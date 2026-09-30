@@ -117,16 +117,20 @@ class Login extends SimplePage
 
             if (
                 $userUndertakingMultiFactorAuthenticationData &&
-                hash_equals($userUndertakingMultiFactorAuthenticationData['userKey'], Filament::getUserScopedAuthIdentifier($user))
+                hash_equals($userUndertakingMultiFactorAuthenticationData['userKey'], Filament::getUserScopedAuthIdentifier($user)) &&
+                $this->getUserUndertakingMultiFactorAuthentication()
             ) {
                 if ($this->isMultiFactorChallengeRateLimited($user)) {
                     return true;
                 }
 
+                $this->cacheSchema('multiFactorChallengeForm', null);
                 $this->multiFactorChallengeForm->validate();
 
                 return false;
             }
+
+            $this->userUndertakingMultiFactorAuthentication = null;
 
             $multiFactorChallenge = $this->getMultiFactorChallenge();
 
@@ -140,6 +144,7 @@ class Login extends SimplePage
             }
 
             if (filled($this->userUndertakingMultiFactorAuthentication)) {
+                $this->cacheSchema('multiFactorChallengeForm', null);
                 $this->multiFactorChallengeForm->fill();
 
                 return true;

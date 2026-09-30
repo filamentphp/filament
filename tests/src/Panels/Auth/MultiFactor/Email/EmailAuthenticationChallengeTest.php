@@ -355,6 +355,68 @@ describe('failure cases', function (): void {
         $this->assertGuest();
     });
 
+    it('will not authenticate the user through an empty cached challenge schema from a legacy pending payload', function (): void {
+        /** @var EmailAuthentication $emailAuthentication */
+        $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasEmailAuthentication()
+            ->create();
+
+        $code = '123456';
+        $emailAuthentication->generateCodesUsing(static fn (): string => $code);
+
+        $login = livewire(EmailAuthenticationLogin::class)
+            ->call('setLegacyUserUndertakingMultiFactorAuthenticationForTesting', $userToAuthenticate->getAuthIdentifier())
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ]);
+
+        $login
+            ->update(calls: [
+                [
+                    'method' => 'cacheMultiFactorChallengeFormForTesting',
+                    'params' => [],
+                    'path' => '',
+                ],
+                [
+                    'method' => 'authenticate',
+                    'params' => [],
+                    'path' => '',
+                ],
+                [
+                    'method' => 'authenticate',
+                    'params' => [],
+                    'path' => '',
+                ],
+            ])
+            ->assertHasFormErrors([
+                "{$emailAuthentication->getId()}.code" => 'required',
+            ], 'multiFactorChallengeForm')
+            ->assertNoRedirect();
+
+        $this->assertGuest();
+
+        expect(decrypt($login->instance()->userUndertakingMultiFactorAuthentication))
+            ->toBe([
+                'identifier' => $userToAuthenticate->getAuthIdentifier(),
+                'userKey' => Filament::getUserScopedAuthIdentifier($userToAuthenticate),
+            ]);
+
+        $login
+            ->fillForm([
+                $emailAuthentication->getId() => [
+                    'code' => $code,
+                ],
+            ], 'multiFactorChallengeForm')
+            ->call('authenticate')
+            ->assertHasNoFormErrors(form: 'multiFactorChallengeForm')
+            ->assertRedirect(Filament::getUrl());
+
+        $this->assertAuthenticatedAs($userToAuthenticate);
+    });
+
     it('will not authenticate the user with a challenge code issued for another guard and model with the same authentication identifier', function (): void {
         Schema::create('email_authentication_users', function (Blueprint $table): void {
             $table->id();
@@ -442,17 +504,40 @@ describe('failure cases', function (): void {
             return $code;
         });
 
-        $victimLogin = livewire(Login::class)
-            ->fillForm([
-                'email' => $victim->email,
-                'password' => 'victim-password',
+        $attackerLogin->fillForm([
+            'email' => $victim->email,
+            'password' => 'victim-password',
+        ]);
+
+        // Simulate a component lookup followed by two queued authentication calls
+        // in one Livewire update. The challenge schema must not remain empty after
+        // the pending principal is rebound to the victim.
+        $attackerLogin
+            ->update(calls: [
+                [
+                    'method' => 'cacheMultiFactorChallengeFormForTesting',
+                    'params' => [],
+                    'path' => '',
+                ],
+                [
+                    'method' => 'authenticate',
+                    'params' => [],
+                    'path' => '',
+                ],
+                [
+                    'method' => 'authenticate',
+                    'params' => [],
+                    'path' => '',
+                ],
             ])
-            ->call('authenticate')
-            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+            ->assertHasFormErrors([
+                "{$victimEmailAuthentication->getId()}.code" => 'required',
+            ], 'multiFactorChallengeForm')
+            ->assertNoRedirect();
 
         expect($issuedCodes)->toBe(['000001', '000002', '000003']);
 
-        $victimLogin
+        $attackerLogin
             ->fillForm([
                 $victimEmailAuthentication->getId() => [
                     'code' => $issuedCodes[1],
@@ -463,6 +548,16 @@ describe('failure cases', function (): void {
                 "{$victimEmailAuthentication->getId()}.code",
             ], 'multiFactorChallengeForm')
             ->assertNoRedirect();
+
+        $attackerLogin
+            ->fillForm([
+                $victimEmailAuthentication->getId() => [
+                    'code' => $issuedCodes[2],
+                ],
+            ], 'multiFactorChallengeForm')
+            ->call('authenticate')
+            ->assertHasNoFormErrors(form: 'multiFactorChallengeForm')
+            ->assertRedirect(Filament::getUrl());
 
         expect($victimEmailAuthentication->sendCode($victim))->toBeTrue()
             ->and($victimEmailAuthentication->sendCode($attacker))->toBeTrue()
@@ -476,7 +571,7 @@ describe('failure cases', function (): void {
 
         expect($emailAuthentication->verifyCode('000002', $attacker))->toBeTrue();
 
-        $this->assertGuest('email-authentication-users');
+        $this->assertAuthenticatedAs($victim, 'email-authentication-users');
     });
 });
 
@@ -687,6 +782,16 @@ class EmailAuthenticationUser extends User
 
 class EmailAuthenticationLogin extends Login
 {
+    public function cacheMultiFactorChallengeFormForTesting(): void
+    {
+        $this->multiFactorChallengeForm->getComponents();
+    }
+
+    public function setLegacyUserUndertakingMultiFactorAuthenticationForTesting(mixed $identifier): void
+    {
+        $this->userUndertakingMultiFactorAuthentication = encrypt($identifier);
+    }
+
     public function getUserUndertakingMultiFactorAuthenticationForTesting(): ?Authenticatable
     {
         return $this->getUserUndertakingMultiFactorAuthentication();
