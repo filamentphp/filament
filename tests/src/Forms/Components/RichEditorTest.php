@@ -5,8 +5,10 @@ use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
+use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Forms\RichEditor\MinimalControlsCalloutBlock;
 use Filament\Tests\Fixtures\Forms\RichEditor\PluginWithFileAttachmentProvider;
@@ -54,6 +56,27 @@ test('fields can be required', function (): void {
 });
 
 describe('toolbar buttons', function (): void {
+    test('uses `FormsIconAlias` constants for all built-in tools', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content'),
+            ])
+            ->getComponents()[0];
+
+        $iconAliases = array_values(array_filter(
+            (new ReflectionClass(FormsIconAlias::class))->getConstants(),
+            static fn (string $name): bool => str_starts_with($name, 'COMPONENTS_RICH_EDITOR_TOOLBAR_'),
+            ARRAY_FILTER_USE_KEY,
+        ));
+        $toolIconAliases = array_values(array_map(
+            static fn (RichEditorTool $tool): ?string => $tool->getIconAlias(),
+            $richEditor->getTools(),
+        ));
+
+        expect($toolIconAliases)->toEqualCanonicalizing($iconAliases);
+    });
+
     test('can get default toolbar buttons using `getDefaultToolbarButtons()`', function (): void {
         $richEditor = Schema::make(Livewire::make())
             ->statePath('data')
