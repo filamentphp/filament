@@ -257,6 +257,48 @@ describe('failure cases', function (): void {
         $this->assertGuest();
     });
 
+    it('will not verify an email code from a stale session after it has been consumed', function (): void {
+        /** @var EmailAuthentication $emailAuthentication */
+        $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasEmailAuthentication()
+            ->create();
+
+        $code = '123456';
+        $emailAuthentication->generateCodesUsing(static fn (): string => $code);
+        $emailAuthentication->sendCode($userToAuthenticate);
+
+        $staleSessionData = session()->all();
+
+        expect($emailAuthentication->verifyCode($code, $userToAuthenticate))->toBeTrue();
+
+        session()->replace($staleSessionData);
+
+        expect($emailAuthentication->verifyCode($code, $userToAuthenticate))->toBeFalse();
+    });
+
+    it('will not verify a replaced email code from a stale session', function (): void {
+        /** @var EmailAuthentication $emailAuthentication */
+        $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasEmailAuthentication()
+            ->create();
+
+        $issuedCodes = ['123456', '654321'];
+        $emailAuthentication->generateCodesUsing(fn (): string => array_shift($issuedCodes));
+
+        $emailAuthentication->sendCode($userToAuthenticate);
+
+        $staleSessionData = session()->all();
+
+        $emailAuthentication->sendCode($userToAuthenticate);
+        session()->replace($staleSessionData);
+
+        expect($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse();
+    });
+
     it('will not authenticate the user with a challenge code that was issued to a different user', function (): void {
         /** @var EmailAuthentication $emailAuthentication */
         $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
@@ -332,7 +374,7 @@ describe('failure cases', function (): void {
 
         // Sending is exhausted for the second user, so reaching their challenge
         // issues no code of its own.
-        $victimRateLimitingKey = 'filament-email-authentication:' . sha1(Filament::getAuthGuard() . '|' . $victim::class . '|' . $victim->getAuthIdentifier());
+        $victimRateLimitingKey = 'filament-email-authentication:' . Filament::getUserScopedAuthIdentifier($victim);
 
         RateLimiter::hit($victimRateLimitingKey);
         RateLimiter::hit($victimRateLimitingKey);
@@ -569,7 +611,9 @@ describe('failure cases', function (): void {
 
         Filament::setCurrentPanel('email-authentication');
 
-        expect($emailAuthentication->verifyCode('000002', $attacker))->toBeTrue();
+        // Completing the victim login regenerated the shared session ID, which
+        // invalidates codes from challenges started before that authentication.
+        expect($emailAuthentication->verifyCode('000002', $attacker))->toBeFalse();
 
         $this->assertAuthenticatedAs($victim, 'email-authentication-users');
     });

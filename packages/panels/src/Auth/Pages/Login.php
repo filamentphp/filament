@@ -161,10 +161,16 @@ class Login extends SimplePage
             return null;
         }
 
+        $userScopedAuthIdentifier = Filament::getUserScopedAuthIdentifier($user);
+
         // Credentials are deliberately validated again after the multi-factor challenge so that
         // password and panel access changes made during the challenge are observed before login.
         // The corresponding second `Attempting` event is intentional.
-        if (! $authGuard->attemptWhen($credentials, fn (Authenticatable $user): bool => $this->isUserAllowedToAccessPanel($user), $remember)) {
+        if (! $authGuard->attemptWhen(
+            $credentials,
+            fn (Authenticatable $user): bool => hash_equals($userScopedAuthIdentifier, Filament::getUserScopedAuthIdentifier($user)) && $this->isUserAllowedToAccessPanel($user),
+            $remember,
+        )) {
             $this->throwFailureValidationException();
         }
 

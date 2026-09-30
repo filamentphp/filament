@@ -628,7 +628,11 @@ class FilamentManager
             throw new LogicException('A user must be authenticated to generate a scoped identifier.');
         }
 
-        return sha1($this->getAuthGuard() . '|' . $user::class . '|' . $user->getAuthIdentifier());
+        $guard = $this->getAuthGuard();
+        $userClass = $user::class;
+        $authIdentifier = (string) $user->getAuthIdentifier();
+
+        return hash('sha256', strlen($guard) . ":{$guard}" . strlen($userClass) . ":{$userClass}" . strlen($authIdentifier) . ":{$authIdentifier}");
     }
 
     /**

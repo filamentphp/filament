@@ -270,3 +270,15 @@ it('can throttle registration attempts per email', function (): void {
 
     $this->assertAuthenticated();
 });
+
+it('scopes registration rate limits by authentication guard and user model', function (): void {
+    $email = fake()->unique()->safeEmail();
+    $registration = livewire(Register::class)->instance();
+
+    expect(invade($registration)->isRegisterRateLimited($email))->toBeFalse()
+        ->and(invade($registration)->isRegisterRateLimited($email))->toBeFalse();
+
+    Filament::getCurrentOrDefaultPanel()->authGuard('another-guard');
+
+    expect(invade($registration)->isRegisterRateLimited($email))->toBeFalse();
+});
