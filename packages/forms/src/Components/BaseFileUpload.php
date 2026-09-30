@@ -937,7 +937,9 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             }
 
             if (! $callback) {
-                return [$fileKey => null];
+                $urls[$fileKey] = null;
+
+                continue;
             }
 
             $urls[$fileKey] = $this->evaluate($callback, [
@@ -1025,7 +1027,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             return $storedFile;
         }, Arr::wrap($this->getRawState())));
 
-        if ($this->isReorderable && ($callback = $this->reorderUploadedFilesUsing)) {
+        if ($this->isReorderable() && ($callback = $this->reorderUploadedFilesUsing)) {
             $rawState = $this->evaluate($callback, [
                 'rawState' => $rawState,
                 // The `state` injection is deprecated, as this value is raw state that

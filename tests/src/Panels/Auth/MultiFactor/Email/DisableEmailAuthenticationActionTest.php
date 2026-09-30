@@ -194,7 +194,7 @@ it('can throttle code verification attempts per user', function (): void {
     $user = auth()->user();
 
     // Pre-fill the per-user rate limiter to simulate 5 prior attempts
-    $rateLimitingKey = 'filament-disable-email-authentication:' . $user->getAuthIdentifier();
+    $rateLimitingKey = 'filament-disable-email-authentication:' . Filament::getUserScopedAuthIdentifier($user);
 
     foreach (range(1, 5) as $i) {
         RateLimiter::hit($rateLimitingKey);

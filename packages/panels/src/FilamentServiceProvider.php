@@ -32,9 +32,11 @@ use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\View\LegacyComponents;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
@@ -99,6 +101,12 @@ class FilamentServiceProvider extends PackageServiceProvider
                 $component->bootCanAuthorizeAccess();
             }
         });
+
+        RateLimiter::for(
+            'filament-authentication',
+            static fn (): Limit => Limit::perMinute(6)
+                ->by(Filament::getUserScopedAuthIdentifier()),
+        );
 
         Blade::components([
             LegacyComponents\PageComponent::class => 'filament::page',
