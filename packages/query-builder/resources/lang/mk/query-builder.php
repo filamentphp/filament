@@ -14,6 +14,10 @@ return [
 
             'label' => 'Групи',
 
+            'group' => [
+                'label' => 'Група',
+            ],
+
             'block' => [
                 'label' => 'ИЛИ услов',
                 'or' => 'ИЛИ',
@@ -34,6 +38,8 @@ return [
     ],
 
     'no_rules' => '(Нема правила)',
+
+    'max_rules_reached_tooltip' => 'Го достигнавте максимумот од :count правила.',
 
     'item_separators' => [
         'and' => 'И',
