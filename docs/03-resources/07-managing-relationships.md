@@ -795,6 +795,10 @@ public static function canViewForRecord(Model $ownerRecord, string $pageClass): 
 }
 ```
 
+Filament also checks `canViewForRecord()` before a relation manager's `mount()` method runs, including when a lazy relation manager loads, and before subsequent Livewire updates. If access is denied, the request returns a 403 response. Resource pages filter out denied relation managers before mounting them, including managers in relation groups.
+
+Keep sensitive work out of the relation manager's `boot()` and lazy `placeholder()` methods, which can run before this authorization check. If you need sensitive work in these methods, authorize it separately.
+
 ## Combining the relation manager tabs with the form
 
 On the Edit or View page class, override the `hasCombinedRelationManagerTabsWithContent()` method:
