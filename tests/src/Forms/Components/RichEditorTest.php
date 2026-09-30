@@ -1866,9 +1866,9 @@ it('does not render custom block previews from imported HTML', function (): void
                         .map((node) => [node.attrs.label, atob(node.attrs.preview)])
                 })()
                 JS, [
-                    ['Callout', '<p>First callout.</p>'],
-                    ['Callout', '<p>First callout.</p>'],
-                ])
+                ['Callout', '<p>First callout.</p>'],
+                ['Callout', '<p>First callout.</p>'],
+            ])
             ->assertScript(<<<'JS'
                 (() => {
                     window.customBlockPreviewExecuted = false
@@ -1935,9 +1935,9 @@ it('does not render custom block previews from imported HTML', function (): void
                         .map((node) => [node.attrs.label, atob(node.attrs.preview)])
                 })()
                 JS, [
-                    ['Callout', '<p>Copied callout.</p>'],
-                    ['Callout', '<p>Copied callout.</p>'],
-                ])
+                ['Callout', '<p>Copied callout.</p>'],
+                ['Callout', '<p>Copied callout.</p>'],
+            ])
             ->assertScript(<<<'JS'
                 (() => {
                     const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
@@ -1979,9 +1979,9 @@ it('does not render custom block previews from imported HTML', function (): void
                         .map((node) => [node.attrs.label, atob(node.attrs.preview)])
                 })()
                 JS, [
-                    ['Callout', '<p>Copied callout.</p>'],
-                    ['Callout', '<p>Copied callout.</p>'],
-                ])
+                ['Callout', '<p>Copied callout.</p>'],
+                ['Callout', '<p>Copied callout.</p>'],
+            ])
             ->assertNoAccessibilityIssues();
 
         visit('/rich-editor-minimal-controls-browser-test')
