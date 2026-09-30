@@ -4,6 +4,7 @@ namespace Filament\Support\Assets;
 
 use Composer\InstalledVersions;
 use Filament\Support\Facades\FilamentAsset;
+use LogicException;
 use Throwable;
 
 abstract class Asset
@@ -79,55 +80,34 @@ abstract class Asset
         try {
             return $this->getInstalledVersion($package);
         } catch (Throwable $exception) {
-            // A name Composer does not know (a plugin registering under its
-            // own id): the file itself says when it changed.
-            return $this->getFileVersion() ?? $this->getInstalledVersion('filament/support');
+            return $this->getInstalledVersion('filament/support');
         }
     }
 
-    /**
-     * A dev version (`dev-main`, `5.x-dev` normalized to `5.9999999.9999999.9999999-dev`)
-     * reads the same for every commit, so browsers would keep a stale copy of
-     * the asset across updates — the installed commit reference busts the
-     * cache instead.
-     */
     protected function getInstalledVersion(string $package): string
     {
         $version = InstalledVersions::getVersion($package);
 
-        if (filled($version) && (! $this->isDevVersion($version))) {
+        if ($version === null) {
+            throw new LogicException("Unable to determine the installed version of package [{$package}].");
+        }
+
+        if (! $this->isDevVersion($version)) {
             return $version;
         }
 
         $reference = InstalledVersions::getReference($package);
 
         if (filled($reference)) {
-            return substr($reference, 0, 12);
+            return hash('sha256', $reference);
         }
 
-        return $version ?? $this->getFileVersion() ?? '';
+        return $version;
     }
 
     protected function isDevVersion(string $version): bool
     {
         return str_starts_with($version, 'dev-') || str_ends_with($version, '-dev');
-    }
-
-    /**
-     * The source file's modification time, for assets whose package Composer
-     * cannot version.
-     */
-    protected function getFileVersion(): ?string
-    {
-        $path = $this->getPath();
-
-        if (blank($path) || $this->isRemote() || (! is_file($path))) {
-            return null;
-        }
-
-        $modifiedAt = filemtime($path);
-
-        return $modifiedAt === false ? null : (string) $modifiedAt;
     }
 
     public function isLoadedOnRequest(): bool
