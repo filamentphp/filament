@@ -239,7 +239,9 @@ class Post extends Model implements HasRichContent
 }
 ```
 
-You may want to preserve the original filenames of the uploaded files, using the `preserveFilenames()` method:
+> Before preserving original filenames, please review the [security implications of controlling file names](https://filamentphp.com/docs/forms/file-upload#security-implications-of-controlling-file-names). Only enable this feature for trusted users.
+
+You may preserve the original filenames of the uploaded files using the `preserveFilenames()` method:
 
 ```php
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;

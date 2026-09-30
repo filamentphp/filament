@@ -2747,6 +2747,27 @@ describe('`saveUploadedFile()` branches', function (): void {
         expect(Storage::disk('public')->exists($path))->toBeTrue();
     });
 
+    it('uses `hashName()` to derive the stored file extension from its MIME type', function () use ($makeField, $makeTemporaryUploadedFile): void {
+        Storage::fake('public');
+
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->disk('public')
+            ->directory('uploads'));
+
+        $gifContents = UploadedFile::fake()->image('image.gif')->getContent();
+        $file = $makeTemporaryUploadedFile('image.html', $gifContents);
+        $path = $field->saveUploadedFile($file);
+
+        expect($file->getMimeType())->toBe('image/gif')
+            ->and($file->getClientOriginalExtension())->toBe('html')
+            ->and(basename($path))->toBe($file->hashName())
+            ->and($path)
+            ->toStartWith('uploads/')
+            ->toEndWith('.gif')
+            ->not->toEndWith('.html')
+            ->and(Storage::disk('public')->exists($path))->toBeTrue();
+    });
+
     it('stores the server-detected `mimetype` instead of the temporary storage metadata', function () use ($makeField): void {
         Storage::fake('tmp-for-tests');
 
@@ -2793,7 +2814,7 @@ describe('`saveUploadedFile()` branches', function (): void {
 
         expect($path)
             ->toStartWith('uploads/')
-            ->toEndWith('.webp')
+            ->toEndWith('.png')
             ->and($file->storedOptions)->toBe([
                 'disk' => 'public',
                 'mimetype' => 'image/png',

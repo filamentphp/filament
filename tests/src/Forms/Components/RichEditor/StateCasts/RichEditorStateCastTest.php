@@ -169,7 +169,21 @@ describe('`set()`', function (): void {
 
         $cast = new RichEditorStateCast($editor);
 
-        $result = $cast->set('<div data-type="customBlock" data-id="preview-block"></div>');
+        $result = $cast->set([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'customBlock',
+                    'attrs' => [
+                        'id' => 'preview-block',
+                        'config' => ['source' => 'persisted'],
+                        'label' => 'Untrusted label',
+                        'preview' => base64_encode('<img src="x" onerror="alert(document.domain)">'),
+                        'shouldApplyProseStylingToPreview' => true,
+                    ],
+                ],
+            ],
+        ]);
 
         $found = null;
 
@@ -181,6 +195,8 @@ describe('`set()`', function (): void {
 
         expect($found['attrs']['label'] ?? null)->toBe('Custom preview label');
         expect(base64_decode($found['attrs']['preview'] ?? ''))->toBe('<strong>Preview HTML</strong>');
+        expect($found['attrs']['shouldApplyProseStylingToPreview'] ?? null)->toBeFalse();
+        expect($found['attrs']['config'] ?? null)->toBe(['source' => 'persisted']);
     });
 
     it('hydrates a custom block `shouldApplyProseStylingToPreview` from the registered block class', function (): void {
@@ -238,8 +254,51 @@ describe('`set()`', function (): void {
         });
 
         expect($found['attrs']['label'] ?? null)->toBeNull();
-        expect($found['attrs']['preview'] ?? null)->not->toContain('Preview HTML');
+        expect($found['attrs']['preview'] ?? null)->toBeNull();
     });
+
+    it('strips persisted custom block preview attributes from unregistered blocks', function (array $registeredCustomBlocks, ?string $id): void {
+        $editor = makeStateCastEditor()
+            ->customBlocks($registeredCustomBlocks);
+
+        $cast = new RichEditorStateCast($editor);
+
+        $result = $cast->set([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'customBlock',
+                    'attrs' => [
+                        'id' => $id,
+                        'config' => ['source' => 'persisted'],
+                        'label' => 'Untrusted label',
+                        'preview' => base64_encode('<img src="x" onerror="alert(document.domain)">'),
+                        'shouldApplyProseStylingToPreview' => true,
+                    ],
+                ],
+            ],
+        ]);
+
+        $found = null;
+
+        walkStateCastResult($result, function (array $node) use (&$found): void {
+            if (($node['type'] ?? null) === 'customBlock') {
+                $found = $node;
+            }
+        });
+
+        expect($found)->not->toBeNull();
+        expect($found['attrs']['id'] ?? null)->toBe($id);
+        expect($found['attrs']['config'] ?? null)->toBe(['source' => 'persisted']);
+        expect($found['attrs'])
+            ->not->toHaveKey('label')
+            ->not->toHaveKey('preview')
+            ->not->toHaveKey('shouldApplyProseStylingToPreview');
+    })->with([
+        'without registered custom blocks' => [[], 'unknown-block'],
+        'with registered custom blocks' => [[StateCastCustomBlock::class], 'unknown-block'],
+        'without an id' => [[StateCastCustomBlock::class], null],
+    ]);
 
     it('hydrates mention labels through a matching `MentionProvider`', function (): void {
         $editor = makeStateCastEditor()
@@ -411,6 +470,44 @@ describe('`get()`', function (): void {
         expect($found['attrs']['label'] ?? null)->toBeNull();
         expect($found['attrs']['preview'] ?? null)->toBeNull();
         expect($found['attrs']['id'] ?? null)->toBe('preview-block');
+    });
+
+    it('strips custom block preview attributes before returning output when no custom blocks are registered', function (): void {
+        $editor = makeStateCastEditor()->json();
+
+        $cast = new RichEditorStateCast($editor);
+
+        $output = $cast->get([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'customBlock',
+                    'attrs' => [
+                        'id' => 'unknown-block',
+                        'config' => ['source' => 'persisted'],
+                        'label' => 'Untrusted label',
+                        'preview' => base64_encode('<img src="x" onerror="alert(document.domain)">'),
+                        'shouldApplyProseStylingToPreview' => true,
+                    ],
+                ],
+            ],
+        ]);
+
+        $found = null;
+
+        walkStateCastResult($output, function (array $node) use (&$found): void {
+            if (($node['type'] ?? null) === 'customBlock') {
+                $found = $node;
+            }
+        });
+
+        expect($found)->not->toBeNull();
+        expect($found['attrs']['id'] ?? null)->toBe('unknown-block');
+        expect($found['attrs']['config'] ?? null)->toBe(['source' => 'persisted']);
+        expect($found['attrs'])
+            ->not->toHaveKey('label')
+            ->not->toHaveKey('preview')
+            ->not->toHaveKey('shouldApplyProseStylingToPreview');
     });
 
     it('strips `shouldApplyProseStylingToPreview` attr from custom blocks before returning output', function (): void {

@@ -104,6 +104,14 @@ return [
 
         ],
 
+        'block_picker' => [
+
+            'no_search_results_message' => 'Żadne bloki nie pasują do Twojego wyszukiwania.',
+
+            'search_prompt' => 'Szukaj bloków',
+
+        ],
+
     ],
 
     'checkbox_list' => [
@@ -493,6 +501,10 @@ return [
 
             ],
 
+            'close_panel' => [
+                'label' => 'Zamknij panel',
+            ],
+
             'custom_block' => [
 
                 'modal' => [
@@ -657,6 +669,28 @@ return [
 
         ],
 
+        'custom_blocks' => [
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Usuń blok',
+                ],
+
+                'edit' => [
+                    'label' => 'Edytuj blok',
+                ],
+
+            ],
+
+            'no_search_results_message' => 'Żadne bloki nie pasują do Twojego wyszukiwania.',
+
+            'search_label' => 'Szukaj bloków',
+
+            'search_prompt' => 'Szukaj bloków',
+
+        ],
+
         'file_attachments_accepted_file_types_message' => 'Przesyłane pliki muszą być typu: :values.',
 
         'file_attachments_max_size_message' => 'Przesyłane pliki nie mogą być większe niż :max kilobajtów.',
@@ -734,6 +768,10 @@ return [
 
         'actions' => [
 
+            'clear' => [
+                'label' => 'Wyczyść wybór',
+            ],
+
             'create_option' => [
 
                 'label' => 'Utwórz',
@@ -778,6 +816,10 @@ return [
 
             ],
 
+            'remove_option' => [
+                'label' => 'Usuń :label',
+            ],
+
         ],
 
         'boolean' => [
@@ -796,6 +838,8 @@ return [
         'placeholder' => 'Wybierz z listy',
 
         'searching_message' => 'Szukanie...',
+
+        'search_label' => 'Szukaj',
 
         'search_prompt' => 'Zacznij pisać aby wyszukać...',
 

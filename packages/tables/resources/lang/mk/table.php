@@ -12,6 +12,10 @@ return [
                 'label' => 'Примени колони',
             ],
 
+            'reorder' => [
+                'label' => 'Преуреди колона',
+            ],
+
             'reset' => [
                 'label' => 'Ресетирај',
             ],
@@ -24,6 +28,15 @@ return [
 
         'actions' => [
             'label' => 'Акција|Акции',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Да',
+                'false' => 'Не',
+            ],
+
         ],
 
         'select' => [
@@ -115,6 +128,10 @@ return [
             'label' => 'Преуреди записи',
         ],
 
+        'reorder_record' => [
+            'label' => 'Преуреди ставка :key',
+        ],
+
         'filter' => [
             'label' => 'Филтер',
         ],
@@ -129,6 +146,10 @@ return [
 
         'column_manager' => [
             'label' => 'Менаџер на колони',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Прошири/собери ставка :key',
         ],
 
     ],
@@ -219,7 +240,11 @@ return [
 
     ],
 
+    'loading' => 'Се вчитува...',
+
     'reorder_indicator' => 'Влечи и спушти ги записите по редослед.',
+
+    'result_count' => '{0} Нема резултати|{1} :count резултат|[2,*] :count резултати',
 
     'selection_indicator' => [
 
