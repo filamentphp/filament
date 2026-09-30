@@ -1012,9 +1012,43 @@ describe('security', function (): void {
             ->and($appAuthentication->verifyCode($currentCode, $secret, shouldPreventCodeReuse: true))->toBeFalse();
     });
 
-    it('does not verify a TOTP code when the replay watermark cannot be persisted', function (): void {
+    it('cannot use the `null` cache store for TOTP replay protection', function (): void {
         config()->set('cache.default', 'null');
         config()->set('cache.stores.null', ['driver' => 'null']);
+
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        expect(fn (): bool => $appAuthentication->verifyCode(
+            $appAuthentication->getCurrentCode($userToAuthenticate),
+            $appAuthentication->getSecret($userToAuthenticate),
+            shouldPreventCodeReuse: true,
+        ))->toThrow(LogicException::class, 'The [null] cache store must support atomic locks to use multi-factor authentication.');
+    });
+
+    it('cannot use the `null` cache store to protect recovery codes', function (): void {
+        config()->set('cache.default', 'null');
+        config()->set('cache.stores.null', ['driver' => 'null']);
+
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication($recoveryCodes = $appAuthentication->generateRecoveryCodes())
+            ->create();
+
+        expect(fn (): bool => $appAuthentication->verifyRecoveryCode(
+            Arr::first($recoveryCodes),
+            $userToAuthenticate,
+        ))->toThrow(LogicException::class, 'The [null] cache store must support atomic locks to use multi-factor authentication.');
+    });
+
+    it('does not verify a TOTP code when the replay watermark cannot be persisted', function (): void {
+        Cache::extend('failed-write', fn (): Repository => new Repository(new FailedWriteCacheStore));
+        config()->set('cache.default', 'failed-write');
+        config()->set('cache.stores.failed-write', ['driver' => 'failed-write']);
 
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
@@ -1152,6 +1186,14 @@ class LostLockOwnershipCacheStore extends ArrayStore
     public function lock($name, $seconds = 0, $owner = null): Lock
     {
         return new LostLockOwnershipCacheLock($name, $seconds, $owner);
+    }
+}
+
+class FailedWriteCacheStore extends ArrayStore
+{
+    public function forever($key, $value): bool
+    {
+        return false;
     }
 }
 

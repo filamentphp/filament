@@ -278,7 +278,7 @@ describe('failure cases', function (): void {
         expect($emailAuthentication->verifyCode($code, $userToAuthenticate))->toBeFalse();
     });
 
-    it('will not verify a replaced email code from a stale session', function (): void {
+    it('keeps the latest email code usable when stale session data is persisted', function (): void {
         /** @var EmailAuthentication $emailAuthentication */
         $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
@@ -287,16 +287,20 @@ describe('failure cases', function (): void {
             ->create();
 
         $issuedCodes = ['123456', '654321'];
-        $emailAuthentication->generateCodesUsing(fn (): string => array_shift($issuedCodes));
+        $emailAuthentication->generateCodesUsing(function () use (&$issuedCodes): string {
+            return array_shift($issuedCodes);
+        });
 
-        $emailAuthentication->sendCode($userToAuthenticate);
+        expect($emailAuthentication->sendCode($userToAuthenticate))->toBeTrue();
 
         $staleSessionData = session()->all();
 
-        $emailAuthentication->sendCode($userToAuthenticate);
+        expect($emailAuthentication->sendCode($userToAuthenticate))->toBeTrue();
         session()->replace($staleSessionData);
 
-        expect($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse();
+        expect($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse()
+            ->and($emailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeTrue()
+            ->and($emailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeFalse();
     });
 
     it('will not authenticate the user with a challenge code that was issued to a different user', function (): void {

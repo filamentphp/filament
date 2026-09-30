@@ -37,7 +37,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-The store must be shared by all application servers, provide consistent reads, and support atomic locks, such as the database or Redis cache driver. The `array`, DynamoDB, failover, and memoized cache drivers cannot be used. Every authentication provider instance that can verify the same authentication secret or code must use the same store. The store must not be flushed or evict replay-protection state while codes remain valid.
+The store must be shared by all application servers, provide consistent reads, and support atomic locks, such as the database or Redis cache driver. The `array`, `null`, DynamoDB, failover, and memoized cache drivers cannot be used. Every authentication provider instance that can verify the same authentication secret or code must use the same store. The store must not be flushed or evict replay-protection state while codes remain valid.
 
 In Filament, users set up multi-factor authentication from their [profile page](overview#authentication-features). If you use Filament's profile page feature, setting up multi-factor authentication will automatically add the correct UI elements to the profile page:
 
@@ -616,7 +616,7 @@ However, if you have other parts of your Laravel app that authenticate users, pl
 When a user signs in with a recovery code, Filament's `verifyRecoveryCode()` method wraps the read-validate-write sequence in a per-user `Cache::lock` and a database transaction with a `lockForUpdate()` row lock on the user's row. The cache lock serializes concurrent submissions across PHP workers regardless of the underlying database driver, so two parallel sign-in requests cannot both consume the same code or resurrect a just-consumed code from a stale snapshot — even when the storage is a non-SQL store, a different database connection, or a driver without `SELECT ... FOR UPDATE` support (such as SQLite).
 
 <Aside variant="warning">
-    The cache lock relies on a shared lock store. Filament's default `file` cache store, as well as `redis`, `memcached`, and `database`, all provide a shared lock across PHP-FPM workers on the same machine (or across machines, for the network-backed stores). The `array` store is per-process and does not serialize across workers, DynamoDB and memoized stores do not provide the consistent reads that replay protection requires, and failover stores do not guarantee that every operation uses one authoritative backend, so these stores cannot be used.
+    The cache lock relies on a shared lock store. Filament's default `file` cache store, as well as `redis`, `memcached`, and `database`, all provide a shared lock across PHP-FPM workers on the same machine (or across machines, for the network-backed stores). The `array` store is per-process and does not serialize across workers, the `null` store does not provide a real lock, DynamoDB and memoized stores do not provide the consistent reads that replay protection requires, and failover stores do not guarantee that every operation uses one authoritative backend, so these stores cannot be used.
 
     If you override `getAppAuthenticationRecoveryCodes()` / `saveAppAuthenticationRecoveryCodes()`, the cache lock still wraps the full read-validate-write sequence, so your override is protected. Your override is only responsible for making the storage write itself atomic — for example, a single Eloquent `update()` or an equivalent atomic primitive on your chosen store.
 </Aside>

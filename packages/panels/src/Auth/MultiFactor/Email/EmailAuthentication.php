@@ -94,15 +94,15 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
         $wasStored = $this->executeWithCacheLock(
             $cache,
             "{$codeCacheKey}.lock",
-            fn (): bool => $cache->put($codeCacheKey, $codeHash, $codeExpiresAt),
+            fn (): bool => $cache->put($codeCacheKey, [
+                'hash' => $codeHash,
+                'expiresAt' => $codeExpiresAt,
+            ], $codeExpiresAt),
         );
 
         if (! $wasStored) {
             return false;
         }
-
-        session()->put($this->getCodeSessionKey($user), $codeHash);
-        session()->put($this->getCodeExpirySessionKey($user), $codeExpiresAt);
 
         $user->notify(app($this->getCodeNotification(), [
             'code' => $code,
@@ -155,39 +155,25 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
             return false;
         }
 
-        $codeHash = session($this->getCodeSessionKey($user));
-        $codeExpiresAt = session($this->getCodeExpirySessionKey($user));
-
-        if (
-            blank($codeHash)
-            || (! ($codeExpiresAt instanceof DateTimeInterface))
-            || (! Hash::check($code, $codeHash))
-            || $this->isCodeExpired($codeExpiresAt)
-        ) {
-            return false;
-        }
-
         $cache = $this->getCacheRepository();
         $codeCacheKey = $this->getCodeCacheKey($user);
 
-        $wasConsumed = $this->executeWithCacheLock($cache, "{$codeCacheKey}.lock", function () use ($cache, $codeCacheKey, $codeExpiresAt, $codeHash): bool {
-            $activeCodeHash = $cache->get($codeCacheKey);
+        return $this->executeWithCacheLock($cache, "{$codeCacheKey}.lock", function () use ($cache, $code, $codeCacheKey): bool {
+            $activeCode = $cache->get($codeCacheKey);
+            $activeCodeHash = is_array($activeCode) ? ($activeCode['hash'] ?? null) : null;
+            $activeCodeExpiresAt = is_array($activeCode) ? ($activeCode['expiresAt'] ?? null) : null;
 
             if (
-                $this->isCodeExpired($codeExpiresAt)
-                || (! is_string($activeCodeHash))
-                || (! hash_equals($activeCodeHash, $codeHash))
+                (! is_string($activeCodeHash))
+                || (! ($activeCodeExpiresAt instanceof DateTimeInterface))
+                || $this->isCodeExpired($activeCodeExpiresAt)
+                || (! Hash::check($code, $activeCodeHash))
             ) {
                 return false;
             }
 
             return $cache->forget($codeCacheKey);
         });
-
-        session()->forget($this->getCodeSessionKey($user));
-        session()->forget($this->getCodeExpirySessionKey($user));
-
-        return $wasConsumed;
     }
 
     protected function isCodeExpired(DateTimeInterface $expiresAt): bool
@@ -204,22 +190,6 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
             'sha256',
             Filament::getUserScopedAuthIdentifier($user) . '|' . session()->getId(),
         );
-    }
-
-    /**
-     * @param  Authenticatable&Model&HasEmailAuthentication  $user
-     */
-    protected function getCodeSessionKey(HasEmailAuthentication $user): string
-    {
-        return 'filament_email_authentication_code:' . Filament::getUserScopedAuthIdentifier($user);
-    }
-
-    /**
-     * @param  Authenticatable&Model&HasEmailAuthentication  $user
-     */
-    protected function getCodeExpirySessionKey(HasEmailAuthentication $user): string
-    {
-        return 'filament_email_authentication_code_expires_at:' . Filament::getUserScopedAuthIdentifier($user);
     }
 
     /**

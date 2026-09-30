@@ -68,6 +68,12 @@ trait HasCacheStore
 
         $lock = $store->lock($name, $seconds);
 
+        if (is_a($lock, 'Illuminate\Cache\NoLock')) {
+            $storeName = $this->getCacheStore() ?? config('cache.default');
+
+            throw new LogicException("The [{$storeName}] cache store must support atomic locks to use multi-factor authentication.");
+        }
+
         if (! ($lock instanceof Lock)) {
             throw new LogicException('The cache store must use Laravel\'s cache lock implementation to use multi-factor authentication.');
         }
