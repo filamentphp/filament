@@ -3,6 +3,7 @@
 namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
@@ -30,12 +31,18 @@ class BuilderTest extends Page
             ->schema([
                 Builder::make('content')
                     ->label('Content')
+                    ->generateUuidUsing(true)
+                    ->addAction(static fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'add-block']))
+                    ->addBetweenAction(static fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'add-between']))
+                    ->deleteAction(static fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'delete-block']))
                     ->blocks([
                         Builder\Block::make('paragraph')
                             ->label('Paragraph')
                             ->schema([
                                 TextInput::make('text')
                                     ->label('Text')
+                                    ->default(fn (): string => 'Paragraph ' . count($this->data['content'] ?? []))
+                                    ->extraInputAttributes(['data-testid' => 'paragraph-text'])
                                     ->required(),
                             ]),
                         Builder\Block::make('heading')
@@ -43,6 +50,7 @@ class BuilderTest extends Page
                             ->schema([
                                 TextInput::make('title')
                                     ->label('Title')
+                                    ->extraInputAttributes(['data-testid' => 'heading-title'])
                                     ->required(),
                             ]),
                     ])

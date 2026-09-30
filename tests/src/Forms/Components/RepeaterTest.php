@@ -1715,6 +1715,33 @@ describe('hydrateItems branches', function (): void {
 });
 
 describe('saveToRelationship branches', function (): void {
+    it('preserves related records when stale reorders follow deletion and saves valid ordering', function (): void {
+        $user = User::factory()->create();
+        $first = Post::factory()->create(['author_id' => $user->id, 'title' => 'Alpha', 'rating' => 1]);
+        $deleted = Post::factory()->create(['author_id' => $user->id, 'title' => 'Beta', 'rating' => 2]);
+        $last = Post::factory()->create(['author_id' => $user->id, 'title' => 'Gamma', 'rating' => 3]);
+
+        $livewire = livewire(RepeaterWithHasManyRelationshipAndOrderColumn::class, ['record' => $user])
+            ->callAction(TestAction::make('delete')->schemaComponent('posts')->arguments(['item' => "record-{$deleted->id}"]));
+        $remainingState = $livewire->get('data');
+
+        $livewire->callAction(TestAction::make('reorder')->schemaComponent('posts')->arguments([
+            'items' => ["record-{$last->id}", "record-{$deleted->id}", "record-{$first->id}"],
+        ]));
+        expect($livewire->get('data'))->toBe($remainingState);
+
+        $livewire->callAction(TestAction::make('reorder')->schemaComponent('posts')->arguments([
+            'items' => ["record-{$last->id}", "record-{$first->id}"],
+        ]))->call('save');
+
+        expect($user->posts()->orderBy('rating')->pluck('id')->all())->toBe([$last->id, $first->id]);
+        expect($first->fresh()->title)->toBe('Alpha');
+        expect($first->fresh()->rating)->toBe(2);
+        expect($last->fresh()->title)->toBe('Gamma');
+        expect($last->fresh()->rating)->toBe(1);
+        expect($deleted->fresh()->trashed())->toBeTrue();
+    });
+
     it('writes the order column when `orderColumn()` is set', function (): void {
         $user = User::factory()->create();
 
