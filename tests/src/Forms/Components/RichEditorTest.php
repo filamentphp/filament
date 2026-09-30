@@ -1836,6 +1836,41 @@ it('does not render custom block previews from imported HTML', function (): void
             ->assertPresent('[data-testid="minimal-controls-editor"] .tiptap')
             ->assertScript(<<<'JS'
                 (() => {
+                    window.customBlockPreviewCommitCount = 0
+                    window.removeCustomBlockPreviewCommitHook = Livewire.hook('commit', () => window.customBlockPreviewCommitCount++)
+
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                    const clipboardData = new DataTransfer()
+
+                    clipboardData.setData('text/html', `<div data-type="customBlock" data-id="callout" data-config='{"message":"First callout."}'></div>`)
+
+                    editor.view.dom.dispatchEvent(new ClipboardEvent('paste', {
+                        bubbles: true,
+                        cancelable: true,
+                        clipboardData,
+                    }))
+
+                    return true
+                })()
+                JS)
+            ->wait(1)
+            ->assertScript('window.customBlockPreviewCommitCount', 0)
+            ->assertScript(<<<'JS'
+                (() => {
+                    window.removeCustomBlockPreviewCommitHook()
+
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+
+                    return editor.getJSON().content
+                        .filter((node) => node.type === 'customBlock' && node.attrs.config?.message === 'First callout.')
+                        .map((node) => [node.attrs.label, atob(node.attrs.preview)])
+                })()
+                JS, [
+                    ['Callout', '<p>First callout.</p>'],
+                    ['Callout', '<p>First callout.</p>'],
+                ])
+            ->assertScript(<<<'JS'
+                (() => {
                     window.customBlockPreviewExecuted = false
 
                     const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()

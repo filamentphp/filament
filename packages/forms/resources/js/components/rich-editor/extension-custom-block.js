@@ -271,30 +271,48 @@ export default Node.create({
 
             const customBlocks = []
             const customBlockFingerprints = []
+            const unhydratedCustomBlocks = new Map()
 
             view.state.doc.descendants((node) => {
-                if (
-                    node.type.name !== this.name ||
-                    node.attrs.preview !== null ||
-                    !node.attrs.id
-                ) {
+                if (node.type.name !== this.name) {
                     return
                 }
 
                 const fingerprint = getCustomBlockFingerprint(node)
 
+                if (node.attrs.preview !== null) {
+                    customBlockPreviews.set(fingerprint, {
+                        label: node.attrs.label,
+                        preview: node.attrs.preview,
+                        shouldApplyProseStylingToPreview:
+                            node.attrs.shouldApplyProseStylingToPreview,
+                    })
+
+                    return
+                }
+
                 if (
-                    customBlockPreviews.has(fingerprint) ||
+                    !node.attrs.id ||
                     pendingCustomBlockPreviews.has(fingerprint)
                 ) {
+                    return
+                }
+
+                unhydratedCustomBlocks.set(fingerprint, {
+                    config: node.attrs.config,
+                    id: node.attrs.id,
+                })
+            })
+
+            unhydratedCustomBlocks.forEach((customBlock, fingerprint) => {
+                if (customBlockPreviews.has(fingerprint)) {
                     return
                 }
 
                 pendingCustomBlockPreviews.add(fingerprint)
                 customBlockFingerprints.push(fingerprint)
                 customBlocks.push({
-                    config: node.attrs.config,
-                    id: node.attrs.id,
+                    ...customBlock,
                     key: customBlocks.length,
                 })
             })
