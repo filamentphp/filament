@@ -13,7 +13,10 @@ use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Actions\ViewAction;
+use Filament\Facades\Filament;
+use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
@@ -30,6 +33,8 @@ use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPi
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithSubquerySelectAndDetachRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -106,21 +111,163 @@ describe('rendering and authorization', function (): void {
         app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
     });
 
-    it('re-authorizes the relation manager on Livewire updates after the initial mount', function (): void {
-        $ticket = Ticket::factory()
-            ->create();
+    describe('lifecycle authorization', function (): void {
+        beforeEach(function (): void {
+            Filament::setCurrentPanel(Filament::getPanel('admin'));
+            AuthorizationRelationManager::$calls = [];
+            AuthorizationRelationManager::$authorizationArguments = [];
+            RelationManagerAuthorizationPage::$grouped = false;
+        });
 
-        app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
+        it('authorizes the owner record and page before first mounting a relation manager', function (bool $canView): void {
+            $ticket = Ticket::factory()->hasAttached(Department::factory()->state(['name' => 'Private department']))->create();
+            app()->bind(DepartmentPolicy::class . '::viewAny', static fn (): bool => $canView);
 
-        $component = livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class]);
+            $component = livewire(AuthorizationRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class]);
 
-        app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => false);
+            if ($canView) {
+                $component->assertSuccessful()->assertSee('Private department');
+            } else {
+                $component->assertDontSee('Private department')->assertForbidden();
+            }
 
-        $component
-            ->set('tableSearch', 'foo')
-            ->assertStatus(403);
+            expect(AuthorizationRelationManager::$calls)->toBe($canView
+                ? ['boot', 'authorize', 'mount', 'table', 'render']
+                : ['boot', 'authorize'])
+                ->and(AuthorizationRelationManager::$authorizationArguments)->toBe([
+                    [$ticket->getKey(), EditTicket::class],
+                ]);
+        })->with([true, false]);
 
-        app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
+        it('uses the relation manager class for authorization when `$pageClass` is omitted', function (): void {
+            $ticket = Ticket::factory()->create();
+            app()->bind(DepartmentPolicy::class . '::viewAny', static fn (): bool => false);
+
+            livewire(AuthorizationRelationManager::class, ['ownerRecord' => $ticket])->assertForbidden();
+
+            expect(AuthorizationRelationManager::$calls)->toBe(['boot', 'authorize'])
+                ->and(AuthorizationRelationManager::$authorizationArguments)->toBe([[$ticket->getKey(), AuthorizationRelationManager::class]]);
+        });
+
+        it('authorizes the real lazy relation manager mount after its placeholder', function (bool $canView): void {
+            $ticket = Ticket::factory()->hasAttached(Department::factory()->state(['name' => 'Private department']))->create();
+
+            $component = livewire(AuthorizationRelationManager::class, [
+                'ownerRecord' => $ticket,
+                'pageClass' => EditTicket::class,
+                'lazy' => true,
+            ])->assertSuccessful()->assertDontSee('Private department');
+
+            expect(AuthorizationRelationManager::$calls)->toBe([]);
+
+            preg_match('/__lazyLoad\(\'([^\']+)\'\)/', html_entity_decode($component->html()), $matches);
+
+            expect($matches)->toHaveKey(1);
+
+            app()->bind(DepartmentPolicy::class . '::viewAny', static fn (): bool => $canView);
+
+            $component->call('__lazyLoad', $matches[1]);
+
+            if ($canView) {
+                $component->assertSuccessful()->assertSee('Private department');
+            } else {
+                $component->assertDontSee('Private department')->assertForbidden();
+            }
+
+            expect(AuthorizationRelationManager::$calls)->toBe($canView
+                ? ['authorize', 'boot', 'mount', 'table', 'render']
+                : ['authorize'])
+                ->and(AuthorizationRelationManager::$authorizationArguments)->toBe([[$ticket->getKey(), EditTicket::class]]);
+
+            if (! $canView) {
+                return;
+            }
+
+            AuthorizationRelationManager::$calls = [];
+            app()->bind(DepartmentPolicy::class . '::viewAny', static fn (): bool => false);
+
+            $component->call('sensitiveAction')->assertForbidden()->assertDontSee('Private department');
+
+            expect(AuthorizationRelationManager::$calls)->toBe(['boot', 'authorize']);
+        })->with([true, false]);
+
+        it('rejects denied requests before a lazy relation manager has mounted', function (array $calls, array $updates, bool $withLazyLoad): void {
+            $ticket = Ticket::factory()->hasAttached(Department::factory()->state(['name' => 'Private department']))->create();
+            $component = livewire(AuthorizationRelationManager::class, [
+                'ownerRecord' => $ticket,
+                'pageClass' => EditTicket::class,
+                'lazy' => true,
+            ]);
+
+            if ($withLazyLoad) {
+                preg_match('/__lazyLoad\(\'([^\']+)\'\)/', html_entity_decode($component->html()), $matches);
+
+                expect($matches)->toHaveKey(1);
+
+                $calls[] = ['method' => '__lazyLoad', 'params' => [$matches[1]]];
+            }
+
+            app()->bind(DepartmentPolicy::class . '::viewAny', static fn (): bool => false);
+
+            $component->update(calls: $calls, updates: $updates);
+
+            expect(AuthorizationRelationManager::$calls)->toBe(['authorize'])
+                ->and(AuthorizationRelationManager::$authorizationArguments)->toBe([[$ticket->getKey(), EditTicket::class]]);
+
+            $component->assertForbidden()->assertDontSee('Private department');
+        })->with([
+            'action' => [[['method' => 'sensitiveAction', 'params' => []]], [], false],
+            'property update' => [[], ['name' => 'changed'], false],
+            'empty request' => [[], [], false],
+            'property update before lazy mount' => [[], ['name' => 'changed'], true],
+            'action before lazy mount' => [[['method' => 'sensitiveAction', 'params' => []]], [], true],
+        ]);
+
+        it('re-authorizes a relation manager before subclass `hydrate()`, property updates, and actions', function (bool $canView, bool $updateProperty): void {
+            $ticket = Ticket::factory()->hasAttached(Department::factory()->state(['name' => 'Private department']))->create();
+            $component = livewire(AuthorizationRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+                ->assertSee('Private department');
+
+            AuthorizationRelationManager::$calls = [];
+            AuthorizationRelationManager::$authorizationArguments = [];
+            app()->bind(DepartmentPolicy::class . '::viewAny', static fn (): bool => $canView);
+
+            if ($updateProperty) {
+                $component->set('name', 'changed');
+            } else {
+                $component->call('sensitiveAction');
+            }
+
+            if ($canView) {
+                $component->assertSuccessful()->assertSee('Private department');
+            } else {
+                $component->assertForbidden()->assertDontSee('Private department');
+            }
+
+            expect(AuthorizationRelationManager::$calls)->toBe($canView
+                ? ['boot', 'authorize', 'hydrate', 'table', ...($updateProperty ? ['updating', 'updated'] : ['action']), 'render']
+                : ['boot', 'authorize'])
+                ->and(AuthorizationRelationManager::$authorizationArguments)->toBe([[$ticket->getKey(), EditTicket::class]]);
+        })->with([true, false])->with([true, false]);
+
+        it('filters denied relation managers before mounting them on resource pages', function (bool $canView, bool $grouped): void {
+            $ticket = Ticket::factory()->hasAttached(Department::factory()->state(['name' => 'Private department']))->create();
+            app()->bind(DepartmentPolicy::class . '::viewAny', static fn (): bool => $canView);
+            RelationManagerAuthorizationPage::$grouped = $grouped;
+
+            $component = livewire(RelationManagerAuthorizationPage::class, ['record' => $ticket->getRouteKey()])
+                ->assertSuccessful();
+
+            if ($canView) {
+                $component->assertSee('Private department');
+
+                expect(AuthorizationRelationManager::$calls)->toContain('mount', 'table', 'render');
+            } else {
+                $component->assertDontSee('Private department');
+
+                expect(AuthorizationRelationManager::$calls)->not->toBeEmpty()->each->toBe('authorize');
+            }
+        })->with([true, false])->with([true, false]);
     });
 
     it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false, bool $isBulkAction = false): void {
@@ -521,3 +668,82 @@ it('does not defer the tab badge loading by default', function (): void {
 
     expect($tab->isBadgeDeferred())->toBeFalse();
 });
+
+class AuthorizationRelationManager extends DepartmentsRelationManager
+{
+    /** @var array<string> */
+    public static array $calls = [];
+
+    /** @var array<array{int|string, string}> */
+    public static array $authorizationArguments = [];
+
+    public ?string $name = null;
+
+    protected static bool $isLazy = false;
+
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        static::$calls[] = 'authorize';
+        static::$authorizationArguments[] = [$ownerRecord->getKey(), $pageClass];
+
+        return parent::canViewForRecord($ownerRecord, $pageClass);
+    }
+
+    public function boot(): void
+    {
+        static::$calls[] = 'boot';
+    }
+
+    public function mount(): void
+    {
+        static::$calls[] = 'mount';
+
+        parent::mount();
+    }
+
+    public function hydrate(): void
+    {
+        static::$calls[] = 'hydrate';
+    }
+
+    public function updatingName(): void
+    {
+        static::$calls[] = 'updating';
+    }
+
+    public function updatedName(): void
+    {
+        static::$calls[] = 'updated';
+    }
+
+    public function table(Table $table): Table
+    {
+        static::$calls[] = 'table';
+
+        return parent::table($table);
+    }
+
+    public function render(): View
+    {
+        static::$calls[] = 'render';
+
+        return parent::render();
+    }
+
+    public function sensitiveAction(): void
+    {
+        static::$calls[] = 'action';
+    }
+}
+
+class RelationManagerAuthorizationPage extends EditTicket
+{
+    public static bool $grouped = false;
+
+    protected function getAllRelationManagers(): array
+    {
+        return static::$grouped
+            ? [RelationGroup::make('Departments', [AuthorizationRelationManager::make()])]
+            : [AuthorizationRelationManager::class];
+    }
+}
