@@ -5,9 +5,7 @@ namespace Filament\Auth\MultiFactor\Concerns;
 use Closure;
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Cache\DynamoDbStore;
-use Illuminate\Cache\FailoverStore;
 use Illuminate\Cache\Lock;
-use Illuminate\Cache\MemoizedStore;
 use Illuminate\Cache\Repository;
 use Illuminate\Contracts\Cache\LockProvider;
 use Illuminate\Support\Facades\Cache;
@@ -47,11 +45,11 @@ trait HasCacheStore
             throw new LogicException('The array cache store is not shared between processes and cannot be used for multi-factor authentication.');
         }
 
-        if ($store instanceof FailoverStore) {
+        if (is_a($store, 'Illuminate\Cache\FailoverStore')) {
             throw new LogicException('The failover cache store cannot provide one authoritative store for multi-factor authentication.');
         }
 
-        if ($store instanceof MemoizedStore) {
+        if (is_a($store, 'Illuminate\Cache\MemoizedStore')) {
             throw new LogicException('The memoized cache store cannot provide authoritative reads for multi-factor authentication.');
         }
 
