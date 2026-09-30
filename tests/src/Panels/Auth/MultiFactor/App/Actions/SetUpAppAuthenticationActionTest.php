@@ -53,11 +53,11 @@ describe('setup flow', function (): void {
                         }
                     }
 
-                    if (blank($encrypted['userId'] ?? null)) {
+                    if (blank($encrypted['userKey'] ?? null)) {
                         return false;
                     }
 
-                    return $encrypted['userId'] === auth()->id();
+                    return $encrypted['userKey'] === Filament::getUserScopedAuthIdentifier(auth()->user());
                 }));
     });
 
@@ -200,7 +200,7 @@ describe('validation', function (): void {
 
         $user = auth()->user();
 
-        $rateLimitingKey = 'filament-set-up-app-authentication:' . $user->getAuthIdentifier();
+        $rateLimitingKey = 'filament-set-up-app-authentication:' . Filament::getUserScopedAuthIdentifier($user);
 
         foreach (range(1, 5) as $attempt) {
             RateLimiter::hit($rateLimitingKey);
@@ -333,7 +333,7 @@ it('can throttle code verification attempts per user', function (): void {
     $user = auth()->user();
 
     // Pre-fill the per-user rate limiter to simulate 5 prior attempts
-    $rateLimitingKey = 'filament-set-up-app-authentication:' . $user->getAuthIdentifier();
+    $rateLimitingKey = 'filament-set-up-app-authentication:' . Filament::getUserScopedAuthIdentifier($user);
 
     foreach (range(1, 5) as $i) {
         RateLimiter::hit($rateLimitingKey);

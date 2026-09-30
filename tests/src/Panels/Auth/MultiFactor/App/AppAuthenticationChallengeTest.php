@@ -43,7 +43,10 @@ describe('authentication flow', function (): void {
             ->assertNoRedirect();
 
         expect(decrypt($livewire->instance()->userUndertakingMultiFactorAuthentication))
-            ->toBe($userToAuthenticate->getKey());
+            ->toBe([
+                'identifier' => $userToAuthenticate->getAuthIdentifier(),
+                'userKey' => Filament::getUserScopedAuthIdentifier($userToAuthenticate),
+            ]);
 
         $this->assertGuest();
     });

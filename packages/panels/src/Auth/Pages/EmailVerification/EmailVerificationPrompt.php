@@ -74,7 +74,7 @@ class EmailVerificationPrompt extends SimplePage
                     return;
                 }
 
-                $rateLimitingKey = 'filament-resend-email-verification:' . Filament::auth()->id();
+                $rateLimitingKey = 'filament-resend-email-verification:' . Filament::getUserScopedAuthIdentifier();
 
                 if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 2)) {
                     $this->getRateLimitedNotification(new TooManyRequestsException(

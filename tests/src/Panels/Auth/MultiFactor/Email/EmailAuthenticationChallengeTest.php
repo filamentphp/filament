@@ -6,11 +6,16 @@ use Filament\Auth\MultiFactor\Email\Notifications\VerifyEmailAuthentication;
 use Filament\Auth\Pages\Login;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification as FilamentNotification;
+use Filament\Panel;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -46,7 +51,10 @@ describe('authentication flow', function (): void {
             ->assertNoRedirect();
 
         expect(decrypt($livewire->instance()->userUndertakingMultiFactorAuthentication))
-            ->toBe($userToAuthenticate->getKey());
+            ->toBe([
+                'identifier' => $userToAuthenticate->getAuthIdentifier(),
+                'userKey' => Filament::getUserScopedAuthIdentifier($userToAuthenticate),
+            ]);
 
         $this->assertGuest();
 
@@ -324,8 +332,10 @@ describe('failure cases', function (): void {
 
         // Sending is exhausted for the second user, so reaching their challenge
         // issues no code of its own.
-        RateLimiter::hit("filament-email-authentication:{$victim->getKey()}");
-        RateLimiter::hit("filament-email-authentication:{$victim->getKey()}");
+        $victimRateLimitingKey = 'filament-email-authentication:' . sha1(Filament::getAuthGuard() . '|' . $victim::class . '|' . $victim->getAuthIdentifier());
+
+        RateLimiter::hit($victimRateLimitingKey);
+        RateLimiter::hit($victimRateLimitingKey);
 
         livewire(Login::class)
             ->fillForm([
@@ -343,6 +353,130 @@ describe('failure cases', function (): void {
         expect($issuedCodes)->toHaveCount(1);
 
         $this->assertGuest();
+    });
+
+    it('will not authenticate the user with a challenge code issued for another guard and model with the same authentication identifier', function (): void {
+        Schema::create('email_authentication_users', function (Blueprint $table): void {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->boolean('has_email_authentication')->default(true);
+            $table->rememberToken();
+            $table->timestamps();
+        });
+
+        config()->set('auth.providers.email-authentication-users', [
+            'driver' => 'eloquent',
+            'model' => EmailAuthenticationUser::class,
+        ]);
+        config()->set('auth.guards.email-authentication-users', [
+            'driver' => 'session',
+            'provider' => 'email-authentication-users',
+        ]);
+
+        $panel = Panel::make()
+            ->id('email-authentication-users')
+            ->path('email-authentication-users')
+            ->login()
+            ->authGuard('email-authentication-users')
+            ->multiFactorAuthentication(EmailAuthentication::make())
+            ->resources([])
+            ->pages([]);
+
+        Filament::registerPanel($panel);
+
+        /** @var EmailAuthentication $emailAuthentication */
+        $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $attacker = User::factory()
+            ->hasEmailAuthentication()
+            ->create(['email' => 'attacker@example.test']);
+
+        $victim = EmailAuthenticationUser::query()->create([
+            'id' => $attacker->getAuthIdentifier(),
+            'name' => 'Victim',
+            'email' => 'victim@example.test',
+            'password' => Hash::make('victim-password'),
+            'has_email_authentication' => true,
+        ]);
+
+        $issuedCodes = [];
+
+        $emailAuthentication->generateCodesUsing(function () use (&$issuedCodes): string {
+            $code = str_pad((string) (count($issuedCodes) + 1), 6, '0', STR_PAD_LEFT);
+
+            $issuedCodes[] = $code;
+
+            return $code;
+        });
+
+        $attackerLogin = livewire(EmailAuthenticationLogin::class)
+            ->fillForm([
+                'email' => $attacker->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        expect($attackerLogin->instance()->getUserUndertakingMultiFactorAuthenticationForTesting()?->is($attacker))->toBeTrue();
+
+        $attackerLogin->callAction(
+            TestAction::make('resend')
+                ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm')
+        );
+
+        expect($issuedCodes)->toBe(['000001', '000002']);
+
+        Filament::setCurrentPanel($panel);
+
+        expect($attackerLogin->instance()->getUserUndertakingMultiFactorAuthenticationForTesting())->toBeNull();
+
+        /** @var EmailAuthentication $victimEmailAuthentication */
+        $victimEmailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+        $victimEmailAuthentication->generateCodesUsing(function () use (&$issuedCodes): string {
+            $code = str_pad((string) (count($issuedCodes) + 1), 6, '0', STR_PAD_LEFT);
+
+            $issuedCodes[] = $code;
+
+            return $code;
+        });
+
+        $victimLogin = livewire(Login::class)
+            ->fillForm([
+                'email' => $victim->email,
+                'password' => 'victim-password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        expect($issuedCodes)->toBe(['000001', '000002', '000003']);
+
+        $victimLogin
+            ->fillForm([
+                $victimEmailAuthentication->getId() => [
+                    'code' => $issuedCodes[1],
+                ],
+            ], 'multiFactorChallengeForm')
+            ->call('authenticate')
+            ->assertHasFormErrors([
+                "{$victimEmailAuthentication->getId()}.code",
+            ], 'multiFactorChallengeForm')
+            ->assertNoRedirect();
+
+        expect($victimEmailAuthentication->sendCode($victim))->toBeTrue()
+            ->and($victimEmailAuthentication->sendCode($attacker))->toBeTrue()
+            ->and($issuedCodes)->toBe(['000001', '000002', '000003', '000004', '000005'])
+            ->and($victimEmailAuthentication->verifyCode('000002', $attacker))->toBeFalse()
+            ->and($victimEmailAuthentication->verifyCode('000005', $victim))->toBeFalse()
+            ->and($victimEmailAuthentication->verifyCode('000004', $victim))->toBeTrue()
+            ->and($victimEmailAuthentication->verifyCode('000005', $attacker))->toBeTrue();
+
+        Filament::setCurrentPanel('email-authentication');
+
+        expect($emailAuthentication->verifyCode('000002', $attacker))->toBeTrue();
+
+        $this->assertGuest('email-authentication-users');
     });
 });
 
@@ -540,3 +674,21 @@ it('can throttle multi-factor challenge attempts per user', function (): void {
 
     $this->assertAuthenticatedAs($secondUser);
 });
+
+class EmailAuthenticationUser extends User
+{
+    protected $table = 'email_authentication_users';
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;
+    }
+}
+
+class EmailAuthenticationLogin extends Login
+{
+    public function getUserUndertakingMultiFactorAuthenticationForTesting(): ?Authenticatable
+    {
+        return $this->getUserUndertakingMultiFactorAuthentication();
+    }
+}

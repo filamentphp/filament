@@ -113,9 +113,11 @@ class Login extends SimplePage
         }, $timeboxDuration);
 
         $needsMultiFactorChallenge = app(Timebox::class)->call(function (Timebox $timebox) use ($user): bool {
+            $userUndertakingMultiFactorAuthenticationData = $this->getUserUndertakingMultiFactorAuthenticationData();
+
             if (
-                filled($this->userUndertakingMultiFactorAuthentication) &&
-                (decrypt($this->userUndertakingMultiFactorAuthentication) === $user->getAuthIdentifier())
+                $userUndertakingMultiFactorAuthenticationData &&
+                hash_equals($userUndertakingMultiFactorAuthenticationData['userKey'], Filament::getUserScopedAuthIdentifier($user))
             ) {
                 if ($this->isMultiFactorChallengeRateLimited($user)) {
                     return true;
@@ -129,7 +131,10 @@ class Login extends SimplePage
             $multiFactorChallenge = $this->getMultiFactorChallenge();
 
             if ($multiFactorAuthenticationProvider = $multiFactorChallenge->getFirstEnabledProvider($user)) {
-                $this->userUndertakingMultiFactorAuthentication = encrypt($user->getAuthIdentifier());
+                $this->userUndertakingMultiFactorAuthentication = encrypt([
+                    'identifier' => $user->getAuthIdentifier(),
+                    'userKey' => Filament::getUserScopedAuthIdentifier($user),
+                ]);
 
                 $multiFactorChallenge->beforeChallenge($user, $multiFactorAuthenticationProvider);
             }
@@ -270,13 +275,42 @@ class Login extends SimplePage
 
     protected function getUserUndertakingMultiFactorAuthentication(): ?Authenticatable
     {
-        if (blank($this->userUndertakingMultiFactorAuthentication)) {
+        $data = $this->getUserUndertakingMultiFactorAuthenticationData();
+
+        if (! $data) {
             return null;
         }
 
         $authProvider = Filament::auth()->getProvider(); /** @phpstan-ignore-line */
+        $user = $authProvider->retrieveById($data['identifier']);
 
-        return $authProvider->retrieveById(decrypt($this->userUndertakingMultiFactorAuthentication));
+        if ((! $user) || (! hash_equals($data['userKey'], Filament::getUserScopedAuthIdentifier($user)))) {
+            return null;
+        }
+
+        return $user;
+    }
+
+    /**
+     * @return array{identifier: mixed, userKey: string} | null
+     */
+    protected function getUserUndertakingMultiFactorAuthenticationData(): ?array
+    {
+        if (blank($this->userUndertakingMultiFactorAuthentication)) {
+            return null;
+        }
+
+        $data = decrypt($this->userUndertakingMultiFactorAuthentication);
+
+        if (
+            (! is_array($data))
+            || (! array_key_exists('identifier', $data))
+            || (! is_string($data['userKey'] ?? null))
+        ) {
+            return null;
+        }
+
+        return $data;
     }
 
     public function multiFactorChallengeForm(Schema $schema): Schema

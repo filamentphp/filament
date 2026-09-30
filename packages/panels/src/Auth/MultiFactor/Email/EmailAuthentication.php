@@ -62,13 +62,17 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
             throw new LogicException('The [' . $user::class . '] class must be an instance of [' . Model::class . '] to use email authentication.');
         }
 
+        if (! ($user instanceof Authenticatable)) {
+            throw new LogicException('The [' . $user::class . '] class must implement [' . Authenticatable::class . '] to use email authentication.');
+        }
+
         if (! method_exists($user, 'notify')) {
             $userClass = $user::class;
 
             throw new LogicException("Model [{$userClass}] does not have a [notify()] method.");
         }
 
-        $rateLimitingKey = "filament-email-authentication:{$user->getKey()}";
+        $rateLimitingKey = 'filament-email-authentication:' . Filament::getUserScopedAuthIdentifier($user);
 
         if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 2)) {
             return false;
@@ -129,6 +133,10 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
             return false;
         }
 
+        if (! ($user instanceof Authenticatable)) {
+            return false;
+        }
+
         $codeHash = session($this->getCodeSessionKey($user));
         $codeExpiresAt = session($this->getCodeExpirySessionKey($user));
 
@@ -148,19 +156,19 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
     }
 
     /**
-     * @param  Model&HasEmailAuthentication  $user
+     * @param  Authenticatable&Model&HasEmailAuthentication  $user
      */
     protected function getCodeSessionKey(HasEmailAuthentication $user): string
     {
-        return 'filament_email_authentication_code:' . $user->getKey();
+        return 'filament_email_authentication_code:' . Filament::getUserScopedAuthIdentifier($user);
     }
 
     /**
-     * @param  Model&HasEmailAuthentication  $user
+     * @param  Authenticatable&Model&HasEmailAuthentication  $user
      */
     protected function getCodeExpirySessionKey(HasEmailAuthentication $user): string
     {
-        return 'filament_email_authentication_code_expires_at:' . $user->getKey();
+        return 'filament_email_authentication_code_expires_at:' . Filament::getUserScopedAuthIdentifier($user);
     }
 
     /**
