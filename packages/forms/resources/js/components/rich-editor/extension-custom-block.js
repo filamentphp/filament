@@ -153,6 +153,7 @@ export default Node.create({
             editCustomBlockButtonIconHtml: null,
             editCustomBlockButtonLabel: null,
             editCustomBlockUsing: () => {},
+            getCustomBlockPreviewsUsing: async () => [],
             hasMinimalCustomBlockControls: false,
             insertCustomBlockUsing: () => {},
         }
@@ -191,18 +192,19 @@ export default Node.create({
 
             label: {
                 default: null,
-                parseHTML: (element) => element.getAttribute('data-label'),
+                parseHTML: () => null,
                 rendered: false,
             },
 
             preview: {
                 default: null,
-                parseHTML: (element) => element.getAttribute('data-preview'),
+                parseHTML: () => null,
                 rendered: false,
             },
 
             shouldApplyProseStylingToPreview: {
                 default: false,
+                parseHTML: () => false,
                 rendered: false,
             },
         }
@@ -254,7 +256,117 @@ export default Node.create({
     },
 
     addProseMirrorPlugins() {
-        const { insertCustomBlockUsing } = this.options
+        const { getCustomBlockPreviewsUsing, insertCustomBlockUsing } =
+            this.options
+        const customBlockPreviews = new Map()
+        const pendingCustomBlockPreviews = new Set()
+
+        const getCustomBlockFingerprint = (node) =>
+            JSON.stringify([node.attrs.id, node.attrs.config])
+
+        const hydrateCustomBlockPreviews = async (view) => {
+            if (this.editor.isDestroyed) {
+                return
+            }
+
+            const customBlocks = []
+            const customBlockFingerprints = []
+
+            view.state.doc.descendants((node) => {
+                if (
+                    node.type.name !== this.name ||
+                    node.attrs.preview !== null ||
+                    !node.attrs.id
+                ) {
+                    return
+                }
+
+                const fingerprint = getCustomBlockFingerprint(node)
+
+                if (
+                    customBlockPreviews.has(fingerprint) ||
+                    pendingCustomBlockPreviews.has(fingerprint)
+                ) {
+                    return
+                }
+
+                pendingCustomBlockPreviews.add(fingerprint)
+                customBlockFingerprints.push(fingerprint)
+                customBlocks.push({
+                    config: node.attrs.config,
+                    id: node.attrs.id,
+                    key: customBlocks.length,
+                })
+            })
+
+            if (customBlocks.length) {
+                let hydratedCustomBlockPreviews
+
+                try {
+                    hydratedCustomBlockPreviews =
+                        await getCustomBlockPreviewsUsing(customBlocks)
+                } catch (error) {
+                    console.error(
+                        'Failed to hydrate custom block previews',
+                        error,
+                    )
+                    hydratedCustomBlockPreviews = []
+                }
+
+                customBlockFingerprints.forEach((fingerprint) => {
+                    pendingCustomBlockPreviews.delete(fingerprint)
+                    customBlockPreviews.set(fingerprint, null)
+                })
+
+                if (this.editor.isDestroyed) {
+                    return
+                }
+
+                hydratedCustomBlockPreviews.forEach((preview) => {
+                    const fingerprint = customBlockFingerprints[preview.key]
+
+                    if (fingerprint === undefined) {
+                        return
+                    }
+
+                    customBlockPreviews.set(fingerprint, {
+                        label: preview.label,
+                        preview: preview.preview,
+                        shouldApplyProseStylingToPreview:
+                            preview.shouldApplyProseStylingToPreview,
+                    })
+                })
+            }
+
+            const transaction = view.state.tr
+
+            view.state.doc.descendants((node, position) => {
+                if (
+                    node.type.name !== this.name ||
+                    node.attrs.preview !== null
+                ) {
+                    return
+                }
+
+                const preview = customBlockPreviews.get(
+                    getCustomBlockFingerprint(node),
+                )
+
+                if (!preview) {
+                    return
+                }
+
+                transaction.setNodeMarkup(position, undefined, {
+                    ...node.attrs,
+                    ...preview,
+                })
+            })
+
+            if (transaction.docChanged) {
+                transaction.setMeta('addToHistory', false)
+                view.dispatch(transaction)
+            }
+        }
 
         return [
             new Plugin({
@@ -264,11 +376,11 @@ export default Node.create({
                             return false
                         }
 
-                        event.preventDefault()
-
                         if (!event.dataTransfer.getData('customBlock')) {
                             return false
                         }
+
+                        event.preventDefault()
 
                         const customBlockId =
                             event.dataTransfer.getData('customBlock')
@@ -283,6 +395,16 @@ export default Node.create({
 
                         return false
                     },
+                },
+                view: (view) => {
+                    setTimeout(() => hydrateCustomBlockPreviews(view))
+
+                    return {
+                        update: (view) =>
+                            queueMicrotask(() =>
+                                hydrateCustomBlockPreviews(view),
+                            ),
+                    }
                 },
             }),
         ]

@@ -8,6 +8,7 @@ use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Forms\RichEditor\MinimalControlsCalloutBlock;
 use Filament\Tests\Fixtures\Forms\RichEditor\PluginWithFileAttachmentProvider;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
@@ -1610,6 +1611,35 @@ describe('custom blocks', function (): void {
         expect($richEditor->getCustomBlock('nonexistent'))->toBeNull();
     });
 
+    it('returns trusted custom block previews from `getCustomBlockPreviewsForJs()`', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks([MinimalControlsCalloutBlock::class]),
+            ])
+            ->getComponents()[0];
+
+        $previews = $richEditor->getCustomBlockPreviewsForJs([
+            [
+                'id' => 'callout',
+                'config' => ['message' => 'Copied callout.'],
+                'key' => 0,
+            ],
+            [
+                'id' => 'unknown',
+                'config' => [],
+                'key' => 1,
+            ],
+        ]);
+
+        expect($previews)->toHaveCount(1);
+        expect($previews[0]['key'])->toBe(0);
+        expect($previews[0]['label'])->toBe('Callout');
+        expect(base64_decode($previews[0]['preview']))->toBe('<p>Copied callout.</p>');
+        expect($previews[0]['shouldApplyProseStylingToPreview'])->toBeFalse();
+    });
+
     it('includes `customBlocks` toolbar button when blocks are registered', function (): void {
         $richEditor = Schema::make(Livewire::make())
             ->statePath('data')
@@ -1792,6 +1822,136 @@ it('can render `RichEditor` in the browser', function (): void {
         visit('/rich-editor-browser-test')
             ->inDarkMode()
             ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+    });
+});
+
+it('does not render custom block previews from imported HTML', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/rich-editor-minimal-controls-browser-test');
+
+        $page
+            ->assertPresent('[data-testid="minimal-controls-editor"] .tiptap')
+            ->assertScript(<<<'JS'
+                (() => {
+                    window.customBlockPreviewExecuted = false
+
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                    const preview = btoa('<img src="x" onerror="window.customBlockPreviewExecuted = true">')
+                    const clipboardData = new DataTransfer()
+
+                    clipboardData.setData('text/html', `<div data-type="customBlock" data-id="callout" data-config='{"message":"Copied callout.","options":{}}' data-label="Untrusted label" data-preview="${preview}" shouldApplyProseStylingToPreview="true"></div>`)
+
+                    editor.view.dom.dispatchEvent(new ClipboardEvent('paste', {
+                        bubbles: true,
+                        cancelable: true,
+                        clipboardData,
+                    }))
+
+                    const block = editor.getJSON().content.find((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.')
+
+                    return [
+                        Boolean(block),
+                        block?.attrs.id ?? null,
+                        block?.attrs.config?.message ?? null,
+                        block?.attrs.preview ?? null,
+                        block?.attrs.shouldApplyProseStylingToPreview ?? null,
+                    ]
+                })()
+                JS, [true, 'callout', 'Copied callout.', null, false])
+            ->wait(1)
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                    const block = editor.getJSON().content.find((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.')
+
+                    return [
+                        block?.attrs.label ?? null,
+                        block?.attrs.preview ? atob(block.attrs.preview) : null,
+                    ]
+                })()
+                JS, ['Callout', '<p>Copied callout.</p>'])
+            ->assertScript('window.customBlockPreviewExecuted', false)
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                    const clipboardData = new DataTransfer()
+
+                    clipboardData.setData('text/html', `<div data-type="customBlock" data-id="callout" data-config='{"message":"Copied callout.","options":{}}'></div>`)
+
+                    editor.view.dom.dispatchEvent(new ClipboardEvent('paste', {
+                        bubbles: true,
+                        cancelable: true,
+                        clipboardData,
+                    }))
+
+                    return true
+                })()
+                JS)
+            ->wait(1)
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+
+                    return editor.getJSON().content
+                        .filter((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.')
+                        .map((node) => [node.attrs.label, atob(node.attrs.preview)])
+                })()
+                JS, [
+                    ['Callout', '<p>Copied callout.</p>'],
+                    ['Callout', '<p>Copied callout.</p>'],
+                ])
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+
+                    editor.commands.focus()
+
+                    return true
+                })()
+                JS);
+
+        $page->page()->keyDown('Control');
+        $page->page()->keyDown('z');
+        $page->page()->keyUp('z');
+        $page->page()->keyUp('Control');
+
+        $page
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+
+                    return editor.getJSON().content.filter((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.').length
+                })()
+                JS, 1);
+
+        $page->page()->keyDown('Control');
+        $page->page()->keyDown('Shift');
+        $page->page()->keyDown('z');
+        $page->page()->keyUp('z');
+        $page->page()->keyUp('Shift');
+        $page->page()->keyUp('Control');
+
+        $page
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+
+                    return editor.getJSON().content
+                        .filter((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.')
+                        .map((node) => [node.attrs.label, atob(node.attrs.preview)])
+                })()
+                JS, [
+                    ['Callout', '<p>Copied callout.</p>'],
+                    ['Callout', '<p>Copied callout.</p>'],
+                ])
+            ->assertNoAccessibilityIssues();
+
+        visit('/rich-editor-minimal-controls-browser-test')
+            ->inDarkMode()
+            ->assertPresent('[data-testid="minimal-controls-editor"] .tiptap')
             ->assertNoAccessibilityIssues();
     });
 });
