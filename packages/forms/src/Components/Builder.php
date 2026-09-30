@@ -206,6 +206,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
+
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->livewireClickHandlerEnabled(false)
             ->button()
@@ -268,27 +270,30 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->label(fn (Builder $component) => $component->getAddBetweenActionLabel())
             ->color('gray')
             ->action(function (array $arguments, Builder $component, array $data = []): void {
+                $state = $component->getRawState() ?? [];
+
+                if (! array_key_exists($arguments['afterItem'], $state)) {
+                    return;
+                }
+
                 $newKey = $component->generateUuid();
+
+                if (! $newKey) {
+                    $state[] = [];
+                    $newKey = array_key_last($state);
+                    unset($state[$newKey]);
+                }
 
                 $items = [];
 
-                foreach ($component->getRawState() ?? [] as $key => $item) {
+                foreach ($state as $key => $item) {
                     $items[$key] = $item;
 
-                    if ($key === $arguments['afterItem']) {
-                        if ($newKey) {
-                            $items[$newKey] = [
-                                'type' => $arguments['block'],
-                                'data' => $data,
-                            ];
-                        } else {
-                            $items[] = [
-                                'type' => $arguments['block'],
-                                'data' => $data,
-                            ];
-
-                            $newKey = array_key_last($items);
-                        }
+                    if ((string) $key === (string) $arguments['afterItem']) {
+                        $items[$newKey] = [
+                            'type' => $arguments['block'],
+                            'data' => $data,
+                        ];
                     }
                 }
 
@@ -346,9 +351,13 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_CLONE) ?? Heroicon::Square2Stack)
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
-                $newUuid = $component->generateUuid();
+                $items = $component->getRawState() ?? [];
 
-                $items = $component->getRawState();
+                if (! array_key_exists($arguments['item'], $items)) {
+                    return;
+                }
+
+                $newUuid = $component->generateUuid();
 
                 if ($newUuid) {
                     $items[$newUuid] = $items[$arguments['item']];
@@ -396,7 +405,12 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_DELETE) ?? Heroicon::Trash)
             ->color('danger')
             ->action(function (array $arguments, Builder $component): void {
-                $items = $component->getRawState();
+                $items = $component->getRawState() ?? [];
+
+                if (! array_key_exists($arguments['item'], $items)) {
+                    return;
+                }
+
                 unset($items[$arguments['item']]);
 
                 $component->rawState($items);
@@ -437,7 +451,13 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_MOVE_DOWN) ?? Heroicon::ArrowDown)
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
-                $items = array_move_after($component->getRawState(), $arguments['item']);
+                $items = $component->getRawState() ?? [];
+
+                if (! array_key_exists($arguments['item'], $items)) {
+                    return;
+                }
+
+                $items = array_move_after($items, $arguments['item']);
 
                 $component->rawState($items);
 
@@ -477,7 +497,13 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_MOVE_UP) ?? Heroicon::ArrowUp)
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
-                $items = array_move_before($component->getRawState(), $arguments['item']);
+                $items = $component->getRawState() ?? [];
+
+                if (! array_key_exists($arguments['item'], $items)) {
+                    return;
+                }
+
+                $items = array_move_before($items, $arguments['item']);
 
                 $component->rawState($items);
 
@@ -524,10 +550,14 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_REORDER) ?? Heroicon::ArrowsUpDown)
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
-                $items = [
-                    ...array_flip($arguments['items']),
-                    ...$component->getRawState(),
-                ];
+                $items = $component->getRawState() ?? [];
+                $order = array_flip($arguments['items']);
+
+                if (array_diff_key($order, $items)) {
+                    return;
+                }
+
+                $items = array_replace($order, $items);
 
                 $component->rawState($items);
 
@@ -693,15 +723,19 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->fillForm(function (array $arguments, Builder $component) {
                 $state = $component->getState();
 
-                return $state[$arguments['item']]['data'];
+                return $state[$arguments['item']]['data'] ?? [];
             })
             ->schema(function (array $arguments, Builder $component) {
                 return $component->getChildSchema($arguments['item'])
-                    ->getClone()
-                    ->getComponents(withHidden: true);
+                    ?->getClone()
+                    ->getComponents(withHidden: true) ?? [];
             })
             ->action(function (array $arguments, Builder $component, $data): void {
-                $state = $component->getRawState();
+                $state = $component->getRawState() ?? [];
+
+                if (! array_key_exists($arguments['item'], $state)) {
+                    return;
+                }
 
                 $state[$arguments['item']]['data'] = $data;
 
