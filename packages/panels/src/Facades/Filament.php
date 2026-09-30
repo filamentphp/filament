@@ -125,6 +125,7 @@ use Livewire\Component;
  * @method static array<Action> getUserMenuItems()
  * @method static UserMenuPosition getUserMenuPosition()
  * @method static string getUserName(Model | Authenticatable $user)
+ * @method static string getUserScopedAuthIdentifier(?Authenticatable $user = null)
  * @method static array<Model> getUserTenants(HasTenants | Model | Authenticatable $user)
  * @method static string | null getUrl(Model | null $tenant = null)
  * @method static string getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user, array<string, mixed> $parameters = [])

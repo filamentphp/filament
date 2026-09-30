@@ -147,7 +147,8 @@ class ResetPassword extends SimplePage
             return false;
         }
 
-        $rateLimitingKey = 'filament-reset-password:' . sha1($email);
+        $passwordBroker = Filament::getAuthPasswordBroker() ?? Password::getDefaultDriver();
+        $rateLimitingKey = 'filament-reset-password:' . sha1($passwordBroker . '|' . $email);
 
         if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 2)) {
             $this->getRateLimitedNotification(new TooManyRequestsException(
