@@ -100,6 +100,12 @@ export default function richEditorFormComponent({
                         { schemaComponent: key },
                     ),
                 floatingToolbars,
+                getCustomBlockPreviewsUsing: (customBlocks) =>
+                    this.$wire.callSchemaComponentMethod(
+                        key,
+                        'getCustomBlockPreviewsForJs',
+                        { customBlocks },
+                    ),
                 hasResizableImages,
                 hasMinimalCustomBlockControls,
                 insertCustomBlockUsing: (id, dragPosition = null) =>

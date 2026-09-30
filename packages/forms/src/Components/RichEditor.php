@@ -1222,6 +1222,42 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         return $labels;
     }
 
+    /**
+     * @param  array<array{config?: mixed, id?: mixed, key?: mixed}>  $customBlocks
+     * @return array<array{key: int, label: string, preview: string, shouldApplyProseStylingToPreview: bool}>
+     */
+    #[ExposedLivewireMethod]
+    #[Renderless]
+    public function getCustomBlockPreviewsForJs(array $customBlocks = []): array
+    {
+        $previews = [];
+
+        foreach ($customBlocks as $customBlock) {
+            $id = $customBlock['id'] ?? null;
+            $config = $customBlock['config'] ?? [];
+            $key = $customBlock['key'] ?? null;
+
+            if ((! is_string($id)) || (! is_array($config)) || (! is_int($key))) {
+                continue;
+            }
+
+            $block = $this->getCustomBlock($id);
+
+            if (blank($block)) {
+                continue;
+            }
+
+            $previews[] = [
+                'key' => $key,
+                'label' => $block::getPreviewLabel($config),
+                'preview' => base64_encode($block::toPreviewHtml($config)),
+                'shouldApplyProseStylingToPreview' => $block::shouldApplyProseStylingToPreview($config),
+            ];
+        }
+
+        return $previews;
+    }
+
     public function hasMentions(): bool
     {
         return isset($this->mentions);
