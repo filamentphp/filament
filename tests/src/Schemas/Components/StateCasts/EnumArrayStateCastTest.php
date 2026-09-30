@@ -17,8 +17,15 @@ it('can get an array of enum from strings', function (): void {
 it('can get an array of enums from integers', function (): void {
     $cast = app(EnumArrayStateCast::class, ['enum' => IntegerBackedEnum::class]);
 
-    expect($cast->get([1, 2, 3]))
-        ->toBe([IntegerBackedEnum::One, IntegerBackedEnum::Two, IntegerBackedEnum::Three]);
+    expect($cast->get([0, 1, 2, 3]))
+        ->toBe([IntegerBackedEnum::Zero, IntegerBackedEnum::One, IntegerBackedEnum::Two, IntegerBackedEnum::Three]);
+});
+
+it('can get an array of integer-backed enums from numeric strings', function (): void {
+    $cast = app(EnumArrayStateCast::class, ['enum' => IntegerBackedEnum::class]);
+
+    expect($cast->get(['0', '2']))
+        ->toBe([IntegerBackedEnum::Zero, IntegerBackedEnum::Two]);
 });
 
 it('can ignore if an array of enums is passed to the getter already', function (): void {
@@ -50,11 +57,24 @@ it('can filter out blank values from the array of enums in the getter', function
         ->toBe([StringBackedEnum::One, StringBackedEnum::Two, StringBackedEnum::Three]);
 });
 
-it('can filter out tampered non-scalar values from the array of enums in the getter', function (): void {
+it('filters invalid values from mixed collections in `get()` while preserving valid order', function (): void {
     $cast = app(EnumArrayStateCast::class, ['enum' => StringBackedEnum::class]);
 
-    expect($cast->get(['one', ['tampered'], 'two']))
-        ->toBe([StringBackedEnum::One, StringBackedEnum::Two]);
+    expect($cast->get([
+        'two',
+        'unknown',
+        IntegerBackedEnum::One,
+        ['tampered'],
+        new stdClass,
+        str('one'),
+    ]))->toBe([StringBackedEnum::Two, StringBackedEnum::One]);
+});
+
+it('filters invalid integer-backed values without coercing booleans or floats in `get()`', function (): void {
+    $cast = app(EnumArrayStateCast::class, ['enum' => IntegerBackedEnum::class]);
+
+    expect($cast->get([0, false, true, 0.0, 1.0, 'not-numeric', '2']))
+        ->toBe([IntegerBackedEnum::Zero, IntegerBackedEnum::Two]);
 });
 
 it('can decode a JSON array of enum from strings', function (): void {
@@ -74,14 +94,14 @@ it('can get the values from an array of string backed enums in the setter', func
 it('can get the values from an array of integer backed enums in the setter', function (): void {
     $cast = app(EnumArrayStateCast::class, ['enum' => IntegerBackedEnum::class]);
 
-    expect($cast->set([IntegerBackedEnum::One, IntegerBackedEnum::Two, IntegerBackedEnum::Three]))
-        ->toBe(['1', '2', '3']);
+    expect($cast->set([IntegerBackedEnum::Zero, IntegerBackedEnum::One, IntegerBackedEnum::Two, IntegerBackedEnum::Three]))
+        ->toBe(['0', '1', '2', '3']);
 });
 
-it('can ignore the values in the setter if they are not enums', function (): void {
+it('normalizes valid backing and `Stringable` values in `set()`', function (): void {
     $cast = app(EnumArrayStateCast::class, ['enum' => StringBackedEnum::class]);
 
-    expect($cast->set(['one', 'two', 'three']))
+    expect($cast->set(['one', str('two'), 'three']))
         ->toBe(['one', 'two', 'three']);
 });
 
@@ -90,4 +110,33 @@ it('can filter out blank values from the array of enums in the setter', function
 
     expect($cast->set([StringBackedEnum::One, null, StringBackedEnum::Two, '', StringBackedEnum::Three]))
         ->toBe(['one', 'two', 'three']);
+});
+
+it('filters invalid values from mixed collections in `set()` while preserving valid order', function (): void {
+    $cast = app(EnumArrayStateCast::class, ['enum' => StringBackedEnum::class]);
+
+    expect($cast->set([
+        StringBackedEnum::Two,
+        'unknown',
+        IntegerBackedEnum::One,
+        ['tampered'],
+        new stdClass,
+        str('one'),
+    ]))->toBe(['two', 'one']);
+});
+
+it('filters invalid integer-backed values while preserving zero in `set()`', function (): void {
+    $cast = app(EnumArrayStateCast::class, ['enum' => IntegerBackedEnum::class]);
+
+    expect($cast->set([0, '0', false, true, 0.0, 1.0, 'not-numeric', '2']))
+        ->toBe(['0', '0', '2']);
+});
+
+it('normalizes invalid JSON and JSON objects with invalid values to an empty array', function (): void {
+    $cast = app(EnumArrayStateCast::class, ['enum' => StringBackedEnum::class]);
+
+    expect($cast->get('{'))->toBe([])
+        ->and($cast->set('{'))->toBe([])
+        ->and($cast->get('{"key":"unknown"}'))->toBe([])
+        ->and($cast->set('{"key":"unknown"}'))->toBe([]);
 });
