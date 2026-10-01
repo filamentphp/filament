@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Support\Facades\FilamentCli;
 use Filament\Tests\TestCase;
 
 use function PHPUnit\Framework\assertFileExists;
@@ -31,6 +32,30 @@ it('can generate a Livewire table component', function (): void {
         expect(file_get_contents($viewPath))
             ->toMatchSnapshot();
     }
+});
+
+it('can generate a Livewire table component in a custom namespace without a `Livewire` segment', function (): void {
+    FilamentCli::registerLivewireComponentLocation(
+        path: base_path('src/Components'),
+        namespace: 'App\\Components',
+        viewNamespace: '',
+    );
+
+    $this->mockConsoleOutput = true;
+
+    $this->artisan('make:filament-livewire-table', [
+        'name' => 'Admin/ListPosts',
+        'model' => 'Post',
+        '--model-namespace' => 'Filament\\Tests\\Fixtures\\Models',
+    ])
+        ->expectsQuestion('Should the table columns be generated from the current database columns?', false)
+        ->expectsQuestion('Where would you like to create the table?', 'App\\Components');
+
+    assertFileExists($path = base_path('src/Components/Admin/ListPosts.php'));
+    expect(file_get_contents($path))
+        ->toContain("return view('livewire.admin.list-posts');");
+
+    assertFileExists(resource_path('views/livewire/admin/list-posts.blade.php'));
 });
 
 it('can generate a Livewire table component with a model', function (): void {
