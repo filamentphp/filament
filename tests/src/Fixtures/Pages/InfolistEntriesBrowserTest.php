@@ -64,7 +64,10 @@ class InfolistEntriesBrowserTest extends Page
                     ->separator(','),
                 IconEntry::make('is_published')
                     ->label('Published')
-                    ->boolean(),
+                    ->size('lg'),
+                IconEntry::make('title')
+                    ->label('Custom icon')
+                    ->icon(new HtmlString('<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="currentColor" /></svg>')),
             ]);
     }
 
