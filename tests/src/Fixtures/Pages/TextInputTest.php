@@ -4,6 +4,7 @@ namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -47,6 +48,19 @@ class TextInputTest extends Page
                     ->label('Code')
                     ->copyable()
                     ->extraAttributes(['data-testid' => 'copyable-input']),
+
+                Toggle::make('useNumericDefaults')
+                    ->label('Use numeric defaults')
+                    ->live()
+                    ->extraAttributes(['data-testid' => 'numeric-defaults-toggle']),
+
+                TextInput::make('amount')
+                    ->numeric(fn (): bool => (bool) ($this->data['useNumericDefaults'] ?? false))
+                    ->extraInputAttributes(['data-testid' => 'dynamic-numeric-input']),
+
+                TextInput::make('quantity')
+                    ->integer(fn (): bool => (bool) ($this->data['useNumericDefaults'] ?? false))
+                    ->extraInputAttributes(['data-testid' => 'dynamic-integer-input']),
             ])
             ->statePath('data');
     }
