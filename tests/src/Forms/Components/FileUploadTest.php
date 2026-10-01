@@ -1477,7 +1477,8 @@ describe('`automaticallyOpenImageEditorForAspectRatio()` validation', function (
 describe('`storeFileNamesIn()`', function (): void {
     it('returns `null` for `getFileNamesStatePath()` by default', function (): void {
         $upload = FileUpload::make('file');
-        expect($upload->getFileNamesStatePath())->toBeNull();
+        expect($upload->getFileNamesStatePath())->toBeNull()
+            ->and($upload->getFileNamesStatePath(isAbsolute: false))->toBeNull();
     });
 
     it('can set `storeFileNamesIn()` and resolve the state path', function (): void {
@@ -1490,7 +1491,135 @@ describe('`storeFileNamesIn()`', function (): void {
             ])
             ->fill();
 
-        expect($upload->getFileNamesStatePath())->toBe('data.original_filename');
+        expect($upload->getFileNamesStatePath())->toBe('data.original_filename')
+            ->and($upload->getFileNamesStatePath(isAbsolute: false))->toBe('original_filename');
+    });
+
+    it('can store, read, and remove file names using a `Closure` path', function (bool $isMultiple, string $prefix, string $expectedPath): void {
+        $livewire = Livewire::make()->data(['unrelated' => 'keep']);
+        $upload = FileUpload::make('attachment')
+            ->container(Schema::make($livewire)->statePath('data.section'))
+            ->multiple($isMultiple)
+            ->storeFileNamesIn(static fn (BaseFileUpload $component): string => "{$prefix}{$component->getName()}_names");
+
+        expect($upload->getFileNamesStatePath())->toBe($expectedPath)
+            ->and($upload->getFileNamesStatePath(isAbsolute: false))->toBe("{$prefix}attachment_names");
+
+        $upload->storeFileName('uploads/notes.txt', 'Meeting notes.txt');
+        $upload->storeFileName('uploads/report.txt', 'Annual report.txt');
+
+        $expectedNames = $isMultiple ? [
+            'uploads/notes.txt' => 'Meeting notes.txt',
+            'uploads/report.txt' => 'Annual report.txt',
+        ] : 'Annual report.txt';
+
+        expect(data_get($livewire, $expectedPath))->toBe($expectedNames)
+            ->and($upload->getStoredFileNames())->toBe($expectedNames);
+
+        $upload->removeStoredFileName('uploads/report.txt');
+
+        $expectedNames = $isMultiple ? ['uploads/notes.txt' => 'Meeting notes.txt'] : null;
+
+        expect(data_get($livewire, $expectedPath))->toBe($expectedNames)
+            ->and($upload->getStoredFileNames())->toBe($expectedNames)
+            ->and($livewire->data['unrelated'])->toBe('keep');
+    })->with([false, true])->with([
+        'sibling' => ['', 'data.section.attachment_names'],
+        'parent' => ['../', 'data.attachment_names'],
+        'absolute' => ['/data.', 'data.attachment_names'],
+    ]);
+
+    it('reevaluates the `Closure` path and skips file name changes when it returns `null`', function (bool $isMultiple): void {
+        $livewire = Livewire::make()->data([]);
+        $statePath = 'original_names';
+        $upload = FileUpload::make('attachment')
+            ->container(Schema::make($livewire)->statePath('data'))
+            ->multiple($isMultiple)
+            ->storeFileNamesIn(static function () use (&$statePath): ?string {
+                return $statePath;
+            });
+
+        $upload->storeFileName('uploads/report.txt', 'Original report.txt');
+
+        $statePath = 'revised_names';
+        expect($upload->getFileNamesStatePath())->toBe('data.revised_names');
+        $upload->storeFileName('uploads/report.txt', 'Revised report.txt');
+
+        $expectedData = [
+            'original_names' => $isMultiple ? ['uploads/report.txt' => 'Original report.txt'] : 'Original report.txt',
+            'revised_names' => $isMultiple ? ['uploads/report.txt' => 'Revised report.txt'] : 'Revised report.txt',
+        ];
+
+        expect($livewire->data)->toBe($expectedData)
+            ->and($upload->getStoredFileNames())->toBe($expectedData['revised_names']);
+
+        $statePath = null;
+        $upload->storeFileName('uploads/report.txt', 'Ignored report.txt');
+        $upload->removeStoredFileName('uploads/report.txt');
+
+        expect($upload->getFileNamesStatePath())->toBeNull()
+            ->and($upload->getStoredFileNames())->toBe($isMultiple ? [] : null)
+            ->and($livewire->data)->toBe($expectedData);
+    })->with([false, true]);
+
+    it('uses the `Closure` path for file metadata, validation, and dehydration', function (): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/report.txt', 'report');
+
+        $statePath = 'original_names';
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data.section')
+            ->components([
+                $upload = FileUpload::make('attachments')
+                    ->disk('local')
+                    ->multiple()
+                    ->storeFileNamesIn(static function () use (&$statePath): ?string {
+                        return $statePath;
+                    }),
+            ])
+            ->fill([
+                'attachments' => ['uploads/report.txt'],
+                'original_names' => ['uploads/report.txt' => 'Annual report.txt'],
+            ]);
+
+        expect(array_column($upload->getUploadedFiles(), 'name'))->toBe(['Annual report.txt'])
+            ->and($schema->getValidationRules()['data.section.original_names'])->toBe(['nullable'])
+            ->and($schema->getState())->toBe([
+                'attachments' => ['uploads/report.txt'],
+                'original_names' => ['uploads/report.txt' => 'Annual report.txt'],
+            ]);
+
+        $statePath = null;
+
+        expect(array_column($upload->getUploadedFiles(), 'name'))->toBe(['report.txt'])
+            ->and($schema->getValidationRules())->not->toHaveKey('data.section.original_names')
+            ->and($schema->getState())->toBe([
+                'attachments' => ['uploads/report.txt'],
+            ]);
+    });
+
+    it('uses an overridden `getFileNamesStatePath()` for resolving, storing, reading, and removing file names', function (): void {
+        $livewire = Livewire::make()->data([]);
+        $upload = (new class('attachment') extends FileUpload
+        {
+            public function getFileNamesStatePath(bool $isAbsolute = true): ?string
+            {
+                return $isAbsolute ? 'data.original_names' : '../original_names';
+            }
+        })
+            ->container(Schema::make($livewire)->statePath('data.section'))
+            ->storeFileNamesIn('unused_names');
+
+        expect($upload->getFileNamesStatePath())->toBe('data.original_names');
+
+        $upload->storeFileName('uploads/report.txt', 'Annual report.txt');
+
+        expect($livewire->data)->toBe(['original_names' => 'Annual report.txt'])
+            ->and($upload->getStoredFileNames())->toBe('Annual report.txt');
+
+        $upload->removeStoredFileName('uploads/report.txt');
+
+        expect($livewire->data)->toBe(['original_names' => null]);
     });
 });
 
