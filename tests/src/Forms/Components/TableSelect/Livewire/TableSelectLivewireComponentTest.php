@@ -1,8 +1,11 @@
 <?php
 
 use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
+use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Tables\PostsTableWithSessionPersistence;
 use Filament\Tests\TestCase;
+use Illuminate\Database\Eloquent\Builder;
 
 use function Filament\Tests\livewire;
 
@@ -25,6 +28,39 @@ it('renders a blade string', function (): void {
     $component = new TableSelectLivewireComponent;
 
     expect($component->render())->toBe('{{ $this->table }}');
+});
+
+it('restores its `record` property through global scopes', function (): void {
+    $post = Post::factory()->create();
+    $component = livewire(TableSelectLivewireComponent::class, [
+        'record' => $post,
+        'tableConfiguration' => base64_encode(PostsTableWithSessionPersistence::class),
+    ])->assertSuccessful();
+    $globalScopes = Post::getAllGlobalScopes();
+
+    try {
+        Post::addGlobalScope(
+            'exclude-table-select-record',
+            fn (Builder $query): Builder => $query->whereKeyNot($post->getKey()),
+        );
+
+        $component
+            ->set('tableSearch', 'search')
+            ->assertNotFound();
+    } finally {
+        Post::setAllGlobalScopes($globalScopes);
+    }
+});
+
+it('preserves an unsaved relationship parent on subsequent requests', function (): void {
+    livewire(TableSelectLivewireComponent::class, [
+        'model' => User::class,
+        'record' => new User,
+        'relationshipName' => 'posts',
+        'tableConfiguration' => base64_encode(PostsTableWithSessionPersistence::class),
+    ])
+        ->set('tableSearch', 'search')
+        ->assertSuccessful();
 });
 
 describe('session persistence', function (): void {
