@@ -12,6 +12,7 @@ use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Enums\VerticalAlignment;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\RawJs;
 use LogicException;
 
@@ -337,7 +338,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         $placeholder = $this->getPlaceholder();
 
         if ($isPasswordRevealable) {
-            $xData = '{ isPasswordRevealed: false }';
+            $xData = 'passwordRevealFormComponent()';
         } elseif (count($extraAlpineAttributes) || filled($mask)) {
             $xData = '{}';
         } else {
@@ -345,7 +346,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         }
 
         if ($isPasswordRevealable) {
-            $type = null;
+            $type = 'password';
         } elseif (filled($mask)) {
             $type = 'text';
         } else {
@@ -388,6 +389,8 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         $wrapperAttributes = $extraAttributeBag
             ->merge([
                 'x-data' => $xData,
+                'x-load' => $isPasswordRevealable ? '' : null,
+                'x-load-src' => $isPasswordRevealable ? FilamentAsset::getAlpineComponentSrc('text-input/password-reveal', 'filament/forms') : null,
                 'x-on:focus-input.stop' => "\$el.querySelector('input')?.focus()",
             ], escape: false)
             ->class(['fi-fo-text-input']);
