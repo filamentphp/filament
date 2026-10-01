@@ -39,6 +39,7 @@ use Filament\Tests\Fixtures\Pages\DatabaseNotificationsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatePickerBrowserTest;
 use Filament\Tests\Fixtures\Pages\DateTimePickerTest;
 use Filament\Tests\Fixtures\Pages\DeferredSchemaLoadingBrowserTest;
+use Filament\Tests\Fixtures\Pages\DissociateBulkActionBrowserTest;
 use Filament\Tests\Fixtures\Pages\DropdownTest;
 use Filament\Tests\Fixtures\Pages\FileUploadBrowserTest;
 use Filament\Tests\Fixtures\Pages\FiltersResetActionBrowserTest;
@@ -150,6 +151,7 @@ class AdminPanelProvider extends PanelProvider
                 DatePickerBrowserTest::class,
                 DateTimePickerTest::class,
                 DeferredSchemaLoadingBrowserTest::class,
+                DissociateBulkActionBrowserTest::class,
                 FileUploadBrowserTest::class,
                 FiltersResetActionBrowserTest::class,
                 IndividualColumnSearchBrowserTest::class,

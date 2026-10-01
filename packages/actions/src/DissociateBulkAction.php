@@ -73,7 +73,7 @@ class DissociateBulkAction extends BulkAction
                         $inverseRelationship = $table->getInverseRelationshipFor($record);
 
                         $inverseRelationship->dissociate();
-                        $record->save();
+                        $record->save() || $action->reportBulkProcessingFailure();
                     } catch (Throwable $exception) {
                         $action->reportBulkProcessingFailure();
 
