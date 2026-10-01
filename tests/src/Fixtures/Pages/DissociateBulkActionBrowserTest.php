@@ -2,6 +2,7 @@
 
 namespace Filament\Tests\Fixtures\Pages;
 
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DissociateBulkAction;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedTable;
@@ -25,10 +26,25 @@ class DissociateBulkActionBrowserTest extends Page implements HasTable
             ->inverseRelationship('author')
             ->columns([TextColumn::make('title')])
             ->toolbarActions([
-                DissociateBulkAction::make()
-                    ->extraAttributes(['data-testid' => 'dissociate-posts'])
-                    ->modalSubmitAction(static fn ($action) => $action->extraAttributes(['data-testid' => 'confirm-dissociate']))
-                    ->failureNotificationTitle(static fn (int $successCount, int $failureCount): string => "{$successCount} dissociated, {$failureCount} failed"),
+                BulkActionGroup::make([
+                    DissociateBulkAction::make()
+                        ->extraAttributes(['data-testid' => 'dissociate-posts'])
+                        ->modalSubmitAction(static fn ($action) => $action->extraAttributes(['data-testid' => 'confirm-dissociate']))
+                        ->failureNotificationTitle(static fn (int $successCount, int $failureCount): string => "{$successCount} dissociated, {$failureCount} failed"),
+                ])
+                    ->extraAttributes([
+                        'data-testid' => 'bulk-actions-trigger',
+                        'data-group-only' => 'group',
+                    ])
+                    ->extraDropdownAttributes([
+                        'data-testid' => 'bulk-actions-dropdown',
+                        'data-dropdown-only' => 'array',
+                        'data-merge-precedence' => 'first',
+                    ])
+                    ->extraDropdownAttributes(static fn (): array => [
+                        'data-closure-only' => 'closure',
+                        'data-merge-precedence' => 'second',
+                    ], merge: true),
             ]);
     }
 
