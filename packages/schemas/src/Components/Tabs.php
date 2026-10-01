@@ -148,7 +148,7 @@ class Tabs extends Component implements HasEmbeddedView
             $queryStringTab = request()->query($this->getTabQueryStringKey());
 
             foreach ($this->getChildSchema()->getComponents() as $index => $tab) {
-                if ($tab->getId() !== $queryStringTab) {
+                if ($tab->getKey(isAbsolute: false) !== $queryStringTab) {
                     continue;
                 }
 

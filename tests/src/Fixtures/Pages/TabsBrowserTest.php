@@ -5,6 +5,7 @@ namespace Filament\Tests\Fixtures\Pages;
 use BackedEnum;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
@@ -30,8 +31,13 @@ class TabsBrowserTest extends Page
         return $form
             ->schema([
                 Tabs::make('Profile Tabs')
+                    ->key('profile')
+                    ->id('profile-tabs')
+                    ->persistTabInQueryString()
                     ->tabs([
                         Tab::make('Account')
+                            ->key('account')
+                            ->id('profile-account')
                             ->badge('Available')
                             ->badgeIcon(Heroicon::OutlinedCheckCircle)
                             ->schema([
@@ -41,12 +47,26 @@ class TabsBrowserTest extends Page
                             ]),
 
                         Tab::make('Contact')
+                            ->key('contact')
+                            ->id('profile-contact')
                             ->schema([
                                 TextInput::make('phone')
                                     ->label('Phone Number')
                                     ->tel(),
                             ]),
                     ]),
+                Group::make([
+                    Tabs::make('Delivery Tabs')
+                        ->key('profile')
+                        ->id('delivery-tabs')
+                        ->persistTabInQueryString('delivery_tab')
+                        ->tabs([
+                            Tab::make('Account')->key('account')->id('delivery-account')
+                                ->schema([TextInput::make('recipient')->label('Recipient')]),
+                            Tab::make('Contact')->key('contact')->id('delivery-contact')
+                                ->schema([TextInput::make('delivery_phone')->label('Delivery phone')]),
+                        ]),
+                ])->key('delivery'),
             ])
             ->statePath('data');
     }

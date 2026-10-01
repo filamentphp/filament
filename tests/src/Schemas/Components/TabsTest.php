@@ -4,6 +4,7 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Testing\TestAction;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -24,6 +25,71 @@ uses(TestCase::class);
 
 beforeEach(function (): void {
     Artisan::call('filament:assets');
+});
+
+it('restores query-string tabs using relative keys rather than custom IDs', function (mixed $query, int $expected): void {
+    request()->query->replace(['tab' => $query, 'delivery_tab' => 'account']);
+
+    Schema::make(Livewire::make())->key('form')->components([
+        $profile = Tabs::make('Profile')->key('profile')->persistTabInQueryString()->activeTab(2)->tabs([
+            Tab::make('Account')->key('account')->id('profile-account'),
+            Tab::make('Contact')->key('contact')->id('profile-contact'),
+        ]),
+        Group::make([
+            $delivery = Tabs::make('Delivery')->key('profile')->persistTabInQueryString('delivery_tab')->activeTab(2)->tabs([
+                Tab::make('Account')->key('account')->id('delivery-account'),
+                Tab::make('Contact')->key('contact')->id('delivery-contact'),
+            ]),
+        ])->key('delivery'),
+    ])->fill();
+
+    expect($profile->getActiveTab())->toBe($expected)
+        ->and($delivery->getActiveTab())->toBe(1)
+        ->and($profile->toHtml())->toContain("activeTab: {$expected}")
+        ->and($delivery->toHtml())->toContain('activeTab: 1');
+})->with([
+    'relative key' => ['account', 1],
+    'custom ID is not a persisted key' => ['profile-account', 2],
+    'absolute key is not a persisted tab key' => ['form.profile.account', 2],
+    'stale key' => ['removed', 2],
+    'missing value' => [null, 2],
+    'array value' => [['account'], 2],
+]);
+
+it('persists independent tabs across reload and browser history', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $browser = visit('/tabs-browser-test?delivery_tab=contact')
+        ->assertVisible('#profile-account')
+        ->assertVisible('#delivery-contact')
+        ->click('#profile-tabs [data-tab-key="contact"]')
+        ->assertVisible('#profile-contact');
+
+    expect($browser->script('new URL(location.href).searchParams.get("tab")'))->toBe('contact');
+    expect($browser->script('new URL(location.href).searchParams.get("delivery_tab")'))->toBe('contact');
+
+    $browser->script("Livewire.navigate('/wizard-browser-test')");
+    $browser->assertVisible('#profile-wizard')
+        ->back()->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
+        ->forward()->assertVisible('#profile-wizard')
+        ->back()->assertVisible('#profile-contact')->assertVisible('#delivery-contact');
+
+    $browser->refresh()
+        ->assertVisible('#profile-contact')
+        ->assertVisible('#delivery-contact')
+        ->assertNoAccessibilityIssues()
+        ->navigate('/tabs-browser-test?tab=account&delivery_tab=account')
+        ->assertVisible('#profile-account')
+        ->assertVisible('#delivery-account')
+        ->back()->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
+        ->forward()->assertVisible('#profile-account')->assertVisible('#delivery-account')
+        ->navigate('/tabs-browser-test?tab=removed&delivery_tab=delivery-contact')
+        ->assertVisible('#profile-account')->assertVisible('#delivery-account')
+        ->assertNoSmoke();
+
+    visit('/tabs-browser-test?tab=contact&delivery_tab=contact')->inDarkMode()
+        ->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
+        ->assertNoAccessibilityIssues();
 });
 
 it('defaults `isBadgeDeferred()` to `false`', function (): void {

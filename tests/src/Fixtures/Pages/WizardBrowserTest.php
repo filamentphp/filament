@@ -5,7 +5,9 @@ namespace Filament\Tests\Fixtures\Pages;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
@@ -25,8 +27,13 @@ class WizardBrowserTest extends Page
 
     public ?array $data = [];
 
+    public bool $hideContactAfterValidation = false;
+
+    public bool $contactCompleted = false;
+
     public function mount(): void
     {
+        $this->hideContactAfterValidation = request()->boolean('hide_contact_after_validation');
         $this->form->fill();
     }
 
@@ -36,6 +43,8 @@ class WizardBrowserTest extends Page
             ->schema([
                 Wizard::make([
                     Step::make('Basic Details')
+                        ->key('details')
+                        ->id('profile-details')
                         ->beforeValidation(static function (): void {
                             delay(1);
                         })
@@ -50,12 +59,32 @@ class WizardBrowserTest extends Page
                                 ->extraAttributes(['data-testid' => 'wizard-dynamic-select']),
                         ]),
 
-                    Step::make('Contact Information'),
+                    Step::make('Contact Information')->key('contact')->id('profile-contact')
+                        ->hidden(fn (): bool => $this->contactCompleted)
+                        ->afterValidation(function (): void {
+                            $this->contactCompleted = $this->hideContactAfterValidation;
+                        }),
+                    Step::make('Review')->key('review')->id('profile-review')
+                        ->schema([TextInput::make('notes')->label('Review notes')]),
                 ])
+                    ->id('profile-wizard')
+                    ->persistStepInQueryString()
                     ->nextAction(static fn (Action $action): Action => $action->extraAttributes([
                         'data-testid' => 'wizard-next-action',
                     ]))
                     ->key('wizard'),
+                Group::make([
+                    Wizard::make([
+                        Step::make('Basic Details')->key('details')->id('delivery-details'),
+                        Step::make('Contact Information')->key('contact')->id('delivery-contact'),
+                    ])
+                        ->key('wizard')
+                        ->id('delivery-wizard')
+                        ->persistStepInQueryString('delivery_step')
+                        ->nextAction(static fn (Action $action): Action => $action->extraAttributes([
+                            'data-testid' => 'delivery-next-action',
+                        ])),
+                ])->key('delivery'),
             ])
             ->statePath('data');
     }
