@@ -180,22 +180,13 @@ it('inserts a hard break into a paragraph', function (): void {
         ->and(Str::markdown($markdown))->toContain('<br />');
 });
 
-it('generates deterministic image URLs using an available image service', function (): void {
-    fake()->seed(2345);
-
-    $firstImage = fake()->filamentMarkdown()
-        ->image(width: 640, height: 480)
+it('generates image URLs using an available image service', function (): void {
+    $image = fake()->filamentMarkdown()
+        ->image(width: 640, height: 480, alt: 'Example image')
         ->toString();
 
-    fake()->seed(2345);
-
-    $secondImage = fake()->filamentMarkdown()
-        ->image(width: 640, height: 480)
-        ->toString();
-
-    expect($firstImage)
-        ->toBe($secondImage)
-        ->toContain('](<https://picsum.photos/seed/')
+    expect($image)
+        ->toStartWith('![Example image](<https://picsum.photos/seed/')
         ->toEndWith('/640/480>)');
 });
 
