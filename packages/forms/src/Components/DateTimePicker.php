@@ -163,6 +163,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                         <?= $extraInputAttributeBag
                             ->merge($extraAlpineAttributes, escape: false)
                             ->merge([
+                                ...$this->getAccessibilityAttributes(),
                                 'autofocus' => $isAutofocused,
                                 'disabled' => $isDisabled,
                                 'id' => $id,
@@ -171,7 +172,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                                 'min' => $hasTime ? $minDate : ($minDate ? Carbon::parse($minDate)->toDateString() : null),
                                 'placeholder' => filled($placeholder) ? e($placeholder) : null,
                                 'readonly' => $isReadOnly,
-                                'required' => $isRequired,
+                                'required' => $isRequired && (! $isDisabled) && (! $isReadOnly),
                                 'step' => $step,
                                 'type' => $type,
                                 $this->applyStateBindingModifiers('wire:model') => $statePath,
