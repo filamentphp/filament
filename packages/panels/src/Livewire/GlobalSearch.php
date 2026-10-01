@@ -19,7 +19,7 @@ class GlobalSearch extends Component
             return null;
         }
 
-        $results = Filament::getGlobalSearchProvider()->getResults($this->search);
+        $results = Filament::getGlobalSearchProvider()->getResults($search);
 
         if ($results === null) {
             return $results;
