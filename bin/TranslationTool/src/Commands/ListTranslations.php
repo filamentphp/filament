@@ -8,9 +8,9 @@ use Laravel\Prompts;
 
 final class ListTranslations
 {
-    public function __invoke(): void
+    public function __invoke(?string $localeCode = null): void
     {
-        $localeCode = Prompts\search(
+        $localeCode ??= Prompts\search(
             label: 'Select a locale to proofread',
             options: fn ($search) => Locale::getAvailableLocales()
                 ->mapWithKeys(fn (Locale $locale) => [$locale->code => $locale->displayName()])

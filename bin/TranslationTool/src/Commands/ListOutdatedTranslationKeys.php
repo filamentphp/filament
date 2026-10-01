@@ -10,9 +10,9 @@ use Laravel\Prompts;
 
 final class ListOutdatedTranslationKeys
 {
-    public function __invoke(): void
+    public function __invoke(?string $localeCode = null): void
     {
-        $localeCode = Prompts\search(
+        $localeCode ??= Prompts\search(
             label: 'Select a locale to check',
             options: fn ($search) => Locale::getAvailableLocales()
                 ->mapWithKeys(fn (Locale $locale) => [$locale->code => $locale->displayName()])
