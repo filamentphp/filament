@@ -2,6 +2,7 @@
 
 namespace Filament\Widgets\Concerns;
 
+use Filament\Resources\Pages\Page as ResourcePage;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,7 +53,7 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
     #[Reactive]
     public ?string $activeTab = null;
 
-    #[Reactive] #[Locked]
+    #[Locked]
     public ?Model $parentRecord = null;
 
     protected HasTable $tablePage;
@@ -76,8 +77,12 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
             return $this->tablePage;
         }
 
-        /** @var HasTable $tableComponent */
+        /** @var HasTable $page */
         $page = app('livewire')->new($this->getTablePage());
+
+        if ($page instanceof ResourcePage) {
+            $page->setParentRecordFromPageTableWidget($this->parentRecord);
+        }
 
         trigger('mount', $page, [], null, null, []);
 

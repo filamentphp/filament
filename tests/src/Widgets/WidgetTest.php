@@ -4,13 +4,18 @@ namespace Filament\Tests\Widgets;
 
 use Filament\Facades\Filament;
 use Filament\Pages\Dashboard;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Pages\TableRenderHooksBrowserTest;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPosts;
 use Filament\Tests\TestCase;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
+use Livewire\Attributes\Locked;
 
 use function Filament\Tests\livewire;
 
@@ -258,6 +263,176 @@ describe('authorization', function (): void {
     ])->with([true, false]);
 });
 
+it('restores a lazy widget `record` property through global scopes', function (): void {
+    $post = Post::factory()->create();
+    $component = livewire(ScopedModelTestWidget::class, [
+        'record' => $post,
+        'lazy' => true,
+    ])->assertSuccessful();
+
+    expect(preg_match(
+        "/__lazyLoad\\('([^']+)'\\)/",
+        html_entity_decode($component->html()),
+        $matches,
+    ))->toBe(1);
+
+    $globalScopes = Post::getAllGlobalScopes();
+
+    try {
+        Post::addGlobalScope(
+            'exclude-widget-record',
+            fn (Builder $query): Builder => $query->whereKeyNot($post->getKey()),
+        );
+
+        $component
+            ->call('__lazyLoad', $matches[1])
+            ->assertNotFound();
+    } finally {
+        Post::setAllGlobalScopes($globalScopes);
+    }
+});
+
+it('rejects a scoped lazy widget `record` before calling a method other than `__lazyLoad()`', function (): void {
+    $post = Post::factory()->create();
+    $component = livewire(ScopedModelTestWidget::class, [
+        'record' => $post,
+        'lazy' => true,
+    ])->assertSuccessful();
+    $globalScopes = Post::getAllGlobalScopes();
+
+    try {
+        Post::addGlobalScope(
+            'exclude-widget-record',
+            fn (Builder $query): Builder => $query->whereKeyNot($post->getKey()),
+        );
+
+        $component
+            ->call('accessRecord')
+            ->assertNotFound();
+    } finally {
+        Post::setAllGlobalScopes($globalScopes);
+    }
+});
+
+it('rejects a scoped model from another lazy widget mount payload', function (): void {
+    MountedScopedModelTestWidget::$hasMounted = false;
+    $firstPost = Post::factory()->create();
+    $secondPost = Post::factory()->create();
+    $firstComponent = livewire(MountedScopedModelTestWidget::class, [
+        'record' => $firstPost,
+        'lazy' => true,
+    ])->assertSuccessful();
+    $secondComponent = livewire(MountedScopedModelTestWidget::class, [
+        'record' => $secondPost,
+        'lazy' => true,
+    ])->assertSuccessful();
+
+    expect(preg_match(
+        "/__lazyLoad\\('([^']+)'\\)/",
+        html_entity_decode($secondComponent->html()),
+        $matches,
+    ))->toBe(1);
+
+    $globalScopes = Post::getAllGlobalScopes();
+
+    try {
+        Post::addGlobalScope(
+            'exclude-widget-record',
+            fn (Builder $query): Builder => $query->whereKeyNot($secondPost->getKey()),
+        );
+
+        $firstComponent
+            ->call('__lazyLoad', $matches[1])
+            ->assertNotFound();
+
+        expect(MountedScopedModelTestWidget::$hasMounted)->toBeFalse();
+    } finally {
+        Post::setAllGlobalScopes($globalScopes);
+        MountedScopedModelTestWidget::$hasMounted = false;
+    }
+});
+
+it('preserves Livewire restoration for user-defined lazy widget model properties', function (): void {
+    $post = Post::factory()->create();
+    $component = livewire(ScopedModelTestWidget::class, [
+        'otherPost' => $post,
+        'lazy' => true,
+    ])->assertSuccessful();
+
+    expect(preg_match(
+        "/__lazyLoad\\('([^']+)'\\)/",
+        html_entity_decode($component->html()),
+        $matches,
+    ))->toBe(1);
+
+    $globalScopes = Post::getAllGlobalScopes();
+
+    try {
+        Post::addGlobalScope(
+            'exclude-user-widget-record',
+            fn (Builder $query): Builder => $query->whereKeyNot($post->getKey()),
+        );
+
+        $component
+            ->call('__lazyLoad', $matches[1])
+            ->assertSuccessful();
+
+        expect($component->instance()->otherPost?->is($post))->toBeTrue();
+    } finally {
+        Post::setAllGlobalScopes($globalScopes);
+    }
+});
+
+it('rejects a scope-excluded parent record before `boot()`', function (): void {
+    $post = Post::factory()->create();
+    $component = livewire(ScopedParentModelTestWidget::class, [
+        'lazy' => false,
+        'parentRecord' => $post,
+    ])->assertSuccessful();
+    ScopedParentModelTestWidget::$bootedRecordKey = null;
+    $globalScopes = Post::getAllGlobalScopes();
+
+    try {
+        Post::addGlobalScope(
+            'exclude-widget-parent-record',
+            fn (Builder $query): Builder => $query->whereKeyNot($post->getKey()),
+        );
+
+        $component
+            ->call('accessRecord')
+            ->assertNotFound();
+
+        expect(ScopedParentModelTestWidget::$bootedRecordKey)->toBeNull();
+    } finally {
+        Post::setAllGlobalScopes($globalScopes);
+    }
+});
+
+it('uses an in-scope parent record before `boot()`', function (): void {
+    $post = Post::factory()->create();
+    $component = livewire(ScopedParentModelTestWidget::class, [
+        'lazy' => false,
+        'parentRecord' => $post,
+    ])->assertSuccessful();
+    ScopedParentModelTestWidget::$bootedRecordKey = null;
+
+    $component
+        ->call('accessRecord')
+        ->assertSuccessful();
+
+    expect(ScopedParentModelTestWidget::$bootedRecordKey)->toBe($post->getKey())
+        ->and($component->instance()->parentRecord?->is($post))->toBeTrue();
+});
+
+it('supports a page table from outside a resource', function (): void {
+    Post::factory()->create();
+
+    livewire(NonResourcePageTableTestWidget::class, ['lazy' => false])
+        ->call('loadPageTable')
+        ->assertSet('pageTableRecordsCount', 1)
+        ->assertSuccessful();
+});
+
 class TestWidget extends Widget
 {
     protected string $view = 'filament-widgets::chart-widget';
@@ -396,5 +571,67 @@ class WidgetAuthorizationResourcePage extends ListPosts
     protected function getFooterWidgets(): array
     {
         return [AuthorizableTestWidget::make()];
+    }
+}
+
+class ScopedModelTestWidget extends Widget
+{
+    public ?Post $otherPost = null;
+
+    public ?Post $record = null;
+
+    protected string $view = 'pages.settings';
+
+    public function accessRecord(): void {}
+}
+
+class MountedScopedModelTestWidget extends Widget
+{
+    public static bool $hasMounted = false;
+
+    public ?Post $record = null;
+
+    protected string $view = 'pages.settings';
+
+    public function mount(Post $record): void
+    {
+        static::$hasMounted = true;
+        $this->record = $record;
+    }
+}
+
+class ScopedParentModelTestWidget extends Widget
+{
+    public static int | string | null $bootedRecordKey = null;
+
+    #[Locked]
+    public ?Post $parentRecord = null;
+
+    protected string $view = 'pages.settings';
+
+    public function boot(): void
+    {
+        static::$bootedRecordKey = $this->parentRecord?->getKey();
+    }
+
+    public function accessRecord(): void {}
+}
+
+class NonResourcePageTableTestWidget extends Widget
+{
+    use InteractsWithPageTable;
+
+    public int $pageTableRecordsCount = 0;
+
+    protected string $view = 'pages.settings';
+
+    public function loadPageTable(): void
+    {
+        $this->pageTableRecordsCount = $this->getPageTableQuery()->count();
+    }
+
+    protected function getTablePage(): string
+    {
+        return TableRenderHooksBrowserTest::class;
     }
 }
