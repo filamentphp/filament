@@ -4,6 +4,8 @@ use Composer\Autoload\ClassLoader;
 use Filament\Commands\MakeResourceCommand;
 use Filament\Facades\Filament;
 use Filament\PanelRegistry;
+use Filament\Schemas\Schema;
+use Filament\Support\Commands\FileGenerators\FileGenerationFlag;
 use Filament\Tests\TestCase;
 
 use function Filament\Support\get_composer_vendor_directory;
@@ -17,6 +19,44 @@ beforeEach(function (): void {
 
     MakeResourceCommand::$shouldCheckModelsForSoftDeletes = false;
 });
+
+it('generates executable resource infolists without guessing a title attribute', function (string $model, bool $isEmbedded, ?string $recordTitleAttribute): void {
+    config()->set('filament.file_generation.flags', $isEmbedded ? [FileGenerationFlag::EMBEDDED_PANEL_RESOURCE_SCHEMAS] : []);
+
+    expect($this->artisan('make:filament-resource', [
+        'model' => $model,
+        '--view' => true,
+        '--panel' => 'admin',
+        ...($recordTitleAttribute ? ['--record-title-attribute' => $recordTitleAttribute] : []),
+        '--no-interaction' => true,
+    ]))->toBe(0);
+
+    $pluralModel = str($model)->plural();
+    $relativeClass = $isEmbedded
+        ? "Filament\\Resources\\{$pluralModel}\\{$model}Resource"
+        : "Filament\\Resources\\{$pluralModel}\\Schemas\\{$model}Infolist";
+    $path = app_path(str_replace('\\', '/', $relativeClass) . '.php');
+    assertFileExists($path);
+
+    if ($recordTitleAttribute) {
+        expect(file_get_contents($path))->toContain("TextEntry::make('display_name')");
+    } else {
+        expect(file_get_contents($path))
+            ->not->toContain('TextEntry')
+            ->toContain("->components([\n                //\n            ])");
+    }
+
+    require $path;
+
+    $class = app()->getNamespace() . $relativeClass;
+    $schema = $isEmbedded ? $class::infolist(Schema::make()) : $class::configure(Schema::make());
+
+    expect(collect($schema->getComponents())->map->getName()->all())->toBe($recordTitleAttribute ? ['display_name'] : []);
+})->with([
+    'embedded without a title' => ['UntitledEmbeddedRecord', true, null],
+    'embedded with a custom title' => ['TitledEmbeddedRecord', true, 'display_name'],
+    'separate schema without a title' => ['UntitledSchemaRecord', false, null],
+]);
 
 it('warns and continues when refreshing the application class index fails', function (): void {
     $this->mockConsoleOutput = true;
