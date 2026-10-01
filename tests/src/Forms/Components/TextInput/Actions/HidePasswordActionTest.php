@@ -20,3 +20,15 @@ it('has an icon', function (): void {
 
     expect($action->getIcon())->not->toBeNull();
 });
+
+it('transfers focus to the `ShowPasswordAction` after hiding the password', function (): void {
+    $action = HidePasswordAction::make();
+
+    expect($action)
+        ->getExtraAttributes()->toMatchArray([
+            'wire:loading.attr' => false,
+            'x-ref' => 'hidePasswordAction',
+            'x-show' => 'isPasswordRevealed',
+        ])
+        ->getCustomAlpineClickHandler()->toBe('setPasswordRevealed(false)');
+});
