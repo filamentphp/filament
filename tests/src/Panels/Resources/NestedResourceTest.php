@@ -3,6 +3,11 @@
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Facades\Filament;
+use Filament\Forms;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\ParentResourceRegistration;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Models\Company;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
@@ -23,6 +28,8 @@ use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource\Pages\Lis
 use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource\Pages\ViewUserPost;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Panels\Resources\TestCase;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertDatabaseMissing;
@@ -363,6 +370,46 @@ describe('soft-deletable nested resource', function (): void {
 });
 
 describe('non-soft-deletable nested resource', function (): void {
+    it('does not require parent record `view` or `update` access', function (): void {
+        Gate::policy(Company::class, NestedCompanyPolicy::class);
+        Gate::policy(Team::class, NestedTeamPolicy::class);
+
+        app()->instance('can-view-any-nested-company', true);
+
+        $parentRecord = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $parentRecord->getKey(),
+        ]);
+
+        $this->get(CompanyTeamResource::getUrl('edit', [
+            'company' => $parentRecord,
+            'record' => $team,
+        ]))->assertSuccessful();
+    });
+
+    it('re-authorizes the parent resource on Livewire requests', function (): void {
+        Gate::policy(Company::class, NestedCompanyPolicy::class);
+        Gate::policy(Team::class, NestedTeamPolicy::class);
+
+        app()->instance('can-view-any-nested-company', true);
+
+        $parentRecord = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $parentRecord->getKey(),
+        ]);
+
+        $component = livewire(EditCompanyTeam::class, [
+            'parentRecord' => $parentRecord,
+            'record' => $team->getKey(),
+        ])->assertSuccessful();
+
+        app()->instance('can-view-any-nested-company', false);
+
+        $component
+            ->set('data.name', 'New name')
+            ->assertForbidden();
+    });
+
     it('can render list page for non-soft-deletable nested resource', function (): void {
         $parentRecord = Company::factory()->create();
 
@@ -632,3 +679,161 @@ describe('non-soft-deletable nested resource', function (): void {
             ->assertCanNotSeeTableRecords($teamsForOtherParent);
     });
 });
+
+describe('multi-level nested resource authorization', function (): void {
+    beforeEach(function (): void {
+        Gate::policy(Company::class, NestedCompanyPolicy::class);
+        Gate::policy(Team::class, NestedTeamPolicy::class);
+        Gate::policy(User::class, NestedUserPolicy::class);
+
+        app()->instance('can-view-any-nested-company', true);
+        app()->instance('can-access-nested-parent-record', true);
+
+        $panel = Filament::getCurrentOrDefaultPanel();
+
+        Route::middleware([...$panel->getMiddleware(), ...$panel->getAuthMiddleware()])
+            ->name("filament.{$panel->getId()}.")
+            ->prefix($panel->getPath())
+            ->group(fn () => NestedTeamUserResource::registerRoutes($panel));
+    });
+
+    it('requires outer ancestor resource access', function (): void {
+        $company = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $company->getKey(),
+        ]);
+        $record = User::factory()->create();
+        $team->users()->attach($record);
+
+        app()->instance('can-view-any-nested-company', false);
+
+        $this->get(NestedTeamUserResource::getUrl('edit', [
+            'company' => $company,
+            'team' => $team,
+            'record' => $record,
+        ]))->assertForbidden();
+    });
+
+    it('re-authorizes outer ancestor resources on Livewire requests', function (): void {
+        $company = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $company->getKey(),
+        ]);
+        $record = User::factory()->create();
+        $team->users()->attach($record);
+
+        $component = livewire(EditNestedTeamUser::class, [
+            'parentRecord' => $team,
+            'record' => $record->getKey(),
+        ])->assertSuccessful();
+
+        app()->instance('can-view-any-nested-company', false);
+
+        $component
+            ->set('data.name', 'New name')
+            ->assertForbidden();
+    });
+
+    it('re-runs custom parent record authorization on Livewire requests', function (): void {
+        $company = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $company->getKey(),
+        ]);
+        $record = User::factory()->create();
+        $team->users()->attach($record);
+
+        $component = livewire(EditNestedTeamUser::class, [
+            'parentRecord' => $team,
+            'record' => $record->getKey(),
+        ])->assertSuccessful();
+
+        app()->instance('can-access-nested-parent-record', false);
+
+        $component
+            ->set('data.name', 'New name')
+            ->assertForbidden();
+    });
+});
+
+class NestedCompanyPolicy
+{
+    public function viewAny(User $user): bool
+    {
+        return app('can-view-any-nested-company');
+    }
+
+    public function view(User $user, Company $record): bool
+    {
+        return false;
+    }
+
+    public function update(User $user, Company $record): bool
+    {
+        return false;
+    }
+}
+
+class NestedTeamPolicy
+{
+    public function viewAny(User $user): bool
+    {
+        return true;
+    }
+
+    public function update(User $user, Team $record): bool
+    {
+        return true;
+    }
+}
+
+class NestedUserPolicy
+{
+    public function viewAny(User $user): bool
+    {
+        return true;
+    }
+
+    public function update(User $user, User $record): bool
+    {
+        return true;
+    }
+}
+
+class NestedTeamUserResource extends Resource
+{
+    protected static ?string $model = User::class;
+
+    public static function getParentResourceRegistration(): ?ParentResourceRegistration
+    {
+        return CompanyTeamResource::asParent(static::class)
+            ->relationship('users')
+            ->inverseRelationship('teams');
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema->components([
+            Forms\Components\TextInput::make('name')->required(),
+            Forms\Components\TextInput::make('email')->required(),
+        ]);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'edit' => EditNestedTeamUser::route('/{record}/edit'),
+        ];
+    }
+}
+
+class EditNestedTeamUser extends EditRecord
+{
+    protected static string $resource = NestedTeamUserResource::class;
+
+    protected function authorizeParentRecordAccess(): void
+    {
+        parent::authorizeParentRecordAccess();
+
+        abort_unless(app('can-access-nested-parent-record'), 403);
+    }
+}

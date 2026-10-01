@@ -23,9 +23,20 @@ trait InteractsWithParentRecord
         $this->mountParentRecord();
     }
 
+    public function hydrateInteractsWithParentRecord(): void
+    {
+        if (! static::getParentResource()) {
+            return;
+        }
+
+        $this->authorizeParentRecordAccess();
+    }
+
     public function mountParentRecord(): void
     {
         if ($this->parentRecord) {
+            $this->authorizeParentRecordAccess();
+
             return;
         }
 
@@ -42,7 +53,15 @@ trait InteractsWithParentRecord
 
     protected function authorizeParentRecordAccess(): void
     {
-        abort_unless(static::getParentResource()::canView($this->getParentRecord()) || static::getParentResource()::canEdit($this->getParentRecord()), 403);
+        $parentResourceRegistration = static::getResource()::getParentResourceRegistration();
+
+        while ($parentResourceRegistration) {
+            $parentResource = $parentResourceRegistration->getParentResource();
+
+            abort_unless($parentResource::canAccess(), 403);
+
+            $parentResourceRegistration = $parentResource::getParentResourceRegistration();
+        }
     }
 
     /**
