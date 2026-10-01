@@ -281,6 +281,61 @@ class Field extends Component implements Contracts\HasValidationRules
         return $errors->has($statePath);
     }
 
+    public function hasValidationError(): bool
+    {
+        $statePath = $this->getStatePath();
+
+        return $this->hasErrorForPath($statePath) || (
+            ($this instanceof Contracts\HasNestedRecursiveValidationRules)
+            && filled($statePath)
+            && $this->hasErrorForPath("{$statePath}.*")
+        );
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getDescriptionIds(): array
+    {
+        if ($this->getFieldWrapperView() === 'filament-forms::plain-field-wrapper') {
+            return [];
+        }
+
+        $ids = [];
+
+        if ($helperTextId = $this->getHelperTextId()) {
+            $ids[] = $helperTextId;
+        }
+
+        if ($this->hasValidationError()) {
+            $ids[] = $this->getId() . '-error';
+        }
+
+        if (filled($this->getRequiredDescription())) {
+            $ids[] = $this->getId() . '-required';
+        }
+
+        return $ids;
+    }
+
+    public function getRequiredDescription(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @return array<string, string | null>
+     */
+    public function getAccessibilityAttributes(): array
+    {
+        $descriptionIds = $this->getDescriptionIds();
+
+        return [
+            'aria-describedby' => $descriptionIds ? e(implode(' ', $descriptionIds)) : null,
+            'aria-invalid' => $this->hasValidationError() ? 'true' : null,
+        ];
+    }
+
     /**
      * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
      *
@@ -303,7 +358,7 @@ class Field extends Component implements Contracts\HasValidationRules
             ? view()->shared('errors')->getBag('default')
             : new MessageBag;
 
-        $hasError = filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")));
+        $hasError = $this->hasValidationError();
 
         $errorMessage = null;
         $errorMessages = null;
@@ -402,6 +457,10 @@ class Field extends Component implements Contracts\HasValidationRules
         ob_start(); ?>
 
         <div data-field-wrapper <?= $wrapperAttributes->toHtml() ?>>
+            <?php if (filled($requiredDescription = $this->getRequiredDescription())) { ?>
+                <span id="<?= e($id) ?>-required" class="fi-sr-only"><?= e($requiredDescription) ?></span>
+            <?php } ?>
+
             <?php if (filled($label) && $labelSrOnly) { ?>
                 <<?= $labelTag ?>
                     <?php if ($labelTag === 'label') { ?>
@@ -485,7 +544,7 @@ class Field extends Component implements Contracts\HasValidationRules
                         <?= $aboveErrorMessageSchema?->toHtml() ?>
 
                         <?php if (filled($errorMessages)) { ?>
-                            <ul data-validation-error class="fi-fo-field-wrp-error-list">
+                            <ul id="<?= e($id) ?>-error" data-validation-error class="fi-fo-field-wrp-error-list">
                                 <?php foreach ($errorMessages as $errorMsg) { ?>
                                     <li class="fi-fo-field-wrp-error-message">
                                         <?php if ($areHtmlErrorMessagesAllowed) { ?>
@@ -497,11 +556,11 @@ class Field extends Component implements Contracts\HasValidationRules
                                 <?php } ?>
                             </ul>
                         <?php } elseif ($areHtmlErrorMessagesAllowed) { ?>
-                            <div data-validation-error class="fi-fo-field-wrp-error-message">
+                            <div id="<?= e($id) ?>-error" data-validation-error class="fi-fo-field-wrp-error-message">
                                 <?= $errorMessage ?>
                             </div>
                         <?php } else { ?>
-                            <p data-validation-error class="fi-fo-field-wrp-error-message">
+                            <p id="<?= e($id) ?>-error" data-validation-error class="fi-fo-field-wrp-error-message">
                                 <?= e($errorMessage) ?>
                             </p>
                         <?php } ?>

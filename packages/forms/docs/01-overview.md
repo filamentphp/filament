@@ -128,6 +128,27 @@ TextInput::make('name')
 
 <UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `hiddenLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+## Adding helper text
+
+You can add instructions below a field using `helperText()`:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('email')
+    ->helperText('Use your work email address.')
+```
+
+For native inputs, native selects, textareas, radios, checkbox lists, and toggle buttons, the helper text is automatically associated with the controls so screen readers can read it as a description. You do not need to manage the instruction's ID yourself. Hints and arbitrary [extra content](#adding-extra-content-to-a-field) are not automatically associated.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `helperText()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+Return `null` or an empty string to remove the helper text and its association. For conditional helper text, ensure the field is [reactive](#the-basics-of-reactivity) when its dependencies change so the text and its association update together.
+
+`helperText()` uses the `belowContent()` slot. Calling `belowContent()` afterwards replaces the helper text and removes its automatic association; calling `helperText()` again replaces that slot with helper text.
+
+You can also use `helperText()` on a `FusedGroup`. Set a unique `key()` or `id()` on the group to associate its helper text with the group. Child fields' helper text is not displayed by a fused group.
+
 ## Setting the default value of a field
 
 Fields may have a default value. The default is only used when a schema is loaded with no data. In a standard [panel resource](../resources), defaults are used on the Create page, not the Edit page. To define a default value, use the `default()` method:
@@ -946,6 +967,42 @@ TextInput::make('categories')
 <Aside variant="tip">
     By default, calling `extraInputAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
 </Aside>
+
+#### Associating instructions and validation errors with inputs
+
+For native inputs, native selects, textareas, radios, checkbox lists, and toggle buttons, Filament connects validation errors to the controls and marks them as invalid. Errors are not live announcements on every keystroke. These accessibility attributes are defaults: attributes you provide through `extraInputAttributes()` take precedence.
+
+Use [`helperText()`](#adding-helper-text) for instructions that should be automatically associated with an input. Hints and arbitrary text in the [field's extra content slots](#adding-extra-content-to-a-field) are not automatically associated. To associate other instructions, give the text an ID using `extraAttributes()` and reference it from the input using `extraInputAttributes()`:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Text;
+
+TextInput::make('email')
+    ->belowContent(
+        Text::make('Use your work email address.')
+            ->extraAttributes(['id' => 'work-email-instructions']),
+    )
+    ->extraInputAttributes([
+        'aria-describedby' => 'work-email-instructions',
+    ])
+```
+
+An explicit `aria-describedby` replaces the generated references, including helper text and errors. To keep the automatic references as well as your instructions, use a closure instead:
+
+```php
+->extraInputAttributes(static fn (TextInput $component): array => [
+    'aria-describedby' => e(implode(' ', ['work-email-instructions', ...$component->getDescriptionIds()])),
+])
+```
+
+Keep instruction IDs unique, including in repeaters. If instructions are conditional, update the reference when they should no longer describe the field; hiding the text alone can leave it available to screen readers.
+
+Keep a label for each field. You can use `hiddenLabel()` to hide it visually while keeping it available to assistive technology. Use `required()` for validation and required-state semantics; `markAsRequired()` only controls the visual marker. Disabled and read-only native controls do not request required input. Required checkbox groups describe that at least one option must be selected, rather than requiring every checkbox.
+
+If you replace a field wrapper or publish a control view, preserve these associations in your custom markup. Merge the field's `getAccessibilityAttributes()` array as defaults into the native control's existing attribute bag, and keep the default wrapper's error IDs. The plain wrapper used by `FusedGroup` suppresses child instructions and leaves error descriptions on the group.
+
+Helper text, error, and required-description IDs append `-helper-text`, `-error`, or `-required` to the existing field ID; field and option IDs are unchanged. Keep explicit IDs unique on the page. Rendering multiple fields with the same state path in the same form at the same time is not supported. Fields with the same name in separate repeater items or nested groups should have distinct full state paths.
 
 ### Adding extra HTML attributes to the field wrapper
 

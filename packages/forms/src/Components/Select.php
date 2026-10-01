@@ -1885,10 +1885,11 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     <select
                         <?= $extraInputAttributeBag
                             ->merge([
+                                ...$this->getAccessibilityAttributes(),
                                 'autofocus' => $isAutofocused,
                                 'disabled' => $isDisabled,
                                 'id' => $id,
-                                'required' => $isRequired,
+                                'required' => $isRequired && (! $isDisabled),
                                 'wire:key' => $hasDynamicOptions ? ($livewireKey . '.' . substr(md5(serialize($options)), 0, 64)) : null,
                                 $this->applyStateBindingModifiers('wire:model') => $statePath,
                             ], escape: false)

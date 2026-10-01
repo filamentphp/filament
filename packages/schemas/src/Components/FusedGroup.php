@@ -283,16 +283,17 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
         $groupId = $this->getId();
         $groupLabelId = (filled($groupId) && filled($this->getLabel())) ? "{$groupId}-label" : null;
         $groupErrorId = (filled($groupId) && $hasError) ? "{$groupId}-error" : null;
+        $descriptionIds = array_filter([$this->getHelperTextId(), $groupErrorId]);
 
         $innerAttributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'id' => $groupId,
                 'role' => 'group',
                 'aria-labelledby' => $groupLabelId,
-                'aria-describedby' => $groupErrorId,
                 'aria-invalid' => $hasError ? 'true' : null,
             ], escape: false)
             ->merge($this->getExtraAttributes(), escape: false)
+            ->merge(['aria-describedby' => $descriptionIds ? e(implode(' ', $descriptionIds)) : null], escape: false)
             ->class(['fi-sc-fused-group']);
 
         $innerHtml = '<div ' . $innerAttributes->toHtml() . '>' . $this->getChildSchema()->toHtml() . '</div>';
@@ -314,6 +315,7 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
                 return view($absoluteView, [
                     'field' => $this,
                     'slot' => new ComponentSlot($innerHtml),
+                    'labelTag' => 'div',
                     'errorMessage' => $errorMessage,
                     'errorMessages' => $errorMessages,
                     'areHtmlErrorMessagesAllowed' => $areHtmlErrorMessagesAllowed,
@@ -326,6 +328,7 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
                 new ComponentSlot($innerHtml),
                 new FilamentComponentAttributeBag([
                     'field' => $this,
+                    'label-tag' => 'div',
                     'error-message' => $errorMessage,
                     'error-messages' => $errorMessages,
                     'are-html-error-messages-allowed' => $areHtmlErrorMessagesAllowed,
