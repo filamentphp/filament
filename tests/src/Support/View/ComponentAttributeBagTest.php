@@ -109,11 +109,89 @@ describe('`merge()`', function (): void {
         expect($bag->get('class'))->toContain('fi-existing');
     });
 
-    it('concatenates styles with `; ` separator', function (): void {
-        $bag = (new ComponentAttributeBag(['style' => 'color: red']))->merge(['style' => 'font-weight: bold']);
+    it('concatenates styles with valid delimiters', function (?string $default, ?string $existing, ?string $expected): void {
+        $bag = (new ComponentAttributeBag(['style' => $existing]))->merge(['style' => $default]);
 
-        expect($bag->get('style'))->toContain('color: red');
-        expect($bag->get('style'))->toContain('font-weight: bold');
+        expect($bag->get('style'))->toBe($expected);
+    })->with([
+        'neither value ends in a semicolon' => ['display: block', 'color: red', 'display: block; color: red;'],
+        'only default ends in a semicolon' => ['display: block;', 'color: red', 'display: block; color: red;'],
+        'only existing ends in a semicolon' => ['display: block', 'color: red;', 'display: block; color: red;'],
+        'both values end in semicolons' => ['display: block;', 'color: red;', 'display: block; color: red;'],
+        'values have trailing whitespace' => ['display: block;  ', 'color: red  ', 'display: block;  ; color: red;'],
+        'default has an escaped trailing space' => ['--label: foo\\ ', 'color: red', '--label: foo\\ ; color: red;'],
+        'empty default' => ['', 'color: red', 'color: red;'],
+        'null default' => [null, 'color: red', 'color: red;'],
+        'empty existing value' => ['display: block', '', 'display: block;'],
+        'null existing value' => ['display: block', null, 'display: block; ;'],
+        'both values are empty' => ['', '', ''],
+        'duplicate properties retain precedence order' => ['color: blue', 'color: red', 'color: blue; color: red;'],
+    ]);
+
+    it('matches Laravel style merging for current contract cases', function (array $existing, array $defaults, array $expected): void {
+        $bag = (new ComponentAttributeBag($existing))->merge($defaults);
+        $baseBag = (new BaseComponentAttributeBag($existing))->merge($defaults);
+
+        expect($bag->getAttributes())
+            ->toBe($expected)
+            ->and($baseBag->getAttributes())->toBe($expected);
+    })->with([
+        'style, class, and unrelated attributes' => [
+            ['style' => 'color: red', 'class' => 'existing', 'title' => 'existing'],
+            ['style' => 'display: block;', 'class' => 'default', 'title' => 'default', 'data-id' => 'new'],
+            ['style' => 'display: block; color: red;', 'class' => 'default existing', 'title' => 'existing', 'data-id' => 'new'],
+        ],
+    ]);
+
+    it('preserves escaping behavior while merging styles', function (): void {
+        $escaped = (new ComponentAttributeBag(['style' => 'color: red']))
+            ->merge(['style' => 'background: url("<image>")']);
+        $unescaped = (new ComponentAttributeBag(['style' => 'color: red']))
+            ->merge(['style' => 'background: url("<image>")'], escape: false);
+
+        expect($escaped->get('style'))->toBe('background: url(&quot;&lt;image&gt;&quot;); color: red;')
+            ->and($unescaped->get('style'))->toBe('background: url("<image>"); color: red;');
+    });
+
+    it('preserves `Htmlable` style defaults without escaping them', function (): void {
+        $default = new HtmlString('background: url("&image");  ');
+
+        $bag = (new ComponentAttributeBag(['style' => 'color: red']))->merge(['style' => $default]);
+
+        expect($bag->get('style'))->toBe('background: url("&image");   color: red;');
+    });
+
+    it('normalizes existing `Htmlable` styles without escaping them', function (): void {
+        $bag = (new ComponentAttributeBag(['style' => new HtmlString('color: red')]))
+            ->merge(['style' => 'display: block']);
+
+        expect($bag->get('style'))->toBe('display: block; color: red;');
+    });
+
+    it('preserves appendable defaults while merging styles', function (): void {
+        $bag = new ComponentAttributeBag([
+            'style' => 'color: red',
+            'class' => 'existing',
+            'data-controller' => 'existing',
+        ]);
+
+        $result = $bag->merge([
+            'style' => $bag->prepends('display: block;'),
+            'class' => 'default',
+            'data-controller' => $bag->prepends('default'),
+        ]);
+
+        expect($result->get('style'))->toBe('display: block; color: red;')
+            ->and($result->get('class'))->toBe('default existing')
+            ->and($result->get('data-controller'))->toBe('default existing');
+    });
+
+    it('keeps style declarations valid across multiple `merge()` calls', function (): void {
+        $bag = (new ComponentAttributeBag(['style' => 'color: red']))
+            ->merge(['style' => 'display: block'])
+            ->merge(['style' => 'position: relative']);
+
+        expect($bag->get('style'))->toBe('position: relative; display: block; color: red;');
     });
 
     it('escapes the inner value of `prepends()` (`AppendableAttributeValue`) by default', function (): void {
