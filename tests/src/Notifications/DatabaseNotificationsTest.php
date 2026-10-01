@@ -7,6 +7,8 @@ use Filament\Notifications\Events\DatabaseNotificationsSent;
 use Filament\Notifications\Livewire\DatabaseNotifications;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\IconSize;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Database\Schema\Blueprint;
@@ -283,12 +285,17 @@ describe('browser interactions', function (): void {
             $user = User::factory()->create();
             $this->actingAs($user);
 
-            Notification::make()->title('First')->sendToDatabase($user);
+            Notification::make()
+                ->title('First')
+                ->icon(Heroicon::Bell)
+                ->iconSize(IconSize::Small)
+                ->sendToDatabase($user);
             Notification::make()->title('Second')->sendToDatabase($user);
 
             visit('/database-notifications-browser-test')
                 ->click('[data-testid="database-notifications-trigger"]')
                 ->assertVisible('[id="database-notifications"] .fi-modal-window')
+                ->assertVisible('[id="database-notifications"] .fi-no-notification-icon.fi-size-sm')
                 ->wait(0.5)
                 // The focus trap focuses the modal window itself, not the `Mark all as read` action, which `Enter` would immediately trigger.
                 ->assertScript('document.activeElement === document.querySelector(\'[id="database-notifications"] .fi-modal-window\')', true)
@@ -304,6 +311,7 @@ describe('browser interactions', function (): void {
                 ->inDarkMode()
                 ->click('[data-testid="database-notifications-trigger"]')
                 ->assertVisible('[id="database-notifications"] .fi-modal-window')
+                ->assertVisible('[id="database-notifications"] .fi-no-notification-icon.fi-size-sm')
                 ->assertNoSmoke()
                 ->assertNoAccessibilityIssues();
         });

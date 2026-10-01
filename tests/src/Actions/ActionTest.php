@@ -2085,6 +2085,16 @@ describe('rendering', function (): void {
         expect($html)->toContain('fi-size-lg');
     });
 
+    it('serializes a scalable icon with a string enum `iconSize()`', function (): void {
+        $action = Action::make('test')
+            ->icon(Heroicon::Trash)
+            ->iconSize('lg');
+
+        expect($action->toArray())
+            ->icon->toBe('heroicon-s-trash')
+            ->iconSize->toBe(IconSize::Large);
+    });
+
     it('renders a `requiresConfirmation()` action with the modal mount handler', function (): void {
         $html = Action::make('test')->requiresConfirmation()->toHtml();
 
