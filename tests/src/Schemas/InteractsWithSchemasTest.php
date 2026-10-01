@@ -7,9 +7,16 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Text;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Artisan;
+use Livewire\Component;
 
 use function Filament\Tests\livewire;
 
@@ -49,6 +56,94 @@ it('can resolve schema using fallback method name without parameters', function 
     };
 
     expect($component->getSchema('test'))->toBeInstanceOf(Schema::class);
+});
+
+it('applies an overridden default hook to a schema method without parameters', function (): void {
+    $component = new TestComponentWithSchemaCaching;
+
+    $schema = $component->getSchema('noArgument');
+
+    expect($schema)
+        ->toBeInstanceOf(Schema::class)
+        ->and($schema->getExtraAttributes())
+        ->toMatchArray([
+            'data-default-hook' => 'base',
+            'data-subclass-hook' => 'applied',
+        ]);
+});
+
+it('applies a default hook before a parameterized schema method', function (): void {
+    $component = new TestComponentWithSchemaCaching;
+
+    $schema = $component->getSchema('parameterized');
+
+    expect($schema)
+        ->toBeInstanceOf(Schema::class)
+        ->and($schema->getColumns())->toBe(['lg' => 1])
+        ->and($schema->getExtraAttributes())->toMatchArray([
+            'data-parameterized-default-hook' => 'applied',
+        ]);
+});
+
+it('does not resolve a default hook without a schema method', function (): void {
+    $component = new TestComponentWithSchemaCaching;
+
+    expect($component->getSchema('defaultOnly'))->toBeNull()
+        ->and($component->defaultOnlyHookCalls)->toBe(0);
+});
+
+it('returns `null` for a missing schema', function (): void {
+    expect((new TestComponentWithSchemaCaching)->getSchema('missing'))->toBeNull();
+});
+
+it('returns the same cached schema on repeated access', function (string $name): void {
+    $component = new TestComponentWithSchemaCaching;
+
+    $schema = $component->getSchema($name);
+
+    expect($component->getSchema($name))->toBe($schema)
+        ->and($component->getCachedSchemas()[$name])->toBe($schema);
+})->with(['noArgument', 'parameterized']);
+
+it('caches a replacement schema returned by the default hook', function (): void {
+    $component = new TestComponentWithReplacementSchema;
+
+    $schema = $component->getSchema('replacement');
+
+    expect($component->getSchemaPassedToDefaultHook())->toBe($component->getSchemaReturnedByMethod())
+        ->and($schema)->toBe($component->getSchemaReturnedByDefaultHook())
+        ->and($schema?->getKey())->toBe('replacement')
+        ->and($component->getSchema('replacement'))->toBe($schema)
+        ->and($component->getCachedSchemas()['replacement'])->toBe($schema);
+});
+
+it('renders schemas with default hook customization through Livewire and Blade', function (): void {
+    livewire(TestComponentWithSchemaCaching::class)
+        ->assertSuccessful()
+        ->assertSee('No-argument schema')
+        ->assertSee('Parameterized schema')
+        ->assertSeeHtml('data-default-hook="base"')
+        ->assertSeeHtml('data-subclass-hook="applied"')
+        ->assertSeeHtml('data-parameterized-default-hook="applied"');
+});
+
+it('renders a customized no-argument schema accessibly in light and dark modes', function (): void {
+    Artisan::call('filament:assets');
+
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/schema-caching-browser-test')
+            ->assertSee('Customized no-argument schema')
+            ->assertPresent('[data-testid="customized-no-argument-schema"][data-default-hook="base"][data-subclass-hook="applied"]')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        visit('/schema-caching-browser-test')
+            ->inDarkMode()
+            ->assertPresent('[data-testid="customized-no-argument-schema"]')
+            ->assertNoAccessibilityIssues();
+    });
 });
 
 it('cannot validate from a client-side call', function (string $method): void {
@@ -305,5 +400,112 @@ class TestComponentWithDeferredSchemas extends Livewire
     public function save(): void
     {
         $this->form->getState();
+    }
+}
+
+class BaseTestComponentWithSchemaCaching extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public int $defaultOnlyHookCalls = 0;
+
+    public function mount(): void
+    {
+        $this->getSchema('noArgument');
+        $this->getSchema('parameterized');
+    }
+
+    public function noArgumentSchema(): Schema
+    {
+        return Schema::make($this)
+            ->components([
+                Text::make('No-argument schema'),
+            ]);
+    }
+
+    public function defaultNoArgument(Schema $schema): Schema
+    {
+        return $schema->extraAttributes([
+            'data-default-hook' => 'base',
+        ]);
+    }
+
+    public function parameterizedSchema(Schema $schema): Schema
+    {
+        return $schema
+            ->columns(1)
+            ->components([
+                Text::make('Parameterized schema'),
+            ]);
+    }
+
+    public function defaultParameterized(Schema $schema): Schema
+    {
+        return $schema
+            ->columns(2)
+            ->extraAttributes([
+                'data-parameterized-default-hook' => 'applied',
+            ]);
+    }
+
+    public function defaultDefaultOnly(Schema $schema): Schema
+    {
+        $this->defaultOnlyHookCalls++;
+
+        return $schema;
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestComponentWithSchemaCaching extends BaseTestComponentWithSchemaCaching
+{
+    public function defaultNoArgument(Schema $schema): Schema
+    {
+        return parent::defaultNoArgument($schema)
+            ->extraAttributes([
+                'data-subclass-hook' => 'applied',
+            ], merge: true);
+    }
+}
+
+class TestComponentWithReplacementSchema extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    protected ?Schema $schemaPassedToDefaultHook = null;
+
+    protected ?Schema $schemaReturnedByDefaultHook = null;
+
+    protected ?Schema $schemaReturnedByMethod = null;
+
+    public function replacementSchema(): Schema
+    {
+        return $this->schemaReturnedByMethod = Schema::make($this);
+    }
+
+    public function defaultReplacement(Schema $schema): Schema
+    {
+        $this->schemaPassedToDefaultHook = $schema;
+
+        return $this->schemaReturnedByDefaultHook = Schema::make($this);
+    }
+
+    public function getSchemaPassedToDefaultHook(): ?Schema
+    {
+        return $this->schemaPassedToDefaultHook;
+    }
+
+    public function getSchemaReturnedByDefaultHook(): ?Schema
+    {
+        return $this->schemaReturnedByDefaultHook;
+    }
+
+    public function getSchemaReturnedByMethod(): ?Schema
+    {
+        return $this->schemaReturnedByMethod;
     }
 }

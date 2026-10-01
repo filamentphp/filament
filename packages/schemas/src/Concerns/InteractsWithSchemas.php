@@ -405,11 +405,13 @@ trait InteractsWithSchemas
                     $this->discoveredSchemaNames[] = $name;
                 }
 
+                $schema = $this->{$methodName}();
+
                 if (method_exists($this, 'default' . ucfirst($name))) {
-                    $this->{'default' . ucfirst($name)}($schema);
+                    $schema = $this->{'default' . ucfirst($name)}($schema);
                 }
 
-                return $this->cachedSchemas[$name] = ($this->{$methodName}())->key($name);
+                return $this->cachedSchemas[$name] = $schema->key($name);
             }
 
             $typeReflection = $parameterReflection->getType();
