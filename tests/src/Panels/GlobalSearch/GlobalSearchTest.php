@@ -65,6 +65,103 @@ describe('search results', function (): void {
             ->assertSee(['foo', 'bar', 'baz']);
     });
 
+    it('passes the normalized search to the provider without changing `$search`', function (string $search, string $expectedQuery): void {
+        Filament::getCurrentOrDefaultPanel()->globalSearch(CustomSearchProvider::class);
+
+        $provider = $this->spy(CustomSearchProvider::class);
+        $provider->shouldReceive('getResults')->andReturn(
+            GlobalSearchResults::make()->category('Invoices', [
+                new GlobalSearchResult(title: 'Invoice found', url: '/invoices/304', details: []),
+            ]),
+        );
+
+        livewire(GlobalSearch::class)
+            ->set('search', $search)
+            ->assertSet('search', $search)
+            ->assertDispatched('open-global-search-results')
+            ->assertSee('Invoice found')
+            ->assertSeeHtml('href="/invoices/304"');
+
+        $provider->shouldHaveReceived('getResults')->once()->withArgs(static fn (string $query): bool => $query === $expectedQuery);
+    })->with([
+        'surrounding spaces' => [' invoice ', 'invoice'],
+        'surrounding tabs and newlines' => ["\t invoice\r\n", 'invoice'],
+        'internal spaces' => [' invoice  overdue ', 'invoice  overdue'],
+        'zero' => ['0', '0'],
+        'padded zero' => [' 0 ', '0'],
+    ]);
+
+    it('does not call the provider for a blank search', function (string $search): void {
+        Filament::getCurrentOrDefaultPanel()->globalSearch(CustomSearchProvider::class);
+
+        $provider = $this->spy(CustomSearchProvider::class);
+
+        livewire(GlobalSearch::class)
+            ->set('search', $search)
+            ->assertSet('search', $search)
+            ->assertNotDispatched('open-global-search-results')
+            ->assertViewHas('results', null);
+
+        $provider->shouldNotHaveReceived('getResults');
+    })->with(['empty' => '', 'spaces' => '   ', 'tabs and newlines' => " \t\r\n "]);
+
+    it('lets a custom provider apply its minimum length to the normalized search', function (string $search, string $expectedQuery, bool $hasResults): void {
+        Filament::getCurrentOrDefaultPanel()->globalSearch(CustomSearchProvider::class);
+
+        $minimumLength = 3;
+        $provider = $this->spy(CustomSearchProvider::class);
+        $provider->shouldReceive('getResults')->andReturnUsing(static function (string $query) use ($minimumLength): ?GlobalSearchResults {
+            if (mb_strlen($query) < $minimumLength) {
+                return null;
+            }
+
+            return GlobalSearchResults::make()->category('Invoices', [
+                new GlobalSearchResult(title: 'Invoice found', url: '/invoices/304', details: []),
+            ]);
+        });
+
+        $component = livewire(GlobalSearch::class)
+            ->set('search', $search)
+            ->assertSet('search', $search);
+
+        if ($hasResults) {
+            $component->assertSee('Invoice found')->assertDispatched('open-global-search-results');
+        } else {
+            $component->assertDontSee('Invoice found')->assertViewHas('results', null)->assertNotDispatched('open-global-search-results');
+        }
+
+        $provider->shouldHaveReceived('getResults')->once()->withArgs(static fn (string $query): bool => $query === $expectedQuery);
+    })->with([
+        'below minimum' => [' ab ', 'ab', false],
+        'at minimum' => [' abc ', 'abc', true],
+    ]);
+
+    it('shows normalized search results while preserving the displayed input', function (string $panel): void {
+        Artisan::call('filament:assets');
+
+        $post = Post::factory()->create(['title' => 'Invoice 304']);
+        $search = ' Invoice 304 ';
+        $inputSelector = 'input[wire\\:key="global-search.field.input"]';
+        $resultUrl = PostResource::getUrl('view', ['record' => $post], panel: $panel);
+
+        foreach ([false, true] as $isDarkMode) {
+            $page = visit(PostResource::getUrl(panel: $panel));
+
+            if ($isDarkMode) {
+                $page = $page->inDarkMode();
+            }
+
+            $page->type($inputSelector, $search)
+                ->assertVisible("nav a[href=\"{$resultUrl}\"]")
+                ->assertValue($inputSelector, $search)
+                ->assertNoAccessibilityIssues();
+
+            $page->type($inputSelector, '   ')
+                ->assertMissing("nav a[href=\"{$resultUrl}\"]")
+                ->assertValue($inputSelector, '   ');
+        }
+    })->with(['standard panel' => 'admin', 'SPA panel' => 'spa']);
+
     it('orders resource global search results by `$globalSearchSort`', function (): void {
         User::factory()->create([
             'name' => 'Test',
