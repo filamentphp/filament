@@ -49,6 +49,14 @@ use App\Filament\Resources\Courses\CourseResource;
 protected static ?string $parentResource = CourseResource::class;
 ```
 
+## Authorizing nested resources
+
+To access a nested resource, the user must be able to access the nested resource and every ancestor resource. By default, resource access is controlled by the `viewAny()` method of the resource's model policy. Filament checks access to every ancestor resource on the initial page load and again on every subsequent Livewire request.
+
+Operations on nested records are authorized independently using the nested resource's policy. For example, editing a lesson requires `update()` access to the lesson, but does not require `view()` or `update()` access to its course. This allows you to grant users permission to manage related records without also granting them permission to view or edit the parent records themselves.
+
+The records in a nested resource URL must still belong to the configured relationship chain. Authorization determines whether the user may access each resource, while relationship scoping ensures that the requested records belong to one another.
+
 ## Customizing the relationship names
 
 In the same way that relation managers and pages predict the name of relationships based on the models in those relationships, nested resources do the same. Sometimes, you may have a relationship that does not fit the traditional relationship naming convention, and you will need to inform Filament of the correct relationship names for the nested resource.
