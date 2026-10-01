@@ -22,6 +22,8 @@ return [
 
                     'invalid' => 'O código informado é inválido.',
 
+                    'rate_limited' => 'Muitas tentativas. Tente novamente mais tarde.',
+
                 ],
 
             ],
