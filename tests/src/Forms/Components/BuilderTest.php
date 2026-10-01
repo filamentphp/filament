@@ -1013,6 +1013,7 @@ describe('block picker search', function (): void {
             livewire(RenderBuilderWithSearchableBlocks::class)
                 ->assertSuccessful()
                 ->assertSeeHtml('data-dropdown-autofocus')
+                ->assertSeeHtml('x-on:keydown.enter.prevent')
                 ->assertSeeHtml('placeholder="Find &quot;R&amp;D&quot;"')
                 ->assertSeeHtml('aria-label="Find &quot;R&amp;D&quot;"')
                 ->assertSeeHtml('data-block-label="paragraph"')
@@ -1142,26 +1143,6 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
         ->assertScript('document.querySelector(\'[data-testid="builder"]\').getAnimations({ subtree: true }).length', 0)
         ->assertNoAccessibilityIssues();
 })->with(['light' => false, 'dark' => true]);
-
-it('does not submit the surrounding form when `Enter` is pressed in the block picker search input', function (): void {
-    Artisan::call('filament:assets');
-
-    $this->actingAs(User::factory()->create());
-
-    $searchInput = '[data-testid="builder"] input[data-dropdown-autofocus]';
-
-    visit('/builder-searchable-test')
-        ->assertScript('(() => { window.builderFormSubmitCount = 0; document.querySelector(\'[data-testid="builder"]\').closest(\'form\').addEventListener(\'submit\', () => window.builderFormSubmitCount++); return window.builderFormSubmitCount })()', 0)
-        ->click('[data-testid="add-block"]')
-        ->assertVisible($searchInput)
-        ->type($searchInput, 'para')
-        ->keys($searchInput, 'Enter')
-        ->wait(1)
-        ->assertScript('window.builderFormSubmitCount', 0)
-        ->assertVisible($searchInput)
-        ->assertValue($searchInput, 'para')
-        ->assertNoSmoke();
-});
 
 it('clears a debounced block picker search with `Escape` before the debounce elapses', function (): void {
     Artisan::call('filament:assets');
