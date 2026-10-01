@@ -45,6 +45,10 @@
         @apply bg-transparent;
     }
 
+    & .filepond--file-info-sub {
+        @apply opacity-100;
+    }
+
     & .filepond--drop-label {
         @apply h-auto! p-3!;
     }

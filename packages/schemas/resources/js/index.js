@@ -1,35 +1,5 @@
 import actions from './components/actions.js'
-
-const resolveRelativeStatePath = function (containerPath, path, isAbsolute) {
-    let containerPathCopy = containerPath
-
-    if (path.startsWith('/')) {
-        isAbsolute = true
-        path = path.slice(1)
-    }
-
-    if (isAbsolute) {
-        return path
-    }
-
-    while (path.startsWith('../')) {
-        containerPathCopy = containerPathCopy.includes('.')
-            ? containerPathCopy.slice(0, containerPathCopy.lastIndexOf('.'))
-            : null
-
-        path = path.slice(3)
-    }
-
-    if (['', null, undefined].includes(containerPathCopy)) {
-        return path
-    }
-
-    if (['', null, undefined].includes(path)) {
-        return containerPathCopy
-    }
-
-    return `${containerPathCopy}.${path}`
-}
+import schemaComponent from './components/component.js'
 
 const findClosestLivewireComponent = (el) => {
     let closestRoot = Alpine.findClosest(el, (i) => i.__livewire)
@@ -219,27 +189,7 @@ document.addEventListener('alpine:init', () => {
         }),
     )
 
-    window.Alpine.data(
-        'filamentSchemaComponent',
-        ({ path, containerPath, $wire }) => ({
-            $statePath: path,
-            $get: (path, isAbsolute) => {
-                return $wire.$get(
-                    resolveRelativeStatePath(containerPath, path, isAbsolute),
-                )
-            },
-            $set: (path, state, isAbsolute, isLive = false) => {
-                return $wire.$set(
-                    resolveRelativeStatePath(containerPath, path, isAbsolute),
-                    state,
-                    isLive,
-                )
-            },
-            get $state() {
-                return $wire.$get(path)
-            },
-        }),
-    )
+    window.Alpine.data('filamentSchemaComponent', schemaComponent)
 
     window.Alpine.data('filamentActionsSchemaComponent', actions)
 

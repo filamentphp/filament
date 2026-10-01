@@ -25,6 +25,9 @@ class ComponentManager implements ScopedComponentManager
      */
     protected array $methodCache = [];
 
+    /** @var array<class-string, array<ReflectionMethod>> */
+    protected static array $publicMethodReflectionCache = [];
+
     /**
      * @var array<class-string, array<class-string>>
      */
@@ -135,8 +138,6 @@ class ComponentManager implements ScopedComponentManager
     public function extractPublicMethods(Component $component): array
     {
         if (! isset($this->methodCache[$component::class])) {
-            $reflection = new ReflectionClass($component);
-
             $this->methodCache[$component::class] = [];
 
             // The `static`-return filter only applies to first-party Filament
@@ -146,7 +147,7 @@ class ComponentManager implements ScopedComponentManager
             // method lists untouched.
             $shouldSkipFluentSetters = str_starts_with($component::class, 'Filament\\');
 
-            foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+            foreach (static::getPublicMethodReflections($component::class) as $method) {
                 $name = $method->getName();
 
                 if (str_starts_with($name, '__')) {
@@ -172,5 +173,15 @@ class ComponentManager implements ScopedComponentManager
         }
 
         return $values;
+    }
+
+    /**
+     * @param  class-string  $componentClass
+     * @return array<ReflectionMethod>
+     */
+    public static function getPublicMethodReflections(string $componentClass): array
+    {
+        return static::$publicMethodReflectionCache[$componentClass]
+            ??= (new ReflectionClass($componentClass))->getMethods(ReflectionMethod::IS_PUBLIC);
     }
 }

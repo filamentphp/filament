@@ -15,7 +15,7 @@ use Filament\Schemas\Components\StateCasts\EnumStateCast;
 use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
 use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Schemas\Schema;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentAsset;
@@ -559,7 +559,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this->evaluate($this->position);
     }
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getOptionLabel(bool $withDefault = true): ?string
     {
@@ -729,7 +729,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @return array<array{'label': string, 'value': string}>
      */
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getSearchResultsForJs(string $search): array
     {
@@ -739,7 +739,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @return array<array{'label': string, 'value': string}>
      */
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getOptionsForJs(): array
     {
@@ -749,7 +749,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @return array<array{'label': string, 'value': string}>
      */
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getOptionLabelsForJs(): array
     {
@@ -1837,7 +1837,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $isNative = (! ($isSearchable || $isMultiple || $isHtmlAllowed) && $this->isNative());
         $isPrefixInline = $this->isPrefixInline();
         $isSuffixInline = $this->isSuffixInline();
-        $key = $this->getKey();
         $id = $this->getId();
         $prefixActions = $this->getPrefixActions();
         $prefixIcon = $this->getPrefixIcon();
@@ -1952,28 +1951,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                     canOptionLabelsWrap: <?= Js::from($canOptionLabelsWrap) ?>,
                                     canSelectPlaceholder: <?= Js::from($canSelectPlaceholder) ?>,
                                     clearButtonLabel: <?= Js::from(__('filament-forms::components.select.actions.clear.label')) ?>,
-                                    getOptionLabelUsing: async () => {
-                                        return await $wire.callSchemaComponentMethod(<?= Js::from($key) ?>, 'getOptionLabel')
-                                    },
-                                    getOptionLabelsUsing: async () => {
-                                        return await $wire.callSchemaComponentMethod(
-                                            <?= Js::from($key) ?>,
-                                            'getOptionLabelsForJs',
-                                        )
-                                    },
-                                    getOptionsUsing: async () => {
-                                        return await $wire.callSchemaComponentMethod(
-                                            <?= Js::from($key) ?>,
-                                            'getOptionsForJs',
-                                        )
-                                    },
-                                    getSearchResultsUsing: async (search) => {
-                                        return await $wire.callSchemaComponentMethod(
-                                            <?= Js::from($key) ?>,
-                                            'getSearchResultsForJs',
-                                            { search },
-                                        )
-                                    },
                                     hasDynamicOptions: <?= Js::from($hasDynamicOptions) ?>,
                                     hasDynamicSearchResults: <?= Js::from($this->hasDynamicSearchResults()) ?>,
                                     hasInitialNoOptionsMessage: <?= Js::from($hasInitialNoOptionsMessage) ?>,

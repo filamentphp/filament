@@ -1620,6 +1620,8 @@ describe('custom blocks', function (): void {
             ])
             ->getComponents()[0];
 
+        expect($richEditor->getExposedMethodNames())->toContain('getCustomBlockPreviewsForJs');
+
         $previews = $richEditor->getCustomBlockPreviewsForJs([
             [
                 'id' => 'callout',
@@ -1811,17 +1813,23 @@ describe('custom block grouping', function (): void {
     });
 });
 
-it('can render `RichEditor` in the browser', function (): void {
+it('can search and insert a mention through the Alpine scope', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/rich-editor-browser-test')
+        $page = visit('/rich-editor-browser-test');
+
+        $page
+            ->fill('[data-testid="default-rich-editor"] [contenteditable="true"]', '@Ali')
+            ->click('Alice Chen')
+            ->assertPresent('[data-testid="default-rich-editor"] [data-type="mention"][data-id="author-7"]')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
-        visit('/rich-editor-browser-test')
-            ->inDarkMode()
-            ->assertNoSmoke()
+        $page->inDarkMode()
+            ->fill('[data-testid="default-rich-editor"] [contenteditable="true"]', '@Ali')
+            ->click('Alice Chen')
+            ->assertPresent('[data-testid="default-rich-editor"] [data-type="mention"][data-id="author-7"]')
             ->assertNoAccessibilityIssues();
     });
 });
@@ -1834,6 +1842,7 @@ it('does not render custom block previews from imported HTML', function (): void
 
         $page
             ->assertPresent('[data-testid="minimal-controls-editor"] .tiptap')
+            ->assertScript("typeof Alpine.\$data(document.querySelector('[data-testid=\"minimal-controls-editor\"] .tiptap')).\$getCustomBlockPreviewsForJs", 'function')
             ->assertScript(<<<'JS'
                 (() => {
                     window.customBlockPreviewCommitCount = 0

@@ -45,21 +45,13 @@ const LocalFilesPlugin = ({
     acceptedTypes,
     acceptedTypesValidationMessage,
     get$WireUsing,
+    getFileAttachmentUrlUsing,
     key,
     maxSize,
     maxSizeValidationMessage,
     statePath,
     uploadingMessage,
 }) => {
-    const getFileAttachmentUrl = (fileKey) =>
-        get$WireUsing().callSchemaComponentMethod(
-            key,
-            'getUploadedFileAttachmentTemporaryUrl',
-            {
-                attachment: fileKey,
-            },
-        )
-
     return new Plugin({
         key: new PluginKey('localFiles'),
         props: {
@@ -127,7 +119,7 @@ const LocalFilesPlugin = ({
                         `componentFileAttachments.${statePath}.${fileKey}`,
                         file,
                         () => {
-                            getFileAttachmentUrl(fileKey).then((url) => {
+                            getFileAttachmentUrlUsing(fileKey).then((url) => {
                                 if (!url) {
                                     return
                                 }
@@ -229,47 +221,49 @@ const LocalFilesPlugin = ({
                             `componentFileAttachments.${statePath}.${fileKey}`,
                             file,
                             () => {
-                                getFileAttachmentUrl(fileKey).then((url) => {
-                                    if (!url) {
-                                        return
-                                    }
+                                getFileAttachmentUrlUsing(fileKey).then(
+                                    (url) => {
+                                        if (!url) {
+                                            return
+                                        }
 
-                                    editor
-                                        .chain()
-                                        .insertContentAt(
-                                            editor.state.selection.anchor,
-                                            {
-                                                type: 'image',
-                                                attrs: {
-                                                    id: fileKey,
-                                                    src: url,
+                                        editor
+                                            .chain()
+                                            .insertContentAt(
+                                                editor.state.selection.anchor,
+                                                {
+                                                    type: 'image',
+                                                    attrs: {
+                                                        id: fileKey,
+                                                        src: url,
+                                                    },
                                                 },
-                                            },
-                                        )
-                                        .run()
+                                            )
+                                            .run()
 
-                                    editor.setEditable(true)
-                                    editorView.dom.dispatchEvent(
-                                        new CustomEvent(
-                                            'rich-editor-uploaded-file',
-                                            {
-                                                bubbles: true,
-                                                detail: {
-                                                    key,
-                                                    livewireId:
-                                                        get$WireUsing().id,
+                                        editor.setEditable(true)
+                                        editorView.dom.dispatchEvent(
+                                            new CustomEvent(
+                                                'rich-editor-uploaded-file',
+                                                {
+                                                    bubbles: true,
+                                                    detail: {
+                                                        key,
+                                                        livewireId:
+                                                            get$WireUsing().id,
+                                                    },
                                                 },
-                                            },
-                                        ),
-                                    )
-
-                                    if (fileIndex === files.length - 1) {
-                                        dispatchFormEvent(
-                                            editorView,
-                                            'form-processing-finished',
+                                            ),
                                         )
-                                    }
-                                })
+
+                                        if (fileIndex === files.length - 1) {
+                                            dispatchFormEvent(
+                                                editorView,
+                                                'form-processing-finished',
+                                            )
+                                        }
+                                    },
+                                )
                             },
                         )
                     })
@@ -359,11 +353,10 @@ const LocalFilesPlugin = ({
                                         `componentFileAttachments.${statePath}.${fileKey}`,
                                         file,
                                         () => {
-                                            getFileAttachmentUrl(fileKey).then(
-                                                (uploadedUrl) =>
-                                                    resolve(
-                                                        uploadedUrl ?? null,
-                                                    ),
+                                            getFileAttachmentUrlUsing(
+                                                fileKey,
+                                            ).then((uploadedUrl) =>
+                                                resolve(uploadedUrl ?? null),
                                             )
                                         },
                                         () => resolve(null),
@@ -444,6 +437,7 @@ export default Extension.create({
             statePath: null,
             uploadingMessage: null,
             get$WireUsing: null,
+            getFileAttachmentUrlUsing: null,
         }
     },
 

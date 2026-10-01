@@ -6,11 +6,57 @@ use Filament\Tests\TestCase;
 use Illuminate\Console\OutputStyle;
 use Illuminate\Console\View\Components\Factory as ComponentsFactory;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Process\PendingProcess;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Process;
 use Mockery\MockInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 
 uses(TestCase::class);
+
+it('preserves an existing theme when overwrite is declined or installation fails', function (bool $shouldOverwrite): void {
+    $path = resource_path('css/filament/admin/theme.css');
+    $originalContents = File::exists($path) ? File::get($path) : null;
+    File::ensureDirectoryExists(dirname($path));
+    File::put($path, '/* Existing custom theme */');
+    $environment = app()['env'];
+
+    Process::fake(static fn (PendingProcess $process) => Process::result(exitCode: ((! $shouldOverwrite) || ($process->command === ['npm', '--version'])) ? 0 : 1));
+    Process::preventStrayProcesses();
+
+    try {
+        app()['env'] = 'local';
+
+        $command = $this->artisan('make:filament-theme', [
+            '--panel' => 'admin',
+            '--skip-build' => true,
+        ])->expectsConfirmation('theme.css already exists, do you want to overwrite it?', $shouldOverwrite ? 'yes' : 'no');
+
+        if ($shouldOverwrite) {
+            $command->expectsOutputToContain('Failed to install JavaScript dependencies.');
+        }
+
+        $command->assertFailed();
+        $command->run();
+
+        expect(File::get($path))->toBe('/* Existing custom theme */');
+
+        if ($shouldOverwrite) {
+            Process::assertRan(static fn (PendingProcess $process): bool => $process->command === ['npm', 'install', 'tailwindcss@latest', '@tailwindcss/vite', '--save-dev']);
+        } else {
+            Process::assertNothingRan();
+        }
+    } finally {
+        app()['env'] = $environment;
+
+        if ($originalContents === null) {
+            File::delete($path);
+        } else {
+            File::put($path, $originalContents);
+        }
+    }
+})->with([false, true])->group('serial');
 
 function getFixturePath(string $type, string $name): string
 {

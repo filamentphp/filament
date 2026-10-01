@@ -5,9 +5,6 @@ export default function selectTableColumn({
     canOptionLabelsWrap,
     canSelectPlaceholder,
     clearButtonLabel,
-    getOptionLabelUsing,
-    getOptionsUsing,
-    getSearchResultsUsing,
     hasDynamicOptions,
     hasDynamicSearchResults,
     hasInitialNoOptionsMessage,
@@ -51,9 +48,25 @@ export default function selectTableColumn({
                     canSelectPlaceholder,
                     clearButtonLabel,
                     element: this.$refs.select,
-                    getOptionLabelUsing,
-                    getOptionsUsing,
-                    getSearchResultsUsing,
+                    getOptionLabelUsing: () =>
+                        this.$wire.callTableColumnMethod(
+                            name,
+                            recordKey,
+                            'getOptionLabel',
+                        ),
+                    getOptionsUsing: () =>
+                        this.$wire.callTableColumnMethod(
+                            name,
+                            recordKey,
+                            'getOptionsForJs',
+                        ),
+                    getSearchResultsUsing: (search) =>
+                        this.$wire.callTableColumnMethod(
+                            name,
+                            recordKey,
+                            'getOptionsSearchResultsForJs',
+                            { search },
+                        ),
                     hasDynamicOptions,
                     hasDynamicSearchResults,
                     hasInitialNoOptionsMessage,

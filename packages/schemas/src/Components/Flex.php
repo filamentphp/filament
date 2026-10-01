@@ -46,7 +46,6 @@ class Flex extends Component implements HasEmbeddedView
 
     public function toEmbeddedHtml(): string
     {
-        $statePath = $this->getStatePath();
         $fromBreakpoint = $this->getFromBreakpoint();
         $verticalAlignment = $this->getVerticalAlignment();
         $alignment = $this->getAlignment();
@@ -91,11 +90,8 @@ class Flex extends Component implements HasEmbeddedView
                     };
                     ?>
                     <div
-                        x-data="filamentSchemaComponent({
-                                    path: <?= Js::from($schemaComponentStatePath) ?>,
-                                    containerPath: <?= Js::from($statePath) ?>,
-                                    $wire,
-                                })"
+                        wire:key="<?= e($schemaComponent->getLivewireKey()) ?>"
+                        x-data="filamentSchemaComponent(<?= Js::from($schemaComponent->getAlpineScopeConfiguration()) ?>)"
                         <?php if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs()) { ?>
                             x-init="<?= implode(';', array_map(
                                 fn (string $js): string => '$wire.watch(' . Js::from($schemaComponentStatePath) . ', ($state, $old) => isStateChanged($state, $old) && eval(' . Js::from($js) . '))',

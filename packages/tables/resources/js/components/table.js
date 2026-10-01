@@ -1,476 +1,497 @@
 import { autoUpdate, computePosition, offset, shift } from '@floating-ui/dom'
 
-export default ({
+export default function table({
     areGroupsCollapsedByDefault,
     canTrackDeselectedRecords,
     currentSelectionLivewireProperty,
     maxSelectableRecords,
     selectsCurrentPageOnly,
-    $wire,
-}) => ({
-    areFiltersOpen: false,
+}) {
+    const $wire = this.$wire
 
-    checkboxClickController: null,
+    return {
+        areFiltersOpen: false,
 
-    groupVisibility: [],
+        checkboxClickController: null,
 
-    isLoading: false,
+        groupVisibility: [],
 
-    selectedRecords: new Set(),
+        isLoading: false,
 
-    deselectedRecords: new Set(),
+        selectedRecords: new Set(),
 
-    isTrackingDeselectedRecords: false,
+        deselectedRecords: new Set(),
 
-    shouldCheckUniqueSelection: true,
+        isTrackingDeselectedRecords: false,
 
-    lastCheckedRecord: null,
+        shouldCheckUniqueSelection: true,
 
-    livewireId: null,
+        lastCheckedRecord: null,
 
-    entangledSelectedRecords: currentSelectionLivewireProperty
-        ? $wire.$entangle(currentSelectionLivewireProperty)
-        : null,
+        livewireId: null,
 
-    cleanUpFiltersDropdown: null,
+        entangledSelectedRecords: currentSelectionLivewireProperty
+            ? $wire.$entangle(currentSelectionLivewireProperty)
+            : null,
 
-    livewireEventListenersController: null,
+        cleanUpFiltersDropdown: null,
 
-    unsubscribeLivewireHook: null,
+        livewireEventListenersController: null,
 
-    init() {
-        this.livewireId =
-            this.$root.closest('[wire\\:id]')?.attributes['wire:id'].value
+        unsubscribeLivewireHook: null,
 
-        this.livewireEventListenersController = new AbortController()
+        init() {
+            this.livewireId =
+                this.$root.closest('[wire\\:id]')?.attributes['wire:id'].value
 
-        const { signal } = this.livewireEventListenersController
+            this.livewireEventListenersController = new AbortController()
 
-        $wire.$el.addEventListener(
-            'deselectAllTableRecords',
-            () => this.deselectAllRecords(),
-            { signal },
-        )
-        $wire.$el.addEventListener(
-            'scrollToTopOfTable',
-            () =>
-                this.$root.scrollIntoView({
-                    block: 'start',
-                    inline: 'nearest',
-                }),
-            { signal },
-        )
+            const { signal } = this.livewireEventListenersController
 
-        if (currentSelectionLivewireProperty) {
-            if (maxSelectableRecords !== 1) {
-                this.selectedRecords = new Set(this.entangledSelectedRecords)
+            $wire.$el.addEventListener(
+                'deselectAllTableRecords',
+                () => this.deselectAllRecords(),
+                { signal },
+            )
+            $wire.$el.addEventListener(
+                'scrollToTopOfTable',
+                () =>
+                    this.$root.scrollIntoView({
+                        block: 'start',
+                        inline: 'nearest',
+                    }),
+                { signal },
+            )
+
+            if (currentSelectionLivewireProperty) {
+                if (maxSelectableRecords !== 1) {
+                    this.selectedRecords = new Set(
+                        this.entangledSelectedRecords,
+                    )
+                } else {
+                    this.selectedRecords = new Set(
+                        this.entangledSelectedRecords
+                            ? [this.entangledSelectedRecords]
+                            : [],
+                    )
+                }
+            }
+
+            this.$nextTick(() => this.watchForCheckboxClicks())
+
+            this.unsubscribeLivewireHook = Livewire.hook(
+                'element.init',
+                ({ component }) => {
+                    if (component.id === this.livewireId) {
+                        this.watchForCheckboxClicks()
+                    }
+                },
+            )
+        },
+
+        mountAction(...args) {
+            $wire.set(
+                'isTrackingDeselectedTableRecords',
+                this.isTrackingDeselectedRecords,
+                false,
+            )
+            $wire.set('selectedTableRecords', [...this.selectedRecords], false)
+            $wire.set(
+                'deselectedTableRecords',
+                [...this.deselectedRecords],
+                false,
+            )
+
+            $wire.mountAction(...args)
+        },
+
+        toggleSelectRecordsOnPage() {
+            const keys = this.getRecordsOnPage()
+
+            if (this.areRecordsSelected(keys)) {
+                this.deselectRecords(keys)
+
+                return
+            }
+
+            this.selectRecords(keys)
+        },
+
+        toggleSelectRecords(keys) {
+            if (this.areRecordsSelected(keys)) {
+                this.deselectRecords(keys)
             } else {
-                this.selectedRecords = new Set(
-                    this.entangledSelectedRecords
-                        ? [this.entangledSelectedRecords]
-                        : [],
+                this.selectRecords(keys)
+            }
+        },
+
+        getSelectedRecordsCount() {
+            if (this.isTrackingDeselectedRecords) {
+                return (
+                    (this.$refs.allSelectableRecordsCount?.value ??
+                        this.deselectedRecords.size) -
+                    this.deselectedRecords.size
                 )
             }
-        }
 
-        this.$nextTick(() => this.watchForCheckboxClicks())
+            return this.selectedRecords.size
+        },
 
-        this.unsubscribeLivewireHook = Livewire.hook(
-            'element.init',
-            ({ component }) => {
-                if (component.id === this.livewireId) {
-                    this.watchForCheckboxClicks()
+        getRecordsOnPage() {
+            const keys = []
+
+            for (let checkbox of this.$root?.getElementsByClassName(
+                'fi-ta-record-checkbox',
+            ) ?? []) {
+                keys.push(checkbox.value)
+            }
+
+            return keys
+        },
+
+        selectRecords(keys) {
+            if (maxSelectableRecords === 1) {
+                this.deselectAllRecords()
+
+                keys = keys.slice(0, 1)
+            }
+
+            for (let key of keys) {
+                if (this.isRecordSelected(key)) {
+                    continue
                 }
-            },
-        )
-    },
 
-    mountAction(...args) {
-        $wire.set(
-            'isTrackingDeselectedTableRecords',
-            this.isTrackingDeselectedRecords,
-            false,
-        )
-        $wire.set('selectedTableRecords', [...this.selectedRecords], false)
-        $wire.set('deselectedTableRecords', [...this.deselectedRecords], false)
+                if (this.isTrackingDeselectedRecords) {
+                    this.deselectedRecords.delete(key)
 
-        $wire.mountAction(...args)
-    },
+                    continue
+                }
 
-    toggleSelectRecordsOnPage() {
-        const keys = this.getRecordsOnPage()
-
-        if (this.areRecordsSelected(keys)) {
-            this.deselectRecords(keys)
-
-            return
-        }
-
-        this.selectRecords(keys)
-    },
-
-    toggleSelectRecords(keys) {
-        if (this.areRecordsSelected(keys)) {
-            this.deselectRecords(keys)
-        } else {
-            this.selectRecords(keys)
-        }
-    },
-
-    getSelectedRecordsCount() {
-        if (this.isTrackingDeselectedRecords) {
-            return (
-                (this.$refs.allSelectableRecordsCount?.value ??
-                    this.deselectedRecords.size) - this.deselectedRecords.size
-            )
-        }
-
-        return this.selectedRecords.size
-    },
-
-    getRecordsOnPage() {
-        const keys = []
-
-        for (let checkbox of this.$root?.getElementsByClassName(
-            'fi-ta-record-checkbox',
-        ) ?? []) {
-            keys.push(checkbox.value)
-        }
-
-        return keys
-    },
-
-    selectRecords(keys) {
-        if (maxSelectableRecords === 1) {
-            this.deselectAllRecords()
-
-            keys = keys.slice(0, 1)
-        }
-
-        for (let key of keys) {
-            if (this.isRecordSelected(key)) {
-                continue
+                this.selectedRecords.add(key)
             }
-
-            if (this.isTrackingDeselectedRecords) {
-                this.deselectedRecords.delete(key)
-
-                continue
-            }
-
-            this.selectedRecords.add(key)
-        }
-
-        this.updatedSelectedRecords()
-    },
-
-    deselectRecords(keys) {
-        for (let key of keys) {
-            if (this.isTrackingDeselectedRecords) {
-                this.deselectedRecords.add(key)
-
-                continue
-            }
-
-            this.selectedRecords.delete(key)
-        }
-
-        this.updatedSelectedRecords()
-    },
-
-    updatedSelectedRecords() {
-        if (maxSelectableRecords !== 1) {
-            this.entangledSelectedRecords = [...this.selectedRecords]
-
-            return
-        }
-
-        this.entangledSelectedRecords = [...this.selectedRecords][0] ?? null
-    },
-
-    toggleSelectedRecord(key) {
-        if (this.isRecordSelected(key)) {
-            this.deselectRecords([key])
-
-            return
-        }
-
-        this.selectRecords([key])
-    },
-
-    async selectAllRecords() {
-        if (!canTrackDeselectedRecords || selectsCurrentPageOnly) {
-            this.isLoading = true
-
-            this.selectedRecords = new Set(
-                await $wire.getAllSelectableTableRecordKeys(),
-            )
 
             this.updatedSelectedRecords()
+        },
 
-            this.isLoading = false
+        deselectRecords(keys) {
+            for (let key of keys) {
+                if (this.isTrackingDeselectedRecords) {
+                    this.deselectedRecords.add(key)
 
-            return
-        }
+                    continue
+                }
 
-        this.isTrackingDeselectedRecords = true
-        this.selectedRecords = new Set()
-        this.deselectedRecords = new Set()
+                this.selectedRecords.delete(key)
+            }
 
-        this.updatedSelectedRecords()
-    },
+            this.updatedSelectedRecords()
+        },
 
-    canSelectAllRecords() {
-        if (selectsCurrentPageOnly) {
-            const recordsOnPage = this.getRecordsOnPage()
+        updatedSelectedRecords() {
+            if (maxSelectableRecords !== 1) {
+                this.entangledSelectedRecords = [...this.selectedRecords]
+
+                return
+            }
+
+            this.entangledSelectedRecords = [...this.selectedRecords][0] ?? null
+        },
+
+        toggleSelectedRecord(key) {
+            if (this.isRecordSelected(key)) {
+                this.deselectRecords([key])
+
+                return
+            }
+
+            this.selectRecords([key])
+        },
+
+        async selectAllRecords() {
+            if (!canTrackDeselectedRecords || selectsCurrentPageOnly) {
+                this.isLoading = true
+
+                this.selectedRecords = new Set(
+                    await $wire.getAllSelectableTableRecordKeys(),
+                )
+
+                this.updatedSelectedRecords()
+
+                this.isLoading = false
+
+                return
+            }
+
+            this.isTrackingDeselectedRecords = true
+            this.selectedRecords = new Set()
+            this.deselectedRecords = new Set()
+
+            this.updatedSelectedRecords()
+        },
+
+        canSelectAllRecords() {
+            if (selectsCurrentPageOnly) {
+                const recordsOnPage = this.getRecordsOnPage()
+
+                return (
+                    !this.areRecordsSelected(recordsOnPage) &&
+                    this.areRecordsToggleable(recordsOnPage)
+                )
+            }
+
+            const allSelectableRecordsCount = parseInt(
+                this.$refs.allSelectableRecordsCount?.value,
+            )
+
+            if (!allSelectableRecordsCount) {
+                return false
+            }
+
+            const selectedRecordsCount = this.getSelectedRecordsCount()
+
+            if (allSelectableRecordsCount === selectedRecordsCount) {
+                return false
+            }
 
             return (
-                !this.areRecordsSelected(recordsOnPage) &&
-                this.areRecordsToggleable(recordsOnPage)
+                maxSelectableRecords === null ||
+                allSelectableRecordsCount <= maxSelectableRecords
             )
-        }
+        },
 
-        const allSelectableRecordsCount = parseInt(
-            this.$refs.allSelectableRecordsCount?.value,
-        )
+        deselectAllRecords() {
+            this.isTrackingDeselectedRecords = false
+            this.selectedRecords = new Set()
+            this.deselectedRecords = new Set()
 
-        if (!allSelectableRecordsCount) {
-            return false
-        }
+            this.updatedSelectedRecords()
+        },
 
-        const selectedRecordsCount = this.getSelectedRecordsCount()
-
-        if (allSelectableRecordsCount === selectedRecordsCount) {
-            return false
-        }
-
-        return (
-            maxSelectableRecords === null ||
-            allSelectableRecordsCount <= maxSelectableRecords
-        )
-    },
-
-    deselectAllRecords() {
-        this.isTrackingDeselectedRecords = false
-        this.selectedRecords = new Set()
-        this.deselectedRecords = new Set()
-
-        this.updatedSelectedRecords()
-    },
-
-    isRecordSelected(key) {
-        if (this.isTrackingDeselectedRecords) {
-            return !this.deselectedRecords.has(key)
-        }
-
-        return this.selectedRecords.has(key)
-    },
-
-    areRecordsSelected(keys) {
-        return keys.every((key) => this.isRecordSelected(key))
-    },
-
-    areRecordsPartiallySelected(keys) {
-        if (keys.length === 0) {
-            return false
-        }
-
-        const selectedCount = keys.filter((key) =>
-            this.isRecordSelected(key),
-        ).length
-
-        return selectedCount > 0 && selectedCount < keys.length
-    },
-
-    areRecordsToggleable(keys) {
-        if (maxSelectableRecords === null) {
-            return true
-        }
-
-        if (maxSelectableRecords === 1) {
-            return true
-        }
-
-        const selectedRecords = keys.filter((key) => this.isRecordSelected(key))
-
-        if (selectedRecords.length === keys.length) {
-            return true
-        }
-
-        return (
-            this.getSelectedRecordsCount() +
-                (keys.length - selectedRecords.length) <=
-            maxSelectableRecords
-        )
-    },
-
-    toggleCollapseGroup(group) {
-        if (this.isGroupCollapsed(group)) {
-            if (areGroupsCollapsedByDefault) {
-                this.groupVisibility.push(group)
-            } else {
-                this.groupVisibility.splice(
-                    this.groupVisibility.indexOf(group),
-                    1,
-                )
+        isRecordSelected(key) {
+            if (this.isTrackingDeselectedRecords) {
+                return !this.deselectedRecords.has(key)
             }
-        } else {
-            if (areGroupsCollapsedByDefault) {
-                this.groupVisibility.splice(
-                    this.groupVisibility.indexOf(group),
-                    1,
-                )
-            } else {
-                this.groupVisibility.push(group)
+
+            return this.selectedRecords.has(key)
+        },
+
+        areRecordsSelected(keys) {
+            return keys.every((key) => this.isRecordSelected(key))
+        },
+
+        areRecordsPartiallySelected(keys) {
+            if (keys.length === 0) {
+                return false
             }
-        }
-    },
 
-    isGroupCollapsed(group) {
-        if (areGroupsCollapsedByDefault) {
-            return !this.groupVisibility.includes(group)
-        }
+            const selectedCount = keys.filter((key) =>
+                this.isRecordSelected(key),
+            ).length
 
-        return this.groupVisibility.includes(group)
-    },
+            return selectedCount > 0 && selectedCount < keys.length
+        },
 
-    resetCollapsedGroups() {
-        this.groupVisibility = []
-    },
+        areRecordsToggleable(keys) {
+            if (maxSelectableRecords === null) {
+                return true
+            }
 
-    watchForCheckboxClicks() {
-        if (this.checkboxClickController) {
-            this.checkboxClickController.abort()
-        }
+            if (maxSelectableRecords === 1) {
+                return true
+            }
 
-        this.checkboxClickController = new AbortController()
-
-        const { signal } = this.checkboxClickController
-
-        this.$root?.addEventListener(
-            'click',
-            (event) =>
-                event.target?.matches('.fi-ta-record-checkbox') &&
-                this.handleCheckboxClick(event, event.target),
-            { signal },
-        )
-    },
-
-    handleCheckboxClick(event, checkbox) {
-        if (!this.lastChecked) {
-            this.lastChecked = checkbox
-
-            return
-        }
-
-        if (event.shiftKey) {
-            let checkboxes = Array.from(
-                this.$root?.getElementsByClassName('fi-ta-record-checkbox') ??
-                    [],
+            const selectedRecords = keys.filter((key) =>
+                this.isRecordSelected(key),
             )
 
-            if (!checkboxes.includes(this.lastChecked)) {
+            if (selectedRecords.length === keys.length) {
+                return true
+            }
+
+            return (
+                this.getSelectedRecordsCount() +
+                    (keys.length - selectedRecords.length) <=
+                maxSelectableRecords
+            )
+        },
+
+        toggleCollapseGroup(group) {
+            if (this.isGroupCollapsed(group)) {
+                if (areGroupsCollapsedByDefault) {
+                    this.groupVisibility.push(group)
+                } else {
+                    this.groupVisibility.splice(
+                        this.groupVisibility.indexOf(group),
+                        1,
+                    )
+                }
+            } else {
+                if (areGroupsCollapsedByDefault) {
+                    this.groupVisibility.splice(
+                        this.groupVisibility.indexOf(group),
+                        1,
+                    )
+                } else {
+                    this.groupVisibility.push(group)
+                }
+            }
+        },
+
+        isGroupCollapsed(group) {
+            if (areGroupsCollapsedByDefault) {
+                return !this.groupVisibility.includes(group)
+            }
+
+            return this.groupVisibility.includes(group)
+        },
+
+        resetCollapsedGroups() {
+            this.groupVisibility = []
+        },
+
+        watchForCheckboxClicks() {
+            if (this.checkboxClickController) {
+                this.checkboxClickController.abort()
+            }
+
+            this.checkboxClickController = new AbortController()
+
+            const { signal } = this.checkboxClickController
+
+            this.$root?.addEventListener(
+                'click',
+                (event) =>
+                    event.target?.matches('.fi-ta-record-checkbox') &&
+                    this.handleCheckboxClick(event, event.target),
+                { signal },
+            )
+        },
+
+        handleCheckboxClick(event, checkbox) {
+            if (!this.lastChecked) {
                 this.lastChecked = checkbox
 
                 return
             }
 
-            let start = checkboxes.indexOf(this.lastChecked)
-            let end = checkboxes.indexOf(checkbox)
+            if (event.shiftKey) {
+                let checkboxes = Array.from(
+                    this.$root?.getElementsByClassName(
+                        'fi-ta-record-checkbox',
+                    ) ?? [],
+                )
 
-            let range = [start, end].sort((a, b) => a - b)
-            let values = []
-
-            for (let i = range[0]; i <= range[1]; i++) {
-                values.push(checkboxes[i].value)
-            }
-
-            if (checkbox.checked) {
-                if (!this.areRecordsToggleable(values)) {
-                    checkbox.checked = false
-                    this.deselectRecords([checkbox.value])
+                if (!checkboxes.includes(this.lastChecked)) {
+                    this.lastChecked = checkbox
 
                     return
                 }
 
-                this.selectRecords(values)
-            } else {
-                this.deselectRecords(values)
-            }
-        }
+                let start = checkboxes.indexOf(this.lastChecked)
+                let end = checkboxes.indexOf(checkbox)
 
-        this.lastChecked = checkbox
-    },
+                let range = [start, end].sort((a, b) => a - b)
+                let values = []
 
-    toggleFiltersDropdown() {
-        this.areFiltersOpen = !this.areFiltersOpen
-
-        if (this.areFiltersOpen) {
-            const trigger = this.$refs.filtersTriggerActionContainer
-            const filters = this.$refs.filtersContentContainer
-            let isPositioningActive = true
-
-            const cleanUpAutoUpdate = autoUpdate(trigger, filters, async () => {
-                const { x, y } = await computePosition(trigger, filters, {
-                    placement: 'bottom-end',
-                    middleware: [offset(8), shift({ padding: 8 })],
-                })
-
-                if (!isPositioningActive) {
-                    return
+                for (let i = range[0]; i <= range[1]; i++) {
+                    values.push(checkboxes[i].value)
                 }
 
-                Object.assign(filters.style, {
-                    left: `${x}px`,
-                    top: `${y}px`,
-                })
-            })
+                if (checkbox.checked) {
+                    if (!this.areRecordsToggleable(values)) {
+                        checkbox.checked = false
+                        this.deselectRecords([checkbox.value])
 
-            const onClickAway = (event) => {
-                if (
-                    (filters && filters.contains(event.target)) ||
-                    (trigger && trigger.contains(event.target))
-                ) {
-                    return
-                }
+                        return
+                    }
 
-                this.areFiltersOpen = false
-
-                if (this.cleanUpFiltersDropdown) {
-                    this.cleanUpFiltersDropdown()
-                    this.cleanUpFiltersDropdown = null
+                    this.selectRecords(values)
+                } else {
+                    this.deselectRecords(values)
                 }
             }
 
-            document.addEventListener('mousedown', onClickAway)
-            document.addEventListener('touchstart', onClickAway, {
-                passive: true,
-            })
-            const onKeydown = (event) => {
-                if (event.key === 'Escape') {
-                    onClickAway(event)
-                }
-            }
-            document.addEventListener('keydown', onKeydown)
+            this.lastChecked = checkbox
+        },
 
-            this.cleanUpFiltersDropdown = () => {
-                isPositioningActive = false
-                cleanUpAutoUpdate()
-                document.removeEventListener('mousedown', onClickAway)
-                document.removeEventListener('touchstart', onClickAway, {
+        toggleFiltersDropdown() {
+            this.areFiltersOpen = !this.areFiltersOpen
+
+            if (this.areFiltersOpen) {
+                const trigger = this.$refs.filtersTriggerActionContainer
+                const filters = this.$refs.filtersContentContainer
+                let isPositioningActive = true
+
+                const cleanUpAutoUpdate = autoUpdate(
+                    trigger,
+                    filters,
+                    async () => {
+                        const { x, y } = await computePosition(
+                            trigger,
+                            filters,
+                            {
+                                placement: 'bottom-end',
+                                middleware: [offset(8), shift({ padding: 8 })],
+                            },
+                        )
+
+                        if (!isPositioningActive) {
+                            return
+                        }
+
+                        Object.assign(filters.style, {
+                            left: `${x}px`,
+                            top: `${y}px`,
+                        })
+                    },
+                )
+
+                const onClickAway = (event) => {
+                    if (
+                        (filters && filters.contains(event.target)) ||
+                        (trigger && trigger.contains(event.target))
+                    ) {
+                        return
+                    }
+
+                    this.areFiltersOpen = false
+
+                    if (this.cleanUpFiltersDropdown) {
+                        this.cleanUpFiltersDropdown()
+                        this.cleanUpFiltersDropdown = null
+                    }
+                }
+
+                document.addEventListener('mousedown', onClickAway)
+                document.addEventListener('touchstart', onClickAway, {
                     passive: true,
                 })
-                document.removeEventListener('keydown', onKeydown)
-            }
-        } else if (this.cleanUpFiltersDropdown) {
-            this.cleanUpFiltersDropdown()
-            this.cleanUpFiltersDropdown = null
-        }
-    },
+                const onKeydown = (event) => {
+                    if (event.key === 'Escape') {
+                        onClickAway(event)
+                    }
+                }
+                document.addEventListener('keydown', onKeydown)
 
-    destroy() {
-        this.cleanUpFiltersDropdown?.()
-        this.livewireEventListenersController?.abort()
-        this.unsubscribeLivewireHook?.()
-    },
-})
+                this.cleanUpFiltersDropdown = () => {
+                    isPositioningActive = false
+                    cleanUpAutoUpdate()
+                    document.removeEventListener('mousedown', onClickAway)
+                    document.removeEventListener('touchstart', onClickAway, {
+                        passive: true,
+                    })
+                    document.removeEventListener('keydown', onKeydown)
+                }
+            } else if (this.cleanUpFiltersDropdown) {
+                this.cleanUpFiltersDropdown()
+                this.cleanUpFiltersDropdown = null
+            }
+        },
+
+        destroy() {
+            this.cleanUpFiltersDropdown?.()
+            this.livewireEventListenersController?.abort()
+            this.unsubscribeLivewireHook?.()
+        },
+    }
+}
