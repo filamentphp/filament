@@ -87,10 +87,7 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
         }
 
         $state = explode($separator, $state ?? '');
-
-        if (count($state) === 1 && blank($state[0])) {
-            $state = [];
-        }
+        $state = array_values(array_filter($state, static fn (string $tag): bool => filled($tag)));
 
         $this->state($state);
     }
