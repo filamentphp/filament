@@ -9,7 +9,6 @@ use Filament\Support\Commands\Exceptions\FailureCommandOutput;
 use Filament\Tables\Commands\FileGenerators\LivewireTableComponentClassGenerator;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -210,13 +209,7 @@ class MakeLivewireTableCommand extends Command
             $this->view,
             $this->viewPath,
         ] = $this->askForViewLocation(
-            str($this->fqn)
-                ->afterLast('\\Livewire\\')
-                ->prepend('Livewire\\')
-                ->replace('\\', '/')
-                ->explode('/')
-                ->map(Str::kebab(...))
-                ->implode('.'),
+            $this->getLivewireComponentViewName($namespace, $this->fqnEnd),
             defaultNamespace: $viewNamespace,
         );
     }
