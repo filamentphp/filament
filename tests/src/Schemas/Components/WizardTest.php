@@ -1,11 +1,15 @@
 <?php
 
 use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Exceptions\Halt;
+use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
@@ -19,6 +23,277 @@ uses(TestCase::class);
 beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
+
+it('restores query-string steps using absolute keys rather than custom IDs', function (mixed $query, int $expected): void {
+    request()->query->replace(['step' => $query, 'delivery_step' => 'form.delivery.wizard.details']);
+
+    Schema::make(Livewire::make())->key('form')->components([
+        $profile = Wizard::make([
+            Step::make('Details')->key('details')->id('profile-details'),
+            Step::make('Contact')->key('contact')->id('profile-contact'),
+        ])->key('wizard')->persistStepInQueryString()->startOnStep(2),
+        Group::make([
+            $delivery = Wizard::make([
+                Step::make('Hidden')->hidden(),
+                Step::make('Details')->key('details')->id('delivery-details'),
+                Step::make('Contact')->key('contact')->id('delivery-contact'),
+            ])->key('wizard')->persistStepInQueryString('delivery_step')->startOnStep(2),
+        ])->key('delivery'),
+    ])->fill();
+
+    expect($profile->getStartStep())->toBe($expected)
+        ->and($delivery->getStartStep())->toBe(1)
+        ->and($profile->toHtml())->toContain('profile-details')
+        ->and($delivery->toHtml())->toContain('delivery-details');
+})->with([
+    'absolute key' => ['form.wizard.details', 1],
+    'custom ID is not a persisted key' => ['profile-details', 2],
+    'relative key is not a persisted step key' => ['details', 2],
+    'another container' => ['form.delivery.wizard.details', 2],
+    'stale key' => ['removed', 2],
+    'missing value' => [null, 2],
+    'array value' => [['form.wizard.details'], 2],
+]);
+
+it('persists independent wizards across reload and browser history', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $browser = visit('/wizard-browser-test')
+        ->assertVisible('#profile-details')
+        ->assertVisible('#delivery-details')
+        ->click('[data-testid="wizard-next-action"]')
+        ->assertVisible('#profile-contact')
+        ->assertVisible('#delivery-details')
+        ->click('[data-testid="delivery-next-action"]')
+        ->assertVisible('#delivery-contact');
+
+    expect($browser->script('new URL(location.href).searchParams.get("step")'))->toBe('form.wizard.contact');
+    expect($browser->script('new URL(location.href).searchParams.get("delivery_step")'))->toBe('form.delivery.wizard.contact');
+
+    $browser->script("Livewire.navigate('/tabs-browser-test')");
+    $browser->assertVisible('#profile-tabs')
+        ->back()->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
+        ->forward()->assertVisible('#profile-tabs')
+        ->back()->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
+        ->click('[data-testid="wizard-next-action"]')
+        ->assertVisible('#profile-review')->assertVisible('#delivery-contact');
+
+    expect($browser->script('new URL(location.href).searchParams.get("step")'))->toBe('form.wizard.review');
+
+    $browser->refresh()->assertVisible('#profile-review')->assertVisible('#delivery-contact')
+        ->assertNoAccessibilityIssues()
+        ->navigate('/wizard-browser-test?step=form.wizard.details&delivery_step=form.delivery.wizard.details')
+        ->assertVisible('#profile-details')->assertVisible('#delivery-details')
+        ->back()->assertVisible('#profile-review')->assertVisible('#delivery-contact')
+        ->forward()->assertVisible('#profile-details')->assertVisible('#delivery-details')
+        ->navigate('/wizard-browser-test?step=removed&delivery_step=delivery-contact')
+        ->assertVisible('#profile-details')->assertVisible('#delivery-details')
+        ->assertNoSmoke();
+
+    visit('/wizard-browser-test?step=form.wizard.contact&delivery_step=form.delivery.wizard.contact')->inDarkMode()
+        ->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
+        ->assertNoAccessibilityIssues();
+});
+
+it('does not turn an unknown browser step into the first step', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $browser = visit('/wizard-browser-test')->assertVisible('#profile-details');
+
+    expect($browser->script(<<<'JS'
+        (() => {
+            const wizard = Alpine.$data(document.querySelector('#profile-wizard'))
+            wizard.goToStep('removed')
+            return wizard.step
+        })()
+        JS))->toBe('form.wizard.details');
+
+    expect($browser->script(<<<'JS'
+        (async () => {
+            const wizard = Alpine.$data(document.querySelector('#profile-wizard'))
+            wizard.step = 'removed'
+            await wizard.requestNextStep()
+            wizard.goToNextStep()
+            return [wizard.getStepIndex('removed'), wizard.step]
+        })()
+        JS))->toBe([-1, 'removed']);
+
+    $browser->assertMissing('#profile-contact')->assertNoSmoke();
+});
+
+it('advances to the resolved visible step when a validation hook hides its own step', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $browser = visit('/wizard-browser-test?hide_contact_after_validation=1')
+        ->assertVisible('#profile-details')
+        ->click('[data-testid="wizard-next-action"]')
+        ->assertVisible('#profile-contact')
+        ->click('[data-testid="wizard-next-action"]')
+        ->assertVisible('#profile-review')
+        ->assertMissing('#profile-contact')
+        ->hover('#profile-review')
+        ->wait(0.3)
+        ->assertNoAccessibilityIssues()
+        ->assertNoSmoke();
+
+    expect($browser->script('new URL(location.href).searchParams.get("step")'))->toBe('form.wizard.review');
+
+    visit('/wizard-browser-test?step=form.wizard.review')->inDarkMode()
+        ->assertVisible('#profile-review')->assertNoAccessibilityIssues();
+});
+
+it('rejects invalid `nextStep()` indexes before hooks or state changes', function (array $arguments, bool $skippable): void {
+    $component = livewire(WizardTransitions::class, ['skippable' => $skippable])
+        ->call('callSchemaComponentMethod', 'form.wizard', 'nextStep', $arguments)
+        ->assertNotDispatched('next-wizard-step')
+        ->assertSet('hooks', [])
+        ->assertSet('data.name', 'Ada')
+        ->assertHasNoErrors();
+
+    expect($component->instance()->form->getComponent('wizard')->getCurrentStepIndex())->toBe(0);
+})->with([
+    'missing' => [[]],
+    'null' => [['currentStepIndex' => null]],
+    'negative' => [['currentStepIndex' => -1]],
+    'numeric string' => [['currentStepIndex' => '0']],
+    'malformed string' => [['currentStepIndex' => 'invalid']],
+    'boolean' => [['currentStepIndex' => false]],
+    'float' => [['currentStepIndex' => 0.5]],
+    'array' => [['currentStepIndex' => []]],
+    'last' => [['currentStepIndex' => 2]],
+    'last plus one' => [['currentStepIndex' => 3]],
+    'overflow' => [['currentStepIndex' => PHP_INT_MAX]],
+])->with([false, true]);
+
+it('rejects stale `nextStep()` indexes after visibility changes', function (int $index, string $key): void {
+    livewire(WizardTransitions::class)
+        ->set('hideFirst', true)
+        ->call('callSchemaComponentMethod', 'form.wizard', 'nextStep', [
+            'currentStepIndex' => $index,
+            'currentStepKey' => $key,
+        ])
+        ->assertSet('hooks', [])
+        ->assertNotDispatched('next-wizard-step')
+        ->assertHasNoErrors();
+})->with([
+    'in-range index now identifies another step' => [0, 'form.wizard.details'],
+    'old middle index is now last' => [1, 'form.wizard.contact'],
+    'old last index is out of range' => [2, 'form.wizard.review'],
+]);
+
+it('validates only the current visible step before advancing', function (bool $hideFirst, string $expectedStep): void {
+    $component = livewire(WizardTransitions::class, ['hideFirst' => $hideFirst])
+        ->call('callSchemaComponentMethod', 'form.wizard', 'nextStep', [
+            'currentStepIndex' => 0,
+            'currentStepKey' => "form.wizard.{$expectedStep}",
+        ])
+        ->assertSet('hooks', ["{$expectedStep}:before", "{$expectedStep}:after"])
+        ->assertDispatched('next-wizard-step', key: 'form.wizard')
+        ->assertHasNoErrors();
+
+    expect($component->instance()->form->getComponent('wizard')->getCurrentStepIndex())->toBe(1);
+})->with([[false, 'details'], [true, 'contact']]);
+
+it('does not advance on validation failure or `Halt`', function (string $failure, array $expectedHooks): void {
+    $component = livewire(WizardTransitions::class, ['failure' => $failure])
+        ->call('callSchemaComponentMethod', 'form.wizard', 'nextStep', ['currentStepIndex' => 0])
+        ->assertSet('hooks', $expectedHooks)
+        ->assertNotDispatched('next-wizard-step');
+
+    if ($failure === 'validation') {
+        $component->assertHasErrors(['data.name' => 'required']);
+    } else {
+        $component->assertHasNoErrors();
+    }
+
+    expect($component->instance()->form->getComponent('wizard')->getCurrentStepIndex())->toBe(0);
+})->with([
+    ['validation', ['details:before']],
+    ['before', ['details:before']],
+    ['after', ['details:before', 'details:after']],
+]);
+
+it('does not call a disabled or unauthorized next action', function (string $restriction): void {
+    livewire(WizardTransitions::class, ['restriction' => $restriction])
+        ->call('callSchemaComponentMethod', 'form.wizard', 'nextStep', ['currentStepIndex' => 0])
+        ->assertSet('hooks', [])
+        ->assertNotDispatched('next-wizard-step');
+})->with(['disabled', 'unauthorized']);
+
+it('preserves valid index-only calls and skips validation only for `skippable()` wizards', function (): void {
+    $component = livewire(WizardTransitions::class, ['skippable' => true, 'failure' => 'validation'])
+        ->call('callSchemaComponentMethod', 'form.wizard', 'nextStep', ['currentStepIndex' => 0])
+        ->assertSet('hooks', [])
+        ->assertDispatched('next-wizard-step', key: 'form.wizard')
+        ->assertHasNoErrors();
+
+    expect($component->instance()->form->getComponent('wizard')->getCurrentStepIndex())->toBe(1);
+});
+
+it('keeps the accepted later step on failure and validates it again on retry', function (string $failure, bool $withKey): void {
+    $arguments = ['currentStepIndex' => 1];
+
+    if ($withKey) {
+        $arguments['currentStepKey'] = 'form.wizard.contact';
+    }
+
+    $component = livewire(WizardTransitions::class, ['failure' => $failure])
+        ->goToNextWizardStep()
+        ->assertWizardCurrentStep(2)
+        ->call('callSchemaComponentMethod', 'form.wizard', 'nextStep', $arguments)
+        ->assertWizardCurrentStep(2)
+        ->assertNotDispatched('next-wizard-step');
+
+    if ($failure === 'contact-validation') {
+        $component->assertHasErrors(['data.contact_notes' => 'required']);
+    } else {
+        $component->assertHasNoErrors();
+    }
+
+    $component->set('failure', '')
+        ->call('callSchemaComponentMethod', 'form.wizard', 'nextStep', $arguments)
+        ->assertWizardCurrentStep(3)
+        ->assertDispatched('next-wizard-step', step: 'form.wizard.review')
+        ->assertHasNoErrors();
+
+    expect(array_slice($component->get('hooks'), -2))->toBe(['contact:before', 'contact:after']);
+})->with(['contact-validation', 'contact-before', 'contact-after'])->with([false, true]);
+
+it('resolves and initializes the visible destination after hooks change the sequence', function (string $mutation, string $destination, int $index, string $field): void {
+    $component = livewire(WizardTransitions::class, ['mutation' => $mutation])
+        ->set('data', ['name' => 'Ada'])
+        ->call('callSchemaComponentMethod', 'form.wizard', 'nextStep', [
+            'currentStepIndex' => 0,
+            'currentStepKey' => 'form.wizard.details',
+        ])
+        ->assertSet('hooks', ['details:before', 'details:after'])
+        ->assertDispatched('next-wizard-step', step: "form.wizard.{$destination}", currentStep: 'form.wizard.details')
+        ->assertHasNoErrors();
+
+    expect($component->instance()->form->getComponent('wizard')->getCurrentStepIndex())->toBe($index)
+        ->and($component->get('data'))->toBe(['name' => 'Ada', $field => null]);
+})->with([
+    ['hide-current', 'contact', 0, 'contact_notes'],
+    ['hide-next', 'review', 1, 'review_notes'],
+    ['replace-next', 'replacement', 1, 'replacement_notes'],
+]);
+
+it('checks `previousStep()` bounds without changing valid backward navigation', function (array $arguments, int $expected): void {
+    $component = livewire(WizardTransitions::class, ['startStep' => 3])
+        ->call('callSchemaComponentMethod', 'form.wizard', 'previousStep', $arguments)
+        ->assertSet('hooks', [])
+        ->assertNotDispatched('next-wizard-step')
+        ->assertHasNoErrors();
+
+    expect($component->instance()->form->getComponent('wizard')->getCurrentStepIndex())->toBe($expected);
+})->with([
+    'missing' => [[], 2],
+    'malformed' => [['currentStepIndex' => 'invalid'], 2],
+    'negative' => [['currentStepIndex' => -1], 2],
+    'first' => [['currentStepIndex' => 0], 2],
+    'last' => [['currentStepIndex' => 2], 1],
+    'past last' => [['currentStepIndex' => 3], 2],
+]);
 
 it('can set `skippable()`', function (): void {
     $wizard = Wizard::make();
@@ -470,6 +745,82 @@ it('only shows the next action loading indicator for its own request', function 
             ->assertNoSmoke();
     });
 });
+
+class WizardTransitions extends Livewire
+{
+    public array $hooks = [];
+
+    public bool $hideFirst = false;
+
+    public bool $skippable = false;
+
+    public string $failure = '';
+
+    public string $restriction = '';
+
+    public int $startStep = 1;
+
+    public string $mutation = '';
+
+    public bool $changed = false;
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema->statePath('data')->components([
+            Wizard::make(fn (): array => [
+                Step::make('Details')->key('details')
+                    ->hidden(fn (): bool => $this->hideFirst || ($this->changed && ($this->mutation === 'hide-current')))
+                    ->beforeValidation(function (): void {
+                        $this->hooks[] = 'details:before';
+
+                        if ($this->failure === 'before') {
+                            throw new Halt;
+                        }
+                    })
+                    ->afterValidation(function (): void {
+                        $this->hooks[] = 'details:after';
+                        $this->changed = true;
+
+                        if ($this->failure === 'after') {
+                            throw new Halt;
+                        }
+                    })
+                    ->schema([
+                        TextInput::make('name')->required()->default(fn (): ?string => $this->failure === 'validation' ? null : 'Ada'),
+                    ]),
+                Step::make('Contact')->key(($this->changed && ($this->mutation === 'replace-next')) ? 'replacement' : 'contact')
+                    ->hidden(fn (): bool => $this->changed && ($this->mutation === 'hide-next'))
+                    ->beforeValidation(function (): void {
+                        $this->hooks[] = 'contact:before';
+
+                        if ($this->failure === 'contact-before') {
+                            throw new Halt;
+                        }
+                    })
+                    ->afterValidation(function (): void {
+                        $this->hooks[] = 'contact:after';
+
+                        if ($this->failure === 'contact-after') {
+                            throw new Halt;
+                        }
+                    })
+                    ->schema([
+                        TextInput::make(($this->changed && ($this->mutation === 'replace-next')) ? 'replacement_notes' : 'contact_notes')
+                            ->required(fn (): bool => $this->failure === 'contact-validation'),
+                    ]),
+                Step::make('Review')->key('review')
+                    ->beforeValidation(function (): void {
+                        $this->hooks[] = 'review:before';
+                    })
+                    ->schema([TextInput::make('review_notes')]),
+            ])->key('wizard')->skippable(fn (): bool => $this->skippable)
+                ->startOnStep(fn (): int => $this->startStep)
+                ->nextAction(fn (Action $action): Action => $action
+                    ->disabled($this->restriction === 'disabled')
+                    ->authorize($this->restriction !== 'unauthorized')),
+        ]);
+    }
+}
 
 class RenderWizard extends Component implements HasSchemas
 {

@@ -72,7 +72,7 @@ class DenyImportViewPolicy
     }
 }
 $createImportForOwner = function (User $owner, string $importer = DownloadFailureTestImporter::class): Import {
-    return Import::create([
+    $import = Import::create([
         'file_name' => 'import.csv',
         'file_path' => 'imports/import.csv',
         'importer' => $importer,
@@ -80,6 +80,13 @@ $createImportForOwner = function (User $owner, string $importer = DownloadFailur
         'successful_rows' => 0,
         'user_id' => $owner->getKey(),
     ]);
+
+    $import->failedRows()->create([
+        'data' => ['name' => 'confidential-import-row'],
+        'validation_error' => 'confidential-validation-error',
+    ]);
+
+    return $import;
 };
 
 $signedImportFailureDownloadUrl = function (Import $import): string {
@@ -93,8 +100,12 @@ it('aborts with `401` when the user is not authenticated', function () use ($cre
 
     $import = $createImportForOwner($owner);
 
+    $this->expectOutputString('');
+
     $this->get($signedImportFailureDownloadUrl($import))
-        ->assertStatus(401);
+        ->assertStatus(401)
+        ->assertNotStreamed()
+        ->assertDontSee('confidential-', escape: false);
 });
 
 it('aborts with `403` when an authenticated non-owner has no `view` policy', function () use ($createImportForOwner, $signedImportFailureDownloadUrl): void {
@@ -103,9 +114,13 @@ it('aborts with `403` when an authenticated non-owner has no `view` policy', fun
 
     $import = $createImportForOwner($owner);
 
+    $this->expectOutputString('');
+
     $this->actingAs($nonOwner)
         ->get($signedImportFailureDownloadUrl($import))
-        ->assertStatus(403);
+        ->assertStatus(403)
+        ->assertNotStreamed()
+        ->assertDontSee('confidential-', escape: false);
 });
 
 it('streams with `200` when the authenticated owner has no `view` policy', function () use ($createImportForOwner, $signedImportFailureDownloadUrl): void {
@@ -113,9 +128,11 @@ it('streams with `200` when the authenticated owner has no `view` policy', funct
 
     $import = $createImportForOwner($owner);
 
-    $this->actingAs($owner)
+    $response = $this->actingAs($owner)
         ->get($signedImportFailureDownloadUrl($import))
         ->assertStatus(200);
+
+    expect($response->streamedContent())->toBe("\xEF\xBB\xBFname,error\nconfidential-import-row,confidential-validation-error\n");
 });
 
 it('streams with `200` when a `view` policy allows a non-owner', function () use ($createImportForOwner, $signedImportFailureDownloadUrl): void {
@@ -126,9 +143,11 @@ it('streams with `200` when a `view` policy allows a non-owner', function () use
 
     $import = $createImportForOwner($owner);
 
-    $this->actingAs($nonOwner)
+    $response = $this->actingAs($nonOwner)
         ->get($signedImportFailureDownloadUrl($import))
         ->assertStatus(200);
+
+    expect($response->streamedContent())->toBe("\xEF\xBB\xBFname,error\nconfidential-import-row,confidential-validation-error\n");
 });
 
 it('aborts with `403` when a `view` policy denies the user', function () use ($createImportForOwner, $signedImportFailureDownloadUrl): void {
@@ -138,9 +157,13 @@ it('aborts with `403` when a `view` policy denies the user', function () use ($c
 
     $import = $createImportForOwner($owner);
 
+    $this->expectOutputString('');
+
     $this->actingAs($owner)
         ->get($signedImportFailureDownloadUrl($import))
-        ->assertStatus(403);
+        ->assertStatus(403)
+        ->assertNotStreamed()
+        ->assertDontSee('confidential-', escape: false);
 });
 
 it('uses the importer\'s `getFailedRowsDownloader()` override', function () use ($createImportForOwner, $signedImportFailureDownloadUrl): void {
