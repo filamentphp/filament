@@ -416,8 +416,14 @@ class ImportColumn extends Component
 
                 if ($this->isMultiple()) {
                     $records = $this->resolveRelatedRecords($state);
+                    $values = array_filter($state, filled(...));
 
-                    if ($records?->count() >= count(array_filter($state, filled(...)))) {
+                    // Custom casters and resolvers may use non-scalar values.
+                    if (count(array_filter($values, is_scalar(...))) === count($values)) {
+                        $values = array_unique($values);
+                    }
+
+                    if ($records?->count() >= count($values)) {
                         return;
                     }
 
