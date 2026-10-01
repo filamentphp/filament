@@ -37,12 +37,15 @@ class Checkbox extends Field implements HasEmbeddedView
                 'autofocus' => $this->isAutofocused(),
                 'disabled' => $this->isDisabled(),
                 'id' => $this->getId(),
-                'required' => $this->isRequired(),
                 'wire:loading.attr' => 'disabled',
                 $this->applyStateBindingModifiers('wire:model') => $statePath,
             ], escape: false)
             ->merge($this->getExtraAttributes(), escape: false)
             ->merge($this->getExtraInputAttributes(), escape: false)
+            ->merge([
+                ...$this->getAccessibilityAttributes(),
+                'required' => $this->isRequired() && (! $this->isDisabled()),
+            ], escape: false)
             ->class([
                 'fi-checkbox-input',
                 'fi-valid' => ! $hasError,

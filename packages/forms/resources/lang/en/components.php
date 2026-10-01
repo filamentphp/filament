@@ -116,6 +116,8 @@ return [
 
     'checkbox_list' => [
 
+        'required_description' => 'Select at least one option.',
+
         'actions' => [
 
             'deselect_all' => [
@@ -887,6 +889,8 @@ return [
     ],
 
     'toggle_buttons' => [
+
+        'required_description' => 'Select at least one option.',
 
         'boolean' => [
             'true' => 'Yes',

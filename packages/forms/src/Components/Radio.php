@@ -49,7 +49,7 @@ class Radio extends Field implements Contracts\CanDisableOptions, HasEmbeddedVie
 
     public function toEmbeddedHtml(): string
     {
-        $extraInputAttributeBag = $this->getExtraInputAttributeBag();
+        $extraInputAttributeBag = $this->getExtraInputAttributeBag()->merge($this->getAccessibilityAttributes(), escape: false);
         $gridDirection = $this->getGridDirection() ?? GridDirection::Column;
         $id = $this->getId();
         $isDisabled = $this->isDisabled();
@@ -67,7 +67,9 @@ class Radio extends Field implements Contracts\CanDisableOptions, HasEmbeddedVie
 
         $containerAttributes = $containerAttributes
             ->merge([
-                'aria-labelledby' => "{$id}-label",
+                ...$this->getAccessibilityAttributes(),
+                'aria-labelledby' => filled($this->getLabel()) ? e("{$id}-label") : null,
+                'aria-required' => $this->isRequired() && (! $isDisabled) ? 'true' : null,
                 'role' => 'radiogroup',
             ], escape: false)
             ->class([
@@ -87,6 +89,7 @@ class Radio extends Field implements Contracts\CanDisableOptions, HasEmbeddedVie
                             'disabled' => $isDisabled || $this->isOptionDisabled($value, $label),
                             'id' => e($id . '-' . $value),
                             'name' => $id,
+                            'required' => $this->isRequired() && (! $isDisabled) && (! $this->isOptionDisabled($value, $label)),
                             'value' => e($value),
                             $wireModelAttribute => $statePath,
                         ], escape: false)

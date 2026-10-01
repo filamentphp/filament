@@ -355,6 +355,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         $inputAttributes = $this->getExtraInputAttributeBag()
             ->merge($extraAlpineAttributes, escape: false)
             ->merge([
+                ...$this->getAccessibilityAttributes(),
                 'autocapitalize' => $this->getAutocapitalize(),
                 'autocomplete' => $this->getAutocomplete(),
                 'autofocus' => $this->isAutofocused(),
@@ -370,7 +371,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
                 'minlength' => $this->getMinLength(),
                 'placeholder' => filled($placeholder) ? e($placeholder) : null,
                 'readonly' => $this->isReadOnly(),
-                'required' => $this->isRequired(),
+                'required' => $this->isRequired() && (! $isDisabled) && (! $this->isReadOnly()),
                 'step' => $this->getStep(),
                 'type' => $type,
                 $this->applyStateBindingModifiers('wire:model') => $statePath,
