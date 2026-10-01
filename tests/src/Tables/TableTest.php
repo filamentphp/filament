@@ -2,13 +2,17 @@
 
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Facades\Filament;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Facades\FilamentView;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Filament\Tables\View\TablesRenderHook;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Pages\TableRenderHooksBrowserTest;
 use Filament\Tests\TestCase;
@@ -119,6 +123,32 @@ describe('query string identifier', function (): void {
 
         expect($table->getQueryStringIdentifier())->toBe('posts');
     });
+
+    it('falls back to `identifier()` for `getQueryStringIdentifier()`', function (): void {
+        $table = livewire(PersistedTableTestComponent::class, ['tableIdentifier' => 'posts'])->instance()->getTable();
+
+        expect($table->getIdentifier())->toBe('posts')
+            ->and($table->getQueryStringIdentifier())->toBe('posts');
+    });
+
+    it('can override `identifier()` with `queryStringIdentifier()`', function (): void {
+        $table = livewire(IdentifiedQueryStringTableTestComponent::class)->instance()->getTable();
+
+        expect($table->getIdentifier())->toBe('persisted-posts')
+            ->and($table->getQueryStringIdentifier())->toBe('url-posts');
+    });
+
+    it('can evaluate and unset `identifier()`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        $table->identifier(static fn (): string => 'posts');
+
+        expect($table->getIdentifier())->toBe('posts');
+
+        $table->identifier(null);
+
+        expect($table->getIdentifier())->toBeNull();
+    });
 });
 
 describe('headings', function (): void {
@@ -197,6 +227,253 @@ describe('session persistence', function (): void {
             ->and($table->persistsGroupInSession())->toBeTrue()
             ->and($table->persistsColumnsInSession())->toBeTrue()
             ->and($table->persistsRecordsPerPageInSession())->toBeTrue();
+    });
+
+    it('uses the identifier for every table session key while preserving default keys and tenant-scoped filter keys', function (): void {
+        /** @var PersistedTableTestComponent $defaultTable */
+        $defaultTable = livewire(PersistedTableTestComponent::class)->instance();
+        $defaultNamespace = $defaultTable::class;
+
+        expect($defaultTable->getTablePerPageSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_per_page')
+            ->and($defaultTable->getTableSearchSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_search')
+            ->and($defaultTable->getTableColumnSearchesSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_column_search')
+            ->and($defaultTable->getTableSortSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_sort')
+            ->and($defaultTable->getTableGroupingSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_grouping')
+            ->and($defaultTable->getTableFiltersSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_filters')
+            ->and($defaultTable->getTableColumnsSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_columns')
+            ->and($defaultTable->getHasReorderedTableColumnsSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_has_reordered_columns');
+
+        /** @var QueryStringTableTestComponent $queryStringTable */
+        $queryStringTable = livewire(QueryStringTableTestComponent::class)->instance();
+
+        expect($queryStringTable->getTableSearchSessionKey())->toBe('tables.' . md5($queryStringTable::class) . '_search');
+
+        /** @var PersistedTableTestComponent $identifiedTable */
+        $identifiedTable = livewire(PersistedTableTestComponent::class, ['tableIdentifier' => 'first'])->instance();
+        $identifiedNamespace = md5($identifiedTable::class) . '.' . md5('first');
+
+        expect($identifiedTable->getTablePerPageSessionKey())->toBe("tables.{$identifiedNamespace}_per_page")
+            ->and($identifiedTable->getTableSearchSessionKey())->toBe("tables.{$identifiedNamespace}_search")
+            ->and($identifiedTable->getTableColumnSearchesSessionKey())->toBe("tables.{$identifiedNamespace}_column_search")
+            ->and($identifiedTable->getTableSortSessionKey())->toBe("tables.{$identifiedNamespace}_sort")
+            ->and($identifiedTable->getTableGroupingSessionKey())->toBe("tables.{$identifiedNamespace}_grouping")
+            ->and($identifiedTable->getTableFiltersSessionKey())->toBe("tables.{$identifiedNamespace}_filters")
+            ->and($identifiedTable->getTableColumnsSessionKey())->toBe("tables.{$identifiedNamespace}_columns")
+            ->and($identifiedTable->getHasReorderedTableColumnsSessionKey())->toBe("tables.{$identifiedNamespace}_has_reordered_columns");
+
+        /** @var PersistedTableTestComponent $secondIdentifiedTable */
+        $secondIdentifiedTable = livewire(PersistedTableTestComponent::class, ['tableIdentifier' => 'second'])->instance();
+
+        expect($secondIdentifiedTable->getTableSearchSessionKey())->not->toBe($identifiedTable->getTableSearchSessionKey());
+
+        $firstTenant = Team::factory()->create();
+        $secondTenant = Team::factory()->create();
+
+        Filament::setTenant($firstTenant, isQuiet: true);
+        /** @var PersistedTableTestComponent $firstTenantTable */
+        $firstTenantTable = livewire(PersistedTableTestComponent::class, ['tableIdentifier' => 'first'])->instance();
+        $firstTenantFilterSessionKey = $firstTenantTable->getTableFiltersSessionKey();
+        $firstTenantSearchSessionKey = $firstTenantTable->getTableSearchSessionKey();
+        $firstTenantColumnSearchesSessionKey = $firstTenantTable->getTableColumnSearchesSessionKey();
+
+        Filament::setTenant($secondTenant, isQuiet: true);
+        /** @var PersistedTableTestComponent $secondTenantTable */
+        $secondTenantTable = livewire(PersistedTableTestComponent::class, ['tableIdentifier' => 'first'])->instance();
+
+        expect($firstTenantFilterSessionKey)->toBe('tables.' . md5($defaultNamespace . "|{$firstTenant->getKey()}") . '.' . md5('first') . '_filters')
+            ->and($firstTenantSearchSessionKey)->toBe('tables.' . md5($defaultNamespace . "|{$firstTenant->getKey()}") . '.' . md5('first') . '_search')
+            ->and($firstTenantColumnSearchesSessionKey)->toBe('tables.' . md5($defaultNamespace . "|{$firstTenant->getKey()}") . '.' . md5('first') . '_column_search')
+            ->and($secondTenantTable->getTableFiltersSessionKey())->toBe('tables.' . md5($defaultNamespace . "|{$secondTenant->getKey()}") . '.' . md5('first') . '_filters')
+            ->and($secondTenantTable->getTableSearchSessionKey())->toBe('tables.' . md5($defaultNamespace . "|{$secondTenant->getKey()}") . '.' . md5('first') . '_search')
+            ->and($secondTenantTable->getTableColumnSearchesSessionKey())->toBe('tables.' . md5($defaultNamespace . "|{$secondTenant->getKey()}") . '.' . md5('first') . '_column_search')
+            ->and($secondTenantTable->getTableSortSessionKey())->toBe("tables.{$identifiedNamespace}_sort");
+
+        Filament::setTenant(null);
+    });
+
+    it('separates and resets every persisted feature for same-class identified tables across reloads', function (): void {
+        Post::factory()->count(3)->create();
+
+        $firstTable = livewire(PersistedTableTestComponent::class, ['tableIdentifier' => 'first']);
+        $reorderedColumns = array_reverse($firstTable->get('tableColumns'));
+        $hasReorderedColumnsSessionKey = $firstTable->instance()->getHasReorderedTableColumnsSessionKey();
+
+        $firstTable
+            ->set('tableRecordsPerPage', 5)
+            ->set('tableSearch', 'first search')
+            ->set('tableColumnSearches.title', 'first column search')
+            ->set('tableSort', 'title:desc')
+            ->set('tableGrouping', 'title:desc')
+            ->filterTable('is_published')
+            ->call('applyTableColumnManager', $reorderedColumns, true);
+
+        expect(session()->get($hasReorderedColumnsSessionKey))->toBeTrue();
+
+        livewire(PersistedTableTestComponent::class, ['tableIdentifier' => 'second'])
+            ->assertSet('tableRecordsPerPage', 10)
+            ->assertSet('tableSearch', '')
+            ->assertSet('tableColumnSearches', [])
+            ->assertSet('tableSort', null)
+            ->assertSet('tableGrouping', null)
+            ->assertSet('tableFilters.is_published.isActive', false)
+            ->assertSet('tableColumns', fn (array $columns): bool => $columns !== $reorderedColumns);
+
+        livewire(PersistedTableTestComponent::class, ['tableIdentifier' => 'first'])
+            ->assertSet('tableRecordsPerPage', 5)
+            ->assertSet('tableSearch', 'first search')
+            ->assertSet('tableColumnSearches.title', 'first column search')
+            ->assertSet('tableSort', 'title:desc')
+            ->assertSet('tableGrouping', 'title:desc')
+            ->assertSet('tableFilters.is_published.isActive', true)
+            ->assertSet('tableColumns', $reorderedColumns)
+            ->set('tableRecordsPerPage', 10)
+            ->call('resetTableSearch')
+            ->call('resetTableColumnSearches')
+            ->set('tableSort', null)
+            ->set('tableGrouping', null)
+            ->resetTableFilters()
+            ->call('resetTableColumnManager');
+
+        expect(session()->get($hasReorderedColumnsSessionKey))->toBeFalse();
+
+        livewire(PersistedTableTestComponent::class, ['tableIdentifier' => 'first'])
+            ->assertSet('tableRecordsPerPage', 10)
+            ->assertSet('tableSearch', '')
+            ->assertSet('tableColumnSearches', [])
+            ->assertSet('tableSort', null)
+            ->assertSet('tableGrouping', null)
+            ->assertSet('tableFilters.is_published.isActive', false)
+            ->assertSet('tableColumns', fn (array $columns): bool => $columns !== $reorderedColumns);
+    });
+
+    it('restores every persisted feature from the existing default session keys', function (): void {
+        Post::factory()->count(3)->create();
+
+        $defaultTable = livewire(PersistedTableTestComponent::class);
+        $reorderedColumns = array_reverse($defaultTable->get('tableColumns'));
+        $namespace = PersistedTableTestComponent::class;
+
+        session()->put([
+            'tables.' . md5($namespace) . '_per_page' => 5,
+            'tables.' . md5($namespace) . '_search' => 'legacy search',
+            'tables.' . md5($namespace) . '_column_search' => ['title' => 'legacy column search'],
+            'tables.' . md5($namespace) . '_sort' => 'title:desc',
+            'tables.' . md5($namespace) . '_grouping' => 'title:desc',
+            'tables.' . md5($namespace) . '_filters' => ['is_published' => ['isActive' => true]],
+            'tables.' . md5($namespace) . '_columns' => $reorderedColumns,
+            'tables.' . md5($namespace) . '_has_reordered_columns' => true,
+        ]);
+
+        livewire(PersistedTableTestComponent::class)
+            ->assertSet('tableRecordsPerPage', 5)
+            ->assertSet('tableSearch', 'legacy search')
+            ->assertSet('tableColumnSearches.title', 'legacy column search')
+            ->assertSet('tableSort', 'title:desc')
+            ->assertSet('tableGrouping', 'title:desc')
+            ->assertSet('tableFilters.is_published.isActive', true)
+            ->assertSet('tableColumns', $reorderedColumns);
+    });
+
+    it('keeps persisted criteria separated and structural preferences shared between tenants', function (?string $tableIdentifier): void {
+        $firstTenant = Team::factory()->create();
+        $secondTenant = Team::factory()->create();
+
+        Filament::setTenant($firstTenant, isQuiet: true);
+        $firstTenantTable = livewire(PersistedTableTestComponent::class, ['tableIdentifier' => $tableIdentifier]);
+        $reorderedColumns = array_reverse($firstTenantTable->get('tableColumns'));
+
+        $firstTenantTable
+            ->set('tableRecordsPerPage', 5)
+            ->set('tableSearch', 'first search')
+            ->set('tableColumnSearches.title', 'first column search')
+            ->set('tableSort', 'title:desc')
+            ->set('tableGrouping', 'title:desc')
+            ->call('applyTableColumnManager', $reorderedColumns, true)
+            ->filterTable('is_published');
+
+        Filament::setTenant($secondTenant, isQuiet: true);
+        livewire(PersistedTableTestComponent::class, ['tableIdentifier' => $tableIdentifier])
+            ->assertSet('tableRecordsPerPage', 5)
+            ->assertSet('tableSearch', '')
+            ->assertSet('tableColumnSearches', [])
+            ->assertSet('tableSort', 'title:desc')
+            ->assertSet('tableGrouping', 'title:desc')
+            ->assertSet('tableFilters.is_published.isActive', false)
+            ->assertSet('tableColumns', $reorderedColumns)
+            ->set('tableSearch', 'second search')
+            ->set('tableColumnSearches.title', 'second column search');
+
+        Filament::setTenant($firstTenant, isQuiet: true);
+        livewire(PersistedTableTestComponent::class, ['tableIdentifier' => $tableIdentifier])
+            ->assertSet('tableRecordsPerPage', 5)
+            ->assertSet('tableSearch', 'first search')
+            ->assertSet('tableColumnSearches.title', 'first column search')
+            ->assertSet('tableSort', 'title:desc')
+            ->assertSet('tableGrouping', 'title:desc')
+            ->assertSet('tableFilters.is_published.isActive', true)
+            ->assertSet('tableColumns', $reorderedColumns);
+
+        Filament::setTenant($secondTenant, isQuiet: true);
+        livewire(PersistedTableTestComponent::class, ['tableIdentifier' => $tableIdentifier])
+            ->assertSet('tableSearch', 'second search')
+            ->assertSet('tableColumnSearches.title', 'second column search')
+            ->assertSet('tableFilters.is_published.isActive', false);
+
+        Filament::setTenant(null);
+    })->with([
+        'without `identifier()`' => [null],
+        'with `identifier()`' => ['posts'],
+    ]);
+
+    it('starts persisted searches fresh per tenant without consuming existing unscoped state', function (): void {
+        $namespace = PersistedTableTestComponent::class;
+
+        session()->put([
+            'tables.' . md5($namespace) . '_search' => 'legacy search',
+            'tables.' . md5($namespace) . '_column_search' => ['title' => 'legacy column search'],
+        ]);
+
+        Filament::setTenant(Team::factory()->create(), isQuiet: true);
+        livewire(PersistedTableTestComponent::class)
+            ->assertSet('tableSearch', '')
+            ->assertSet('tableColumnSearches', []);
+
+        Filament::setTenant(null);
+        livewire(PersistedTableTestComponent::class)
+            ->assertSet('tableSearch', 'legacy search')
+            ->assertSet('tableColumnSearches.title', 'legacy column search');
+    });
+
+    it('keeps tenant and identifier dimensions unambiguous when persisting filters', function (): void {
+        $tenant = Team::factory()->create();
+
+        Filament::setTenant($tenant, isQuiet: true);
+        livewire(PersistedTableTestComponent::class)
+            ->filterTable('is_published');
+
+        Filament::setTenant(null);
+        livewire(PersistedTableTestComponent::class, ['tableIdentifier' => (string) $tenant->getKey()])
+            ->assertSet('tableFilters.is_published.isActive', false);
+
+        $firstTenant = (new Team(['id' => 'first|second']))->setKeyType('string');
+        $secondTenant = (new Team(['id' => 'first']))->setKeyType('string');
+
+        expect($firstTenant->getKey())->toBe('first|second')
+            ->and($secondTenant->getKey())->toBe('first');
+
+        Filament::setTenant($firstTenant, isQuiet: true);
+        livewire(PersistedTableTestComponent::class, ['tableIdentifier' => 'third'])
+            ->filterTable('is_published');
+
+        Filament::setTenant($secondTenant, isQuiet: true);
+        livewire(PersistedTableTestComponent::class, ['tableIdentifier' => 'second|third'])
+            ->assertSet('tableFilters.is_published.isActive', false);
+
+        Filament::setTenant($firstTenant, isQuiet: true);
+        livewire(PersistedTableTestComponent::class, ['tableIdentifier' => 'third'])
+            ->assertSet('tableFilters.is_published.isActive', true);
+
+        Filament::setTenant(null);
     });
 });
 
@@ -468,6 +745,46 @@ class QueryStringTableTestComponent extends TableTestComponent
     {
         return parent::table($table)
             ->queryStringIdentifier('posts');
+    }
+}
+
+class IdentifiedQueryStringTableTestComponent extends TableTestComponent
+{
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->identifier('persisted-posts')
+            ->queryStringIdentifier('url-posts');
+    }
+}
+
+class PersistedTableTestComponent extends TableTestComponent
+{
+    public ?string $tableIdentifier = null;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->identifier($this->tableIdentifier)
+            ->columns([
+                Tables\Columns\TextColumn::make('title')
+                    ->searchable(isIndividual: true)
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('content')
+                    ->toggleable(),
+            ])
+            ->filters([
+                Filter::make('is_published'),
+            ])
+            ->groups([
+                Group::make('title'),
+            ])
+            ->paginationPageOptions([5, 10])
+            ->defaultPaginationPageOption(10)
+            ->reorderableColumns()
+            ->persistInSession();
     }
 }
 

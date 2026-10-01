@@ -17,6 +17,6 @@ trait HasQueryStringIdentifier
 
     public function getQueryStringIdentifier(): ?string
     {
-        return $this->evaluate($this->queryStringIdentifier);
+        return $this->evaluate($this->queryStringIdentifier) ?? $this->getIdentifier();
     }
 }
