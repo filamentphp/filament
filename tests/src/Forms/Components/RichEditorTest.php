@@ -5,8 +5,10 @@ use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
+use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Forms\RichEditor\MinimalControlsCalloutBlock;
 use Filament\Tests\Fixtures\Forms\RichEditor\PluginWithFileAttachmentProvider;
@@ -54,6 +56,27 @@ test('fields can be required', function (): void {
 });
 
 describe('toolbar buttons', function (): void {
+    test('uses `FormsIconAlias` constants for all built-in tools', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content'),
+            ])
+            ->getComponents()[0];
+
+        $iconAliases = array_values(array_filter(
+            (new ReflectionClass(FormsIconAlias::class))->getConstants(),
+            static fn (string $name): bool => str_starts_with($name, 'COMPONENTS_RICH_EDITOR_TOOLBAR_'),
+            ARRAY_FILTER_USE_KEY,
+        ));
+        $toolIconAliases = array_values(array_map(
+            static fn (RichEditorTool $tool): ?string => $tool->getIconAlias(),
+            $richEditor->getTools(),
+        ));
+
+        expect($toolIconAliases)->toEqualCanonicalizing($iconAliases);
+    });
+
     test('can get default toolbar buttons using `getDefaultToolbarButtons()`', function (): void {
         $richEditor = Schema::make(Livewire::make())
             ->statePath('data')
@@ -73,6 +96,22 @@ describe('toolbar buttons', function (): void {
             ->and($defaultButtons[3])->toEqual(['blockquote', 'codeBlock', 'bulletList', 'orderedList'])
             ->and($defaultButtons[4])->toEqual(['table', 'attachFiles'])
             ->and($defaultButtons[5])->toEqual(['undo', 'redo']);
+    });
+
+    test('can get default floating toolbars using `getDefaultFloatingToolbars()`', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content'),
+            ])
+            ->getComponents()[0];
+
+        expect($richEditor->getDefaultFloatingToolbars())
+            ->toHaveKey('grid', [
+                'gridAddColumnBefore', 'gridAddColumnAfter', 'gridDeleteColumn',
+                'gridDelete',
+            ])
+            ->toHaveKey('table');
     });
 
     test('can overwrite toolbar buttons array using `toolbarButtons()`', function (): void {
@@ -1988,6 +2027,514 @@ it('does not render custom block previews from imported HTML', function (): void
             ->inDarkMode()
             ->assertPresent('[data-testid="minimal-controls-editor"] .tiptap')
             ->assertNoAccessibilityIssues();
+    });
+});
+
+it('can delete a grid from its floating toolbar without deleting its content', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        foreach ([false, true] as $isDarkMode) {
+            $page = visit('/rich-editor-browser-test');
+
+            if ($isDarkMode) {
+                $page->inDarkMode();
+            }
+
+            $page
+                ->assertPresent('[data-testid="default-rich-editor"] .tiptap')
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+
+                        editor.commands.setContent({
+                            type: 'doc',
+                            content: [
+                                { type: 'paragraph', content: [{ type: 'text', text: 'Before grid.' }] },
+                                {
+                                    type: 'grid',
+                                    attrs: { 'data-cols': 2, 'data-from-breakpoint': 'md' },
+                                    content: [
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 1 },
+                                            content: [
+                                                { type: 'paragraph', content: [{ type: 'text', text: 'First column.' }] },
+                                                { type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: 'Column heading' }] },
+                                            ],
+                                        },
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 1 },
+                                            content: [
+                                                { type: 'paragraph', content: [{ type: 'text', text: 'Second column.' }] },
+                                                {
+                                                    type: 'bulletList',
+                                                    content: [
+                                                        {
+                                                            type: 'listItem',
+                                                            content: [
+                                                                { type: 'paragraph', content: [{ type: 'text', text: 'List item.' }] },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                                { type: 'paragraph', content: [{ type: 'text', text: 'After grid.' }] },
+                            ],
+                        })
+
+                        let selectionPosition = null
+
+                        editor.state.doc.descendants((node, position) => {
+                            if (node.isText && node.text === 'First column.') {
+                                selectionPosition = position + 1
+                            }
+                        })
+
+                        editor.chain().focus().setTextSelection(selectionPosition).run()
+
+                        return true
+                    })()
+                    JS)
+                ->assertVisible('[data-testid="default-rich-editor"] .fi-fo-rich-editor-floating-toolbar button[aria-label="Delete grid"]')
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = document.querySelector('[data-testid="default-rich-editor"]')
+                        const gridBounds = editor.querySelector('.grid-layout').getBoundingClientRect()
+                        const toolbarBounds = editor.querySelector('.fi-fo-rich-editor-floating-toolbar button[aria-label="Delete grid"]').parentElement.getBoundingClientRect()
+
+                        return toolbarBounds.right <= gridBounds.left ||
+                            toolbarBounds.left >= gridBounds.right ||
+                            toolbarBounds.bottom <= gridBounds.top ||
+                            toolbarBounds.top >= gridBounds.bottom
+                    })()
+                    JS)
+                ->assertNoAccessibilityIssues()
+                ->click('[data-testid="default-rich-editor"] .fi-fo-rich-editor-floating-toolbar button[aria-label="Delete grid"]')
+                ->assertScript(
+                    <<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+                        const content = editor.getJSON().content
+                        const getText = (node) => node.text ?? (node.content ?? []).map(getText).join('')
+
+                        return [
+                            content.map((node) => node.type),
+                            content.map(getText),
+                            JSON.stringify(content).includes('"type":"grid"'),
+                        ]
+                    })()
+                    JS,
+                    [
+                        ['paragraph', 'paragraph', 'heading', 'paragraph', 'bulletList', 'paragraph'],
+                        ['Before grid.', 'First column.', 'Column heading', 'Second column.', 'List item.', 'After grid.'],
+                        false,
+                    ],
+                )
+                ->assertNoAccessibilityIssues();
+        }
+    });
+});
+
+it('can manage grid columns from its floating toolbar', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        foreach ([false, true] as $isDarkMode) {
+            $page = visit('/rich-editor-browser-test');
+
+            if ($isDarkMode) {
+                $page->inDarkMode();
+            }
+
+            $page
+                ->assertPresent('[data-testid="default-rich-editor"] .tiptap')
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+
+                        editor.commands.setContent({
+                            type: 'doc',
+                            content: [
+                                {
+                                    type: 'grid',
+                                    attrs: { 'data-cols': 2, 'data-from-breakpoint': '2xl' },
+                                    content: [
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 1 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Alpha' }] }],
+                                        },
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 1 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Beta' }] }],
+                                        },
+                                    ],
+                                },
+                            ],
+                        })
+
+                        let selectionPosition = null
+
+                        editor.state.doc.descendants((node, position) => {
+                            if (node.isText && node.text === 'Beta') {
+                                selectionPosition = position + 1
+                            }
+                        })
+
+                        editor.chain().focus().setTextSelection(selectionPosition).run()
+
+                        return true
+                    })()
+                    JS)
+                ->assertVisible('[data-testid="default-rich-editor"] [data-testid="grid-add-column-before"]')
+                ->assertVisible('[data-testid="default-rich-editor"] [data-testid="grid-add-column-after"]')
+                ->assertVisible('[data-testid="default-rich-editor"] [data-testid="grid-delete-column"]')
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = document.querySelector('[data-testid="default-rich-editor"]')
+
+                        return [
+                            editor.querySelector('[data-testid="grid-add-column-before"]').disabled,
+                            editor.querySelector('[data-testid="grid-add-column-after"]').disabled,
+                            editor.querySelector('[data-testid="grid-delete-column"]').disabled,
+                        ]
+                    })()
+                    JS, [false, false, false])
+                ->assertNoAccessibilityIssues()
+                ->click('[data-testid="default-rich-editor"] [data-testid="grid-add-column-before"]')
+                ->click('[data-testid="default-rich-editor"] [data-testid="grid-add-column-after"]')
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+                        const grid = editor.getJSON().content[0]
+                        const getText = (node) => node.text ?? (node.content ?? []).map(getText).join('')
+
+                        return [
+                            grid.attrs['data-cols'],
+                            grid.attrs['data-from-breakpoint'],
+                            grid.content.map((column) => column.attrs['data-col-span']),
+                            grid.content.map(getText),
+                        ]
+                    })()
+                    JS, [
+                    4,
+                    '2xl',
+                    [1, 1, 1, 1],
+                    ['Alpha', '', 'Beta', ''],
+                ])
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+
+                        editor.commands.setContent({
+                            type: 'doc',
+                            content: [
+                                {
+                                    type: 'grid',
+                                    attrs: { 'data-cols': 3, 'data-from-breakpoint': 'sm' },
+                                    content: [
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 1 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Narrow' }] }],
+                                        },
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 2 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Wide' }] }],
+                                        },
+                                    ],
+                                },
+                            ],
+                        })
+
+                        let selectionPosition = null
+
+                        editor.state.doc.descendants((node, position) => {
+                            if (node.isText && node.text === 'Narrow') {
+                                selectionPosition = position + 1
+                            }
+                        })
+
+                        editor.chain().focus().setTextSelection(selectionPosition).run()
+
+                        return true
+                    })()
+                    JS)
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = document.querySelector('[data-testid="default-rich-editor"]')
+
+                        return [
+                            editor.querySelector('[data-testid="grid-add-column-before"]').disabled,
+                            editor.querySelector('[data-testid="grid-add-column-after"]').disabled,
+                            editor.querySelector('[data-testid="grid-delete-column"]').disabled,
+                        ]
+                    })()
+                    JS, [true, true, false])
+                ->click('[data-testid="default-rich-editor"] [data-testid="grid-delete-column"]')
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+                        const grid = editor.getJSON().content[0]
+                        const getText = (node) => node.text ?? (node.content ?? []).map(getText).join('')
+                        const richEditor = document.querySelector('[data-testid="default-rich-editor"]')
+                        const deleteButton = document.querySelector('[data-testid="default-rich-editor"] [data-testid="grid-delete-column"]')
+
+                        return [
+                            grid.attrs['data-cols'],
+                            grid.attrs['data-from-breakpoint'],
+                            grid.content.map((column) => column.attrs['data-col-span']),
+                            grid.content.map(getText),
+                            richEditor.querySelector('[data-testid="grid-add-column-before"]').disabled,
+                            richEditor.querySelector('[data-testid="grid-add-column-after"]').disabled,
+                            deleteButton.disabled,
+                        ]
+                    })()
+                    JS, [1, 'sm', [1], ['Wide'], false, false, true])
+                ->click('[data-testid="default-rich-editor"] [data-testid="grid-add-column-after"]')
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+                        const grid = editor.getJSON().content[0]
+                        const getText = (node) => node.text ?? (node.content ?? []).map(getText).join('')
+
+                        return [
+                            grid.attrs['data-cols'],
+                            grid.attrs['data-from-breakpoint'],
+                            grid.content.map((column) => column.attrs['data-col-span']),
+                            grid.content.map(getText),
+                        ]
+                    })()
+                    JS, [2, 'sm', [1, 1], ['Wide', '']])
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+
+                        editor.commands.setContent({
+                            type: 'doc',
+                            content: [
+                                {
+                                    type: 'grid',
+                                    attrs: { 'data-cols': 3, 'data-from-breakpoint': '2xl' },
+                                    content: [
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 1 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Narrow' }] }],
+                                        },
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 2 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Wide' }] }],
+                                        },
+                                    ],
+                                },
+                            ],
+                        })
+
+                        let selectionPosition = null
+
+                        editor.state.doc.descendants((node, position) => {
+                            if (node.isText && node.text === 'Wide') {
+                                selectionPosition = position + 1
+                            }
+                        })
+
+                        editor.chain().focus().setTextSelection(selectionPosition).deleteGridColumn().run()
+
+                        const grid = editor.getJSON().content[0]
+                        const getText = (node) => node.text ?? (node.content ?? []).map(getText).join('')
+
+                        return [
+                            grid.attrs['data-cols'],
+                            grid.attrs['data-from-breakpoint'],
+                            grid.content.map((column) => column.attrs['data-col-span']),
+                            grid.content.map(getText),
+                        ]
+                    })()
+                    JS, [1, '2xl', [1], ['Narrow']])
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+
+                        editor.commands.setContent({
+                            type: 'doc',
+                            content: [
+                                {
+                                    type: 'grid',
+                                    attrs: { 'data-cols': 8, 'data-from-breakpoint': 'lg' },
+                                    content: [
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 2 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Left' }] }],
+                                        },
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 4 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Middle' }] }],
+                                        },
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 2 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Right' }] }],
+                                        },
+                                    ],
+                                },
+                            ],
+                        })
+
+                        let selectionPosition = null
+
+                        editor.state.doc.descendants((node, position) => {
+                            if (node.isText && node.text === 'Middle') {
+                                selectionPosition = position + 1
+                            }
+                        })
+
+                        editor.chain().focus().setTextSelection(selectionPosition).deleteGridColumn().run()
+
+                        const grid = editor.getJSON().content[0]
+                        const getText = (node) => node.text ?? (node.content ?? []).map(getText).join('')
+
+                        return [
+                            grid.attrs['data-cols'],
+                            grid.attrs['data-from-breakpoint'],
+                            grid.content.map((column) => column.attrs['data-col-span']),
+                            grid.content.map(getText),
+                        ]
+                    })()
+                    JS, [2, 'lg', [1, 1], ['Left', 'Right']])
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+
+                        editor.commands.setContent({
+                            type: 'doc',
+                            content: [
+                                {
+                                    type: 'grid',
+                                    attrs: { 'data-cols': 2, 'data-from-breakpoint': 'lg' },
+                                    content: [
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 1 },
+                                            content: [
+                                                { type: 'paragraph', content: [{ type: 'text', text: 'Outer before' }] },
+                                                {
+                                                    type: 'grid',
+                                                    attrs: { 'data-cols': 2, 'data-from-breakpoint': 'xl' },
+                                                    content: [
+                                                        {
+                                                            type: 'gridColumn',
+                                                            attrs: { 'data-col-span': 1 },
+                                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Inner alpha' }] }],
+                                                        },
+                                                        {
+                                                            type: 'gridColumn',
+                                                            attrs: { 'data-col-span': 1 },
+                                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Inner beta' }] }],
+                                                        },
+                                                    ],
+                                                },
+                                                { type: 'paragraph', content: [{ type: 'text', text: 'Outer after' }] },
+                                            ],
+                                        },
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 1 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Outer sibling' }] }],
+                                        },
+                                    ],
+                                },
+                            ],
+                        })
+
+                        let selectionPosition = null
+
+                        editor.state.doc.descendants((node, position) => {
+                            if (node.type.name === 'gridColumn' && node.textContent === 'Inner beta') {
+                                selectionPosition = position
+                            }
+                        })
+
+                        editor.chain().focus().setNodeSelection(selectionPosition).addGridColumnBefore().addGridColumnAfter().deleteGridColumn().run()
+
+                        const outerGrid = editor.getJSON().content[0]
+                        const outerColumn = outerGrid.content[0]
+                        const innerGrid = outerColumn.content[1]
+                        const getText = (node) => node.text ?? (node.content ?? []).map(getText).join('')
+
+                        return [
+                            outerGrid.attrs['data-cols'],
+                            outerGrid.attrs['data-from-breakpoint'],
+                            outerGrid.content.map(getText),
+                            innerGrid.attrs['data-cols'],
+                            innerGrid.attrs['data-from-breakpoint'],
+                            innerGrid.content.map((column) => column.attrs['data-col-span']),
+                            innerGrid.content.map(getText),
+                        ]
+                    })()
+                    JS, [
+                    2,
+                    'lg',
+                    ['Outer beforeInner alphaOuter after', 'Outer sibling'],
+                    3,
+                    'xl',
+                    [1, 1, 1],
+                    ['Inner alpha', '', ''],
+                ])
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+
+                        editor.commands.setContent({
+                            type: 'doc',
+                            content: [
+                                {
+                                    type: 'grid',
+                                    attrs: { 'data-cols': 12, 'data-from-breakpoint': 'md' },
+                                    content: Array.from({ length: 12 }, (_, index) => ({
+                                        type: 'gridColumn',
+                                        attrs: { 'data-col-span': 1 },
+                                        content: [{ type: 'paragraph', content: [{ type: 'text', text: `Column ${index + 1}` }] }],
+                                    })),
+                                },
+                            ],
+                        })
+
+                        let selectionPosition = null
+
+                        editor.state.doc.descendants((node, position) => {
+                            if (node.isText && node.text === 'Column 1') {
+                                selectionPosition = position + 1
+                            }
+                        })
+
+                        editor.chain().focus().setTextSelection(selectionPosition).run()
+
+                        return true
+                    })()
+                    JS)
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = document.querySelector('[data-testid="default-rich-editor"]')
+
+                        return [
+                            editor.querySelector('[data-testid="grid-add-column-before"]').disabled,
+                            editor.querySelector('[data-testid="grid-add-column-after"]').disabled,
+                        ]
+                    })()
+                    JS, [true, true])
+                ->assertNoAccessibilityIssues();
+        }
     });
 });
 

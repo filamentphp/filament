@@ -276,6 +276,20 @@ export default function richEditorFormComponent({
                         editor,
                         element,
                         pluginKey: `floatingToolbar::${key}`,
+                        getReferencedVirtualElement:
+                            key === 'grid'
+                                ? () => {
+                                      const { node } = editor.view.domAtPos(
+                                          editor.state.selection.from,
+                                      )
+
+                                      return (
+                                          node.nodeType === Node.TEXT_NODE
+                                              ? node.parentElement
+                                              : node
+                                      )?.closest('.grid-layout')
+                                  }
+                                : undefined,
                         shouldShow: ({ editor }) => {
                             if (key === 'paragraph') {
                                 return (
@@ -296,8 +310,15 @@ export default function richEditorFormComponent({
                             return editor.isFocused && editor.isActive(key)
                         },
                         options: {
-                            placement: 'bottom',
+                            placement: key === 'grid' ? 'top-end' : 'bottom',
                             offset: 15,
+                            ...(key === 'grid'
+                                ? {
+                                      flip: {
+                                          fallbackPlacements: ['bottom-end'],
+                                      },
+                                  }
+                                : {}),
                         },
                     }),
                 )
