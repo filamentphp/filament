@@ -685,13 +685,19 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return (bool) $this->evaluate($this->shouldPreventFilePathTampering);
     }
 
-    public function getFileNamesStatePath(): ?string
+    public function getFileNamesStatePath(bool $isAbsolute = true): ?string
     {
-        if (! $this->fileNamesStatePath) {
+        $statePath = $this->evaluate($this->fileNamesStatePath);
+
+        if (! $isAbsolute) {
+            return $statePath;
+        }
+
+        if (! $statePath) {
             return null;
         }
 
-        return $this->resolveRelativeStatePath($this->fileNamesStatePath);
+        return $this->resolveRelativeStatePath($statePath);
     }
 
     /**
@@ -857,7 +863,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     public function removeStoredFileName(string $file): void
     {
-        $statePath = $this->fileNamesStatePath;
+        $statePath = $this->getFileNamesStatePath(isAbsolute: false);
 
         if (blank($statePath)) {
             return;
@@ -1080,7 +1086,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     public function storeFileName(string $file, string $fileName): void
     {
-        $statePath = $this->fileNamesStatePath;
+        $statePath = $this->getFileNamesStatePath(isAbsolute: false);
 
         if (blank($statePath)) {
             return;
@@ -1108,7 +1114,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     public function getStoredFileNames(): string | array | null
     {
         $rawState = null;
-        $statePath = $this->fileNamesStatePath;
+        $statePath = $this->getFileNamesStatePath(isAbsolute: false);
 
         if (filled($statePath)) {
             $rawState = $this->makeGetUtility()($statePath);
