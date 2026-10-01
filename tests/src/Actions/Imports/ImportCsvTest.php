@@ -77,8 +77,10 @@ it('accounts for mixed rows and preserves only permitted original values in the 
         ['Headline' => 'Rejected', ...($masked ? [] : ['Credential' => 'secret-rejected']), 'Notes' => 'ordinary-rejected'],
         ['Headline' => 'Broken', ...($masked ? [] : ['Credential' => 'secret-broken']), 'Notes' => 'ordinary-broken'],
     ];
+    // JSON storage may reorder object keys, but row order and value types must be preserved.
+    $sortRowKeys = static fn (array $row): array => collect($row)->sortKeys()->all();
     $failedRows = $this->import->failedRows()->orderBy('id')->get();
-    expect($failedRows->pluck('data')->all())->toBe($expectedData)
+    expect($failedRows->pluck('data')->map($sortRowKeys)->all())->toBe(array_map($sortRowKeys, $expectedData))
         ->and($failedRows->pluck('validation_error')->all())->toBe(['The title field is required.', 'Rejected by importer.', null]);
     Exceptions::assertReported(static fn (RuntimeException $exception): bool => $exception->getMessage() === 'Internal failure: secret-broken');
 
@@ -86,11 +88,11 @@ it('accounts for mixed rows and preserves only permitted original values in the 
     app(CsvImportFailureContentGenerator::class)($this->import, $csv);
     $reader = Reader::fromString($csv->toString());
     $reader->setHeaderOffset(0);
-    expect(array_values(iterator_to_array($reader->getRecords())))->toBe([
+    expect(array_map($sortRowKeys, array_values(iterator_to_array($reader->getRecords()))))->toBe(array_map($sortRowKeys, [
         [...$expectedData[0], 'error' => 'The title field is required.'],
         [...$expectedData[1], 'error' => 'Rejected by importer.'],
         [...$expectedData[2], 'error' => 'System error, please contact support.'],
-    ]);
+    ]));
     if ($masked) {
         expect($csv->toString())->not->toContain('Credential', 'secret-');
     }
