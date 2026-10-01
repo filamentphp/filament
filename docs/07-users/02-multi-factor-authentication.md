@@ -17,28 +17,6 @@ Filament includes two methods of MFA which you can enable out of the box:
 - [App authentication](#app-authentication) uses a Google Authenticator-compatible app (such as the Google Authenticator, Authy, or Microsoft Authenticator apps) to generate a time-based one-time password (TOTP) that is used to verify the user.
 - [Email authentication](#email-authentication) sends a one-time code to the user's email address, which they must enter to verify their identity.
 
-Both methods require a cache store that supports atomic locks to prevent a code from being used more than once. By default, Filament uses your application's default cache store. If you want to use a different store, you can use the `cacheStore()` method on each authentication provider:
-
-```php
-use Filament\Auth\MultiFactor\App\AppAuthentication;
-use Filament\Auth\MultiFactor\Email\EmailAuthentication;
-use Filament\Panel;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ...
-        ->multiFactorAuthentication([
-            AppAuthentication::make()
-                ->cacheStore('redis'),
-            EmailAuthentication::make()
-                ->cacheStore('redis'),
-        ]);
-}
-```
-
-The store must be shared by all application servers, provide consistent reads, and support atomic locks, such as the database or Redis cache driver. The `array`, `null`, DynamoDB, failover, and memoized cache drivers cannot be used. Every authentication provider instance that can verify the same authentication secret or code must use the same store. The store must not be flushed or evict replay-protection state while codes remain valid.
-
 In Filament, users set up multi-factor authentication from their [profile page](overview#authentication-features). If you use Filament's profile page feature, setting up multi-factor authentication will automatically add the correct UI elements to the profile page:
 
 ```php
@@ -372,7 +350,7 @@ use Filament\Facades\Filament;
 $principal = Filament::getUserScopedAuthIdentifier($user);
 ```
 
-Verification and consumption must be one atomic operation so that concurrent requests cannot use the same code successfully. For example, you may use a database transaction with a row lock, or a shared cache store with consistent reads and atomic locks. If you use a cache store, the same [store requirements described above](#introduction) apply. Do not read a valid code and delete it as two unprotected operations.
+Verification and consumption must be one atomic operation so that concurrent requests cannot use the same code successfully. For example, you may use a database transaction with a row lock, or a shared cache store with consistent reads and atomic locks. If you use a cache store, the same [store requirements](#choosing-a-cache-store) apply. Do not read a valid code and delete it as two unprotected operations.
 
 ### Identifying the provider
 
@@ -610,6 +588,30 @@ $this->multiFactorChallengeForm->getState();
 In Filament, the multi-factor authentication process occurs before the user is actually authenticated into the app. This allows you to be sure that no users can authenticate and access the app without passing the multi-factor authentication step. You do not need to remember to add middleware to any of your authenticated routes to ensure that users completed the multi-factor authentication step.
 
 However, if you have other parts of your Laravel app that authenticate users, please bear in mind that they will not be challenged for multi-factor authentication if they are already authenticated elsewhere and then visit the panel, unless [multi-factor authentication is required](#requiring-multi-factor-authentication) and they have not set it up yet.
+
+### Choosing a cache store
+
+Both built-in authentication methods require a cache store that supports atomic locks to prevent a code from being used more than once. By default, Filament uses your application's default cache store. If you want to use a different store, you can use the `cacheStore()` method on each authentication provider:
+
+```php
+use Filament\Auth\MultiFactor\App\AppAuthentication;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->multiFactorAuthentication([
+            AppAuthentication::make()
+                ->cacheStore('redis'),
+            EmailAuthentication::make()
+                ->cacheStore('redis'),
+        ]);
+}
+```
+
+The store must be shared by all application servers, provide consistent reads, and support atomic locks, such as the database or Redis cache driver. The `array`, `null`, DynamoDB, failover, and memoized cache drivers cannot be used. Every authentication provider instance that can verify the same authentication secret or code must use the same store. The store must not be flushed or evict replay-protection state while codes remain valid.
 
 ### Concurrent recovery code submissions
 
