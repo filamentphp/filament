@@ -50,8 +50,8 @@ final class ListTranslations
                 $index = 0;
 
                 foreach ($originTranslations as $key => $originTranslation) {
-                    $translation = ($localeTranslations[$key] ?? '<bg=red;fg=white> Missing </>');
-                    $content = '  ' . $originTranslation . '  ➡  ' . $translation;
+                    $translation = ($localeTranslations[$key]['value'] ?? '<bg=red;fg=white> Missing </>');
+                    $content = '  ' . $originTranslation['value'] . '  ➡  ' . $translation;
 
                     $output->writeln(
                         $index++ % 2 === 0
