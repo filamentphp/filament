@@ -25,10 +25,12 @@ class HidePasswordAction extends Action
         $this->defaultColor('gray');
 
         $this->extraAttributes([
+            'wire:loading.attr' => false,
             'x-cloak' => 'x-cloak',
+            'x-ref' => 'hidePasswordAction',
             'x-show' => 'isPasswordRevealed',
         ], merge: true);
 
-        $this->alpineClickHandler('isPasswordRevealed = false');
+        $this->alpineClickHandler('setPasswordRevealed(false)');
     }
 }
