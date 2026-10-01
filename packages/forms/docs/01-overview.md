@@ -141,7 +141,7 @@ TextInput::make('email')
 
 For native inputs, native selects, textareas, radios, checkbox lists, and toggle buttons, the helper text is automatically associated with the controls so screen readers can read it as a description. You do not need to manage the instruction's ID yourself. Hints and arbitrary [extra content](#adding-extra-content-to-a-field) are not automatically associated.
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `helperText()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `helperText()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 Return `null` or an empty string to remove the helper text and its association. For conditional helper text, ensure the field is [reactive](#the-basics-of-reactivity) when its dependencies change so the text and its association update together.
 
