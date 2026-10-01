@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
+use Stringable;
 
 trait CanFormatState
 {
@@ -393,6 +394,16 @@ trait CanFormatState
             $state = json_encode($state);
         }
 
+        // Preserve existing `Stringable` rendering and plain-mode label handling.
+        if (
+            $isHtml &&
+            ($state instanceof LabelInterface) &&
+            (! ($state instanceof Htmlable)) &&
+            (! ($state instanceof Stringable))
+        ) {
+            $state = $state->getLabel();
+        }
+
         if ($state instanceof RichContentAttribute) {
             $isHtml = true;
             $state = Str::sanitizeHtml($state->toHtml());
@@ -400,6 +411,8 @@ trait CanFormatState
             $isHtml = true;
             $state = $state->toHtml();
         } elseif ($isHtml) {
+            $state ??= '';
+
             if ($this->isMarkdown()) {
                 $state = Str::markdown($state, $this->getCommonMarkOptions(), $this->getCommonMarkExtensions());
             }

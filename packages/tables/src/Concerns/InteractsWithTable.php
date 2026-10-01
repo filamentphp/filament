@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Facades\Filament;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -252,6 +253,23 @@ trait InteractsWithTable
         }
 
         return $property;
+    }
+
+    public function getTableSessionKey(string $key, bool $isTenantScoped = false): string
+    {
+        $namespace = $this::class;
+
+        if ($isTenantScoped && class_exists(Filament::class) && filled($tenantKey = Filament::getTenant()?->getKey())) {
+            $namespace .= '|' . $tenantKey;
+        }
+
+        $table = md5($namespace);
+
+        if (filled($identifier = $this->getTable()->getIdentifier())) {
+            $table .= '.' . md5($identifier);
+        }
+
+        return "tables.{$table}_{$key}";
     }
 
     public function getActiveTableLocale(): ?string

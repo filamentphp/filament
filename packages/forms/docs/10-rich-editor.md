@@ -104,7 +104,10 @@ Additional tools available in the toolbar include:
 - `clearFormatting` - Clears all formatting from the selected text.
 - `details` - Inserts a `<details>` tag, which allows users to create collapsible sections in their content.
 - `grid` - Inserts a grid layout into the editor, allowing users to create responsive columns of content.
-- `gridDelete` - Deletes the current grid layout.
+- `gridAddColumnAfter` - Adds a column after the current column in a symmetrical grid.
+- `gridAddColumnBefore` - Adds a column before the current column in a symmetrical grid.
+- `gridDeleteColumn` - Deletes the current grid column and its content.
+- `gridDelete` - Deletes the current grid layout while preserving its content.
 - `highlight` - Highlights the selected text with a `<mark>` tag around it.
 - `horizontalRule` - Inserts a horizontal rule.
 - `lead` - Applies a `lead` class around the text, which is typically used for the first paragraph of an article.
@@ -129,11 +132,11 @@ Additional tools available in the toolbar include:
 
 ### Customizing floating toolbars
 
-If your toolbar is too full, you can use a floating toolbar to show certain tools in a toolbar below the cursor, only when the user is inside a specific node type. This allows you to keep the main toolbar clean while still providing access to additional tools when needed.
+If your toolbar is too full, you can use a floating toolbar to show certain tools near the current node, only when the user is inside a specific node type. This allows you to keep the main toolbar clean while still providing access to additional tools when needed.
 
 You can customize the floating toolbars that appear when your cursor is placed inside a specific node by using the `floatingToolbars()` method.
 
-In the example below, a floating toolbar appears when the cursor is inside a paragraph node. It shows bold, italic, and similar buttons. When the cursor is in a heading node, it displays heading-related buttons, and when inside a table, it shows table-specific controls.
+In the example below, a floating toolbar appears when the cursor is inside a paragraph node. It shows bold, italic, and similar buttons. When the cursor is in a heading node, it displays heading-related buttons. Grids and tables show controls specific to those nodes.
 
 ```php
 use Filament\Forms\Components\RichEditor;
@@ -145,6 +148,9 @@ RichEditor::make('content')
         ],
         'heading' => [
             'h1', 'h2', 'h3',
+        ],
+        'grid' => [
+            'gridAddColumnBefore', 'gridAddColumnAfter', 'gridDeleteColumn', 'gridDelete',
         ],
         'table' => [
             'tableAddColumnBefore', 'tableAddColumnAfter', 'tableDeleteColumn',

@@ -28,7 +28,7 @@ it('can generate a Livewire table component', function (): void {
     assertFileExists($viewPath = resource_path('views/livewire/list-blog-posts.blade.php'));
     expect(file_get_contents($viewPath));
     if (config('database.default') === 'testing') {
-        expect(file_get_contents($path))
+        expect(file_get_contents($viewPath))
             ->toMatchSnapshot();
     }
 });
@@ -51,7 +51,7 @@ it('can generate a Livewire table component with a model', function (): void {
     assertFileExists($viewPath = resource_path('views/livewire/list-posts.blade.php'));
     expect(file_get_contents($viewPath));
     if (config('database.default') === 'testing') {
-        expect(file_get_contents($path))
+        expect(file_get_contents($viewPath))
             ->toMatchSnapshot();
     }
 });
@@ -75,7 +75,7 @@ it('can generate a Livewire table component with generated columns', function ()
     assertFileExists($viewPath = resource_path('views/livewire/list-posts-with-columns.blade.php'));
     expect(file_get_contents($viewPath));
     if (config('database.default') === 'testing') {
-        expect(file_get_contents($path))
+        expect(file_get_contents($viewPath))
             ->toMatchSnapshot();
     }
 });
@@ -98,7 +98,7 @@ it('can generate a Livewire table component in a nested directory', function ():
     assertFileExists($viewPath = resource_path('views/livewire/blog/list-posts.blade.php'));
     expect(file_get_contents($viewPath));
     if (config('database.default') === 'testing') {
-        expect(file_get_contents($path))
+        expect(file_get_contents($viewPath))
             ->toMatchSnapshot();
     }
 });
@@ -121,7 +121,7 @@ it('can generate a Livewire table component for a model in a nested directory', 
     assertFileExists($viewPath = resource_path('views/livewire/blog/list-categories.blade.php'));
     expect(file_get_contents($viewPath));
     if (config('database.default') === 'testing') {
-        expect(file_get_contents($path))
+        expect(file_get_contents($viewPath))
             ->toMatchSnapshot();
     }
 });

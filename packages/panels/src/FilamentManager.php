@@ -620,6 +620,21 @@ class FilamentManager
         return $user->getAttributeValue('name');
     }
 
+    public function getUserScopedAuthIdentifier(?Authenticatable $user = null): string
+    {
+        $user ??= $this->auth()->user();
+
+        if (! $user) {
+            throw new LogicException('A user must be authenticated to generate a scoped identifier.');
+        }
+
+        $guard = $this->getAuthGuard();
+        $userClass = $user::class;
+        $authIdentifier = (string) $user->getAuthIdentifier();
+
+        return hash('sha256', strlen($guard) . ":{$guard}" . strlen($userClass) . ":{$userClass}" . strlen($authIdentifier) . ":{$authIdentifier}");
+    }
+
     /**
      * @return array<Model>
      */

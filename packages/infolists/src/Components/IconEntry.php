@@ -15,6 +15,7 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
@@ -129,9 +130,15 @@ class IconEntry extends Entry implements HasEmbeddedView
 
     public function getSize(mixed $state): IconSize | string | null
     {
-        return $this->evaluate($this->size, [
+        $size = $this->evaluate($this->size, [
             'state' => $state,
         ]);
+
+        if (is_string($size)) {
+            $size = IconSize::tryFrom($size) ?? $size;
+        }
+
+        return $size;
     }
 
     public function getIcon(mixed $state): string | BackedEnum | Htmlable | null
@@ -228,7 +235,9 @@ class IconEntry extends Entry implements HasEmbeddedView
     public function isBoolean(): bool
     {
         if (blank($this->isBoolean)) {
-            $this->isBoolean = $this->getRecord()?->hasCast($this->getName(), ['bool', 'boolean']);
+            $record = $this->getRecord();
+
+            $this->isBoolean = ($record instanceof Model) && $record->hasCast($this->getName(), ['bool', 'boolean']);
         }
 
         return (bool) $this->evaluate($this->isBoolean);

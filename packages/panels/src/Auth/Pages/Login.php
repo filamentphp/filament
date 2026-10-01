@@ -113,28 +113,38 @@ class Login extends SimplePage
         }, $timeboxDuration);
 
         $needsMultiFactorChallenge = app(Timebox::class)->call(function (Timebox $timebox) use ($user): bool {
+            $userUndertakingMultiFactorAuthenticationData = $this->getUserUndertakingMultiFactorAuthenticationData();
+
             if (
-                filled($this->userUndertakingMultiFactorAuthentication) &&
-                (decrypt($this->userUndertakingMultiFactorAuthentication) === $user->getAuthIdentifier())
+                $userUndertakingMultiFactorAuthenticationData &&
+                hash_equals($userUndertakingMultiFactorAuthenticationData['userKey'], Filament::getUserScopedAuthIdentifier($user)) &&
+                $this->getUserUndertakingMultiFactorAuthentication()
             ) {
                 if ($this->isMultiFactorChallengeRateLimited($user)) {
                     return true;
                 }
 
+                $this->cacheSchema('multiFactorChallengeForm', null);
                 $this->multiFactorChallengeForm->validate();
 
                 return false;
             }
 
+            $this->userUndertakingMultiFactorAuthentication = null;
+
             $multiFactorChallenge = $this->getMultiFactorChallenge();
 
             if ($multiFactorAuthenticationProvider = $multiFactorChallenge->getFirstEnabledProvider($user)) {
-                $this->userUndertakingMultiFactorAuthentication = encrypt($user->getAuthIdentifier());
+                $this->userUndertakingMultiFactorAuthentication = encrypt([
+                    'identifier' => $user->getAuthIdentifier(),
+                    'userKey' => Filament::getUserScopedAuthIdentifier($user),
+                ]);
 
                 $multiFactorChallenge->beforeChallenge($user, $multiFactorAuthenticationProvider);
             }
 
             if (filled($this->userUndertakingMultiFactorAuthentication)) {
+                $this->cacheSchema('multiFactorChallengeForm', null);
                 $this->multiFactorChallengeForm->fill();
 
                 return true;
@@ -151,10 +161,16 @@ class Login extends SimplePage
             return null;
         }
 
+        $userScopedAuthIdentifier = Filament::getUserScopedAuthIdentifier($user);
+
         // Credentials are deliberately validated again after the multi-factor challenge so that
         // password and panel access changes made during the challenge are observed before login.
         // The corresponding second `Attempting` event is intentional.
-        if (! $authGuard->attemptWhen($credentials, fn (Authenticatable $user): bool => $this->isUserAllowedToAccessPanel($user), $remember)) {
+        if (! $authGuard->attemptWhen(
+            $credentials,
+            fn (Authenticatable $user): bool => hash_equals($userScopedAuthIdentifier, Filament::getUserScopedAuthIdentifier($user)) && $this->isUserAllowedToAccessPanel($user),
+            $remember,
+        )) {
             $this->throwFailureValidationException();
         }
 
@@ -270,13 +286,42 @@ class Login extends SimplePage
 
     protected function getUserUndertakingMultiFactorAuthentication(): ?Authenticatable
     {
-        if (blank($this->userUndertakingMultiFactorAuthentication)) {
+        $data = $this->getUserUndertakingMultiFactorAuthenticationData();
+
+        if (! $data) {
             return null;
         }
 
         $authProvider = Filament::auth()->getProvider(); /** @phpstan-ignore-line */
+        $user = $authProvider->retrieveById($data['identifier']);
 
-        return $authProvider->retrieveById(decrypt($this->userUndertakingMultiFactorAuthentication));
+        if ((! $user) || (! hash_equals($data['userKey'], Filament::getUserScopedAuthIdentifier($user)))) {
+            return null;
+        }
+
+        return $user;
+    }
+
+    /**
+     * @return array{identifier: mixed, userKey: string} | null
+     */
+    protected function getUserUndertakingMultiFactorAuthenticationData(): ?array
+    {
+        if (blank($this->userUndertakingMultiFactorAuthentication)) {
+            return null;
+        }
+
+        $data = decrypt($this->userUndertakingMultiFactorAuthentication);
+
+        if (
+            (! is_array($data))
+            || (! array_key_exists('identifier', $data))
+            || (! is_string($data['userKey'] ?? null))
+        ) {
+            return null;
+        }
+
+        return $data;
     }
 
     public function multiFactorChallengeForm(Schema $schema): Schema

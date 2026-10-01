@@ -20,7 +20,9 @@ class TagsInputTest extends Page
 
     public function mount(): void
     {
-        $this->form->fill();
+        $this->form->fill([
+            'separator_tags' => 'alpha,,0,',
+        ]);
     }
 
     public function form(Schema $form): Schema
@@ -29,7 +31,13 @@ class TagsInputTest extends Page
             ->schema([
                 TagsInput::make('tags')
                     ->label('Basic Tags')
+                    ->splitKeys([','])
                     ->extraAttributes(['data-testid' => 'basic-tags']),
+
+                TagsInput::make('separator_tags')
+                    ->label('Separator Tags')
+                    ->separator(',')
+                    ->extraAttributes(['data-testid' => 'separator-tags']),
 
                 TagsInput::make('suggested_tags')
                     ->label('Tags with Suggestions')

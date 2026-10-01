@@ -39,6 +39,7 @@ use Filament\Tests\Fixtures\Pages\DatabaseNotificationsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatePickerBrowserTest;
 use Filament\Tests\Fixtures\Pages\DateTimePickerTest;
 use Filament\Tests\Fixtures\Pages\DeferredSchemaLoadingBrowserTest;
+use Filament\Tests\Fixtures\Pages\DissociateBulkActionBrowserTest;
 use Filament\Tests\Fixtures\Pages\DropdownTest;
 use Filament\Tests\Fixtures\Pages\FileUploadBrowserTest;
 use Filament\Tests\Fixtures\Pages\FiltersResetActionBrowserTest;
@@ -55,6 +56,7 @@ use Filament\Tests\Fixtures\Pages\RadioTest;
 use Filament\Tests\Fixtures\Pages\RepeaterTest;
 use Filament\Tests\Fixtures\Pages\RichEditorBrowserTest;
 use Filament\Tests\Fixtures\Pages\RichEditorMinimalControlsBrowserTest;
+use Filament\Tests\Fixtures\Pages\SchemaCachingBrowserTest;
 use Filament\Tests\Fixtures\Pages\SectionBrowserTest;
 use Filament\Tests\Fixtures\Pages\SelectTest;
 use Filament\Tests\Fixtures\Pages\Settings;
@@ -150,6 +152,7 @@ class AdminPanelProvider extends PanelProvider
                 DatePickerBrowserTest::class,
                 DateTimePickerTest::class,
                 DeferredSchemaLoadingBrowserTest::class,
+                DissociateBulkActionBrowserTest::class,
                 FileUploadBrowserTest::class,
                 FiltersResetActionBrowserTest::class,
                 IndividualColumnSearchBrowserTest::class,
@@ -165,6 +168,7 @@ class AdminPanelProvider extends PanelProvider
                 RepeaterTest::class,
                 RichEditorBrowserTest::class,
                 RichEditorMinimalControlsBrowserTest::class,
+                SchemaCachingBrowserTest::class,
                 SectionBrowserTest::class,
                 SelectTest::class,
                 Settings::class,

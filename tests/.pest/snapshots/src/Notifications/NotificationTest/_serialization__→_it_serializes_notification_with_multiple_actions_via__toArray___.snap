@@ -82,6 +82,7 @@
     "duration": 6000,
     "icon": null,
     "iconColor": null,
+    "iconSize": null,
     "status": null,
     "title": "Test Title",
     "view": null,

@@ -90,8 +90,8 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         $this->isInteger = $condition;
 
         $this->numeric($condition);
-        $this->inputMode(static fn (): ?string => $condition ? 'numeric' : null);
-        $this->step(static fn (): ?int => $condition ? 1 : null);
+        $this->inputMode(static fn (TextInput $component): ?string => $component->isInteger() ? 'numeric' : null);
+        $this->step(static fn (TextInput $component): ?int => $component->isInteger() ? 1 : null);
         $this->rule('integer', $condition);
 
         return $this;
@@ -140,9 +140,9 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     {
         $this->isNumeric = $condition;
 
-        $this->inputMode(static fn (): ?string => $condition ? 'decimal' : null);
+        $this->inputMode(static fn (TextInput $component): ?string => $component->isNumeric() ? 'decimal' : null);
         $this->rule('numeric', $condition);
-        $this->step(static fn (): ?string => $condition ? 'any' : null);
+        $this->step(static fn (TextInput $component): ?string => $component->isNumeric() ? 'any' : null);
 
         return $this;
     }

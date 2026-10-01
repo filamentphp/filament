@@ -17,6 +17,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use League\Csv\Bom;
 use League\Csv\Writer;
+use League\Flysystem\UnableToWriteFile;
 use SplTempFileObject;
 
 class PrepareCsvExport implements ShouldQueue
@@ -66,7 +67,10 @@ class PrepareCsvExport implements ShouldQueue
         $csv->insertOne(array_values($this->columnMap));
 
         $filePath = $this->export->getFileDirectory() . DIRECTORY_SEPARATOR . 'headers.csv';
-        $this->export->getFileDisk()->put($filePath, $csv->toString(), Filesystem::VISIBILITY_PRIVATE);
+
+        if (! $this->export->getFileDisk()->put($filePath, $csv->toString(), Filesystem::VISIBILITY_PRIVATE)) {
+            throw UnableToWriteFile::atLocation($filePath);
+        }
 
         $query = EloquentSerializeFacade::unserialize($this->query);
         $keyName = $query->getModel()->getKeyName();

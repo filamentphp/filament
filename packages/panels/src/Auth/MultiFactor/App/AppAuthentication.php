@@ -12,6 +12,7 @@ use Filament\Auth\MultiFactor\App\Actions\RegenerateAppAuthenticationRecoveryCod
 use Filament\Auth\MultiFactor\App\Actions\SetUpAppAuthenticationAction;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
+use Filament\Auth\MultiFactor\Concerns\HasCacheStore;
 use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\OneTimeCodeInput;
@@ -22,10 +23,7 @@ use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Cache\LockProvider;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use LogicException;
@@ -34,6 +32,8 @@ use SensitiveParameter;
 
 class AppAuthentication implements MultiFactorAuthenticationProvider
 {
+    use HasCacheStore;
+
     protected bool $isRecoverable = false;
 
     protected bool $canRegenerateRecoveryCodes = true;
@@ -184,11 +184,12 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         // a successful verification rejects that code and every earlier one, not just a repeat
         // of the same code.
         $cacheKey = 'filament.app_authentication_codes.' . md5($secret);
+        $cache = $this->getCacheRepository();
 
-        $verifyCode = function () use ($cacheKey, $code, $secret): bool {
+        $verifyCode = function () use ($cache, $cacheKey, $code, $secret): bool {
             // Passing an initial `$lastAcceptedTimestamp` makes `verifyKeyNewer()` return the
             // matched period instead of `true`, so future codes are cached correctly.
-            $lastAcceptedTimestamp = Cache::get($cacheKey)
+            $lastAcceptedTimestamp = $cache->get($cacheKey)
                 ?? ($this->google2FA->getTimestamp() - $this->getCodeWindow() - 1);
 
             $timestamp = $this->google2FA->verifyKeyNewer($secret, $code, $lastAcceptedTimestamp, $this->getCodeWindow());
@@ -197,19 +198,10 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
                 return false;
             }
 
-            Cache::put($cacheKey, $timestamp, ($this->getCodeWindow() + 1) * 60);
-
-            return true;
+            return $cache->forever($cacheKey, $timestamp);
         };
 
-        // Locking closes the window where concurrent requests both read the timestep before
-        // either writes it. Not every cache store supports locks, and verification is on the
-        // login path, so fall back to verifying without one rather than failing to log in.
-        if (! (Cache::getStore() instanceof LockProvider)) {
-            return $verifyCode();
-        }
-
-        return Cache::lock("{$cacheKey}.lock", 10)->block(10, $verifyCode);
+        return $this->executeWithCacheLock($cache, "{$cacheKey}.lock", $verifyCode);
     }
 
     public function verifyRecoveryCode(#[SensitiveParameter] string $recoveryCode, ?HasAppAuthenticationRecovery $user = null): bool
@@ -220,7 +212,10 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
             $user::class . ':' . (($user instanceof Authenticatable) ? $user->getAuthIdentifier() : spl_object_id($user)),
         );
 
-        return Cache::lock($lockKey, 10)->block(10, fn (): bool => DB::transaction(function () use ($user, $recoveryCode): bool {
+        $cache = $this->getCacheRepository();
+        $connection = $user->getConnection(); /** @phpstan-ignore-line */
+
+        return $this->executeWithCacheLock($cache, $lockKey, fn (): bool => $connection->transaction(function () use ($user, $recoveryCode): bool {
             $lockedUser = $user
                 ->newQuery() /** @phpstan-ignore-line */
                 ->whereKey($user->getKey()) /** @phpstan-ignore-line */

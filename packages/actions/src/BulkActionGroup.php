@@ -33,7 +33,7 @@ class BulkActionGroup extends ActionGroup
         return [
             'x-cloak' => true,
             'x-show' => 'getSelectedRecordsCount()',
-            ...parent::getExtraAttributes(),
+            ...parent::getExtraDropdownAttributes(),
         ];
     }
 }

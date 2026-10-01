@@ -69,9 +69,10 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
     public function toArray(): array
     {
         $icon = $this->getIcon();
+        $iconSize = $this->getIconSize();
 
         if ($icon instanceof ScalableIcon) {
-            $icon = $icon->getIconForSize(IconSize::Large);
+            $icon = $icon->getIconForSize($iconSize instanceof IconSize ? $iconSize : IconSize::Large);
         } elseif ($icon instanceof BackedEnum) {
             $icon = $icon->value;
         }
@@ -84,6 +85,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
             'duration' => $this->getDuration(),
             'icon' => $icon,
             'iconColor' => $this->getIconColor(),
+            'iconSize' => $iconSize,
             'status' => $this->getStatus(),
             'title' => $this->getTitle(),
             'view' => $this->hasView() ? $this->getView() : null,
@@ -131,6 +133,11 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         $static->status($data['status'] ?? $static->getStatus());
         $static->icon($data['icon'] ?? $static->getIcon());
         $static->iconColor($data['iconColor'] ?? $static->getIconColor());
+
+        if (isset($data['iconSize'])) {
+            $static->iconSize($data['iconSize']);
+        }
+
         $static->title($data['title'] ?? null);
 
         return $static;

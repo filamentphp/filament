@@ -76,6 +76,110 @@ class FormsIconAlias
 
     const COMPONENTS_RICH_EDITOR_PANELS_MERGE_TAGS_CLOSE_BUTTON = 'forms::components.rich-editor.panels.merge-tags.close-button';
 
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_ALIGN_CENTER = 'forms:components.rich-editor.toolbar.align-center';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_ALIGN_END = 'forms:components.rich-editor.toolbar.align-end';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_ALIGN_JUSTIFY = 'forms:components.rich-editor.toolbar.align-justify';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_ALIGN_START = 'forms:components.rich-editor.toolbar.align-start';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_ATTACH_FILES = 'forms:components.rich-editor.toolbar.attach-files';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_BLOCKQUOTE = 'forms:components.rich-editor.toolbar.blockquote';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_BOLD = 'forms:components.rich-editor.toolbar.bold';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_BULLET_LIST = 'forms:components.rich-editor.toolbar.bullet-list';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_CLEAR_FORMATTING = 'forms:components.rich-editor.toolbar.clear_formatting';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_CODE = 'forms:components.rich-editor.toolbar.code';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_CODE_BLOCK = 'forms:components.rich-editor.toolbar.code-block';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_CUSTOM_BLOCKS = 'forms:components.rich-editor.toolbar.custom-blocks';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_DETAILS = 'forms:components.rich-editor.toolbar.details';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_GRID = 'forms:components.rich-editor.toolbar.grid';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_GRID_ADD_COLUMN_AFTER = 'forms:components.rich-editor.toolbar.grid_add_column_after';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_GRID_ADD_COLUMN_BEFORE = 'forms:components.rich-editor.toolbar.grid_add_column_before';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_GRID_DELETE = 'forms:components.rich-editor.toolbar.grid_delete';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_GRID_DELETE_COLUMN = 'forms:components.rich-editor.toolbar.grid_delete_column';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_H1 = 'forms:components.rich-editor.toolbar.h1';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_H2 = 'forms:components.rich-editor.toolbar.h2';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_H3 = 'forms:components.rich-editor.toolbar.h3';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_H4 = 'forms:components.rich-editor.toolbar.h4';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_H5 = 'forms:components.rich-editor.toolbar.h5';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_H6 = 'forms:components.rich-editor.toolbar.h6';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_HIGHLIGHT = 'forms:components.rich-editor.toolbar.highlight';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_HORIZONTAL_RULE = 'forms:components.rich-editor.toolbar.horizontal-rule';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_ITALIC = 'forms:components.rich-editor.toolbar.italic';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_LEAD = 'forms:components.rich-editor.toolbar.lead';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_LINK = 'forms:components.rich-editor.toolbar.link';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_MERGE_TAGS = 'forms:components.rich-editor.toolbar.merge-tags';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_ORDERED_LIST = 'forms:components.rich-editor.toolbar.ordered-list';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_PARAGRAPH = 'forms:components.rich-editor.toolbar.paragraph';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_REDO = 'forms:components.rich-editor.toolbar.redo';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_SMALL = 'forms:components.rich-editor.toolbar.small';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_STRIKE = 'forms:components.rich-editor.toolbar.strike';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_SUBSCRIPT = 'forms:components.rich-editor.toolbar.subscript';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_SUPERSCRIPT = 'forms:components.rich-editor.toolbar.superscript';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE = 'forms:components.rich-editor.toolbar.table';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_ADD_COLUMN_AFTER = 'forms:components.rich-editor.toolbar.table_add_column_after';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_ADD_COLUMN_BEFORE = 'forms:components.rich-editor.toolbar.table_add_column_before';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_ADD_ROW_AFTER = 'forms:components.rich-editor.toolbar.table_add_row_after';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_ADD_ROW_BEFORE = 'forms:components.rich-editor.toolbar.table_add_row_before';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_DELETE = 'forms:components.rich-editor.toolbar.table_delete';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_DELETE_COLUMN = 'forms:components.rich-editor.toolbar.table_delete_column';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_DELETE_ROW = 'forms:components.rich-editor.toolbar.table_delete_row';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_MERGE_CELLS = 'forms:components.rich-editor.toolbar.table_merge_cells';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_SPLIT_CELL = 'forms:components.rich-editor.toolbar.table_split_cell';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_TOGGLE_HEADER_CELL = 'forms:components.rich-editor.toolbar.table_toggle_header_cell';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_TOGGLE_HEADER_ROW = 'forms:components.rich-editor.toolbar.table_toggle_header_row';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_TEXT_COLOR = 'forms:components.rich-editor.toolbar.text-color';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_UNDERLINE = 'forms:components.rich-editor.toolbar.underline';
+
+    const COMPONENTS_RICH_EDITOR_TOOLBAR_UNDO = 'forms:components.rich-editor.toolbar.undo';
+
     const COMPONENTS_SELECT_ACTIONS_CREATE_OPTION = 'forms::components.select.actions.create-option';
 
     const COMPONENTS_SELECT_ACTIONS_EDIT_OPTION = 'forms::components.select.actions.edit-option';

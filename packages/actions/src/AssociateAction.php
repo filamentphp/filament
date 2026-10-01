@@ -85,6 +85,8 @@ class AssociateAction extends Action
 
             $record = $relationshipQuery->find($data['recordId']);
 
+            $hasFailed = false;
+
             foreach (($this->isMultiple ? $record : [$record]) as $record) {
                 if (! $record instanceof Model) {
                     continue;
@@ -95,13 +97,24 @@ class AssociateAction extends Action
                 /** @var BelongsTo $inverseRelationship */
                 $inverseRelationship = $table->getInverseRelationshipFor($record);
 
-                $this->process(function () use ($inverseRelationship, $record, $relationship): void {
+                $result = $this->process(function () use ($inverseRelationship, $record, $relationship): bool {
                     $inverseRelationship->associate($relationship->getParent());
-                    $record->save();
+
+                    return $record->save();
                 }, [
                     'inverseRelationship' => $inverseRelationship,
                     'relationship' => $relationship,
                 ]);
+
+                if ($result === false) {
+                    $hasFailed = true;
+                }
+            }
+
+            if ($hasFailed) {
+                $this->failure();
+
+                return;
             }
 
             if ($arguments['another'] ?? false) {

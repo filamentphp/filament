@@ -168,6 +168,10 @@ public static function canView(): bool
 }
 ```
 
+Filament also checks `canView()` before a widget's `mount()` method runs, including when a lazy widget loads, and before subsequent Livewire updates. If access is denied, the request returns a 403 response. Dashboard and resource pages filter out denied widgets before mounting them.
+
+Keep sensitive work out of the widget's `boot()` and lazy `placeholder()` methods, which can run before this authorization check. If you need sensitive work in these methods, authorize it separately.
+
 ## Table widgets
 
 You may easily add tables to your dashboard. Start by creating a widget with the command:

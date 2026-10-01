@@ -525,6 +525,8 @@ public function table(Table $table): Table
 }
 ```
 
+When using Filament tenancy, persisted searches are isolated to the current tenant.
+
 ### Disabling search term splitting
 
 By default, the table search will split the search term into individual words and search for each word separately. This allows for more flexible search queries. However, it can have a negative impact on performance when large datasets are involved. You can disable this behavior using the `splitSearchTerms(false)` method on the table:

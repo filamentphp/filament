@@ -29,7 +29,7 @@ class DisableAppAuthenticationAction
     {
         $isRecoverable = $appAuthentication->isRecoverable();
         $rateLimitAuthenticationAttempt = static function (string $passwordStatePath): void {
-            $rateLimitingKey = 'filament-disable-app-authentication:' . Filament::auth()->id();
+            $rateLimitingKey = 'filament-disable-app-authentication:' . Filament::getUserScopedAuthIdentifier();
 
             if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
                 throw ValidationException::withMessages([

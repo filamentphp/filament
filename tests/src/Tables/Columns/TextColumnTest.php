@@ -17,17 +17,138 @@ use Filament\Support\Enums\TextSize;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Tests\Fixtures\Enums\NavigationGroupEnum;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
+use Mockery;
 use Stringable;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
+describe('label formatting compatibility', function (): void {
+    it('resolves enum labels after the formatter but before rich formatting', function (string $mode, string $expected): void {
+        $column = TextColumn::make('status')
+            ->{$mode}()
+            ->formatStateUsing(static function (NavigationGroupEnum $state): NavigationGroupEnum {
+                expect($state)->toBe(NavigationGroupEnum::Users);
+
+                return NavigationGroupEnum::Settings;
+            });
+
+        expect($column->formatState(NavigationGroupEnum::Users)->toHtml())->toBe($expected);
+    })->with([
+        ['html', 'System Settings'],
+        ['markdown', "<p>System Settings</p>\n"],
+    ]);
+
+    it('formats non-stringable labels according to their trust in rich modes', function (string $mode, string | Htmlable | null $label, string $expected): void {
+        $state = new class($label) implements HasLabelContract
+        {
+            public function __construct(protected string | Htmlable | null $label) {}
+
+            public function getLabel(): string | Htmlable | null
+            {
+                return $this->label;
+            }
+        };
+
+        $column = TextColumn::make('status')->{$mode}()->prefix('<before>');
+
+        expect($column->formatState($state)->toHtml())->toBe($expected);
+    })->with([
+        ['html', '<b onclick="alert(1)">Label</b><script>alert(2)</script>', '&lt;before&gt;<b>Label</b>'],
+        ['html', null, '&lt;before&gt;'],
+        ['markdown', null, '&lt;before&gt;'],
+        ['markdown', new HtmlString('<b onclick="trusted()">**Label**</b>'), '&lt;before&gt;<b onclick="trusted()">**Label**</b>'],
+    ]);
+
+    it('preserves plain-mode label escaping and truncation', function (?int $limit, ?string $prefix, bool $isTrusted, string $expected): void {
+        $state = new class implements HasLabelContract
+        {
+            public function getLabel(): HtmlString
+            {
+                return new HtmlString('<b onclick="trusted()">Alpha beta</b>');
+            }
+        };
+
+        $formatted = TextColumn::make('status')->limit($limit)->prefix($prefix)->formatState($state);
+
+        expect($formatted instanceof Htmlable)->toBe($isTrusted)
+            ->and(e($formatted))->toBe($expected);
+
+        if (! $isTrusted) {
+            expect($formatted)->toBeString();
+        }
+    })->with([
+        'unformatted fast path' => [null, null, true, '<b onclick="trusted()">Alpha beta</b>'],
+        'non-truncating limit' => [100, null, true, '<b onclick="trusted()">Alpha beta</b>'],
+        'truncating limit' => [2, null, false, '&lt;b...'],
+        'string prefix' => [null, 'Label: ', false, 'Label: &lt;b onclick=&quot;trusted()&quot;&gt;Alpha beta&lt;/b&gt;'],
+    ]);
+
+    it('preserves existing `Stringable` and `Htmlable` precedence over labels in rich modes', function (bool $isHtmlable, string $expected): void {
+        if ($isHtmlable) {
+            $state = new class implements HasLabelContract, Htmlable
+            {
+                public function toHtml(): string
+                {
+                    return '<b onclick="trusted()">Original</b>';
+                }
+
+                public function getLabel(): string
+                {
+                    return 'Unused label';
+                }
+            };
+        } else {
+            $state = Mockery::mock(HasLabelContract::class);
+            $state->shouldReceive('__toString')->andReturn('<b onclick="trusted()">Original</b>');
+            $state->shouldNotReceive('getLabel');
+        }
+
+        expect(TextColumn::make('status')->html()->formatState($state)->toHtml())->toBe($expected);
+    })->with([
+        [false, '<b>Original</b>'],
+        [true, '<b onclick="trusted()">Original</b>'],
+    ]);
+
+    it('keeps string labels untrusted without rich formatting', function (): void {
+        $state = Mockery::mock(HasLabelContract::class);
+        $state->shouldReceive('getLabel')->once()->andReturn('<b>Label</b>');
+
+        $column = TextColumn::make('status')->prefix('Label: ');
+
+        expect($column->isHtml())->toBeFalse()
+            ->and($column->formatState($state))->toBe('Label: <b>Label</b>');
+    });
+});
+
+it('renders rich-mode enum labels accessibly in light and dark modes', function (): void {
+    Artisan::call('filament:assets');
+    Post::factory()->create(['title' => 'Quarterly report', 'content' => 'Review summary']);
+    $this->actingAs(User::factory()->create());
+
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/columns-browser-test');
+
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page
+            ->assertNoSmoke()
+            ->assertScript('document.querySelector(\'[data-testid="enum-label-column"]\').textContent.trim()', 'User Management')
+            ->assertNoAccessibilityIssues();
+    }
+});
 
 it('can set `badge()`', function (): void {
     expect(TextColumn::make('name')->badge()->isBadge())->toBeTrue();

@@ -108,49 +108,79 @@ function signedExportDownloadUrl(Export $export, string $format = 'csv'): string
     ], absolute: false);
 }
 
-function fakeExportFile(Export $export): void
+function fakeExportFile(Export $export, string $format = 'csv'): string
 {
     Storage::fake('local');
+
+    if ($format === 'xlsx') {
+        $content = 'confidential-prebuilt-xlsx-bytes';
+
+        Storage::disk('local')->put(
+            $export->getFileDirectory() . DIRECTORY_SEPARATOR . "{$export->file_name}.xlsx",
+            $content,
+        );
+
+        return $content;
+    }
 
     Storage::disk('local')->put(
         $export->getFileDirectory() . DIRECTORY_SEPARATOR . 'headers.csv',
         "id,name\n",
     );
+
+    Storage::disk('local')->put(
+        $export->getFileDirectory() . DIRECTORY_SEPARATOR . '0000000000000001.csv',
+        "1,confidential-export-row\n",
+    );
+
+    return "id,name\n1,confidential-export-row\n";
 }
 
-it('aborts with `401` when the user is not authenticated', function (): void {
+it('aborts with `401` without disclosing bytes when the user is not authenticated', function (string $format): void {
     $owner = User::factory()->create();
 
     $export = createExportForOwner($owner);
 
-    $this->get(signedExportDownloadUrl($export))
-        ->assertStatus(401);
-});
+    fakeExportFile($export, $format);
 
-it('aborts with `403` when an authenticated non-owner has no `view` policy', function (): void {
+    $this->expectOutputString('');
+
+    $this->get(signedExportDownloadUrl($export, $format))
+        ->assertStatus(401)
+        ->assertNotStreamed()
+        ->assertDontSee('confidential-', escape: false);
+})->with(['csv', 'xlsx']);
+
+it('aborts with `403` without disclosing bytes when an authenticated non-owner has no `view()` policy', function (string $format): void {
     $owner = User::factory()->create();
     $nonOwner = User::factory()->create();
 
     $export = createExportForOwner($owner);
 
-    $this->actingAs($nonOwner)
-        ->get(signedExportDownloadUrl($export))
-        ->assertStatus(403);
-});
+    fakeExportFile($export, $format);
 
-it('streams with `200` when the authenticated owner has no `view` policy', function (): void {
+    $this->expectOutputString('');
+
+    $this->actingAs($nonOwner)
+        ->get(signedExportDownloadUrl($export, $format))
+        ->assertStatus(403)
+        ->assertNotStreamed()
+        ->assertDontSee('confidential-', escape: false);
+})->with(['csv', 'xlsx']);
+
+it('streams the exact bytes when the authenticated owner has no `view()` policy', function (string $format): void {
     $owner = User::factory()->create();
 
     $export = createExportForOwner($owner);
 
-    fakeExportFile($export);
+    $content = fakeExportFile($export, $format);
 
     $response = $this->actingAs($owner)
-        ->get(signedExportDownloadUrl($export))
+        ->get(signedExportDownloadUrl($export, $format))
         ->assertStatus(200);
 
-    expect($response->streamedContent())->toContain('id,name');
-});
+    expect($response->streamedContent())->toBe($content);
+})->with(['csv', 'xlsx']);
 
 it('streams with `200` when a `view` policy allows a non-owner', function (): void {
     Gate::policy(Export::class, AllowExportViewPolicy::class);
@@ -160,13 +190,13 @@ it('streams with `200` when a `view` policy allows a non-owner', function (): vo
 
     $export = createExportForOwner($owner);
 
-    fakeExportFile($export);
+    $content = fakeExportFile($export);
 
     $response = $this->actingAs($nonOwner)
         ->get(signedExportDownloadUrl($export))
         ->assertStatus(200);
 
-    expect($response->streamedContent())->toContain('id,name');
+    expect($response->streamedContent())->toBe($content);
 });
 
 it('aborts with `403` when a `view` policy denies the user', function (): void {
@@ -176,10 +206,31 @@ it('aborts with `403` when a `view` policy denies the user', function (): void {
 
     $export = createExportForOwner($owner);
 
+    fakeExportFile($export);
+
+    $this->expectOutputString('');
+
     $this->actingAs($owner)
         ->get(signedExportDownloadUrl($export))
-        ->assertStatus(403);
+        ->assertStatus(403)
+        ->assertNotStreamed()
+        ->assertDontSee('confidential-', escape: false);
 });
+
+it('returns `404` for missing export files only after authorization', function (string $format): void {
+    Storage::fake('local');
+
+    $owner = User::factory()->create();
+    $nonOwner = User::factory()->create();
+    $export = createExportForOwner($owner);
+    $url = signedExportDownloadUrl($export, $format);
+
+    $this->expectOutputString('');
+
+    $this->get($url)->assertUnauthorized()->assertNotStreamed();
+    $this->actingAs($nonOwner)->get($url)->assertForbidden()->assertNotStreamed();
+    $this->actingAs($owner)->get($url)->assertNotFound()->assertNotStreamed();
+})->with(['csv', 'xlsx']);
 
 it('aborts with `404` when the requested format is unknown', function (): void {
     $owner = User::factory()->create();

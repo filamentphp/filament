@@ -81,6 +81,36 @@ it('can set `numeric()`', function (): void {
     expect($input->getType())->toBe('number');
 });
 
+it('derives `numeric()` input attributes from its boolean condition', function (bool $condition, ?string $expectedInputMode, ?string $expectedStep): void {
+    $input = TextInput::make('amount')
+        ->numeric($condition);
+
+    expect($input)
+        ->getInputMode()->toBe($expectedInputMode)
+        ->getStep()->toBe($expectedStep);
+})->with([
+    'true' => [true, 'decimal', 'any'],
+    'false' => [false, null, null],
+]);
+
+it('reevaluates dynamic `numeric()` input attribute defaults', function (): void {
+    $isNumeric = false;
+    $input = TextInput::make('amount')
+        ->numeric(static function () use (&$isNumeric): bool {
+            return $isNumeric;
+        });
+
+    expect($input)
+        ->getInputMode()->toBeNull()
+        ->getStep()->toBeNull();
+
+    $isNumeric = true;
+
+    expect($input)
+        ->getInputMode()->toBe('decimal')
+        ->getStep()->toBe('any');
+});
+
 it('can set `password()`', function (): void {
     $input = TextInput::make('secret');
 
@@ -185,6 +215,90 @@ it('can set `integer()`', function (): void {
 
     expect($input->isNumeric())->toBeTrue();
     expect($input->getType())->toBe('number');
+});
+
+it('derives `integer()` input attributes from its boolean condition', function (bool $condition, ?string $expectedInputMode, ?int $expectedStep): void {
+    $input = TextInput::make('quantity')
+        ->integer($condition);
+
+    expect($input)
+        ->getInputMode()->toBe($expectedInputMode)
+        ->getStep()->toBe($expectedStep);
+})->with([
+    'true' => [true, 'numeric', 1],
+    'false' => [false, null, null],
+]);
+
+it('reevaluates dynamic `integer()` input attribute defaults', function (): void {
+    $isInteger = false;
+    $input = TextInput::make('quantity')
+        ->integer(static function () use (&$isInteger): bool {
+            return $isInteger;
+        });
+
+    expect($input)
+        ->getInputMode()->toBeNull()
+        ->getStep()->toBeNull();
+
+    $isInteger = true;
+
+    expect($input)
+        ->getInputMode()->toBe('numeric')
+        ->getStep()->toBe(1);
+});
+
+it('preserves input attribute configuration order around `numeric()` and `integer()`', function (): void {
+    $numericConfiguredBefore = TextInput::make('numericConfiguredBefore')
+        ->inputMode('tel')
+        ->step(2)
+        ->numeric();
+    $numericConfiguredAfter = TextInput::make('numericConfiguredAfter')
+        ->numeric()
+        ->inputMode('tel')
+        ->step(2);
+    $integerConfiguredBefore = TextInput::make('integerConfiguredBefore')
+        ->inputMode('tel')
+        ->step(2)
+        ->integer();
+    $integerConfiguredAfter = TextInput::make('integerConfiguredAfter')
+        ->integer()
+        ->inputMode('tel')
+        ->step(2);
+
+    expect($numericConfiguredBefore)
+        ->getInputMode()->toBe('decimal')
+        ->getStep()->toBe('any')
+        ->and($numericConfiguredAfter)
+        ->getInputMode()->toBe('tel')
+        ->getStep()->toBe(2)
+        ->and($integerConfiguredBefore)
+        ->getInputMode()->toBe('numeric')
+        ->getStep()->toBe(1)
+        ->and($integerConfiguredAfter)
+        ->getInputMode()->toBe('tel')
+        ->getStep()->toBe(2);
+});
+
+it('defaults input attributes to `null` and can reset them after `numeric()` and `integer()`', function (): void {
+    $defaultInput = TextInput::make('value');
+    $numericInput = TextInput::make('amount')
+        ->numeric()
+        ->inputMode(null)
+        ->step(null);
+    $integerInput = TextInput::make('quantity')
+        ->integer()
+        ->inputMode(null)
+        ->step(null);
+
+    expect($defaultInput)
+        ->getInputMode()->toBeNull()
+        ->getStep()->toBeNull()
+        ->and($numericInput)
+        ->getInputMode()->toBeNull()
+        ->getStep()->toBeNull()
+        ->and($integerInput)
+        ->getInputMode()->toBeNull()
+        ->getStep()->toBeNull();
 });
 
 it('can set `revealable()` on a `password()` input', function (): void {
@@ -551,6 +665,24 @@ describe('rendering', function (): void {
         livewire(RenderTextInputWithNumericUndone::class)->assertSuccessful();
     });
 
+    it('renders input attribute defaults from changing dynamic `numeric()` and `integer()` conditions', function (): void {
+        livewire(RenderTextInputWithDynamicNumericConditions::class)
+            ->assertDontSeeHtml('inputmode="decimal"')
+            ->assertDontSeeHtml('inputmode="numeric"')
+            ->assertDontSeeHtml('step="any"')
+            ->assertDontSeeHtml('step="1"')
+            ->set('hasNumericInputs', true)
+            ->assertSeeHtml('inputmode="decimal"')
+            ->assertSeeHtml('inputmode="numeric"')
+            ->assertSeeHtml('step="any"')
+            ->assertSeeHtml('step="1"')
+            ->set('hasNumericInputs', false)
+            ->assertDontSeeHtml('inputmode="decimal"')
+            ->assertDontSeeHtml('inputmode="numeric"')
+            ->assertDontSeeHtml('step="any"')
+            ->assertDontSeeHtml('step="1"');
+    });
+
     it('can render with `placeholder()`', function (): void {
         livewire(RenderTextInputWithPlaceholder::class)
             ->assertSuccessful()
@@ -577,6 +709,40 @@ it('can render and type in `TextInput` in the browser', function (): void {
 
         visit('/text-input-test')
             ->inDarkMode()
+            ->assertNoAccessibilityIssues();
+    });
+});
+
+it('updates dynamic `numeric()` and `integer()` attributes in the browser', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/text-input-test')
+            ->assertAttributeMissing('[data-testid="dynamic-numeric-input"]', 'inputmode')
+            ->assertAttributeMissing('[data-testid="dynamic-numeric-input"]', 'step')
+            ->assertAttributeMissing('[data-testid="dynamic-integer-input"]', 'inputmode')
+            ->assertAttributeMissing('[data-testid="dynamic-integer-input"]', 'step')
+            ->click('[data-testid="numeric-defaults-toggle"]')
+            ->assertAttribute('[data-testid="dynamic-numeric-input"]', 'inputmode', 'decimal')
+            ->assertAttribute('[data-testid="dynamic-numeric-input"]', 'step', 'any')
+            ->assertAttribute('[data-testid="dynamic-integer-input"]', 'inputmode', 'numeric')
+            ->assertAttribute('[data-testid="dynamic-integer-input"]', 'step', '1')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues()
+            ->click('[data-testid="numeric-defaults-toggle"]')
+            ->assertAttributeMissing('[data-testid="dynamic-numeric-input"]', 'inputmode')
+            ->assertAttributeMissing('[data-testid="dynamic-numeric-input"]', 'step')
+            ->assertAttributeMissing('[data-testid="dynamic-integer-input"]', 'inputmode')
+            ->assertAttributeMissing('[data-testid="dynamic-integer-input"]', 'step')
+            ->assertNoAccessibilityIssues();
+
+        visit('/text-input-test')
+            ->inDarkMode()
+            ->click('[data-testid="numeric-defaults-toggle"]')
+            ->assertAttribute('[data-testid="dynamic-numeric-input"]', 'inputmode', 'decimal')
+            ->assertAttribute('[data-testid="dynamic-numeric-input"]', 'step', 'any')
+            ->assertAttribute('[data-testid="dynamic-integer-input"]', 'inputmode', 'numeric')
+            ->assertAttribute('[data-testid="dynamic-integer-input"]', 'step', '1')
             ->assertNoAccessibilityIssues();
     });
 });
@@ -682,6 +848,23 @@ class RenderTextInputWithNumericUndone extends Livewire
     public function form(Schema $form): Schema
     {
         return $form->schema([TextInput::make('field')->numeric()->numeric(false)])->statePath('data');
+    }
+}
+
+class RenderTextInputWithDynamicNumericConditions extends Livewire
+{
+    public bool $hasNumericInputs = false;
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                TextInput::make('amount')
+                    ->numeric(fn (): bool => $this->hasNumericInputs),
+                TextInput::make('quantity')
+                    ->integer(fn (): bool => $this->hasNumericInputs),
+            ])
+            ->statePath('data');
     }
 }
 

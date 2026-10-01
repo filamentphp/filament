@@ -12,6 +12,7 @@ use Filament\Support\Enums\Size;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Notifications\CustomNotification;
 use Filament\Tests\TestCase;
+use Illuminate\Notifications\DatabaseNotification as DatabaseNotificationModel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\AssertionFailedError;
@@ -23,6 +24,15 @@ uses(TestCase::class);
 it('can render', function (): void {
     livewire(Notifications::class)
         ->assertSeeHtml('notifications');
+});
+
+it('can render with a string enum `iconSize()`', function (): void {
+    $html = Notification::make()
+        ->icon(Heroicon::Check)
+        ->iconSize('lg')
+        ->toHtml();
+
+    expect($html)->toContain('fi-size-lg');
 });
 
 it('can send notifications', function (): void {
@@ -352,6 +362,117 @@ it('can accumulate safe views across multiple calls to `safeViews()`', function 
 });
 
 describe('serialization', function (): void {
+    it('serializes default and configured scalable icon sizes via `toArray()`', function (): void {
+        $defaultSizeNotification = Notification::make()
+            ->icon(Heroicon::Bell);
+        $smallNotification = Notification::make()
+            ->icon(Heroicon::Bell)
+            ->iconSize('sm');
+        $customSizeNotification = Notification::make()
+            ->icon(Heroicon::Bell)
+            ->iconSize('custom');
+
+        expect($defaultSizeNotification->toArray())
+            ->icon->toBe('heroicon-s-bell')
+            ->iconSize->toBeNull()
+            ->and($smallNotification->toArray())
+            ->icon->toBe('heroicon-c-bell')
+            ->iconSize->toBe(IconSize::Small)
+            ->and($customSizeNotification->toArray())
+            ->icon->toBe('heroicon-s-bell')
+            ->iconSize->toBe('custom');
+    });
+
+    it('restores notification icon sizes via `fromArray()`', function (): void {
+        $notification = Notification::make()
+            ->icon(Heroicon::Bell)
+            ->iconSize(IconSize::Small);
+
+        $restoredNotification = Notification::fromArray($notification->toArray());
+
+        expect($restoredNotification)
+            ->getIcon()->toBe('heroicon-c-bell')
+            ->getIconSize()->toBe(IconSize::Small);
+    });
+
+    it('restores old notification payloads without an `iconSize` field', function (): void {
+        $payload = Notification::make()
+            ->icon(Heroicon::Bell)
+            ->toArray();
+
+        unset($payload['iconSize']);
+
+        $restoredNotification = Notification::fromArray($payload);
+
+        expect($restoredNotification)
+            ->getIcon()->toBe('heroicon-s-bell')
+            ->getIconSize()->toBeNull();
+    });
+
+    it('preserves a lazy default icon size when restoring old notification payloads', function (): void {
+        $restoredNotification = NotificationWithLazyIconSize::fromArray([
+            'title' => 'Important',
+        ]);
+
+        expect($restoredNotification->getIconSize())->toBe(IconSize::Large);
+    });
+
+    it('preserves notification icon sizes through the session', function (): void {
+        Notification::make()
+            ->icon(Heroicon::Bell)
+            ->iconSize(IconSize::Small)
+            ->send();
+
+        $notificationsComponent = new Notifications;
+        $notificationsComponent->mount();
+        $restoredNotification = $notificationsComponent->notifications->first();
+
+        expect($restoredNotification)
+            ->getIcon()->toBe('heroicon-c-bell')
+            ->getIconSize()->toBe(IconSize::Small);
+    });
+
+    it('preserves notification icon sizes through broadcast messages', function (): void {
+        $broadcastNotification = Notification::make()
+            ->icon(Heroicon::Bell)
+            ->iconSize(IconSize::Small)
+            ->toBroadcast();
+        $payload = json_decode(
+            json_encode($broadcastNotification->toBroadcast(null)->data, JSON_THROW_ON_ERROR),
+            associative: true,
+            flags: JSON_THROW_ON_ERROR,
+        );
+
+        $notificationsComponent = new Notifications;
+        $notificationsComponent->mount();
+        $notificationsComponent->handleBroadcastNotification($payload);
+        $restoredNotification = $notificationsComponent->notifications->first();
+
+        expect($restoredNotification)
+            ->getIcon()->toBe('heroicon-c-bell')
+            ->getIconSize()->toBe(IconSize::Small);
+    });
+
+    it('preserves notification icon sizes through database messages', function (): void {
+        $payload = Notification::make()
+            ->icon(Heroicon::Bell)
+            ->iconSize(IconSize::Small)
+            ->toDatabase()
+            ->toDatabase(null);
+        $databaseNotification = new DatabaseNotificationModel;
+        $databaseNotification->setRawAttributes([
+            'id' => 'notification-id',
+            'data' => json_encode($payload, JSON_THROW_ON_ERROR),
+        ]);
+
+        $restoredNotification = Notification::fromDatabase($databaseNotification);
+
+        expect($restoredNotification)
+            ->getId()->toBe('notification-id')
+            ->getIcon()->toBe('heroicon-c-bell')
+            ->getIconSize()->toBe(IconSize::Small);
+    });
+
     it('serializes simple notification via `toArray()`', function (): void {
         $notification = Notification::make('test-id')
             ->title('Test Title')
@@ -579,3 +700,13 @@ it('can create notification with `make()` and verify `getId()`', function (): vo
 
     expect($notification->getId())->toBe('custom-id');
 });
+
+class NotificationWithLazyIconSize extends Notification
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->iconSize(fn (): IconSize => $this->getTitle() === 'Important' ? IconSize::Large : IconSize::Small);
+    }
+}

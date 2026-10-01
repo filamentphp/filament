@@ -69,7 +69,7 @@ class DetachBulkAction extends BulkAction
                 $records->each(
                     function (Model $record) use ($action, &$isFirstException, $relationshipPivotAccessor): void {
                         try {
-                            $record->getRelationValue($relationshipPivotAccessor)->delete();
+                            $record->getRelationValue($relationshipPivotAccessor)->delete() || $action->reportBulkProcessingFailure();
                         } catch (Throwable $exception) {
                             $action->reportBulkProcessingFailure();
 

@@ -98,6 +98,14 @@ it('converts a HEX color to OKLCH via `convertToOklch()`', function (): void {
     expect($result)->toStartWith('oklch(');
 });
 
+it('converts a three-digit HEX color to the same OKLCH color as its six-digit equivalent via `convertToOklch()`', function (string $color, string $equivalentColor): void {
+    expect(Color::convertToOklch($color))->toBe(Color::convertToOklch($equivalentColor));
+})->with([
+    ['#abc', '#aabbcc'],
+    ['#1e7', '#11ee77'],
+    ['#ABC', '#AABBCC'],
+]);
+
 it('passes through an OKLCH color unchanged via `convertToOklch()`', function (): void {
     $oklch = 'oklch(0.637 0.237 25.331)';
 
@@ -112,6 +120,18 @@ it('converts an RGB color to OKLCH via `convertToOklch()`', function (): void {
 
 it('converts a HEX color to RGB via `convertToRgb()`', function (): void {
     expect(Color::convertToRgb('#ff0000'))->toBe('rgb(255, 0, 0)');
+});
+
+it('converts a three-digit HEX color to RGB via `convertToRgb()`', function (string $color, string $expectedRgb): void {
+    expect(Color::convertToRgb($color))->toBe($expectedRgb);
+})->with([
+    ['#abc', 'rgb(170, 187, 204)'],
+    ['#1e7', 'rgb(17, 238, 119)'],
+    ['#ABC', 'rgb(170, 187, 204)'],
+]);
+
+it('does not normalize malformed three-digit HEX colors via `convertToRgb()`', function (): void {
+    expect(Color::convertToRgb("#abc\n"))->not->toBe(Color::convertToRgb('#aabbcc'));
 });
 
 it('passes through an RGB color unchanged via `convertToRgb()`', function (): void {
@@ -152,6 +172,11 @@ it('returns `1.0` contrast ratio for identical colors via `calculateContrastRati
     expect($ratio)->toEqual(1.0);
 });
 
+it('calculates the same contrast ratio for three-digit and equivalent six-digit HEX colors via `calculateContrastRatio()`', function (): void {
+    expect(Color::calculateContrastRatio('#1e7', '#fff'))
+        ->toBe(Color::calculateContrastRatio('#11ee77', '#ffffff'));
+});
+
 it('identifies black-on-white as text-contrast-accessible via `isTextContrastRatioAccessible()`', function (): void {
     expect(Color::isTextContrastRatioAccessible('#ffffff', '#000000'))->toBeTrue();
 });
@@ -190,11 +215,21 @@ it('identifies a dark color as not light via `isLight()`', function (): void {
     expect(Color::isLight('#000000'))->toBeFalse();
 });
 
+it('identifies three-digit and equivalent six-digit HEX colors with the same lightness via `isLight()`', function (): void {
+    expect(Color::isLight('#abc'))->toBe(Color::isLight('#aabbcc'))
+        ->and(Color::isLight('#1e7'))->toBe(Color::isLight('#11ee77'));
+});
+
 it('generates a palette with expected shade keys via `generatePalette()`', function (): void {
     $palette = Color::generatePalette('#3b82f6');
 
     expect($palette)->toHaveKeys([50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]);
     expect($palette[500])->toBeString();
+});
+
+it('generates the same palettes for three-digit and equivalent six-digit HEX colors', function (): void {
+    expect(Color::generatePalette('#abc'))->toBe(Color::generatePalette('#aabbcc'))
+        ->and(Color::generateV3Palette('#1e7'))->toBe(Color::generateV3Palette('#11ee77'));
 });
 
 it('calculates maximum contrast ratio between black and white', function (): void {

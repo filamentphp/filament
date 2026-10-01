@@ -501,6 +501,75 @@ describe('preventing existing file path tampering', function (): void {
     });
 });
 
+describe('`getUploadedFiles()` accumulation', function (): void {
+    it('preserves every key without changing files or state when `getUploadedFileUsing()` is `null`', function (): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/report.txt', 'report');
+        Storage::disk('local')->put('uploads/notes.txt', 'meeting notes');
+        Storage::fake('tmp-for-tests');
+        Storage::disk('tmp-for-tests')->put('livewire-tmp/pending.txt', 'pending');
+
+        $temporaryFile = TemporaryUploadedFile::createFromLivewire('pending.txt');
+        $field = FileUpload::make('attachments')
+            ->container(Schema::make(Livewire::make())->statePath('data'))
+            ->disk('local')
+            ->multiple()
+            ->getUploadedFileUsing(null);
+
+        $state = [
+            'pending-key' => $temporaryFile,
+            'report-key' => 'uploads/report.txt',
+            'notes-key' => 'uploads/notes.txt',
+        ];
+        $field->rawState($state);
+
+        expect($field->getUploadedFiles())->toBe([
+            'pending-key' => null,
+            'report-key' => null,
+            'notes-key' => null,
+        ])
+            ->and($field->getRawState())->toBe($state)
+            ->and($temporaryFile->exists())->toBeTrue()
+            ->and(Storage::disk('local')->get('uploads/report.txt'))->toBe('report')
+            ->and(Storage::disk('local')->get('uploads/notes.txt'))->toBe('meeting notes');
+    });
+
+    it('continues past unauthorized paths and `null` metadata without exposing paths to read callbacks', function (): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/hidden.txt', 'private');
+        Storage::disk('local')->put('uploads/report.txt', 'report');
+
+        $readFiles = [];
+        $metadata = ['name' => 'Report', 'size' => 6, 'type' => 'text/plain', 'url' => 'https://example.com/report'];
+        $field = FileUpload::make('attachments')
+            ->container(Schema::make(Livewire::make())->statePath('data'))
+            ->disk('local')
+            ->multiple()
+            ->preventFilePathTampering(allowFilePathUsing: static fn (string $file): bool => in_array($file, ['uploads/missing.txt', 'uploads/report.txt'], strict: true))
+            ->getUploadedFileUsing(static function (string $file, array $storedFileNames) use (&$readFiles, $metadata): ?array {
+                $readFiles[] = [$file, $storedFileNames];
+
+                return ($file === 'uploads/report.txt') ? $metadata : null;
+            });
+
+        $field->rawState([
+            'hidden-key' => 'uploads/hidden.txt',
+            'missing-key' => 'uploads/missing.txt',
+            'report-key' => 'uploads/report.txt',
+        ]);
+
+        expect($field->getUploadedFiles())->toBe([
+            'hidden-key' => null,
+            'missing-key' => null,
+            'report-key' => $metadata,
+        ])
+            ->and($readFiles)->toBe([
+                ['uploads/missing.txt', []],
+                ['uploads/report.txt', []],
+            ]);
+    });
+});
+
 describe('openable and downloadable URLs', function (): void {
     $makeField = function (Closure $configure): FileUpload {
         $field = FileUpload::make('document')
@@ -1413,7 +1482,8 @@ describe('`automaticallyOpenImageEditorForAspectRatio()` validation', function (
 describe('`storeFileNamesIn()`', function (): void {
     it('returns `null` for `getFileNamesStatePath()` by default', function (): void {
         $upload = FileUpload::make('file');
-        expect($upload->getFileNamesStatePath())->toBeNull();
+        expect($upload->getFileNamesStatePath())->toBeNull()
+            ->and($upload->getFileNamesStatePath(isAbsolute: false))->toBeNull();
     });
 
     it('can set `storeFileNamesIn()` and resolve the state path', function (): void {
@@ -1426,7 +1496,135 @@ describe('`storeFileNamesIn()`', function (): void {
             ])
             ->fill();
 
-        expect($upload->getFileNamesStatePath())->toBe('data.original_filename');
+        expect($upload->getFileNamesStatePath())->toBe('data.original_filename')
+            ->and($upload->getFileNamesStatePath(isAbsolute: false))->toBe('original_filename');
+    });
+
+    it('can store, read, and remove file names using a `Closure` path', function (bool $isMultiple, string $prefix, string $expectedPath): void {
+        $livewire = Livewire::make()->data(['unrelated' => 'keep']);
+        $upload = FileUpload::make('attachment')
+            ->container(Schema::make($livewire)->statePath('data.section'))
+            ->multiple($isMultiple)
+            ->storeFileNamesIn(static fn (BaseFileUpload $component): string => "{$prefix}{$component->getName()}_names");
+
+        expect($upload->getFileNamesStatePath())->toBe($expectedPath)
+            ->and($upload->getFileNamesStatePath(isAbsolute: false))->toBe("{$prefix}attachment_names");
+
+        $upload->storeFileName('uploads/notes.txt', 'Meeting notes.txt');
+        $upload->storeFileName('uploads/report.txt', 'Annual report.txt');
+
+        $expectedNames = $isMultiple ? [
+            'uploads/notes.txt' => 'Meeting notes.txt',
+            'uploads/report.txt' => 'Annual report.txt',
+        ] : 'Annual report.txt';
+
+        expect(data_get($livewire, $expectedPath))->toBe($expectedNames)
+            ->and($upload->getStoredFileNames())->toBe($expectedNames);
+
+        $upload->removeStoredFileName('uploads/report.txt');
+
+        $expectedNames = $isMultiple ? ['uploads/notes.txt' => 'Meeting notes.txt'] : null;
+
+        expect(data_get($livewire, $expectedPath))->toBe($expectedNames)
+            ->and($upload->getStoredFileNames())->toBe($expectedNames)
+            ->and($livewire->data['unrelated'])->toBe('keep');
+    })->with([false, true])->with([
+        'sibling' => ['', 'data.section.attachment_names'],
+        'parent' => ['../', 'data.attachment_names'],
+        'absolute' => ['/data.', 'data.attachment_names'],
+    ]);
+
+    it('reevaluates the `Closure` path and skips file name changes when it returns `null`', function (bool $isMultiple): void {
+        $livewire = Livewire::make()->data([]);
+        $statePath = 'original_names';
+        $upload = FileUpload::make('attachment')
+            ->container(Schema::make($livewire)->statePath('data'))
+            ->multiple($isMultiple)
+            ->storeFileNamesIn(static function () use (&$statePath): ?string {
+                return $statePath;
+            });
+
+        $upload->storeFileName('uploads/report.txt', 'Original report.txt');
+
+        $statePath = 'revised_names';
+        expect($upload->getFileNamesStatePath())->toBe('data.revised_names');
+        $upload->storeFileName('uploads/report.txt', 'Revised report.txt');
+
+        $expectedData = [
+            'original_names' => $isMultiple ? ['uploads/report.txt' => 'Original report.txt'] : 'Original report.txt',
+            'revised_names' => $isMultiple ? ['uploads/report.txt' => 'Revised report.txt'] : 'Revised report.txt',
+        ];
+
+        expect($livewire->data)->toBe($expectedData)
+            ->and($upload->getStoredFileNames())->toBe($expectedData['revised_names']);
+
+        $statePath = null;
+        $upload->storeFileName('uploads/report.txt', 'Ignored report.txt');
+        $upload->removeStoredFileName('uploads/report.txt');
+
+        expect($upload->getFileNamesStatePath())->toBeNull()
+            ->and($upload->getStoredFileNames())->toBe($isMultiple ? [] : null)
+            ->and($livewire->data)->toBe($expectedData);
+    })->with([false, true]);
+
+    it('uses the `Closure` path for file metadata, validation, and dehydration', function (): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/report.txt', 'report');
+
+        $statePath = 'original_names';
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data.section')
+            ->components([
+                $upload = FileUpload::make('attachments')
+                    ->disk('local')
+                    ->multiple()
+                    ->storeFileNamesIn(static function () use (&$statePath): ?string {
+                        return $statePath;
+                    }),
+            ])
+            ->fill([
+                'attachments' => ['uploads/report.txt'],
+                'original_names' => ['uploads/report.txt' => 'Annual report.txt'],
+            ]);
+
+        expect(array_column($upload->getUploadedFiles(), 'name'))->toBe(['Annual report.txt'])
+            ->and($schema->getValidationRules()['data.section.original_names'])->toBe(['nullable'])
+            ->and($schema->getState())->toBe([
+                'attachments' => ['uploads/report.txt'],
+                'original_names' => ['uploads/report.txt' => 'Annual report.txt'],
+            ]);
+
+        $statePath = null;
+
+        expect(array_column($upload->getUploadedFiles(), 'name'))->toBe(['report.txt'])
+            ->and($schema->getValidationRules())->not->toHaveKey('data.section.original_names')
+            ->and($schema->getState())->toBe([
+                'attachments' => ['uploads/report.txt'],
+            ]);
+    });
+
+    it('uses an overridden `getFileNamesStatePath()` for resolving, storing, reading, and removing file names', function (): void {
+        $livewire = Livewire::make()->data([]);
+        $upload = (new class('attachment') extends FileUpload
+        {
+            public function getFileNamesStatePath(bool $isAbsolute = true): ?string
+            {
+                return $isAbsolute ? 'data.original_names' : '../original_names';
+            }
+        })
+            ->container(Schema::make($livewire)->statePath('data.section'))
+            ->storeFileNamesIn('unused_names');
+
+        expect($upload->getFileNamesStatePath())->toBe('data.original_names');
+
+        $upload->storeFileName('uploads/report.txt', 'Annual report.txt');
+
+        expect($livewire->data)->toBe(['original_names' => 'Annual report.txt'])
+            ->and($upload->getStoredFileNames())->toBe('Annual report.txt');
+
+        $upload->removeStoredFileName('uploads/report.txt');
+
+        expect($livewire->data)->toBe(['original_names' => null]);
     });
 });
 
@@ -2874,6 +3072,65 @@ describe('`saveUploadedFiles()` reordering', function (): void {
             ->multiple()
             ->reorderable();
     };
+
+    it('evaluates a dynamic `reorderable()` condition on every save before applying the callback order', function () use ($makeField, $makeTemporaryUploadedFile): void {
+        $temporaryFile = $makeTemporaryUploadedFile('report.txt', 'new report');
+        $isReorderable = false;
+        $reorderCallbackCount = 0;
+        $savedFiles = [];
+
+        $field = $makeField()
+            ->preserveFilenames()
+            ->reorderable(static function () use (&$isReorderable): bool {
+                return $isReorderable;
+            })
+            ->saveUploadedFileUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file) use (&$savedFiles): ?string {
+                $savedFiles[] = $file->getClientOriginalName();
+
+                return $component->saveUploadedFile($file);
+            })
+            ->reorderUploadedFilesUsing(static function (array $rawState) use (&$reorderCallbackCount): array {
+                $reorderCallbackCount++;
+
+                return array_reverse($rawState, preserve_keys: true);
+            });
+
+        Storage::disk('public')->put('uploads/existing.txt', 'existing');
+        $field->rawState([
+            'existing-key' => 'uploads/existing.txt',
+            'new-key' => $temporaryFile,
+        ]);
+
+        $field->saveUploadedFiles();
+
+        expect($field->getRawState())->toBe([
+            'existing-key' => 'uploads/existing.txt',
+            'new-key' => 'uploads/report.txt',
+        ])
+            ->and($reorderCallbackCount)->toBe(0)
+            ->and($savedFiles)->toBe(['report.txt'])
+            ->and($temporaryFile->exists())->toBeFalse()
+            ->and(Storage::disk('public')->get('uploads/report.txt'))->toBe('new report');
+
+        $isReorderable = true;
+        $field->saveUploadedFiles();
+
+        expect($field->getRawState())->toBe([
+            'new-key' => 'uploads/report.txt',
+            'existing-key' => 'uploads/existing.txt',
+        ])
+            ->and($reorderCallbackCount)->toBe(1);
+
+        $isReorderable = false;
+        $field->saveUploadedFiles();
+
+        expect($field->getRawState())->toBe([
+            'new-key' => 'uploads/report.txt',
+            'existing-key' => 'uploads/existing.txt',
+        ])
+            ->and($reorderCallbackCount)->toBe(1)
+            ->and($savedFiles)->toBe(['report.txt']);
+    });
 
     it('passes the saved files to a `reorderUploadedFilesUsing()` callback `$state` parameter', function () use ($makeField, $makeTemporaryUploadedFile): void {
         $temporaryFile = $makeTemporaryUploadedFile();
