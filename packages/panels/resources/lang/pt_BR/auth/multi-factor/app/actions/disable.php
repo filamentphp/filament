@@ -34,6 +34,8 @@ return [
 
                     'invalid' => 'O código informado é inválido.',
 
+                    'rate_limited' => 'Muitas tentativas. Tente novamente mais tarde.',
+
                 ],
 
             ],
@@ -47,6 +49,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'O código de recuperação informado é inválido.',
+
+                    'rate_limited' => 'Muitas tentativas. Tente novamente mais tarde.',
 
                 ],
 
