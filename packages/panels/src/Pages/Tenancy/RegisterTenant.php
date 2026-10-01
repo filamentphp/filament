@@ -15,6 +15,8 @@ use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
+use Filament\Support\Livewire\Concerns\ResolvesScopedModelProperties;
+use Filament\Support\Livewire\Contracts\HasScopedModelProperties;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -25,10 +27,11 @@ use function Filament\authorize;
 /**
  * @property-read Schema $form
  */
-abstract class RegisterTenant extends SimplePage
+abstract class RegisterTenant extends SimplePage implements HasScopedModelProperties
 {
     use Concerns\CanUseDatabaseTransactions;
     use Concerns\HasRoutes;
+    use ResolvesScopedModelProperties;
 
     /**
      * @var array<string, mixed> | null
@@ -59,6 +62,11 @@ abstract class RegisterTenant extends SimplePage
     public function hydrate(): void
     {
         abort_unless(static::canView(), 404);
+    }
+
+    protected function getScopedModelPropertyNames(): array
+    {
+        return ['tenant'];
     }
 
     /**

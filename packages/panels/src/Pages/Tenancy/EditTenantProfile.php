@@ -16,6 +16,7 @@ use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
+use Filament\Support\Livewire\Contracts\HasScopedModelProperties;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -27,7 +28,7 @@ use function Filament\authorize;
 /**
  * @property-read Schema $form
  */
-abstract class EditTenantProfile extends Page
+abstract class EditTenantProfile extends Page implements HasScopedModelProperties
 {
     use Concerns\CanUseDatabaseTransactions;
     use Concerns\HasRoutes;
@@ -76,6 +77,12 @@ abstract class EditTenantProfile extends Page
     public function hydrate(): void
     {
         abort_unless(static::canView($this->tenant), 404);
+    }
+
+    /** @param array<string, mixed> | null $properties */
+    public function resolveScopedModelProperties(?array $properties = null): void
+    {
+        $this->tenant = Filament::getTenant();
     }
 
     protected function fillForm(): void

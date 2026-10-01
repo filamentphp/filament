@@ -20,6 +20,26 @@ it('allows the user access to the tenant profile page if the user is authorized'
         ->assertSuccessful();
 });
 
+it('restores the current tenant on Livewire updates', function (): void {
+    $tenant = Team::factory()->create();
+    Filament::setTenant(Team::query()->findOrFail($tenant->getKey()));
+    Gate::policy(Team::class, TeamPolicyWithAccess::class);
+
+    livewire(EditTeamProfile::class)
+        ->set('data.name', 'Updated team')
+        ->assertSuccessful();
+});
+
+it('preserves `hydrate()` overrides that call `parent::hydrate()`', function (): void {
+    Filament::setTenant(Team::factory()->create());
+    Gate::policy(Team::class, TeamPolicyWithAccess::class);
+
+    livewire(EditTeamProfileWithHydrateHook::class)
+        ->set('data.name', 'Updated team')
+        ->assertSet('hasHydrated', true)
+        ->assertSuccessful();
+});
+
 it('denies the user access to the tenant profile page if the user is unauthorized', function (): void {
     Filament::setTenant(Team::factory()->create());
 
@@ -43,11 +63,68 @@ it('re-authorizes the tenant profile page on Livewire updates after the initial 
         ->assertStatus(404);
 });
 
+it('uses the current tenant when the tenant changes between requests', function (): void {
+    $originalTenant = Team::factory()->create();
+    $currentTenant = Team::factory()->create();
+    Filament::setTenant($originalTenant);
+    Gate::policy(Team::class, TeamPolicyWithAccess::class);
+    $component = livewire(EditTeamProfile::class)
+        ->assertSuccessful();
+
+    Filament::setTenant($currentTenant);
+
+    $component
+        ->set('data.name', 'Updated current tenant')
+        ->assertSuccessful();
+
+    expect($component->instance()->tenant->is($currentTenant))->toBeTrue();
+});
+
+it('uses the current tenant before `boot()` on Livewire updates', function (): void {
+    $originalTenant = Team::factory()->create();
+    $currentTenant = Team::factory()->create();
+    Filament::setTenant($originalTenant);
+    Gate::policy(Team::class, TeamPolicyWithAccess::class);
+    $component = livewire(EditTeamProfileWithBootHook::class)
+        ->assertSuccessful();
+
+    EditTeamProfileWithBootHook::$bootedTenantKey = null;
+    Filament::setTenant($currentTenant);
+
+    $component
+        ->set('data.name', 'Updated current tenant')
+        ->assertSuccessful();
+
+    expect(EditTeamProfileWithBootHook::$bootedTenantKey)->toBe($currentTenant->getKey());
+});
+
 class EditTeamProfile extends EditTenantProfile
 {
     public static function getLabel(): string
     {
         return 'Edit team';
+    }
+}
+
+class EditTeamProfileWithHydrateHook extends EditTeamProfile
+{
+    public bool $hasHydrated = false;
+
+    public function hydrate(): void
+    {
+        parent::hydrate();
+
+        $this->hasHydrated = true;
+    }
+}
+
+class EditTeamProfileWithBootHook extends EditTeamProfile
+{
+    public static int | string | null $bootedTenantKey = null;
+
+    public function boot(): void
+    {
+        static::$bootedTenantKey = $this->tenant?->getKey();
     }
 }
 

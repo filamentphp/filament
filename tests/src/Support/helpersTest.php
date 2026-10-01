@@ -17,6 +17,10 @@ use function Filament\Support\prepare_inherited_attributes;
 
 uses(TestCase::class);
 
+it('does not share the `originalRequest` binding between Livewire component snapshots', function (): void {
+    expect(app()->isShared('originalRequest'))->toBeFalse();
+});
+
 it('builds a fresh index of application classes and excludes symlinked path repository classes with `discover_app_classes()` when Composer uses a custom vendor directory', function (): void {
     $filesystem = app(Filesystem::class);
     $repositoryDirectory = dirname(__DIR__, 3);
