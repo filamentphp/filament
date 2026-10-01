@@ -348,7 +348,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
         return $this->evaluate($this->overlap);
     }
 
-    public function ring(string | Closure | null $ring): static
+    public function ring(int | string | Closure | null $ring): static
     {
         $this->ring = $ring;
 
