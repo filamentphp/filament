@@ -14,6 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
+use League\Flysystem\UnableToWriteFile;
 use OpenSpout\Common\Entity\Style\Style;
 use OpenSpout\Writer\XLSX\Writer;
 
@@ -97,13 +98,17 @@ class CreateXlsxFile implements ShouldQueue
 
         $writer->close();
 
-        $disk->putFileAs(
-            $this->export->getFileDirectory(),
-            new File($temporaryFile),
-            "{$this->export->file_name}.xlsx",
-            Filesystem::VISIBILITY_PRIVATE,
-        );
-
-        unlink($temporaryFile);
+        try {
+            if ($disk->putFileAs(
+                $this->export->getFileDirectory(),
+                new File($temporaryFile),
+                "{$this->export->file_name}.xlsx",
+                Filesystem::VISIBILITY_PRIVATE,
+            ) === false) {
+                throw UnableToWriteFile::atLocation($this->export->getFileDirectory() . DIRECTORY_SEPARATOR . "{$this->export->file_name}.xlsx");
+            }
+        } finally {
+            unlink($temporaryFile);
+        }
     }
 }
