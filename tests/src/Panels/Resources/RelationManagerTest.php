@@ -921,7 +921,7 @@ class RecordUrlResolutionRelationManager extends RelationManager
             ])
             ->recordActions($recordActions)
             ->when($this->hasCustomRecordAction, fn (Table $table): Table => $table->recordAction(null))
-            ->defaultSort('id')
+            ->defaultSort('departments.id')
             ->openRecordUrlInNewTab(static fn (Department $record): bool => $record->name === 'View URL')
             ->deferLoading($this->isTableLoadingDeferred);
     }
