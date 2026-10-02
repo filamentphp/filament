@@ -528,7 +528,7 @@ To find out if you’re using this parameter in your code, try searching for `'a
 
 When using tenancy in v3, Filament only scoped resource queries to the current tenant: to render the resource table, resolve URL parameters, and fetch global search results. There were many situations where other queries in the panel weren’t scoped by default, and the developer had to manually scope them. While this was a documented feature, it created a lot of additional work for developers.
 
-In v4, Filament automatically scopes all queries in a panel to the current tenant, and automatically associates new records with the current tenant using model events. This means that you no longer need to manually scope queries or associate new Eloquent records in most cases. There are still some important points to consider, so the [documentation](users/tenancy#tenancy-security) has been updated to reflect this.
+In v4, Filament automatically scopes Eloquent queries for tenant-aware resource models registered in the panel once the current tenant has been identified. It also associates newly created records for those models with the current tenant using model events. Queries for other models still require your own tenant scoping. There are also some important limitations, so the [documentation](users/tenancy#tenancy-security) has been updated to explain them.
 </Disclosure>
 
 <Disclosure x-show="packages.includes('forms')">

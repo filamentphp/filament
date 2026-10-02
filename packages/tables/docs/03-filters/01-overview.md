@@ -203,7 +203,7 @@ TernaryFilter::make('trashed')
 
 ## Excluding filters when resolving records
 
-When a user interacts with a table record (e.g., clicking an action button), Filament resolves that record from the database. By default, all active filter conditions are applied, ensuring users cannot access records outside their filter scope.
+When a user interacts with a table record (e.g., clicking an action button), Filament resolves that record from the database. By default, any active filter conditions are applied when resolving the record.
 
 However, some filters like `TrashedFilter` modify global scopes rather than restricting access. When a record's state changes after the user saw it in the table, you may still want the user to interact with it.
 
@@ -227,7 +227,7 @@ When `excludeWhenResolvingRecord()` is used:
 - The filter's `baseQuery()` callback is still applied when resolving records
 
 <Aside variant="danger">
-    Do not use `excludeWhenResolvingRecord()` on filters that enforce authorization rules. For example, if you have a filter that restricts records by tenant or user ownership, those filters should remain enforced to prevent unauthorized access.
+    Filters are controlled by the client and must not be your only tenant or ownership restriction. Apply mandatory restrictions to the resource's `getEloquentQuery()` or the table's `modifyQueryUsing()`, and authorize operations separately. `excludeWhenResolvingRecord()` only changes record resolution; it must not remove your application's authorization boundary.
 </Aside>
 
 ## Customizing the filters trigger action
