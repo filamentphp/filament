@@ -586,6 +586,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/loading-skeleton" alt="Table displaying loading skeletons" version="4.x" />
+
 To enable the loading skeleton for all tables, you may use `Table::configureUsing()` in the `boot()` method of a service provider:
 
 ```php
