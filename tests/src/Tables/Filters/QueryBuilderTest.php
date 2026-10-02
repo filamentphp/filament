@@ -236,6 +236,37 @@ describe('text constraints', function () use ($applyQueryBuilderFilter): void {
             ->assertCanSeeTableRecords($otherPosts)
             ->assertCanNotSeeTableRecords($posts);
     });
+
+    it('treats LIKE wildcard characters as literal text for text constraint operators', function (string $operator, string $literalTitle, string $wildcardTitle) use ($applyQueryBuilderFilter): void {
+        $literalMatch = Post::factory()->create(['title' => $literalTitle]);
+        $wildcardMatch = Post::factory()->create(['title' => $wildcardTitle]);
+        $unrelatedPost = Post::factory()->create(['title' => 'Unrelated']);
+
+        $rule = [
+            'type' => 'title',
+            'data' => [
+                'operator' => $operator,
+                'settings' => ['text' => 'a!_b%'],
+            ],
+        ];
+
+        livewire(PostsQueryBuilderTable::class)
+            ->tap($applyQueryBuilderFilter([$rule]))
+            ->assertCanSeeTableRecords([$literalMatch])
+            ->assertCanNotSeeTableRecords([$wildcardMatch, $unrelatedPost]);
+
+        $rule['data']['operator'] .= '.inverse';
+
+        livewire(PostsQueryBuilderTable::class)
+            ->tap($applyQueryBuilderFilter([$rule]))
+            ->assertCanSeeTableRecords([$wildcardMatch, $unrelatedPost])
+            ->assertCanNotSeeTableRecords([$literalMatch]);
+    })->with([
+        'contains' => ['contains', 'Before a!_b% After', 'Before a!Xb anything After'],
+        'starts with' => ['startsWith', 'a!_b% After', 'a!Xb anything After'],
+        'ends with' => ['endsWith', 'Before a!_b%', 'Before a!Xb anything'],
+        'equals' => ['equals', 'a!_b%', 'a!Xb anything'],
+    ]);
 });
 
 describe('settings type safety', function () use ($applyQueryBuilderFilter): void {

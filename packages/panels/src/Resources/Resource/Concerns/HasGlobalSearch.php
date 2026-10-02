@@ -13,7 +13,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use ReflectionProperty;
 
+use function Filament\Support\apply_search_constraint;
 use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_pattern;
 use function Filament\Support\generate_search_term_expression;
 
 /**
@@ -219,6 +221,7 @@ trait HasGlobalSearch
     protected static function applyGlobalSearchAttributeConstraint(Builder $query, string $search, array $searchAttributes, bool &$isFirst): Builder
     {
         $isForcedCaseInsensitive = static::isGlobalSearchForcedCaseInsensitive();
+        $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true);
 
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
@@ -228,20 +231,21 @@ trait HasGlobalSearch
 
             $query->when(
                 str($searchAttribute)->contains('.'),
-                function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $searchAttribute, $search, $whereClause): Builder {
+                function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $searchAttribute, $searchPattern, $whereClause): Builder {
                     return $query->{"{$whereClause}Has"}(
                         (string) str($searchAttribute)->beforeLast('.'),
-                        fn (Builder $query) => $query->where(
+                        fn (Builder $query): Builder => apply_search_constraint(
+                            $query,
                             generate_search_column_expression($query->qualifyColumn((string) str($searchAttribute)->afterLast('.')), $isForcedCaseInsensitive, $databaseConnection),
-                            'like',
-                            "%{$search}%",
+                            $searchPattern,
                         ),
                     );
                 },
-                fn (Builder $query) => $query->{$whereClause}(
+                fn (Builder $query): Builder => apply_search_constraint(
+                    $query,
                     generate_search_column_expression($query->qualifyColumn($searchAttribute), $isForcedCaseInsensitive, $databaseConnection),
-                    'like',
-                    "%{$search}%",
+                    $searchPattern,
+                    ($whereClause === 'where') ? 'and' : 'or',
                 ),
             );
 

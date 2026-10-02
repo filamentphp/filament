@@ -12,10 +12,21 @@ use Symfony\Component\Process\Process;
 
 use function Filament\get_authorization_response;
 use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_pattern;
 use function Filament\Support\is_path_within_directory;
 use function Filament\Support\prepare_inherited_attributes;
 
 uses(TestCase::class);
+
+it('generates patterns with literal LIKE wildcard characters using `generate_search_pattern()`', function (bool $hasLeadingWildcard, bool $hasTrailingWildcard, string $expected): void {
+    expect(generate_search_pattern('café!_100%[draft]\\path', $hasLeadingWildcard, $hasTrailingWildcard))
+        ->toBe($expected);
+})->with([
+    'equals' => [false, false, 'café!!!_100!%![draft]\\path'],
+    'starts with' => [false, true, 'café!!!_100!%![draft]\\path%'],
+    'ends with' => [true, false, '%café!!!_100!%![draft]\\path'],
+    'contains' => [true, true, '%café!!!_100!%![draft]\\path%'],
+]);
 
 it('does not share the `originalRequest` binding between Livewire component snapshots', function (): void {
     expect(app()->isShared('originalRequest'))->toBeFalse();
