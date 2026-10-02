@@ -296,7 +296,7 @@ it('manages focus for the filters dropdown', function (bool $isDarkMode): void {
             ->click($dateFilter)
             ->assertVisible($datePanel)
             ->click("{$datePanel} .fi-fo-date-time-picker-calendar-day[aria-selected=\"true\"]")
-            ->assertScript("document.querySelector('{$dateFilter} input').value !== ''", true)
+            ->assertScript("document.querySelector('{$dateFilter}').value !== ''", true)
             ->assertVisible($datePanel)
             ->click($dateFilter)
             ->assertMissing($datePanel)
