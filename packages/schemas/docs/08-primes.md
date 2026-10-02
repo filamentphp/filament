@@ -273,6 +273,20 @@ Icon::make(Heroicon::Star)
 
 <AutoScreenshot name="primes/icon/simple" alt="Icon" version="4.x" />
 
+### Providing an accessible label
+
+Icons are hidden from assistive technology by default. When an icon conveys information that is not also available as text, you should provide an accessible label using `extraAttributes()`:
+
+```php
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Icons\Heroicon;
+
+Icon::make(Heroicon::CheckCircle)
+    ->extraAttributes(['aria-label' => 'Verified'])
+```
+
+The icon is exposed to assistive technology as an image with the provided label. You may use `aria-labelledby` instead to reference text elsewhere on the page. A [tooltip](#adding-a-tooltip-to-the-icon) is also used as the accessible label when neither attribute is present.
+
 ### Customizing the icon color
 
 You may set a [color](../styling/colors) for the icon:
