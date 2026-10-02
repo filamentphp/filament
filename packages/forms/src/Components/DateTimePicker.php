@@ -18,6 +18,7 @@ use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentTimezone;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Js;
 use Illuminate\Validation\ValidationRuleParser;
@@ -193,7 +194,10 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                             ])
                             ->toHtml() ?>
                     />
-                <?php } else { ?>
+                <?php } else {
+                    $label = $this->getLabel();
+                    $labelText = $label instanceof Htmlable ? html_entity_decode(strip_tags($label->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8') : $label;
+                    ?>
                     <div
                         x-load
                         x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('date-time-picker', 'filament/forms')) ?>"
@@ -202,7 +206,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                                     displayFormat: <?= Js::from(convert_date_format($this->getDisplayFormat())->to('day.js')) ?>,
                                     firstDayOfWeek: <?= $this->getFirstDayOfWeek() ?>,
                                     hasDate: <?= Js::from($hasDate) ?>,
-                                    isAutofocused: <?= Js::from($isAutofocused) ?>,
+                                    isAutofocused: <?= Js::from($isAutofocused && (! $isDisabled) && (! $isReadOnly)) ?>,
                                     locale: <?= Js::from($this->getLocale()) ?>,
                                     shouldCloseOnDateSelection: <?= Js::from($this->shouldCloseOnDateSelection()) ?>,
                                     state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')") ?>,
@@ -216,36 +220,43 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                         <input x-ref="minDate" type="hidden" value="<?= e($minDate) ?>" />
                         <input x-ref="disabledDates" type="hidden" value="<?= e(json_encode($disabledDates)) ?>" />
 
-                        <button
+                        <input
                             x-ref="button"
-                            x-on:click="togglePanelVisibility()"
-                            x-on:keydown.enter.prevent.stop="if (! $el.disabled) { isOpen() ? selectDate() : togglePanelVisibility() }"
-                            x-on:keydown.arrow-left.prevent.stop="if (! $el.disabled) focusPreviousDay()"
-                            x-on:keydown.arrow-right.prevent.stop="if (! $el.disabled) focusNextDay()"
-                            x-on:keydown.arrow-up.prevent.stop="if (! $el.disabled) focusPreviousWeek()"
-                            x-on:keydown.arrow-down.prevent.stop="if (! $el.disabled) focusNextWeek()"
-                            x-on:keydown.backspace.prevent.stop="if (! $el.disabled) clearState()"
-                            x-on:keydown.clear.prevent.stop="if (! $el.disabled) clearState()"
-                            x-on:keydown.delete.prevent.stop="if (! $el.disabled) clearState()"
-                            aria-label="<?= e($placeholder) ?>"
-                            type="button"
-                            tabindex="-1"
-                            <?php if ($isDisabled || $isReadOnly) { ?> disabled <?php } ?>
-                            <?= $this->getExtraTriggerAttributeBag()->class(['fi-fo-date-time-picker-trigger'])->toHtml() ?>
-                        >
-                            <input
-                                <?php if ($isDisabled) { ?> disabled <?php } ?>
-                                readonly
-                                placeholder="<?= e($placeholder) ?>"
-                                wire:key="<?= e($livewireKey) ?>.display-text"
-                                x-model="displayText"
-                                <?php if ($id) { ?> id="<?= e($id) ?>" <?php } ?>
-                                class="fi-fo-date-time-picker-display-text-input"
-                            />
-                        </button>
+                            x-on:keydown.enter.prevent.stop="if (<?= Js::from(! ($isDisabled || $isReadOnly)) ?>) { isOpen() ? selectDate() : togglePanelVisibility() }"
+                            <?php if (! ($isDisabled || $isReadOnly)) { ?>
+                                x-on:click="togglePanelVisibility()"
+                                x-on:keydown.arrow-left.prevent.stop="focusPreviousDay()"
+                                x-on:keydown.arrow-right.prevent.stop="focusNextDay()"
+                                x-on:keydown.arrow-up.prevent.stop="focusPreviousWeek()"
+                                x-on:keydown.arrow-down.prevent.stop="focusNextWeek()"
+                                x-on:keydown.backspace.prevent.stop="clearState()"
+                                x-on:keydown.clear.prevent.stop="clearState()"
+                                x-on:keydown.delete.prevent.stop="clearState()"
+                            <?php } ?>
+                            readonly
+                            wire:key="<?= e($livewireKey) ?>.display-text"
+                            x-model="displayText"
+                            <?= $this->getExtraTriggerAttributeBag()
+                                ->merge($this->getAccessibilityAttributes(), escape: false)
+                                ->merge([
+                                    'aria-controls' => $id . '-panel',
+                                    'aria-expanded' => 'false',
+                                    'aria-haspopup' => 'dialog',
+                                    'disabled' => $isDisabled,
+                                    'id' => $id,
+                                    'placeholder' => $placeholder,
+                                    'role' => 'combobox',
+                                    'type' => 'text',
+                                ])
+                                ->class(['fi-fo-date-time-picker-trigger', 'fi-fo-date-time-picker-display-text-input'])
+                                ->toHtml() ?>
+                        />
 
                         <div
                             x-ref="panel"
+                            id="<?= e($id) ?>-panel"
+                            role="dialog"
+                            aria-label="<?= e($labelText) ?>"
                             x-cloak
                             x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                             wire:ignore

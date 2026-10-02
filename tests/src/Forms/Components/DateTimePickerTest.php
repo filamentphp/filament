@@ -16,6 +16,7 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Profile;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Validator;
@@ -1017,6 +1018,34 @@ class DateTimePickerWithDateValidation extends Livewire
 }
 
 describe('rendering', function (): void {
+    it('names the custom picker dialog using plain text or a non-stringable `Htmlable` label', function (bool $isHtml): void {
+        $label = $isHtml ? new class implements Htmlable
+        {
+            public function toHtml(): string
+            {
+                return '<strong>Departure &lt;local&gt; &amp; return</strong>';
+            }
+        } : 'Departure <local> & return';
+
+        DateTimePicker::configureUsing(
+            static fn (DateTimePicker $component) => $component->label($label),
+            during: static fn () => livewire(RenderDateTimePickerNonNative::class)
+                ->assertSuccessful()
+                ->assertSeeHtml('aria-label="Departure &lt;local&gt; &amp; return"'),
+        );
+    })->with([true, false]);
+
+    it('escapes custom input IDs exactly once in accessible descriptions', function (): void {
+        DateTimePicker::configureUsing(
+            static fn (DateTimePicker $component) => $component
+                ->id('departure&return')
+                ->helperText('Choose your departure date'),
+            during: static fn () => livewire(RenderDateTimePickerNonNative::class)
+                ->assertSuccessful()
+                ->assertSeeHtml('aria-describedby="departure&amp;return-helper-text"'),
+        );
+    });
+
     it('can render with `time(false)`', function (): void {
         livewire(RenderDateTimePickerWithTimeDisabled::class)
             ->assertSuccessful();
@@ -1325,6 +1354,100 @@ it('compares custom time-only clocks independently of browser DST dates and pres
 
     expect($accessibilityFailures)->toBeEmpty(implode("\n", $accessibilityFailures));
 });
+
+it('uses one labelled input to open, select, copy and clear a custom picker with the keyboard', function (bool $hasDate, bool $hasTime): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/date-time-picker-test?native=0&date=' . (int) $hasDate . '&time=' . (int) $hasTime)->withTimezone('UTC');
+    $trigger = '[data-testid="timed-trigger"]';
+    $picker = 'Alpine.$data(document.querySelector(\'[data-testid="timed-trigger"]\'))';
+
+    foreach ([false, true] as $isDarkMode) {
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
+        $page->assertScript("typeof {$picker}.togglePanelVisibility", 'function')
+            ->assertScript('document.querySelector(\'[data-testid="timed-trigger"]\').tagName', 'INPUT')
+            ->assertValue($trigger, '')
+            ->assertAttribute($trigger, 'aria-expanded', 'false')
+            ->assertNoAccessibilityIssues()
+            ->click('label[for="' . $page->attribute($trigger, 'id') . '"]')
+            ->assertPresent($trigger . ':focus')
+            ->assertVisible('[role="dialog"]');
+
+        // Wait for the forwarded label click to open the popup before testing `Escape`.
+        $page->keys($trigger, 'Escape')
+            ->assertScript("{$picker}.isOpen()", false)
+            ->keys($trigger, 'Enter')
+            ->assertAttribute($trigger, 'aria-expanded', 'true')
+            ->assertVisible('[role="dialog"]')
+            ->assertAttributeMissing('[role="dialog"]', 'aria-modal')
+            ->assertPresent($trigger . ':focus');
+
+        if ($hasDate) {
+            $page->keys($trigger, ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'ArrowRight', 'Enter'])
+                ->assertScript("{$picker}.getSelectedDate().format('YYYY-MM-DD')", '2025-07-16');
+        } else {
+            $page->fill('input[aria-label="Minute"]', '31')
+                ->assertScript("{$picker}.minute", 31)
+                ->assertNoAccessibilityIssues();
+        }
+
+        $page->keys($trigger, 'Escape')
+            ->assertAttribute($trigger, 'aria-expanded', 'false')
+            ->assertScript("{$picker}.isOpen()", false)
+            ->keys($trigger, ['ControlOrMeta+a'])
+            ->assertScript('(() => { const input = document.querySelector(\'[data-testid="timed-trigger"]\'); return input.selectionEnd - input.selectionStart === input.value.length && input.value.length > 0; })()', true)
+            ->keys($trigger, 'Delete')
+            ->assertValue($trigger, '')
+            ->click($trigger)
+            ->assertAttribute($trigger, 'aria-expanded', 'true')
+            ->click('h1[class]')
+            ->assertAttribute($trigger, 'aria-expanded', 'false')
+            ->assertScript("{$picker}.isOpen()", false)
+            ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').textContent.trim()', '0')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+    }
+})->with([
+    'date and time' => [true, true],
+    'date only' => [true, false],
+    'time only' => [false, true],
+]);
+
+it('does not open or clear a disabled or read-only custom picker, including with `autofocus()`', function (string $mode): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit("/date-time-picker-test?native=0&date=0&dst=1&autofocus=1&{$mode}=1");
+    $trigger = '[data-testid="timed-trigger"]';
+    $picker = 'Alpine.$data(document.querySelector(\'[data-testid="timed-trigger"]\'))';
+
+    foreach ([false, true] as $isDarkMode) {
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page->assertScript("typeof {$picker}.togglePanelVisibility", 'function')
+            ->assertAttribute($trigger, 'aria-expanded', 'false');
+
+        if ($mode === 'disabled') {
+            $page->assertDisabled($trigger);
+        } else {
+            $page->click($trigger)
+                ->assertPresent($trigger . ':focus')
+                ->keys($trigger, ['Enter', 'ArrowRight', 'Backspace', 'Delete']);
+        }
+
+        $page->assertAttribute($trigger, 'aria-expanded', 'false')
+            ->assertScript("{$picker}.getSelectedDate().format('HH:mm:ss')", '01:45:07')
+            ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').textContent.trim()', '0')
+            ->assertNoSmoke();
+        $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
+        $page->assertNoAccessibilityIssues();
+    }
+})->with(['disabled', 'readonly']);
 
 class RenderDateTimePickerWithTimeDisabled extends Livewire
 {

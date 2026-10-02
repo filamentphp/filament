@@ -23,6 +23,14 @@ class DateTimePickerTest extends Page
 
     public bool $hasDate = true;
 
+    public bool $hasTime = true;
+
+    public bool $isDisabled = false;
+
+    public bool $isReadOnly = false;
+
+    public bool $isAutofocused = false;
+
     public bool $hasSeconds = true;
 
     public bool $hasLimits = false;
@@ -42,6 +50,10 @@ class DateTimePickerTest extends Page
     public function mount(): void
     {
         $this->hasDate = request()->boolean('date', true);
+        $this->hasTime = request()->boolean('time', true);
+        $this->isDisabled = request()->boolean('disabled');
+        $this->isReadOnly = request()->boolean('readonly');
+        $this->isAutofocused = request()->boolean('autofocus');
         $this->hasSeconds = request()->boolean('seconds', true);
         $this->hasLimits = request()->boolean('bounds');
         $this->isNative = request()->boolean('native', true);
@@ -55,6 +67,12 @@ class DateTimePickerTest extends Page
         $field = ($this->hasDate ? DateTimePicker::make('field') : TimePicker::make('field'))
             ->label('Test DateTimePicker')
             ->native($this->isNative)
+            ->time($this->hasTime)
+            ->disabled($this->isDisabled)
+            ->readOnly($this->isReadOnly)
+            ->autofocus($this->isAutofocused)
+            ->defaultFocusedDate('2025-07-15 13:24:37')
+            ->placeholder('Choose a date or time')
             ->seconds($this->hasSeconds)
             ->extraAttributes(['data-testid' => 'date-time-picker'])
             ->extraInputAttributes(['data-testid' => 'timed-input'])
