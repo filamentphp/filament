@@ -77,6 +77,7 @@ class ModalBrowserTest extends Page
             Action::make('escapeCloseDisabled')
                 ->label('Escape close disabled')
                 ->closeModalByEscaping(false)
+                ->stickyModalHeader()
                 ->schema([
                     TextInput::make('name'),
                     TextInput::make('email'),
@@ -126,7 +127,8 @@ class ModalBrowserTest extends Page
                 ->modalSubmitAction(false)
                 ->stickyModalFooter()
                 ->schema(array_map(
-                    fn (int $index): TextInput => TextInput::make("scrollField{$index}"),
+                    fn (int $index): TextInput => TextInput::make("scrollField{$index}")
+                        ->extraInputAttributes(['data-testid' => "scroll-field-{$index}"]),
                     range(1, 25),
                 ))
                 ->extraModalWindowAttributes(['data-testid' => 'scroll-modal'])
@@ -135,6 +137,7 @@ class ModalBrowserTest extends Page
                         ->label('Open nested modal')
                         ->requiresConfirmation()
                         ->action(static fn () => null)
+                        ->extraAttributes(['data-testid' => 'scroll-nested-trigger'])
                         ->extraModalWindowAttributes(['data-testid' => 'scroll-nested-modal']),
                 ]),
             Action::make('clickThrough')
