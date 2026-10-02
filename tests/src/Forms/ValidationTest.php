@@ -6,6 +6,7 @@ use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Enums\IntegerBackedEnum;
 use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
@@ -960,6 +961,94 @@ describe('string validation rules', function (): void {
             ->toBeEmpty();
     });
 
+});
+
+describe('scoped database validation rules', function (): void {
+    test('`scopedUnique()` uses the given model when the schema has no model', function (): void {
+        $user = User::factory()->create();
+
+        $errors = [];
+
+        try {
+            Schema::make(Livewire::make()->data(['email' => $user->email]))
+                ->statePath('data')
+                ->components([
+                    $field = (new Field('email'))
+                        ->scopedUnique(User::class),
+                ])
+                ->validate();
+        } catch (ValidationException $exception) {
+            $errors = $exception->validator->errors()->get($field->getStatePath());
+        }
+
+        expect($errors)
+            ->toContain('The email has already been taken.');
+    });
+
+    test('`scopedUnique()` uses the schema model when no model is given', function (): void {
+        $user = User::factory()->create();
+
+        $errors = [];
+
+        try {
+            Schema::make(Livewire::make()->data(['email' => $user->email]))
+                ->statePath('data')
+                ->model(User::class)
+                ->components([
+                    $field = (new Field('email'))
+                        ->scopedUnique(),
+                ])
+                ->validate();
+        } catch (ValidationException $exception) {
+            $errors = $exception->validator->errors()->get($field->getStatePath());
+        }
+
+        expect($errors)
+            ->toContain('The email has already been taken.');
+    });
+
+    test('`scopedExists()` uses the given model when the schema has no model', function (): void {
+        User::factory()->create();
+
+        $errors = [];
+
+        try {
+            Schema::make(Livewire::make()->data(['email' => 'missing@example.com']))
+                ->statePath('data')
+                ->components([
+                    $field = (new Field('email'))
+                        ->scopedExists(User::class),
+                ])
+                ->validate();
+        } catch (ValidationException $exception) {
+            $errors = $exception->validator->errors()->get($field->getStatePath());
+        }
+
+        expect($errors)
+            ->toContain('The selected email is invalid.');
+    });
+
+    test('`scopedExists()` uses the schema model when no model is given', function (): void {
+        User::factory()->create();
+
+        $errors = [];
+
+        try {
+            Schema::make(Livewire::make()->data(['email' => 'missing@example.com']))
+                ->statePath('data')
+                ->model(User::class)
+                ->components([
+                    $field = (new Field('email'))
+                        ->scopedExists(),
+                ])
+                ->validate();
+        } catch (ValidationException $exception) {
+            $errors = $exception->validator->errors()->get($field->getStatePath());
+        }
+
+        expect($errors)
+            ->toContain('The selected email is invalid.');
+    });
 });
 
 describe('enum and label validation', function (): void {
