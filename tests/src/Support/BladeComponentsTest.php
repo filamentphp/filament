@@ -154,3 +154,43 @@ it('binds `aria-controls` on the collapse button when a collapsible section has 
     expect($html)
         ->toContain('x-bind:aria-controls');
 });
+
+it('traps focus on a modal window when it owns scrolling', function (): void {
+    $html = Blade::render(<<<'BLADE'
+        <x-filament::modal heading="Agreement" sticky-header>Content</x-filament::modal>
+        BLADE);
+
+    preg_match('/<div(?=[^>]*\bfi-modal-window-ctn\b)[^>]*>/', $html, $modalWindowContainerMatches);
+    preg_match('/<(?:div|form)(?=[^>]*\bfi-modal-window\b)(?![^>]*\bfi-modal-window-ctn\b)[^>]*>/', $html, $modalWindowMatches);
+
+    expect($modalWindowContainerMatches[0])
+        ->not->toContain('x-trap')
+        ->and($modalWindowMatches[0])
+        ->toContain('tabindex="0"')
+        ->toContain('x-trap.noreturn');
+});
+
+it('preserves explicit modal window focus attributes', function (): void {
+    $html = Blade::render(<<<'BLADE'
+        <x-filament::modal
+            :extra-modal-window-attribute-bag="$modalWindowAttributes"
+            heading="Agreement"
+            sticky-header
+        >
+            Content
+        </x-filament::modal>
+        BLADE, [
+        'modalWindowAttributes' => new Filament\Support\View\ComponentAttributeBag([
+            'tabindex' => '-1',
+        ]),
+    ]);
+
+    preg_match('/<div(?=[^>]*\bfi-modal-window-ctn\b)[^>]*>/', $html, $modalWindowContainerMatches);
+    preg_match('/<(?:div|form)(?=[^>]*\bfi-modal-window\b)(?![^>]*\bfi-modal-window-ctn\b)[^>]*>/', $html, $modalWindowMatches);
+
+    expect($modalWindowContainerMatches[0])
+        ->toContain('x-trap.noreturn')
+        ->and($modalWindowMatches[0])
+        ->toContain('tabindex="-1"')
+        ->not->toContain('x-trap');
+});
