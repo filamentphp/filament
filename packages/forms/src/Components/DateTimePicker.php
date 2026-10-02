@@ -200,6 +200,8 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                                 })"
                         wire:ignore
                         wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$disabledDates, $isDisabled, $isReadOnly, $maxDate, $minDate, $hasDate, $hasTime, $hasSeconds])), 0, 64) ?>"
+                        x-on:dropdown-escape="$refs.panel.close()"
+                        x-on:focusout="if (isOpen() && ! $el.contains($event.relatedTarget)) $refs.panel.close()"
                         x-on:keydown.esc="isOpen() && $event.stopPropagation()"
                         <?= $this->getExtraAlpineAttributeBag()->toHtml() ?>
                     >
@@ -267,6 +269,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                                         <div
                                             x-text="day"
                                             x-on:click="dayIsDisabled(day) || selectDate(day)"
+                                            x-on:mousedown.prevent
                                             x-on:mouseenter="setFocusedDay(day)"
                                             role="option"
                                             x-bind:aria-selected="focusedDate.date() === day"

@@ -3,6 +3,8 @@ export default () => ({
 
     isOpen: false,
 
+    shouldAutofocus: true,
+
     observer: null,
 
     navigateListener: null,
@@ -24,17 +26,6 @@ export default () => ({
         }
 
         this.setUpAria()
-    },
-
-    destroy() {
-        this.observer?.disconnect()
-        this.observer = null
-
-        document.removeEventListener('livewire:navigate', this.navigateListener)
-        this.navigateListener = null
-
-        window.removeEventListener('keydown', this.escapeListener, true)
-        this.escapeListener = null
     },
 
     setUpAria() {
@@ -127,6 +118,15 @@ export default () => ({
                 '[data-dropdown-autofocus]',
             )
 
+            if (
+                autofocusable?.hasAttribute(
+                    'data-dropdown-autofocus-on-keyboard',
+                ) &&
+                !this.shouldAutofocus
+            ) {
+                return
+            }
+
             autofocusable?.dispatchEvent(new CustomEvent('dropdown-autofocus'))
             autofocusable?.focus()
         }
@@ -139,11 +139,15 @@ export default () => ({
     },
 
     toggle(event) {
+        this.shouldAutofocus = !(event instanceof MouseEvent)
+
         this.$refs.panel?.toggle(event)
         this.syncAria()
     },
 
     open(event) {
+        this.shouldAutofocus = !(event instanceof MouseEvent)
+
         this.$refs.panel?.open(event)
         this.syncAria()
     },
@@ -154,6 +158,12 @@ export default () => ({
         }
 
         const panel = this.$refs.panel
+        const trigger = this.$el.querySelector(':scope > .fi-dropdown-trigger')
+        const isFromTrigger = trigger?.contains(event.target)
+        const isFromContent =
+            event.target
+                .closest('[data-dropdown-escape]')
+                ?.closest('.fi-dropdown-panel') === panel
 
         // Only intercept for content that explicitly opts into staged Escape handling.
         // Other controls, such as searchable selects, need the original keydown event
@@ -161,21 +171,21 @@ export default () => ({
         if (
             !panel ||
             panel.style.display !== 'block' ||
-            event.target
-                .closest('[data-dropdown-escape]')
-                ?.closest('.fi-dropdown-panel') !== panel
+            (!isFromTrigger && !isFromContent)
         ) {
             return
         }
 
         // Content inside the panel may cancel this to keep the panel open, e.g. a search
         // input that clears its value first.
-        const shouldClose = event.target.dispatchEvent(
-            new CustomEvent('dropdown-escape', {
-                bubbles: true,
-                cancelable: true,
-            }),
-        )
+        const shouldClose =
+            isFromTrigger ||
+            event.target.dispatchEvent(
+                new CustomEvent('dropdown-escape', {
+                    bubbles: true,
+                    cancelable: true,
+                }),
+            )
 
         // Stop the floating UI plugin and any enclosing modal from also acting on this `Escape`.
         event.stopImmediatePropagation()
@@ -192,5 +202,16 @@ export default () => ({
     close(event) {
         this.$refs.panel?.close(event)
         this.syncAria()
+    },
+
+    destroy() {
+        this.observer?.disconnect()
+        this.observer = null
+
+        document.removeEventListener('livewire:navigate', this.navigateListener)
+        this.navigateListener = null
+
+        window.removeEventListener('keydown', this.escapeListener, true)
+        this.escapeListener = null
     },
 })
