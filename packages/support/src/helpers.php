@@ -388,6 +388,13 @@ if (! function_exists('Filament\Support\apply_search_constraint')) {
     function apply_search_constraint(Builder $query, string | Expression $column, string $pattern, string $boolean = 'and', bool $isInverse = false): Builder
     {
         if (! is_database_driver_supported($query->getConnection())) {
+            $pattern = strtr($pattern, [
+                '!!' => '!',
+                '![' => '[',
+                '!%' => '\\%',
+                '!_' => '\\_',
+            ]);
+
             return $query->whereLike($column, $pattern, false, $boolean, $isInverse);
         }
 

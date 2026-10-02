@@ -48,7 +48,7 @@ it('recognizes supported drivers with `is_database_driver_supported()`', functio
     'MongoDB' => ['mongodb', false],
 ]);
 
-it('uses `whereLike()` for unsupported database drivers', function (): void {
+it('uses `whereLike()` with its expected wildcard escaping for unsupported database drivers', function (): void {
     $databaseConnection = Mockery::mock(Connection::class);
     $databaseConnection->shouldReceive('getDriverName')->once()->andReturn('mongodb');
 
@@ -70,7 +70,7 @@ it('uses `whereLike()` for unsupported database drivers', function (): void {
     $returnedQuery = apply_search_constraint(
         $query,
         'profile.name',
-        '%Te!_st%',
+        generate_search_pattern('café!_100%[draft]\\path\\%\\_wow!!', hasLeadingWildcard: true, hasTrailingWildcard: true),
         boolean: 'or',
         isInverse: true,
     );
@@ -78,7 +78,7 @@ it('uses `whereLike()` for unsupported database drivers', function (): void {
     expect($returnedQuery)
         ->toBe($query)
         ->and($baseQuery->whereLikeArguments)
-        ->toBe(['profile.name', '%Te!_st%', false, 'or', true]);
+        ->toBe(['profile.name', '%café!\\_100\\%[draft]\\path\\\\%\\\\_wow!!%', false, 'or', true]);
 });
 
 it('does not share the `originalRequest` binding between Livewire component snapshots', function (): void {
