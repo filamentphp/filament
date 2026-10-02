@@ -359,13 +359,19 @@ if (! function_exists('Filament\Support\generate_search_pattern')) {
     /**
      * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
      */
-    function generate_search_pattern(string $search, bool $hasLeadingWildcard, bool $hasTrailingWildcard): string
+    function generate_search_pattern(string $search, bool $hasLeadingWildcard, bool $hasTrailingWildcard, ConnectionInterface $databaseConnection): string
     {
-        $search = str_replace(
-            ['!', '[', '%', '_'],
-            ['!!', '![', '!%', '!_'],
-            $search,
-        );
+        $search = is_database_driver_supported($databaseConnection)
+            ? str_replace(
+                ['!', '[', '%', '_'],
+                ['!!', '![', '!%', '!_'],
+                $search,
+            )
+            : str_replace(
+                ['%', '_'],
+                ['\\%', '\\_'],
+                $search,
+            );
 
         return ($hasLeadingWildcard ? '%' : '') . $search . ($hasTrailingWildcard ? '%' : '');
     }
@@ -388,13 +394,6 @@ if (! function_exists('Filament\Support\apply_search_constraint')) {
     function apply_search_constraint(Builder $query, string | Expression $column, string $pattern, string $boolean = 'and', bool $isInverse = false): Builder
     {
         if (! is_database_driver_supported($query->getConnection())) {
-            $pattern = strtr($pattern, [
-                '!!' => '!',
-                '![' => '[',
-                '!%' => '\\%',
-                '!_' => '\\_',
-            ]);
-
             return $query->whereLike($column, $pattern, false, $boolean, $isInverse);
         }
 

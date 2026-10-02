@@ -25,7 +25,7 @@ use function Filament\Support\prepare_inherited_attributes;
 uses(TestCase::class);
 
 it('generates patterns with literal LIKE wildcard characters using `generate_search_pattern()`', function (bool $hasLeadingWildcard, bool $hasTrailingWildcard, string $expected): void {
-    expect(generate_search_pattern('café!_100%[draft]\\path', $hasLeadingWildcard, $hasTrailingWildcard))
+    expect(generate_search_pattern('café!_100%[draft]\\path', $hasLeadingWildcard, $hasTrailingWildcard, Ticket::query()->getConnection()))
         ->toBe($expected);
 })->with([
     'equals' => [false, false, 'café!!!_100!%![draft]\\path'],
@@ -50,7 +50,7 @@ it('recognizes supported drivers with `is_database_driver_supported()`', functio
 
 it('uses `whereLike()` with its expected wildcard escaping for unsupported database drivers', function (): void {
     $databaseConnection = Mockery::mock(Connection::class);
-    $databaseConnection->shouldReceive('getDriverName')->once()->andReturn('mongodb');
+    $databaseConnection->shouldReceive('getDriverName')->twice()->andReturn('mongodb');
 
     $baseQuery = new class($databaseConnection, new Grammar($databaseConnection), new Processor) extends QueryBuilder
     {
@@ -70,7 +70,7 @@ it('uses `whereLike()` with its expected wildcard escaping for unsupported datab
     $returnedQuery = apply_search_constraint(
         $query,
         'profile.name',
-        generate_search_pattern('café!_100%[draft]\\path\\%\\_wow!!', hasLeadingWildcard: true, hasTrailingWildcard: true),
+        generate_search_pattern('café!_100%[draft]\\path\\%\\_wow!!', hasLeadingWildcard: true, hasTrailingWildcard: true, databaseConnection: $databaseConnection),
         boolean: 'or',
         isInverse: true,
     );

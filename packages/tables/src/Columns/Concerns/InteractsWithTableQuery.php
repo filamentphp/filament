@@ -85,7 +85,7 @@ trait InteractsWithTableQuery
         $isSearchForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
 
         $nonTranslatableSearch = generate_search_term_expression($search, $isSearchForcedCaseInsensitive, $databaseConnection);
-        $searchPattern = generate_search_pattern($nonTranslatableSearch, hasLeadingWildcard: true, hasTrailingWildcard: true);
+        $searchPattern = generate_search_pattern($nonTranslatableSearch, hasLeadingWildcard: true, hasTrailingWildcard: true, databaseConnection: $databaseConnection);
 
         $translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver();
 
@@ -97,7 +97,7 @@ trait InteractsWithTableQuery
                 fn (EloquentBuilder $query): EloquentBuilder => $translatableContentDriver->applySearchConstraintToQuery($query, $searchColumn, $search, $whereClause, $isSearchForcedCaseInsensitive),
                 fn (EloquentBuilder $query) => $query->when(
                     $this->hasRelationship($query->getModel()),
-                    function (EloquentBuilder $query) use ($model, $whereClause, $searchColumn, $isSearchForcedCaseInsensitive, $databaseConnection, $searchPattern): EloquentBuilder {
+                    function (EloquentBuilder $query) use ($model, $whereClause, $search, $searchColumn, $isSearchForcedCaseInsensitive): EloquentBuilder {
                         $relationshipName = $this->getRelationshipName($query->getModel());
                         $relationship = $this->getRelationship($query->getModel(), $relationshipName);
 
@@ -112,11 +112,18 @@ trait InteractsWithTableQuery
 
                         return $query->{"{$whereClause}Has"}(
                             $relationshipName,
-                            fn (EloquentBuilder $query): EloquentBuilder => apply_search_constraint(
-                                $query,
-                                generate_search_column_expression($this->getJsonSafeColumnName($searchColumn, $relatedTable), $isSearchForcedCaseInsensitive, $databaseConnection),
-                                $searchPattern,
-                            ),
+                            function (EloquentBuilder $query) use ($relatedTable, $search, $searchColumn, $isSearchForcedCaseInsensitive): EloquentBuilder {
+                                /** @var Connection $databaseConnection */
+                                $databaseConnection = $query->getConnection();
+
+                                $search = generate_search_term_expression($search, $isSearchForcedCaseInsensitive, $databaseConnection);
+
+                                return apply_search_constraint(
+                                    $query,
+                                    generate_search_column_expression($this->getJsonSafeColumnName($searchColumn, $relatedTable), $isSearchForcedCaseInsensitive, $databaseConnection),
+                                    generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true, databaseConnection: $databaseConnection),
+                                );
+                            },
                         );
                     },
                     fn (EloquentBuilder $query) => apply_search_constraint(
