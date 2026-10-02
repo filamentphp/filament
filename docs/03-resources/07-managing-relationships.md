@@ -757,6 +757,10 @@ public function form(Schema $schema): Schema
 
 All methods in Filament accept a callback which you can access `$livewire->ownerRecord` in.
 
+<Aside variant="warning">
+    On every Livewire request, Filament re-queries `$ownerRecord` using its global scopes, then runs `canViewForRecord()`. It does not apply constraints from the parent resource's `getEloquentQuery()` or automatically run the owner record's policy. If you rely on either, check them in `canViewForRecord()`. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+</Aside>
+
 ## Grouping relation managers
 
 You may choose to group relation managers together into one tab. To do this, you may wrap multiple managers in a `RelationGroup` object, with a label:

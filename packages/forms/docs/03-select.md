@@ -614,6 +614,10 @@ MorphToSelect::make('commentable')
     ])
 ```
 
+<Aside variant="warning">
+    If `$team` is stored in a public Livewire property, Filament does not re-query or authorize it on later requests. Re-query and authorize the team before using it to scope the options. See [Eloquent model restoration in Livewire](../../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+</Aside>
+
 <UtilityInjection set="formFields" version="5.x" extras="Eloquent query builder;;Illuminate\Database\Eloquent\Builder;;$query;;The query builder to modify.">The `modifyOptionsQueryUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="tip">

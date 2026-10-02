@@ -25,10 +25,6 @@ export default function builderBlockPickerFormComponent() {
             })
         },
 
-        destroy() {
-            this.observer?.disconnect()
-        },
-
         clearSearch() {
             this.search = ''
 
@@ -68,6 +64,10 @@ export default function builderBlockPickerFormComponent() {
             return !this.blockLabels.some((label) =>
                 label.includes(this.search.toLowerCase()),
             )
+        },
+
+        destroy() {
+            this.observer?.disconnect()
         },
     }
 }

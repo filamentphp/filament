@@ -298,6 +298,25 @@ Repeater::make('members')
 
 You may also pass a boolean or function to `deferLoading()` to control it conditionally.
 
+## Setting the root heading level
+
+By default, headings in a schema start at level two, since schemas are usually rendered below a page's level-one heading. If you render a schema elsewhere in the document hierarchy, you can change its root heading level using the `rootHeadingLevel()` method:
+
+```php
+use Filament\Schemas\Schema;
+
+public function productSchema(Schema $schema): Schema
+{
+    return $schema
+        ->rootHeadingLevel(3)
+        ->components([
+            // ...
+        ]);
+}
+```
+
+In this example, the schema is rendered below a level-two heading, so its headings start at level three. Nested section headings automatically use the next level. Labelled repeater and builder items also advance the heading level used by components inside them.
+
 ## Global settings
 
 If you wish to change the default behavior of a component globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all section components have [2 columns](sections#using-grid-columns-within-a-section) by default, you can do it like so:

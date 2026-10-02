@@ -2,6 +2,7 @@
 title: Custom pages
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import Aside from "@components/Aside.astro"
 
 ## Introduction
 
@@ -56,6 +57,10 @@ protected function getHeaderActions(): array
     ];
 }
 ```
+
+<Aside variant="warning">
+    If `$post` is stored in a public Livewire property, the page's `canAccess()` method does not authorize it, and Filament does not re-query it on later requests. Re-query and authorize the post before using it in an action. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+</Aside>
 
 #### Aligning header actions
 

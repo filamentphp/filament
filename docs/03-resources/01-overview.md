@@ -539,9 +539,9 @@ CustomerResource::getUrl(panel: 'marketing');
 
 ## Customizing the resource Eloquent query
 
-Within Filament, every query to your resource model will start with the `getEloquentQuery()` method.
+The resource's list table, record pages, and global search start their queries with the `getEloquentQuery()` method.
 
-Because of this, it's very easy to apply your own query constraints or [model scopes](https://laravel.com/docs/eloquent#query-scopes) that affect the entire resource:
+Because of this, it's very easy to apply your own query constraints or [model scopes](https://laravel.com/docs/eloquent#query-scopes) to those parts of the resource:
 
 ```php
 public static function getEloquentQuery(): Builder
@@ -665,6 +665,10 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 - `forceDelete()` is used to prevent a single soft-deleted record from being force-deleted. `forceDeleteAny()` is used to prevent records from being bulk force-deleted. Filament uses the `forceDeleteAny()` method because iterating through multiple records and checking the `forceDelete()` policy is not very performant. When using a `ForceDeleteBulkAction`, if you want to call the `forceDelete()` method for each record anyway, you should use the `ForceDeleteBulkAction::make()->authorizeIndividualRecords()` method. Any records that fail the authorization check will not be processed.
 - `restore()` is used to prevent a single soft-deleted record from being restored. `restoreAny()` is used to prevent records from being bulk restored. Filament uses the `restoreAny()` method because iterating through multiple records and checking the `restore()` policy is not very performant. When using a `RestoreBulkAction`, if you want to call the `restore()` method for each record anyway, you should use the `RestoreBulkAction::make()->authorizeIndividualRecords()` method. Any records that fail the authorization check will not be processed.
 - `reorder()` is used to control [reordering records in a table](listing-records#reordering-records).
+
+<Aside variant="info">
+    On every Livewire request, Filament re-queries the page's `$record` using the resource query, then repeats the page's authorization checks. For example, edit and view pages check the resource's `update()` and `view()` policies. A `ManageRelatedRecords` page checks access to the related resource or model, but does not authorize the owner record unless you add that check to the page's `canAccess()` method. Any global scopes removed by the resource query remain removed. Filament does not re-query or authorize additional model properties that you add to the page. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+</Aside>
 
 #### Skipping authorization
 

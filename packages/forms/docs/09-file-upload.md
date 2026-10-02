@@ -22,7 +22,7 @@ FileUpload::make('attachment')
 </Aside>
 
 <Aside variant="danger">
-    By default, `FileUpload` accepts any string path within the configured disk — the field value is a client-controlled string and a tampered request can submit any other file on the same disk. If your disk holds files for more than one user, tenant, or record, either call [`->preventFilePathTampering()`](#authorizing-existing-file-paths) on the field (or apply it globally with `FileUpload::configureUsing()`), or isolate uploads at the disk or directory level so the field can only ever address files belonging to the current owner.
+    By default, `FileUpload` accepts any string path within the configured disk — the field value is a client-controlled string and a tampered request can submit any other file on the same disk. If the disk holds files for more than one user, tenant, or record, call [`preventFilePathTampering()`](#authorizing-existing-file-paths) on the field, or use a dedicated disk containing only files that the current user may access. Setting `directory()` only changes where new uploads are stored; it does not restrict which existing paths can be submitted.
 </Aside>
 
 ## Configuring the storage disk and directory
@@ -231,9 +231,14 @@ use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('avatar')
     ->preventFilePathTampering(
-        allowFilePathUsing: fn (string $file): bool => str_starts_with($file, 'templates/'),
+        allowFilePathUsing: fn (string $file): bool => in_array($file, [
+            'templates/default-avatar.png',
+            'templates/company-logo.png',
+        ], strict: true),
     )
 ```
+
+The callback receives the path exactly as submitted by the client. Use exact trusted paths where possible. Do not authorize an arbitrary directory using a prefix check, since the filesystem may normalize segments such as `..` after the callback runs.
 
 <UtilityInjection set="formFields" version="5.x" extras="File;;string;;$file;;The submitted file path being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
 

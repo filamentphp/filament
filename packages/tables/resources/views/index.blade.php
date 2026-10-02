@@ -642,6 +642,13 @@
                                                 :heading-tag="$secondLevelHeadingTag"
                                                 :reset-action="$filtersResetAction"
                                                 :reset-action-position="$filtersResetActionPosition"
+                                                data-dropdown-autofocus
+                                                data-dropdown-autofocus-on-keyboard
+                                                data-dropdown-escape
+                                                x-data="filamentTableFilters"
+                                                x-on:click="rememberActionFocus($event)"
+                                                x-on:dropdown-autofocus="focusFirstControl()"
+                                                tabindex="-1"
                                             />
                                         </x-filament::dropdown>
                                     @endif

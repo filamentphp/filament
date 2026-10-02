@@ -198,6 +198,10 @@ public function form(Schema $schema): Schema
 }
 ```
 
+<Aside variant="warning">
+    `$post` is a model property on a regular Livewire component. Filament does not re-query or authorize it on later requests. Re-query and authorize the post before passing it to the form or saving it. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+</Aside>
+
 ### Passing the form model after the form has been submitted
 
 In some cases, the form's model is not available until the form has been submitted. For example, in a Create Post form, the post does not exist until the form has been submitted. Therefore, you can't pass it in to `$form->model()`. However, you can pass a model class instead:
@@ -347,6 +351,10 @@ By default, passing a model to the `make:livewire-form` command will result in a
 ```bash
 php artisan make:filament-livewire-form Products/EditProduct --edit
 ```
+
+<Aside variant="warning">
+    The generated component is a regular Livewire component. Filament does not re-query or authorize its `$record` property on later requests. Re-query and authorize the record before filling or saving the form. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+</Aside>
 
 ### Automatically generating form schemas
 

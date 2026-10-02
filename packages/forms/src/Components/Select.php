@@ -2019,6 +2019,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                 })"
                         wire:ignore
                         wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled, $isReorderable])), 0, 64) ?>"
+                        x-on:dropdown-escape="select.closeDropdown()"
                         x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                         x-on:set-select-property="$event.detail.isDisabled ? select.disable() : select.enable()"
                         <?= (new FilamentComponentAttributeBag)

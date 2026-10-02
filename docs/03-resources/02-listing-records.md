@@ -152,7 +152,7 @@ public function getDefaultActiveTab(): string | int | null
 
 ### Excluding the tab query when resolving records
 
-When a user interacts with a table record (e.g., clicking an action button), Filament resolves that record from the database. By default, the active tab's query is applied, ensuring users cannot access records outside the current tab's scope.
+When a user interacts with a table record (e.g., clicking an action button), Filament resolves that record from the database. While a valid tab is active, its query is applied when resolving the record.
 
 However, when a record's state changes after the user saw it in the table, you may still want the user to interact with it. For example, if you have an "Active" tab and an action sets a record to inactive, subsequent actions in the same modal would fail to resolve that record.
 
@@ -176,7 +176,7 @@ public function getTabs(): array
 ```
 
 <Aside variant="danger">
-    Do not use `excludeQueryWhenResolvingRecord()` on tabs that enforce authorization rules. For example, if you have a tab that restricts records by tenant or user ownership, those tabs should remain enforced to prevent unauthorized access.
+    Tabs are controlled by the client and must not be your only tenant or ownership restriction. Apply mandatory restrictions to the resource's `getEloquentQuery()` or the table's `modifyQueryUsing()`, and authorize operations separately. `excludeQueryWhenResolvingRecord()` only changes record resolution; it must not remove your application's authorization boundary.
 </Aside>
 
 ## Authorization

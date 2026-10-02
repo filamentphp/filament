@@ -218,9 +218,9 @@ SelectConstraint::make('creator.department') // Filter the `department` column o
 ```
 
 <Aside variant="danger">
-    `options()` is a UI affordance, not an authorization boundary. The list constrains what the dropdown displays, but the submitted value is not checked against it before the constraint runs. Query-builder rules are stored in Livewire state and can be tampered with — a crafted request can submit any value into the constraint's `settings`, and `IsOperator::apply()` passes it straight into `whereIn`/`where` on the query.
+    `options()` controls the available filter values, but it does not restrict access to records. Users can remove the rule, and rules that fail validation are ignored.
 
-    If you are using `options()` to hide certain values from a group of users (for example, hiding `archived` from non-admins), scope the underlying query itself — for example with [`modifyRelationshipQueryUsing()`](#scoping-relationships) on the constraint, a [`modifyQueryUsing()`](../../resources/listing-records#customizing-the-eloquent-query) on the resource, or a global scope on the model — so the restricted rows are never reachable regardless of what the constraint submits.
+    If you are using `options()` to hide certain values from a group of users (for example, hiding `archived` from non-admins), apply the mandatory restriction to the table's underlying query using the resource's [`getEloquentQuery()`](../../resources/overview#customizing-the-resource-eloquent-query), the table's [`modifyQueryUsing()`](../../resources/listing-records#customizing-the-eloquent-query), or a global scope on the model. [`modifyRelationshipQueryUsing()`](#scoping-relationships) only scopes the relationship query for that individual rule, which the user can omit. Authorization for operations on records must be handled separately.
 </Aside>
 
 #### Searchable select constraints
