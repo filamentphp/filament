@@ -7,6 +7,7 @@ use Carbon\CarbonInterface;
 use Carbon\Exceptions\InvalidFormatException;
 use Closure;
 use DateTime;
+use DateTimeInterface;
 use Filament\Actions\Action;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\DateTimeStateCast;
@@ -19,6 +20,8 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Js;
+use Illuminate\Validation\ValidationRuleParser;
+use Illuminate\Validation\Validator;
 use Illuminate\View\ComponentAttributeBag;
 
 class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
@@ -109,8 +112,8 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
         $isAutofocused = $this->isAutofocused();
         $isPrefixInline = $this->isPrefixInline();
         $isSuffixInline = $this->isSuffixInline();
-        $maxDate = $this->getMaxDate();
-        $minDate = $this->getMinDate();
+        $maxDate = $this->getDateLimitForInput($this->getMaxDate(), isMaximum: true);
+        $minDate = $this->getDateLimitForInput($this->getMinDate());
         $defaultFocusedDate = $this->getDefaultFocusedDate();
         $prefixActions = $this->getPrefixActions();
         $prefixIcon = $this->getPrefixIcon();
@@ -128,6 +131,11 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
         $type = $this->getType();
         $livewireKey = $this->getLivewireKey();
         $isNative = $this->isNative();
+
+        if ($isNative && (! $hasDate) && filled($minDate) && filled($maxDate) && ($minDate > $maxDate)) {
+            // HTML interprets reversed time limits as an overnight range, unlike server validation.
+            $minDate = $maxDate = null;
+        }
 
         // Mirror the snapshot Blade: the input's inline prefix/suffix classes
         // are computed against the unfiltered prefix/suffix actions, while the
@@ -168,8 +176,8 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                                 'disabled' => $isDisabled,
                                 'id' => $id,
                                 'list' => $datalistOptions ? $id . '-list' : null,
-                                'max' => $hasTime ? $maxDate : ($maxDate ? Carbon::parse($maxDate)->toDateString() : null),
-                                'min' => $hasTime ? $minDate : ($minDate ? Carbon::parse($minDate)->toDateString() : null),
+                                'max' => $maxDate,
+                                'min' => $minDate,
                                 'placeholder' => filled($placeholder) ? e($placeholder) : null,
                                 'readonly' => $isReadOnly,
                                 'required' => $isRequired && (! $isDisabled) && (! $isReadOnly),
@@ -193,6 +201,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                                     defaultFocusedDate: <?= Js::from($defaultFocusedDate) ?>,
                                     displayFormat: <?= Js::from(convert_date_format($this->getDisplayFormat())->to('day.js')) ?>,
                                     firstDayOfWeek: <?= $this->getFirstDayOfWeek() ?>,
+                                    hasDate: <?= Js::from($hasDate) ?>,
                                     isAutofocused: <?= Js::from($isAutofocused) ?>,
                                     locale: <?= Js::from($this->getLocale()) ?>,
                                     shouldCloseOnDateSelection: <?= Js::from($this->shouldCloseOnDateSelection()) ?>,
@@ -326,7 +335,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
             app(DateTimeStateCast::class, [
                 'format' => $this->getFormat(),
                 'internalFormat' => $this->getInternalFormat(),
-                'timezone' => $this->getTimezone(),
+                'timezone' => $this->hasTime() ? $this->getTimezone() : null,
             ]),
         ];
     }
@@ -411,7 +420,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
         $this->maxDate = $date;
 
         $this->rule(static function (DateTimePicker $component) {
-            return "before_or_equal:{$component->getMaxDate()}";
+            return $component->getDateLimitValidationRule('before_or_equal', $component->getMaxDate());
         }, static fn (DateTimePicker $component): bool => (bool) $component->getMaxDate());
 
         return $this;
@@ -422,7 +431,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
         $this->minDate = $date;
 
         $this->rule(static function (DateTimePicker $component) {
-            return "after_or_equal:{$component->getMinDate()}";
+            return $component->getDateLimitValidationRule('after_or_equal', $component->getMinDate());
         }, static fn (DateTimePicker $component): bool => (bool) $component->getMinDate());
 
         return $this;
@@ -691,17 +700,122 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
 
     public function getMaxDate(): ?string
     {
-        return $this->evaluate($this->maxDate);
+        $date = $this->evaluate($this->maxDate);
+
+        if ($this->hasTime() || blank($date)) {
+            return $date;
+        }
+
+        if (! $date instanceof CarbonInterface) {
+            $date = Carbon::parse($date, Carbon::hasRelativeKeywords($date) ? config('app.timezone') : 'UTC');
+        }
+
+        return $date->toDateString() . ' 23:59:59';
     }
 
     public function getMinDate(): ?string
     {
-        return $this->evaluate($this->minDate);
+        $date = $this->evaluate($this->minDate);
+
+        if ($this->hasTime() || blank($date)) {
+            return $date;
+        }
+
+        if (! $date instanceof CarbonInterface) {
+            $date = Carbon::parse($date, Carbon::hasRelativeKeywords($date) ? config('app.timezone') : 'UTC');
+        }
+
+        return $date->toDateString() . ' 00:00:00';
+    }
+
+    protected function getDateLimitForInput(?string $date, bool $isMaximum = false): ?string
+    {
+        if (blank($date)) {
+            return null;
+        }
+
+        $date = Carbon::parse($date, $this->hasTime() ? null : 'UTC');
+
+        if ($this->hasTime()) {
+            // Match the timezone used by Laravel's date validation, not the state cast's display timezone.
+            $date = $date->setTimezone(date_default_timezone_get());
+        }
+
+        if (! $this->isNative()) {
+            if ($this->hasTime() && (! $this->hasSeconds())) {
+                $date = $date->second($isMaximum ? 59 : 0);
+            }
+
+            return $date->format('Y-m-d H:i:s');
+        }
+
+        if (! $this->hasTime()) {
+            return $date->toDateString();
+        }
+
+        return $date->format(($this->hasDate() ? 'Y-m-d\\TH:i' : 'H:i') . ($this->hasSeconds() ? ':s' : ''));
+    }
+
+    protected function getDateLimitValidationRule(string $rule, ?string $date): string | Closure
+    {
+        if ((! $this->hasTime()) || ($this->hasDate() && $this->hasSeconds())) {
+            return "{$rule}:{$date}";
+        }
+
+        $limit = Carbon::parse($date)->setTimezone(date_default_timezone_get());
+
+        if (! $this->hasSeconds()) {
+            $limit = $limit->second($rule === 'before_or_equal' ? 59 : 0);
+        }
+
+        if ($this->hasDate()) {
+            return "{$rule}:{$limit->toIso8601String()}";
+        }
+
+        return static function (string $attribute, mixed $value, Closure $fail, Validator $validator) use ($limit, $rule, $date): void {
+            $comparisonDate = $date;
+
+            if (is_string($value) || $value instanceof DateTimeInterface) {
+                try {
+                    foreach ($validator->getRules()[$attribute] as $validationRule) {
+                        [$validationRule, $parameters] = ValidationRuleParser::parse($validationRule);
+
+                        if (($validationRule === 'DateFormat') && is_string($value)) {
+                            $value = DateTime::createFromFormat('!' . $parameters[0], $value) ?: $value;
+
+                            break;
+                        }
+                    }
+
+                    $value = Carbon::parse($value)->setTimezone(date_default_timezone_get());
+
+                    // Compare clocks on the submitted date and offset, independent of the limit's date.
+                    $comparisonDate = "{$value->format('Y-m-d')}T{$limit->format('H:i:s')}{$value->format('P')}";
+                } catch (InvalidFormatException) {
+                    // Leave malformed values for Laravel's date rule to reject.
+                }
+            }
+
+            $rule = $rule === 'before_or_equal' ? 'BeforeOrEqual' : 'AfterOrEqual';
+
+            if (! $validator->{"validate{$rule}"}($attribute, $validator->getValue($attribute), [$comparisonDate])) {
+                // Preserve named failures, custom messages, and replacers instead of a closure-rule error.
+                $validator->addFailure($attribute, $rule, [$date]);
+            }
+        };
     }
 
     public function getDefaultFocusedDate(): ?string
     {
         $defaultFocusedDate = $this->evaluate($this->defaultFocusedDate);
+
+        if (! $this->hasTime()) {
+            return app(DateTimeStateCast::class, [
+                'format' => $this->getFormat(),
+                'internalFormat' => 'Y-m-d H:i:s',
+                'timezone' => null,
+            ])->set($defaultFocusedDate);
+        }
 
         if (filled($defaultFocusedDate)) {
             if (! $defaultFocusedDate instanceof CarbonInterface) {
