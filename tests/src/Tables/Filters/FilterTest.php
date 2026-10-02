@@ -420,10 +420,12 @@ it('contains filters `Escape` handling inside an enclosing modal', function (boo
             ->click('[data-testid="table-modal-trigger"]')
             ->assertVisible($tableModal)
             ->keys($filtersTrigger, 'Enter')
+            ->assertVisible($publishedFilter)
             ->keys($publishedFilter, 'Escape')
             ->assertMissing($publishedFilter)
             ->assertVisible($tableModal)
             ->keys($filtersTrigger, 'Enter')
+            ->assertVisible($publishedFilter)
             ->assertNoAccessibilityIssues();
 
         $page->script(<<<'JS'
