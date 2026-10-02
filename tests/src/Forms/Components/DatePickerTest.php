@@ -2,8 +2,12 @@
 
 namespace Filament\Tests\Forms\Components;
 
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Schemas\Schema;
+use Filament\Support\Facades\FilamentTimezone;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
@@ -31,6 +35,137 @@ it('can set and get state', function (): void {
 it('can render with min and max date', function (): void {
     livewire(TestComponentWithDatePickerMinMax::class)
         ->assertSuccessful();
+});
+
+it('accepts the entire boundary dates and rejects adjacent dates when `hasTime()` is `false`', function (string $pickerClass, string $source, bool $isNative): void {
+    config(['app.timezone' => 'Europe/London']);
+
+    $livewire = livewire(TestComponentWithDatePickerMinMax::class, compact('pickerClass', 'source', 'isNative'));
+
+    if (! $isNative) {
+        $livewire->assertSeeHtml('x-ref="minDate" type="hidden" value="2025-03-30 00:00:00"')
+            ->assertSeeHtml('x-ref="maxDate" type="hidden" value="2025-03-31 23:59:59"');
+    }
+
+    foreach ([
+        ['2025-03-29 23:59:59', null],
+        ['2025-03-30 00:00:00', '30/03/2025'],
+        ['2025-03-31 23:59:59', '31/03/2025'],
+        ['2025-04-01 00:00:00', null],
+    ] as [$state, $expectedSavedDate]) {
+        $livewire->set('data.date', $isNative ? substr($state, 0, 10) : $state)
+            ->call('save');
+
+        if ($expectedSavedDate === null) {
+            $livewire->assertHasFormErrors(['date']);
+
+            continue;
+        }
+
+        $livewire->assertHasNoFormErrors()
+            ->assertSet('saved.date', $expectedSavedDate)
+            ->call('reloadForm')
+            ->assertSet('data.date', static fn (string $reloadedState): bool => substr($reloadedState, 0, 10) === substr($state, 0, 10));
+    }
+})->with([
+    'date picker' => [DatePicker::class],
+    'date-time picker without time' => [DateTimePicker::class],
+])->with(['string', Carbon::class, CarbonImmutable::class])
+    ->with([true, false]);
+
+it('ignores the time of a date-only limit in a timezone that skips midnight', function (string $pickerClass, bool $isNative): void {
+    config(['app.timezone' => 'UTC']);
+
+    $livewire = livewire(TestComponentWithDatePickerMinMax::class, [
+        'pickerClass' => $pickerClass,
+        'isNative' => $isNative,
+        'minimumDate' => '2025-09-07 12:00:00 America/Santiago',
+        'maximumDate' => '2025-09-09 16:45:47 America/Santiago',
+    ]);
+
+    $livewire->set('data.date', $isNative ? '2025-09-07' : '2025-09-07 00:00:00')
+        ->call('save')
+        ->assertHasNoFormErrors()
+        ->assertSet('saved.date', '07/09/2025')
+        ->call('reloadForm')
+        ->assertSet('data.date', static fn (string $reloadedState): bool => substr($reloadedState, 0, 10) === '2025-09-07')
+        ->set('data.date', $isNative ? '2025-09-06' : '2025-09-06 23:59:59')
+        ->call('save')
+        ->assertHasFormErrors(['date']);
+
+    if (! $isNative) {
+        $livewire->assertSeeHtml('x-ref="minDate" type="hidden" value="2025-09-07 00:00:00"')
+            ->assertSeeHtml('x-ref="maxDate" type="hidden" value="2025-09-09 23:59:59"');
+    }
+})->with([[DatePicker::class], [DateTimePicker::class]])->with([true, false]);
+
+it('can reset date-only bounds to `null`', function (bool $isNative): void {
+    livewire(TestComponentWithDatePickerMinMax::class, ['isNative' => $isNative, 'resetLimits' => true])
+        ->set('data.date', '2025-03-29')
+        ->call('save')
+        ->assertHasNoFormErrors()
+        ->set('data.date', '2025-04-01')
+        ->call('save')
+        ->assertHasNoFormErrors();
+})->with([true, false]);
+
+it('ignores explicit and global timezones when loading, saving, and reloading date-only fields', function (string $pickerClass, bool $isNative, ?string $timezone): void {
+    config(['app.timezone' => 'Europe/London']);
+    FilamentTimezone::set('Pacific/Honolulu');
+
+    foreach (['00:15:23', '23:45:47'] as $time) {
+        $this->travelTo(Carbon::parse("2025-03-30 {$time}", 'UTC'));
+
+        livewire(TestComponentWithDatePickerMinMax::class, [
+            'pickerClass' => $pickerClass,
+            'isNative' => $isNative,
+            'timezone' => $timezone,
+        ])
+            ->set('saved.date', '30/03/2025')
+            ->call('reloadForm')
+            ->assertSet('data.date', $isNative ? '2025-03-30' : '2025-03-30 00:00:00')
+            ->call('save')
+            ->assertHasNoFormErrors()
+            ->assertSet('saved.date', '30/03/2025')
+            ->call('reloadForm')
+            ->assertSet('data.date', $isNative ? '2025-03-30' : '2025-03-30 00:00:00')
+            ->call('save')
+            ->assertSet('saved.date', '30/03/2025');
+    }
+})->with([[DatePicker::class], [DateTimePicker::class]])
+    ->with([true, false])
+    ->with([null, 'Asia/Tokyo', 'America/Los_Angeles']);
+
+it('preserves date-only focused dates without timezone conversion or an implicit clock', function (string $source): void {
+    config(['app.timezone' => 'Europe/London']);
+    $this->travelTo(Carbon::parse('2025-07-20 23:45:47', 'UTC'));
+
+    $date = $source === 'string' ? '15/07/2025' : $source::parse('2025-07-15 00:00:00', 'Asia/Tokyo');
+    $picker = DatePicker::make('date')
+        ->native(false)
+        ->format('d/m/Y')
+        ->timezone('America/Los_Angeles')
+        ->defaultFocusedDate(static fn () => $date);
+
+    expect($picker->getDefaultFocusedDate())->toBe('2025-07-15 00:00:00');
+
+    if ($source !== 'string') {
+        expect($date->format('Y-m-d H:i:s e'))->toBe('2025-07-15 00:00:00 Asia/Tokyo');
+    }
+
+    expect($picker->defaultFocusedDate('not a date')->getDefaultFocusedDate())->toBeNull()
+        ->and($picker->defaultFocusedDate(null)->getDefaultFocusedDate())->toBeNull();
+})->with(['string', Carbon::class, CarbonImmutable::class]);
+
+it('preserves the app year for a partial `defaultFocusedDate()` format', function (): void {
+    config(['app.timezone' => 'Pacific/Honolulu']);
+    $this->travelTo(Carbon::parse('2025-01-01 00:30:47', 'UTC'));
+
+    expect(DatePicker::make('birthday')
+        ->format('m-d')
+        ->timezone('Asia/Tokyo')
+        ->defaultFocusedDate('02-29')
+        ->getDefaultFocusedDate())->toBe('2024-02-29 00:00:00');
 });
 
 describe('`hasTime()` override', function (): void {
@@ -118,14 +253,14 @@ describe('date constraints', function (): void {
         $picker = DatePicker::make('date')
             ->minDate('2024-01-01');
 
-        expect($picker->getMinDate())->toBe('2024-01-01');
+        expect($picker->getMinDate())->toBe('2024-01-01 00:00:00');
     });
 
     it('can set `minDate()` with a `Closure`', function (): void {
         $picker = DatePicker::make('date')
             ->minDate(static fn (): string => '2024-06-01');
 
-        expect($picker->getMinDate())->toBe('2024-06-01');
+        expect($picker->getMinDate())->toBe('2024-06-01 00:00:00');
     });
 
     it('returns `null` for `getMaxDate()` by default', function (): void {
@@ -138,14 +273,14 @@ describe('date constraints', function (): void {
         $picker = DatePicker::make('date')
             ->maxDate('2024-12-31');
 
-        expect($picker->getMaxDate())->toBe('2024-12-31');
+        expect($picker->getMaxDate())->toBe('2024-12-31 23:59:59');
     });
 
     it('can set `maxDate()` with a `Closure`', function (): void {
         $picker = DatePicker::make('date')
             ->maxDate(static fn (): string => '2025-01-01');
 
-        expect($picker->getMaxDate())->toBe('2025-01-01');
+        expect($picker->getMaxDate())->toBe('2025-01-01 23:59:59');
     });
 
     it('returns empty array for `getDisabledDates()` by default', function (): void {
@@ -379,19 +514,54 @@ describe('rendering', function (): void {
     });
 });
 
-it('has no accessibility issues in light and dark modes', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+it('selects and saves full boundary dates in a native picker with accessible light and dark states', function (): void {
+    $this->actingAs(User::factory()->create());
 
-        visit('/date-picker-browser-test')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/date-picker-browser-test');
 
-        visit('/date-picker-browser-test')
-            ->inDarkMode()
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    });
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
+        $page->assertNoSmoke()->assertNoAccessibilityIssues();
+
+        $reloadCount = 0;
+
+        foreach ([
+            ['2025-07-14', false, 0],
+            ['2025-07-15', true, 1],
+            ['2025-07-17', true, 2],
+            ['2025-07-18', false, 2],
+        ] as [$date, $isValid, $saveCount]) {
+            $page->script("(() => { const input = document.querySelector('[data-testid=\"native-date\"]'); input.oninvalid = () => { input.dataset.rejected = 'true'; }; input.dataset.rejected = 'false'; input.value = '{$date}'; input.dispatchEvent(new Event('input', { bubbles: true })); })()");
+
+            $page->assertScript('document.querySelector(\'[data-testid="native-date"]\').validity.valid', $isValid)
+                ->click('[data-testid="save-dates"]');
+
+            if (! $isValid) {
+                $page->assertScript('document.querySelector(\'[data-testid="native-date"]\').dataset.rejected', 'true');
+            }
+
+            $page->assertScript('document.querySelector(\'[data-testid="save-count"]\').textContent.trim()', (string) $saveCount);
+
+            if ($isValid) {
+                $page->assertScript('document.querySelector(\'[data-testid="saved-native-date"]\').textContent.trim()', $date)
+                    ->click('[data-testid="reload-dates"]')
+                    ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
+                    ->assertValue('[data-testid="native-date"]', $date);
+            }
+        }
+
+        $page->click('[data-testid="reload-dates"]')
+            ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
+            ->assertValue('[data-testid="native-date"]', '2025-07-17')
+            ->assertScript('document.querySelector(\'[data-testid="reload-dates"]\').disabled', false);
+
+        $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
+        $page->assertNoAccessibilityIssues();
+    }
 });
 
 class TestComponentWithDatePicker extends Livewire
@@ -408,15 +578,54 @@ class TestComponentWithDatePicker extends Livewire
 
 class TestComponentWithDatePickerMinMax extends Livewire
 {
+    public string $pickerClass = DatePicker::class;
+
+    public string $source = 'string';
+
+    public string $minimumDate = '2025-03-30 09:30:23';
+
+    public string $maximumDate = '2025-03-31 17:45:47';
+
+    public bool $isNative = true;
+
+    public bool $resetLimits = false;
+
+    public ?string $timezone = null;
+
+    public array $saved = [];
+
     public function form(Schema $form): Schema
     {
+        $minimum = $this->source === 'string' ? $this->minimumDate : $this->source::parse($this->minimumDate, 'Asia/Tokyo');
+        $maximum = $this->source === 'string' ? $this->maximumDate : $this->source::parse($this->maximumDate, 'America/New_York');
+        $field = $this->pickerClass::make('date')
+            ->time(false)
+            ->native($this->isNative)
+            ->format('d/m/Y')
+            ->minDate($minimum)
+            ->maxDate(static fn () => $maximum);
+
+        if ($this->resetLimits) {
+            $field->minDate(null)->maxDate(static fn () => null);
+        }
+
+        if ($this->timezone !== null) {
+            $field->timezone(fn (): string => $this->timezone);
+        }
+
         return $form
-            ->schema([
-                DatePicker::make('date')
-                    ->minDate(now()->subYear())
-                    ->maxDate(now()->addYear()),
-            ])
+            ->schema([$field])
             ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->saved = $this->form->getState();
+    }
+
+    public function reloadForm(): void
+    {
+        $this->form->fill($this->saved);
     }
 }
 

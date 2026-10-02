@@ -17,6 +17,7 @@ export default function dateTimePickerFormComponent({
     defaultFocusedDate,
     displayFormat,
     firstDayOfWeek,
+    hasDate = true,
     isAutofocused,
     locale,
     shouldCloseOnDateSelection,
@@ -71,12 +72,7 @@ export default function dateTimePickerFormComponent({
                 this.getDefaultFocusedDate() ??
                 dayjs().tz(timezone).hour(0).minute(0).second(0)
 
-            if (this.getMaxDate() !== null && date.isAfter(this.getMaxDate())) {
-                date = null
-            } else if (
-                this.getMinDate() !== null &&
-                date.isBefore(this.getMinDate())
-            ) {
+            if (this.dateIsOutsideLimits(date)) {
                 date = null
             }
 
@@ -222,16 +218,7 @@ export default function dateTimePickerFormComponent({
                     return
                 }
 
-                if (
-                    this.getMaxDate() !== null &&
-                    date?.isAfter(this.getMaxDate())
-                ) {
-                    date = null
-                }
-                if (
-                    this.getMinDate() !== null &&
-                    date?.isBefore(this.getMinDate())
-                ) {
+                if (this.dateIsOutsideLimits(date)) {
                     date = null
                 }
 
@@ -291,10 +278,18 @@ export default function dateTimePickerFormComponent({
                 return true
             }
 
-            if (this.getMaxDate() && date.isAfter(this.getMaxDate(), 'day')) {
+            if (
+                hasDate &&
+                this.getMaxDate() &&
+                date.isAfter(this.getMaxDate(), 'day')
+            ) {
                 return true
             }
-            if (this.getMinDate() && date.isBefore(this.getMinDate(), 'day')) {
+            if (
+                hasDate &&
+                this.getMinDate() &&
+                date.isBefore(this.getMinDate(), 'day')
+            ) {
                 return true
             }
 
@@ -372,15 +367,34 @@ export default function dateTimePickerFormComponent({
         },
 
         getMaxDate() {
-            let date = dayjs(this.$refs.maxDate?.value)
+            return this.getDateLimit(this.$refs.maxDate?.value)
+        },
+
+        getMinDate() {
+            return this.getDateLimit(this.$refs.minDate?.value)
+        },
+
+        getDateLimit(value) {
+            const date = hasDate ? dayjs(value) : dayjs.utc(value)
 
             return date.isValid() ? date : null
         },
 
-        getMinDate() {
-            let date = dayjs(this.$refs.minDate?.value)
+        dateIsOutsideLimits(date) {
+            const minimum = this.getMinDate()
+            const maximum = this.getMaxDate()
 
-            return date.isValid() ? date : null
+            return (
+                (minimum !== null &&
+                    (hasDate
+                        ? date.isBefore(minimum)
+                        : date.format('HH:mm:ss') <
+                          minimum.format('HH:mm:ss'))) ||
+                (maximum !== null &&
+                    (hasDate
+                        ? date.isAfter(maximum)
+                        : date.format('HH:mm:ss') > maximum.format('HH:mm:ss')))
+            )
         },
 
         getSelectedDate() {
@@ -392,7 +406,7 @@ export default function dateTimePickerFormComponent({
                 return null
             }
 
-            let date = dayjs(this.state)
+            let date = hasDate ? dayjs(this.state) : dayjs.utc(this.state)
 
             if (!date.isValid()) {
                 return null
@@ -406,7 +420,9 @@ export default function dateTimePickerFormComponent({
                 return null
             }
 
-            let defaultFocusedDate = dayjs(this.defaultFocusedDate)
+            let defaultFocusedDate = hasDate
+                ? dayjs(this.defaultFocusedDate)
+                : dayjs.utc(this.defaultFocusedDate)
 
             if (!defaultFocusedDate.isValid()) {
                 return null
@@ -491,6 +507,10 @@ export default function dateTimePickerFormComponent({
 
             if (this.dateIsDisabled(date)) {
                 return
+            }
+
+            if (!hasDate) {
+                date = dayjs.utc(date.format('YYYY-MM-DD HH:mm:ss'))
             }
 
             this.state = date

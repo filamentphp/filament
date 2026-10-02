@@ -7,6 +7,7 @@ use Carbon\CarbonInterface;
 use Carbon\Exceptions\InvalidFormatException;
 use Closure;
 use DateTime;
+use DateTimeInterface;
 use Filament\Actions\Action;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\DateTimeStateCast;
@@ -17,8 +18,11 @@ use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentTimezone;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Js;
+use Illuminate\Validation\ValidationRuleParser;
+use Illuminate\Validation\Validator;
 use Illuminate\View\ComponentAttributeBag;
 
 class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
@@ -109,8 +113,8 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
         $isAutofocused = $this->isAutofocused();
         $isPrefixInline = $this->isPrefixInline();
         $isSuffixInline = $this->isSuffixInline();
-        $maxDate = $this->getMaxDate();
-        $minDate = $this->getMinDate();
+        $maxDate = $this->getDateLimitForInput($this->getMaxDate(), isMaximum: true);
+        $minDate = $this->getDateLimitForInput($this->getMinDate());
         $defaultFocusedDate = $this->getDefaultFocusedDate();
         $prefixActions = $this->getPrefixActions();
         $prefixIcon = $this->getPrefixIcon();
@@ -128,6 +132,11 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
         $type = $this->getType();
         $livewireKey = $this->getLivewireKey();
         $isNative = $this->isNative();
+
+        if ($isNative && (! $hasDate) && filled($minDate) && filled($maxDate) && ($minDate > $maxDate)) {
+            // HTML interprets reversed time limits as an overnight range, unlike server validation.
+            $minDate = $maxDate = null;
+        }
 
         // Mirror the snapshot Blade: the input's inline prefix/suffix classes
         // are computed against the unfiltered prefix/suffix actions, while the
@@ -168,8 +177,8 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                                 'disabled' => $isDisabled,
                                 'id' => $id,
                                 'list' => $datalistOptions ? $id . '-list' : null,
-                                'max' => $hasTime ? $maxDate : ($maxDate ? Carbon::parse($maxDate)->toDateString() : null),
-                                'min' => $hasTime ? $minDate : ($minDate ? Carbon::parse($minDate)->toDateString() : null),
+                                'max' => $maxDate,
+                                'min' => $minDate,
                                 'placeholder' => filled($placeholder) ? e($placeholder) : null,
                                 'readonly' => $isReadOnly,
                                 'required' => $isRequired && (! $isDisabled) && (! $isReadOnly),
@@ -185,7 +194,10 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                             ])
                             ->toHtml() ?>
                     />
-                <?php } else { ?>
+                <?php } else {
+                    $label = $this->getLabel();
+                    $labelText = $label instanceof Htmlable ? html_entity_decode(strip_tags($label->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8') : $label;
+                    ?>
                     <div
                         x-load
                         x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('date-time-picker', 'filament/forms')) ?>"
@@ -193,7 +205,8 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                                     defaultFocusedDate: <?= Js::from($defaultFocusedDate) ?>,
                                     displayFormat: <?= Js::from(convert_date_format($this->getDisplayFormat())->to('day.js')) ?>,
                                     firstDayOfWeek: <?= $this->getFirstDayOfWeek() ?>,
-                                    isAutofocused: <?= Js::from($isAutofocused) ?>,
+                                    hasDate: <?= Js::from($hasDate) ?>,
+                                    isAutofocused: <?= Js::from($isAutofocused && (! $isDisabled) && (! $isReadOnly)) ?>,
                                     locale: <?= Js::from($this->getLocale()) ?>,
                                     shouldCloseOnDateSelection: <?= Js::from($this->shouldCloseOnDateSelection()) ?>,
                                     state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')") ?>,
@@ -209,36 +222,43 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                         <input x-ref="minDate" type="hidden" value="<?= e($minDate) ?>" />
                         <input x-ref="disabledDates" type="hidden" value="<?= e(json_encode($disabledDates)) ?>" />
 
-                        <button
+                        <input
                             x-ref="button"
-                            x-on:click="togglePanelVisibility()"
-                            x-on:keydown.enter.prevent.stop="if (! $el.disabled) { isOpen() ? selectDate() : togglePanelVisibility() }"
-                            x-on:keydown.arrow-left.prevent.stop="if (! $el.disabled) focusPreviousDay()"
-                            x-on:keydown.arrow-right.prevent.stop="if (! $el.disabled) focusNextDay()"
-                            x-on:keydown.arrow-up.prevent.stop="if (! $el.disabled) focusPreviousWeek()"
-                            x-on:keydown.arrow-down.prevent.stop="if (! $el.disabled) focusNextWeek()"
-                            x-on:keydown.backspace.prevent.stop="if (! $el.disabled) clearState()"
-                            x-on:keydown.clear.prevent.stop="if (! $el.disabled) clearState()"
-                            x-on:keydown.delete.prevent.stop="if (! $el.disabled) clearState()"
-                            aria-label="<?= e($placeholder) ?>"
-                            type="button"
-                            tabindex="-1"
-                            <?php if ($isDisabled || $isReadOnly) { ?> disabled <?php } ?>
-                            <?= $this->getExtraTriggerAttributeBag()->class(['fi-fo-date-time-picker-trigger'])->toHtml() ?>
-                        >
-                            <input
-                                <?php if ($isDisabled) { ?> disabled <?php } ?>
-                                readonly
-                                placeholder="<?= e($placeholder) ?>"
-                                wire:key="<?= e($livewireKey) ?>.display-text"
-                                x-model="displayText"
-                                <?php if ($id) { ?> id="<?= e($id) ?>" <?php } ?>
-                                class="fi-fo-date-time-picker-display-text-input"
-                            />
-                        </button>
+                            x-on:keydown.enter.prevent.stop="if (<?= Js::from(! ($isDisabled || $isReadOnly)) ?>) { isOpen() ? selectDate() : togglePanelVisibility() }"
+                            <?php if (! ($isDisabled || $isReadOnly)) { ?>
+                                x-on:click="togglePanelVisibility()"
+                                x-on:keydown.arrow-left.prevent.stop="focusPreviousDay()"
+                                x-on:keydown.arrow-right.prevent.stop="focusNextDay()"
+                                x-on:keydown.arrow-up.prevent.stop="focusPreviousWeek()"
+                                x-on:keydown.arrow-down.prevent.stop="focusNextWeek()"
+                                x-on:keydown.backspace.prevent.stop="clearState()"
+                                x-on:keydown.clear.prevent.stop="clearState()"
+                                x-on:keydown.delete.prevent.stop="clearState()"
+                            <?php } ?>
+                            readonly
+                            wire:key="<?= e($livewireKey) ?>.display-text"
+                            x-model="displayText"
+                            <?= $this->getExtraTriggerAttributeBag()
+                                ->merge($this->getAccessibilityAttributes(), escape: false)
+                                ->merge([
+                                    'aria-controls' => $id . '-panel',
+                                    'aria-expanded' => 'false',
+                                    'aria-haspopup' => 'dialog',
+                                    'disabled' => $isDisabled,
+                                    'id' => $id,
+                                    'placeholder' => $placeholder,
+                                    'role' => 'combobox',
+                                    'type' => 'text',
+                                ])
+                                ->class(['fi-fo-date-time-picker-trigger', 'fi-fo-date-time-picker-display-text-input'])
+                                ->toHtml() ?>
+                        />
 
                         <div
                             x-ref="panel"
+                            id="<?= e($id) ?>-panel"
+                            role="dialog"
+                            aria-label="<?= e($labelText) ?>"
                             x-cloak
                             x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                             wire:ignore
@@ -329,7 +349,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
             app(DateTimeStateCast::class, [
                 'format' => $this->getFormat(),
                 'internalFormat' => $this->getInternalFormat(),
-                'timezone' => $this->getTimezone(),
+                'timezone' => $this->hasTime() ? $this->getTimezone() : null,
             ]),
         ];
     }
@@ -414,7 +434,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
         $this->maxDate = $date;
 
         $this->rule(static function (DateTimePicker $component) {
-            return "before_or_equal:{$component->getMaxDate()}";
+            return $component->getDateLimitValidationRule('before_or_equal', $component->getMaxDate());
         }, static fn (DateTimePicker $component): bool => (bool) $component->getMaxDate());
 
         return $this;
@@ -425,7 +445,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
         $this->minDate = $date;
 
         $this->rule(static function (DateTimePicker $component) {
-            return "after_or_equal:{$component->getMinDate()}";
+            return $component->getDateLimitValidationRule('after_or_equal', $component->getMinDate());
         }, static fn (DateTimePicker $component): bool => (bool) $component->getMinDate());
 
         return $this;
@@ -694,17 +714,122 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
 
     public function getMaxDate(): ?string
     {
-        return $this->evaluate($this->maxDate);
+        $date = $this->evaluate($this->maxDate);
+
+        if ($this->hasTime() || blank($date)) {
+            return $date;
+        }
+
+        if (! $date instanceof CarbonInterface) {
+            $date = Carbon::parse($date, Carbon::hasRelativeKeywords($date) ? config('app.timezone') : 'UTC');
+        }
+
+        return $date->toDateString() . ' 23:59:59';
     }
 
     public function getMinDate(): ?string
     {
-        return $this->evaluate($this->minDate);
+        $date = $this->evaluate($this->minDate);
+
+        if ($this->hasTime() || blank($date)) {
+            return $date;
+        }
+
+        if (! $date instanceof CarbonInterface) {
+            $date = Carbon::parse($date, Carbon::hasRelativeKeywords($date) ? config('app.timezone') : 'UTC');
+        }
+
+        return $date->toDateString() . ' 00:00:00';
+    }
+
+    protected function getDateLimitForInput(?string $date, bool $isMaximum = false): ?string
+    {
+        if (blank($date)) {
+            return null;
+        }
+
+        $date = Carbon::parse($date, $this->hasTime() ? null : 'UTC');
+
+        if ($this->hasTime()) {
+            // Match the timezone used by Laravel's date validation, not the state cast's display timezone.
+            $date = $date->setTimezone(date_default_timezone_get());
+        }
+
+        if (! $this->isNative()) {
+            if ($this->hasTime() && (! $this->hasSeconds())) {
+                $date = $date->second($isMaximum ? 59 : 0);
+            }
+
+            return $date->format('Y-m-d H:i:s');
+        }
+
+        if (! $this->hasTime()) {
+            return $date->toDateString();
+        }
+
+        return $date->format(($this->hasDate() ? 'Y-m-d\\TH:i' : 'H:i') . ($this->hasSeconds() ? ':s' : ''));
+    }
+
+    protected function getDateLimitValidationRule(string $rule, ?string $date): string | Closure
+    {
+        if ((! $this->hasTime()) || ($this->hasDate() && $this->hasSeconds())) {
+            return "{$rule}:{$date}";
+        }
+
+        $limit = Carbon::parse($date)->setTimezone(date_default_timezone_get());
+
+        if (! $this->hasSeconds()) {
+            $limit = $limit->second($rule === 'before_or_equal' ? 59 : 0);
+        }
+
+        if ($this->hasDate()) {
+            return "{$rule}:{$limit->toIso8601String()}";
+        }
+
+        return static function (string $attribute, mixed $value, Closure $fail, Validator $validator) use ($limit, $rule, $date): void {
+            $comparisonDate = $date;
+
+            if (is_string($value) || $value instanceof DateTimeInterface) {
+                try {
+                    foreach ($validator->getRules()[$attribute] as $validationRule) {
+                        [$validationRule, $parameters] = ValidationRuleParser::parse($validationRule);
+
+                        if (($validationRule === 'DateFormat') && is_string($value)) {
+                            $value = DateTime::createFromFormat('!' . $parameters[0], $value) ?: $value;
+
+                            break;
+                        }
+                    }
+
+                    $value = Carbon::parse($value)->setTimezone(date_default_timezone_get());
+
+                    // Compare clocks on the submitted date and offset, independent of the limit's date.
+                    $comparisonDate = "{$value->format('Y-m-d')}T{$limit->format('H:i:s')}{$value->format('P')}";
+                } catch (InvalidFormatException) {
+                    // Leave malformed values for Laravel's date rule to reject.
+                }
+            }
+
+            $rule = $rule === 'before_or_equal' ? 'BeforeOrEqual' : 'AfterOrEqual';
+
+            if (! $validator->{"validate{$rule}"}($attribute, $validator->getValue($attribute), [$comparisonDate])) {
+                // Preserve named failures, custom messages, and replacers instead of a closure-rule error.
+                $validator->addFailure($attribute, $rule, [$date]);
+            }
+        };
     }
 
     public function getDefaultFocusedDate(): ?string
     {
         $defaultFocusedDate = $this->evaluate($this->defaultFocusedDate);
+
+        if (! $this->hasTime()) {
+            return app(DateTimeStateCast::class, [
+                'format' => $this->getFormat(),
+                'internalFormat' => 'Y-m-d H:i:s',
+                'timezone' => null,
+            ])->set($defaultFocusedDate);
+        }
 
         if (filled($defaultFocusedDate)) {
             if (! $defaultFocusedDate instanceof CarbonInterface) {
