@@ -305,6 +305,8 @@ trait HasFilters
             ]) ?? $action;
         }
 
+        $action->extraAttributes(['data-table-filter-action' => 'apply'], merge: true);
+
         return $action;
     }
 
@@ -322,6 +324,8 @@ trait HasFilters
                 'action' => $action,
             ]) ?? $action;
         }
+
+        $action->extraAttributes(['data-table-filter-action' => 'reset'], merge: true);
 
         return $action;
     }

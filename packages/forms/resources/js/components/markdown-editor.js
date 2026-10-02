@@ -305,29 +305,6 @@ export default function markdownEditorFormComponent({
             this.wasEditorVisible = isEditorVisible
         },
 
-        destroy() {
-            isDestroyed = true
-
-            this.resizeObserver?.disconnect()
-            this.resizeObserver = null
-
-            this.intersectionObserver?.disconnect()
-            this.intersectionObserver = null
-
-            if (this.editor) {
-                this.editor.codemirror.setOption('autoRefresh', false)
-                this.form?.removeEventListener(
-                    'submit',
-                    this.editor.codemirror.save,
-                )
-                this.editor.cleanup()
-                this.editor.toTextArea()
-            }
-
-            this.$root._editor = null
-            this.editor = null
-        },
-
         getToolbar() {
             let toolbar = []
 
@@ -506,6 +483,29 @@ export default function markdownEditorFormComponent({
                 action: EasyMDE.redo,
                 title: translations.tools?.redo,
             }
+        },
+
+        destroy() {
+            isDestroyed = true
+
+            this.resizeObserver?.disconnect()
+            this.resizeObserver = null
+
+            this.intersectionObserver?.disconnect()
+            this.intersectionObserver = null
+
+            if (this.editor) {
+                this.editor.codemirror.setOption('autoRefresh', false)
+                this.form?.removeEventListener(
+                    'submit',
+                    this.editor.codemirror.save,
+                )
+                this.editor.cleanup()
+                this.editor.toTextArea()
+            }
+
+            this.$root._editor = null
+            this.editor = null
         },
     }
 }

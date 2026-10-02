@@ -48,23 +48,6 @@ export default ({ livewireId }) => ({
         window.addEventListener('modal-closed', this.boundOnModalClosed)
     },
 
-    destroy() {
-        if (this.boundSyncActionModals) {
-            window.removeEventListener(
-                'sync-action-modals',
-                this.boundSyncActionModals,
-            )
-
-            this.boundSyncActionModals = null
-        }
-
-        if (this.boundOnModalClosed) {
-            window.removeEventListener('modal-closed', this.boundOnModalClosed)
-
-            this.boundOnModalClosed = null
-        }
-    },
-
     syncActionModals(
         newActionNestingIndex,
         shouldOverlayParentActions = false,
@@ -234,5 +217,22 @@ export default ({ livewireId }) => ({
                 detail: { id },
             }),
         )
+    },
+
+    destroy() {
+        if (this.boundSyncActionModals) {
+            window.removeEventListener(
+                'sync-action-modals',
+                this.boundSyncActionModals,
+            )
+
+            this.boundSyncActionModals = null
+        }
+
+        if (this.boundOnModalClosed) {
+            window.removeEventListener('modal-closed', this.boundOnModalClosed)
+
+            this.boundOnModalClosed = null
+        }
     },
 })
