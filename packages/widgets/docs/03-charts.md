@@ -583,6 +583,70 @@ protected bool $isCollapsible = true;
 
 <AutoScreenshot name="widgets/chart/collapsible" alt="Collapsible chart" version="5.x" />
 
+## Providing an accessible alternative
+
+Chart.js renders the chart onto a `<canvas>`, so assistive technologies cannot read the plotted values or relationships between them. The widget's heading and description identify and summarize the chart. You should ensure that the description communicates the chart's purpose and important trends or relationships:
+
+```php
+protected ?string $heading = 'Blog posts created';
+
+protected ?string $description = 'Blog post creation peaked in August, before declining through October.';
+```
+
+For charts where the summary does not provide an equivalent alternative, you can return additional content from the `getChartAssistiveContent()` method. This content is visually hidden but available to screen readers. You can return a string for a textual alternative:
+
+```php
+public function getChartAssistiveContent(): string
+{
+    return 'The number of blog posts created increased from 0 in January to 89 in December.';
+}
+```
+
+You may return a `View` or `Htmlable` instance to provide structured content, such as a data table. Avoid including links, buttons, or other interactive elements, since visually hidden controls would not be apparent to sighted keyboard users. The alternative is rendered from the same Livewire request as the chart, so you can use `getCachedData()` to keep it synchronized with the chart's data and applied filters:
+
+```php
+use Illuminate\Contracts\View\View;
+
+public function getChartAssistiveContent(): View
+{
+    return view('filament.widgets.blog-posts-chart-assistive-content', [
+        'data' => $this->getCachedData(),
+    ]);
+}
+```
+
+For the standard Chart.js structure of shared labels and multiple datasets, the view could render each dataset as a column:
+
+```blade
+<table>
+    <caption>Blog posts created each month</caption>
+    <thead>
+        <tr>
+            <th scope="col">Month</th>
+
+            @foreach ($data['datasets'] as $dataset)
+                <th scope="col">{{ $dataset['label'] }}</th>
+            @endforeach
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($data['labels'] as $index => $label)
+            <tr>
+                <th scope="row">{{ $label }}</th>
+
+                @foreach ($data['datasets'] as $dataset)
+                    <td>{{ $dataset['data'][$index] }}</td>
+                @endforeach
+            </tr>
+        @endforeach
+    </tbody>
+</table>
+```
+
+Chart.js also supports data points represented by tuples or objects, custom parsing keys, mixed dataset types, and plugins that transform data in the browser. For these structures, map the meaningful labels, values, units, and annotations explicitly instead of assuming that the example above applies. For a large dataset, prefer a concise summary or a meaningful subset of the data rather than rendering every point in a long, visually hidden table. If users need to explore or download the complete data, provide that as a separate visible interface.
+
+When polling or filtering updates the chart, Filament updates the alternative without automatically announcing the entire replacement. If an update is important enough to announce immediately, provide a concise, appropriately throttled live region in your alternative instead of making the complete table a live region.
+
 ## Using custom Chart.js plugins
 
 Chart.js offers a powerful plugin system that allows you to extend its functionality and create custom chart behaviors. This guide details how to use them in a chart widget.

@@ -78,7 +78,7 @@ public function boot(): void
 This is useful if you want to set a default timezone for all date-time pickers in your application. It is also used in other places where timezones are used in Filament.
 
 <Aside variant="warning">
-    Filament's default timezone will only apply when the field stores a time. If the field stores a date only (`DatePicker` instead of `DateTimePicker` or `TimePicker`), the timezone will not be applied. This is to prevent timezone shifts when storing dates without times.
+    Timezone conversion only applies to fields with a time input. `DatePicker` and `DateTimePicker::make()->time(false)` preserve the calendar date when loading and saving, ignoring both `timezone()` and Filament's default timezone. This applies to native and JavaScript pickers, even with a custom storage `format()`. Use a `DateTimePicker` with a time input if you need timezone conversion.
 </Aside>
 
 ## Enabling the JavaScript date picker
@@ -350,5 +350,11 @@ DatePicker::make('date_of_birth')
     ->minDate(now()->subYears(150))
     ->maxDate(now())
 ```
+
+For date-only fields (`DatePicker` or `DateTimePicker::make()->time(false)`), the time portion of each limit is ignored. The entire minimum and maximum calendar dates are allowed, without converting the limits to another timezone.
+
+For time-only fields (`TimePicker` or `DateTimePicker::make()->date(false)`), the date portion of each limit is ignored. The minimum time must not be later than the maximum time; these limits do not support ranges that cross midnight.
+
+When using `seconds(false)`, seconds are ignored when checking both the selected value and its limits. For example, a minimum of `09:30:23` allows any value in the `09:30` minute, and a maximum of `17:45:47` allows the entire `17:45` minute. This does not change your storage `format()` or remove seconds already preserved by it.
 
 <UtilityInjection set="formFields" version="5.x">As well as allowing static values, the `minDate()` and `maxDate()` methods also accept functions to dynamically calculate them. If the functions return `null`, the validation rule is not applied. You can inject various utilities into the functions as parameters. </UtilityInjection>

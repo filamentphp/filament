@@ -105,6 +105,8 @@ By default, the following operators are available:
 - Is filled - filters a column to not be empty
 - Is blank - filters a column to be empty
 
+Text entered into these operators is treated as literal text, so characters such as `%` and `_` do not act as SQL wildcard characters.
+
 ### Boolean constraints
 
 Boolean constraints allow you to filter boolean fields. They can be used to filter any boolean field, including via relationships.

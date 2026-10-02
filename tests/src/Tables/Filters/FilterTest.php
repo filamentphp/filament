@@ -296,7 +296,10 @@ it('manages focus for the filters dropdown', function (bool $isDarkMode): void {
             ->click($dateFilter)
             ->assertVisible($datePanel)
             ->click("{$datePanel} .fi-fo-date-time-picker-calendar-day[aria-selected=\"true\"]")
-            ->assertScript("document.querySelector('{$dateFilter} input').value !== ''", true)
+            ->assertScript("document.querySelector('{$dateFilter}').value !== ''", true)
+            ->assertVisible($datePanel)
+            ->click($dateFilter)
+            ->assertMissing($datePanel)
             ->click($dateFilter)
             ->assertVisible($datePanel)
             ->assertScript("document.querySelector('{$selectFilter}').focus(); document.querySelector('{$datePanel}').style.display === 'none'", true)
@@ -311,8 +314,8 @@ it('manages focus for the filters dropdown', function (bool $isDarkMode): void {
             ->keys($colorFilter, 'Escape')
             ->assertMissing($publishedFilter)
             ->keys($filtersTrigger, 'Enter')
-            ->assertMissing($colorPanel)
-            ->assertNoAccessibilityIssues();
+            ->assertVisible($publishedFilter)
+            ->assertMissing($colorPanel);
 
         $page->script('document.querySelector(\'[data-testid="filters-trigger"]\').focus()');
 
@@ -323,7 +326,8 @@ it('manages focus for the filters dropdown', function (bool $isDarkMode): void {
             ->keys($filtersTrigger, 'Enter')
             ->click('.fi-topbar')
             ->assertMissing($publishedFilter)
-            ->assertNoSmoke();
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
     });
 })->with(['mobile light' => false, 'desktop dark' => true]);
 
@@ -420,10 +424,12 @@ it('contains filters `Escape` handling inside an enclosing modal', function (boo
             ->click('[data-testid="table-modal-trigger"]')
             ->assertVisible($tableModal)
             ->keys($filtersTrigger, 'Enter')
+            ->assertVisible($publishedFilter)
             ->keys($publishedFilter, 'Escape')
             ->assertMissing($publishedFilter)
             ->assertVisible($tableModal)
             ->keys($filtersTrigger, 'Enter')
+            ->assertVisible($publishedFilter)
             ->assertNoAccessibilityIssues();
 
         $page->script(<<<'JS'

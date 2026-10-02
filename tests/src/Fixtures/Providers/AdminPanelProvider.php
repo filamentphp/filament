@@ -29,6 +29,7 @@ use Filament\Tests\Fixtures\Pages\AutofocusWizardBrowserTest;
 use Filament\Tests\Fixtures\Pages\BuilderSearchableTest;
 use Filament\Tests\Fixtures\Pages\BuilderTest;
 use Filament\Tests\Fixtures\Pages\CalloutBrowserTest;
+use Filament\Tests\Fixtures\Pages\ChartWidgetBrowserTest;
 use Filament\Tests\Fixtures\Pages\CheckboxListTest;
 use Filament\Tests\Fixtures\Pages\CheckboxTest;
 use Filament\Tests\Fixtures\Pages\CodeEditorBrowserTest;
@@ -45,6 +46,7 @@ use Filament\Tests\Fixtures\Pages\FieldAccessibilityTest;
 use Filament\Tests\Fixtures\Pages\FileUploadBrowserTest;
 use Filament\Tests\Fixtures\Pages\FiltersModalBrowserTest;
 use Filament\Tests\Fixtures\Pages\FiltersResetActionBrowserTest;
+use Filament\Tests\Fixtures\Pages\IconBrowserTest;
 use Filament\Tests\Fixtures\Pages\IndividualColumnSearchBrowserTest;
 use Filament\Tests\Fixtures\Pages\InfolistEntriesBrowserTest;
 use Filament\Tests\Fixtures\Pages\KeyValueTest;
@@ -84,6 +86,7 @@ use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
+use Filament\Tests\Fixtures\Widgets\ChartWidgetWithAssistiveContent;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -145,6 +148,7 @@ class AdminPanelProvider extends PanelProvider
                 DropdownTest::class,
                 CalloutBrowserTest::class,
                 CheckboxListTest::class,
+                ChartWidgetBrowserTest::class,
                 CodeEditorBrowserTest::class,
                 ColumnManagerBrowserTest::class,
                 ColumnsBrowserTest::class,
@@ -159,6 +163,7 @@ class AdminPanelProvider extends PanelProvider
                 FileUploadBrowserTest::class,
                 FiltersModalBrowserTest::class,
                 FiltersResetActionBrowserTest::class,
+                IconBrowserTest::class,
                 IndividualColumnSearchBrowserTest::class,
                 InfolistEntriesBrowserTest::class,
                 KeyValueTest::class,
@@ -194,6 +199,9 @@ class AdminPanelProvider extends PanelProvider
                 GeneralSettings::class,
                 WithoutSubNavigationCluster::class,
                 ClusteredPageWithoutSubNavigation::class,
+            ])
+            ->livewireComponents([
+                ChartWidgetWithAssistiveContent::class,
             ])
             ->middleware([
                 EncryptCookies::class,

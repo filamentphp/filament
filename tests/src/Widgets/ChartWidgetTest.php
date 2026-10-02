@@ -4,16 +4,15 @@ namespace Filament\Tests\Widgets;
 
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\HtmlString;
 use Livewire\Livewire;
 
 uses(TestCase::class);
-
-beforeEach(function (): void {
-    Artisan::call('filament:assets');
-});
 
 it('has deferred filters disabled by default', function (): void {
     $widget = Livewire::test(TestChartWidgetDefault::class);
@@ -131,6 +130,106 @@ it('returns `null` from `getDescription()` by default', function (): void {
     $widget = Livewire::test(TestChartWidgetDefault::class);
 
     expect($widget->instance()->getDescription())->toBeNull();
+});
+
+it('returns `null` from `getChartAssistiveContent()` by default', function (): void {
+    $widget = Livewire::test(TestChartWidgetDefault::class);
+
+    expect($widget->instance()->getChartAssistiveContent())->toBeNull();
+});
+
+it('renders an escaped string from `getChartAssistiveContent()`', function (): void {
+    Livewire::test(TestChartWidgetWithStringAssistiveContent::class)
+        ->assertSeeHtml('class="fi-wi-chart-assistive-content fi-sr-only"')
+        ->assertSee('<strong>Sales increased</strong>')
+        ->assertDontSeeHtml('<strong>Sales increased</strong>');
+});
+
+it('renders an `Htmlable` from `getChartAssistiveContent()`', function (): void {
+    Livewire::test(TestChartWidgetWithHtmlableAssistiveContent::class)
+        ->assertSeeHtml('<strong>Sales increased</strong>');
+});
+
+it('renders a `View` from `getChartAssistiveContent()`', function (): void {
+    Livewire::test(TestChartWidgetWithViewAssistiveContent::class)
+        ->assertSeeHtml('<caption>Monthly sales</caption>')
+        ->assertSeeHtml('<th scope="col">Month</th>')
+        ->assertSeeHtml('<th scope="row">January</th>');
+});
+
+it('renders a `View` from `getChartAssistiveContent()` once', function (): void {
+    $renderCount = 0;
+
+    app('view')->composer('widgets.chart-assistive-content', function () use (&$renderCount): void {
+        $renderCount++;
+    });
+
+    Livewire::test(TestChartWidgetWithViewAssistiveContent::class);
+
+    expect($renderCount)->toBe(1);
+});
+
+it('does not render `getChartAssistiveContent()` in the empty state', function (): void {
+    Livewire::test(TestEmptyChartWidgetWithAssistiveContent::class)
+        ->assertDontSee('There is no chart data.');
+});
+
+it('exposes the chart wrapper as an image and hides the canvas', function (): void {
+    Livewire::test(TestChartWidgetWithDescription::class)
+        ->assertSeeHtml('class="fi-wi-chart-image"')
+        ->assertSeeHtml('role="img"')
+        ->assertSeeHtml('aria-label="A summary of sales"')
+        ->assertSeeHtml('aria-hidden="true"');
+});
+
+it('keeps the accessible name and alternative synchronized when the chart data is unchanged', function (): void {
+    Livewire::test(TestChartWidgetWithDynamicAssistiveContent::class)
+        ->assertSeeHtml('aria-label="Sales. Sales for 2024"')
+        ->assertSee('The monthly sales total for 2024 is 60.')
+        ->set('filter', '2023')
+        ->assertSeeHtml('aria-label="Sales. Sales for 2023"')
+        ->assertSee('The monthly sales total for 2023 is 60.');
+});
+
+it('renders an accessible chart alternative in the browser', function (): void {
+    Artisan::call('filament:assets');
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/chart-widget-browser-test', ['reducedMotion' => 'reduce'])
+        ->inLightMode()
+        ->assertAttribute('.fi-wi-chart-image', 'aria-label', 'Sales. Sales for 2024')
+        ->assertAttribute('.fi-wi-chart-image canvas', 'aria-hidden', 'true')
+        ->assertSee('Monthly sales for 2024')
+        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").offsetWidth', 1)
+        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").closest("[aria-hidden=true]")', null)
+        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content table").closest(".fi-wi-chart-image")', null)
+        ->assertScript('(() => { let element = document.querySelector(".fi-wi-chart-assistive-content table"); while (element) { if (element.hasAttribute("wire:ignore")) return true; element = element.parentElement; } return false; })()', false)
+        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").closest("[aria-live], [role=alert], [role=status]")', null)
+        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").querySelector("[aria-live], [role=alert], [role=status]")', null)
+        ->assertNoAccessibilityIssues();
+
+    $page->script('document.querySelector(".fi-wi-chart-image canvas").dataset.preserved = "true"');
+
+    $page->select('.fi-wi-chart-filter select', '2023')
+        ->assertAttribute('.fi-wi-chart-image', 'aria-label', 'Sales. Sales for 2023')
+        ->assertAttribute('.fi-wi-chart-image canvas', 'data-preserved', 'true')
+        ->assertSee('Monthly sales for 2023')
+        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content table").closest(".fi-wi-chart-image")', null)
+        ->assertScript('(() => { let element = document.querySelector(".fi-wi-chart-assistive-content table"); while (element) { if (element.hasAttribute("wire:ignore")) return true; element = element.parentElement; } return false; })()', false)
+        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").closest("[aria-live], [role=alert], [role=status]")', null)
+        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").querySelector("[aria-live], [role=alert], [role=status]")', null)
+        ->assertNoAccessibilityIssues();
+
+    visit('/chart-widget-browser-test', ['reducedMotion' => 'reduce'])
+        ->inDarkMode()
+        ->assertAttribute('.fi-wi-chart-image', 'aria-label', 'Sales. Sales for 2024')
+        ->assertAttribute('.fi-wi-chart-image canvas', 'aria-hidden', 'true')
+        ->assertSee('Monthly sales for 2024')
+        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").offsetWidth', 1)
+        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").closest("[aria-hidden=true]")', null)
+        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").closest("[aria-live], [role=alert], [role=status]")', null)
+        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").querySelector("[aria-live], [role=alert], [role=status]")', null)
+        ->assertNoAccessibilityIssues();
 });
 
 class TestChartWidgetDefault extends ChartWidget
@@ -301,5 +400,72 @@ class TestChartWidgetWithDescription extends ChartWidget
     protected function getData(): array
     {
         return ['datasets' => [], 'labels' => []];
+    }
+}
+
+abstract class TestChartWidgetWithAssistiveContent extends ChartWidget
+{
+    protected function getType(): string
+    {
+        return 'line';
+    }
+
+    protected function getData(): array
+    {
+        return ['datasets' => [['data' => [10]]], 'labels' => ['January']];
+    }
+}
+
+class TestChartWidgetWithStringAssistiveContent extends TestChartWidgetWithAssistiveContent
+{
+    public function getChartAssistiveContent(): string
+    {
+        return '<strong>Sales increased</strong>';
+    }
+}
+
+class TestChartWidgetWithHtmlableAssistiveContent extends TestChartWidgetWithAssistiveContent
+{
+    public function getChartAssistiveContent(): HtmlString
+    {
+        return new HtmlString('<strong>Sales increased</strong>');
+    }
+}
+
+class TestChartWidgetWithViewAssistiveContent extends TestChartWidgetWithAssistiveContent
+{
+    public function getChartAssistiveContent(): View
+    {
+        return view('widgets.chart-assistive-content');
+    }
+}
+
+class TestChartWidgetWithDynamicAssistiveContent extends TestChartWidgetWithAssistiveContent
+{
+    protected ?string $heading = 'Sales';
+
+    public ?string $filter = '2024';
+
+    public function getDescription(): string
+    {
+        return "Sales for {$this->filter}";
+    }
+
+    public function getChartAssistiveContent(): string
+    {
+        return "The monthly sales total for {$this->filter} is 60.";
+    }
+}
+
+class TestEmptyChartWidgetWithAssistiveContent extends TestChartWidgetWithStringAssistiveContent
+{
+    protected function getData(): array
+    {
+        return [];
+    }
+
+    public function getChartAssistiveContent(): string
+    {
+        return 'There is no chart data.';
     }
 }
