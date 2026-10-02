@@ -31,6 +31,19 @@ it('clamps `getHeadingLevel()` to a minimum of `1` while preserving nested headi
         ->and($childSection->getHeadingTag())->toBe('h2');
 })->with([0, -1]);
 
+it('renders heading levels above `6` as paragraphs while preserving nested heading levels', function (): void {
+    $livewire = Livewire::make();
+    $parentSection = Section::make('Parent')
+        ->container(Schema::make($livewire)->rootHeadingLevel(6));
+    $childSection = Section::make('Child')
+        ->container(Schema::make($livewire)->parentComponent($parentSection));
+
+    expect($parentSection->getHeadingLevel())->toBe(6)
+        ->and($parentSection->getHeadingTag())->toBe('h6')
+        ->and($childSection->getHeadingLevel())->toBe(7)
+        ->and($childSection->getHeadingTag())->toBe('p');
+});
+
 it('invalidates hierarchy caches when attached to a different container', function (): void {
     $firstSchema = Schema::make(Livewire::make())
         ->key('first')
