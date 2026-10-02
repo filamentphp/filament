@@ -101,26 +101,6 @@ Alternatively, you can open an action modal when a page loads by specifying the 
 /admin/products/edit/932510?action=onboarding
 ```
 
-### Refreshing form data
-
-If you're using actions on an [Edit](../resources/editing-records) or [View](../resources/viewing-records) resource page, you can refresh data within the main form using the `refreshFormData()` method:
-
-```php
-use App\Models\Post;
-use Filament\Actions\Action;
-
-Action::make('approve')
-    ->action(function (Post $record) {
-        $record->approve();
-
-        $this->refreshFormData([
-            'status',
-        ]);
-    })
-```
-
-This method accepts an array of model attributes that you wish to refresh in the form.
-
 ## Adding widgets to pages
 
 Filament allows you to display [widgets](../widgets) inside pages, below the header and above the footer.
