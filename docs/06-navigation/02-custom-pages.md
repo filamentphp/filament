@@ -2,6 +2,7 @@
 title: Custom pages
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import Aside from "@components/Aside.astro"
 
 ## Introduction
 
@@ -57,6 +58,10 @@ protected function getHeaderActions(): array
 }
 ```
 
+<Aside variant="warning">
+    If `$post` is stored in a public Livewire property, the page's `canAccess()` method does not authorize it, and Filament does not re-query it on later requests. Re-query and authorize the post before using it in an action. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+</Aside>
+
 #### Aligning header actions
 
 By default, header actions are aligned to the left on mobile. To change the alignment of the header actions on mobile, set `$headerActionsAlignment`:
@@ -95,26 +100,6 @@ Alternatively, you can open an action modal when a page loads by specifying the 
 ```
 /admin/products/edit/932510?action=onboarding
 ```
-
-### Refreshing form data
-
-If you're using actions on an [Edit](../resources/editing-records) or [View](../resources/viewing-records) resource page, you can refresh data within the main form using the `refreshFormData()` method:
-
-```php
-use App\Models\Post;
-use Filament\Actions\Action;
-
-Action::make('approve')
-    ->action(function (Post $record) {
-        $record->approve();
-
-        $this->refreshFormData([
-            'status',
-        ]);
-    })
-```
-
-This method accepts an array of model attributes that you wish to refresh in the form.
 
 ## Adding widgets to pages
 

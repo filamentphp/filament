@@ -19,6 +19,10 @@ Action::make('delete')
     ->action(fn () => $this->client->delete())
 ```
 
+<Aside variant="warning">
+    If `$client` or `$post` in these examples is stored in a public Livewire property, Filament does not re-query or authorize it on later requests. Re-query and authorize the model before using it in an action. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+</Aside>
+
 Actions can also collect extra information from the user. For instance, you might have a button to email a client. When the user clicks the button, a modal opens to collect the email subject and body. When the user clicks the "Send" button in the modal, the email is sent:
 
 ```php
@@ -248,7 +252,7 @@ Action::make('edit')
 ```
 
 <Aside variant="info">
-    If you're using an action in a panel resource or relation manager, you don't need to use the `authorize()` method, since Filament will automatically read the policy based on the resource model for the built-in actions like `CreateAction`, `EditAction` and `DeleteAction`. For more information, visit the [resource authorization](../resources/overview#authorization) section.
+    In a panel resource or relation manager, policy-backed CRUD actions such as `CreateAction`, `EditAction`, and `DeleteAction` automatically use the resource model's policy, unless resource authorization is skipped. Other actions, including attach, associate, detach, and dissociate actions, must be authorized explicitly when needed. For more information, visit the [resource authorization](../resources/overview#authorization) section.
 </Aside>
 
 If your policy method returns a [response message](https://laravel.com/docs/authorization#policy-responses), you can disable the action instead of hiding it, and add a tooltip containing the message, using the `authorizationTooltip()` method:

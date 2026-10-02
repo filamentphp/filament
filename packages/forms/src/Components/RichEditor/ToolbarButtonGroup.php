@@ -149,6 +149,8 @@ class ToolbarButtonGroup extends ViewComponent implements HasEmbeddedView
         <div x-data="<?= $xData ?>"
              x-effect="<?= $xEffect ?>"
              x-on:click.outside="open = false"
+             x-on:dropdown-escape="open = false"
+             x-on:focusout="if (open && ! $el.contains($event.relatedTarget)) open = false"
              x-on:keydown.escape.prevent="open = false"
              class="<?= $wrapperClass ?>">
 

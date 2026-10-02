@@ -136,10 +136,6 @@ document.addEventListener('alpine:init', () => {
                 this.intersectionObserver.observe(this.$el)
             },
 
-            destroy() {
-                this.intersectionObserver?.disconnect()
-            },
-
             handleFormValidationError(event) {
                 if (event.detail.livewireId !== livewireId) {
                     return
@@ -215,6 +211,10 @@ document.addEventListener('alpine:init', () => {
                 } catch {
                     return state !== old
                 }
+            },
+
+            destroy() {
+                this.intersectionObserver?.disconnect()
             },
         }),
     )

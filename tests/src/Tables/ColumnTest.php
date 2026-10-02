@@ -236,6 +236,16 @@ describe('searching', function (): void {
             ->assertCanNotSeeTableRecords($posts->where('title', '!=', $title));
     });
 
+    it('treats LIKE wildcard characters as literal text when searching records', function (): void {
+        $literalMatch = Post::factory()->create(['title' => 'Before café!_100% After']);
+        $wildcardMatch = Post::factory()->create(['title' => 'Before café!X100 anything After']);
+
+        livewire(PostsTable::class)
+            ->searchTable('café!_100%')
+            ->assertCanSeeTableRecords([$literalMatch])
+            ->assertCanNotSeeTableRecords([$wildcardMatch]);
+    });
+
     it('can search individual column records', function (): void {
         $posts = Post::factory()->count(10)->create();
 

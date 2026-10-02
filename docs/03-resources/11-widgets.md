@@ -2,6 +2,7 @@
 title: Using widgets on resource pages
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import Aside from "@components/Aside.astro"
 
 ## Introduction
 
@@ -73,6 +74,10 @@ use Illuminate\Database\Eloquent\Model;
 
 public ?Model $record = null;
 ```
+
+<Aside variant="warning">
+    On every Livewire request, Filament re-queries `$record` and `$parentRecord` using their global scopes. It does not use the resource query or run a policy for either record. The widget's `canView()` method only controls access to the widget. Check any other record access rules yourself. Filament does not re-query other model properties that you add to the widget. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+</Aside>
 
 ## Accessing page table data in the widget
 

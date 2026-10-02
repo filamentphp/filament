@@ -559,26 +559,6 @@ export default function fileUploadFormComponent({
             this.isInitializing = false
         },
 
-        destroy() {
-            isDestroyed = true
-            this.isInitializing = false
-
-            if (this.isProcessingFiles) {
-                this.isProcessingFiles = false
-                this.dispatchFormEvent('form-processing-finished')
-            }
-
-            this.visibilityObserver?.disconnect()
-            this.intersectionObserver?.disconnect()
-
-            this.destroyEditor()
-
-            if (this.pond) {
-                this.pond.destroy()
-                this.pond = null
-            }
-        },
-
         dispatchFormEvent(name, detail = {}) {
             this.form?.dispatchEvent(
                 new CustomEvent(name, {
@@ -1075,6 +1055,26 @@ export default function fileUploadFormComponent({
 
                 img.src = objectUrl
             })
+        },
+
+        destroy() {
+            isDestroyed = true
+            this.isInitializing = false
+
+            if (this.isProcessingFiles) {
+                this.isProcessingFiles = false
+                this.dispatchFormEvent('form-processing-finished')
+            }
+
+            this.visibilityObserver?.disconnect()
+            this.intersectionObserver?.disconnect()
+
+            this.destroyEditor()
+
+            if (this.pond) {
+                this.pond.destroy()
+                this.pond = null
+            }
         },
     }
 }

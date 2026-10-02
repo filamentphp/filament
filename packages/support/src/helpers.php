@@ -17,6 +17,7 @@ use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag
 use Filament\Support\View\Components\Contracts\HasColor;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
@@ -350,6 +351,35 @@ if (! function_exists('Filament\Support\generate_search_term_expression')) {
         }
 
         return Str::lower($search);
+    }
+}
+
+if (! function_exists('Filament\Support\generate_search_pattern')) {
+    /**
+     * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
+     */
+    function generate_search_pattern(string $search, bool $hasLeadingWildcard, bool $hasTrailingWildcard): string
+    {
+        $search = str_replace(
+            ['!', '[', '%', '_'],
+            ['!!', '![', '!%', '!_'],
+            $search,
+        );
+
+        return ($hasLeadingWildcard ? '%' : '') . $search . ($hasTrailingWildcard ? '%' : '');
+    }
+}
+
+if (! function_exists('Filament\Support\apply_search_constraint')) {
+    /**
+     * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
+     */
+    function apply_search_constraint(Builder $query, string | Expression $column, string $pattern, string $boolean = 'and', bool $isInverse = false): Builder
+    {
+        $column = $query->getQuery()->getGrammar()->wrap($column);
+        $operator = $isInverse ? 'not like' : 'like';
+
+        return $query->whereRaw("{$column} {$operator} ? escape '!'", [$pattern], $boolean);
     }
 }
 

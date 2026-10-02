@@ -43,7 +43,9 @@ use Livewire\Attributes\Renderless;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
+use function Filament\Support\apply_search_constraint;
 use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_pattern;
 use function Filament\Support\generate_search_term_expression;
 
 class Select extends Field implements Contracts\CanDisableOptions, Contracts\HasAffixes, Contracts\HasNestedRecursiveValidationRules, HasEmbeddedView
@@ -1446,17 +1448,19 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $databaseConnection = $query->getConnection();
 
         $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
+        $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true);
 
-        $query->where(function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $search): Builder {
+        $query->where(function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $searchPattern): Builder {
             $isFirst = true;
 
             foreach ($this->getSearchColumns() ?? [] as $searchColumn) {
                 $whereClause = $isFirst ? 'where' : 'orWhere';
 
-                $query->{$whereClause}(
+                apply_search_constraint(
+                    $query,
                     generate_search_column_expression($searchColumn, $isForcedCaseInsensitive, $databaseConnection),
-                    'like',
-                    "%{$search}%",
+                    $searchPattern,
+                    ($whereClause === 'where') ? 'and' : 'or',
                 );
 
                 $isFirst = false;
@@ -2009,6 +2013,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                 })"
                         wire:ignore
                         wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled, $isReorderable])), 0, 64) ?>"
+                        x-on:dropdown-escape="select.closeDropdown()"
                         x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                         x-on:set-select-property="$event.detail.isDisabled ? select.disable() : select.enable()"
                         <?= (new FilamentComponentAttributeBag)
