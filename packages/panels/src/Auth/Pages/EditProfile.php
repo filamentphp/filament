@@ -169,7 +169,7 @@ class EditProfile extends Page
             return;
         }
 
-        $rateLimitingKey = 'filament-edit-profile:' . Filament::auth()->id();
+        $rateLimitingKey = 'filament-edit-profile:' . Filament::getUserScopedAuthIdentifier();
 
         if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
             $this->getRateLimitedNotification(new TooManyRequestsException(

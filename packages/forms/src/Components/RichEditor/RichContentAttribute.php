@@ -52,6 +52,11 @@ class RichContentAttribute implements Htmlable
 
     protected bool $hasCustomTextColors = false;
 
+    /**
+     * @var ?array<string>
+     */
+    protected ?array $linkProtocols = null;
+
     public function __construct(protected Model $model, protected string $name) {}
 
     public static function make(Model $model, string $name): static
@@ -172,7 +177,8 @@ class RichContentAttribute implements Htmlable
             ->fileAttachmentsDisk($this->getFileAttachmentsDiskName())
             ->fileAttachmentsVisibility($this->getFileAttachmentsVisibility())
             ->fileAttachmentProvider($this->getFileAttachmentProvider())
-            ->textColors($this->getTextColors());
+            ->textColors($this->getTextColors())
+            ->linkProtocols($this->getLinkProtocols());
     }
 
     /**
@@ -319,5 +325,23 @@ class RichContentAttribute implements Htmlable
     public function hasCustomTextColors(): bool
     {
         return $this->hasCustomTextColors;
+    }
+
+    /**
+     * @param  ?array<string>  $protocols
+     */
+    public function linkProtocols(?array $protocols): static
+    {
+        $this->linkProtocols = $protocols;
+
+        return $this;
+    }
+
+    /**
+     * @return ?array<string>
+     */
+    public function getLinkProtocols(): ?array
+    {
+        return $this->linkProtocols;
     }
 }

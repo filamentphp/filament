@@ -8,6 +8,7 @@ use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Tables\Table;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +17,9 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 use function Filament\Support\apply_search_constraint;
+use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_pattern;
+use function Filament\Support\generate_search_term_expression;
 
 class AssociateAction extends Action
 {
@@ -83,6 +87,8 @@ class AssociateAction extends Action
 
             $record = $relationshipQuery->find($data['recordId']);
 
+            $hasFailed = false;
+
             foreach (($this->isMultiple ? $record : [$record]) as $record) {
                 if (! $record instanceof Model) {
                     continue;
@@ -93,13 +99,24 @@ class AssociateAction extends Action
                 /** @var BelongsTo $inverseRelationship */
                 $inverseRelationship = $table->getInverseRelationshipFor($record);
 
-                $this->process(function () use ($inverseRelationship, $record, $relationship): void {
+                $result = $this->process(function () use ($inverseRelationship, $record, $relationship): bool {
                     $inverseRelationship->associate($relationship->getParent());
-                    $record->save();
+
+                    return $record->save();
                 }, [
                     'inverseRelationship' => $inverseRelationship,
                     'relationship' => $relationship,
                 ]);
+
+                if ($result === false) {
+                    $hasFailed = true;
+                }
+            }
+
+            if ($hasFailed) {
+                $this->failure();
+
+                return;
             }
 
             if ($arguments['another'] ?? false) {
@@ -222,20 +239,26 @@ class AssociateAction extends Action
             $titleAttribute = filled($titleAttribute) ? $relationshipQuery->qualifyColumn($titleAttribute) : null;
 
             if (filled($search) && ($searchColumns || filled($titleAttribute))) {
+                /** @var Connection $databaseConnection */
+                $databaseConnection = $relationshipQuery->getConnection();
+
                 $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
 
+                $search = generate_search_term_expression($search, $isForcedCaseInsensitive, $databaseConnection);
+                $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true);
                 $searchColumns ??= [$titleAttribute];
 
                 $isFirst = true;
 
-                $relationshipQuery->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $searchColumns, $search): Builder {
+                $relationshipQuery->where(function (Builder $query) use ($databaseConnection, $isFirst, $isForcedCaseInsensitive, $searchColumns, $searchPattern): Builder {
                     foreach ($searchColumns as $searchColumn) {
+                        $whereClause = $isFirst ? 'where' : 'orWhere';
+
                         apply_search_constraint(
                             $query,
-                            $query->qualifyColumn($searchColumn),
-                            "%{$search}%",
-                            $isForcedCaseInsensitive,
-                            $isFirst ? 'and' : 'or',
+                            generate_search_column_expression($query->qualifyColumn($searchColumn), $isForcedCaseInsensitive, $databaseConnection),
+                            $searchPattern,
+                            ($whereClause === 'where') ? 'and' : 'or',
                         );
 
                         $isFirst = false;

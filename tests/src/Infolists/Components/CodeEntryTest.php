@@ -2,10 +2,13 @@
 
 namespace Filament\Tests\Infolists\Components;
 
+use DOMDocument;
+use DOMXPath;
 use Filament\Infolists\Components\CodeEntry;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
 use Livewire\Component;
 use Phiki\Grammar\Grammar;
@@ -24,6 +27,21 @@ it('can render', function (): void {
 it('can render with grammar highlighting', function (): void {
     livewire(TestComponentWithPhpCodeEntry::class)
         ->assertSuccessful();
+});
+
+it('renders malicious HTML as code text rather than active elements', function (): void {
+    $html = CodeEntry::make('code')
+        ->container(Schema::make(Livewire::make()))
+        ->state('<script>alert(1)</script><img src="x" onerror="alert(2)"> & tail')
+        ->toHtml();
+
+    $document = new DOMDocument;
+    $document->loadHTML($html);
+    $xpath = new DOMXPath($document);
+
+    expect($xpath->query('//script | //img')->length)->toBe(0)
+        ->and(rtrim($xpath->query('//code')->item(0)->textContent, "\n"))
+        ->toBe('<script>alert(1)</script><img src="x" onerror="alert(2)"> & tail');
 });
 
 it('can set and get `grammar()`', function (): void {

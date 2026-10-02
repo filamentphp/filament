@@ -17,6 +17,7 @@ use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
@@ -34,6 +35,9 @@ use Stringable;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
 use function Filament\Support\apply_search_constraint;
+use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_pattern;
+use function Filament\Support\generate_search_term_expression;
 
 class SelectColumn extends Column implements Editable, HasEmbeddedView
 {
@@ -610,7 +614,10 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
             ]) ?? $relationshipQuery;
         }
 
-        $this->applyOptionsSearchConstraint($relationshipQuery, $search);
+        $this->applyOptionsSearchConstraint(
+            $relationshipQuery,
+            generate_search_term_expression($search, $this->isOptionsSearchForcedCaseInsensitive(), $relationshipQuery->getConnection()),
+        );
 
         $baseRelationshipQuery = $relationshipQuery->getQuery();
 
@@ -787,18 +794,23 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
      */
     public function applyOptionsSearchConstraint(Builder $query, string $search): Builder
     {
-        $isForcedCaseInsensitive = $this->isOptionsSearchForcedCaseInsensitive();
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
 
-        $query->where(function (Builder $query) use ($isForcedCaseInsensitive, $search): Builder {
+        $isForcedCaseInsensitive = $this->isOptionsSearchForcedCaseInsensitive();
+        $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true);
+
+        $query->where(function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $searchPattern): Builder {
             $isFirst = true;
 
             foreach ($this->getOptionsSearchColumns() ?? [] as $searchColumn) {
+                $whereClause = $isFirst ? 'where' : 'orWhere';
+
                 apply_search_constraint(
                     $query,
-                    $searchColumn,
-                    "%{$search}%",
-                    $isForcedCaseInsensitive,
-                    $isFirst ? 'and' : 'or',
+                    generate_search_column_expression($searchColumn, $isForcedCaseInsensitive, $databaseConnection),
+                    $searchPattern,
+                    ($whereClause === 'where') ? 'and' : 'or',
                 );
 
                 $isFirst = false;

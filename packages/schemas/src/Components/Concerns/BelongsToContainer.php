@@ -50,6 +50,14 @@ trait BelongsToContainer
         return $this->container;
     }
 
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     */
+    public function hasContainer(): bool
+    {
+        return isset($this->container);
+    }
+
     public function getRootContainer(): Schema
     {
         return $this->rootContainer ??= (function (): Schema {

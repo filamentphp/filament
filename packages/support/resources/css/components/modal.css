@@ -415,7 +415,7 @@
 
     &.fi-modal-has-sticky-footer {
         & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-footer {
-            @apply sticky bottom-0 border-t border-gray-200 bg-white py-5 dark:border-white/10 dark:bg-gray-900;
+            @apply sticky bottom-0 z-10 border-t border-gray-200 bg-white py-5 dark:border-white/10 dark:bg-gray-900;
         }
     }
 

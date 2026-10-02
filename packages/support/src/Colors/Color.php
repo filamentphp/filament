@@ -419,7 +419,7 @@ class Color
         $color = str_replace(' ', '', $color);
 
         if (str_starts_with($color, '#')) {
-            [$red, $green, $blue] = sscanf($color, '#%02x%02x%02x');
+            [$red, $green, $blue] = sscanf(static::convertToRgb($color), 'rgb(%d, %d, %d)');
         } elseif (str_starts_with($color, 'rgb(')) {
             [$red, $green, $blue] = sscanf($color, 'rgb(%d,%d,%d)');
         } else {
@@ -471,6 +471,10 @@ class Color
         }
 
         if (str_starts_with($color, '#')) {
+            if (preg_match('/^#([0-9a-f])([0-9a-f])([0-9a-f])\z/i', $color, $matches)) {
+                $color = "#{$matches[1]}{$matches[1]}{$matches[2]}{$matches[2]}{$matches[3]}{$matches[3]}";
+            }
+
             [$red, $green, $blue] = sscanf($color, '#%02x%02x%02x');
 
             return "rgb({$red}, {$green}, {$blue})";

@@ -3,7 +3,9 @@
 namespace Filament\Support;
 
 use BackedEnum;
+use Closure;
 use Composer\Autoload\ClassLoader;
+use Composer\ClassMapGenerator\ClassMapGenerator;
 use Composer\InstalledVersions;
 use Filament\Support\Contracts\LoadingIndicator;
 use Filament\Support\Contracts\ScalableIcon;
@@ -256,7 +258,7 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
     /**
      * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
      */
-    function generate_search_column_expression(string $column, ?bool $isSearchForcedCaseInsensitive, Connection $databaseConnection, bool $shouldApplySearchCollation = true): string | Expression
+    function generate_search_column_expression(string $column, ?bool $isSearchForcedCaseInsensitive, Connection $databaseConnection): string | Expression
     {
         $driverName = $databaseConnection->getDriverName();
 
@@ -317,9 +319,7 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
             $column = "lower({$column})";
         }
 
-        $collation = $shouldApplySearchCollation
-            ? $databaseConnection->getConfig('search_collation')
-            : null;
+        $collation = $databaseConnection->getConfig('search_collation');
 
         if (filled($collation)) {
             $column = "{$column} collate {$collation}";
@@ -355,6 +355,22 @@ if (! function_exists('Filament\Support\generate_search_term_expression')) {
     }
 }
 
+if (! function_exists('Filament\Support\generate_search_pattern')) {
+    /**
+     * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
+     */
+    function generate_search_pattern(string $search, bool $hasLeadingWildcard, bool $hasTrailingWildcard): string
+    {
+        $search = str_replace(
+            ['!', '[', '%', '_'],
+            ['!!', '![', '!%', '!_'],
+            $search,
+        );
+
+        return ($hasLeadingWildcard ? '%' : '') . $search . ($hasTrailingWildcard ? '%' : '');
+    }
+}
+
 if (! function_exists('Filament\Support\is_database_driver_supported')) {
     /**
      * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
@@ -369,25 +385,16 @@ if (! function_exists('Filament\Support\apply_search_constraint')) {
     /**
      * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
      */
-    function apply_search_constraint(Builder $query, string $column, string $search, ?bool $isSearchForcedCaseInsensitive = null, string $boolean = 'and', bool $isInverse = false, bool $shouldApplySearchCollation = true): Builder
+    function apply_search_constraint(Builder $query, string | Expression $column, string $pattern, string $boolean = 'and', bool $isInverse = false): Builder
     {
-        /** @var Connection $databaseConnection */
-        $databaseConnection = $query->getConnection();
-
-        if (! is_database_driver_supported($databaseConnection)) {
-            $query->whereLike($column, $search, false, $boolean, $isInverse);
-
-            return $query;
+        if (! is_database_driver_supported($query->getConnection())) {
+            return $query->whereLike($column, $pattern, false, $boolean, $isInverse);
         }
 
-        $query->{$isInverse ? 'whereNot' : 'where'}(
-            generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection, $shouldApplySearchCollation),
-            'like',
-            generate_search_term_expression($search, $isSearchForcedCaseInsensitive, $databaseConnection),
-            $boolean,
-        );
+        $column = $query->getQuery()->getGrammar()->wrap($column);
+        $operator = $isInverse ? 'not like' : 'like';
 
-        return $query;
+        return $query->whereRaw("{$column} {$operator} ? escape '!'", [$pattern], $boolean);
     }
 }
 
@@ -471,11 +478,37 @@ if (! function_exists('Filament\Support\discover_app_classes')) {
     /**
      * @return array<class-string>
      */
-    function discover_app_classes(?string $parentClass = null): array
+    function discover_app_classes(?string $parentClass = null, ?Closure $onIndexingFailure = null): array
     {
         $vendorDirectory = get_composer_vendor_directory();
         $classLoader = ClassLoader::getRegisteredLoaders()[$vendorDirectory];
         $applicationPath = (string) InstalledVersions::getRootPackage()['install_path'];
+
+        try {
+            $classMapGenerator = (new ClassMapGenerator)->avoidDuplicateScans();
+
+            foreach ([...$classLoader->getPrefixesPsr4(), '' => $classLoader->getFallbackDirsPsr4()] as $namespace => $directories) {
+                foreach ($directories as $directory) {
+                    if (
+                        (! is_path_within_directory($directory, $applicationPath)) ||
+                        is_path_within_vendor_directory($directory, $applicationPath)
+                    ) {
+                        continue;
+                    }
+
+                    $classMapGenerator->scanPaths(
+                        path: $directory,
+                        autoloadType: 'psr-4',
+                        namespace: $namespace,
+                        excludedDirs: ['vendor'],
+                    );
+                }
+            }
+
+            $classLoader->addClassMap($classMapGenerator->getClassMap()->getMap());
+        } catch (Throwable $exception) {
+            $onIndexingFailure?->__invoke($exception);
+        }
 
         return collect($classLoader->getClassMap())
             ->filter(function (string $file, string $class) use ($applicationPath, $parentClass): bool {

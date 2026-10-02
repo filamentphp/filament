@@ -2,11 +2,11 @@
     'applyAction',
     'form',
     'headingTag' => 'h3',
+    'resetAction' => null,
     'resetActionPosition' => null,
 ])
 
 @php
-    use Filament\Support\View\ComponentAttributeBag;
     use Filament\Tables\Enums\FiltersResetActionPosition;
 
     $resetActionPosition ??= FiltersResetActionPosition::Header;
@@ -18,42 +18,23 @@
             {{ __('filament-tables::table.filters.heading') }}
         </{{ $headingTag }}>
 
-        @if ($resetActionPosition === FiltersResetActionPosition::Header)
+        @if (($resetActionPosition === FiltersResetActionPosition::Header) && $resetAction?->isVisible())
             <div>
-                <x-filament::link
-                    :attributes="
-                        \Filament\Support\prepare_inherited_attributes(
-                            new ComponentAttributeBag([
-                                'color' => 'danger',
-                                'tag' => 'button',
-                                'wire:click' => 'resetTableFiltersForm',
-                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                                'wire:target' => 'resetTableFiltersForm',
-                            ])
-                        )
-                    "
-                >
-                    {{ __('filament-tables::table.filters.actions.reset.label') }}
-                </x-filament::link>
+                {{ $resetAction->defaultView($resetAction::LINK_VIEW) }}
             </div>
         @endif
     </div>
 
     {{ $form }}
 
-    @if ($applyAction->isVisible() || $resetActionPosition === FiltersResetActionPosition::Footer)
+    @if ($applyAction->isVisible() || (($resetActionPosition === FiltersResetActionPosition::Footer) && $resetAction?->isVisible()))
         <div class="fi-ta-filters-actions-ctn">
             @if ($applyAction->isVisible())
                 {{ $applyAction }}
             @endif
 
-            @if ($resetActionPosition === FiltersResetActionPosition::Footer)
-                <x-filament::button
-                    color="danger"
-                    wire:click="resetTableFiltersForm"
-                >
-                    {{ __('filament-tables::table.filters.actions.reset.label') }}
-                </x-filament::button>
+            @if (($resetActionPosition === FiltersResetActionPosition::Footer) && $resetAction?->isVisible())
+                {{ $resetAction }}
             @endif
         </div>
     @endif

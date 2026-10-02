@@ -157,6 +157,12 @@ Interfaces in `Contracts/` directories.
 
 ## Coding Standards
 
+### JavaScript lifecycle cleanup
+
+- Alpine components and directives must release resources they own in `destroy()` or `cleanup()`, including listeners on surviving ancestors or global objects, observers, animation loops, and third-party instances. Listeners attached only to removed subtree elements do not need separate cleanup.
+- Guard asynchronous initialization and callbacks when they could create surviving resources or cause observable stale behavior after destruction. Use the third-party instance's real teardown API, verified against its source when necessary.
+- Do not add cleanup solely for short-lived timers; cancel or guard them when their callback could still cause stale behavior after destruction.
+
 ### PHPDoc
 
 Only add when providing type info beyond native PHP types:

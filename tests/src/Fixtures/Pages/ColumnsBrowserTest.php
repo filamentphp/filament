@@ -10,6 +10,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Filament\Tests\Fixtures\Enums\NavigationGroupEnum;
 use Filament\Tests\Fixtures\Models\Post;
 
 class ColumnsBrowserTest extends Page implements HasTable
@@ -32,6 +33,10 @@ class ColumnsBrowserTest extends Page implements HasTable
                 Tables\Columns\TextColumn::make('content')
                     ->label('Content')
                     ->limit(50),
+                Tables\Columns\TextColumn::make('enum_label')
+                    ->state(NavigationGroupEnum::Users)
+                    ->html()
+                    ->extraAttributes(['data-testid' => 'enum-label-column']),
                 Tables\Columns\IconColumn::make('is_published')
                     ->label('Published')
                     ->boolean(),

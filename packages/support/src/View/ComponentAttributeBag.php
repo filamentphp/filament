@@ -7,6 +7,7 @@ use Filament\Support\Enums\GridDirection;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\View\Components\Contracts\HasColor;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\View\AppendableAttributeValue;
 use Illuminate\View\ComponentAttributeBag as BaseComponentAttributeBag;
 
@@ -127,7 +128,7 @@ class ComponentAttributeBag extends BaseComponentAttributeBag
 
         $start = array_filter($start);
 
-        $order = array_filter($order);
+        $order = Arr::whereNotNull($order);
 
         return $this
             ->class([
@@ -260,8 +261,14 @@ class ComponentAttributeBag extends BaseComponentAttributeBag
             if ($key === 'class' || $key === 'style') {
                 $defaultValue = $result[$key] ?? '';
 
-                if ($key === 'style' && $value !== '') {
-                    $value = rtrim($value, '; ') . ';';
+                if ($key === 'style') {
+                    if (is_string($defaultValue) && $defaultValue !== '') {
+                        $defaultValue = Str::finish($defaultValue, ';');
+                    }
+
+                    if ($value !== '') {
+                        $value = rtrim($value, '; ') . ';';
+                    }
                 }
 
                 $parts = array_filter([$defaultValue, $value], fn ($part) => ($part !== '') && ($part !== null));

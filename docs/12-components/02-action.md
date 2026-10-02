@@ -95,6 +95,10 @@ class ManagePost extends Component implements HasActions, HasSchemas
 }
 ```
 
+<Aside variant="warning">
+    `$post` is a model property on a regular Livewire component. Filament does not re-query or authorize it on later requests. Re-query and authorize the post before using it in the action. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+</Aside>
+
 Finally, you need to render the action in your view. To do this, you can use `{{ $this->deleteAction }}`, where you replace `deleteAction` with the name of your action method:
 
 ```blade

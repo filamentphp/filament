@@ -16,7 +16,7 @@
             }
 
             & > tr > .fi-ta-header-cell {
-                @apply hidden sm:table-cell;
+                @apply max-sm:hidden;
             }
 
             & > tr > .fi-ta-selection-cell {
@@ -47,26 +47,50 @@
                     }
                 }
 
-                & > *:first-child::before {
-                    @apply hidden sm:block;
+                & > *:first-child {
+                    @apply max-sm:inset-shadow-none;
                 }
             }
 
             &.fi-ta-group-header-row {
                 @apply py-0;
 
+                &.fi-ta-group-header-row-with-selection {
+                    @apply grid grid-cols-[1fr_auto] sm:table-row;
+                }
+
                 & > td {
                     @apply block w-full sm:table-cell sm:w-auto;
+                }
+
+                & > td:empty {
+                    @apply hidden sm:table-cell;
+                }
+
+                & > .fi-ta-group-selection-cell {
+                    @apply order-last flex! w-auto items-center px-4 sm:table-cell! sm:w-1 sm:px-3;
                 }
             }
 
             &.fi-ta-summary-row {
                 @apply py-0;
             }
+
+            &.fi-ta-summary-header-row {
+                @apply hidden sm:table-row;
+            }
         }
 
         & > tbody > tr > .fi-ta-selection-cell {
-            @apply absolute end-5 top-0 sm:static sm:table-cell sm:w-1 sm:px-3 sm:py-4 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+            @apply absolute end-4 top-0 pe-4 sm:static sm:table-cell sm:w-1 sm:px-3 sm:py-4 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+        }
+
+        & > tfoot {
+            @apply max-sm:block;
+
+            & > tr {
+                @apply max-sm:block;
+            }
         }
 
         & > tbody > tr > .fi-ta-cell:not(.fi-ta-selection-cell) {
@@ -83,7 +107,7 @@
             }
 
             &.fi-ta-summary-row-heading-cell {
-                @apply sm:px-3 sm:first:ps-6 sm:last:pe-6;
+                @apply pb-0 sm:px-3 sm:py-4 sm:first:ps-6 sm:last:pe-6;
             }
 
             &.fi-ta-summary-header-cell {
@@ -139,6 +163,10 @@
                 @apply hidden 2xl:table-cell;
             }
 
+            &.fi-ta-summary-row-heading-cell-responsive {
+                @apply max-sm:block!;
+            }
+
             & > .fi-ta-cell-label {
                 @apply pt-2 text-sm leading-6 font-semibold text-gray-500 sm:hidden dark:text-gray-400;
             }
@@ -185,6 +213,167 @@
 
     & > tfoot {
         @apply bg-gray-50 dark:bg-white/5;
+    }
+}
+
+:where(.fi-ta-table.fi-ta-table-stacked-on-mobile > tfoot > tr > td),
+:where(.fi-ta-table.fi-ta-table-stacked-on-mobile > tfoot > tr > th) {
+    @apply max-sm:block max-sm:w-full;
+}
+
+@variant max-sm {
+    .fi-ta-table .fi-ta-individual-search-row[data-search-hidden-at~='base'] {
+        @apply hidden;
+    }
+}
+
+@variant sm {
+    @variant max-md {
+        .fi-ta-table .fi-ta-individual-search-row[data-search-hidden-at~='sm'] {
+            @apply hidden;
+        }
+    }
+}
+
+@variant md {
+    @variant max-lg {
+        .fi-ta-table .fi-ta-individual-search-row[data-search-hidden-at~='md'] {
+            @apply hidden;
+        }
+    }
+}
+
+@variant lg {
+    @variant max-xl {
+        .fi-ta-table .fi-ta-individual-search-row[data-search-hidden-at~='lg'] {
+            @apply hidden;
+        }
+    }
+}
+
+@variant xl {
+    @variant max-2xl {
+        .fi-ta-table .fi-ta-individual-search-row[data-search-hidden-at~='xl'] {
+            @apply hidden;
+        }
+    }
+}
+
+@variant 2xl {
+    .fi-ta-table .fi-ta-individual-search-row[data-search-hidden-at~='2xl'] {
+        @apply hidden;
+    }
+}
+
+.fi-ta-summary-row-heading-fallback {
+    @apply hidden min-h-9 px-3 pt-4 text-sm leading-5 font-medium text-gray-950 dark:text-white;
+
+    & > span {
+        @apply sr-only;
+    }
+}
+
+@variant max-sm {
+    .fi-ta-summary-row[data-summary-heading-hidden-at~='base'] {
+        & > td:has(> .fi-ta-summary-row-heading-fallback) {
+            @apply align-top;
+        }
+
+        & > td > .fi-ta-summary-row-heading-fallback {
+            @apply block;
+
+            & > span[data-visible-at~='base'] {
+                @apply not-sr-only block whitespace-nowrap;
+            }
+        }
+    }
+}
+
+@variant sm {
+    @variant max-md {
+        .fi-ta-summary-row[data-summary-heading-hidden-at~='sm'] {
+            & > td:has(> .fi-ta-summary-row-heading-fallback) {
+                @apply align-top;
+            }
+
+            & > td > .fi-ta-summary-row-heading-fallback {
+                @apply block;
+
+                & > span[data-visible-at~='sm'] {
+                    @apply not-sr-only block whitespace-nowrap;
+                }
+            }
+        }
+    }
+}
+
+@variant md {
+    @variant max-lg {
+        .fi-ta-summary-row[data-summary-heading-hidden-at~='md'] {
+            & > td:has(> .fi-ta-summary-row-heading-fallback) {
+                @apply align-top;
+            }
+
+            & > td > .fi-ta-summary-row-heading-fallback {
+                @apply block;
+
+                & > span[data-visible-at~='md'] {
+                    @apply not-sr-only block whitespace-nowrap;
+                }
+            }
+        }
+    }
+}
+
+@variant lg {
+    @variant max-xl {
+        .fi-ta-summary-row[data-summary-heading-hidden-at~='lg'] {
+            & > td:has(> .fi-ta-summary-row-heading-fallback) {
+                @apply align-top;
+            }
+
+            & > td > .fi-ta-summary-row-heading-fallback {
+                @apply block;
+
+                & > span[data-visible-at~='lg'] {
+                    @apply not-sr-only block whitespace-nowrap;
+                }
+            }
+        }
+    }
+}
+
+@variant xl {
+    @variant max-2xl {
+        .fi-ta-summary-row[data-summary-heading-hidden-at~='xl'] {
+            & > td:has(> .fi-ta-summary-row-heading-fallback) {
+                @apply align-top;
+            }
+
+            & > td > .fi-ta-summary-row-heading-fallback {
+                @apply block;
+
+                & > span[data-visible-at~='xl'] {
+                    @apply not-sr-only block whitespace-nowrap;
+                }
+            }
+        }
+    }
+}
+
+@variant 2xl {
+    .fi-ta-summary-row[data-summary-heading-hidden-at~='2xl'] {
+        & > td:has(> .fi-ta-summary-row-heading-fallback) {
+            @apply align-top;
+        }
+
+        & > td > .fi-ta-summary-row-heading-fallback {
+            @apply block;
+
+            & > span[data-visible-at~='2xl'] {
+                @apply not-sr-only block whitespace-nowrap;
+            }
+        }
     }
 }
 

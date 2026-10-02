@@ -1,9 +1,14 @@
 <?php
 
+use Composer\Autoload\ClassLoader;
 use Filament\Commands\MakeResourceCommand;
 use Filament\Facades\Filament;
+use Filament\PanelRegistry;
+use Filament\Schemas\Schema;
+use Filament\Support\Commands\FileGenerators\FileGenerationFlag;
 use Filament\Tests\TestCase;
 
+use function Filament\Support\get_composer_vendor_directory;
 use function PHPUnit\Framework\assertFileDoesNotExist;
 use function PHPUnit\Framework\assertFileExists;
 
@@ -13,6 +18,89 @@ beforeEach(function (): void {
     $this->withoutMockingConsoleOutput();
 
     MakeResourceCommand::$shouldCheckModelsForSoftDeletes = false;
+});
+
+it('generates executable resource infolists without guessing a title attribute', function (string $model, bool $isEmbedded, ?string $recordTitleAttribute): void {
+    config()->set('filament.file_generation.flags', $isEmbedded ? [FileGenerationFlag::EMBEDDED_PANEL_RESOURCE_SCHEMAS] : []);
+
+    expect($this->artisan('make:filament-resource', [
+        'model' => $model,
+        '--view' => true,
+        '--panel' => 'admin',
+        ...($recordTitleAttribute ? ['--record-title-attribute' => $recordTitleAttribute] : []),
+        '--no-interaction' => true,
+    ]))->toBe(0);
+
+    $pluralModel = str($model)->plural();
+    $relativeClass = $isEmbedded
+        ? "Filament\\Resources\\{$pluralModel}\\{$model}Resource"
+        : "Filament\\Resources\\{$pluralModel}\\Schemas\\{$model}Infolist";
+    $path = app_path(str_replace('\\', '/', $relativeClass) . '.php');
+    assertFileExists($path);
+
+    if ($recordTitleAttribute) {
+        expect(file_get_contents($path))->toContain("TextEntry::make('display_name')");
+    } else {
+        expect(file_get_contents($path))
+            ->not->toContain('TextEntry')
+            ->toContain("->components([\n                //\n            ])");
+    }
+
+    require $path;
+
+    $class = app()->getNamespace() . $relativeClass;
+    $schema = $isEmbedded ? $class::infolist(Schema::make()) : $class::configure(Schema::make());
+
+    expect(collect($schema->getComponents())->map->getName()->all())->toBe($recordTitleAttribute ? ['display_name'] : []);
+})->with([
+    'embedded without a title' => ['UntitledEmbeddedRecord', true, null],
+    'embedded with a custom title' => ['TitledEmbeddedRecord', true, 'display_name'],
+    'separate schema without a title' => ['UntitledSchemaRecord', false, null],
+]);
+
+it('warns and continues when refreshing the application class index fails', function (): void {
+    $this->mockConsoleOutput = true;
+
+    $vendorDirectory = get_composer_vendor_directory();
+    $originalClassLoader = ClassLoader::getRegisteredLoaders()[$vendorDirectory];
+    $failingClassLoader = new class($vendorDirectory) extends ClassLoader
+    {
+        public function getPrefixesPsr4()
+        {
+            throw new RuntimeException('Unable to read PSR-4 prefixes.');
+        }
+    };
+
+    foreach ($originalClassLoader->getPrefixesPsr4() as $namespace => $directories) {
+        $failingClassLoader->addPsr4($namespace, $directories);
+    }
+
+    $failingClassLoader->addPsr4('', $originalClassLoader->getFallbackDirsPsr4());
+
+    foreach ($originalClassLoader->getPrefixes() as $namespace => $directories) {
+        $failingClassLoader->add($namespace, $directories);
+    }
+
+    $failingClassLoader->add('', $originalClassLoader->getFallbackDirs());
+    $failingClassLoader->addClassMap($originalClassLoader->getClassMap());
+    $failingClassLoader->register();
+
+    try {
+        $this->artisan('make:filament-resource', [
+            '--panel' => 'admin',
+            '--record-title-attribute' => 'name',
+        ])
+            ->expectsOutputToContain('Unable to refresh the application class index. Model suggestions may be incomplete.')
+            ->expectsQuestion('What is the model?', 'Filament\Tests\Fixtures\Models\User')
+            ->expectsQuestion('Would you like to generate a read-only view page for the resource?', false)
+            ->expectsQuestion('Should the configuration be generated from the current database columns?', false)
+            ->expectsQuestion('Does the model use soft-deletes?', false)
+            ->assertSuccessful();
+    } finally {
+        $this->mockConsoleOutput = false;
+        $failingClassLoader->unregister();
+        $originalClassLoader->register();
+    }
 });
 
 it('can generate a resource class', function (): void {
@@ -869,4 +957,19 @@ it('can generate a nested resource class in a nested directory', function (): vo
         expect(file_get_contents($path))
             ->toMatchSnapshot();
     }
+});
+
+it('fails when Filament has not been installed', function (): void {
+    app(PanelRegistry::class)->panels = [];
+
+    $this->mockConsoleOutput = true;
+
+    $this->artisan('make:filament-resource', [
+        'model' => 'Post',
+        '--model-namespace' => 'Filament\Tests\Fixtures\Models',
+        '--record-title-attribute' => 'title',
+        '--no-interaction' => true,
+    ])
+        ->expectsOutputToContain('Filament has not been installed yet')
+        ->assertFailed();
 });

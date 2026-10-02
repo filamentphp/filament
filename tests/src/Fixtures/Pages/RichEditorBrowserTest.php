@@ -7,6 +7,9 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tests\Fixtures\Forms\RichEditor\SidebarImageBlock;
+use Filament\Tests\Fixtures\Forms\RichEditor\SidebarQuoteBlock;
+use Filament\Tests\Fixtures\Forms\RichEditor\SidebarSectionBlock;
 
 class RichEditorBrowserTest extends Page
 {
@@ -35,6 +38,20 @@ class RichEditorBrowserTest extends Page
                     ->minHeight('12rem')
                     ->maxHeight('14rem')
                     ->extraAttributes(['data-testid' => 'height-constrained-rich-editor']),
+                RichEditor::make('customBlocksContent')
+                    ->label('Custom blocks content')
+                    ->toolbarButtons([['bold', 'italic', 'customBlocks']])
+                    ->customBlocks([
+                        'Editorial' => [SidebarQuoteBlock::class, SidebarSectionBlock::class],
+                        'Media' => [SidebarImageBlock::class],
+                    ])
+                    ->activePanel('customBlocks')
+                    ->customBlocksGrid()
+                    ->searchableCustomBlocks()
+                    ->stickyToolbar()
+                    ->stickyPanels()
+                    ->default('<p>First paragraph.</p><p>Last paragraph.</p>')
+                    ->extraAttributes(['data-testid' => 'custom-blocks-rich-editor']),
             ])
             ->statePath('data');
     }

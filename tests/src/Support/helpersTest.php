@@ -17,17 +17,80 @@ use Symfony\Component\Process\Process;
 use function Filament\get_authorization_response;
 use function Filament\Support\apply_search_constraint;
 use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_pattern;
 use function Filament\Support\is_database_driver_supported;
 use function Filament\Support\is_path_within_directory;
 use function Filament\Support\prepare_inherited_attributes;
 
 uses(TestCase::class);
 
-it('discovers application classes and excludes symlinked path repository classes with `discover_app_classes()` when Composer uses a custom vendor directory', function (): void {
+it('generates patterns with literal LIKE wildcard characters using `generate_search_pattern()`', function (bool $hasLeadingWildcard, bool $hasTrailingWildcard, string $expected): void {
+    expect(generate_search_pattern('café!_100%[draft]\\path', $hasLeadingWildcard, $hasTrailingWildcard))
+        ->toBe($expected);
+})->with([
+    'equals' => [false, false, 'café!!!_100!%![draft]\\path'],
+    'starts with' => [false, true, 'café!!!_100!%![draft]\\path%'],
+    'ends with' => [true, false, '%café!!!_100!%![draft]\\path'],
+    'contains' => [true, true, '%café!!!_100!%![draft]\\path%'],
+]);
+
+it('recognizes supported drivers with `is_database_driver_supported()`', function (string $driver, bool $isSupported): void {
+    $databaseConnection = Mockery::mock(Connection::class);
+    $databaseConnection->shouldReceive('getDriverName')->once()->andReturn($driver);
+
+    expect(is_database_driver_supported($databaseConnection))->toBe($isSupported);
+})->with([
+    'MariaDB' => ['mariadb', true],
+    'MySQL' => ['mysql', true],
+    'PostgreSQL' => ['pgsql', true],
+    'SQLite' => ['sqlite', true],
+    'SQL Server' => ['sqlsrv', true],
+    'MongoDB' => ['mongodb', false],
+]);
+
+it('uses `whereLike()` for unsupported database drivers', function (): void {
+    $databaseConnection = Mockery::mock(Connection::class);
+    $databaseConnection->shouldReceive('getDriverName')->once()->andReturn('mongodb');
+
+    $baseQuery = new class($databaseConnection, new Grammar($databaseConnection), new Processor) extends QueryBuilder
+    {
+        /** @var array<mixed> */
+        public array $whereLikeArguments = [];
+
+        public function whereLike($column, $value, $caseSensitive = false, $boolean = 'and', $not = false)
+        {
+            $this->whereLikeArguments = [$column, $value, $caseSensitive, $boolean, $not];
+
+            return $this;
+        }
+    };
+
+    $query = (new EloquentBuilder($baseQuery))->setModel(new Ticket);
+
+    $returnedQuery = apply_search_constraint(
+        $query,
+        'profile.name',
+        '%Te!_st%',
+        boolean: 'or',
+        isInverse: true,
+    );
+
+    expect($returnedQuery)
+        ->toBe($query)
+        ->and($baseQuery->whereLikeArguments)
+        ->toBe(['profile.name', '%Te!_st%', false, 'or', true]);
+});
+
+it('does not share the `originalRequest` binding between Livewire component snapshots', function (): void {
+    expect(app()->isShared('originalRequest'))->toBeFalse();
+});
+
+it('builds a fresh index of application classes and excludes symlinked path repository classes with `discover_app_classes()` when Composer uses a custom vendor directory', function (): void {
     $filesystem = app(Filesystem::class);
     $repositoryDirectory = dirname(__DIR__, 3);
-    $temporaryDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'filament-discover-app-classes-' . bin2hex(random_bytes(8));
-    $vendorDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'filament-discover-app-classes-vendor-' . bin2hex(random_bytes(8));
+    $temporaryRootDirectory = realpath(sys_get_temp_dir());
+    $temporaryDirectory = $temporaryRootDirectory . DIRECTORY_SEPARATOR . 'filament-discover-app-classes-' . bin2hex(random_bytes(8));
+    $vendorDirectory = $temporaryRootDirectory . DIRECTORY_SEPARATOR . 'filament-discover-app-classes-vendor-' . bin2hex(random_bytes(8));
     $composerDirectory = $vendorDirectory . DIRECTORY_SEPARATOR . 'composer';
     $dependencySourceDirectory = $temporaryDirectory . DIRECTORY_SEPARATOR . 'packages/dependency';
     $linkedDependencyDirectory = $vendorDirectory . DIRECTORY_SEPARATOR . 'fixture/dependency';
@@ -62,6 +125,7 @@ it('discovers application classes and excludes symlinked path repository classes
             return ClassLoader::getRegisteredLoaders()[__DIR__];
             PHP);
         $filesystem->put($temporaryDirectory . DIRECTORY_SEPARATOR . 'app/ApplicationClass.php', '<?php namespace Fixture; class ApplicationClass {}');
+        $filesystem->put($temporaryDirectory . DIRECTORY_SEPARATOR . 'app/FreshlyIndexedClass.php', '<?php namespace Fixture; class FreshlyIndexedClass {}');
         $filesystem->put($dependencySourceDirectory . DIRECTORY_SEPARATOR . 'src/DependencyClass.php', '<?php namespace Fixture; class DependencyClass {}');
         $filesystem->link($dependencySourceDirectory, $linkedDependencyDirectory);
 
@@ -78,6 +142,7 @@ it('discovers application classes and excludes symlinked path repository classes
                 $applicationPathPrefix = %s;
                 $classLoader = new Composer\Autoload\ClassLoader($vendorDirectory);
                 Composer\InstalledVersions::$rootInstallPath = $applicationPathPrefix;
+                $classLoader->addPsr4('Fixture\\', $applicationPathPrefix . 'app');
                 $classLoader->addClassMap([
                     'Fixture\\ApplicationClass' => $applicationPathPrefix . 'app/ApplicationClass.php',
                     'Fixture\\DependencyClass' => $vendorDirectory . DIRECTORY_SEPARATOR . 'composer/../fixture/dependency/src/DependencyClass.php',
@@ -109,7 +174,7 @@ it('discovers application classes and excludes symlinked path repository classes
 
         expect(json_decode($process->getOutput(), associative: true, flags: JSON_THROW_ON_ERROR))
             ->toBe([
-                'classes' => ['Fixture\\ApplicationClass'],
+                'classes' => ['Fixture\\ApplicationClass', 'Fixture\\FreshlyIndexedClass'],
                 'windowsClasses' => ['Fixture\\WindowsApplicationClass'],
                 'vendorDirectory' => $vendorDirectory,
             ]);
@@ -344,109 +409,4 @@ it('will generate a JSON search column expression for Postgres with explicit ->>
 
     expect($expression->getValue($grammar))
         ->toBe("lower(\"name\"->>'en'::text)");
-});
-
-it('uses Filament search expressions for recognized database drivers', function (): void {
-    $query = Ticket::query();
-
-    $expectedSearchColumnExpression = match ($query->getConnection()->getDriverName()) {
-        'pgsql' => 'lower("name"::text)',
-        default => 'lower(name)',
-    };
-
-    $returnedQuery = apply_search_constraint(
-        $query,
-        'name',
-        '%TeSt%',
-        isSearchForcedCaseInsensitive: true,
-        boolean: 'or',
-        isInverse: true,
-    );
-
-    $where = $query->getQuery()->wheres[0];
-
-    expect($returnedQuery)
-        ->toBe($query)
-        ->and($where['type'])
-        ->toBe('Basic')
-        ->and($where['column']->getValue($query->getQuery()->getGrammar()))
-        ->toBe($expectedSearchColumnExpression)
-        ->and($where['operator'])
-        ->toBe('like')
-        ->and($where['value'])
-        ->toBe('%test%')
-        ->and($where['boolean'])
-        ->toBe('or not');
-});
-
-it('recognizes supported drivers with `is_database_driver_supported()`', function (string $driver, bool $isSupported): void {
-    $databaseConnection = Mockery::mock(Connection::class);
-    $databaseConnection->shouldReceive('getDriverName')->once()->andReturn($driver);
-
-    expect(is_database_driver_supported($databaseConnection))->toBe($isSupported);
-})->with([
-    'MariaDB' => ['mariadb', true],
-    'MySQL' => ['mysql', true],
-    'PostgreSQL' => ['pgsql', true],
-    'SQLite' => ['sqlite', true],
-    'SQL Server' => ['sqlsrv', true],
-    'MongoDB' => ['mongodb', false],
-]);
-
-it('can use `apply_search_constraint()` without applying a search collation', function (): void {
-    $databaseConnection = Mockery::mock(Connection::class);
-    $databaseConnection->shouldReceive('getDriverName')->andReturn('pgsql');
-    $databaseConnection->shouldReceive('getTablePrefix')->andReturn('');
-    $databaseConnection->shouldNotReceive('getConfig');
-
-    $grammar = new PostgresGrammar($databaseConnection);
-    $baseQuery = new QueryBuilder($databaseConnection, $grammar, new Processor);
-    $query = (new EloquentBuilder($baseQuery))->setModel(new Ticket);
-
-    apply_search_constraint(
-        $query,
-        'tickets.Name',
-        '%TeSt%',
-        shouldApplySearchCollation: false,
-    );
-
-    $where = $query->getQuery()->wheres[0];
-
-    expect($where['column']->getValue($grammar))
-        ->toBe('lower("tickets"."Name"::text)')
-        ->and($where['value'])
-        ->toBe('%test%');
-});
-
-it('uses `whereLike()` for unrecognized database drivers', function (): void {
-    $databaseConnection = Mockery::mock(Connection::class);
-    $databaseConnection->shouldReceive('getDriverName')->once()->andReturn('mongodb');
-
-    $baseQuery = new class($databaseConnection, new Grammar($databaseConnection), new Processor) extends QueryBuilder
-    {
-        /** @var array<mixed> */
-        public array $whereLikeArguments = [];
-
-        public function whereLike($column, $value, $caseSensitive = false, $boolean = 'and', $not = false)
-        {
-            $this->whereLikeArguments = [$column, $value, $caseSensitive, $boolean, $not];
-
-            return $this;
-        }
-    };
-
-    $query = (new EloquentBuilder($baseQuery))->setModel(new Ticket);
-
-    $returnedQuery = apply_search_constraint(
-        $query,
-        'profile.name',
-        '%Te_st%',
-        boolean: 'or',
-        isInverse: true,
-    );
-
-    expect($returnedQuery)
-        ->toBe($query)
-        ->and($baseQuery->whereLikeArguments)
-        ->toBe(['profile.name', '%Te_st%', false, 'or', true]);
 });

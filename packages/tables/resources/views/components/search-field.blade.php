@@ -1,5 +1,7 @@
 @props([
     'debounce' => '500ms',
+    'label' => __('filament-tables::table.fields.search.label'),
+    'labelHidden' => true,
     'onBlur' => false,
     'placeholder' => __('filament-tables::table.fields.search.placeholder'),
     'wireModel' => 'tableSearch',
@@ -17,8 +19,14 @@
     x-id="['input']"
     {{ $attributes->class(['fi-ta-search-field']) }}
 >
-    <label x-bind:for="$id('input')" class="fi-sr-only">
-        {{ __('filament-tables::table.fields.search.label') }}
+    <label
+        x-bind:for="$id('input')"
+        @class([
+            'fi-sr-only' => $labelHidden,
+            'fi-ta-cell-label' => ! $labelHidden,
+        ])
+    >
+        {{ $label }}
     </label>
 
     <x-filament::input.wrapper

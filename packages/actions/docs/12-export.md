@@ -990,6 +990,10 @@ public function getJobBatchName(): ?string
 }
 ```
 
+## Testing
+
+To test exporter row values and export actions, see the [Testing exports](../testing/testing-exports) guide.
+
 ## Authorization
 
 By default, only the user who started the export may download files that get generated. If you'd like to customize the authorization logic, you may create an `ExportPolicy` class, and [register it in your `AuthServiceProvider`](https://laravel.com/docs/authorization#registering-policies):
@@ -1043,7 +1047,7 @@ You could also apply [global scopes](https://laravel.com/docs/eloquent#global-sc
 
 Filament's export system writes data to CSV and XLSX files exactly as it is stored in the database, without any transformation. This means that if your database contains values beginning with characters like `=`, `+`, `-`, or `@`, they will appear unchanged in the exported file. When opened in spreadsheet software such as Microsoft Excel or Google Sheets, these values may be interpreted as formulas, which could pose a security risk if your data includes untrusted or user-submitted content. You should ensure that your users are aware of this risk, or sanitize the data before export using the [`formatStateUsing()` method](export#formatting-the-value-of-an-export-column) on each column, for example by prefixing values with a single quote (`'`) to prevent formula interpretation.
 
-Alternatively, you may opt in to Filament's built-in protection. When enabled on a column, any value that begins with a formula-triggering character (`=`, `+`, `-`, `@`, a tab, or a carriage return) is automatically prefixed with a single quote (`'`) so that spreadsheet software treats it as plain text. Enable it using the `preventFormulaInjection()` method on the column:
+Alternatively, you may opt in to Filament's built-in protection. When enabled on a column, strings beginning with a formula-triggering character (`=`, `+`, `-`, `@`, a tab, or a carriage return) are automatically prefixed with a single quote (`'`) so that spreadsheet software treats them as plain text. Purely numeric strings beginning with `+` or `-`, such as `+42` or `-5`, remain unchanged. Enable it using the `preventFormulaInjection()` method on the column:
 
 ```php
 use Filament\Actions\Exports\ExportColumn;
@@ -1067,5 +1071,5 @@ ExportColumn::make('temperature')
 ```
 
 <Aside variant="warning">
-    This protection is **opt in** and disabled by default, because prefixing a single quote alters legitimate data. For example, values such as `-5` or a phone number like `+44 1234 567890` are valid formula triggers and would be rewritten to `'-5` and `'+44 1234 567890`. Only enable it when you are exporting untrusted or user-submitted content, and make sure the transformation is acceptable for the columns you enable it on.
+    This protection is **opt in** and disabled by default, because prefixing a single quote alters legitimate data. For example, a phone number like `+44 1234 567890` begins with a formula trigger and would be rewritten to `'+44 1234 567890`. Only enable it when you are exporting untrusted or user-submitted content, and make sure the transformation is acceptable for the columns you enable it on.
 </Aside>

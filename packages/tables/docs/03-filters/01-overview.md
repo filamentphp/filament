@@ -203,7 +203,7 @@ TernaryFilter::make('trashed')
 
 ## Excluding filters when resolving records
 
-When a user interacts with a table record (e.g., clicking an action button), Filament resolves that record from the database. By default, all active filter conditions are applied, ensuring users cannot access records outside their filter scope.
+When a user interacts with a table record (e.g., clicking an action button), Filament resolves that record from the database. By default, any active filter conditions are applied when resolving the record.
 
 However, some filters like `TrashedFilter` modify global scopes rather than restricting access. When a record's state changes after the user saw it in the table, you may still want the user to interact with it.
 
@@ -227,7 +227,7 @@ When `excludeWhenResolvingRecord()` is used:
 - The filter's `baseQuery()` callback is still applied when resolving records
 
 <Aside variant="danger">
-    Do not use `excludeWhenResolvingRecord()` on filters that enforce authorization rules. For example, if you have a filter that restricts records by tenant or user ownership, those filters should remain enforced to prevent unauthorized access.
+    Filters are controlled by the client and must not be your only tenant or ownership restriction. Apply mandatory restrictions to the resource's `getEloquentQuery()` or the table's `modifyQueryUsing()`, and authorize operations separately. `excludeWhenResolvingRecord()` only changes record resolution; it must not remove your application's authorization boundary.
 </Aside>
 
 ## Customizing the filters trigger action
@@ -276,6 +276,29 @@ public function table(Table $table): Table
 ```
 
 <AutoScreenshot name="tables/filters/custom-remove-all-action" alt="Table with custom filters remove all action" version="4.x" />
+
+## Customizing the reset filters action
+
+To customize the action that resets the filters form, you may use the `filtersResetAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/overview) can be used:
+
+```php
+use Filament\Actions\Action;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->filtersResetAction(
+            fn (Action $action) => $action
+                ->icon(Heroicon::XMark)
+                ->label('Clear filters'),
+        );
+}
+```
 
 ## Filter utility injection
 

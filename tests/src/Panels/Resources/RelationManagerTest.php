@@ -1,5 +1,7 @@
 <?php
 
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -13,7 +15,11 @@ use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Actions\ViewAction;
+use Filament\Facades\Filament;
+use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
@@ -30,6 +36,8 @@ use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPi
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithSubquerySelectAndDetachRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -54,6 +62,196 @@ describe('rendering and authorization', function (): void {
 
         livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
             ->assertCanSeeTableRecords($ticket->departments);
+    });
+
+    it('resolves record URLs and actions without leaking record context between records', function (bool $isTableLoadingDeferred, string $actionHierarchy): void {
+        $ticket = Ticket::factory()->create();
+        $departments = collect([
+            Department::factory()->create(['name' => 'View URL']),
+            Department::factory()->create(['name' => 'Edit URL']),
+            Department::factory()->create(['name' => 'Edit action']),
+            Department::factory()->create(['name' => 'No access']),
+        ]);
+
+        $ticket->departments()->attach($departments);
+
+        RecordUrlResolutionRelationManager::$initialActionRecordKeys = [];
+
+        $component = livewire(RecordUrlResolutionRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+            'areActionsGrouped' => $actionHierarchy === 'grouped',
+            'areActionsNested' => $actionHierarchy === 'nested',
+            'hasRecordDependentRootGroupTriggerView' => $actionHierarchy !== 'ungrouped',
+            'isTableLoadingDeferred' => $isTableLoadingDeferred,
+        ])->assertSuccessful();
+
+        expect(RecordUrlResolutionRelationManager::$initialActionRecordKeys)->toBe([null, null]);
+
+        if ($isTableLoadingDeferred) {
+            $component
+                ->assertDontSeeHtml("href=\"/departments/{$departments[0]->getKey()}/view\"")
+                ->assertDontSeeHtml("href=\"/departments/{$departments[1]->getKey()}/edit\"")
+                ->call('loadTable');
+        }
+
+        $component
+            ->assertSeeHtml("href=\"/departments/{$departments[0]->getKey()}/view\"")
+            ->assertSeeHtml("href=\"/departments/{$departments[1]->getKey()}/edit\"")
+            ->assertSeeHtml('target="_blank"');
+
+        $table = $component->instance()->getTable();
+        $viewAction = $table->getAction('view');
+        $editAction = $table->getAction('edit');
+
+        $assertActionHierarchyIsUnbound = function (Action $action): void {
+            expect($action->getRecord(withDefault: false))->toBeNull();
+
+            $actionGroup = $action->getGroup();
+
+            while ($actionGroup) {
+                expect($actionGroup->getRecord(withDefault: false))->toBeNull();
+
+                $actionGroup = $actionGroup->getGroup();
+            }
+        };
+
+        $assertActionHierarchyIsUnbound($viewAction);
+        $assertActionHierarchyIsUnbound($editAction);
+
+        $assertResolution = function (Department $department, ?string $expectedUrl, ?string $expectedAction, bool $shouldOpenInNewTab) use ($assertActionHierarchyIsUnbound, $editAction, $table, $viewAction): void {
+            expect($table->getRecordAction($department))->toBe($expectedAction)
+                ->and($table->getRecordUrl($department))->toBe($expectedUrl)
+                ->and($table->shouldOpenRecordUrlInNewTab($department))->toBe($shouldOpenInNewTab);
+
+            $assertActionHierarchyIsUnbound($viewAction);
+            $assertActionHierarchyIsUnbound($editAction);
+        };
+
+        $assertResolution($departments[0], "/departments/{$departments[0]->getKey()}/view", null, true);
+        $assertResolution($departments[1], "/departments/{$departments[1]->getKey()}/edit", null, false);
+        $assertResolution($departments[2], null, 'edit', false);
+        $assertResolution($departments[3], null, null, false);
+
+        $assertResolution($departments[3], null, null, false);
+        $assertResolution($departments[2], null, 'edit', false);
+        $assertResolution($departments[1], "/departments/{$departments[1]->getKey()}/edit", null, false);
+        $assertResolution($departments[0], "/departments/{$departments[0]->getKey()}/view", null, true);
+
+        $component
+            ->call('$refresh')
+            ->assertSeeHtml("href=\"/departments/{$departments[0]->getKey()}/view\"")
+            ->assertSeeHtml("href=\"/departments/{$departments[1]->getKey()}/edit\"");
+
+        $refreshedTable = $component->instance()->getTable();
+
+        $assertActionHierarchyIsUnbound($refreshedTable->getAction('view'));
+        $assertActionHierarchyIsUnbound($refreshedTable->getAction('edit'));
+    })->with([
+        'eager table loading' => false,
+        'deferred table loading' => true,
+    ])->with([
+        'ungrouped actions' => 'ungrouped',
+        'grouped actions' => 'grouped',
+        'nested actions' => 'nested',
+    ]);
+
+    it('does not leak grouped action context from a previous record while resolving record URLs', function (): void {
+        $ticket = Ticket::factory()->create();
+        $editUrlDepartment = Department::factory()->create(['name' => 'Edit URL']);
+        $viewUrlDepartment = Department::factory()->create(['name' => 'View URL']);
+
+        $ticket->departments()->attach([$editUrlDepartment, $viewUrlDepartment]);
+
+        $component = livewire(RecordUrlResolutionRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+            'areActionsNested' => true,
+            'hasCustomRecordAction' => true,
+        ])->assertSuccessful();
+
+        $document = new DOMDocument;
+        @$document->loadHTML($component->html());
+
+        $xpath = new DOMXPath($document);
+        $editUrlRow = $xpath->query("//tr[contains(@class, 'fi-ta-row')][contains(., 'Edit URL')]")->item(0);
+        $viewUrlRow = $xpath->query("//tr[contains(@class, 'fi-ta-row')][contains(., 'View URL')]")->item(0);
+
+        expect($editUrlRow)->not->toBeNull()
+            ->and($viewUrlRow)->not->toBeNull();
+
+        $editUrlRowHtml = $document->saveHTML($editUrlRow);
+        $viewUrlRowHtml = $document->saveHTML($viewUrlRow);
+
+        expect($editUrlRowHtml)->toContain("href=\"/departments/{$editUrlDepartment->getKey()}/edit\"")
+            ->and($viewUrlRowHtml)->toContain("href=\"/departments/{$viewUrlDepartment->getKey()}/view\"")
+            ->and($viewUrlRowHtml)->not->toContain("href=\"/departments/{$editUrlDepartment->getKey()}/edit\"");
+    });
+
+    it('does not leak grouped action context from a previous record while resolving record actions', function (): void {
+        $ticket = Ticket::factory()->create();
+        $editUrlDepartment = Department::factory()->create(['name' => 'Edit URL']);
+        $viewActionDepartment = Department::factory()->create(['name' => 'View action']);
+
+        $ticket->departments()->attach([$editUrlDepartment, $viewActionDepartment]);
+
+        $component = livewire(RecordUrlResolutionRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+            'areActionsGrouped' => true,
+        ])->assertSuccessful();
+
+        $document = new DOMDocument;
+        @$document->loadHTML($component->html());
+
+        $xpath = new DOMXPath($document);
+        $viewActionRow = $xpath->query("//tr[contains(@class, 'fi-ta-row')][contains(., 'View action')]")->item(0);
+
+        expect($viewActionRow)->not->toBeNull();
+
+        $viewActionRowHtml = $document->saveHTML($viewActionRow);
+
+        expect($viewActionRowHtml)->not->toContain("href=\"/departments/{$editUrlDepartment->getKey()}/edit\"");
+    });
+
+    it('respects hidden intermediate action groups while resolving record URLs and actions', function (): void {
+        $ticket = Ticket::factory()->create();
+        $editUrlDepartment = Department::factory()->create(['name' => 'Edit URL']);
+        $editActionDepartment = Department::factory()->create(['name' => 'Edit action']);
+
+        $ticket->departments()->attach([$editUrlDepartment, $editActionDepartment]);
+
+        $component = livewire(RecordUrlResolutionRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+            'areActionsNested' => true,
+            'isNestedGroupHidden' => true,
+        ])->assertSuccessful();
+
+        $table = $component->instance()->getTable();
+
+        expect($table->getRecordUrl($editUrlDepartment))->toBeNull()
+            ->and($table->getRecordAction($editActionDepartment))->toBeNull();
+    });
+
+    it('evaluates intermediate action group visibility against each current record', function (): void {
+        $ticket = Ticket::factory()->create();
+        $editUrlDepartment = Department::factory()->create(['name' => 'Edit URL']);
+        $editActionDepartment = Department::factory()->create(['name' => 'Edit action']);
+
+        $ticket->departments()->attach([$editUrlDepartment, $editActionDepartment]);
+
+        $table = livewire(RecordUrlResolutionRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+            'areActionsNested' => true,
+            'hasRecordDependentNestedGroupVisibility' => true,
+        ])->instance()->getTable();
+
+        expect($table->getRecordUrl($editUrlDepartment))->toBe("/departments/{$editUrlDepartment->getKey()}/edit")
+            ->and($table->getRecordAction($editActionDepartment))->toBeNull()
+            ->and($table->getRecordAction($editUrlDepartment))->toBeNull()
+            ->and($table->getRecordUrl($editActionDepartment))->toBeNull();
     });
 
     it('can render relation manager if the policy viewAny returns true', function (): void {
@@ -106,21 +304,163 @@ describe('rendering and authorization', function (): void {
         app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
     });
 
-    it('re-authorizes the relation manager on Livewire updates after the initial mount', function (): void {
-        $ticket = Ticket::factory()
-            ->create();
+    describe('lifecycle authorization', function (): void {
+        beforeEach(function (): void {
+            Filament::setCurrentPanel(Filament::getPanel('admin'));
+            AuthorizationRelationManager::$calls = [];
+            AuthorizationRelationManager::$authorizationArguments = [];
+            RelationManagerAuthorizationPage::$grouped = false;
+        });
 
-        app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
+        it('authorizes the owner record and page before first mounting a relation manager', function (bool $canView): void {
+            $ticket = Ticket::factory()->hasAttached(Department::factory()->state(['name' => 'Private department']))->create();
+            app()->bind(DepartmentPolicy::class . '::viewAny', static fn (): bool => $canView);
 
-        $component = livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class]);
+            $component = livewire(AuthorizationRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class]);
 
-        app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => false);
+            if ($canView) {
+                $component->assertSuccessful()->assertSee('Private department');
+            } else {
+                $component->assertDontSee('Private department')->assertForbidden();
+            }
 
-        $component
-            ->set('tableSearch', 'foo')
-            ->assertStatus(403);
+            expect(AuthorizationRelationManager::$calls)->toBe($canView
+                ? ['boot', 'authorize', 'mount', 'table', 'render']
+                : ['boot', 'authorize'])
+                ->and(AuthorizationRelationManager::$authorizationArguments)->toBe([
+                    [$ticket->getKey(), EditTicket::class],
+                ]);
+        })->with([true, false]);
 
-        app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
+        it('uses the relation manager class for authorization when `$pageClass` is omitted', function (): void {
+            $ticket = Ticket::factory()->create();
+            app()->bind(DepartmentPolicy::class . '::viewAny', static fn (): bool => false);
+
+            livewire(AuthorizationRelationManager::class, ['ownerRecord' => $ticket])->assertForbidden();
+
+            expect(AuthorizationRelationManager::$calls)->toBe(['boot', 'authorize'])
+                ->and(AuthorizationRelationManager::$authorizationArguments)->toBe([[$ticket->getKey(), AuthorizationRelationManager::class]]);
+        });
+
+        it('authorizes the real lazy relation manager mount after its placeholder', function (bool $canView): void {
+            $ticket = Ticket::factory()->hasAttached(Department::factory()->state(['name' => 'Private department']))->create();
+
+            $component = livewire(AuthorizationRelationManager::class, [
+                'ownerRecord' => $ticket,
+                'pageClass' => EditTicket::class,
+                'lazy' => true,
+            ])->assertSuccessful()->assertDontSee('Private department');
+
+            expect(AuthorizationRelationManager::$calls)->toBe([]);
+
+            preg_match('/__lazyLoad\(\'([^\']+)\'\)/', html_entity_decode($component->html()), $matches);
+
+            expect($matches)->toHaveKey(1);
+
+            app()->bind(DepartmentPolicy::class . '::viewAny', static fn (): bool => $canView);
+
+            $component->call('__lazyLoad', $matches[1]);
+
+            if ($canView) {
+                $component->assertSuccessful()->assertSee('Private department');
+            } else {
+                $component->assertDontSee('Private department')->assertForbidden();
+            }
+
+            expect(AuthorizationRelationManager::$calls)->toBe($canView
+                ? ['authorize', 'boot', 'mount', 'table', 'render']
+                : ['authorize'])
+                ->and(AuthorizationRelationManager::$authorizationArguments)->toBe([[$ticket->getKey(), EditTicket::class]]);
+
+            if (! $canView) {
+                return;
+            }
+
+            AuthorizationRelationManager::$calls = [];
+            app()->bind(DepartmentPolicy::class . '::viewAny', static fn (): bool => false);
+
+            $component->call('sensitiveAction')->assertForbidden()->assertDontSee('Private department');
+
+            expect(AuthorizationRelationManager::$calls)->toBe(['boot', 'authorize']);
+        })->with([true, false]);
+
+        it('rejects denied requests before a lazy relation manager has mounted', function (array $calls, array $updates, bool $withLazyLoad): void {
+            $ticket = Ticket::factory()->hasAttached(Department::factory()->state(['name' => 'Private department']))->create();
+            $component = livewire(AuthorizationRelationManager::class, [
+                'ownerRecord' => $ticket,
+                'pageClass' => EditTicket::class,
+                'lazy' => true,
+            ]);
+
+            if ($withLazyLoad) {
+                preg_match('/__lazyLoad\(\'([^\']+)\'\)/', html_entity_decode($component->html()), $matches);
+
+                expect($matches)->toHaveKey(1);
+
+                $calls[] = ['method' => '__lazyLoad', 'params' => [$matches[1]]];
+            }
+
+            app()->bind(DepartmentPolicy::class . '::viewAny', static fn (): bool => false);
+
+            $component->update(calls: $calls, updates: $updates);
+
+            expect(AuthorizationRelationManager::$calls)->toBe(['authorize'])
+                ->and(AuthorizationRelationManager::$authorizationArguments)->toBe([[$ticket->getKey(), EditTicket::class]]);
+
+            $component->assertForbidden()->assertDontSee('Private department');
+        })->with([
+            'action' => [[['method' => 'sensitiveAction', 'params' => []]], [], false],
+            'property update' => [[], ['name' => 'changed'], false],
+            'empty request' => [[], [], false],
+            'property update before lazy mount' => [[], ['name' => 'changed'], true],
+            'action before lazy mount' => [[['method' => 'sensitiveAction', 'params' => []]], [], true],
+        ]);
+
+        it('re-authorizes a relation manager before subclass `hydrate()`, property updates, and actions', function (bool $canView, bool $updateProperty): void {
+            $ticket = Ticket::factory()->hasAttached(Department::factory()->state(['name' => 'Private department']))->create();
+            $component = livewire(AuthorizationRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+                ->assertSee('Private department');
+
+            AuthorizationRelationManager::$calls = [];
+            AuthorizationRelationManager::$authorizationArguments = [];
+            app()->bind(DepartmentPolicy::class . '::viewAny', static fn (): bool => $canView);
+
+            if ($updateProperty) {
+                $component->set('name', 'changed');
+            } else {
+                $component->call('sensitiveAction');
+            }
+
+            if ($canView) {
+                $component->assertSuccessful()->assertSee('Private department');
+            } else {
+                $component->assertForbidden()->assertDontSee('Private department');
+            }
+
+            expect(AuthorizationRelationManager::$calls)->toBe($canView
+                ? ['boot', 'authorize', 'hydrate', 'table', ...($updateProperty ? ['updating', 'updated'] : ['action']), 'render']
+                : ['boot', 'authorize'])
+                ->and(AuthorizationRelationManager::$authorizationArguments)->toBe([[$ticket->getKey(), EditTicket::class]]);
+        })->with([true, false])->with([true, false]);
+
+        it('filters denied relation managers before mounting them on resource pages', function (bool $canView, bool $grouped): void {
+            $ticket = Ticket::factory()->hasAttached(Department::factory()->state(['name' => 'Private department']))->create();
+            app()->bind(DepartmentPolicy::class . '::viewAny', static fn (): bool => $canView);
+            RelationManagerAuthorizationPage::$grouped = $grouped;
+
+            $component = livewire(RelationManagerAuthorizationPage::class, ['record' => $ticket->getRouteKey()])
+                ->assertSuccessful();
+
+            if ($canView) {
+                $component->assertSee('Private department');
+
+                expect(AuthorizationRelationManager::$calls)->toContain('mount', 'table', 'render');
+            } else {
+                $component->assertDontSee('Private department');
+
+                expect(AuthorizationRelationManager::$calls)->not->toBeEmpty()->each->toBe('authorize');
+            }
+        })->with([true, false])->with([true, false]);
     });
 
     it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false, bool $isBulkAction = false): void {
@@ -521,3 +861,147 @@ it('does not defer the tab badge loading by default', function (): void {
 
     expect($tab->isBadgeDeferred())->toBeFalse();
 });
+
+class RecordUrlResolutionRelationManager extends RelationManager
+{
+    /** @var array<int | string | null> */
+    public static array $initialActionRecordKeys = [];
+
+    public bool $areActionsGrouped = false;
+
+    public bool $areActionsNested = false;
+
+    public bool $hasCustomRecordAction = false;
+
+    public bool $hasRecordDependentNestedGroupVisibility = false;
+
+    public bool $hasRecordDependentRootGroupTriggerView = false;
+
+    public bool $isTableLoadingDeferred = false;
+
+    public bool $isNestedGroupHidden = false;
+
+    protected static string $relationship = 'departments';
+
+    protected static bool $isLazy = false;
+
+    public function table(Table $table): Table
+    {
+        $viewAction = Action::make('view')
+            ->authorize(static fn (Department $record): bool => in_array($record->name, ['View URL', 'View action']))
+            ->url(static fn (Department $record): ?string => $record->name === 'View URL' ? "/departments/{$record->getKey()}/view" : null)
+            ->openUrlInNewTab(static fn (Department $record): bool => $record->name === 'View URL');
+        $editAction = Action::make('edit')
+            ->authorize(static fn (Department $record): bool => in_array($record->name, ['Edit URL', 'Edit action']))
+            ->url(static fn (Department $record): ?string => $record->name === 'Edit URL' ? "/departments/{$record->getKey()}/edit" : null);
+
+        static::$initialActionRecordKeys[] = $viewAction->getRecord(withDefault: false)?->getKey();
+        static::$initialActionRecordKeys[] = $editAction->getRecord(withDefault: false)?->getKey();
+
+        $recordActions = match (true) {
+            $this->areActionsNested => ActionGroup::make([
+                Action::make('other'),
+                $viewAction,
+                ActionGroup::make([$editAction])
+                    ->hidden(fn (Department $record): bool => $this->isNestedGroupHidden || ($this->hasRecordDependentNestedGroupVisibility && ($record->name !== 'Edit URL'))),
+            ]),
+            $this->areActionsGrouped => ActionGroup::make([$viewAction, $editAction]),
+            default => [$viewAction, $editAction],
+        };
+
+        if (($recordActions instanceof ActionGroup) && $this->hasRecordDependentRootGroupTriggerView) {
+            $recordActions->defaultTriggerView(static fn (Department $record): string => $record->name === 'View URL'
+                ? ActionGroup::BUTTON_VIEW
+                : ActionGroup::ICON_BUTTON_VIEW);
+        }
+
+        return $table
+            ->columns([
+                TextColumn::make('name'),
+            ])
+            ->recordActions($recordActions)
+            ->when($this->hasCustomRecordAction, fn (Table $table): Table => $table->recordAction(null))
+            ->defaultSort('departments.id')
+            ->openRecordUrlInNewTab(static fn (Department $record): bool => $record->name === 'View URL')
+            ->deferLoading($this->isTableLoadingDeferred);
+    }
+}
+
+class AuthorizationRelationManager extends DepartmentsRelationManager
+{
+    /** @var array<string> */
+    public static array $calls = [];
+
+    /** @var array<array{int|string, string}> */
+    public static array $authorizationArguments = [];
+
+    public ?string $name = null;
+
+    protected static bool $isLazy = false;
+
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        static::$calls[] = 'authorize';
+        static::$authorizationArguments[] = [$ownerRecord->getKey(), $pageClass];
+
+        return parent::canViewForRecord($ownerRecord, $pageClass);
+    }
+
+    public function boot(): void
+    {
+        static::$calls[] = 'boot';
+    }
+
+    public function mount(): void
+    {
+        static::$calls[] = 'mount';
+
+        parent::mount();
+    }
+
+    public function hydrate(): void
+    {
+        static::$calls[] = 'hydrate';
+    }
+
+    public function updatingName(): void
+    {
+        static::$calls[] = 'updating';
+    }
+
+    public function updatedName(): void
+    {
+        static::$calls[] = 'updated';
+    }
+
+    public function table(Table $table): Table
+    {
+        static::$calls[] = 'table';
+
+        return parent::table($table);
+    }
+
+    public function render(): View
+    {
+        static::$calls[] = 'render';
+
+        return parent::render();
+    }
+
+    public function sensitiveAction(): void
+    {
+        static::$calls[] = 'action';
+    }
+}
+
+class RelationManagerAuthorizationPage extends EditTicket
+{
+    public static bool $grouped = false;
+
+    protected function getAllRelationManagers(): array
+    {
+        return static::$grouped
+            ? [RelationGroup::make('Departments', [AuthorizationRelationManager::make()])]
+            : [AuthorizationRelationManager::class];
+    }
+}

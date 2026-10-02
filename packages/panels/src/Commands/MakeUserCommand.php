@@ -3,6 +3,7 @@
 namespace Filament\Commands;
 
 use Filament\Support\Commands\Concerns\HasPanel;
+use Filament\Support\Commands\Exceptions\FailureCommandOutput;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -76,7 +77,11 @@ class MakeUserCommand extends Command
 
     public function handle(): int
     {
-        $this->configurePanel(question: 'Which panel would you like to create this user in?');
+        try {
+            $this->configurePanel(question: 'Which panel would you like to create this user in?');
+        } catch (FailureCommandOutput) {
+            return static::FAILURE;
+        }
 
         $this->options = $this->options();
 

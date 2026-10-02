@@ -12,6 +12,8 @@ use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
 use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\GridDirection;
+use Filament\Support\Enums\IconSize;
+use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
@@ -43,6 +45,28 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
     protected bool | Closure $isGrouped = false;
 
     protected bool | Closure $areButtonLabelsHidden = false;
+
+    protected bool | Closure $isFullWidth = false;
+
+    protected Size | string | Closure | null $size = null;
+
+    public function size(Size | string | Closure | null $size): static
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+
+    public function getSize(): Size | string
+    {
+        $size = $this->evaluate($this->size);
+
+        if (! $size instanceof Size) {
+            $size = filled($size) ? (Size::tryFrom($size) ?? $size) : Size::Medium;
+        }
+
+        return $size;
+    }
 
     public function grouped(bool | Closure $condition = true): static
     {
@@ -78,9 +102,17 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
         $isMultiple = $this->isMultiple();
         $statePath = $this->getStatePath();
         $areButtonLabelsHidden = $this->areButtonLabelsHidden();
+        $size = $this->getSize();
+        $iconSize = match ($size) {
+            Size::ExtraSmall, Size::Small => IconSize::Small,
+            default => null,
+        };
         $wireModelAttribute = $this->applyStateBindingModifiers('wire:model');
-        $extraInputAttributeBag = $this->getExtraInputAttributeBag()->class(['fi-fo-toggle-buttons-input']);
+        $extraInputAttributeBag = $this->getExtraInputAttributeBag()
+            ->merge($this->getAccessibilityAttributes(), escape: false)
+            ->class(['fi-fo-toggle-buttons-input']);
         $isAutofocused = $this->isAutofocused();
+        $isFullWidth = $this->isFullWidth();
 
         $containerAttributes = $this->getExtraAttributeBag();
 
@@ -90,12 +122,15 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
 
         $containerAttributes = $containerAttributes
             ->merge([
-                'aria-labelledby' => "{$id}-label",
+                ...$this->getAccessibilityAttributes(),
+                'aria-labelledby' => filled($this->getLabel()) ? e("{$id}-label") : null,
+                'aria-required' => (! $isMultiple) && $this->isRequired() && (! $isDisabled) ? 'true' : null,
                 'role' => $isMultiple ? 'group' : 'radiogroup',
             ], escape: false)
             ->class([
                 'fi-fo-toggle-buttons',
                 'fi-inline' => $isInline,
+                'fi-width-full' => $isFullWidth,
             ]);
 
         $first = true;
@@ -120,7 +155,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                     ], escape: false)
                     ->class([
                         'fi-btn',
-                        'fi-size-md',
+                        ($size instanceof Size) ? "fi-size-{$size->value}" : e($size),
                         'fi-disabled' => $shouldOptionBeDisabled,
                     ])
                     ->color(ButtonComponent::class, $color);
@@ -137,7 +172,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                         type="<?= $isMultiple ? 'checkbox' : 'radio' ?>"
                         value="<?= e($value) ?>"
                         <?= $wireModelAttribute ?>="<?= e($statePath) ?>"
-                        <?= $extraInputAttributeBag->toHtml() ?>
+                        <?= $extraInputAttributeBag->merge(['required' => (! $isMultiple) && $this->isRequired() && (! $shouldOptionBeDisabled)], escape: false)->toHtml() ?>
                     />
 
                     <label
@@ -147,7 +182,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                         <?= $buttonAttributes->toHtml() ?>
                     >
                         <?php if (filled($icon)) { ?>
-                            <?= generate_icon_html($icon)?->toHtml() ?>
+                            <?= generate_icon_html($icon, size: $iconSize)?->toHtml() ?>
                         <?php } ?>
 
                         <?php if (! $areButtonLabelsHidden) { ?>
@@ -169,15 +204,29 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
         $isMultiple = $this->isMultiple();
         $statePath = $this->getStatePath();
         $areButtonLabelsHidden = $this->areButtonLabelsHidden();
+        $size = $this->getSize();
+        $iconSize = match ($size) {
+            Size::ExtraSmall, Size::Small => IconSize::Small,
+            default => null,
+        };
         $wireModelAttribute = $this->applyStateBindingModifiers('wire:model');
-        $extraInputAttributeBag = $this->getExtraInputAttributeBag()->class(['fi-fo-toggle-buttons-input']);
+        $extraInputAttributeBag = $this->getExtraInputAttributeBag()
+            ->merge($this->getAccessibilityAttributes(), escape: false)
+            ->class(['fi-fo-toggle-buttons-input']);
+        $isFullWidth = $this->isFullWidth();
 
         $containerAttributes = $this->getExtraAttributeBag()
             ->merge([
-                'aria-labelledby' => "{$id}-label",
+                ...$this->getAccessibilityAttributes(),
+                'aria-labelledby' => filled($this->getLabel()) ? e("{$id}-label") : null,
+                'aria-required' => (! $isMultiple) && $this->isRequired() && (! $isDisabled) ? 'true' : null,
                 'role' => $isMultiple ? 'group' : 'radiogroup',
             ], escape: false)
-            ->class(['fi-fo-toggle-buttons fi-btn-group']);
+            ->class([
+                'fi-fo-toggle-buttons',
+                'fi-btn-group',
+                'fi-width-full' => $isFullWidth,
+            ]);
 
         ob_start(); ?>
 
@@ -200,7 +249,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                     ->class([
                         'fi-btn',
                         'fi-btn-group-btn',
-                        'fi-size-md',
+                        ($size instanceof Size) ? "fi-size-{$size->value}" : e($size),
                         'fi-disabled' => $shouldOptionBeDisabled,
                     ])
                     ->color(ButtonComponent::class, $color);
@@ -216,7 +265,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                     value="<?= e($value) ?>"
                     wire:loading.attr="disabled"
                     <?= $wireModelAttribute ?>="<?= e($statePath) ?>"
-                    <?= $extraInputAttributeBag->toHtml() ?>
+                    <?= $extraInputAttributeBag->merge(['required' => (! $isMultiple) && $this->isRequired() && (! $shouldOptionBeDisabled)], escape: false)->toHtml() ?>
                 />
 
                 <label
@@ -226,7 +275,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                     <?= $buttonAttributes->toHtml() ?>
                 >
                     <?php if (filled($icon)) { ?>
-                        <?= generate_icon_html($icon)?->toHtml() ?>
+                        <?= generate_icon_html($icon, size: $iconSize)?->toHtml() ?>
                     <?php } ?>
 
                     <?php if (! $areButtonLabelsHidden) { ?>
@@ -273,6 +322,18 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
         return (bool) $this->evaluate($this->isInline);
     }
 
+    public function fullWidth(bool | Closure $condition = true): static
+    {
+        $this->isFullWidth = $condition;
+
+        return $this;
+    }
+
+    public function isFullWidth(): bool
+    {
+        return (bool) $this->evaluate($this->isFullWidth);
+    }
+
     public function hiddenButtonLabels(bool | Closure $condition = true): static
     {
         $this->areButtonLabelsHidden = $condition;
@@ -295,6 +356,13 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
     public function isMultiple(): bool
     {
         return (bool) $this->evaluate($this->isMultiple);
+    }
+
+    public function getRequiredDescription(): ?string
+    {
+        return ($this->isMultiple() && $this->isRequired() && (! $this->isDisabled()))
+            ? __('filament-forms::components.toggle_buttons.required_description')
+            : null;
     }
 
     public function getDefaultState(): mixed

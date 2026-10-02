@@ -24,7 +24,6 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Support\Stringable;
 use ReflectionClass;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -91,6 +90,10 @@ class MakeWidgetCommand extends Command
     protected string $widgetsNamespace;
 
     protected string $widgetsDirectory;
+
+    protected ?string $livewireComponentNamespace = null;
+
+    protected ?string $livewireComponentViewNamespace = null;
 
     /**
      * @return array<InputArgument>
@@ -313,9 +316,11 @@ class MakeWidgetCommand extends Command
             [
                 $this->widgetsNamespace,
                 $this->widgetsDirectory,
+                $this->livewireComponentViewNamespace,
             ] = $this->askForLivewireComponentLocation(
                 question: 'Where would you like to create the widget?',
             );
+            $this->livewireComponentNamespace = $this->widgetsNamespace;
 
             return;
         }
@@ -366,28 +371,39 @@ class MakeWidgetCommand extends Command
 
             $matchingComponentLocationNamespaces = collect($componentLocations)
                 ->keys()
-                ->filter(fn (string $namespace): bool => str($this->fqn)->startsWith($namespace));
+                ->filter(fn (string $namespace): bool => str($this->fqn)->startsWith("{$namespace}\\"));
+
+            if (count($matchingComponentLocationNamespaces) === 1) {
+                $this->livewireComponentNamespace = Arr::first($matchingComponentLocationNamespaces);
+                $this->livewireComponentViewNamespace = $componentLocations[$this->livewireComponentNamespace]['viewNamespace'] ?? null;
+            }
+
+            $view = str($this->fqn);
+
+            if ($view->contains('Filament\\')) {
+                $view = $view->after('Filament\\')->prepend('Filament\\');
+            } elseif (filled($this->livewireComponentNamespace)) {
+                $view = $this->getLivewireComponentViewName(
+                    $this->livewireComponentNamespace,
+                    (string) $view->after("{$this->livewireComponentNamespace}\\"),
+                );
+            } else {
+                $view = $view
+                    ->afterLast('\\Livewire\\')
+                    ->prepend('Livewire\\');
+            }
 
             [
                 $this->view,
                 $this->viewPath,
             ] = $this->askForViewLocation(
-                view: str($this->fqn)
-                    ->whenContains(
-                        'Filament\\',
-                        fn (Stringable $fqn) => $fqn->after('Filament\\')->prepend('Filament\\'),
-                        fn (Stringable $fqn) => $fqn
-                            ->afterLast('\\Livewire\\')
-                            ->prepend('Livewire\\'),
-                    )
+                view: str($view)
                     ->replace('\\', '/')
                     ->explode('/')
                     ->map(Str::kebab(...))
                     ->implode('.'),
                 question: 'Where would you like to create the Blade view for the widget?',
-                defaultNamespace: (count($matchingComponentLocationNamespaces) === 1)
-                    ? $componentLocations[Arr::first($matchingComponentLocationNamespaces)]['viewNamespace'] ?? null
-                    : null,
+                defaultNamespace: $this->livewireComponentViewNamespace,
             );
         }
     }

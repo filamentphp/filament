@@ -16,6 +16,8 @@ it('loads deferred sections, tabs, and wizard steps as they are revealed', funct
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());
 
+        $finiteAnimationsHaveFinished = 'document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")';
+
         visit('/deferred-schema-loading-browser-test')
             ->assertPresent('[data-testid="viewport-deferred-section"] .fi-section-content.fi-sc-loading')
             ->assertMissing('#form\.deferredDetails\.deferred_name')
@@ -23,6 +25,7 @@ it('loads deferred sections, tabs, and wizard steps as they are revealed', funct
             ->assertMissing('#form\.deferredTabs\.preferencesTab\.timezone')
             ->assertMissing('#form\.deferredWizard\.accountStep\.account_name')
             ->assertMissing('#form\.deferredWizard\.confirmationStep\.confirmation_note')
+            ->assertScript($finiteAnimationsHaveFinished)
             ->assertNoAccessibilityIssues()
             ->assertScript("(() => { document.querySelector('[data-testid=\"viewport-deferred-section\"]').scrollIntoView(); return true })()", true)
             ->assertVisible('#form\.deferredDetails\.deferred_name')
@@ -46,6 +49,7 @@ it('loads deferred sections, tabs, and wizard steps as they are revealed', funct
 
         visit('/deferred-schema-loading-browser-test')
             ->inDarkMode()
+            ->assertScript($finiteAnimationsHaveFinished)
             ->assertNoAccessibilityIssues()
             ->assertScript("(() => { document.querySelector('[data-testid=\"deferred-tabs\"]').scrollIntoView(); return true })()", true)
             ->assertVisible('#form\.deferredTabs\.profileTab\.profile_name')
@@ -55,6 +59,7 @@ it('loads deferred sections, tabs, and wizard steps as they are revealed', funct
             ->assertVisible('#form\.deferredWizard\.accountStep\.account_name')
             ->click('Next')
             ->assertVisible('#form\.deferredWizard\.confirmationStep\.confirmation_note')
+            ->assertScript($finiteAnimationsHaveFinished)
             ->assertNoAccessibilityIssues();
     });
 });

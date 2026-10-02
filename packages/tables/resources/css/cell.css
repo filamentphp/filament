@@ -123,6 +123,10 @@
     }
 
     &.fi-ta-group-selection-cell {
-        @apply w-1 px-3 first-of-type:ps-4 last-of-type:pe-4 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+        @apply w-1 px-3 align-middle first-of-type:ps-4 last-of-type:pe-4 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
     }
+}
+
+.fi-ta-search-field > .fi-ta-cell-label {
+    @apply block pt-2 pb-1 text-sm leading-6 font-semibold text-gray-500 sm:hidden dark:text-gray-400;
 }

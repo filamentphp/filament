@@ -5,6 +5,7 @@ namespace Filament\Support\Commands\Concerns;
 use Filament\Exceptions\NoDefaultPanelSetException;
 use Filament\Facades\Filament;
 use Filament\Panel;
+use Filament\Support\Commands\Exceptions\FailureCommandOutput;
 use Illuminate\Support\Arr;
 
 use function Laravel\Prompts\confirm;
@@ -36,6 +37,18 @@ trait HasPanel
         }
 
         $panels = Filament::getPanels();
+
+        if (empty($panels)) {
+            if (filled($initialQuestion)) {
+                $this->panel = null;
+
+                return;
+            }
+
+            $this->components->error('Filament has not been installed yet: php artisan filament:install --panels');
+
+            throw new FailureCommandOutput;
+        }
 
         if (count($panels) > 1) {
             try {

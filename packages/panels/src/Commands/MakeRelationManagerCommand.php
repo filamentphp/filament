@@ -437,7 +437,7 @@ class MakeRelationManagerCommand extends Command
             //
         }
 
-        $this->askForRelatedModel($this->relationship);
+        $this->relatedModelFqn = $this->askForRelatedModel($this->relationship);
     }
 
     protected function configureRecordTitleAttributeIfNotAlready(): void
@@ -501,7 +501,7 @@ class MakeRelationManagerCommand extends Command
 
     protected function configureIsSoftDeletable(): void
     {
-        $this->isSoftDeletable = $this->option('soft-deletes') || ((static::$shouldCheckModelsForSoftDeletes && filled($this->relatedModelFqn))
+        $this->isSoftDeletable = $this->option('soft-deletes') || ((static::$shouldCheckModelsForSoftDeletes && filled($this->relatedModelFqn) && class_exists($this->relatedModelFqn))
                 ? in_array(SoftDeletes::class, class_uses_recursive($this->relatedModelFqn))
                 : confirm(
                     label: 'Does the model use soft-deletes?',

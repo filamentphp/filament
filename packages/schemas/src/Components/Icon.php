@@ -44,7 +44,7 @@ class Icon extends Component implements HasEmbeddedView
         return $this;
     }
 
-    public function getIcon(): string | BackedEnum
+    public function getIcon(): string | BackedEnum | Htmlable
     {
         return $this->evaluate($this->icon);
     }
@@ -78,40 +78,68 @@ class Icon extends Component implements HasEmbeddedView
     public function toEmbeddedHtml(): string
     {
         $size = $this->getSize();
+        $icon = $this->getIcon();
 
         $tooltip = $this->getTooltip();
         $hasTooltip = filled($tooltip);
 
         $extraAttributes = $this->getExtraAttributes();
 
-        // A user-supplied `aria-label` via `extraAttributes()` would land on the icon's `<svg>`, but the
-        // SVG carries a baked-in `aria-hidden="true"` (from the icon source) that removes it — and every
-        // attribute on it, including the label — from the accessibility tree, leaving the icon unnamed.
-        // Pull the label off the SVG and expose it as the icon's visually-hidden text alternative instead.
-        $userLabel = $extraAttributes['aria-label'] ?? null;
-        unset($extraAttributes['aria-label']);
+        $ariaLabel = $extraAttributes['aria-label'] ?? null;
+        $ariaLabelledBy = $extraAttributes['aria-labelledby'] ?? null;
+        $ariaDescribedBy = $extraAttributes['aria-describedby'] ?? null;
+
+        $normalizeText = static fn (mixed $text): mixed => $text instanceof Htmlable
+            ? trim(strip_tags($text->toHtml()))
+            : $text;
+
+        $ariaLabel = $normalizeText($ariaLabel);
+
+        $isImagePathIcon = is_string($icon) && str_contains($icon, '/');
+
+        if ($isImagePathIcon && blank($ariaLabel) && blank($ariaLabelledBy) && blank($extraAttributes['alt'] ?? null) && $hasTooltip) {
+            $ariaLabel = $normalizeText($tooltip);
+            $extraAttributes['aria-label'] = $ariaLabel;
+        }
+
+        foreach (['alt', 'aria-describedby', 'aria-label', 'aria-labelledby'] as $attribute) {
+            if (filled($extraAttributes[$attribute] ?? null)) {
+                $extraAttributes[$attribute] = e($normalizeText($extraAttributes[$attribute]), doubleEncode: false);
+            }
+        }
+
+        if (! $isImagePathIcon) {
+            $extraAttributes['aria-hidden'] = 'true';
+        }
 
         $iconAttributes = [
             'x-tooltip' => $hasTooltip ? '{ content: ' . Js::from($tooltip) . ', theme: $store.theme, allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ' }' : null,
         ];
 
-        $html = generate_icon_html($this->getIcon(), attributes: (new FilamentComponentAttributeBag($iconAttributes))->merge($extraAttributes, escape: false)->color(IconComponent::class, $this->getColor() ?? 'primary')->class(['fi-sc-icon']), size: $size instanceof IconSize ? $size : null)?->toHtml() ?? '';
+        $html = generate_icon_html($icon, attributes: (new FilamentComponentAttributeBag($iconAttributes))->merge($extraAttributes, escape: false)->color(IconComponent::class, $this->getColor() ?? 'primary')->class([
+            'fi-sc-icon',
+            'fi-sc-icon-htmlable' => $icon instanceof Htmlable,
+        ]), size: $size instanceof IconSize ? $size : null)?->toHtml() ?? '';
 
-        // Give the decorative icon a visually-hidden text alternative. Priority: an explicit user
-        // `aria-label`, then the tooltip (which is the icon's meaning but is hover-only). Skipped when the
-        // user named the icon through `aria-labelledby` — they've deliberately pointed at another element.
-        if (filled($userLabel)) {
-            $accessibleText = $userLabel instanceof Htmlable ? trim(strip_tags($userLabel->toHtml())) : $userLabel;
-        } elseif ($hasTooltip && blank($extraAttributes['aria-labelledby'] ?? null)) {
-            $accessibleText = $tooltip instanceof Htmlable ? trim(strip_tags($tooltip->toHtml())) : $tooltip;
-        } else {
-            $accessibleText = null;
+        if ($isImagePathIcon) {
+            return $html;
         }
 
-        if (filled($accessibleText)) {
-            $html .= '<span class="fi-sr-only">' . e($accessibleText) . '</span>';
+        if (blank($ariaLabel) && blank($ariaLabelledBy) && $hasTooltip) {
+            $ariaLabel = $normalizeText($tooltip);
         }
 
-        return $html;
+        if (blank($ariaLabel) && blank($ariaLabelledBy)) {
+            return $html;
+        }
+
+        $accessibleAttributes = (new FilamentComponentAttributeBag([
+            'aria-describedby' => filled($ariaDescribedBy) ? e($normalizeText($ariaDescribedBy), doubleEncode: false) : null,
+            'aria-label' => filled($ariaLabel) ? e($ariaLabel, doubleEncode: false) : null,
+            'aria-labelledby' => filled($ariaLabelledBy) ? e($normalizeText($ariaLabelledBy), doubleEncode: false) : null,
+            'role' => 'img',
+        ]))->class(['fi-sr-only']);
+
+        return $html . '<span ' . $accessibleAttributes->toHtml() . '></span>';
     }
 }

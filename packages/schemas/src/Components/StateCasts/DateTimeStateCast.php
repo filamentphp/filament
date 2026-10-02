@@ -25,8 +25,8 @@ class DateTimeStateCast implements StateCast
             $state = Carbon::parse($state);
         }
 
-        $state->shiftTimezone($this->timezone);
-        $state->setTimezone(config('app.timezone'));
+        $state = $state->shiftTimezone($this->timezone);
+        $state = $state->setTimezone(config('app.timezone'));
 
         return $state->format($this->format);
     }

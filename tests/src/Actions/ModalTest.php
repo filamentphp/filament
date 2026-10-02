@@ -71,7 +71,10 @@ describe('browser interactions', function (): void {
                         resolveLivewireComponentUsing: () => ({}),
                         $wire: {
                             mountedActions: [{}],
-                            __instance: { effects: {} },
+                            __instance: {
+                                effects: {},
+                                addCleanup: () => {},
+                            },
                         },
                     })
 
@@ -108,6 +111,46 @@ describe('browser interactions', function (): void {
         'light mode' => false,
         'dark mode' => true,
     ]);
+
+    it('keeps the parent modal open when `getValidatedData()` prevents a nested modal from opening', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $browser = visit('/modal-browser-test');
+
+        $assertValidationBehavior = static function ($browser): void {
+            $browser
+                ->click('[data-testid="validated-parent-data-trigger"]')
+                ->assertVisible('[data-testid="validated-parent-data-modal"]')
+                ->click('[data-testid="validated-parent-data-suffix-action"]')
+                ->assertValue('[data-testid="validated-parent-data-input"]', 'First generated name')
+                ->click('[data-testid="validated-parent-data-suffix-action"]')
+                ->assertValue('[data-testid="validated-parent-data-input"]', 'Second generated name')
+                ->fill('[data-testid="validated-parent-data-input"]', '')
+                ->click('[data-testid="validated-parent-data-nested-trigger"]')
+                ->assertVisible('[data-testid="validated-parent-data-modal"]')
+                ->assertMissing('[data-testid="validated-parent-data-nested-modal"]')
+                ->assertVisible('[data-testid="validated-parent-data-field"] [data-validation-error]')
+                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
+                ->assertNoAccessibilityIssues()
+                ->type('[data-testid="validated-parent-data-input"]', 'Jane Doe')
+                ->click('[data-testid="validated-parent-data-nested-trigger"]')
+                ->assertValue('[data-testid="validated-parent-data-input"]', 'Jane Doe')
+                ->assertVisible('[data-testid="validated-parent-data-nested-modal"]')
+                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+        };
+
+        $assertValidationBehavior($browser);
+
+        $browser
+            ->click('[data-testid="validated-parent-data-nested-modal"] .fi-modal-footer-actions button >> text=Cancel')
+            ->click('[data-testid="validated-parent-data-modal"] .fi-modal-footer-actions button >> text=Cancel');
+
+        $browser->inDarkMode();
+
+        $assertValidationBehavior($browser);
+    });
 
     it('locks page scroll and restores focus and scroll position after closing a standalone modal', function (): void {
         retry(10, function (): void {
@@ -184,6 +227,54 @@ describe('browser interactions', function (): void {
     })->with([
         'light mode' => false,
         'dark mode' => true,
+    ]);
+
+    it('allows keyboard scrolling in a long modal without tabbable content', function (string $modalType, bool $isDarkMode): void {
+        retry(10, function () use ($modalType, $isDarkMode): void {
+            $this->actingAs(User::factory()->create());
+
+            $browser = visit('/modal-browser-test');
+
+            if ($isDarkMode) {
+                $browser->inDarkMode();
+            }
+
+            $modalSelector = "[data-testid=\"long-{$modalType}-modal\"]";
+            $triggerSelector = "[data-testid=\"long-{$modalType}-trigger\"]";
+
+            $browser
+                // Wait for Alpine to initialize the modal trigger before clicking it from the script.
+                ->assertScript('window.Alpine !== undefined')
+                ->assertScript("(() => { const spacer = document.createElement('div'); spacer.style.height = '200vh'; document.body.append(spacer); const trigger = document.querySelector('{$triggerSelector}'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()", true)
+                ->assertVisible($modalSelector)
+                // Let the focus trap activate before checking its fallback target.
+                ->wait(0.5)
+                ->assertPresent("{$modalSelector}:focus")
+                ->assertScript("document.querySelector('{$modalSelector}').tabIndex", 0)
+                ->assertScript('window.scrollY === window.modalTestScrollY', true)
+                ->keys($modalSelector, 'PageDown')
+                ->wait(0.5)
+                ->assertScript("document.querySelector('{$modalSelector}').scrollTop > 0", true)
+                ->assertScript("document.querySelector('{$modalSelector}').scrollTop = 0", 0)
+                ->keys($modalSelector, 'ArrowDown')
+                ->wait(0.5)
+                ->assertScript("document.querySelector('{$modalSelector}').scrollTop > 0", true)
+                ->assertScript("document.querySelector('{$modalSelector}').scrollTop = 0", 0)
+                ->keys($modalSelector, 'Space')
+                ->wait(0.5)
+                ->assertScript("document.querySelector('{$modalSelector}').scrollTop > 0", true)
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues()
+                ->keys($modalSelector, 'Escape')
+                ->assertMissing($modalSelector)
+                ->assertPresent("{$triggerSelector}:focus")
+                ->assertScript('window.scrollY === window.modalTestScrollY', true);
+        });
+    })->with([
+        'sticky modal in light mode' => ['sticky', false],
+        'sticky modal in dark mode' => ['sticky', true],
+        'slide-over in light mode' => ['slide-over', false],
+        'slide-over in dark mode' => ['slide-over', true],
     ]);
 
     it('does not restore focus to the trigger after closing a standalone modal using `:restores-focus="false"`', function (): void {
@@ -314,18 +405,23 @@ describe('browser interactions', function (): void {
         });
     });
 
-    it('keeps the parent modal focus trap active while a nested modal is open', function (): void {
+    it('keeps focus trapped and the parent modal focus trap active while a nested modal is open', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/modal-browser-test')
                 ->click('Scroll preservation')
                 ->assertVisible('[data-testid="scroll-modal"]')
-                // Let the modal's fields lay out so the window is scrollable.
-                ->wait(1)
+                // Let the focus trap activate and the modal's fields lay out.
+                ->wait(0.5)
+                ->assertPresent('[data-testid="scroll-field-1"]:focus')
+                ->keys('[data-testid="scroll-field-1"]', 'Tab')
+                ->assertPresent('[data-testid="scroll-field-2"]:focus')
+                ->keys('[data-testid="scroll-field-1"]', 'Shift+Tab')
+                ->assertScript('document.activeElement.closest(\'[data-testid="scroll-modal"]\') !== null', true)
                 // Scroll the parent modal window to the bottom (~1264px).
                 ->assertScript('(() => { const el = document.querySelector(\'[data-testid="scroll-modal"]\'); el.scrollTop = el.scrollHeight; return el.scrollTop > 600 })()', true)
-                ->click('[data-testid="scroll-modal"] .fi-modal-footer-actions button >> text=Open nested modal')
+                ->click('[data-testid="scroll-nested-trigger"]')
                 ->assertVisible('[data-testid="scroll-nested-modal"]')
                 // The parent is now hidden behind the child, but its trap must
                 // remain active so it is not re-activated (and re-focused) later.

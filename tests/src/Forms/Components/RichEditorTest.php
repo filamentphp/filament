@@ -1,12 +1,16 @@
 <?php
 
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
+use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Forms\RichEditor\MinimalControlsCalloutBlock;
 use Filament\Tests\Fixtures\Forms\RichEditor\PluginWithFileAttachmentProvider;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
@@ -52,6 +56,27 @@ test('fields can be required', function (): void {
 });
 
 describe('toolbar buttons', function (): void {
+    test('uses `FormsIconAlias` constants for all built-in tools', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content'),
+            ])
+            ->getComponents()[0];
+
+        $iconAliases = array_values(array_filter(
+            (new ReflectionClass(FormsIconAlias::class))->getConstants(),
+            static fn (string $name): bool => str_starts_with($name, 'COMPONENTS_RICH_EDITOR_TOOLBAR_'),
+            ARRAY_FILTER_USE_KEY,
+        ));
+        $toolIconAliases = array_values(array_map(
+            static fn (RichEditorTool $tool): ?string => $tool->getIconAlias(),
+            $richEditor->getTools(),
+        ));
+
+        expect($toolIconAliases)->toEqualCanonicalizing($iconAliases);
+    });
+
     test('can get default toolbar buttons using `getDefaultToolbarButtons()`', function (): void {
         $richEditor = Schema::make(Livewire::make())
             ->statePath('data')
@@ -71,6 +96,22 @@ describe('toolbar buttons', function (): void {
             ->and($defaultButtons[3])->toEqual(['blockquote', 'codeBlock', 'bulletList', 'orderedList'])
             ->and($defaultButtons[4])->toEqual(['table', 'attachFiles'])
             ->and($defaultButtons[5])->toEqual(['undo', 'redo']);
+    });
+
+    test('can get default floating toolbars using `getDefaultFloatingToolbars()`', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content'),
+            ])
+            ->getComponents()[0];
+
+        expect($richEditor->getDefaultFloatingToolbars())
+            ->toHaveKey('grid', [
+                'gridAddColumnBefore', 'gridAddColumnAfter', 'gridDeleteColumn',
+                'gridDelete',
+            ])
+            ->toHaveKey('table');
     });
 
     test('can overwrite toolbar buttons array using `toolbarButtons()`', function (): void {
@@ -314,6 +355,30 @@ describe('toolbar buttons', function (): void {
 });
 
 describe('file attachments', function (): void {
+    it('stores the server-detected `mimetype`', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->fileAttachmentsDirectory('attachments')
+                    ->fileAttachmentsDisk('public')
+                    ->fileAttachmentsVisibility('private'),
+            ])
+            ->getComponents()[0];
+
+        $file = Mockery::mock(TemporaryUploadedFile::class);
+        $file->shouldReceive('getMimeType')->once()->andReturn('image/png');
+        $file->shouldReceive('store')
+            ->once()
+            ->with('attachments', [
+                'disk' => 'public',
+                'mimetype' => 'image/png',
+            ])
+            ->andReturn('attachments/image.png');
+
+        expect($richEditor->saveUploadedFileAttachment($file))->toBe('attachments/image.png');
+    });
+
     test('`hasFileAttachments()` returns `true` by default', function (): void {
         $richEditor = Schema::make(Livewire::make())
             ->statePath('data')
@@ -779,6 +844,52 @@ it('can set `linkProtocols()`', function (): void {
     expect($editor->getLinkProtocols())->toBe(['https', 'mailto']);
 });
 
+it('returns default link protocols before the editor is attached to a schema', function (): void {
+    expect(RichEditor::make('content')->getLinkProtocols())->toBe([
+        'http',
+        'https',
+        'ftp',
+        'ftps',
+        'mailto',
+        'tel',
+        'callto',
+        'sms',
+        'cid',
+        'xmpp',
+    ]);
+});
+
+it('inherits `linkProtocols()` from the rich content attribute', function (): void {
+    $record = new PostWithRichContent;
+    $record->getRichContentAttribute('content')
+        ->linkProtocols(['https', 'mailto']);
+
+    $editor = Schema::make(Livewire::make())
+        ->model($record)
+        ->components([
+            RichEditor::make('content'),
+        ])
+        ->getComponents()[0];
+
+    expect($editor->getLinkProtocols())->toBe(['https', 'mailto']);
+});
+
+it('can override rich content attribute `linkProtocols()`', function (): void {
+    $record = new PostWithRichContent;
+    $record->getRichContentAttribute('content')
+        ->linkProtocols(['https', 'mailto']);
+
+    $editor = Schema::make(Livewire::make())
+        ->model($record)
+        ->components([
+            RichEditor::make('content')
+                ->linkProtocols(['tel']),
+        ])
+        ->getComponents()[0];
+
+    expect($editor->getLinkProtocols())->toBe(['tel']);
+});
+
 it('can set `textColors()`', function (): void {
     $editor = RichEditor::make('content')
         ->textColors(['red' => '#ff0000', 'blue' => '#0000ff']);
@@ -919,6 +1030,89 @@ it('returns `false` for `hasMentions()` by default', function (): void {
     expect($editor->hasMentions())->toBeFalse();
 });
 
+describe('mention options', function (): void {
+    // JavaScript objects order integer-like keys in ascending numeric order, so mention
+    // items must be sent as an ordered list of `id` and `label` pairs instead of an
+    // object keyed by ID, otherwise the order of the items is silently discarded.
+
+    it('preserves the declared order of `items()` in `getMentionsForJs()`', function (): void {
+        $mentions = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->mentions([
+                        MentionProvider::make('@')
+                            ->items([30 => 'Alice', 10 => 'Bob', 20 => 'Carol']),
+                    ]),
+            ])
+            ->getComponents()[0]
+            ->getMentionsForJs();
+
+        expect($mentions[0]['items'])->toBe([
+            ['id' => '30', 'label' => 'Alice'],
+            ['id' => '10', 'label' => 'Bob'],
+            ['id' => '20', 'label' => 'Carol'],
+        ]);
+    });
+
+    it('preserves sequential IDs from `items()` in `getMentionsForJs()`', function (): void {
+        $mentions = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->mentions([
+                        MentionProvider::make('@')
+                            ->items([0 => 'Alice', 1 => 'Bob']),
+                    ]),
+            ])
+            ->getComponents()[0]
+            ->getMentionsForJs();
+
+        // Without the `id` and `label` pairs, sequential IDs serialise to a JSON array of
+        // bare labels, and the inserted mention takes its label as its `id`.
+        expect($mentions[0]['items'])->toBe([
+            ['id' => '0', 'label' => 'Alice'],
+            ['id' => '1', 'label' => 'Bob'],
+        ]);
+    });
+
+    it('preserves result order in `getMentionSearchResultsForJs()`', function (): void {
+        $results = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->mentions([
+                        MentionProvider::make('@')
+                            ->getSearchResultsUsing(static fn (string $search): array => [
+                                3 => 'Alice',
+                                1 => 'Carol',
+                                2 => 'Bob',
+                            ]),
+                    ]),
+            ])
+            ->getComponents()[0]
+            ->getMentionSearchResultsForJs('a');
+
+        expect($results)->toBe([
+            ['id' => '3', 'label' => 'Alice'],
+            ['id' => '1', 'label' => 'Carol'],
+            ['id' => '2', 'label' => 'Bob'],
+        ]);
+    });
+
+    it('returns an empty array from `getMentionSearchResultsForJs()` when no mention providers are configured', function (): void {
+        $results = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content'),
+            ])
+            ->getComponents()[0]
+            ->getMentionSearchResultsForJs('a');
+
+        expect($results)->toBe([]);
+    });
+});
+
 it('returns fluent `$this` from `tools()`', function (): void {
     $editor = RichEditor::make('content');
 
@@ -954,6 +1148,45 @@ it('can clear `activePanel()` with `null`', function (): void {
         ->activePanel(null);
 
     expect($editor->getActivePanel())->toBeNull();
+});
+
+it('keeps optional custom block and sticky features disabled by default and evaluates their conditions', function (string $setter, string $getter): void {
+    $editor = RichEditor::make('content');
+
+    expect($editor->{$getter}())->toBeFalse();
+
+    $editor->{$setter}();
+
+    expect($editor->{$getter}())->toBeTrue();
+
+    $editor->{$setter}(static fn (): bool => false);
+
+    expect($editor->{$getter}())->toBeFalse();
+
+    $editor->{$setter}(false);
+
+    expect($editor->{$getter}())->toBeFalse();
+})->with([
+    '`customBlocksGrid()`' => ['customBlocksGrid', 'hasCustomBlocksGrid'],
+    '`searchableCustomBlocks()`' => ['searchableCustomBlocks', 'hasSearchableCustomBlocks'],
+    '`stickyToolbar()`' => ['stickyToolbar', 'hasStickyToolbar'],
+    '`stickyPanels()`' => ['stickyPanels', 'hasStickyPanels'],
+]);
+
+it('can evaluate and clear `stickyOffset()` without enabling sticky controls', function (): void {
+    $editor = RichEditor::make('content');
+
+    expect($editor->getStickyOffset())->toBeNull();
+
+    $editor->stickyOffset(static fn (): string => '5rem');
+
+    expect($editor->getStickyOffset())->toBe('5rem')
+        ->and($editor->hasStickyToolbar())->toBeFalse()
+        ->and($editor->hasStickyPanels())->toBeFalse();
+
+    $editor->stickyOffset(null);
+
+    expect($editor->getStickyOffset())->toBeNull();
 });
 
 it('returns fluent `$this` from `customTextColors()`', function (): void {
@@ -1174,6 +1407,11 @@ describe('rendering', function (): void {
             ->assertSuccessful();
     });
 
+    it('can render with `minimalCustomBlockControls()`', function (): void {
+        livewire(RenderRichEditorWithMinimalCustomBlockControls::class)
+            ->assertSuccessful();
+    });
+
     it('can render with `noMergeTagSearchResultsMessage()`', function (): void {
         livewire(RenderRichEditorWithNoMergeTagSearchResultsMessage::class)
             ->assertSuccessful();
@@ -1193,6 +1431,96 @@ describe('rendering', function (): void {
         livewire(RenderRichEditorWithPluginDisabledButtons::class)
             ->assertSuccessful();
     });
+});
+
+it('keeps `minimalCustomBlockControls()` opt-in and evaluates and resets its condition', function (): void {
+    $richEditor = RichEditor::make('content')
+        ->container(Schema::make(Livewire::make())->statePath('data'));
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeFalse();
+
+    $richEditor->minimalCustomBlockControls();
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeTrue();
+
+    $richEditor->minimalCustomBlockControls(static fn (): bool => false);
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeFalse();
+
+    $richEditor->minimalCustomBlockControls(static fn (): bool => true);
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeTrue();
+
+    $richEditor->minimalCustomBlockControls(false);
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeFalse();
+});
+
+it('can edit, delete and undo custom blocks with `minimalCustomBlockControls()`', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/rich-editor-minimal-controls-browser-test');
+
+    $minimalEditor = '[data-testid="minimal-controls-editor"]';
+    $customBlock = '[data-testid="rich-editor-custom-block"]';
+    $firstCallout = ':nth-match(' . $minimalEditor . ' ' . $customBlock . '[data-id="callout"], 1)';
+    $secondCallout = ':nth-match(' . $minimalEditor . ' ' . $customBlock . '[data-id="callout"], 2)';
+    $editButton = ' [data-testid="rich-editor-custom-block-edit-button"]';
+    $deleteButton = ' [data-testid="rich-editor-custom-block-delete-button"]';
+
+    $page
+        ->assertVisible($minimalEditor . ' ' . $customBlock . '[data-id="divider"]' . $deleteButton)
+        ->assertNotPresent('[data-testid="disabled-controls-editor"] [data-testid$="-button"]')
+        ->assertScript(<<<'JS'
+            (() => {
+                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')).$getEditor()
+                editor.commands.focus()
+                editor.commands.setTextSelection(editor.state.doc.content.size - 1)
+                return true
+            })()
+            JS)
+        ->click($secondCallout . $editButton)
+        ->assertVisible('[data-testid="minimal-controls-edit-modal"]')
+        ->fill('[data-testid="minimal-controls-message-input"]', 'Updated second callout.')
+        ->click('[data-testid="minimal-controls-edit-modal"] button[type="submit"]')
+        ->assertScript(<<<'JS'
+            (() => {
+                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')).$getEditor()
+                return editor.getJSON().content.filter(node => node.type === 'customBlock' && node.attrs.id === 'callout').map(node => node.attrs.config.message)
+            })()
+            JS, ['First callout.', 'Updated second callout.'])
+        // Keep the deletion outside TipTap's history grouping interval for the edit.
+        ->wait(0.6)
+        ->click($firstCallout . $deleteButton)
+        ->assertScript(<<<'JS'
+            (() => {
+                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')).$getEditor()
+                return editor.getJSON().content.filter(node => node.type === 'customBlock' && node.attrs.id === 'callout').map(node => node.attrs.config.message)
+            })()
+            JS, ['Updated second callout.'])
+        ->assertScript(<<<'JS'
+            document.activeElement === document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')
+            JS);
+
+    $page->page()->keyDown('Control');
+    $page->page()->keyDown('z');
+    $page->page()->keyUp('z');
+    $page->page()->keyUp('Control');
+
+    $page
+        ->assertScript(<<<'JS'
+            (() => {
+                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')).$getEditor()
+                return editor.getJSON().content.filter(node => node.type === 'customBlock' && node.attrs.id === 'callout').map(node => node.attrs.config.message)
+            })()
+            JS, ['First callout.', 'Updated second callout.'])
+        ->assertNoAccessibilityIssues();
+
+    visit('/rich-editor-minimal-controls-browser-test')
+        ->on()->mobile()
+        ->inDarkMode()
+        ->assertVisible($firstCallout . $editButton)
+        ->assertNoAccessibilityIssues();
 });
 
 describe('custom blocks', function (): void {
@@ -1320,6 +1648,35 @@ describe('custom blocks', function (): void {
             ->getComponents()[0];
 
         expect($richEditor->getCustomBlock('nonexistent'))->toBeNull();
+    });
+
+    it('returns trusted custom block previews from `getCustomBlockPreviewsForJs()`', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks([MinimalControlsCalloutBlock::class]),
+            ])
+            ->getComponents()[0];
+
+        $previews = $richEditor->getCustomBlockPreviewsForJs([
+            [
+                'id' => 'callout',
+                'config' => ['message' => 'Copied callout.'],
+                'key' => 0,
+            ],
+            [
+                'id' => 'unknown',
+                'config' => [],
+                'key' => 1,
+            ],
+        ]);
+
+        expect($previews)->toHaveCount(1);
+        expect($previews[0]['key'])->toBe(0);
+        expect($previews[0]['label'])->toBe('Callout');
+        expect(base64_decode($previews[0]['preview']))->toBe('<p>Copied callout.</p>');
+        expect($previews[0]['shouldApplyProseStylingToPreview'])->toBeFalse();
     });
 
     it('includes `customBlocks` toolbar button when blocks are registered', function (): void {
@@ -1504,6 +1861,726 @@ it('can render `RichEditor` in the browser', function (): void {
         visit('/rich-editor-browser-test')
             ->inDarkMode()
             ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+    });
+});
+
+it('does not render custom block previews from imported HTML', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/rich-editor-minimal-controls-browser-test');
+
+        $page
+            ->assertPresent('[data-testid="minimal-controls-editor"] .tiptap')
+            ->assertScript(<<<'JS'
+                (() => {
+                    window.customBlockPreviewCommitCount = 0
+                    window.removeCustomBlockPreviewCommitHook = Livewire.hook('commit', () => window.customBlockPreviewCommitCount++)
+
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                    const clipboardData = new DataTransfer()
+
+                    clipboardData.setData('text/html', `<div data-type="customBlock" data-id="callout" data-config='{"message":"First callout."}'></div>`)
+
+                    editor.view.dom.dispatchEvent(new ClipboardEvent('paste', {
+                        bubbles: true,
+                        cancelable: true,
+                        clipboardData,
+                    }))
+
+                    return true
+                })()
+                JS)
+            ->wait(1)
+            ->assertScript('window.customBlockPreviewCommitCount', 0)
+            ->assertScript(<<<'JS'
+                (() => {
+                    window.removeCustomBlockPreviewCommitHook()
+
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+
+                    return editor.getJSON().content
+                        .filter((node) => node.type === 'customBlock' && node.attrs.config?.message === 'First callout.')
+                        .map((node) => [node.attrs.label, atob(node.attrs.preview)])
+                })()
+                JS, [
+                ['Callout', '<p>First callout.</p>'],
+                ['Callout', '<p>First callout.</p>'],
+            ])
+            ->assertScript(<<<'JS'
+                (() => {
+                    window.customBlockPreviewExecuted = false
+
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                    const preview = btoa('<img src="x" onerror="window.customBlockPreviewExecuted = true">')
+                    const clipboardData = new DataTransfer()
+
+                    clipboardData.setData('text/html', `<div data-type="customBlock" data-id="callout" data-config='{"message":"Copied callout.","options":{}}' data-label="Untrusted label" data-preview="${preview}" shouldApplyProseStylingToPreview="true"></div>`)
+
+                    editor.view.dom.dispatchEvent(new ClipboardEvent('paste', {
+                        bubbles: true,
+                        cancelable: true,
+                        clipboardData,
+                    }))
+
+                    const block = editor.getJSON().content.find((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.')
+
+                    return [
+                        Boolean(block),
+                        block?.attrs.id ?? null,
+                        block?.attrs.config?.message ?? null,
+                        block?.attrs.preview ?? null,
+                        block?.attrs.shouldApplyProseStylingToPreview ?? null,
+                    ]
+                })()
+                JS, [true, 'callout', 'Copied callout.', null, false])
+            ->wait(1)
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                    const block = editor.getJSON().content.find((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.')
+
+                    return [
+                        block?.attrs.label ?? null,
+                        block?.attrs.preview ? atob(block.attrs.preview) : null,
+                    ]
+                })()
+                JS, ['Callout', '<p>Copied callout.</p>'])
+            ->assertScript('window.customBlockPreviewExecuted', false)
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                    const clipboardData = new DataTransfer()
+
+                    clipboardData.setData('text/html', `<div data-type="customBlock" data-id="callout" data-config='{"message":"Copied callout.","options":{}}'></div>`)
+
+                    editor.view.dom.dispatchEvent(new ClipboardEvent('paste', {
+                        bubbles: true,
+                        cancelable: true,
+                        clipboardData,
+                    }))
+
+                    return true
+                })()
+                JS)
+            ->wait(1)
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+
+                    return editor.getJSON().content
+                        .filter((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.')
+                        .map((node) => [node.attrs.label, atob(node.attrs.preview)])
+                })()
+                JS, [
+                ['Callout', '<p>Copied callout.</p>'],
+                ['Callout', '<p>Copied callout.</p>'],
+            ])
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+
+                    editor.commands.focus()
+
+                    return true
+                })()
+                JS);
+
+        $page->page()->keyDown('Control');
+        $page->page()->keyDown('z');
+        $page->page()->keyUp('z');
+        $page->page()->keyUp('Control');
+
+        $page
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+
+                    return editor.getJSON().content.filter((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.').length
+                })()
+                JS, 1);
+
+        $page->page()->keyDown('Control');
+        $page->page()->keyDown('Shift');
+        $page->page()->keyDown('z');
+        $page->page()->keyUp('z');
+        $page->page()->keyUp('Shift');
+        $page->page()->keyUp('Control');
+
+        $page
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+
+                    return editor.getJSON().content
+                        .filter((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.')
+                        .map((node) => [node.attrs.label, atob(node.attrs.preview)])
+                })()
+                JS, [
+                ['Callout', '<p>Copied callout.</p>'],
+                ['Callout', '<p>Copied callout.</p>'],
+            ])
+            ->assertNoAccessibilityIssues();
+
+        visit('/rich-editor-minimal-controls-browser-test')
+            ->inDarkMode()
+            ->assertPresent('[data-testid="minimal-controls-editor"] .tiptap')
+            ->assertNoAccessibilityIssues();
+    });
+});
+
+it('can delete a grid from its floating toolbar without deleting its content', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        foreach ([false, true] as $isDarkMode) {
+            $page = visit('/rich-editor-browser-test');
+
+            if ($isDarkMode) {
+                $page->inDarkMode();
+            }
+
+            $page
+                ->assertPresent('[data-testid="default-rich-editor"] .tiptap')
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+
+                        editor.commands.setContent({
+                            type: 'doc',
+                            content: [
+                                { type: 'paragraph', content: [{ type: 'text', text: 'Before grid.' }] },
+                                {
+                                    type: 'grid',
+                                    attrs: { 'data-cols': 2, 'data-from-breakpoint': 'md' },
+                                    content: [
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 1 },
+                                            content: [
+                                                { type: 'paragraph', content: [{ type: 'text', text: 'First column.' }] },
+                                                { type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: 'Column heading' }] },
+                                            ],
+                                        },
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 1 },
+                                            content: [
+                                                { type: 'paragraph', content: [{ type: 'text', text: 'Second column.' }] },
+                                                {
+                                                    type: 'bulletList',
+                                                    content: [
+                                                        {
+                                                            type: 'listItem',
+                                                            content: [
+                                                                { type: 'paragraph', content: [{ type: 'text', text: 'List item.' }] },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                                { type: 'paragraph', content: [{ type: 'text', text: 'After grid.' }] },
+                            ],
+                        })
+
+                        let selectionPosition = null
+
+                        editor.state.doc.descendants((node, position) => {
+                            if (node.isText && node.text === 'First column.') {
+                                selectionPosition = position + 1
+                            }
+                        })
+
+                        editor.chain().focus().setTextSelection(selectionPosition).run()
+
+                        return true
+                    })()
+                    JS)
+                ->assertVisible('[data-testid="default-rich-editor"] .fi-fo-rich-editor-floating-toolbar button[aria-label="Delete grid"]')
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = document.querySelector('[data-testid="default-rich-editor"]')
+                        const gridBounds = editor.querySelector('.grid-layout').getBoundingClientRect()
+                        const toolbarBounds = editor.querySelector('.fi-fo-rich-editor-floating-toolbar button[aria-label="Delete grid"]').parentElement.getBoundingClientRect()
+
+                        return toolbarBounds.right <= gridBounds.left ||
+                            toolbarBounds.left >= gridBounds.right ||
+                            toolbarBounds.bottom <= gridBounds.top ||
+                            toolbarBounds.top >= gridBounds.bottom
+                    })()
+                    JS)
+                ->assertNoAccessibilityIssues()
+                ->click('[data-testid="default-rich-editor"] .fi-fo-rich-editor-floating-toolbar button[aria-label="Delete grid"]')
+                ->assertScript(
+                    <<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+                        const content = editor.getJSON().content
+                        const getText = (node) => node.text ?? (node.content ?? []).map(getText).join('')
+
+                        return [
+                            content.map((node) => node.type),
+                            content.map(getText),
+                            JSON.stringify(content).includes('"type":"grid"'),
+                        ]
+                    })()
+                    JS,
+                    [
+                        ['paragraph', 'paragraph', 'heading', 'paragraph', 'bulletList', 'paragraph'],
+                        ['Before grid.', 'First column.', 'Column heading', 'Second column.', 'List item.', 'After grid.'],
+                        false,
+                    ],
+                )
+                ->assertNoAccessibilityIssues();
+        }
+    });
+});
+
+it('can manage grid columns from its floating toolbar', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        foreach ([false, true] as $isDarkMode) {
+            $page = visit('/rich-editor-browser-test');
+
+            if ($isDarkMode) {
+                $page->inDarkMode();
+            }
+
+            $page
+                ->assertPresent('[data-testid="default-rich-editor"] .tiptap')
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+
+                        editor.commands.setContent({
+                            type: 'doc',
+                            content: [
+                                {
+                                    type: 'grid',
+                                    attrs: { 'data-cols': 2, 'data-from-breakpoint': '2xl' },
+                                    content: [
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 1 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Alpha' }] }],
+                                        },
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 1 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Beta' }] }],
+                                        },
+                                    ],
+                                },
+                            ],
+                        })
+
+                        let selectionPosition = null
+
+                        editor.state.doc.descendants((node, position) => {
+                            if (node.isText && node.text === 'Beta') {
+                                selectionPosition = position + 1
+                            }
+                        })
+
+                        editor.chain().focus().setTextSelection(selectionPosition).run()
+
+                        return true
+                    })()
+                    JS)
+                ->assertVisible('[data-testid="default-rich-editor"] [data-testid="grid-add-column-before"]')
+                ->assertVisible('[data-testid="default-rich-editor"] [data-testid="grid-add-column-after"]')
+                ->assertVisible('[data-testid="default-rich-editor"] [data-testid="grid-delete-column"]')
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = document.querySelector('[data-testid="default-rich-editor"]')
+
+                        return [
+                            editor.querySelector('[data-testid="grid-add-column-before"]').disabled,
+                            editor.querySelector('[data-testid="grid-add-column-after"]').disabled,
+                            editor.querySelector('[data-testid="grid-delete-column"]').disabled,
+                        ]
+                    })()
+                    JS, [false, false, false])
+                ->assertNoAccessibilityIssues()
+                ->click('[data-testid="default-rich-editor"] [data-testid="grid-add-column-before"]')
+                ->click('[data-testid="default-rich-editor"] [data-testid="grid-add-column-after"]')
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+                        const grid = editor.getJSON().content[0]
+                        const getText = (node) => node.text ?? (node.content ?? []).map(getText).join('')
+
+                        return [
+                            grid.attrs['data-cols'],
+                            grid.attrs['data-from-breakpoint'],
+                            grid.content.map((column) => column.attrs['data-col-span']),
+                            grid.content.map(getText),
+                        ]
+                    })()
+                    JS, [
+                    4,
+                    '2xl',
+                    [1, 1, 1, 1],
+                    ['Alpha', '', 'Beta', ''],
+                ])
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+
+                        editor.commands.setContent({
+                            type: 'doc',
+                            content: [
+                                {
+                                    type: 'grid',
+                                    attrs: { 'data-cols': 3, 'data-from-breakpoint': 'sm' },
+                                    content: [
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 1 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Narrow' }] }],
+                                        },
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 2 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Wide' }] }],
+                                        },
+                                    ],
+                                },
+                            ],
+                        })
+
+                        let selectionPosition = null
+
+                        editor.state.doc.descendants((node, position) => {
+                            if (node.isText && node.text === 'Narrow') {
+                                selectionPosition = position + 1
+                            }
+                        })
+
+                        editor.chain().focus().setTextSelection(selectionPosition).run()
+
+                        return true
+                    })()
+                    JS)
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = document.querySelector('[data-testid="default-rich-editor"]')
+
+                        return [
+                            editor.querySelector('[data-testid="grid-add-column-before"]').disabled,
+                            editor.querySelector('[data-testid="grid-add-column-after"]').disabled,
+                            editor.querySelector('[data-testid="grid-delete-column"]').disabled,
+                        ]
+                    })()
+                    JS, [true, true, false])
+                ->click('[data-testid="default-rich-editor"] [data-testid="grid-delete-column"]')
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+                        const grid = editor.getJSON().content[0]
+                        const getText = (node) => node.text ?? (node.content ?? []).map(getText).join('')
+                        const richEditor = document.querySelector('[data-testid="default-rich-editor"]')
+                        const deleteButton = document.querySelector('[data-testid="default-rich-editor"] [data-testid="grid-delete-column"]')
+
+                        return [
+                            grid.attrs['data-cols'],
+                            grid.attrs['data-from-breakpoint'],
+                            grid.content.map((column) => column.attrs['data-col-span']),
+                            grid.content.map(getText),
+                            richEditor.querySelector('[data-testid="grid-add-column-before"]').disabled,
+                            richEditor.querySelector('[data-testid="grid-add-column-after"]').disabled,
+                            deleteButton.disabled,
+                        ]
+                    })()
+                    JS, [1, 'sm', [1], ['Wide'], false, false, true])
+                ->click('[data-testid="default-rich-editor"] [data-testid="grid-add-column-after"]')
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+                        const grid = editor.getJSON().content[0]
+                        const getText = (node) => node.text ?? (node.content ?? []).map(getText).join('')
+
+                        return [
+                            grid.attrs['data-cols'],
+                            grid.attrs['data-from-breakpoint'],
+                            grid.content.map((column) => column.attrs['data-col-span']),
+                            grid.content.map(getText),
+                        ]
+                    })()
+                    JS, [2, 'sm', [1, 1], ['Wide', '']])
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+
+                        editor.commands.setContent({
+                            type: 'doc',
+                            content: [
+                                {
+                                    type: 'grid',
+                                    attrs: { 'data-cols': 3, 'data-from-breakpoint': '2xl' },
+                                    content: [
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 1 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Narrow' }] }],
+                                        },
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 2 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Wide' }] }],
+                                        },
+                                    ],
+                                },
+                            ],
+                        })
+
+                        let selectionPosition = null
+
+                        editor.state.doc.descendants((node, position) => {
+                            if (node.isText && node.text === 'Wide') {
+                                selectionPosition = position + 1
+                            }
+                        })
+
+                        editor.chain().focus().setTextSelection(selectionPosition).deleteGridColumn().run()
+
+                        const grid = editor.getJSON().content[0]
+                        const getText = (node) => node.text ?? (node.content ?? []).map(getText).join('')
+
+                        return [
+                            grid.attrs['data-cols'],
+                            grid.attrs['data-from-breakpoint'],
+                            grid.content.map((column) => column.attrs['data-col-span']),
+                            grid.content.map(getText),
+                        ]
+                    })()
+                    JS, [1, '2xl', [1], ['Narrow']])
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+
+                        editor.commands.setContent({
+                            type: 'doc',
+                            content: [
+                                {
+                                    type: 'grid',
+                                    attrs: { 'data-cols': 8, 'data-from-breakpoint': 'lg' },
+                                    content: [
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 2 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Left' }] }],
+                                        },
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 4 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Middle' }] }],
+                                        },
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 2 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Right' }] }],
+                                        },
+                                    ],
+                                },
+                            ],
+                        })
+
+                        let selectionPosition = null
+
+                        editor.state.doc.descendants((node, position) => {
+                            if (node.isText && node.text === 'Middle') {
+                                selectionPosition = position + 1
+                            }
+                        })
+
+                        editor.chain().focus().setTextSelection(selectionPosition).deleteGridColumn().run()
+
+                        const grid = editor.getJSON().content[0]
+                        const getText = (node) => node.text ?? (node.content ?? []).map(getText).join('')
+
+                        return [
+                            grid.attrs['data-cols'],
+                            grid.attrs['data-from-breakpoint'],
+                            grid.content.map((column) => column.attrs['data-col-span']),
+                            grid.content.map(getText),
+                        ]
+                    })()
+                    JS, [2, 'lg', [1, 1], ['Left', 'Right']])
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+
+                        editor.commands.setContent({
+                            type: 'doc',
+                            content: [
+                                {
+                                    type: 'grid',
+                                    attrs: { 'data-cols': 2, 'data-from-breakpoint': 'lg' },
+                                    content: [
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 1 },
+                                            content: [
+                                                { type: 'paragraph', content: [{ type: 'text', text: 'Outer before' }] },
+                                                {
+                                                    type: 'grid',
+                                                    attrs: { 'data-cols': 2, 'data-from-breakpoint': 'xl' },
+                                                    content: [
+                                                        {
+                                                            type: 'gridColumn',
+                                                            attrs: { 'data-col-span': 1 },
+                                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Inner alpha' }] }],
+                                                        },
+                                                        {
+                                                            type: 'gridColumn',
+                                                            attrs: { 'data-col-span': 1 },
+                                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Inner beta' }] }],
+                                                        },
+                                                    ],
+                                                },
+                                                { type: 'paragraph', content: [{ type: 'text', text: 'Outer after' }] },
+                                            ],
+                                        },
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 1 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Outer sibling' }] }],
+                                        },
+                                    ],
+                                },
+                            ],
+                        })
+
+                        let selectionPosition = null
+
+                        editor.state.doc.descendants((node, position) => {
+                            if (node.type.name === 'gridColumn' && node.textContent === 'Inner beta') {
+                                selectionPosition = position
+                            }
+                        })
+
+                        editor.chain().focus().setNodeSelection(selectionPosition).addGridColumnBefore().addGridColumnAfter().deleteGridColumn().run()
+
+                        const outerGrid = editor.getJSON().content[0]
+                        const outerColumn = outerGrid.content[0]
+                        const innerGrid = outerColumn.content[1]
+                        const getText = (node) => node.text ?? (node.content ?? []).map(getText).join('')
+
+                        return [
+                            outerGrid.attrs['data-cols'],
+                            outerGrid.attrs['data-from-breakpoint'],
+                            outerGrid.content.map(getText),
+                            innerGrid.attrs['data-cols'],
+                            innerGrid.attrs['data-from-breakpoint'],
+                            innerGrid.content.map((column) => column.attrs['data-col-span']),
+                            innerGrid.content.map(getText),
+                        ]
+                    })()
+                    JS, [
+                    2,
+                    'lg',
+                    ['Outer beforeInner alphaOuter after', 'Outer sibling'],
+                    3,
+                    'xl',
+                    [1, 1, 1],
+                    ['Inner alpha', '', ''],
+                ])
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+
+                        editor.commands.setContent({
+                            type: 'doc',
+                            content: [
+                                {
+                                    type: 'grid',
+                                    attrs: { 'data-cols': 12, 'data-from-breakpoint': 'md' },
+                                    content: Array.from({ length: 12 }, (_, index) => ({
+                                        type: 'gridColumn',
+                                        attrs: { 'data-col-span': 1 },
+                                        content: [{ type: 'paragraph', content: [{ type: 'text', text: `Column ${index + 1}` }] }],
+                                    })),
+                                },
+                            ],
+                        })
+
+                        let selectionPosition = null
+
+                        editor.state.doc.descendants((node, position) => {
+                            if (node.isText && node.text === 'Column 1') {
+                                selectionPosition = position + 1
+                            }
+                        })
+
+                        editor.chain().focus().setTextSelection(selectionPosition).run()
+
+                        return true
+                    })()
+                    JS)
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = document.querySelector('[data-testid="default-rich-editor"]')
+
+                        return [
+                            editor.querySelector('[data-testid="grid-add-column-before"]').disabled,
+                            editor.querySelector('[data-testid="grid-add-column-after"]').disabled,
+                        ]
+                    })()
+                    JS, [true, true])
+                ->assertNoAccessibilityIssues();
+        }
+    });
+});
+
+it('can search custom blocks and insert one at the preserved editor selection', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/rich-editor-browser-test')
+            ->assertPresent('[data-testid="custom-blocks-rich-editor"] .tiptap')
+            ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '  eDiToRiAl  ')
+            ->assertVisible('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
+            ->assertVisible('[data-testid="custom-blocks-rich-editor"] [data-block-id="section"]')
+            ->assertMissing('[data-testid="custom-blocks-rich-editor"] [data-block-id="image"]')
+            ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', 'unknown block')
+            ->assertPresent('[data-testid="custom-blocks-rich-editor"] [role="status"]')
+            ->assertMissing('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
+            ->assertNoAccessibilityIssues()
+            ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '')
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="custom-blocks-rich-editor"] .tiptap')).$getEditor()
+                    editor.commands.focus()
+                    editor.commands.setTextSelection(editor.state.doc.firstChild.nodeSize - 1)
+
+                    return true
+                })()
+                JS)
+            ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '  QuOtE  ')
+            ->click('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="custom-blocks-rich-editor"] .tiptap')).$getEditor()
+                    const content = editor.getJSON().content
+                    const blockPosition = content.findIndex((node) => node.type === 'customBlock')
+                    const lastParagraphPosition = content.findIndex((node) => node.content?.[0]?.text === 'Last paragraph.')
+
+                    return blockPosition > 0 &&
+                        blockPosition < lastParagraphPosition &&
+                        content[blockPosition].attrs.id === 'quote'
+                })()
+                JS)
+            ->assertNoAccessibilityIssues();
+
+        visit('/rich-editor-browser-test')
+            ->inDarkMode()
+            ->assertPresent('[data-testid="custom-blocks-rich-editor"] .tiptap')
             ->assertNoAccessibilityIssues();
     });
 });
@@ -2052,6 +3129,16 @@ class RenderRichEditorWithClosureCustomBlocks extends Livewire
     {
         return $form->schema([
             RichEditor::make('content')->customBlocks(static fn (): array => []),
+        ])->statePath('data');
+    }
+}
+
+class RenderRichEditorWithMinimalCustomBlockControls extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            RichEditor::make('content')->minimalCustomBlockControls(),
         ])->statePath('data');
     }
 }

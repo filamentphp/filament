@@ -69,6 +69,10 @@ public function productInfolist(Schema $schema): Schema
 }
 ```
 
+<Aside variant="warning">
+    `$product` is a model property on a regular Livewire component. Filament does not re-query or authorize it on later requests. Re-query and authorize the product before passing it to the infolist. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+</Aside>
+
 Finally, render the infolist in the Livewire component's view:
 
 ```blade

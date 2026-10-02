@@ -24,28 +24,98 @@ However, Filament's automatic authorization only covers these built-in resource 
 
 ### Authorization and the Livewire request lifecycle
 
-Filament re-runs authorization on every Livewire request — both on the initial page load and on every subsequent update (search, filter, pagination, action call, form interaction). This means that if a user's permissions change while they are using the panel, the next interaction they make will be authorized against the current policy state, not the policy state at the time the component was first mounted.
+Filament repeats its built-in authorization checks when a component mounts and on later Livewire requests. If a user's access changes while a component is open, their next interaction is checked against their current access:
 
-This applies across every Livewire component Filament ships:
+- Resource pages repeat their page access checks. For example, edit and view pages check access to the resource, its parent resources, and the current record. A `ManageRelatedRecords` page checks access to the related resource or model, but you must add an owner-record check to its `canAccess()` method if your application requires one.
+- Custom panel pages that extend `Filament\Pages\Page` check `canAccess()`.
+- Relation managers check `canViewForRecord()`.
+- Widgets check `canView()`.
+- Tenant registration and profile pages check `canView()`.
 
-- **Resource pages** (`ListRecords`, `CreateRecord`, `EditRecord`, `ViewRecord`, `ManageRelatedRecords`) — the resource-level `Resource::canAccess()` check (and parent resource's check, if any) re-runs on every request via the `CanAuthorizeResourceAccess` trait. The page-specific record-scoped checks (`canEdit($record)`, `canView($record)`, `canCreate()`, parameterized `canAccess(['record' => ...])`) re-run on every request via each page type's `hydrate()` method, mirroring the existing `mount()`-time call to `$this->authorizeAccess()`.
-- **Custom panel pages** (anything extending `Filament\Pages\Page`, including `SettingsPage`, the auth pages, the dashboard, cluster pages) — the page's `canAccess()` method re-runs on every request via the `CanAuthorizeAccess` trait.
-- **Relation managers** — the `canViewForRecord($ownerRecord, $pageClass)` check re-runs on every request via the `CanAuthorizeAccess` trait under `Filament\Resources\RelationManagers\Concerns`. Initial mount is gated by the parent page's render-time filter, so the trait only registers a hydrate-time check to avoid a duplicate call on the first request.
-- **Widgets** — the static `canView()` check re-runs on every request via the `CanAuthorizeAccess` trait under `Filament\Widgets\Concerns`. As with relation managers, the parent dashboard's render-time filter handles the initial-mount gate.
-- **Tenancy pages** (`RegisterTenant`, `EditTenantProfile`) — their `canView()` checks re-run on every Livewire request via a `hydrate()` method mirroring the existing `mount()`-time check.
+Panel access is also checked by `canAccessPanel()` on every request, including Livewire requests.
 
-Panel-level access (`canAccessPanel`) is enforced by the panel's `Authenticate` middleware, which runs on every HTTP request (including Livewire updates) — so users who lose panel access mid-session are bounced at the middleware layer before any component-level authorization is consulted.
+### Understanding Eloquent model restoration in Livewire
 
-When you build custom Livewire components on a Filament panel, be aware that **several Livewire activities run before Filament's authorization hooks fire**:
+When a public Livewire property contains an Eloquent model, Livewire stores the model's identifier in the component snapshot. On the next request, Livewire queries the database to restore it. A signed snapshot prevents a user from changing the identifier, but it does not prove that they are still allowed to access the model.
 
-- Public properties are deserialized from the request payload (Livewire's "synth" step) before any of your hooks run.
-- The `boot()` and `boot{TraitName}()` lifecycle hooks fire before authorization.
-- The user's `mount()` body runs before trait-level `mount{TraitName}` hooks on initial mount.
-- Per-property `hydrate{PropertyName}()` hooks fire after Filament's hydrate-time authorization but still complete before the request progresses to update or render.
+Livewire does not reuse the query that originally loaded the model. Its restoration query does not apply Filament resource or table queries, and Laravel does not apply the model's global scopes by default.
 
-In practice this means **work that happens during these earlier hooks runs even when authorization will subsequently abort the request**. Filament aborts before the response is rendered or any update method is called, so unauthorized data is never returned to the user, but server-side side effects (database queries to resolve a record, audit log entries that fire on `SELECT`, dispatched events in custom hooks, etc.) can occur before the abort.
+#### Re-querying built-in model properties
 
-If your component does anything significant that should not happen for an unauthorized user — emitting events, writing to the database, calling external services — do that work in a method or hook that runs **after** Filament's authorization has already fired (for example, in the `mount()` body **after** an explicit `$this->authorizeAccess()` call, or in an action method invoked via `wire:click`, which always runs post-authorization). Avoid putting such work in `boot()` or per-property hydrate hooks.
+On later requests, Filament runs another query for these built-in properties:
+
+- Resource page `$record`: the resource query, including nested parent scoping.
+- Nested resource page `$parentRecord`: the parent resource query when the page has route context; otherwise, the model's global scopes.
+- Relation manager `$ownerRecord`: the model's global scopes.
+- Widget `$record` and `$parentRecord`: the model's global scopes.
+- Modal table select `$record` and tenant registration `$tenant`: the model's global scopes.
+- Tenant profile `$tenant`: the panel's current tenant.
+
+If the query can no longer find the model, Filament returns a 404 response. Any policy or component authorization check runs separately.
+
+Table row actions resolve their record through the table query. Attach and associate actions resolve selected records through their configured relationship or options query. Filament does not provide either guarantee for model values passed to custom Livewire methods or action arguments.
+
+<Aside variant="warning">
+    A scoped query is not an authorization check. For example, a widget's `canView()` method controls access to the widget, but it does not authorize the widget's `$record`. If access depends on a policy or another condition, authorize the model yourself.
+</Aside>
+
+#### Protecting your own model properties
+
+Filament does not re-query model values that belong to your application, including:
+
+- model properties that you add to a custom Livewire component, custom page, or other Filament component,
+- application-owned model properties on a Livewire component embedded inside a schema,
+- model arguments passed to a lazy component's `mount()` method,
+- models nested inside arrays, collections, form state, or other public properties, and
+- model values passed through custom Livewire method or action arguments.
+
+Do not assume that these models still pass the query or authorization rules that applied when they were first loaded. Store a scalar key instead, then query and authorize the model when you need it. You may also re-query and authorize a restored model before using it.
+
+For example, store a locked record ID and use a computed property to query and authorize the record when you access it:
+
+```php
+use App\Models\Post;
+use Illuminate\Support\Facades\Gate;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
+
+#[Locked]
+public int $postId;
+
+#[Computed]
+public function post(): Post
+{
+    $post = Post::query()->findOrFail($this->postId);
+
+    Gate::authorize('view', $post);
+
+    return $post;
+}
+```
+
+Relationships use their relationship query and the related model's global scopes. Filament does not automatically run a policy for every related model that your code accesses.
+
+### Running code before authorization
+
+On a later Livewire request:
+
+1. Livewire restores public properties. This can run an unscoped model query, Eloquent retrieval events, and callbacks such as a Livewire form object's `boot()` method.
+2. Filament re-queries the built-in model properties listed above. A model that no longer passes this query is rejected before your component lifecycle hooks run.
+3. Filament runs the component's applicable authorization checks. Passing the query in the previous step does not mean that the model is authorized.
+
+Some lifecycle hooks can run before step 3:
+
+- A page's `boot()`, trait initializers, and early `mount()` or `hydrate()` code.
+- A widget or relation manager's `boot()` method.
+- A lazy widget or relation manager's placeholder and initial dehydration hooks.
+
+Do not rely on the order of lifecycle hooks from different traits for authorization. If code must not run for an unauthorized user, authorize the user before running it. This includes database writes, events, audit logging, and external service calls.
+
+After the applicable built-in authorization check, Livewire runs per-property hydration hooks, requested property updates, public methods requested by Livewire, actions, and normal rendering. This only protects models covered by that check. For example, a custom page's `canAccess()` method does not authorize each model property that you add to the page.
+
+<Aside variant="warning">
+    Filament explicitly checks widget and relation manager authorization while a lazy component is waiting to mount. Pages do not have an equivalent check during this waiting state. Do not enable Livewire lazy loading on a Filament page that relies on page authorization hooks.
+</Aside>
 
 ### Inline editable columns
 
@@ -59,6 +129,8 @@ When you create [custom actions](../actions/overview#authorization), you are res
 
 Your application should have a comprehensive test suite that verifies authorization is enforced correctly across all entry points — not just Filament's resource pages, but also any custom actions, custom pages, Livewire components, API routes, and other functionality. Filament provides [testing helpers](../testing/overview) for asserting that actions, pages, and resources behave correctly for different user roles.
 
+If a component keeps a model between requests, test what happens when its access changes. Mount the component, change the model's tenant, ownership, scope, or policy result, then send another request using the existing component. Assert that the requested update, action, or render is rejected. Test any authorization that protects earlier lifecycle code separately.
+
 Do not rely solely on Filament's built-in policy checks. Treat them as a helpful layer, but always verify that your authorization rules are enforced end-to-end through testing.
 
 ## Validating user input
@@ -67,7 +139,7 @@ Many Filament configuration methods accept closures that can return dynamic valu
 
 For example, the `url()` method on columns, entries, and actions renders an `<a href="...">` tag with whatever value you provide. If you pass a URL sourced from user input without validation, a malicious value like `javascript:alert(document.cookie)` could be rendered as a clickable link, leading to XSS. Always validate that URLs use a safe scheme such as `http` or `https` before passing them to Filament.
 
-Filament ships a `Str::sanitizeUrl()` helper that returns the URL when it is schemeless (relative) or uses the `http`/`https` scheme, and returns `null` for anything else. Before checking the scheme, it accounts for the obfuscation tricks that browsers silently undo when parsing an `href` value — HTML entity references (numeric like `&#9;`/`&#x09;` and named like `&Tab;`/`&NewLine;`/`&colon;`), percent-encoded control characters (`%09`, `%0A`), embedded raw control characters and whitespace (`\t`, `\n`, `\r`, NUL bytes), and mixed-case schemes — so values like `"\tJaVa\nScRiPt:alert(1)"` or `"java&#x09;script:alert(1)"` are rejected. The return value is the original input unchanged when it passes the check; the helper never rewrites a URL.
+Filament ships a `Str::sanitizeUrl()` helper that returns the URL when it is schemeless (relative) or uses the `http`/`https` scheme, and returns `null` for anything else. Before checking the scheme, it decodes HTML entities and rejects control characters and raw whitespace. The return value is the original input unchanged when it passes the check; the helper does not HTML-escape or rewrite the URL. Filament escapes the value when its configuration methods render it into an HTML attribute. If you render the value yourself, escape it as an HTML attribute, including its ampersands.
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -93,29 +165,12 @@ TextColumn::make('contact')
 
 - check that the host belongs to a domain you control (open-redirect protection),
 - check that the URL is safe for the server to fetch (SSRF protection),
-- guarantee safety for non-standard rendering contexts — the safety analysis assumes the URL will be placed in an HTML attribute like `href`, where the browser performs a single HTML-entity decode and strips whitespace/control characters before parsing the scheme. If your code applies additional transformations to the return value before rendering (for example, calling `urldecode()` and then setting `location.href`), apply your own scheme check to the transformed value,
+- guarantee safety after you transform its return value. For example, if you call `urldecode()` before setting `location.href`, apply your own scheme check to the transformed value,
 - validate that an `http(s)` URL is reachable or trusted in any other way.
 
 If you need any of those guarantees, layer your own check on top of the helper's return value.
 
-If you need a stricter allowlist (for example, only your own domains), wrap the helper:
-
-```php
-TextColumn::make('website')
-    ->url(function (string $state): ?string {
-        $sanitized = Str::sanitizeUrl($state);
-
-        if (blank($sanitized)) {
-            return null;
-        }
-
-        $host = parse_url($sanitized, PHP_URL_HOST);
-
-        return in_array($host, ['example.com', 'cdn.example.com'], true)
-            ? $sanitized
-            : null;
-    })
-```
+For links that must stay within your application, prefer generating the URL from a named route instead of accepting a complete URL. If you accept complete URLs and restrict their hosts, use a URL parser that follows the browser URL standard. Do not use `parse_url()` alone for a security allowlist, since PHP and browsers can interpret the same URL differently.
 
 Similarly, the `ColorColumn` and `ColorEntry` components render their state into a `background-color` CSS declaration. Filament runs every value through a `Str::sanitizeCssColor()` helper that only allows hex colors (`#rgb`, `#rgba`, `#rrggbb`, `#rrggbbaa`), bare CSS keyword colors (like `red`), and the functional notations `rgb()`, `rgba()`, `hsl()`, `hsla()`, `hwb()`, `lab()`, `lch()`, `oklab()`, `oklch()`, and `color()` whose contents do not contain CSS metacharacters. Anything else — such as `red;position:fixed;inset:0;background-image:url(//attacker)` — is rejected and the declaration is omitted, preventing a stored value from injecting extra CSS. You can call `Str::sanitizeCssColor()` yourself anywhere you build a color style from untrusted input; it returns the original value when it passes and `null` otherwise.
 
@@ -290,4 +345,4 @@ With the trait in place, an attacker tampering with a Livewire request to upload
 
 When building tables, resources, or custom Livewire components, ensure that database queries are properly scoped to the current user's permissions. Filament's resource system uses Eloquent queries that return all records by default — it is up to you to apply appropriate query scopes using the `modifyQueryUsing()` method on your table or by overriding the `getEloquentQuery()` method on your resource to ensure users can only access records they are authorized to see.
 
-For example, in a multi-tenant application, forgetting to scope queries to the current tenant would allow users to see other tenants' data. If you are using Filament's built-in [tenancy](../users/tenancy) features, queries are scoped automatically for resources. However, any custom queries, actions, or pages you build must be scoped manually.
+For example, in a multi-tenant application, forgetting to scope queries to the current tenant would allow users to see other tenants' data. If you are using Filament's built-in [tenancy](../users/tenancy) features, Filament registers a tenant global scope for tenant-aware resource models after the current tenant is identified. Ordinary Eloquent queries for those models then use the scope, including queries in custom actions and pages. You must scope queries for other models, queries made before the tenant is identified or outside the tenant-aware panel, and queries that remove the scope. See [tenancy security](../users/tenancy#tenancy-security) for all limitations.

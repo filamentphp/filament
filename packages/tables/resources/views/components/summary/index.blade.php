@@ -76,6 +76,9 @@
                     $alignmentClass = $isFirstSummaryHeading
                         ? 'fi-align-start'
                         : (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''));
+
+                    $columnHiddenFrom = $column->getHiddenFrom();
+                    $columnVisibleFrom = $column->getVisibleFrom();
                 @endphp
 
                 <{{ $headerCellTag }}
@@ -85,6 +88,8 @@
                             'fi-ta-cell fi-ta-summary-header-cell',
                             'fi-wrapped' => $column->canHeaderWrap(),
                             $alignmentClass => $isFirstSummaryHeading || $hasColumnHeaderLabel,
+                            filled($columnHiddenFrom) ? "{$columnHiddenFrom}:fi-hidden" : '',
+                            filled($columnVisibleFrom) ? "{$columnVisibleFrom}:fi-visible" : '',
                         ])
                     }}
                 >

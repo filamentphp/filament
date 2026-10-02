@@ -83,7 +83,10 @@ Additional tools available in the toolbar include:
 - `clearFormatting` - Clears all formatting from the selected text.
 - `details` - Inserts a `<details>` tag, which allows users to create collapsible sections in their content.
 - `grid` - Inserts a grid layout into the editor, allowing users to create responsive columns of content.
-- `gridDelete` - Deletes the current grid layout.
+- `gridAddColumnAfter` - Adds a column after the current column in a symmetrical grid.
+- `gridAddColumnBefore` - Adds a column before the current column in a symmetrical grid.
+- `gridDeleteColumn` - Deletes the current grid column and its content.
+- `gridDelete` - Deletes the current grid layout while preserving its content.
 - `highlight` - Highlights the selected text with a `<mark>` tag around it.
 - `horizontalRule` - Inserts a horizontal rule.
 - `lead` - Applies a `lead` class around the text, which is typically used for the first paragraph of an article.
@@ -108,11 +111,11 @@ Additional tools available in the toolbar include:
 
 ### Customizing floating toolbars
 
-If your toolbar is too full, you can use a floating toolbar to show certain tools in a toolbar below the cursor, only when the user is inside a specific node type. This allows you to keep the main toolbar clean while still providing access to additional tools when needed.
+If your toolbar is too full, you can use a floating toolbar to show certain tools near the current node, only when the user is inside a specific node type. This allows you to keep the main toolbar clean while still providing access to additional tools when needed.
 
 You can customize the floating toolbars that appear when your cursor is placed inside a specific node by using the `floatingToolbars()` method.
 
-In the example below, a floating toolbar appears when the cursor is inside a paragraph node. It shows bold, italic, and similar buttons. When the cursor is in a heading node, it displays heading-related buttons, and when inside a table, it shows table-specific controls.
+In the example below, a floating toolbar appears when the cursor is inside a paragraph node. It shows bold, italic, and similar buttons. When the cursor is in a heading node, it displays heading-related buttons. Grids and tables show controls specific to those nodes.
 
 ```php
 use Filament\Forms\Components\RichEditor;
@@ -124,6 +127,9 @@ RichEditor::make('content')
         ],
         'heading' => [
             'h1', 'h2', 'h3',
+        ],
+        'grid' => [
+            'gridAddColumnBefore', 'gridAddColumnAfter', 'gridDeleteColumn', 'gridDelete',
         ],
         'table' => [
             'tableAddColumnBefore', 'tableAddColumnAfter', 'tableDeleteColumn',
@@ -212,6 +218,50 @@ RichEditor::make('content')
 The editor has a minimum height of `10rem` by default. Once the content exceeds `maxHeight()`, the editor stops growing and becomes scrollable. Each method may be used on its own — `minHeight()` sets a starting height while still allowing the editor to grow, and `maxHeight()` caps how tall it may become. Pass `null` to `minHeight()` to use the editor's intrinsic `3rem` minimum height, or to `maxHeight()` to remove the cap. These constraints also apply when the editor is disabled.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minHeight()` and `maxHeight()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
+## Keeping the toolbar and panels visible while scrolling
+
+You can keep the toolbar visible while scrolling through a long document using `stickyToolbar()`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->stickyToolbar()
+```
+
+You can also keep the custom blocks and merge tags panels visible using `stickyPanels()`. Each option can be enabled independently:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->stickyToolbar()
+    ->stickyPanels()
+```
+
+Panels only stick when the editor is wide enough to display them beside the content. In narrower editors, panels scroll with the page so they leave room for editing.
+
+Inside an action modal or slide-over, sticky panels fit within the modal's scrollable area, leaving room for its sticky footer. If the blocks or merge tags exceed the available height, you can scroll the panel independently.
+
+Both options are disabled by default. Pass `false` to `stickyToolbar()` or `stickyPanels()` to disable them.
+
+### Setting the sticky offset
+
+Inside a Filament panel, the sticky toolbar and panels automatically account for the topbar. Inside an action modal or slide-over, they account for the modal's sticky header instead. If your page has a custom fixed header, you can set the distance from the top of the scroll viewport using `stickyOffset()`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->stickyToolbar()
+    ->stickyPanels()
+    ->stickyOffset('5rem')
+```
+
+The offset accepts a CSS length value. Pass `null` to restore the automatic offset.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `stickyToolbar()`, `stickyPanels()`, and `stickyOffset()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ## Customizing text colors
 
@@ -430,7 +480,7 @@ RichEditor::make('content')
 
 Filament parses the record's original content (via `$record->getOriginal()` for the attribute matching the field name) and allows only the `data-id` values already present. Any other existing `data-id` causes the field to fail validation, so the record is never saved with a tampered value. Newly uploaded images always pass through.
 
-The default file attachment provider performs no per-record scoping — any `data-id` that resolves to a file on the configured disk is accepted unless you enable `preventFileAttachmentPathTampering()` (or isolate uploads at the disk/directory level). If instead you are using the [`spatie/laravel-medialibrary` plugin](https://filamentphp.com/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) as the file attachment provider, this protection is already implicit — it looks up each `data-id` against the record's own media collection via `$media->has($file)`, so a `data-id` for another record's media is rejected automatically.
+The default file attachment provider performs no per-record scoping — any `data-id` that resolves to a file on the configured disk is accepted unless you enable `preventFileAttachmentPathTampering()` or use a dedicated disk containing only files that the current user may access. Setting `fileAttachmentsDirectory()` only changes where new attachments are stored; it does not restrict which existing paths can be submitted. If instead you are using the [`spatie/laravel-medialibrary` plugin](https://filamentphp.com/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) as the file attachment provider, it only generates URLs for `data-id` values in the record's own media collection. This prevents another record's media from being served, but it does not reject the submitted content during validation. Use `preventFileAttachmentPathTampering()` if you also need unapproved IDs to fail validation.
 
 <Aside variant="warning">
     `preventFileAttachmentPathTampering()` needs a record on the form. Without one — for example, on a create page — every existing `data-id` fails validation unless the [`allowFilePathUsing`](#allowing-additional-data-id-values-with-a-callback) callback approves it. New uploads are unaffected.
@@ -457,9 +507,14 @@ use Filament\Forms\Components\RichEditor;
 
 RichEditor::make('content')
     ->preventFileAttachmentPathTampering(
-        allowFilePathUsing: fn (string $file): bool => str_starts_with($file, 'templates/'),
+        allowFilePathUsing: fn (string $file): bool => in_array($file, [
+            'templates/default-image.png',
+            'templates/company-logo.png',
+        ], strict: true),
     )
 ```
+
+The callback receives the path exactly as submitted by the client. Use exact trusted paths where possible. Do not authorize an arbitrary directory using a prefix check, since the filesystem may normalize segments such as `..` after the callback runs.
 
 <UtilityInjection set="formFields" version="4.x" extras="File;;string;;$file;;The submitted `data-id` value being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
 
@@ -600,6 +655,8 @@ class HeroBlock extends RichContentCustomBlock
 }
 ```
 
+<AutoScreenshot name="forms/fields/rich-editor/custom-block-previews" alt="Rich editor with custom block previews and normal controls" version="4.x" />
+
 The `getPreviewLabel()` can be defined if you would like to customize the label that is displayed above the preview in the editor. By default, it will use the label defined in the `getLabel()` method, but the `getPreviewLabel()` is able to access the `$config` for the block, allowing you to display dynamic information in the label:
 
 ```php
@@ -618,6 +675,29 @@ class HeroBlock extends RichContentCustomBlock
     }
 }
 ```
+
+#### Using minimal custom block controls
+
+You can reduce the framing around custom block previews to make the content look closer to how it would render on the frontend using `minimalCustomBlockControls()`. This stacks compact edit and delete buttons beside the preview and visually hides the block's label, while keeping it available to screen readers:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->customBlocks([
+        HeroBlock::class,
+        CallToActionBlock::class,
+    ])
+    ->minimalCustomBlockControls()
+```
+
+<AutoScreenshot name="forms/fields/rich-editor/minimal-custom-block-controls" alt="Rich editor with minimal controls beside short and tall custom block previews" version="4.x" />
+
+This setting applies to all custom blocks with previews in the editor. Blocks without a preview keep their usual header and label. Disabled editors do not display edit or delete buttons.
+
+The buttons stay at the top beside tall previews. Previews shorter than the buttons are vertically centered, with enough space for both buttons.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `minimalCustomBlockControls()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Rendering content with custom blocks
 
@@ -674,6 +754,50 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
+### Adding icons to custom blocks
+
+You can display an [icon](../styling/icons) alongside a block's label in the side panel by defining its `getIcon()` method:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
+use Filament\Support\Icons\Heroicon;
+
+class HeroBlock extends RichContentCustomBlock
+{
+    // ...
+
+    public static function getIcon(): Heroicon
+    {
+        return Heroicon::RectangleGroup;
+    }
+}
+```
+
+You may return an icon name, a `BackedEnum` such as `Heroicon`, or an object implementing Laravel's `Htmlable` interface. By default, `getIcon()` returns `null` and the block displays its label without an icon.
+
+### Displaying custom blocks in a grid
+
+By default, the side panel displays custom blocks as a list. You can display them as a grid using `customBlocksGrid()`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->customBlocks([
+        HeroBlock::class,
+        CallToActionBlock::class,
+    ])
+    ->customBlocksGrid()
+```
+
+Each grid item displays the block's label and its [icon](#adding-icons-to-custom-blocks), if one is defined. Pass `false` to `customBlocksGrid()` to restore the list.
+
+Defining an icon for each block makes the grid easier to scan:
+
+<AutoScreenshot name="forms/fields/rich-editor/custom-blocks-grid" alt="Rich editor with icons above custom block labels in a grid" version="4.x" />
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `customBlocksGrid()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Grouping custom blocks
 
 You can organize custom blocks into groups using string keys in the `customBlocks()` array. Blocks passed directly (without a string key) are ungrouped and appear first in the panel:
@@ -717,6 +841,35 @@ RichContentRenderer::make($record->content)
     ])
     ->toHtml()
 ```
+
+### Searching custom blocks
+
+You can add a search field to the custom blocks panel using `searchableCustomBlocks()`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->customBlocks([
+        'Marketing' => [
+            HeroBlock::class,
+            CallToActionBlock::class,
+        ],
+        'Media' => [
+            ImageGalleryBlock::class,
+            VideoEmbedBlock::class,
+        ],
+    ])
+    ->searchableCustomBlocks()
+```
+
+Search matches block labels and group names, ignoring capitalization and surrounding whitespace. When a group name matches, all blocks in that group appear. If nothing matches, the panel displays a message. Clearing the search restores all blocks.
+
+Search works with both the list and [grid](#displaying-custom-blocks-in-a-grid) layouts. It is disabled by default, and you can pass `false` to `searchableCustomBlocks()` to disable it.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchableCustomBlocks()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/rich-editor/searchable-custom-blocks-grid" alt="Rich editor with custom blocks filtered to the Media group, showing image gallery and video embed icons in a grid" version="4.x" />
 
 ### Opening the custom blocks panel by default
 
@@ -967,8 +1120,6 @@ RichContentRenderer::make($record->content)
         route('users.show', $id),
     ))
     ```
-
-    If you intentionally want to allow a `javascript:` URL (for example, to wire a mention to an Alpine.js handler), skip the helper and return the raw value — just make sure none of the components of that URL come from untrusted user input.
 </Aside>
 
 ## Registering rich content attributes
@@ -1017,6 +1168,7 @@ class Post extends Model implements HasRichContent
                 'brand' => TextColor::make('Brand', '#0ea5e9', darkColor: '#38bdf8'),
             ])
             ->customTextColors()
+            ->linkProtocols(['http', 'https', 'mailto'])
             ->plugins([
                 HighlightRichContentPlugin::make(),
             ]);
@@ -1054,6 +1206,161 @@ TextColumn::make('content')
 
 TextEntry::make('content')
 ```
+
+## Generating fake rich content
+
+You can generate rich content in database factories using Faker's `filamentRichContent()` method. You can build the document by chaining methods, then store it as HTML using `toHtml()`:
+
+```php
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class PostFactory extends Factory
+{
+    public function definition(): array
+    {
+        return [
+            'content' => fake()
+                ->filamentRichContent()
+                ->heading()
+                ->paragraphs(3)
+                ->bulletList()
+                ->toHtml(),
+        ];
+    }
+}
+```
+
+If the rich editor is [storing content as JSON](#storing-content-as-json), you can use `toArray()` instead:
+
+```php
+'content' => fake()
+    ->filamentRichContent()
+    ->heading()
+    ->paragraphs(3)
+    ->toArray(),
+```
+
+You can generate a complete article using the `article()` method. An article starts with a lead introduction followed by sections with level-two headings. The `depth` argument recursively adds nested sections, using the next heading level for each depth:
+
+```php
+'content' => fake()
+    ->filamentRichContent()
+    ->article(depth: 2)
+    ->toHtml(),
+```
+
+In this example, the article contains level-two sections with level-three subsections. The maximum depth is `5`, corresponding to heading levels two through six.
+
+You can generate the following block content:
+
+- `heading()`
+- `paragraphs()`
+- `lead()`
+- `bulletList()`
+- `orderedList()`
+- `blockquote()`
+- `codeBlock()`
+- `horizontalRule()`
+- `table()`
+- `details()`
+- `grid()`
+- `image()` for an image with a URL
+- `fileAttachment()` for an existing image ID managed by a [file attachment provider](#uploading-images-to-the-editor)
+
+The `paragraphs()` method can generate links and the `bold`, `italic`, `underline`, `strike`, `subscript`, `superscript`, `code`, `small`, and `highlight` marks:
+
+```php
+'content' => fake()
+    ->filamentRichContent()
+    ->paragraphs(
+        count: 3,
+        links: true,
+        bold: true,
+        italic: true,
+    )
+    ->toHtml(),
+```
+
+You can apply a configured text color to generated text using `textColor()`, apply an alignment using `textAlignment()`, or insert a hard break using `hardBreak()`.
+
+### Using rich content attribute configuration
+
+You may pass a [rich content attribute](#registering-rich-content-attributes) to `filamentRichContent()`. The faker will use its JSON mode, renderer, custom blocks, merge tags, mentions, text colors, plugins, link protocols, and file attachment configuration:
+
+```php
+use App\Models\Post;
+
+$attribute = (new Post)->getRichContentAttribute('content');
+
+return [
+    'content' => fake()
+        ->filamentRichContent($attribute)
+        ->article()
+        ->mergeTags(2)
+        ->mention()
+        ->textColor()
+        ->toValue(),
+];
+```
+
+The `toValue()` method returns an array when the attribute uses JSON mode and storage HTML otherwise, so the factory does not need to repeat that configuration. Storage HTML preserves custom blocks, merge tags, mentions, and attachments so that they can be edited later. You may also use `toArray()` or `toHtml()` to choose the stored format explicitly.
+
+If you need to render the generated content for display instead of storing it, use `toRenderedHtml()` or `toText()`. The `attribute()` method can set the attribute after constructing the faker, and `renderUsing()` can override the renderer used for display output.
+
+The `mergeTag()` and `mention()` methods insert inline nodes into generated paragraphs. Without arguments, they choose from the merge tags or mention providers registered on the attribute. You can use `mergeTags()` and `mentions()` to insert several. You may also pass a specific merge tag ID to `mergeTag()`, or a mention ID and trigger character to `mention()`. When multiple mention providers are configured, you must specify the trigger character when passing an ID.
+
+### Generating custom blocks
+
+Calling `customBlock()` without arguments only selects from registered custom blocks that implement the `CanGenerateFakeConfiguration` contract. This prevents the faker from generating blocks with invalid empty configuration:
+
+```php
+use Faker\Generator;
+use Filament\Forms\Components\RichEditor\Contracts\CanGenerateFakeConfiguration;
+use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
+
+class CallToActionBlock extends RichContentCustomBlock implements CanGenerateFakeConfiguration
+{
+    public static function generateFakeConfiguration(Generator $faker): array
+    {
+        return [
+            'heading' => $faker->sentence(),
+            'buttonLabel' => $faker->words(3, true),
+            'buttonUrl' => $faker->url(),
+        ];
+    }
+
+    // ...
+}
+```
+
+You may pass a block class or ID and its configuration directly when you need a particular block:
+
+```php
+->customBlock(CallToActionBlock::class, [
+    'heading' => 'Start building today',
+    'buttonLabel' => 'Get started',
+    'buttonUrl' => '/register',
+])
+```
+
+### Generating plugin content
+
+Plugins may add arbitrary TipTap nodes, so you may insert their raw JSON structures using `block()` and `inline()`:
+
+```php
+->block([
+    'type' => 'callout',
+    'attrs' => ['variant' => 'info'],
+])
+->inline([
+    'type' => 'stockTicker',
+    'attrs' => ['symbol' => 'AAPL'],
+])
+```
+
+The `RichContentFaker` class is macroable, so a plugin can also register fluent methods for its own nodes.
+
+All random values use the same Faker generator, so seeded Faker output remains reproducible.
 
 ## Extending the rich editor
 

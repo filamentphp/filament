@@ -158,9 +158,7 @@ trait CanSortRecords
 
     public function getTableSortSessionKey(): string
     {
-        $table = md5($this::class);
-
-        return "tables.{$table}_sort";
+        return $this->getTableSessionKey('sort');
     }
 
     /**

@@ -25,6 +25,8 @@
             ->all();
     }
 
+    $isStackedOnMobile = $this->getTable()->isStackedOnMobile();
+
     // `$query` is constant for this render, so each column's resolved summarizers are
     // too. Resolve them once here instead of re-running `getSummarizers($query)` (and
     // `hasSummary($query)`, which wraps it) in every loop guard below. Keyed by the
@@ -37,11 +39,68 @@
         $columnsWithSummary[$summaryColumnKey] = [
             'summarizers' => $summaryColumnSummarizers,
             'hasSummary' => (bool) count($summaryColumnSummarizers),
+            'hiddenFrom' => $summaryColumn->getHiddenFrom(),
+            'visibleFrom' => $summaryColumn->getVisibleFrom(),
         ];
+    }
+
+    $summaryHeadingHiddenAt = [];
+    $summaryHeadingFallbackVisibleAt = [];
+
+    if ((! $extraHeadingColumn) && (! $groupsOnly) && filled($columns)) {
+        $breakpointOrder = [
+            'base' => 0,
+            'sm' => 1,
+            'md' => 2,
+            'lg' => 3,
+            'xl' => 4,
+            '2xl' => 5,
+        ];
+
+        $responsiveBreakpointOrder = array_diff_key($breakpointOrder, ['base' => true]);
+
+        $isColumnVisibleAt = static function (array $columnState, int $breakpointIndex) use ($responsiveBreakpointOrder): bool {
+            $visibleFromIndex = $responsiveBreakpointOrder[$columnState['visibleFrom']] ?? null;
+
+            if ($visibleFromIndex !== null) {
+                return $breakpointIndex >= $visibleFromIndex;
+            }
+
+            $hiddenFromIndex = $responsiveBreakpointOrder[$columnState['hiddenFrom']] ?? null;
+
+            return ($hiddenFromIndex === null) || ($breakpointIndex < $hiddenFromIndex);
+        };
+
+        $firstColumnState = $columnsWithSummary[array_key_first($columns)];
+
+        foreach ($breakpointOrder as $breakpoint => $breakpointIndex) {
+            if (($breakpoint === 'base') && $isStackedOnMobile) {
+                continue;
+            }
+
+            if ($isColumnVisibleAt($firstColumnState, $breakpointIndex)) {
+                continue;
+            }
+
+            $summaryHeadingHiddenAt[] = $breakpoint;
+
+            foreach ($columnsWithSummary as $columnKey => $columnState) {
+                if ((! $columnState['hasSummary']) || (! $isColumnVisibleAt($columnState, $breakpointIndex))) {
+                    continue;
+                }
+
+                $summaryHeadingFallbackVisibleAt[$columnKey][] = $breakpoint;
+
+                break;
+            }
+        }
     }
 @endphp
 
-<tr {{ $attributes->class(['fi-ta-row fi-ta-summary-row']) }}>
+<tr
+    @if (filled($summaryHeadingHiddenAt)) data-summary-heading-hidden-at="{{ implode(' ', $summaryHeadingHiddenAt) }}" @endif
+    {{ $attributes->class(['fi-ta-row fi-ta-summary-row']) }}
+>
     @if ($placeholderColumns && $actions && in_array($actionsPosition, [RecordActionsPosition::BeforeCells, RecordActionsPosition::BeforeColumns]))
         <td></td>
     @endif
@@ -63,10 +122,18 @@
 
             foreach ($columns as $index => $column) {
                 if ($index === array_key_first($columns)) {
+                    if (filled($columnsWithSummary[$index]['hiddenFrom']) || filled($columnsWithSummary[$index]['visibleFrom'])) {
+                        break;
+                    }
+
                     continue;
                 }
 
-                if ($columnsWithSummary[$index]['hasSummary']) {
+                if (
+                    $columnsWithSummary[$index]['hasSummary'] ||
+                    filled($columnsWithSummary[$index]['hiddenFrom']) ||
+                    filled($columnsWithSummary[$index]['visibleFrom'])
+                ) {
                     break;
                 }
 
@@ -88,6 +155,8 @@
                 // value cells stay `<td>` and gain a row association from this `<th scope="row">`.
                 $isSummaryRowHeadingCell = $loop->first && (! $extraHeadingColumn) && (! $groupsOnly);
                 $summaryCellTag = $isSummaryRowHeadingCell ? 'th' : 'td';
+                $columnHiddenFrom = $columnsWithSummary[$columnKey]['hiddenFrom'];
+                $columnVisibleFrom = $columnsWithSummary[$columnKey]['visibleFrom'];
             @endphp
 
             <{{ $summaryCellTag }}
@@ -97,11 +166,30 @@
                     'fi-ta-cell',
                     ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
                     'fi-ta-summary-row-heading-cell' => $isSummaryRowHeadingCell,
+                    'fi-ta-summary-row-heading-cell-responsive' => $isSummaryRowHeadingCell && (filled($columnHiddenFrom) || filled($columnVisibleFrom)),
+                    filled($columnHiddenFrom) ? "{$columnHiddenFrom}:fi-hidden" : '',
+                    filled($columnVisibleFrom) ? "{$columnVisibleFrom}:fi-visible" : '',
                 ])
             >
                 @if ($isSummaryRowHeadingCell)
                     {{ $heading }}
                 @elseif ((! $placeholderColumns) || $columnsWithSummary[$columnKey]['hasSummary'])
+                    @if (filled($summaryHeadingHiddenAt) && $columnsWithSummary[$columnKey]['hasSummary'])
+                        <div class="fi-ta-summary-row-heading-fallback">
+                            <span
+                                data-visible-at="{{ implode(' ', $summaryHeadingFallbackVisibleAt[$columnKey] ?? []) }}"
+                            >
+                                {{ $heading }}
+                            </span>
+                        </div>
+                    @endif
+
+                    @if ($isStackedOnMobile)
+                        <div class="fi-ta-cell-label">
+                            {{ $column->getLabel() }}
+                        </div>
+                    @endif
+
                     @foreach ($columnsWithSummary[$columnKey]['summarizers'] as $summarizer)
                         {{ $summarizer->query($query)->selectedState($selectedState) }}
                     @endforeach

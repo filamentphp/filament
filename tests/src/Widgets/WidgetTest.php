@@ -2,9 +2,20 @@
 
 namespace Filament\Tests\Widgets;
 
+use Filament\Facades\Filament;
+use Filament\Pages\Dashboard;
+use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Pages\TableRenderHooksBrowserTest;
+use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPosts;
 use Filament\Tests\TestCase;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Route;
+use Livewire\Attributes\Locked;
 
 use function Filament\Tests\livewire;
 
@@ -85,18 +96,341 @@ it('returns empty array from `getDefaultProperties()` when `$isLazy` is `false`'
     expect(TestWidgetNotLazy::getDefaultProperties())->toBe([]);
 });
 
-it('re-authorizes the widget on Livewire updates after the initial mount', function (): void {
-    AuthorizableTestWidget::$canViewFlag = true;
+describe('authorization', function (): void {
+    beforeEach(function (): void {
+        AuthorizableTestWidget::$canViewFlag = true;
+        AuthorizableTestWidget::$calls = [];
+    });
 
-    $component = livewire(AuthorizableTestWidget::class);
+    it('authorizes an allowed first mount before subclass `mount()` and rendering', function (bool $inPanel): void {
+        Filament::setCurrentPanel($inPanel ? Filament::getPanel('admin') : null);
 
-    AuthorizableTestWidget::$canViewFlag = false;
+        livewire(AuthorizableTestWidget::class)
+            ->assertSuccessful()
+            ->assertSee('Private widget data');
+
+        expect(AuthorizableTestWidget::$calls)->toBe(['boot', 'authorize', 'mount', 'render']);
+    })->with([true, false]);
+
+    it('rejects a denied first mount without subclass `mount()` or rendering', function (bool $inPanel): void {
+        Filament::setCurrentPanel($inPanel ? Filament::getPanel('admin') : null);
+        AuthorizableTestWidget::$canViewFlag = false;
+
+        $component = livewire(AuthorizableTestWidget::class);
+
+        $component->assertDontSee('Private widget data');
+
+        expect(AuthorizableTestWidget::$calls)->toBe(['boot', 'authorize']);
+
+        $component->assertForbidden();
+    })->with([true, false]);
+
+    it('authorizes the real lazy mount without running sensitive work in the placeholder', function (bool $canView, bool $inPanel): void {
+        Filament::setCurrentPanel($inPanel ? Filament::getPanel('admin') : null);
+
+        $component = livewire(AuthorizableTestWidget::class, ['lazy' => true])
+            ->assertSuccessful()
+            ->assertDontSee('Private widget data');
+
+        expect(AuthorizableTestWidget::$calls)->toBe([]);
+
+        preg_match('/__lazyLoad\(\'([^\']+)\'\)/', html_entity_decode($component->html()), $matches);
+
+        expect($matches)->toHaveKey(1);
+
+        // Access can change after the placeholder has been returned.
+        AuthorizableTestWidget::$canViewFlag = $canView;
+
+        $component->call('__lazyLoad', $matches[1]);
+
+        expect(AuthorizableTestWidget::$calls)->toBe($canView
+            ? ['authorize', 'boot', 'mount', 'render']
+            : ['authorize']);
+
+        if (! $canView) {
+            $component->assertForbidden()->assertDontSee('Private widget data');
+
+            return;
+        }
+
+        $component->assertSuccessful()->assertSee('Private widget data');
+
+        AuthorizableTestWidget::$calls = [];
+        AuthorizableTestWidget::$canViewFlag = false;
+
+        $component->call('sensitiveAction')->assertForbidden()->assertDontSee('Private widget data');
+
+        expect(AuthorizableTestWidget::$calls)->toBe(['boot', 'authorize']);
+    })->with([true, false])->with([true, false]);
+
+    it('rejects denied requests before a lazy widget has mounted', function (array $calls, array $updates, bool $withLazyLoad): void {
+        $component = livewire(AuthorizableTestWidget::class, ['lazy' => true]);
+
+        if ($withLazyLoad) {
+            preg_match('/__lazyLoad\(\'([^\']+)\'\)/', html_entity_decode($component->html()), $matches);
+
+            expect($matches)->toHaveKey(1);
+
+            $calls[] = ['method' => '__lazyLoad', 'params' => [$matches[1]]];
+        }
+
+        AuthorizableTestWidget::$canViewFlag = false;
+
+        $component->update(calls: $calls, updates: $updates);
+
+        expect(AuthorizableTestWidget::$calls)->toBe(['authorize']);
+
+        $component->assertForbidden()->assertDontSee('Private widget data');
+    })->with([
+        'action' => [[['method' => 'sensitiveAction', 'params' => []]], [], false],
+        'property update' => [[], ['name' => 'changed'], false],
+        'empty request' => [[], [], false],
+        'property update before lazy mount' => [[], ['name' => 'changed'], true],
+        'action before lazy mount' => [[['method' => 'sensitiveAction', 'params' => []]], [], true],
+    ]);
+
+    it('re-authorizes hydration once before subclass `hydrate()`, property updates, and actions', function (bool $canView, bool $updateProperty): void {
+        $component = livewire(AuthorizableTestWidget::class)->assertSee('Private widget data');
+
+        AuthorizableTestWidget::$calls = [];
+        AuthorizableTestWidget::$canViewFlag = $canView;
+
+        if ($updateProperty) {
+            $component->set('name', 'changed');
+        } else {
+            $component->call('sensitiveAction');
+        }
+
+        expect(AuthorizableTestWidget::$calls)->toBe($canView
+            ? ['boot', 'authorize', 'hydrate', ...($updateProperty ? ['updating', 'updated'] : ['action']), 'render']
+            : ['boot', 'authorize']);
+
+        if ($canView) {
+            $component->assertSuccessful()->assertSee('Private widget data');
+        } else {
+            $component->assertForbidden()->assertDontSee('Private widget data');
+        }
+    })->with([true, false])->with([true, false]);
+
+    it('enforces `canView()` when a standalone Blade view mounts a widget', function (string $template, bool $canView): void {
+        Filament::setCurrentPanel(null);
+        AuthorizableTestWidget::$canViewFlag = $canView;
+
+        Route::get('/widget-authorization-test', static fn (): string => Blade::render(
+            $template,
+            ['widget' => AuthorizableTestWidget::class],
+        ));
+
+        $response = $this->get('/widget-authorization-test');
+
+        expect(AuthorizableTestWidget::$calls)->toBe($canView
+            ? ['boot', 'authorize', 'mount', 'render']
+            : ['boot', 'authorize']);
+
+        if ($canView) {
+            $response->assertSuccessful()->assertSee('Private widget data');
+        } else {
+            $response->assertForbidden()->assertDontSee('Private widget data');
+        }
+    })->with([
+        'direct Livewire' => ['@livewire($widget)'],
+        'legacy widget grid' => ['<x-filament-widgets::widgets :widgets="[$widget]" />'],
+        'configured legacy widget grid' => ['<x-filament-widgets::widgets :widgets="[$widget::make()]" />'],
+    ])->with([true, false]);
+
+    it('filters denied widgets before mounting them on dashboard and resource pages', function (string $page, bool $canView): void {
+        $panel = Filament::getPanel('admin');
+        Filament::setCurrentPanel($panel);
+        $panel->widgets([AuthorizableTestWidget::make()]);
+        $this->actingAs(User::factory()->create());
+        AuthorizableTestWidget::$canViewFlag = $canView;
+
+        $component = livewire($page)->assertSuccessful();
+
+        if ($canView) {
+            $component->assertSee('Private widget data');
+
+            expect(AuthorizableTestWidget::$calls)->toContain('mount', 'render');
+        } else {
+            $component->assertDontSee('Private widget data');
+
+            expect(AuthorizableTestWidget::$calls)->not->toBeEmpty()
+                ->each->toBe('authorize');
+        }
+    })->with([
+        'dashboard' => [Dashboard::class],
+        'resource header and footer' => [WidgetAuthorizationResourcePage::class],
+    ])->with([true, false]);
+});
+
+it('restores a lazy widget `record` property through global scopes', function (): void {
+    $post = Post::factory()->create();
+    $component = livewire(ScopedModelTestWidget::class, [
+        'record' => $post,
+        'lazy' => true,
+    ])->assertSuccessful();
+
+    expect(preg_match(
+        "/__lazyLoad\\('([^']+)'\\)/",
+        html_entity_decode($component->html()),
+        $matches,
+    ))->toBe(1);
+
+    $globalScopes = Post::getAllGlobalScopes();
+
+    try {
+        Post::addGlobalScope(
+            'exclude-widget-record',
+            fn (Builder $query): Builder => $query->whereKeyNot($post->getKey()),
+        );
+
+        $component
+            ->call('__lazyLoad', $matches[1])
+            ->assertNotFound();
+    } finally {
+        Post::setAllGlobalScopes($globalScopes);
+    }
+});
+
+it('rejects a scoped lazy widget `record` before calling a method other than `__lazyLoad()`', function (): void {
+    $post = Post::factory()->create();
+    $component = livewire(ScopedModelTestWidget::class, [
+        'record' => $post,
+        'lazy' => true,
+    ])->assertSuccessful();
+    $globalScopes = Post::getAllGlobalScopes();
+
+    try {
+        Post::addGlobalScope(
+            'exclude-widget-record',
+            fn (Builder $query): Builder => $query->whereKeyNot($post->getKey()),
+        );
+
+        $component
+            ->call('accessRecord')
+            ->assertNotFound();
+    } finally {
+        Post::setAllGlobalScopes($globalScopes);
+    }
+});
+
+it('rejects a scoped model from another lazy widget mount payload', function (): void {
+    MountedScopedModelTestWidget::$hasMounted = false;
+    $firstPost = Post::factory()->create();
+    $secondPost = Post::factory()->create();
+    $firstComponent = livewire(MountedScopedModelTestWidget::class, [
+        'record' => $firstPost,
+        'lazy' => true,
+    ])->assertSuccessful();
+    $secondComponent = livewire(MountedScopedModelTestWidget::class, [
+        'record' => $secondPost,
+        'lazy' => true,
+    ])->assertSuccessful();
+
+    expect(preg_match(
+        "/__lazyLoad\\('([^']+)'\\)/",
+        html_entity_decode($secondComponent->html()),
+        $matches,
+    ))->toBe(1);
+
+    $globalScopes = Post::getAllGlobalScopes();
+
+    try {
+        Post::addGlobalScope(
+            'exclude-widget-record',
+            fn (Builder $query): Builder => $query->whereKeyNot($secondPost->getKey()),
+        );
+
+        $firstComponent
+            ->call('__lazyLoad', $matches[1])
+            ->assertNotFound();
+
+        expect(MountedScopedModelTestWidget::$hasMounted)->toBeFalse();
+    } finally {
+        Post::setAllGlobalScopes($globalScopes);
+        MountedScopedModelTestWidget::$hasMounted = false;
+    }
+});
+
+it('preserves Livewire restoration for user-defined lazy widget model properties', function (): void {
+    $post = Post::factory()->create();
+    $component = livewire(ScopedModelTestWidget::class, [
+        'otherPost' => $post,
+        'lazy' => true,
+    ])->assertSuccessful();
+
+    expect(preg_match(
+        "/__lazyLoad\\('([^']+)'\\)/",
+        html_entity_decode($component->html()),
+        $matches,
+    ))->toBe(1);
+
+    $globalScopes = Post::getAllGlobalScopes();
+
+    try {
+        Post::addGlobalScope(
+            'exclude-user-widget-record',
+            fn (Builder $query): Builder => $query->whereKeyNot($post->getKey()),
+        );
+
+        $component
+            ->call('__lazyLoad', $matches[1])
+            ->assertSuccessful();
+
+        expect($component->instance()->otherPost?->is($post))->toBeTrue();
+    } finally {
+        Post::setAllGlobalScopes($globalScopes);
+    }
+});
+
+it('rejects a scope-excluded parent record before `boot()`', function (): void {
+    $post = Post::factory()->create();
+    $component = livewire(ScopedParentModelTestWidget::class, [
+        'lazy' => false,
+        'parentRecord' => $post,
+    ])->assertSuccessful();
+    ScopedParentModelTestWidget::$bootedRecordKey = null;
+    $globalScopes = Post::getAllGlobalScopes();
+
+    try {
+        Post::addGlobalScope(
+            'exclude-widget-parent-record',
+            fn (Builder $query): Builder => $query->whereKeyNot($post->getKey()),
+        );
+
+        $component
+            ->call('accessRecord')
+            ->assertNotFound();
+
+        expect(ScopedParentModelTestWidget::$bootedRecordKey)->toBeNull();
+    } finally {
+        Post::setAllGlobalScopes($globalScopes);
+    }
+});
+
+it('uses an in-scope parent record before `boot()`', function (): void {
+    $post = Post::factory()->create();
+    $component = livewire(ScopedParentModelTestWidget::class, [
+        'lazy' => false,
+        'parentRecord' => $post,
+    ])->assertSuccessful();
+    ScopedParentModelTestWidget::$bootedRecordKey = null;
 
     $component
-        ->set('name', 'foo')
-        ->assertStatus(403);
+        ->call('accessRecord')
+        ->assertSuccessful();
 
-    AuthorizableTestWidget::$canViewFlag = true;
+    expect(ScopedParentModelTestWidget::$bootedRecordKey)->toBe($post->getKey())
+        ->and($component->instance()->parentRecord?->is($post))->toBeTrue();
+});
+
+it('supports a page table from outside a resource', function (): void {
+    Post::factory()->create();
+
+    livewire(NonResourcePageTableTestWidget::class, ['lazy' => false])
+        ->call('loadPageTable')
+        ->assertSet('pageTableRecordsCount', 1)
+        ->assertSuccessful();
 });
 
 class TestWidget extends Widget
@@ -173,17 +507,131 @@ class AuthorizableTestWidget extends Widget
 {
     public static bool $canViewFlag = true;
 
+    /** @var array<string> */
+    public static array $calls = [];
+
     public ?string $name = null;
 
-    protected string $view = 'pages.settings';
+    protected static bool $isLazy = false;
+
+    protected string $view = 'widgets.authorizable';
 
     public static function canView(): bool
     {
+        static::$calls[] = 'authorize';
+
         return static::$canViewFlag;
+    }
+
+    public function boot(): void
+    {
+        static::$calls[] = 'boot';
+    }
+
+    public function mount(): void
+    {
+        static::$calls[] = 'mount';
+    }
+
+    public function hydrate(): void
+    {
+        static::$calls[] = 'hydrate';
+    }
+
+    public function updatingName(): void
+    {
+        static::$calls[] = 'updating';
+    }
+
+    public function updatedName(): void
+    {
+        static::$calls[] = 'updated';
+    }
+
+    public function sensitiveAction(): void
+    {
+        static::$calls[] = 'action';
     }
 
     protected function getViewData(): array
     {
-        return [];
+        static::$calls[] = 'render';
+
+        return ['privateWidgetData' => 'Private widget data'];
+    }
+}
+
+class WidgetAuthorizationResourcePage extends ListPosts
+{
+    protected function getHeaderWidgets(): array
+    {
+        return [AuthorizableTestWidget::class];
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        return [AuthorizableTestWidget::make()];
+    }
+}
+
+class ScopedModelTestWidget extends Widget
+{
+    public ?Post $otherPost = null;
+
+    public ?Post $record = null;
+
+    protected string $view = 'pages.settings';
+
+    public function accessRecord(): void {}
+}
+
+class MountedScopedModelTestWidget extends Widget
+{
+    public static bool $hasMounted = false;
+
+    public ?Post $record = null;
+
+    protected string $view = 'pages.settings';
+
+    public function mount(Post $record): void
+    {
+        static::$hasMounted = true;
+        $this->record = $record;
+    }
+}
+
+class ScopedParentModelTestWidget extends Widget
+{
+    public static int | string | null $bootedRecordKey = null;
+
+    #[Locked]
+    public ?Post $parentRecord = null;
+
+    protected string $view = 'pages.settings';
+
+    public function boot(): void
+    {
+        static::$bootedRecordKey = $this->parentRecord?->getKey();
+    }
+
+    public function accessRecord(): void {}
+}
+
+class NonResourcePageTableTestWidget extends Widget
+{
+    use InteractsWithPageTable;
+
+    public int $pageTableRecordsCount = 0;
+
+    protected string $view = 'pages.settings';
+
+    public function loadPageTable(): void
+    {
+        $this->pageTableRecordsCount = $this->getPageTableQuery()->count();
+    }
+
+    protected function getTablePage(): string
+    {
+        return TableRenderHooksBrowserTest::class;
     }
 }

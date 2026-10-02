@@ -97,8 +97,12 @@ export default function markdownEditorFormComponent({
     toolbarButtons,
     uploadFileAttachmentUsing,
 }) {
+    let isDestroyed = false
+
     return {
         editor: null,
+
+        form: null,
 
         state,
 
@@ -116,10 +120,16 @@ export default function markdownEditorFormComponent({
                 await new Promise((resolve) => setTimeout(resolve, 300))
             }
 
+            if (isDestroyed) {
+                return
+            }
+
             if (this.$root._editor) {
                 this.$root._editor.toTextArea()
                 this.$root._editor = null
             }
+
+            this.form = this.$refs.editor.form
 
             this.$root._editor = this.editor = new EasyMDE({
                 autoDownloadFontAwesome: false,
@@ -293,17 +303,6 @@ export default function markdownEditorFormComponent({
             }
 
             this.wasEditorVisible = isEditorVisible
-        },
-
-        destroy() {
-            this.resizeObserver?.disconnect()
-            this.resizeObserver = null
-
-            this.intersectionObserver?.disconnect()
-            this.intersectionObserver = null
-
-            this.editor.cleanup()
-            this.editor = null
         },
 
         getToolbar() {
@@ -484,6 +483,29 @@ export default function markdownEditorFormComponent({
                 action: EasyMDE.redo,
                 title: translations.tools?.redo,
             }
+        },
+
+        destroy() {
+            isDestroyed = true
+
+            this.resizeObserver?.disconnect()
+            this.resizeObserver = null
+
+            this.intersectionObserver?.disconnect()
+            this.intersectionObserver = null
+
+            if (this.editor) {
+                this.editor.codemirror.setOption('autoRefresh', false)
+                this.form?.removeEventListener(
+                    'submit',
+                    this.editor.codemirror.save,
+                )
+                this.editor.cleanup()
+                this.editor.toTextArea()
+            }
+
+            this.$root._editor = null
+            this.editor = null
         },
     }
 }

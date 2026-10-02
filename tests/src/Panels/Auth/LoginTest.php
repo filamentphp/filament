@@ -252,6 +252,36 @@ describe('authentication failures', function (): void {
             ->and($failedEvents)->toBe(1);
     });
 
+    it('does not authenticate a different principal returned by the final credential lookup', function (): void {
+        $initialUser = User::factory()->create();
+        $differentUser = User::factory()->create();
+        $email = $initialUser->email;
+        $attemptingEvents = 0;
+
+        Event::listen(Attempting::class, static function () use (&$attemptingEvents, $differentUser, $email, $initialUser): void {
+            $attemptingEvents++;
+
+            if ($attemptingEvents !== 2) {
+                return;
+            }
+
+            $initialUser->update(['email' => 'replaced@example.com']);
+            $differentUser->update(['email' => $email]);
+        });
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertHasFormErrors(['email']);
+
+        $this->assertGuest();
+
+        expect($attemptingEvents)->toBe(2);
+    });
+
     it('fires the `Attempting` and `Failed` events when authentication fails because the email is unknown', function (): void {
         Event::fake([Attempting::class, Failed::class]);
 

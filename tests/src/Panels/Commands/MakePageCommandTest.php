@@ -1,7 +1,13 @@
 <?php
 
+use Filament\Commands\FileGenerators\Resources\Pages\ResourceManageRelatedRecordsPageClassGenerator;
 use Filament\Commands\MakePageCommand;
 use Filament\Facades\Filament;
+use Filament\PanelRegistry;
+use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\TestCase;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -449,6 +455,65 @@ it('can generate a manage related records page class in a resource with a view o
         ->toMatchSnapshot();
 });
 
+it('generates an executable related records infolist only with a named title entry', function (?string $recordTitleAttribute, ?string $relatedModel, bool $isInferred): void {
+    if ($isInferred) {
+        $relatedModel = app(Team::class)->users()->getRelated()::class;
+    }
+
+    $basename = 'ManageTitleEntries' . md5(serialize([$recordTitleAttribute, $relatedModel, $isInferred]));
+    $class = app()->getNamespace() . "Filament\\Pages\\{$basename}";
+    $path = app_path("{$basename}.php");
+    $generator = app(ResourceManageRelatedRecordsPageClassGenerator::class, [
+        'fqn' => $class,
+        'resourceFqn' => UserResource::class,
+        'relationship' => 'members',
+        'relatedResourceFqn' => null,
+        'hasViewOperation' => true,
+        'formSchemaFqn' => null,
+        'infolistSchemaFqn' => null,
+        'tableFqn' => null,
+        'recordTitleAttribute' => $recordTitleAttribute,
+        'isGenerated' => filled($relatedModel),
+        'relatedModelFqn' => $relatedModel,
+        'isSoftDeletable' => false,
+        'relationshipType' => null,
+    ]);
+
+    file_put_contents($path, $generator->generate());
+
+    try {
+        expect(file_get_contents($path))->not->toContain('::make(null)', "TextEntry::make('name')");
+
+        if (filled($recordTitleAttribute)) {
+            expect(file_get_contents($path))->toContain("TextEntry::make('email')");
+        } else {
+            expect(file_get_contents($path))
+                ->not->toContain('TextEntry')
+                ->toContain("public function infolist(Schema \$schema): Schema\n    {\n        return \$schema\n            ->components([\n                //\n            ]);");
+        }
+
+        require $path;
+
+        $page = app($class);
+        $components = $page->infolist(Schema::make()->record(new User(['email' => 'related@example.com'])))->getComponents();
+
+        expect(collect($components)->map->getName()->all())->toBe(filled($recordTitleAttribute) ? ['email'] : []);
+
+        if (filled($recordTitleAttribute)) {
+            expect($components[0]->getState())->toBe('related@example.com');
+        }
+    } finally {
+        unlink($path);
+    }
+})->with([
+    'no model or title' => [null, null, false],
+    'inferred model without a title' => [null, null, true],
+    'selected model without a title' => [null, User::class, false],
+    'custom title without a model' => ['email', null, false],
+    'custom title with an inferred model' => ['email', null, true],
+    'custom title with a selected model' => ['email', User::class, false],
+]);
+
 it('can generate a manage related records page class in a resource with an infolist schema class', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions): void {
     $questions = $generateManageRelatedRecordsPageCommandQuestions;
 
@@ -560,4 +625,17 @@ it('can generate a custom record page class in a resource', function (): void {
     assertFileExists($path = app_path('Filament/Resources/Users/Pages/ManageUserPermissions.php'));
     expect(file_get_contents($path))
         ->toMatchSnapshot();
+});
+
+it('fails when Filament has not been installed', function (): void {
+    app(PanelRegistry::class)->panels = [];
+
+    $this->artisan('make:filament-page', [
+        'name' => 'PageWithoutPanel',
+        '--no-interaction' => true,
+    ])
+        ->expectsOutputToContain('Filament has not been installed yet')
+        ->assertFailed();
+
+    assertFileDoesNotExist(app_path('Filament/Pages/PageWithoutPanel.php'));
 });

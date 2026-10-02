@@ -4,11 +4,15 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Tables\Filters\Indicator;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 use function Filament\Support\apply_search_constraint;
+use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_pattern;
+use function Filament\Support\generate_search_term_expression;
 
 trait CanSearchRecords
 {
@@ -198,7 +202,13 @@ trait CanSearchRecords
                 continue;
             }
 
+            /** @var Connection $databaseConnection */
+            $databaseConnection = $query->getConnection();
+
             $model = $query->getModel();
+
+            $nonTranslatableSearch = generate_search_term_expression($search, isSearchForcedCaseInsensitive: null, databaseConnection: $databaseConnection);
+            $searchPattern = generate_search_pattern($nonTranslatableSearch, hasLeadingWildcard: true, hasTrailingWildcard: true);
 
             $translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver();
 
@@ -211,11 +221,11 @@ trait CanSearchRecords
                         (string) str($column)->beforeLast('.'),
                         fn (Builder $query): Builder => apply_search_constraint(
                             $query,
-                            (string) str($column)->afterLast('.'),
-                            "%{$search}%",
+                            generate_search_column_expression((string) str($column)->afterLast('.'), isSearchForcedCaseInsensitive: null, databaseConnection: $databaseConnection),
+                            $searchPattern,
                         ),
                     ),
-                    function (Builder $query) use ($column, $search, $whereClause): Builder {
+                    function (Builder $query) use ($databaseConnection, $searchPattern, $column, $whereClause): Builder {
                         // Treat the missing "relationship" as a JSON column if dot notation is used in the column name.
                         if (str($column)->contains('.')) {
                             $column = (string) str($column)->replace('.', '->');
@@ -223,9 +233,9 @@ trait CanSearchRecords
 
                         return apply_search_constraint(
                             $query,
-                            $column,
-                            "%{$search}%",
-                            boolean: ($whereClause === 'where') ? 'and' : 'or',
+                            generate_search_column_expression($column, isSearchForcedCaseInsensitive: null, databaseConnection: $databaseConnection),
+                            $searchPattern,
+                            ($whereClause === 'where') ? 'and' : 'or',
                         );
                     },
                 ),

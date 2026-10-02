@@ -26,14 +26,18 @@ use Filament\Http\Middleware\IdentifyResourceConfiguration;
 use Filament\Http\Middleware\IdentifyTenant;
 use Filament\Http\Middleware\SetUpPanel;
 use Filament\Navigation\NavigationManager;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Assets\Font;
 use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\View\LegacyComponents;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
+use Livewire\Component;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -91,6 +95,19 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        Livewire::listen('hydrate', static function (Component $component, array $memo): void {
+            // Livewire skips lifecycle hooks for lazy components that have not mounted yet.
+            if (($component instanceof RelationManager) && (($memo['lazyLoaded'] ?? null) === false)) {
+                $component->bootCanAuthorizeAccess();
+            }
+        });
+
+        RateLimiter::for(
+            'filament-authentication',
+            static fn (): Limit => Limit::perMinute(6)
+                ->by(Filament::getUserScopedAuthIdentifier()),
+        );
+
         Blade::components([
             LegacyComponents\PageComponent::class => 'filament::page',
             LegacyComponents\WidgetComponent::class => 'filament::widget',

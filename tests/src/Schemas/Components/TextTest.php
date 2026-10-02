@@ -278,6 +278,18 @@ describe('icon size', function (): void {
         expect($text->getIconSize())->toBe(IconSize::Large);
     });
 
+    it('can set `iconSize()` with a string enum value', function (): void {
+        $text = Text::make('Test')->iconSize('lg');
+
+        expect($text->getIconSize())->toBe(IconSize::Large);
+    });
+
+    it('preserves a custom string `iconSize()` value', function (): void {
+        $text = Text::make('Test')->iconSize('custom');
+
+        expect($text->getIconSize())->toBe('custom');
+    });
+
     it('can set `iconSize()` with a `Closure`', function (): void {
         $text = Text::make('Test')
             ->iconSize(static fn (): IconSize => IconSize::Small);

@@ -3,7 +3,7 @@ import Sortable from 'sortablejs'
 window.Sortable = Sortable
 
 export default (Alpine) => {
-    Alpine.directive('sortable', (el) => {
+    Alpine.directive('sortable', (el, {}, { cleanup }) => {
         let animation = parseInt(el.dataset?.sortableAnimationDuration)
 
         if (animation !== 0 && !animation) {
@@ -43,5 +43,7 @@ export default (Alpine) => {
                 }
             },
         })
+
+        cleanup(() => el.sortable.destroy())
     })
 }

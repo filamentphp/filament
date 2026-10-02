@@ -3,18 +3,29 @@
 namespace Filament\Widgets;
 
 use Filament\Support\Concerns\CanBeLazy;
+use Filament\Support\Livewire\Concerns\ResolvesScopedModelProperties;
+use Filament\Support\Livewire\Contracts\HasScopedModelProperties;
 use Filament\Widgets\Concerns\CanAuthorizeAccess;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-abstract class Widget extends Component
+abstract class Widget extends Component implements HasScopedModelProperties
 {
     use CanAuthorizeAccess;
     use CanBeLazy;
+    use ResolvesScopedModelProperties;
 
     protected static bool $isDiscovered = true;
 
     protected static ?int $sort = null;
+
+    protected function getScopedModelPropertyNames(): array
+    {
+        return array_values(array_filter(
+            ['record', 'parentRecord'],
+            fn (string $property): bool => property_exists($this, $property),
+        ));
+    }
 
     /**
      * @var view-string

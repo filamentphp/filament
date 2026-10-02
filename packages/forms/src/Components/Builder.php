@@ -16,11 +16,13 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\GridDirection;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\DropdownComponent\ItemComponent;
 use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
@@ -104,6 +106,14 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
     protected ?array $blockPickerColumns = [];
 
     protected Width | string | Closure | null $blockPickerWidth = null;
+
+    protected bool | Closure | null $isSearchable = false;
+
+    protected string | Htmlable | Closure | null $searchPrompt = null;
+
+    protected string | Htmlable | Closure | null $noSearchResultsMessage = null;
+
+    protected int | Closure $searchDebounce = 0;
 
     protected bool | Closure | null $shouldPartiallyRenderAfterActionsCalled = null;
 
@@ -196,6 +206,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
+
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->livewireClickHandlerEnabled(false)
             ->button()
@@ -258,27 +270,30 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->label(fn (Builder $component) => $component->getAddBetweenActionLabel())
             ->color('gray')
             ->action(function (array $arguments, Builder $component, array $data = []): void {
+                $state = $component->getRawState() ?? [];
+
+                if (! array_key_exists($arguments['afterItem'], $state)) {
+                    return;
+                }
+
                 $newKey = $component->generateUuid();
+
+                if (! $newKey) {
+                    $state[] = [];
+                    $newKey = array_key_last($state);
+                    unset($state[$newKey]);
+                }
 
                 $items = [];
 
-                foreach ($component->getRawState() ?? [] as $key => $item) {
+                foreach ($state as $key => $item) {
                     $items[$key] = $item;
 
-                    if ($key === $arguments['afterItem']) {
-                        if ($newKey) {
-                            $items[$newKey] = [
-                                'type' => $arguments['block'],
-                                'data' => $data,
-                            ];
-                        } else {
-                            $items[] = [
-                                'type' => $arguments['block'],
-                                'data' => $data,
-                            ];
-
-                            $newKey = array_key_last($items);
-                        }
+                    if ((string) $key === (string) $arguments['afterItem']) {
+                        $items[$newKey] = [
+                            'type' => $arguments['block'],
+                            'data' => $data,
+                        ];
                     }
                 }
 
@@ -336,9 +351,13 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_CLONE) ?? Heroicon::Square2Stack)
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
-                $newUuid = $component->generateUuid();
+                $items = $component->getRawState() ?? [];
 
-                $items = $component->getRawState();
+                if (! array_key_exists($arguments['item'], $items)) {
+                    return;
+                }
+
+                $newUuid = $component->generateUuid();
 
                 if ($newUuid) {
                     $items[$newUuid] = $items[$arguments['item']];
@@ -386,7 +405,12 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_DELETE) ?? Heroicon::Trash)
             ->color('danger')
             ->action(function (array $arguments, Builder $component): void {
-                $items = $component->getRawState();
+                $items = $component->getRawState() ?? [];
+
+                if (! array_key_exists($arguments['item'], $items)) {
+                    return;
+                }
+
                 unset($items[$arguments['item']]);
 
                 $component->rawState($items);
@@ -427,7 +451,13 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_MOVE_DOWN) ?? Heroicon::ArrowDown)
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
-                $items = array_move_after($component->getRawState(), $arguments['item']);
+                $items = $component->getRawState() ?? [];
+
+                if (! array_key_exists($arguments['item'], $items)) {
+                    return;
+                }
+
+                $items = array_move_after($items, $arguments['item']);
 
                 $component->rawState($items);
 
@@ -467,7 +497,13 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_MOVE_UP) ?? Heroicon::ArrowUp)
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
-                $items = array_move_before($component->getRawState(), $arguments['item']);
+                $items = $component->getRawState() ?? [];
+
+                if (! array_key_exists($arguments['item'], $items)) {
+                    return;
+                }
+
+                $items = array_move_before($items, $arguments['item']);
 
                 $component->rawState($items);
 
@@ -514,10 +550,14 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_REORDER) ?? Heroicon::ArrowsUpDown)
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
-                $items = [
-                    ...array_flip($arguments['items']),
-                    ...$component->getRawState(),
-                ];
+                $items = $component->getRawState() ?? [];
+                $order = array_flip($arguments['items']);
+
+                if (array_diff_key($order, $items)) {
+                    return;
+                }
+
+                $items = array_replace($order, $items);
 
                 $component->rawState($items);
 
@@ -683,15 +723,19 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->fillForm(function (array $arguments, Builder $component) {
                 $state = $component->getState();
 
-                return $state[$arguments['item']]['data'];
+                return $state[$arguments['item']]['data'] ?? [];
             })
             ->schema(function (array $arguments, Builder $component) {
                 return $component->getChildSchema($arguments['item'])
-                    ->getClone()
-                    ->getComponents(withHidden: true);
+                    ?->getClone()
+                    ->getComponents(withHidden: true) ?? [];
             })
             ->action(function (array $arguments, Builder $component, $data): void {
-                $state = $component->getRawState();
+                $state = $component->getRawState() ?? [];
+
+                if (! array_key_exists($arguments['item'], $state)) {
+                    return;
+                }
 
                 $state[$arguments['item']]['data'] = $data;
 
@@ -969,6 +1013,16 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         return $this->cachedItemsRawStateStructure === $this->getRawStateStructure($this->getRawState());
     }
 
+    protected function isCachedDefaultChildSchemaFresh(string | int $key): bool
+    {
+        $rawState = $this->getRawState();
+
+        return is_array($rawState)
+            && array_key_exists($key, $rawState)
+            && array_key_exists($key, $this->cachedItemsRawStateStructure ?? [])
+            && ($this->cachedItemsRawStateStructure[$key] === (is_array($rawState[$key]) ? ($rawState[$key]['type'] ?? null) : null));
+    }
+
     /**
      * @return array<?string>
      */
@@ -1207,6 +1261,54 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         };
     }
 
+    public function searchable(bool | Closure | null $condition = true): static
+    {
+        $this->isSearchable = $condition;
+
+        return $this;
+    }
+
+    public function isSearchable(): bool
+    {
+        return (bool) $this->evaluate($this->isSearchable);
+    }
+
+    public function searchPrompt(string | Htmlable | Closure | null $message): static
+    {
+        $this->searchPrompt = $message;
+
+        return $this;
+    }
+
+    public function getSearchPrompt(): string | Htmlable
+    {
+        return $this->evaluate($this->searchPrompt) ?? __('filament-forms::components.builder.block_picker.search_prompt');
+    }
+
+    public function noSearchResultsMessage(string | Htmlable | Closure | null $message): static
+    {
+        $this->noSearchResultsMessage = $message;
+
+        return $this;
+    }
+
+    public function getNoSearchResultsMessage(): string | Htmlable
+    {
+        return $this->evaluate($this->noSearchResultsMessage) ?? __('filament-forms::components.builder.block_picker.no_search_results_message');
+    }
+
+    public function searchDebounce(int | Closure $debounce): static
+    {
+        $this->searchDebounce = $debounce;
+
+        return $this;
+    }
+
+    public function getSearchDebounce(): int
+    {
+        return $this->evaluate($this->searchDebounce);
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -1286,6 +1388,14 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         array | int | null $columns = null,
         Width | string | null $width = null,
     ): string {
+        $isSearchable = $this->isSearchable();
+        $searchPrompt = $isSearchable ? $this->getSearchPrompt() : null;
+        $searchDebounce = $this->getSearchDebounce();
+
+        if ($searchPrompt instanceof Htmlable) {
+            $searchPrompt = html_entity_decode(strip_tags($searchPrompt->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        }
+
         /** @var view-string $publishedView */
         $publishedView = 'filament-forms::components.builder.block-picker';
 
@@ -1297,6 +1407,10 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                 'blocks' => $blocks,
                 'columns' => $columns,
                 'key' => $key,
+                'noSearchResultsMessage' => $isSearchable ? $this->getNoSearchResultsMessage() : null,
+                'searchable' => $isSearchable,
+                'searchDebounce' => $searchDebounce,
+                'searchPrompt' => $searchPrompt,
                 'trigger' => new HtmlString($triggerHtml),
                 'width' => $width,
             ])->render();
@@ -1322,8 +1436,15 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 
         $xFloatDirective = 'x-float' . ($placement ? ".placement.{$placement}" : '') . '.flip.shift.offset';
 
+        // Reinitialize when the panel appears or its ignored layout attributes change.
+        // Ordinary block catalog updates must preserve the active search and focus.
+        $blockPickerKey = "{$key}.{$action->getName()}.{$afterItem}.block-picker." . md5(serialize([$widthClass, $placement, filled($blocks), $isSearchable]));
+
         $dropdownAttributes = (new FilamentComponentAttributeBag)
-            ->merge(['x-data' => 'filamentDropdown'], escape: false)
+            ->merge([
+                'x-data' => 'filamentDropdown',
+                'wire:key' => $blockPickerKey,
+            ], escape: false)
             ->class([
                 'fi-dropdown',
                 'fi-fo-builder-block-picker',
@@ -1334,6 +1455,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->merge([
                 'x-cloak' => true,
                 'x-ref' => 'panel',
+                'wire:key' => "{$blockPickerKey}.panel",
+                'wire:ignore.self' => true,
                 'x-transition:enter-start' => 'fi-opacity-0',
                 'x-transition:leave-end' => 'fi-opacity-0',
                 $xFloatDirective => '{ offset: 8 }',
@@ -1342,6 +1465,16 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                 'fi-dropdown-panel',
                 $widthClass,
             ]);
+
+        $listAttributes = (new FilamentComponentAttributeBag)
+            ->merge([
+                'x-load' => $isSearchable ? true : null,
+                'x-load-src' => $isSearchable ? FilamentAsset::getAlpineComponentSrc('builder', 'filament/forms') : null,
+                'x-data' => $isSearchable ? 'builderBlockPickerFormComponent()' : null,
+                'x-on:dropdown-escape' => $isSearchable ? 'handleEscape($event)' : null,
+                'data-dropdown-escape' => $isSearchable ? true : null,
+            ], escape: false)
+            ->class(['fi-dropdown-list']);
 
         $loadingDelay = config('filament.livewire_loading_delay', 'default');
 
@@ -1359,10 +1492,38 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 
             <?php if (filled($blocks)) { ?>
                 <div <?= $panelAttributes->toHtml() ?>>
-                    <div class="fi-dropdown-list">
+                    <div <?= $listAttributes->toHtml() ?>>
+                        <?php if ($isSearchable) { ?>
+                            <div class="fi-fo-builder-block-picker-search-ctn">
+                                <input
+                                    aria-label="<?= e($searchPrompt) ?>"
+                                    placeholder="<?= e($searchPrompt) ?>"
+                                    type="text"
+                                    data-dropdown-autofocus
+                                    x-ref="searchInput"
+                                    x-model.debounce.<?= $searchDebounce ?>="search"
+                                    x-on:dropdown-autofocus="clearSearch()"
+                                    x-on:keydown.enter.prevent
+                                    class="fi-input"
+                                />
+                            </div>
+                        <?php } ?>
                         <div <?= (new FilamentComponentAttributeBag)->grid($columns, GridDirection::Column)->toHtml() ?>>
                             <?php foreach ($blocks as $block) {
                                 $blockIcon = $block->getIcon();
+                                $blockLabel = $block->getLabel();
+
+                                $blockSearchLabel = null;
+
+                                if ($isSearchable) {
+                                    $blockSearchLabel = $blockLabel;
+
+                                    if ($blockSearchLabel instanceof Htmlable) {
+                                        $blockSearchLabel = html_entity_decode(strip_tags($blockSearchLabel->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                                    }
+
+                                    $blockSearchLabel = Str::lower($blockSearchLabel);
+                                }
 
                                 $wireClickArguments = ['block' => $block->getName()];
 
@@ -1379,6 +1540,9 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                         'type' => 'button',
                                         'wire:loading.attr' => 'disabled',
                                         'wire:target' => $wireClick,
+                                        'wire:key' => $isSearchable ? md5($wireClick . $blockSearchLabel) : null,
+                                        'data-block-label' => $isSearchable ? e($blockSearchLabel) : null,
+                                        'x-show' => $isSearchable ? 'isBlockVisible($el)' : null,
                                     ], escape: false)
                                     ->class(['fi-dropdown-list-item'])
                                     ->color(ItemComponent::class, 'gray');
@@ -1398,11 +1562,23 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                 ]))->color(IconComponent::class, 'gray'))->toHtml() ?>
 
                                 <span class="fi-dropdown-list-item-label">
-                                    <?= e($block->getLabel()) ?>
+                                    <?= e($blockLabel) ?>
                                 </span>
                             </button>
                             <?php } ?>
                         </div>
+
+                        <?php if ($isSearchable) { ?>
+                            <div
+                                x-cloak
+                                x-show="hasNoSearchResults"
+                                role="status"
+                                aria-live="polite"
+                                class="fi-fo-builder-block-picker-no-search-results-message"
+                            >
+                                <?= e($this->getNoSearchResultsMessage()) ?>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
             <?php } ?>

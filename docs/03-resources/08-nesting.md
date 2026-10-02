@@ -49,6 +49,14 @@ use App\Filament\Resources\Courses\CourseResource;
 protected static ?string $parentResource = CourseResource::class;
 ```
 
+## Authorizing nested resources
+
+To access a nested resource, the user must be able to access the nested resource and every ancestor resource. By default, resource access is controlled by the `viewAny()` method of the resource's model policy. Filament checks access to every ancestor resource on the initial page load and again on every subsequent Livewire request.
+
+Operations on nested records are authorized independently using the nested resource's policy. For example, editing a lesson requires `update()` access to the lesson, but does not require `view()` or `update()` access to its course. This allows you to grant users permission to manage related records without also granting them permission to view or edit the parent records themselves.
+
+The records in a nested resource URL must still belong to the configured relationship chain. Authorization determines whether the user may access each resource, while relationship scoping ensures that the requested records belong to one another.
+
 ## Customizing the relationship names
 
 In the same way that relation managers and pages predict the name of relationships based on the models in those relationships, nested resources do the same. Sometimes, you may have a relationship that does not fit the traditional relationship naming convention, and you will need to inform Filament of the correct relationship names for the nested resource.
@@ -69,7 +77,11 @@ public static function getParentResourceRegistration(): ?ParentResourceRegistrat
 
 You can omit the calls to `relationship()` and `inverseRelationship()` if you want to use the default names.
 
-## Registering a relation manager with the correct URL
+## Customizing the nested resource index URL
+
+The nested resource's index URL is used for breadcrumbs and redirects back to the relation manager or page.
+
+### Registering a relation manager with the correct URL
 
 When dealing with a nested resource that is listed by a relation manager, and the relation manager is amongst others on that page, you may notice that the URL to it is not correct when you redirect from the nested resource back to it. This is because each relation manager registered on a resource is assigned an integer, which is used to identify it in the URL when switching between multiple relation managers. For example, `?relation=0` might represent one relation manager in the URL, and `?relation=1` might represent another.
 
@@ -83,3 +95,22 @@ public static function getRelations(): array
     ];
 }
 ```
+
+### Registering a relation page with a custom key
+
+By default, Filament uses the parent resource page whose key matches the kebab-cased relationship name for the nested resource's index URL. If you register the relation page under a different key in the parent resource's `getPages()` method, you can pass that key to the `page()` method:
+
+```php
+use App\Filament\Resources\Courses\CourseResource;
+use Filament\Resources\ParentResourceRegistration;
+
+public static function getParentResourceRegistration(): ?ParentResourceRegistration
+{
+    return CourseResource::asParent()
+        ->relationship('lessons')
+        ->inverseRelationship('course')
+        ->page('manageLessons');
+}
+```
+
+If the configured page is not registered, Filament falls back to the parent resource's view, edit, or index page.

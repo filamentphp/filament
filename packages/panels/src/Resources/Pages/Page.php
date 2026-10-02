@@ -25,8 +25,11 @@ use Filament\Resources\Events\RecordSaved;
 use Filament\Resources\Events\RecordUpdated;
 use Filament\Resources\Pages\Concerns\CanAuthorizeResourceAccess;
 use Filament\Resources\Pages\Concerns\InteractsWithParentRecord;
+use Filament\Support\Livewire\Contracts\HasScopedModelProperties;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Event;
@@ -35,16 +38,75 @@ use LogicException;
 
 use function Filament\Support\original_request;
 
-abstract class Page extends BasePage
+abstract class Page extends BasePage implements HasScopedModelProperties
 {
     use CanAuthorizeResourceAccess;
     use InteractsWithParentRecord;
 
-    protected static ?string $breadcrumb = null;
-
     protected static string $resource;
 
     protected static bool $isDiscovered = false;
+
+    /** @param array<string, mixed> | null $properties */
+    public function resolveScopedModelProperties(?array $properties = null): void
+    {
+        try {
+            $this->mountParentRecord();
+
+            if (method_exists($this, 'resolveRecordPropertyFromLivewire')) {
+                $this->resolveRecordPropertyFromLivewire();
+
+                return;
+            }
+
+            if (! (($this->record ?? null) instanceof Model)) {
+                return;
+            }
+
+            $this->record = $this->resolveRecordFromLivewire($this->record);
+        } catch (ModelNotFoundException) {
+            abort(404);
+        }
+    }
+
+    protected function resolveRecordFromLivewire(Model $model): Model
+    {
+        $routeKey = filled($routeKeyName = static::getResource()::getRecordRouteKeyName())
+            ? $model->getAttribute($routeKeyName)
+            : $model->getRouteKey();
+
+        abort_unless(is_int($routeKey) || is_string($routeKey), 404);
+
+        $record = $this->resolveRecord($routeKey);
+
+        abort_unless((string) $record->getKey() === (string) $model->getKey(), 404);
+
+        return $record;
+    }
+
+    protected function resolveRecord(int | string $key): Model
+    {
+        $this->mountParentRecord();
+
+        $parentRecord = $this->getParentRecord();
+        $modifyQuery = fn (Builder $query): Builder => $query->useWritePdo();
+
+        if ($parentRecord) {
+            $modifyQuery = fn (Builder $query): Builder => static::getResource()::scopeEloquentQueryToParent($query->useWritePdo(), $parentRecord);
+        }
+
+        $record = static::getResource()::resolveRecordRouteBinding($key, $modifyQuery);
+
+        if ($record === null) {
+            throw (new ModelNotFoundException)->setModel(static::getResource()::getModel(), [$key]);
+        }
+
+        if ($parentRecord) {
+            $record->setRelation(static::getResource()::getParentResourceRegistration()->getInverseRelationshipName(), $parentRecord);
+        }
+
+        return $record;
+    }
 
     /**
      * @var array<class-string, string>
@@ -227,6 +289,17 @@ abstract class Page extends BasePage
             }
         }
 
+        if (Filament::getCurrentOrDefaultPanel()->hasNavigationHierarchyInBreadcrumbs()) {
+            $navigationHierarchyBreadcrumbs = $this->getNavigationHierarchyBreadcrumbs();
+
+            if ($navigationHierarchyBreadcrumbs !== null) {
+                return [
+                    ...$navigationHierarchyBreadcrumbs,
+                    ...$breadcrumbs,
+                ];
+            }
+        }
+
         if (filled($cluster = static::getCluster())) {
             return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
         }
@@ -243,6 +316,42 @@ abstract class Page extends BasePage
             ...$this->getResourceBreadcrumbs(),
             $this->getBreadcrumb(),
         ];
+    }
+
+    protected function getNavigationBreadcrumbItemKey(): string
+    {
+        return static::getResource();
+    }
+
+    protected function getNavigationBreadcrumbItemUrl(): ?string
+    {
+        $resource = static::getResource();
+
+        if ((! $resource::shouldRegisterNavigation()) || $resource::getParentResourceRegistration()) {
+            return null;
+        }
+
+        return $resource::getNavigationUrl();
+    }
+
+    protected function getSubNavigationBreadcrumbItemKey(): string
+    {
+        return $this->getSubNavigationParameters() ? static::class : parent::getSubNavigationBreadcrumbItemKey();
+    }
+
+    protected function getSubNavigationBreadcrumbItemUrl(): ?string
+    {
+        $parameters = $this->getSubNavigationParameters();
+
+        if (! $parameters) {
+            return parent::getSubNavigationBreadcrumbItemUrl();
+        }
+
+        if (! static::shouldRegisterNavigation($parameters)) {
+            return null;
+        }
+
+        return static::getNavigationUrl($parameters);
     }
 
     /**

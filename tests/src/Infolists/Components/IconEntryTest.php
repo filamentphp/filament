@@ -8,7 +8,9 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\TestCase;
+use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -31,6 +33,17 @@ it('can set `icon()`', function (): void {
         ->icon(Heroicon::Check);
 
     expect($entry->getIcon(null))->toBe(Heroicon::Check);
+});
+
+it('can set `icon()` with an `Htmlable` icon', function (): void {
+    $icon = new HtmlString('<svg data-testid="custom-icon"></svg>');
+
+    expect(IconEntry::make('status')->icon($icon)->getIcon(null))->toBe($icon);
+});
+
+it('can set `icon()` with scalable and backed enum icons', function (): void {
+    expect(IconEntry::make('status')->icon(Heroicon::Check)->getIcon(null))->toBe(Heroicon::Check)
+        ->and(IconEntry::make('status')->icon(TestIcon::Check)->getIcon(null))->toBe(TestIcon::Check);
 });
 
 it('can set `size()`', function (): void {
@@ -101,6 +114,14 @@ it('`getIcon()` returns the base icon when set directly', function (): void {
     expect($entry->getIcon('anything'))->toBe(Heroicon::Check);
 });
 
+it('`getIcon()` preserves explicit icons for a `null` state', function (): void {
+    expect(IconEntry::make('is_active')->icon(Heroicon::Check)->getIcon(null))->toBe(Heroicon::Check);
+});
+
+it('`getIcon()` returns `null` for a `null` boolean state', function (): void {
+    expect(IconEntry::make('is_active')->boolean()->getIcon(null))->toBeNull();
+});
+
 it('`getIcon()` returns the `trueIcon` for a truthy state when `boolean()` is set', function (): void {
     $entry = IconEntry::make('is_active')
         ->boolean()
@@ -155,7 +176,19 @@ it('can set `size()` with a string value', function (): void {
     $entry = IconEntry::make('status')
         ->size('lg');
 
-    expect($entry->getSize(null))->toBe('lg');
+    expect($entry->getSize(null))->toBe(IconSize::Large);
+});
+
+it('preserves a custom string `size()` value', function (): void {
+    expect(IconEntry::make('status')->size('custom')->getSize(null))->toBe('custom');
+});
+
+it('detects boolean state from a model cast', function (): void {
+    expect(IconEntry::make('is_published')->model(new Post)->isBoolean())->toBeTrue();
+});
+
+it('does not infer boolean state from an array record', function (): void {
+    expect(IconEntry::make('is_published')->model(['is_published' => true])->isBoolean())->toBeFalse();
 });
 
 it('can set `listWithLineBreaks()` with a `Closure`', function (): void {
@@ -220,6 +253,14 @@ describe('rendering', function (): void {
 
     it('can render with `size()` set via `Closure`', function (): void {
         livewire(RenderIconEntryWithClosureSize::class)->assertSuccessful();
+    });
+
+    it('can render supported custom icon types and string sizes', function (): void {
+        livewire(RenderIconEntryWithSupportedIconTypes::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('data-testid="custom-icon"')
+            ->assertSeeHtml('fi-size-sm')
+            ->assertSeeHtml('fi-size-lg');
     });
 
     it('can render with `boolean()` mode', function (): void {
@@ -345,6 +386,34 @@ class RenderIconEntryWithClosureSize extends Component implements HasSchemas
     {
         return $schema->state(['status' => 'active'])->components([
             IconEntry::make('status')->icon(Heroicon::Check)->size(static fn (): IconSize => IconSize::Large),
+        ]);
+    }
+
+    public function render(): string
+    {
+        return '<div>{{ $this->infolist }}</div>';
+    }
+}
+
+class RenderIconEntryWithSupportedIconTypes extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema->state([
+            'html_icon' => 'html',
+            'scalable_icon' => 'scalable',
+            'backed_enum_icon' => 'backed enum',
+        ])->components([
+            IconEntry::make('html_icon')
+                ->icon(new HtmlString('<svg data-testid="custom-icon"></svg>'))
+                ->size(IconSize::Small),
+            IconEntry::make('scalable_icon')
+                ->icon(Heroicon::Check)
+                ->size('lg'),
+            IconEntry::make('backed_enum_icon')
+                ->icon(TestIcon::Check),
         ]);
     }
 
@@ -539,4 +608,9 @@ class RenderIconEntryWithFalseCombined extends Component implements HasSchemas
     {
         return '<div>{{ $this->infolist }}</div>';
     }
+}
+
+enum TestIcon: string
+{
+    case Check = 'heroicon-o-check';
 }

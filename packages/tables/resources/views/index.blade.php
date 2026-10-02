@@ -5,7 +5,6 @@
     use Filament\Actions\BulkActionGroup;
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\IconSize;
-    use Filament\Support\Enums\VerticalAlignment;
     use Filament\Support\Enums\Width;
     use Filament\Support\Facades\FilamentView;
     use Filament\Support\Icons\Heroicon;
@@ -14,9 +13,7 @@
     use Filament\Tables\Columns\Column;
     use Filament\Tables\Columns\ColumnGroup;
     use Filament\Tables\Enums\ColumnManagerLayout;
-    use Filament\Tables\Enums\ColumnManagerResetActionPosition;
     use Filament\Tables\Enums\FiltersLayout;
-    use Filament\Tables\Enums\FiltersResetActionPosition;
     use Filament\Tables\Enums\RecordActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
     use Filament\Tables\Filters\Indicator;
@@ -53,6 +50,7 @@
     $contentFooter = $getContentFooter();
     $filterIndicators = $getFilterIndicators();
     $filtersApplyAction = $getFiltersApplyAction();
+    $filtersResetAction = $getFiltersResetAction();
     $filtersForm = $getFiltersForm();
     $filtersFormWidth = $getFiltersFormWidth();
     $filtersResetActionPosition = $getFiltersResetActionPosition();
@@ -151,6 +149,11 @@
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
     $hasPagination = (($records instanceof Paginator) || ($records instanceof CursorPaginator)) && (($records instanceof LengthAwarePaginator) ? $records->total() : $records->isNotEmpty());
+    $contentRenderHookData = [
+        'hasPagination' => $hasPagination,
+        'records' => $records,
+        'table' => $this->getTable(),
+    ];
     $hasEmptyState = ($records !== null) && ! count($records);
     $hasContentLayout = $content || $hasColumnsLayout;
     $searchDebounce = $getSearchDebounce();
@@ -271,6 +274,7 @@
                     :form="$filtersForm"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-before-content"
+                    :reset-action="$filtersResetAction"
                     :reset-action-position="$filtersResetActionPosition"
                 />
             </div>
@@ -341,6 +345,7 @@
                             :heading-tag="$secondLevelHeadingTag"
                             x-cloak
                             :x-show="$hasCollapsibleFilters ? 'areFiltersOpen' : null"
+                            :reset-action="$filtersResetAction"
                             :reset-action-position="$filtersResetActionPosition"
                         />
 
@@ -635,7 +640,15 @@
                                                 :apply-action="$filtersApplyAction"
                                                 :form="$filtersForm"
                                                 :heading-tag="$secondLevelHeadingTag"
+                                                :reset-action="$filtersResetAction"
                                                 :reset-action-position="$filtersResetActionPosition"
+                                                data-dropdown-autofocus
+                                                data-dropdown-autofocus-on-keyboard
+                                                data-dropdown-escape
+                                                x-data="filamentTableFilters"
+                                                x-on:click="rememberActionFocus($event)"
+                                                x-on:dropdown-autofocus="focusFirstControl()"
+                                                tabindex="-1"
                                             />
                                         </x-filament::dropdown>
                                     @endif
@@ -894,6 +907,8 @@
                 @endif
             @endif
 
+            {{ FilamentView::renderHook(TablesRenderHook::CONTENT_BEFORE, scopes: static::class, data: $contentRenderHookData) }}
+
             @if (((! $content) && (! $hasColumnsLayout)) || ($records === null) || count($records))
                 <div
                     @if ((! $isReordering) && ($pollingInterval = $getPollingInterval()))
@@ -1119,6 +1134,7 @@
                                             <table
                                                 @class([
                                                     'fi-ta-table',
+                                                    'fi-ta-table-stacked-on-mobile' => $isStackedOnMobile,
                                                     'fi-ta-table-reordering' => $isReordering,
                                                 ])
                                             >
@@ -1396,7 +1412,12 @@
                                 @endforeach
 
                                 @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && $this->shouldRenderTrailingGroupedTableSummary($previousRecord))
-                                    <table class="fi-ta-table">
+                                    <table
+                                        @class([
+                                            'fi-ta-table',
+                                            'fi-ta-table-stacked-on-mobile' => $isStackedOnMobile,
+                                        ])
+                                    >
                                         <tbody>
                                             @php
                                                 $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
@@ -1426,7 +1447,12 @@
                         @endif
 
                         @if ($hasTopLevelSummary && (! $isReordering))
-                            <table class="fi-ta-table">
+                            <table
+                                @class([
+                                    'fi-ta-table',
+                                    'fi-ta-table-stacked-on-mobile' => $isStackedOnMobile,
+                                ])
+                            >
                                 <tbody>
                                     <x-filament-tables::summary
                                         :all-table-summary="$hasAllTableSummary"
@@ -1962,8 +1988,58 @@
                                     @endif
                                 >
                                     @if ($isColumnSearchVisible)
+                                        @php
+                                            $breakpointOrder = [
+                                                'base' => 0,
+                                                'sm' => 1,
+                                                'md' => 2,
+                                                'lg' => 3,
+                                                'xl' => 4,
+                                                '2xl' => 5,
+                                            ];
+                                            $responsiveBreakpointOrder = array_diff_key($breakpointOrder, ['base' => true]);
+                                            $individualSearchHiddenAt = [];
+
+                                            $individualSearchColumnStates = [];
+
+                                            foreach ($columns as $columnKey => $column) {
+                                                $individualSearchColumnStates[$columnKey] = [
+                                                    'hiddenFrom' => $column->getHiddenFrom(),
+                                                    'isIndividuallySearchable' => $column->isIndividuallySearchable(),
+                                                    'visibleFrom' => $column->getVisibleFrom(),
+                                                ];
+                                            }
+
+                                            foreach ($breakpointOrder as $breakpoint => $breakpointIndex) {
+                                                foreach ($individualSearchColumnStates as $columnState) {
+                                                    if (! $columnState['isIndividuallySearchable']) {
+                                                        continue;
+                                                    }
+
+                                                    $visibleFromIndex = $responsiveBreakpointOrder[$columnState['visibleFrom']] ?? null;
+
+                                                    if ($visibleFromIndex !== null) {
+                                                        if ($breakpointIndex >= $visibleFromIndex) {
+                                                            continue 2;
+                                                        }
+
+                                                        continue;
+                                                    }
+
+                                                    $hiddenFromIndex = $responsiveBreakpointOrder[$columnState['hiddenFrom']] ?? null;
+
+                                                    if (($hiddenFromIndex === null) || ($breakpointIndex < $hiddenFromIndex)) {
+                                                        continue 2;
+                                                    }
+                                                }
+
+                                                $individualSearchHiddenAt[] = $breakpoint;
+                                            }
+                                        @endphp
+
                                         <tr
-                                            class="fi-ta-row fi-ta-row-not-reorderable"
+                                            @if (filled($individualSearchHiddenAt)) data-search-hidden-at="{{ implode(' ', $individualSearchHiddenAt) }}" @endif
+                                            class="fi-ta-row fi-ta-row-not-reorderable fi-ta-individual-search-row"
                                         >
                                             @if (count($records))
                                                 @if ($isReordering)
@@ -1979,21 +2055,29 @@
                                                 @endif
                                             @endif
 
-                                            @foreach ($columns as $column)
+                                            @foreach ($columns as $columnKey => $column)
                                                 @php
                                                     $columnName = $column->getName();
+                                                    $columnState = $individualSearchColumnStates[$columnKey];
+                                                    $isIndividuallySearchable = $columnState['isIndividuallySearchable'];
+                                                    $columnHiddenFrom = $columnState['hiddenFrom'];
+                                                    $columnVisibleFrom = $columnState['visibleFrom'];
                                                 @endphp
 
                                                 <td
                                                     @class([
                                                         'fi-ta-cell',
-                                                        'fi-ta-individual-search-cell' => $isIndividuallySearchable = $column->isIndividuallySearchable(),
+                                                        'fi-ta-individual-search-cell' => $isIndividuallySearchable,
                                                         'fi-ta-individual-search-cell-' . str($columnName)->camel()->kebab() => $isIndividuallySearchable,
+                                                        filled($columnHiddenFrom) ? "{$columnHiddenFrom}:fi-hidden" : '',
+                                                        filled($columnVisibleFrom) ? "{$columnVisibleFrom}:fi-visible" : '',
                                                     ])
                                                 >
                                                     @if ($isIndividuallySearchable)
                                                         <x-filament-tables::search-field
                                                             :debounce="$searchDebounce"
+                                                            :label="$column->getLabel()"
+                                                            :label-hidden="! $isStackedOnMobile"
                                                             :on-blur="$isSearchOnBlur"
                                                             :wire-model="'tableColumnSearches.' . $columnName"
                                                         />
@@ -2058,7 +2142,10 @@
 
                                                 @if (! $isGroupsOnly)
                                                     <tr
-                                                        class="fi-ta-row fi-ta-group-header-row"
+                                                        @class([
+                                                            'fi-ta-row fi-ta-group-header-row',
+                                                            'fi-ta-group-header-row-with-selection' => $isSelectionEnabled && ($maxSelectableRecords !== 1),
+                                                        ])
                                                     >
                                                         @php
                                                             $isRecordGroupCollapsible = $group?->isCollapsible();
@@ -2571,6 +2658,8 @@
                 @endif
             @endif
 
+            {{ FilamentView::renderHook(TablesRenderHook::CONTENT_AFTER, scopes: static::class, data: $contentRenderHookData) }}
+
             @if ($hasPagination)
                 @php
                     $hasExtremePaginationLinks = $hasExtremePaginationLinks();
@@ -2590,6 +2679,7 @@
                     :form="$filtersForm"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-below-content"
+                    :reset-action="$filtersResetAction"
                     :reset-action-position="$filtersResetActionPosition"
                 />
             @endif
@@ -2613,6 +2703,7 @@
                     :form="$filtersForm"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-after-content"
+                    :reset-action="$filtersResetAction"
                     :reset-action-position="$filtersResetActionPosition"
                 />
             </div>

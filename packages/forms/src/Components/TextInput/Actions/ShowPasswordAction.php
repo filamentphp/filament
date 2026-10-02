@@ -25,9 +25,11 @@ class ShowPasswordAction extends Action
         $this->defaultColor('gray');
 
         $this->extraAttributes([
+            'wire:loading.attr' => false,
+            'x-ref' => 'showPasswordAction',
             'x-show' => '! isPasswordRevealed',
         ], merge: true);
 
-        $this->alpineClickHandler('isPasswordRevealed = true');
+        $this->alpineClickHandler('setPasswordRevealed(true)');
     }
 }

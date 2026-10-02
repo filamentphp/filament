@@ -4,12 +4,16 @@ namespace Filament\Forms\Components\MorphToSelect;
 
 use Closure;
 use Filament\Forms\Components\Select;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use LogicException;
 
 use function Filament\Support\apply_search_constraint;
+use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_pattern;
+use function Filament\Support\generate_search_term_expression;
 use function Filament\Support\get_model_label;
 
 class Type
@@ -73,18 +77,25 @@ class Type
                 ]) ?? $query;
             }
 
+            /** @var Connection $databaseConnection */
+            $databaseConnection = $query->getConnection();
+
             $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
 
             $isFirst = true;
 
-            $query->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $search): Builder {
+            $search = generate_search_term_expression($search, $isForcedCaseInsensitive, $databaseConnection);
+            $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true);
+
+            $query->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $databaseConnection, $searchPattern): Builder {
                 foreach ($this->getSearchColumns() as $searchColumn) {
+                    $whereClause = $isFirst ? 'where' : 'orWhere';
+
                     apply_search_constraint(
                         $query,
-                        $searchColumn,
-                        "%{$search}%",
-                        $isForcedCaseInsensitive,
-                        $isFirst ? 'and' : 'or',
+                        generate_search_column_expression($searchColumn, $isForcedCaseInsensitive, $databaseConnection),
+                        $searchPattern,
+                        ($whereClause === 'where') ? 'and' : 'or',
                     );
 
                     $isFirst = false;

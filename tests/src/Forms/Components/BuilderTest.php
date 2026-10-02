@@ -8,15 +8,298 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\ViewComponent;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\Width;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 
+use function Filament\Forms\array_move_after;
+use function Filament\Forms\array_move_before;
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
+beforeEach(function (): void {
+    require_once __DIR__ . '/../../../../packages/forms/src/helpers.php';
+});
+
+it('returns inserted blocks in the Livewire partial response', function (string $action, bool $hasBlockPreviews): void {
+    $livewire = livewire(ItemStateTestComponent::class, compact('hasBlockPreviews'));
+    $items = [
+        'first' => ['type' => 'one', 'data' => ['foo' => 'Stored first text']],
+        'last' => ['type' => 'one', 'data' => ['foo' => 'Stored last text']],
+    ];
+
+    $livewire->set('data.group.items', $items)
+        ->callAction(TestAction::make($action)->schemaComponent('group.items')->arguments(['block' => 'one', 'afterItem' => 'first']), data: $hasBlockPreviews ? ['foo' => 'Submitted text'] : []);
+
+    $state = $livewire->get('data.group.items');
+    expect($state)->toHaveCount(3);
+    $newKey = array_key_first(array_diff_key($state, $items));
+    $newItem = ['type' => 'one', 'data' => ['foo' => $hasBlockPreviews ? 'Submitted text' : 'Draft 3']];
+    expect($state)->toBe($action === 'add'
+        ? [...$items, $newKey => $newItem]
+        : ['first' => $items['first'], $newKey => $newItem, 'last' => $items['last']]);
+    expect($livewire->effects['partials']['schema-component::form.group.items'] ?? null)
+        ->toBeString()->toContain('data.group.items.first.data.foo', "data.group.items.{$newKey}.data.foo", 'data.group.items.last.data.foo');
+    expect($livewire->effects)->not->toHaveKey('html');
+})->with(['add', 'addBetween'])->with([false, true]);
+
+it('keeps full rendering for live or explicitly non-partial Builder actions', function (bool $isLive, ?bool $partialRender): void {
+    $livewire = livewire(ItemStateTestComponent::class, compact('isLive', 'partialRender'))
+        ->call('mountAction', 'add', ['block' => 'one'], ['schemaComponent' => 'form.group.items']);
+
+    expect($livewire->effects['html'] ?? null)->toBeString()->toContain('data.group.items.');
+    expect($livewire->effects['partials'])->not->toHaveKey('schema-component::form.group.items');
+})->with([[true, null], [false, false]]);
+
+it('generates distinct UUIDs when enabled and preserves disabled and callback generation', function (string $fieldType): void {
+    foreach ([true, null] as $configuration) {
+        $field = $fieldType::make('items')->generateUuidUsing($configuration);
+        $first = $field->generateUuid();
+        $second = $field->generateUuid();
+
+        expect(Str::isUuid($first))->toBeTrue();
+        expect(Str::isUuid($second))->toBeTrue();
+        expect($first)->not->toBe($second);
+    }
+
+    $field->generateUuidUsing(false);
+    expect($field->generateUuid())->toBeNull();
+    $field->generateUuidUsing(static fn ($component): string => $component->getName() . '-key');
+    expect($field->generateUuid())->toBe('items-key');
+    expect($field->generateUuid())->toBe('items-key');
+})->with(['builder' => [Builder::class], 'repeater' => [Repeater::class]]);
+
+it('inserts two items with distinct enabled UUIDs', function (string $fieldType): void {
+    $livewire = livewire(ItemStateTestComponent::class, compact('fieldType'));
+
+    foreach (range(1, 2) as $index) {
+        $livewire->call('mountAction', 'add', ['block' => 'one'], ['schemaComponent' => 'form.group.items']);
+        expect($livewire->get('data.group.items'))->toHaveCount($index);
+    }
+
+    foreach (array_keys($livewire->get('data.group.items')) as $key) {
+        expect(Str::isUuid($key))->toBeTrue();
+    }
+})->with(['builder' => [Builder::class], 'repeater' => [Repeater::class]]);
+
+it('clones an existing item without changing its source or sibling state', function (string $fieldType, bool $generateUuids): void {
+    $items = [
+        'source' => ['foo' => 'Alpha', 'nested' => ['left' => 13, 'right' => [7, 29]]],
+        'other' => ['foo' => 'Beta', 'nested' => ['left' => 31, 'right' => []]],
+    ];
+
+    if ($fieldType === Builder::class) {
+        $items = array_map(static fn (array $item): array => ['type' => 'one', 'data' => $item], $items);
+    }
+
+    $livewire = livewire(ItemStateTestComponent::class, compact('fieldType', 'generateUuids'))
+        ->set('data.group.items', $items)
+        ->call('mountAction', 'clone', ['item' => 'source'], ['schemaComponent' => 'form.group.items'])
+        ->assertDispatched('items-updated');
+
+    $state = $livewire->get('data.group.items');
+    expect($state)->toHaveCount(3);
+    $newKey = array_key_last($state);
+
+    if ($generateUuids) {
+        expect(Str::isUuid($newKey))->toBeTrue();
+    } else {
+        expect($newKey)->toBe(0);
+    }
+
+    expect($livewire->get('data'))->toBe([
+        'group' => ['items' => [...$items, $newKey => $items['source']]],
+        'sibling' => 'Untouched',
+    ]);
+})->with(['builder' => [Builder::class], 'repeater' => [Repeater::class]])->with([false, true]);
+
+it('ignores stale item actions after a concurrent deletion without changing nested or sibling state', function (string $fieldType, string $action, bool $deleteAll): void {
+    $items = [
+        'record-17' => ['foo' => 'Alpha', 'nested' => ['left' => 13, 'right' => [7, 29]]],
+        'record-42' => ['foo' => 'Beta', 'nested' => ['left' => 31, 'right' => []]],
+        'record-93' => ['foo' => 'Gamma', 'nested' => ['left' => 2, 'right' => [11]]],
+    ];
+
+    if ($fieldType === Builder::class) {
+        $items = array_map(static fn (array $item): array => ['type' => 'one', 'data' => $item], $items);
+    }
+
+    $livewire = livewire(ItemStateTestComponent::class, compact('fieldType'))
+        ->set('data.group.items', $items);
+
+    foreach ($deleteAll ? array_keys($items) : ['record-42'] as $key) {
+        $livewire->call('mountAction', 'delete', ['item' => $key], ['schemaComponent' => 'form.group.items']);
+        unset($items[$key]);
+    }
+
+    $expected = ['group' => ['items' => $items], 'sibling' => 'Untouched'];
+    expect($livewire->get('data'))->toBe($expected);
+
+    $livewire->call('mountAction', $action, [
+        'item' => 'record-42',
+        'afterItem' => 'record-42',
+        'items' => ['record-93', 'record-42', 'record-17'],
+        'block' => 'one',
+    ], ['schemaComponent' => 'form.group.items'])->assertNotDispatched('items-updated');
+
+    expect($livewire->get('data'))->toBe($expected);
+})->with(['builder' => [Builder::class], 'repeater' => [Repeater::class]])
+    ->with(['clone', 'moveUp', 'moveDown', 'delete', 'addBetween', 'reorder', 'collapse', 'expand'])
+    ->with([false, true]);
+
+it('preserves item keys and values for valid moves and partial reorders', function (string $fieldType, array $keys): void {
+    $items = array_combine($keys, [
+        ['foo' => 'Alpha', 'nested' => [13, 7]],
+        ['foo' => 'Beta', 'nested' => [29]],
+        ['foo' => 'Gamma', 'nested' => []],
+    ]);
+
+    if ($fieldType === Builder::class) {
+        $items = array_map(static fn (array $item): array => ['type' => 'one', 'data' => $item], $items);
+    }
+
+    $livewire = livewire(ItemStateTestComponent::class, compact('fieldType'))->set('data.group.items', $items);
+    $livewire->call('mountAction', 'moveDown', ['item' => (string) $keys[0]], ['schemaComponent' => 'form.group.items']);
+    expect($livewire->get('data.group.items'))->toBe([$keys[1] => $items[$keys[1]], $keys[0] => $items[$keys[0]], $keys[2] => $items[$keys[2]]]);
+    $livewire->call('mountAction', 'moveUp', ['item' => (string) $keys[0]], ['schemaComponent' => 'form.group.items']);
+    expect($livewire->get('data.group.items'))->toBe($items);
+    $livewire->call('mountAction', 'moveUp', ['item' => $keys[0]], ['schemaComponent' => 'form.group.items']);
+    $livewire->call('mountAction', 'moveDown', ['item' => $keys[2]], ['schemaComponent' => 'form.group.items']);
+    expect($livewire->get('data.group.items'))->toBe($items);
+    $livewire->call('mountAction', 'reorder', ['items' => [(string) $keys[2], (string) $keys[0]]], ['schemaComponent' => 'form.group.items']);
+    expect($livewire->get('data'))->toBe([
+        'group' => ['items' => [$keys[2] => $items[$keys[2]], $keys[0] => $items[$keys[0]], $keys[1] => $items[$keys[1]]]],
+        'sibling' => 'Untouched',
+    ]);
+})->with(['builder' => [Builder::class], 'repeater' => [Repeater::class]])->with([
+    'relationship keys' => [['record-17', 'record-42', 'record-93']],
+    'numeric keys' => [[0, 1, 2]],
+]);
+
+it('adds between numeric items without overwriting the following item when UUIDs are disabled', function (string $fieldType): void {
+    $items = [['foo' => 'Alpha'], ['foo' => 'Beta']];
+
+    if ($fieldType === Builder::class) {
+        $items = array_map(static fn (array $item): array => ['type' => 'one', 'data' => $item], $items);
+    }
+
+    $livewire = livewire(ItemStateTestComponent::class, ['fieldType' => $fieldType, 'generateUuids' => false])
+        ->set('data.group.items', $items)
+        ->call('mountAction', 'addBetween', ['block' => 'one', 'afterItem' => '0'], ['schemaComponent' => 'form.group.items']);
+
+    $newItem = ['foo' => 'Draft 3'];
+    if ($fieldType === Builder::class) {
+        $newItem = ['type' => 'one', 'data' => $newItem];
+    }
+
+    expect($livewire->get('data.group.items'))->toBe([0 => $items[0], 2 => $newItem, 1 => $items[1]]);
+})->with(['builder' => [Builder::class], 'repeater' => [Repeater::class]]);
+
+it('moves array items using exact PHP keys and leaves missing items or neighbors unchanged', function (): void {
+    $items = ['01' => ['name' => 'Padded'], 1 => ['name' => 'Integer'], 'tail' => ['name' => 'Last']];
+    expect(array_move_after($items, '1'))->toBe(['01' => $items['01'], 'tail' => $items['tail'], 1 => $items[1]]);
+    expect(array_move_before($items, '1'))->toBe([1 => $items[1], '01' => $items['01'], 'tail' => $items['tail']]);
+
+    foreach (['missing', '1.0', '1e0'] as $missingKey) {
+        expect(array_move_after($items, $missingKey))->toBe($items);
+        expect(array_move_before($items, $missingKey))->toBe($items);
+    }
+
+    expect(array_move_before($items, '01'))->toBe($items);
+    expect(array_move_after($items, 'tail'))->toBe($items);
+    expect(array_move_after([], 'missing'))->toBe([]);
+    expect(array_move_before([], 'missing'))->toBe([]);
+    expect(array_move_after([0 => null, 4 => ['value' => 7]], '0'))->toBe([4 => ['value' => 7], 0 => null]);
+    expect(array_move_before([0 => null, 4 => ['value' => 7]], '4'))->toBe([4 => ['value' => 7], 0 => null]);
+});
+
+it('does not resurrect a block deleted before mounting or submitting its preview edit action', function (bool $deleteBeforeMount): void {
+    $items = [
+        'first' => ['type' => 'one', 'data' => ['foo' => 'Keep me']],
+        'deleted' => ['type' => 'one', 'data' => ['foo' => 'Remove me']],
+    ];
+    $livewire = livewire(ItemStateTestComponent::class, ['hasBlockPreviews' => true])->set('data.group.items', $items);
+
+    if ($deleteBeforeMount) {
+        $livewire->call('mountAction', 'delete', ['item' => 'deleted'], ['schemaComponent' => 'form.group.items']);
+    }
+
+    $livewire->mountAction(TestAction::make('edit')->schemaComponent('group.items')->arguments(['item' => 'deleted']));
+
+    if (! $deleteBeforeMount) {
+        $livewire->setActionData(['foo' => 'Late edit'])
+            ->set('data.group.items', ['first' => $items['first']]);
+    }
+
+    $livewire->callMountedAction()->assertNotDispatched('items-updated');
+    expect($livewire->get('data'))->toBe(['group' => ['items' => ['first' => $items['first']]], 'sibling' => 'Untouched']);
+})->with([false, true]);
+
+it('updates only the targeted block when submitting a valid preview edit', function (): void {
+    $items = [
+        'first' => ['type' => 'one', 'data' => ['foo' => 'Keep me', 'nested' => [13, 29]]],
+        'edited' => ['type' => 'one', 'data' => ['foo' => 'Original']],
+    ];
+    $livewire = livewire(ItemStateTestComponent::class, ['hasBlockPreviews' => true])
+        ->set('data.group.items', $items)
+        ->mountAction(TestAction::make('edit')->schemaComponent('group.items')->arguments(['item' => 'edited']))
+        ->assertActionDataSet(['foo' => 'Original'])
+        ->setActionData(['foo' => 'Updated'])
+        ->callMountedAction()
+        ->assertDispatched('items-updated');
+
+    expect($livewire->get('data'))->toBe([
+        'group' => ['items' => ['first' => $items['first'], 'edited' => ['type' => 'one', 'data' => ['foo' => 'Updated']]]],
+        'sibling' => 'Untouched',
+    ]);
+});
+
+class ItemStateTestComponent extends Livewire
+{
+    public string $fieldType = Builder::class;
+
+    public bool $isLive = false;
+
+    public ?bool $partialRender = null;
+
+    public bool $generateUuids = true;
+
+    public bool $hasBlockPreviews = false;
+
+    public function form(Schema $form): Schema
+    {
+        $field = $this->fieldType::make('items')
+            ->generateUuidUsing($this->generateUuids)
+            ->cloneable()
+            ->reorderableWithButtons()
+            ->partiallyRenderAfterActionsCalled($this->partialRender)
+            ->afterStateUpdated(fn () => $this->dispatch('items-updated'));
+
+        $components = [TextInput::make('foo')->default(fn (): string => 'Draft ' . count($this->data['group']['items'] ?? []))];
+
+        if ($field instanceof Builder) {
+            $field->blocks([Builder\Block::make('one')->schema($components)])->blockPreviews($this->hasBlockPreviews);
+        } else {
+            $field->schema($components)->defaultItems(0)->addBetweenAction(static fn (Action $action): Action => $action->visible());
+        }
+
+        if ($this->isLive) {
+            $field->live();
+        }
+
+        return $form->components([
+            Section::make('Items')->statePath('group')->schema([$field]),
+            TextInput::make('sibling')->default('Untouched'),
+        ])->statePath('data');
+    }
+}
 
 it('displays blocks in builder', function (): void {
     $data = [
@@ -656,33 +939,430 @@ describe('rendering', function (): void {
     });
 });
 
-it('can add and delete blocks in the browser', function (): void {
-    retry(10, function (): void {
+describe('block picker search', function (): void {
+    it('can configure `searchable()`', function (): void {
+        $builder = Builder::make('content');
+
+        expect($builder->isSearchable())->toBeFalse()
+            ->and($builder->searchable()->isSearchable())->toBeTrue()
+            ->and($builder->searchable(false)->isSearchable())->toBeFalse()
+            ->and($builder->searchable(static fn (): bool => true)->isSearchable())->toBeTrue()
+            ->and($builder->searchable(null)->isSearchable())->toBeFalse()
+            ->and($builder->searchable()->searchable(static fn () => null)->isSearchable())->toBeFalse();
+    });
+
+    it('returns default translations for `getSearchPrompt()` and `getNoSearchResultsMessage()`', function (): void {
+        $builder = Builder::make('content');
+
+        expect($builder->getSearchPrompt())->toBe(__('filament-forms::components.builder.block_picker.search_prompt'))
+            ->and($builder->getNoSearchResultsMessage())->toBe(__('filament-forms::components.builder.block_picker.no_search_results_message'));
+    });
+
+    it('can set `searchPrompt()`, `noSearchResultsMessage()`, and `searchDebounce()` with a `Closure`', function (): void {
+        $builder = Builder::make('content')
+            ->searchPrompt(static fn (): string => 'Find a block')
+            ->noSearchResultsMessage(static fn (): string => 'Nothing found.')
+            ->searchDebounce(static fn (): int => 500);
+
+        expect($builder->getSearchPrompt())->toBe('Find a block')
+            ->and($builder->getNoSearchResultsMessage())->toBe('Nothing found.')
+            ->and($builder->getSearchDebounce())->toBe(500);
+    });
+
+    it('returns `0` for `getSearchDebounce()` by default', function (): void {
+        expect(Builder::make('content')->getSearchDebounce())->toBe(0);
+    });
+
+    it('can set and reset the block picker search configuration', function (): void {
+        $builder = Builder::make('content')
+            ->searchPrompt('Find')
+            ->noSearchResultsMessage('Empty')
+            ->searchDebounce(300);
+
+        expect($builder->getSearchPrompt())->toBe('Find')
+            ->and($builder->getNoSearchResultsMessage())->toBe('Empty')
+            ->and($builder->getSearchDebounce())->toBe(300)
+            ->and($builder->searchPrompt(null)->getSearchPrompt())->toBe(__('filament-forms::components.builder.block_picker.search_prompt'))
+            ->and($builder->noSearchResultsMessage(null)->getNoSearchResultsMessage())->toBe(__('filament-forms::components.builder.block_picker.no_search_results_message'))
+            ->and($builder->searchDebounce(0)->getSearchDebounce())->toBe(0);
+    });
+
+    it('preserves literal text in `searchPrompt()`', function (): void {
+        expect(Builder::make('content')->searchPrompt('<Find> &amp; "R&D"')->getSearchPrompt())
+            ->toBe('<Find> &amp; "R&D"');
+    });
+
+    it('preserves an `Htmlable` in `getSearchPrompt()` and accepts the `message` named argument', function (): void {
+        $message = new HtmlString('<strong>Find &quot;R&amp;D&quot;</strong>');
+        $builder = Builder::make('content');
+
+        expect($builder->searchPrompt(message: $message))->toBe($builder)
+            ->and($builder->getSearchPrompt())->toBe($message)
+            ->and($builder->searchPrompt(message: static fn (): HtmlString => $message)->getSearchPrompt())->toBe($message);
+    });
+
+    it('renders search labels and safely escapes an `Htmlable` search prompt', function (bool $hasPublishedView): void {
+        $cache = new ReflectionProperty(ViewComponent::class, 'hasPublishedEmbeddedViewOverrideCache');
+        $originalCache = $cache->getValue();
+        $cache->setValue(null, [
+            ...$originalCache,
+            'filament-forms::components.builder.block-picker' => $hasPublishedView,
+        ]);
+
+        try {
+            livewire(RenderBuilderWithSearchableBlocks::class)
+                ->assertSuccessful()
+                ->assertSeeHtml('data-dropdown-autofocus')
+                ->assertSeeHtml('x-on:keydown.enter.prevent')
+                ->assertSeeHtml('placeholder="Find &quot;R&amp;D&quot;"')
+                ->assertSeeHtml('aria-label="Find &quot;R&amp;D&quot;"')
+                ->assertSeeHtml('data-block-label="paragraph"')
+                ->assertSeeHtml('data-block-label="editor&#039;s picks"')
+                ->assertSeeHtml('<strong>No matching blocks</strong>')
+                ->assertDontSeeHtml('<span title="Search">');
+        } finally {
+            $cache->setValue(null, $originalCache);
+        }
+    })->with(['embedded' => false, 'published Blade' => true]);
+
+    it('uses the same picker identity for equivalent widths in both renderers', function (): void {
+        $cache = new ReflectionProperty(ViewComponent::class, 'hasPublishedEmbeddedViewOverrideCache');
+        $originalCache = $cache->getValue();
+        $render = new ReflectionMethod(Builder::class, 'generateBlockPickerHtml');
+        $keys = [];
+
+        try {
+            foreach ([false, true] as $hasPublishedView) {
+                $cache->setValue(null, [
+                    ...$originalCache,
+                    'filament-forms::components.builder.block-picker' => $hasPublishedView,
+                ]);
+
+                foreach (['sm', Width::Small] as $width) {
+                    $html = $render->invoke(Builder::make('content'), Action::make('add'), [], 'content', '', width: $width);
+                    preg_match('/wire:key="([^"]+)"/', $html, $matches);
+                    expect($matches)->toHaveCount(2);
+                    $keys[] = $matches[1];
+                }
+            }
+
+            expect(array_unique($keys))->toHaveCount(1);
+        } finally {
+            $cache->setValue(null, $originalCache);
+        }
+    });
+
+    it('does not render search markup when not `searchable()`', function (): void {
+        livewire(TestComponentWithBuilder::class)
+            ->assertSuccessful()
+            ->assertDontSeeHtml('data-dropdown-autofocus')
+            ->assertDontSeeHtml('data-block-label')
+            ->assertDontSeeHtml('builderBlockPickerFormComponent');
+    });
+});
+
+it('renders appended and between blocks with current defaults while preserving edited data in the browser', function (): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    $paragraph = '[data-testid="paragraph-text"]';
+    $firstParagraph = ':nth-match([data-testid="paragraph-text"], 1)';
+    $secondParagraph = ':nth-match([data-testid="paragraph-text"], 2)';
+    $heading = '[data-testid="heading-title"]';
+    $page = visit('/builder-test')
+        ->inDarkMode()
+        ->assertNotPresent($paragraph)
+        ->click('[data-testid="add-block"]')
+        ->click('button:has-text("Paragraph"):visible')
+        ->assertValue($paragraph, 'Paragraph 1')
+        ->type($paragraph, 'Welcome to the autumn edition')
+        ->click('[data-testid="add-block"]')
+        ->click('button:has-text("Heading"):visible')
+        ->type($heading, 'What is new')
+        ->click(':nth-match([data-testid="add-between"], 1)')
+        ->click('button:has-text("Paragraph"):visible')
+        ->assertCount($paragraph, 2)
+        ->assertValue($firstParagraph, 'Welcome to the autumn edition')
+        ->assertValue($secondParagraph, 'Paragraph 3')
+        ->assertValue($heading, 'What is new')
+        ->assertScript('Array.from(document.querySelectorAll(\'[data-testid="builder"] input\')).map(input => input.value)', ['Welcome to the autumn edition', 'Paragraph 3', 'What is new'])
+        ->assertScript('Array.from(document.querySelectorAll(\'[data-testid="add-between"]\')).every(button => !document.getElementById(button.getAttribute("aria-controls")).checkVisibility())', true)
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    $page->script('window.dispatchEvent(new CustomEvent("theme-changed", { detail: "light" }))');
+    $page->wait(0.5)->assertNoAccessibilityIssues();
+
+    $page->click(':nth-match([data-testid="delete-block"], 2)')
+        ->assertCount($paragraph, 1)
+        ->assertValue($paragraph, 'Welcome to the autumn edition')
+        ->assertValue($heading, 'What is new')
+        ->assertNoSmoke();
+});
+
+it('can search blocks in the picker in the browser', function (bool $isDarkMode): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    $addBlockAction = '[data-testid="add-block"]';
+    $noSearchResultsMessage = '[data-testid="builder"] [role="status"]';
+    $searchInput = '[data-testid="builder"] input[data-dropdown-autofocus]';
+    $page = visit('/builder-searchable-test');
+
+    if ($isDarkMode) {
+        $page = $page->inDarkMode();
+    }
+
+    $page
+        ->click($addBlockAction)
+        ->assertVisible($searchInput)
+        ->assertAttribute($searchInput, 'type', 'text')
+        ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[data-dropdown-autofocus]\')', true)
+        ->type($searchInput, 'ReSeArCh & DEVELOPMENT')
+        ->assertVisible('[data-testid="builder"] [data-block-label="research & development"]')
+        ->assertMissing('[data-testid="builder"] [data-block-label="paragraph"]')
+        ->type($searchInput, 'zzz')
+        ->assertVisible($noSearchResultsMessage)
+        ->keys($searchInput, 'Escape')
+        ->assertValue($searchInput, '')
+        ->assertVisible($searchInput)
+        ->assertVisible('[data-testid="builder"] [data-block-label="paragraph"]')
+        ->keys($searchInput, 'Escape')
+        ->assertMissing($searchInput)
+        ->assertScript('document.activeElement.closest(\'[data-testid="add-block"]\') !== null', true)
+        ->click($addBlockAction)
+        ->type($searchInput, 'video')
+        ->click('[data-testid="builder"] [data-block-label="video"]')
+        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
+        ->click($addBlockAction)
+        ->type($searchInput, 'video')
+        ->assertVisible($noSearchResultsMessage)
+        ->assertNoSmoke()
+        ->assertScript('document.querySelector(\'[data-testid="builder"]\').getAnimations({ subtree: true }).length', 0)
+        ->assertNoAccessibilityIssues();
+})->with(['light' => false, 'dark' => true]);
+
+it('clears a debounced block picker search with `Escape` before the debounce elapses', function (): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    $searchInput = '[data-testid="debounced-builder"] input[data-dropdown-autofocus]';
+
+    visit('/builder-searchable-test')
+        ->click('[data-testid="add-debounced-block"]')
+        ->assertVisible($searchInput)
+        ->type($searchInput, 'zzz')
+        ->keys($searchInput, 'Escape')
+        ->assertVisible($searchInput)
+        ->assertValue($searchInput, '')
+        // Wait for the debounce to elapse, so the cleared input is not overwritten by the stale search.
+        ->wait(1.5)
+        ->assertVisible($searchInput)
+        ->assertValue($searchInput, '')
+        ->assertVisible('[data-testid="debounced-builder"] [data-block-label="paragraph"]')
+        ->assertMissing('[data-testid="debounced-builder"] [role="status"]')
+        ->assertNoSmoke();
+});
+
+it('closes only the block picker with `Escape` when it is inside a modal', function (bool $isDarkMode): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    $modal = '[data-testid="builder-modal"]';
+    $addBlockAction = '[data-testid="add-modal-block"]';
+    $searchInput = '[data-testid="modal-builder"] input[data-dropdown-autofocus]';
+    $page = visit('/builder-searchable-test');
+
+    if ($isDarkMode) {
+        $page = $page->inDarkMode();
+    }
+
+    $page
+        ->click('[data-testid="modal-builder-trigger"]')
+        ->assertVisible($modal)
+        ->click($addBlockAction)
+        ->assertVisible($searchInput)
+        ->assertScript('document.querySelector(\'[data-testid="builder-modal"]\').getAnimations({ subtree: true }).length', 0)
+        ->assertNoAccessibilityIssues()
+        ->type($searchInput, 'zzz')
+        ->keys($searchInput, 'Escape')
+        ->assertValue($searchInput, '')
+        ->assertVisible($searchInput)
+        ->assertVisible($modal)
+        ->keys($searchInput, 'Escape')
+        ->assertMissing($searchInput)
+        ->assertVisible($modal)
+        ->assertScript('document.activeElement.closest(\'[data-testid="add-modal-block"]\') !== null', true)
+        ->keys($addBlockAction, 'Escape')
+        ->assertMissing($modal)
+        ->assertNoSmoke();
+})->with(['light' => false, 'dark' => true]);
+
+it('clears and focuses the block picker search after clicking away and reopening', function (bool $isDarkMode): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    $searchInput = '[data-testid="builder"] input[data-dropdown-autofocus]';
+    $page = visit('/builder-searchable-test');
+
+    if ($isDarkMode) {
+        $page = $page->inDarkMode();
+    }
+
+    $page
+        ->click('[data-testid="add-block"]')
+        ->type($searchInput, 'video')
+        ->assertVisible('[data-testid="builder"] [data-block-label="video"]')
+        ->assertMissing('[data-testid="builder"] [data-block-label="paragraph"]')
+        ->click('[data-testid="outside-picker"]')
+        ->assertMissing($searchInput)
+        ->click('[data-testid="add-block"]')
+        ->assertVisible($searchInput)
+        ->assertValue($searchInput, '')
+        ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[data-dropdown-autofocus]\')', true)
+        ->assertVisible('[data-testid="builder"] [data-block-label="paragraph"]')
+        ->assertVisible('[data-testid="builder"] [data-block-label="research & development"]')
+        ->assertVisible('[data-testid="builder"] [data-block-label="video"]')
+        ->assertMissing('[data-testid="builder"] [role="status"]')
+        ->assertNoSmoke()
+        ->assertScript('document.querySelector(\'[data-testid="builder"]\').getAnimations({ subtree: true }).length', 0)
+        ->assertNoAccessibilityIssues();
+})->with(['light' => false, 'dark' => true]);
+
+it('searches independently in the add-between picker and inserts the selected block in order', function (): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    $endPicker = '[data-testid="builder"] > .fi-fo-builder-block-picker';
+    $betweenPicker = '[data-testid="builder"] .fi-fo-builder-add-between-items-ctn';
+
+    visit('/builder-searchable-test')
+        ->click('[data-testid="add-block"]')
+        ->click($endPicker . ' [data-block-label="paragraph"]')
+        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
+        ->click('[data-testid="add-block"]')
+        ->click($endPicker . ' [data-block-label="research & development"]')
+        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 2)
+        ->click('[data-testid="add-block"]')
+        ->type($endPicker . ' input[data-dropdown-autofocus]', 'paragraph')
+        ->click('[data-testid="outside-picker"]')
+        ->hover('[data-testid="builder"] .fi-fo-builder-item:first-child')
+        ->click($betweenPicker . ' .fi-dropdown-trigger button')
+        ->assertValue($betweenPicker . ' input[data-dropdown-autofocus]', '')
+        ->type($betweenPicker . ' input[data-dropdown-autofocus]', 'video')
+        ->assertMissing($betweenPicker . ' [data-block-label="paragraph"]')
+        ->assertValue($endPicker . ' input[data-dropdown-autofocus]', 'paragraph')
+        ->click($betweenPicker . ' [data-block-label="video"]')
+        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 3)
+        ->assertScript('Array.from(document.querySelectorAll(\'[data-testid="builder"] .fi-fo-builder-item input\'), input => input.id.split(\'.\').pop())', ['text', 'url', 'title'])
+        ->assertNoSmoke();
+});
+
+it('preserves an active search when the block catalog changes', function (): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    $searchInput = '[data-testid="builder"] input[data-dropdown-autofocus]';
+    $page = visit('/builder-searchable-test')
+        ->click('[data-testid="add-block"]')
+        ->type($searchInput, 'video')
+        ->assertVisible('[data-testid="builder"] [data-block-label="video"]');
+
+    $page->script('Alpine.$data(document.querySelector(\'[data-testid="builder"]\')).$wire.$set(\'hasUpdatedBlocks\', true)');
+
+    $page
+        ->assertValue($searchInput, 'video')
+        ->assertVisible('[data-testid="builder"] [data-block-label="video heading"]')
+        ->assertVisible('[data-testid="builder"] [data-block-label="video quote"]')
+        ->assertNotPresent('[data-testid="builder"] [data-block-label="video"]')
+        ->assertMissing('[data-testid="builder"] [data-block-label="introduction"]')
+        ->assertMissing('[data-testid="builder"] [role="status"]')
+        ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[data-dropdown-autofocus]\')', true);
+
+    $page->script('Alpine.$data(document.querySelector(\'[data-testid="builder"]\')).$wire.$set(\'hasUpdatedBlocks\', false)');
+
+    $page
+        ->assertVisible('[data-testid="builder"] [data-block-label="video"]')
+        ->type($searchInput, 'quote')
+        ->assertVisible('[data-testid="builder"] [role="status"]');
+
+    $page->script('Alpine.$data(document.querySelector(\'[data-testid="builder"]\')).$wire.$set(\'hasUpdatedBlocks\', true)');
+
+    $page
+        ->assertValue($searchInput, 'quote')
+        ->assertVisible('[data-testid="builder"] [data-block-label="video quote"]')
+        ->assertMissing('[data-testid="builder"] [role="status"]')
+        ->click('[data-testid="builder"] [data-block-label="video quote"]')
+        ->assertVisible('[data-testid="builder"] input[id$=".quotation"]')
+        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
+        ->assertNoSmoke();
+});
+
+it('focuses the search when blocks become available and after deleting the last allowed block', function (bool $hasPublishedView): void {
+    $cache = new ReflectionProperty(ViewComponent::class, 'hasPublishedEmbeddedViewOverrideCache');
+    $originalCache = $cache->getValue();
+    $cache->setValue(null, [
+        ...$originalCache,
+        'filament-forms::components.builder.block-picker' => $hasPublishedView,
+    ]);
+
+    try {
         Artisan::call('filament:assets');
 
         $this->actingAs(User::factory()->create());
 
-        visit('/builder-test')
-            ->assertNotPresent('[data-testid="builder"] .fi-fo-builder-item')
-            ->click('text=Add to content')
-            ->click('text=Paragraph')
-            ->wait(1)
-            ->assertPresent('[data-testid="builder"] .fi-fo-builder-item')
-            ->click('text=Add to content')
-            ->click('text=Heading')
-            ->wait(1)
-            ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 2)
-            ->click('[data-testid="builder"] .fi-fo-builder-items > .fi-fo-builder-item:last-child .fi-fo-builder-item-header-end-actions button')
-            ->wait(1)
-            ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+        $searchInput = '[data-testid="builder"] input[data-dropdown-autofocus]';
+        $page = visit('/builder-searchable-test?empty=1&limited=1')
+            ->assertNotPresent($searchInput);
 
-        visit('/builder-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
-});
+        $page->script('Alpine.$data(document.querySelector(\'[data-testid="builder"]\')).$wire.$set(\'hasNoBlocks\', false)');
+
+        $page
+            ->click('[data-testid="add-block"]')
+            ->assertVisible($searchInput)
+            ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true')
+            ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[data-dropdown-autofocus]\')', true)
+            ->click('[data-testid="builder"] [data-block-label="video"]')
+            ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
+            ->assertNotPresent($searchInput)
+            ->click('[data-testid="builder"] .fi-fo-builder-item-header-end-actions button')
+            ->assertNotPresent('[data-testid="builder"] .fi-fo-builder-item')
+            ->click('[data-testid="add-block"]')
+            ->assertVisible($searchInput)
+            ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true')
+            ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[data-dropdown-autofocus]\')', true)
+            ->assertNoSmoke();
+    } finally {
+        $cache->setValue(null, $originalCache);
+    }
+})->with(['embedded' => false, 'published Blade' => true]);
+
+it('can reopen the picker and add a block after `blockPickerWidth()` changes', function (bool $isSearchable): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/builder-searchable-test?notSearchable=' . (int) (! $isSearchable))
+        ->click('[data-testid="add-block"]')
+        ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true');
+
+    $page->script('Alpine.$data(document.querySelector(\'[data-testid="builder"]\')).$wire.$set(\'hasWidePicker\', true)');
+
+    $page
+        ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'false')
+        ->click('[data-testid="add-block"]')
+        ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true')
+        ->click('[data-testid="builder"] .fi-dropdown-list-item:first-child')
+        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
+        ->assertNoSmoke();
+})->with(['searchable' => true, 'not searchable' => false]);
 
 it('returns `1` for `getHeadingsCount()` when block labels are enabled (default)', function (): void {
     $builder = Builder::make('content');
@@ -1902,5 +2582,30 @@ class BuilderInStatePathAncestorSetByHook extends Livewire
                     }),
             ])
             ->statePath('data');
+    }
+}
+
+class RenderBuilderWithSearchableBlocks extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            Builder::make('content')
+                ->searchable()
+                ->searchPrompt(new HtmlString('<span title="Search">Find &quot;R&amp;D&quot;</span>'))
+                ->noSearchResultsMessage(new HtmlString('<strong>No matching blocks</strong>'))
+                ->blocks([
+                    Builder\Block::make('paragraph')
+                        ->label('Paragraph')
+                        ->schema([TextInput::make('text')]),
+                    Builder\Block::make('heading')
+                        ->label(new HtmlString('Editor&apos;s picks'))
+                        ->schema([TextInput::make('title')]),
+                    Builder\Block::make('video')
+                        ->label('Video')
+                        ->maxItems(1)
+                        ->schema([TextInput::make('url')]),
+                ]),
+        ])->statePath('data');
     }
 }

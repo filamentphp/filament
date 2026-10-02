@@ -3,6 +3,7 @@
 namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Schema;
@@ -17,6 +18,8 @@ class IndividualColumnSearchBrowserTest extends Page implements HasTable
 {
     use Tables\Concerns\InteractsWithTable;
 
+    public bool $showTable = true;
+
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedMagnifyingGlass;
 
     protected static ?int $navigationSort = 9;
@@ -29,20 +32,34 @@ class IndividualColumnSearchBrowserTest extends Page implements HasTable
                 // `length` and `sort` collide with built-in JavaScript array properties. They are
                 // not real database columns, so they use a no-op search query to avoid SQL errors.
                 Tables\Columns\TextColumn::make('length')
-                    ->searchable(query: fn (Builder $query): Builder => $query, isIndividual: true, isGlobal: false),
+                    ->searchable(query: fn (Builder $query): Builder => $query, isIndividual: true, isGlobal: false)
+                    ->hiddenFrom('sm'),
                 Tables\Columns\TextColumn::make('sort')
-                    ->searchable(query: fn (Builder $query): Builder => $query, isIndividual: true, isGlobal: false),
+                    ->searchable(query: fn (Builder $query): Builder => $query, isIndividual: true, isGlobal: false)
+                    ->hiddenFrom('sm'),
                 // `title` is a normal column name that has never collided.
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable(isIndividual: true, isGlobal: false),
-            ]);
+                    ->searchable(isIndividual: true, isGlobal: false)
+                    ->visibleFrom('md'),
+            ])
+            ->stackedOnMobile();
     }
 
     public function content(Schema $schema): Schema
     {
         return $schema
             ->components([
-                EmbeddedTable::make(),
+                EmbeddedTable::make()
+                    ->visible(fn (): bool => $this->showTable),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('toggleTable')
+                ->action(fn () => $this->showTable = ! $this->showTable)
+                ->extraAttributes(['data-testid' => 'toggle-table']),
+        ];
     }
 }

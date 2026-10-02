@@ -5,6 +5,7 @@ namespace Filament\Tables\Columns\Concerns;
 use Closure;
 use Filament\Support\Services\RelationshipOrderer;
 use Illuminate\Contracts\Database\Query\Expression;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
@@ -13,6 +14,9 @@ use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
 use function Filament\Support\apply_search_constraint;
+use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_pattern;
+use function Filament\Support\generate_search_term_expression;
 use function Filament\Support\is_database_driver_supported;
 
 trait InteractsWithTableQuery
@@ -73,9 +77,15 @@ trait InteractsWithTableQuery
             return $query;
         }
 
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
         $model = $query->getModel();
 
         $isSearchForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
+
+        $nonTranslatableSearch = generate_search_term_expression($search, $isSearchForcedCaseInsensitive, $databaseConnection);
+        $searchPattern = generate_search_pattern($nonTranslatableSearch, hasLeadingWildcard: true, hasTrailingWildcard: true);
 
         $translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver();
 
@@ -87,7 +97,7 @@ trait InteractsWithTableQuery
                 fn (EloquentBuilder $query): EloquentBuilder => $translatableContentDriver->applySearchConstraintToQuery($query, $searchColumn, $search, $whereClause, $isSearchForcedCaseInsensitive),
                 fn (EloquentBuilder $query) => $query->when(
                     $this->hasRelationship($query->getModel()),
-                    function (EloquentBuilder $query) use ($model, $whereClause, $searchColumn, $isSearchForcedCaseInsensitive, $search): EloquentBuilder {
+                    function (EloquentBuilder $query) use ($model, $whereClause, $searchColumn, $isSearchForcedCaseInsensitive, $databaseConnection, $searchPattern): EloquentBuilder {
                         $relationshipName = $this->getRelationshipName($query->getModel());
                         $relationship = $this->getRelationship($query->getModel(), $relationshipName);
 
@@ -104,17 +114,15 @@ trait InteractsWithTableQuery
                             $relationshipName,
                             fn (EloquentBuilder $query): EloquentBuilder => apply_search_constraint(
                                 $query,
-                                $this->getJsonSafeColumnName($searchColumn, $relatedTable),
-                                "%{$search}%",
-                                $isSearchForcedCaseInsensitive,
+                                generate_search_column_expression($this->getJsonSafeColumnName($searchColumn, $relatedTable), $isSearchForcedCaseInsensitive, $databaseConnection),
+                                $searchPattern,
                             ),
                         );
                     },
                     fn (EloquentBuilder $query) => apply_search_constraint(
                         $query,
-                        $this->getJsonSafeColumnName($searchColumn, $model->getTable()),
-                        "%{$search}%",
-                        $isSearchForcedCaseInsensitive,
+                        generate_search_column_expression($this->getJsonSafeColumnName($searchColumn, $model->getTable()), $isSearchForcedCaseInsensitive, $databaseConnection),
+                        $searchPattern,
                         ($whereClause === 'where') ? 'and' : 'or',
                     ),
                 ),

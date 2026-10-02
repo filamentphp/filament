@@ -29,6 +29,7 @@ class ColorPickerTest extends Page
             ->schema([
                 ColorPicker::make('field')
                     ->label('Test Color')
+                    ->live(debounce: 1000)
                     ->extraAttributes(['data-testid' => 'color-picker']),
             ])
             ->statePath('data');

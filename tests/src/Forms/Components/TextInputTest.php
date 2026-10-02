@@ -78,6 +78,36 @@ it('can set `numeric()`', function (): void {
     expect($input->getType())->toBe('number');
 });
 
+it('derives `numeric()` input attributes from its boolean condition', function (bool $condition, ?string $expectedInputMode, ?string $expectedStep): void {
+    $input = TextInput::make('amount')
+        ->numeric($condition);
+
+    expect($input)
+        ->getInputMode()->toBe($expectedInputMode)
+        ->getStep()->toBe($expectedStep);
+})->with([
+    'true' => [true, 'decimal', 'any'],
+    'false' => [false, null, null],
+]);
+
+it('reevaluates dynamic `numeric()` input attribute defaults', function (): void {
+    $isNumeric = false;
+    $input = TextInput::make('amount')
+        ->numeric(static function () use (&$isNumeric): bool {
+            return $isNumeric;
+        });
+
+    expect($input)
+        ->getInputMode()->toBeNull()
+        ->getStep()->toBeNull();
+
+    $isNumeric = true;
+
+    expect($input)
+        ->getInputMode()->toBe('decimal')
+        ->getStep()->toBe('any');
+});
+
 it('can set `password()`', function (): void {
     $input = TextInput::make('secret');
 
@@ -182,6 +212,90 @@ it('can set `integer()`', function (): void {
 
     expect($input->isNumeric())->toBeTrue();
     expect($input->getType())->toBe('number');
+});
+
+it('derives `integer()` input attributes from its boolean condition', function (bool $condition, ?string $expectedInputMode, ?int $expectedStep): void {
+    $input = TextInput::make('quantity')
+        ->integer($condition);
+
+    expect($input)
+        ->getInputMode()->toBe($expectedInputMode)
+        ->getStep()->toBe($expectedStep);
+})->with([
+    'true' => [true, 'numeric', 1],
+    'false' => [false, null, null],
+]);
+
+it('reevaluates dynamic `integer()` input attribute defaults', function (): void {
+    $isInteger = false;
+    $input = TextInput::make('quantity')
+        ->integer(static function () use (&$isInteger): bool {
+            return $isInteger;
+        });
+
+    expect($input)
+        ->getInputMode()->toBeNull()
+        ->getStep()->toBeNull();
+
+    $isInteger = true;
+
+    expect($input)
+        ->getInputMode()->toBe('numeric')
+        ->getStep()->toBe(1);
+});
+
+it('preserves input attribute configuration order around `numeric()` and `integer()`', function (): void {
+    $numericConfiguredBefore = TextInput::make('numericConfiguredBefore')
+        ->inputMode('tel')
+        ->step(2)
+        ->numeric();
+    $numericConfiguredAfter = TextInput::make('numericConfiguredAfter')
+        ->numeric()
+        ->inputMode('tel')
+        ->step(2);
+    $integerConfiguredBefore = TextInput::make('integerConfiguredBefore')
+        ->inputMode('tel')
+        ->step(2)
+        ->integer();
+    $integerConfiguredAfter = TextInput::make('integerConfiguredAfter')
+        ->integer()
+        ->inputMode('tel')
+        ->step(2);
+
+    expect($numericConfiguredBefore)
+        ->getInputMode()->toBe('decimal')
+        ->getStep()->toBe('any')
+        ->and($numericConfiguredAfter)
+        ->getInputMode()->toBe('tel')
+        ->getStep()->toBe(2)
+        ->and($integerConfiguredBefore)
+        ->getInputMode()->toBe('numeric')
+        ->getStep()->toBe(1)
+        ->and($integerConfiguredAfter)
+        ->getInputMode()->toBe('tel')
+        ->getStep()->toBe(2);
+});
+
+it('defaults input attributes to `null` and can reset them after `numeric()` and `integer()`', function (): void {
+    $defaultInput = TextInput::make('value');
+    $numericInput = TextInput::make('amount')
+        ->numeric()
+        ->inputMode(null)
+        ->step(null);
+    $integerInput = TextInput::make('quantity')
+        ->integer()
+        ->inputMode(null)
+        ->step(null);
+
+    expect($defaultInput)
+        ->getInputMode()->toBeNull()
+        ->getStep()->toBeNull()
+        ->and($numericInput)
+        ->getInputMode()->toBeNull()
+        ->getStep()->toBeNull()
+        ->and($integerInput)
+        ->getInputMode()->toBeNull()
+        ->getStep()->toBeNull();
 });
 
 it('can set `revealable()` on a `password()` input', function (): void {
@@ -533,7 +647,16 @@ describe('rendering', function (): void {
     });
 
     it('can render with `password()` and `revealable()`', function (): void {
-        livewire(RenderTextInputWithRevealable::class)->assertSuccessful();
+        livewire(RenderTextInputWithRevealable::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('type="password"')
+            ->assertSeeHtml('x-data="passwordRevealFormComponent()"')
+            ->assertSeeHtml('x-load=""')
+            ->assertSeeHtml('x-load-src=')
+            ->assertSeeHtml('x-ref="showPasswordAction"')
+            ->assertSeeHtml('x-ref="hidePasswordAction"')
+            ->assertDontSeeHtml('passwordRevealFocusRequest')
+            ->assertDontSeeHtml('wire:loading.attr="disabled"');
     });
 
     it('can render with `integer()`', function (): void {
@@ -546,6 +669,24 @@ describe('rendering', function (): void {
 
     it('can render with `numeric(false)` undone', function (): void {
         livewire(RenderTextInputWithNumericUndone::class)->assertSuccessful();
+    });
+
+    it('renders input attribute defaults from changing dynamic `numeric()` and `integer()` conditions', function (): void {
+        livewire(RenderTextInputWithDynamicNumericConditions::class)
+            ->assertDontSeeHtml('inputmode="decimal"')
+            ->assertDontSeeHtml('inputmode="numeric"')
+            ->assertDontSeeHtml('step="any"')
+            ->assertDontSeeHtml('step="1"')
+            ->set('hasNumericInputs', true)
+            ->assertSeeHtml('inputmode="decimal"')
+            ->assertSeeHtml('inputmode="numeric"')
+            ->assertSeeHtml('step="any"')
+            ->assertSeeHtml('step="1"')
+            ->set('hasNumericInputs', false)
+            ->assertDontSeeHtml('inputmode="decimal"')
+            ->assertDontSeeHtml('inputmode="numeric"')
+            ->assertDontSeeHtml('step="any"')
+            ->assertDontSeeHtml('step="1"');
     });
 
     it('can render with `placeholder()`', function (): void {
@@ -575,6 +716,244 @@ it('can render and type in `TextInput` in the browser', function (): void {
         visit('/text-input-test')
             ->inDarkMode()
             ->assertNoAccessibilityIssues();
+    });
+});
+
+it('updates dynamic `numeric()` and `integer()` attributes in the browser', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/text-input-test')
+            ->assertAttributeMissing('[data-testid="dynamic-numeric-input"]', 'inputmode')
+            ->assertAttributeMissing('[data-testid="dynamic-numeric-input"]', 'step')
+            ->assertAttributeMissing('[data-testid="dynamic-integer-input"]', 'inputmode')
+            ->assertAttributeMissing('[data-testid="dynamic-integer-input"]', 'step')
+            ->click('[data-testid="numeric-defaults-toggle"]')
+            ->assertAttribute('[data-testid="dynamic-numeric-input"]', 'inputmode', 'decimal')
+            ->assertAttribute('[data-testid="dynamic-numeric-input"]', 'step', 'any')
+            ->assertAttribute('[data-testid="dynamic-integer-input"]', 'inputmode', 'numeric')
+            ->assertAttribute('[data-testid="dynamic-integer-input"]', 'step', '1')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues()
+            ->click('[data-testid="numeric-defaults-toggle"]')
+            ->assertAttributeMissing('[data-testid="dynamic-numeric-input"]', 'inputmode')
+            ->assertAttributeMissing('[data-testid="dynamic-numeric-input"]', 'step')
+            ->assertAttributeMissing('[data-testid="dynamic-integer-input"]', 'inputmode')
+            ->assertAttributeMissing('[data-testid="dynamic-integer-input"]', 'step')
+            ->assertNoAccessibilityIssues();
+
+        visit('/text-input-test')
+            ->inDarkMode()
+            ->click('[data-testid="numeric-defaults-toggle"]')
+            ->assertAttribute('[data-testid="dynamic-numeric-input"]', 'inputmode', 'decimal')
+            ->assertAttribute('[data-testid="dynamic-numeric-input"]', 'step', 'any')
+            ->assertAttribute('[data-testid="dynamic-integer-input"]', 'inputmode', 'numeric')
+            ->assertAttribute('[data-testid="dynamic-integer-input"]', 'step', '1')
+            ->assertNoAccessibilityIssues();
+    });
+});
+
+it('preserves focus and selection when revealing a password in the browser', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $passwordInput = '[data-testid="password-input"]';
+        $input = "{$passwordInput} input.fi-input";
+        $showPasswordAction = '[data-testid="show-password"]';
+        $hidePasswordAction = '[data-testid="hide-password"]';
+
+        $page = visit('/text-input-test')
+            ->type($input, 'secret-value');
+
+        $page->script("document.querySelector('{$input}').setSelectionRange(1, 6, 'backward')");
+
+        $page
+            ->assertScript("document.querySelector('{$passwordInput} input[type=hidden]') !== null", true)
+            ->assertScript("document.querySelector('{$showPasswordAction}').ariaLabel.length > 0", true)
+            ->assertScript("document.querySelector('{$hidePasswordAction}').ariaLabel.length > 0", true)
+            ->assertScript("document.querySelector('{$showPasswordAction}').ariaLabel !== document.querySelector('{$hidePasswordAction}').ariaLabel", true)
+            ->keys($input, 'Tab')
+            ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
+            ->assertScript('document.activeElement.matches(\':focus-visible\')', true)
+            ->keys($showPasswordAction, 'Enter')
+            ->assertAttribute($input, 'type', 'text')
+            ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
+            ->assertScript('document.activeElement.matches(\':focus-visible\')', true)
+            ->assertScript("[document.querySelector('{$input}').selectionStart, document.querySelector('{$input}').selectionEnd, document.querySelector('{$input}').selectionDirection]", [1, 6, 'backward'])
+            ->keys($hidePasswordAction, 'Space')
+            ->assertAttribute($input, 'type', 'password')
+            ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
+            ->assertScript('document.activeElement.matches(\':focus-visible\')', true)
+            ->keys($showPasswordAction, 'Enter')
+            ->assertAttribute($input, 'type', 'text')
+            ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
+            ->click($hidePasswordAction)
+            ->assertAttribute($input, 'type', 'password')
+            ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
+            ->click($showPasswordAction)
+            ->assertAttribute($input, 'type', 'text')
+            ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
+            ->assertValue($input, 'secret-value')
+            ->assertScript("[document.querySelector('{$input}').selectionStart, document.querySelector('{$input}').selectionEnd, document.querySelector('{$input}').selectionDirection]", [1, 6, 'backward']);
+
+        $livewireComponent = "Livewire.find(document.querySelector('{$passwordInput}').closest('[wire\\\\:id]').getAttribute('wire:id'))";
+
+        $page->script("window.passwordRefreshFinished = false; {$livewireComponent}.call('\$refresh').then(() => window.passwordRefreshFinished = true)");
+
+        $page
+            ->assertScript('window.passwordRefreshFinished', true)
+            ->assertAttribute($input, 'type', 'text')
+            ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
+            ->assertValue($input, 'secret-value')
+            ->assertScript("[document.querySelector('{$input}').selectionStart, document.querySelector('{$input}').selectionEnd, document.querySelector('{$input}').selectionDirection]", [1, 6, 'backward'])
+            ->keys($hidePasswordAction, 'Enter')
+            ->assertAttribute($input, 'type', 'password')
+            ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        $page
+            ->assertScript('document.querySelector(\'[data-testid="disabled-password-input"] input.fi-input\').disabled', true)
+            ->assertScript('document.querySelector(\'[data-testid="read-only-password-input"] input.fi-input\').readOnly', true);
+
+        foreach (['disabled', 'read-only'] as $fieldState) {
+            $field = "[data-testid=\"{$fieldState}-password-input\"]";
+            $fieldInput = "{$field} input";
+            $fieldShowPasswordAction = "[data-testid=\"show-{$fieldState}-password\"]";
+            $fieldHidePasswordAction = "[data-testid=\"hide-{$fieldState}-password\"]";
+
+            $page
+                ->click($fieldShowPasswordAction)
+                ->assertAttribute($fieldInput, 'type', 'text')
+                ->assertScript("document.activeElement.matches('{$fieldHidePasswordAction}')", true)
+                ->click($fieldHidePasswordAction)
+                ->assertAttribute($fieldInput, 'type', 'password')
+                ->assertScript("document.activeElement.matches('{$fieldShowPasswordAction}')", true);
+        }
+
+        visit('/text-input-test')
+            ->inDarkMode()
+            ->assertNoAccessibilityIssues();
+    });
+});
+
+it('preserves focus when revealing a password with responsive actions in the browser', function (int $width, string $actionClass): void {
+    retry(10, function () use ($width, $actionClass): void {
+        $this->actingAs(User::factory()->create());
+
+        $passwordInput = '[data-testid="responsive-password-input"] input.fi-input';
+        $showPasswordAction = "[data-testid=\"show-responsive-password\"].{$actionClass}";
+        $hidePasswordAction = "[data-testid=\"hide-responsive-password\"].{$actionClass}";
+
+        $page = visit('/text-input-test')
+            ->resize($width, 812);
+
+        $page->script("document.querySelector('{$passwordInput}').focus(); document.querySelector('{$passwordInput}').setSelectionRange(1, 6, 'backward')");
+
+        $page
+            ->keys($passwordInput, 'Tab')
+            ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
+            ->keys($showPasswordAction, 'Enter')
+            ->assertAttribute($passwordInput, 'type', 'text')
+            ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
+            ->assertScript('document.activeElement.matches(\':focus-visible\')', true)
+            ->assertScript("[document.querySelector('{$passwordInput}').selectionStart, document.querySelector('{$passwordInput}').selectionEnd, document.querySelector('{$passwordInput}').selectionDirection]", [1, 6, 'backward'])
+            ->keys($hidePasswordAction, 'Space')
+            ->assertAttribute($passwordInput, 'type', 'password')
+            ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        visit('/text-input-test')
+            ->inDarkMode()
+            ->resize($width, 812)
+            ->click($showPasswordAction)
+            ->assertAttribute($passwordInput, 'type', 'text')
+            ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
+            ->assertNoAccessibilityIssues();
+    });
+})->with([
+    'icon buttons below the `md` breakpoint' => [375, 'fi-icon-btn'],
+    'buttons from the `md` breakpoint' => [1024, 'fi-btn'],
+]);
+
+it('does not transfer password reveal focus after `destroy()` in the browser', function (bool $afterNextTick): void {
+    retry(10, function () use ($afterNextTick): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/text-input-test');
+        $destroyPasswordRevealController = $afterNextTick ? 'Alpine.nextTick(destroyPasswordRevealController)' : 'destroyPasswordRevealController()';
+
+        $page->assertScript("document.querySelector('[data-testid=\"show-password\"]').closest('[x-data]')._x_dataStack.some((data) => typeof data.setPasswordRevealed === 'function')", true);
+
+        $page->script(<<<JS
+            window.passwordRevealDestroyed = false
+            window.passwordRevealDestructionSettled = false
+            window.passwordRevealFocusCalls = 0
+            window.passwordRevealSelectionCalls = 0
+
+            const showPasswordAction = document.querySelector('[data-testid="show-password"]')
+            const hidePasswordAction = document.querySelector('[data-testid="hide-password"]')
+            const passwordInput = document.querySelector('[data-testid="password-input"] input.fi-input')
+            const passwordRevealController = Alpine.\$data(showPasswordAction.closest('[x-data]'))
+            const destroyPasswordRevealController = () => {
+                passwordRevealController.destroy()
+                window.passwordRevealDestroyed = true
+            }
+
+            hidePasswordAction.focus = () => window.passwordRevealFocusCalls++
+            passwordInput.setSelectionRange = () => window.passwordRevealSelectionCalls++
+
+            showPasswordAction.click()
+
+            {$destroyPasswordRevealController}
+
+            Alpine.nextTick(() => requestAnimationFrame(() => {
+                window.passwordRevealDestructionSettled = true
+            }))
+            JS);
+
+        $page
+            ->assertScript('window.passwordRevealDestroyed', true)
+            ->assertScript('window.passwordRevealDestructionSettled', true)
+            ->assertScript("document.querySelector('[data-testid=\"show-password\"]').isConnected", true)
+            ->assertScript('window.passwordRevealFocusCalls', 0)
+            ->assertScript('window.passwordRevealSelectionCalls', 0)
+            ->assertNoSmoke();
+    });
+})->with([
+    'before the focus frame is scheduled' => false,
+    'after the focus frame is scheduled' => true,
+]);
+
+it('invokes `destroy()` when destroying the password reveal controller in the browser', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/text-input-test');
+
+        $page->assertScript("document.querySelector('[data-testid=\"show-password\"]').closest('[x-data]')._x_dataStack.some((data) => typeof data.setPasswordRevealed === 'function')", true);
+
+        $page->script(<<<'JS'
+            window.passwordRevealDestroyCalls = 0
+
+            const showPasswordAction = document.querySelector('[data-testid="show-password"]')
+            const passwordInputWrapper = showPasswordAction.closest('[x-data]')
+            const passwordRevealController = Alpine.$data(passwordInputWrapper)
+            const originalDestroy = passwordRevealController.destroy
+
+            passwordRevealController.destroy = function () {
+                window.passwordRevealDestroyCalls++
+                originalDestroy.call(this)
+            }
+
+            Alpine.destroyTree(passwordInputWrapper)
+            JS);
+
+        $page
+            ->assertScript('window.passwordRevealDestroyCalls', 1)
+            ->assertScript("document.querySelector('[data-testid=\"show-password\"]').isConnected", true)
+            ->assertNoSmoke();
     });
 });
 
@@ -679,6 +1058,23 @@ class RenderTextInputWithNumericUndone extends Livewire
     public function form(Schema $form): Schema
     {
         return $form->schema([TextInput::make('field')->numeric()->numeric(false)])->statePath('data');
+    }
+}
+
+class RenderTextInputWithDynamicNumericConditions extends Livewire
+{
+    public bool $hasNumericInputs = false;
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                TextInput::make('amount')
+                    ->numeric(fn (): bool => $this->hasNumericInputs),
+                TextInput::make('quantity')
+                    ->integer(fn (): bool => $this->hasNumericInputs),
+            ])
+            ->statePath('data');
     }
 }
 

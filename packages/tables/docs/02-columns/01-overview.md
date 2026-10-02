@@ -346,6 +346,8 @@ TextColumn::make('name')
 
 By default, Filament will apply a `where` clause to the Eloquent query, searching for the column name. This is useful for simple cases where the column name matches the database column name. It can also handle [relationships](#displaying-data-from-relationships).
 
+Search terms are treated as literal text, so characters such as `%` and `_` do not act as SQL wildcard characters.
+
 However, many columns are not as simple. The [state](#column-content-state) of the column might be customized, or using an [Eloquent accessor](https://laravel.com/docs/eloquent-mutators#accessors-and-mutators). In this case, you may need to customize the search behavior.
 
 You can pass an array of real database columns in the table to search the column with:
@@ -524,6 +526,8 @@ public function table(Table $table): Table
         ->persistColumnSearchesInSession();
 }
 ```
+
+When using Filament tenancy, persisted searches are isolated to the current tenant.
 
 ### Disabling search term splitting
 

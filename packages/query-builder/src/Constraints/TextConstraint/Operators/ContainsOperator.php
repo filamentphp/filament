@@ -7,9 +7,13 @@ use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\TextInput;
 use Filament\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Schemas\Components\Component;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Str;
 
 use function Filament\Support\apply_search_constraint;
+use function Filament\Support\generate_search_pattern;
 
 class ContainsOperator extends Operator
 {
@@ -62,12 +66,40 @@ class ContainsOperator extends Operator
             return $query;
         }
 
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        $isPostgres = $databaseConnection->getDriverName() === 'pgsql';
+
+        if ($isPostgres) {
+            $parts = explode('.', $qualifiedColumn);
+
+            if (count($parts) === 3) {
+                [$schema, $table, $column] = $parts;
+                $table = "{$schema}.{$table}";
+            } else {
+                [$table, $column] = $parts;
+            }
+
+            if (Str::lower($table) !== $table) {
+                $table = collect(explode('.', $table))
+                    ->map(fn (string $segment): string => "\"{$segment}\"")
+                    ->implode('.');
+            }
+
+            if (Str::lower($column) !== $column) {
+                $column = "\"{$column}\"";
+            }
+
+            $qualifiedColumn = new Expression("lower({$table}.{$column}::text)");
+            $text = Str::lower($text);
+        }
+
         return apply_search_constraint(
             $query,
             $qualifiedColumn,
-            "%{$text}%",
+            generate_search_pattern($text, hasLeadingWildcard: true, hasTrailingWildcard: true),
             isInverse: $this->isInverse(),
-            shouldApplySearchCollation: false,
         );
     }
 }
