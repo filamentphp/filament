@@ -182,7 +182,7 @@ ImageEntry::make('colleagues.avatar')
 
 ### Customizing the stacked ring width
 
-The default ring width is `3`, but you may customize it to be from `0` to `8`:
+No ring is displayed by default, but you may add one with a width from `0` to `8`:
 
 ```php
 use Filament\Infolists\Components\ImageEntry;
