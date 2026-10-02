@@ -297,6 +297,9 @@ it('manages focus for the filters dropdown', function (bool $isDarkMode): void {
             ->assertVisible($datePanel)
             ->click("{$datePanel} .fi-fo-date-time-picker-calendar-day[aria-selected=\"true\"]")
             ->assertScript("document.querySelector('{$dateFilter} input').value !== ''", true)
+            ->assertVisible($datePanel)
+            ->click($dateFilter)
+            ->assertMissing($datePanel)
             ->click($dateFilter)
             ->assertVisible($datePanel)
             ->assertScript("document.querySelector('{$selectFilter}').focus(); document.querySelector('{$datePanel}').style.display === 'none'", true)
@@ -311,8 +314,8 @@ it('manages focus for the filters dropdown', function (bool $isDarkMode): void {
             ->keys($colorFilter, 'Escape')
             ->assertMissing($publishedFilter)
             ->keys($filtersTrigger, 'Enter')
-            ->assertMissing($colorPanel)
-            ->assertNoAccessibilityIssues();
+            ->assertVisible($publishedFilter)
+            ->assertMissing($colorPanel);
 
         $page->script('document.querySelector(\'[data-testid="filters-trigger"]\').focus()');
 
@@ -323,7 +326,8 @@ it('manages focus for the filters dropdown', function (bool $isDarkMode): void {
             ->keys($filtersTrigger, 'Enter')
             ->click('.fi-topbar')
             ->assertMissing($publishedFilter)
-            ->assertNoSmoke();
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
     });
 })->with(['mobile light' => false, 'desktop dark' => true]);
 
