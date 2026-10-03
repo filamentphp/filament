@@ -1,6 +1,7 @@
 <div>
     @php
         use Filament\Enums\GlobalSearchPosition;
+        use Illuminate\Support\Facades\Vite;
 
         $navigation = filament()->getNavigation();
         $isRtl = __('filament-panels::layout.direction') === 'rtl';
@@ -10,6 +11,8 @@
         $hasTopbar = filament()->hasTopbar();
         $hasTenantMenu = filament()->hasTenancy() && filament()->hasTenantMenu();
         $hasGlobalSearchInSidebar = filament()->isGlobalSearchEnabled() && filament()->getGlobalSearchPosition() === GlobalSearchPosition::Sidebar;
+
+        $cspNonce = Vite::cspNonce();
     @endphp
 
     {{-- format-ignore-start --}}
@@ -152,7 +155,7 @@
                 @endforeach
             </ul>
 
-            <script>
+            <script @if (filled($cspNonce)) nonce="{{ $cspNonce }}" @endif>
                 var collapsedGroups = JSON.parse(
                     localStorage.getItem('collapsedGroups'),
                 )
