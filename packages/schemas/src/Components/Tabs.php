@@ -880,7 +880,7 @@ class Tabs extends Component implements HasEmbeddedView
                     "
                 >
                     <span
-                        x-html="deferredBadges[<?= $indexJs ?>].badgeIconHtml"
+                        x-filament-html="deferredBadges[<?= $indexJs ?>].badgeIconHtml"
                     ></span>
                 </template>
 
@@ -898,7 +898,7 @@ class Tabs extends Component implements HasEmbeddedView
                     "
                 >
                     <span
-                        x-html="deferredBadges[<?= $indexJs ?>].badgeIconHtml"
+                        x-filament-html="deferredBadges[<?= $indexJs ?>].badgeIconHtml"
                     ></span>
                 </template>
             </span>

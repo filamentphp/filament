@@ -514,6 +514,8 @@ describe('searching', function (): void {
                 // Open the first table's column manager too, so its checkboxes are also rendered when the second manager's labels are clicked.
                 ->click('#first-table button[aria-label="Column manager"]')
                 ->click('#second-table button[aria-label="Column manager"]')
+                // Labels are rendered with `x-filament-html`.
+                ->assertSeeIn('#second-table .fi-ta-col-manager-label[for$="-title"]', 'Title')
                 // Every rendered column manager checkbox id must be unique, otherwise a label's `for` can activate a checkbox in another table's manager.
                 ->assertScript('new Set(Array.from(document.querySelectorAll(\'.fi-ta-col-manager-label input[type="checkbox"]\')).map((checkbox) => checkbox.id)).size === document.querySelectorAll(\'.fi-ta-col-manager-label input[type="checkbox"]\').length', true)
                 // Clicking the `Title` label must toggle the checkbox in this table's column manager, not the checkbox of the other table's manager that shares the column name.
@@ -525,6 +527,8 @@ describe('searching', function (): void {
                 ->click('#second-table .fi-ta-col-manager-label[for$="-title"]')
                 ->wait(1)
                 ->assertPresent('#second-table .fi-ta-header-cell-title')
+                // The label must survive the morphs of both Livewire updates.
+                ->assertSeeIn('#second-table .fi-ta-col-manager-label[for$="-title"]', 'Title')
                 ->assertNoSmoke()
                 ->assertNoAccessibilityIssues();
 
