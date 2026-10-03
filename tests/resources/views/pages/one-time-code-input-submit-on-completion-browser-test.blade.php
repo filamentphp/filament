@@ -2,9 +2,11 @@
     <div x-data="{ submissionAttemptCount: 0 }">
         <form x-on:submit="submissionAttemptCount++" wire:submit="save">
             {{ $this->form }}
-
-            <x-filament::button type="submit">Save</x-filament::button>
         </form>
+
+        <x-filament::button data-testid="reset-code" wire:click="resetCode">
+            Reset code
+        </x-filament::button>
 
         <p>
             Submitted code:
