@@ -9,6 +9,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Image;
+use Filament\Tests\Fixtures\Models\Team;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -25,7 +26,8 @@ class ImagesTable extends Component implements HasActions, HasSchemas, Tables\Co
             ->columns([
                 Tables\Columns\TextColumn::make('url'),
                 Tables\Columns\TextColumn::make('imageable.team.name')
-                    ->label('Imageable Team (MorphTo -> BelongsTo)'),
+                    ->label('Imageable Team (MorphTo -> BelongsTo)')
+                    ->formatStateUsing(static fn (string $state, Team $relatedRecord): string => $state),
                 Tables\Columns\TextColumn::make('imageable.company.name')
                     ->label('Imageable Company (MorphTo -> BelongsTo / BelongsToThrough)'),
             ]);

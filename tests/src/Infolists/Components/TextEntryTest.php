@@ -3,15 +3,21 @@
 namespace Filament\Tests\Infolists\Components;
 
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
+use Filament\Infolists\Components\ColorEntry;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Contracts\HasLabel;
 use Filament\Support\Enums\TextSize;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Enums\NavigationGroupEnum;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\Company;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Htmlable;
@@ -36,6 +42,95 @@ it('can format state using `formatStateUsing()`', function (): void {
         ->assertSeeText('HELLO WORLD');
 });
 
+it('keeps a wrapper `url()` that does not use item state', function (): void {
+    $post = Post::factory()->create();
+
+    $entry = TextEntry::make('title')
+        ->url(static fn (): string => 'https://example.test/foo')
+        ->container(Schema::make(Livewire::make())->record($post));
+
+    expect($entry->toHtml())->toContain('href="https://example.test/foo"');
+});
+
+it('injects the related model for a relationship JSON attribute', function (): void {
+    $author = User::factory()->create(['json' => ['color' => 'red']]);
+    $post = Post::factory()->create(['author_id' => $author->getKey()]);
+
+    $entry = TextEntry::make('author.json.color')
+        ->formatStateUsing(static fn (string $state, Post $record, User $relatedRecord): string => "{$record->getKey()}:{$relatedRecord->email}:{$state}")
+        ->container(Schema::make(Livewire::make())->record($post));
+
+    expect($entry->toHtml())->toContain("{$post->getKey()}:{$author->email}:red");
+});
+
+it('injects the terminal `$relatedRecord` for each nested relationship state item', function (): void {
+    $company = Company::factory()->create(['name' => 'Acme']);
+    $firstTeam = Team::factory()->create(['company_id' => $company->getKey()]);
+    $secondTeam = Team::factory()->create(['company_id' => $company->getKey()]);
+    $firstUser = User::factory()->create(['name' => 'First user', 'email' => 'first@example.com']);
+    $secondUser = User::factory()->create(['name' => 'Second user', 'email' => 'second@example.com']);
+
+    $firstTeam->users()->attach($firstUser);
+    $secondTeam->users()->attach($secondUser);
+
+    $entry = TextEntry::make('teams.users.name')
+        ->badge()
+        ->formatStateUsing(static fn (Company $record, User $relatedRecord, string $state): string => "{$record->name}:{$relatedRecord->email}:{$state}")
+        ->container(Schema::make(Livewire::make())->record($company));
+
+    expect($entry->toHtml())
+        ->toContain("{$company->name}:{$firstUser->email}:{$firstUser->name}")
+        ->toContain("{$company->name}:{$secondUser->email}:{$secondUser->name}");
+});
+
+it('does not cache nested relationship cardinality from a record with a missing intermediate relationship', function (): void {
+    $postWithoutAuthor = Post::factory()->create(['author_id' => null]);
+    $author = User::factory()->create();
+    $team = Team::factory()->create(['name' => 'Framework team']);
+    $author->teams()->attach($team);
+    $postWithAuthor = Post::factory()->create(['author_id' => $author->getKey()]);
+
+    $entry = TextEntry::make('author.teams.name');
+
+    expect($entry->getConstantStateFromRecord($postWithoutAuthor))->toBeNull()
+        ->and($entry->getConstantStateFromRecord($postWithAuthor))->toBe(['Framework team']);
+});
+
+it('renders a JSON attribute path without treating it as a relationship', function (): void {
+    $user = User::factory()->create(['json' => ['color' => 'red']]);
+
+    $entry = TextEntry::make('json.color')
+        ->container(Schema::make(Livewire::make())->record($user));
+
+    expect($entry->toHtml())->toContain('red');
+});
+
+it('injects `$state` and `$relatedRecord` into nested numeric configuration', function (): void {
+    $relatedRecord = new User(['email' => 'user@example.com']);
+
+    $formattedState = TextEntry::make('cost')
+        ->numeric(
+            decimalPlaces: static fn (float $state, User $relatedRecord): int => (($state === 1234.5) && ($relatedRecord->email === 'user@example.com')) ? 1 : 0,
+            decimalSeparator: static fn (float $state, User $relatedRecord): string => (($state === 1234.5) && ($relatedRecord->email === 'user@example.com')) ? '.' : ',',
+            thousandsSeparator: static fn (float $state, User $relatedRecord): string => (($state === 1234.5) && ($relatedRecord->email === 'user@example.com')) ? '' : ',',
+        )
+        ->container(Schema::make(Livewire::make()))
+        ->formatState(1234.5, $relatedRecord);
+
+    expect($formattedState)->toBe('1234.5');
+});
+
+it('uses the displayed collapsed-list state for the clipboard', function (): void {
+    $entry = TextEntry::make('items')
+        ->state([1, 2])
+        ->numeric()
+        ->prefix('!')
+        ->copyable()
+        ->container(Schema::make(Livewire::make()));
+
+    expect($entry->toEmbeddedHtml())->toContain("clipboard.writeText('!1, !2')");
+});
+
 it('renders array state as JSON instead of crashing', function (): void {
     livewire(TestComponentWithArrayStateTextEntry::class)
         ->assertSuccessful()
@@ -48,6 +143,47 @@ it('can display multiple values', function (): void {
         ->assertSeeText('Tag 1')
         ->assertSeeText('Tag 2')
         ->assertSeeText('Tag 3');
+});
+
+it('injects the correct related model throughout every relationship item rendering path', function (): void {
+    $team = Team::factory()->create(['name' => 'Framework team']);
+    $users = collect([
+        User::factory()->create([
+            'name' => '',
+            'email' => 'first@example.com',
+            'json' => ['color' => '#ff0000', 'duplicate' => 'Duplicate', 'icon' => 'first', 'image' => 'https://example.com/first.jpg'],
+        ]),
+        User::factory()->create([
+            'name' => 'Duplicate name',
+            'email' => 'second@example.com',
+            'json' => ['color' => '#00ff00', 'duplicate' => 'Duplicate', 'icon' => 'second', 'image' => 'https://example.com/second.jpg'],
+        ]),
+        User::factory()->create([
+            'name' => 'Duplicate name',
+            'email' => 'third@example.com',
+            'json' => ['color' => '#0000ff', 'duplicate' => 'Duplicate', 'icon' => 'third', 'image' => 'https://example.com/third.jpg'],
+        ]),
+    ]);
+
+    $team->users()->attach($users);
+
+    $component = livewire(RenderEntriesWithRelatedRecords::class, ['team' => $team])
+        ->assertSuccessful()
+        ->assertSeeText("Duplicate name:{$users[1]->getKey()}:Framework team:second@example.com:Duplicate name")
+        ->assertSeeText("Duplicate name:{$users[2]->getKey()}:Framework team:third@example.com:Duplicate name")
+        ->assertSeeHtml('href="/users/' . $users[1]->getKey() . '"')
+        ->assertSeeHtml('href="/users/' . $users[2]->getKey() . '"')
+        ->assertSeeText($users->map(fn (User $user): string => "{$user->getKey()}:{$user->email}:{$user->email}")->implode(', '))
+        ->assertSeeText('distinct:second@example.com:Duplicate name')
+        ->assertDontSeeText('distinct:third@example.com:Duplicate name')
+        ->assertSeeHtml('alt="image-' . $users[0]->getKey() . '-' . $users[0]->email . '"')
+        ->assertSeeHtml('alt="image-' . $users[1]->getKey() . '-' . $users[1]->email . '"')
+        ->assertDontSeeHtml('alt="image-' . $users[2]->getKey() . '-' . $users[2]->email . '"')
+        ->assertSeeHtml('icon-' . $users[2]->getKey())
+        ->assertSeeHtml('color-' . $users[2]->getKey())
+        ->assertSeeHtml('copy-' . $users[2]->getKey());
+
+    expect(substr_count($component->html(), 'fi-prose'))->toBeGreaterThanOrEqual(2);
 });
 
 it('can set `badge()`', function (): void {
@@ -514,6 +650,75 @@ class TestComponentWithTextEntry extends Component implements HasSchemas
                 {{ $this->infolist }}
             </div>
             BLADE;
+    }
+}
+
+class RenderEntriesWithRelatedRecords extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public Team $team;
+
+    public function mount(Team $team): void
+    {
+        $this->team = $team;
+    }
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->record($this->team)
+            ->components([
+                TextEntry::make('users.name')
+                    ->badge()
+                    ->prefix(static fn (string $state, User $relatedRecord): string => "{$state}:{$relatedRecord->getKey()}:")
+                    ->colors(static fn (string $state, User $relatedRecord): array => [
+                        'success' => static fn (string $state, User $relatedRecord): bool => $state === $relatedRecord->name,
+                    ])
+                    ->icons(static fn (string $state, User $relatedRecord): array => [
+                        'heroicon-o-check' => static fn (string $state, User $relatedRecord): bool => $state === $relatedRecord->name,
+                    ])
+                    ->formatStateUsing(static fn (Team $record, User $relatedRecord, string $state): string => "{$record->name}:{$relatedRecord->email}:{$state}")
+                    ->url(static fn (string $state, User $relatedRecord): string => ($state === $relatedRecord->name) ? "/users/{$relatedRecord->getKey()}" : '/invalid')
+                    ->tooltip(static fn (string $state, User $relatedRecord): string => "text-{$relatedRecord->getKey()}-{$state}"),
+                TextEntry::make('users.email')
+                    ->key('collapsed-copyable-users')
+                    ->copyable()
+                    ->prefix(static fn (string $state, User $relatedRecord): string => "{$relatedRecord->getKey()}:{$state}:"),
+                TextEntry::make('users.name')
+                    ->key('distinct-users')
+                    ->distinctList()
+                    ->badge()
+                    ->formatStateUsing(static fn (User $relatedRecord, string $state): string => "distinct:{$relatedRecord->email}:{$state}"),
+                TextEntry::make('users.email')
+                    ->key('prose-users')
+                    ->formatStateUsing(static fn (string $state): string => "prose:{$state}")
+                    ->prose(static fn (string $state, User $relatedRecord): bool => $state === $relatedRecord->email),
+                TextEntry::make('users.email')
+                    ->key('markdown-users')
+                    ->formatStateUsing(static fn (string $state): string => "markdown:{$state}")
+                    ->markdown(static fn (string $state, User $relatedRecord): bool => $state === $relatedRecord->email)
+                    ->commonMarkOptions(static fn (string $state, User $relatedRecord): array => $state === $relatedRecord->email ? [] : ['html_input' => 'strip']),
+                ImageEntry::make('users.email')
+                    ->key('user-images')
+                    ->checkFileExistence(static fn (string $state, User $relatedRecord): bool => $state !== $relatedRecord->email)
+                    ->limit(2)
+                    ->alt(static fn (string $state, User $relatedRecord): string => "image-{$relatedRecord->getKey()}-{$state}"),
+                IconEntry::make('users.email')
+                    ->key('user-icons')
+                    ->icon(Heroicon::Check)
+                    ->tooltip(static fn (string $state, User $relatedRecord): string => "icon-{$relatedRecord->getKey()}-{$state}"),
+                ColorEntry::make('users.email')
+                    ->key('user-colors')
+                    ->copyable(static fn (string $state, User $relatedRecord): bool => $state === $relatedRecord->email)
+                    ->copyableState(static fn (string $state, User $relatedRecord): string => "copy-{$relatedRecord->getKey()}-{$state}")
+                    ->tooltip(static fn (string $state, User $relatedRecord): string => "color-{$relatedRecord->getKey()}-{$state}"),
+            ]);
+    }
+
+    public function render(): string
+    {
+        return '<div>{{ $this->infolist }}</div>';
     }
 }
 

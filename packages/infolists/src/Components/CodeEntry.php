@@ -116,6 +116,7 @@ class CodeEntry extends Entry implements HasEmbeddedView
         $grammar = $this->getGrammar();
         $lightTheme = $this->getLightTheme();
         $darkTheme = $this->getDarkTheme();
+        $rawState = $state;
 
         if (is_array($state)) {
             $state = json_encode($state, flags: $this->getJsonFlags());
@@ -126,16 +127,17 @@ class CodeEntry extends Entry implements HasEmbeddedView
         $lightTheme ??= Theme::GithubLight;
         $darkTheme ??= Theme::GithubDarkHighContrast;
 
-        $isCopyable = $this->isCopyable($state);
+        $relatedRecord = $this->getRelatedRecord();
+        $isCopyable = $this->isCopyable($rawState, $relatedRecord);
 
         $copyableStateJs = $isCopyable
-            ? Js::from($this->getCopyableState($state) ?? $state)
+            ? Js::from($this->getCopyableState($rawState, $relatedRecord) ?? $state)
             : null;
         $copyMessageJs = $isCopyable
-            ? Js::from($this->getCopyMessage($state))
+            ? Js::from($this->getCopyMessage($rawState, $relatedRecord))
             : null;
         $copyMessageDurationJs = $isCopyable
-            ? Js::from($this->getCopyMessageDuration($state))
+            ? Js::from($this->getCopyMessageDuration($rawState, $relatedRecord))
             : null;
 
         $attributes = $attributes
@@ -149,7 +151,7 @@ class CodeEntry extends Entry implements HasEmbeddedView
                         })
                         JS
                     : null,
-                'x-tooltip' => filled($tooltip = $this->getTooltip($state))
+                'x-tooltip' => filled($tooltip = $this->getTooltip($rawState, $relatedRecord))
                     ? '{
                         content: ' . Js::from($tooltip) . ',
                         theme: $store.theme,

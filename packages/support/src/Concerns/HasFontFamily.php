@@ -4,6 +4,7 @@ namespace Filament\Support\Concerns;
 
 use Closure;
 use Filament\Support\Enums\FontFamily;
+use Illuminate\Database\Eloquent\Model;
 
 trait HasFontFamily
 {
@@ -16,10 +17,11 @@ trait HasFontFamily
         return $this;
     }
 
-    public function getFontFamily(mixed $state = null): FontFamily | string | null
+    public function getFontFamily(mixed $state = null, ?Model $relatedRecord = null): FontFamily | string | null
     {
         $family = $this->evaluate($this->fontFamily, [
             'state' => $state,
+            'relatedRecord' => $relatedRecord,
         ]);
 
         if (is_string($family)) {

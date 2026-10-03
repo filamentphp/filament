@@ -45,7 +45,9 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
         $offIcon = $this->getOffIcon();
         $onColor = $this->getOnColor() ?? 'primary';
         $onIcon = $this->getOnIcon();
-        $state = (bool) $this->getState();
+        $rawState = $this->getState();
+        $state = (bool) $rawState;
+        $relatedRecord = $this->getRelatedRecord();
 
         $attributes = $this->getExtraAttributeBag()
             ->merge([
@@ -56,7 +58,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                     recordKey: ' . Js::from($this->getRecordKey()) . ',
                     state: ' . Js::from($state) . ',
                 })',
-                'x-tooltip' => filled($tooltip = $this->getTooltip($state))
+                'x-tooltip' => filled($tooltip = $this->getTooltip($rawState, $relatedRecord))
                     ? '{
                         content: ' . Js::from($tooltip) . ',
                         theme: $store.theme,

@@ -9,6 +9,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
@@ -159,6 +160,22 @@ it('can set `boolean()` with a `Closure`', function (): void {
         ->boolean(static fn (): bool => true);
 
     expect($entry->isBoolean())->toBeTrue();
+});
+
+it('injects `$state` and `$relatedRecord` into boolean configuration', function (): void {
+    $relatedRecord = new User(['email' => 'user@example.com']);
+
+    $entry = IconEntry::make('active')
+        ->boolean(static fn (bool $state, User $relatedRecord): bool => is_bool($state) && ($relatedRecord->email === 'user@example.com'))
+        ->trueColor(static fn (bool $state, User $relatedRecord): string => ($state && ($relatedRecord->email === 'user@example.com')) ? 'info' : 'danger')
+        ->falseColor(static fn (bool $state, User $relatedRecord): string => ((! $state) && ($relatedRecord->email === 'user@example.com')) ? 'warning' : 'danger')
+        ->trueIcon(static fn (bool $state, User $relatedRecord): string => ($state && ($relatedRecord->email === 'user@example.com')) ? 'true-icon' : 'wrong-icon')
+        ->falseIcon(static fn (bool $state, User $relatedRecord): string => ((! $state) && ($relatedRecord->email === 'user@example.com')) ? 'false-icon' : 'wrong-icon');
+
+    expect($entry->getColor(true, $relatedRecord))->toBe('info')
+        ->and($entry->getColor(false, $relatedRecord))->toBe('warning')
+        ->and($entry->getIcon(true, $relatedRecord))->toBe('true-icon')
+        ->and($entry->getIcon(false, $relatedRecord))->toBe('false-icon');
 });
 
 it('can set `size()` with a `Closure`', function (): void {

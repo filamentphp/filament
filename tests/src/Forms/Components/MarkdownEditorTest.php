@@ -486,6 +486,23 @@ describe('height constraints', function (): void {
             ->and($html)->toContain('tabindex="0"');
     });
 
+    it('injects the implicit `$state` into CommonMark configuration for disabled content', function (): void {
+        $html = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                MarkdownEditor::make('content')
+                    ->disabled()
+                    ->commonMarkOptions(static fn (string $state): array => [
+                        'html_input' => $state === '<strong>Allowed</strong>' ? 'allow' : 'strip',
+                    ]),
+            ])
+            ->fill(['content' => '<strong>Allowed</strong>'])
+            ->getComponents()[0]
+            ->toHtml();
+
+        expect($html)->toContain('<strong>Allowed</strong>');
+    });
+
     it('does not constrain disabled content after clearing `minHeight()` and `maxHeight()`', function (): void {
         $html = Schema::make(Livewire::make())
             ->statePath('data')
