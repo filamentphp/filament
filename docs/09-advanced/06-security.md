@@ -432,7 +432,7 @@ If you write your own `<script>` elements, in a custom page, a [render hook](ren
 </Aside>
 
 <Aside variant="warning">
-    Filament does not modify content that you inject through [render hooks](render-hooks), the `scripts` Blade stack, or `RawJs`, so you must add the nonce to any inline script you render there yourself. Configuring this nonce does not, by itself, allow you to remove `'unsafe-inline'` from `script-src`; you must audit and handle every script rendered by your application. Scripts inside Livewire's `@script` directive are evaluated by Alpine.js rather than executed as script elements, so they are governed by `script-src 'unsafe-eval'` rather than by the nonce. Filament also does not currently support a strict `style-src` directive, since Livewire, Alpine.js, and TipTap rely on inline styles.
+    Filament does not modify content that you inject through [render hooks](render-hooks), the `scripts` Blade stack, or `RawJs`, so you must add the nonce to any inline script you render there yourself. Configuring this nonce does not, by itself, allow you to remove `'unsafe-inline'` from `script-src`; you must audit and handle every script rendered by your application. Alpine.js compiles the expressions in its attributes, such as `x-data` and `x-on:click`, into functions at runtime, and Livewire evaluates the contents of its `@script` directive the same way, so `script-src` still needs `'unsafe-eval'`. The nonce does not apply to them. Filament also does not currently support a strict `style-src` directive, since Livewire, Alpine.js, and TipTap rely on inline styles.
 </Aside>
 
 ### Allowing the file upload's web workers
