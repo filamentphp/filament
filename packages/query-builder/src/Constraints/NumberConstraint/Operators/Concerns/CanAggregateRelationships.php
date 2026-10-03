@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
 
+use function Filament\Support\is_database_driver_supported;
+
 trait CanAggregateRelationships
 {
     public static function getAggregateSelectName(): string
@@ -63,6 +65,21 @@ trait CanAggregateRelationships
         $attributeForQuery = $this->getConstraint()->getAttributeForQuery();
         $aggregate = $this->getAggregate();
         $modifyRelationshipQueryUsing = $this->getConstraint()->getModifyRelationshipQueryUsing();
+        $whereRelationAggregateMethod = 'whereRelationAggregate';
+
+        if (
+            (! is_database_driver_supported($query->getConnection())) &&
+            method_exists($query, $whereRelationAggregateMethod)
+        ) {
+            return $query->{$whereRelationAggregateMethod}(
+                $relationshipName,
+                $attributeForQuery,
+                $aggregate,
+                $operator,
+                $value,
+                $modifyRelationshipQueryUsing,
+            );
+        }
 
         /** @var Relation $relationship */
         $relationship = Relation::noConstraints(

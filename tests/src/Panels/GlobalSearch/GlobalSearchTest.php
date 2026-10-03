@@ -11,8 +11,12 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Panels\GlobalSearch\TestCase;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Sequence;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\SQLiteConnection;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -178,6 +182,48 @@ describe('search results', function (): void {
 
         expect($categories[0])->toBe('users');
         expect($categories[1])->toBe('posts');
+    });
+
+    it('uses the related database driver when generating a relationship search pattern', function (): void {
+        $parentConnectionName = 'parent-search-test';
+        $relatedConnectionName = 'related-search-test';
+        $defaultConnection = DB::connection();
+
+        DB::extend('parent-search-test', fn (array $configuration): ParentSearchTestConnection => new ParentSearchTestConnection(
+            $defaultConnection->getPdo(),
+            $defaultConnection->getDatabaseName(),
+            $defaultConnection->getTablePrefix(),
+            $configuration,
+        ));
+
+        DB::extend('related-search-test', fn (array $configuration): RelatedSearchTestConnection => new RelatedSearchTestConnection(
+            $defaultConnection->getPdo(),
+            $defaultConnection->getDatabaseName(),
+            $defaultConnection->getTablePrefix(),
+            $configuration,
+        ));
+
+        config()->set("database.connections.{$parentConnectionName}", [
+            'driver' => 'parent-search-test',
+            'database' => $defaultConnection->getDatabaseName(),
+            'prefix' => $defaultConnection->getTablePrefix(),
+        ]);
+        config()->set("database.connections.{$relatedConnectionName}", [
+            'driver' => 'related-search-test',
+            'database' => $defaultConnection->getDatabaseName(),
+            'prefix' => $defaultConnection->getTablePrefix(),
+        ]);
+
+        try {
+            $query = HybridSearchPostResource::applyRelationshipSearch(HybridSearchPost::query(), 'MiXeD%_');
+
+            expect($query->getBindings())->toContain('%MiXeD\\%\\_%');
+        } finally {
+            DB::purge($parentConnectionName);
+            DB::purge($relatedConnectionName);
+            config()->offsetUnset("database.connections.{$parentConnectionName}");
+            config()->offsetUnset("database.connections.{$relatedConnectionName}");
+        }
     });
 });
 
@@ -360,6 +406,58 @@ describe('`globalSearchResourceOptIn()`', function (): void {
                     new GlobalSearchResult(title: 'bar', url: '#', details: []),
                     new GlobalSearchResult(title: 'baz', url: '#', details: []),
                 ]);
+        }
+    }
+
+    class ParentSearchTestConnection extends SQLiteConnection
+    {
+        public function getDriverName()
+        {
+            return 'pgsql';
+        }
+    }
+
+    class RelatedSearchTestConnection extends SQLiteConnection
+    {
+        public function getDriverName()
+        {
+            return 'related-search-test';
+        }
+    }
+
+    class HybridSearchPost extends Post
+    {
+        protected $connection = 'parent-search-test';
+
+        protected $table = 'posts';
+
+        public function author(): BelongsTo
+        {
+            return $this->belongsTo(HybridSearchUser::class, 'author_id');
+        }
+    }
+
+    class HybridSearchUser extends User
+    {
+        protected $connection = 'related-search-test';
+
+        protected $table = 'users';
+    }
+
+    class HybridSearchPostResource extends Resource
+    {
+        protected static ?string $model = HybridSearchPost::class;
+
+        public static function applyRelationshipSearch(Builder $query, string $search): Builder
+        {
+            static::applyGlobalSearchAttributeConstraints($query, $search);
+
+            return $query;
+        }
+
+        public static function getGloballySearchableAttributes(): array
+        {
+            return ['author.name'];
         }
     }
 });

@@ -172,11 +172,6 @@ trait HasGlobalSearch
 
     protected static function applyGlobalSearchAttributeConstraints(Builder $query, string $search): void
     {
-        /** @var Connection $databaseConnection */
-        $databaseConnection = $query->getConnection();
-
-        $search = generate_search_term_expression($search, static::isGlobalSearchForcedCaseInsensitive(), $databaseConnection);
-
         if (! static::shouldSplitGlobalSearchTerms()) {
             $query->where(function (Builder $query) use ($search): void {
                 $isFirst = true;
@@ -221,24 +216,37 @@ trait HasGlobalSearch
     protected static function applyGlobalSearchAttributeConstraint(Builder $query, string $search, array $searchAttributes, bool &$isFirst): Builder
     {
         $isForcedCaseInsensitive = static::isGlobalSearchForcedCaseInsensitive();
-        $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true);
 
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
+
+        $searchPattern = generate_search_pattern(
+            generate_search_term_expression($search, $isForcedCaseInsensitive, $databaseConnection),
+            hasLeadingWildcard: true,
+            hasTrailingWildcard: true,
+            databaseConnection: $databaseConnection,
+        );
 
         foreach ($searchAttributes as $searchAttribute) {
             $whereClause = $isFirst ? 'where' : 'orWhere';
 
             $query->when(
                 str($searchAttribute)->contains('.'),
-                function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $searchAttribute, $searchPattern, $whereClause): Builder {
+                function (Builder $query) use ($isForcedCaseInsensitive, $search, $searchAttribute, $whereClause): Builder {
                     return $query->{"{$whereClause}Has"}(
                         (string) str($searchAttribute)->beforeLast('.'),
-                        fn (Builder $query): Builder => apply_search_constraint(
-                            $query,
-                            generate_search_column_expression($query->qualifyColumn((string) str($searchAttribute)->afterLast('.')), $isForcedCaseInsensitive, $databaseConnection),
-                            $searchPattern,
-                        ),
+                        function (Builder $query) use ($isForcedCaseInsensitive, $search, $searchAttribute): Builder {
+                            /** @var Connection $databaseConnection */
+                            $databaseConnection = $query->getConnection();
+
+                            $search = generate_search_term_expression($search, $isForcedCaseInsensitive, $databaseConnection);
+
+                            return apply_search_constraint(
+                                $query,
+                                generate_search_column_expression($query->qualifyColumn((string) str($searchAttribute)->afterLast('.')), $isForcedCaseInsensitive, $databaseConnection),
+                                generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true, databaseConnection: $databaseConnection),
+                            );
+                        },
                     );
                 },
                 fn (Builder $query): Builder => apply_search_constraint(

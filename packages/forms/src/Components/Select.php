@@ -1448,7 +1448,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $databaseConnection = $query->getConnection();
 
         $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
-        $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true);
+        $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true, databaseConnection: $databaseConnection);
 
         $query->where(function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $searchPattern): Builder {
             $isFirst = true;
