@@ -1,6 +1,40 @@
 .fi-ta-icon {
     @apply flex w-full gap-1.5;
 
+    .fi-ta-content-loading > .fi-ta-content &,
+    .fi-ta-content-loading > .fi-ta-table > .fi-ta-records > .fi-ta-row & {
+        @apply relative w-fit max-w-full text-transparent;
+
+        &.fi-align-center {
+            @apply mx-auto;
+        }
+
+        &.fi-align-end,
+        &.fi-align-right {
+            @apply ms-auto;
+        }
+
+        &::after {
+            @apply absolute inset-x-3 inset-y-4;
+            animation: var(--loading-skeleton-animation);
+            background-color: var(--loading-skeleton-background-color);
+            border-radius: var(--loading-skeleton-border-radius);
+            content: '';
+        }
+
+        &.fi-inline::after {
+            @apply inset-0;
+        }
+
+        .fi-ta-table-stacked-on-mobile &::after {
+            @apply inset-0 sm:inset-x-3 sm:inset-y-4;
+        }
+
+        & > * {
+            @apply opacity-0;
+        }
+    }
+
     &.fi-wrapped {
         @apply flex-wrap;
     }

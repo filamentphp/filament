@@ -36,6 +36,7 @@ class Table extends ViewComponent
     use Table\Concerns\HasHeaderActions;
     use Table\Concerns\HasHeadings;
     use Table\Concerns\HasIdentifier;
+    use Table\Concerns\HasLoadingSkeleton;
     use Table\Concerns\HasQuery;
     use Table\Concerns\HasQueryStringIdentifier;
     use Table\Concerns\HasRecordAction;
@@ -55,18 +56,26 @@ class Table extends ViewComponent
     protected string $evaluationIdentifier = 'table';
 
     public const LOADING_TARGETS = [
+        'activeTab',
+        'applyTableFilters',
         'gotoPage',
         'nextPage',
         'previousPage',
         'removeTableFilter',
         'removeTableFilters',
         'reorderTable',
+        'resetTableColumnSearch',
         'resetTableFiltersForm',
+        'resetTableSearch',
+        'setPage',
         'sortTable',
         'tableColumnSearches',
         'tableFilters',
+        'tableGrouping',
         'tableRecordsPerPage',
         'tableSearch',
+        'tableSort',
+        'toggleTableReordering',
     ];
 
     final public function __construct(HasTable $livewire)
