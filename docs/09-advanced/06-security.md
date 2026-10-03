@@ -434,3 +434,9 @@ If you write your own `<script>` elements, in a custom page, a [render hook](ren
 <Aside variant="warning">
     Filament does not modify content that you inject through [render hooks](render-hooks), the `scripts` Blade stack, or `RawJs`, so you must add the nonce to any inline script you render there yourself. Configuring this nonce does not, by itself, allow you to remove `'unsafe-inline'` from `script-src`; you must audit and handle every script rendered by your application. Scripts inside Livewire's `@script` directive are evaluated by Alpine.js rather than executed as script elements, so they are governed by `script-src 'unsafe-eval'` rather than by the nonce. Filament also does not currently support a strict `style-src` directive, since Livewire, Alpine.js, and TipTap rely on inline styles.
 </Aside>
+
+### Allowing the file upload's web workers
+
+The [file upload field](../forms/file-upload) generates image previews and [resizes images](../forms/file-upload#cropping-and-resizing-images-without-the-editor) in web workers, which it creates from `blob:` URLs. If your policy has no `worker-src` directive, the browser checks these workers against `script-src` instead, which usually does not allow `blob:`. The workers are then blocked: images are uploaded without a preview, and uploads that resize images never finish.
+
+To allow these workers without allowing `blob:` scripts anywhere else, add `worker-src 'self' blob:` to your policy.
