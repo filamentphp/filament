@@ -8,6 +8,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Support\Contracts\HasIcon as IconInterface;
 use Filament\Support\Enums\IconPosition;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 
 trait HasIcon
 {
@@ -27,15 +28,21 @@ trait HasIcon
      */
     public function icons(array | Closure $icons): static
     {
-        $this->icon(function (Component $component, $state) use ($icons) {
-            $icons = $component->evaluate($icons);
+        $this->icon(function (Component $component, $state, ?Model $relatedRecord) use ($icons) {
+            $icons = $component->evaluate($icons, [
+                'state' => $state,
+                'relatedRecord' => $relatedRecord,
+            ]);
 
             $icon = null;
 
             foreach ($icons as $conditionalIcon => $condition) {
                 if (is_numeric($conditionalIcon)) {
                     $icon = $condition;
-                } elseif ($condition instanceof Closure && $component->evaluate($condition)) {
+                } elseif ($condition instanceof Closure && $component->evaluate($condition, [
+                    'state' => $state,
+                    'relatedRecord' => $relatedRecord,
+                ])) {
                     $icon = $conditionalIcon;
                 } elseif ($condition === $state) {
                     $icon = $conditionalIcon;
@@ -55,10 +62,11 @@ trait HasIcon
         return $this;
     }
 
-    public function getIcon(mixed $state): string | BackedEnum | Htmlable | null
+    public function getIcon(mixed $state, ?Model $relatedRecord = null): string | BackedEnum | Htmlable | null
     {
         $icon = $this->evaluate($this->icon, [
             'state' => $state,
+            'relatedRecord' => $relatedRecord,
         ]);
 
         if ($icon === false) {

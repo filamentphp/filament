@@ -7,6 +7,7 @@ use Filament\Tests\Fixtures\Models\MediaPost;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 use function Filament\Tests\livewire;
 
@@ -162,6 +163,27 @@ describe('state from media', function (): void {
         livewire(SpatieMediaLibraryTableForm::class)
             ->assertTableColumnExists('media')
             ->assertCanRenderTableColumn('media');
+    });
+
+    it('injects the media model while rendering each item', function (): void {
+        $record = MediaPost::factory()->create();
+
+        $media = $record->addMediaFromString('first')
+            ->usingFileName('first.jpg')
+            ->toMediaCollection('avatars');
+
+        $column = livewire(SpatieMediaLibraryTableForm::class)
+            ->instance()
+            ->getTable()
+            ->getColumn('media')
+            ->record($record)
+            ->recordKey((string) $record->getKey())
+            ->conversion(static fn (string $state, Media $relatedRecord): string => $state === $relatedRecord->uuid ? '' : 'missing')
+            ->alt(static fn (string $state, Media $relatedRecord): string => "media-{$relatedRecord->getKey()}-{$state}");
+
+        $column->clearCachedState();
+
+        expect($column->toEmbeddedHtml())->toContain('alt="media-' . $media->getKey() . '-' . $media->uuid . '"');
     });
 
     it('can render column for a record without media', function (): void {

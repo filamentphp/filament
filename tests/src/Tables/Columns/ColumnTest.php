@@ -10,6 +10,7 @@ use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -39,6 +40,26 @@ it('throws `LogicException` from `getTable()` when not mounted', function (): vo
 
     expect(static fn () => $column->getTable())
         ->toThrow(LogicException::class, 'is not mounted to a table');
+});
+
+it('can call `getStateFromRecord()` for a relationship without mounting the column', function (): void {
+    $author = User::factory()->create();
+    $post = Post::factory()->create(['author_id' => $author->getKey()]);
+
+    expect(TextColumn::make('author.name')->record($post)->getStateFromRecord())
+        ->toBe($author->name);
+});
+
+it('can call `getStateFromRecord()` with keyless records after mounting the column', function (): void {
+    $column = livewire(RenderColumnWithCustomLabel::class)
+        ->instance()
+        ->getTable()
+        ->getColumn('title');
+
+    expect($column->record(['title' => 'Array title'])->getStateFromRecord())
+        ->toBe('Array title')
+        ->and($column->record(new Post(['title' => 'Model title']))->getStateFromRecord())
+        ->toBe('Model title');
 });
 
 describe('label', function (): void {

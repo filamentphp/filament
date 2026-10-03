@@ -8,6 +8,7 @@ use Filament\Tests\Fixtures\Models\MediaPost;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 uses(TestCase::class);
 
@@ -67,6 +68,19 @@ describe('conversion', function (): void {
             ->conversion(static fn (): string => 'preview');
 
         expect($entry->getConversion())->toBe('preview');
+    });
+
+    it('preserves implicit `$state` injection when `getConversion()` state is omitted', function (): void {
+        $entry = (new class('media') extends SpatieMediaLibraryImageEntry
+        {
+            public function getState(): array
+            {
+                return ['media-uuid'];
+            }
+        })->conversion(static fn (?array $state): string => $state ? $state[0] : 'original');
+
+        expect($entry->getConversion())->toBe('media-uuid')
+            ->and($entry->getConversion(null))->toBe('original');
     });
 
     it('can clear `conversion()` with `null`', function (): void {
@@ -149,6 +163,40 @@ describe('state from media', function (): void {
         expect($state)->toContain($media1->uuid);
         expect($state)->toContain($media2->uuid);
         expect($state)->toHaveCount(2);
+    });
+
+    it('can render a record without media', function (): void {
+        $record = MediaPost::factory()->create();
+        $record->load('media');
+
+        $entry = SpatieMediaLibraryImageEntry::make('media')
+            ->container(
+                Schema::make(Livewire::make())
+                    ->record($record)
+            );
+
+        expect($entry->toEmbeddedHtml())->not->toContain('<img');
+    });
+
+    it('injects the media model while rendering each item', function (): void {
+        $record = MediaPost::factory()->create();
+
+        $media = $record->addMediaFromString('first')
+            ->usingFileName('first.jpg')
+            ->toMediaCollection('avatars');
+
+        $record->load('media');
+
+        $entry = SpatieMediaLibraryImageEntry::make('media')
+            ->collection('avatars')
+            ->conversion(static fn (string $state, Media $relatedRecord): string => $state === $relatedRecord->uuid ? '' : 'missing')
+            ->alt(static fn (string $state, Media $relatedRecord): string => "media-{$relatedRecord->getKey()}-{$state}")
+            ->container(
+                Schema::make(Livewire::make())
+                    ->record($record)
+            );
+
+        expect($entry->toEmbeddedHtml())->toContain('alt="media-' . $media->getKey() . '-' . $media->uuid . '"');
     });
 
     it('only returns UUIDs from the specified collection', function (): void {

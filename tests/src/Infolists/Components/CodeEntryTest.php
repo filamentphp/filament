@@ -9,6 +9,8 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Livewire\Component;
 use Phiki\Grammar\Grammar;
@@ -42,6 +44,42 @@ it('renders malicious HTML as code text rather than active elements', function (
     expect($xpath->query('//script | //img')->length)->toBe(0)
         ->and(rtrim($xpath->query('//code')->item(0)->textContent, "\n"))
         ->toBe('<script>alert(1)</script><img src="x" onerror="alert(2)"> & tail');
+});
+
+it('injects the related model into copying and tooltip evaluations', function (): void {
+    $author = User::factory()->create(['json' => ['code' => 'echo true;']]);
+    $post = Post::factory()->create(['author_id' => $author->getKey()]);
+
+    $entry = CodeEntry::make('author.json.code')
+        ->copyable(static fn (User $relatedRecord): bool => $relatedRecord->exists)
+        ->copyableState(static fn (User $relatedRecord): string => "copy-{$relatedRecord->email}")
+        ->copyMessage(static fn (User $relatedRecord): string => "message-{$relatedRecord->email}")
+        ->copyMessageDuration(static fn (User $relatedRecord): int => 1234)
+        ->tooltip(static fn (User $relatedRecord): string => "tooltip-{$relatedRecord->email}")
+        ->container(Schema::make(Livewire::make())->record($post));
+
+    expect($entry->toHtml())
+        ->toContain("copy-{$author->email}")
+        ->toContain("message-{$author->email}")
+        ->toContain('1234')
+        ->toContain("tooltip-{$author->email}");
+});
+
+it('injects raw array `$state` and `$relatedRecord` into copying and tooltip evaluations', function (): void {
+    $author = User::factory()->create(['json' => ['code' => 'echo true;']]);
+    $post = Post::factory()->create(['author_id' => $author->getKey()]);
+
+    $entry = CodeEntry::make('author.json')
+        ->copyable(static fn (array $state, User $relatedRecord): bool => ($state === $relatedRecord->json) && $relatedRecord->exists)
+        ->copyableState(static fn (array $state, User $relatedRecord): string => "{$state['code']}:{$relatedRecord->email}")
+        ->copyMessage(static fn (array $state, User $relatedRecord): string => "{$state['code']}:{$relatedRecord->getKey()}")
+        ->tooltip(static fn (array $state, User $relatedRecord): string => "{$relatedRecord->email}:{$state['code']}")
+        ->container(Schema::make(Livewire::make())->record($post));
+
+    expect($entry->toHtml())
+        ->toContain("echo true;:{$author->email}")
+        ->toContain("echo true;:{$author->getKey()}")
+        ->toContain("{$author->email}:echo true;");
 });
 
 it('can set and get `grammar()`', function (): void {

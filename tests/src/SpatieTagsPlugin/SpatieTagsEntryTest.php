@@ -6,6 +6,7 @@ use Filament\SpatieLaravelTagsPlugin\Types\AllTagTypes;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Article;
 use Filament\Tests\TestCase;
+use Spatie\Tags\Tag;
 
 uses(TestCase::class);
 
@@ -79,6 +80,23 @@ describe('state from tags', function (): void {
         expect($state)->toContain('Laravel');
         expect($state)->toContain('PHP');
         expect($state)->toHaveCount(2);
+    });
+
+    it('injects the tag model while rendering each item', function (): void {
+        $record = Article::factory()->create();
+        $record->attachTags(['Laravel', 'PHP']);
+        $record->load('tags');
+
+        $entry = SpatieTagsEntry::make('tags')
+            ->formatStateUsing(static fn (Tag $relatedRecord, string $state): string => "{$relatedRecord->getKey()}:{$state}")
+            ->container(
+                Schema::make(Livewire::make())
+                    ->record($record)
+            );
+
+        foreach ($record->tags as $tag) {
+            expect($entry->toEmbeddedHtml())->toContain("{$tag->getKey()}:{$tag->name}");
+        }
     });
 
     it('returns only tags of the specified type', function (): void {

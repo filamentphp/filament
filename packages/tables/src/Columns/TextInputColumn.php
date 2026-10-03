@@ -205,6 +205,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
     {
         $isDisabled = $this->isDisabled();
         $state = $this->getState();
+        $relatedRecord = $this->getRelatedRecord();
         $mask = $this->getMask();
 
         $alignment = $this->getAlignment() ?? Alignment::Start;
@@ -254,7 +255,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                 'step' => $this->getStep(),
                 'type' => $type,
                 'x-mask' . ($mask instanceof RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
-                'x-tooltip' => filled($tooltip = $this->getTooltip($state))
+                'x-tooltip' => filled($tooltip = $this->getTooltip($state, $relatedRecord))
                     ? '{
                         content: ' . Js::from($tooltip) . ',
                         theme: $store.theme,
