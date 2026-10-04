@@ -4,22 +4,28 @@ use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\TestCase;
 use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Query\Grammars\Grammar;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use Illuminate\Database\Query\Grammars\PostgresGrammar;
+use Illuminate\Database\Query\Processors\Processor;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\ComponentAttributeBag;
 use Symfony\Component\Process\Process;
 
 use function Filament\get_authorization_response;
+use function Filament\Support\apply_search_constraint;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_pattern;
+use function Filament\Support\is_database_driver_supported;
 use function Filament\Support\is_path_within_directory;
 use function Filament\Support\prepare_inherited_attributes;
 
 uses(TestCase::class);
 
 it('generates patterns with literal LIKE wildcard characters using `generate_search_pattern()`', function (bool $hasLeadingWildcard, bool $hasTrailingWildcard, string $expected): void {
-    expect(generate_search_pattern('café!_100%[draft]\\path', $hasLeadingWildcard, $hasTrailingWildcard))
+    expect(generate_search_pattern('café!_100%[draft]\\path', $hasLeadingWildcard, $hasTrailingWildcard, Ticket::query()->getConnection()))
         ->toBe($expected);
 })->with([
     'equals' => [false, false, 'café!!!_100!%![draft]\\path'],
@@ -27,6 +33,53 @@ it('generates patterns with literal LIKE wildcard characters using `generate_sea
     'ends with' => [true, false, '%café!!!_100!%![draft]\\path'],
     'contains' => [true, true, '%café!!!_100!%![draft]\\path%'],
 ]);
+
+it('recognizes supported drivers with `is_database_driver_supported()`', function (string $driver, bool $isSupported): void {
+    $databaseConnection = Mockery::mock(Connection::class);
+    $databaseConnection->shouldReceive('getDriverName')->once()->andReturn($driver);
+
+    expect(is_database_driver_supported($databaseConnection))->toBe($isSupported);
+})->with([
+    'MariaDB' => ['mariadb', true],
+    'MySQL' => ['mysql', true],
+    'PostgreSQL' => ['pgsql', true],
+    'SQLite' => ['sqlite', true],
+    'SQL Server' => ['sqlsrv', true],
+    'MongoDB' => ['mongodb', false],
+]);
+
+it('uses `whereLike()` with its expected wildcard escaping for unsupported database drivers', function (): void {
+    $databaseConnection = Mockery::mock(Connection::class);
+    $databaseConnection->shouldReceive('getDriverName')->twice()->andReturn('mongodb');
+
+    $baseQuery = new class($databaseConnection, new Grammar($databaseConnection), new Processor) extends QueryBuilder
+    {
+        /** @var array<mixed> */
+        public array $whereLikeArguments = [];
+
+        public function whereLike($column, $value, $caseSensitive = false, $boolean = 'and', $not = false)
+        {
+            $this->whereLikeArguments = [$column, $value, $caseSensitive, $boolean, $not];
+
+            return $this;
+        }
+    };
+
+    $query = (new EloquentBuilder($baseQuery))->setModel(new Ticket);
+
+    $returnedQuery = apply_search_constraint(
+        $query,
+        'profile.name',
+        generate_search_pattern('café!_100%[draft]\\path\\%\\_wow!!', hasLeadingWildcard: true, hasTrailingWildcard: true, databaseConnection: $databaseConnection),
+        boolean: 'or',
+        isInverse: true,
+    );
+
+    expect($returnedQuery)
+        ->toBe($query)
+        ->and($baseQuery->whereLikeArguments)
+        ->toBe(['profile.name', '%café!\\_100\\%[draft]\\path\\\\%\\\\_wow!!%', false, 'or', true]);
+});
 
 it('does not share the `originalRequest` binding between Livewire component snapshots', function (): void {
     expect(app()->isShared('originalRequest'))->toBeFalse();

@@ -358,9 +358,11 @@ class Group extends Component
         }
 
         if (filled($relationshipName = $this->getRelationshipName())) {
-            return $query->orderBy(
-                app(RelationshipOrderer::class)->buildSubquery($query, $relationshipName, $this->getRelationshipAttribute()),
-                $direction
+            return app(RelationshipOrderer::class)->orderQuery(
+                $query,
+                $relationshipName,
+                $this->getRelationshipAttribute(),
+                $direction,
             );
         }
 

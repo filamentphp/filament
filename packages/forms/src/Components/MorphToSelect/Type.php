@@ -85,7 +85,7 @@ class Type
             $isFirst = true;
 
             $search = generate_search_term_expression($search, $isForcedCaseInsensitive, $databaseConnection);
-            $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true);
+            $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true, databaseConnection: $databaseConnection);
 
             $query->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $databaseConnection, $searchPattern): Builder {
                 foreach ($this->getSearchColumns() as $searchColumn) {
