@@ -4,6 +4,7 @@ use Filament\Actions\Testing\TestAction;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Auth\Pages\Login;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\OneTimeCodeInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
@@ -34,6 +35,8 @@ beforeEach(function (): void {
 
 describe('authentication flow', function (): void {
     it('can render the challenge form after valid login credentials are successfully used', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
         $userToAuthenticate = User::factory()
             ->hasAppAuthentication()
             ->create();
@@ -46,7 +49,12 @@ describe('authentication flow', function (): void {
             ->assertSet('userUndertakingMultiFactorAuthentication', null)
             ->call('authenticate')
             ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
-            ->assertNoRedirect();
+            ->assertNoRedirect()
+            ->assertFormFieldExists(
+                "{$appAuthentication->getId()}.code",
+                'multiFactorChallengeForm',
+                fn (OneTimeCodeInput $field): bool => $field->shouldSubmitOnCompletion(),
+            );
 
         expect(decrypt($livewire->instance()->userUndertakingMultiFactorAuthentication))
             ->toBe([

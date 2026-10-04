@@ -28,7 +28,7 @@ TextEntry::make('status')
     ->color('primary')
 ```
 
-<UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="infolists/entries/text/color" alt="Text entry in the primary color" version="5.x" />
 
@@ -44,7 +44,7 @@ TextEntry::make('email')
     ->icon(Heroicon::Envelope)
 ```
 
-<UtilityInjection set="infolistEntries" version="5.x">The `icon()` method also accepts a function to dynamically calculate the icon. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">The `icon()` method also accepts a function to dynamically calculate the icon. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="infolists/entries/text/icon" alt="Text entry with icon" version="5.x" />
 
@@ -75,7 +75,7 @@ TextEntry::make('email')
     ->iconColor('primary')
 ```
 
-<UtilityInjection set="infolistEntries" version="5.x">The `iconColor()` method also accepts a function to dynamically calculate the icon color. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">The `iconColor()` method also accepts a function to dynamically calculate the icon color. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="infolists/entries/text/icon-color" alt="Text entry with icon in the primary color" version="5.x" />
 
@@ -126,7 +126,7 @@ TextEntry::make('status')
 
 In this case, the `status` column in the database might contain values like `draft`, `reviewing`, `published`, or `rejected`, but the formatted state will be the translated version of these values.
 
-<UtilityInjection set="infolistEntries" version="5.x">The function passed to `formatStateUsing()` can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">The function passed to `formatStateUsing()` can inject various utilities as parameters.</UtilityInjection>
 
 ### Date formatting
 
@@ -162,7 +162,7 @@ TextEntry::make('created_at')
     ->time('H:i:s')
 ```
 
-<UtilityInjection set="infolistEntries" version="5.x">As well as allowing static values, the `date()`, `dateTime()`, and `time()` methods also accept a function to dynamically calculate the format. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `date()`, `dateTime()`, and `time()` methods also accept a function to dynamically calculate the format. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 #### Date formatting using Carbon macro formats
 
@@ -196,7 +196,7 @@ TextEntry::make('created_at')
     ->isoTime('LT')
 ```
 
-<UtilityInjection set="infolistEntries" version="5.x">As well as allowing static values, the `isoDate()`, `isoDateTime()`, and `isoTime()` methods also accept a function to dynamically calculate the format. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `isoDate()`, `isoDateTime()`, and `isoTime()` methods also accept a function to dynamically calculate the format. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 #### Relative date formatting
 
@@ -270,7 +270,7 @@ TextEntry::make('created_at')
     ->dateTime()
 ```
 
-<UtilityInjection set="infolistEntries" version="5.x">As well as allowing static values, the `timezone()` method also accepts a function to dynamically calculate the timezone. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `timezone()` method also accepts a function to dynamically calculate the timezone. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 If you do not pass a `timezone()` to the entry, it will use Filament's default timezone. You can set Filament's default timezone using the `FilamentTimezone::set()` method in the `boot()` method of a service provider such as `AppServiceProvider`:
 
@@ -311,7 +311,7 @@ TextEntry::make('stock')
     ->numeric(decimalPlaces: 0)
 ```
 
-<UtilityInjection set="infolistEntries" version="5.x">As well as allowing static values, the `decimalPlaces` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `decimalPlaces` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 By default, your app's locale will be used to format the number suitably. If you would like to customize the locale used, you can pass it to the `locale` argument:
 
@@ -322,7 +322,7 @@ TextEntry::make('stock')
     ->numeric(locale: 'nl')
 ```
 
-<UtilityInjection set="infolistEntries" version="5.x">As well as allowing static values, the `locale` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `locale` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Money formatting
 
@@ -337,7 +337,7 @@ TextEntry::make('price')
 
 <AutoScreenshot name="infolists/entries/text/money" alt="Text entry with money formatting" version="5.x" />
 
-<UtilityInjection set="infolistEntries" version="5.x">As well as allowing static values, the `money()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `money()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 There is also a `divideBy` argument for `money()` that allows you to divide the original value by a number before formatting it. This could be useful if your database stores the price in cents, for example:
 
@@ -348,7 +348,7 @@ TextEntry::make('price')
     ->money('EUR', divideBy: 100)
 ```
 
-<UtilityInjection set="infolistEntries" version="5.x">As well as allowing static values, the `divideBy` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `divideBy` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 By default, your app's locale will be used to format the money suitably. If you would like to customize the locale used, you can pass it to the `locale` argument:
 
@@ -359,7 +359,7 @@ TextEntry::make('price')
     ->money('EUR', locale: 'nl')
 ```
 
-<UtilityInjection set="infolistEntries" version="5.x">As well as allowing static values, the `locale` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `locale` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 If you would like to customize the number of decimal places used to format the number with, you can use the `decimalPlaces` argument:
 
@@ -370,7 +370,7 @@ TextEntry::make('price')
     ->money('EUR', decimalPlaces: 3)
 ```
 
-<UtilityInjection set="infolistEntries" version="5.x">As well as allowing static values, the `decimalPlaces` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `decimalPlaces` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Rendering Markdown
 
@@ -616,7 +616,7 @@ TextEntry::make('title')
     ->weight(FontWeight::Bold)
 ```
 
-<UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `weight()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `weight()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="infolists/entries/text/bold" alt="Text entry in a bold font" version="5.x" />
 
@@ -635,7 +635,7 @@ TextEntry::make('apiKey')
     ->fontFamily(FontFamily::Mono)
 ```
 
-<UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `fontFamily()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `fontFamily()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="infolists/entries/text/mono" alt="Text entry in a monospaced font" version="5.x" />
 
@@ -652,7 +652,7 @@ TextEntry::make('description')
     ->limit(50)
 ```
 
-<UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `limit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `limit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="infolists/entries/text/limit" alt="Text entry with limited text length" version="5.x" />
 
@@ -665,7 +665,7 @@ TextEntry::make('description')
     ->limit(50, end: ' (more)')
 ```
 
-<UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `end` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `end` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You may also reuse the value that is being passed to `limit()` in a function, by getting it using the `getCharacterLimit()` method:
 
@@ -697,7 +697,7 @@ TextEntry::make('description')
     ->words(10)
 ```
 
-<UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `words()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `words()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="infolists/entries/text/words" alt="Text entry with limited word count" version="5.x" />
 
@@ -710,7 +710,7 @@ TextEntry::make('description')
     ->words(10, end: ' (more)')
 ```
 
-<UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `end` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `end` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Limiting text to a specific number of lines
 
@@ -768,7 +768,7 @@ TextEntry::make('apiKey')
     ->copyable(FeatureFlag::active())
 ```
 
-<UtilityInjection set="infolistEntries" version="5.x">As well as allowing static values, the `copyable()`, `copyMessage()`, and `copyMessageDuration()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `copyable()`, `copyMessage()`, and `copyMessageDuration()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="warning">
     This feature only works when SSL is enabled for the app.

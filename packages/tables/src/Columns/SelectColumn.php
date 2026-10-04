@@ -942,6 +942,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         $placeholder = $this->getPlaceholder();
         $recordKey = $this->getRecordKey();
         $state = $this->getState();
+        $relatedRecord = $this->getRelatedRecord();
 
         $attributes = $this->getExtraAttributeBag()
             ->merge([
@@ -1007,7 +1008,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                 'wire:loading.attr' => 'disabled',
                 'wire:target' => implode(',', Table::LOADING_TARGETS),
                 'x-bind:disabled' => $isDisabled ? null : 'isLoading',
-                'x-tooltip' => filled($tooltip = $this->getTooltip($state))
+                'x-tooltip' => filled($tooltip = $this->getTooltip($state, $relatedRecord))
                     ? '{
                         content: ' . Js::from($tooltip) . ',
                         theme: $store.theme,

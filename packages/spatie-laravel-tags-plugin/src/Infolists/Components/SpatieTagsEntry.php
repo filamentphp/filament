@@ -45,6 +45,7 @@ class SpatieTagsEntry extends TextEntry
         $records = Arr::wrap($record);
 
         $state = [];
+        $relatedRecords = [];
 
         foreach ($records as $record) {
             /** @var Model $record */
@@ -60,13 +61,17 @@ class SpatieTagsEntry extends TextEntry
                 $tags = $record->tagsWithType($type);
             }
 
-            $state = [
-                ...$state,
-                ...$tags->pluck('name')->all(),
-            ];
+            foreach ($tags as $tag) {
+                $state[] = $tag->getAttributeValue('name');
+                $relatedRecords[] = $tag;
+            }
         }
 
-        return array_unique($state);
+        $state = array_unique($state);
+
+        $this->relatedRecords = array_intersect_key($relatedRecords, $state);
+
+        return $state;
     }
 
     public function type(string | AllTagTypes | Closure | null $type): static

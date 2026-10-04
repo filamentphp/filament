@@ -4410,6 +4410,27 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'tables/loading-skeleton': {
+        url: 'tables?table=loadingSkeleton',
+        selector: '#table',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.$eval('#table', (table) => {
+                table.scrollIntoView()
+
+                const content = table.querySelector('.fi-ta-content-ctn')
+
+                content.classList.add('fi-ta-content-loading')
+                content.setAttribute('aria-busy', 'true')
+            })
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
     'tables/overview/columns': {
         url: 'tables?table=gettingStartedColumns',
         selector: '#table',

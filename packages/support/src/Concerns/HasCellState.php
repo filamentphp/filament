@@ -34,6 +34,11 @@ trait HasCellState
      */
     protected array $cachedState = [];
 
+    /**
+     * @var array<string, array<Model>>
+     */
+    protected array $cachedRelatedRecords = [];
+
     protected ?bool $hasMultipleRelationshipCache = null;
 
     protected ?Relation $relationshipCache = null;
@@ -119,15 +124,23 @@ trait HasCellState
     {
         $record = $this->getRecord();
 
+        $this->cacheRelatedRecords([]);
+
         if ($record instanceof Model) {
             $relationship = $this->getRelationship($record);
 
             if ($relationship) {
                 $relationshipAttribute = $this->getFullAttributeName($record);
+                $relatedRecords = [];
+                $relationshipResults = $this->getRelationshipResults($record);
 
-                $state = collect($this->getRelationshipResults($record))
+                if ((count($relationshipResults) === 1) && (! $this->hasMultipleRelationship($record))) {
+                    $this->cacheRelatedRecords([reset($relationshipResults)]);
+                }
+
+                $state = collect($relationshipResults)
                     ->reduce(
-                        function (Collection $carry, Model $record) use ($relationshipAttribute): Collection {
+                        function (Collection $carry, Model $record) use (&$relatedRecords, $relationshipAttribute): Collection {
                             if (
                                 ($record instanceof HasRichContent) &&
                                 $record->hasRichContentAttribute($relationshipAttribute)
@@ -141,16 +154,28 @@ trait HasCellState
                                 return $carry;
                             }
 
+                            $relatedRecords[] = $record;
+
                             return $carry->push($state);
                         },
                         initial: collect(),
                     )
-                    ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
+                    ->when(
+                        $this->isDistinctList(),
+                        function (Collection $state) use (&$relatedRecords): Collection {
+                            $uniqueStateKeys = $state->unique()->keys();
+                            $relatedRecords = Arr::only($relatedRecords, $uniqueStateKeys->all());
+
+                            return $state->only($uniqueStateKeys);
+                        },
+                    )
                     ->values();
 
                 if (! $state->count()) {
                     return null;
                 }
+
+                $this->cacheRelatedRecords(array_values($relatedRecords));
 
                 if (($state->count() < 2) && (! $this->hasMultipleRelationship($record))) {
                     return $state->first();
@@ -177,6 +202,25 @@ trait HasCellState
     public function clearCachedState(): void
     {
         $this->cachedState = [];
+        $this->cachedRelatedRecords = [];
+    }
+
+    /**
+     * @internal
+     *
+     * @return array<Model>
+     */
+    public function getRelatedRecords(): array
+    {
+        $this->getState();
+
+        $recordKey = $this->getStateCacheKey();
+
+        if (blank($recordKey)) {
+            return [];
+        }
+
+        return $this->cachedRelatedRecords[$recordKey] ?? [];
     }
 
     public function separator(string | Closure | null $separator = ','): static
@@ -573,19 +617,11 @@ trait HasCellState
 
     protected function cacheState(Closure $state): mixed
     {
-        $record = $this->getRecord();
-
-        if (! $record) {
+        if (! $this->getRecord()) {
             return null;
         }
 
-        if ($this instanceof Column) {
-            $recordKey = $this->getLivewire()->getTableRecordKey($record);
-        } elseif (is_array($record)) { /** @phpstan-ignore function.impossibleType */
-            $recordKey = (string) ($record[ArrayRecord::getKeyName()] ?? null); /** @phpstan-ignore nullCoalesce.offset */
-        } else {
-            $recordKey = (string) $record->getKey();
-        }
+        $recordKey = $this->getStateCacheKey();
 
         if (blank($recordKey)) {
             return $state();
@@ -596,6 +632,50 @@ trait HasCellState
         }
 
         return $this->cachedState[$recordKey] = $state();
+    }
+
+    /**
+     * @param  array<Model>  $records
+     */
+    protected function cacheRelatedRecords(array $records): void
+    {
+        if (
+            (! ($this instanceof Column)) ||
+            (! isset($this->table)) ||
+            (! ($this->getRecord() instanceof Model)) ||
+            blank($recordKey = $this->getStateCacheKey())
+        ) {
+            return;
+        }
+
+        $this->cachedRelatedRecords[$recordKey] = $records;
+    }
+
+    protected function getStateCacheKey(): ?string
+    {
+        $record = $this->getRecord();
+
+        if (! $record) {
+            return null;
+        }
+
+        if ($this instanceof Column) {
+            if (
+                ($record instanceof Model) &&
+                blank($record->getKey()) &&
+                (! $this->getTable()->hasPivotRecordKeys())
+            ) {
+                return null;
+            }
+
+            return $this->getLivewire()->getTableRecordKey($record);
+        }
+
+        if (is_array($record)) { /** @phpstan-ignore function.impossibleType */
+            return (string) ($record[ArrayRecord::getKeyName()] ?? null); /** @phpstan-ignore nullCoalesce.offset */
+        }
+
+        return (string) $record->getKey();
     }
 
     public function getGetStateUsingCallback(): mixed

@@ -1,3 +1,22 @@
+.fi-ta-content-loading {
+    --loading-skeleton-animation: var(--animate-pulse);
+    --loading-skeleton-background-color: var(--gray-200);
+    --loading-skeleton-border-radius: var(--radius-md);
+
+    @variant dark {
+        --loading-skeleton-background-color: rgb(255 255 255 / 0.1);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        --loading-skeleton-animation: none;
+    }
+
+    & > .fi-ta-content,
+    & > .fi-ta-table > .fi-ta-records {
+        @apply pointer-events-none;
+    }
+}
+
 .fi-ta-content-ctn {
     @apply relative divide-y divide-gray-200 overflow-x-auto dark:divide-white/10 dark:border-t-white/10;
 
@@ -144,25 +163,7 @@
         }
 
         & .fi-ta-group-header {
-            @apply col-span-full flex w-full items-center gap-x-3 bg-gray-50 px-1 py-2 sm:px-3 dark:bg-white/5;
-
-            &.fi-collapsible {
-                @apply cursor-pointer;
-
-                &.fi-collapsed {
-                    & .fi-icon-btn {
-                        @apply -rotate-180;
-                    }
-                }
-            }
-
-            & .fi-ta-group-heading {
-                @apply text-sm font-medium text-gray-950 dark:text-white;
-            }
-
-            & .fi-ta-group-description {
-                @apply text-sm text-gray-500 dark:text-gray-400;
-            }
+            @apply col-span-full bg-gray-50 px-1 sm:px-3 dark:bg-white/5;
 
             & .fi-ta-group-checkbox {
                 @apply mx-3;
@@ -175,6 +176,15 @@
 
         & .fi-ta-record {
             @apply relative flex h-full items-center bg-white transition duration-75 dark:bg-gray-900;
+
+            .fi-ta-content-loading & .fi-ta-record-checkbox {
+                @apply shadow-none;
+                animation: var(--loading-skeleton-animation);
+                background-color: var(
+                    --loading-skeleton-background-color
+                ) !important;
+                background-image: none !important;
+            }
 
             &.fi-ta-record-with-content-prefix {
                 @apply ps-1;

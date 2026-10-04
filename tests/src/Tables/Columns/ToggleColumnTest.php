@@ -9,6 +9,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -39,6 +40,15 @@ it('can display false state', function (): void {
         ->assertSuccessful();
 });
 
+it('injects raw relationship state into `tooltip()`', function (): void {
+    $author = User::factory()->create(['json' => ['is_active' => null]]);
+    Post::factory()->create(['author_id' => $author->getKey()]);
+
+    livewire(TestTableWithRelationshipToggleColumn::class)
+        ->assertSuccessful()
+        ->assertSee("raw-null-{$author->getKey()}", escape: false);
+});
+
 class TestTableWithToggleColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
@@ -52,6 +62,28 @@ class TestTableWithToggleColumn extends Component implements HasActions, HasSche
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
                 Tables\Columns\ToggleColumn::make('is_published'),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithRelationshipToggleColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\ToggleColumn::make('author.json.is_active')
+                    ->tooltip(static fn (mixed $state, User $relatedRecord): string => 'raw-' . ($state === null ? 'null' : get_debug_type($state)) . "-{$relatedRecord->getKey()}"),
             ]);
     }
 

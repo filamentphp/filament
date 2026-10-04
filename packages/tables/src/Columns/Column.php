@@ -12,6 +12,7 @@ use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasCellState;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasPlaceholder;
+use Filament\Support\Concerns\HasRelatedRecord;
 use Filament\Support\Concerns\HasVerticalAlignment;
 use Filament\Support\Concerns\HasWidth;
 use Filament\Support\Enums\Alignment;
@@ -54,6 +55,7 @@ class Column extends ViewComponent
     use HasCellState;
     use HasExtraAttributes;
     use HasPlaceholder;
+    use HasRelatedRecord;
     use HasTooltip;
     use HasVerticalAlignment;
     use HasWidth;

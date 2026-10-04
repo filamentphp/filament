@@ -354,6 +354,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         return [
             OneTimeCodeInput::make('code')
                 ->label(__('filament-panels::auth/multi-factor/app/provider.login_form.code.label'))
+                ->submitOnCompletion()
                 ->belowContent(fn (Get $get): Action => Action::make('useRecoveryCode')
                     ->label(__('filament-panels::auth/multi-factor/app/provider.login_form.code.actions.use_recovery_code.label'))
                     ->link()

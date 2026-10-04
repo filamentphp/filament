@@ -1109,6 +1109,21 @@ function (?Model $record) {
 }
 ```
 
+### Injecting the current related record
+
+When a column displays multiple values from a relationship, you may inject the Eloquent record that contains the current value into functions that customize each item using a `$relatedRecord` parameter:
+
+```php
+use App\Models\Tag;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('tags.name')
+    ->badge()
+    ->color(fn (Tag $relatedRecord): string => $relatedRecord->color)
+```
+
+The `$record` parameter continues to contain the current table record. The `$relatedRecord` parameter is only available while an individual relationship value is being evaluated. If multiple text values are joined into a comma-separated list, item styling is evaluated for the joined list instead. Use `badge()` or `listWithLineBreaks()` to evaluate item styling for each related record.
+
 ### Injecting the row loop
 
 To access the [row loop](https://laravel.com/docs/blade#the-loop-variable) object for the current table row, define a `$rowLoop` parameter:

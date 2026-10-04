@@ -12,9 +12,16 @@ class DropdownTest extends Page
 
     public ?array $data = [];
 
+    public int $refreshCount = 0;
+
     public function mount(): void
     {
         $this->form->fill();
+    }
+
+    public function refresh(): void
+    {
+        $this->refreshCount++;
     }
 
     public function form(Schema $form): Schema

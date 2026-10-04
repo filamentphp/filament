@@ -8,4 +8,8 @@
 
         {{ $this->form }}
     </x-filament::dropdown>
+
+    <x-filament::button data-testid="refresh" wire:click="refresh">
+        Refreshed {{ $refreshCount }} times
+    </x-filament::button>
 </x-filament-panels::page>
