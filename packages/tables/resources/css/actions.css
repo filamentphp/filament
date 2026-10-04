@@ -1,6 +1,26 @@
 .fi-ta-actions {
     @apply flex max-w-full shrink-0 items-center justify-end gap-3;
 
+    .fi-ta-content-loading
+        > .fi-ta-content
+        &
+        :is(.fi-icon-btn, .fi-btn, .fi-link),
+    .fi-ta-content-loading
+        > .fi-ta-table
+        > .fi-ta-records
+        > .fi-ta-row
+        &
+        :is(.fi-icon-btn, .fi-btn, .fi-link) {
+        @apply text-transparent shadow-none;
+        animation: var(--loading-skeleton-animation);
+        background-color: var(--loading-skeleton-background-color);
+        border-radius: var(--loading-skeleton-border-radius);
+
+        & > * {
+            @apply opacity-0;
+        }
+    }
+
     & > * {
         @apply shrink-0;
     }

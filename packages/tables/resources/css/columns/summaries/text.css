@@ -3,6 +3,22 @@
        with the numeric column above. */
     @apply grid gap-y-1 px-3 py-4 text-sm text-gray-500 tabular-nums dark:text-gray-400;
 
+    .fi-ta-content-loading & {
+        @apply relative w-fit max-w-full text-transparent;
+
+        &::after {
+            @apply absolute inset-x-0 top-1/2 h-4 -translate-y-1/2;
+            animation: var(--loading-skeleton-animation);
+            background-color: var(--loading-skeleton-background-color);
+            border-radius: var(--loading-skeleton-border-radius);
+            content: '';
+        }
+
+        & > * {
+            @apply opacity-0;
+        }
+    }
+
     .fi-ta-table-stacked-on-mobile & {
         @apply px-0 py-2 sm:px-3 sm:py-4;
     }

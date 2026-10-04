@@ -56,6 +56,43 @@ describe('defer loading', function (): void {
     });
 });
 
+describe('loading skeleton', function (): void {
+    it('defaults `hasLoadingSkeleton()` to `false`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        expect($table->hasLoadingSkeleton())->toBeFalse();
+    });
+
+    it('can set and evaluate `loadingSkeleton()`', function (): void {
+        $table = livewire(LoadingSkeletonTableTestComponent::class)->instance()->getTable();
+
+        expect($table->hasLoadingSkeleton())
+            ->toBeTrue()
+            ->and($table->loadingSkeleton(static fn (): bool => false)->hasLoadingSkeleton())
+            ->toBeFalse();
+    });
+
+    it('can configure `loadingSkeleton()` globally', function (): void {
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->loadingSkeleton(),
+            function (): void {
+                $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+                expect($table->hasLoadingSkeleton())->toBeTrue();
+            },
+        );
+    });
+
+    it('targets direct property updates and methods that change the displayed records', function (): void {
+        expect(Table::LOADING_TARGETS)
+            ->toContain('activeTab')
+            ->toContain('resetTableColumnSearch')
+            ->toContain('resetTableSearch')
+            ->toContain('tableSort')
+            ->toContain('setPage');
+    });
+});
+
 describe('polling', function (): void {
     it('returns `null` for `getPollingInterval()` by default', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
@@ -509,6 +546,69 @@ describe('rendering', function (): void {
             ->assertSuccessful();
     });
 
+    it('renders a delayed loading state for updates that change the displayed records', function (): void {
+        Post::factory()->create();
+
+        $html = livewire(TableTestComponent::class)
+            ->assertSuccessful()
+            ->html();
+
+        expect($html)
+            ->toContain('data-testid="table-loading-state"')
+            ->toContain('wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') . '.block')
+            ->not->toContain('wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') . '="fi-ta-content-loading"')
+            ->not->toContain('wire:loading.attr.delay.' . config('filament.livewire_loading_delay', 'default') . '="inert"')
+            ->toContain('wire:target="' . implode(',', Table::LOADING_TARGETS) . '"')
+            ->and(strpos($html, 'data-testid="table-loading-state"'))
+            ->toBeLessThan(strpos($html, 'class="fi-ta-table"'));
+    });
+
+    it('renders a delayed loading skeleton when enabled', function (): void {
+        Post::factory()->create();
+
+        $html = livewire(LoadingSkeletonTableTestComponent::class)
+            ->assertSuccessful()
+            ->html();
+
+        expect($html)
+            ->toContain('wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') . '="fi-ta-content-loading"');
+        expect($html)
+            ->toContain('wire:loading.attr.delay.' . config('filament.livewire_loading_delay', 'default') . '="inert"');
+    });
+
+    it('preserves the header sort loading indicator when the loading skeleton is disabled', function (): void {
+        Post::factory()->create();
+
+        $html = livewire(SortableTableTestComponent::class)
+            ->assertSuccessful()
+            ->html();
+
+        expect(substr_count($html, 'wire:target="sortTable(\'title\')"'))->toBe(3);
+    });
+
+    it('preserves the header sort loading indicator when the loading skeleton is enabled', function (): void {
+        Post::factory()->create();
+
+        $html = livewire(LoadingSkeletonSortableTableTestComponent::class)
+            ->assertSuccessful()
+            ->html();
+
+        expect(substr_count($html, 'wire:target="sortTable(\'title\')"'))->toBe(3);
+    });
+
+    it('replaces the empty state icon with a loading indicator during updates that change the displayed records', function (): void {
+        $html = livewire(EmptyStateTableTestComponent::class)
+            ->assertSuccessful()
+            ->html();
+
+        expect($html)
+            ->toContain('wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default'))
+            ->toContain('wire:loading.delay.' . config('filament.livewire_loading_delay', 'default'))
+            ->toContain('wire:target="' . implode(',', Table::LOADING_TARGETS) . '"')
+            ->toContain('fi-loading-indicator')
+            ->not->toContain('wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') . '="fi-ta-content-loading"');
+    });
+
     it('can render `CONTENT_BEFORE` and `CONTENT_AFTER` hooks around the table content', function (): void {
         $contentBeforeData = null;
         $contentAfterData = null;
@@ -646,6 +746,224 @@ describe('rendering', function (): void {
                 ->assertNoAccessibilityIssues();
         });
     });
+
+    it('renders accessible table loading states in light and dark modes', function (): void {
+        Artisan::call('filament:assets');
+
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            Post::query()->delete();
+
+            Post::factory()->create(['title' => 'Short']);
+            Post::factory()->create(['title' => 'A much longer title']);
+
+            $showLoadingStateScript = <<<'JS'
+                (() => {
+                    const loadingState = document.querySelector('[data-testid="table-loading-state"]')
+                    const tableContentContainer = loadingState.closest('.fi-ta-content-ctn')
+                    const recordActionLink = tableContentContainer.querySelector('tbody .fi-ta-actions .fi-link')
+
+                    loadingState.style.display = 'block'
+                    tableContentContainer.classList.add('fi-ta-content-loading')
+
+                    const textSkeleton = tableContentContainer.querySelector('tbody .fi-ta-text')
+                    const textSkeletonAnimationName = getComputedStyle(textSkeleton, '::after').animationName
+                    const textSkeletonWidths = [...tableContentContainer.querySelectorAll('tbody .fi-ta-text')]
+                        .map((element) => parseFloat(getComputedStyle(element, '::after').width))
+
+                    tableContentContainer.style.setProperty('--loading-skeleton-animation', 'none')
+                    tableContentContainer.style.setProperty('--loading-skeleton-background-color', 'rgb(1, 2, 3)')
+                    tableContentContainer.style.setProperty('--loading-skeleton-border-radius', '11px')
+
+                    const customizedTextSkeletonStyles = getComputedStyle(textSkeleton, '::after')
+                    const checkbox = tableContentContainer.querySelector('.fi-ta-checkbox')
+                    const checkboxInputRect = checkbox.querySelector('.fi-checkbox-input').getBoundingClientRect()
+                    const checkboxSkeletonStyles = getComputedStyle(checkbox, '::after')
+                    const toggle = tableContentContainer.querySelector('.fi-ta-toggle')
+                    const toggleControlRect = toggle.querySelector('.fi-toggle:not(.fi-hidden)').getBoundingClientRect()
+                    const toggleSkeletonStyles = getComputedStyle(toggle, '::after')
+
+                    return loadingState.getAttribute('role') === 'status'
+                        && loadingState.getAttribute('aria-live') === 'polite'
+                        && textSkeletonAnimationName === 'pulse'
+                        && getComputedStyle(tableContentContainer.querySelector('thead')).animationName === 'none'
+                        && Math.min(...textSkeletonWidths) < Math.max(...textSkeletonWidths)
+                        && customizedTextSkeletonStyles.animationName === 'none'
+                        && customizedTextSkeletonStyles.backgroundColor === 'rgb(1, 2, 3)'
+                        && customizedTextSkeletonStyles.borderRadius === '11px'
+                        && getComputedStyle(recordActionLink).backgroundColor === 'rgb(1, 2, 3)'
+                        && parseFloat(checkboxSkeletonStyles.width) === checkboxInputRect.width
+                        && parseFloat(checkboxSkeletonStyles.height) === checkboxInputRect.height
+                        && parseFloat(toggleSkeletonStyles.width) === toggleControlRect.width
+                        && parseFloat(toggleSkeletonStyles.height) === toggleControlRect.height
+                })()
+                JS;
+
+            visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+                ->assertScript($showLoadingStateScript, true)
+                ->assertNoAccessibilityIssues();
+
+            visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+                ->inDarkMode()
+                ->assertScript($showLoadingStateScript, true)
+                ->assertNoAccessibilityIssues();
+
+            $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
+            $individualSearchInput = '.fi-ta-individual-search-row input';
+
+            $page->script(<<<'JS'
+                (() => {
+                    const input = document.querySelector('.fi-ta-individual-search-row input')
+
+                    input.focus()
+                    input.value = 'Sho'
+                    input.dispatchEvent(new Event('input', { bubbles: true }))
+                })()
+                JS);
+
+            usleep(800_000);
+
+            expect($page->script(<<<'JS'
+                (() => {
+                    const input = document.querySelector('.fi-ta-individual-search-row input')
+
+                    return input === document.activeElement
+                        && ! input.closest('tbody').hasAttribute('inert')
+                        && document.querySelector('.fi-ta-records').hasAttribute('inert')
+                })()
+                JS))->toBeTrue();
+
+            $page->keys($individualSearchInput, 'r');
+
+            expect($page->script("document.querySelector('{$individualSearchInput}').value"))->toBe('Shor');
+
+            usleep(2_000_000);
+
+            $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
+
+            $page->click('Published');
+
+            usleep(300_000);
+
+            expect($page->script(<<<'JS'
+                (() => {
+                    const tableContent = document.querySelector('.fi-ta-content-ctn')
+
+                    return tableContent.classList.contains('fi-ta-content-loading')
+                        && tableContent.querySelector('.fi-ta-records').hasAttribute('inert')
+                })()
+                JS))->toBeTrue();
+
+            usleep(1_000_000);
+
+            Post::query()->delete();
+
+            $showEmptyStateLoadingIndicatorScript = <<<'JS'
+                (() => {
+                    const iconContainer = document.querySelector('.fi-ta-empty-state-icon-bg')
+                    const emptyStateIcon = iconContainer.querySelector('.fi-icon:not(.fi-loading-indicator)')
+                    const loadingIndicator = iconContainer.querySelector('.fi-loading-indicator')
+                    const emptyStateIconWidth = emptyStateIcon.getBoundingClientRect().width
+
+                    emptyStateIcon.style.display = 'none'
+                    loadingIndicator.style.display = 'block'
+
+                    return getComputedStyle(emptyStateIcon).display === 'none'
+                        && getComputedStyle(loadingIndicator).display === 'block'
+                        && loadingIndicator.getBoundingClientRect().width === emptyStateIconWidth
+                })()
+                JS;
+
+            visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+                ->assertScript($showEmptyStateLoadingIndicatorScript, true)
+                ->assertNoAccessibilityIssues();
+
+            visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+                ->inDarkMode()
+                ->assertScript($showEmptyStateLoadingIndicatorScript, true)
+                ->assertNoAccessibilityIssues();
+        });
+    });
+
+    it('renders loading states when removing search indicators', function (): void {
+        Artisan::call('filament:assets');
+
+        retry(3, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            Post::query()->delete();
+
+            Post::factory()->create(['title' => 'Short']);
+
+            $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
+
+            $page
+                ->fill('.fi-ta-individual-search-row input', 'Short')
+                ->assertPresent('.fi-ta-filter-indicators .fi-badge-delete-btn');
+
+            usleep(2_000_000);
+
+            $page->script(<<<'JS'
+                (() => {
+                    const tableContent = document.querySelector('.fi-ta-content-ctn')
+
+                    window.searchIndicatorLoadingState = {
+                        skeleton: false,
+                        inert: false,
+                    }
+
+                    window.searchIndicatorLoadingInterval = setInterval(() => {
+                        window.searchIndicatorLoadingState.skeleton ||= tableContent.classList.contains('fi-ta-content-loading')
+                        window.searchIndicatorLoadingState.inert ||= tableContent.querySelector('.fi-ta-records').hasAttribute('inert')
+                    }, 10)
+
+                    document.querySelector('.fi-ta-filter-indicators .fi-badge-delete-btn').click()
+                })()
+                JS);
+
+            usleep(2_000_000);
+
+            expect($page->script('window.searchIndicatorLoadingState'))->toBe([
+                'skeleton' => true,
+                'inert' => true,
+            ]);
+
+            $page->script('clearInterval(window.searchIndicatorLoadingInterval)');
+
+            $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
+
+            $page
+                ->fill('.fi-ta-header-toolbar .fi-ta-search-field input', 'No matching post')
+                ->assertPresent('.fi-ta-empty-state-icon-bg .fi-loading-indicator');
+
+            usleep(2_000_000);
+
+            $page->script(<<<'JS'
+                (() => {
+                    const tableContent = document.querySelector('.fi-ta-content-ctn')
+
+                    window.searchIndicatorLoadingState = {
+                        skeleton: false,
+                    }
+
+                    window.searchIndicatorLoadingInterval = setInterval(() => {
+                        window.searchIndicatorLoadingState.skeleton ||= tableContent.classList.contains('fi-ta-content-loading')
+                    }, 10)
+
+                    document.querySelector('.fi-ta-filter-indicators .fi-badge-delete-btn').click()
+                })()
+                JS);
+
+            usleep(2_000_000);
+
+            expect($page->script('window.searchIndicatorLoadingState'))->toBe([
+                'skeleton' => true,
+            ]);
+
+            $page->script('clearInterval(window.searchIndicatorLoadingInterval)');
+        });
+    });
 });
 
 function registerTableContentRenderHooks(string $scope, ?array &$contentBeforeData, ?array &$contentAfterData): void
@@ -698,6 +1016,36 @@ class StripedTableTestComponent extends TableTestComponent
     {
         return parent::table($table)
             ->striped();
+    }
+}
+
+class LoadingSkeletonTableTestComponent extends TableTestComponent
+{
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->loadingSkeleton();
+    }
+}
+
+class SortableTableTestComponent extends TableTestComponent
+{
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->columns([
+                Tables\Columns\TextColumn::make('title')
+                    ->sortable(),
+            ]);
+    }
+}
+
+class LoadingSkeletonSortableTableTestComponent extends SortableTableTestComponent
+{
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->loadingSkeleton();
     }
 }
 

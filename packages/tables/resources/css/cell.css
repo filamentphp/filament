@@ -118,6 +118,13 @@
         @apply cursor-move;
     }
 
+    .fi-ta-content-loading & .fi-ta-record-checkbox {
+        @apply shadow-none;
+        animation: var(--loading-skeleton-animation);
+        background-color: var(--loading-skeleton-background-color) !important;
+        background-image: none !important;
+    }
+
     &.fi-ta-selection-cell {
         @apply w-1 px-3 py-4 first-of-type:ps-4 last-of-type:pe-4 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
     }

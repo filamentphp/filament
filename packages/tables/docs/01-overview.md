@@ -572,6 +572,46 @@ public function table(Table $table): Table
 }
 ```
 
+## Displaying a loading skeleton
+
+You may display a skeleton over the current table records while pagination, sorting, filtering, or searching updates them using the `loadingSkeleton()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->loadingSkeleton();
+}
+```
+
+<AutoScreenshot name="tables/loading-skeleton" alt="Table displaying loading skeletons" version="4.x" />
+
+To enable the loading skeleton for all tables, you may use `Table::configureUsing()` in the `boot()` method of a service provider:
+
+```php
+use Filament\Tables\Table;
+
+Table::configureUsing(function (Table $table): void {
+    $table->loadingSkeleton();
+});
+```
+
+### Customizing the loading skeleton styles
+
+The loading skeleton's background color, border radius, and animation are controlled by CSS variables on the `.fi-ta-content-loading` element. You may customize these variables in your [theme's CSS file](../styling/overview#creating-a-custom-theme):
+
+```css
+.fi-ta-content-loading {
+    --loading-skeleton-animation: var(--animate-pulse);
+    --loading-skeleton-background-color: var(--primary-200);
+    --loading-skeleton-border-radius: var(--radius-lg);
+}
+```
+
+These variables are inherited by all loading skeletons in the table, including those that you add to [custom columns](columns/custom-columns#adding-a-loading-skeleton).
+
 ## Searching records with Laravel Scout
 
 While Filament doesn't provide a direct integration with [Laravel Scout](https://laravel.com/docs/scout), you may use the `searchUsing()` method with a `whereKey()` clause to filter the query for Scout results:
