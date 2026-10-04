@@ -544,7 +544,6 @@ class Tabs extends Component implements HasEmbeddedView
                                     $dropdownItemAttributes = (new FilamentComponentAttributeBag)
                                         ->merge([
                                             'type' => 'button',
-                                            'wire:loading.attr' => 'disabled',
                                             'x-bind:class' => "{ 'fi-selected': tab === '" . e($tabKey) . "' }",
                                             'x-on:click' => "tab = '{$tabKey}'; close(\$event);",
                                             'x-show' => "{$index} >= withinDropdownIndex",
@@ -739,7 +738,6 @@ class Tabs extends Component implements HasEmbeddedView
                             'role' => 'tab',
                             'type' => 'button',
                             'wire:click' => $wireClickValue,
-                            'wire:loading.attr' => 'disabled',
                         ], escape: false)
                         ->class([
                             'fi-tabs-item',

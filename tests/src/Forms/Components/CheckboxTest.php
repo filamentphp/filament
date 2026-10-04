@@ -265,12 +265,54 @@ it('can render `Checkbox` in the browser', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/checkbox-test')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+        $browser = visit('/checkbox-test');
 
-        visit('/checkbox-test')
-            ->inDarkMode()
+        $browser
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues()
+            ->assertScript(<<<'JS'
+                (() => {
+                    const checkbox = document.querySelector('[data-testid="checkbox"]')
+
+                    checkbox.focus()
+                    checkbox.click()
+                    setTimeout(() => checkbox.click(), 25)
+
+                    return document.activeElement === checkbox
+                })()
+                JS, true);
+
+        usleep(50_000);
+
+        $browser
+            ->assertScript('document.querySelector(\'[data-testid="checkbox"]\').disabled', false)
+            ->assertScript('document.activeElement === document.querySelector(\'[data-testid="checkbox"]\')', true);
+
+        usleep(600_000);
+
+        $browser
+            ->assertScript('document.querySelector(\'[data-testid="checkbox-form"]\').dataset.updateCount', '2')
+            ->assertScript('document.querySelector(\'[data-testid="checkbox"]\').checked', false);
+
+        $browser = visit('/checkbox-test')->inDarkMode();
+
+        $browser->assertScript(<<<'JS'
+            (() => {
+                const checkbox = document.querySelector('[data-testid="checkbox"]')
+
+                checkbox.focus()
+                checkbox.click()
+
+                return true
+            })()
+            JS, true);
+
+        usleep(50_000);
+
+        $browser
+            ->assertScript('document.querySelector(\'[data-testid="checkbox"]\').disabled', false)
+            ->assertScript('document.activeElement === document.querySelector(\'[data-testid="checkbox"]\')', true)
+            ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
     });
 });

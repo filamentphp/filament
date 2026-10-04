@@ -259,8 +259,10 @@ it('renders `wire:click="$set(...)"` on each tab when `livewireProperty()` is se
 
     $html = $tabs->toHtml();
 
-    expect($html)->toContain("\$set('activeTab', 'all')");
-    expect($html)->toContain("\$set('activeTab', 'active')");
+    expect($html)
+        ->toContain("\$set('activeTab', 'all')")
+        ->toContain("\$set('activeTab', 'active')")
+        ->not->toContain('wire:loading.attr="disabled"');
 });
 
 it('can call an `Action` nested inside a tab that uses `livewireProperty()`', function (): void {

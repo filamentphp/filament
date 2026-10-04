@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b839f8847caef032bf77b5225e478ec5",
+    "content-hash": "2e9037aea33699d1aa634a59b47bd004",
     "packages": [],
     "packages-dev": [
         {
@@ -2978,7 +2978,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/support",
-                "reference": "2d698cb5ec5ae38ff39b77423bdcdd72cf6e57bd"
+                "reference": "d1642cb4b24d384bbc77994c3cb8f88adba2b8d9"
             },
             "require": {
                 "blade-ui-kit/blade-heroicons": "^2.5",
@@ -2989,7 +2989,7 @@
                 "illuminate/contracts": "^11.28|^12.0|^13.0",
                 "kirschbaum-development/eloquent-power-joins": "^4.0",
                 "league/uri-components": "^7.0",
-                "livewire/livewire": "^3.8.6",
+                "livewire/livewire": "^3.8.7",
                 "nette/php-generator": "^4.0",
                 "php": "^8.2",
                 "ryangjchandler/blade-capture-directive": "^1.0",

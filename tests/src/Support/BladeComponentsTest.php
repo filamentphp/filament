@@ -1,6 +1,8 @@
 <?php
 
+use Filament\Support\View\Concerns\CanGenerateBadgeHtml;
 use Filament\Support\View\Concerns\CanGenerateButtonHtml;
+use Filament\Support\View\Concerns\CanGenerateDropdownItemHtml;
 use Filament\Support\View\Concerns\CanGenerateIconButtonHtml;
 use Filament\Support\View\Concerns\CanGenerateLinkHtml;
 use Filament\Tests\TestCase;
@@ -15,11 +17,100 @@ function embeddedHtmlGenerator(): object
 {
     return new class
     {
+        use CanGenerateBadgeHtml;
         use CanGenerateButtonHtml;
+        use CanGenerateDropdownItemHtml;
         use CanGenerateIconButtonHtml;
         use CanGenerateLinkHtml;
     };
 }
+
+it('uses the `fi-disabled` class instead of the `disabled` attribute on loading Blade buttons', function (): void {
+    $htmlOutputs = [
+        Blade::render('<x-filament::badge tag="button" wire:click="save">Save</x-filament::badge>'),
+        Blade::render('<x-filament::button wire:click="save">Save</x-filament::button>'),
+        Blade::render('<x-filament::dropdown.list.item wire:click="save">Save</x-filament::dropdown.list.item>'),
+        Blade::render('<x-filament::icon-button icon="heroicon-o-pencil" label="Edit" wire:click="edit" />'),
+        Blade::render('<x-filament::link tag="button" wire:click="view">View</x-filament::link>'),
+    ];
+
+    foreach ($htmlOutputs as $html) {
+        expect($html)
+            ->toContain('wire:loading.attr="aria-disabled"')
+            ->toContain('wire:loading.class="fi-disabled"')
+            ->not->toContain('wire:loading.attr="disabled"');
+    }
+});
+
+it('uses the `fi-disabled` class instead of the `disabled` attribute on loading embedded buttons', function (): void {
+    $generator = embeddedHtmlGenerator();
+
+    $htmlOutputs = [
+        $generator->generateBadgeHtml(
+            attributes: new ComponentAttributeBag(['wire:click' => 'save']),
+            label: 'Save',
+            tag: 'button',
+        ),
+        $generator->generateButtonHtml(
+            attributes: new ComponentAttributeBag(['wire:click' => 'save']),
+            label: 'Save',
+        ),
+        $generator->generateDropdownItemHtml(
+            attributes: new ComponentAttributeBag(['wire:click' => 'save']),
+            label: 'Save',
+        ),
+        $generator->generateIconButtonHtml(
+            attributes: new ComponentAttributeBag(['wire:click' => 'edit']),
+            icon: 'heroicon-o-pencil',
+            label: 'Edit',
+        ),
+        $generator->generateLinkHtml(
+            attributes: new ComponentAttributeBag(['wire:click' => 'view']),
+            label: 'View',
+        ),
+    ];
+
+    foreach ($htmlOutputs as $html) {
+        expect($html)
+            ->toContain('wire:loading.attr="aria-disabled"')
+            ->toContain('wire:loading.class="fi-disabled"')
+            ->not->toContain('wire:loading.attr="disabled"');
+    }
+});
+
+it('preserves custom loading classes on Blade buttons', function (): void {
+    $htmlOutputs = [
+        Blade::render('<x-filament::badge tag="button" wire:click="save" wire:loading.class="custom-loading">Save</x-filament::badge>'),
+        Blade::render('<x-filament::button wire:click="save" wire:loading.class="custom-loading">Save</x-filament::button>'),
+        Blade::render('<x-filament::dropdown.list.item wire:click="save" wire:loading.class="custom-loading">Save</x-filament::dropdown.list.item>'),
+        Blade::render('<x-filament::icon-button icon="heroicon-o-pencil" label="Edit" wire:click="edit" wire:loading.class="custom-loading" />'),
+        Blade::render('<x-filament::link tag="button" wire:click="view" wire:loading.class="custom-loading">View</x-filament::link>'),
+    ];
+
+    foreach ($htmlOutputs as $html) {
+        expect($html)->toContain('wire:loading.class="fi-disabled custom-loading"');
+    }
+});
+
+it('preserves custom loading classes on embedded buttons', function (): void {
+    $generator = embeddedHtmlGenerator();
+    $attributes = new ComponentAttributeBag([
+        'wire:click' => 'save',
+        'wire:loading.class' => 'custom-loading',
+    ]);
+
+    $htmlOutputs = [
+        $generator->generateBadgeHtml(attributes: $attributes, label: 'Save', tag: 'button'),
+        $generator->generateButtonHtml(attributes: $attributes, label: 'Save'),
+        $generator->generateDropdownItemHtml(attributes: $attributes, label: 'Save'),
+        $generator->generateIconButtonHtml(attributes: $attributes, icon: 'heroicon-o-pencil', label: 'Edit'),
+        $generator->generateLinkHtml(attributes: $attributes, label: 'View'),
+    ];
+
+    foreach ($htmlOutputs as $html) {
+        expect($html)->toContain('wire:loading.class="fi-disabled custom-loading"');
+    }
+});
 
 it('escapes the sr-only `aria-label` on the link Blade component', function (): void {
     $html = Blade::render(<<<'BLADE'
