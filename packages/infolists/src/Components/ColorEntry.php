@@ -59,6 +59,7 @@ class ColorEntry extends Entry implements HasEmbeddedView
         }
 
         $state = Arr::wrap($state);
+        $relatedRecords = $this->getRelatedRecordsForState($state);
 
         $alignment = $this->getAlignment();
 
@@ -71,21 +72,14 @@ class ColorEntry extends Entry implements HasEmbeddedView
         ob_start(); ?>
 
         <div <?= $attributes->toHtml() ?>>
-            <?php foreach ($state as $stateItem) { ?>
+            <?php foreach ($state as $stateItemIndex => $stateItem) { ?>
                 <?php
-                $isCopyable = $this->isCopyable($stateItem);
-
-                $copyableStateJs = $isCopyable
-                    ? Js::from($this->getCopyableState($stateItem) ?? $stateItem)
-                    : null;
-                $copyMessageJs = $isCopyable
-                    ? Js::from($this->getCopyMessage($stateItem))
-                    : null;
-                $copyMessageDurationJs = $isCopyable
-                    ? Js::from($this->getCopyMessageDuration($stateItem))
-                    : null;
-
-                $tooltip = $this->getTooltip($stateItem);
+                $relatedRecord = $relatedRecords[$stateItemIndex] ?? null;
+                $isCopyable = $this->isCopyable($stateItem, $relatedRecord);
+                $copyableStateJs = $isCopyable ? Js::from($this->getCopyableState($stateItem, $relatedRecord) ?? $stateItem) : null;
+                $copyMessageJs = $isCopyable ? Js::from($this->getCopyMessage($stateItem, $relatedRecord)) : null;
+                $copyMessageDurationJs = $isCopyable ? Js::from($this->getCopyMessageDuration($stateItem, $relatedRecord)) : null;
+                $tooltip = $this->getTooltip($stateItem, $relatedRecord);
 
                 $sanitizedColor = Str::sanitizeCssColor($stateItem);
 

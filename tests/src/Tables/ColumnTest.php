@@ -822,7 +822,9 @@ describe('relationship columns', function (): void {
 
         livewire(ImagesTable::class)
             ->assertTableColumnStateSet('imageable.team.name', 'Team Alpha', $image)
-            ->assertTableColumnStateNotSet('imageable.team.name', 'Alice', $image);
+            ->assertTableColumnStateNotSet('imageable.team.name', 'Alice', $image)
+            ->assertTableColumnFormattedStateSet('imageable.team.name', 'Team Alpha', $image)
+            ->assertTableColumnFormattedStateNotSet('imageable.team.name', 'Alice', $image);
     });
 
     it('can output the state of multiple nested relationships through the same `MorphTo` relationship', function (): void {

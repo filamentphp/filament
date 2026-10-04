@@ -5,6 +5,7 @@ use Filament\Tables\Columns\SpatieTagsColumn;
 use Filament\Tests\Fixtures\Livewire\SpatieTagsColumnTable;
 use Filament\Tests\Fixtures\Models\Article;
 use Filament\Tests\TestCase;
+use Spatie\Tags\Tag;
 
 use function Filament\Tests\livewire;
 
@@ -92,6 +93,25 @@ describe('rendering with tags', function (): void {
         livewire(SpatieTagsColumnTable::class)
             ->assertTableColumnExists('tags')
             ->assertCanRenderTableColumn('tags');
+    });
+
+    it('injects the tag model while rendering each item', function (): void {
+        $record = Article::factory()->create();
+        $record->attachTags(['Laravel', 'PHP']);
+
+        $column = livewire(SpatieTagsColumnTable::class)
+            ->instance()
+            ->getTable()
+            ->getColumn('tags')
+            ->record($record)
+            ->recordKey((string) $record->getKey())
+            ->formatStateUsing(static fn (Tag $relatedRecord, string $state): string => "{$relatedRecord->getKey()}:{$state}");
+
+        $column->clearCachedState();
+
+        foreach ($record->tags as $tag) {
+            expect($column->toEmbeddedHtml())->toContain("{$tag->getKey()}:{$tag->name}");
+        }
     });
 
     it('can render column for a record without tags', function (): void {

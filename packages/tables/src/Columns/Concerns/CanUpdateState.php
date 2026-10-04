@@ -42,62 +42,86 @@ trait CanUpdateState
         return $this;
     }
 
-    public function updateState(mixed $state): mixed
+    public function updateState(mixed $state, ?Model $relatedRecord = null): mixed
     {
         if (blank($state)) {
             $state = null;
         }
 
-        $this->callBeforeStateUpdated($state);
+        $record = $this->getRecord();
+        $columnName = $this->getName();
+        $hasRelationship = ($record instanceof Model) && $this->hasRelationship($record);
+
+        if ($hasRelationship) {
+            $columnName = $this->getFullAttributeName($record);
+            $columnRelationshipName = $this->getRelationshipName($record);
+            $relatedRecord ??= Arr::get(
+                $record->load($columnRelationshipName),
+                $columnRelationshipName,
+            );
+
+            if (! ($relatedRecord instanceof Model)) {
+                $relatedRecord = null;
+            }
+        }
+
+        $this->callBeforeStateUpdated($state, $relatedRecord);
 
         if ($this->updateStateUsing !== null) {
             try {
                 return $this->evaluate($this->updateStateUsing, [
                     'state' => $state,
+                    'relatedRecord' => $relatedRecord,
                 ]);
             } finally {
-                $this->callAfterStateUpdated($state);
+                $this->callAfterStateUpdated($state, $relatedRecord);
             }
         }
 
-        $record = $this->getRecord();
+        $recordToUpdate = $record;
 
-        $columnName = $this->getName();
-
-        if ($this->hasRelationship($record)) {
+        if ($hasRelationship) {
             $columnName = $this->getFullAttributeName($record);
             $columnRelationshipName = $this->getRelationshipName($record);
-
-            $record = Arr::get(
+            $recordToUpdate = Arr::get(
                 $record->load($columnRelationshipName),
                 $columnRelationshipName,
             );
-        } elseif (
-            (($tableRelationship = $this->getTable()->getRelationship()) instanceof BelongsToMany) &&
-            in_array($this->getAttributeName($record), $tableRelationship->getPivotColumns())
-        ) {
-            $record = $record->getRelationValue($tableRelationship->getPivotAccessor());
+            $relatedRecord = $recordToUpdate instanceof Model ? $recordToUpdate : null;
         }
 
-        if (! ($record instanceof Model)) {
+        if ((! $hasRelationship) && ($record instanceof Model) && (
+            (($tableRelationship = $this->getTable()->getRelationship()) instanceof BelongsToMany) &&
+            in_array($this->getAttributeName($record), $tableRelationship->getPivotColumns())
+        )) {
+            $recordToUpdate = $record->getRelationValue($tableRelationship->getPivotAccessor());
+        }
+
+        if (! ($recordToUpdate instanceof Model)) {
             return null;
         }
 
-        $record->setAttribute((string) str($columnName)->replace('.', '->'), $state);
-        $record->save();
+        $recordToUpdate->setAttribute((string) str($columnName)->replace('.', '->'), $state);
+        $recordToUpdate->save();
 
-        $this->callAfterStateUpdated($state);
+        $this->callAfterStateUpdated($state, $relatedRecord);
 
         return $state;
     }
 
-    public function callBeforeStateUpdated(mixed $state): mixed
+    public function callBeforeStateUpdated(mixed $state, ?Model $relatedRecord = null): mixed
     {
-        return $this->evaluate($this->beforeStateUpdated, ['state' => $state]);
+        return $this->evaluate($this->beforeStateUpdated, [
+            'state' => $state,
+            'relatedRecord' => $relatedRecord,
+        ]);
     }
 
-    public function callAfterStateUpdated(mixed $state): mixed
+    public function callAfterStateUpdated(mixed $state, ?Model $relatedRecord = null): mixed
     {
-        return $this->evaluate($this->afterStateUpdated, ['state' => $state]);
+        return $this->evaluate($this->afterStateUpdated, [
+            'state' => $state,
+            'relatedRecord' => $relatedRecord,
+        ]);
     }
 }

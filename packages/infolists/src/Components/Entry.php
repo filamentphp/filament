@@ -12,10 +12,12 @@ use Filament\Schemas\Components\Concerns\HasName;
 use Filament\Schemas\Schema;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasPlaceholder;
+use Filament\Support\Concerns\HasRelatedRecord;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\View\ComponentSlot;
 use LogicException;
 
@@ -34,6 +36,7 @@ class Entry extends Component
     }
     use HasName;
     use HasPlaceholder;
+    use HasRelatedRecord;
 
     protected string $viewIdentifier = 'entry';
 
@@ -90,6 +93,14 @@ class Entry extends Component
     public function getState(): mixed
     {
         return $this->getConstantState();
+    }
+
+    /**
+     * @return array<Model>
+     */
+    protected function getRelatedRecords(): array
+    {
+        return $this->relatedRecords;
     }
 
     public function getLabel(): string | Htmlable | null

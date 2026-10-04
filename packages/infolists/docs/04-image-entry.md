@@ -32,7 +32,7 @@ ImageEntry::make('header_image')
     ->alt('Article header image')
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `alt()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters, including the `$state` of the current image, which is useful when the entry renders multiple images.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="4.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `alt()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters, including the `$state` of the current image, which is useful when the entry renders multiple images.</UtilityInjection>
 
 If you do not set any alt text, the image is rendered with an empty `alt` attribute, which marks it as decorative for assistive technology.
 
@@ -51,7 +51,7 @@ ImageEntry::make('header_image')
     ->disk('s3')
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `disk()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="4.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `disk()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Public images
 
@@ -64,7 +64,7 @@ ImageEntry::make('header_image')
     ->visibility('public')
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `visibility()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="4.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `visibility()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Customizing the size
 
@@ -295,7 +295,7 @@ ImageEntry::make('attachment')
     ->checkFileExistence(false)
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `checkFileExistence()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="4.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `checkFileExistence()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Adding extra HTML attributes to the image
 
@@ -311,6 +311,6 @@ ImageEntry::make('logo')
     ])
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `extraImgAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="4.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `extraImgAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 By default, calling `extraImgAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
