@@ -42,6 +42,13 @@ export default () => ({
             panel.id ||
             'fi-dropdown-panel-' + Math.random().toString(36).slice(2, 10)
 
+        // Livewire morph matches elements without a `wire:key` by their `id`. The server HTML has
+        // no panel `id`, so if it were set directly, the keys would differ and every morph would
+        // replace the panel, leaving the observer below attached to a detached element. Alpine
+        // morph copies an Alpine-bound `id` onto the incoming HTML before comparing keys, so the
+        // keys match and the existing panel is patched in place.
+        Alpine.bind(panel, { id: this.panelId })
+
         this.syncAria()
 
         this.observer = new MutationObserver(() => {
@@ -50,10 +57,9 @@ export default () => ({
 
         // The floating UI plugin toggles the panel's `display` for open and close paths this
         // component does not drive itself (click-away, the plugin's own Escape handler), so observe
-        // it directly to keep `aria-expanded` on the real trigger correct in every case. A Livewire
-        // morph also strips the client-applied panel `id`, so observe that too and re-apply it.
+        // it directly to keep `aria-expanded` on the real trigger correct in every case.
         this.observer.observe(panel, {
-            attributeFilter: ['id', 'style'],
+            attributeFilter: ['style'],
         })
 
         // A Livewire morph re-renders the trigger from server HTML, stripping the client-applied
@@ -87,10 +93,6 @@ export default () => ({
 
         if (!trigger || !panel) {
             return
-        }
-
-        if (panel.id !== this.panelId) {
-            panel.id = this.panelId
         }
 
         const wasOpen = this.isOpen
