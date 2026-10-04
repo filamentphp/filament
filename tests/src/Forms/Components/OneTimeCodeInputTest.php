@@ -156,11 +156,13 @@ describe('rendering', function (): void {
     });
 });
 
-it('handles code entry and commits the code to the Livewire state', function (): void {
+it('handles code entry in left-to-right and right-to-left layouts and commits the code to the Livewire state', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/one-time-code-input-browser-test')
+        $page = visit('/one-time-code-input-browser-test');
+
+        $page
             ->type('.fi-one-time-code-input-ctn input:nth-child(1)', '1234567')
             ->assertValue('.fi-one-time-code-input-ctn input:nth-child(1)', '1')
             ->assertValue('.fi-one-time-code-input-ctn input:nth-child(2)', '2')
@@ -181,13 +183,20 @@ it('handles code entry and commits the code to the Livewire state', function ():
             ->assertValue('.fi-one-time-code-input-ctn input:nth-child(6)', '6')
             ->press('Save')
             ->wait(1)
-            ->assertSeeIn('[data-testid="submitted-code"]', '123456')
+            ->assertSeeIn('[data-testid="submitted-code"]', '123456');
+
+        $page->script('document.documentElement.dir = \'rtl\'');
+
+        $page
+            ->assertScript('document.querySelector(\'.fi-one-time-code-input-ctn input:nth-child(1)\').getBoundingClientRect().left < document.querySelector(\'.fi-one-time-code-input-ctn input:nth-child(2)\').getBoundingClientRect().left')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
-        visit('/one-time-code-input-browser-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
+        $darkModePage = visit('/one-time-code-input-browser-test')->inDarkMode();
+
+        $darkModePage->script('document.documentElement.dir = \'rtl\'');
+
+        $darkModePage->assertNoAccessibilityIssues();
     });
 });
 

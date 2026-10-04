@@ -82,9 +82,16 @@ return [
                 'label' => 'توسيع الكل',
             ],
         ],
+
+        'block_picker' => [
+            'no_search_results_message' => 'لا توجد عناصر تطابق بحثك.',
+            'search_prompt' => 'البحث في العناصر',
+        ],
     ],
 
     'checkbox_list' => [
+        'required_description' => 'اختر خياراً واحداً على الأقل.',
+
         'actions' => [
             'deselect_all' => [
                 'label' => 'إلغاء تحديد الكل',
@@ -408,6 +415,10 @@ return [
                 ],
             ],
 
+            'close_panel' => [
+                'label' => 'إغلاق اللوحة',
+            ],
+
             'custom_block' => [
                 'modal' => [
                     'actions' => [
@@ -581,6 +592,24 @@ return [
             ],
         ],
 
+        'custom_blocks' => [
+            'actions' => [
+                'delete' => [
+                    'label' => 'حذف العنصر',
+                ],
+
+                'edit' => [
+                    'label' => 'تعديل العنصر',
+                ],
+            ],
+
+            'no_search_results_message' => 'لا توجد عناصر تطابق بحثك.',
+
+            'search_label' => 'البحث في العناصر',
+
+            'search_prompt' => 'البحث في العناصر',
+        ],
+
         'file_attachments_accepted_file_types_message' => 'يجب أن تكون الملفات المرفوعة من نوع: :values.',
 
         'file_attachments_max_size_message' => 'يجب ألا يتجاوز حجم الملفات المرفوعة :max كيلوبايت.',
@@ -620,7 +649,7 @@ return [
 
             'code_block' => 'نص برمجي',
 
-            'custom_blocks' => 'الكتل المخصصة',
+            'custom_blocks' => 'العناصر المخصصة',
 
             'details' => 'التفاصيل',
 
@@ -706,6 +735,10 @@ return [
 
     'select' => [
         'actions' => [
+            'clear' => [
+                'label' => 'مسح التحديد',
+            ],
+
             'create_option' => [
                 'label' => 'إضافة',
 
@@ -737,6 +770,10 @@ return [
                     ],
                 ],
             ],
+
+            'remove_option' => [
+                'label' => 'إزالة :label',
+            ],
         ],
 
         'boolean' => [
@@ -756,6 +793,8 @@ return [
         'placeholder' => 'اختر',
 
         'searching_message' => 'جارٍ البحث...',
+
+        'search_label' => 'بحث',
 
         'search_prompt' => 'ابدأ بالكتابة للبحث...',
     ],
@@ -793,6 +832,8 @@ return [
     ],
 
     'toggle_buttons' => [
+        'required_description' => 'اختر خياراً واحداً على الأقل.',
+
         'boolean' => [
             'true' => 'نعم',
 

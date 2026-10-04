@@ -221,7 +221,7 @@ trait CanBeValidated
                     $fail(__($component->getValidationMessages()['exists'] ?? 'validation.exists', ['attribute' => $component->getValidationAttribute()]));
                 }
             };
-        }, static fn (Field $component, ?string $model): bool => (bool) ($component->evaluate($model) ?? $model));
+        }, static fn (Field $component): bool => (bool) ($component->evaluate($model) ?? $component->getModel()));
 
         return $this;
     }
@@ -621,7 +621,7 @@ trait CanBeValidated
                     $fail(__($component->getValidationMessages()['unique'] ?? 'validation.unique', ['attribute' => $component->getValidationAttribute()]));
                 }
             };
-        }, fn (Field $component, ?string $model): bool => (bool) ($component->evaluate($model) ?? $model));
+        }, fn (Field $component): bool => (bool) ($component->evaluate($model) ?? $component->getModel()));
 
         return $this;
     }
