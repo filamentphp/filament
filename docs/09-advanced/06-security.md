@@ -437,6 +437,4 @@ If you write your own `<script>` elements, in a custom page, a [render hook](ren
 
 ### Allowing the file upload's web workers
 
-The [file upload field](../forms/file-upload) generates image previews and [resizes images](../forms/file-upload#cropping-and-resizing-images-without-the-editor) in web workers, which it creates from `blob:` URLs. If your policy has no `worker-src` directive, the browser checks these workers against `script-src` instead, which usually does not allow `blob:`. The workers are then blocked: images are uploaded without a preview, and uploads that resize images never finish.
-
-To allow these workers without allowing `blob:` scripts anywhere else, add `worker-src 'self' blob:` to your policy.
+The [file upload field](../forms/file-upload) creates web workers from `blob:` URLs to generate image previews and [resize images](../forms/file-upload#cropping-and-resizing-images-without-the-editor). To allow these workers, add `worker-src 'self' blob:` to your policy.
