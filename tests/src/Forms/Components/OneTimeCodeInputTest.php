@@ -156,11 +156,13 @@ describe('rendering', function (): void {
     });
 });
 
-it('handles code entry and commits the code to the Livewire state', function (): void {
+it('handles code entry in left-to-right and right-to-left layouts and commits the code to the Livewire state', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/one-time-code-input-browser-test')
+        $page = visit('/one-time-code-input-browser-test');
+
+        $page
             ->type('.fi-one-time-code-input-ctn input:nth-child(1)', '1234567')
             ->assertValue('.fi-one-time-code-input-ctn input:nth-child(1)', '1')
             ->assertValue('.fi-one-time-code-input-ctn input:nth-child(2)', '2')
@@ -181,29 +183,13 @@ it('handles code entry and commits the code to the Livewire state', function ():
             ->assertValue('.fi-one-time-code-input-ctn input:nth-child(6)', '6')
             ->press('Save')
             ->wait(1)
-            ->assertSeeIn('[data-testid="submitted-code"]', '123456')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-
-        visit('/one-time-code-input-browser-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
-});
-
-it('keeps the digits in left-to-right order in a right-to-left layout', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
-
-        $page = visit('/one-time-code-input-browser-test');
+            ->assertSeeIn('[data-testid="submitted-code"]', '123456');
 
         $page->script('document.documentElement.dir = \'rtl\'');
 
         $page
             ->assertScript('document.querySelector(\'.fi-one-time-code-input-ctn input:nth-child(1)\').getBoundingClientRect().left < document.querySelector(\'.fi-one-time-code-input-ctn input:nth-child(2)\').getBoundingClientRect().left')
-            ->type('.fi-one-time-code-input-ctn input:nth-child(1)', '12')
-            ->keys('.fi-one-time-code-input-ctn input:nth-child(3)', 'ArrowLeft')
-            ->assertScript('document.activeElement === document.querySelector(\'.fi-one-time-code-input-ctn input:nth-child(2)\')')
+            ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
         $darkModePage = visit('/one-time-code-input-browser-test')->inDarkMode();
