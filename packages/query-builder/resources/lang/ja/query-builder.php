@@ -14,6 +14,10 @@ return [
 
             'label' => 'グループ',
 
+            'group' => [
+                'label' => 'グループ',
+            ],
+
             'block' => [
                 'label' => '論理和 (または)',
                 'or' => 'または',
@@ -34,6 +38,8 @@ return [
     ],
 
     'no_rules' => '（ルールなし）',
+
+    'max_rules_reached_tooltip' => 'ルールの上限:count件に達しました。',
 
     'item_separators' => [
         'and' => 'かつ',
