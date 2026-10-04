@@ -256,6 +256,7 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
         return [
             OneTimeCodeInput::make('code')
                 ->label(__('filament-panels::auth/multi-factor/email/provider.login_form.code.label'))
+                ->submitOnCompletion()
                 ->validationAttribute('code')
                 ->belowContent(Action::make('resend')
                     ->label(__('filament-panels::auth/multi-factor/email/provider.login_form.code.actions.resend.label'))

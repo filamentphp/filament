@@ -129,6 +129,38 @@ describe('placeholder', function (): void {
     });
 });
 
+describe('submit on completion', function (): void {
+    it('defaults `shouldSubmitOnCompletion()` to `false`', function (): void {
+        $input = OneTimeCodeInput::make('code');
+
+        expect($input->shouldSubmitOnCompletion())->toBeFalse();
+    });
+
+    it('can set `submitOnCompletion()`', function (): void {
+        $input = OneTimeCodeInput::make('code')->submitOnCompletion();
+
+        expect($input->shouldSubmitOnCompletion())->toBeTrue();
+    });
+
+    it('can set `submitOnCompletion()` with a `Closure`', function (): void {
+        $input = OneTimeCodeInput::make('code')
+            ->submitOnCompletion(static fn (): bool => true);
+
+        expect($input->shouldSubmitOnCompletion())->toBeTrue();
+    });
+
+    it('can render with `submitOnCompletion()`', function (): void {
+        livewire(RenderOneTimeCodeInputWithSubmitOnCompletion::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('shouldSubmitOnCompletion: true');
+    });
+
+    it('does not enable submitting on completion when rendered by default', function (): void {
+        livewire(TestComponentWithOneTimeCodeInput::class)
+            ->assertSeeHtml('shouldSubmitOnCompletion: false');
+    });
+});
+
 describe('rendering', function (): void {
     it('can render with `length()` set via `Closure`', function (): void {
         livewire(RenderOneTimeCodeInputWithClosureLength::class)
@@ -181,9 +213,11 @@ it('handles code entry in left-to-right and right-to-left layouts and commits th
             ->assertValue('.fi-one-time-code-input-ctn input:nth-child(4)', '4')
             ->assertValue('.fi-one-time-code-input-ctn input:nth-child(5)', '5')
             ->assertValue('.fi-one-time-code-input-ctn input:nth-child(6)', '6')
+            ->assertSeeIn('[data-testid="submission-attempt-count"]', '0')
             ->press('Save')
             ->wait(1)
-            ->assertSeeIn('[data-testid="submitted-code"]', '123456');
+            ->assertSeeIn('[data-testid="submitted-code"]', '123456')
+            ->assertSeeIn('[data-testid="submission-attempt-count"]', '1');
 
         $page->script('document.documentElement.dir = \'rtl\'');
 
@@ -197,6 +231,67 @@ it('handles code entry in left-to-right and right-to-left layouts and commits th
         $darkModePage->script('document.documentElement.dir = \'rtl\'');
 
         $darkModePage->assertNoAccessibilityIssues();
+    });
+});
+
+it('submits the form once all digits are entered when using `submitOnCompletion()`', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/one-time-code-input-submit-on-completion-browser-test')
+            ->type('.fi-one-time-code-input-ctn input:nth-child(1)', '12345')
+            ->wait(1)
+            ->assertSeeIn('[data-testid="submission-attempt-count"]', '0');
+
+        $page->script(<<<'JS'
+            const input = document.querySelector('.fi-one-time-code-input-ctn input:nth-child(6)')
+            input.value = '6'
+            input.dispatchEvent(new InputEvent('input', { bubbles: true, data: '6', inputType: 'insertText' }))
+            input.dispatchEvent(new InputEvent('input', { bubbles: true, data: '6', inputType: 'insertText' }))
+            JS);
+
+        $page
+            ->wait(1)
+            ->assertSeeIn('[data-testid="submitted-code"]', '123456')
+            ->assertSeeIn('[data-testid="submission-attempt-count"]', '1')
+            ->type('.fi-one-time-code-input-ctn input:nth-child(6)', '6')
+            ->wait(1)
+            ->assertSeeIn('[data-testid="submission-attempt-count"]', '1')
+            ->fill('.fi-one-time-code-input-ctn input:nth-child(6)', '')
+            ->type('.fi-one-time-code-input-ctn input:nth-child(6)', '6')
+            ->wait(1)
+            ->assertSeeIn('[data-testid="submission-attempt-count"]', '2')
+            ->click('[data-testid="reset-code"]')
+            ->wait(1)
+            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(1)', '')
+            ->fill('.fi-one-time-code-input-ctn input:nth-child(1)', '123456')
+            ->wait(1)
+            ->assertSeeIn('[data-testid="submission-attempt-count"]', '3');
+
+        $page->script(<<<'JS'
+            const input = document.querySelector('.fi-one-time-code-input-ctn input:nth-child(6)')
+            input.value = '7'
+            input.dispatchEvent(new InputEvent('input', { bubbles: true, data: '7', inputType: 'insertText' }))
+            input.value = '6'
+            input.dispatchEvent(new InputEvent('input', { bubbles: true, data: '6', inputType: 'insertText' }))
+            JS);
+
+        $page
+            ->wait(1)
+            ->assertSeeIn('[data-testid="submission-attempt-count"]', '3')
+            ->type('.fi-one-time-code-input-ctn input:nth-child(6)', '7')
+            ->wait(1)
+            ->assertSeeIn('[data-testid="submission-attempt-count"]', '4')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        visit('/one-time-code-input-submit-on-completion-browser-test')
+            ->inDarkMode()
+            ->fill('.fi-one-time-code-input-ctn input:nth-child(1)', '654321')
+            ->wait(1)
+            ->assertSeeIn('[data-testid="submitted-code"]', '654321')
+            ->assertSeeIn('[data-testid="submission-attempt-count"]', '1')
+            ->assertNoAccessibilityIssues();
     });
 });
 
@@ -283,5 +378,13 @@ class RenderOneTimeCodeInputWithClosurePlaceholder extends Livewire
     public function form(Schema $form): Schema
     {
         return $form->schema([OneTimeCodeInput::make('code')->placeholder(static fn (): string => '•')])->statePath('data');
+    }
+}
+
+class RenderOneTimeCodeInputWithSubmitOnCompletion extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([OneTimeCodeInput::make('code')->submitOnCompletion()])->statePath('data');
     }
 }

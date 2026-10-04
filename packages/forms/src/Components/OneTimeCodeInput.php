@@ -5,6 +5,7 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Illuminate\Support\Js;
 
 class OneTimeCodeInput extends Field implements HasEmbeddedView
 {
@@ -16,6 +17,8 @@ class OneTimeCodeInput extends Field implements HasEmbeddedView
     protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.one-time-code-input';
 
     protected int | Closure $length = 6;
+
+    protected bool | Closure $shouldSubmitOnCompletion = false;
 
     protected function setUp(): void
     {
@@ -35,6 +38,18 @@ class OneTimeCodeInput extends Field implements HasEmbeddedView
     public function getLength(): int
     {
         return $this->evaluate($this->length);
+    }
+
+    public function submitOnCompletion(bool | Closure $condition = true): static
+    {
+        $this->shouldSubmitOnCompletion = $condition;
+
+        return $this;
+    }
+
+    public function shouldSubmitOnCompletion(): bool
+    {
+        return (bool) $this->evaluate($this->shouldSubmitOnCompletion);
     }
 
     public function toEmbeddedHtml(): string
@@ -68,7 +83,7 @@ class OneTimeCodeInput extends Field implements HasEmbeddedView
 
         <div x-data="{ code: $wire.<?= $entangle ?>, }">
             <div
-                x-data="filamentOneTimeCodeInput"
+                x-data="filamentOneTimeCodeInput({ shouldSubmitOnCompletion: <?= Js::from($this->shouldSubmitOnCompletion()) ?> })"
                 x-modelable="state"
                 x-model="code"
                 dir="ltr"

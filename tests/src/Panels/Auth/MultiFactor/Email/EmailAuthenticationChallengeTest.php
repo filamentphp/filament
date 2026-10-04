@@ -5,6 +5,7 @@ use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Auth\MultiFactor\Email\Notifications\VerifyEmailAuthentication;
 use Filament\Auth\Pages\Login;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\OneTimeCodeInput;
 use Filament\Notifications\Notification as FilamentNotification;
 use Filament\Panel;
 use Filament\Tests\Fixtures\Models\User;
@@ -48,7 +49,12 @@ describe('authentication flow', function (): void {
             ->assertSet('userUndertakingMultiFactorAuthentication', null)
             ->call('authenticate')
             ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
-            ->assertNoRedirect();
+            ->assertNoRedirect()
+            ->assertFormFieldExists(
+                "{$emailAuthentication->getId()}.code",
+                'multiFactorChallengeForm',
+                fn (OneTimeCodeInput $field): bool => $field->shouldSubmitOnCompletion(),
+            );
 
         expect(decrypt($livewire->instance()->userUndertakingMultiFactorAuthentication))
             ->toBe([

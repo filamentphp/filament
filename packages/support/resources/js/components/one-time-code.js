@@ -1,5 +1,9 @@
-export default () => ({
+export default ({ shouldSubmitOnCompletion = false } = {}) => ({
     inputs: [],
+
+    lastSubmittedValue: null,
+
+    pendingSubmissionValue: null,
 
     state: null,
 
@@ -30,24 +34,28 @@ export default () => ({
                     this.distribute(value)
                     this.commit()
                     this.focusInput(this.getFirstEmptyInputIndex())
+                    this.submitIfComplete()
 
                     return
                 }
 
                 if (value === '') {
                     this.commit()
+                    this.submitIfComplete()
 
                     return
                 }
 
                 if (/\D/.test(value)) {
                     event.target.value = ''
+                    this.submitIfComplete()
 
                     return
                 }
 
                 this.commit()
                 this.focusInput(index + 1)
+                this.submitIfComplete()
             })
 
             input.addEventListener('keydown', (event) => {
@@ -100,6 +108,11 @@ export default () => ({
         this.inputs.forEach((input, index) => {
             input.value = digits[index] ?? ''
         })
+
+        if (digits.length < this.inputs.length) {
+            this.lastSubmittedValue = null
+            this.pendingSubmissionValue = null
+        }
     },
 
     read() {
@@ -110,6 +123,52 @@ export default () => ({
         let value = this.read()
 
         this.state = value === '' ? null : value
+    },
+
+    submitIfComplete() {
+        if (!shouldSubmitOnCompletion) {
+            return
+        }
+
+        let value = this.read()
+
+        if (value.length < this.inputs.length) {
+            this.lastSubmittedValue = null
+            this.pendingSubmissionValue = null
+
+            return
+        }
+
+        if (
+            value === this.lastSubmittedValue ||
+            value === this.pendingSubmissionValue
+        ) {
+            return
+        }
+
+        this.pendingSubmissionValue = value
+
+        // Wait for the committed state to sync with Livewire before submitting.
+        this.$nextTick(() => {
+            if (this.pendingSubmissionValue !== value) {
+                return
+            }
+
+            this.pendingSubmissionValue = null
+
+            if (this.read() !== value) {
+                return
+            }
+
+            let form = this.$root.closest('form')
+
+            if (!form) {
+                return
+            }
+
+            this.lastSubmittedValue = value
+            form.requestSubmit()
+        })
     },
 
     getFirstEmptyInputIndex() {
