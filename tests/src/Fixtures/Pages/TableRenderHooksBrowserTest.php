@@ -23,7 +23,7 @@ class TableRenderHooksBrowserTest extends Page implements HasTable
 
     protected static bool $shouldRegisterNavigation = false;
 
-    public string $activeTab = 'all';
+    public ?string $activeTab = 'all';
 
     public function table(Table $table): Table
     {
