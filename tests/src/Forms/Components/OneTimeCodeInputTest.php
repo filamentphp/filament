@@ -191,6 +191,29 @@ it('handles code entry and commits the code to the Livewire state', function ():
     });
 });
 
+it('keeps the digits in left-to-right order in a right-to-left layout', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/one-time-code-input-browser-test');
+
+        $page->script('document.documentElement.dir = \'rtl\'');
+
+        $page
+            ->assertScript('document.querySelector(\'.fi-one-time-code-input-ctn input:nth-child(1)\').getBoundingClientRect().left < document.querySelector(\'.fi-one-time-code-input-ctn input:nth-child(2)\').getBoundingClientRect().left')
+            ->type('.fi-one-time-code-input-ctn input:nth-child(1)', '12')
+            ->keys('.fi-one-time-code-input-ctn input:nth-child(3)', 'ArrowLeft')
+            ->assertScript('document.activeElement === document.querySelector(\'.fi-one-time-code-input-ctn input:nth-child(2)\')')
+            ->assertNoAccessibilityIssues();
+
+        $darkModePage = visit('/one-time-code-input-browser-test')->inDarkMode();
+
+        $darkModePage->script('document.documentElement.dir = \'rtl\'');
+
+        $darkModePage->assertNoAccessibilityIssues();
+    });
+});
+
 class TestComponentWithFourDigitCodeInput extends Livewire
 {
     public function form(Schema $form): Schema

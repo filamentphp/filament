@@ -71,6 +71,7 @@ class OneTimeCodeInput extends Field implements HasEmbeddedView
                 x-data="filamentOneTimeCodeInput"
                 x-modelable="state"
                 x-model="code"
+                dir="ltr"
                 role="group"
                 <?= $containerAttributes->toHtml() ?>
             >
