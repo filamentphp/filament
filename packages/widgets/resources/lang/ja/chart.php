@@ -10,6 +10,10 @@ return [
 
     ],
 
+    'filter' => [
+        'label' => 'チャートのデータを絞り込む',
+    ],
+
     'filters' => [
 
         'actions' => [
@@ -24,6 +28,10 @@ return [
 
         ],
 
+    ],
+
+    'empty' => [
+        'heading' => '表示するデータがありません',
     ],
 
 ];
