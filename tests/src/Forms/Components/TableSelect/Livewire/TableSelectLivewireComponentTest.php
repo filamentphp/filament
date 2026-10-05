@@ -30,8 +30,9 @@ it('renders a blade string', function (): void {
     expect($component->render())->toBe('{{ $this->table }}');
 });
 
-it('restores its `record` property through global scopes', function (): void {
+it('preserves native restoration for a scope-excluded `record`', function (): void {
     $post = Post::factory()->create();
+    $post->delete();
     $component = livewire(TableSelectLivewireComponent::class, [
         'record' => $post,
         'tableConfiguration' => base64_encode(PostsTableWithSessionPersistence::class),
@@ -41,12 +42,15 @@ it('restores its `record` property through global scopes', function (): void {
     try {
         Post::addGlobalScope(
             'exclude-table-select-record',
-            fn (Builder $query): Builder => $query->whereKeyNot($post->getKey()),
+            static fn (Builder $query): Builder => $query->whereKeyNot($post->getKey()),
         );
 
         $component
             ->set('tableSearch', 'search')
-            ->assertNotFound();
+            ->assertSuccessful();
+
+        expect($component->instance()->record->is($post))->toBeTrue()
+            ->and($component->instance()->record->trashed())->toBeTrue();
     } finally {
         Post::setAllGlobalScopes($globalScopes);
     }

@@ -53,7 +53,7 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
     #[Reactive]
     public ?string $activeTab = null;
 
-    #[Locked]
+    #[Reactive] #[Locked]
     public ?Model $parentRecord = null;
 
     protected HasTable $tablePage;
@@ -80,13 +80,7 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
         /** @var HasTable $page */
         $page = app('livewire')->new($this->getTablePage());
 
-        if ($page instanceof ResourcePage) {
-            $page->setParentRecordFromPageTableWidget($this->parentRecord);
-        }
-
-        trigger('mount', $page, [], null, null);
-
-        foreach ([
+        $properties = [
             'activeTab' => $this->activeTab,
             'paginators' => $this->paginators,
             'parentRecord' => $this->parentRecord,
@@ -97,7 +91,17 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
             'tableSearch' => $this->tableSearch,
             'tableSort' => $this->tableSort,
             ...$this->getTablePageMountParameters(),
-        ] as $property => $value) {
+        ];
+
+        if ($page instanceof ResourcePage) {
+            $page->parentRecord = $properties['parentRecord'];
+            $page->mountParentRecord();
+            $properties['parentRecord'] = $page->getParentRecord();
+        }
+
+        trigger('mount', $page, [], null, null);
+
+        foreach ($properties as $property => $value) {
             $page->{$property} = $value;
         }
 
