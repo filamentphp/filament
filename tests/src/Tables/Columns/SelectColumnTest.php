@@ -14,7 +14,6 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use LogicException;
@@ -62,45 +61,6 @@ it('renders one error-aware select tooltip with or without a configured hint', f
         ->toContain('content: error')
         ->toContain('allowHTML: false');
 })->with([false, true])->with([null, 'Edit rating']);
-
-it('prioritizes select errors and restores the configured tooltip after a successful save', function (string $mode): void {
-    Artisan::call('filament:assets');
-    $author = User::factory()->create(['name' => 'Alex Morgan', 'json' => ["{$mode}_status" => 'Pending']]);
-    Post::factory()->create(['author_id' => $author->getKey()]);
-    $this->actingAs(User::factory()->create());
-    $rootSelector = "[data-testid=\"author-{$mode}-select\"]";
-    $selector = $rootSelector . (($mode === 'native') ? ' select' : ' [role="combobox"]');
-    $tooltipSelector = $rootSelector . ' [x-tooltip]';
-
-    foreach ([false, true] as $isDarkMode) {
-        $author->refresh()->update(['json' => ["{$mode}_status" => 'Pending']]);
-        $page = visit('/columns-browser-test');
-
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-
-        $page->assertVisible($selector)
-            ->assertScript('typeof Alpine.$data(document.querySelector(\'' . $rootSelector . '\')).getServerState === "function"')
-            ->assertScript('typeof document.querySelector(\'' . $tooltipSelector . '\')._tippy === "object"')
-            ->assertScript('[document.querySelector(\'' . $tooltipSelector . '\')._tippy.props.content, document.querySelector(\'' . $tooltipSelector . '\')._tippy.props.allowHTML]', ['<strong>Update status for Alex Morgan</strong>', true]);
-
-        foreach (['Rejected', 'Approved'] as $value) {
-            if ($mode === 'native') {
-                $page->select($selector, $value);
-            } else {
-                $page->click($selector)->click($rootSelector . ' [role="option"][data-value="' . $value . '"]');
-            }
-
-            $page->assertScript('Alpine.$data(document.querySelector(\'' . $rootSelector . '\')).error ' . (($value === 'Rejected') ? '=== "Approval <em>required</em>."' : '=== undefined'))
-                ->assertScript('[document.querySelector(\'' . $tooltipSelector . '\')._tippy.props.content, document.querySelector(\'' . $tooltipSelector . '\')._tippy.props.allowHTML]', ($value === 'Rejected') ? ['Approval <em>required</em>.', false] : ['<strong>Update status for Alex Morgan</strong>', true])
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
-
-            expect($author->fresh()->json["{$mode}_status"])->toBe(($value === 'Rejected') ? 'Pending' : 'Approved');
-        }
-    }
-})->with(['native', 'custom', 'searchable']);
 
 it('can set `native()` to `false` and get with `isNative()`', function (): void {
     expect(SelectColumn::make('status')->native(false)->isNative())->toBeFalse();

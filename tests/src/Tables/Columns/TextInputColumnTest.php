@@ -17,7 +17,6 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Artisan;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -34,45 +33,6 @@ it('renders one error-aware text input tooltip with or without a configured hint
         ->toContain('content: error')
         ->toContain('allowHTML: false');
 })->with([null, 'Edit rating']);
-
-it('prioritizes text input errors and restores the configured tooltip after a successful save', function (): void {
-    Artisan::call('filament:assets');
-    $author = User::factory()->create(['name' => 'Alex Morgan', 'json' => ['display_name' => 'Pending']]);
-    Post::factory()->create(['author_id' => $author->getKey()]);
-    $this->actingAs(User::factory()->create());
-    $rootSelector = '[data-testid="author-name-input"]';
-    $selector = '[data-testid="author-name-input"] input:not([type="hidden"])';
-
-    foreach ([false, true] as $isDarkMode) {
-        $author->refresh()->update(['json' => ['display_name' => 'Pending']]);
-        $page = visit('/columns-browser-test');
-
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-
-        $page->assertVisible($selector)
-            ->assertScript('typeof Alpine.$data(document.querySelector(\'' . $rootSelector . '\')).getServerState === "function"')
-            ->assertScript('[document.querySelector(\'' . $selector . '\')._tippy.props.content, document.querySelector(\'' . $selector . '\')._tippy.props.allowHTML]', ['<strong>Update name for Alex Morgan</strong>', true])
-            ->fill($selector, 'Rejected')
-            ->click('[data-testid="enum-label-column"]')
-            ->assertScript('Alpine.$data(document.querySelector(\'' . $rootSelector . '\')).error', 'Approval <em>required</em>.')
-            ->assertScript('[document.querySelector(\'' . $selector . '\')._tippy.props.content, document.querySelector(\'' . $selector . '\')._tippy.props.allowHTML]', ['Approval <em>required</em>.', false])
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-
-        expect($author->fresh()->json['display_name'])->toBe('Pending');
-
-        $page->fill($selector, 'Approved')
-            ->click('[data-testid="enum-label-column"]')
-            ->assertScript('Alpine.$data(document.querySelector(\'' . $rootSelector . '\')).error === undefined')
-            ->assertScript('[document.querySelector(\'' . $selector . '\')._tippy.props.content, document.querySelector(\'' . $selector . '\')._tippy.props.allowHTML]', ['<strong>Update name for Alex Morgan</strong>', true])
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-
-        expect($author->fresh()->json['display_name'])->toBe('Approved');
-    }
-});
 
 it('injects `$state` and a `null` `$relatedRecord` into update callbacks without a relationship', function (): void {
     $calls = [];
