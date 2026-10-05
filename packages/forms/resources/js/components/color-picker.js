@@ -101,6 +101,30 @@ export default function colorPickerFormComponent({
             return this.$refs.panel.style.display === 'block'
         },
 
+        closePanelAndRestoreFocus() {
+            this.$refs.panel.close()
+
+            if (document.activeElement === this.$refs.input) {
+                return
+            }
+
+            const preventPanelOpening = (event) => {
+                event.stopImmediatePropagation()
+            }
+
+            this.$refs.input.addEventListener(
+                'focus',
+                preventPanelOpening,
+                true,
+            )
+            this.$refs.input.focus()
+            this.$refs.input.removeEventListener(
+                'focus',
+                preventPanelOpening,
+                true,
+            )
+        },
+
         commitState() {
             if (isDestroyed) {
                 return

@@ -1012,7 +1012,8 @@ describe('block picker search', function (): void {
         try {
             livewire(RenderBuilderWithSearchableBlocks::class)
                 ->assertSuccessful()
-                ->assertSeeHtml('data-dropdown-autofocus')
+                ->assertSeeHtml('x-ref="searchInput"')
+                ->assertDontSeeHtml('x-on:dropdown-escape')
                 ->assertSeeHtml('x-on:keydown.enter.prevent')
                 ->assertSeeHtml('placeholder="Find &quot;R&amp;D&quot;"')
                 ->assertSeeHtml('aria-label="Find &quot;R&amp;D&quot;"')
@@ -1055,7 +1056,7 @@ describe('block picker search', function (): void {
     it('does not render search markup when not `searchable()`', function (): void {
         livewire(TestComponentWithBuilder::class)
             ->assertSuccessful()
-            ->assertDontSeeHtml('data-dropdown-autofocus')
+            ->assertDontSeeHtml('x-ref="searchInput"')
             ->assertDontSeeHtml('data-block-label')
             ->assertDontSeeHtml('builderBlockPickerFormComponent');
     });
@@ -1108,7 +1109,7 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
 
     $addBlockAction = '[data-testid="add-block"]';
     $noSearchResultsMessage = '[data-testid="builder"] [role="status"]';
-    $searchInput = '[data-testid="builder"] input[data-dropdown-autofocus]';
+    $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
     $page = visit('/builder-searchable-test');
 
     if ($isDarkMode) {
@@ -1119,7 +1120,7 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
         ->click($addBlockAction)
         ->assertVisible($searchInput)
         ->assertAttribute($searchInput, 'type', 'text')
-        ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[data-dropdown-autofocus]\')', true)
+        ->assertScript('document.activeElement.matches(\'.fi-fo-builder-block-picker-search-ctn input\')', true)
         ->type($searchInput, 'ReSeArCh & DEVELOPMENT')
         ->assertVisible('[data-testid="builder"] [data-block-label="research & development"]')
         ->assertMissing('[data-testid="builder"] [data-block-label="paragraph"]')
@@ -1144,12 +1145,70 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
         ->assertNoAccessibilityIssues();
 })->with(['light' => false, 'dark' => true]);
 
+it('focuses the block picker search when its lazy component initializes after opening', function (bool $isDarkMode): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    $addBlockAction = '[data-testid="add-block"]';
+    $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
+    $page = visit('/builder-searchable-test');
+
+    if ($isDarkMode) {
+        $page = $page->inDarkMode();
+    }
+
+    $removeDropdownOpenedListener = <<<'JS'
+        const searchInput = document.querySelector('[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input')
+        const picker = Alpine.$data(searchInput.closest('[x-data]'))
+
+        picker.dropdownPanel.removeEventListener('dropdown-opened', picker.dropdownOpenedListener)
+        picker.dropdownOpenedListener = null
+        JS;
+
+    $page->script($removeDropdownOpenedListener);
+
+    $page
+        ->click($addBlockAction)
+        ->assertVisible($searchInput)
+        ->assertScript('document.activeElement.closest(\'[data-testid="add-block"]\') !== null', true);
+
+    $page->script(<<<'JS'
+        const searchInput = document.querySelector('[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input')
+
+        Alpine.$data(searchInput.closest('[x-data]')).setUpDropdownAutofocus()
+        JS);
+
+    $page
+        ->assertScript('document.activeElement.matches(\'.fi-fo-builder-block-picker-search-ctn input\')', true)
+        ->click($addBlockAction);
+
+    $page->script($removeDropdownOpenedListener);
+
+    $page
+        ->click($addBlockAction)
+        ->assertVisible($searchInput)
+        ->click($addBlockAction)
+        ->assertMissing($searchInput);
+
+    $page->script(<<<'JS'
+        const picker = Alpine.$data(document.querySelector('[data-testid="builder"] [x-data="builderBlockPickerFormComponent()"]'))
+
+        picker.setUpDropdownAutofocus()
+        JS);
+
+    $page
+        ->assertScript('document.activeElement.closest(\'[data-testid="add-block"]\') !== null', true)
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+})->with(['light' => false, 'dark' => true]);
+
 it('clears a debounced block picker search with `Escape` before the debounce elapses', function (): void {
     Artisan::call('filament:assets');
 
     $this->actingAs(User::factory()->create());
 
-    $searchInput = '[data-testid="debounced-builder"] input[data-dropdown-autofocus]';
+    $searchInput = '[data-testid="debounced-builder"] .fi-fo-builder-block-picker-search-ctn input';
 
     visit('/builder-searchable-test')
         ->click('[data-testid="add-debounced-block"]')
@@ -1174,7 +1233,7 @@ it('closes only the block picker with `Escape` when it is inside a modal', funct
 
     $modal = '[data-testid="builder-modal"]';
     $addBlockAction = '[data-testid="add-modal-block"]';
-    $searchInput = '[data-testid="modal-builder"] input[data-dropdown-autofocus]';
+    $searchInput = '[data-testid="modal-builder"] .fi-fo-builder-block-picker-search-ctn input';
     $page = visit('/builder-searchable-test');
 
     if ($isDarkMode) {
@@ -1207,7 +1266,7 @@ it('clears and focuses the block picker search after clicking away and reopening
 
     $this->actingAs(User::factory()->create());
 
-    $searchInput = '[data-testid="builder"] input[data-dropdown-autofocus]';
+    $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
     $page = visit('/builder-searchable-test');
 
     if ($isDarkMode) {
@@ -1224,7 +1283,7 @@ it('clears and focuses the block picker search after clicking away and reopening
         ->click('[data-testid="add-block"]')
         ->assertVisible($searchInput)
         ->assertValue($searchInput, '')
-        ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[data-dropdown-autofocus]\')', true)
+        ->assertScript('document.activeElement.matches(\'.fi-fo-builder-block-picker-search-ctn input\')', true)
         ->assertVisible('[data-testid="builder"] [data-block-label="paragraph"]')
         ->assertVisible('[data-testid="builder"] [data-block-label="research & development"]')
         ->assertVisible('[data-testid="builder"] [data-block-label="video"]')
@@ -1250,14 +1309,14 @@ it('searches independently in the add-between picker and inserts the selected bl
         ->click($endPicker . ' [data-block-label="research & development"]')
         ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 2)
         ->click('[data-testid="add-block"]')
-        ->type($endPicker . ' input[data-dropdown-autofocus]', 'paragraph')
+        ->type($endPicker . ' .fi-fo-builder-block-picker-search-ctn input', 'paragraph')
         ->click('[data-testid="outside-picker"]')
         ->hover('[data-testid="builder"] .fi-fo-builder-item:first-child')
         ->click($betweenPicker . ' .fi-dropdown-trigger button')
-        ->assertValue($betweenPicker . ' input[data-dropdown-autofocus]', '')
-        ->type($betweenPicker . ' input[data-dropdown-autofocus]', 'video')
+        ->assertValue($betweenPicker . ' .fi-fo-builder-block-picker-search-ctn input', '')
+        ->type($betweenPicker . ' .fi-fo-builder-block-picker-search-ctn input', 'video')
         ->assertMissing($betweenPicker . ' [data-block-label="paragraph"]')
-        ->assertValue($endPicker . ' input[data-dropdown-autofocus]', 'paragraph')
+        ->assertValue($endPicker . ' .fi-fo-builder-block-picker-search-ctn input', 'paragraph')
         ->click($betweenPicker . ' [data-block-label="video"]')
         ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 3)
         ->assertScript('Array.from(document.querySelectorAll(\'[data-testid="builder"] .fi-fo-builder-item input\'), input => input.id.split(\'.\').pop())', ['text', 'url', 'title'])
@@ -1269,7 +1328,7 @@ it('preserves an active search when the block catalog changes', function (): voi
 
     $this->actingAs(User::factory()->create());
 
-    $searchInput = '[data-testid="builder"] input[data-dropdown-autofocus]';
+    $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
     $page = visit('/builder-searchable-test')
         ->click('[data-testid="add-block"]')
         ->type($searchInput, 'video')
@@ -1284,7 +1343,7 @@ it('preserves an active search when the block catalog changes', function (): voi
         ->assertNotPresent('[data-testid="builder"] [data-block-label="video"]')
         ->assertMissing('[data-testid="builder"] [data-block-label="introduction"]')
         ->assertMissing('[data-testid="builder"] [role="status"]')
-        ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[data-dropdown-autofocus]\')', true);
+        ->assertScript('document.activeElement.matches(\'.fi-fo-builder-block-picker-search-ctn input\')', true);
 
     $page->script('Alpine.$data(document.querySelector(\'[data-testid="builder"]\')).$wire.$set(\'hasUpdatedBlocks\', false)');
 
@@ -1318,7 +1377,7 @@ it('focuses the search when blocks become available and after deleting the last 
 
         $this->actingAs(User::factory()->create());
 
-        $searchInput = '[data-testid="builder"] input[data-dropdown-autofocus]';
+        $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
         $page = visit('/builder-searchable-test?empty=1&limited=1')
             ->assertNotPresent($searchInput);
 
@@ -1328,7 +1387,7 @@ it('focuses the search when blocks become available and after deleting the last 
             ->click('[data-testid="add-block"]')
             ->assertVisible($searchInput)
             ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true')
-            ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[data-dropdown-autofocus]\')', true)
+            ->assertScript('document.activeElement.matches(\'.fi-fo-builder-block-picker-search-ctn input\')', true)
             ->click('[data-testid="builder"] [data-block-label="video"]')
             ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
             ->assertNotPresent($searchInput)
@@ -1337,7 +1396,7 @@ it('focuses the search when blocks become available and after deleting the last 
             ->click('[data-testid="add-block"]')
             ->assertVisible($searchInput)
             ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true')
-            ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[data-dropdown-autofocus]\')', true)
+            ->assertScript('document.activeElement.matches(\'.fi-fo-builder-block-picker-search-ctn input\')', true)
             ->assertNoSmoke();
     } finally {
         $cache->setValue(null, $originalCache);

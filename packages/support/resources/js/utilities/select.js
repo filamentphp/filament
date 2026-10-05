@@ -1081,6 +1081,17 @@ export class Select {
             this.handleDropdownKeydown(event)
         }
 
+        this.dropdownEscapeListener = (event) => {
+            if (!this.isOpen) {
+                return
+            }
+
+            this.closeDropdown()
+            this.selectButton.focus()
+            event.preventDefault()
+            event.stopPropagation()
+        }
+
         // Toggle dropdown when button is clicked
         this.selectButton.addEventListener('click', this.buttonClickListener)
 
@@ -1095,6 +1106,10 @@ export class Select {
 
         // Keyboard navigation within dropdown
         this.dropdown.addEventListener('keydown', this.dropdownKeydownListener)
+        this.element.addEventListener(
+            'dropdown-escape',
+            this.dropdownEscapeListener,
+        )
 
         // Add event listener for refreshing selected option labels (only for non-multiple selects)
         if (
@@ -2383,6 +2398,13 @@ export class Select {
             this.dropdown.removeEventListener(
                 'keydown',
                 this.dropdownKeydownListener,
+            )
+        }
+
+        if (this.dropdownEscapeListener) {
+            this.element.removeEventListener(
+                'dropdown-escape',
+                this.dropdownEscapeListener,
             )
         }
 

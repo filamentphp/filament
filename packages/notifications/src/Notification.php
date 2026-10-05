@@ -388,6 +388,13 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
             x-transition:enter-end="fi-transition-enter-end"
             x-transition:leave-start="fi-transition-leave-start"
             x-transition:leave-end="fi-transition-leave-end"
+            <?php if (! $this->isInline) { ?>
+                x-on:mouseenter="pauseDuration('hover')"
+                x-on:mouseleave="resumeDuration('hover')"
+                x-on:focusin="handleFocusIn($event)"
+                x-on:focusout="handleFocusOut($event)"
+                x-on:keydown.escape="handleEscape($event)"
+            <?php } ?>
             <?= $attributes ?>
         >
             <?= generate_icon_html(
@@ -430,7 +437,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
 
             <button
                 type="button"
-                x-on:click="close"
+                x-on:click="<?= $this->isInline ? 'close' : 'dismiss()' ?>"
                 aria-label="<?= e($closeButtonLabel) ?>"
                 title="<?= e($closeButtonLabel) ?>"
                 class="fi-icon-btn fi-no-notification-close-btn"

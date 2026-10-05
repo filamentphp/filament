@@ -33,6 +33,8 @@ class TextInputTest extends Page
             ->schema([
                 TextInput::make('name')
                     ->label('Name')
+                    ->prefix('Prefix')
+                    ->suffix('Suffix')
                     ->required()
                     ->extraAttributes(['data-testid' => 'text-input']),
 
