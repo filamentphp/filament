@@ -28,6 +28,8 @@ export default function selectFormComponent({
     state,
     statePath,
 }) {
+    let refreshSelectedOptionLabelListener
+
     return {
         isSearching: false,
 
@@ -134,21 +136,23 @@ export default function selectFormComponent({
             }
 
             if (!isMultiple) {
+                refreshSelectedOptionLabelListener = async (event) => {
+                    if (event.detail.livewireId !== livewireId) {
+                        return
+                    }
+
+                    if (event.detail.statePath !== statePath) {
+                        return
+                    }
+
+                    await this.refreshChoices({
+                        withInitialOptions: false,
+                    })
+                }
+
                 window.addEventListener(
                     'filament-forms::select.refreshSelectedOptionLabel',
-                    async (event) => {
-                        if (event.detail.livewireId !== livewireId) {
-                            return
-                        }
-
-                        if (event.detail.statePath !== statePath) {
-                            return
-                        }
-
-                        await this.refreshChoices({
-                            withInitialOptions: false,
-                        })
-                    },
+                    refreshSelectedOptionLabelListener,
                 )
             }
 
@@ -170,6 +174,13 @@ export default function selectFormComponent({
         },
 
         destroy: function () {
+            if (refreshSelectedOptionLabelListener) {
+                window.removeEventListener(
+                    'filament-forms::select.refreshSelectedOptionLabel',
+                    refreshSelectedOptionLabelListener,
+                )
+            }
+
             this.select.destroy()
             this.select = null
         },
