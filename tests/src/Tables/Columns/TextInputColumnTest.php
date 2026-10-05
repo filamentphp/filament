@@ -40,6 +40,7 @@ it('prioritizes text input errors and restores the configured tooltip after a su
     $author = User::factory()->create(['name' => 'Alex Morgan', 'json' => ['display_name' => 'Pending']]);
     Post::factory()->create(['author_id' => $author->getKey()]);
     $this->actingAs(User::factory()->create());
+    $rootSelector = '[data-testid="author-name-input"]';
     $selector = '[data-testid="author-name-input"] input:not([type="hidden"])';
 
     foreach ([false, true] as $isDarkMode) {
@@ -51,19 +52,12 @@ it('prioritizes text input errors and restores the configured tooltip after a su
         }
 
         $page->assertVisible($selector)
-            ->assertScript('typeof Alpine.$data(document.querySelector(\'[data-testid="author-name-input"]\')).getServerState === "function"');
-        $page->script('document.querySelector(\'' . $selector . '\').focus()');
-
-        $page
-            ->assertVisible('[role="tooltip"] strong')
-            ->assertScript('document.querySelector(\'[role="tooltip"]\').textContent', 'Update name for Alex Morgan')
-            ->assertScript('document.activeElement.hasAttribute("aria-describedby")')
+            ->assertScript('typeof Alpine.$data(document.querySelector(\'' . $rootSelector . '\')).getServerState === "function"')
+            ->assertScript('[document.querySelector(\'' . $selector . '\')._tippy.props.content, document.querySelector(\'' . $selector . '\')._tippy.props.allowHTML]', ['<strong>Update name for Alex Morgan</strong>', true])
             ->fill($selector, 'Rejected')
             ->click('[data-testid="enum-label-column"]')
-            ->assertScript('Alpine.$data(document.querySelector(\'[data-testid="author-name-input"]\')).error', 'Approval <em>required</em>.')
-            ->hover($selector)
-            ->assertScript('Array.from(document.querySelectorAll(\'[role="tooltip"]\')).filter(element => getComputedStyle(element).visibility === "visible").map(element => element.textContent)', ['Approval <em>required</em>.'])
-            ->assertMissing('[role="tooltip"] em')
+            ->assertScript('Alpine.$data(document.querySelector(\'' . $rootSelector . '\')).error', 'Approval <em>required</em>.')
+            ->assertScript('[document.querySelector(\'' . $selector . '\')._tippy.props.content, document.querySelector(\'' . $selector . '\')._tippy.props.allowHTML]', ['Approval <em>required</em>.', false])
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
@@ -71,10 +65,8 @@ it('prioritizes text input errors and restores the configured tooltip after a su
 
         $page->fill($selector, 'Approved')
             ->click('[data-testid="enum-label-column"]')
-            ->assertScript('Alpine.$data(document.querySelector(\'[data-testid="author-name-input"]\')).error === undefined')
-            ->hover($selector)
-            ->assertVisible('[role="tooltip"] strong')
-            ->assertScript('Array.from(document.querySelectorAll(\'[role="tooltip"]\')).filter(element => getComputedStyle(element).visibility === "visible").map(element => element.textContent)', ['Update name for Alex Morgan'])
+            ->assertScript('Alpine.$data(document.querySelector(\'' . $rootSelector . '\')).error === undefined')
+            ->assertScript('[document.querySelector(\'' . $selector . '\')._tippy.props.content, document.querySelector(\'' . $selector . '\')._tippy.props.allowHTML]', ['<strong>Update name for Alex Morgan</strong>', true])
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 

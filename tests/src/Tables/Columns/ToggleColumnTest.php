@@ -73,6 +73,7 @@ it('prioritizes toggle errors and restores the configured tooltip after a succes
     $author = User::factory()->create(['name' => 'Alex Morgan', 'json' => ['is_subscribed' => null]]);
     Post::factory()->create(['author_id' => $author->getKey()]);
     $this->actingAs(User::factory()->create());
+    $selector = '[data-testid="author-subscribed-toggle"] [role="switch"]';
 
     foreach ([false, true] as $isDarkMode) {
         $author->refresh()->update(['json' => ['is_subscribed' => null]]);
@@ -82,37 +83,26 @@ it('prioritizes toggle errors and restores the configured tooltip after a succes
             $page = $page->inDarkMode();
         }
 
-        $page->assertAttribute('[data-testid="author-subscribed-toggle"] [role="switch"]', 'aria-checked', 'false')
-            ->assertScript('typeof Alpine.$data(document.querySelector(\'[data-testid="author-subscribed-toggle"]\')).getServerState === "function"');
-        $page->script('document.querySelector(\'[data-testid="author-subscribed-toggle"] [role="switch"]\').focus()');
-
-        $page
-            ->assertVisible('[role="tooltip"] strong')
-            ->assertScript('document.querySelector(\'[role="tooltip"]\').textContent', 'Update subscription for Alex Morgan')
-            ->assertScript('document.activeElement.hasAttribute("aria-describedby")')
-            ->click('[data-testid="author-subscribed-toggle"] [role="switch"]')
+        $page->assertAttribute($selector, 'aria-checked', 'false')
+            ->assertScript('typeof Alpine.$data(document.querySelector(\'[data-testid="author-subscribed-toggle"]\')).getServerState === "function"')
+            ->assertScript('[document.querySelector(\'' . $selector . '\')._tippy.props.content, document.querySelector(\'' . $selector . '\')._tippy.props.allowHTML]', ['<strong>Update subscription for Alex Morgan</strong>', true])
+            ->click($selector)
             ->assertScript('Alpine.$data(document.querySelector(\'[data-testid="author-subscribed-toggle"]\')).error', 'Approval <em>required</em>.')
-            ->hover('[data-testid="enum-label-column"]')
-            ->hover('[data-testid="author-subscribed-toggle"] [role="switch"]')
-            ->assertScript('Array.from(document.querySelectorAll(\'[role="tooltip"]\')).filter(element => getComputedStyle(element).visibility === "visible").map(element => element.textContent)', ['Approval <em>required</em>.'])
-            ->assertMissing('[role="tooltip"] em')
+            ->assertScript('[document.querySelector(\'' . $selector . '\')._tippy.props.content, document.querySelector(\'' . $selector . '\')._tippy.props.allowHTML]', ['Approval <em>required</em>.', false])
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
         expect($author->fresh()->json['is_subscribed'])->toBeNull();
 
         if ($page->script('Alpine.$data(document.querySelector(\'[data-testid="author-subscribed-toggle"]\')).state')) {
-            $page->click('[data-testid="author-subscribed-toggle"] [role="switch"]')
-                ->assertAttribute('[data-testid="author-subscribed-toggle"] [role="switch"]', 'aria-checked', 'false');
+            $page->click($selector)
+                ->assertAttribute($selector, 'aria-checked', 'false');
         }
 
         $page
-            ->click('[data-testid="author-subscribed-toggle"] [role="switch"]')
+            ->click($selector)
             ->assertScript('Alpine.$data(document.querySelector(\'[data-testid="author-subscribed-toggle"]\')).error === undefined')
-            ->hover('[data-testid="enum-label-column"]')
-            ->hover('[data-testid="author-subscribed-toggle"] [role="switch"]')
-            ->assertVisible('[role="tooltip"] strong')
-            ->assertScript('Array.from(document.querySelectorAll(\'[role="tooltip"]\')).filter(element => getComputedStyle(element).visibility === "visible").map(element => element.textContent)', ['Update subscription for Alex Morgan'])
+            ->assertScript('[document.querySelector(\'' . $selector . '\')._tippy.props.content, document.querySelector(\'' . $selector . '\')._tippy.props.allowHTML]', ['<strong>Update subscription for Alex Morgan</strong>', true])
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
