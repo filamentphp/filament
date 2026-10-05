@@ -4,6 +4,7 @@ namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
 use Filament\Forms\Components\OneTimeCodeInput;
+use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -20,6 +21,8 @@ class OneTimeCodeInputSubmitOnCompletionBrowserTest extends Page
 
     public ?array $data = [];
 
+    public ?string $submittedCode = null;
+
     public function mount(): void
     {
         $this->form->fill();
@@ -29,8 +32,13 @@ class OneTimeCodeInputSubmitOnCompletionBrowserTest extends Page
     {
         return $form
             ->schema([
+                TextInput::make('name')
+                    ->default('Ada Lovelace')
+                    ->required()
+                    ->extraInputAttributes(['data-testid' => 'required-sibling']),
                 OneTimeCodeInput::make('code')
                     ->label('Test OTP Code')
+                    ->extraAttributes(['data-testid' => 'code-input'])
                     ->submitOnCompletion(),
             ])
             ->statePath('data');
@@ -38,7 +46,7 @@ class OneTimeCodeInputSubmitOnCompletionBrowserTest extends Page
 
     public function save(): void
     {
-        $this->form->getState();
+        $this->submittedCode = $this->form->getState()['code'];
     }
 
     public function resetCode(): void

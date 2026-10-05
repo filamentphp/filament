@@ -166,6 +166,10 @@ export default ({ shouldSubmitOnCompletion = false } = {}) => ({
                 return
             }
 
+            if (!form.noValidate && !form.reportValidity()) {
+                return
+            }
+
             this.lastSubmittedValue = value
             form.requestSubmit()
         })
