@@ -19,6 +19,8 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Text;
+use Illuminate\Cache\Lock;
+use Illuminate\Cache\Repository;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
@@ -94,10 +96,16 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
         $wasStored = $this->executeWithCacheLock(
             $cache,
             "{$codeCacheKey}.lock",
-            fn (): bool => $cache->put($codeCacheKey, [
-                'hash' => $codeHash,
-                'expiresAt' => $codeExpiresAt,
-            ], $codeExpiresAt),
+            function (?Lock $lock, Repository $cache) use ($codeCacheKey, $codeExpiresAt, $codeHash): bool {
+                if (($lock !== null) && (! $lock->isOwnedByCurrentProcess())) {
+                    return false;
+                }
+
+                return $cache->put($codeCacheKey, [
+                    'hash' => $codeHash,
+                    'expiresAt' => $codeExpiresAt,
+                ], $codeExpiresAt);
+            },
         );
 
         if (! $wasStored) {
@@ -158,7 +166,7 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
         $cache = $this->getCacheRepository();
         $codeCacheKey = $this->getCodeCacheKey($user);
 
-        return $this->executeWithCacheLock($cache, "{$codeCacheKey}.lock", function () use ($cache, $code, $codeCacheKey): bool {
+        return $this->executeWithCacheLock($cache, "{$codeCacheKey}.lock", function (?Lock $lock, Repository $cache) use ($code, $codeCacheKey): bool {
             $activeCode = $cache->get($codeCacheKey);
             $activeCodeHash = is_array($activeCode) ? ($activeCode['hash'] ?? null) : null;
             $activeCodeExpiresAt = is_array($activeCode) ? ($activeCode['expiresAt'] ?? null) : null;
@@ -168,6 +176,17 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
                 || (! ($activeCodeExpiresAt instanceof DateTimeInterface))
                 || $this->isCodeExpired($activeCodeExpiresAt)
                 || (! Hash::check($code, $activeCodeHash))
+            ) {
+                return false;
+            }
+
+            $currentCode = $cache->get($codeCacheKey);
+            $currentCodeHash = is_array($currentCode) ? ($currentCode['hash'] ?? null) : null;
+
+            if (
+                (! is_string($currentCodeHash))
+                || (! hash_equals($activeCodeHash, $currentCodeHash))
+                || (($lock !== null) && (! $lock->isOwnedByCurrentProcess()))
             ) {
                 return false;
             }

@@ -22,6 +22,8 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Cache\Lock;
+use Illuminate\Cache\Repository;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
@@ -186,15 +188,37 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         $cacheKey = 'filament.app_authentication_codes.' . md5($secret);
         $cache = $this->getCacheRepository();
 
-        $verifyCode = function () use ($cache, $cacheKey, $code, $secret): bool {
+        $verifyCode = function (?Lock $lock, Repository $cache) use ($cacheKey, $code, $secret): bool {
             // Passing an initial `$lastAcceptedTimestamp` makes `verifyKeyNewer()` return the
             // matched period instead of `true`, so future codes are cached correctly.
-            $lastAcceptedTimestamp = $cache->get($cacheKey)
-                ?? ($this->google2FA->getTimestamp() - $this->getCodeWindow() - 1);
+            $lastAcceptedTimestamp = $cache->get($cacheKey);
+
+            if (is_string($lastAcceptedTimestamp) && ctype_digit($lastAcceptedTimestamp)) {
+                $lastAcceptedTimestamp = (int) $lastAcceptedTimestamp;
+            }
+
+            if (($lastAcceptedTimestamp !== null) && (! is_int($lastAcceptedTimestamp))) {
+                return false;
+            }
+
+            $lastAcceptedTimestamp ??= $this->google2FA->getTimestamp() - $this->getCodeWindow() - 1;
 
             $timestamp = $this->google2FA->verifyKeyNewer($secret, $code, $lastAcceptedTimestamp, $this->getCodeWindow());
 
             if ($timestamp === false) {
+                return false;
+            }
+
+            $lastAcceptedTimestamp = $cache->get($cacheKey);
+
+            if (is_string($lastAcceptedTimestamp) && ctype_digit($lastAcceptedTimestamp)) {
+                $lastAcceptedTimestamp = (int) $lastAcceptedTimestamp;
+            }
+
+            if (
+                (($lastAcceptedTimestamp !== null) && ((! is_int($lastAcceptedTimestamp)) || ($timestamp <= $lastAcceptedTimestamp)))
+                || (($lock !== null) && (! $lock->isOwnedByCurrentProcess()))
+            ) {
                 return false;
             }
 
@@ -215,7 +239,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         $cache = $this->getCacheRepository();
         $connection = $user->getConnection(); /** @phpstan-ignore-line */
 
-        return $this->executeWithCacheLock($cache, $lockKey, fn (): bool => $connection->transaction(function () use ($user, $recoveryCode): bool {
+        return $this->executeWithCacheLock($cache, $lockKey, fn (?Lock $lock): bool => $connection->transaction(function () use ($lock, $user, $recoveryCode): bool {
             $lockedUser = $user
                 ->newQuery() /** @phpstan-ignore-line */
                 ->whereKey($user->getKey()) /** @phpstan-ignore-line */
@@ -239,11 +263,17 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
                 $remainingCodes[] = $hashedRecoveryCode;
             }
 
-            if ($isValid) {
-                $lockedUser->saveAppAuthenticationRecoveryCodes($remainingCodes); /** @phpstan-ignore-line */
+            if (! $isValid) {
+                return false;
             }
 
-            return $isValid;
+            if (($lock !== null) && (! $lock->isOwnedByCurrentProcess())) {
+                return false;
+            }
+
+            $lockedUser->saveAppAuthenticationRecoveryCodes($remainingCodes); /** @phpstan-ignore-line */
+
+            return true;
         }));
     }
 

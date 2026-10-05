@@ -10,9 +10,15 @@ use Filament\Notifications\Notification as FilamentNotification;
 use Filament\Panel;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Cache\ArrayLock;
+use Illuminate\Cache\ArrayStore;
+use Illuminate\Cache\Lock;
+use Illuminate\Cache\Repository;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Cache\Store;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\RateLimiter;
@@ -307,6 +313,118 @@ describe('failure cases', function (): void {
         expect($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse()
             ->and($emailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeTrue()
             ->and($emailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeFalse();
+    });
+
+    it('does not overwrite a newer email code after a cache lock expires', function (): void {
+        $cacheStore = new OverlappingEmailAuthenticationCacheStore;
+
+        Cache::extend('overlapping-email-authentication', fn (): Repository => new Repository($cacheStore));
+        config()->set('cache.default', 'overlapping-email-authentication');
+        config()->set('cache.stores.overlapping-email-authentication', ['driver' => 'overlapping-email-authentication']);
+
+        $userToAuthenticate = User::factory()
+            ->hasEmailAuthentication()
+            ->create();
+
+        $olderEmailAuthentication = EmailAuthentication::make()
+            ->generateCodesUsing(static fn (): string => '123456');
+        $newerEmailAuthentication = EmailAuthentication::make()
+            ->generateCodesUsing(static fn (): string => '654321');
+        $newerCodeWasSent = null;
+
+        $cacheStore->afterLockAcquired(function () use ($newerEmailAuthentication, $userToAuthenticate, &$newerCodeWasSent): void {
+            $this->travel(61)->seconds();
+
+            $newerCodeWasSent = $newerEmailAuthentication->sendCode($userToAuthenticate);
+        });
+
+        expect($olderEmailAuthentication->sendCode($userToAuthenticate))->toBeFalse()
+            ->and($newerCodeWasSent)->toBeTrue()
+            ->and($olderEmailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse()
+            ->and($newerEmailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeTrue();
+    });
+
+    it('does not delete a newer email code after a cache lock expires', function (): void {
+        $cacheStore = new OverlappingEmailAuthenticationCacheStore;
+
+        Cache::extend('overlapping-email-authentication', fn (): Repository => new Repository($cacheStore));
+        config()->set('cache.default', 'overlapping-email-authentication');
+        config()->set('cache.stores.overlapping-email-authentication', ['driver' => 'overlapping-email-authentication']);
+
+        $userToAuthenticate = User::factory()
+            ->hasEmailAuthentication()
+            ->create();
+
+        $olderEmailAuthentication = EmailAuthentication::make()
+            ->generateCodesUsing(static fn (): string => '123456');
+        $newerEmailAuthentication = EmailAuthentication::make()
+            ->generateCodesUsing(static fn (): string => '654321');
+
+        expect($olderEmailAuthentication->sendCode($userToAuthenticate))->toBeTrue();
+
+        $newerCodeWasSent = null;
+
+        $cacheStore->beforeReadReturns(function () use ($newerEmailAuthentication, $userToAuthenticate, &$newerCodeWasSent): void {
+            $this->travel(61)->seconds();
+
+            $newerCodeWasSent = $newerEmailAuthentication->sendCode($userToAuthenticate);
+        });
+
+        expect($olderEmailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse()
+            ->and($newerCodeWasSent)->toBeTrue()
+            ->and($olderEmailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse()
+            ->and($newerEmailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeTrue();
+    });
+
+    it('can issue and consume an email code when the cache store does not support locks', function (): void {
+        Cache::extend('non-locking-email-authentication', fn (): Repository => new Repository(new NonLockingEmailAuthenticationCacheStore));
+        config()->set('cache.default', 'non-locking-email-authentication');
+        config()->set('cache.stores.non-locking-email-authentication', ['driver' => 'non-locking-email-authentication']);
+
+        $emailAuthentication = EmailAuthentication::make();
+
+        $userToAuthenticate = User::factory()
+            ->hasEmailAuthentication()
+            ->create();
+
+        $emailAuthentication->generateCodesUsing(static fn (): string => '123456');
+
+        expect($emailAuthentication->sendCode($userToAuthenticate))->toBeTrue()
+            ->and($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeTrue()
+            ->and($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse();
+    });
+
+    it('does not send an email code when it cannot be persisted', function (): void {
+        Cache::extend('failed-email-authentication-write', fn (): Repository => new Repository(new FailedEmailAuthenticationWriteCacheStore));
+        config()->set('cache.default', 'failed-email-authentication-write');
+        config()->set('cache.stores.failed-email-authentication-write', ['driver' => 'failed-email-authentication-write']);
+
+        $emailAuthentication = EmailAuthentication::make()
+            ->generateCodesUsing(static fn (): string => '123456');
+
+        $userToAuthenticate = User::factory()
+            ->hasEmailAuthentication()
+            ->create();
+
+        expect($emailAuthentication->sendCode($userToAuthenticate))->toBeFalse();
+
+        Notification::assertNothingSent();
+    });
+
+    it('does not verify an email code when it cannot be consumed', function (): void {
+        Cache::extend('failed-email-authentication-delete', fn (): Repository => new Repository(new FailedEmailAuthenticationDeleteCacheStore));
+        config()->set('cache.default', 'failed-email-authentication-delete');
+        config()->set('cache.stores.failed-email-authentication-delete', ['driver' => 'failed-email-authentication-delete']);
+
+        $emailAuthentication = EmailAuthentication::make()
+            ->generateCodesUsing(static fn (): string => '123456');
+
+        $userToAuthenticate = User::factory()
+            ->hasEmailAuthentication()
+            ->create();
+
+        expect($emailAuthentication->sendCode($userToAuthenticate))->toBeTrue()
+            ->and($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse();
     });
 
     it('will not authenticate the user with a challenge code that was issued to a different user', function (): void {
@@ -823,6 +941,168 @@ it('can throttle multi-factor challenge attempts per user', function (): void {
 
     $this->assertAuthenticatedAs($secondUser);
 });
+
+/**
+ * A cache store that implements `Store` but not `LockProvider`.
+ */
+class NonLockingEmailAuthenticationCacheStore implements Store
+{
+    /** @var array<string, mixed> */
+    protected array $data = [];
+
+    public function get($key): mixed
+    {
+        return $this->data[$key] ?? null;
+    }
+
+    /**
+     * @param  array<string>  $keys
+     * @return array<string, mixed>
+     */
+    public function many(array $keys): array
+    {
+        return array_map(fn (string $key): mixed => $this->get($key), array_combine($keys, $keys));
+    }
+
+    public function put($key, $value, $seconds): bool
+    {
+        $this->data[$key] = $value;
+
+        return true;
+    }
+
+    /**
+     * @param  array<string, mixed>  $values
+     */
+    public function putMany(array $values, $seconds): bool
+    {
+        foreach ($values as $key => $value) {
+            $this->put($key, $value, $seconds);
+        }
+
+        return true;
+    }
+
+    public function increment($key, $value = 1): int
+    {
+        return $this->data[$key] = ((int) ($this->data[$key] ?? 0)) + $value;
+    }
+
+    public function decrement($key, $value = 1): int
+    {
+        return $this->increment($key, -$value);
+    }
+
+    public function forever($key, $value): bool
+    {
+        return $this->put($key, $value, 0);
+    }
+
+    public function forget($key): bool
+    {
+        unset($this->data[$key]);
+
+        return true;
+    }
+
+    public function flush(): bool
+    {
+        $this->data = [];
+
+        return true;
+    }
+
+    public function touch($key, $ttl): bool
+    {
+        return true;
+    }
+
+    public function getPrefix(): string
+    {
+        return '';
+    }
+}
+
+class FailedEmailAuthenticationWriteCacheStore extends ArrayStore
+{
+    public function put($key, $value, $seconds): bool
+    {
+        return false;
+    }
+}
+
+class FailedEmailAuthenticationDeleteCacheStore extends ArrayStore
+{
+    public function forget($key): bool
+    {
+        return false;
+    }
+}
+
+class OverlappingEmailAuthenticationCacheStore extends ArrayStore
+{
+    protected ?Closure $afterLockAcquired = null;
+
+    protected ?Closure $beforeReadReturns = null;
+
+    public function afterLockAcquired(Closure $callback): void
+    {
+        $this->afterLockAcquired = $callback;
+    }
+
+    public function beforeReadReturns(Closure $callback): void
+    {
+        $this->beforeReadReturns = $callback;
+    }
+
+    public function get($key): mixed
+    {
+        $value = parent::get($key);
+        $callback = $this->beforeReadReturns;
+        $this->beforeReadReturns = null;
+        $callback?->__invoke();
+
+        return $value;
+    }
+
+    public function lock($name, $seconds = 0, $owner = null): Lock
+    {
+        if (! $this->afterLockAcquired) {
+            return parent::lock($name, $seconds, $owner);
+        }
+
+        $callback = $this->afterLockAcquired;
+        $this->afterLockAcquired = null;
+
+        return new OverlappingEmailAuthenticationCacheLock($this, $name, $seconds, $owner, $callback);
+    }
+}
+
+class OverlappingEmailAuthenticationCacheLock extends ArrayLock
+{
+    public function __construct(
+        ArrayStore $store,
+        string $name,
+        int $seconds,
+        ?string $owner,
+        protected ?Closure $afterLockAcquired,
+    ) {
+        parent::__construct($store, $name, $seconds, $owner);
+    }
+
+    public function acquire(): bool
+    {
+        if (! parent::acquire()) {
+            return false;
+        }
+
+        $callback = $this->afterLockAcquired;
+        $this->afterLockAcquired = null;
+        $callback?->__invoke();
+
+        return true;
+    }
+}
 
 class EmailAuthenticationUser extends User
 {
