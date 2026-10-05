@@ -1857,7 +1857,6 @@
                                                             x-on:keydown.space.prevent.stop="$wire.sortTable('{{ $columnName }}')"
                                                         @endif
                                                         wire:click="sortTable('{{ $columnName }}')"
-                                                        wire:loading.attr="disabled"
                                                         wire:target="sortTable('{{ $columnName }}')"
                                                         class="fi-ta-header-cell-sort-btn"
                                                     >

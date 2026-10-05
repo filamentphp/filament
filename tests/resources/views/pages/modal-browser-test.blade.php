@@ -3,6 +3,14 @@
 @endphp
 
 <x-filament-panels::page>
+    <x-filament::button
+        wire:click="activateLoadingButton"
+        data-testid="loading-button"
+        data-activations="{{ $loadingButtonActivations }}"
+    >
+        Simulate loading
+    </x-filament::button>
+
     <span data-testid="action-after-child-result">
         {{ $didRunActionAfterClosingChild ? 'ran' : 'not-ran' }}
     </span>

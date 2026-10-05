@@ -11,6 +11,121 @@ beforeEach(function (): void {
 });
 
 describe('browser interactions', function (): void {
+    it('keeps a button focused while its loading state blocks pointer activation', function (): void {
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            $browser = visit('/modal-browser-test');
+
+            $browser
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const button = document.querySelector('[data-testid="loading-button"]')
+
+                        window.loadingButtonPointerActivations = 0
+                        window.loadingButtonObservation = null
+
+                        button.addEventListener('click', () => {
+                            window.loadingButtonPointerActivations++
+                        })
+
+                        const observer = new MutationObserver(() => {
+                            if (button.getAttribute('aria-disabled') !== 'true') {
+                                return
+                            }
+
+                            requestAnimationFrame(() => {
+                                const bounds = button.getBoundingClientRect()
+                                const pointerTarget = document.elementFromPoint(
+                                    bounds.left + (bounds.width / 2),
+                                    bounds.top + (bounds.height / 2),
+                                )
+
+                                pointerTarget?.click()
+
+                                window.loadingButtonObservation = {
+                                    ariaDisabled: button.getAttribute('aria-disabled'),
+                                    cursor: getComputedStyle(button).cursor,
+                                    disabled: button.disabled,
+                                    hasFocus: document.activeElement === button,
+                                    pointerEvents: getComputedStyle(button).pointerEvents,
+                                    pointerTargetIsOutsideButton: (pointerTarget !== button) && (! button.contains(pointerTarget)),
+                                }
+
+                                observer.disconnect()
+                            })
+                        })
+
+                        observer.observe(button, { attributes: true })
+                        button.focus()
+                        button.click()
+
+                        return document.activeElement === button
+                    })()
+                    JS, true);
+
+            usleep(400_000);
+
+            $browser
+                ->assertScript('window.loadingButtonObservation.ariaDisabled', 'true')
+                ->assertScript('window.loadingButtonObservation.disabled', false)
+                ->assertScript('window.loadingButtonObservation.hasFocus', true)
+                ->assertScript('window.loadingButtonObservation.pointerEvents', 'none')
+                ->assertScript('window.loadingButtonObservation.cursor', 'default')
+                ->assertScript('window.loadingButtonObservation.pointerTargetIsOutsideButton', true)
+                ->assertScript('window.loadingButtonPointerActivations', 1)
+                ->assertPresent('[data-testid="loading-button"]:focus')
+                ->assertScript('document.querySelector(\'[data-testid="loading-button"]\').disabled', false)
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+
+            $browser
+                ->assertScript('document.querySelector(\'[data-testid="loading-button"]\').dataset.activations', '1')
+                ->assertScript('document.querySelector(\'[data-testid="loading-button"]\').hasAttribute(\'aria-disabled\')', false)
+                ->assertScript('getComputedStyle(document.querySelector(\'[data-testid="loading-button"]\')).pointerEvents', 'auto')
+                ->assertPresent('[data-testid="loading-button"]:focus');
+
+            $browser = visit('/modal-browser-test')->inDarkMode();
+
+            $browser
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const button = document.querySelector('[data-testid="loading-button"]')
+
+                        window.darkLoadingButtonObservation = null
+
+                        const observer = new MutationObserver(() => {
+                            if (button.getAttribute('aria-disabled') !== 'true') {
+                                return
+                            }
+
+                            window.darkLoadingButtonObservation = {
+                                ariaDisabled: button.getAttribute('aria-disabled'),
+                                hasFocus: document.activeElement === button,
+                            }
+
+                            observer.disconnect()
+                        })
+
+                        observer.observe(button, { attributes: true })
+                        button.focus()
+                        button.click()
+
+                        return true
+                    })()
+                    JS);
+
+            usleep(400_000);
+
+            $browser
+                ->assertScript('window.darkLoadingButtonObservation.ariaDisabled', 'true')
+                ->assertScript('window.darkLoadingButtonObservation.hasFocus', true)
+                ->assertPresent('[data-testid="loading-button"]:focus')
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+        });
+    });
+
     it('prevents `beforeunload` only while actions that can contain unsaved changes are mounted', function (bool $isDarkMode): void {
         $this->actingAs(User::factory()->create());
 

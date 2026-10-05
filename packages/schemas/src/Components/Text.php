@@ -151,7 +151,6 @@ class Text extends Component implements HasEmbeddedView
             $badgeAttributes = $this->getExtraAttributeBag()
                 ->merge([
                     'type' => $isCopyable ? 'button' : null,
-                    'wire:loading.attr' => $isCopyable ? 'disabled' : null,
                 ], escape: false)
                 ->class([
                     'fi-sc-text',

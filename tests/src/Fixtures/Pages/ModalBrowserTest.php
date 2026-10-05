@@ -16,11 +16,20 @@ class ModalBrowserTest extends Page
 
     public bool $didRunActionAfterClosingChild = false;
 
+    public int $loadingButtonActivations = 0;
+
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedBolt;
 
     protected static ?int $navigationSort = 5;
 
     protected static bool $shouldRegisterNavigation = false;
+
+    public function activateLoadingButton(): void
+    {
+        $this->loadingButtonActivations++;
+
+        usleep(250_000);
+    }
 
     protected function getHeaderActions(): array
     {

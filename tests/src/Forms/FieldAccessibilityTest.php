@@ -10,6 +10,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\FusedGroup;
 use Filament\Schemas\Components\Group;
@@ -363,6 +364,26 @@ it('preserves group attribute overrides without referencing an absent label', fu
     [static fn (): Field => ToggleButtons::make('answer')->grouped()->options(['a' => 'Option'])],
     [static fn (): Field => ToggleButtons::make('answer')->multiple()->options(['a' => 'Option'])],
     [static fn (): Field => ToggleButtons::make('answer')->multiple()->grouped()->options(['a' => 'Option'])],
+]);
+
+it('keeps live state controls enabled while loading and preserves explicit `disabled()` states', function (Closure $makeField): void {
+    $field = $makeField()->live();
+    $schema = Schema::make(Livewire::make())->components([$field]);
+
+    expect($schema->toHtml())->not->toContain('wire:loading.attr="disabled"');
+
+    $field->disabled();
+    $document = fieldAccessibilityDocument($schema->toHtml());
+
+    foreach ($document->query('//input | //button[@role="switch"]') as $control) {
+        expect($control->hasAttribute('disabled'))->toBeTrue();
+    }
+})->with([
+    [static fn (): Field => Checkbox::make('answer')],
+    [static fn (): Field => CheckboxList::make('answer')->options(['a' => 'Option'])],
+    [static fn (): Field => Radio::make('answer')->options(['a' => 'Option'])],
+    [static fn (): Field => Toggle::make('answer')],
+    [static fn (): Field => ToggleButtons::make('answer')->options(['a' => 'Option'])],
 ]);
 
 it('evaluates Alpine input attributes once per render', function (string $fieldClass): void {

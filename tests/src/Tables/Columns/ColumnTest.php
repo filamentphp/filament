@@ -237,7 +237,14 @@ describe('rendering', function (): void {
 
     it('can render with `sortable()`', function (): void {
         Post::factory()->create();
-        livewire(RenderColumnWithSortable::class)->assertSuccessful();
+        $html = livewire(RenderColumnWithSortable::class)
+            ->assertSuccessful()
+            ->html();
+
+        preg_match('/<button[^>]+fi-ta-header-cell-sort-btn[^>]*>/', $html, $matches);
+
+        expect($matches)->toHaveCount(1)
+            ->and($matches[0])->not->toContain('wire:loading.attr="disabled"');
     });
 
     it('can render with `searchable()`', function (): void {

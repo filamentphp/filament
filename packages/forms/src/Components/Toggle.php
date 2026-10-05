@@ -55,7 +55,6 @@ class Toggle extends Field implements HasEmbeddedView
                 'autofocus' => $this->isAutofocused(),
                 'disabled' => $this->isDisabled(),
                 'id' => $this->getId(),
-                'wire:loading.attr' => 'disabled',
                 'wire:target' => $statePath,
             ], escape: false)
             ->merge($this->getExtraAttributes(), escape: false)

@@ -731,8 +731,8 @@ it('only shows the next action loading indicator for its own request', function 
             ->wait(0.3);
 
         expect($browser->script(
-            "document.querySelector('{$nextAction}').parentElement.hasAttribute('inert')",
-        ))->toBeTrue();
+            "document.querySelector('{$nextAction}').parentElement.getAttribute('aria-disabled')",
+        ))->toBe('true');
 
         expect($browser->script(
             "Boolean(document.querySelector('{$nextActionLoadingIndicator}')?.getClientRects().length)",
@@ -743,6 +743,57 @@ it('only shows the next action loading indicator for its own request', function 
             ->click($nextAction)
             ->assertVisible($nextActionLoadingIndicator)
             ->assertNoSmoke();
+    });
+});
+
+it('keeps the next action focused and blocked during other requests', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $nextAction = '[data-testid="wizard-next-action"]';
+
+        foreach ([false, true] as $isDarkMode) {
+            $browser = visit('/wizard-browser-test');
+
+            if ($isDarkMode) {
+                $browser->inDarkMode();
+            }
+
+            $browser->assertScript(<<<'JS'
+                (() => {
+                    const nextAction = document.querySelector('[data-testid="wizard-next-action"]')
+
+                    nextAction.focus()
+                    document.querySelector('[data-testid="wizard-dynamic-select"] .fi-select-input-btn').click()
+
+                    return document.activeElement === nextAction
+                })()
+                JS, true);
+
+            $browser->wait(0.3);
+
+            expect($browser->script(
+                "document.querySelector('{$nextAction}').parentElement.getAttribute('aria-disabled')",
+            ))->toBe('true');
+
+            expect($browser->script(
+                "document.activeElement === document.querySelector('{$nextAction}')",
+            ))->toBeTrue();
+
+            $browser
+                ->assertScript("(() => { document.querySelector('{$nextAction}').click(); return true })()", true)
+                ->wait(0.1)
+                ->assertScript('window.wizardNextActionActivationCount ?? 0', 0)
+                ->assertVisible('#profile-details')
+                ->assertNoSmoke()
+                ->wait(1)
+                ->keys('[data-testid="wizard-dynamic-select"] .fi-select-input-btn', 'Escape')
+                ->assertNoAccessibilityIssues()
+                ->click($nextAction)
+                ->assertScript('window.wizardNextActionActivationCount', 1)
+                ->wait(1.1)
+                ->assertVisible('#profile-contact');
+        }
     });
 });
 

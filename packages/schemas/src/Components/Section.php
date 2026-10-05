@@ -425,7 +425,6 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
                                 $collapseButtonAttributes = (new FilamentComponentAttributeBag)
                                     ->merge([
                                         'type' => 'button',
-                                        'wire:loading.attr' => 'disabled',
                                         'x-on:click.stop' => 'isCollapsed = ! isCollapsed',
                                         // The button only contains a decorative chevron, so give it an accessible
                                         // name. Static values cover the pre-Alpine/no-JS render; `x-bind` keeps the

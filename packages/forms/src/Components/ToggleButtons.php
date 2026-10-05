@@ -263,7 +263,6 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                     <?php } ?>
                     type="<?= $isMultiple ? 'checkbox' : 'radio' ?>"
                     value="<?= e($value) ?>"
-                    wire:loading.attr="disabled"
                     <?= $wireModelAttribute ?>="<?= e($statePath) ?>"
                     <?= $extraInputAttributeBag->merge(['required' => (! $isMultiple) && $this->isRequired() && (! $shouldOptionBeDisabled)], escape: false)->toHtml() ?>
                 />
