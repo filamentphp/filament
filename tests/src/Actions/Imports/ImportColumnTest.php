@@ -9,7 +9,9 @@ use Filament\Tests\TestCase;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\SqlServerConnection;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -112,6 +114,76 @@ describe('relationship columns', function (): void {
         'missing value' => ['A,Missing', true],
         'repeated and missing values' => ['A,A,Missing', true],
     ]);
+
+    it('preserves the selected columns in SQL Server relationship coverage probes', function () use ($makeColumn): void {
+        $connection = app(SqlServerConnection::class, ['pdo' => $this->app['db']->connection()->getPdo()]);
+        $this->app['config']->set('database.connections.import_sqlsrv', ['driver' => 'sqlsrv']);
+        $this->app['db']->extend('sqlsrv', static fn (): SqlServerConnection => $connection);
+        $user = app(User::class)->setConnection('import_sqlsrv');
+        $scopedUser = Mockery::mock(User::class)->makePartial();
+        $scopedUser->shouldReceive('teams')->andReturnUsing(
+            static fn (): BelongsToMany => $user->teams()->orderBy('teams.name'),
+        );
+        $column = $makeColumn($scopedUser)->multiple()->relationship(resolveUsing: 'name');
+        $queries = $connection->pretend(static fn () => $column->resolveRelatedRecords(['Editorial']));
+
+        expect($queries)->toHaveCount(2)
+            ->and($queries[1]['query'])->toContain('select distinct top 1 [teams].*', 'order by [teams].[name] asc')
+            ->and($queries[1]['bindings'])->toBe(['Editorial']);
+    });
+
+    it('preserves `groupLimit()` with an offset when checking relationship coverage', function () use ($makeColumn): void {
+        $user = User::factory()->create();
+        Team::factory()->create(['name' => 'Editorial']);
+        $firstTeam = Team::factory()->create(['name' => 'Editorial']);
+        Team::factory()->create(['name' => 'Research']);
+        $secondTeam = Team::factory()->create(['name' => 'Research']);
+        $scopedUser = Mockery::mock(User::class)->makePartial();
+        $scopedUser->shouldReceive('teams')->andReturnUsing(static function () use ($user): BelongsToMany {
+            $relationship = $user->teams()->orderBy('teams.id');
+            $relationship->getQuery()->groupLimit(1, 'teams.name')->offset(1);
+
+            return $relationship;
+        });
+        $column = $makeColumn($scopedUser)->multiple()->relationship(resolveUsing: 'name');
+        $state = $column->castState('Editorial,Research');
+
+        expect(Validator::make(['teams' => $state], ['teams' => $column->getDataValidationRules()])->passes())->toBeTrue()
+            ->and($column->resolveRelatedRecords($state)->modelKeys())->toEqualCanonicalizing([$firstTeam->getKey(), $secondTeam->getKey()]);
+
+        $column->saveRelationships($state);
+
+        expect($user->fresh()->teams->modelKeys())->toEqualCanonicalizing([$firstTeam->getKey(), $secondTeam->getKey()]);
+    });
+
+    it('does not apply Query Builder `afterQuery()` callbacks to relationship coverage probes', function () use ($makeColumn): void {
+        $user = User::factory()->create();
+        Team::factory()->create(['name' => 'Editorial', 'slug' => 'excluded']);
+        $firstTeam = Team::factory()->create(['name' => 'Editorial', 'slug' => 'editorial']);
+        $secondTeam = Team::factory()->create(['name' => 'Research', 'slug' => 'research']);
+        $afterQueryCalls = 0;
+        $scopedUser = Mockery::mock(User::class)->makePartial();
+        $scopedUser->shouldReceive('teams')->andReturnUsing(static function () use ($user, &$afterQueryCalls): BelongsToMany {
+            $relationship = $user->teams()->orderBy('teams.id');
+            $relationship->getQuery()->getQuery()->afterQuery(static function (SupportCollection $records) use (&$afterQueryCalls): SupportCollection {
+                $afterQueryCalls++;
+
+                return $records->reject(static fn (object $record): bool => $record->slug === 'excluded')->values();
+            });
+
+            return $relationship;
+        });
+        $column = $makeColumn($scopedUser)->multiple()->relationship(resolveUsing: 'name');
+        $state = $column->castState('Editorial,Research');
+
+        expect(Validator::make(['teams' => $state], ['teams' => $column->getDataValidationRules()])->passes())->toBeTrue()
+            ->and($column->resolveRelatedRecords($state)->modelKeys())->toBe([$firstTeam->getKey(), $secondTeam->getKey()])
+            ->and($afterQueryCalls)->toBe(1);
+
+        $column->saveRelationships($state);
+
+        expect($user->fresh()->teams->modelKeys())->toEqualCanonicalizing([$firstTeam->getKey(), $secondTeam->getKey()]);
+    });
 
     it('keeps relationship constraints when checking each lookup value across columns', function () use ($makeColumn): void {
         $user = User::factory()->create();
