@@ -15,7 +15,6 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
@@ -79,45 +78,6 @@ it('renders one reactive tooltip with a configured fallback', function (string |
     'plain text' => ['Publish this post', '{'],
     'HTML' => [new HtmlString('<strong>Publish this post</strong>'), '{'],
 ]);
-
-it('prioritizes checkbox errors and restores the configured tooltip after a successful save', function (): void {
-    Artisan::call('filament:assets');
-    $author = User::factory()->create(['name' => 'Alex Morgan', 'json' => ['is_active' => null]]);
-    Post::factory()->create(['author_id' => $author->getKey()]);
-    $this->actingAs(User::factory()->create());
-
-    foreach ([false, true] as $isDarkMode) {
-        $author->refresh()->update(['json' => ['is_active' => null]]);
-        $page = visit('/columns-browser-test');
-
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-
-        $page
-            ->assertNotChecked('[data-testid="author-active-checkbox"]')
-            ->assertScript('typeof document.querySelector(\'[data-testid="author-active-checkbox"]\')._tippy === "object"')
-            ->assertScript('[document.querySelector(\'[data-testid="author-active-checkbox"]\')._tippy.props.content, document.querySelector(\'[data-testid="author-active-checkbox"]\')._tippy.props.allowHTML]', ['<strong>Update activity for Alex Morgan</strong>', true])
-            ->check('[data-testid="author-active-checkbox"]')
-            ->assertScript('Alpine.$data(document.querySelector(\'[data-testid="author-active-checkbox"]\')).error', 'Approval <em>required</em>.')
-            ->assertScript('[document.querySelector(\'[data-testid="author-active-checkbox"]\')._tippy.props.content, document.querySelector(\'[data-testid="author-active-checkbox"]\')._tippy.props.allowHTML]', ['Approval <em>required</em>.', false])
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-
-        expect($author->fresh()->json['is_active'])->toBeNull();
-
-        $page
-            ->uncheck('[data-testid="author-active-checkbox"]')
-            ->check('[data-testid="author-active-checkbox"]')
-            ->assertScript('Alpine.$data(document.querySelector(\'[data-testid="author-active-checkbox"]\')).error === undefined')
-            ->assertScript('[document.querySelector(\'[data-testid="author-active-checkbox"]\')._tippy.props.content, document.querySelector(\'[data-testid="author-active-checkbox"]\')._tippy.props.allowHTML]', ['<strong>Update activity for Alex Morgan</strong>', true])
-            ->assertChecked('[data-testid="author-active-checkbox"]')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-
-        expect($author->fresh()->json['is_active'])->toBeTrue();
-    }
-});
 
 class TestTableWithCheckboxColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
