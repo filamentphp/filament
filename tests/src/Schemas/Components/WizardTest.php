@@ -24,7 +24,7 @@ beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
 
-it('restores query-string steps using absolute keys rather than custom IDs', function (mixed $query, int $expected): void {
+it('restores query-string steps using absolute keys and legacy IDs', function (mixed $query, int $expected): void {
     request()->query->replace(['step' => $query, 'delivery_step' => 'form.delivery.wizard.details']);
 
     Schema::make(Livewire::make())->key('form')->components([
@@ -47,12 +47,28 @@ it('restores query-string steps using absolute keys rather than custom IDs', fun
         ->and($delivery->toHtml())->toContain('delivery-details');
 })->with([
     'absolute key' => ['form.wizard.details', 1],
-    'custom ID is not a persisted key' => ['profile-details', 2],
+    'legacy custom ID' => ['profile-details', 1],
     'relative key is not a persisted step key' => ['details', 2],
     'another container' => ['form.delivery.wizard.details', 2],
     'stale key' => ['removed', 2],
     'missing value' => [null, 2],
     'array value' => [['form.wizard.details'], 2],
+]);
+
+it('prefers query-string step keys before legacy IDs', function (string $query, int $expected): void {
+    request()->query->replace(['step' => $query]);
+
+    Schema::make(Livewire::make())->key('form')->components([
+        $wizard = Wizard::make([
+            Step::make('Details')->key('details')->id('form.wizard.contact'),
+            Step::make('Contact')->key('contact')->id('profile-contact'),
+        ])->key('wizard')->persistStepInQueryString(),
+    ])->fill();
+
+    expect($wizard->getStartStep())->toBe($expected);
+})->with([
+    'absolute key before another step custom ID' => ['form.wizard.contact', 2],
+    'legacy custom ID' => ['profile-contact', 2],
 ]);
 
 it('persists independent wizards across reload and browser history', function (): void {
@@ -86,8 +102,10 @@ it('persists independent wizards across reload and browser history', function ()
         ->assertVisible('#profile-details')->assertVisible('#delivery-details')
         ->back()->assertVisible('#profile-review')->assertVisible('#delivery-contact')
         ->forward()->assertVisible('#profile-details')->assertVisible('#delivery-details')
+        ->navigate('/wizard-browser-test?step=profile-contact&delivery_step=delivery-contact')
+        ->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
         ->navigate('/wizard-browser-test?step=removed&delivery_step=delivery-contact')
-        ->assertVisible('#profile-details')->assertVisible('#delivery-details')
+        ->assertVisible('#profile-details')->assertVisible('#delivery-contact')
         ->assertNoSmoke();
 
     visit('/wizard-browser-test?step=form.wizard.contact&delivery_step=form.delivery.wizard.contact')->inDarkMode()
