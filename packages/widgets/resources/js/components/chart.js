@@ -11,8 +11,6 @@ export default function chart({ cachedData, options, type }) {
 
         unsubscribeChartDataListener: null,
 
-        isDestroyed: false,
-
         init: function () {
             this.initChart()
 
@@ -20,7 +18,7 @@ export default function chart({ cachedData, options, type }) {
                 'updateChartData',
                 ({ data }) => {
                     const chart = this.getChart()
-                    if (this.isDestroyed || !chart) {
+                    if (!chart) {
                         return
                     }
 
@@ -33,7 +31,7 @@ export default function chart({ cachedData, options, type }) {
                 Alpine.store('theme')
 
                 this.$nextTick(() => {
-                    if (this.isDestroyed || !this.getChart()) {
+                    if (!this.getChart()) {
                         return
                     }
 
@@ -51,7 +49,7 @@ export default function chart({ cachedData, options, type }) {
                 }
 
                 this.$nextTick(() => {
-                    if (this.isDestroyed || !this.getChart()) {
+                    if (!this.getChart()) {
                         return
                     }
 
@@ -66,21 +64,12 @@ export default function chart({ cachedData, options, type }) {
         },
 
         destroy: function () {
-            this.isDestroyed = true
             this.themeMediaQuery.removeEventListener(
                 'change',
                 this.themeMediaQueryChangeHandler,
             )
-            this.themeMediaQueryChangeHandler = null
-            this.themeMediaQuery = null
-            this.unsubscribeChartDataListener?.()
-            this.unsubscribeChartDataListener = null
-
-            if (this.themeEffect) {
-                Alpine.release(this.themeEffect)
-                this.themeEffect = null
-            }
-
+            this.unsubscribeChartDataListener()
+            Alpine.release(this.themeEffect)
             this.getChart()?.destroy()
         },
 
