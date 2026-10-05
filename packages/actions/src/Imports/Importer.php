@@ -78,6 +78,10 @@ abstract class Importer
         $this->originalData = $this->data = $data;
         $this->record = null;
 
+        foreach ($this->getCachedColumns() as $column) {
+            $column->clearResolvedRelatedRecords();
+        }
+
         $this->remapData();
         $this->castData();
 
