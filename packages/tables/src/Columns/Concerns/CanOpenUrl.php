@@ -36,7 +36,9 @@ trait CanOpenUrl
     public function getUrl(mixed $state = null, ?Model $relatedRecord = null): ?string
     {
         if (! $this->hasStateBasedUrls()) {
-            return $this->evaluate($this->url);
+            // A URL that does not depend on state resolves once, at the cell level
+            // (no arguments), so it is not also emitted inside each item's anchor.
+            return func_num_args() === 0 ? $this->evaluate($this->url) : null;
         }
 
         if (func_num_args() === 0) {

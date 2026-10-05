@@ -264,6 +264,26 @@ describe('rendering', function (): void {
     });
 });
 
+it('resolves a non-state `url()` only at the cell level so it is not also emitted per item', function (): void {
+    // The cell wrapper calls `getUrl()` with no arguments; each item calls it with its state.
+    // A URL that does not depend on state must resolve only for the cell, otherwise the item
+    // anchor is nested inside the cell anchor.
+    $closureUrl = TextColumn::make('title')->url(fn (): string => 'https://example.test/edit');
+    expect($closureUrl->getUrl())->toBe('https://example.test/edit')
+        ->and($closureUrl->getUrl('item-state'))->toBeNull();
+
+    $stringUrl = TextColumn::make('title')->url('https://example.test/static');
+    expect($stringUrl->getUrl())->toBe('https://example.test/static')
+        ->and($stringUrl->getUrl('item-state'))->toBeNull();
+});
+
+it('resolves a state-based `url()` only per item, not at the cell level', function (): void {
+    $column = TextColumn::make('title')->url(fn (mixed $state): string => "https://example.test/{$state}");
+
+    expect($column->getUrl())->toBeNull()
+        ->and($column->getUrl('abc'))->toBe('https://example.test/abc');
+});
+
 class RenderColumnWithCustomLabel extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
