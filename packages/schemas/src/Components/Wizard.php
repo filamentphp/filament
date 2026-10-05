@@ -314,12 +314,24 @@ class Wizard extends Component implements HasEmbeddedView
         if ($this->isStepPersistedInQueryString()) {
             $queryStringStep = request()->query($this->getStepQueryStringKey());
 
-            foreach ($this->getSteps() as $index => $step) {
-                if ($step->getKey() !== $queryStringStep) {
-                    continue;
+            if (is_string($queryStringStep)) {
+                $steps = $this->getSteps();
+
+                foreach ($steps as $index => $step) {
+                    if ($step->getKey() !== $queryStringStep) {
+                        continue;
+                    }
+
+                    return $index + 1;
                 }
 
-                return $index + 1;
+                foreach ($steps as $index => $step) {
+                    if ($step->getId() !== $queryStringStep) {
+                        continue;
+                    }
+
+                    return $index + 1;
+                }
             }
         }
 
