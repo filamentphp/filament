@@ -17,15 +17,19 @@ it('serializes an empty builder as an empty string', function (): void {
 });
 
 it('generates deterministic Markdown using the Faker seed', function (): void {
-    fake()->seed(1234);
+    $faker = fake();
+    $firstMarkdownBuilder = $faker->filamentMarkdown();
+    $secondMarkdownBuilder = $faker->filamentMarkdown();
 
-    $firstMarkdown = fake()->filamentMarkdown()
+    $faker->seed(1234);
+
+    $firstMarkdown = $firstMarkdownBuilder
         ->article(depth: 2)
         ->toString();
 
-    fake()->seed(1234);
+    $faker->seed(1234);
 
-    $secondMarkdown = fake()->filamentMarkdown()
+    $secondMarkdown = $secondMarkdownBuilder
         ->article(depth: 2)
         ->toString();
 
