@@ -28,8 +28,6 @@ export default function selectFormComponent({
     state,
     statePath,
 }) {
-    let refreshSelectedOptionLabelListener
-
     return {
         isSearching: false,
 
@@ -38,6 +36,8 @@ export default function selectFormComponent({
         selectedOptions: [],
 
         isStateBeingUpdated: false,
+
+        refreshSelectedOptionLabelListener: null,
 
         state,
 
@@ -136,7 +136,7 @@ export default function selectFormComponent({
             }
 
             if (!isMultiple) {
-                refreshSelectedOptionLabelListener = async (event) => {
+                this.refreshSelectedOptionLabelListener = async (event) => {
                     if (event.detail.livewireId !== livewireId) {
                         return
                     }
@@ -152,7 +152,7 @@ export default function selectFormComponent({
 
                 window.addEventListener(
                     'filament-forms::select.refreshSelectedOptionLabel',
-                    refreshSelectedOptionLabelListener,
+                    this.refreshSelectedOptionLabelListener,
                 )
             }
 
@@ -174,11 +174,12 @@ export default function selectFormComponent({
         },
 
         destroy: function () {
-            if (refreshSelectedOptionLabelListener) {
+            if (this.refreshSelectedOptionLabelListener) {
                 window.removeEventListener(
                     'filament-forms::select.refreshSelectedOptionLabel',
-                    refreshSelectedOptionLabelListener,
+                    this.refreshSelectedOptionLabelListener,
                 )
+                this.refreshSelectedOptionLabelListener = null
             }
 
             this.select.destroy()
