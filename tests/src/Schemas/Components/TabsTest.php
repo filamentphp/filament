@@ -27,7 +27,7 @@ beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
 
-it('restores query-string tabs using relative keys rather than custom IDs', function (mixed $query, int $expected): void {
+it('restores query-string tabs using relative keys and legacy IDs', function (mixed $query, int $expected): void {
     request()->query->replace(['tab' => $query, 'delivery_tab' => 'account']);
 
     Schema::make(Livewire::make())->key('form')->components([
@@ -49,11 +49,29 @@ it('restores query-string tabs using relative keys rather than custom IDs', func
         ->and($delivery->toHtml())->toContain('activeTab: 1');
 })->with([
     'relative key' => ['account', 1],
-    'custom ID is not a persisted key' => ['profile-account', 2],
+    'legacy custom ID' => ['profile-account', 1],
     'absolute key is not a persisted tab key' => ['form.profile.account', 2],
     'stale key' => ['removed', 2],
     'missing value' => [null, 2],
     'array value' => [['account'], 2],
+]);
+
+it('prefers query-string tab keys before legacy IDs', function (string $query, int $expected): void {
+    request()->query->replace(['tab' => $query]);
+
+    Schema::make(Livewire::make())->key('form')->components([
+        $tabs = Tabs::make('Profile')->key('profile')->persistTabInQueryString()->tabs([
+            Tab::make('Account')->key('account')->id('contact'),
+            Tab::make('Contact')->key('contact')->id('profile-contact'),
+            Tab::make('Billing')->key('billing'),
+        ]),
+    ])->fill();
+
+    expect($tabs->getActiveTab())->toBe($expected);
+})->with([
+    'relative key before another tab custom ID' => ['contact', 2],
+    'legacy custom ID' => ['profile-contact', 2],
+    'legacy default absolute ID' => ['form.profile.billing', 3],
 ]);
 
 it('persists independent tabs across reload and browser history', function (): void {
@@ -83,8 +101,10 @@ it('persists independent tabs across reload and browser history', function (): v
         ->assertVisible('#delivery-account')
         ->back()->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
         ->forward()->assertVisible('#profile-account')->assertVisible('#delivery-account')
+        ->navigate('/tabs-browser-test?tab=profile-contact&delivery_tab=delivery-contact')
+        ->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
         ->navigate('/tabs-browser-test?tab=removed&delivery_tab=delivery-contact')
-        ->assertVisible('#profile-account')->assertVisible('#delivery-account')
+        ->assertVisible('#profile-account')->assertVisible('#delivery-contact')
         ->assertNoSmoke();
 
     visit('/tabs-browser-test?tab=contact&delivery_tab=contact')->inDarkMode()
