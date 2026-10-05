@@ -5,6 +5,8 @@ export default function statsOverviewStatChart({
     labels,
     values,
 }) {
+    let isDestroyed = false
+
     return {
         dataChecksum,
 
@@ -14,11 +16,9 @@ export default function statsOverviewStatChart({
 
         themeMediaQueryChangeHandler: null,
 
-        isDestroyed: false,
-
         init: function () {
             this.themeEffect = Alpine.effect(() => {
-                if (this.isDestroyed) {
+                if (isDestroyed) {
                     return
                 }
 
@@ -42,7 +42,7 @@ export default function statsOverviewStatChart({
                 }
 
                 this.$nextTick(() => {
-                    if (this.isDestroyed) {
+                    if (isDestroyed) {
                         return
                     }
 
@@ -62,19 +62,12 @@ export default function statsOverviewStatChart({
         },
 
         destroy: function () {
-            this.isDestroyed = true
+            isDestroyed = true
             this.themeMediaQuery.removeEventListener(
                 'change',
                 this.themeMediaQueryChangeHandler,
             )
-            this.themeMediaQueryChangeHandler = null
-            this.themeMediaQuery = null
-
-            if (this.themeEffect) {
-                Alpine.release(this.themeEffect)
-                this.themeEffect = null
-            }
-
+            Alpine.release(this.themeEffect)
             this.getChart()?.destroy()
         },
 
