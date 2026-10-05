@@ -42,7 +42,7 @@ it('can use `HtmlString` as label', function (): void {
         ->assertCanRenderTableColumn('author.email');
 });
 
-it('can toggle all table columns inside a column group', function (): void {
+it('can use `toggleAllTableColumns()` to toggle all columns inside a column group', function (): void {
     Post::factory()->count(5)->create();
 
     livewire(TestTableWithToggleableColumnGroup::class)
@@ -52,6 +52,7 @@ it('can toggle all table columns inside a column group', function (): void {
         ->toggleAllTableColumns()
         ->assertCanRenderTableColumn('author.email')
         ->toggleAllTableColumns(false)
+        ->assertCanRenderTableColumn('author.name')
         ->assertCanNotRenderTableColumn('author.email');
 });
 
