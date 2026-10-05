@@ -97,6 +97,11 @@ class Column extends ViewComponent
         return $this->table ?? $this->getGroup()?->getTable() ?? $this->getLayout()?->getTable() ?? throw new LogicException("The column [{$this->getName()}] is not mounted to a table.");
     }
 
+    public function hasTable(): bool
+    {
+        return isset($this->table) || ($this->getGroup()?->hasTable() ?? false) || ($this->getLayout()?->hasTable() ?? false);
+    }
+
     /**
      * @return array<mixed>
      */

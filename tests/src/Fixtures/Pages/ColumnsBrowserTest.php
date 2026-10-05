@@ -13,6 +13,9 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Enums\NavigationGroupEnum;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\User;
+use Livewire\Attributes\Url;
 
 class ColumnsBrowserTest extends Page implements HasTable
 {
@@ -24,8 +27,23 @@ class ColumnsBrowserTest extends Page implements HasTable
 
     protected static bool $shouldRegisterNavigation = false;
 
+    #[Url]
+    public bool $relatedRecordLayout = false;
+
     public function table(Table $table): Table
     {
+        if ($this->relatedRecordLayout) {
+            return $table->query(Post::query())->columns([
+                Tables\Columns\Layout\Stack::make([
+                    Tables\Columns\TextColumn::make('author.name')
+                        ->url(static fn (User $relatedRecord): string => "/authors/{$relatedRecord->getKey()}"),
+                    Tables\Columns\TextColumn::make('author.teams.name')
+                        ->listWithLineBreaks()
+                        ->url(static fn (string $state, Post $record, Team $relatedRecord): string => "/posts/{$record->getKey()}/teams/{$relatedRecord->getKey()}/" . rawurlencode($state)),
+                ])->extraAttributes(['data-testid' => 'related-record-layout']),
+            ]);
+        }
+
         return $table
             ->query(Post::query())
             ->reorderable('id')

@@ -121,6 +121,11 @@ class Component extends ViewComponent
         return $this->table ?? $this->getLayout()?->getTable() ?? throw new LogicException('The column layout component is not mounted to a table.');
     }
 
+    public function hasTable(): bool
+    {
+        return isset($this->table) || ($this->getLayout()?->hasTable() ?? false);
+    }
+
     public function isCollapsible(): bool
     {
         return $this->isCollapsible;

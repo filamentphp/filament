@@ -641,7 +641,7 @@ trait HasCellState
     {
         if (
             (! ($this instanceof Column)) ||
-            (! isset($this->table)) ||
+            (! $this->hasTable()) ||
             (! ($this->getRecord() instanceof Model)) ||
             blank($recordKey = $this->getStateCacheKey())
         ) {

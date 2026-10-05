@@ -7,13 +7,18 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\ColumnGroup;
 use Filament\Tables\Columns\Contracts\Editable;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Artisan;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -57,12 +62,86 @@ it('throws `LogicException` from `getTable()` when not mounted', function (): vo
         ->toThrow(LogicException::class, 'is not mounted to a table');
 });
 
-it('can call `getStateFromRecord()` for a relationship without mounting the column', function (): void {
+it('can call `getStateFromRecord()` for a relationship without mounting the column', function (string $container): void {
     $author = User::factory()->create();
     $post = Post::factory()->create(['author_id' => $author->getKey()]);
+    $column = TextColumn::make('author.name')->record($post);
 
-    expect(TextColumn::make('author.name')->record($post)->getStateFromRecord())
-        ->toBe($author->name);
+    match ($container) {
+        'stack' => Stack::make([$column])->getColumns(),
+        'nested' => Stack::make([Split::make([$column])])->getColumns(),
+        'group' => ColumnGroup::make('Author', [$column])->getColumns(),
+        default => null,
+    };
+
+    expect($column->hasTable())->toBeFalse()
+        ->and($column->getStateFromRecord())->toBe($author->name);
+})->with(['none', 'stack', 'nested', 'group']);
+
+it('preserves `$relatedRecord` in column containers across records and rendering paths', function (string $container, bool $combinedUrl, bool $decorated): void {
+    $firstAuthor = User::factory()->create(['name' => 'Shared author']);
+    $secondAuthor = User::factory()->create(['name' => 'Shared author']);
+    $firstPost = Post::factory()->create(['author_id' => $firstAuthor->getKey()]);
+    $secondPost = Post::factory()->create(['author_id' => $secondAuthor->getKey()]);
+    $firstTeam = Team::factory()->create(['name' => 'Shared team']);
+    $secondTeam = Team::factory()->create(['name' => 'Shared team']);
+    $thirdTeam = Team::factory()->create(['name' => 'Other team']);
+    $firstAuthor->teams()->attach([$firstTeam->getKey(), $secondTeam->getKey()]);
+    $secondAuthor->teams()->attach($thirdTeam);
+
+    $component = livewire(RenderRelatedRecordColumnsInContainers::class, compact('container', 'combinedUrl', 'decorated'))
+        ->assertSuccessful();
+
+    preg_match_all('/<a\b[^>]*href="([^"]+)"/', $component->html(), $matches);
+
+    expect($matches[1])->toBe($combinedUrl ? [
+        "/posts/{$firstPost->getKey()}/authors/{$firstAuthor->getKey()}/Shared%20author",
+        "/posts/{$firstPost->getKey()}/teams/{$firstTeam->getKey()}/Shared%20team",
+        "/posts/{$firstPost->getKey()}/teams/{$secondTeam->getKey()}/Shared%20team",
+        "/posts/{$secondPost->getKey()}/authors/{$secondAuthor->getKey()}/Shared%20author",
+        "/posts/{$secondPost->getKey()}/teams/{$thirdTeam->getKey()}/Other%20team",
+    ] : [
+        "/authors/{$firstAuthor->getKey()}",
+        "/teams/{$firstTeam->getKey()}",
+        "/teams/{$secondTeam->getKey()}",
+        "/authors/{$secondAuthor->getKey()}",
+        "/teams/{$thirdTeam->getKey()}",
+    ]);
+
+    $column = $component->instance()->getTable()->getColumn('author.teams.name');
+
+    foreach ([$firstPost, $secondPost, $firstPost] as $post) {
+        $column->record($post);
+
+        expect(collect($column->getRelatedRecords())->map->getKey()->all())
+            ->toBe($post->is($firstPost) ? [$firstTeam->getKey(), $secondTeam->getKey()] : [$thirdTeam->getKey()]);
+    }
+})->with(['stack', 'nested', 'group'])->with([false, true])->with([false, true]);
+
+it('renders relationship item URLs inside `Stack` accessibly in light and dark modes', function (): void {
+    Artisan::call('filament:assets');
+    $author = User::factory()->create(['name' => 'Alex Morgan']);
+    $post = Post::factory()->create(['author_id' => $author->getKey()]);
+    $firstTeam = Team::factory()->create(['name' => 'Research']);
+    $secondTeam = Team::factory()->create(['name' => 'Delivery']);
+    $author->teams()->attach([$firstTeam->getKey(), $secondTeam->getKey()]);
+    $this->actingAs($author);
+
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/columns-browser-test?relatedRecordLayout=true');
+
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page->assertNoSmoke()
+            ->assertScript('[...document.querySelectorAll(\'[data-testid="related-record-layout"] a\')].map(anchor => anchor.getAttribute("href"))', [
+                "/authors/{$author->getKey()}",
+                "/posts/{$post->getKey()}/teams/{$firstTeam->getKey()}/Research",
+                "/posts/{$post->getKey()}/teams/{$secondTeam->getKey()}/Delivery",
+            ])
+            ->assertNoAccessibilityIssues();
+    }
 });
 
 it('can call `getStateFromRecord()` with keyless records after mounting the column', function (): void {
@@ -468,6 +547,48 @@ class RenderColumnWithGrowFalse extends Component implements HasActions, HasSche
     {
         return $table->query(Post::query())->columns([
             TextColumn::make('title')->grow(false),
+        ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class RenderRelatedRecordColumnsInContainers extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public string $container = 'stack';
+
+    public bool $combinedUrl = false;
+
+    public bool $decorated = false;
+
+    public function table(Table $table): Table
+    {
+        $columns = [
+            TextColumn::make('author.name')
+                ->tooltip($this->decorated ? 'Author' : null)
+                ->url($this->combinedUrl
+                    ? static fn (string $state, Post $record, User $relatedRecord): string => "/posts/{$record->getKey()}/authors/{$relatedRecord->getKey()}/" . rawurlencode($state)
+                    : static fn (User $relatedRecord): string => "/authors/{$relatedRecord->getKey()}"),
+            TextColumn::make('author.teams.name')
+                ->listWithLineBreaks($this->decorated)
+                ->url($this->combinedUrl
+                    ? static fn (string $state, Post $record, Team $relatedRecord): string => "/posts/{$record->getKey()}/teams/{$relatedRecord->getKey()}/" . rawurlencode($state)
+                    : static fn (Team $relatedRecord): string => "/teams/{$relatedRecord->getKey()}"),
+        ];
+
+        return $table->query(Post::query()->orderBy('id'))->columns([
+            match ($this->container) {
+                'stack' => Stack::make($columns),
+                'nested' => Stack::make([Split::make($columns)]),
+                'group' => ColumnGroup::make('Author', $columns),
+            },
         ]);
     }
 
