@@ -84,6 +84,7 @@ it('prioritizes select errors and restores the configured tooltip after a succes
             ->assertScript('typeof Alpine.$data(document.querySelector(\'' . $rootSelector . '\')).getServerState === "function"')
             ->assertScript('typeof document.querySelector(\'' . $tooltipSelector . '\')._tippy === "object"');
         $page->script('document.querySelector(\'' . $selector . '\').focus()');
+        $page->script('document.querySelector(\'' . $tooltipSelector . '\')._tippy.show()');
 
         $page
             ->assertVisible('[role="tooltip"] strong')
@@ -98,8 +99,9 @@ it('prioritizes select errors and restores the configured tooltip after a succes
             }
 
             $page->assertScript('Alpine.$data(document.querySelector(\'' . $rootSelector . '\')).error ' . (($value === 'Rejected') ? '=== "Approval <em>required</em>."' : '=== undefined'))
-                ->hover('[data-testid="enum-label-column"]')
-                ->hover($selector)
+                ->script('document.querySelector(\'' . $tooltipSelector . '\')._tippy.show()');
+
+            $page
                 ->assertScript('Array.from(document.querySelectorAll(\'[role="tooltip"]\')).filter(element => getComputedStyle(element).visibility === "visible").map(element => element.textContent)', [($value === 'Rejected') ? 'Approval <em>required</em>.' : 'Update status for Alex Morgan'])
                 ->assertMissing('[role="tooltip"] em')
                 ->assertNoSmoke()
