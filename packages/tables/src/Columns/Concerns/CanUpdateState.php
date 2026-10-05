@@ -57,7 +57,7 @@ trait CanUpdateState
             $columnName = $this->getFullAttributeName($record);
             $columnRelationshipName = $this->getRelationshipName($record);
             $relatedRecord = Arr::get(
-                $record->load($columnRelationshipName),
+                $record->loadMissing($columnRelationshipName),
                 $columnRelationshipName,
             );
 

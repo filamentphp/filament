@@ -88,6 +88,29 @@ it('resolves one relationship model for all update callbacks without cached rend
         ->and($callbackRelatedRecords[0]->is($author))->toBeTrue();
 });
 
+it('preserves constrained eager loads in `updateStateUsing()`', function (): void {
+    $author = User::factory()->create();
+    $draft = Post::factory()->create([
+        'author_id' => $author->getKey(),
+        'is_published' => false,
+        'title' => 'Draft title',
+    ]);
+    $published = Post::factory()->create([
+        'author_id' => $author->getKey(),
+        'is_published' => true,
+        'title' => 'Published title',
+    ]);
+
+    livewire(TestTableWithConstrainedRelationshipTextInputColumn::class)
+        ->assertSee('Published title')
+        ->assertDontSee('Draft title')
+        ->call('updateTableColumnState', 'posts.title', (string) $author->getKey(), 'Updated title')
+        ->assertHasNoErrors();
+
+    expect($published->refresh()->title)->toBe('Updated title')
+        ->and($draft->refresh()->title)->toBe('Draft title');
+});
+
 it('resolves the default relationship persistence target after `beforeStateUpdated()`', function (): void {
     $originalAuthor = User::factory()->create(['name' => 'Original author']);
     $replacementAuthor = User::factory()->create(['name' => 'Replacement author']);
@@ -389,6 +412,35 @@ class TestTableWithTextInputColumn extends Component implements HasActions, HasS
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
                 TextInputColumn::make('rating'),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithConstrainedRelationshipTextInputColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(User::query()->with([
+                'posts' => static fn ($query) => $query->where('is_published', true)->orderBy('id'),
+            ]))
+            ->columns([
+                TextInputColumn::make('posts.title')
+                    ->state(static fn (User $record): ?string => $record->posts->first()?->title)
+                    ->updateStateUsing(static function (User $record, string $state): string {
+                        $record->posts->first()->update(['title' => $state]);
+
+                        return $state;
+                    }),
             ]);
     }
 
