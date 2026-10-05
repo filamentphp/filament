@@ -1002,6 +1002,31 @@ describe('`fixIndistinctState()`', function (): void {
         'integer enum' => [ToggleButtons::class, IntegerBackedEnum::class, IntegerBackedEnum::Zero, '0'],
     ]);
 
+    it('clears duplicate enum selections from multiple fields', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                Repeater::make('items')
+                    ->generateUuidUsing(false)
+                    ->schema([
+                        Select::make('choice')
+                            ->multiple()
+                            ->options(TestLetterEnum::class)
+                            ->fixIndistinctState(),
+                    ]),
+            ]);
+
+        $schema->fill(['items' => [['choice' => ['A', 'B']], ['choice' => ['C']]]]);
+
+        $schema->getComponentByStatePath('items.1.choice', withHidden: true)
+            ->rawState(['A'])
+            ->callAfterStateUpdated();
+
+        expect($schema->getRawState())->toBe([
+            'items' => [['choice' => ['B']], ['choice' => ['A']]],
+        ]);
+    });
+
     it('allows multiple `false` values and clears only other `true` values', function (string $fieldClass): void {
         $schema = Schema::make(Livewire::make())
             ->statePath('data')

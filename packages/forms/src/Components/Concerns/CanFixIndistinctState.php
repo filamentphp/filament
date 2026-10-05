@@ -47,17 +47,29 @@ trait CanFixIndistinctState
             }
 
             if (is_array($state)) {
-                collect($repeaterSiblingState)
-                    ->filter(fn (array $itemState): bool => filled(array_intersect(data_get($itemState, $componentItemStatePath, []), $state)))
-                    ->map(fn (array $itemState): array => collect(data_get($itemState, $componentItemStatePath) ?? [])
-                        ->diff($state)
-                        ->values()
-                        ->all())
-                    ->each(fn (array $newSiblingItemState, string $itemKey) => $set(
-                        path: "{$repeaterStatePath}.{$itemKey}.{$componentItemStatePath}",
-                        state: $newSiblingItemState,
+                foreach (array_keys($repeaterSiblingState) as $itemKey) {
+                    $siblingItemStatePath = "{$repeaterStatePath}.{$itemKey}.{$componentItemStatePath}";
+
+                    $siblingItemComponentState = (array) $get(
+                        path: $siblingItemStatePath,
                         isAbsolute: true,
-                    ));
+                    );
+
+                    $newSiblingItemState = array_filter(
+                        $siblingItemComponentState,
+                        static fn (mixed $siblingItemComponentStateValue): bool => ! in_array($siblingItemComponentStateValue, $state, strict: true),
+                    );
+
+                    if (count($newSiblingItemState) === count($siblingItemComponentState)) {
+                        continue;
+                    }
+
+                    $set(
+                        path: $siblingItemStatePath,
+                        state: array_values($newSiblingItemState),
+                        isAbsolute: true,
+                    );
+                }
 
                 return;
             }
