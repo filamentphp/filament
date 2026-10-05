@@ -2,7 +2,7 @@
     <form wire:submit="save">
         {{ $this->form }}
 
-        <x-filament::button type="submit" data-testid="save">
+        <x-filament::button type="submit" color="gray" data-testid="save">
             Save
         </x-filament::button>
 
