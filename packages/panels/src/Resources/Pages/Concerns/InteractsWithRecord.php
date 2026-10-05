@@ -22,7 +22,8 @@ trait InteractsWithRecord
             return;
         }
 
-        $this->record = $this->resolveRecordFromLivewire($this->record);
+        parent::resolveRecordPropertyFromLivewire();
+
         $this->hasResolvedRecordForRequest = true;
     }
 

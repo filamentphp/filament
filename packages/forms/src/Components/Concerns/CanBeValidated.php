@@ -180,6 +180,8 @@ trait CanBeValidated
                         ]) ?? $query;
                     }
 
+                    $query->useWritePdo();
+
                     if (! $query->exists()) {
                         $fail(__($component->getValidationMessages()['exists'] ?? 'validation.exists', ['attribute' => $component->getValidationAttribute()]));
                     }
@@ -216,6 +218,8 @@ trait CanBeValidated
                         'query' => $query,
                     ]) ?? $query;
                 }
+
+                $query->useWritePdo();
 
                 if (! $query->exists()) {
                     $fail(__($component->getValidationMessages()['exists'] ?? 'validation.exists', ['attribute' => $component->getValidationAttribute()]));
@@ -616,6 +620,8 @@ trait CanBeValidated
                         'query' => $query,
                     ]) ?? $query;
                 }
+
+                $query->useWritePdo();
 
                 if ($query->exists()) {
                     $fail(__($component->getValidationMessages()['unique'] ?? 'validation.unique', ['attribute' => $component->getValidationAttribute()]));

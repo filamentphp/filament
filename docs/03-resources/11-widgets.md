@@ -76,7 +76,7 @@ public ?Model $record = null;
 ```
 
 <Aside variant="warning">
-    On every Livewire request, Filament re-queries `$record` and `$parentRecord` using their global scopes. It does not use the resource query or run a policy for either record. The widget's `canView()` method only controls access to the widget. Check any other record access rules yourself. Filament does not re-query other model properties that you add to the widget. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+    Filament leaves widget model properties, including `$record` and `$parentRecord`, to Livewire's native restoration. It does not reapply global scopes, the resource query, or a policy for those records. A request to the widget does not reauthorize the parent page. The widget's `canView()` method controls access to the widget, not its records. Query and authorize records before using them, including any tenant or ownership restrictions. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
 </Aside>
 
 ## Accessing page table data in the widget
@@ -122,6 +122,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 Stat::make('Total Products', $this->getPageTableQuery()->count()),
 ```
+
+For a nested resource page, `InteractsWithPageTable` validates the table page's parent through its parent resource binding before initializing that page. It checks the ancestor chain when route parameters are available, or the supplied parent's identity and immediate resource binding otherwise. This applies to the table page instance, not to other uses of model properties on your widget.
 
 Alternatively, you can access a collection of the records on the current page using the `$this->getPageTableRecords()` method:
 

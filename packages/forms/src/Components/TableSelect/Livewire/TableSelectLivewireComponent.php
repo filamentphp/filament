@@ -6,8 +6,6 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Support\Livewire\Concerns\ResolvesScopedModelProperties;
-use Filament\Support\Livewire\Contracts\HasScopedModelProperties;
 use Filament\Support\Services\RelationshipJoiner;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -24,12 +22,11 @@ use Livewire\Component;
 use Livewire\WithoutUrlPagination;
 use LogicException;
 
-class TableSelectLivewireComponent extends Component implements HasActions, HasForms, HasScopedModelProperties, HasTable
+class TableSelectLivewireComponent extends Component implements HasActions, HasForms, HasTable
 {
     use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
-    use ResolvesScopedModelProperties;
     use WithoutUrlPagination;
 
     #[Locked]
@@ -64,11 +61,6 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
      */
     #[Modelable]
     public string | array | null $state = null;
-
-    protected function getScopedModelPropertyNames(): array
-    {
-        return ['record'];
-    }
 
     public function table(Table $table): Table
     {
