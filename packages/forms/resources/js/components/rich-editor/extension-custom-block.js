@@ -319,26 +319,44 @@ export default Node.create({
 
             if (customBlocks.length) {
                 let hydratedCustomBlockPreviews
+                let timeout
 
                 try {
-                    hydratedCustomBlockPreviews =
-                        await getCustomBlockPreviewsUsing(customBlocks)
+                    hydratedCustomBlockPreviews = await Promise.race([
+                        getCustomBlockPreviewsUsing(customBlocks),
+                        new Promise((resolve, reject) => {
+                            timeout = setTimeout(
+                                () =>
+                                    reject(
+                                        new Error('Preview request timed out'),
+                                    ),
+                                30000,
+                            )
+                        }),
+                    ])
                 } catch (error) {
-                    console.error(
-                        'Failed to hydrate custom block previews',
-                        error,
-                    )
-                    hydratedCustomBlockPreviews = []
-                }
+                    if (!this.editor.isDestroyed) {
+                        console.error(
+                            'Failed to hydrate custom block previews',
+                            error,
+                        )
+                    }
 
-                customBlockFingerprints.forEach((fingerprint) => {
-                    pendingCustomBlockPreviews.delete(fingerprint)
-                    customBlockPreviews.set(fingerprint, null)
-                })
+                    return
+                } finally {
+                    clearTimeout(timeout)
+                    customBlockFingerprints.forEach((fingerprint) => {
+                        pendingCustomBlockPreviews.delete(fingerprint)
+                    })
+                }
 
                 if (this.editor.isDestroyed) {
                     return
                 }
+
+                customBlockFingerprints.forEach((fingerprint) => {
+                    customBlockPreviews.set(fingerprint, null)
+                })
 
                 hydratedCustomBlockPreviews.forEach((preview) => {
                     const fingerprint = customBlockFingerprints[preview.key]

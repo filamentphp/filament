@@ -32,6 +32,20 @@ class RichEditorBrowserTest extends Page
             ->schema([
                 RichEditor::make('content')
                     ->label('Content')
+                    ->default(<<<'HTML'
+                        <p>Before grid.</p>
+                        <div class="grid-layout" data-cols="2" data-from-breakpoint="md">
+                            <div class="grid-layout-col" data-col-span="1">
+                                <p>First column.</p>
+                                <h2>Column heading</h2>
+                            </div>
+                            <div class="grid-layout-col" data-col-span="1">
+                                <p>Second column.</p>
+                                <ul><li><p>List item.</p></li></ul>
+                            </div>
+                        </div>
+                        <p>After grid.</p>
+                        HTML)
                     ->extraAttributes(['data-testid' => 'default-rich-editor']),
                 RichEditor::make('heightConstrainedContent')
                     ->label('Height constrained content')

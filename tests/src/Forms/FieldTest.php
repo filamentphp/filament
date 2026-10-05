@@ -81,58 +81,52 @@ it('can use a Blade component alias via `fieldWrapperView()`', function (): void
 });
 
 describe('validation messages for nested recursive rules', function (): void {
-    $shareErrors = function (array $messages): void {
+    $renderCheckboxListWithErrors = function (array $messages, ?string $fieldWrapperView = null): string {
+        $previousErrors = view()->shared('errors');
+
         view()->share('errors', (new ViewErrorBag)->put('default', new MessageBag($messages)));
+
+        try {
+            $checkboxList = CheckboxList::make('choices')
+                ->options(['alpha' => 'Alpha'])
+                ->showAllValidationMessages();
+
+            if (filled($fieldWrapperView)) {
+                $checkboxList->fieldWrapperView($fieldWrapperView);
+            }
+
+            return Schema::make(Livewire::make())
+                ->statePath('data')
+                ->components([$checkboxList])
+                ->toHtml();
+        } finally {
+            view()->share('errors', $previousErrors);
+        }
     };
 
-    it('renders a single per-element message', function () use ($shareErrors): void {
-        $shareErrors(['data.choices.0' => ['The first choice is invalid.']]);
-
-        $html = Schema::make(Livewire::make())
-            ->statePath('data')
-            ->components([
-                CheckboxList::make('choices')
-                    ->options(['alpha' => 'Alpha'])
-                    ->showAllValidationMessages(),
-            ])
-            ->toHtml();
+    it('renders a single per-element message', function () use ($renderCheckboxListWithErrors): void {
+        $html = $renderCheckboxListWithErrors(['data.choices.0' => ['The first choice is invalid.']]);
 
         expect($html)
             ->toContain('The first choice is invalid.');
     });
 
-    it('renders every per-element message when more than one index fails', function () use ($shareErrors): void {
-        $shareErrors([
+    it('renders every per-element message when more than one index fails', function () use ($renderCheckboxListWithErrors): void {
+        $html = $renderCheckboxListWithErrors([
             'data.choices.0' => ['The first choice is invalid.'],
             'data.choices.1' => ['The second choice is invalid.'],
         ]);
-
-        $html = Schema::make(Livewire::make())
-            ->statePath('data')
-            ->components([
-                CheckboxList::make('choices')
-                    ->options(['alpha' => 'Alpha'])
-                    ->showAllValidationMessages(),
-            ])
-            ->toHtml();
 
         expect($html)
             ->toContain('The first choice is invalid.')
             ->toContain('The second choice is invalid.');
     });
 
-    it('renders a per-element message through a Blade field wrapper', function () use ($shareErrors): void {
-        $shareErrors(['data.choices.0' => ['The first choice is invalid.']]);
-
-        $html = Schema::make(Livewire::make())
-            ->statePath('data')
-            ->components([
-                CheckboxList::make('choices')
-                    ->options(['alpha' => 'Alpha'])
-                    ->showAllValidationMessages()
-                    ->fieldWrapperView('test-plugin-wrapper'),
-            ])
-            ->toHtml();
+    it('renders a per-element message through a Blade field wrapper', function () use ($renderCheckboxListWithErrors): void {
+        $html = $renderCheckboxListWithErrors(
+            ['data.choices.0' => ['The first choice is invalid.']],
+            fieldWrapperView: 'test-plugin-wrapper',
+        );
 
         expect($html)
             ->toContain('The first choice is invalid.');

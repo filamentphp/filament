@@ -14,12 +14,103 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use LogicException;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
+it('isolates validation state from cached relationship state', function (bool $warmCache, string $input, bool $isValid): void {
+    $author = User::factory()->create(['json' => ['status' => 'Pending']]);
+    $post = Post::factory()->create(['author_id' => $author->getKey()]);
+    $column = SelectColumn::make('author.json.status')
+        ->table(livewire(TestTableWithSelectColumn::class)->instance()->getTable())
+        ->record($post)
+        ->options(['Pending' => 'Pending', 'Approved' => 'Approved', 'Blocked' => 'Blocked'])
+        ->disableOptionWhen(static fn (string $value): bool => $value === 'Blocked')
+        ->tooltip(static fn (string $state, User $relatedRecord): string => "{$state}:{$relatedRecord->getKey()}");
+
+    if ($warmCache) {
+        expect($column->getState())->toBe('Pending');
+    }
+
+    if ($isValid) {
+        $column->validate($input);
+    } else {
+        expect(fn () => $column->validate($input))->toThrow(ValidationException::class);
+    }
+
+    expect($column->getState())->toBe('Pending')
+        ->and($column->getRelatedRecords()[0]->is($author))->toBeTrue()
+        ->and($column->toEmbeddedHtml())->toContain("Pending:{$author->getKey()}");
+})->with([false, true])->with([
+    'valid option' => ['Approved', true],
+    'missing option' => ['Missing', false],
+    'disabled option' => ['Blocked', false],
+]);
+
+it('renders one error-aware select tooltip with or without a configured hint', function (bool $isNative, ?string $tooltip): void {
+    $post = Post::factory()->create();
+    $column = livewire(TestTableWithSelectColumn::class)->instance()->getTable()->getColumn('rating');
+    $html = $column->record($post)->native($isNative)->tooltip($tooltip)->toEmbeddedHtml();
+
+    expect(substr_count($html, 'x-tooltip='))->toBe(1)
+        ->and($html)->toContain('error === undefined ? ' . ($tooltip ? '{' : 'false'))
+        ->toContain('content: error')
+        ->toContain('allowHTML: false');
+})->with([false, true])->with([null, 'Edit rating']);
+
+it('prioritizes select errors and restores the configured tooltip after a successful save', function (string $mode): void {
+    Artisan::call('filament:assets');
+    $author = User::factory()->create(['name' => 'Alex Morgan', 'json' => ["{$mode}_status" => 'Pending']]);
+    Post::factory()->create(['author_id' => $author->getKey()]);
+    $this->actingAs(User::factory()->create());
+    $rootSelector = "[data-testid=\"author-{$mode}-select\"]";
+    $selector = $rootSelector . (($mode === 'native') ? ' select' : ' [role="combobox"]');
+
+    foreach ([false, true] as $isDarkMode) {
+        $author->refresh()->update(['json' => ["{$mode}_status" => 'Pending']]);
+        $page = visit('/columns-browser-test');
+
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page->assertVisible($selector)
+            ->assertScript('typeof Alpine.$data(document.querySelector(\'' . $rootSelector . '\')).getServerState === "function"');
+        $page->script('document.querySelector(\'' . $selector . '\').focus()');
+
+        $page
+            ->assertVisible('[role="tooltip"] strong')
+            ->assertScript('document.querySelector(\'[role="tooltip"]\').textContent', 'Update status for Alex Morgan')
+            ->assertScript('document.activeElement.hasAttribute("aria-describedby")');
+
+        foreach (['Rejected', 'Approved'] as $value) {
+            if ($mode === 'native') {
+                $page->select($selector, $value);
+            } else {
+                $page->click($selector)->click($rootSelector . ' [role="option"][data-value="' . $value . '"]');
+            }
+
+            $page->assertScript('Alpine.$data(document.querySelector(\'' . $rootSelector . '\')).error ' . (($value === 'Rejected') ? '=== "Approval <em>required</em>."' : '=== undefined'))
+                ->hover('[data-testid="enum-label-column"]')
+                ->hover($selector)
+                ->assertScript('Array.from(document.querySelectorAll(\'[role="tooltip"]\')).filter(element => getComputedStyle(element).visibility === "visible").map(element => element.textContent)', [($value === 'Rejected') ? 'Approval <em>required</em>.' : 'Update status for Alex Morgan'])
+                ->assertMissing('[role="tooltip"] em')
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+
+            if ($value === 'Approved') {
+                $page->assertVisible('[role="tooltip"] strong');
+            }
+
+            expect($author->fresh()->json["{$mode}_status"])->toBe(($value === 'Rejected') ? 'Pending' : 'Approved');
+        }
+    }
+})->with(['native', 'custom', 'searchable']);
 
 it('can set `native()` to `false` and get with `isNative()`', function (): void {
     expect(SelectColumn::make('status')->native(false)->isNative())->toBeFalse();

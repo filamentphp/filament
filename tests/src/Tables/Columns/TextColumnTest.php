@@ -142,7 +142,7 @@ describe('label formatting compatibility', function (): void {
     });
 });
 
-it('renders rich-mode enum labels accessibly in light and dark modes', function (): void {
+it('renders labels and wrapper URLs accessibly in light and dark modes', function (): void {
     Artisan::call('filament:assets');
     Post::factory()->create(['title' => 'Quarterly report', 'content' => 'Review summary']);
     $this->actingAs(User::factory()->create());
@@ -157,6 +157,11 @@ it('renders rich-mode enum labels accessibly in light and dark modes', function 
         $page
             ->assertNoSmoke()
             ->assertScript('document.querySelector(\'[data-testid="enum-label-column"]\').textContent.trim()', 'User Management')
+            ->assertScript('document.querySelectorAll(\'[data-testid="linked-column"] a\').length', 1)
+            ->assertScript('document.querySelectorAll(\'[data-testid="disabled-column"] a\').length', 0)
+            ->assertNoAccessibilityIssues()
+            ->click('[data-testid="toggle-reordering"]')
+            ->assertScript('document.querySelectorAll(\'[data-testid="linked-column"] a\').length', 0)
             ->assertNoAccessibilityIssues();
     }
 });
@@ -442,13 +447,45 @@ describe('rendering', function (): void {
             ->assertSeeHtml('2025-06-15');
     });
 
-    it('wraps the state in an `<a>` when `url()` is set', function (): void {
-        Post::factory()->create();
+    it('keeps wrapper `url()` links exclusive and respects click suppression', function (string $urlType, string $rendering): void {
+        $post = Post::factory()->create(['title' => 'Quarterly report']);
+        $url = ($urlType === 'record') ? "https://example.test/posts/{$post->getKey()}" : 'https://example.test/foo';
 
-        livewire(RenderTextColumnWithUrl::class)
-            ->assertSuccessful()
-            ->assertSeeHtml('href="https://example.test/foo"');
-    });
+        $component = livewire(RenderTextColumnWithUrl::class, compact('urlType', 'rendering'))
+            ->assertSuccessful();
+        $column = $component->instance()->getTable()->getColumn('title')->record($post);
+
+        expect(preg_match_all('/<a\b/', $component->html()))->toBe(1)
+            ->and(substr_count($component->html(), 'href="' . $url . '"'))->toBe(1)
+            ->and(preg_match_all('/<a\b/', $column->renderInLayout()->toHtml()))->toBe(1)
+            ->and($column->getUrl())->toBe($url)
+            ->and($column->getUrl(null))->toBeNull()
+            ->and($column->getUrl('Alpha', new User))->toBeNull();
+
+        $component->set('disableColumnClick', true);
+        expect(preg_match_all('/<a\b/', $component->html()))->toBe(0);
+
+        $component->set('disableColumnClick', false)->call('toggleTableReordering')->assertSet('isTableReordering', true);
+        expect(preg_match_all('/<a\b/', $component->html()))->toBe(0);
+    })->with(['constant', 'closure', 'record'])->with(['optimized', 'rich', 'list', 'collapsed']);
+
+    it('resolves item `url()` closures only for explicit item arguments', function (string $urlType): void {
+        $column = TextColumn::make('title')
+            ->record(new Post(['title' => 'Parent']))
+            ->url(match ($urlType) {
+                'state' => static fn (?string $state): string => '/items/' . ($state ?? 'empty'),
+                'related' => static fn (?User $relatedRecord): string => '/items/' . ($relatedRecord?->name ?? 'empty'),
+                'combined' => static fn (?string $state, Post $record, ?User $relatedRecord): string => "/items/{$record->title}/" . ($state ?? 'empty') . '/' . ($relatedRecord?->name ?? 'empty'),
+            });
+
+        expect($column->getUrl())->toBeNull()
+            ->and($column->getUrl(null))->toBe(($urlType === 'combined') ? '/items/Parent/empty/empty' : '/items/empty')
+            ->and($column->getUrl('Alpha', new User(['name' => 'Beta'])))->toBe(match ($urlType) {
+                'state' => '/items/Alpha',
+                'related' => '/items/Beta',
+                'combined' => '/items/Parent/Alpha/Beta',
+            });
+    })->with(['state', 'related', 'combined']);
 
     it('adds `target="_blank"` when `openUrlInNewTab()` is set', function (): void {
         Post::factory()->create();
@@ -1439,11 +1476,30 @@ class RenderTextColumnWithUrl extends Component implements HasActions, HasSchema
     use InteractsWithSchemas;
     use Tables\Concerns\InteractsWithTable;
 
+    public string $urlType = 'closure';
+
+    public string $rendering = 'optimized';
+
+    public bool $disableColumnClick = false;
+
     public function table(Table $table): Table
     {
-        return $table->query(Post::query())->columns([
-            TextColumn::make('title')->url(static fn (): string => 'https://example.test/foo'),
-        ]);
+        $column = TextColumn::make('title')
+            ->url(match ($this->urlType) {
+                'constant' => 'https://example.test/foo',
+                'closure' => static fn (): string => 'https://example.test/foo',
+                'record' => static fn (Post $record): string => "https://example.test/posts/{$record->getKey()}",
+            })
+            ->disabledClick(fn (): bool => $this->disableColumnClick);
+
+        match ($this->rendering) {
+            'rich' => $column->tooltip('Details'),
+            'list' => $column->state(['Alpha', 'Beta'])->listWithLineBreaks(),
+            'collapsed' => $column->state(['Alpha', 'Beta']),
+            default => null,
+        };
+
+        return $table->query(Post::query())->reorderable('id')->columns([$column]);
     }
 
     public function render(): View

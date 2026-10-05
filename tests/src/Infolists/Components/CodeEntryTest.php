@@ -12,6 +12,8 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Js;
 use Livewire\Component;
 use Phiki\Grammar\Grammar;
 use Phiki\Theme\Theme;
@@ -65,21 +67,94 @@ it('injects the related model into copying and tooltip evaluations', function ()
         ->toContain("tooltip-{$author->email}");
 });
 
-it('injects raw array `$state` and `$relatedRecord` into copying and tooltip evaluations', function (): void {
-    $author = User::factory()->create(['json' => ['code' => 'echo true;']]);
+it('injects JSON `$state` and preserves both records in copying and tooltip evaluations', function (int $flags, string $expectedState): void {
+    $author = User::factory()->create(['json' => ['url' => 'https://example.com/café']]);
     $post = Post::factory()->create(['author_id' => $author->getKey()]);
+    $evaluatedMethods = [];
 
     $entry = CodeEntry::make('author.json')
-        ->copyable(static fn (array $state, User $relatedRecord): bool => ($state === $relatedRecord->json) && $relatedRecord->exists)
-        ->copyableState(static fn (array $state, User $relatedRecord): string => "{$state['code']}:{$relatedRecord->email}")
-        ->copyMessage(static fn (array $state, User $relatedRecord): string => "{$state['code']}:{$relatedRecord->getKey()}")
-        ->tooltip(static fn (array $state, User $relatedRecord): string => "{$relatedRecord->email}:{$state['code']}")
+        ->jsonFlags($flags)
         ->container(Schema::make(Livewire::make())->record($post));
 
-    expect($entry->toHtml())
-        ->toContain("echo true;:{$author->email}")
-        ->toContain("echo true;:{$author->getKey()}")
-        ->toContain("{$author->email}:echo true;");
+    foreach (['copyable', 'copyableState', 'copyMessage', 'copyMessageDuration', 'tooltip'] as $method) {
+        $entry->{$method}(static function (string $state, User $relatedRecord, Post $record) use ($author, &$evaluatedMethods, $expectedState, $method, $post): bool | int | string {
+            expect($state)->toBe($expectedState)
+                ->and($relatedRecord->is($author))->toBeTrue()
+                ->and($record->is($post))->toBeTrue();
+
+            $evaluatedMethods[] = $method;
+
+            return match ($method) {
+                'copyable' => true,
+                'copyableState' => "Copy: {$state}",
+                'copyMessage' => 'Copied code',
+                'copyMessageDuration' => 1234,
+                'tooltip' => 'Copy code',
+            };
+        });
+    }
+
+    $document = new DOMDocument;
+    $document->loadHTML('<?xml encoding="UTF-8">' . $entry->toHtml());
+    $xpath = new DOMXPath($document);
+    $clickHandler = $xpath->query('//*[@*[name()="x-on:click"]]')->item(0)->getAttribute('x-on:click');
+
+    expect($evaluatedMethods)->toBe(['copyable', 'copyableState', 'copyMessage', 'copyMessageDuration', 'tooltip'])
+        ->and(rtrim($xpath->query('//code')->item(0)->textContent, "\n"))->toBe($expectedState)
+        ->and($clickHandler)->toContain('clipboard.writeText(' . Js::from("Copy: {$expectedState}") . ')')
+        ->toContain("\$tooltip('Copied code'")
+        ->toContain('timeout: 1234');
+})->with([
+    'pretty JSON' => [JSON_PRETTY_PRINT, "{\n    \"url\": \"https:\\/\\/example.com\\/caf\\u00e9\"\n}"],
+    'unescaped JSON' => [JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE, '{"url":"https://example.com/café"}'],
+]);
+
+it('copies the displayed JSON by default for array and `Collection` state', function (bool $isCollection): void {
+    $state = ['enabled' => true, 'retries' => 3];
+    $expectedState = "{\n    \"enabled\": true,\n    \"retries\": 3\n}";
+
+    $entry = CodeEntry::make('code')
+        ->container(Schema::make(Livewire::make()))
+        ->state($isCollection ? collect($state) : $state)
+        ->copyable(static fn (string $state): bool => $state === $expectedState);
+
+    $document = new DOMDocument;
+    $document->loadHTML($entry->toHtml());
+    $xpath = new DOMXPath($document);
+
+    expect(rtrim($xpath->query('//code')->item(0)->textContent, "\n"))->toBe($expectedState)
+        ->and($xpath->query('//*[@*[name()="x-on:click"]]')->item(0)->getAttribute('x-on:click'))
+        ->toContain('clipboard.writeText(' . Js::from($expectedState) . ')');
+
+    $entry->copyable(static fn (string $state): bool => $state !== $expectedState);
+
+    expect($entry->toHtml())->not->toContain('clipboard.writeText');
+})->with([false, true]);
+
+it('copies JSON and custom string callback content in the browser', function (): void {
+    Artisan::call('filament:assets');
+    $this->actingAs(User::factory()->create());
+
+    $expectedState = "{\n    \"enabled\": true,\n    \"retries\": 3\n}";
+
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/infolist-entries-browser-test');
+
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page->script("Object.defineProperty(window.navigator, 'clipboard', { configurable: true, value: { writeText: async (value) => { window.__copiedText = value } } })");
+
+        $page
+            ->assertScript('document.querySelector(\'[data-testid="copyable-code"] code\').textContent.trim()', $expectedState)
+            ->click('[data-testid="copyable-code"]')
+            ->assertScript('window.__copiedText', $expectedState)
+            ->click('[data-testid="custom-copy-code"]')
+            ->assertScript('window.__copiedText', "Copy: {$expectedState}")
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+    }
 });
 
 it('can set and get `grammar()`', function (): void {

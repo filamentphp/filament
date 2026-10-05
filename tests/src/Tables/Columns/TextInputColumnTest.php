@@ -17,34 +17,93 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Artisan;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('injects `$state` and `$relatedRecord` into update callbacks', function (): void {
-    $relatedRecord = new User(['email' => 'user@example.com']);
+it('renders one error-aware text input tooltip with or without a configured hint', function (?string $tooltip): void {
+    $post = Post::factory()->create();
+    $column = livewire(TestTableWithTextInputColumn::class)->instance()->getTable()->getColumn('rating');
+    $html = $column->record($post)->tooltip($tooltip)->toEmbeddedHtml();
+
+    expect(substr_count($html, 'x-tooltip='))->toBe(1)
+        ->and($html)->toContain('error === undefined ? ' . ($tooltip ? '{' : 'false'))
+        ->toContain('content: error')
+        ->toContain('allowHTML: false');
+})->with([null, 'Edit rating']);
+
+it('prioritizes text input errors and restores the configured tooltip after a successful save', function (): void {
+    Artisan::call('filament:assets');
+    $author = User::factory()->create(['name' => 'Alex Morgan', 'json' => ['display_name' => 'Pending']]);
+    Post::factory()->create(['author_id' => $author->getKey()]);
+    $this->actingAs(User::factory()->create());
+    $selector = '[data-testid="author-name-input"] input:not([type="hidden"])';
+
+    foreach ([false, true] as $isDarkMode) {
+        $author->refresh()->update(['json' => ['display_name' => 'Pending']]);
+        $page = visit('/columns-browser-test');
+
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page->assertVisible($selector)
+            ->assertScript('typeof Alpine.$data(document.querySelector(\'[data-testid="author-name-input"]\')).getServerState === "function"');
+        $page->script('document.querySelector(\'' . $selector . '\').focus()');
+
+        $page
+            ->assertVisible('[role="tooltip"] strong')
+            ->assertScript('document.querySelector(\'[role="tooltip"]\').textContent', 'Update name for Alex Morgan')
+            ->assertScript('document.activeElement.hasAttribute("aria-describedby")')
+            ->fill($selector, 'Rejected')
+            ->click('[data-testid="enum-label-column"]')
+            ->assertScript('Alpine.$data(document.querySelector(\'[data-testid="author-name-input"]\')).error', 'Approval <em>required</em>.')
+            ->hover($selector)
+            ->assertScript('Array.from(document.querySelectorAll(\'[role="tooltip"]\')).filter(element => getComputedStyle(element).visibility === "visible").map(element => element.textContent)', ['Approval <em>required</em>.'])
+            ->assertMissing('[role="tooltip"] em')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        expect($author->fresh()->json['display_name'])->toBe('Pending');
+
+        $page->fill($selector, 'Approved')
+            ->click('[data-testid="enum-label-column"]')
+            ->assertScript('Alpine.$data(document.querySelector(\'[data-testid="author-name-input"]\')).error === undefined')
+            ->hover($selector)
+            ->assertVisible('[role="tooltip"] strong')
+            ->assertScript('Array.from(document.querySelectorAll(\'[role="tooltip"]\')).filter(element => getComputedStyle(element).visibility === "visible").map(element => element.textContent)', ['Update name for Alex Morgan'])
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        expect($author->fresh()->json['display_name'])->toBe('Approved');
+    }
+});
+
+it('injects `$state` and a `null` `$relatedRecord` into update callbacks without a relationship', function (): void {
     $calls = [];
 
     $column = TextInputColumn::make('name')
-        ->beforeStateUpdated(static function (string $state, User $relatedRecord) use (&$calls): void {
-            $calls[] = "before:{$state}:{$relatedRecord->email}";
+        ->record(new User(['name' => 'Original name']))
+        ->beforeStateUpdated(static function (string $state, ?User $relatedRecord) use (&$calls): void {
+            $calls[] = ['before', $state, $relatedRecord];
         })
-        ->updateStateUsing(static function (string $state, User $relatedRecord) use (&$calls): string {
-            $calls[] = "update:{$state}:{$relatedRecord->email}";
+        ->updateStateUsing(static function (string $state, ?User $relatedRecord) use (&$calls): string {
+            $calls[] = ['update', $state, $relatedRecord];
 
             return strtoupper($state);
         })
-        ->afterStateUpdated(static function (string $state, User $relatedRecord) use (&$calls): void {
-            $calls[] = "after:{$state}:{$relatedRecord->email}";
+        ->afterStateUpdated(static function (string $state, ?User $relatedRecord) use (&$calls): void {
+            $calls[] = ['after', $state, $relatedRecord];
         });
 
-    expect($column->updateState('updated', $relatedRecord))->toBe('UPDATED')
+    expect($column->updateState('updated'))->toBe('UPDATED')
         ->and($calls)->toBe([
-            'before:updated:user@example.com',
-            'update:updated:user@example.com',
-            'after:updated:user@example.com',
+            ['before', 'updated', null],
+            ['update', 'updated', null],
+            ['after', 'updated', null],
         ]);
 });
 
@@ -58,8 +117,11 @@ it('resolves one relationship model for all update callbacks without cached rend
         ->beforeStateUpdated(static function (User $relatedRecord) use (&$callbackRelatedRecords): void {
             $callbackRelatedRecords[] = $relatedRecord;
         })
-        ->updateStateUsing(static function (string $state): string {
+        ->updateStateUsing(static function (string $state, Post $record, User $relatedRecord) use (&$callbackRelatedRecords, $post): string {
             expect($state)->toBe('Updated name');
+            expect($record)->toBe($post);
+
+            $callbackRelatedRecords[] = $relatedRecord;
 
             return strtoupper($state);
         })
@@ -68,8 +130,9 @@ it('resolves one relationship model for all update callbacks without cached rend
         });
 
     expect($column->updateState('Updated name'))->toBe('UPDATED NAME')
-        ->and($callbackRelatedRecords)->toHaveCount(2)
+        ->and($callbackRelatedRecords)->toHaveCount(3)
         ->and($callbackRelatedRecords[0])->toBe($callbackRelatedRecords[1])
+        ->and($callbackRelatedRecords[1])->toBe($callbackRelatedRecords[2])
         ->and($callbackRelatedRecords[0]->is($author))->toBeTrue();
 });
 

@@ -42,9 +42,4 @@ class CheckboxTest extends Page
             ])
             ->statePath('data');
     }
-
-    public function save(): void
-    {
-        $this->form->getState();
-    }
 }
