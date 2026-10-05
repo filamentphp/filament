@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => '详情',
 
+    'navigation_label' => '详情',
+
     'content' => [
 
         'tab' => [

@@ -22,8 +22,16 @@ return [
 
     'actions' => [
 
+        'first' => [
+            'label' => '首页',
+        ],
+
         'go_to_page' => [
             'label' => '跳转到 :page',
+        ],
+
+        'last' => [
+            'label' => '末页',
         ],
 
         'next' => [
