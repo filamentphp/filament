@@ -8,8 +8,20 @@ export default function statsOverviewStatChart({
     return {
         dataChecksum,
 
+        themeEffect: null,
+
+        themeMediaQuery: null,
+
+        themeMediaQueryChangeHandler: null,
+
+        isDestroyed: false,
+
         init: function () {
-            Alpine.effect(() => {
+            this.themeEffect = Alpine.effect(() => {
+                if (this.isDestroyed) {
+                    return
+                }
+
                 Alpine.store('theme')
 
                 const chart = this.getChart()
@@ -21,23 +33,49 @@ export default function statsOverviewStatChart({
                 this.initChart()
             })
 
-            window
-                .matchMedia('(prefers-color-scheme: dark)')
-                .addEventListener('change', () => {
-                    if (Alpine.store('theme') !== 'system') {
+            this.themeMediaQuery = window.matchMedia(
+                '(prefers-color-scheme: dark)',
+            )
+            this.themeMediaQueryChangeHandler = () => {
+                if (Alpine.store('theme') !== 'system') {
+                    return
+                }
+
+                this.$nextTick(() => {
+                    if (this.isDestroyed) {
                         return
                     }
 
-                    this.$nextTick(() => {
-                        const chart = this.getChart()
+                    const chart = this.getChart()
 
-                        if (chart) {
-                            chart.destroy()
-                        }
+                    if (chart) {
+                        chart.destroy()
+                    }
 
-                        this.initChart()
-                    })
+                    this.initChart()
                 })
+            }
+            this.themeMediaQuery.addEventListener(
+                'change',
+                this.themeMediaQueryChangeHandler,
+            )
+        },
+
+        destroy: function () {
+            this.isDestroyed = true
+            this.themeMediaQuery.removeEventListener(
+                'change',
+                this.themeMediaQueryChangeHandler,
+            )
+            this.themeMediaQueryChangeHandler = null
+            this.themeMediaQuery = null
+
+            if (this.themeEffect) {
+                Alpine.release(this.themeEffect)
+                this.themeEffect = null
+            }
+
+            this.getChart()?.destroy()
         },
 
         initChart: function () {
