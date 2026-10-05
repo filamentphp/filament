@@ -656,11 +656,17 @@ class TestsColumns
             $tableColumns = $this->instance()->tableColumns;
 
             foreach ($tableColumns as &$column) {
-                if (! $column['isToggleable']) {
-                    continue;
+                if ($column['isToggleable']) {
+                    $column['isToggled'] = $condition;
                 }
 
-                $column['isToggled'] = $condition;
+                foreach ($column['columns'] ?? [] as $index => $groupedColumn) {
+                    if (! $groupedColumn['isToggleable']) {
+                        continue;
+                    }
+
+                    $column['columns'][$index]['isToggled'] = $condition;
+                }
             }
 
             $this->set('tableColumns', $tableColumns);
