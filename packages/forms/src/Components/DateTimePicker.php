@@ -349,9 +349,17 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
             app(DateTimeStateCast::class, [
                 'format' => $this->getFormat(),
                 'internalFormat' => $this->getInternalFormat(),
-                'timezone' => $this->hasTime() ? $this->getTimezone() : null,
+                'timezone' => $this->getStateCastTimezone(),
             ]),
         ];
+    }
+
+    protected function getStateCastTimezone(): ?string
+    {
+        // Epoch formats need a timezone to determine their calendar date. Ignore escaped tokens.
+        return ($this->hasTime() || str_contains(preg_replace('/\\\\./s', '', $this->getFormat()), 'U'))
+            ? $this->getTimezone()
+            : null;
     }
 
     public function getInternalFormat(): string
@@ -827,7 +835,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
             return app(DateTimeStateCast::class, [
                 'format' => $this->getFormat(),
                 'internalFormat' => 'Y-m-d H:i:s',
-                'timezone' => null,
+                'timezone' => $this->getStateCastTimezone(),
             ])->set($defaultFocusedDate);
         }
 

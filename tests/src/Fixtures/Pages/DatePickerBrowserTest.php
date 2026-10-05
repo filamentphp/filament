@@ -43,6 +43,20 @@ class DatePickerBrowserTest extends Page
                     ->minDate(Carbon::parse('2025-07-15 09:30:23', 'Asia/Tokyo'))
                     ->maxDate(static fn () => CarbonImmutable::parse('2025-07-17 17:45:47', 'America/New_York'))
                     ->extraInputAttributes(['data-testid' => 'native-date']),
+                DatePicker::make('timestamp')
+                    ->label('Timestamp date')
+                    ->format('U')
+                    ->timezone('Asia/Tokyo')
+                    ->default('1752505200')
+                    ->extraInputAttributes(['data-testid' => 'timestamp-date']),
+                DatePicker::make('customTimestamp')
+                    ->label('Custom timestamp date')
+                    ->native(false)
+                    ->format('U')
+                    ->displayFormat('Y-m-d')
+                    ->timezone('Asia/Tokyo')
+                    ->default('1752505200')
+                    ->extraTriggerAttributes(['data-testid' => 'custom-timestamp-date']),
             ])
             ->statePath('data');
     }
