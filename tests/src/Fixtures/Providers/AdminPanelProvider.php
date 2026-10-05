@@ -54,6 +54,7 @@ use Filament\Tests\Fixtures\Pages\KeyValueTest;
 use Filament\Tests\Fixtures\Pages\ManageSiteSettings;
 use Filament\Tests\Fixtures\Pages\MarkdownEditorBrowserTest;
 use Filament\Tests\Fixtures\Pages\ModalBrowserTest;
+use Filament\Tests\Fixtures\Pages\NotificationBrowserTest;
 use Filament\Tests\Fixtures\Pages\OneTimeCodeInputBrowserTest;
 use Filament\Tests\Fixtures\Pages\OneTimeCodeInputSubmitOnCompletionBrowserTest;
 use Filament\Tests\Fixtures\Pages\PartialRenderingTest;
@@ -173,6 +174,7 @@ class AdminPanelProvider extends PanelProvider
                 ManageSiteSettings::class,
                 MarkdownEditorBrowserTest::class,
                 ModalBrowserTest::class,
+                NotificationBrowserTest::class,
                 OneTimeCodeInputBrowserTest::class,
                 OneTimeCodeInputSubmitOnCompletionBrowserTest::class,
                 PartialRenderingTest::class,

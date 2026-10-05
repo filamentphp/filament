@@ -213,7 +213,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                                 })"
                         wire:ignore
                         wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$disabledDates, $isDisabled, $isReadOnly, $maxDate, $minDate, $hasDate, $hasTime, $hasSeconds])), 0, 64) ?>"
-                        x-on:dropdown-escape="$refs.panel.close()"
+                        x-on:dropdown-escape="if (isOpen()) { $refs.panel.close(); $refs.button.focus(); $event.preventDefault() }"
                         x-on:focusout="if (isOpen() && ! $el.contains($event.relatedTarget)) $refs.panel.close()"
                         x-on:keydown.esc="isOpen() && $event.stopPropagation()"
                         <?= $this->getExtraAlpineAttributeBag()->toHtml() ?>

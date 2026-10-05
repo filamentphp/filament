@@ -482,6 +482,27 @@ export const tableFilters = () => ({
 
     removeActionCommitHook: null,
 
+    dropdownPanel: null,
+
+    dropdownOpenedListener: null,
+
+    init() {
+        this.dropdownPanel = this.$el.closest('.fi-dropdown-panel')
+        this.dropdownOpenedListener = (event) => {
+            if (!event.detail.shouldAutofocus) {
+                return
+            }
+
+            this.focusFirstControl()
+            this.$el.focus()
+        }
+
+        this.dropdownPanel?.addEventListener(
+            'dropdown-opened',
+            this.dropdownOpenedListener,
+        )
+    },
+
     rememberActionFocus(event) {
         const action = event.target.closest('[data-table-filter-action]')
 
@@ -570,5 +591,10 @@ export const tableFilters = () => ({
 
         this.removeActionCommitHook?.()
         this.removeActionCommitHook = null
+
+        this.dropdownPanel?.removeEventListener(
+            'dropdown-opened',
+            this.dropdownOpenedListener,
+        )
     },
 })

@@ -198,6 +198,10 @@ new FilamentNotification()
     .send()
 ```
 
+The automatic close timer pauses while the notification is hovered or while keyboard focus is inside it. The timer resumes with its remaining time when neither interaction is active. A focused notification can also be closed with `Escape`.
+
+If a notification contains information or a function that is not available elsewhere on the page, make it persistent so that users can choose when to close it.
+
 ## Setting body text
 
 Additional notification text can be shown in the `body()`:

@@ -185,6 +185,20 @@ it('can close notifications', function (): void {
         ->toHaveCount(0);
 });
 
+it('does not add toast dismissal behavior to inline notifications', function (): void {
+    $html = Notification::make()
+        ->inline()
+        ->actions([
+            Action::make('dismiss')->close(),
+        ])
+        ->toEmbeddedHtml();
+
+    expect($html)
+        ->not->toContain('dismiss-notification')
+        ->not->toContain('x-on:keydown.escape')
+        ->toContain('x-on:click="close()"');
+});
+
 it('matches the correct notification with `assertNotified()` when multiple notifications are sent', function (): void {
     Notification::make()->title('First')->body('First body')->send();
     Notification::make()->title('Second')->body('Second body')->send();
