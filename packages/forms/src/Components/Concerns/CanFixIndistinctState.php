@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Arr;
 
@@ -14,7 +15,7 @@ trait CanFixIndistinctState
         $this->distinct($condition);
         $this->live(condition: $condition);
 
-        $this->afterStateUpdated(static function (Component $component, mixed $state, Set $set) use ($condition): void {
+        $this->afterStateUpdated(static function (Component $component, mixed $state, Get $get, Set $set) use ($condition): void {
             if (! $component->evaluate($condition)) {
                 return;
             }
@@ -62,7 +63,10 @@ trait CanFixIndistinctState
             }
 
             collect($repeaterSiblingState)
-                ->map(fn (array $itemState): mixed => data_get($itemState, $componentItemStatePath))
+                ->map(fn (array $itemState, string $itemKey): mixed => $get(
+                    path: "{$repeaterStatePath}.{$itemKey}.{$componentItemStatePath}",
+                    isAbsolute: true,
+                ))
                 ->filter(function (mixed $siblingItemComponentState) use ($state): bool {
                     if ($siblingItemComponentState === false) {
                         return false;
