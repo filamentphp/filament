@@ -47,6 +47,7 @@ use Filament\Tests\Fixtures\Pages\FileUploadBrowserTest;
 use Filament\Tests\Fixtures\Pages\FiltersModalBrowserTest;
 use Filament\Tests\Fixtures\Pages\FiltersResetActionBrowserTest;
 use Filament\Tests\Fixtures\Pages\IconBrowserTest;
+use Filament\Tests\Fixtures\Pages\IndistinctStateBrowserTest;
 use Filament\Tests\Fixtures\Pages\IndividualColumnSearchBrowserTest;
 use Filament\Tests\Fixtures\Pages\InfolistEntriesBrowserTest;
 use Filament\Tests\Fixtures\Pages\KeyValueTest;
@@ -165,6 +166,7 @@ class AdminPanelProvider extends PanelProvider
                 FiltersModalBrowserTest::class,
                 FiltersResetActionBrowserTest::class,
                 IconBrowserTest::class,
+                IndistinctStateBrowserTest::class,
                 IndividualColumnSearchBrowserTest::class,
                 InfolistEntriesBrowserTest::class,
                 KeyValueTest::class,
