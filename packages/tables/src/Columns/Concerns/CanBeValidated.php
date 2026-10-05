@@ -66,6 +66,7 @@ trait CanBeValidated
         $originalState = $this->getGetStateUsingCallback();
 
         $this->getStateUsing($input);
+        $this->clearCachedState();
 
         try {
             Validator::make(
@@ -76,6 +77,7 @@ trait CanBeValidated
             )->validate();
         } finally {
             $this->getStateUsing($originalState);
+            $this->clearCachedState();
         }
     }
 

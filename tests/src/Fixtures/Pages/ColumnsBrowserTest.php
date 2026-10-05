@@ -3,6 +3,7 @@
 namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedTable;
@@ -15,6 +16,7 @@ use Filament\Tests\Fixtures\Enums\NavigationGroupEnum;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
+use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Url;
 
 class ColumnsBrowserTest extends Page implements HasTable
@@ -29,6 +31,10 @@ class ColumnsBrowserTest extends Page implements HasTable
 
     #[Url]
     public bool $relatedRecordLayout = false;
+
+    public bool $hasRejectedCheckboxUpdate = false;
+
+    public bool $hasRejectedToggleUpdate = false;
 
     public function table(Table $table): Table
     {
@@ -66,6 +72,49 @@ class ColumnsBrowserTest extends Page implements HasTable
                 Tables\Columns\IconColumn::make('is_published')
                     ->label('Published')
                     ->boolean(),
+                Tables\Columns\CheckboxColumn::make('author.json.is_active')
+                    ->label('Author active')
+                    ->tooltip(static fn (bool $state, User $relatedRecord): HtmlString => new HtmlString('<strong>Update activity for ' . e($relatedRecord->name) . '</strong>'))
+                    ->rules([
+                        'boolean',
+                        function (string $attribute, mixed $value, Closure $fail): void {
+                            if (! $this->hasRejectedCheckboxUpdate) {
+                                $this->hasRejectedCheckboxUpdate = true;
+
+                                $fail('Approval <em>required</em>.');
+                            }
+                        },
+                    ])
+                    ->extraInputAttributes(['data-testid' => 'author-active-checkbox']),
+                Tables\Columns\ToggleColumn::make('author.json.is_subscribed')
+                    ->label('Author subscribed')
+                    ->tooltip(static fn (bool $state, User $relatedRecord): HtmlString => new HtmlString('<strong>Update subscription for ' . e($relatedRecord->name) . '</strong>'))
+                    ->rules([
+                        'boolean',
+                        function (string $attribute, mixed $value, Closure $fail): void {
+                            if (! $this->hasRejectedToggleUpdate) {
+                                $this->hasRejectedToggleUpdate = true;
+
+                                $fail('Approval <em>required</em>.');
+                            }
+                        },
+                    ])
+                    ->extraAttributes(['data-testid' => 'author-subscribed-toggle']),
+                Tables\Columns\TextInputColumn::make('author.json.display_name')
+                    ->label('Display name')
+                    ->tooltip(static fn (User $relatedRecord): HtmlString => new HtmlString('<strong>Update name for ' . e($relatedRecord->name) . '</strong>'))
+                    ->rules(['in:Approved'])
+                    ->validationMessages(['in' => 'Approval <em>required</em>.'])
+                    ->extraAttributes(['data-testid' => 'author-name-input']),
+                ...array_map(static fn (string $mode): Tables\Columns\SelectColumn => Tables\Columns\SelectColumn::make("author.json.{$mode}_status")
+                    ->label(ucfirst($mode) . ' status')
+                    ->options(['Pending' => 'Pending', 'Rejected' => 'Rejected', 'Approved' => 'Approved'])
+                    ->native($mode === 'native')
+                    ->searchableOptions($mode === 'searchable')
+                    ->tooltip(static fn (User $relatedRecord): HtmlString => new HtmlString('<strong>Update status for ' . e($relatedRecord->name) . '</strong>'))
+                    ->rules(['in:Approved'])
+                    ->validationMessages(['in' => 'Approval <em>required</em>.'])
+                    ->extraAttributes(['data-testid' => "author-{$mode}-select"]), ['native', 'custom', 'searchable']),
                 Tables\Columns\TextColumn::make('rating')
                     ->label('Rating')
                     ->badge(),

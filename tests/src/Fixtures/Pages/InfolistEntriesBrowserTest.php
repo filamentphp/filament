@@ -3,6 +3,7 @@
 namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
+use Filament\Infolists\Components\CodeEntry;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Pages\Page;
@@ -64,6 +65,15 @@ class InfolistEntriesBrowserTest extends Page
                     ->label('Tags')
                     ->badge()
                     ->separator(','),
+                CodeEntry::make('code')
+                    ->state(['enabled' => true, 'retries' => 3])
+                    ->copyable(static fn (string $state): bool => str_contains($state, 'enabled'))
+                    ->extraAttributes(['data-testid' => 'copyable-code']),
+                CodeEntry::make('custom_copy_code')
+                    ->state(['enabled' => true, 'retries' => 3])
+                    ->copyable()
+                    ->copyableState(static fn (string $state): string => "Copy: {$state}")
+                    ->extraAttributes(['data-testid' => 'custom-copy-code']),
                 IconEntry::make('is_published')
                     ->label('Published')
                     ->size('lg'),

@@ -45,8 +45,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
         $offIcon = $this->getOffIcon();
         $onColor = $this->getOnColor() ?? 'primary';
         $onIcon = $this->getOnIcon();
-        $rawState = $this->getState();
-        $state = (bool) $rawState;
+        $state = (bool) $this->getState();
         $relatedRecord = $this->getRelatedRecord();
 
         $attributes = $this->getExtraAttributeBag()
@@ -58,13 +57,6 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                     recordKey: ' . Js::from($this->getRecordKey()) . ',
                     state: ' . Js::from($state) . ',
                 })',
-                'x-tooltip' => filled($tooltip = $this->getTooltip($rawState, $relatedRecord))
-                    ? '{
-                        content: ' . Js::from($tooltip) . ',
-                        theme: $store.theme,
-                        allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
-                    }'
-                    : null,
             ], escape: false)
             ->class([
                 'fi-ta-toggle',
@@ -79,6 +71,17 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                 'disabled' => $this->isDisabled(),
                 'wire:loading.attr' => 'disabled',
                 'wire:target' => implode(',', Table::LOADING_TARGETS),
+                'x-tooltip' => 'error === undefined ? ' . (filled($tooltip = $this->getTooltip($state, $relatedRecord))
+                    ? '{
+                        content: ' . Js::from($tooltip) . ',
+                        theme: $store.theme,
+                        allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
+                    }'
+                    : 'false') . ' : {
+                        content: error,
+                        theme: $store.theme,
+                        allowHTML: false,
+                    }',
             ], escape: false)
             ->class(['fi-toggle']);
 
@@ -114,14 +117,6 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                 x-on:keydown.space.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
                 x-bind:class="state ? <?= $onClasses ?> : <?= $offClasses ?>"
                 <?php if ($state) { ?> x-cloak <?php } ?>
-                x-tooltip="
-                    error === undefined
-                        ? false
-                        : {
-                            content: error,
-                            theme: $store.theme,
-                        }
-                "
                 role="switch"
                 <?= $buttonAttributes->toHtml() ?>
             >
