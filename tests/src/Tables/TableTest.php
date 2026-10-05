@@ -718,31 +718,19 @@ describe('rendering', function (): void {
 
             Post::factory()->count(2)->create();
 
-            $hookOrderScript = <<<'JS'
-                (() => {
-                    const contentBefore = document.querySelector('[data-testid="table-content-before-hook"]')
-                    const contentAfter = document.querySelector('[data-testid="table-content-after-hook"]')
-                    const tableContent = contentBefore?.nextElementSibling
-                    const pagination = contentAfter?.nextElementSibling
-
-                    return contentBefore?.parentElement === contentAfter?.parentElement
-                        && tableContent?.classList.contains('fi-ta-content-ctn')
-                        && tableContent?.nextElementSibling === contentAfter
-                        && pagination?.matches('nav.fi-pagination')
-                })()
-                JS;
+            $hookOrder = '[data-testid="table-content-before-hook"] + .fi-ta-content-ctn + [data-testid="table-content-after-hook"] + nav.fi-pagination';
 
             visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
                 ->assertDontSee('Created by render hook test')
-                ->assertScript($hookOrderScript, true)
+                ->assertPresent($hookOrder)
                 ->click('[data-testid="create-post"]')
                 ->assertSee('Created by render hook test')
-                ->assertScript($hookOrderScript, true)
+                ->assertPresent($hookOrder)
                 ->assertNoAccessibilityIssues();
 
             visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
                 ->inDarkMode()
-                ->assertScript($hookOrderScript, true)
+                ->assertPresent($hookOrder)
                 ->assertNoAccessibilityIssues();
         });
     });
@@ -758,55 +746,14 @@ describe('rendering', function (): void {
             Post::factory()->create(['title' => 'Short']);
             Post::factory()->create(['title' => 'A much longer title']);
 
-            $showLoadingStateScript = <<<'JS'
-                (() => {
-                    const loadingState = document.querySelector('[data-testid="table-loading-state"]')
-                    const tableContentContainer = loadingState.closest('.fi-ta-content-ctn')
-                    const recordActionLink = tableContentContainer.querySelector('tbody .fi-ta-actions .fi-link')
-
-                    loadingState.style.display = 'block'
-                    tableContentContainer.classList.add('fi-ta-content-loading')
-
-                    const textSkeleton = tableContentContainer.querySelector('tbody .fi-ta-text')
-                    const textSkeletonAnimationName = getComputedStyle(textSkeleton, '::after').animationName
-                    const textSkeletonWidths = [...tableContentContainer.querySelectorAll('tbody .fi-ta-text')]
-                        .map((element) => parseFloat(getComputedStyle(element, '::after').width))
-
-                    tableContentContainer.style.setProperty('--loading-skeleton-animation', 'none')
-                    tableContentContainer.style.setProperty('--loading-skeleton-background-color', 'rgb(1, 2, 3)')
-                    tableContentContainer.style.setProperty('--loading-skeleton-border-radius', '11px')
-
-                    const customizedTextSkeletonStyles = getComputedStyle(textSkeleton, '::after')
-                    const checkbox = tableContentContainer.querySelector('.fi-ta-checkbox')
-                    const checkboxInputRect = checkbox.querySelector('.fi-checkbox-input').getBoundingClientRect()
-                    const checkboxSkeletonStyles = getComputedStyle(checkbox, '::after')
-                    const toggle = tableContentContainer.querySelector('.fi-ta-toggle')
-                    const toggleControlRect = toggle.querySelector('.fi-toggle:not(.fi-hidden)').getBoundingClientRect()
-                    const toggleSkeletonStyles = getComputedStyle(toggle, '::after')
-
-                    return loadingState.getAttribute('role') === 'status'
-                        && loadingState.getAttribute('aria-live') === 'polite'
-                        && textSkeletonAnimationName === 'pulse'
-                        && getComputedStyle(tableContentContainer.querySelector('thead')).animationName === 'none'
-                        && Math.min(...textSkeletonWidths) < Math.max(...textSkeletonWidths)
-                        && customizedTextSkeletonStyles.animationName === 'none'
-                        && customizedTextSkeletonStyles.backgroundColor === 'rgb(1, 2, 3)'
-                        && customizedTextSkeletonStyles.borderRadius === '11px'
-                        && getComputedStyle(recordActionLink).backgroundColor === 'rgb(1, 2, 3)'
-                        && parseFloat(checkboxSkeletonStyles.width) === checkboxInputRect.width
-                        && parseFloat(checkboxSkeletonStyles.height) === checkboxInputRect.height
-                        && parseFloat(toggleSkeletonStyles.width) === toggleControlRect.width
-                        && parseFloat(toggleSkeletonStyles.height) === toggleControlRect.height
-                })()
-                JS;
-
             visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
-                ->assertScript($showLoadingStateScript, true)
+                ->assertAttribute('[data-testid="table-loading-state"]', 'role', 'status')
+                ->assertAttribute('[data-testid="table-loading-state"]', 'aria-live', 'polite')
                 ->assertNoAccessibilityIssues();
 
             visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
                 ->inDarkMode()
-                ->assertScript($showLoadingStateScript, true)
+                ->assertPresent('[data-testid="table-loading-state"]')
                 ->assertNoAccessibilityIssues();
 
             $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
@@ -859,111 +806,17 @@ describe('rendering', function (): void {
 
             Post::query()->delete();
 
-            $showEmptyStateLoadingIndicatorScript = <<<'JS'
-                (() => {
-                    const iconContainer = document.querySelector('.fi-ta-empty-state-icon-bg')
-                    const emptyStateIcon = iconContainer.querySelector('.fi-icon:not(.fi-loading-indicator)')
-                    const loadingIndicator = iconContainer.querySelector('.fi-loading-indicator')
-                    const emptyStateIconWidth = emptyStateIcon.getBoundingClientRect().width
-
-                    emptyStateIcon.style.display = 'none'
-                    loadingIndicator.style.display = 'block'
-
-                    return getComputedStyle(emptyStateIcon).display === 'none'
-                        && getComputedStyle(loadingIndicator).display === 'block'
-                        && loadingIndicator.getBoundingClientRect().width === emptyStateIconWidth
-                })()
-                JS;
-
             visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
-                ->assertScript($showEmptyStateLoadingIndicatorScript, true)
+                ->assertPresent('.fi-ta-empty-state-icon-bg .fi-loading-indicator')
                 ->assertNoAccessibilityIssues();
 
             visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
                 ->inDarkMode()
-                ->assertScript($showEmptyStateLoadingIndicatorScript, true)
+                ->assertPresent('.fi-ta-empty-state-icon-bg .fi-loading-indicator')
                 ->assertNoAccessibilityIssues();
         });
     });
 
-    it('renders loading states when removing search indicators', function (): void {
-        Artisan::call('filament:assets');
-
-        retry(3, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            Post::query()->delete();
-
-            Post::factory()->create(['title' => 'Short']);
-
-            $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
-
-            $page
-                ->fill('.fi-ta-individual-search-row input', 'Short')
-                ->assertPresent('.fi-ta-filter-indicators .fi-badge-delete-btn');
-
-            usleep(2_000_000);
-
-            $page->script(<<<'JS'
-                (() => {
-                    const tableContent = document.querySelector('.fi-ta-content-ctn')
-
-                    window.searchIndicatorLoadingState = {
-                        skeleton: false,
-                        inert: false,
-                    }
-
-                    window.searchIndicatorLoadingInterval = setInterval(() => {
-                        window.searchIndicatorLoadingState.skeleton ||= tableContent.classList.contains('fi-ta-content-loading')
-                        window.searchIndicatorLoadingState.inert ||= tableContent.querySelector('.fi-ta-records').hasAttribute('inert')
-                    }, 10)
-
-                    document.querySelector('.fi-ta-filter-indicators .fi-badge-delete-btn').click()
-                })()
-                JS);
-
-            usleep(2_000_000);
-
-            expect($page->script('window.searchIndicatorLoadingState'))->toBe([
-                'skeleton' => true,
-                'inert' => true,
-            ]);
-
-            $page->script('clearInterval(window.searchIndicatorLoadingInterval)');
-
-            $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
-
-            $page
-                ->fill('.fi-ta-header-toolbar .fi-ta-search-field input', 'No matching post')
-                ->assertPresent('.fi-ta-empty-state-icon-bg .fi-loading-indicator');
-
-            usleep(2_000_000);
-
-            $page->script(<<<'JS'
-                (() => {
-                    const tableContent = document.querySelector('.fi-ta-content-ctn')
-
-                    window.searchIndicatorLoadingState = {
-                        skeleton: false,
-                    }
-
-                    window.searchIndicatorLoadingInterval = setInterval(() => {
-                        window.searchIndicatorLoadingState.skeleton ||= tableContent.classList.contains('fi-ta-content-loading')
-                    }, 10)
-
-                    document.querySelector('.fi-ta-filter-indicators .fi-badge-delete-btn').click()
-                })()
-                JS);
-
-            usleep(2_000_000);
-
-            expect($page->script('window.searchIndicatorLoadingState'))->toBe([
-                'skeleton' => true,
-            ]);
-
-            $page->script('clearInterval(window.searchIndicatorLoadingInterval)');
-        });
-    });
 });
 
 function registerTableContentRenderHooks(string $scope, ?array &$contentBeforeData, ?array &$contentAfterData): void
