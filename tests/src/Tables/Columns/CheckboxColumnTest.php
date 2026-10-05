@@ -96,6 +96,7 @@ it('prioritizes checkbox errors and restores the configured tooltip after a succ
 
         $page
             ->assertNotChecked('[data-testid="author-active-checkbox"]')
+            ->assertScript('typeof document.querySelector(\'[data-testid="author-active-checkbox"]\')._tippy === "object"')
             ->hover('[data-testid="author-active-checkbox"]')
             ->assertVisible('[role="tooltip"] strong')
             ->assertScript('document.querySelector(\'[role="tooltip"]\').textContent', 'Update activity for Alex Morgan')

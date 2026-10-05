@@ -70,6 +70,7 @@ it('prioritizes select errors and restores the configured tooltip after a succes
     $this->actingAs(User::factory()->create());
     $rootSelector = "[data-testid=\"author-{$mode}-select\"]";
     $selector = $rootSelector . (($mode === 'native') ? ' select' : ' [role="combobox"]');
+    $tooltipSelector = $rootSelector . ' [x-tooltip]';
 
     foreach ([false, true] as $isDarkMode) {
         $author->refresh()->update(['json' => ["{$mode}_status" => 'Pending']]);
@@ -80,7 +81,8 @@ it('prioritizes select errors and restores the configured tooltip after a succes
         }
 
         $page->assertVisible($selector)
-            ->assertScript('typeof Alpine.$data(document.querySelector(\'' . $rootSelector . '\')).getServerState === "function"');
+            ->assertScript('typeof Alpine.$data(document.querySelector(\'' . $rootSelector . '\')).getServerState === "function"')
+            ->assertScript('typeof document.querySelector(\'' . $tooltipSelector . '\')._tippy === "object"');
         $page->script('document.querySelector(\'' . $selector . '\').focus()');
 
         $page
