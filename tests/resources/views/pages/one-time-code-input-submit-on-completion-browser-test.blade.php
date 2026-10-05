@@ -11,7 +11,7 @@
         <p>
             Submitted code:
             <span data-testid="submitted-code">
-                {{ data_get($data, 'code') }}
+                {{ $submittedCode }}
             </span>
         </p>
 
