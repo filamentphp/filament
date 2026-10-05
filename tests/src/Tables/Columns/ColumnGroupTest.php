@@ -42,6 +42,19 @@ it('can use `HtmlString` as label', function (): void {
         ->assertCanRenderTableColumn('author.email');
 });
 
+it('can toggle all table columns inside a column group', function (): void {
+    Post::factory()->count(5)->create();
+
+    livewire(TestTableWithToggleableColumnGroup::class)
+        ->assertSuccessful()
+        ->assertCanRenderTableColumn('author.name')
+        ->assertCanNotRenderTableColumn('author.email')
+        ->toggleAllTableColumns()
+        ->assertCanRenderTableColumn('author.email')
+        ->toggleAllTableColumns(false)
+        ->assertCanNotRenderTableColumn('author.email');
+});
+
 class TestTableWithColumnGroup extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
@@ -82,6 +95,32 @@ class TestTableWithColumnGroupWithHtmlStringLabel extends Component implements H
                 Tables\Columns\ColumnGroup::make(new HtmlString('<span>Author</span>'), [
                     Tables\Columns\TextColumn::make('author.name'),
                     Tables\Columns\TextColumn::make('author.email'),
+                ]),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithToggleableColumnGroup extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\ColumnGroup::make('author', [
+                    Tables\Columns\TextColumn::make('author.name'),
+                    Tables\Columns\TextColumn::make('author.email')
+                        ->toggleable(isToggledHiddenByDefault: true),
                 ]),
             ]);
     }
