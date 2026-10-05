@@ -2015,18 +2015,26 @@ it('can delete a grid from its floating toolbar without deleting its content', f
 
     $editor = '[data-testid="default-rich-editor"]';
 
-    visit('/rich-editor-browser-test')
-        ->click($editor . ' .grid-layout-col >> text=First column.')
-        ->assertVisible($editor . ' .fi-fo-rich-editor-floating-toolbar button[aria-label="Delete grid"]')
-        ->click($editor . ' .fi-fo-rich-editor-floating-toolbar button[aria-label="Delete grid"]')
-        ->assertMissing($editor . ' .grid-layout')
-        ->assertSeeIn($editor, 'Before grid.')
-        ->assertSeeIn($editor, 'First column.')
-        ->assertSeeIn($editor, 'Column heading')
-        ->assertSeeIn($editor, 'Second column.')
-        ->assertSeeIn($editor, 'List item.')
-        ->assertSeeIn($editor, 'After grid.')
-        ->assertNoAccessibilityIssues();
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/rich-editor-browser-test');
+
+        if ($isDarkMode) {
+            $page->inDarkMode();
+        }
+
+        $page
+            ->click($editor . ' .grid-layout-col >> text=First column.')
+            ->assertVisible($editor . ' .fi-fo-rich-editor-floating-toolbar button[aria-label="Delete grid"]')
+            ->click($editor . ' .fi-fo-rich-editor-floating-toolbar button[aria-label="Delete grid"]')
+            ->assertMissing($editor . ' .grid-layout')
+            ->assertSeeIn($editor, 'Before grid.')
+            ->assertSeeIn($editor, 'First column.')
+            ->assertSeeIn($editor, 'Column heading')
+            ->assertSeeIn($editor, 'Second column.')
+            ->assertSeeIn($editor, 'List item.')
+            ->assertSeeIn($editor, 'After grid.')
+            ->assertNoAccessibilityIssues();
+    }
 });
 
 it('can manage grid columns from its floating toolbar', function (): void {
@@ -2034,20 +2042,28 @@ it('can manage grid columns from its floating toolbar', function (): void {
 
     $editor = '[data-testid="default-rich-editor"]';
 
-    visit('/rich-editor-browser-test')
-        ->click($editor . ' .grid-layout-col >> text=Second column.')
-        ->assertVisible($editor . ' [data-testid="grid-add-column-before"]')
-        ->assertVisible($editor . ' [data-testid="grid-add-column-after"]')
-        ->assertVisible($editor . ' [data-testid="grid-delete-column"]')
-        ->assertEnabled($editor . ' [data-testid="grid-add-column-before"]')
-        ->assertEnabled($editor . ' [data-testid="grid-add-column-after"]')
-        ->assertEnabled($editor . ' [data-testid="grid-delete-column"]')
-        ->click($editor . ' [data-testid="grid-add-column-before"]')
-        ->click($editor . ' [data-testid="grid-add-column-after"]')
-        ->assertCount($editor . ' .grid-layout-col', 4)
-        ->assertSeeIn($editor, 'First column.')
-        ->assertSeeIn($editor, 'Second column.')
-        ->assertNoAccessibilityIssues();
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/rich-editor-browser-test');
+
+        if ($isDarkMode) {
+            $page->inDarkMode();
+        }
+
+        $page
+            ->click($editor . ' .grid-layout-col >> text=Second column.')
+            ->assertVisible($editor . ' [data-testid="grid-add-column-before"]')
+            ->assertVisible($editor . ' [data-testid="grid-add-column-after"]')
+            ->assertVisible($editor . ' [data-testid="grid-delete-column"]')
+            ->assertEnabled($editor . ' [data-testid="grid-add-column-before"]')
+            ->assertEnabled($editor . ' [data-testid="grid-add-column-after"]')
+            ->assertEnabled($editor . ' [data-testid="grid-delete-column"]')
+            ->click($editor . ' [data-testid="grid-add-column-before"]')
+            ->click($editor . ' [data-testid="grid-add-column-after"]')
+            ->assertCount($editor . ' .grid-layout-col', 4)
+            ->assertSeeIn($editor, 'First column.')
+            ->assertSeeIn($editor, 'Second column.')
+            ->assertNoAccessibilityIssues();
+    }
 });
 
 it('can search custom blocks and insert one at the preserved editor selection', function (): void {

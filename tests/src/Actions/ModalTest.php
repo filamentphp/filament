@@ -11,8 +11,8 @@ beforeEach(function (): void {
 });
 
 describe('browser interactions', function (): void {
-    it('keeps a button focused while its loading state blocks pointer activation', function (): void {
-        retry(10, function (bool $isDarkMode): void {
+    it('keeps a button focused while its loading state blocks pointer activation', function (bool $isDarkMode): void {
+        retry(10, function () use ($isDarkMode): void {
             $this->actingAs(User::factory()->create());
 
             $browser = visit('/modal-browser-test');
