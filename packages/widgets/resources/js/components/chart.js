@@ -3,20 +3,37 @@ import 'chartjs-adapter-luxon'
 
 export default function chart({ cachedData, options, type }) {
     return {
+        themeEffect: null,
+
+        themeMediaQuery: null,
+
+        themeMediaQueryChangeHandler: null,
+
+        unsubscribeChartDataListener: null,
+
+        isDestroyed: false,
+
         init: function () {
             this.initChart()
 
-            this.$wire.$on('updateChartData', ({ data }) => {
-                chart = this.getChart()
-                chart.data = data
-                chart.update('resize')
-            })
+            this.unsubscribeChartDataListener = this.$wire.$on(
+                'updateChartData',
+                ({ data }) => {
+                    const chart = this.getChart()
+                    if (this.isDestroyed || !chart) {
+                        return
+                    }
 
-            Alpine.effect(() => {
+                    chart.data = data
+                    chart.update('resize')
+                },
+            )
+
+            this.themeEffect = Alpine.effect(() => {
                 Alpine.store('theme')
 
                 this.$nextTick(() => {
-                    if (!this.getChart()) {
+                    if (this.isDestroyed || !this.getChart()) {
                         return
                     }
 
@@ -25,18 +42,46 @@ export default function chart({ cachedData, options, type }) {
                 })
             })
 
-            window
-                .matchMedia('(prefers-color-scheme: dark)')
-                .addEventListener('change', () => {
-                    if (Alpine.store('theme') !== 'system') {
+            this.themeMediaQuery = window.matchMedia(
+                '(prefers-color-scheme: dark)',
+            )
+            this.themeMediaQueryChangeHandler = () => {
+                if (Alpine.store('theme') !== 'system') {
+                    return
+                }
+
+                this.$nextTick(() => {
+                    if (this.isDestroyed || !this.getChart()) {
                         return
                     }
 
-                    this.$nextTick(() => {
-                        this.getChart().destroy()
-                        this.initChart()
-                    })
+                    this.getChart().destroy()
+                    this.initChart()
                 })
+            }
+            this.themeMediaQuery.addEventListener(
+                'change',
+                this.themeMediaQueryChangeHandler,
+            )
+        },
+
+        destroy: function () {
+            this.isDestroyed = true
+            this.themeMediaQuery.removeEventListener(
+                'change',
+                this.themeMediaQueryChangeHandler,
+            )
+            this.themeMediaQueryChangeHandler = null
+            this.themeMediaQuery = null
+            this.unsubscribeChartDataListener?.()
+            this.unsubscribeChartDataListener = null
+
+            if (this.themeEffect) {
+                Alpine.release(this.themeEffect)
+                this.themeEffect = null
+            }
+
+            this.getChart()?.destroy()
         },
 
         initChart: function (data = null) {
