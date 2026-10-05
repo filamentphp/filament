@@ -335,6 +335,8 @@ ImportColumn::make('authors')
     ->multiple(',')
 ```
 
+You may repeat a value in the same cell. When looking up records by primary key or the column names passed to `resolveUsing`, missing related values cause the row to fail validation.
+
 #### Customizing the relationship import resolution
 
 If you want to find a related record using a different column, you can pass the column name as `resolveUsing`:
@@ -387,6 +389,8 @@ ImportColumn::make('authors')
             ->get();
     })
 ```
+
+When returning a collection, you should validate that your function resolves every requested value, since Filament cannot determine which input value each returned record represents.
 
 You could even use this function to dynamically determine which columns to use to resolve the record:
 
