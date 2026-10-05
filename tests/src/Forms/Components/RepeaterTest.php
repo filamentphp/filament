@@ -6,10 +6,12 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
@@ -18,6 +20,8 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
+use Filament\Tests\Fixtures\Enums\IntegerBackedEnum;
+use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\PostMetadata;
@@ -971,6 +975,108 @@ class TestComponentWithRepeaterAndBuilder extends Livewire
     }
 }
 
+describe('`fixIndistinctState()`', function (): void {
+    it('clears duplicate cast values and preserves their submitted type', function (string $fieldClass, array | string $options, mixed $state, string $updatedState): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                Repeater::make('items')
+                    ->generateUuidUsing(false)
+                    ->schema([
+                        $fieldClass::make('choice')->options($options)->fixIndistinctState(),
+                    ]),
+            ]);
+
+        $schema->fill(['items' => [['choice' => $state], ['choice' => null]]]);
+
+        $schema->getComponentByStatePath('items.1.choice', withHidden: true)
+            ->rawState($updatedState)
+            ->callAfterStateUpdated();
+
+        expect($schema->getState())->toBe([
+            'items' => [['choice' => null], ['choice' => $state]],
+        ]);
+    })->with([
+        'numeric zero' => [Select::class, [0 => 'Zero', 1 => 'One'], 0, '0'],
+        'string enum' => [Radio::class, StringBackedEnum::class, StringBackedEnum::One, 'one'],
+        'integer enum' => [ToggleButtons::class, IntegerBackedEnum::class, IntegerBackedEnum::Zero, '0'],
+    ]);
+
+    it('clears duplicate enum selections from multiple fields', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                Repeater::make('items')
+                    ->generateUuidUsing(false)
+                    ->schema([
+                        Select::make('choice')
+                            ->multiple()
+                            ->options(TestLetterEnum::class)
+                            ->fixIndistinctState(),
+                    ]),
+            ]);
+
+        $schema->fill(['items' => [['choice' => ['A', 'B']], ['choice' => ['C']]]]);
+
+        $schema->getComponentByStatePath('items.1.choice', withHidden: true)
+            ->rawState(['A'])
+            ->callAfterStateUpdated();
+
+        expect($schema->getRawState())->toBe([
+            'items' => [['choice' => ['B']], ['choice' => ['A']]],
+        ]);
+    });
+
+    it('allows multiple `false` values and clears only other `true` values', function (string $fieldClass): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                Repeater::make('items')
+                    ->generateUuidUsing(false)
+                    ->schema([
+                        $fieldClass::make('choice')->fixIndistinctState(),
+                    ]),
+            ]);
+
+        $schema->fill(['items' => [['choice' => true], ['choice' => false], ['choice' => false]]]);
+
+        $secondField = $schema->getComponentByStatePath('items.1.choice', withHidden: true);
+        $secondField->rawState(false)->callAfterStateUpdated();
+
+        expect($schema->getState())->toBe([
+            'items' => [['choice' => true], ['choice' => false], ['choice' => false]],
+        ]);
+
+        $secondField->rawState(true)->callAfterStateUpdated();
+
+        expect($schema->getState())->toBe([
+            'items' => [['choice' => false], ['choice' => true], ['choice' => false]],
+        ]);
+    })->with(['checkbox' => [Checkbox::class], 'toggle' => [Toggle::class]]);
+
+    it('preserves different string option identifiers with leading zeroes', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                Repeater::make('items')
+                    ->generateUuidUsing(false)
+                    ->schema([
+                        Select::make('choice')->options(['01' => 'First', 1 => 'Second'])->fixIndistinctState(),
+                    ]),
+            ]);
+
+        $schema->fill(['items' => [['choice' => '01'], ['choice' => null]]]);
+
+        $schema->getComponentByStatePath('items.1.choice', withHidden: true)
+            ->rawState('1')
+            ->callAfterStateUpdated();
+
+        expect($schema->getRawState())->toBe([
+            'items' => [['choice' => '01'], ['choice' => '1']],
+        ]);
+    });
+});
+
 describe('`distinct()` validation on boolean fields', function (): void {
     it('does not force an optional `distinct()` boolean field to be selected when sibling items exist', function (string $component): void {
         livewire($component)
@@ -1500,6 +1606,29 @@ describe('rendering', function (): void {
     it('can render with `table()` view', function (): void {
         livewire(RenderRepeaterWithTable::class)->assertSuccessful();
     });
+});
+
+it('clears duplicate selections with `fixIndistinctState()` in the browser and allows saving', function (): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    $firstSelect = ':nth-match([data-testid="choice"], 1)';
+    $secondSelect = ':nth-match([data-testid="choice"], 2)';
+
+    $page = visit('/indistinct-state-browser-test');
+
+    $page
+        ->assertValue($firstSelect, '0')
+        ->select($secondSelect, '0')
+        ->assertValue($firstSelect, '')
+        ->assertValue($secondSelect, '0')
+        ->assertNoAccessibilityIssues()
+        ->click('[data-testid="save"]')
+        ->assertVisible('[data-testid="saved"]')
+        ->assertNoSmoke();
+
+    $page->inDarkMode()->assertNoAccessibilityIssues();
 });
 
 it('can add and delete items in the browser', function (): void {
