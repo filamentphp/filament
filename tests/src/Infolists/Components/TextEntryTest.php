@@ -42,15 +42,48 @@ it('can format state using `formatStateUsing()`', function (): void {
         ->assertSeeText('HELLO WORLD');
 });
 
-it('keeps a wrapper `url()` that does not use item state', function (): void {
-    $post = Post::factory()->create();
+it('keeps wrapper `url()` links exclusive', function (string $urlType, string $rendering): void {
+    $post = Post::factory()->create(['title' => 'Quarterly report']);
+    $url = ($urlType === 'record') ? "https://example.test/posts/{$post->getKey()}" : 'https://example.test/foo';
 
     $entry = TextEntry::make('title')
-        ->url(static fn (): string => 'https://example.test/foo')
+        ->url(match ($urlType) {
+            'constant' => 'https://example.test/foo',
+            'closure' => static fn (): string => 'https://example.test/foo',
+            'record' => static fn (Post $record): string => "https://example.test/posts/{$record->getKey()}",
+        })
         ->container(Schema::make(Livewire::make())->record($post));
 
-    expect($entry->toHtml())->toContain('href="https://example.test/foo"');
-});
+    match ($rendering) {
+        'list' => $entry->state(['Alpha', 'Beta'])->listWithLineBreaks(),
+        'collapsed' => $entry->state(['Alpha', 'Beta']),
+        default => null,
+    };
+
+    expect(preg_match_all('/<a\b/', $entry->toHtml()))->toBe(1)
+        ->and(substr_count($entry->toHtml(), 'href="' . $url . '"'))->toBe(1)
+        ->and($entry->getUrl())->toBe($url)
+        ->and($entry->getUrl(null))->toBeNull()
+        ->and($entry->getUrl('Alpha', new User))->toBeNull();
+})->with(['constant', 'closure', 'record'])->with(['scalar', 'list', 'collapsed']);
+
+it('resolves item `url()` closures only for explicit item arguments', function (string $urlType): void {
+    $entry = TextEntry::make('title')
+        ->container(Schema::make(Livewire::make())->record(new Post(['title' => 'Parent'])))
+        ->url(match ($urlType) {
+            'state' => static fn (?string $state): string => '/items/' . ($state ?? 'empty'),
+            'related' => static fn (?User $relatedRecord): string => '/items/' . ($relatedRecord?->name ?? 'empty'),
+            'combined' => static fn (?string $state, Post $record, ?User $relatedRecord): string => "/items/{$record->title}/" . ($state ?? 'empty') . '/' . ($relatedRecord?->name ?? 'empty'),
+        });
+
+    expect($entry->getUrl())->toBeNull()
+        ->and($entry->getUrl(null))->toBe(($urlType === 'combined') ? '/items/Parent/empty/empty' : '/items/empty')
+        ->and($entry->getUrl('Alpha', new User(['name' => 'Beta'])))->toBe(match ($urlType) {
+            'state' => '/items/Alpha',
+            'related' => '/items/Beta',
+            'combined' => '/items/Parent/Alpha/Beta',
+        });
+})->with(['state', 'related', 'combined']);
 
 it('injects the related model for a relationship JSON attribute', function (): void {
     $author = User::factory()->create(['json' => ['color' => 'red']]);
@@ -603,7 +636,7 @@ describe('rendering', function (): void {
     });
 });
 
-it('renders rich-mode enum labels without changing plain-mode label escaping in light and dark modes', function (): void {
+it('renders labels and wrapper URLs accessibly in light and dark modes', function (): void {
     Artisan::call('filament:assets');
 
     retry(10, function (): void {
@@ -623,6 +656,7 @@ it('renders rich-mode enum labels without changing plain-mode label escaping in 
                 ->assertScript('document.querySelector(\'[data-testid="enum-label"]\').textContent.trim()', 'User Management')
                 ->assertScript('document.querySelector(\'[data-testid="trusted-label"]\').textContent.trim()', 'Label: <strong>Alpha beta</strong> (label)')
                 ->assertScript('document.querySelector(\'[data-testid="trusted-label"] strong\') === null')
+                ->assertScript('document.querySelectorAll(\'[data-testid="linked-entry"] a\').length', 1)
                 ->assertNoAccessibilityIssues();
         }
     });

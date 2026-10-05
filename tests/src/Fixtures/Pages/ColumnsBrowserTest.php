@@ -3,6 +3,7 @@
 namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Schema;
@@ -27,12 +28,19 @@ class ColumnsBrowserTest extends Page implements HasTable
     {
         return $table
             ->query(Post::query())
+            ->reorderable('id')
+            ->reorderRecordsTriggerAction(static fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'toggle-reordering']))
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Title'),
+                    ->label('Title')
+                    ->url(static fn (Post $record): string => "/posts/{$record->getKey()}")
+                    ->extraCellAttributes(['data-testid' => 'linked-column']),
                 Tables\Columns\TextColumn::make('content')
                     ->label('Content')
-                    ->limit(50),
+                    ->limit(50)
+                    ->url('/posts')
+                    ->disabledClick()
+                    ->extraCellAttributes(['data-testid' => 'disabled-column']),
                 Tables\Columns\TextColumn::make('enum_label')
                     ->state(NavigationGroupEnum::Users)
                     ->html()

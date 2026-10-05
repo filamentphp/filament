@@ -35,18 +35,16 @@ trait CanOpenUrl
 
     public function getUrl(mixed $state = null, ?Model $relatedRecord = null): ?string
     {
-        if (! $this->hasStateBasedUrls()) {
-            return $this->evaluate($this->url);
-        }
+        $isItemCall = func_num_args() > 0;
 
-        if (func_num_args() === 0) {
-            return null;
-        }
-
-        return $this->evaluate($this->url, [
-            'state' => $state,
-            'relatedRecord' => $relatedRecord,
-        ]);
+        return match (true) {
+            $isItemCall !== $this->hasStateBasedUrls() => null,
+            $isItemCall => $this->evaluate($this->url, [
+                'state' => $state,
+                'relatedRecord' => $relatedRecord,
+            ]),
+            default => $this->evaluate($this->url),
+        };
     }
 
     public function hasStateBasedUrls(): bool

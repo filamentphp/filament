@@ -35,7 +35,9 @@ class InfolistEntriesBrowserTest extends Page
             ->record($this->record)
             ->components([
                 TextEntry::make('title')
-                    ->label('Title'),
+                    ->label('Title')
+                    ->url('/posts')
+                    ->extraEntryWrapperAttributes(['data-testid' => 'linked-entry']),
                 TextEntry::make('content')
                     ->label('Content'),
                 TextEntry::make('enum_label')
