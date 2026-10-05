@@ -7,6 +7,9 @@
         wire:click="activateLoadingButton"
         data-testid="loading-button"
         data-activations="{{ $loadingButtonActivations }}"
+        icon="heroicon-o-arrow-path"
+        tooltip="Simulate a pending request"
+        :key-bindings="['ctrl+shift+l']"
     >
         Simulate loading
     </x-filament::button>

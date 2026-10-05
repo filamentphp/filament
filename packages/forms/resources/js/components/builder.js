@@ -6,6 +6,12 @@ export default function builderBlockPickerFormComponent() {
 
         observer: null,
 
+        dropdownPanel: null,
+
+        dropdownOpenedListener: null,
+
+        dropdownEscapeListener: null,
+
         init() {
             const syncBlockLabels = () => {
                 this.blockLabels = Array.from(
@@ -23,6 +29,54 @@ export default function builderBlockPickerFormComponent() {
                 attributes: true,
                 attributeFilter: ['data-block-label'],
             })
+
+            this.setUpDropdownAutofocus()
+
+            this.dropdownEscapeListener = (event) => {
+                this.handleEscape(event)
+                event.stopPropagation()
+            }
+            this.$root.addEventListener(
+                'dropdown-escape',
+                this.dropdownEscapeListener,
+            )
+        },
+
+        setUpDropdownAutofocus() {
+            this.dropdownPanel = this.$root.closest('.fi-dropdown-panel')
+            this.dropdownOpenedListener = () => this.autofocusSearch()
+
+            this.dropdownPanel?.addEventListener(
+                'dropdown-opened',
+                this.dropdownOpenedListener,
+            )
+
+            const dropdownTrigger = this.dropdownPanel
+                ?.closest('.fi-dropdown')
+                ?.querySelector(
+                    ':scope > .fi-dropdown-trigger button, :scope > .fi-dropdown-trigger a, :scope > .fi-dropdown-trigger [tabindex]',
+                )
+
+            if (
+                this.dropdownPanel?.style.display !== 'block' ||
+                document.activeElement !== dropdownTrigger
+            ) {
+                return
+            }
+
+            this.autofocusSearch()
+        },
+
+        autofocusSearch() {
+            if (
+                !this.$root.isConnected ||
+                this.dropdownPanel?.style.display !== 'block'
+            ) {
+                return
+            }
+
+            this.clearSearch()
+            this.$refs.searchInput?.focus()
         },
 
         clearSearch() {
@@ -68,6 +122,15 @@ export default function builderBlockPickerFormComponent() {
 
         destroy() {
             this.observer?.disconnect()
+
+            this.dropdownPanel?.removeEventListener(
+                'dropdown-opened',
+                this.dropdownOpenedListener,
+            )
+            this.$root.removeEventListener(
+                'dropdown-escape',
+                this.dropdownEscapeListener,
+            )
         },
     }
 }

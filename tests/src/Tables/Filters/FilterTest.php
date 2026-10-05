@@ -290,6 +290,9 @@ it('manages focus for the filters dropdown', function (bool $isDarkMode): void {
             ->type($selectSearch, 'Draft')
             ->keys($selectSearch, 'Escape')
             ->assertAttribute($selectFilter, 'aria-expanded', 'false')
+            ->assertVisible($publishedFilter)
+            ->assertScript("document.activeElement.matches('{$selectFilter}')", true)
+            ->keys($selectFilter, 'Escape')
             ->assertMissing($publishedFilter)
             ->keys($filtersTrigger, 'Enter')
             ->assertAttribute($selectFilter, 'aria-expanded', 'false')
@@ -306,11 +309,32 @@ it('manages focus for the filters dropdown', function (bool $isDarkMode): void {
             ->click($dateFilter)
             ->assertVisible($datePanel)
             ->keys($dateFilter, 'Escape')
+            ->assertMissing($datePanel)
+            ->assertVisible($publishedFilter)
+            ->assertScript("document.activeElement.matches('{$dateFilter}')", true)
+            ->keys($dateFilter, 'Escape')
             ->assertMissing($publishedFilter)
             ->keys($filtersTrigger, 'Enter')
             ->assertMissing($datePanel)
             ->click($colorFilter)
-            ->assertVisible($colorPanel)
+            ->assertVisible($colorPanel);
+
+        $page->script(<<<JS
+            const colorPicker = document.querySelector('{$colorPanel}').firstElementChild
+            const hueSlider = colorPicker.shadowRoot.querySelector('[part="hue"]')
+
+            hueSlider.focus()
+            hueSlider.dispatchEvent(new KeyboardEvent('keydown', {
+                bubbles: true,
+                composed: true,
+                key: 'Escape',
+            }))
+            JS);
+
+        $page
+            ->assertMissing($colorPanel)
+            ->assertVisible($publishedFilter)
+            ->assertScript("document.activeElement.matches('{$colorFilter}')", true)
             ->keys($colorFilter, 'Escape')
             ->assertMissing($publishedFilter)
             ->keys($filtersTrigger, 'Enter')
@@ -363,7 +387,7 @@ it('cancels pending filter autofocus when the dropdown closes', function (): voi
         $page = visit('/filters-reset-action-browser-test?focus=1');
 
         $page->script(<<<'JS'
-            document.querySelector('.fi-ta-filters').addEventListener('dropdown-autofocus', () => queueMicrotask(() => {
+            document.querySelector('.fi-ta-filters').closest('.fi-dropdown-panel').addEventListener('dropdown-opened', () => queueMicrotask(() => {
                 document.querySelector('[data-testid="filters-trigger"]').dispatchEvent(new KeyboardEvent('keydown', {
                     bubbles: true,
                     key: 'Escape',

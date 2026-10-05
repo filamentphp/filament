@@ -777,16 +777,10 @@ it('keeps the next action focused and blocked during other requests', function (
                 $browser->inDarkMode();
             }
 
-            $browser->assertScript(<<<'JS'
-                (() => {
-                    const nextAction = document.querySelector('[data-testid="wizard-next-action"]')
-
-                    nextAction.focus()
-                    document.querySelector('[data-testid="wizard-dynamic-select"] .fi-select-input-btn').click()
-
-                    return document.activeElement === nextAction
-                })()
-                JS, true);
+            $browser->script(<<<'JS'
+                document.querySelector('[data-testid="wizard-next-action"]').focus()
+                document.querySelector('[data-testid="wizard-dynamic-select"] .fi-select-input-btn').click()
+                JS);
 
             $browser->wait(0.3);
 
@@ -794,12 +788,10 @@ it('keeps the next action focused and blocked during other requests', function (
                 "document.querySelector('{$nextAction}').parentElement.getAttribute('aria-disabled')",
             ))->toBe('true');
 
-            expect($browser->script(
-                "document.activeElement === document.querySelector('{$nextAction}')",
-            ))->toBeTrue();
-
             $browser
-                ->assertScript("(() => { document.querySelector('{$nextAction}').click(); return true })()", true)
+                ->assertPresent("{$nextAction}:focus")
+                ->keys($nextAction, 'Enter')
+                ->keys($nextAction, 'Space')
                 ->wait(0.1)
                 ->assertScript('window.wizardNextActionActivationCount ?? 0', 0)
                 ->assertVisible('#profile-details')
@@ -808,6 +800,10 @@ it('keeps the next action focused and blocked during other requests', function (
                 ->keys('[data-testid="wizard-dynamic-select"] .fi-select-input-btn', 'Escape')
                 ->assertNoAccessibilityIssues()
                 ->click($nextAction)
+                ->assertAttribute($nextAction, 'aria-disabled', 'true')
+                ->assertPresent("{$nextAction}:focus")
+                ->keys($nextAction, 'Enter')
+                ->keys($nextAction, 'Space')
                 ->assertScript('window.wizardNextActionActivationCount', 1)
                 ->wait(1.1)
                 ->assertVisible('#profile-contact');

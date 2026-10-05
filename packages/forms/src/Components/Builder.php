@@ -1471,8 +1471,6 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                 'x-load' => $isSearchable ? true : null,
                 'x-load-src' => $isSearchable ? FilamentAsset::getAlpineComponentSrc('builder', 'filament/forms') : null,
                 'x-data' => $isSearchable ? 'builderBlockPickerFormComponent()' : null,
-                'x-on:dropdown-escape' => $isSearchable ? 'handleEscape($event)' : null,
-                'data-dropdown-escape' => $isSearchable ? true : null,
             ], escape: false)
             ->class(['fi-dropdown-list']);
 
@@ -1499,10 +1497,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                     aria-label="<?= e($searchPrompt) ?>"
                                     placeholder="<?= e($searchPrompt) ?>"
                                     type="text"
-                                    data-dropdown-autofocus
                                     x-ref="searchInput"
                                     x-model.debounce.<?= $searchDebounce ?>="search"
-                                    x-on:dropdown-autofocus="clearSearch()"
                                     x-on:keydown.enter.prevent
                                     class="fi-input"
                                 />

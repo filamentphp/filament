@@ -706,6 +706,12 @@ it('can render and type in `TextInput` in the browser', function (): void {
         $page = visit('/text-input-test')
             ->type('[data-testid="text-input"] input', 'John Doe');
 
+        $page
+            ->click('[data-testid="text-input"] .fi-input-wrp-prefix')
+            ->assertScript('document.activeElement.matches(\'[data-testid="text-input"] input\')', true)
+            ->click('[data-testid="text-input"] .fi-input-wrp-suffix')
+            ->assertScript('document.activeElement.matches(\'[data-testid="text-input"] input\')', true);
+
         $page->script("Object.defineProperty(window.navigator, 'clipboard', { configurable: true, value: { writeText: async (value) => { window.__copiedText = value } } })");
 
         $page

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Grammars\SqlServerGrammar;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -580,7 +581,23 @@ class ImportColumn extends Component
                 $query = clone $relationshipQuery;
                 $applyLookup($query, [$value]);
 
-                if ($query->exists()) {
+                if ($query->getQuery()->getGrammar() instanceof SqlServerGrammar) {
+                    // SQL Server's `exists()` replaces the projection, invalidating ordered `DISTINCT` queries.
+                    // Preserve it without running the result callbacks that `first()` would invoke.
+                    $query = $query->toBase();
+                    $query->applyBeforeQueryCallbacks();
+                    $query->limit(1);
+
+                    $hasRelatedRecord = $query->getConnection()->selectOne(
+                        $query->toSql(),
+                        $query->getBindings(),
+                        ! $query->useWritePdo,
+                    ) !== null;
+                } else {
+                    $hasRelatedRecord = $query->exists();
+                }
+
+                if ($hasRelatedRecord) {
                     continue;
                 }
 

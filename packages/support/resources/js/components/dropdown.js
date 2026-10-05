@@ -1,7 +1,29 @@
+window.addEventListener(
+    'keydown',
+    (event) => {
+        if (event.key !== 'Escape' || !(event.target instanceof Element)) {
+            return
+        }
+
+        let dropdown = event.target.closest('.fi-dropdown')
+
+        while (dropdown) {
+            if (window.Alpine.$data(dropdown)?.handleEscape(event)) {
+                return
+            }
+
+            dropdown = dropdown.parentElement?.closest('.fi-dropdown')
+        }
+    },
+    true,
+)
+
 export default () => ({
     panelId: null,
 
     isOpen: false,
+
+    isClosing: false,
 
     shouldAutofocus: true,
 
@@ -9,21 +31,10 @@ export default () => ({
 
     navigateListener: null,
 
-    escapeListener: null,
-
     init() {
         this.navigateListener = () => this.close()
 
         document.addEventListener('livewire:navigate', this.navigateListener)
-
-        // The floating UI plugin only adds its own window `keydown` listener when the panel
-        // first opens, so registering here guarantees this listener runs before it and before
-        // any enclosing modal's `Escape` handler.
-        if (this.$refs.panel?.querySelector('[data-dropdown-escape]')) {
-            this.escapeListener = (event) => this.handleEscape(event)
-
-            window.addEventListener('keydown', this.escapeListener, true)
-        }
 
         this.setUpAria()
     },
@@ -113,24 +124,16 @@ export default () => ({
             .querySelector(':scope > .fi-dropdown-trigger')
             ?.removeAttribute('aria-expanded')
 
-        // The floating UI plugin opens asynchronously, so focus only after the panel
-        // actually becomes visible. Later attribute updates must not reset the search.
+        // The floating UI plugin opens asynchronously, so notify content only after the panel
+        // actually becomes visible. Later attribute updates must not repeat the notification.
         if (this.isOpen && !wasOpen) {
-            const autofocusable = panel.querySelector(
-                '[data-dropdown-autofocus]',
+            panel.dispatchEvent(
+                new CustomEvent('dropdown-opened', {
+                    detail: {
+                        shouldAutofocus: this.shouldAutofocus,
+                    },
+                }),
             )
-
-            if (
-                autofocusable?.hasAttribute(
-                    'data-dropdown-autofocus-on-keyboard',
-                ) &&
-                !this.shouldAutofocus
-            ) {
-                return
-            }
-
-            autofocusable?.dispatchEvent(new CustomEvent('dropdown-autofocus'))
-            autofocusable?.focus()
         }
     },
 
@@ -141,6 +144,7 @@ export default () => ({
     },
 
     toggle(event) {
+        this.isClosing = false
         this.shouldAutofocus = !(event instanceof MouseEvent)
 
         this.$refs.panel?.toggle(event)
@@ -148,6 +152,7 @@ export default () => ({
     },
 
     open(event) {
+        this.isClosing = false
         this.shouldAutofocus = !(event instanceof MouseEvent)
 
         this.$refs.panel?.open(event)
@@ -162,20 +167,13 @@ export default () => ({
         const panel = this.$refs.panel
         const trigger = this.$el.querySelector(':scope > .fi-dropdown-trigger')
         const isFromTrigger = trigger?.contains(event.target)
-        const isFromContent =
-            event.target
-                .closest('[data-dropdown-escape]')
-                ?.closest('.fi-dropdown-panel') === panel
 
-        // Only intercept for content that explicitly opts into staged Escape handling.
-        // Other controls, such as searchable selects, need the original keydown event
-        // to reach their own listeners before the floating UI plugin closes the panel.
         if (
             !panel ||
             panel.style.display !== 'block' ||
-            (!isFromTrigger && !isFromContent)
+            (!isFromTrigger && !panel.contains(event.target))
         ) {
-            return
+            return false
         }
 
         // Content inside the panel may cancel this to keep the panel open, e.g. a search
@@ -193,15 +191,29 @@ export default () => ({
         event.stopImmediatePropagation()
 
         if (!shouldClose) {
-            return
+            return true
         }
 
         this.close()
 
         this.getTrigger()?.focus()
+
+        return true
     },
 
     close(event) {
+        if (this.isClosing) {
+            return
+        }
+
+        this.isClosing = true
+
+        this.$refs.panel
+            ?.querySelectorAll('.fi-dropdown')
+            .forEach((dropdown) => {
+                window.Alpine.$data(dropdown)?.close(event)
+            })
+
         this.$refs.panel?.close(event)
         this.syncAria()
     },
@@ -212,8 +224,5 @@ export default () => ({
 
         document.removeEventListener('livewire:navigate', this.navigateListener)
         this.navigateListener = null
-
-        window.removeEventListener('keydown', this.escapeListener, true)
-        this.escapeListener = null
     },
 })

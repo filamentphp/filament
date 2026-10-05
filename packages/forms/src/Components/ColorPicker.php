@@ -148,7 +148,7 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
                         liveDebounce: <?= Js::from($liveDebounce) ?>,
                         state: $wire.$entangle('<?= e($statePath) ?>'),
                     })"
-            x-on:dropdown-escape="$refs.panel.close()"
+            x-on:dropdown-escape="if (isOpen()) { closePanelAndRestoreFocus(); $event.preventDefault() }"
             x-on:keydown.esc="isOpen() && $event.stopPropagation()"
             x-on:focusout="if (isOpen() && ! $el.contains($event.relatedTarget)) $refs.panel.close()"
             <?= $this->getExtraAlpineAttributeBag()->class(['fi-input-wrp-content'])->toHtml() ?>
