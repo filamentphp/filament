@@ -11,27 +11,39 @@ beforeEach(function (): void {
 });
 
 describe('browser interactions', function (): void {
-    it('keeps a button focused while its loading state blocks pointer activation', function (bool $isDarkMode): void {
-        retry(10, function () use ($isDarkMode): void {
-            $this->actingAs(User::factory()->create());
+    it('keeps a loading button focused without allowing repeated activation', function (): void {
+        $browser = visit('/modal-browser-test');
+        $selector = '[data-testid="loading-button"]';
 
-            $browser = visit('/modal-browser-test');
-
+        foreach ([false, true] as $isDarkMode) {
             if ($isDarkMode) {
                 $browser->inDarkMode();
             }
 
             $browser
-                ->click('[data-testid="loading-button"]')
-                ->assertAttribute('[data-testid="loading-button"]', 'data-activations', '1')
-                ->assertPresent('[data-testid="loading-button"]:focus')
+                ->keys($selector, 'Enter')
+                ->assertAttribute($selector, 'aria-disabled', 'true')
+                ->assertScript('document.querySelector(\'[data-testid="loading-button"]\').disabled', false)
+                ->assertPresent("{$selector}:focus")
+                ->keys($selector, 'Enter')
+                ->keys($selector, 'Space');
+
+            // Playwright normally waits for `aria-disabled` to clear before clicking.
+            $browser->page()->locator($selector)->click(['force' => true]);
+            $browser->script('document.querySelector(\'[data-testid="loading-button"]\').click()');
+
+            $browser
+                ->assertAttribute($selector, 'data-activations', $isDarkMode ? '3' : '1')
+                ->assertScript('!document.querySelector(\'[data-testid="loading-button"]\').hasAttribute("aria-disabled")')
+                ->assertPresent("{$selector}:focus")
+                ->keys($selector, 'Control+Shift+l')
+                ->assertAttribute($selector, 'data-activations', $isDarkMode ? '4' : '2')
+                ->assertScript('!document.querySelector(\'[data-testid="loading-button"]\').hasAttribute("aria-disabled")')
+                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
                 ->assertNoSmoke()
                 ->assertNoAccessibilityIssues();
-        });
-    })->with([
-        'light mode' => false,
-        'dark mode' => true,
-    ]);
+        }
+    });
 
     it('prevents `beforeunload` only while actions that can contain unsaved changes are mounted', function (bool $isDarkMode): void {
         $this->actingAs(User::factory()->create());
