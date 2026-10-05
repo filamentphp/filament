@@ -568,10 +568,11 @@ class Wizard extends Component implements HasEmbeddedView
                 <div
                     x-cloak
                     <?php if (! $nextAction->isDisabled()) { ?>
-                        x-on:click="requestNextStep()"
+                        x-on:click.capture="if ($el.hasAttribute('aria-disabled')) { $event.preventDefault(); $event.stopImmediatePropagation() }"
+                        x-on:click="if (! $el.hasAttribute('aria-disabled')) requestNextStep()"
                     <?php } ?>
                     x-bind:class="{ 'fi-hidden': isLastStep() }"
-                    wire:loading.attr="inert"
+                    wire:loading.attr="aria-disabled"
                 >
                     <?= $nextAction->toHtml() ?>
                 </div>

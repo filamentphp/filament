@@ -1134,7 +1134,9 @@ describe('rendering', function (): void {
     });
 
     it('can render with `collapsible()`', function (): void {
-        livewire(RenderSectionWithCollapsible::class)->assertSuccessful();
+        livewire(RenderSectionWithCollapsible::class)
+            ->assertSuccessful()
+            ->assertDontSeeHtml('wire:loading.attr="disabled"');
     });
 
     it('can render with `collapsed()`', function (): void {

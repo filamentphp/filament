@@ -646,7 +646,6 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
                                         ->merge([
                                             'disabled' => $isDisabled || $this->isOptionDisabled($value, $label),
                                             'value' => e($value),
-                                            'wire:loading.attr' => 'disabled',
                                             $wireModelAttribute => $statePath,
                                             'x-on:change' => $isBulkToggleable ? 'checkIfAllCheckboxesAreChecked()' : null,
                                         ], escape: false)
