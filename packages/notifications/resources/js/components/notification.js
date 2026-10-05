@@ -200,12 +200,7 @@ export default (Alpine) => {
             clearTimeout(this.closeTimeout)
             clearTimeout(this.durationTimeout)
             this.unsubscribeLivewireHook?.()
-            this.unsubscribeLivewireHook = null
-
-            if (this.transitionEffect) {
-                Alpine.release(this.transitionEffect)
-                this.transitionEffect = null
-            }
+            Alpine.release(this.transitionEffect)
         },
     }))
 }
