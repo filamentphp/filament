@@ -9,7 +9,7 @@ return [
     'actions' => [
 
         'resend_notification' => [
-            'label' => '已重新发送',
+            'label' => '重新发送',
         ],
 
     ],
