@@ -11,8 +11,12 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Resources\Tenancy\TenantScopedUsers\TenantScopedUserResource;
+use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
@@ -66,23 +70,13 @@ class TenantScopedPostsRelationManager extends RelationManager
 {
     public static int | string | null $deniedOwnerKey = null;
 
-    public static int $scopedModelPropertyResolutionCount = 0;
-
     protected static string $relationship = 'posts';
 
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
         return ((string) $ownerRecord->getKey() !== (string) static::$deniedOwnerKey)
+            && TenantScopedUserResource::getEloquentQuery()->whereKey($ownerRecord->getKey())->exists()
             && parent::canViewForRecord($ownerRecord, $pageClass);
-    }
-
-    public function resolveScopedModelProperties(?array $properties = null): void
-    {
-        if ($properties !== null) {
-            static::$scopedModelPropertyResolutionCount++;
-        }
-
-        parent::resolveScopedModelProperties($properties);
     }
 
     public function table(Table $table): Table
@@ -121,7 +115,7 @@ function relationManagerTenantScopeHydrationFixture(): array
     return [$tenantA, $tenantB, $owner, $post];
 }
 
-it('rejects a stale relation manager snapshot after its owner moves to another tenant', function (): void {
+it('can reject a moved owner through `canViewForRecord()` before an action runs', function (): void {
     [, $tenantB, $owner, $post] = relationManagerTenantScopeHydrationFixture();
     $originalTitle = $post->title;
     $component = livewire(TenantScopedPostsRelationManager::class, [
@@ -139,31 +133,12 @@ it('rejects a stale relation manager snapshot after its owner moves to another t
 
     $component
         ->callMountedAction()
-        ->assertNotFound();
+        ->assertForbidden();
 
     expect($post->refresh()->title)->toBe($originalTitle);
 });
 
-it('rejects direct Livewire calls to `resolveScopedModelProperties()`', function (): void {
-    [$tenantA, , $owner] = relationManagerTenantScopeHydrationFixture();
-    $otherOwner = User::factory()->create();
-    $otherOwner->teams()->attach($tenantA);
-    $component = livewire(TenantScopedPostsRelationManager::class, [
-        'ownerRecord' => $owner,
-        'pageClass' => RelationManagerTenantScopeHydrationOwnerPage::class,
-    ])->assertSuccessful();
-    TenantScopedPostsRelationManager::$scopedModelPropertyResolutionCount = 0;
-
-    $component
-        ->call('resolveScopedModelProperties', [
-            'ownerRecord' => $otherOwner,
-        ])
-        ->assertNotFound();
-
-    expect(TenantScopedPostsRelationManager::$scopedModelPropertyResolutionCount)->toBe(1);
-});
-
-it('restores a lazy relation manager owner through global scopes outside a resource page', function (): void {
+it('can scope a lazy relation manager owner in `canViewForRecord()` outside a resource page', function (): void {
     [, $tenantB, $owner, $post] = relationManagerTenantScopeHydrationFixture();
     $component = livewire(TenantScopedPostsRelationManager::class, [
         'ownerRecord' => $owner,
@@ -187,10 +162,10 @@ it('restores a lazy relation manager owner through global scopes outside a resou
 
     $component
         ->set('tableSearch', 'search')
-        ->assertNotFound();
+        ->assertForbidden();
 });
 
-it('rejects a stale lazy relation manager snapshot after its owner moves to another tenant', function (): void {
+it('can reject a moved owner in `canViewForRecord()` before a lazy mount', function (): void {
     [, $tenantB, $owner] = relationManagerTenantScopeHydrationFixture();
     $component = livewire(TenantScopedPostsRelationManager::class, [
         'ownerRecord' => $owner,
@@ -209,10 +184,10 @@ it('rejects a stale lazy relation manager snapshot after its owner moves to anot
 
     $component
         ->call('__lazyLoad', $matches[1])
-        ->assertNotFound();
+        ->assertForbidden();
 });
 
-it('rejects a stale lazy relation manager snapshot before calls other than `__lazyLoad()`', function (): void {
+it('can reject a moved owner in `canViewForRecord()` before calls other than `__lazyLoad()`', function (): void {
     [, $tenantB, $owner] = relationManagerTenantScopeHydrationFixture();
     $component = livewire(TenantScopedPostsRelationManager::class, [
         'ownerRecord' => $owner,
@@ -225,13 +200,15 @@ it('rejects a stale lazy relation manager snapshot before calls other than `__la
 
     $component
         ->set('tableSearch', 'search')
-        ->assertNotFound();
+        ->assertForbidden();
 });
 
-it('rejects another relation manager owner from a signed lazy payload before authorization can be reused', function (): void {
-    [$tenant, , $owner] = relationManagerTenantScopeHydrationFixture();
+it('retains the original owner and action target when another signed lazy payload is replayed', function (): void {
+    [$tenant, , $owner, $post] = relationManagerTenantScopeHydrationFixture();
     $otherOwner = User::factory()->create();
     $otherOwner->teams()->attach($tenant);
+    $otherPost = Post::factory()->create(['author_id' => $otherOwner->getKey()]);
+    $otherTitle = $otherPost->title;
     $component = livewire(TenantScopedPostsRelationManager::class, [
         'ownerRecord' => $owner,
         'pageClass' => RelationManagerTenantScopeHydrationOwnerPage::class,
@@ -253,7 +230,21 @@ it('rejects another relation manager owner from a signed lazy payload before aut
 
     $component
         ->call('__lazyLoad', $matches[1])
-        ->assertNotFound();
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords([$post])
+        ->assertCanNotSeeTableRecords([$otherPost]);
+
+    expect($component->instance()->getOwnerRecord()->is($owner))->toBeTrue();
+
+    $component
+        ->callAction(TestAction::make(EditAction::class)->table($post), [
+            'title' => 'updated original owner post',
+        ])
+        ->assertSuccessful()
+        ->assertHasNoFormErrors();
+
+    expect($post->refresh()->title)->toBe('updated original owner post')
+        ->and($otherPost->refresh()->title)->toBe($otherTitle);
 });
 
 it('loads a lazy relation manager while its owner remains in the tenant', function (): void {
@@ -291,3 +282,33 @@ it('allows a relation manager action while its owner remains in the tenant', fun
 
     expect($post->refresh()->title)->toBe('updated in tenant');
 });
+
+it('preserves a soft-deleted owner approved by its resource on mount and later requests', function (bool $isLazy): void {
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
+    $ticket = Ticket::factory()->create();
+    $ticket->delete();
+    $owner = TicketResource::resolveRecordRouteBinding($ticket->getKey());
+
+    expect($owner)->not->toBeNull();
+
+    $component = livewire(DepartmentsRelationManager::class, [
+        'ownerRecord' => $owner,
+        'pageClass' => EditTicket::class,
+        'lazy' => $isLazy,
+    ])->assertSuccessful();
+
+    if ($isLazy) {
+        expect(preg_match(
+            "/__lazyLoad\\('([^']+)'\\)/",
+            html_entity_decode($component->html()),
+            $matches,
+        ))->toBe(1);
+
+        $component->call('__lazyLoad', $matches[1])->assertSuccessful();
+    }
+
+    $component->set('tableSearch', 'Support')->assertSuccessful();
+
+    expect($component->instance()->getOwnerRecord()->is($ticket))->toBeTrue()
+        ->and($component->instance()->getOwnerRecord()->trashed())->toBeTrue();
+})->with([false, true]);

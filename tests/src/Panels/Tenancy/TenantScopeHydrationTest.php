@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Pages\Page as PanelPage;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
 use Filament\Tests\Fixtures\Models\Post;
@@ -274,9 +275,124 @@ it('preserves Livewire restoration for user-defined model properties', function 
     expect($page->instance()->otherPost->is($otherPost))->toBeTrue();
 });
 
+it('preserves in-memory changes after restoring a page with `InteractsWithRecord`', function (): void {
+    [, , , $post] = tenantScopeHydrationFixture();
+    $originalTitle = $post->title;
+    $component = livewire(EditPostWithRecordMutation::class, ['record' => $post->getKey()]);
+    EditPostWithRecordMutation::$recordResolutions = 0;
+
+    $component
+        ->call('captureRecordTitle')
+        ->assertSuccessful()
+        ->assertSet('capturedRecordTitle', 'unsaved title from boot');
+
+    expect(EditPostWithRecordMutation::$recordResolutions)->toBe(1)
+        ->and($post->refresh()->title)->toBe($originalTitle);
+});
+
+it('revalidates a custom resource page record replaced after hydration before an action', function (bool $isReplacementAllowed): void {
+    [, $otherTenant, $author, $post] = tenantScopeHydrationFixture();
+    $replacementAuthor = User::factory()->create([
+        'team_id' => $isReplacementAllowed ? $author->team_id : $otherTenant->getKey(),
+    ]);
+    $replacementPost = Post::factory()->create(['author_id' => $replacementAuthor->getKey()]);
+    $originalTitle = $post->title;
+    $replacementTitle = $replacementPost->title;
+    $component = livewire(CustomPostPageWithoutRecordTrait::class, ['record' => $post->getKey()])
+        ->assertSuccessful();
+
+    $component->update(
+        calls: [['method' => 'saveRecordTitle', 'params' => []]],
+        updates: ['selectedRecordKey' => $replacementPost->getKey()],
+    );
+
+    if ($isReplacementAllowed) {
+        $component->assertSuccessful();
+    } else {
+        $component->assertNotFound();
+    }
+
+    expect($post->refresh()->title)->toBe($originalTitle)
+        ->and($replacementPost->refresh()->title)->toBe($isReplacementAllowed ? 'updated replacement' : $replacementTitle);
+})->with([true, false]);
+
+it('does not intercept `resolveScopedModelProperties()` on an unrelated panel page', function (): void {
+    livewire(UnrelatedModelRestorationPage::class)
+        ->call('$refresh')
+        ->assertSuccessful()
+        ->assertSet('hasResolvedModelProperties', false)
+        ->call('resolveScopedModelProperties')
+        ->assertSuccessful()
+        ->assertSet('hasResolvedModelProperties', true);
+});
+
+class UnrelatedModelRestorationPage extends PanelPage
+{
+    protected string $view = 'pages.settings';
+
+    public bool $hasResolvedModelProperties = false;
+
+    public function resolveScopedModelProperties(): void
+    {
+        $this->hasResolvedModelProperties = true;
+    }
+}
+
 class EditPostWithUserDefinedModelProperty extends EditPost
 {
     public ?Post $otherPost = null;
+}
+
+class EditPostWithRecordMutation extends EditPost
+{
+    public static int $recordResolutions = 0;
+
+    public ?string $capturedRecordTitle = null;
+
+    public function boot(): void
+    {
+        if (isset($this->record) && ($this->record instanceof Model)) {
+            $this->record->title = 'unsaved title from boot';
+        }
+    }
+
+    public function captureRecordTitle(): void
+    {
+        $this->capturedRecordTitle = $this->record->title;
+    }
+
+    protected function resolveRecord(int | string $key): Model
+    {
+        static::$recordResolutions++;
+
+        return parent::resolveRecord($key);
+    }
+}
+
+class CustomPostPageWithoutRecordTrait extends Page
+{
+    protected static string $resource = PostResource::class;
+
+    protected string $view = 'pages.settings';
+
+    public Model | int | string | null $record = null;
+
+    public int $selectedRecordKey = 0;
+
+    public function mount(int | string $record): void
+    {
+        $this->record = $this->resolveRecord($record);
+    }
+
+    public function updatedSelectedRecordKey(): void
+    {
+        $this->record = Post::withoutGlobalScopes()->findOrFail($this->selectedRecordKey);
+    }
+
+    public function saveRecordTitle(): void
+    {
+        $this->record->update(['title' => 'updated replacement']);
+    }
 }
 
 class EditPostWithBootHook extends EditPost

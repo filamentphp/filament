@@ -25,6 +25,7 @@ use Filament\Http\Middleware\IdentifyPageConfiguration;
 use Filament\Http\Middleware\IdentifyResourceConfiguration;
 use Filament\Http\Middleware\IdentifyTenant;
 use Filament\Http\Middleware\SetUpPanel;
+use Filament\Livewire\ScopedModelPropertiesComponentHook;
 use Filament\Navigation\NavigationManager;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Assets\Font;
@@ -91,6 +92,10 @@ class FilamentServiceProvider extends PackageServiceProvider
         app(Router::class)->aliasMiddleware('panel', SetUpPanel::class);
         app(Router::class)->aliasMiddleware('resource-configuration', IdentifyResourceConfiguration::class);
         app(Router::class)->aliasMiddleware('page-configuration', IdentifyPageConfiguration::class);
+
+        $this->app->booting(static function (): void {
+            app('livewire')->componentHook(app(ScopedModelPropertiesComponentHook::class));
+        });
     }
 
     public function packageBooted(): void

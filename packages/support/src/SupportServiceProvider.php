@@ -26,7 +26,6 @@ use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Icons\IconManager;
 use Filament\Support\Livewire\Partials\DataStoreOverride;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
-use Filament\Support\Livewire\ScopedModelPropertiesComponentHook;
 use Filament\Support\View\Components\Contracts\HasColor;
 use Filament\Support\View\DefaultLoadingIndicator;
 use Filament\Support\View\ViewManager;
@@ -155,10 +154,6 @@ class SupportServiceProvider extends PackageServiceProvider
 
         $this->app->singleton(DataStore::class, DataStoreOverride::class);
         $this->app->bind(LoadingIndicator::class, DefaultLoadingIndicator::class);
-
-        $this->app->booting(function (): void {
-            app('livewire')->componentHook(new ScopedModelPropertiesComponentHook);
-        });
 
         $this->callAfterResolving(BladeIconsFactory::class, function (BladeIconsFactory $factory): void {
             $factory->add('filament', [

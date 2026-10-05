@@ -3,6 +3,7 @@
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\ReadReplica;
 use Filament\Tests\TestCase;
 use League\Uri\Components\Query;
 
@@ -79,16 +80,18 @@ it('cannot verify an email when signed in as another user', function (): void {
 });
 
 it('cannot verify an email change to an address that has been taken since the verification link was issued', function (): void {
-    $userToVerify = User::factory()->create();
-    $newEmail = fake()->email();
+    $connection = ReadReplica::connection('CREATE TABLE users (id INTEGER PRIMARY KEY, email TEXT, email_verified_at TEXT)');
+    $connection->getPdo()->exec("INSERT INTO users (id, email) VALUES (1, 'original@example.com'), (2, 'taken@example.com')");
+    $connection->getReadPdo()->exec("INSERT INTO users (id, email) VALUES (1, 'original@example.com')");
+
+    $userToVerify = ReadReplicaEmailChangeUser::query()->findOrFail(1);
+    $newEmail = 'taken@example.com';
     $originalEmail = $userToVerify->email;
 
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 
     $verificationSignature = Query::new($verificationUrl)->get('signature');
     cache()->put($verificationSignature, true, ttl: now()->addHour());
-
-    User::factory()->create(['email' => $newEmail]);
 
     $this
         ->actingAs($userToVerify)
@@ -140,3 +143,10 @@ it('cannot verify an email change with the same URL twice', function (): void {
         ->get($verificationUrl)
         ->assertForbidden();
 });
+
+class ReadReplicaEmailChangeUser extends User
+{
+    protected $connection = 'read-replica';
+
+    protected $table = 'users';
+}
