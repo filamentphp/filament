@@ -23,28 +23,28 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('injects `$state` and `$relatedRecord` into update callbacks', function (): void {
-    $relatedRecord = new User(['email' => 'user@example.com']);
+it('injects `$state` and a `null` `$relatedRecord` into update callbacks without a relationship', function (): void {
     $calls = [];
 
     $column = TextInputColumn::make('name')
-        ->beforeStateUpdated(static function (string $state, User $relatedRecord) use (&$calls): void {
-            $calls[] = "before:{$state}:{$relatedRecord->email}";
+        ->record(new User(['name' => 'Original name']))
+        ->beforeStateUpdated(static function (string $state, ?User $relatedRecord) use (&$calls): void {
+            $calls[] = ['before', $state, $relatedRecord];
         })
-        ->updateStateUsing(static function (string $state, User $relatedRecord) use (&$calls): string {
-            $calls[] = "update:{$state}:{$relatedRecord->email}";
+        ->updateStateUsing(static function (string $state, ?User $relatedRecord) use (&$calls): string {
+            $calls[] = ['update', $state, $relatedRecord];
 
             return strtoupper($state);
         })
-        ->afterStateUpdated(static function (string $state, User $relatedRecord) use (&$calls): void {
-            $calls[] = "after:{$state}:{$relatedRecord->email}";
+        ->afterStateUpdated(static function (string $state, ?User $relatedRecord) use (&$calls): void {
+            $calls[] = ['after', $state, $relatedRecord];
         });
 
-    expect($column->updateState('updated', $relatedRecord))->toBe('UPDATED')
+    expect($column->updateState('updated'))->toBe('UPDATED')
         ->and($calls)->toBe([
-            'before:updated:user@example.com',
-            'update:updated:user@example.com',
-            'after:updated:user@example.com',
+            ['before', 'updated', null],
+            ['update', 'updated', null],
+            ['after', 'updated', null],
         ]);
 });
 
@@ -58,8 +58,11 @@ it('resolves one relationship model for all update callbacks without cached rend
         ->beforeStateUpdated(static function (User $relatedRecord) use (&$callbackRelatedRecords): void {
             $callbackRelatedRecords[] = $relatedRecord;
         })
-        ->updateStateUsing(static function (string $state): string {
+        ->updateStateUsing(static function (string $state, Post $record, User $relatedRecord) use (&$callbackRelatedRecords, $post): string {
             expect($state)->toBe('Updated name');
+            expect($record)->toBe($post);
+
+            $callbackRelatedRecords[] = $relatedRecord;
 
             return strtoupper($state);
         })
@@ -68,8 +71,9 @@ it('resolves one relationship model for all update callbacks without cached rend
         });
 
     expect($column->updateState('Updated name'))->toBe('UPDATED NAME')
-        ->and($callbackRelatedRecords)->toHaveCount(2)
+        ->and($callbackRelatedRecords)->toHaveCount(3)
         ->and($callbackRelatedRecords[0])->toBe($callbackRelatedRecords[1])
+        ->and($callbackRelatedRecords[1])->toBe($callbackRelatedRecords[2])
         ->and($callbackRelatedRecords[0]->is($author))->toBeTrue();
 });
 

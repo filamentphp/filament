@@ -7,6 +7,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
@@ -24,6 +25,20 @@ it('can be constructed with `make()` and a name', function (): void {
 
     expect($column)->toBeInstanceOf(Column::class);
     expect($column->getName())->toBe('title');
+});
+
+it('can implement `Editable` with a one-argument `updateState()` method', function (): void {
+    $column = new class('title') extends Column implements Editable
+    {
+        use Tables\Columns\Concerns\CanBeValidated;
+
+        public function updateState(mixed $state): mixed
+        {
+            return $state;
+        }
+    };
+
+    expect($column->updateState('Updated title'))->toBe('Updated title');
 });
 
 it('throws `LogicException` from `make()` when name is blank', function (): void {

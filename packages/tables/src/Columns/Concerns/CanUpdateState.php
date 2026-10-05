@@ -42,20 +42,21 @@ trait CanUpdateState
         return $this;
     }
 
-    public function updateState(mixed $state, ?Model $relatedRecord = null): mixed
+    public function updateState(mixed $state): mixed
     {
         if (blank($state)) {
             $state = null;
         }
 
         $record = $this->getRecord();
+        $relatedRecord = null;
         $columnName = $this->getName();
         $hasRelationship = ($record instanceof Model) && $this->hasRelationship($record);
 
         if ($hasRelationship) {
             $columnName = $this->getFullAttributeName($record);
             $columnRelationshipName = $this->getRelationshipName($record);
-            $relatedRecord ??= Arr::get(
+            $relatedRecord = Arr::get(
                 $record->load($columnRelationshipName),
                 $columnRelationshipName,
             );
