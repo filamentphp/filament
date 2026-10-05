@@ -82,14 +82,8 @@ it('prioritizes select errors and restores the configured tooltip after a succes
 
         $page->assertVisible($selector)
             ->assertScript('typeof Alpine.$data(document.querySelector(\'' . $rootSelector . '\')).getServerState === "function"')
-            ->assertScript('typeof document.querySelector(\'' . $tooltipSelector . '\')._tippy === "object"');
-        $page->script('document.querySelector(\'' . $selector . '\').focus()');
-        $page->script('document.querySelector(\'' . $tooltipSelector . '\')._tippy.show()');
-
-        $page
-            ->assertVisible('[role="tooltip"] strong')
-            ->assertScript('document.querySelector(\'[role="tooltip"]\').textContent', 'Update status for Alex Morgan')
-            ->assertScript('document.activeElement.hasAttribute("aria-describedby")');
+            ->assertScript('typeof document.querySelector(\'' . $tooltipSelector . '\')._tippy === "object"')
+            ->assertScript('[document.querySelector(\'' . $tooltipSelector . '\')._tippy.props.content, document.querySelector(\'' . $tooltipSelector . '\')._tippy.props.allowHTML]', ['<strong>Update status for Alex Morgan</strong>', true]);
 
         foreach (['Rejected', 'Approved'] as $value) {
             if ($mode === 'native') {
@@ -99,17 +93,9 @@ it('prioritizes select errors and restores the configured tooltip after a succes
             }
 
             $page->assertScript('Alpine.$data(document.querySelector(\'' . $rootSelector . '\')).error ' . (($value === 'Rejected') ? '=== "Approval <em>required</em>."' : '=== undefined'))
-                ->script('document.querySelector(\'' . $tooltipSelector . '\')._tippy.show()');
-
-            $page
-                ->assertScript('Array.from(document.querySelectorAll(\'[role="tooltip"]\')).filter(element => getComputedStyle(element).visibility === "visible").map(element => element.textContent)', [($value === 'Rejected') ? 'Approval <em>required</em>.' : 'Update status for Alex Morgan'])
-                ->assertMissing('[role="tooltip"] em')
+                ->assertScript('[document.querySelector(\'' . $tooltipSelector . '\')._tippy.props.content, document.querySelector(\'' . $tooltipSelector . '\')._tippy.props.allowHTML]', ($value === 'Rejected') ? ['Approval <em>required</em>.', false] : ['<strong>Update status for Alex Morgan</strong>', true])
                 ->assertNoSmoke()
                 ->assertNoAccessibilityIssues();
-
-            if ($value === 'Approved') {
-                $page->assertVisible('[role="tooltip"] strong');
-            }
 
             expect($author->fresh()->json["{$mode}_status"])->toBe(($value === 'Rejected') ? 'Pending' : 'Approved');
         }

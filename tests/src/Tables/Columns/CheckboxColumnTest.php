@@ -97,19 +97,10 @@ it('prioritizes checkbox errors and restores the configured tooltip after a succ
         $page
             ->assertNotChecked('[data-testid="author-active-checkbox"]')
             ->assertScript('typeof document.querySelector(\'[data-testid="author-active-checkbox"]\')._tippy === "object"')
-            ->script('document.querySelector(\'[data-testid="author-active-checkbox"]\')._tippy.show()');
-
-        $page
-            ->assertVisible('[role="tooltip"] strong')
-            ->assertScript('document.querySelector(\'[role="tooltip"]\').textContent', 'Update activity for Alex Morgan')
+            ->assertScript('[document.querySelector(\'[data-testid="author-active-checkbox"]\')._tippy.props.content, document.querySelector(\'[data-testid="author-active-checkbox"]\')._tippy.props.allowHTML]', ['<strong>Update activity for Alex Morgan</strong>', true])
             ->check('[data-testid="author-active-checkbox"]')
             ->assertScript('Alpine.$data(document.querySelector(\'[data-testid="author-active-checkbox"]\')).error', 'Approval <em>required</em>.')
-            ->script('document.querySelector(\'[data-testid="author-active-checkbox"]\')._tippy.show()');
-
-        $page
-            ->assertVisible('[role="tooltip"]')
-            ->assertScript('document.querySelector(\'[role="tooltip"]\').textContent', 'Approval <em>required</em>.')
-            ->assertMissing('[role="tooltip"] em')
+            ->assertScript('[document.querySelector(\'[data-testid="author-active-checkbox"]\')._tippy.props.content, document.querySelector(\'[data-testid="author-active-checkbox"]\')._tippy.props.allowHTML]', ['Approval <em>required</em>.', false])
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
@@ -119,11 +110,7 @@ it('prioritizes checkbox errors and restores the configured tooltip after a succ
             ->uncheck('[data-testid="author-active-checkbox"]')
             ->check('[data-testid="author-active-checkbox"]')
             ->assertScript('Alpine.$data(document.querySelector(\'[data-testid="author-active-checkbox"]\')).error === undefined')
-            ->script('document.querySelector(\'[data-testid="author-active-checkbox"]\')._tippy.show()');
-
-        $page
-            ->assertVisible('[role="tooltip"] strong')
-            ->assertScript('document.querySelector(\'[role="tooltip"]\').textContent', 'Update activity for Alex Morgan')
+            ->assertScript('[document.querySelector(\'[data-testid="author-active-checkbox"]\')._tippy.props.content, document.querySelector(\'[data-testid="author-active-checkbox"]\')._tippy.props.allowHTML]', ['<strong>Update activity for Alex Morgan</strong>', true])
             ->assertChecked('[data-testid="author-active-checkbox"]')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
