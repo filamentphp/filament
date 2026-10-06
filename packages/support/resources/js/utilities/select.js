@@ -2110,7 +2110,7 @@ export class Select {
         if (newState.includes(value)) {
             // Find and remove the badge directly from the DOM
             const badgeToRemove = this.selectedDisplay.querySelector(
-                `[data-value="${value}"]`,
+                `[data-value="${CSS.escape(value)}"]`,
             )
             if (filled(badgeToRemove)) {
                 // Check if this is the last badge
