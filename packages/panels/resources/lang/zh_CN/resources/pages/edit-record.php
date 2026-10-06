@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => '编辑',
 
+    'navigation_label' => '编辑',
+
     'form' => [
 
         'actions' => [

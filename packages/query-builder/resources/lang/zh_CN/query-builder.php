@@ -14,6 +14,10 @@ return [
 
             'label' => '条件组',
 
+            'group' => [
+                'label' => '条件组',
+            ],
+
             'block' => [
                 'label' => '或条件组 (OR)',
                 'or' => '或',
@@ -34,6 +38,8 @@ return [
     ],
 
     'no_rules' => '（无规则）',
+
+    'max_rules_reached_tooltip' => '规则数量已达上限（:count 条）。',
 
     'item_separators' => [
         'and' => '且',
