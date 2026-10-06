@@ -43,6 +43,30 @@ return [
 
     ],
 
+    'multi_factor' => [
+
+        'heading' => '验证身份',
+
+        'subheading' => '请先验证身份，再继续登录。',
+
+        'form' => [
+
+            'provider' => [
+                'label' => '选择验证方式',
+            ],
+
+            'actions' => [
+
+                'authenticate' => [
+                    'label' => '确认登录',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'messages' => [
 
         'failed' => '登录信息有误。',
