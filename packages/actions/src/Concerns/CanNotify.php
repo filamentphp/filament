@@ -92,7 +92,7 @@ trait CanNotify
                 ->persistent(),
         ]) ?? $notification;
 
-        if (filled($notification?->getTitle())) {
+        if (filled($notification->getTitle())) {
             $notification->send();
         }
 
@@ -141,7 +141,7 @@ trait CanNotify
                 ->title($this->getSuccessNotificationTitle()),
         ]) ?? $notification;
 
-        if (filled($notification?->getTitle())) {
+        if (filled($notification->getTitle())) {
             $notification->send();
         }
 
@@ -185,7 +185,7 @@ trait CanNotify
             'response' => $response,
         ]) ?? $notification;
 
-        if (filled($notification?->getTitle())) {
+        if (filled($notification->getTitle())) {
             $notification->send();
         }
 
