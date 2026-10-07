@@ -34,6 +34,32 @@ The dropdown component allows you to render a dropdown menu with a button that t
 
 <AutoScreenshot name="components/dropdown/simple" alt="A dropdown menu with action items" version="4.x" />
 
+## Using the keyboard
+
+Dropdowns use action-menu semantics by default. You can open the menu with Enter, Space or Arrow Down to focus the first item, or Arrow Up to focus the last item. Arrow Up and Arrow Down move between items and wrap at either end. Disabled items can receive focus but cannot be activated. Escape closes the menu and returns focus to its trigger; Tab closes it and moves to the next focusable control.
+
+## Displaying content other than a menu
+
+If your dropdown contains form fields or other content that is not an action menu, set `:menu="false"` to preserve normal Tab navigation and the content's own keyboard interactions:
+
+```blade
+<x-filament::dropdown :menu="false">
+    <x-slot name="trigger">
+        <x-filament::button>
+            Edit notes
+        </x-filament::button>
+    </x-slot>
+
+    <label for="dropdown-notes">Notes</label>
+
+    <x-filament::input.wrapper>
+        <x-filament::input id="dropdown-notes" wire:model="notes" />
+    </x-filament::input.wrapper>
+</x-filament::dropdown>
+```
+
+Use form components or native buttons and links in these popups, rather than `dropdown.list.item`, which renders menu-item semantics.
+
 ## Using a dropdown item as an anchor link
 
 By default, a dropdown item's underlying HTML tag is `<button>`. You can change it to be an `<a>` tag by using the `tag` attribute:

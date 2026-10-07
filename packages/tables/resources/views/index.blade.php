@@ -438,6 +438,7 @@
                                 class="fi-ta-grouping-settings"
                             >
                                 <x-filament::dropdown
+                                    :menu="false"
                                     placement="bottom-start"
                                     shift
                                     width="xs"
@@ -625,6 +626,7 @@
                                         </x-filament::modal>
                                     @else
                                         <x-filament::dropdown
+                                            :menu="false"
                                             :max-height="$filtersFormMaxHeight"
                                             placement="bottom-end"
                                             shift
@@ -741,6 +743,7 @@
                                         </x-filament::modal>
                                     @else
                                         <x-filament::dropdown
+                                            :menu="false"
                                             :max-height="$columnManagerMaxHeight"
                                             placement="bottom-end"
                                             shift

@@ -47,6 +47,7 @@
 @endphp
 
 <x-filament::dropdown
+    :menu="! $searchable"
     :placement="$placement"
     shift
     :width="$width"
@@ -120,6 +121,8 @@
 
                     <x-filament::dropdown.list.item
                         :icon="$blockIcon"
+                        :role="$searchable ? 'button' : 'menuitem'"
+                        :tabindex="$searchable ? 0 : -1"
                         x-on:click="close"
                         :wire:click="$wireClickAction"
                         :wire:key="$searchable ? md5($wireClickAction . $blockSearchLabel) : null"

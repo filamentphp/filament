@@ -1442,7 +1442,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 
         $dropdownAttributes = (new FilamentComponentAttributeBag)
             ->merge([
-                'x-data' => 'filamentDropdown',
+                'x-data' => 'filamentDropdown({ isMenu: ' . ($isSearchable ? 'false' : 'true') . ' })',
                 'wire:key' => $blockPickerKey,
             ], escape: false)
             ->class([
@@ -1480,8 +1480,6 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 
         <div <?= $dropdownAttributes->toHtml() ?>>
             <div
-                x-on:keyup.enter="toggle($event)"
-                x-on:keyup.space="toggle($event)"
                 x-on:mousedown="if ($event.button === 0) toggle($event)"
                 class="fi-dropdown-trigger"
             >

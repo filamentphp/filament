@@ -32,11 +32,21 @@
     $afterSwitcherItemGroups = $multiGroupAfterSwitcher ? $this->getTenantMenuItemGroupsAfterSwitcher() : [];
 
     $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
+
+    if ($isSearchable) {
+        foreach ($items as $item) {
+            $item->extraAttributes([
+                'role' => ($item->getUrl() && (! $item->shouldPostToUrl())) ? 'link' : 'button',
+                'tabindex' => '0',
+            ], merge: true);
+        }
+    }
 @endphp
 
 {{ FilamentView::renderHook(PanelsRenderHook::TENANT_MENU_BEFORE) }}
 
 <x-filament::dropdown
+    :menu="! $isSearchable"
     placement="bottom-start"
     size
     :teleport="$teleport"
@@ -127,6 +137,7 @@
                     @endphp
 
                     <div
+                        class="fi-tenant-menu-item"
                         x-show="
                             search === '' ||
                                 @js($tenantName).replace(/ /g, '')
@@ -134,13 +145,33 @@
                                     .includes(search.replace(/ /g, '').toLowerCase())
                         "
                     >
-                        <x-filament::dropdown.list.item
-                            :href="$tenantUrl"
-                            :image="$tenantImage"
-                            tag="a"
-                        >
-                            {{ $tenantName }}
-                        </x-filament::dropdown.list.item>
+                        @if ($isSearchable)
+                            <a
+                                {{ \Filament\Support\generate_href_html($tenantUrl) }}
+                                class="fi-dropdown-list-item"
+                            >
+                                @if ($tenantImage)
+                                    <div
+                                        class="fi-dropdown-list-item-image"
+                                        style="
+                                            background-image: url('{{ $tenantImage }}');
+                                        "
+                                    ></div>
+                                @endif
+
+                                <span class="fi-dropdown-list-item-label">
+                                    {{ $tenantName }}
+                                </span>
+                            </a>
+                        @else
+                            <x-filament::dropdown.list.item
+                                :href="$tenantUrl"
+                                :image="$tenantImage"
+                                tag="a"
+                            >
+                                {{ $tenantName }}
+                            </x-filament::dropdown.list.item>
+                        @endif
                     </div>
                 @endforeach
             </x-filament::dropdown.list>

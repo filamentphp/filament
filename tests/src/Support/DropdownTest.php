@@ -6,6 +6,71 @@ use Illuminate\Support\Facades\Artisan;
 
 uses(TestCase::class);
 
+it('uses menu behavior by default and supports opting out', function (): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    $trigger = '[data-testid="menu-dropdown-trigger"]';
+    $firstItem = '[data-testid="menu-dropdown-first-item"]';
+    $disabledItem = '[data-testid="menu-dropdown-disabled-item"]';
+    $lastItem = '[data-testid="menu-dropdown-last-item"]';
+
+    visit('/dropdown-test')
+        ->assertAttribute($trigger, 'aria-haspopup', 'menu')
+        ->assertAttribute('[data-testid="dropdown-trigger"]', 'aria-haspopup', 'true')
+        ->assertScript('(window.originalCheckVisibility = Element.prototype.checkVisibility, Element.prototype.checkVisibility = undefined, true)', true)
+        ->keys($trigger, 'Enter')
+        ->assertScript("document.activeElement.matches('{$firstItem}')", true)
+        ->assertAttribute($firstItem, 'role', 'menuitem')
+        ->assertAttribute($firstItem, 'tabindex', '-1')
+        ->keys($firstItem, 'ArrowDown')
+        ->assertScript("document.activeElement.matches('{$disabledItem}')", true)
+        ->assertAttribute($disabledItem, 'aria-disabled', 'true')
+        ->assertScript("!document.activeElement.hasAttribute('disabled')", true)
+        ->keys($disabledItem, 'Enter')
+        ->assertVisible($lastItem)
+        ->keys($disabledItem, 'ArrowDown')
+        ->assertScript("document.activeElement.matches('{$lastItem}')", true)
+        ->keys($lastItem, 'ArrowDown')
+        ->assertScript("document.activeElement.matches('{$firstItem}')", true)
+        ->keys($firstItem, 'Escape')
+        ->assertMissing($firstItem)
+        ->assertScript("document.activeElement.matches('{$trigger}')", true)
+        ->click($trigger)
+        ->assertVisible($firstItem)
+        ->keys($trigger, 'Tab')
+        ->assertMissing($firstItem)
+        ->assertScript("document.activeElement.matches('[data-testid=\"refresh\"]')", true)
+        ->click($trigger)
+        ->assertVisible($firstItem)
+        ->keys($trigger, 'Shift+Tab')
+        ->assertMissing($firstItem)
+        ->assertScript("document.activeElement.matches('[data-testid=\"dropdown-trigger\"]') || (/AppleWebKit/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent) && !document.activeElement.closest('[role=\"menu\"]'))", true)
+        ->click('[data-testid="dropdown-trigger"]')
+        ->assertScript("document.querySelector('[data-testid=\"dropdown-trigger\"]').getAttribute('aria-controls') === document.querySelector('[data-testid=\"dropdown-trigger\"]').closest('.fi-dropdown').querySelector('.fi-dropdown-panel').id", true)
+        ->assertScript("!document.querySelector('[data-testid=\"dropdown-trigger\"]').closest('.fi-dropdown').querySelector('.fi-dropdown-panel').hasAttribute('role')", true)
+        ->assertScript('(Element.prototype.checkVisibility = window.originalCheckVisibility, true)', true)
+        ->assertNoSmoke();
+});
+
+it('keeps an opted-out popup open when closing a nested menu', function (): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    visit('/dropdown-test')
+        ->click('[data-testid="dropdown-trigger"]')
+        ->keys('[data-testid="nested-menu-trigger"]', 'Enter')
+        ->assertScript("document.activeElement.matches('[data-testid=\"nested-menu-item\"]')", true)
+        ->keys('[data-testid="nested-menu-item"]', 'Tab')
+        ->assertMissing('[data-testid="nested-menu-item"]')
+        ->assertVisible('.fi-select-input-btn')
+        ->assertAttribute('[data-testid="dropdown-trigger"]', 'aria-expanded', 'true')
+        ->assertScript("document.activeElement.matches('[data-testid=\"after-nested-menu\"]')", true)
+        ->assertNoSmoke();
+});
+
 it('closes nested form controls before their dropdown on `Escape`', function (bool $isDarkMode): void {
     Artisan::call('filament:assets');
 
