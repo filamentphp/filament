@@ -185,6 +185,7 @@ it('closes nested dropdowns when their parent closes', function (): void {
     visit('/dropdown-test')
         ->click('[data-testid="dropdown-trigger"]')
         ->assertScript("(Alpine.\$data(document.querySelector('[data-testid=\"secondary-dropdown-container\"]')).isSecondaryDropdownShown = true, true)", true)
+        ->assertVisible('[data-testid="secondary-dropdown-trigger"]')
         ->keys('[data-testid="secondary-dropdown-trigger"]', 'Enter')
         ->assertVisible('[data-testid="secondary-dropdown-content"]')
         ->keys('[data-testid="secondary-dropdown-content-button"]', 'Enter')

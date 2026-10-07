@@ -175,6 +175,12 @@ abstract class TestCase extends BaseTestCase
 
         // Paratest sets TEST_TOKEN for each worker (0, 1, 2, etc.)
         $testToken = env('TEST_TOKEN', '');
+
+        // Laravel 11 writes inline Blade views and compiled PHP non-atomically.
+        if ($testToken !== '') {
+            $app['config']->set('view.compiled', $app['config']->get('view.compiled') . '/worker-' . $testToken);
+        }
+
         $dbSuffix = $testToken !== '' ? "_{$testToken}" : '';
         $dbName = env('DB_DATABASE', 'testing') . $dbSuffix;
 
