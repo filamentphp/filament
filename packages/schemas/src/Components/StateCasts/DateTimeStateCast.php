@@ -52,7 +52,7 @@ class DateTimeStateCast implements StateCast
         }
 
         if ($this->timezone !== null) {
-            $state = $state->shiftTimezone($this->timezone);
+            $state = $state->avoidMutation()->shiftTimezone($this->timezone);
             $state = $state->setTimezone(config('app.timezone'));
         } else {
             $state = $state->avoidMutation()->shiftTimezone(config('app.timezone'));
@@ -85,7 +85,7 @@ class DateTimeStateCast implements StateCast
         }
 
         if ($this->timezone !== null) {
-            $state = $state->setTimezone($this->timezone);
+            $state = $state->avoidMutation()->setTimezone($this->timezone);
         } else {
             $state = $state->avoidMutation()->setTimezone(config('app.timezone'));
         }

@@ -8,6 +8,29 @@ use Illuminate\Database\Eloquent\Model;
 
 uses(TestCase::class);
 
+it('does not mutate `Carbon` state during repeated `get()` and `set()` calls with a field timezone', function (string $source, string $format, string $internalFormat, string $stored, string $internal): void {
+    config(['app.timezone' => 'UTC']);
+    $cast = app(DateTimeStateCast::class, [
+        'format' => $format,
+        'internalFormat' => $internalFormat,
+        'timezone' => 'Asia/Tokyo',
+    ]);
+    $internalState = $source::parse($internal, 'UTC');
+    $storedState = $source::parse('2025-07-14 15:15:23', 'UTC');
+    $originalInternalState = $internalState->format('Y-m-d H:i:s.u e');
+    $originalStoredState = $storedState->format('Y-m-d H:i:s.u e');
+
+    for ($cycle = 0; $cycle < 3; $cycle++) {
+        expect($cast->get($internalState))->toBe($stored)
+            ->and($cast->set($storedState))->toBe($internal)
+            ->and($internalState->format('Y-m-d H:i:s.u e'))->toBe($originalInternalState)
+            ->and($storedState->format('Y-m-d H:i:s.u e'))->toBe($originalStoredState);
+    }
+})->with([[Carbon::class], [CarbonImmutable::class]])->with([
+    'datetime' => ['Y-m-d H:i:s', 'Y-m-d H:i:s', '2025-07-14 15:15:23', '2025-07-15 00:15:23'],
+    'native epoch date' => ['U', 'Y-m-d', '1752505200', '2025-07-15'],
+]);
+
 it('shifts wall time in `get()` and converts instants in `set()` for mutable, immutable, and string state', function (string $appTimezone, string $timezone, string $stored, string $internal, string $source): void {
     config(['app.timezone' => $appTimezone]);
 
