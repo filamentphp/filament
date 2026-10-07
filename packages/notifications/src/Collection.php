@@ -24,12 +24,12 @@ class Collection extends BaseCollection implements Wireable
     }
 
     /**
-     * @param  array<array<string, mixed>>  $value
+     * @param  mixed  $value
      */
     public static function fromLivewire($value): static
     {
-        return app(static::class, ['items' => $value])->transform(
-            fn (array $notification): Notification => Notification::fromArray($notification),
-        );
+        return app(static::class, ['items' => is_array($value) ? $value : []])
+            ->filter(fn (mixed $notification): bool => is_array($notification))
+            ->transform(fn (array $notification): Notification => Notification::fromArray($notification));
     }
 }

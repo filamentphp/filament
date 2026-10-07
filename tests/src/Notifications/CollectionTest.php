@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Notification;
 use Filament\Tests\TestCase;
@@ -91,4 +92,53 @@ it('produces an empty `Collection` via `fromLivewire()` when given an empty arra
     expect($collection)
         ->toBeInstanceOf(Collection::class)
         ->toHaveCount(0);
+});
+
+it('produces an empty `Collection` via `fromLivewire()` when given a value that is not an array', function (): void {
+    expect(Collection::fromLivewire(5))
+        ->toBeInstanceOf(Collection::class)
+        ->toHaveCount(0);
+
+    expect(Collection::fromLivewire('not-a-list'))
+        ->toBeInstanceOf(Collection::class)
+        ->toHaveCount(0);
+});
+
+it('skips items that are not arrays via `fromLivewire()` and keeps the rest in order', function (): void {
+    $collection = Collection::fromLivewire([
+        Notification::make('first')->title('First')->toArray(),
+        5,
+        'not-a-notification',
+        null,
+        Notification::make('second')->title('Second')->toArray(),
+    ]);
+
+    expect($collection)
+        ->toHaveCount(2)
+        ->sequence(
+            fn ($item) => $item->toBeInstanceOf(Notification::class)->getId()->toBe('first'),
+            fn ($item) => $item->toBeInstanceOf(Notification::class)->getId()->toBe('second'),
+        );
+});
+
+it('skips actions that are not arrays when restoring a notification via `fromLivewire()`', function (): void {
+    $data = Notification::make('with-actions')
+        ->title('With actions')
+        ->actions([
+            Action::make('view'),
+        ])
+        ->toArray();
+
+    $data['actions'][] = 5;
+    $data['actions'][] = 'not-an-action';
+
+    $collection = Collection::fromLivewire([$data]);
+
+    expect($collection)->toHaveCount(1);
+
+    expect($collection->first()->getActions())
+        ->toHaveCount(1)
+        ->sequence(
+            fn ($action) => $action->toBeInstanceOf(Action::class)->getName()->toBe('view'),
+        );
 });

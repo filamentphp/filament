@@ -116,7 +116,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
                     true => ActionGroup::fromArray($action),
                     false => Action::fromArray($action),
                 },
-                $data['actions'] ?? [],
+                array_values(array_filter($data['actions'] ?? [], fn (mixed $action): bool => is_array($action))),
             ),
         );
 
