@@ -24,8 +24,11 @@ class DateTimeStateCast implements StateCast
         if (! $state instanceof CarbonInterface) {
             $parsedState = Carbon::parse($state, $this->timezone === null ? config('app.timezone') : null);
 
-            if (($this->timezone !== null) && is_string($state) && preg_match('/^(?:\d{4}-\d{2}-\d{2}[ T])?\d{2}:\d{2}(?::\d{2}(?:\.\d{1,6})?)?$/D', $state)) {
-                $parts = date_parse($state);
+            if (($this->timezone !== null) && is_string($state) && (
+                preg_match('/^(?:\d{4}-\d{2}-\d{2}[ T])?\d{2}:\d{2}(?::\d{2}(?:\.\d{1,6})?)?$/D', $state)
+                || (($this->internalFormat === 'Y-m-d') && preg_match('/^\d{4}-\d{2}-\d{2}$/D', $state))
+            )) {
+                $parts = date_parse(str_contains($state, ':') ? $state : "{$state} 00:00:00");
 
                 if (! $parts['warning_count']) {
                     foreach (['year', 'month', 'day', 'hour', 'minute', 'second'] as $part) {

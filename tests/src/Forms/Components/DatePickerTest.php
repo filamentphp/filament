@@ -293,6 +293,45 @@ it('preserves epoch-backed dates when loading, saving, and reloading', function 
         'explicit timezone' => ['UTC', 'Asia/Tokyo'],
     ]);
 
+it('preserves epoch dates across app and field timezone gaps and repeated midnights', function (string $pickerClass, bool $isNative, string $format, string $prefix, string $appTimezone, ?string $timezone, string $date, string $time, string $timestamp): void {
+    $originalTimezone = date_default_timezone_get();
+    config(['app.timezone' => $appTimezone]);
+    date_default_timezone_set($appTimezone);
+    FilamentTimezone::set('Pacific/Honolulu');
+
+    try {
+        $livewire = Livewire::make();
+        $schema = Schema::make($livewire)->statePath('data')->components([
+            $pickerClass::make('date')->time(false)->native($isNative)->format($format)->timezone($timezone),
+        ]);
+        $schema->fill(['date' => $prefix . $timestamp]);
+
+        for ($cycle = 0; $cycle < 3; $cycle++) {
+            expect($livewire->data['date'])->toBe($date . ($isNative ? '' : ' ' . $time))
+                ->and($schema->getState())->toBe(['date' => $prefix . $timestamp]);
+
+            $schema->fill($schema->getState());
+        }
+    } finally {
+        date_default_timezone_set($originalTimezone);
+    }
+})->with([[DatePicker::class], [DateTimePicker::class]])
+    ->with([true, false])
+    ->with([
+        'epoch' => ['U', ''],
+        'literal prefix' => ['\\@U', '@'],
+        'escaped backslash before epoch' => ['\\\\U', '\\'],
+    ])
+    ->with([
+        'before app skipped midnight' => ['America/Santiago', 'UTC', '2025-09-06', '00:00:00', '1757116800'],
+        'app skipped midnight' => ['America/Santiago', 'UTC', '2025-09-07', '00:00:00', '1757203200'],
+        'after app skipped midnight' => ['America/Santiago', 'UTC', '2025-09-08', '00:00:00', '1757289600'],
+        'field skipped midnight' => ['UTC', 'America/Santiago', '2025-09-07', '01:00:00', '1757217600'],
+        'default field skipped midnight' => ['America/Santiago', null, '2025-09-07', '01:00:00', '1757217600'],
+        'app skipped entire date' => ['Pacific/Apia', 'UTC', '2011-12-30', '00:00:00', '1325203200'],
+        'field repeated midnight' => ['America/Los_Angeles', 'America/Havana', '2025-11-02', '00:00:00', '1762059600'],
+    ]);
+
 it('does not treat an escaped `U` in `format()` as an epoch', function (): void {
     config(['app.timezone' => 'UTC']);
 
@@ -687,10 +726,10 @@ describe('rendering', function (): void {
     });
 });
 
-it('saves boundary dates and round-trips epoch-backed and model-backed dates with accessible light and dark states', function (): void {
+it('saves boundary dates and round-trips epoch-backed and model-backed dates with accessible light and dark states', function (string $appTimezone): void {
     $originalTimezone = date_default_timezone_get();
-    config(['app.timezone' => 'Europe/Madrid']);
-    date_default_timezone_set('Europe/Madrid');
+    config(['app.timezone' => $appTimezone]);
+    date_default_timezone_set($appTimezone);
     $record = User::factory()->create(['email_verified_at' => '2026-06-30 00:00:00']);
     $this->actingAs($record);
 
@@ -706,6 +745,7 @@ it('saves boundary dates and round-trips epoch-backed and model-backed dates wit
             $page->assertNoSmoke()->assertNoAccessibilityIssues()
                 ->assertValue('[data-testid="timestamp-date"]', '2025-07-15')
                 ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-15')
+                ->assertValue('[data-testid="midnight-timestamp-date"]', '2025-09-07')
                 ->assertValue('[data-testid="model-date"]', '2026-06-30');
 
             $reloadCount = 0;
@@ -731,6 +771,7 @@ it('saves boundary dates and round-trips epoch-backed and model-backed dates wit
                     $page->assertScript('document.querySelector(\'[data-testid="saved-native-date"]\').textContent.trim()', $date)
                         ->assertScript('document.querySelector(\'[data-testid="saved-timestamp-date"]\').textContent.trim()', '1752505200')
                         ->assertScript('document.querySelector(\'[data-testid="saved-custom-timestamp-date"]\').textContent.trim()', '1752505200')
+                        ->assertScript('document.querySelector(\'[data-testid="saved-midnight-timestamp-date"]\').textContent.trim()', '1757203200')
                         ->click('[data-testid="reload-dates"]')
                         ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
                         ->assertValue('[data-testid="native-date"]', $date)
@@ -756,6 +797,7 @@ it('saves boundary dates and round-trips epoch-backed and model-backed dates wit
                 ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
                 ->assertValue('[data-testid="timestamp-date"]', '2025-07-16')
                 ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-16')
+                ->assertValue('[data-testid="midnight-timestamp-date"]', '2025-09-07')
                 ->assertValue('[data-testid="model-date"]', '2026-06-30');
 
             expect(substr($record->refresh()->getRawOriginal('email_verified_at'), 0, 10))->toBe('2026-06-30');
@@ -766,7 +808,7 @@ it('saves boundary dates and round-trips epoch-backed and model-backed dates wit
     } finally {
         date_default_timezone_set($originalTimezone);
     }
-});
+})->with(['Europe/Madrid', 'America/Santiago']);
 
 class TestComponentWithDatePicker extends Livewire
 {

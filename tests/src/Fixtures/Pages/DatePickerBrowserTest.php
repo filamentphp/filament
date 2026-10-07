@@ -60,6 +60,12 @@ class DatePickerBrowserTest extends Page
                     ->timezone('Asia/Tokyo')
                     ->default('1752505200')
                     ->extraTriggerAttributes(['data-testid' => 'custom-timestamp-date']),
+                DatePicker::make('midnightTimestamp')
+                    ->label('Midnight timestamp date')
+                    ->format('U')
+                    ->timezone('UTC')
+                    ->default('1757203200')
+                    ->extraInputAttributes(['data-testid' => 'midnight-timestamp-date']),
                 DatePicker::make('email_verified_at')
                     ->label('Verified date')
                     ->extraInputAttributes(['data-testid' => 'model-date']),
