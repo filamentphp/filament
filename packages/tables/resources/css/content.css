@@ -178,7 +178,7 @@
             @apply relative flex h-full items-center bg-white transition duration-75 dark:bg-gray-900;
 
             .fi-ta-content-loading & .fi-ta-record-checkbox {
-                @apply shadow-none;
+                @apply shadow-none ring-0 transition-none;
                 animation: var(--loading-skeleton-animation);
                 background-color: var(
                     --loading-skeleton-background-color

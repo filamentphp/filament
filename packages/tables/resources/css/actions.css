@@ -11,13 +11,13 @@
         > .fi-ta-row
         &
         :is(.fi-icon-btn, .fi-btn, .fi-link) {
-        @apply text-transparent shadow-none;
+        @apply text-transparent shadow-none ring-0 transition-none;
         animation: var(--loading-skeleton-animation);
         background-color: var(--loading-skeleton-background-color);
         border-radius: var(--loading-skeleton-border-radius);
 
         & > * {
-            @apply opacity-0;
+            @apply opacity-0 transition-none;
         }
     }
 
