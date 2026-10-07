@@ -46,7 +46,7 @@
 .fi-ta-group-checkbox {
     .fi-ta-content-loading > .fi-ta-content &,
     .fi-ta-content-loading > .fi-ta-table > .fi-ta-records > .fi-ta-row & {
-        @apply shadow-none;
+        @apply shadow-none ring-0 transition-none;
         animation: var(--loading-skeleton-animation);
         background-color: var(--loading-skeleton-background-color) !important;
         background-image: none !important;
