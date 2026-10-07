@@ -350,6 +350,22 @@ it('can set `defaultFocusedDate()`', function (): void {
     expect($picker->getDefaultFocusedDate())->not->toBeNull();
 });
 
+it('does not mutate a shared `CarbonInterface` from `defaultFocusedDate()`', function (string $dateClass): void {
+    $date = $dateClass::parse('2025-07-15 23:45:19.123456', 'Asia/Tokyo');
+    $picker = DateTimePicker::make('appointment')
+        ->timezone('America/New_York')
+        ->defaultFocusedDate(static fn (): CarbonInterface => $date);
+    $otherPicker = DateTimePicker::make('other_appointment')
+        ->timezone('UTC')
+        ->defaultFocusedDate($date);
+
+    for ($cycle = 0; $cycle < 3; $cycle++) {
+        expect($picker->getDefaultFocusedDate())->toBe('2025-07-15 10:45:19')
+            ->and($otherPicker->getDefaultFocusedDate())->toBe('2025-07-15 14:45:19')
+            ->and($date->format('Y-m-d H:i:s.u e'))->toBe('2025-07-15 23:45:19.123456 Asia/Tokyo');
+    }
+})->with(['mutable' => [Carbon::class], 'immutable' => [CarbonImmutable::class]]);
+
 it('can set `maxDate()` with a `Closure`', function (): void {
     $picker = DateTimePicker::make('dt')
         ->maxDate(static fn (): string => '2030-01-01');
@@ -1298,6 +1314,227 @@ it('saves a valid native field time through an app DST gap and reloads it unchan
         }
     } finally {
         date_default_timezone_set($originalTimezone);
+    }
+});
+
+it('preserves field calendar components through browser timezone gaps and folds, navigation, limits, saving and clearing', function (string $browserTimezone, string $state, string $today, bool $hasTime, bool $hasSeconds): void {
+    $originalTimezone = date_default_timezone_get();
+    config(['app.timezone' => 'UTC']);
+    date_default_timezone_set('UTC');
+    $this->actingAs(User::factory()->create());
+
+    try {
+        foreach ([false, true] as $isDarkMode) {
+            $page = visit('/date-time-picker-test?' . http_build_query([
+                'native' => 0,
+                'time' => (int) $hasTime,
+                'seconds' => (int) $hasSeconds,
+                'calendar-state' => $state,
+                'display-format' => $hasTime ? ($hasSeconds ? 'Y-m-d H:i:s' : 'Y-m-d H:i') : 'Y-m-d',
+            ]))->withTimezone($browserTimezone);
+
+            if ($isDarkMode) {
+                $page = $page->inDarkMode();
+            }
+
+            $trigger = '[data-testid="timed-trigger"]';
+            $picker = 'Alpine.$data(document.querySelector(\'[data-testid="timed-trigger"]\'))';
+            $format = $hasTime ? ($hasSeconds ? 'Y-m-d H:i:s' : 'Y-m-d H:i') : 'Y-m-d';
+            $stored = Carbon::parse($state, 'UTC')->format($format);
+            $internal = Carbon::parse($stored, 'UTC')->toDateTimeString();
+            $lastDate = Carbon::parse($internal, 'UTC')->addDays(2)->toDateTimeString();
+            $lastStored = Carbon::parse($lastDate, 'UTC')->format($format);
+
+            $page->assertScript("{$picker}.getSelectedDate().format('YYYY-MM-DD HH:mm:ss')", $state)
+                ->assertScript("{$picker}.getDefaultFocusedDate().format('YYYY-MM-DD HH:mm:ss')", $state)
+                ->assertValue($trigger, $stored)
+                ->assertNoSmoke()->assertNoAccessibilityIssues();
+
+            $page->click($trigger);
+
+            if ($hasTime) {
+                $hour = Carbon::parse($state, 'UTC')->hour;
+                $page->fill('input[aria-label="Hour"]', (string) ($hour + 1))
+                    ->assertScript("{$picker}.state", Carbon::parse($state, 'UTC')->addHour()->toDateTimeString())
+                    ->fill('input[aria-label="Hour"]', (string) $hour)
+                    ->assertScript("{$picker}.state", $state);
+            }
+
+            $page->keys($trigger, ['ArrowLeft', 'Enter'])
+                ->assertScript("{$picker}.state", $state)
+                ->keys($trigger, ['Escape', 'Enter', 'Enter', 'Escape'])
+                ->assertScript("{$picker}.state", $state);
+
+            for ($cycle = 1; $cycle <= 2; $cycle++) {
+                $page->click('[data-testid="save-timed"]')
+                    ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').textContent.trim()', (string) $cycle)
+                    ->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', $stored)
+                    ->click('[data-testid="reload-timed"]')
+                    ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', (string) $cycle)
+                    ->assertScript("{$picker}.getSelectedDate().format('YYYY-MM-DD HH:mm:ss')", $internal);
+            }
+
+            $page->click($trigger)
+                ->keys($trigger, ['ArrowRight', 'Enter'])
+                ->assertScript("{$picker}.state", $internal)
+                ->keys($trigger, 'Escape')
+                ->assertScript("{$picker}.isOpen()", false)
+                ->keys($trigger, 'Enter')
+                ->assertScript("{$picker}.isOpen()", true)
+                ->keys($trigger, 'ArrowRight')
+                ->assertScript("{$picker}.focusedDate.format('YYYY-MM-DD')", Carbon::parse($internal, 'UTC')->addDay()->toDateString())
+                ->keys($trigger, 'ArrowRight')
+                ->assertScript("{$picker}.focusedDate.format('YYYY-MM-DD')", Carbon::parse($lastDate, 'UTC')->toDateString())
+                ->keys($trigger, 'Enter')
+                ->assertScript("{$picker}.state", $lastDate)
+                ->keys($trigger, 'Escape')
+                ->click('[data-testid="save-timed"]')
+                ->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', $lastStored)
+                ->click('[data-testid="reload-timed"]')
+                ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', '3')
+                ->click($trigger)
+                ->keys($trigger, ['ArrowRight', 'Enter'])
+                ->assertScript("{$picker}.state", $lastDate)
+                ->keys($trigger, 'Backspace')
+                ->assertScript("{$picker}.state", null)
+                ->keys($trigger, 'Escape')
+                ->click('[data-testid="save-timed"]')
+                ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').textContent.trim()', '4')
+                ->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', '')
+                ->click('[data-testid="reload-timed"]')
+                ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', '4')
+                ->assertValue($trigger, '');
+
+            $page->assertScript("(() => { const OriginalDate = Date; try { window.Date = class extends OriginalDate { constructor(...parameters) { super(...(parameters.length ? parameters : ['2025-07-15T00:30:00Z'])); } }; return {$picker}.getToday().format('YYYY-MM-DD'); } finally { window.Date = OriginalDate; } })()", $today);
+            $page->script("{$picker}.\$refs.disabledDates.value = JSON.stringify(['" . substr($state, 0, 10) . "'])");
+            $page->assertScript("{$picker}.dateIsDisabled(dayjs.utc('{$state}'))", true)
+                ->assertScript("{$picker}.dateIsDisabled(dayjs.utc('{$state}').add(1, 'day'))", false)
+                ->click($trigger)
+                ->select('select[aria-label="Month"]', '1')
+                ->fill('input[aria-label="Year"]', '2024')
+                ->assertScript("{$picker}.focusedDate.format('YYYY-MM')", '2024-02')
+                ->assertScript("{$picker}.daysInFocusedMonth.length", 29)
+                ->assertScript("{$picker}.state", null)
+                ->keys($trigger, 'Escape');
+            $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
+            $page->assertNoSmoke()->assertNoAccessibilityIssues();
+        }
+    } finally {
+        date_default_timezone_set($originalTimezone);
+    }
+})->with([
+    'skipped browser date' => ['Pacific/Apia', '2011-12-30 00:15:23', '2025-07-15'],
+    'skipped browser midnight' => ['America/Santiago', '2025-09-07 00:15:23', '2025-07-14'],
+    'skipped browser hour' => ['Europe/London', '2025-03-30 01:30:23', '2025-07-15'],
+    'repeated browser midnight' => ['America/Havana', '2025-11-02 00:15:23', '2025-07-14'],
+])->with([
+    'date only' => [false, true],
+    'datetime with seconds' => [true, true],
+    'datetime without seconds' => [true, false],
+]);
+
+it('preserves browser-based `displayFormat()` zone tokens and zoned `disabledDates()` calendar projection', function (bool $hasDate): void {
+    config(['app.timezone' => 'UTC']);
+    $this->actingAs(User::factory()->create());
+
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/date-time-picker-test?' . http_build_query([
+            'native' => 0,
+            'date' => (int) $hasDate,
+            'calendar-state' => '2025-07-14 12:00:00',
+            'display-format' => ($hasDate ? 'Y-m-d ' : '') . 'H:i P O [Z]',
+            'zoned-disabled-date' => 1,
+        ]))->withTimezone('America/Los_Angeles');
+
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $picker = 'Alpine.$data(document.querySelector(\'[data-testid="timed-trigger"]\'))';
+        $page->assertValue('[data-testid="timed-trigger"]', $hasDate ? '2025-07-14 12:00 -07:00 -0700 Z' : '12:00 +00:00 +0000 Z')
+            ->assertScript("{$picker}.dateIsDisabled(dayjs.utc('2025-07-14 12:00:00'))", true)
+            ->assertScript("{$picker}.dateIsDisabled(dayjs.utc('2025-07-15 12:00:00'))", false)
+            ->assertScript("{$picker}.dateIsDisabled(dayjs.utc('2025-07-14 02:30:00'))", $hasDate)
+            ->assertScript("{$picker}.dateIsDisabled(dayjs.utc('2025-07-15 02:30:00'))", ! $hasDate)
+            ->assertNoSmoke()->assertNoAccessibilityIssues();
+    }
+})->with([true, false]);
+
+it('preserves browser-local disabled-day checks when editing an initially empty time-only picker', function (bool $hasZonedDisabledDate): void {
+    config(['app.timezone' => 'UTC']);
+    $this->actingAs(User::factory()->create());
+
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/date-time-picker-test?native=0&date=0&zoned-disabled-date=1')->withTimezone('America/Los_Angeles');
+
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $picker = 'Alpine.$data(document.querySelector(\'[data-testid="timed-trigger"]\'))';
+
+        if (! $hasZonedDisabledDate) {
+            $page->script("{$picker}.\$refs.disabledDates.value = JSON.stringify(['2025-07-15'])");
+        }
+
+        $page->assertValue('[data-testid="timed-trigger"]', '')
+            ->click('[data-testid="timed-trigger"]')
+            ->assertScript("{$picker}.focusedDate.format('YYYY-MM-DD HH:mm:ss Z')", '2025-07-15 06:24:37 -07:00')
+            ->fill('input[aria-label="Hour"]', '2')
+            ->assertScript("{$picker}.state", $hasZonedDisabledDate ? '2025-07-15 02:24:37' : null)
+            ->keys('[data-testid="timed-trigger"]', 'Escape')
+            ->click('[data-testid="save-timed"]')
+            ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').textContent.trim()', '1')
+            ->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', $hasZonedDisabledDate ? '02:24:37' : '')
+            ->click('[data-testid="reload-timed"]')
+            ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', '1')
+            ->assertValue('[data-testid="timed-trigger"]', $hasZonedDisabledDate ? '02:24:37' : '');
+        $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
+        $page->assertNoSmoke()->assertNoAccessibilityIssues();
+    }
+})->with([true, false]);
+
+it('initializes an empty time-only calendar without applying the browser timezone twice during a fold', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/date-time-picker-test?native=0&date=0')->withTimezone('America/Nuuk');
+
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page->assertScript('typeof Alpine.$data(document.querySelector(\'[data-testid="timed-trigger"]\')).init', 'function')
+            ->assertValue('[data-testid="timed-trigger"]', '')
+            ->assertScript(<<<'JS'
+                (() => {
+                    const OriginalDate = Date;
+                    try {
+                        window.Date = class extends OriginalDate {
+                            constructor(...parameters) { super(...(parameters.length ? parameters : ['2025-10-26T01:30:00Z'])); }
+                        };
+                        const component = {
+                            ...document.querySelector('[data-testid="timed-trigger"]').closest('[x-data]')._x_dataStack[0],
+                            $nextTick: callback => callback(),
+                            $watch: () => {},
+                            $refs: { disabledDates: { value: '["2025-10-25"]' } },
+                            defaultFocusedDate: null,
+                            focusedDate: null,
+                            focusedMonth: null,
+                            focusedYear: null,
+                            state: null,
+                        };
+                        component.init();
+                        const focus = component.focusedDate.format('YYYY-MM-DD HH:mm Z');
+                        component.hour = 2;
+                        component.setState(component.focusedDate.hour(2));
+                        return { focus, state: component.state };
+                    } finally {
+                        window.Date = OriginalDate;
+                    }
+                })()
+                JS, ['focus' => '2025-10-25 23:30 -03:00', 'state' => null])
+            ->assertNoSmoke()->assertNoAccessibilityIssues();
     }
 });
 

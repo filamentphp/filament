@@ -78,7 +78,7 @@ public function boot(): void
 This is useful if you want to set a default timezone for all date-time pickers in your application. It is also used in other places where timezones are used in Filament.
 
 <Aside variant="warning">
-    `DatePicker` and `DateTimePicker::make()->time(false)` preserve the calendar date when loading and saving, ignoring both `timezone()` and Filament's default timezone. This applies to native and JavaScript pickers, even with a custom calendar storage `format()`. The exception is a Unix timestamp format containing an unescaped `U` token: timestamps use `timezone()` or the app's timezone to determine the selected date. Filament's default timezone still does not apply to these date-only fields. Use a `DateTimePicker` with a time input if you need to preserve the time as well as the date.
+    `DatePicker` and `DateTimePicker::make()->time(false)` use the app's timezone, ignoring both `timezone()` and Filament's default timezone. Plain dates are interpreted in the app's timezone. Values with a timezone or offset, including Eloquent's serialized dates, are converted to the app's timezone before determining the selected date. This applies to native and JavaScript pickers, even with a custom calendar storage `format()`. The exception is a Unix timestamp format containing an unescaped `U` token: timestamps use `timezone()` or the app's timezone to determine the selected date. Filament's default timezone still does not apply to these date-only fields. Use a `DateTimePicker` with a time input if you need to preserve the time as well as the date.
 </Aside>
 
 ## Enabling the JavaScript date picker

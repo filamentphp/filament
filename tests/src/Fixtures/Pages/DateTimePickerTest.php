@@ -41,6 +41,12 @@ class DateTimePickerTest extends Page
 
     public bool $hasAppDstGap = false;
 
+    public ?string $calendarState = null;
+
+    public ?string $displayFormat = null;
+
+    public bool $hasZonedDisabledDate = false;
+
     public array $saved = [];
 
     public int $saveCount = 0;
@@ -59,7 +65,10 @@ class DateTimePickerTest extends Page
         $this->isNative = request()->boolean('native', true);
         $this->hasDstLimits = request()->boolean('dst');
         $this->hasAppDstGap = request()->boolean('app-dst-gap');
-        $this->form->fill($this->hasDstLimits ? ['field' => '01:45:07'] : []);
+        $this->calendarState = request()->query('calendar-state');
+        $this->displayFormat = request()->query('display-format');
+        $this->hasZonedDisabledDate = request()->boolean('zoned-disabled-date');
+        $this->form->fill($this->calendarState !== null ? ['field' => $this->calendarState] : ($this->hasDstLimits ? ['field' => '01:45:07'] : []));
     }
 
     public function form(Schema $form): Schema
@@ -74,6 +83,7 @@ class DateTimePickerTest extends Page
             ->defaultFocusedDate('2025-07-15 13:24:37')
             ->placeholder('Choose a date or time')
             ->seconds($this->hasSeconds)
+            ->displayFormat($this->displayFormat)
             ->extraAttributes(['data-testid' => 'date-time-picker'])
             ->extraInputAttributes(['data-testid' => 'timed-input'])
             ->extraTriggerAttributes(['data-testid' => 'timed-trigger']);
@@ -93,6 +103,19 @@ class DateTimePickerTest extends Page
 
         if ($this->hasAppDstGap) {
             $field->timezone('America/New_York');
+        }
+
+        if ($this->calendarState !== null) {
+            $date = Carbon::parse($this->calendarState, 'UTC');
+            $field->timezone('UTC')
+                ->defaultFocusedDate($this->calendarState)
+                ->minDate($date->copy()->startOfDay()->toDateTimeString())
+                ->maxDate($date->copy()->addDays(2)->endOfDay()->toDateTimeString())
+                ->disabledDates([$date->copy()->addDay()->toDateString()]);
+        }
+
+        if ($this->hasZonedDisabledDate) {
+            $field->disabledDates(['2025-07-15T00:00:00Z']);
         }
 
         return $form
