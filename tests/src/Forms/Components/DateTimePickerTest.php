@@ -1362,7 +1362,14 @@ it('preserves field calendar components through browser timezone gaps and folds,
 
             $page->keys($trigger, ['ArrowLeft', 'Enter'])
                 ->assertScript("{$picker}.state", $state)
-                ->keys($trigger, ['Escape', 'Enter', 'Enter', 'Escape'])
+                ->keys($trigger, 'Escape')
+                ->assertScript("{$picker}.isOpen()", false)
+                ->keys($trigger, 'Enter')
+                ->assertScript("{$picker}.isOpen()", true)
+                ->keys($trigger, 'Enter')
+                ->assertScript("{$picker}.state", $state)
+                ->keys($trigger, 'Escape')
+                ->assertScript("{$picker}.isOpen()", false)
                 ->assertScript("{$picker}.state", $state);
 
             for ($cycle = 1; $cycle <= 2; $cycle++) {
