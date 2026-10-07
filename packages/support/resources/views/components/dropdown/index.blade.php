@@ -3,6 +3,7 @@
     'availableWidth' => null,
     'flip' => true,
     'maxHeight' => null,
+    'menu' => true,
     'offset' => 8,
     'placement' => null,
     'shift' => false,
@@ -28,12 +29,10 @@
 @endphp
 
 <div
-    x-data="filamentDropdown"
+    x-data="filamentDropdown({ isMenu: @js($menu) })"
     {{ $attributes->class(['fi-dropdown']) }}
 >
     <div
-        x-on:keyup.enter="toggle($event)"
-        x-on:keyup.space="toggle($event)"
         x-on:mousedown="if ($event.button === 0) toggle($event)"
         {{ $trigger->attributes->class(['fi-dropdown-trigger']) }}
     >

@@ -1628,6 +1628,29 @@ describe('browser interactions', function (): void {
         });
     });
 
+    it('keeps initial options when clearing a pending search', function (): void {
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            $page = visit('/select-test');
+
+            $page
+                ->click('#dynamic-select')
+                ->assertCount('[role="listbox"]:visible [role="option"]', 2)
+                ->type('[role="listbox"]:visible input', 'result')
+                ->assertMissing('[role="listbox"]:visible [role="option"]')
+                ->clear('[role="listbox"]:visible input')
+                ->wait(1.5)
+                ->assertCount('[role="listbox"]:visible [role="option"]', 2)
+                ->keys('[role="listbox"]:visible input', 'Enter')
+                ->assertSeeIn('#dynamic-select', 'Dynamic Option 1')
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+
+            $page->inDarkMode()->assertNoAccessibilityIssues();
+        });
+    });
+
     it('only adds one remove button when selecting multiple options in sequence', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());

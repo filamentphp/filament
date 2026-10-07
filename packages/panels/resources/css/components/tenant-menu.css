@@ -34,6 +34,10 @@
     @apply text-gray-950 dark:text-white;
 }
 
+.fi-tenant-menu-item {
+    @apply min-w-0;
+}
+
 .fi-sidebar {
     & .fi-tenant-menu {
         @apply mx-4 mt-3;

@@ -1847,6 +1847,8 @@ export class Select {
 
         // If query is empty, restore original options and exit early
         if (query === '') {
+            this.activeSearchId++
+            this.isSearching = false
             this.options = JSON.parse(JSON.stringify(this.originalOptions))
             this.renderOptions()
             return

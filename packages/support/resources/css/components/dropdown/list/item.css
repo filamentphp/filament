@@ -18,6 +18,10 @@
         }
     }
 
+    &[role^='menuitem'][aria-disabled='true']:focus-visible {
+        @apply bg-gray-50 dark:bg-white/5;
+    }
+
     & .fi-icon {
         @apply transition duration-75;
     }
@@ -41,6 +45,10 @@
             &.fi-selected {
                 @apply bg-color-50 dark:bg-color-400/10;
             }
+        }
+
+        &[role^='menuitem'][aria-disabled='true']:focus-visible {
+            @apply bg-color-50 dark:bg-color-400/10;
         }
 
         & .fi-dropdown-list-item-label {

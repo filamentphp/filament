@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Livewire\Sidebar;
 use Filament\Livewire\Topbar;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
@@ -91,5 +92,20 @@ describe('flat tenant menu items', function (): void {
             ->assertNotified('first ran')
             ->callAction('second')
             ->assertNotified('second ran');
+    });
+
+    it('keeps searchable tenant popup controls in the tab order without menu semantics', function (): void {
+        Filament::getCurrentPanel()->searchableTenantMenu();
+
+        $document = new DOMDocument;
+        @$document->loadHTML(livewire(Sidebar::class)->html());
+
+        $xpath = new DOMXPath($document);
+        $tenantMenu = $xpath->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' fi-tenant-menu ')]")->item(0);
+
+        expect($tenantMenu)->not->toBeNull()
+            ->and($xpath->query('.//*[@role="menuitem"]', $tenantMenu))->toHaveCount(0)
+            ->and($xpath->query('.//*[@role="button" and @tabindex="0"]', $tenantMenu))->toHaveCount(2)
+            ->and($xpath->query('.//a[contains(concat(" ", normalize-space(@class), " "), " fi-dropdown-list-item ") and not(@tabindex)]', $tenantMenu))->toHaveCount(1);
     });
 });

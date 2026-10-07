@@ -78,6 +78,39 @@ it('uses the `fi-disabled` class instead of the `disabled` attribute on loading 
     }
 });
 
+it('renders dropdown items with menu item semantics', function (): void {
+    $htmlOutputs = [
+        Blade::render('<x-filament::dropdown.list.item disabled>Save</x-filament::dropdown.list.item>'),
+        embeddedHtmlGenerator()->generateDropdownItemHtml(
+            attributes: new ComponentAttributeBag,
+            isDisabled: true,
+            label: 'Save',
+        ),
+    ];
+
+    foreach ($htmlOutputs as $html) {
+        expect($html)
+            ->toContain('aria-disabled="true"')
+            ->toContain('role="menuitem"')
+            ->toContain('tabindex="-1"')
+            ->not->toContain(' disabled');
+    }
+});
+
+it('preserves specialized dropdown item roles', function (): void {
+    $htmlOutputs = [
+        Blade::render('<x-filament::dropdown.list.item role="menuitemradio">Light</x-filament::dropdown.list.item>'),
+        embeddedHtmlGenerator()->generateDropdownItemHtml(
+            attributes: new ComponentAttributeBag(['role' => 'menuitemradio']),
+            label: 'Light',
+        ),
+    ];
+
+    foreach ($htmlOutputs as $html) {
+        expect($html)->toContain('role="menuitemradio"');
+    }
+});
+
 it('preserves custom loading classes on Blade buttons', function (): void {
     $htmlOutputs = [
         Blade::render('<x-filament::badge tag="button" wire:click="save" wire:loading.class="custom-loading">Save</x-filament::badge>'),

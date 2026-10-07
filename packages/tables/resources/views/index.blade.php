@@ -438,6 +438,7 @@
                                 class="fi-ta-grouping-settings"
                             >
                                 <x-filament::dropdown
+                                    :menu="false"
                                     placement="bottom-start"
                                     shift
                                     width="xs"
@@ -625,6 +626,7 @@
                                         </x-filament::modal>
                                     @else
                                         <x-filament::dropdown
+                                            :menu="false"
                                             :max-height="$filtersFormMaxHeight"
                                             placement="bottom-end"
                                             shift
@@ -741,6 +743,7 @@
                                         </x-filament::modal>
                                     @else
                                         <x-filament::dropdown
+                                            :menu="false"
                                             :max-height="$columnManagerMaxHeight"
                                             placement="bottom-end"
                                             shift
@@ -2020,7 +2023,7 @@
                                                     continue;
                                                 }
 
-                                                $visibleFromIndex = $responsiveBreakpointOrder[$columnState['visibleFrom']] ?? null;
+                                                $visibleFromIndex = filled($columnState['visibleFrom']) ? ($responsiveBreakpointOrder[$columnState['visibleFrom']] ?? null) : null;
 
                                                 if ($visibleFromIndex !== null) {
                                                     if ($breakpointIndex >= $visibleFromIndex) {
@@ -2030,7 +2033,7 @@
                                                     continue;
                                                 }
 
-                                                $hiddenFromIndex = $responsiveBreakpointOrder[$columnState['hiddenFrom']] ?? null;
+                                                $hiddenFromIndex = filled($columnState['hiddenFrom']) ? ($responsiveBreakpointOrder[$columnState['hiddenFrom']] ?? null) : null;
 
                                                 if (($hiddenFromIndex === null) || ($breakpointIndex < $hiddenFromIndex)) {
                                                     continue 2;

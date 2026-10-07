@@ -50,6 +50,26 @@ class NotificationBrowserTest extends Page
                     Action::make('grouped-action')
                         ->label('Grouped action')
                         ->extraAttributes(['data-testid' => 'grouped-action']),
+                    Action::make('disabled-action')
+                        ->label('Disabled action')
+                        ->disabled()
+                        ->extraAttributes(['data-testid' => 'disabled-action']),
+                    Action::make('link-action')
+                        ->label('Link action')
+                        ->url('#link-action')
+                        ->extraAttributes(['data-testid' => 'link-action']),
+                    Action::make('post-action')
+                        ->label('Post action')
+                        ->url('/notification-browser-test')
+                        ->postToUrl()
+                        ->extraAttributes(['data-testid' => 'post-action']),
+                    ActionGroup::make([
+                        Action::make('nested-action')
+                            ->label('Nested action')
+                            ->extraAttributes(['data-testid' => 'nested-action']),
+                    ])
+                        ->label('Nested group')
+                        ->extraAttributes(['data-testid' => 'nested-group']),
                 ])
                     ->label('More actions')
                     ->color('gray')
@@ -57,5 +77,27 @@ class NotificationBrowserTest extends Page
                     ->button(),
             ])
             ->send();
+    }
+
+    public function getResponsiveActionGroup(): ActionGroup
+    {
+        return ActionGroup::make([
+            Action::make('responsive-action')
+                ->label('Responsive action')
+                ->url('#responsive-action')
+                ->extraAttributes(['data-testid' => 'responsive-action']),
+            ActionGroup::make([
+                Action::make('styled-nested-action')
+                    ->label('Nested action')
+                    ->extraAttributes(['data-testid' => 'styled-nested-action']),
+            ])
+                ->button()
+                ->label('Nested actions')
+                ->extraAttributes(['data-testid' => 'styled-nested-trigger']),
+        ])
+            ->label('Responsive actions')
+            ->labeledFrom('md')
+            ->button()
+            ->extraAttributes(['data-testid' => 'responsive-action-group']);
     }
 }
