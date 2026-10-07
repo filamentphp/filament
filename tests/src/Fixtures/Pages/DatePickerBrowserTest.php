@@ -30,7 +30,10 @@ class DatePickerBrowserTest extends Page
 
     public function mount(): void
     {
+        $record = auth()->user()->mergeCasts(['email_verified_at' => 'date']);
+
         $this->form->fill();
+        $this->form->fillPartially($record->attributesToArray(), ['email_verified_at']);
     }
 
     public function form(Schema $form): Schema
@@ -57,6 +60,9 @@ class DatePickerBrowserTest extends Page
                     ->timezone('Asia/Tokyo')
                     ->default('1752505200')
                     ->extraTriggerAttributes(['data-testid' => 'custom-timestamp-date']),
+                DatePicker::make('email_verified_at')
+                    ->label('Verified date')
+                    ->extraInputAttributes(['data-testid' => 'model-date']),
             ])
             ->statePath('data');
     }
@@ -64,12 +70,19 @@ class DatePickerBrowserTest extends Page
     public function save(): void
     {
         $this->saved = $this->form->getState();
+        auth()->user()->mergeCasts(['email_verified_at' => 'date'])
+            ->update(['email_verified_at' => $this->saved['email_verified_at']]);
         $this->saveCount++;
     }
 
     public function reloadForm(): void
     {
-        $this->form->fill($this->saved);
+        $record = auth()->user()->refresh()->mergeCasts(['email_verified_at' => 'date']);
+
+        $this->form->fill([
+            ...$this->saved,
+            'email_verified_at' => $record->attributesToArray()['email_verified_at'],
+        ]);
         $this->reloadCount++;
     }
 }

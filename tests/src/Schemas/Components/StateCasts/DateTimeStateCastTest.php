@@ -47,7 +47,7 @@ it('preserves blank state in both directions and rejects invalid stored dates', 
         ->and($cast->set('2025-07-14T22:30:19Z'))->toBe('2025-07-15 04:15:19');
 });
 
-it('preserves calendar dates without timezone conversion or an implicit clock', function (string $source, string $appTimezone): void {
+it('preserves app calendar dates without an implicit clock', function (string $source, string $appTimezone): void {
     config(['app.timezone' => $appTimezone]);
 
     $cast = app(DateTimeStateCast::class, [
@@ -58,14 +58,14 @@ it('preserves calendar dates without timezone conversion or an implicit clock', 
 
     foreach (['00:15:23', '23:45:47'] as $time) {
         $this->travelTo(Carbon::parse("2025-07-20 {$time}", 'UTC'));
-        $stored = $source === 'string' ? '15/07/2025' : $source::parse('2025-07-15 00:00:00', 'Asia/Tokyo');
+        $stored = $source === 'string' ? '15/07/2025' : $source::parse('2025-07-15 00:00:00', $appTimezone);
         $internal = $source === 'string' ? '2025-07-15 00:00:00' : $source::parse('2025-07-15 00:00:00', 'America/Los_Angeles');
 
         expect($cast->set($stored))->toBe('2025-07-15 00:00:00')
             ->and($cast->get($internal))->toBe('15/07/2025');
 
         if ($source !== 'string') {
-            expect($stored->format('Y-m-d H:i:s e'))->toBe('2025-07-15 00:00:00 Asia/Tokyo')
+            expect($stored->format('Y-m-d H:i:s e'))->toBe("2025-07-15 00:00:00 {$appTimezone}")
                 ->and($internal->format('Y-m-d H:i:s e'))->toBe('2025-07-15 00:00:00 America/Los_Angeles');
         }
     }
@@ -103,7 +103,7 @@ it('preserves app-calendar defaults for partial formats without timezone convers
     ['d', '15', '2024-12-15 00:00:00'],
 ]);
 
-it('parses absolute calendar dates neutrally and relative dates in the app timezone', function (): void {
+it('parses absolute and relative dates in the app timezone', function (): void {
     config(['app.timezone' => 'Pacific/Honolulu']);
     $this->travelTo(Carbon::parse('2025-07-15 00:30:00', 'UTC'));
 
@@ -115,8 +115,8 @@ it('parses absolute calendar dates neutrally and relative dates in the app timez
 
     expect($cast->set('today'))->toBe('2025-07-14 00:00:00')
         ->and($cast->set('tomorrow'))->toBe('2025-07-15 00:00:00')
-        ->and($cast->set('2025-07-15T00:15:23+09:00'))->toBe('2025-07-15 00:15:23')
-        ->and($cast->set('2025-09-07 12:00:00 America/Santiago'))->toBe('2025-09-07 12:00:00')
+        ->and($cast->set('2025-07-15T00:15:23+09:00'))->toBe('2025-07-14 05:15:23')
+        ->and($cast->set('2025-09-07 12:00:00 America/Santiago'))->toBe('2025-09-07 05:00:00')
         ->and($cast->set(null))->toBeNull()
         ->and($cast->set(''))->toBeNull()
         ->and($cast->set('not a date'))->toBeNull()
@@ -125,8 +125,8 @@ it('parses absolute calendar dates neutrally and relative dates in the app timez
 
     config(['app.timezone' => 'Pacific/Apia']);
 
-    expect($cast->set('2011-12-30'))->toBe('2011-12-30 00:00:00')
-        ->and($cast->get('2011-12-30 00:00:00'))->toBe('2011-12-30');
+    expect($cast->set('2011-12-30'))->toBe('2011-12-31 00:00:00')
+        ->and($cast->get('2011-12-30 00:00:00'))->toBe('2011-12-31');
 });
 
 it('preserves valid field wall times across gaps in the app timezone in repeated `get()` and `set()` calls', function (string $appTimezone, string $timezone, string $internal, string $stored, string $source): void {
@@ -377,3 +377,76 @@ it('keeps the app calendar date of Eloquent `date` casts serialized by `attribut
         date_default_timezone_set($originalTimezone);
     }
 })->with(['UTC', 'Europe/Madrid', 'Asia/Tokyo', 'America/New_York', 'Pacific/Kiritimati', 'Pacific/Pago_Pago']);
+
+it('rejects invalid strings matching the Eloquent date serialization format', function (): void {
+    $stateCast = app(DateTimeStateCast::class, [
+        'format' => 'Y-m-d',
+        'internalFormat' => 'Y-m-d H:i:s',
+        'timezone' => null,
+    ]);
+
+    expect($stateCast->set('2026-99-30T22:00:00.000000Z'))->toBeNull();
+});
+
+it('prioritizes the configured `format` over Eloquent date serialization in repeated round trips', function (): void {
+    config(['app.timezone' => 'Asia/Tokyo']);
+
+    $stateCast = app(DateTimeStateCast::class, [
+        'format' => 'Y-m-d\TH:i:s.u\Z',
+        'internalFormat' => 'Y-m-d H:i:s',
+        'timezone' => null,
+    ]);
+
+    $stored = '2026-06-30T23:30:00.000000Z';
+
+    for ($cycle = 0; $cycle < 3; $cycle++) {
+        $internal = $stateCast->set($stored);
+
+        expect($internal)->toBe('2026-06-30 23:30:00');
+
+        $stored = $stateCast->get($internal);
+
+        expect($stored)->toBe('2026-06-30T23:30:00.000000Z');
+    }
+});
+
+it('converts date-only string and object instants to the app timezone without mutating objects', function (string $source, string $stored, string $appTimezone, string $internal): void {
+    config(['app.timezone' => $appTimezone]);
+    $stateCast = app(DateTimeStateCast::class, [
+        'format' => 'Y-m-d',
+        'internalFormat' => 'Y-m-d H:i:s',
+        'timezone' => null,
+    ]);
+
+    $state = $source === 'string' ? $stored : $source::parse($stored);
+    $originalState = $source === 'string' ? null : $state->format('Y-m-d H:i:s.u e');
+
+    expect($stateCast->set($state))->toBe($internal);
+
+    if ($source !== 'string') {
+        expect($state->format('Y-m-d H:i:s.u e'))->toBe($originalState);
+    }
+})->with(['string', Carbon::class, CarbonImmutable::class])->with([
+    ['2026-06-29T22:00:00.000000Z', 'Europe/Madrid', '2026-06-30 00:00:00'],
+    ['2026-06-29T22:00:00.000Z', 'Europe/Madrid', '2026-06-30 00:00:00'],
+    ['2026-06-29T22:00:00Z', 'Europe/Madrid', '2026-06-30 00:00:00'],
+    ['2026-06-29T22:00:00+00:00', 'Europe/Madrid', '2026-06-30 00:00:00'],
+    ['2026-06-30T04:00:00Z', 'America/New_York', '2026-06-30 00:00:00'],
+    ['2026-06-30T00:00:00+09:00', 'America/New_York', '2026-06-29 11:00:00'],
+]);
+
+it('formats date-only internal wall time in the app timezone without mutating objects', function (string $source): void {
+    config(['app.timezone' => 'Europe/Madrid']);
+    $stateCast = app(DateTimeStateCast::class, [
+        'format' => 'Y-m-d\TH:i:s.uP',
+        'internalFormat' => 'Y-m-d H:i:s',
+        'timezone' => null,
+    ]);
+    $state = $source === 'string' ? '2026-06-30 00:15:23' : $source::parse('2026-06-30 00:15:23', 'America/Los_Angeles');
+
+    expect($stateCast->get($state))->toBe('2026-06-30T00:15:23.000000+02:00');
+
+    if ($source !== 'string') {
+        expect($state->format('Y-m-d H:i:s e'))->toBe('2026-06-30 00:15:23 America/Los_Angeles');
+    }
+})->with(['string', Carbon::class, CarbonImmutable::class]);

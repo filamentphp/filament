@@ -6,9 +6,11 @@ use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentTimezone;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\Profile;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
@@ -136,6 +138,112 @@ it('ignores explicit and global timezones when loading, saving, and reloading da
     ->with([true, false])
     ->with([null, 'Asia/Tokyo', 'America/Los_Angeles']);
 
+it('preserves model-backed calendar dates through repeated `attributesToArray()` fills and database saves', function (string $modelCast, string $pickerClass, bool $isNative, string $appTimezone, string $date): void {
+    $originalTimezone = date_default_timezone_get();
+    config(['app.timezone' => $appTimezone]);
+    date_default_timezone_set($appTimezone);
+
+    try {
+        $record = User::factory()->make()->mergeCasts(['email_verified_at' => $modelCast]);
+        $record->email_verified_at = $date . ' 23:30:19';
+        $record->save();
+
+        $picker = $pickerClass::make('email_verified_at')
+            ->time(false)
+            ->native($isNative)
+            ->timezone('Pacific/Honolulu');
+        $livewire = Livewire::make();
+        $schema = Schema::make($livewire)->model($record)->statePath('data')->components([$picker]);
+
+        for ($cycle = 0; $cycle < 3; $cycle++) {
+            $schema->fill($record->refresh()->attributesToArray());
+
+            expect(substr($livewire->data['email_verified_at'], 0, 10))->toBe($date)
+                ->and($schema->getState())->toBe(['email_verified_at' => $date]);
+
+            $record->fill($schema->getState())->save();
+
+            expect(substr($record->refresh()->getRawOriginal('email_verified_at'), 0, 10))->toBe($date);
+        }
+    } finally {
+        date_default_timezone_set($originalTimezone);
+    }
+})->with(['date', 'immutable_date', 'datetime', 'immutable_datetime'])
+    ->with([[DatePicker::class], [DateTimePicker::class]])
+    ->with([true, false])
+    ->with([
+        'positive offset' => ['Europe/Madrid', '2026-06-30'],
+        'negative offset' => ['America/New_York', '2026-06-30'],
+        'skipped midnight' => ['America/Santiago', '2025-09-07'],
+    ]);
+
+it('preserves model-backed dates with ISO-offset `format()` values through repeated database saves', function (string $pickerClass, bool $isNative, string $format): void {
+    $originalTimezone = date_default_timezone_get();
+    config(['app.timezone' => 'Europe/Madrid']);
+    date_default_timezone_set('Europe/Madrid');
+
+    try {
+        $record = User::factory()->make()->mergeCasts(['email_verified_at' => 'date']);
+        $record->email_verified_at = '2026-06-30';
+        $record->save();
+        $livewire = Livewire::make();
+        $schema = Schema::make($livewire)->model($record)->statePath('data')->components([
+            $pickerClass::make('email_verified_at')
+                ->time(false)
+                ->native($isNative)
+                ->format($format)
+                ->timezone('Pacific/Honolulu'),
+        ]);
+
+        for ($cycle = 0; $cycle < 3; $cycle++) {
+            $schema->fill($record->refresh()->attributesToArray());
+
+            expect($livewire->data['email_verified_at'])->toBe('2026-06-30' . ($isNative ? '' : ' 00:00:00'))
+                ->and($schema->getState())->toBe(['email_verified_at' => '2026-06-30T00:00:00.000000+02:00']);
+
+            $record->fill($schema->getState())->save();
+
+            expect(substr($record->refresh()->getRawOriginal('email_verified_at'), 0, 10))->toBe('2026-06-30');
+        }
+    } finally {
+        date_default_timezone_set($originalTimezone);
+    }
+})->with([[DatePicker::class], [DateTimePicker::class]])
+    ->with([true, false])
+    ->with(['Y-m-d\TH:i:s.uP', 'Y-m-d\TH:i:s.up']);
+
+it('preserves a relationship-backed date through repeated fills and database saves', function (): void {
+    $originalTimezone = date_default_timezone_get();
+    config(['app.timezone' => 'Europe/Madrid']);
+    date_default_timezone_set('Europe/Madrid');
+
+    try {
+        $record = User::factory()->create();
+        $profile = Profile::factory()->create([
+            'user_id' => $record->getKey(),
+            'created_at' => '2026-06-30 00:00:00',
+        ]);
+        $livewire = Livewire::make();
+        $schema = Schema::make($livewire)->model($record)->statePath('data')->components([
+            Section::make('Profile')
+                ->relationship('profile')
+                ->schema([DatePicker::make('created_at')]),
+        ]);
+
+        for ($cycle = 0; $cycle < 3; $cycle++) {
+            $schema->fill([]);
+
+            expect($livewire->data['profile']['created_at'])->toBe('2026-06-30');
+
+            $schema->getState();
+
+            expect(substr($profile->refresh()->getRawOriginal('created_at'), 0, 10))->toBe('2026-06-30');
+        }
+    } finally {
+        date_default_timezone_set($originalTimezone);
+    }
+});
+
 it('preserves epoch-backed dates when loading, saving, and reloading', function (string $pickerClass, bool $isNative, string $format, string $prefix, string $appTimezone, ?string $timezone): void {
     config(['app.timezone' => $appTimezone]);
     FilamentTimezone::set('America/Los_Angeles');
@@ -201,11 +309,11 @@ it('does not treat an escaped `U` in `format()` as an epoch', function (): void 
         ->and($picker->getDefaultFocusedDate())->toBe('2025-07-15 00:00:00');
 });
 
-it('preserves date-only focused dates without timezone conversion or an implicit clock', function (string $source): void {
+it('preserves app-calendar focused dates without an implicit clock', function (string $source): void {
     config(['app.timezone' => 'Europe/London']);
     $this->travelTo(Carbon::parse('2025-07-20 23:45:47', 'UTC'));
 
-    $date = $source === 'string' ? '15/07/2025' : $source::parse('2025-07-15 00:00:00', 'Asia/Tokyo');
+    $date = $source === 'string' ? '15/07/2025' : $source::parse('2025-07-15 00:00:00', 'Europe/London');
     $picker = DatePicker::make('date')
         ->native(false)
         ->format('d/m/Y')
@@ -215,7 +323,7 @@ it('preserves date-only focused dates without timezone conversion or an implicit
     expect($picker->getDefaultFocusedDate())->toBe('2025-07-15 00:00:00');
 
     if ($source !== 'string') {
-        expect($date->format('Y-m-d H:i:s e'))->toBe('2025-07-15 00:00:00 Asia/Tokyo');
+        expect($date->format('Y-m-d H:i:s e'))->toBe('2025-07-15 00:00:00 Europe/London');
     }
 
     expect($picker->defaultFocusedDate('not a date')->getDefaultFocusedDate())->toBeNull()
@@ -579,71 +687,84 @@ describe('rendering', function (): void {
     });
 });
 
-it('saves boundary dates and round-trips epoch-backed dates with accessible light and dark states', function (): void {
-    $this->actingAs(User::factory()->create());
+it('saves boundary dates and round-trips epoch-backed and model-backed dates with accessible light and dark states', function (): void {
+    $originalTimezone = date_default_timezone_get();
+    config(['app.timezone' => 'Europe/Madrid']);
+    date_default_timezone_set('Europe/Madrid');
+    $record = User::factory()->create(['email_verified_at' => '2026-06-30 00:00:00']);
+    $this->actingAs($record);
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/date-picker-browser-test');
+    try {
+        foreach ([false, true] as $isDarkMode) {
+            $page = visit('/date-picker-browser-test');
 
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-
-        $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
-        $page->assertNoSmoke()->assertNoAccessibilityIssues()
-            ->assertValue('[data-testid="timestamp-date"]', '2025-07-15')
-            ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-15');
-
-        $reloadCount = 0;
-
-        foreach ([
-            ['2025-07-14', false, 0],
-            ['2025-07-15', true, 1],
-            ['2025-07-17', true, 2],
-            ['2025-07-18', false, 2],
-        ] as [$date, $isValid, $saveCount]) {
-            $page->script("(() => { const input = document.querySelector('[data-testid=\"native-date\"]'); input.oninvalid = () => { input.dataset.rejected = 'true'; }; input.dataset.rejected = 'false'; input.value = '{$date}'; input.dispatchEvent(new Event('input', { bubbles: true })); })()");
-
-            $page->assertScript('document.querySelector(\'[data-testid="native-date"]\').validity.valid', $isValid)
-                ->click('[data-testid="save-dates"]');
-
-            if (! $isValid) {
-                $page->assertScript('document.querySelector(\'[data-testid="native-date"]\').dataset.rejected', 'true');
+            if ($isDarkMode) {
+                $page = $page->inDarkMode();
             }
 
-            $page->assertScript('document.querySelector(\'[data-testid="save-count"]\').textContent.trim()', (string) $saveCount);
+            $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
+            $page->assertNoSmoke()->assertNoAccessibilityIssues()
+                ->assertValue('[data-testid="timestamp-date"]', '2025-07-15')
+                ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-15')
+                ->assertValue('[data-testid="model-date"]', '2026-06-30');
 
-            if ($isValid) {
-                $page->assertScript('document.querySelector(\'[data-testid="saved-native-date"]\').textContent.trim()', $date)
-                    ->assertScript('document.querySelector(\'[data-testid="saved-timestamp-date"]\').textContent.trim()', '1752505200')
-                    ->assertScript('document.querySelector(\'[data-testid="saved-custom-timestamp-date"]\').textContent.trim()', '1752505200')
-                    ->click('[data-testid="reload-dates"]')
-                    ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
-                    ->assertValue('[data-testid="native-date"]', $date)
-                    ->assertValue('[data-testid="timestamp-date"]', '2025-07-15')
-                    ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-15');
+            $reloadCount = 0;
+
+            foreach ([
+                ['2025-07-14', false, 0],
+                ['2025-07-15', true, 1],
+                ['2025-07-17', true, 2],
+                ['2025-07-18', false, 2],
+            ] as [$date, $isValid, $saveCount]) {
+                $page->script("(() => { const input = document.querySelector('[data-testid=\"native-date\"]'); input.oninvalid = () => { input.dataset.rejected = 'true'; }; input.dataset.rejected = 'false'; input.value = '{$date}'; input.dispatchEvent(new Event('input', { bubbles: true })); })()");
+
+                $page->assertScript('document.querySelector(\'[data-testid="native-date"]\').validity.valid', $isValid)
+                    ->click('[data-testid="save-dates"]');
+
+                if (! $isValid) {
+                    $page->assertScript('document.querySelector(\'[data-testid="native-date"]\').dataset.rejected', 'true');
+                }
+
+                $page->assertScript('document.querySelector(\'[data-testid="save-count"]\').textContent.trim()', (string) $saveCount);
+
+                if ($isValid) {
+                    $page->assertScript('document.querySelector(\'[data-testid="saved-native-date"]\').textContent.trim()', $date)
+                        ->assertScript('document.querySelector(\'[data-testid="saved-timestamp-date"]\').textContent.trim()', '1752505200')
+                        ->assertScript('document.querySelector(\'[data-testid="saved-custom-timestamp-date"]\').textContent.trim()', '1752505200')
+                        ->click('[data-testid="reload-dates"]')
+                        ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
+                        ->assertValue('[data-testid="native-date"]', $date)
+                        ->assertValue('[data-testid="timestamp-date"]', '2025-07-15')
+                        ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-15')
+                        ->assertValue('[data-testid="model-date"]', '2026-06-30');
+                }
             }
+
+            $page->click('[data-testid="reload-dates"]')
+                ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
+                ->assertValue('[data-testid="native-date"]', '2025-07-17')
+                ->assertScript('document.querySelector(\'[data-testid="reload-dates"]\').disabled', false);
+
+            $page->fill('[data-testid="timestamp-date"]', '2025-07-16')
+                ->click('[data-testid="custom-timestamp-date"]')
+                ->keys('[data-testid="custom-timestamp-date"]', ['ArrowRight', 'Enter', 'Escape'])
+                ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-16')
+                ->click('[data-testid="save-dates"]')
+                ->assertScript('document.querySelector(\'[data-testid="saved-timestamp-date"]\').textContent.trim()', '1752591600')
+                ->assertScript('document.querySelector(\'[data-testid="saved-custom-timestamp-date"]\').textContent.trim()', '1752591600')
+                ->click('[data-testid="reload-dates"]')
+                ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
+                ->assertValue('[data-testid="timestamp-date"]', '2025-07-16')
+                ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-16')
+                ->assertValue('[data-testid="model-date"]', '2026-06-30');
+
+            expect(substr($record->refresh()->getRawOriginal('email_verified_at'), 0, 10))->toBe('2026-06-30');
+
+            $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
+            $page->assertNoAccessibilityIssues();
         }
-
-        $page->click('[data-testid="reload-dates"]')
-            ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
-            ->assertValue('[data-testid="native-date"]', '2025-07-17')
-            ->assertScript('document.querySelector(\'[data-testid="reload-dates"]\').disabled', false);
-
-        $page->fill('[data-testid="timestamp-date"]', '2025-07-16')
-            ->click('[data-testid="custom-timestamp-date"]')
-            ->keys('[data-testid="custom-timestamp-date"]', ['ArrowRight', 'Enter', 'Escape'])
-            ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-16')
-            ->click('[data-testid="save-dates"]')
-            ->assertScript('document.querySelector(\'[data-testid="saved-timestamp-date"]\').textContent.trim()', '1752591600')
-            ->assertScript('document.querySelector(\'[data-testid="saved-custom-timestamp-date"]\').textContent.trim()', '1752591600')
-            ->click('[data-testid="reload-dates"]')
-            ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
-            ->assertValue('[data-testid="timestamp-date"]', '2025-07-16')
-            ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-16');
-
-        $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
-        $page->assertNoAccessibilityIssues();
+    } finally {
+        date_default_timezone_set($originalTimezone);
     }
 });
 
