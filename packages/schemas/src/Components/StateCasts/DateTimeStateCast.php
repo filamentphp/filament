@@ -62,6 +62,13 @@ class DateTimeStateCast implements StateCast
             return null;
         }
 
+        // Eloquent serializes `date` and `datetime` casts as UTC instants (e.g. `2026-06-29T22:00:00.000000Z` for
+        // 2026-06-30 in `Europe/Madrid`), which is the state that records are filled with. Date-only fields would
+        // otherwise read the UTC calendar date, so convert these instants back to the app timezone first.
+        if (($this->timezone === null) && is_string($state) && preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}Z$/D', $state)) {
+            $state = Carbon::parse($state)->setTimezone(config('app.timezone'));
+        }
+
         if (! $state instanceof CarbonInterface) {
             try {
                 // Default omitted date parts to the app's calendar date, but omitted time parts to midnight.

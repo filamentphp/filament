@@ -4,6 +4,7 @@ use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Filament\Schemas\Components\StateCasts\DateTimeStateCast;
 use Filament\Tests\TestCase;
+use Illuminate\Database\Eloquent\Model;
 
 uses(TestCase::class);
 
@@ -346,3 +347,33 @@ it('preserves ordinary PHP date objects in `get()` without mutating them', funct
         date_default_timezone_set($originalTimezone);
     }
 })->with([DateTime::class, DateTimeImmutable::class]);
+
+it('keeps the app calendar date of Eloquent `date` casts serialized by `attributesToArray()`', function (string $appTimezone): void {
+    $originalTimezone = date_default_timezone_get();
+    config(['app.timezone' => $appTimezone]);
+    date_default_timezone_set($appTimezone);
+
+    try {
+        $record = new class extends Model
+        {
+            protected $guarded = [];
+        };
+        $record->mergeCasts(['due_date' => 'date']);
+        $record->setRawAttributes(['due_date' => '2026-06-30']);
+
+        $serializedDate = $record->attributesToArray()['due_date'];
+
+        $stateCast = app(DateTimeStateCast::class, [
+            'format' => 'Y-m-d',
+            'internalFormat' => 'Y-m-d H:i:s',
+            'timezone' => null,
+        ]);
+
+        expect($serializedDate)->toEndWith('Z')
+            ->and($stateCast->set($serializedDate))->toBe('2026-06-30 00:00:00')
+            ->and($stateCast->get($stateCast->set($serializedDate)))->toBe('2026-06-30')
+            ->and($stateCast->set($record->due_date))->toBe('2026-06-30 00:00:00');
+    } finally {
+        date_default_timezone_set($originalTimezone);
+    }
+})->with(['UTC', 'Europe/Madrid', 'Asia/Tokyo', 'America/New_York', 'Pacific/Kiritimati', 'Pacific/Pago_Pago']);
