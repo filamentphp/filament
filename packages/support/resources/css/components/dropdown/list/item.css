@@ -27,7 +27,11 @@
     }
 
     & .fi-dropdown-list-item-image {
-        @apply size-5 rounded-full bg-cover bg-center;
+        @apply size-5 rounded-md bg-cover bg-center;
+
+        &.fi-circular {
+            @apply rounded-full;
+        }
     }
 
     & > .fi-icon {

@@ -38,6 +38,12 @@
     @apply min-w-0;
 }
 
+.fi-tenant-menu {
+    & .fi-dropdown-list-item-image {
+        @apply rounded-md;
+    }
+}
+
 .fi-sidebar {
     & .fi-tenant-menu {
         @apply mx-4 mt-3;

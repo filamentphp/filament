@@ -167,6 +167,7 @@
                             <x-filament::dropdown.list.item
                                 :href="$tenantUrl"
                                 :image="$tenantImage"
+                                :image-circular="false"
                                 tag="a"
                             >
                                 {{ $tenantName }}
