@@ -635,8 +635,10 @@ it('supports the keyboard in a non-scrollable `Tabs` overflow popup', function (
             ->keys($trigger, 'Enter')
             ->assertVisible($item)
             ->assertScript("Array.from(document.querySelectorAll('#overflow-tabs .fi-dropdown-trigger button')).find((trigger) => trigger.checkVisibility()).getAttribute('aria-controls') === document.querySelector('#overflow-tabs .fi-dropdown-panel').id", true)
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+            ->assertNoSmoke();
+
+        $themedPage->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
+        $themedPage->assertNoAccessibilityIssues();
     }
 });
 

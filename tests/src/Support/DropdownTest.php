@@ -61,6 +61,7 @@ it('keeps an opted-out popup open when closing a nested menu', function (): void
 
     visit('/dropdown-test')
         ->click('[data-testid="dropdown-trigger"]')
+        ->assertVisible('[data-testid="nested-menu-trigger"]')
         ->keys('[data-testid="nested-menu-trigger"]', 'Enter')
         ->assertScript("document.activeElement.matches('[data-testid=\"nested-menu-item\"]')", true)
         ->keys('[data-testid="nested-menu-item"]', 'Tab')

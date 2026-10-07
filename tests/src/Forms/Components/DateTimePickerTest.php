@@ -1485,6 +1485,7 @@ it('preserves browser-local disabled-day checks when editing an initially empty 
         }
 
         $page->assertValue('[data-testid="timed-trigger"]', '')
+            ->assertScript("{$picker}.focusedDate?.format('YYYY-MM-DD HH:mm:ss Z')", '2025-07-15 06:24:37 -07:00')
             ->click('[data-testid="timed-trigger"]')
             ->assertScript("{$picker}.focusedDate.format('YYYY-MM-DD HH:mm:ss Z')", '2025-07-15 06:24:37 -07:00')
             ->fill('input[aria-label="Hour"]', '2')
