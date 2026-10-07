@@ -1403,6 +1403,46 @@ it('focuses the search when blocks become available and after deleting the last 
     }
 })->with(['embedded' => false, 'published Blade' => true]);
 
+it('can add a searched block using `Tab` and `Enter` in both renderers', function (bool $hasPublishedView): void {
+    $cache = new ReflectionProperty(ViewComponent::class, 'hasPublishedEmbeddedViewOverrideCache');
+    $originalCache = $cache->getValue();
+    $cache->setValue(null, [
+        ...$originalCache,
+        'filament-forms::components.builder.block-picker' => $hasPublishedView,
+    ]);
+
+    try {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
+        $option = '[data-testid="builder"] [data-block-label="video"]';
+        $page = visit('/builder-searchable-test');
+
+        foreach ([$page, $page->inDarkMode()] as $themedPage) {
+            $themedPage
+                ->click('[data-testid="add-block"]')
+                ->assertVisible($searchInput)
+                ->type($searchInput, 'video')
+                ->assertMissing('[data-testid="builder"] [data-block-label="paragraph"]')
+                ->assertVisible($option)
+                ->assertScript("(() => { const option = document.querySelector('{$option}'); return option.tagName === 'BUTTON' && (!option.hasAttribute('role') || option.getAttribute('role') === 'button') && option.tabIndex === 0 })()", true)
+                ->keys($searchInput, 'Tab')
+                ->assertScript("document.activeElement.matches('{$option}')", true)
+                ->assertScript('document.getAnimations().length', 0)
+                ->assertNoAccessibilityIssues()
+                ->keys($option, 'Enter')
+                ->assertVisible('[data-testid="builder"] input[id$=".url"]')
+                ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
+                ->assertMissing($searchInput)
+                ->assertNoSmoke();
+        }
+    } finally {
+        $cache->setValue(null, $originalCache);
+    }
+})->with(['embedded' => false, 'published Blade' => true]);
+
 it('can reopen the picker and add a block after `blockPickerWidth()` changes', function (bool $isSearchable): void {
     Artisan::call('filament:assets');
 

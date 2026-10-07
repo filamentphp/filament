@@ -612,6 +612,34 @@ it('can render `Tabs` in the browser', function (): void {
     });
 });
 
+it('supports the keyboard in a non-scrollable `Tabs` overflow popup', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $trigger = '#overflow-tabs .fi-dropdown-trigger button:visible';
+    $item = '#overflow-tabs .fi-dropdown-panel .fi-dropdown-list-item:first-child:visible';
+
+    $page = visit('/tabs-browser-test?overflow=1');
+
+    foreach ([$page, $page->inDarkMode()] as $themedPage) {
+        $themedPage
+            ->resize(375, 812)
+            ->assertVisible($trigger)
+            ->click($trigger)
+            ->assertVisible($item)
+            ->assertAttribute($trigger, 'aria-haspopup', 'true')
+            ->keys($trigger, 'Tab')
+            ->assertScript("document.activeElement.matches('#overflow-tabs .fi-dropdown-panel .fi-dropdown-list-item')", true)
+            ->keys($item, 'Enter')
+            ->assertMissing($item)
+            ->assertAttribute($trigger, 'aria-expanded', 'false')
+            ->keys($trigger, 'Enter')
+            ->assertVisible($item)
+            ->assertScript("Array.from(document.querySelectorAll('#overflow-tabs .fi-dropdown-trigger button')).find((trigger) => trigger.checkVisibility()).getAttribute('aria-controls') === document.querySelector('#overflow-tabs .fi-dropdown-panel').id", true)
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+    }
+});
+
 class RenderTabs extends Component implements HasSchemas
 {
     use InteractsWithSchemas;

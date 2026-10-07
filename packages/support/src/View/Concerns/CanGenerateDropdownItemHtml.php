@@ -74,7 +74,8 @@ trait CanGenerateDropdownItemHtml
             )
             ->merge([
                 'aria-disabled' => $isDisabled ? 'true' : null,
-                'disabled' => $isDisabled && blank($tooltip),
+                'role' => 'menuitem',
+                'tabindex' => '-1',
                 'type' => match ($tag) {
                     'button' => $type,
                     'form' => 'submit',

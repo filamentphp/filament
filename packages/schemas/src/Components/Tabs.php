@@ -466,10 +466,11 @@ class Tabs extends Component implements HasEmbeddedView
                 <?php } ?>
 
                 <?php if (! $isScrollable) { ?>
-                    <div x-data="filamentDropdown" class="fi-dropdown">
+                    <div
+                        x-data="filamentDropdown({ isMenu: false })"
+                        class="fi-dropdown"
+                    >
                         <div
-                            x-on:keyup.enter="toggle($event)"
-                            x-on:keyup.space="toggle($event)"
                             x-on:mousedown="if ($event.button === 0) toggle($event)"
                             class="fi-dropdown-trigger"
                         >
@@ -555,6 +556,9 @@ class Tabs extends Component implements HasEmbeddedView
 
                                     $dropdownItemAttributes = (new FilamentComponentAttributeBag)
                                         ->merge([
+                                            'role' => 'tab',
+                                            'aria-selected' => 'false',
+                                            'x-bind:aria-selected' => "tab === '{$tabKey}'",
                                             'type' => 'button',
                                             'x-bind:class' => "{ 'fi-selected': tab === '" . e($tabKey) . "' }",
                                             'x-on:click' => "tab = '{$tabKey}'; close(\$event);",

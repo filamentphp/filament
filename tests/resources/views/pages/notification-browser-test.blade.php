@@ -72,5 +72,7 @@
         >
             Navigate away
         </a>
+
+        {{ $this->getResponsiveActionGroup() }}
     </div>
 </x-filament-panels::page>

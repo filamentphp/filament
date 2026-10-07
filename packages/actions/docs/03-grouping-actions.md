@@ -23,6 +23,12 @@ ActionGroup::make([
 
 This page is about customizing the look of the group's trigger button and dropdown.
 
+## Using the keyboard
+
+Dropdown action groups use menu keyboard navigation. You can open a group with Enter, Space or Arrow Down to focus its first action, or Arrow Up to focus its last action. Arrow Up and Arrow Down move between actions, including disabled actions, which cannot be activated. Escape closes the menu and returns focus to its trigger; Tab closes it and moves to the next focusable control.
+
+For nested groups, Arrow Right, Enter or Space opens the submenu. Arrow Left or Escape closes it and returns focus to its parent item.
+
 ## Customizing the group trigger style
 
 The button which opens the dropdown may be customized in the same way as a normal action. [All the methods available for trigger buttons](overview) may be used to customize the group trigger button:
@@ -44,6 +50,8 @@ ActionGroup::make([
 <AutoScreenshot name="actions/group/customized" alt="Action group with custom trigger style" version="4.x" />
 
 <AutoScreenshot name="tables/actions/group-button" alt="Table with button action group" version="4.x" />
+
+When you render multiple groups together, use distinct `label()` values so users can distinguish their triggers, including when only icons are visible.
 
 ### Adding a tooltip to the group trigger button
 

@@ -67,6 +67,17 @@ class TabsBrowserTest extends Page
                                 ->schema([TextInput::make('delivery_phone')->label('Delivery phone')]),
                         ]),
                 ])->key('delivery'),
+                Tabs::make('Overflow Tabs')
+                    ->id('overflow-tabs')
+                    ->visible(static fn (): bool => request()->boolean('overflow'))
+                    ->scrollable(false)
+                    ->tabs([
+                        Tab::make('Overview and activity'),
+                        Tab::make('Contact information'),
+                        Tab::make('Billing information'),
+                        Tab::make('Security settings'),
+                        Tab::make('Notification preferences'),
+                    ]),
             ])
             ->statePath('data');
     }

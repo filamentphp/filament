@@ -130,6 +130,179 @@ it('closes an action group before dismissing its notification with `Escape`', fu
         ->assertScript("document.activeElement.matches('{$groupedOrigin}')", true);
 });
 
+it('supports keyboard navigation in an action group menu', function (): void {
+    $groupedOrigin = '[data-testid="send-grouped-action-notification"]';
+    $groupTrigger = '[data-testid="action-group"]';
+    $groupedAction = '[data-testid="grouped-action"]';
+    $disabledAction = '[data-testid="disabled-action"]';
+    $linkAction = '[data-testid="link-action"]';
+    $postAction = '[data-testid="post-action"]';
+    $nestedGroup = '[data-testid="nested-group"]';
+    $nestedAction = '[data-testid="nested-action"]';
+
+    visit('/notification-browser-test')
+        ->click($groupedOrigin)
+        ->assertAttribute($groupTrigger, 'aria-haspopup', 'menu')
+        ->click($groupTrigger)
+        ->assertScript("document.activeElement.matches('{$groupTrigger}')", true)
+        ->keys($groupTrigger, 'ArrowDown')
+        ->assertScript("document.activeElement.matches('{$groupedAction}')", true)
+        ->keys($groupedAction, 'ArrowDown')
+        ->assertScript("document.activeElement.matches('{$disabledAction}')", true)
+        ->keys($disabledAction, 'Enter')
+        ->assertVisible($groupedAction)
+        ->assertScript("document.activeElement.matches('{$disabledAction}')", true)
+        ->keys($disabledAction, 'ArrowUp')
+        ->assertScript("document.activeElement.matches('{$groupedAction}')", true)
+        ->keys($groupedAction, 'ArrowUp')
+        ->assertScript("document.activeElement.matches('{$nestedGroup}')", true)
+        ->assertMissing($nestedAction)
+        ->keys($nestedGroup, 'ArrowDown')
+        ->assertScript("document.activeElement.matches('{$groupedAction}')", true)
+        ->keys($groupedAction, 'ArrowDown')
+        ->assertScript("document.activeElement.matches('{$disabledAction}')", true)
+        ->keys($disabledAction, 'ArrowDown')
+        ->assertScript("document.activeElement.matches('{$linkAction}')", true)
+        ->keys($linkAction, 'ArrowDown')
+        ->assertScript("document.activeElement.matches('{$postAction}')", true)
+        ->keys($postAction, 'ArrowDown')
+        ->assertScript("document.activeElement.matches('{$nestedGroup}')", true)
+        ->assertScript("(document.querySelector('{$nestedGroup}').setAttribute('aria-disabled', 'true'), true)", true)
+        ->keys($nestedGroup, 'ArrowRight')
+        ->assertMissing($nestedAction)
+        ->assertScript("(document.querySelector('{$nestedGroup}').removeAttribute('aria-disabled'), true)", true)
+        ->keys($nestedGroup, 'Enter')
+        ->assertScript("!document.querySelector('{$nestedGroup}').closest('[role=menu]').hasAttribute('aria-expanded')", true)
+        ->assertScript("document.activeElement.matches('{$nestedAction}')", true)
+        ->keys($nestedAction, 'ArrowLeft')
+        ->assertScript("document.activeElement.matches('{$nestedGroup}')", true)
+        ->keys($nestedGroup, ' ')
+        ->assertScript("document.activeElement.matches('{$nestedAction}')", true)
+        ->assertScript("(document.querySelector('{$nestedGroup}').closest('.fi-dropdown').remove(), true)")
+        ->assertScript("document.activeElement.matches('{$postAction}')", true)
+        ->keys($postAction, 'Escape')
+        ->assertMissing($groupedAction)
+        ->assertScript("document.activeElement.matches('{$groupTrigger}')", true)
+        ->click($groupTrigger)
+        ->assertScript("document.activeElement.matches('{$groupTrigger}')", true)
+        ->assertScript(<<<'JS'
+            (() => {
+                const action = document.querySelector('[data-testid="post-action"]')
+                action.replaceWith(action.cloneNode(true))
+
+                return true
+            })()
+            JS, true)
+        ->assertScript("document.activeElement.matches('{$groupTrigger}')", true)
+        ->click($groupTrigger)
+        ->keys($groupTrigger, 'ArrowUp')
+        ->assertScript("document.activeElement.matches('{$postAction}')", true)
+        ->keys($postAction, 'Tab')
+        ->assertMissing($groupedAction)
+        ->assertScript("!document.activeElement.matches('{$groupTrigger}, {$postAction}')", true)
+        ->keys($groupTrigger, 'Enter')
+        ->keys($groupedAction, 'ArrowDown')
+        ->keys($disabledAction, 'ArrowDown')
+        ->assertScript("document.activeElement.matches('{$linkAction}')", true)
+        ->assertScript(<<<'JS'
+            (() => {
+                const link = document.querySelector('[data-testid="link-action"]')
+                link.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }))
+                setTimeout(() => document.activeElement.dispatchEvent(new KeyboardEvent('keyup', { key: ' ', bubbles: true })), 200)
+
+                return true
+            })()
+            JS, true)
+        ->wait(0.4)
+        ->assertMissing($groupedAction)
+        ->assertScript("window.location.hash === '#link-action'", true)
+        ->assertScript("document.activeElement.matches('{$groupTrigger}')", true)
+        ->assertScript(<<<'JS'
+            (() => {
+                const dropdown = document.querySelector('[data-testid="action-group"]').closest('.fi-dropdown')
+                const data = Alpine.$data(dropdown)
+                const trigger = data.getTrigger()
+                const panel = data.$refs.panel
+
+                window.destroyedActionMenuCloseCount = 0
+                const close = data.close
+                data.close = (...parameters) => {
+                    window.destroyedActionMenuCloseCount++
+
+                    return close.call(data, ...parameters)
+                }
+
+                Alpine.destroyTree(dropdown)
+                trigger.setAttribute('aria-controls', 'destroyed')
+                document.dispatchEvent(new Event('livewire:navigate'))
+                panel.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
+
+                return true
+            })()
+            JS, true)
+        ->wait(0.1)
+        ->assertAttribute($groupTrigger, 'aria-controls', 'destroyed')
+        ->assertScript('window.destroyedActionMenuCloseCount', 0);
+});
+
+it('preserves keyboard activation of explicitly styled nested action group triggers', function (): void {
+    $trigger = '[data-testid="styled-nested-trigger"]';
+    $item = '[data-testid="styled-nested-action"]';
+
+    visit('/notification-browser-test')
+        ->keys('[data-testid="responsive-action-group"]:visible', 'Enter')
+        ->assertVisible($trigger)
+        ->assertScript("!document.querySelector('{$trigger}').hasAttribute('role')", true)
+        ->keys($trigger, 'Enter')
+        ->assertScript("document.activeElement.matches('{$item}')", true)
+        ->keys($item, 'Escape')
+        ->assertMissing($item)
+        ->assertScript("document.activeElement.matches('{$trigger}')", true)
+        ->keys($trigger, ' ')
+        ->assertScript("document.activeElement.matches('{$item}')", true)
+        ->assertNoSmoke();
+});
+
+it('synchronizes a responsive action group trigger across breakpoints', function (): void {
+    $trigger = '[data-testid="responsive-action-group"]:visible';
+    $item = '[data-testid="responsive-action"]';
+
+    visit('/notification-browser-test')
+        ->resize(900, 812)
+        ->assertAttribute($trigger, 'aria-haspopup', 'menu')
+        ->resize(375, 812)
+        ->wait(0.1)
+        ->assertAttribute($trigger, 'aria-haspopup', 'menu')
+        ->assertScript("(() => { const trigger = Array.from(document.querySelectorAll('[data-testid=\"responsive-action-group\"]')).find((trigger) => trigger.checkVisibility()); return trigger.getAttribute('aria-controls') === trigger.closest('.fi-dropdown').querySelector('.fi-dropdown-panel').id })()", true)
+        ->assertScript("(() => { const trigger = Array.from(document.querySelectorAll('[data-testid=\"responsive-action-group\"]')).find((trigger) => trigger.checkVisibility()); return trigger.id === trigger.closest('.fi-dropdown').querySelector('.fi-dropdown-panel').getAttribute('aria-labelledby') })()", true)
+        ->assertScript("(() => { const ids = Array.from(document.querySelectorAll('[data-testid=\"responsive-action-group\"]')).map((trigger) => trigger.id).filter(Boolean); return ids.length === new Set(ids).size })()", true)
+        ->keys($trigger, 'Enter')
+        ->assertScript("document.activeElement.matches('{$item}')", true)
+        ->resize(900, 812)
+        ->wait(0.1)
+        ->assertMissing($item)
+        ->assertAttribute($trigger, 'aria-expanded', 'false')
+        ->assertScript("(() => { const trigger = Array.from(document.querySelectorAll('[data-testid=\"responsive-action-group\"]')).find((trigger) => trigger.checkVisibility()); return trigger.id === trigger.closest('.fi-dropdown').querySelector('.fi-dropdown-panel').getAttribute('aria-labelledby') })()", true)
+        ->assertNoSmoke();
+});
+
+it('has no accessibility issues in an open action group menu in light and dark modes', function (): void {
+    $page = visit('/notification-browser-test');
+
+    foreach ([$page, $page->inDarkMode()] as $themedPage) {
+        $themedPage
+            ->click('[data-testid="send-grouped-action-notification"]')
+            ->assertVisible('[data-testid="action-group"]')
+            ->keys('[data-testid="action-group"]', 'Enter')
+            ->assertVisible('[data-testid="grouped-action"]')
+            ->keys('[data-testid="grouped-action"]', 'ArrowDown')
+            ->assertScript("document.activeElement.matches('[data-testid=\"disabled-action\"]')", true)
+            ->wait(0.3)
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+    }
+});
+
 it('cleans up an expiring notification when navigating away', function (): void {
     visit('/notification-browser-test')
         ->assertScript("(sessionStorage.setItem('notificationClosedCount', '0'), window.addEventListener('notificationClosed', () => sessionStorage.setItem('notificationClosedCount', String(Number(sessionStorage.getItem('notificationClosedCount')) + 1))), true)")
