@@ -2020,7 +2020,7 @@
                                                     continue;
                                                 }
 
-                                                $visibleFromIndex = $responsiveBreakpointOrder[$columnState['visibleFrom']] ?? null;
+                                                $visibleFromIndex = filled($columnState['visibleFrom']) ? ($responsiveBreakpointOrder[$columnState['visibleFrom']] ?? null) : null;
 
                                                 if ($visibleFromIndex !== null) {
                                                     if ($breakpointIndex >= $visibleFromIndex) {
@@ -2030,7 +2030,7 @@
                                                     continue;
                                                 }
 
-                                                $hiddenFromIndex = $responsiveBreakpointOrder[$columnState['hiddenFrom']] ?? null;
+                                                $hiddenFromIndex = filled($columnState['hiddenFrom']) ? ($responsiveBreakpointOrder[$columnState['hiddenFrom']] ?? null) : null;
 
                                                 if (($hiddenFromIndex === null) || ($breakpointIndex < $hiddenFromIndex)) {
                                                     continue 2;

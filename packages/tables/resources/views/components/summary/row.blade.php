@@ -60,13 +60,13 @@
         $responsiveBreakpointOrder = array_diff_key($breakpointOrder, ['base' => true]);
 
         $isColumnVisibleAt = static function (array $columnState, int $breakpointIndex) use ($responsiveBreakpointOrder): bool {
-            $visibleFromIndex = $responsiveBreakpointOrder[$columnState['visibleFrom']] ?? null;
+            $visibleFromIndex = filled($columnState['visibleFrom']) ? ($responsiveBreakpointOrder[$columnState['visibleFrom']] ?? null) : null;
 
             if ($visibleFromIndex !== null) {
                 return $breakpointIndex >= $visibleFromIndex;
             }
 
-            $hiddenFromIndex = $responsiveBreakpointOrder[$columnState['hiddenFrom']] ?? null;
+            $hiddenFromIndex = filled($columnState['hiddenFrom']) ? ($responsiveBreakpointOrder[$columnState['hiddenFrom']] ?? null) : null;
 
             return ($hiddenFromIndex === null) || ($breakpointIndex < $hiddenFromIndex);
         };
