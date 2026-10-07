@@ -852,7 +852,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                 }
             }
 
-            $defaultFocusedDate = $defaultFocusedDate->setTimezone($this->getTimezone());
+            $defaultFocusedDate = $defaultFocusedDate->avoidMutation()->setTimezone($this->getTimezone());
         }
 
         return $defaultFocusedDate;

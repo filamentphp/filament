@@ -350,6 +350,22 @@ it('can set `defaultFocusedDate()`', function (): void {
     expect($picker->getDefaultFocusedDate())->not->toBeNull();
 });
 
+it('does not mutate a shared `CarbonInterface` from `defaultFocusedDate()`', function (string $dateClass): void {
+    $date = $dateClass::parse('2025-07-15 23:45:19.123456', 'Asia/Tokyo');
+    $picker = DateTimePicker::make('appointment')
+        ->timezone('America/New_York')
+        ->defaultFocusedDate(static fn (): CarbonInterface => $date);
+    $otherPicker = DateTimePicker::make('other_appointment')
+        ->timezone('UTC')
+        ->defaultFocusedDate($date);
+
+    for ($cycle = 0; $cycle < 3; $cycle++) {
+        expect($picker->getDefaultFocusedDate())->toBe('2025-07-15 10:45:19')
+            ->and($otherPicker->getDefaultFocusedDate())->toBe('2025-07-15 14:45:19')
+            ->and($date->format('Y-m-d H:i:s.u e'))->toBe('2025-07-15 23:45:19.123456 Asia/Tokyo');
+    }
+})->with(['mutable' => [Carbon::class], 'immutable' => [CarbonImmutable::class]]);
+
 it('can set `maxDate()` with a `Closure`', function (): void {
     $picker = DateTimePicker::make('dt')
         ->maxDate(static fn (): string => '2030-01-01');
