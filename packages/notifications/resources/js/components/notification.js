@@ -119,7 +119,7 @@ export default (Alpine) => {
                             }
 
                             animation = () => {
-                                if (this.isDestroyed || !this.isShown) {
+                                if (!this.isShown) {
                                     return
                                 }
 
@@ -197,7 +197,8 @@ export default (Alpine) => {
 
         destroy: function () {
             this.isDestroyed = true
-            clearTimeout(this.closeTimeout)
+            // Keep the pending `notificationClosed` event so a dismissal is not
+            // lost if Livewire removes this notification before its transition ends.
             clearTimeout(this.durationTimeout)
             this.unsubscribeLivewireHook?.()
             Alpine.release(this.transitionEffect)
