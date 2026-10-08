@@ -10,6 +10,16 @@ export default (Alpine) => {
 
         transitionEasing: null,
 
+        closeTimeout: null,
+
+        durationTimeout: null,
+
+        transitionEffect: null,
+
+        unsubscribeLivewireHook: null,
+
+        isDestroyed: false,
+
         init: function () {
             this.computedStyle = window.getComputedStyle(this.$el)
 
@@ -25,7 +35,7 @@ export default (Alpine) => {
                 notification.duration &&
                 notification.duration !== 'persistent'
             ) {
-                setTimeout(() => {
+                this.durationTimeout = setTimeout(() => {
                     if (!this.$el.matches(':hover')) {
                         this.close()
 
@@ -70,13 +80,19 @@ export default (Alpine) => {
                 },
             )
 
-            Alpine.effect(() => toggle(this.isShown))
+            this.transitionEffect = Alpine.effect(() => {
+                if (this.isDestroyed) {
+                    return
+                }
+
+                toggle(this.isShown)
+            })
         },
 
         configureAnimations: function () {
             let animation
 
-            Livewire.hook(
+            this.unsubscribeLivewireHook = Livewire.hook(
                 'commit',
                 ({ component, commit, succeed, fail, respond }) => {
                     if (
@@ -89,11 +105,19 @@ export default (Alpine) => {
                     // Calling `el.getBoundingClientRect()` from outside `requestAnimationFrame()` can
                     // occasionally cause the page to scroll to the top.
                     requestAnimationFrame(() => {
+                        if (this.isDestroyed) {
+                            return
+                        }
+
                         const getTop = () =>
                             this.$el.getBoundingClientRect().top
                         const oldTop = getTop()
 
                         respond(() => {
+                            if (this.isDestroyed) {
+                                return
+                            }
+
                             animation = () => {
                                 if (!this.isShown) {
                                     return
@@ -121,6 +145,10 @@ export default (Alpine) => {
                         })
 
                         succeed(({ snapshot, effect }) => {
+                            if (this.isDestroyed) {
+                                return
+                            }
+
                             animation()
                         })
                     })
@@ -129,9 +157,12 @@ export default (Alpine) => {
         },
 
         close: function () {
+            clearTimeout(this.closeTimeout)
+            clearTimeout(this.durationTimeout)
+
             this.isShown = false
 
-            setTimeout(
+            this.closeTimeout = setTimeout(
                 () =>
                     window.dispatchEvent(
                         new CustomEvent('notificationClosed', {
@@ -162,6 +193,15 @@ export default (Alpine) => {
                     },
                 }),
             )
+        },
+
+        destroy: function () {
+            this.isDestroyed = true
+            // Keep the pending `notificationClosed` event so a dismissal is not
+            // lost if Livewire removes this notification before its transition ends.
+            clearTimeout(this.durationTimeout)
+            this.unsubscribeLivewireHook?.()
+            Alpine.release(this.transitionEffect)
         },
     }))
 }
