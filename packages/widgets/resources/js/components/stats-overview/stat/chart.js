@@ -25,14 +25,23 @@ export default function statsOverviewStatChart({ key, labels, values }) {
     return {
         key,
 
+        chartDataUpdateEventTarget: null,
+
+        chartDataUpdateListener: null,
+
         themeEffect: null,
 
         init() {
-            this.$wire.$on('updateStatsOverviewChartData', (event) => {
-                if (event.key === this.key) {
-                    this.updateChartData(event.data)
+            this.chartDataUpdateEventTarget = this.$wire.$el
+            this.chartDataUpdateListener = (event) => {
+                if (event.detail.key === this.key) {
+                    this.updateChartData(event.detail.data)
                 }
-            })
+            }
+            this.chartDataUpdateEventTarget.addEventListener(
+                'updateStatsOverviewChartData',
+                this.chartDataUpdateListener,
+            )
 
             this.themeEffect = Alpine.effect(() => {
                 if (isDestroyed) {
@@ -209,6 +218,10 @@ export default function statsOverviewStatChart({ key, labels, values }) {
         destroy() {
             isDestroyed = true
             Alpine.release(this.themeEffect)
+            this.chartDataUpdateEventTarget?.removeEventListener(
+                'updateStatsOverviewChartData',
+                this.chartDataUpdateListener,
+            )
             this.systemThemeMediaQuery?.removeEventListener(
                 'change',
                 this.systemThemeListener,
