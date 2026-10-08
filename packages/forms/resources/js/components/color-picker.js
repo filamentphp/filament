@@ -12,8 +12,12 @@ export default function colorPickerFormComponent({
     liveDebounce,
     state,
 }) {
+    let isDestroyed = false
+
     return {
         state,
+
+        panelObserver: null,
 
         init: function () {
             if (!(this.state === null || this.state === '')) {
@@ -37,6 +41,10 @@ export default function colorPickerFormComponent({
 
                 setTimeout(
                     () => {
+                        if (isDestroyed) {
+                            return
+                        }
+
                         if (this.state !== event.detail.value) {
                             return
                         }
@@ -48,9 +56,11 @@ export default function colorPickerFormComponent({
             })
 
             if (isLive || isLiveDebounced || isLiveOnBlur) {
-                new MutationObserver(() =>
+                this.panelObserver = new MutationObserver(() =>
                     this.isOpen() ? null : this.commitState(),
-                ).observe(this.$refs.panel, {
+                )
+
+                this.panelObserver.observe(this.$refs.panel, {
                     attributes: true,
                     childList: true,
                 })
@@ -77,6 +87,10 @@ export default function colorPickerFormComponent({
         },
 
         commitState: function () {
+            if (isDestroyed) {
+                return
+            }
+
             if (
                 JSON.stringify(this.$wire.__instance.canonical) ===
                 JSON.stringify(this.$wire.__instance.ephemeral)
@@ -85,6 +99,11 @@ export default function colorPickerFormComponent({
             }
 
             this.$wire.$commit()
+        },
+
+        destroy: function () {
+            isDestroyed = true
+            this.panelObserver?.disconnect()
         },
     }
 }
