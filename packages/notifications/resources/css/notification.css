@@ -75,7 +75,7 @@
     &.fi-align-left {
         & .fi-no-notification {
             &.fi-transition-enter-start {
-                @apply -translate-x-12;
+                @apply -translate-x-12 rtl:translate-x-12;
             }
         }
     }
@@ -84,7 +84,7 @@
     &.fi-align-right {
         & .fi-no-notification {
             &.fi-transition-enter-start {
-                @apply translate-x-12;
+                @apply translate-x-12 rtl:-translate-x-12;
             }
         }
     }
