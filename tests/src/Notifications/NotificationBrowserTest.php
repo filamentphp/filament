@@ -313,6 +313,35 @@ it('cleans up an expiring notification when navigating away', function (): void 
         ->assertScript("sessionStorage.getItem('notificationClosedCount')", '0');
 });
 
+it('preserves a pending dismissal when the notification is destroyed', function (): void {
+    foreach ([false, true] as $isDarkMode) {
+        $browser = visit('/notification-browser-test');
+
+        if ($isDarkMode) {
+            $browser->inDarkMode();
+        }
+
+        $page = $browser
+            ->click('[data-testid="send-persistent-notification"]')
+            ->assertPresent('[x-data^="notificationComponent"]')
+            ->assertNoAccessibilityIssues();
+        $page->script(<<<'JS'
+            window.dismissalCount = 0
+            window.addEventListener('notificationClosed', (event) => {
+                if (event.detail.id === 'persistent-notification') window.dismissalCount++
+            })
+            const element = document.querySelector('[x-data^="notificationComponent"]')
+            const component = Alpine.$data(element)
+            component.close()
+            Alpine.destroyTree(element)
+            element.remove()
+            JS);
+        $page->assertScript('window.dismissalCount', 1)
+            ->assertNoJavaScriptErrors()
+            ->assertNoAccessibilityIssues();
+    }
+});
+
 it('has no accessibility issues in light and dark modes', function (bool $isDarkMode): void {
     $page = visit('/notification-browser-test');
 
