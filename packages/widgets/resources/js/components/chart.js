@@ -3,35 +3,45 @@ import 'chartjs-adapter-luxon'
 
 export default function chart({ cachedData, options, type }) {
     return {
+        isDestroyed: false,
+
+        chartDataEventTarget: null,
+
+        chartDataListener: null,
+
         themeEffect: null,
 
         themeMediaQuery: null,
 
         themeMediaQueryChangeHandler: null,
 
-        unsubscribeChartDataListener: null,
-
         init: function () {
             this.initChart()
 
-            this.unsubscribeChartDataListener = this.$wire.$on(
-                'updateChartData',
-                ({ data }) => {
-                    const chart = this.getChart()
-                    if (!chart) {
-                        return
-                    }
+            this.chartDataEventTarget = this.$wire.$el
+            this.chartDataListener = ({ detail: { data } }) => {
+                const chart = this.getChart()
+                if (!chart) {
+                    return
+                }
 
-                    chart.data = data
-                    chart.update('resize')
-                },
+                chart.data = data
+                chart.update('resize')
+            }
+            this.chartDataEventTarget.addEventListener(
+                'updateChartData',
+                this.chartDataListener,
             )
 
             this.themeEffect = Alpine.effect(() => {
+                if (this.isDestroyed) {
+                    return
+                }
+
                 Alpine.store('theme')
 
                 this.$nextTick(() => {
-                    if (!this.getChart()) {
+                    if (this.isDestroyed || !this.getChart()) {
                         return
                     }
 
@@ -49,7 +59,7 @@ export default function chart({ cachedData, options, type }) {
                 }
 
                 this.$nextTick(() => {
-                    if (!this.getChart()) {
+                    if (this.isDestroyed || !this.getChart()) {
                         return
                     }
 
@@ -64,11 +74,16 @@ export default function chart({ cachedData, options, type }) {
         },
 
         destroy: function () {
+            this.isDestroyed = true
+
             this.themeMediaQuery.removeEventListener(
                 'change',
                 this.themeMediaQueryChangeHandler,
             )
-            this.unsubscribeChartDataListener()
+            this.chartDataEventTarget.removeEventListener(
+                'updateChartData',
+                this.chartDataListener,
+            )
             Alpine.release(this.themeEffect)
             this.getChart()?.destroy()
         },
