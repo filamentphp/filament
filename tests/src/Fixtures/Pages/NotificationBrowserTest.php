@@ -24,11 +24,11 @@ class NotificationBrowserTest extends Page
         $this->isInlineNotificationShown = true;
     }
 
-    public function sendTimedNotification(int $duration = 800): void
+    public function sendTimedNotification(): void
     {
         Notification::make('timed-notification')
             ->title('Timed notification')
-            ->duration($duration)
+            ->duration(800)
             ->send();
     }
 

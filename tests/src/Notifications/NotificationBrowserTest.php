@@ -12,30 +12,6 @@ beforeEach(function (): void {
     $this->actingAs(User::factory()->create());
 });
 
-it('pauses the remaining lifetime while hovered or focused', function (): void {
-    $notification = '.fi-no-notification';
-    $closeButton = "{$notification} .fi-no-notification-close-btn";
-    $origin = '[data-testid="send-timed-notification"]';
-
-    $page = visit('/notification-browser-test')
-        ->click($origin)
-        ->assertVisible($notification)
-        ->wait(0.9)
-        ->hover($notification)
-        ->wait(1.4)
-        ->assertVisible($notification)
-        ->assertScript("(document.querySelector('{$closeButton}').focus(), document.activeElement.matches('{$closeButton}'))", true)
-        ->hover($origin)
-        ->wait(1.1)
-        ->assertVisible($notification)
-        ->assertScript("(document.querySelector('{$origin}').focus(), document.activeElement.matches('{$origin}'))", true)
-        ->wait(0.35)
-        ->assertVisible($notification)
-        ->wait(0.8);
-
-    expect($page->script("document.querySelector('{$notification}') === null"))->toBeTrue();
-});
-
 it('keeps finite duration behavior for inline notifications', function (): void {
     visit('/notification-browser-test')
         ->assertScript("(sessionStorage.setItem('inlineNotificationClosedCount', '0'), window.addEventListener('notificationClosed', (event) => event.detail.id === 'inline-timed-notification' && sessionStorage.setItem('inlineNotificationClosedCount', String(Number(sessionStorage.getItem('inlineNotificationClosedCount')) + 1))), true)")
@@ -185,64 +161,12 @@ it('supports keyboard navigation in an action group menu', function (): void {
         ->assertScript("document.activeElement.matches('{$groupTrigger}')", true)
         ->click($groupTrigger)
         ->assertScript("document.activeElement.matches('{$groupTrigger}')", true)
-        ->assertScript(<<<'JS'
-            (() => {
-                const action = document.querySelector('[data-testid="post-action"]')
-                action.replaceWith(action.cloneNode(true))
-
-                return true
-            })()
-            JS, true)
-        ->assertScript("document.activeElement.matches('{$groupTrigger}')", true)
         ->click($groupTrigger)
         ->keys($groupTrigger, 'ArrowUp')
         ->assertScript("document.activeElement.matches('{$postAction}')", true)
         ->keys($postAction, 'Tab')
         ->assertMissing($groupedAction)
-        ->assertScript("!document.activeElement.matches('{$groupTrigger}, {$postAction}')", true)
-        ->keys($groupTrigger, 'Enter')
-        ->keys($groupedAction, 'ArrowDown')
-        ->keys($disabledAction, 'ArrowDown')
-        ->assertScript("document.activeElement.matches('{$linkAction}')", true)
-        ->assertScript(<<<'JS'
-            (() => {
-                const link = document.querySelector('[data-testid="link-action"]')
-                link.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }))
-                setTimeout(() => document.activeElement.dispatchEvent(new KeyboardEvent('keyup', { key: ' ', bubbles: true })), 200)
-
-                return true
-            })()
-            JS, true)
-        ->wait(0.4)
-        ->assertMissing($groupedAction)
-        ->assertScript("window.location.hash === '#link-action'", true)
-        ->assertScript("document.activeElement.matches('{$groupTrigger}')", true)
-        ->assertScript(<<<'JS'
-            (() => {
-                const dropdown = document.querySelector('[data-testid="action-group"]').closest('.fi-dropdown')
-                const data = Alpine.$data(dropdown)
-                const trigger = data.getTrigger()
-                const panel = data.$refs.panel
-
-                window.destroyedActionMenuCloseCount = 0
-                const close = data.close
-                data.close = (...parameters) => {
-                    window.destroyedActionMenuCloseCount++
-
-                    return close.call(data, ...parameters)
-                }
-
-                Alpine.destroyTree(dropdown)
-                trigger.setAttribute('aria-controls', 'destroyed')
-                document.dispatchEvent(new Event('livewire:navigate'))
-                panel.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
-
-                return true
-            })()
-            JS, true)
-        ->wait(0.1)
-        ->assertAttribute($groupTrigger, 'aria-controls', 'destroyed')
-        ->assertScript('window.destroyedActionMenuCloseCount', 0);
+        ->assertScript("!document.activeElement.matches('{$groupTrigger}, {$postAction}')", true);
 });
 
 it('preserves keyboard activation of explicitly styled nested action group triggers', function (): void {

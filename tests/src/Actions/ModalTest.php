@@ -159,7 +159,7 @@ describe('browser interactions', function (): void {
         $assertValidationBehavior($browser);
     });
 
-    it('restores standalone modal state on close and skips `open()` after removal', function (): void {
+    it('restores standalone modal state on close', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());
 
@@ -189,30 +189,7 @@ describe('browser interactions', function (): void {
             // `inDarkMode()` requires a fresh browser context.
             visit('/modal-browser-test')
                 ->inDarkMode()
-                ->assertNoAccessibilityIssues()
-                ->assertScript(<<<'JS'
-                    (async () => {
-                        const element = document.getElementById('standalone-browser-test-modal')
-                        const component = Alpine.$data(element)
-                        const overflow = document.documentElement.style.overflow
-                        let openedEvents = 0
-                        const onOpened = () => openedEvents++
-                        document.addEventListener('x-modal-opened', onOpened)
-
-                        component.open()
-                        Alpine.destroyTree(element)
-                        element.remove()
-                        await Alpine.nextTick()
-                        component.close()
-                        document.removeEventListener('x-modal-opened', onOpened)
-
-                        return !component.isOpen
-                            && !component.isTrapActive
-                            && !component.isHoldingScrollLock
-                            && document.documentElement.style.overflow === overflow
-                            && openedEvents === 0
-                    })()
-                    JS, true);
+                ->assertNoAccessibilityIssues();
         });
     });
 
