@@ -64,7 +64,7 @@
         close: function () {
             this.isOpen = false
 
-            if (! this.$refs.modalContainer.isConnected) {
+            if (! this.$refs.modalContainer?.isConnected) {
                 return
             }
 
@@ -75,6 +75,10 @@
 
         open: function () {
             this.$nextTick(() => {
+                if (! this.$refs.modalContainer?.isConnected) {
+                    return
+                }
+
                 this.isOpen = true
 
                 @if (FilamentView::hasSpaMode())
