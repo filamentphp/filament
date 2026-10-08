@@ -13,7 +13,6 @@
         "build:support-css": "npx tailwindcss -c ./packages/support/tailwind.config.js -i ./packages/support/dist/index.css -o ./packages/support/dist/index.css --minify",
         "build": "npm-run-all build:*",
         "build-demo": "npm run build && cd ../demo && php artisan filament:upgrade && cd ../filament && cd docs-assets/app && php artisan filament:upgrade && npm run build && cd ../../",
-        "test:chart": "node --test tests/js/chart.test.js",
         "prettier": "npx prettier --write --cache --cache-location=.prettiercache ."
     },
     "devDependencies": {
