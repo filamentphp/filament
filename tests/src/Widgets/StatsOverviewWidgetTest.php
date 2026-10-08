@@ -130,17 +130,118 @@ it('renders `placeholder()` for values considered blank by `blank()`', function 
     'whitespace-only string' => ['   '],
 ]);
 
-it('has no accessibility issues in light and dark modes', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+it('renders accessible charts and stops chart work after `destroy()`', function (): void {
+    $this->actingAs(User::factory()->create());
 
-        visit('/stats-overview-widget-browser-test')
-            ->assertNoAccessibilityIssues();
+    visit('/stats-overview-widget-browser-test')
+        ->assertScript(<<<'JS'
+            (() => {
+                const canvas = document.querySelector('[data-testid="orders-stat"] canvas')
+                const component = canvas && Alpine.$data(canvas.closest('[x-data]'))
 
-        visit('/stats-overview-widget-browser-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+                return typeof component?.getChart === 'function' && !!component.getChart()
+            })()
+            JS, true)
+        ->assertNoAccessibilityIssues();
+
+    // `inDarkMode()` requires a fresh browser context.
+    visit('/stats-overview-widget-browser-test')
+        ->inDarkMode()
+        ->assertScript(<<<'JS'
+            (() => {
+                const canvas = document.querySelector('[data-testid="orders-stat"] canvas')
+                const component = canvas && Alpine.$data(canvas.closest('[x-data]'))
+
+                return typeof component?.getChart === 'function' && !!component.getChart()
+            })()
+            JS, true)
+        ->assertNoAccessibilityIssues()
+        ->assertScript(<<<'JS'
+            (async () => {
+                const canvas = document.querySelector('[data-testid="orders-stat"] canvas')
+                const element = canvas.closest('[x-data]')
+                const component = Alpine.$data(element)
+                const chart = component.getChart()
+                const initialValues = JSON.stringify(chart.data.datasets[0].data) === '[13,4,21,9]'
+                const livewireElement = element.closest('[wire\\:id]')
+
+                livewireElement.dispatchEvent(new CustomEvent('updateStatsOverviewChartData', {
+                    detail: { key: component.key, data: [7, 2, 19] },
+                }))
+
+                const updatesInPlace = component.getChart() === chart
+                    && JSON.stringify(chart.data.datasets[0].data) === '[7,2,19]'
+                    && JSON.stringify(chart.data.labels) === '[0,1,2]'
+
+                Alpine.store('theme', 'system')
+                await Alpine.nextTick()
+
+                let destroyedLookups = 0
+                let themeUpdates = 0
+                const getChart = component.getChart
+                const updateChartTheme = component.updateChartTheme
+                component.getChart = () => {
+                    destroyedLookups++
+
+                    return getChart.call(component)
+                }
+                component.updateChartTheme = () => {
+                    themeUpdates++
+
+                    return updateChartTheme.call(component)
+                }
+
+                component.systemThemeListener()
+                Alpine.store('theme', 'light')
+                Alpine.destroyTree(element)
+                const lookupsAtDestroy = destroyedLookups
+                const chartDestroyed = chart.canvas === null
+                Alpine.initTree(element)
+                await Alpine.nextTick()
+
+                const replacement = Alpine.$data(element)
+                const replacementChart = replacement.getChart()
+                component.updateChartData([99, 100])
+                component.initChart()
+                component.systemThemeListener()
+
+                const queuedWorkStopped = destroyedLookups === lookupsAtDestroy
+                    && replacement.getChart() === replacementChart
+                    && JSON.stringify(replacementChart.data.datasets[0].data) === '[13,4,21,9]'
+                const updatesAfterQueuedWork = themeUpdates
+                Alpine.store('theme', 'dark')
+                await Alpine.nextTick()
+                const effectReleased = !component.themeEffect.active
+                    && themeUpdates === updatesAfterQueuedWork
+
+                // Tear down before the next instance's deferred `initChart()` runs.
+                Alpine.destroyTree(element)
+                Alpine.initTree(element)
+                const pending = Alpine.$data(element)
+                let pendingLookups = 0
+                const pendingGetChart = pending.getChart
+                pending.getChart = () => {
+                    pendingLookups++
+
+                    return pendingGetChart.call(pending)
+                }
+                Alpine.destroyTree(element)
+                const pendingLookupsAtDestroy = pendingLookups
+                Alpine.initTree(element)
+                await Alpine.nextTick()
+                const deferredInitializationStopped = pendingLookups === pendingLookupsAtDestroy
+                    && !!Alpine.$data(element).getChart()
+
+                return { initialValues, updatesInPlace, chartDestroyed, queuedWorkStopped, effectReleased, deferredInitializationStopped }
+            })()
+            JS, [
+            'initialValues' => true,
+            'updatesInPlace' => true,
+            'chartDestroyed' => true,
+            'queuedWorkStopped' => true,
+            'effectReleased' => true,
+            'deferredInitializationStopped' => true,
+        ]);
 });
 
 class TestStatsOverviewWidgetDefault extends StatsOverviewWidget

@@ -197,6 +197,10 @@ export default ({ id, isScrollLocked = true, shouldRestoreFocus = true }) => ({
 
         this.restorePreviouslyFocusedElement()
 
+        if (!this.$el.isConnected) {
+            return
+        }
+
         this.$dispatch('modal-closed', { id })
     },
 
@@ -206,6 +210,10 @@ export default ({ id, isScrollLocked = true, shouldRestoreFocus = true }) => ({
 
     open() {
         this.$nextTick(() => {
+            if (!this.$el.isConnected) {
+                return
+            }
+
             if (shouldRestoreFocus) {
                 this.previouslyFocusedElement = document.activeElement
             }
