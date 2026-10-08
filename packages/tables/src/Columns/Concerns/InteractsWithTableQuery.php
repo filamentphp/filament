@@ -152,7 +152,7 @@ trait InteractsWithTableQuery
 
         $relationshipName = $this->getRelationshipName($query->getModel());
 
-        foreach (array_reverse($this->getSortColumns($query->getModel())) as $sortColumn) {
+        foreach ($this->getSortColumns($query->getModel()) as $sortColumn) {
             $sortColumn = $this->getJsonSafeColumnName($sortColumn, $query->getModel()->getTable());
 
             if (filled($relationshipName)) {

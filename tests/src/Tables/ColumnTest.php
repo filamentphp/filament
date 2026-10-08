@@ -125,6 +125,21 @@ describe('rendering and sorting', function (): void {
             ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
     });
 
+    it('can sort records by multiple columns in the order they are passed', function (): void {
+        $posts = collect([
+            ['rating' => 1, 'title' => 'Charlie'],
+            ['rating' => 2, 'title' => 'Alpha'],
+            ['rating' => 1, 'title' => 'Bravo'],
+            ['rating' => 2, 'title' => 'Delta'],
+        ])->map(fn (array $attributes): Post => Post::factory()->create($attributes));
+
+        livewire(PostsTable::class)
+            ->sortTable('rating_and_title')
+            ->assertCanSeeTableRecords([$posts[2], $posts[0], $posts[1], $posts[3]], inOrder: true)
+            ->sortTable('rating_and_title', 'desc')
+            ->assertCanSeeTableRecords([$posts[3], $posts[1], $posts[0], $posts[2]], inOrder: true);
+    });
+
     it('can sort records with JSON column', function (): void {
         $posts = Post::factory()->count(10)->state(fn (): array => [
             'json' => ['foo' => Str::random()],
