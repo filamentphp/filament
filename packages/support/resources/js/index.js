@@ -7,6 +7,7 @@ import Tooltip from '@ryangjchandler/alpine-tooltip'
 import './components/tooltip.js'
 import dropdown from './components/dropdown.js'
 import formButton from './components/form-button.js'
+import html from './directives/html.js'
 import modal from './components/modal.js'
 import oneTimeCodeInput from './components/one-time-code.js'
 import './components/disabled-button.js'
@@ -20,6 +21,7 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.plugin(AlpineFloatingUI)
     window.Alpine.plugin(AlpineLazyLoadAssets)
     window.Alpine.plugin(AsyncAlpine)
+    window.Alpine.plugin(html)
     window.Alpine.plugin(Sortable)
     window.Alpine.plugin(Tooltip)
     window.Alpine.data('filamentDropdown', dropdown)

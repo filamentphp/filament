@@ -120,7 +120,7 @@
                     "
                 >
                     <span
-                        x-html="{{ $alpineDeferredBadgeData }}.badgeIconHtml"
+                        x-filament-html="{{ $alpineDeferredBadgeData }}.badgeIconHtml"
                     ></span>
                 </template>
 
@@ -138,7 +138,7 @@
                     "
                 >
                     <span
-                        x-html="{{ $alpineDeferredBadgeData }}.badgeIconHtml"
+                        x-filament-html="{{ $alpineDeferredBadgeData }}.badgeIconHtml"
                     ></span>
                 </template>
             </span>

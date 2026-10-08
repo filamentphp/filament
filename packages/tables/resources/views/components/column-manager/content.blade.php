@@ -56,7 +56,7 @@
                                 />
                             @endif
 
-                            <span x-html="column.label"></span>
+                            <span x-filament-html="column.label"></span>
                         </label>
 
                         @if ($hasReorderableColumns)
@@ -108,7 +108,7 @@
                                         @endif
 
                                         <span
-                                            x-html="groupColumn.label"
+                                            x-filament-html="groupColumn.label"
                                         ></span>
                                     </label>
 
@@ -146,7 +146,7 @@
                             />
                         @endif
 
-                        <span x-html="column.label"></span>
+                        <span x-filament-html="column.label"></span>
                     </label>
 
                     @if ($hasReorderableColumns)
