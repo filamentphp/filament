@@ -342,6 +342,30 @@ it('preserves a pending dismissal when the notification is destroyed', function 
     }
 });
 
+it('does not dispatch a pending dismissal after its Livewire host is removed', function (): void {
+    $page = visit('/notification-browser-test')
+        ->click('[data-testid="send-persistent-notification"]')
+        ->assertPresent('[x-data^="notificationComponent"]');
+
+    $page->script(<<<'JS'
+        window.dismissalCount = 0
+        window.addEventListener('notificationClosed', (event) => {
+            if (event.detail.id === 'persistent-notification') window.dismissalCount++
+        })
+        const element = document.querySelector('[x-data^="notificationComponent"]')
+        const host = element.closest('[wire\\:id]')
+        const component = Alpine.$data(element)
+        component.transitionDuration = 300
+        component.close()
+        Alpine.destroyTree(host)
+        host.remove()
+        JS);
+
+    $page->wait(0.5)
+        ->assertScript('window.dismissalCount', 0)
+        ->assertNoJavaScriptErrors();
+});
+
 it('has no accessibility issues in light and dark modes', function (bool $isDarkMode): void {
     $page = visit('/notification-browser-test');
 

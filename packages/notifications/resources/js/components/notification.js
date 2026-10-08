@@ -329,12 +329,18 @@ export default (Alpine) => {
                 return
             }
 
+            const livewireRoot = this.$el.closest('[wire\\:id]')
+
             this.isShown = false
 
-            this.closeTimeout = setTimeout(
-                dispatchClosedEvent,
-                this.transitionDuration,
-            )
+            this.closeTimeout = setTimeout(() => {
+                // Do not deliver an old dismissal to a new host after navigation.
+                if (livewireRoot && !livewireRoot.isConnected) {
+                    return
+                }
+
+                dispatchClosedEvent()
+            }, this.transitionDuration)
         },
 
         dismiss() {
