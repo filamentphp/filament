@@ -29,7 +29,7 @@ class NavigationItem extends Component
 
     protected string | BackedEnum | Htmlable | Closure | null $activeIcon = null;
 
-    protected string | Closure $label;
+    protected string | Htmlable | Closure $label;
 
     protected string | Closure | null $badge = null;
 
@@ -53,14 +53,14 @@ class NavigationItem extends Component
      */
     protected array | Arrayable $childItems = [];
 
-    final public function __construct(string | Closure | null $label = null)
+    final public function __construct(string | Htmlable | Closure | null $label = null)
     {
         if (filled($label)) {
             $this->label($label);
         }
     }
 
-    public static function make(string | Closure | null $label = null): static
+    public static function make(string | Htmlable | Closure | null $label = null): static
     {
         $static = app(static::class, ['label' => $label]);
         $static->configure();
@@ -135,7 +135,7 @@ class NavigationItem extends Component
         return $this;
     }
 
-    public function label(string | Closure $label): static
+    public function label(string | Htmlable | Closure $label): static
     {
         $this->label = $label;
 
@@ -173,7 +173,9 @@ class NavigationItem extends Component
 
     public function getKey(): string
     {
-        return $this->evaluate($this->key) ?? $this->getLabel();
+        $key = $this->evaluate($this->key) ?? $this->getLabel();
+
+        return ($key instanceof Htmlable) ? $key->toHtml() : $key;
     }
 
     public function getBadge(): ?string
@@ -206,7 +208,10 @@ class NavigationItem extends Component
         $icon = $this->evaluate($this->icon);
 
         if (blank($icon) && $this->getChildItems()) {
-            throw new LogicException("Navigation item [{$this->getLabel()}] has child items but no icon. Parent items must have an icon to ensure a proper user experience.");
+            $label = $this->getLabel();
+            $label = ($label instanceof Htmlable) ? $label->toHtml() : $label;
+
+            throw new LogicException("Navigation item [{$label}] has child items but no icon. Parent items must have an icon to ensure a proper user experience.");
         }
 
         return $icon;
@@ -231,7 +236,7 @@ class NavigationItem extends Component
         return $this->evaluate($this->activeIcon);
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable
     {
         return $this->evaluate($this->label);
     }

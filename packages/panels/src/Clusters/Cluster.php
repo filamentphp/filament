@@ -6,6 +6,7 @@ use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Filament\Pages\PageConfiguration;
 use Filament\Panel;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 
 class Cluster extends Page
@@ -77,7 +78,7 @@ class Cluster extends Page
         ];
     }
 
-    public static function getNavigationLabel(): string
+    public static function getNavigationLabel(): string | Htmlable
     {
         return static::$navigationLabel ?? static::$title ?? str(class_basename(static::class))
             ->beforeLast('Cluster')

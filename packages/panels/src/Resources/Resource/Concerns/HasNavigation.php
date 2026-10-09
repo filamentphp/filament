@@ -137,7 +137,7 @@ trait HasNavigation
         return static::$activeNavigationIcon ?? static::getNavigationIcon();
     }
 
-    public static function getNavigationLabel(): string
+    public static function getNavigationLabel(): string | Htmlable
     {
         return static::$navigationLabel ?? static::getTitleCasePluralModelLabel();
     }
