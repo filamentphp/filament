@@ -67,7 +67,7 @@ it('associates native and grouped controls with `helperText()` and errors but no
     foreach ([false, true, false] as $hasError) {
         view()->share('errors', (new ViewErrorBag)->put('default', new MessageBag($hasError ? ['data.answer' => ['Please check your answer.']] : [])));
         $document = fieldAccessibilityDocument($schema->toHtml());
-        expect($document->query('//input | //textarea | //select')->length)->toBe(($field instanceof Radio) ? 2 : 1);
+        expect($document->query('//input[not(@hidden)] | //textarea | //select | //button')->length)->toBe(($field instanceof Radio) ? 2 : 1);
         foreach ($document->query('//label[@for]') as $label) {
             expect($document->query('//*[@id="' . $label->getAttribute('for') . '"]')->length)->toBe(1);
         }
@@ -77,9 +77,9 @@ it('associates native and grouped controls with `helperText()` and errors but no
         $expectedDescriptions = [
             'data.answer-helper-text' => 'Only used for delivery',
             ...($hasError ? ['data.answer-error' => 'Please check your answer.'] : []),
-            ...($isMultiple ? ['data.answer-required' => 'Select at least one option.'] : []),
+            ...(($isMultiple || $field instanceof ToggleButtons) ? ['data.answer-required' => 'Select at least one option.'] : []),
         ];
-        foreach ($document->query('//input | //textarea | //select | //*[@role="group" or @role="radiogroup"]') as $control) {
+        foreach ($document->query('//input[not(@hidden)] | //textarea | //select | //button | //*[@role="group" or @role="radiogroup"]') as $control) {
             expect($control->getAttribute('aria-invalid'))->toBe($hasError ? 'true' : '')
                 ->and($control->getAttribute('aria-describedby'))->toBe(implode(' ', array_keys($expectedDescriptions)));
             foreach ($expectedDescriptions as $reference => $description) {
@@ -88,7 +88,7 @@ it('associates native and grouped controls with `helperText()` and errors but no
                     ->and(trim($targets->item(0)->textContent))->toBe($description);
             }
         }
-        foreach ($document->query('//input | //textarea | //select') as $control) {
+        foreach ($document->query('//input[not(@hidden)] | //textarea | //select | //button') as $control) {
             expect($control->getAttribute('data-owner'))->toBe('application');
         }
         expect($document->query('//*[@data-validation-error and (@role="alert" or @aria-live)]')->length)->toBe(0);
@@ -225,7 +225,7 @@ it('lets input attributes override accessibility defaults', function (Closure $m
     }
     view()->share('errors', (new ViewErrorBag)->put('default', new MessageBag(['answer' => ['Check your answer.']])));
     $document = fieldAccessibilityDocument('<p id="application-note">Application instructions</p>' . Schema::make(Livewire::make())->components([$field])->toHtml());
-    foreach ($document->query('//input | //textarea | //select') as $control) {
+    foreach ($document->query('//input[not(@hidden)] | //textarea | //select | //button') as $control) {
         expect($control->getAttribute('aria-describedby'))->toBe('application-note')
             ->and($control->getAttribute('aria-invalid'))->toBe('false')
             ->and($control->hasAttribute('required'))->toBeFalse();
@@ -264,7 +264,7 @@ it('preserves literal entity-like field IDs in label and error references', func
     }
     view()->share('errors', (new ViewErrorBag)->put('default', new MessageBag(['answer' => ['Check your answer.']])));
     $document = fieldAccessibilityDocument(Schema::make(Livewire::make())->components([$field])->toHtml());
-    foreach ($document->query('//input | //textarea | //select') as $control) {
+    foreach ($document->query('//input[not(@hidden)] | //textarea | //select | //button') as $control) {
         expect($control->getAttribute('aria-describedby'))->toBe('choice&#65;-helper-text choice&#65;-error')
             ->and($document->query('//*[@id="choice&#65;-helper-text"]')->length)->toBe(1)
             ->and($document->query('//*[@id="choice&#65;-error"]')->length)->toBe(1);
@@ -351,7 +351,7 @@ it('preserves group attribute overrides without referencing an absent label', fu
         ->and($group->getAttribute('aria-describedby'))->toBe('group-note')
         ->and($group->getAttribute('aria-invalid'))->toBe('false')
         ->and($group->hasAttribute('aria-required'))->toBeFalse();
-    foreach ($document->query('//input') as $control) {
+    foreach ($document->query('//input[not(@hidden)] | //button') as $control) {
         expect($control->getAttribute('aria-invalid'))->toBe('true');
         foreach (explode(' ', $control->getAttribute('aria-describedby')) as $reference) {
             expect($document->query('//*[@id="' . $reference . '"]')->length)->toBe(1);
@@ -375,7 +375,7 @@ it('keeps live state controls enabled while loading and preserves explicit `disa
     $field->disabled();
     $document = fieldAccessibilityDocument($schema->toHtml());
 
-    foreach ($document->query('//input | //button[@role="switch"]') as $control) {
+    foreach ($document->query('//input[not(@hidden)] | //button') as $control) {
         expect($control->hasAttribute('disabled'))->toBeTrue();
     }
 })->with([
@@ -459,15 +459,21 @@ it('exposes required groups without requiring every checkbox', function (Closure
     $document = fieldAccessibilityDocument(Schema::make(Livewire::make())->components([$field])->toHtml());
     $group = $document->query('//*[@role="group" or @role="radiogroup"]')->item(0);
     expect($document->query('//*[@id="' . $group->getAttribute('aria-labelledby') . '"]')->length)->toBe(1)
-        ->and($group->getAttribute('aria-required'))->toBe((! $multiple && ! $disabled) ? 'true' : '');
-    foreach ($document->query('//input') as $control) {
+        ->and($group->getAttribute('aria-required'))->toBe(($field instanceof Radio && ! $disabled) ? 'true' : '');
+    foreach ($document->query('//input[not(@hidden)]') as $control) {
         expect($control->hasAttribute('required'))->toBe(! $multiple && ! $disabled)
             ->and($control->hasAttribute('aria-required'))->toBeFalse();
         if (! $field instanceof CheckboxList) {
             expect($control->getAttribute('id'))->toBe('answer-' . $control->getAttribute('value'));
         }
     }
-    expect($field->getRequiredDescription() !== null)->toBe($multiple && ! $disabled);
+    foreach ($document->query('//button') as $control) {
+        expect($control->getAttribute('type'))->toBe('button')
+            ->and($control->getAttribute('aria-pressed'))->toBe('false')
+            ->and($control->hasAttribute('required'))->toBeFalse()
+            ->and($control->hasAttribute('aria-required'))->toBeFalse();
+    }
+    expect($field->getRequiredDescription() !== null)->toBe(($multiple || $field instanceof ToggleButtons) && ! $disabled);
 })->with([
     [static fn (): Field => Radio::make('answer')->options(['a' => 'Option']), false],
     [static fn (): Field => CheckboxList::make('answer')->options(['a' => 'Option']), true],
