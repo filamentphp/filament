@@ -43,7 +43,7 @@
     @apply flex flex-col items-center;
 
     & .fi-logo {
-        @apply mb-4;
+        @apply mb-4 text-center text-balance;
     }
 }
 
