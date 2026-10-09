@@ -788,7 +788,10 @@ it('saves boundary dates and round-trips epoch-backed and model-backed dates wit
 
             $page->fill('[data-testid="timestamp-date"]', '2025-07-16')
                 ->click('[data-testid="custom-timestamp-date"]')
-                ->keys('[data-testid="custom-timestamp-date"]', ['ArrowRight', 'Enter', 'Escape'])
+                ->assertPresent('[data-date="2025-07-15"]:focus')
+                ->keys('[role="gridcell"]:focus', 'ArrowRight')
+                ->assertPresent('[data-date="2025-07-16"]:focus')
+                ->keys('[data-date="2025-07-16"]', ['Enter', 'Escape'])
                 ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-16')
                 ->click('[data-testid="save-dates"]')
                 ->assertScript('document.querySelector(\'[data-testid="saved-timestamp-date"]\').textContent.trim()', '1752591600')

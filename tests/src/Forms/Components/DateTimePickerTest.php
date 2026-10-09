@@ -1360,15 +1360,20 @@ it('preserves field calendar components through browser timezone gaps and folds,
                     ->assertScript("{$picker}.state", $state);
             }
 
-            $page->keys($trigger, ['ArrowLeft', 'Enter'])
+            $page->keys($trigger, 'Enter')
+                ->assertPresent('[role="gridcell"]:focus')
+                ->keys('[role="gridcell"]:focus', 'ArrowLeft')
+                ->assertPresent('[data-date="' . Carbon::parse($state, 'UTC')->subDay()->toDateString() . '"]:focus')
+                ->keys('[role="gridcell"]:focus', 'Enter')
                 ->assertScript("{$picker}.state", $state)
-                ->keys($trigger, 'Escape')
+                ->keys('[role="gridcell"]:focus', 'Escape')
                 ->assertScript("{$picker}.isOpen()", false)
                 ->keys($trigger, 'Enter')
                 ->assertScript("{$picker}.isOpen()", true)
-                ->keys($trigger, 'Enter')
+                ->assertPresent('[role="gridcell"]:focus')
+                ->keys('[role="gridcell"]:focus', 'Enter')
                 ->assertScript("{$picker}.state", $state)
-                ->keys($trigger, 'Escape')
+                ->keys('[role="gridcell"]:focus', 'Escape')
                 ->assertScript("{$picker}.isOpen()", false)
                 ->assertScript("{$picker}.state", $state);
 
@@ -1382,26 +1387,36 @@ it('preserves field calendar components through browser timezone gaps and folds,
             }
 
             $page->click($trigger)
-                ->keys($trigger, ['ArrowRight', 'Enter'])
+                ->assertPresent('[data-date="' . Carbon::parse($internal, 'UTC')->toDateString() . '"]:focus')
+                ->keys('[role="gridcell"]:focus', 'ArrowRight')
+                ->assertPresent('[data-date="' . Carbon::parse($internal, 'UTC')->addDay()->toDateString() . '"]:focus')
+                ->keys('[role="gridcell"]:focus', 'Enter')
                 ->assertScript("{$picker}.state", $internal)
-                ->keys($trigger, 'Escape')
+                ->keys('[role="gridcell"]:focus', 'Escape')
                 ->assertScript("{$picker}.isOpen()", false)
                 ->keys($trigger, 'Enter')
                 ->assertScript("{$picker}.isOpen()", true)
-                ->keys($trigger, 'ArrowRight')
+                ->assertPresent('[data-date="' . Carbon::parse($internal, 'UTC')->toDateString() . '"]:focus')
+                ->keys('[role="gridcell"]:focus', 'ArrowRight')
+                ->assertPresent('[data-date="' . Carbon::parse($internal, 'UTC')->addDay()->toDateString() . '"]:focus')
                 ->assertScript("{$picker}.focusedDate.format('YYYY-MM-DD')", Carbon::parse($internal, 'UTC')->addDay()->toDateString())
-                ->keys($trigger, 'ArrowRight')
+                ->keys('[role="gridcell"]:focus', 'ArrowRight')
+                ->assertPresent('[data-date="' . Carbon::parse($lastDate, 'UTC')->toDateString() . '"]:focus')
                 ->assertScript("{$picker}.focusedDate.format('YYYY-MM-DD')", Carbon::parse($lastDate, 'UTC')->toDateString())
-                ->keys($trigger, 'Enter')
+                ->keys('[role="gridcell"]:focus', 'Enter')
                 ->assertScript("{$picker}.state", $lastDate)
-                ->keys($trigger, 'Escape')
+                ->keys('[role="gridcell"]:focus', 'Escape')
                 ->click('[data-testid="save-timed"]')
                 ->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', $lastStored)
                 ->click('[data-testid="reload-timed"]')
                 ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', '3')
                 ->click($trigger)
-                ->keys($trigger, ['ArrowRight', 'Enter'])
+                ->assertPresent('[data-date="' . Carbon::parse($lastDate, 'UTC')->toDateString() . '"]:focus')
+                ->keys('[role="gridcell"]:focus', 'ArrowRight')
+                ->assertPresent('[data-date="' . Carbon::parse($lastDate, 'UTC')->addDay()->toDateString() . '"]:focus')
+                ->keys('[role="gridcell"]:focus', 'Enter')
                 ->assertScript("{$picker}.state", $lastDate)
+                ->keys('[role="gridcell"]:focus', 'Escape')
                 ->keys($trigger, 'Backspace')
                 ->assertScript("{$picker}.state", null)
                 ->keys($trigger, 'Escape')
@@ -1417,12 +1432,15 @@ it('preserves field calendar components through browser timezone gaps and folds,
             $page->assertScript("{$picker}.dateIsDisabled(dayjs.utc('{$state}'))", true)
                 ->assertScript("{$picker}.dateIsDisabled(dayjs.utc('{$state}').add(1, 'day'))", false)
                 ->click($trigger)
+                ->keys('[role="gridcell"]:focus', 'Shift+Tab')
+                ->keys('input[aria-label="Year"]', 'Shift+Tab')
+                ->assertPresent('select[aria-label="Month"]:focus')
                 ->select('select[aria-label="Month"]', '1')
                 ->fill('input[aria-label="Year"]', '2024')
                 ->assertScript("{$picker}.focusedDate.format('YYYY-MM')", '2024-02')
-                ->assertScript("{$picker}.daysInFocusedMonth.length", 29)
+                ->assertScript('document.querySelectorAll(\'[data-testid="date-time-picker"] [role="gridcell"][data-date]\').length', 29)
                 ->assertScript("{$picker}.state", null)
-                ->keys($trigger, 'Escape');
+                ->keys('input[aria-label="Year"]', 'Escape');
             $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
             $page->assertNoSmoke()->assertNoAccessibilityIssues();
         }
@@ -1502,50 +1520,6 @@ it('preserves browser-local disabled-day checks when editing an initially empty 
     }
 })->with([true, false]);
 
-it('initializes an empty time-only calendar without applying the browser timezone twice during a fold', function (): void {
-    $this->actingAs(User::factory()->create());
-
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/date-time-picker-test?native=0&date=0')->withTimezone('America/Nuuk');
-
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-
-        $page->assertScript('typeof Alpine.$data(document.querySelector(\'[data-testid="timed-trigger"]\')).init', 'function')
-            ->assertValue('[data-testid="timed-trigger"]', '')
-            ->assertScript(<<<'JS'
-                (() => {
-                    const OriginalDate = Date;
-                    try {
-                        window.Date = class extends OriginalDate {
-                            constructor(...parameters) { super(...(parameters.length ? parameters : ['2025-10-26T01:30:00Z'])); }
-                        };
-                        const component = {
-                            ...document.querySelector('[data-testid="timed-trigger"]').closest('[x-data]')._x_dataStack[0],
-                            $nextTick: callback => callback(),
-                            $watch: () => {},
-                            $refs: { disabledDates: { value: '["2025-10-25"]' } },
-                            defaultFocusedDate: null,
-                            focusedDate: null,
-                            focusedMonth: null,
-                            focusedYear: null,
-                            state: null,
-                        };
-                        component.init();
-                        const focus = component.focusedDate.format('YYYY-MM-DD HH:mm Z');
-                        component.hour = 2;
-                        component.setState(component.focusedDate.hour(2));
-                        return { focus, state: component.state };
-                    } finally {
-                        window.Date = OriginalDate;
-                    }
-                })()
-                JS, ['focus' => '2025-10-25 23:30 -03:00', 'state' => null])
-            ->assertNoSmoke()->assertNoAccessibilityIssues();
-    }
-});
-
 it('compares custom time-only clocks independently of browser DST dates and preserves hidden seconds on reload', function (): void {
     $this->actingAs(User::factory()->create());
     $accessibilityFailures = [];
@@ -1603,7 +1577,7 @@ it('compares custom time-only clocks independently of browser DST dates and pres
 it('uses one labelled input to open, select, copy and clear a custom picker with the keyboard', function (bool $hasDate, bool $hasTime): void {
     $this->actingAs(User::factory()->create());
 
-    $page = visit('/date-time-picker-test?native=0&date=' . (int) $hasDate . '&time=' . (int) $hasTime)->withTimezone('UTC');
+    $page = visit('/date-time-picker-test?native=0&close-on-selection=1&date=' . (int) $hasDate . '&time=' . (int) $hasTime)->withTimezone('UTC');
     $trigger = '[data-testid="timed-trigger"]';
     $picker = 'Alpine.$data(document.querySelector(\'[data-testid="timed-trigger"]\'))';
 
@@ -1619,23 +1593,37 @@ it('uses one labelled input to open, select, copy and clear a custom picker with
             ->assertAttribute($trigger, 'aria-expanded', 'false')
             ->assertNoAccessibilityIssues()
             ->click('label[for="' . $page->attribute($trigger, 'id') . '"]')
-            ->assertPresent($trigger . ':focus')
             ->assertVisible('[role="dialog"]');
 
         // Wait for the forwarded label click to open the popup before testing `Escape`.
-        $page->keys($trigger, 'Escape')
+        $page->keys($hasDate ? '[role="gridcell"]:focus' : $trigger, 'Escape')
+            ->assertPresent($trigger . ':focus')
             ->assertScript("{$picker}.isOpen()", false)
             ->keys($trigger, 'Enter')
             ->assertAttribute($trigger, 'aria-expanded', 'true')
             ->assertVisible('[role="dialog"]')
             ->assertAttributeMissing('[role="dialog"]', 'aria-modal')
-            ->assertPresent($trigger . ':focus');
+            ->assertNoAccessibilityIssues();
 
         if ($hasDate) {
-            $page->keys($trigger, ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'ArrowRight', 'Enter'])
-                ->assertScript("{$picker}.getSelectedDate().format('YYYY-MM-DD')", '2025-07-16');
+            $page->assertPresent('[data-date="2025-07-15"]:focus')
+                ->keys('[role="gridcell"]:focus', 'ArrowRight')
+                ->assertPresent('[data-date="2025-07-16"]:focus')
+                ->keys('[role="gridcell"]:focus', 'ArrowDown')
+                ->assertPresent('[data-date="2025-07-23"]:focus')
+                ->keys('[role="gridcell"]:focus', 'ArrowLeft')
+                ->assertPresent('[data-date="2025-07-22"]:focus')
+                ->keys('[role="gridcell"]:focus', 'ArrowUp')
+                ->assertPresent('[data-date="2025-07-15"]:focus')
+                ->keys('[role="gridcell"]:focus', 'ArrowRight')
+                ->assertPresent('[data-date="2025-07-16"]:focus')
+                ->keys('[role="gridcell"]:focus', 'Enter')
+                ->assertScript("{$picker}.getSelectedDate().format('YYYY-MM-DD')", '2025-07-16')
+                ->assertPresent($trigger . ':focus')
+                ->assertAttribute($trigger, 'aria-expanded', 'false');
         } else {
-            $page->fill('input[aria-label="Minute"]', '31')
+            $page->assertPresent($trigger . ':focus')
+                ->fill('input[aria-label="Minute"]', '31')
                 ->assertScript("{$picker}.minute", 31)
                 ->assertNoAccessibilityIssues();
         }
@@ -1662,10 +1650,358 @@ it('uses one labelled input to open, select, copy and clear a custom picker with
     'time only' => [false, true],
 ]);
 
-it('does not open or clear a disabled or read-only custom picker, including with `autofocus()`', function (string $mode): void {
+it('navigates month and year boundaries without changing the selected date until activation', function (): void {
     $this->actingAs(User::factory()->create());
 
-    $page = visit("/date-time-picker-test?native=0&date=0&dst=1&autofocus=1&{$mode}=1");
+    $page = visit('/date-time-picker-test?native=0&time=0')->withTimezone('UTC');
+    $trigger = '[data-testid="timed-trigger"]';
+    $picker = 'Alpine.$data(document.querySelector(\'[data-testid="timed-trigger"]\'))';
+
+    foreach ([false, true] as $isDarkMode) {
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page->assertScript("{$picker}.focusedDate.format('YYYY-MM-DD')", '2025-07-15');
+        $page->script("{$picker}.state = '2024-01-31 00:00:00'");
+        $page->keys($trigger, 'ArrowDown')
+            ->assertPresent('[data-date="2024-01-31"]:focus')
+            ->assertAttribute('[data-date="2024-01-31"]', 'aria-selected', 'true')
+            ->keys('[role="gridcell"]:focus', 'PageDown')
+            ->assertScript("{$picker}.focusedDate.format('YYYY-MM-DD')", '2024-02-29')
+            ->assertPresent('[data-date="2024-02-29"]:focus')
+            ->assertAttribute('[data-date="2024-02-29"]', 'aria-selected', 'false')
+            ->assertScript("{$picker}.state", '2024-01-31 00:00:00')
+            ->keys('[role="gridcell"]:focus', ['Shift+PageDown'])
+            ->assertPresent('[data-date="2025-02-28"]:focus')
+            ->keys('[role="gridcell"]:focus', 'ArrowRight')
+            ->assertPresent('[data-date="2025-03-01"]:focus')
+            ->keys('[role="gridcell"]:focus', 'Home')
+            ->assertPresent('[data-date="2025-02-24"]:focus')
+            ->keys('[role="gridcell"]:focus', 'End')
+            ->assertPresent('[data-date="2025-03-02"]:focus')
+            ->keys('[role="gridcell"]:focus', ['ArrowUp', 'ArrowDown', 'PageUp'])
+            ->assertPresent('[data-date="2025-02-02"]:focus')
+            ->keys('[role="gridcell"]:focus', ['Shift+PageUp'])
+            ->assertPresent('[data-date="2024-02-02"]:focus')
+            ->assertScript('document.querySelectorAll(\'[role="gridcell"][tabindex="0"]\').length', 1)
+            ->assertScript('Array.from(document.querySelectorAll(\'[role="grid"] [role="row"]\')).every(row => row.querySelectorAll(\'[role="gridcell"], [role="columnheader"]\').length === 7)', true)
+            ->assertNoAccessibilityIssues()
+            ->keys('[role="gridcell"]:focus', ' ')
+            ->assertScript("{$picker}.state", '2024-02-02 00:00:00')
+            ->assertPresent('[data-date="2024-02-02"]:focus')
+            ->assertAttribute('[data-date="2024-02-02"]', 'aria-selected', 'true')
+            ->keys('[role="gridcell"]:focus', 'Escape')
+            ->assertPresent($trigger . ':focus')
+            ->keys($trigger, 'Enter')
+            ->assertPresent('[data-date="2024-02-02"]:focus')
+            ->keys('[role="gridcell"]:focus', 'Escape')
+            ->keys($trigger, 'Delete')
+            ->keys($trigger, 'Enter')
+            ->assertPresent('[data-date="2024-02-02"]:focus')
+            ->assertScript("{$picker}.state", null)
+            ->assertScript('document.querySelectorAll(\'[role="gridcell"][aria-selected="true"]\').length', 0)
+            ->assertNoAccessibilityIssues()
+            ->keys('[role="gridcell"]:focus', 'Escape')
+            ->assertNoSmoke();
+
+        $page->script("{$picker}.state = '2024-12-31 00:00:00'");
+        $page->keys($trigger, 'Enter')
+            ->assertPresent('[data-date="2024-12-31"]:focus')
+            ->keys('[role="gridcell"]:focus', 'ArrowRight')
+            ->assertPresent('[data-date="2025-01-01"]:focus')
+            ->keys('[role="gridcell"]:focus', 'ArrowLeft')
+            ->assertPresent('[data-date="2024-12-31"]:focus')
+            ->assertScript("{$picker}.state", '2024-12-31 00:00:00')
+            ->withKeyDown('ArrowRight', static fn () => null)
+            ->withKeyDown('ArrowRight', static fn () => null)
+            ->withKeyDown('Enter', static fn () => null)
+            ->assertScript("{$picker}.state", '2025-01-02 00:00:00')
+            ->assertPresent('[data-date="2025-01-02"]:focus')
+            ->assertNoAccessibilityIssues()
+            ->withKeyDown('PageUp', static fn () => null)
+            ->withKeyDown('Tab', static fn () => null)
+            ->assertPresent('[data-testid="save-timed"]:focus')
+            ->assertAttribute($trigger, 'aria-expanded', 'false')
+            ->assertScript("{$picker}.state", '2025-01-02 00:00:00');
+    }
+});
+
+it('keeps unavailable dates focusable but rejects activation, even in a wholly unavailable month', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/date-time-picker-test?native=0&bounds=1&disabled-dates=1')->withTimezone('UTC');
+    $trigger = '[data-testid="timed-trigger"]';
+    $picker = 'Alpine.$data(document.querySelector(\'[data-testid="timed-trigger"]\'))';
+
+    foreach ([false, true] as $isDarkMode) {
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page->assertScript("{$picker}.focusedDate.format('YYYY-MM-DD')", '2025-07-15');
+        $page->script("{$picker}.state = '2025-07-15 13:24:37'");
+        $page->assertScript("{$picker}.state", '2025-07-15 13:24:37');
+        $page->click($trigger)
+            ->keys('[role="gridcell"]:focus', 'ArrowRight')
+            ->assertPresent('[data-date="2025-07-16"]:focus')
+            ->assertAttribute('[data-date="2025-07-16"]', 'aria-disabled', 'true')
+            ->keys('[role="gridcell"]:focus', ['Enter', ' '])
+            ->assertScript("{$picker}.state", '2025-07-15 13:24:37')
+            ->assertAttribute($trigger, 'aria-expanded', 'true')
+            ->assertAttribute('[data-date="2025-07-14"]', 'aria-disabled', 'true')
+            ->assertAttribute('[data-date="2025-07-15"]', 'aria-disabled', 'false')
+            ->assertAttribute('[data-date="2025-07-17"]', 'aria-disabled', 'false')
+            ->assertAttribute('[data-date="2025-07-18"]', 'aria-disabled', 'true')
+            ->assertNoAccessibilityIssues()
+            ->keys('[role="gridcell"]:focus', 'PageDown')
+            ->assertPresent('[data-date="2025-08-16"]:focus')
+            ->assertScript('Array.from(document.querySelectorAll(\'[role="gridcell"][data-date]\')).every(cell => cell.getAttribute("aria-disabled") === "true")', true)
+            ->keys('[role="gridcell"]:focus', 'Enter')
+            ->assertScript("{$picker}.state", '2025-07-15 13:24:37')
+            ->assertNoAccessibilityIssues()
+            ->keys('[role="gridcell"]:focus', 'Escape')
+            ->assertPresent($trigger . ':focus')
+            ->assertNoSmoke();
+    }
+});
+
+it('uses localized date names, a Sunday week start and RTL horizontal navigation', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/date-time-picker-test?native=0&time=0&locale=fr&week-start=7')->withTimezone('UTC');
+    $trigger = '[data-testid="timed-trigger"]';
+
+    foreach ([false, true] as $isDarkMode) {
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page->assertScript('Alpine.$data(document.querySelector(\'[data-testid="timed-trigger"]\')).focusedDate.format("YYYY-MM-DD")', '2025-07-15');
+        $page->script('document.querySelector(\'[data-testid="date-time-picker"]\').dir = "rtl"');
+        $page->keys($trigger, 'Enter')
+            ->assertPresent('[data-date="2025-07-15"]:focus')
+            ->assertAttribute('[data-date="2025-07-15"]', 'aria-label', 'mardi, 15 juillet 2025')
+            ->assertAttribute('[role="grid"]', 'aria-label', 'juillet 2025')
+            ->assertAttribute('[role="columnheader"]:first-of-type', 'aria-label', 'dimanche')
+            ->keys('[role="gridcell"]:focus', 'ArrowRight')
+            ->assertPresent('[data-date="2025-07-14"]:focus')
+            ->keys('[role="gridcell"]:focus', ['ArrowLeft', 'Home'])
+            ->assertPresent('[data-date="2025-07-13"]:focus')
+            ->keys('[role="gridcell"]:focus', 'End')
+            ->assertPresent('[data-date="2025-07-19"]:focus')
+            ->assertNoAccessibilityIssues()
+            ->keys('[role="gridcell"]:focus', ['Shift+Tab'])
+            ->assertPresent('input[aria-label="Year"]:focus')
+            ->keys('input[aria-label="Year"]', 'Escape')
+            ->assertPresent($trigger . ':focus')
+            ->keys($trigger, 'Enter')
+            ->keys('[role="gridcell"]:focus', 'Tab')
+            ->assertPresent('[data-testid="save-timed"]:focus')
+            ->assertAttribute($trigger, 'aria-expanded', 'false')
+            ->assertNoSmoke();
+
+    }
+});
+
+it('closes the calendar before its nested action modal and restores each focus owner in turn', function (bool $overlaysParentModal): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/date-time-picker-test?native=0&overlay=' . (int) $overlaysParentModal);
+
+    foreach ([false, true] as $isDarkMode) {
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page->keys('[data-testid="calendar-modal-trigger"]', 'Enter')
+            ->assertVisible('[data-testid="calendar-modal"]')
+            ->assertAttributeMissing('[data-testid="nested-calendar-modal-trigger"]', 'aria-disabled');
+        $page->script('document.querySelector(\'[data-testid="nested-calendar-modal-trigger"]\').focus()');
+        $page->assertPresent('[data-testid="nested-calendar-modal-trigger"]:focus')
+            ->keys('[data-testid="nested-calendar-modal-trigger"]', 'Enter')
+            ->assertVisible('[data-testid="nested-calendar-modal"]')
+            ->click('[data-testid="nested-calendar-trigger"]')
+            ->assertPresent('[role="gridcell"]:focus');
+        $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
+        $page->assertNoAccessibilityIssues()
+            ->keys('[role="gridcell"]:focus', 'Escape')
+            ->assertAttribute('[data-testid="nested-calendar-trigger"]', 'aria-expanded', 'false')
+            ->assertPresent('[data-testid="nested-calendar-trigger"]:focus')
+            ->assertVisible('[data-testid="nested-calendar-modal"]')
+            ->keys('[data-testid="nested-calendar-trigger"]', 'Escape')
+            ->assertMissing('[data-testid="nested-calendar-modal"]')
+            ->assertPresent('[data-testid="nested-calendar-modal-trigger"]:focus')
+            ->keys('[data-testid="nested-calendar-modal-trigger"]', 'Escape')
+            ->assertMissing('[data-testid="calendar-modal"]')
+            ->assertPresent('[data-testid="calendar-modal-trigger"]:focus')
+            ->assertNoSmoke();
+    }
+})->with([
+    'replacing parent modal' => [false],
+    'overlaying parent modal' => [true],
+]);
+
+it('preserves control focus and the selected date when browsing before editing time', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/date-time-picker-test?native=0')->withTimezone('UTC');
+    $trigger = '[data-testid="timed-trigger"]';
+    $picker = 'Alpine.$data(document.querySelector(\'[data-testid="timed-trigger"]\'))';
+
+    foreach ([false, true] as $isDarkMode) {
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page->assertScript("{$picker}.focusedDate.format('YYYY-MM-DD')", '2025-07-15');
+        $page->script("{$picker}.state = '2024-03-31 13:24:37'");
+        $page->click($trigger)
+            ->assertPresent('[data-date="2024-03-31"]:focus')
+            ->keys('[role="gridcell"]:focus', ['Shift+Tab'])
+            ->fill('input[aria-label="Year"]', '2025')
+            ->assertScript("{$picker}.focusedDate.format('YYYY-MM-DD')", '2025-03-31')
+            ->assertPresent('input[aria-label="Year"]:focus')
+            ->keys('input[aria-label="Year"]', ['Shift+Tab'])
+            ->select('select[aria-label="Month"]', '1')
+            ->assertScript("{$picker}.focusedDate.format('YYYY-MM-DD')", '2025-02-28')
+            ->assertScript("{$picker}.state", '2024-03-31 13:24:37')
+            ->assertPresent('select[aria-label="Month"]:focus')
+            ->keys('select[aria-label="Month"]', 'Tab')
+            ->keys('input[aria-label="Year"]', 'Tab')
+            ->assertPresent('[data-date="2025-02-28"]:focus')
+            ->keys('[role="gridcell"]:focus', 'Tab')
+            ->fill('input[aria-label="Minute"]', '31')
+            ->assertScript("{$picker}.state", '2024-03-31 13:31:37')
+            ->assertPresent('input[aria-label="Minute"]:focus')
+            ->assertNoAccessibilityIssues()
+            ->keys('input[aria-label="Minute"]', 'Escape')
+            ->keys($trigger, 'Delete')
+            ->keys($trigger, 'Enter')
+            ->assertPresent('[data-date="2025-02-28"]:focus')
+            ->fill('input[aria-label="Minute"]', '19')
+            ->assertScript("{$picker}.state", '2025-02-28 00:19:00')
+            ->assertNoAccessibilityIssues()
+            ->keys('input[aria-label="Minute"]', 'Escape')
+            ->assertNoSmoke();
+
+        $page->script("{$picker}.state = '2024-12-31 13:24:37'");
+        $page->keys($trigger, 'Enter')
+            ->assertPresent('[data-date="2024-12-31"]:focus')
+            ->withKeyDown('ArrowRight', static fn () => null)
+            ->withKeyDown('Tab', static fn () => null)
+            ->assertPresent('input[aria-label="Hour"]:focus')
+            ->assertScript("{$picker}.state", '2024-12-31 13:24:37')
+            ->keys('input[aria-label="Hour"]', 'Shift+Tab')
+            ->assertPresent('[data-date="2025-01-01"]:focus')
+            ->assertNoAccessibilityIssues()
+            ->keys('[role="gridcell"]:focus', 'Escape')
+            ->assertNoSmoke();
+    }
+});
+
+it('opens for stepped time validation without stealing focus and cancels stale opening requests', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/date-time-picker-test?native=0&hour-step=2&minute-step=5');
+    $trigger = '[data-testid="timed-trigger"]';
+    $picker = 'Alpine.$data(document.querySelector(\'[data-testid="timed-trigger"]\'))';
+
+    foreach ([false, true] as $isDarkMode) {
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page->assertScript("{$picker}.focusedDate.format('YYYY-MM-DD')", '2025-07-15')
+            ->click($trigger)
+            ->assertPresent('[role="gridcell"]:focus')
+            ->fill('input[aria-label="Hour"]', '14')
+            ->assertScript("{$picker}.hour", 14)
+            ->fill('input[aria-label="Minute"]', '31')
+            ->assertScript("{$picker}.minute", 31)
+            ->keys('input[aria-label="Minute"]', 'Escape')
+            ->click('[data-testid="save-timed"]')
+            ->assertPresent('input[aria-label="Minute"]:focus')
+            ->assertAttribute($trigger, 'aria-expanded', 'true')
+            ->assertScript('document.querySelector(\'input[aria-label="Minute"]\').validity.stepMismatch', true)
+            ->assertNoAccessibilityIssues()
+            ->fill('input[aria-label="Minute"]', '30')
+            ->keys('input[aria-label="Minute"]', 'Escape');
+
+        $page->script("{$picker}.togglePanelVisibility(); document.querySelector('[data-testid=\"timed-trigger\"]').dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true }))");
+        $page->assertPresent('[role="gridcell"]:focus')
+            ->assertNoAccessibilityIssues()
+            ->keys('[role="gridcell"]:focus', 'Escape');
+        $page->script('window.invalidReports = []; document.querySelector(\'input[aria-label="Hour"]\').value = "13"; document.querySelector(\'input[aria-label="Minute"]\').value = "31"; document.querySelectorAll(\'input[aria-label="Hour"], input[aria-label="Minute"]\').forEach(input => input.addEventListener("invalid", event => invalidReports.push(event.defaultPrevented)))');
+        $page->click('[data-testid="save-timed"]')
+            ->assertPresent('input[aria-label="Hour"]:focus')
+            ->assertScript('invalidReports.slice(0, 2)', [true, true])
+            ->assertNoAccessibilityIssues()
+            ->fill('input[aria-label="Hour"]', '14')
+            ->fill('input[aria-label="Minute"]', '30')
+            ->keys('input[aria-label="Minute"]', 'Escape');
+
+        $page->script("new Promise(resolve => { {$picker}.togglePanelVisibility(); {$picker}.\$nextTick(() => requestAnimationFrame(() => { document.querySelector('input[aria-label=\"Year\"]').focus(); resolve(); })); })");
+        $page->assertPresent('input[aria-label="Year"]:focus')
+            ->assertNoAccessibilityIssues()
+            ->keys('input[aria-label="Year"]', 'Escape');
+        $page->script("{$picker}.togglePanelVisibility(); {$picker}.closePanel(); document.querySelector('[data-testid=\"save-timed\"]').focus()");
+        $page->assertAttribute($trigger, 'aria-expanded', 'false')
+            ->assertPresent('[data-testid="save-timed"]:focus')
+            ->assertScript("{$picker}.positioningCleanup", null)
+            ->assertNoSmoke();
+    }
+});
+
+it('preserves ignored calendars across Livewire refreshes and disposes replaced calendars', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/date-time-picker-test?native=0');
+    $trigger = '[data-testid="timed-trigger"]';
+    $picker = 'Alpine.$data(document.querySelector(\'[data-testid="timed-trigger"]\'))';
+
+    foreach ([false, true] as $isDarkMode) {
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page->assertScript("{$picker}.focusedDate.format('YYYY-MM-DD')", '2025-07-15')
+            ->click($trigger)
+            ->assertPresent('[data-date="2025-07-15"]:focus');
+        $page->script("window.originalCalendar = {$picker}; {$picker}.\$wire.\$refresh()");
+        $page->assertScript("{$picker}.isDestroyed", false)
+            ->assertPresent('[data-date="2025-07-15"]:focus')
+            ->assertNoAccessibilityIssues()
+            ->click('[data-testid="replace-calendar"]')
+            ->assertScript('window.originalCalendar.isDestroyed', true)
+            ->assertScript('window.originalCalendar.positioningCleanup', null)
+            ->assertAttribute($trigger, 'aria-expanded', 'false')
+            ->assertPresent('[data-testid="replace-calendar"]:focus')
+            ->click($trigger)
+            ->assertPresent('[data-date="2025-07-15"]:focus')
+            ->assertAttribute('[data-date="2025-07-16"]', 'aria-disabled', 'true')
+            ->assertNoAccessibilityIssues();
+
+        $page->script("window.replacedCalendar = {$picker}; {$picker}.focusCalendarDate(); Alpine.destroyTree({$picker}.\$el); {$picker}.\$el.remove(); document.querySelector('[data-testid=\"save-timed\"]').focus()");
+        $page->assertScript('window.replacedCalendar.isDestroyed', true)
+            ->assertScript('window.replacedCalendar.positioningCleanup', null)
+            ->assertPresent('[data-testid="save-timed"]:focus')
+            ->assertNoSmoke();
+    }
+});
+
+it('does not open or clear a disabled or read-only custom picker, including with `autofocus()`', function (string $mode, bool $hasDate, bool $hasTime): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/date-time-picker-test?' . http_build_query([
+        'native' => 0,
+        'date' => (int) $hasDate,
+        'time' => (int) $hasTime,
+        'dst' => 1,
+        'autofocus' => 1,
+        'calendar-state' => '2025-07-15 01:45:07',
+        $mode => 1,
+    ]));
     $trigger = '[data-testid="timed-trigger"]';
     $picker = 'Alpine.$data(document.querySelector(\'[data-testid="timed-trigger"]\'))';
 
@@ -1692,7 +2028,11 @@ it('does not open or clear a disabled or read-only custom picker, including with
         $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
         $page->assertNoAccessibilityIssues();
     }
-})->with(['disabled', 'readonly']);
+})->with(['disabled', 'readonly'])->with([
+    'time-only' => [false, true],
+    'date-only' => [true, false],
+    'date-and-time' => [true, true],
+]);
 
 class RenderDateTimePickerWithTimeDisabled extends Livewire
 {

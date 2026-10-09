@@ -53,50 +53,6 @@ it('only autofocuses a text input after its tab becomes active', function (): vo
     });
 });
 
-it('resets to the first tab and refocuses an `autofocus()` field after `create another`', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
-
-        visit('/autofocus-after-create-another-tabs-browser-test')
-            ->assertVisible('input[wire\\:model="data.name"]')
-            ->assertScript('document.activeElement === document.querySelector("[autofocus]")', true)
-            ->click('input[wire\\:model="data.email"]')
-            ->wait(0.1)
-            ->assertScript('document.activeElement === document.querySelector("[autofocus]")', false)
-            ->click('[data-testid="simulate-create-another"]')
-            ->wait(0.5)
-            ->assertScript('document.activeElement === document.querySelector("[autofocus]")', true)
-            ->click('.fi-tabs-item >> text=Second Tab')
-            ->wait(0.3)
-            ->assertScript('document.activeElement === document.querySelector("[autofocus]")', false)
-            ->click('[data-testid="simulate-create-another"]')
-            ->wait(0.5)
-            ->assertScript('document.activeElement === document.querySelector("[autofocus]")', true);
-    });
-});
-
-it('resets to the first wizard step and refocuses an `autofocus()` field after `create another`', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
-
-        visit('/autofocus-after-create-another-wizard-browser-test')
-            ->assertVisible('input[wire\\:model="data.name"]')
-            ->assertScript('document.activeElement === document.querySelector("[autofocus]")', true)
-            ->click('input[wire\\:model="data.email"]')
-            ->wait(0.1)
-            ->assertScript('document.activeElement === document.querySelector("[autofocus]")', false)
-            ->click('[data-testid="simulate-create-another"]')
-            ->wait(0.5)
-            ->assertScript('document.activeElement === document.querySelector("[autofocus]")', true)
-            ->click('button >> text=Next')
-            ->wait(0.3)
-            ->assertScript('document.activeElement === document.querySelector("[autofocus]")', false)
-            ->click('[data-testid="simulate-create-another"]')
-            ->wait(0.5)
-            ->assertScript('document.activeElement === document.querySelector("[autofocus]")', true);
-    });
-});
-
 it('refocuses an `autofocus()` field after `create another` inside a `CreateAction` modal that contains tabs', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());

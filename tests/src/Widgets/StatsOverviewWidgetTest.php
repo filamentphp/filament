@@ -130,17 +130,22 @@ it('renders `placeholder()` for values considered blank by `blank()`', function 
     'whitespace-only string' => ['   '],
 ]);
 
-it('has no accessibility issues in light and dark modes', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+it('renders accessible charts in light and dark modes', function (): void {
+    $this->actingAs(User::factory()->create());
 
-        visit('/stats-overview-widget-browser-test')
-            ->assertNoAccessibilityIssues();
+    visit('/stats-overview-widget-browser-test')
+        ->assertVisible('[data-testid="orders-stat"] canvas')
+        ->assertScript("!!Alpine.\$data(document.querySelector('[data-testid=\"orders-stat\"] canvas').closest('[x-data]')).getChart()", true)
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/stats-overview-widget-browser-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+    // `inDarkMode()` requires a fresh browser context.
+    visit('/stats-overview-widget-browser-test')
+        ->inDarkMode()
+        ->assertVisible('[data-testid="orders-stat"] canvas')
+        ->assertScript("!!Alpine.\$data(document.querySelector('[data-testid=\"orders-stat\"] canvas').closest('[x-data]')).getChart()", true)
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 });
 
 class TestStatsOverviewWidgetDefault extends StatsOverviewWidget

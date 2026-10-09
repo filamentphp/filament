@@ -123,6 +123,8 @@ jobs:
           cache: npm
       - name: Install npm dependencies
         run: npm ci --ignore-scripts
+      - name: Build JavaScript assets for browser tests
+        run: npm run build:js
       - name: Install Chromium system dependencies
         run: |
           packages=(libnss3 libatk-bridge2.0-0t64 libdrm2 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxkbcommon0 libpango-1.0-0 libcairo2 libasound2t64)
