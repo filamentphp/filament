@@ -128,6 +128,11 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
         return $this;
     }
 
+    public function getPlaceholder(): ?string
+    {
+        return $this->evaluate($this->placeholder) ?? ($this->isDisabled() ? __('filament-forms::components.file_upload.placeholder') : null);
+    }
+
     public function image(): static
     {
         $this->acceptedFileTypes([
