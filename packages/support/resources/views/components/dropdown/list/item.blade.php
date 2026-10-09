@@ -12,7 +12,6 @@
     'iconColor' => null,
     'iconSize' => null,
     'image' => null,
-    'imageCircular' => true,
     'keyBindings' => null,
     'loadingIndicator' => true,
     'spaMode' => null,
@@ -117,10 +116,7 @@
 
     @if ($image)
         <div
-            @class([
-                'fi-dropdown-list-item-image',
-                'fi-circular' => $imageCircular,
-            ])
+            class="fi-dropdown-list-item-image"
             style="background-image: url('{{ $image }}')"
             @if ($hasLoadingIndicator)
                 wire:loading.remove.delay.{{ $loadingDelay }}

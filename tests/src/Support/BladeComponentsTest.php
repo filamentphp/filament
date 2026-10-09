@@ -318,19 +318,3 @@ it('preserves explicit modal window focus attributes', function (): void {
         ->toContain('tabindex="-1"')
         ->not->toContain('x-trap');
 });
-
-it('renders dropdown item images with circular style by default', function (): void {
-    $html = Blade::render('<x-filament::dropdown.list.item image="https://example.com/avatar.jpg">Item</x-filament::dropdown.list.item>');
-
-    expect($html)
-        ->toContain('fi-dropdown-list-item-image')
-        ->toContain('fi-circular');
-});
-
-it('supports rendering non-circular dropdown item images with `:image-circular="false"`', function (): void {
-    $html = Blade::render('<x-filament::dropdown.list.item image="https://example.com/avatar.jpg" :image-circular="false">Item</x-filament::dropdown.list.item>');
-
-    expect($html)
-        ->toContain('fi-dropdown-list-item-image')
-        ->not->toContain('fi-circular');
-});

@@ -36,9 +36,7 @@
 
 .fi-tenant-menu-item {
     @apply min-w-0;
-}
 
-.fi-tenant-menu {
     & .fi-dropdown-list-item-image {
         @apply rounded-md;
     }
