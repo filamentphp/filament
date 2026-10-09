@@ -7,6 +7,10 @@
         @apply focus-visible:ring-2;
     }
 
+    &[aria-pressed]:focus-visible:not([disabled]) {
+        @apply z-1 ring-2 ring-gray-950/10 dark:ring-white/20;
+    }
+
     &.fi-disabled:not(.fi-force-enabled),
     &[disabled]:not(.fi-force-enabled) {
         @apply cursor-default opacity-70;
@@ -66,7 +70,8 @@
             @apply hover:bg-gray-50 dark:hover:bg-white/10;
         }
 
-        input:checked + label& {
+        input:checked + label&,
+        &[aria-pressed='true'] {
             @apply bg-gray-400 text-white ring-0 dark:bg-gray-600;
 
             &.fi-force-enabled,
@@ -76,7 +81,7 @@
         }
 
         &.fi-color {
-            &:not(label) {
+            &:not(label):not([aria-pressed]) {
                 @apply bg-(--bg) text-(--text) dark:bg-(--dark-bg) dark:text-(--dark-text);
 
                 &.fi-force-enabled,
@@ -89,14 +94,16 @@
                 }
             }
 
-            label& {
-                input:checked + & {
+            &:is(label, [aria-pressed]) {
+                input:checked + &,
+                &[aria-pressed='true'] {
                     @apply bg-(--bg) text-(--text) ring-0 dark:bg-(--dark-bg) dark:text-(--dark-text);
                 }
 
                 &.fi-force-enabled,
                 &:not(.fi-disabled):not([disabled]) {
-                    input:checked + & {
+                    input:checked + &,
+                    &[aria-pressed='true'] {
                         @apply hover:bg-(--hover-bg) hover:text-(--hover-text) dark:hover:bg-(--dark-hover-bg) dark:hover:text-(--dark-hover-text);
                     }
 
@@ -108,20 +115,28 @@
                         @apply ring-color-500/50 dark:ring-color-400/50;
                     }
                 }
+
+                &[aria-pressed='true']:focus-visible:not([disabled]) {
+                    @apply ring-color-500/50 dark:ring-color-400/50 ring-2;
+                }
             }
         }
     }
 
-    label& {
+    &:is(label, [aria-pressed]) {
         @apply cursor-pointer;
 
-        & > .fi-icon:is(:checked + label > .fi-icon) {
+        &
+            > .fi-icon:is(
+                :checked + label > .fi-icon,
+                [aria-pressed='true'] > .fi-icon
+            ) {
             @apply text-(--text) dark:text-(--dark-text);
         }
     }
 
     &:not(.fi-color),
-    label& {
+    &:is(label, [aria-pressed]) {
         @apply ring-1 ring-gray-950/10 dark:ring-white/20;
     }
 
@@ -189,7 +204,7 @@
         }
 
         &:not(.fi-color),
-        label& {
+        &:is(label, [aria-pressed]) {
             @apply ring-0;
         }
     }

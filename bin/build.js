@@ -128,6 +128,7 @@ const formComponents = [
     'tags-input',
     'textarea',
     'text-input/password-reveal',
+    'toggle-buttons',
 ]
 
 formComponents.forEach((component) => {

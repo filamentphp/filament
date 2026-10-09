@@ -31,6 +31,13 @@ it('can set and get state', function (): void {
         ->assertSchemaStateSet(['status' => 'active']);
 });
 
+it('can render a single `ToggleButtons` field after a malformed Livewire state update', function (string $componentClass): void {
+    livewire($componentClass)
+        ->set('data.status', ['active'])
+        ->assertSuccessful()
+        ->assertDontSeeHtml('aria-pressed="true"');
+})->with([[TestComponentWithToggleButtons::class], [RenderToggleButtonsWithGrouped::class]]);
+
 it('can render in boolean mode', function (): void {
     livewire(TestComponentWithBooleanToggleButtons::class)
         ->assertSuccessful();
@@ -602,18 +609,142 @@ describe('rendering', function (): void {
     });
 });
 
-it('can render `ToggleButtons` in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+it('can select, replace, and clear a single `ToggleButtons` option with pointer and keyboard', function (): void {
+    $this->actingAs(User::factory()->create());
 
-        visit('/toggle-buttons-test')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    foreach ([false, true] as $darkMode) {
+        $page = $darkMode
+            ? visit('/toggle-buttons-test')->inDarkMode()
+            : visit('/toggle-buttons-test')->inLightMode();
+        $page->assertNoSmoke();
+        $livewireComponent = 'Livewire.find(document.getElementById("form.field-a").closest("[wire\\\\:id]").getAttribute("wire:id"))';
 
-        visit('/toggle-buttons-test')
-            ->inDarkMode()
+        foreach (['field', 'grouped_field'] as $fieldName) {
+            $firstButton = "[id=\"form.{$fieldName}-a\"]";
+            $secondButton = "[id=\"form.{$fieldName}-b\"]";
+
+            $page->assertAttribute($firstButton, 'aria-pressed', 'false')
+                ->click($firstButton)
+                ->assertAttribute($firstButton, 'aria-pressed', 'true')
+                ->click($secondButton)
+                ->assertAttribute($firstButton, 'aria-pressed', 'false')
+                ->assertAttribute($secondButton, 'aria-pressed', 'true');
+
+            expect($page->script("{$livewireComponent}.call('save')")[$fieldName])->toBe('b');
+
+            $page->click($secondButton)
+                ->assertAttribute($secondButton, 'aria-pressed', 'false')
+                ->keys($firstButton, 'Space')
+                ->assertAttribute($firstButton, 'aria-pressed', 'true')
+                ->keys($firstButton, 'Tab');
+
+            expect($page->script('document.activeElement.id'))->toBe("form.{$fieldName}-b");
+
+            $page->keys($secondButton, 'Enter')
+                ->assertAttribute($firstButton, 'aria-pressed', 'false')
+                ->assertAttribute($secondButton, 'aria-pressed', 'true')
+                ->keys($secondButton, 'Space')
+                ->assertAttribute($secondButton, 'aria-pressed', 'false');
+        }
+
+        $page->assertAttribute('[id="form.boolean_field-0"]', 'aria-pressed', 'true')
+            ->keys('[id="form.boolean_field-0"]', 'Enter')
+            ->assertAttribute('[id="form.boolean_field-0"]', 'aria-pressed', 'false')
+            ->assertDisabled('[id="form.disabled_options-b"]')
+            ->keys('[id="form.disabled_options-c"]', 'Enter')
+            ->assertAttribute('[id="form.disabled_options-c"]', 'aria-pressed', 'false')
+            ->click('[for="form.multiple_field-a"]')
+            ->click('[for="form.multiple_field-b"]')
+            ->assertChecked('[id="form.multiple_field-a"]')
+            ->assertChecked('[id="form.multiple_field-b"]')
+            ->click('[for="form.multiple_field-a"]')
+            ->assertNotChecked('[id="form.multiple_field-a"]')
+            ->assertChecked('[id="form.multiple_field-b"]');
+
+        $state = $page->script("{$livewireComponent}.call('save')");
+
+        expect($state)->toMatchArray([
+            'field' => null,
+            'grouped_field' => null,
+            'boolean_field' => null,
+            'disabled_options' => null,
+            'multiple_field' => ['b'],
+        ]);
+
+        $page->assertNoAccessibilityIssues();
+    }
+});
+
+it('preserves `live()` update timing and submission locking for single `ToggleButtons`', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    foreach ([false, true] as $darkMode) {
+        $page = $darkMode
+            ? visit('/toggle-buttons-test')->inDarkMode()
+            : visit('/toggle-buttons-test')->inLightMode();
+        $livewireComponent = 'Livewire.find(document.getElementById("form.field-a").closest("[wire\\\\:id]").getAttribute("wire:id"))';
+
+        foreach (['deferred_blur', 'deferred_debounced', 'deferred_override'] as $fieldName) {
+            $button = "[id=\"form.{$fieldName}-a\"]";
+
+            $page->click($button)
+                ->assertAttribute($button, 'aria-pressed', 'true')
+                ->keys($button, 'Tab')
+                ->wait(0.5)
+                ->assertScript("{$livewireComponent}.get('updatedStates.{$fieldName}') ?? []", []);
+        }
+
+        $page->click('[id="form.live_field-a"]')
+            ->assertScript("{$livewireComponent}.get('updatedStates.live_field')", ['a'])
+            ->click('[id="form.live_field-a"]')
+            ->assertScript("{$livewireComponent}.get('updatedStates.live_field')", ['a', null]);
+
+        foreach (['blur', 'grouped_blur'] as $fieldName) {
+            $button = "[id=\"form.{$fieldName}-a\"]";
+            $updates = "{$livewireComponent}.get('updatedStates.{$fieldName}') ?? []";
+
+            $page->script("document.getElementById('form.{$fieldName}-a').focus()");
+            $page->script("{$livewireComponent}.\$commit()");
+
+            $page->click($button)
+                ->assertAttribute($button, 'aria-pressed', 'true')
+                ->wait(0.2)
+                ->assertScript($updates, [])
+                ->keys($button, 'Tab')
+                ->assertScript($updates, ['a']);
+        }
+
+        foreach (['debounced', 'grouped_debounced'] as $fieldName) {
+            $firstButton = "[id=\"form.{$fieldName}-a\"]";
+            $secondButton = "[id=\"form.{$fieldName}-b\"]";
+            $updates = "{$livewireComponent}.get('updatedStates.{$fieldName}') ?? []";
+
+            $page->script("document.getElementById('form.{$fieldName}-a').focus()");
+            $page->script("{$livewireComponent}.\$commit()");
+
+            $page->click($firstButton)
+                ->assertAttribute($firstButton, 'aria-pressed', 'true')
+                ->wait(0.2)
+                ->assertScript($updates, [])
+                ->click($secondButton)
+                ->assertAttribute($firstButton, 'aria-pressed', 'false')
+                ->assertAttribute($secondButton, 'aria-pressed', 'true')
+                ->wait(0.6)
+                ->assertScript($updates, [])
+                ->assertEnabled($firstButton)
+                ->assertScript($updates, ['b']);
+        }
+
+        $submissionDisabled = $page->script('(async () => { document.querySelector("[data-testid=save]").click(); return new Promise(resolve => setTimeout(() => resolve([document.getElementById("form.field-a").disabled, document.getElementById("form.grouped_field-a").disabled]), 50)); })()');
+
+        expect($submissionDisabled)->toBe([true, true]);
+
+        $page->assertEnabled('[id="form.field-a"]')
+            ->assertEnabled('[id="form.grouped_field-a"]')
+            ->assertDisabled('[id="form.disabled_options-b"]')
+            ->wait(0.2)
             ->assertNoAccessibilityIssues();
-    });
+    }
 });
 
 class RenderToggleButtonsWithInline extends Livewire
