@@ -159,7 +159,7 @@ describe('browser interactions', function (): void {
         $assertValidationBehavior($browser);
     });
 
-    it('locks page scroll and restores focus and scroll position after closing a standalone modal', function (): void {
+    it('restores standalone modal state on close', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());
 
@@ -183,7 +183,13 @@ describe('browser interactions', function (): void {
                 ->assertPresent('[data-testid="standalone-trigger"]:focus')
                 ->assertScript('window.scrollY === window.modalTestScrollY', true)
                 ->assertScript('document.documentElement.style.overflow', '')
-                ->assertNoSmoke();
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+
+            // `inDarkMode()` requires a fresh browser context.
+            visit('/modal-browser-test')
+                ->inDarkMode()
+                ->assertNoAccessibilityIssues();
         });
     });
 

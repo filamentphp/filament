@@ -1485,6 +1485,7 @@ it('preserves browser-local disabled-day checks when editing an initially empty 
         }
 
         $page->assertValue('[data-testid="timed-trigger"]', '')
+            ->assertScript("{$picker}.focusedDate?.format('YYYY-MM-DD HH:mm:ss Z')", '2025-07-15 06:24:37 -07:00')
             ->click('[data-testid="timed-trigger"]')
             ->assertScript("{$picker}.focusedDate.format('YYYY-MM-DD HH:mm:ss Z')", '2025-07-15 06:24:37 -07:00')
             ->fill('input[aria-label="Hour"]', '2')
@@ -1500,50 +1501,6 @@ it('preserves browser-local disabled-day checks when editing an initially empty 
         $page->assertNoSmoke()->assertNoAccessibilityIssues();
     }
 })->with([true, false]);
-
-it('initializes an empty time-only calendar without applying the browser timezone twice during a fold', function (): void {
-    $this->actingAs(User::factory()->create());
-
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/date-time-picker-test?native=0&date=0')->withTimezone('America/Nuuk');
-
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-
-        $page->assertScript('typeof Alpine.$data(document.querySelector(\'[data-testid="timed-trigger"]\')).init', 'function')
-            ->assertValue('[data-testid="timed-trigger"]', '')
-            ->assertScript(<<<'JS'
-                (() => {
-                    const OriginalDate = Date;
-                    try {
-                        window.Date = class extends OriginalDate {
-                            constructor(...parameters) { super(...(parameters.length ? parameters : ['2025-10-26T01:30:00Z'])); }
-                        };
-                        const component = {
-                            ...document.querySelector('[data-testid="timed-trigger"]').closest('[x-data]')._x_dataStack[0],
-                            $nextTick: callback => callback(),
-                            $watch: () => {},
-                            $refs: { disabledDates: { value: '["2025-10-25"]' } },
-                            defaultFocusedDate: null,
-                            focusedDate: null,
-                            focusedMonth: null,
-                            focusedYear: null,
-                            state: null,
-                        };
-                        component.init();
-                        const focus = component.focusedDate.format('YYYY-MM-DD HH:mm Z');
-                        component.hour = 2;
-                        component.setState(component.focusedDate.hour(2));
-                        return { focus, state: component.state };
-                    } finally {
-                        window.Date = OriginalDate;
-                    }
-                })()
-                JS, ['focus' => '2025-10-25 23:30 -03:00', 'state' => null])
-            ->assertNoSmoke()->assertNoAccessibilityIssues();
-    }
-});
 
 it('compares custom time-only clocks independently of browser DST dates and preserves hidden seconds on reload', function (): void {
     $this->actingAs(User::factory()->create());

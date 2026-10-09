@@ -2765,6 +2765,10 @@ describe('legacy `relationship()` method', function () use ($applyQueryBuilderFi
 });
 
 describe('absolute and relative date filtering', function () use ($applyQueryBuilderFilter): void {
+    beforeEach(function (): void {
+        $this->freezeTime();
+    });
+
     it('preserves date-only filter boundaries with a globally configured `timezone()`', function (string $operator, array $expectedDates) use ($applyQueryBuilderFilter): void {
         config(['app.timezone' => 'Europe/London']);
 
