@@ -68,7 +68,7 @@
                               theme: $store.theme,
                           }
                 "
-                x-tooltip.html="tooltip"
+                x-tooltip="tooltip"
             @endif
             type="button"
             class="fi-tenant-menu-trigger"
