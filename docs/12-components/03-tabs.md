@@ -6,7 +6,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
-The tabs component allows you to render a set of tabs, which can be used to toggle between multiple sections of content:
+The tabs Blade component provides styled navigation links or buttons. It does not implement the keyboard behavior or content panels of an accessible tabset. For switching between schema content panels, use the [schema tabs component](../schemas/tabs).
 
 ```blade
 <x-filament::tabs label="Content tabs">
@@ -141,6 +141,8 @@ By default, a tab's underlying HTML tag is `<button>`. You can change it to be a
     {{-- Other tabs --}}
 </x-filament::tabs>
 ```
+
+Active links use `aria-current="page"` and retain native link navigation and keyboard behavior. Do not add tablist or tabpanel roles to these navigation links.
 
 ## Using vertical tabs
 

@@ -34,6 +34,14 @@ Tabs::make('Tabs')
 
 <AutoScreenshot name="schemas/layout/tabs/simple" alt="Tabs" version="4.x" />
 
+## Navigating tabs using the keyboard
+
+You can use Tab to enter the tab headers, then the left and right arrow keys to move focus between available tabs. Home and End focus the first and last available tabs. For vertical tabs, use the up and down arrow keys instead. Moving focus does not change the selected tab; press Enter or Space to select it. Press Tab again to continue to the selected panel.
+
+Hidden tabs and disabled header buttons are skipped. Calling `disabled()` on a `Tab` disables its fields, not its header, so you can still open a read-only tab.
+
+Tab headers are linked to their panels using accessible IDs. If you set custom `id()` values, keep them unique across the page. Use distinct keys for separate tabsets, including nested tabsets with the same tab labels.
+
 ## Setting the default active tab
 
 The first tab will be open by default. You can change the default open tab using the `activeTab()` method:
@@ -263,6 +271,8 @@ Tabs::make('Tabs')
 
 When tabs are not scrollable, the component automatically detects the available width. If not all tabs can fit, a dropdown button will appear. Any tabs that exceed the available width will be grouped inside this dropdown automatically.
 
+The dropdown is a visual presentation of the same tab headers, not a separate menu. Arrow keys, Home, and End navigate all available tabs. Focusing an overflowed tab automatically opens the dropdown and displays that tab's focus indicator. Press Enter or Space to select it; the dropdown remains open while you navigate its tabs. Press Tab to leave the headers and close the dropdown. Escape closes it without changing selection and returns focus to an inline tab, or to the selected panel if every tab is overflowed. You can also click the dropdown button to reveal the overflowed tabs.
+
 <AutoScreenshot name="schemas/layout/tabs/not-scrollable" alt="Non-scrollable tabs with overflow dropdown" version="4.x" />
 
 ## Using vertical tabs
@@ -418,3 +428,22 @@ Tabs::make('Tabs')
 ```
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `persistTabInQueryString()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Using tabs without content panels
+
+If your `livewireProperty()` tabs change a filter instead of showing separate content panels, use `tabPanels(false)`. This renders a labelled group of buttons with a pressed state rather than a tablist. Each button remains reachable using Tab:
+
+```php
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+
+Tabs::make('Status')
+    ->livewireProperty('activeStatus')
+    ->tabPanels(false)
+    ->tabs([
+        'all' => Tab::make('All'),
+        'published' => Tab::make('Published'),
+    ])
+```
+
+Resource list filters use this mode automatically. For links that navigate to another page, use the [tabs Blade component](../components/tabs) instead. Navigation links keep their native link behavior and are not schema tab panels.

@@ -62,6 +62,8 @@ class Tabs extends Component implements HasEmbeddedView
 
     protected bool | Closure $isVertical = false;
 
+    protected bool | Closure $hasTabPanels = true;
+
     final public function __construct(string | Htmlable | Closure | null $label = null)
     {
         $this->label($label);
@@ -267,6 +269,18 @@ class Tabs extends Component implements HasEmbeddedView
         return (bool) $this->evaluate($this->isVertical);
     }
 
+    public function tabPanels(bool | Closure $condition = true): static
+    {
+        $this->hasTabPanels = $condition;
+
+        return $this;
+    }
+
+    public function hasTabPanels(): bool
+    {
+        return (bool) $this->evaluate($this->hasTabPanels);
+    }
+
     public function toEmbeddedHtml(): string
     {
         if (filled($this->getLivewireProperty())) {
@@ -287,32 +301,6 @@ class Tabs extends Component implements HasEmbeddedView
         ));
         $tabsKey = $this->getKey();
 
-        $getTabVisibilityJs = static function (Tab $tab, ?int $index = null, ?string $mode = null) use ($isScrollable): ?string {
-            $hiddenJs = $tab->getHiddenJs();
-            $visibleJs = $tab->getVisibleJs();
-
-            $baseJs = match ([filled($hiddenJs), filled($visibleJs)]) {
-                [true, true] => "(! ({$hiddenJs})) && ({$visibleJs})",
-                [true, false] => "! ({$hiddenJs})",
-                [false, true] => $visibleJs,
-                default => null,
-            };
-
-            if ($isScrollable || $index === null || $mode === null) {
-                return $baseJs;
-            }
-
-            $tabKey = $tab->getKey(isAbsolute: false);
-
-            $dropdownJs = match ($mode) {
-                'inline' => "(!withinDropdownMounted || withinDropdownIndex === null || {$index} < withinDropdownIndex)",
-                'trigger' => "(withinDropdownMounted && withinDropdownIndex !== null && {$index} >= withinDropdownIndex && '{$tabKey}' === tab)",
-                default => null,
-            };
-
-            return $baseJs ? "{$baseJs} && {$dropdownJs}" : $dropdownJs;
-        };
-
         $outerAttributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'id' => $id,
@@ -327,10 +315,7 @@ class Tabs extends Component implements HasEmbeddedView
             ]);
 
         $navAttributes = (new FilamentComponentAttributeBag)
-            ->merge([
-                'aria-label' => $label,
-                'role' => 'tablist',
-            ])
+            ->merge(['x-ref' => 'tabsHeader'])
             ->class([
                 'fi-tabs',
                 'fi-contained' => $isContained,
@@ -339,7 +324,7 @@ class Tabs extends Component implements HasEmbeddedView
 
         if (! $isScrollable) {
             $navAttributes = $navAttributes->merge([
-                'x-bind:class' => '{ \'fi-invisible\': ! withinDropdownMounted }',
+                'x-bind:class' => '{ \'fi-invisible\': ! overflowReady }',
             ], escape: false);
         }
 
@@ -367,12 +352,6 @@ class Tabs extends Component implements HasEmbeddedView
             ], escape: false);
         }
 
-        $visibleTabKeysJson = collect($tabs)
-            ->filter(static fn (Tab $tab): bool => $tab->isVisible())
-            ->map(static fn (Tab $tab) => $tab->getKey(isAbsolute: false))
-            ->values()
-            ->toJson();
-
         $alpineComponentSrc = FilamentAsset::getAlpineComponentSrc('tabs', 'filament/schemas');
 
         ob_start(); ?>
@@ -380,7 +359,9 @@ class Tabs extends Component implements HasEmbeddedView
         <div
             x-data="tabsSchemaComponent({
                 activeTab: <?= Js::from($activeTab) ?>,
+                hasTabPanels: <?= Js::from($this->hasTabPanels()) ?>,
                 isScrollable: <?= Js::from($isScrollable) ?>,
+                isVertical: <?= Js::from($isVertical) ?>,
                 isTabPersisted: <?= Js::from($this->isTabPersisted()) ?>,
                 isTabPersistedInQueryString: <?= Js::from($this->isTabPersistedInQueryString()) ?>,
                 livewireId: <?= Js::from($this->getLivewire()->getId()) ?>,
@@ -390,19 +371,31 @@ class Tabs extends Component implements HasEmbeddedView
             })"
             x-load
             x-load-src="<?= e($alpineComponentSrc) ?>"
+            <?php if ($this->hasTabPanels() && ! $isScrollable) { ?>
+            x-on:resize.window="scheduleUpdate(true)"
+            <?php } ?>
             wire:ignore.self
             <?= $outerAttributes->toHtml() ?>
         >
-            <input
-                type="hidden"
-                value="<?= e($visibleTabKeysJson) ?>"
-                x-ref="tabsData"
-            />
-
-            <nav <?= $navAttributes->toHtml() ?>>
+            <div <?= $navAttributes->toHtml() ?>>
                 <?php foreach ($this->getStartRenderHooks() as $startRenderHook) { ?>
                     <?= FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes)->toHtml() ?>
                 <?php } ?>
+                <div
+                    x-ref="tablist"
+                    role="<?= $this->hasTabPanels() ? 'tablist' : 'group' ?>"
+                    <?php if ($this->hasTabPanels()) { ?>x-bind:role="hasVisibleTabHeaders ? 'tablist' : 'group'"<?php } ?>
+                    aria-label="<?= e($label ?? __('filament::components/tabs.label')) ?>"
+                    <?php if ($this->hasTabPanels() && $isVertical) { ?>x-bind:aria-orientation="hasVisibleTabHeaders ? 'vertical' : null"<?php } ?>
+                    x-on:keydown="handleKeydown($event)"
+                    <?php if ($this->hasTabPanels() && ! $isScrollable) { ?>
+                    x-on:dropdown-escape="if (isOverflowOpen) { $event.preventDefault(); $event.stopPropagation(); dismissOverflow() }"
+                    x-on:wheel="scrollOverflow($event)"
+                    x-on:touchstart="scrollOverflow($event)"
+                    x-on:touchmove="scrollOverflow($event)"
+                    <?php } ?>
+                    class="fi-sc-tabs-tablist"
+                >
 
                 <?php foreach ($tabs as $index => $tab) {
                     $isTabBadgeDeferred = $tab->isBadgeDeferred();
@@ -416,32 +409,35 @@ class Tabs extends Component implements HasEmbeddedView
                     $tabIconPosition = $tab->getIconPosition();
                     $tabKey = $tab->getKey(isAbsolute: false);
                     $tabLabel = $tab->getLabel();
-                    $tabVisibilityJs = $getTabVisibilityJs($tab, $index, 'inline');
+                    $tabVisibilityJs = $tab->getTabVisibilityJs();
 
                     $tabItemAttributes = (new FilamentComponentAttributeBag)
-                        ->merge($tabExtraAttributeBag->getAttributes(), escape: false)
                         ->merge([
-                            'role' => 'tab',
-                            'aria-selected' => 'false',
+                            'id' => e($tab->getTabId()),
+                            'role' => $this->hasTabPanels() ? 'tab' : null,
+                            'aria-controls' => $this->hasTabPanels() ? e($tab->getPanelId()) : null,
+                            'tabindex' => $this->hasTabPanels() ? -1 : 0,
+                            'x-bind:tabindex' => 'getTabIndex(' . Js::from($tabKey) . ')',
                             'data-tab-key' => $tabKey,
-                            'x-bind:aria-selected' => "tab === '{$tabKey}'",
-                            'x-on:click' => "tab = '{$tabKey}'",
+                            'x-bind:data-tab-available' => "Boolean({$tabVisibilityJs}).toString()",
+                            $this->hasTabPanels() ? 'x-bind:aria-selected' : 'x-bind:aria-pressed' => 'isTabSelected(' . Js::from($tabKey) . ')',
+                            'x-on:click' => 'selectTab(' . Js::from($tabKey) . ', $event)',
+                            'x-show' => $this->hasTabPanels() ? $tabVisibilityJs : "({$tabVisibilityJs}) && ! overflowTabs.includes(" . Js::from($tabKey) . ')',
                         ], escape: false)
+                        ->merge($tabExtraAttributeBag->getAttributes(), escape: false)
                         ->class([
                             'fi-tabs-item',
                         ]);
 
-                    if ($tabVisibilityJs !== null) {
-                        $tabItemAttributes = $tabItemAttributes->merge([
-                            'x-cloak' => true,
-                            'x-show' => $tabVisibilityJs,
-                        ], escape: false);
-                    }
                     ?>
                     <button
                         type="button"
                         x-bind:class="{
-                            'fi-active': tab === '<?= e($tabKey) ?>',
+                            'fi-active': isTabSelected(<?= Js::from($tabKey) ?>),
+                            <?php if ($this->hasTabPanels()) { ?>
+                            'fi-sc-tabs-header-overflow': overflowTabs.includes(<?= Js::from($tabKey) ?>),
+                            'fi-sc-tabs-header-overflow-open': isOverflowOpen && overflowTabs.includes(<?= Js::from($tabKey) ?>),
+                            <?php } ?>
                         }"
                         <?= $tabItemAttributes->toHtml() ?>
                     >
@@ -465,13 +461,16 @@ class Tabs extends Component implements HasEmbeddedView
                     </button>
                 <?php } ?>
 
+                </div>
+
                 <?php if (! $isScrollable) { ?>
                     <div
-                        x-data="filamentDropdown({ isMenu: false })"
+                        <?php if (! $this->hasTabPanels()) { ?>x-data="filamentDropdown"<?php } ?>
+                        <?php if ($this->hasTabPanels()) { ?>aria-hidden="true"<?php } ?>
                         class="fi-dropdown"
                     >
                         <div
-                            x-on:mousedown="if ($event.button === 0) toggle($event)"
+                            x-on:mousedown="if ($event.button === 0) { <?= $this->hasTabPanels() ? '$event.preventDefault(); toggleOverflow()' : 'toggle($event)' ?> }"
                             class="fi-dropdown-trigger"
                         >
                             <?php foreach ($tabs as $index => $tab) {
@@ -479,42 +478,31 @@ class Tabs extends Component implements HasEmbeddedView
                                 $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
                                 $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
                                 $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
-                                $tabExtraAttributeBag = $tab->getExtraAttributeBag();
                                 $tabKey = $tab->getKey(isAbsolute: false);
                                 $tabLabel = $tab->getLabel();
-                                $tabVisibilityJs = $getTabVisibilityJs($tab, $index, 'trigger');
-
                                 $triggerTabAttributes = (new FilamentComponentAttributeBag)
-                                    ->merge($tabExtraAttributeBag->getAttributes(), escape: false)
                                     ->merge([
-                                        'role' => 'tab',
-                                        'aria-selected' => 'false',
-                                        'x-bind:aria-selected' => "tab === '{$tabKey}'",
+                                        'id' => null,
+                                        'role' => null,
+                                        'aria-selected' => null,
+                                        'aria-pressed' => null,
+                                        'aria-controls' => null,
+                                        'tabindex' => $this->hasTabPanels() ? -1 : 0,
+                                        'aria-hidden' => $this->hasTabPanels() ? 'true' : null,
+                                        'x-bind:tabindex' => null,
+                                        'x-bind:aria-selected' => null,
+                                        'x-bind:aria-pressed' => null,
+                                        'data-tabs-overflow-trigger' => true,
+                                        'data-tab-trigger-key' => $tabKey,
+                                        'aria-label' => e(__('filament-schemas::components.tabs.actions.more.label') . ': ' . ($tabLabel instanceof Htmlable ? html_entity_decode(strip_tags($tabLabel->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8') : $tabLabel)),
+                                        'x-show' => 'overflowReady && overflowTabs.includes(' . Js::from($tabKey) . ') && isTabSelected(' . Js::from($tabKey) . ')',
                                     ], escape: false)
-                                    ->class(['fi-tabs-item']);
-
-                                if ($tabVisibilityJs !== null) {
-                                    $triggerTabAttributes = $triggerTabAttributes->merge([
-                                        'x-cloak' => true,
-                                        'x-show' => $tabVisibilityJs,
-                                    ], escape: false);
-                                }
-
-                                $chevronIconHtml = generate_icon_html(Heroicon::ChevronDown, alias: SchemaIconAlias::COMPONENTS_TABS_DROPDOWN_TRIGGER_BUTTON)?->toHtml();
+                                    ->merge($tab->getExtraAttributes(), escape: false)
+                                    ->class(['fi-tabs-item', 'fi-active']);
                                 ?>
-                                <button
-                                    type="button"
-                                    x-bind:class="{
-                                        'fi-active': tab === '<?= e($tabKey) ?>',
-                                    }"
-                                    <?= $triggerTabAttributes->toHtml() ?>
-                                >
-                                    <?= $chevronIconHtml ?>
-
-                                    <span class="fi-tabs-item-label">
-                                        <?= e($tabLabel) ?>
-                                    </span>
-
+                                <button type="button" <?= $triggerTabAttributes->toHtml() ?>>
+                                    <?= generate_icon_html(Heroicon::ChevronDown, alias: SchemaIconAlias::COMPONENTS_TABS_DROPDOWN_TRIGGER_BUTTON)?->toHtml() ?>
+                                    <span class="fi-tabs-item-label"><?= e($tabLabel) ?></span>
                                     <?php if (filled($tabBadge)) { ?>
                                         <?= $this->generateTabBadgeHtml($tabBadge, $tabBadgeColor, tooltip: $tabBadgeTooltip) ?>
                                     <?php } elseif ($isTabBadgeDeferred) { ?>
@@ -525,10 +513,12 @@ class Tabs extends Component implements HasEmbeddedView
 
                             <button
                                 type="button"
-                                role="tab"
-                                aria-selected="false"
+                                data-tabs-overflow-trigger
+                                data-tabs-overflow-ellipsis
+                                <?php if ($this->hasTabPanels()) { ?>tabindex="-1" aria-hidden="true"<?php } ?>
+                                aria-label="<?= e(__('filament-schemas::components.tabs.actions.more.label')) ?>"
                                 class="fi-tabs-item"
-                                x-show="isDropdownButtonVisible"
+                                x-show="! overflowReady || (overflowTabs.some(key => availableTabs.includes(key)) && ! overflowTabs.includes(tab))"
                             >
                                 <span class="fi-tabs-item-label">
                                     <?= generate_icon_html(Heroicon::EllipsisHorizontal, alias: SchemaIconAlias::COMPONENTS_TABS_MORE_TABS_BUTTON)?->toHtml() ?>
@@ -538,11 +528,22 @@ class Tabs extends Component implements HasEmbeddedView
 
                         <div
                             x-cloak
+                            <?php if ($this->hasTabPanels()) { ?>
+                            x-ref="overflowPanel"
+                            x-show="isOverflowOpen"
+                            aria-hidden="true"
+                            x-on:scroll="scheduleUpdate()"
+                            x-on:click.outside="if (! $el.closest('.fi-sc-tabs').querySelector('[x-ref=tablist]').contains($event.target) && ! getOverflowTrigger()?.contains($event.target)) dismissOverflow()"
+                            class="fi-dropdown-panel fi-sc-tabs-overflow-panel"
+                            <?php } else { ?>
                             x-float.placement.<?= e(__('filament-panels::layout.direction') === 'ltr' ? 'bottom-start' : 'bottom-end') ?>.flip.offset="{ offset: 8 }"
                             x-ref="panel"
                             x-transition:enter-start="fi-opacity-0"
                             x-transition:leave-end="fi-opacity-0"
+                            x-on:keydown.home.prevent.stop="focusMenuItem('first')"
+                            x-on:keydown.end.prevent.stop="focusMenuItem('last')"
                             class="fi-dropdown-panel"
+                            <?php } ?>
                         >
                             <div class="fi-dropdown-list">
                                 <?php foreach ($tabs as $index => $tab) {
@@ -553,21 +554,23 @@ class Tabs extends Component implements HasEmbeddedView
                                     $tabIcon = $tab->getIcon();
                                     $tabKey = $tab->getKey(isAbsolute: false);
                                     $tabLabel = $tab->getLabel();
+                                    $tabVisibilityJs = $tab->getTabVisibilityJs();
+                                    $tabExtraAttributeBag = $tab->getExtraAttributeBag();
 
                                     $dropdownItemAttributes = (new FilamentComponentAttributeBag)
                                         ->merge([
-                                            'role' => 'tab',
-                                            'aria-selected' => 'false',
-                                            'x-bind:aria-selected' => "tab === '{$tabKey}'",
-                                            'type' => 'button',
-                                            'x-bind:class' => "{ 'fi-selected': tab === '" . e($tabKey) . "' }",
-                                            'x-on:click' => "tab = '{$tabKey}'; close(\$event);",
-                                            'x-show' => "{$index} >= withinDropdownIndex",
+                                            'role' => $this->hasTabPanels() ? null : 'menuitem',
+                                            'type' => $this->hasTabPanels() ? null : 'button',
+                                            'data-tab-menu-key' => $tabKey,
+                                            'aria-disabled' => ($tabExtraAttributeBag->get('disabled') || ($tabExtraAttributeBag->get('aria-disabled') === 'true')) ? 'true' : null,
+                                            'x-bind:aria-disabled' => 'availableTabs.includes(' . Js::from($tabKey) . ") ? 'false' : 'true'",
+                                            'x-on:click' => $this->hasTabPanels() ? null : "if (\$el.getAttribute('aria-disabled') !== 'true') selectTab(" . Js::from($tabKey) . ', $event, true)',
+                                            'x-show' => "({$tabVisibilityJs}) && overflowTabs.includes(" . Js::from($tabKey) . ')',
                                         ], escape: false)
-                                        ->class(['fi-dropdown-list-item'])
+                                        ->class(['fi-dropdown-list-item', 'fi-sc-tabs-overflow-placeholder' => $this->hasTabPanels()])
                                         ->color(ItemComponent::class, 'gray');
                                     ?>
-                                    <button <?= $dropdownItemAttributes->toHtml() ?>>
+                                    <<?= $this->hasTabPanels() ? 'div' : 'button' ?> <?= $dropdownItemAttributes->toHtml() ?>>
                                         <?php if ($tabIcon) { ?>
                                             <?= generate_icon_html($tabIcon, attributes: (new FilamentComponentAttributeBag)->color(IconComponent::class, 'gray'))?->toHtml() ?>
                                         <?php } ?>
@@ -626,7 +629,7 @@ class Tabs extends Component implements HasEmbeddedView
                                                 </span>
                                             </template>
                                         <?php } ?>
-                                    </button>
+                                    </<?= $this->hasTabPanels() ? 'div' : 'button' ?>>
                                 <?php } ?>
                             </div>
                         </div>
@@ -636,19 +639,11 @@ class Tabs extends Component implements HasEmbeddedView
                 <?php foreach ($this->getEndRenderHooks() as $endRenderHook) { ?>
                     <?= FilamentView::renderHook($endRenderHook, scopes: $renderHookScopes)->toHtml() ?>
                 <?php } ?>
-            </nav>
+            </div>
 
-            <?php foreach ($tabs as $tab) {
-                $tabVisibilityJs = $getTabVisibilityJs($tab);
-
-                if ($tabVisibilityJs) { ?>
-                    <div x-cloak x-show="<?= $tabVisibilityJs ?>">
-                        <?= $tab->toHtml() ?>
-                    </div>
-                <?php } else { ?>
-                    <?= $tab->toHtml() ?>
-                <?php }
-                } ?>
+            <?php foreach ($tabs as $tab) { ?>
+                <?= $tab->toHtml() ?>
+            <?php } ?>
         </div>
 
         <?php return ob_get_clean();
@@ -687,8 +682,16 @@ class Tabs extends Component implements HasEmbeddedView
                 'fi-vertical' => $isVertical,
             ]);
 
+        $navAttributes = (new FilamentComponentAttributeBag)
+            ->merge(['x-ref' => 'tabsHeader'])
+            ->class([
+                'fi-tabs',
+                'fi-contained' => $isContained,
+                'fi-vertical' => $isVertical,
+            ]);
+
         if ($hasDeferredBadges) {
-            $outerAttributes = $outerAttributes->merge([
+            $navAttributes = $navAttributes->merge([
                 'x-data' => '{
                     deferredBadges: {},
                     isLoadingDeferredBadges: true,
@@ -705,24 +708,37 @@ class Tabs extends Component implements HasEmbeddedView
             ], escape: false);
         }
 
-        $navAttributes = (new FilamentComponentAttributeBag)
-            ->merge([
-                'aria-label' => $label,
-                'role' => 'tablist',
-            ])
-            ->class([
-                'fi-tabs',
-                'fi-contained' => $isContained,
-                'fi-vertical' => $isVertical,
-            ]);
-
         ob_start(); ?>
 
-        <div <?= $outerAttributes->toHtml() ?>>
-            <nav <?= $navAttributes->toHtml() ?>>
+        <div
+            x-data="tabsSchemaComponent({
+                activeTab: <?= Js::from($this->getActiveTab()) ?>,
+                hasTabPanels: <?= Js::from($this->hasTabPanels()) ?>,
+                isScrollable: true,
+                isVertical: <?= Js::from($isVertical) ?>,
+                livewireId: <?= Js::from($this->getLivewire()->getId()) ?>,
+                livewireProperty: <?= Js::from($livewireProperty) ?>,
+                tab: <?= Js::from($activeTab) ?>,
+            })"
+            x-load
+            x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('tabs', 'filament/schemas')) ?>"
+            wire:ignore.self
+            <?= $outerAttributes->toHtml() ?>
+        >
+            <input type="hidden" x-ref="tabsData" data-active-tab="<?= e($activeTab) ?>" />
+            <div <?= $navAttributes->toHtml() ?>>
                 <?php foreach ($this->getStartRenderHooks() as $startRenderHook) { ?>
                     <?= FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes)->toHtml() ?>
                 <?php } ?>
+                <div
+                    x-ref="tablist"
+                    role="<?= $this->hasTabPanels() ? 'tablist' : 'group' ?>"
+                    <?php if ($this->hasTabPanels()) { ?>x-bind:role="hasVisibleTabHeaders ? 'tablist' : 'group'"<?php } ?>
+                    aria-label="<?= e($label ?? __('filament::components/tabs.label')) ?>"
+                    <?php if ($this->hasTabPanels() && $isVertical) { ?>x-bind:aria-orientation="hasVisibleTabHeaders ? 'vertical' : null"<?php } ?>
+                    x-on:keydown="handleKeydown($event)"
+                    class="fi-sc-tabs-tablist"
+                >
 
                 <?php
                     $livewire = $this->getLivewire();
@@ -742,19 +758,30 @@ class Tabs extends Component implements HasEmbeddedView
                     $tabIconPosition = $tab->getIconPosition();
                     $tabLabel = $tab->getLabel() ?? ($canGenerateTabLabel ? $livewire->generateTabLabel($tabKey) : null);
                     $isActive = $activeTab === $tabKey;
+                    $tabVisibilityJs = $tab->getTabVisibilityJs();
 
                     $wireClickValue = filled($tabKey)
                         ? "\$set('{$livewireProperty}', '" . addslashes($tabKey) . "')"
                         : "\$set('{$livewireProperty}', null)";
 
                     $tabItemAttributes = (new FilamentComponentAttributeBag)
-                        ->merge($tabExtraAttributeBag->getAttributes(), escape: false)
                         ->merge([
-                            'aria-selected' => $isActive ? 'true' : 'false',
-                            'role' => 'tab',
+                            'id' => e($tab->getTabId()),
+                            'role' => $this->hasTabPanels() ? 'tab' : null,
+                            'aria-controls' => $this->hasTabPanels() ? e($tab->getPanelId()) : null,
+                            $this->hasTabPanels() ? 'aria-selected' : 'aria-pressed' => $isActive ? 'true' : 'false',
+                            $this->hasTabPanels() ? 'x-bind:aria-selected' : 'x-bind:aria-pressed' => 'isTabSelected(' . Js::from($tabKey) . ')',
+                            'tabindex' => $this->hasTabPanels() ? ($isActive ? 0 : -1) : 0,
+                            'x-bind:tabindex' => 'getTabIndex(' . Js::from($tabKey) . ')',
+                            'data-tab-key' => $tabKey,
+                            'x-bind:data-tab-available' => "Boolean({$tabVisibilityJs}).toString()",
+                            'x-show' => $tabVisibilityJs,
+                            'x-on:click.capture' => 'if (! selectTab(' . Js::from($tabKey) . ', $event)) { $event.preventDefault(); $event.stopImmediatePropagation() }',
+                            'x-bind:class' => "{ 'fi-active': isTabSelected(" . Js::from($tabKey) . ') }',
                             'type' => 'button',
                             'wire:click' => $wireClickValue,
                         ], escape: false)
+                        ->merge($tabExtraAttributeBag->getAttributes(), escape: false)
                         ->class([
                             'fi-tabs-item',
                             'fi-active' => $isActive,
@@ -781,10 +808,11 @@ class Tabs extends Component implements HasEmbeddedView
                     </button>
                 <?php } ?>
 
+                </div>
                 <?php foreach ($this->getEndRenderHooks() as $endRenderHook) { ?>
                     <?= FilamentView::renderHook($endRenderHook, scopes: $renderHookScopes)->toHtml() ?>
                 <?php } ?>
-            </nav>
+            </div>
 
             <?php foreach ($tabs as $tab) { ?>
                 <?= $tab->toHtml() ?>

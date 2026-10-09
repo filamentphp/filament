@@ -110,6 +110,13 @@ it('persists independent tabs across reload and browser history', function (): v
     visit('/tabs-browser-test?tab=contact&delivery_tab=contact')->inDarkMode()
         ->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
         ->assertNoAccessibilityIssues();
+
+    $browser = visit('/tabs-browser-test?disabled-profile=1&tab=profile-contact');
+    foreach ([$browser, $browser->inDarkMode()] as $page) {
+        $page->assertVisible('#profile-contact')
+            ->assertAttribute('#profile-tabs [data-tab-key="contact"]', 'aria-selected', 'true')
+            ->assertNoAccessibilityIssues();
+    }
 });
 
 it('defaults `isBadgeDeferred()` to `false`', function (): void {
@@ -289,6 +296,71 @@ it('can call an `Action` nested inside a tab that uses `livewireProperty()`', fu
     livewire(TabsWithLivewirePropertyAction::class)
         ->callAction(TestAction::make('set_value')->schemaComponent('test-tabs.first'))
         ->assertSet('actionCalled', true);
+});
+
+it('can opt out of panels using `tabPanels()` and a `Closure`', function (): void {
+    $livewire = new class extends Livewire
+    {
+        public ?string $activeTab = 'all';
+    };
+
+    Schema::make($livewire)->components([
+        $tabs = Tabs::make('Status')->livewireProperty('activeTab')->tabPanels(static fn (): bool => false)->tabs([
+            'all' => Tab::make('All'),
+            'active' => Tab::make('Active'),
+        ]),
+    ])->fill();
+
+    expect($tabs->hasTabPanels())->toBeFalse()
+        ->and($tabs->toHtml())->toContain('role="group"', 'aria-pressed="true"')
+        ->not->toContain('role="tab"', 'role="tabpanel"', 'aria-controls=');
+
+    expect($tabs->tabPanels()->hasTabPanels())->toBeTrue();
+});
+
+it('links stable tab IDs to custom and empty panel IDs without changing keys', function (): void {
+    $livewire = new class extends Livewire
+    {
+        public ?string $activeTab = null;
+    };
+
+    Schema::make($livewire)->key('form')->components([
+        $tabs = Tabs::make('Details')->key('details')->livewireProperty('activeTab')->tabs([
+            '' => $empty = Tab::make('All'),
+            '0' => $zero = Tab::make('Zero')->id('zero-panel')->extraAttributes(['id' => 'zero-header']),
+        ]),
+        $otherTabs = Tabs::make('Other')->key('other')->scrollable(false)->tabs([
+            $other = Tab::make(new HtmlString('All &amp; <strong>&quot;other&quot;</strong>'))->key('')->extraAttributes(['id' => 'other-header']),
+        ]),
+        Group::make([
+            Tabs::make()->tabs([$billing = Tab::make('Account')->key('account')]),
+        ])->key('billing'),
+        Group::make([
+            Tabs::make()->tabs([$shipping = Tab::make('Account')->key('account')]),
+        ])->key('shipping'),
+    ])->fill();
+
+    $html = $tabs->toHtml();
+    expect($empty->getKey(isAbsolute: false))->toBe('')
+        ->and($zero->getKey(isAbsolute: false))->toBe('0')
+        ->and($zero->getPanelId())->toBe('zero-panel')
+        ->and($zero->getTabId())->toBe('zero-header')
+        ->and(substr_count($html, 'id="zero-header"'))->toBe(1)
+        ->and(substr_count($otherTabs->toHtml(), 'id="other-header"'))->toBe(1)
+        ->and($otherTabs->toHtml())->toContain('aria-label="More tabs: All &amp; &quot;other&quot;"')
+        ->and($empty->getTabId())->not->toBe($other->getTabId())
+        ->and($billing->getPanelId())->toBe('form.billing.account')
+        ->and($shipping->getPanelId())->toBe('form.shipping.account')
+        ->and($billing->getTabId())->not->toBe($shipping->getTabId())
+        ->and($html)->toContain(
+            'id="' . $empty->getTabId() . '"',
+            'aria-labelledby="' . $empty->getTabId() . '"',
+            'aria-controls="' . $empty->getPanelId() . '"',
+            'id="' . $empty->getPanelId() . '"',
+            'aria-controls="zero-panel"',
+            'aria-labelledby="zero-header"',
+            'id="zero-panel"',
+        );
 });
 
 it('returns fluent `$this` from `tabs()`', function (): void {
@@ -612,11 +684,15 @@ it('can render `Tabs` in the browser', function (): void {
     });
 });
 
-it('supports the keyboard in a non-scrollable `Tabs` overflow popup', function (): void {
+it('keeps non-scrollable `Tabs` in one keyboard sequence and accessible tablist', function (): void {
     $this->actingAs(User::factory()->create());
 
-    $trigger = '#overflow-tabs .fi-dropdown-trigger button:visible';
-    $item = '#overflow-tabs .fi-dropdown-panel .fi-dropdown-list-item:first-child:visible';
+    $trigger = '#overflow-tabs [data-tabs-overflow-trigger]:visible';
+    $overview = '#overflow-tabs [data-tab-key="overview"]';
+    $contact = '#overflow-tabs [data-tab-key="contact"]';
+    $billing = '#overflow-tabs [data-tab-key="billing"]';
+    $notifications = '#overflow-tabs [data-tab-key="notifications"]';
+    $popup = '#overflow-tabs [x-ref="overflowPanel"]';
 
     $page = visit('/tabs-browser-test?overflow=1');
 
@@ -624,21 +700,279 @@ it('supports the keyboard in a non-scrollable `Tabs` overflow popup', function (
         $themedPage
             ->resize(375, 812)
             ->assertVisible($trigger)
-            ->click($trigger)
-            ->assertVisible($item)
-            ->assertAttribute($trigger, 'aria-haspopup', 'true')
-            ->keys($trigger, 'Tab')
-            ->assertScript("document.activeElement.matches('#overflow-tabs .fi-dropdown-panel .fi-dropdown-list-item')", true)
-            ->keys($item, 'Enter')
-            ->assertMissing($item)
-            ->assertAttribute($trigger, 'aria-expanded', 'false')
-            ->keys($trigger, 'Enter')
-            ->assertVisible($item)
-            ->assertScript("Array.from(document.querySelectorAll('#overflow-tabs .fi-dropdown-trigger button')).find((trigger) => trigger.checkVisibility()).getAttribute('aria-controls') === document.querySelector('#overflow-tabs .fi-dropdown-panel').id", true)
-            ->assertNoSmoke();
+            ->assertAttribute($trigger, 'aria-hidden', 'true')
+            ->assertAttribute($trigger, 'tabindex', '-1')
+            ->assertAttribute($overview, 'aria-selected', 'true')
+            ->keys($overview, 'ArrowRight')
+            ->assertVisible($popup)
+            ->assertScript('document.activeElement.dataset.tabKey', 'contact')
+            ->assertScript('document.activeElement.getAttribute("role")', 'tab')
+            ->assertScript('document.activeElement.closest("[aria-hidden=true]") === null', true)
+            ->assertScript('document.activeElement.getAttribute("aria-controls") === document.querySelector("#overflow-tabs > [role=tabpanel][aria-labelledby=\"" + document.activeElement.id + "\"]").id', true)
+            ->assertAttribute($overview, 'aria-selected', 'true')
+            ->keys($contact, 'End')
+            ->assertScript('document.activeElement.dataset.tabKey', 'notifications')
+            ->keys($notifications, 'ArrowRight')
+            ->assertScript('document.activeElement.dataset.tabKey', 'overview');
 
+        $themedPage->script('document.querySelector("#overflow-tabs [data-tab-key=contact]").disabled = true');
+        $themedPage->keys($overview, 'ArrowRight')
+            ->assertScript('document.activeElement.dataset.tabKey', 'billing');
+        $themedPage->script('document.querySelector("#overflow-tabs [data-tab-key=contact]").disabled = false');
+        $themedPage->keys($billing, 'ArrowLeft')
+            ->assertScript('document.activeElement.dataset.tabKey', 'contact')
+            ->keys($contact, 'Enter')
+            ->assertAttribute($contact, 'aria-selected', 'true')
+            ->assertVisible($popup)
+            ->assertScript('document.activeElement.dataset.tabKey', 'contact');
+        $themedPage->script('document.getElementById("overflow-tabs").style.transform = "scale(.8)"');
+        $themedPage->assertScript('(() => { const focused = document.activeElement.getBoundingClientRect(); const row = document.querySelector("#overflow-tabs [data-tab-menu-key=contact]").getBoundingClientRect(); return Math.abs(focused.x - row.x) < 1 && Math.abs(focused.y - row.y) < 1 && Math.abs(focused.width - row.width) < 1 && Math.abs(focused.height - row.height) < 1 })()', true)
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+        $themedPage->script('document.getElementById("overflow-tabs").style.transform = ""');
+        $themedPage->keys($contact, 'End')
+            ->resize(375, 180)
+            ->assertScript('document.activeElement.dataset.tabKey', 'notifications')
+            ->assertScript('document.activeElement.getBoundingClientRect().top >= 0 && document.activeElement.getBoundingClientRect().bottom <= innerHeight', true);
+        $themedPage->script('Alpine.$data(document.querySelector("[data-testid=tabs-form]")).showOverflowChoice = true');
+        $themedPage->assertVisible('#overflow-tabs [data-tab-key=hidden]')
+            ->assertScript('document.activeElement.dataset.tabKey', 'notifications')
+            ->assertScript('document.activeElement.getBoundingClientRect().top >= 0 && document.activeElement.getBoundingClientRect().bottom <= innerHeight', true);
+        $themedPage->script('Alpine.$data(document.querySelector("[data-testid=tabs-form]")).showOverflowChoice = false');
+        $themedPage->keys($notifications, 'Home')
+            ->assertScript('document.activeElement.dataset.tabKey', 'overview')
+            ->assertScript('document.activeElement.getBoundingClientRect().top >= 0 && document.activeElement.getBoundingClientRect().bottom <= innerHeight', true)
+            ->assertScript('document.activeElement.dispatchEvent(new WheelEvent("wheel", { deltaY: 250, ctrlKey: true, bubbles: true, cancelable: true }))', true);
+        $scrollTop = $themedPage->script('document.querySelector("#overflow-tabs [x-ref=overflowPanel]").scrollTop');
+        $themedPage->assertScript('document.activeElement.dispatchEvent(new WheelEvent("wheel", { deltaY: 3, bubbles: true, cancelable: true }))', false)
+            ->assertScript('document.querySelector("#overflow-tabs [x-ref=overflowPanel]").scrollTop', $scrollTop + 3);
+        $themedPage->script('document.querySelector("#overflow-tabs [x-ref=overflowPanel]").scrollTop = 0');
+        $themedPage->assertScript('document.activeElement.dispatchEvent(new WheelEvent("wheel", { deltaY: 1, deltaMode: WheelEvent.DOM_DELTA_LINE, bubbles: true, cancelable: true }))', false)
+            ->assertScript('document.querySelector("#overflow-tabs [x-ref=overflowPanel]").scrollTop > 1', true);
+        $themedPage->script('document.querySelector("#overflow-tabs [x-ref=overflowPanel]").scrollTop = 0');
+        $themedPage->assertScript('document.activeElement.dispatchEvent(new WheelEvent("wheel", { deltaY: 1, deltaMode: WheelEvent.DOM_DELTA_PAGE, bubbles: true, cancelable: true }))', false)
+            ->assertScript('(() => { const panel = document.querySelector("#overflow-tabs [x-ref=overflowPanel]"); return panel.scrollTop === panel.scrollHeight - panel.clientHeight })()', true)
+            ->resize(375, 812)
+            ->click('#profile-tabs > [role=tabpanel].fi-active input')
+            ->assertScript('document.activeElement.matches("#profile-tabs input")', true)
+            ->assertMissing($popup . ':visible')
+            ->keys($contact, 'Home')
+            ->keys($overview, 'ArrowRight')
+            ->assertScript('document.activeElement.dataset.tabKey', 'contact')
+            ->keys($contact, 'Escape')
+            ->assertMissing($popup . ':visible')
+            ->assertScript('document.activeElement.matches("#overflow-tabs > [role=tabpanel].fi-active")', true)
+            ->keys('#overflow-tabs > [role=tabpanel].fi-active', 'Shift+Tab')
+            ->assertScript('document.activeElement.dataset.tabKey', 'contact')
+            ->assertVisible($popup)
+            ->keys($contact, 'Tab')
+            ->assertMissing($popup . ':visible')
+            ->assertScript('document.activeElement.matches("#overflow-tabs > [role=tabpanel].fi-active")', true);
+
+        $themedPage->keys($overview, 'End')
+            ->assertScript('document.activeElement.dataset.tabKey', 'notifications')
+            ->resize(1920, 900)
+            ->assertMissing($trigger)
+            ->assertMissing($popup . ':visible')
+            ->assertScript('document.activeElement.dataset.tabKey', 'notifications')
+            ->keys($notifications, 'Home')
+            ->assertScript('document.activeElement.dataset.tabKey', 'overview');
+        $themedPage->script('document.querySelector("#overflow-tabs [data-tab-key=contact] .fi-tabs-item-label").textContent = "Contact information and account preferences ".repeat(8)');
+        $themedPage->assertVisible($trigger)
+            ->assertVisible($popup)
+            ->assertScript('document.activeElement.dataset.tabKey', 'overview');
+        $themedPage->script('document.querySelector("#overflow-tabs [data-tab-key=contact] .fi-tabs-item-label").textContent = "Contact information"');
+        $themedPage->assertMissing($popup . ':visible')
+            ->assertScript('document.activeElement.dataset.tabKey', 'overview')
+            ->keys($overview, 'End')
+            ->resize(375, 180)
+            ->assertVisible($popup)
+            ->assertScript('document.activeElement.dataset.tabKey', 'notifications')
+            ->assertScript('document.activeElement.getBoundingClientRect().top >= 0 && document.activeElement.getBoundingClientRect().bottom <= innerHeight', true)
+            ->keys($notifications, 'Home')
+            ->keys($overview, 'ArrowRight')
+            ->resize(375, 812)
+            ->assertVisible($popup)
+            ->assertScript('document.activeElement.dataset.tabKey', 'contact')
+            ->assertAttribute($contact, 'aria-selected', 'true');
         $themedPage->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
-        $themedPage->assertNoAccessibilityIssues();
+        $themedPage->assertNoAccessibilityIssues()
+            ->keys($contact, 'Home')
+            ->keys($overview, 'Enter')
+            ->assertAttribute($overview, 'aria-selected', 'true')
+            ->keys($overview, 'Escape');
+    }
+});
+
+it('dismisses tab overflow before an enclosing dropdown', function (): void {
+    $this->actingAs(User::factory()->create());
+    $page = visit('/tabs-browser-test?overflow=1&dropdown=1');
+    $dropdownTrigger = '[data-testid=enclosing-dropdown-trigger]';
+    $dropdownPanel = '[data-testid=enclosing-dropdown] > [x-ref=panel]';
+    $overview = '#overflow-tabs [data-tab-key=overview]';
+    $notifications = '#overflow-tabs [data-tab-key=notifications]';
+
+    foreach ([$page, $page->inDarkMode()] as $themedPage) {
+        $themedPage->resize(375, 812)
+            ->click($dropdownTrigger)
+            ->assertVisible($dropdownPanel)
+            ->keys($overview, 'End')
+            ->assertVisible('#overflow-tabs [x-ref=overflowPanel]')
+            ->assertScript('document.activeElement.dataset.tabKey', 'notifications')
+            ->keys($notifications, 'Escape')
+            ->assertMissing('#overflow-tabs [x-ref=overflowPanel]:visible')
+            ->assertVisible($dropdownPanel)
+            ->assertAttribute($overview, 'aria-selected', 'true');
+        $themedPage->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
+        $themedPage->assertNoAccessibilityIssues()
+            ->keys('#overflow-tabs > [role=tabpanel].fi-active', 'Escape')
+            ->assertMissing($dropdownPanel . ':visible')
+            ->assertScript('document.activeElement.dataset.testid', 'enclosing-dropdown-trigger');
+    }
+});
+
+it('uses manual activation, roving focus and scoped `tabpanel` relationships', function (): void {
+    $this->actingAs(User::factory()->create());
+    $browser = visit('/tabs-browser-test?keyboard=1');
+    $account = '#keyboard-tabs > [x-ref=tabsHeader] [data-tab-key="account"]';
+    $contact = '#keyboard-tabs > [x-ref=tabsHeader] [data-tab-key="contact"]';
+    $readonly = '#keyboard-tabs > [x-ref=tabsHeader] [data-tab-key="readonly"]';
+
+    foreach ([$browser, $browser->inDarkMode()] as $page) {
+        $page->assertAttribute($account, 'aria-selected', 'true')
+            ->keys($account, 'ArrowRight')
+            ->assertScript('document.activeElement.dataset.tabKey', 'contact')
+            ->assertAttribute($account, 'aria-selected', 'true')
+            ->assertAttribute($contact, 'tabindex', '0')
+            ->assertAttribute($account, 'tabindex', '-1')
+            ->keys($contact, 'End')
+            ->assertScript('document.activeElement.dataset.tabKey', 'readonly')
+            ->keys($readonly, 'ArrowRight')
+            ->assertScript("document.activeElement.matches('{$account}')", true)
+            ->keys($account, 'ArrowLeft')
+            ->assertScript('document.activeElement.dataset.tabKey', 'readonly')
+            ->keys($readonly, 'Enter')->assertAttribute($readonly, 'aria-selected', 'true')
+            ->assertScript('document.querySelector("#keyboard-tabs > [role=tabpanel].fi-active input").disabled', true)
+            ->keys($account, 'End')->keys($readonly, 'Home')
+            ->keys($account, 'ArrowRight')->keys($contact, 'Enter')
+            ->assertAttribute($contact, 'aria-selected', 'true')
+            ->assertScript("document.activeElement.matches('{$contact}')", true)
+            ->keys($contact, 'Tab')
+            ->assertScript('document.activeElement.getAttribute("role")', 'tabpanel')
+            ->assertScript('Array.from(document.querySelectorAll("[role=tab]")).every(tab => { const panel = document.getElementById(tab.getAttribute("aria-controls")); return panel && panel.getAttribute("aria-labelledby") === tab.id })', true)
+            ->assertScript('new Set(Array.from(document.querySelectorAll("[id]"), element => element.id)).size === document.querySelectorAll("[id]").length', true)
+            ->keys($account, 'Enter')
+            ->keys('#nested-tabs [data-tab-key="account"]', 'ArrowRight')
+            ->assertScript('document.activeElement.closest(".fi-sc-tabs").id', 'nested-tabs')
+            ->keys('#nested-tabs [data-tab-key="contact"]', 'Enter')
+            ->assertAttribute($account, 'aria-selected', 'true')
+            ->refresh()
+            ->assertAttribute('#nested-tabs [data-tab-key="contact"]', 'aria-selected', 'true')
+            ->assertAttribute($account, 'aria-selected', 'true');
+
+        $page->script('document.querySelector("#keyboard-tabs [role=tablist]").dir = "rtl"');
+        $page->keys($account, 'ArrowLeft')->assertScript('document.activeElement.dataset.tabKey', 'contact')
+            ->keys($contact, 'ArrowRight')->assertScript('document.activeElement.dataset.tabKey', 'account')
+            ->assertAttribute('#vertical-tabs [role=tablist]', 'aria-orientation', 'vertical')
+            ->keys('#vertical-tabs [data-tab-key="account"]', 'ArrowDown')
+            ->assertScript('document.activeElement.dataset.tabKey', 'contact')
+            ->keys('#vertical-tabs [data-tab-key="contact"]', 'Home')
+            ->keys('#vertical-tabs [data-tab-key="account"]', 'ArrowUp')
+            ->assertScript('document.activeElement.dataset.tabKey', 'contact')
+            ->click('#profile-tabs [data-tab-key="contact"]')
+            ->click('[data-testid=save]')->assertVisible('#profile-account')
+            ->assertNoSmoke()->assertNoAccessibilityIssues();
+
+        $page->hover('[data-testid=hide-all]');
+        $page->script('window.keyboardTabHeaders = Array.from(document.querySelectorAll("#keyboard-tabs > [x-ref=tabsHeader] [data-tab-key], #vertical-tabs > [x-ref=tabsHeader] [data-tab-key]"), element => [element, element.disabled]); window.keyboardTabHeaders.forEach(([element]) => element.disabled = true)');
+        $page->assertScript('Alpine.$data(document.getElementById("keyboard-tabs")).availableTabs.length', 0)
+            ->assertAttribute('#keyboard-tabs > [x-ref=tabsHeader] > [x-ref=tablist]', 'role', 'tablist')
+            ->assertAttribute('#vertical-tabs > [x-ref=tabsHeader] > [x-ref=tablist]', 'role', 'tablist')
+            ->assertAttribute('#vertical-tabs > [x-ref=tabsHeader] > [x-ref=tablist]', 'aria-orientation', 'vertical')
+            ->assertNoAccessibilityIssues();
+        $page->script('window.keyboardTabHeaders.forEach(([element, isDisabled]) => element.disabled = isDisabled)');
+        $page->assertAttribute($account, 'tabindex', '0')
+            ->assertNoSmoke()->assertNoAccessibilityIssues();
+    }
+});
+
+it('reconciles client-hidden tabs without stealing outside focus', function (): void {
+    $this->actingAs(User::factory()->create());
+    $browser = visit('/tabs-browser-test?keyboard=1');
+    $contact = '#keyboard-tabs > [x-ref=tabsHeader] [data-tab-key="contact"]';
+    $account = '#keyboard-tabs > [x-ref=tabsHeader] [data-tab-key="account"]';
+
+    foreach ([$browser, $browser->inDarkMode()] as $page) {
+        $page->assertScript('document.activeElement === document.querySelector("#keyboard-tabs input[autofocus]")', true)
+            ->keys('#nested-tabs [data-tab-key="account"]', 'ArrowRight');
+        $page->script('document.querySelector(\'#keyboard-tabs > [x-ref=tabsHeader] [data-tab-key="account"]\').disabled = true');
+        $page->assertAttribute($contact, 'aria-selected', 'true')
+            ->assertScript("document.activeElement.matches('{$contact}')", true);
+        $page->script('document.querySelector(\'#keyboard-tabs > [x-ref=tabsHeader] [data-tab-key="account"]\').disabled = false');
+        $page->keys($account, 'Enter')
+            ->assertAttribute($account, 'aria-selected', 'true')
+            ->assertVisible('#nested-tabs')
+            ->keys('#nested-tabs [data-tab-key="account"]', 'ArrowRight');
+        $page->script('document.querySelector(\'#nested-tabs [data-tab-key="contact"]\').disabled = true');
+        $page->assertScript('document.activeElement.closest(".fi-sc-tabs").id', 'nested-tabs')
+            ->assertScript('document.activeElement.dataset.tabKey', 'account')
+            ->assertAttribute($account, 'aria-selected', 'true')
+            ->keys($contact, 'Enter')->assertAttribute($contact, 'aria-selected', 'true');
+        $page->script('Alpine.$data(document.querySelector("[data-testid=tabs-form]")).showContact = false');
+        $page->assertAttribute($account, 'aria-selected', 'true')
+            ->assertScript("document.activeElement.matches('{$account}')", true);
+
+        $page->script('Alpine.$data(document.querySelector("[data-testid=tabs-form]")).showContact = true');
+        $page->keys($contact, 'Enter')->click('[data-testid=hide-contact]')
+            ->assertAttribute($account, 'aria-selected', 'true')
+            ->assertScript('document.activeElement.dataset.testid', 'hide-contact')
+            ->click('[data-testid=hide-all]')
+            ->assertScript('Array.from(document.querySelectorAll("#keyboard-tabs > [role=tabpanel]")).some(panel => panel.checkVisibility())', false)
+            ->assertScript('document.querySelectorAll("#keyboard-tabs > [x-ref=tabsHeader] [role=tab][aria-selected=true]").length', 0)
+            ->assertNoSmoke()->assertNoAccessibilityIssues();
+    }
+});
+
+it('retains lazy panel shells and selection through `Livewire` morphs', function (): void {
+    $this->actingAs(User::factory()->create());
+    $browser = visit('/tabs-browser-test?keyboard=1');
+    $empty = '#dynamic-tabs [data-tab-key=""]';
+    $zero = '#dynamic-tabs [data-tab-key="0"]';
+    $second = '#dynamic-tabs [data-tab-key="second"]';
+
+    foreach ([$browser, $browser->inDarkMode()] as $page) {
+        $page->assertAttribute($second, 'aria-selected', 'true')
+            ->assertScript('document.querySelectorAll("#dynamic-tabs > [role=tabpanel]").length', 4)
+            ->assertScript('document.getElementById(document.querySelector(\'#dynamic-tabs [data-tab-key=""]\').getAttribute("aria-controls")).childElementCount', 0)
+            ->keys($second, 'Home')->assertScript('document.activeElement.dataset.tabKey', '')
+            ->keys($empty, ' ')->assertAttribute($empty, 'aria-selected', 'true')
+            ->keys($empty, 'ArrowRight')->keys($zero, 'Enter')
+            ->assertAttribute($zero, 'aria-selected', 'true')
+            ->assertScript('document.activeElement.dataset.tabKey', '0')
+            ->keys('#dynamic-tabs [data-tab-key="unavailable"]', 'Enter')
+            ->assertAttribute($zero, 'aria-selected', 'true')
+            ->keys($second, 'Enter')->assertAttribute($second, 'aria-selected', 'true');
+        $secondId = $page->script('document.querySelector(\'#dynamic-tabs [data-tab-key="second"]\').id');
+        $page->script('document.querySelector("#dynamic-tabs > [role=tabpanel].fi-active input").focus(); Alpine.$data(document.querySelector("#dynamic-tabs")).$wire.$set("showSecondTab", false)');
+        $page->assertMissing($second)
+            ->assertAttribute($zero, 'aria-selected', 'true')
+            ->assertScript('document.activeElement.dataset.tabKey', '0');
+        $page->script('Alpine.$data(document.querySelector("#dynamic-tabs")).$wire.$set("showSecondTab", true)');
+        $page->assertVisible($second)->assertAttribute($second, 'id', $secondId)
+            ->keys($second, 'Enter')->assertAttribute($second, 'aria-selected', 'true')
+            ->click('[data-testid=remove-tab]')->assertMissing($second)
+            ->assertAttribute($zero, 'aria-selected', 'true')
+            ->assertScript('document.activeElement.dataset.testid', 'remove-tab')
+            ->click('[data-testid=remove-zero]')->assertMissing($zero)
+            ->assertAttribute($empty, 'aria-selected', 'true')
+            ->assertScript('document.querySelectorAll("#filter-tabs [role=tab], #filter-tabs [role=tabpanel]").length', 0)
+            ->keys('#filter-tabs [data-tab-key="all"]', 'Tab')
+            ->assertScript('document.activeElement.dataset.tabKey', 'published')
+            ->keys('#filter-tabs [data-tab-key="published"]', 'Enter')
+            ->assertAttribute('#filter-tabs [data-tab-key="published"]', 'aria-pressed', 'true')
+            ->hover('[data-testid=hide-contact]');
+        $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
+        $page->assertNoSmoke()->assertNoAccessibilityIssues();
     }
 });
 
