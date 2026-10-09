@@ -122,6 +122,7 @@ const formComponents = [
     'file-upload',
     'key-value',
     'markdown-editor',
+    'repeater',
     'rich-editor',
     'select',
     'slider',

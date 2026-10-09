@@ -1,4 +1,35 @@
-export default function builderBlockPickerFormComponent() {
+import collapsibleItem from '../utils/collapsible-item.js'
+import reordering from '../utils/reordering.js'
+
+export default function builderFormComponent({ statePath, ...configuration }) {
+    return {
+        ...reordering(configuration),
+
+        builderFormComponentBlockPicker,
+
+        collapseAll() {
+            this.$dispatch('builder-collapse', statePath)
+        },
+
+        expandAll() {
+            this.$dispatch('builder-expand', statePath)
+        },
+
+        editItem(item) {
+            this.$wire.mountAction(
+                'edit',
+                { item },
+                { schemaComponent: configuration.schemaComponent },
+            )
+        },
+
+        item(configuration) {
+            return collapsibleItem({ statePath, ...configuration })
+        },
+    }
+}
+
+function builderFormComponentBlockPicker() {
     return {
         search: '',
 

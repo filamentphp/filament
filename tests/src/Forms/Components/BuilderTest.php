@@ -261,6 +261,32 @@ it('updates only the targeted block when submitting a valid preview edit', funct
     ]);
 });
 
+it('preserves unrendered block data when moving between rendered blocks', function (): void {
+    $items = [
+        'first' => ['type' => 'one', 'data' => ['foo' => 'Alpha']],
+        'hidden' => ['type' => 'unregistered', 'data' => ['foo' => 'Archived', 'nested' => [13, 29]]],
+        'second' => ['type' => 'one', 'data' => ['foo' => 'Beta']],
+        'third' => ['type' => 'one', 'data' => ['foo' => 'Gamma']],
+    ];
+    $livewire = livewire(ItemStateTestComponent::class)->set('data.group.items', $items);
+
+    $livewire->callAction(TestAction::make('moveDown')->schemaComponent('group.items')->arguments(['item' => 'first']));
+    expect($livewire->get('data.group.items'))->toBe([
+        'second' => $items['second'],
+        'first' => $items['first'],
+        'third' => $items['third'],
+        'hidden' => $items['hidden'],
+    ]);
+
+    $livewire->callAction(TestAction::make('moveUp')->schemaComponent('group.items')->arguments(['item' => 'first']));
+    expect($livewire->get('data.group.items'))->toBe([
+        'first' => $items['first'],
+        'second' => $items['second'],
+        'third' => $items['third'],
+        'hidden' => $items['hidden'],
+    ]);
+});
+
 class ItemStateTestComponent extends Livewire
 {
     public string $fieldType = Builder::class;
@@ -1057,10 +1083,112 @@ describe('block picker search', function (): void {
         livewire(TestComponentWithBuilder::class)
             ->assertSuccessful()
             ->assertDontSeeHtml('x-ref="searchInput"')
-            ->assertDontSeeHtml('data-block-label')
-            ->assertDontSeeHtml('builderBlockPickerFormComponent');
+            ->assertDontSeeHtml('data-block-label');
     });
 });
+
+it('keeps blocks collapsed and preserves keyboard focus when reordering', function (string $renderMode): void {
+    Artisan::call('filament:assets');
+    $this->actingAs(User::factory()->create());
+    $url = '/builder-test?reordering=1&full=' . (int) ($renderMode === 'full') . '&ancestor=' . (int) ($renderMode === 'ancestor');
+    $page = visit($url);
+    foreach ([$page, $page->inDarkMode()] as $page) {
+        $firstParagraph = ':nth-match([data-testid="paragraph-text"], 1)';
+        $secondParagraph = ':nth-match([data-testid="paragraph-text"], 2)';
+        $thirdParagraph = ':nth-match([data-testid="paragraph-text"], 3)';
+        $firstDown = ':nth-match([data-testid="builder"] [data-reorder-direction="down"], 1)';
+        $secondDown = ':nth-match([data-testid="builder"] [data-reorder-direction="down"], 2)';
+        $secondUp = ':nth-match([data-testid="builder"] [data-reorder-direction="up"], 2)';
+        $thirdUp = ':nth-match([data-testid="builder"] [data-reorder-direction="up"], 3)';
+
+        $page->keys($firstDown, 'Enter')
+            ->assertValue($firstParagraph, 'Beta')
+            ->assertValue($secondParagraph, 'Alpha')
+            ->assertValue($thirdParagraph, 'Gamma')
+            ->assertMissing($secondParagraph)
+            ->assertPresent($secondDown . ':focus')
+            ->keys($secondDown, 'Enter')
+            ->assertValue($firstParagraph, 'Beta')
+            ->assertValue($secondParagraph, 'Gamma')
+            ->assertValue($thirdParagraph, 'Alpha')
+            ->assertMissing($thirdParagraph)
+            ->assertPresent($thirdUp . ':focus')
+            ->assertDisabled(':nth-match([data-testid="builder"] [data-reorder-direction="down"], 3)')
+            ->keys($thirdUp, 'Enter')
+            ->assertValue($firstParagraph, 'Beta')
+            ->assertValue($secondParagraph, 'Alpha')
+            ->assertValue($thirdParagraph, 'Gamma')
+            ->assertPresent($secondUp . ':focus')
+            ->keys($secondUp, 'Enter')
+            ->assertValue($firstParagraph, 'Alpha')
+            ->assertValue($secondParagraph, 'Beta')
+            ->assertValue($thirdParagraph, 'Gamma')
+            ->assertPresent($firstDown . ':focus')
+            ->assertDisabled(':nth-match([data-testid="builder"] [data-reorder-direction="up"], 1)')
+            ->assertMissing($firstParagraph)
+            ->assertMissing($secondParagraph)
+            ->assertMissing($thirdParagraph)
+            ->assertSeeIn('[data-testid="builder"] > [role="status"]', __('filament-forms::components.builder.reordering.moved', ['label' => 'Alpha', 'position' => 1, 'count' => 3]))
+            ->assertNoSmoke()->assertNoAccessibilityIssues();
+    }
+})->with(['partial', 'full', 'ancestor']);
+
+it('provides non-tabbable move actions for collapsed blocks without taking focus', function (string $renderMode): void {
+    Artisan::call('filament:assets');
+    $this->actingAs(User::factory()->create());
+    $url = '/builder-test?reordering=1&screenReader=1&full=' . (int) ($renderMode === 'full') . '&ancestor=' . (int) ($renderMode === 'ancestor');
+    $page = visit($url);
+    foreach ([$page, $page->inDarkMode()] as $page) {
+        $controls = '[data-testid="builder"] [data-reorder-direction]';
+        $page->assertCount($controls, 6)
+            ->assertNotPresent('[data-testid="builder"] [aria-hidden="true"] [data-reorder-direction]');
+
+        foreach (range(1, 6) as $position) {
+            $page->assertAttribute(':nth-match(' . $controls . ', ' . $position . ')', 'tabindex', '-1');
+        }
+
+        $page->click('[data-testid="outside-reordering"]');
+        // Activate the visually hidden control without moving DOM focus to it.
+        $page->script('document.querySelector(\'[data-testid="builder"] [data-reorder-direction="down"]\').click()');
+        $page->assertValue(':nth-match([data-testid="paragraph-text"], 1)', 'Beta')
+            ->assertValue(':nth-match([data-testid="paragraph-text"], 2)', 'Alpha')
+            ->assertValue(':nth-match([data-testid="paragraph-text"], 3)', 'Gamma')
+            ->assertMissing(':nth-match([data-testid="paragraph-text"], 2)')
+            ->assertSeeIn('[data-testid="builder"] > [role="status"]', __('filament-forms::components.builder.reordering.moved', ['label' => 'Alpha', 'position' => 2, 'count' => 3]))
+            ->assertPresent('[data-testid="outside-reordering"]:focus')
+            ->assertNoSmoke()->assertNoAccessibilityIssues();
+    }
+})->with(['partial', 'full', 'ancestor']);
+
+it('preserves literal labels and decodes `Htmlable` text in reorder descriptions', function (string $fieldType, string | HtmlString $label, ?string $expectedLabel): void {
+    $field = $fieldType::make('items')->generateUuidUsing(false);
+
+    if ($field instanceof Builder) {
+        $field->blocks([Builder\Block::make('one')->label($label)->schema([TextInput::make('foo')])])
+            ->default([['type' => 'one', 'data' => ['foo' => 'Value']]]);
+    } else {
+        $field->schema([TextInput::make('foo')])->itemLabel($label)
+            ->default([['foo' => 'Value']]);
+    }
+
+    Schema::make(Livewire::make())->statePath('data')->components([$field])->fill();
+    $componentName = $field instanceof Builder ? 'builder' : 'repeater';
+    $expectedLabel ??= (($field instanceof Builder) && is_string($label))
+        ? 'One'
+        : __("filament-forms::components.{$componentName}.reordering.item");
+
+    expect($field->toHtml())
+        ->toContain('data-reorder-label="' . e($expectedLabel) . '"')
+        ->toContain(e(__("filament-forms::components.{$componentName}.reordering.position", ['label' => $expectedLabel, 'position' => 1, 'count' => 1])));
+})->with(['builder' => [Builder::class], 'repeater' => [Repeater::class]])->with([
+    'literal' => ['Customer <West> &amp;', 'Customer <West> &amp;'],
+    'HTML' => [new HtmlString('<strong>Research &amp; Development &lt;West&gt;</strong>'), 'Research & Development <West>'],
+    'literal zero' => ['0', '0'],
+    'HTML zero' => [new HtmlString('<strong>0</strong>'), '0'],
+    'empty' => ['', null],
+    'whitespace' => ['  ', null],
+    'textless HTML' => [new HtmlString('<i></i>'), null],
+]);
 
 it('renders appended and between blocks with current defaults while preserving edited data in the browser', function (): void {
     Artisan::call('filament:assets');
@@ -1108,7 +1236,7 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
     $this->actingAs(User::factory()->create());
 
     $addBlockAction = '[data-testid="add-block"]';
-    $noSearchResultsMessage = '[data-testid="builder"] [role="status"]';
+    $noSearchResultsMessage = '[data-testid="builder"] [role="status"]:not([x-ref="reorderStatus"])';
     $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
     $page = visit('/builder-searchable-test');
 
@@ -1164,7 +1292,7 @@ it('clears a debounced block picker search with `Escape` before the debounce ela
         ->assertVisible($searchInput)
         ->assertValue($searchInput, '')
         ->assertVisible('[data-testid="debounced-builder"] [data-block-label="paragraph"]')
-        ->assertMissing('[data-testid="debounced-builder"] [role="status"]')
+        ->assertMissing('[data-testid="debounced-builder"] [role="status"]:not([x-ref="reorderStatus"])')
         ->assertNoSmoke();
 });
 
@@ -1217,6 +1345,7 @@ it('clears and focuses the block picker search after clicking away and reopening
 
     $page
         ->click('[data-testid="add-block"]')
+        ->assertPresent($searchInput . ':focus')
         ->type($searchInput, 'video')
         ->assertVisible('[data-testid="builder"] [data-block-label="video"]')
         ->assertMissing('[data-testid="builder"] [data-block-label="paragraph"]')
@@ -1229,7 +1358,7 @@ it('clears and focuses the block picker search after clicking away and reopening
         ->assertVisible('[data-testid="builder"] [data-block-label="paragraph"]')
         ->assertVisible('[data-testid="builder"] [data-block-label="research & development"]')
         ->assertVisible('[data-testid="builder"] [data-block-label="video"]')
-        ->assertMissing('[data-testid="builder"] [role="status"]')
+        ->assertMissing('[data-testid="builder"] [role="status"]:not([x-ref="reorderStatus"])')
         ->assertNoSmoke()
         ->assertScript('document.querySelector(\'[data-testid="builder"]\').getAnimations({ subtree: true }).length', 0)
         ->assertNoAccessibilityIssues();
@@ -1284,7 +1413,7 @@ it('preserves an active search when the block catalog changes', function (): voi
         ->assertVisible('[data-testid="builder"] [data-block-label="video quote"]')
         ->assertNotPresent('[data-testid="builder"] [data-block-label="video"]')
         ->assertMissing('[data-testid="builder"] [data-block-label="introduction"]')
-        ->assertMissing('[data-testid="builder"] [role="status"]')
+        ->assertMissing('[data-testid="builder"] [role="status"]:not([x-ref="reorderStatus"])')
         ->assertScript('document.activeElement.matches(\'.fi-fo-builder-block-picker-search-ctn input\')', true);
 
     $page->script('Alpine.$data(document.querySelector(\'[data-testid="builder"]\')).$wire.$set(\'hasUpdatedBlocks\', false)');
@@ -1292,14 +1421,14 @@ it('preserves an active search when the block catalog changes', function (): voi
     $page
         ->assertVisible('[data-testid="builder"] [data-block-label="video"]')
         ->type($searchInput, 'quote')
-        ->assertVisible('[data-testid="builder"] [role="status"]');
+        ->assertVisible('[data-testid="builder"] [role="status"]:not([x-ref="reorderStatus"])');
 
     $page->script('Alpine.$data(document.querySelector(\'[data-testid="builder"]\')).$wire.$set(\'hasUpdatedBlocks\', true)');
 
     $page
         ->assertValue($searchInput, 'quote')
         ->assertVisible('[data-testid="builder"] [data-block-label="video quote"]')
-        ->assertMissing('[data-testid="builder"] [role="status"]')
+        ->assertMissing('[data-testid="builder"] [role="status"]:not([x-ref="reorderStatus"])')
         ->click('[data-testid="builder"] [data-block-label="video quote"]')
         ->assertVisible('[data-testid="builder"] input[id$=".quotation"]')
         ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
@@ -1366,6 +1495,7 @@ it('can add a searched block using `Tab` and `Enter` in both renderers', functio
             $themedPage
                 ->click('[data-testid="add-block"]')
                 ->assertVisible($searchInput)
+                ->assertPresent($searchInput . ':focus')
                 ->type($searchInput, 'video')
                 ->assertMissing('[data-testid="builder"] [data-block-label="paragraph"]')
                 ->assertVisible($option)
@@ -1574,16 +1704,16 @@ describe('boolean properties', function (): void {
         expect($builder->isReorderable())->toBeFalse();
     });
 
-    it('defaults `isReorderableWithButtons()` to `false`', function (): void {
+    it('defaults `isReorderableWithButtons()` to `false`', function (string $fieldType): void {
         Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
-                $builder = Builder::make('content'),
+                $field = $fieldType::make('content'),
             ])
             ->fill();
 
-        expect($builder->isReorderableWithButtons())->toBeFalse();
-    });
+        expect($field->isReorderableWithButtons())->toBeFalse();
+    })->with(['builder' => [Builder::class], 'repeater' => [Repeater::class]]);
 
     it('can set `reorderableWithButtons()`', function (): void {
         Schema::make(Livewire::make())
