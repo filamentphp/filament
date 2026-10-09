@@ -616,7 +616,7 @@ it('can select, replace, and clear a single `ToggleButtons` option with pointer 
         $page = $darkMode
             ? visit('/toggle-buttons-test')->inDarkMode()
             : visit('/toggle-buttons-test')->inLightMode();
-        $page->assertNoSmoke();
+        $page->assertNoSmoke()->assertNoAccessibilityIssues();
         $livewireComponent = 'Livewire.find(document.getElementById("form.field-a").closest("[wire\\\\:id]").getAttribute("wire:id"))';
 
         foreach (['field', 'grouped_field'] as $fieldName) {
@@ -670,8 +670,6 @@ it('can select, replace, and clear a single `ToggleButtons` option with pointer 
             'disabled_options' => null,
             'multiple_field' => ['b'],
         ]);
-
-        $page->assertNoAccessibilityIssues();
     }
 });
 
