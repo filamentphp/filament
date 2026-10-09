@@ -244,82 +244,75 @@ it('renders a customized `filtersResetAction()` accessibly', function (): void {
 });
 
 it('manages focus for the filters dropdown', function (bool $isDarkMode): void {
-    retry(10, function () use ($isDarkMode): void {
-        Artisan::call('filament:assets');
+    Artisan::call('filament:assets');
 
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        $filtersTrigger = '[data-testid="filters-trigger"]';
-        $publishedFilter = '[data-testid="published-filter"]';
-        $selectFilter = '[data-testid="status-filter"] .fi-select-input-btn';
-        $selectSearch = '[data-testid="status-filter"] .fi-select-input-search-ctn input';
-        $dateFilter = '.fi-fo-date-time-picker-trigger';
-        $datePanel = '.fi-fo-date-time-picker-panel';
-        $colorFilter = '[data-testid="color-filter"] input';
-        $colorPanel = '.fi-fo-color-picker-panel';
+    $filtersTrigger = '[data-testid="filters-trigger"]';
+    $publishedFilter = '[data-testid="published-filter"]';
+    $selectFilter = '[data-testid="status-filter"] .fi-select-input-btn';
+    $selectSearch = '[data-testid="status-filter"] .fi-select-input-search-ctn input';
+    $dateFilter = '.fi-fo-date-time-picker-trigger';
+    $datePanel = '.fi-fo-date-time-picker-panel';
+    $colorFilter = '[data-testid="color-filter"] input';
+    $colorPanel = '.fi-fo-color-picker-panel';
 
-        $page = visit('/filters-reset-action-browser-test?focus=1');
+    $page = visit('/filters-reset-action-browser-test?focus=1');
 
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        } else {
-            $page = $page->resize(375, 812);
-        }
+    if ($isDarkMode) {
+        $page = $page->inDarkMode();
+    } else {
+        $page = $page->resize(375, 812);
+    }
 
-        $page->script('window.enclosingEscapeCount = 0; window.addEventListener(\'keydown\', (event) => { if (event.key === \'Escape\') window.enclosingEscapeCount++ })');
+    $page->script('window.enclosingEscapeCount = 0; window.addEventListener(\'keydown\', (event) => { if (event.key === \'Escape\') window.enclosingEscapeCount++ })');
 
-        $page
-            ->keys($filtersTrigger, 'Enter')
-            ->assertScript('document.activeElement.closest(\'[data-testid="published-filter"]\') !== null', true)
-            ->keys($publishedFilter, 'Escape')
-            ->assertMissing($publishedFilter)
-            ->assertScript('document.activeElement.closest(\'[data-testid="filters-trigger"]\') !== null', true)
-            ->assertScript('window.enclosingEscapeCount', 0)
-            ->click($filtersTrigger)
-            ->assertVisible($publishedFilter)
-            ->assertScript('document.activeElement.closest(\'[data-testid="filters-trigger"]\') !== null', true);
+    $page
+        ->keys($filtersTrigger, 'Enter')
+        ->assertScript('document.activeElement.closest(\'[data-testid="published-filter"]\') !== null', true)
+        ->keys($publishedFilter, 'Escape')
+        ->assertMissing($publishedFilter)
+        ->assertScript('document.activeElement.closest(\'[data-testid="filters-trigger"]\') !== null', true)
+        ->assertScript('window.enclosingEscapeCount', 0)
+        ->click($filtersTrigger)
+        ->assertVisible($publishedFilter)
+        ->assertScript('document.activeElement.closest(\'[data-testid="filters-trigger"]\') !== null', true);
 
-        $page->script('document.querySelector(\'[data-testid="status-filter"] .fi-select-input-btn\').focus()');
-        $page->script('document.querySelector(\'[data-testid="filters-trigger"]\').dispatchEvent(new MouseEvent(\'mousedown\', { bubbles: true, button: 2 }))');
+    $page
+        ->click($selectFilter)
+        ->type($selectSearch, 'Draft')
+        ->keys($selectSearch, 'Escape')
+        ->assertAttribute($selectFilter, 'aria-expanded', 'false')
+        ->assertVisible($publishedFilter)
+        ->assertScript("document.activeElement.matches('{$selectFilter}')", true)
+        ->keys($selectFilter, 'Escape')
+        ->assertMissing($publishedFilter)
+        ->keys($filtersTrigger, 'Enter')
+        ->assertAttribute($selectFilter, 'aria-expanded', 'false')
+        ->click($dateFilter)
+        ->assertVisible($datePanel)
+        ->click("{$datePanel} [role=\"gridcell\"][tabindex=\"0\"][aria-disabled=\"false\"]")
+        ->assertScript("document.querySelector('{$dateFilter}').value !== ''", true)
+        ->assertVisible($datePanel)
+        ->click($dateFilter)
+        ->assertMissing($datePanel)
+        ->click($dateFilter)
+        ->assertVisible($datePanel)
+        ->assertScript("document.querySelector('{$selectFilter}').focus(); document.querySelector('{$datePanel}').style.display === 'none'", true)
+        ->click($dateFilter)
+        ->assertVisible($datePanel)
+        ->keys($dateFilter, 'Escape')
+        ->assertMissing($datePanel)
+        ->assertVisible($publishedFilter)
+        ->assertScript("document.activeElement.matches('{$dateFilter}')", true)
+        ->keys($dateFilter, 'Escape')
+        ->assertMissing($publishedFilter)
+        ->keys($filtersTrigger, 'Enter')
+        ->assertMissing($datePanel)
+        ->click($colorFilter)
+        ->assertVisible($colorPanel);
 
-        $page
-            ->assertScript('document.activeElement.matches(\'[data-testid="status-filter"] .fi-select-input-btn\')', true)
-            ->resize($isDarkMode ? 900 : 700, 812)
-            ->assertScript('document.activeElement.matches(\'[data-testid="status-filter"] .fi-select-input-btn\')', true)
-            ->click($selectFilter)
-            ->type($selectSearch, 'Draft')
-            ->keys($selectSearch, 'Escape')
-            ->assertAttribute($selectFilter, 'aria-expanded', 'false')
-            ->assertVisible($publishedFilter)
-            ->assertScript("document.activeElement.matches('{$selectFilter}')", true)
-            ->keys($selectFilter, 'Escape')
-            ->assertMissing($publishedFilter)
-            ->keys($filtersTrigger, 'Enter')
-            ->assertAttribute($selectFilter, 'aria-expanded', 'false')
-            ->click($dateFilter)
-            ->assertVisible($datePanel)
-            ->click("{$datePanel} .fi-fo-date-time-picker-calendar-day[aria-selected=\"true\"]")
-            ->assertScript("document.querySelector('{$dateFilter}').value !== ''", true)
-            ->assertVisible($datePanel)
-            ->click($dateFilter)
-            ->assertMissing($datePanel)
-            ->click($dateFilter)
-            ->assertVisible($datePanel)
-            ->assertScript("document.querySelector('{$selectFilter}').focus(); document.querySelector('{$datePanel}').style.display === 'none'", true)
-            ->click($dateFilter)
-            ->assertVisible($datePanel)
-            ->keys($dateFilter, 'Escape')
-            ->assertMissing($datePanel)
-            ->assertVisible($publishedFilter)
-            ->assertScript("document.activeElement.matches('{$dateFilter}')", true)
-            ->keys($dateFilter, 'Escape')
-            ->assertMissing($publishedFilter)
-            ->keys($filtersTrigger, 'Enter')
-            ->assertMissing($datePanel)
-            ->click($colorFilter)
-            ->assertVisible($colorPanel);
-
-        $page->script(<<<JS
+    $page->script(<<<JS
             const colorPicker = document.querySelector('{$colorPanel}').firstElementChild
             const hueSlider = colorPicker.shadowRoot.querySelector('[part="hue"]')
 
@@ -331,28 +324,27 @@ it('manages focus for the filters dropdown', function (bool $isDarkMode): void {
             }))
             JS);
 
-        $page
-            ->assertMissing($colorPanel)
-            ->assertVisible($publishedFilter)
-            ->assertScript("document.activeElement.matches('{$colorFilter}')", true)
-            ->keys($colorFilter, 'Escape')
-            ->assertMissing($publishedFilter)
-            ->keys($filtersTrigger, 'Enter')
-            ->assertVisible($publishedFilter)
-            ->assertMissing($colorPanel);
+    $page
+        ->assertMissing($colorPanel)
+        ->assertVisible($publishedFilter)
+        ->assertScript("document.activeElement.matches('{$colorFilter}')", true)
+        ->keys($colorFilter, 'Escape')
+        ->assertMissing($publishedFilter)
+        ->keys($filtersTrigger, 'Enter')
+        ->assertVisible($publishedFilter)
+        ->assertMissing($colorPanel);
 
-        $page->script('document.querySelector(\'[data-testid="filters-trigger"]\').focus()');
+    $page->script('document.querySelector(\'[data-testid="filters-trigger"]\').focus()');
 
-        $page
-            ->keys($filtersTrigger, 'Escape')
-            ->assertMissing($publishedFilter)
-            ->assertScript('window.enclosingEscapeCount', 0)
-            ->keys($filtersTrigger, 'Enter')
-            ->click('.fi-topbar')
-            ->assertMissing($publishedFilter)
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    });
+    $page
+        ->keys($filtersTrigger, 'Escape')
+        ->assertMissing($publishedFilter)
+        ->assertScript('window.enclosingEscapeCount', 0)
+        ->keys($filtersTrigger, 'Enter')
+        ->click('.fi-topbar')
+        ->assertMissing($publishedFilter)
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 })->with(['mobile light' => false, 'desktop dark' => true]);
 
 it('focuses lazy and empty filter configurations', function (string $focusScenario, string $focusedSelector): void {

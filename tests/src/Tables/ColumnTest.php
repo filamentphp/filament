@@ -88,11 +88,13 @@ describe('rendering and sorting', function (): void {
     });
 
     it('can sort records with nested relationship', function (): void {
-        Post::factory()->count(5)->state(fn (): array => [
-            'author_id' => User::factory()->state([
-                'team_id' => Team::factory(),
-            ]),
-        ])->create();
+        foreach (['Birch', 'Maple', 'Birch', 'Cedar', 'Ash'] as $teamName) {
+            Post::factory()->state([
+                'author_id' => User::factory()->state([
+                    'team_id' => Team::factory()->state(['name' => $teamName]),
+                ]),
+            ])->create();
+        }
 
         $sortedAsc = Post::query()
             ->orderBy(
@@ -115,7 +117,7 @@ describe('rendering and sorting', function (): void {
                     ->whereColumn('users.id', 'posts.author_id')
                     ->limit(1)
             )
-            ->orderBy('posts.id')
+            ->orderByDesc('posts.id')
             ->get();
 
         livewire(PostsTable::class)
