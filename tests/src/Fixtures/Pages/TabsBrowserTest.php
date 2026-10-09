@@ -21,8 +21,28 @@ class TabsBrowserTest extends Page
 
     public ?array $data = [];
 
+    public ?string $activeTab = 'second';
+
+    public bool $showSecondTab = true;
+
+    public bool $showZeroTab = true;
+
+    public ?string $activeFilter = 'all';
+
+    public bool $showKeyboardTabs = false;
+
+    public bool $showOverflowTabs = false;
+
+    public bool $showEnclosingDropdown = false;
+
+    public bool $hasDisabledProfileHeader = false;
+
     public function mount(): void
     {
+        $this->showKeyboardTabs = request()->boolean('keyboard');
+        $this->showOverflowTabs = request()->boolean('overflow');
+        $this->showEnclosingDropdown = request()->boolean('dropdown');
+        $this->hasDisabledProfileHeader = request()->boolean('disabled-profile');
         $this->form->fill();
     }
 
@@ -38,6 +58,7 @@ class TabsBrowserTest extends Page
                         Tab::make('Account')
                             ->key('account')
                             ->id('profile-account')
+                            ->extraAttributes(fn (): array => $this->hasDisabledProfileHeader ? ['disabled' => true] : [])
                             ->badge('Available')
                             ->badgeIcon(Heroicon::OutlinedCheckCircle)
                             ->schema([
@@ -54,6 +75,8 @@ class TabsBrowserTest extends Page
                                     ->label('Phone Number')
                                     ->tel(),
                             ]),
+                        Tab::make('Billing')->key('billing')->id('profile-billing')
+                            ->visible(fn (): bool => $this->hasDisabledProfileHeader),
                     ]),
                 Group::make([
                     Tabs::make('Delivery Tabs')
@@ -68,15 +91,62 @@ class TabsBrowserTest extends Page
                         ]),
                 ])->key('delivery'),
                 Tabs::make('Overflow Tabs')
+                    ->key('overflow')
                     ->id('overflow-tabs')
-                    ->visible(static fn (): bool => request()->boolean('overflow'))
+                    ->visible(fn (): bool => $this->showOverflowTabs)
                     ->scrollable(false)
                     ->tabs([
-                        Tab::make('Overview and activity'),
-                        Tab::make('Contact information'),
-                        Tab::make('Billing information'),
-                        Tab::make('Security settings'),
-                        Tab::make('Notification preferences'),
+                        Tab::make('Overview and activity')->key('overview'),
+                        Tab::make('Contact information')->key('contact')->badge('12')->deferBadge(),
+                        Tab::make('Billing information')->key('billing'),
+                        Tab::make('Security settings')->key('security'),
+                        Tab::make('Additional preferences')->key('hidden')->visibleJs('showOverflowChoice'),
+                        Tab::make('Notification preferences')->key('notifications'),
+                    ]),
+                Tabs::make('Keyboard tabs')
+                    ->key('keyboard')
+                    ->id('keyboard-tabs')
+                    ->visible(fn (): bool => $this->showKeyboardTabs)
+                    ->tabs([
+                        Tab::make('Account')->key('account')->visibleJs('showAll')->schema([
+                            TextInput::make('keyboard_username')->autofocus(),
+                            Tabs::make('Nested tabs')->id('nested-tabs')->persistTab()->tabs([
+                                Tab::make('Account')->key('account'),
+                                Tab::make('Contact')->key('contact'),
+                            ]),
+                        ]),
+                        Tab::make('Hidden')->key('hidden')->hiddenJs('true'),
+                        Tab::make('Disabled header')->key('disabled')->visibleJs('showAll')->extraAttributes(['disabled' => true]),
+                        Tab::make('Unavailable')->key('unavailable')->visibleJs('showAll')->extraAttributes(['aria-disabled' => 'true']),
+                        Tab::make('Contact')->key('contact')->visibleJs('showContact && showAll')->schema([
+                            TextInput::make('keyboard_phone')->autofocus(),
+                        ]),
+                        Tab::make('Read only')->key('readonly')->disabled()->visibleJs('showAll')->schema([
+                            TextInput::make('readonly'),
+                        ]),
+                    ]),
+                Tabs::make('Dynamic tabs')
+                    ->key('dynamic')
+                    ->id('dynamic-tabs')
+                    ->activeTab(2)
+                    ->livewireProperty('activeTab')
+                    ->visible(fn (): bool => $this->showKeyboardTabs)
+                    ->tabs(fn (): array => [
+                        '' => Tab::make('All')->schema([TextInput::make('dynamic_all')]),
+                        ...($this->showZeroTab ? ['0' => Tab::make('Zero')->schema([TextInput::make('dynamic_zero')])] : []),
+                        'unavailable' => Tab::make('Unavailable')->extraAttributes(['aria-disabled' => 'true']),
+                        ...($this->showSecondTab ? ['second' => Tab::make('Details')->schema([TextInput::make('dynamic_details')->autofocus()])] : []),
+                    ]),
+                Tabs::make('Status filters')->key('filters')->id('filter-tabs')
+                    ->visible(fn (): bool => $this->showKeyboardTabs)
+                    ->livewireProperty('activeFilter')->tabPanels(false)->tabs([
+                        'all' => Tab::make('All'),
+                        'published' => Tab::make('Published'),
+                    ]),
+                Tabs::make('Vertical tabs')->key('vertical')->id('vertical-tabs')->vertical()
+                    ->visible(fn (): bool => $this->showKeyboardTabs)->tabs([
+                        Tab::make('Account')->key('account'),
+                        Tab::make('Contact')->key('contact'),
                     ]),
             ])
             ->statePath('data');
