@@ -36,6 +36,10 @@
 
 .fi-tenant-menu-item {
     @apply min-w-0;
+
+    & .fi-dropdown-list-item-image {
+        @apply rounded-sm;
+    }
 }
 
 .fi-sidebar {
