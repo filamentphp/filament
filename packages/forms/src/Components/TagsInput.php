@@ -67,7 +67,7 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
             return $state;
         });
 
-        $this->placeholder(__('filament-forms::components.tags_input.placeholder'));
+        $this->placeholder(static fn (TagsInput $component): ?string => $component->isDisabled() ? null : __('filament-forms::components.tags_input.placeholder'));
 
         $this->reorderAnimationDuration(100);
     }
@@ -314,7 +314,7 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
                 <?php } ?>
             </datalist>
 
-            <div wire:ignore>
+            <div wire:ignore wire:key="<?= e($this->getLivewireKey()) ?>.<?= substr(md5(serialize([$isDisabled, $isReorderable])), 0, 64) ?>">
                 <template x-cloak x-if="state?.length">
                     <div
                         <?php if ($isReorderable) { ?>

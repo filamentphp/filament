@@ -99,7 +99,11 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
             ob_start(); ?>
 
             <div <?= $wrapperAttributes->toHtml() ?>>
-                <?= str($this->getState())->markdown($this->getCommonMarkOptions(), $this->getCommonMarkExtensions())->sanitizeHtml() ?>
+                <?php if (filled($this->getState())) { ?>
+                    <?= str($this->getState())->markdown($this->getCommonMarkOptions(), $this->getCommonMarkExtensions())->sanitizeHtml() ?>
+                <?php } else { ?>
+                    <span class="fi-fo-markdown-editor-placeholder"><?= e($this->getPlaceholder()) ?></span>
+                <?php } ?>
             </div>
 
             <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');

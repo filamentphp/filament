@@ -130,7 +130,13 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
     public function getPlaceholder(): ?string
     {
-        return $this->evaluate($this->placeholder) ?? ($this->isDisabled() ? __('filament-forms::components.file_upload.placeholder') : null);
+        $placeholder = $this->evaluate($this->placeholder);
+
+        if (($placeholder !== null) || (! $this->isDisabled())) {
+            return $placeholder;
+        }
+
+        return blank($this->getState()) ? __('filament-forms::components.file_upload.placeholder') : '';
     }
 
     public function image(): static
@@ -844,6 +850,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
         $key = $this->getKey();
         $statePath = $this->getStatePath();
         $isDisabled = $this->isDisabled();
+        $placeholder = $this->getPlaceholder();
         $hasImageEditor = $this->hasImageEditor();
         $isImageEditorExplicitlyEnabled = $this->isImageEditorExplicitlyEnabled();
         $hasCircleCropper = $this->hasCircleCropper();
@@ -858,7 +865,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
             $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
         }
 
-        $wireKey = $livewireKey . '.' . substr(md5(serialize([$isDisabled])), 0, 64);
+        $wireKey = $livewireKey . '.' . substr(md5(serialize([$isDisabled, $isDisabled ? $placeholder : null])), 0, 64);
 
         $outerAttributes = $this->getExtraAttributeBag()
             ->merge([
@@ -943,7 +950,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                         minSize: <?= Js::from($minSize ? "{$minSize}KB" : null) ?>,
                         panelAspectRatio: <?= Js::from($this->getPanelAspectRatio()) ?>,
                         panelLayout: <?= Js::from($this->getPanelLayout()) ?>,
-                        placeholder: <?= Js::from($this->getPlaceholder()) ?>,
+                        placeholder: <?= Js::from($placeholder) ?>,
                         removeUploadedFileButtonPosition: <?= Js::from($this->getRemoveUploadedFileButtonPosition()) ?>,
                         removeUploadedFileUsing: async (fileKey) => {
                             return await $wire.callSchemaComponentMethod(

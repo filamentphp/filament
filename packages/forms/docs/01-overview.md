@@ -186,6 +186,14 @@ Toggle::make('is_admin')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `disabled()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+Disabled fields keep their values visible, but hide built-in actions that change them, such as adding, removing, reordering, or formatting content. Value indicators, such as select chevrons, color swatches, and slider handles, remain visible without allowing changes. Actions for inspecting values, such as revealing passwords, copying, opening or downloading files, and expanding collapsed items, remain available.
+
+Default placeholders that invite editing are suppressed, or replaced with a neutral empty-state message. Explicitly configured placeholders are preserved.
+
+Some fields also support `readOnly()`. Read-only fields hide editing affordances too, but remain focusable and do not use disabled styling. Only use `readOnly()` on fields that support it, such as text inputs, textareas, one-time code inputs, and date-time pickers.
+
+Custom actions, including prefix, suffix, and extra item actions, keep their own visibility and disabled settings. If a custom action changes a value, you should hide or disable it when the field is not editable. Neither `disabled()` nor `readOnly()` replaces server-side authorization.
+
 Disabling a field will prevent it from being saved. If you'd like it to be saved, but still not editable, use the `saved()` method:
 
 ```php

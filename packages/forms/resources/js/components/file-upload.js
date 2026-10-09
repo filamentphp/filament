@@ -186,12 +186,15 @@ export default function fileUploadFormComponent({
                 return
             }
 
+            const inputLabelledBy =
+                this.$refs.input.getAttribute('aria-labelledby')
+
             this.pond = FilePond.create(this.$refs.input, {
                 acceptedFileTypes,
                 allowImageExifOrientation: shouldOrientImageFromExif,
-                allowPaste: isPasteable,
-                allowRemove: isDeletable,
-                allowReorder: isReorderable,
+                allowPaste: isPasteable && !isDisabled,
+                allowRemove: isDeletable && !isDisabled,
+                allowReorder: isReorderable && !isDisabled,
                 allowImagePreview: isPreviewable,
                 allowVideoPreview: isPreviewable,
                 allowAudioPreview: isPreviewable,
@@ -230,12 +233,21 @@ export default function fileUploadFormComponent({
                     shouldAutomaticallyUpscaleImagesWhenResizing,
                 imageTransformOutputStripImageHead: false,
                 itemInsertLocation: shouldAppendFiles ? 'after' : 'before',
-                ...(placeholder && { labelIdle: placeholder }),
+                ...(placeholder !== null && { labelIdle: placeholder }),
                 maxFiles,
                 maxFileSize: maxSize,
                 mediaPreviewHeight: imagePreviewHeight,
                 minFileSize: minSize,
                 ...(maxParallelUploads && { maxParallelUploads }),
+                oninit: () => {
+                    if (isDestroyed || !inputLabelledBy) {
+                        return
+                    }
+
+                    this.pond.element
+                        .querySelector('.filepond--browser')
+                        ?.setAttribute('aria-labelledby', inputLabelledBy)
+                },
                 styleButtonProcessItemPosition: uploadButtonPosition,
                 styleButtonRemoveItemPosition: removeUploadedFileButtonPosition,
                 styleItemPanelAspectRatio: itemPanelAspectRatio,
@@ -328,7 +340,7 @@ export default function fileUploadFormComponent({
                         load()
                     },
                 },
-                allowImageEdit: isImageEditorExplicitlyEnabled,
+                allowImageEdit: isImageEditorExplicitlyEnabled && !isDisabled,
                 imageEditEditor: {
                     open: (file) => this.loadEditor(file),
                     onconfirm: () => {},
