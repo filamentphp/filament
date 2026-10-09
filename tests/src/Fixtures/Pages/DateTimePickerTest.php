@@ -5,6 +5,7 @@ namespace Filament\Tests\Fixtures\Pages;
 use BackedEnum;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TimePicker;
 use Filament\Pages\Page;
@@ -47,6 +48,20 @@ class DateTimePickerTest extends Page
 
     public bool $hasZonedDisabledDate = false;
 
+    public bool $hasDisabledDates = false;
+
+    public string $calendarLocale = 'en';
+
+    public int $calendarWeekStart = 1;
+
+    public bool $overlaysParentCalendarModal = false;
+
+    public bool $closesOnDateSelection = false;
+
+    public int $hourStep = 1;
+
+    public int $minuteStep = 1;
+
     public array $saved = [];
 
     public int $saveCount = 0;
@@ -68,6 +83,13 @@ class DateTimePickerTest extends Page
         $this->calendarState = request()->query('calendar-state');
         $this->displayFormat = request()->query('display-format');
         $this->hasZonedDisabledDate = request()->boolean('zoned-disabled-date');
+        $this->hasDisabledDates = request()->boolean('disabled-dates');
+        $this->calendarLocale = request()->string('locale', 'en')->toString();
+        $this->calendarWeekStart = request()->integer('week-start', 1);
+        $this->overlaysParentCalendarModal = request()->boolean('overlay');
+        $this->closesOnDateSelection = request()->boolean('close-on-selection');
+        $this->hourStep = request()->integer('hour-step', 1);
+        $this->minuteStep = request()->integer('minute-step', 1);
         $this->form->fill($this->calendarState !== null ? ['field' => $this->calendarState] : ($this->hasDstLimits ? ['field' => '01:45:07'] : []));
     }
 
@@ -80,6 +102,12 @@ class DateTimePickerTest extends Page
             ->disabled($this->isDisabled)
             ->readOnly($this->isReadOnly)
             ->autofocus($this->isAutofocused)
+            ->locale($this->calendarLocale)
+            ->firstDayOfWeek($this->calendarWeekStart)
+            ->closeOnDateSelection($this->closesOnDateSelection)
+            ->hoursStep($this->hourStep)
+            ->minutesStep($this->minuteStep)
+            ->disabledDates($this->hasDisabledDates ? ['2025-07-16'] : [])
             ->defaultFocusedDate('2025-07-15 13:24:37')
             ->placeholder('Choose a date or time')
             ->seconds($this->hasSeconds)
@@ -121,6 +149,31 @@ class DateTimePickerTest extends Page
         return $form
             ->schema([$field])
             ->statePath('data');
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('calendarModal')
+                ->schema([
+                    DateTimePicker::make('parentDate')->native(false),
+                ])
+                ->modalSubmitAction(false)
+                ->extraAttributes(['data-testid' => 'calendar-modal-trigger'])
+                ->extraModalWindowAttributes(['data-testid' => 'calendar-modal'])
+                ->extraModalFooterActions([
+                    Action::make('nestedCalendarModal')
+                        ->schema([
+                            DateTimePicker::make('nestedDate')
+                                ->native(false)
+                                ->extraTriggerAttributes(['data-testid' => 'nested-calendar-trigger']),
+                        ])
+                        ->overlayParentActions($this->overlaysParentCalendarModal)
+                        ->modalSubmitAction(false)
+                        ->extraAttributes(['data-testid' => 'nested-calendar-modal-trigger'])
+                        ->extraModalWindowAttributes(['data-testid' => 'nested-calendar-modal']),
+                ]),
+        ];
     }
 
     public function save(): void

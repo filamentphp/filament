@@ -213,9 +213,17 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                                 })"
                         wire:ignore
                         wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$disabledDates, $isDisabled, $isReadOnly, $maxDate, $minDate, $hasDate, $hasTime, $hasSeconds])), 0, 64) ?>"
-                        x-on:dropdown-escape="if (isOpen()) { $refs.panel.close(); $refs.button.focus(); $event.preventDefault() }"
-                        x-on:focusout="if (isOpen() && ! $el.contains($event.relatedTarget)) $refs.panel.close()"
-                        x-on:keydown.esc="isOpen() && $event.stopPropagation()"
+                        <?php if ($hasDate) { ?>
+                            x-on:dropdown-escape="if (isOpen()) { closePanel(true); $event.preventDefault() }"
+                            x-on:focusout="handleFocusOut($event)"
+                            x-on:keydown.escape="if (isOpen()) { $event.preventDefault(); $event.stopPropagation(); closePanel(true) }"
+                            x-on:click.outside="isOpen() && closePanel()"
+                            x-on:livewire:navigating.window="closePanel()"
+                        <?php } else { ?>
+                            x-on:dropdown-escape="if (isOpen()) { $refs.panel.close(); $refs.button.focus(); $event.preventDefault() }"
+                            x-on:focusout="if (isOpen() && ! $el.contains($event.relatedTarget)) $refs.panel.close()"
+                            x-on:keydown.esc="isOpen() && $event.stopPropagation()"
+                        <?php } ?>
                         <?= $this->getExtraAlpineAttributeBag()->toHtml() ?>
                     >
                         <input x-ref="maxDate" type="hidden" value="<?= e($maxDate) ?>" />
@@ -224,13 +232,20 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
 
                         <input
                             x-ref="button"
-                            x-on:keydown.enter.prevent.stop="if (<?= Js::from(! ($isDisabled || $isReadOnly)) ?>) { isOpen() ? selectDate() : togglePanelVisibility() }"
+                            <?php if ((! $hasDate) || $isDisabled || $isReadOnly) { ?>
+                                x-on:keydown.enter.prevent.stop="if (<?= Js::from(! ($isDisabled || $isReadOnly)) ?>) { isOpen() ? selectDate() : togglePanelVisibility() }"
+                            <?php } ?>
                             <?php if (! ($isDisabled || $isReadOnly)) { ?>
                                 x-on:click="togglePanelVisibility()"
-                                x-on:keydown.arrow-left.prevent.stop="focusPreviousDay()"
-                                x-on:keydown.arrow-right.prevent.stop="focusNextDay()"
-                                x-on:keydown.arrow-up.prevent.stop="focusPreviousWeek()"
-                                x-on:keydown.arrow-down.prevent.stop="focusNextWeek()"
+                                <?php if ($hasDate) { ?>
+                                    x-on:keydown="handleTriggerKeydown($event)"
+                                    x-bind:aria-expanded="isPanelOpen.toString()"
+                                <?php } else { ?>
+                                    x-on:keydown.arrow-left.prevent.stop="focusPreviousDay()"
+                                    x-on:keydown.arrow-right.prevent.stop="focusNextDay()"
+                                    x-on:keydown.arrow-up.prevent.stop="focusPreviousWeek()"
+                                    x-on:keydown.arrow-down.prevent.stop="focusNextWeek()"
+                                <?php } ?>
                                 x-on:keydown.backspace.prevent.stop="clearState()"
                                 x-on:keydown.clear.prevent.stop="clearState()"
                                 x-on:keydown.delete.prevent.stop="clearState()"
@@ -260,7 +275,11 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                             role="dialog"
                             aria-label="<?= e($labelText) ?>"
                             x-cloak
-                            x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
+                            <?php if ($hasDate) { ?>
+                                x-show="isPanelOpen"
+                            <?php } else { ?>
+                                x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
+                            <?php } ?>
                             wire:ignore
                             wire:key="<?= e($livewireKey) ?>.panel"
                             class="fi-fo-date-time-picker-panel"
@@ -275,32 +294,38 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                                     <input type="number" inputmode="numeric" aria-label="<?= e(__('filament-forms::components.date_time_picker.year_input.label')) ?>" x-model.debounce="focusedYear" class="fi-fo-date-time-picker-year-input" />
                                 </div>
 
-                                <div class="fi-fo-date-time-picker-calendar-header">
-                                    <template x-for="(day, index) in dayLabels" x-bind:key="index">
-                                        <div x-text="day" class="fi-fo-date-time-picker-calendar-header-day"></div>
-                                    </template>
-                                </div>
+                                <div aria-live="polite" aria-atomic="true" x-text="getCalendarLabel()" class="fi-fo-date-time-picker-calendar-description"></div>
 
-                                <div role="grid" class="fi-fo-date-time-picker-calendar">
-                                    <template x-for="day in emptyDaysInFocusedMonth" x-bind:key="day">
-                                        <div></div>
-                                    </template>
-                                    <template x-for="day in daysInFocusedMonth" x-bind:key="day">
-                                        <div
-                                            x-text="day"
-                                            x-on:click="dayIsDisabled(day) || selectDate(day)"
-                                            x-on:mousedown.prevent
-                                            x-on:mouseenter="setFocusedDay(day)"
-                                            role="option"
-                                            x-bind:aria-selected="focusedDate.date() === day"
-                                            x-bind:class="{
-                                                'fi-fo-date-time-picker-calendar-day-today': dayIsToday(day),
-                                                'fi-focused': focusedDate.date() === day,
-                                                'fi-selected': dayIsSelected(day),
-                                                'fi-disabled': dayIsDisabled(day),
-                                            }"
-                                            class="fi-fo-date-time-picker-calendar-day"
-                                        ></div>
+                                <div x-ref="calendar" role="grid" tabindex="-1" x-bind:aria-label="getCalendarLabel()" x-on:keydown="handleCalendarKeydown($event)" class="fi-fo-date-time-picker-calendar">
+                                    <div role="row" class="fi-fo-date-time-picker-calendar-header">
+                                        <template x-for="(day, index) in dayLabels" x-bind:key="index">
+                                            <div role="columnheader" x-bind:aria-label="fullDayLabels[index]" x-text="day" class="fi-fo-date-time-picker-calendar-header-day"></div>
+                                        </template>
+                                    </div>
+                                    <template x-for="(week, weekIndex) in weeksInFocusedMonth" x-bind:key="weekIndex">
+                                        <div role="row" class="fi-fo-date-time-picker-calendar-week">
+                                            <template x-for="(day, dayIndex) in week" x-bind:key="day ?? ('empty-' + dayIndex)">
+                                                <div
+                                                    role="gridcell"
+                                                    x-text="day"
+                                                    x-bind:data-date="day ? focusedDate.date(day).format('YYYY-MM-DD') : null"
+                                                    x-bind:aria-label="day ? getDayLabel(day) : null"
+                                                    x-bind:aria-selected="day && dayIsSelected(day) ? 'true' : 'false'"
+                                                    x-bind:aria-current="day && dayIsToday(day) ? 'date' : null"
+                                                    x-bind:aria-disabled="day && dayIsDisabled(day) ? 'true' : 'false'"
+                                                    x-bind:tabindex="day ? (focusedDate.date() === day ? 0 : -1) : null"
+                                                    x-on:focus="day && setFocusedDay(day)"
+                                                    x-on:click="if (day) { $el.focus(); selectDate(day) }"
+                                                    x-bind:class="{
+                                                        'fi-fo-date-time-picker-calendar-day': day,
+                                                        'fi-fo-date-time-picker-calendar-day-today': day && dayIsToday(day),
+                                                        'fi-focused': day && focusedDate.date() === day,
+                                                        'fi-selected': day && dayIsSelected(day),
+                                                        'fi-disabled': day && dayIsDisabled(day),
+                                                    }"
+                                                ></div>
+                                            </template>
+                                        </div>
                                     </template>
                                 </div>
                             <?php } ?>
