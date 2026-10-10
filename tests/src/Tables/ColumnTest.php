@@ -897,14 +897,14 @@ describe('relationship columns', function (): void {
     });
 
     it('can sort records with `BelongsTo` -> `HasOne` relationship', function (): void {
-        Post::factory()->count(5)->state(fn (): array => [
-            'author_id' => User::factory()->has(
-                Profile::factory()->state(fn (): array => [
-                    'bio' => fake()->sentence(),
-                ]),
-                'profile'
-            ),
-        ])->create();
+        foreach (['Charlie', 'Alpha', 'Echo', 'Bravo', 'Delta'] as $bio) {
+            Post::factory()->create([
+                'author_id' => User::factory()->has(
+                    Profile::factory()->state(['bio' => $bio]),
+                    'profile'
+                ),
+            ]);
+        }
 
         $sortedAsc = Post::query()
             ->orderBy(
@@ -938,14 +938,16 @@ describe('relationship columns', function (): void {
     });
 
     it('can sort records with `BelongsTo` -> `HasOne` -> `BelongsTo` relationship', function (): void {
-        Post::factory()->count(5)->state(fn (): array => [
-            'author_id' => User::factory()->has(
-                Profile::factory()->state(fn (): array => [
-                    'company_id' => Company::factory(),
-                ]),
-                'profile'
-            ),
-        ])->create();
+        foreach (['Charlie', 'Alpha', 'Echo', 'Bravo', 'Delta'] as $companyName) {
+            Post::factory()->create([
+                'author_id' => User::factory()->has(
+                    Profile::factory()->state([
+                        'company_id' => Company::factory()->state(['name' => $companyName]),
+                    ]),
+                    'profile'
+                ),
+            ]);
+        }
 
         $sortedAsc = Post::query()
             ->orderBy(
@@ -1528,11 +1530,13 @@ describe('relationship columns', function (): void {
     });
 
     it('can sort records with `BelongsToThrough` relationship', function (): void {
-        Post::factory()->count(5)->state(fn (): array => [
-            'author_id' => User::factory()->state([
-                'team_id' => Team::factory(),
-            ]),
-        ])->create();
+        foreach (['Charlie', 'Alpha', 'Echo', 'Bravo', 'Delta'] as $teamName) {
+            Post::factory()->create([
+                'author_id' => User::factory()->state([
+                    'team_id' => Team::factory()->state(['name' => $teamName]),
+                ]),
+            ]);
+        }
 
         $sortedAsc = Post::query()
             ->orderBy(
@@ -1604,13 +1608,15 @@ describe('relationship columns', function (): void {
     });
 
     it('can sort records with nested `BelongsToThrough` -> `BelongsTo` relationship', function (): void {
-        Post::factory()->count(5)->state(fn (): array => [
-            'author_id' => User::factory()->state([
-                'team_id' => Team::factory()->state([
-                    'company_id' => Company::factory(),
+        foreach (['Charlie', 'Alpha', 'Echo', 'Bravo', 'Delta'] as $companyName) {
+            Post::factory()->create([
+                'author_id' => User::factory()->state([
+                    'team_id' => Team::factory()->state([
+                        'company_id' => Company::factory()->state(['name' => $companyName]),
+                    ]),
                 ]),
-            ]),
-        ])->create();
+            ]);
+        }
 
         $sortedAsc = Post::query()
             ->orderBy(
@@ -1691,13 +1697,15 @@ describe('relationship columns', function (): void {
     });
 
     it('can sort records with `BelongsTo` -> `BelongsToThrough` relationship', function (): void {
-        Post::factory()->count(5)->state(fn (): array => [
-            'author_id' => User::factory()->state([
-                'team_id' => Team::factory()->state([
-                    'company_id' => Company::factory(),
+        foreach (['Charlie', 'Alpha', 'Echo', 'Bravo', 'Delta'] as $companyName) {
+            Post::factory()->create([
+                'author_id' => User::factory()->state([
+                    'team_id' => Team::factory()->state([
+                        'company_id' => Company::factory()->state(['name' => $companyName]),
+                    ]),
                 ]),
-            ]),
-        ])->create();
+            ]);
+        }
 
         $sortedAsc = Post::query()
             ->orderBy(

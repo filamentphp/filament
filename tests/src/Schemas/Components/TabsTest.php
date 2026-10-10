@@ -743,16 +743,19 @@ it('keeps non-scrollable `Tabs` in one keyboard sequence and accessible tablist'
             ->assertScript('document.activeElement.dataset.tabKey', 'overview')
             ->assertScript('document.activeElement.getBoundingClientRect().top >= 0 && document.activeElement.getBoundingClientRect().bottom <= innerHeight', true)
             ->assertScript('document.activeElement.dispatchEvent(new WheelEvent("wheel", { deltaY: 250, ctrlKey: true, bubbles: true, cancelable: true }))', true);
-        $scrollTop = $themedPage->script('document.querySelector("#overflow-tabs [x-ref=overflowPanel]").scrollTop');
-        $themedPage->assertScript('document.activeElement.dispatchEvent(new WheelEvent("wheel", { deltaY: 3, bubbles: true, cancelable: true }))', false)
-            ->assertScript('document.querySelector("#overflow-tabs [x-ref=overflowPanel]").scrollTop', $scrollTop + 3);
-        $themedPage->script('document.querySelector("#overflow-tabs [x-ref=overflowPanel]").scrollTop = 0');
-        $themedPage->assertScript('document.activeElement.dispatchEvent(new WheelEvent("wheel", { deltaY: 1, deltaMode: WheelEvent.DOM_DELTA_LINE, bubbles: true, cancelable: true }))', false)
-            ->assertScript('document.querySelector("#overflow-tabs [x-ref=overflowPanel]").scrollTop > 1', true);
-        $themedPage->script('document.querySelector("#overflow-tabs [x-ref=overflowPanel]").scrollTop = 0');
-        $themedPage->assertScript('document.activeElement.dispatchEvent(new WheelEvent("wheel", { deltaY: 1, deltaMode: WheelEvent.DOM_DELTA_PAGE, bubbles: true, cancelable: true }))', false)
-            ->assertScript('(() => { const panel = document.querySelector("#overflow-tabs [x-ref=overflowPanel]"); return panel.scrollTop === panel.scrollHeight - panel.clientHeight })()', true)
-            ->resize(375, 812)
+
+        // Measure the wheel response synchronously, before overflow positioning can scroll the focused row back into view.
+        $wheelResponse = $themedPage->script('(() => { const panel = document.querySelector("#overflow-tabs [x-ref=overflowPanel]"); const scrollTop = panel.scrollTop; const isUncancelled = document.activeElement.dispatchEvent(new WheelEvent("wheel", { deltaY: 3, bubbles: true, cancelable: true })); return { isUncancelled, distance: panel.scrollTop - scrollTop }; })()');
+        expect($wheelResponse)->toBe(['isUncancelled' => false, 'distance' => 3]);
+
+        $wheelResponse = $themedPage->script('(() => { const panel = document.querySelector("#overflow-tabs [x-ref=overflowPanel]"); panel.scrollTop = 0; const isUncancelled = document.activeElement.dispatchEvent(new WheelEvent("wheel", { deltaY: 1, deltaMode: WheelEvent.DOM_DELTA_LINE, bubbles: true, cancelable: true })); return { isUncancelled, distance: panel.scrollTop }; })()');
+        expect($wheelResponse['isUncancelled'])->toBeFalse()
+            ->and($wheelResponse['distance'])->toBeGreaterThan(1);
+
+        $wheelResponse = $themedPage->script('(() => { const panel = document.querySelector("#overflow-tabs [x-ref=overflowPanel]"); panel.scrollTop = 0; const isUncancelled = document.activeElement.dispatchEvent(new WheelEvent("wheel", { deltaY: 1, deltaMode: WheelEvent.DOM_DELTA_PAGE, bubbles: true, cancelable: true })); return { isUncancelled, isAtBottom: panel.scrollTop === panel.scrollHeight - panel.clientHeight }; })()');
+        expect($wheelResponse)->toBe(['isUncancelled' => false, 'isAtBottom' => true]);
+
+        $themedPage->resize(375, 812)
             ->click('#profile-tabs > [role=tabpanel].fi-active input')
             ->assertScript('document.activeElement.matches("#profile-tabs input")', true)
             ->assertMissing($popup . ':visible')
@@ -941,7 +944,12 @@ it('retains lazy panel shells and selection through `Livewire` morphs', function
     $second = '#dynamic-tabs [data-tab-key="second"]';
 
     foreach ([$browser, $browser->inDarkMode()] as $page) {
-        $page->assertAttribute($second, 'aria-selected', 'true')
+        // Test settled colors, not intermediate button colors during hover and `Livewire` transitions.
+        $page->script('(() => { const style = document.createElement("style"); style.textContent = "*, *::before, *::after { transition: none !important; animation: none !important; }"; document.head.appendChild(style); })()');
+
+        // Let initial autofocus finish before keyboard navigation, so it cannot steal the tab header focus.
+        $page->assertScript('document.activeElement === document.querySelector("#keyboard-tabs input[autofocus]")', true)
+            ->assertAttribute($second, 'aria-selected', 'true')
             ->assertScript('document.querySelectorAll("#dynamic-tabs > [role=tabpanel]").length', 4)
             ->assertScript('document.getElementById(document.querySelector(\'#dynamic-tabs [data-tab-key=""]\').getAttribute("aria-controls")).childElementCount', 0)
             ->keys($second, 'Home')->assertScript('document.activeElement.dataset.tabKey', '')
@@ -971,7 +979,6 @@ it('retains lazy panel shells and selection through `Livewire` morphs', function
             ->keys('#filter-tabs [data-tab-key="published"]', 'Enter')
             ->assertAttribute('#filter-tabs [data-tab-key="published"]', 'aria-pressed', 'true')
             ->hover('[data-testid=hide-contact]');
-        $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
         $page->assertNoSmoke()->assertNoAccessibilityIssues();
     }
 });

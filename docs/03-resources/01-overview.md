@@ -363,6 +363,8 @@ public static function getNavigationLabel(): string
 }
 ```
 
+You may also [render HTML in the navigation label](../navigation/overview#rendering-html-in-navigation-item-labels) by returning an `Htmlable` object.
+
 ### Setting a resource navigation icon
 
 The `$navigationIcon` property supports the name of any Blade component. By default, [Heroicons](https://heroicons.com) are installed. However, you may create your own custom icon components or install an alternative library if you wish.

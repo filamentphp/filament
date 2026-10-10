@@ -6,6 +6,7 @@ use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use LogicException;
@@ -72,7 +73,7 @@ class NavigationManager
 
                 $parentItems->except([''])->each(function (Collection $parentItemItems, string $parentItemKey) use ($items): void {
                     $parent = $items->first(
-                        fn (NavigationItem $item): bool => $item->getKey() === $parentItemKey || $item->getLabel() === $parentItemKey
+                        fn (NavigationItem $item): bool => $item->getKey() === $parentItemKey || (($label = $item->getLabel()) instanceof Htmlable ? $label->toHtml() : $label) === $parentItemKey
                     );
 
                     if (! $parent) {
@@ -116,7 +117,9 @@ class NavigationManager
                             return false;
                         }
 
-                        return $registeredGroup->getLabel() === $groupName;
+                        $label = $registeredGroup->getLabel();
+
+                        return (($label instanceof Htmlable) ? $label->toHtml() : $label) === $groupName;
                     });
 
                 if ($registeredGroup instanceof NavigationGroup) {
@@ -144,7 +147,7 @@ class NavigationManager
                 if (Arr::first($registeredGroups) instanceof NavigationGroup) {
                     $groupsToSearch = [
                         ...array_keys($registeredGroups),
-                        ...array_map(fn (NavigationGroup $registeredGroup): string => $registeredGroup->getLabel(), array_values($registeredGroups)),
+                        ...array_map(fn (NavigationGroup $registeredGroup): ?string => ($label = $registeredGroup->getLabel()) instanceof Htmlable ? $label->toHtml() : $label, array_values($registeredGroups)),
                     ];
                 }
 
