@@ -83,23 +83,34 @@ class ColorColumn extends Column implements HasEmbeddedView
                 $tooltip = $this->getTooltip($stateItem, $relatedRecord);
 
                 $sanitizedColor = Str::sanitizeCssColor($stateItem);
+                $copyLabelJs = Js::from(__('filament::components/copyable.label', [
+                    'label' => $sanitizedColor ?? $this->getName(),
+                ]));
+                $copyFailureMessageJs = Js::from(__('filament::components/copyable.messages.failed'));
                 ?>
 
                 <div <?= (new FilamentComponentAttributeBag)
                     ->merge([
                         // The swatch conveys its value purely through `background-color`, so expose the color as a
                         // named `role="img"` for screen readers. Only the sanitized colour is used, so an invalid
-                        // value is never announced. The copyable swatch is an interactive control that needs
-                        // separate treatment (an accessible name and keyboard operability), so it is not named here.
+                        // value is never announced. `filamentCopyable` supplies button semantics and a name
+                        // only when the copyable swatch is not inside another interactive control.
                         'aria-label' => ($isCopyable || blank($sanitizedColor)) ? null : e($sanitizedColor),
                         'role' => ($isCopyable || blank($sanitizedColor)) ? null : 'img',
+                        'x-data' => $isCopyable ? 'filamentCopyable' : null,
+                        'x-bind' => $isCopyable ? 'bindings' : null,
+                        'x-bind:aria-label' => $isCopyable ? "isStandalone ? {$copyLabelJs} : null" : null,
                         'x-on:click.prevent.stop' => $isCopyable
                             ? <<<JS
-                            window.navigator.clipboard.writeText({$copyableStateJs})
-                            \$tooltip({$copyMessageJs}, {
-                                theme: \$store.theme,
-                                timeout: {$copyMessageDurationJs},
-                            })
+                            if (isStandalone) {
+                                copy({$copyableStateJs}, {$copyMessageJs}, {$copyMessageDurationJs}, {$copyFailureMessageJs})
+                            } else {
+                                window.navigator.clipboard.writeText({$copyableStateJs})
+                                \$tooltip({$copyMessageJs}, {
+                                    theme: \$store.theme,
+                                    timeout: {$copyMessageDurationJs},
+                                })
+                            }
                             JS
                             : null,
                         'x-tooltip' => filled($tooltip)

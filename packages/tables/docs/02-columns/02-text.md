@@ -771,6 +771,8 @@ TextColumn::make('email')
 
 <AutoScreenshot name="tables/columns/text/copyable" alt="Text column with a button to copy it" version="4.x" />
 
+When the copyable text is not part of a link or action, including a row link or action, and contains no interactive elements, you can also focus it using Tab and copy it using Enter or Space. The confirmation appears and is announced only after copying succeeds. If copying fails, a failure message appears and is announced instead.
+
 Optionally, you may pass a boolean value to control if the text should be copyable or not:
 
 ```php
