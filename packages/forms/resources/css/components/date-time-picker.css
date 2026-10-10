@@ -6,6 +6,14 @@
         padding: 0;
     }
 
+    & input:disabled,
+    & input[readonly] {
+        &::-webkit-calendar-picker-indicator,
+        &::-webkit-inner-spin-button {
+            @apply hidden;
+        }
+    }
+
     & .fi-fo-date-time-picker-trigger {
         @apply w-full;
     }

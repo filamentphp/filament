@@ -170,6 +170,8 @@ return [
 
     'file_upload' => [
 
+        'placeholder' => 'No files uploaded',
+
         'actions' => [
 
             'download' => [

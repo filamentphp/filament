@@ -100,7 +100,6 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
 
     public function toEmbeddedHtml(): string
     {
-        $datalistOptions = $this->getDatalistOptions();
         $disabledDates = $this->getDisabledDates();
         $extraAlpineAttributes = $this->getExtraAlpineAttributes();
         $extraAttributeBag = $this->getExtraAttributeBag();
@@ -127,6 +126,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
         $statePath = $this->getStatePath();
         $placeholder = $this->getPlaceholder();
         $isReadOnly = $this->isReadOnly();
+        $datalistOptions = ((! $isDisabled) && (! $isReadOnly)) ? $this->getDatalistOptions() : [];
         $isRequired = $this->isRequired();
         $step = $this->getStep();
         $type = $this->getType();

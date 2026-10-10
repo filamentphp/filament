@@ -151,6 +151,7 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
             x-on:dropdown-escape="if (isOpen()) { closePanelAndRestoreFocus(); $event.preventDefault() }"
             x-on:keydown.esc="isOpen() && $event.stopPropagation()"
             x-on:focusout="if (isOpen() && ! $el.contains($event.relatedTarget)) $refs.panel.close()"
+            wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled])), 0, 64) ?>"
             <?= $this->getExtraAlpineAttributeBag()->class(['fi-input-wrp-content'])->toHtml() ?>
         >
             <input

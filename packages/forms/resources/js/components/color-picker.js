@@ -143,6 +143,7 @@ export default function colorPickerFormComponent({
         destroy() {
             isDestroyed = true
             this.panelObserver?.disconnect()
+            this.$refs.panel?.close?.()
         },
     }
 }

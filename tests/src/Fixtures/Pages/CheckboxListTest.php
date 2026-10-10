@@ -4,7 +4,9 @@ namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Toggle;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
@@ -27,10 +29,17 @@ class CheckboxListTest extends Page
     {
         return $form
             ->schema([
+                Toggle::make('disabled')
+                    ->live()
+                    ->extraAttributes(['data-testid' => 'checkbox-list-disabled']),
                 CheckboxList::make('field')
                     ->label('Test CheckboxList')
                     ->options(['a' => 'Option A', 'b' => 'Option B', 'c' => 'Option C'])
-                    ->extraAttributes(['data-testid' => 'checkbox-list']),
+                    ->default(['a', 'c'])
+                    ->searchable()
+                    ->bulkToggleable()
+                    ->disabled(static fn (Get $get): bool => (bool) $get('disabled'))
+                    ->extraFieldWrapperAttributes(['data-testid' => 'checkbox-list']),
             ])
             ->statePath('data');
     }
