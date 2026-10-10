@@ -44,6 +44,14 @@ SelectColumn::make('status')
 
 <AutoScreenshot name="tables/columns/select/javascript" alt="Table with JavaScript select column" version="4.x" />
 
+### Using the keyboard
+
+You can open the JavaScript select using `Enter`, `Space`, or an arrow key. Use `ArrowUp` and `ArrowDown` to highlight an enabled option, then `Enter` to select and save it. Highlighting an option does not save a change.
+
+When search is disabled, you can also use `Home` and `End` to highlight the first and last enabled options, type an option's initial characters to highlight it, or use `Space` to select it. When search is enabled, focus stays in the search input while you navigate options, and text-editing keys retain their usual behavior.
+
+Press `Escape` to close the options and return to the select button. `Tab` and `Shift+Tab` follow the normal tab order and close the options without selecting the highlighted option.
+
 ## Searching options
 
 You may enable a search input to allow easier access to many options, using the `searchableOptions()` method:

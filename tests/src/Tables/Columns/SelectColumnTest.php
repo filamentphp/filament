@@ -14,6 +14,7 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use LogicException;
@@ -21,6 +22,56 @@ use LogicException;
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
+it('navigates and saves JavaScript select columns with stable focus in light and dark modes', function (): void {
+    Artisan::call('filament:assets');
+    $post = Post::factory()->create(['rating' => 1, 'title' => 'draft']);
+    $this->actingAs(User::factory()->create());
+
+    foreach ([false, true] as $isDarkMode) {
+        $post->update(['rating' => 1, 'title' => 'draft']);
+        $page = visit('/columns-browser-test?selectColumns=1');
+
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $owner = '[data-testid="rating-select"] [role="combobox"]';
+        $launcher = '[data-testid="publication-select"] button[aria-haspopup="listbox"]';
+        $search = '[data-testid="publication-select"] input[role="combobox"]';
+
+        $page
+            ->keys($owner, 'Enter')
+            ->assertVisible('[data-testid="rating-select"] [role="option"][data-value="3"]')
+            ->keys($owner, 'ArrowDown')
+            ->assertPresent($owner . ':focus')
+            ->assertScript('document.getElementById(document.activeElement.getAttribute("aria-activedescendant")).dataset.value', '3')
+            ->assertNoAccessibilityIssues()
+            ->keys($owner, 'Enter')
+            ->assertPresent($owner . ':focus')
+            ->assertScript('document.activeElement.getAttribute("aria-expanded")', 'false')
+            ->assertSeeIn($owner, 'High')
+            ->assertValue('[data-testid="rating-select"] input[x-ref="serverState"]', '3')
+            ->keys($owner, ['Enter', 'z'])
+            ->assertScript('document.getElementById(document.activeElement.getAttribute("aria-activedescendant")).dataset.value', '3')
+            ->keys($owner, 'Enter')
+            ->assertSeeIn($owner, 'High')
+            ->click($launcher)
+            ->assertPresent($search . ':focus')
+            ->type($search, 'pub')
+            ->assertVisible('[data-testid="publication-select"] [role="option"][data-value="published"]')
+            ->keys($search, 'ArrowDown')
+            ->assertScript('document.getElementById(document.activeElement.getAttribute("aria-activedescendant")).dataset.value', 'published')
+            ->assertNoAccessibilityIssues()
+            ->keys($search, 'Enter')
+            ->assertPresent($launcher . ':focus')
+            ->assertSeeIn($launcher, 'Published')
+            ->assertValue('[data-testid="publication-select"] input[x-ref="serverState"]', 'published')
+            ->assertNoSmoke();
+
+        expect($post->fresh())->rating->toBe(3)->title->toBe('published');
+    }
+});
 
 it('isolates validation state from cached relationship state', function (bool $warmCache, string $input, bool $isValid): void {
     $author = User::factory()->create(['json' => ['status' => 'Pending']]);

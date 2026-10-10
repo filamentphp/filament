@@ -30,8 +30,26 @@ class ColumnsBrowserTest extends Page implements HasTable
     #[Url]
     public bool $relatedRecordLayout = false;
 
+    #[Url]
+    public bool $selectColumns = false;
+
     public function table(Table $table): Table
     {
+        if ($this->selectColumns) {
+            return $table->query(Post::query())->columns([
+                Tables\Columns\SelectColumn::make('rating')
+                    ->native(false)
+                    ->options([1 => 'Low', 2 => 'Unavailable', 3 => 'High'])
+                    ->disableOptionWhen(static fn (string $value): bool => $value === '2')
+                    ->extraAttributes(['data-testid' => 'rating-select']),
+                Tables\Columns\SelectColumn::make('title')
+                    ->label('Publication status')
+                    ->searchableOptions()
+                    ->options(['draft' => 'Draft', 'published' => 'Published'])
+                    ->extraAttributes(['data-testid' => 'publication-select']),
+            ]);
+        }
+
         if ($this->relatedRecordLayout) {
             return $table->query(Post::query())->columns([
                 Tables\Columns\Layout\Stack::make([
