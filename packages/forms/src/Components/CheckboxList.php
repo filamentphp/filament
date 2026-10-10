@@ -552,6 +552,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
         $optionsAttributes = $this->getExtraAttributeBag()
             ->grid($this->getColumns(), $gridDirection)
             ->merge([
+                'wire:key' => "{$livewireKey}.options",
                 'x-show' => $isSearchable ? 'visibleCheckboxListOptions.length' : null,
             ], escape: false)
             ->class(['fi-fo-checkbox-list-options']);
