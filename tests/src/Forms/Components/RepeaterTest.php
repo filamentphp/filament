@@ -1650,7 +1650,8 @@ it('keeps item order, position feedback and keyboard focus when reordering in th
         $thirdUp = ':nth-match(' . $moveUp . ', 3)';
         $status = '[data-testid="repeater"] > [role="status"]';
 
-        $page->keys($firstDown, 'Enter')
+        $page->assertPresent('[data-testid="repeater"]:not([x-ignore])')
+            ->keys($firstDown, 'Enter')
             ->assertValue($firstName, 'Beta')
             ->assertValue($secondName, 'Alpha')
             ->assertValue($thirdName, 'Gamma')
