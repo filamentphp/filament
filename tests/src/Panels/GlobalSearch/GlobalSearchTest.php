@@ -1,18 +1,22 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\GlobalSearch\GlobalSearchResults;
 use Filament\GlobalSearch\Providers\Contracts\GlobalSearchProvider;
 use Filament\Livewire\GlobalSearch;
 use Filament\Resources\Resource;
+use Filament\Support\Facades\FilamentView;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Panels\GlobalSearch\TestCase;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -179,6 +183,105 @@ describe('search results', function (): void {
         expect($categories[0])->toBe('users');
         expect($categories[1])->toBe('posts');
     });
+
+    it('keeps result links and independent actions reachable with the keyboard', function (string $panel): void {
+        Artisan::call('filament:assets');
+        Filament::getPanel($panel)->globalSearch(ActionSearchProvider::class);
+        FilamentView::registerRenderHook(PanelsRenderHook::GLOBAL_SEARCH_END, static fn (): string => Blade::render(
+            '<x-filament::modal id="global-search-preview" heading="Invoice preview">Preview requested.</x-filament::modal>',
+        ));
+
+        $post = Post::factory()->create(['title' => 'Invoice 224']);
+        $otherPost = Post::factory()->create(['title' => 'Invoice 485']);
+        $search = 'Invoice';
+        $inputSelector = 'input[wire\\:key="global-search.field.input"]';
+        $resultUrl = PostResource::getUrl('view', ['record' => $post], panel: $panel);
+        $resultSelector = "[role=region] a[href=\"{$resultUrl}\"]:not([target])";
+        $otherResultUrl = PostResource::getUrl('view', ['record' => $otherPost], panel: $panel);
+        $otherResultSelector = "[role=region] a[href=\"{$otherResultUrl}\"]:not([target])";
+        $otherNewTabSelector = "[role=region] a[href=\"{$otherResultUrl}\"][target=\"_blank\"]";
+        $previewSelector = "[data-testid=\"global-search-preview-{$post->id}\"]";
+        $otherPreviewSelector = "[data-testid=\"global-search-preview-{$otherPost->id}\"]";
+
+        $page = visit(PostResource::getUrl(panel: $panel))->inDarkMode();
+
+        foreach ([true, false] as $isDarkMode) {
+            if (! $isDarkMode) {
+                $page->click('[aria-label="' . __('filament-panels::layout.actions.open_user_menu.label') . '"]')
+                    ->click('[role="menuitemradio"][aria-label="' . __('filament-panels::layout.actions.theme_switcher.light.label') . '"]');
+            }
+
+            $page->type($inputSelector, $search)
+                ->assertVisible($resultSelector)
+                ->assertVisible($otherResultSelector)
+                ->assertNotPresent('[role=region] h3:has-text("Empty")')
+                ->assertSeeIn('nav [role=status]', '2')
+                ->keys($inputSelector, 'ArrowDown')
+                ->assertPresent("{$resultSelector}:focus")
+                ->keys($resultSelector, 'ArrowDown')
+                ->assertPresent("{$otherResultSelector}:focus")
+                ->keys($otherResultSelector, 'ArrowUp')
+                ->assertPresent("{$resultSelector}:focus")
+                ->keys($resultSelector, 'Tab')
+                ->assertPresent("{$previewSelector}:focus")
+                ->keys($previewSelector, 'ArrowDown')
+                ->assertPresent("{$otherResultSelector}:focus")
+                ->keys($otherResultSelector, 'Tab')
+                ->assertPresent("{$otherPreviewSelector}:focus")
+                ->keys($otherPreviewSelector, 'ArrowUp')
+                ->assertPresent("{$resultSelector}:focus")
+                ->keys($resultSelector, 'Tab')
+                ->assertPresent("{$previewSelector}:focus")
+                ->wait(0.2)
+                ->assertNoAccessibilityIssues()
+                ->keys($previewSelector, 'Escape')
+                ->assertPresent("{$inputSelector}:focus")
+                ->assertValue($inputSelector, $search)
+                ->assertMissing($resultSelector)
+                ->keys($inputSelector, 'ArrowDown')
+                ->assertPresent("{$resultSelector}:focus")
+                ->keys($resultSelector, 'ArrowUp')
+                ->assertPresent("{$otherResultSelector}:focus")
+                ->keys($otherResultSelector, 'ArrowDown')
+                ->assertPresent("{$resultSelector}:focus")
+                ->keys($resultSelector, 'ArrowUp')
+                ->assertPresent("{$otherResultSelector}:focus")
+                ->keys($otherResultSelector, 'Tab')
+                ->assertPresent("{$otherPreviewSelector}:focus")
+                ->keys($otherPreviewSelector, 'Tab')
+                ->assertPresent("{$otherNewTabSelector}:focus")
+                ->keys($otherNewTabSelector, 'Tab')
+                ->assertMissing($resultSelector)
+                ->click($inputSelector)
+                ->assertVisible($resultSelector)
+                ->type($inputSelector, 'No matching invoices')
+                ->assertVisible('[role=region] p')
+                ->assertNotPresent('[role=region] a')
+                ->assertNotPresent('[role=region] h3')
+                ->wait(0.2)
+                ->assertNoAccessibilityIssues()
+                ->type($inputSelector, $search)
+                ->assertVisible($resultSelector)
+                ->keys($inputSelector, 'ArrowDown')
+                ->keys($resultSelector, 'Tab')
+                ->keys($previewSelector, 'Space')
+                ->assertVisible('#global-search-preview button')
+                ->wait(0.4)
+                ->keys('#global-search-preview button', 'Escape')
+                ->assertMissing('#global-search-preview button')
+                ->wait(0.2)
+                ->assertValue($inputSelector, $search)
+                ->assertPresent("{$inputSelector}:focus");
+        }
+
+        $page->click($inputSelector)
+            ->assertVisible($resultSelector)
+            ->keys($inputSelector, 'ArrowDown')
+            ->assertPresent("{$resultSelector}:focus")
+            ->keys($resultSelector, 'Enter')
+            ->assertPathIs(parse_url($resultUrl, PHP_URL_PATH))
+            ->assertValue($inputSelector, '');
+    })->with(['standard panel' => 'admin', 'SPA panel' => 'spa']);
 });
 
 describe('SPA mode', function (): void {
@@ -195,14 +298,11 @@ describe('SPA mode', function (): void {
                 ->type('.fi-global-search-field input', $post->title)
                 ->assertVisible('.fi-global-search-result-link');
 
-            $page->script("window.persistedGlobalSearch = document.querySelector('.fi-global-search')");
-
             $page
                 ->click('.fi-global-search-result-link')
                 ->assertPathIs($expectedPath)
                 ->assertValue('.fi-global-search-field input', '')
-                ->assertMissing('.fi-global-search-results-ctn')
-                ->assertScript("window.persistedGlobalSearch === document.querySelector('.fi-global-search')");
+                ->assertMissing('.fi-global-search-results-ctn');
         });
     });
 
@@ -219,16 +319,13 @@ describe('SPA mode', function (): void {
                 ->type('.fi-global-search-field input', $post->title)
                 ->assertVisible('.fi-global-search-result-link');
 
-            $page->script("window.persistedGlobalSearch = document.querySelector('.fi-global-search')");
-
             $page
                 ->keys('.fi-global-search-field input', 'ArrowDown')
                 ->assertPresent('.fi-global-search-result-link:focus')
                 ->keys('.fi-global-search-result-link', 'Enter')
                 ->assertPathIs($expectedPath)
                 ->assertValue('.fi-global-search-field input', '')
-                ->assertMissing('.fi-global-search-results-ctn')
-                ->assertScript("window.persistedGlobalSearch === document.querySelector('.fi-global-search')");
+                ->assertMissing('.fi-global-search-results-ctn');
         });
     });
 
@@ -266,16 +363,10 @@ describe('SPA mode', function (): void {
                 ->type('.fi-global-search-field input', $post->title)
                 ->assertVisible('.fi-global-search-results-ctn');
 
-            $page->script(<<<'JS'
-                const globalSearch = document.querySelector('.fi-global-search')
-                const livewireId = globalSearch.closest('[wire\\:id]').getAttribute('wire:id')
-
-                window.dispatchEvent(new CustomEvent('livewire:navigate'))
-                Livewire.find(livewireId).search = ''
-                window.dispatchEvent(new CustomEvent('open-global-search-results'))
-                JS);
-
-            $page->assertMissing('.fi-global-search-results-ctn');
+            $page->type('.fi-global-search-field input', '')
+                ->assertValue('.fi-global-search-field input', '')
+                ->keys('.fi-global-search-field input', 'ArrowDown')
+                ->assertMissing('.fi-global-search-results-ctn');
         });
     });
 
@@ -328,7 +419,7 @@ describe('`globalSearchResourceOptIn()`', function (): void {
 
         livewire(GlobalSearch::class)
             ->set('search', $post->title)
-            ->assertDontSee($post->title);
+            ->assertViewHas('results', static fn (GlobalSearchResults $results): bool => $results->getCategories()->isEmpty());
     });
 
     class OptedInGlobalSearchResource extends Resource
@@ -363,3 +454,31 @@ describe('`globalSearchResourceOptIn()`', function (): void {
         }
     }
 });
+
+class ActionSearchProvider implements GlobalSearchProvider
+{
+    public function getResults(string $query): ?GlobalSearchResults
+    {
+        if (mb_strlen($query) < 3) {
+            return null;
+        }
+
+        $results = Post::query()->where('title', 'like', "{$query}%")->orderBy('id')->get()
+            ->map(static fn (Post $post): GlobalSearchResult => new GlobalSearchResult(
+                title: $post->title,
+                url: PostResource::getUrl('view', ['record' => $post]),
+                actions: [
+                    Action::make('preview')
+                        ->dispatch('open-modal', ['id' => 'global-search-preview'])
+                        ->extraAttributes(['data-testid' => "global-search-preview-{$post->id}"]),
+                    Action::make('openInNewTab')
+                        ->url(PostResource::getUrl('view', ['record' => $post]), shouldOpenInNewTab: true),
+                ],
+            ));
+
+        return GlobalSearchResults::make()
+            ->category('Empty', [])
+            ->category('Invoices', $results->take(1))
+            ->category('Archived invoices', $results->skip(1));
+    }
+}

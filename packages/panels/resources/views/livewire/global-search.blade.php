@@ -1,4 +1,5 @@
 @php
+    use Filament\Actions\Action;
     use Filament\Support\Facades\FilamentView;
     use Filament\Support\Icons\Heroicon;
     use Filament\View\PanelsIconAlias;
@@ -8,18 +9,41 @@
     $debounce = filament()->getGlobalSearchDebounce();
     $keyBindings = filament()->getGlobalSearchKeyBindings();
     $suffix = filament()->getGlobalSearchFieldSuffix();
+    $categories = $results?->getCategories()
+        ->map(static fn ($groupedResults) => collect($groupedResults))
+        ->filter(static fn ($groupedResults): bool => $groupedResults->isNotEmpty());
+    $resultsCount = $categories?->sum(static fn ($groupedResults): int => count($groupedResults)) ?? 0;
+    $resultsMessage = $resultsCount
+        ? trans_choice('filament-panels::global-search.results_count', $resultsCount, ['count' => $resultsCount])
+        : __('filament-panels::global-search.no_results_message');
+    $id = 'global-search-' . $this->getId();
 @endphp
 
 <div class="fi-global-search-ctn">
     {{ FilamentView::renderHook(PanelsRenderHook::GLOBAL_SEARCH_START) }}
 
     <div
-        x-on:focus-first-global-search-result.stop="$el.querySelector('.fi-global-search-result-link')?.focus()"
-        x-on:livewire:navigated.window="if ($wire.search) $wire.$set('search', '', false)"
+        x-data="filamentGlobalSearch({
+                    loadingMessage: @js(__('filament-panels::global-search.loading_message')),
+                    failureMessage: @js(__('filament-panels::global-search.failure_message')),
+                })"
+        x-on:input="if ($event.target === $refs.input) inputChanged($event.target.value)"
+        x-on:focusin="if ($event.target === $refs.input) reopen()"
+        x-on:focusout="focusLeft($event)"
+        x-on:keydown="keydown($event)"
+        x-on:click.outside="dismiss()"
+        x-on:open-modal.window.capture="
+            if ($refs.results.contains(document.activeElement)) {
+                dismiss()
+                restoreFocus()
+            }
+        "
+        x-on:livewire:navigate.window="navigationStarted($event)"
+        x-on:livewire:navigated.window="navigationCompleted()"
         class="fi-global-search"
     >
-        <div x-id="['input']" class="fi-global-search-field">
-            <label x-bind:for="$id('input')" class="fi-sr-only">
+        <div class="fi-global-search-field">
+            <label for="{{ $id }}-input" class="fi-sr-only">
                 {{ __('filament-panels::global-search.field.label') }}
             </label>
 
@@ -37,53 +61,61 @@
                     placeholder="{{ __('filament-panels::global-search.field.placeholder') }}"
                     type="search"
                     wire:key="global-search.field.input"
-                    x-bind:id="$id('input')"
-                    x-on:keydown.down.prevent.stop="$dispatch('focus-first-global-search-result')"
+                    id="{{ $id }}-input"
+                    aria-controls="{{ $id }}-results"
+                    aria-describedby="{{ $id }}-instructions"
+                    x-ref="input"
                     wire:model.live.debounce.{{ $debounce }}="search"
-                    x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($id('input'))?.focus()"
+                    x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="$refs.input?.focus()"
                     class="fi-input fi-input-has-inline-prefix"
                 />
             </x-filament::input.wrapper>
         </div>
 
-        @if ($results !== null)
-            <div
-                x-data="{
-                    isOpen: false,
+        <p id="{{ $id }}-instructions" class="fi-sr-only">
+            {{ __('filament-panels::global-search.field.instructions') }}
+        </p>
 
-                    open(event) {
-                        if (! this.$wire.search) {
-                            return
-                        }
+        <p
+            wire:ignore
+            role="status"
+            aria-atomic="true"
+            x-text="status"
+            class="fi-sr-only"
+        ></p>
 
-                        this.isOpen = true
-                    },
-
-                    close(event) {
-                        this.isOpen = false
-                    },
-                }"
-                x-init="$nextTick(() => open())"
-                x-on:click.away="close()"
-                x-on:keydown.escape.window="close()"
-                x-on:livewire:navigate.window="close()"
-                x-on:keydown.up.prevent="$focus.wrap().previous()"
-                x-on:keydown.down.prevent="$focus.wrap().next()"
-                x-on:open-global-search-results.window="$nextTick(() => open())"
-                x-show="isOpen"
-                x-transition:enter-start="fi-transition-enter-start"
-                x-transition:leave-end="fi-transition-leave-end"
-                class="fi-global-search-results-ctn"
-            >
-                @if ($results->getCategories()->isEmpty())
+        <div
+            id="{{ $id }}-results"
+            role="region"
+            aria-label="{{ __('filament-panels::global-search.results_label') }}"
+            data-query="{{ trim($this->search ?? '') }}"
+            data-has-results="{{ $results !== null ? 'true' : 'false' }}"
+            data-message="{{ $resultsMessage }}"
+            x-ref="results"
+            x-show="isOpen"
+            x-bind:inert="! isOpen"
+            x-bind:aria-hidden="! isOpen"
+            x-cloak
+            x-on:click="linkActivated($event)"
+            x-transition:enter-start="fi-transition-enter-start"
+            x-transition:leave-end="fi-transition-leave-end"
+            class="fi-global-search-results-ctn"
+        >
+            @if ($results !== null)
+                @if ($categories->isEmpty())
                     <p class="fi-global-search-no-results-message">
                         {{ __('filament-panels::global-search.no_results_message') }}
                     </p>
                 @else
                     <ul class="fi-global-search-results">
-                        @foreach ($results->getCategories() as $group => $groupedResults)
+                        @foreach ($categories as $group => $groupedResults)
+                            @php
+                                $groupHeadingId = $id . '-group-' . $loop->index;
+                            @endphp
+
                             <li class="fi-global-search-result-group">
                                 <h3
+                                    id="{{ $groupHeadingId }}"
                                     class="fi-global-search-result-group-header"
                                 >
                                     {{ $group }}
@@ -95,6 +127,7 @@
                                     @foreach ($groupedResults as $result)
                                         @php
                                             $resultVisibleActions = $result->getVisibleActions();
+                                            $resultHeadingId = $groupHeadingId . '-result-' . $loop->index;
                                         @endphp
 
                                         <li
@@ -105,10 +138,10 @@
                                         >
                                             <a
                                                 {{ \Filament\Support\generate_href_html($result->url) }}
-                                                x-on:click="close()"
                                                 class="fi-global-search-result-link"
                                             >
                                                 <h4
+                                                    id="{{ $resultHeadingId }}"
                                                     class="fi-global-search-result-heading"
                                                 >
                                                     {{ $result->title }}
@@ -146,7 +179,16 @@
                                                     class="fi-global-search-result-actions"
                                                 >
                                                     @foreach ($resultVisibleActions as $action)
-                                                        {{ $action }}
+                                                        @php
+                                                            $actionAttributes = $action->getExtraAttributes();
+                                                            $actionAttributes['aria-describedby'] = trim(($actionAttributes['aria-describedby'] ?? '') . ' ' . $groupHeadingId . ' ' . $resultHeadingId);
+
+                                                            if (in_array($action->getView(), [Action::LINK_VIEW, Action::BUTTON_VIEW, Action::ICON_BUTTON_VIEW, Action::BADGE_VIEW])) {
+                                                                $actionAttributes['data-global-search-action'] = true;
+                                                            }
+                                                        @endphp
+
+                                                        {{ (clone $action)->extraAttributes($actionAttributes) }}
                                                     @endforeach
                                                 </div>
                                             @endif
@@ -157,8 +199,8 @@
                         @endforeach
                     </ul>
                 @endif
-            </div>
-        @endif
+            @endif
+        </div>
     </div>
 
     {{ FilamentView::renderHook(PanelsRenderHook::GLOBAL_SEARCH_END) }}
