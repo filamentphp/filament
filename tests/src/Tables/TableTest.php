@@ -822,50 +822,23 @@ describe('rendering', function (): void {
         $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
         $individualSearchInput = '.fi-ta-individual-search-row input';
 
-        $page->script(<<<'JS'
-                (() => {
-                    const input = document.querySelector('.fi-ta-individual-search-row input')
-
-                    input.focus()
-                    input.value = 'Sho'
-                    input.dispatchEvent(new Event('input', { bubbles: true }))
-                })()
-                JS);
-
-        usleep(800_000);
-
-        expect($page->script(<<<'JS'
-                (() => {
-                    const input = document.querySelector('.fi-ta-individual-search-row input')
-
-                    return input === document.activeElement
-                        && ! input.closest('tbody').hasAttribute('inert')
-                        && document.querySelector('.fi-ta-records').hasAttribute('inert')
-                })()
-                JS))->toBeTrue();
-
-        $page->keys($individualSearchInput, 'r');
-
-        expect($page->script("document.querySelector('{$individualSearchInput}').value"))->toBe('Shor');
-
-        usleep(2_000_000);
+        $page
+            ->type($individualSearchInput, 'Sho')
+            ->assertPresent('.fi-ta-records[inert]')
+            ->assertMissing('tbody[inert] .fi-ta-individual-search-row input')
+            ->assertPresent($individualSearchInput . ':focus')
+            ->keys($individualSearchInput, 'r')
+            ->assertValue($individualSearchInput, 'Shor')
+            // Let the debounced search finish before opening another page.
+            ->wait(2)
+            ->assertMissing('.fi-ta-records[inert]');
 
         $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
 
-        $page->click('Published');
-
-        usleep(300_000);
-
-        expect($page->script(<<<'JS'
-                (() => {
-                    const tableContent = document.querySelector('.fi-ta-content-ctn')
-
-                    return tableContent.classList.contains('fi-ta-content-loading')
-                        && tableContent.querySelector('.fi-ta-records').hasAttribute('inert')
-                })()
-                JS))->toBeTrue();
-
-        usleep(1_000_000);
+        $page
+            ->click('Published')
+            ->assertPresent('.fi-ta-content-loading .fi-ta-records[inert]')
+            ->assertMissing('.fi-ta-records[inert]');
 
         Post::query()->delete();
 

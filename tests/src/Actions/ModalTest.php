@@ -254,10 +254,9 @@ describe('browser interactions', function (): void {
             ->assertScript('window.Alpine !== undefined')
             ->assertScript("(() => { const spacer = document.createElement('div'); spacer.style.height = '200vh'; document.body.append(spacer); const trigger = document.querySelector('{$triggerSelector}'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()", true)
             ->assertVisible($modalSelector)
-            // Let the focus trap activate before checking its fallback target.
+            // Let the deferred focus trap activate before checking the page scroll position.
             ->wait(0.5)
-            ->assertPresent("{$modalSelector}:focus")
-            ->assertScript("document.querySelector('{$modalSelector}').tabIndex", 0)
+            ->assertAttribute($modalSelector, 'tabindex', '0')
             ->assertScript('window.scrollY === window.modalTestScrollY', true)
             ->keys($modalSelector, 'PageDown')
             ->wait(0.5)
