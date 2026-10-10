@@ -1743,6 +1743,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
         <div
             aria-labelledby="<?= e($id) ?>-label"
+            data-rich-editor-key="<?= e($key) ?>"
             id="<?= e($id) ?>"
             role="group"
             x-load
@@ -1797,16 +1798,17 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
             x-bind:class="{
                 'fi-fo-rich-editor-uploading-file': isUploadingFile,
             }"
+            x-on:keydown="handleToolbarKeydown($event)"
+            x-on:focusin="handleToolbarFocusin($event)"
+            x-on:focusout="handleToolbarFocusout($event)"
             wire:ignore
             wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled])), 0, 64) ?>"
         >
             <?php if ((! $isDisabled) && filled($toolbarButtons)) { ?>
-                <?php // `role="toolbar"` is withheld until the APG roving-tabindex/arrow-key pattern is
-                      // implemented: the tools are `tabindex="-1"` with no arrow-key navigation, so announcing
-                      // a toolbar would promise keyboard behaviour that does not exist. The `aria-label`
-                      // still names the group.?>
                 <div
                     class="fi-fo-rich-editor-toolbar <?= $this->hasStickyToolbar() ? 'fi-fo-rich-editor-sticky-toolbar' : '' ?>"
+                    data-rich-editor-toolbar="main"
+                    role="toolbar"
                     x-ref="toolbar"
                     aria-label="<?= e(__('filament-forms::components.rich_editor.toolbar.label')) ?>"
                 >
@@ -1851,6 +1853,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                         <div
                             x-ref="floatingToolbar::<?= e($nodeName) ?>"
                             class="fi-fo-rich-editor-floating-toolbar fi-not-prose"
+                            data-rich-editor-toolbar
+                            role="toolbar"
+                            aria-label="<?= e(__('filament-forms::components.rich_editor.toolbar.label')) ?>"
                         >
                             <?php foreach ($buttons as $button) { ?>
                                 <?php if (is_string($button)) { ?>
