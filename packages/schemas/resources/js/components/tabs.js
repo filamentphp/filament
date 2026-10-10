@@ -167,12 +167,10 @@ export default function tabsSchemaComponent({
                 )
                     return
 
-                this.$nextTick(() => {
-                    if (this.isDestroyed) return
-                    this.tab = this.getDefaultTab()
-                    this.shouldAutofocusAfterUpdate = true
-                    this.scheduleUpdate()
-                })
+                if (this.isDestroyed) return
+                this.tab = this.getDefaultTab()
+                this.shouldAutofocusAfterUpdate = true
+                this.scheduleUpdate()
             }
             window.addEventListener(
                 'reset-schema-component-state',
