@@ -23,6 +23,8 @@ class SelectTest extends Page
 
     public ?array $data = [];
 
+    public bool $isSelectDisabled = false;
+
     public function mount(): void
     {
         $this->form->fill();
@@ -55,7 +57,10 @@ class SelectTest extends Page
                     ->extraAttributes(['data-testid' => 'multiple-select']),
 
                 Select::make('searchable_status')
+                    ->id('searchable-status')
                     ->label('Searchable Select')
+                    ->helperText('Choose the color used for this status.')
+                    ->required()
                     ->options([
                         'red' => 'Red',
                         'green' => 'Green',
@@ -65,6 +70,24 @@ class SelectTest extends Page
                     ])
                     ->searchable()
                     ->extraAttributes(['data-testid' => 'searchable-select']),
+
+                Select::make('nonsearchable_multiple_status')
+                    ->label('Publication channels')
+                    ->multiple()
+                    ->searchable(false)
+                    ->disabled(fn (): bool => $this->isSelectDisabled)
+                    ->options([
+                        'website' => 'Website',
+                        'Social' => [
+                            'archived' => 'Archived channel',
+                            'newsletter' => 'Newsletter',
+                        ],
+                        'print' => 'Print',
+                        'mobile' => 'Mobile app',
+                    ])
+                    ->disableOptionWhen(static fn (string $value): bool => $value === 'archived')
+                    ->optionsLimit(4)
+                    ->extraAttributes(['data-testid' => 'nonsearchable-multiple-select']),
 
                 Select::make('clearable_status')
                     ->label('Clearable Select')
@@ -156,6 +179,11 @@ class SelectTest extends Page
                             ->autofocus()
                             ->required()
                             ->extraInputAttributes(['data-testid' => 'create-option-name-input']),
+                        Select::make('category')
+                            ->label('Category')
+                            ->searchable()
+                            ->options(['news' => 'News', 'guide' => 'Guide'])
+                            ->extraAttributes(['data-testid' => 'modal-select']),
                     ])
                     ->createOptionUsing(static fn (array $data): string => $data['name'])
                     ->createOptionAction(static fn (Action $action): Action => $action

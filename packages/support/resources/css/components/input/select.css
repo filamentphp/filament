@@ -51,6 +51,24 @@ select.fi-select-input {
         @apply flex flex-wrap gap-1.5;
     }
 
+    & .fi-select-input-ctn-multiple {
+        & .fi-select-input-btn {
+            @apply absolute inset-0 h-full;
+        }
+
+        & .fi-select-input-value-ctn {
+            @apply pointer-events-none relative min-h-9 py-1.5 ps-3 pe-8;
+        }
+
+        & .fi-badge-delete-btn {
+            @apply pointer-events-auto;
+        }
+    }
+
+    & .fi-select-input-ctn-reorderable .fi-select-input-value-badges-ctn {
+        @apply pointer-events-auto;
+    }
+
     & .fi-select-input-value-label {
         @apply flex-1;
     }

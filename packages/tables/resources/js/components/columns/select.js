@@ -1,10 +1,15 @@
-import { Select } from '../../../../../support/resources/js/utilities/select.js'
+import {
+    Select,
+    createSelectOptionRequestHandler,
+} from '../../../../../support/resources/js/utilities/select.js'
 
 export default function selectTableColumn({
+    accessibilityAttributes,
     ariaLabel,
     canOptionLabelsWrap,
     canSelectPlaceholder,
     clearButtonLabel,
+    errorMessage,
     getOptionLabelUsing,
     getOptionsUsing,
     getSearchResultsUsing,
@@ -32,6 +37,8 @@ export default function selectTableColumn({
     searchPrompt,
     state,
 }) {
+    const optionRequests = createSelectOptionRequestHandler()
+
     return {
         error: undefined,
 
@@ -46,14 +53,18 @@ export default function selectTableColumn({
         init() {
             if (!isNative) {
                 this.select = new Select({
+                    accessibilityAttributes,
                     ariaLabel,
                     canOptionLabelsWrap,
                     canSelectPlaceholder,
                     clearButtonLabel,
                     element: this.$refs.select,
+                    errorMessage,
                     getOptionLabelUsing,
-                    getOptionsUsing,
-                    getSearchResultsUsing,
+                    getOptionsUsing: optionRequests.wrap(getOptionsUsing),
+                    getSearchResultsUsing: optionRequests.wrap(
+                        getSearchResultsUsing,
+                    ),
                     hasDynamicOptions,
                     hasDynamicSearchResults,
                     hasInitialNoOptionsMessage,
@@ -181,6 +192,7 @@ export default function selectTableColumn({
                 this.select.destroy()
                 this.select = null
             }
+            optionRequests.destroy()
         },
     }
 }
