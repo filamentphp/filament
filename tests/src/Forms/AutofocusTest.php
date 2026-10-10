@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
@@ -53,23 +54,31 @@ it('only autofocuses a text input after its tab becomes active', function (): vo
     });
 });
 
-it('resets tabs and form data after `create another` inside a `CreateAction` modal', function (): void {
+it('resets the form and active tab after `create another` inside a `CreateAction` modal', function (): void {
     $this->actingAs(User::factory()->create());
 
-    visit('/autofocus-after-create-another-tabs-modal-browser-test')
-        ->click('[data-testid="open-modal-trigger"]')
-        ->assertVisible('input[wire\\:model="mountedActions.0.data.name"]')
-        ->assertScript('document.activeElement === document.querySelector("[autofocus]")', true)
-        ->fill('input[wire\\:model="mountedActions.0.data.name"]', 'Department')
-        ->click('[role="tab"]:has-text("Second Tab")')
-        ->assertAttribute('[role="tab"]:has-text("Second Tab")', 'aria-selected', 'true')
-        ->assertScript('document.activeElement === document.querySelector("[autofocus]")', false)
-        ->click('button >> text=Create & create another')
-        ->assertAttribute('[role="tab"]:has-text("First Tab")', 'aria-selected', 'true')
-        ->assertVisible('input[wire\\:model="mountedActions.0.data.name"]')
-        ->assertValue('input[wire\\:model="mountedActions.0.data.name"]', '');
+    $page = visit('/autofocus-after-create-another-tabs-modal-browser-test');
 
-    $this->assertDatabaseHas('departments', ['name' => 'Department']);
+    foreach ([$page, $page->inDarkMode()] as $themedPage) {
+        $themedPage
+            ->click('[data-testid="open-modal-trigger"]')
+            ->assertVisible('input[wire\\:model="mountedActions.0.data.name"]');
+
+        foreach (['Engineering', 'Operations'] as $departmentName) {
+            $themedPage
+                ->fill('input[wire\\:model="mountedActions.0.data.name"]', $departmentName)
+                ->click('[role="tab"]:nth-child(2)')
+                ->assertAttribute('[role="tab"]:nth-child(2)', 'aria-selected', 'true')
+                ->click('button >> text=Create & create another')
+                ->assertAttribute('[role="tab"]:nth-child(1)', 'aria-selected', 'true')
+                ->assertVisible('input[wire\\:model="mountedActions.0.data.name"]')
+                ->assertValue('input[wire\\:model="mountedActions.0.data.name"]', '');
+        }
+
+        $themedPage->assertNoAccessibilityIssues();
+    }
+
+    expect(Department::query()->orderBy('id')->pluck('name')->all())->toBe(['Engineering', 'Operations', 'Engineering', 'Operations']);
 });
 
 it('refocuses an `autofocus()` field after `create another` is clicked on a `CreateRecord` page', function (): void {
