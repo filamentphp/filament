@@ -2049,6 +2049,7 @@ it('preserves the selection and returns focus from toolbar link actions across e
 
             $page
                 ->assertVisible('input[id="mountedActionSchema0.url"]')
+                ->assertScript('document.activeElement.id', 'mountedActionSchema0.url')
                 ->assertCount('[role="tooltip"]:visible', 0);
 
             if ($shouldRemount) {
@@ -2097,6 +2098,7 @@ it('preserves the selection and returns focus from toolbar link actions across e
                 ->keys($content, 'Shift+Tab')
                 ->keys(':focus', ['End', 'Enter'])
                 ->assertVisible('input[id="mountedActionSchema0.url"]')
+                ->assertScript('document.activeElement.id', 'mountedActionSchema0.url')
                 ->assertCount('[role="tooltip"]:visible', 0);
 
             $page->script("window.oldKeyboardEditor = document.querySelector('{$content}'); const component = Alpine.\$data(window.oldKeyboardEditor); component.\$wire.\$set('data.keyboardContent', '<p>Updated article.</p>', false); component.\$wire.remountEditor()");
@@ -2156,6 +2158,7 @@ it('navigates horizontal toolbar menus using directional arrows and `Home` / `En
             ->keys(':focus', 'Shift+Tab')
             ->keys(':focus', ['Home', 'ArrowDown'])
             ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[0]", true)
+            ->assertScript("document.querySelector('{$editor} [data-rich-editor-tool=\"Formatting\"]').getAttribute('aria-haspopup')", 'menu')
             ->keys(':focus', $backwardKey)
             ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[3]", true)
             ->keys(':focus', $forwardKey)

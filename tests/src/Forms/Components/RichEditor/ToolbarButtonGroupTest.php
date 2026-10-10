@@ -129,7 +129,7 @@ describe('`toEmbeddedHtml()` output', function (): void {
 
         expect($html)->toContain('fi-fo-rich-editor-dropdown-tool');
         expect($html)->toContain('fi-fo-rich-editor-dropdown-tool-menu');
-        expect($html)->toContain('aria-haspopup="menu"');
+        expect($html)->toContain('aria-orientation="horizontal"');
         expect($html)->toContain('Format');
     });
 
