@@ -99,15 +99,23 @@ trait HasRecords
                 return $this->cachedTableRecords;
             }
 
+            $sortColumn = $this->getTableSortColumn();
+            $sortDirection = $this->getTableSortDirection();
+
+            if ($sortColumn && $this->getTable()->getColumn($sortColumn)?->isToggledHidden()) {
+                $sortColumn = null;
+                $sortDirection = null;
+            }
+
             $records = $this->getTable()->evaluate($this->getTable()->getDataSource(), [
                 'columnSearches' => fn (): array => $this->getTableColumnSearches(),
                 'filters' => fn (): ?array => $this->tableFilters,
                 'page' => fn (): int | string => $this->getTablePage(),
                 'recordsPerPage' => fn (): int | string => $this->getTableRecordsPerPage(),
                 'search' => fn (): ?string => $this->getTableSearch(),
-                'sort' => fn (): array => [$this->getTableSortColumn(), $this->getTableSortDirection()],
-                'sortColumn' => fn (): ?string => $this->getTableSortColumn(),
-                'sortDirection' => fn (): ?string => $this->getTableSortDirection(),
+                'sort' => static fn (): array => [$sortColumn, $sortDirection],
+                'sortColumn' => static fn (): ?string => $sortColumn,
+                'sortDirection' => static fn (): ?string => $sortDirection,
             ]);
 
             if (is_array($records)) {
