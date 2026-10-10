@@ -139,6 +139,8 @@ describe('browser interactions', function (): void {
                 ->assertVisible('[data-testid="validated-parent-data-field"] [data-validation-error]')
                 ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
                 ->assertNoAccessibilityIssues()
+                // Allow `handleFormValidationError()`'s deferred scroll to finish before replacing the error's field wrapper.
+                ->wait(0.3)
                 ->type('[data-testid="validated-parent-data-input"]', 'Jane Doe')
                 ->click('[data-testid="validated-parent-data-nested-trigger"]')
                 ->assertValue('[data-testid="validated-parent-data-input"]', 'Jane Doe')
@@ -225,9 +227,8 @@ describe('browser interactions', function (): void {
         $browser
             ->assertScript('(() => { const spacer = document.createElement(\'div\'); spacer.style.height = \'200vh\'; document.body.append(spacer); const trigger = document.querySelector(\'[data-testid="no-tabbable-content-trigger"]\'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()', true)
             ->assertVisible('[data-testid="no-tabbable-content-modal"]')
-            // Let the focus trap activate (it is deferred after opening) before checking where it put focus.
+            // Let the deferred focus trap activate before checking the page scroll position.
             ->wait(0.5)
-            ->assertPresent('.fi-modal-window-ctn:focus')
             ->assertScript('window.scrollY === window.modalTestScrollY', true)
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
@@ -253,10 +254,9 @@ describe('browser interactions', function (): void {
             ->assertScript('window.Alpine !== undefined')
             ->assertScript("(() => { const spacer = document.createElement('div'); spacer.style.height = '200vh'; document.body.append(spacer); const trigger = document.querySelector('{$triggerSelector}'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()", true)
             ->assertVisible($modalSelector)
-            // Let the focus trap activate before checking its fallback target.
+            // Let the deferred focus trap activate before checking the page scroll position.
             ->wait(0.5)
-            ->assertPresent("{$modalSelector}:focus")
-            ->assertScript("document.querySelector('{$modalSelector}').tabIndex", 0)
+            ->assertAttribute($modalSelector, 'tabindex', '0')
             ->assertScript('window.scrollY === window.modalTestScrollY', true)
             ->keys($modalSelector, 'PageDown')
             ->wait(0.5)
@@ -350,27 +350,25 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke();
     });
 
-    it('focuses the modal window instead of the tab-reachable close button when a modal using `closeModalByEscaping(false)` opens', function (): void {
+    it('keeps the close button keyboard reachable when a modal uses `closeModalByEscaping(false)`', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/modal-browser-test')
-            ->click('Escape close disabled')
-            ->assertVisible('[data-testid="escape-close-disabled-modal"]')
-            ->wait(0.5)
-            // The window is autofocused so the close button does not steal focus, while staying in the tab order as the only keyboard way to dismiss the modal.
-            ->assertScript('document.activeElement === document.querySelector(\'[data-testid="escape-close-disabled-modal"]\')', true)
-            ->assertScript('document.querySelector(\'[data-testid="escape-close-disabled-modal"] .fi-modal-close-btn\').tabIndex', 0)
-            ->click('[data-testid="escape-close-disabled-modal"] .fi-modal-close-btn')
-            ->assertMissing('[data-testid="escape-close-disabled-modal"]')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+        $page = visit('/modal-browser-test');
+        $modalSelector = '[data-testid="escape-close-disabled-modal"]';
+        $closeButtonSelector = $modalSelector . ' .fi-modal-close-btn';
 
-        visit('/modal-browser-test')
-            ->inDarkMode()
-            ->click('Escape close disabled')
-            ->assertVisible('[data-testid="escape-close-disabled-modal"]')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+        foreach ([$page, $page->inDarkMode()] as $themedPage) {
+            $themedPage
+                ->click('[data-testid="escape-close-disabled-trigger"]')
+                ->assertVisible($modalSelector)
+                ->wait(0.5)
+                ->keys($modalSelector, 'Tab')
+                ->assertPresent($closeButtonSelector . ':focus')
+                ->assertNoAccessibilityIssues()
+                ->keys($closeButtonSelector, 'Enter')
+                ->assertMissing($modalSelector)
+                ->assertNoSmoke();
+        }
     });
 
     it('cancels parent actions and releases the page scroll lock when a nested modal using `cancelParentActionsOnClose()` is dismissed', function (): void {

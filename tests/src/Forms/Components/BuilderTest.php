@@ -1101,7 +1101,8 @@ it('keeps blocks collapsed and preserves keyboard focus when reordering', functi
         $secondUp = ':nth-match([data-testid="builder"] [data-reorder-direction="up"], 2)';
         $thirdUp = ':nth-match([data-testid="builder"] [data-reorder-direction="up"], 3)';
 
-        $page->keys($firstDown, 'Enter')
+        $page->assertPresent('[data-testid="builder"]:not([x-ignore])')
+            ->keys($firstDown, 'Enter')
             ->assertValue($firstParagraph, 'Beta')
             ->assertValue($secondParagraph, 'Alpha')
             ->assertValue($thirdParagraph, 'Gamma')
@@ -1140,7 +1141,8 @@ it('provides non-tabbable move actions for collapsed blocks without taking focus
     $page = visit($url);
     foreach ([$page, $page->inDarkMode()] as $page) {
         $controls = '[data-testid="builder"] [data-reorder-direction]';
-        $page->assertCount($controls, 6)
+        $page->assertPresent('[data-testid="builder"]:not([x-ignore])')
+            ->assertCount($controls, 6)
             ->assertNotPresent('[data-testid="builder"] [aria-hidden="true"] [data-reorder-direction]');
 
         foreach (range(1, 6) as $position) {
@@ -1201,15 +1203,25 @@ it('renders appended and between blocks with current defaults while preserving e
     $heading = '[data-testid="heading-title"]';
     $page = visit('/builder-test')
         ->inDarkMode()
-        ->assertNotPresent($paragraph)
-        ->click('[data-testid="add-block"]')
+        ->assertPresent('[data-testid="builder"]:not([x-ignore])')
+        ->assertNotPresent($paragraph);
+
+    $page->page()->locator('[data-testid="add-block"]')->click();
+
+    $page
         ->click('button:has-text("Paragraph"):visible')
         ->assertValue($paragraph, 'Paragraph 1')
-        ->type($paragraph, 'Welcome to the autumn edition')
-        ->click('[data-testid="add-block"]')
+        ->type($paragraph, 'Welcome to the autumn edition');
+
+    $page->page()->locator('[data-testid="add-block"]')->click();
+
+    $page
         ->click('button:has-text("Heading"):visible')
-        ->type($heading, 'What is new')
-        ->click(':nth-match([data-testid="add-between"], 1)')
+        ->type($heading, 'What is new');
+
+    $page->page()->locator(':nth-match([data-testid="add-between"], 1)')->click();
+
+    $page
         ->click('button:has-text("Paragraph"):visible')
         ->assertCount($paragraph, 2)
         ->assertValue($firstParagraph, 'Welcome to the autumn edition')
@@ -1245,10 +1257,16 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
     }
 
     $page
-        ->click($addBlockAction)
+        ->assertPresent('[data-testid="builder"]:not([x-ignore])')
+        ->assertAttribute($addBlockAction, 'aria-expanded', 'false');
+
+    // Use the native locator timeout so a slow click is not repeated, toggling the picker closed again.
+    $page->page()->locator($addBlockAction)->click();
+
+    $page
         ->assertVisible($searchInput)
         ->assertAttribute($searchInput, 'type', 'text')
-        ->assertScript('document.activeElement.matches(\'.fi-fo-builder-block-picker-search-ctn input\')', true)
+        ->assertPresent($searchInput . ':focus')
         ->type($searchInput, 'ReSeArCh & DEVELOPMENT')
         ->assertVisible('[data-testid="builder"] [data-block-label="research & development"]')
         ->assertMissing('[data-testid="builder"] [data-block-label="paragraph"]')
@@ -1260,12 +1278,18 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
         ->assertVisible('[data-testid="builder"] [data-block-label="paragraph"]')
         ->keys($searchInput, 'Escape')
         ->assertMissing($searchInput)
-        ->assertScript('document.activeElement.closest(\'[data-testid="add-block"]\') !== null', true)
-        ->click($addBlockAction)
+        ->assertPresent($addBlockAction . ':focus');
+
+    $page->page()->locator($addBlockAction)->click();
+
+    $page
         ->type($searchInput, 'video')
         ->click('[data-testid="builder"] [data-block-label="video"]')
-        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
-        ->click($addBlockAction)
+        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1);
+
+    $page->page()->locator($addBlockAction)->click();
+
+    $page
         ->type($searchInput, 'video')
         ->assertVisible($noSearchResultsMessage)
         ->assertNoSmoke()
@@ -1280,8 +1304,12 @@ it('clears a debounced block picker search with `Escape` before the debounce ela
 
     $searchInput = '[data-testid="debounced-builder"] .fi-fo-builder-block-picker-search-ctn input';
 
-    visit('/builder-searchable-test')
-        ->click('[data-testid="add-debounced-block"]')
+    $page = visit('/builder-searchable-test')
+        ->assertPresent('[data-testid="debounced-builder"]:not([x-ignore])');
+
+    $page->page()->locator('[data-testid="add-debounced-block"]')->click();
+
+    $page
         ->assertVisible($searchInput)
         ->type($searchInput, 'zzz')
         ->keys($searchInput, 'Escape')
@@ -1313,7 +1341,11 @@ it('closes only the block picker with `Escape` when it is inside a modal', funct
     $page
         ->click('[data-testid="modal-builder-trigger"]')
         ->assertVisible($modal)
-        ->click($addBlockAction)
+        ->assertPresent('[data-testid="modal-builder"]:not([x-ignore])');
+
+    $page->page()->locator($addBlockAction)->click();
+
+    $page
         ->assertVisible($searchInput)
         ->assertScript('document.querySelector(\'[data-testid="builder-modal"]\').getAnimations({ subtree: true }).length', 0)
         ->assertNoAccessibilityIssues()
@@ -1343,15 +1375,21 @@ it('clears and focuses the block picker search after clicking away and reopening
         $page = $page->inDarkMode();
     }
 
+    $page->assertPresent('[data-testid="builder"]:not([x-ignore])');
+
+    $page->page()->locator('[data-testid="add-block"]')->click();
+
     $page
-        ->click('[data-testid="add-block"]')
         ->assertPresent($searchInput . ':focus')
         ->type($searchInput, 'video')
         ->assertVisible('[data-testid="builder"] [data-block-label="video"]')
         ->assertMissing('[data-testid="builder"] [data-block-label="paragraph"]')
         ->click('[data-testid="outside-picker"]')
-        ->assertMissing($searchInput)
-        ->click('[data-testid="add-block"]')
+        ->assertMissing($searchInput);
+
+    $page->page()->locator('[data-testid="add-block"]')->click();
+
+    $page
         ->assertVisible($searchInput)
         ->assertValue($searchInput, '')
         ->assertScript('document.activeElement.matches(\'.fi-fo-builder-block-picker-search-ctn input\')', true)
@@ -1372,18 +1410,31 @@ it('searches independently in the add-between picker and inserts the selected bl
     $endPicker = '[data-testid="builder"] > .fi-fo-builder-block-picker';
     $betweenPicker = '[data-testid="builder"] .fi-fo-builder-add-between-items-ctn';
 
-    visit('/builder-searchable-test')
-        ->click('[data-testid="add-block"]')
+    $page = visit('/builder-searchable-test')
+        ->assertPresent('[data-testid="builder"]:not([x-ignore])');
+
+    $page->page()->locator('[data-testid="add-block"]')->click();
+
+    $page
         ->click($endPicker . ' [data-block-label="paragraph"]')
-        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
-        ->click('[data-testid="add-block"]')
+        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1);
+
+    $page->page()->locator('[data-testid="add-block"]')->click();
+
+    $page
         ->click($endPicker . ' [data-block-label="research & development"]')
-        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 2)
-        ->click('[data-testid="add-block"]')
+        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 2);
+
+    $page->page()->locator('[data-testid="add-block"]')->click();
+
+    $page
         ->type($endPicker . ' .fi-fo-builder-block-picker-search-ctn input', 'paragraph')
         ->click('[data-testid="outside-picker"]')
-        ->hover('[data-testid="builder"] .fi-fo-builder-item:first-child')
-        ->click($betweenPicker . ' .fi-dropdown-trigger button')
+        ->hover('[data-testid="builder"] .fi-fo-builder-item:first-child');
+
+    $page->page()->locator($betweenPicker . ' .fi-dropdown-trigger button')->click();
+
+    $page
         ->assertValue($betweenPicker . ' .fi-fo-builder-block-picker-search-ctn input', '')
         ->type($betweenPicker . ' .fi-fo-builder-block-picker-search-ctn input', 'video')
         ->assertMissing($betweenPicker . ' [data-block-label="paragraph"]')
@@ -1401,7 +1452,11 @@ it('preserves an active search when the block catalog changes', function (): voi
 
     $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
     $page = visit('/builder-searchable-test')
-        ->click('[data-testid="add-block"]')
+        ->assertPresent('[data-testid="builder"]:not([x-ignore])');
+
+    $page->page()->locator('[data-testid="add-block"]')->click();
+
+    $page
         ->type($searchInput, 'video')
         ->assertVisible('[data-testid="builder"] [data-block-label="video"]');
 
@@ -1450,24 +1505,32 @@ it('focuses the search when blocks become available and after deleting the last 
 
         $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
         $page = visit('/builder-searchable-test?empty=1&limited=1')
+            ->assertPresent('[data-testid="builder"]:not([x-ignore])')
             ->assertNotPresent($searchInput);
 
         $page->script('Alpine.$data(document.querySelector(\'[data-testid="builder"]\')).$wire.$set(\'hasNoBlocks\', false)');
 
+        $page->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'false');
+
+        $page->page()->locator('[data-testid="add-block"]')->click();
+
         $page
-            ->click('[data-testid="add-block"]')
             ->assertVisible($searchInput)
             ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true')
-            ->assertScript('document.activeElement.matches(\'.fi-fo-builder-block-picker-search-ctn input\')', true)
+            ->assertPresent($searchInput . ':focus')
             ->click('[data-testid="builder"] [data-block-label="video"]')
             ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
             ->assertNotPresent($searchInput)
             ->click('[data-testid="builder"] .fi-fo-builder-item-header-end-actions button')
             ->assertNotPresent('[data-testid="builder"] .fi-fo-builder-item')
-            ->click('[data-testid="add-block"]')
+            ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'false');
+
+        $page->page()->locator('[data-testid="add-block"]')->click();
+
+        $page
             ->assertVisible($searchInput)
             ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true')
-            ->assertScript('document.activeElement.matches(\'.fi-fo-builder-block-picker-search-ctn input\')', true)
+            ->assertPresent($searchInput . ':focus')
             ->assertNoSmoke();
     } finally {
         $cache->setValue(null, $originalCache);
@@ -1492,8 +1555,11 @@ it('can add a searched block using `Tab` and `Enter` in both renderers', functio
         $page = visit('/builder-searchable-test');
 
         foreach ([$page, $page->inDarkMode()] as $themedPage) {
+            $themedPage->assertPresent('[data-testid="builder"]:not([x-ignore])');
+
+            $themedPage->page()->locator('[data-testid="add-block"]')->click();
+
             $themedPage
-                ->click('[data-testid="add-block"]')
                 ->assertVisible($searchInput)
                 ->assertPresent($searchInput . ':focus')
                 ->type($searchInput, 'video')
@@ -1521,14 +1587,20 @@ it('can reopen the picker and add a block after `blockPickerWidth()` changes', f
     $this->actingAs(User::factory()->create());
 
     $page = visit('/builder-searchable-test?notSearchable=' . (int) (! $isSearchable))
-        ->click('[data-testid="add-block"]')
+        ->assertPresent('[data-testid="builder"]:not([x-ignore])');
+
+    $page->page()->locator('[data-testid="add-block"]')->click();
+
+    $page
         ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true');
 
     $page->script('Alpine.$data(document.querySelector(\'[data-testid="builder"]\')).$wire.$set(\'hasWidePicker\', true)');
 
+    $page->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'false');
+
+    $page->page()->locator('[data-testid="add-block"]')->click();
+
     $page
-        ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'false')
-        ->click('[data-testid="add-block"]')
         ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true')
         ->click('[data-testid="builder"] .fi-dropdown-list-item:first-child')
         ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)

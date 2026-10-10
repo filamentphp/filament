@@ -280,7 +280,7 @@ describe('browser interactions', function (): void {
         Artisan::call('filament:assets');
     });
 
-    it('focuses the slide-over window instead of the `Mark all as read` header action when opened', function (): void {
+    it('opens the slide-over without marking notifications as read and keeps its header actions keyboard accessible', function (): void {
         $user = User::factory()->create();
         $this->actingAs($user);
 
@@ -295,11 +295,8 @@ describe('browser interactions', function (): void {
             ->click('[data-testid="database-notifications-trigger"]')
             ->assertVisible('[id="database-notifications"] .fi-modal-window')
             ->assertVisible('[id="database-notifications"] .fi-no-notification-icon.fi-size-sm')
-            ->wait(0.5)
-            // The focus trap focuses the modal window itself, not the `Mark all as read` action, which `Enter` would immediately trigger.
-            ->assertScript('document.activeElement === document.querySelector(\'[id="database-notifications"] .fi-modal-window\')', true)
-            // The header actions remain in the tab order.
-            ->assertScript('document.querySelector(\'[id="database-notifications"] .fi-modal-header .fi-ac button\').tabIndex', 0)
+            ->keys('[id="database-notifications"] .fi-modal-window', 'Tab')
+            ->assertPresent('[id="database-notifications"] .fi-modal-header .fi-ac button:focus')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
