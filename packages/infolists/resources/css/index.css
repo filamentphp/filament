@@ -6,3 +6,9 @@
 @import './components/image.css' layer(components);
 @import './components/repeatable.css' layer(components);
 @import './components/text.css' layer(components);
+
+@layer utilities {
+    .fi-in-text-item.fi-prose {
+        font-size: revert-layer;
+    }
+}
