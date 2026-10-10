@@ -518,7 +518,7 @@ The callback receives the path exactly as submitted by the client. Use exact tru
 
 <UtilityInjection set="formFields" version="4.x" extras="File;;string;;$file;;The submitted `data-id` value being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
 
-The validation error message can be customized via [`validationMessages()`](validation#customizing-validation-messages) using the `tampered` key:
+The validation error message can be customized via [`validationMessages()`](validation#validation-messages) using the `tampered` key:
 
 ```php
 use Filament\Forms\Components\RichEditor;

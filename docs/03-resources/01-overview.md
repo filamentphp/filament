@@ -155,7 +155,7 @@ public static function configure(Schema $schema): Schema
 }
 ```
 
-The `components()` method is used to define the structure of your form. It is an array of [fields](../forms/overview#available-fields) and [layout components](../schemas/layouts#available-layout-components), in the order they should appear in your form.
+The `components()` method is used to define the structure of your form. It is an array of [fields](../forms/overview#form-fields) and [layout components](../schemas/layouts#available-layout-components), in the order they should appear in your form.
 
 Check out the Forms docs for a [guide](../forms) on how to build forms with Filament.
 
@@ -346,7 +346,7 @@ protected static bool $hasTitleCaseModelLabel = false;
 
 ## Resource navigation items
 
-Filament will automatically generate a navigation menu item for your resource using the [plural label](#plural-label).
+Filament will automatically generate a navigation menu item for your resource using the [plural label](#customizing-the-plural-model-label).
 
 If you'd like to customize the navigation item label, you may use the `$navigationLabel` property:
 
@@ -664,7 +664,7 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 - `delete()` is used to prevent a single record from being deleted. `deleteAny()` is used to prevent records from being bulk deleted. Filament uses the `deleteAny()` method because iterating through multiple records and checking the `delete()` policy is not very performant. When using a `DeleteBulkAction`, if you want to call the `delete()` method for each record anyway, you should use the `DeleteBulkAction::make()->authorizeIndividualRecords()` method. Any records that fail the authorization check will not be processed.
 - `forceDelete()` is used to prevent a single soft-deleted record from being force-deleted. `forceDeleteAny()` is used to prevent records from being bulk force-deleted. Filament uses the `forceDeleteAny()` method because iterating through multiple records and checking the `forceDelete()` policy is not very performant. When using a `ForceDeleteBulkAction`, if you want to call the `forceDelete()` method for each record anyway, you should use the `ForceDeleteBulkAction::make()->authorizeIndividualRecords()` method. Any records that fail the authorization check will not be processed.
 - `restore()` is used to prevent a single soft-deleted record from being restored. `restoreAny()` is used to prevent records from being bulk restored. Filament uses the `restoreAny()` method because iterating through multiple records and checking the `restore()` policy is not very performant. When using a `RestoreBulkAction`, if you want to call the `restore()` method for each record anyway, you should use the `RestoreBulkAction::make()->authorizeIndividualRecords()` method. Any records that fail the authorization check will not be processed.
-- `reorder()` is used to control [reordering records in a table](listing-records#reordering-records).
+- `reorder()` is used to control [reordering records in a table](../tables/overview#reordering-records).
 
 <Aside variant="info">
     On every Livewire request, Filament re-queries the page's `$record` using the resource query, then repeats the page's authorization checks. For example, edit and view pages check the resource's `update()` and `view()` policies. A `ManageRelatedRecords` page checks access to the related resource or model, but does not authorize the owner record unless you add that check to the page's `canAccess()` method. Any global scopes removed by the resource query remain removed. Filament does not re-query or authorize additional model properties that you add to the page. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.

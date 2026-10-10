@@ -43,7 +43,7 @@ This is the basis of how fields work in Filament. Each field is assigned to a pu
 </x-dynamic-component>
 ```
 
-If your component heavily relies on third party libraries, we advise that you asynchronously load the Alpine.js component using the Filament asset system. This ensures that the Alpine.js component is only loaded when it's needed, and not on every page load. To find out how to do this, check out our [Assets documentation](../advanced/assets#asynchronous-alpinejs-components).
+If your component heavily relies on third party libraries, we advise that you asynchronously load the Alpine.js component using the Filament asset system. This ensures that the Alpine.js component is only loaded when it's needed, and not on every page load. To find out how to do this, check out our [Assets documentation](../advanced/assets#asynchronous-alpine-js-components).
 
 ## Custom field classes
 
@@ -230,7 +230,7 @@ class LocationPicker extends Field
 }
 ```
 
-Now, you can pass a static value or a function to the `zoom()` method, and [inject any utility](overview#component-utility-injection) as a parameter:
+Now, you can pass a static value or a function to the `zoom()` method, and [inject any utility](overview#field-utility-injection) as a parameter:
 
 ```php
 use App\Filament\Forms\Components\LocationPicker;
