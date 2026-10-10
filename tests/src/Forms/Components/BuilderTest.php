@@ -1101,7 +1101,8 @@ it('keeps blocks collapsed and preserves keyboard focus when reordering', functi
         $secondUp = ':nth-match([data-testid="builder"] [data-reorder-direction="up"], 2)';
         $thirdUp = ':nth-match([data-testid="builder"] [data-reorder-direction="up"], 3)';
 
-        $page->keys($firstDown, 'Enter')
+        $page->assertPresent('[data-testid="builder"]:not([x-ignore])')
+            ->keys($firstDown, 'Enter')
             ->assertValue($firstParagraph, 'Beta')
             ->assertValue($secondParagraph, 'Alpha')
             ->assertValue($thirdParagraph, 'Gamma')
@@ -1140,7 +1141,8 @@ it('provides non-tabbable move actions for collapsed blocks without taking focus
     $page = visit($url);
     foreach ([$page, $page->inDarkMode()] as $page) {
         $controls = '[data-testid="builder"] [data-reorder-direction]';
-        $page->assertCount($controls, 6)
+        $page->assertPresent('[data-testid="builder"]:not([x-ignore])')
+            ->assertCount($controls, 6)
             ->assertNotPresent('[data-testid="builder"] [aria-hidden="true"] [data-reorder-direction]');
 
         foreach (range(1, 6) as $position) {
