@@ -4,6 +4,7 @@ import {
     ActionGroup as NotificationActionGroup,
     Notification,
 } from './Notification'
+import './broadcast-notifications.js'
 
 window.FilamentNotificationAction = NotificationAction
 window.FilamentNotificationActionGroup = NotificationActionGroup

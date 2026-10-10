@@ -76,6 +76,7 @@ class FormsServiceProvider extends PackageServiceProvider
             AlpineComponent::make('file-upload', __DIR__ . '/../dist/components/file-upload.js'),
             AlpineComponent::make('key-value', __DIR__ . '/../dist/components/key-value.js'),
             AlpineComponent::make('markdown-editor', __DIR__ . '/../dist/components/markdown-editor.js'),
+            AlpineComponent::make('repeater', __DIR__ . '/../dist/components/repeater.js'),
             AlpineComponent::make('rich-editor', __DIR__ . '/../dist/components/rich-editor.js'),
             AlpineComponent::make('select', __DIR__ . '/../dist/components/select.js'),
             AlpineComponent::make('slider', __DIR__ . '/../dist/components/slider.js'),

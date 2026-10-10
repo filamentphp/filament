@@ -6,17 +6,129 @@ use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Contracts\Collapsible;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Clusters\UserManagement;
 use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageAdmins;
 use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster;
 use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster\Pages\ClusteredPageWithoutSubNavigation;
 use Filament\Tests\Fixtures\Enums\NavigationGroupEnum;
+use Filament\Tests\Fixtures\Pages\Settings;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Panels\Navigation\TestCase;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\HtmlString;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
+it('supports `Htmlable` navigation labels and closures', function (): void {
+    $label = new class implements Htmlable
+    {
+        public function toHtml(): string
+        {
+            return '<strong>Reports &amp; billing</strong>';
+        }
+    };
+
+    expect(NavigationGroup::make($label)->getLabel())->toBe($label)
+        ->and(NavigationItem::make($label)->getLabel())->toBe($label)
+        ->and(NavigationGroup::make()->label(static fn (): Htmlable => $label)->getLabel())->toBe($label)
+        ->and(NavigationItem::make()->label(static fn (): Htmlable => $label)->getLabel())->toBe($label)
+        ->and(NavigationItem::make($label)->getKey())->toBe('<strong>Reports &amp; billing</strong>');
+});
+
+it('matches and orders `Htmlable` navigation group labels and parents', function (): void {
+    $label = new HtmlString('<strong>Reports</strong>');
+
+    Filament::getCurrentOrDefaultPanel()
+        ->navigationGroups([
+            NavigationGroup::make($label),
+        ])
+        ->navigationItems([
+            NavigationItem::make($label)->key('reports')->group($label->toHtml())->url('/reports'),
+            NavigationItem::make('Invoices')->parentItem($label->toHtml())->group($label->toHtml())->url('/invoices'),
+        ]);
+
+    $groups = array_values(Filament::getNavigation());
+
+    expect($groups[1]->getLabel())->toBe($label)
+        ->and(collect($groups[1]->getItems())->first()->getChildItems()[0]->getLabel())->toBe('Invoices');
+});
+
+it('supports `Htmlable` group and parent labels in sub-navigation', function (): void {
+    $page = new class extends Page
+    {
+        public function getSubNavigation(): array
+        {
+            return [
+                NavigationGroup::make(new HtmlString('<strong>Reports</strong>')),
+                NavigationItem::make(new HtmlString('<strong>Overview</strong>'))->key('overview')->group('<strong>Reports</strong>')->url('/overview'),
+                NavigationItem::make('Invoices')->parentItem('<strong>Overview</strong>')->group('<strong>Reports</strong>')->url('/invoices'),
+            ];
+        }
+    };
+
+    $group = array_values($page->getCachedSubNavigation())[0];
+
+    expect($group->getLabel())->toBeInstanceOf(Htmlable::class)
+        ->and($group->getLabel()->toHtml())->toBe('<strong>Reports</strong>')
+        ->and(collect($group->getItems())->first()->getChildItems()[0]->getLabel())->toBe('Invoices');
+});
+
+it('renders `Htmlable` navigation labels and tooltips while escaping string labels', function (): void {
+    Artisan::call('filament:assets');
+
+    Filament::getCurrentOrDefaultPanel()
+        ->sidebarCollapsibleOnDesktop()
+        ->navigationGroups([
+            'literal' => NavigationGroup::make('<b>Archives &amp; billing</b>')
+                ->icon(Heroicon::OutlinedFolder)
+                ->extraSidebarAttributes(['data-testid' => 'literal-group']),
+            'rich' => NavigationGroup::make(new HtmlString('<b>Reports &amp; &lt;Draft&gt;</b>'))
+                ->icon(Heroicon::OutlinedFolder)
+                ->extraSidebarAttributes(['data-testid' => 'rich-group']),
+        ])
+        ->navigationItems([
+            NavigationItem::make('<b>Overview &amp; insights</b>')
+                ->icon(Heroicon::OutlinedChartBar)
+                ->url(Settings::getUrl())
+                ->extraAttributes(['data-testid' => 'literal-item']),
+            NavigationItem::make(new HtmlString('<b>Overview &amp; insights</b>'))
+                ->icon(Heroicon::OutlinedChartBar)
+                ->url(Settings::getUrl())
+                ->extraAttributes(['data-testid' => 'rich-item']),
+            NavigationItem::make('Invoices')->group('literal')->url(Settings::getUrl()),
+            NavigationItem::make('Reports')->group('rich')->url(Settings::getUrl()),
+        ]);
+
+    $page = visit(Settings::getUrl())
+        ->inDarkMode()
+        ->assertSeeIn('[data-testid="literal-item"]', '<b>Overview &amp; insights</b>')
+        ->assertMissing('[data-testid="literal-item"] b')
+        ->assertSeeIn('[data-testid="rich-item"] b', 'Overview & insights')
+        ->assertSeeIn('[data-testid="literal-group"] > div > span:visible', '<b>Archives &amp; billing</b>')
+        ->assertMissing('[data-testid="literal-group"] b')
+        ->assertSeeIn('[data-testid="rich-group"] > div b:visible', 'Reports & <Draft>')
+        ->assertAttribute('[data-testid="rich-group"] button[aria-controls]:not([aria-haspopup])', 'aria-label', 'Reports & <Draft>')
+        ->assertNoAccessibilityIssues();
+
+    $page->script("window.dispatchEvent(new CustomEvent('theme-changed', { detail: 'light' }))");
+    $page->assertNoAccessibilityIssues()
+        ->click('button[aria-label="' . __('filament-panels::layout.actions.sidebar.collapse.label') . '"]:visible')
+        ->hover('[data-testid="literal-item"] a')
+        ->assertSeeIn('[role="tooltip"]', '<b>Overview &amp; insights</b>')
+        ->assertMissing('[role="tooltip"] b')
+        ->hover('[data-testid="rich-item"] a')
+        ->assertSeeIn('[role="tooltip"] b', 'Overview & insights')
+        ->hover('[data-testid="literal-group"] button[aria-haspopup="menu"]')
+        ->assertSeeIn('[role="tooltip"]', '<b>Archives &amp; billing</b>')
+        ->assertMissing('[role="tooltip"] b')
+        ->hover('[data-testid="rich-group"] button[aria-haspopup="menu"]')
+        ->assertSeeIn('[role="tooltip"] b', 'Reports & <Draft>')
+        ->assertAttribute('[data-testid="rich-group"] button[aria-haspopup="menu"]', 'aria-label', 'Reports & <Draft>');
+});
 
 describe('registration and ordering', function (): void {
     it('can register navigation items from resources and pages', function (): void {

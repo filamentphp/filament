@@ -1,4 +1,8 @@
-window.setUpUnsavedDataChangesAlert = ({ body, livewireComponent, $wire }) => {
+window.setUpFilamentUnsavedDataChangesAlert = ({
+    body,
+    livewireComponent,
+    $wire,
+}) => {
     const beforeUnloadHandler = (event) => {
         if (
             window.jsMd5(JSON.stringify($wire.data).replace(/\\/g, '')) ===
@@ -19,7 +23,7 @@ window.setUpUnsavedDataChangesAlert = ({ body, livewireComponent, $wire }) => {
     )
 }
 
-window.setUpSpaModeUnsavedDataChangesAlert = ({
+window.setUpFilamentSpaModeUnsavedDataChangesAlert = ({
     body,
     resolveLivewireComponentUsing,
     $wire,
@@ -71,7 +75,7 @@ window.setUpSpaModeUnsavedDataChangesAlert = ({
     })
 }
 
-window.setUpUnsavedActionChangesAlert = ({
+window.setUpFilamentUnsavedActionChangesAlert = ({
     resolveLivewireComponentUsing,
     $wire,
 }) => {

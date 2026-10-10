@@ -8,6 +8,7 @@ use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\Page as ResourcePage;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
 use UnitEnum;
 
@@ -60,7 +61,8 @@ trait HasSubNavigation
 
         foreach ($this->getSubNavigation() as $item) {
             if ($item instanceof NavigationGroup) {
-                $navigationGroups[$item->getLabel()] = $item;
+                $label = $item->getLabel();
+                $navigationGroups[($label instanceof Htmlable) ? $label->toHtml() : $label] = $item;
 
                 continue;
             }
@@ -138,7 +140,7 @@ trait HasSubNavigation
 
         $parentItems->except([''])->each(function (Collection $parentItemItems, string $parentItemKey) use ($items): void {
             $parent = $items->first(
-                fn (NavigationItem $item): bool => $item->getKey() === $parentItemKey || $item->getLabel() === $parentItemKey
+                fn (NavigationItem $item): bool => $item->getKey() === $parentItemKey || (($label = $item->getLabel()) instanceof Htmlable ? $label->toHtml() : $label) === $parentItemKey
             );
 
             if (! $parent) {

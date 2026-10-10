@@ -163,7 +163,7 @@
                         JSON.stringify(@js(
                         collect($navigation)
                             ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
-                            ->map(fn (\Filament\Navigation\NavigationGroup $group): string => $group->getLabel())
+                            ->map(fn (\Filament\Navigation\NavigationGroup $group): ?string => ($label = $group->getLabel()) instanceof \Illuminate\Contracts\Support\Htmlable ? $label->toHtml() : $label)
                             ->values()
                             ->all()
                     )),

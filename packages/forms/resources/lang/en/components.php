@@ -4,6 +4,12 @@ return [
 
     'builder' => [
 
+        'reordering' => [
+            'item' => 'Block',
+            'position' => ':label, position :position of :count',
+            'moved' => ':label moved to position :position of :count',
+        ],
+
         'actions' => [
 
             'clone' => [
@@ -404,6 +410,12 @@ return [
     ],
 
     'repeater' => [
+
+        'reordering' => [
+            'item' => 'Item',
+            'position' => ':label, position :position of :count',
+            'moved' => ':label moved to position :position of :count',
+        ],
 
         'columns' => [
 
