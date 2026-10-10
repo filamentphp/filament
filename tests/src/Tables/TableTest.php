@@ -239,6 +239,72 @@ describe('content grid', function (): void {
     });
 });
 
+describe('sorting', function (): void {
+    it('ignores a persisted sort on a toggled-hidden column until it is shown again', function (string $sortColumn): void {
+        $firstUser = User::factory()->create(['name' => 'Charlie', 'email' => 'bravo@example.com']);
+        $secondUser = User::factory()->create(['name' => 'Alpha', 'email' => 'charlie@example.com']);
+        $thirdUser = User::factory()->create(['name' => 'Bravo', 'email' => 'alpha@example.com']);
+
+        Post::factory()->count(2)->for($firstUser, 'author')->create();
+        Post::factory()->for($thirdUser, 'author')->create();
+
+        $component = livewire(ToggleableSortableTableTestComponent::class)
+            ->sortTable($sortColumn)
+            ->assertCanSeeTableRecords([$secondUser, $thirdUser, $firstUser], inOrder: true);
+
+        $tableColumns = array_map(static function (array $column) use ($sortColumn): array {
+            if ($column['name'] === $sortColumn) {
+                $column['isToggled'] = false;
+            }
+
+            return $column;
+        }, $component->get('tableColumns'));
+
+        $component
+            ->call('applyTableColumnManager', $tableColumns)
+            ->assertCanSeeTableRecords([$thirdUser, $firstUser, $secondUser], inOrder: true);
+
+        livewire(ToggleableSortableTableTestComponent::class)
+            ->assertSet('tableSort', "{$sortColumn}:asc")
+            ->assertCanSeeTableRecords([$thirdUser, $firstUser, $secondUser], inOrder: true)
+            ->call('resetTableColumnManager')
+            ->assertCanSeeTableRecords([$secondUser, $thirdUser, $firstUser], inOrder: true);
+    })->with(['name', 'posts_count']);
+
+    it('ignores a persisted custom-data sort on a toggled-hidden column until it is shown again', function (bool $usesSortTuple): void {
+        $component = livewire(ToggleableSortableCustomDataTableTestComponent::class, ['usesSortTuple' => $usesSortTuple])
+            ->sortTable('title', 'desc')
+            ->assertCanSeeTableRecords([2, 1, 3], inOrder: true);
+
+        $tableColumns = $component->get('tableColumns');
+        $tableColumns[0]['isToggled'] = false;
+
+        $component
+            ->call('applyTableColumnManager', $tableColumns)
+            ->assertCanSeeTableRecords([1, 2, 3], inOrder: true);
+
+        livewire(ToggleableSortableCustomDataTableTestComponent::class, ['usesSortTuple' => $usesSortTuple])
+            ->assertSet('tableSort', 'title:desc')
+            ->assertCanSeeTableRecords([1, 2, 3], inOrder: true)
+            ->call('resetTableColumnManager')
+            ->assertCanSeeTableRecords([2, 1, 3], inOrder: true);
+    })->with([
+        'separate `$sortColumn` and `$sortDirection` injections' => [false],
+        'combined `$sort` injection' => [true],
+    ]);
+
+    it('preserves mapped sorting for a toggled-hidden `defaultSort()` column', function (): void {
+        $firstPost = Post::factory()->create(['title' => 'Charlie']);
+        $secondPost = Post::factory()->create(['title' => 'Alpha']);
+
+        livewire(MappedDefaultSortTableTestComponent::class)
+            ->assertCanSeeTableRecords([$secondPost, $firstPost], inOrder: true)
+            ->set('tableSort', 'display_title:desc')
+            ->assertSet('tableSort', 'display_title:desc')
+            ->assertCanSeeTableRecords([$secondPost, $firstPost], inOrder: true);
+    });
+});
+
 describe('session persistence', function (): void {
     it('can toggle all session persistence with `persistInSession()`', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
@@ -899,6 +965,68 @@ class LoadingSkeletonSortableTableTestComponent extends SortableTableTestCompone
     {
         return parent::table($table)
             ->loadingSkeleton();
+    }
+}
+
+class ToggleableSortableTableTestComponent extends TableTestComponent
+{
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(User::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('name')
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('posts_count')
+                    ->counts('posts')
+                    ->sortable()
+                    ->toggleable(),
+            ])
+            ->defaultSort('email')
+            ->persistSortInSession();
+    }
+}
+
+class ToggleableSortableCustomDataTableTestComponent extends TableTestComponent
+{
+    public bool $usesSortTuple = false;
+
+    public function table(Table $table): Table
+    {
+        $records = collect([
+            1 => ['id' => 1, 'title' => 'Bravo'],
+            2 => ['id' => 2, 'title' => 'Charlie'],
+            3 => ['id' => 3, 'title' => 'Alpha'],
+        ]);
+
+        return $table
+            ->records($this->usesSortTuple
+                ? static fn (array $sort): Collection => $records->sortBy($sort[0] ?? 'id', descending: $sort[1] === 'desc')
+                : static fn (?string $sortColumn, ?string $sortDirection): Collection => $records->sortBy($sortColumn ?? 'id', descending: $sortDirection === 'desc'))
+            ->columns([
+                Tables\Columns\TextColumn::make('title')
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('id'),
+            ])
+            ->persistSortInSession();
+    }
+}
+
+class MappedDefaultSortTableTestComponent extends TableTestComponent
+{
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('display_title')
+                    ->state(static fn (Post $record): string => $record->title)
+                    ->sortable(['title'])
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->defaultSort('display_title');
     }
 }
 
