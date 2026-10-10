@@ -109,7 +109,7 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
 
     public function action(string | Closure | null $action = null, string | Closure | null $arguments = null): static
     {
-        $this->jsHandler(fn (RichEditorTool $tool): string => '$wire.mountAction(\'' . ($tool->evaluate($action) ?? $tool->getName()) . '\', { editorSelection, ...' . ($tool->evaluate($arguments) ?? '{}') . ' }, ' . Js::from(['schemaComponent' => $tool->getEditor()->getKey()]) . ')');
+        $this->jsHandler(fn (RichEditorTool $tool): string => 'mountToolAction(' . Js::from($tool->evaluate($action) ?? $tool->getName()) . ', { editorSelection, ...' . ($tool->evaluate($arguments) ?? '{}') . ' }, $el)');
 
         return $this;
     }
@@ -216,6 +216,7 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
 
         $attributes = $this->getExtraAttributeBag()
             ->merge([
+                'data-rich-editor-tool' => e($this->getName()),
                 'tabindex' => -1,
                 'type' => 'button',
                 'aria-label' => e($label),
