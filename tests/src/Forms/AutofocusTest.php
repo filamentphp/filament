@@ -53,23 +53,23 @@ it('only autofocuses a text input after its tab becomes active', function (): vo
     });
 });
 
-it('refocuses an `autofocus()` field after `create another` inside a `CreateAction` modal that contains tabs', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+it('resets tabs and form data after `create another` inside a `CreateAction` modal', function (): void {
+    $this->actingAs(User::factory()->create());
 
-        visit('/autofocus-after-create-another-tabs-modal-browser-test')
-            ->click('[data-testid="open-modal-trigger"]')
-            ->assertVisible('input[wire\\:model="mountedActions.0.data.name"]')
-            ->wait(0.3)
-            ->assertScript('document.activeElement === document.querySelector("[autofocus]")', true)
-            ->fill('input[wire\\:model="mountedActions.0.data.name"]', 'Department')
-            ->click('.fi-tabs-item >> text=Second Tab')
-            ->wait(0.3)
-            ->assertScript('document.activeElement === document.querySelector("[autofocus]")', false)
-            ->click('button >> text=Create & create another')
-            ->wait(1.0)
-            ->assertScript('document.activeElement === document.querySelector("[autofocus]")', true);
-    });
+    visit('/autofocus-after-create-another-tabs-modal-browser-test')
+        ->click('[data-testid="open-modal-trigger"]')
+        ->assertVisible('input[wire\\:model="mountedActions.0.data.name"]')
+        ->assertScript('document.activeElement === document.querySelector("[autofocus]")', true)
+        ->fill('input[wire\\:model="mountedActions.0.data.name"]', 'Department')
+        ->click('[role="tab"]:has-text("Second Tab")')
+        ->assertAttribute('[role="tab"]:has-text("Second Tab")', 'aria-selected', 'true')
+        ->assertScript('document.activeElement === document.querySelector("[autofocus]")', false)
+        ->click('button >> text=Create & create another')
+        ->assertAttribute('[role="tab"]:has-text("First Tab")', 'aria-selected', 'true')
+        ->assertVisible('input[wire\\:model="mountedActions.0.data.name"]')
+        ->assertValue('input[wire\\:model="mountedActions.0.data.name"]', '');
+
+    $this->assertDatabaseHas('departments', ['name' => 'Department']);
 });
 
 it('refocuses an `autofocus()` field after `create another` is clicked on a `CreateRecord` page', function (): void {
