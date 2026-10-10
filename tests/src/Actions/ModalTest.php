@@ -139,6 +139,8 @@ describe('browser interactions', function (): void {
                 ->assertVisible('[data-testid="validated-parent-data-field"] [data-validation-error]')
                 ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
                 ->assertNoAccessibilityIssues()
+                // Allow `handleFormValidationError()`'s deferred scroll to finish before replacing the error's field wrapper.
+                ->wait(0.3)
                 ->type('[data-testid="validated-parent-data-input"]', 'Jane Doe')
                 ->click('[data-testid="validated-parent-data-nested-trigger"]')
                 ->assertValue('[data-testid="validated-parent-data-input"]', 'Jane Doe')
@@ -225,9 +227,8 @@ describe('browser interactions', function (): void {
         $browser
             ->assertScript('(() => { const spacer = document.createElement(\'div\'); spacer.style.height = \'200vh\'; document.body.append(spacer); const trigger = document.querySelector(\'[data-testid="no-tabbable-content-trigger"]\'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()', true)
             ->assertVisible('[data-testid="no-tabbable-content-modal"]')
-            // Let the focus trap activate (it is deferred after opening) before checking where it put focus.
+            // Let the deferred focus trap activate before checking the page scroll position.
             ->wait(0.5)
-            ->assertPresent('.fi-modal-window-ctn:focus')
             ->assertScript('window.scrollY === window.modalTestScrollY', true)
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();

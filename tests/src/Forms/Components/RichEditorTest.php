@@ -1848,9 +1848,9 @@ it('does not render custom block previews from imported HTML', function (): void
 
     $page = visit('/rich-editor-minimal-controls-browser-test');
 
-    $page
-        ->assertPresent('[data-testid="minimal-controls-editor"] .tiptap')
-        ->assertScript(<<<'JS'
+    $page->assertPresent('[data-testid="minimal-controls-editor"] .tiptap');
+
+    $page->script(<<<'JS'
                 (() => {
                     window.customBlockPreviewCommitCount = 0
                     window.removeCustomBlockPreviewCommitHook = Livewire.hook('commit', () => window.customBlockPreviewCommitCount++)
@@ -1868,13 +1868,13 @@ it('does not render custom block previews from imported HTML', function (): void
 
                     return true
                 })()
-                JS)
+                JS);
+
+    $page
         ->wait(1)
         ->assertScript('window.customBlockPreviewCommitCount', 0)
         ->assertScript(<<<'JS'
                 (() => {
-                    window.removeCustomBlockPreviewCommitHook()
-
                     const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
 
                     return editor.getJSON().content
@@ -1884,9 +1884,11 @@ it('does not render custom block previews from imported HTML', function (): void
                 JS, [
             ['Callout', '<p>First callout.</p>'],
             ['Callout', '<p>First callout.</p>'],
-        ])
-        ->assertScript(<<<'JS'
+        ]);
+
+    $page->script(<<<'JS'
                 (() => {
+                    window.removeCustomBlockPreviewCommitHook()
                     window.customBlockPreviewExecuted = false
 
                     const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
@@ -1900,19 +1902,10 @@ it('does not render custom block previews from imported HTML', function (): void
                         cancelable: true,
                         clipboardData,
                     }))
-
-                    const block = editor.getJSON().content.find((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.')
-
-                    return [
-                        Boolean(block),
-                        block?.attrs.id ?? null,
-                        block?.attrs.config?.message ?? null,
-                        block?.attrs.preview ?? null,
-                        block?.attrs.shouldApplyProseStylingToPreview ?? null,
-                    ]
                 })()
-                JS, [true, 'callout', 'Copied callout.', null, false])
-        ->wait(1)
+                JS);
+
+    $page
         ->assertScript(<<<'JS'
                 (() => {
                     const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
@@ -1921,11 +1914,15 @@ it('does not render custom block previews from imported HTML', function (): void
                     return [
                         block?.attrs.label ?? null,
                         block?.attrs.preview ? atob(block.attrs.preview) : null,
+                        block?.attrs.shouldApplyProseStylingToPreview ?? null,
                     ]
                 })()
-                JS, ['Callout', '<p>Copied callout.</p>'])
+                JS, ['Callout', '<p>Copied callout.</p>', false])
         ->assertScript('window.customBlockPreviewExecuted', false)
-        ->assertScript(<<<'JS'
+        // Keep the next paste outside TipTap's history grouping interval.
+        ->wait(0.6);
+
+    $page->script(<<<'JS'
                 (() => {
                     const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
                     const clipboardData = new DataTransfer()
@@ -1940,7 +1937,9 @@ it('does not render custom block previews from imported HTML', function (): void
 
                     return true
                 })()
-                JS)
+                JS);
+
+    $page
         ->wait(1)
         ->assertScript(<<<'JS'
                 (() => {
@@ -1954,38 +1953,9 @@ it('does not render custom block previews from imported HTML', function (): void
             ['Callout', '<p>Copied callout.</p>'],
             ['Callout', '<p>Copied callout.</p>'],
         ])
-        ->assertScript(<<<'JS'
-                (() => {
-                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
-
-                    editor.commands.focus()
-
-                    return true
-                })()
-                JS);
-
-    $page->page()->keyDown('Control');
-    $page->page()->keyDown('z');
-    $page->page()->keyUp('z');
-    $page->page()->keyUp('Control');
-
-    $page
-        ->assertScript(<<<'JS'
-                (() => {
-                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
-
-                    return editor.getJSON().content.filter((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.').length
-                })()
-                JS, 1);
-
-    $page->page()->keyDown('Control');
-    $page->page()->keyDown('Shift');
-    $page->page()->keyDown('z');
-    $page->page()->keyUp('z');
-    $page->page()->keyUp('Shift');
-    $page->page()->keyUp('Control');
-
-    $page
+        ->keys('[data-testid="minimal-controls-editor"] .tiptap', 'Control+z')
+        ->assertCount('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-custom-block"][data-config*="Copied callout."]', 1)
+        ->keys('[data-testid="minimal-controls-editor"] .tiptap', 'Control+Shift+z')
         ->assertScript(<<<'JS'
                 (() => {
                     const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()

@@ -153,6 +153,7 @@ class SelectTest extends Page
                     ->native(false)
                     ->createOptionForm([
                         TextInput::make('name')
+                            ->autofocus()
                             ->required()
                             ->extraInputAttributes(['data-testid' => 'create-option-name-input']),
                     ])
