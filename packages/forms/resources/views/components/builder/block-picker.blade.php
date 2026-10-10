@@ -17,7 +17,6 @@
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\GridDirection;
     use Filament\Support\Enums\Width;
-    use Filament\Support\Facades\FilamentAsset;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Illuminate\Contracts\Support\Htmlable;
     use Illuminate\Support\Js;
@@ -39,9 +38,7 @@
 
     $listAttributes = $searchable
         ? new FilamentComponentAttributeBag([
-            'x-load' => true,
-            'x-load-src' => FilamentAsset::getAlpineComponentSrc('builder', 'filament/forms'),
-            'x-data' => 'builderBlockPickerFormComponent()',
+            'x-data' => 'builderFormComponentBlockPicker()',
         ])
         : new FilamentComponentAttributeBag;
 @endphp

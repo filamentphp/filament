@@ -1027,7 +1027,7 @@ public function view(User $user, Export $export): bool
 
 The export system does not perform per-record authorization checks. When an export is triggered, all records matching the table query (or the model's full dataset, if used outside a table) are included in the export without consulting your application's [Laravel policies](https://laravel.com/docs/authorization#creating-policies). This means that if a user is allowed to trigger an export, they may receive records they would not normally be authorized to view through your application's UI.
 
-If you need to restrict which records are exported, you should scope the query using the [`modifyQueryUsing()` method](#modifying-the-eloquent-query):
+If you need to restrict which records are exported, you should scope the query using the [`modifyQueryUsing()` method](#modifying-the-export-query):
 
 ```php
 use Illuminate\Database\Eloquent\Builder;

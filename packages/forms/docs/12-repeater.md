@@ -140,7 +140,15 @@ Repeater::make('members')
 
 ## Reordering items
 
-A button is displayed on each item to allow the user to drag and drop to reorder it in the list.
+When drag reordering is enabled, you can use drag handles or move up and move down buttons to reorder items. By default, these buttons remain visually hidden and are excluded from the Tab sequence, but are available through screen-reader navigation.
+
+To provide visible buttons for sighted keyboard users, enable [reordering with buttons](#reordering-items-with-buttons).
+
+After a successful move, Filament updates a status message with the item's new position for screen readers. The repeater does not restore focus to the hidden buttons.
+
+While a move is being processed, further moves in the same repeater are ignored. Once it completes, you can move the item again. Moving a collapsed item does not expand it.
+
+Actions with custom client-side click handlers or native `wire:confirm` prompts retain their own interaction behavior. Filament does not automatically prevent repeated moves, restore focus, or provide position feedback for these actions.
 
 ### Preventing the user from reordering items
 
@@ -160,7 +168,7 @@ Repeater::make('members')
 
 ### Reordering items with buttons
 
-You may use the `reorderableWithButtons()` method to enable reordering items with buttons to move the item up and down:
+You may use `reorderableWithButtons()` to display move up and move down buttons:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -173,6 +181,8 @@ Repeater::make('members')
 ```
 
 <AutoScreenshot name="forms/fields/repeater/reorderable-with-buttons" alt="Repeater that is reorderable with buttons" version="4.x" />
+
+You can use Tab to reach these visible buttons and Enter or Space to activate them. After a successful keyboard move, focus stays with the same item unless you have moved focus elsewhere. At the first or last position, focus moves to the other enabled move button, if available; otherwise, it moves to the item itself. Filament confirmation modals configured with `requiresConfirmation()` retain their own focus behavior.
 
 Optionally, you may pass a boolean value to control if the repeater should be ordered with buttons or not:
 
@@ -201,6 +211,8 @@ Repeater::make('members')
     ])
     ->reorderableWithDragAndDrop(false)
 ```
+
+This also removes the visually hidden fallback buttons. Explicitly enabled visible move buttons remain available. Use `reorderable(false)` to prevent all reordering.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `reorderableWithDragAndDrop()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -976,8 +988,10 @@ Repeater::make('members')
 ```
 
 <Aside variant="info">
-    The `collapseAction()`, `collapseAllAction()`, `expandAction()`, `expandAllAction()` and `reorderAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
+    The `collapseAction()`, `collapseAllAction()`, `expandAction()` and `expandAllAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
 </Aside>
+
+Completing a drag that changes the item order invokes `reorderAction()`, which supports `requiresConfirmation()`. Clicking the drag handle alone does not invoke the action.
 
 ### Adding extra item actions to a repeater
 

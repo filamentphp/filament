@@ -96,7 +96,7 @@ Step::make('Order')
 
 ## Customizing the icon for completed steps
 
-You may customize the [icon](#setting-up-step-icons) of a completed step using the `completedIcon()` method:
+You may customize the [icon](#setting-a-step-icon) of a completed step using the `completedIcon()` method:
 
 ```php
 use Filament\Schemas\Components\Wizard\Step;

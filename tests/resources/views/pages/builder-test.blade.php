@@ -1,4 +1,8 @@
 <x-filament-panels::page>
+    <button type="button" data-testid="outside-reordering">
+        Outside the field
+    </button>
+
     <form wire:submit="save">
         {{ $this->form }}
 

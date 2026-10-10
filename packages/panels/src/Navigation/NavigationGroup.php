@@ -30,14 +30,14 @@ class NavigationGroup extends Component
      */
     protected array | Arrayable $items = [];
 
-    protected string | Closure | null $label = null;
+    protected string | Htmlable | Closure | null $label = null;
 
-    final public function __construct(string | Closure | null $label = null)
+    final public function __construct(string | Htmlable | Closure | null $label = null)
     {
         $this->label($label);
     }
 
-    public static function make(string | Closure | null $label = null): static
+    public static function make(string | Htmlable | Closure | null $label = null): static
     {
         $static = app(static::class, ['label' => $label]);
         $static->configure();
@@ -78,7 +78,7 @@ class NavigationGroup extends Component
         return $this;
     }
 
-    public function label(string | Closure | null $label): static
+    public function label(string | Htmlable | Closure | null $label): static
     {
         $this->label = $label;
 
@@ -98,7 +98,7 @@ class NavigationGroup extends Component
         return $this->items;
     }
 
-    public function getLabel(): ?string
+    public function getLabel(): string | Htmlable | null
     {
         return $this->evaluate($this->label);
     }
