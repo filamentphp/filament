@@ -75,6 +75,8 @@ CodeEntry::make('code')
     ->copyMessageDuration(1500)
 ```
 
+When the copyable code is not part of a link or action, you can also focus it using Tab and copy it using Enter or Space. The confirmation appears and is announced only after copying succeeds. If copying fails, a failure message appears and is announced instead.
+
 Optionally, you may pass a boolean value to control if the code should be copyable or not:
 
 ```php
