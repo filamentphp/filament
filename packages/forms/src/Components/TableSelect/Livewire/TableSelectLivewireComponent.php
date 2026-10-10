@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Modelable;
+use Livewire\Attributes\Reactive;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
 use LogicException;
@@ -30,6 +31,7 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
     use WithoutUrlPagination;
 
     #[Locked]
+    #[Reactive]
     public bool $isDisabled = false;
 
     #[Locked]

@@ -439,7 +439,7 @@ class KeyValue extends Field implements HasEmbeddedView
                     </thead>
 
                     <tbody
-                        <?php if ($isReorderable) { ?>
+                        <?php if ($isReorderable && (! $isDisabled)) { ?>
                             x-on:end.stop="reorderRows($event)"
                             x-sortable
                             data-sortable-animation-duration="<?= e($this->getReorderAnimationDuration()) ?>"
@@ -450,7 +450,7 @@ class KeyValue extends Field implements HasEmbeddedView
                             x-for="(row, index) in rows"
                         >
                             <tr
-                                <?php if ($isReorderable) { ?>
+                                <?php if ($isReorderable && (! $isDisabled)) { ?>
                                     x-bind:x-sortable-item="row.key"
                                 <?php } ?>
                             >

@@ -1699,7 +1699,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         $mentions = $this->getMentionsForJs();
         $toolbarButtons = $this->getToolbarButtons();
         $tools = $this->getTools();
-        $floatingToolbars = $this->getFloatingToolbars();
+        $floatingToolbars = $isDisabled ? [] : $this->getFloatingToolbars();
         $linkProtocols = $this->getLinkProtocols();
         $fileAttachmentsMaxSize = $this->getFileAttachmentsMaxSize();
         $fileAttachmentsAcceptedFileTypes = $this->getFileAttachmentsAcceptedFileTypes();
@@ -1773,7 +1773,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                                     { search: query, char },
                                 )
                             },
-                            hasResizableImages: <?= Js::from($this->hasResizableImages()) ?>,
+                            hasResizableImages: <?= Js::from((! $isDisabled) && $this->hasResizableImages()) ?>,
                             hasMinimalCustomBlockControls: <?= Js::from($this->hasMinimalCustomBlockControls()) ?>,
                             hasStickyToolbar: <?= Js::from($this->hasStickyToolbar()) ?>,
                             isDisabled: <?= Js::from($isDisabled) ?>,

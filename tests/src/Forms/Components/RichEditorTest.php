@@ -2179,6 +2179,7 @@ it('navigates horizontal toolbar menus using directional arrows and `Home` / `En
             ->assertScript("Alpine.\$data(document.querySelector('{$content}')).\$getEditor().state.selection.toJSON()", ['type' => 'text', 'anchor' => 1, 'head' => 6])
             ->keys(':focus', 'Shift+Tab')
             ->keys(':focus', 'ArrowDown')
+            ->assertAttribute(':focus', 'role', 'menuitemcheckbox')
             ->keys(':focus', [$forwardKey, $forwardKey])
             ->assertAttribute(':focus', 'aria-checked', 'true')
             ->keys(':focus', 'Escape')

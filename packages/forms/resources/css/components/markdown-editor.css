@@ -42,6 +42,10 @@
         @apply px-4! py-0!;
     }
 
+    & .fi-fo-markdown-editor-placeholder {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+
     & .EasyMDEContainer .CodeMirror-lines {
         @apply py-3!;
     }

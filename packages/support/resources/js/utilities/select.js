@@ -894,6 +894,7 @@ export class Select {
 
             this.badgesSortable = new Sortable(badgesContainer, {
                 animation: 150,
+                disabled: this.isDisabled,
                 onEnd: () => {
                     const newState = []
 
@@ -2301,6 +2302,8 @@ export class Select {
     }
 
     applyDisabledState() {
+        this.badgesSortable?.option('disabled', this.isDisabled)
+
         if (this.isDisabled) {
             // Add disabled attribute and class to the select button
             this.selectButton.setAttribute('disabled', 'disabled')
