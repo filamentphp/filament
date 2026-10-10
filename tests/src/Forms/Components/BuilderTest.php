@@ -1245,10 +1245,11 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
     }
 
     $page
+        ->assertAttribute($addBlockAction, 'aria-expanded', 'false')
         ->click($addBlockAction)
         ->assertVisible($searchInput)
         ->assertAttribute($searchInput, 'type', 'text')
-        ->assertScript('document.activeElement.matches(\'.fi-fo-builder-block-picker-search-ctn input\')', true)
+        ->assertPresent($searchInput . ':focus')
         ->type($searchInput, 'ReSeArCh & DEVELOPMENT')
         ->assertVisible('[data-testid="builder"] [data-block-label="research & development"]')
         ->assertMissing('[data-testid="builder"] [data-block-label="paragraph"]')
@@ -1260,7 +1261,7 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
         ->assertVisible('[data-testid="builder"] [data-block-label="paragraph"]')
         ->keys($searchInput, 'Escape')
         ->assertMissing($searchInput)
-        ->assertScript('document.activeElement.closest(\'[data-testid="add-block"]\') !== null', true)
+        ->assertPresent($addBlockAction . ':focus')
         ->click($addBlockAction)
         ->type($searchInput, 'video')
         ->click('[data-testid="builder"] [data-block-label="video"]')
@@ -1450,24 +1451,27 @@ it('focuses the search when blocks become available and after deleting the last 
 
         $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
         $page = visit('/builder-searchable-test?empty=1&limited=1')
+            ->assertPresent('[data-testid="builder"]:not([x-ignore])')
             ->assertNotPresent($searchInput);
 
         $page->script('Alpine.$data(document.querySelector(\'[data-testid="builder"]\')).$wire.$set(\'hasNoBlocks\', false)');
 
         $page
+            ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'false')
             ->click('[data-testid="add-block"]')
             ->assertVisible($searchInput)
             ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true')
-            ->assertScript('document.activeElement.matches(\'.fi-fo-builder-block-picker-search-ctn input\')', true)
+            ->assertPresent($searchInput . ':focus')
             ->click('[data-testid="builder"] [data-block-label="video"]')
             ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
             ->assertNotPresent($searchInput)
             ->click('[data-testid="builder"] .fi-fo-builder-item-header-end-actions button')
             ->assertNotPresent('[data-testid="builder"] .fi-fo-builder-item')
+            ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'false')
             ->click('[data-testid="add-block"]')
             ->assertVisible($searchInput)
             ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true')
-            ->assertScript('document.activeElement.matches(\'.fi-fo-builder-block-picker-search-ctn input\')', true)
+            ->assertPresent($searchInput . ':focus')
             ->assertNoSmoke();
     } finally {
         $cache->setValue(null, $originalCache);
