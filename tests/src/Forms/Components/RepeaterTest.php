@@ -1843,26 +1843,24 @@ it('leaves custom move handlers in control without locking later ordering', func
 })->with(['custom-mount', 'custom-refresh', 'custom-child-cancel', 'custom-child-submit']);
 
 it('can add and delete items in the browser', function (): void {
-    retry(10, function (): void {
-        Artisan::call('filament:assets');
+    Artisan::call('filament:assets');
 
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/repeater-test')
-            ->assertPresent('[data-testid="repeater"] .fi-fo-repeater-item')
-            ->click('[data-testid="repeater"] .fi-fo-repeater-add button')
-            ->wait(1)
-            ->assertPresent('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2)')
-            ->click('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2) .fi-fo-repeater-item-header-end-actions button')
-            ->wait(1)
-            ->assertNotPresent('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2)')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/repeater-test')
+        ->assertPresent('[data-testid="repeater"] .fi-fo-repeater-item')
+        ->click('[data-testid="repeater"] .fi-fo-repeater-add button')
+        ->wait(1)
+        ->assertPresent('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2)')
+        ->click('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2) .fi-fo-repeater-item-header-end-actions button')
+        ->wait(1)
+        ->assertNotPresent('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2)')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/repeater-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/repeater-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
 });
 
 describe('nested singular relationships', function (): void {

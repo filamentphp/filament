@@ -1831,29 +1831,26 @@ describe('custom block grouping', function (): void {
 });
 
 it('can render `RichEditor` in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/rich-editor-browser-test')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/rich-editor-browser-test')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/rich-editor-browser-test')
-            ->inDarkMode()
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/rich-editor-browser-test')
+        ->inDarkMode()
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 });
 
 it('does not render custom block previews from imported HTML', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        $page = visit('/rich-editor-minimal-controls-browser-test');
+    $page = visit('/rich-editor-minimal-controls-browser-test');
 
-        $page
-            ->assertPresent('[data-testid="minimal-controls-editor"] .tiptap')
-            ->assertScript(<<<'JS'
+    $page
+        ->assertPresent('[data-testid="minimal-controls-editor"] .tiptap')
+        ->assertScript(<<<'JS'
                 (() => {
                     window.customBlockPreviewCommitCount = 0
                     window.removeCustomBlockPreviewCommitHook = Livewire.hook('commit', () => window.customBlockPreviewCommitCount++)
@@ -1872,9 +1869,9 @@ it('does not render custom block previews from imported HTML', function (): void
                     return true
                 })()
                 JS)
-            ->wait(1)
-            ->assertScript('window.customBlockPreviewCommitCount', 0)
-            ->assertScript(<<<'JS'
+        ->wait(1)
+        ->assertScript('window.customBlockPreviewCommitCount', 0)
+        ->assertScript(<<<'JS'
                 (() => {
                     window.removeCustomBlockPreviewCommitHook()
 
@@ -1885,10 +1882,10 @@ it('does not render custom block previews from imported HTML', function (): void
                         .map((node) => [node.attrs.label, atob(node.attrs.preview)])
                 })()
                 JS, [
-                ['Callout', '<p>First callout.</p>'],
-                ['Callout', '<p>First callout.</p>'],
-            ])
-            ->assertScript(<<<'JS'
+            ['Callout', '<p>First callout.</p>'],
+            ['Callout', '<p>First callout.</p>'],
+        ])
+        ->assertScript(<<<'JS'
                 (() => {
                     window.customBlockPreviewExecuted = false
 
@@ -1915,8 +1912,8 @@ it('does not render custom block previews from imported HTML', function (): void
                     ]
                 })()
                 JS, [true, 'callout', 'Copied callout.', null, false])
-            ->wait(1)
-            ->assertScript(<<<'JS'
+        ->wait(1)
+        ->assertScript(<<<'JS'
                 (() => {
                     const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
                     const block = editor.getJSON().content.find((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.')
@@ -1927,8 +1924,8 @@ it('does not render custom block previews from imported HTML', function (): void
                     ]
                 })()
                 JS, ['Callout', '<p>Copied callout.</p>'])
-            ->assertScript('window.customBlockPreviewExecuted', false)
-            ->assertScript(<<<'JS'
+        ->assertScript('window.customBlockPreviewExecuted', false)
+        ->assertScript(<<<'JS'
                 (() => {
                     const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
                     const clipboardData = new DataTransfer()
@@ -1944,8 +1941,8 @@ it('does not render custom block previews from imported HTML', function (): void
                     return true
                 })()
                 JS)
-            ->wait(1)
-            ->assertScript(<<<'JS'
+        ->wait(1)
+        ->assertScript(<<<'JS'
                 (() => {
                     const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
 
@@ -1954,10 +1951,10 @@ it('does not render custom block previews from imported HTML', function (): void
                         .map((node) => [node.attrs.label, atob(node.attrs.preview)])
                 })()
                 JS, [
-                ['Callout', '<p>Copied callout.</p>'],
-                ['Callout', '<p>Copied callout.</p>'],
-            ])
-            ->assertScript(<<<'JS'
+            ['Callout', '<p>Copied callout.</p>'],
+            ['Callout', '<p>Copied callout.</p>'],
+        ])
+        ->assertScript(<<<'JS'
                 (() => {
                     const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
 
@@ -1967,13 +1964,13 @@ it('does not render custom block previews from imported HTML', function (): void
                 })()
                 JS);
 
-        $page->page()->keyDown('Control');
-        $page->page()->keyDown('z');
-        $page->page()->keyUp('z');
-        $page->page()->keyUp('Control');
+    $page->page()->keyDown('Control');
+    $page->page()->keyDown('z');
+    $page->page()->keyUp('z');
+    $page->page()->keyUp('Control');
 
-        $page
-            ->assertScript(<<<'JS'
+    $page
+        ->assertScript(<<<'JS'
                 (() => {
                     const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
 
@@ -1981,15 +1978,15 @@ it('does not render custom block previews from imported HTML', function (): void
                 })()
                 JS, 1);
 
-        $page->page()->keyDown('Control');
-        $page->page()->keyDown('Shift');
-        $page->page()->keyDown('z');
-        $page->page()->keyUp('z');
-        $page->page()->keyUp('Shift');
-        $page->page()->keyUp('Control');
+    $page->page()->keyDown('Control');
+    $page->page()->keyDown('Shift');
+    $page->page()->keyDown('z');
+    $page->page()->keyUp('z');
+    $page->page()->keyUp('Shift');
+    $page->page()->keyUp('Control');
 
-        $page
-            ->assertScript(<<<'JS'
+    $page
+        ->assertScript(<<<'JS'
                 (() => {
                     const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
 
@@ -1998,16 +1995,15 @@ it('does not render custom block previews from imported HTML', function (): void
                         .map((node) => [node.attrs.label, atob(node.attrs.preview)])
                 })()
                 JS, [
-                ['Callout', '<p>Copied callout.</p>'],
-                ['Callout', '<p>Copied callout.</p>'],
-            ])
-            ->assertNoAccessibilityIssues();
+            ['Callout', '<p>Copied callout.</p>'],
+            ['Callout', '<p>Copied callout.</p>'],
+        ])
+        ->assertNoAccessibilityIssues();
 
-        visit('/rich-editor-minimal-controls-browser-test')
-            ->inDarkMode()
-            ->assertPresent('[data-testid="minimal-controls-editor"] .tiptap')
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/rich-editor-minimal-controls-browser-test')
+        ->inDarkMode()
+        ->assertPresent('[data-testid="minimal-controls-editor"] .tiptap')
+        ->assertNoAccessibilityIssues();
 });
 
 it('can delete a grid from its floating toolbar without deleting its content', function (): void {
@@ -2067,31 +2063,29 @@ it('can manage grid columns from its floating toolbar', function (): void {
 });
 
 it('can search custom blocks and insert one at the preserved editor selection', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        $page = visit('/rich-editor-browser-test')
-            ->assertPresent('[data-testid="custom-blocks-rich-editor"] .tiptap')
-            ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '  eDiToRiAl  ')
-            ->assertVisible('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
-            ->assertVisible('[data-testid="custom-blocks-rich-editor"] [data-block-id="section"]')
-            ->assertMissing('[data-testid="custom-blocks-rich-editor"] [data-block-id="image"]')
-            ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', 'unknown block')
-            ->assertPresent('[data-testid="custom-blocks-rich-editor"] [role="status"]')
-            ->assertMissing('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
-            ->assertNoAccessibilityIssues()
-            ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '')
-            ->click('[data-testid="custom-blocks-rich-editor"] .tiptap p >> text=First paragraph.')
-            ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '  QuOtE  ')
-            ->click('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
-            ->assertPresent('[data-testid="custom-blocks-rich-editor"] [data-testid="rich-editor-custom-block"][data-id="quote"]')
-            ->assertNoAccessibilityIssues();
+    $page = visit('/rich-editor-browser-test')
+        ->assertPresent('[data-testid="custom-blocks-rich-editor"] .tiptap')
+        ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '  eDiToRiAl  ')
+        ->assertVisible('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
+        ->assertVisible('[data-testid="custom-blocks-rich-editor"] [data-block-id="section"]')
+        ->assertMissing('[data-testid="custom-blocks-rich-editor"] [data-block-id="image"]')
+        ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', 'unknown block')
+        ->assertPresent('[data-testid="custom-blocks-rich-editor"] [role="status"]')
+        ->assertMissing('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
+        ->assertNoAccessibilityIssues()
+        ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '')
+        ->click('[data-testid="custom-blocks-rich-editor"] .tiptap p >> text=First paragraph.')
+        ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '  QuOtE  ')
+        ->click('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
+        ->assertPresent('[data-testid="custom-blocks-rich-editor"] [data-testid="rich-editor-custom-block"][data-id="quote"]')
+        ->assertNoAccessibilityIssues();
 
-        visit('/rich-editor-browser-test')
-            ->inDarkMode()
-            ->assertPresent('[data-testid="custom-blocks-rich-editor"] .tiptap')
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/rich-editor-browser-test')
+        ->inDarkMode()
+        ->assertPresent('[data-testid="custom-blocks-rich-editor"] .tiptap')
+        ->assertNoAccessibilityIssues();
 });
 
 describe('preventing file attachment tampering', function (): void {
@@ -2374,16 +2368,14 @@ function walkEditorRawState(RichEditor $editor, callable $callback): void
 }
 
 it('exposes TipTap and ProseMirror modules on `window.FilamentRichEditor.tiptap` once the editor has mounted', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/rich-editor-browser-test')
-            ->assertPresent('.fi-fo-rich-editor .tiptap')
-            ->assertScript("typeof window.FilamentRichEditor?.tiptap?.core?.Editor === 'function'")
-            ->assertScript("typeof window.FilamentRichEditor?.tiptap?.pmState?.Plugin === 'function'")
-            ->assertScript("typeof window.FilamentRichEditor?.tiptap?.pmView?.EditorView === 'function'")
-            ->assertScript("typeof window.FilamentRichEditor?.tiptap?.pmModel?.Node === 'function'");
-    });
+    visit('/rich-editor-browser-test')
+        ->assertPresent('.fi-fo-rich-editor .tiptap')
+        ->assertScript("typeof window.FilamentRichEditor?.tiptap?.core?.Editor === 'function'")
+        ->assertScript("typeof window.FilamentRichEditor?.tiptap?.pmState?.Plugin === 'function'")
+        ->assertScript("typeof window.FilamentRichEditor?.tiptap?.pmView?.EditorView === 'function'")
+        ->assertScript("typeof window.FilamentRichEditor?.tiptap?.pmModel?.Node === 'function'");
 });
 
 class RenderRichEditor extends Livewire

@@ -189,62 +189,59 @@ describe('rendering', function (): void {
 });
 
 it('handles code entry in left-to-right and right-to-left layouts and commits the code to the Livewire state', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        $page = visit('/one-time-code-input-browser-test');
+    $page = visit('/one-time-code-input-browser-test');
 
-        $page
-            ->type('.fi-one-time-code-input-ctn input:nth-child(1)', '1234567')
-            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(1)', '1')
-            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(2)', '2')
-            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(5)', '5')
-            ->fill('.fi-one-time-code-input-ctn input:nth-child(1)', 'a6b5c4d3e2f1')
-            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(1)', '6')
-            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(2)', '5')
-            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(3)', '4')
-            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(4)', '3')
-            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(5)', '2')
-            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(6)', '1')
-            ->fill('.fi-one-time-code-input-ctn input:nth-child(1)', '123456')
-            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(1)', '1')
-            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(2)', '2')
-            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(3)', '3')
-            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(4)', '4')
-            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(5)', '5')
-            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(6)', '6')
-            ->assertSeeIn('[data-testid="submission-attempt-count"]', '0')
-            ->press('Save')
-            ->wait(1)
-            ->assertSeeIn('[data-testid="submitted-code"]', '123456')
-            ->assertSeeIn('[data-testid="submission-attempt-count"]', '1');
+    $page
+        ->type('.fi-one-time-code-input-ctn input:nth-child(1)', '1234567')
+        ->assertValue('.fi-one-time-code-input-ctn input:nth-child(1)', '1')
+        ->assertValue('.fi-one-time-code-input-ctn input:nth-child(2)', '2')
+        ->assertValue('.fi-one-time-code-input-ctn input:nth-child(5)', '5')
+        ->fill('.fi-one-time-code-input-ctn input:nth-child(1)', 'a6b5c4d3e2f1')
+        ->assertValue('.fi-one-time-code-input-ctn input:nth-child(1)', '6')
+        ->assertValue('.fi-one-time-code-input-ctn input:nth-child(2)', '5')
+        ->assertValue('.fi-one-time-code-input-ctn input:nth-child(3)', '4')
+        ->assertValue('.fi-one-time-code-input-ctn input:nth-child(4)', '3')
+        ->assertValue('.fi-one-time-code-input-ctn input:nth-child(5)', '2')
+        ->assertValue('.fi-one-time-code-input-ctn input:nth-child(6)', '1')
+        ->fill('.fi-one-time-code-input-ctn input:nth-child(1)', '123456')
+        ->assertValue('.fi-one-time-code-input-ctn input:nth-child(1)', '1')
+        ->assertValue('.fi-one-time-code-input-ctn input:nth-child(2)', '2')
+        ->assertValue('.fi-one-time-code-input-ctn input:nth-child(3)', '3')
+        ->assertValue('.fi-one-time-code-input-ctn input:nth-child(4)', '4')
+        ->assertValue('.fi-one-time-code-input-ctn input:nth-child(5)', '5')
+        ->assertValue('.fi-one-time-code-input-ctn input:nth-child(6)', '6')
+        ->assertSeeIn('[data-testid="submission-attempt-count"]', '0')
+        ->press('Save')
+        ->wait(1)
+        ->assertSeeIn('[data-testid="submitted-code"]', '123456')
+        ->assertSeeIn('[data-testid="submission-attempt-count"]', '1');
 
-        $page->script('document.documentElement.dir = \'rtl\'');
+    $page->script('document.documentElement.dir = \'rtl\'');
 
-        $page
-            ->assertScript('document.querySelector(\'.fi-one-time-code-input-ctn input:nth-child(1)\').getBoundingClientRect().left < document.querySelector(\'.fi-one-time-code-input-ctn input:nth-child(2)\').getBoundingClientRect().left')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    $page
+        ->assertScript('document.querySelector(\'.fi-one-time-code-input-ctn input:nth-child(1)\').getBoundingClientRect().left < document.querySelector(\'.fi-one-time-code-input-ctn input:nth-child(2)\').getBoundingClientRect().left')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        $darkModePage = visit('/one-time-code-input-browser-test')->inDarkMode();
+    $darkModePage = visit('/one-time-code-input-browser-test')->inDarkMode();
 
-        $darkModePage->script('document.documentElement.dir = \'rtl\'');
+    $darkModePage->script('document.documentElement.dir = \'rtl\'');
 
-        $darkModePage->assertNoAccessibilityIssues();
-    });
+    $darkModePage->assertNoAccessibilityIssues();
 });
 
 it('retries `submitOnCompletion()` after native validation fails and deduplicates submitted codes', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        $page = visit('/one-time-code-input-submit-on-completion-browser-test')
-            ->type('[data-testid="code-input"] input:nth-child(1)', '12345')
-            ->wait(1)
-            ->assertSeeIn('[data-testid="submission-attempt-count"]', '0')
-            ->fill('[data-testid="required-sibling"]', '');
+    $page = visit('/one-time-code-input-submit-on-completion-browser-test')
+        ->type('[data-testid="code-input"] input:nth-child(1)', '12345')
+        ->wait(1)
+        ->assertSeeIn('[data-testid="submission-attempt-count"]', '0')
+        ->fill('[data-testid="required-sibling"]', '');
 
-        $page->script(<<<'JS'
+    $page->script(<<<'JS'
             window.invalidEventCount = 0
             document.querySelector('[data-testid="required-sibling"]').addEventListener('invalid', () => window.invalidEventCount++)
             const input = document.querySelector('[data-testid="code-input"] input:nth-child(6)')
@@ -253,39 +250,39 @@ it('retries `submitOnCompletion()` after native validation fails and deduplicate
             input.dispatchEvent(new InputEvent('input', { bubbles: true, data: '6', inputType: 'insertText' }))
             JS);
 
-        $page
-            ->wait(1)
-            ->assertScript('window.invalidEventCount', 1)
-            ->assertSeeIn('[data-testid="submission-attempt-count"]', '0')
-            ->fill('[data-testid="required-sibling"]', 'Ada Lovelace');
+    $page
+        ->wait(1)
+        ->assertScript('window.invalidEventCount', 1)
+        ->assertSeeIn('[data-testid="submission-attempt-count"]', '0')
+        ->fill('[data-testid="required-sibling"]', 'Ada Lovelace');
 
-        // Replace the completed digit without clearing it, which would reset deduplication.
-        $page->script(<<<'JS'
+    // Replace the completed digit without clearing it, which would reset deduplication.
+    $page->script(<<<'JS'
             const input = document.querySelector('[data-testid="code-input"] input:nth-child(6)')
             input.value = '6'
             input.dispatchEvent(new InputEvent('input', { bubbles: true, data: '6', inputType: 'insertText' }))
             input.dispatchEvent(new InputEvent('input', { bubbles: true, data: '6', inputType: 'insertText' }))
             JS);
 
-        $page
-            ->wait(1)
-            ->assertSeeIn('[data-testid="submitted-code"]', '123456')
-            ->assertSeeIn('[data-testid="submission-attempt-count"]', '1')
-            ->type('[data-testid="code-input"] input:nth-child(6)', '6')
-            ->wait(1)
-            ->assertSeeIn('[data-testid="submission-attempt-count"]', '1')
-            ->fill('[data-testid="code-input"] input:nth-child(6)', '')
-            ->type('[data-testid="code-input"] input:nth-child(6)', '6')
-            ->wait(1)
-            ->assertSeeIn('[data-testid="submission-attempt-count"]', '2')
-            ->click('[data-testid="reset-code"]')
-            ->wait(1)
-            ->assertValue('[data-testid="code-input"] input:nth-child(1)', '')
-            ->fill('[data-testid="code-input"] input:nth-child(1)', '123456')
-            ->wait(1)
-            ->assertSeeIn('[data-testid="submission-attempt-count"]', '3');
+    $page
+        ->wait(1)
+        ->assertSeeIn('[data-testid="submitted-code"]', '123456')
+        ->assertSeeIn('[data-testid="submission-attempt-count"]', '1')
+        ->type('[data-testid="code-input"] input:nth-child(6)', '6')
+        ->wait(1)
+        ->assertSeeIn('[data-testid="submission-attempt-count"]', '1')
+        ->fill('[data-testid="code-input"] input:nth-child(6)', '')
+        ->type('[data-testid="code-input"] input:nth-child(6)', '6')
+        ->wait(1)
+        ->assertSeeIn('[data-testid="submission-attempt-count"]', '2')
+        ->click('[data-testid="reset-code"]')
+        ->wait(1)
+        ->assertValue('[data-testid="code-input"] input:nth-child(1)', '')
+        ->fill('[data-testid="code-input"] input:nth-child(1)', '123456')
+        ->wait(1)
+        ->assertSeeIn('[data-testid="submission-attempt-count"]', '3');
 
-        $page->script(<<<'JS'
+    $page->script(<<<'JS'
             const input = document.querySelector('[data-testid="code-input"] input:nth-child(6)')
             input.value = '7'
             input.dispatchEvent(new InputEvent('input', { bubbles: true, data: '7', inputType: 'insertText' }))
@@ -293,24 +290,23 @@ it('retries `submitOnCompletion()` after native validation fails and deduplicate
             input.dispatchEvent(new InputEvent('input', { bubbles: true, data: '6', inputType: 'insertText' }))
             JS);
 
-        $page
-            ->wait(1)
-            ->assertSeeIn('[data-testid="submission-attempt-count"]', '3')
-            ->type('[data-testid="code-input"] input:nth-child(6)', '7')
-            ->wait(1)
-            ->assertSeeIn('[data-testid="submission-attempt-count"]', '4')
-            ->assertSeeIn('[data-testid="submitted-code"]', '123457')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    $page
+        ->wait(1)
+        ->assertSeeIn('[data-testid="submission-attempt-count"]', '3')
+        ->type('[data-testid="code-input"] input:nth-child(6)', '7')
+        ->wait(1)
+        ->assertSeeIn('[data-testid="submission-attempt-count"]', '4')
+        ->assertSeeIn('[data-testid="submitted-code"]', '123457')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/one-time-code-input-submit-on-completion-browser-test')
-            ->inDarkMode()
-            ->fill('[data-testid="code-input"] input:nth-child(1)', '654321')
-            ->wait(1)
-            ->assertSeeIn('[data-testid="submitted-code"]', '654321')
-            ->assertSeeIn('[data-testid="submission-attempt-count"]', '1')
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/one-time-code-input-submit-on-completion-browser-test')
+        ->inDarkMode()
+        ->fill('[data-testid="code-input"] input:nth-child(1)', '654321')
+        ->wait(1)
+        ->assertSeeIn('[data-testid="submitted-code"]', '654321')
+        ->assertSeeIn('[data-testid="submission-attempt-count"]', '1')
+        ->assertNoAccessibilityIssues();
 });
 
 it('honors `novalidate` when using `submitOnCompletion()`', function (): void {

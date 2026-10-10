@@ -102,17 +102,15 @@ describe('`hasDate()` override effects', function (): void {
 });
 
 it('has no accessibility issues in light and dark modes', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/time-picker-browser-test')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/time-picker-browser-test')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/time-picker-browser-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/time-picker-browser-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
 });
 
 class TestComponentWithTimePicker extends Livewire

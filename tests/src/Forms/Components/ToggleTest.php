@@ -17,39 +17,35 @@ beforeEach(function (): void {
 });
 
 it('can toggle state by clicking in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/toggle-test')
-            ->assertAttribute('[data-testid="toggle"]', 'aria-checked', 'false')
-            ->click('[data-testid="toggle"]')
-            ->assertAttribute('[data-testid="toggle"]', 'aria-checked', 'true')
-            ->click('[data-testid="toggle"]')
-            ->assertAttribute('[data-testid="toggle"]', 'aria-checked', 'false')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/toggle-test')
+        ->assertAttribute('[data-testid="toggle"]', 'aria-checked', 'false')
+        ->click('[data-testid="toggle"]')
+        ->assertAttribute('[data-testid="toggle"]', 'aria-checked', 'true')
+        ->click('[data-testid="toggle"]')
+        ->assertAttribute('[data-testid="toggle"]', 'aria-checked', 'false')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/toggle-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/toggle-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
 });
 
 it('keeps `helperText()` visible after toggling off when `inlineLabel()` and `live()` are used', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/toggle-test')
-            ->assertSee('Live inline label helper text')
-            ->click('[data-testid="live-inline-label-toggle"]')
-            ->assertAttribute('[data-testid="live-inline-label-toggle"]', 'aria-checked', 'true')
-            ->assertSee('Live inline label helper text')
-            ->click('[data-testid="live-inline-label-toggle"]')
-            ->wait(1)
-            ->assertAttribute('[data-testid="live-inline-label-toggle"]', 'aria-checked', 'false')
-            ->assertSee('Live inline label helper text')
-            ->assertNoSmoke();
-    });
+    visit('/toggle-test')
+        ->assertSee('Live inline label helper text')
+        ->click('[data-testid="live-inline-label-toggle"]')
+        ->assertAttribute('[data-testid="live-inline-label-toggle"]', 'aria-checked', 'true')
+        ->assertSee('Live inline label helper text')
+        ->click('[data-testid="live-inline-label-toggle"]')
+        ->wait(1)
+        ->assertAttribute('[data-testid="live-inline-label-toggle"]', 'aria-checked', 'false')
+        ->assertSee('Live inline label helper text')
+        ->assertNoSmoke();
 });
 
 it('can set and get `onColor()`', function (): void {

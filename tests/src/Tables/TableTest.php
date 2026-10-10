@@ -777,55 +777,52 @@ describe('rendering', function (): void {
     it('keeps `CONTENT_BEFORE` and `CONTENT_AFTER` around the table content after an update', function (): void {
         Artisan::call('filament:assets');
 
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-            Post::query()->delete();
+        Post::query()->delete();
 
-            Post::factory()->count(2)->create();
+        Post::factory()->count(2)->create();
 
-            $hookOrder = '[data-testid="table-content-before-hook"] + .fi-ta-content-ctn + [data-testid="table-content-after-hook"] + nav.fi-pagination';
+        $hookOrder = '[data-testid="table-content-before-hook"] + .fi-ta-content-ctn + [data-testid="table-content-after-hook"] + nav.fi-pagination';
 
-            visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
-                ->assertDontSee('Created by render hook test')
-                ->assertPresent($hookOrder)
-                ->click('[data-testid="create-post"]')
-                ->assertSee('Created by render hook test')
-                ->assertPresent($hookOrder)
-                ->assertNoAccessibilityIssues();
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->assertDontSee('Created by render hook test')
+            ->assertPresent($hookOrder)
+            ->click('[data-testid="create-post"]')
+            ->assertSee('Created by render hook test')
+            ->assertPresent($hookOrder)
+            ->assertNoAccessibilityIssues();
 
-            visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
-                ->inDarkMode()
-                ->assertPresent($hookOrder)
-                ->assertNoAccessibilityIssues();
-        });
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->inDarkMode()
+            ->assertPresent($hookOrder)
+            ->assertNoAccessibilityIssues();
     });
 
     it('renders accessible table loading states in light and dark modes', function (): void {
         Artisan::call('filament:assets');
 
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-            Post::query()->delete();
+        Post::query()->delete();
 
-            Post::factory()->create(['title' => 'Short']);
-            Post::factory()->create(['title' => 'A much longer title']);
+        Post::factory()->create(['title' => 'Short']);
+        Post::factory()->create(['title' => 'A much longer title']);
 
-            visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
-                ->assertAttribute('[data-testid="table-loading-state"]', 'role', 'status')
-                ->assertAttribute('[data-testid="table-loading-state"]', 'aria-live', 'polite')
-                ->assertNoAccessibilityIssues();
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->assertAttribute('[data-testid="table-loading-state"]', 'role', 'status')
+            ->assertAttribute('[data-testid="table-loading-state"]', 'aria-live', 'polite')
+            ->assertNoAccessibilityIssues();
 
-            visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
-                ->inDarkMode()
-                ->assertPresent('[data-testid="table-loading-state"]')
-                ->assertNoAccessibilityIssues();
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->inDarkMode()
+            ->assertPresent('[data-testid="table-loading-state"]')
+            ->assertNoAccessibilityIssues();
 
-            $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
-            $individualSearchInput = '.fi-ta-individual-search-row input';
+        $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
+        $individualSearchInput = '.fi-ta-individual-search-row input';
 
-            $page->script(<<<'JS'
+        $page->script(<<<'JS'
                 (() => {
                     const input = document.querySelector('.fi-ta-individual-search-row input')
 
@@ -835,9 +832,9 @@ describe('rendering', function (): void {
                 })()
                 JS);
 
-            usleep(800_000);
+        usleep(800_000);
 
-            expect($page->script(<<<'JS'
+        expect($page->script(<<<'JS'
                 (() => {
                     const input = document.querySelector('.fi-ta-individual-search-row input')
 
@@ -847,19 +844,19 @@ describe('rendering', function (): void {
                 })()
                 JS))->toBeTrue();
 
-            $page->keys($individualSearchInput, 'r');
+        $page->keys($individualSearchInput, 'r');
 
-            expect($page->script("document.querySelector('{$individualSearchInput}').value"))->toBe('Shor');
+        expect($page->script("document.querySelector('{$individualSearchInput}').value"))->toBe('Shor');
 
-            usleep(2_000_000);
+        usleep(2_000_000);
 
-            $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
+        $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
 
-            $page->click('Published');
+        $page->click('Published');
 
-            usleep(300_000);
+        usleep(300_000);
 
-            expect($page->script(<<<'JS'
+        expect($page->script(<<<'JS'
                 (() => {
                     const tableContent = document.querySelector('.fi-ta-content-ctn')
 
@@ -868,19 +865,18 @@ describe('rendering', function (): void {
                 })()
                 JS))->toBeTrue();
 
-            usleep(1_000_000);
+        usleep(1_000_000);
 
-            Post::query()->delete();
+        Post::query()->delete();
 
-            visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
-                ->assertPresent('.fi-ta-empty-state-icon-bg .fi-loading-indicator')
-                ->assertNoAccessibilityIssues();
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->assertPresent('.fi-ta-empty-state-icon-bg .fi-loading-indicator')
+            ->assertNoAccessibilityIssues();
 
-            visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
-                ->inDarkMode()
-                ->assertPresent('.fi-ta-empty-state-icon-bg .fi-loading-indicator')
-                ->assertNoAccessibilityIssues();
-        });
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->inDarkMode()
+            ->assertPresent('.fi-ta-empty-state-icon-bg .fi-loading-indicator')
+            ->assertNoAccessibilityIssues();
     });
 
 });

@@ -293,17 +293,15 @@ describe('rendering', function (): void {
 });
 
 it('can render `Textarea` in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/textarea-test')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/textarea-test')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/textarea-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/textarea-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
 });
 
 class RenderTextareaWithAutosize extends Livewire

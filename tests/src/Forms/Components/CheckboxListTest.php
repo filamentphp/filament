@@ -1391,17 +1391,15 @@ describe('rendering', function (): void {
 });
 
 it('can render `CheckboxList` in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/checkbox-list-test')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/checkbox-list-test')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/checkbox-list-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/checkbox-list-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
 });
 
 class RenderCheckboxListWithStaticOptions extends Component implements HasActions, HasSchemas

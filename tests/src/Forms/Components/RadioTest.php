@@ -337,17 +337,15 @@ describe('rendering', function (): void {
 });
 
 it('can render `Radio` in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/radio-test')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/radio-test')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/radio-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/radio-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
 });
 
 class RenderRadioWithClosureInline extends Livewire

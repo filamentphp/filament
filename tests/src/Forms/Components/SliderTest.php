@@ -571,18 +571,16 @@ describe('rendering', function (): void {
 });
 
 it('can render `Slider` in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/slider-browser-test')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/slider-browser-test')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/slider-browser-test')
-            ->inDarkMode()
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/slider-browser-test')
+        ->inDarkMode()
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 });
 
 class TestComponentWithStepSliderInteger extends Livewire

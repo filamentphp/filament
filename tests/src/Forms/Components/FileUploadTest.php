@@ -2172,18 +2172,16 @@ describe('rendering', function (): void {
 });
 
 it('can render `FileUpload` in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/file-upload-browser-test')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/file-upload-browser-test')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/file-upload-browser-test')
-            ->inDarkMode()
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/file-upload-browser-test')
+        ->inDarkMode()
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 });
 
 it('does not refetch file metadata when reordering files', function (): void {

@@ -358,21 +358,19 @@ describe('rate limiting', function (): void {
 });
 
 it('has no accessibility issues outside `Login` in light and dark modes', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()
-            ->hasEmailAuthentication()
-            ->hasAppAuthentication()
-            ->create());
+    $this->actingAs(User::factory()
+        ->hasEmailAuthentication()
+        ->hasAppAuthentication()
+        ->create());
 
-        visit(MultiFactorChallengeBrowserTest::getUrl(panel: 'required-multi-factor-authentication'))
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit(MultiFactorChallengeBrowserTest::getUrl(panel: 'required-multi-factor-authentication'))
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit(MultiFactorChallengeBrowserTest::getUrl(panel: 'required-multi-factor-authentication'))
-            ->inDarkMode()
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    });
+    visit(MultiFactorChallengeBrowserTest::getUrl(panel: 'required-multi-factor-authentication'))
+        ->inDarkMode()
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 });
 
 class AlternateMultiFactorChallengeUser extends User {}

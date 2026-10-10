@@ -724,91 +724,85 @@ describe('rendering', function (): void {
 });
 
 it('can render `Wizard` in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/wizard-browser-test')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/wizard-browser-test')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/wizard-browser-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/wizard-browser-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
 });
 
 it('only shows the next action loading indicator for its own request', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        $nextAction = '[data-testid="wizard-next-action"]';
-        $nextActionLoadingIndicator = "{$nextAction} .fi-loading-indicator";
+    $nextAction = '[data-testid="wizard-next-action"]';
+    $nextActionLoadingIndicator = "{$nextAction} .fi-loading-indicator";
 
-        $browser = visit('/wizard-browser-test')
-            ->click('[data-testid="wizard-dynamic-select"] .fi-select-input-btn')
-            ->wait(0.3);
+    $browser = visit('/wizard-browser-test')
+        ->click('[data-testid="wizard-dynamic-select"] .fi-select-input-btn')
+        ->wait(0.3);
+
+    expect($browser->script(
+        "document.querySelector('{$nextAction}').parentElement.getAttribute('aria-disabled')",
+    ))->toBe('true');
+
+    expect($browser->script(
+        "Boolean(document.querySelector('{$nextActionLoadingIndicator}')?.getClientRects().length)",
+    ))->toBeFalse();
+
+    $browser
+        ->click('Draft')
+        ->click($nextAction)
+        ->assertVisible($nextActionLoadingIndicator)
+        ->assertNoSmoke();
+});
+
+it('keeps the next action focused and blocked during other requests', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $nextAction = '[data-testid="wizard-next-action"]';
+
+    foreach ([false, true] as $isDarkMode) {
+        $browser = visit('/wizard-browser-test');
+
+        if ($isDarkMode) {
+            $browser->inDarkMode();
+        }
+
+        $browser->script(<<<'JS'
+                document.querySelector('[data-testid="wizard-next-action"]').focus()
+                document.querySelector('[data-testid="wizard-dynamic-select"] .fi-select-input-btn').click()
+                JS);
+
+        $browser->wait(0.3);
 
         expect($browser->script(
             "document.querySelector('{$nextAction}').parentElement.getAttribute('aria-disabled')",
         ))->toBe('true');
 
-        expect($browser->script(
-            "Boolean(document.querySelector('{$nextActionLoadingIndicator}')?.getClientRects().length)",
-        ))->toBeFalse();
-
         $browser
-            ->click('Draft')
+            ->assertPresent("{$nextAction}:focus")
+            ->keys($nextAction, 'Enter')
+            ->keys($nextAction, 'Space')
+            ->wait(0.1)
+            ->assertScript('window.wizardNextActionActivationCount ?? 0', 0)
+            ->assertVisible('#profile-details')
+            ->assertNoSmoke()
+            ->wait(1)
+            ->keys('[data-testid="wizard-dynamic-select"] .fi-select-input-btn', 'Escape')
+            ->assertNoAccessibilityIssues()
             ->click($nextAction)
-            ->assertVisible($nextActionLoadingIndicator)
-            ->assertNoSmoke();
-    });
-});
-
-it('keeps the next action focused and blocked during other requests', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
-
-        $nextAction = '[data-testid="wizard-next-action"]';
-
-        foreach ([false, true] as $isDarkMode) {
-            $browser = visit('/wizard-browser-test');
-
-            if ($isDarkMode) {
-                $browser->inDarkMode();
-            }
-
-            $browser->script(<<<'JS'
-                document.querySelector('[data-testid="wizard-next-action"]').focus()
-                document.querySelector('[data-testid="wizard-dynamic-select"] .fi-select-input-btn').click()
-                JS);
-
-            $browser->wait(0.3);
-
-            expect($browser->script(
-                "document.querySelector('{$nextAction}').parentElement.getAttribute('aria-disabled')",
-            ))->toBe('true');
-
-            $browser
-                ->assertPresent("{$nextAction}:focus")
-                ->keys($nextAction, 'Enter')
-                ->keys($nextAction, 'Space')
-                ->wait(0.1)
-                ->assertScript('window.wizardNextActionActivationCount ?? 0', 0)
-                ->assertVisible('#profile-details')
-                ->assertNoSmoke()
-                ->wait(1)
-                ->keys('[data-testid="wizard-dynamic-select"] .fi-select-input-btn', 'Escape')
-                ->assertNoAccessibilityIssues()
-                ->click($nextAction)
-                ->assertAttribute($nextAction, 'aria-disabled', 'true')
-                ->assertPresent("{$nextAction}:focus")
-                ->keys($nextAction, 'Enter')
-                ->keys($nextAction, 'Space')
-                ->assertScript('window.wizardNextActionActivationCount', 1)
-                ->wait(1.1)
-                ->assertVisible('#profile-contact');
-        }
-    });
+            ->assertAttribute($nextAction, 'aria-disabled', 'true')
+            ->assertPresent("{$nextAction}:focus")
+            ->keys($nextAction, 'Enter')
+            ->keys($nextAction, 'Space')
+            ->assertScript('window.wizardNextActionActivationCount', 1)
+            ->wait(1.1)
+            ->assertVisible('#profile-contact');
+    }
 });
 
 class WizardTransitions extends Livewire

@@ -441,28 +441,26 @@ it('can reset `$isCreating` from the client to release the duplicate creation gu
 });
 
 it('can create a record again in the browser after navigating back to a create page restored from the history cache', function (): void {
-    retry(10, function (): void {
-        Artisan::call('filament:assets');
+    Artisan::call('filament:assets');
 
-        Ticket::query()->delete();
+    Ticket::query()->delete();
 
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit(TicketResource::getUrl('create', panel: 'spa'))
-            ->assertPresent('.fi-sc-form button[type="submit"]')
-            ->click('.fi-sc-form button[type="submit"]')
-            ->assertScript("window.location.pathname !== '/spa/tickets/create'", true)
-            ->assertPathIs('/spa/tickets/*')
-            ->back()
-            ->assertPathIs('/spa/tickets/create')
-            ->assertPresent('.fi-sc-form button[type="submit"]')
-            ->wait(1)
-            ->click('.fi-sc-form button[type="submit"]')
-            ->assertScript("window.location.pathname !== '/spa/tickets/create'", true)
-            ->assertPathIs('/spa/tickets/*');
+    visit(TicketResource::getUrl('create', panel: 'spa'))
+        ->assertPresent('.fi-sc-form button[type="submit"]')
+        ->click('.fi-sc-form button[type="submit"]')
+        ->assertScript("window.location.pathname !== '/spa/tickets/create'", true)
+        ->assertPathIs('/spa/tickets/*')
+        ->back()
+        ->assertPathIs('/spa/tickets/create')
+        ->assertPresent('.fi-sc-form button[type="submit"]')
+        ->wait(1)
+        ->click('.fi-sc-form button[type="submit"]')
+        ->assertScript("window.location.pathname !== '/spa/tickets/create'", true)
+        ->assertPathIs('/spa/tickets/*');
 
-        expect(Ticket::count())->toBe(2);
-    });
+    expect(Ticket::count())->toBe(2);
 });
 
 it('re-authorizes viewAny on Livewire updates after the initial mount of a create page', function (): void {

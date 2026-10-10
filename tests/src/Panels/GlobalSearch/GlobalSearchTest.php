@@ -286,109 +286,99 @@ describe('search results', function (): void {
 
 describe('SPA mode', function (): void {
     it('clears the search and closes the results after clicking a result', function (): void {
-        retry(10, function (): void {
-            Artisan::call('filament:assets');
+        Artisan::call('filament:assets');
 
-            Post::query()->delete();
+        Post::query()->delete();
 
-            $post = Post::factory()->create();
-            $expectedPath = parse_url(PostResource::getUrl('view', ['record' => $post], panel: 'spa'), PHP_URL_PATH);
+        $post = Post::factory()->create();
+        $expectedPath = parse_url(PostResource::getUrl('view', ['record' => $post], panel: 'spa'), PHP_URL_PATH);
 
-            $page = visit(PostResource::getUrl(panel: 'spa'))
-                ->type('.fi-global-search-field input', $post->title)
-                ->assertVisible('.fi-global-search-result-link');
+        $page = visit(PostResource::getUrl(panel: 'spa'))
+            ->type('.fi-global-search-field input', $post->title)
+            ->assertVisible('.fi-global-search-result-link');
 
-            $page
-                ->click('.fi-global-search-result-link')
-                ->assertPathIs($expectedPath)
-                ->assertValue('.fi-global-search-field input', '')
-                ->assertMissing('.fi-global-search-results-ctn');
-        });
+        $page
+            ->click('.fi-global-search-result-link')
+            ->assertPathIs($expectedPath)
+            ->assertValue('.fi-global-search-field input', '')
+            ->assertMissing('.fi-global-search-results-ctn');
     });
 
     it('clears the search and closes the results after selecting a result with the keyboard', function (): void {
-        retry(10, function (): void {
-            Artisan::call('filament:assets');
+        Artisan::call('filament:assets');
 
-            Post::query()->delete();
+        Post::query()->delete();
 
-            $post = Post::factory()->create();
-            $expectedPath = parse_url(PostResource::getUrl('view', ['record' => $post], panel: 'spa'), PHP_URL_PATH);
+        $post = Post::factory()->create();
+        $expectedPath = parse_url(PostResource::getUrl('view', ['record' => $post], panel: 'spa'), PHP_URL_PATH);
 
-            $page = visit(PostResource::getUrl(panel: 'spa'))
-                ->type('.fi-global-search-field input', $post->title)
-                ->assertVisible('.fi-global-search-result-link');
+        $page = visit(PostResource::getUrl(panel: 'spa'))
+            ->type('.fi-global-search-field input', $post->title)
+            ->assertVisible('.fi-global-search-result-link');
 
-            $page
-                ->keys('.fi-global-search-field input', 'ArrowDown')
-                ->assertPresent('.fi-global-search-result-link:focus')
-                ->keys('.fi-global-search-result-link', 'Enter')
-                ->assertPathIs($expectedPath)
-                ->assertValue('.fi-global-search-field input', '')
-                ->assertMissing('.fi-global-search-results-ctn');
-        });
+        $page
+            ->keys('.fi-global-search-field input', 'ArrowDown')
+            ->assertPresent('.fi-global-search-result-link:focus')
+            ->keys('.fi-global-search-result-link', 'Enter')
+            ->assertPathIs($expectedPath)
+            ->assertValue('.fi-global-search-field input', '')
+            ->assertMissing('.fi-global-search-results-ctn');
     });
 
     it('preserves the search when navigation is canceled', function (): void {
-        retry(10, function (): void {
-            Artisan::call('filament:assets');
+        Artisan::call('filament:assets');
 
-            Post::query()->delete();
+        Post::query()->delete();
 
-            $post = Post::factory()->create();
-            $expectedPath = parse_url(PostResource::getUrl(panel: 'spa'), PHP_URL_PATH);
+        $post = Post::factory()->create();
+        $expectedPath = parse_url(PostResource::getUrl(panel: 'spa'), PHP_URL_PATH);
 
-            $page = visit(PostResource::getUrl(panel: 'spa'))
-                ->type('.fi-global-search-field input', $post->title)
-                ->assertVisible('.fi-global-search-result-link');
+        $page = visit(PostResource::getUrl(panel: 'spa'))
+            ->type('.fi-global-search-field input', $post->title)
+            ->assertVisible('.fi-global-search-result-link');
 
-            $page->script("window.addEventListener('livewire:navigate', (event) => event.preventDefault(), { once: true })");
+        $page->script("window.addEventListener('livewire:navigate', (event) => event.preventDefault(), { once: true })");
 
-            $page
-                ->click('.fi-global-search-result-link')
-                ->assertPathIs($expectedPath)
-                ->assertValue('.fi-global-search-field input', $post->title);
-        });
+        $page
+            ->click('.fi-global-search-result-link')
+            ->assertPathIs($expectedPath)
+            ->assertValue('.fi-global-search-field input', $post->title);
     });
 
     it('does not reopen the results after the search is cleared', function (): void {
-        retry(10, function (): void {
-            Artisan::call('filament:assets');
+        Artisan::call('filament:assets');
 
-            Post::query()->delete();
+        Post::query()->delete();
 
-            $post = Post::factory()->create();
+        $post = Post::factory()->create();
 
-            $page = visit(PostResource::getUrl(panel: 'spa'))
-                ->type('.fi-global-search-field input', $post->title)
-                ->assertVisible('.fi-global-search-results-ctn');
+        $page = visit(PostResource::getUrl(panel: 'spa'))
+            ->type('.fi-global-search-field input', $post->title)
+            ->assertVisible('.fi-global-search-results-ctn');
 
-            $page->type('.fi-global-search-field input', '')
-                ->assertValue('.fi-global-search-field input', '')
-                ->keys('.fi-global-search-field input', 'ArrowDown')
-                ->assertMissing('.fi-global-search-results-ctn');
-        });
+        $page->type('.fi-global-search-field input', '')
+            ->assertValue('.fi-global-search-field input', '')
+            ->keys('.fi-global-search-field input', 'ArrowDown')
+            ->assertMissing('.fi-global-search-results-ctn');
     });
 
     it('has no accessibility issues in light and dark modes', function (bool $isDarkMode): void {
-        retry(10, function () use ($isDarkMode): void {
-            Artisan::call('filament:assets');
+        Artisan::call('filament:assets');
 
-            Post::query()->delete();
+        Post::query()->delete();
 
-            $post = Post::factory()->create();
+        $post = Post::factory()->create();
 
-            $page = visit(PostResource::getUrl(panel: 'spa'));
+        $page = visit(PostResource::getUrl(panel: 'spa'));
 
-            if ($isDarkMode) {
-                $page = $page->inDarkMode();
-            }
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
 
-            $page
-                ->type('.fi-global-search-field input', $post->title)
-                ->assertVisible('.fi-global-search-results-ctn')
-                ->assertNoAccessibilityIssues();
-        });
+        $page
+            ->type('.fi-global-search-field input', $post->title)
+            ->assertVisible('.fi-global-search-results-ctn')
+            ->assertNoAccessibilityIssues();
     })->with(['light' => false, 'dark' => true]);
 });
 

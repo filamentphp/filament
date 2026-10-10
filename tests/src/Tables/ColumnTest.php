@@ -484,72 +484,68 @@ describe('searching', function (): void {
     });
 
     it('renders, responsively hides, and clears individual column search inputs with associated labels for columns named after JavaScript array properties in the browser', function (): void {
-        retry(10, function (): void {
-            Artisan::call('filament:assets');
+        Artisan::call('filament:assets');
 
-            $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-            Post::factory()->count(3)->create();
+        Post::factory()->count(3)->create();
 
-            visit('/individual-column-search-browser-test')
-                ->assertValue('.fi-ta-individual-search-cell-length input', '')
-                ->assertValue('.fi-ta-individual-search-cell-sort input', '')
-                ->assertValue('.fi-ta-individual-search-cell-title input', '')
-                ->resize(375, 812)
-                ->assertScript("(() => { const expectedLabels = { length: 'Length', sort: 'Sort', title: 'Title' }; return Object.entries(expectedLabels).every(([column, label]) => document.querySelector('.fi-ta-individual-search-cell-' + column + ' input').labels[0]?.textContent.trim() === label) })()", true)
-                ->fill('.fi-ta-individual-search-cell-length input', 'foo')
-                ->wait(1)
-                ->assertValue('.fi-ta-individual-search-cell-length input', 'foo')
-                ->fill('.fi-ta-individual-search-cell-length input', '')
-                ->wait(1)
-                ->assertValue('.fi-ta-individual-search-cell-length input', '')
-                ->resize(700, 812)
-                ->assertScript("document.querySelector('.fi-ta-individual-search-row').checkVisibility()", false)
-                ->resize(800, 812)
-                ->assertScript("document.querySelector('.fi-ta-individual-search-row').checkVisibility()", true)
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
+        visit('/individual-column-search-browser-test')
+            ->assertValue('.fi-ta-individual-search-cell-length input', '')
+            ->assertValue('.fi-ta-individual-search-cell-sort input', '')
+            ->assertValue('.fi-ta-individual-search-cell-title input', '')
+            ->resize(375, 812)
+            ->assertScript("(() => { const expectedLabels = { length: 'Length', sort: 'Sort', title: 'Title' }; return Object.entries(expectedLabels).every(([column, label]) => document.querySelector('.fi-ta-individual-search-cell-' + column + ' input').labels[0]?.textContent.trim() === label) })()", true)
+            ->fill('.fi-ta-individual-search-cell-length input', 'foo')
+            ->wait(1)
+            ->assertValue('.fi-ta-individual-search-cell-length input', 'foo')
+            ->fill('.fi-ta-individual-search-cell-length input', '')
+            ->wait(1)
+            ->assertValue('.fi-ta-individual-search-cell-length input', '')
+            ->resize(700, 812)
+            ->assertScript("document.querySelector('.fi-ta-individual-search-row').checkVisibility()", false)
+            ->resize(800, 812)
+            ->assertScript("document.querySelector('.fi-ta-individual-search-row').checkVisibility()", true)
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
 
-            visit('/individual-column-search-browser-test')
-                ->inDarkMode()
-                ->resize(375, 812)
-                ->assertNoAccessibilityIssues();
-        });
+        visit('/individual-column-search-browser-test')
+            ->inDarkMode()
+            ->resize(375, 812)
+            ->assertNoAccessibilityIssues();
     });
 
     it('scopes column manager checkbox ids to each table in the browser', function (): void {
-        retry(10, function (): void {
-            Artisan::call('filament:assets');
+        Artisan::call('filament:assets');
 
-            $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-            Post::factory()->count(3)->create();
+        Post::factory()->count(3)->create();
 
-            visit('/column-manager-browser-test')
-                ->assertPresent('#first-table .fi-ta-header-cell-title')
-                ->assertPresent('#second-table .fi-ta-header-cell-title')
-                // Open the first table's column manager too, so its checkboxes are also rendered when the second manager's labels are clicked.
-                ->click('#first-table button[aria-label="Column manager"]')
-                ->click('#second-table button[aria-label="Column manager"]')
-                // Every rendered column manager checkbox id must be unique, otherwise a label's `for` can activate a checkbox in another table's manager.
-                ->assertScript('new Set(Array.from(document.querySelectorAll(\'.fi-ta-col-manager-label input[type="checkbox"]\')).map((checkbox) => checkbox.id)).size === document.querySelectorAll(\'.fi-ta-col-manager-label input[type="checkbox"]\').length', true)
-                // Clicking the `Title` label must toggle the checkbox in this table's column manager, not the checkbox of the other table's manager that shares the column name.
-                ->click('#second-table .fi-ta-col-manager-label[for$="-title"]')
-                ->wait(1)
-                ->assertMissing('#second-table .fi-ta-header-cell-title')
-                ->assertPresent('#first-table .fi-ta-header-cell-title')
-                // Restore the toggled column, since the column manager persists in the session and a retried attempt must start from the default state.
-                ->click('#second-table .fi-ta-col-manager-label[for$="-title"]')
-                ->wait(1)
-                ->assertPresent('#second-table .fi-ta-header-cell-title')
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
+        visit('/column-manager-browser-test')
+            ->assertPresent('#first-table .fi-ta-header-cell-title')
+            ->assertPresent('#second-table .fi-ta-header-cell-title')
+            // Open the first table's column manager too, so its checkboxes are also rendered when the second manager's labels are clicked.
+            ->click('#first-table button[aria-label="Column manager"]')
+            ->click('#second-table button[aria-label="Column manager"]')
+            // Every rendered column manager checkbox id must be unique, otherwise a label's `for` can activate a checkbox in another table's manager.
+            ->assertScript('new Set(Array.from(document.querySelectorAll(\'.fi-ta-col-manager-label input[type="checkbox"]\')).map((checkbox) => checkbox.id)).size === document.querySelectorAll(\'.fi-ta-col-manager-label input[type="checkbox"]\').length', true)
+            // Clicking the `Title` label must toggle the checkbox in this table's column manager, not the checkbox of the other table's manager that shares the column name.
+            ->click('#second-table .fi-ta-col-manager-label[for$="-title"]')
+            ->wait(1)
+            ->assertMissing('#second-table .fi-ta-header-cell-title')
+            ->assertPresent('#first-table .fi-ta-header-cell-title')
+            // Restore the toggled column, since the column manager persists in the session and a retried attempt must start from the default state.
+            ->click('#second-table .fi-ta-col-manager-label[for$="-title"]')
+            ->wait(1)
+            ->assertPresent('#second-table .fi-ta-header-cell-title')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
 
-            visit('/column-manager-browser-test')
-                ->inDarkMode()
-                ->click('#second-table button[aria-label="Column manager"]')
-                ->assertNoAccessibilityIssues();
-        });
+        visit('/column-manager-browser-test')
+            ->inDarkMode()
+            ->click('#second-table button[aria-label="Column manager"]')
+            ->assertNoAccessibilityIssues();
     });
 });
 

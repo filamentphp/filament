@@ -361,35 +361,33 @@ describe('rendering', function (): void {
 });
 
 it('can add and remove tags in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/tags-input-test')
-            ->assertScript("JSON.stringify(Array.from(document.querySelectorAll('[data-testid=\"separator-tags\"] .fi-badge-label [x-text=\"tag\"]'), (element) => element.textContent))", '["alpha","0"]')
-            ->assertDontSee('MyNewTag')
-            ->type('[data-testid="basic-tags"] input', 'MyNewTag')
-            ->keys('[data-testid="basic-tags"] input', 'Enter')
-            ->assertSee('MyNewTag')
-            ->assertSee('MyNewTag')
-            ->click('[data-testid="basic-tags"] .fi-badge-delete-btn')
-            ->assertNotPresent('[data-testid="basic-tags"] .fi-badge') // The live region briefly announces the removal, so assert on the badge element instead of the page text.
-            ->type('[data-testid="basic-tags"] input', 'alpha')
-            ->keys('[data-testid="basic-tags"] input', ',', ',')
-            ->type('[data-testid="basic-tags"] input', '0')
-            ->keys('[data-testid="basic-tags"] input', ',')
-            ->assertScript("JSON.stringify(Array.from(document.querySelectorAll('[data-testid=\"basic-tags\"] .fi-badge-label [x-text=\"tag\"]'), (element) => element.textContent))", '["alpha","0"]')
-            ->type('[data-testid="basic-tags"] input', '50% off $&')
-            ->keys('[data-testid="basic-tags"] input', 'Enter')
-            ->assertSee('50% off $&')
-            // `$` sequences in a tag must not be treated as `String.replace()` substitution patterns in the live region announcement.
-            ->assertScript('document.querySelector(\'[data-testid="basic-tags"] [x-ref="liveRegion"]\').textContent.includes(\'50% off $&\')', true)
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/tags-input-test')
+        ->assertScript("JSON.stringify(Array.from(document.querySelectorAll('[data-testid=\"separator-tags\"] .fi-badge-label [x-text=\"tag\"]'), (element) => element.textContent))", '["alpha","0"]')
+        ->assertDontSee('MyNewTag')
+        ->type('[data-testid="basic-tags"] input', 'MyNewTag')
+        ->keys('[data-testid="basic-tags"] input', 'Enter')
+        ->assertSee('MyNewTag')
+        ->assertSee('MyNewTag')
+        ->click('[data-testid="basic-tags"] .fi-badge-delete-btn')
+        ->assertNotPresent('[data-testid="basic-tags"] .fi-badge') // The live region briefly announces the removal, so assert on the badge element instead of the page text.
+        ->type('[data-testid="basic-tags"] input', 'alpha')
+        ->keys('[data-testid="basic-tags"] input', ',', ',')
+        ->type('[data-testid="basic-tags"] input', '0')
+        ->keys('[data-testid="basic-tags"] input', ',')
+        ->assertScript("JSON.stringify(Array.from(document.querySelectorAll('[data-testid=\"basic-tags\"] .fi-badge-label [x-text=\"tag\"]'), (element) => element.textContent))", '["alpha","0"]')
+        ->type('[data-testid="basic-tags"] input', '50% off $&')
+        ->keys('[data-testid="basic-tags"] input', 'Enter')
+        ->assertSee('50% off $&')
+        // `$` sequences in a tag must not be treated as `String.replace()` substitution patterns in the live region announcement.
+        ->assertScript('document.querySelector(\'[data-testid="basic-tags"] [x-ref="liveRegion"]\').textContent.includes(\'50% off $&\')', true)
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/tags-input-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/tags-input-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
 });
 
 class RenderTagsInputWithSplitKeys extends Livewire

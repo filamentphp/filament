@@ -697,187 +697,179 @@ describe('rendering', function (): void {
 });
 
 it('can render and type in `TextInput` in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        $page = visit('/text-input-test')
-            ->type('[data-testid="text-input"] input', 'John Doe');
+    $page = visit('/text-input-test')
+        ->type('[data-testid="text-input"] input', 'John Doe');
 
-        $page
-            ->click('[data-testid="text-input"] .fi-input-wrp-prefix')
-            ->assertScript('document.activeElement.matches(\'[data-testid="text-input"] input\')', true)
-            ->click('[data-testid="text-input"] .fi-input-wrp-suffix')
-            ->assertScript('document.activeElement.matches(\'[data-testid="text-input"] input\')', true);
+    $page
+        ->click('[data-testid="text-input"] .fi-input-wrp-prefix')
+        ->assertScript('document.activeElement.matches(\'[data-testid="text-input"] input\')', true)
+        ->click('[data-testid="text-input"] .fi-input-wrp-suffix')
+        ->assertScript('document.activeElement.matches(\'[data-testid="text-input"] input\')', true);
 
-        $page->script("Object.defineProperty(window.navigator, 'clipboard', { configurable: true, value: { writeText: async (value) => { window.__copiedText = value } } })");
+    $page->script("Object.defineProperty(window.navigator, 'clipboard', { configurable: true, value: { writeText: async (value) => { window.__copiedText = value } } })");
 
-        $page
-            ->type('[data-testid="copyable-input"] input', 'ABC123')
-            ->click('[data-testid="copyable-input"] button')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    $page
+        ->type('[data-testid="copyable-input"] input', 'ABC123')
+        ->click('[data-testid="copyable-input"] button')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        expect($page->script('window.__copiedText'))->toBe('ABC123');
+    expect($page->script('window.__copiedText'))->toBe('ABC123');
 
-        visit('/text-input-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/text-input-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
 });
 
 it('updates dynamic `numeric()` and `integer()` attributes in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/text-input-test')
-            ->assertAttributeMissing('[data-testid="dynamic-numeric-input"]', 'inputmode')
-            ->assertAttributeMissing('[data-testid="dynamic-numeric-input"]', 'step')
-            ->assertAttributeMissing('[data-testid="dynamic-integer-input"]', 'inputmode')
-            ->assertAttributeMissing('[data-testid="dynamic-integer-input"]', 'step')
-            ->click('[data-testid="numeric-defaults-toggle"]')
-            ->assertAttribute('[data-testid="dynamic-numeric-input"]', 'inputmode', 'decimal')
-            ->assertAttribute('[data-testid="dynamic-numeric-input"]', 'step', 'any')
-            ->assertAttribute('[data-testid="dynamic-integer-input"]', 'inputmode', 'numeric')
-            ->assertAttribute('[data-testid="dynamic-integer-input"]', 'step', '1')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues()
-            ->click('[data-testid="numeric-defaults-toggle"]')
-            ->assertAttributeMissing('[data-testid="dynamic-numeric-input"]', 'inputmode')
-            ->assertAttributeMissing('[data-testid="dynamic-numeric-input"]', 'step')
-            ->assertAttributeMissing('[data-testid="dynamic-integer-input"]', 'inputmode')
-            ->assertAttributeMissing('[data-testid="dynamic-integer-input"]', 'step')
-            ->assertNoAccessibilityIssues();
+    visit('/text-input-test')
+        ->assertAttributeMissing('[data-testid="dynamic-numeric-input"]', 'inputmode')
+        ->assertAttributeMissing('[data-testid="dynamic-numeric-input"]', 'step')
+        ->assertAttributeMissing('[data-testid="dynamic-integer-input"]', 'inputmode')
+        ->assertAttributeMissing('[data-testid="dynamic-integer-input"]', 'step')
+        ->click('[data-testid="numeric-defaults-toggle"]')
+        ->assertAttribute('[data-testid="dynamic-numeric-input"]', 'inputmode', 'decimal')
+        ->assertAttribute('[data-testid="dynamic-numeric-input"]', 'step', 'any')
+        ->assertAttribute('[data-testid="dynamic-integer-input"]', 'inputmode', 'numeric')
+        ->assertAttribute('[data-testid="dynamic-integer-input"]', 'step', '1')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues()
+        ->click('[data-testid="numeric-defaults-toggle"]')
+        ->assertAttributeMissing('[data-testid="dynamic-numeric-input"]', 'inputmode')
+        ->assertAttributeMissing('[data-testid="dynamic-numeric-input"]', 'step')
+        ->assertAttributeMissing('[data-testid="dynamic-integer-input"]', 'inputmode')
+        ->assertAttributeMissing('[data-testid="dynamic-integer-input"]', 'step')
+        ->assertNoAccessibilityIssues();
 
-        visit('/text-input-test')
-            ->inDarkMode()
-            ->click('[data-testid="numeric-defaults-toggle"]')
-            ->assertAttribute('[data-testid="dynamic-numeric-input"]', 'inputmode', 'decimal')
-            ->assertAttribute('[data-testid="dynamic-numeric-input"]', 'step', 'any')
-            ->assertAttribute('[data-testid="dynamic-integer-input"]', 'inputmode', 'numeric')
-            ->assertAttribute('[data-testid="dynamic-integer-input"]', 'step', '1')
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/text-input-test')
+        ->inDarkMode()
+        ->click('[data-testid="numeric-defaults-toggle"]')
+        ->assertAttribute('[data-testid="dynamic-numeric-input"]', 'inputmode', 'decimal')
+        ->assertAttribute('[data-testid="dynamic-numeric-input"]', 'step', 'any')
+        ->assertAttribute('[data-testid="dynamic-integer-input"]', 'inputmode', 'numeric')
+        ->assertAttribute('[data-testid="dynamic-integer-input"]', 'step', '1')
+        ->assertNoAccessibilityIssues();
 });
 
 it('preserves focus and selection when revealing a password in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        $passwordInput = '[data-testid="password-input"]';
-        $input = "{$passwordInput} input.fi-input";
-        $showPasswordAction = '[data-testid="show-password"]';
-        $hidePasswordAction = '[data-testid="hide-password"]';
+    $passwordInput = '[data-testid="password-input"]';
+    $input = "{$passwordInput} input.fi-input";
+    $showPasswordAction = '[data-testid="show-password"]';
+    $hidePasswordAction = '[data-testid="hide-password"]';
 
-        $page = visit('/text-input-test')
-            ->type($input, 'secret-value');
+    $page = visit('/text-input-test')
+        ->type($input, 'secret-value');
 
-        $page->script("document.querySelector('{$input}').setSelectionRange(1, 6, 'backward')");
+    $page->script("document.querySelector('{$input}').setSelectionRange(1, 6, 'backward')");
+
+    $page
+        ->assertScript("document.querySelector('{$passwordInput} input[type=hidden]') !== null", true)
+        ->assertScript("document.querySelector('{$showPasswordAction}').ariaLabel.length > 0", true)
+        ->assertScript("document.querySelector('{$hidePasswordAction}').ariaLabel.length > 0", true)
+        ->assertScript("document.querySelector('{$showPasswordAction}').ariaLabel !== document.querySelector('{$hidePasswordAction}').ariaLabel", true)
+        ->keys($input, 'Tab')
+        ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
+        ->assertScript('document.activeElement.matches(\':focus-visible\')', true)
+        ->keys($showPasswordAction, 'Enter')
+        ->assertAttribute($input, 'type', 'text')
+        ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
+        ->assertScript('document.activeElement.matches(\':focus-visible\')', true)
+        ->assertScript("[document.querySelector('{$input}').selectionStart, document.querySelector('{$input}').selectionEnd, document.querySelector('{$input}').selectionDirection]", [1, 6, 'backward'])
+        ->keys($hidePasswordAction, 'Space')
+        ->assertAttribute($input, 'type', 'password')
+        ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
+        ->assertScript('document.activeElement.matches(\':focus-visible\')', true)
+        ->keys($showPasswordAction, 'Enter')
+        ->assertAttribute($input, 'type', 'text')
+        ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
+        ->click($hidePasswordAction)
+        ->assertAttribute($input, 'type', 'password')
+        ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
+        ->click($showPasswordAction)
+        ->assertAttribute($input, 'type', 'text')
+        ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
+        ->assertValue($input, 'secret-value')
+        ->assertScript("[document.querySelector('{$input}').selectionStart, document.querySelector('{$input}').selectionEnd, document.querySelector('{$input}').selectionDirection]", [1, 6, 'backward']);
+
+    $livewireComponent = "Livewire.find(document.querySelector('{$passwordInput}').closest('[wire\\\\:id]').getAttribute('wire:id'))";
+
+    $page->script("window.passwordRefreshFinished = false; {$livewireComponent}.call('\$refresh').then(() => window.passwordRefreshFinished = true)");
+
+    $page
+        ->assertScript('window.passwordRefreshFinished', true)
+        ->assertAttribute($input, 'type', 'text')
+        ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
+        ->assertValue($input, 'secret-value')
+        ->assertScript("[document.querySelector('{$input}').selectionStart, document.querySelector('{$input}').selectionEnd, document.querySelector('{$input}').selectionDirection]", [1, 6, 'backward'])
+        ->keys($hidePasswordAction, 'Enter')
+        ->assertAttribute($input, 'type', 'password')
+        ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    $page
+        ->assertScript('document.querySelector(\'[data-testid="disabled-password-input"] input.fi-input\').disabled', true)
+        ->assertScript('document.querySelector(\'[data-testid="read-only-password-input"] input.fi-input\').readOnly', true);
+
+    foreach (['disabled', 'read-only'] as $fieldState) {
+        $field = "[data-testid=\"{$fieldState}-password-input\"]";
+        $fieldInput = "{$field} input";
+        $fieldShowPasswordAction = "[data-testid=\"show-{$fieldState}-password\"]";
+        $fieldHidePasswordAction = "[data-testid=\"hide-{$fieldState}-password\"]";
 
         $page
-            ->assertScript("document.querySelector('{$passwordInput} input[type=hidden]') !== null", true)
-            ->assertScript("document.querySelector('{$showPasswordAction}').ariaLabel.length > 0", true)
-            ->assertScript("document.querySelector('{$hidePasswordAction}').ariaLabel.length > 0", true)
-            ->assertScript("document.querySelector('{$showPasswordAction}').ariaLabel !== document.querySelector('{$hidePasswordAction}').ariaLabel", true)
-            ->keys($input, 'Tab')
-            ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
-            ->assertScript('document.activeElement.matches(\':focus-visible\')', true)
-            ->keys($showPasswordAction, 'Enter')
-            ->assertAttribute($input, 'type', 'text')
-            ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
-            ->assertScript('document.activeElement.matches(\':focus-visible\')', true)
-            ->assertScript("[document.querySelector('{$input}').selectionStart, document.querySelector('{$input}').selectionEnd, document.querySelector('{$input}').selectionDirection]", [1, 6, 'backward'])
-            ->keys($hidePasswordAction, 'Space')
-            ->assertAttribute($input, 'type', 'password')
-            ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
-            ->assertScript('document.activeElement.matches(\':focus-visible\')', true)
-            ->keys($showPasswordAction, 'Enter')
-            ->assertAttribute($input, 'type', 'text')
-            ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
-            ->click($hidePasswordAction)
-            ->assertAttribute($input, 'type', 'password')
-            ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
-            ->click($showPasswordAction)
-            ->assertAttribute($input, 'type', 'text')
-            ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
-            ->assertValue($input, 'secret-value')
-            ->assertScript("[document.querySelector('{$input}').selectionStart, document.querySelector('{$input}').selectionEnd, document.querySelector('{$input}').selectionDirection]", [1, 6, 'backward']);
+            ->click($fieldShowPasswordAction)
+            ->assertAttribute($fieldInput, 'type', 'text')
+            ->assertScript("document.activeElement.matches('{$fieldHidePasswordAction}')", true)
+            ->click($fieldHidePasswordAction)
+            ->assertAttribute($fieldInput, 'type', 'password')
+            ->assertScript("document.activeElement.matches('{$fieldShowPasswordAction}')", true);
+    }
 
-        $livewireComponent = "Livewire.find(document.querySelector('{$passwordInput}').closest('[wire\\\\:id]').getAttribute('wire:id'))";
-
-        $page->script("window.passwordRefreshFinished = false; {$livewireComponent}.call('\$refresh').then(() => window.passwordRefreshFinished = true)");
-
-        $page
-            ->assertScript('window.passwordRefreshFinished', true)
-            ->assertAttribute($input, 'type', 'text')
-            ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
-            ->assertValue($input, 'secret-value')
-            ->assertScript("[document.querySelector('{$input}').selectionStart, document.querySelector('{$input}').selectionEnd, document.querySelector('{$input}').selectionDirection]", [1, 6, 'backward'])
-            ->keys($hidePasswordAction, 'Enter')
-            ->assertAttribute($input, 'type', 'password')
-            ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-
-        $page
-            ->assertScript('document.querySelector(\'[data-testid="disabled-password-input"] input.fi-input\').disabled', true)
-            ->assertScript('document.querySelector(\'[data-testid="read-only-password-input"] input.fi-input\').readOnly', true);
-
-        foreach (['disabled', 'read-only'] as $fieldState) {
-            $field = "[data-testid=\"{$fieldState}-password-input\"]";
-            $fieldInput = "{$field} input";
-            $fieldShowPasswordAction = "[data-testid=\"show-{$fieldState}-password\"]";
-            $fieldHidePasswordAction = "[data-testid=\"hide-{$fieldState}-password\"]";
-
-            $page
-                ->click($fieldShowPasswordAction)
-                ->assertAttribute($fieldInput, 'type', 'text')
-                ->assertScript("document.activeElement.matches('{$fieldHidePasswordAction}')", true)
-                ->click($fieldHidePasswordAction)
-                ->assertAttribute($fieldInput, 'type', 'password')
-                ->assertScript("document.activeElement.matches('{$fieldShowPasswordAction}')", true);
-        }
-
-        visit('/text-input-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/text-input-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
 });
 
 it('preserves focus when revealing a password with responsive actions in the browser', function (int $width, string $actionClass): void {
-    retry(10, function () use ($width, $actionClass): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        $passwordInput = '[data-testid="responsive-password-input"] input.fi-input';
-        $showPasswordAction = "[data-testid=\"show-responsive-password\"].{$actionClass}";
-        $hidePasswordAction = "[data-testid=\"hide-responsive-password\"].{$actionClass}";
+    $passwordInput = '[data-testid="responsive-password-input"] input.fi-input';
+    $showPasswordAction = "[data-testid=\"show-responsive-password\"].{$actionClass}";
+    $hidePasswordAction = "[data-testid=\"hide-responsive-password\"].{$actionClass}";
 
-        $page = visit('/text-input-test')
-            ->resize($width, 812);
+    $page = visit('/text-input-test')
+        ->resize($width, 812);
 
-        $page->script("document.querySelector('{$passwordInput}').focus(); document.querySelector('{$passwordInput}').setSelectionRange(1, 6, 'backward')");
+    $page->script("document.querySelector('{$passwordInput}').focus(); document.querySelector('{$passwordInput}').setSelectionRange(1, 6, 'backward')");
 
-        $page
-            ->keys($passwordInput, 'Tab')
-            ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
-            ->keys($showPasswordAction, 'Enter')
-            ->assertAttribute($passwordInput, 'type', 'text')
-            ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
-            ->assertScript('document.activeElement.matches(\':focus-visible\')', true)
-            ->assertScript("[document.querySelector('{$passwordInput}').selectionStart, document.querySelector('{$passwordInput}').selectionEnd, document.querySelector('{$passwordInput}').selectionDirection]", [1, 6, 'backward'])
-            ->keys($hidePasswordAction, 'Space')
-            ->assertAttribute($passwordInput, 'type', 'password')
-            ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    $page
+        ->keys($passwordInput, 'Tab')
+        ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
+        ->keys($showPasswordAction, 'Enter')
+        ->assertAttribute($passwordInput, 'type', 'text')
+        ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
+        ->assertScript('document.activeElement.matches(\':focus-visible\')', true)
+        ->assertScript("[document.querySelector('{$passwordInput}').selectionStart, document.querySelector('{$passwordInput}').selectionEnd, document.querySelector('{$passwordInput}').selectionDirection]", [1, 6, 'backward'])
+        ->keys($hidePasswordAction, 'Space')
+        ->assertAttribute($passwordInput, 'type', 'password')
+        ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/text-input-test')
-            ->inDarkMode()
-            ->resize($width, 812)
-            ->click($showPasswordAction)
-            ->assertAttribute($passwordInput, 'type', 'text')
-            ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/text-input-test')
+        ->inDarkMode()
+        ->resize($width, 812)
+        ->click($showPasswordAction)
+        ->assertAttribute($passwordInput, 'type', 'text')
+        ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
+        ->assertNoAccessibilityIssues();
 })->with([
     'icon buttons below the `md` breakpoint' => [375, 'fi-icon-btn'],
     'buttons from the `md` breakpoint' => [1024, 'fi-btn'],

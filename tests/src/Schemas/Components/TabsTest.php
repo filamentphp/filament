@@ -671,17 +671,15 @@ describe('rendering', function (): void {
 });
 
 it('can render `Tabs` in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/tabs-browser-test')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/tabs-browser-test')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/tabs-browser-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/tabs-browser-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
 });
 
 it('keeps non-scrollable `Tabs` in one keyboard sequence and accessible tablist', function (): void {

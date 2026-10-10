@@ -4874,20 +4874,18 @@ describe('absolute and relative date filtering', function () use ($applyQueryBui
     });
 
     it('can delete a rule in the query builder filter in the browser', function (): void {
-        retry(10, function (): void {
-            Artisan::call('filament:assets');
+        Artisan::call('filament:assets');
 
-            $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-            visit('/query-builder-table-test')
-                ->click('button[title="Filter"]')
-                ->click('text=Add rule')
-                ->click('.fi-dropdown-list-item >> text=Title')
-                ->assertPresent('.fi-fo-builder-item')
-                ->click('.fi-fo-builder-item button[title="Delete"]')
-                ->assertNotPresent('.fi-fo-builder-item')
-                ->assertNoSmoke();
-        });
+        visit('/query-builder-table-test')
+            ->click('button[title="Filter"]')
+            ->click('text=Add rule')
+            ->click('.fi-dropdown-list-item >> text=Title')
+            ->assertPresent('.fi-fo-builder-item')
+            ->click('.fi-fo-builder-item button[title="Delete"]')
+            ->assertNotPresent('.fi-fo-builder-item')
+            ->assertNoSmoke();
     });
 });
 

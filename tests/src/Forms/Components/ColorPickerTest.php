@@ -427,17 +427,15 @@ describe('rendering', function (): void {
 });
 
 it('can render `ColorPicker` in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/color-picker-test')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/color-picker-test')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/color-picker-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/color-picker-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
 });
 
 class RenderColorPickerWithHsl extends Livewire
