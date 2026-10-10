@@ -1390,16 +1390,26 @@ describe('rendering', function (): void {
     });
 });
 
-it('can render `CheckboxList` in the browser', function (): void {
+it('can search a `CheckboxList` after disabling it without changing checked values', function (): void {
     $this->actingAs(User::factory()->create());
 
-    visit('/checkbox-list-test')
+    $page = visit('/checkbox-list-test')
+        ->inDarkMode()
         ->assertNoSmoke()
+        ->fill('[data-testid="checkbox-list"] input[type="search"]', 'Option B')
+        ->assertMissing('[data-testid="checkbox-list"] input[value="a"]:visible')
+        ->click('[data-testid="checkbox-list-disabled"]')
+        ->assertDisabled('[data-testid="checkbox-list"] input[value="b"]')
+        ->clear('[data-testid="checkbox-list"] input[type="search"]')
+        ->assertVisible('[data-testid="checkbox-list"] input[value="a"]')
+        ->assertVisible('[data-testid="checkbox-list"] input[value="c"]')
+        ->assertChecked('[data-testid="checkbox-list"] input[value="a"]')
+        ->assertNotChecked('[data-testid="checkbox-list"] input[value="b"]')
+        ->assertChecked('[data-testid="checkbox-list"] input[value="c"]')
         ->assertNoAccessibilityIssues();
 
-    visit('/checkbox-list-test')
-        ->inDarkMode()
-        ->assertNoAccessibilityIssues();
+    $page->script('window.dispatchEvent(new CustomEvent("theme-changed", { detail: "light" }))');
+    $page->wait(0.5)->assertNoAccessibilityIssues();
 });
 
 class RenderCheckboxListWithStaticOptions extends Component implements HasActions, HasSchemas

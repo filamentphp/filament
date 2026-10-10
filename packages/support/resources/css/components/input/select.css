@@ -70,6 +70,15 @@ select.fi-select-input {
         @apply pe-14;
     }
 
+    & .fi-select-input-ctn-clearable .fi-select-input-btn:disabled {
+        @apply pe-8;
+    }
+
+    & .fi-select-input-value-remove-btn:disabled,
+    & .fi-badge-delete-btn:disabled {
+        @apply hidden;
+    }
+
     & .fi-dropdown-panel {
         @apply max-h-60 max-w-full!;
     }

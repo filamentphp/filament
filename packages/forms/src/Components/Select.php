@@ -1905,9 +1905,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     >
                         <?php if ($canSelectPlaceholder) { ?>
                             <option value="">
-                                <?php if (! $isDisabled) { ?>
-                                    <?= e($this->getPlaceholder()) ?>
-                                <?php } ?>
+                                <?= e($this->getPlaceholder()) ?>
                             </option>
                         <?php } ?>
 

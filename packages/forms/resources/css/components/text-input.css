@@ -5,5 +5,16 @@
         &.fi-revealable {
             @apply [&::-ms-reveal]:hidden;
         }
+
+        &[type='number']:disabled,
+        &[type='number'][readonly] {
+            -moz-appearance: textfield;
+
+            &::-webkit-inner-spin-button,
+            &::-webkit-outer-spin-button {
+                @apply appearance-none;
+                margin: 0;
+            }
+        }
     }
 }
