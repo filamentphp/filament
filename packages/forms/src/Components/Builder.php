@@ -457,7 +457,11 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                     return;
                 }
 
-                $items = array_move_after($items, $arguments['item']);
+                $renderedItems = array_intersect_key($items, array_filter(
+                    $component->getItems(),
+                    static fn (Schema $item): bool => $item->getParentComponent() instanceof Block,
+                ));
+                $items = array_replace(array_move_after($renderedItems, $arguments['item']), $items);
 
                 $component->rawState($items);
 
@@ -503,7 +507,11 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                     return;
                 }
 
-                $items = array_move_before($items, $arguments['item']);
+                $renderedItems = array_intersect_key($items, array_filter(
+                    $component->getItems(),
+                    static fn (Schema $item): bool => $item->getParentComponent() instanceof Block,
+                ));
+                $items = array_replace(array_move_before($renderedItems, $arguments['item']), $items);
 
                 $component->rawState($items);
 
@@ -1468,9 +1476,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 
         $listAttributes = (new FilamentComponentAttributeBag)
             ->merge([
-                'x-load' => $isSearchable ? true : null,
-                'x-load-src' => $isSearchable ? FilamentAsset::getAlpineComponentSrc('builder', 'filament/forms') : null,
-                'x-data' => $isSearchable ? 'builderBlockPickerFormComponent()' : null,
+                'x-data' => $isSearchable ? 'builderFormComponentBlockPicker()' : null,
             ], escape: false)
             ->class(['fi-dropdown-list']);
 
@@ -1623,7 +1629,6 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         $persistCollapsed = $this->shouldPersistCollapsed();
 
         $key = $this->getKey();
-        $statePath = $this->getStatePath();
 
         $blockLabelHeadingTag = $this->getHeadingTag();
         $isBlockLabelTruncated = $this->isBlockLabelTruncated();
@@ -1633,6 +1638,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 
         $outerAttributes = (new FilamentComponentAttributeBag)
             ->merge($this->getExtraAttributes(), escape: false)
+            ->merge($this->getAlpineAttributes($items), escape: false)
             ->merge([
                 'aria-labelledby' => "{$id}-label",
                 'id' => $id,
@@ -1654,6 +1660,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         ob_start(); ?>
 
         <div <?= $outerAttributes->toHtml() ?>>
+            <?= $this->getReorderingDescriptionHtml($items) ?>
             <?php if ($collapseAllActionIsVisible || $expandAllActionIsVisible) { ?>
                 <div
                     <?= (new FilamentComponentAttributeBag)->class([
@@ -1662,13 +1669,13 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                     ])->toHtml() ?>
                 >
                     <?php if ($collapseAllActionIsVisible) { ?>
-                        <span x-on:click="$dispatch('builder-collapse', '<?= e($statePath) ?>')">
+                        <span x-on:click="collapseAll">
                             <?= $collapseAllAction->toHtml() ?>
                         </span>
                     <?php } ?>
 
                     <?php if ($expandAllActionIsVisible) { ?>
-                        <span x-on:click="$dispatch('builder-expand', '<?= e($statePath) ?>')">
+                        <span x-on:click="expandAll">
                             <?= $expandAllAction->toHtml() ?>
                         </span>
                     <?php } ?>
@@ -1678,8 +1685,9 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             <?php if ($itemCount) { ?>
                 <ul
                     x-sortable
+                    x-ref="reorderItems"
                     data-sortable-animation-duration="<?= e($this->getReorderAnimationDuration()) ?>"
-                    x-on:end.stop="$wire.mountAction('reorder', { items: $event.target.sortable.toArray() }, { schemaComponent: '<?= e($key) ?>' })"
+                    x-on:end.stop="reorder"
                     class="fi-fo-builder-items"
                 >
                     <?php foreach ($items as $itemKey => $item) {
@@ -1700,35 +1708,38 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                         $deleteActionIsVisible = $isDeletable && $itemDeleteAction->isVisible();
                         $itemEditAction = $editAction(['item' => $itemKey]);
                         $editActionIsVisible = $hasBlockPreviews && $itemEditAction->isVisible();
-                        $itemMoveDownAction = $moveDownAction(['item' => $itemKey])->disabled($isLast);
-                        $moveDownActionIsVisible = $isReorderableWithButtons && $itemMoveDownAction->isVisible();
-                        $itemMoveUpAction = $moveUpAction(['item' => $itemKey])->disabled($isFirst);
-                        $moveUpActionIsVisible = $isReorderableWithButtons && $itemMoveUpAction->isVisible();
                         $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
+                        $itemMoveDownAction = $moveDownAction(['item' => $itemKey]);
+                        $itemMoveDownAction->disabled($isLast || $itemMoveDownAction->isDisabled())->extraAttributes($this->getReorderingActionAttributes($itemMoveDownAction, 'down', ! $isReorderableWithButtons), merge: true);
+                        $moveDownActionIsVisible = ($isReorderableWithButtons || $reorderActionIsVisible) && $itemMoveDownAction->isVisible();
+                        $itemMoveUpAction = $moveUpAction(['item' => $itemKey]);
+                        $itemMoveUpAction->disabled($isFirst || $itemMoveUpAction->isDisabled())->extraAttributes($this->getReorderingActionAttributes($itemMoveUpAction, 'up', ! $isReorderableWithButtons), merge: true);
+                        $moveUpActionIsVisible = ($isReorderableWithButtons || $reorderActionIsVisible) && $itemMoveUpAction->isVisible();
                         $hasItemHeader = $hasBlockHeaders && ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockIcons || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions);
                         ?>
 
                         <li
                             wire:ignore.self
                             wire:key="<?= e($item->getLivewireKey()) ?>.item"
-                            x-data="{
-                                isCollapsed: <?php if ($persistCollapsed) { ?>$persist(<?= Js::from($this->isCollapsed($item)) ?>).as(`builder-${<?= Js::from($key) ?>}-${<?= Js::from($itemKey) ?>}-isCollapsed`)<?php } else { ?><?= Js::from($this->isCollapsed($item)) ?><?php } ?>,
-                            }"
-                            x-on:builder-expand.window="$event.detail === '<?= e($statePath) ?>' && (isCollapsed = false)"
-                            x-on:builder-collapse.window="$event.detail === '<?= e($statePath) ?>' && (isCollapsed = true)"
-                            x-on:expand="isCollapsed = false"
+                            x-data="item(<?= Js::from([
+                                'isCollapsed' => $this->isCollapsed($item),
+                                'collapseKey' => $persistCollapsed ? "builder-{$key}-{$itemKey}-isCollapsed" : null,
+                            ]) ?>)"
+                            x-on:builder-expand.window="expandFromEvent"
+                            x-on:builder-collapse.window="collapseFromEvent"
+                            x-on:expand="expand"
                             x-sortable-item="<?= e($itemKey) ?>"
                             <?= $block->getExtraAttributeBag()
                                 ->class([
                                     'fi-fo-builder-item',
                                     'fi-fo-builder-item-has-header' => $hasItemHeader,
                                 ])->toHtml() ?>
-                            x-bind:class="{ 'fi-collapsed': isCollapsed }"
+                            x-bind:class="itemClasses"
                         >
                             <?php if ($hasItemHeader) { ?>
                                 <div
                                     <?php if ($isCollapsible) { ?>
-                                        x-on:click.stop="isCollapsed = !isCollapsed"
+                                        x-on:click.stop="toggleCollapsed"
                                     <?php } ?>
                                     class="fi-fo-builder-item-header"
                                 >
@@ -1740,9 +1751,11 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                                 </li>
                                             <?php } ?>
 
-                                            <?php if ($moveUpActionIsVisible || $moveDownActionIsVisible) { ?>
-                                                <li x-on:click.stop><?= $itemMoveUpAction->toHtml() ?></li>
-                                                <li x-on:click.stop><?= $itemMoveDownAction->toHtml() ?></li>
+                                            <?php if ($moveUpActionIsVisible) { ?>
+                                                <li x-on:click.stop class="<?= $isReorderableWithButtons ? '' : 'fi-sr-only' ?>"><?= $itemMoveUpAction->toHtml() ?></li>
+                                            <?php } ?>
+                                            <?php if ($moveDownActionIsVisible) { ?>
+                                                <li x-on:click.stop class="<?= $isReorderableWithButtons ? '' : 'fi-sr-only' ?>"><?= $itemMoveDownAction->toHtml() ?></li>
                                             <?php } ?>
                                         </ul>
                                     <?php } ?>
@@ -1788,7 +1801,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                             <?php } ?>
 
                                             <?php if ($isCollapsible) { ?>
-                                                <li class="fi-fo-builder-item-header-collapsible-actions" x-on:click.stop="isCollapsed = !isCollapsed">
+                                                <li class="fi-fo-builder-item-header-collapsible-actions" x-on:click.stop="toggleCollapsed">
                                                     <div class="fi-fo-builder-item-header-collapse-action">
                                                         <?= $this->getAction('collapse')->toHtml() ?>
                                                     </div>
@@ -1823,7 +1836,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                         <div
                                             class="fi-fo-builder-item-preview-edit-overlay"
                                             role="button"
-                                            x-on:click.stop="<?= e('$wire.mountAction(\'edit\', { item: \'' . $itemKey . '\' }, { schemaComponent: \'' . $key . '\' })') ?>"
+                                            x-on:click.stop="editItem(<?= Js::from($itemKey) ?>)"
                                         ></div>
                                     <?php } ?>
                                 <?php } else { ?>
@@ -1875,5 +1888,67 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         </div>
 
         <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
+    }
+
+    /**
+     * @param  array<Schema>  $items
+     * @return array<string, mixed>
+     */
+    protected function getAlpineAttributes(array $items): array
+    {
+        return [
+            'data-reorder-owner' => true,
+            'data-reorder-items' => e(json_encode(array_map('strval', array_keys($items)))),
+            'x-load' => true,
+            'x-load-src' => FilamentAsset::getAlpineComponentSrc('builder', 'filament/forms'),
+            'x-data' => 'builderFormComponent(' . Js::from([
+                'statePath' => $this->getStatePath(),
+                'schemaComponent' => $this->getKey(),
+                'moveUpAction' => $this->getMoveUpActionName(),
+                'moveDownAction' => $this->getMoveDownActionName(),
+                'reorderAction' => $this->getReorderActionName(),
+                'message' => __('filament-forms::components.builder.reordering.moved'),
+                'hasCustomReorderAction' => (bool) $this->modifyReorderActionUsing,
+            ]) . ')',
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    protected function getReorderingActionAttributes(Action $action, string $direction, bool $isVisuallyHidden): array
+    {
+        return [
+            ...($isVisuallyHidden ? ['tabindex' => -1, 'data-reorder-hidden' => true] : []),
+            'data-reorder-direction' => $direction,
+            'data-reorder-action' => ($action->getActionFunction() && (! $action->getLivewireEventClickHandler()) && blank($action->getParentActionCallLivewireClickHandler())) ? $action->getLivewireClickHandler() : null,
+            'aria-describedby' => $this->getId() . '-item-' . md5((string) $action->getArguments()['item']),
+        ];
+    }
+
+    /** @param array<Schema> $items */
+    protected function getReorderingDescriptionHtml(array $items): string
+    {
+        $html = '<span wire:ignore x-ref="reorderStatus" class="fi-sr-only" role="status" aria-live="polite" aria-atomic="true"></span>';
+        $position = 0;
+
+        foreach ($items as $itemKey => $item) {
+            /** @var Block $block */
+            $block = $item->getParentComponent();
+            $label = $block->getLabel($item->getRawState(), $itemKey, $position);
+
+            if ($label instanceof Htmlable) {
+                $label = html_entity_decode(strip_tags($label->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            }
+
+            $label = trim($label);
+
+            if ($label === '') {
+                $label = __('filament-forms::components.builder.reordering.item');
+            }
+
+            $description = __('filament-forms::components.builder.reordering.position', ['label' => $label, 'position' => ++$position, 'count' => count($items)]);
+            $html .= '<span class="fi-sr-only" data-reorder-description="' . e($itemKey) . '" data-reorder-label="' . e($label) . '" id="' . e($this->getId() . '-item-' . md5((string) $itemKey)) . '">' . e($description) . '</span>';
+        }
+
+        return $html;
     }
 }
