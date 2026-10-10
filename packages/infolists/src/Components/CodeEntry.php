@@ -5,6 +5,7 @@ namespace Filament\Infolists\Components;
 use Closure;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanBeCopied;
+use Filament\Support\View\ComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
@@ -139,17 +140,44 @@ class CodeEntry extends Entry implements HasEmbeddedView
             ? Js::from($this->getCopyMessageDuration($state, $relatedRecord))
             : null;
 
-        $attributes = $attributes
+        if ($isCopyable) {
+            $label = $this->getLabel();
+            $copyLabelJs = Js::from(__('filament::components/copyable.label', [
+                'label' => ($label instanceof Htmlable) ? html_entity_decode(strip_tags($label->toHtml()), ENT_QUOTES | ENT_HTML5) : ($label ?? $this->getName()),
+            ]));
+            $copyFailureMessageJs = Js::from(__('filament::components/copyable.messages.failed'));
+        }
+
+        $hasCustomAlpineScope = $isCopyable && ($attributes->has('x-data') || $attributes->has('x-bind') || $attributes->has('x-id'));
+
+        $copyableAttributes = (new ComponentAttributeBag)
             ->merge([
+                'x-data' => $isCopyable ? 'filamentCopyable' : null,
+                'x-bind' => $isCopyable ? 'bindings' : null,
+                'x-id' => $isCopyable ? "['copyable-code']" : null,
+                'x-bind:aria-label' => $isCopyable ? "isStandalone ? {$copyLabelJs} : null" : null,
+                'x-bind:aria-describedby' => $isCopyable ? "isStandalone ? \$id('copyable-code') : null" : null,
                 'x-on:click' => $isCopyable
                     ? <<<JS
-                        window.navigator.clipboard.writeText({$copyableStateJs})
-                        \$tooltip({$copyMessageJs}, {
-                            theme: \$store.theme,
-                            timeout: {$copyMessageDurationJs},
-                        })
+                        if (isStandalone) {
+                            copy({$copyableStateJs}, {$copyMessageJs}, {$copyMessageDurationJs}, {$copyFailureMessageJs})
+                        } else {
+                            window.navigator.clipboard.writeText({$copyableStateJs})
+                            \$tooltip({$copyMessageJs}, {
+                                theme: \$store.theme,
+                                timeout: {$copyMessageDurationJs},
+                            })
+                        }
                         JS
                     : null,
+            ], escape: false);
+
+        if (! $hasCustomAlpineScope) {
+            $attributes = $attributes->merge($copyableAttributes->getAttributes(), escape: false);
+        }
+
+        $attributes = $attributes
+            ->merge([
                 'x-tooltip' => filled($tooltip = $this->getTooltip($state, $relatedRecord))
                     ? '{
                         content: ' . Js::from($tooltip) . ',
@@ -165,10 +193,26 @@ class CodeEntry extends Entry implements HasEmbeddedView
         ob_start(); ?>
 
         <div <?= $attributes->toHtml() ?>>
+            <?php if ($hasCustomAlpineScope) { ?>
+                <div <?= $copyableAttributes->class(['fi-copyable'])->toHtml() ?>>
+            <?php } ?>
+
+            <?php if ($isCopyable) { ?>
+                <div x-bind:id="$id('copyable-code')">
+            <?php } ?>
+
             <?= (string) $phiki->codeToHtml($state, $grammar, [
                 'light' => $lightTheme,
                 'dark' => $darkTheme,
             ]) ?>
+
+            <?php if ($isCopyable) { ?>
+                </div>
+            <?php } ?>
+
+            <?php if ($hasCustomAlpineScope) { ?>
+                </div>
+            <?php } ?>
         </div>
 
         <?php return $this->wrapEmbeddedHtml(ob_get_clean());

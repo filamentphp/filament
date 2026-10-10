@@ -420,6 +420,12 @@ class TextColumn extends Column implements HasEmbeddedView
                 $copyableStateJs = Js::from($this->getCopyableState($stateItem, $relatedRecord) ?? $formattedState);
                 $copyMessageJs = Js::from($this->getCopyMessage($stateItem, $relatedRecord));
                 $copyMessageDurationJs = Js::from($this->getCopyMessageDuration($stateItem, $relatedRecord));
+                $copyLabelJs = Js::from(__('filament::components/copyable.label', [
+                    'label' => ($formattedState instanceof Htmlable)
+                        ? html_entity_decode(strip_tags($formattedState->toHtml()), ENT_QUOTES | ENT_HTML5)
+                        : ($isCollapsedList ? html_entity_decode(strip_tags($formattedState), ENT_QUOTES | ENT_HTML5) : $formattedState),
+                ]));
+                $copyFailureMessageJs = Js::from(__('filament::components/copyable.messages.failed'));
             }
 
             $tooltip = $this->getTooltip($stateItem, $relatedRecord);
@@ -445,13 +451,20 @@ class TextColumn extends Column implements HasEmbeddedView
                 'contentAttributes' => ($isBadge || $isCopyable || filled($tooltip))
                     ? (new FilamentComponentAttributeBag)
                         ->merge([
+                            'x-data' => $isCopyable ? 'filamentCopyable' : null,
+                            'x-bind' => $isCopyable ? 'bindings' : null,
+                            'x-bind:aria-label' => $isCopyable ? "isStandalone ? {$copyLabelJs} : null" : null,
                             'x-on:click.prevent.stop' => $isCopyable
                                 ? <<<JS
-                                window.navigator.clipboard.writeText({$copyableStateJs})
-                                \$tooltip({$copyMessageJs}, {
-                                    theme: \$store.theme,
-                                    timeout: {$copyMessageDurationJs},
-                                })
+                                if (isStandalone) {
+                                    copy({$copyableStateJs}, {$copyMessageJs}, {$copyMessageDurationJs}, {$copyFailureMessageJs})
+                                } else {
+                                    window.navigator.clipboard.writeText({$copyableStateJs})
+                                    \$tooltip({$copyMessageJs}, {
+                                        theme: \$store.theme,
+                                        timeout: {$copyMessageDurationJs},
+                                    })
+                                }
                                 JS
                                 : null,
                             'x-tooltip' => filled($tooltip)
