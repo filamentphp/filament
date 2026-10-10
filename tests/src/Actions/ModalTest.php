@@ -350,27 +350,25 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke();
     });
 
-    it('focuses the modal window instead of the tab-reachable close button when a modal using `closeModalByEscaping(false)` opens', function (): void {
+    it('keeps the close button keyboard reachable when a modal uses `closeModalByEscaping(false)`', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/modal-browser-test')
-            ->click('Escape close disabled')
-            ->assertVisible('[data-testid="escape-close-disabled-modal"]')
-            ->wait(0.5)
-            // The window is autofocused so the close button does not steal focus, while staying in the tab order as the only keyboard way to dismiss the modal.
-            ->assertScript('document.activeElement === document.querySelector(\'[data-testid="escape-close-disabled-modal"]\')', true)
-            ->assertScript('document.querySelector(\'[data-testid="escape-close-disabled-modal"] .fi-modal-close-btn\').tabIndex', 0)
-            ->click('[data-testid="escape-close-disabled-modal"] .fi-modal-close-btn')
-            ->assertMissing('[data-testid="escape-close-disabled-modal"]')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+        $page = visit('/modal-browser-test');
+        $modalSelector = '[data-testid="escape-close-disabled-modal"]';
+        $closeButtonSelector = $modalSelector . ' .fi-modal-close-btn';
 
-        visit('/modal-browser-test')
-            ->inDarkMode()
-            ->click('Escape close disabled')
-            ->assertVisible('[data-testid="escape-close-disabled-modal"]')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+        foreach ([$page, $page->inDarkMode()] as $themedPage) {
+            $themedPage
+                ->click('[data-testid="escape-close-disabled-trigger"]')
+                ->assertVisible($modalSelector)
+                ->wait(0.5)
+                ->keys($modalSelector, 'Tab')
+                ->assertPresent($closeButtonSelector . ':focus')
+                ->assertNoAccessibilityIssues()
+                ->keys($closeButtonSelector, 'Enter')
+                ->assertMissing($modalSelector)
+                ->assertNoSmoke();
+        }
     });
 
     it('cancels parent actions and releases the page scroll lock when a nested modal using `cancelParentActionsOnClose()` is dismissed', function (): void {
