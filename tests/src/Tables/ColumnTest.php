@@ -88,11 +88,13 @@ describe('rendering and sorting', function (): void {
     });
 
     it('can sort records with nested relationship', function (): void {
-        Post::factory()->count(5)->state(fn (): array => [
-            'author_id' => User::factory()->state([
-                'team_id' => Team::factory(),
-            ]),
-        ])->create();
+        foreach (['Birch', 'Maple', 'Birch', 'Cedar', 'Ash'] as $teamName) {
+            Post::factory()->state([
+                'author_id' => User::factory()->state([
+                    'team_id' => Team::factory()->state(['name' => $teamName]),
+                ]),
+            ])->create();
+        }
 
         $sortedAsc = Post::query()
             ->orderBy(
@@ -115,7 +117,7 @@ describe('rendering and sorting', function (): void {
                     ->whereColumn('users.id', 'posts.author_id')
                     ->limit(1)
             )
-            ->orderBy('posts.id')
+            ->orderByDesc('posts.id')
             ->get();
 
         livewire(PostsTable::class)
@@ -123,6 +125,21 @@ describe('rendering and sorting', function (): void {
             ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
             ->sortTable('author.team.name', 'desc')
             ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
+    });
+
+    it('can sort records by multiple columns in the order they are passed', function (): void {
+        $posts = collect([
+            ['rating' => 1, 'title' => 'Charlie'],
+            ['rating' => 2, 'title' => 'Alpha'],
+            ['rating' => 1, 'title' => 'Bravo'],
+            ['rating' => 2, 'title' => 'Delta'],
+        ])->map(fn (array $attributes): Post => Post::factory()->create($attributes));
+
+        livewire(PostsTable::class)
+            ->sortTable('rating_and_title')
+            ->assertCanSeeTableRecords([$posts[2], $posts[0], $posts[1], $posts[3]], inOrder: true)
+            ->sortTable('rating_and_title', 'desc')
+            ->assertCanSeeTableRecords([$posts[3], $posts[1], $posts[0], $posts[2]], inOrder: true);
     });
 
     it('can sort records with JSON column', function (): void {
@@ -234,6 +251,16 @@ describe('searching', function (): void {
             ->searchTable($title)
             ->assertCanSeeTableRecords($posts->where('title', $title))
             ->assertCanNotSeeTableRecords($posts->where('title', '!=', $title));
+    });
+
+    it('treats LIKE wildcard characters as literal text when searching records', function (): void {
+        $literalMatch = Post::factory()->create(['title' => 'Before café!_100% After']);
+        $wildcardMatch = Post::factory()->create(['title' => 'Before café!X100 anything After']);
+
+        livewire(PostsTable::class)
+            ->searchTable('café!_100%')
+            ->assertCanSeeTableRecords([$literalMatch])
+            ->assertCanNotSeeTableRecords([$wildcardMatch]);
     });
 
     it('can search individual column records', function (): void {
@@ -457,124 +484,68 @@ describe('searching', function (): void {
     });
 
     it('renders, responsively hides, and clears individual column search inputs with associated labels for columns named after JavaScript array properties in the browser', function (): void {
-        retry(10, function (): void {
-            Artisan::call('filament:assets');
+        Artisan::call('filament:assets');
 
-            $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-            Post::factory()->count(3)->create();
+        Post::factory()->count(3)->create();
 
-            visit('/individual-column-search-browser-test')
-                ->assertValue('.fi-ta-individual-search-cell-length input', '')
-                ->assertValue('.fi-ta-individual-search-cell-sort input', '')
-                ->assertValue('.fi-ta-individual-search-cell-title input', '')
-                ->resize(375, 812)
-                ->assertScript("(() => { const expectedLabels = { length: 'Length', sort: 'Sort', title: 'Title' }; return Object.entries(expectedLabels).every(([column, label]) => document.querySelector('.fi-ta-individual-search-cell-' + column + ' input').labels[0]?.textContent.trim() === label) })()", true)
-                ->fill('.fi-ta-individual-search-cell-length input', 'foo')
-                ->wait(1)
-                ->assertValue('.fi-ta-individual-search-cell-length input', 'foo')
-                ->fill('.fi-ta-individual-search-cell-length input', '')
-                ->wait(1)
-                ->assertValue('.fi-ta-individual-search-cell-length input', '')
-                ->resize(700, 812)
-                ->assertScript("document.querySelector('.fi-ta-individual-search-row').checkVisibility()", false)
-                ->resize(800, 812)
-                ->assertScript("document.querySelector('.fi-ta-individual-search-row').checkVisibility()", true)
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
+        visit('/individual-column-search-browser-test')
+            ->assertValue('.fi-ta-individual-search-cell-length input', '')
+            ->assertValue('.fi-ta-individual-search-cell-sort input', '')
+            ->assertValue('.fi-ta-individual-search-cell-title input', '')
+            ->resize(375, 812)
+            ->assertScript("(() => { const expectedLabels = { length: 'Length', sort: 'Sort', title: 'Title' }; return Object.entries(expectedLabels).every(([column, label]) => document.querySelector('.fi-ta-individual-search-cell-' + column + ' input').labels[0]?.textContent.trim() === label) })()", true)
+            ->fill('.fi-ta-individual-search-cell-length input', 'foo')
+            ->wait(1)
+            ->assertValue('.fi-ta-individual-search-cell-length input', 'foo')
+            ->fill('.fi-ta-individual-search-cell-length input', '')
+            ->wait(1)
+            ->assertValue('.fi-ta-individual-search-cell-length input', '')
+            ->resize(700, 812)
+            ->assertScript("document.querySelector('.fi-ta-individual-search-row').checkVisibility()", false)
+            ->resize(800, 812)
+            ->assertScript("document.querySelector('.fi-ta-individual-search-row').checkVisibility()", true)
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
 
-            visit('/individual-column-search-browser-test')
-                ->inDarkMode()
-                ->resize(375, 812)
-                ->assertNoAccessibilityIssues();
-        });
-    });
-
-    it('removes table event listeners when the table is destroyed', function (): void {
-        retry(10, function (): void {
-            Artisan::call('filament:assets');
-
-            $this->actingAs(User::factory()->create());
-
-            $page = visit('/individual-column-search-browser-test');
-
-            $page->script(<<<'JS'
-                window.tableScrollCount = 0
-                if (! window.originalScrollIntoView) {
-                    window.originalScrollIntoView = Element.prototype.scrollIntoView
-                    Element.prototype.scrollIntoView = function (...arguments) {
-                        if (this.matches?.('.fi-ta')) {
-                            window.tableScrollCount++
-                        }
-
-                        return window.originalScrollIntoView.apply(this, arguments)
-                    }
-                }
-                JS);
-
-            $page
-                ->click('[data-testid="toggle-table"]')
-                ->wait(1)
-                ->assertMissing('.fi-ta')
-                ->click('[data-testid="toggle-table"]')
-                ->wait(1)
-                ->assertPresent('.fi-ta')
-                ->click('[data-testid="toggle-table"]')
-                ->wait(1)
-                ->assertMissing('.fi-ta')
-                ->click('[data-testid="toggle-table"]')
-                ->wait(1)
-                ->assertPresent('.fi-ta');
-
-            $page->script(<<<'JS'
-                window.tableScrollCount = 0
-                document.querySelector('.fi-ta').closest('[wire\\:id]').dispatchEvent(new CustomEvent('scrollToTopOfTable'))
-                JS);
-
-            $page
-                ->assertScript('window.tableScrollCount', 1)
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
-
-            visit('/individual-column-search-browser-test')
-                ->inDarkMode()
-                ->assertNoAccessibilityIssues();
-        });
+        visit('/individual-column-search-browser-test')
+            ->inDarkMode()
+            ->resize(375, 812)
+            ->assertNoAccessibilityIssues();
     });
 
     it('scopes column manager checkbox ids to each table in the browser', function (): void {
-        retry(10, function (): void {
-            Artisan::call('filament:assets');
+        Artisan::call('filament:assets');
 
-            $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-            Post::factory()->count(3)->create();
+        Post::factory()->count(3)->create();
 
-            visit('/column-manager-browser-test')
-                ->assertPresent('#first-table .fi-ta-header-cell-title')
-                ->assertPresent('#second-table .fi-ta-header-cell-title')
-                // Open the first table's column manager too, so its checkboxes are also rendered when the second manager's labels are clicked.
-                ->click('#first-table button[aria-label="Column manager"]')
-                ->click('#second-table button[aria-label="Column manager"]')
-                // Every rendered column manager checkbox id must be unique, otherwise a label's `for` can activate a checkbox in another table's manager.
-                ->assertScript('new Set(Array.from(document.querySelectorAll(\'.fi-ta-col-manager-label input[type="checkbox"]\')).map((checkbox) => checkbox.id)).size === document.querySelectorAll(\'.fi-ta-col-manager-label input[type="checkbox"]\').length', true)
-                // Clicking the `Title` label must toggle the checkbox in this table's column manager, not the checkbox of the other table's manager that shares the column name.
-                ->click('#second-table .fi-ta-col-manager-label[for$="-title"]')
-                ->wait(1)
-                ->assertMissing('#second-table .fi-ta-header-cell-title')
-                ->assertPresent('#first-table .fi-ta-header-cell-title')
-                // Restore the toggled column, since the column manager persists in the session and a retried attempt must start from the default state.
-                ->click('#second-table .fi-ta-col-manager-label[for$="-title"]')
-                ->wait(1)
-                ->assertPresent('#second-table .fi-ta-header-cell-title')
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
+        visit('/column-manager-browser-test')
+            ->assertPresent('#first-table .fi-ta-header-cell-title')
+            ->assertPresent('#second-table .fi-ta-header-cell-title')
+            // Open the first table's column manager too, so its checkboxes are also rendered when the second manager's labels are clicked.
+            ->click('#first-table button[aria-label="Column manager"]')
+            ->click('#second-table button[aria-label="Column manager"]')
+            // Every rendered column manager checkbox id must be unique, otherwise a label's `for` can activate a checkbox in another table's manager.
+            ->assertScript('new Set(Array.from(document.querySelectorAll(\'.fi-ta-col-manager-label input[type="checkbox"]\')).map((checkbox) => checkbox.id)).size === document.querySelectorAll(\'.fi-ta-col-manager-label input[type="checkbox"]\').length', true)
+            // Clicking the `Title` label must toggle the checkbox in this table's column manager, not the checkbox of the other table's manager that shares the column name.
+            ->click('#second-table .fi-ta-col-manager-label[for$="-title"]')
+            ->wait(1)
+            ->assertMissing('#second-table .fi-ta-header-cell-title')
+            ->assertPresent('#first-table .fi-ta-header-cell-title')
+            // Restore the toggled column, since the column manager persists in the session and a retried attempt must start from the default state.
+            ->click('#second-table .fi-ta-col-manager-label[for$="-title"]')
+            ->wait(1)
+            ->assertPresent('#second-table .fi-ta-header-cell-title')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
 
-            visit('/column-manager-browser-test')
-                ->inDarkMode()
-                ->click('#second-table button[aria-label="Column manager"]')
-                ->assertNoAccessibilityIssues();
-        });
+        visit('/column-manager-browser-test')
+            ->inDarkMode()
+            ->click('#second-table button[aria-label="Column manager"]')
+            ->assertNoAccessibilityIssues();
     });
 });
 
@@ -812,7 +783,9 @@ describe('relationship columns', function (): void {
 
         livewire(ImagesTable::class)
             ->assertTableColumnStateSet('imageable.team.name', 'Team Alpha', $image)
-            ->assertTableColumnStateNotSet('imageable.team.name', 'Alice', $image);
+            ->assertTableColumnStateNotSet('imageable.team.name', 'Alice', $image)
+            ->assertTableColumnFormattedStateSet('imageable.team.name', 'Team Alpha', $image)
+            ->assertTableColumnFormattedStateNotSet('imageable.team.name', 'Alice', $image);
     });
 
     it('can output the state of multiple nested relationships through the same `MorphTo` relationship', function (): void {
@@ -920,14 +893,14 @@ describe('relationship columns', function (): void {
     });
 
     it('can sort records with `BelongsTo` -> `HasOne` relationship', function (): void {
-        Post::factory()->count(5)->state(fn (): array => [
-            'author_id' => User::factory()->has(
-                Profile::factory()->state(fn (): array => [
-                    'bio' => fake()->sentence(),
-                ]),
-                'profile'
-            ),
-        ])->create();
+        foreach (['Charlie', 'Alpha', 'Echo', 'Bravo', 'Delta'] as $bio) {
+            Post::factory()->create([
+                'author_id' => User::factory()->has(
+                    Profile::factory()->state(['bio' => $bio]),
+                    'profile'
+                ),
+            ]);
+        }
 
         $sortedAsc = Post::query()
             ->orderBy(
@@ -961,14 +934,16 @@ describe('relationship columns', function (): void {
     });
 
     it('can sort records with `BelongsTo` -> `HasOne` -> `BelongsTo` relationship', function (): void {
-        Post::factory()->count(5)->state(fn (): array => [
-            'author_id' => User::factory()->has(
-                Profile::factory()->state(fn (): array => [
-                    'company_id' => Company::factory(),
-                ]),
-                'profile'
-            ),
-        ])->create();
+        foreach (['Charlie', 'Alpha', 'Echo', 'Bravo', 'Delta'] as $companyName) {
+            Post::factory()->create([
+                'author_id' => User::factory()->has(
+                    Profile::factory()->state([
+                        'company_id' => Company::factory()->state(['name' => $companyName]),
+                    ]),
+                    'profile'
+                ),
+            ]);
+        }
 
         $sortedAsc = Post::query()
             ->orderBy(
@@ -1551,11 +1526,13 @@ describe('relationship columns', function (): void {
     });
 
     it('can sort records with `BelongsToThrough` relationship', function (): void {
-        Post::factory()->count(5)->state(fn (): array => [
-            'author_id' => User::factory()->state([
-                'team_id' => Team::factory(),
-            ]),
-        ])->create();
+        foreach (['Charlie', 'Alpha', 'Echo', 'Bravo', 'Delta'] as $teamName) {
+            Post::factory()->create([
+                'author_id' => User::factory()->state([
+                    'team_id' => Team::factory()->state(['name' => $teamName]),
+                ]),
+            ]);
+        }
 
         $sortedAsc = Post::query()
             ->orderBy(
@@ -1627,13 +1604,15 @@ describe('relationship columns', function (): void {
     });
 
     it('can sort records with nested `BelongsToThrough` -> `BelongsTo` relationship', function (): void {
-        Post::factory()->count(5)->state(fn (): array => [
-            'author_id' => User::factory()->state([
-                'team_id' => Team::factory()->state([
-                    'company_id' => Company::factory(),
+        foreach (['Charlie', 'Alpha', 'Echo', 'Bravo', 'Delta'] as $companyName) {
+            Post::factory()->create([
+                'author_id' => User::factory()->state([
+                    'team_id' => Team::factory()->state([
+                        'company_id' => Company::factory()->state(['name' => $companyName]),
+                    ]),
                 ]),
-            ]),
-        ])->create();
+            ]);
+        }
 
         $sortedAsc = Post::query()
             ->orderBy(
@@ -1714,13 +1693,15 @@ describe('relationship columns', function (): void {
     });
 
     it('can sort records with `BelongsTo` -> `BelongsToThrough` relationship', function (): void {
-        Post::factory()->count(5)->state(fn (): array => [
-            'author_id' => User::factory()->state([
-                'team_id' => Team::factory()->state([
-                    'company_id' => Company::factory(),
+        foreach (['Charlie', 'Alpha', 'Echo', 'Bravo', 'Delta'] as $companyName) {
+            Post::factory()->create([
+                'author_id' => User::factory()->state([
+                    'team_id' => Team::factory()->state([
+                        'company_id' => Company::factory()->state(['name' => $companyName]),
+                    ]),
                 ]),
-            ]),
-        ])->create();
+            ]);
+        }
 
         $sortedAsc = Post::query()
             ->orderBy(

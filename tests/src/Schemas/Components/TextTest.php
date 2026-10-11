@@ -278,6 +278,18 @@ describe('icon size', function (): void {
         expect($text->getIconSize())->toBe(IconSize::Large);
     });
 
+    it('can set `iconSize()` with a string enum value', function (): void {
+        $text = Text::make('Test')->iconSize('lg');
+
+        expect($text->getIconSize())->toBe(IconSize::Large);
+    });
+
+    it('preserves a custom string `iconSize()` value', function (): void {
+        $text = Text::make('Test')->iconSize('custom');
+
+        expect($text->getIconSize())->toBe('custom');
+    });
+
     it('can set `iconSize()` with a `Closure`', function (): void {
         $text = Text::make('Test')
             ->iconSize(static fn (): IconSize => IconSize::Small);
@@ -455,8 +467,10 @@ describe('rendering', function (): void {
         livewire(RenderTextWithClosureTooltip::class)->assertSuccessful();
     });
 
-    it('can render with `copyable()`', function (): void {
-        livewire(RenderTextWithCopyable::class)->assertSuccessful();
+    it('can render a badge with `copyable()`', function (): void {
+        livewire(RenderTextWithCopyable::class)
+            ->assertSuccessful()
+            ->assertDontSeeHtml('wire:loading.attr="disabled"');
     });
 
     it('can render with `copyable()` set via `Closure`', function (): void {
@@ -680,7 +694,7 @@ class RenderTextWithCopyable extends Component implements HasSchemas
 
     public function infolist(Schema $schema): Schema
     {
-        return $schema->state([])->components([Text::make('Test')->copyable()]);
+        return $schema->state([])->components([Text::make('Test')->badge()->copyable()]);
     }
 
     public function render(): string

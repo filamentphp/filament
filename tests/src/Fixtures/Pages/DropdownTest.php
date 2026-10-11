@@ -1,0 +1,46 @@
+<?php
+
+namespace Filament\Tests\Fixtures\Pages;
+
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
+use Filament\Forms\Components\Select;
+use Filament\Pages\Page;
+use Filament\Schemas\Schema;
+
+class DropdownTest extends Page
+{
+    protected string $view = 'pages.dropdown-test';
+
+    public ?array $data = [];
+
+    public int $refreshCount = 0;
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function refresh(): void
+    {
+        $this->refreshCount++;
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('status')
+                    ->searchable()
+                    ->options(['draft' => 'Draft', 'published' => 'Published']),
+                DatePicker::make('published_at')
+                    ->native(false),
+                RichEditor::make('content')
+                    ->toolbarButtons([
+                        [ToolbarButtonGroup::make('Headings', ['h1', 'h2'])],
+                    ]),
+            ])
+            ->statePath('data');
+    }
+}

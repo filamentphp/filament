@@ -6,6 +6,8 @@ return [
 
         'heading' => '通知',
 
+        'unread_label' => '未読の通知',
+
         'actions' => [
 
             'clear' => [

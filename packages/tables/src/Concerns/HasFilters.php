@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Facades\Filament;
 use Filament\QueryBuilder\Forms\Components\RuleBuilder;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
@@ -148,6 +147,20 @@ trait HasFilters
 
     public function resetTableFiltersForm(): void
     {
+        $action = $this->getTable()->getFiltersResetAction();
+
+        if ($action->isDisabled()) {
+            return;
+        }
+
+        if (! $action->isAuthorized()) {
+            if ($action->hasAuthorizationNotification()) {
+                $action->sendUnauthorizedNotification($action->getAuthorizationResponseWithMessage());
+            }
+
+            return;
+        }
+
         $this->getTableFiltersForm()->fill();
 
         if ($this->getTable()->hasDeferredFilters()) {
@@ -218,21 +231,7 @@ trait HasFilters
 
     public function getTableFiltersSessionKey(): string
     {
-        $namespace = $this::class;
-
-        $tenantKey = null;
-
-        if (class_exists(Filament::class)) {
-            $tenantKey = Filament::getTenant()?->getKey();
-        }
-
-        if (filled($tenantKey)) {
-            $namespace .= '|' . $tenantKey;
-        }
-
-        $table = md5($namespace);
-
-        return "tables.{$table}_filters";
+        return $this->getTableSessionKey('filters', isTenantScoped: true);
     }
 
     /**

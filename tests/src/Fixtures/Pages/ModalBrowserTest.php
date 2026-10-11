@@ -6,8 +6,11 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
+
+use function Amp\delay;
 
 class ModalBrowserTest extends Page
 {
@@ -15,11 +18,20 @@ class ModalBrowserTest extends Page
 
     public bool $didRunActionAfterClosingChild = false;
 
+    public int $loadingButtonActivations = 0;
+
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedBolt;
 
     protected static ?int $navigationSort = 5;
 
     protected static bool $shouldRegisterNavigation = false;
+
+    public function activateLoadingButton(): void
+    {
+        $this->loadingButtonActivations++;
+
+        delay(1);
+    }
 
     protected function getHeaderActions(): array
     {
@@ -76,6 +88,7 @@ class ModalBrowserTest extends Page
             Action::make('escapeCloseDisabled')
                 ->label('Escape close disabled')
                 ->closeModalByEscaping(false)
+                ->stickyModalHeader()
                 ->schema([
                     TextInput::make('name'),
                     TextInput::make('email'),
@@ -83,12 +96,50 @@ class ModalBrowserTest extends Page
                 ->action(static fn () => null)
                 ->extraAttributes(['data-testid' => 'escape-close-disabled-trigger'])
                 ->extraModalWindowAttributes(['data-testid' => 'escape-close-disabled-modal']),
+            Action::make('validatedParentData')
+                ->label('Validated parent data')
+                ->schema([
+                    TextInput::make('name')
+                        ->required()
+                        ->extraInputAttributes(['data-testid' => 'validated-parent-data-input'])
+                        ->extraFieldWrapperAttributes(['data-testid' => 'validated-parent-data-field'])
+                        ->suffixAction(
+                            Action::make('generateValidatedParentDataName')
+                                ->action(function (Action $parentAction): void {
+                                    $parentAction->fillData([
+                                        'name' => blank($parentAction->getRawData()['name'] ?? null)
+                                            ? 'First generated name'
+                                            : 'Second generated name',
+                                    ]);
+                                })
+                                ->extraAttributes(['data-testid' => 'validated-parent-data-suffix-action']),
+                        ),
+                ])
+                ->action(static fn () => null)
+                ->extraAttributes(['data-testid' => 'validated-parent-data-trigger'])
+                ->extraModalWindowAttributes(['data-testid' => 'validated-parent-data-modal'])
+                ->extraModalFooterActions([
+                    Action::make('validateParentDataBeforeOpening')
+                        ->label('Open nested modal')
+                        ->schema([
+                            TextInput::make('confirmation'),
+                        ])
+                        ->mountUsing(function (Action $parentAction, Schema $schema): void {
+                            $parentAction->getValidatedData();
+
+                            $schema->fill();
+                        })
+                        ->action(static fn () => null)
+                        ->extraAttributes(['data-testid' => 'validated-parent-data-nested-trigger'])
+                        ->extraModalWindowAttributes(['data-testid' => 'validated-parent-data-nested-modal']),
+                ]),
             Action::make('scrollPreservation')
                 ->label('Scroll preservation')
                 ->modalSubmitAction(false)
                 ->stickyModalFooter()
                 ->schema(array_map(
-                    fn (int $index): TextInput => TextInput::make("scrollField{$index}"),
+                    fn (int $index): TextInput => TextInput::make("scrollField{$index}")
+                        ->extraInputAttributes(['data-testid' => "scroll-field-{$index}"]),
                     range(1, 25),
                 ))
                 ->extraModalWindowAttributes(['data-testid' => 'scroll-modal'])
@@ -97,6 +148,7 @@ class ModalBrowserTest extends Page
                         ->label('Open nested modal')
                         ->requiresConfirmation()
                         ->action(static fn () => null)
+                        ->extraAttributes(['data-testid' => 'scroll-nested-trigger'])
                         ->extraModalWindowAttributes(['data-testid' => 'scroll-nested-modal']),
                 ]),
             Action::make('clickThrough')

@@ -6,6 +6,8 @@ return [
 
         'heading' => 'Известувања',
 
+        'unread_label' => 'Непрочитано известување',
+
         'actions' => [
 
             'clear' => [

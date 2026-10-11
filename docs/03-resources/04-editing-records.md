@@ -20,6 +20,32 @@ protected function mutateFormDataBeforeFill(array $data): array
 
 Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../actions/edit#customizing-data-before-filling-the-form).
 
+## Refreshing form data
+
+If an action modifies a record while you are editing it, you can refresh selected data in the form using the `refreshFormData()` method:
+
+```php
+use App\Models\Post;
+use Filament\Actions\Action;
+
+Action::make('approve')
+    ->action(function (Post $record) {
+        $record->approve();
+
+        $this->refreshFormData([
+            'status',
+        ]);
+    })
+```
+
+This method accepts an array of form state paths to refresh from the page's current record. If you pass the path of a field containing nested fields, those nested fields are also refreshed. State outside the refreshed paths is retained unless your own customization code changes it, so unsaved edits to other fields are not normally discarded.
+
+Before the selected state is refreshed, the current record data is passed through the page's `mutateFormDataBeforeFill()` method. Each refreshed field then runs its normal state hydration logic, such as relationship loading, state casts, and `afterStateHydrated()` callbacks. The page's [`beforeFill()` and `afterFill()` lifecycle hooks](#lifecycle-hooks) are not run, since they apply when filling the entire form.
+
+The `refreshFormData()` method does not retrieve a fresh copy of the record from the database. If the record was updated elsewhere, you should refresh the record before refreshing the form data. Relationship data is loaded according to the behavior of each form component and may use relationships that are already loaded on the record.
+
+Be careful when refreshing relationship fields or other parent state paths, since unsaved changes within those paths may be replaced. Refilling the entire form instead may also discard unsaved changes in fields and relationships outside the paths that you intended to refresh.
+
 ## Customizing data before saving
 
 Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may define a `mutateFormDataBeforeSave()` method on the Edit page class, which accepts the `$data` as an array, and returns it modified:

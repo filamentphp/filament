@@ -656,13 +656,14 @@ By default, Filament will use the `name` attribute of the tenant to display its 
 namespace App\Models;
 
 use Filament\Models\Contracts\HasName;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 
 class Team extends Model implements HasName
 {
     // ...
 
-    public function getFilamentName(): string
+    public function getFilamentName(): string | Htmlable
     {
         return "{$this->name} {$this->subscription_plan}";
     }
@@ -670,6 +671,22 @@ class Team extends Model implements HasName
 ```
 
 The `getFilamentName()` method is used to retrieve the name of the current user.
+
+### Rendering HTML in tenant names
+
+You may return an `Htmlable` object, such as an `HtmlString`, from `getFilamentName()` to render HTML in the tenant name:
+
+```php
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\HtmlString;
+
+public function getFilamentName(): string | Htmlable
+{
+    return new HtmlString(e($this->name) . ' <strong>' . e($this->subscription_plan) . '</strong>');
+}
+```
+
+Filament's `getTenantName()` method returns either a string or an `Htmlable` object. Strings are rendered as text, including in tenant menu tooltips. Only `Htmlable` names are rendered as trusted HTML, so you must escape dynamic content using `e()` before including it in an `HtmlString`.
 
 ## Setting the current tenant label
 
@@ -856,6 +873,10 @@ Below is a list of features that Filament provides to help you implement multi-t
     - As per the point above, queries made outside the panel with tenancy enabled do not have access to the current tenant, so are not scoped. If in doubt, please check if your queries are properly scoped or not before deploying your application.
     - If you need to disable the tenancy global scope for a specific query, you can use the `withoutGlobalScope(filament()->getTenancyScopeName())` method on the query.
     - If any of your queries disable all global scopes, the tenancy global scope will be disabled as well. You should be careful when using this method, as it can lead to data leakage. If you need to disable all global scopes except the tenancy global scope, you can use the `withoutGlobalScopes()` method passing an array of the global scopes you want to disable.
+
+<Aside variant="warning">
+    On each Livewire request to a resource page, Filament re-resolves its record through the resource binding query, including tenant scoping unless that query removes it. This protection does not extend to records passed into relation managers, widgets, or modal table selects: their model properties use Livewire's native restoration, which does not apply global scopes by default. Filament also does not re-query a tenant registration page's `$tenant`, model properties that you add, or models nested inside other public state. Enforce tenant and ownership restrictions and authorize those models before using them. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for the complete boundary.
+</Aside>
 
 - Automatic association of newly created Eloquent models with the current tenant. When a new record is created for a [tenant-aware](#disabling-tenancy-for-a-resource) resource, the tenant is automatically associated with the record. This means that the record will belong to the current tenant, as the foreign key column is automatically set to the tenant's ID. This is done by Filament registering an event listener for the `creating` and `created` events on the resource's Eloquent model.
     - A [tenant-aware](#disabling-tenancy-for-a-resource) resource has to exist in the panel with tenancy enabled for the resource's model to have the automatic association to happen. If you want automatic association for a model that does not have a corresponding resource, you must [register a listener for the `creating` event](https://laravel.com/docs/eloquent#events) for that model, and associate the `filament()->getTenant()` with it.

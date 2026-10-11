@@ -30,8 +30,13 @@ export default Node.create({
                 default: null,
                 parseHTML: (element) => element.getAttribute('style'),
                 renderHTML: (attributes) => {
+                    const span = Math.max(
+                        1,
+                        Number(attributes['data-col-span']) || 1,
+                    )
+
                     return {
-                        style: `grid-column: span ${attributes['data-col-span'] ?? 1};`,
+                        style: `--col-span: span ${span} / span ${span}`,
                     }
                 },
             },

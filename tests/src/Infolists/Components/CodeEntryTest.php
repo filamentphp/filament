@@ -2,11 +2,18 @@
 
 namespace Filament\Tests\Infolists\Components;
 
+use DOMDocument;
+use DOMXPath;
 use Filament\Infolists\Components\CodeEntry;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Js;
 use Livewire\Component;
 use Phiki\Grammar\Grammar;
 use Phiki\Theme\Theme;
@@ -24,6 +31,185 @@ it('can render', function (): void {
 it('can render with grammar highlighting', function (): void {
     livewire(TestComponentWithPhpCodeEntry::class)
         ->assertSuccessful();
+});
+
+it('renders malicious HTML as code text rather than active elements', function (): void {
+    $html = CodeEntry::make('code')
+        ->container(Schema::make(Livewire::make()))
+        ->state('<script>alert(1)</script><img src="x" onerror="alert(2)"> & tail')
+        ->toHtml();
+
+    $document = new DOMDocument;
+    $document->loadHTML($html);
+    $xpath = new DOMXPath($document);
+
+    expect($xpath->query('//script | //img')->length)->toBe(0)
+        ->and(rtrim($xpath->query('//code')->item(0)->textContent, "\n"))
+        ->toBe('<script>alert(1)</script><img src="x" onerror="alert(2)"> & tail');
+});
+
+it('injects the related model into copying and tooltip evaluations', function (): void {
+    $author = User::factory()->create(['json' => ['code' => 'echo true;']]);
+    $post = Post::factory()->create(['author_id' => $author->getKey()]);
+
+    $entry = CodeEntry::make('author.json.code')
+        ->copyable(static fn (User $relatedRecord): bool => $relatedRecord->exists)
+        ->copyableState(static fn (User $relatedRecord): string => "copy-{$relatedRecord->email}")
+        ->copyMessage(static fn (User $relatedRecord): string => "message-{$relatedRecord->email}")
+        ->copyMessageDuration(static fn (User $relatedRecord): int => 1234)
+        ->tooltip(static fn (User $relatedRecord): string => "tooltip-{$relatedRecord->email}")
+        ->container(Schema::make(Livewire::make())->record($post));
+
+    expect($entry->toHtml())
+        ->toContain("copy-{$author->email}")
+        ->toContain("message-{$author->email}")
+        ->toContain('1234')
+        ->toContain("tooltip-{$author->email}");
+});
+
+it('injects JSON `$state` and preserves both records in copying and tooltip evaluations', function (int $flags, string $expectedState): void {
+    $author = User::factory()->create(['json' => ['url' => 'https://example.com/café']]);
+    $post = Post::factory()->create(['author_id' => $author->getKey()]);
+    $evaluatedMethods = [];
+
+    $entry = CodeEntry::make('author.json')
+        ->jsonFlags($flags)
+        ->container(Schema::make(Livewire::make())->record($post));
+
+    foreach (['copyable', 'copyableState', 'copyMessage', 'copyMessageDuration', 'tooltip'] as $method) {
+        $entry->{$method}(static function (string $state, User $relatedRecord, Post $record) use ($author, &$evaluatedMethods, $expectedState, $method, $post): bool | int | string {
+            expect($state)->toBe($expectedState)
+                ->and($relatedRecord->is($author))->toBeTrue()
+                ->and($record->is($post))->toBeTrue();
+
+            $evaluatedMethods[] = $method;
+
+            return match ($method) {
+                'copyable' => true,
+                'copyableState' => "Copy: {$state}",
+                'copyMessage' => 'Copied code',
+                'copyMessageDuration' => 1234,
+                'tooltip' => 'Copy code',
+            };
+        });
+    }
+
+    $document = new DOMDocument;
+    $document->loadHTML('<?xml encoding="UTF-8">' . $entry->toHtml());
+    $xpath = new DOMXPath($document);
+    $clickHandler = $xpath->query('//*[@*[name()="x-on:click"]]')->item(0)->getAttribute('x-on:click');
+
+    expect($evaluatedMethods)->toBe(['copyable', 'copyableState', 'copyMessage', 'copyMessageDuration', 'tooltip'])
+        ->and(rtrim($xpath->query('//code')->item(0)->textContent, "\n"))->toBe($expectedState)
+        ->and($clickHandler)->toContain('clipboard.writeText(' . Js::from("Copy: {$expectedState}") . ')')
+        ->toContain("\$tooltip('Copied code'")
+        ->toContain('timeout: 1234');
+})->with([
+    'pretty JSON' => [JSON_PRETTY_PRINT, "{\n    \"url\": \"https:\\/\\/example.com\\/caf\\u00e9\"\n}"],
+    'unescaped JSON' => [JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE, '{"url":"https://example.com/café"}'],
+]);
+
+it('copies the displayed JSON by default for array and `Collection` state', function (bool $isCollection): void {
+    $state = ['enabled' => true, 'retries' => 3];
+    $expectedState = "{\n    \"enabled\": true,\n    \"retries\": 3\n}";
+
+    $entry = CodeEntry::make('code')
+        ->container(Schema::make(Livewire::make()))
+        ->state($isCollection ? collect($state) : $state)
+        ->copyable(static fn (string $state): bool => $state === $expectedState);
+
+    $document = new DOMDocument;
+    $document->loadHTML($entry->toHtml());
+    $xpath = new DOMXPath($document);
+
+    expect(rtrim($xpath->query('//code')->item(0)->textContent, "\n"))->toBe($expectedState)
+        ->and($xpath->query('//*[@*[name()="x-on:click"]]')->item(0)->getAttribute('x-on:click'))
+        ->toContain('clipboard.writeText(' . Js::from($expectedState) . ')');
+
+    $entry->copyable(static fn (string $state): bool => $state !== $expectedState);
+
+    expect($entry->toHtml())->not->toContain('clipboard.writeText');
+})->with([false, true]);
+
+it('copies JSON and custom string callback content using the keyboard and reports clipboard results', function (): void {
+    Artisan::call('filament:assets');
+    $this->actingAs(User::factory()->create());
+
+    $expectedState = "{\n    \"enabled\": true,\n    \"retries\": 3\n}";
+    $feedbackExpression = 'document.querySelector(\'[data-testid="copyable-code"]\').closest(\'[role="definition"]\').querySelector(\'[role="status"]\').textContent';
+
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/infolist-entries-browser-test');
+
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page->script(<<<'JS'
+            window.copyCalls = []
+            Object.defineProperty(window.navigator, 'clipboard', {
+                configurable: true,
+                value: {
+                    writeText: (value) => {
+                        window.copyCalls.push(value)
+                        return new Promise((resolve, reject) => {
+                            window.resolveCopy = resolve
+                            window.rejectCopy = reject
+                        })
+                    },
+                },
+            })
+            JS);
+
+        $page
+            ->assertScript('document.querySelector(\'[data-testid="copyable-code"] code\').textContent.trim()', $expectedState)
+            ->assertScript('document.getElementById(document.querySelector(\'[data-testid="copyable-code"]\').getAttribute(\'aria-describedby\')).textContent.trim()', $expectedState)
+            ->keys('[data-testid="copyable-code"]', 'Enter')
+            ->assertScript('window.copyCalls', [$expectedState])
+            ->assertScript($feedbackExpression, '')
+            ->click('[data-testid="copyable-code"]')
+            ->assertScript('window.copyCalls.length', 1);
+
+        $page->script('window.resolveCopy()');
+        $page->assertScript("Boolean({$feedbackExpression})", true);
+        $page->script("window.successFeedback = {$feedbackExpression}");
+
+        $page
+            ->keys('[data-testid="copyable-code"]', 'Space')
+            ->assertScript('window.copyCalls.length', 2)
+            ->assertScript($feedbackExpression, '');
+
+        $page->script('window.rejectCopy(new Error("Permission denied"))');
+        $page->assertScript("Boolean({$feedbackExpression}) && ({$feedbackExpression} !== window.successFeedback)", true);
+
+        $page->keys('[data-testid="copyable-code"]', 'Enter');
+        $page->script('window.resolveCopy()');
+        $page->assertScript("{$feedbackExpression} === window.successFeedback", true);
+
+        $page->keys('[data-testid="copyable-code"]', 'Enter');
+        $page->script('window.resolveCopy()');
+        $page->assertScript("{$feedbackExpression} === window.successFeedback", true);
+
+        $page
+            ->keys('[data-testid="custom-copy-code"] [role="button"]', 'Space')
+            ->assertScript('window.copyCalls', [$expectedState, $expectedState, $expectedState, $expectedState, "Copy: {$expectedState}"]);
+
+        $page->script('window.resolveCopy()');
+        $page
+            ->assertScript(<<<'JS'
+                (() => {
+                    const control = document.querySelector('[data-testid="id-scoped-code"]').closest('[role="definition"]').querySelector('[role="button"]')
+                    return (document.getElementById(control.getAttribute('aria-describedby'))?.textContent ?? '').trim()
+                })()
+                JS, $expectedState)
+            ->keys('[data-testid="id-scoped-code"] [role="button"], [data-testid="id-scoped-code"][role="button"]', 'Enter')
+            ->assertScript('window.copyCalls.length', 6);
+
+        $page->script('window.resolveCopy()');
+        $page
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+    }
 });
 
 it('can set and get `grammar()`', function (): void {

@@ -32,6 +32,8 @@ ColorColumn::make('color')
 
 <AutoScreenshot name="tables/columns/color/copyable" alt="Color column with a button to copy it" version="6.x" />
 
+When the copyable preview is not part of a link or action, including a row link or action, you can also focus it using Tab and copy it using Enter or Space. The confirmation appears and is announced only after copying succeeds. If copying fails, a failure message appears and is announced instead.
+
 Optionally, you may pass a boolean value to control if the text should be copyable or not:
 
 ```php
@@ -41,7 +43,7 @@ ColorColumn::make('color')
     ->copyable(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="6.x">As well as allowing static values, the `copyable()`, `copyMessage()`, and `copyMessageDuration()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `copyable()`, `copyMessage()`, and `copyMessageDuration()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Wrapping multiple color blocks
 

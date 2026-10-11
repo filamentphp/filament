@@ -103,3 +103,66 @@ use Filament\Forms\Components\MarkdownEditor;
 MarkdownEditor::make('content')
     ->fileAttachmentsMaxSize(5120) // 5 MB
 ```
+
+## Generating fake Markdown
+
+You can generate Markdown in database factories using Faker's `filamentMarkdown()` method. You can build the content by chaining methods, then store it using `toString()`:
+
+```php
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class PostFactory extends Factory
+{
+    public function definition(): array
+    {
+        return [
+            'content' => fake()
+                ->filamentMarkdown()
+                ->heading()
+                ->paragraphs(3)
+                ->bulletList()
+                ->toString(),
+        ];
+    }
+}
+```
+
+You can generate a complete article using the `article()` method. An article starts with an introductory paragraph followed by sections with level-two headings. The `depth` argument recursively adds nested sections, using the next heading level for each depth:
+
+```php
+'content' => fake()
+    ->filamentMarkdown()
+    ->article(depth: 2)
+    ->toString(),
+```
+
+In this example, the article contains level-two sections with level-three subsections. The maximum depth is `5`, corresponding to heading levels two through six.
+
+You can generate the following block content:
+
+- `heading()`
+- `paragraphs()`
+- `bulletList()`
+- `orderedList()`
+- `blockquote()`
+- `codeBlock()`
+- `horizontalRule()`
+- `hardBreak()`
+- `table()`
+- `image()`
+
+The `paragraphs()` method can generate links and bold, italic, strike-through, and inline code formatting:
+
+```php
+'content' => fake()
+    ->filamentMarkdown()
+    ->paragraphs(
+        count: 3,
+        links: true,
+        bold: true,
+        italic: true,
+    )
+    ->toString(),
+```
+
+All random values use the same Faker generator, so seeded Faker output remains reproducible. The `MarkdownFaker` class is also macroable, allowing you to register additional fluent methods that generate Markdown supported by your application.

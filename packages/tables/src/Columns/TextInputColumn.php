@@ -205,6 +205,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
     {
         $isDisabled = $this->isDisabled();
         $state = $this->getState();
+        $relatedRecord = $this->getRelatedRecord();
         $mask = $this->getMask();
 
         $alignment = $this->getAlignment() ?? Alignment::Start;
@@ -254,13 +255,17 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                 'step' => $this->getStep(),
                 'type' => $type,
                 'x-mask' . ($mask instanceof RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
-                'x-tooltip' => filled($tooltip = $this->getTooltip($state))
+                'x-tooltip' => 'error === undefined ? ' . (filled($tooltip = $this->getTooltip($state, $relatedRecord))
                     ? '{
                         content: ' . Js::from($tooltip) . ',
                         theme: $store.theme,
                         allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                     }'
-                    : null,
+                    : 'false') . ' : {
+                        content: error,
+                        theme: $store.theme,
+                        allowHTML: false,
+                    }',
             ], escape: false)
             ->class([
                 'fi-input',
@@ -280,14 +285,6 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                     'fi-disabled': isLoading || <?= Js::from($isDisabled) ?>,
                     'fi-invalid': error !== undefined,
                 }"
-                x-tooltip="
-                    error === undefined
-                        ? false
-                        : {
-                            content: error,
-                            theme: $store.theme,
-                        }
-                "
                 x-on:click.prevent.stop
                 class="fi-input-wrp"
             >

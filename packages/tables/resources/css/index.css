@@ -19,6 +19,7 @@
 @import './container.css' layer(components);
 @import './content.css' layer(components);
 @import './empty-state.css' layer(components);
+@import './group-header.css' layer(components);
 @import './header-cell.css' layer(components);
 @import './row.css' layer(components);
 @import './table.css' layer(components);

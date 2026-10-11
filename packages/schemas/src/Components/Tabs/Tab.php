@@ -144,54 +144,72 @@ class Tab extends Component implements HasEmbeddedView
         return (bool) $this->evaluate($this->isBadgeDeferred);
     }
 
+    public function getTabId(): string
+    {
+        if (filled($id = $this->getExtraAttributeBag()->get('id'))) {
+            return $id;
+        }
+
+        /** @var Tabs $tabs */
+        $tabs = $this->getContainer()->getParentComponent();
+
+        return 'fi-sc-tab-' . hash('xxh128', json_encode([
+            $this->getLivewire()->getId(),
+            $tabs->getContainer()->getInheritanceKey(),
+            $tabs->getKey() ?? $tabs->getId(),
+            $this->getKey(isAbsolute: false),
+        ], JSON_THROW_ON_ERROR));
+    }
+
+    public function getPanelId(): string
+    {
+        return $this->getId() ?? ($this->getTabId() . '-panel');
+    }
+
+    public function getTabVisibilityJs(): string
+    {
+        $hiddenJs = $this->getHiddenJs();
+        $visibleJs = $this->getVisibleJs();
+
+        return match ([filled($hiddenJs), filled($visibleJs)]) {
+            [true, true] => "(! ({$hiddenJs})) && ({$visibleJs})",
+            [true, false] => "! ({$hiddenJs})",
+            [false, true] => "({$visibleJs})",
+            default => 'true',
+        };
+    }
+
     public function toEmbeddedHtml(): string
     {
-        $id = $this->getId();
         $key = $this->getKey(isAbsolute: false);
         /** @var Tabs $tabs */
         $tabs = $this->getContainer()->getParentComponent();
         $livewireProperty = $tabs->getLivewireProperty();
 
-        $childSchema = $this->getChildSchema();
-
-        if (empty($childSchema->getComponents())) {
+        if (! $tabs->hasTabPanels()) {
             return '';
         }
 
+        $isActive = blank($livewireProperty) || (strval($tabs->getLivewire()->{$livewireProperty}) === strval($key));
+
         $attributes = (new FilamentComponentAttributeBag)
             ->merge([
-                'aria-labelledby' => $id,
-                'id' => $id,
+                'aria-labelledby' => e($this->getTabId()),
+                'id' => e($this->getPanelId()),
                 'role' => 'tabpanel',
-                'wire:key' => $this->getLivewireKey() . '.container',
+                'tabindex' => 0,
+                'wire:key' => ($this->getLivewireKey() ?? $this->getTabId()) . '.container',
+                'x-show' => $this->getTabVisibilityJs(),
+                'x-bind:class' => "{ 'fi-active': isTabSelected(" . Js::from($key) . ') }',
+                'x-on:expand' => 'revealTab(' . Js::from($key) . ')',
             ], escape: false)
             ->merge($this->getExtraAttributes(), escape: false)
             ->class(['fi-sc-tabs-tab']);
 
-        if (blank($livewireProperty)) {
-            ob_start(); ?>
-
-            <div
-                x-bind:class="{
-                    'fi-active': tab === <?= Js::from($key) ?>,
-                }"
-                x-on:expand="tab = <?= Js::from($key) ?>"
-                <?= $attributes->toHtml() ?>
-            >
-                <?= $childSchema->toHtml() ?>
-            </div>
-
-            <?php return ob_get_clean();
-        }
-
-        if (strval($tabs->getLivewire()->{$livewireProperty}) !== strval($key)) {
-            return '';
-        }
-
         ob_start(); ?>
 
-        <div <?= $attributes->class(['fi-active'])->toHtml() ?>>
-            <?= $childSchema->toHtml() ?>
+        <div <?= $attributes->toHtml() ?>>
+            <?= $isActive ? $this->getChildSchema()->toHtml() : '' ?>
         </div>
 
         <?php return ob_get_clean();

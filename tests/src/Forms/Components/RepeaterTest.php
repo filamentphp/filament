@@ -9,10 +9,12 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
@@ -21,6 +23,8 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
+use Filament\Tests\Fixtures\Enums\IntegerBackedEnum;
+use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\PostMetadata;
@@ -974,6 +978,108 @@ class TestComponentWithRepeaterAndBuilder extends Livewire
     }
 }
 
+describe('`fixIndistinctState()`', function (): void {
+    it('clears duplicate cast values and preserves their submitted type', function (string $fieldClass, array | string $options, mixed $state, string $updatedState): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                Repeater::make('items')
+                    ->generateUuidUsing(false)
+                    ->schema([
+                        $fieldClass::make('choice')->options($options)->fixIndistinctState(),
+                    ]),
+            ]);
+
+        $schema->fill(['items' => [['choice' => $state], ['choice' => null]]]);
+
+        $schema->getComponentByStatePath('items.1.choice', withHidden: true)
+            ->rawState($updatedState)
+            ->callAfterStateUpdated();
+
+        expect($schema->getState())->toBe([
+            'items' => [['choice' => null], ['choice' => $state]],
+        ]);
+    })->with([
+        'numeric zero' => [Select::class, [0 => 'Zero', 1 => 'One'], 0, '0'],
+        'string enum' => [Radio::class, StringBackedEnum::class, StringBackedEnum::One, 'one'],
+        'integer enum' => [ToggleButtons::class, IntegerBackedEnum::class, IntegerBackedEnum::Zero, '0'],
+    ]);
+
+    it('clears duplicate enum selections from multiple fields', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                Repeater::make('items')
+                    ->generateUuidUsing(false)
+                    ->schema([
+                        Select::make('choice')
+                            ->multiple()
+                            ->options(TestLetterEnum::class)
+                            ->fixIndistinctState(),
+                    ]),
+            ]);
+
+        $schema->fill(['items' => [['choice' => ['A', 'B']], ['choice' => ['C']]]]);
+
+        $schema->getComponentByStatePath('items.1.choice', withHidden: true)
+            ->rawState(['A'])
+            ->callAfterStateUpdated();
+
+        expect($schema->getRawState())->toBe([
+            'items' => [['choice' => ['B']], ['choice' => ['A']]],
+        ]);
+    });
+
+    it('allows multiple `false` values and clears only other `true` values', function (string $fieldClass): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                Repeater::make('items')
+                    ->generateUuidUsing(false)
+                    ->schema([
+                        $fieldClass::make('choice')->fixIndistinctState(),
+                    ]),
+            ]);
+
+        $schema->fill(['items' => [['choice' => true], ['choice' => false], ['choice' => false]]]);
+
+        $secondField = $schema->getComponentByStatePath('items.1.choice', withHidden: true);
+        $secondField->rawState(false)->callAfterStateUpdated();
+
+        expect($schema->getState())->toBe([
+            'items' => [['choice' => true], ['choice' => false], ['choice' => false]],
+        ]);
+
+        $secondField->rawState(true)->callAfterStateUpdated();
+
+        expect($schema->getState())->toBe([
+            'items' => [['choice' => false], ['choice' => true], ['choice' => false]],
+        ]);
+    })->with(['checkbox' => [Checkbox::class], 'toggle' => [Toggle::class]]);
+
+    it('preserves different string option identifiers with leading zeroes', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                Repeater::make('items')
+                    ->generateUuidUsing(false)
+                    ->schema([
+                        Select::make('choice')->options(['01' => 'First', 1 => 'Second'])->fixIndistinctState(),
+                    ]),
+            ]);
+
+        $schema->fill(['items' => [['choice' => '01'], ['choice' => null]]]);
+
+        $schema->getComponentByStatePath('items.1.choice', withHidden: true)
+            ->rawState('1')
+            ->callAfterStateUpdated();
+
+        expect($schema->getRawState())->toBe([
+            'items' => [['choice' => '01'], ['choice' => '1']],
+        ]);
+    });
+});
+
 describe('`distinct()` validation on boolean fields', function (): void {
     it('does not force an optional `distinct()` boolean field to be selected when sibling items exist', function (string $component): void {
         livewire($component)
@@ -1505,27 +1611,262 @@ describe('rendering', function (): void {
     });
 });
 
+it('clears duplicate selections with `fixIndistinctState()` in the browser and allows saving', function (): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    $firstSelect = ':nth-match([data-testid="choice"], 1)';
+    $secondSelect = ':nth-match([data-testid="choice"], 2)';
+
+    $page = visit('/indistinct-state-browser-test');
+
+    $page
+        ->assertValue($firstSelect, '0')
+        ->select($secondSelect, '0')
+        ->assertValue($firstSelect, '')
+        ->assertValue($secondSelect, '0')
+        ->assertNoAccessibilityIssues()
+        ->click('[data-testid="save"]')
+        ->assertVisible('[data-testid="saved"]')
+        ->assertNoSmoke();
+
+    $page->inDarkMode()->assertNoAccessibilityIssues();
+});
+
+it('keeps item order, position feedback and keyboard focus when reordering in the browser', function (string $view): void {
+    require_once __DIR__ . '/../../../../packages/forms/src/helpers.php';
+    Artisan::call('filament:assets');
+    $this->actingAs(User::factory()->create());
+
+    $url = '/repeater-test?reordering=' . $view;
+    $page = visit($url);
+    foreach ([$page, $page->inDarkMode()] as $page) {
+        $firstName = ':nth-match([data-testid="item-name"], 1)';
+        $secondName = ':nth-match([data-testid="item-name"], 2)';
+        $thirdName = ':nth-match([data-testid="item-name"], 3)';
+        $moveDown = '[data-testid="repeater"] [data-reorder-direction="down"]:not([data-testid="children"] *)';
+        $moveUp = '[data-testid="repeater"] [data-reorder-direction="up"]:not([data-testid="children"] *)';
+        $firstDown = ':nth-match(' . $moveDown . ', 1)';
+        $secondDown = ':nth-match(' . $moveDown . ', 2)';
+        $secondUp = ':nth-match(' . $moveUp . ', 2)';
+        $thirdUp = ':nth-match(' . $moveUp . ', 3)';
+        $status = '[data-testid="repeater"] > [role="status"]';
+
+        $page->assertPresent('[data-testid="repeater"]:not([x-ignore])')
+            ->keys($firstDown, 'Enter')
+            ->assertValue($firstName, 'Beta')
+            ->assertValue($secondName, 'Alpha')
+            ->assertValue($thirdName, 'Gamma')
+            ->assertPresent($secondDown . ':focus')
+            ->assertSeeIn($status, __('filament-forms::components.repeater.reordering.moved', [
+                'label' => $view === 'simple' ? __('filament-forms::components.repeater.reordering.item') : 'Alpha',
+                'position' => 2,
+                'count' => 3,
+            ]));
+
+        $page->keys($secondDown, 'Space')
+            ->assertValue($firstName, 'Beta')
+            ->assertValue($secondName, 'Gamma')
+            ->assertValue($thirdName, 'Alpha')
+            ->assertDisabled(':nth-match(' . $moveDown . ', 3)');
+
+        if ($view === 'one-direction') {
+            $lastItem = ':nth-match([data-testid="repeater"] [x-sortable-item]:not([data-testid="children"] *), 3)';
+            $page->assertPresent($lastItem . ':focus');
+            $description = '[id="' . $page->attribute($lastItem, 'aria-labelledby') . '"]';
+            $page->assertSeeIn($description, __('filament-forms::components.repeater.reordering.position', ['label' => 'Alpha', 'position' => 3, 'count' => 3]))
+                ->keys($secondDown, 'Enter')
+                ->assertValue($firstName, 'Beta')
+                ->assertValue($secondName, 'Alpha')
+                ->assertValue($thirdName, 'Gamma')
+                ->assertSeeIn($description, __('filament-forms::components.repeater.reordering.position', ['label' => 'Alpha', 'position' => 2, 'count' => 3]))
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+
+            continue;
+        }
+
+        $page->assertPresent($thirdUp . ':focus')
+            ->keys($thirdUp, 'Enter')
+            ->assertValue($firstName, 'Beta')
+            ->assertValue($secondName, 'Alpha')
+            ->assertValue($thirdName, 'Gamma')
+            ->assertPresent($secondUp . ':focus')
+            ->keys($secondUp, 'Enter')
+            ->assertValue($firstName, 'Alpha')
+            ->assertValue($secondName, 'Beta')
+            ->assertValue($thirdName, 'Gamma')
+            ->assertPresent($firstDown . ':focus')
+            ->assertDisabled(':nth-match(' . $moveUp . ', 1)');
+
+        if ($view === 'regular') {
+            // Both activations run in one browser task, before the move request can complete.
+            $page->script(<<<'JS'
+            const control = document.querySelector('[data-testid="repeater"] [data-reorder-direction="down"]')
+            control.click()
+            control.click()
+            JS);
+            $page->assertValue($firstName, 'Beta')
+                ->assertValue($secondName, 'Alpha')
+                ->assertValue($thirdName, 'Gamma')
+                ->assertPresent($secondDown . ':focus');
+        }
+
+        if (in_array($view, ['regular', 'full', 'ancestor'])) {
+            $page->keys(':nth-match([data-testid="children"] [data-reorder-direction="down"], 1)', 'Enter')
+                ->assertValue(':nth-match([data-testid="child-name"], 1)', 'Child B')
+                ->assertValue(':nth-match([data-testid="child-name"], 2)', 'Child A')
+                ->assertPresent('[data-testid="children"] [data-reorder-direction="up"]:focus')
+                ->assertSeeIn('[data-testid="children"] > [role="status"]', __('filament-forms::components.repeater.reordering.moved', ['label' => __('filament-forms::components.repeater.reordering.item'), 'position' => 2, 'count' => 2]))
+                ->assertSeeIn($status, __('filament-forms::components.repeater.reordering.moved', ['label' => 'Alpha', 'position' => $view === 'regular' ? 2 : 1, 'count' => 3]));
+        }
+
+        $page->assertNoSmoke()->assertNoAccessibilityIssues();
+    }
+})->with(['regular', 'full', 'ancestor', 'simple', 'table', 'one-direction']);
+
+it('provides non-tabbable move actions without taking focus when visible buttons are disabled', function (string $view): void {
+    require_once __DIR__ . '/../../../../packages/forms/src/helpers.php';
+    Artisan::call('filament:assets');
+    $this->actingAs(User::factory()->create());
+    $url = '/repeater-test?reordering=screen-reader-' . $view;
+    $page = visit($url);
+    foreach ([$page, $page->inDarkMode()] as $page) {
+        $controls = '[data-testid="repeater"] [data-reorder-direction]:not([data-testid="children"] *)';
+        $page->assertCount($controls, 6)
+            ->assertNotPresent('[data-testid="repeater"] [aria-hidden="true"] [data-reorder-direction]');
+
+        foreach (range(1, 6) as $position) {
+            $page->assertAttribute(':nth-match(' . $controls . ', ' . $position . ')', 'tabindex', '-1');
+        }
+
+        $page->click('[data-testid="outside-reordering"]');
+        // Activate the visually hidden control without moving DOM focus to it.
+        $page->script('document.querySelector(\'[data-testid="repeater"] [data-reorder-direction="down"]\').click()');
+        $page->assertValue(':nth-match([data-testid="item-name"], 1)', 'Beta')
+            ->assertValue(':nth-match([data-testid="item-name"], 2)', 'Alpha')
+            ->assertValue(':nth-match([data-testid="item-name"], 3)', 'Gamma')
+            ->assertSeeIn('[data-testid="repeater"] > [role="status"]', __('filament-forms::components.repeater.reordering.moved', [
+                'label' => $view === 'simple' ? __('filament-forms::components.repeater.reordering.item') : 'Alpha',
+                'position' => 2,
+                'count' => 3,
+            ]))
+            ->assertPresent('[data-testid="outside-reordering"]:focus')
+            ->assertNoSmoke()->assertNoAccessibilityIssues();
+    }
+})->with(['regular', 'full', 'ancestor', 'simple', 'table']);
+
+it('omits fallback move controls when drag is unavailable', function (string $view): void {
+    Artisan::call('filament:assets');
+    $this->actingAs(User::factory()->create());
+    $url = '/repeater-test?reordering=screen-reader-' . $view;
+    $page = visit($url);
+    foreach ([$page, $page->inDarkMode()] as $page) {
+        $page->assertNotPresent('[data-testid="repeater"] [data-reorder-direction]:not([data-testid="children"] *)')
+            ->assertNoSmoke()->assertNoAccessibilityIssues();
+    }
+})->with(['no-drag', 'disabled', 'no-handle']);
+
+it('announces confirmed moves and allows reordering after cancelling confirmation', function (): void {
+    require_once __DIR__ . '/../../../../packages/forms/src/helpers.php';
+    Artisan::call('filament:assets');
+    $this->actingAs(User::factory()->create());
+    $url = '/repeater-test?reordering=modal';
+    $page = visit($url);
+    foreach ([$page, $page->inDarkMode()] as $page) {
+        $firstDown = ':nth-match([data-testid="repeater"] [data-reorder-direction="down"], 1)';
+        $status = '[data-testid="repeater"] > [role="status"]';
+
+        $page->assertPresent('[data-testid="repeater"]:not([x-ignore])')
+            ->keys($firstDown, 'Enter')->assertVisible('[data-testid="cancel-move"]')
+            ->assertSeeNothingIn($status)
+            ->click('[data-testid="cancel-move"]')
+            ->assertMissing('[data-testid="cancel-move"]')
+            ->assertNotPresent('[role="dialog"]:visible')
+            // The modal can close before its cancellation refresh finishes.
+            ->assertScript('Alpine.$data(document.querySelector(\'[data-testid="repeater"]\')).pending === null')
+            ->assertValue(':nth-match([data-testid="item-name"], 1)', 'Alpha')
+            ->assertValue(':nth-match([data-testid="item-name"], 2)', 'Beta')
+            ->assertValue(':nth-match([data-testid="item-name"], 3)', 'Gamma')
+            ->assertSeeNothingIn($status)
+            ->click($firstDown)
+            ->assertVisible('[data-testid="confirm-move"]')
+            ->assertSeeNothingIn($status)
+            ->click('[data-testid="confirm-move"]')
+            ->assertValue(':nth-match([data-testid="item-name"], 1)', 'Beta')
+            ->assertValue(':nth-match([data-testid="item-name"], 2)', 'Alpha')
+            ->assertValue(':nth-match([data-testid="item-name"], 3)', 'Gamma')
+            ->assertMissing('[data-testid="confirm-move"]')
+            ->assertNotPresent('[role="dialog"]:visible')
+            ->assertSeeIn($status, __('filament-forms::components.repeater.reordering.moved', ['label' => 'Alpha', 'position' => 2, 'count' => 3]))
+            ->click(':nth-match([data-testid="repeater"] [data-reorder-direction="up"]:not([data-testid="children"] *), 2)')
+            ->assertValue(':nth-match([data-testid="item-name"], 1)', 'Alpha')
+            ->assertValue(':nth-match([data-testid="item-name"], 2)', 'Beta')
+            ->assertValue(':nth-match([data-testid="item-name"], 3)', 'Gamma')
+            ->assertNoSmoke();
+        // Audit settled colors, not intermediate transition frames.
+        $page->page()->addStyleTag('*, *::before, *::after { transition: none !important; animation: none !important; }');
+        $page->assertNoAccessibilityIssues();
+    }
+});
+
+it('leaves custom move handlers in control without locking later ordering', function (string $view): void {
+    require_once __DIR__ . '/../../../../packages/forms/src/helpers.php';
+    Artisan::call('filament:assets');
+    $this->actingAs(User::factory()->create());
+    $url = '/repeater-test?reordering=' . $view;
+    $page = visit($url);
+    foreach ([$page, $page->inDarkMode()] as $page) {
+        $page->assertPresent('[data-testid="repeater"]:not([x-ignore])')
+            ->assertNotPresent('[data-testid="custom-refreshed"]');
+        $page->keys(':nth-match([data-testid="repeater"] [data-reorder-direction="down"], 1)', 'Enter');
+
+        if ($view === 'custom-refresh') {
+            $page->assertVisible('[data-testid="custom-refreshed"]');
+        } else {
+            $page->assertVisible('[data-testid="cancel-custom"]');
+
+            $page->click($view === 'custom-child-submit' ? '[data-testid="submit-custom"]' : '[data-testid="cancel-custom"]')
+                ->assertMissing('[data-testid="cancel-custom"]')
+                ->assertNotPresent('[role="dialog"]:visible');
+
+            // Child actions can dismiss their modal before the owner refresh finishes.
+            $page->assertScript('Alpine.$data(document.querySelector(\'[data-testid="repeater"]\')).pending === null');
+        }
+
+        $page->assertSeeNothingIn('[data-testid="repeater"] > [role="status"]')
+            ->click(':nth-match([data-testid="repeater"] [data-reorder-direction="up"]:not([data-testid="children"] *), 2)')
+            ->assertValue(':nth-match([data-testid="item-name"], 1)', 'Beta')
+            ->assertValue(':nth-match([data-testid="item-name"], 2)', 'Alpha')
+            ->assertValue(':nth-match([data-testid="item-name"], 3)', 'Gamma')
+            ->assertSeeIn('[data-testid="repeater"] > [role="status"]', __('filament-forms::components.repeater.reordering.moved', ['label' => 'Beta', 'position' => 1, 'count' => 3]))
+            ->assertNoSmoke();
+        // Audit settled colors, not intermediate transition frames.
+        $page->page()->addStyleTag('*, *::before, *::after { transition: none !important; animation: none !important; }');
+        $page->assertNoAccessibilityIssues();
+    }
+})->with(['custom-mount', 'custom-refresh', 'custom-child-cancel', 'custom-child-submit']);
+
 it('can add and delete items in the browser', function (): void {
-    retry(10, function (): void {
-        Artisan::call('filament:assets');
+    Artisan::call('filament:assets');
 
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/repeater-test')
-            ->assertPresent('[data-testid="repeater"] .fi-fo-repeater-item')
-            ->click('[data-testid="repeater"] .fi-fo-repeater-add button')
-            ->wait(1)
-            ->assertPresent('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2)')
-            ->click('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2) .fi-fo-repeater-item-header-end-actions button')
-            ->wait(1)
-            ->assertNotPresent('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2)')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/repeater-test')
+        ->assertPresent('[data-testid="repeater"] .fi-fo-repeater-item')
+        ->click('[data-testid="repeater"] .fi-fo-repeater-add button')
+        ->wait(1)
+        ->assertPresent('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2)')
+        ->click('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2) .fi-fo-repeater-item-header-end-actions button')
+        ->wait(1)
+        ->assertNotPresent('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2)')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/repeater-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/repeater-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
 });
 
 describe('nested singular relationships', function (): void {
@@ -1718,6 +2059,38 @@ describe('hydrateItems branches', function (): void {
 });
 
 describe('saveToRelationship branches', function (): void {
+    it('preserves related records when stale reorders follow deletion and saves valid ordering', function (): void {
+        $user = User::factory()->create();
+        $first = Post::factory()->create(['author_id' => $user->id, 'title' => 'Alpha', 'rating' => 1]);
+        $deleted = Post::factory()->create(['author_id' => $user->id, 'title' => 'Beta', 'rating' => 2]);
+        $last = Post::factory()->create(['author_id' => $user->id, 'title' => 'Gamma', 'rating' => 3]);
+
+        $livewire = livewire(RepeaterWithHasManyRelationshipAndOrderColumn::class, ['record' => $user])
+            ->callAction(TestAction::make('delete')->schemaComponent('posts')->arguments(['item' => "record-{$deleted->id}"]));
+        $remainingState = $livewire->get('data');
+
+        $livewire->callAction(TestAction::make('reorder')->schemaComponent('posts')->arguments([
+            'items' => ["record-{$last->id}", "record-{$deleted->id}", "record-{$first->id}"],
+        ]));
+        expect($livewire->get('data'))->toBe($remainingState);
+
+        $livewire->callAction(TestAction::make('moveDown')->schemaComponent('posts')->arguments(['item' => "record-{$first->id}"]));
+        expect(array_keys($livewire->get('data.posts')))->toBe(["record-{$last->id}", "record-{$first->id}"]);
+        $livewire->callAction(TestAction::make('moveUp')->schemaComponent('posts')->arguments(['item' => "record-{$first->id}"]));
+        expect($livewire->get('data'))->toBe($remainingState);
+
+        $livewire->callAction(TestAction::make('reorder')->schemaComponent('posts')->arguments([
+            'items' => ["record-{$last->id}", "record-{$first->id}"],
+        ]))->call('save');
+
+        expect($user->posts()->orderBy('rating')->pluck('id')->all())->toBe([$last->id, $first->id]);
+        expect($first->fresh()->title)->toBe('Alpha');
+        expect($first->fresh()->rating)->toBe(2);
+        expect($last->fresh()->title)->toBe('Gamma');
+        expect($last->fresh()->rating)->toBe(1);
+        expect($deleted->fresh()->trashed())->toBeTrue();
+    });
+
     it('writes the order column when `orderColumn()` is set', function (): void {
         $user = User::factory()->create();
 

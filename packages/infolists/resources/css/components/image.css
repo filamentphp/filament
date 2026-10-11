@@ -17,6 +17,13 @@
             @apply ring ring-white dark:ring-gray-900;
         }
 
+        &.fi-in-image-ring-0 {
+            & img,
+            & .fi-in-image-limited-remaining-text {
+                @apply ring-0;
+            }
+        }
+
         &.fi-in-image-ring-1 {
             & img,
             & .fi-in-image-limited-remaining-text {
@@ -31,10 +38,45 @@
             }
         }
 
+        &.fi-in-image-ring-3 {
+            & img,
+            & .fi-in-image-limited-remaining-text {
+                @apply ring-3;
+            }
+        }
+
         &.fi-in-image-ring-4 {
             & img,
             & .fi-in-image-limited-remaining-text {
                 @apply ring-4;
+            }
+        }
+
+        &.fi-in-image-ring-5 {
+            & img,
+            & .fi-in-image-limited-remaining-text {
+                @apply ring-5;
+            }
+        }
+
+        &.fi-in-image-ring-6 {
+            & img,
+            & .fi-in-image-limited-remaining-text {
+                @apply ring-6;
+            }
+        }
+
+        &.fi-in-image-ring-7 {
+            & img,
+            & .fi-in-image-limited-remaining-text {
+                @apply ring-7;
+            }
+        }
+
+        &.fi-in-image-ring-8 {
+            & img,
+            & .fi-in-image-limited-remaining-text {
+                @apply ring-8;
             }
         }
     }

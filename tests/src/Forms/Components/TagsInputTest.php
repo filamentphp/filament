@@ -218,13 +218,39 @@ it('can clear `separator()` with `null`', function (): void {
 });
 
 describe('`afterStateHydrated` closure', function (): void {
-    it('keeps array state as-is', function (): void {
-        livewire(TagsInputWithSeparator::class)
-            ->fillForm(['tags' => ['one', 'two']])
-            ->assertSchemaStateSet(['tags' => ['one', 'two']]);
+    it('keeps array state as-is, including blank values', function (): void {
+        $livewire = Livewire::make();
+        $state = [1 => '', 3 => ' ', 5 => '0', 7 => 'one'];
+
+        Schema::make($livewire)
+            ->statePath('data')
+            ->components([
+                TagsInput::make('tags')->separator(','),
+            ])
+            ->fill(['tags' => $state]);
+
+        expect($livewire->data['tags'])->toBe($state);
     });
 
-    it('splits string state by separator during hydration', function (): void {
+    it('splits string state by separator and removes blank tags during hydration', function (string $state, string $separator, array $expected): void {
+        $livewire = Livewire::make();
+
+        Schema::make($livewire)
+            ->statePath('data')
+            ->components([
+                TagsInput::make('tags')->separator($separator),
+            ])
+            ->fill(['tags' => $state]);
+
+        expect($livewire->data['tags'])->toBe($expected);
+    })->with([
+        'repeated, leading, and trailing separators preserve `0`' => [',alpha,,0,beta,', ',', ['alpha', '0', 'beta']],
+        'whitespace-only tags are blank without trimming nonblank tags' => [" alpha , ,\t\n, 0 , beta ", ',', [' alpha ', ' 0 ', ' beta ']],
+        'custom multi-character separator is treated literally' => ['||alpha||||0||beta||', '||', ['alpha', '0', 'beta']],
+        'separator regex characters are treated literally' => ['.*alpha.*.*0.*beta.*', '.*', ['alpha', '0', 'beta']],
+    ]);
+
+    it('sets empty array when string state is blank with separator', function (?string $state): void {
         $livewire = Livewire::make();
 
         Schema::make($livewire)
@@ -232,23 +258,15 @@ describe('`afterStateHydrated` closure', function (): void {
             ->components([
                 TagsInput::make('tags')->separator(','),
             ])
-            ->fill(['tags' => 'one,two,three']);
-
-        expect($livewire->data['tags'])->toBe(['one', 'two', 'three']);
-    });
-
-    it('sets empty array when string state is blank with separator', function (): void {
-        $livewire = Livewire::make();
-
-        Schema::make($livewire)
-            ->statePath('data')
-            ->components([
-                TagsInput::make('tags')->separator(','),
-            ])
-            ->fill(['tags' => '']);
+            ->fill(['tags' => $state]);
 
         expect($livewire->data['tags'])->toBe([]);
-    });
+    })->with([
+        'null' => [null],
+        'empty string' => [''],
+        'whitespace-only string' => [" \t\n"],
+        'separators only' => [',,,'],
+    ]);
 
     it('sets empty array when no separator and state is string', function (): void {
         $livewire = Livewire::make();
@@ -265,17 +283,21 @@ describe('`afterStateHydrated` closure', function (): void {
 });
 
 describe('`dehydrateStateUsing` closure', function (): void {
-    it('joins array state with separator when set', function (): void {
-        livewire(TagsInputWithSeparator::class)
-            ->fillForm(['tags' => ['one', 'two', 'three']])
-            ->assertSchemaStateSet(function (array $state): array {
-                // The state in the form is the array, but dehydration
-                // will join it with the separator when getState() is called
-                expect($state['tags'])->toBe(['one', 'two', 'three']);
+    it('joins array state with separator without filtering array values', function (array $state, string $separator, string $expected): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                TagsInput::make('tags')->separator($separator),
+            ])
+            ->fill(['tags' => $state]);
 
-                return [];
-            });
-    });
+        expect($schema->getState())->toBe(['tags' => $expected]);
+    })->with([
+        'empty state' => [[], ',', ''],
+        'blank and `0` array values' => [['alpha', '', '0', ''], ',', 'alpha,,0,'],
+        'custom multi-character separator' => [['alpha', '0', 'beta'], '||', 'alpha||0||beta'],
+        'separator regex characters' => [['alpha', '0', 'beta'], '.*', 'alpha.*0.*beta'],
+    ]);
 });
 
 class TagsInputWithSeparator extends Livewire
@@ -341,29 +363,33 @@ describe('rendering', function (): void {
 });
 
 it('can add and remove tags in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/tags-input-test')
-            ->assertDontSee('MyNewTag')
-            ->type('[data-testid="basic-tags"] input', 'MyNewTag')
-            ->keys('[data-testid="basic-tags"] input', 'Enter')
-            ->assertSee('MyNewTag')
-            ->assertSee('MyNewTag')
-            ->click('[data-testid="basic-tags"] .fi-badge-delete-btn')
-            ->assertNotPresent('[data-testid="basic-tags"] .fi-badge') // The live region briefly announces the removal, so assert on the badge element instead of the page text.
-            ->type('[data-testid="basic-tags"] input', '50% off $&')
-            ->keys('[data-testid="basic-tags"] input', 'Enter')
-            ->assertSee('50% off $&')
-            // `$` sequences in a tag must not be treated as `String.replace()` substitution patterns in the live region announcement.
-            ->assertScript('document.querySelector(\'[data-testid="basic-tags"] [x-ref="liveRegion"]\').textContent.includes(\'50% off $&\')', true)
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/tags-input-test')
+        ->assertScript("JSON.stringify(Array.from(document.querySelectorAll('[data-testid=\"separator-tags\"] .fi-badge-label [x-text=\"tag\"]'), (element) => element.textContent))", '["alpha","0"]')
+        ->assertDontSee('MyNewTag')
+        ->type('[data-testid="basic-tags"] input', 'MyNewTag')
+        ->keys('[data-testid="basic-tags"] input', 'Enter')
+        ->assertSee('MyNewTag')
+        ->assertSee('MyNewTag')
+        ->click('[data-testid="basic-tags"] .fi-badge-delete-btn')
+        ->assertNotPresent('[data-testid="basic-tags"] .fi-badge') // The live region briefly announces the removal, so assert on the badge element instead of the page text.
+        ->type('[data-testid="basic-tags"] input', 'alpha')
+        ->keys('[data-testid="basic-tags"] input', ',', ',')
+        ->type('[data-testid="basic-tags"] input', '0')
+        ->keys('[data-testid="basic-tags"] input', ',')
+        ->assertScript("JSON.stringify(Array.from(document.querySelectorAll('[data-testid=\"basic-tags\"] .fi-badge-label [x-text=\"tag\"]'), (element) => element.textContent))", '["alpha","0"]')
+        ->type('[data-testid="basic-tags"] input', '50% off $&')
+        ->keys('[data-testid="basic-tags"] input', 'Enter')
+        ->assertSee('50% off $&')
+        // `$` sequences in a tag must not be treated as `String.replace()` substitution patterns in the live region announcement.
+        ->assertScript('document.querySelector(\'[data-testid="basic-tags"] [x-ref="liveRegion"]\').textContent.includes(\'50% off $&\')', true)
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/tags-input-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/tags-input-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
 });
 
 class RenderTagsInputWithSplitKeys extends Livewire

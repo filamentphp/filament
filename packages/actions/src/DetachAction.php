@@ -40,16 +40,22 @@ class DetachAction extends Action
         $this->modalIcon(FilamentIcon::resolve(ActionsIconAlias::DETACH_ACTION_MODAL) ?? Heroicon::OutlinedXMark);
 
         $this->action(function (): void {
-            $this->process(function (Model $record, Table $table): void {
+            $result = $this->process(function (Model $record, Table $table): bool {
                 /** @var BelongsToMany $relationship */
                 $relationship = $table->getRelationship();
 
                 if ($table->allowsDuplicates()) {
-                    $record->getRelationValue($relationship->getPivotAccessor())->delete();
-                } else {
-                    $relationship->detach($record);
+                    return (bool) $record->getRelationValue($relationship->getPivotAccessor())->delete();
                 }
+
+                return (bool) $relationship->detach($record);
             });
+
+            if ($result === false) {
+                $this->failure();
+
+                return;
+            }
 
             $this->success();
         });

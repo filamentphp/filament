@@ -178,6 +178,8 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                 Tables\Columns\TextColumn::make('toggleable_column')
                     ->state('Toggleable column state')
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('rating_and_title')
+                    ->sortable(['rating', 'title']),
             ])
             ->filters([
                 Tables\Filters\Filter::make('is_published')

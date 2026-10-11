@@ -34,7 +34,9 @@ use LogicException;
 use Stringable;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
+use function Filament\Support\apply_search_constraint;
 use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_pattern;
 use function Filament\Support\generate_search_term_expression;
 
 class SelectColumn extends Column implements Editable, HasEmbeddedView
@@ -796,17 +798,19 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         $databaseConnection = $query->getConnection();
 
         $isForcedCaseInsensitive = $this->isOptionsSearchForcedCaseInsensitive();
+        $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true);
 
-        $query->where(function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $search): Builder {
+        $query->where(function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $searchPattern): Builder {
             $isFirst = true;
 
             foreach ($this->getOptionsSearchColumns() ?? [] as $searchColumn) {
                 $whereClause = $isFirst ? 'where' : 'orWhere';
 
-                $query->{$whereClause}(
+                apply_search_constraint(
+                    $query,
                     generate_search_column_expression($searchColumn, $isForcedCaseInsensitive, $databaseConnection),
-                    'like',
-                    "%{$search}%",
+                    $searchPattern,
+                    ($whereClause === 'where') ? 'and' : 'or',
                 );
 
                 $isFirst = false;
@@ -938,32 +942,36 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         $placeholder = $this->getPlaceholder();
         $recordKey = $this->getRecordKey();
         $state = $this->getState();
+        $relatedRecord = $this->getRelatedRecord();
 
         $attributes = $this->getExtraAttributeBag()
             ->merge([
                 'x-load' => true,
                 'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/select', 'filament/tables'),
                 'x-data' => 'selectTableColumn({
+                    accessibilityAttributes: ' . Js::from($this->getExtraInputAttributeBag()->only(['aria-label', 'aria-labelledby', 'aria-describedby', 'aria-invalid', 'aria-busy', 'aria-required'])->getAttributes()) . ',
                     ariaLabel: ' . Js::from(trim(strip_tags((string) $this->getLabel()))) . ',
                     canOptionLabelsWrap: ' . Js::from($this->canOptionLabelsWrap()) . ',
                     canSelectPlaceholder: ' . Js::from($canSelectPlaceholder) . ',
                     clearButtonLabel: ' . Js::from(__('filament-forms::components.select.actions.clear.label')) . ',
+                    errorMessage: ' . Js::from(__('filament-forms::components.select.error_message')) . ',
                     getOptionLabelUsing: async () => {
                         return await $wire.callTableColumnMethod(' . Js::from($name) . ', ' . Js::from($recordKey) . ', \'getOptionLabel\')
                     },
                     getOptionsUsing: async () => {
-                        return await $wire.callTableColumnMethod(
-                            ' . Js::from($name) . ',
-                            ' . Js::from($recordKey) . ',
-                            \'getOptionsForJs\',
+                        return await Livewire.fireAction(
+                            $wire.__instance,
+                            \'callTableColumnMethod\',
+                            [' . Js::from($name) . ', ' . Js::from($recordKey) . ', \'getOptionsForJs\'],
+                            { async: true },
                         )
                     },
                     getSearchResultsUsing: async (search) => {
-                        return await $wire.callTableColumnMethod(
-                            ' . Js::from($name) . ',
-                            ' . Js::from($recordKey) . ',
-                            \'getOptionsSearchResultsForJs\',
-                            { search },
+                        return await Livewire.fireAction(
+                            $wire.__instance,
+                            \'callTableColumnMethod\',
+                            [' . Js::from($name) . ', ' . Js::from($recordKey) . ', \'getOptionsSearchResultsForJs\', { search }],
+                            { async: true },
                         )
                     },
                     hasDynamicOptions: ' . Js::from($this->hasDynamicOptions()) . ',
@@ -1003,13 +1011,19 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                 'wire:loading.attr' => 'disabled',
                 'wire:target' => implode(',', Table::LOADING_TARGETS),
                 'x-bind:disabled' => $isDisabled ? null : 'isLoading',
-                'x-tooltip' => filled($tooltip = $this->getTooltip($state))
+                'x-tooltip' => 'error === undefined ? ' . (filled($tooltip = $this->getTooltip($state, $relatedRecord))
                     ? '{
                         content: ' . Js::from($tooltip) . ',
                         theme: $store.theme,
                         allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
+                        ' . ($isNative ? '' : 'triggerTarget: select && select.selectButton,') . '
                     }'
-                    : null,
+                    : 'false') . ' : {
+                        content: error,
+                        theme: $store.theme,
+                        allowHTML: false,
+                        ' . ($isNative ? '' : 'triggerTarget: select && select.selectButton,') . '
+                    }',
             ], escape: false)
             ->class([
                 'fi-select-input',
@@ -1028,18 +1042,9 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                     'fi-disabled': isLoading || <?= Js::from($isDisabled) ?>,
                     'fi-invalid': error !== undefined,
                 }"
-                x-tooltip="
-                    error === undefined
-                        ? false
-                        : {
-                            content: error,
-                            theme: $store.theme,
-                        }
-                "
                 x-on:click.prevent.stop
                 <?php if (! $isNative) { ?>
-                    wire:ignore
-                    x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
+                    <?= $inputAttributes->only(['x-tooltip'])->toHtml() ?>
                 <?php } ?>
                 class="fi-input-wrp"
             >
@@ -1062,7 +1067,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                         <?php } ?>
                     </select>
                 <?php } else { ?>
-                    <div class="fi-select-input">
+                    <div wire:ignore class="fi-select-input">
                         <div x-ref="select"></div>
                     </div>
                 <?php } ?>

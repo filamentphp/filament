@@ -10,7 +10,11 @@ use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
+use Filament\Tests\Fixtures\Models\Image;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Profile;
+use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -18,6 +22,142 @@ use Livewire\Component;
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
+it('renders one error-aware text input tooltip with or without a configured hint', function (?string $tooltip): void {
+    $post = Post::factory()->create();
+    $column = livewire(TestTableWithTextInputColumn::class)->instance()->getTable()->getColumn('rating');
+    $html = $column->record($post)->tooltip($tooltip)->toEmbeddedHtml();
+
+    expect(substr_count($html, 'x-tooltip='))->toBe(1)
+        ->and($html)->toContain('error === undefined ? ' . ($tooltip ? '{' : 'false'))
+        ->toContain('content: error')
+        ->toContain('allowHTML: false');
+})->with([null, 'Edit rating']);
+
+it('injects `$state` and a `null` `$relatedRecord` into update callbacks without a relationship', function (): void {
+    $calls = [];
+
+    $column = TextInputColumn::make('name')
+        ->record(new User(['name' => 'Original name']))
+        ->beforeStateUpdated(static function (string $state, ?User $relatedRecord) use (&$calls): void {
+            $calls[] = ['before', $state, $relatedRecord];
+        })
+        ->updateStateUsing(static function (string $state, ?User $relatedRecord) use (&$calls): string {
+            $calls[] = ['update', $state, $relatedRecord];
+
+            return strtoupper($state);
+        })
+        ->afterStateUpdated(static function (string $state, ?User $relatedRecord) use (&$calls): void {
+            $calls[] = ['after', $state, $relatedRecord];
+        });
+
+    expect($column->updateState('updated'))->toBe('UPDATED')
+        ->and($calls)->toBe([
+            ['before', 'updated', null],
+            ['update', 'updated', null],
+            ['after', 'updated', null],
+        ]);
+});
+
+it('resolves one relationship model for all update callbacks without cached rendering state', function (): void {
+    $author = User::factory()->create(['name' => 'Original name']);
+    $post = Post::factory()->create(['author_id' => $author->getKey()]);
+    $callbackRelatedRecords = [];
+
+    $column = TextInputColumn::make('author.name')
+        ->record($post)
+        ->beforeStateUpdated(static function (User $relatedRecord) use (&$callbackRelatedRecords): void {
+            $callbackRelatedRecords[] = $relatedRecord;
+        })
+        ->updateStateUsing(static function (string $state, Post $record, User $relatedRecord) use (&$callbackRelatedRecords, $post): string {
+            expect($state)->toBe('Updated name');
+            expect($record)->toBe($post);
+
+            $callbackRelatedRecords[] = $relatedRecord;
+
+            return strtoupper($state);
+        })
+        ->afterStateUpdated(static function (User $relatedRecord) use (&$callbackRelatedRecords): void {
+            $callbackRelatedRecords[] = $relatedRecord;
+        });
+
+    expect($column->updateState('Updated name'))->toBe('UPDATED NAME')
+        ->and($callbackRelatedRecords)->toHaveCount(3)
+        ->and($callbackRelatedRecords[0])->toBe($callbackRelatedRecords[1])
+        ->and($callbackRelatedRecords[1])->toBe($callbackRelatedRecords[2])
+        ->and($callbackRelatedRecords[0]->is($author))->toBeTrue();
+});
+
+it('preserves constrained eager loads in `updateStateUsing()`', function (): void {
+    $author = User::factory()->create();
+    $draft = Post::factory()->create([
+        'author_id' => $author->getKey(),
+        'is_published' => false,
+        'title' => 'Draft title',
+    ]);
+    $published = Post::factory()->create([
+        'author_id' => $author->getKey(),
+        'is_published' => true,
+        'title' => 'Published title',
+    ]);
+
+    livewire(TestTableWithConstrainedRelationshipTextInputColumn::class)
+        ->assertSee('Published title')
+        ->assertDontSee('Draft title')
+        ->call('updateTableColumnState', 'posts.title', (string) $author->getKey(), 'Updated title')
+        ->assertHasNoErrors();
+
+    expect($published->refresh()->title)->toBe('Updated title')
+        ->and($draft->refresh()->title)->toBe('Draft title');
+});
+
+it('resolves the default relationship persistence target after `beforeStateUpdated()`', function (): void {
+    $originalAuthor = User::factory()->create(['name' => 'Original author']);
+    $replacementAuthor = User::factory()->create(['name' => 'Replacement author']);
+    $post = Post::factory()->create(['author_id' => $originalAuthor->getKey()]);
+    $afterRelatedRecord = null;
+
+    $column = TextInputColumn::make('author.name')
+        ->record($post)
+        ->beforeStateUpdated(static function (User $relatedRecord) use ($post, $replacementAuthor): void {
+            expect($relatedRecord->is($post->author))->toBeTrue();
+
+            $post->author()->associate($replacementAuthor);
+            $post->save();
+        })
+        ->afterStateUpdated(static function (User $relatedRecord) use (&$afterRelatedRecord): void {
+            $afterRelatedRecord = $relatedRecord;
+        });
+
+    expect($column->updateState('Updated replacement'))->toBe('Updated replacement')
+        ->and($originalAuthor->refresh()->name)->toBe('Original author')
+        ->and($replacementAuthor->refresh()->name)->toBe('Updated replacement')
+        ->and($afterRelatedRecord)->toBeInstanceOf(User::class)
+        ->and($afterRelatedRecord->is($replacementAuthor))->toBeTrue();
+});
+
+it('recomputes a nested `MorphTo` persistence path after `beforeStateUpdated()`', function (): void {
+    $team = Team::factory()->create(['name' => 'Original team']);
+    $user = User::factory()->create(['team_id' => $team->getKey()]);
+    $profile = Profile::factory()->create();
+    $image = Image::factory()->for($profile, 'imageable')->create();
+    $afterRelatedRecord = null;
+
+    $column = TextInputColumn::make('imageable.team.name')
+        ->record($image)
+        ->beforeStateUpdated(static function () use ($image, $user): void {
+            $image->imageable()->associate($user);
+            $image->save();
+        })
+        ->afterStateUpdated(static function (Team $relatedRecord) use (&$afterRelatedRecord): void {
+            $afterRelatedRecord = $relatedRecord;
+        });
+
+    expect($column->updateState('Updated team'))->toBe('Updated team')
+        ->and($team->refresh()->name)->toBe('Updated team')
+        ->and($afterRelatedRecord)->toBeInstanceOf(Team::class)
+        ->and($afterRelatedRecord->is($team))->toBeTrue();
+});
 
 it('can set `type()` and get with `getType()`', function (): void {
     expect(TextInputColumn::make('rating')->type('number')->getType())->toBe('number');
@@ -272,6 +412,35 @@ class TestTableWithTextInputColumn extends Component implements HasActions, HasS
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
                 TextInputColumn::make('rating'),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithConstrainedRelationshipTextInputColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(User::query()->with([
+                'posts' => static fn ($query) => $query->where('is_published', true)->orderBy('id'),
+            ]))
+            ->columns([
+                TextInputColumn::make('posts.title')
+                    ->state(static fn (User $record): ?string => $record->posts->first()?->title)
+                    ->updateStateUsing(static function (User $record, string $state): string {
+                        $record->posts->first()->update(['title' => $state]);
+
+                        return $state;
+                    }),
             ]);
     }
 

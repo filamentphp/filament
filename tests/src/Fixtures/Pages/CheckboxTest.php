@@ -18,6 +18,8 @@ class CheckboxTest extends Page
 
     public ?array $data = [];
 
+    public int $updateCount = 0;
+
     public function mount(): void
     {
         $this->form->fill();
@@ -30,13 +32,14 @@ class CheckboxTest extends Page
                 Checkbox::make('field')
                     ->label('Test Checkbox')
                     ->inline()
+                    ->live()
+                    ->afterStateUpdated(function (): void {
+                        $this->updateCount++;
+
+                        usleep(250_000);
+                    })
                     ->extraAttributes(['data-testid' => 'checkbox']),
             ])
             ->statePath('data');
-    }
-
-    public function save(): void
-    {
-        $this->form->getState();
     }
 }

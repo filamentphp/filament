@@ -1,0 +1,54 @@
+.fi-ta-group-header {
+    @apply flex w-full items-center gap-x-3 py-2;
+
+    .fi-ta-content-loading > .fi-ta-content &,
+    .fi-ta-content-loading > .fi-ta-table > .fi-ta-records > .fi-ta-row & {
+        & > div {
+            @apply relative w-fit max-w-full text-transparent;
+
+            &::after {
+                @apply absolute inset-x-0 top-1/2 h-4 -translate-y-1/2;
+                animation: var(--loading-skeleton-animation);
+                background-color: var(--loading-skeleton-background-color);
+                border-radius: var(--loading-skeleton-border-radius);
+                content: '';
+            }
+
+            & > * {
+                @apply opacity-0;
+            }
+        }
+
+        & > .fi-icon-btn {
+            @apply opacity-0;
+        }
+    }
+
+    &.fi-collapsible {
+        @apply cursor-pointer;
+
+        &.fi-collapsed {
+            & .fi-icon-btn {
+                @apply -rotate-180;
+            }
+        }
+    }
+
+    & .fi-ta-group-heading {
+        @apply text-sm font-medium text-gray-950 dark:text-white;
+    }
+
+    & .fi-ta-group-description {
+        @apply text-sm text-gray-500 dark:text-gray-400;
+    }
+}
+
+.fi-ta-group-checkbox {
+    .fi-ta-content-loading > .fi-ta-content &,
+    .fi-ta-content-loading > .fi-ta-table > .fi-ta-records > .fi-ta-row & {
+        @apply shadow-none ring-0 transition-none;
+        animation: var(--loading-skeleton-animation);
+        background-color: var(--loading-skeleton-background-color) !important;
+        background-image: none !important;
+    }
+}

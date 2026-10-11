@@ -2,6 +2,33 @@
 
 return [
 
+    'callout' => [
+
+        'statuses' => [
+            'danger' => 'Грешка:',
+            'info' => 'Белешка:',
+            'success' => 'Успешно:',
+            'warning' => 'Предупредување:',
+        ],
+
+    ],
+
+    'section' => [
+
+        'actions' => [
+
+            'collapse' => [
+                'label' => 'Собери секција',
+            ],
+
+            'expand' => [
+                'label' => 'Прошири секција',
+            ],
+
+        ],
+
+    ],
+
     'wizard' => [
 
         'actions' => [
@@ -12,6 +39,19 @@ return [
 
             'next_step' => [
                 'label' => 'Следно',
+            ],
+
+        ],
+
+        'header' => [
+
+            'step' => [
+
+                'statuses' => [
+                    'completed' => 'Завршено',
+                    'upcoming' => 'Незавршено',
+                ],
+
             ],
 
         ],

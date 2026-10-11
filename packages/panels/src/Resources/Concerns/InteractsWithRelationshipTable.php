@@ -2,6 +2,8 @@
 
 namespace Filament\Resources\Concerns;
 
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -119,6 +121,35 @@ trait InteractsWithRelationshipTable
                         continue;
                     }
 
+                    if ($actionGroup = $action->getRootGroup()) {
+                        $actionName = $action->getName();
+                        $actionGroup = $actionGroup->getClone()->record($record);
+
+                        $findActionInGroup = function (ActionGroup $actionGroup) use (&$findActionInGroup, $actionName): ?Action {
+                            foreach ($actionGroup->getActions() as $groupedAction) {
+                                if ($groupedAction instanceof Action) {
+                                    if ($groupedAction->getName() === $actionName) {
+                                        return $groupedAction;
+                                    }
+
+                                    continue;
+                                }
+
+                                if ($nestedAction = $findActionInGroup($groupedAction)) {
+                                    return $nestedAction;
+                                }
+                            }
+
+                            return null;
+                        };
+
+                        $action = $findActionInGroup($actionGroup);
+
+                        assert($action instanceof Action);
+                    } else {
+                        $action = clone $action;
+                    }
+
                     $action->record($record);
 
                     $actionGroup = $action->getGroup();
@@ -150,6 +181,35 @@ trait InteractsWithRelationshipTable
 
                     if (! $action) {
                         continue;
+                    }
+
+                    if ($actionGroup = $action->getRootGroup()) {
+                        $actionName = $action->getName();
+                        $actionGroup = $actionGroup->getClone()->record($record);
+
+                        $findActionInGroup = function (ActionGroup $actionGroup) use (&$findActionInGroup, $actionName): ?Action {
+                            foreach ($actionGroup->getActions() as $groupedAction) {
+                                if ($groupedAction instanceof Action) {
+                                    if ($groupedAction->getName() === $actionName) {
+                                        return $groupedAction;
+                                    }
+
+                                    continue;
+                                }
+
+                                if ($nestedAction = $findActionInGroup($groupedAction)) {
+                                    return $nestedAction;
+                                }
+                            }
+
+                            return null;
+                        };
+
+                        $action = $findActionInGroup($actionGroup);
+
+                        assert($action instanceof Action);
+                    } else {
+                        $action = clone $action;
                     }
 
                     $action->record($record);

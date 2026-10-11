@@ -302,11 +302,11 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/pagination/cursor" alt="Table with cursor pagination" version="6.x" />
 
-### Preventing query string conflicts with the pagination page
+### Identifying tables
 
 By default, Livewire stores the pagination state in a `page` parameter of the URL query string. If you have multiple tables on the same page, this will mean that the pagination state of one table may be overwritten by the state of another table.
 
-To fix this, you may define a `$table->queryStringIdentifier()`, to return a unique query string identifier for that table:
+To fix this, you may define a unique `$table->identifier()` for each table:
 
 ```php
 use Filament\Tables\Table;
@@ -314,9 +314,26 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->queryStringIdentifier('users');
+        ->identifier('users');
 }
 ```
+
+The identifier also distinguishes the table's [persisted session state](#persisting-the-table-state-in-the-users-session) from other tables that use the same Livewire component class. Tables without an identifier continue to share the component class's default persisted state. When you add an identifier to an existing table, it starts with fresh persisted state instead of importing the state previously shared by the component class.
+
+By default, the identifier is also used to identify the table's pagination query string parameter. To use a different identifier for the pagination query string, you may pass it to `queryStringIdentifier()`:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->identifier('users')
+        ->queryStringIdentifier('table');
+}
+```
+
+The `queryStringIdentifier()` only changes the pagination query string parameter, not the table's persisted session state.
 
 ### Disabling pagination
 
@@ -555,6 +572,46 @@ public function table(Table $table): Table
 }
 ```
 
+## Displaying a loading skeleton
+
+You may display a skeleton over the current table records while pagination, sorting, filtering, or searching updates them using the `loadingSkeleton()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->loadingSkeleton();
+}
+```
+
+<AutoScreenshot name="tables/loading-skeleton" alt="Table displaying loading skeletons" version="6.x" />
+
+To enable the loading skeleton for all tables, you may use `Table::configureUsing()` in the `boot()` method of a service provider:
+
+```php
+use Filament\Tables\Table;
+
+Table::configureUsing(function (Table $table): void {
+    $table->loadingSkeleton();
+});
+```
+
+### Customizing the loading skeleton styles
+
+The loading skeleton's background color, border radius, and animation are controlled by CSS variables on the `.fi-ta-content-loading` element. You may customize these variables in your [theme's CSS file](../styling/overview#creating-a-custom-theme):
+
+```css
+.fi-ta-content-loading {
+    --loading-skeleton-animation: var(--animate-pulse);
+    --loading-skeleton-background-color: var(--primary-200);
+    --loading-skeleton-border-radius: var(--radius-lg);
+}
+```
+
+These variables are inherited by all loading skeletons in the table, including those that you add to [custom columns](columns/custom-columns#adding-a-loading-skeleton).
+
 ## Searching records with Laravel Scout
 
 While Filament doesn't provide a direct integration with [Laravel Scout](https://laravel.com/docs/scout), you may use the `searchUsing()` method with a `whereKey()` clause to filter the query for Scout results:
@@ -615,6 +672,10 @@ public function table(Table $table): Table
         ->persistInSession(false);
 }
 ```
+
+When using Filament tenancy, persisted filters, global searches, and individual column searches are isolated to the current tenant because they select tenant-specific records. Structural preferences such as sorting, grouping, column configuration, and records per page remain shared between tenants for the same table component and [identifier](#identifying-tables).
+
+In existing applications that use tenancy, persisted searches will start fresh for each tenant after upgrading. Existing search state remains available when no tenant is active. Other existing state keeps its current tenant-sharing behavior.
 
 ## Styling table rows
 

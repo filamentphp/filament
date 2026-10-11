@@ -182,7 +182,7 @@ By default, you will not be able to interact with deleted records in the relatio
 php artisan make:filament-relation-manager CategoryResource posts title --soft-deletes
 ```
 
-You can find out more about soft-deleting [here](#deleting-records).
+You can find out more about soft-deleting [here](#deleting-related-records).
 
 ## Listing related records
 
@@ -757,6 +757,10 @@ public function form(Schema $schema): Schema
 
 All methods in Filament accept a callback which you can access `$livewire->ownerRecord` in.
 
+<Aside variant="warning">
+    On every Livewire request, Filament runs `canViewForRecord()`, but leaves `$ownerRecord` to Livewire's native model restoration. It does not reapply the model's global scopes or the parent resource's query, or automatically run the owner record's policy. A request to the relation manager does not reauthorize the parent page. Enforce tenant, ownership, and other owner-record restrictions in `canViewForRecord()`, using your application's authoritative query and policy. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+</Aside>
+
 ## Grouping relation managers
 
 You may choose to group relation managers together into one tab. To do this, you may wrap multiple managers in a `RelationGroup` object, with a label:
@@ -794,6 +798,10 @@ public static function canViewForRecord(Model $ownerRecord, string $pageClass): 
     return $ownerRecord->status === Status::Draft;
 }
 ```
+
+Filament also checks `canViewForRecord()` before a relation manager's `mount()` method runs, including when a lazy relation manager loads, and before subsequent Livewire updates. If access is denied, the request returns a 403 response. Resource pages filter out denied relation managers before mounting them, including managers in relation groups.
+
+Keep sensitive work out of the relation manager's `boot()` and lazy `placeholder()` methods, which can run before this authorization check. If you need sensitive work in these methods, authorize it separately.
 
 ## Combining the relation manager tabs with the form
 

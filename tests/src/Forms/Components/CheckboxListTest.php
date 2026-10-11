@@ -1393,18 +1393,33 @@ describe('rendering', function (): void {
     });
 });
 
-it('can render `CheckboxList` in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+it('can search a `CheckboxList` after disabling it without changing checked values', function (): void {
+    $this->actingAs(User::factory()->create());
 
-        visit('/checkbox-list-test')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    $page = visit('/checkbox-list-test')
+        ->inDarkMode()
+        ->assertNoSmoke()
+        ->fill('[data-testid="checkbox-list"] input[type="search"]', 'Óption B')
+        ->assertMissing('[data-testid="checkbox-list"] input[value="a"]:visible')
+        ->assertVisible('[data-testid="checkbox-list"] input[value="b"]')
+        ->click(__('filament-forms::components.checkbox_list.actions.select_all.label'))
+        ->assertChecked('[data-testid="checkbox-list"] input[value="b"]')
+        ->click(__('filament-forms::components.checkbox_list.actions.deselect_all.label'))
+        ->assertNotChecked('[data-testid="checkbox-list"] input[value="b"]')
+        ->assertChecked('[data-testid="checkbox-list"] input[value="a"]')
+        ->assertChecked('[data-testid="checkbox-list"] input[value="c"]')
+        ->click('[data-testid="checkbox-list-disabled"]')
+        ->assertDisabled('[data-testid="checkbox-list"] input[value="b"]')
+        ->clear('[data-testid="checkbox-list"] input[type="search"]')
+        ->assertVisible('[data-testid="checkbox-list"] input[value="a"]')
+        ->assertVisible('[data-testid="checkbox-list"] input[value="c"]')
+        ->assertChecked('[data-testid="checkbox-list"] input[value="a"]')
+        ->assertNotChecked('[data-testid="checkbox-list"] input[value="b"]')
+        ->assertChecked('[data-testid="checkbox-list"] input[value="c"]')
+        ->assertNoAccessibilityIssues();
 
-        visit('/checkbox-list-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+    $page->script('window.dispatchEvent(new CustomEvent("theme-changed", { detail: "light" }))');
+    $page->wait(0.5)->assertNoAccessibilityIssues();
 });
 
 class RenderCheckboxListWithStaticOptions extends Component implements HasActions, HasSchemas

@@ -10,7 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use LogicException;
 
+use function Filament\Support\apply_search_constraint;
 use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_pattern;
 use function Filament\Support\generate_search_term_expression;
 use function Filament\Support\get_model_label;
 
@@ -83,15 +85,17 @@ class Type
             $isFirst = true;
 
             $search = generate_search_term_expression($search, $isForcedCaseInsensitive, $databaseConnection);
+            $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true);
 
-            $query->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $databaseConnection, $search): Builder {
+            $query->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $databaseConnection, $searchPattern): Builder {
                 foreach ($this->getSearchColumns() as $searchColumn) {
                     $whereClause = $isFirst ? 'where' : 'orWhere';
 
-                    $query->{$whereClause}(
+                    apply_search_constraint(
+                        $query,
                         generate_search_column_expression($searchColumn, $isForcedCaseInsensitive, $databaseConnection),
-                        'like',
-                        "%{$search}%",
+                        $searchPattern,
+                        ($whereClause === 'where') ? 'and' : 'or',
                     );
 
                     $isFirst = false;

@@ -23,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        config()->set('livewire.component_layout', 'components.layouts.app');
+
         if ((! $this->app->runningInConsole()) && (! request()->query('no_auto_login'))) {
             Auth::loginUsingId(1);
         }

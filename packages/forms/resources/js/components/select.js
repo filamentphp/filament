@@ -4,6 +4,7 @@ export default function selectFormComponent({
     canOptionLabelsWrap,
     canSelectPlaceholder,
     clearButtonLabel,
+    errorMessage,
     getOptionLabelUsing,
     getOptionLabelsUsing,
     getOptionsUsing,
@@ -43,6 +44,8 @@ export default function selectFormComponent({
     return {
         select: null,
 
+        accessibilityObserver: null,
+
         state,
 
         init() {
@@ -51,6 +54,7 @@ export default function selectFormComponent({
                 canSelectPlaceholder,
                 clearButtonLabel,
                 element: this.$refs.select,
+                errorMessage,
                 getOptionLabelUsing,
                 getOptionLabelsUsing,
                 getOptionsUsing,
@@ -91,6 +95,24 @@ export default function selectFormComponent({
                 statePath,
             })
 
+            const attributesElement = this.$el.previousElementSibling
+            if (attributesElement?.hasAttribute('data-select-accessibility')) {
+                const syncAccessibility = () =>
+                    this.select?.setAccessibilityAttributes(
+                        JSON.parse(
+                            attributesElement.dataset.selectAccessibility,
+                        ),
+                    )
+                syncAccessibility()
+                this.accessibilityObserver = new MutationObserver(
+                    syncAccessibility,
+                )
+                this.accessibilityObserver.observe(attributesElement, {
+                    attributes: true,
+                    attributeFilter: ['data-select-accessibility'],
+                })
+            }
+
             this.$watch('state', (newState) => {
                 this.$nextTick(() => {
                     if (this.select && this.select.state !== newState) {
@@ -103,6 +125,7 @@ export default function selectFormComponent({
         },
 
         destroy() {
+            this.accessibilityObserver?.disconnect()
             if (this.select) {
                 this.select.destroy()
                 this.select = null

@@ -320,7 +320,15 @@ Builder::make('content')
 
 ## Reordering items
 
-A button is displayed on each item to allow the user to drag and drop to reorder it in the list.
+When drag reordering is enabled, you can use drag handles or move up and move down buttons to reorder blocks. By default, these buttons remain visually hidden and are excluded from the Tab sequence, but are available through screen-reader navigation.
+
+To provide visible buttons for sighted keyboard users, enable [reordering with buttons](#reordering-items-with-buttons).
+
+After a successful move, Filament updates a status message with the block's new position for screen readers. The builder does not restore focus to the hidden buttons.
+
+While a move is being processed, further moves in the same builder are ignored. Once it completes, you can move the block again. Moving a collapsed block does not expand it. Move buttons use the visible block order; hidden blocks remain in the stored state after the reordered visible blocks, without being included in position announcements.
+
+Actions with custom client-side click handlers or native `wire:confirm` prompts retain their own interaction behavior. Filament does not automatically prevent repeated moves, restore focus, or provide position feedback for these actions.
 
 ### Preventing the user from reordering items
 
@@ -340,7 +348,7 @@ Builder::make('content')
 
 ### Reordering items with buttons
 
-You may use the `reorderableWithButtons()` method to enable reordering items with buttons to move the item up and down:
+You may use `reorderableWithButtons()` to display move up and move down buttons:
 
 ```php
 use Filament\Forms\Components\Builder;
@@ -353,6 +361,8 @@ Builder::make('content')
 ```
 
 <AutoScreenshot name="forms/fields/builder/reorderable-with-buttons" alt="Builder that is reorderable with buttons" version="6.x" />
+
+You can use Tab to reach these visible buttons and Enter or Space to activate them. After a successful keyboard move, focus stays with the same block unless you have moved focus elsewhere. At the first or last position, focus moves to the other enabled move button, if available; otherwise, it moves to the block itself. Filament confirmation modals configured with `requiresConfirmation()` retain their own focus behavior.
 
 Optionally, you may pass a boolean value to control if the builder should be ordered with buttons or not:
 
@@ -381,6 +391,8 @@ Builder::make('content')
     ])
     ->reorderableWithDragAndDrop(false)
 ```
+
+This also removes the visually hidden fallback buttons. Explicitly enabled visible move buttons remain available. Use `reorderable(false)` to prevent all reordering.
 
 <UtilityInjection set="formFields" version="6.x">As well as allowing a static value, the `reorderableWithDragAndDrop()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -520,6 +532,55 @@ Builder::make()
 
 <UtilityInjection set="formFields" version="6.x">As well as allowing a static value, the `blockPickerWidth()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Searching blocks
+
+If you have many blocks, you may allow users to search them in the block picker using the `searchable()` method:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->searchable()
+    ->blocks([
+        // ...
+    ])
+```
+
+The search matches block labels in the browser, without making a server request, and is case-insensitive. You may customize the placeholder of the search field using the `searchPrompt()` method, and the message displayed when no blocks match the search using the `noSearchResultsMessage()` method:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->searchable()
+    ->searchPrompt('Search for a block')
+    ->noSearchResultsMessage('No blocks found.')
+    ->blocks([
+        // ...
+    ])
+```
+
+<UtilityInjection set="formFields" version="6.x">As well as allowing static values, the `searchable()`, `searchPrompt()` and `noSearchResultsMessage()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
+The search prompt is displayed as plain text. If you pass an `HtmlString` to `searchPrompt()`, its tags are removed and its HTML entities are decoded.
+
+#### Tweaking the search debounce
+
+By default, the block picker filters blocks immediately as the user types. You may debounce the search using the `searchDebounce()` method, which accepts the number of milliseconds to wait:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->searchable()
+    ->searchDebounce(500)
+    ->blocks([
+        // ...
+    ])
+```
+
+<UtilityInjection set="formFields" version="6.x">As well as allowing a static value, the `searchDebounce()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Limiting the number of times a block can be used
 
 By default, each block can be used in the builder an unlimited number of times. You may limit this using the `maxItems()` method on a block:
@@ -638,8 +699,10 @@ Builder::make('content')
 ```
 
 <Aside variant="info">
-    The `addAction()`, `addBetweenAction()`, `collapseAction()`, `collapseAllAction()`, `expandAction()`, `expandAllAction()` and `reorderAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
+    The `addAction()`, `addBetweenAction()`, `collapseAction()`, `collapseAllAction()`, `expandAction()` and `expandAllAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
 </Aside>
+
+Completing a drag that changes the block order invokes `reorderAction()`, which supports `requiresConfirmation()`. Clicking the drag handle alone does not invoke the action.
 
 ### Adding extra item actions to a builder
 

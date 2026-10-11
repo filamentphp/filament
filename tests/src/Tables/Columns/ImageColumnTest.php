@@ -10,6 +10,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -175,6 +176,46 @@ it('can set `checkFileExistence()` with a `Closure`', function (): void {
     expect(ImageColumn::make('avatar')->checkFileExistence(static fn (): bool => false)->shouldCheckFileExistence())->toBeFalse();
 });
 
+it('injects `$state` and `$relatedRecord` into per-item image configuration', function (): void {
+    $state = 'avatar.jpg';
+    $relatedRecord = new User(['email' => 'user@example.com']);
+
+    $column = ImageColumn::make('avatar')
+        ->disk(static fn (string $state, User $relatedRecord): string => (($state === 'avatar.jpg') && ($relatedRecord->email === 'user@example.com')) ? 's3' : 'public')
+        ->visibility(static fn (string $state, User $relatedRecord): string => (($state === 'avatar.jpg') && ($relatedRecord->email === 'user@example.com')) ? 'private' : 'public')
+        ->defaultImageUrl(static fn (string $state, User $relatedRecord): string => "https://example.com/{$relatedRecord->email}/{$state}")
+        ->extraImgAttributes(static fn (string $state, User $relatedRecord): array => ['data-image' => "{$relatedRecord->email}:{$state}"])
+        ->checkFileExistence(static fn (string $state, User $relatedRecord): bool => ($state !== 'avatar.jpg') || ($relatedRecord->email !== 'user@example.com'));
+
+    expect($column->getDiskName($state, $relatedRecord))->toBe('s3')
+        ->and($column->getCustomVisibility($state, $relatedRecord))->toBe('private')
+        ->and($column->getDefaultImageUrl($state, $relatedRecord))->toBe('https://example.com/user@example.com/avatar.jpg')
+        ->and($column->getExtraImgAttributes($state, $relatedRecord))->toBe(['data-image' => 'user@example.com:avatar.jpg'])
+        ->and($column->shouldCheckFileExistence($state, $relatedRecord))->toBeFalse();
+});
+
+it('preserves implicit `$state` injection when per-item getter state is omitted', function (): void {
+    $column = (new class('avatar') extends ImageColumn
+    {
+        public function getState(): mixed
+        {
+            return 'avatar.jpg';
+        }
+    })->disk(static fn (?string $state): string => $state ?? 'local');
+
+    expect($column->getDiskName())->toBe('avatar.jpg')
+        ->and($column->getDiskName(null))->toBe('local');
+});
+
+it('injects a singular `$relatedRecord` into `defaultImageUrl()` when relationship state is blank', function (): void {
+    $author = User::factory()->create(['json' => ['image' => null]]);
+    Post::factory()->create(['author_id' => $author->getKey()]);
+
+    livewire(RenderImageColumnWithBlankRelatedState::class)
+        ->assertSuccessful()
+        ->assertSeeHtml("src=\"https://example.com/{$author->getKey()}.jpg\"");
+});
+
 it('can render', function (): void {
     Post::factory()->count(5)->create();
 
@@ -307,6 +348,28 @@ class TestTableWithImageColumn extends Component implements HasActions, HasSchem
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
                 ImageColumn::make('title'),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class RenderImageColumnWithBlankRelatedState extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                ImageColumn::make('author.json.image')
+                    ->defaultImageUrl(static fn (mixed $state, User $relatedRecord): string => "https://example.com/{$relatedRecord->getKey()}.jpg"),
             ]);
     }
 

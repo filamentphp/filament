@@ -4,6 +4,7 @@ namespace Filament\Support\Assets;
 
 use Composer\InstalledVersions;
 use Filament\Support\Facades\FilamentAsset;
+use LogicException;
 use Throwable;
 
 abstract class Asset
@@ -66,7 +67,7 @@ abstract class Asset
         $package = $this->getPackage();
 
         if (blank($package)) {
-            return InstalledVersions::getVersion('filament/support');
+            return $this->getInstalledVersion('filament/support');
         }
 
         if (
@@ -77,10 +78,36 @@ abstract class Asset
         }
 
         try {
-            return InstalledVersions::getVersion($package);
+            return $this->getInstalledVersion($package);
         } catch (Throwable $exception) {
-            return InstalledVersions::getVersion('filament/support');
+            return $this->getInstalledVersion('filament/support');
         }
+    }
+
+    protected function getInstalledVersion(string $package): string
+    {
+        $version = InstalledVersions::getVersion($package);
+
+        if ($version === null) {
+            throw new LogicException("Unable to determine the installed version of package [{$package}].");
+        }
+
+        if (! $this->isDevVersion($version)) {
+            return $version;
+        }
+
+        $reference = InstalledVersions::getReference($package);
+
+        if (filled($reference)) {
+            return hash('sha256', $reference);
+        }
+
+        return $version;
+    }
+
+    protected function isDevVersion(string $version): bool
+    {
+        return str_starts_with($version, 'dev-') || str_ends_with($version, '-dev');
     }
 
     public function isLoadedOnRequest(): bool

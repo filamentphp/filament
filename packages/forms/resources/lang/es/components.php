@@ -104,6 +104,14 @@ return [
 
         ],
 
+        'block_picker' => [
+
+            'no_search_results_message' => 'No existen bloques que coincidan con su búsqueda.',
+
+            'search_prompt' => 'Buscar bloques',
+
+        ],
+
     ],
 
     'checkbox_list' => [
@@ -495,6 +503,10 @@ return [
 
             ],
 
+            'close_panel' => [
+                'label' => 'Cerrar panel',
+            ],
+
             'custom_block' => [
 
                 'modal' => [
@@ -656,6 +668,28 @@ return [
                 ],
 
             ],
+
+        ],
+
+        'custom_blocks' => [
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Borrar bloque',
+                ],
+
+                'edit' => [
+                    'label' => 'Editar bloque',
+                ],
+
+            ],
+
+            'no_search_results_message' => 'No existen bloques que coincidan con su búsqueda.',
+
+            'search_label' => 'Buscar bloques',
+
+            'search_prompt' => 'Buscar bloques',
 
         ],
 

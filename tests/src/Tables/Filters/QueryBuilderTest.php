@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\QueryBuilder\Constraints\DateConstraint;
 use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsAfterOperator;
 use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsBeforeOperator;
@@ -236,6 +237,37 @@ describe('text constraints', function () use ($applyQueryBuilderFilter): void {
             ->assertCanSeeTableRecords($otherPosts)
             ->assertCanNotSeeTableRecords($posts);
     });
+
+    it('treats LIKE wildcard characters as literal text for text constraint operators', function (string $operator, string $literalTitle, string $wildcardTitle) use ($applyQueryBuilderFilter): void {
+        $literalMatch = Post::factory()->create(['title' => $literalTitle]);
+        $wildcardMatch = Post::factory()->create(['title' => $wildcardTitle]);
+        $unrelatedPost = Post::factory()->create(['title' => 'Unrelated']);
+
+        $rule = [
+            'type' => 'title',
+            'data' => [
+                'operator' => $operator,
+                'settings' => ['text' => 'a!_b%'],
+            ],
+        ];
+
+        livewire(PostsQueryBuilderTable::class)
+            ->tap($applyQueryBuilderFilter([$rule]))
+            ->assertCanSeeTableRecords([$literalMatch])
+            ->assertCanNotSeeTableRecords([$wildcardMatch, $unrelatedPost]);
+
+        $rule['data']['operator'] .= '.inverse';
+
+        livewire(PostsQueryBuilderTable::class)
+            ->tap($applyQueryBuilderFilter([$rule]))
+            ->assertCanSeeTableRecords([$wildcardMatch, $unrelatedPost])
+            ->assertCanNotSeeTableRecords([$literalMatch]);
+    })->with([
+        'contains' => ['contains', 'Before a!_b% After', 'Before a!Xb anything After'],
+        'starts with' => ['startsWith', 'a!_b% After', 'a!Xb anything After'],
+        'ends with' => ['endsWith', 'Before a!_b%', 'Before a!Xb anything'],
+        'equals' => ['equals', 'a!_b%', 'a!Xb anything'],
+    ]);
 });
 
 describe('settings type safety', function () use ($applyQueryBuilderFilter): void {
@@ -2733,6 +2765,39 @@ describe('legacy `relationship()` method', function () use ($applyQueryBuilderFi
 });
 
 describe('absolute and relative date filtering', function () use ($applyQueryBuilderFilter): void {
+    beforeEach(function (): void {
+        $this->freezeTime();
+    });
+
+    it('preserves date-only filter boundaries with a globally configured `timezone()`', function (string $operator, array $expectedDates) use ($applyQueryBuilderFilter): void {
+        config(['app.timezone' => 'Europe/London']);
+
+        DateTimePicker::configureUsing(static fn (DateTimePicker $picker) => $picker->timezone('Asia/Tokyo'), during: function () use ($applyQueryBuilderFilter, $operator, $expectedDates): void {
+            $posts = collect(['2025-03-29', '2025-03-30', '2025-03-31'])
+                ->mapWithKeys(static fn (string $date): array => [$date => Post::factory()->create(['created_at' => "{$date} 12:00:00"])]);
+
+            livewire(PostsQueryBuilderTable::class)
+                ->tap($applyQueryBuilderFilter([
+                    [
+                        'type' => 'created_at',
+                        'data' => [
+                            'operator' => $operator,
+                            'settings' => [
+                                'mode' => 'absolute',
+                                'date' => '2025-03-30',
+                            ],
+                        ],
+                    ],
+                ]))
+                ->assertCanSeeTableRecords($posts->only($expectedDates))
+                ->assertCanNotSeeTableRecords($posts->except($expectedDates));
+        });
+    })->with([
+        ['isBefore', ['2025-03-29', '2025-03-30']],
+        ['isDate', ['2025-03-30']],
+        ['isAfter', ['2025-03-30', '2025-03-31']],
+    ]);
+
     it('can filter records using date constraint with is after operator in `absolute` mode', function () use ($applyQueryBuilderFilter): void {
         $recentPosts = Post::factory()->count(5)->create([
             'created_at' => now()->addDays(5),
@@ -4809,20 +4874,18 @@ describe('absolute and relative date filtering', function () use ($applyQueryBui
     });
 
     it('can delete a rule in the query builder filter in the browser', function (): void {
-        retry(10, function (): void {
-            Artisan::call('filament:assets');
+        Artisan::call('filament:assets');
 
-            $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-            visit('/query-builder-table-test')
-                ->click('button[title="Filter"]')
-                ->click('text=Add rule')
-                ->click('.fi-dropdown-list-item >> text=Title')
-                ->assertPresent('.fi-fo-builder-item')
-                ->click('.fi-fo-builder-item button[title="Delete"]')
-                ->assertNotPresent('.fi-fo-builder-item')
-                ->assertNoSmoke();
-        });
+        visit('/query-builder-table-test')
+            ->click('button[title="Filter"]')
+            ->click('text=Add rule')
+            ->click('.fi-dropdown-list-item >> text=Title')
+            ->assertPresent('.fi-fo-builder-item')
+            ->click('.fi-fo-builder-item button[title="Delete"]')
+            ->assertNotPresent('.fi-fo-builder-item')
+            ->assertNoSmoke();
     });
 });
 

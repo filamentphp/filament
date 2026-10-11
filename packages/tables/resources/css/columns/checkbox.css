@@ -1,6 +1,40 @@
 .fi-ta-checkbox {
     @apply w-full;
 
+    .fi-ta-content-loading > .fi-ta-content &,
+    .fi-ta-content-loading > .fi-ta-table > .fi-ta-records > .fi-ta-row & {
+        @apply relative w-fit max-w-full text-transparent;
+
+        &.fi-align-center {
+            @apply mx-auto;
+        }
+
+        &.fi-align-end,
+        &.fi-align-right {
+            @apply ms-auto;
+        }
+
+        &::after {
+            @apply absolute inset-x-3 top-1/2 h-4 -translate-y-1/2;
+            animation: var(--loading-skeleton-animation);
+            background-color: var(--loading-skeleton-background-color);
+            border-radius: var(--loading-skeleton-border-radius);
+            content: '';
+        }
+
+        &.fi-inline::after {
+            @apply inset-x-0;
+        }
+
+        .fi-ta-table-stacked-on-mobile &::after {
+            @apply inset-x-0 sm:inset-x-3;
+        }
+
+        & > * {
+            @apply opacity-0;
+        }
+    }
+
     &:not(.fi-inline) {
         @apply px-3 py-4;
     }

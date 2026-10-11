@@ -44,6 +44,7 @@ class EmailChangeVerificationRequest extends FormRequest
         $isEmailTaken = $user::query()
             ->whereKeyNot($user->getKey())
             ->where('email', $newEmail)
+            ->useWritePdo()
             ->exists();
 
         cache()->forget($this->query('signature'));

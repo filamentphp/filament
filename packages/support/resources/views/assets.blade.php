@@ -1,5 +1,13 @@
+@php
+    use Illuminate\Support\Facades\Vite;
+@endphp
+
 @if (isset($data))
-    <script>
+    @php
+        $nonce = Vite::cspNonce();
+    @endphp
+
+    <script @if (filled($nonce)) nonce="{{ $nonce }}" @endif>
         window.filamentData = @js($data)
     </script>
 @endif

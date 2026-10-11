@@ -14,20 +14,157 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
+use Filament\Tables\Columns\ColorColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Tests\Fixtures\Enums\NavigationGroupEnum;
+use Filament\Tests\Fixtures\Models\Company;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
+use Mockery;
 use Stringable;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
+it('keeps inherited one-argument callers of `toOptimizedHtml()` compatible', function (): void {
+    expect(TextColumnWithPublicOptimizedRenderer::make('title')->renderOptimized('Title'))
+        ->toContain('Title');
+});
+
+describe('label formatting compatibility', function (): void {
+    it('resolves enum labels after the formatter but before rich formatting', function (string $mode, string $expected): void {
+        $column = TextColumn::make('status')
+            ->{$mode}()
+            ->formatStateUsing(static function (NavigationGroupEnum $state): NavigationGroupEnum {
+                expect($state)->toBe(NavigationGroupEnum::Users);
+
+                return NavigationGroupEnum::Settings;
+            });
+
+        expect($column->formatState(NavigationGroupEnum::Users)->toHtml())->toBe($expected);
+    })->with([
+        ['html', 'System Settings'],
+        ['markdown', "<p>System Settings</p>\n"],
+    ]);
+
+    it('formats non-stringable labels according to their trust in rich modes', function (string $mode, string | Htmlable | null $label, string $expected): void {
+        $state = new class($label) implements HasLabelContract
+        {
+            public function __construct(protected string | Htmlable | null $label) {}
+
+            public function getLabel(): string | Htmlable | null
+            {
+                return $this->label;
+            }
+        };
+
+        $column = TextColumn::make('status')->{$mode}()->prefix('<before>');
+
+        expect($column->formatState($state)->toHtml())->toBe($expected);
+    })->with([
+        ['html', '<b onclick="alert(1)">Label</b><script>alert(2)</script>', '&lt;before&gt;<b>Label</b>'],
+        ['html', null, '&lt;before&gt;'],
+        ['markdown', null, '&lt;before&gt;'],
+        ['markdown', new HtmlString('<b onclick="trusted()">**Label**</b>'), '&lt;before&gt;<b onclick="trusted()">**Label**</b>'],
+    ]);
+
+    it('preserves plain-mode label escaping and truncation', function (?int $limit, ?string $prefix, bool $isTrusted, string $expected): void {
+        $state = new class implements HasLabelContract
+        {
+            public function getLabel(): HtmlString
+            {
+                return new HtmlString('<b onclick="trusted()">Alpha beta</b>');
+            }
+        };
+
+        $formatted = TextColumn::make('status')->limit($limit)->prefix($prefix)->formatState($state);
+
+        expect($formatted instanceof Htmlable)->toBe($isTrusted)
+            ->and(e($formatted))->toBe($expected);
+
+        if (! $isTrusted) {
+            expect($formatted)->toBeString();
+        }
+    })->with([
+        'unformatted fast path' => [null, null, true, '<b onclick="trusted()">Alpha beta</b>'],
+        'non-truncating limit' => [100, null, true, '<b onclick="trusted()">Alpha beta</b>'],
+        'truncating limit' => [2, null, false, '&lt;b...'],
+        'string prefix' => [null, 'Label: ', false, 'Label: &lt;b onclick=&quot;trusted()&quot;&gt;Alpha beta&lt;/b&gt;'],
+    ]);
+
+    it('preserves existing `Stringable` and `Htmlable` precedence over labels in rich modes', function (bool $isHtmlable, string $expected): void {
+        if ($isHtmlable) {
+            $state = new class implements HasLabelContract, Htmlable
+            {
+                public function toHtml(): string
+                {
+                    return '<b onclick="trusted()">Original</b>';
+                }
+
+                public function getLabel(): string
+                {
+                    return 'Unused label';
+                }
+            };
+        } else {
+            $state = Mockery::mock(HasLabelContract::class);
+            $state->shouldReceive('__toString')->andReturn('<b onclick="trusted()">Original</b>');
+            $state->shouldNotReceive('getLabel');
+        }
+
+        expect(TextColumn::make('status')->html()->formatState($state)->toHtml())->toBe($expected);
+    })->with([
+        [false, '<b>Original</b>'],
+        [true, '<b onclick="trusted()">Original</b>'],
+    ]);
+
+    it('keeps string labels untrusted without rich formatting', function (): void {
+        $state = Mockery::mock(HasLabelContract::class);
+        $state->shouldReceive('getLabel')->once()->andReturn('<b>Label</b>');
+
+        $column = TextColumn::make('status')->prefix('Label: ');
+
+        expect($column->isHtml())->toBeFalse()
+            ->and($column->formatState($state))->toBe('Label: <b>Label</b>');
+    });
+});
+
+it('renders labels and wrapper URLs accessibly in light and dark modes', function (): void {
+    Artisan::call('filament:assets');
+    Post::factory()->create(['title' => 'Quarterly report', 'content' => 'Review summary']);
+    $this->actingAs(User::factory()->create());
+
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/columns-browser-test');
+
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page
+            ->assertNoSmoke()
+            ->assertScript('document.querySelector(\'[data-testid="enum-label-column"]\').textContent.trim()', 'User Management')
+            ->assertScript('document.querySelectorAll(\'[data-testid="linked-column"] a\').length', 1)
+            ->assertScript('document.querySelectorAll(\'[data-testid="disabled-column"] a\').length', 0)
+            ->assertNoAccessibilityIssues()
+            ->click('[data-testid="toggle-reordering"]')
+            ->assertScript('document.querySelectorAll(\'[data-testid="linked-column"] a\').length', 0)
+            ->assertNoAccessibilityIssues();
+    }
+});
 
 it('can set `badge()`', function (): void {
     expect(TextColumn::make('name')->badge()->isBadge())->toBeTrue();
@@ -288,6 +425,20 @@ describe('rendering', function (): void {
             ->assertSeeHtml('1,234');
     });
 
+    it('injects `$state` and `$relatedRecord` into nested numeric configuration', function (): void {
+        $relatedRecord = new User(['email' => 'user@example.com']);
+
+        $formattedState = TextColumn::make('cost')
+            ->numeric(
+                decimalPlaces: static fn (float $state, User $relatedRecord): int => (($state === 1234.5) && ($relatedRecord->email === 'user@example.com')) ? 1 : 0,
+                decimalSeparator: static fn (float $state, User $relatedRecord): string => (($state === 1234.5) && ($relatedRecord->email === 'user@example.com')) ? '.' : ',',
+                thousandsSeparator: static fn (float $state, User $relatedRecord): string => (($state === 1234.5) && ($relatedRecord->email === 'user@example.com')) ? '' : ',',
+            )
+            ->formatState(1234.5, $relatedRecord);
+
+        expect($formattedState)->toBe('1234.5');
+    });
+
     it('renders `date()` formatted state', function (): void {
         Post::factory()->create();
 
@@ -296,13 +447,45 @@ describe('rendering', function (): void {
             ->assertSeeHtml('2025-06-15');
     });
 
-    it('wraps the state in an `<a>` when `url()` is set', function (): void {
-        Post::factory()->create();
+    it('keeps wrapper `url()` links exclusive and respects click suppression', function (string $urlType, string $rendering): void {
+        $post = Post::factory()->create(['title' => 'Quarterly report']);
+        $url = ($urlType === 'record') ? "https://example.test/posts/{$post->getKey()}" : 'https://example.test/foo';
 
-        livewire(RenderTextColumnWithUrl::class)
-            ->assertSuccessful()
-            ->assertSeeHtml('href="https://example.test/foo"');
-    });
+        $component = livewire(RenderTextColumnWithUrl::class, compact('urlType', 'rendering'))
+            ->assertSuccessful();
+        $column = $component->instance()->getTable()->getColumn('title')->record($post);
+
+        expect(preg_match_all('/<a\b/', $component->html()))->toBe(1)
+            ->and(substr_count($component->html(), 'href="' . $url . '"'))->toBe(1)
+            ->and(preg_match_all('/<a\b/', $column->renderInLayout()->toHtml()))->toBe(1)
+            ->and($column->getUrl())->toBe($url)
+            ->and($column->getUrl(null))->toBeNull()
+            ->and($column->getUrl('Alpha', new User))->toBeNull();
+
+        $component->set('disableColumnClick', true);
+        expect(preg_match_all('/<a\b/', $component->html()))->toBe(0);
+
+        $component->set('disableColumnClick', false)->call('toggleTableReordering')->assertSet('isTableReordering', true);
+        expect(preg_match_all('/<a\b/', $component->html()))->toBe(0);
+    })->with(['constant', 'closure', 'record'])->with(['optimized', 'rich', 'list', 'collapsed']);
+
+    it('resolves item `url()` closures only for explicit item arguments', function (string $urlType): void {
+        $column = TextColumn::make('title')
+            ->record(new Post(['title' => 'Parent']))
+            ->url(match ($urlType) {
+                'state' => static fn (?string $state): string => '/items/' . ($state ?? 'empty'),
+                'related' => static fn (?User $relatedRecord): string => '/items/' . ($relatedRecord?->name ?? 'empty'),
+                'combined' => static fn (?string $state, Post $record, ?User $relatedRecord): string => "/items/{$record->title}/" . ($state ?? 'empty') . '/' . ($relatedRecord?->name ?? 'empty'),
+            });
+
+        expect($column->getUrl())->toBeNull()
+            ->and($column->getUrl(null))->toBe(($urlType === 'combined') ? '/items/Parent/empty/empty' : '/items/empty')
+            ->and($column->getUrl('Alpha', new User(['name' => 'Beta'])))->toBe(match ($urlType) {
+                'state' => '/items/Alpha',
+                'related' => '/items/Beta',
+                'combined' => '/items/Parent/Alpha/Beta',
+            });
+    })->with(['state', 'related', 'combined']);
 
     it('adds `target="_blank"` when `openUrlInNewTab()` is set', function (): void {
         Post::factory()->create();
@@ -326,6 +509,23 @@ describe('rendering', function (): void {
         livewire(RenderTextColumnWithCopyable::class)
             ->assertSuccessful()
             ->assertSeeHtml('fi-copyable');
+    });
+
+    it('uses the displayed collapsed-list state for the clipboard', function (): void {
+        $post = Post::factory()->create();
+
+        $column = livewire(RenderTextColumnWithCopyable::class)
+            ->instance()
+            ->getTable()
+            ->getColumn('title')
+            ->state([1, 2])
+            ->numeric(decimalSeparator: '.', thousandsSeparator: ',')
+            ->prefix('!')
+            ->copyable()
+            ->record($post);
+        $column->clearCachedState();
+
+        expect($column->toEmbeddedHtml())->toContain("clipboard.writeText('!1, !2')");
     });
 
     it('renders an `icon()` as an SVG/`fi-icon` element', function (): void {
@@ -450,6 +650,141 @@ describe('rendering', function (): void {
             ->assertSuccessful()
             ->assertSeeHtml('fi-badge');
     });
+
+    it('injects the related model for each relationship state item without changing `$record`', function (): void {
+        $team = Team::factory()->create(['name' => 'Framework team']);
+        $firstUser = User::factory()->create(['name' => 'Duplicate name']);
+        $secondUser = User::factory()->create(['name' => 'Duplicate name']);
+        $emptyTeam = Team::factory()->create(['name' => 'Empty team']);
+
+        $team->users()->attach([$firstUser, $secondUser]);
+
+        livewire(RenderTextColumnWithRelatedRecords::class)
+            ->assertSuccessful()
+            ->assertSeeText("Duplicate name:{$firstUser->getKey()}:Framework team:{$firstUser->email}:Duplicate name")
+            ->assertSeeText("Duplicate name:{$secondUser->getKey()}:Framework team:{$secondUser->email}:Duplicate name")
+            ->assertSeeText("{$emptyTeam->name}:none:No users");
+    });
+
+    it('injects the terminal `$relatedRecord` for each nested relationship state item', function (): void {
+        $company = Company::factory()->create(['name' => 'Acme']);
+        $firstTeam = Team::factory()->create(['company_id' => $company->getKey()]);
+        $secondTeam = Team::factory()->create(['company_id' => $company->getKey()]);
+        $firstUser = User::factory()->create(['name' => 'First user', 'email' => 'first@example.com']);
+        $secondUser = User::factory()->create(['name' => 'Second user', 'email' => 'second@example.com']);
+
+        $firstTeam->users()->attach($firstUser);
+        $secondTeam->users()->attach($secondUser);
+
+        livewire(RenderTextColumnWithNestedRelatedRecords::class)
+            ->assertSuccessful()
+            ->assertSeeText("{$company->name}:{$firstUser->email}:{$firstUser->name}")
+            ->assertSeeText("{$company->name}:{$secondUser->email}:{$secondUser->name}");
+    });
+
+    it('does not cache nested relationship cardinality from a record with a missing intermediate relationship', function (): void {
+        $postWithoutAuthor = Post::factory()->create(['author_id' => null]);
+        $author = User::factory()->create();
+        $team = Team::factory()->create(['name' => 'Framework team']);
+        $author->teams()->attach($team);
+        $postWithAuthor = Post::factory()->create(['author_id' => $author->getKey()]);
+
+        $column = TextColumn::make('author.teams.name')->record($postWithoutAuthor);
+
+        expect($column->getStateFromRecord())->toBeNull();
+
+        $column->record($postWithAuthor);
+
+        expect($column->getStateFromRecord())->toBe(['Framework team']);
+    });
+
+    it('injects the related model when rendering an optimized singular relationship state', function (): void {
+        $author = User::factory()->create(['name' => 'Related author']);
+        $post = Post::factory()->create([
+            'author_id' => $author->getKey(),
+            'title' => 'Parent post',
+        ]);
+
+        livewire(RenderOptimizedTextColumnWithRelatedRecord::class)
+            ->assertSuccessful()
+            ->assertSeeText("{$post->title}:{$author->email}:{$author->name}");
+    });
+
+    it('does not reuse cached state or relationship records when rebound using only `record()`', function (): void {
+        $firstTeam = Team::factory()->create();
+        $firstUser = User::factory()->create(['name' => 'First user']);
+        $firstTeam->users()->attach($firstUser);
+
+        $secondTeam = Team::factory()->create();
+        $secondUser = User::factory()->create(['name' => 'Second user']);
+        $secondTeam->users()->attach($secondUser);
+
+        $column = livewire(RenderTextColumnWithRelatedRecords::class)
+            ->instance()
+            ->getTable()
+            ->getColumn('users.name');
+        $column->clearCachedState();
+
+        $column->record($firstTeam)->recordKey((string) $firstTeam->getKey());
+
+        expect($column->getState())->toBe(['First user'])
+            ->and(collect($column->getRelatedRecords())->map->getKey()->all())->toBe([$firstUser->getKey()]);
+
+        $column->record($secondTeam);
+
+        expect($column->getState())->toBe(['Second user'])
+            ->and(collect($column->getRelatedRecords())->map->getKey()->all())->toBe([$secondUser->getKey()]);
+
+        $column->record($firstTeam);
+
+        expect($column->getState())->toBe(['First user'])
+            ->and(collect($column->getRelatedRecords())->map->getKey()->all())->toBe([$firstUser->getKey()]);
+    });
+
+    it('injects the correct related model throughout every relationship item rendering path', function (): void {
+        $team = Team::factory()->create(['name' => 'Framework team']);
+        $users = collect([
+            User::factory()->create([
+                'name' => '',
+                'email' => 'first@example.com',
+                'json' => ['color' => '#ff0000', 'duplicate' => '', 'icon' => 'first', 'image' => 'https://example.com/first.jpg'],
+            ]),
+            User::factory()->create([
+                'name' => 'Duplicate name',
+                'email' => 'second@example.com',
+                'json' => ['color' => '#00ff00', 'duplicate' => 'Duplicate', 'icon' => 'second', 'image' => 'https://example.com/second.jpg'],
+            ]),
+            User::factory()->create([
+                'name' => 'Duplicate name',
+                'email' => 'third@example.com',
+                'json' => ['color' => '#0000ff', 'duplicate' => 'Duplicate', 'icon' => 'third', 'image' => 'https://example.com/third.jpg'],
+            ]),
+            User::factory()->create([
+                'name' => 'Unique name',
+                'email' => 'fourth@example.com',
+                'json' => ['color' => '#ffff00', 'duplicate' => 'Unique', 'icon' => 'fourth', 'image' => 'https://example.com/fourth.jpg'],
+            ]),
+        ]);
+
+        $team->users()->attach($users);
+
+        livewire(RenderColumnsWithRelatedRecords::class)
+            ->assertSuccessful()
+            ->assertSeeText('Framework team:second@example.com:Duplicate name')
+            ->assertSeeText('Framework team:third@example.com:Duplicate name')
+            ->assertSeeHtml('href="/users/' . $users[1]->getKey() . '"')
+            ->assertSeeHtml('href="/users/' . $users[2]->getKey() . '"')
+            ->assertSeeText($users->map(fn (User $user): string => "{$user->getKey()}:{$user->email}:{$user->email}")->implode(', '))
+            ->assertSeeText('distinct:second@example.com:Duplicate')
+            ->assertDontSeeText('distinct:third@example.com:Duplicate')
+            ->assertSeeText('distinct:fourth@example.com:Unique')
+            ->assertSeeHtml('alt="image-' . $users[0]->getKey() . '-' . $users[0]->json['image'] . '"')
+            ->assertSeeHtml('alt="image-' . $users[1]->getKey() . '-' . $users[1]->json['image'] . '"')
+            ->assertDontSeeHtml('alt="image-' . $users[2]->getKey() . '-' . $users[2]->json['image'] . '"')
+            ->assertSeeHtml('icon-' . $users[2]->getKey())
+            ->assertSeeHtml('color-' . $users[2]->getKey())
+            ->assertSeeHtml('copy-' . $users[2]->getKey());
+    });
 });
 
 class RenderTextColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
@@ -462,6 +797,119 @@ class RenderTextColumn extends Component implements HasActions, HasSchemas, Tabl
     {
         return $table->query(Post::query())->columns([
             TextColumn::make('title'),
+        ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class RenderTextColumnWithRelatedRecords extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table->query(Team::query())->columns([
+            TextColumn::make('users.name')
+                ->badge()
+                ->default('No users')
+                ->prefix(static fn (mixed $state, ?User $relatedRecord): string => $relatedRecord ? "{$state}:{$relatedRecord->getKey()}:" : '')
+                ->formatStateUsing(static fn (Team $record, ?User $relatedRecord, string $state): string => "{$record->name}:" . ($relatedRecord?->email ?? 'none') . ":{$state}"),
+        ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class RenderTextColumnWithNestedRelatedRecords extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table->query(Company::query())->columns([
+            TextColumn::make('teams.users.name')
+                ->badge()
+                ->formatStateUsing(static fn (Company $record, User $relatedRecord, string $state): string => "{$record->name}:{$relatedRecord->email}:{$state}"),
+        ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class RenderOptimizedTextColumnWithRelatedRecord extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table->query(Post::query())->columns([
+            TextColumn::make('author.name')
+                ->formatStateUsing(static fn (Post $record, User $relatedRecord, string $state): string => "{$record->title}:{$relatedRecord->email}:{$state}"),
+        ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class RenderColumnsWithRelatedRecords extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table->query(Team::query()->with([
+            'users' => static fn ($query) => $query->orderBy('users.id'),
+        ]))->columns([
+            TextColumn::make('users.name')
+                ->badge()
+                ->colors(static fn (string $state, User $relatedRecord): array => [
+                    'success' => static fn (string $state, User $relatedRecord): bool => $state === $relatedRecord->name,
+                ])
+                ->icons(static fn (string $state, User $relatedRecord): array => [
+                    'heroicon-o-check' => static fn (string $state, User $relatedRecord): bool => $state === $relatedRecord->name,
+                ])
+                ->formatStateUsing(static fn (Team $record, User $relatedRecord, string $state): string => "{$record->name}:{$relatedRecord->email}:{$state}")
+                ->url(static fn (string $state, User $relatedRecord): string => ($state === $relatedRecord->name) ? "/users/{$relatedRecord->getKey()}" : '/invalid')
+                ->tooltip(static fn (string $state, User $relatedRecord): string => "text-{$relatedRecord->getKey()}-{$state}"),
+            TextColumn::make('users.email')
+                ->copyable()
+                ->prefix(static fn (string $state, User $relatedRecord): string => "{$relatedRecord->getKey()}:{$state}:"),
+            TextColumn::make('users.json.duplicate')
+                ->distinctList()
+                ->badge()
+                ->formatStateUsing(static fn (User $relatedRecord, string $state): string => "distinct:{$relatedRecord->email}:{$state}"),
+            ImageColumn::make('users.json.image')
+                ->limit(2)
+                ->checkFileExistence(static fn (string $state, User $relatedRecord): bool => $state !== $relatedRecord->json['image'])
+                ->alt(static fn (string $state, User $relatedRecord): string => "image-{$relatedRecord->getKey()}-{$state}"),
+            IconColumn::make('users.json.icon')
+                ->icon(Heroicon::Check)
+                ->tooltip(static fn (string $state, User $relatedRecord): string => "icon-{$relatedRecord->getKey()}-{$state}"),
+            ColorColumn::make('users.json.color')
+                ->copyable(static fn (string $state, User $relatedRecord): bool => $state === $relatedRecord->json['color'])
+                ->copyableState(static fn (string $state, User $relatedRecord): string => "copy-{$relatedRecord->getKey()}-{$state}")
+                ->tooltip(static fn (string $state, User $relatedRecord): string => "color-{$relatedRecord->getKey()}-{$state}"),
         ]);
     }
 
@@ -1030,11 +1478,30 @@ class RenderTextColumnWithUrl extends Component implements HasActions, HasSchema
     use InteractsWithSchemas;
     use Tables\Concerns\InteractsWithTable;
 
+    public string $urlType = 'closure';
+
+    public string $rendering = 'optimized';
+
+    public bool $disableColumnClick = false;
+
     public function table(Table $table): Table
     {
-        return $table->query(Post::query())->columns([
-            TextColumn::make('title')->url(static fn (): string => 'https://example.test/foo'),
-        ]);
+        $column = TextColumn::make('title')
+            ->url(match ($this->urlType) {
+                'constant' => 'https://example.test/foo',
+                'closure' => static fn (): string => 'https://example.test/foo',
+                'record' => static fn (Post $record): string => "https://example.test/posts/{$record->getKey()}",
+            })
+            ->disabledClick(fn (): bool => $this->disableColumnClick);
+
+        match ($this->rendering) {
+            'rich' => $column->tooltip('Details'),
+            'list' => $column->state(['Alpha', 'Beta'])->listWithLineBreaks(),
+            'collapsed' => $column->state(['Alpha', 'Beta']),
+            default => null,
+        };
+
+        return $table->query(Post::query())->reorderable('id')->columns([$column]);
     }
 
     public function render(): View
@@ -1387,5 +1854,13 @@ class RenderTextColumnBadgeContents extends Component implements HasActions, Has
     public function render(): View
     {
         return view('livewire.table');
+    }
+}
+
+class TextColumnWithPublicOptimizedRenderer extends TextColumn
+{
+    public function renderOptimized(mixed $state): string
+    {
+        return $this->toOptimizedHtml($state);
     }
 }

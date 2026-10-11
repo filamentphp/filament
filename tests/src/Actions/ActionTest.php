@@ -1887,7 +1887,10 @@ describe('rendering', function (): void {
             ->toContain('fi-ac-link-action')
             ->toContain('fi-color')
             ->toContain('style="--color-')
-            ->toContain('wire:click="mountAction(');
+            ->toContain('wire:click="mountAction(')
+            ->toContain('wire:loading.attr="aria-disabled"')
+            ->toContain('wire:loading.class="fi-disabled"')
+            ->not->toContain('wire:loading.attr="disabled"');
     });
 
     it('can render a link action with a string `color()` without inline styles', function (): void {
@@ -1955,7 +1958,11 @@ describe('rendering', function (): void {
     it('renders a `badge()` action with the `fi-badge` class', function (): void {
         $html = Action::make('test')->badge()->toHtml();
 
-        expect($html)->toContain('fi-badge');
+        expect($html)
+            ->toContain('fi-badge')
+            ->toContain('wire:loading.attr="aria-disabled"')
+            ->toContain('wire:loading.class="fi-disabled"')
+            ->not->toContain('wire:loading.attr="disabled"');
     });
 
     it('renders a `grouped()` action with the dropdown list-item class', function (): void {
@@ -1963,7 +1970,10 @@ describe('rendering', function (): void {
 
         expect($html)
             ->toContain('fi-ac-grouped-action')
-            ->toContain('fi-dropdown-list-item');
+            ->toContain('fi-dropdown-list-item')
+            ->toContain('wire:loading.attr="aria-disabled"')
+            ->toContain('wire:loading.class="fi-disabled"')
+            ->not->toContain('wire:loading.attr="disabled"');
     });
 
     it('renders a string `color()` on a button as a `fi-color-*` class', function (): void {
@@ -2083,6 +2093,16 @@ describe('rendering', function (): void {
             ->toHtml();
 
         expect($html)->toContain('fi-size-lg');
+    });
+
+    it('serializes a scalable icon with a string enum `iconSize()`', function (): void {
+        $action = Action::make('test')
+            ->icon(Heroicon::Trash)
+            ->iconSize('lg');
+
+        expect($action->toArray())
+            ->icon->toBe('heroicon-s-trash')
+            ->iconSize->toBe(IconSize::Large);
     });
 
     it('renders a `requiresConfirmation()` action with the modal mount handler', function (): void {

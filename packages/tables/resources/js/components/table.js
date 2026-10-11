@@ -474,3 +474,127 @@ export default ({
         this.unsubscribeLivewireHook?.()
     },
 })
+
+export const tableFilters = () => ({
+    focusFrame: null,
+
+    actionFocusFrame: null,
+
+    removeActionCommitHook: null,
+
+    dropdownPanel: null,
+
+    dropdownOpenedListener: null,
+
+    init() {
+        this.dropdownPanel = this.$el.closest('.fi-dropdown-panel')
+        this.dropdownOpenedListener = (event) => {
+            if (!event.detail.shouldAutofocus) {
+                return
+            }
+
+            this.focusFirstControl()
+            this.$el.focus()
+        }
+
+        this.dropdownPanel?.addEventListener(
+            'dropdown-opened',
+            this.dropdownOpenedListener,
+        )
+    },
+
+    rememberActionFocus(event) {
+        const action = event.target.closest('[data-table-filter-action]')
+
+        if (event.detail !== 0 || action === null) {
+            return
+        }
+
+        const actionName = action.dataset.tableFilterAction
+
+        this.removeActionCommitHook?.()
+        this.removeActionCommitHook = this.$wire.$hook(
+            'commit',
+            ({ succeed }) => {
+                this.removeActionCommitHook?.()
+                this.removeActionCommitHook = null
+
+                succeed(() => {
+                    this.actionFocusFrame = requestAnimationFrame(() => {
+                        this.actionFocusFrame = null
+
+                        if (
+                            !this.$el.isConnected ||
+                            this.$el.closest('.fi-dropdown-panel')?.style
+                                .display !== 'block' ||
+                            document.activeElement !== document.body
+                        ) {
+                            return
+                        }
+
+                        this.$el
+                            .querySelector(
+                                `[data-table-filter-action="${actionName}"]`,
+                            )
+                            ?.focus()
+                    })
+                })
+            },
+        )
+    },
+
+    focusFirstControl() {
+        if (this.focusFrame !== null) {
+            cancelAnimationFrame(this.focusFrame)
+        }
+
+        this.focusFrame = requestAnimationFrame(() => {
+            this.focusFrame = null
+
+            if (
+                !this.$el.isConnected ||
+                this.$el.closest('.fi-dropdown-panel')?.style.display !==
+                    'block' ||
+                document.activeElement !== this.$el
+            ) {
+                return
+            }
+
+            const control = Array.from(
+                this.$el.querySelectorAll(
+                    'button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [href], [tabindex]:not([tabindex="-1"])',
+                ),
+            ).find(
+                (element) =>
+                    !element.matches(':disabled') &&
+                    !element.closest(
+                        '.fi-ta-filters-header, .fi-ta-filters-actions-ctn, [x-load][x-ignore], fieldset[disabled]',
+                    ) &&
+                    element.getClientRects().length > 0 &&
+                    getComputedStyle(element).visibility !== 'hidden',
+            )
+
+            control?.focus()
+        })
+    },
+
+    destroy() {
+        if (this.actionFocusFrame !== null) {
+            cancelAnimationFrame(this.actionFocusFrame)
+            this.actionFocusFrame = null
+        }
+
+        if (this.focusFrame !== null) {
+            cancelAnimationFrame(this.focusFrame)
+            this.focusFrame = null
+        }
+
+        this.removeActionCommitHook?.()
+        this.removeActionCommitHook = null
+
+        this.dropdownPanel?.removeEventListener(
+            'dropdown-opened',
+            this.dropdownOpenedListener,
+        )
+    },
+})

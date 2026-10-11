@@ -3,6 +3,7 @@
 namespace Filament\Infolists\Components\Concerns;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 
 trait HasIconColor
 {
@@ -24,10 +25,11 @@ trait HasIconColor
     /**
      * @return string | array<int | string, string | int> | null
      */
-    public function getIconColor(mixed $state): string | array | null
+    public function getIconColor(mixed $state, ?Model $relatedRecord = null): string | array | null
     {
         return $this->evaluate($this->iconColor, [
             'state' => $state,
+            'relatedRecord' => $relatedRecord,
         ]);
     }
 }

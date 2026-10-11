@@ -21,6 +21,7 @@
 
 @php
     use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
+    use Filament\Forms\Components\Field;
     use Filament\Support\Enums\VerticalAlignment;
     use Illuminate\Support\Arr;
     use Illuminate\View\ComponentSlot;
@@ -78,11 +79,17 @@
             ])
     }}
 >
+    @if (($field instanceof Field) && filled($requiredDescription = $field->getRequiredDescription()))
+        <span id="{{ $id }}-required" class="fi-sr-only">
+            {{ $requiredDescription }}
+        </span>
+    @endif
+
     @if (filled($label) && $labelSrOnly)
         <{{ $labelTag }}
             @if ($labelTag === 'label')
                 for="{{ $id }}"
-            @else
+            @elseif (filled($id))
                 id="{{ $id }}-label"
             @endif
             class="fi-fo-field-label fi-sr-only"
@@ -112,7 +119,7 @@
                     <{{ $labelTag }}
                         @if ($labelTag === 'label')
                             for="{{ $id }}"
-                        @else
+                        @elseif (filled($id))
                             id="{{ $id }}-label"
                         @endif
                         class="fi-fo-field-label"
@@ -162,6 +169,9 @@
 
                 @if (filled($errorMessages))
                     <ul
+                        @if (filled($id))
+                            id="{{ $id }}-error"
+                        @endif
                         data-validation-error
                         class="fi-fo-field-wrp-error-list"
                     >
@@ -177,6 +187,9 @@
                     </ul>
                 @elseif ($areHtmlErrorMessagesAllowed)
                     <div
+                        @if (filled($id))
+                            id="{{ $id }}-error"
+                        @endif
                         data-validation-error
                         class="fi-fo-field-wrp-error-message"
                     >
@@ -184,6 +197,9 @@
                     </div>
                 @else
                     <p
+                        @if (filled($id))
+                            id="{{ $id }}-error"
+                        @endif
                         data-validation-error
                         class="fi-fo-field-wrp-error-message"
                     >

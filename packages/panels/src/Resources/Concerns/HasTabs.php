@@ -89,9 +89,10 @@ trait HasTabs
     {
         $tabs = $this->getCachedTabs();
 
-        return Tabs::make()
+        return Tabs::make(__('filament-panels::resources/pages/list-records.tabs.label'))
             ->key('resourceTabs')
             ->livewireProperty('activeTab')
+            ->tabPanels(false)
             ->contained(false)
             ->tabs($tabs)
             ->hidden(empty($tabs));

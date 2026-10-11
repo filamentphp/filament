@@ -286,3 +286,20 @@ it('can throttle reset password attempts per email', function (): void {
 
     Event::assertDispatchedTimes(PasswordReset::class, times: 3);
 });
+
+it('scopes reset password rate limits by password broker', function (): void {
+    $email = fake()->unique()->safeEmail();
+    $resetPassword = livewire(ResetPassword::class)->instance();
+    $defaultPasswordBroker = Password::getDefaultDriver();
+
+    expect(invade($resetPassword)->isResetPasswordRateLimited($email))->toBeFalse();
+
+    Filament::getCurrentOrDefaultPanel()->authPasswordBroker($defaultPasswordBroker);
+
+    expect(invade($resetPassword)->isResetPasswordRateLimited($email))->toBeFalse()
+        ->and(invade($resetPassword)->isResetPasswordRateLimited($email))->toBeTrue();
+
+    Filament::getCurrentOrDefaultPanel()->authPasswordBroker('another-broker');
+
+    expect(invade($resetPassword)->isResetPasswordRateLimited($email))->toBeFalse();
+});

@@ -3,6 +3,7 @@
 namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
@@ -19,8 +20,20 @@ class BuilderTest extends Page
 
     public ?array $data = [];
 
+    public bool $isReorderingTest = false;
+
+    public bool $isFullRender = false;
+
+    public bool $hasVisibleMoveButtons = false;
+
+    public bool $isAncestorPartial = false;
+
     public function mount(): void
     {
+        $this->isReorderingTest = request()->boolean('reordering');
+        $this->isFullRender = request()->boolean('full');
+        $this->hasVisibleMoveButtons = $this->isReorderingTest && (! request()->boolean('screenReader'));
+        $this->isAncestorPartial = request()->boolean('ancestor');
         $this->form->fill();
     }
 
@@ -30,12 +43,28 @@ class BuilderTest extends Page
             ->schema([
                 Builder::make('content')
                     ->label('Content')
+                    ->reorderableWithButtons($this->hasVisibleMoveButtons)
+                    ->generateUuidUsing(true)
+                    ->default($this->isReorderingTest ? [
+                        ['type' => 'paragraph', 'data' => ['text' => 'Alpha']],
+                        ['type' => 'secret', 'data' => ['text' => 'Hidden']],
+                        ['type' => 'paragraph', 'data' => ['text' => 'Beta']],
+                        ['type' => 'paragraph', 'data' => ['text' => 'Gamma']],
+                    ] : [])
+                    ->collapsed($this->isReorderingTest)
+                    ->partiallyRenderAfterActionsCalled((! $this->isFullRender) && (! $this->isAncestorPartial))
+                    ->addAction(static fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'add-block']))
+                    ->addBetweenAction(static fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'add-between']))
+                    ->deleteAction(static fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'delete-block']))
                     ->blocks([
+                        Builder\Block::make('secret')->hidden()->schema([TextInput::make('text')]),
                         Builder\Block::make('paragraph')
-                            ->label('Paragraph')
+                            ->label(static fn (?array $state): string => $state['text'] ?? 'Paragraph')
                             ->schema([
                                 TextInput::make('text')
                                     ->label('Text')
+                                    ->default(fn (): string => 'Paragraph ' . count($this->data['content'] ?? []))
+                                    ->extraInputAttributes(['data-testid' => 'paragraph-text'])
                                     ->required(),
                             ]),
                         Builder\Block::make('heading')
@@ -43,11 +72,13 @@ class BuilderTest extends Page
                             ->schema([
                                 TextInput::make('title')
                                     ->label('Title')
+                                    ->extraInputAttributes(['data-testid' => 'heading-title'])
                                     ->required(),
                             ]),
                     ])
                     ->extraAttributes(['data-testid' => 'builder']),
             ])
+            ->partiallyRender($this->isAncestorPartial)
             ->statePath('data');
     }
 

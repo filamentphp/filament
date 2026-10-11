@@ -19,6 +19,17 @@ class RichEditorSchema
 {
     public static function schema(): array
     {
+        $customBlockPreviewContent = [
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'heading', 'attrs' => ['level' => 2], 'content' => [['type' => 'text', 'text' => 'Made for everyday adventures']]],
+                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Discover thoughtfully made essentials for your next trip, from a weekend away to a walk around the neighbourhood.']]],
+                ['type' => 'customBlock', 'attrs' => ['id' => 'alert', 'config' => ['message' => 'Free shipping on orders over £50.']]],
+                ['type' => 'customBlock', 'attrs' => ['id' => 'testimonial', 'config' => ['quote' => 'My favourite bag for a weekend away. There is room for everything I need, and the thoughtful details make it just as useful on my daily commute.', 'author' => 'Alex Morgan']]],
+                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Explore the collection and find your new everyday favourite.']]],
+            ],
+        ];
+
         return [
             Group::make()
                 ->id('richEditor')
@@ -127,6 +138,48 @@ class RichEditorSchema
                         ]),
                 ]),
             Group::make()
+                ->id('richEditorCustomBlocksGrid')
+                ->extraAttributes([
+                    'class' => 'p-16 max-w-5xl',
+                ])
+                ->schema([
+                    RichEditor::make('richEditorCustomBlocksGrid')
+                        ->label('Page content')
+                        ->customBlocks([
+                            HeroBlock::class,
+                            CallToActionBlock::class,
+                        ])
+                        ->customBlocksGrid()
+                        ->activePanel('customBlocks'),
+                ]),
+            Group::make()
+                ->id('richEditorCustomBlockPreviews')
+                ->extraAttributes([
+                    'class' => 'p-16 max-w-5xl',
+                ])
+                ->schema([
+                    RichEditor::make('richEditorCustomBlockPreviews')
+                        ->label('Content')
+                        ->json()
+                        ->toolbarButtons([['bold', 'italic', 'link'], ['undo', 'redo']])
+                        ->customBlocks([AlertBlock::class, TestimonialBlock::class])
+                        ->default($customBlockPreviewContent),
+                ]),
+            Group::make()
+                ->id('richEditorMinimalCustomBlockControls')
+                ->extraAttributes([
+                    'class' => 'p-16 max-w-5xl',
+                ])
+                ->schema([
+                    RichEditor::make('richEditorMinimalCustomBlockControls')
+                        ->label('Content')
+                        ->json()
+                        ->toolbarButtons([['bold', 'italic', 'link'], ['undo', 'redo']])
+                        ->customBlocks([AlertBlock::class, TestimonialBlock::class])
+                        ->minimalCustomBlockControls()
+                        ->default($customBlockPreviewContent),
+                ]),
+            Group::make()
                 ->id('richEditorGroupedCustomBlocks')
                 ->extraAttributes([
                     'class' => 'p-16 max-w-5xl',
@@ -147,6 +200,30 @@ class RichEditorSchema
                                 VideoEmbedBlock::class,
                             ],
                         ]),
+                ]),
+            Group::make()
+                ->id('richEditorSearchableCustomBlocksGrid')
+                ->extraAttributes([
+                    'class' => 'p-16 max-w-5xl',
+                ])
+                ->schema([
+                    RichEditor::make('richEditorSearchableCustomBlocksGrid')
+                        ->label('Page content')
+                        ->customBlocks([
+                            'Marketing' => [
+                                HeroBlock::class,
+                                CallToActionBlock::class,
+                                BannerBlock::class,
+                                TestimonialBlock::class,
+                            ],
+                            'Media' => [
+                                ImageGalleryBlock::class,
+                                VideoEmbedBlock::class,
+                            ],
+                        ])
+                        ->customBlocksGrid()
+                        ->searchableCustomBlocks()
+                        ->activePanel('customBlocks'),
                 ]),
             Group::make()
                 ->id('richEditorFloatingToolbar')

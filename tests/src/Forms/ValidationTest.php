@@ -6,8 +6,11 @@ use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Enums\IntegerBackedEnum;
 use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\ReadReplica;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -961,6 +964,182 @@ describe('string validation rules', function (): void {
     });
 
 });
+
+describe('scoped database validation rules', function (): void {
+    test('`scopedUnique()` uses the given model when the schema has no model', function (): void {
+        $user = User::factory()->create();
+
+        $errors = [];
+
+        try {
+            Schema::make(Livewire::make()->data(['email' => $user->email]))
+                ->statePath('data')
+                ->components([
+                    $field = (new Field('email'))
+                        ->scopedUnique(User::class),
+                ])
+                ->validate();
+        } catch (ValidationException $exception) {
+            $errors = $exception->validator->errors()->get($field->getStatePath());
+        }
+
+        expect($errors)
+            ->toContain('The email has already been taken.');
+    });
+
+    test('`scopedUnique()` uses the schema model when no model is given', function (): void {
+        $user = User::factory()->create();
+
+        $errors = [];
+
+        try {
+            Schema::make(Livewire::make()->data(['email' => $user->email]))
+                ->statePath('data')
+                ->model(User::class)
+                ->components([
+                    $field = (new Field('email'))
+                        ->scopedUnique(),
+                ])
+                ->validate();
+        } catch (ValidationException $exception) {
+            $errors = $exception->validator->errors()->get($field->getStatePath());
+        }
+
+        expect($errors)
+            ->toContain('The email has already been taken.');
+    });
+
+    test('`scopedExists()` uses the given model when the schema has no model', function (): void {
+        User::factory()->create();
+
+        $errors = [];
+
+        try {
+            Schema::make(Livewire::make()->data(['email' => 'missing@example.com']))
+                ->statePath('data')
+                ->components([
+                    $field = (new Field('email'))
+                        ->scopedExists(User::class),
+                ])
+                ->validate();
+        } catch (ValidationException $exception) {
+            $errors = $exception->validator->errors()->get($field->getStatePath());
+        }
+
+        expect($errors)
+            ->toContain('The selected email is invalid.');
+    });
+
+    test('`scopedExists()` uses the schema model when no model is given', function (): void {
+        User::factory()->create();
+
+        $errors = [];
+
+        try {
+            Schema::make(Livewire::make()->data(['email' => 'missing@example.com']))
+                ->statePath('data')
+                ->model(User::class)
+                ->components([
+                    $field = (new Field('email'))
+                        ->scopedExists(),
+                ])
+                ->validate();
+        } catch (ValidationException $exception) {
+            $errors = $exception->validator->errors()->get($field->getStatePath());
+        }
+
+        expect($errors)
+            ->toContain('The selected email is invalid.');
+    });
+
+    test('`scopedExists()` validates against the write PDO after the query is replaced', function (): void {
+        $connection = ReadReplica::connection('CREATE TABLE users (id INTEGER PRIMARY KEY, email TEXT)');
+        $connection->getPdo()->exec("INSERT INTO users (email) VALUES ('primary@example.com')");
+        $connection->getReadPdo()->exec("INSERT INTO users (email) VALUES ('stale@example.com')");
+
+        $validate = function (string $email): array {
+            try {
+                Schema::make(Livewire::make()->data(['email' => $email]))
+                    ->statePath('data')
+                    ->components([
+                        $field = (new Field('email'))
+                            ->scopedExists(User::class, modifyQueryUsing: fn (): Builder => User::on('read-replica')->where('email', $email)),
+                    ])
+                    ->validate();
+
+                return [];
+            } catch (ValidationException $exception) {
+                return $exception->validator->errors()->get($field->getStatePath());
+            }
+        };
+
+        expect($validate('stale@example.com'))
+            ->toContain('The selected email is invalid.')
+            ->and($validate('primary@example.com'))
+            ->toBeEmpty();
+    });
+
+    test('`scopedUnique()` validates against the write PDO after the query is replaced', function (): void {
+        $connection = ReadReplica::connection('CREATE TABLE users (id INTEGER PRIMARY KEY, email TEXT)');
+        $connection->getPdo()->exec("INSERT INTO users (email) VALUES ('primary@example.com')");
+        $connection->getReadPdo()->exec("INSERT INTO users (email) VALUES ('removed@example.com')");
+
+        $validate = function (string $email): array {
+            try {
+                Schema::make(Livewire::make()->data(['email' => $email]))
+                    ->statePath('data')
+                    ->components([
+                        $field = (new Field('email'))
+                            ->scopedUnique(User::class, modifyQueryUsing: fn (): Builder => User::on('read-replica')->where('email', $email)),
+                    ])
+                    ->validate();
+
+                return [];
+            } catch (ValidationException $exception) {
+                return $exception->validator->errors()->get($field->getStatePath());
+            }
+        };
+
+        expect($validate('primary@example.com'))
+            ->toContain('The email has already been taken.')
+            ->and($validate('removed@example.com'))
+            ->toBeEmpty();
+    });
+
+    test('tenant-aware `exists()` validates against the write PDO', function (): void {
+        $connection = ReadReplica::connection('CREATE TABLE users (id INTEGER PRIMARY KEY, email TEXT)');
+        $connection->getPdo()->exec("INSERT INTO users (email) VALUES ('primary@example.com')");
+        $connection->getReadPdo()->exec("INSERT INTO users (email) VALUES ('stale@example.com')");
+        ReadReplicaValidationUser::addGlobalScope(filament()->getTenancyScopeName(), fn (Builder $query): Builder => $query);
+
+        $validate = function (string $email): array {
+            try {
+                Schema::make(Livewire::make()->data(['email' => $email]))
+                    ->statePath('data')
+                    ->components([
+                        $field = (new Field('email'))->exists(ReadReplicaValidationUser::class),
+                    ])
+                    ->validate();
+
+                return [];
+            } catch (ValidationException $exception) {
+                return $exception->validator->errors()->get($field->getStatePath());
+            }
+        };
+
+        expect($validate('stale@example.com'))
+            ->toContain('The selected email is invalid.')
+            ->and($validate('primary@example.com'))
+            ->toBeEmpty();
+    });
+});
+
+class ReadReplicaValidationUser extends User
+{
+    protected $connection = 'read-replica';
+
+    protected $table = 'users';
+}
 
 describe('enum and label validation', function (): void {
     test('conditional validation rules support enum instances', function (string $rule, BackedEnum $defaultValue, BackedEnum | array $enumValue): void {

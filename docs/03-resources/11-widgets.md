@@ -2,6 +2,7 @@
 title: Using widgets on resource pages
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import Aside from "@components/Aside.astro"
 
 ## Introduction
 
@@ -74,6 +75,10 @@ use Illuminate\Database\Eloquent\Model;
 public ?Model $record = null;
 ```
 
+<Aside variant="warning">
+    Filament leaves widget model properties, including `$record` and `$parentRecord`, to Livewire's native restoration. It does not reapply global scopes, the resource query, or a policy for those records. A request to the widget does not reauthorize the parent page. The widget's `canView()` method controls access to the widget, not its records. Query and authorize records before using them, including any tenant or ownership restrictions. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+</Aside>
+
 ## Accessing page table data in the widget
 
 If you're using a widget on a [List](listing-records) page, you may access the table data by first adding the `ExposesTableToWidgets` trait to the page class:
@@ -117,6 +122,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 Stat::make('Total Products', $this->getPageTableQuery()->count()),
 ```
+
+For a nested resource page, `InteractsWithPageTable` validates the table page's parent through its parent resource binding before initializing that page. It checks the ancestor chain when route parameters are available, or the supplied parent's identity and immediate resource binding otherwise. This applies to the table page instance, not to other uses of model properties on your widget.
 
 Alternatively, you can access a collection of the records on the current page using the `$this->getPageTableRecords()` method:
 

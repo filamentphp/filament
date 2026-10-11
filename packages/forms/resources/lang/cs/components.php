@@ -104,6 +104,14 @@ return [
 
         ],
 
+        'block_picker' => [
+
+            'no_search_results_message' => 'Žádné bloky neodpovídají vašemu hledání.',
+
+            'search_prompt' => 'Hledat bloky',
+
+        ],
+
     ],
 
     'checkbox_list' => [
@@ -495,6 +503,10 @@ return [
 
             ],
 
+            'close_panel' => [
+                'label' => 'Zavřít panel',
+            ],
+
             'custom_block' => [
 
                 'modal' => [
@@ -659,6 +671,28 @@ return [
 
         ],
 
+        'custom_blocks' => [
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Smazat blok',
+                ],
+
+                'edit' => [
+                    'label' => 'Upravit blok',
+                ],
+
+            ],
+
+            'no_search_results_message' => 'Žádné bloky neodpovídají vašemu hledání.',
+
+            'search_label' => 'Hledat bloky',
+
+            'search_prompt' => 'Hledat bloky',
+
+        ],
+
         'file_attachments_accepted_file_types_message' => 'Nahrané soubory musí být typu: :values.',
 
         'file_attachments_max_size_message' => 'Nahrané soubory nesmí být větší než :max kB.',
@@ -736,6 +770,10 @@ return [
 
         'actions' => [
 
+            'clear' => [
+                'label' => 'Vymazat výběr',
+            ],
+
             'create_option' => [
 
                 'label' => 'Vytvořit',
@@ -780,6 +818,10 @@ return [
 
             ],
 
+            'remove_option' => [
+                'label' => 'Odebrat :label',
+            ],
+
         ],
 
         'boolean' => [
@@ -798,6 +840,8 @@ return [
         'placeholder' => 'Zvolte některou z možností',
 
         'searching_message' => 'Hledání...',
+
+        'search_label' => 'Hledat',
 
         'search_prompt' => 'Zadejte hledaný výraz...',
 

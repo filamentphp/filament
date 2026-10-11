@@ -13,6 +13,7 @@
 <div
     x-data="filamentOneTimeCodeInput"
     x-modelable="state"
+    dir="ltr"
     role="group"
     {{ $attributes->class(['fi-one-time-code-input-ctn']) }}
 >

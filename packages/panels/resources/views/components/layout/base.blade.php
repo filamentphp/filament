@@ -6,8 +6,11 @@
     use Filament\Livewire\Notifications;
     use Filament\Support\Facades\FilamentView;
     use Filament\View\PanelsRenderHook;
+    use Illuminate\Support\Facades\Vite;
 
     $renderHookScopes = $livewire?->getRenderHookScopes();
+
+    $cspNonce = Vite::cspNonce();
 @endphp
 
 <!DOCTYPE html>
@@ -97,15 +100,15 @@
         {{ FilamentView::renderHook(PanelsRenderHook::STYLES_AFTER, scopes: $renderHookScopes) }}
 
         @if (! filament()->hasDarkMode())
-            <script>
+            <script @if (filled($cspNonce)) nonce="{{ $cspNonce }}" @endif>
                 localStorage.setItem('theme', 'light')
             </script>
         @elseif (filament()->hasDarkModeForced())
-            <script>
+            <script @if (filled($cspNonce)) nonce="{{ $cspNonce }}" @endif>
                 localStorage.setItem('theme', 'dark')
             </script>
         @else
-            <script>
+            <script @if (filled($cspNonce)) nonce="{{ $cspNonce }}" @endif>
                 const loadDarkMode = () => {
                     window.theme = localStorage.getItem('theme') ?? @js(filament()->getDefaultThemeMode()->value)
 
@@ -149,7 +152,10 @@
         @filamentScripts(withCore: true)
 
         @if (filament()->hasBroadcasting() && config('filament.broadcasting.echo'))
-            <script data-navigate-once>
+            <script
+                data-navigate-once
+                @if (filled($cspNonce)) nonce="{{ $cspNonce }}" @endif
+            >
                 window.Echo = new window.EchoFactory(@js(config('filament.broadcasting.echo')))
 
                 window.dispatchEvent(new CustomEvent('EchoLoaded'))
@@ -157,7 +163,7 @@
         @endif
 
         @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
-            <script>
+            <script @if (filled($cspNonce)) nonce="{{ $cspNonce }}" @endif>
                 loadDarkMode()
             </script>
         @endif

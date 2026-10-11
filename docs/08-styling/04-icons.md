@@ -171,6 +171,58 @@ Using class `Filament\Forms\View\FormsIconAlias`
 - `FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_DELETE_BUTTON` - Delete button for a custom block in a rich editor
 - `FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_EDIT_BUTTON` - Edit button for a custom block in a rich editor
 - `FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_MERGE_TAGS_CLOSE_BUTTON` - Close button for merge tags panel in a rich editor
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_ALIGN_CENTER` - Center alignment tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_ALIGN_END` - End alignment tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_ALIGN_JUSTIFY` - Justified alignment tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_ALIGN_START` - Start alignment tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_ATTACH_FILES` - File attachment tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_BLOCKQUOTE` - Blockquote tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_BOLD` - Bold tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_BULLET_LIST` - Bulleted list tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_CLEAR_FORMATTING` - Clear formatting tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_CODE` - Inline code tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_CODE_BLOCK` - Code block tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_CUSTOM_BLOCKS` - Custom blocks tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_DETAILS` - Details tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_GRID` - Grid tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_GRID_ADD_COLUMN_AFTER` - Add column after tool in a rich editor grid floating toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_GRID_ADD_COLUMN_BEFORE` - Add column before tool in a rich editor grid floating toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_GRID_DELETE` - Delete grid tool in a rich editor grid floating toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_GRID_DELETE_COLUMN` - Delete column tool in a rich editor grid floating toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_H1` - Heading level 1 tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_H2` - Heading level 2 tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_H3` - Heading level 3 tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_H4` - Heading level 4 tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_H5` - Heading level 5 tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_H6` - Heading level 6 tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_HIGHLIGHT` - Highlight tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_HORIZONTAL_RULE` - Horizontal rule tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_ITALIC` - Italic tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_LEAD` - Lead text tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_LINK` - Link tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_MERGE_TAGS` - Merge tags tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_ORDERED_LIST` - Ordered list tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_PARAGRAPH` - Paragraph tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_REDO` - Redo tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_SMALL` - Small text tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_STRIKE` - Strikethrough tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_SUBSCRIPT` - Subscript tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_SUPERSCRIPT` - Superscript tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE` - Table tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_ADD_COLUMN_AFTER` - Add column after tool in a rich editor table floating toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_ADD_COLUMN_BEFORE` - Add column before tool in a rich editor table floating toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_ADD_ROW_AFTER` - Add row after tool in a rich editor table floating toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_ADD_ROW_BEFORE` - Add row before tool in a rich editor table floating toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_DELETE` - Delete table tool in a rich editor table floating toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_DELETE_COLUMN` - Delete column tool in a rich editor table floating toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_DELETE_ROW` - Delete row tool in a rich editor table floating toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_MERGE_CELLS` - Merge cells tool in a rich editor table floating toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_SPLIT_CELL` - Split cell tool in a rich editor table floating toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_TOGGLE_HEADER_CELL` - Toggle header cell tool in a rich editor table floating toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_TABLE_TOGGLE_HEADER_ROW` - Toggle header row tool in a rich editor table floating toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_TEXT_COLOR` - Text color tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_UNDERLINE` - Underline tool in a rich editor toolbar
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_TOOLBAR_UNDO` - Undo tool in a rich editor toolbar
 - `FormsIconAlias::COMPONENTS_SELECT_ACTIONS_CREATE_OPTION` - Trigger button of a create option action in a select field
 - `FormsIconAlias::COMPONENTS_SELECT_ACTIONS_EDIT_OPTION` - Trigger button of an edit option action in a select field
 - `FormsIconAlias::COMPONENTS_TEXT_INPUT_ACTIONS_COPY` - Trigger button of a copy action in a text input field

@@ -486,6 +486,23 @@ describe('height constraints', function (): void {
             ->and($html)->toContain('tabindex="0"');
     });
 
+    it('injects the implicit `$state` into CommonMark configuration for disabled content', function (): void {
+        $html = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                MarkdownEditor::make('content')
+                    ->disabled()
+                    ->commonMarkOptions(static fn (string $state): array => [
+                        'html_input' => $state === '<strong>Allowed</strong>' ? 'allow' : 'strip',
+                    ]),
+            ])
+            ->fill(['content' => '<strong>Allowed</strong>'])
+            ->getComponents()[0]
+            ->toHtml();
+
+        expect($html)->toContain('<strong>Allowed</strong>');
+    });
+
     it('does not constrain disabled content after clearing `minHeight()` and `maxHeight()`', function (): void {
         $html = Schema::make(Livewire::make())
             ->statePath('data')
@@ -682,23 +699,21 @@ describe('rendering', function (): void {
 });
 
 it('can render `MarkdownEditor` in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/markdown-editor-browser-test')
-            ->assertAttribute(
-                '[data-testid="null-min-height-with-max-height-markdown-editor"] .CodeMirror-scroll',
-                'tabindex',
-                '0',
-            )
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/markdown-editor-browser-test')
+        ->assertAttribute(
+            '[data-testid="null-min-height-with-max-height-markdown-editor"] .CodeMirror-scroll',
+            'tabindex',
+            '0',
+        )
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/markdown-editor-browser-test')
-            ->inDarkMode()
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/markdown-editor-browser-test')
+        ->inDarkMode()
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 });
 
 class RenderMarkdownEditor extends Livewire

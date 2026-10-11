@@ -18,7 +18,13 @@ trait HasIconSize
 
     public function getIconSize(): IconSize | string | null
     {
-        return $this->evaluate($this->iconSize);
+        $size = $this->evaluate($this->iconSize);
+
+        if (is_string($size)) {
+            $size = IconSize::tryFrom($size) ?? $size;
+        }
+
+        return $size;
     }
 
     public function hasIconSize(): bool

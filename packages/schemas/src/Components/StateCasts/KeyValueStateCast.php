@@ -20,6 +20,10 @@ class KeyValueStateCast implements StateCast
             $state = json_decode($state, associative: true);
         }
 
+        if (empty($state) || (! is_array($state))) {
+            return [];
+        }
+
         if (! is_array($state[array_key_first($state)])) {
             return $state;
         }
@@ -44,6 +48,10 @@ class KeyValueStateCast implements StateCast
 
         if (! is_array($state)) {
             $state = json_decode($state, associative: true);
+        }
+
+        if (empty($state) || (! is_array($state))) {
+            return [];
         }
 
         if (is_array($state[array_key_first($state)])) {

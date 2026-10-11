@@ -12,12 +12,27 @@ use Symfony\Component\Process\Process;
 
 use function Filament\get_authorization_response;
 use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_pattern;
 use function Filament\Support\is_path_within_directory;
 use function Filament\Support\prepare_inherited_attributes;
 
 uses(TestCase::class);
 
-it('discovers application classes and excludes symlinked path repository classes with `discover_app_classes()` when Composer uses a custom vendor directory', function (): void {
+it('generates patterns with literal LIKE wildcard characters using `generate_search_pattern()`', function (bool $hasLeadingWildcard, bool $hasTrailingWildcard, string $expected): void {
+    expect(generate_search_pattern('café!_100%[draft]\\path', $hasLeadingWildcard, $hasTrailingWildcard))
+        ->toBe($expected);
+})->with([
+    'equals' => [false, false, 'café!!!_100!%![draft]\\path'],
+    'starts with' => [false, true, 'café!!!_100!%![draft]\\path%'],
+    'ends with' => [true, false, '%café!!!_100!%![draft]\\path'],
+    'contains' => [true, true, '%café!!!_100!%![draft]\\path%'],
+]);
+
+it('does not share the `originalRequest` binding between Livewire component snapshots', function (): void {
+    expect(app()->isShared('originalRequest'))->toBeFalse();
+});
+
+it('builds a fresh index of application classes and excludes symlinked path repository classes with `discover_app_classes()` when Composer uses a custom vendor directory', function (): void {
     $filesystem = app(Filesystem::class);
     $repositoryDirectory = dirname(__DIR__, 3);
     $temporaryRootDirectory = realpath(sys_get_temp_dir());
@@ -57,6 +72,7 @@ it('discovers application classes and excludes symlinked path repository classes
             return ClassLoader::getRegisteredLoaders()[__DIR__];
             PHP);
         $filesystem->put($temporaryDirectory . DIRECTORY_SEPARATOR . 'app/ApplicationClass.php', '<?php namespace Fixture; class ApplicationClass {}');
+        $filesystem->put($temporaryDirectory . DIRECTORY_SEPARATOR . 'app/FreshlyIndexedClass.php', '<?php namespace Fixture; class FreshlyIndexedClass {}');
         $filesystem->put($dependencySourceDirectory . DIRECTORY_SEPARATOR . 'src/DependencyClass.php', '<?php namespace Fixture; class DependencyClass {}');
         $filesystem->link($dependencySourceDirectory, $linkedDependencyDirectory);
 
@@ -73,6 +89,7 @@ it('discovers application classes and excludes symlinked path repository classes
                 $applicationPathPrefix = %s;
                 $classLoader = new Composer\Autoload\ClassLoader($vendorDirectory);
                 Composer\InstalledVersions::$rootInstallPath = $applicationPathPrefix;
+                $classLoader->addPsr4('Fixture\\', $applicationPathPrefix . 'app');
                 $classLoader->addClassMap([
                     'Fixture\\ApplicationClass' => $applicationPathPrefix . 'app/ApplicationClass.php',
                     'Fixture\\DependencyClass' => $vendorDirectory . DIRECTORY_SEPARATOR . 'composer/../fixture/dependency/src/DependencyClass.php',
@@ -104,7 +121,7 @@ it('discovers application classes and excludes symlinked path repository classes
 
         expect(json_decode($process->getOutput(), associative: true, flags: JSON_THROW_ON_ERROR))
             ->toBe([
-                'classes' => ['Fixture\\ApplicationClass'],
+                'classes' => ['Fixture\\ApplicationClass', 'Fixture\\FreshlyIndexedClass'],
                 'windowsClasses' => ['Fixture\\WindowsApplicationClass'],
                 'vendorDirectory' => $vendorDirectory,
             ]);

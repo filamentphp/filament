@@ -18,7 +18,7 @@ trait CanGenerateUuids
 
     public function generateUuid(): ?string
     {
-        if ($this->generateUuidUsing) {
+        if ($this->generateUuidUsing instanceof Closure) {
             return $this->evaluate($this->generateUuidUsing);
         }
 

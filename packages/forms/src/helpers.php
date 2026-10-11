@@ -12,7 +12,13 @@ if (! function_exists('Filament\Forms\array_move_after')) {
     {
         $keys = array_keys($array);
 
-        $indexToMoveAfter = array_search($keyToMoveAfter, $keys);
+        $keyToMoveAfter = array_key_first([$keyToMoveAfter => null]);
+        $indexToMoveAfter = array_search($keyToMoveAfter, $keys, strict: true);
+
+        if ($indexToMoveAfter === false) {
+            return $array;
+        }
+
         $keyToMoveBefore = $keys[$indexToMoveAfter + 1] ?? null;
 
         if (blank($keyToMoveBefore)) {
@@ -42,7 +48,13 @@ if (! function_exists('Filament\Forms\array_move_before')) {
     {
         $keys = array_keys($array);
 
-        $indexToMoveBefore = array_search($keyToMoveBefore, $keys);
+        $keyToMoveBefore = array_key_first([$keyToMoveBefore => null]);
+        $indexToMoveBefore = array_search($keyToMoveBefore, $keys, strict: true);
+
+        if ($indexToMoveBefore === false) {
+            return $array;
+        }
+
         $keyToMoveAfter = $keys[$indexToMoveBefore - 1] ?? null;
 
         if (blank($keyToMoveAfter)) {

@@ -12,22 +12,28 @@ require __DIR__ . '/TranslationTool/src/helpers.php';
 
 const PACKAGES_DIR = __DIR__ . '/../packages/';
 
-$commandName = select(
+$commandLabels = [
+    'status' => 'Show translation status',
+    'list-outdated' => 'List outdated translation keys',
+    'list-translations' => 'List translations side-by-side',
+    'list-translators' => 'List translation managers',
+];
+
+$options = getopt('', [...array_keys($commandLabels), 'help', 'locale:']);
+
+$localeCode = $options['locale'] ?? null;
+unset($options['locale']);
+
+$commandName = array_key_first($options) ?? select(
     label: 'Choose the command you want to run',
-    options: [
-        'status' => 'Show translation status',
-        'list_outdated' => 'List outdated translation keys',
-        'list_translations' => 'List translations side-by-side',
-        'list_translators' => 'List translation managers',
-    ],
+    options: $commandLabels,
     default: 'status',
 );
 
-$command = match ($commandName) {
-    'status' => new Commands\ShowLocaleStatus,
-    'list_outdated' => new Commands\ListOutdatedTranslationKeys,
-    'list_translators' => new Commands\ListTranslators,
-    'list_translations' => new Commands\ListTranslations
+match ($commandName) {
+    'status' => (new Commands\ShowLocaleStatus)(),
+    'list-outdated' => (new Commands\ListOutdatedTranslationKeys)($localeCode),
+    'list-translations' => (new Commands\ListTranslations)($localeCode),
+    'list-translators' => (new Commands\ListTranslators)(),
+    'help' => (new Commands\ShowHelp)($commandLabels),
 };
-
-$command();

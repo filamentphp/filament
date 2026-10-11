@@ -52,7 +52,7 @@ it('returns null for getImageCropAspectRatio by default')
 
 ## Development Commands
 
-**Always update tests when making changes.** For UI components, add browser tests using Pest Browser with `visit()`. Always call `assertNoAccessibilityIssues()` in both light and dark modes (`->inDarkMode()`).
+**Introduce new tests only for actual frontend or backend behavior changes.** Styling changes and bug fixes that restore existing intended behavior should not introduce new tests. Verify those fixes using existing tests and, for styling, visual inspection. For frontend behavior changes, add browser tests using Pest Browser with `visit()`. Always call `assertNoAccessibilityIssues()` in both light and dark modes (`->inDarkMode()`).
 
 - Keep inexpensive non-browser coverage of supported configuration and rendering paths, including setters, getters, `Closure` evaluation, and successful rendering.
 - In browser tests, do not assert exact translated copy, CSS classes, inline styles, utility classes, incidental HTML, or computed visual styling unless that output proves the behavior under test.

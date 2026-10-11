@@ -40,13 +40,20 @@ class DissociateAction extends Action
         $this->modalIcon(FilamentIcon::resolve(ActionsIconAlias::DISSOCIATE_ACTION_MODAL) ?? Heroicon::OutlinedXMark);
 
         $this->action(function (): void {
-            $this->process(function (Model $record, Table $table): void {
+            $result = $this->process(function (Model $record, Table $table): bool {
                 /** @var BelongsTo $inverseRelationship */
                 $inverseRelationship = $table->getInverseRelationshipFor($record);
 
                 $inverseRelationship->dissociate();
-                $record->save();
+
+                return $record->save();
             });
+
+            if ($result === false) {
+                $this->failure();
+
+                return;
+            }
 
             $this->success();
         });

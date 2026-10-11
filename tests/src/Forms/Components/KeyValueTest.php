@@ -514,27 +514,25 @@ describe('rendering', function (): void {
 
 describe('browser interactions', function (): void {
     it('supports row actions and configured controls in the browser', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-            visit('/key-value-test')
-                ->assertPresent('[data-testid="basic-key-value"] .fi-fo-key-value-add-action-ctn')
-                ->assertCount('[data-testid="basic-key-value"] tbody tr', 1)
-                ->click('[data-testid="basic-key-value"] .fi-fo-key-value-add-action-ctn')
-                ->assertCount('[data-testid="basic-key-value"] tbody tr', 2)
-                ->click('[data-testid="reorderable-key-value"] .fi-fo-key-value-add-action-ctn')
-                ->click('[data-testid="reorderable-key-value"] .fi-fo-key-value-add-action-ctn')
-                ->assertCount('[data-testid="reorderable-key-value"] .fi-fo-key-value-table-row-sortable-handle', 3)
-                ->assertMissing('[data-testid="not-addable-key-value"] .fi-fo-key-value-add-action-ctn')
-                ->assertMissing('[data-testid="not-deletable-key-value"] tbody .fi-has-action')
-                ->assertMissing('[data-testid="disabled-key-value"] .fi-fo-key-value-add-action-ctn')
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
+        visit('/key-value-test')
+            ->assertPresent('[data-testid="basic-key-value"] .fi-fo-key-value-add-action-ctn')
+            ->assertCount('[data-testid="basic-key-value"] tbody tr', 1)
+            ->click('[data-testid="basic-key-value"] .fi-fo-key-value-add-action-ctn')
+            ->assertCount('[data-testid="basic-key-value"] tbody tr', 2)
+            ->click('[data-testid="reorderable-key-value"] .fi-fo-key-value-add-action-ctn')
+            ->click('[data-testid="reorderable-key-value"] .fi-fo-key-value-add-action-ctn')
+            ->assertCount('[data-testid="reorderable-key-value"] .fi-fo-key-value-table-row-sortable-handle', 3)
+            ->assertMissing('[data-testid="not-addable-key-value"] .fi-fo-key-value-add-action-ctn')
+            ->assertMissing('[data-testid="not-deletable-key-value"] tbody .fi-has-action')
+            ->assertMissing('[data-testid="disabled-key-value"] .fi-fo-key-value-add-action-ctn')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
 
-            visit('/key-value-test')
-                ->inDarkMode()
-                ->assertNoAccessibilityIssues();
-        });
+        visit('/key-value-test')
+            ->inDarkMode()
+            ->assertNoAccessibilityIssues();
     });
 });
 

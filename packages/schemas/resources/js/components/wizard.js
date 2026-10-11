@@ -12,7 +12,15 @@ export default function wizardSchemaComponent({
         step: null,
 
         init() {
-            this.step = this.getSteps().at(startStep - 1)
+            const steps = this.getSteps()
+            const queryStringStep = new URLSearchParams(
+                window.location.search,
+            ).get(stepQueryStringKey)
+
+            this.step =
+                isStepPersistedInQueryString && steps.includes(queryStringStep)
+                    ? queryStringStep
+                    : steps.at(startStep - 1)
 
             this.$watch('step', () => {
                 this.updateQueryString()
@@ -44,17 +52,30 @@ export default function wizardSchemaComponent({
         async requestNextStep() {
             await this.$wire.callSchemaComponentMethod(key, 'nextStep', {
                 currentStepIndex: this.getStepIndex(this.step),
+                currentStepKey: this.step,
             })
         },
 
-        goToNextStep() {
-            let nextStepIndex = this.getStepIndex(this.step) + 1
-
-            if (nextStepIndex >= this.getSteps().length) {
+        goToNextStep(nextStep = null, currentStep = null) {
+            if (currentStep !== null && this.step !== currentStep) {
                 return
             }
 
-            this.step = this.getSteps()[nextStepIndex]
+            if (nextStep === null) {
+                const currentStepIndex = this.getStepIndex(this.step)
+
+                if (currentStepIndex === -1) {
+                    return
+                }
+
+                nextStep = this.getSteps()[currentStepIndex + 1]
+            }
+
+            if (!this.getSteps().includes(nextStep)) {
+                return
+            }
+
+            this.step = nextStep
 
             this.scroll()
         },
@@ -123,15 +144,9 @@ export default function wizardSchemaComponent({
         },
 
         getStepIndex(step) {
-            let index = this.getSteps().findIndex(
+            return this.getSteps().findIndex(
                 (indexedStep) => indexedStep === step,
             )
-
-            if (index === -1) {
-                return 0
-            }
-
-            return index
         },
 
         getSteps() {
@@ -148,8 +163,9 @@ export default function wizardSchemaComponent({
 
         isStepAccessible(stepKey) {
             return (
-                isSkippable ||
-                this.getStepIndex(this.step) > this.getStepIndex(stepKey)
+                this.getStepIndex(stepKey) !== -1 &&
+                (isSkippable ||
+                    this.getStepIndex(this.step) > this.getStepIndex(stepKey))
             )
         },
 

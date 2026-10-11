@@ -115,6 +115,9 @@ it('can get the range of a subset of values in a column on this pagination page'
 
 it('can get the range of values from a relationship in a column', function (): void {
     $posts = Post::factory()->count(20)->create();
+    $posts->each(
+        static fn (Post $post, int $index) => $post->author()->update(['name' => sprintf('Author %02d', $index)]),
+    );
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -123,6 +126,9 @@ it('can get the range of values from a relationship in a column', function (): v
 
 it('can get the range of values from a relationship in a column on this pagination page', function (): void {
     $posts = Post::factory()->count(20)->create();
+    $posts->each(
+        static fn (Post $post, int $index) => $post->author()->update(['name' => sprintf('Author %02d', $index)]),
+    );
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))

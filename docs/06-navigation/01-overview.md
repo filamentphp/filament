@@ -27,6 +27,33 @@ public static function getNavigationLabel(): string
 }
 ```
 
+### Rendering HTML in navigation item labels
+
+The `$navigationLabel` property remains a string. You may return an `Htmlable` object, such as an `HtmlString`, from `getNavigationLabel()` to render HTML in the label:
+
+```php
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\HtmlString;
+
+public static function getNavigationLabel(): string | Htmlable
+{
+    return new HtmlString('<strong>' . e(__('navigation.reports')) . '</strong>');
+}
+```
+
+The `make()` and `label()` methods on `NavigationItem` also accept a string, an `Htmlable` object, or a closure returning either:
+
+```php
+use Filament\Navigation\NavigationItem;
+use Illuminate\Support\HtmlString;
+
+NavigationItem::make('Reports')
+    ->label(static fn (): HtmlString => new HtmlString('<strong>' . e(__('navigation.reports')) . '</strong>'))
+    ->url('/reports');
+```
+
+Strings are rendered as text, including in collapsed sidebar tooltips. Only `Htmlable` labels are rendered as trusted HTML. You must escape any dynamic content using `e()` before including it in an `HtmlString`.
+
 ## Customizing a navigation item's icon
 
 To customize a navigation item's [icon](../styling/icons), you may override the `$navigationIcon` property on the [resource](../resources/overview) or [page](custom-pages) class:
@@ -200,6 +227,29 @@ public function panel(Panel $panel): Panel
 ```
 
 In this example, we pass in a custom `icon()` for the groups, and make one `collapsed()` by default.
+
+#### Rendering HTML in navigation group labels
+
+The `make()` and `label()` methods on `NavigationGroup` accept a string, an `Htmlable` object, or a closure returning either. To render HTML in a group label, you may pass an `HtmlString`:
+
+```php
+use Filament\Navigation\NavigationGroup;
+use Filament\Panel;
+use Illuminate\Support\HtmlString;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->navigationGroups([
+            'Shop' => NavigationGroup::make(new HtmlString('<strong>' . e(__('navigation.shop')) . '</strong>')),
+        ]);
+}
+```
+
+The array key, `Shop`, identifies the group, while the `HtmlString` controls its display label. Keep the `$navigationGroup` property on your resources and pages set to the string identifier (`'Shop'` in this example) or a `UnitEnum` case, not an `Htmlable` object. For HTML labels, use keyed `navigationGroups()` entries so the display markup is not used as the group identifier.
+
+As with navigation item labels, strings are rendered as text, including in tooltips, while `Htmlable` labels are rendered as trusted HTML. Escape dynamic content using `e()`.
 
 #### Ordering navigation groups
 
@@ -638,6 +688,40 @@ public function panel(Panel $panel): Panel
         ->breadcrumbs(false);
 }
 ```
+
+## Adding a breadcrumb to a custom page
+
+Custom pages do not include a breadcrumb for the current page by default. You may add one using the `$breadcrumb` property:
+
+```php
+use Filament\Pages\Page;
+
+class Settings extends Page
+{
+    protected static ?string $breadcrumb = 'Settings';
+
+    // ...
+}
+```
+
+## Including the navigation hierarchy in breadcrumbs
+
+By default, breadcrumbs for a page are built from its resource and parent record relationships. For example, an `EditRecord` page's breadcrumbs are derived from its resource's list and view pages, and any parent resources in the case of nested resources.
+
+If you would also like breadcrumbs to reflect the full navigation hierarchy of a page, including its [cluster](clusters), [navigation group](#grouping-navigation-items), and [navigation parent item](#grouping-navigation-items-under-other-items), you can enable this behavior in your [configuration](../panel-configuration):
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->breadcrumbs(hasNavigationHierarchy: true);
+}
+```
+
+When enabled, the navigation hierarchy is prepended to the page's existing breadcrumbs. If a custom page does not have a `$breadcrumb`, its title is used as the current breadcrumb when its navigation hierarchy can be resolved. If the page is not present in the navigation, its existing breadcrumbs are used instead.
 
 ## Reloading the sidebar and topbar
 

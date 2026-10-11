@@ -78,6 +78,11 @@ abstract class EditTenantProfile extends Page
         abort_unless(static::canView($this->tenant), 404);
     }
 
+    public function resolveScopedModelProperties(): void
+    {
+        $this->tenant = Filament::getTenant();
+    }
+
     protected function fillForm(): void
     {
         $data = $this->tenant->attributesToArray();

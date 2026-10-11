@@ -1,5 +1,7 @@
 <?php
 
+use Filament\PanelRegistry;
+use Filament\Support\Facades\FilamentCli;
 use Filament\Tests\TestCase;
 
 use function PHPUnit\Framework\assertFileExists;
@@ -52,6 +54,46 @@ it('can run `make:filament-widget` non-interactively to generate a custom widget
     ]);
 
     assertFileExists(app_path('Filament/Widgets/NonInteractiveWidget.php'));
+});
+
+it('can generate a standalone widget when no panels are registered', function (): void {
+    $this->withoutMockingConsoleOutput();
+
+    app(PanelRegistry::class)->panels = [];
+
+    $this->artisan('make:filament-widget', [
+        'name' => 'StandaloneWidget',
+        '--no-interaction' => true,
+    ]);
+
+    assertFileExists(app_path('Livewire/StandaloneWidget.php'));
+});
+
+it('can generate a standalone widget in a custom namespace without a `Livewire` segment', function (): void {
+    $this->withoutMockingConsoleOutput();
+
+    app(PanelRegistry::class)->panels = [];
+
+    FilamentCli::registerLivewireComponentLocation(
+        path: base_path('src/Components'),
+        namespace: 'App\\Components',
+        viewNamespace: '',
+    );
+
+    $this->mockConsoleOutput = true;
+
+    $this->artisan('make:filament-widget', [
+        'name' => 'Admin/CustomWidget',
+    ])
+        ->expectsQuestion('Which type of widget would you like to create?', 'Filament\\Widgets\\Widget')
+        ->expectsQuestion('Would you like to create this widget in a panel?', false)
+        ->expectsQuestion('Where would you like to create the widget?', 'App\\Components');
+
+    assertFileExists($path = base_path('src/Components/Admin/CustomWidget.php'));
+    expect(file_get_contents($path))
+        ->toContain("protected string \$view = 'livewire.admin.custom-widget';");
+
+    assertFileExists(resource_path('views/livewire/admin/custom-widget.blade.php'));
 });
 
 it('can generate a chart widget class', function (): void {

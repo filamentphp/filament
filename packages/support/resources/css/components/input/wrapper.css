@@ -68,6 +68,26 @@
 
     & .fi-input-wrp-actions {
         @apply flex items-center gap-3;
+
+        & .fi-btn.fi-size-sm {
+            @apply px-2 py-1;
+        }
+
+        & .fi-icon-btn.fi-size-sm {
+            @apply size-7;
+
+            &:has(.fi-icon.fi-size-sm) {
+                @apply -m-1.5;
+            }
+
+            &:has(.fi-icon.fi-size-md) {
+                @apply -m-1;
+            }
+
+            &:has(.fi-icon.fi-size-lg) {
+                @apply -m-0.5;
+            }
+        }
     }
 
     & .fi-input-wrp-label {

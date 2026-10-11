@@ -6,15 +6,26 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Attributes\Locked;
 
 trait InteractsWithRecord
 {
+    protected bool $hasResolvedRecordForRequest = false;
+
     #[Locked]
     public Model | int | string | null $record;
+
+    protected function resolveRecordPropertyFromLivewire(): void
+    {
+        if ($this->hasResolvedRecordForRequest || (! ($this->record instanceof Model))) {
+            return;
+        }
+
+        parent::resolveRecordPropertyFromLivewire();
+
+        $this->hasResolvedRecordForRequest = true;
+    }
 
     public function mountCanAuthorizeAccess(): void
     {
@@ -24,30 +35,6 @@ trait InteractsWithRecord
     public function hydrateCanAuthorizeAccess(): void
     {
         abort_unless(static::canAccess(['record' => $this->getRecord()]), 403);
-    }
-
-    protected function resolveRecord(int | string $key): Model
-    {
-        $this->mountParentRecord();
-
-        $parentRecord = $this->getParentRecord();
-        $modifyQuery = null;
-
-        if ($parentRecord) {
-            $modifyQuery = fn (Builder $query) => static::getResource()::scopeEloquentQueryToParent($query, $parentRecord);
-        }
-
-        $record = static::getResource()::resolveRecordRouteBinding($key, $modifyQuery);
-
-        if ($record === null) {
-            throw (new ModelNotFoundException)->setModel($this->getModel(), [$key]);
-        }
-
-        if ($parentRecord) {
-            $record->setRelation(static::getResource()::getParentResourceRegistration()->getInverseRelationshipName(), $parentRecord);
-        }
-
-        return $record;
     }
 
     public function getRecord(): Model

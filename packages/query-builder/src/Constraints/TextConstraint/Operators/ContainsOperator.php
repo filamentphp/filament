@@ -12,6 +12,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Str;
 
+use function Filament\Support\apply_search_constraint;
+use function Filament\Support\generate_search_pattern;
+
 class ContainsOperator extends Operator
 {
     public function getName(): string
@@ -92,6 +95,11 @@ class ContainsOperator extends Operator
             $text = Str::lower($text);
         }
 
-        return $query->{$this->isInverse() ? 'whereNot' : 'where'}($qualifiedColumn, 'like', "%{$text}%");
+        return apply_search_constraint(
+            $query,
+            $qualifiedColumn,
+            generate_search_pattern($text, hasLeadingWildcard: true, hasTrailingWildcard: true),
+            isInverse: $this->isInverse(),
+        );
     }
 }

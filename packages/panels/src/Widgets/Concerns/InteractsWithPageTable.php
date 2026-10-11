@@ -2,6 +2,7 @@
 
 namespace Filament\Widgets\Concerns;
 
+use Filament\Resources\Pages\Page as ResourcePage;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -76,12 +77,10 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
             return $this->tablePage;
         }
 
-        /** @var HasTable $tableComponent */
+        /** @var HasTable $page */
         $page = app('livewire')->new($this->getTablePage());
 
-        trigger('mount', $page, [], null, null, []);
-
-        foreach ([
+        $properties = [
             'activeTab' => $this->activeTab,
             'paginators' => $this->paginators,
             'parentRecord' => $this->parentRecord,
@@ -92,7 +91,17 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
             'tableSearch' => $this->tableSearch,
             'tableSort' => $this->tableSort,
             ...$this->getTablePageMountParameters(),
-        ] as $property => $value) {
+        ];
+
+        if ($page instanceof ResourcePage) {
+            $page->parentRecord = $properties['parentRecord'];
+            $page->mountParentRecord();
+            $properties['parentRecord'] = $page->getParentRecord();
+        }
+
+        trigger('mount', $page, [], null, null, []);
+
+        foreach ($properties as $property => $value) {
             $page->{$property} = $value;
         }
 

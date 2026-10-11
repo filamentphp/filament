@@ -8,7 +8,6 @@ use Filament\Support\Commands\Concerns\CanAskForViewLocation;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Exceptions\FailureCommandOutput;
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -136,13 +135,7 @@ class MakeLivewireSchemaCommand extends Command
             $this->view,
             $this->viewPath,
         ] = $this->askForViewLocation(
-            str($this->fqn)
-                ->afterLast('\\Livewire\\')
-                ->prepend('Livewire\\')
-                ->replace('\\', '/')
-                ->explode('/')
-                ->map(Str::kebab(...))
-                ->implode('.'),
+            $this->getLivewireComponentViewName($namespace, $this->fqnEnd),
             defaultNamespace: $viewNamespace,
         );
     }

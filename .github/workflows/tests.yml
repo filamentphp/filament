@@ -123,8 +123,19 @@ jobs:
           cache: npm
       - name: Install npm dependencies
         run: npm ci --ignore-scripts
+      - name: Build JavaScript assets for browser tests
+        run: npm run build:js
       - name: Install Chromium system dependencies
-        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libnss3 libatk-bridge2.0-0 libdrm2 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxkbcommon0 libpango-1.0-0 libcairo2 libasound2t64
+        run: |
+          packages=(libnss3 libatk-bridge2.0-0t64 libdrm2 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxkbcommon0 libpango-1.0-0 libcairo2 libasound2t64)
+          for package in "${packages[@]}"; do
+            if [[ "$(dpkg-query --show --showformat='${Status}' "$package" 2>/dev/null)" != 'install ok installed' ]]; then
+              sudo apt-get update
+              sudo apt-get install -y --no-install-recommends "${packages[@]}"
+              exit 0
+            fi
+          done
+          echo "Chromium system dependencies are already installed."
       - name: Cache Playwright Chromium
         id: playwright-cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -157,42 +168,9 @@ jobs:
       - name: Cache Blade views
         run: ./vendor/bin/testbench view:cache
       - name: Execute tests (parallel)
-        id: parallel-tests
-        continue-on-error: true
         run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --parallel --exclude-group=serial
         env:
           DB_PASSWORD: password
-      - name: Retry tests (parallel, attempt 2)
-        if: steps.parallel-tests.outcome == 'failure'
-        id: parallel-retry-2
-        continue-on-error: true
-        run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --parallel --bail --exclude-group=serial
-        env:
-          DB_PASSWORD: password
-      - name: Retry tests (parallel, attempt 3)
-        if: steps.parallel-retry-2.outcome == 'failure'
-        id: parallel-retry-3
-        continue-on-error: true
-        run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --parallel --bail --exclude-group=serial
-        env:
-          DB_PASSWORD: password
-      - name: Retry tests (parallel, attempt 4)
-        if: steps.parallel-retry-3.outcome == 'failure'
-        id: parallel-retry-4
-        continue-on-error: true
-        run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --parallel --bail --exclude-group=serial
-        env:
-          DB_PASSWORD: password
-      - name: Retry tests (parallel, attempt 5)
-        if: steps.parallel-retry-4.outcome == 'failure'
-        id: parallel-retry-5
-        run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --parallel --bail --exclude-group=serial
-        env:
-          DB_PASSWORD: password
-      - name: Warn about flaky tests
-        if: steps.parallel-tests.outcome == 'failure' && (steps.parallel-retry-2.outcome == 'success' || steps.parallel-retry-3.outcome == 'success' || steps.parallel-retry-4.outcome == 'success' || steps.parallel-retry-5.outcome == 'success')
-        run: |
-          echo "::warning::Parallel tests failed but a retry passed. This may indicate a race condition or test isolation issue."
       - name: Execute serial tests
         run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --group=serial
         env:

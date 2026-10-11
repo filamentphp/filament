@@ -129,6 +129,10 @@ Livewire::make(Chart::class)
     When inserting a Livewire component into the schema, there are limited capabilities. Only serializable data is accessible from the nested Livewire component, since they are rendered separately. As such, you can't [render a child schema](#rendering-the-components-child-schema), [access another component's live state](#accessing-the-state-of-another-component-in-the-blade-view), [access the current Livewire component instance](#accessing-the-current-livewire-component-instance-in-the-blade-view), or [access the current component instance](#accessing-the-current-component-instance-in-the-blade-view). Only [static data that you pass to the Livewire component](#passing-parameters-to-a-livewire-component), and [the current record](#accessing-the-current-record-in-the-livewire-component) are accessible. Situations where you should render a nested Livewire component instead of a [Blade view](#inserting-a-blade-view-into-a-schema) are rare because of these limitations.
 </Aside>
 
+<Aside variant="warning">
+    A custom Livewire component does not inherit the parent component's model scoping or authorization. Re-query and authorize models in its public properties, including a record passed into the component. Do the same for model arguments passed to a lazy component's `mount()` method. Filament components such as widgets still run their own documented checks. See [Eloquent model restoration in Livewire](../../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+</Aside>
+
 If you are rendering multiple of the same Livewire component, please make sure to pass a unique `key()` to each:
 
 ```php

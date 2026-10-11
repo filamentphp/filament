@@ -104,9 +104,19 @@ return [
 
         ],
 
+        'block_picker' => [
+
+            'no_search_results_message' => 'Nenhum bloco corresponde à sua pesquisa.',
+
+            'search_prompt' => 'Pesquisar blocos',
+
+        ],
+
     ],
 
     'checkbox_list' => [
+
+        'required_description' => 'Selecione pelo menos uma opção.',
 
         'actions' => [
 
@@ -495,6 +505,10 @@ return [
 
             ],
 
+            'close_panel' => [
+                'label' => 'Fechar painel',
+            ],
+
             'custom_block' => [
 
                 'modal' => [
@@ -656,6 +670,28 @@ return [
                 ],
 
             ],
+
+        ],
+
+        'custom_blocks' => [
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Excluir bloco',
+                ],
+
+                'edit' => [
+                    'label' => 'Editar bloco',
+                ],
+
+            ],
+
+            'no_search_results_message' => 'Nenhum bloco corresponde à sua pesquisa.',
+
+            'search_label' => 'Pesquisar blocos',
+
+            'search_prompt' => 'Pesquisar blocos',
 
         ],
 
@@ -853,6 +889,8 @@ return [
     ],
 
     'toggle_buttons' => [
+
+        'required_description' => 'Selecione pelo menos uma opção.',
 
         'boolean' => [
             'true' => 'Sim',

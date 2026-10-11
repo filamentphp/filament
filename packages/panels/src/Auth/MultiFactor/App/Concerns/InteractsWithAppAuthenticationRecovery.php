@@ -4,6 +4,7 @@ namespace Filament\Auth\MultiFactor\App\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
+use RuntimeException;
 use SensitiveParameter;
 
 /**
@@ -44,6 +45,9 @@ trait InteractsWithAppAuthenticationRecovery /** @phpstan-ignore trait.unused */
     public function saveAppAuthenticationRecoveryCodes(#[SensitiveParameter] ?array $codes): void
     {
         $this->app_authentication_recovery_codes = $codes;
-        $this->save();
+
+        if (! $this->save()) {
+            throw new RuntimeException('Failed to save app authentication recovery codes.');
+        }
     }
 }

@@ -6,6 +6,7 @@ use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Tests\Fixtures\Models\MediaPost;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -269,8 +270,7 @@ describe('media operations', function (): void {
         $file->shouldReceive('exists')->andReturn(true);
         $file->shouldReceive('get')->andReturn('file-content');
         $file->shouldReceive('getClientOriginalName')->andReturn('document.pdf');
-        $file->shouldReceive('getClientOriginalExtension')->andReturn('pdf');
-        $file->shouldReceive('getMimeType')->andReturn('application/pdf');
+        $file->shouldReceive('hashName')->andReturn('random.pdf');
 
         $uuid = $provider->saveUploadedFileAttachment($file);
 
@@ -279,6 +279,32 @@ describe('media operations', function (): void {
         expect($record->getMedia('content')->first()->uuid)->toBe($uuid);
 
         @unlink($tempFile);
+    });
+
+    it('uses `hashName()` to derive the stored file attachment extension from its MIME type', function (): void {
+        Storage::fake('tmp-for-tests');
+
+        $record = MediaPost::factory()->create();
+        $attribute = RichContentAttribute::make($record, 'content');
+        $provider = SpatieMediaLibraryFileAttachmentProvider::make()
+            ->attribute($attribute);
+
+        $gifContents = UploadedFile::fake()->image('image.gif')->getContent();
+        $temporaryFileName = TemporaryUploadedFile::generateHashNameWithOriginalNameEmbedded(
+            UploadedFile::fake()->createWithContent('image.html', $gifContents),
+        );
+        Storage::disk('tmp-for-tests')->put("livewire-tmp/{$temporaryFileName}", $gifContents);
+        $file = TemporaryUploadedFile::createFromLivewire($temporaryFileName);
+
+        $uuid = $provider->saveUploadedFileAttachment($file);
+        $media = $record->getMedia('content')->first();
+
+        expect($file->getMimeType())->toBe('image/gif')
+            ->and($file->getClientOriginalExtension())->toBe('html')
+            ->and($uuid)->toBeString()
+            ->and($media->file_name)->toBe($file->hashName())
+            ->toEndWith('.gif')
+            ->not->toEndWith('.html');
     });
 
     it('can clean up file attachments except specified UUIDs', function (): void {

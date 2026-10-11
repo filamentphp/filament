@@ -3,6 +3,7 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use League\CommonMark\Extension\ExtensionInterface;
 
 trait CanConfigureCommonMark
@@ -30,9 +31,17 @@ trait CanConfigureCommonMark
     /**
      * @return array<string, mixed>
      */
-    public function getCommonMarkOptions(): array
+    public function getCommonMarkOptions(mixed $state = null, ?Model $relatedRecord = null): array
     {
-        return $this->evaluate($this->commonMarkOptions) ?? [];
+        $evaluationParameters = func_num_args() ? [
+            'state' => $state,
+            'relatedRecord' => $relatedRecord,
+        ] : [];
+
+        return $this->evaluate(
+            $this->commonMarkOptions,
+            $evaluationParameters,
+        ) ?? [];
     }
 
     /**
@@ -48,8 +57,16 @@ trait CanConfigureCommonMark
     /**
      * @return array<array-key, ExtensionInterface>
      */
-    public function getCommonMarkExtensions(): array
+    public function getCommonMarkExtensions(mixed $state = null, ?Model $relatedRecord = null): array
     {
-        return $this->evaluate($this->commonMarkExtensions) ?? [];
+        $evaluationParameters = func_num_args() ? [
+            'state' => $state,
+            'relatedRecord' => $relatedRecord,
+        ] : [];
+
+        return $this->evaluate(
+            $this->commonMarkExtensions,
+            $evaluationParameters,
+        ) ?? [];
     }
 }

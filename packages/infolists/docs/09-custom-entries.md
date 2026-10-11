@@ -201,7 +201,7 @@ class AudioPlayerEntry extends Entry
 }
 ```
 
-Now, you can pass a static value or a function to the `speed()` method, and [inject any utility](overview#component-utility-injection) as a parameter:
+Now, you can pass a static value or a function to the `speed()` method, and [inject any utility](overview#entry-utility-injection) as a parameter:
 
 ```php
 use App\Filament\Infolists\Components\AudioPlayerEntry;

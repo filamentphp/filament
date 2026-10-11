@@ -990,6 +990,10 @@ public function getJobBatchName(): ?string
 }
 ```
 
+## Testing
+
+To test exporter row values and export actions, see the [Testing exports](../testing/testing-exports) guide.
+
 ## Authorization
 
 By default, only the user who started the export may download files that get generated. If you'd like to customize the authorization logic, you may create an `ExportPolicy` class, and [register it in your `AuthServiceProvider`](https://laravel.com/docs/authorization#registering-policies):
@@ -1023,7 +1027,7 @@ public function view(User $user, Export $export): bool
 
 The export system does not perform per-record authorization checks. When an export is triggered, all records matching the table query (or the model's full dataset, if used outside a table) are included in the export without consulting your application's [Laravel policies](https://laravel.com/docs/authorization#creating-policies). This means that if a user is allowed to trigger an export, they may receive records they would not normally be authorized to view through your application's UI.
 
-If you need to restrict which records are exported, you should scope the query using the [`modifyQueryUsing()` method](#modifying-the-eloquent-query):
+If you need to restrict which records are exported, you should scope the query using the [`modifyQueryUsing()` method](#modifying-the-export-query):
 
 ```php
 use Illuminate\Database\Eloquent\Builder;
@@ -1043,7 +1047,7 @@ You could also apply [global scopes](https://laravel.com/docs/eloquent#global-sc
 
 When data is written to CSV and XLSX files, values beginning with characters like `=`, `+`, `-`, or `@` may be interpreted as formulas when opened in spreadsheet software such as Microsoft Excel or Google Sheets. If your data includes untrusted or user-submitted content, this could pose a security risk (CSV formula injection).
 
-To protect against this, Filament neutralizes formula injection by default. Any value that begins with a formula-triggering character (`=`, `+`, `-`, `@`, a tab, or a carriage return) is automatically prefixed with a single quote (`'`) so that spreadsheet software treats it as plain text. Purely numeric strings such as `-5` are left unchanged, since spreadsheets interpret them as numbers rather than formulas.
+To protect against this, Filament neutralizes formula injection by default. Any value that begins with a formula-triggering character (`=`, `+`, `-`, `@`, a tab, or a carriage return) is automatically prefixed with a single quote (`'`) so that spreadsheet software treats it as plain text. Purely numeric strings beginning with `+` or `-`, such as `+42` or `-5`, remain unchanged, since spreadsheets interpret them as numbers rather than formulas.
 
 Prefixing a single quote can still alter some legitimate data — for example, a phone number stored as a string like `+44 1234 567890` would be rewritten to `'+44 1234 567890` (numeric strings like `-5` are unaffected). If a specific column exports trusted data where this transformation is unwanted, disable the protection for that column by passing `false`:
 

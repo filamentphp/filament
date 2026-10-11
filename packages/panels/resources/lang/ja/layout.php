@@ -4,6 +4,10 @@ return [
 
     'direction' => 'ltr',
 
+    'skip_to_content' => [
+        'label' => '本文へスキップ',
+    ],
+
     'actions' => [
 
         'billing' => [
@@ -16,6 +20,7 @@ return [
 
         'open_database_notifications' => [
             'label' => 'お知らせを確認',
+            'label_with_unread_count' => '{1} お知らせ、未読:count件|[2,*] お知らせ、未読:count件',
         ],
 
         'open_user_menu' => [
@@ -36,6 +41,8 @@ return [
 
         'theme_switcher' => [
 
+            'label' => 'テーマ',
+
             'dark' => [
                 'label' => 'ダークモードに切り替える',
             ],
@@ -50,6 +57,14 @@ return [
 
         ],
 
+    ],
+
+    'navigation' => [
+        'label' => 'サイドバーナビゲーション',
+    ],
+
+    'topbar' => [
+        'label' => 'トップバー',
     ],
 
     'avatar' => [

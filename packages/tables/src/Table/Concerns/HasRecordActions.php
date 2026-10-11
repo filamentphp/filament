@@ -9,7 +9,7 @@ use Filament\Support\Enums\Size;
 use Filament\Tables\Enums\RecordActionsPosition;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
-use PHPUnit\Event\InvalidArgumentException;
+use InvalidArgumentException;
 
 trait HasRecordActions
 {

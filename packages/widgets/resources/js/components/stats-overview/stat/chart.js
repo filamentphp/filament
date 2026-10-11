@@ -20,17 +20,34 @@ Chart.register(
 )
 
 export default function statsOverviewStatChart({ key, labels, values }) {
+    let isDestroyed = false
+
     return {
         key,
 
-        init() {
-            this.$wire.$on('updateStatsOverviewChartData', (event) => {
-                if (event.key === this.key) {
-                    this.updateChartData(event.data)
-                }
-            })
+        chartDataUpdateEventTarget: null,
 
-            Alpine.effect(() => {
+        chartDataUpdateListener: null,
+
+        themeEffect: null,
+
+        init() {
+            this.chartDataUpdateEventTarget = this.$wire.$el
+            this.chartDataUpdateListener = (event) => {
+                if (event.detail.key === this.key) {
+                    this.updateChartData(event.detail.data)
+                }
+            }
+            this.chartDataUpdateEventTarget.addEventListener(
+                'updateStatsOverviewChartData',
+                this.chartDataUpdateListener,
+            )
+
+            this.themeEffect = Alpine.effect(() => {
+                if (isDestroyed) {
+                    return
+                }
+
                 Alpine.store('theme')
 
                 this.$nextTick(() => this.updateChartTheme())
@@ -40,7 +57,7 @@ export default function statsOverviewStatChart({ key, labels, values }) {
                 '(prefers-color-scheme: dark)',
             )
             this.systemThemeListener = () => {
-                if (Alpine.store('theme') !== 'system') {
+                if (isDestroyed || Alpine.store('theme') !== 'system') {
                     return
                 }
 
@@ -58,6 +75,10 @@ export default function statsOverviewStatChart({ key, labels, values }) {
         },
 
         initChart() {
+            if (isDestroyed) {
+                return
+            }
+
             if (
                 !this.$refs.canvas ||
                 !this.$refs.backgroundColorElement ||
@@ -120,6 +141,10 @@ export default function statsOverviewStatChart({ key, labels, values }) {
         },
 
         updateChartData(newValues) {
+            if (isDestroyed) {
+                return
+            }
+
             const chart = this.getChart()
 
             if (!chart) {
@@ -132,6 +157,10 @@ export default function statsOverviewStatChart({ key, labels, values }) {
         },
 
         updateChartTheme() {
+            if (isDestroyed) {
+                return
+            }
+
             const chart = this.getChart()
 
             if (!chart) {
@@ -187,6 +216,12 @@ export default function statsOverviewStatChart({ key, labels, values }) {
         },
 
         destroy() {
+            isDestroyed = true
+            Alpine.release(this.themeEffect)
+            this.chartDataUpdateEventTarget?.removeEventListener(
+                'updateStatsOverviewChartData',
+                this.chartDataUpdateListener,
+            )
             this.systemThemeMediaQuery?.removeEventListener(
                 'change',
                 this.systemThemeListener,

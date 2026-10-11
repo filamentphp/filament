@@ -14,7 +14,8 @@
         }
     }
 
-    &.fi-copyable {
-        @apply cursor-pointer;
+    &.fi-copyable,
+    & > .fi-copyable {
+        @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 cursor-pointer rounded-lg outline-none focus-visible:ring-2;
     }
 }

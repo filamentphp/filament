@@ -78,7 +78,7 @@ public function boot(): void
 This is useful if you want to set a default timezone for all date-time pickers in your application. It is also used in other places where timezones are used in Filament.
 
 <Aside variant="warning">
-    Filament's default timezone will only apply when the field stores a time. If the field stores a date only (`DatePicker` instead of `DateTimePicker` or `TimePicker`), the timezone will not be applied. This is to prevent timezone shifts when storing dates without times.
+    `DatePicker` and `DateTimePicker::make()->time(false)` use the app's timezone, ignoring both `timezone()` and Filament's default timezone. Plain dates are interpreted in the app's timezone. Values with a timezone or offset, including Eloquent's serialized dates, are converted to the app's timezone before determining the selected date. This applies to native and JavaScript pickers, even with a custom calendar storage `format()`. The exception is a Unix timestamp format containing an unescaped `U` token: timestamps use `timezone()` or the app's timezone to determine the selected date. Filament's default timezone still does not apply to these date-only fields. Use a `DateTimePicker` with a time input if you need to preserve the time as well as the date.
 </Aside>
 
 ## Enabling the JavaScript date picker
@@ -97,8 +97,19 @@ DatePicker::make('date_of_birth')
 <AutoScreenshot name="forms/fields/date-time-picker/javascript" alt="JavaScript-based date time picker" version="6.x" />
 
 <Aside variant="info">
-    The JavaScript date picker does not support full keyboard input in the same way that the native date picker does. If you require full keyboard input, you should use the native date picker.
+    The JavaScript date picker supports keyboard navigation, but does not allow you to type a date directly into the field. Use the native date picker if you need direct date entry.
 </Aside>
+
+### Navigating the calendar with the keyboard
+
+You can open the calendar using `Enter`, `Space`, or an arrow key. Focus starts on the selected date, or the calendar's focused date when the field is empty. Moving focus does not change the field's value until you select a date:
+
+- Use the left and right arrow keys to move one day, following the calendar's text direction, and the up and down arrow keys to move one week.
+- Use `Home` and `End` to move to the first and last day of the week, respecting `firstDayOfWeek()`.
+- Use `Page Up` and `Page Down` to move one month. Hold `Shift` to move one year instead. If the destination month does not contain the same day, focus moves to its last day.
+- Use `Enter` or `Space` to select the focused date. Unavailable dates can receive focus, but cannot be selected.
+- Use `Tab` and `Shift + Tab` to move between the calendar and the month, year, and time controls. Leaving the picker closes it without moving focus back.
+- Use `Escape` to close the picker and return focus to its field.
 
 ### Customizing the display format
 
@@ -315,7 +326,7 @@ DatePicker::make('date_of_birth')
     ->readonly()
 ```
 
-Please note that this setting is only enforced on native date pickers. If you're using the [JavaScript date picker](#enabling-the-javascript-date-picker), you'll need to use [`disabled()`](overview#disabling-a-field).
+This setting applies to both native and [JavaScript date pickers](#enabling-the-javascript-date-picker). Read-only JavaScript date pickers remain focusable, but cannot open the picker or clear the value.
 
 There are a few differences, compared to [`disabled()`](overview#disabling-a-field):
 
@@ -350,5 +361,11 @@ DatePicker::make('date_of_birth')
     ->minDate(now()->subYears(150))
     ->maxDate(now())
 ```
+
+For date-only fields (`DatePicker` or `DateTimePicker::make()->time(false)`), the time portion of each limit is ignored. The entire minimum and maximum calendar dates are allowed, without converting the limits to another timezone.
+
+For time-only fields (`TimePicker` or `DateTimePicker::make()->date(false)`), the date portion of each limit is ignored. The minimum time must not be later than the maximum time; these limits do not support ranges that cross midnight.
+
+When using `seconds(false)`, seconds are ignored when checking both the selected value and its limits. For example, a minimum of `09:30:23` allows any value in the `09:30` minute, and a maximum of `17:45:47` allows the entire `17:45` minute. This does not change your storage `format()` or remove seconds already preserved by it.
 
 <UtilityInjection set="formFields" version="6.x">As well as allowing static values, the `minDate()` and `maxDate()` methods also accept functions to dynamically calculate them. If the functions return `null`, the validation rule is not applied. You can inject various utilities into the functions as parameters. </UtilityInjection>

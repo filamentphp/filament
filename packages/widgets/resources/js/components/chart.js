@@ -25,6 +25,11 @@ Chart.defaults.plugins.legend.position = 'bottom'
 
 export default function chart({ cachedData, options, type }) {
     return {
+        isDestroyed: false,
+        chartDataEventTarget: null,
+        chartDataListener: null,
+        themeEffect: null,
+
         userBackgroundColor: options?.backgroundColor,
         userBorderColor: options?.borderColor,
         userTextColor: options?.color,
@@ -50,11 +55,19 @@ export default function chart({ cachedData, options, type }) {
         userPointRadius: options?.pointRadius,
 
         init() {
-            this.$wire.$on('updateChartData', ({ data }) =>
-                this.updateChartData(data),
+            this.chartDataEventTarget = this.$wire.$el
+            this.chartDataListener = ({ detail: { data } }) =>
+                this.updateChartData(data)
+            this.chartDataEventTarget.addEventListener(
+                'updateChartData',
+                this.chartDataListener,
             )
 
-            Alpine.effect(() => {
+            this.themeEffect = Alpine.effect(() => {
+                if (this.isDestroyed) {
+                    return
+                }
+
                 Alpine.store('theme')
 
                 this.$nextTick(() => this.updateChartTheme())
@@ -80,6 +93,10 @@ export default function chart({ cachedData, options, type }) {
             // exits early on that first run; otherwise the effect would tear down and
             // recreate the chart on every mount.
             this.$nextTick(() => {
+                if (this.isDestroyed) {
+                    return
+                }
+
                 this.initChart()
 
                 this.resizeObserver = new ResizeObserver(() =>
@@ -298,7 +315,7 @@ export default function chart({ cachedData, options, type }) {
         },
 
         getChart() {
-            if (!this.$refs.canvas) {
+            if (this.isDestroyed || !this.$refs.canvas) {
                 return null
             }
 
@@ -421,6 +438,14 @@ export default function chart({ cachedData, options, type }) {
         },
 
         destroy() {
+            const chart = this.getChart()
+            this.isDestroyed = true
+
+            this.chartDataEventTarget.removeEventListener(
+                'updateChartData',
+                this.chartDataListener,
+            )
+            Alpine.release(this.themeEffect)
             this.resizeObserver?.disconnect()
             this.dprChangeHandler &&
                 window.removeEventListener('resize', this.dprChangeHandler)
@@ -428,7 +453,7 @@ export default function chart({ cachedData, options, type }) {
                 'change',
                 this.systemThemeListener,
             )
-            this.getChart()?.destroy()
+            chart?.destroy()
         },
     }
 }

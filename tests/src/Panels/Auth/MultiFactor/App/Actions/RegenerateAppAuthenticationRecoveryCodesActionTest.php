@@ -302,7 +302,7 @@ describe('throttling', function (): void {
         $recoveryCodes = $user->getAppAuthenticationRecoveryCodes();
 
         // Pre-fill the per-user rate limiter to simulate 5 prior attempts
-        $rateLimitingKey = 'filament-regenerate-recovery-codes:' . $user->getAuthIdentifier();
+        $rateLimitingKey = 'filament-regenerate-recovery-codes:' . Filament::getUserScopedAuthIdentifier($user);
 
         foreach (range(1, 5) as $i) {
             RateLimiter::hit($rateLimitingKey);

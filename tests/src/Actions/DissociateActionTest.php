@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Actions\DissociateAction;
+use Filament\Actions\Enums\ActionStatus;
 use Filament\Actions\Testing\TestAction;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
@@ -83,4 +84,40 @@ it('can dissociate multiple records sequentially', function (): void {
 
 it('returns `dissociate` from `getDefaultName()`', function (): void {
     expect(DissociateAction::getDefaultName())->toBe('dissociate');
+});
+
+it('fails when a model event vetoes dissociation', function (string $event): void {
+    $user = User::factory()->create();
+    $post = Post::factory()->create(['author_id' => $user->id]);
+    $statuses = collect();
+
+    Post::{$event}(static fn (): bool => false);
+
+    DissociateAction::configureUsing(
+        static fn (DissociateAction $action) => $action->after(static function (DissociateAction $action) use ($statuses): void {
+            $statuses->push($action->getStatus());
+        }),
+        during: static fn () => livewire(PostsWithDissociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->callAction(TestAction::make(DissociateAction::class)->table($post))
+            ->assertNotNotified(),
+    );
+
+    expect($post->refresh()->author_id)->toBe($user->id)
+        ->and($statuses->all())->toBe([ActionStatus::Failure]);
+})->with(['saving', 'updating']);
+
+it('preserves a custom `using()` callback without a return value when dissociating', function (): void {
+    $user = User::factory()->create();
+    $post = Post::factory()->create(['author_id' => $user->id]);
+
+    DissociateAction::configureUsing(
+        static fn (DissociateAction $action) => $action->using(static function (Post $record): void {
+            $record->update(['author_id' => null]);
+        }),
+        during: static fn () => livewire(PostsWithDissociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->callAction(TestAction::make(DissociateAction::class)->table($post))
+            ->assertNotified(),
+    );
+
+    expect($post->refresh()->author_id)->toBeNull();
 });

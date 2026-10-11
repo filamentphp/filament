@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
+use function Filament\Support\apply_search_constraint;
 use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_pattern;
 use function Filament\Support\generate_search_term_expression;
 
 trait CanSearchRecords
@@ -206,6 +208,7 @@ trait CanSearchRecords
             $model = $query->getModel();
 
             $nonTranslatableSearch = generate_search_term_expression($search, isSearchForcedCaseInsensitive: null, databaseConnection: $databaseConnection);
+            $searchPattern = generate_search_pattern($nonTranslatableSearch, hasLeadingWildcard: true, hasTrailingWildcard: true);
 
             $translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver();
 
@@ -214,22 +217,25 @@ trait CanSearchRecords
                 fn (Builder $query): Builder => $translatableContentDriver->applySearchConstraintToQuery($query, $column, $search, $whereClause),
                 fn (Builder $query) => $query->when(
                     $this->getExtraSearchableColumnRelationship($column, $query->getModel()),
-                    fn (Builder $query): Builder => $query->{"{$whereClause}Relation"}(
+                    fn (Builder $query): Builder => $query->{"{$whereClause}Has"}(
                         (string) str($column)->beforeLast('.'),
-                        generate_search_column_expression((string) str($column)->afterLast('.'), isSearchForcedCaseInsensitive: null, databaseConnection: $databaseConnection),
-                        'like',
-                        "%{$nonTranslatableSearch}%",
+                        fn (Builder $query): Builder => apply_search_constraint(
+                            $query,
+                            generate_search_column_expression((string) str($column)->afterLast('.'), isSearchForcedCaseInsensitive: null, databaseConnection: $databaseConnection),
+                            $searchPattern,
+                        ),
                     ),
-                    function (Builder $query) use ($databaseConnection, $nonTranslatableSearch, $column, $whereClause): Builder {
+                    function (Builder $query) use ($databaseConnection, $searchPattern, $column, $whereClause): Builder {
                         // Treat the missing "relationship" as a JSON column if dot notation is used in the column name.
                         if (str($column)->contains('.')) {
                             $column = (string) str($column)->replace('.', '->');
                         }
 
-                        return $query->{$whereClause}(
+                        return apply_search_constraint(
+                            $query,
                             generate_search_column_expression($column, isSearchForcedCaseInsensitive: null, databaseConnection: $databaseConnection),
-                            'like',
-                            "%{$nonTranslatableSearch}%",
+                            $searchPattern,
+                            ($whereClause === 'where') ? 'and' : 'or',
                         );
                     },
                 ),

@@ -3,6 +3,7 @@ import { EditorView, basicSetup } from 'codemirror-v6'
 import { indentWithTab } from '@codemirror/commands'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { keymap } from '@codemirror/view'
+import { observeFieldAccessibility } from '../utils/field-accessibility'
 
 import { cpp } from '@codemirror/lang-cpp'
 import { css } from '@codemirror/lang-css'
@@ -32,6 +33,8 @@ export default function codeEditorFormComponent({
     return {
         editor: null,
         themeCompartment: new Compartment(),
+        accessibilityCompartment: new Compartment(),
+        accessibilityObserver: null,
         isDocChanged: false,
         state,
 
@@ -49,6 +52,7 @@ export default function codeEditorFormComponent({
                     doc: this.state,
                     extensions: [
                         basicSetup,
+                        this.accessibilityCompartment.of([]),
                         keymap.of([indentWithTab]),
                         ...(label
                             ? [
@@ -82,6 +86,23 @@ export default function codeEditorFormComponent({
                     ],
                 }),
             })
+
+            this.accessibilityObserver = observeFieldAccessibility(
+                this.$el,
+                (attributes) => {
+                    this.editor.dispatch({
+                        effects: this.accessibilityCompartment.reconfigure(
+                            EditorView.contentAttributes.of(
+                                Object.fromEntries(
+                                    Object.entries(attributes).filter(
+                                        ([, value]) => value !== null,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    })
+                },
+            )
 
             this.$watch('state', () => {
                 if (this.state === undefined) {
@@ -148,6 +169,8 @@ export default function codeEditorFormComponent({
         },
 
         destroy() {
+            this.accessibilityObserver?.disconnect()
+
             if (this.themeObserver) {
                 this.themeObserver.disconnect()
                 this.themeObserver = null

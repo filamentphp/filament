@@ -2,21 +2,41 @@
 
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Facades\Filament;
+use Filament\Forms;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\ParentResourceRegistration;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Models\Company;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Resources\Companies\CompanyResource;
 use Filament\Tests\Fixtures\Resources\Companies\Resources\CompanyTeamResource;
 use Filament\Tests\Fixtures\Resources\Companies\Resources\CompanyTeamResource\Pages\CreateCompanyTeam;
 use Filament\Tests\Fixtures\Resources\Companies\Resources\CompanyTeamResource\Pages\EditCompanyTeam;
 use Filament\Tests\Fixtures\Resources\Companies\Resources\CompanyTeamResource\Pages\ListCompanyTeams;
 use Filament\Tests\Fixtures\Resources\Companies\Resources\CompanyTeamResource\Pages\ViewCompanyTeam;
+use Filament\Tests\Fixtures\Resources\Tickets\Resources\TicketDepartmentResource;
+use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource;
 use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource\Pages\CreateUserPost;
 use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource\Pages\EditUserPost;
 use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource\Pages\ListUserPosts;
 use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource\Pages\ViewUserPost;
+use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Panels\Resources\TestCase;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
+use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertDatabaseMissing;
@@ -24,7 +44,63 @@ use function Pest\Laravel\assertSoftDeleted;
 
 uses(TestCase::class);
 
+describe('nested resource index URLs', function (): void {
+    it('resolves the parent relation page when the page key matches the relationship name', function (): void {
+        $parentRecord = Ticket::factory()->create();
+
+        expect(TicketDepartmentResource::getIndexUrl([
+            'ticket' => $parentRecord,
+        ]))->toBe(TicketResource::getUrl('departments', [
+            'record' => $parentRecord,
+        ]));
+    });
+
+    it('prefers an explicit page name when the relation page uses a custom key', function (): void {
+        $parentRecord = User::factory()->create();
+
+        expect(UserPostResource::getIndexUrl([
+            'author' => $parentRecord,
+        ]))->toBe(UserResource::getUrl('managePosts', [
+            'record' => $parentRecord,
+        ]));
+    });
+
+    it('can restore the relationship page name with `page(null)`', function (): void {
+        $registration = UserPostResource::getParentResourceRegistration();
+
+        expect($registration->getPageName())->toBe('managePosts')
+            ->and($registration->page(null)->getPageName())->toBe('posts');
+    });
+
+    it('falls back to the parent view page when the explicit page does not exist', function (): void {
+        $parentRecord = Company::factory()->create();
+
+        expect(CompanyTeamResource::getIndexUrl([
+            'company' => $parentRecord,
+        ]))->toBe(CompanyResource::getUrl('view', [
+            'relation' => 'teams',
+            'record' => $parentRecord,
+        ]));
+    });
+});
+
 describe('soft-deletable nested resource', function (): void {
+    it('can render with the navigation hierarchy in breadcrumbs regardless of panel navigation visibility', function (): void {
+        $parentRecord = User::factory()->create();
+        $url = UserPostResource::getUrl('index', [
+            'author' => $parentRecord,
+        ]);
+
+        $panel = Filament::getCurrentOrDefaultPanel()
+            ->breadcrumbs(hasNavigationHierarchy: true);
+
+        $this->get($url)->assertSuccessful();
+
+        $panel->navigation(false);
+
+        $this->get($url)->assertSuccessful();
+    });
+
     it('can render list page', function (): void {
         $parentRecord = User::factory()->create();
 
@@ -52,6 +128,34 @@ describe('soft-deletable nested resource', function (): void {
             'author' => $parentRecord,
         ]))->assertSuccessful();
     });
+
+    it('rejects a scope-excluded supplied parent before creating or saving records', function (string $pageClass, string $action): void {
+        $parentRecord = User::factory()->create();
+        $post = Post::factory()->create(['author_id' => $parentRecord->getKey()]);
+        $originalTitle = $post->title;
+        $component = livewire($pageClass, [
+            'parentRecord' => $parentRecord,
+            ...(($action === 'save') ? ['record' => $post->getKey()] : []),
+        ])->fillForm(['title' => 'must-not-write-for-excluded-parent'])->assertSuccessful();
+        $globalScopes = User::getAllGlobalScopes();
+
+        try {
+            User::addGlobalScope(
+                'exclude-supplied-parent',
+                static fn (Builder $query): Builder => $query->whereKeyNot($parentRecord->getKey()),
+            );
+
+            $component->call($action)->assertNotFound();
+
+            expect($post->refresh()->title)->toBe($originalTitle);
+            assertDatabaseMissing(Post::class, ['title' => 'must-not-write-for-excluded-parent']);
+        } finally {
+            User::setAllGlobalScopes($globalScopes);
+        }
+    })->with([
+        [CreateUserPost::class, 'create'],
+        [EditUserPost::class, 'save'],
+    ]);
 
     it('can create', function (): void {
         $parentRecord = User::factory()->create();
@@ -147,6 +251,245 @@ describe('soft-deletable nested resource', function (): void {
                 'title' => $post->title,
                 'rating' => $post->rating,
             ]);
+    });
+
+    it('rejects a stale edit page snapshot after the record moves to another parent', function (): void {
+        $parentRecord = User::factory()->create();
+        $newParentRecord = User::factory()->create();
+        $post = Post::factory()->create([
+            'author_id' => $parentRecord->getKey(),
+        ]);
+        $page = livewire(EditUserPost::class, [
+            'parentRecord' => $parentRecord,
+            'record' => $post->getKey(),
+        ])->assertSuccessful();
+
+        $post->update(['author_id' => $newParentRecord->getKey()]);
+
+        $page
+            ->set('data.title', 'must-not-cross-parent-boundary')
+            ->assertNotFound();
+    });
+
+    it('validates the parent resource scope when `resolveParentRecord()` is overridden', function (): void {
+        $parentRecord = User::factory()->create();
+        $post = Post::factory()->create([
+            'author_id' => $parentRecord->getKey(),
+        ]);
+        EditUserPostWithCustomParentResolver::$testParentRecordRouteParameters = [
+            'author' => $parentRecord->getRouteKey(),
+        ];
+
+        livewire(EditUserPostWithCustomParentResolver::class, [
+            'record' => $post->getKey(),
+        ])
+            ->set('data.title', 'still scoped to parent')
+            ->assertSuccessful();
+    });
+
+    it('rejects parent substitution from an overridden `resolveParentRecord()`', function (): void {
+        $parentRecord = User::factory()->create();
+        $replacementParentRecord = User::factory()->create();
+        $post = Post::factory()->create([
+            'author_id' => $parentRecord->getKey(),
+        ]);
+        EditUserPostWithCustomParentResolver::$testParentRecordRouteParameters = [
+            'author' => $parentRecord->getRouteKey(),
+        ];
+        $page = livewire(EditUserPostWithCustomParentResolver::class, [
+            'record' => $post->getKey(),
+        ])->assertSuccessful();
+
+        EditUserPostWithCustomParentResolver::$replacementParentRecord = $replacementParentRecord;
+
+        try {
+            $page
+                ->set('data.title', 'must-not-use-replacement-parent')
+                ->assertNotFound();
+        } finally {
+            EditUserPostWithCustomParentResolver::$replacementParentRecord = null;
+            EditUserPostWithCustomParentResolver::$testParentRecordRouteParameters = [];
+        }
+    });
+
+    it('rejects a stale edit page snapshot after an ancestor moves to another parent', function (): void {
+        $company = Company::factory()->create();
+        $newCompany = Company::factory()->create();
+        $team = Team::factory()->create(['company_id' => $company->getKey()]);
+        $user = User::factory()->create();
+        $user->teams()->attach($team);
+        EditDeepNestedUser::$testParentRecordRouteParameters = [
+            'company' => $company->getRouteKey(),
+            'team' => $team->name,
+        ];
+        $page = livewire(EditDeepNestedUser::class, [
+            'parentRecord' => $team,
+            'record' => $user->getKey(),
+        ])->assertSuccessful();
+
+        $team->update(['company_id' => $newCompany->getKey()]);
+
+        $page
+            ->set('data.name', 'must-not-cross-ancestor-boundary')
+            ->assertNotFound();
+    });
+
+    it('uses the current parent when its route key resolves to another record', function (): void {
+        $company = Company::factory()->create();
+        $newCompany = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $company->getKey(),
+            'name' => 'Shared team route key',
+        ]);
+        CreateDeepNestedUser::$testParentRecordRouteParameters = [
+            'company' => $company->getRouteKey(),
+            'team' => $team->name,
+        ];
+        $page = livewire(CreateDeepNestedUser::class, [
+            'parentRecord' => $team,
+        ])->assertSuccessful();
+
+        $currentTeam = Team::factory()->create([
+            'company_id' => $company->getKey(),
+            'name' => 'Shared team route key',
+        ]);
+        $team->update(['company_id' => $newCompany->getKey()]);
+
+        $page
+            ->set('data.name', 'uses-current-parent')
+            ->assertSuccessful()
+            ->assertSet('parentRecord.id', $currentTeam->getKey());
+    });
+
+    it('validates a lazy page table widget parent before the synthetic page boots or mounts', function (): void {
+        $company = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $company->getKey(),
+            'name' => 'Page table widget team',
+        ]);
+        $user = User::factory()->create();
+        $user->teams()->attach($team);
+        $component = livewire(DeepNestedPageTableWidget::class, [
+            'lazy' => true,
+            'parentRecord' => $team,
+        ])->assertSuccessful();
+
+        expect(preg_match(
+            "/__lazyLoad\\('([^']+)'\\)/",
+            html_entity_decode($component->html()),
+            $matches,
+        ))->toBe(1);
+
+        $component
+            ->call('__lazyLoad', $matches[1])
+            ->call('loadPageTable')
+            ->assertSet('pageTableRecordsCount', 1)
+            ->assertSuccessful();
+
+        expect(ListDeepNestedUsers::$hasBooted)->toBeTrue()
+            ->and(ListDeepNestedUsers::$hasMounted)->toBeTrue();
+
+        ListDeepNestedUsers::$hasBooted = false;
+        ListDeepNestedUsers::$hasMounted = false;
+        $globalScopes = Team::getAllGlobalScopes();
+
+        try {
+            Team::addGlobalScope(
+                'exclude-page-table-widget-parent',
+                fn (Builder $query): Builder => $query->whereKeyNot($team->getKey()),
+            );
+
+            $component->call('loadPageTable')->assertNotFound();
+
+            expect(ListDeepNestedUsers::$hasBooted)->toBeFalse()
+                ->and(ListDeepNestedUsers::$hasMounted)->toBeFalse();
+        } finally {
+            Team::setAllGlobalScopes($globalScopes);
+        }
+    });
+
+    it('resolves a supplied parent using its resource binding, write connection, and primary key', function (): void {
+        $company = Company::factory()->create();
+        Team::factory()->create(['company_id' => $company->getKey(), 'name' => 'Shared route key']);
+        $team = Team::factory()->create(['company_id' => $company->getKey(), 'name' => 'Shared route key']);
+        $page = app(CreateDeepNestedUser::class);
+        $page->parentRecord = $team;
+        CreateDeepNestedUser::$testParentRecordRouteParameters = ['unrelated' => 'parameter'];
+
+        try {
+            $page->mountParentRecord();
+
+            expect($page->getParentRecord()->is($team))->toBeTrue()
+                ->and($page->getParentRecord())->not->toBe($team)
+                ->and(app('nested-parent-used-write-connection'))->toBeTrue();
+
+            app()->instance('nested-parent-binding-denied', true);
+            $deniedPage = app(CreateDeepNestedUser::class);
+            $deniedPage->parentRecord = $team;
+
+            expect(fn () => $deniedPage->mountParentRecord())->toThrow(ModelNotFoundException::class);
+        } finally {
+            CreateDeepNestedUser::$testParentRecordRouteParameters = [];
+        }
+    });
+
+    it('rejects a replacement model returned by a supplied parent resource binding', function (): void {
+        $company = Company::factory()->create();
+        $team = Team::factory()->create(['company_id' => $company->getKey()]);
+        $replacementTeam = Team::factory()->create(['company_id' => $company->getKey()]);
+        app()->instance('nested-parent-binding-replacement', $replacementTeam);
+        CreateDeepNestedUser::$testParentRecordRouteParameters = [];
+        $page = app(CreateDeepNestedUser::class);
+        $page->parentRecord = $team;
+
+        expect(fn () => $page->mountParentRecord())->toThrow(ModelNotFoundException::class);
+    });
+
+    it('does not use a supplied parent to bypass incomplete ancestor route parameters', function (): void {
+        $company = Company::factory()->create();
+        $team = Team::factory()->create(['company_id' => $company->getKey()]);
+        $page = app(CreateDeepNestedUser::class);
+        $page->parentRecord = $team;
+        CreateDeepNestedUser::$testParentRecordRouteParameters = ['team' => $team->name];
+
+        try {
+            expect(fn () => $page->mountParentRecord())->toThrow(ModelNotFoundException::class);
+        } finally {
+            CreateDeepNestedUser::$testParentRecordRouteParameters = [];
+        }
+    });
+
+    it('allows a supplied soft-deleted parent approved by its resource', function (): void {
+        $ticket = Ticket::factory()->create();
+        $ticket->delete();
+        $page = app(ListTicketDepartments::class);
+        $page->parentRecord = $ticket;
+
+        $page->mountParentRecord();
+
+        expect($page->getParentRecord()->is($ticket))->toBeTrue()
+            ->and($page->getParentRecord()->trashed())->toBeTrue();
+    });
+
+    it('retains the resolved synthetic page parent including mount parameter overrides', function (bool $hasOverride): void {
+        $company = Company::factory()->create();
+        $team = Team::factory()->create(['company_id' => $company->getKey()]);
+        $overrideTeam = Team::factory()->create(['company_id' => $company->getKey()]);
+        $widget = app(DeepNestedPageTableWidget::class);
+        $widget->parentRecord = $team;
+        $widget->parentRecordOverride = $hasOverride ? $overrideTeam : null;
+        $expectedParent = $hasOverride ? $overrideTeam : $team;
+
+        $page = $widget->getResolvedTablePage();
+
+        expect($page->getParentRecord()->is($expectedParent))->toBeTrue()
+            ->and($page->getParentRecord())->not->toBe($expectedParent);
+    })->with([false, true]);
+
+    it('rejects direct Livewire calls to `resolveScopedModelProperties()` on resource pages', function (): void {
+        livewire(CreateUserPost::class, ['parentRecord' => User::factory()->create()])
+            ->call('resolveScopedModelProperties')
+            ->assertNotFound();
     });
 
     it('can save', function (): void {
@@ -268,7 +611,7 @@ describe('soft-deletable nested resource', function (): void {
         $sortedDesc = Post::query()
             ->where('author_id', $parentRecord->getKey())
             ->orderByDesc('title')
-            ->orderBy('id')
+            ->orderByDesc('id')
             ->get();
 
         livewire(ListUserPosts::class, [
@@ -300,7 +643,184 @@ describe('soft-deletable nested resource', function (): void {
 
 });
 
+class NamedCompanyTeamResource extends CompanyTeamResource
+{
+    public static function resolveRecordRouteBinding(int | string $key, ?Closure $modifyQuery = null): ?Model
+    {
+        if (app()->bound('nested-parent-binding-replacement')) {
+            return app('nested-parent-binding-replacement');
+        }
+
+        return parent::resolveRecordRouteBinding($key, function (Builder $query) use ($modifyQuery): Builder {
+            $query = $modifyQuery ? $modifyQuery($query) : $query;
+            app()->instance('nested-parent-used-write-connection', $query->getQuery()->useWritePdo);
+
+            return app()->bound('nested-parent-binding-denied') ? $query->whereRaw('1 = 0') : $query;
+        });
+    }
+
+    public static function getRecordRouteKeyName(): ?string
+    {
+        return 'name';
+    }
+}
+
+class EditUserPostWithCustomParentResolver extends EditUserPost
+{
+    public static ?User $replacementParentRecord = null;
+
+    /** @var array<string, int | string> */
+    public static array $testParentRecordRouteParameters = [];
+
+    protected function getParentRecordRouteParameters(): array
+    {
+        return static::$testParentRecordRouteParameters;
+    }
+
+    protected function resolveParentRecord(array $parameters): User
+    {
+        if (static::$replacementParentRecord) {
+            return static::$replacementParentRecord;
+        }
+
+        return User::query()->findOrFail($parameters['author']);
+    }
+}
+
+class DeepNestedUserResource extends UserResource
+{
+    public static function getParentResourceRegistration(): ?ParentResourceRegistration
+    {
+        return NamedCompanyTeamResource::asParent(static::class)
+            ->relationship('users')
+            ->inverseRelationship('teams');
+    }
+}
+
+class CreateDeepNestedUser extends CreateRecord
+{
+    /** @var array<string, int | string> */
+    public static array $testParentRecordRouteParameters = [];
+
+    protected static string $resource = DeepNestedUserResource::class;
+
+    protected function getParentRecordRouteParameters(): array
+    {
+        return static::$testParentRecordRouteParameters;
+    }
+}
+
+class EditDeepNestedUser extends EditRecord
+{
+    /** @var array<string, int | string> */
+    public static array $testParentRecordRouteParameters = [];
+
+    protected static string $resource = DeepNestedUserResource::class;
+
+    protected function getParentRecordRouteParameters(): array
+    {
+        return static::$testParentRecordRouteParameters;
+    }
+}
+
+class ListDeepNestedUsers extends ListRecords
+{
+    public static bool $hasBooted = false;
+
+    public static bool $hasMounted = false;
+
+    protected static string $resource = DeepNestedUserResource::class;
+
+    public function boot(): void
+    {
+        static::$hasBooted = true;
+    }
+
+    public function mount(): void
+    {
+        static::$hasMounted = true;
+
+        parent::mount();
+    }
+}
+
+class DeepNestedPageTableWidget extends Widget
+{
+    use InteractsWithPageTable;
+
+    public int $pageTableRecordsCount = 0;
+
+    public ?Model $parentRecordOverride = null;
+
+    protected string $view = 'pages.settings';
+
+    protected function getTablePageMountParameters(): array
+    {
+        return $this->parentRecordOverride ? ['parentRecord' => $this->parentRecordOverride] : [];
+    }
+
+    public function getResolvedTablePage(): ListDeepNestedUsers
+    {
+        return $this->getTablePageInstance();
+    }
+
+    public function loadPageTable(): void
+    {
+        $this->pageTableRecordsCount = $this->getPageTableQuery()->count();
+    }
+
+    protected function getTablePage(): string
+    {
+        return ListDeepNestedUsers::class;
+    }
+}
+
+class ListTicketDepartments extends ListRecords
+{
+    protected static string $resource = TicketDepartmentResource::class;
+}
+
 describe('non-soft-deletable nested resource', function (): void {
+    it('does not require parent record `view` or `update` access', function (): void {
+        Gate::policy(Company::class, NestedCompanyPolicy::class);
+        Gate::policy(Team::class, NestedTeamPolicy::class);
+
+        app()->instance('can-view-any-nested-company', true);
+
+        $parentRecord = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $parentRecord->getKey(),
+        ]);
+
+        $this->get(CompanyTeamResource::getUrl('edit', [
+            'company' => $parentRecord,
+            'record' => $team,
+        ]))->assertSuccessful();
+    });
+
+    it('re-authorizes the parent resource on Livewire requests', function (): void {
+        Gate::policy(Company::class, NestedCompanyPolicy::class);
+        Gate::policy(Team::class, NestedTeamPolicy::class);
+
+        app()->instance('can-view-any-nested-company', true);
+
+        $parentRecord = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $parentRecord->getKey(),
+        ]);
+
+        $component = livewire(EditCompanyTeam::class, [
+            'parentRecord' => $parentRecord,
+            'record' => $team->getKey(),
+        ])->assertSuccessful();
+
+        app()->instance('can-view-any-nested-company', false);
+
+        $component
+            ->set('data.name', 'New name')
+            ->assertForbidden();
+    });
+
     it('can render list page for non-soft-deletable nested resource', function (): void {
         $parentRecord = Company::factory()->create();
 
@@ -528,9 +1048,11 @@ describe('non-soft-deletable nested resource', function (): void {
 
     it('can sort records by name for non-soft-deletable nested resource', function (): void {
         $parentRecord = Company::factory()->create();
-        Team::factory()->count(10)->create([
-            'company_id' => $parentRecord->getKey(),
-        ]);
+        Team::factory()->count(10)
+            ->sequence(['name' => 'Walker Ltd'], ['name' => 'Wolff-Greenfelder'])
+            ->create([
+                'company_id' => $parentRecord->getKey(),
+            ]);
 
         $sortedAsc = Team::query()
             ->where('company_id', $parentRecord->getKey())
@@ -540,7 +1062,7 @@ describe('non-soft-deletable nested resource', function (): void {
         $sortedDesc = Team::query()
             ->where('company_id', $parentRecord->getKey())
             ->orderByDesc('name')
-            ->orderBy('id')
+            ->orderByDesc('id')
             ->get();
 
         livewire(ListCompanyTeams::class, [
@@ -570,3 +1092,161 @@ describe('non-soft-deletable nested resource', function (): void {
             ->assertCanNotSeeTableRecords($teamsForOtherParent);
     });
 });
+
+describe('multi-level nested resource authorization', function (): void {
+    beforeEach(function (): void {
+        Gate::policy(Company::class, NestedCompanyPolicy::class);
+        Gate::policy(Team::class, NestedTeamPolicy::class);
+        Gate::policy(User::class, NestedUserPolicy::class);
+
+        app()->instance('can-view-any-nested-company', true);
+        app()->instance('can-access-nested-parent-record', true);
+
+        $panel = Filament::getCurrentOrDefaultPanel();
+
+        Route::middleware([...$panel->getMiddleware(), ...$panel->getAuthMiddleware()])
+            ->name("filament.{$panel->getId()}.")
+            ->prefix($panel->getPath())
+            ->group(fn () => NestedTeamUserResource::registerRoutes($panel));
+    });
+
+    it('requires outer ancestor resource access', function (): void {
+        $company = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $company->getKey(),
+        ]);
+        $record = User::factory()->create();
+        $team->users()->attach($record);
+
+        app()->instance('can-view-any-nested-company', false);
+
+        $this->get(NestedTeamUserResource::getUrl('edit', [
+            'company' => $company,
+            'team' => $team,
+            'record' => $record,
+        ]))->assertForbidden();
+    });
+
+    it('re-authorizes outer ancestor resources on Livewire requests', function (): void {
+        $company = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $company->getKey(),
+        ]);
+        $record = User::factory()->create();
+        $team->users()->attach($record);
+
+        $component = livewire(EditNestedTeamUser::class, [
+            'parentRecord' => $team,
+            'record' => $record->getKey(),
+        ])->assertSuccessful();
+
+        app()->instance('can-view-any-nested-company', false);
+
+        $component
+            ->set('data.name', 'New name')
+            ->assertForbidden();
+    });
+
+    it('re-runs custom parent record authorization on Livewire requests', function (): void {
+        $company = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $company->getKey(),
+        ]);
+        $record = User::factory()->create();
+        $team->users()->attach($record);
+
+        $component = livewire(EditNestedTeamUser::class, [
+            'parentRecord' => $team,
+            'record' => $record->getKey(),
+        ])->assertSuccessful();
+
+        app()->instance('can-access-nested-parent-record', false);
+
+        $component
+            ->set('data.name', 'New name')
+            ->assertForbidden();
+    });
+});
+
+class NestedCompanyPolicy
+{
+    public function viewAny(User $user): bool
+    {
+        return app('can-view-any-nested-company');
+    }
+
+    public function view(User $user, Company $record): bool
+    {
+        return false;
+    }
+
+    public function update(User $user, Company $record): bool
+    {
+        return false;
+    }
+}
+
+class NestedTeamPolicy
+{
+    public function viewAny(User $user): bool
+    {
+        return true;
+    }
+
+    public function update(User $user, Team $record): bool
+    {
+        return true;
+    }
+}
+
+class NestedUserPolicy
+{
+    public function viewAny(User $user): bool
+    {
+        return true;
+    }
+
+    public function update(User $user, User $record): bool
+    {
+        return true;
+    }
+}
+
+class NestedTeamUserResource extends Resource
+{
+    protected static ?string $model = User::class;
+
+    public static function getParentResourceRegistration(): ?ParentResourceRegistration
+    {
+        return CompanyTeamResource::asParent(static::class)
+            ->relationship('users')
+            ->inverseRelationship('teams');
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema->components([
+            Forms\Components\TextInput::make('name')->required(),
+            Forms\Components\TextInput::make('email')->required(),
+        ]);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'edit' => EditNestedTeamUser::route('/{record}/edit'),
+        ];
+    }
+}
+
+class EditNestedTeamUser extends EditRecord
+{
+    protected static string $resource = NestedTeamUserResource::class;
+
+    protected function authorizeParentRecordAccess(): void
+    {
+        parent::authorizeParentRecordAccess();
+
+        abort_unless(app('can-access-nested-parent-record'), 403);
+    }
+}

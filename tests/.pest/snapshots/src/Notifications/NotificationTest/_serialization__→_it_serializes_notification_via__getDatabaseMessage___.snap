@@ -31,6 +31,7 @@
     "duration": "persistent",
     "icon": "heroicon-s-bell",
     "iconColor": null,
+    "iconSize": null,
     "status": null,
     "title": "Test Title",
     "view": null,

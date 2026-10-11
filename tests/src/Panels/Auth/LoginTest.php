@@ -252,6 +252,36 @@ describe('authentication failures', function (): void {
             ->and($failedEvents)->toBe(1);
     });
 
+    it('does not authenticate a different principal returned by the final credential lookup', function (): void {
+        $initialUser = User::factory()->create();
+        $differentUser = User::factory()->create();
+        $email = $initialUser->email;
+        $attemptingEvents = 0;
+
+        Event::listen(Attempting::class, static function () use (&$attemptingEvents, $differentUser, $email, $initialUser): void {
+            $attemptingEvents++;
+
+            if ($attemptingEvents !== 2) {
+                return;
+            }
+
+            $initialUser->update(['email' => 'replaced@example.com']);
+            $differentUser->update(['email' => $email]);
+        });
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertHasFormErrors(['email']);
+
+        $this->assertGuest();
+
+        expect($attemptingEvents)->toBe(2);
+    });
+
     it('fires the `Attempting` and `Failed` events when authentication fails because the email is unknown', function (): void {
         Event::fake([Attempting::class, Failed::class]);
 
@@ -536,30 +566,28 @@ describe('validation', function (): void {
 });
 
 it('can fill the login form, authenticate, and redirect to the dashboard in the browser', function (): void {
-    retry(10, function (): void {
-        $user = User::factory()->create();
+    $user = User::factory()->create();
 
-        visit(Filament::getLoginUrl())
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues()
-            ->type('input[type="email"]', $user->email)
-            ->type('input[type="password"]', 'password')
-            ->click('button[type="submit"]')
-            ->assertVisible('.fi-page')
-            ->assertPathIs('/')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit(Filament::getLoginUrl())
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues()
+        ->type('input[type="email"]', $user->email)
+        ->type('input[type="password"]', 'password')
+        ->click('button[type="submit"]')
+        ->assertVisible('.fi-page')
+        ->assertPathIs('/')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit(Filament::getLoginUrl())
-            ->inDarkMode()
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit(Filament::getLoginUrl())
+        ->inDarkMode()
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit(Filament::getUrl())
-            ->inDarkMode()
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    });
+    visit(Filament::getUrl())
+        ->inDarkMode()
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 });
 
 it('does not lock out a user when an attacker exhausts login attempts from a different IP', function (): void {

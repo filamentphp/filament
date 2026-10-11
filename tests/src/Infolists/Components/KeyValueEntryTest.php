@@ -6,7 +6,9 @@ use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
+use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -27,6 +29,21 @@ it('renders nested array values as JSON instead of crashing', function (): void 
         ->assertSuccessful()
         ->assertSeeText('theme')
         ->assertSeeText('{"mode":"dark"}');
+});
+
+it('escapes keys and plain values while preserving explicitly trusted values', function (): void {
+    $html = KeyValueEntry::make('metadata')
+        ->container(Schema::make(Livewire::make()))
+        ->state([
+            '<b>Key &</b>' => '<script>alert(1)</script>',
+            'trusted' => new HtmlString('<i onclick="trusted()">Value</i>'),
+            'nested' => ['value' => '<img onerror="alert(2)">'],
+        ])
+        ->toHtml();
+
+    expect($html)
+        ->toContain('&lt;b&gt;Key &amp;&lt;/b&gt;', '&lt;script&gt;alert(1)&lt;/script&gt;', '<i onclick="trusted()">Value</i>', '{&quot;value&quot;:&quot;&lt;img onerror=\\&quot;alert(2)\\&quot;&gt;&quot;}')
+        ->not->toContain('<b>Key', '<script>', '<img');
 });
 
 it('can render with custom key and value labels', function (): void {

@@ -83,8 +83,6 @@ trait CanGroupRecords
 
     public function getTableGroupingSessionKey(): string
     {
-        $table = md5($this::class);
-
-        return "tables.{$table}_grouping";
+        return $this->getTableSessionKey('grouping');
     }
 }

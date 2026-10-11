@@ -128,6 +128,17 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
         return $this;
     }
 
+    public function getPlaceholder(): ?string
+    {
+        $placeholder = $this->evaluate($this->placeholder);
+
+        if (($placeholder !== null) || (! $this->isDisabled())) {
+            return $placeholder;
+        }
+
+        return blank($this->getState()) ? __('filament-forms::components.file_upload.placeholder') : '';
+    }
+
     public function image(): static
     {
         $this->acceptedFileTypes([
@@ -839,6 +850,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
         $key = $this->getKey();
         $statePath = $this->getStatePath();
         $isDisabled = $this->isDisabled();
+        $placeholder = $this->getPlaceholder();
         $hasImageEditor = $this->hasImageEditor();
         $isImageEditorExplicitlyEnabled = $this->isImageEditorExplicitlyEnabled();
         $hasCircleCropper = $this->hasCircleCropper();
@@ -853,7 +865,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
             $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
         }
 
-        $wireKey = $livewireKey . '.' . substr(md5(serialize([$isDisabled])), 0, 64);
+        $wireKey = $livewireKey . '.' . substr(md5(serialize([$isDisabled, $isDisabled ? $placeholder : null])), 0, 64);
 
         $outerAttributes = $this->getExtraAttributeBag()
             ->merge([
@@ -868,7 +880,10 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                 ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
             ]);
 
-        $inputAttributes = $this->getExtraInputAttributeBag()
+        $extraInputAttributeBag = $this->getExtraInputAttributeBag();
+
+        $inputAttributes = $extraInputAttributeBag
+            ->merge($this->getAccessibilityAttributes(), escape: false)
             ->merge([
                 'aria-labelledby' => "{$id}-label",
                 'disabled' => $isDisabled,
@@ -880,6 +895,12 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
         ob_start(); ?>
 
+        <div
+            hidden
+            data-field-accessibility
+            <?php if (! $extraInputAttributeBag->has('aria-describedby')) { ?> data-preserve-filepond-description <?php } ?>
+            <?= $inputAttributes->only(['aria-describedby', 'aria-invalid'])->toHtml() ?>
+        ></div>
         <div
             x-load
             x-load-src="<?= e($alpineComponentSrc) ?>"
@@ -940,7 +961,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                         minSize: <?= Js::from($minSize ? "{$minSize}KB" : null) ?>,
                         panelAspectRatio: <?= Js::from($this->getPanelAspectRatio()) ?>,
                         panelLayout: <?= Js::from($this->getPanelLayout()) ?>,
-                        placeholder: <?= Js::from($this->getPlaceholder()) ?>,
+                        placeholder: <?= Js::from($placeholder) ?>,
                         removeUploadedFileButtonPosition: <?= Js::from($this->getRemoveUploadedFileButtonPosition()) ?>,
                         removeUploadedFileUsing: async (fileKey) => {
                             return await $wire.callSchemaComponentMethod(

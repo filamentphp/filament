@@ -152,7 +152,7 @@ In this example, specific columns like `title` do not need to be `searchable()` 
 
 #### Searching individual columns
 
-The [individual column searches](#searching-individually) feature provides a way to render a search field separately for each column, allowing more precise filtering. When using custom data, you need to implement this feature yourself.
+The [individual column searches](#searching-individual-columns) feature provides a way to render a search field separately for each column, allowing more precise filtering. When using custom data, you need to implement this feature yourself.
 
 Instead of injecting `$search` into the `records()` function, you can inject an array of `$columnSearches`, which contains the search queries for each column.
 

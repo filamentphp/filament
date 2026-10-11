@@ -7,6 +7,7 @@ class Font extends Asset
     public function getStyle(): Css
     {
         return Css::make($this->getId(), path: $this->getPath() . DIRECTORY_SEPARATOR . 'index.css')
+            ->package($this->getPackage())
             ->relativePublicPath($this->getRelativePublicPath() . DIRECTORY_SEPARATOR . 'index.css');
     }
 

@@ -2,6 +2,7 @@
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkActionGroup;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Actions\TestCase;
 use Illuminate\View\ComponentAttributeBag;
@@ -184,6 +185,49 @@ describe('dropdown attributes', function (): void {
 
         expect($bag)->toBeInstanceOf(ComponentAttributeBag::class);
         expect($bag->get('data-test'))->toBe('bag');
+    });
+
+    it('keeps `BulkActionGroup` trigger and dropdown attributes in their respective slots', function (): void {
+        $group = BulkActionGroup::make([
+            Action::make('edit'),
+        ])
+            ->extraAttributes(static fn (): array => ['data-group-only' => 'group'])
+            ->extraDropdownAttributes([
+                'data-dropdown-only' => 'array',
+                'data-merge-precedence' => 'first',
+            ])
+            ->extraDropdownAttributes(static fn (): array => [
+                'data-closure-only' => 'closure',
+                'data-merge-precedence' => 'second',
+            ], merge: true);
+
+        expect($group->getExtraDropdownAttributes())->toEqual([
+            'x-cloak' => true,
+            'x-show' => 'getSelectedRecordsCount()',
+            'data-dropdown-only' => 'array',
+            'data-merge-precedence' => 'first',
+            'data-closure-only' => 'closure',
+        ]);
+
+        $usesInternalErrors = libxml_use_internal_errors(true);
+        $document = new DOMDocument;
+        $document->loadHTML($group->toHtml());
+        libxml_clear_errors();
+        libxml_use_internal_errors($usesInternalErrors);
+        $xpath = new DOMXPath($document);
+        $dropdown = $xpath->query('//div[contains(concat(" ", normalize-space(@class), " "), " fi-dropdown ")]')->item(0);
+
+        expect($dropdown)->toBeInstanceOf(DOMElement::class);
+
+        if (! ($dropdown instanceof DOMElement)) {
+            throw new LogicException('The bulk action group dropdown was not rendered.');
+        }
+
+        expect($dropdown->getAttribute('data-dropdown-only'))->toBe('array')
+            ->and($dropdown->getAttribute('data-closure-only'))->toBe('closure')
+            ->and($dropdown->getAttribute('data-merge-precedence'))->toBe('first')
+            ->and($dropdown->hasAttribute('data-group-only'))->toBeFalse()
+            ->and($xpath->query('.//button[@data-group-only="group"]', $dropdown)->count())->toBeGreaterThan(0);
     });
 });
 

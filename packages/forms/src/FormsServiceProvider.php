@@ -2,6 +2,7 @@
 
 namespace Filament\Forms;
 
+use Faker\Generator;
 use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
 use Filament\Forms\Testing\TestsFormComponentActions;
 use Filament\Forms\Testing\TestsForms;
@@ -15,6 +16,41 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class FormsServiceProvider extends PackageServiceProvider
 {
+    public function packageRegistered(): void
+    {
+        if (! class_exists(Generator::class)) {
+            return;
+        }
+
+        $registerFakerProvider = static function (Generator $faker): void {
+            foreach ($faker->getProviders() as $provider) {
+                if ($provider instanceof FakerProvider) {
+                    return;
+                }
+            }
+
+            $faker->addProvider(new FakerProvider($faker));
+        };
+
+        $fakerBindings = [
+            Generator::class,
+            ...array_filter(
+                array_keys($this->app->getBindings()),
+                static fn (string $binding): bool => str_starts_with($binding, Generator::class . ':'),
+            ),
+        ];
+
+        foreach ($fakerBindings as $fakerBinding) {
+            if (! $this->app->resolved($fakerBinding)) {
+                continue;
+            }
+
+            $registerFakerProvider($this->app->make($fakerBinding));
+        }
+
+        $this->app->afterResolving(Generator::class, $registerFakerProvider);
+    }
+
     public function configurePackage(Package $package): void
     {
         $package
@@ -32,6 +68,7 @@ class FormsServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         FilamentAsset::register([
+            AlpineComponent::make('builder', __DIR__ . '/../dist/components/builder.js'),
             AlpineComponent::make('checkbox-list', __DIR__ . '/../dist/components/checkbox-list.js'),
             AlpineComponent::make('code-editor', __DIR__ . '/../dist/components/code-editor.js'),
             AlpineComponent::make('color-picker', __DIR__ . '/../dist/components/color-picker.js'),
@@ -39,11 +76,14 @@ class FormsServiceProvider extends PackageServiceProvider
             AlpineComponent::make('file-upload', __DIR__ . '/../dist/components/file-upload.js'),
             AlpineComponent::make('key-value', __DIR__ . '/../dist/components/key-value.js'),
             AlpineComponent::make('markdown-editor', __DIR__ . '/../dist/components/markdown-editor.js'),
+            AlpineComponent::make('repeater', __DIR__ . '/../dist/components/repeater.js'),
             AlpineComponent::make('rich-editor', __DIR__ . '/../dist/components/rich-editor.js'),
             AlpineComponent::make('select', __DIR__ . '/../dist/components/select.js'),
             AlpineComponent::make('slider', __DIR__ . '/../dist/components/slider.js'),
             AlpineComponent::make('tags-input', __DIR__ . '/../dist/components/tags-input.js'),
             AlpineComponent::make('textarea', __DIR__ . '/../dist/components/textarea.js'),
+            AlpineComponent::make('text-input/password-reveal', __DIR__ . '/../dist/components/text-input/password-reveal.js'),
+            AlpineComponent::make('toggle-buttons', __DIR__ . '/../dist/components/toggle-buttons.js'),
         ], 'filament/forms');
 
         if ($this->app->runningInConsole()) {

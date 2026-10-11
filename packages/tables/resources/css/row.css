@@ -23,28 +23,6 @@
         @apply px-3 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
     }
 
-    & .fi-ta-group-header {
-        @apply flex w-full items-center gap-x-3 py-2;
-
-        &.fi-collapsible {
-            @apply cursor-pointer;
-
-            &.fi-collapsed {
-                & .fi-icon-btn {
-                    @apply -rotate-180;
-                }
-            }
-        }
-
-        & .fi-ta-group-heading {
-            @apply text-sm font-medium text-gray-950 dark:text-white;
-        }
-
-        & .fi-ta-group-description {
-            @apply text-sm text-gray-500 dark:text-gray-400;
-        }
-    }
-
     &.fi-selected {
         &:not(.fi-striped) {
             @apply bg-gray-50 dark:bg-white/5;

@@ -1,3 +1,8 @@
+import {
+    observeFieldAccessibility,
+    setFieldAccessibilityAttributes,
+} from '../utils/field-accessibility'
+
 window.CodeMirror = require('codemirror/lib/codemirror')
 
 require('codemirror')
@@ -111,6 +116,7 @@ export default function markdownEditorFormComponent({
         resizeObserver: null,
 
         intersectionObserver: null,
+        accessibilityObserver: null,
 
         async init() {
             // If the editor is inside a modal, wait for the modal transition to finish before initializing the editor.
@@ -262,6 +268,15 @@ export default function markdownEditorFormComponent({
                 setUpUsing(this)
             }
 
+            this.accessibilityObserver = observeFieldAccessibility(
+                this.$el,
+                (attributes) =>
+                    setFieldAccessibilityAttributes(
+                        this.editor.codemirror.getInputField(),
+                        attributes,
+                    ),
+            )
+
             // If the editor initializes while hidden, such as in a collapsed
             // section or an inactive tab, CodeMirror renders no lines, and no
             // update pass runs when the editor is revealed, so inline image
@@ -303,29 +318,6 @@ export default function markdownEditorFormComponent({
             }
 
             this.wasEditorVisible = isEditorVisible
-        },
-
-        destroy() {
-            isDestroyed = true
-
-            this.resizeObserver?.disconnect()
-            this.resizeObserver = null
-
-            this.intersectionObserver?.disconnect()
-            this.intersectionObserver = null
-
-            if (this.editor) {
-                this.editor.codemirror.setOption('autoRefresh', false)
-                this.form?.removeEventListener(
-                    'submit',
-                    this.editor.codemirror.save,
-                )
-                this.editor.cleanup()
-                this.editor.toTextArea()
-            }
-
-            this.$root._editor = null
-            this.editor = null
         },
 
         getToolbar() {
@@ -506,6 +498,30 @@ export default function markdownEditorFormComponent({
                 action: EasyMDE.redo,
                 title: translations.tools?.redo,
             }
+        },
+
+        destroy() {
+            isDestroyed = true
+            this.accessibilityObserver?.disconnect()
+
+            this.resizeObserver?.disconnect()
+            this.resizeObserver = null
+
+            this.intersectionObserver?.disconnect()
+            this.intersectionObserver = null
+
+            if (this.editor) {
+                this.editor.codemirror.setOption('autoRefresh', false)
+                this.form?.removeEventListener(
+                    'submit',
+                    this.editor.codemirror.save,
+                )
+                this.editor.cleanup()
+                this.editor.toTextArea()
+            }
+
+            this.$root._editor = null
+            this.editor = null
         },
     }
 }

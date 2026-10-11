@@ -325,10 +325,13 @@ class TestsColumns
             $livewireClass = $this->instance()::class;
 
             $column->clearCachedState();
+            $columnState = $column->getState();
+            $relatedRecords = $column->getRelatedRecords();
+            $relatedRecord = count($relatedRecords) === 1 ? reset($relatedRecords) : null;
 
             Assert::assertEquals(
                 $state,
-                $column->formatState($column->getState()),
+                $column->formatState($columnState, $relatedRecord),
                 "Failed asserting that a table column with name [{$name}] has a formatted state of [{$state}] for record [{$recordKey}] on the [{$livewireClass}] component.",
             );
 
@@ -363,10 +366,13 @@ class TestsColumns
             $livewireClass = $this->instance()::class;
 
             $column->clearCachedState();
+            $columnState = $column->getState();
+            $relatedRecords = $column->getRelatedRecords();
+            $relatedRecord = count($relatedRecords) === 1 ? reset($relatedRecords) : null;
 
             Assert::assertNotEquals(
                 $state,
-                $column->formatState($column->getState()),
+                $column->formatState($columnState, $relatedRecord),
                 "Failed asserting that a table column with name [{$name}] does not have a formatted state of [{$state}] for record [{$recordKey}] on the [{$livewireClass}] component.",
             );
 
@@ -650,11 +656,17 @@ class TestsColumns
             $tableColumns = $this->instance()->tableColumns;
 
             foreach ($tableColumns as &$column) {
-                if (! $column['isToggleable']) {
-                    continue;
+                if ($column['isToggleable']) {
+                    $column['isToggled'] = $condition;
                 }
 
-                $column['isToggled'] = $condition;
+                foreach ($column['columns'] ?? [] as $index => $groupedColumn) {
+                    if (! $groupedColumn['isToggleable']) {
+                        continue;
+                    }
+
+                    $column['columns'][$index]['isToggled'] = $condition;
+                }
             }
 
             $this->set('tableColumns', $tableColumns);

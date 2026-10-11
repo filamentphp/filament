@@ -87,7 +87,7 @@ TextColumn::make('title')
 
 #### Adding placeholder text if a column is empty
 
-Sometimes you may want to display placeholder text for columns with an empty state, which is styled as a lighter gray text. This differs from the [default value](#setting-the-default-state-of-an-column), as the placeholder is always text and not treated as if it were real state.
+Sometimes you may want to display placeholder text for columns with an empty state, which is styled as a lighter gray text. This differs from the [default value](#setting-the-default-state-of-a-column), as the placeholder is always text and not treated as if it were real state.
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -346,6 +346,8 @@ TextColumn::make('name')
 
 By default, Filament will apply a `where` clause to the Eloquent query, searching for the column name. This is useful for simple cases where the column name matches the database column name. It can also handle [relationships](#displaying-data-from-relationships).
 
+Search terms are treated as literal text, so characters such as `%` and `_` do not act as SQL wildcard characters.
+
 However, many columns are not as simple. The [state](#column-content-state) of the column might be customized, or using an [Eloquent accessor](https://laravel.com/docs/eloquent-mutators#accessors-and-mutators). In this case, you may need to customize the search behavior.
 
 You can pass an array of real database columns in the table to search the column with:
@@ -524,6 +526,8 @@ public function table(Table $table): Table
         ->persistColumnSearchesInSession();
 }
 ```
+
+When using Filament tenancy, persisted searches are isolated to the current tenant.
 
 ### Disabling search term splitting
 
@@ -1104,6 +1108,21 @@ function (?Model $record) {
     // ...
 }
 ```
+
+### Injecting the current related record
+
+When a column displays multiple values from a relationship, you may inject the Eloquent record that contains the current value into functions that customize each item using a `$relatedRecord` parameter:
+
+```php
+use App\Models\Tag;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('tags.name')
+    ->badge()
+    ->color(fn (Tag $relatedRecord): string => $relatedRecord->color)
+```
+
+The `$record` parameter continues to contain the current table record. The `$relatedRecord` parameter is only available while an individual relationship value is being evaluated. If multiple text values are joined into a comma-separated list, item styling is evaluated for the joined list instead. Use `badge()` or `listWithLineBreaks()` to evaluate item styling for each related record.
 
 ### Injecting the row loop
 

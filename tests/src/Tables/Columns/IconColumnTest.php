@@ -11,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -91,6 +92,35 @@ it('can undo `boolean()` with `false`', function (): void {
 
 it('can set `boolean()` with a `Closure`', function (): void {
     expect(IconColumn::make('active')->boolean(static fn (): bool => true)->isBoolean())->toBeTrue();
+});
+
+it('injects `$state` and `$relatedRecord` into boolean configuration', function (): void {
+    $relatedRecord = new User(['email' => 'user@example.com']);
+
+    $column = IconColumn::make('active')
+        ->boolean(static fn (bool $state, User $relatedRecord): bool => is_bool($state) && ($relatedRecord->email === 'user@example.com'))
+        ->trueColor(static fn (bool $state, User $relatedRecord): string => ($state && ($relatedRecord->email === 'user@example.com')) ? 'info' : 'danger')
+        ->falseColor(static fn (bool $state, User $relatedRecord): string => ((! $state) && ($relatedRecord->email === 'user@example.com')) ? 'warning' : 'danger')
+        ->trueIcon(static fn (bool $state, User $relatedRecord): string => ($state && ($relatedRecord->email === 'user@example.com')) ? 'true-icon' : 'wrong-icon')
+        ->falseIcon(static fn (bool $state, User $relatedRecord): string => ((! $state) && ($relatedRecord->email === 'user@example.com')) ? 'false-icon' : 'wrong-icon');
+
+    expect($column->getColor(true, $relatedRecord))->toBe('info')
+        ->and($column->getColor(false, $relatedRecord))->toBe('warning')
+        ->and($column->getIcon(true, $relatedRecord))->toBe('true-icon')
+        ->and($column->getIcon(false, $relatedRecord))->toBe('false-icon');
+});
+
+it('preserves implicit `$state` injection when boolean getter state is omitted', function (): void {
+    $column = (new class('active') extends IconColumn
+    {
+        public function getState(): mixed
+        {
+            return true;
+        }
+    })->trueColor(static fn (?bool $state): string => $state ? 'info' : 'danger');
+
+    expect($column->getTrueColor())->toBe('info')
+        ->and($column->getTrueColor(null))->toBe('danger');
 });
 
 it('can set `true()` with combined icon and color', function (): void {

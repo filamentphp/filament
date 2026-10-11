@@ -12,7 +12,9 @@ updates:
     milestone: 9
 
   - package-ecosystem: composer
-    directory: /
+    directories:
+      - /
+      - /docs-assets/app
     schedule:
       interval: weekly
     open-pull-requests-limit: 0
@@ -23,7 +25,10 @@ updates:
     milestone: 9
 
   - package-ecosystem: npm
-    directory: /
+    directories:
+      - /
+      - /docs-assets/app
+      - /docs-assets/screenshots
     schedule:
       interval: weekly
     open-pull-requests-limit: 0

@@ -305,7 +305,10 @@ class MakeResourceCommand extends Command
 
             $this->modelFqn = "{$modelNamespace}\\{$this->modelFqnEnd}";
         } else {
-            $modelFqns = discover_app_classes(parentClass: Model::class);
+            $modelFqns = discover_app_classes(
+                parentClass: Model::class,
+                onIndexingFailure: fn () => $this->components->warn('Unable to refresh the application class index. Model suggestions may be incomplete.'),
+            );
 
             $this->modelFqn = suggest(
                 label: 'What is the model?',

@@ -8,6 +8,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\Imports\Downloaders\Contracts\Downloader;
 use Filament\Actions\Imports\Downloaders\CsvDownloader;
 use Filament\Actions\Imports\Models\Import;
+use Filament\Actions\Testing\TestableImport;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Component;
 use Filament\Support\Concerns\CanCallHooks;
@@ -61,12 +62,25 @@ abstract class Importer
     ) {}
 
     /**
+     * @param  array<string, string> | null  $columnMap
+     * @param  array<string, mixed>  $options
+     */
+    public static function test(?array $columnMap = null, array $options = [], ?Import $import = null): TestableImport
+    {
+        return TestableImport::make(static::class, $columnMap, $options, $import);
+    }
+
+    /**
      * @param  array<string, mixed>  $data
      */
     public function __invoke(array $data): void
     {
         $this->originalData = $this->data = $data;
         $this->record = null;
+
+        foreach ($this->getCachedColumns() as $column) {
+            $column->clearResolvedRelatedRecords();
+        }
 
         $this->remapData();
         $this->castData();

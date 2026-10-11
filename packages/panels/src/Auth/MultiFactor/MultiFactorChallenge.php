@@ -172,7 +172,7 @@ class MultiFactorChallenge
 
     protected function getRateLimiterKey(Authenticatable $user): string
     {
-        return 'filament-multi-factor-challenge:' . sha1(Filament::getAuthGuard() . '|' . $user::class . '|' . $user->getAuthIdentifier());
+        return 'filament-multi-factor-challenge:' . Filament::getUserScopedAuthIdentifier($user);
     }
 
     public function getMaxRateLimiterAttempts(): int

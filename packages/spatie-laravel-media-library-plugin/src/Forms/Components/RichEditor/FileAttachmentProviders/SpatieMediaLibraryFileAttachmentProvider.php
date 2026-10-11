@@ -6,7 +6,6 @@ use Closure;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Support\Concerns\EvaluatesClosures;
-use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use LogicException;
 use Spatie\MediaLibrary\HasMedia;
@@ -133,7 +132,7 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
     {
         $media = $this->getExistingModel()
             ->addMediaFromString($file->get()) /** @phpstan-ignore method.notFound */
-            ->usingFileName($this->shouldPreserveFilenames() ? $file->getClientOriginalName() : (Str::ulid() . '.' . $file->getClientOriginalExtension()))
+            ->usingFileName($this->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->hashName())
             ->usingName($this->getMediaName($file) ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
             ->withCustomProperties($this->getCustomProperties())
             ->toMediaCollection($this->getCollection(), diskName: $this->attribute->getFileAttachmentsDiskName() ?? '');

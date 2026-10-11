@@ -27,9 +27,15 @@ trait CanGetStateFromRelationships
             return null;
         }
 
+        $relationshipName = $statePath ?? $this->getStateRelationshipName(record: $record);
+
+        if (blank($relationshipName)) {
+            return null;
+        }
+
         $relationship = null;
 
-        foreach (explode('.', $statePath ?? $this->getStateRelationshipName()) as $nestedRelationshipName) {
+        foreach (explode('.', $relationshipName) as $nestedRelationshipName) {
             if ($record->hasAttribute($nestedRelationshipName)) {
                 $relationship = null;
 
@@ -55,7 +61,7 @@ trait CanGetStateFromRelationships
             return $this->hasMultipleStateRelationshipCache;
         }
 
-        $relationships = explode('.', $this->getStateRelationshipName($record));
+        $relationships = explode('.', $this->getStateRelationshipName(record: $record) ?? '');
 
         while (count($relationships)) {
             $currentRelationshipName = array_shift($relationships);
@@ -88,7 +94,7 @@ trait CanGetStateFromRelationships
     {
         $results = [];
 
-        $relationships ??= explode('.', $this->getStateRelationshipName());
+        $relationships ??= explode('.', $this->getStateRelationshipName(record: $record));
 
         while (count($relationships)) {
             $currentRelationshipName = array_shift($relationships);
@@ -134,9 +140,13 @@ trait CanGetStateFromRelationships
         return $results;
     }
 
-    public function getStateRelationshipAttribute(?string $statePath = null): string
+    public function getStateRelationshipAttribute(?string $statePath = null, ?Model $record = null): string
     {
         $statePath ??= $this->getStateRelationshipPath();
+
+        if ($record && filled($relationshipName = $this->getStateRelationshipName($statePath, $record))) {
+            return (string) str($statePath)->after("{$relationshipName}.");
+        }
 
         if (! str($statePath)->contains('.')) {
             return $statePath;
@@ -145,7 +155,7 @@ trait CanGetStateFromRelationships
         return (string) str($statePath)->afterLast('.');
     }
 
-    public function getStateRelationshipName(?string $statePath = null): ?string
+    public function getStateRelationshipName(?string $statePath = null, ?Model $record = null): ?string
     {
         $statePath ??= $this->getStateRelationshipPath();
 
@@ -153,7 +163,25 @@ trait CanGetStateFromRelationships
             return null;
         }
 
-        return (string) str($statePath)->beforeLast('.');
+        if (! $record) {
+            return (string) str($statePath)->beforeLast('.');
+        }
+
+        $statePathParts = explode('.', $statePath);
+        array_pop($statePathParts);
+
+        $relationshipParts = [];
+
+        foreach ($statePathParts as $statePathPart) {
+            if ($record->hasAttribute($statePathPart) || (! $record->isRelation($statePathPart))) {
+                break;
+            }
+
+            $relationshipParts[] = $statePathPart;
+            $record = $record->{$statePathPart}()->getRelated();
+        }
+
+        return filled($relationshipParts) ? implode('.', $relationshipParts) : null;
     }
 
     public function getStateRelationshipPath(): ?string

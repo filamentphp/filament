@@ -2,22 +2,29 @@
 
 namespace Filament\Actions\Imports;
 
+use BackedEnum;
 use Closure;
+use Filament\Forms\Components\Concerns\HasEnum;
 use Filament\Forms\Components\Select;
 use Filament\Support\Components\Component;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Grammars\SqlServerGrammar;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 
 class ImportColumn extends Component
 {
+    use HasEnum;
+
     protected string $name;
 
     protected string | Closure | null $label = null;
@@ -60,9 +67,9 @@ class ImportColumn extends Component
     protected ?Importer $importer = null;
 
     /**
-     * @var array<mixed> | Closure
+     * @var array<mixed> | Closure | null
      */
-    protected array | Closure $examples = [];
+    protected array | Closure | null $examples = null;
 
     protected string | Closure | null $exampleHeader = null;
 
@@ -74,7 +81,7 @@ class ImportColumn extends Component
     protected string | array | Closure | null $resolveRelationshipUsing = null;
 
     /**
-     * @var array<Model | Collection>
+     * @var array<Model | array{records: ?Collection, hasAllRelatedRecords: ?bool} | null>
      */
     protected array $resolvedRelatedRecords = [];
 
@@ -410,8 +417,17 @@ class ImportColumn extends Component
 
                 if ($this->isMultiple()) {
                     $records = $this->resolveRelatedRecords($state);
+                    $values = array_filter($state, filled(...));
 
-                    if ($records?->count() >= count(array_filter($state, filled(...)))) {
+                    // Custom casters and resolvers may use non-scalar values.
+                    if (count(array_filter($values, is_scalar(...))) === count($values)) {
+                        $values = array_unique($values);
+                    }
+
+                    if (
+                        ($records?->count() >= count($values)) &&
+                        ($this->resolvedRelatedRecords[json_encode($state)]['hasAllRelatedRecords'] ?? true)
+                    ) {
                         return;
                     }
 
@@ -428,6 +444,11 @@ class ImportColumn extends Component
 
                 $fail('validation.exists')->translate();
             };
+        }
+
+        if ((! $this->isMultiple()) && filled($enum = $this->getBackedEnum())) {
+            $rules[] = 'nullable';
+            $rules[] = Rule::enum($enum);
         }
 
         return $rules;
@@ -467,18 +488,20 @@ class ImportColumn extends Component
 
         $resolveUsing = Arr::wrap($resolveUsing);
 
-        $isFirst = true;
+        $relationshipQuery->where(function (Builder $query) use ($resolveUsing, $state): void {
+            $isFirst = true;
 
-        foreach ($resolveUsing as $columnToResolve) {
-            $whereClause = $isFirst ? 'where' : 'orWhere';
+            foreach ($resolveUsing as $columnToResolve) {
+                $whereClause = $isFirst ? 'where' : 'orWhere';
 
-            $relationshipQuery->{$whereClause}(
-                $columnToResolve,
-                $state,
-            );
+                $query->{$whereClause}(
+                    $columnToResolve,
+                    $state,
+                );
 
-            $isFirst = false;
-        }
+                $isFirst = false;
+            }
+        });
 
         return $this->resolvedRelatedRecords[$state] = $relationshipQuery->first();
     }
@@ -491,29 +514,35 @@ class ImportColumn extends Component
         $encodedState = json_encode($state);
 
         if (array_key_exists($encodedState, $this->resolvedRelatedRecords)) {
-            return $this->resolvedRelatedRecords[$encodedState];
+            return $this->resolvedRelatedRecords[$encodedState]['records'];
         }
 
         /** @var BelongsToMany $relationship */
         $relationship = Relation::noConstraints(fn () => $this->getRelationship());
         $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
-        if (blank($this->resolveRelationshipUsing)) {
-            return $this->resolvedRelatedRecords[$encodedState] = $relationshipQuery
-                ->whereIn($relationship->getQualifiedRelatedKeyName(), $state)
-                ->get();
-        }
-
-        $resolveUsing = $this->evaluate($this->resolveRelationshipUsing, [
-            'state' => $state,
-        ]);
+        $resolveUsing = blank($this->resolveRelationshipUsing)
+            ? $relationship->getQualifiedRelatedKeyName()
+            : $this->evaluate($this->resolveRelationshipUsing, [
+                'state' => $state,
+            ]);
 
         if (blank($resolveUsing)) {
-            return $this->resolvedRelatedRecords[$encodedState] = null;
+            $this->resolvedRelatedRecords[$encodedState] = [
+                'records' => null,
+                'hasAllRelatedRecords' => null,
+            ];
+
+            return null;
         }
 
         if ($resolveUsing instanceof Collection) {
-            return $this->resolvedRelatedRecords[$encodedState] = $resolveUsing;
+            $this->resolvedRelatedRecords[$encodedState] = [
+                'records' => $resolveUsing,
+                'hasAllRelatedRecords' => null,
+            ];
+
+            return $resolveUsing;
         }
 
         if (! (is_array($resolveUsing) || is_string($resolveUsing))) {
@@ -522,20 +551,73 @@ class ImportColumn extends Component
 
         $resolveUsing = Arr::wrap($resolveUsing);
 
-        $isFirst = true;
+        $applyLookup = static function (Builder $query, array $values) use ($resolveUsing): void {
+            $query->where(static function (Builder $query) use ($resolveUsing, $values): void {
+                $isFirst = true;
 
-        foreach ($resolveUsing as $columnToResolve) {
-            $whereClause = $isFirst ? 'whereIn' : 'orWhereIn';
+                foreach ($resolveUsing as $columnToResolve) {
+                    $whereClause = $isFirst ? 'whereIn' : 'orWhereIn';
 
-            $relationshipQuery->{$whereClause}(
-                $columnToResolve,
-                $state,
-            );
+                    $query->{$whereClause}(
+                        $columnToResolve,
+                        $values,
+                    );
 
-            $isFirst = false;
+                    $isFirst = false;
+                }
+            });
+        };
+
+        $recordsQuery = clone $relationshipQuery;
+        $applyLookup($recordsQuery, $state);
+        $records = $recordsQuery->get();
+        $values = array_filter($state, filled(...));
+        $hasAllRelatedRecords = null;
+
+        if (count(array_filter($values, is_scalar(...))) === count($values)) {
+            $hasAllRelatedRecords = true;
+
+            foreach (collect($values)->uniqueStrict() as $value) {
+                $query = clone $relationshipQuery;
+                $applyLookup($query, [$value]);
+
+                if ($query->getQuery()->getGrammar() instanceof SqlServerGrammar) {
+                    // SQL Server's `exists()` replaces the projection, invalidating ordered `DISTINCT` queries.
+                    // Preserve it without running the result callbacks that `first()` would invoke.
+                    $query = $query->toBase();
+                    $query->applyBeforeQueryCallbacks();
+                    $query->limit(1);
+
+                    $hasRelatedRecord = $query->getConnection()->selectOne(
+                        $query->toSql(),
+                        $query->getBindings(),
+                        ! $query->useWritePdo,
+                    ) !== null;
+                } else {
+                    $hasRelatedRecord = $query->exists();
+                }
+
+                if ($hasRelatedRecord) {
+                    continue;
+                }
+
+                $hasAllRelatedRecords = false;
+
+                break;
+            }
         }
 
-        return $this->resolvedRelatedRecords[$encodedState] = $relationshipQuery->get();
+        $this->resolvedRelatedRecords[$encodedState] = [
+            'records' => $records,
+            'hasAllRelatedRecords' => $hasAllRelatedRecords,
+        ];
+
+        return $records;
+    }
+
+    public function clearResolvedRelatedRecords(): void
+    {
+        $this->resolvedRelatedRecords = [];
     }
 
     /**
@@ -543,7 +625,13 @@ class ImportColumn extends Component
      */
     public function getNestedRecursiveDataValidationRules(): array
     {
-        return $this->evaluate($this->nestedRecursiveDataValidationRules);
+        $rules = $this->evaluate($this->nestedRecursiveDataValidationRules);
+
+        if ($this->isMultiple() && filled($enum = $this->getBackedEnum())) {
+            $rules[] = Rule::enum($enum);
+        }
+
+        return $rules;
     }
 
     public function isNumeric(): bool
@@ -594,7 +682,38 @@ class ImportColumn extends Component
      */
     public function getExamples(): array
     {
-        return Arr::wrap($this->evaluate($this->examples));
+        if ($this->examples !== null) {
+            return Arr::wrap($this->evaluate($this->examples));
+        }
+
+        if ($this->enum instanceof Closure) {
+            return [];
+        }
+
+        if (blank($enum = $this->getBackedEnum())) {
+            return [];
+        }
+
+        return array_map(
+            static fn (BackedEnum $case): string | int => $case->value,
+            $enum::cases(),
+        );
+    }
+
+    /**
+     * @return class-string<BackedEnum> | null
+     */
+    protected function getBackedEnum(): ?string
+    {
+        if (blank($enum = $this->getEnum())) {
+            return null;
+        }
+
+        if (! is_a($enum, BackedEnum::class, allow_string: true)) {
+            throw new InvalidArgumentException("Enum [$enum] must be a backed enum.");
+        }
+
+        return $enum;
     }
 
     /**

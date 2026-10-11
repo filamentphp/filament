@@ -25,7 +25,7 @@ class SetUpEmailAuthenticationAction
     public static function make(EmailAuthentication $emailAuthentication): Action
     {
         $rateLimitAuthenticationAttempt = static function (string $codeStatePath): void {
-            $rateLimitingKey = 'filament-set-up-email-authentication:' . Filament::auth()->id();
+            $rateLimitingKey = 'filament-set-up-email-authentication:' . Filament::getUserScopedAuthIdentifier();
 
             if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
                 throw ValidationException::withMessages([

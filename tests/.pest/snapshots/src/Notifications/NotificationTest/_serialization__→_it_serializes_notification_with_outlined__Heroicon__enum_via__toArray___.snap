@@ -6,6 +6,7 @@
     "duration": 6000,
     "icon": "heroicon-o-check-circle",
     "iconColor": null,
+    "iconSize": null,
     "status": null,
     "title": "Test Title",
     "view": null,

@@ -138,6 +138,8 @@ class Action extends ViewComponent implements Arrayable
 
     protected ?Action $parentAction = null;
 
+    protected ?Action $mountedParentAction = null;
+
     final public function __construct(?string $name)
     {
         $this->name($name);
@@ -569,6 +571,7 @@ class Action extends ViewComponent implements Arrayable
             'livewire' => [$this->getLivewire()],
             'model' => [$this->getModel()],
             'mountedActions' => [$this->getLivewire()->getMountedActions()],
+            'parentAction' => [$this->mountedParentAction ?? $this->getParentAction()],
             'record' => [$this->getRecord()],
             'selectedRecords', 'records' => [$this->getIndividuallyAuthorizedSelectedRecords()],
             'selectedRecordsQuery', 'recordsQuery' => [$this->getSelectedRecordsQuery()],
@@ -921,7 +924,7 @@ class Action extends ViewComponent implements Arrayable
         // Match `ComponentAttributeBag::__toString()` attribute escaping (only `"` → `\"`).
         $handler = str_replace('"', '\\"', $handler);
 
-        return "<button type=\"button\" wire:loading.attr=\"disabled\" wire:click=\"{$handler}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}<span class=\"fi-link-label\">{$label}</span></button>";
+        return "<button type=\"button\" wire:loading.attr=\"aria-disabled\" wire:loading.class=\"fi-disabled\" wire:click=\"{$handler}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}<span class=\"fi-link-label\">{$label}</span></button>";
     }
 
     protected function canRenderOptimizedGrouped(): bool
@@ -1003,7 +1006,7 @@ class Action extends ViewComponent implements Arrayable
         // Match `ComponentAttributeBag::__toString()` attribute escaping (only `"` → `\"`).
         $handlerEscaped = str_replace('"', '\\"', $handler);
 
-        return "<button type=\"button\" wire:loading.attr=\"disabled\" wire:click=\"{$handlerEscaped}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
+        return "<button type=\"button\" wire:loading.attr=\"aria-disabled\" wire:loading.class=\"fi-disabled\" wire:click=\"{$handlerEscaped}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
     }
 
     protected function toBadgeHtml(): string
@@ -1204,5 +1207,12 @@ class Action extends ViewComponent implements Arrayable
     public function getParentAction(): ?Action
     {
         return $this->parentAction;
+    }
+
+    public function mountedParentAction(?Action $action): static
+    {
+        $this->mountedParentAction = $action;
+
+        return $this;
     }
 }

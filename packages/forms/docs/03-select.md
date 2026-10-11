@@ -44,6 +44,14 @@ Select::make('status')
 
 <AutoScreenshot name="forms/fields/select/javascript" alt="JavaScript select" version="6.x" />
 
+### Using the keyboard
+
+You can open the JavaScript select using `Enter`, `Space`, or an arrow key. Use `ArrowUp` and `ArrowDown` to highlight an enabled option, then `Enter` to select it. Highlighting an option does not change the selected value.
+
+When search is disabled, you can also use `Home` and `End` to highlight the first and last enabled options, type an option's initial characters to highlight it, or use `Space` to select it. When search is enabled, focus stays in the search input while you navigate options, and text-editing keys retain their usual behavior.
+
+Press `Escape` to close the options and return to the select button. Inside a modal, this closes only the select; pressing `Escape` again can close the modal. `Tab` and `Shift+Tab` follow the normal tab order and close the options without selecting the highlighted option. You can tab to a selected item's remove button and press `Enter` or `Space` to remove it.
+
 ## Searching options
 
 You may enable a search input to allow easier access to many options, using the `searchable()` method:
@@ -613,6 +621,10 @@ MorphToSelect::make('commentable')
             ->modifyOptionsQueryUsing(fn (Builder $query) => $query->whereBelongsTo($this->team)),
     ])
 ```
+
+<Aside variant="warning">
+    If `$team` is stored in a public Livewire property, Filament does not re-query or authorize it on later requests. Re-query and authorize the team before using it to scope the options. See [Eloquent model restoration in Livewire](../../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+</Aside>
 
 <UtilityInjection set="formFields" version="6.x" extras="Eloquent query builder;;Illuminate\Database\Eloquent\Builder;;$query;;The query builder to modify.">The `modifyOptionsQueryUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 

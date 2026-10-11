@@ -1,13 +1,18 @@
 <?php
 
 use Filament\Actions\Testing\TestAction;
+use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Auth\Pages\Login;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\OneTimeCodeInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Validated;
+use Illuminate\Cache\ArrayStore;
+use Illuminate\Cache\Lock;
+use Illuminate\Cache\NullStore;
 use Illuminate\Cache\Repository;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Support\Arr;
@@ -28,6 +33,8 @@ beforeEach(function (): void {
 
 describe('authentication flow', function (): void {
     it('can render the challenge form after valid login credentials are successfully used', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
         $userToAuthenticate = User::factory()
             ->hasAppAuthentication()
             ->create();
@@ -40,10 +47,18 @@ describe('authentication flow', function (): void {
             ->assertSet('userUndertakingMultiFactorAuthentication', null)
             ->call('authenticate')
             ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
-            ->assertNoRedirect();
+            ->assertNoRedirect()
+            ->assertFormFieldExists(
+                "{$appAuthentication->getId()}.code",
+                'multiFactorChallengeForm',
+                fn (OneTimeCodeInput $field): bool => $field->shouldSubmitOnCompletion(),
+            );
 
         expect(decrypt($livewire->instance()->userUndertakingMultiFactorAuthentication))
-            ->toBe($userToAuthenticate->getKey());
+            ->toBe([
+                'identifier' => $userToAuthenticate->getAuthIdentifier(),
+                'userKey' => Filament::getUserScopedAuthIdentifier($userToAuthenticate),
+            ]);
 
         $this->assertGuest();
     });
@@ -663,7 +678,7 @@ describe('recovery codes', function (): void {
         $this->assertGuest();
     });
 
-    it('will not preserve a recovery code when a different code is used concurrently', function (): void {
+    it('will not preserve a recovery code when a stale user instance uses a different code', function (): void {
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
         $userToAuthenticate = User::factory()
@@ -685,7 +700,7 @@ describe('recovery codes', function (): void {
         expect($appAuthentication->verifyRecoveryCode($recoveryCodes[0], $userToAuthenticate->fresh()))->toBeFalse();
     });
 
-    it('will not allow the same recovery code to authenticate two concurrent requests', function (): void {
+    it('will not allow the same recovery code to authenticate with a stale user instance', function (): void {
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
         $userToAuthenticate = User::factory()
@@ -699,6 +714,40 @@ describe('recovery codes', function (): void {
 
         expect($appAuthentication->verifyRecoveryCode($code, $userInstanceA))->toBeTrue();
         expect($appAuthentication->verifyRecoveryCode($code, $userInstanceB))->toBeFalse();
+    });
+
+    it('consumes a recovery code when the cache store returns `NoLock`', function (): void {
+        Cache::extend('no-lock-recovery', fn (): Repository => new Repository(new NullStore));
+        config()->set('cache.default', 'no-lock-recovery');
+        config()->set('cache.stores.no-lock-recovery', ['driver' => 'no-lock-recovery']);
+
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication($recoveryCodes = $appAuthentication->generateRecoveryCodes())
+            ->create();
+
+        expect($appAuthentication->verifyRecoveryCode($recoveryCodes[0], $userToAuthenticate))->toBeTrue()
+            ->and($appAuthentication->verifyRecoveryCode($recoveryCodes[0], $userToAuthenticate))->toBeFalse();
+    });
+
+    it('does not verify a recovery code when `save()` is cancelled', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication($recoveryCodes = $appAuthentication->generateRecoveryCodes())
+            ->create();
+
+        $storedRecoveryCodes = $userToAuthenticate->getAppAuthenticationRecoveryCodes();
+
+        Event::listen('eloquent.saving: ' . User::class, static function (User $user) use ($userToAuthenticate): ?bool {
+            return ($user->getKey() === $userToAuthenticate->getKey()) ? false : null;
+        });
+
+        expect(fn (): bool => $appAuthentication->verifyRecoveryCode($recoveryCodes[0], $userToAuthenticate))
+            ->toThrow(RuntimeException::class, 'Failed to save app authentication recovery codes.');
+
+        expect($userToAuthenticate->fresh()->getAppAuthenticationRecoveryCodes())->toBe($storedRecoveryCodes);
     });
 });
 
@@ -893,8 +942,46 @@ describe('security', function (): void {
         expect($appAuthentication->verifyCode($futureCode, $secret, shouldPreventCodeReuse: true))->toBeFalse();
     });
 
-    it('can still verify TOTP codes when the cache store does not support locks', function (): void {
-        Cache::swap(new Repository(new NonLockingCacheStore));
+    it('can prevent sequential TOTP code reuse when the cache store does not support locks', function (): void {
+        Cache::extend('non-locking', fn (): Repository => new Repository(new NonLockingCacheStore));
+        config()->set('cache.stores.non-locking', ['driver' => 'non-locking']);
+        config()->set('cache.default', 'non-locking');
+
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        $secret = $appAuthentication->getSecret($userToAuthenticate);
+        $code = $appAuthentication->getCurrentCode($userToAuthenticate);
+
+        expect($appAuthentication->verifyCode($code, $secret, shouldPreventCodeReuse: true))->toBeTrue()
+            ->and($appAuthentication->verifyCode($code, $secret, shouldPreventCodeReuse: true))->toBeFalse();
+    });
+
+    it('does not verify a TOTP code when the replay watermark cannot be persisted', function (): void {
+        Cache::extend('failed-write', fn (): Repository => new Repository(new FailedWriteCacheStore));
+        config()->set('cache.default', 'failed-write');
+        config()->set('cache.stores.failed-write', ['driver' => 'failed-write']);
+
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        expect($appAuthentication->verifyCode(
+            $appAuthentication->getCurrentCode($userToAuthenticate),
+            $appAuthentication->getSecret($userToAuthenticate),
+            shouldPreventCodeReuse: true,
+        ))->toBeFalse();
+    });
+
+    it('does not verify a TOTP code when cache lock ownership is lost', function (): void {
+        Cache::extend('lost-lock-ownership', fn (): Repository => new Repository(new LostLockOwnershipCacheStore));
+        config()->set('cache.default', 'lost-lock-ownership');
+        config()->set('cache.stores.lost-lock-ownership', ['driver' => 'lost-lock-ownership']);
 
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
@@ -904,15 +991,72 @@ describe('security', function (): void {
 
         $secret = $appAuthentication->getSecret($userToAuthenticate);
 
-        $google2FA = app(Google2FA::class);
+        expect($appAuthentication->verifyCode(
+            $appAuthentication->getCurrentCode($userToAuthenticate),
+            $secret,
+            shouldPreventCodeReuse: true,
+        ))->toBeFalse()
+            ->and(Cache::get('filament.app_authentication_codes.' . md5($secret)))->toBeNull();
+    });
 
+    it('does not move the TOTP replay watermark backwards after a cache lock expires', function (): void {
+        $google2FA = new OverlappingGoogle2FA;
+        $appAuthentication = new AppAuthentication($google2FA);
+        $concurrentAppAuthentication = new AppAuthentication(new OverlappingGoogle2FA);
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        $secret = $appAuthentication->getSecret($userToAuthenticate);
         $timestamp = $google2FA->getTimestamp();
-        $earlierCode = $google2FA->oathTotp($secret, $timestamp - 4);
-        $currentCode = $google2FA->oathTotp($secret, $timestamp);
+        $olderCode = $google2FA->oathTotp($secret, $timestamp);
+        $newerCode = $google2FA->oathTotp($secret, $timestamp + 2);
+        $newerCodeWasVerified = null;
 
-        expect($appAuthentication->verifyCode($currentCode, $secret, shouldPreventCodeReuse: true))->toBeTrue();
-        expect($appAuthentication->verifyCode($currentCode, $secret, shouldPreventCodeReuse: true))->toBeFalse();
-        expect($appAuthentication->verifyCode($earlierCode, $secret, shouldPreventCodeReuse: true))->toBeFalse();
+        $google2FA->beforeVerificationReturns(function () use ($concurrentAppAuthentication, $newerCode, $secret, &$newerCodeWasVerified): void {
+            $this->travel(61)->seconds();
+
+            $newerCodeWasVerified = $concurrentAppAuthentication->verifyCode($newerCode, $secret, shouldPreventCodeReuse: true);
+        });
+
+        expect($appAuthentication->verifyCode($olderCode, $secret, shouldPreventCodeReuse: true))->toBeFalse()
+            ->and($newerCodeWasVerified)->toBeTrue()
+            ->and($appAuthentication->verifyCode($newerCode, $secret, shouldPreventCodeReuse: true))->toBeFalse();
+    });
+
+    it('does not consume a recovery code when cache lock ownership is lost', function (): void {
+        Cache::extend('lost-lock-ownership', fn (): Repository => new Repository(new LostLockOwnershipCacheStore));
+        config()->set('cache.default', 'lost-lock-ownership');
+        config()->set('cache.stores.lost-lock-ownership', ['driver' => 'lost-lock-ownership']);
+
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication($recoveryCodes = $appAuthentication->generateRecoveryCodes())
+            ->create();
+
+        $storedRecoveryCodes = $userToAuthenticate->getAppAuthenticationRecoveryCodes();
+
+        expect($appAuthentication->verifyRecoveryCode(Arr::first($recoveryCodes), $userToAuthenticate))->toBeFalse()
+            ->and($userToAuthenticate->fresh()->getAppAuthenticationRecoveryCodes())->toBe($storedRecoveryCodes);
+    });
+
+    it('will not allow a TOTP code accepted with a smaller `codeWindow()` to be replayed by a larger `codeWindow()`', function (): void {
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        $shortWindowAppAuthentication = AppAuthentication::make()->codeWindow(0);
+        $largeWindowAppAuthentication = AppAuthentication::make()->codeWindow(8);
+        $secret = $shortWindowAppAuthentication->getSecret($userToAuthenticate);
+        $code = $shortWindowAppAuthentication->getCurrentCode($userToAuthenticate);
+
+        expect($shortWindowAppAuthentication->verifyCode($code, $secret, shouldPreventCodeReuse: true))->toBeTrue();
+
+        $this->travel(61)->seconds();
+
+        expect($largeWindowAppAuthentication->verifyCode($code, $secret, shouldPreventCodeReuse: true))->toBeFalse();
     });
 });
 
@@ -996,4 +1140,72 @@ class NonLockingCacheStore implements Store
     {
         return '';
     }
+}
+
+class LostLockOwnershipCacheStore extends ArrayStore
+{
+    public function lock($name, $seconds = 0, $owner = null): Lock
+    {
+        return new LostLockOwnershipCacheLock($name, $seconds, $owner);
+    }
+}
+
+class FailedWriteCacheStore extends ArrayStore
+{
+    public function forever($key, $value): bool
+    {
+        return false;
+    }
+}
+
+class OverlappingGoogle2FA extends Google2FA
+{
+    protected ?Closure $beforeVerificationReturns = null;
+
+    public function getTimestamp(): int
+    {
+        return (int) (now()->getTimestamp() / $this->keyRegeneration);
+    }
+
+    public function beforeVerificationReturns(Closure $callback): void
+    {
+        $this->beforeVerificationReturns = $callback;
+    }
+
+    public function verifyKeyNewer(
+        #[SensitiveParameter]
+        $secret,
+        #[SensitiveParameter]
+        $key,
+        $oldTimestamp,
+        $window = null,
+        $timestamp = null,
+    ) {
+        $verifiedTimestamp = parent::verifyKeyNewer($secret, $key, $oldTimestamp, $window, $timestamp);
+        $callback = $this->beforeVerificationReturns;
+        $this->beforeVerificationReturns = null;
+        $callback?->__invoke();
+
+        return $verifiedTimestamp;
+    }
+}
+
+class LostLockOwnershipCacheLock extends Lock
+{
+    public function acquire(): bool
+    {
+        return true;
+    }
+
+    public function release(): bool
+    {
+        return true;
+    }
+
+    protected function getCurrentOwner(): ?string
+    {
+        return 'different-owner';
+    }
+
+    public function forceRelease(): void {}
 }

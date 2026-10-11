@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Actions\AssociateAction;
+use Filament\Actions\Enums\ActionStatus;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Select;
 use Filament\Tests\Fixtures\Models\Post;
@@ -16,6 +17,47 @@ use Filament\Tests\Panels\Resources\TestCase;
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
+it('fails when a model event vetoes association without skipping other records', function (string $event, bool $another): void {
+    $user = User::factory()->create();
+    [$vetoedPost, $allowedPost, $unselectedPost] = Post::factory()->count(3)->create(['author_id' => null])->all();
+    $statuses = collect();
+
+    Post::{$event}(static fn (Post $post): bool => ! $post->is($vetoedPost));
+
+    AssociateAction::configureUsing(
+        static fn (AssociateAction $action) => $action->after(static function (AssociateAction $action) use ($statuses): void {
+            $statuses->push($action->getStatus());
+        }),
+        during: static fn () => livewire(PostsWithPreloadedAssociateRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->callAction(TestAction::make(AssociateAction::class)->table()->arguments(['another' => $another]), [
+                'recordId' => [$vetoedPost->getKey(), $allowedPost->getKey()],
+            ])
+            ->assertHasNoFormErrors()
+            ->assertNotNotified(),
+    );
+
+    expect($allowedPost->refresh()->author_id)->toBe($user->id)
+        ->and($vetoedPost->refresh()->author_id)->toBeNull()
+        ->and($unselectedPost->refresh()->author_id)->toBeNull()
+        ->and($statuses->all())->toBe([ActionStatus::Failure]);
+})->with(['saving', 'updating'])->with([false, true]);
+
+it('preserves a custom `using()` callback without a return value when associating', function (): void {
+    $user = User::factory()->create();
+    $post = Post::factory()->create(['author_id' => null]);
+
+    AssociateAction::configureUsing(
+        static fn (AssociateAction $action) => $action->using(static function (Post $record) use ($user): void {
+            $record->update(['author_id' => $user->id]);
+        }),
+        during: static fn () => livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->callAction(TestAction::make(AssociateAction::class)->table(), ['recordId' => $post->getKey()])
+            ->assertNotified(),
+    );
+
+    expect($post->refresh()->author_id)->toBe($user->id);
+});
 
 describe('associating records', function (): void {
     it('can render `AssociateAction`', function (): void {

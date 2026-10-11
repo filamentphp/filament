@@ -616,7 +616,7 @@ In this example, if the `fourth` action is run, the `second` action is canceled,
 
 ## Accessing information about parent actions from a child
 
-You can access the instances of parent actions and their raw data and arguments by injecting the `$mountedActions` array in a function used by your nested action. For example, to get the top-most parent action currently active on the page, you can use `$mountedActions[0]`. From there, you can get the raw data for that action by calling `$mountedActions[0]->getRawData()`. Please be aware that raw data is not validated since the action has not been submitted yet:
+You can access the parent action instance by injecting `$parentAction` into the `action()` or `mountUsing()` function of your nested action. From there, you can get the raw data for that action by calling `getRawData()`. Please be aware that raw data is not validated since the action has not been submitted yet:
 
 ```php
 use Filament\Actions\Action;
@@ -632,17 +632,17 @@ Action::make('first')
     ->extraModalFooterActions([
         Action::make('second')
             ->requiresConfirmation()
-            ->action(function (array $mountedActions) {
-                dd($mountedActions[0]->getRawData());
-            
+            ->action(function (Action $parentAction) {
+                dd($parentAction->getRawData());
+
                 // ...
             }),
     ])
 ```
 
-You can do similar with the current arguments for a parent action, with the `$mountedActions[0]->getArguments()` method.
+You can do similar with the current arguments for a parent action, with the `$parentAction->getArguments()` method.
 
-Even if you have multiple layers of nesting, the `$mountedActions` array will contain every action that is currently active, so you can access information about them:
+If you need to access an action other than the direct parent, you can inject the `$mountedActions` array, which contains every action that is currently active:
 
 ```php
 use Filament\Actions\Action;
@@ -688,6 +688,87 @@ Action::make('first')
                             }),
                     ]),
             ]),
+    ])
+```
+
+### Validating the data of a parent action
+
+`getRawData()` returns the current unvalidated data. When a nested action relies on that data being valid, use `getValidatedData()` instead, which validates it with the rules of the action it belongs to and returns the result:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+
+Action::make('first')
+    ->schema([
+        TextInput::make('foo')
+            ->required(),
+    ])
+    ->action(function () {
+        // ...
+    })
+    ->extraModalFooterActions([
+        Action::make('second')
+            ->action(function (Action $parentAction) {
+                $data = $parentAction->getValidatedData();
+
+                // ...
+            }),
+    ])
+```
+
+If the parent action's schema is invalid, a `ValidationException` is thrown. When the nested action has no modal of its own, the parent action's modal reports the errors as it would for any other failed validation. When it does have a modal, call `getValidatedData()` from `mountUsing()` so that the errors are reported before the nested action's modal opens:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Schema;
+
+Action::make('second')
+    ->schema([
+        // ...
+    ])
+    ->mountUsing(function (Action $parentAction, Schema $schema) {
+        $data = $parentAction->getValidatedData();
+
+        // ...
+
+        $schema->fill();
+    })
+```
+
+<Aside variant="warning">
+    Reading an action's data must not have the side effects of submitting it, so the hooks that run before dehydration are skipped, as they are for the repeater's `getItemState()`. A newly uploaded file can therefore remain a `TemporaryUploadedFile` instead of becoming a stored path. `mutateDataUsing()` is not applied either, and the action's `beforeFormValidated()` and `afterFormValidated()` hooks do not run.
+</Aside>
+
+### Filling in the data of a parent action
+
+A nested action can write into the schema data of a mounted parent action, using `fillData()`. Only keys for fields in that action's schema are filled, and other keys are ignored. The data is hydrated by the action's schema, so nested state and dot-notation keys land where the action reads them, and the action validates it with its own rules when it is submitted:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+
+Action::make('createInvoice')
+    ->schema([
+        TextInput::make('title')
+            ->required(),
+        TextInput::make('reference')
+            ->required(),
+    ])
+    ->action(function (array $data) {
+        // `$data['reference']` is filled in.
+    })
+    ->extraModalFooterActions([
+        Action::make('generateReference')
+            ->schema([
+                TextInput::make('prefix')
+                    ->required(),
+            ])
+            ->action(function (array $data, Action $parentAction) {
+                $parentAction->fillData([
+                    'reference' => "{$data['prefix']}-123",
+                ]);
+            }),
     ])
 ```
 

@@ -166,16 +166,12 @@ trait HasColumnManager
 
     public function getTableColumnsSessionKey(): string
     {
-        $table = md5($this::class);
-
-        return "tables.{$table}_columns";
+        return $this->getTableSessionKey('columns');
     }
 
     public function getHasReorderedTableColumnsSessionKey(): string
     {
-        $table = md5($this::class);
-
-        return "tables.{$table}_has_reordered_columns";
+        return $this->getTableSessionKey('has_reordered_columns');
     }
 
     /**

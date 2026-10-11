@@ -45,7 +45,7 @@ class SetUpAppAuthenticationAction
     public static function make(AppAuthentication $appAuthentication): Action
     {
         $rateLimitAuthenticationAttempt = static function (string $passwordStatePath): void {
-            $rateLimitingKey = 'filament-set-up-app-authentication:' . Filament::auth()->id();
+            $rateLimitingKey = 'filament-set-up-app-authentication:' . Filament::getUserScopedAuthIdentifier();
 
             if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
                 throw ValidationException::withMessages([
@@ -89,7 +89,7 @@ class SetUpAppAuthenticationAction
                         ...($appAuthentication->isRecoverable()
                             ? ['recoveryCodes' => $appAuthentication->generateRecoveryCodes()]
                             : []),
-                        'userId' => Filament::auth()->id(),
+                        'userKey' => Filament::getUserScopedAuthIdentifier(),
                     ]),
                 ]);
             })
@@ -211,7 +211,7 @@ class SetUpAppAuthenticationAction
 
                 $encrypted = decrypt($arguments['encrypted']);
 
-                if ($user->getAuthIdentifier() !== $encrypted['userId']) {
+                if (Filament::getUserScopedAuthIdentifier($user) !== $encrypted['userKey']) {
                     // Avoid encrypted arguments being passed between users by verifying that the authenticated
                     // user is the same as the user that the encrypted arguments were issued for.
                     return;

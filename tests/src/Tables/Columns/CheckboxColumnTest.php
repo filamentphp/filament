@@ -2,6 +2,8 @@
 
 namespace Filament\Tests\Tables\Columns;
 
+use DOMDocument;
+use DOMXPath;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -9,8 +11,11 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -39,6 +44,41 @@ it('can display unchecked state', function (): void {
         ->assertSuccessful();
 });
 
+it('injects boolean relationship state into `tooltip()`', function (mixed $state, string $expectedState): void {
+    $author = User::factory()->create(['json' => ['is_active' => $state]]);
+    $post = Post::factory()->create(['author_id' => $author->getKey()]);
+
+    livewire(TestTableWithRelationshipCheckboxColumn::class)
+        ->assertSuccessful()
+        ->assertSee("bool-{$expectedState}-{$author->getKey()}-{$post->getKey()}", escape: false);
+})->with([
+    'null' => [null, 'false'],
+    'false' => [false, 'false'],
+    'true' => [true, 'true'],
+    'zero' => [0, 'false'],
+    'one' => [1, 'true'],
+]);
+
+it('renders one reactive tooltip with a configured fallback', function (string | Htmlable | null $tooltip, string $expectedFallback): void {
+    $post = Post::factory()->create();
+    $column = livewire(TestTableWithCheckboxColumn::class)->instance()->getTable()->getColumn('is_published');
+    $html = $column->record($post)->tooltip($tooltip)->toEmbeddedHtml();
+
+    $document = new DOMDocument;
+    $document->loadHTML($html);
+    $xpath = new DOMXPath($document);
+    $expression = $xpath->query('//input[@type="checkbox"]')->item(0)->getAttribute('x-tooltip');
+
+    expect(substr_count($html, 'x-tooltip='))->toBe(1)
+        ->and($expression)->toContain('error === undefined ? ' . $expectedFallback)
+        ->toContain('content: error')
+        ->toContain('allowHTML: false');
+})->with([
+    'no tooltip' => [null, 'false'],
+    'plain text' => ['Publish this post', '{'],
+    'HTML' => [new HtmlString('<strong>Publish this post</strong>'), '{'],
+]);
+
 class TestTableWithCheckboxColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
@@ -52,6 +92,28 @@ class TestTableWithCheckboxColumn extends Component implements HasActions, HasSc
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
                 Tables\Columns\CheckboxColumn::make('is_published'),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithRelationshipCheckboxColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\CheckboxColumn::make('author.json.is_active')
+                    ->tooltip(static fn (mixed $state, User $relatedRecord, Post $record): string => get_debug_type($state) . '-' . ($state ? 'true' : 'false') . "-{$relatedRecord->getKey()}-{$record->getKey()}"),
             ]);
     }
 

@@ -5,6 +5,7 @@ namespace Filament\Infolists\Components\Concerns;
 use Closure;
 use Filament\Schemas\Components\Component;
 use Filament\Support\Contracts\HasColor as ColorInterface;
+use Illuminate\Database\Eloquent\Model;
 
 trait HasColor
 {
@@ -28,15 +29,21 @@ trait HasColor
      */
     public function colors(array | Closure $colors): static
     {
-        $this->color(function (Component $component, $state) use ($colors) {
-            $colors = $component->evaluate($colors);
+        $this->color(function (Component $component, $state, ?Model $relatedRecord) use ($colors) {
+            $colors = $component->evaluate($colors, [
+                'state' => $state,
+                'relatedRecord' => $relatedRecord,
+            ]);
 
             $color = null;
 
             foreach ($colors as $conditionalColor => $condition) {
                 if (is_numeric($conditionalColor)) {
                     $color = $condition;
-                } elseif ($condition instanceof Closure && $component->evaluate($condition)) {
+                } elseif ($condition instanceof Closure && $component->evaluate($condition, [
+                    'state' => $state,
+                    'relatedRecord' => $relatedRecord,
+                ])) {
                     $color = $conditionalColor;
                 } elseif ($condition === $state) {
                     $color = $conditionalColor;
@@ -52,10 +59,11 @@ trait HasColor
     /**
      * @return string | array<string> | null
      */
-    public function getColor(mixed $state): string | array | null
+    public function getColor(mixed $state, ?Model $relatedRecord = null): string | array | null
     {
         $color = $this->evaluate($this->color, [
             'state' => $state,
+            'relatedRecord' => $relatedRecord,
         ]);
 
         if ($color === false) {

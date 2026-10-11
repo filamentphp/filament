@@ -104,6 +104,14 @@ return [
 
         ],
 
+        'block_picker' => [
+
+            'no_search_results_message' => 'Geen blokken gevonden.',
+
+            'search_prompt' => 'Blokken zoeken',
+
+        ],
+
     ],
 
     'checkbox_list' => [

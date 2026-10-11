@@ -51,7 +51,7 @@ return [
 
             'searching_message' => 'Searching...',
 
-            'search_prompt' => 'Start typing to search...',
+            'search_prompt' => 'Start typing to search',
 
         ],
 

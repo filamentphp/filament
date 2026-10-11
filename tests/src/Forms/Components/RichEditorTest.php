@@ -5,9 +5,12 @@ use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
+use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Forms\RichEditor\MinimalControlsCalloutBlock;
 use Filament\Tests\Fixtures\Forms\RichEditor\PluginWithFileAttachmentProvider;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
@@ -53,6 +56,27 @@ test('fields can be required', function (): void {
 });
 
 describe('toolbar buttons', function (): void {
+    test('uses `FormsIconAlias` constants for all built-in tools', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content'),
+            ])
+            ->getComponents()[0];
+
+        $iconAliases = array_values(array_filter(
+            (new ReflectionClass(FormsIconAlias::class))->getConstants(),
+            static fn (string $name): bool => str_starts_with($name, 'COMPONENTS_RICH_EDITOR_TOOLBAR_'),
+            ARRAY_FILTER_USE_KEY,
+        ));
+        $toolIconAliases = array_values(array_map(
+            static fn (RichEditorTool $tool): ?string => $tool->getIconAlias(),
+            $richEditor->getTools(),
+        ));
+
+        expect($toolIconAliases)->toEqualCanonicalizing($iconAliases);
+    });
+
     test('can get default toolbar buttons using `getDefaultToolbarButtons()`', function (): void {
         $richEditor = Schema::make(Livewire::make())
             ->statePath('data')
@@ -72,6 +96,22 @@ describe('toolbar buttons', function (): void {
             ->and($defaultButtons[3])->toEqual(['blockquote', 'codeBlock', 'bulletList', 'orderedList'])
             ->and($defaultButtons[4])->toEqual(['table', 'attachFiles'])
             ->and($defaultButtons[5])->toEqual(['undo', 'redo']);
+    });
+
+    test('can get default floating toolbars using `getDefaultFloatingToolbars()`', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content'),
+            ])
+            ->getComponents()[0];
+
+        expect($richEditor->getDefaultFloatingToolbars())
+            ->toHaveKey('grid', [
+                'gridAddColumnBefore', 'gridAddColumnAfter', 'gridDeleteColumn',
+                'gridDelete',
+            ])
+            ->toHaveKey('table');
     });
 
     test('can overwrite toolbar buttons array using `toolbarButtons()`', function (): void {
@@ -315,6 +355,30 @@ describe('toolbar buttons', function (): void {
 });
 
 describe('file attachments', function (): void {
+    it('stores the server-detected `mimetype`', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->fileAttachmentsDirectory('attachments')
+                    ->fileAttachmentsDisk('public')
+                    ->fileAttachmentsVisibility('private'),
+            ])
+            ->getComponents()[0];
+
+        $file = Mockery::mock(TemporaryUploadedFile::class);
+        $file->shouldReceive('getMimeType')->once()->andReturn('image/png');
+        $file->shouldReceive('store')
+            ->once()
+            ->with('attachments', [
+                'disk' => 'public',
+                'mimetype' => 'image/png',
+            ])
+            ->andReturn('attachments/image.png');
+
+        expect($richEditor->saveUploadedFileAttachment($file))->toBe('attachments/image.png');
+    });
+
     test('`hasFileAttachments()` returns `true` by default', function (): void {
         $richEditor = Schema::make(Livewire::make())
             ->statePath('data')
@@ -780,6 +844,52 @@ it('can set `linkProtocols()`', function (): void {
     expect($editor->getLinkProtocols())->toBe(['https', 'mailto']);
 });
 
+it('returns default link protocols before the editor is attached to a schema', function (): void {
+    expect(RichEditor::make('content')->getLinkProtocols())->toBe([
+        'http',
+        'https',
+        'ftp',
+        'ftps',
+        'mailto',
+        'tel',
+        'callto',
+        'sms',
+        'cid',
+        'xmpp',
+    ]);
+});
+
+it('inherits `linkProtocols()` from the rich content attribute', function (): void {
+    $record = new PostWithRichContent;
+    $record->getRichContentAttribute('content')
+        ->linkProtocols(['https', 'mailto']);
+
+    $editor = Schema::make(Livewire::make())
+        ->model($record)
+        ->components([
+            RichEditor::make('content'),
+        ])
+        ->getComponents()[0];
+
+    expect($editor->getLinkProtocols())->toBe(['https', 'mailto']);
+});
+
+it('can override rich content attribute `linkProtocols()`', function (): void {
+    $record = new PostWithRichContent;
+    $record->getRichContentAttribute('content')
+        ->linkProtocols(['https', 'mailto']);
+
+    $editor = Schema::make(Livewire::make())
+        ->model($record)
+        ->components([
+            RichEditor::make('content')
+                ->linkProtocols(['tel']),
+        ])
+        ->getComponents()[0];
+
+    expect($editor->getLinkProtocols())->toBe(['tel']);
+});
+
 it('can set `textColors()`', function (): void {
     $editor = RichEditor::make('content')
         ->textColors(['red' => '#ff0000', 'blue' => '#0000ff']);
@@ -1040,6 +1150,45 @@ it('can clear `activePanel()` with `null`', function (): void {
     expect($editor->getActivePanel())->toBeNull();
 });
 
+it('keeps optional custom block and sticky features disabled by default and evaluates their conditions', function (string $setter, string $getter): void {
+    $editor = RichEditor::make('content');
+
+    expect($editor->{$getter}())->toBeFalse();
+
+    $editor->{$setter}();
+
+    expect($editor->{$getter}())->toBeTrue();
+
+    $editor->{$setter}(static fn (): bool => false);
+
+    expect($editor->{$getter}())->toBeFalse();
+
+    $editor->{$setter}(false);
+
+    expect($editor->{$getter}())->toBeFalse();
+})->with([
+    '`customBlocksGrid()`' => ['customBlocksGrid', 'hasCustomBlocksGrid'],
+    '`searchableCustomBlocks()`' => ['searchableCustomBlocks', 'hasSearchableCustomBlocks'],
+    '`stickyToolbar()`' => ['stickyToolbar', 'hasStickyToolbar'],
+    '`stickyPanels()`' => ['stickyPanels', 'hasStickyPanels'],
+]);
+
+it('can evaluate and clear `stickyOffset()` without enabling sticky controls', function (): void {
+    $editor = RichEditor::make('content');
+
+    expect($editor->getStickyOffset())->toBeNull();
+
+    $editor->stickyOffset(static fn (): string => '5rem');
+
+    expect($editor->getStickyOffset())->toBe('5rem')
+        ->and($editor->hasStickyToolbar())->toBeFalse()
+        ->and($editor->hasStickyPanels())->toBeFalse();
+
+    $editor->stickyOffset(null);
+
+    expect($editor->getStickyOffset())->toBeNull();
+});
+
 it('returns fluent `$this` from `customTextColors()`', function (): void {
     $editor = RichEditor::make('content');
 
@@ -1258,6 +1407,11 @@ describe('rendering', function (): void {
             ->assertSuccessful();
     });
 
+    it('can render with `minimalCustomBlockControls()`', function (): void {
+        livewire(RenderRichEditorWithMinimalCustomBlockControls::class)
+            ->assertSuccessful();
+    });
+
     it('can render with `noMergeTagSearchResultsMessage()`', function (): void {
         livewire(RenderRichEditorWithNoMergeTagSearchResultsMessage::class)
             ->assertSuccessful();
@@ -1277,6 +1431,76 @@ describe('rendering', function (): void {
         livewire(RenderRichEditorWithPluginDisabledButtons::class)
             ->assertSuccessful();
     });
+});
+
+it('keeps `minimalCustomBlockControls()` opt-in and evaluates and resets its condition', function (): void {
+    $richEditor = RichEditor::make('content')
+        ->container(Schema::make(Livewire::make())->statePath('data'));
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeFalse();
+
+    $richEditor->minimalCustomBlockControls();
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeTrue();
+
+    $richEditor->minimalCustomBlockControls(static fn (): bool => false);
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeFalse();
+
+    $richEditor->minimalCustomBlockControls(static fn (): bool => true);
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeTrue();
+
+    $richEditor->minimalCustomBlockControls(false);
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeFalse();
+});
+
+it('can edit, delete and undo custom blocks with `minimalCustomBlockControls()`', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/rich-editor-minimal-controls-browser-test');
+
+    $minimalEditor = '[data-testid="minimal-controls-editor"]';
+    $customBlock = '[data-testid="rich-editor-custom-block"]';
+    $firstCallout = ':nth-match(' . $minimalEditor . ' ' . $customBlock . '[data-id="callout"], 1)';
+    $secondCallout = ':nth-match(' . $minimalEditor . ' ' . $customBlock . '[data-id="callout"], 2)';
+    $editButton = ' [data-testid="rich-editor-custom-block-edit-button"]';
+    $deleteButton = ' [data-testid="rich-editor-custom-block-delete-button"]';
+
+    $page
+        ->assertVisible($minimalEditor . ' ' . $customBlock . '[data-id="divider"]' . $deleteButton)
+        ->assertNotPresent('[data-testid="disabled-controls-editor"] [data-testid$="-button"]')
+        ->click($minimalEditor . ' .tiptap p >> text=Closing paragraph.')
+        ->click($secondCallout . $editButton)
+        ->assertVisible('[data-testid="minimal-controls-edit-modal"]')
+        ->fill('[data-testid="minimal-controls-message-input"]', 'Updated second callout.')
+        ->click('[data-testid="minimal-controls-edit-modal"] button[type="submit"]')
+        ->assertSeeIn($minimalEditor, 'Updated second callout.')
+        // Keep the deletion outside TipTap's history grouping interval for the edit.
+        ->wait(0.6)
+        ->click($firstCallout . $deleteButton)
+        ->assertCount($minimalEditor . ' ' . $customBlock . '[data-id="callout"]', 1)
+        ->assertScript(<<<'JS'
+            document.activeElement === document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')
+            JS);
+
+    $page->page()->keyDown('Control');
+    $page->page()->keyDown('z');
+    $page->page()->keyUp('z');
+    $page->page()->keyUp('Control');
+
+    $page
+        ->assertCount($minimalEditor . ' ' . $customBlock . '[data-id="callout"]', 2)
+        ->assertSeeIn($minimalEditor, 'First callout.')
+        ->assertSeeIn($minimalEditor, 'Updated second callout.')
+        ->assertNoAccessibilityIssues();
+
+    visit('/rich-editor-minimal-controls-browser-test')
+        ->on()->mobile()
+        ->inDarkMode()
+        ->assertVisible($firstCallout . $editButton)
+        ->assertNoAccessibilityIssues();
 });
 
 describe('custom blocks', function (): void {
@@ -1404,6 +1628,35 @@ describe('custom blocks', function (): void {
             ->getComponents()[0];
 
         expect($richEditor->getCustomBlock('nonexistent'))->toBeNull();
+    });
+
+    it('returns trusted custom block previews from `getCustomBlockPreviewsForJs()`', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks([MinimalControlsCalloutBlock::class]),
+            ])
+            ->getComponents()[0];
+
+        $previews = $richEditor->getCustomBlockPreviewsForJs([
+            [
+                'id' => 'callout',
+                'config' => ['message' => 'Copied callout.'],
+                'key' => 0,
+            ],
+            [
+                'id' => 'unknown',
+                'config' => [],
+                'key' => 1,
+            ],
+        ]);
+
+        expect($previews)->toHaveCount(1);
+        expect($previews[0]['key'])->toBe(0);
+        expect($previews[0]['label'])->toBe('Callout');
+        expect(base64_decode($previews[0]['preview']))->toBe('<p>Copied callout.</p>');
+        expect($previews[0]['shouldApplyProseStylingToPreview'])->toBeFalse();
     });
 
     it('includes `customBlocks` toolbar button when blocks are registered', function (): void {
@@ -1578,18 +1831,725 @@ describe('custom block grouping', function (): void {
 });
 
 it('can render `RichEditor` in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/rich-editor-browser-test')
+    visit('/rich-editor-browser-test')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    visit('/rich-editor-browser-test')
+        ->inDarkMode()
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+});
+
+it('can navigate configured toolbar groups and format selected text using the keyboard', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $editor = '[data-testid="keyboard-rich-editor"]';
+    $content = $editor . ' [role="textbox"]';
+
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/rich-editor-browser-test');
+
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page
+            ->keys($content, 'Shift+Tab')
+            ->assertScript('document.activeElement.dataset.richEditorTool', 'bold')
+            ->keys(':focus', 'ArrowRight')
+            ->assertScript('document.activeElement.dataset.richEditorTool', 'italic')
+            ->keys(':focus', 'End')
+            ->assertScript('document.activeElement.dataset.richEditorTool', 'link')
+            ->keys(':focus', 'ArrowRight')
+            ->assertScript('document.activeElement.dataset.richEditorTool', 'bold')
+            ->keys(':focus', 'Tab')
+            ->assertScript("document.activeElement.matches('{$content}')", true)
+            ->wait(0.1)
+            ->keys(':focus', ['Home', 'Control+Shift+ArrowRight'])
+            ->assertScript('window.getSelection().toString()', 'Alpha')
+            ->assertScript("Alpine.\$data(document.querySelector('{$content}')).\$getEditor().state.selection.toJSON()", ['type' => 'text', 'anchor' => 1, 'head' => 6])
+            ->keys(':focus', 'Control+b')
+            ->assertSeeIn($editor . ' strong', 'Alpha')
+            ->keys(':focus', 'Control+b')
+            ->assertMissing($editor . ' strong')
+            ->keys(':focus', 'Shift+Tab')
+            ->keys(':focus', 'Enter')
+            ->assertSeeIn($editor . ' strong', 'Alpha')
+            ->assertAttribute($editor . ' [data-rich-editor-toolbar="main"] [data-rich-editor-tool="bold"]', 'aria-pressed', 'true')
+            ->assertScript("document.activeElement.matches('{$content}')", true)
+            ->wait(0.1)
+            ->keys(':focus', 'Shift+Tab')
+            ->keys(':focus', ['ArrowRight', 'ArrowRight', 'ArrowDown'])
+            ->assertScript('document.activeElement.getAttribute(\'role\')', 'menuitemcheckbox')
+            ->assertAttribute(':focus', 'aria-checked', 'true')
+            ->keys(':focus', 'ArrowDown')
+            ->assertAttribute(':focus', 'aria-disabled', 'true')
+            ->keys(':focus', 'Enter')
+            ->assertDontSeeIn($editor, 'Unexpected text')
+            ->assertAttribute($editor . ' [data-rich-editor-tool^="Formatting"]', 'data-rich-editor-tool', 'Formatting "advanced"')
+            ->assertAttribute($editor . ' [data-rich-editor-tool^="Formatting"]', 'aria-expanded', 'true')
+            ->assertScript("document.querySelector('{$editor} .fi-dropdown-panel').getAnimations({ subtree: true }).length", 0)
+            ->assertNoAccessibilityIssues()
+            ->keys(':focus', ['ArrowDown', 'Enter'])
+            ->assertSeeIn($editor . ' strong em', 'Alpha')
+            ->assertScript("document.activeElement.matches('{$content}')", true)
+            ->assertAttribute($editor . ' [data-rich-editor-tool^="Formatting"]', 'aria-expanded', 'false')
+            ->wait(0.1)
+            ->keys(':focus', 'Shift+Tab')
+            ->keys(':focus', ['ArrowRight', 'Enter'])
+            ->assertSeeIn($editor . ' u', 'Alpha')
+            ->assertAttribute($editor . ' [data-rich-editor-tool^="customUnderline"]', 'data-rich-editor-tool', 'customUnderline"advanced')
+            ->assertAttribute($editor . ' [data-rich-editor-tool^="customUnderline"]', 'aria-pressed', 'true')
+            ->wait(0.1)
+            ->keys(':focus', 'Shift+Tab')
+            ->keys(':focus', ['ArrowLeft', 'ArrowDown'])
+            ->assertScript('document.activeElement.getAttribute(\'role\')', 'menuitemcheckbox')
+            ->assertAttribute($editor . ' [data-rich-editor-tool^="Formatting"]', 'aria-expanded', 'true')
+            ->assertScript('document.getAnimations().filter(animation => animation.playState === "running").length', 0)
+            ->assertCount('[role="tooltip"]:visible', 0)
+            ->keys(':focus', 'Escape')
+            ->assertScript('document.activeElement.dataset.richEditorTool', 'Formatting "advanced"')
+            ->assertAttribute($editor . ' [data-rich-editor-tool^="Formatting"]', 'aria-expanded', 'false')
+            ->wait(0.1)
+            ->keys(':focus', 'Escape')
+            ->assertCount('[role="tooltip"]:visible', 0)
+            ->keys(':focus', 'Escape')
+            ->assertScript("document.activeElement.matches('{$content}')", true)
+            ->wait(0.1)
+            ->keys(':focus', 'Shift+Tab')
+            ->keys(':focus', 'ArrowDown')
+            ->assertScript('document.activeElement.getAttribute(\'role\')', 'menuitemcheckbox')
+            ->assertAttribute($editor . ' [data-rich-editor-tool^="Formatting"]', 'aria-expanded', 'true')
+            ->assertScript('document.getAnimations().filter(animation => animation.playState === "running").length', 0)
+            ->keys(':focus', 'Tab')
+            ->assertScript("document.activeElement.matches('{$content}')", true)
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
+    }
+});
 
-        visit('/rich-editor-browser-test')
-            ->inDarkMode()
+it('can tab into a toolbar after its editor is revealed and navigate in `rtl`', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $editor = '[data-testid="revealed-rich-editor"]';
+    $content = $editor . ' [role="textbox"]';
+
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/rich-editor-browser-test');
+
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page->assertPresent($content);
+        $page->script("Alpine.\$data(document.querySelector('{$editor}')).isVisible = true; document.querySelector('{$editor}').dir = 'rtl'");
+
+        $page
+            ->assertPresent($editor . ' [role="toolbar"] [tabindex="0"]')
+            ->keys($content, 'Shift+Tab')
+            ->assertScript('document.activeElement.dataset.richEditorTool', 'italic')
+            ->keys(':focus', 'ArrowLeft')
+            ->assertScript('document.activeElement.dataset.richEditorTool', 'bold')
+            ->keys(':focus', 'ArrowRight')
+            ->assertScript('document.activeElement.dataset.richEditorTool', 'italic')
+            ->keys(':focus', 'End')
+            ->assertScript('document.activeElement.dataset.richEditorTool', 'bold')
+            ->keys(':focus', 'Home')
+            ->assertScript('document.activeElement.dataset.richEditorTool', 'italic')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
-    });
+    }
+});
+
+it('can reach both grid and table floating controls from a nested selection', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $editor = '[data-testid="nested-rich-editor"]';
+
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/rich-editor-browser-test');
+
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page
+            ->click($editor . ' td:first-child p')
+            ->keys(':focus', 'Alt+F10')
+            ->assertScript('document.activeElement.dataset.richEditorTool', 'gridAddColumnBefore')
+            ->keys(':focus', 'Alt+F10')
+            ->assertScript('document.activeElement.dataset.richEditorTool', 'tableAddColumnBefore')
+            ->keys(':focus', ['ArrowRight', 'ArrowRight', 'ArrowRight', 'ArrowRight', 'Enter'])
+            ->assertCount($editor . ' tr', 2)
+            ->assertSeeIn($editor, 'Nested cell.')
+            ->assertScript("document.activeElement.matches('{$editor} [role=\"textbox\"]')", true)
+            ->wait(0.1)
+            ->keys(':focus', 'Alt+F10')
+            ->assertScript('document.activeElement.dataset.richEditorTool', 'gridAddColumnBefore')
+            ->keys(':focus', 'Enter')
+            ->assertCount($editor . ' .grid-layout-col', 3)
+            ->assertSeeIn($editor, 'Other column.')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+    }
+});
+
+it('preserves the selection and returns focus from toolbar link actions across editor remounts', function (string $origin, bool $shouldRemount): void {
+    $this->actingAs(User::factory()->create());
+
+    $editor = '[data-testid="keyboard-rich-editor"]';
+    $content = $editor . ' [role="textbox"]';
+    $linkDialog = '[role="dialog"]:has(input[id="mountedActionSchema0.url"])';
+
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/rich-editor-browser-test');
+
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page
+            ->keys($content, 'Home')
+            ->wait(0.1)
+            ->keys(':focus', 'Control+Shift+ArrowRight')
+            ->assertScript('window.getSelection().toString()', 'Alpha')
+            ->assertScript("Alpine.\$data(document.querySelector('{$content}')).\$getEditor().state.selection.toJSON()", ['type' => 'text', 'anchor' => 1, 'head' => 6]);
+
+        foreach (($origin === 'main') ? ['cancel', 'set link', 'extend link'] : ['cancel', 'set link'] as $operation) {
+            $shouldSubmit = $operation !== 'cancel';
+
+            if ($operation === 'extend link') {
+
+                // ProseMirror treats moving to the document start within 200 ms of focus as a browser selection reset.
+                $page
+                    ->keys(':focus', 'Escape')
+                    ->assertCount('[role="tooltip"]:visible', 0)
+                    ->keys(':focus', 'Escape')
+                    ->assertScript("document.activeElement.matches('{$content}')", true)
+                    ->wait(0.3)
+                    ->keys(':focus', 'Control+Home')
+                    ->assertScript("Alpine.\$data(document.querySelector('{$content}')).\$getEditor().state.selection.toJSON()", ['type' => 'text', 'anchor' => 1, 'head' => 1])
+                    ->keys(':focus', 'ArrowRight')
+                    ->assertScript("Alpine.\$data(document.querySelector('{$content}')).\$getEditor().state.selection.toJSON()", ['type' => 'text', 'anchor' => 2, 'head' => 2]);
+            }
+
+            if ($origin === 'main') {
+                $page->keys($content, 'Shift+Tab')->keys(':focus', ['End', 'Enter']);
+            } elseif ($origin === 'floating') {
+                $page->keys($content, 'Alt+F10')->keys(':focus', ['End', 'Enter']);
+            } else {
+                $page
+                    ->keys($content, 'Alt+F10')
+                    ->keys(':focus', ['Home', 'ArrowRight', 'ArrowDown'])
+                    ->assertScript('document.activeElement.getAttribute(\'role\')', 'menuitemcheckbox')
+                    ->keys(':focus', ['ArrowDown', 'Enter']);
+            }
+
+            $page
+                ->assertVisible('input[id="mountedActionSchema0.url"]')
+                ->assertPresent("{$linkDialog}:focus, {$linkDialog} :focus")
+                ->assertCount('[role="tooltip"]:visible', 0);
+
+            if ($shouldRemount) {
+                $page->script("window.oldKeyboardEditor = document.querySelector('{$content}'); Alpine.\$data(window.oldKeyboardEditor).\$wire.remountEditor()");
+
+                $page
+                    ->assertScript('!window.oldKeyboardEditor.isConnected', true)
+                    ->assertPresent($content);
+            }
+
+            if ($shouldSubmit) {
+                $page
+                    ->type('input[id="mountedActionSchema0.url"]', 'https://example.com/article')
+                    ->keys('input[id="mountedActionSchema0.url"]', 'Tab')
+                    ->keys(':focus', 'Tab')
+                    ->assertScript('document.activeElement.matches(\'button[type="submit"]\')', true)
+                    ->keys(':focus', 'Enter')
+                    ->assertSeeIn($editor . ' a[href="https://example.com/article"]', 'Alpha')
+                    ->assertDontSeeIn($editor . ' a[href="https://example.com/article"]', 'beta');
+            } else {
+                $page->keys('input[id="mountedActionSchema0.url"]', 'Escape');
+            }
+
+            $page
+                ->assertNotPresent('input[id="mountedActionSchema0.url"]')
+                ->assertPresent($origin === 'main'
+                    ? $editor . ' [data-rich-editor-tool="link"]:focus'
+                    : $content . ':focus')
+                ->assertScript("Alpine.\$data(document.querySelector('{$content}')).\$getEditor().state.selection.toJSON()", ['type' => 'text', 'anchor' => 1, 'head' => 6])
+                ->assertNoSmoke()
+                ->assertScript('document.getAnimations().filter(animation => animation.playState === "running").length', 0)
+                ->assertScript(<<<'JS'
+                    function () {
+                        const submitButton = document.querySelector('form[wire\\:submit="save"] > button[type="submit"]');
+
+                        return submitButton !== null
+                            && !submitButton.disabled
+                            && !submitButton.hasAttribute('aria-disabled')
+                            && submitButton.getAnimations().length === 0;
+                    }
+                    JS)
+                ->assertNoAccessibilityIssues();
+        }
+
+        if (($origin === 'main') && $shouldRemount) {
+            $page
+                ->keys($content, 'Shift+Tab')
+                ->keys(':focus', ['End', 'Enter'])
+                ->assertVisible('input[id="mountedActionSchema0.url"]')
+                ->assertPresent("{$linkDialog}:focus, {$linkDialog} :focus")
+                ->assertCount('[role="tooltip"]:visible', 0);
+
+            $page->script("window.oldKeyboardEditor = document.querySelector('{$content}'); const component = Alpine.\$data(window.oldKeyboardEditor); component.\$wire.\$set('data.keyboardContent', '<p>Updated article.</p>', false); component.\$wire.remountEditor()");
+
+            $page
+                ->assertScript('!window.oldKeyboardEditor.isConnected', true)
+                ->assertSeeIn($editor, 'Updated article.')
+                ->keys('input[id="mountedActionSchema0.url"]', 'Escape')
+                ->assertNotPresent('input[id="mountedActionSchema0.url"]')
+                ->assertPresent($editor . ' [data-rich-editor-tool="link"]:focus')
+                ->assertScript("Alpine.\$data(document.querySelector('{$content}')).\$getEditor().state.selection.toJSON()", ['type' => 'text', 'anchor' => 1, 'head' => 1])
+                ->assertNoSmoke()
+                ->assertScript('document.getAnimations().filter(animation => animation.playState === "running").length', 0)
+                ->assertScript(<<<'JS'
+                    function () {
+                        const submitButton = document.querySelector('form[wire\\:submit="save"] > button[type="submit"]');
+
+                        return submitButton !== null
+                            && !submitButton.disabled
+                            && !submitButton.hasAttribute('aria-disabled')
+                            && submitButton.getAnimations().length === 0;
+                    }
+                    JS)
+                ->assertNoAccessibilityIssues();
+        }
+    }
+})->with(['main', 'floating', 'grouped floating'])->with([false, true]);
+
+it('navigates horizontal toolbar menus using directional arrows and `Home` / `End`', function (bool $isRtl): void {
+    $this->actingAs(User::factory()->create());
+
+    $editor = '[data-testid="duplicate-groups-rich-editor"]';
+    $content = $editor . ' [role="textbox"]';
+    $menu = $editor . ' [role="menu"][aria-orientation="horizontal"]';
+    $forwardKey = $isRtl ? 'ArrowLeft' : 'ArrowRight';
+    $backwardKey = $isRtl ? 'ArrowRight' : 'ArrowLeft';
+
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/rich-editor-browser-test');
+
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page
+            ->keys($content, 'Home')
+            ->wait(0.3)
+            ->keys(':focus', 'Control+Home')
+            ->keys(':focus', 'Control+Shift+ArrowRight')
+            ->wait(0.1)
+            ->assertScript("Alpine.\$data(document.querySelector('{$content}')).\$getEditor().state.selection.toJSON()", ['type' => 'text', 'anchor' => 1, 'head' => 6]);
+
+        if ($isRtl) {
+            $page->script("document.querySelector('{$editor}').dir = 'rtl'");
+        }
+
+        $page
+            ->keys(':focus', 'Shift+Tab')
+            ->keys(':focus', ['Home', 'ArrowDown'])
+            ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[0]", true)
+            ->assertScript("document.querySelector('{$editor} [data-rich-editor-tool=\"Formatting\"]').getAttribute('aria-haspopup')", 'menu')
+            ->keys(':focus', $backwardKey)
+            ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[3]", true)
+            ->keys(':focus', $forwardKey)
+            ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[0]", true)
+            ->keys(':focus', $forwardKey)
+            ->assertAttribute(':focus', 'aria-disabled', 'true')
+            ->keys(':focus', 'Enter')
+            ->assertDontSeeIn($editor, 'Unexpected text')
+            ->keys(':focus', 'End')
+            ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[3]", true)
+            ->keys(':focus', 'Home')
+            ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[0]", true)
+            ->keys(':focus', 'ArrowUp')
+            ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[3]", true)
+            ->keys(':focus', 'ArrowDown')
+            ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[0]", true)
+            ->assertNoAccessibilityIssues()
+            ->keys(':focus', [$forwardKey, $forwardKey, 'Enter'])
+            ->assertSeeIn($editor . ' em', 'Alpha')
+            ->assertScript("document.activeElement.matches('{$content}')", true)
+            ->assertScript("Alpine.\$data(document.querySelector('{$content}')).\$getEditor().state.selection.toJSON()", ['type' => 'text', 'anchor' => 1, 'head' => 6])
+            ->keys(':focus', 'Shift+Tab')
+            ->keys(':focus', 'ArrowDown')
+            ->assertAttribute(':focus', 'role', 'menuitemcheckbox')
+            ->keys(':focus', [$forwardKey, $forwardKey])
+            ->assertAttribute(':focus', 'aria-checked', 'true')
+            ->keys(':focus', 'Escape')
+            ->assertCount('[role="tooltip"]:visible', 0)
+            ->keys(':focus', 'Escape')
+            ->assertScript("document.activeElement === document.querySelectorAll('{$editor} [data-rich-editor-tool=\"Formatting\"]')[0]", true)
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+    }
+})->with([false, true]);
+
+it('returns link dialog focus to the originating toolbar group with duplicate labels across remounts', function (bool $shouldRemount): void {
+    $this->actingAs(User::factory()->create());
+
+    $editor = '[data-testid="duplicate-groups-rich-editor"]';
+    $content = $editor . ' [role="textbox"]';
+    $trigger = $editor . ' [data-rich-editor-tool="Formatting"]';
+    $linkDialog = '[role="dialog"]:has(input[id="mountedActionSchema0.url"])';
+
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/rich-editor-browser-test');
+
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page
+            ->keys($content, 'Home')
+            ->wait(0.3)
+            ->keys(':focus', 'Control+Home')
+            ->keys(':focus', 'Control+Shift+ArrowRight')
+            ->assertScript('window.getSelection().toString()', 'Alpha')
+            ->wait(0.1)
+            ->assertScript("Alpine.\$data(document.querySelector('{$content}')).\$getEditor().state.selection.toJSON()", ['type' => 'text', 'anchor' => 1, 'head' => 6])
+            ->keys(':focus', 'Shift+Tab')
+            ->keys(':focus', 'End')
+            ->assertScript("document.activeElement === document.querySelectorAll('{$trigger}')[1]", true)
+            ->keys(':focus', 'ArrowDown')
+            ->assertAttribute(':focus', 'role', 'menuitemcheckbox')
+            ->keys(':focus', 'ArrowDown')
+            ->keys(':focus', 'Enter')
+            ->assertVisible('input[id="mountedActionSchema0.url"]')
+            ->assertPresent("{$linkDialog}:focus, {$linkDialog} :focus")
+            ->assertCount('[role="tooltip"]:visible', 0)
+            ->assertScript('document.getAnimations().filter(animation => animation.playState === "running").length', 0)
+            ->assertScript("Array.from(document.querySelectorAll('{$trigger}')).every(trigger => trigger.getAttribute('aria-expanded') === 'false')", true);
+
+        if ($shouldRemount) {
+            $page->script("window.oldDuplicateEditor = document.querySelector('{$content}'); Alpine.\$data(window.oldDuplicateEditor).\$wire.remountEditor()");
+
+            $page
+                ->assertScript('!window.oldDuplicateEditor.isConnected', true)
+                ->assertPresent($content);
+        }
+
+        $page
+            ->keys('input[id="mountedActionSchema0.url"]', 'Escape')
+            ->assertNotPresent('input[id="mountedActionSchema0.url"]')
+            ->assertScript("document.activeElement === document.querySelectorAll('{$trigger}')[1]", true)
+            ->assertScript("Alpine.\$data(document.querySelector('{$content}')).\$getEditor().state.selection.toJSON()", ['type' => 'text', 'anchor' => 1, 'head' => 6])
+            ->assertNoSmoke()
+            ->assertScript('document.getAnimations().filter(animation => animation.playState === "running").length', 0)
+            ->assertNoAccessibilityIssues();
+    }
+})->with([false, true]);
+
+it('does not steal newer focus while a remounted editor is waiting to initialize after a dialog', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $editor = '[data-testid="keyboard-rich-editor"]';
+    $content = $editor . ' [role="textbox"]';
+    $otherContent = '[data-testid="height-constrained-rich-editor"] [role="textbox"]';
+    $linkDialog = '[role="dialog"]:has(input[id="mountedActionSchema0.url"])';
+
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/rich-editor-browser-test');
+
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
+        }
+
+        $page
+            ->keys($content, 'Shift+Tab')
+            ->keys(':focus', ['End', 'Enter'])
+            ->assertVisible('input[id="mountedActionSchema0.url"]')
+            ->assertPresent("{$linkDialog}:focus, {$linkDialog} :focus");
+
+        $page->script("window.oldKeyboardEditor = document.querySelector('{$content}'); Alpine.\$data(window.oldKeyboardEditor).\$wire.remountEditor()");
+
+        $page
+            ->assertScript('!window.oldKeyboardEditor.isConnected', true)
+            ->assertPresent($content);
+
+        $page->script(<<<'JS'
+            const element = document.querySelector('[data-testid="keyboard-rich-editor"] [data-rich-editor-key]')
+            const component = Alpine.$data(element)
+            const getEditor = component.getEditor
+            component.getEditor = () => null
+            window.resumeKeyboardEditor = () => {
+                component.getEditor = getEditor
+                window.dispatchEvent(new CustomEvent(`schema-component-${element.closest('[wire\\:id]').getAttribute('wire:id')}-${element.dataset.richEditorKey}-loaded`))
+            }
+            JS);
+
+        $page
+            ->keys('input[id="mountedActionSchema0.url"]', 'Escape')
+            ->assertMissing('input[id="mountedActionSchema0.url"]')
+            ->wait(0.1)
+            ->keys($otherContent, 'Home')
+            ->assertScript("document.activeElement.matches('{$otherContent}')", true);
+
+        $page->script('window.resumeKeyboardEditor()');
+
+        $page
+            ->wait(0.1)
+            ->assertScript("document.activeElement.matches('{$otherContent}')", true)
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+    }
+});
+
+it('does not render custom block previews from imported HTML', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/rich-editor-minimal-controls-browser-test');
+
+    $page->assertPresent('[data-testid="minimal-controls-editor"] .tiptap');
+
+    $page->script(<<<'JS'
+                (() => {
+                    window.customBlockPreviewCommitCount = 0
+                    window.removeCustomBlockPreviewCommitHook = Livewire.hook('commit', () => window.customBlockPreviewCommitCount++)
+
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                    const clipboardData = new DataTransfer()
+
+                    clipboardData.setData('text/html', `<div data-type="customBlock" data-id="callout" data-config='{"message":"First callout."}'></div>`)
+
+                    editor.view.dom.dispatchEvent(new ClipboardEvent('paste', {
+                        bubbles: true,
+                        cancelable: true,
+                        clipboardData,
+                    }))
+
+                    return true
+                })()
+                JS);
+
+    $page
+        ->wait(1)
+        ->assertScript('window.customBlockPreviewCommitCount', 0)
+        ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+
+                    return editor.getJSON().content
+                        .filter((node) => node.type === 'customBlock' && node.attrs.config?.message === 'First callout.')
+                        .map((node) => [node.attrs.label, atob(node.attrs.preview)])
+                })()
+                JS, [
+            ['Callout', '<p>First callout.</p>'],
+            ['Callout', '<p>First callout.</p>'],
+        ]);
+
+    $page->script(<<<'JS'
+                (() => {
+                    window.removeCustomBlockPreviewCommitHook()
+                    window.customBlockPreviewExecuted = false
+
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                    const preview = btoa('<img src="x" onerror="window.customBlockPreviewExecuted = true">')
+                    const clipboardData = new DataTransfer()
+
+                    clipboardData.setData('text/html', `<div data-type="customBlock" data-id="callout" data-config='{"message":"Copied callout.","options":{}}' data-label="Untrusted label" data-preview="${preview}" shouldApplyProseStylingToPreview="true"></div>`)
+
+                    editor.view.dom.dispatchEvent(new ClipboardEvent('paste', {
+                        bubbles: true,
+                        cancelable: true,
+                        clipboardData,
+                    }))
+                })()
+                JS);
+
+    $page
+        ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                    const block = editor.getJSON().content.find((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.')
+
+                    return [
+                        block?.attrs.label ?? null,
+                        block?.attrs.preview ? atob(block.attrs.preview) : null,
+                        block?.attrs.shouldApplyProseStylingToPreview ?? null,
+                    ]
+                })()
+                JS, ['Callout', '<p>Copied callout.</p>', false])
+        ->assertScript('window.customBlockPreviewExecuted', false)
+        // Keep the next paste outside TipTap's history grouping interval.
+        ->wait(0.6);
+
+    $page->script(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                    const clipboardData = new DataTransfer()
+
+                    clipboardData.setData('text/html', `<div data-type="customBlock" data-id="callout" data-config='{"message":"Copied callout.","options":{}}'></div>`)
+
+                    editor.view.dom.dispatchEvent(new ClipboardEvent('paste', {
+                        bubbles: true,
+                        cancelable: true,
+                        clipboardData,
+                    }))
+
+                    return true
+                })()
+                JS);
+
+    $page
+        ->wait(1)
+        ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+
+                    return editor.getJSON().content
+                        .filter((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.')
+                        .map((node) => [node.attrs.label, atob(node.attrs.preview)])
+                })()
+                JS, [
+            ['Callout', '<p>Copied callout.</p>'],
+            ['Callout', '<p>Copied callout.</p>'],
+        ])
+        ->keys('[data-testid="minimal-controls-editor"] .tiptap', 'Control+z')
+        ->assertCount('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-custom-block"][data-config*="Copied callout."]', 1)
+        ->keys('[data-testid="minimal-controls-editor"] .tiptap', 'Control+Shift+z')
+        ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+
+                    return editor.getJSON().content
+                        .filter((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.')
+                        .map((node) => [node.attrs.label, atob(node.attrs.preview)])
+                })()
+                JS, [
+            ['Callout', '<p>Copied callout.</p>'],
+            ['Callout', '<p>Copied callout.</p>'],
+        ])
+        ->assertNoAccessibilityIssues();
+
+    visit('/rich-editor-minimal-controls-browser-test')
+        ->inDarkMode()
+        ->assertPresent('[data-testid="minimal-controls-editor"] .tiptap')
+        ->assertNoAccessibilityIssues();
+});
+
+it('can delete a grid from its floating toolbar without deleting its content', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $editor = '[data-testid="default-rich-editor"]';
+
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/rich-editor-browser-test');
+
+        if ($isDarkMode) {
+            $page->inDarkMode();
+        }
+
+        $page
+            ->click($editor . ' .grid-layout-col >> text=First column.')
+            ->assertVisible($editor . ' .fi-fo-rich-editor-floating-toolbar button[aria-label="Delete grid"]')
+            ->click($editor . ' .fi-fo-rich-editor-floating-toolbar button[aria-label="Delete grid"]')
+            ->assertMissing($editor . ' .grid-layout')
+            ->assertSeeIn($editor, 'Before grid.')
+            ->assertSeeIn($editor, 'First column.')
+            ->assertSeeIn($editor, 'Column heading')
+            ->assertSeeIn($editor, 'Second column.')
+            ->assertSeeIn($editor, 'List item.')
+            ->assertSeeIn($editor, 'After grid.')
+            ->assertNoAccessibilityIssues();
+    }
+});
+
+it('can manage grid columns from its floating toolbar', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $editor = '[data-testid="default-rich-editor"]';
+
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/rich-editor-browser-test');
+
+        if ($isDarkMode) {
+            $page->inDarkMode();
+        }
+
+        $page
+            ->click($editor . ' .grid-layout-col >> text=Second column.')
+            ->assertVisible($editor . ' [data-testid="grid-add-column-before"]')
+            ->assertVisible($editor . ' [data-testid="grid-add-column-after"]')
+            ->assertVisible($editor . ' [data-testid="grid-delete-column"]')
+            ->assertEnabled($editor . ' [data-testid="grid-add-column-before"]')
+            ->assertEnabled($editor . ' [data-testid="grid-add-column-after"]')
+            ->assertEnabled($editor . ' [data-testid="grid-delete-column"]')
+            ->click($editor . ' [data-testid="grid-add-column-before"]')
+            ->click($editor . ' [data-testid="grid-add-column-after"]')
+            ->assertCount($editor . ' .grid-layout-col', 4)
+            ->assertSeeIn($editor, 'First column.')
+            ->assertSeeIn($editor, 'Second column.')
+            ->assertNoAccessibilityIssues();
+    }
+});
+
+it('can search custom blocks and insert one at the preserved editor selection', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/rich-editor-browser-test')
+        ->assertPresent('[data-testid="custom-blocks-rich-editor"] .tiptap')
+        ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '  éDiTóRiAl  ')
+        ->assertVisible('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
+        ->assertVisible('[data-testid="custom-blocks-rich-editor"] [data-block-id="section"]')
+        ->assertMissing('[data-testid="custom-blocks-rich-editor"] [data-block-id="image"]')
+        ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', 'unknown block')
+        ->assertPresent('[data-testid="custom-blocks-rich-editor"] [role="status"]')
+        ->assertMissing('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
+        ->assertScript(<<<'JS'
+            function () {
+                const submitButton = document.querySelector('form[wire\\:submit="save"] > button[type="submit"]');
+
+                return submitButton !== null
+                    && !submitButton.disabled
+                    && !submitButton.hasAttribute('aria-disabled')
+                    && submitButton.getAnimations().length === 0;
+            }
+            JS)
+        ->assertNoAccessibilityIssues()
+        ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '')
+        ->click('[data-testid="custom-blocks-rich-editor"] .tiptap p >> text=First paragraph.')
+        ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '  QuOtE  ')
+        ->click('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
+        ->assertPresent('[data-testid="custom-blocks-rich-editor"] [data-testid="rich-editor-custom-block"][data-id="quote"]')
+        ->assertScript(<<<'JS'
+            function () {
+                const submitButton = document.querySelector('form[wire\\:submit="save"] > button[type="submit"]');
+
+                return submitButton !== null
+                    && !submitButton.disabled
+                    && !submitButton.hasAttribute('aria-disabled')
+                    && submitButton.getAnimations().length === 0;
+            }
+            JS)
+        ->assertNoAccessibilityIssues();
+
+    visit('/rich-editor-browser-test')
+        ->inDarkMode()
+        ->assertPresent('[data-testid="custom-blocks-rich-editor"] .tiptap')
+        ->assertScript(<<<'JS'
+            function () {
+                const submitButton = document.querySelector('form[wire\\:submit="save"] > button[type="submit"]');
+
+                return submitButton !== null
+                    && !submitButton.disabled
+                    && !submitButton.hasAttribute('aria-disabled')
+                    && submitButton.getAnimations().length === 0;
+            }
+            JS)
+        ->assertNoAccessibilityIssues();
 });
 
 describe('preventing file attachment tampering', function (): void {
@@ -1887,16 +2847,14 @@ function walkEditorRawState(RichEditor $editor, callable $callback): void
 }
 
 it('exposes TipTap and ProseMirror modules on `window.FilamentRichEditor.tiptap` once the editor has mounted', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/rich-editor-browser-test')
-            ->assertPresent('.fi-fo-rich-editor .tiptap')
-            ->assertScript("typeof window.FilamentRichEditor?.tiptap?.core?.Editor === 'function'")
-            ->assertScript("typeof window.FilamentRichEditor?.tiptap?.pmState?.Plugin === 'function'")
-            ->assertScript("typeof window.FilamentRichEditor?.tiptap?.pmView?.EditorView === 'function'")
-            ->assertScript("typeof window.FilamentRichEditor?.tiptap?.pmModel?.Node === 'function'");
-    });
+    visit('/rich-editor-browser-test')
+        ->assertPresent('.fi-fo-rich-editor .tiptap')
+        ->assertScript("typeof window.FilamentRichEditor?.tiptap?.core?.Editor === 'function'")
+        ->assertScript("typeof window.FilamentRichEditor?.tiptap?.pmState?.Plugin === 'function'")
+        ->assertScript("typeof window.FilamentRichEditor?.tiptap?.pmView?.EditorView === 'function'")
+        ->assertScript("typeof window.FilamentRichEditor?.tiptap?.pmModel?.Node === 'function'");
 });
 
 class RenderRichEditor extends Livewire
@@ -2151,6 +3109,16 @@ class RenderRichEditorWithClosureCustomBlocks extends Livewire
     {
         return $form->schema([
             RichEditor::make('content')->customBlocks(static fn (): array => []),
+        ])->statePath('data');
+    }
+}
+
+class RenderRichEditorWithMinimalCustomBlockControls extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            RichEditor::make('content')->minimalCustomBlockControls(),
         ])->statePath('data');
     }
 }

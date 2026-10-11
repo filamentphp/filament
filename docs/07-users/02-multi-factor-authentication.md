@@ -17,6 +17,10 @@ Filament includes two methods of MFA which you can enable out of the box:
 - [App authentication](#app-authentication) uses a Google Authenticator-compatible app (such as the Google Authenticator, Authy, or Microsoft Authenticator apps) to generate a time-based one-time password (TOTP) that is used to verify the user.
 - [Email authentication](#email-authentication) sends a one-time code to the user's email address, which they must enter to verify their identity.
 
+<Aside variant="warning">
+    The built-in providers use your application's default cache store for challenge or replay-protection state and use an atomic cache lock when the store supports one. In a multi-server deployment, every server should use the same authoritative cache backend, and this state should remain available while its codes can be accepted. Cache locks reduce the chance that overlapping requests accept the same code while the lock lease remains valid. Without lock support, sequential code reuse is still prevented, but concurrent requests may accept the same code.
+</Aside>
+
 In Filament, users set up multi-factor authentication from their [profile page](overview#authentication-features). If you use Filament's profile page feature, setting up multi-factor authentication will automatically add the correct UI elements to the profile page:
 
 ```php
@@ -81,10 +85,6 @@ public function panel(Panel $panel): Panel
         ]);
 }
 ```
-
-<Aside variant="warning">
-    To prevent the same app authentication code from being accepted more than once, use a default cache store that supports atomic locks, such as the database or Redis cache driver. All application servers must use the same cache backend. With other cache configurations, concurrent requests may accept the same code more than once.
-</Aside>
 
 ### Setting up app recovery codes
 
@@ -344,7 +344,21 @@ class SmsAuthentication implements MultiFactorAuthenticationProvider
 }
 ```
 
-The service should generate codes using a cryptographically secure random source, store only a hash of each code, scope codes to the user they were issued for, expire and consume codes, and rate-limit both delivery and verification attempts. It may deliver codes using any [SMS notification channel supported by Laravel](https://laravel.com/docs/notifications#sms-notifications).
+The service should generate codes using a cryptographically secure random source, store only a hash of each code, give codes a short expiry time, consume valid codes after verification, and rate-limit both delivery and verification attempts. It may deliver codes using any [SMS notification channel supported by Laravel](https://laravel.com/docs/notifications#sms-notifications).
+
+Code storage and rate limits must be scoped to the complete authentication principal, not only the user's model key or authentication identifier. Numeric keys and other identifiers can belong to unrelated users when an application has multiple authentication guards or user models. You can use `Filament::getUserScopedAuthIdentifier($user)` to generate an opaque identifier containing the active authentication guard, concrete user model class, and authentication identifier:
+
+```php
+use Filament\Facades\Filament;
+
+$principal = Filament::getUserScopedAuthIdentifier($user);
+```
+
+For codes generated for a particular login challenge, also bind the stored code to the current session so that a code issued for one browser's challenge cannot satisfy another. If your application runs on multiple servers, code storage and rate limits should use a shared backend.
+
+When the storage backend supports it, validation and consumption should be atomic, using a database transaction with a row lock, an atomic compare-and-delete operation, or a cache lock. If work can outlive a lock lease, checking lock ownership and re-reading the stored state immediately before changing it can reject many stale operations, but only an atomic conditional mutation can eliminate the final race after that check. An older request should never delete a newer code or overwrite newer verification progress. Without a suitable atomic primitive, you should still consume valid codes to prevent sequential reuse, but concurrent requests may both accept the same code.
+
+For a time-based provider like app authentication, store the timestep of the last accepted code and only replace it with a newer timestep. This rejects both repeated and older codes and prevents verification progress from moving backwards.
 
 ### Identifying the provider
 
@@ -414,7 +428,7 @@ public function getManagementSchemaComponents(): array
 // ...
 ```
 
-In this example, the setup and disable actions should send an SMS code, display a `OneTimeCodeInput`, verify the code using the service, and then persist the new enabled state. Keeping these workflows in separate action classes prevents the provider from becoming difficult to read. If your integration manages enrollment elsewhere, the management schema could instead contain an action that links to that page.
+In this example, the setup and disable actions should send an SMS code, display a `OneTimeCodeInput`, verify the code using the service, and then persist the new enabled state. Any temporary enrollment state that is passed between requests, including encrypted action arguments, should contain the scoped principal identifier and be rejected if it no longer matches the current user. Keeping these workflows in separate action classes prevents the provider from becoming difficult to read. If your integration manages enrollment elsewhere, the management schema could instead contain an action that links to that page.
 
 ### Rendering the challenge form
 
@@ -447,7 +461,7 @@ public function getChallengeFormComponents(Authenticatable $user): array
 // ...
 ```
 
-The verification operation should consume a valid code so that it cannot be used successfully again.
+The verification operation should follow the storage, expiry, rate-limiting, and one-time consumption practices described above.
 
 ### Running logic before the challenge
 
@@ -470,7 +484,7 @@ class SmsAuthentication implements HasBeforeChallengeHook, MultiFactorAuthentica
 }
 ```
 
-The `beforeChallenge()` method may be called more than once if the user switches between enabled providers. The service should rate-limit code delivery and avoid invalidating an existing code when another code cannot be sent yet.
+The `beforeChallenge()` method may be called more than once if the user switches between enabled providers. The service should rate-limit code delivery using the scoped principal identifier and avoid invalidating an existing code when another code cannot be sent yet.
 
 <Aside variant="danger">
     Store phone numbers in a consistent format such as E.164, and disable SMS authentication whenever a user's phone number changes so that they must verify the new number. You should also provide a secure account recovery process for users who lose access to their phone. SMS authentication is vulnerable to risks such as SIM swapping, so consider offering app authentication or security keys as stronger alternatives.
@@ -585,10 +599,8 @@ However, if you have other parts of your Laravel app that authenticate users, pl
 
 ### Concurrent recovery code submissions
 
-When a user signs in with a recovery code, Filament's `verifyRecoveryCode()` method wraps the read-validate-write sequence in a per-user `Cache::lock` and a database transaction with a `lockForUpdate()` row lock on the user's row. The cache lock serializes concurrent submissions across PHP workers regardless of the underlying database driver, so two parallel sign-in requests cannot both consume the same code or resurrect a just-consumed code from a stale snapshot — even when the storage is a non-SQL store, a different database connection, or a driver without `SELECT ... FOR UPDATE` support (such as SQLite).
+When a user signs in with a recovery code, Filament's `verifyRecoveryCode()` method wraps the read-validate-write sequence in a database transaction with a `lockForUpdate()` row lock on the user's row. This prevents concurrent submissions using the built-in Eloquent storage from consuming the same code or writing a stale list of codes. Filament also uses a per-user cache lock when the configured cache store supports atomic locks.
 
 <Aside variant="warning">
-    The cache lock relies on a shared lock store. Filament's default `file` cache store, as well as `redis`, `memcached`, `database`, and `dynamodb`, all provide a shared lock across PHP-FPM workers on the same machine (or across machines, for the network-backed stores). The `array` store is per-process and does not serialize across workers — it is intended for testing only.
-
-    If you override `getAppAuthenticationRecoveryCodes()` / `saveAppAuthenticationRecoveryCodes()`, the cache lock still wraps the full read-validate-write sequence, so your override is protected. Your override is only responsible for making the storage write itself atomic — for example, a single Eloquent `update()` or an equivalent atomic primitive on your chosen store.
+    If you override `getAppAuthenticationRecoveryCodes()` / `saveAppAuthenticationRecoveryCodes()`, your storage is responsible for preventing concurrent updates. `saveAppAuthenticationRecoveryCodes()` must either persist the new state successfully or throw an exception, since silently ignoring a failed write can allow a recovery code to be reused.
 </Aside>

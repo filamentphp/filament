@@ -43,7 +43,9 @@ use Livewire\Attributes\Renderless;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
+use function Filament\Support\apply_search_constraint;
 use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_pattern;
 use function Filament\Support\generate_search_term_expression;
 
 class Select extends Field implements Contracts\CanDisableOptions, Contracts\HasAffixes, Contracts\HasNestedRecursiveValidationRules, HasEmbeddedView
@@ -1446,17 +1448,19 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $databaseConnection = $query->getConnection();
 
         $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
+        $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true);
 
-        $query->where(function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $search): Builder {
+        $query->where(function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $searchPattern): Builder {
             $isFirst = true;
 
             foreach ($this->getSearchColumns() ?? [] as $searchColumn) {
                 $whereClause = $isFirst ? 'where' : 'orWhere';
 
-                $query->{$whereClause}(
+                apply_search_constraint(
+                    $query,
                     generate_search_column_expression($searchColumn, $isForcedCaseInsensitive, $databaseConnection),
-                    'like',
-                    "%{$search}%",
+                    $searchPattern,
+                    ($whereClause === 'where') ? 'and' : 'or',
                 );
 
                 $isFirst = false;
@@ -1821,6 +1825,15 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return true;
     }
 
+    public function getRequiredDescription(): ?string
+    {
+        if ((! $this->isRequired()) || $this->isDisabled() || ($this->isNative() && (! $this->isSearchable()) && (! $this->isMultiple()) && (! $this->isHtmlAllowed()))) {
+            return null;
+        }
+
+        return __('filament-forms::components.select.required_description');
+    }
+
     public function toEmbeddedHtml(): string
     {
         $extraInputAttributeBag = $this->getExtraInputAttributeBag();
@@ -1885,10 +1898,11 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     <select
                         <?= $extraInputAttributeBag
                             ->merge([
+                                ...$this->getAccessibilityAttributes(),
                                 'autofocus' => $isAutofocused,
                                 'disabled' => $isDisabled,
                                 'id' => $id,
-                                'required' => $isRequired,
+                                'required' => $isRequired && (! $isDisabled),
                                 'wire:key' => $hasDynamicOptions ? ($livewireKey . '.' . substr(md5(serialize($options)), 0, 64)) : null,
                                 $this->applyStateBindingModifiers('wire:model') => $statePath,
                             ], escape: false)
@@ -1900,9 +1914,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     >
                         <?php if ($canSelectPlaceholder) { ?>
                             <option value="">
-                                <?php if (! $isDisabled) { ?>
-                                    <?= e($this->getPlaceholder()) ?>
-                                <?php } ?>
+                                <?= e($this->getPlaceholder()) ?>
                             </option>
                         <?php } ?>
 
@@ -1930,9 +1942,21 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     </select>
                 <?php } else { ?>
                     <?php $options = $this->getOptions(); ?>
+                    <?php
+                    $accessibilityAttributes = [
+                        ...$this->getAccessibilityAttributes(),
+                        'aria-required' => ($isRequired && (! $isDisabled)) ? 'true' : null,
+                        ...$extraInputAttributeBag->only(['aria-label', 'aria-labelledby', 'aria-describedby', 'aria-invalid', 'aria-busy', 'aria-required'])->getAttributes(),
+                    ];
+                    $accessibilityAttributes['aria-describedby'] = implode(' ', array_unique([
+                        ...$this->getDescriptionIds(),
+                        ...preg_split('/\s+/', trim($extraInputAttributeBag->get('aria-describedby') ?? ''), flags: PREG_SPLIT_NO_EMPTY),
+                    ])) ?: null;
+                    ?>
 
                     <div
                         class="fi-hidden"
+                        data-select-accessibility="<?= e(Js::encode($accessibilityAttributes)) ?>"
                         x-data="{
                             isDisabled: <?= Js::from($isDisabled) ?>,
                             init() {
@@ -1952,6 +1976,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                     canOptionLabelsWrap: <?= Js::from($canOptionLabelsWrap) ?>,
                                     canSelectPlaceholder: <?= Js::from($canSelectPlaceholder) ?>,
                                     clearButtonLabel: <?= Js::from(__('filament-forms::components.select.actions.clear.label')) ?>,
+                                    errorMessage: <?= Js::from(__('filament-forms::components.select.error_message')) ?>,
                                     getOptionLabelUsing: async () => {
                                         return await Livewire.fireAction(
                                             $wire.__instance,
@@ -2018,7 +2043,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                 })"
                         wire:ignore
                         wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled, $isReorderable])), 0, 64) ?>"
-                        x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                         x-on:set-select-property="$event.detail.isDisabled ? select.disable() : select.enable()"
                         <?= (new FilamentComponentAttributeBag)
                             ->merge($this->getExtraAlpineAttributes(), escape: false)

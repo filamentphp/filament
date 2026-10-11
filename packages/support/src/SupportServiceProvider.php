@@ -133,7 +133,7 @@ class SupportServiceProvider extends PackageServiceProvider
             ),
         );
 
-        $this->app->scoped(
+        $this->app->bind(
             'originalRequest',
             function () {
                 if (! Livewire::isLivewireRequest()) {

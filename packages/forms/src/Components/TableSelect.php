@@ -504,7 +504,8 @@ class TableSelect extends Field implements HasEmbeddedView
                 'id' => $id,
                 'role' => 'group',
             ], escape: false)
-            ->merge($extraAttributes, escape: false);
+            ->merge($extraAttributes, escape: false)
+            ->merge(['aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby'] ?? null], escape: false);
 
         return $this->wrapEmbeddedHtml('<div ' . $attributes->toHtml() . '>' . $livewireHtml . '</div>', labelTag: 'div');
     }

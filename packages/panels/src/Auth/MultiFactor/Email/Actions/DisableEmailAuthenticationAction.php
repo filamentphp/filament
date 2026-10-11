@@ -24,7 +24,7 @@ class DisableEmailAuthenticationAction
     public static function make(EmailAuthentication $emailAuthentication): Action
     {
         $rateLimitAuthenticationAttempt = static function (string $codeStatePath): void {
-            $rateLimitingKey = 'filament-disable-email-authentication:' . Filament::auth()->id();
+            $rateLimitingKey = 'filament-disable-email-authentication:' . Filament::getUserScopedAuthIdentifier();
 
             if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
                 throw ValidationException::withMessages([

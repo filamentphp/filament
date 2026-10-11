@@ -11,6 +11,8 @@ use Illuminate\Support\Stringable;
 
 class ParentResourceRegistration
 {
+    protected ?string $pageName = null;
+
     public function __construct(
         protected string $parentResource,
         protected ?string $childResource = null,
@@ -49,6 +51,13 @@ class ParentResourceRegistration
     public function inverseRelationship(string $name): static
     {
         $this->inverseRelationshipName = $name;
+
+        return $this;
+    }
+
+    public function page(?string $name): static
+    {
+        $this->pageName = $name;
 
         return $this;
     }
@@ -93,5 +102,10 @@ class ParentResourceRegistration
     public function getRouteName(): string
     {
         return Str::kebab($this->relationshipName);
+    }
+
+    public function getPageName(): string
+    {
+        return $this->pageName ?? $this->getRouteName();
     }
 }

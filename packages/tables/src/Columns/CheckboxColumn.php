@@ -34,6 +34,7 @@ class CheckboxColumn extends Column implements Editable, HasEmbeddedView
     {
         $isDisabled = $this->isDisabled();
         $state = (bool) $this->getState();
+        $relatedRecord = $this->getRelatedRecord();
 
         $attributes = $this->getExtraAttributeBag()
             ->merge([
@@ -58,13 +59,17 @@ class CheckboxColumn extends Column implements Editable, HasEmbeddedView
                 'wire:loading.attr' => 'disabled',
                 'wire:target' => implode(',', Table::LOADING_TARGETS),
                 'x-bind:disabled' => $isDisabled ? null : 'isLoading',
-                'x-tooltip' => filled($tooltip = $this->getTooltip($state))
+                'x-tooltip' => 'error === undefined ? ' . (filled($tooltip = $this->getTooltip($state, $relatedRecord))
                     ? '{
                         content: ' . Js::from($tooltip) . ',
                         theme: $store.theme,
                         allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                     }'
-                    : null,
+                    : 'false') . ' : {
+                        content: error,
+                        theme: $store.theme,
+                        allowHTML: false,
+                    }',
             ], escape: false)
             ->class([
                 'fi-checkbox-input',
@@ -86,14 +91,6 @@ class CheckboxColumn extends Column implements Editable, HasEmbeddedView
                     'fi-invalid': error,
                 }"
                 x-model="state"
-                x-tooltip="
-                    error === undefined
-                        ? false
-                        : {
-                            content: error,
-                            theme: $store.theme,
-                        }
-                "
                 <?= $inputAttributes->toHtml() ?>
             />
         </div>
