@@ -83,11 +83,13 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                         content: ' . Js::from($tooltip) . ',
                         theme: $store.theme,
                         allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
+                        aria: { content: \'auto\' },
                     }'
                     : 'false') . ' : {
                         content: error,
                         theme: $store.theme,
                         allowHTML: false,
+                        aria: { content: null },
                     }',
             ], escape: false)
             ->class(['fi-toggle']);
@@ -163,7 +165,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                 x-bind:id="$id('table-column-error')"
                 x-ref="error"
                 x-text="error"
-                class="fi-ta-column-error"
+                class="fi-sr-only"
             ></p>
 
             <p

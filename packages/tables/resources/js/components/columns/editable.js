@@ -16,6 +16,10 @@ export default function editableTableColumn({
 
         isDestroyed: false,
 
+        isRefreshing: false,
+
+        hasRenderedState: false,
+
         state,
 
         status: undefined,
@@ -32,12 +36,28 @@ export default function editableTableColumn({
                         return
                     }
 
-                    if (commit.calls.some(isMatchingSaveCall)) {
+                    const isSaveCommit = commit.calls.some(isMatchingSaveCall)
+                    const isRefreshCommit = this.isRefreshing
+
+                    if (isSaveCommit || isRefreshCommit) {
                         // Livewire 3 does not settle method-call promises on failure.
                         fail(() => this.handleSaveFailure())
                     }
 
-                    succeed(() => {
+                    succeed(({ effects }) => {
+                        if (isSaveCommit || isRefreshCommit) {
+                            this.hasRenderedState = Boolean(effects.html)
+                        }
+
+                        if (isRefreshCommit) {
+                            // Release ownership before Livewire sends another queued commit.
+                            this.isRefreshing = false
+                        }
+
+                        if (!effects.html) {
+                            return
+                        }
+
                         this.$nextTick(() => {
                             if (!this.isDestroyed && !this.isLoading) {
                                 this.syncServerState()
@@ -61,6 +81,7 @@ export default function editableTableColumn({
 
                 this.clearError()
                 this.isLoading = true
+                this.hasRenderedState = false
                 this.status = messages?.saving
 
                 this.unsubscribeRequestHook = Livewire.hook(
@@ -71,7 +92,10 @@ export default function editableTableColumn({
                                 (component) =>
                                     JSON.parse(component.snapshot).memo.id ===
                                         this.$wire.$id &&
-                                    component.calls.some(isMatchingSaveCall),
+                                    (this.isRefreshing ||
+                                        component.calls.some(
+                                            isMatchingSaveCall,
+                                        )),
                             )
                         ) {
                             return
@@ -103,6 +127,19 @@ export default function editableTableColumn({
                     )
 
                     await this.$nextTick()
+
+                    // Batched renderless option requests can suppress the save's HTML.
+                    if (!this.isDestroyed && !this.hasRenderedState) {
+                        this.isRefreshing = true
+                        await this.$wire.$refresh()
+                        await this.$nextTick()
+
+                        if (!this.hasRenderedState) {
+                            this.handleSaveFailure()
+
+                            return
+                        }
+                    }
 
                     this.unsubscribeRequestHook?.()
                     this.unsubscribeRequestHook = null
@@ -155,6 +192,7 @@ export default function editableTableColumn({
                 messages?.failure ??
                 'The save could not be confirmed. Refresh the page before trying again.'
             this.status = this.error
+            this.isRefreshing = false
             this.isLoading = false
         },
 

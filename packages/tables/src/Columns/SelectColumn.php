@@ -1023,13 +1023,15 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                         content: ' . Js::from($tooltip) . ',
                         theme: $store.theme,
                         allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
-                        ' . ($isNative ? '' : 'triggerTarget: select && select.selectButton,') . '
+                        aria: { content: \'auto\' },
+                        ' . ($isNative ? '' : 'triggerTarget: $el.isConnected && select ? select.selectButton : null,') . '
                     }'
                     : 'false') . ' : {
                         content: error,
                         theme: $store.theme,
                         allowHTML: false,
-                        ' . ($isNative ? '' : 'triggerTarget: select && select.selectButton,') . '
+                        aria: { content: null },
+                        ' . ($isNative ? '' : 'triggerTarget: $el.isConnected && select ? select.selectButton : null,') . '
                     }',
             ], escape: false)
             ->class([
@@ -1086,7 +1088,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                 x-bind:id="$id('table-column-error')"
                 x-ref="error"
                 x-text="error"
-                class="fi-ta-column-error"
+                class="fi-sr-only"
             ></p>
 
             <p

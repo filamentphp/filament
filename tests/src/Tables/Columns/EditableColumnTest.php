@@ -107,7 +107,7 @@ it('describes validation errors at the focus owner and clears them on a successf
     }
 });
 
-it('displays persisted state after save hooks and `void` callbacks in both themes', function (string $scenario, string $expectedState): void {
+it('displays persisted state after save hooks and `void` callbacks in both themes', function (string $scenario, string $expectedState, bool $isBatched = false): void {
     Artisan::call('filament:assets');
     $post = Post::factory()->create(['title' => 'Original title']);
     $this->actingAs(User::factory()->create());
@@ -120,8 +120,16 @@ it('displays persisted state after save hooks and `void` callbacks in both theme
             $page = $page->inDarkMode();
         }
 
-        $page->type('[data-testid="editable-title"] input:not([type="hidden"])', 'mixedCase')
-            ->keys('[data-testid="editable-title"] input:not([type="hidden"])', 'Tab')
+        $page->type('[data-testid="editable-title"] input:not([type="hidden"])', 'mixedCase');
+
+        if ($isBatched) {
+            // Queue a renderless options request alongside the public save flow.
+            $page->script('document.querySelector("[data-testid=editable-title] input:not([type=hidden])").blur(); Livewire.find(document.querySelector("[data-testid=editable-title]").closest("[wire\\\\:id]").getAttribute("wire:id")).callTableColumnMethod("content", "' . $post->getKey() . '", "getOptionsForJs")');
+        } else {
+            $page->keys('[data-testid="editable-title"] input:not([type="hidden"])', 'Tab');
+        }
+
+        $page->assertValue('[data-testid="editable-title"] input[x-ref="serverState"]', $expectedState)
             ->assertAttributeMissing('[data-testid="editable-title"] input:not([type="hidden"])', 'aria-busy');
 
         expect($post->fresh()->title)->toBe($expectedState);
@@ -135,6 +143,7 @@ it('displays persisted state after save hooks and `void` callbacks in both theme
     'normalization' => ['normalize', 'MIXEDCASE'],
     'cached column state' => ['cached-state', 'mixedCase'],
     'custom records' => ['custom-records', 'MIXEDCASE'],
+    'batched normalization' => ['normalize', 'MIXEDCASE', true],
 ]);
 
 it('blocks rapid toggle and custom select edits without losing focus while saving in both themes', function (): void {
