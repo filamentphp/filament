@@ -30,6 +30,13 @@ return [
             'label' => 'Action|Actions',
         ],
 
+        'editable' => [
+            'saving' => 'Saving change...',
+            'saved' => 'Change saved.',
+            'failure' => 'The save could not be confirmed. Refresh the page before trying again.',
+            'unavailable' => 'This item can no longer be edited.',
+        ],
+
         'icon' => [
 
             'boolean' => [

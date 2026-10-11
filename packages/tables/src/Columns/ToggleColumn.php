@@ -53,10 +53,14 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                 'x-load' => true,
                 'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/toggle', 'filament/tables'),
                 'x-data' => 'toggleTableColumn({
+                    messages: ' . Js::from($this->getUpdateStateMessages()) . ',
                     name: ' . Js::from($this->getName()) . ',
                     recordKey: ' . Js::from($this->getRecordKey()) . ',
                     state: ' . Js::from($state) . ',
                 })',
+                'x-id' => "['table-column-error']",
+                'x-on:click.capture' => 'blockEdit($event)',
+                'x-on:keydown.capture' => 'blockEdit($event)',
             ], escape: false)
             ->class([
                 'fi-ta-toggle',
@@ -71,6 +75,9 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                 'disabled' => $this->isDisabled(),
                 'wire:loading.attr' => 'disabled',
                 'wire:target' => implode(',', Table::LOADING_TARGETS),
+                'x-bind:aria-invalid' => "error ? 'true' : null",
+                'x-bind:aria-busy' => "isLoading ? 'true' : null",
+                'x-bind:aria-describedby' => "getAccessibilityAttributes()['aria-describedby']",
                 'x-tooltip' => 'error === undefined ? ' . (filled($tooltip = $this->getTooltip($state, $relatedRecord))
                     ? '{
                         content: ' . Js::from($tooltip) . ',
@@ -111,10 +118,10 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                       // `tabindex` descendant is invalid inside an `<a>`. Applying it after Alpine boots keeps the
                       // served markup valid while still making the switch keyboard-focusable.?>
                 x-bind:tabindex="$el.hasAttribute('disabled') ? '-1' : '0'"
-                x-bind:aria-disabled="$el.hasAttribute('disabled') ? 'true' : null"
-                x-on:click.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
-                x-on:keydown.enter.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
-                x-on:keydown.space.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
+                x-bind:aria-disabled="isLoading || $el.hasAttribute('disabled') ? 'true' : null"
+                x-on:click.prevent.stop="if (! $el.hasAttribute('disabled')) { clearError(); state = ! state }"
+                x-on:keydown.enter.prevent.stop="if (! $el.hasAttribute('disabled')) { clearError(); state = ! state }"
+                x-on:keydown.space.prevent.stop="if (! $el.hasAttribute('disabled')) { clearError(); state = ! state }"
                 x-bind:class="state ? <?= $onClasses ?> : <?= $offClasses ?>"
                 <?php if ($state) { ?> x-cloak <?php } ?>
                 role="switch"
@@ -149,6 +156,23 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                     </div>
                 </div>
             <?php } ?>
+
+            <p
+                x-cloak
+                x-show="error"
+                x-bind:id="$id('table-column-error')"
+                x-ref="error"
+                x-text="error"
+                class="fi-ta-column-error"
+            ></p>
+
+            <p
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                x-text="status"
+                class="fi-sr-only"
+            ></p>
         </div>
 
         <?php return ob_get_clean();

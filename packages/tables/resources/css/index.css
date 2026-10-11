@@ -2,6 +2,7 @@
 @import './cell.css' layer(components);
 @import './columns/checkbox.css' layer(components);
 @import './columns/color.css' layer(components);
+@import './columns/editable.css' layer(components);
 @import './columns/icon.css' layer(components);
 @import './columns/image.css' layer(components);
 @import './columns/select.css' layer(components);

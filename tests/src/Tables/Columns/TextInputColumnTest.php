@@ -23,6 +23,18 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
+it('reports a missing persistence target without changing custom `null` callback results', function (): void {
+    $post = Post::factory()->create(['author_id' => null]);
+    $column = TextInputColumn::make('author.name')->record($post);
+
+    expect($column->updateState('Updated name'))->toBe(['error' => __('filament-tables::table.columns.editable.unavailable')])
+        ->and($post->fresh()->author_id)->toBeNull();
+
+    $column->updateStateUsing(static fn (): mixed => null);
+
+    expect($column->updateState('Updated name'))->toBeNull();
+});
+
 it('renders one error-aware text input tooltip with or without a configured hint', function (?string $tooltip): void {
     $post = Post::factory()->create();
     $column = livewire(TestTableWithTextInputColumn::class)->instance()->getTable()->getColumn('rating');
