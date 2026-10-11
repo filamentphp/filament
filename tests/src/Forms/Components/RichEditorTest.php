@@ -33,6 +33,67 @@ beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
 
+function traceRichEditorFocus($page): void
+{
+    $page->script(<<<'JS'
+        window.richEditorFocusTrace = [];
+        const describe = (element) => element instanceof Element ? {
+            tag: element.tagName,
+            id: element.id,
+            tool: element.getAttribute('data-rich-editor-tool'),
+            role: element.getAttribute('role'),
+            connected: element.isConnected,
+            dialog: element.closest('[role="dialog"]')?.id,
+            hiddenAncestors: Array.from((function* () { for (let ancestor = element; ancestor; ancestor = ancestor.parentElement) yield ancestor; })()).filter(ancestor => ancestor.style.display === 'none').map(ancestor => ({tag: ancestor.tagName, id: ancestor.id, class: ancestor.className})),
+        } : null;
+        const record = (type, detail = {}) => {
+            window.richEditorFocusTrace.push({time: performance.now(), type, documentFocused: document.hasFocus(), active: describe(document.activeElement), ...detail});
+            if (window.richEditorFocusTrace.length > 120) window.richEditorFocusTrace.shift();
+        };
+        const originalFocus = HTMLElement.prototype.focus;
+        HTMLElement.prototype.focus = function (...focusArguments) {
+            record('focus-call', {target: describe(this), stack: new Error().stack});
+            const result = originalFocus.apply(this, focusArguments);
+            record('focus-result', {target: describe(this)});
+            return result;
+        };
+        const originalTimeout = window.setTimeout;
+        window.setTimeout = function (callback, delay, ...callbackArguments) {
+            if (delay === 15 && typeof callback === 'function' && callback.toString().includes('.activate()')) {
+                record('trap-scheduled');
+                return originalTimeout.call(this, function () {
+                    record('trap-activating');
+                    callback.apply(this, callbackArguments);
+                    record('trap-activated');
+                }, delay);
+            }
+            return originalTimeout.call(this, callback, delay, ...callbackArguments);
+        };
+        for (const type of ['focusin', 'focusout', 'keydown', 'open-modal', 'close-modal-quietly', 'x-modal-opened', 'modal-closed', 'sync-action-modals', 'action-modal-focus-target', 'action-modal-focus-target-finished']) {
+            window.addEventListener(type, (event) => record(type, {target: describe(event.target), related: describe(event.relatedTarget), key: event.key, detail: {id: event.detail?.id, newActionNestingIndex: event.detail?.newActionNestingIndex}}), true);
+        }
+        window.addEventListener('error', (event) => record('error', {message: event.message, stack: event.error?.stack}));
+        window.addEventListener('unhandledrejection', (event) => record('rejection', {message: String(event.reason)}));
+        JS);
+}
+
+function assertRichEditorLinkDialogFocus($page, array $context): void
+{
+    try {
+        $page->assertPresent('[role="dialog"]:has(input[id="mountedActionSchema0.url"]):focus, [role="dialog"]:has(input[id="mountedActionSchema0.url"]) :focus');
+    } catch (Throwable $exception) {
+        fwrite(STDERR, 'RICH_EDITOR_FOCUS_FAILURE ' . json_encode([
+            'context' => $context,
+            'trace' => $page->script('window.richEditorFocusTrace'),
+            'state' => $page->script(<<<'JS'
+                ({focused: document.activeElement?.outerHTML.slice(0, 1000), documentFocused: document.hasFocus(), modals: Array.from(document.querySelectorAll('[role="dialog"]')).map(element => ({id: element.id, connected: element.isConnected, visible: !!element.getClientRects().length, open: Alpine.$data(element).isOpen, trap: Alpine.$data(element).isTrapActive, windowVisible: Alpine.$data(element).isWindowVisible, traps: Array.from(element.querySelectorAll('[x-trap\\.noreturn]')).map(trap => ({html: trap.outerHTML.slice(0, 1200), visible: !!trap.getClientRects().length})), autofocus: Array.from(element.querySelectorAll('[autofocus]')).map(input => ({html: input.outerHTML, connected: input.isConnected, visible: !!input.getClientRects().length}))}))})
+                JS),
+        ]) . PHP_EOL);
+
+        throw $exception;
+    }
+}
+
 test('fields can be required', function (): void {
     $errors = [];
 
@@ -2011,6 +2072,8 @@ it('preserves the selection and returns focus from toolbar link actions across e
             $page = $page->inDarkMode();
         }
 
+        traceRichEditorFocus($page);
+
         $page
             ->keys($content, 'Home')
             ->wait(0.1)
@@ -2048,9 +2111,10 @@ it('preserves the selection and returns focus from toolbar link actions across e
                     ->keys(':focus', ['ArrowDown', 'Enter']);
             }
 
+            $page->assertVisible('input[id="mountedActionSchema0.url"]');
+            assertRichEditorLinkDialogFocus($page, compact('origin', 'shouldRemount', 'isDarkMode', 'operation'));
+
             $page
-                ->assertVisible('input[id="mountedActionSchema0.url"]')
-                ->assertPresent("{$linkDialog}:focus, {$linkDialog} :focus")
                 ->assertCount('[role="tooltip"]:visible', 0);
 
             if ($shouldRemount) {
@@ -2099,9 +2163,9 @@ it('preserves the selection and returns focus from toolbar link actions across e
             $page
                 ->keys($content, 'Shift+Tab')
                 ->keys(':focus', ['End', 'Enter'])
-                ->assertVisible('input[id="mountedActionSchema0.url"]')
-                ->assertPresent("{$linkDialog}:focus, {$linkDialog} :focus")
-                ->assertCount('[role="tooltip"]:visible', 0);
+                ->assertVisible('input[id="mountedActionSchema0.url"]');
+            assertRichEditorLinkDialogFocus($page, ['operation' => 'updated document'] + compact('origin', 'shouldRemount', 'isDarkMode'));
+            $page->assertCount('[role="tooltip"]:visible', 0);
 
             $page->script("window.oldKeyboardEditor = document.querySelector('{$content}'); const component = Alpine.\$data(window.oldKeyboardEditor); component.\$wire.\$set('data.keyboardContent', '<p>Updated article.</p>', false); component.\$wire.remountEditor()");
 
@@ -2212,6 +2276,8 @@ it('returns link dialog focus to the originating toolbar group with duplicate la
             $page = $page->inDarkMode();
         }
 
+        traceRichEditorFocus($page);
+
         $page
             ->keys($content, 'Home')
             ->wait(0.3)
@@ -2227,8 +2293,10 @@ it('returns link dialog focus to the originating toolbar group with duplicate la
             ->assertAttribute(':focus', 'role', 'menuitemcheckbox')
             ->keys(':focus', 'ArrowDown')
             ->keys(':focus', 'Enter')
-            ->assertVisible('input[id="mountedActionSchema0.url"]')
-            ->assertPresent("{$linkDialog}:focus, {$linkDialog} :focus")
+            ->assertVisible('input[id="mountedActionSchema0.url"]');
+        assertRichEditorLinkDialogFocus($page, ['origin' => 'duplicate group'] + compact('shouldRemount', 'isDarkMode'));
+
+        $page
             ->assertCount('[role="tooltip"]:visible', 0)
             ->assertScript('document.getAnimations().filter(animation => animation.playState === "running").length', 0)
             ->assertScript("Array.from(document.querySelectorAll('{$trigger}')).every(trigger => trigger.getAttribute('aria-expanded') === 'false')", true);
