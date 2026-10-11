@@ -82,15 +82,13 @@ function assertRichEditorLinkDialogFocus($page, array $context): void
     try {
         $page->assertPresent('[role="dialog"]:has(input[id="mountedActionSchema0.url"]):focus, [role="dialog"]:has(input[id="mountedActionSchema0.url"]) :focus');
     } catch (Throwable $exception) {
-        fwrite(STDERR, 'RICH_EDITOR_FOCUS_FAILURE ' . json_encode([
+        throw new RuntimeException($exception->getMessage() . PHP_EOL . 'RICH_EDITOR_FOCUS_FAILURE ' . json_encode([
             'context' => $context,
             'trace' => $page->script('window.richEditorFocusTrace'),
             'state' => $page->script(<<<'JS'
                 ({focused: document.activeElement?.outerHTML.slice(0, 1000), documentFocused: document.hasFocus(), modals: Array.from(document.querySelectorAll('[role="dialog"]')).map(element => ({id: element.id, connected: element.isConnected, visible: !!element.getClientRects().length, open: Alpine.$data(element).isOpen, trap: Alpine.$data(element).isTrapActive, windowVisible: Alpine.$data(element).isWindowVisible, traps: Array.from(element.querySelectorAll('[x-trap\\.noreturn]')).map(trap => ({html: trap.outerHTML.slice(0, 1200), visible: !!trap.getClientRects().length})), autofocus: Array.from(element.querySelectorAll('[autofocus]')).map(input => ({html: input.outerHTML, connected: input.isConnected, visible: !!input.getClientRects().length}))}))})
                 JS),
-        ]) . PHP_EOL);
-
-        throw $exception;
+        ]), previous: $exception);
     }
 }
 
