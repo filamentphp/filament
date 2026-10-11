@@ -60,6 +60,7 @@ it('renders and searches `Htmlable` tenant names while escaping string names', f
     $tenant = Team::factory()->create(['name' => '<b>Research &amp; billing</b>']);
     $switchableTenant = Team::factory()->create(['name' => '<b>Support &amp; sales</b>']);
     $literalTenant = Team::factory()->create(['name' => '<b>Archives</b>']);
+    $accentedTenant = Team::factory()->create(['name' => 'Málaga']);
 
     Team::retrieved(static function (Team $team) use ($literalTenant): void {
         if (! $team->is($literalTenant)) {
@@ -83,6 +84,7 @@ it('renders and searches `Htmlable` tenant names while escaping string names', f
 
     $switchableTenantUrl = Filament::getUrl($switchableTenant);
     $literalTenantUrl = Filament::getUrl($literalTenant);
+    $accentedTenantUrl = Filament::getUrl($accentedTenant);
 
     $page->click($tenantTrigger)
         ->assertSeeIn("a[href=\"{$literalTenantUrl}\"]", '<b>Archives</b>')
@@ -90,6 +92,9 @@ it('renders and searches `Htmlable` tenant names while escaping string names', f
         ->type('input[x-model="search"]', 'Support & sales')
         ->assertVisible("a[href=\"{$switchableTenantUrl}\"]")
         ->assertMissing("a[href=\"{$literalTenantUrl}\"]:visible")
+        ->type('input[x-model="search"]', 'MALAGA')
+        ->assertVisible("a[href=\"{$accentedTenantUrl}\"]")
+        ->assertMissing("a[href=\"{$switchableTenantUrl}\"]:visible")
         ->type('input[x-model="search"]', '<b>Archives</b>')
         ->assertVisible("a[href=\"{$literalTenantUrl}\"]")
         ->assertMissing("a[href=\"{$switchableTenantUrl}\"]:visible")
