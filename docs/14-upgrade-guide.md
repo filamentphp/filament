@@ -49,7 +49,7 @@ You can now `composer remove filament/upgrade --dev` as you don't need it anymor
 
 ## Breaking changes that must be handled manually
 
-<div x-data="{ packages: ['panels', 'forms', 'infolists', 'tables', 'actions', 'notifications', 'widgets', 'support'] }">
+<div x-data="{ packages: ['panels', 'forms', 'infolists', 'tables', 'actions', 'notifications', 'widgets'] }">
 
 To begin, filter the upgrade guide for your specific needs by selecting only the packages that you use in your project:
 
@@ -104,10 +104,6 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
         <span slot="description">
             This package is also often used in a panel.
         </span>
-    </Checkbox>
-
-    <Checkbox value="support" model="packages">
-        Blade UI components
     </Checkbox>
 </Checkboxes>
 
@@ -325,7 +321,7 @@ The Actions package now depends on OpenSpout v5. If you customize XLSX exports u
 See the [XLSX export customization documentation](../actions/export#customizing-xlsx-files) for updated examples and the [OpenSpout v5 upgrade guide](https://github.com/openspout/openspout/blob/5.x/UPGRADE.md#upgrading-from-4x-to-50) for a complete list of changes.
 </Disclosure>
 
-<Disclosure open x-show="packages.includes('support')">
+<Disclosure open>
 <span slot="summary">Livewire file uploads are now restricted to schema components by default</span>
 
 Every Livewire component that uses the `InteractsWithSchemas` trait exposes Livewire's `_startUpload` and `_finishUpload` RPC methods, which by default accept uploads to any property name — even ones that are not real upload fields. To close this, Filament now restricts these uploads by default: `_startUpload` and `_finishUpload` abort with a `403` unless the target property maps to a `FileUpload` field (or any field that supports file attachments) registered in one of the component's schemas. Previously this was opt-in via the `RestrictsFileUploadsToSchemaComponents` trait.
@@ -370,7 +366,23 @@ You should review your provider's implementation for Eloquent-specific method ca
 See the [custom avatar provider documentation](../users/overview#using-a-different-avatar-provider) for more details.
 </Disclosure>
 
-<Disclosure open x-show="packages.includes('support')">
+<Disclosure open x-show="packages.includes('tables')">
+<span slot="summary">Deprecated column-toggle render hook constants have been removed</span>
+
+The deprecated `TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER` and `TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE` constants have been removed. Use `TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER` and `TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE` instead.
+
+The automated upgrade script updates references to these constants for you. Their underlying string values, `tables::toolbar.toggle-column-trigger.after` and `tables::toolbar.toggle-column-trigger.before`, are unchanged, so hooks registered using those strings do not need to be updated.
+
+See the [table render hook documentation](../advanced/render-hooks#table-builder-render-hooks) for more details.
+</Disclosure>
+
+<Disclosure open>
+<span slot="summary">The deprecated badge delete button icon alias has been removed</span>
+
+The deprecated `SupportIconAlias::BADGE_DELETE_BUTTON` constant has been removed. Remove any icon registrations that use it and customize the `.fi-badge-delete-btn-icon` CSS class instead. There is no replacement icon alias, so this change must be handled manually rather than by the automated upgrade script.
+</Disclosure>
+
+<Disclosure open>
 <span slot="summary">The modal content is now wrapped in a `fi-modal-window-scroll` element when using a sticky header or footer</span>
 
 To fix an issue where modals with a sticky header or footer could overflow the viewport, the internal DOM structure of the modal component has changed. When a modal has a sticky header (`stickyHeader()`) or a sticky footer (`stickyFooter()`), and is not a slide-over or a screen-width modal, its heading, content, and footer are now wrapped in a new scrollable `fi-modal-window-scroll` element:
@@ -388,7 +400,7 @@ To fix an issue where modals with a sticky header or footer could overflow the v
 If you have written custom CSS or a theme that targets `fi-modal-header`, `fi-modal-content`, or `fi-modal-footer` as direct children of `fi-modal-window`, you should update your selectors to account for the new `fi-modal-window-scroll` wrapper.
 </Disclosure>
 
-<Disclosure open x-show="packages.includes('support')">
+<Disclosure open>
 <span slot="summary">The `ryangjchandler/blade-capture-directive` Composer dependency has been removed</span>
 
 Filament no longer depends on the [`ryangjchandler/blade-capture-directive`](https://github.com/ryangjchandler/blade-capture-directive) package, since Filament registers its own `@capture` and `@endcapture` Blade directives with the same functionality. If you use these directives in your own Blade views, they will continue to work without any changes.

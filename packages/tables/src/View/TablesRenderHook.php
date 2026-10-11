@@ -39,14 +39,4 @@ class TablesRenderHook
     const FILTER_INDICATORS = 'tables::filter.indicators';
 
     const HEADER_CELL = 'tables::header.cell';
-
-    /**
-     * @deprecated Use `TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER` instead.
-     */
-    const TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER = self::TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER;
-
-    /**
-     * @deprecated Use `TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE` instead.
-     */
-    const TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE = self::TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE;
 }
