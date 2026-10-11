@@ -1640,6 +1640,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->merge($this->getExtraAttributes(), escape: false)
             ->merge($this->getAlpineAttributes($items), escape: false)
             ->merge([
+                'aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby'] ?? null,
                 'aria-labelledby' => "{$id}-label",
                 'id' => $id,
                 'role' => 'group',

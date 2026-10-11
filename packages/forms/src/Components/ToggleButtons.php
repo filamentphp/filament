@@ -112,7 +112,10 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
         };
         $wireModelAttribute = $this->applyStateBindingModifiers('wire:model');
         $extraInputAttributeBag = $this->getExtraInputAttributeBag()
-            ->merge($this->getAccessibilityAttributes(), escape: false)
+            ->merge([
+                'aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby'],
+                'aria-invalid' => $isMultiple ? $this->getAccessibilityAttributes()['aria-invalid'] : null,
+            ], escape: false)
             ->class(['fi-fo-toggle-buttons-input' => $isMultiple]);
         $isAutofocused = $this->isAutofocused();
         $isFullWidth = $this->isFullWidth();
@@ -125,7 +128,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
 
         $containerAttributes = $containerAttributes
             ->merge([
-                ...$this->getAccessibilityAttributes(),
+                'aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby'] ?? null,
                 'aria-labelledby' => filled($this->getLabel()) ? e("{$id}-label") : null,
                 'role' => 'group',
                 'x-load' => $isMultiple ? null : '',
@@ -236,14 +239,17 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
         };
         $wireModelAttribute = $this->applyStateBindingModifiers('wire:model');
         $extraInputAttributeBag = $this->getExtraInputAttributeBag()
-            ->merge($this->getAccessibilityAttributes(), escape: false)
+            ->merge([
+                'aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby'],
+                'aria-invalid' => $isMultiple ? $this->getAccessibilityAttributes()['aria-invalid'] : null,
+            ], escape: false)
             ->class(['fi-fo-toggle-buttons-input' => $isMultiple]);
         $isFullWidth = $this->isFullWidth();
         $isAutofocused = $this->isAutofocused();
 
         $containerAttributes = $this->getExtraAttributeBag()
             ->merge([
-                ...$this->getAccessibilityAttributes(),
+                'aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby'] ?? null,
                 'aria-labelledby' => filled($this->getLabel()) ? e("{$id}-label") : null,
                 'role' => 'group',
                 'x-load' => $isMultiple ? null : '',

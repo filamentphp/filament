@@ -1,12 +1,20 @@
 <?php
 
+use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\ModalTableSelect;
+use Filament\Forms\Components\OneTimeCodeInput;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TableSelect;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
@@ -18,6 +26,8 @@ use Filament\Schemas\Components\Text;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Tables\PostsTable;
+use Filament\Tests\Fixtures\Tables\UsersTable;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\HtmlString;
@@ -80,7 +90,7 @@ it('associates native and grouped controls with `helperText()` and errors but no
             ...(($isMultiple || $field instanceof ToggleButtons) ? ['data.answer-required' => 'Select at least one option.'] : []),
         ];
         foreach ($document->query('//input[not(@hidden)] | //textarea | //select | //button | //*[@role="group" or @role="radiogroup"]') as $control) {
-            expect($control->getAttribute('aria-invalid'))->toBe($hasError ? 'true' : '')
+            expect($control->getAttribute('aria-invalid'))->toBe(($hasError && ($control->getAttribute('role') !== 'group') && ($control->nodeName !== 'button')) ? 'true' : '')
                 ->and($control->getAttribute('aria-describedby'))->toBe(implode(' ', array_keys($expectedDescriptions)));
             foreach ($expectedDescriptions as $reference => $description) {
                 $targets = $document->query('//*[@id="' . $reference . '"]');
@@ -94,6 +104,86 @@ it('associates native and grouped controls with `helperText()` and errors but no
         expect($document->query('//*[@data-validation-error and (@role="alert" or @aria-live)]')->length)->toBe(0);
     }
 })->with('accessible native and grouped fields')->with([false, true]);
+
+it('associates direct and split value controls with helpers and errors for `HtmlString` labels', function (Closure $makeField, int $count, bool $bladeWrapper): void {
+    $field = $makeField()->id('choice&#65;')->helperText('Instructions')
+        ->label(new HtmlString('<strong class="field-label">Updates &amp; "delivery"</strong>'));
+    if ($bladeWrapper) {
+        $field->fieldWrapperView('test-plugin-wrapper');
+    }
+    $schema = Schema::make(Livewire::make())->components([$field]);
+    foreach ([false, true, false] as $hasError) {
+        view()->share('errors', (new ViewErrorBag)->put('default', new MessageBag($hasError ? ['answer' => ['Check your answer.']] : [])));
+        $document = fieldAccessibilityDocument($schema->toHtml());
+        $controls = $document->query('//input | //button[@role="switch"]');
+        expect($controls->length)->toBe($count);
+        foreach ($controls as $control) {
+            expect($control->getAttribute('aria-describedby'))->toBe('choice&#65;-helper-text' . ($hasError ? ' choice&#65;-error' : ''))
+                ->and($control->getAttribute('aria-invalid'))->toBe($hasError ? 'true' : '');
+        }
+        foreach ($document->query('//*[@role="group"]') as $group) {
+            expect($group->hasAttribute('aria-invalid'))->toBeFalse()
+                ->and($group->getAttribute('aria-label'))->toBe('Updates & "delivery"');
+        }
+    }
+
+    $attributes = ['aria-describedby' => e('application&#65;note'), 'aria-invalid' => null];
+    ($field instanceof Toggle) ? $field->extraAttributes($attributes) : $field->extraInputAttributes($attributes);
+    view()->share('errors', (new ViewErrorBag)->put('default', new MessageBag(['answer' => ['Check your answer.']])));
+    $document = fieldAccessibilityDocument($schema->toHtml());
+    foreach ($document->query('//input | //button[@role="switch"]') as $control) {
+        expect($control->getAttribute('aria-describedby'))->toBe('application&#65;note')
+            ->and($control->hasAttribute('aria-invalid'))->toBeFalse();
+    }
+})->with([
+    [static fn (): Field => Toggle::make('answer'), 1],
+    [static fn (): Field => ColorPicker::make('answer'), 1],
+    [static fn (): Field => OneTimeCodeInput::make('answer')->length(4), 4],
+])->with([false, true]);
+
+it('describes collection errors without invalidating groups or unrelated child controls', function (Closure $makeField, bool $bladeWrapper): void {
+    $field = $makeField()->helperText('Collection instructions')
+        ->label(new HtmlString('<strong class="field-label">Updates &amp; "delivery"</strong>'));
+    if ($bladeWrapper) {
+        $field->fieldWrapperView('test-plugin-wrapper');
+    }
+    $schema = Schema::make(Livewire::make())->statePath('data')->components([$field]);
+    foreach ([false, true, false] as $hasError) {
+        view()->share('errors', (new ViewErrorBag)->put('default', new MessageBag($hasError ? ['data.answer' => ['Check the collection.']] : [])));
+        $document = fieldAccessibilityDocument($schema->toHtml());
+        $groups = $document->query('//*[@role="group" and @aria-describedby]');
+        expect($groups->length)->toBeGreaterThan(0);
+        $group = $groups->item(0);
+        expect($group->getAttribute('aria-describedby'))->toBe('data.answer-helper-text' . ($hasError ? ' data.answer-error' : ''))
+            ->and($document->query('//*[@aria-invalid="true"]')->length)->toBe(0);
+        if ($field instanceof TagsInput) {
+            expect($group->getAttribute('aria-label'))->toBe('Updates & "delivery"');
+        }
+        foreach (explode(' ', $group->getAttribute('aria-describedby')) as $reference) {
+            expect($document->query('//*[@id="' . $reference . '"]')->length)->toBe(1);
+        }
+        foreach ($document->query('//*[@aria-labelledby]') as $control) {
+            expect($document->query('//*[@id="' . $control->getAttribute('aria-labelledby') . '"]')->length)->toBe(1);
+        }
+    }
+
+    foreach (['application-instructions', null] as $description) {
+        $field->extraAttributes(['aria-describedby' => $description]);
+        $document = fieldAccessibilityDocument($schema->toHtml());
+        $group = $document->query('//*[@role="group"]')->item(0);
+        expect($group->getAttribute('aria-describedby'))->toBe($description ?? '')
+            ->and($group->hasAttribute('aria-invalid'))->toBeFalse();
+    }
+})->with([
+    [static fn (): Field => TagsInput::make('answer')],
+    [static fn (): Field => KeyValue::make('answer')],
+    [static fn (): Field => Builder::make('answer')->blocks([])],
+    [static fn (): Field => Repeater::make('answer')->schema([TextInput::make('name')])],
+    [static fn (): Field => Repeater::make('answer')->simple(TextInput::make('name'))],
+    [static fn (): Field => Repeater::make('answer')->schema([TextInput::make('name')])->table([Repeater\TableColumn::make('Name')])],
+    [static fn (): Field => TableSelect::make('answer')->model(User::class)->relationship('posts')->tableConfiguration(PostsTable::class)],
+    [static fn (): Field => ModalTableSelect::make('answer')->model(User::class)->tableConfiguration(UsersTable::class)->getOptionLabelUsing(static fn (): ?string => null)],
+])->with([false, true]);
 
 it('removes replaced or empty `helperText()` associations', function (bool $bladeWrapper): void {
     $field = TextInput::make('answer')->hint('Hint only');
@@ -275,6 +365,16 @@ it('preserves literal entity-like field IDs in label and error references', func
     }
 })->with('accessible native and grouped fields')->with([false, true]);
 
+it('preserves literal entity-like `KeyValue` group label references', function (bool $bladeWrapper): void {
+    $field = KeyValue::make('answer')->id('choice&#65;');
+    if ($bladeWrapper) {
+        $field->fieldWrapperView('test-plugin-wrapper');
+    }
+    $document = fieldAccessibilityDocument(Schema::make(Livewire::make())->components([$field])->toHtml());
+    expect($document->query('//*[@role="group"]')->item(0)->getAttribute('aria-labelledby'))->toBe('choice&#65;-label')
+        ->and($document->query('//*[@id="choice&#65;-label"]')->length)->toBe(1);
+})->with([false, true]);
+
 it('keeps same-name fields with distinct nested state paths associated across renders', function (): void {
     $schema = Schema::make(Livewire::make())->key('form')->statePath('data')->components([
         Group::make([TextInput::make('name')])->statePath('guests.first'),
@@ -330,6 +430,21 @@ it('preserves `Textarea::getExtraInputAttributeBag()` overrides and Alpine prece
         ->and($control->getAttribute('data-extension'))->toBe('present');
 });
 
+it('preserves custom `DateTimePicker::getExtraAlpineAttributeBag()` overrides', function (): void {
+    $field = new class('answer') extends DateTimePicker
+    {
+        public function getExtraAlpineAttributeBag(): ComponentAttributeBag
+        {
+            return parent::getExtraAlpineAttributeBag()->merge(['data-extension' => 'present']);
+        }
+    };
+    $field->native(false)->extraAlpineAttributes(['data-application' => 'present']);
+    $document = fieldAccessibilityDocument(Schema::make(Livewire::make())->components([$field])->toHtml());
+    $control = $document->query('//input[@x-ref="button"]/..')->item(0);
+    expect($control->getAttribute('data-extension'))->toBe('present')
+        ->and($control->getAttribute('data-application'))->toBe('present');
+});
+
 it('lets Alpine attributes suppress accessibility defaults', function (string $fieldClass, ?string $description): void {
     $field = $fieldClass::make('answer')->extraAlpineAttributes(['aria-describedby' => $description, 'aria-invalid' => null]);
     view()->share('errors', (new ViewErrorBag)->put('default', new MessageBag(['answer' => ['Check your answer.']])));
@@ -352,7 +467,7 @@ it('preserves group attribute overrides without referencing an absent label', fu
         ->and($group->getAttribute('aria-invalid'))->toBe('false')
         ->and($group->hasAttribute('aria-required'))->toBeFalse();
     foreach ($document->query('//input[not(@hidden)] | //button') as $control) {
-        expect($control->getAttribute('aria-invalid'))->toBe('true');
+        expect($control->getAttribute('aria-invalid'))->toBe($control->nodeName === 'button' ? '' : 'true');
         foreach (explode(' ', $control->getAttribute('aria-describedby')) as $reference) {
             expect($document->query('//*[@id="' . $reference . '"]')->length)->toBe(1);
         }
@@ -421,7 +536,8 @@ it('associates fused group helpers and errors without referencing suppressed chi
         expect($control->hasAttribute('aria-describedby'))->toBeFalse();
     }
     foreach ($document->query('//*[@role="group"]') as $index => $control) {
-        expect($control->getAttribute('aria-describedby'))->toBe($keyed ? $groups[$index]->getId() . '-helper-text ' . $groups[$index]->getId() . '-error' : '');
+        expect($control->getAttribute('aria-describedby'))->toBe($keyed ? $groups[$index]->getId() . '-helper-text ' . $groups[$index]->getId() . '-error' : '')
+            ->and($control->hasAttribute('aria-invalid'))->toBeFalse();
         foreach (['aria-describedby', 'aria-labelledby'] as $attribute) {
             if ($control->hasAttribute($attribute)) {
                 foreach (explode(' ', $control->getAttribute($attribute)) as $reference) {
@@ -579,5 +695,53 @@ it('updates accessible error descriptions after validation in the browser', func
             ->assertAttribute('[data-testid="notes"]', 'aria-describedby', 'privacy-note');
         $page->script('Promise.all(document.getAnimations().filter(animation => animation.effect.getTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {})))');
         $page->assertNoAccessibilityIssues();
+
+        $valueControls = [
+            'code' => '[data-testid="additional-code"] [contenteditable="true"]',
+            'markdown' => '[data-testid="additional-markdown"] textarea:not([x-ref])',
+            'rich' => '[data-testid="additional-rich"] [contenteditable="true"]',
+            'date' => '[data-testid="additional-date"] [role="combobox"]',
+            'slider' => '[data-testid="additional-slider"] [role="slider"]',
+            'color' => '[data-testid="additional-color"] input',
+            'code_digits' => '[data-testid="additional-code_digits"] input[id]',
+            'attachment' => '[data-testid="additional-attachment"] input[type="file"]',
+        ];
+        foreach ($valueControls as $name => $selector) {
+            $page->assertAttribute($selector, 'aria-describedby', 'additionalForm.' . $name . '-helper-text');
+        }
+        $page->click('[data-testid="validate-additional"]');
+        foreach ($valueControls as $name => $selector) {
+            $page->assertAttribute($selector, 'aria-describedby', 'additionalForm.' . $name . '-helper-text additionalForm.' . $name . '-error')
+                ->assertAttribute($selector, 'aria-invalid', 'true');
+        }
+        foreach (['tags', 'metadata', 'members', 'blocks'] as $name) {
+            $page->assertAttribute('[data-testid="additional-' . $name . '"]', 'aria-describedby', 'additionalForm.' . $name . '-helper-text additionalForm.' . $name . '-error');
+        }
+        $page->assertScript('[...document.querySelectorAll("[data-testid=additional-range] [role=slider]")].map(handle => handle.getAttribute("aria-describedby"))', ['additionalForm.range-helper-text additionalForm.range-error', 'additionalForm.range-helper-text additionalForm.range-error'])
+            ->assertAttribute('[data-testid="additional-tags"] input', 'aria-describedby', 'additionalForm.tags-helper-text additionalForm.tags-error')
+            ->assertAttribute('[data-testid="additional-custom_attachment"] input[type="file"]', 'aria-describedby', 'custom-file-note')
+            ->assertAttribute('[data-testid="additional-attachment"] .filepond--label-action', 'aria-describedby', 'additionalForm.attachment-helper-text additionalForm.attachment-error')
+            ->assertAttribute('[data-testid="additional-composed_attachment"] input[type="file"]', 'aria-describedby', 'custom-file-note additionalForm.composed_attachment-helper-text additionalForm.composed_attachment-error')
+            ->assertAttribute('[data-testid="additional-composed_attachment"] .filepond--label-action', 'aria-describedby', 'custom-file-note additionalForm.composed_attachment-helper-text additionalForm.composed_attachment-error');
+        expect($page->script('document.querySelectorAll("[data-testid=additional-form] [role=group][aria-invalid], [data-testid=additional-tags] input[aria-invalid], [data-testid=additional-metadata] input[aria-invalid], [data-testid=additional-range] [role=slider][aria-invalid], [data-testid=additional-custom_attachment] input[aria-invalid]").length'))->toBe(0)
+            ->and($page->script('[...document.querySelectorAll("[data-testid=additional-code_digits] input")].every(input => input.getAttribute("aria-invalid") === "true")'))->toBeTrue()
+            ->and($page->script('[...document.querySelectorAll("[data-testid=additional-form] [aria-describedby]")].every(control => control.getAttribute("aria-describedby").split(/\\s+/).every(id => document.querySelectorAll(`[id="${id}"]`).length === 1))'))->toBeTrue();
+        $page->assertNoAccessibilityIssues();
+
+        $page->fill($valueControls['code'], 'const updated = true;')
+            ->fill($valueControls['rich'], 'Updated welcome message.')
+            ->click('[data-testid="accept-additional"]');
+        foreach ($valueControls as $selector) {
+            $page->assertScript('document.querySelector(' . json_encode($selector) . ').hasAttribute("aria-describedby")', false)
+                ->assertScript('document.querySelector(' . json_encode($selector) . ').hasAttribute("aria-invalid")', false);
+        }
+        $page->assertSeeIn($valueControls['code'], 'const updated = true;')
+            ->assertSeeIn($valueControls['rich'], 'Updated welcome message.')
+            ->assertAttribute('[data-testid="additional-custom_attachment"] input[type="file"]', 'aria-describedby', 'custom-file-note')
+            ->assertAttribute('[data-testid="additional-composed_attachment"] input[type="file"]', 'aria-describedby', 'custom-file-note')
+            ->assertAttribute('[data-testid="additional-composed_attachment"] .filepond--label-action', 'aria-describedby', 'custom-file-note')
+            ->assertScript('document.querySelector("[data-testid=additional-attachment] .filepond--label-action").hasAttribute("aria-describedby")', false)
+            ->assertScript('document.querySelectorAll("[data-testid=additional-form] [data-validation-error]").length', 0)
+            ->assertNoAccessibilityIssues();
     }
 });

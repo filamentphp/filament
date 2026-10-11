@@ -290,7 +290,6 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
                 'id' => $groupId,
                 'role' => 'group',
                 'aria-labelledby' => $groupLabelId,
-                'aria-invalid' => $hasError ? 'true' : null,
             ], escape: false)
             ->merge($this->getExtraAttributes(), escape: false)
             ->merge(['aria-describedby' => $descriptionIds ? e(implode(' ', $descriptionIds)) : null], escape: false)

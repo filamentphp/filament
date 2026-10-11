@@ -10,6 +10,10 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginImageResize from 'filepond-plugin-image-resize'
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform'
 import FilePondPluginMediaPreview from './file-upload/filepond-plugin-media-preview'
+import {
+    observeFieldAccessibility,
+    setFieldAccessibilityAttributes,
+} from '../utils/field-accessibility'
 
 FilePond.registerPlugin(FilePondPluginFileValidateSize)
 FilePond.registerPlugin(FilePondPluginFileValidateType)
@@ -117,6 +121,7 @@ export default function fileUploadFormComponent({
         visibilityObserver: null,
 
         intersectionObserver: null,
+        accessibilityObserver: null,
 
         isInitializing: false,
 
@@ -176,8 +181,6 @@ export default function fileUploadFormComponent({
                 return
             }
 
-            FilePond.setOptions(locales[locale] ?? locales['en'])
-
             const files = await this.getFiles()
 
             if (isDestroyed) {
@@ -186,10 +189,11 @@ export default function fileUploadFormComponent({
                 return
             }
 
-            const inputLabelledBy =
-                this.$refs.input.getAttribute('aria-labelledby')
+            const input = this.$refs.input
+            const inputLabelledBy = input.getAttribute('aria-labelledby')
 
-            this.pond = FilePond.create(this.$refs.input, {
+            this.pond = FilePond.create(input, {
+                ...(locales[locale] ?? locales['en']),
                 acceptedFileTypes,
                 allowImageExifOrientation: shouldOrientImageFromExif,
                 allowPaste: isPasteable && !isDisabled,
@@ -240,13 +244,49 @@ export default function fileUploadFormComponent({
                 minFileSize: minSize,
                 ...(maxParallelUploads && { maxParallelUploads }),
                 oninit: () => {
-                    if (isDestroyed || !inputLabelledBy) {
+                    if (isDestroyed) {
                         return
                     }
 
-                    this.pond.element
-                        .querySelector('.filepond--browser')
-                        ?.setAttribute('aria-labelledby', inputLabelledBy)
+                    const browser =
+                        this.pond.element.querySelector('.filepond--browser')
+
+                    if (inputLabelledBy) {
+                        browser?.setAttribute(
+                            'aria-labelledby',
+                            inputLabelledBy,
+                        )
+                    }
+
+                    const description =
+                        browser?.getAttribute('aria-describedby')
+                    const sync = (attributes, source) => {
+                        const browseDescription = attributes['aria-describedby']
+
+                        if (
+                            source.hasAttribute(
+                                'data-preserve-filepond-description',
+                            )
+                        ) {
+                            attributes['aria-describedby'] =
+                                [description, attributes['aria-describedby']]
+                                    .filter(Boolean)
+                                    .join(' ') || null
+                        }
+
+                        setFieldAccessibilityAttributes(browser, attributes)
+                        setFieldAccessibilityAttributes(
+                            this.pond.element.querySelector(
+                                '.filepond--label-action',
+                            ),
+                            { 'aria-describedby': browseDescription },
+                        )
+                    }
+
+                    this.accessibilityObserver = observeFieldAccessibility(
+                        this.$el,
+                        sync,
+                    )
                 },
                 styleButtonProcessItemPosition: uploadButtonPosition,
                 styleButtonRemoveItemPosition: removeUploadedFileButtonPosition,
@@ -1080,6 +1120,7 @@ export default function fileUploadFormComponent({
 
             this.visibilityObserver?.disconnect()
             this.intersectionObserver?.disconnect()
+            this.accessibilityObserver?.disconnect()
 
             this.destroyEditor()
 

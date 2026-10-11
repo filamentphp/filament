@@ -880,7 +880,10 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                 ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
             ]);
 
-        $inputAttributes = $this->getExtraInputAttributeBag()
+        $extraInputAttributeBag = $this->getExtraInputAttributeBag();
+
+        $inputAttributes = $extraInputAttributeBag
+            ->merge($this->getAccessibilityAttributes(), escape: false)
             ->merge([
                 'aria-labelledby' => "{$id}-label",
                 'disabled' => $isDisabled,
@@ -892,6 +895,12 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
         ob_start(); ?>
 
+        <div
+            hidden
+            data-field-accessibility
+            <?php if (! $extraInputAttributeBag->has('aria-describedby')) { ?> data-preserve-filepond-description <?php } ?>
+            <?= $inputAttributes->only(['aria-describedby', 'aria-invalid'])->toHtml() ?>
+        ></div>
         <div
             x-load
             x-load-src="<?= e($alpineComponentSrc) ?>"

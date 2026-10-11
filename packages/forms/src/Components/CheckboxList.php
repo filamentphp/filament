@@ -568,7 +568,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
                     })"
             <?= $this->getExtraAlpineAttributeBag()
                 ->merge([
-                    ...$this->getAccessibilityAttributes(),
+                    'aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby'] ?? null,
                     'aria-labelledby' => filled($this->getLabel()) ? e("{$id}-label") : null,
                 ], escape: false)
                 ->class(['fi-fo-checkbox-list'])->toHtml() ?>

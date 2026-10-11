@@ -107,6 +107,7 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
         } . '-color-picker';
 
         $inputAttributes = $this->getExtraInputAttributeBag()
+            ->merge($this->getAccessibilityAttributes(), escape: false)
             ->merge([
                 // `aria-expanded` / `aria-haspopup` are not supported on a plain textbox, so only
                 // `aria-controls` (a global ARIA attribute) associates the input with its panel.
