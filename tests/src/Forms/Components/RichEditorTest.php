@@ -1853,7 +1853,7 @@ it('can navigate configured toolbar groups and format selected text using the ke
         $page = visit('/rich-editor-browser-test');
 
         if ($isDarkMode) {
-            $page->inDarkMode();
+            $page = $page->inDarkMode();
         }
 
         $page
@@ -1941,7 +1941,7 @@ it('can tab into a toolbar after its editor is revealed and navigate in `rtl`', 
         $page = visit('/rich-editor-browser-test');
 
         if ($isDarkMode) {
-            $page->inDarkMode();
+            $page = $page->inDarkMode();
         }
 
         $page->assertPresent($content);
@@ -1973,7 +1973,7 @@ it('can reach both grid and table floating controls from a nested selection', fu
         $page = visit('/rich-editor-browser-test');
 
         if ($isDarkMode) {
-            $page->inDarkMode();
+            $page = $page->inDarkMode();
         }
 
         $page
@@ -2002,12 +2002,13 @@ it('preserves the selection and returns focus from toolbar link actions across e
 
     $editor = '[data-testid="keyboard-rich-editor"]';
     $content = $editor . ' [role="textbox"]';
+    $linkDialog = '[role="dialog"]:has(input[id="mountedActionSchema0.url"])';
 
     foreach ([false, true] as $isDarkMode) {
         $page = visit('/rich-editor-browser-test');
 
         if ($isDarkMode) {
-            $page->inDarkMode();
+            $page = $page->inDarkMode();
         }
 
         $page
@@ -2049,7 +2050,7 @@ it('preserves the selection and returns focus from toolbar link actions across e
 
             $page
                 ->assertVisible('input[id="mountedActionSchema0.url"]')
-                ->assertScript('document.querySelector(\'input[id="mountedActionSchema0.url"]\').closest(\'[role="dialog"]\').contains(document.activeElement)', true)
+                ->assertPresent("{$linkDialog}:focus, {$linkDialog} :focus")
                 ->assertCount('[role="tooltip"]:visible', 0);
 
             if ($shouldRemount) {
@@ -2074,9 +2075,10 @@ it('preserves the selection and returns focus from toolbar link actions across e
             }
 
             $page
-                ->assertScript($origin === 'main'
-                    ? "document.activeElement.matches('{$editor} [data-rich-editor-tool=\"link\"]')"
-                    : "document.activeElement.matches('{$content}')", true)
+                ->assertNotPresent('input[id="mountedActionSchema0.url"]')
+                ->assertPresent($origin === 'main'
+                    ? $editor . ' [data-rich-editor-tool="link"]:focus'
+                    : $content . ':focus')
                 ->assertScript("Alpine.\$data(document.querySelector('{$content}')).\$getEditor().state.selection.toJSON()", ['type' => 'text', 'anchor' => 1, 'head' => 6])
                 ->assertNoSmoke()
                 ->assertScript('document.getAnimations().filter(animation => animation.playState === "running").length', 0)
@@ -2098,7 +2100,7 @@ it('preserves the selection and returns focus from toolbar link actions across e
                 ->keys($content, 'Shift+Tab')
                 ->keys(':focus', ['End', 'Enter'])
                 ->assertVisible('input[id="mountedActionSchema0.url"]')
-                ->assertScript('document.querySelector(\'input[id="mountedActionSchema0.url"]\').closest(\'[role="dialog"]\').contains(document.activeElement)', true)
+                ->assertPresent("{$linkDialog}:focus, {$linkDialog} :focus")
                 ->assertCount('[role="tooltip"]:visible', 0);
 
             $page->script("window.oldKeyboardEditor = document.querySelector('{$content}'); const component = Alpine.\$data(window.oldKeyboardEditor); component.\$wire.\$set('data.keyboardContent', '<p>Updated article.</p>', false); component.\$wire.remountEditor()");
@@ -2107,7 +2109,8 @@ it('preserves the selection and returns focus from toolbar link actions across e
                 ->assertScript('!window.oldKeyboardEditor.isConnected', true)
                 ->assertSeeIn($editor, 'Updated article.')
                 ->keys('input[id="mountedActionSchema0.url"]', 'Escape')
-                ->assertScript("document.activeElement.matches('{$editor} [data-rich-editor-tool=\"link\"]')", true)
+                ->assertNotPresent('input[id="mountedActionSchema0.url"]')
+                ->assertPresent($editor . ' [data-rich-editor-tool="link"]:focus')
                 ->assertScript("Alpine.\$data(document.querySelector('{$content}')).\$getEditor().state.selection.toJSON()", ['type' => 'text', 'anchor' => 1, 'head' => 1])
                 ->assertNoSmoke()
                 ->assertScript('document.getAnimations().filter(animation => animation.playState === "running").length', 0)
@@ -2139,7 +2142,7 @@ it('navigates horizontal toolbar menus using directional arrows and `Home` / `En
         $page = visit('/rich-editor-browser-test');
 
         if ($isDarkMode) {
-            $page->inDarkMode();
+            $page = $page->inDarkMode();
         }
 
         $page
@@ -2200,12 +2203,13 @@ it('returns link dialog focus to the originating toolbar group with duplicate la
     $editor = '[data-testid="duplicate-groups-rich-editor"]';
     $content = $editor . ' [role="textbox"]';
     $trigger = $editor . ' [data-rich-editor-tool="Formatting"]';
+    $linkDialog = '[role="dialog"]:has(input[id="mountedActionSchema0.url"])';
 
     foreach ([false, true] as $isDarkMode) {
         $page = visit('/rich-editor-browser-test');
 
         if ($isDarkMode) {
-            $page->inDarkMode();
+            $page = $page->inDarkMode();
         }
 
         $page
@@ -2224,7 +2228,7 @@ it('returns link dialog focus to the originating toolbar group with duplicate la
             ->keys(':focus', 'ArrowDown')
             ->keys(':focus', 'Enter')
             ->assertVisible('input[id="mountedActionSchema0.url"]')
-            ->assertScript('document.querySelector(\'input[id="mountedActionSchema0.url"]\').closest(\'[role="dialog"]\').contains(document.activeElement)', true)
+            ->assertPresent("{$linkDialog}:focus, {$linkDialog} :focus")
             ->assertCount('[role="tooltip"]:visible', 0)
             ->assertScript('document.getAnimations().filter(animation => animation.playState === "running").length', 0)
             ->assertScript("Array.from(document.querySelectorAll('{$trigger}')).every(trigger => trigger.getAttribute('aria-expanded') === 'false')", true);
@@ -2239,7 +2243,7 @@ it('returns link dialog focus to the originating toolbar group with duplicate la
 
         $page
             ->keys('input[id="mountedActionSchema0.url"]', 'Escape')
-            ->assertMissing('input[id="mountedActionSchema0.url"]')
+            ->assertNotPresent('input[id="mountedActionSchema0.url"]')
             ->assertScript("document.activeElement === document.querySelectorAll('{$trigger}')[1]", true)
             ->assertScript("Alpine.\$data(document.querySelector('{$content}')).\$getEditor().state.selection.toJSON()", ['type' => 'text', 'anchor' => 1, 'head' => 6])
             ->assertNoSmoke()
@@ -2254,18 +2258,20 @@ it('does not steal newer focus while a remounted editor is waiting to initialize
     $editor = '[data-testid="keyboard-rich-editor"]';
     $content = $editor . ' [role="textbox"]';
     $otherContent = '[data-testid="height-constrained-rich-editor"] [role="textbox"]';
+    $linkDialog = '[role="dialog"]:has(input[id="mountedActionSchema0.url"])';
 
     foreach ([false, true] as $isDarkMode) {
         $page = visit('/rich-editor-browser-test');
 
         if ($isDarkMode) {
-            $page->inDarkMode();
+            $page = $page->inDarkMode();
         }
 
         $page
             ->keys($content, 'Shift+Tab')
             ->keys(':focus', ['End', 'Enter'])
-            ->assertVisible('input[id="mountedActionSchema0.url"]');
+            ->assertVisible('input[id="mountedActionSchema0.url"]')
+            ->assertPresent("{$linkDialog}:focus, {$linkDialog} :focus");
 
         $page->script("window.oldKeyboardEditor = document.querySelector('{$content}'); Alpine.\$data(window.oldKeyboardEditor).\$wire.remountEditor()");
 
