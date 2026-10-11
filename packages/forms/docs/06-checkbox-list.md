@@ -133,8 +133,6 @@ CheckboxList::make('technologies')
 
 <AutoScreenshot name="forms/fields/checkbox-list/searchable" alt="Searchable checkbox list" version="4.x" />
 
-The search matches option labels and descriptions, ignoring capitalization and accents such as those in `Málaga`, so searching for `malaga` matches that option. Displayed labels and descriptions are unchanged.
-
 Optionally, you may pass a boolean value to control if the options should be searchable or not:
 
 ```php

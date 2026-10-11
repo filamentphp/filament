@@ -80,8 +80,6 @@ Select::make('author_id')
 
 <AutoScreenshot name="forms/fields/select/searchable" alt="Searchable select" version="4.x" />
 
-When options are filtered in the browser, searching ignores capitalization and accents such as those in `Málaga`, so searching for `malaga` matches that option. Keyboard typeahead when search is disabled uses the same matching. Displayed labels and option values are unchanged. For custom or database search results, matching is controlled by your callback or database instead.
-
 ### Returning custom search results
 
 If you have lots of options and want to populate them based on a database search or other external data source, you can use the `getSearchResultsUsing()` and `getOptionLabelUsing()` methods instead of `options()`.

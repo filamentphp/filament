@@ -438,8 +438,6 @@ public function panel(Panel $panel): Panel
 
 This is automatically enabled when there are more than 10 tenants in a user's list. You can disable it using `searchableTenantMenu(false)`.
 
-The search ignores capitalization, spaces, and accents such as those in `Málaga`, so searching for `malaga` matches that tenant. Displayed tenant names are unchanged.
-
 ### Customizing the registration link
 
 To customize the [registration](#adding-a-tenant-registration-page) link in the tenant menu, register a new item with the `register` array key, and pass a function that [customizes the action](../actions) object:
