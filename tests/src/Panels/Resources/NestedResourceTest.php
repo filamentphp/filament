@@ -611,7 +611,7 @@ describe('soft-deletable nested resource', function (): void {
         $sortedDesc = Post::query()
             ->where('author_id', $parentRecord->getKey())
             ->orderByDesc('title')
-            ->orderBy('id')
+            ->orderByDesc('id')
             ->get();
 
         livewire(ListUserPosts::class, [
@@ -1048,9 +1048,11 @@ describe('non-soft-deletable nested resource', function (): void {
 
     it('can sort records by name for non-soft-deletable nested resource', function (): void {
         $parentRecord = Company::factory()->create();
-        Team::factory()->count(10)->create([
-            'company_id' => $parentRecord->getKey(),
-        ]);
+        Team::factory()->count(10)
+            ->sequence(['name' => 'Walker Ltd'], ['name' => 'Wolff-Greenfelder'])
+            ->create([
+                'company_id' => $parentRecord->getKey(),
+            ]);
 
         $sortedAsc = Team::query()
             ->where('company_id', $parentRecord->getKey())
@@ -1060,7 +1062,7 @@ describe('non-soft-deletable nested resource', function (): void {
         $sortedDesc = Team::query()
             ->where('company_id', $parentRecord->getKey())
             ->orderByDesc('name')
-            ->orderBy('id')
+            ->orderByDesc('id')
             ->get();
 
         livewire(ListCompanyTeams::class, [

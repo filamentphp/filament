@@ -1078,14 +1078,14 @@ export class Select {
         }
 
         this.focusinListener = () => this.syncActiveDescendant()
-        this.focusoutListener = () => {
+        this.focusoutListener = (event) => {
             this.selectButton.removeAttribute('aria-activedescendant')
             this.searchInput?.removeAttribute('aria-activedescendant')
             queueMicrotask(() => {
                 if (this.isDestroyed || !this.isOpen) return
                 if (
                     this.isTabbing ||
-                    !this.container.contains(document.activeElement)
+                    !this.container.contains(event.relatedTarget)
                 ) {
                     this.isTabbing = false
                     this.closeDropdown()
