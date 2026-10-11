@@ -2049,7 +2049,7 @@ it('preserves the selection and returns focus from toolbar link actions across e
 
             $page
                 ->assertVisible('input[id="mountedActionSchema0.url"]')
-                ->assertScript('document.activeElement.id', 'mountedActionSchema0.url')
+                ->assertScript('document.querySelector(\'input[id="mountedActionSchema0.url"]\').closest(\'[role="dialog"]\').contains(document.activeElement)', true)
                 ->assertCount('[role="tooltip"]:visible', 0);
 
             if ($shouldRemount) {
@@ -2098,7 +2098,7 @@ it('preserves the selection and returns focus from toolbar link actions across e
                 ->keys($content, 'Shift+Tab')
                 ->keys(':focus', ['End', 'Enter'])
                 ->assertVisible('input[id="mountedActionSchema0.url"]')
-                ->assertScript('document.activeElement.id', 'mountedActionSchema0.url')
+                ->assertScript('document.querySelector(\'input[id="mountedActionSchema0.url"]\').closest(\'[role="dialog"]\').contains(document.activeElement)', true)
                 ->assertCount('[role="tooltip"]:visible', 0);
 
             $page->script("window.oldKeyboardEditor = document.querySelector('{$content}'); const component = Alpine.\$data(window.oldKeyboardEditor); component.\$wire.\$set('data.keyboardContent', '<p>Updated article.</p>', false); component.\$wire.remountEditor()");
@@ -2224,6 +2224,7 @@ it('returns link dialog focus to the originating toolbar group with duplicate la
             ->keys(':focus', 'ArrowDown')
             ->keys(':focus', 'Enter')
             ->assertVisible('input[id="mountedActionSchema0.url"]')
+            ->assertScript('document.querySelector(\'input[id="mountedActionSchema0.url"]\').closest(\'[role="dialog"]\').contains(document.activeElement)', true)
             ->assertCount('[role="tooltip"]:visible', 0)
             ->assertScript('document.getAnimations().filter(animation => animation.playState === "running").length', 0)
             ->assertScript("Array.from(document.querySelectorAll('{$trigger}')).every(trigger => trigger.getAttribute('aria-expanded') === 'false')", true);
