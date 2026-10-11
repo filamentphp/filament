@@ -335,20 +335,112 @@ describe('browser interactions', function (): void {
     it('restores focus when closing a nested overlay action modal', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/modal-browser-test')
-            ->click('Overlay focus restoration')
-            ->assertVisible('[data-testid="overlay-modal"]')
-            ->assertPresent('[data-testid="overlay-modal"] :focus')
-            ->click('[data-testid="overlay-modal"] .fi-modal-footer-actions button >> text=Open nested modal')
-            ->assertVisible('[data-testid="overlay-modal"]')
-            ->assertVisible('[data-testid="overlay-nested-modal"]')
-            ->click('[data-testid="overlay-nested-modal"] .fi-modal-footer-actions button >> text=Cancel')
-            ->assertMissing('[data-testid="overlay-nested-modal"]')
-            ->assertPresent('[data-testid="overlay-nested-trigger"]:focus')
-            ->click('[data-testid="overlay-modal"] .fi-modal-footer-actions button >> text=Cancel')
-            ->assertMissing('[data-testid="overlay-modal"]')
-            ->assertPresent('[data-testid="overlay-trigger"]:focus')
-            ->assertNoSmoke();
+        $browser = visit('/modal-browser-test');
+        $browser->script(<<<'JS'
+            (() => {
+                const identities = new WeakMap();
+                const retainedOrigins = new Set();
+                const wrappedManagers = new WeakSet();
+                const owner = document.querySelector('[data-testid="overlay-trigger"]').closest('[wire\\:id]');
+                const trace = window.overlayFocusTrace = [];
+                let nextIdentity = 0;
+                const describe = (element) => {
+                    if (!(element instanceof HTMLElement)) return null;
+                    if (!identities.has(element)) identities.set(element, ++nextIdentity);
+                    return {identity: identities.get(element), testid: element.dataset.testid, tag: element.tagName,
+                        text: element.textContent.replace(/\s+/g, ' ').trim().slice(0, 60),
+                        connected: element.isConnected, focused: element.matches(':focus'),
+                        disabled: element.matches(':disabled'), inert: !!element.closest('[inert]'),
+                        rendered: !!element.getClientRects().length,
+                        modal: element.closest('[data-fi-modal-id]')?.id};
+                };
+                const managers = () => Array.from(owner.querySelectorAll('[x-data*="filamentActionModals"]'))
+                    .filter((element) => element.closest('[wire\\:id]') === owner);
+                const record = (event, extra = {}) => {
+                    if (trace.length > 500) return;
+                    trace.push({time: performance.now(), event, ...extra, active: describe(document.activeElement),
+                        trigger: describe(owner.querySelector('[data-testid="overlay-nested-trigger"]')),
+                        origins: Array.from(retainedOrigins, describe),
+                        managers: managers().map((element) => {
+                            const manager = Alpine.$data(element);
+                            return {root: describe(element), index: manager.actionNestingIndex,
+                                tracked: describe(manager.$focus.focused()),
+                                saved: Object.fromEntries(Object.entries(manager.focusTargetsByNestingIndex)
+                                    .map(([index, target]) => [index, describe(target)]))};
+                        }), documentFocused: document.hasFocus(), visibility: document.visibilityState});
+                };
+                const wrapManagers = () => managers().forEach((element) => {
+                    if (wrappedManagers.has(element)) return;
+                    wrappedManagers.add(element);
+                    const manager = Alpine.$data(element);
+                    for (const method of ['rememberPreviouslyFocusedElement', 'restorePreviouslyFocusedElement', 'syncActionModals']) {
+                        const original = manager[method];
+                        manager[method] = function (...arguments) {
+                            for (const target of Object.values(this.focusTargetsByNestingIndex)) {
+                                if (target instanceof HTMLElement) retainedOrigins.add(target);
+                            }
+                            record(method + ':before', {arguments});
+                            const result = original.apply(this, arguments);
+                            for (const target of Object.values(this.focusTargetsByNestingIndex)) {
+                                if (target instanceof HTMLElement) retainedOrigins.add(target);
+                            }
+                            record(method + ':after');
+                            return result;
+                        };
+                    }
+                });
+                const originalFocus = HTMLElement.prototype.focus;
+                HTMLElement.prototype.focus = function (...arguments) {
+                    record('focus:before', {target: describe(this), stack: new Error().stack});
+                    const result = originalFocus.apply(this, arguments);
+                    record('focus:after', {target: describe(this)});
+                    return result;
+                };
+                for (const type of ['pointerdown', 'mousedown', 'click', 'focusin', 'focusout', 'sync-action-modals', 'modal-closed']) {
+                    window.addEventListener(type, (event) => {
+                        wrapManagers();
+                        record(type + ':capture', {target: describe(event.target), button: describe(event.target.closest?.('button')), trusted: event.isTrusted});
+                        queueMicrotask(() => record(type + ':settled', {target: describe(event.target), prevented: event.defaultPrevented}));
+                    }, true);
+                }
+                for (const hook of ['morph', 'morphed']) Livewire.hook(hook, () => {
+                    wrapManagers();
+                    record(hook);
+                });
+                new MutationObserver((mutations) => {
+                    for (const mutation of mutations) for (const removed of mutation.removedNodes) {
+                        for (const origin of retainedOrigins) if (removed === origin || removed.contains?.(origin)) {
+                            record('origin-removed', {target: describe(origin)});
+                        }
+                    }
+                    wrapManagers();
+                }).observe(owner, {childList: true, subtree: true});
+                wrapManagers();
+                window.snapshotOverlayFocus = () => record('final');
+            })()
+            JS);
+
+        try {
+            $browser
+                ->click('Overlay focus restoration')
+                ->assertVisible('[data-testid="overlay-modal"]')
+                ->assertPresent('[data-testid="overlay-modal"] :focus')
+                ->click('[data-testid="overlay-modal"] .fi-modal-footer-actions button >> text=Open nested modal')
+                ->assertVisible('[data-testid="overlay-modal"]')
+                ->assertVisible('[data-testid="overlay-nested-modal"]')
+                ->click('[data-testid="overlay-nested-modal"] .fi-modal-footer-actions button >> text=Cancel')
+                ->assertMissing('[data-testid="overlay-nested-modal"]')
+                ->assertPresent('[data-testid="overlay-nested-trigger"]:focus')
+                ->click('[data-testid="overlay-modal"] .fi-modal-footer-actions button >> text=Cancel')
+                ->assertMissing('[data-testid="overlay-modal"]')
+                ->assertPresent('[data-testid="overlay-trigger"]:focus')
+                ->assertNoSmoke();
+        } catch (Throwable $exception) {
+            $browser->script('window.snapshotOverlayFocus()');
+            echo 'OVERLAY_FOCUS_TRACE=' . json_encode($browser->script('window.overlayFocusTrace')) . PHP_EOL;
+
+            throw $exception;
+        }
     });
 
     it('keeps the close button keyboard reachable when a modal uses `closeModalByEscaping(false)`', function (): void {
