@@ -1,8 +1,13 @@
 <?php
 
 use Filament\AvatarProviders\UiAvatarsProvider;
+use Filament\Facades\Filament;
+use Filament\Models\Contracts\HasAvatar;
+use Filament\Models\Contracts\HasName;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Panels\Configuration\TestCase;
+use Illuminate\Auth\GenericUser;
+use Illuminate\Database\Eloquent\Model;
 
 uses(TestCase::class);
 
@@ -15,6 +20,42 @@ it('returns a URL string from `get()`', function (): void {
     expect($url)->toBeString();
     expect($url)->toStartWith('https://ui-avatars.com/api/');
 });
+
+it('generates default avatars for `Model` and non-Eloquent `Authenticatable` records', function (bool $isEloquent): void {
+    $record = $isEloquent
+        ? new class extends Model implements HasAvatar, HasName
+        {
+            public function getFilamentAvatarUrl(): ?string
+            {
+                return null;
+            }
+
+            public function getFilamentName(): string
+            {
+                return 'Taylor Morgan';
+            }
+        }
+    : new class([]) extends GenericUser implements HasAvatar, HasName
+    {
+        public function getFilamentAvatarUrl(): ?string
+        {
+            return null;
+        }
+
+        public function getFilamentName(): string
+        {
+            return 'Jordan Ellis';
+        }
+    };
+
+    $url = Filament::getUserAvatarUrl($record);
+
+    expect($url)->toStartWith('https://ui-avatars.com/api/');
+    expect($url)->toContain($isEloquent ? 'name=T+M' : 'name=J+E');
+})->with([
+    'Eloquent model' => [true],
+    'non-Eloquent user' => [false],
+]);
 
 it('includes encoded name in the URL', function (): void {
     $provider = new UiAvatarsProvider;

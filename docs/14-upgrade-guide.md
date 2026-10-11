@@ -346,6 +346,30 @@ See the [security documentation](../advanced/security#restricting-livewire-file-
 
 ### Low-impact changes
 
+<Disclosure open x-show="packages.includes('panels')">
+<span slot="summary">Custom avatar providers must accept non-Eloquent users</span>
+
+The `AvatarProvider::get()` method now accepts `Model | Authenticatable` instead of only `Model`, so avatar providers can receive users that do not extend an Eloquent model.
+
+If you have a custom avatar provider, update its `get()` parameter type:
+
+```php
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+
+public function get(Model | Authenticatable $record): string
+{
+    // Return the avatar URL for the record.
+}
+```
+
+The automated upgrade script updates this parameter type when `get()` is declared directly on a class implementing `AvatarProvider` or an interface extending it. If your provider uses a `get()` method declared in a trait or inherited from a parent class that does not implement `AvatarProvider`, you must update that declaration manually.
+
+You should review your provider's implementation for Eloquent-specific method calls and handle non-Eloquent users if your application uses them. Providers that already accept both types, `object`, `mixed`, or an untyped parameter do not need a signature change.
+
+See the [custom avatar provider documentation](../users/overview#using-a-different-avatar-provider) for more details.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('support')">
 <span slot="summary">The modal content is now wrapped in a `fi-modal-window-scroll` element when using a sticky header or footer</span>
 

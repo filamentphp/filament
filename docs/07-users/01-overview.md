@@ -95,7 +95,7 @@ The `getFilamentAvatarUrl()` method is used to retrieve the avatar of the curren
 
 You can easily swap out [ui-avatars.com](https://ui-avatars.com) for a different service, by creating a new avatar provider.
 
-In this example, we create a new file at `app/Filament/AvatarProviders/BoringAvatarsProvider.php` for [boringavatars.com](https://boringavatars.com). The `get()` method accepts a user model instance and returns an avatar URL for that user:
+In this example, we create a new file at `app/Filament/AvatarProviders/BoringAvatarsProvider.php` for [boringavatars.com](https://boringavatars.com). The `get()` method accepts an Eloquent model or an `Authenticatable` user instance and returns an avatar URL for that record:
 
 ```php
 <?php
