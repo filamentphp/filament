@@ -850,9 +850,14 @@ it('preserves focus when revealing a password with responsive actions in the bro
     $page = visit('/text-input-test')
         ->resize($width, 812);
 
+    $page
+        ->assertScript("typeof window.Alpine?.\$data(document.querySelector('{$passwordInput}').closest('[x-data]')).setPasswordRevealed === 'function'", true)
+        ->assertValue($passwordInput, 'responsive-secret');
+
     $page->script("document.querySelector('{$passwordInput}').focus(); document.querySelector('{$passwordInput}').setSelectionRange(1, 6, 'backward')");
 
     $page
+        ->assertScript("[document.querySelector('{$passwordInput}').selectionStart, document.querySelector('{$passwordInput}').selectionEnd, document.querySelector('{$passwordInput}').selectionDirection]", [1, 6, 'backward'])
         ->keys($passwordInput, 'Tab')
         ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
         ->keys($showPasswordAction, 'Enter')
