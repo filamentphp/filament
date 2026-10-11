@@ -46,7 +46,7 @@ class WizardBrowserTest extends Page
                         ->key('details')
                         ->id('profile-details')
                         ->beforeValidation(static function (): void {
-                            delay(1);
+                            delay(3);
                         })
                         ->schema([
                             WizardBrowserTestSelect::make('status')

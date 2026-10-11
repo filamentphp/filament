@@ -743,20 +743,16 @@ it('only shows the next action loading indicator for its own request', function 
 
     $browser = visit('/wizard-browser-test')
         ->click('[data-testid="wizard-dynamic-select"] .fi-select-input-btn')
-        ->wait(0.3);
+        ->assertAttribute(":has(> {$nextAction})", 'aria-disabled', 'true')
+        ->assertMissing($nextActionLoadingIndicator)
+        ->click('Draft')
+        ->assertAttributeMissing(":has(> {$nextAction})", 'aria-disabled');
 
-    expect($browser->script(
-        "document.querySelector('{$nextAction}').parentElement.getAttribute('aria-disabled')",
-    ))->toBe('true');
-
-    expect($browser->script(
-        "Boolean(document.querySelector('{$nextActionLoadingIndicator}')?.getClientRects().length)",
-    ))->toBeFalse();
+    $browser->page()->locator($nextAction)->click();
 
     $browser
-        ->click('Draft')
-        ->click($nextAction)
         ->assertVisible($nextActionLoadingIndicator)
+        ->assertVisible('#profile-contact')
         ->assertNoSmoke();
 });
 
@@ -769,39 +765,40 @@ it('keeps the next action focused and blocked during other requests', function (
         $browser = visit('/wizard-browser-test');
 
         if ($isDarkMode) {
-            $browser->inDarkMode();
+            $browser = $browser->inDarkMode();
         }
 
-        $browser->script(<<<'JS'
-                document.querySelector('[data-testid="wizard-next-action"]').focus()
-                document.querySelector('[data-testid="wizard-dynamic-select"] .fi-select-input-btn').click()
-                JS);
+        $nextActionLocator = $browser->page()->locator($nextAction);
 
-        $browser->wait(0.3);
+        $browser
+            ->click('[data-testid="wizard-dynamic-select"] .fi-select-input-btn')
+            ->assertAttribute(":has(> {$nextAction})", 'aria-disabled', 'true');
 
-        expect($browser->script(
-            "document.querySelector('{$nextAction}').parentElement.getAttribute('aria-disabled')",
-        ))->toBe('true');
+        $nextActionLocator->press('Enter');
+        $nextActionLocator->press('Space');
 
         $browser
             ->assertPresent("{$nextAction}:focus")
-            ->keys($nextAction, 'Enter')
-            ->keys($nextAction, 'Space')
-            ->wait(0.1)
             ->assertScript('window.wizardNextActionActivationCount ?? 0', 0)
+            ->assertAttributeMissing(":has(> {$nextAction})", 'aria-disabled')
             ->assertVisible('#profile-details')
             ->assertNoSmoke()
-            ->wait(1)
-            ->keys('[data-testid="wizard-dynamic-select"] .fi-select-input-btn', 'Escape')
-            ->assertNoAccessibilityIssues()
-            ->click($nextAction)
+            ->assertNoAccessibilityIssues();
+
+        $nextActionLocator->click();
+
+        $browser
             ->assertAttribute($nextAction, 'aria-disabled', 'true')
-            ->assertPresent("{$nextAction}:focus")
-            ->keys($nextAction, 'Enter')
-            ->keys($nextAction, 'Space')
+            ->assertPresent("{$nextAction}:focus");
+
+        $nextActionLocator->press('Enter');
+        $nextActionLocator->press('Space');
+
+        $browser
             ->assertScript('window.wizardNextActionActivationCount', 1)
-            ->wait(1.1)
-            ->assertVisible('#profile-contact');
+            ->assertVisible('#profile-contact')
+            ->assertAttributeMissing(":has(> {$nextAction})", 'aria-disabled')
+            ->assertNoSmoke();
     }
 });
 
