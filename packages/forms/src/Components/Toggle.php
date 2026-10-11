@@ -59,6 +59,7 @@ class Toggle extends Field implements HasEmbeddedView
             ], escape: false)
             ->merge($this->getExtraAttributes(), escape: false)
             ->merge($this->getExtraAlpineAttributes(), escape: false)
+            ->merge($this->getAccessibilityAttributes(), escape: false)
             ->class(['fi-fo-toggle']);
 
         $onClasses = Js::from(Arr::toCssClasses([

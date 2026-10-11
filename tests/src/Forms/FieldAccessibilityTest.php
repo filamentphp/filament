@@ -95,6 +95,30 @@ it('associates native and grouped controls with `helperText()` and errors but no
     }
 })->with('accessible native and grouped fields')->with([false, true]);
 
+it('associates `Toggle` switches with `helperText()` and errors', function (bool $inline, bool $bladeWrapper): void {
+    $field = Toggle::make('answer')->inline($inline)->helperText('Only used for delivery');
+    if ($bladeWrapper) {
+        $field->fieldWrapperView('test-plugin-wrapper');
+    }
+    $schema = Schema::make(Livewire::make())->statePath('data')->components([$field]);
+
+    foreach ([false, true, false] as $hasError) {
+        view()->share('errors', (new ViewErrorBag)->put('default', new MessageBag($hasError ? ['data.answer' => ['Please check your answer.']] : [])));
+        $document = fieldAccessibilityDocument($schema->toHtml());
+        $control = $document->query('//button[@role="switch"]')->item(0);
+        expect($control->getAttribute('aria-invalid'))->toBe($hasError ? 'true' : '')
+            ->and($control->getAttribute('aria-describedby'))->toBe($hasError ? 'data.answer-helper-text data.answer-error' : 'data.answer-helper-text')
+            ->and($document->query('//*[@id="data.answer-helper-text"]')->length)->toBe(1)
+            ->and($document->query('//*[@id="data.answer-error"]')->length)->toBe($hasError ? 1 : 0);
+    }
+
+    $field->extraAttributes(['aria-describedby' => 'application-note', 'aria-invalid' => 'false']);
+    view()->share('errors', (new ViewErrorBag)->put('default', new MessageBag(['data.answer' => ['Please check your answer.']])));
+    $control = fieldAccessibilityDocument($schema->toHtml())->query('//button[@role="switch"]')->item(0);
+    expect($control->getAttribute('aria-describedby'))->toBe('application-note')
+        ->and($control->getAttribute('aria-invalid'))->toBe('false');
+})->with([false, true])->with([false, true]);
+
 it('removes replaced or empty `helperText()` associations', function (bool $bladeWrapper): void {
     $field = TextInput::make('answer')->hint('Hint only');
     if ($bladeWrapper) {
