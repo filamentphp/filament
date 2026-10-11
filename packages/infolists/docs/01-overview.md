@@ -613,7 +613,7 @@ TextEntry::make('name')
 
 ### Adding extra content above an entry's label
 
-You can insert extra content above an entry's label using the `aboveLabel()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+You can insert extra content above an entry's label using the `aboveLabel()` method. You can [pass any content](#adding-extra-content-to-an-entry) to this method, like text, a schema component, an action, or an action group:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -633,7 +633,7 @@ TextEntry::make('name')
 
 ### Adding extra content before an entry's label
 
-You can insert extra content before an entry's label using the `beforeLabel()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+You can insert extra content before an entry's label using the `beforeLabel()` method. You can [pass any content](#adding-extra-content-to-an-entry) to this method, like text, a schema component, an action, or an action group:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -650,7 +650,7 @@ TextEntry::make('name')
 
 ### Adding extra content after an entry's label
 
-You can insert extra content after an entry's label using the `afterLabel()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+You can insert extra content after an entry's label using the `afterLabel()` method. You can [pass any content](#adding-extra-content-to-an-entry) to this method, like text, a schema component, an action, or an action group:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -689,7 +689,7 @@ TextEntry::make('name')
 
 ### Adding extra content below an entry's label
 
-You can insert extra content below an entry's label using the `belowLabel()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+You can insert extra content below an entry's label using the `belowLabel()` method. You can [pass any content](#adding-extra-content-to-an-entry) to this method, like text, a schema component, an action, or an action group:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -713,7 +713,7 @@ TextEntry::make('name')
 
 ### Adding extra content above an entry's content
 
-You can insert extra content above an entry's content using the `aboveContent()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+You can insert extra content above an entry's content using the `aboveContent()` method. You can [pass any content](#adding-extra-content-to-an-entry) to this method, like text, a schema component, an action, or an action group:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -737,7 +737,7 @@ TextEntry::make('name')
 
 ### Adding extra content before an entry's content
 
-You can insert extra content before an entry's content using the `beforeContent()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+You can insert extra content before an entry's content using the `beforeContent()` method. You can [pass any content](#adding-extra-content-to-an-entry) to this method, like text, a schema component, an action, or an action group:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -754,7 +754,7 @@ TextEntry::make('name')
 
 ### Adding extra content after an entry's content
 
-You can insert extra content after an entry's content using the `afterContent()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+You can insert extra content after an entry's content using the `afterContent()` method. You can [pass any content](#adding-extra-content-to-an-entry) to this method, like text, a schema component, an action, or an action group:
 
 ```php
 use Filament\Infolists\Components\TextEntry;

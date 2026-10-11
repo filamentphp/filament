@@ -336,6 +336,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         $suffixLabel = $this->getSuffixLabel();
         $statePath = $this->getStatePath();
         $placeholder = $this->getPlaceholder();
+        $datalistOptions = ((! $isDisabled) && (! $this->isReadOnly())) ? $this->getDatalistOptions() : [];
 
         if ($isPasswordRevealable) {
             $xData = 'passwordRevealFormComponent()';
@@ -365,7 +366,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
                 'inlinePrefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
                 'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
                 'inputmode' => $this->getInputMode(),
-                'list' => ($datalistOptions = $this->getDatalistOptions()) ? $id . '-list' : null,
+                'list' => $datalistOptions ? $id . '-list' : null,
                 'max' => $this->getMaxValue(),
                 'maxlength' => $this->getMaxLength(),
                 'min' => $this->getMinValue(),

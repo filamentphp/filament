@@ -130,20 +130,18 @@ it('renders schemas with default hook customization through Livewire and Blade',
 it('renders a customized no-argument schema accessibly in light and dark modes', function (): void {
     Artisan::call('filament:assets');
 
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/schema-caching-browser-test')
-            ->assertSee('Customized no-argument schema')
-            ->assertPresent('[data-testid="customized-no-argument-schema"][data-default-hook="base"][data-subclass-hook="applied"]')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/schema-caching-browser-test')
+        ->assertSee('Customized no-argument schema')
+        ->assertPresent('[data-testid="customized-no-argument-schema"][data-default-hook="base"][data-subclass-hook="applied"]')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/schema-caching-browser-test')
-            ->inDarkMode()
-            ->assertPresent('[data-testid="customized-no-argument-schema"]')
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/schema-caching-browser-test')
+        ->inDarkMode()
+        ->assertPresent('[data-testid="customized-no-argument-schema"]')
+        ->assertNoAccessibilityIssues();
 });
 
 it('cannot validate from a client-side call', function (string $method): void {

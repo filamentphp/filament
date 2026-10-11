@@ -22,7 +22,7 @@ class Dashboard extends Page
 
     protected static ?int $navigationSort = -2;
 
-    public static function getNavigationLabel(): string
+    public static function getNavigationLabel(): string | Htmlable
     {
         return static::$navigationLabel ??
             static::$title ??

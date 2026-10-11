@@ -1825,6 +1825,15 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return true;
     }
 
+    public function getRequiredDescription(): ?string
+    {
+        if ((! $this->isRequired()) || $this->isDisabled() || ($this->isNative() && (! $this->isSearchable()) && (! $this->isMultiple()) && (! $this->isHtmlAllowed()))) {
+            return null;
+        }
+
+        return __('filament-forms::components.select.required_description');
+    }
+
     public function toEmbeddedHtml(): string
     {
         $extraInputAttributeBag = $this->getExtraInputAttributeBag();
@@ -1905,9 +1914,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     >
                         <?php if ($canSelectPlaceholder) { ?>
                             <option value="">
-                                <?php if (! $isDisabled) { ?>
-                                    <?= e($this->getPlaceholder()) ?>
-                                <?php } ?>
+                                <?= e($this->getPlaceholder()) ?>
                             </option>
                         <?php } ?>
 
@@ -1935,9 +1942,21 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     </select>
                 <?php } else { ?>
                     <?php $options = $this->getOptions(); ?>
+                    <?php
+                    $accessibilityAttributes = [
+                        ...$this->getAccessibilityAttributes(),
+                        'aria-required' => ($isRequired && (! $isDisabled)) ? 'true' : null,
+                        ...$extraInputAttributeBag->only(['aria-label', 'aria-labelledby', 'aria-describedby', 'aria-invalid', 'aria-busy', 'aria-required'])->getAttributes(),
+                    ];
+                    $accessibilityAttributes['aria-describedby'] = implode(' ', array_unique([
+                        ...$this->getDescriptionIds(),
+                        ...preg_split('/\s+/', trim($extraInputAttributeBag->get('aria-describedby') ?? ''), flags: PREG_SPLIT_NO_EMPTY),
+                    ])) ?: null;
+                    ?>
 
                     <div
                         class="fi-hidden"
+                        data-select-accessibility="<?= e(Js::encode($accessibilityAttributes)) ?>"
                         x-data="{
                             isDisabled: <?= Js::from($isDisabled) ?>,
                             init() {
@@ -1957,6 +1976,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                     canOptionLabelsWrap: <?= Js::from($canOptionLabelsWrap) ?>,
                                     canSelectPlaceholder: <?= Js::from($canSelectPlaceholder) ?>,
                                     clearButtonLabel: <?= Js::from(__('filament-forms::components.select.actions.clear.label')) ?>,
+                                    errorMessage: <?= Js::from(__('filament-forms::components.select.error_message')) ?>,
                                     getOptionLabelUsing: async () => {
                                         return await Livewire.fireAction(
                                             $wire.__instance,
@@ -2023,7 +2043,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                 })"
                         wire:ignore
                         wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled, $isReorderable])), 0, 64) ?>"
-                        x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                         x-on:set-select-property="$event.detail.isDisabled ? select.disable() : select.enable()"
                         <?= (new FilamentComponentAttributeBag)
                             ->merge($this->getExtraAlpineAttributes(), escape: false)

@@ -222,7 +222,7 @@ SelectConstraint::make('creator.department') // Filter the `department` column o
 <Aside variant="danger">
     `options()` controls the available filter values, but it does not restrict access to records. Users can remove the rule, and rules that fail validation are ignored.
 
-    If you are using `options()` to hide certain values from a group of users (for example, hiding `archived` from non-admins), apply the mandatory restriction to the table's underlying query using the resource's [`getEloquentQuery()`](../../resources/overview#customizing-the-resource-eloquent-query), the table's [`modifyQueryUsing()`](../../resources/listing-records#customizing-the-eloquent-query), or a global scope on the model. [`modifyRelationshipQueryUsing()`](#scoping-relationships) only scopes the relationship query for that individual rule, which the user can omit. Authorization for operations on records must be handled separately.
+    If you are using `options()` to hide certain values from a group of users (for example, hiding `archived` from non-admins), apply the mandatory restriction to the table's underlying query using the resource's [`getEloquentQuery()`](../../resources/overview#customizing-the-resource-eloquent-query), the table's [`modifyQueryUsing()`](../../resources/listing-records#customizing-the-table-eloquent-query), or a global scope on the model. [`modifyRelationshipQueryUsing()`](#scoping-relationships) only scopes the relationship query for that individual rule, which the user can omit. Authorization for operations on records must be handled separately.
 </Aside>
 
 #### Searchable select constraints

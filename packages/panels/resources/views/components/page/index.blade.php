@@ -155,7 +155,7 @@
         @if (FilamentView::hasSpaMode())
             @script
                 <script>
-                    setUpSpaModeUnsavedDataChangesAlert({
+                    setUpFilamentSpaModeUnsavedDataChangesAlert({
                         body: @js(__('filament-panels::unsaved-changes-alert.body')),
                         resolveLivewireComponentUsing: () => @this,
                         $wire,
@@ -165,7 +165,7 @@
         @else
             @script
                 <script>
-                    setUpUnsavedDataChangesAlert({ $wire })
+                    setUpFilamentUnsavedDataChangesAlert({ $wire })
                 </script>
             @endscript
         @endif

@@ -1,10 +1,12 @@
 import { Select } from '../../../../../support/resources/js/utilities/select.js'
 
 export default function selectTableColumn({
+    accessibilityAttributes,
     ariaLabel,
     canOptionLabelsWrap,
     canSelectPlaceholder,
     clearButtonLabel,
+    errorMessage,
     getOptionLabelUsing,
     getOptionsUsing,
     getSearchResultsUsing,
@@ -46,11 +48,13 @@ export default function selectTableColumn({
         init() {
             if (!isNative) {
                 this.select = new Select({
+                    accessibilityAttributes,
                     ariaLabel,
                     canOptionLabelsWrap,
                     canSelectPlaceholder,
                     clearButtonLabel,
                     element: this.$refs.select,
+                    errorMessage,
                     getOptionLabelUsing,
                     getOptionsUsing,
                     getSearchResultsUsing,

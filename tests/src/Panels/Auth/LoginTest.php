@@ -566,30 +566,28 @@ describe('validation', function (): void {
 });
 
 it('can fill the login form, authenticate, and redirect to the dashboard in the browser', function (): void {
-    retry(10, function (): void {
-        $user = User::factory()->create();
+    $user = User::factory()->create();
 
-        visit(Filament::getLoginUrl())
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues()
-            ->type('input[type="email"]', $user->email)
-            ->type('input[type="password"]', 'password')
-            ->click('button[type="submit"]')
-            ->assertVisible('.fi-page')
-            ->assertPathIs('/')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit(Filament::getLoginUrl())
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues()
+        ->type('input[type="email"]', $user->email)
+        ->type('input[type="password"]', 'password')
+        ->click('button[type="submit"]')
+        ->assertVisible('.fi-page')
+        ->assertPathIs('/')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit(Filament::getLoginUrl())
-            ->inDarkMode()
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit(Filament::getLoginUrl())
+        ->inDarkMode()
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit(Filament::getUrl())
-            ->inDarkMode()
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    });
+    visit(Filament::getUrl())
+        ->inDarkMode()
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 });
 
 it('does not lock out a user when an attacker exhausts login attempts from a different IP', function (): void {

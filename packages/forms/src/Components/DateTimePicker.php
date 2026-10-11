@@ -100,9 +100,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
 
     public function toEmbeddedHtml(): string
     {
-        $datalistOptions = $this->getDatalistOptions();
         $disabledDates = $this->getDisabledDates();
-        $extraAlpineAttributes = $this->getExtraAlpineAttributes();
         $extraAttributeBag = $this->getExtraAttributeBag();
         $extraInputAttributeBag = $this->getExtraInputAttributeBag();
         $hasDate = $this->hasDate();
@@ -127,6 +125,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
         $statePath = $this->getStatePath();
         $placeholder = $this->getPlaceholder();
         $isReadOnly = $this->isReadOnly();
+        $datalistOptions = ((! $isDisabled) && (! $isReadOnly)) ? $this->getDatalistOptions() : [];
         $isRequired = $this->isRequired();
         $step = $this->getStep();
         $type = $this->getType();
@@ -167,7 +166,9 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
         ob_start(); ?>
 
 
-                <?php if ($isNative) { ?>
+                <?php if ($isNative) {
+                    $extraAlpineAttributes = $this->getExtraAlpineAttributes();
+                    ?>
                     <input
                         <?= $extraInputAttributeBag
                             ->merge($extraAlpineAttributes, escape: false)
@@ -195,9 +196,24 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                             ->toHtml() ?>
                     />
                 <?php } else {
+                    $extraAlpineAttributeBag = $this->getExtraAlpineAttributeBag();
                     $label = $this->getLabel();
                     $labelText = $label instanceof Htmlable ? html_entity_decode(strip_tags($label->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8') : $label;
+                    $triggerAttributes = $this->getExtraTriggerAttributeBag()
+                        ->merge($this->getAccessibilityAttributes(), escape: false)
+                        ->merge([
+                            'aria-controls' => $id . '-panel',
+                            'aria-expanded' => 'false',
+                            'aria-haspopup' => 'dialog',
+                            'disabled' => $isDisabled,
+                            'id' => $id,
+                            'placeholder' => $placeholder,
+                            'role' => 'combobox',
+                            'type' => 'text',
+                        ])
+                        ->class(['fi-fo-date-time-picker-trigger', 'fi-fo-date-time-picker-display-text-input']);
                     ?>
+                    <div hidden data-field-accessibility <?= $triggerAttributes->only(['aria-describedby', 'aria-invalid'])->toHtml() ?>></div>
                     <div
                         x-load
                         x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('date-time-picker', 'filament/forms')) ?>"
@@ -224,7 +240,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                             x-on:focusout="if (isOpen() && ! $el.contains($event.relatedTarget)) $refs.panel.close()"
                             x-on:keydown.esc="isOpen() && $event.stopPropagation()"
                         <?php } ?>
-                        <?= $this->getExtraAlpineAttributeBag()->toHtml() ?>
+                        <?= $extraAlpineAttributeBag->toHtml() ?>
                     >
                         <input x-ref="maxDate" type="hidden" value="<?= e($maxDate) ?>" />
                         <input x-ref="minDate" type="hidden" value="<?= e($minDate) ?>" />
@@ -253,20 +269,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                             readonly
                             wire:key="<?= e($livewireKey) ?>.display-text"
                             x-model="displayText"
-                            <?= $this->getExtraTriggerAttributeBag()
-                                ->merge($this->getAccessibilityAttributes(), escape: false)
-                                ->merge([
-                                    'aria-controls' => $id . '-panel',
-                                    'aria-expanded' => 'false',
-                                    'aria-haspopup' => 'dialog',
-                                    'disabled' => $isDisabled,
-                                    'id' => $id,
-                                    'placeholder' => $placeholder,
-                                    'role' => 'combobox',
-                                    'type' => 'text',
-                                ])
-                                ->class(['fi-fo-date-time-picker-trigger', 'fi-fo-date-time-picker-display-text-input'])
-                                ->toHtml() ?>
+                            <?= $triggerAttributes->toHtml() ?>
                         />
 
                         <div

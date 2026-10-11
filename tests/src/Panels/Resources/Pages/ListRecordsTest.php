@@ -51,6 +51,23 @@ it('can list posts', function (): void {
         ->assertCanSeeTableRecords($posts);
 });
 
+it('uses no-panel filters without changing default queries or pagination updates', function (): void {
+    $published = Post::factory()->create(['is_published' => true]);
+    $draft = Post::factory()->create(['is_published' => false]);
+
+    livewire(ListPostsWithTabs::class)
+        ->assertSet('activeTab', 'published')
+        ->assertSeeHtml('role="group"')
+        ->assertDontSeeHtml('role="tabpanel"')
+        ->assertCanSeeTableRecords([$published])
+        ->assertCanNotSeeTableRecords([$draft])
+        ->call('setPage', 2)
+        ->set('activeTab', 'draft')
+        ->assertSet('paginators.page', 1)
+        ->assertCanSeeTableRecords([$draft])
+        ->assertCanNotSeeTableRecords([$published]);
+});
+
 it('can render post titles', function (): void {
     Post::factory()->count(10)->create();
 

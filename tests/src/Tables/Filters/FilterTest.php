@@ -219,28 +219,26 @@ it('does not reset filters when the `filtersResetAction()` is unauthorized', fun
 });
 
 it('renders a customized `filtersResetAction()` accessibly', function (): void {
-    retry(10, function (): void {
-        Artisan::call('filament:assets');
+    Artisan::call('filament:assets');
 
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/filters-reset-action-browser-test')
-            ->click('[data-testid="filters-trigger"]')
-            ->assertVisible('[data-testid="filters-reset-action"]')
-            ->assertAttribute('[data-testid="published-filter"]', 'aria-checked', 'false')
-            ->click('[data-testid="published-filter"]')
-            ->assertAttribute('[data-testid="published-filter"]', 'aria-checked', 'true')
-            ->click('[data-testid="filters-reset-action"]')
-            ->assertAttribute('[data-testid="published-filter"]', 'aria-checked', 'false')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/filters-reset-action-browser-test')
+        ->click('[data-testid="filters-trigger"]')
+        ->assertVisible('[data-testid="filters-reset-action"]')
+        ->assertAttribute('[data-testid="published-filter"]', 'aria-checked', 'false')
+        ->click('[data-testid="published-filter"]')
+        ->assertAttribute('[data-testid="published-filter"]', 'aria-checked', 'true')
+        ->click('[data-testid="filters-reset-action"]')
+        ->assertAttribute('[data-testid="published-filter"]', 'aria-checked', 'false')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/filters-reset-action-browser-test')
-            ->inDarkMode()
-            ->click('[data-testid="filters-trigger"]')
-            ->assertVisible('[data-testid="filters-reset-action"]')
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/filters-reset-action-browser-test')
+        ->inDarkMode()
+        ->click('[data-testid="filters-trigger"]')
+        ->assertVisible('[data-testid="filters-reset-action"]')
+        ->assertNoAccessibilityIssues();
 });
 
 it('manages focus for the filters dropdown', function (bool $isDarkMode): void {
@@ -348,20 +346,18 @@ it('manages focus for the filters dropdown', function (bool $isDarkMode): void {
 })->with(['mobile light' => false, 'desktop dark' => true]);
 
 it('focuses lazy and empty filter configurations', function (string $focusScenario, string $focusedSelector): void {
-    retry(10, function () use ($focusScenario, $focusedSelector): void {
-        Artisan::call('filament:assets');
+    Artisan::call('filament:assets');
 
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit("/filters-reset-action-browser-test?focusScenario={$focusScenario}")
-            ->wait(0.5)
-            ->keys('[data-testid="filters-trigger"]', 'Enter')
-            ->wait(1)
-            ->assertScript("document.activeElement.closest('{$focusedSelector}') !== null", true)
-            ->keys($focusedSelector, 'Escape')
-            ->assertScript('document.activeElement.closest(\'[data-testid="filters-trigger"]\') !== null', true)
-            ->assertNoSmoke();
-    });
+    visit("/filters-reset-action-browser-test?focusScenario={$focusScenario}")
+        ->wait(0.5)
+        ->keys('[data-testid="filters-trigger"]', 'Enter')
+        ->wait(1)
+        ->assertScript("document.activeElement.closest('{$focusedSelector}') !== null", true)
+        ->keys($focusedSelector, 'Escape')
+        ->assertScript('document.activeElement.closest(\'[data-testid="filters-trigger"]\') !== null', true)
+        ->assertNoSmoke();
 })->with([
     'lazy select first' => ['selectFirst', '.fi-select-input-btn'],
     'disabled focusable control first' => ['disabledFirst', '[data-testid="published-filter"]'],
@@ -371,14 +367,13 @@ it('focuses lazy and empty filter configurations', function (string $focusScenar
 ]);
 
 it('cancels pending filter autofocus when the dropdown closes', function (): void {
-    retry(10, function (): void {
-        Artisan::call('filament:assets');
+    Artisan::call('filament:assets');
 
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        $page = visit('/filters-reset-action-browser-test?focus=1');
+    $page = visit('/filters-reset-action-browser-test?focus=1');
 
-        $page->script(<<<'JS'
+    $page->script(<<<'JS'
             document.querySelector('.fi-ta-filters').closest('.fi-dropdown-panel').addEventListener('dropdown-opened', () => queueMicrotask(() => {
                 document.querySelector('[data-testid="filters-trigger"]').dispatchEvent(new KeyboardEvent('keydown', {
                     bubbles: true,
@@ -387,68 +382,64 @@ it('cancels pending filter autofocus when the dropdown closes', function (): voi
             }), { once: true })
             JS);
 
-        $page
-            ->keys('[data-testid="filters-trigger"]', 'Enter')
-            ->wait(0.5)
-            ->assertMissing('.fi-ta-filters')
-            ->assertScript('document.activeElement.closest(\'[data-testid="filters-trigger"]\') !== null', true)
-            ->assertNoSmoke();
-    });
+    $page
+        ->keys('[data-testid="filters-trigger"]', 'Enter')
+        ->wait(0.5)
+        ->assertMissing('.fi-ta-filters')
+        ->assertScript('document.activeElement.closest(\'[data-testid="filters-trigger"]\') !== null', true)
+        ->assertNoSmoke();
 });
 
 it('skips a lazy filter control until it is initialized', function (): void {
-    retry(10, function (): void {
-        Artisan::call('filament:assets');
+    Artisan::call('filament:assets');
 
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        $page = visit('/filters-reset-action-browser-test?focusScenario=dateFirst')
-            ->wait(0.5);
+    $page = visit('/filters-reset-action-browser-test?focusScenario=dateFirst')
+        ->wait(0.5);
 
-        $page->script('document.querySelector(\'[data-testid="published-at-filter"] [x-load]\').setAttribute(\'x-ignore\', \'\')');
+    $page->script('document.querySelector(\'[data-testid="published-at-filter"] [x-load]\').setAttribute(\'x-ignore\', \'\')');
 
-        $page
-            ->keys('[data-testid="filters-trigger"]', 'Enter')
-            ->assertScript('document.activeElement.closest(\'[data-testid="published-filter"]\') !== null', true);
+    $page
+        ->keys('[data-testid="filters-trigger"]', 'Enter')
+        ->assertScript('document.activeElement.closest(\'[data-testid="published-filter"]\') !== null', true);
 
-        $page->script('document.querySelector(\'[data-testid="published-at-filter"] [x-load]\').removeAttribute(\'x-ignore\')');
+    $page->script('document.querySelector(\'[data-testid="published-at-filter"] [x-load]\').removeAttribute(\'x-ignore\')');
 
-        $page
-            ->wait(0.5)
-            ->assertScript('document.activeElement.closest(\'[data-testid="published-filter"]\') !== null', true)
-            ->assertNoSmoke();
-    });
+    $page
+        ->wait(0.5)
+        ->assertScript('document.activeElement.closest(\'[data-testid="published-filter"]\') !== null', true)
+        ->assertNoSmoke();
 });
 
 it('contains filters `Escape` handling inside an enclosing modal', function (bool $isDarkMode): void {
-    retry(10, function () use ($isDarkMode): void {
-        Artisan::call('filament:assets');
+    Artisan::call('filament:assets');
 
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        $filtersTrigger = '[data-testid="filters-trigger"]';
-        $publishedFilter = '[data-testid="published-filter"]';
-        $tableModal = '[data-testid="table-modal"]';
+    $filtersTrigger = '[data-testid="filters-trigger"]';
+    $publishedFilter = '[data-testid="published-filter"]';
+    $tableModal = '[data-testid="table-modal"]';
 
-        $page = visit('/filters-modal-browser-test');
+    $page = visit('/filters-modal-browser-test');
 
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
+    if ($isDarkMode) {
+        $page = $page->inDarkMode();
+    }
 
-        $page
-            ->click('[data-testid="table-modal-trigger"]')
-            ->assertVisible($tableModal)
-            ->keys($filtersTrigger, 'Enter')
-            ->assertVisible($publishedFilter)
-            ->keys($publishedFilter, 'Escape')
-            ->assertMissing($publishedFilter)
-            ->assertVisible($tableModal)
-            ->keys($filtersTrigger, 'Enter')
-            ->assertVisible($publishedFilter)
-            ->assertNoAccessibilityIssues();
+    $page
+        ->click('[data-testid="table-modal-trigger"]')
+        ->assertVisible($tableModal)
+        ->keys($filtersTrigger, 'Enter')
+        ->assertVisible($publishedFilter)
+        ->keys($publishedFilter, 'Escape')
+        ->assertMissing($publishedFilter)
+        ->assertVisible($tableModal)
+        ->keys($filtersTrigger, 'Enter')
+        ->assertVisible($publishedFilter)
+        ->assertNoAccessibilityIssues();
 
-        $page->script(<<<'JS'
+    $page->script(<<<'JS'
             const dropdown = document.querySelector('[data-testid="table-modal"] .fi-ta-col-manager-dropdown')
             const trigger = dropdown.querySelector(':scope > .fi-dropdown-trigger button')
 
@@ -456,24 +447,23 @@ it('contains filters `Escape` handling inside an enclosing modal', function (boo
             window.columnManagerPanel.open(trigger)
             JS);
 
-        $page->assertScript('window.columnManagerPanel.style.display === \'block\'', true);
+    $page->assertScript('window.columnManagerPanel.style.display === \'block\'', true);
 
-        $page->script('document.querySelector(\'[data-testid="filters-trigger"]\').focus()');
+    $page->script('document.querySelector(\'[data-testid="filters-trigger"]\').focus()');
 
-        $page
-            ->keys($filtersTrigger, 'Escape')
-            ->assertMissing($publishedFilter)
-            ->assertVisible($tableModal)
-            ->assertScript('window.columnManagerPanel.style.display === \'block\'', true)
-            ->assertScript('document.activeElement.closest(\'[data-testid="filters-trigger"]\') !== null', true);
+    $page
+        ->keys($filtersTrigger, 'Escape')
+        ->assertMissing($publishedFilter)
+        ->assertVisible($tableModal)
+        ->assertScript('window.columnManagerPanel.style.display === \'block\'', true)
+        ->assertScript('document.activeElement.closest(\'[data-testid="filters-trigger"]\') !== null', true);
 
-        $page->script('window.columnManagerPanel.close()');
+    $page->script('window.columnManagerPanel.close()');
 
-        $page
-            ->keys($tableModal, 'Escape')
-            ->assertMissing($tableModal)
-            ->assertNoSmoke();
-    });
+    $page
+        ->keys($tableModal, 'Escape')
+        ->assertMissing($tableModal)
+        ->assertNoSmoke();
 })->with(['light' => false, 'dark' => true]);
 
 it('can use a custom attribute for the `SelectFilter`', function (): void {

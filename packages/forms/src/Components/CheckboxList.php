@@ -552,6 +552,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
         $optionsAttributes = $this->getExtraAttributeBag()
             ->grid($this->getColumns(), $gridDirection)
             ->merge([
+                'wire:key' => "{$livewireKey}.options",
                 'x-show' => $isSearchable ? 'visibleCheckboxListOptions.length' : null,
             ], escape: false)
             ->class(['fi-fo-checkbox-list-options']);
@@ -567,34 +568,34 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
                     })"
             <?= $this->getExtraAlpineAttributeBag()
                 ->merge([
-                    ...$this->getAccessibilityAttributes(),
+                    'aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby'] ?? null,
                     'aria-labelledby' => filled($this->getLabel()) ? e("{$id}-label") : null,
                 ], escape: false)
                 ->class(['fi-fo-checkbox-list'])->toHtml() ?>
         >
-            <?php if (! $isDisabled) { ?>
-                <?php if ($isSearchable) { ?>
-                    <div <?= (new FilamentComponentAttributeBag)->class(['fi-input-wrp', 'fi-fo-checkbox-list-search-input-wrp'])->toHtml() ?>>
-                        <div class="fi-input-wrp-prefix fi-input-wrp-prefix-has-content fi-inline">
-                            <?= generate_icon_html(
-                                Heroicon::MagnifyingGlass,
-                                FormsIconAlias::COMPONENTS_CHECKBOX_LIST_SEARCH_FIELD,
-                                (new FilamentComponentAttributeBag)->color(IconComponent::class, 'gray'),
-                            )?->toHtml() ?>
-                        </div>
-
-                        <div class="fi-input-wrp-content-ctn">
-                            <input
-                                aria-label="<?= e($this->getSearchPrompt()) ?>"
-                                placeholder="<?= e($this->getSearchPrompt()) ?>"
-                                type="search"
-                                x-model.debounce.<?= $this->getSearchDebounce() ?>="search"
-                                class="fi-input fi-input-has-inline-prefix"
-                            />
-                        </div>
+            <?php if ($isSearchable) { ?>
+                <div <?= (new FilamentComponentAttributeBag)->class(['fi-input-wrp', 'fi-fo-checkbox-list-search-input-wrp'])->toHtml() ?>>
+                    <div class="fi-input-wrp-prefix fi-input-wrp-prefix-has-content fi-inline">
+                        <?= generate_icon_html(
+                            Heroicon::MagnifyingGlass,
+                            FormsIconAlias::COMPONENTS_CHECKBOX_LIST_SEARCH_FIELD,
+                            (new FilamentComponentAttributeBag)->color(IconComponent::class, 'gray'),
+                        )?->toHtml() ?>
                     </div>
-                <?php } ?>
 
+                    <div class="fi-input-wrp-content-ctn">
+                        <input
+                            aria-label="<?= e($this->getSearchPrompt()) ?>"
+                            placeholder="<?= e($this->getSearchPrompt()) ?>"
+                            type="search"
+                            x-model.debounce.<?= $this->getSearchDebounce() ?>="search"
+                            class="fi-input fi-input-has-inline-prefix"
+                        />
+                    </div>
+                </div>
+            <?php } ?>
+
+            <?php if (! $isDisabled) { ?>
                 <?php if ($isBulkToggleable && count($options)) { ?>
                     <div
                         x-cloak
@@ -626,16 +627,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
                         <div
                             wire:key="<?= e($livewireKey) ?>.options.<?= e($value) ?>"
                             <?php if ($isSearchable) { ?>
-                                x-show="
-                                    $el
-                                        .querySelector('.fi-fo-checkbox-list-option-label')
-                                        ?.innerText.toLowerCase()
-                                        .includes(search.toLowerCase()) ||
-                                        $el
-                                            .querySelector('.fi-fo-checkbox-list-option-description')
-                                            ?.innerText.toLowerCase()
-                                            .includes(search.toLowerCase())
-                                "
+                                x-show="matchesSearch($el)"
                             <?php } ?>
                             class="fi-fo-checkbox-list-option-ctn"
                         >

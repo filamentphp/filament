@@ -878,7 +878,9 @@ class RenderColumnsWithRelatedRecords extends Component implements HasActions, H
 
     public function table(Table $table): Table
     {
-        return $table->query(Team::query())->columns([
+        return $table->query(Team::query()->with([
+            'users' => static fn ($query) => $query->orderBy('users.id'),
+        ]))->columns([
             TextColumn::make('users.name')
                 ->badge()
                 ->colors(static fn (string $state, User $relatedRecord): array => [

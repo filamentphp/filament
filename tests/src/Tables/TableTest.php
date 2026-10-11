@@ -239,6 +239,72 @@ describe('content grid', function (): void {
     });
 });
 
+describe('sorting', function (): void {
+    it('ignores a persisted sort on a toggled-hidden column until it is shown again', function (string $sortColumn): void {
+        $firstUser = User::factory()->create(['name' => 'Charlie', 'email' => 'bravo@example.com']);
+        $secondUser = User::factory()->create(['name' => 'Alpha', 'email' => 'charlie@example.com']);
+        $thirdUser = User::factory()->create(['name' => 'Bravo', 'email' => 'alpha@example.com']);
+
+        Post::factory()->count(2)->for($firstUser, 'author')->create();
+        Post::factory()->for($thirdUser, 'author')->create();
+
+        $component = livewire(ToggleableSortableTableTestComponent::class)
+            ->sortTable($sortColumn)
+            ->assertCanSeeTableRecords([$secondUser, $thirdUser, $firstUser], inOrder: true);
+
+        $tableColumns = array_map(static function (array $column) use ($sortColumn): array {
+            if ($column['name'] === $sortColumn) {
+                $column['isToggled'] = false;
+            }
+
+            return $column;
+        }, $component->get('tableColumns'));
+
+        $component
+            ->call('applyTableColumnManager', $tableColumns)
+            ->assertCanSeeTableRecords([$thirdUser, $firstUser, $secondUser], inOrder: true);
+
+        livewire(ToggleableSortableTableTestComponent::class)
+            ->assertSet('tableSort', "{$sortColumn}:asc")
+            ->assertCanSeeTableRecords([$thirdUser, $firstUser, $secondUser], inOrder: true)
+            ->call('resetTableColumnManager')
+            ->assertCanSeeTableRecords([$secondUser, $thirdUser, $firstUser], inOrder: true);
+    })->with(['name', 'posts_count']);
+
+    it('ignores a persisted custom-data sort on a toggled-hidden column until it is shown again', function (bool $usesSortTuple): void {
+        $component = livewire(ToggleableSortableCustomDataTableTestComponent::class, ['usesSortTuple' => $usesSortTuple])
+            ->sortTable('title', 'desc')
+            ->assertCanSeeTableRecords([2, 1, 3], inOrder: true);
+
+        $tableColumns = $component->get('tableColumns');
+        $tableColumns[0]['isToggled'] = false;
+
+        $component
+            ->call('applyTableColumnManager', $tableColumns)
+            ->assertCanSeeTableRecords([1, 2, 3], inOrder: true);
+
+        livewire(ToggleableSortableCustomDataTableTestComponent::class, ['usesSortTuple' => $usesSortTuple])
+            ->assertSet('tableSort', 'title:desc')
+            ->assertCanSeeTableRecords([1, 2, 3], inOrder: true)
+            ->call('resetTableColumnManager')
+            ->assertCanSeeTableRecords([2, 1, 3], inOrder: true);
+    })->with([
+        'separate `$sortColumn` and `$sortDirection` injections' => [false],
+        'combined `$sort` injection' => [true],
+    ]);
+
+    it('preserves mapped sorting for a toggled-hidden `defaultSort()` column', function (): void {
+        $firstPost = Post::factory()->create(['title' => 'Charlie']);
+        $secondPost = Post::factory()->create(['title' => 'Alpha']);
+
+        livewire(MappedDefaultSortTableTestComponent::class)
+            ->assertCanSeeTableRecords([$secondPost, $firstPost], inOrder: true)
+            ->set('tableSort', 'display_title:desc')
+            ->assertSet('tableSort', 'display_title:desc')
+            ->assertCanSeeTableRecords([$secondPost, $firstPost], inOrder: true);
+    });
+});
+
 describe('session persistence', function (): void {
     it('can toggle all session persistence with `persistInSession()`', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
@@ -711,110 +777,79 @@ describe('rendering', function (): void {
     it('keeps `CONTENT_BEFORE` and `CONTENT_AFTER` around the table content after an update', function (): void {
         Artisan::call('filament:assets');
 
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-            Post::query()->delete();
+        Post::query()->delete();
 
-            Post::factory()->count(2)->create();
+        Post::factory()->count(2)->create();
 
-            $hookOrder = '[data-testid="table-content-before-hook"] + .fi-ta-content-ctn + [data-testid="table-content-after-hook"] + nav.fi-pagination';
+        $hookOrder = '[data-testid="table-content-before-hook"] + .fi-ta-content-ctn + [data-testid="table-content-after-hook"] + nav.fi-pagination';
 
-            visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
-                ->assertDontSee('Created by render hook test')
-                ->assertPresent($hookOrder)
-                ->click('[data-testid="create-post"]')
-                ->assertSee('Created by render hook test')
-                ->assertPresent($hookOrder)
-                ->assertNoAccessibilityIssues();
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->assertDontSee('Created by render hook test')
+            ->assertPresent($hookOrder)
+            ->click('[data-testid="create-post"]')
+            ->assertSee('Created by render hook test')
+            ->assertPresent($hookOrder)
+            ->assertNoAccessibilityIssues();
 
-            visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
-                ->inDarkMode()
-                ->assertPresent($hookOrder)
-                ->assertNoAccessibilityIssues();
-        });
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->inDarkMode()
+            ->assertPresent($hookOrder)
+            ->assertNoAccessibilityIssues();
     });
 
     it('renders accessible table loading states in light and dark modes', function (): void {
         Artisan::call('filament:assets');
 
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-            Post::query()->delete();
+        Post::query()->delete();
 
-            Post::factory()->create(['title' => 'Short']);
-            Post::factory()->create(['title' => 'A much longer title']);
+        Post::factory()->create(['title' => 'Short']);
+        Post::factory()->create(['title' => 'A much longer title']);
 
-            visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
-                ->assertAttribute('[data-testid="table-loading-state"]', 'role', 'status')
-                ->assertAttribute('[data-testid="table-loading-state"]', 'aria-live', 'polite')
-                ->assertNoAccessibilityIssues();
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->assertAttribute('[data-testid="table-loading-state"]', 'role', 'status')
+            ->assertAttribute('[data-testid="table-loading-state"]', 'aria-live', 'polite')
+            ->assertNoAccessibilityIssues();
 
-            visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
-                ->inDarkMode()
-                ->assertPresent('[data-testid="table-loading-state"]')
-                ->assertNoAccessibilityIssues();
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->inDarkMode()
+            ->assertPresent('[data-testid="table-loading-state"]')
+            ->assertNoAccessibilityIssues();
 
-            $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
-            $individualSearchInput = '.fi-ta-individual-search-row input';
+        $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
+        $individualSearchInput = '.fi-ta-individual-search-row input';
 
-            $page->script(<<<'JS'
-                (() => {
-                    const input = document.querySelector('.fi-ta-individual-search-row input')
+        $page
+            ->type($individualSearchInput, 'Sho')
+            ->assertPresent('.fi-ta-records[inert]')
+            ->assertMissing('tbody[inert] .fi-ta-individual-search-row input')
+            ->assertPresent($individualSearchInput . ':focus')
+            ->keys($individualSearchInput, 'r')
+            ->assertValue($individualSearchInput, 'Shor')
+            // Let the debounced search finish before opening another page.
+            ->wait(2)
+            ->assertMissing('.fi-ta-records[inert]');
 
-                    input.focus()
-                    input.value = 'Sho'
-                    input.dispatchEvent(new Event('input', { bubbles: true }))
-                })()
-                JS);
+        $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
 
-            usleep(800_000);
+        $page
+            ->click('Published')
+            ->assertPresent('.fi-ta-content-loading .fi-ta-records[inert]')
+            ->assertMissing('.fi-ta-records[inert]');
 
-            expect($page->script(<<<'JS'
-                (() => {
-                    const input = document.querySelector('.fi-ta-individual-search-row input')
+        Post::query()->delete();
 
-                    return input === document.activeElement
-                        && ! input.closest('tbody').hasAttribute('inert')
-                        && document.querySelector('.fi-ta-records').hasAttribute('inert')
-                })()
-                JS))->toBeTrue();
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->assertPresent('.fi-ta-empty-state-icon-bg .fi-loading-indicator')
+            ->assertNoAccessibilityIssues();
 
-            $page->keys($individualSearchInput, 'r');
-
-            expect($page->script("document.querySelector('{$individualSearchInput}').value"))->toBe('Shor');
-
-            usleep(2_000_000);
-
-            $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
-
-            $page->click('Published');
-
-            usleep(300_000);
-
-            expect($page->script(<<<'JS'
-                (() => {
-                    const tableContent = document.querySelector('.fi-ta-content-ctn')
-
-                    return tableContent.classList.contains('fi-ta-content-loading')
-                        && tableContent.querySelector('.fi-ta-records').hasAttribute('inert')
-                })()
-                JS))->toBeTrue();
-
-            usleep(1_000_000);
-
-            Post::query()->delete();
-
-            visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
-                ->assertPresent('.fi-ta-empty-state-icon-bg .fi-loading-indicator')
-                ->assertNoAccessibilityIssues();
-
-            visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
-                ->inDarkMode()
-                ->assertPresent('.fi-ta-empty-state-icon-bg .fi-loading-indicator')
-                ->assertNoAccessibilityIssues();
-        });
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->inDarkMode()
+            ->assertPresent('.fi-ta-empty-state-icon-bg .fi-loading-indicator')
+            ->assertNoAccessibilityIssues();
     });
 
 });
@@ -899,6 +934,68 @@ class LoadingSkeletonSortableTableTestComponent extends SortableTableTestCompone
     {
         return parent::table($table)
             ->loadingSkeleton();
+    }
+}
+
+class ToggleableSortableTableTestComponent extends TableTestComponent
+{
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(User::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('name')
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('posts_count')
+                    ->counts('posts')
+                    ->sortable()
+                    ->toggleable(),
+            ])
+            ->defaultSort('email')
+            ->persistSortInSession();
+    }
+}
+
+class ToggleableSortableCustomDataTableTestComponent extends TableTestComponent
+{
+    public bool $usesSortTuple = false;
+
+    public function table(Table $table): Table
+    {
+        $records = collect([
+            1 => ['id' => 1, 'title' => 'Bravo'],
+            2 => ['id' => 2, 'title' => 'Charlie'],
+            3 => ['id' => 3, 'title' => 'Alpha'],
+        ]);
+
+        return $table
+            ->records($this->usesSortTuple
+                ? static fn (array $sort): Collection => $records->sortBy($sort[0] ?? 'id', descending: $sort[1] === 'desc')
+                : static fn (?string $sortColumn, ?string $sortDirection): Collection => $records->sortBy($sortColumn ?? 'id', descending: $sortDirection === 'desc'))
+            ->columns([
+                Tables\Columns\TextColumn::make('title')
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('id'),
+            ])
+            ->persistSortInSession();
+    }
+}
+
+class MappedDefaultSortTableTestComponent extends TableTestComponent
+{
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('display_title')
+                    ->state(static fn (Post $record): string => $record->title)
+                    ->sortable(['title'])
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->defaultSort('display_title');
     }
 }
 

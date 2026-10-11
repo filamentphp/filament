@@ -158,6 +158,7 @@ export default async ({
         Paragraph,
         Placeholder.configure({
             placeholder,
+            showOnlyWhenEditable: false,
         }),
         TextColor.configure({
             textColors,

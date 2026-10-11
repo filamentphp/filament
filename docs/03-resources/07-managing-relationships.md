@@ -182,7 +182,7 @@ By default, you will not be able to interact with deleted records in the relatio
 php artisan make:filament-relation-manager CategoryResource posts title --soft-deletes
 ```
 
-You can find out more about soft-deleting [here](#deleting-records).
+You can find out more about soft-deleting [here](#deleting-related-records).
 
 ## Listing related records
 

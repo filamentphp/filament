@@ -656,13 +656,14 @@ By default, Filament will use the `name` attribute of the tenant to display its 
 namespace App\Models;
 
 use Filament\Models\Contracts\HasName;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 
 class Team extends Model implements HasName
 {
     // ...
 
-    public function getFilamentName(): string
+    public function getFilamentName(): string | Htmlable
     {
         return "{$this->name} {$this->subscription_plan}";
     }
@@ -670,6 +671,22 @@ class Team extends Model implements HasName
 ```
 
 The `getFilamentName()` method is used to retrieve the name of the current user.
+
+### Rendering HTML in tenant names
+
+You may return an `Htmlable` object, such as an `HtmlString`, from `getFilamentName()` to render HTML in the tenant name:
+
+```php
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\HtmlString;
+
+public function getFilamentName(): string | Htmlable
+{
+    return new HtmlString(e($this->name) . ' <strong>' . e($this->subscription_plan) . '</strong>');
+}
+```
+
+Filament's `getTenantName()` method returns either a string or an `Htmlable` object. Strings are rendered as text, including in tenant menu tooltips. Only `Htmlable` names are rendered as trusted HTML, so you must escape dynamic content using `e()` before including it in an `HtmlString`.
 
 ## Setting the current tenant label
 

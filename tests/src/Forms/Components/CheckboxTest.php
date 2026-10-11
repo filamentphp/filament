@@ -262,15 +262,14 @@ it('can render with a custom `label()`', function (): void {
 });
 
 it('can render `Checkbox` in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        $browser = visit('/checkbox-test');
+    $browser = visit('/checkbox-test');
 
-        $browser
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues()
-            ->assertScript(<<<'JS'
+    $browser
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues()
+        ->assertScript(<<<'JS'
                 (() => {
                     const checkbox = document.querySelector('[data-testid="checkbox"]')
 
@@ -282,21 +281,21 @@ it('can render `Checkbox` in the browser', function (): void {
                 })()
                 JS, true);
 
-        usleep(50_000);
+    usleep(50_000);
 
-        $browser
-            ->assertScript('document.querySelector(\'[data-testid="checkbox"]\').disabled', false)
-            ->assertScript('document.activeElement === document.querySelector(\'[data-testid="checkbox"]\')', true);
+    $browser
+        ->assertScript('document.querySelector(\'[data-testid="checkbox"]\').disabled', false)
+        ->assertScript('document.activeElement === document.querySelector(\'[data-testid="checkbox"]\')', true);
 
-        usleep(1_000_000);
+    usleep(1_000_000);
 
-        $browser
-            ->assertScript('document.querySelector(\'[data-testid="checkbox-form"]\').dataset.updateCount', '2')
-            ->assertScript('document.querySelector(\'[data-testid="checkbox"]\').checked', false);
+    $browser
+        ->assertScript('document.querySelector(\'[data-testid="checkbox-form"]\').dataset.updateCount', '2')
+        ->assertScript('document.querySelector(\'[data-testid="checkbox"]\').checked', false);
 
-        $browser = visit('/checkbox-test')->inDarkMode();
+    $browser = visit('/checkbox-test')->inDarkMode();
 
-        $browser->assertScript(<<<'JS'
+    $browser->assertScript(<<<'JS'
             (() => {
                 const checkbox = document.querySelector('[data-testid="checkbox"]')
 
@@ -307,17 +306,16 @@ it('can render `Checkbox` in the browser', function (): void {
             })()
             JS, true);
 
-        usleep(50_000);
+    usleep(50_000);
 
-        $browser
-            ->assertScript('document.querySelector(\'[data-testid="checkbox"]\').disabled', false)
-            ->assertScript('document.activeElement === document.querySelector(\'[data-testid="checkbox"]\')', true)
-            ->assertNoSmoke();
+    $browser
+        ->assertScript('document.querySelector(\'[data-testid="checkbox"]\').disabled', false)
+        ->assertScript('document.activeElement === document.querySelector(\'[data-testid="checkbox"]\')', true)
+        ->assertNoSmoke();
 
-        usleep(300_000);
+    usleep(300_000);
 
-        $browser->assertNoAccessibilityIssues();
-    });
+    $browser->assertNoAccessibilityIssues();
 });
 
 class TestComponentWithNonInlineCheckbox extends Livewire

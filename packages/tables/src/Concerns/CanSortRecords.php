@@ -91,9 +91,13 @@ trait CanSortRecords
             $tableSortColumn &&
             $column = $this->getTable()->getSortableVisibleColumn($tableSortColumn)
         ) {
-            $sortDirection = $this->getTableSortDirection() === 'desc' ? 'desc' : 'asc';
+            if ($column->isToggledHidden()) {
+                $tableSortColumn = null;
+            } else {
+                $sortDirection = $this->getTableSortDirection() === 'desc' ? 'desc' : 'asc';
 
-            $column->applySort($query, $sortDirection);
+                $column->applySort($query, $sortDirection);
+            }
         }
 
         $sortDirection = ($this->getTable()->getDefaultSortDirection() ?? $this->getTableSortDirection()) === 'desc' ? 'desc' : 'asc';

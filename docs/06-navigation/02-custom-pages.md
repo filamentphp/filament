@@ -240,6 +240,8 @@ public static function getNavigationLabel(): string
 }
 ```
 
+You may also [render HTML in the navigation label](overview#rendering-html-in-navigation-item-labels) by returning an `Htmlable` object.
+
 ## Customizing the page URL
 
 By default, Filament will automatically generate a URL (slug) for your page based on its name. You may override this by defining a `$slug` property on your page class:

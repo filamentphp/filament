@@ -1,12 +1,42 @@
 .fi-sc-tabs {
     @apply flex flex-col;
 
+    & > .fi-tabs > .fi-sc-tabs-tablist {
+        @apply contents;
+    }
+
+    & .fi-sc-tabs-header-overflow:not(.fi-sc-tabs-header-overflow-open) {
+        @apply sr-only;
+    }
+
+    & .fi-sc-tabs-header-overflow-open {
+        @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 fixed z-32 justify-start rounded-md px-2 font-normal focus-visible:ring-2 focus-visible:ring-inset;
+
+        left: var(--tab-overflow-left);
+        top: var(--tab-overflow-top);
+        width: var(--tab-overflow-width);
+        height: var(--tab-overflow-height);
+        clip-path: var(--tab-overflow-clip);
+
+        & .fi-tabs-item-label {
+            @apply flex-1 truncate text-start;
+        }
+    }
+
+    & .fi-sc-tabs-overflow-panel {
+        @apply fixed z-31 overflow-y-auto;
+    }
+
+    & .fi-sc-tabs-overflow-placeholder {
+        @apply invisible;
+    }
+
     & .fi-tabs.fi-invisible {
         @apply invisible;
     }
 
     & .fi-sc-tabs-tab {
-        @apply outline-hidden;
+        @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 outline-hidden focus-visible:ring-2;
 
         &.fi-active {
             @apply mt-6;

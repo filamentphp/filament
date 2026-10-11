@@ -19,6 +19,8 @@ class ToggleButtonsTest extends Page
 
     public ?array $data = [];
 
+    public array $updatedStates = [];
+
     public function mount(): void
     {
         $this->form->fill();
@@ -41,7 +43,58 @@ class ToggleButtonsTest extends Page
                         'b' => Heroicon::XMark,
                     ])
                     ->size(Size::ExtraSmall)
-                    ->grouped(),
+                    ->grouped()
+                    ->extraAttributes(['data-testid' => 'grouped-toggle-buttons']),
+                ToggleButtons::make('boolean_field')
+                    ->label('Boolean ToggleButtons')
+                    ->boolean()
+                    ->default(false)
+                    ->grouped()
+                    ->extraAttributes(['data-testid' => 'boolean-toggle-buttons']),
+                ToggleButtons::make('disabled_options')
+                    ->label('Disabled options')
+                    ->options(['a' => 'Available', 'b' => 'Unavailable', 'c' => 'Unavailable with tooltip'])
+                    ->disableOptionWhen(static fn (string $value): bool => $value !== 'a')
+                    ->tooltips(['c' => 'This option is unavailable.'])
+                    ->extraAttributes(['data-testid' => 'disabled-toggle-buttons']),
+                ToggleButtons::make('multiple_field')
+                    ->label('Multiple ToggleButtons')
+                    ->options(['a' => 'Option A', 'b' => 'Option B'])
+                    ->multiple()
+                    ->extraAttributes(['data-testid' => 'multiple-toggle-buttons']),
+                ...array_map(fn (bool $grouped): ToggleButtons => ToggleButtons::make($grouped ? 'grouped_blur' : 'blur')
+                    ->label($grouped ? 'Grouped blur updates' : 'Blur updates')
+                    ->options(['a' => 'Option A', 'b' => 'Option B'])
+                    ->grouped($grouped)
+                    ->live(onBlur: true)
+                    ->when($grouped, static fn (ToggleButtons $component): ToggleButtons => $component->stateBindingModifiers(['blur']))
+                    ->afterStateUpdated(function (mixed $state, ToggleButtons $component): void {
+                        $this->updatedStates[$component->getName()][] = $state;
+                    }), [false, true]),
+                ...array_map(fn (bool $grouped): ToggleButtons => ToggleButtons::make($grouped ? 'grouped_debounced' : 'debounced')
+                    ->label($grouped ? 'Grouped debounced updates' : 'Debounced updates')
+                    ->options(['a' => 'Option A', 'b' => 'Option B'])
+                    ->grouped($grouped)
+                    ->live(debounce: 1000)
+                    ->when($grouped, static fn (ToggleButtons $component): ToggleButtons => $component->stateBindingModifiers(['live', 'debounce', '1000ms']))
+                    ->afterStateUpdated(function (mixed $state, ToggleButtons $component): void {
+                        $this->updatedStates[$component->getName()][] = $state;
+                    }), [false, true]),
+                ...array_map(fn (string $name): ToggleButtons => ToggleButtons::make($name)
+                    ->options(['a' => 'Option A', 'b' => 'Option B'])
+                    ->grouped($name === 'deferred_debounced')
+                    ->live(onBlur: $name === 'deferred_blur', debounce: $name === 'deferred_debounced' ? 300 : null, condition: false)
+                    ->when($name === 'deferred_override', static fn (ToggleButtons $component): ToggleButtons => $component->live()->stateBindingModifiers([]))
+                    ->afterStateUpdated(function (mixed $state, ToggleButtons $component): void {
+                        $this->updatedStates[$component->getName()][] = $state;
+                    }), ['deferred_blur', 'deferred_debounced', 'deferred_override']),
+                ToggleButtons::make('live_field')
+                    ->options(['a' => 'Option A', 'b' => 'Option B'])
+                    ->grouped()
+                    ->live()
+                    ->afterStateUpdated(function (mixed $state): void {
+                        $this->updatedStates['live_field'][] = $state;
+                    }),
                 ToggleButtons::make('fullWidthStacked')
                     ->label('Full-width stacked ToggleButtons')
                     ->options(['a' => 'Option A', 'b' => 'Option B'])
@@ -65,8 +118,12 @@ class ToggleButtonsTest extends Page
             ->statePath('data');
     }
 
-    public function save(): void
+    public function save(bool $slow = false): array
     {
-        $this->form->getState();
+        if ($slow) {
+            usleep(500000);
+        }
+
+        return $this->form->getState();
     }
 }

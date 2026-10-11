@@ -46,9 +46,15 @@ class CodeEditor extends Field implements HasEmbeddedView
 
         $wrapperAttributes = $this->getExtraAttributeBag()
             ->class(['fi-fo-code-editor']);
+        $extraAlpineAttributeBag = $this->getExtraAlpineAttributeBag();
+        $accessibilityAttributes = $extraAlpineAttributeBag
+            ->merge($wrapperAttributes->getAttributes(), escape: false)
+            ->merge($this->getAccessibilityAttributes(), escape: false)
+            ->only(['aria-describedby', 'aria-invalid']);
 
         ob_start(); ?>
 
+        <div hidden data-field-accessibility <?= $accessibilityAttributes->toHtml() ?>></div>
         <div
             aria-labelledby="<?= e($id) ?>-label"
             id="<?= e($id) ?>"
@@ -68,7 +74,7 @@ class CodeEditor extends Field implements HasEmbeddedView
                     })"
             wire:ignore
             wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled, $language?->value])), 0, 64) ?>"
-            <?= $this->getExtraAlpineAttributeBag()->toHtml() ?>
+            <?= $extraAlpineAttributeBag->toHtml() ?>
         >
             <div x-ref="editor" x-cloak></div>
         </div>

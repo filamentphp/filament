@@ -326,7 +326,7 @@ DatePicker::make('date_of_birth')
     ->readonly()
 ```
 
-Please note that this setting is only enforced on native date pickers. If you're using the [JavaScript date picker](#enabling-the-javascript-date-picker), you'll need to use [`disabled()`](overview#disabling-a-field).
+This setting applies to both native and [JavaScript date pickers](#enabling-the-javascript-date-picker). Read-only JavaScript date pickers remain focusable, but cannot open the picker or clear the value.
 
 There are a few differences, compared to [`disabled()`](overview#disabling-a-field):
 

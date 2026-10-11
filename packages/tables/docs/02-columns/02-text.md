@@ -213,7 +213,7 @@ TextColumn::make('created_at')
 
 #### Displaying a formatting date in a tooltip
 
-Additionally, you can use the `dateTooltip()`, `dateTimeTooltip()`, `timeTooltip()`, `isoDateTooltip()`, `isoDateTimeTooltip()`, `isoTime()`, `isoTimeTooltip()`, or `sinceTooltip()` method to display a formatted date in a [tooltip](overview#adding-a-tooltip-to-an-column), often to provide extra information:
+Additionally, you can use the `dateTooltip()`, `dateTimeTooltip()`, `timeTooltip()`, `isoDateTooltip()`, `isoDateTimeTooltip()`, `isoTime()`, `isoTimeTooltip()`, or `sinceTooltip()` method to display a formatted date in a [tooltip](overview#adding-a-tooltip-to-a-column), often to provide extra information:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -483,7 +483,7 @@ TextColumn::make('title')
 
 ## Listing multiple values
 
-Multiple values can be rendered in a text column if its [state](overview#column-content-state) is an array. This can happen if you are using an `array` cast on an Eloquent attribute, an Eloquent relationship with multiple results, or if you have passed an array to the [`state()` method](overview#setting-the-state-of-an-column). If there are multiple values inside your text column, they will be comma-separated. You may use the `listWithLineBreaks()` method to display them on new lines instead:
+Multiple values can be rendered in a text column if its [state](overview#column-content-state) is an array. This can happen if you are using an `array` cast on an Eloquent attribute, an Eloquent relationship with multiple results, or if you have passed an array to the [`state()` method](overview#setting-the-state-of-a-column). If there are multiple values inside your text column, they will be comma-separated. You may use the `listWithLineBreaks()` method to display them on new lines instead:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -770,6 +770,8 @@ TextColumn::make('email')
 ```
 
 <AutoScreenshot name="tables/columns/text/copyable" alt="Text column with a button to copy it" version="5.x" />
+
+When the copyable text is not part of a link or action, including a row link or action, and contains no interactive elements, you can also focus it using Tab and copy it using Enter or Space. The confirmation appears and is announced only after copying succeeds. If copying fails, a failure message appears and is announced instead.
 
 Optionally, you may pass a boolean value to control if the text should be copyable or not:
 

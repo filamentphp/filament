@@ -639,27 +639,25 @@ describe('rendering', function (): void {
 it('renders labels and wrapper URLs accessibly in light and dark modes', function (): void {
     Artisan::call('filament:assets');
 
-    retry(10, function (): void {
-        Post::factory()->create();
+    Post::factory()->create();
 
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        foreach ([false, true] as $isDarkMode) {
-            $page = visit('/infolist-entries-browser-test');
+    foreach ([false, true] as $isDarkMode) {
+        $page = visit('/infolist-entries-browser-test');
 
-            if ($isDarkMode) {
-                $page = $page->inDarkMode();
-            }
-
-            $page
-                ->assertNoSmoke()
-                ->assertScript('document.querySelector(\'[data-testid="enum-label"]\').textContent.trim()', 'User Management')
-                ->assertScript('document.querySelector(\'[data-testid="trusted-label"]\').textContent.trim()', 'Label: <strong>Alpha beta</strong> (label)')
-                ->assertScript('document.querySelector(\'[data-testid="trusted-label"] strong\') === null')
-                ->assertScript('document.querySelectorAll(\'[data-testid="linked-entry"] a\').length', 1)
-                ->assertNoAccessibilityIssues();
+        if ($isDarkMode) {
+            $page = $page->inDarkMode();
         }
-    });
+
+        $page
+            ->assertNoSmoke()
+            ->assertSeeIn('[data-testid="enum-label"]', 'User Management')
+            ->assertSeeIn('[data-testid="trusted-label"]', 'Label: <strong>Alpha beta</strong> (label)')
+            ->assertNotPresent('[data-testid="trusted-label"] strong')
+            ->assertCount('[data-testid="linked-entry"] a', 1)
+            ->assertNoAccessibilityIssues();
+    }
 });
 
 class TestComponentWithTextEntry extends Component implements HasSchemas
@@ -695,6 +693,8 @@ class RenderEntriesWithRelatedRecords extends Component implements HasSchemas
 
     public function mount(Team $team): void
     {
+        $team->load(['users' => static fn ($query) => $query->orderBy('users.id')]);
+
         $this->team = $team;
     }
 

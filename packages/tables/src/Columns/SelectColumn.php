@@ -949,26 +949,29 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                 'x-load' => true,
                 'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/select', 'filament/tables'),
                 'x-data' => 'selectTableColumn({
+                    accessibilityAttributes: ' . Js::from($this->getExtraInputAttributeBag()->only(['aria-label', 'aria-labelledby', 'aria-describedby', 'aria-invalid', 'aria-busy', 'aria-required'])->getAttributes()) . ',
                     ariaLabel: ' . Js::from(trim(strip_tags((string) $this->getLabel()))) . ',
                     canOptionLabelsWrap: ' . Js::from($this->canOptionLabelsWrap()) . ',
                     canSelectPlaceholder: ' . Js::from($canSelectPlaceholder) . ',
                     clearButtonLabel: ' . Js::from(__('filament-forms::components.select.actions.clear.label')) . ',
+                    errorMessage: ' . Js::from(__('filament-forms::components.select.error_message')) . ',
                     getOptionLabelUsing: async () => {
                         return await $wire.callTableColumnMethod(' . Js::from($name) . ', ' . Js::from($recordKey) . ', \'getOptionLabel\')
                     },
                     getOptionsUsing: async () => {
-                        return await $wire.callTableColumnMethod(
-                            ' . Js::from($name) . ',
-                            ' . Js::from($recordKey) . ',
-                            \'getOptionsForJs\',
+                        return await Livewire.fireAction(
+                            $wire.__instance,
+                            \'callTableColumnMethod\',
+                            [' . Js::from($name) . ', ' . Js::from($recordKey) . ', \'getOptionsForJs\'],
+                            { async: true },
                         )
                     },
                     getSearchResultsUsing: async (search) => {
-                        return await $wire.callTableColumnMethod(
-                            ' . Js::from($name) . ',
-                            ' . Js::from($recordKey) . ',
-                            \'getOptionsSearchResultsForJs\',
-                            { search },
+                        return await Livewire.fireAction(
+                            $wire.__instance,
+                            \'callTableColumnMethod\',
+                            [' . Js::from($name) . ', ' . Js::from($recordKey) . ', \'getOptionsSearchResultsForJs\', { search }],
+                            { async: true },
                         )
                     },
                     hasDynamicOptions: ' . Js::from($this->hasDynamicOptions()) . ',
@@ -1013,13 +1016,13 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                         content: ' . Js::from($tooltip) . ',
                         theme: $store.theme,
                         allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
-                        ' . ($isNative ? '' : 'triggerTarget: select && $el.querySelector(\'[role=combobox]\'),') . '
+                        ' . ($isNative ? '' : 'triggerTarget: select && select.selectButton,') . '
                     }'
                     : 'false') . ' : {
                         content: error,
                         theme: $store.theme,
                         allowHTML: false,
-                        ' . ($isNative ? '' : 'triggerTarget: select && $el.querySelector(\'[role=combobox]\'),') . '
+                        ' . ($isNative ? '' : 'triggerTarget: select && select.selectButton,') . '
                     }',
             ], escape: false)
             ->class([
@@ -1042,7 +1045,6 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                 x-on:click.prevent.stop
                 <?php if (! $isNative) { ?>
                     <?= $inputAttributes->only(['x-tooltip'])->toHtml() ?>
-                    x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                 <?php } ?>
                 class="fi-input-wrp"
             >

@@ -87,7 +87,7 @@ TextColumn::make('title')
 
 #### Adding placeholder text if a column is empty
 
-Sometimes you may want to display placeholder text for columns with an empty state, which is styled as a lighter gray text. This differs from the [default value](#setting-the-default-state-of-an-column), as the placeholder is always text and not treated as if it were real state.
+Sometimes you may want to display placeholder text for columns with an empty state, which is styled as a lighter gray text. This differs from the [default value](#setting-the-default-state-of-a-column), as the placeholder is always text and not treated as if it were real state.
 
 ```php
 use Filament\Tables\Columns\TextColumn;

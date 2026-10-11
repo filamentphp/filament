@@ -137,7 +137,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         return static::$breadcrumb ?? static::getRelationshipTitle();
     }
 
-    public static function getNavigationLabel(): string
+    public static function getNavigationLabel(): string | Htmlable
     {
         return static::$navigationLabel ?? static::getRelationshipTitle();
     }

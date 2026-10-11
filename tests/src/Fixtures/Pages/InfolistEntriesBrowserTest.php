@@ -73,7 +73,11 @@ class InfolistEntriesBrowserTest extends Page
                     ->state(['enabled' => true, 'retries' => 3])
                     ->copyable()
                     ->copyableState(static fn (string $state): string => "Copy: {$state}")
-                    ->extraAttributes(['data-testid' => 'custom-copy-code']),
+                    ->extraAttributes(['data-testid' => 'custom-copy-code', 'x-data' => '{}']),
+                CodeEntry::make('id_scoped_code')
+                    ->state(['enabled' => true, 'retries' => 3])
+                    ->copyable()
+                    ->extraAttributes(['data-testid' => 'id-scoped-code', 'x-id' => "['custom-description']"]),
                 IconEntry::make('is_published')
                     ->label('Published')
                     ->size('lg'),

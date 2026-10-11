@@ -14,6 +14,8 @@ use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
 use Illuminate\Database\Eloquent\Builder;
 
+use function Amp\delay;
+
 class TableRenderHooksBrowserTest extends Page implements HasTable
 {
     use Tables\Concerns\InteractsWithTable {
@@ -30,13 +32,7 @@ class TableRenderHooksBrowserTest extends Page implements HasTable
         return $table
             ->query(Post::query())
             ->modifyQueryUsing(function (Builder $query): void {
-                if (filled($this->tableSearch) || filled($this->tableColumnSearches['title'] ?? null)) {
-                    usleep(1_000_000);
-                }
-
                 if ($this->activeTab === 'published') {
-                    usleep(1_000_000);
-
                     $query->where('is_published', true);
                 }
             })
@@ -68,18 +64,33 @@ class TableRenderHooksBrowserTest extends Page implements HasTable
             ]);
     }
 
+    public function updatingActiveTab(): void
+    {
+        delay(1);
+    }
+
+    public function updatingTableColumnSearches(): void
+    {
+        delay(1);
+    }
+
+    public function updatingTableSearch(): void
+    {
+        delay(1);
+    }
+
     public function resetTableColumnSearch(string $column): void
     {
         $this->resetTableColumnSearchWithoutDelay($column);
 
-        usleep(1_000_000);
+        delay(1);
     }
 
     public function resetTableSearch(): void
     {
         $this->resetTableSearchWithoutDelay();
 
-        usleep(1_000_000);
+        delay(1);
     }
 
     protected function getHeaderActions(): array

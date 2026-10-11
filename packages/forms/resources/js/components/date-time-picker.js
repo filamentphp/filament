@@ -11,6 +11,10 @@ import customParseFormat from 'dayjs/plugin/customParseFormat'
 import localeData from 'dayjs/plugin/localeData'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
+import {
+    observeFieldAccessibility,
+    setFieldAccessibilityAttributes,
+} from '../utils/field-accessibility'
 
 dayjs.extend(advancedFormat)
 dayjs.extend(customParseFormat)
@@ -52,6 +56,8 @@ export default function dateTimePickerFormComponent({
         positionGeneration: 0,
 
         positioningCleanup: null,
+
+        accessibilityObserver: null,
 
         focusedDate: null,
 
@@ -111,6 +117,15 @@ export default function dateTimePickerFormComponent({
             this.setDisplayText()
             this.setMonths()
             this.setDayLabels()
+
+            this.accessibilityObserver = observeFieldAccessibility(
+                this.$el,
+                (attributes) =>
+                    setFieldAccessibilityAttributes(
+                        this.$refs.button,
+                        attributes,
+                    ),
+            )
 
             if (isAutofocused) {
                 this.$nextTick(() => {
@@ -931,6 +946,7 @@ export default function dateTimePickerFormComponent({
 
         destroy() {
             this.isDestroyed = true
+            this.accessibilityObserver?.disconnect()
 
             if (hasDate) {
                 this.closePanel()

@@ -699,23 +699,21 @@ describe('rendering', function (): void {
 });
 
 it('can render `MarkdownEditor` in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/markdown-editor-browser-test')
-            ->assertAttribute(
-                '[data-testid="null-min-height-with-max-height-markdown-editor"] .CodeMirror-scroll',
-                'tabindex',
-                '0',
-            )
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    visit('/markdown-editor-browser-test')
+        ->assertAttribute(
+            '[data-testid="null-min-height-with-max-height-markdown-editor"] .CodeMirror-scroll',
+            'tabindex',
+            '0',
+        )
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        visit('/markdown-editor-browser-test')
-            ->inDarkMode()
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    });
+    visit('/markdown-editor-browser-test')
+        ->inDarkMode()
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 });
 
 class RenderMarkdownEditor extends Livewire

@@ -217,7 +217,7 @@ abstract class Page extends BasePage
     }
 
     /**
-     * @return array<string> | null
+     * @return array<string | Htmlable> | null
      */
     protected function getNavigationHierarchyBreadcrumbs(): ?array
     {
@@ -276,7 +276,7 @@ abstract class Page extends BasePage
     /**
      * @param  Closure(): ?string  $navigationItemUrl
      * @param  ?array<NavigationGroup>  $navigation
-     * @return array<string> | null
+     * @return array<string | Htmlable> | null
      */
     protected function getNavigationBreadcrumbs(string $navigationItemKey, Closure $navigationItemUrl, ?array $navigation = null): ?array
     {
@@ -317,7 +317,7 @@ abstract class Page extends BasePage
     /**
      * @param  Closure(): ?string  $navigationItemUrl
      * @param  iterable<NavigationItem>  $navigationItems
-     * @return array<string> | null
+     * @return array<string | Htmlable> | null
      */
     protected function getNavigationItemBreadcrumbs(string $navigationItemKey, Closure $navigationItemUrl, iterable $navigationItems): ?array
     {
@@ -388,7 +388,7 @@ abstract class Page extends BasePage
         return static::$activeNavigationIcon ?? static::getNavigationIcon();
     }
 
-    public static function getNavigationLabel(): string
+    public static function getNavigationLabel(): string | Htmlable
     {
         return static::$navigationLabel ?? static::$title ?? str(class_basename(static::class))
             ->kebab()

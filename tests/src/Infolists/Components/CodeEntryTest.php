@@ -131,11 +131,12 @@ it('copies the displayed JSON by default for array and `Collection` state', func
     expect($entry->toHtml())->not->toContain('clipboard.writeText');
 })->with([false, true]);
 
-it('copies JSON and custom string callback content in the browser', function (): void {
+it('copies JSON and custom string callback content using the keyboard and reports clipboard results', function (): void {
     Artisan::call('filament:assets');
     $this->actingAs(User::factory()->create());
 
     $expectedState = "{\n    \"enabled\": true,\n    \"retries\": 3\n}";
+    $feedbackExpression = 'document.querySelector(\'[data-testid="copyable-code"]\').closest(\'[role="definition"]\').querySelector(\'[role="status"]\').textContent';
 
     foreach ([false, true] as $isDarkMode) {
         $page = visit('/infolist-entries-browser-test');
@@ -144,14 +145,68 @@ it('copies JSON and custom string callback content in the browser', function ():
             $page = $page->inDarkMode();
         }
 
-        $page->script("Object.defineProperty(window.navigator, 'clipboard', { configurable: true, value: { writeText: async (value) => { window.__copiedText = value } } })");
+        $page->script(<<<'JS'
+            window.copyCalls = []
+            Object.defineProperty(window.navigator, 'clipboard', {
+                configurable: true,
+                value: {
+                    writeText: (value) => {
+                        window.copyCalls.push(value)
+                        return new Promise((resolve, reject) => {
+                            window.resolveCopy = resolve
+                            window.rejectCopy = reject
+                        })
+                    },
+                },
+            })
+            JS);
 
         $page
             ->assertScript('document.querySelector(\'[data-testid="copyable-code"] code\').textContent.trim()', $expectedState)
+            ->assertScript('document.getElementById(document.querySelector(\'[data-testid="copyable-code"]\').getAttribute(\'aria-describedby\')).textContent.trim()', $expectedState)
+            ->keys('[data-testid="copyable-code"]', 'Enter')
+            ->assertScript('window.copyCalls', [$expectedState])
+            ->assertScript($feedbackExpression, '')
             ->click('[data-testid="copyable-code"]')
-            ->assertScript('window.__copiedText', $expectedState)
-            ->click('[data-testid="custom-copy-code"]')
-            ->assertScript('window.__copiedText', "Copy: {$expectedState}")
+            ->assertScript('window.copyCalls.length', 1);
+
+        $page->script('window.resolveCopy()');
+        $page->assertScript("Boolean({$feedbackExpression})", true);
+        $page->script("window.successFeedback = {$feedbackExpression}");
+
+        $page
+            ->keys('[data-testid="copyable-code"]', 'Space')
+            ->assertScript('window.copyCalls.length', 2)
+            ->assertScript($feedbackExpression, '');
+
+        $page->script('window.rejectCopy(new Error("Permission denied"))');
+        $page->assertScript("Boolean({$feedbackExpression}) && ({$feedbackExpression} !== window.successFeedback)", true);
+
+        $page->keys('[data-testid="copyable-code"]', 'Enter');
+        $page->script('window.resolveCopy()');
+        $page->assertScript("{$feedbackExpression} === window.successFeedback", true);
+
+        $page->keys('[data-testid="copyable-code"]', 'Enter');
+        $page->script('window.resolveCopy()');
+        $page->assertScript("{$feedbackExpression} === window.successFeedback", true);
+
+        $page
+            ->keys('[data-testid="custom-copy-code"] [role="button"]', 'Space')
+            ->assertScript('window.copyCalls', [$expectedState, $expectedState, $expectedState, $expectedState, "Copy: {$expectedState}"]);
+
+        $page->script('window.resolveCopy()');
+        $page
+            ->assertScript(<<<'JS'
+                (() => {
+                    const control = document.querySelector('[data-testid="id-scoped-code"]').closest('[role="definition"]').querySelector('[role="button"]')
+                    return (document.getElementById(control.getAttribute('aria-describedby'))?.textContent ?? '').trim()
+                })()
+                JS, $expectedState)
+            ->keys('[data-testid="id-scoped-code"] [role="button"], [data-testid="id-scoped-code"][role="button"]', 'Enter')
+            ->assertScript('window.copyCalls.length', 6);
+
+        $page->script('window.resolveCopy()');
+        $page
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
     }

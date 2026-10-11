@@ -280,41 +280,38 @@ describe('browser interactions', function (): void {
         Artisan::call('filament:assets');
     });
 
-    it('focuses the slide-over window instead of the `Mark all as read` header action when opened', function (): void {
-        retry(10, function (): void {
-            $user = User::factory()->create();
-            $this->actingAs($user);
+    it('opens the slide-over without marking notifications as read and keeps its header actions keyboard accessible', function (): void {
+        $user = User::factory()->create();
+        $this->actingAs($user);
 
-            Notification::make()
-                ->title('First')
-                ->icon(Heroicon::Bell)
-                ->iconSize(IconSize::Small)
-                ->sendToDatabase($user);
-            Notification::make()->title('Second')->sendToDatabase($user);
+        Notification::make()
+            ->title('First')
+            ->icon(Heroicon::Bell)
+            ->iconSize(IconSize::Small)
+            ->sendToDatabase($user);
+        Notification::make()->title('Second')->sendToDatabase($user);
 
-            visit('/database-notifications-browser-test')
-                ->click('[data-testid="database-notifications-trigger"]')
-                ->assertVisible('[id="database-notifications"] .fi-modal-window')
-                ->assertVisible('[id="database-notifications"] .fi-no-notification-icon.fi-size-sm')
-                ->wait(0.5)
-                // The focus trap focuses the modal window itself, not the `Mark all as read` action, which `Enter` would immediately trigger.
-                ->assertScript('document.activeElement === document.querySelector(\'[id="database-notifications"] .fi-modal-window\')', true)
-                // The header actions remain in the tab order.
-                ->assertScript('document.querySelector(\'[id="database-notifications"] .fi-modal-header .fi-ac button\').tabIndex', 0)
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
+        visit('/database-notifications-browser-test')
+            ->click('[data-testid="database-notifications-trigger"]')
+            ->assertVisible('[id="database-notifications"] .fi-modal-window')
+            ->assertVisible('[id="database-notifications"] .fi-no-notification-icon.fi-size-sm')
+            ->assertPresent('[id="database-notifications"] [autofocus]:focus')
+            ->keys('[id="database-notifications"] .fi-modal-window', 'Tab')
+            ->assertPresent('[id="database-notifications"] .fi-modal-header .fi-ac button:focus')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
 
-            // No notification has been marked as read by simply opening the slide-over.
-            expect($user->unreadNotifications()->count())->toBe(2);
+        // No notification has been marked as read by simply opening the slide-over.
+        expect($user->unreadNotifications()->count())->toBe(2);
 
-            visit('/database-notifications-browser-test')
-                ->inDarkMode()
-                ->click('[data-testid="database-notifications-trigger"]')
-                ->assertVisible('[id="database-notifications"] .fi-modal-window')
-                ->assertVisible('[id="database-notifications"] .fi-no-notification-icon.fi-size-sm')
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
-        });
+        visit('/database-notifications-browser-test')
+            ->inDarkMode()
+            ->click('[data-testid="database-notifications-trigger"]')
+            ->assertVisible('[id="database-notifications"] .fi-modal-window')
+            ->assertVisible('[id="database-notifications"] .fi-no-notification-icon.fi-size-sm')
+            ->assertPresent('[id="database-notifications"] [autofocus]:focus')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
     });
 });
 

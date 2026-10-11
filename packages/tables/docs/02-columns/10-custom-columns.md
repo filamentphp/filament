@@ -190,7 +190,7 @@ class AudioPlayerColumn extends Column
 }
 ```
 
-Now, you can pass a static value or a function to the `speed()` method, and [inject any utility](overview#component-utility-injection) as a parameter:
+Now, you can pass a static value or a function to the `speed()` method, and [inject any utility](overview#column-utility-injection) as a parameter:
 
 ```php
 use App\Filament\Tables\Columns\AudioPlayerColumn;

@@ -10,6 +10,7 @@
     use Filament\Support\View\ComponentAttributeBag;
     use Filament\View\PanelsIconAlias;
     use Filament\View\PanelsRenderHook;
+    use Illuminate\Contracts\Support\Htmlable;
     use Illuminate\Support\Arr;
 
     $currentTenant = filament()->getTenant();
@@ -63,12 +64,13 @@
                     tooltip = $store.sidebar.isOpen
                         ? false
                         : {
-                              content: @js($currentTenantName),
+                              content: @js(($currentTenantName instanceof Htmlable) ? $currentTenantName->toHtml() : $currentTenantName),
+                              allowHTML: @js($currentTenantName instanceof Htmlable),
                               placement: document.dir === 'rtl' ? 'left' : 'right',
                               theme: $store.theme,
                           }
                 "
-                x-tooltip.html="tooltip"
+                x-tooltip="tooltip"
             @endif
             type="button"
             class="fi-tenant-menu-trigger"
@@ -112,7 +114,7 @@
     @endif
 
     @if ($canSwitchTenants)
-        <div x-data="{ search: '' }">
+        <div x-data="filamentTenantMenu">
             <x-filament::dropdown.list>
                 @if ($isSearchable)
                     <div x-id="['input']">
@@ -138,12 +140,7 @@
 
                     <div
                         class="fi-tenant-menu-item"
-                        x-show="
-                            search === '' ||
-                                @js($tenantName).replace(/ /g, '')
-                                    .toLowerCase()
-                                    .includes(search.replace(/ /g, '').toLowerCase())
-                        "
+                        x-show="matchesSearch(@js(($tenantName instanceof Htmlable) ? html_entity_decode(strip_tags($tenantName->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8') : $tenantName))"
                     >
                         @if ($isSearchable)
                             <a
