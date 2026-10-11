@@ -1,4 +1,5 @@
 import { computePosition, flip, shift } from '@floating-ui/dom'
+import normalizeSearchString from '../../../../../support/resources/js/utilities/normalize-search-string.js'
 
 const updatePosition = (editor, element) => {
     const referenceElement = {
@@ -71,13 +72,15 @@ export default ({
 
             if (!query) return items
 
-            const searchQuery = String(query).toLowerCase()
+            const searchQuery = normalizeSearchString(String(query))
             return items.filter((item) => {
                 const label =
                     typeof item === 'string'
                         ? item
                         : (item?.label ?? item?.name ?? '')
-                return String(label).toLowerCase().includes(searchQuery)
+                return normalizeSearchString(String(label)).includes(
+                    searchQuery,
+                )
             })
         },
 

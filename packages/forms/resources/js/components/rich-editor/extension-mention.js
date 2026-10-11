@@ -3,6 +3,7 @@ import { Node as ProseMirrorNode } from '@tiptap/pm/model'
 import { Plugin, PluginKey } from '@tiptap/pm/state'
 import Suggestion from '@tiptap/suggestion'
 import getMentionSuggestion from './mention-suggestion.js'
+import normalizeSearchString from '../../../../../support/resources/js/utilities/normalize-search-string.js'
 
 const getSuggestionOptions = function ({
     editor: tiptapEditor,
@@ -404,7 +405,9 @@ export default Node.create({
                                 return items
                             }
 
-                            const searchQuery = String(query).toLowerCase()
+                            const searchQuery = normalizeSearchString(
+                                String(query),
+                            )
 
                             return items.filter((item) => {
                                 const label =
@@ -412,9 +415,9 @@ export default Node.create({
                                         ? item
                                         : (item?.label ?? item?.name ?? '')
 
-                                return String(label)
-                                    .toLowerCase()
-                                    .includes(searchQuery)
+                                return normalizeSearchString(
+                                    String(label),
+                                ).includes(searchQuery)
                             })
                         },
                         isSearchable,

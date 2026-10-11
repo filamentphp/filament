@@ -4,6 +4,7 @@ import * as TipTapPmView from '@tiptap/pm/view'
 import * as TipTapPmModel from '@tiptap/pm/model'
 import getExtensions from './rich-editor/extensions'
 import { BubbleMenuPlugin } from '@tiptap/extension-bubble-menu'
+import normalizeSearchString from '../../../../support/resources/js/utilities/normalize-search-string.js'
 
 const { Editor } = TipTapCore
 const { Selection } = TipTapPmState
@@ -951,12 +952,16 @@ export default function richEditorFormComponent({
         },
 
         matchesCustomBlockSearch(labels) {
-            const search = this.customBlockSearch.trim().toLocaleLowerCase()
+            const search = normalizeSearchString(
+                this.customBlockSearch.trim().toLocaleLowerCase(),
+            )
 
             return (
                 !search ||
                 labels.some((label) =>
-                    label.toLocaleLowerCase().includes(search),
+                    normalizeSearchString(label.toLocaleLowerCase()).includes(
+                        search,
+                    ),
                 )
             )
         },
