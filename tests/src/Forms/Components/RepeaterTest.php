@@ -1775,7 +1775,8 @@ it('announces confirmed moves and allows reordering after cancelling confirmatio
         $firstDown = ':nth-match([data-testid="repeater"] [data-reorder-direction="down"], 1)';
         $status = '[data-testid="repeater"] > [role="status"]';
 
-        $page->keys($firstDown, 'Enter')->assertVisible('[data-testid="cancel-move"]')
+        $page->assertPresent('[data-testid="repeater"]:not([x-ignore])')
+            ->keys($firstDown, 'Enter')->assertVisible('[data-testid="cancel-move"]')
             ->assertSeeNothingIn($status)
             ->click('[data-testid="cancel-move"]')
             ->assertMissing('[data-testid="cancel-move"]')
@@ -1814,7 +1815,8 @@ it('leaves custom move handlers in control without locking later ordering', func
     $url = '/repeater-test?reordering=' . $view;
     $page = visit($url);
     foreach ([$page, $page->inDarkMode()] as $page) {
-        $page->assertNotPresent('[data-testid="custom-refreshed"]');
+        $page->assertPresent('[data-testid="repeater"]:not([x-ignore])')
+            ->assertNotPresent('[data-testid="custom-refreshed"]');
         $page->keys(':nth-match([data-testid="repeater"] [data-reorder-direction="down"], 1)', 'Enter');
 
         if ($view === 'custom-refresh') {
