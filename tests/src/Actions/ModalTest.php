@@ -338,6 +338,7 @@ describe('browser interactions', function (): void {
         visit('/modal-browser-test')
             ->click('Overlay focus restoration')
             ->assertVisible('[data-testid="overlay-modal"]')
+            ->assertPresent('[data-testid="overlay-modal"] :focus')
             ->click('[data-testid="overlay-modal"] .fi-modal-footer-actions button >> text=Open nested modal')
             ->assertVisible('[data-testid="overlay-modal"]')
             ->assertVisible('[data-testid="overlay-nested-modal"]')

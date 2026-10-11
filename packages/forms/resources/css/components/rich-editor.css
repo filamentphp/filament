@@ -44,6 +44,12 @@
 
     & .fi-fo-rich-editor-dropdown-tool {
         @apply relative inline-flex;
+
+        &:not(.fi-fo-rich-editor-dropdown-tool-textual) {
+            & .fi-fo-rich-editor-dropdown-tool-panel {
+                @apply divide-y-0;
+            }
+        }
     }
 
     & .fi-fo-rich-editor-dropdown-tool-trigger {
@@ -58,12 +64,24 @@
         @apply h-3 w-3 text-gray-400 dark:text-gray-500;
     }
 
+    & .fi-fo-rich-editor-dropdown-tool-panel {
+        @apply z-30 w-max max-w-none! rounded-lg border border-gray-300 bg-white p-1 shadow-lg ring-0 dark:border-gray-600 dark:bg-gray-800;
+    }
+
     & .fi-fo-rich-editor-dropdown-tool-menu {
-        @apply absolute start-0 top-[calc(100%+0.25rem)] z-30 flex gap-1 rounded-lg border border-gray-300 bg-white p-1 shadow-lg dark:border-gray-600 dark:bg-gray-800;
+        @apply flex gap-1;
     }
 
     & .fi-fo-rich-editor-dropdown-tool-option {
-        @apply flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent p-0 text-sm font-semibold text-gray-700 transition duration-75 outline-none hover:bg-gray-50 focus-visible:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+        @apply flex h-8 w-auto min-w-8 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent p-0 text-sm font-semibold text-gray-700 transition duration-75 outline-none hover:bg-gray-50 focus-visible:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+
+        & > .fi-icon {
+            @apply text-current;
+        }
+
+        &[aria-disabled='true'] {
+            @apply cursor-default opacity-70;
+        }
 
         &.fi-active {
             @apply text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-white/5;
@@ -77,6 +95,10 @@
 
         & .fi-fo-rich-editor-dropdown-tool-option {
             @apply min-w-0 justify-start gap-2 px-2 py-1 text-[0.8125rem] font-normal whitespace-nowrap;
+
+            &.fi-active {
+                @apply text-primary-700 dark:text-primary-400;
+            }
         }
     }
 
@@ -93,6 +115,14 @@
 
         &.fi-fo-rich-editor-tool-with-label {
             @apply items-center gap-x-1 px-1.5;
+        }
+    }
+
+    & .fi-fo-rich-editor-tool,
+    & .fi-fo-rich-editor-dropdown-tool-trigger,
+    & .fi-fo-rich-editor-dropdown-tool-option {
+        &:focus-visible {
+            @apply outline-primary-600 dark:outline-primary-400 outline-2 outline-offset-1 outline-solid;
         }
     }
 
