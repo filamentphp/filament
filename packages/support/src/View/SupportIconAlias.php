@@ -4,11 +4,6 @@ namespace Filament\Support\View;
 
 class SupportIconAlias
 {
-    /**
-     * @deprecated Customize the `.fi-badge-delete-btn-icon` CSS class instead.
-     */
-    const BADGE_DELETE_BUTTON = 'badge.delete-button';
-
     const BREADCRUMBS_SEPARATOR = 'breadcrumbs.separator';
 
     const BREADCRUMBS_SEPARATOR_RTL = 'breadcrumbs.separator.rtl';
