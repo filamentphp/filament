@@ -88,30 +88,29 @@ export default function checkboxListFormComponent({ livewireId }) {
         },
 
         updateVisibleCheckboxListOptions() {
-            const search = normalizeSearchString(this.search ?? '')
-
             this.visibleCheckboxListOptions = this.checkboxListOptions.filter(
-                (checkboxListItem) => {
-                    if (['', null, undefined].includes(this.search)) {
-                        return true
-                    }
+                (checkboxListItem) => this.matchesSearch(checkboxListItem),
+            )
+        },
 
-                    if (
-                        normalizeSearchString(
-                            checkboxListItem.querySelector(
-                                '.fi-fo-checkbox-list-option-label',
-                            )?.innerText ?? '',
-                        ).includes(search)
-                    ) {
-                        return true
-                    }
+        matchesSearch(checkboxListItem) {
+            if (['', null, undefined].includes(this.search)) {
+                return true
+            }
 
-                    return normalizeSearchString(
-                        checkboxListItem.querySelector(
-                            '.fi-fo-checkbox-list-option-description',
-                        )?.innerText ?? '',
-                    ).includes(search)
-                },
+            const search = normalizeSearchString(this.search)
+
+            return (
+                normalizeSearchString(
+                    checkboxListItem.querySelector(
+                        '.fi-fo-checkbox-list-option-label',
+                    )?.innerText ?? '',
+                ).includes(search) ||
+                normalizeSearchString(
+                    checkboxListItem.querySelector(
+                        '.fi-fo-checkbox-list-option-description',
+                    )?.innerText ?? '',
+                ).includes(search)
             )
         },
 
