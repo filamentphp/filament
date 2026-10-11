@@ -1,3 +1,5 @@
+import normalizeSearchString from '../../../../support/resources/js/utilities/normalize-search-string.js'
+
 export default function checkboxListFormComponent({ livewireId }) {
     return {
         areAllCheckboxesChecked: false,
@@ -87,27 +89,28 @@ export default function checkboxListFormComponent({ livewireId }) {
 
         updateVisibleCheckboxListOptions() {
             this.visibleCheckboxListOptions = this.checkboxListOptions.filter(
-                (checkboxListItem) => {
-                    if (['', null, undefined].includes(this.search)) {
-                        return true
-                    }
+                (checkboxListItem) => this.matchesSearch(checkboxListItem),
+            )
+        },
 
-                    if (
-                        checkboxListItem
-                            .querySelector('.fi-fo-checkbox-list-option-label')
-                            ?.innerText.toLowerCase()
-                            .includes(this.search.toLowerCase())
-                    ) {
-                        return true
-                    }
+        matchesSearch(checkboxListItem) {
+            if (['', null, undefined].includes(this.search)) {
+                return true
+            }
 
-                    return checkboxListItem
-                        .querySelector(
-                            '.fi-fo-checkbox-list-option-description',
-                        )
-                        ?.innerText.toLowerCase()
-                        .includes(this.search.toLowerCase())
-                },
+            const search = normalizeSearchString(this.search)
+
+            return (
+                normalizeSearchString(
+                    checkboxListItem.querySelector(
+                        '.fi-fo-checkbox-list-option-label',
+                    )?.innerText ?? '',
+                ).includes(search) ||
+                normalizeSearchString(
+                    checkboxListItem.querySelector(
+                        '.fi-fo-checkbox-list-option-description',
+                    )?.innerText ?? '',
+                ).includes(search)
             )
         },
 

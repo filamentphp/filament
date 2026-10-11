@@ -295,6 +295,7 @@ describe('browser interactions', function (): void {
             ->click('[data-testid="database-notifications-trigger"]')
             ->assertVisible('[id="database-notifications"] .fi-modal-window')
             ->assertVisible('[id="database-notifications"] .fi-no-notification-icon.fi-size-sm')
+            ->assertPresent('[id="database-notifications"] [autofocus]:focus')
             ->keys('[id="database-notifications"] .fi-modal-window', 'Tab')
             ->assertPresent('[id="database-notifications"] .fi-modal-header .fi-ac button:focus')
             ->assertNoSmoke()
@@ -308,6 +309,7 @@ describe('browser interactions', function (): void {
             ->click('[data-testid="database-notifications-trigger"]')
             ->assertVisible('[id="database-notifications"] .fi-modal-window')
             ->assertVisible('[id="database-notifications"] .fi-no-notification-icon.fi-size-sm')
+            ->assertPresent('[id="database-notifications"] [autofocus]:focus')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
     });

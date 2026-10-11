@@ -225,7 +225,21 @@ export default ({ id, isScrollLocked = true, shouldRestoreFocus = true }) => ({
             }
 
             this.isOpen = true
-            this.isTrapActive = true
+
+            // Wait for Alpine's root `x-show` and window transition to remove `display: none`.
+            requestAnimationFrame(() =>
+                requestAnimationFrame(() => {
+                    if (
+                        this.isDestroyed ||
+                        !this.isOpen ||
+                        !this.$el.isConnected
+                    ) {
+                        return
+                    }
+
+                    this.isTrapActive = true
+                }),
+            )
 
             // Click-through modals let you interact with the page behind them,
             // so they must not lock scrolling.

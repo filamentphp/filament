@@ -627,16 +627,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
                         <div
                             wire:key="<?= e($livewireKey) ?>.options.<?= e($value) ?>"
                             <?php if ($isSearchable) { ?>
-                                x-show="
-                                    $el
-                                        .querySelector('.fi-fo-checkbox-list-option-label')
-                                        ?.innerText.toLowerCase()
-                                        .includes(search.toLowerCase()) ||
-                                        $el
-                                            .querySelector('.fi-fo-checkbox-list-option-description')
-                                            ?.innerText.toLowerCase()
-                                            .includes(search.toLowerCase())
-                                "
+                                x-show="matchesSearch($el)"
                             <?php } ?>
                             class="fi-fo-checkbox-list-option-ctn"
                         >

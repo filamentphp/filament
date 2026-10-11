@@ -1481,7 +1481,7 @@ describe('browser interactions', function (): void {
             ->click('[data-testid="searchable-select"] .fi-select-input-btn')
             ->assertSee('Red')
             ->assertSee('Purple')
-            ->type('[data-testid="searchable-select"] .fi-select-input-search-ctn input', 'pur')
+            ->type('[data-testid="searchable-select"] .fi-select-input-search-ctn input', 'púr')
             ->assertSee('Purple')
             ->assertDontSee('Red')
             ->click('Purple')
@@ -1760,6 +1760,7 @@ describe('browser interactions', function (): void {
             $page
                 ->click('[data-testid="create-option-action-trigger"]')
                 ->assertVisible('[data-testid="create-option-action-modal"]')
+                ->assertPresent('[data-testid="create-option-name-input"]:focus')
                 ->click($launcher)
                 ->keys($search, 'ArrowDown')
                 ->assertPresent($search . ':focus')

@@ -1,4 +1,5 @@
 import { computePosition, flip, shift } from '@floating-ui/dom'
+import normalizeSearchString from '../../../../../support/resources/js/utilities/normalize-search-string.js'
 
 const updatePosition = (editor, element) => {
     const referenceElement = {
@@ -34,17 +35,17 @@ const updatePosition = (editor, element) => {
 
 export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
     items: ({ query }) => {
+        const search = normalizeSearchString(query)
+
         return Object.entries(mergeTags)
             .filter(
                 ([id, label]) =>
-                    id
-                        .toLowerCase()
+                    normalizeSearchString(id)
                         .replace(/\s/g, '')
-                        .includes(query.toLowerCase()) ||
-                    label
-                        .toLowerCase()
+                        .includes(search) ||
+                    normalizeSearchString(label)
                         .replace(/\s/g, '')
-                        .includes(query.toLowerCase()),
+                        .includes(search),
             )
             .map(([id, label]) => ({ id, label }))
     },

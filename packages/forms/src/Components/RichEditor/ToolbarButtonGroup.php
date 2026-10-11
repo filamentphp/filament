@@ -128,10 +128,8 @@ class ToolbarButtonGroup extends ViewComponent implements HasEmbeddedView
             ->merge([
                 'type' => 'button',
                 'tabindex' => -1,
+                'data-rich-editor-tool' => e($label),
                 'aria-label' => e($label),
-                'aria-haspopup' => 'menu',
-                'x-on:click' => 'open = !open',
-                'x-bind:aria-expanded' => 'open',
                 'x-bind:class' => '{ \'fi-active\': ' . $activeExpression . ' }',
                 'x-tooltip' => '{ content: ' . Js::from($label)->toHtml() . ', theme: $store.theme }',
             ], escape: false)
@@ -139,30 +137,31 @@ class ToolbarButtonGroup extends ViewComponent implements HasEmbeddedView
                 'fi-fo-rich-editor-dropdown-tool-trigger',
             ]);
 
-        $xData = e('{ open: false, triggerContent: ' . Js::from($defaultContent)->toHtml() . ' }');
+        $xData = e('{ ...filamentDropdown(), triggerContent: ' . Js::from($defaultContent)->toHtml() . ' }');
         $xEffect = e($effectJs);
-        $wrapperClass = 'fi-fo-rich-editor-dropdown-tool' . ($isTextual ? ' fi-fo-rich-editor-dropdown-tool-textual' : '');
+        $wrapperClass = 'fi-dropdown fi-fo-rich-editor-dropdown-tool' . ($isTextual ? ' fi-fo-rich-editor-dropdown-tool-textual' : '');
         $chevronSvg = '<svg class="fi-fo-rich-editor-dropdown-tool-chevron" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M3 4.5 6 7.5l3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
         ob_start(); ?>
 
         <div x-data="<?= $xData ?>"
              x-effect="<?= $xEffect ?>"
-             x-on:click.outside="open = false"
-             x-on:dropdown-escape="if (open) { open = false; $el.querySelector('.fi-fo-rich-editor-dropdown-tool-trigger')?.focus(); $event.preventDefault(); $event.stopPropagation() }"
-             x-on:focusout="if (open && ! $el.contains($event.relatedTarget)) open = false"
-             x-on:keydown.escape.prevent="open = false"
              class="<?= $wrapperClass ?>">
 
-            <button <?= $triggerAttributes->toHtml() ?>>
-                <span x-html="triggerContent"><?= $defaultContentHtml ?></span>
-                <?= $chevronSvg ?>
-            </button>
+            <div class="fi-dropdown-trigger" x-on:mousedown="if ($event.button === 0) toggle($event)">
+                <button <?= $triggerAttributes->toHtml() ?>>
+                    <span x-html="triggerContent"><?= $defaultContentHtml ?></span>
+                    <?= $chevronSvg ?>
+                </button>
+            </div>
 
-            <div x-show="open" x-cloak x-transition
-                 class="fi-fo-rich-editor-dropdown-tool-menu"
-                 role="menu">
-                <?= $buttonsHtml ?>
+            <div x-cloak x-ref="panel" x-float.placement.bottom-start.flip="{ offset: 4 }"
+                 aria-orientation="<?= $isTextual ? 'vertical' : 'horizontal' ?>"
+                 x-on:keydown.capture="handleToolbarMenuKeydown($event)"
+                 class="fi-dropdown-panel fi-fo-rich-editor-dropdown-tool-panel">
+                <div class="fi-fo-rich-editor-dropdown-tool-menu">
+                    <?= $buttonsHtml ?>
+                </div>
             </div>
         </div>
 
@@ -201,15 +200,19 @@ class ToolbarButtonGroup extends ViewComponent implements HasEmbeddedView
                 ->merge([
                     'tabindex' => -1,
                     'type' => 'button',
-                    'role' => 'menuitem',
+                    'role' => $button->isToggle() ? 'menuitemcheckbox' : 'menuitem',
                     'aria-label' => e($buttonLabel),
-                    'x-on:click' => $button->getJsHandler() . '; open = false',
-                    'x-bind:class' => '{ \'fi-active\': ' . $activeExpression . ' }',
+                    'aria-checked' => $button->isToggle() ? 'false' : null,
+                    'x-bind:aria-checked' => $button->isToggle() ? '(' . $activeExpression . ') ? \'true\' : \'false\'' : null,
+                    'x-bind:aria-disabled' => $button->isDisabledWhenNotActive() ? '!(' . $activeExpression . ') ? \'true\' : \'false\'' : null,
+                    'x-on:click' => '$event.stopPropagation(); if ($el.getAttribute(\'aria-disabled\') === \'true\') return; Alpine.$data($el.closest(\'.fi-dropdown\')).closeMenuHierarchy(); ' . $button->getJsHandler(),
+                    'x-bind:class' => '{ \'fi-active\': ' . ($button->hasActiveStyling() ? $activeExpression : 'false') . ' }',
                     ...($isTextual ? [] : [
                         'x-tooltip' => '{ content: ' . Js::from($buttonLabel)->toHtml() . ', theme: $store.theme }',
                     ]),
                 ], escape: false)
                 ->class([
+                    'fi-dropdown-list-item',
                     'fi-fo-rich-editor-dropdown-tool-option',
                 ]);
 
