@@ -315,15 +315,21 @@
             }
 
             & > button {
-                @apply mt-px mr-2 flex size-5 items-center justify-center rounded-md bg-transparent p-1 text-xs leading-none hover:bg-gray-950/5 dark:hover:bg-white/5;
+                @apply me-2 mt-px flex size-5 items-center justify-center rounded-md bg-transparent p-1 text-xs leading-none hover:bg-gray-950/5 dark:hover:bg-white/5;
 
                 &::before {
                     content: '\25B6';
                 }
+
+                @variant rtl {
+                    &::before {
+                        content: '\25C0';
+                    }
+                }
             }
 
             &.is-open > button::before {
-                transform: rotate(90deg);
+                content: '\25BC';
             }
 
             & > div {
