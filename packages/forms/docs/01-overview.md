@@ -139,7 +139,7 @@ TextInput::make('email')
     ->helperText('Use your work email address.')
 ```
 
-For native inputs, native selects, textareas, radios, checkbox lists, and toggle buttons, the helper text is automatically associated with the controls so screen readers can read it as a description. You do not need to manage the instruction's ID yourself. Hints and arbitrary [extra content](#adding-extra-content-to-a-field) are not automatically associated.
+Helper text is automatically associated with field controls or their named groups so screen readers can read it as a description. You do not need to manage the instruction's ID yourself. Hints and arbitrary [extra content](#adding-extra-content-to-a-field) are not automatically associated.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `helperText()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -978,7 +978,15 @@ TextInput::make('categories')
 
 #### Associating instructions and validation errors with inputs
 
-For native inputs, native selects, textareas, radios, checkbox lists, and toggle buttons, Filament connects validation errors to the controls and marks them as invalid. Errors are not live announcements on every keystroke. These accessibility attributes are defaults: attributes you provide through `extraInputAttributes()` take precedence.
+For native inputs, native selects, textareas, radios, checkbox lists, multiple-selection toggle buttons, toggles, and the color picker's text input, Filament connects validation errors to the controls and marks them as invalid. Errors are not live announcements on every keystroke. These accessibility attributes are defaults: attributes you provide through `extraInputAttributes()` take precedence. For a toggle, use `extraAttributes()` instead.
+
+Composite fields associate helper text and validation errors with their named collection or group. Builders, repeaters (including simple and table layouts), key-value fields, and table selects do not mark the group, child inputs, or action buttons invalid for a collection-level error. Each child field retains its own validation associations. Checkbox list and toggle button groups also carry descriptions without automatic `aria-invalid`. Multiple-selection toggle buttons use native checkbox options that retain invalid-state semantics; single-selection toggle buttons receive descriptions without automatic `aria-invalid`, since they use ordinary buttons.
+
+The tags input associates descriptions with both its group and its textbox, but does not automatically mark the textbox invalid for an error in the stored tags: the textbox edits a pending new tag, not the collection. The one-time code input describes both its group and each digit, and marks the digits invalid together because they represent one validated code. Its `extraInputAttributes()` overrides for `aria-describedby` and `aria-invalid` apply consistently to every digit; IDs and autocomplete attributes remain specific to the first digit.
+
+Code, Markdown, and rich editors, custom date and time pickers, file uploads, and sliders keep descriptions synchronized on their JavaScript-created controls when validation errors or helper text change. Scalar sliders are marked invalid for an error, while array-valued sliders only describe the error on each handle: a collection-level error does not identify an invalid handle. File uploads describe both the file input and the keyboard-focusable Browse control, without marking unrelated upload actions invalid. Modal table selects describe both the group and the opening action, without automatically marking the action invalid.
+
+You can override editor and slider accessibility attributes using `extraAttributes()` or `extraAlpineAttributes()` where supported. Rich editors also support `extraInputAttributes()`, file uploads use `extraInputAttributes()`, and custom date and time pickers use `extraTriggerAttributes()`. These attributes are evaluated again when the field renders, so closures that compose your own instructions with `getDescriptionIds()` remain synchronized. An explicit `null` removes the attribute. To override a modal table select's opening action, use `selectAction()` to configure the action's `extraAttributes()`.
 
 Use [`helperText()`](#adding-helper-text) for instructions that should be automatically associated with an input. Hints and arbitrary text in the [field's extra content slots](#adding-extra-content-to-a-field) are not automatically associated. To associate other instructions, give the text an ID using `extraAttributes()` and reference it from the input using `extraInputAttributes()`:
 
@@ -1008,7 +1016,7 @@ Keep instruction IDs unique, including in repeaters. If instructions are conditi
 
 Keep a label for each field. You can use `hiddenLabel()` to hide it visually while keeping it available to assistive technology. Use `required()` for validation and required-state semantics; `markAsRequired()` only controls the visual marker. Disabled and read-only native controls do not request required input. Required checkbox groups describe that at least one option must be selected, rather than requiring every checkbox.
 
-If you replace a field wrapper or publish a control view, preserve these associations in your custom markup. Merge the field's `getAccessibilityAttributes()` array as defaults into the native control's existing attribute bag, and keep the default wrapper's error IDs. The plain wrapper used by `FusedGroup` suppresses child instructions and leaves error descriptions on the group.
+If you replace a field wrapper, preserve the label, helper text, and error IDs in your custom markup. JavaScript-created controls synchronize independently of the wrapper. If you publish a control view, merge the field's `getAccessibilityAttributes()` array as defaults into the control's existing attribute bag. Preserve its hidden `data-field-accessibility` element immediately before the JavaScript component and outside `wire:ignore`, with the resolved description and invalid-state attributes. The plain wrapper used by `FusedGroup` suppresses child instructions and leaves error descriptions on the group.
 
 Helper text, error, and required-description IDs append `-helper-text`, `-error`, or `-required` to the existing field ID; field and option IDs are unchanged. Keep explicit IDs unique on the page. Rendering multiple fields with the same state path in the same form at the same time is not supported. Fields with the same name in separate repeater items or nested groups should have distinct full state paths.
 

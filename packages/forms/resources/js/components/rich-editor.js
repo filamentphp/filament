@@ -4,6 +4,7 @@ import * as TipTapPmView from '@tiptap/pm/view'
 import * as TipTapPmModel from '@tiptap/pm/model'
 import getExtensions from './rich-editor/extensions'
 import { BubbleMenuPlugin } from '@tiptap/extension-bubble-menu'
+import { observeFieldAccessibility } from '../utils/field-accessibility'
 
 const { Editor } = TipTapCore
 const { Selection } = TipTapPmState
@@ -60,6 +61,7 @@ export default function richEditorFormComponent({
     let toolbarResizeObserver
     let modalResizeObserver
     let modalMutationObserver
+    let accessibilityObserver
 
     return {
         state,
@@ -252,6 +254,7 @@ export default function richEditorFormComponent({
                 element: this.$refs.editor,
                 editorProps: {
                     attributes: {
+                        role: 'textbox',
                         ...(label ? { 'aria-label': label } : {}),
                         'data-testid': 'rich-editor-content',
                     },
@@ -259,6 +262,30 @@ export default function richEditorFormComponent({
                 extensions: resolvedExtensions,
                 content: this.state,
             })
+
+            accessibilityObserver = observeFieldAccessibility(
+                this.$el,
+                (attributes) => {
+                    const editorAttributes = {
+                        ...editor.options.editorProps.attributes,
+                    }
+
+                    for (const [name, value] of Object.entries(attributes)) {
+                        if (value === null) {
+                            delete editorAttributes[name]
+                        } else {
+                            editorAttributes[name] = value
+                        }
+                    }
+
+                    editor.setOptions({
+                        editorProps: {
+                            ...editor.options.editorProps,
+                            attributes: editorAttributes,
+                        },
+                    })
+                },
+            )
 
             const hasParagraphToolbar = 'paragraph' in floatingToolbars
 
@@ -571,6 +598,7 @@ export default function richEditorFormComponent({
 
         destroy() {
             isDestroyed = true
+            accessibilityObserver?.disconnect()
             toolbarResizeObserver?.disconnect()
             modalResizeObserver?.disconnect()
             modalMutationObserver?.disconnect()

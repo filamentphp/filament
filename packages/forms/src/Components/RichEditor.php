@@ -1724,6 +1724,12 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
             ]))
             ->class(['fi-fo-rich-editor']);
 
+        $extraInputAttributeBag = $this->getExtraInputAttributeBag();
+        $accessibilityAttributes = $extraInputAttributeBag
+            ->merge($wrapperAttributes->getAttributes(), escape: false)
+            ->merge($this->getAccessibilityAttributes(), escape: false)
+            ->only(['aria-describedby', 'aria-invalid']);
+
         $contentAttributes = (new FilamentComponentAttributeBag)
             ->merge(['x-ref' => 'editor'], escape: false)
             ->class(['fi-fo-rich-editor-content', 'fi-prose']);
@@ -1741,6 +1747,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
         ob_start(); ?>
 
+        <div hidden data-field-accessibility <?= $accessibilityAttributes->toHtml() ?>></div>
         <div
             aria-labelledby="<?= e($id) ?>-label"
             id="<?= e($id) ?>"
@@ -1845,7 +1852,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                 ></span>
             </div>
 
-            <div <?= $this->getExtraInputAttributeBag()->class(['fi-fo-rich-editor-main'])->toHtml() ?>>
+            <div <?= $extraInputAttributeBag->class(['fi-fo-rich-editor-main'])->toHtml() ?>>
                 <div <?= $contentAttributes->toHtml() ?>>
                     <?php foreach ($floatingToolbars as $nodeName => $buttons) { ?>
                         <div

@@ -15,6 +15,7 @@ use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\BadgeComponent;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 
 class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNestedRecursiveValidationRules, HasEmbeddedView
@@ -230,6 +231,8 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
         $isPrefixInline = $this->isPrefixInline();
         $isReorderable = (! $isDisabled) && $this->isReorderable();
         $isSuffixInline = $this->isSuffixInline();
+        $label = $this->getLabel();
+        $labelText = $label instanceof Htmlable ? html_entity_decode(strip_tags($label->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8') : $label;
         $placeholder = $this->getPlaceholder();
         $prefixActions = $this->getPrefixActions();
         $prefixIcon = $this->getPrefixIcon();
@@ -243,6 +246,7 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
 
         $inputAttributes = $extraInputAttributeBag
             ->merge([
+                'aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby'] ?? null,
                 'autocomplete' => 'off',
                 'autofocus' => $isAutofocused,
                 'disabled' => $isDisabled,
@@ -270,6 +274,9 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
 
         $wrapperAttributes = $this->getExtraAttributeBag()
             ->merge([
+                'aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby'] ?? null,
+                'aria-label' => filled($labelText) ? e($labelText) : null,
+                'role' => 'group',
                 'x-on:focus-input.stop' => "\$el.querySelector('input')?.focus()",
             ], escape: false)
             ->class([

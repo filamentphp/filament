@@ -388,6 +388,11 @@ class KeyValue extends Field implements HasEmbeddedView
         $valuePlaceholder = $this->getValuePlaceholder();
 
         $wrapperAttributes = $this->getExtraAttributeBag()
+            ->merge([
+                'aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby'] ?? null,
+                'aria-labelledby' => e("{$id}-label"),
+                'role' => 'group',
+            ], escape: false)
             ->class(['fi-fo-key-value']);
 
         $alpineDivAttributes = $this->getExtraAlpineAttributeBag()

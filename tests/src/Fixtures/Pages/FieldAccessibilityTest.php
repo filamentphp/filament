@@ -2,10 +2,22 @@
 
 namespace Filament\Tests\Fixtures\Pages;
 
+use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\CodeEditor;
+use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\OneTimeCodeInput;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Slider;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
@@ -22,11 +34,18 @@ class FieldAccessibilityTest extends Page
 
     public ?array $data = [];
 
+    public ?array $additionalData = [];
+
     public bool $saved = false;
+
+    public bool $additionalValidationFails = false;
+
+    public bool $additionalSaved = false;
 
     public function mount(): void
     {
         $this->form->fill();
+        $this->additionalForm->fill();
     }
 
     public function form(Schema $form): Schema
@@ -75,5 +94,55 @@ class FieldAccessibilityTest extends Page
     {
         $this->form->getState();
         $this->saved = true;
+    }
+
+    public function additionalForm(Schema $form): Schema
+    {
+        $fields = [
+            CodeEditor::make('code')->default('const message = "Welcome";')->fieldWrapperView('test-plugin-wrapper'),
+            MarkdownEditor::make('markdown')->default('Welcome to the team.')->toolbarButtons(['bold', 'italic']),
+            RichEditor::make('rich')->default('<p>Welcome to the team.</p>')->toolbarButtons(['bold', 'italic']),
+            DateTimePicker::make('date')->native(false)->default('2026-10-11 14:30:00'),
+            Slider::make('slider')->default(35),
+            Slider::make('range')->default([20, 65]),
+            ColorPicker::make('color')->default('#336699'),
+            OneTimeCodeInput::make('code_digits')->default('123456'),
+            TagsInput::make('tags')->default(['Laravel']),
+            KeyValue::make('metadata')->default(['Team' => 'Membership']),
+            Repeater::make('members')->schema([TextInput::make('name')])->default([['name' => 'Alex Morgan']]),
+            Builder::make('blocks')->blocks([Builder\Block::make('paragraph')->schema([TextInput::make('text')])])
+                ->default([['type' => 'paragraph', 'data' => ['text' => 'Welcome']]]),
+            FileUpload::make('attachment'),
+            FileUpload::make('custom_attachment')->extraInputAttributes(['aria-describedby' => 'custom-file-note', 'aria-invalid' => null]),
+            FileUpload::make('composed_attachment')->extraInputAttributes(static fn (FileUpload $component): array => [
+                'aria-describedby' => e(implode(' ', ['custom-file-note', ...$component->getDescriptionIds()])),
+            ]),
+        ];
+
+        foreach ($fields as $field) {
+            if ($field instanceof FileUpload) {
+                $field->required(fn (): bool => $this->additionalValidationFails);
+            } else {
+                $field->rule('prohibited', fn (): bool => $this->additionalValidationFails);
+            }
+
+            $field->helperText(fn (): ?string => $this->additionalSaved ? null : 'Instructions for ' . $field->getName())
+                ->extraAttributes(['data-testid' => 'additional-' . $field->getName()]);
+        }
+
+        return $form->statePath('additionalData')->components($fields);
+    }
+
+    public function validateAdditionalFields(): void
+    {
+        $this->additionalValidationFails = true;
+        $this->additionalForm->getState();
+    }
+
+    public function acceptAdditionalFields(): void
+    {
+        $this->additionalValidationFails = false;
+        $this->additionalForm->getState();
+        $this->additionalSaved = true;
     }
 }
