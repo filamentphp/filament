@@ -114,7 +114,7 @@
     @endif
 
     @if ($canSwitchTenants)
-        <div x-data="{ search: '' }">
+        <div x-data="filamentTenantMenu">
             <x-filament::dropdown.list>
                 @if ($isSearchable)
                     <div x-id="['input']">
@@ -140,12 +140,7 @@
 
                     <div
                         class="fi-tenant-menu-item"
-                        x-show="
-                            search === '' ||
-                                @js(($tenantName instanceof Htmlable) ? html_entity_decode(strip_tags($tenantName->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8') : $tenantName).replace(/ /g, '')
-                                    .toLowerCase()
-                                    .includes(search.replace(/ /g, '').toLowerCase())
-                        "
+                        x-show="matchesSearch(@js(($tenantName instanceof Htmlable) ? html_entity_decode(strip_tags($tenantName->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8') : $tenantName))"
                     >
                         @if ($isSearchable)
                             <a

@@ -1436,7 +1436,7 @@ it('searches independently in the add-between picker and inserts the selected bl
 
     $page
         ->assertValue($betweenPicker . ' .fi-fo-builder-block-picker-search-ctn input', '')
-        ->type($betweenPicker . ' .fi-fo-builder-block-picker-search-ctn input', 'video')
+        ->type($betweenPicker . ' .fi-fo-builder-block-picker-search-ctn input', 'vídeo')
         ->assertMissing($betweenPicker . ' [data-block-label="paragraph"]')
         ->assertValue($endPicker . ' .fi-fo-builder-block-picker-search-ctn input', 'paragraph')
         ->click($betweenPicker . ' [data-block-label="video"]')
