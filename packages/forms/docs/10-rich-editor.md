@@ -863,7 +863,7 @@ RichEditor::make('content')
     ->searchableCustomBlocks()
 ```
 
-Search matches block labels and group names, ignoring capitalization and surrounding whitespace. When a group name matches, all blocks in that group appear. If nothing matches, the panel displays a message. Clearing the search restores all blocks.
+Search matches block labels and group names, ignoring capitalization, surrounding whitespace, and accents such as those in `Málaga`. When a group name matches, all blocks in that group appear. If nothing matches, the panel displays a message. Clearing the search restores all blocks.
 
 Search works with both the list and [grid](#displaying-custom-blocks-in-a-grid) layouts. It is disabled by default, and you can pass `false` to `searchableCustomBlocks()` to disable it.
 
@@ -939,6 +939,8 @@ RichEditor::make('content')
 Merge tags are surrounded by double curly braces, like `{{ name }}`. When the content is rendered, these tags will be replaced with the corresponding values.
 
 To insert a merge tag into the content, users can start typing `{{` to search for a tag to insert. Alternatively, they can click on the "merge tags" tool in the editor's toolbar, which opens a panel containing all the merge tags. They can then drag a merge tag from the editor's side panel into the content or click to insert it.
+
+Searching merge tags ignores capitalization and accents such as those in `Málaga`. The inserted tag IDs and displayed labels are unchanged.
 
 ### Rendering content with merge tags
 
@@ -1040,6 +1042,8 @@ RichEditor::make('content')
 <AutoScreenshot name="forms/fields/rich-editor/mentions" alt="Rich editor with mention suggestions" version="4.x" />
 
 Items passed to `items()` are sent to the browser along with the editor, so typing after the trigger character filters them client-side without making any requests to the server.
+
+This client-side search ignores capitalization and accents such as those in `Málaga`, so searching for `malaga` matches that label. Displayed labels and inserted mention IDs are unchanged. When you use `getSearchResultsUsing()`, matching is controlled by your callback instead, and the search term is passed to it unchanged.
 
 Each provider is configured with a trigger character (passed to `make()`) that activates the mention search. You can have multiple providers with different triggers:
 

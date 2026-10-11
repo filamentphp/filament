@@ -2037,7 +2037,7 @@ it('can search custom blocks and insert one at the preserved editor selection', 
 
     $page = visit('/rich-editor-browser-test')
         ->assertPresent('[data-testid="custom-blocks-rich-editor"] .tiptap')
-        ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '  eDiToRiAl  ')
+        ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '  éDiTóRiAl  ')
         ->assertVisible('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
         ->assertVisible('[data-testid="custom-blocks-rich-editor"] [data-block-id="section"]')
         ->assertMissing('[data-testid="custom-blocks-rich-editor"] [data-block-id="image"]')

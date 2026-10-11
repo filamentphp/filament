@@ -546,7 +546,7 @@ Builder::make('content')
     ])
 ```
 
-The search matches block labels in the browser, without making a server request, and is case-insensitive. You may customize the placeholder of the search field using the `searchPrompt()` method, and the message displayed when no blocks match the search using the `noSearchResultsMessage()` method:
+The search matches block labels in the browser, without making a server request, and ignores capitalization and accents such as those in `Málaga`. Displayed block labels are unchanged. You may customize the placeholder of the search field using the `searchPrompt()` method, and the message displayed when no blocks match the search using the `noSearchResultsMessage()` method:
 
 ```php
 use Filament\Forms\Components\Builder;

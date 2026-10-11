@@ -1,3 +1,5 @@
+import normalizeSearchString from '../../../../support/resources/js/utilities/normalize-search-string.js'
+
 export default function checkboxListFormComponent({ livewireId }) {
     return {
         areAllCheckboxesChecked: false,
@@ -86,6 +88,8 @@ export default function checkboxListFormComponent({ livewireId }) {
         },
 
         updateVisibleCheckboxListOptions() {
+            const search = normalizeSearchString(this.search ?? '')
+
             this.visibleCheckboxListOptions = this.checkboxListOptions.filter(
                 (checkboxListItem) => {
                     if (['', null, undefined].includes(this.search)) {
@@ -93,20 +97,20 @@ export default function checkboxListFormComponent({ livewireId }) {
                     }
 
                     if (
-                        checkboxListItem
-                            .querySelector('.fi-fo-checkbox-list-option-label')
-                            ?.innerText.toLowerCase()
-                            .includes(this.search.toLowerCase())
+                        normalizeSearchString(
+                            checkboxListItem.querySelector(
+                                '.fi-fo-checkbox-list-option-label',
+                            )?.innerText ?? '',
+                        ).includes(search)
                     ) {
                         return true
                     }
 
-                    return checkboxListItem
-                        .querySelector(
+                    return normalizeSearchString(
+                        checkboxListItem.querySelector(
                             '.fi-fo-checkbox-list-option-description',
-                        )
-                        ?.innerText.toLowerCase()
-                        .includes(this.search.toLowerCase())
+                        )?.innerText ?? '',
+                    ).includes(search)
                 },
             )
         },

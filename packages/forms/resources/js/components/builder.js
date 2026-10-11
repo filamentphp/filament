@@ -1,5 +1,6 @@
 import collapsibleItem from '../utils/collapsible-item.js'
 import reordering from '../utils/reordering.js'
+import normalizeSearchString from '../../../../support/resources/js/utilities/normalize-search-string.js'
 
 export default function builderFormComponent({ statePath, ...configuration }) {
     return {
@@ -136,9 +137,9 @@ function builderFormComponentBlockPicker() {
                 return true
             }
 
-            return blockElement.dataset.blockLabel.includes(
-                this.search.toLowerCase(),
-            )
+            return normalizeSearchString(
+                blockElement.dataset.blockLabel,
+            ).includes(normalizeSearchString(this.search))
         },
 
         get hasNoSearchResults() {
@@ -147,7 +148,9 @@ function builderFormComponentBlockPicker() {
             }
 
             return !this.blockLabels.some((label) =>
-                label.includes(this.search.toLowerCase()),
+                normalizeSearchString(label).includes(
+                    normalizeSearchString(this.search),
+                ),
             )
         },
 

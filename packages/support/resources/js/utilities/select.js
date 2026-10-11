@@ -1,5 +1,6 @@
 import { computePosition, flip, shift, offset } from '@floating-ui/dom'
 import Sortable from 'sortablejs'
+import normalizeSearchString from './normalize-search-string.js'
 
 // Helper function to check if a value is null, undefined, or an empty string
 function blank(value) {
@@ -452,10 +453,9 @@ export class Select {
                         ? (options.find(
                               (option) =>
                                   this.typeahead &&
-                                  option.textContent
-                                      .trim()
-                                      .toLowerCase()
-                                      .startsWith(this.typeahead),
+                                  normalizeSearchString(
+                                      option.textContent.trim(),
+                                  ).startsWith(this.typeahead),
                           ) ??
                           options.find(
                               (option) => option.dataset.value === this.state,
@@ -1324,14 +1324,13 @@ export class Select {
                         this.typeahead =
                             (now - this.typeaheadTime < 1000
                                 ? this.typeahead
-                                : '') + event.key.toLowerCase()
+                                : '') + normalizeSearchString(event.key)
                         this.typeaheadTime = now
                         const matchingOption = this.getEnabledOptions().find(
                             (option) =>
-                                option.textContent
-                                    .trim()
-                                    .toLowerCase()
-                                    .startsWith(this.typeahead),
+                                normalizeSearchString(
+                                    option.textContent.trim(),
+                                ).startsWith(this.typeahead),
                         )
                         if (matchingOption) {
                             this.setActiveOption(matchingOption)
@@ -1950,7 +1949,7 @@ export class Select {
         const searchInLabel = this.searchableOptionFields.includes('label')
         const searchInValue = this.searchableOptionFields.includes('value')
 
-        query = query.toLowerCase()
+        query = normalizeSearchString(query)
 
         const filteredOptions = []
 
@@ -1962,13 +1961,13 @@ export class Select {
                         // Check if the option matches the search query in any of the specified fields
                         return (
                             (searchInLabel &&
-                                groupOption.label
-                                    .toLowerCase()
-                                    .includes(query)) ||
+                                normalizeSearchString(
+                                    groupOption.label,
+                                ).includes(query)) ||
                             (searchInValue &&
-                                String(groupOption.value)
-                                    .toLowerCase()
-                                    .includes(query))
+                                normalizeSearchString(
+                                    String(groupOption.value),
+                                ).includes(query))
                         )
                     },
                 )
@@ -1980,9 +1979,10 @@ export class Select {
                     })
                 }
             } else if (
-                (searchInLabel && option.label.toLowerCase().includes(query)) ||
+                (searchInLabel &&
+                    normalizeSearchString(option.label).includes(query)) ||
                 (searchInValue &&
-                    String(option.value).toLowerCase().includes(query))
+                    normalizeSearchString(String(option.value)).includes(query))
             ) {
                 // This is a regular option
                 filteredOptions.push(option)

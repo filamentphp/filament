@@ -1396,7 +1396,7 @@ it('can search a `CheckboxList` after disabling it without changing checked valu
     $page = visit('/checkbox-list-test')
         ->inDarkMode()
         ->assertNoSmoke()
-        ->fill('[data-testid="checkbox-list"] input[type="search"]', 'Option B')
+        ->fill('[data-testid="checkbox-list"] input[type="search"]', 'Óption B')
         ->assertMissing('[data-testid="checkbox-list"] input[value="a"]:visible')
         ->click('[data-testid="checkbox-list-disabled"]')
         ->assertDisabled('[data-testid="checkbox-list"] input[value="b"]')

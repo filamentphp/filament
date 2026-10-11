@@ -1,5 +1,6 @@
 import Mousetrap from '@danharrin/alpine-mousetrap'
 import globalSearch from './global-search.js'
+import tenantMenu from './tenant-menu.js'
 import sidebar from './stores/sidebar.js'
 import './dark-mode.js'
 import './error-notifications.js'
@@ -12,5 +13,6 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.plugin(Mousetrap)
 
     window.Alpine.data('filamentGlobalSearch', globalSearch)
+    window.Alpine.data('filamentTenantMenu', tenantMenu)
     window.Alpine.store('sidebar', sidebar())
 })
