@@ -192,7 +192,7 @@ By default, the field name will be used as the column to search. You may specify
 Field::make('invitation')->exists(column: 'id')
 ```
 
-You can further customize the rule by passing a [closure](overview#closure-customization) to the `modifyRuleUsing` parameter:
+You can further customize the rule by passing a [closure](overview#field-utility-injection) to the `modifyRuleUsing` parameter:
 
 ```php
 use Illuminate\Validation\Rules\Exists;
@@ -389,7 +389,7 @@ Field::make('name')->required()
 
 #### Marking a field as required
 
-By default, required fields will show an asterisk `*` next to their label. You may want to hide the asterisk on forms where all fields are required, or where it makes sense to add a [hint](#adding-a-hint-next-to-the-label) to optional fields instead:
+By default, required fields will show an asterisk `*` next to their label. You may want to hide the asterisk on forms where all fields are required, or where it makes sense to add [extra content after the label](overview#adding-extra-content-after-a-field%E2%80%99s-label) to optional fields instead:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -531,7 +531,7 @@ Alternatively, to ignore an Eloquent record of your choice, you can pass it to t
 Field::make('email')->unique(ignorable: $ignoredUser)
 ```
 
-You can further customize the rule by passing a [closure](overview#closure-customization) to the `modifyRuleUsing` parameter:
+You can further customize the rule by passing a [closure](overview#field-utility-injection) to the `modifyRuleUsing` parameter:
 
 ```php
 use Illuminate\Validation\Rules\Unique;
@@ -651,7 +651,7 @@ By default Laravel's validation error message is used. To customize the error me
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('email')
-    ->unique(// ...)
+    ->unique()
     ->validationMessages([
         'unique' => 'The :attribute has already been registered.',
     ])

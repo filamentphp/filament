@@ -17,7 +17,7 @@ Other examples of this include a "Settings" page, or a "Profile" page for the cu
 
 ## Creating a singular resource
 
-Although there is no specific "singular resource" feature in Filament, it is a highly-requested behavior and can be implemented quite simply using a [custom page](../navigation/custom-pages) with a [form](../forms). This guide will explain how to do this.
+Use a [custom page](../navigation/custom-pages) with a [form](../forms) to manage a single record without a resource table.
 
 Firstly, create a [custom page](../navigation/custom-pages):
 
@@ -25,14 +25,13 @@ Firstly, create a [custom page](../navigation/custom-pages):
 php artisan make:filament-page ManageHomepage
 ```
 
-This command will create two files - a page class in the `/Filament/Pages` directory of your resource directory, and a Blade view in the `/filament/pages` directory of the resource views directory.
+This creates a page class and a Blade view in your panel's configured page directories.
 
-The page class should contain the following elements:
-- A `$data` property, which will hold the current state of the form.
-- A `mount()` method, which will load the current record from the database and fill the form with its data. If the record doesn't exist, `null` will be passed to the `fill()` method of the form, which will assign any default values to the form fields.
-- A `form()` method, which will define the form schema. The form contains fields in the `components()` method. The `record()` method should be used to specify the record that the form should load relationship data from. The `statePath()` method should be used to specify the name of the property (`$data`) where the form's state should be stored.
-- A `save()` method, which will save the form data to the database. The `getState()` method runs form validation and returns valid form data. This method should check if the record already exists, and if not, create a new one. The `wasRecentlyCreated` property of the model can be used to determine if the record was just created, and if so then any relationships should be saved as well. A notification is sent to the user to confirm that the record was saved.
-- A `getRecord()` method, while not strictly necessary, is a good idea to have. This method will return the Eloquent record that the form is editing. It can be used across the other methods to avoid code duplication.
+The example below loads the homepage or uses form defaults if it does not exist.
+
+<Aside variant="warning">
+    Custom pages do not automatically apply resource policies. Authorize access to the page and the create or update operation, and apply any tenant or ownership restrictions your application requires to the query.
+</Aside>
 
 ```php
 namespace App\Filament\Pages;
@@ -124,7 +123,7 @@ class ManageHomepage extends Page
 The page Blade view should render the form:
 
 ```blade
-<x-filament::page>
+<x-filament-panels::page>
     {{ $this->form }}
-</x-filament::page>
+</x-filament-panels::page>
 ```

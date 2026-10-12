@@ -157,6 +157,7 @@ use App\Models\Post;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {
@@ -188,9 +189,11 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/overview/actions" alt="Table with actions" version="4.x" />
 
-In this example, we define 2 actions for table rows. The first action is a "feature" action. When clicked, it will set the `is_featured` attribute on the record to `true` - which is written within the `action()` method. Using the `hidden()` method, the action will be hidden if the record is already featured. The second action is an "unfeature" action. When clicked, it will set the `is_featured` attribute on the record to `false`. Using the `visible()` method, the action will be hidden if the record is not featured.
+The `feature` and `unfeature` actions update the row's record. Their `hidden()` and `visible()` conditions show the appropriate action for its current state.
 
-We also define a bulk action. When bulk actions are defined, each row in the table will have a checkbox. This bulk action is [built-in to Filament](../actions/delete#bulk-delete), and it will delete all selected records. However, you can [write your own custom bulk actions](actions#bulk-actions) easily too.
+Custom actions need [explicit authorization](../actions/overview#authorization). Visibility based on a record's featured state does not replace authorization.
+
+We also define a bulk action. When bulk actions are defined, each row in the table will have a checkbox. This bulk action is [built-in to Filament](../actions/delete), and it will delete all selected records. However, you can [write your own custom bulk actions](actions#bulk-actions) easily too.
 
 <AutoScreenshot name="tables/overview/actions-modal" alt="Table with action modal open" version="4.x" />
 
@@ -509,6 +512,7 @@ public function table(Table $table): Table
         ->columns([
             // ...
         ]);
+}
 ```
 
 You can also add a description below the heading using the `$table->description()` method:
@@ -524,6 +528,7 @@ public function table(Table $table): Table
         ->columns([
             // ...
         ]);
+}
 ```
 
 <AutoScreenshot name="tables/heading" alt="Table with heading and description" version="4.x" />
@@ -542,6 +547,7 @@ public function table(Table $table): Table
         ->columns([
             // ...
         ]);
+}
 ```
 
 ## Polling table content
@@ -625,9 +631,10 @@ public function table(Table $table): Table
 {
     return $table
         ->searchUsing(fn (Builder $query, string $search) => $query->whereKey(Post::search($search)->keys()));
+}
 ```
 
-Under normal circumstances Scout uses the `whereKey()` (`whereIn()`) method to retrieve results internally, so there is no performance penalty for using it.
+This loads the matching IDs from Scout and filters the table's Eloquent query with them. Check performance with your search engine and dataset, especially when searches match many records.
 
 For the global search input to show, at least one column in the table needs to be `searchable()`. Alternatively, if you are using Scout to control which columns are searchable already, you can simply pass `searchable()` to the entire table instead:
 

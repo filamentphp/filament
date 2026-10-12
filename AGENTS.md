@@ -224,12 +224,16 @@ Hook class naming:
 
 ## Writing Documentation
 
-**Always update documentation for user-facing features** in `packages/{package}/docs/`.
+**Always update documentation for user-facing features** in the owning page under `docs/` or `packages/{package}/docs/`.
 
 - **Tone**: Direct, second person ("You may set...", "You can do this using...")
-- **Structure**: Start with `## Introduction`, show simplest code first
+- **Audience**: Document how developers configure, extend, and troubleshoot Filament, not how end users operate it. Explain built-in interactions or internal behavior only when they affect a developer's decision, integration, or consequential limitation.
+- **Structure**: Start with `## Introduction`, briefly explain the purpose, and show the simplest useful example. Defer optional configuration and specialized integration details to later sections.
 - **Section order**: Review the full page and analogous pages, then place sections by reader importance and logical flow, not by when they were added. Do not default new sections to the top.
-- **Hierarchy**: Keep foundational and common workflows before specialized content, and nest narrower topics under their parent section.
+- **Hierarchy**: Keep foundational and common workflows before specialized content, and nest narrower topics under their parent section. Place consequential warnings beside the first affected recipe, even when the full explanation belongs later.
+- **Security and accessibility**: State what Filament provides, where that protection or support stops, and what the application developer must implement. Preserve meaningful security, accessibility, compatibility, and data-loss guidance; do not replace precise boundaries with broad assurances.
+- **Examples**: Keep examples focused on the API being taught. Do not add application-specific authorization, re-querying, or defensive boilerplate to unrelated recipes; explain those responsibilities in an adjacent warning and link to the dedicated guidance. Examples must still demonstrate correct API usage and must not imply protections Filament does not provide.
+- **Accuracy and repetition**: Check behavioral claims and examples against the current branch's implementation. Explain shared contracts in their owning section and link from contextual recipes, retaining any caveat needed to use that recipe safely.
 - **Headings**: Use gerunds ("Setting the type" not "Type settings", "Enabling search" not "Search")
 - **Formatting**: Backticks for code (`method()`, `ClassName`), include `use` statements
 - **Asides**: `<Aside variant="tip|info|danger">...</Aside>`

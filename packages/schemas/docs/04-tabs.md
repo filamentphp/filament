@@ -34,14 +34,6 @@ Tabs::make('Tabs')
 
 <AutoScreenshot name="schemas/layout/tabs/simple" alt="Tabs" version="4.x" />
 
-## Navigating tabs using the keyboard
-
-You can use Tab to enter the tab headers, then the left and right arrow keys to move focus between available tabs. Home and End focus the first and last available tabs. For vertical tabs, use the up and down arrow keys instead. Moving focus does not change the selected tab; press Enter or Space to select it. Press Tab again to continue to the selected panel.
-
-Hidden tabs and disabled header buttons are skipped. Calling `disabled()` on a `Tab` disables its fields, not its header, so you can still open a read-only tab.
-
-Tab headers are linked to their panels using accessible IDs. If you set custom `id()` values, keep them unique across the page. Use distinct keys for separate tabsets, including nested tabsets with the same tab labels.
-
 ## Setting the default active tab
 
 The first tab will be open by default. You can change the default open tab using the `activeTab()` method:
@@ -170,6 +162,7 @@ Tabs::make('Tabs')
 If you have expensive queries powering your tab badges, the initial page load may be slow. You can defer the loading of tab badges using the `deferBadge()` method, which will load the badge values asynchronously after the page has rendered:
 
 ```php
+use App\Models\Notification;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 
@@ -177,7 +170,7 @@ Tabs::make('Tabs')
     ->key('notifications-tabs')
     ->tabs([
         Tab::make('Notifications')
-            ->badge(static fn (): int => Notification::query()->where('unread', true->count())
+            ->badge(static fn (): int => Notification::query()->where('unread', true)->count())
             ->deferBadge()
             ->schema([
                 // ...
@@ -193,44 +186,6 @@ Tabs::make('Tabs')
 </Aside>
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `deferBadge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
-
-While the badges are loading, a small loading indicator will appear in place of each deferred badge. Once the data is fetched, the loading indicators will be replaced with the actual badge values.
-
-## Deferring the loading of tab content
-
-If the content of a tab is expensive to render, you can pass a `Schema` object to its `schema()` method and use `deferLoading()`. The content of the active tab will be loaded when it enters the viewport. The content of an inactive tab will not be loaded until the tab is selected:
-
-```php
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Schema;
-
-Tabs::make('Settings')
-    ->key('settingsTabs')
-    ->tabs([
-        Tab::make('Profile')
-            ->key('profileTab')
-            ->schema(
-                Schema::make()
-                    ->components([
-                        TextInput::make('name'),
-                    ])
-                    ->deferLoading(),
-            ),
-        Tab::make('Notifications')
-            ->key('notificationsTab')
-            ->schema(
-                Schema::make()
-                    ->components([
-                        // ...
-                    ])
-                    ->deferLoading(),
-            ),
-    ])
-```
-
-Every deferred schema must have a unique key. In this example, the keys on the tabs are inherited by their child schemas, while the key on the `Tabs` component namespaces them from other tabs in the same schema. You can learn more in the [schema overview](overview#deferring-the-loading-of-a-child-schema).
 
 ## Using grid columns within a tab
 
@@ -270,8 +225,6 @@ Tabs::make('Tabs')
 ```
 
 When tabs are not scrollable, the component automatically detects the available width. If not all tabs can fit, a dropdown button will appear. Any tabs that exceed the available width will be grouped inside this dropdown automatically.
-
-The dropdown is a visual presentation of the same tab headers, not a separate menu. Arrow keys, Home, and End navigate all available tabs. Focusing an overflowed tab automatically opens the dropdown and displays that tab's focus indicator. Press Enter or Space to select it; the dropdown remains open while you navigate its tabs. Press Tab to leave the headers and close the dropdown. Escape closes it without changing selection and returns focus to an inline tab, or to the selected panel if every tab is overflowed. You can also click the dropdown button to reveal the overflowed tabs.
 
 <AutoScreenshot name="schemas/layout/tabs/not-scrollable" alt="Non-scrollable tabs with overflow dropdown" version="4.x" />
 
@@ -346,6 +299,14 @@ Tabs::make('Tabs')
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `contained()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="schemas/layout/tabs/not-contained" alt="Tabs without a styled container" version="4.x" />
+
+## Disabling fields in a tab
+
+Calling `disabled()` on a `Tab` disables its fields, not its header. The tab remains available so users can read its content.
+
+## Setting unique tab IDs
+
+If you set custom `id()` values, keep them unique across the page so headers remain associated with the correct panels. Use distinct keys for separate tabsets, including nested tabsets with the same tab labels.
 
 ## Persisting the current tab in the user's session
 
@@ -429,9 +390,45 @@ Tabs::make('Tabs')
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `persistTabInQueryString()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+## Deferring the loading of tab content
+
+If the content of a tab is expensive to render, you can pass a `Schema` object to its `schema()` method and use `deferLoading()`. The content of the active tab will be loaded when it enters the viewport. The content of an inactive tab will not be loaded until the tab is selected:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
+
+Tabs::make('Settings')
+    ->key('settingsTabs')
+    ->tabs([
+        Tab::make('Profile')
+            ->key('profileTab')
+            ->schema(
+                Schema::make()
+                    ->components([
+                        TextInput::make('name'),
+                    ])
+                    ->deferLoading(),
+            ),
+        Tab::make('Notifications')
+            ->key('notificationsTab')
+            ->schema(
+                Schema::make()
+                    ->components([
+                        // ...
+                    ])
+                    ->deferLoading(),
+            ),
+    ])
+```
+
+Every deferred schema must have a unique key. In this example, the keys on the tabs are inherited by their child schemas, while the key on the `Tabs` component namespaces them from other tabs in the same schema. You can learn more in the [schema overview](overview#deferring-the-loading-of-a-child-schema).
+
 ## Using tabs without content panels
 
-If your `livewireProperty()` tabs change a filter instead of showing separate content panels, use `tabPanels(false)`. This renders a labelled group of buttons with a pressed state rather than a tablist. Each button remains reachable using Tab:
+If your `livewireProperty()` tabs change a filter instead of showing separate content panels, use `tabPanels(false)`. This renders a labelled group of buttons with a pressed state rather than a tablist:
 
 ```php
 use Filament\Schemas\Components\Tabs;

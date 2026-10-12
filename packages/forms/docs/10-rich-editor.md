@@ -109,12 +109,6 @@ Additional tools available in the toolbar include:
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-### Using the toolbar with a keyboard
-
-You can enter the main toolbar using Tab, or Shift+Tab from the editor. The toolbar has one tab stop, which remembers the last focused tool. Use the left and right arrow keys to move between tools, and Home or End to reach the first or last tool. Disabled and hidden tools are skipped. Enter or Space activates the focused tool.
-
-Tab and Shift+Tab leave the toolbar normally. Escape returns to the editor without changing your selection. If a tooltip is showing, Escape dismisses the tooltip first. These keys retain their normal text-editing behavior while you are inside the editor.
-
 ### Customizing floating toolbars
 
 If your toolbar is too full, you can use a floating toolbar to show certain tools near the current node, only when the user is inside a specific node type. This allows you to keep the main toolbar clean while still providing access to additional tools when needed.
@@ -149,10 +143,6 @@ RichEditor::make('content')
 
 <AutoScreenshot name="forms/fields/rich-editor/floating-toolbar" alt="Rich editor with floating toolbar below selected text" version="4.x" />
 
-You can press Alt+F10 inside the editor to enter an applicable floating toolbar, or the main toolbar if no floating toolbar applies. Press Alt+F10 again while a toolbar tool is focused to cycle through the applicable floating toolbars in your configured order, followed by the main toolbar. For example, you can reach both the grid and table toolbars when editing a table inside a grid. Floating toolbars use the same arrow, Home, End, and Escape behavior as the main toolbar, without adding extra tab stops.
-
-Actions opened from a floating toolbar return focus to the editor when their modal closes, since the floating toolbar may disappear. Actions opened from the main toolbar return focus to their tool or dropdown trigger.
-
 ### Grouping toolbar buttons into dropdowns
 
 You may group related toolbar buttons into a dropdown menu using `ToolbarButtonGroup`. The first argument is a label used for the dropdown's tooltip and accessibility, and the second argument is an array of button names to include in the dropdown:
@@ -171,9 +161,7 @@ RichEditor::make('content')
     ])
 ```
 
-By default, the first button's icon is used as the dropdown trigger, and it updates reactively to reflect the currently active button. Clicking on the trigger reveals the grouped buttons.
-
-You can also open a focused dropdown using Enter, Space, or the up and down arrow keys. Inside a horizontal icon menu, the left and right arrow keys move between tools, following the reading direction. Home and End move to the first and last tools. The up and down arrow keys also work. Vertical menus configured using `textualButtons()` use the up and down arrow keys. Disabled tools remain focusable so you can discover them, but cannot be activated. Escape closes the menu and returns focus to its trigger; Tab leaves the menu. Toggle tools expose their formatting state as checked menu items.
+By default, the dropdown trigger uses the currently active button's icon, or the first button's icon if none is active.
 
 You can set a fixed icon for the dropdown trigger using the `icon()` method. When a custom icon is set, the trigger icon remains static and does not change based on the active button:
 
@@ -707,8 +695,6 @@ RichEditor::make('content')
 
 This setting applies to all custom blocks with previews in the editor. Blocks without a preview keep their usual header and label. Disabled editors do not display edit or delete buttons.
 
-The buttons stay at the top beside tall previews. Previews shorter than the buttons are vertically centered, with enough space for both buttons.
-
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `minimalCustomBlockControls()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Rendering content with custom blocks
@@ -875,7 +861,7 @@ RichEditor::make('content')
     ->searchableCustomBlocks()
 ```
 
-Search matches block labels and group names, ignoring capitalization and surrounding whitespace. When a group name matches, all blocks in that group appear. If nothing matches, the panel displays a message. Clearing the search restores all blocks.
+Search matches block labels and group names, ignoring capitalization and surrounding whitespace. Matching a group name displays all blocks in that group.
 
 Search works with both the list and [grid](#displaying-custom-blocks-in-a-grid) layouts. It is disabled by default, and you can pass `false` to `searchableCustomBlocks()` to disable it.
 
@@ -919,9 +905,7 @@ class HeadingBlock extends RichContentCustomBlock
 }
 ```
 
-When `shouldApplyProseStylingToPreview()` returns `true`, the block's preview will be styled with the prose typography styles defined in the rich editor, including proper margins, font sizes, and other text formatting. By default, this method returns `false`, so previews are displayed with minimal styling.
-
-You can make this decision based on the block's configuration, allowing different blocks to have different preview styling:
+You can also choose the preview styling based on the block's configuration:
 
 ```php
 public static function shouldApplyProseStylingToPreview(array $config): bool
@@ -1123,7 +1107,7 @@ RichContentRenderer::make($record->content)
 ```
 
 <Aside variant="tip">
-    The string returned from the `url()` closure is rendered directly into the `href` attribute of an `<a>` tag, so if any part of the URL is built from user input you should make sure it cannot resolve to a scheme like `javascript:` or `data:` that the browser would execute. The simplest way to guarantee this is to wrap the return value in Filament's [`Str::sanitizeUrl()`](../../advanced/security#validating-user-input) helper, which only allows `http`/`https` and relative URLs:
+    The string returned from the `url()` closure is rendered directly into the `href` attribute of an `<a>` tag, so if any part of the URL is built from user input you should make sure it cannot resolve to a scheme like `javascript:` or `data:` that the browser would execute. The simplest way to guarantee this is to wrap the return value in Filament's [`Str::sanitizeUrl()`](../advanced/security#validating-user-input) helper, which only allows `http`/`https` and relative URLs:
 
     ```php
     use Illuminate\Support\Str;
@@ -1376,8 +1360,6 @@ All random values use the same Faker generator, so seeded Faker output remains r
 
 ## Extending the rich editor
 
-Custom `RichEditorTool` buttons participate in toolbar keyboard navigation automatically. Use `toggle()` to expose a tool's formatting state, and `disabledWhenNotActive()` to disable it when its active expression is false. Use `action()` for Filament action modals so selection and focus return are preserved. If you use `jsHandler()` to open your own dialog or another asynchronous interface, you are responsible for managing its focus and returning to a valid editor or toolbar control when it closes.
-
 You can create plugins for the rich editor, which allow you to add custom TipTap extensions to the editor and renderer, as well as custom toolbar buttons. Create a new class that implements the `RichContentPlugin` interface:
 
 ```php
@@ -1518,6 +1500,10 @@ RichContentRenderer::make($record->content)
         HighlightRichContentPlugin::make(),
     ])
 ```
+
+### Configuring custom toolbar controls
+
+Use `toggle()` to expose a tool's formatting state, and `disabledWhenNotActive()` to disable it when its active expression is false. Use `action()` for Filament action modals to preserve editor selection and focus. If you use `jsHandler()` to open your own dialog or another asynchronous interface, manage its focus and return focus to a valid editor or toolbar control when it closes.
 
 ### Enabling or disabling toolbar buttons from a plugin
 

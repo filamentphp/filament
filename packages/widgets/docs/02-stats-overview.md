@@ -178,7 +178,7 @@ protected function getStats(): array
 
 ## Styling stat charts in a theme
 
-Chart.js paints a stat's chart onto a `<canvas>`, so its line cannot be reached from a stylesheet. A [custom theme](../styling/overview) is CSS only, so Filament exposes the shape of that line as CSS custom properties, which you may set on `.fi-wi-stats-overview-stat`, or on any element above it to cover every stat in the panel at once:
+To style stat charts from a [custom theme](../styling/overview), set these CSS custom properties on `.fi-wi-stats-overview-stat` or a parent element:
 
 ```css
 .fi-wi-stats-overview-stat {
@@ -188,9 +188,11 @@ Chart.js paints a stat's chart onto a `<canvas>`, so its line cannot be reached 
 }
 ```
 
-`--stat-chart-border-width` thickens the line, `--stat-chart-line-tension` curves it, from `0` for straight segments up to `1`, and `--stat-chart-fill` shades the area beneath it, accepting `start`, `end`, `origin` or `stack`, as well as `none` to leave the line bare.
+- `--stat-chart-border-width`: The line thickness.
+- `--stat-chart-line-tension`: The curvature, from `0` for straight segments to `1`.
+- `--stat-chart-fill`: The fill target: `start`, `end`, `origin`, or `stack`. Use `none` to disable the fill.
 
-These values are handed to Chart.js rather than used by the browser, so they are plain numbers and keywords, without units. If you set one to something Chart.js cannot use, it is ignored and the chart keeps its default. They are also read again whenever the color scheme changes, so you may give light and dark mode different values.
+Use unitless numbers and the supported keywords, not CSS lengths. You may set different values for light and dark mode.
 
 The chart takes its colors from the [color of the stat](#changing-the-color-of-the-stat). To change them in a theme, style the `.fi-wi-stats-overview-stat-chart-bg-color` and `.fi-wi-stats-overview-stat-chart-border-color` elements with an ordinary `color` declaration:
 

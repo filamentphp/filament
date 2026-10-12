@@ -612,7 +612,7 @@ TextColumn::make('title')
 
 #### Action modals
 
-You may open [action modals](../../actions#modals) by passing in an `Action` object to the `action()` method:
+You may open [action modals](../../actions/modals) by passing in an `Action` object to the `action()` method:
 
 ```php
 use Filament\Actions\Action;

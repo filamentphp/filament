@@ -139,11 +139,11 @@ TextInput::make('email')
     ->helperText('Use your work email address.')
 ```
 
-Helper text is automatically associated with field controls or their named groups so screen readers can read it as a description. You do not need to manage the instruction's ID yourself. Hints and arbitrary [extra content](#adding-extra-content-to-a-field) are not automatically associated.
+Helper text is associated with the field for assistive technology. To associate hints or [extra content](#adding-extra-content-to-a-field) instead, see [associating instructions with inputs](#associating-instructions-and-validation-errors-with-inputs).
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `helperText()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-Return `null` or an empty string to remove the helper text and its association. For conditional helper text, ensure the field is [reactive](#the-basics-of-reactivity) when its dependencies change so the text and its association update together.
+Return `null` or an empty string to remove the helper text. For conditional helper text, ensure the field is [reactive](#the-basics-of-reactivity) when its dependencies change.
 
 `helperText()` uses the `belowContent()` slot. Calling `belowContent()` afterwards replaces the helper text and removes its automatic association; calling `helperText()` again replaces that slot with helper text.
 
@@ -186,11 +186,7 @@ Toggle::make('is_admin')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `disabled()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-Disabled fields keep their values visible, but hide built-in actions that change them, such as adding, removing, reordering, or formatting content. Value indicators, such as select chevrons, color swatches, and slider handles, remain visible without allowing changes. Actions for inspecting values, such as revealing passwords, copying, opening or downloading files, searching checkbox lists or tables, and expanding collapsed items, remain available.
-
-Default placeholders that invite editing are suppressed, or replaced with a neutral empty-state message. Explicitly configured placeholders are preserved.
-
-Some fields also support `readOnly()`. Read-only fields hide editing affordances too, but remain focusable and do not use disabled styling. Only use `readOnly()` on fields that support it, such as text inputs, textareas, one-time code inputs, and date-time pickers.
+Disabling a field prevents editing through its built-in controls, but does not prevent inspecting or copying its value. Some fields also support `readOnly()`, which prevents editing without disabled styling. See the documentation for each field for its supported options.
 
 Custom actions, including prefix, suffix, and extra item actions, keep their own visibility and disabled settings. If a custom action changes a value, you should hide or disable it when the field is not editable. Neither `disabled()` nor `readOnly()` replaces server-side authorization.
 
@@ -978,15 +974,7 @@ TextInput::make('categories')
 
 #### Associating instructions and validation errors with inputs
 
-For native inputs, native selects, textareas, radios, checkbox lists, multiple-selection toggle buttons, toggles, and the color picker's text input, Filament connects validation errors to the controls and marks them as invalid. Errors are not live announcements on every keystroke. These accessibility attributes are defaults: attributes you provide through `extraInputAttributes()` take precedence. For a toggle, use `extraAttributes()` instead.
-
-Composite fields associate helper text and validation errors with their named collection or group. Builders, repeaters (including simple and table layouts), key-value fields, and table selects do not mark the group, child inputs, or action buttons invalid for a collection-level error. Each child field retains its own validation associations. Checkbox list and toggle button groups also carry descriptions without automatic `aria-invalid`. Multiple-selection toggle buttons use native checkbox options that retain invalid-state semantics; single-selection toggle buttons receive descriptions without automatic `aria-invalid`, since they use ordinary buttons.
-
-The tags input associates descriptions with both its group and its textbox, but does not automatically mark the textbox invalid for an error in the stored tags: the textbox edits a pending new tag, not the collection. The one-time code input describes both its group and each digit, and marks the digits invalid together because they represent one validated code. Its `extraInputAttributes()` overrides for `aria-describedby` and `aria-invalid` apply consistently to every digit; IDs and autocomplete attributes remain specific to the first digit.
-
-Code, Markdown, and rich editors, custom date and time pickers, file uploads, and sliders keep descriptions synchronized on their JavaScript-created controls when validation errors or helper text change. Scalar sliders are marked invalid for an error, while array-valued sliders only describe the error on each handle: a collection-level error does not identify an invalid handle. File uploads describe both the file input and the keyboard-focusable Browse control, without marking unrelated upload actions invalid. Modal table selects describe both the group and the opening action, without automatically marking the action invalid.
-
-You can override editor and slider accessibility attributes using `extraAttributes()` or `extraAlpineAttributes()` where supported. Rich editors also support `extraInputAttributes()`, file uploads use `extraInputAttributes()`, and custom date and time pickers use `extraTriggerAttributes()`. These attributes are evaluated again when the field renders, so closures that compose your own instructions with `getDescriptionIds()` remain synchronized. An explicit `null` removes the attribute. To override a modal table select's opening action, use `selectAction()` to configure the action's `extraAttributes()`.
+Filament associates helper text and validation errors with field controls or their groups. You only need to configure these associations when adding your own instructions or customizing the field's markup.
 
 Use [`helperText()`](#adding-helper-text) for instructions that should be automatically associated with an input. Hints and arbitrary text in the [field's extra content slots](#adding-extra-content-to-a-field) are not automatically associated. To associate other instructions, give the text an ID using `extraAttributes()` and reference it from the input using `extraInputAttributes()`:
 
@@ -1014,7 +1002,11 @@ An explicit `aria-describedby` replaces the generated references, including help
 
 Keep instruction IDs unique, including in repeaters. If instructions are conditional, update the reference when they should no longer describe the field; hiding the text alone can leave it available to screen readers.
 
-Keep a label for each field. You can use `hiddenLabel()` to hide it visually while keeping it available to assistive technology. Use `required()` for validation and required-state semantics; `markAsRequired()` only controls the visual marker. Disabled and read-only native controls do not request required input. Required checkbox groups describe that at least one option must be selected, rather than requiring every checkbox.
+Attributes you provide override Filament's accessibility defaults; an explicit `null` removes an attribute. Use `extraInputAttributes()` for native inputs, rich editors, and file uploads; `extraAttributes()` for toggles; `extraTriggerAttributes()` for custom date and time pickers; and `extraAttributes()` or `extraAlpineAttributes()` for other editors and sliders where supported. For a modal table select, configure the opening action's `extraAttributes()` using `selectAction()`.
+
+##### Preserving accessibility in custom field views
+
+Keep a label for each field, using `hiddenLabel()` if it should be visually hidden. Use `required()` for validation and required-state semantics; `markAsRequired()` only controls the visual marker.
 
 If you replace a field wrapper, preserve the label, helper text, and error IDs in your custom markup. JavaScript-created controls synchronize independently of the wrapper. If you publish a control view, merge the field's `getAccessibilityAttributes()` array as defaults into the control's existing attribute bag. Preserve its hidden `data-field-accessibility` element immediately before the JavaScript component and outside `wire:ignore`, with the resolved description and invalid-state attributes. The plain wrapper used by `FusedGroup` suppresses child instructions and leaves error descriptions on the group.
 
@@ -1439,18 +1431,11 @@ TextInput::make('name')
     })
 ```
 
-Since [setting the state of another field](#setting-the-state-of-another-field) from an `afterStateUpdated()` function using the `$set()` method will actually just mutate the frontend state of fields, you don't even need a network request in the first place. The `afterStateUpdatedJs()` method accepts a JavaScript expression that runs each time the value of the field changes. The [`$state`](#injecting-the-current-state-of-the-field), [`$get()`](#injecting-the-state-of-another-field) and [`$set()`](#setting-the-state-of-another-field) utilities are available in the JavaScript context, so you can use them to set the state of other fields:
+If you only need to update another field's value, you can use `afterStateUpdatedJs()` to do so in the browser without a network request. It accepts a JavaScript expression that runs each time the field's value changes. The [`$state`](#injecting-the-current-state-of-the-field), [`$get()`](#injecting-the-state-of-another-field) and [`$set()`](#setting-the-state-of-another-field) utilities are available in the JavaScript context:
 
 ```php
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Utilities\Set;
 
-// Old name input that is `live()`, so it makes a network request and render each time it is updated.
-TextInput::make('name')
-    ->live()
-    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('email', ((string) str($state)->replace(' ', '.')->lower()) . '@example.com'))
-
-// New name input that uses `afterStateUpdatedJs()` to set the state of the email field and doesn't make a network request.
 TextInput::make('name')
     ->afterStateUpdatedJs(<<<'JS'
         $set('email', ($state ?? '').replaceAll(' ', '.').toLowerCase() + '@example.com')
@@ -1661,7 +1646,7 @@ Grid::make(2)
     ->key('dynamicTypeFields')
 ```
 
-In this example, the `type` field is [`live()`](#the-basics-of-reactivity). This allows the schema to rerender when the value of the `type` field changes. The `afterStateUpdated()` method is used to run a function after the state of the `type` field is updated. In this case, we [inject the current select field instance](#injecting-the-current-field-instance), which we can then use to get the schema "container" instance that holds both the select and the grid components. With this container, we can target the grid component using a unique key (`dynamicTypeFields`) that we have assigned to it. With that grid component instance, we can call `fill()`, just as we do on a normal form to initialise it. The `schema()` method of the grid component is then used to return a different schema based on the value of the `type` field. This is done by using the [`$get()` utility](#injecting-the-state-of-another-field), and returning a different schema array dynamically.
+`live()` re-renders the schema when `type` changes, and the grid's `schema()` closure uses [`$get()`](#injecting-the-state-of-another-field) to choose the fields. The `afterStateUpdated()` callback finds the grid by its `dynamicTypeFields` key and calls `fill()` to initialize the newly displayed fields.
 
 ### Auto-hashing password field
 

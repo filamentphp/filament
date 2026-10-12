@@ -482,7 +482,7 @@ protected function getOptions(): RawJs
 
 ## Styling charts in a theme
 
-Chart.js paints a chart onto a `<canvas>`, so almost none of it can be reached from a stylesheet. A [custom theme](../styling/overview) is CSS only and cannot call `getOptions()`, so Filament exposes the parts of a chart that a theme is most likely to want to change as CSS custom properties. You may set them on `.fi-wi-chart`, or on any element above it to cover every chart in the panel at once:
+To style the canvas-rendered chart from a [custom theme](../styling/overview), set these CSS custom properties on `.fi-wi-chart` or a parent element:
 
 ```css
 .fi-wi-chart {
@@ -494,12 +494,16 @@ Chart.js paints a chart onto a `<canvas>`, so almost none of it can be reached f
 }
 ```
 
-`--chart-border-width` sets the thickness of the line that a chart draws around its data. `--chart-line-tension` curves the line of a line chart, from `0` for straight segments up to `1`. `--chart-point-radius` sizes the markers on a line, radar or scatter chart, and `--chart-point-style` shapes them, accepting any of Chart.js' point styles - `circle`, `cross`, `crossRot`, `dash`, `line`, `rect`, `rectRounded`, `rectRot`, `star` or `triangle` - as well as `none` to hide them entirely. `--chart-bar-border-radius` rounds the corners of the bars in a bar chart, which are already slightly rounded by default. Set it to `0` for square bars.
+- `--chart-border-width`: The thickness of the data outlines.
+- `--chart-line-tension`: The curvature of a line chart, from `0` for straight segments to `1`.
+- `--chart-point-radius`: The marker size for line, radar, and scatter charts.
+- `--chart-point-style`: The marker shape: `circle`, `cross`, `crossRot`, `dash`, `line`, `rect`, `rectRounded`, `rectRot`, `star`, or `triangle`. Use `none` to hide markers.
+- `--chart-bar-border-radius`: The corner radius of bars. Use `0` for square corners instead of the default rounded corners.
 
-These values are handed to Chart.js rather than used by the browser, so they are plain numbers and keywords, without units. If you set one to something Chart.js cannot use, it is ignored and the chart keeps its default. They are also read again whenever the color scheme changes, so you may give light and dark mode different values.
+Use unitless numbers and the supported keywords, not CSS lengths such as `3px`. You may set different values for light and dark mode.
 
 <Aside variant="info">
-    These properties are for styling every chart in a panel at once, which is what a theme usually wants. To change a single chart, use [`getOptions()`](#setting-chart-configuration-options) instead - anything you set there wins over the properties here.
+    To configure an individual chart, use [`getOptions()`](#setting-chart-configuration-options). Explicit options for these settings take precedence over the CSS custom properties.
 </Aside>
 
 ### Styling the chart legend

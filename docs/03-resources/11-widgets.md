@@ -47,15 +47,17 @@ To display a widget on a resource page, use the `getHeaderWidgets()` or `getFoot
 namespace App\Filament\Resources\Customers\Pages;
 
 use App\Filament\Resources\Customers\CustomerResource;
+use App\Filament\Resources\Customers\Widgets\CustomerOverview;
+use Filament\Resources\Pages\ListRecords;
 
 class ListCustomers extends ListRecords
 {
-    public static string $resource = CustomerResource::class;
+    protected static string $resource = CustomerResource::class;
 
     protected function getHeaderWidgets(): array
     {
         return [
-            CustomerResource\Widgets\CustomerOverview::class,
+            CustomerOverview::class,
         ];
     }
 }
@@ -123,8 +125,6 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 Stat::make('Total Products', $this->getPageTableQuery()->count()),
 ```
 
-For a nested resource page, `InteractsWithPageTable` validates the table page's parent through its parent resource binding before initializing that page. It checks the ancestor chain when route parameters are available, or the supplied parent's identity and immediate resource binding otherwise. This applies to the table page instance, not to other uses of model properties on your widget.
-
 Alternatively, you can access a collection of the records on the current page using the `$this->getPageTableRecords()` method:
 
 ```php
@@ -133,7 +133,11 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 Stat::make('Total Products', $this->getPageTableRecords()->count()),
 ```
 
-## Accessing the total table records count
+<Aside variant="warning">
+    `InteractsWithPageTable` uses the page's table query, not each record's `view()` policy. Add query restrictions for records that must not be included in the widget's data. For nested resources, parent binding and ancestor resource access checks do not replace parent-record policy checks. This trait also does not protect other uses of model properties on your widget. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for the binding rules and your authorization responsibilities.
+</Aside>
+
+### Accessing the total table records count
 
 If you need the total count of all records for the table query without executing an additional count query, you can use the `$tableRecordsCount` property:
 
@@ -148,10 +152,12 @@ Stat::make('Total Products', $this->tableRecordsCount),
 When registering a widget on a resource page, you can use the `make()` method to pass an array of [Livewire properties](https://livewire.laravel.com/docs/properties) to it:
 
 ```php
+use App\Filament\Resources\Customers\Widgets\CustomerOverview;
+
 protected function getHeaderWidgets(): array
 {
     return [
-        CustomerResource\Widgets\CustomerOverview::make([
+        CustomerOverview::make([
             'status' => 'active',
         ]),
     ];

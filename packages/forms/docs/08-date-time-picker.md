@@ -77,9 +77,15 @@ public function boot(): void
 
 This is useful if you want to set a default timezone for all date-time pickers in your application. It is also used in other places where timezones are used in Filament.
 
-<Aside variant="warning">
-    `DatePicker` and `DateTimePicker::make()->time(false)` use the app's timezone, ignoring both `timezone()` and Filament's default timezone. Plain dates are interpreted in the app's timezone. Values with a timezone or offset, including Eloquent's serialized dates, are converted to the app's timezone before determining the selected date. This applies to native and JavaScript pickers, even with a custom calendar storage `format()`. The exception is a Unix timestamp format containing an unescaped `U` token: timestamps use `timezone()` or the app's timezone to determine the selected date. Filament's default timezone still does not apply to these date-only fields. Use a `DateTimePicker` with a time input if you need to preserve the time as well as the date.
-</Aside>
+### Timezones for date-only fields
+
+`DatePicker` and `DateTimePicker::make()->time(false)` use the app's timezone, ignoring both `timezone()` and Filament's default timezone. Plain dates are interpreted in the app's timezone; values with an offset or timezone, including Eloquent's serialized dates, are converted to the app's timezone before determining the selected date. This applies to native and JavaScript pickers, including custom calendar storage formats.
+
+Use a `DateTimePicker` with a time input if you need to preserve the time as well as the date.
+
+#### Storing date-only values as Unix timestamps
+
+A storage `format()` containing an unescaped `U` token is an exception: it uses `timezone()` or the app's timezone to determine the selected date. Filament's default timezone still does not apply to these date-only fields.
 
 ## Enabling the JavaScript date picker
 
@@ -97,19 +103,8 @@ DatePicker::make('date_of_birth')
 <AutoScreenshot name="forms/fields/date-time-picker/javascript" alt="JavaScript-based date time picker" version="4.x" />
 
 <Aside variant="info">
-    The JavaScript date picker supports keyboard navigation, but does not allow you to type a date directly into the field. Use the native date picker if you need direct date entry.
+    The JavaScript date picker does not allow direct date entry. Use the native date picker if users need to type dates.
 </Aside>
-
-### Navigating the calendar with the keyboard
-
-You can open the calendar using `Enter`, `Space`, or an arrow key. Focus starts on the selected date, or the calendar's focused date when the field is empty. Moving focus does not change the field's value until you select a date:
-
-- Use the left and right arrow keys to move one day, following the calendar's text direction, and the up and down arrow keys to move one week.
-- Use `Home` and `End` to move to the first and last day of the week, respecting `firstDayOfWeek()`.
-- Use `Page Up` and `Page Down` to move one month. Hold `Shift` to move one year instead. If the destination month does not contain the same day, focus moves to its last day.
-- Use `Enter` or `Space` to select the focused date. Unavailable dates can receive focus, but cannot be selected.
-- Use `Tab` and `Shift + Tab` to move between the calendar and the month, year, and time controls. Leaving the picker closes it without moving focus back.
-- Use `Escape` to close the picker and return focus to its field.
 
 ### Customizing the display format
 
