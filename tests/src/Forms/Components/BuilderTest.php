@@ -1097,7 +1097,7 @@ it('can search and insert grouped blocks', function (): void {
         ->inDarkMode()
         ->assertPresent('[data-testid="builder"]');
 
-    $page->page()->locator('[data-testid="add-block"]')->click();
+    $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
 
     $page
         ->assertVisible($contentGroup)
@@ -1121,7 +1121,7 @@ it('can search and insert grouped blocks', function (): void {
         ->click($mediaGroup . ' button')
         ->assertVisible('[data-testid="video-url"]');
 
-    $page->page()->locator('[data-testid="add-block"]')->click();
+    $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
 
     $page
         ->assertNotPresent($mediaGroup)
@@ -1239,20 +1239,20 @@ it('renders appended and between blocks with current defaults while preserving e
         ->assertPresent('[data-testid="builder"]')
         ->assertNotPresent($paragraph);
 
-    $page->page()->locator('[data-testid="add-block"]')->click();
+    $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
 
     $page
         ->click('button:has-text("Paragraph"):visible')
         ->assertValue($paragraph, 'Paragraph 1')
         ->type($paragraph, 'Welcome to the autumn edition');
 
-    $page->page()->locator('[data-testid="add-block"]')->click();
+    $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
 
     $page
         ->click('button:has-text("Heading"):visible')
         ->type($heading, 'What is new');
 
-    $page->page()->locator(':nth-match([data-testid="add-between"], 1)')->click();
+    $page->page()->locator(':nth-match([data-testid="add-between"][aria-expanded="false"], 1)')->click();
 
     $page
         ->click('button:has-text("Paragraph"):visible')
@@ -1294,7 +1294,7 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
         ->assertAttribute($addBlockAction, 'aria-expanded', 'false');
 
     // Use the native locator timeout so a slow click is not repeated, toggling the picker closed again.
-    $page->page()->locator($addBlockAction)->click();
+    $page->page()->locator($addBlockAction . '[aria-expanded="false"]')->click();
 
     $page
         ->assertVisible($searchInput)
@@ -1313,14 +1313,14 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
         ->assertMissing($searchInput)
         ->assertPresent($addBlockAction . ':focus');
 
-    $page->page()->locator($addBlockAction)->click();
+    $page->page()->locator($addBlockAction . '[aria-expanded="false"]')->click();
 
     $page
         ->type($searchInput, 'video')
         ->click('[data-testid="builder"] [data-block-label="video"]')
         ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1);
 
-    $page->page()->locator($addBlockAction)->click();
+    $page->page()->locator($addBlockAction . '[aria-expanded="false"]')->click();
 
     $page
         ->type($searchInput, 'video')
@@ -1339,7 +1339,7 @@ it('clears a debounced block picker search with `Escape` before the debounce ela
     $page = visit('/builder-searchable-test')
         ->assertPresent('[data-testid="debounced-builder"]');
 
-    $page->page()->locator('[data-testid="add-debounced-block"]')->click();
+    $page->page()->locator('[data-testid="add-debounced-block"][aria-expanded="false"]')->click();
 
     $page
         ->assertVisible($searchInput)
@@ -1373,7 +1373,7 @@ it('closes only the block picker with `Escape` when it is inside a modal', funct
         ->assertVisible($modal)
         ->assertPresent('[data-testid="modal-builder"]');
 
-    $page->page()->locator($addBlockAction)->click();
+    $page->page()->locator($addBlockAction . '[aria-expanded="false"]')->click();
 
     $page
         ->assertVisible($searchInput)
@@ -1406,7 +1406,7 @@ it('clears and focuses the block picker search after clicking away and reopening
 
     $page->assertPresent('[data-testid="builder"]');
 
-    $page->page()->locator('[data-testid="add-block"]')->click();
+    $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
 
     $page
         ->assertPresent($searchInput . ':focus')
@@ -1416,7 +1416,7 @@ it('clears and focuses the block picker search after clicking away and reopening
         ->click('[data-testid="outside-picker"]')
         ->assertMissing($searchInput);
 
-    $page->page()->locator('[data-testid="add-block"]')->click();
+    $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
 
     $page
         ->assertVisible($searchInput)
@@ -1441,26 +1441,26 @@ it('searches independently in the add-between picker and inserts the selected bl
     $page = visit('/builder-searchable-test')
         ->assertPresent('[data-testid="builder"]');
 
-    $page->page()->locator('[data-testid="add-block"]')->click();
+    $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
 
     $page
         ->click($endPicker . ' [data-block-label="paragraph"]')
         ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1);
 
-    $page->page()->locator('[data-testid="add-block"]')->click();
+    $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
 
     $page
         ->click($endPicker . ' [data-block-label="research & development"]')
         ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 2);
 
-    $page->page()->locator('[data-testid="add-block"]')->click();
+    $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
 
     $page
         ->type($endPicker . ' .fi-fo-builder-block-picker-search-ctn input', 'paragraph')
         ->click('[data-testid="outside-picker"]')
         ->hover('[data-testid="builder"] .fi-fo-builder-item:first-child');
 
-    $page->page()->locator($betweenPicker . ' .fi-dropdown-trigger button')->click();
+    $page->page()->locator($betweenPicker . ' button[aria-expanded="false"]')->click();
 
     $page
         ->assertValue($betweenPicker . ' .fi-fo-builder-block-picker-search-ctn input', '')
@@ -1482,7 +1482,7 @@ it('can search and insert blocks after changing the block catalog', function ():
     $page = visit('/builder-searchable-test')
         ->click('[data-testid="update-blocks"]');
 
-    $page->page()->locator('[data-testid="add-block"]')->click();
+    $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
 
     $page
         ->type($searchInput, 'video')
@@ -1514,7 +1514,7 @@ it('focuses the search when blocks become available and after deleting the last 
 
     $page->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'false');
 
-    $page->page()->locator('[data-testid="add-block"]')->click();
+    $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
 
     $page
         ->assertVisible($searchInput)
@@ -1527,7 +1527,7 @@ it('focuses the search when blocks become available and after deleting the last 
         ->assertNotPresent('[data-testid="builder"] .fi-fo-builder-item')
         ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'false');
 
-    $page->page()->locator('[data-testid="add-block"]')->click();
+    $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
 
     $page
         ->assertVisible($searchInput)
@@ -1548,7 +1548,7 @@ it('can add a searched block using `Tab` and `Enter`', function (): void {
     foreach ([$page, $page->inDarkMode()] as $themedPage) {
         $themedPage->assertPresent('[data-testid="builder"]');
 
-        $themedPage->page()->locator('[data-testid="add-block"]')->click();
+        $themedPage->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
 
         $themedPage
             ->assertVisible($searchInput)
@@ -1576,7 +1576,7 @@ it('can reopen the picker and add a block after `blockPickerWidth()` changes', f
     $page = visit('/builder-searchable-test?notSearchable=' . (int) (! $isSearchable))
         ->assertPresent('[data-testid="builder"]');
 
-    $page->page()->locator('[data-testid="add-block"]')->click();
+    $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
 
     $page
         ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true');
@@ -1585,7 +1585,7 @@ it('can reopen the picker and add a block after `blockPickerWidth()` changes', f
 
     $page->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'false');
 
-    $page->page()->locator('[data-testid="add-block"]')->click();
+    $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
 
     $page
         ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true')
