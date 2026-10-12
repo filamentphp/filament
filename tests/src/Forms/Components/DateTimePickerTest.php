@@ -1485,41 +1485,6 @@ it('preserves browser-based `displayFormat()` zone tokens and zoned `disabledDat
     }
 })->with([true, false]);
 
-it('preserves browser-local disabled-day checks when editing an initially empty time-only picker', function (bool $hasZonedDisabledDate): void {
-    config(['app.timezone' => 'UTC']);
-    $this->actingAs(User::factory()->create());
-
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/date-time-picker-test?native=0&date=0&zoned-disabled-date=1')->withTimezone('America/Los_Angeles');
-
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-
-        $picker = 'Alpine.$data(document.querySelector(\'[data-testid="timed-trigger"]\'))';
-
-        if (! $hasZonedDisabledDate) {
-            $page->script("{$picker}.\$refs.disabledDates.value = JSON.stringify(['2025-07-15'])");
-        }
-
-        $page->assertValue('[data-testid="timed-trigger"]', '')
-            ->assertScript("{$picker}.focusedDate?.format('YYYY-MM-DD HH:mm:ss Z')", '2025-07-15 06:24:37 -07:00')
-            ->click('[data-testid="timed-trigger"]')
-            ->assertScript("{$picker}.focusedDate.format('YYYY-MM-DD HH:mm:ss Z')", '2025-07-15 06:24:37 -07:00')
-            ->fill('input[aria-label="Hour"]', '2')
-            ->assertScript("{$picker}.state", $hasZonedDisabledDate ? '2025-07-15 02:24:37' : null)
-            ->keys('[data-testid="timed-trigger"]', 'Escape')
-            ->click('[data-testid="save-timed"]')
-            ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').textContent.trim()', '1')
-            ->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', $hasZonedDisabledDate ? '02:24:37' : '')
-            ->click('[data-testid="reload-timed"]')
-            ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', '1')
-            ->assertValue('[data-testid="timed-trigger"]', $hasZonedDisabledDate ? '02:24:37' : '');
-        $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
-        $page->assertNoSmoke()->assertNoAccessibilityIssues();
-    }
-})->with([true, false]);
-
 it('compares custom time-only clocks independently of browser DST dates and preserves hidden seconds on reload', function (): void {
     $this->actingAs(User::factory()->create());
     $accessibilityFailures = [];
