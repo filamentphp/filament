@@ -120,7 +120,8 @@ it('displays persisted state after save hooks and `void` callbacks in both theme
             $page = $page->inDarkMode();
         }
 
-        $page->type('[data-testid="editable-title"] input:not([type="hidden"])', 'mixedCase');
+        $page->assertScript('typeof Alpine.$data(document.querySelector("[data-testid=editable-title]")).blockEdit', 'function')
+            ->type('[data-testid="editable-title"] input:not([type="hidden"])', 'mixedCase');
 
         if ($isBatched) {
             // Queue a renderless options request alongside the public save flow.
