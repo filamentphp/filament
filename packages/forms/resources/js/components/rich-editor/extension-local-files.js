@@ -141,7 +141,7 @@ const LocalFilesPlugin = ({
         const operation = startUpload(editorView)
 
         try {
-            await Promise.all(
+            const results = await Promise.allSettled(
                 files.map(async (file) => {
                     const attachment = await uploadFile(file, operation)
                     if (!attachment || !operation.isCurrent()) return
@@ -155,6 +155,15 @@ const LocalFilesPlugin = ({
                         .run()
                 }),
             )
+
+            results.forEach((result) => {
+                if (result.status === 'rejected') {
+                    console.error(
+                        'Failed to insert uploaded file attachment',
+                        result.reason,
+                    )
+                }
+            })
         } finally {
             operation.finish()
         }
