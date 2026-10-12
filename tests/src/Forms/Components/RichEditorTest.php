@@ -1407,6 +1407,15 @@ describe('rendering', function (): void {
             ->assertSuccessful();
     });
 
+    it('can render custom blocks inherited from the model without evaluating renderer data', function (): void {
+        livewire(RenderRichEditorWithModelCustomBlocks::class)
+            ->assertSuccessful()
+            ->assertSee('Block A')
+            ->assertSee('Block B')
+            ->assertSee('Block C')
+            ->assertSee('Marketing');
+    });
+
     it('can render with `minimalCustomBlockControls()`', function (): void {
         livewire(RenderRichEditorWithMinimalCustomBlockControls::class)
             ->assertSuccessful();
@@ -1532,6 +1541,66 @@ describe('custom blocks', function (): void {
             RichEditorTestBlockB::class,
         ]);
     });
+
+    it('resolves class-keyed custom blocks in `getCustomBlocks()`', function (string $dataType, bool $isRegisteredOnModel): void {
+        $data = match ($dataType) {
+            'array' => ['categoryUrl' => '/categories/marketing'],
+            'numeric array' => [RichEditorTestBlockC::class],
+            'closure' => static function (): array {
+                throw new RuntimeException('Renderer data must not be evaluated by the editor.');
+            },
+        };
+
+        $blocks = [
+            RichEditorTestBlockA::class => $data,
+            RichEditorTestBlockB::class,
+            'Marketing' => [RichEditorTestBlockC::class => ['categoryUrl' => '/categories/other']],
+        ];
+
+        $record = new PostWithRichContent;
+        $record->registerRichContent('content')->customBlocks($blocks);
+
+        $richEditor = Schema::make(Livewire::make())
+            ->model($record)
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks($isRegisteredOnModel ? null : $blocks),
+            ])
+            ->getComponents()[0];
+
+        expect($richEditor->getCustomBlocks())->toBe([
+            RichEditorTestBlockA::class,
+            RichEditorTestBlockB::class,
+            RichEditorTestBlockC::class,
+        ]);
+
+        expect($richEditor->getCustomBlock('block-a'))->toBe(RichEditorTestBlockA::class);
+    })->with(['array', 'numeric array', 'closure'])->with([
+        'model registration' => true,
+        'field registration' => false,
+    ]);
+
+    it('uses field `customBlocks()` instead of model registrations unless `null`', function (?array $fieldBlocks, array $expectedBlocks): void {
+        $record = new PostWithRichContent;
+        $record->registerRichContent('content')->customBlocks([RichEditorTestBlockA::class]);
+
+        $richEditor = Schema::make(Livewire::make())
+            ->model($record)
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')->customBlocks($fieldBlocks),
+            ])
+            ->getComponents()[0];
+
+        expect($richEditor->getCustomBlocks())->toBe($expectedBlocks)
+            ->and($richEditor->getGroupedCustomBlocks()->toArray())
+            ->toBe($expectedBlocks ? ['' => $expectedBlocks] : []);
+    })->with([
+        'overriding inherited blocks' => [[RichEditorTestBlockB::class], [RichEditorTestBlockB::class]],
+        'disabling inherited blocks' => [[], []],
+        'falling back to inherited blocks' => [null, [RichEditorTestBlockA::class]],
+    ]);
 
     it('can register custom blocks using a `Closure`', function (): void {
         $richEditor = Schema::make(Livewire::make())
@@ -1690,6 +1759,42 @@ describe('custom blocks', function (): void {
 });
 
 describe('custom block grouping', function (): void {
+    it('keeps class-keyed custom blocks ungrouped in `getGroupedCustomBlocks()`', function (string $dataType, bool $isRegisteredOnModel): void {
+        $data = match ($dataType) {
+            'array' => ['categoryUrl' => '/categories/marketing'],
+            'numeric array' => [RichEditorTestBlockC::class],
+            'closure' => static function (): array {
+                throw new RuntimeException('Renderer data must not be evaluated by the editor.');
+            },
+        };
+
+        $blocks = [
+            'Marketing' => [RichEditorTestBlockC::class => ['categoryUrl' => '/categories/other']],
+            RichEditorTestBlockA::class => $data,
+            RichEditorTestBlockB::class,
+        ];
+
+        $record = new PostWithRichContent;
+        $record->registerRichContent('content')->customBlocks($blocks);
+
+        $richEditor = Schema::make(Livewire::make())
+            ->model($record)
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks($isRegisteredOnModel ? null : $blocks),
+            ])
+            ->getComponents()[0];
+
+        expect($richEditor->getGroupedCustomBlocks()->toArray())->toBe([
+            '' => [RichEditorTestBlockA::class, RichEditorTestBlockB::class],
+            'Marketing' => [RichEditorTestBlockC::class],
+        ]);
+    })->with(['array', 'numeric array', 'closure'])->with([
+        'model registration' => true,
+        'field registration' => false,
+    ]);
+
     it('returns all blocks in a single ungrouped collection when no groups are used', function (): void {
         $richEditor = Schema::make(Livewire::make())
             ->statePath('data')
@@ -3095,6 +3200,28 @@ class RenderRichEditorWithClosureCustomBlocks extends Livewire
         return $form->schema([
             RichEditor::make('content')->customBlocks(static fn (): array => []),
         ])->statePath('data');
+    }
+}
+
+class RenderRichEditorWithModelCustomBlocks extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        $record = new PostWithRichContent;
+        $record->registerRichContent('content')->customBlocks([
+            RichEditorTestBlockA::class => static function (): array {
+                throw new RuntimeException('Renderer data must not be evaluated by the editor.');
+            },
+            'Marketing' => [RichEditorTestBlockB::class => ['categoryUrl' => '/categories/marketing']],
+            RichEditorTestBlockC::class,
+        ]);
+
+        return $form
+            ->model($record)
+            ->schema([
+                RichEditor::make('content'),
+            ])
+            ->statePath('data');
     }
 }
 
