@@ -14,7 +14,7 @@ import utc from 'dayjs/plugin/utc'
 import {
     observeFieldAccessibility,
     setFieldAccessibilityAttributes,
-} from '../utilities/field-accessibility'
+} from '../utilities/field-accessibility.js'
 
 dayjs.extend(advancedFormat)
 dayjs.extend(customParseFormat)

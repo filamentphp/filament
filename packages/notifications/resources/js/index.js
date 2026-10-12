@@ -1,9 +1,9 @@
-import NotificationComponentAlpinePlugin from './components/notification'
+import notification from './components/notification.js'
 import {
     Action as NotificationAction,
     ActionGroup as NotificationActionGroup,
     Notification,
-} from './Notification'
+} from './notification.js'
 import './broadcast-notifications.js'
 
 window.FilamentNotificationAction = NotificationAction
@@ -11,5 +11,5 @@ window.FilamentNotificationActionGroup = NotificationActionGroup
 window.FilamentNotification = Notification
 
 document.addEventListener('alpine:init', () => {
-    window.Alpine.plugin(NotificationComponentAlpinePlugin)
+    window.Alpine.data('notificationComponent', notification)
 })

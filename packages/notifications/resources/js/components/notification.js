@@ -1,7 +1,7 @@
 import { once } from 'alpinejs/src/utils/once'
 
-export default (Alpine) => {
-    Alpine.data('notificationComponent', ({ notification }) => ({
+export default function notificationComponent({ notification }) {
+    return {
         isShown: false,
 
         computedStyle: null,
@@ -390,5 +390,5 @@ export default (Alpine) => {
             this.unsubscribeLivewireHook = null
             Alpine.release(this.transitionEffect)
         },
-    }))
+    }
 }

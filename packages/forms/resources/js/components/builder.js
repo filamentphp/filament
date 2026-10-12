@@ -1,5 +1,5 @@
-import collapsibleItem from './collapsible-item.js'
-import reordering from './reordering.js'
+import collapsibleItem from '../utilities/collapsible-item.js'
+import reordering from '../utilities/reordering.js'
 import normalizeSearchString from '../../../../support/resources/js/utilities/normalize-search-string.js'
 
 export default function builderFormComponent({ statePath, ...configuration }) {

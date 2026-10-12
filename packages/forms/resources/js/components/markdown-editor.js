@@ -1,7 +1,7 @@
 import {
     observeFieldAccessibility,
     setFieldAccessibilityAttributes,
-} from '../utilities/field-accessibility'
+} from '../utilities/field-accessibility.js'
 
 window.CodeMirror = require('codemirror/lib/codemirror')
 
@@ -42,7 +42,7 @@ require('codemirror/mode/vue/vue')
 require('codemirror/mode/xml/xml')
 require('codemirror/mode/yaml/yaml')
 
-require('./markdown-editor/EasyMDE')
+require('./markdown-editor/EasyMDE.js')
 
 CodeMirror.commands.tabAndIndentMarkdownList = function (codemirror) {
     var ranges = codemirror.listSelections()

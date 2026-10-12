@@ -1,4 +1,4 @@
-import normalizeSearchString from '../../../support/resources/js/utilities/normalize-search-string.js'
+import normalizeSearchString from '../../../../support/resources/js/utilities/normalize-search-string.js'
 
 export default function tenantMenu() {
     return {

@@ -1,4 +1,4 @@
-import editableTableColumn from './editable.js'
+import editableTableColumn from '../../utilities/editable-table-column.js'
 
 export default function textInputTableColumn(configuration) {
     return {

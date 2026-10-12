@@ -2,7 +2,7 @@ import {
     Select,
     createSelectOptionRequestHandler,
 } from '../../../../../support/resources/js/utilities/select.js'
-import editableTableColumn from './editable.js'
+import editableTableColumn from '../../utilities/editable-table-column.js'
 
 export default function selectTableColumn({
     accessibilityAttributes,

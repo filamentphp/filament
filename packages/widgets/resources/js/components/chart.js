@@ -1,7 +1,7 @@
 import Chart from 'chart.js/auto'
 import { color } from 'chart.js/helpers'
 import 'chartjs-adapter-luxon'
-import readCustomProperties from '../custom-properties'
+import readCustomProperties from '../utilities/custom-properties.js'
 
 const darken = (value, amount) => {
     if (Array.isArray(value)) {

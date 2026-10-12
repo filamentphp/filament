@@ -1,6 +1,6 @@
 import Mousetrap from '@danharrin/alpine-mousetrap'
-import globalSearch from './global-search.js'
-import tenantMenu from './tenant-menu.js'
+import globalSearch from './components/global-search.js'
+import tenantMenu from './components/tenant-menu.js'
 import sidebar from './stores/sidebar.js'
 import './dark-mode.js'
 import './error-notifications.js'
