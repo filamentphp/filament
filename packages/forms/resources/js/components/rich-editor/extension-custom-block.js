@@ -1,5 +1,4 @@
 import { mergeAttributes, Node } from '@tiptap/core'
-import { Node as ProseMirrorNode } from '@tiptap/pm/model'
 import { Plugin } from '@tiptap/pm/state'
 
 export default Node.create({
@@ -228,7 +227,7 @@ export default Node.create({
     addKeyboardShortcuts() {
         return {
             Backspace: () =>
-                this.editor.commands.command(({ tr, state }) => {
+                this.editor.commands.command(({ state }) => {
                     let isCustomBlock = false
                     const { selection } = state
                     const { empty, anchor } = selection
@@ -237,15 +236,9 @@ export default Node.create({
                         return false
                     }
 
-                    // Store node and position for later use
-                    let customBlockNode = new ProseMirrorNode()
-                    let customBlockPos = 0
-
-                    state.doc.nodesBetween(anchor - 1, anchor, (node, pos) => {
+                    state.doc.nodesBetween(anchor - 1, anchor, (node) => {
                         if (node.type.name === this.name) {
                             isCustomBlock = true
-                            customBlockNode = node
-                            customBlockPos = pos
                             return false
                         }
                     })
