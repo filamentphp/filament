@@ -685,7 +685,8 @@ it('preserves `live()` update timing and submission locking for single `ToggleBu
         foreach (['deferred_blur', 'deferred_debounced', 'deferred_override'] as $fieldName) {
             $button = "[id=\"form.{$fieldName}-a\"]";
 
-            $page->click($button)
+            $page->assertScript("typeof Alpine.\$data(document.getElementById('form.{$fieldName}-a')).select === 'function'")
+                ->click($button)
                 ->assertAttribute($button, 'aria-pressed', 'true')
                 ->keys($button, 'Tab')
                 ->wait(0.5)
