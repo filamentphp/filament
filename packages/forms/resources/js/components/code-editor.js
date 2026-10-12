@@ -41,10 +41,11 @@ export default function codeEditorFormComponent({
         init() {
             const languageExtension = this.getLanguageExtension()
 
-            const debouncedCommit = Alpine.debounce(
-                () => this.$wire.commit(),
-                liveDebounce ?? 300,
-            )
+            const debouncedCommit = Alpine.debounce(() => {
+                if (this.editor) {
+                    this.$wire.commit()
+                }
+            }, liveDebounce ?? 300)
 
             this.editor = new EditorView({
                 parent: this.$refs.editor,
