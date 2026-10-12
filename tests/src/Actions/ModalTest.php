@@ -196,17 +196,27 @@ describe('browser interactions', function (): void {
     it('restores focus and scroll position after cancelling and confirming a top-level action modal', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/modal-browser-test')
-            ->assertScript('(() => { const spacer = document.createElement(\'div\'); spacer.style.height = \'200vh\'; document.body.append(spacer); const trigger = document.querySelector(\'[data-testid="basic-trigger"]\'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()', true)
+        $browser = visit('/modal-browser-test');
+
+        $browser->script('const spacer = document.createElement("div"); spacer.style.height = "200vh"; document.body.append(spacer); document.querySelector(\'[data-testid="basic-trigger"]\').focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight)');
+        $browser->assertScript('window.scrollY > 0');
+        $browser->script('window.modalTestScrollY = window.scrollY; document.querySelector(\'[data-testid="basic-trigger"]\').click()');
+
+        $browser
             ->assertVisible('[data-testid="basic-modal"]')
+            ->assertPresent('[data-testid="basic-modal"] :focus')
             ->click('[data-testid="basic-modal"] .fi-modal-footer-actions button >> text=Cancel')
             ->assertMissing('[data-testid="basic-modal"]')
             ->assertPresent('[data-testid="basic-trigger"]:focus')
-            ->assertScript('window.scrollY === window.modalTestScrollY', true)
-            // Let the first modal finish restoring scroll before capturing the position again.
-            ->wait(0.5)
-            ->assertScript('(() => { window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; document.querySelector(\'[data-testid="basic-trigger"]\').click(); return window.modalTestScrollY > 0 })()', true)
+            ->assertScript('window.scrollY === window.modalTestScrollY', true);
+
+        $browser->script('window.scrollTo(0, document.documentElement.scrollHeight)');
+        $browser->assertScript('window.scrollY > 0');
+        $browser->script('window.modalTestScrollY = window.scrollY; document.querySelector(\'[data-testid="basic-trigger"]\').click()');
+
+        $browser
             ->assertVisible('[data-testid="basic-modal"]')
+            ->assertPresent('[data-testid="basic-modal"] :focus')
             // Confirming runs the action and a Livewire request, unlike cancelling.
             ->click('[data-testid="basic-modal"] .fi-modal-footer-actions button >> text=Confirm')
             ->assertMissing('[data-testid="basic-modal"]')
