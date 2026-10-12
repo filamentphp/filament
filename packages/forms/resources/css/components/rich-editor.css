@@ -296,6 +296,12 @@
                 content: attr(data-placeholder);
             }
 
+            &::after {
+                /* Reserve placeholder space without moving the caret from the first line. */
+                @apply pointer-events-none invisible -mt-[1lh] block min-h-[1lh];
+                content: attr(data-placeholder);
+            }
+
             @variant dark {
                 &::before {
                     @apply text-gray-500;
