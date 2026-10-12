@@ -63,7 +63,8 @@ it('describes validation errors at the focus owner and clears them on a successf
             $control = $column . ' ' . $controlSelector;
 
             if ($name === 'title') {
-                $page->type($control, 'Updated title')->keys($control, 'Tab');
+                $page->assertValue($control, 'Draft title')
+                    ->type($control, 'Updated title')->keys($control, 'Tab');
             } elseif ($name === 'rating') {
                 $page->select($control, '2');
             } elseif ($name === 'content') {
@@ -120,7 +121,7 @@ it('displays persisted state after save hooks and `void` callbacks in both theme
             $page = $page->inDarkMode();
         }
 
-        $page->assertScript('typeof Alpine.$data(document.querySelector("[data-testid=editable-title]")).blockEdit', 'function')
+        $page->assertValue('[data-testid="editable-title"] input:not([type="hidden"])', 'Original title')
             ->type('[data-testid="editable-title"] input:not([type="hidden"])', 'mixedCase');
 
         if ($isBatched) {
@@ -166,7 +167,8 @@ it('blocks rapid toggle and custom select edits without losing focus while savin
         // Hold real save requests until the second interaction has been exercised.
         $page->script('window.editableFetch = window.fetch; window.fetch = (...parameters) => parameters[1]?.body?.includes("updateTableColumnState") ? new Promise(resolve => { window.resumeEditableSave = () => { window.resumeEditableSave = null; resolve(window.editableFetch(...parameters)) } }) : window.editableFetch(...parameters)');
 
-        $page->keys($toggle, 'Space')
+        $page->assertAttribute($toggle, 'tabindex', '0')
+            ->keys($toggle, 'Space')
             ->assertAttribute($toggle, 'aria-busy', 'true')
             ->assertAttribute($toggle, 'aria-disabled', 'true')
             ->keys($toggle, 'Space')
@@ -213,7 +215,8 @@ it('releases a failed save without claiming rollback and allows a later correcti
         $page->script('Livewire.hook("request", ({ fail }) => fail(({ preventDefault }) => preventDefault()))');
         $control = '[data-testid="editable-title"] input:not([type="hidden"])';
 
-        $page->type($control, 'Attempted title')->keys($control, 'Tab')
+        $page->assertValue($control, 'Original title')
+            ->type($control, 'Attempted title')->keys($control, 'Tab')
             ->assertAttribute($control, 'aria-invalid', 'true')
             ->assertAttributeMissing($control, 'aria-busy')
             ->assertEnabled($control)
@@ -249,7 +252,8 @@ it('releases a save whose response body is interrupted after headers in both the
         $page->script('window.editableFetch = window.fetch; window.addEventListener("unhandledrejection", event => event.preventDefault()); window.fetch = async (...parameters) => { const response = await window.editableFetch(...parameters); if (!parameters[1]?.body?.includes("updateTableColumnState")) return response; window.editableBodyInterrupted = true; return new Response(new ReadableStream({ start(controller) { controller.error(new TypeError("Response body interrupted")) } }), { status: response.status, headers: response.headers }) }; window.editableBodyInterrupted = false');
 
         $control = '[data-testid="editable-title"] input:not([type="hidden"])';
-        $page->type($control, 'Updated title')->keys($control, 'Tab')
+        $page->assertValue($control, 'Original title')
+            ->type($control, 'Updated title')->keys($control, 'Tab')
             ->assertScript('window.editableBodyInterrupted');
 
         expect($post->fresh()->title)->toBe('Updated title');
