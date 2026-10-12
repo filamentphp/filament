@@ -150,6 +150,10 @@ export default function markdownEditorFormComponent({
                 minHeight: minHeight ?? '3rem',
                 placeholder,
                 previewImagesInEditor: true,
+                shortcuts: {
+                    togglePreview: null,
+                    toggleSideBySide: null,
+                },
                 spellChecker: false,
                 status: [
                     {
