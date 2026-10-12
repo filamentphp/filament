@@ -20,6 +20,7 @@ return [
 
             'block' => [
                 'label' => 'OR condition',
+                'picker_group' => 'Logic',
                 'or' => 'OR',
             ],
 

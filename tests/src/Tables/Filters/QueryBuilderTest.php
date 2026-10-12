@@ -32,6 +32,7 @@ use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\QueryBuilderItem;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Pages\QueryBuilderTableTest;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Support\Facades\Artisan;
 use Livewire\Features\SupportTesting\Testable;
@@ -4889,7 +4890,52 @@ describe('absolute and relative date filtering', function () use ($applyQueryBui
     });
 });
 
-describe('properties', function (): void {
+describe('properties', function () use ($applyQueryBuilderFilter): void {
+    it('keeps grouped `constraints()` addressable by name and allows them to be regrouped', function (): void {
+        $queryBuilder = QueryBuilder::make()->table(livewire(PostsQueryBuilderTable::class)->instance()->getTable())
+            ->constraints([
+                'Content' => [TextConstraint::make('title'), TextConstraint::make('content')],
+                DateConstraint::make('published_at'),
+                'Empty' => [],
+            ]);
+
+        expect(array_keys($queryBuilder->getConstraints()))->toBe(['title', 'content', 'published_at'])
+            ->and($queryBuilder->getConstraint('title')?->getName())->toBe('title')
+            ->and(array_keys($queryBuilder->getGroupedConstraints()))->toBe([0, 'Content']);
+
+        $queryBuilder->constraints(['Publishing' => [TextConstraint::make('title')], TextConstraint::make('content')]);
+
+        expect(array_keys($queryBuilder->getGroupedConstraints()))->toBe([0, 1, 'Publishing'])
+            ->and($queryBuilder->getGroupedConstraints()['Publishing'][0]->getName())->toBe('title');
+
+        $queryBuilder = QueryBuilder::make()->table($queryBuilder->getTable())
+            ->constraints([TextConstraint::make('title')])
+            ->constraints([
+                'Publishing' => [DateConstraint::make('published_at')],
+                'Content' => [TextConstraint::make('title')],
+            ]);
+
+        expect(array_keys($queryBuilder->getGroupedConstraints()))->toBe(['Publishing', 'Content']);
+    });
+
+    it('applies nested rules with grouped constraints without changing query semantics', function () use ($applyQueryBuilderFilter): void {
+        $this->actingAs(User::factory()->create());
+
+        $titleMatch = Post::factory()->create(['title' => 'Autumn news', 'content' => 'Ordinary update']);
+        $contentMatch = Post::factory()->create(['title' => 'Other news', 'content' => 'Autumn highlights']);
+        $nonMatch = Post::factory()->create(['title' => 'Other news', 'content' => 'Ordinary update']);
+
+        livewire(QueryBuilderTableTest::class, ['grouped' => true])
+            ->tap($applyQueryBuilderFilter([
+                ['type' => 'or', 'data' => ['groups' => [
+                    ['rules' => [['type' => 'title', 'data' => ['operator' => 'contains', 'settings' => ['text' => 'Autumn']]]]],
+                    ['rules' => [['type' => 'content', 'data' => ['operator' => 'contains', 'settings' => ['text' => 'Autumn']]]]],
+                ]]],
+            ]))
+            ->assertCanSeeTableRecords([$titleMatch, $contentMatch])
+            ->assertCanNotSeeTableRecords([$nonMatch]);
+    });
+
     it('returns `queryBuilder` from `getDefaultName()`', function (): void {
         expect(QueryBuilder::getDefaultName())->toBe('queryBuilder');
     });
@@ -4952,6 +4998,81 @@ describe('properties', function (): void {
         // getConstraints/getConstraint need a table model, tested via integration
         expect($qb)->toBeInstanceOf(QueryBuilder::class);
     });
+});
+
+it('groups the OR block using its translated heading only when attributes are grouped', function (bool $hasGroups, ?string $label): void {
+    $this->actingAs(User::factory()->create());
+
+    if ($label !== null) {
+        app('translator')->get('filament-query-builder::query-builder');
+        app('translator')->addLines(['query-builder.form.or_groups.block.picker_group' => $label], 'en', 'filament-query-builder');
+    }
+
+    $label ??= 'Logic';
+    $livewire = livewire(QueryBuilderTableTest::class, ['grouped' => $hasGroups]);
+    $filter = $livewire->instance()->getTable()->getFilter('query_builder');
+    $builder = $filter->getSchema()->getComponent(static fn ($component): bool => $component instanceof RuleBuilder);
+
+    $html = $builder->toHtml();
+    $document = new DOMDocument;
+    @$document->loadHTML($html);
+    $xpath = new DOMXPath($document);
+
+    $orButtons = $xpath->query('//button[normalize-space(.)="OR condition"]');
+
+    expect($orButtons->length)->toBe(1)
+        ->and($xpath->query('ancestor::*[@role="group" and @aria-label="' . $label . '"]', $orButtons->item(0))->length)->toBe((int) ($hasGroups && ($label !== '')));
+
+    if ($hasGroups && ($label === 'Content')) {
+        expect($xpath->query('//*[@role="group" and @aria-label="Content"]//button')->length)->toBe(2);
+    }
+})->with(['flat' => false, 'grouped' => true])->with([
+    'default' => null,
+    'custom' => 'Conditions',
+    'numeric' => '0',
+    'existing group' => 'Content',
+    'ungrouped' => '',
+]);
+
+it('preserves constraint picker groups inside nested OR conditions', function (): void {
+    Artisan::call('filament:assets');
+    $this->actingAs(User::factory()->create());
+
+    $addRule = '.fi-fo-builder-block-picker > .fi-dropdown-trigger button';
+    $contentGroup = '[role="group"][aria-label="Content"]:visible';
+    $detailsGroup = '[role="group"][aria-label="Details"]:visible';
+    $logicGroup = '[role="group"][aria-label="Logic"]:visible';
+
+    $page = visit('/query-builder-table-test?grouped=1')
+        ->inDarkMode()
+        ->click('button[title="Filter"]')
+        ->assertPresent('[data-reorder-owner][x-data^="builderFormComponent("]:not([x-ignore])');
+
+    $page->page()->locator($addRule)->click();
+
+    $page
+        ->assertVisible($contentGroup)
+        ->assertVisible($detailsGroup)
+        ->assertVisible($logicGroup)
+        ->wait(0.5)
+        ->assertNoAccessibilityIssues();
+
+    $page->script('window.dispatchEvent(new CustomEvent("theme-changed", { detail: "light" }))');
+    $page->wait(0.5)->assertNoAccessibilityIssues()
+        ->click($logicGroup . ' button')
+        ->assertPresent('[data-reorder-owner] [data-reorder-owner]')
+        ->assertScript('Array.from(document.querySelectorAll("[data-reorder-owner]")).every(element => !element.closest("[x-ignore]"))', true);
+
+    $page->page()->locator(':nth-match(' . $addRule . ', 2)')->click();
+
+    $page
+        ->assertVisible($contentGroup)
+        ->assertVisible($detailsGroup)
+        ->assertVisible($logicGroup)
+        ->click($detailsGroup . ' button')
+        ->assertNoSmoke();
+
+    $page->assertMissing($detailsGroup)->wait(0.5)->assertNoAccessibilityIssues();
 });
 
 describe('rule limits', function () use ($applyQueryBuilderFilter): void {

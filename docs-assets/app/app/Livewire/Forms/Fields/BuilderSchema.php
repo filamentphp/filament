@@ -463,6 +463,39 @@ class BuilderSchema
                                 ->icon(Heroicon::ChatBubbleBottomCenterText),
                         ]),
                 ]),
+            Group::make()
+                ->id('builderGroupedBlocks')
+                ->extraAttributes([
+                    'class' => 'px-16 pt-16 max-w-5xl',
+                    'style' => 'padding-bottom: 14rem',
+                ])
+                ->schema([
+                    Builder::make('builderGroupedBlocks')
+                        ->label('Content')
+                        ->searchable()
+                        ->blockPickerColumns(2)
+                        ->blocks([
+                            'Content' => [
+                                Builder\Block::make('heading')
+                                    ->icon(Heroicon::Hashtag)
+                                    ->schema([TextInput::make('text')]),
+                                Builder\Block::make('paragraph')
+                                    ->icon(Heroicon::Bars3BottomLeft)
+                                    ->schema([Textarea::make('text')]),
+                                Builder\Block::make('quote')
+                                    ->icon(Heroicon::ChatBubbleBottomCenterText)
+                                    ->schema([Textarea::make('text')]),
+                            ],
+                            'Media' => [
+                                Builder\Block::make('image')
+                                    ->icon(Heroicon::Photo)
+                                    ->schema([FileUpload::make('url')->image()]),
+                                Builder\Block::make('video')
+                                    ->icon(Heroicon::Film)
+                                    ->schema([TextInput::make('url')->url()]),
+                            ],
+                        ]),
+                ]),
         ];
     }
 }

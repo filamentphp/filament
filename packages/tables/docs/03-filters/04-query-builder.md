@@ -515,6 +515,37 @@ The `summary()` method is used in the header of the constraint when it is applie
 
 ## Customizing the constraint picker
 
+### Grouping constraints
+
+You may group attributes under headings by using named arrays in `constraints()`:
+
+```php
+use Filament\QueryBuilder\Constraints\DateConstraint;
+use Filament\QueryBuilder\Constraints\TextConstraint;
+use Filament\Tables\Filters\QueryBuilder;
+
+QueryBuilder::make()
+    ->constraints([
+        'Content' => [
+            TextConstraint::make('title'),
+            TextConstraint::make('content'),
+        ],
+        'Publishing' => [
+            DateConstraint::make('published_at'),
+        ],
+    ])
+```
+
+Groups appear in the order they are defined. You may also include ungrouped constraints, which appear first without a heading. These groups are preserved in nested OR conditions and only organize the picker; they do not change how your query is evaluated.
+
+Use group names in `constraints()` that PHP keeps as string array keys. Integer keys (including numeric strings such as `'2026'`, which PHP converts to integers) are treated as ungrouped lists of constraints. Groups retain the order in which they are first defined across repeated calls to `constraints()`.
+
+When you configure multiple columns using `constraintPickerColumns()`, groups flow down each column before moving to the next. Groups stay together, and their heights are balanced across the columns. Otherwise, groups are stacked vertically.
+
+When you group attributes, the OR condition appears in a separate "Logic" group. If you do not group attributes, the OR condition remains ungrouped.
+
+<AutoScreenshot name="tables/filters/query-builder-grouped" alt="Query builder with grouped attributes and logic in the picker" version="4.x" />
+
 ### Changing the number of columns in the constraint picker
 
 The constraint picker has only 1 column. You may customize it by passing a number of columns to `constraintPickerColumns()`:

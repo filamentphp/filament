@@ -107,6 +107,9 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 
     protected Width | string | Closure | null $blockPickerWidth = null;
 
+    /** @var array<string, string> */
+    protected array $blockGroups = [];
+
     protected bool | Closure | null $isSearchable = false;
 
     protected string | Htmlable | Closure | null $searchPrompt = null;
@@ -168,13 +171,53 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
     }
 
     /**
-     * @param  array<Block> | Closure  $blocks
+     * @param  array<Block | array<Block>> | Closure  $blocks
      */
     public function blocks(array | Closure $blocks): static
     {
-        $this->components($blocks);
+        $this->components($blocks instanceof Closure
+            ? static fn (Builder $component): array | Schema => $component->normalizeBlocks($component->evaluate($blocks) ?? [])
+            : $this->normalizeBlocks($blocks));
 
         return $this;
+    }
+
+    /**
+     * @param  array<Block | array<Block>> | Schema  $blocks
+     * @return array<Block> | Schema
+     */
+    protected function normalizeBlocks(array | Schema $blocks): array | Schema
+    {
+        $this->blockGroups = [];
+
+        if ($blocks instanceof Schema) {
+            return $blocks;
+        }
+
+        $components = [];
+
+        foreach ($blocks as $group => $groupBlocks) {
+            if (! is_array($groupBlocks)) {
+                $components[] = $groupBlocks;
+
+                continue;
+            }
+
+            foreach ($groupBlocks as $block) {
+                $components[] = $block;
+
+                if (is_string($group)) {
+                    $this->blockGroups[$block->getName()] = $group;
+                }
+            }
+        }
+
+        return $components;
+    }
+
+    protected function getBlockGroup(Block $block): ?string
+    {
+        return $this->blockGroups[$block->getName()] ?? null;
     }
 
     public function getAddAction(): Action
@@ -1424,6 +1467,15 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ])->render();
         }
 
+        $blockGroups = ['' => []];
+
+        foreach ($blocks as $block) {
+            $blockGroups[$this->getBlockGroup($block) ?? ''][] = $block;
+        }
+
+        $blockGroups = array_filter($blockGroups);
+        $hasBlockGroups = array_keys($blockGroups) !== [''] && filled($blockGroups);
+
         $placement = match ($actionAlignment) {
             Alignment::Start, Alignment::Left => 'bottom-start',
             Alignment::End, Alignment::Right => 'bottom-end',
@@ -1508,8 +1560,17 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                 />
                             </div>
                         <?php } ?>
-                        <div <?= (new FilamentComponentAttributeBag)->grid($columns, GridDirection::Column)->toHtml() ?>>
-                            <?php foreach ($blocks as $block) {
+                        <div <?= $hasBlockGroups ? (new FilamentComponentAttributeBag)->grid($columns, GridDirection::Column)->class(['fi-fo-builder-block-picker-groups'])->toHtml() : '' ?>>
+                            <?php foreach ($blockGroups as $group => $groupBlocks) { ?>
+                                <div
+                                    <?= ($hasBlockGroups ? new FilamentComponentAttributeBag : (new FilamentComponentAttributeBag)->grid($columns, GridDirection::Column))->class(['fi-fo-builder-block-picker-group' => $hasBlockGroups])->toHtml() ?>
+                                    <?= ($hasBlockGroups && $isSearchable) ? 'x-show="isGroupVisible($el)"' : '' ?>
+                                    <?= filled($group) ? 'role="group" aria-label="' . e($group) . '"' : '' ?>
+                                >
+                                    <?php if (filled($group)) { ?>
+                                        <div class="fi-fo-builder-block-picker-group-label"><?= e($group) ?></div>
+                                    <?php } ?>
+                            <?php foreach ($groupBlocks as $block) {
                                 $blockIcon = $block->getIcon();
                                 $blockLabel = $block->getLabel();
 
@@ -1565,6 +1626,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                     <?= e($blockLabel) ?>
                                 </span>
                             </button>
+                            <?php } ?>
+                                </div>
                             <?php } ?>
                         </div>
 

@@ -1087,6 +1087,94 @@ describe('block picker search', function (): void {
     });
 });
 
+it('keeps array-backed `blocks()` independent when cloning a builder', function (bool $hasGroups): void {
+    $livewire = livewire(TestComponentWithBuilder::class)->instance();
+    $blocks = [Builder\Block::make('paragraph')->label('Paragraph')->schema([TextInput::make('text')])];
+    $builder = Builder::make('content')->blocks($hasGroups ? ['Content' => $blocks] : $blocks);
+    $clonedBuilder = $builder->getClone();
+
+    Schema::make($livewire)->components([$builder])->getComponents();
+    Schema::make($livewire)->components([$clonedBuilder])->getComponents();
+
+    $originalBlock = $builder->getBlock('paragraph');
+    $clonedBuilder->getBlock('paragraph')->label('Cloned paragraph');
+
+    expect($originalBlock->getLabel())->toBe('Paragraph')
+        ->and($clonedBuilder->getBlock('paragraph')->getLabel())->toBe('Cloned paragraph')
+        ->and($originalBlock->getContainer()->getParentComponent())->toBe($builder);
+})->with([false, true]);
+
+it('renders grouped `blocks()` from a `Closure` and hides groups at their item limit', function (): void {
+    expect(Builder::make('content')->blocks(static fn (): ?array => null)->getDefaultChildComponents())->toBe([]);
+
+    $blockSchema = Schema::make()->components([Builder\Block::make('paragraph')->label('Paragraph')]);
+    $builder = Builder::make('content')->blocks(static fn (): Schema => $blockSchema);
+    Schema::make(livewire(TestComponentWithBuilder::class)->instance())->components([$builder])->getComponents();
+
+    expect($builder->getDefaultChildComponents())->toBe($blockSchema)
+        ->and($builder->getBlock('paragraph')->getLabel())->toBe('Paragraph');
+
+    $livewire = livewire(RenderBuilderWithSearchableBlocks::class, ['hasGroups' => true])
+        ->assertSuccessful()
+        ->assertSeeHtml('aria-label="Content &amp; layout"')
+        ->assertSeeHtml('aria-label="Media"')
+        ->assertDontSeeHtml('aria-label="Empty"');
+
+    $livewire->callAction(TestAction::make('add')->schemaComponent('content')->arguments(['block' => 'video']))
+        ->call('$refresh')
+        ->assertDontSeeHtml('aria-label="Media"')
+        ->assertSeeHtml('aria-label="Content &amp; layout"');
+
+    expect(array_values($livewire->get('data.content')))->toBe([
+        ['type' => 'video', 'data' => ['url' => null]],
+    ]);
+});
+
+it('can search and insert grouped blocks', function (): void {
+    Artisan::call('filament:assets');
+    $this->actingAs(User::factory()->create());
+
+    $contentGroup = '[data-testid="builder"] [role="group"][aria-label="Content"]';
+    $mediaGroup = '[data-testid="builder"] [role="group"][aria-label="Media"]';
+    $searchInput = '[data-testid="builder"] input[type="text"][x-ref="searchInput"]';
+
+    $page = visit('/builder-searchable-test?grouped=1')
+        ->inDarkMode()
+        ->assertPresent('[data-testid="builder"]:not([x-ignore])');
+
+    $page->page()->locator('[data-testid="add-block"]')->click();
+
+    $page
+        ->assertVisible($contentGroup)
+        ->assertVisible($mediaGroup)
+        ->wait(0.5)
+        ->assertNoAccessibilityIssues();
+
+    $page->script('window.dispatchEvent(new CustomEvent("theme-changed", { detail: "light" }))');
+    $page->wait(0.5)->assertNoAccessibilityIssues()
+        ->type($searchInput, 'resume')
+        ->assertVisible($contentGroup)
+        ->assertMissing($mediaGroup)
+        ->type($searchInput, 'video')
+        ->assertMissing($contentGroup)
+        ->assertVisible($mediaGroup)
+        ->type($searchInput, 'zzz')
+        ->assertMissing($mediaGroup)
+        ->assertVisible('[data-testid="builder"] [role="status"]:not([x-ref="reorderStatus"])')
+        ->keys($searchInput, 'Escape')
+        ->assertVisible($contentGroup)
+        ->assertVisible($mediaGroup)
+        ->click($mediaGroup . ' button')
+        ->assertVisible('[data-testid="video-url"]');
+
+    $page->page()->locator('[data-testid="add-block"]')->click();
+
+    $page
+        ->assertNotPresent($mediaGroup)
+        ->assertVisible($contentGroup)
+        ->assertNoSmoke();
+});
+
 it('keeps blocks collapsed and preserves keyboard focus when reordering', function (string $renderMode): void {
     Artisan::call('filament:assets');
     $this->actingAs(User::factory()->create());
@@ -2830,6 +2918,8 @@ class BuilderInStatePathAncestorSetByHook extends Livewire
 
 class RenderBuilderWithSearchableBlocks extends Livewire
 {
+    public bool $hasGroups = false;
+
     public function form(Schema $form): Schema
     {
         return $form->schema([
@@ -2837,7 +2927,15 @@ class RenderBuilderWithSearchableBlocks extends Livewire
                 ->searchable()
                 ->searchPrompt(new HtmlString('<span title="Search">Find &quot;R&amp;D&quot;</span>'))
                 ->noSearchResultsMessage(new HtmlString('<strong>No matching blocks</strong>'))
-                ->blocks([
+                ->blocks(fn (): array => $this->hasGroups ? [
+                    'Content & layout' => [
+                        Builder\Block::make('paragraph')->schema([TextInput::make('text')]),
+                        Builder\Block::make('heading')->schema([TextInput::make('title')]),
+                    ],
+                    'Media' => [Builder\Block::make('video')->maxItems(1)->schema([TextInput::make('url')])],
+                    'Empty' => [],
+                    Builder\Block::make('divider'),
+                ] : [
                     Builder\Block::make('paragraph')
                         ->label('Paragraph')
                         ->schema([TextInput::make('text')]),
