@@ -836,8 +836,10 @@ describe('rendering', function (): void {
         $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
 
         $page
-            ->click('Published')
+            ->assertAttribute('[data-tab-key="published"]', 'data-tab-available', 'true')
+            ->click('[data-tab-key="published"]')
             ->assertPresent('.fi-ta-content-loading .fi-ta-records[inert]')
+            ->assertAttribute('[x-ref="tabsData"]', 'data-active-tab', 'published')
             ->assertMissing('.fi-ta-records[inert]');
 
         Post::query()->delete();
