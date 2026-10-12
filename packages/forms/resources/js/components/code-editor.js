@@ -3,7 +3,7 @@ import { EditorView, basicSetup } from 'codemirror-v6'
 import { indentWithTab } from '@codemirror/commands'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { keymap } from '@codemirror/view'
-import { observeFieldAccessibility } from '../utils/field-accessibility'
+import { observeFieldAccessibility } from '../utilities/field-accessibility'
 
 import { cpp } from '@codemirror/lang-cpp'
 import { css } from '@codemirror/lang-css'

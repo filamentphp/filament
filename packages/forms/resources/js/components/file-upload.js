@@ -13,7 +13,7 @@ import FilePondPluginMediaPreview from './file-upload/filepond-plugin-media-prev
 import {
     observeFieldAccessibility,
     setFieldAccessibilityAttributes,
-} from '../utils/field-accessibility'
+} from '../utilities/field-accessibility'
 
 FilePond.registerPlugin(FilePondPluginFileValidateSize)
 FilePond.registerPlugin(FilePondPluginFileValidateType)

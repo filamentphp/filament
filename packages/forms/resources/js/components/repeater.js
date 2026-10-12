@@ -1,5 +1,5 @@
-import collapsibleItem from '../utils/collapsible-item.js'
-import reordering from '../utils/reordering.js'
+import collapsibleItem from './collapsible-item.js'
+import reordering from './reordering.js'
 
 export default function repeaterFormComponent({ statePath, ...configuration }) {
     return {

@@ -1,7 +1,7 @@
 import {
     observeFieldAccessibility,
     setFieldAccessibilityAttributes,
-} from '../utils/field-accessibility'
+} from '../utilities/field-accessibility'
 
 window.CodeMirror = require('codemirror/lib/codemirror')
 

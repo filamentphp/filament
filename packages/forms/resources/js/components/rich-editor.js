@@ -4,7 +4,7 @@ import * as TipTapPmView from '@tiptap/pm/view'
 import * as TipTapPmModel from '@tiptap/pm/model'
 import getExtensions from './rich-editor/extensions'
 import { BubbleMenuPlugin } from '@tiptap/extension-bubble-menu'
-import { observeFieldAccessibility } from '../utils/field-accessibility'
+import { observeFieldAccessibility } from '../utilities/field-accessibility'
 import normalizeSearchString from '../../../../support/resources/js/utilities/normalize-search-string.js'
 
 const { Editor } = TipTapCore

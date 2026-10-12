@@ -2,7 +2,7 @@ import noUiSlider from 'nouislider'
 import {
     observeFieldAccessibility,
     setFieldAccessibilityAttributes,
-} from '../utils/field-accessibility'
+} from '../utilities/field-accessibility'
 
 export default function sliderFormComponent({
     arePipsStepped,

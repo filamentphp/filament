@@ -60,6 +60,68 @@ const LocalFilesPlugin = ({
             },
         )
 
+    const uploadFiles = (editorView, files, getPosition) => {
+        dispatchFormEvent(editorView, 'form-processing-started', {
+            message: uploadingMessage,
+        })
+
+        files.forEach((file, fileIndex) => {
+            editor.setEditable(false)
+            editorView.dom.dispatchEvent(
+                new CustomEvent('rich-editor-uploading-file', {
+                    bubbles: true,
+                    detail: {
+                        key,
+                        livewireId: get$WireUsing().id,
+                    },
+                }),
+            )
+
+            const fileKey = generateFileKey()
+
+            get$WireUsing().upload(
+                `componentFileAttachments.${statePath}.${fileKey}`,
+                file,
+                () => {
+                    getFileAttachmentUrl(fileKey).then((url) => {
+                        if (!url) {
+                            return
+                        }
+
+                        editor
+                            .chain()
+                            .insertContentAt(getPosition(), {
+                                type: 'image',
+                                attrs: {
+                                    id: fileKey,
+                                    src: url,
+                                },
+                            })
+                            .run()
+
+                        editor.setEditable(true)
+                        editorView.dom.dispatchEvent(
+                            new CustomEvent('rich-editor-uploaded-file', {
+                                bubbles: true,
+                                detail: {
+                                    key,
+                                    livewireId: get$WireUsing().id,
+                                },
+                            }),
+                        )
+
+                        if (fileIndex === files.length - 1) {
+                            dispatchFormEvent(
+                                editorView,
+                                'form-processing-finished',
+                            )
+                        }
+                    })
+                },
+            )
+        })
+    }
+
     return new Plugin({
         key: new PluginKey('localFiles'),
         props: {
@@ -97,10 +159,6 @@ const LocalFilesPlugin = ({
                     return false
                 }
 
-                dispatchFormEvent(editorView, 'form-processing-started', {
-                    message: uploadingMessage,
-                })
-
                 event.preventDefault()
                 event.stopPropagation()
 
@@ -109,64 +167,7 @@ const LocalFilesPlugin = ({
                     top: event.clientY,
                 })
 
-                files.forEach((file, fileIndex) => {
-                    editor.setEditable(false)
-                    editorView.dom.dispatchEvent(
-                        new CustomEvent('rich-editor-uploading-file', {
-                            bubbles: true,
-                            detail: {
-                                key,
-                                livewireId: get$WireUsing().id,
-                            },
-                        }),
-                    )
-
-                    const fileKey = generateFileKey()
-
-                    get$WireUsing().upload(
-                        `componentFileAttachments.${statePath}.${fileKey}`,
-                        file,
-                        () => {
-                            getFileAttachmentUrl(fileKey).then((url) => {
-                                if (!url) {
-                                    return
-                                }
-
-                                editor
-                                    .chain()
-                                    .insertContentAt(position?.pos ?? 0, {
-                                        type: 'image',
-                                        attrs: {
-                                            id: fileKey,
-                                            src: url,
-                                        },
-                                    })
-                                    .run()
-
-                                editor.setEditable(true)
-                                editorView.dom.dispatchEvent(
-                                    new CustomEvent(
-                                        'rich-editor-uploaded-file',
-                                        {
-                                            bubbles: true,
-                                            detail: {
-                                                key,
-                                                livewireId: get$WireUsing().id,
-                                            },
-                                        },
-                                    ),
-                                )
-
-                                if (fileIndex === files.length - 1) {
-                                    dispatchFormEvent(
-                                        editorView,
-                                        'form-processing-finished',
-                                    )
-                                }
-                            })
-                        },
-                    )
-                })
+                uploadFiles(editorView, files, () => position?.pos ?? 0)
 
                 return true
             },
@@ -207,72 +208,11 @@ const LocalFilesPlugin = ({
                     event.preventDefault()
                     event.stopPropagation()
 
-                    dispatchFormEvent(editorView, 'form-processing-started', {
-                        message: uploadingMessage,
-                    })
-
-                    files.forEach((file, fileIndex) => {
-                        editor.setEditable(false)
-                        editorView.dom.dispatchEvent(
-                            new CustomEvent('rich-editor-uploading-file', {
-                                bubbles: true,
-                                detail: {
-                                    key,
-                                    livewireId: get$WireUsing().id,
-                                },
-                            }),
-                        )
-
-                        const fileKey = generateFileKey()
-
-                        get$WireUsing().upload(
-                            `componentFileAttachments.${statePath}.${fileKey}`,
-                            file,
-                            () => {
-                                getFileAttachmentUrl(fileKey).then((url) => {
-                                    if (!url) {
-                                        return
-                                    }
-
-                                    editor
-                                        .chain()
-                                        .insertContentAt(
-                                            editor.state.selection.anchor,
-                                            {
-                                                type: 'image',
-                                                attrs: {
-                                                    id: fileKey,
-                                                    src: url,
-                                                },
-                                            },
-                                        )
-                                        .run()
-
-                                    editor.setEditable(true)
-                                    editorView.dom.dispatchEvent(
-                                        new CustomEvent(
-                                            'rich-editor-uploaded-file',
-                                            {
-                                                bubbles: true,
-                                                detail: {
-                                                    key,
-                                                    livewireId:
-                                                        get$WireUsing().id,
-                                                },
-                                            },
-                                        ),
-                                    )
-
-                                    if (fileIndex === files.length - 1) {
-                                        dispatchFormEvent(
-                                            editorView,
-                                            'form-processing-finished',
-                                        )
-                                    }
-                                })
-                            },
-                        )
-                    })
+                    uploadFiles(
+                        editorView,
+                        files,
+                        () => editor.state.selection.anchor,
+                    )
 
                     return true
                 }
