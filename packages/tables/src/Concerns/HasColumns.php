@@ -45,23 +45,23 @@ trait HasColumns
         $column = $this->getTable()->getColumn($column);
 
         if (! ($column instanceof Editable)) {
-            return null;
+            return ['error' => __('filament-tables::table.columns.editable.unavailable')];
         }
 
         if ($column->isHidden()) {
-            return null;
+            return ['error' => __('filament-tables::table.columns.editable.unavailable')];
         }
 
         $record = $this->getTableRecord($record);
 
         if (! $record) {
-            return null;
+            return ['error' => __('filament-tables::table.columns.editable.unavailable')];
         }
 
         $column->record($record);
 
         if ($column->isDisabled()) {
-            return null;
+            return ['error' => __('filament-tables::table.columns.editable.unavailable')];
         }
 
         try {
@@ -72,7 +72,12 @@ trait HasColumns
             ];
         }
 
-        return $column->updateState($input);
+        $response = $column->updateState($input);
+
+        $column->clearCachedState();
+        $this->flushCachedTableRecords();
+
+        return $response;
     }
 
     /**

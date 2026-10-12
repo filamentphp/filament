@@ -233,10 +233,14 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                 'x-load' => true,
                 'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/text-input', 'filament/tables'),
                 'x-data' => 'textInputTableColumn({
+                    messages: ' . Js::from($this->getUpdateStateMessages()) . ',
                     name: ' . Js::from($this->getName()) . ',
                     recordKey: ' . Js::from($this->getRecordKey()) . ',
                     state: ' . Js::from($state) . ',
                 })',
+                'x-id' => "['table-column-error']",
+                'x-on:click.capture' => 'blockEdit($event)',
+                'x-on:keydown.capture' => 'blockEdit($event)',
             ], escape: false)
             ->class([
                 'fi-ta-text-input',
@@ -249,7 +253,11 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                 'disabled' => $isDisabled,
                 'wire:loading.attr' => 'disabled',
                 'wire:target' => implode(',', Table::LOADING_TARGETS),
+                'x-bind:aria-invalid' => "error ? 'true' : " . Js::from($this->getExtraInputAttributeBag()->get('aria-invalid')),
+                'x-bind:aria-busy' => "isLoading ? 'true' : " . Js::from($this->getExtraInputAttributeBag()->get('aria-busy')),
+                'x-bind:aria-describedby' => 'getAccessibilityAttributes(' . Js::from($this->getExtraInputAttributeBag()->only('aria-describedby')->getAttributes()) . ")[ 'aria-describedby' ]",
                 'x-bind:disabled' => $isDisabled ? null : 'isLoading',
+                'x-on:input' => 'clearError()',
                 'inputmode' => $this->getInputMode(),
                 'placeholder' => filled($placeholder = $this->getPlaceholder()) ? e($placeholder) : null,
                 'step' => $this->getStep(),
@@ -260,11 +268,13 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                         content: ' . Js::from($tooltip) . ',
                         theme: $store.theme,
                         allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
+                        aria: { content: \'auto\' },
                     }'
                     : 'false') . ' : {
                         content: error,
                         theme: $store.theme,
                         allowHTML: false,
+                        aria: { content: null },
                     }',
             ], escape: false)
             ->class([
@@ -328,6 +338,23 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                     </div>
                 <?php } ?>
             </div>
+
+            <p
+                x-cloak
+                x-show="error"
+                x-bind:id="$id('table-column-error')"
+                x-ref="error"
+                x-text="error"
+                class="fi-sr-only"
+            ></p>
+
+            <p
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                x-text="status"
+                class="fi-sr-only"
+            ></p>
         </div>
 
         <?php return ob_get_clean();
