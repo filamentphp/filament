@@ -259,6 +259,10 @@ document.addEventListener('alpine:init', () => {
 
     Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
         succeed(({ snapshot, effects }) => {
+            if (!component.el.isConnected) {
+                return
+            }
+
             effects.dispatches?.forEach((dispatch) => {
                 if (!dispatch.params?.awaitSchemaComponent) {
                     return
@@ -278,16 +282,21 @@ document.addEventListener('alpine:init', () => {
                     throw `Multiple schema components found with key [${dispatch.params.awaitSchemaComponent}].`
                 }
 
-                window.addEventListener(
-                    `schema-component-${component.id}-${dispatch.params.awaitSchemaComponent}-loaded`,
-                    () => {
-                        window.dispatchEvent(
-                            new CustomEvent(dispatch.name, {
-                                detail: dispatch.params,
-                            }),
-                        )
-                    },
-                    { once: true },
+                const loadedEvent = `schema-component-${component.id}-${dispatch.params.awaitSchemaComponent}-loaded`
+                const dispatchWhenLoaded = () => {
+                    window.dispatchEvent(
+                        new CustomEvent(dispatch.name, {
+                            detail: dispatch.params,
+                        }),
+                    )
+                }
+
+                window.addEventListener(loadedEvent, dispatchWhenLoaded, {
+                    once: true,
+                })
+
+                component.addCleanup(() =>
+                    window.removeEventListener(loadedEvent, dispatchWhenLoaded),
                 )
             })
         })

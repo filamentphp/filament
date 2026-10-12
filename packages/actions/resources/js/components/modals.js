@@ -1,6 +1,8 @@
 export default ({ livewireId }) => ({
     actionNestingIndex: null,
 
+    isDestroyed: false,
+
     shouldOverlayParentActions: false,
 
     closedActionNestingIndexes: [],
@@ -239,6 +241,8 @@ export default ({ livewireId }) => ({
         requestAnimationFrame(() =>
             requestAnimationFrame(() =>
                 this.$nextTick(async () => {
+                    if (this.isDestroyed) return
+
                     if (!previouslyFocusedElement.restore) {
                         previouslyFocusedElement.focus({ preventScroll: true })
                         return
@@ -282,6 +286,8 @@ export default ({ livewireId }) => ({
     },
 
     openModal() {
+        if (this.isDestroyed) return
+
         const id = this.generateModalId(this.actionNestingIndex)
 
         document.dispatchEvent(
@@ -306,6 +312,7 @@ export default ({ livewireId }) => ({
     },
 
     destroy() {
+        this.isDestroyed = true
         this.pendingFocusTarget?.controller.abort()
         this.restoringFocusTarget?.controller.abort()
         Object.values(this.focusTargetsByNestingIndex).forEach((target) =>
