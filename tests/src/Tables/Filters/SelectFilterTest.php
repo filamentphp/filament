@@ -70,7 +70,7 @@ describe('filtering records', function (): void {
             ->assertCanSeeTableRecords($postsWithAuthor->merge($postsWithoutAuthor));
     });
 
-    it('can filter records with no relationship using `hasEmptyRelationshipOption`', function (): void {
+    it('can filter records with no relationship using `hasEmptyRelationshipOption()`', function (): void {
         $author = User::factory()->create();
 
         $postsWithAuthor = Post::factory()->count(3)->create(['author_id' => $author->getKey()]);
@@ -83,7 +83,7 @@ describe('filtering records', function (): void {
             ->assertCanNotSeeTableRecords($postsWithAuthor);
     });
 
-    it('can filter records by specific relationship value using `hasEmptyRelationshipOption`', function (): void {
+    it('can filter records by specific relationship value using `hasEmptyRelationshipOption()`', function (): void {
         $author1 = User::factory()->create();
         $author2 = User::factory()->create();
 
@@ -99,7 +99,7 @@ describe('filtering records', function (): void {
             ->assertCanNotSeeTableRecords($postsWithoutAuthor);
     });
 
-    it('can filter records with no relationship using `hasEmptyRelationshipOption` with `multiple()`', function (): void {
+    it('can filter records with no relationship using `hasEmptyRelationshipOption()` with `multiple()`', function (): void {
         $author = User::factory()->create();
 
         $postsWithAuthor = Post::factory()->count(3)->create(['author_id' => $author->getKey()]);
@@ -112,7 +112,7 @@ describe('filtering records', function (): void {
             ->assertCanNotSeeTableRecords($postsWithAuthor);
     });
 
-    it('can filter records by specific relationship values using `hasEmptyRelationshipOption` with `multiple()`', function (): void {
+    it('can filter records by specific relationship values using `hasEmptyRelationshipOption()` with `multiple()`', function (): void {
         $author1 = User::factory()->create();
         $author2 = User::factory()->create();
         $author3 = User::factory()->create();
@@ -130,7 +130,7 @@ describe('filtering records', function (): void {
             ->assertCanNotSeeTableRecords($postsWithoutAuthor);
     });
 
-    it('can filter records by relationship values combined with empty option using `hasEmptyRelationshipOption` with `multiple()`', function (): void {
+    it('can filter records by relationship values combined with empty option using `hasEmptyRelationshipOption()` with `multiple()`', function (): void {
         $author1 = User::factory()->create();
         $author2 = User::factory()->create();
 
@@ -355,7 +355,7 @@ describe('options and properties', function (): void {
         expect($filter->getRelationshipTitleAttribute())->toBe('name');
     });
 
-    it('can check `hasEmptyRelationshipOption()` returns `true` when `hasEmptyOption` is set', function (): void {
+    it('can check `hasEmptyRelationshipOption()` returns `true` when `$hasEmptyOption` is set', function (): void {
         $withoutEmptyOption = SelectFilter::make('author')
             ->relationship('author', 'name');
 
@@ -890,7 +890,7 @@ describe('relationship branch coverage', function (): void {
             });
     });
 
-    it('includes the empty relationship option key in `getOptionsFromRelationship()` when `hasEmptyOption` is set', function () use ($wireField): void {
+    it('includes the empty relationship option key in `getOptionsFromRelationship()` when `$hasEmptyOption` is set', function () use ($wireField): void {
         $author = User::factory()->create(['name' => 'Alpha']);
 
         livewire(TestTableWithPreloadedEmptyRelationshipFilter::class)

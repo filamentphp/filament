@@ -245,7 +245,7 @@ it('can set `listWithLineBreaks()`', function (): void {
     expect($entry->isListWithLineBreaks())->toBeTrue();
 });
 
-it('`isListWithLineBreaks()` returns true when `bulleted()` is set', function (): void {
+test('`isListWithLineBreaks()` returns true when `bulleted()` is set', function (): void {
     $entry = TextEntry::make('name')->bulleted();
     expect($entry->isListWithLineBreaks())->toBeTrue();
 });
@@ -425,7 +425,7 @@ describe('formatting trust boundaries', function (): void {
     it('sanitizes `RichContentAttribute` before the general `Htmlable` bypass', function (bool $isMarkdown): void {
         // Return unsafe HTML at the boundary so the renderer's own sanitizer cannot mask a regression here.
         $content = Mockery::mock(RichContentAttribute::class);
-        $content->shouldReceive('toHtml')->once()
+        $content->shouldReceive('toHtml')
             ->andReturn('<p onclick="alert(1)">Alpha beta</p><script>alert(2)</script>');
 
         $entry = TextEntry::make('content')

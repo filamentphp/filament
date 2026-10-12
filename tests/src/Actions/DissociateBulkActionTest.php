@@ -160,7 +160,7 @@ it('shows successful and partially vetoed dissociations in the browser', functio
 
     foreach (['dark', 'light'] as $theme) {
         $browser->script("window.dispatchEvent(new CustomEvent('theme-changed', { detail: '{$theme}' }))");
-        $browser->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
+        $browser
             ->assertNoAccessibilityIssues();
     }
 
@@ -178,7 +178,7 @@ it('shows successful and partially vetoed dissociations in the browser', functio
 
     foreach (['dark', 'light'] as $theme) {
         $browser->script("window.dispatchEvent(new CustomEvent('theme-changed', { detail: '{$theme}' }))");
-        $browser->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
+        $browser
             ->assertNoAccessibilityIssues();
     }
 

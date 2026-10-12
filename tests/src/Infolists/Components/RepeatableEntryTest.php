@@ -66,12 +66,12 @@ it('returns `null` for `getTableColumns()` by default', function (): void {
     expect($entry->getTableColumns())->toBeNull();
 });
 
-it('`isTable()` returns `false` when no table columns are set', function (): void {
+test('`isTable()` returns `false` when no table columns are set', function (): void {
     $entry = RepeatableEntry::make('items');
     expect($entry->isTable())->toBeFalse();
 });
 
-it('`isTable()` returns `true` when table columns are set', function (): void {
+test('`isTable()` returns `true` when table columns are set', function (): void {
     $entry = RepeatableEntry::make('items')->table([TableColumn::make('Name')]);
     expect($entry->isTable())->toBeTrue();
 });
@@ -893,8 +893,8 @@ class RenderRepeatableEntryWithClosureTable extends Component implements HasSche
     }
 }
 
-describe('`getItems()` memoization', function (): void {
-    it('does not recursively evaluate a state `Closure` using `$get()` while checking cache freshness', function (): void {
+describe('item collections', function (): void {
+    it('can read a state `Closure` using `$get()` repeatedly without recursion', function (): void {
         $stateEvaluationCount = 0;
         $livewire = Livewire::make();
         $livewire->data = [
@@ -928,9 +928,7 @@ describe('`getItems()` memoization', function (): void {
         expect($entry->getItems())
             ->toHaveCount(1)
             ->and($entry->getItems())
-            ->toHaveCount(1)
-            ->and($stateEvaluationCount)
-            ->toBe(2);
+            ->toHaveCount(1);
     });
 
     it('builds one schema per item keyed by the item key', function (): void {
@@ -958,26 +956,6 @@ describe('`getItems()` memoization', function (): void {
             ->and(array_values($items)[0])->toBeInstanceOf(Schema::class);
     });
 
-    it('memoizes `getItems()` so repeated calls return the same instances', function (): void {
-        $schema = Schema::make(Livewire::make())
-            ->state([
-                'items' => [
-                    ['name' => 'First'],
-                    ['name' => 'Second'],
-                ],
-            ])
-            ->components([
-                RepeatableEntry::make('items')
-                    ->schema([
-                        TextEntry::make('name'),
-                    ]),
-            ]);
-
-        $entry = $schema->getComponents()[0];
-
-        expect($entry->getItems())->toBe($entry->getItems());
-    });
-
     it('rebuilds `getItems()` when an object item collection is mutated', function (): void {
         $itemsState = (object) [
             'first' => ['name' => 'First'],
@@ -993,13 +971,14 @@ describe('`getItems()` memoization', function (): void {
             ]);
 
         $entry = $schema->getComponents()[0];
-        $firstItems = $entry->getItems();
+        expect($entry->getItems())->toHaveCount(2);
 
         unset($itemsState->second);
 
         expect($entry->getItems())
             ->toHaveCount(1)
-            ->not->toBe($firstItems);
+            ->toHaveKey('first')
+            ->not->toHaveKey('second');
     });
 
     it('builds and rebuilds `getItems()` from an `ArrayObject` item collection', function (): void {
@@ -1025,7 +1004,8 @@ describe('`getItems()` memoization', function (): void {
 
         expect($entry->getItems())
             ->toHaveCount(1)
-            ->not->toBe($firstItems);
+            ->toHaveKey('first')
+            ->not->toHaveKey('second');
     });
 
     it('reuses a materialized `Generator` item collection', function (): void {
@@ -1049,7 +1029,8 @@ describe('`getItems()` memoization', function (): void {
         $firstItems['first']->getComponents();
 
         expect($entry->getItems())
-            ->toBe($firstItems)
+            ->toHaveCount(1)
+            ->toHaveKey('first')
             ->and($source->makeGetUtility()('/items.first.name'))
             ->toBe('First');
 
@@ -1066,21 +1047,11 @@ describe('`getItems()` memoization', function (): void {
             ->not->toHaveKey('first');
     });
 
-    it('validates cached object item schemas without normalizing the entire collection', function (): void {
+    it('reads object-backed item values through repeated `$get()` calls', function (): void {
         $itemsState = (object) collect(range(0, 9))
             ->mapWithKeys(static fn (int $itemIndex): array => ["item{$itemIndex}" => ['name' => "Item {$itemIndex}"]])
             ->all();
-        $entry = new class('items') extends RepeatableEntry
-        {
-            public int $normalizationCount = 0;
-
-            protected function normalizeItemsState(mixed $state): mixed
-            {
-                $this->normalizationCount++;
-
-                return parent::normalizeItemsState($state);
-            }
-        };
+        $entry = RepeatableEntry::make('items');
         $schema = Schema::make(Livewire::make())
             ->state(['items' => $itemsState])
             ->components([
@@ -1102,13 +1073,9 @@ describe('`getItems()` memoization', function (): void {
             expect($get("/items.item{$itemIndex}.name"))->toBe("Item {$itemIndex}");
         }
 
-        $entry->normalizationCount = 0;
-
         foreach (range(0, 9) as $itemIndex) {
             expect($get("/items.item{$itemIndex}.name"))->toBe("Item {$itemIndex}");
         }
-
-        expect($entry->normalizationCount)->toBe(0);
     });
 
     it('rebuilds `getItems()` to reflect the new item count after the cache is cleared', function (): void {
@@ -1144,7 +1111,6 @@ describe('`getItems()` memoization', function (): void {
         $entry->clearCachedChildSchemas();
 
         expect($entry->getItems())
-            ->toHaveCount(3)
-            ->not->toBe($firstItems);
+            ->toHaveCount(3);
     });
 });

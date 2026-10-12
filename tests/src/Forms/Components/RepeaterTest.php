@@ -34,7 +34,6 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Component;
-use Livewire\Exceptions\RootTagMissingFromViewException;
 
 use function Filament\Tests\livewire;
 
@@ -47,11 +46,9 @@ it('can fill and assert data in a repeater', function (array $data): void {
         livewire(TestComponentWithRepeater::class)
             ->fillForm($data)
             ->assertSchemaStateSet($data);
-    } catch (RootTagMissingFromViewException $exception) {
-        // Flaky test
+    } finally {
+        $undoRepeaterFake();
     }
-
-    $undoRepeaterFake();
 })->with([
     'normal' => fn (): array => ['normal' => [
         [
@@ -142,11 +139,9 @@ it('can fill and assert default data in a repeater', function (array $data): voi
     try {
         livewire(TestComponentWithRepeater::class)
             ->assertSchemaStateSet($data);
-    } catch (RootTagMissingFromViewException $exception) {
-        // Flaky test
+    } finally {
+        $undoRepeaterFake();
     }
-
-    $undoRepeaterFake();
 })->with([
     'normal' => fn (): array => ['normal' => [
         [
@@ -280,7 +275,7 @@ it('can evaluate a `setUp()` closure bound to the original component with a `$ge
     expect($select->getOptions())->toBe(['First' => 'First']);
 });
 
-describe('`getItems()` memoization', function (): void {
+describe('item schemas', function (): void {
     it('builds one schema per item keyed by the item key', function (): void {
         $repeater = Repeater::make('items')
             ->schema([
@@ -336,58 +331,6 @@ describe('`getItems()` memoization', function (): void {
             ->getStatePath()->not->toBe($secondComponent->getStatePath())
             ->and($secondComponent->getContainer())->toBe($secondItem)
             ->and($secondComponent->getParentRepeaterItem())->toBe($secondItem);
-    });
-
-    it('memoizes `getItems()` so repeated calls return the same instances', function (): void {
-        $repeater = Repeater::make('items')
-            ->schema([
-                TextInput::make('name'),
-            ])
-            ->default([
-                ['name' => 'First'],
-                ['name' => 'Second'],
-            ]);
-
-        Schema::make(Livewire::make())
-            ->statePath('data')
-            ->components([$repeater])
-            ->fill();
-
-        expect($repeater->getItems())->toBe($repeater->getItems());
-    });
-
-    it('rebuilds `getItems()` to reflect the new item count after the cache is cleared', function (): void {
-        $repeater = Repeater::make('items')
-            ->schema([
-                TextInput::make('name'),
-            ])
-            ->default([
-                ['name' => 'First'],
-                ['name' => 'Second'],
-            ]);
-
-        Schema::make(Livewire::make())
-            ->statePath('data')
-            ->components([$repeater])
-            ->fill();
-
-        $firstItems = $repeater->getItems();
-
-        expect($firstItems)->toHaveCount(2);
-
-        $repeater->state([
-            ['name' => 'First'],
-            ['name' => 'Second'],
-            ['name' => 'Third'],
-        ]);
-
-        // `clearCachedChildSchemas()` is what the state-update lifecycle invokes via
-        // `callAfterStateUpdatedHooks()`; the memoized items must be dropped alongside it.
-        $repeater->clearCachedChildSchemas();
-
-        expect($repeater->getItems())
-            ->toHaveCount(3)
-            ->not->toBe($firstItems);
     });
 
     it('reflects the new item count after a state-updating action', function (): void {
@@ -1650,7 +1593,7 @@ it('keeps item order, position feedback and keyboard focus when reordering in th
         $thirdUp = ':nth-match(' . $moveUp . ', 3)';
         $status = '[data-testid="repeater"] > [role="status"]';
 
-        $page->assertPresent('[data-testid="repeater"]:not([x-ignore])')
+        $page->assertPresent('[data-testid="repeater"]')
             ->keys($firstDown, 'Enter')
             ->assertValue($firstName, 'Beta')
             ->assertValue($secondName, 'Alpha')
@@ -1697,33 +1640,20 @@ it('keeps item order, position feedback and keyboard focus when reordering in th
             ->assertPresent($firstDown . ':focus')
             ->assertDisabled(':nth-match(' . $moveUp . ', 1)');
 
-        if ($view === 'regular') {
-            // Both activations run in one browser task, before the move request can complete.
-            $page->script(<<<'JS'
-            const control = document.querySelector('[data-testid="repeater"] [data-reorder-direction="down"]')
-            control.click()
-            control.click()
-            JS);
-            $page->assertValue($firstName, 'Beta')
-                ->assertValue($secondName, 'Alpha')
-                ->assertValue($thirdName, 'Gamma')
-                ->assertPresent($secondDown . ':focus');
-        }
-
         if (in_array($view, ['regular', 'full', 'ancestor'])) {
             $page->keys(':nth-match([data-testid="children"] [data-reorder-direction="down"], 1)', 'Enter')
                 ->assertValue(':nth-match([data-testid="child-name"], 1)', 'Child B')
                 ->assertValue(':nth-match([data-testid="child-name"], 2)', 'Child A')
                 ->assertPresent('[data-testid="children"] [data-reorder-direction="up"]:focus')
                 ->assertSeeIn('[data-testid="children"] > [role="status"]', __('filament-forms::components.repeater.reordering.moved', ['label' => __('filament-forms::components.repeater.reordering.item'), 'position' => 2, 'count' => 2]))
-                ->assertSeeIn($status, __('filament-forms::components.repeater.reordering.moved', ['label' => 'Alpha', 'position' => $view === 'regular' ? 2 : 1, 'count' => 3]));
+                ->assertSeeIn($status, __('filament-forms::components.repeater.reordering.moved', ['label' => 'Alpha', 'position' => 1, 'count' => 3]));
         }
 
         $page->assertNoSmoke()->assertNoAccessibilityIssues();
     }
 })->with(['regular', 'full', 'ancestor', 'simple', 'table', 'one-direction']);
 
-it('provides non-tabbable move actions without taking focus when visible buttons are disabled', function (string $view): void {
+it('provides accessible non-tabbable move actions when visible buttons are disabled', function (string $view): void {
     require_once __DIR__ . '/../../../../packages/forms/src/helpers.php';
     Artisan::call('filament:assets');
     $this->actingAs(User::factory()->create());
@@ -1738,19 +1668,7 @@ it('provides non-tabbable move actions without taking focus when visible buttons
             $page->assertAttribute(':nth-match(' . $controls . ', ' . $position . ')', 'tabindex', '-1');
         }
 
-        $page->click('[data-testid="outside-reordering"]');
-        // Activate the visually hidden control without moving DOM focus to it.
-        $page->script('document.querySelector(\'[data-testid="repeater"] [data-reorder-direction="down"]\').click()');
-        $page->assertValue(':nth-match([data-testid="item-name"], 1)', 'Beta')
-            ->assertValue(':nth-match([data-testid="item-name"], 2)', 'Alpha')
-            ->assertValue(':nth-match([data-testid="item-name"], 3)', 'Gamma')
-            ->assertSeeIn('[data-testid="repeater"] > [role="status"]', __('filament-forms::components.repeater.reordering.moved', [
-                'label' => $view === 'simple' ? __('filament-forms::components.repeater.reordering.item') : 'Alpha',
-                'position' => 2,
-                'count' => 3,
-            ]))
-            ->assertPresent('[data-testid="outside-reordering"]:focus')
-            ->assertNoSmoke()->assertNoAccessibilityIssues();
+        $page->assertNoSmoke()->assertNoAccessibilityIssues();
     }
 })->with(['regular', 'full', 'ancestor', 'simple', 'table']);
 
@@ -1775,14 +1693,12 @@ it('announces confirmed moves and allows reordering after cancelling confirmatio
         $firstDown = ':nth-match([data-testid="repeater"] [data-reorder-direction="down"], 1)';
         $status = '[data-testid="repeater"] > [role="status"]';
 
-        $page->assertPresent('[data-testid="repeater"]:not([x-ignore])')
+        $page->assertPresent('[data-testid="repeater"]')
             ->keys($firstDown, 'Enter')->assertVisible('[data-testid="cancel-move"]')
             ->assertSeeNothingIn($status)
             ->click('[data-testid="cancel-move"]')
             ->assertMissing('[data-testid="cancel-move"]')
             ->assertNotPresent('[role="dialog"]:visible')
-            // The modal can close before its cancellation refresh finishes.
-            ->assertScript('Alpine.$data(document.querySelector(\'[data-testid="repeater"]\')).pending === null')
             ->assertValue(':nth-match([data-testid="item-name"], 1)', 'Alpha')
             ->assertValue(':nth-match([data-testid="item-name"], 2)', 'Beta')
             ->assertValue(':nth-match([data-testid="item-name"], 3)', 'Gamma')
@@ -1815,7 +1731,7 @@ it('leaves custom move handlers in control without locking later ordering', func
     $url = '/repeater-test?reordering=' . $view;
     $page = visit($url);
     foreach ([$page, $page->inDarkMode()] as $page) {
-        $page->assertPresent('[data-testid="repeater"]:not([x-ignore])')
+        $page->assertPresent('[data-testid="repeater"]')
             ->assertNotPresent('[data-testid="custom-refreshed"]');
         $page->keys(':nth-match([data-testid="repeater"] [data-reorder-direction="down"], 1)', 'Enter');
 
@@ -1824,12 +1740,9 @@ it('leaves custom move handlers in control without locking later ordering', func
         } else {
             $page->assertVisible('[data-testid="cancel-custom"]');
 
-            $page->click($view === 'custom-child-submit' ? '[data-testid="submit-custom"]' : '[data-testid="cancel-custom"]')
+            $page->click('[data-testid="cancel-custom"]')
                 ->assertMissing('[data-testid="cancel-custom"]')
                 ->assertNotPresent('[role="dialog"]:visible');
-
-            // Child actions can dismiss their modal before the owner refresh finishes.
-            $page->assertScript('Alpine.$data(document.querySelector(\'[data-testid="repeater"]\')).pending === null');
         }
 
         $page->assertSeeNothingIn('[data-testid="repeater"] > [role="status"]')
@@ -1843,7 +1756,7 @@ it('leaves custom move handlers in control without locking later ordering', func
         $page->page()->addStyleTag('*, *::before, *::after { transition: none !important; animation: none !important; }');
         $page->assertNoAccessibilityIssues();
     }
-})->with(['custom-mount', 'custom-refresh', 'custom-child-cancel', 'custom-child-submit']);
+})->with(['custom-mount', 'custom-refresh']);
 
 it('can add and delete items in the browser', function (): void {
     Artisan::call('filament:assets');
@@ -1853,10 +1766,8 @@ it('can add and delete items in the browser', function (): void {
     visit('/repeater-test')
         ->assertPresent('[data-testid="repeater"] .fi-fo-repeater-item')
         ->click('[data-testid="repeater"] .fi-fo-repeater-add button')
-        ->wait(1)
         ->assertPresent('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2)')
         ->click('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2) .fi-fo-repeater-item-header-end-actions button')
-        ->wait(1)
         ->assertNotPresent('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2)')
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();

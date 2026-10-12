@@ -455,7 +455,6 @@ it('can create a record again in the browser after navigating back to a create p
         ->back()
         ->assertPathIs('/spa/tickets/create')
         ->assertPresent('.fi-sc-form button[type="submit"]')
-        ->wait(1)
         ->click('.fi-sc-form button[type="submit"]')
         ->assertScript("window.location.pathname !== '/spa/tickets/create'", true)
         ->assertPathIs('/spa/tickets/*');

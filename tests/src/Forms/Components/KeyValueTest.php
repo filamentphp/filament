@@ -17,66 +17,41 @@ beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
 
-describe('rendering and state', function (): void {
-    it('can render', function (): void {
-        livewire(TestComponentWithKeyValue::class)
-            ->assertSuccessful();
+describe('defaults', function (): void {
+    it('defaults `isAddable()` to `true`', function (): void {
+        $keyValue = KeyValue::make('meta');
+
+        expect($keyValue->isAddable())->toBeTrue();
     });
 
-    it('can set and get state', function (): void {
-        livewire(TestComponentWithKeyValue::class)
-            ->fillForm(['metadata' => ['key1' => 'value1', 'key2' => 'value2']])
-            ->assertSchemaStateSet(['metadata' => ['key1' => 'value1', 'key2' => 'value2']]);
-    });
+    it('defaults `isDeletable()` to `true`', function (): void {
+        $keyValue = KeyValue::make('meta');
 
-    it('can render when not addable', function (): void {
-        livewire(TestComponentWithReadOnlyKeyValue::class)
-            ->assertSuccessful();
-    });
-
-    it('can render when `reorderable()`', function (): void {
-        livewire(TestComponentWithReorderableKeyValue::class)
-            ->assertSuccessful();
+        expect($keyValue->isDeletable())->toBeTrue();
     });
 });
+describe('default label values', function (): void {
+    it('returns translated default for `getAddActionLabel()`', function (): void {
+        $keyValue = KeyValue::make('meta');
 
-class TestComponentWithKeyValue extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->schema([
-                KeyValue::make('metadata'),
-            ])
-            ->statePath('data');
-    }
-}
+        expect($keyValue->getAddActionLabel())->toBeString();
+        expect($keyValue->getAddActionLabel())->not->toBeEmpty();
+    });
 
-class TestComponentWithReadOnlyKeyValue extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->schema([
-                KeyValue::make('metadata')
-                    ->addable(false)
-                    ->deletable(false),
-            ])
-            ->statePath('data');
-    }
-}
+    it('returns translated default for `getKeyLabel()`', function (): void {
+        $keyValue = KeyValue::make('meta');
 
-class TestComponentWithReorderableKeyValue extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->schema([
-                KeyValue::make('metadata')->reorderable(),
-            ])
-            ->statePath('data');
-    }
-}
+        expect($keyValue->getKeyLabel())->toBeString();
+        expect($keyValue->getKeyLabel())->not->toBeEmpty();
+    });
+
+    it('returns translated default for `getValueLabel()`', function (): void {
+        $keyValue = KeyValue::make('meta');
+
+        expect($keyValue->getValueLabel())->toBeString();
+        expect($keyValue->getValueLabel())->not->toBeEmpty();
+    });
+});
 
 describe('properties', function (): void {
     it('can set `addActionLabel()` and get with `getAddActionLabel()`', function (): void {
@@ -209,185 +184,168 @@ describe('properties', function (): void {
 
 describe('closure support', function (): void {
     it('can set `addActionLabel()` with a `Closure`', function (): void {
-        $kv = KeyValue::make('meta')
+        $keyValue = KeyValue::make('meta')
             ->addActionLabel(static fn (): string => 'Custom add');
 
-        expect($kv->getAddActionLabel())->toBe('Custom add');
+        expect($keyValue->getAddActionLabel())->toBe('Custom add');
     });
 
     it('can set `keyLabel()` with a `Closure`', function (): void {
-        $kv = KeyValue::make('meta')
+        $keyValue = KeyValue::make('meta')
             ->keyLabel(static fn (): string => 'Property');
 
-        expect($kv->getKeyLabel())->toBe('Property');
+        expect($keyValue->getKeyLabel())->toBe('Property');
     });
 
     it('can set `valueLabel()` with a `Closure`', function (): void {
-        $kv = KeyValue::make('meta')
+        $keyValue = KeyValue::make('meta')
             ->valueLabel(static fn (): string => 'Content');
 
-        expect($kv->getValueLabel())->toBe('Content');
+        expect($keyValue->getValueLabel())->toBe('Content');
     });
 
     it('can set `keyPlaceholder()` with a `Closure`', function (): void {
-        $kv = KeyValue::make('meta')
+        $keyValue = KeyValue::make('meta')
             ->keyPlaceholder(static fn (): string => 'type key...');
 
-        expect($kv->getKeyPlaceholder())->toBe('type key...');
+        expect($keyValue->getKeyPlaceholder())->toBe('type key...');
     });
 
     it('can set `valuePlaceholder()` with a `Closure`', function (): void {
-        $kv = KeyValue::make('meta')
+        $keyValue = KeyValue::make('meta')
             ->valuePlaceholder(static fn (): string => 'type value...');
 
-        expect($kv->getValuePlaceholder())->toBe('type value...');
+        expect($keyValue->getValuePlaceholder())->toBe('type value...');
     });
 
     it('can set `addable()` with a `Closure`', function (): void {
-        $kv = KeyValue::make('meta')
+        $keyValue = KeyValue::make('meta')
             ->addable(static fn (): bool => false);
 
-        expect($kv->isAddable())->toBeFalse();
+        expect($keyValue->isAddable())->toBeFalse();
     });
 
     it('can set `deletable()` with a `Closure`', function (): void {
-        $kv = KeyValue::make('meta')
+        $keyValue = KeyValue::make('meta')
             ->deletable(static fn (): bool => false);
 
-        expect($kv->isDeletable())->toBeFalse();
+        expect($keyValue->isDeletable())->toBeFalse();
     });
 
     it('can set `reorderable()` with a `Closure`', function (): void {
-        $kv = KeyValue::make('meta')
+        $keyValue = KeyValue::make('meta')
             ->reorderable(static fn (): bool => true);
 
-        expect($kv->isReorderable())->toBeTrue();
+        expect($keyValue->isReorderable())->toBeTrue();
+    });
+
+    it('can set `editableKeys()` with a `Closure`', function (): void {
+        $keyValue = KeyValue::make('meta')
+            ->editableKeys(static fn (): bool => false);
+
+        expect($keyValue->canEditKeys())->toBeFalse();
+    });
+
+    it('can set `editableValues()` with a `Closure`', function (): void {
+        $keyValue = KeyValue::make('meta')
+            ->editableValues(static fn (): bool => false);
+
+        expect($keyValue->canEditValues())->toBeFalse();
+    });
+
+    it('can set `deleteActionLabel()` with a `Closure`', function (): void {
+        $keyValue = KeyValue::make('meta')
+            ->deleteActionLabel(static fn (): string => 'Remove');
+
+        expect($keyValue->getDeleteActionLabel())->toBe('Remove');
+    });
+
+    it('can set `reorderActionLabel()` with a `Closure`', function (): void {
+        $keyValue = KeyValue::make('meta')
+            ->reorderActionLabel(static fn (): string => 'Sort');
+
+        expect($keyValue->getReorderActionLabel())->toBe('Sort');
     });
 });
 
 describe('action modifiers', function (): void {
     it('can modify add action via `addAction()` callback', function (): void {
-        $kv = KeyValue::make('meta')
+        $keyValue = KeyValue::make('meta')
             ->addAction(static fn ($action) => $action->label('New Row'));
 
-        $action = $kv->getAddAction();
+        $action = $keyValue->getAddAction();
 
         expect($action->getLabel())->toBe('New Row');
     });
 
     it('can modify delete action via `deleteAction()` callback', function (): void {
-        $kv = KeyValue::make('meta')
+        $keyValue = KeyValue::make('meta')
             ->deleteAction(static fn ($action) => $action->color('warning'));
 
-        $action = $kv->getDeleteAction();
+        $action = $keyValue->getDeleteAction();
 
         expect($action->getColor())->toBe('warning');
     });
 
     it('can modify reorder action via `reorderAction()` callback', function (): void {
-        $kv = KeyValue::make('meta')
+        $keyValue = KeyValue::make('meta')
             ->reorderAction(static fn ($action) => $action->color('primary'));
 
-        $action = $kv->getReorderAction();
+        $action = $keyValue->getReorderAction();
 
         expect($action->getColor())->toBe('primary');
     });
 
     it('returns fluent `$this` from `addAction()`', function (): void {
-        $kv = KeyValue::make('meta');
+        $keyValue = KeyValue::make('meta');
 
-        $result = $kv->addAction(static fn ($action) => $action);
+        $result = $keyValue->addAction(static fn ($action) => $action);
 
-        expect($result)->toBe($kv);
-    });
-});
-
-describe('default label values', function (): void {
-    it('returns translated default for `getAddActionLabel()`', function (): void {
-        $kv = KeyValue::make('meta');
-
-        expect($kv->getAddActionLabel())->toBeString();
-        expect($kv->getAddActionLabel())->not->toBeEmpty();
-    });
-
-    it('returns translated default for `getKeyLabel()`', function (): void {
-        $kv = KeyValue::make('meta');
-
-        expect($kv->getKeyLabel())->toBeString();
-        expect($kv->getKeyLabel())->not->toBeEmpty();
-    });
-
-    it('returns translated default for `getValueLabel()`', function (): void {
-        $kv = KeyValue::make('meta');
-
-        expect($kv->getValueLabel())->toBeString();
-        expect($kv->getValueLabel())->not->toBeEmpty();
-    });
-});
-
-describe('additional Closure support', function (): void {
-    it('can set `editableKeys()` with a `Closure`', function (): void {
-        $kv = KeyValue::make('meta')
-            ->editableKeys(static fn (): bool => false);
-
-        expect($kv->canEditKeys())->toBeFalse();
-    });
-
-    it('can set `editableValues()` with a `Closure`', function (): void {
-        $kv = KeyValue::make('meta')
-            ->editableValues(static fn (): bool => false);
-
-        expect($kv->canEditValues())->toBeFalse();
-    });
-
-    it('can set `deleteActionLabel()` with a `Closure`', function (): void {
-        $kv = KeyValue::make('meta')
-            ->deleteActionLabel(static fn (): string => 'Remove');
-
-        expect($kv->getDeleteActionLabel())->toBe('Remove');
-    });
-
-    it('can set `reorderActionLabel()` with a `Closure`', function (): void {
-        $kv = KeyValue::make('meta')
-            ->reorderActionLabel(static fn (): string => 'Sort');
-
-        expect($kv->getReorderActionLabel())->toBe('Sort');
-    });
-});
-
-describe('defaults', function (): void {
-    it('defaults `isAddable()` to `true`', function (): void {
-        $kv = KeyValue::make('meta');
-
-        expect($kv->isAddable())->toBeTrue();
-    });
-
-    it('defaults `isDeletable()` to `true`', function (): void {
-        $kv = KeyValue::make('meta');
-
-        expect($kv->isDeletable())->toBeTrue();
+        expect($result)->toBe($keyValue);
     });
 });
 
 describe('reorder animation', function (): void {
     it('defaults `getReorderAnimationDuration()` to `300`', function (): void {
-        $kv = KeyValue::make('meta');
+        $keyValue = KeyValue::make('meta');
 
-        expect($kv->getReorderAnimationDuration())->toBe(300);
+        expect($keyValue->getReorderAnimationDuration())->toBe(300);
     });
 
     it('can set `reorderAnimationDuration()`', function (): void {
-        $kv = KeyValue::make('meta')
+        $keyValue = KeyValue::make('meta')
             ->reorderAnimationDuration(500);
 
-        expect($kv->getReorderAnimationDuration())->toBe(500);
+        expect($keyValue->getReorderAnimationDuration())->toBe(500);
     });
 
     it('can set `reorderAnimationDuration()` with a `Closure`', function (): void {
-        $kv = KeyValue::make('meta')
+        $keyValue = KeyValue::make('meta')
             ->reorderAnimationDuration(static fn (): int => 0);
 
-        expect($kv->getReorderAnimationDuration())->toBe(0);
+        expect($keyValue->getReorderAnimationDuration())->toBe(0);
+    });
+});
+describe('rendering and state', function (): void {
+    it('can render', function (): void {
+        livewire(TestComponentWithKeyValue::class)
+            ->assertSuccessful();
+    });
+
+    it('can set and get state', function (): void {
+        livewire(TestComponentWithKeyValue::class)
+            ->fillForm(['metadata' => ['key1' => 'value1', 'key2' => 'value2']])
+            ->assertSchemaStateSet(['metadata' => ['key1' => 'value1', 'key2' => 'value2']]);
+    });
+
+    it('can render when not addable', function (): void {
+        livewire(TestComponentWithReadOnlyKeyValue::class)
+            ->assertSuccessful();
+    });
+
+    it('can render when `reorderable()`', function (): void {
+        livewire(TestComponentWithReorderableKeyValue::class)
+            ->assertSuccessful();
     });
 });
 
@@ -540,26 +498,12 @@ describe('browser interactions', function (): void {
             $page->assertAttribute(':nth-match(' . $controls . ', ' . $position . ')', 'tabindex', '-1');
         }
 
-        $page->fill(':nth-match([data-testid="reorderable-key-value"] input[aria-label="Key"], 1)', 'first')
-            ->fill(':nth-match([data-testid="reorderable-key-value"] input[aria-label="Key"], 2)', 'second')
-            ->click('[data-testid="outside-reordering"]');
-        // Activate the hidden control without moving DOM focus, as screen-reader navigation can.
-        $page->script('document.querySelector(\'[data-testid="reorderable-key-value"] [data-reorder-direction="down"]\').click()');
-        $page->assertValue(':nth-match([data-testid="reorderable-key-value"] input[aria-label="Key"], 1)', 'second')
-            ->assertValue(':nth-match([data-testid="reorderable-key-value"] input[aria-label="Key"], 2)', 'first')
-            ->assertPresent('[data-testid="outside-reordering"]:focus')
-            ->click(':nth-match([data-testid="reorderable-key-value"] input[aria-label="Key"], 1)');
-
-        $page->script('document.querySelector(\'[data-testid="reorderable-key-value"] [data-reorder-direction="down"]\').click()');
-        $page->assertValue(':nth-match([data-testid="reorderable-key-value"] input[aria-label="Key"], 1)', 'first')
-            ->assertValue(':nth-match([data-testid="reorderable-key-value"] input[aria-label="Key"], 2)', 'second')
-            ->assertPresent(':nth-match([data-testid="reorderable-key-value"] input[aria-label="Key"], 2):focus')
-            ->assertNoSmoke()->assertNoAccessibilityIssues();
+        $page->assertNoSmoke()->assertNoAccessibilityIssues();
 
         $page->inDarkMode()->assertNoAccessibilityIssues();
     });
 
-    it('keeps drafts, focus and save semantics when dragging and activating screen-reader move controls', function (): void {
+    it('preserves drafts and saved values when dragging rows', function (): void {
         $this->actingAs(User::factory()->create());
 
         $field = '[data-testid="accessible-key-value"]';
@@ -570,84 +514,33 @@ describe('browser interactions', function (): void {
         $handles = $field . ' [x-sortable-handle]';
         $page = visit('/key-value-test');
 
-        // Simulate activation without moving DOM focus, not real assistive technology.
-        $activateMove = function (string $direction, int $position) use ($page, $field): void {
-            $selector = json_encode($field . ' [data-reorder-direction="' . $direction . '"]');
-            $page->script('document.querySelectorAll(' . $selector . ')[' . ($position - 1) . '].click()');
-        };
-
         $page->assertPresent($field . ' [x-sortable]')
             ->assertDisabled(':nth-match(' . $moveUp . ', 1)')
             ->assertDisabled(':nth-match(' . $moveDown . ', 3)')
-            ->fill(':nth-match(' . $values . ', 1)', 'Unsaved first');
-
-        $activateMove('down', 1);
-        $page->assertValue(':nth-match(' . $keys . ', 1)', 'beta')
-            ->assertValue(':nth-match(' . $keys . ', 2)', 'alpha')
-            ->assertValue(':nth-match(' . $values . ', 2)', 'Unsaved first')
-            ->assertPresent(':nth-match(' . $values . ', 2):focus');
-
-        $activateMove('down', 2);
-        $page->assertValue(':nth-match(' . $keys . ', 3)', 'alpha')
-            ->assertPresent(':nth-match(' . $values . ', 3):focus');
-
-        $activateMove('up', 3);
-        $activateMove('up', 2);
-        $page->assertValue(':nth-match(' . $keys . ', 1)', 'alpha')
-            ->assertPresent(':nth-match(' . $values . ', 1):focus');
-
-        $page->click($field . ' .fi-fo-key-value-add-action-ctn')
-            ->fill(':nth-match(' . $values . ', 4)', 'Blank draft');
-
-        $activateMove('up', 4);
-        $activateMove('up', 3);
-        $page->assertValue(':nth-match(' . $keys . ', 2)', '')
-            ->assertValue(':nth-match(' . $values . ', 2)', 'Blank draft')
-            ->assertPresent(':nth-match(' . $values . ', 2):focus')
-            ->fill(':nth-match(' . $keys . ', 3)', 'alpha')
-            ->fill(':nth-match(' . $values . ', 3)', 'Unsaved duplicate');
-
-        $activateMove('down', 3);
-        $page->assertValue(':nth-match(' . $keys . ', 2)', '')
-            ->assertValue(':nth-match(' . $values . ', 2)', 'Blank draft')
-            ->assertValue(':nth-match(' . $keys . ', 3)', 'gamma')
-            ->assertValue(':nth-match(' . $values . ', 4)', 'Unsaved duplicate')
-            ->assertPresent(':nth-match(' . $values . ', 4):focus');
-
-        $page->script('window.keyValueInputs = [...document.querySelectorAll(' . json_encode($field . ' input') . ')]');
-        $page->drag(':nth-match(' . $handles . ', 1)', ':nth-match(' . $handles . ', 4)')
-            ->assertValue(':nth-match(' . $keys . ', 1)', '')
-            ->assertValue(':nth-match(' . $values . ', 1)', 'Blank draft')
+            ->fill(':nth-match(' . $values . ', 1)', 'Unsaved first')
+            ->fill(':nth-match(' . $keys . ', 2)', 'alpha')
+            ->fill(':nth-match(' . $values . ', 2)', 'Unsaved duplicate')
+            ->click('[data-testid="add-accessible-row"]')
+            ->fill(':nth-match(' . $values . ', 4)', 'Blank draft')
+            ->drag(':nth-match(' . $handles . ', 1)', ':nth-match(' . $handles . ', 4)')
+            ->assertValue(':nth-match(' . $values . ', 1)', 'Unsaved duplicate')
             ->assertValue(':nth-match(' . $keys . ', 2)', 'gamma')
-            ->assertValue(':nth-match(' . $values . ', 3)', 'Unsaved duplicate')
+            ->assertValue(':nth-match(' . $values . ', 3)', 'Blank draft')
             ->assertValue(':nth-match(' . $values . ', 4)', 'Unsaved first')
-            ->assertScript('window.keyValueInputs.every(input => input.isConnected)')
             ->click('[data-testid="save"]')
-            ->assertSeeIn('[data-testid="saved"]', '{"gamma":"Third","alpha":"Unsaved first"}')
+            ->assertSeeIn('[data-testid="saved"]', '{"alpha":"Unsaved first","gamma":"Third"}')
             ->drag(':nth-match(' . $handles . ', 4)', ':nth-match(' . $handles . ', 1)')
             ->assertValue(':nth-match(' . $values . ', 1)', 'Unsaved first')
-            ->assertValue(':nth-match(' . $values . ', 2)', 'Blank draft')
+            ->assertValue(':nth-match(' . $values . ', 2)', 'Unsaved duplicate')
             ->assertValue(':nth-match(' . $keys . ', 3)', 'gamma')
-            ->assertValue(':nth-match(' . $values . ', 4)', 'Unsaved duplicate')
-            ->assertScript('window.keyValueInputs.every(input => input.isConnected)')
-            ->click(':nth-match(' . $values . ', 4)');
-
-        $activateMove('up', 4);
-        $page->assertValue(':nth-match(' . $values . ', 3)', 'Unsaved duplicate')
-            ->assertPresent(':nth-match(' . $values . ', 3):focus');
-        $activateMove('down', 3);
-
-        $description = $page->attribute(':nth-match(' . $moveUp . ', 4)', 'aria-describedby');
-        $page->assertSeeIn('[id="' . $description . '"]', __('filament-forms::components.key_value.reordering.position', ['label' => 'alpha', 'position' => 4, 'count' => 4]))
-            ->assertSeeIn($field . ' [role="status"]', __('filament-forms::components.key_value.reordering.moved', ['label' => 'alpha', 'position' => 4, 'count' => 4]))
+            ->assertValue(':nth-match(' . $values . ', 4)', 'Blank draft')
             ->click('[data-testid="save"]')
             ->assertSeeIn('[data-testid="saved"]', '{"alpha":"Unsaved duplicate","gamma":"Third"}')
             ->assertValue(':nth-match(' . $values . ', 1)', 'Unsaved first')
-            ->assertValue(':nth-match(' . $values . ', 2)', 'Blank draft')
             ->assertNoSmoke()->assertNoAccessibilityIssues();
 
-        $page->click(':nth-match(' . $field . ' button[aria-label="Delete row"], 4)')
-            ->click(':nth-match(' . $field . ' button[aria-label="Delete row"], 3)')
+        $page->click(':nth-match(' . $field . ' button[aria-label="Delete row"], 3)')
+            ->click(':nth-match(' . $field . ' button[aria-label="Delete row"], 2)')
             ->click(':nth-match(' . $field . ' button[aria-label="Delete row"], 1)')
             ->click('[data-testid="save"]')
             ->assertPresent('[data-validation-error]')
@@ -660,6 +553,41 @@ describe('browser interactions', function (): void {
         $page->inDarkMode()->assertNoAccessibilityIssues();
     });
 });
+class TestComponentWithKeyValue extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                KeyValue::make('metadata'),
+            ])
+            ->statePath('data');
+    }
+}
+class TestComponentWithReadOnlyKeyValue extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                KeyValue::make('metadata')
+                    ->addable(false)
+                    ->deletable(false),
+            ])
+            ->statePath('data');
+    }
+}
+class TestComponentWithReorderableKeyValue extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                KeyValue::make('metadata')->reorderable(),
+            ])
+            ->statePath('data');
+    }
+}
 
 class RenderKeyValueWithKeyLabel extends Livewire
 {

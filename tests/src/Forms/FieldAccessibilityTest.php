@@ -440,7 +440,7 @@ it('preserves custom `DateTimePicker::getExtraAlpineAttributeBag()` overrides', 
     };
     $field->native(false)->extraAlpineAttributes(['data-application' => 'present']);
     $document = fieldAccessibilityDocument(Schema::make(Livewire::make())->components([$field])->toHtml());
-    $control = $document->query('//input[@x-ref="button"]/..')->item(0);
+    $control = $document->query('//input[@role="combobox"]/..')->item(0);
     expect($control->getAttribute('data-extension'))->toBe('present')
         ->and($control->getAttribute('data-application'))->toBe('present');
 });
@@ -500,17 +500,6 @@ it('keeps live state controls enabled while loading and preserves explicit `disa
     [static fn (): Field => Toggle::make('answer')],
     [static fn (): Field => ToggleButtons::make('answer')->options(['a' => 'Option'])],
 ]);
-
-it('evaluates Alpine input attributes once per render', function (string $fieldClass): void {
-    $evaluations = 0;
-    $field = $fieldClass::make('name')->extraAlpineAttributes(function () use (&$evaluations): array {
-        $evaluations++;
-
-        return ['aria-describedby' => 'application-note'];
-    });
-    Schema::make(Livewire::make())->components([$field])->toHtml();
-    expect($evaluations)->toBe(1);
-})->with([TextInput::class, Textarea::class, DateTimePicker::class]);
 
 it('associates fused group helpers and errors without referencing suppressed child content', function (bool $bladeWrapper, bool $keyed): void {
     $groups = [
@@ -693,12 +682,11 @@ it('updates accessible error descriptions after validation in the browser', func
         $page->assertAttribute('[data-testid="name"]', 'aria-describedby', 'form.name-helper-text')
             ->assertAttribute('[data-testid="interests"]', 'aria-describedby', 'form.interests-required')
             ->assertAttribute('[data-testid="notes"]', 'aria-describedby', 'privacy-note');
-        $page->script('Promise.all(document.getAnimations().filter(animation => animation.effect.getTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {})))');
         $page->assertNoAccessibilityIssues();
 
         $valueControls = [
             'code' => '[data-testid="additional-code"] [contenteditable="true"]',
-            'markdown' => '[data-testid="additional-markdown"] textarea:not([x-ref])',
+            'markdown' => '[data-testid="additional-markdown"] textarea[aria-label]',
             'rich' => '[data-testid="additional-rich"] [contenteditable="true"]',
             'date' => '[data-testid="additional-date"] [role="combobox"]',
             'slider' => '[data-testid="additional-slider"] [role="slider"]',

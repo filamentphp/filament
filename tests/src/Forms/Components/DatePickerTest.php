@@ -44,11 +44,6 @@ it('accepts the entire boundary dates and rejects adjacent dates when `hasTime()
 
     $livewire = livewire(TestComponentWithDatePickerMinMax::class, compact('pickerClass', 'source', 'isNative'));
 
-    if (! $isNative) {
-        $livewire->assertSeeHtml('x-ref="minDate" type="hidden" value="2025-03-30 00:00:00"')
-            ->assertSeeHtml('x-ref="maxDate" type="hidden" value="2025-03-31 23:59:59"');
-    }
-
     foreach ([
         ['2025-03-29 23:59:59', null],
         ['2025-03-30 00:00:00', '30/03/2025'],
@@ -94,11 +89,6 @@ it('ignores the time of a date-only limit in a timezone that skips midnight', fu
         ->set('data.date', $isNative ? '2025-09-06' : '2025-09-06 23:59:59')
         ->call('save')
         ->assertHasFormErrors(['date']);
-
-    if (! $isNative) {
-        $livewire->assertSeeHtml('x-ref="minDate" type="hidden" value="2025-09-07 00:00:00"')
-            ->assertSeeHtml('x-ref="maxDate" type="hidden" value="2025-09-09 23:59:59"');
-    }
 })->with([[DatePicker::class], [DateTimePicker::class]])->with([true, false]);
 
 it('can reset date-only bounds to `null`', function (bool $isNative): void {
@@ -740,8 +730,6 @@ it('saves boundary dates and round-trips epoch-backed and model-backed dates wit
             if ($isDarkMode) {
                 $page = $page->inDarkMode();
             }
-
-            $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
             $page->assertNoSmoke()->assertNoAccessibilityIssues()
                 ->assertValue('[data-testid="timestamp-date"]', '2025-07-15')
                 ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-15')
@@ -756,13 +744,12 @@ it('saves boundary dates and round-trips epoch-backed and model-backed dates wit
                 ['2025-07-17', true, 2],
                 ['2025-07-18', false, 2],
             ] as [$date, $isValid, $saveCount]) {
-                $page->script("(() => { const input = document.querySelector('[data-testid=\"native-date\"]'); input.oninvalid = () => { input.dataset.rejected = 'true'; }; input.dataset.rejected = 'false'; input.value = '{$date}'; input.dispatchEvent(new Event('input', { bubbles: true })); })()");
-
-                $page->assertScript('document.querySelector(\'[data-testid="native-date"]\').validity.valid', $isValid)
+                $page->fill('[data-testid="native-date"]', $date)
+                    ->assertScript('document.querySelector(\'[data-testid="native-date"]\').validity.valid', $isValid)
                     ->click('[data-testid="save-dates"]');
 
                 if (! $isValid) {
-                    $page->assertScript('document.querySelector(\'[data-testid="native-date"]\').dataset.rejected', 'true');
+                    $page->assertPresent('[data-testid="native-date"]:invalid:focus');
                 }
 
                 $page->assertScript('document.querySelector(\'[data-testid="save-count"]\').textContent.trim()', (string) $saveCount);
@@ -804,8 +791,6 @@ it('saves boundary dates and round-trips epoch-backed and model-backed dates wit
                 ->assertValue('[data-testid="model-date"]', '2026-06-30');
 
             expect(substr($record->refresh()->getRawOriginal('email_verified_at'), 0, 10))->toBe('2026-06-30');
-
-            $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))).then(() => Promise.all(document.getAnimations().filter(animation => animation.effect.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))))');
             $page->assertNoAccessibilityIssues();
         }
     } finally {

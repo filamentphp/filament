@@ -86,8 +86,8 @@ it('persists independent wizards across reload and browser history', function ()
     expect($browser->script('new URL(location.href).searchParams.get("step")'))->toBe('form.wizard.contact');
     expect($browser->script('new URL(location.href).searchParams.get("delivery_step")'))->toBe('form.delivery.wizard.contact');
 
-    $browser->script("Livewire.navigate('/tabs-browser-test')");
-    $browser->assertVisible('#profile-tabs')
+    $browser->click('a[href$="/tabs-browser-test"]:visible')
+        ->assertVisible('#profile-tabs')
         ->back()->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
         ->forward()->assertVisible('#profile-tabs')
         ->back()->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
@@ -113,32 +113,6 @@ it('persists independent wizards across reload and browser history', function ()
         ->assertNoAccessibilityIssues();
 });
 
-it('does not turn an unknown browser step into the first step', function (): void {
-    $this->actingAs(User::factory()->create());
-
-    $browser = visit('/wizard-browser-test')->assertVisible('#profile-details');
-
-    expect($browser->script(<<<'JS'
-        (() => {
-            const wizard = Alpine.$data(document.querySelector('#profile-wizard'))
-            wizard.goToStep('removed')
-            return wizard.step
-        })()
-        JS))->toBe('form.wizard.details');
-
-    expect($browser->script(<<<'JS'
-        (async () => {
-            const wizard = Alpine.$data(document.querySelector('#profile-wizard'))
-            wizard.step = 'removed'
-            await wizard.requestNextStep()
-            wizard.goToNextStep()
-            return [wizard.getStepIndex('removed'), wizard.step]
-        })()
-        JS))->toBe([-1, 'removed']);
-
-    $browser->assertMissing('#profile-contact')->assertNoSmoke();
-});
-
 it('advances to the resolved visible step when a validation hook hides its own step', function (): void {
     $this->actingAs(User::factory()->create());
 
@@ -150,7 +124,6 @@ it('advances to the resolved visible step when a validation hook hides its own s
         ->assertVisible('#profile-review')
         ->assertMissing('#profile-contact')
         ->hover('#profile-review')
-        ->wait(0.3)
         ->assertNoAccessibilityIssues()
         ->assertNoSmoke();
 

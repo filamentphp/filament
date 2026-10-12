@@ -123,7 +123,7 @@ it('`getIcon()` returns `null` for a `null` boolean state', function (): void {
     expect(IconEntry::make('is_active')->boolean()->getIcon(null))->toBeNull();
 });
 
-it('`getIcon()` returns the `trueIcon` for a truthy state when `boolean()` is set', function (): void {
+test('`getIcon()` returns the `trueIcon` for a truthy state when `boolean()` is set', function (): void {
     $entry = IconEntry::make('is_active')
         ->boolean()
         ->trueIcon(Heroicon::Check)
@@ -133,7 +133,7 @@ it('`getIcon()` returns the `trueIcon` for a truthy state when `boolean()` is se
     expect($entry->getIcon(false))->toBe(Heroicon::XMark);
 });
 
-it('`getColor()` returns the `trueColor` for a truthy state when `boolean()` is set', function (): void {
+test('`getColor()` returns the `trueColor` for a truthy state when `boolean()` is set', function (): void {
     $entry = IconEntry::make('is_active')
         ->boolean()
         ->trueColor('success')

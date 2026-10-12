@@ -194,7 +194,7 @@ describe('fluent API', function (): void {
     });
 });
 
-describe('`getOptionsUsing` closure', function (): void {
+describe('`getOptionsUsing()` callback', function (): void {
     it('returns options keyed by ID with title attribute values', function (): void {
         $users = User::factory()->count(3)->create();
 
@@ -274,7 +274,7 @@ describe('`getOptionsUsing` closure', function (): void {
     });
 });
 
-describe('`getOptionLabelUsing` closure', function (): void {
+describe('`getOptionLabelUsing()` callback', function (): void {
     it('resolves label from title attribute for a given value', function (): void {
         $user = User::factory()->create(['name' => 'Jane Doe']);
 
@@ -347,7 +347,7 @@ describe('`getOptionLabelUsing` closure', function (): void {
     });
 });
 
-describe('`getSearchResultsUsing` closure', function (): void {
+describe('`getSearchResultsUsing()` callback', function (): void {
     it('returns matching records by title attribute', function (): void {
         User::factory()->create(['name' => 'Alice Smith']);
         User::factory()->create(['name' => 'Bob Jones']);

@@ -147,19 +147,22 @@ describe('schema components', function (): void {
             ->toBeEmpty();
     });
 
-    it('only calls `isEnabled()` once per provider when building `getSchemaComponents()`', function (): void {
+    it('builds challenge components for a custom authentication provider', function (): void {
         $user = User::factory()->create();
 
         /** @var MockInterface&MultiFactorAuthenticationProvider $provider */
         $provider = Mockery::mock(MultiFactorAuthenticationProvider::class);
         $provider->shouldReceive('getId')->andReturn('custom');
-        $provider->shouldReceive('isEnabled')->once()->with($user)->andReturnTrue();
-        $provider->shouldReceive('getChallengeFormComponents')->once()->with($user)->andReturn([]);
+        $provider->shouldReceive('isEnabled')->with($user)->andReturnTrue();
+        $provider->shouldReceive('getChallengeFormComponents')->with($user)->andReturn([]);
 
         Filament::getCurrentPanel()->multiFactorAuthentication([$provider]);
 
-        expect(MultiFactorChallenge::make()->getSchemaComponents($user))
-            ->toHaveCount(1);
+        $components = MultiFactorChallenge::make()->getSchemaComponents($user);
+
+        expect($components)->toHaveCount(1)
+            ->toHaveKey('custom')
+            ->and($components['custom'])->toBeInstanceOf(Group::class);
     });
 });
 

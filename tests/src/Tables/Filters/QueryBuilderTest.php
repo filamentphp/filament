@@ -847,7 +847,7 @@ describe('relationship constraints', function () use ($applyQueryBuilderFilter):
             ->assertCanNotSeeTableRecords($nonMatchingUsers);
     });
 
-    it('still matches in-scope `isRelatedTo` values when `modifyRelationshipQueryUsing` is set', function () use ($applyQueryBuilderFilter): void {
+    it('still matches in-scope `isRelatedTo` values when `modifyRelationshipQueryUsing()` is set', function () use ($applyQueryBuilderFilter): void {
         $inScopeAuthor = User::factory()->create(['name' => 'Alpha Author']);
         $outOfScopeAuthor = User::factory()->create(['name' => 'Beta Author']);
 
@@ -868,7 +868,7 @@ describe('relationship constraints', function () use ($applyQueryBuilderFilter):
             ->assertCanNotSeeTableRecords($outOfScopePosts);
     });
 
-    it('applies `modifyRelationshipQueryUsing` inside the `whereHas` subquery to defend against a bypassed tampered value', function (): void {
+    it('applies `modifyRelationshipQueryUsing()` inside the `whereHas` subquery to defend against a bypassed tampered value', function (): void {
         // Defense-in-depth: form validation is the primary defense and would reject the
         // out-of-scope value before reaching `apply()`. This test bypasses validation
         // by invoking `apply()` directly to confirm the operator does not leak rows
@@ -892,7 +892,7 @@ describe('relationship constraints', function () use ($applyQueryBuilderFilter):
         expect($filtered->count())->toBe(0);
     });
 
-    it('applies `modifyRelationshipQueryUsing` inside `IsEmptyOperator` count check', function () use ($applyQueryBuilderFilter): void {
+    it('applies `modifyRelationshipQueryUsing()` inside `IsEmptyOperator` count check', function () use ($applyQueryBuilderFilter): void {
         // Author A has 1 published + 0 unpublished — should NOT match isEmpty under the published-only scope.
         // Author B has 0 published + 2 unpublished — SHOULD match isEmpty under the scope (no published posts).
         // Author C has no posts at all — SHOULD match isEmpty.
@@ -918,7 +918,7 @@ describe('relationship constraints', function () use ($applyQueryBuilderFilter):
             ->assertCanNotSeeTableRecords([$authorA]);
     });
 
-    it('applies `modifyRelationshipQueryUsing` inside `HasMinOperator` count check', function () use ($applyQueryBuilderFilter): void {
+    it('applies `modifyRelationshipQueryUsing()` inside `HasMinOperator` count check', function () use ($applyQueryBuilderFilter): void {
         $authorWithTwoPublished = User::factory()->create(['name' => 'Two Published']);
         Post::factory()->count(2)->create(['author_id' => $authorWithTwoPublished->id, 'is_published' => true]);
 
@@ -939,7 +939,7 @@ describe('relationship constraints', function () use ($applyQueryBuilderFilter):
             ->assertCanNotSeeTableRecords([$authorWithUnpublishedOnly]);
     });
 
-    it('applies `modifyRelationshipQueryUsing` inside `HasMaxOperator` count check', function () use ($applyQueryBuilderFilter): void {
+    it('applies `modifyRelationshipQueryUsing()` inside `HasMaxOperator` count check', function () use ($applyQueryBuilderFilter): void {
         $authorWithOnePublished = User::factory()->create(['name' => 'One Published']);
         Post::factory()->create(['author_id' => $authorWithOnePublished->id, 'is_published' => true]);
         Post::factory()->count(5)->create(['author_id' => $authorWithOnePublished->id, 'is_published' => false]);
@@ -964,7 +964,7 @@ describe('relationship constraints', function () use ($applyQueryBuilderFilter):
             ->assertCanNotSeeTableRecords([$authorWithThreePublished]);
     });
 
-    it('applies `modifyRelationshipQueryUsing` inside `EqualsOperator` count check', function () use ($applyQueryBuilderFilter): void {
+    it('applies `modifyRelationshipQueryUsing()` inside `EqualsOperator` count check', function () use ($applyQueryBuilderFilter): void {
         $authorWithTwoPublished = User::factory()->create(['name' => 'Two Published']);
         Post::factory()->count(2)->create(['author_id' => $authorWithTwoPublished->id, 'is_published' => true]);
         Post::factory()->count(3)->create(['author_id' => $authorWithTwoPublished->id, 'is_published' => false]);
@@ -988,7 +988,7 @@ describe('relationship constraints', function () use ($applyQueryBuilderFilter):
             ->assertCanNotSeeTableRecords([$authorWithFivePublished]);
     });
 
-    it('inverts the scope inside `whereDoesntHave` when `isRelatedTo.inverse` is used with `modifyRelationshipQueryUsing`', function (): void {
+    it('inverts the scope inside `whereDoesntHave` when `isRelatedTo.inverse` is used with `modifyRelationshipQueryUsing()`', function (): void {
         $inScopeAuthor = User::factory()->create(['name' => 'Alpha Author']);
         $outOfScopeAuthor = User::factory()->create(['name' => 'Beta Author']);
 
@@ -2098,7 +2098,7 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
             ->assertCanNotSeeTableRecords([$highAvgUser]);
     });
 
-    it('applies `modifyRelationshipQueryUsing` to the `sum` aggregate subquery, hiding scoped-out rows', function () use ($applyQueryBuilderFilter): void {
+    it('applies `modifyRelationshipQueryUsing()` to the `sum` aggregate subquery, hiding scoped-out rows', function () use ($applyQueryBuilderFilter): void {
         $inScopeUser = User::factory()->create();
         Post::factory()->create(['author_id' => $inScopeUser->id, 'rating' => 5, 'is_published' => true]);
         Post::factory()->create(['author_id' => $inScopeUser->id, 'rating' => 3, 'is_published' => true]);
@@ -2122,7 +2122,7 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
             ->assertCanNotSeeTableRecords([$outOfScopeUser]);
     });
 
-    it('applies `modifyRelationshipQueryUsing` to the `max` aggregate subquery, hiding scoped-out rows', function () use ($applyQueryBuilderFilter): void {
+    it('applies `modifyRelationshipQueryUsing()` to the `max` aggregate subquery, hiding scoped-out rows', function () use ($applyQueryBuilderFilter): void {
         $inScopeUser = User::factory()->create();
         Post::factory()->create(['author_id' => $inScopeUser->id, 'rating' => 8, 'is_published' => true]);
 
@@ -2145,7 +2145,7 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
             ->assertCanNotSeeTableRecords([$outOfScopeUser]);
     });
 
-    it('applies `modifyRelationshipQueryUsing` to the `equals` aggregate subquery, hiding scoped-out rows', function () use ($applyQueryBuilderFilter): void {
+    it('applies `modifyRelationshipQueryUsing()` to the `equals` aggregate subquery, hiding scoped-out rows', function () use ($applyQueryBuilderFilter): void {
         $inScopeUser = User::factory()->create();
         Post::factory()->create(['author_id' => $inScopeUser->id, 'rating' => 4, 'is_published' => true]);
         Post::factory()->create(['author_id' => $inScopeUser->id, 'rating' => 4, 'is_published' => true]);
@@ -5038,41 +5038,37 @@ it('preserves constraint picker groups inside nested OR conditions', function ()
     Artisan::call('filament:assets');
     $this->actingAs(User::factory()->create());
 
-    $addRule = '.fi-fo-builder-block-picker > .fi-dropdown-trigger button';
+    $addRule = '.fi-fo-builder-block-picker > .fi-dropdown-trigger button[aria-haspopup="menu"]';
     $contentGroup = '[role="group"][aria-label="Content"]:visible';
     $detailsGroup = '[role="group"][aria-label="Details"]:visible';
     $logicGroup = '[role="group"][aria-label="Logic"]:visible';
 
-    $page = visit('/query-builder-table-test?grouped=1')
-        ->inDarkMode()
-        ->click('button[title="Filter"]')
-        ->assertPresent('[data-reorder-owner][x-data^="builderFormComponent("]:not([x-ignore])');
+    $page = visit('/query-builder-table-test?grouped=1');
 
-    $page->page()->locator($addRule)->click();
+    foreach ([$page, $page->inDarkMode()] as $page) {
+        $page->click('button[title="Filter"]');
+        $page->page()->locator($addRule)->click();
 
-    $page
-        ->assertVisible($contentGroup)
-        ->assertVisible($detailsGroup)
-        ->assertVisible($logicGroup)
-        ->wait(0.5)
-        ->assertNoAccessibilityIssues();
+        $page
+            ->assertVisible($contentGroup)
+            ->assertVisible($detailsGroup)
+            ->assertVisible($logicGroup)
+            ->assertNoAccessibilityIssues()
+            ->click($logicGroup . ' button')
+            ->assertMissing($logicGroup)
+            ->assertCount($addRule, 3);
 
-    $page->script('window.dispatchEvent(new CustomEvent("theme-changed", { detail: "light" }))');
-    $page->wait(0.5)->assertNoAccessibilityIssues()
-        ->click($logicGroup . ' button')
-        ->assertPresent('[data-reorder-owner] [data-reorder-owner]')
-        ->assertScript('Array.from(document.querySelectorAll("[data-reorder-owner]")).every(element => !element.closest("[x-ignore]"))', true);
+        $page->page()->locator(':nth-match(' . $addRule . ', 2)')->click();
 
-    $page->page()->locator(':nth-match(' . $addRule . ', 2)')->click();
-
-    $page
-        ->assertVisible($contentGroup)
-        ->assertVisible($detailsGroup)
-        ->assertVisible($logicGroup)
-        ->click($detailsGroup . ' button')
-        ->assertNoSmoke();
-
-    $page->assertMissing($detailsGroup)->wait(0.5)->assertNoAccessibilityIssues();
+        $page
+            ->assertVisible($contentGroup)
+            ->assertVisible($detailsGroup)
+            ->assertVisible($logicGroup)
+            ->click($detailsGroup . ' button')
+            ->assertNoSmoke()
+            ->assertMissing($detailsGroup)
+            ->assertNoAccessibilityIssues();
+    }
 });
 
 describe('rule limits', function () use ($applyQueryBuilderFilter): void {

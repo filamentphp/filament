@@ -497,10 +497,8 @@ describe('searching', function (): void {
             ->resize(375, 812)
             ->assertScript("(() => { const expectedLabels = { length: 'Length', sort: 'Sort', title: 'Title' }; return Object.entries(expectedLabels).every(([column, label]) => document.querySelector('.fi-ta-individual-search-cell-' + column + ' input').labels[0]?.textContent.trim() === label) })()", true)
             ->fill('.fi-ta-individual-search-cell-length input', 'foo')
-            ->wait(1)
             ->assertValue('.fi-ta-individual-search-cell-length input', 'foo')
             ->fill('.fi-ta-individual-search-cell-length input', '')
-            ->wait(1)
             ->assertValue('.fi-ta-individual-search-cell-length input', '')
             ->resize(700, 812)
             ->assertScript("document.querySelector('.fi-ta-individual-search-row').checkVisibility()", false)
@@ -532,12 +530,10 @@ describe('searching', function (): void {
             ->assertScript('new Set(Array.from(document.querySelectorAll(\'.fi-ta-col-manager-label input[type="checkbox"]\')).map((checkbox) => checkbox.id)).size === document.querySelectorAll(\'.fi-ta-col-manager-label input[type="checkbox"]\').length', true)
             // Clicking the `Title` label must toggle the checkbox in this table's column manager, not the checkbox of the other table's manager that shares the column name.
             ->click('#second-table .fi-ta-col-manager-label[for$="-title"]')
-            ->wait(1)
             ->assertMissing('#second-table .fi-ta-header-cell-title')
             ->assertPresent('#first-table .fi-ta-header-cell-title')
             // Restore the toggled column, since the column manager persists in the session and a retried attempt must start from the default state.
             ->click('#second-table .fi-ta-col-manager-label[for$="-title"]')
-            ->wait(1)
             ->assertPresent('#second-table .fi-ta-header-cell-title')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();

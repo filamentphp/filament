@@ -1,6 +1,10 @@
 <x-filament-panels::page>
     <div x-data="{ submissionAttemptCount: 0 }">
-        <form x-on:submit="submissionAttemptCount++" wire:submit="save">
+        <form
+            x-on:submit="submissionAttemptCount++"
+            wire:submit="save"
+            @if (! $hasNativeValidation) novalidate @endif
+        >
             {{ $this->form }}
         </form>
 

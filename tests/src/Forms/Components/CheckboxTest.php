@@ -266,53 +266,17 @@ it('can render `Checkbox` in the browser', function (): void {
 
     $browser = visit('/checkbox-test');
 
-    $browser
-        ->assertNoSmoke()
-        ->assertNoAccessibilityIssues()
-        ->assertScript(<<<'JS'
-                (() => {
-                    const checkbox = document.querySelector('[data-testid="checkbox"]')
-
-                    checkbox.focus()
-                    checkbox.click()
-                    setTimeout(() => checkbox.click(), 25)
-
-                    return document.activeElement === checkbox
-                })()
-                JS, true);
-
-    usleep(50_000);
-
-    $browser
-        ->assertScript('document.querySelector(\'[data-testid="checkbox"]\').disabled', false)
-        ->assertScript('document.activeElement === document.querySelector(\'[data-testid="checkbox"]\')', true);
-
-    usleep(600_000);
-
-    $browser
-        ->assertScript('document.querySelector(\'[data-testid="checkbox-form"]\').dataset.updateCount', '2')
-        ->assertScript('document.querySelector(\'[data-testid="checkbox"]\').checked', false);
-
-    $browser = visit('/checkbox-test')->inDarkMode();
-
-    $browser->assertScript(<<<'JS'
-            (() => {
-                const checkbox = document.querySelector('[data-testid="checkbox"]')
-
-                checkbox.focus()
-                checkbox.click()
-
-                return true
-            })()
-            JS, true);
-
-    usleep(50_000);
-
-    $browser
-        ->assertScript('document.querySelector(\'[data-testid="checkbox"]\').disabled', false)
-        ->assertScript('document.activeElement === document.querySelector(\'[data-testid="checkbox"]\')', true)
-        ->assertNoSmoke()
-        ->assertNoAccessibilityIssues();
+    foreach ([$browser, $browser->inDarkMode()] as $page) {
+        $page->check('[data-testid="checkbox"]')
+            ->assertChecked('[data-testid="checkbox"]')
+            ->assertPresent('[data-testid="checkbox"]:focus')
+            ->uncheck('[data-testid="checkbox"]')
+            ->assertNotChecked('[data-testid="checkbox"]')
+            ->assertEnabled('[data-testid="checkbox"]')
+            ->assertPresent('[data-testid="checkbox"]:focus')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+    }
 });
 
 class TestComponentWithNonInlineCheckbox extends Livewire

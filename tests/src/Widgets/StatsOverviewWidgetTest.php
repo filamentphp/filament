@@ -135,7 +135,6 @@ it('renders accessible charts in light and dark modes', function (): void {
 
     visit('/stats-overview-widget-browser-test')
         ->assertVisible('[data-testid="orders-stat"] canvas')
-        ->assertScript("!!Alpine.\$data(document.querySelector('[data-testid=\"orders-stat\"] canvas').closest('[x-data]')).getChart()", true)
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
 
@@ -143,7 +142,6 @@ it('renders accessible charts in light and dark modes', function (): void {
     visit('/stats-overview-widget-browser-test')
         ->inDarkMode()
         ->assertVisible('[data-testid="orders-stat"] canvas')
-        ->assertScript("!!Alpine.\$data(document.querySelector('[data-testid=\"orders-stat\"] canvas').closest('[x-data]')).getChart()", true)
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
 });

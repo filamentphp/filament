@@ -39,7 +39,7 @@ test('fields can be required', function (): void {
 });
 
 describe('toolbar buttons', function (): void {
-    test('can get default toolbar buttons using `getDefaultToolbarButtons()`', function (): void {
+    it('can get default toolbar buttons using `getDefaultToolbarButtons()`', function (): void {
         $markdownEditor = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -59,7 +59,7 @@ describe('toolbar buttons', function (): void {
             ->and($defaultButtons[4])->toEqual(['undo', 'redo']);
     });
 
-    test('can overwrite toolbar buttons array using `toolbarButtons()`', function (): void {
+    it('can replace toolbar buttons using `toolbarButtons()`', function (): void {
         $markdownEditor = MarkdownEditor::make('content')
             ->toolbarButtons([
                 ['bold', 'italic'],
@@ -75,7 +75,7 @@ describe('toolbar buttons', function (): void {
             ->and($buttons[1])->toEqual(['undo', 'redo']);
     });
 
-    test('can overwrite toolbar buttons with closure using `toolbarButtons()`', function (): void {
+    it('can set toolbar buttons with a `Closure` using `toolbarButtons()`', function (): void {
         $markdownEditor = MarkdownEditor::make('content')
             ->toolbarButtons(fn () => [
                 ['bold', 'italic'],
@@ -89,7 +89,7 @@ describe('toolbar buttons', function (): void {
             ->and($buttons[0])->toEqual(['bold', 'italic']);
     });
 
-    test('can disable specific toolbar buttons using `disableToolbarButtons()`', function (): void {
+    it('can disable specific toolbar buttons using `disableToolbarButtons()`', function (): void {
         $schema = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -113,7 +113,7 @@ describe('toolbar buttons', function (): void {
             ->toContain('undo');
     });
 
-    test('can enable additional toolbar buttons using `enableToolbarButtons()`', function (): void {
+    it('can enable additional toolbar buttons using `enableToolbarButtons()`', function (): void {
         $schema = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -135,7 +135,7 @@ describe('toolbar buttons', function (): void {
             ->toContain('subscript');
     });
 
-    test('can disable all toolbar buttons using `disableAllToolbarButtons()`', function (): void {
+    it('can disable all toolbar buttons using `disableAllToolbarButtons()`', function (): void {
         $schema = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -150,7 +150,7 @@ describe('toolbar buttons', function (): void {
         expect($buttons)->toBeArray()->toBeEmpty();
     });
 
-    test('can conditionally disable all toolbar buttons using `disableAllToolbarButtons()`', function (): void {
+    it('can conditionally disable all toolbar buttons using `disableAllToolbarButtons()`', function (): void {
         $markdownEditor = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -164,7 +164,7 @@ describe('toolbar buttons', function (): void {
         expect($buttons)->toBeArray()->not->toBeEmpty();
     });
 
-    test('can check if toolbar button exists using `hasToolbarButton()`', function (): void {
+    it('can check if a toolbar button exists using `hasToolbarButton()`', function (): void {
         $markdownEditor = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -178,7 +178,7 @@ describe('toolbar buttons', function (): void {
             ->and($markdownEditor->hasToolbarButton('nonexistent'))->toBeFalse();
     });
 
-    test('can check if toolbar button exists with array using `hasToolbarButton()`', function (): void {
+    it('can check if any toolbar button in an array exists using `hasToolbarButton()`', function (): void {
         $markdownEditor = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -191,7 +191,7 @@ describe('toolbar buttons', function (): void {
             ->and($markdownEditor->hasToolbarButton(['bold', 'nonexistent']))->toBeTrue(); // At least one exists
     });
 
-    test('can check if custom toolbar buttons are set using `hasCustomToolbarButtons()`', function (): void {
+    it('can check if custom toolbar buttons are set using `hasCustomToolbarButtons()`', function (): void {
         $markdownEditor = MarkdownEditor::make('content');
 
         expect($markdownEditor->hasCustomToolbarButtons())->toBeFalse();
@@ -238,7 +238,7 @@ describe('toolbar buttons', function (): void {
             ->and($buttons[1])->toEqual(['undo', 'redo']);
     });
 
-    test('cannot use `disableToolbarButtons()` when using closure', function (): void {
+    it('cannot use `disableToolbarButtons()` when using closure', function (): void {
         $markdownEditor = MarkdownEditor::make('content')
             ->toolbarButtons(fn () => [['bold', 'italic']]);
 
@@ -246,7 +246,7 @@ describe('toolbar buttons', function (): void {
             ->toThrow(LogicException::class, 'You cannot use the `disableToolbarButtons()` method when the toolbar buttons are dynamically returned from a function.');
     });
 
-    test('cannot use `enableToolbarButtons()` when using closure', function (): void {
+    it('cannot use `enableToolbarButtons()` when using closure', function (): void {
         $markdownEditor = MarkdownEditor::make('content')
             ->toolbarButtons(fn () => [['bold', 'italic']]);
 

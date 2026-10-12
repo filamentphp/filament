@@ -42,7 +42,6 @@ it('keeps `helperText()` visible after toggling off when `inlineLabel()` and `li
         ->assertAttribute('[data-testid="live-inline-label-toggle"]', 'aria-checked', 'true')
         ->assertSee('Live inline label helper text')
         ->click('[data-testid="live-inline-label-toggle"]')
-        ->wait(1)
         ->assertAttribute('[data-testid="live-inline-label-toggle"]', 'aria-checked', 'false')
         ->assertSee('Live inline label helper text')
         ->assertNoSmoke();

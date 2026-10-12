@@ -12,6 +12,9 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Tables\Fixtures\PostsTableWithIconColumnStaticUrl;
+use Filament\Tests\Tables\Fixtures\PostsTableWithIconColumnUrl;
+use Filament\Tests\Tables\Fixtures\PostsTableWithIconColumnUrlNewTab;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -171,6 +174,28 @@ it('returns fluent `$this` from `options()`', function (): void {
     $result = $column->options(['active' => 'heroicon-o-check', 'inactive' => 'heroicon-o-x-mark']);
 
     expect($result)->toBe($column);
+});
+describe('URLs', function (): void {
+    it('can render a state-based URL', function (): void {
+        Post::factory()->create();
+
+        livewire(PostsTableWithIconColumnUrl::class)
+            ->assertSeeHtml('href="https://example.com/icon-link"');
+    });
+
+    it('can render a static URL', function (): void {
+        Post::factory()->create();
+
+        livewire(PostsTableWithIconColumnStaticUrl::class)
+            ->assertSeeHtml('href="https://example.com/static-link"');
+    });
+
+    it('can render a URL that opens in a new tab', function (): void {
+        Post::factory()->create();
+
+        livewire(PostsTableWithIconColumnUrlNewTab::class)
+            ->assertSeeHtml('target="_blank"');
+    });
 });
 
 describe('rendering', function (): void {

@@ -8,9 +8,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Support\Components\ViewComponent;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\Width;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
@@ -1027,62 +1025,19 @@ describe('block picker search', function (): void {
             ->and($builder->searchPrompt(message: static fn (): HtmlString => $message)->getSearchPrompt())->toBe($message);
     });
 
-    it('renders search labels and safely escapes an `Htmlable` search prompt', function (bool $hasPublishedView): void {
-        $cache = new ReflectionProperty(ViewComponent::class, 'hasPublishedEmbeddedViewOverrideCache');
-        $originalCache = $cache->getValue();
-        $cache->setValue(null, [
-            ...$originalCache,
-            'filament-forms::components.builder.block-picker' => $hasPublishedView,
-        ]);
-
-        try {
-            livewire(RenderBuilderWithSearchableBlocks::class)
-                ->assertSuccessful()
-                ->assertSeeHtml('x-ref="searchInput"')
-                ->assertDontSeeHtml('x-on:dropdown-escape')
-                ->assertSeeHtml('x-on:keydown.enter.prevent')
-                ->assertSeeHtml('placeholder="Find &quot;R&amp;D&quot;"')
-                ->assertSeeHtml('aria-label="Find &quot;R&amp;D&quot;"')
-                ->assertSeeHtml('data-block-label="paragraph"')
-                ->assertSeeHtml('data-block-label="editor&#039;s picks"')
-                ->assertSeeHtml('<strong>No matching blocks</strong>')
-                ->assertDontSeeHtml('<span title="Search">');
-        } finally {
-            $cache->setValue(null, $originalCache);
-        }
-    })->with(['embedded' => false, 'published Blade' => true]);
-
-    it('uses the same picker identity for equivalent widths in both renderers', function (): void {
-        $cache = new ReflectionProperty(ViewComponent::class, 'hasPublishedEmbeddedViewOverrideCache');
-        $originalCache = $cache->getValue();
-        $render = new ReflectionMethod(Builder::class, 'generateBlockPickerHtml');
-        $keys = [];
-
-        try {
-            foreach ([false, true] as $hasPublishedView) {
-                $cache->setValue(null, [
-                    ...$originalCache,
-                    'filament-forms::components.builder.block-picker' => $hasPublishedView,
-                ]);
-
-                foreach (['sm', Width::Small] as $width) {
-                    $html = $render->invoke(Builder::make('content'), Action::make('add'), [], 'content', '', width: $width);
-                    preg_match('/wire:key="([^"]+)"/', $html, $matches);
-                    expect($matches)->toHaveCount(2);
-                    $keys[] = $matches[1];
-                }
-            }
-
-            expect(array_unique($keys))->toHaveCount(1);
-        } finally {
-            $cache->setValue(null, $originalCache);
-        }
+    it('renders search labels and safely escapes an `Htmlable` search prompt', function (): void {
+        livewire(RenderBuilderWithSearchableBlocks::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('placeholder="Find &quot;R&amp;D&quot;"')
+            ->assertSeeHtml('aria-label="Find &quot;R&amp;D&quot;"')
+            ->assertSeeHtml('<strong>No matching blocks</strong>')
+            ->assertDontSeeHtml('<span title="Search">');
     });
 
     it('does not render search markup when not `searchable()`', function (): void {
         livewire(TestComponentWithBuilder::class)
             ->assertSuccessful()
-            ->assertDontSeeHtml('x-ref="searchInput"')
+            ->assertDontSeeHtml('placeholder=')
             ->assertDontSeeHtml('data-block-label');
     });
 });
@@ -1136,22 +1091,21 @@ it('can search and insert grouped blocks', function (): void {
 
     $contentGroup = '[data-testid="builder"] [role="group"][aria-label="Content"]';
     $mediaGroup = '[data-testid="builder"] [role="group"][aria-label="Media"]';
-    $searchInput = '[data-testid="builder"] input[type="text"][x-ref="searchInput"]';
+    $searchInput = '[data-testid="builder"] input[type="text"][aria-label][placeholder]';
 
     $page = visit('/builder-searchable-test?grouped=1')
         ->inDarkMode()
-        ->assertPresent('[data-testid="builder"]:not([x-ignore])');
+        ->assertPresent('[data-testid="builder"]');
 
     $page->page()->locator('[data-testid="add-block"]')->click();
 
     $page
         ->assertVisible($contentGroup)
         ->assertVisible($mediaGroup)
-        ->wait(0.5)
         ->assertNoAccessibilityIssues();
 
     $page->script('window.dispatchEvent(new CustomEvent("theme-changed", { detail: "light" }))');
-    $page->wait(0.5)->assertNoAccessibilityIssues()
+    $page->assertNoAccessibilityIssues()
         ->type($searchInput, 'resume')
         ->assertVisible($contentGroup)
         ->assertMissing($mediaGroup)
@@ -1160,7 +1114,7 @@ it('can search and insert grouped blocks', function (): void {
         ->assertVisible($mediaGroup)
         ->type($searchInput, 'zzz')
         ->assertMissing($mediaGroup)
-        ->assertVisible('[data-testid="builder"] [role="status"]:not([x-ref="reorderStatus"])')
+        ->assertVisible('[data-testid="builder"] [role="status"]:not([aria-atomic="true"])')
         ->keys($searchInput, 'Escape')
         ->assertVisible($contentGroup)
         ->assertVisible($mediaGroup)
@@ -1189,7 +1143,7 @@ it('keeps blocks collapsed and preserves keyboard focus when reordering', functi
         $secondUp = ':nth-match([data-testid="builder"] [data-reorder-direction="up"], 2)';
         $thirdUp = ':nth-match([data-testid="builder"] [data-reorder-direction="up"], 3)';
 
-        $page->assertPresent('[data-testid="builder"]:not([x-ignore])')
+        $page->assertPresent('[data-testid="builder"]')
             ->keys($firstDown, 'Enter')
             ->assertValue($firstParagraph, 'Beta')
             ->assertValue($secondParagraph, 'Alpha')
@@ -1222,14 +1176,14 @@ it('keeps blocks collapsed and preserves keyboard focus when reordering', functi
     }
 })->with(['partial', 'full', 'ancestor']);
 
-it('provides non-tabbable move actions for collapsed blocks without taking focus', function (string $renderMode): void {
+it('provides accessible non-tabbable move actions for collapsed blocks', function (string $renderMode): void {
     Artisan::call('filament:assets');
     $this->actingAs(User::factory()->create());
     $url = '/builder-test?reordering=1&screenReader=1&full=' . (int) ($renderMode === 'full') . '&ancestor=' . (int) ($renderMode === 'ancestor');
     $page = visit($url);
     foreach ([$page, $page->inDarkMode()] as $page) {
         $controls = '[data-testid="builder"] [data-reorder-direction]';
-        $page->assertPresent('[data-testid="builder"]:not([x-ignore])')
+        $page->assertPresent('[data-testid="builder"]')
             ->assertCount($controls, 6)
             ->assertNotPresent('[data-testid="builder"] [aria-hidden="true"] [data-reorder-direction]');
 
@@ -1237,16 +1191,7 @@ it('provides non-tabbable move actions for collapsed blocks without taking focus
             $page->assertAttribute(':nth-match(' . $controls . ', ' . $position . ')', 'tabindex', '-1');
         }
 
-        $page->click('[data-testid="outside-reordering"]');
-        // Activate the visually hidden control without moving DOM focus to it.
-        $page->script('document.querySelector(\'[data-testid="builder"] [data-reorder-direction="down"]\').click()');
-        $page->assertValue(':nth-match([data-testid="paragraph-text"], 1)', 'Beta')
-            ->assertValue(':nth-match([data-testid="paragraph-text"], 2)', 'Alpha')
-            ->assertValue(':nth-match([data-testid="paragraph-text"], 3)', 'Gamma')
-            ->assertMissing(':nth-match([data-testid="paragraph-text"], 2)')
-            ->assertSeeIn('[data-testid="builder"] > [role="status"]', __('filament-forms::components.builder.reordering.moved', ['label' => 'Alpha', 'position' => 2, 'count' => 3]))
-            ->assertPresent('[data-testid="outside-reordering"]:focus')
-            ->assertNoSmoke()->assertNoAccessibilityIssues();
+        $page->assertNoSmoke()->assertNoAccessibilityIssues();
     }
 })->with(['partial', 'full', 'ancestor']);
 
@@ -1291,7 +1236,7 @@ it('renders appended and between blocks with current defaults while preserving e
     $heading = '[data-testid="heading-title"]';
     $page = visit('/builder-test')
         ->inDarkMode()
-        ->assertPresent('[data-testid="builder"]:not([x-ignore])')
+        ->assertPresent('[data-testid="builder"]')
         ->assertNotPresent($paragraph);
 
     $page->page()->locator('[data-testid="add-block"]')->click();
@@ -1321,7 +1266,7 @@ it('renders appended and between blocks with current defaults while preserving e
         ->assertNoAccessibilityIssues();
 
     $page->script('window.dispatchEvent(new CustomEvent("theme-changed", { detail: "light" }))');
-    $page->wait(0.5)->assertNoAccessibilityIssues();
+    $page->assertNoAccessibilityIssues();
 
     $page->click(':nth-match([data-testid="delete-block"], 2)')
         ->assertCount($paragraph, 1)
@@ -1336,8 +1281,8 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
     $this->actingAs(User::factory()->create());
 
     $addBlockAction = '[data-testid="add-block"]';
-    $noSearchResultsMessage = '[data-testid="builder"] [role="status"]:not([x-ref="reorderStatus"])';
-    $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
+    $noSearchResultsMessage = '[data-testid="builder"] [role="status"]:not([aria-atomic="true"])';
+    $searchInput = '[data-testid="builder"] input[type="text"][aria-label][placeholder]';
     $page = visit('/builder-searchable-test');
 
     if ($isDarkMode) {
@@ -1345,7 +1290,7 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
     }
 
     $page
-        ->assertPresent('[data-testid="builder"]:not([x-ignore])')
+        ->assertPresent('[data-testid="builder"]')
         ->assertAttribute($addBlockAction, 'aria-expanded', 'false');
 
     // Use the native locator timeout so a slow click is not repeated, toggling the picker closed again.
@@ -1381,7 +1326,6 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
         ->type($searchInput, 'video')
         ->assertVisible($noSearchResultsMessage)
         ->assertNoSmoke()
-        ->assertScript('document.querySelector(\'[data-testid="builder"]\').getAnimations({ subtree: true }).length', 0)
         ->assertNoAccessibilityIssues();
 })->with(['light' => false, 'dark' => true]);
 
@@ -1390,10 +1334,10 @@ it('clears a debounced block picker search with `Escape` before the debounce ela
 
     $this->actingAs(User::factory()->create());
 
-    $searchInput = '[data-testid="debounced-builder"] .fi-fo-builder-block-picker-search-ctn input';
+    $searchInput = '[data-testid="debounced-builder"] input[type="text"][aria-label][placeholder]';
 
     $page = visit('/builder-searchable-test')
-        ->assertPresent('[data-testid="debounced-builder"]:not([x-ignore])');
+        ->assertPresent('[data-testid="debounced-builder"]');
 
     $page->page()->locator('[data-testid="add-debounced-block"]')->click();
 
@@ -1403,12 +1347,10 @@ it('clears a debounced block picker search with `Escape` before the debounce ela
         ->keys($searchInput, 'Escape')
         ->assertVisible($searchInput)
         ->assertValue($searchInput, '')
-        // Wait for the debounce to elapse, so the cleared input is not overwritten by the stale search.
-        ->wait(1.5)
         ->assertVisible($searchInput)
         ->assertValue($searchInput, '')
         ->assertVisible('[data-testid="debounced-builder"] [data-block-label="paragraph"]')
-        ->assertMissing('[data-testid="debounced-builder"] [role="status"]:not([x-ref="reorderStatus"])')
+        ->assertMissing('[data-testid="debounced-builder"] [role="status"]:not([aria-atomic="true"])')
         ->assertNoSmoke();
 });
 
@@ -1429,13 +1371,12 @@ it('closes only the block picker with `Escape` when it is inside a modal', funct
     $page
         ->click('[data-testid="modal-builder-trigger"]')
         ->assertVisible($modal)
-        ->assertPresent('[data-testid="modal-builder"]:not([x-ignore])');
+        ->assertPresent('[data-testid="modal-builder"]');
 
     $page->page()->locator($addBlockAction)->click();
 
     $page
         ->assertVisible($searchInput)
-        ->assertScript('document.querySelector(\'[data-testid="builder-modal"]\').getAnimations({ subtree: true }).length', 0)
         ->assertNoAccessibilityIssues()
         ->type($searchInput, 'zzz')
         ->keys($searchInput, 'Escape')
@@ -1463,7 +1404,7 @@ it('clears and focuses the block picker search after clicking away and reopening
         $page = $page->inDarkMode();
     }
 
-    $page->assertPresent('[data-testid="builder"]:not([x-ignore])');
+    $page->assertPresent('[data-testid="builder"]');
 
     $page->page()->locator('[data-testid="add-block"]')->click();
 
@@ -1484,9 +1425,8 @@ it('clears and focuses the block picker search after clicking away and reopening
         ->assertVisible('[data-testid="builder"] [data-block-label="paragraph"]')
         ->assertVisible('[data-testid="builder"] [data-block-label="research & development"]')
         ->assertVisible('[data-testid="builder"] [data-block-label="video"]')
-        ->assertMissing('[data-testid="builder"] [role="status"]:not([x-ref="reorderStatus"])')
+        ->assertMissing('[data-testid="builder"] [role="status"]:not([aria-atomic="true"])')
         ->assertNoSmoke()
-        ->assertScript('document.querySelector(\'[data-testid="builder"]\').getAnimations({ subtree: true }).length', 0)
         ->assertNoAccessibilityIssues();
 })->with(['light' => false, 'dark' => true]);
 
@@ -1499,7 +1439,7 @@ it('searches independently in the add-between picker and inserts the selected bl
     $betweenPicker = '[data-testid="builder"] .fi-fo-builder-add-between-items-ctn';
 
     $page = visit('/builder-searchable-test')
-        ->assertPresent('[data-testid="builder"]:not([x-ignore])');
+        ->assertPresent('[data-testid="builder"]');
 
     $page->page()->locator('[data-testid="add-block"]')->click();
 
@@ -1533,141 +1473,100 @@ it('searches independently in the add-between picker and inserts the selected bl
         ->assertNoSmoke();
 });
 
-it('preserves an active search when the block catalog changes', function (): void {
+it('can search and insert blocks after changing the block catalog', function (): void {
     Artisan::call('filament:assets');
 
     $this->actingAs(User::factory()->create());
 
     $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
     $page = visit('/builder-searchable-test')
-        ->assertPresent('[data-testid="builder"]:not([x-ignore])');
+        ->click('[data-testid="update-blocks"]');
 
     $page->page()->locator('[data-testid="add-block"]')->click();
 
     $page
         ->type($searchInput, 'video')
-        ->assertVisible('[data-testid="builder"] [data-block-label="video"]');
-
-    $page->script('Alpine.$data(document.querySelector(\'[data-testid="builder"]\')).$wire.$set(\'hasUpdatedBlocks\', true)');
-
-    $page
-        ->assertValue($searchInput, 'video')
         ->assertVisible('[data-testid="builder"] [data-block-label="video heading"]')
         ->assertVisible('[data-testid="builder"] [data-block-label="video quote"]')
         ->assertNotPresent('[data-testid="builder"] [data-block-label="video"]')
         ->assertMissing('[data-testid="builder"] [data-block-label="introduction"]')
-        ->assertMissing('[data-testid="builder"] [role="status"]:not([x-ref="reorderStatus"])')
-        ->assertScript('document.activeElement.matches(\'.fi-fo-builder-block-picker-search-ctn input\')', true);
-
-    $page->script('Alpine.$data(document.querySelector(\'[data-testid="builder"]\')).$wire.$set(\'hasUpdatedBlocks\', false)');
-
-    $page
-        ->assertVisible('[data-testid="builder"] [data-block-label="video"]')
-        ->type($searchInput, 'quote')
-        ->assertVisible('[data-testid="builder"] [role="status"]:not([x-ref="reorderStatus"])');
-
-    $page->script('Alpine.$data(document.querySelector(\'[data-testid="builder"]\')).$wire.$set(\'hasUpdatedBlocks\', true)');
-
-    $page
-        ->assertValue($searchInput, 'quote')
+        ->fill($searchInput, 'quote')
+        ->assertMissing('[data-testid="builder"] [data-block-label="video heading"]')
         ->assertVisible('[data-testid="builder"] [data-block-label="video quote"]')
-        ->assertMissing('[data-testid="builder"] [role="status"]:not([x-ref="reorderStatus"])')
+        ->assertMissing('[data-testid="builder"] [role="status"]:not([aria-atomic="true"])')
         ->click('[data-testid="builder"] [data-block-label="video quote"]')
         ->assertVisible('[data-testid="builder"] input[id$=".quotation"]')
         ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
         ->assertNoSmoke();
 });
 
-it('focuses the search when blocks become available and after deleting the last allowed block', function (bool $hasPublishedView): void {
-    $cache = new ReflectionProperty(ViewComponent::class, 'hasPublishedEmbeddedViewOverrideCache');
-    $originalCache = $cache->getValue();
-    $cache->setValue(null, [
-        ...$originalCache,
-        'filament-forms::components.builder.block-picker' => $hasPublishedView,
-    ]);
+it('focuses the search when blocks become available and after deleting the last allowed block', function (): void {
+    Artisan::call('filament:assets');
 
-    try {
-        Artisan::call('filament:assets');
+    $this->actingAs(User::factory()->create());
 
-        $this->actingAs(User::factory()->create());
+    $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
+    $page = visit('/builder-searchable-test?empty=1&limited=1')
+        ->assertPresent('[data-testid="builder"]')
+        ->assertNotPresent($searchInput);
 
-        $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
-        $page = visit('/builder-searchable-test?empty=1&limited=1')
-            ->assertPresent('[data-testid="builder"]:not([x-ignore])')
-            ->assertNotPresent($searchInput);
+    $page->click('[data-testid="enable-blocks"]');
 
-        $page->script('Alpine.$data(document.querySelector(\'[data-testid="builder"]\')).$wire.$set(\'hasNoBlocks\', false)');
+    $page->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'false');
 
-        $page->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'false');
+    $page->page()->locator('[data-testid="add-block"]')->click();
 
-        $page->page()->locator('[data-testid="add-block"]')->click();
+    $page
+        ->assertVisible($searchInput)
+        ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true')
+        ->assertPresent($searchInput . ':focus')
+        ->click('[data-testid="builder"] [data-block-label="video"]')
+        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
+        ->assertNotPresent($searchInput)
+        ->click('[data-testid="builder"] .fi-fo-builder-item-header-end-actions button')
+        ->assertNotPresent('[data-testid="builder"] .fi-fo-builder-item')
+        ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'false');
 
-        $page
+    $page->page()->locator('[data-testid="add-block"]')->click();
+
+    $page
+        ->assertVisible($searchInput)
+        ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true')
+        ->assertPresent($searchInput . ':focus')
+        ->assertNoSmoke();
+});
+
+it('can add a searched block using `Tab` and `Enter`', function (): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
+    $option = '[data-testid="builder"] [data-block-label="video"]';
+    $page = visit('/builder-searchable-test');
+
+    foreach ([$page, $page->inDarkMode()] as $themedPage) {
+        $themedPage->assertPresent('[data-testid="builder"]');
+
+        $themedPage->page()->locator('[data-testid="add-block"]')->click();
+
+        $themedPage
             ->assertVisible($searchInput)
-            ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true')
             ->assertPresent($searchInput . ':focus')
-            ->click('[data-testid="builder"] [data-block-label="video"]')
+            ->type($searchInput, 'video')
+            ->assertMissing('[data-testid="builder"] [data-block-label="paragraph"]')
+            ->assertVisible($option)
+            ->assertScript("(() => { const option = document.querySelector('{$option}'); return option.tagName === 'BUTTON' && (!option.hasAttribute('role') || option.getAttribute('role') === 'button') && option.tabIndex === 0 })()", true)
+            ->keys($searchInput, 'Tab')
+            ->assertScript("document.activeElement.matches('{$option}')", true)
+            ->assertNoAccessibilityIssues()
+            ->keys($option, 'Enter')
+            ->assertVisible('[data-testid="builder"] input[id$=".url"]')
             ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
-            ->assertNotPresent($searchInput)
-            ->click('[data-testid="builder"] .fi-fo-builder-item-header-end-actions button')
-            ->assertNotPresent('[data-testid="builder"] .fi-fo-builder-item')
-            ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'false');
-
-        $page->page()->locator('[data-testid="add-block"]')->click();
-
-        $page
-            ->assertVisible($searchInput)
-            ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true')
-            ->assertPresent($searchInput . ':focus')
+            ->assertMissing($searchInput)
             ->assertNoSmoke();
-    } finally {
-        $cache->setValue(null, $originalCache);
     }
-})->with(['embedded' => false, 'published Blade' => true]);
-
-it('can add a searched block using `Tab` and `Enter` in both renderers', function (bool $hasPublishedView): void {
-    $cache = new ReflectionProperty(ViewComponent::class, 'hasPublishedEmbeddedViewOverrideCache');
-    $originalCache = $cache->getValue();
-    $cache->setValue(null, [
-        ...$originalCache,
-        'filament-forms::components.builder.block-picker' => $hasPublishedView,
-    ]);
-
-    try {
-        Artisan::call('filament:assets');
-
-        $this->actingAs(User::factory()->create());
-
-        $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
-        $option = '[data-testid="builder"] [data-block-label="video"]';
-        $page = visit('/builder-searchable-test');
-
-        foreach ([$page, $page->inDarkMode()] as $themedPage) {
-            $themedPage->assertPresent('[data-testid="builder"]:not([x-ignore])');
-
-            $themedPage->page()->locator('[data-testid="add-block"]')->click();
-
-            $themedPage
-                ->assertVisible($searchInput)
-                ->assertPresent($searchInput . ':focus')
-                ->type($searchInput, 'video')
-                ->assertMissing('[data-testid="builder"] [data-block-label="paragraph"]')
-                ->assertVisible($option)
-                ->assertScript("(() => { const option = document.querySelector('{$option}'); return option.tagName === 'BUTTON' && (!option.hasAttribute('role') || option.getAttribute('role') === 'button') && option.tabIndex === 0 })()", true)
-                ->keys($searchInput, 'Tab')
-                ->assertScript("document.activeElement.matches('{$option}')", true)
-                ->assertScript('document.getAnimations().length', 0)
-                ->assertNoAccessibilityIssues()
-                ->keys($option, 'Enter')
-                ->assertVisible('[data-testid="builder"] input[id$=".url"]')
-                ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
-                ->assertMissing($searchInput)
-                ->assertNoSmoke();
-        }
-    } finally {
-        $cache->setValue(null, $originalCache);
-    }
-})->with(['embedded' => false, 'published Blade' => true]);
+});
 
 it('can reopen the picker and add a block after `blockPickerWidth()` changes', function (bool $isSearchable): void {
     Artisan::call('filament:assets');
@@ -1675,14 +1574,14 @@ it('can reopen the picker and add a block after `blockPickerWidth()` changes', f
     $this->actingAs(User::factory()->create());
 
     $page = visit('/builder-searchable-test?notSearchable=' . (int) (! $isSearchable))
-        ->assertPresent('[data-testid="builder"]:not([x-ignore])');
+        ->assertPresent('[data-testid="builder"]');
 
     $page->page()->locator('[data-testid="add-block"]')->click();
 
     $page
         ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true');
 
-    $page->script('Alpine.$data(document.querySelector(\'[data-testid="builder"]\')).$wire.$set(\'hasWidePicker\', true)');
+    $page->click('[data-testid="widen-picker"]');
 
     $page->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'false');
 

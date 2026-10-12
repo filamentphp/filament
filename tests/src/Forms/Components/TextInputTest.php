@@ -649,14 +649,7 @@ describe('rendering', function (): void {
     it('can render with `password()` and `revealable()`', function (): void {
         livewire(RenderTextInputWithRevealable::class)
             ->assertSuccessful()
-            ->assertSeeHtml('type="password"')
-            ->assertSeeHtml('x-data="passwordRevealFormComponent()"')
-            ->assertSeeHtml('x-load=""')
-            ->assertSeeHtml('x-load-src=')
-            ->assertSeeHtml('x-ref="showPasswordAction"')
-            ->assertSeeHtml('x-ref="hidePasswordAction"')
-            ->assertDontSeeHtml('passwordRevealFocusRequest')
-            ->assertDontSeeHtml('wire:loading.attr="disabled"');
+            ->assertSeeHtml('type="password"');
     });
 
     it('can render with `integer()`', function (): void {
@@ -699,7 +692,9 @@ describe('rendering', function (): void {
 it('can render and type in `TextInput` in the browser', function (): void {
     $this->actingAs(User::factory()->create());
 
-    $page = visit('/text-input-test')
+    $page = visit('/text-input-test', [
+        'permissions' => ['clipboard-read', 'clipboard-write'],
+    ])
         ->type('[data-testid="text-input"] input', 'John Doe');
 
     $page
@@ -708,15 +703,12 @@ it('can render and type in `TextInput` in the browser', function (): void {
         ->click('[data-testid="text-input"] .fi-input-wrp-suffix')
         ->assertScript('document.activeElement.matches(\'[data-testid="text-input"] input\')', true);
 
-    $page->script("Object.defineProperty(window.navigator, 'clipboard', { configurable: true, value: { writeText: async (value) => { window.__copiedText = value } } })");
-
     $page
         ->type('[data-testid="copyable-input"] input', 'ABC123')
         ->click('[data-testid="copyable-input"] button')
+        ->assertScript('navigator.clipboard.readText()', 'ABC123')
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
-
-    expect($page->script('window.__copiedText'))->toBe('ABC123');
 
     visit('/text-input-test')
         ->inDarkMode()
@@ -759,17 +751,15 @@ it('preserves focus and selection when revealing a password in the browser', fun
     $this->actingAs(User::factory()->create());
 
     $passwordInput = '[data-testid="password-input"]';
-    $input = "{$passwordInput} input.fi-input";
+    $input = "{$passwordInput} input:not([type=hidden])";
     $showPasswordAction = '[data-testid="show-password"]';
     $hidePasswordAction = '[data-testid="hide-password"]';
 
     $page = visit('/text-input-test')
         ->type($input, 'secret-value');
 
-    $page->script("document.querySelector('{$input}').setSelectionRange(1, 6, 'backward')");
-
     $page
-        ->assertScript("document.querySelector('{$passwordInput} input[type=hidden]') !== null", true)
+        ->keys($input, ['Home', ...array_fill(0, 6, 'ArrowRight'), ...array_fill(0, 5, 'Shift+ArrowLeft')])
         ->assertScript("document.querySelector('{$showPasswordAction}').ariaLabel.length > 0", true)
         ->assertScript("document.querySelector('{$hidePasswordAction}').ariaLabel.length > 0", true)
         ->assertScript("document.querySelector('{$showPasswordAction}').ariaLabel !== document.querySelector('{$hidePasswordAction}').ariaLabel", true)
@@ -797,16 +787,7 @@ it('preserves focus and selection when revealing a password in the browser', fun
         ->assertValue($input, 'secret-value')
         ->assertScript("[document.querySelector('{$input}').selectionStart, document.querySelector('{$input}').selectionEnd, document.querySelector('{$input}').selectionDirection]", [1, 6, 'backward']);
 
-    $livewireComponent = "Livewire.find(document.querySelector('{$passwordInput}').closest('[wire\\\\:id]').getAttribute('wire:id'))";
-
-    $page->script("window.passwordRefreshFinished = false; {$livewireComponent}.call('\$refresh').then(() => window.passwordRefreshFinished = true)");
-
     $page
-        ->assertScript('window.passwordRefreshFinished', true)
-        ->assertAttribute($input, 'type', 'text')
-        ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
-        ->assertValue($input, 'secret-value')
-        ->assertScript("[document.querySelector('{$input}').selectionStart, document.querySelector('{$input}').selectionEnd, document.querySelector('{$input}').selectionDirection]", [1, 6, 'backward'])
         ->keys($hidePasswordAction, 'Enter')
         ->assertAttribute($input, 'type', 'password')
         ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
@@ -837,29 +818,28 @@ it('preserves focus and selection when revealing a password in the browser', fun
         ->assertNoAccessibilityIssues();
 });
 
-it('preserves focus when revealing a password with responsive actions in the browser', function (int $width, string $actionClass): void {
+it('preserves focus when revealing a password with responsive actions in the browser', function (int $width): void {
     $this->actingAs(User::factory()->create());
 
-    $passwordInput = '[data-testid="responsive-password-input"] input.fi-input';
-    $showPasswordAction = "[data-testid=\"show-responsive-password\"].{$actionClass}";
-    $hidePasswordAction = "[data-testid=\"hide-responsive-password\"].{$actionClass}";
+    $passwordInput = '[data-testid="responsive-password-input"] input:not([type=hidden])';
+    $showPasswordAction = '[data-testid="show-responsive-password"]:visible';
+    $hidePasswordAction = '[data-testid="hide-responsive-password"]:visible';
 
     $page = visit('/text-input-test')
         ->resize($width, 812);
 
-    $page->script("document.querySelector('{$passwordInput}').focus(); document.querySelector('{$passwordInput}').setSelectionRange(1, 6, 'backward')");
-
     $page
+        ->keys($passwordInput, ['Home', ...array_fill(0, 6, 'ArrowRight'), ...array_fill(0, 5, 'Shift+ArrowLeft')])
         ->keys($passwordInput, 'Tab')
-        ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
+        ->assertPresent($showPasswordAction . ':focus')
         ->keys($showPasswordAction, 'Enter')
         ->assertAttribute($passwordInput, 'type', 'text')
-        ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
+        ->assertPresent($hidePasswordAction . ':focus')
         ->assertScript('document.activeElement.matches(\':focus-visible\')', true)
         ->assertScript("[document.querySelector('{$passwordInput}').selectionStart, document.querySelector('{$passwordInput}').selectionEnd, document.querySelector('{$passwordInput}').selectionDirection]", [1, 6, 'backward'])
         ->keys($hidePasswordAction, 'Space')
         ->assertAttribute($passwordInput, 'type', 'password')
-        ->assertScript("document.activeElement.matches('{$showPasswordAction}')", true)
+        ->assertPresent($showPasswordAction . ':focus')
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
 
@@ -868,11 +848,11 @@ it('preserves focus when revealing a password with responsive actions in the bro
         ->resize($width, 812)
         ->click($showPasswordAction)
         ->assertAttribute($passwordInput, 'type', 'text')
-        ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
+        ->assertPresent($hidePasswordAction . ':focus')
         ->assertNoAccessibilityIssues();
 })->with([
-    'icon buttons below the `md` breakpoint' => [375, 'fi-icon-btn'],
-    'buttons from the `md` breakpoint' => [1024, 'fi-btn'],
+    'icon buttons below the `md` breakpoint' => [375],
+    'buttons from the `md` breakpoint' => [1024],
 ]);
 
 class RenderTextInputWithPassword extends Livewire

@@ -21,6 +21,8 @@ class ToggleButtonsTest extends Page
 
     public array $updatedStates = [];
 
+    public array $saved = [];
+
     public function mount(): void
     {
         $this->form->fill();
@@ -121,9 +123,9 @@ class ToggleButtonsTest extends Page
     public function save(bool $slow = false): array
     {
         if ($slow) {
-            usleep(500000);
+            \Amp\delay(0.5);
         }
 
-        return $this->form->getState();
+        return $this->saved = $this->form->getState();
     }
 }

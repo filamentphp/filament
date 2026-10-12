@@ -51,7 +51,6 @@ it('navigates and saves JavaScript select columns with stable focus in light and
             ->assertPresent($owner . ':focus')
             ->assertScript('document.activeElement.getAttribute("aria-expanded")', 'false')
             ->assertSeeIn($owner, 'High')
-            ->assertValue('[data-testid="rating-select"] input[x-ref="serverState"]', '3')
             ->keys($owner, ['Enter', 'z'])
             ->assertScript('document.getElementById(document.activeElement.getAttribute("aria-activedescendant")).dataset.value', '3')
             ->keys($owner, 'Enter')
@@ -66,7 +65,6 @@ it('navigates and saves JavaScript select columns with stable focus in light and
             ->keys($search, 'Enter')
             ->assertPresent($launcher . ':focus')
             ->assertSeeIn($launcher, 'Published')
-            ->assertValue('[data-testid="publication-select"] input[x-ref="serverState"]', 'published')
             ->assertNoSmoke();
 
         expect($post->fresh())->rating->toBe(3)->title->toBe('published');

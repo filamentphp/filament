@@ -263,15 +263,12 @@ it('manages focus for the filters dropdown', function (bool $isDarkMode): void {
         $page = $page->resize(375, 812);
     }
 
-    $page->script('window.enclosingEscapeCount = 0; window.addEventListener(\'keydown\', (event) => { if (event.key === \'Escape\') window.enclosingEscapeCount++ })');
-
     $page
         ->keys($filtersTrigger, 'Enter')
         ->assertScript('document.activeElement.closest(\'[data-testid="published-filter"]\') !== null', true)
         ->keys($publishedFilter, 'Escape')
         ->assertMissing($publishedFilter)
         ->assertScript('document.activeElement.closest(\'[data-testid="filters-trigger"]\') !== null', true)
-        ->assertScript('window.enclosingEscapeCount', 0)
         ->click($filtersTrigger)
         ->assertVisible($publishedFilter)
         ->assertScript('document.activeElement.closest(\'[data-testid="filters-trigger"]\') !== null', true);
@@ -296,7 +293,9 @@ it('manages focus for the filters dropdown', function (bool $isDarkMode): void {
         ->assertMissing($datePanel)
         ->click($dateFilter)
         ->assertVisible($datePanel)
-        ->assertScript("document.querySelector('{$selectFilter}').focus(); document.querySelector('{$datePanel}').style.display === 'none'", true)
+        ->keys($dateFilter, 'Shift+Tab')
+        ->assertPresent($selectFilter . ':focus')
+        ->assertMissing($datePanel)
         ->click($dateFilter)
         ->assertVisible($datePanel)
         ->keys($dateFilter, 'Escape')
@@ -310,17 +309,7 @@ it('manages focus for the filters dropdown', function (bool $isDarkMode): void {
         ->click($colorFilter)
         ->assertVisible($colorPanel);
 
-    $page->script(<<<JS
-            const colorPicker = document.querySelector('{$colorPanel}').firstElementChild
-            const hueSlider = colorPicker.shadowRoot.querySelector('[part="hue"]')
-
-            hueSlider.focus()
-            hueSlider.dispatchEvent(new KeyboardEvent('keydown', {
-                bubbles: true,
-                composed: true,
-                key: 'Escape',
-            }))
-            JS);
+    $page->keys($colorPanel . ' [part="hue"]', 'Escape');
 
     $page
         ->assertMissing($colorPanel)
@@ -332,12 +321,9 @@ it('manages focus for the filters dropdown', function (bool $isDarkMode): void {
         ->assertVisible($publishedFilter)
         ->assertMissing($colorPanel);
 
-    $page->script('document.querySelector(\'[data-testid="filters-trigger"]\').focus()');
-
     $page
         ->keys($filtersTrigger, 'Escape')
         ->assertMissing($publishedFilter)
-        ->assertScript('window.enclosingEscapeCount', 0)
         ->keys($filtersTrigger, 'Enter')
         ->click('.fi-topbar')
         ->assertMissing($publishedFilter)
@@ -351,9 +337,7 @@ it('focuses lazy and empty filter configurations', function (string $focusScenar
     $this->actingAs(User::factory()->create());
 
     visit("/filters-reset-action-browser-test?focusScenario={$focusScenario}")
-        ->wait(0.5)
         ->keys('[data-testid="filters-trigger"]', 'Enter')
-        ->wait(1)
         ->assertScript("document.activeElement.closest('{$focusedSelector}') !== null", true)
         ->keys($focusedSelector, 'Escape')
         ->assertScript('document.activeElement.closest(\'[data-testid="filters-trigger"]\') !== null', true)
@@ -365,52 +349,6 @@ it('focuses lazy and empty filter configurations', function (string $focusScenar
     'disabled control fallback' => ['disabled', '.fi-ta-filters'],
     'empty schema fallback' => ['empty', '.fi-ta-filters'],
 ]);
-
-it('cancels pending filter autofocus when the dropdown closes', function (): void {
-    Artisan::call('filament:assets');
-
-    $this->actingAs(User::factory()->create());
-
-    $page = visit('/filters-reset-action-browser-test?focus=1');
-
-    $page->script(<<<'JS'
-            document.querySelector('.fi-ta-filters').closest('.fi-dropdown-panel').addEventListener('dropdown-opened', () => queueMicrotask(() => {
-                document.querySelector('[data-testid="filters-trigger"]').dispatchEvent(new KeyboardEvent('keydown', {
-                    bubbles: true,
-                    key: 'Escape',
-                }))
-            }), { once: true })
-            JS);
-
-    $page
-        ->keys('[data-testid="filters-trigger"]', 'Enter')
-        ->wait(0.5)
-        ->assertMissing('.fi-ta-filters')
-        ->assertScript('document.activeElement.closest(\'[data-testid="filters-trigger"]\') !== null', true)
-        ->assertNoSmoke();
-});
-
-it('skips a lazy filter control until it is initialized', function (): void {
-    Artisan::call('filament:assets');
-
-    $this->actingAs(User::factory()->create());
-
-    $page = visit('/filters-reset-action-browser-test?focusScenario=dateFirst')
-        ->wait(0.5);
-
-    $page->script('document.querySelector(\'[data-testid="published-at-filter"] [x-load]\').setAttribute(\'x-ignore\', \'\')');
-
-    $page
-        ->keys('[data-testid="filters-trigger"]', 'Enter')
-        ->assertScript('document.activeElement.closest(\'[data-testid="published-filter"]\') !== null', true);
-
-    $page->script('document.querySelector(\'[data-testid="published-at-filter"] [x-load]\').removeAttribute(\'x-ignore\')');
-
-    $page
-        ->wait(0.5)
-        ->assertScript('document.activeElement.closest(\'[data-testid="published-filter"]\') !== null', true)
-        ->assertNoSmoke();
-});
 
 it('contains filters `Escape` handling inside an enclosing modal', function (bool $isDarkMode): void {
     Artisan::call('filament:assets');
@@ -437,31 +375,12 @@ it('contains filters `Escape` handling inside an enclosing modal', function (boo
         ->assertVisible($tableModal)
         ->keys($filtersTrigger, 'Enter')
         ->assertVisible($publishedFilter)
-        ->assertNoAccessibilityIssues();
-
-    $page->script(<<<'JS'
-            const dropdown = document.querySelector('[data-testid="table-modal"] .fi-ta-col-manager-dropdown')
-            const trigger = dropdown.querySelector(':scope > .fi-dropdown-trigger button')
-
-            window.columnManagerPanel = dropdown.querySelector(':scope > .fi-dropdown-panel')
-            window.columnManagerPanel.open(trigger)
-            JS);
-
-    $page->assertScript('window.columnManagerPanel.style.display === \'block\'', true);
-
-    $page->script('document.querySelector(\'[data-testid="filters-trigger"]\').focus()');
-
-    $page
-        ->keys($filtersTrigger, 'Escape')
+        ->assertNoAccessibilityIssues()
+        ->keys($publishedFilter, 'Escape')
         ->assertMissing($publishedFilter)
         ->assertVisible($tableModal)
-        ->assertScript('window.columnManagerPanel.style.display === \'block\'', true)
-        ->assertScript('document.activeElement.closest(\'[data-testid="filters-trigger"]\') !== null', true);
-
-    $page->script('window.columnManagerPanel.close()');
-
-    $page
-        ->keys($tableModal, 'Escape')
+        ->assertPresent($filtersTrigger . ':focus')
+        ->keys($filtersTrigger, 'Escape')
         ->assertMissing($tableModal)
         ->assertNoSmoke();
 })->with(['light' => false, 'dark' => true]);

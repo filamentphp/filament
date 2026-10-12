@@ -13,7 +13,6 @@ use Filament\Forms\FormsServiceProvider;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\TestCase;
 use Illuminate\Container\Container;
-use Illuminate\Support\ServiceProvider;
 
 uses(TestCase::class);
 
@@ -28,8 +27,7 @@ it('registers with locale-specific Faker generators that were resolved before th
 
     $faker = $container->make($binding);
 
-    $serviceProvider = (new ReflectionClass(FormsServiceProvider::class))->newInstanceWithoutConstructor();
-    (new ReflectionProperty(ServiceProvider::class, 'app'))->setValue($serviceProvider, $container);
+    $serviceProvider = new FormsServiceProvider($container);
     $serviceProvider->packageRegistered();
 
     expect($faker->filamentRichContent())->toBeInstanceOf(RichContentFaker::class)

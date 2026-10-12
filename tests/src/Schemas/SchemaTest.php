@@ -25,6 +25,21 @@ it('can be constructed without a Livewire component', function (): void {
     expect($schema)->toBeInstanceOf(Schema::class);
 });
 
+it('belongs to a `Livewire` component', function (): void {
+    $schema = Schema::make($livewire = Livewire::make());
+
+    expect($schema)
+        ->getLivewire()->toBe($livewire);
+});
+
+it('belongs to a parent component', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->parentComponent($component = new Component);
+
+    expect($schema)
+        ->getParentComponent()->toBe($component);
+});
+
 describe('alignment factory methods', function (): void {
     it('creates a start-aligned schema with `start()`', function (): void {
         $schema = Schema::start([]);

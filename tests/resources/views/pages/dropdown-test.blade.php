@@ -16,6 +16,12 @@
             x-data="{ isSecondaryDropdownShown: false }"
             data-testid="secondary-dropdown-container"
         >
+            <x-filament::button
+                data-testid="show-secondary-dropdown"
+                x-on:click="isSecondaryDropdownShown = true"
+            >
+                Show secondary filters
+            </x-filament::button>
             <template x-if="isSecondaryDropdownShown">
                 <x-filament::dropdown :menu="false">
                     <x-slot name="trigger">

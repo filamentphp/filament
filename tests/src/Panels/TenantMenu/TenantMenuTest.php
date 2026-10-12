@@ -72,11 +72,8 @@ it('renders and searches `Htmlable` tenant names while escaping string names', f
     $tenantTrigger = 'button:has(img[alt*="Research"])';
 
     $page->assertSeeIn("{$tenantTrigger} b", 'Research & billing');
-
-    $page->script('async () => { await new Promise(requestAnimationFrame); await Promise.all(document.getAnimations().map((animation) => animation.finished)); }');
     $page->assertNoAccessibilityIssues();
     $page->script("window.dispatchEvent(new CustomEvent('theme-changed', { detail: 'light' }))");
-    $page->script('async () => { await new Promise(requestAnimationFrame); await Promise.all(document.getAnimations().map((animation) => animation.finished)); }');
     $page->assertNoAccessibilityIssues();
     $page->click('button[aria-label="' . __('filament-panels::layout.actions.sidebar.collapse.label') . '"]:visible')
         ->hover($tenantTrigger)

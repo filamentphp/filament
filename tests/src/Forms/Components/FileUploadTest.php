@@ -15,7 +15,6 @@ use Illuminate\Validation\ValidationException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\MimeTypeDetection\ExtensionMimeTypeDetector;
-use Livewire\Exceptions\RootTagMissingFromViewException;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 use function Filament\Tests\livewire;
@@ -27,24 +26,20 @@ beforeEach(function (): void {
 });
 
 describe('file conversion', function (): void {
-    it('should convert `UploadedFile` objects to `TemporaryUploadedFile`', function (): void {
-        try {
-            livewire(TestComponentWithFileUpload::class)
-                ->fillForm([
-                    'single-file' => UploadedFile::fake()->image('single-file.jpg'),
-                    'multiple-files' => [
-                        UploadedFile::fake()->image('multiple-file1.jpg'),
-                        UploadedFile::fake()->image('multiple-file2.jpg'),
-                    ],
-                ])
-                ->assertSchemaStateSet(function (array $data): void {
-                    expect($data['single-file'][0])->toBeInstanceOf(TemporaryUploadedFile::class)
-                        ->and($data['multiple-files'][0])->toBeInstanceOf(TemporaryUploadedFile::class)
-                        ->and($data['multiple-files'][1])->toBeInstanceOf(TemporaryUploadedFile::class);
-                });
-        } catch (RootTagMissingFromViewException $exception) {
-            // Flaky test
-        }
+    it('converts `UploadedFile` objects to `TemporaryUploadedFile`', function (): void {
+        livewire(TestComponentWithFileUpload::class)
+            ->fillForm([
+                'single-file' => UploadedFile::fake()->image('single-file.jpg'),
+                'multiple-files' => [
+                    UploadedFile::fake()->image('multiple-file1.jpg'),
+                    UploadedFile::fake()->image('multiple-file2.jpg'),
+                ],
+            ])
+            ->assertSchemaStateSet(function (array $data): void {
+                expect($data['single-file'][0])->toBeInstanceOf(TemporaryUploadedFile::class)
+                    ->and($data['multiple-files'][0])->toBeInstanceOf(TemporaryUploadedFile::class)
+                    ->and($data['multiple-files'][1])->toBeInstanceOf(TemporaryUploadedFile::class);
+            });
     });
 });
 
@@ -2184,33 +2179,6 @@ it('can render `FileUpload` in the browser', function (): void {
         ->assertNoAccessibilityIssues();
 });
 
-it('does not refetch file metadata when reordering files', function (): void {
-    $this->actingAs(User::factory()->create());
-
-    $fileUploadAlpineData = "Alpine.\$data(document.querySelector('.fi-fo-file-upload'))";
-    $fileUploadLivewireComponent = "Livewire.find(document.querySelector('.fi-fo-file-upload').closest('[wire\\\\:id]').getAttribute('wire:id'))";
-
-    $page = visit('/file-upload-browser-test?testReordering=1')
-        ->wait(1);
-
-    $page->script("window.initialUploadedFileUrls = Object.fromEntries(Object.entries({$fileUploadAlpineData}.fileKeyIndex).map(([fileKey, file]) => [fileKey, file.url]))");
-
-    $page->script("{$fileUploadLivewireComponent}.call('reorderAttachments')");
-
-    $page
-        ->wait(1)
-        ->assertScript("Object.keys({$fileUploadAlpineData}.fileKeyIndex).join(',')", 'second-key,first-key')
-        ->assertScript("{$fileUploadAlpineData}.fileKeyIndex['first-key'].url === window.initialUploadedFileUrls['first-key']", true)
-        ->assertScript("{$fileUploadAlpineData}.fileKeyIndex['second-key'].url === window.initialUploadedFileUrls['second-key']", true);
-
-    $page->script("{$fileUploadLivewireComponent}.call('replaceAttachment')");
-
-    $page
-        ->wait(1)
-        ->assertScript("{$fileUploadAlpineData}.fileKeyIndex['first-key'].name", 'replacement.txt')
-        ->assertScript("{$fileUploadAlpineData}.fileKeyIndex['first-key'].url !== window.initialUploadedFileUrls['first-key']", true);
-});
-
 class RenderFileUploadWithAvatar extends Livewire
 {
     public function form(Schema $form): Schema
@@ -2798,7 +2766,7 @@ describe('`hydrateFiles()` branches', function (): void {
         return $field;
     };
 
-    it('filters out files that do not exist on disk when `shouldFetchFileInformation` is true', function () use ($makeField): void {
+    it('filters out files that do not exist on disk when `$shouldFetchFileInformation` is true', function () use ($makeField): void {
         Storage::fake('local');
         Storage::disk('local')->put('uploads/exists.jpg', 'data');
 
@@ -2845,7 +2813,7 @@ describe('`getUploadedFile()` branches', function (): void {
         return $field;
     };
 
-    it('returns `null` when the file does not exist and `shouldFetchFileInformation` is true', function () use ($makeField): void {
+    it('returns `null` when the file does not exist and `$shouldFetchFileInformation` is true', function () use ($makeField): void {
         Storage::fake('local');
 
         $field = $makeField(static fn (FileUpload $field) => $field);

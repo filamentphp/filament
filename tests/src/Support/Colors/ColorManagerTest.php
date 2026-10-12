@@ -32,6 +32,10 @@ describe('default colors', function (): void {
 });
 
 describe('registering colors', function (): void {
+    it('returns the same `ColorManager` instance from `register()` for fluent chaining', function (): void {
+        expect($this->manager->register(['brand' => Color::Green]))->toBe($this->manager);
+    });
+
     it('can register a color palette by name', function (): void {
         $this->manager->register([
             'brand' => Color::Indigo,

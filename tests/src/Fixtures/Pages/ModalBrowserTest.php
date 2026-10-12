@@ -20,11 +20,18 @@ class ModalBrowserTest extends Page
 
     public int $loadingButtonActivations = 0;
 
+    public bool $hasScrollableContent = false;
+
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedBolt;
 
     protected static ?int $navigationSort = 5;
 
     protected static bool $shouldRegisterNavigation = false;
+
+    public function mount(): void
+    {
+        $this->hasScrollableContent = request()->boolean('scroll');
+    }
 
     public function activateLoadingButton(): void
     {
@@ -45,13 +52,7 @@ class ModalBrowserTest extends Page
             Action::make('nonOverlayFocusRestoration')
                 ->label('Non-overlay focus restoration')
                 ->requiresConfirmation()
-                ->modalContent(function (): HtmlString {
-                    if (count($this->mountedActions ?? []) === 1) {
-                        usleep(250_000);
-                    }
-
-                    return new HtmlString('<p>Simulated network delay.</p>');
-                })
+                ->modalContent(new HtmlString('<p>Review the changes before continuing.</p>'))
                 ->action(static fn () => null)
                 ->extraAttributes(['data-testid' => 'non-overlay-trigger'])
                 ->extraModalWindowAttributes(['data-testid' => 'non-overlay-modal'])
@@ -147,6 +148,7 @@ class ModalBrowserTest extends Page
                     Action::make('scrollPreservationNested')
                         ->label('Open nested modal')
                         ->requiresConfirmation()
+                        ->modalCancelAction(static fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'scroll-nested-cancel']))
                         ->action(static fn () => null)
                         ->extraAttributes(['data-testid' => 'scroll-nested-trigger'])
                         ->extraModalWindowAttributes(['data-testid' => 'scroll-nested-modal']),
