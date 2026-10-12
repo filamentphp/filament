@@ -139,6 +139,14 @@ return [
             'label' => 'Reorder item :key',
         ],
 
+        'move_record_up' => [
+            'label' => 'Move :label up',
+        ],
+
+        'move_record_down' => [
+            'label' => 'Move :label down',
+        ],
+
         'filter' => [
             'label' => 'Filter',
         ],
@@ -250,6 +258,11 @@ return [
     'loading' => 'Loading...',
 
     'reorder_indicator' => 'Drag and drop the records into order.',
+
+    'reordering' => [
+        'position' => ':label, position :position of :count.',
+        'moved' => ':label moved to position :position of :count.',
+    ],
 
     'result_count' => '{0} No results|{1} :count result|[2,*] :count results',
 
