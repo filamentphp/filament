@@ -4,19 +4,29 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Livewire\SpatieMediaLibraryFileUploadForm;
+use Filament\Tests\Fixtures\Models\MediaPost;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\FileUploadController;
 
 use function Filament\Tests\livewire;
 
@@ -186,6 +196,118 @@ it('can validate from the component itself', function (): void {
         ->assertHasFormErrors(['title' => ['required']]);
 });
 
+describe('upload validation', function (): void {
+    it('uses friendly field names when `WithFileUploads` is also used directly', function (): void {
+        $uploadPath = 'data.avatar.24b0c021-dcd4-4b43-ad0c-3b5c241225ee';
+
+        $component = livewire(SpatieMediaLibraryFileUploadForm::class, ['record' => MediaPost::factory()->create()])
+            ->call('_uploadErrored', $uploadPath, json_encode([
+                'errors' => ['files.0' => ['The files.0 field must not be greater than 1024 kilobytes.']],
+            ]), false)
+            ->assertHasErrors([$uploadPath]);
+
+        expect($component->errors()->get($uploadPath))
+            ->toBe(['The avatar field must not be greater than 1024 kilobytes.']);
+    });
+
+    it('uses friendly field names for temporary upload validation errors', function (string $uploadComponent, string $uploadPath, ?string $validationAttribute, string $expectedAttribute): void {
+        config()->set('livewire.temporary_file_upload.rules', 'file|max:1024');
+
+        try {
+            app(FileUploadController::class)->validateAndStore([
+                UploadedFile::fake()->create('download.zip', 2048, 'application/zip'),
+            ], 'local');
+
+            $this->fail('The oversized temporary upload should fail validation.');
+        } catch (ValidationException $exception) {
+            $errorsInJson = json_encode(['errors' => $exception->errors()]);
+        }
+
+        $component = livewire(UploadValidationTestComponent::class, [
+            'uploadComponent' => $uploadComponent,
+            'validationAttribute' => $validationAttribute,
+        ])
+            ->call('_uploadErrored', $uploadPath, $errorsInJson, false)
+            ->assertHasErrors([$uploadPath])
+            ->assertDispatched('upload:errored', name: $uploadPath);
+
+        expect($component->errors()->get($uploadPath))
+            ->toBe(["The {$expectedAttribute} field must not be greater than 1024 kilobytes."]);
+
+        if (is_a($uploadComponent, FileUpload::class, allow_string: true)) {
+            $component->assertSee("The {$expectedAttribute} field must not be greater than 1024 kilobytes.");
+        }
+    })->with([
+        'file upload label' => [FileUpload::class, 'data.downloadable_file.24b0c021-dcd4-4b43-ad0c-3b5c241225ee', null, 'downloadable file'],
+        'file upload validation attribute' => [FileUpload::class, 'data.downloadable_file.24b0c021-dcd4-4b43-ad0c-3b5c241225ee', 'product download', 'product download'],
+        'Spatie media upload' => [SpatieMediaLibraryFileUpload::class, 'data.downloadable_file.24b0c021-dcd4-4b43-ad0c-3b5c241225ee', null, 'downloadable file'],
+        'rich editor attachment' => [RichEditor::class, 'componentFileAttachments.data.downloadable_file.24b0c021-dcd4-4b43-ad0c-3b5c241225ee', null, 'downloadable file'],
+        'markdown editor attachment' => [MarkdownEditor::class, 'componentFileAttachments.data.downloadable_file', null, 'downloadable file'],
+    ]);
+
+    it('uses friendly field names for generic upload failures and leaves unrelated uploads unchanged', function (string $uploadComponent, string $uploadPath, string $placeholder, string $expectedAttribute): void {
+        __('validation.uploaded');
+        app('translator')->addLines(['validation.uploaded' => "The {$placeholder} failed to upload."], 'en');
+
+        $component = livewire(UploadValidationTestComponent::class, ['uploadComponent' => $uploadComponent])
+            ->call('_uploadErrored', name: $uploadPath, errorsInJson: null, isMultiple: false)
+            ->assertHasErrors([$uploadPath])
+            ->assertDispatched('upload:errored', name: $uploadPath);
+
+        expect($component->errors()->get($uploadPath))
+            ->toBe(["The {$expectedAttribute} failed to upload."]);
+    })->with([
+        'file upload' => [FileUpload::class, 'data.downloadable_file.24b0c021-dcd4-4b43-ad0c-3b5c241225ee', ':attribute', 'downloadable file'],
+        'editor attachment' => [RichEditor::class, 'componentFileAttachments.data.downloadable_file.24b0c021-dcd4-4b43-ad0c-3b5c241225ee', ':attribute', 'downloadable file'],
+        'capitalized file upload' => [FileUpload::class, 'data.downloadable_file.24b0c021-dcd4-4b43-ad0c-3b5c241225ee', ':Attribute', 'Downloadable file'],
+        'uppercase editor attachment' => [RichEditor::class, 'componentFileAttachments.data.downloadable_file.24b0c021-dcd4-4b43-ad0c-3b5c241225ee', ':ATTRIBUTE', 'DOWNLOADABLE FILE'],
+        'unrelated upload' => [FileUpload::class, 'data.other_upload', ':attribute', 'data.other_upload'],
+    ]);
+
+    it('preserves translated attribute names for generic upload failures', function (): void {
+        $uploadPath = 'data.downloadable_file.24b0c021-dcd4-4b43-ad0c-3b5c241225ee';
+
+        __('validation.uploaded');
+        app('translator')->addLines(["validation.attributes.{$uploadPath}" => 'translated download'], 'en');
+
+        $component = livewire(UploadValidationTestComponent::class)
+            ->call('_uploadErrored', $uploadPath, null, false);
+
+        expect($component->errors()->get($uploadPath))
+            ->toBe(['The translated download failed to upload.']);
+    });
+
+    it('preserves multiple upload error keys, unrelated errors and custom messages', function (): void {
+        $component = livewire(UploadValidationTestComponent::class)
+            ->call('_uploadErrored', 'data.downloadable_file', json_encode([
+                'errors' => [
+                    'files.0' => ['The files.0 field must not be greater than 1024 kilobytes.'],
+                    'files.1' => ['This archive is not supported.'],
+                    'data.other_upload' => ['The data.other_upload field is required.'],
+                ],
+            ]), true);
+
+        expect($component->errors()->messages())->toEqual([
+            'data.downloadable_file.0' => ['The downloadable file field must not be greater than 1024 kilobytes.'],
+            'data.downloadable_file.1' => ['This archive is not supported.'],
+            'data.other_upload' => ['The data.other_upload field is required.'],
+        ]);
+    });
+
+    it('uses the validation attribute of the correct repeater row', function (): void {
+        $component = livewire(RepeaterUploadValidationTestComponent::class);
+        $rowKey = array_keys($component->get('data.products'))[1];
+        $uploadPath = "data.products.{$rowKey}.downloadable_file.24b0c021-dcd4-4b43-ad0c-3b5c241225ee";
+
+        $component->call('_uploadErrored', $uploadPath, json_encode([
+            'errors' => ['files.0' => ['The files.0 field must not be greater than 1024 kilobytes.']],
+        ]), false);
+
+        expect($component->errors()->get($uploadPath))
+            ->toBe(['The secondary download field must not be greater than 1024 kilobytes.']);
+    });
+});
+
 it('can load nested deferred schemas independently', function (): void {
     $livewire = livewire(TestComponentWithDeferredSchemas::class);
 
@@ -318,6 +440,49 @@ class TestComponentWithValidation extends Livewire
     public function submit(): void
     {
         $this->form->validate();
+    }
+}
+
+class UploadValidationTestComponent extends Livewire
+{
+    public string $uploadComponent = FileUpload::class;
+
+    public ?string $validationAttribute = null;
+
+    public function form(Schema $schema): Schema
+    {
+        $field = $this->uploadComponent::make('downloadable_file')
+            ->validationAttribute($this->validationAttribute);
+
+        if ($field instanceof FileUpload) {
+            $field->disk('local');
+        }
+
+        return $schema
+            ->components([$field])
+            ->statePath('data');
+    }
+}
+
+class RepeaterUploadValidationTestComponent extends Livewire
+{
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Repeater::make('products')
+                    ->default([
+                        ['name' => 'primary download'],
+                        ['name' => 'secondary download'],
+                    ])
+                    ->schema([
+                        TextInput::make('name'),
+                        FileUpload::make('downloadable_file')
+                            ->disk('local')
+                            ->validationAttribute(static fn (Get $get): string => $get('name')),
+                    ]),
+            ])
+            ->statePath('data');
     }
 }
 
