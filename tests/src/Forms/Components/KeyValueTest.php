@@ -516,8 +516,9 @@ describe('browser interactions', function (): void {
     it('supports row actions and configured controls in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/key-value-test')
-            ->assertPresent('[data-testid="basic-key-value"] .fi-fo-key-value-add-action-ctn')
+        $page = visit('/key-value-test');
+
+        $page->assertPresent('[data-testid="basic-key-value"] .fi-fo-key-value-add-action-ctn')
             ->assertCount('[data-testid="basic-key-value"] tbody tr', 1)
             ->click('[data-testid="basic-key-value"] .fi-fo-key-value-add-action-ctn')
             ->assertCount('[data-testid="basic-key-value"] tbody tr', 2)
@@ -527,12 +528,136 @@ describe('browser interactions', function (): void {
             ->assertMissing('[data-testid="not-addable-key-value"] .fi-fo-key-value-add-action-ctn')
             ->assertMissing('[data-testid="not-deletable-key-value"] tbody .fi-has-action')
             ->assertMissing('[data-testid="disabled-key-value"] .fi-fo-key-value-add-action-ctn')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+            ->assertMissing('[data-testid="disabled-key-value"] [data-reorder-direction]')
+            ->assertMissing('[data-testid="hidden-reorder-key-value"] [data-reorder-direction]')
+            ->assertMissing('[data-testid="hidden-reorder-key-value"] [x-sortable]')
+            ->assertMissing('[data-testid="disabled-reorder-key-value"] [data-reorder-direction]')
+            ->assertMissing('[data-testid="disabled-reorder-key-value"] [x-sortable]')
+            ->assertMissing('[data-testid="basic-key-value"] [data-reorder-direction]');
 
-        visit('/key-value-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
+        $controls = '[data-testid="reorderable-key-value"] [data-reorder-direction]';
+        foreach (range(1, 6) as $position) {
+            $page->assertAttribute(':nth-match(' . $controls . ', ' . $position . ')', 'tabindex', '-1');
+        }
+
+        $page->fill(':nth-match([data-testid="reorderable-key-value"] input[aria-label="Key"], 1)', 'first')
+            ->fill(':nth-match([data-testid="reorderable-key-value"] input[aria-label="Key"], 2)', 'second')
+            ->click('[data-testid="outside-reordering"]');
+        // Activate the hidden control without moving DOM focus, as screen-reader navigation can.
+        $page->script('document.querySelector(\'[data-testid="reorderable-key-value"] [data-reorder-direction="down"]\').click()');
+        $page->assertValue(':nth-match([data-testid="reorderable-key-value"] input[aria-label="Key"], 1)', 'second')
+            ->assertValue(':nth-match([data-testid="reorderable-key-value"] input[aria-label="Key"], 2)', 'first')
+            ->assertPresent('[data-testid="outside-reordering"]:focus')
+            ->click(':nth-match([data-testid="reorderable-key-value"] input[aria-label="Key"], 1)');
+
+        $page->script('document.querySelector(\'[data-testid="reorderable-key-value"] [data-reorder-direction="down"]\').click()');
+        $page->assertValue(':nth-match([data-testid="reorderable-key-value"] input[aria-label="Key"], 1)', 'first')
+            ->assertValue(':nth-match([data-testid="reorderable-key-value"] input[aria-label="Key"], 2)', 'second')
+            ->assertPresent(':nth-match([data-testid="reorderable-key-value"] input[aria-label="Key"], 2):focus')
+            ->assertNoSmoke()->assertNoAccessibilityIssues();
+
+        $page->inDarkMode()->assertNoAccessibilityIssues();
+    });
+
+    it('keeps drafts, focus and save semantics when dragging and activating screen-reader move controls', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $field = '[data-testid="accessible-key-value"]';
+        $keys = $field . ' input[aria-label="Key"]';
+        $values = $field . ' input[aria-label="Value"]';
+        $moveUp = $field . ' [data-reorder-direction="up"]';
+        $moveDown = $field . ' [data-reorder-direction="down"]';
+        $handles = $field . ' [x-sortable-handle]';
+        $page = visit('/key-value-test');
+
+        // Simulate activation without moving DOM focus, not real assistive technology.
+        $activateMove = function (string $direction, int $position) use ($page, $field): void {
+            $selector = json_encode($field . ' [data-reorder-direction="' . $direction . '"]');
+            $page->script('document.querySelectorAll(' . $selector . ')[' . ($position - 1) . '].click()');
+        };
+
+        $page->assertPresent($field . ' [x-sortable]')
+            ->assertDisabled(':nth-match(' . $moveUp . ', 1)')
+            ->assertDisabled(':nth-match(' . $moveDown . ', 3)')
+            ->fill(':nth-match(' . $values . ', 1)', 'Unsaved first');
+
+        $activateMove('down', 1);
+        $page->assertValue(':nth-match(' . $keys . ', 1)', 'beta')
+            ->assertValue(':nth-match(' . $keys . ', 2)', 'alpha')
+            ->assertValue(':nth-match(' . $values . ', 2)', 'Unsaved first')
+            ->assertPresent(':nth-match(' . $values . ', 2):focus');
+
+        $activateMove('down', 2);
+        $page->assertValue(':nth-match(' . $keys . ', 3)', 'alpha')
+            ->assertPresent(':nth-match(' . $values . ', 3):focus');
+
+        $activateMove('up', 3);
+        $activateMove('up', 2);
+        $page->assertValue(':nth-match(' . $keys . ', 1)', 'alpha')
+            ->assertPresent(':nth-match(' . $values . ', 1):focus');
+
+        $page->click($field . ' .fi-fo-key-value-add-action-ctn')
+            ->fill(':nth-match(' . $values . ', 4)', 'Blank draft');
+
+        $activateMove('up', 4);
+        $activateMove('up', 3);
+        $page->assertValue(':nth-match(' . $keys . ', 2)', '')
+            ->assertValue(':nth-match(' . $values . ', 2)', 'Blank draft')
+            ->assertPresent(':nth-match(' . $values . ', 2):focus')
+            ->fill(':nth-match(' . $keys . ', 3)', 'alpha')
+            ->fill(':nth-match(' . $values . ', 3)', 'Unsaved duplicate');
+
+        $activateMove('down', 3);
+        $page->assertValue(':nth-match(' . $keys . ', 2)', '')
+            ->assertValue(':nth-match(' . $values . ', 2)', 'Blank draft')
+            ->assertValue(':nth-match(' . $keys . ', 3)', 'gamma')
+            ->assertValue(':nth-match(' . $values . ', 4)', 'Unsaved duplicate')
+            ->assertPresent(':nth-match(' . $values . ', 4):focus');
+
+        $page->script('window.keyValueInputs = [...document.querySelectorAll(' . json_encode($field . ' input') . ')]');
+        $page->drag(':nth-match(' . $handles . ', 1)', ':nth-match(' . $handles . ', 4)')
+            ->assertValue(':nth-match(' . $keys . ', 1)', '')
+            ->assertValue(':nth-match(' . $values . ', 1)', 'Blank draft')
+            ->assertValue(':nth-match(' . $keys . ', 2)', 'gamma')
+            ->assertValue(':nth-match(' . $values . ', 3)', 'Unsaved duplicate')
+            ->assertValue(':nth-match(' . $values . ', 4)', 'Unsaved first')
+            ->assertScript('window.keyValueInputs.every(input => input.isConnected)')
+            ->click('[data-testid="save"]')
+            ->assertSeeIn('[data-testid="saved"]', '{"gamma":"Third","alpha":"Unsaved first"}')
+            ->drag(':nth-match(' . $handles . ', 4)', ':nth-match(' . $handles . ', 1)')
+            ->assertValue(':nth-match(' . $values . ', 1)', 'Unsaved first')
+            ->assertValue(':nth-match(' . $values . ', 2)', 'Blank draft')
+            ->assertValue(':nth-match(' . $keys . ', 3)', 'gamma')
+            ->assertValue(':nth-match(' . $values . ', 4)', 'Unsaved duplicate')
+            ->assertScript('window.keyValueInputs.every(input => input.isConnected)')
+            ->click(':nth-match(' . $values . ', 4)');
+
+        $activateMove('up', 4);
+        $page->assertValue(':nth-match(' . $values . ', 3)', 'Unsaved duplicate')
+            ->assertPresent(':nth-match(' . $values . ', 3):focus');
+        $activateMove('down', 3);
+
+        $description = $page->attribute(':nth-match(' . $moveUp . ', 4)', 'aria-describedby');
+        $page->assertSeeIn('[id="' . $description . '"]', __('filament-forms::components.key_value.reordering.position', ['label' => 'alpha', 'position' => 4, 'count' => 4]))
+            ->assertSeeIn($field . ' [role="status"]', __('filament-forms::components.key_value.reordering.moved', ['label' => 'alpha', 'position' => 4, 'count' => 4]))
+            ->click('[data-testid="save"]')
+            ->assertSeeIn('[data-testid="saved"]', '{"alpha":"Unsaved duplicate","gamma":"Third"}')
+            ->assertValue(':nth-match(' . $values . ', 1)', 'Unsaved first')
+            ->assertValue(':nth-match(' . $values . ', 2)', 'Blank draft')
+            ->assertNoSmoke()->assertNoAccessibilityIssues();
+
+        $page->click(':nth-match(' . $field . ' button[aria-label="Delete row"], 4)')
+            ->click(':nth-match(' . $field . ' button[aria-label="Delete row"], 3)')
+            ->click(':nth-match(' . $field . ' button[aria-label="Delete row"], 1)')
+            ->click('[data-testid="save"]')
+            ->assertPresent('[data-validation-error]')
+            ->assertCount($field . ' tbody tr', 1)
+            ->assertValue(':nth-match(' . $values . ', 1)', 'Blank draft')
+            ->assertDisabled(':nth-match(' . $moveUp . ', 1)')
+            ->assertDisabled(':nth-match(' . $moveDown . ', 1)')
+            ->assertNoSmoke()->assertNoAccessibilityIssues();
+
+        $page->inDarkMode()->assertNoAccessibilityIssues();
     });
 });
 

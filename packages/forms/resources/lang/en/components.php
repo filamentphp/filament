@@ -324,6 +324,14 @@ return [
                 'label' => 'Delete row',
             ],
 
+            'move_down' => [
+                'label' => 'Move down',
+            ],
+
+            'move_up' => [
+                'label' => 'Move up',
+            ],
+
             'reorder' => [
                 'label' => 'Reorder row',
             ],
@@ -352,6 +360,12 @@ return [
                 'label' => 'Value',
             ],
 
+        ],
+
+        'reordering' => [
+            'row' => 'Row',
+            'position' => ':label, position :position of :count',
+            'moved' => ':label moved to position :position of :count',
         ],
 
     ],
