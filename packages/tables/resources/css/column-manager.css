@@ -13,6 +13,11 @@
         @apply -mt-6 gap-x-6;
     }
 
+    & .fi-ta-col-manager-reorder-controls,
+    & .fi-ta-col-manager-status {
+        @apply sr-only;
+    }
+
     & .fi-ta-col-manager-item {
         @apply flex break-inside-avoid items-center gap-3 pt-6;
 

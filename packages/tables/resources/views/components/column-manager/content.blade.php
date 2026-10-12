@@ -20,6 +20,8 @@
     @if ($hasReorderableColumns)
         x-sortable
         x-on:end.stop="reorderColumns($event.target.sortable.toArray())"
+        x-on:focusin.window="focusRevision++"
+        x-on:pointerdown.window="focusRevision++"
         data-sortable-animation-duration="{{ $reorderAnimationDuration }}"
     @endif
     {{
@@ -29,8 +31,8 @@
     }}
 >
     <template
-        x-for="(column, index) in columns.filter((column) => ! column.isHidden && column.label)"
-        x-bind:key="(column.type === 'group' ? 'group::' : 'column::') + column.name + '_' + index"
+        x-for="column in getVisibleColumns()"
+        x-bind:key="JSON.stringify([column.type, column.name])"
     >
         <div
             @if ($hasReorderableColumns)
@@ -60,9 +62,47 @@
                         </label>
 
                         @if ($hasReorderableColumns)
+                            <div
+                                x-data="{}"
+                                x-id="['column-manager-position']"
+                                class="fi-ta-col-manager-reorder-controls"
+                            >
+                                <span
+                                    x-bind:id="$id('column-manager-position')"
+                                    x-text="
+                                        @js(__('filament-tables::table.column_manager.position')).replace(':position', getColumnPosition(column)).replace(
+                                            ':count',
+                                            getVisibleColumns().length,
+                                        )
+                                    "
+                                ></span>
+
+                                @foreach (['up', 'down'] as $direction)
+                                    <button
+                                        type="button"
+                                        tabindex="-1"
+                                        x-text="@js(__('filament-tables::table.column_manager.actions.move_' . $direction . '.label')).replace(':column', getColumnLabel(column))"
+                                        x-bind:aria-describedby="$id('column-manager-position')"
+                                        x-bind:disabled="! canMoveColumn(column, @js($direction))"
+                                        x-bind:aria-disabled="isLoading || ! canMoveColumn(column, @js($direction))"
+                                        x-bind:data-testid="'column-manager-' + column.name + '-move-{{ $direction }}'"
+                                        x-on:click.stop="
+                                            moveColumn(
+                                                column,
+                                                @js($direction),
+                                                null,
+                                                $event.currentTarget,
+                                                isLive ? @js(__('filament-tables::table.column_manager.reordered')) : @js(__('filament-tables::table.column_manager.reordered_deferred')),
+                                            )
+                                        "
+                                    ></button>
+                                @endforeach
+                            </div>
+
                             <button
                                 x-sortable-handle
-                                x-bind:aria-label="@js(__('filament-tables::table.column_manager.actions.reorder.label')) + (column.name ? ' ' + column.name : '')"
+                                aria-hidden="true"
+                                tabindex="-1"
                                 x-on:click.stop
                                 class="fi-ta-col-manager-reorder-handle fi-icon-btn"
                                 type="button"
@@ -80,11 +120,8 @@
                         class="fi-ta-col-manager-group-items"
                     >
                         <template
-                            x-for="
-                                (groupColumn, index) in
-                                    column.columns.filter((column) => ! column.isHidden && column.label)
-                            "
-                            x-bind:key="'column::' + groupColumn.name + '_' + index"
+                            x-for="groupColumn in getVisibleColumns(column.name)"
+                            x-bind:key="JSON.stringify([groupColumn.type, groupColumn.name])"
                         >
                             <div
                                 @if ($hasReorderableColumns)
@@ -113,9 +150,46 @@
                                     </label>
 
                                     @if ($hasReorderableColumns)
+                                        <div
+                                            x-data="{}"
+                                            x-id="['column-manager-position']"
+                                            class="fi-ta-col-manager-reorder-controls"
+                                        >
+                                            <span
+                                                x-bind:id="$id('column-manager-position')"
+                                                x-text="
+                                                    @js(__('filament-tables::table.column_manager.position_in_group')).replace(':position', getColumnPosition(groupColumn, column.name))
+                                                        .replace(':count', getVisibleColumns(column.name).length)
+                                                        .replace(':group', getColumnLabel(column))
+                                                "
+                                            ></span>
+
+                                            @foreach (['up', 'down'] as $direction)
+                                                <button
+                                                    type="button"
+                                                    tabindex="-1"
+                                                    x-text="@js(__('filament-tables::table.column_manager.actions.move_' . $direction . '.label')).replace(':column', getColumnLabel(groupColumn))"
+                                                    x-bind:aria-describedby="$id('column-manager-position')"
+                                                    x-bind:disabled="! canMoveColumn(groupColumn, @js($direction), column.name)"
+                                                    x-bind:aria-disabled="isLoading || ! canMoveColumn(groupColumn, @js($direction), column.name)"
+                                                    x-bind:data-testid="'column-manager-' + groupColumn.name + '-move-{{ $direction }}'"
+                                                    x-on:click.stop="
+                                                        moveColumn(
+                                                            groupColumn,
+                                                            @js($direction),
+                                                            column.name,
+                                                            $event.currentTarget,
+                                                            isLive ? @js(__('filament-tables::table.column_manager.reordered_in_group')) : @js(__('filament-tables::table.column_manager.reordered_in_group_deferred')),
+                                                        )
+                                                    "
+                                                ></button>
+                                            @endforeach
+                                        </div>
+
                                         <button
                                             x-sortable-handle
-                                            x-bind:aria-label="@js(__('filament-tables::table.column_manager.actions.reorder.label')) + (groupColumn.name ? ' ' + groupColumn.name : '')"
+                                            aria-hidden="true"
+                                            tabindex="-1"
                                             x-on:click.stop
                                             class="fi-ta-col-manager-reorder-handle fi-icon-btn"
                                             type="button"
@@ -150,9 +224,47 @@
                     </label>
 
                     @if ($hasReorderableColumns)
+                        <div
+                            x-data="{}"
+                            x-id="['column-manager-position']"
+                            class="fi-ta-col-manager-reorder-controls"
+                        >
+                            <span
+                                x-bind:id="$id('column-manager-position')"
+                                x-text="
+                                    @js(__('filament-tables::table.column_manager.position')).replace(':position', getColumnPosition(column)).replace(
+                                        ':count',
+                                        getVisibleColumns().length,
+                                    )
+                                "
+                            ></span>
+
+                            @foreach (['up', 'down'] as $direction)
+                                <button
+                                    type="button"
+                                    tabindex="-1"
+                                    x-text="@js(__('filament-tables::table.column_manager.actions.move_' . $direction . '.label')).replace(':column', getColumnLabel(column))"
+                                    x-bind:aria-describedby="$id('column-manager-position')"
+                                    x-bind:disabled="! canMoveColumn(column, @js($direction))"
+                                    x-bind:aria-disabled="isLoading || ! canMoveColumn(column, @js($direction))"
+                                    x-bind:data-testid="'column-manager-' + column.name + '-move-{{ $direction }}'"
+                                    x-on:click.stop="
+                                        moveColumn(
+                                            column,
+                                            @js($direction),
+                                            null,
+                                            $event.currentTarget,
+                                            isLive ? @js(__('filament-tables::table.column_manager.reordered')) : @js(__('filament-tables::table.column_manager.reordered_deferred')),
+                                        )
+                                    "
+                                ></button>
+                            @endforeach
+                        </div>
+
                         <button
                             x-sortable-handle
-                            x-bind:aria-label="@js(__('filament-tables::table.column_manager.actions.reorder.label')) + (column.name ? ' ' + column.name : '')"
+                            aria-hidden="true"
+                            tabindex="-1"
                             x-on:click.stop
                             class="fi-ta-col-manager-reorder-handle fi-icon-btn"
                             type="button"
@@ -164,4 +276,14 @@
             </template>
         </div>
     </template>
+
+    @if ($hasReorderableColumns)
+        <p
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            class="fi-ta-col-manager-status"
+            x-text="reorderAnnouncement"
+        ></p>
+    @endif
 </div>
