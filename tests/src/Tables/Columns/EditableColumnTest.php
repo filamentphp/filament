@@ -163,7 +163,7 @@ it('blocks rapid toggle and custom select edits without losing focus while savin
         $select = '[data-testid="editable-content"] [role="combobox"]';
 
         // Hold real save requests until the second interaction has been exercised.
-        $page->script('window.editableFetch = window.fetch; window.fetch = (...parameters) => parameters[1]?.body?.includes("updateTableColumnState") ? new Promise(resolve => { window.resumeEditableSave = () => resolve(window.editableFetch(...parameters)) }) : window.editableFetch(...parameters)');
+        $page->script('window.editableFetch = window.fetch; window.fetch = (...parameters) => parameters[1]?.body?.includes("updateTableColumnState") ? new Promise(resolve => { window.resumeEditableSave = () => { window.resumeEditableSave = null; resolve(window.editableFetch(...parameters)) } }) : window.editableFetch(...parameters)');
 
         $page->keys($toggle, 'Space')
             ->assertAttribute($toggle, 'aria-busy', 'true')
@@ -171,6 +171,7 @@ it('blocks rapid toggle and custom select edits without losing focus while savin
             ->keys($toggle, 'Space')
             ->assertPresent($toggle . ':focus');
 
+        $page->assertScript('typeof window.resumeEditableSave', 'function');
         $page->script('window.resumeEditableSave()');
         $page->assertValue('[data-testid="editable-json-approved"] input[x-ref="serverState"]', '1')
             ->assertAttributeMissing($toggle, 'aria-busy')
@@ -182,6 +183,7 @@ it('blocks rapid toggle and custom select edits without losing focus while savin
             ->assertAttribute($select, 'aria-expanded', 'false')
             ->assertPresent($select . ':focus');
 
+        $page->assertScript('typeof window.resumeEditableSave', 'function');
         $page->script('window.resumeEditableSave()');
         $page->assertValue('[data-testid="editable-content"] input[x-ref="serverState"]', 'published')
             ->assertAttributeMissing($select, 'aria-busy')
