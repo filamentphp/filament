@@ -12,6 +12,26 @@ beforeEach(function (): void {
     $this->actingAs(User::factory()->create());
 });
 
+it('delivers notifications once across redirects in light and dark modes', function (string $redirect): void {
+    $page = visit('/notification-browser-test');
+
+    foreach ([false, true] as $isDarkMode) {
+        if ($isDarkMode) {
+            $page->inDarkMode();
+        }
+
+        $page
+            ->click("[data-testid=\"send-{$redirect}-redirect-notification\"]")
+            ->assertScript("new URL(location.href).searchParams.get('redirected')", '1')
+            ->assertCount('.fi-no .fi-no-notification', 1)
+            ->assertNoAccessibilityIssues()
+            ->refresh()
+            ->assertCount('.fi-no .fi-no-notification', 0)
+            ->assertNoJavaScriptErrors()
+            ->assertNoAccessibilityIssues();
+    }
+})->with(['full', 'spa']);
+
 it('keeps finite duration behavior for inline notifications', function (): void {
     visit('/notification-browser-test')
         ->assertScript("(sessionStorage.setItem('inlineNotificationClosedCount', '0'), window.addEventListener('notificationClosed', (event) => event.detail.id === 'inline-timed-notification' && sessionStorage.setItem('inlineNotificationClosedCount', String(Number(sessionStorage.getItem('inlineNotificationClosedCount')) + 1))), true)")

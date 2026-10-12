@@ -121,7 +121,7 @@ it('rejects malformed Livewire collection updates without reporting or calling c
         ]],
     ], ['X-Livewire' => 'true'])->assertStatus(419);
 
-    expect(session()->get('filament.notifications'))->toHaveCount(1);
+    Notification::assertNotified('Queued');
     Exceptions::assertNothingReported();
 })->with([
     'scalar notification among valid notifications' => fn (): array => [

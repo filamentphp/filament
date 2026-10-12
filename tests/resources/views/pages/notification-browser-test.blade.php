@@ -23,6 +23,22 @@
 
         <button
             type="button"
+            wire:click="sendRedirectNotification"
+            data-testid="send-full-redirect-notification"
+        >
+            Send and redirect
+        </button>
+
+        <button
+            type="button"
+            wire:click="sendRedirectNotification(true)"
+            data-testid="send-spa-redirect-notification"
+        >
+            Send and navigate
+        </button>
+
+        <button
+            type="button"
             wire:click="sendGroupedActionNotification"
             data-testid="send-grouped-action-notification"
         >

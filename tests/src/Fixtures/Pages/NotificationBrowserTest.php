@@ -24,6 +24,15 @@ class NotificationBrowserTest extends Page
         $this->isInlineNotificationShown = true;
     }
 
+    public function returnNotificationPayload(): object
+    {
+        return (object) [
+            'empty' => (object) [],
+            'numeric' => (object) ['0' => 'first'],
+            'list' => [],
+        ];
+    }
+
     public function sendTimedNotification(): void
     {
         Notification::make('timed-notification')
@@ -38,6 +47,13 @@ class NotificationBrowserTest extends Page
             ->title('Persistent notification')
             ->persistent()
             ->send();
+    }
+
+    public function sendRedirectNotification(bool $navigate = false): void
+    {
+        Notification::make('redirect-notification')->title('Redirect notification')->persistent()->send();
+
+        $this->redirect(static::getUrl(['redirected' => 1]), navigate: $navigate);
     }
 
     public function sendGroupedActionNotification(): void

@@ -8,6 +8,8 @@ use Filament\Actions\Imports\ImportDispatcher;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Livewire\Notifications;
+use Filament\Notifications\NotificationMailbox;
 use Filament\Tests\Actions\TestCase;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
@@ -76,7 +78,8 @@ it('runs synchronous imports and completion notifications with the original guar
     assertDatabaseHas('posts', ['title' => 'First post']);
     assertDatabaseCount('failed_import_rows', 1);
 
-    $notifications = session('filament.claimed_notifications');
+    app(NotificationMailbox::class)->flush();
+    $notifications = livewire(Notifications::class)->dispatch('notificationsSent')->instance()->notifications->toArray();
     expect($notifications)->toHaveCount(1);
     $notification = array_values($notifications)[0];
     expect($notification['title'])->toBe('Dispatch completed')
