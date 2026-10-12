@@ -362,6 +362,10 @@ trait HasBulkActions
             $this->applySortingToTableQuery($query);
         }
 
+        if ($table->shouldDeselectAllRecordsWhenFiltered()) {
+            $this->filterTableQuery($query);
+        }
+
         if (! $shouldFetchSelectedRecords) {
             $this->constrainQueryToSelectableTableRecords($query);
         }
