@@ -28,7 +28,7 @@ enum ExportFormat: string implements ExportFormatInterface
     {
         return Action::make("download_{$this->value}")
             ->label(__("filament-actions::export.notifications.completed.actions.download_{$this->value}.label"))
-            ->url(URL::signedRoute('filament.exports.download', ['authGuard' => $authGuard, 'export' => $export, 'format' => $this], absolute: false), shouldOpenInNewTab: true)
+            ->url(rtrim(request()->getBaseUrl(), '/') . URL::signedRoute('filament.exports.download', ['authGuard' => $authGuard, 'export' => $export, 'format' => $this], absolute: false), shouldOpenInNewTab: true)
             ->markAsRead();
     }
 }
