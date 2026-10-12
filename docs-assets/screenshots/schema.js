@@ -5473,7 +5473,7 @@ export default {
         selector: 'body',
         viewport: {
             width: 1280,
-            height: 800,
+            height: 660,
             deviceScaleFactor: 3,
         },
         before: async (page) => {
