@@ -60,6 +60,7 @@ it('returns null for getImageCropAspectRatio by default')
 - Before adding a browser test, search the file for the same route and setup. Combine related assertions into one coherently named test and reuse the page; use another visit only when isolation or a state reset is required.
 - Keep light- and dark-mode accessibility checks for the same scenario together. Do not repeat database, authentication, or browser setup solely to split those checks into separate tests.
 - Keep each test focused on one behavior and each test file focused on its owning component or feature. Separate scenarios only when combining them would obscure the behavior or introduce order-dependent state.
+- For asynchronous JavaScript changes, exercise out-of-order completion, failure/cancellation, and destruction with pending work. Use the real integration where mocked callbacks would hide its contract. This validation does not automatically require new permanent tests.
 
 ```bash
 composer test              # Run all tests (SQLite + commands + PHPStan)
@@ -157,10 +158,15 @@ Interfaces in `Contracts/` directories.
 
 ## Coding Standards
 
+### JavaScript organization
+
+Use `components/` for eager and lazy Alpine factories, `stores/` for Alpine stores, `utilities/` for shared helpers and composition, and `components/<feature>/` for feature-private internals. Keep registration in `index.js`. Use kebab-case filenames and explicit `.js` extensions on relative JavaScript imports. Follow the owning package's frontend naming convention; check registration and markup usage before renaming existing names.
+
 ### JavaScript lifecycle cleanup
 
-- Alpine components and directives must release resources they own in `destroy()` or `cleanup()`, including listeners on surviving ancestors or global objects, observers, animation loops, and third-party instances. Listeners attached only to removed subtree elements do not need separate cleanup.
-- Guard asynchronous initialization and callbacks when they could create surviving resources or cause observable stale behavior after destruction. Use the third-party instance's real teardown API, verified against its source when necessary.
+- Alpine components and directives must release resources they own in `destroy()` or `cleanup()`, including listeners on surviving ancestors or global objects, observers, animation loops, and third-party instances. Retain the same callback reference when adding and removing listeners. Listeners attached only to removed subtree elements do not need separate cleanup.
+- Guard asynchronous initialization and callbacks when they could create surviving resources or cause observable stale behavior after destruction. After asynchronous work, verify the owner and target are still current; saved document positions alone do not establish identity. Verify third-party completion, failure, cancellation, and teardown contracts against their implementation when necessary, and use their real teardown API.
+- Balance processing-start/finish signals exactly once per operation, including failure, cancellation, and destruction. For batches, restore busy/editable state only after every task settles; preserve the original state.
 - Do not add cleanup solely for short-lived timers; cancel or guard them when their callback could still cause stale behavior after destruction.
 
 ### PHPDoc
