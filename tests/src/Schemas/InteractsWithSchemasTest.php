@@ -17,6 +17,8 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Livewire\SpatieMediaLibraryFileUploadForm;
+use Filament\Tests\Fixtures\Models\MediaPost;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
@@ -195,6 +197,19 @@ it('can validate from the component itself', function (): void {
 });
 
 describe('upload validation', function (): void {
+    it('uses friendly field names when `WithFileUploads` is also used directly', function (): void {
+        $uploadPath = 'data.avatar.24b0c021-dcd4-4b43-ad0c-3b5c241225ee';
+
+        $component = livewire(SpatieMediaLibraryFileUploadForm::class, ['record' => MediaPost::factory()->create()])
+            ->call('_uploadErrored', $uploadPath, json_encode([
+                'errors' => ['files.0' => ['The files.0 field must not be greater than 1024 kilobytes.']],
+            ]), false)
+            ->assertHasErrors([$uploadPath]);
+
+        expect($component->errors()->get($uploadPath))
+            ->toBe(['The avatar field must not be greater than 1024 kilobytes.']);
+    });
+
     it('uses friendly field names for temporary upload validation errors', function (string $uploadComponent, string $uploadPath, ?string $validationAttribute, string $expectedAttribute): void {
         config()->set('livewire.temporary_file_upload.rules', 'file|max:1024');
 
@@ -235,8 +250,9 @@ describe('upload validation', function (): void {
         app('translator')->addLines(['validation.uploaded' => "The {$placeholder} failed to upload."], 'en');
 
         $component = livewire(UploadValidationTestComponent::class, ['uploadComponent' => $uploadComponent])
-            ->call('_uploadErrored', $uploadPath, null, false)
-            ->assertHasErrors([$uploadPath]);
+            ->call('_uploadErrored', name: $uploadPath, errorsInJson: null, isMultiple: false)
+            ->assertHasErrors([$uploadPath])
+            ->assertDispatched('upload:errored', name: $uploadPath);
 
         expect($component->errors()->get($uploadPath))
             ->toBe(["The {$expectedAttribute} failed to upload."]);
@@ -261,18 +277,20 @@ describe('upload validation', function (): void {
             ->toBe(['The translated download failed to upload.']);
     });
 
-    it('preserves multiple upload error keys and custom messages', function (): void {
+    it('preserves multiple upload error keys, unrelated errors and custom messages', function (): void {
         $component = livewire(UploadValidationTestComponent::class)
             ->call('_uploadErrored', 'data.downloadable_file', json_encode([
                 'errors' => [
                     'files.0' => ['The files.0 field must not be greater than 1024 kilobytes.'],
                     'files.1' => ['This archive is not supported.'],
+                    'data.other_upload' => ['The data.other_upload field is required.'],
                 ],
             ]), true);
 
-        expect($component->errors()->messages())->toBe([
+        expect($component->errors()->messages())->toEqual([
             'data.downloadable_file.0' => ['The downloadable file field must not be greater than 1024 kilobytes.'],
             'data.downloadable_file.1' => ['This archive is not supported.'],
+            'data.other_upload' => ['The data.other_upload field is required.'],
         ]);
     });
 

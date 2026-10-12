@@ -27,9 +27,7 @@ use ReflectionNamedType;
 trait InteractsWithSchemas
 {
     use ResolvesDynamicLivewireProperties;
-    use WithFileUploads {
-        _uploadErrored as protected handleFileUploadError;
-    }
+    use WithFileUploads;
 
     /**
      * @var array <string, TemporaryUploadedFile | array<TemporaryUploadedFile> | null>
@@ -654,37 +652,36 @@ trait InteractsWithSchemas
         return array_key_first($this->getCachedSchemas());
     }
 
-    public function _uploadErrored(string $name, ?string $errorsInJson, bool $isMultiple): void
+    public function handleFileUploadValidationError(string $name): void
     {
-        try {
-            $this->handleFileUploadError($name, $errorsInJson, $isMultiple);
-        } catch (ValidationException $exception) {
-            $statePath = str_starts_with($name, 'componentFileAttachments.')
-                ? substr($name, strlen('componentFileAttachments.'))
-                : $name;
+        $statePath = str_starts_with($name, 'componentFileAttachments.')
+            ? substr($name, strlen('componentFileAttachments.'))
+            : $name;
 
-            $component = $this->getSchemaComponentForFileUpload($statePath)
-                ?? $this->getSchemaComponentForFileUpload((string) str($statePath)->beforeLast('.'));
+        $component = $this->getSchemaComponentForFileUpload($statePath)
+            ?? $this->getSchemaComponentForFileUpload((string) str($statePath)->beforeLast('.'));
 
-            if (! $component instanceof Field) {
-                throw $exception;
+        if (! $component instanceof Field) {
+            return;
+        }
+
+        $validationAttribute = $component->getValidationAttribute();
+        $errorBag = $this->getErrorBag();
+
+        foreach ($errorBag->messages() as $attribute => $attributeMessages) {
+            if (($attribute !== $name) && ! str_starts_with($attribute, "{$name}.")) {
+                continue;
             }
 
-            $validationAttribute = $component->getValidationAttribute();
-            $messages = [];
+            $errorBag->forget($attribute);
 
-            foreach ($exception->errors() as $attribute => $attributeMessages) {
-                $messages[$attribute] = array_map(
-                    static fn (string $message): string => strtr($message, [
-                        Str::upper($attribute) => Str::upper($validationAttribute),
-                        Str::ucfirst($attribute) => Str::ucfirst($validationAttribute),
-                        $attribute => $validationAttribute,
-                    ]),
-                    $attributeMessages,
-                );
+            foreach ($attributeMessages as $message) {
+                $errorBag->add($attribute, strtr($message, [
+                    Str::upper($attribute) => Str::upper($validationAttribute),
+                    Str::ucfirst($attribute) => Str::ucfirst($validationAttribute),
+                    $attribute => $validationAttribute,
+                ]));
             }
-
-            throw ValidationException::withMessages($messages);
         }
     }
 
