@@ -108,7 +108,7 @@ function builderFormComponentBlockPicker() {
             }
 
             this.clearSearch()
-            this.$refs.searchInput?.focus()
+            this.$refs.searchInput?.focus({ preventScroll: true })
         },
 
         clearSearch() {
@@ -140,6 +140,15 @@ function builderFormComponentBlockPicker() {
             return normalizeSearchString(
                 blockElement.dataset.blockLabel,
             ).includes(normalizeSearchString(this.search))
+        },
+
+        isGroupVisible(groupElement) {
+            return (
+                this.blockLabels.length > 0 &&
+                Array.from(
+                    groupElement.querySelectorAll('[data-block-label]'),
+                ).some((element) => this.isBlockVisible(element))
+            )
         },
 
         get hasNoSearchResults() {

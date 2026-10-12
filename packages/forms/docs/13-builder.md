@@ -490,6 +490,39 @@ Builder::make('content')
 
 ## Customizing the block picker
 
+### Grouping blocks
+
+You may group blocks under headings by using named arrays in `blocks()`:
+
+```php
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+
+Builder::make('content')
+    ->blocks([
+        'Content' => [
+            Block::make('heading')
+                ->schema([TextInput::make('text')]),
+            Block::make('paragraph')
+                ->schema([Textarea::make('text')]),
+        ],
+        'Media' => [
+            Block::make('video')
+                ->schema([TextInput::make('url')->url()]),
+        ],
+    ])
+```
+
+Groups appear in the order they are defined. You may include ungrouped blocks alongside named groups; ungrouped blocks appear first without a heading. Grouping only affects the picker, not the order or stored state of the blocks you add.
+
+Use group names that PHP keeps as string array keys. Integer keys (including numeric strings such as `'2026'`, which PHP converts to integers) are treated as ungrouped lists of blocks.
+
+<AutoScreenshot name="forms/fields/builder/grouped-blocks" alt="Builder with grouped blocks in the picker" version="4.x" />
+
+When you configure multiple columns using `blockPickerColumns()`, groups flow down each column before moving to the next. Groups stay together, and their heights are balanced across the columns. Otherwise, groups are stacked vertically. Searching hides groups with no matching blocks.
+
 ### Changing the number of columns in the block picker
 
 The block picker has only 1 column. You may customize it by passing a number of columns to `blockPickerColumns()`:

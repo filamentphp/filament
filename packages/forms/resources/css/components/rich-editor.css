@@ -215,7 +215,7 @@
     }
 
     & .fi-fo-rich-editor-custom-blocks-group-header {
-        @apply sticky -top-px z-1 border-b border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-950 capitalize dark:border-white/10 dark:bg-gray-800 dark:text-white;
+        @apply sticky -top-px z-1 border-b border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-950 dark:border-white/10 dark:bg-gray-800 dark:text-white;
 
         &:not(:first-child) {
             @apply border-t;
