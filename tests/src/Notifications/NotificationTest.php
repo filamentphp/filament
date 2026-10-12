@@ -265,7 +265,8 @@ it('delivers notifications with a cache store that does not support locking', fu
         $store->shouldReceive($method)->andReturnUsing(static fn (...$arguments) => $backingStore->{$method}(...$arguments));
     }
 
-    Cache::extend('without-locks', static fn (): Repository => Cache::repository($store));
+    // Older Laravel versions bind `Cache::extend()` callbacks to the cache manager.
+    Cache::extend('without-locks', fn (): Repository => Cache::repository($store));
     config(['cache.stores.without-locks.driver' => 'without-locks', 'filament.cache_store' => 'without-locks']);
 
     Route::middleware('web')->get('/notification-without-locks/{title}', static function (string $title) {

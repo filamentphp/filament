@@ -24,6 +24,7 @@ it('delivers notifications once across redirects in light and dark modes', funct
             ->click("[data-testid=\"send-{$redirect}-redirect-notification\"]")
             ->assertScript("new URL(location.href).searchParams.get('redirected')", '1')
             ->assertCount('.fi-no .fi-no-notification', 1)
+            ->assertMissing('#nprogress')
             ->assertNoAccessibilityIssues()
             ->refresh()
             ->assertCount('.fi-no .fi-no-notification', 0)
