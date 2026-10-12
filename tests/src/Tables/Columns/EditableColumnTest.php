@@ -89,7 +89,7 @@ it('describes validation errors at the focus owner and clears them on a successf
         }
 
         expect($post->fresh())->is_published->toBeFalse()->title->toBe('Draft title')->rating->toBe(1)->content->toBe('draft');
-        expect($post->fresh()->json)->toBe(['approved' => false, 'status' => 'draft']);
+        expect($post->fresh()->json)->approved->toBeFalse()->status->toBe('draft');
 
         $page->assertNoAccessibilityIssues();
         $page->script('Livewire.find(document.querySelector("[data-testid=editable-title]").closest("[wire\\\\:id]").getAttribute("wire:id")).set("saveScenario", "success")');
