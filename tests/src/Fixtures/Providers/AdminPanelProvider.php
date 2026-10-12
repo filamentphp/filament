@@ -69,6 +69,7 @@ use Filament\Tests\Fixtures\Pages\SliderBrowserTest;
 use Filament\Tests\Fixtures\Pages\StatsOverviewWidgetBrowserTest;
 use Filament\Tests\Fixtures\Pages\TableActionGroupsBrowserTest;
 use Filament\Tests\Fixtures\Pages\TableRenderHooksBrowserTest;
+use Filament\Tests\Fixtures\Pages\TableReorderingBrowserTest;
 use Filament\Tests\Fixtures\Pages\TabsBrowserTest;
 use Filament\Tests\Fixtures\Pages\TagsInputTest;
 use Filament\Tests\Fixtures\Pages\TextareaTest;
@@ -188,6 +189,7 @@ class AdminPanelProvider extends PanelProvider
                 StatsOverviewWidgetBrowserTest::class,
                 TableActionGroupsBrowserTest::class,
                 TableRenderHooksBrowserTest::class,
+                TableReorderingBrowserTest::class,
                 TabsBrowserTest::class,
                 TagsInputTest::class,
                 TextareaTest::class,
