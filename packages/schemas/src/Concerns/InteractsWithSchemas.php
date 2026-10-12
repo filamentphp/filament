@@ -14,6 +14,7 @@ use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Renderless;
@@ -26,7 +27,9 @@ use ReflectionNamedType;
 trait InteractsWithSchemas
 {
     use ResolvesDynamicLivewireProperties;
-    use WithFileUploads;
+    use WithFileUploads {
+        _uploadErrored as protected handleFileUploadError;
+    }
 
     /**
      * @var array <string, TemporaryUploadedFile | array<TemporaryUploadedFile> | null>
@@ -649,6 +652,40 @@ trait InteractsWithSchemas
     public function getDefaultTestingSchemaName(): ?string
     {
         return array_key_first($this->getCachedSchemas());
+    }
+
+    public function _uploadErrored(string $name, ?string $errorsInJson, bool $isMultiple): void
+    {
+        try {
+            $this->handleFileUploadError($name, $errorsInJson, $isMultiple);
+        } catch (ValidationException $exception) {
+            $statePath = str_starts_with($name, 'componentFileAttachments.')
+                ? substr($name, strlen('componentFileAttachments.'))
+                : $name;
+
+            $component = $this->getSchemaComponentForFileUpload($statePath)
+                ?? $this->getSchemaComponentForFileUpload((string) str($statePath)->beforeLast('.'));
+
+            if (! $component instanceof Field) {
+                throw $exception;
+            }
+
+            $validationAttribute = $component->getValidationAttribute();
+            $messages = [];
+
+            foreach ($exception->errors() as $attribute => $attributeMessages) {
+                $messages[$attribute] = array_map(
+                    static fn (string $message): string => strtr($message, [
+                        Str::upper($attribute) => Str::upper($validationAttribute),
+                        Str::ucfirst($attribute) => Str::ucfirst($validationAttribute),
+                        $attribute => $validationAttribute,
+                    ]),
+                    $attributeMessages,
+                );
+            }
+
+            throw ValidationException::withMessages($messages);
+        }
     }
 
     public function isFileUploadForSchemaComponent(string $name): bool
