@@ -506,8 +506,14 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getTenantModel();
     }
 
-    public function getTenantName(Model $tenant): string | Htmlable
+    public function getTenantName(?Model $tenant = null): string | Htmlable | null
     {
+        $tenant ??= $this->getTenant();
+
+        if (! $tenant) {
+            return null;
+        }
+
         if ($tenant instanceof HasName) {
             return $tenant->getFilamentName();
         }

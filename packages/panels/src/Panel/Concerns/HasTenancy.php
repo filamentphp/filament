@@ -305,9 +305,15 @@ trait HasTenancy
     /**
      * @param  array<mixed>  $parameters
      */
-    public function getTenantBillingUrl(Model $tenant, array $parameters = []): ?string
+    public function getTenantBillingUrl(?Model $tenant = null, array $parameters = []): ?string
     {
         if (! $this->hasTenantBilling()) {
+            return null;
+        }
+
+        $tenant ??= Filament::getTenant();
+
+        if (! $tenant) {
             return null;
         }
 
@@ -323,6 +329,12 @@ trait HasTenancy
     public function getTenantProfileUrl(array $parameters = []): ?string
     {
         if (! $this->hasTenantProfile()) {
+            return null;
+        }
+
+        $parameters['tenant'] ??= Filament::getTenant();
+
+        if (! $parameters['tenant']) {
             return null;
         }
 
@@ -356,7 +368,7 @@ trait HasTenancy
             ->label($page ? $page::getLabel() : Filament::getTenantName($currentTenant))
             ->icon(FilamentIcon::resolve(PanelsIconAlias::TENANT_MENU_PROFILE_BUTTON) ?? Heroicon::Cog6Tooth)
             ->url($url = Filament::getTenantProfileUrl())
-            ->visible(filament()->hasTenantProfile() && filled($url) && (blank($page) || $page::canView($currentTenant)))
+            ->visible(filament()->hasTenantProfile() && filled($url) && (blank($page) || ($currentTenant && $page::canView($currentTenant))))
             ->sort(-2);
 
         if ($item instanceof MenuItem) {
