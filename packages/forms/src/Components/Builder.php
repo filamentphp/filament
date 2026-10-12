@@ -1528,7 +1528,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 
         $listAttributes = (new FilamentComponentAttributeBag)
             ->merge([
-                'x-data' => $isSearchable ? 'builderFormComponentBlockPicker()' : null,
+                'x-data' => $isSearchable ? 'blockPicker()' : null,
             ], escape: false)
             ->class(['fi-dropdown-list']);
 

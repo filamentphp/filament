@@ -6,7 +6,7 @@ export default function builderFormComponent({ statePath, ...configuration }) {
     return {
         ...reordering(configuration),
 
-        builderFormComponentBlockPicker,
+        blockPicker,
 
         collapseAll() {
             this.$dispatch('builder-collapse', statePath)
@@ -30,7 +30,7 @@ export default function builderFormComponent({ statePath, ...configuration }) {
     }
 }
 
-function builderFormComponentBlockPicker() {
+function blockPicker() {
     return {
         search: '',
 
