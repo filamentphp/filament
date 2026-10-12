@@ -1396,6 +1396,7 @@ it('can search a `CheckboxList` after disabling it without changing checked valu
     $page = visit('/checkbox-list-test')
         ->inDarkMode()
         ->assertNoSmoke()
+        ->assertScript('Alpine.$data(document.querySelector(\'[data-testid="checkbox-list"] [x-data]\')).checkboxListOptions?.length === 3')
         ->fill('[data-testid="checkbox-list"] input[type="search"]', 'Óption B')
         ->assertMissing('[data-testid="checkbox-list"] input[value="a"]:visible')
         ->assertVisible('[data-testid="checkbox-list"] input[value="b"]')
@@ -1416,7 +1417,7 @@ it('can search a `CheckboxList` after disabling it without changing checked valu
         ->assertNoAccessibilityIssues();
 
     $page->script('window.dispatchEvent(new CustomEvent("theme-changed", { detail: "light" }))');
-    $page->wait(0.5)->assertNoAccessibilityIssues();
+    $page->assertScript('! document.documentElement.classList.contains("dark")')->assertNoAccessibilityIssues();
 });
 
 class RenderCheckboxListWithStaticOptions extends Component implements HasActions, HasSchemas
