@@ -3,6 +3,7 @@
 namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Forms\Components\KeyValue;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
@@ -18,6 +19,8 @@ class KeyValueTest extends Page
 
     public ?array $data = [];
 
+    public array $saved = [];
+
     public function mount(): void
     {
         $this->form->fill([
@@ -29,6 +32,7 @@ class KeyValueTest extends Page
                 'email' => 'john@example.com',
                 'role' => 'admin',
             ],
+            'accessible_data' => ['alpha' => 'First', 'beta' => 'Second', 'gamma' => 'Third'],
         ]);
     }
 
@@ -58,6 +62,25 @@ class KeyValueTest extends Page
                     ->keyPlaceholder('Enter key')
                     ->valuePlaceholder('Enter value')
                     ->extraAttributes(['data-testid' => 'reorderable-key-value']),
+
+                KeyValue::make('accessible_data')
+                    ->label('Accessible Reordering')
+                    ->reorderable()
+                    ->reorderAnimationDuration(0)
+                    ->required()
+                    ->extraAttributes(['data-testid' => 'accessible-key-value']),
+
+                KeyValue::make('hidden_reorder_action')
+                    ->label('Hidden Reorder Action')
+                    ->reorderable()
+                    ->reorderAction(static fn (Action $action): Action => $action->hidden())
+                    ->extraAttributes(['data-testid' => 'hidden-reorder-key-value']),
+
+                KeyValue::make('disabled_reorder_action')
+                    ->label('Disabled Reorder Action')
+                    ->reorderable()
+                    ->reorderAction(static fn (Action $action): Action => $action->disabled())
+                    ->extraAttributes(['data-testid' => 'disabled-reorder-key-value']),
 
                 KeyValue::make('readonly_keys')
                     ->label('Read-Only Keys')
@@ -111,6 +134,7 @@ class KeyValueTest extends Page
                 KeyValue::make('disabled_field')
                     ->label('Disabled Key-Value')
                     ->disabled()
+                    ->reorderable()
                     ->keyPlaceholder('Key')
                     ->valuePlaceholder('Value')
                     ->default([
@@ -123,6 +147,6 @@ class KeyValueTest extends Page
 
     public function save(): void
     {
-        $this->form->getState();
+        $this->saved = $this->form->getState();
     }
 }
