@@ -37,12 +37,17 @@ class TabsBrowserTest extends Page
 
     public bool $hasDisabledProfileHeader = false;
 
+    public bool $hasNativeValidation = false;
+
+    public bool $isSaved = false;
+
     public function mount(): void
     {
         $this->showKeyboardTabs = request()->boolean('keyboard');
         $this->showOverflowTabs = request()->boolean('overflow');
         $this->showEnclosingDropdown = request()->boolean('dropdown');
         $this->hasDisabledProfileHeader = request()->boolean('disabled-profile');
+        $this->hasNativeValidation = request()->boolean('native-validation');
         $this->form->fill();
     }
 
@@ -73,7 +78,8 @@ class TabsBrowserTest extends Page
                             ->schema([
                                 TextInput::make('phone')
                                     ->label('Phone Number')
-                                    ->tel(),
+                                    ->tel()
+                                    ->required(fn (): bool => $this->hasNativeValidation),
                             ]),
                         Tab::make('Billing')->key('billing')->id('profile-billing')
                             ->visible(fn (): bool => $this->hasDisabledProfileHeader),
@@ -155,5 +161,7 @@ class TabsBrowserTest extends Page
     public function save(): void
     {
         $this->form->getState();
+
+        $this->isSaved = true;
     }
 }
