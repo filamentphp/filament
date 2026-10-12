@@ -119,6 +119,40 @@ it('persists independent tabs across reload and browser history', function (): v
     }
 });
 
+it('prioritizes visible native validation errors before revealing invalid fields in another `Tab`', function (string $activeTab, string $visibleField, string $hiddenTab, string $hiddenField): void {
+    $this->actingAs(User::factory()->create());
+
+    $browser = visit("/tabs-browser-test?native-validation=1&tab={$activeTab}");
+
+    foreach ([$browser, $browser->inDarkMode()] as $page) {
+        $page->assertVisible("#profile-{$activeTab}")
+            ->assertNoAccessibilityIssues();
+
+        foreach (range(1, 2) as $attempt) {
+            $page->click('[data-testid="save"]');
+            $page->script('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))');
+            $page->assertVisible("#profile-{$activeTab}")
+                ->assertMissing("#profile-{$hiddenTab}:visible")
+                ->assertScript("document.activeElement === document.querySelector('#profile-{$activeTab} input')", true)
+                ->assertMissing('[data-testid="saved"]');
+        }
+
+        $page->fill("#profile-{$activeTab} input", $visibleField)
+            ->click('[data-testid="save"]')
+            ->assertVisible("#profile-{$hiddenTab}")
+            ->assertScript("document.activeElement === document.querySelector('#profile-{$hiddenTab} input')", true)
+            ->assertNoAccessibilityIssues()
+            ->assertMissing('[data-testid="saved"]');
+
+        $page->fill("#profile-{$hiddenTab} input", $hiddenField)
+            ->click('[data-testid="save"]')
+            ->assertVisible('[data-testid="saved"]');
+    }
+})->with([
+    'visible invalid field before hidden invalid field' => ['account', 'alex', 'contact', '+44 7700 900123'],
+    'hidden invalid field before visible invalid field' => ['contact', '+44 7700 900123', 'account', 'alex'],
+]);
+
 it('defaults `isBadgeDeferred()` to `false`', function (): void {
     $tab = Tab::make('Test');
 

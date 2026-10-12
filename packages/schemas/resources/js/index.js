@@ -74,6 +74,20 @@ document.addEventListener(
             return
         }
 
+        // Keep visible errors available to fix before revealing another
+        // container. Read validity without dispatching more `invalid` events.
+        if (
+            Array.from(control.form?.elements ?? []).some(
+                (element) =>
+                    element.willValidate &&
+                    !element.validity.valid &&
+                    element.offsetParent !== null &&
+                    getComputedStyle(element).visibility !== 'hidden',
+            )
+        ) {
+            return
+        }
+
         isRetryingConcealedValidation = true
 
         // Reveal the concealing containers, using the same `expand` event
