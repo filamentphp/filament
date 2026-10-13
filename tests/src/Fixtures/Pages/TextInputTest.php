@@ -47,6 +47,7 @@ class TextInputTest extends Page
                     ->label('Password')
                     ->password()
                     ->revealable()
+                    ->default('secret-value')
                     ->prefixAction(
                         Action::make('post')
                             ->icon(Heroicon::Star)
