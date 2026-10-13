@@ -116,9 +116,9 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
                     return false;
                 }
 
-                $cache->forget($legacyCodeCacheKey);
-
-                return true;
+                return (! $cache->has($legacyCodeCacheKey))
+                    || $cache->forget($legacyCodeCacheKey)
+                    || ($cache->get($legacyCodeCacheKey) === null);
             },
         );
 
