@@ -98,15 +98,24 @@ trait HasBulkActions
     {
         $query = $this->getFilteredTableQuery();
 
+        if ($query && $this->getTable()->hasPivotRecordKeys() && (! $this->getTable()->selectsCurrentPageOnly())) {
+            $query = $this->applyPivotRecordKeyToTableQuery($query);
+        }
+
         if (! $this->getTable()->checksIfRecordIsSelectable()) {
             if (! $this->getTable()->hasQuery()) {
                 /** @phpstan-ignore-next-line */
                 return $this->getTableRecords()->keys()->all();
             }
 
-            $records = $this->getTable()->selectsCurrentPageOnly() ?
-                $this->getTableRecords()->pluck($query->getModel()->getKeyName()) :
-                $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
+            if ($this->getTable()->selectsCurrentPageOnly()) {
+                $records = $this->getTableRecords();
+                $records = $this->getTable()->hasPivotRecordKeys() ?
+                    $records->map(fn (Model $record): string => $this->getTableRecordKey($record)) :
+                    $records->pluck($query->getModel()->getKeyName());
+            } else {
+                $records = $query->toBase()->pluck($this->getTable()->hasPivotRecordKeys() ? 'filament_pivot_key' : $query->getModel()->getQualifiedKeyName());
+            }
 
             /** @phpstan-ignore-next-line */
             return $records->map(fn ($key): string => (string) $key)->all();
@@ -122,7 +131,13 @@ trait HasBulkActions
                     return $carry;
                 }
 
-                $carry[] = ($record instanceof Model) ? ((string) $record->getKey()) : $key;
+                if ($record instanceof Model) {
+                    $key = $this->getTable()->hasPivotRecordKeys() ?
+                        $this->getTableRecordKey($record) :
+                        ((string) $record->getKey());
+                }
+
+                $carry[] = $key;
 
                 return $carry;
             },
@@ -174,12 +189,20 @@ trait HasBulkActions
 
         $tableGrouping->scopeQueryByKey($query, $group);
 
+        if ($this->getTable()->hasPivotRecordKeys() && (! $this->getTable()->selectsCurrentPageOnly())) {
+            $query = $this->applyPivotRecordKeyToTableQuery($query);
+        }
+
         if (! $this->getTable()->checksIfRecordIsSelectable()) {
-            $records = $this->getTable()->selectsCurrentPageOnly() ?
-                $this->getTableRecords()
-                    ->filter(fn (Model $record): bool => $tableGrouping->getStringKey($record) === $group)
-                    ->pluck($query->getModel()->getKeyName()) : /** @phpstan-ignore method.notFound */
-                $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
+            if ($this->getTable()->selectsCurrentPageOnly()) {
+                $records = $this->getTableRecords()
+                    ->filter(fn (Model $record): bool => $tableGrouping->getStringKey($record) === $group); /** @phpstan-ignore method.notFound */
+                $records = $this->getTable()->hasPivotRecordKeys() ?
+                    $records->map(fn (Model $record): string => $this->getTableRecordKey($record)) :
+                    $records->pluck($query->getModel()->getKeyName());
+            } else {
+                $records = $query->toBase()->pluck($this->getTable()->hasPivotRecordKeys() ? 'filament_pivot_key' : $query->getModel()->getQualifiedKeyName());
+            }
 
             return $records
                 ->map(fn ($key): string => (string) $key)
@@ -198,7 +221,7 @@ trait HasBulkActions
                     return $carry;
                 }
 
-                $carry[] = (string) $record->getKey();
+                $carry[] = $this->getTable()->hasPivotRecordKeys() ? $this->getTableRecordKey($record) : ((string) $record->getKey());
 
                 return $carry;
             },
@@ -212,7 +235,9 @@ trait HasBulkActions
             /** @var Collection $records */
             $records = $this->getTable()->selectsCurrentPageOnly() ?
                 $this->getTableRecords() :
-                $this->getFilteredTableQuery()->get();
+                ($this->getTable()->hasPivotRecordKeys() ?
+                    $this->applyPivotRecordKeyToTableQuery($this->getFilteredTableQuery()) :
+                    $this->getFilteredTableQuery())->get();
 
             return $records
                 ->filter(fn (Model | array $record): bool => $this->getTable()->isRecordSelectable($record))
@@ -273,13 +298,15 @@ trait HasBulkActions
             return $this->cachedSelectedTableRecords = $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
         }
 
-        if ($chunkSize && $table->getRelationship() instanceof BelongsToMany && ! $table->allowsDuplicates()) {
-            $invadedRelationship = invade($table->getRelationship());
+        if ($chunkSize) {
+            $resolvedSelectedRecords = $this->lazyTableRecordsByKey($query, $chunkSize);
 
-            $resolvedSelectedRecords = $query->lazyById($chunkSize)
-                ->tapEach(fn (Model $record) => $invadedRelationship->hydratePivotRelation([$record]));
-        } elseif ($chunkSize) {
-            $resolvedSelectedRecords = $query->lazyById($chunkSize);
+            if ($table->getRelationship() instanceof BelongsToMany && ! $table->allowsDuplicates()) {
+                $invadedRelationship = invade($table->getRelationship());
+
+                $resolvedSelectedRecords = $resolvedSelectedRecords
+                    ->tapEach(fn (Model $record) => $invadedRelationship->hydratePivotRelation([$record]));
+            }
         } else {
             $resolvedSelectedRecords = $this->hydratePivotRelationForTableRecords($query->get());
         }
@@ -298,7 +325,7 @@ trait HasBulkActions
         $table = $this->getTable();
         $maxSelectableRecords = $table->getMaxSelectableRecords();
 
-        if (! ($table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates())) {
+        if (! $table->hasPivotRecordKeys()) {
             if ($this->isTrackingDeselectedTableRecords) {
                 $query = $table->getQuery()->whereKeyNot($this->deselectedTableRecords);
             } else {
@@ -331,38 +358,41 @@ trait HasBulkActions
             return $query;
         }
 
-        /** @var BelongsToMany $relationship */
-        $relationship = $table->getRelationship();
-
-        $pivotClass = $relationship->getPivotClass();
-        $pivotKeyName = app($pivotClass)->getKeyName();
+        $query = $table->getQuery();
+        $qualifiedKeyName = $this->getQualifiedTablePivotKeyName();
 
         if ($this->isTrackingDeselectedTableRecords) {
-            $relationship->wherePivotNotIn($pivotKeyName, $this->deselectedTableRecords);
+            $query->whereNotIn($qualifiedKeyName, $this->deselectedTableRecords);
         } else {
-            $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords);
+            $query->whereIn($qualifiedKeyName, $this->selectedTableRecords);
         }
 
         if ($maxSelectableRecords) {
-            $relationship->limit($maxSelectableRecords);
+            $query->limit($maxSelectableRecords);
         }
 
         if ($shouldFetchSelectedRecords) {
             foreach ($this->getTable()->getColumns() as $column) {
-                $column->applyEagerLoading($relationship);
-                $column->applyRelationshipAggregates($relationship);
+                $column->applyEagerLoading($query);
+                $column->applyRelationshipAggregates($query);
             }
         }
 
-        $relationship = $table->selectPivotDataInQuery($relationship);
+        $table->selectPivotDataInQuery($query);
 
-        $query = $relationship->getQuery();
+        $this->applySortingToTableQuery($query);
 
-        if (! $chunkSize) {
-            $this->applySortingToTableQuery($query);
+        if ($table->shouldDeselectAllRecordsWhenFiltered()) {
+            $query = $this->filterTableQuery($query);
         }
 
+        $query = $this->applyPivotRecordKeyToTableQuery($query);
+
         if (! $shouldFetchSelectedRecords) {
+            if ($table->checksIfRecordIsSelectable()) {
+                $query = $query->applyScopes()->withoutGlobalScopes();
+            }
+
             $this->constrainQueryToSelectableTableRecords($query);
         }
 
@@ -379,13 +409,42 @@ trait HasBulkActions
 
         $selectableKeys = [];
 
-        (clone $query)->lazyById()->each(function (Model $record) use (&$selectableKeys, $table): void {
+        $this->lazyTableRecordsByKey(clone $query, 1000)->each(function (Model $record) use (&$selectableKeys, $table): void {
             if ($table->isRecordSelectable($record)) {
-                $selectableKeys[] = $record->getKey();
+                $selectableKeys[] = $table->hasPivotRecordKeys() ? $record->getAttribute('filament_pivot_key') : $record->getKey();
             }
         });
 
-        $query->whereKey($selectableKeys);
+        if ($table->hasPivotRecordKeys()) {
+            if ($query->getQuery()->offset) {
+                $query->getQuery()->offset = null;
+            }
+
+            $query->whereIn($this->getQualifiedTablePivotKeyName(), $selectableKeys);
+        } else {
+            $query->whereKey($selectableKeys);
+        }
+    }
+
+    protected function lazyTableRecordsByKey(Builder $query, int $chunkSize): LazyCollection
+    {
+        if (! $this->getTable()->hasPivotRecordKeys()) {
+            return $query->lazyById($chunkSize);
+        }
+
+        $query = $this->applyPivotRecordKeyToTableQuery($query)->applyScopes()->withoutGlobalScopes();
+        $qualifiedKeyName = $this->getQualifiedTablePivotKeyName();
+        $keyName = 'filament_pivot_key';
+
+        if (($query->getQuery()->limit !== null) || $query->getQuery()->offset) {
+            // Resolve bounded selection before changing the traversal order.
+            $keys = (clone $query)->toBase()->pluck($keyName)->all();
+            $query->whereIn($qualifiedKeyName, $keys);
+            $query->getQuery()->limit = null;
+            $query->getQuery()->offset = null;
+        }
+
+        return $query->reorder()->lazyById($chunkSize, $qualifiedKeyName, $keyName);
     }
 
     /**
