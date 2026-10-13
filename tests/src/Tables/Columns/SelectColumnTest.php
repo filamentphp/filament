@@ -784,6 +784,7 @@ it('navigates and saves JavaScript select columns with stable focus', function (
         ->assertPresent($owner . ':focus')
         ->assertAttribute($owner, 'aria-expanded', 'false')
         ->assertSeeIn($owner, 'High')
+        ->assertSeeIn('[data-testid="rating-select"] [role="status"]', __('filament-tables::table.columns.editable.saved'))
         ->keys($owner, ['Enter', 'z'])
         ->assertScript('document.getElementById(document.activeElement.getAttribute("aria-activedescendant")).dataset.value', '3')
         ->keys($owner, 'Enter')
@@ -798,6 +799,7 @@ it('navigates and saves JavaScript select columns with stable focus', function (
         ->keys($search, 'Enter')
         ->assertPresent($launcher . ':focus')
         ->assertSeeIn($launcher, 'Published')
+        ->assertSeeIn('[data-testid="publication-select"] [role="status"]', __('filament-tables::table.columns.editable.saved'))
         ->assertNoSmoke();
 
     expect($post->fresh())->rating->toBe(3)->title->toBe('published');
