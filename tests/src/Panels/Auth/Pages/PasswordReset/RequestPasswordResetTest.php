@@ -53,9 +53,7 @@ describe('requesting password reset', function (): void {
 
         Notification::assertSentTo($userToResetPassword, ResetPassword::class);
 
-        if (class_exists(PasswordResetLinkSent::class)) {
-            Event::assertDispatched(PasswordResetLinkSent::class, fn (PasswordResetLinkSent $event): bool => $event->user->is($userToResetPassword));
-        }
+        Event::assertDispatched(PasswordResetLinkSent::class, fn (PasswordResetLinkSent $event): bool => $event->user->is($userToResetPassword));
     });
 
     it('can throttle requests', function (): void {

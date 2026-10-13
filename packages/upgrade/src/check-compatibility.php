@@ -59,12 +59,12 @@ try {
 } catch (Throwable $exception) {
 }
 
-if ($laravelVersion !== null && version_compare($laravelVersion, '11.28.0', '<')) {
+if ($laravelVersion !== null && version_compare($laravelVersion, '12.0.0', '<')) {
     render('<p class="text-red font-bold">Incompatible Laravel version detected</p>');
-    render("<p>Detected Laravel {$laravelVersion}. Filament v6 targets Laravel v11.28+ to rely on framework changes and fixes introduced in v11.28 and later. Please upgrade Laravel to at least v11.28 before continuing.</p>v");
+    render("<p>Detected Laravel {$laravelVersion}. Filament v6 requires Laravel v12.0+. Please upgrade Laravel to at least v12.0 before continuing.</p>");
     render(<<<'HTML'
         <p class="bg-red-600 text-red-50 mt-1">
-            <strong>Upgrade aborted because Laravel version is below 11.28</strong>
+            <strong>Upgrade aborted because Laravel version is below 12.0</strong>
         </p>
     HTML);
 

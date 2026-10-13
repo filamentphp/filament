@@ -84,9 +84,7 @@ class RequestPasswordReset extends SimplePage
 
                 $user->notify($notification);
 
-                if (class_exists(PasswordResetLinkSent::class)) {
-                    event(new PasswordResetLinkSent($user));
-                }
+                event(new PasswordResetLinkSent($user));
             },
         );
 

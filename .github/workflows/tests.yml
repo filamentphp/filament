@@ -31,7 +31,7 @@ jobs:
       fail-fast: true
       matrix:
         php: [8.5, 8.4, 8.3]
-        laravel: [13.*, 12.*, 11.*]
+        laravel: [13.*, 12.*]
         db: [sqlite]
         dependency-version: [prefer-stable]
         include:
@@ -39,8 +39,6 @@ jobs:
             testbench: 11.*
           - laravel: 12.*
             testbench: 10.*
-          - laravel: 11.*
-            testbench: 9.*
           - php: 8.5
             laravel: 13.*
             testbench: 11.*
@@ -61,19 +59,6 @@ jobs:
             testbench: 10.*
             db: pgsql
             dependency-version: prefer-stable
-          - php: 8.4
-            laravel: 11.*
-            testbench: 9.*
-            db: mysql
-            dependency-version: prefer-stable
-          - php: 8.4
-            laravel: 11.*
-            testbench: 9.*
-            db: pgsql
-            dependency-version: prefer-stable
-        exclude:
-          - laravel: 11.*
-            php: 8.5
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - DB:${{ matrix.db }}
     services:
       mysql:
