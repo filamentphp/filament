@@ -1180,8 +1180,8 @@ class Post extends Model implements HasRichContent
             ->fileAttachmentsDisk('s3')
             ->fileAttachmentsVisibility('private')
             ->customBlocks([
-                HeroBlock::class => [
-                    'categoryUrl' => fn (): string => $this->category->getUrl(),
+                HeroBlock::class => fn (): array => [
+                    'categoryUrl' => $this->category->getUrl(),
                 ],
                 CallToActionBlock::class,
             ])
