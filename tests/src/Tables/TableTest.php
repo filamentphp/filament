@@ -299,7 +299,7 @@ describe('sorting', function (): void {
         'combined `$sort` injection' => [true],
     ]);
 
-    it('preserves mapped sorting for a toggled-hidden `defaultSort()` column', function (): void {
+    it('preserves selected mapped sorting for a toggled-hidden `defaultSort()` column', function (): void {
         $firstPost = Post::factory()->create(['title' => 'Charlie']);
         $secondPost = Post::factory()->create(['title' => 'Alpha']);
 
@@ -307,8 +307,40 @@ describe('sorting', function (): void {
             ->assertCanSeeTableRecords([$secondPost, $firstPost], inOrder: true)
             ->set('tableSort', 'display_title:desc')
             ->assertSet('tableSort', 'display_title:desc')
-            ->assertCanSeeTableRecords([$secondPost, $firstPost], inOrder: true);
+            ->assertCanSeeTableRecords([$firstPost, $secondPost], inOrder: true);
     });
+
+    it('preserves selected sorting for a toggled-hidden aggregate `defaultSort()` column', function (bool $usesDefaultSortClosure): void {
+        $firstUser = User::factory()->create(['name' => 'Charlie']);
+        $secondUser = User::factory()->create(['name' => 'Alpha']);
+        $thirdUser = User::factory()->create(['name' => 'Bravo']);
+
+        Post::factory()->count(2)->for($firstUser, 'author')->create();
+        Post::factory()->for($thirdUser, 'author')->create();
+
+        $component = livewire(ToggleableSortableTableTestComponent::class, [
+            'defaultSortColumn' => 'posts_count',
+            'usesDefaultSortClosure' => $usesDefaultSortClosure,
+        ])->assertCanSeeTableRecords([$secondUser, $thirdUser, $firstUser], inOrder: true);
+
+        $tableColumns = $component->get('tableColumns');
+        $tableColumns[1]['isToggled'] = false;
+
+        $component
+            ->call('applyTableColumnManager', $tableColumns)
+            ->assertCanSeeTableRecords([$secondUser, $thirdUser, $firstUser], inOrder: true)
+            ->sortTable('posts_count', 'desc')
+            ->assertCanSeeTableRecords([$firstUser, $thirdUser, $secondUser], inOrder: true);
+
+        livewire(ToggleableSortableTableTestComponent::class, [
+            'defaultSortColumn' => 'posts_count',
+            'usesDefaultSortClosure' => $usesDefaultSortClosure,
+        ])
+            ->assertSet('tableSort', 'posts_count:desc')
+            ->assertCanSeeTableRecords([$firstUser, $thirdUser, $secondUser], inOrder: true)
+            ->call('resetTableColumnManager')
+            ->assertCanSeeTableRecords([$firstUser, $thirdUser, $secondUser], inOrder: true);
+    })->with([false, true]);
 });
 
 describe('pagination', function (): void {
@@ -1016,6 +1048,10 @@ class LoadingSkeletonSortableTableTestComponent extends SortableTableTestCompone
 
 class ToggleableSortableTableTestComponent extends TableTestComponent
 {
+    public string $defaultSortColumn = 'email';
+
+    public bool $usesDefaultSortClosure = false;
+
     public function table(Table $table): Table
     {
         return $table
@@ -1029,7 +1065,7 @@ class ToggleableSortableTableTestComponent extends TableTestComponent
                     ->sortable()
                     ->toggleable(),
             ])
-            ->defaultSort('email')
+            ->defaultSort($this->usesDefaultSortClosure ? fn (): string => $this->defaultSortColumn : $this->defaultSortColumn)
             ->persistSortInSession();
     }
 }
