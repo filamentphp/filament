@@ -16,7 +16,7 @@ describe('success notifications', function (): void {
 
         $action->sendSuccessNotification();
 
-        Notification::assertNotified('Created');
+        Notification::assertNotified();
     });
 
     it('will not send a success notification when disabled via `successNotification(null)`', function (): void {

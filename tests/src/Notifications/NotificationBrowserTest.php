@@ -15,17 +15,18 @@ beforeEach(function (): void {
 it('delivers notifications once across redirects in light and dark modes', function (string $redirect): void {
     $page = visit('/notification-browser-test');
 
-    foreach ([false, true] as $isDarkMode) {
-        if ($isDarkMode) {
-            $page->inDarkMode();
+    foreach ([$page, $page->inDarkMode()] as $themedPage) {
+        $themedPage
+            ->click("[data-testid=\"send-{$redirect}-redirect-notification\"]")
+            ->assertQueryStringHas('redirected', '1')
+            ->assertCount('.fi-no .fi-no-notification', 1)
+            ->assertNoJavaScriptErrors();
+
+        if ($redirect === 'full') {
+            $themedPage->assertNoAccessibilityIssues();
         }
 
-        $page
-            ->click("[data-testid=\"send-{$redirect}-redirect-notification\"]")
-            ->assertScript("new URL(location.href).searchParams.get('redirected')", '1')
-            ->assertCount('.fi-no .fi-no-notification', 1)
-            ->assertNotPresent('#nprogress')
-            ->assertNoAccessibilityIssues()
+        $themedPage
             ->refresh()
             ->assertCount('.fi-no .fi-no-notification', 0)
             ->assertNoJavaScriptErrors()

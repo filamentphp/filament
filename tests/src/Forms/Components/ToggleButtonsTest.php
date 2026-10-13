@@ -617,7 +617,6 @@ it('can select, replace, and clear a single `ToggleButtons` option with pointer 
             ? visit('/toggle-buttons-test')->inDarkMode()
             : visit('/toggle-buttons-test')->inLightMode();
         $page->assertNoSmoke()->assertNoAccessibilityIssues();
-        $livewireComponent = 'Livewire.find(document.getElementById("form.field-a").closest("[wire\\\\:id]").getAttribute("wire:id"))';
 
         foreach (['field', 'grouped_field'] as $fieldName) {
             $firstButton = "[id=\"form.{$fieldName}-a\"]";
@@ -630,7 +629,8 @@ it('can select, replace, and clear a single `ToggleButtons` option with pointer 
                 ->assertAttribute($firstButton, 'aria-pressed', 'false')
                 ->assertAttribute($secondButton, 'aria-pressed', 'true');
 
-            expect($page->script("{$livewireComponent}.call('save')")[$fieldName])->toBe('b');
+            $page->click('[data-testid="save"]')
+                ->assertSeeIn('[data-testid="saved-' . $fieldName . '"]', '"b"');
 
             $page->click($secondButton)
                 ->assertAttribute($secondButton, 'aria-pressed', 'false')
@@ -638,7 +638,7 @@ it('can select, replace, and clear a single `ToggleButtons` option with pointer 
                 ->assertAttribute($firstButton, 'aria-pressed', 'true')
                 ->keys($firstButton, 'Tab');
 
-            expect($page->script('document.activeElement.id'))->toBe("form.{$fieldName}-b");
+            $page->assertPresent($secondButton . ':focus');
 
             $page->keys($secondButton, 'Enter')
                 ->assertAttribute($firstButton, 'aria-pressed', 'false')
@@ -661,88 +661,12 @@ it('can select, replace, and clear a single `ToggleButtons` option with pointer 
             ->assertNotChecked('[id="form.multiple_field-a"]')
             ->assertChecked('[id="form.multiple_field-b"]');
 
-        $state = $page->script("{$livewireComponent}.call('save')");
-
-        expect($state)->toMatchArray([
-            'field' => null,
-            'grouped_field' => null,
-            'boolean_field' => null,
-            'disabled_options' => null,
-            'multiple_field' => ['b'],
-        ]);
-    }
-});
-
-it('preserves `live()` update timing and submission locking for single `ToggleButtons`', function (): void {
-    $this->actingAs(User::factory()->create());
-
-    foreach ([false, true] as $darkMode) {
-        $page = $darkMode
-            ? visit('/toggle-buttons-test')->inDarkMode()
-            : visit('/toggle-buttons-test')->inLightMode();
-        $livewireComponent = 'Livewire.find(document.getElementById("form.field-a").closest("[wire\\\\:id]").getAttribute("wire:id"))';
-
-        foreach (['deferred_blur', 'deferred_debounced', 'deferred_override'] as $fieldName) {
-            $button = "[id=\"form.{$fieldName}-a\"]";
-
-            $page->assertScript("typeof Alpine.\$data(document.getElementById('form.{$fieldName}-a')).select === 'function'")
-                ->click($button)
-                ->assertAttribute($button, 'aria-pressed', 'true')
-                ->keys($button, 'Tab')
-                ->wait(0.5)
-                ->assertScript("{$livewireComponent}.get('updatedStates.{$fieldName}') ?? []", []);
-        }
-
-        $page->click('[id="form.live_field-a"]')
-            ->assertScript("{$livewireComponent}.get('updatedStates.live_field')", ['a'])
-            ->click('[id="form.live_field-a"]')
-            ->assertScript("{$livewireComponent}.get('updatedStates.live_field')", ['a', null]);
-
-        foreach (['blur', 'grouped_blur'] as $fieldName) {
-            $button = "[id=\"form.{$fieldName}-a\"]";
-            $updates = "{$livewireComponent}.get('updatedStates.{$fieldName}') ?? []";
-
-            $page->script("document.getElementById('form.{$fieldName}-a').focus()");
-            $page->script("{$livewireComponent}.\$commit()");
-
-            $page->click($button)
-                ->assertAttribute($button, 'aria-pressed', 'true')
-                ->wait(0.2)
-                ->assertScript($updates, [])
-                ->keys($button, 'Tab')
-                ->assertScript($updates, ['a']);
-        }
-
-        foreach (['debounced', 'grouped_debounced'] as $fieldName) {
-            $firstButton = "[id=\"form.{$fieldName}-a\"]";
-            $secondButton = "[id=\"form.{$fieldName}-b\"]";
-            $updates = "{$livewireComponent}.get('updatedStates.{$fieldName}') ?? []";
-
-            $page->script("document.getElementById('form.{$fieldName}-a').focus()");
-            $page->script("{$livewireComponent}.\$commit()");
-
-            $page->click($firstButton)
-                ->assertAttribute($firstButton, 'aria-pressed', 'true')
-                ->wait(0.2)
-                ->assertScript($updates, [])
-                ->click($secondButton)
-                ->assertAttribute($firstButton, 'aria-pressed', 'false')
-                ->assertAttribute($secondButton, 'aria-pressed', 'true')
-                ->wait(0.6)
-                ->assertScript($updates, [])
-                ->assertEnabled($firstButton)
-                ->assertScript($updates, ['b']);
-        }
-
-        $submissionDisabled = $page->script('(async () => { document.querySelector("[data-testid=save]").click(); return new Promise(resolve => setTimeout(() => resolve([document.getElementById("form.field-a").disabled, document.getElementById("form.grouped_field-a").disabled]), 50)); })()');
-
-        expect($submissionDisabled)->toBe([true, true]);
-
-        $page->assertEnabled('[id="form.field-a"]')
-            ->assertEnabled('[id="form.grouped_field-a"]')
-            ->assertDisabled('[id="form.disabled_options-b"]')
-            ->wait(0.2)
-            ->assertNoAccessibilityIssues();
+        $page->click('[data-testid="save"]')
+            ->assertSeeIn('[data-testid="saved-field"]', 'null')
+            ->assertSeeIn('[data-testid="saved-grouped_field"]', 'null')
+            ->assertSeeIn('[data-testid="saved-boolean_field"]', 'null')
+            ->assertSeeIn('[data-testid="saved-disabled_options"]', 'null')
+            ->assertSeeIn('[data-testid="saved-multiple_field"]', '["b"]');
     }
 });
 

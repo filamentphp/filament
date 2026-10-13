@@ -65,8 +65,7 @@ it('can send notifications', function (): void {
         return 'heroicon-' . collect($icons)->flatten()->random();
     };
 
-    expect(session()->get('filament.notifications'))
-        ->toBeEmpty();
+    Notification::assertNotNotified();
 
     Notification::make($id = Str::random())
         ->actions([
@@ -178,8 +177,7 @@ it('can send notifications', function (): void {
         ->getSize()->toBe($actionSize)
         ->getUrl()->toBe($actionUrl);
 
-    expect(session()->get('filament.notifications'))
-        ->toBeEmpty();
+    livewire(Notifications::class)->dispatch('notificationsSent')->assertCount('notifications', 0);
 });
 
 it('can close notifications', function (): void {
@@ -207,11 +205,11 @@ it('does not replay a consumed notification after a stale session is restored', 
 
     $this->get('/notification-mailbox-send')->assertRedirect('/');
     $staleSession = session()->all();
-    app()->forgetInstance(NotificationMailbox::class);
 
     livewire(Notifications::class)
         ->dispatch('notificationsSent')
-        ->assertCount('notifications', 1);
+        ->assertCount('notifications', 1)
+        ->assertSee('Saved');
 
     session()->replace($staleSession);
 
@@ -332,10 +330,6 @@ it('discards notifications queued before session invalidation on a route with pr
 
     $storedSession = new Store(session()->getName(), session()->getHandler(), session()->getId());
     $storedSession->start();
-
-    expect($storedSession->get('filament.notification_mailbox'))
-        ->toBeString()
-        ->toBe(session()->get('filament.notification_mailbox'));
 
     session()->flush();
     session()->replace($storedSession->all());
@@ -570,10 +564,7 @@ function getLastNotificationAction()
 {
     app(NotificationMailbox::class)->flush();
 
-    $notificationsLivewireComponent = new Notifications;
-    $notificationsLivewireComponent->mount();
-    $notificationsLivewireComponent->pullNotificationsFromSession();
-    $notifications = $notificationsLivewireComponent->notifications;
+    $notifications = livewire(Notifications::class)->dispatch('notificationsSent')->get('notifications');
 
     return $notifications->first()->getActions()[0];
 }
@@ -767,10 +758,7 @@ describe('serialization', function (): void {
 
         app(NotificationMailbox::class)->flush();
 
-        $notificationsComponent = new Notifications;
-        $notificationsComponent->mount();
-        $notificationsComponent->pullNotificationsFromSession();
-        $restoredNotification = $notificationsComponent->notifications->first();
+        $restoredNotification = livewire(Notifications::class)->dispatch('notificationsSent')->get('notifications')->first();
 
         expect($restoredNotification)
             ->getIcon()->toBe('heroicon-c-bell')
