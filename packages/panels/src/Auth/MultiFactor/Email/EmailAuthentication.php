@@ -99,7 +99,7 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
         $wasStored = $this->executeWithCacheLock(
             $cache,
             "{$codeCacheKey}:lock",
-            function (?Lock $lock, Repository $cache) use ($codeCacheKey, $legacyCodeCacheKey, $codeExpiresAt, $codeHash): bool {
+            function (?Lock $lock, Repository $cache) use ($user, $codeCacheKey, $legacyCodeCacheKey, $codeExpiresAt, $codeHash): bool {
                 if (($lock !== null) && (! $lock->isOwnedByCurrentProcess())) {
                     return false;
                 }
@@ -108,6 +108,10 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
                     'hash' => $codeHash,
                     'expiresAt' => $codeExpiresAt,
                 ], $codeExpiresAt)) {
+                    return false;
+                }
+
+                if (! $this->forgetLegacySessionCode($cache, $codeCacheKey, $user)) {
                     return false;
                 }
 
@@ -176,9 +180,17 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
         $codeCacheKey = $this->getCodeCacheKey($user);
         $legacyCodeCacheKey = $this->getLegacyCodeCacheKey($user);
 
-        return $this->executeWithCacheLock($cache, "{$codeCacheKey}:lock", function (?Lock $lock, Repository $cache) use ($code, $codeCacheKey, $legacyCodeCacheKey): bool {
-            $activeCodeCacheKey = $cache->has($codeCacheKey) ? $codeCacheKey : $legacyCodeCacheKey;
-            $activeCode = $cache->get($activeCodeCacheKey);
+        return $this->executeWithCacheLock($cache, "{$codeCacheKey}:lock", function (?Lock $lock, Repository $cache) use ($user, $code, $codeCacheKey, $legacyCodeCacheKey): bool {
+            $activeCodeCacheKey = $cache->has($codeCacheKey) ? $codeCacheKey : ($cache->has($legacyCodeCacheKey) ? $legacyCodeCacheKey : null);
+
+            if (($activeCodeCacheKey === null) && $cache->has("{$codeCacheKey}:legacy_session")) {
+                return false;
+            }
+
+            $activeCode = ($activeCodeCacheKey !== null) ? $cache->get($activeCodeCacheKey) : [
+                'hash' => session($this->getLegacyCodeSessionKey($user)),
+                'expiresAt' => session($this->getLegacyCodeExpirySessionKey($user)),
+            ];
             $activeCodeHash = is_array($activeCode) ? ($activeCode['hash'] ?? null) : null;
             $activeCodeExpiresAt = is_array($activeCode) ? ($activeCode['expiresAt'] ?? null) : null;
 
@@ -191,15 +203,33 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
                 return false;
             }
 
-            $currentCode = $cache->get($activeCodeCacheKey);
+            $currentCode = ($activeCodeCacheKey !== null) ? $cache->get($activeCodeCacheKey) : [
+                'hash' => session($this->getLegacyCodeSessionKey($user)),
+            ];
             $currentCodeHash = is_array($currentCode) ? ($currentCode['hash'] ?? null) : null;
 
             if (
                 (! is_string($currentCodeHash))
                 || (! hash_equals($activeCodeHash, $currentCodeHash))
-                || (($activeCodeCacheKey === $legacyCodeCacheKey) && $cache->has($codeCacheKey))
+                || (($activeCodeCacheKey !== $codeCacheKey) && $cache->has($codeCacheKey))
+                || (($activeCodeCacheKey === null) && $cache->has($legacyCodeCacheKey))
                 || (($lock !== null) && (! $lock->isOwnedByCurrentProcess()))
             ) {
+                return false;
+            }
+
+            if ($activeCodeCacheKey === null) {
+                // A cache marker prevents stale session writes from restoring a consumed legacy code.
+                if (! $cache->add("{$codeCacheKey}:legacy_session", true, $activeCodeExpiresAt)) {
+                    return false;
+                }
+
+                session()->forget([$this->getLegacyCodeSessionKey($user), $this->getLegacyCodeExpirySessionKey($user)]);
+
+                return true;
+            }
+
+            if (! $this->forgetLegacySessionCode($cache, $codeCacheKey, $user)) {
                 return false;
             }
 
@@ -236,6 +266,40 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
             'sha256',
             Filament::getUserScopedAuthIdentifier($user) . '|' . session()->getId(),
         );
+    }
+
+    /**
+     * @param  Model&HasEmailAuthentication  $user
+     */
+    protected function getLegacyCodeSessionKey(HasEmailAuthentication $user): string
+    {
+        return 'filament_email_authentication_code:' . $user->getKey();
+    }
+
+    /**
+     * @param  Model&HasEmailAuthentication  $user
+     */
+    protected function getLegacyCodeExpirySessionKey(HasEmailAuthentication $user): string
+    {
+        return 'filament_email_authentication_code_expires_at:' . $user->getKey();
+    }
+
+    /**
+     * @param  Model&HasEmailAuthentication  $user
+     */
+    protected function forgetLegacySessionCode(Repository $cache, string $codeCacheKey, HasEmailAuthentication $user): bool
+    {
+        $expiresAt = session($this->getLegacyCodeExpirySessionKey($user));
+
+        if (($expiresAt instanceof DateTimeInterface) && (! $this->isCodeExpired($expiresAt))) {
+            if (! $cache->put("{$codeCacheKey}:legacy_session", true, $expiresAt)) {
+                return false;
+            }
+        }
+
+        session()->forget([$this->getLegacyCodeSessionKey($user), $this->getLegacyCodeExpirySessionKey($user)]);
+
+        return true;
     }
 
     /**
