@@ -108,6 +108,10 @@ trait CanSortRecords
             ($defaultSort !== $tableSortColumn) &&
             ($sortColumn = $this->getTable()->getSortableVisibleColumn($defaultSort))
         ) {
+            if ($sortColumn->isToggledHidden()) {
+                $sortColumn->applyRelationshipAggregates($query);
+            }
+
             $sortColumn->applySort($query, $sortDirection);
         } elseif (
             is_string($defaultSort) &&
