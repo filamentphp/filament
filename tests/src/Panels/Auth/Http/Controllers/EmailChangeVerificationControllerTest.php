@@ -53,7 +53,7 @@ it('can verify an email with a custom slug', function (): void {
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 
     $verificationSignature = Query::new($verificationUrl)->get('signature');
-    cache()->put($verificationSignature, true, ttl: now()->addHour());
+    cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
 
     expect($userToVerify)
         ->email->not->toBe($newEmail)
@@ -78,7 +78,7 @@ it('cannot verify an email when signed in as another user', function (): void {
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 
     $verificationSignature = Query::new($verificationUrl)->get('signature');
-    cache()->put($verificationSignature, true, ttl: now()->addHour());
+    cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
 
     $anotherUser = User::factory()->create();
 
@@ -103,7 +103,7 @@ it('cannot verify an email change to an address that has been taken since the ve
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 
     $verificationSignature = Query::new($verificationUrl)->get('signature');
-    cache()->put($verificationSignature, true, ttl: now()->addHour());
+    cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
 
     $this
         ->actingAs($userToVerify)
@@ -116,7 +116,7 @@ it('cannot verify an email change to an address that has been taken since the ve
     expect($userToVerify->refresh())
         ->email->toBe($originalEmail);
 
-    expect(cache()->has($verificationSignature))
+    expect(cache()->has("filament:auth:email_change:verification:{$verificationSignature}"))
         ->toBeFalse();
 });
 
@@ -130,7 +130,7 @@ it('cannot verify an email change with the same URL twice', function (): void {
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 
     $verificationSignature = Query::new($verificationUrl)->get('signature');
-    cache()->put($verificationSignature, true, ttl: now()->addHour());
+    cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
 
     $this
         ->actingAs($userToVerify)
@@ -140,7 +140,7 @@ it('cannot verify an email change with the same URL twice', function (): void {
     expect($userToVerify->refresh())
         ->email->toBe($newEmail);
 
-    expect(cache()->has($verificationSignature))
+    expect(cache()->has("filament:auth:email_change:verification:{$verificationSignature}"))
         ->toBeFalse();
 
     $this
