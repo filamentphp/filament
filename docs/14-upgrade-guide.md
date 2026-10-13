@@ -10,6 +10,9 @@ import Aside from "@components/Aside.astro"
 ## New requirements
 
 - PHP 8.3+
+- Laravel v12.0+
+
+If your app uses Laravel 11, upgrade it to Laravel 12 or later before running the Filament upgrade script.
 
 ## Running the automated upgrade script
 
