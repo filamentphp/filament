@@ -31,12 +31,15 @@ class TicketDepartmentsReorderableTable extends Component implements HasActions,
 
     public ?int $minimumQuantity = null;
 
+    public bool $isPaginated = false;
+
     public function table(Table $table): Table
     {
         $ticket = Ticket::query()->findOrFail($this->ticketKey);
+        $configuredRelationship = $table->getRelationship();
 
         return $table
-            ->relationship(function () use ($ticket): BelongsToMany {
+            ->relationship($configuredRelationship ? static fn () => $configuredRelationship : function () use ($ticket): BelongsToMany {
                 $relationship = $ticket->departments()->withPivot(['id', 'sort']);
 
                 if ($this->minimumQuantity !== null) {
@@ -50,7 +53,7 @@ class TicketDepartmentsReorderableTable extends Component implements HasActions,
             ])
             ->allowDuplicates($this->duplicates)
             ->reorderable('sort', direction: $this->direction)
-            ->paginated(false)
+            ->paginated($this->isPaginated)
             ->toolbarActions([
                 BulkAction::make('customBulk')
                     ->action(function (Collection | LazyCollection $records): void {

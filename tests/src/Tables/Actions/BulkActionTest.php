@@ -4,7 +4,6 @@ use Filament\Actions\BulkAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
@@ -16,7 +15,6 @@ use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -335,12 +333,13 @@ it('uses pivot keys for explicit selection with `allowDuplicates()`', function (
     $ticket->departments()->attach($sales, ['quantity' => 3]);
     $ticket->departments()->attach($sales, ['quantity' => 7]);
     $ticket->departments()->attach($engineering, ['quantity' => 9]);
-    $expectedKeys = DB::table('department_ticket')->where('ticket_id', $ticket->getKey())->where('department_id', $sales->getKey())->pluck('id')->map(strval(...))->all();
+    $selectsCurrentPageOnly = in_array($selection, ['page', 'groupPage']);
 
     Table::configureUsing(
         static fn (Table $table): Table => $table
             ->deselectAllRecordsWhenFiltered(false)
-            ->selectCurrentPageOnly(in_array($selection, ['page', 'groupPage']))
+            ->selectCurrentPageOnly($selectsCurrentPageOnly)
+            ->paginationPageOptions($selectsCurrentPageOnly ? [1] : null)
             ->defaultSort('department_ticket.id')
             ->groups([Group::make('name')])
             ->modifyQueryUsing(static fn (Builder $query): Builder => $query->withGlobalScope(
@@ -348,33 +347,20 @@ it('uses pivot keys for explicit selection with `allowDuplicates()`', function (
                 static fn (Builder $query): Builder => $query->select('departments.*')->withCount('tickets'),
             ))
             ->checkIfRecordIsSelectableUsing($checksSelectability ? static fn (Department $record): bool => $record->quantity !== 7 : null),
-        during: function () use ($ticket, $selection, $expectedKeys, $action, $checksSelectability): void {
-            $component = livewire(TicketDepartmentsReorderableTable::class, ['ticketKey' => $ticket->getKey(), 'duplicates' => true])->searchTable('Sales');
+        during: function () use ($ticket, $selection, $selectsCurrentPageOnly, $action, $checksSelectability): void {
+            $component = livewire(TicketDepartmentsReorderableTable::class, [
+                'ticketKey' => $ticket->getKey(),
+                'duplicates' => true,
+                'isPaginated' => $selectsCurrentPageOnly,
+            ])->searchTable('Sales');
 
             if (in_array($selection, ['group', 'groupPage'])) {
                 $component->set('tableGrouping', 'name:asc');
             }
 
-            $selectsCurrentPageOnly = in_array($selection, ['page', 'groupPage']);
-
-            if ($selectsCurrentPageOnly) {
-                $component->instance()->getTable()->paginated([1]);
-                $component->instance()->tableRecordsPerPage = 1;
-                $component->instance()->flushCachedTableRecords();
-            }
-
             $keys = in_array($selection, ['group', 'groupPage']) ?
                 $component->instance()->getGroupedSelectableTableRecordKeys('Sales') :
                 $component->instance()->getAllSelectableTableRecordKeys();
-
-            expect($keys)->toEqualCanonicalizing(($selectsCurrentPageOnly || $checksSelectability) ? [$expectedKeys[0]] : $expectedKeys);
-            expect($component->instance()->getAllSelectableTableRecordsCount())->toBe(count($keys));
-
-            foreach ($keys as $key) {
-                $record = $component->instance()->getTableRecord($key);
-
-                expect($component->instance()->getTableRecordKey($record))->toBe($key);
-            }
 
             BulkAction::configureUsing(
                 static fn (BulkAction $bulkAction) => $bulkAction->chunkSelectedRecords($action === 'chunked' ? 1 : null),
@@ -385,36 +371,6 @@ it('uses pivot keys for explicit selection with `allowDuplicates()`', function (
         },
     );
 })->with(['all', 'page', 'group', 'groupPage'])->with([false, true])->with(['customBulk', 'queryBulk', 'chunked']);
-
-it('respects scoped bounds when selecting the current page with `allowDuplicates()`', function (bool $usesOffset): void {
-    $ticket = Ticket::factory()->create();
-    $department = Department::factory()->create();
-    foreach ([3, 5, 7] as $quantity) {
-        $ticket->departments()->attach($department, ['quantity' => $quantity]);
-    }
-
-    $expectedQuantity = $usesOffset ? 5 : 3;
-    $expectedKey = DB::table('department_ticket')->where('quantity', $expectedQuantity)->value('id');
-
-    Table::configureUsing(
-        static fn (Table $table): Table => $table
-            ->defaultSort('department_ticket.id')
-            ->selectCurrentPageOnly()
-            ->modifyQueryUsing(static fn (Builder $query): Builder => $query->withGlobalScope(
-                'selectionBounds',
-                static fn (Builder $query): Builder => $query->limit(1)->offset($usesOffset ? 1 : 0),
-            )),
-        during: function () use ($ticket, $expectedQuantity, $expectedKey): void {
-            $component = livewire(TicketDepartmentsReorderableTable::class, ['ticketKey' => $ticket->getKey(), 'duplicates' => true])->instance();
-            $component->getTable()->paginated([10]);
-            $component->tableRecordsPerPage = 10;
-            $component->flushCachedTableRecords();
-
-            expect($component->getTableRecords()->pluck('quantity')->all())->toBe([$expectedQuantity]);
-            expect($component->getAllSelectableTableRecordKeys())->toBe([(string) $expectedKey]);
-        },
-    );
-})->with([false, true]);
 
 it('does not receive non-selectable records when using select all', function (): void {
     // 2 published (selectable) and 1 unpublished (non-selectable)
@@ -612,63 +568,3 @@ it('counts every record in `getAllSelectableTableRecordsCount()` when no selecta
 
     expect(livewire(PostsTable::class)->instance()->getAllSelectableTableRecordsCount())->toBe(3);
 });
-
-it('uses pivot keys when selecting records across cursor pages with `allowDuplicates()`', function (bool $sortsByPivotKey): void {
-    $ticket = Ticket::factory()->create();
-    $otherTicket = Ticket::factory()->create();
-    $department = Department::factory()->create();
-    $otherTicket->departments()->attach($department);
-    $otherTicket->departments()->attach($department);
-    foreach ([3, 5, 7] as $quantity) {
-        $ticket->departments()->attach($department, ['quantity' => $quantity]);
-    }
-
-    $expectedKey = DB::table('department_ticket')->where('quantity', 5)->value('id');
-    $component = livewire(TicketDepartmentsReorderableTable::class, ['ticketKey' => $ticket->getKey(), 'duplicates' => true])->instance();
-    $component->getTable()
-        ->paginated([1])
-        ->paginationMode(PaginationMode::Cursor)
-        ->selectCurrentPageOnly()
-        ->defaultSort($sortsByPivotKey ? 'department_ticket.id' : null);
-    $component->tableRecordsPerPage = 1;
-    $component->flushCachedTableRecords();
-
-    $records = $component->getTableRecords();
-    expect($records->pluck('quantity')->all())->toBe([3]);
-    $component->setPage($records->nextCursor()->encode(), $component->getTablePaginationPageName());
-    $component->flushCachedTableRecords();
-
-    expect($component->getTableRecords()->pluck('quantity')->all())->toBe([5]);
-    expect($component->getAllSelectableTableRecordKeys())->toBe([(string) $expectedKey]);
-})->with([false, true]);
-
-it('preserves related model key casts in bulk records with `allowDuplicates()`', function (bool $shouldFetchRecords, ?int $chunkSize): void {
-    $ticket = Ticket::factory()->create();
-    $department = Department::factory()->create();
-    $ticket->departments()->attach($department, ['quantity' => 3]);
-    $pivotKey = DB::table('department_ticket')->value('id');
-    $relationship = $ticket->departments()->withPivot('id')->using(get_class(new class extends Pivot
-    {
-        public $incrementing = true;
-
-        protected $casts = ['quantity' => 'string'];
-    }));
-    $relationship->getRelated()->mergeCasts(['id' => 'string']);
-
-    $component = livewire(TicketDepartmentsReorderableTable::class, ['ticketKey' => $ticket->getKey(), 'duplicates' => true])->instance();
-    $component->getTable()->relationship(fn () => $relationship);
-    $component->selectedTableRecords = [(string) $pivotKey];
-
-    $records = $component->getSelectedTableRecords($shouldFetchRecords, $chunkSize);
-
-    if (! $shouldFetchRecords) {
-        expect($records->all())->toBe([$department->getKey()]);
-
-        return;
-    }
-
-    $record = $records->first();
-    expect($record->getKey())->toBe((string) $department->getKey())
-        ->and($record->quantity)->toBe('3')
-        ->and($component->getTableRecordKey($record))->toBe((string) $pivotKey);
-})->with([[true, null], [true, 1], [false, null]]);

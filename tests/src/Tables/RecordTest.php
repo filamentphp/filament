@@ -9,6 +9,8 @@ use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +25,76 @@ it('can list records', function (): void {
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts);
 });
+
+it('resolves and counts eligible attachment keys with `allowDuplicates()`', function (bool $checksSelectability): void {
+    $ticket = Ticket::factory()->create();
+    $otherTicket = Ticket::factory()->create();
+    $sales = Department::factory()->create(['name' => 'Sales']);
+    $engineering = Department::factory()->create(['name' => 'Engineering']);
+    $otherTicket->departments()->attach($sales);
+    $otherTicket->departments()->attach($sales);
+    $ticket->departments()->attach($sales, ['quantity' => 3]);
+    $ticket->departments()->attach($sales, ['quantity' => 7]);
+    $ticket->departments()->attach($engineering, ['quantity' => 9]);
+    $expectedQuantities = $checksSelectability ? [3] : [3, 7];
+    $expectedKeys = DB::table('department_ticket')->where('ticket_id', $ticket->getKey())->whereIn('quantity', $expectedQuantities)->orderBy('id')->pluck('id')->map(strval(...))->all();
+
+    Table::configureUsing(
+        static fn (Table $table): Table => $table
+            ->modifyQueryUsing(static fn (Builder $query): Builder => $query->withGlobalScope(
+                'projection',
+                static fn (Builder $query): Builder => $query->select('departments.*')->withCount('tickets'),
+            ))
+            ->checkIfRecordIsSelectableUsing($checksSelectability ? static fn (Department $record): bool => $record->quantity !== 7 : null),
+        during: function () use ($ticket, $expectedKeys, $expectedQuantities): void {
+            $component = livewire(TicketDepartmentsReorderableTable::class, ['ticketKey' => $ticket->getKey(), 'duplicates' => true])->searchTable('Sales');
+
+            expect($component->instance()->getAllSelectableTableRecordKeys())->toEqualCanonicalizing($expectedKeys);
+            expect($component->instance()->getAllSelectableTableRecordsCount())->toBe(count($expectedQuantities));
+
+            foreach ($expectedKeys as $index => $key) {
+                $record = $component->instance()->getTableRecord($key);
+
+                expect($record->quantity)->toBe($expectedQuantities[$index]);
+                expect($component->instance()->getTableRecordKey($record))->toBe($key);
+            }
+        },
+    );
+})->with([false, true]);
+
+it('preserves related model key casts in selected records with `allowDuplicates()`', function (bool $shouldFetchRecords, ?int $chunkSize): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create();
+    $ticket->departments()->attach($department, ['quantity' => 3]);
+    $pivotKey = DB::table('department_ticket')->value('id');
+    $relationship = $ticket->departments()->withPivot('id')->using(get_class(new class extends Pivot
+    {
+        public $incrementing = true;
+
+        protected $casts = ['quantity' => 'string'];
+    }));
+    $relationship->getRelated()->mergeCasts(['id' => 'string']);
+
+    Table::configureUsing(
+        static fn (Table $table): Table => $table->relationship(static fn () => $relationship),
+        during: function () use ($ticket, $department, $pivotKey, $shouldFetchRecords, $chunkSize): void {
+            $component = livewire(TicketDepartmentsReorderableTable::class, ['ticketKey' => $ticket->getKey(), 'duplicates' => true])
+                ->set('selectedTableRecords', [(string) $pivotKey]);
+            $records = $component->instance()->getSelectedTableRecords($shouldFetchRecords, $chunkSize);
+
+            if (! $shouldFetchRecords) {
+                expect($records->all())->toBe([$department->getKey()]);
+
+                return;
+            }
+
+            $record = $records->first();
+            expect($record->quantity)->toBe('3');
+            expect($record->getKey())->toBe((string) $department->getKey());
+            expect($component->instance()->getTableRecordKey($record))->toBe((string) $pivotKey);
+        },
+    );
+})->with([[true, null], [true, 1], [false, null]]);
 
 it('can set extra record link attributes', function (): void {
     $table = livewire(PostsTable::class)->instance()->getTable();
