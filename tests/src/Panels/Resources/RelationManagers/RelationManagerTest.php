@@ -667,7 +667,7 @@ describe('scoped default action URLs', function (): void {
             'actionComponent' => 'departments',
             'tableActionRecord' => match ($recordState) {
                 'malformed' => [$department->getKey()],
-                'unknown' => 'unknown',
+                'unknown' => (string) (Department::query()->max('id') + 1),
                 default => (string) $department->getKey(),
             },
         ]);
