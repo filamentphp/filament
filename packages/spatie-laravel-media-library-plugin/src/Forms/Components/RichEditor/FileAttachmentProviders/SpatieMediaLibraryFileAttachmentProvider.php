@@ -22,6 +22,8 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
 
     protected ?string $collection = null;
 
+    protected ?string $conversion = null;
+
     protected bool | Closure $shouldPreserveFilenames = false;
 
     protected string | Closure | null $mediaName = null;
@@ -39,6 +41,13 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
     public function collection(?string $collection): static
     {
         $this->collection = $collection;
+
+        return $this;
+    }
+
+    public function conversion(?string $conversion): static
+    {
+        $this->conversion = $conversion;
 
         return $this;
     }
@@ -125,7 +134,9 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
             }
         }
 
-        return $fileAttachment->getUrl();
+        return $this->conversion
+            ? $fileAttachment->getUrl($this->conversion)
+            : $fileAttachment->getUrl();
     }
 
     public function saveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
