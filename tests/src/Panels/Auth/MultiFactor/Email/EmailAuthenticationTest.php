@@ -336,6 +336,10 @@ describe('failure cases', function (): void {
         session()->replace($staleSessionData);
 
         expect($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse();
+
+        session()->regenerate();
+
+        expect($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse();
     });
 
     it('invalidates legacy session email codes when sending or consuming a cached code', function (string $cacheFormat): void {
@@ -344,6 +348,10 @@ describe('failure cases', function (): void {
         $userToAuthenticate = User::factory()->hasEmailAuthentication()->create();
         $legacyCodeSessionKey = "filament_email_authentication_code:{$userToAuthenticate->getKey()}";
         $legacyCodeExpirySessionKey = "filament_email_authentication_code_expires_at:{$userToAuthenticate->getKey()}";
+
+        session()->put($legacyCodeSessionKey, Hash::make('111111'));
+        session()->put($legacyCodeExpirySessionKey, now()->addMinute());
+        $olderSessionData = session()->all();
 
         session()->put($legacyCodeSessionKey, Hash::make('123456'));
         session()->put($legacyCodeExpirySessionKey, now()->addMinutes(4));
@@ -373,6 +381,18 @@ describe('failure cases', function (): void {
 
         expect($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse()
             ->and($emailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeFalse();
+
+        session()->replace($olderSessionData);
+
+        expect($emailAuthentication->verifyCode('111111', $userToAuthenticate))->toBeFalse();
+
+        expect($emailAuthentication->sendCode($userToAuthenticate))->toBeTrue()
+            ->and($emailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeTrue();
+
+        $this->travel(61)->seconds();
+        session()->replace($staleSessionData);
+
+        expect($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse();
     })->with(['current', 'legacy']);
 
     it('rejects expired or incomplete legacy session email codes', function (string $expiry): void {
