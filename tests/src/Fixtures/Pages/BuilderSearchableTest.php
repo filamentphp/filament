@@ -32,11 +32,14 @@ class BuilderSearchableTest extends Page
 
     public bool $isPickerSearchable = true;
 
+    public bool $hasGroupedBlocks = false;
+
     public function mount(): void
     {
         $this->hasNoBlocks = request()->boolean('empty');
         $this->hasOnlyVideoBlock = request()->boolean('limited');
         $this->isPickerSearchable = ! request()->boolean('notSearchable');
+        $this->hasGroupedBlocks = request()->boolean('grouped');
 
         $this->form->fill();
     }
@@ -67,6 +70,7 @@ class BuilderSearchableTest extends Page
                 Builder::make('content')
                     ->label('Content')
                     ->searchable(fn (): bool => $this->isPickerSearchable)
+                    ->blockPickerColumns(fn (): int => $this->hasGroupedBlocks ? 2 : 1)
                     ->blockPickerWidth(fn (): Width => $this->hasWidePicker ? Width::Large : Width::Small)
                     ->addAction(fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'add-block']))
                     ->blocks($this->getBlocks())
@@ -83,7 +87,7 @@ class BuilderSearchableTest extends Page
     }
 
     /**
-     * @return array<Builder\Block>
+     * @return array<Builder\Block | array<Builder\Block>>
      */
     protected function getBlocks(): array
     {
@@ -107,7 +111,7 @@ class BuilderSearchableTest extends Page
 
         $blocks = [
             Builder\Block::make('paragraph')
-                ->label('Paragraph')
+                ->label($this->hasGroupedBlocks ? 'Résumé' : 'Paragraph')
                 ->schema([
                     TextInput::make('text')
                         ->label('Text'),
@@ -123,9 +127,17 @@ class BuilderSearchableTest extends Page
                 ->maxItems(1)
                 ->schema([
                     TextInput::make('url')
-                        ->label('URL'),
+                        ->label('URL')
+                        ->extraInputAttributes(['data-testid' => 'video-url']),
                 ]),
         ];
+
+        if ($this->hasGroupedBlocks) {
+            return [
+                'Content' => [$blocks[0], $blocks[1]],
+                'Media' => [$blocks[2]],
+            ];
+        }
 
         return $this->hasOnlyVideoBlock ? [$blocks[2]] : $blocks;
     }

@@ -37,15 +37,11 @@ Route::get('posts/create', CreatePost::class);
 
 ## Adding the form
 
-<Aside variant="warning">
-    Before proceeding, please ensure that the **Forms package** is installed in your project. Consult the [installation guide](../introduction/installation#installing-the-individual-components) and configure the **individual components** according to the instructions.
-</Aside>
-
 There are 5 main tasks when adding a form to a Livewire component class. Each one is essential:
 
 1) Implement the `HasSchemas` interface and use the `InteractsWithSchemas` trait.
 2) Define a public Livewire property to store your form's data. In our example, we'll call this `$data`, but you can call it whatever you want.
-3) Add a `form()` method, which is where you configure the form. [Add the form's schema](../forms/overview#form-schemas), and tell Filament to store the form data in the `$data` property (using `statePath('data')`).
+3) Add a `form()` method, which is where you configure the form. [Add the form's fields](../forms/overview#form-fields), and tell Filament to store the form data in the `$data` property (using `statePath('data')`).
 4) Initialize the form with `$this->form->fill()` in `mount()`. This is imperative for every form that you build, even if it doesn't have any initial data.
 5) Define a method to handle the form submission. In our example, we'll call this `create()`, but you can call it whatever you want. Inside that method, you can validate and get the form's data using `$this->form->getState()`. It's important that you use this method instead of accessing the `$this->data` property directly, because the form's data needs to be validated and transformed into a useful format before being returned.
 
@@ -197,7 +193,7 @@ public function form(Schema $schema): Schema
 ```
 
 <Aside variant="warning">
-    `$post` is a model property on a regular Livewire component. Filament does not re-query or authorize it on later requests. Re-query and authorize the post before passing it to the form or saving it. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+    `$post` is a model property on a regular Livewire component. Filament does not re-query or authorize it on later requests. Re-query and authorize the post before passing it to the form or saving it, including any tenant or ownership restrictions your application requires. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
 </Aside>
 
 ### Passing the form model after the form has been submitted

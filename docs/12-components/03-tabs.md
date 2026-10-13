@@ -142,7 +142,7 @@ By default, a tab's underlying HTML tag is `<button>`. You can change it to be a
 </x-filament::tabs>
 ```
 
-Active links use `aria-current="page"` and retain native link navigation and keyboard behavior. Do not add tablist or tabpanel roles to these navigation links.
+Do not add tablist or tabpanel roles to these navigation links.
 
 ## Using vertical tabs
 

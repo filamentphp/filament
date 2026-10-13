@@ -262,7 +262,9 @@ public function table(Table $table): Table
 
 The second parameter is optional and defaults to `'asc'`.
 
-If you pass the name of a table column as the first parameter, Filament will use that column's sorting behavior (custom sorting columns or query function). However, if you need to sort by a column that doesn’t exist in the table or in the database, you should pass a query function instead:
+If you pass the name of a table column as the first parameter, Filament will use that column's sorting behavior (custom sorting columns or query function). This also applies when the column is toggled off, and preserves any sort direction the user has selected for that column.
+
+If you need to sort by a column that doesn’t exist in the table or in the database, you should pass a query function instead:
 
 ```php
 use Filament\Tables\Table;
@@ -612,7 +614,7 @@ TextColumn::make('title')
 
 #### Action modals
 
-You may open [action modals](../../actions#modals) by passing in an `Action` object to the `action()` method:
+You may open [action modals](../../actions/modals) by passing in an `Action` object to the `action()` method:
 
 ```php
 use Filament\Actions\Action;

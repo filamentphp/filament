@@ -23,7 +23,7 @@ Filament provides many ways to manage relationships in the app. Which feature yo
     These are compatible with `BelongsTo`, `MorphTo` and `BelongsToMany` relationships.
 </Aside>
 
-Using a [select](../forms/select#integrating-with-an-eloquent-relationship), users will be able to choose from a list of existing records. You may also [add a button that allows you to create a new record inside a modal](../forms/select#creating-new-records), without leaving the page.
+Using a [select](../forms/select#integrating-with-an-eloquent-relationship), users will be able to choose from a list of existing records. You may also [add a button that allows you to create a new record inside a modal](../forms/select#creating-a-new-option-in-a-modal), without leaving the page.
 
 When using a `BelongsToMany` relationship with a select, you'll be able to select multiple options, not just one. Records will be automatically added to your pivot table when you submit the form. If you wish, you can swap out the multi-select dropdown with a simple [checkbox list](../forms/checkbox-list#integrating-with-an-eloquent-relationship). Both components work in the same way.
 
@@ -308,7 +308,7 @@ public function table(Table $table): Table
 <AutoScreenshot name="panels/resources/relation-manager-attach" alt="Relation manager attach modal" version="6.x" />
 
 <Aside variant="danger">
-    `AssociateAction`, `AttachAction`, `DetachAction`, and `DissociateAction` (and their bulk variants) only check the relation manager's `isReadOnly()` state — they do not consult any model policy method by default. Bulk delete, force-delete, and restore actions use the `deleteAny()`, `forceDeleteAny()`, and `restoreAny()` policy methods (one call for the whole batch) for performance. If you need per-record authorization on a bulk action, call [`authorizeIndividualRecords('ability')`](../actions/overview#authorizing-individual-records-of-a-bulk-action) on it, accepting the extra query cost.
+    `AssociateAction`, `AttachAction`, `DetachAction`, and `DissociateAction` (and their bulk variants) only check the relation manager's `isReadOnly()` state — they do not consult any model policy method by default. Bulk delete, force-delete, and restore actions use the `deleteAny()`, `forceDeleteAny()`, and `restoreAny()` policy methods (one call for the whole batch) for performance. If you need per-record authorization on a bulk action, call [`authorizeIndividualRecords('ability')`](../tables/actions#authorizing-bulk-actions) on it, accepting the extra query cost.
 </Aside>
 
 ### Preloading the attachment modal select options

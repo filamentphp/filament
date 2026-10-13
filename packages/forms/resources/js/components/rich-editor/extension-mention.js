@@ -257,16 +257,18 @@ export default Node.create({
 
     addProseMirrorPlugins() {
         const hydrateMentions = async (view) => {
+            if (this.editor.isDestroyed) return
+
             const { state, dispatch } = view
             const pending = []
 
-            state.doc.descendants((node, pos) => {
+            state.doc.descendants((node) => {
                 if (node.type.name !== this.name) return
                 if (node.attrs?.label) return
                 const id = node.attrs?.id
                 const char = node.attrs?.char ?? '@'
                 if (!id) return
-                pending.push({ id, char, pos })
+                pending.push({ id, char })
             })
 
             if (pending.length === 0) return
@@ -275,22 +277,34 @@ export default Node.create({
             if (typeof getMentionLabelsUsing !== 'function') return
 
             try {
-                const mentions = pending.map(({ id, char }) => ({ id, char }))
-                const labels = await getMentionLabelsUsing(mentions)
+                const labels = await getMentionLabelsUsing(pending)
+                if (this.editor.isDestroyed) return
 
-                pending.forEach(({ id, pos }) => {
-                    const label = labels[id]
-                    if (!label) return
-                    const current = view.state.doc.nodeAt(pos)
-                    if (!current || current.type.name !== this.name) return
-                    const attrs = { ...current.attrs, label }
-                    const transaction = view.state.tr.setNodeMarkup(
-                        pos,
-                        undefined,
-                        attrs,
+                // Positions can now belong to other mentions, or the same mention may have moved.
+                const transaction = view.state.tr
+
+                view.state.doc.descendants((node, position) => {
+                    if (
+                        node.type.name !== this.name ||
+                        node.attrs.label ||
+                        !pending.some(
+                            ({ id, char }) =>
+                                id === node.attrs.id &&
+                                char === (node.attrs.char ?? '@'),
+                        )
                     )
-                    dispatch(transaction)
+                        return
+
+                    const label = labels[node.attrs.id]
+                    if (!label) return
+
+                    transaction.setNodeMarkup(position, undefined, {
+                        ...node.attrs,
+                        label,
+                    })
                 })
+
+                if (transaction.docChanged) dispatch(transaction)
             } catch {}
         }
 

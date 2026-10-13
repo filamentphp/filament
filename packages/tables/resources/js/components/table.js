@@ -5,6 +5,7 @@ export default ({
     canTrackDeselectedRecords,
     currentSelectionLivewireProperty,
     maxSelectableRecords,
+    reorderMessage,
     selectsCurrentPageOnly,
     $wire,
 }) => ({
@@ -38,7 +39,14 @@ export default ({
 
     unsubscribeLivewireHook: null,
 
+    tableReorderOperation: null,
+
+    tableReorderFrame: null,
+
+    tableReorderRoot: null,
+
     init() {
+        this.tableReorderRoot = this.$root
         this.livewireId =
             this.$root.closest('[wire\\:id]')?.attributes['wire:id'].value
 
@@ -83,6 +91,154 @@ export default ({
                 }
             },
         )
+    },
+
+    getTableReorderItems() {
+        return Array.from(
+            this.tableReorderRoot.querySelector('[x-ref="tableReorderRecords"]')
+                ?.children ?? [],
+        ).filter((element) => element.hasAttribute('x-sortable-item'))
+    },
+
+    beginTableReorder(recordKey, direction) {
+        if (this.tableReorderOperation) return false
+
+        this.tableReorderOperation = {
+            recordKey,
+            direction,
+            before: this.getTableReorderItems().map((element) =>
+                element.getAttribute('x-sortable-item'),
+            ),
+        }
+
+        return true
+    },
+
+    startTableReorder(event) {
+        if (event.target !== this.$refs.tableReorderRecords) return
+        this.beginTableReorder(
+            event.item.getAttribute('x-sortable-item'),
+            'drag',
+        )
+    },
+
+    async reorderTableRecords(event) {
+        if (event.target !== this.$refs.tableReorderRecords) return
+        if (event.oldDraggableIndex === event.newDraggableIndex) {
+            this.tableReorderOperation = null
+            return
+        }
+
+        await this.finishTableReorder(() =>
+            $wire.reorderTable(
+                event.target.sortable.toArray(),
+                event.item.getAttribute('x-sortable-item'),
+            ),
+        )
+    },
+
+    async moveTableRecord(event, recordKey, direction) {
+        if (
+            event.currentTarget.disabled ||
+            !this.beginTableReorder(recordKey, direction)
+        )
+            return
+        await this.finishTableReorder(() =>
+            $wire.moveTableRecord(recordKey, direction),
+        )
+    },
+
+    async finishTableReorder(request) {
+        const operation = this.tableReorderOperation
+        if (!operation) return
+        const records = this.tableReorderRoot.querySelector(
+            '[x-ref="tableReorderRecords"]',
+        )
+        records?.sortable?.option('disabled', true)
+
+        try {
+            await request()
+        } catch {
+            if (
+                this.tableReorderOperation !== operation ||
+                !this.tableReorderRoot.isConnected
+            )
+                return
+            // Recover the server order after a failed drag without announcing an unverified move.
+            try {
+                await $wire.$refresh()
+            } catch {
+                if (
+                    this.tableReorderOperation !== operation ||
+                    !this.tableReorderRoot.isConnected
+                )
+                    return
+
+                this.tableReorderRoot
+                    .querySelector('[x-ref="tableReorderRecords"]')
+                    ?.sortable?.sort(operation.before)
+            }
+        }
+
+        if (
+            this.tableReorderOperation !== operation ||
+            !this.tableReorderRoot.isConnected
+        )
+            return
+
+        this.tableReorderFrame = requestAnimationFrame(() => {
+            this.tableReorderFrame = null
+            if (
+                this.tableReorderOperation !== operation ||
+                !this.tableReorderRoot.isConnected
+            )
+                return
+
+            const items = this.getTableReorderItems()
+            const after = items.map((element) =>
+                element.getAttribute('x-sortable-item'),
+            )
+            const beforePeers = operation.before.filter((key) =>
+                after.includes(key),
+            )
+            const afterPeers = after.filter((key) =>
+                operation.before.includes(key),
+            )
+            const item = items.find(
+                (element) =>
+                    element.getAttribute('x-sortable-item') ===
+                    operation.recordKey,
+            )
+            const moved =
+                item &&
+                beforePeers.indexOf(operation.recordKey) !==
+                    afterPeers.indexOf(operation.recordKey)
+
+            const status = this.tableReorderRoot.querySelector(
+                '[x-ref="tableReorderStatus"]',
+            )
+
+            if (moved && status) {
+                const label = item.querySelector('[data-table-reorder-label]')
+                    ?.dataset.tableReorderLabel
+                status.textContent = reorderMessage.replace(
+                    /:label|:position|:count/g,
+                    (placeholder) =>
+                        ({
+                            ':label': label,
+                            ':position': String(
+                                after.indexOf(operation.recordKey) + 1,
+                            ),
+                            ':count': String(after.length),
+                        })[placeholder],
+                )
+            }
+
+            this.tableReorderOperation = null
+            this.tableReorderRoot
+                .querySelector('[x-ref="tableReorderRecords"]')
+                ?.sortable?.option('disabled', false)
+        })
     },
 
     mountAction(...args) {
@@ -469,6 +625,8 @@ export default ({
     },
 
     destroy() {
+        this.tableReorderOperation = null
+        cancelAnimationFrame(this.tableReorderFrame)
         this.cleanUpFiltersDropdown?.()
         this.livewireEventListenersController?.abort()
         this.unsubscribeLivewireHook?.()
@@ -513,32 +671,35 @@ export const tableFilters = () => ({
         const actionName = action.dataset.tableFilterAction
 
         this.removeActionCommitHook?.()
-        this.removeActionCommitHook = this.$wire.$hook(
-            'commit',
-            ({ succeed }) => {
+        this.removeActionCommitHook = Livewire.interceptMessage(
+            ({ message, onSuccess }) => {
+                if (message.component.id !== this.$wire.$id) return
+
                 this.removeActionCommitHook?.()
                 this.removeActionCommitHook = null
 
-                succeed(() => {
-                    this.actionFocusFrame = requestAnimationFrame(() => {
-                        this.actionFocusFrame = null
+                onSuccess(({ onMorphed }) =>
+                    onMorphed(() => {
+                        this.actionFocusFrame = requestAnimationFrame(() => {
+                            this.actionFocusFrame = null
 
-                        if (
-                            !this.$el.isConnected ||
-                            this.$el.closest('.fi-dropdown-panel')?.style
-                                .display !== 'block' ||
-                            document.activeElement !== document.body
-                        ) {
-                            return
-                        }
+                            if (
+                                !this.$el.isConnected ||
+                                this.$el.closest('.fi-dropdown-panel')?.style
+                                    .display !== 'block' ||
+                                document.activeElement !== document.body
+                            ) {
+                                return
+                            }
 
-                        this.$el
-                            .querySelector(
-                                `[data-table-filter-action="${actionName}"]`,
-                            )
-                            ?.focus()
-                    })
-                })
+                            this.$el
+                                .querySelector(
+                                    `[data-table-filter-action="${actionName}"]`,
+                                )
+                                ?.focus()
+                        })
+                    }),
+                )
             },
         )
     },

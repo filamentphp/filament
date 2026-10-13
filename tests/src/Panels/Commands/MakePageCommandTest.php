@@ -139,10 +139,9 @@ it('can generate a page class in a resource', function (): void {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentOrDefaultPanel())->resources = [
-        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+    Filament::getCurrentOrDefaultPanel()->resources([
         app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
-    ];
+    ]);
 
     $this->artisan('make:filament-page', [
         'name' => 'ManageUserPermissions',
@@ -172,10 +171,9 @@ it('can generate a page view in a resource', function (): void {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentOrDefaultPanel())->resources = [
-        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+    Filament::getCurrentOrDefaultPanel()->resources([
         app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
-    ];
+    ]);
 
     $this->artisan('make:filament-page', [
         'name' => 'ManageUserPermissions',
@@ -205,10 +203,9 @@ it('can generate a create page class in a resource', function (): void {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentOrDefaultPanel())->resources = [
-        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+    Filament::getCurrentOrDefaultPanel()->resources([
         app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
-    ];
+    ]);
 
     $this->artisan('make:filament-page', [
         'name' => 'CreateUser',
@@ -240,10 +237,9 @@ it('can generate an edit page class in a resource', function (): void {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentOrDefaultPanel())->resources = [
-        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+    Filament::getCurrentOrDefaultPanel()->resources([
         app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
-    ];
+    ]);
 
     $this->artisan('make:filament-page', [
         'name' => 'EditUser',
@@ -275,10 +271,9 @@ it('can generate a view page class in a resource', function (): void {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentOrDefaultPanel())->resources = [
-        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+    Filament::getCurrentOrDefaultPanel()->resources([
         app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
-    ];
+    ]);
 
     $this->artisan('make:filament-page', [
         'name' => 'ViewUser',
@@ -327,11 +322,10 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentOrDefaultPanel())->resources = [
-        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+    Filament::getCurrentOrDefaultPanel()->resources([
         app()->getNamespace() . 'Filament\\Resources\\Teams\\TeamResource',
         app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
-    ];
+    ]);
 
     return $testCase->artisan('make:filament-page', [
         'name' => 'ManageUserTeams',
@@ -606,10 +600,9 @@ it('can generate a custom record page class in a resource', function (): void {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentOrDefaultPanel())->resources = [
-        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+    Filament::getCurrentOrDefaultPanel()->resources([
         app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
-    ];
+    ]);
 
     $this->mockConsoleOutput = true;
 

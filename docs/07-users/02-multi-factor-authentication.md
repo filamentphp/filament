@@ -593,9 +593,9 @@ $this->multiFactorChallengeForm->getState();
 
 ## Security notes about multi-factor authentication
 
-In Filament, the multi-factor authentication process occurs before the user is actually authenticated into the app. This allows you to be sure that no users can authenticate and access the app without passing the multi-factor authentication step. You do not need to remember to add middleware to any of your authenticated routes to ensure that users completed the multi-factor authentication step.
+When a user with an enabled multi-factor authentication provider signs in through Filament's login page, the challenge must succeed before Filament authenticates them. Users without an enabled provider can still sign in; [require multi-factor authentication](#requiring-multi-factor-authentication) if they must configure one before accessing the panel.
 
-However, if you have other parts of your Laravel app that authenticate users, please bear in mind that they will not be challenged for multi-factor authentication if they are already authenticated elsewhere and then visit the panel, unless [multi-factor authentication is required](#requiring-multi-factor-authentication) and they have not set it up yet.
+Filament does not challenge users who arrive at the panel already authenticated through another part of your application. Requiring multi-factor authentication enforces setup for these users, not a new challenge for an already-configured provider. If your application has other login routes or authentication paths, enforce the challenges you need on those paths separately.
 
 ### Concurrent recovery code submissions
 

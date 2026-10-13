@@ -58,6 +58,8 @@ html.fi {
 
 .fi-main,
 .fi-simple-main {
+    @apply outline-none;
+
     &.fi-width-3xs {
         @apply max-w-3xs;
     }

@@ -74,6 +74,20 @@ document.addEventListener(
             return
         }
 
+        // Keep visible errors available to fix before revealing another
+        // container. Read validity without dispatching more `invalid` events.
+        if (
+            Array.from(control.form?.elements ?? []).some(
+                (element) =>
+                    element.willValidate &&
+                    !element.validity.valid &&
+                    element.offsetParent !== null &&
+                    getComputedStyle(element).visibility !== 'hidden',
+            )
+        ) {
+            return
+        }
+
         isRetryingConcealedValidation = true
 
         // Reveal the concealing containers, using the same `expand` event
@@ -158,17 +172,17 @@ document.addEventListener('alpine:init', () => {
                         elementToExpand = elementToExpand.parentNode
                     }
 
-                    setTimeout(
-                        () =>
-                            error
-                                .closest('[data-field-wrapper]')
-                                .scrollIntoView({
-                                    behavior: 'smooth',
-                                    block: 'start',
-                                    inline: 'start',
-                                }),
-                        200,
-                    )
+                    setTimeout(() => {
+                        if (!error.isConnected) {
+                            return
+                        }
+
+                        error.closest('[data-field-wrapper]')?.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                            inline: 'start',
+                        })
+                    }, 200)
                 })
             },
 
@@ -245,6 +259,12 @@ document.addEventListener('alpine:init', () => {
 
     Livewire.interceptMessage(({ message, onSuccess }) => {
         onSuccess(({ payload }) => {
+            const component = message.component
+
+            if (!component.el.isConnected) {
+                return
+            }
+
             payload.effects?.dispatches?.forEach((dispatch) => {
                 if (!dispatch.params?.awaitSchemaComponent) {
                     return
@@ -267,16 +287,21 @@ document.addEventListener('alpine:init', () => {
                     throw `Multiple schema components found with key [${dispatch.params.awaitSchemaComponent}].`
                 }
 
-                window.addEventListener(
-                    `schema-component-${message.component.id}-${dispatch.params.awaitSchemaComponent}-loaded`,
-                    () => {
-                        window.dispatchEvent(
-                            new CustomEvent(dispatch.name, {
-                                detail: dispatch.params,
-                            }),
-                        )
-                    },
-                    { once: true },
+                const loadedEvent = `schema-component-${component.id}-${dispatch.params.awaitSchemaComponent}-loaded`
+                const dispatchWhenLoaded = () => {
+                    window.dispatchEvent(
+                        new CustomEvent(dispatch.name, {
+                            detail: dispatch.params,
+                        }),
+                    )
+                }
+
+                window.addEventListener(loadedEvent, dispatchWhenLoaded, {
+                    once: true,
+                })
+
+                component.addCleanup(() =>
+                    window.removeEventListener(loadedEvent, dispatchWhenLoaded),
                 )
             })
         })

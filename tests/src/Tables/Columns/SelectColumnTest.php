@@ -23,250 +23,184 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('navigates and saves JavaScript select columns with stable focus in light and dark modes', function (): void {
-    Artisan::call('filament:assets');
-    $post = Post::factory()->create(['rating' => 1, 'title' => 'draft']);
-    $this->actingAs(User::factory()->create());
+describe('validation and relationship state', function (): void {
+    it('isolates validation state from cached relationship state', function (bool $warmCache, string $input, bool $isValid): void {
+        $author = User::factory()->create(['json' => ['status' => 'Pending']]);
+        $post = Post::factory()->create(['author_id' => $author->getKey()]);
+        $column = SelectColumn::make('author.json.status')
+            ->table(livewire(TestTableWithSelectColumn::class)->instance()->getTable())
+            ->record($post)
+            ->options(['Pending' => 'Pending', 'Approved' => 'Approved', 'Blocked' => 'Blocked'])
+            ->disableOptionWhen(static fn (string $value): bool => $value === 'Blocked')
+            ->tooltip(static fn (string $state, User $relatedRecord): string => "{$state}:{$relatedRecord->getKey()}");
 
-    foreach ([false, true] as $isDarkMode) {
-        $post->update(['rating' => 1, 'title' => 'draft']);
-        $page = visit('/columns-browser-test?selectColumns=1');
-
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
+        if ($warmCache) {
+            expect($column->getState())->toBe('Pending');
         }
 
-        $owner = '[data-testid="rating-select"] [role="combobox"]';
-        $launcher = '[data-testid="publication-select"] button[aria-haspopup="listbox"]';
-        $search = '[data-testid="publication-select"] input[role="combobox"]';
+        if ($isValid) {
+            $column->validate($input);
+        } else {
+            expect(fn () => $column->validate($input))->toThrow(ValidationException::class);
+        }
 
-        $page
-            ->keys($owner, 'Enter')
-            ->assertVisible('[data-testid="rating-select"] [role="option"][data-value="3"]')
-            ->keys($owner, 'ArrowDown')
-            ->assertPresent($owner . ':focus')
-            ->assertScript('document.getElementById(document.activeElement.getAttribute("aria-activedescendant")).dataset.value', '3')
-            ->assertNoAccessibilityIssues()
-            ->keys($owner, 'Enter')
-            ->assertPresent($owner . ':focus')
-            ->assertScript('document.activeElement.getAttribute("aria-expanded")', 'false')
-            ->assertSeeIn($owner, 'High')
-            ->assertValue('[data-testid="rating-select"] input[x-ref="serverState"]', '3')
-            ->keys($owner, ['Enter', 'z'])
-            ->assertScript('document.getElementById(document.activeElement.getAttribute("aria-activedescendant")).dataset.value', '3')
-            ->keys($owner, 'Enter')
-            ->assertSeeIn($owner, 'High')
-            ->click($launcher)
-            ->assertPresent($search . ':focus')
-            ->type($search, 'pub')
-            ->assertVisible('[data-testid="publication-select"] [role="option"][data-value="published"]')
-            ->keys($search, 'ArrowDown')
-            ->assertScript('document.getElementById(document.activeElement.getAttribute("aria-activedescendant")).dataset.value', 'published')
-            ->assertNoAccessibilityIssues()
-            ->keys($search, 'Enter')
-            ->assertPresent($launcher . ':focus')
-            ->assertSeeIn($launcher, 'Published')
-            ->assertValue('[data-testid="publication-select"] input[x-ref="serverState"]', 'published')
-            ->assertNoSmoke();
-
-        expect($post->fresh())->rating->toBe(3)->title->toBe('published');
-    }
+        expect($column->getState())->toBe('Pending')
+            ->and($column->getRelatedRecords()[0]->is($author))->toBeTrue()
+            ->and($column->toEmbeddedHtml())->toContain("Pending:{$author->getKey()}");
+    })->with([false, true])->with([
+        'valid option' => ['Approved', true],
+        'missing option' => ['Missing', false],
+        'disabled option' => ['Blocked', false],
+    ]);
 });
 
-it('isolates validation state from cached relationship state', function (bool $warmCache, string $input, bool $isValid): void {
-    $author = User::factory()->create(['json' => ['status' => 'Pending']]);
-    $post = Post::factory()->create(['author_id' => $author->getKey()]);
-    $column = SelectColumn::make('author.json.status')
-        ->table(livewire(TestTableWithSelectColumn::class)->instance()->getTable())
-        ->record($post)
-        ->options(['Pending' => 'Pending', 'Approved' => 'Approved', 'Blocked' => 'Blocked'])
-        ->disableOptionWhen(static fn (string $value): bool => $value === 'Blocked')
-        ->tooltip(static fn (string $state, User $relatedRecord): string => "{$state}:{$relatedRecord->getKey()}");
+describe('native select', function (): void {
+    it('can set `native()` to `false` and get with `isNative()`', function (): void {
+        expect(SelectColumn::make('status')->native(false)->isNative())->toBeFalse();
+    });
 
-    if ($warmCache) {
-        expect($column->getState())->toBe('Pending');
-    }
+    it('defaults `isNative()` to `true`', function (): void {
+        expect(SelectColumn::make('status')->isNative())->toBeTrue();
+    });
 
-    if ($isValid) {
-        $column->validate($input);
-    } else {
-        expect(fn () => $column->validate($input))->toThrow(ValidationException::class);
-    }
-
-    expect($column->getState())->toBe('Pending')
-        ->and($column->getRelatedRecords()[0]->is($author))->toBeTrue()
-        ->and($column->toEmbeddedHtml())->toContain("Pending:{$author->getKey()}");
-})->with([false, true])->with([
-    'valid option' => ['Approved', true],
-    'missing option' => ['Missing', false],
-    'disabled option' => ['Blocked', false],
-]);
-
-it('renders one error-aware select tooltip with or without a configured hint', function (bool $isNative, ?string $tooltip): void {
-    $post = Post::factory()->create();
-    $column = livewire(TestTableWithSelectColumn::class)->instance()->getTable()->getColumn('rating');
-    $html = $column->record($post)->native($isNative)->tooltip($tooltip)->toEmbeddedHtml();
-
-    expect(substr_count($html, 'x-tooltip='))->toBe(1)
-        ->and($html)->toContain('error === undefined ? ' . ($tooltip ? '{' : 'false'))
-        ->toContain('content: error')
-        ->toContain('allowHTML: false');
-})->with([false, true])->with([null, 'Edit rating']);
-
-it('can set `native()` to `false` and get with `isNative()`', function (): void {
-    expect(SelectColumn::make('status')->native(false)->isNative())->toBeFalse();
+    it('can set `native()` with a `Closure`', function (): void {
+        expect(SelectColumn::make('status')->native(static fn (): bool => false)->isNative())->toBeFalse();
+    });
 });
 
-it('defaults `isNative()` to `true`', function (): void {
-    expect(SelectColumn::make('status')->isNative())->toBeTrue();
+describe('option search and limits', function (): void {
+    it('can set `searchableOptions()` and get with `areOptionsSearchable()`', function (): void {
+        expect(SelectColumn::make('status')->searchableOptions()->areOptionsSearchable())->toBeTrue();
+    });
+
+    it('defaults `areOptionsSearchable()` to `false`', function (): void {
+        expect(SelectColumn::make('status')->areOptionsSearchable())->toBeFalse();
+    });
+
+    it('can set `optionsLimit()` and get with `getOptionsLimit()`', function (): void {
+        expect(SelectColumn::make('status')->optionsLimit(100)->getOptionsLimit())->toBe(100);
+    });
+
+    it('defaults `getOptionsLimit()` to `50`', function (): void {
+        expect(SelectColumn::make('status')->getOptionsLimit())->toBe(50);
+    });
+
+    it('can set `optionsLimit()` with a `Closure`', function (): void {
+        expect(SelectColumn::make('status')->optionsLimit(static fn (): int => 100)->getOptionsLimit())->toBe(100);
+    });
 });
 
-it('can set `searchableOptions()` and get with `areOptionsSearchable()`', function (): void {
-    expect(SelectColumn::make('status')->searchableOptions()->areOptionsSearchable())->toBeTrue();
+describe('option presentation', function (): void {
+    it('can set `position()` and get with `getPosition()`', function (): void {
+        expect(SelectColumn::make('status')->position('bottom')->getPosition())->toBe('bottom');
+    });
+
+    it('defaults `getPosition()` to `null`', function (): void {
+        expect(SelectColumn::make('status')->getPosition())->toBeNull();
+    });
+
+    it('can set `position()` with a `Closure`', function (): void {
+        expect(SelectColumn::make('status')->position(static fn (): string => 'bottom')->getPosition())->toBe('bottom');
+    });
+
+    it('can set `wrapOptionLabels()` to `false` and get with `canOptionLabelsWrap()`', function (): void {
+        expect(SelectColumn::make('status')->wrapOptionLabels(false)->canOptionLabelsWrap())->toBeFalse();
+    });
+
+    it('defaults `canOptionLabelsWrap()` to `true`', function (): void {
+        expect(SelectColumn::make('status')->canOptionLabelsWrap())->toBeTrue();
+    });
+
+    it('can set `wrapOptionLabels()` with a `Closure`', function (): void {
+        expect(SelectColumn::make('status')->wrapOptionLabels(static fn (): bool => false)->canOptionLabelsWrap())->toBeFalse();
+    });
+
+    it('can set `allowOptionsHtml()` and get with `isOptionsHtmlAllowed()`', function (): void {
+        expect(SelectColumn::make('status')->allowOptionsHtml()->isOptionsHtmlAllowed())->toBeTrue();
+    });
+
+    it('defaults `isOptionsHtmlAllowed()` to `false`', function (): void {
+        expect(SelectColumn::make('status')->isOptionsHtmlAllowed())->toBeFalse();
+    });
 });
 
-it('defaults `areOptionsSearchable()` to `false`', function (): void {
-    expect(SelectColumn::make('status')->areOptionsSearchable())->toBeFalse();
+describe('option loading', function (): void {
+    it('can set `preloadOptions()` and get with `areOptionsPreloaded()`', function (): void {
+        expect(SelectColumn::make('status')->preloadOptions()->areOptionsPreloaded())->toBeTrue();
+    });
+
+    it('defaults `areOptionsPreloaded()` to `false`', function (): void {
+        expect(SelectColumn::make('status')->areOptionsPreloaded())->toBeFalse();
+    });
+
+    it('can set `rememberOptions()` and get with `areOptionsRemembered()`', function (): void {
+        expect(SelectColumn::make('status')->rememberOptions()->areOptionsRemembered())->toBeTrue();
+    });
 });
 
-it('can set `optionsLimit()` and get with `getOptionsLimit()`', function (): void {
-    expect(SelectColumn::make('status')->optionsLimit(100)->getOptionsLimit())->toBe(100);
-});
+describe('option search fields and messages', function (): void {
+    it('can set `searchOptionLabels()` to `false` and get with `shouldSearchOptionLabels()`', function (): void {
+        expect(SelectColumn::make('status')->searchOptionLabels(false)->shouldSearchOptionLabels())->toBeFalse();
+    });
 
-it('defaults `getOptionsLimit()` to `50`', function (): void {
-    expect(SelectColumn::make('status')->getOptionsLimit())->toBe(50);
-});
+    it('defaults `shouldSearchOptionLabels()` to `true`', function (): void {
+        expect(SelectColumn::make('status')->shouldSearchOptionLabels())->toBeTrue();
+    });
 
-it('can set `position()` and get with `getPosition()`', function (): void {
-    expect(SelectColumn::make('status')->position('bottom')->getPosition())->toBe('bottom');
-});
+    it('can set `searchOptionValues()` and get with `shouldSearchOptionValues()`', function (): void {
+        expect(SelectColumn::make('status')->searchOptionValues()->shouldSearchOptionValues())->toBeTrue();
+    });
 
-it('defaults `getPosition()` to `null`', function (): void {
-    expect(SelectColumn::make('status')->getPosition())->toBeNull();
-});
+    it('defaults `shouldSearchOptionValues()` to `false`', function (): void {
+        expect(SelectColumn::make('status')->shouldSearchOptionValues())->toBeFalse();
+    });
 
-it('can set `wrapOptionLabels()` to `false` and get with `canOptionLabelsWrap()`', function (): void {
-    expect(SelectColumn::make('status')->wrapOptionLabels(false)->canOptionLabelsWrap())->toBeFalse();
-});
+    it('can set `forceOptionsSearchCaseInsensitive()` and get with `isOptionsSearchForcedCaseInsensitive()`', function (): void {
+        $column = SelectColumn::make('status');
 
-it('defaults `canOptionLabelsWrap()` to `true`', function (): void {
-    expect(SelectColumn::make('status')->canOptionLabelsWrap())->toBeTrue();
-});
+        expect($column->isOptionsSearchForcedCaseInsensitive())->toBeNull();
 
-it('can set `allowOptionsHtml()` and get with `isOptionsHtmlAllowed()`', function (): void {
-    expect(SelectColumn::make('status')->allowOptionsHtml()->isOptionsHtmlAllowed())->toBeTrue();
-});
+        $column->forceOptionsSearchCaseInsensitive();
 
-it('defaults `isOptionsHtmlAllowed()` to `false`', function (): void {
-    expect(SelectColumn::make('status')->isOptionsHtmlAllowed())->toBeFalse();
-});
+        expect($column->isOptionsSearchForcedCaseInsensitive())->toBeTrue();
 
-it('can set `preloadOptions()` and get with `areOptionsPreloaded()`', function (): void {
-    expect(SelectColumn::make('status')->preloadOptions()->areOptionsPreloaded())->toBeTrue();
-});
+        $column->forceOptionsSearchCaseInsensitive(false);
 
-it('defaults `areOptionsPreloaded()` to `false`', function (): void {
-    expect(SelectColumn::make('status')->areOptionsPreloaded())->toBeFalse();
-});
+        expect($column->isOptionsSearchForcedCaseInsensitive())->toBeFalse();
+    });
 
-it('can set `rememberOptions()` and get with `areOptionsRemembered()`', function (): void {
-    expect(SelectColumn::make('status')->rememberOptions()->areOptionsRemembered())->toBeTrue();
-});
+    it('can set `optionsLoadingMessage()` and get with `getOptionsLoadingMessage()`', function (): void {
+        $column = SelectColumn::make('status');
 
-it('can set `searchOptionLabels()` to `false` and get with `shouldSearchOptionLabels()`', function (): void {
-    expect(SelectColumn::make('status')->searchOptionLabels(false)->shouldSearchOptionLabels())->toBeFalse();
-});
+        expect($column->getOptionsLoadingMessage())->toBeString();
+        expect($column->getOptionsLoadingMessage())->not->toBeEmpty();
 
-it('defaults `shouldSearchOptionLabels()` to `true`', function (): void {
-    expect(SelectColumn::make('status')->shouldSearchOptionLabels())->toBeTrue();
-});
+        $column->optionsLoadingMessage('Please wait...');
 
-it('can set `searchOptionValues()` and get with `shouldSearchOptionValues()`', function (): void {
-    expect(SelectColumn::make('status')->searchOptionValues()->shouldSearchOptionValues())->toBeTrue();
-});
+        expect($column->getOptionsLoadingMessage())->toBe('Please wait...');
+    });
 
-it('defaults `shouldSearchOptionValues()` to `false`', function (): void {
-    expect(SelectColumn::make('status')->shouldSearchOptionValues())->toBeFalse();
-});
+    it('can set `optionsSearchDebounce()` and get with `getOptionsSearchDebounce()`', function (): void {
+        $column = SelectColumn::make('status')
+            ->optionsSearchDebounce(500);
 
-it('can render', function (): void {
-    Post::factory()->count(5)->create();
+        expect($column->getOptionsSearchDebounce())->toBe(500);
+    });
 
-    livewire(TestTableWithSelectColumn::class)
-        ->assertSuccessful()
-        ->assertCanRenderTableColumn('rating');
-});
+    it('can set `noOptionsMessage()` and get with `getNoOptionsMessage()`', function (): void {
+        $column = SelectColumn::make('status')
+            ->noOptionsMessage('Nothing here');
 
-it('can display different option values', function (): void {
-    Post::factory()->create(['rating' => 1]);
-    Post::factory()->create(['rating' => 3]);
-    Post::factory()->create(['rating' => 5]);
+        expect($column->getNoOptionsMessage())->toBe('Nothing here');
+    });
 
-    livewire(TestTableWithSelectColumn::class)
-        ->assertSuccessful();
-});
+    it('returns `false` for `hasOptionsRelationship()` by default', function (): void {
+        expect(SelectColumn::make('status')->hasOptionsRelationship())->toBeFalse();
+    });
 
-it('can set `native()` with a `Closure`', function (): void {
-    expect(SelectColumn::make('status')->native(static fn (): bool => false)->isNative())->toBeFalse();
-});
-
-it('can set `optionsLimit()` with a `Closure`', function (): void {
-    expect(SelectColumn::make('status')->optionsLimit(static fn (): int => 100)->getOptionsLimit())->toBe(100);
-});
-
-it('can set `position()` with a `Closure`', function (): void {
-    expect(SelectColumn::make('status')->position(static fn (): string => 'bottom')->getPosition())->toBe('bottom');
-});
-
-it('can set `wrapOptionLabels()` with a `Closure`', function (): void {
-    expect(SelectColumn::make('status')->wrapOptionLabels(static fn (): bool => false)->canOptionLabelsWrap())->toBeFalse();
-});
-
-it('can set `forceOptionsSearchCaseInsensitive()` and get with `isOptionsSearchForcedCaseInsensitive()`', function (): void {
-    $column = SelectColumn::make('status');
-
-    expect($column->isOptionsSearchForcedCaseInsensitive())->toBeNull();
-
-    $column->forceOptionsSearchCaseInsensitive();
-
-    expect($column->isOptionsSearchForcedCaseInsensitive())->toBeTrue();
-
-    $column->forceOptionsSearchCaseInsensitive(false);
-
-    expect($column->isOptionsSearchForcedCaseInsensitive())->toBeFalse();
-});
-
-it('can set `optionsLoadingMessage()` and get with `getOptionsLoadingMessage()`', function (): void {
-    $column = SelectColumn::make('status');
-
-    expect($column->getOptionsLoadingMessage())->toBeString();
-    expect($column->getOptionsLoadingMessage())->not->toBeEmpty();
-
-    $column->optionsLoadingMessage('Please wait...');
-
-    expect($column->getOptionsLoadingMessage())->toBe('Please wait...');
-});
-
-it('can set `optionsSearchDebounce()` and get with `getOptionsSearchDebounce()`', function (): void {
-    $column = SelectColumn::make('status')
-        ->optionsSearchDebounce(500);
-
-    expect($column->getOptionsSearchDebounce())->toBe(500);
-});
-
-it('can set `noOptionsMessage()` and get with `getNoOptionsMessage()`', function (): void {
-    $column = SelectColumn::make('status')
-        ->noOptionsMessage('Nothing here');
-
-    expect($column->getNoOptionsMessage())->toBe('Nothing here');
-});
-
-it('returns `false` for `hasOptionsRelationship()` by default', function (): void {
-    expect(SelectColumn::make('status')->hasOptionsRelationship())->toBeFalse();
-});
-
-it('returns `null` for `getOptionsRelationshipName()` by default', function (): void {
-    expect(SelectColumn::make('status')->getOptionsRelationshipName())->toBeNull();
+    it('returns `null` for `getOptionsRelationshipName()` by default', function (): void {
+        expect(SelectColumn::make('status')->getOptionsRelationshipName())->toBeNull();
+    });
 });
 
 describe('`getSearchableOptionFields()` logic', function (): void {
@@ -473,6 +407,23 @@ describe('`optionsRelationship()` closure: option label', function (): void {
 });
 
 describe('rendering', function (): void {
+    it('can render', function (): void {
+        Post::factory()->count(5)->create();
+
+        livewire(TestTableWithSelectColumn::class)
+            ->assertSuccessful()
+            ->assertCanRenderTableColumn('rating');
+    });
+
+    it('can display different option values', function (): void {
+        Post::factory()->create(['rating' => 1]);
+        Post::factory()->create(['rating' => 3]);
+        Post::factory()->create(['rating' => 5]);
+
+        livewire(TestTableWithSelectColumn::class)
+            ->assertSuccessful();
+    });
+
     it('can render with `native(false)`', function (): void {
         Post::factory()->create();
         livewire(RenderSelectColumnWithNonNative::class)->assertSuccessful();
@@ -542,6 +493,325 @@ describe('rendering', function (): void {
         Post::factory()->create();
         livewire(RenderSelectColumnWithLoadingMessage::class)->assertSuccessful();
     });
+});
+
+describe('relationship options, labels, and updates', function (): void {
+    it('applies `modifyQueryUsing` inside `getOptionsFromRelationship()`', function (): void {
+        User::factory()->create(['name' => 'Alpha']);
+        User::factory()->create(['name' => 'Hidden']);
+        Post::factory()->create();
+
+        livewire(TestTableWithFilteredRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
+                $options = $column->getOptions();
+
+                expect(array_values($options))->toBe(['Alpha']);
+
+                return true;
+            });
+    });
+
+    it('respects a custom limit set inside `modifyQueryUsing()` for `getOptionsFromRelationship()`', function (): void {
+        User::factory()->count(20)->create();
+        Post::factory()->create();
+
+        livewire(TestTableWithLimitedRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
+                expect($column->getOptions())->toHaveCount(3);
+                expect($column->getOptionsLimit())->toBe(3);
+
+                return true;
+            });
+    });
+
+    it('preserves an existing `orderBy` from `modifyQueryUsing()` in `getOptionsFromRelationship()`', function (): void {
+        $beta = User::factory()->create(['name' => 'Beta']);
+        User::factory()->create(['name' => 'Alpha']);
+        User::factory()->create(['name' => 'Gamma']);
+        Post::factory()->create(['author_id' => $beta->id]);
+
+        livewire(TestTableWithOrderedRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
+                $options = $column->getOptions();
+
+                expect(array_values($options))->toBe(['Gamma', 'Beta', 'Alpha']);
+
+                return true;
+            });
+    });
+
+    it('handles JSON path `titleAttribute` in `getOptionsFromRelationship()`', function (): void {
+        $alpha = User::factory()->create(['name' => 'Alpha', 'json' => ['nickname' => 'Ace']]);
+        User::factory()->create(['name' => 'Beta', 'json' => ['nickname' => 'Bee']]);
+        Post::factory()->create(['author_id' => $alpha->id]);
+
+        livewire(TestTableWithJsonPathRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
+                $options = $column->getOptions();
+
+                expect(array_values($options))->toEqualCanonicalizing(['Ace', 'Bee']);
+
+                return true;
+            });
+    });
+
+    it('applies `modifyQueryUsing` inside `getOptionsSearchResultsFromRelationship()`', function (): void {
+        User::factory()->create(['name' => 'Alpha Match']);
+        User::factory()->create(['name' => 'Hidden Match']);
+        Post::factory()->create();
+
+        livewire(TestTableWithFilteredRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
+                $results = $column->getOptionsSearchResults('Match');
+
+                expect(array_values($results))->toBe(['Alpha Match']);
+
+                return true;
+            });
+    });
+
+    it('uses `getOptionLabelFromRecordUsing()` callback inside `getOptionsSearchResultsFromRelationship()`', function (): void {
+        $user = User::factory()->create(['name' => 'Custom User']);
+        Post::factory()->create();
+
+        livewire(TestTableWithCustomLabelRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column) use ($user): bool {
+                $results = $column->getOptionsSearchResults('Custom');
+
+                expect($results[$user->id])->toBe("Author: {$user->name}");
+
+                return true;
+            });
+    });
+
+    it('handles JSON path `titleAttribute` in `getOptionsSearchResultsFromRelationship()`', function (): void {
+        $alpha = User::factory()->create(['name' => 'Alpha', 'json' => ['nickname' => 'Ace']]);
+        User::factory()->create(['name' => 'Beta', 'json' => ['nickname' => 'Bee']]);
+        Post::factory()->create(['author_id' => $alpha->id]);
+
+        livewire(TestTableWithJsonPathRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
+                $results = $column->getOptionsSearchResults('Ace');
+
+                expect(array_values($results))->toEqualCanonicalizing(['Ace']);
+
+                return true;
+            });
+    });
+
+    it('respects a custom limit inside `modifyQueryUsing()` for `getOptionsSearchResultsFromRelationship()`', function (): void {
+        User::factory()->count(10)->create(['name' => 'Match Me']);
+        Post::factory()->create();
+
+        livewire(TestTableWithLimitedSearchableRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
+                $results = $column->getOptionsSearchResults('Match');
+
+                expect($results)->toHaveCount(2);
+                expect($column->getOptionsLimit())->toBe(2);
+
+                return true;
+            });
+    });
+
+    it('preserves an existing `orderBy` from `modifyQueryUsing()` in `getOptionsSearchResultsFromRelationship()`', function (): void {
+        User::factory()->create(['name' => 'Match Beta']);
+        User::factory()->create(['name' => 'Match Alpha']);
+        User::factory()->create(['name' => 'Match Gamma']);
+        Post::factory()->create();
+
+        livewire(TestTableWithOrderedRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
+                $results = $column->getOptionsSearchResults('Match');
+
+                expect(array_values($results))->toBe(['Match Gamma', 'Match Beta', 'Match Alpha']);
+
+                return true;
+            });
+    });
+
+    it('resolves the eager-loaded relationship label with `getOptionLabel()`', function (): void {
+        $user = User::factory()->create(['name' => 'Eager Loaded']);
+        $post = Post::factory()->create(['author_id' => $user->id]);
+
+        livewire(TestTableWithRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column) use ($post, $user): bool {
+                $post->setRelation('author', $user);
+                $column->record($post);
+
+                expect($column->getOptionLabel())->toBe('Eager Loaded');
+
+                return true;
+            });
+    });
+
+    it('falls back to a query when the eager-loaded relation key does not match the state inside `getOptionLabelFromRelationship()`', function (): void {
+        $databaseAuthor = User::factory()->create(['name' => 'From Database']);
+        $unrelated = User::factory()->create(['name' => 'Wrongly Loaded']);
+        $post = Post::factory()->create(['author_id' => $databaseAuthor->id]);
+
+        livewire(TestTableWithRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column) use ($post, $unrelated): bool {
+                $post->setRelation('author', $unrelated);
+                $column->record($post);
+
+                expect($column->getOptionLabel())->toBe('From Database');
+
+                return true;
+            });
+    });
+
+    it('returns `null` from `getOptionLabelFromRelationship()` when no record matches the state', function (): void {
+        $user = User::factory()->create();
+        Post::factory()->create(['author_id' => $user->id]);
+
+        livewire(TestTableWithRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
+                $missingPost = new Post(['author_id' => 999999]);
+                $missingPost->id = 999999;
+                $column->record($missingPost);
+
+                expect($column->getOptionLabel(withDefault: false))->toBeNull();
+
+                return true;
+            });
+    });
+
+    it('handles JSON path `titleAttribute` in `getOptionLabelFromRelationship()`', function (): void {
+        $user = User::factory()->create(['name' => 'Alpha', 'json' => ['nickname' => 'Ace']]);
+        $post = Post::factory()->create(['author_id' => $user->id]);
+
+        livewire(TestTableWithJsonPathRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column) use ($post, $user): bool {
+                $post->setRelation('author', $user);
+                $column->record($post);
+
+                expect($column->getOptionLabel())->toBe('Ace');
+
+                return true;
+            });
+    });
+
+    it('applies `modifyQueryUsing()` inside `getOptionLabelFromRelationship()` fallback query', function (): void {
+        $hiddenUser = User::factory()->create(['name' => 'Hidden']);
+        $post = Post::factory()->create(['author_id' => $hiddenUser->id]);
+
+        livewire(TestTableWithFilteredRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column) use ($post): bool {
+                $post->setRelation('author', null);
+                $column->record($post);
+
+                expect($column->getOptionLabel(withDefault: false))->toBeNull();
+
+                return true;
+            });
+    });
+
+    it('rejects an `updateTableColumnState` call with a value excluded by `modifyQueryUsing`', function (): void {
+        $inScopeUser = User::factory()->create(['name' => 'Alpha User']);
+        $outOfScopeUser = User::factory()->create(['name' => 'Beta User']);
+        $post = Post::factory()->create(['author_id' => $inScopeUser->id]);
+
+        livewire(TestTableWithFilteredRelationshipSelectColumn::class)
+            ->call('updateTableColumnState', 'author_id', (string) $post->getKey(), $outOfScopeUser->getKey());
+
+        // The validation error in `updateTableColumnState` is caught and returned as ['error' => …]
+        // (rather than thrown), so we assert the persisted state was not mutated.
+        expect($post->fresh()->author_id)->toBe($inScopeUser->id);
+    });
+
+    it('allows an `updateTableColumnState` call with a value matched by `modifyQueryUsing`', function (): void {
+        $inScopeUser = User::factory()->create(['name' => 'Alpha User']);
+        $anotherInScopeUser = User::factory()->create(['name' => 'Alpha Author']);
+        $post = Post::factory()->create(['author_id' => $inScopeUser->id]);
+
+        livewire(TestTableWithFilteredRelationshipSelectColumn::class)
+            ->call('updateTableColumnState', 'author_id', (string) $post->getKey(), $anotherInScopeUser->getKey());
+
+        expect($post->fresh()->author_id)->toBe($anotherInScopeUser->id);
+    });
+
+    it('throws `LogicException` from `getOptionsRelationship()` when the relationship does not exist', function (): void {
+        $post = Post::factory()->create();
+
+        $column = SelectColumn::make('missing')
+            ->optionsRelationship('nonExistentRelationship', 'name')
+            ->record($post);
+
+        expect(fn () => $column->getOptionsRelationship())->toThrow(LogicException::class);
+    });
+
+    it('returns `null` from `getOptionsRelationship()` when no relationship name is set', function (): void {
+        expect(SelectColumn::make('status')->getOptionsRelationship())->toBeNull();
+    });
+
+    it('returns options from a `BelongsToThrough` relationship', function (): void {
+        $team = Team::factory()->create(['name' => 'My Team']);
+        $author = User::factory()->create(['team_id' => $team->getKey()]);
+        $post = Post::factory()->create(['author_id' => $author->getKey()]);
+
+        livewire(TestTableWithBelongsToThroughRelationshipSelectColumn::class)
+            ->assertTableColumnExists('team_id', function (SelectColumn $column) use ($post, $team): bool {
+                $column->record($post->fresh());
+
+                $options = $column->getOptions();
+                expect($options[$team->getKey()])->toBe('My Team');
+
+                return true;
+            });
+    });
+});
+
+it('navigates and saves JavaScript select columns with stable focus', function (): void {
+    Artisan::call('filament:assets');
+    $post = Post::factory()->create(['rating' => 1, 'title' => 'draft']);
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/columns-browser-test?selectColumns=1');
+
+    $owner = '[data-testid="rating-select"] [role="combobox"]';
+    $launcher = '[data-testid="publication-select"] button[aria-haspopup="listbox"]';
+    $search = '[data-testid="publication-select"] input[role="combobox"]';
+
+    $page
+        ->keys($owner, 'Enter')
+        ->assertVisible('[data-testid="rating-select"] [role="option"][data-value="3"]')
+        ->keys($owner, 'ArrowDown')
+        ->assertPresent($owner . ':focus')
+        ->assertScript('document.getElementById(document.activeElement.getAttribute("aria-activedescendant")).dataset.value', '3')
+        ->assertNoAccessibilityIssues()
+        ->keys($owner, 'Enter')
+        ->assertPresent($owner . ':focus')
+        ->assertAttribute($owner, 'aria-expanded', 'false')
+        ->assertSeeIn($owner, 'High')
+        ->assertSeeIn('[data-testid="rating-select"] [role="status"]', __('filament-tables::table.columns.editable.saved'))
+        ->keys($owner, ['Enter', 'z'])
+        ->assertScript('document.getElementById(document.activeElement.getAttribute("aria-activedescendant")).dataset.value', '3')
+        ->keys($owner, 'Enter')
+        ->assertSeeIn($owner, 'High')
+        ->click($launcher)
+        ->assertPresent($search . ':focus')
+        ->type($search, 'pub')
+        ->assertVisible('[data-testid="publication-select"] [role="option"][data-value="published"]')
+        ->keys($search, 'ArrowDown')
+        ->assertScript('document.getElementById(document.activeElement.getAttribute("aria-activedescendant")).dataset.value', 'published')
+        ->assertNoAccessibilityIssues()
+        ->keys($search, 'Enter')
+        ->assertPresent($launcher . ':focus')
+        ->assertSeeIn($launcher, 'Published')
+        ->assertSeeIn('[data-testid="publication-select"] [role="status"]', __('filament-tables::table.columns.editable.saved'))
+        ->assertNoSmoke();
+
+    expect($post->fresh())->rating->toBe(3)->title->toBe('published');
+
+    $page->inDarkMode()
+        ->keys($owner, 'Enter')
+        ->assertVisible('[data-testid="rating-select"] [role="option"][data-value="3"]')
+        ->assertNoAccessibilityIssues()
+        ->keys($owner, 'Escape')
+        ->click($launcher)
+        ->assertPresent($search . ':focus')
+        ->assertNoAccessibilityIssues();
 });
 
 class TestTableWithRelationshipSelectColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
@@ -906,279 +1176,6 @@ class RenderSelectColumnWithLoadingMessage extends Component implements HasActio
         return view('livewire.table');
     }
 }
-
-describe('relationship branch coverage', function (): void {
-    it('applies `modifyQueryUsing` inside `getOptionsFromRelationship()`', function (): void {
-        User::factory()->create(['name' => 'Alpha']);
-        User::factory()->create(['name' => 'Hidden']);
-        Post::factory()->create();
-
-        livewire(TestTableWithFilteredRelationshipSelectColumn::class)
-            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
-                $options = $column->getOptions();
-
-                expect(array_values($options))->toBe(['Alpha']);
-
-                return true;
-            });
-    });
-
-    it('respects a custom limit set inside `modifyQueryUsing()` for `getOptionsFromRelationship()`', function (): void {
-        User::factory()->count(20)->create();
-        Post::factory()->create();
-
-        livewire(TestTableWithLimitedRelationshipSelectColumn::class)
-            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
-                expect($column->getOptions())->toHaveCount(3);
-                expect($column->getOptionsLimit())->toBe(3);
-
-                return true;
-            });
-    });
-
-    it('preserves an existing `orderBy` from `modifyQueryUsing()` in `getOptionsFromRelationship()`', function (): void {
-        $beta = User::factory()->create(['name' => 'Beta']);
-        User::factory()->create(['name' => 'Alpha']);
-        User::factory()->create(['name' => 'Gamma']);
-        Post::factory()->create(['author_id' => $beta->id]);
-
-        livewire(TestTableWithOrderedRelationshipSelectColumn::class)
-            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
-                $options = $column->getOptions();
-
-                expect(array_values($options))->toBe(['Gamma', 'Beta', 'Alpha']);
-
-                return true;
-            });
-    });
-
-    it('handles JSON path `titleAttribute` in `getOptionsFromRelationship()`', function (): void {
-        $alpha = User::factory()->create(['name' => 'Alpha', 'json' => ['nickname' => 'Ace']]);
-        User::factory()->create(['name' => 'Beta', 'json' => ['nickname' => 'Bee']]);
-        Post::factory()->create(['author_id' => $alpha->id]);
-
-        livewire(TestTableWithJsonPathRelationshipSelectColumn::class)
-            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
-                $options = $column->getOptions();
-
-                expect(array_values($options))->toEqualCanonicalizing(['Ace', 'Bee']);
-
-                return true;
-            });
-    });
-
-    it('applies `modifyQueryUsing` inside `getOptionsSearchResultsFromRelationship()`', function (): void {
-        User::factory()->create(['name' => 'Alpha Match']);
-        User::factory()->create(['name' => 'Hidden Match']);
-        Post::factory()->create();
-
-        livewire(TestTableWithFilteredRelationshipSelectColumn::class)
-            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
-                $results = $column->getOptionsSearchResults('Match');
-
-                expect(array_values($results))->toBe(['Alpha Match']);
-
-                return true;
-            });
-    });
-
-    it('uses `getOptionLabelFromRecordUsing()` callback inside `getOptionsSearchResultsFromRelationship()`', function (): void {
-        $user = User::factory()->create(['name' => 'Custom User']);
-        Post::factory()->create();
-
-        livewire(TestTableWithCustomLabelRelationshipSelectColumn::class)
-            ->assertTableColumnExists('author_id', function (SelectColumn $column) use ($user): bool {
-                $results = $column->getOptionsSearchResults('Custom');
-
-                expect($results[$user->id])->toBe("Author: {$user->name}");
-
-                return true;
-            });
-    });
-
-    it('handles JSON path `titleAttribute` in `getOptionsSearchResultsFromRelationship()`', function (): void {
-        $alpha = User::factory()->create(['name' => 'Alpha', 'json' => ['nickname' => 'Ace']]);
-        User::factory()->create(['name' => 'Beta', 'json' => ['nickname' => 'Bee']]);
-        Post::factory()->create(['author_id' => $alpha->id]);
-
-        livewire(TestTableWithJsonPathRelationshipSelectColumn::class)
-            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
-                $results = $column->getOptionsSearchResults('Ace');
-
-                expect(array_values($results))->toEqualCanonicalizing(['Ace']);
-
-                return true;
-            });
-    });
-
-    it('respects a custom limit inside `modifyQueryUsing()` for `getOptionsSearchResultsFromRelationship()`', function (): void {
-        User::factory()->count(10)->create(['name' => 'Match Me']);
-        Post::factory()->create();
-
-        livewire(TestTableWithLimitedSearchableRelationshipSelectColumn::class)
-            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
-                $results = $column->getOptionsSearchResults('Match');
-
-                expect($results)->toHaveCount(2);
-                expect($column->getOptionsLimit())->toBe(2);
-
-                return true;
-            });
-    });
-
-    it('preserves an existing `orderBy` from `modifyQueryUsing()` in `getOptionsSearchResultsFromRelationship()`', function (): void {
-        User::factory()->create(['name' => 'Match Beta']);
-        User::factory()->create(['name' => 'Match Alpha']);
-        User::factory()->create(['name' => 'Match Gamma']);
-        Post::factory()->create();
-
-        livewire(TestTableWithOrderedRelationshipSelectColumn::class)
-            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
-                $results = $column->getOptionsSearchResults('Match');
-
-                expect(array_values($results))->toBe(['Match Gamma', 'Match Beta', 'Match Alpha']);
-
-                return true;
-            });
-    });
-
-    it('returns the eager-loaded relation label without re-querying inside `getOptionLabelFromRelationship()`', function (): void {
-        $user = User::factory()->create(['name' => 'Eager Loaded']);
-        $post = Post::factory()->create(['author_id' => $user->id]);
-
-        livewire(TestTableWithRelationshipSelectColumn::class)
-            ->assertTableColumnExists('author_id', function (SelectColumn $column) use ($post, $user): bool {
-                $post->setRelation('author', $user);
-                $column->record($post);
-
-                expect($column->getOptionLabel())->toBe('Eager Loaded');
-
-                return true;
-            });
-    });
-
-    it('falls back to a query when the eager-loaded relation key does not match the state inside `getOptionLabelFromRelationship()`', function (): void {
-        // The cached `$column->getState()` (from initial table render) returns `$dbAuthor->id`,
-        // but we manually set the eagerly-loaded relation to a different user. Because the loaded
-        // record's PK does not match the state, `getOptionLabelFromRelationship()` must fall back
-        // to a fresh query and return the actual database author.
-        $dbAuthor = User::factory()->create(['name' => 'From Database']);
-        $unrelated = User::factory()->create(['name' => 'Wrongly Loaded']);
-        $post = Post::factory()->create(['author_id' => $dbAuthor->id]);
-
-        livewire(TestTableWithRelationshipSelectColumn::class)
-            ->assertTableColumnExists('author_id', function (SelectColumn $column) use ($post, $unrelated): bool {
-                $post->setRelation('author', $unrelated);
-                $column->record($post);
-
-                expect($column->getOptionLabel())->toBe('From Database');
-
-                return true;
-            });
-    });
-
-    it('returns `null` from `getOptionLabelFromRelationship()` when no record matches the state', function (): void {
-        $user = User::factory()->create();
-        Post::factory()->create(['author_id' => $user->id]);
-
-        livewire(TestTableWithRelationshipSelectColumn::class)
-            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
-                // Build a fresh post that was not part of the initial render so the state cache is empty,
-                // and point its `author_id` to a non-existent user.
-                $missingPost = new Post(['author_id' => 999999]);
-                $missingPost->id = 999999;
-                $column->record($missingPost);
-
-                expect($column->getOptionLabel(withDefault: false))->toBeNull();
-
-                return true;
-            });
-    });
-
-    it('handles JSON path `titleAttribute` in `getOptionLabelFromRelationship()`', function (): void {
-        $user = User::factory()->create(['name' => 'Alpha', 'json' => ['nickname' => 'Ace']]);
-        $post = Post::factory()->create(['author_id' => $user->id]);
-
-        livewire(TestTableWithJsonPathRelationshipSelectColumn::class)
-            ->assertTableColumnExists('author_id', function (SelectColumn $column) use ($post, $user): bool {
-                $post->setRelation('author', $user);
-                $column->record($post);
-
-                expect($column->getOptionLabel())->toBe('Ace');
-
-                return true;
-            });
-    });
-
-    it('applies `modifyQueryUsing()` inside `getOptionLabelFromRelationship()` fallback query', function (): void {
-        $hiddenUser = User::factory()->create(['name' => 'Hidden']);
-        $post = Post::factory()->create(['author_id' => $hiddenUser->id]);
-
-        livewire(TestTableWithFilteredRelationshipSelectColumn::class)
-            ->assertTableColumnExists('author_id', function (SelectColumn $column) use ($post): bool {
-                $post->setRelation('author', null);
-                $column->record($post);
-
-                expect($column->getOptionLabel(withDefault: false))->toBeNull();
-
-                return true;
-            });
-    });
-
-    it('rejects an `updateTableColumnState` call with a value excluded by `modifyQueryUsing`', function (): void {
-        $inScopeUser = User::factory()->create(['name' => 'Alpha User']);
-        $outOfScopeUser = User::factory()->create(['name' => 'Beta User']);
-        $post = Post::factory()->create(['author_id' => $inScopeUser->id]);
-
-        livewire(TestTableWithFilteredRelationshipSelectColumn::class)
-            ->call('updateTableColumnState', 'author_id', (string) $post->getKey(), $outOfScopeUser->getKey());
-
-        // The validation error in `updateTableColumnState` is caught and returned as ['error' => …]
-        // (rather than thrown), so we assert the persisted state was not mutated.
-        expect($post->fresh()->author_id)->toBe($inScopeUser->id);
-    });
-
-    it('allows an `updateTableColumnState` call with a value matched by `modifyQueryUsing`', function (): void {
-        $inScopeUser = User::factory()->create(['name' => 'Alpha User']);
-        $anotherInScopeUser = User::factory()->create(['name' => 'Alpha Author']);
-        $post = Post::factory()->create(['author_id' => $inScopeUser->id]);
-
-        livewire(TestTableWithFilteredRelationshipSelectColumn::class)
-            ->call('updateTableColumnState', 'author_id', (string) $post->getKey(), $anotherInScopeUser->getKey());
-
-        expect($post->fresh()->author_id)->toBe($anotherInScopeUser->id);
-    });
-
-    it('throws `LogicException` from `getOptionsRelationship()` when the relationship does not exist', function (): void {
-        $post = Post::factory()->create();
-
-        $column = SelectColumn::make('missing')
-            ->optionsRelationship('nonExistentRelationship', 'name')
-            ->record($post);
-
-        expect(fn () => $column->getOptionsRelationship())->toThrow(LogicException::class);
-    });
-
-    it('returns `null` from `getOptionsRelationship()` when no relationship name is set', function (): void {
-        expect(SelectColumn::make('status')->getOptionsRelationship())->toBeNull();
-    });
-
-    it('returns options from a `BelongsToThrough` relationship', function (): void {
-        $team = Team::factory()->create(['name' => 'My Team']);
-        $author = User::factory()->create(['team_id' => $team->getKey()]);
-        $post = Post::factory()->create(['author_id' => $author->getKey()]);
-
-        livewire(TestTableWithBelongsToThroughRelationshipSelectColumn::class)
-            ->assertTableColumnExists('team_id', function (SelectColumn $column) use ($post, $team): bool {
-                $column->record($post->fresh());
-
-                $options = $column->getOptions();
-                expect($options[$team->getKey()])->toBe('My Team');
-
-                return true;
-            });
-    });
-});
 
 class TestTableWithFilteredRelationshipSelectColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {

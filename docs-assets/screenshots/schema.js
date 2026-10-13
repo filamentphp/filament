@@ -2176,6 +2176,22 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
+    'forms/fields/builder/grouped-blocks': {
+        url: 'forms/fields/builder',
+        selector: 'body',
+        viewport: {
+            width: 1152,
+            height: 400,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.evaluate(() => document.querySelector('#builderGroupedBlocks').scrollIntoView())
+            await new Promise((resolve) => setTimeout(resolve, 500))
+            await page.click('#builderGroupedBlocks .fi-dropdown-trigger button')
+            await page.waitForSelector('#builderGroupedBlocks [role="group"][aria-label="Media"]', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
     'forms/fields/tags-input/simple': {
         url: 'forms/fields/tags-input',
         selector: '#tagsInput',
@@ -5450,6 +5466,20 @@ export default {
                     break
                 }
             }
+        },
+    },
+    'tables/filters/query-builder-grouped': {
+        url: 'tables?table=filtersQueryBuilderGrouped',
+        selector: 'body',
+        viewport: {
+            width: 1280,
+            height: 660,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.fi-fo-builder-block-picker .fi-dropdown-trigger button')
+            await page.waitForSelector('[role="group"][aria-label="Logic"]', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
     'tables/actions/simple': {

@@ -6,6 +6,7 @@
  * - Prevented audio controls from initiating file reordering.
  * - Corrected audio timeline positioning when the preview is transformed or resized.
  * - Added stable references for global audio drag listeners and an `AudioPlayer.destroy()` method to remove them.
+ * - Reused the audio time-update listener so dragging suspends it without accumulating duplicate callbacks.
  * - Retained the `AudioPlayer` on the FilePond view and destroyed it through the view's `destroy` callback.
  * - Tracked generated media object URLs and revoked them before replacement and when the view is destroyed.
  */
@@ -20,6 +21,7 @@ class AudioPlayer {
         this.audioElements = audioElements
         this.onPlayhead = false
         this.duration = 0
+        this.timeUpdateHandler = this.timeUpdate.bind(this)
         this.movePlayheadHandler = this.movePlayhead.bind(this)
         this.mouseUpHandler = this.mouseUp.bind(this)
 
@@ -29,7 +31,7 @@ class AudioPlayer {
     registerListeners() {
         this.mediaEl.addEventListener(
             'timeupdate',
-            this.timeUpdate.bind(this),
+            this.timeUpdateHandler,
             false,
         )
         this.mediaEl.addEventListener(
@@ -95,7 +97,7 @@ class AudioPlayer {
         window.addEventListener('mousemove', this.movePlayheadHandler, true)
         this.mediaEl.removeEventListener(
             'timeupdate',
-            this.timeUpdate.bind(this),
+            this.timeUpdateHandler,
             false,
         )
     }
@@ -108,7 +110,7 @@ class AudioPlayer {
             this.mediaEl.currentTime = this.duration * this.clickPercent(event)
             this.mediaEl.addEventListener(
                 'timeupdate',
-                this.timeUpdate.bind(this),
+                this.timeUpdateHandler,
                 false,
             )
         }

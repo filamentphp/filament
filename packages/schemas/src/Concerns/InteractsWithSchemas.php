@@ -14,6 +14,7 @@ use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Renderless;
@@ -303,8 +304,37 @@ trait InteractsWithSchemas
             return;
         }
 
+        $statePaths = [$statePath];
+        $state = data_get($this, $statePath);
+
+        if (is_array($state)) {
+            $oldState = $this->getOldSchemaState($statePath);
+
+            // Livewire 4 consolidates array replacements into one update.
+            foreach (Arr::dot($state) + Arr::dot(is_array($oldState) ? $oldState : []) as $childStatePath => $value) {
+                if (data_get($state, $childStatePath) === data_get($oldState, $childStatePath)) {
+                    continue;
+                }
+
+                // Added or removed branches are one update, not updates to every field inside them.
+                while (str_contains($childStatePath, '.')) {
+                    $parentStatePath = Str::beforeLast($childStatePath, '.');
+
+                    if (Arr::has($state, $parentStatePath) && is_array($oldState) && Arr::has($oldState, $parentStatePath)) {
+                        break;
+                    }
+
+                    $childStatePath = $parentStatePath;
+                }
+
+                $statePaths[] = "{$statePath}.{$childStatePath}";
+            }
+        }
+
         foreach ($this->getCachedSchemas() as $schema) {
-            $schema->callAfterStateUpdated($statePath);
+            foreach (array_unique($statePaths) as $updatedStatePath) {
+                $schema->callAfterStateUpdated($updatedStatePath);
+            }
         }
     }
 
@@ -659,6 +689,39 @@ trait InteractsWithSchemas
         // uploads to arbitrary property paths (CWE-434 / CWE-639). Override this
         // to return `false` to opt out for a specific component.
         return true;
+    }
+
+    public function handleFileUploadValidationError(string $name): void
+    {
+        $statePath = str_starts_with($name, 'componentFileAttachments.')
+            ? substr($name, strlen('componentFileAttachments.'))
+            : $name;
+
+        $component = $this->getSchemaComponentForFileUpload($statePath)
+            ?? $this->getSchemaComponentForFileUpload((string) str($statePath)->beforeLast('.'));
+
+        if (! $component instanceof Field) {
+            return;
+        }
+
+        $validationAttribute = $component->getValidationAttribute();
+        $errorBag = $this->getErrorBag();
+
+        foreach ($errorBag->messages() as $attribute => $attributeMessages) {
+            if (($attribute !== $name) && ! str_starts_with($attribute, "{$name}.")) {
+                continue;
+            }
+
+            $errorBag->forget($attribute);
+
+            foreach ($attributeMessages as $message) {
+                $errorBag->add($attribute, strtr($message, [
+                    Str::upper($attribute) => Str::upper($validationAttribute),
+                    Str::ucfirst($attribute) => Str::ucfirst($validationAttribute),
+                    $attribute => $validationAttribute,
+                ]));
+            }
+        }
     }
 
     public function isFileUploadForSchemaComponent(string $name): bool

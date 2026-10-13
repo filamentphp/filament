@@ -448,22 +448,19 @@ it('can create a record again in the browser after navigating back to a create p
     $this->actingAs(User::factory()->create());
 
     visit(TicketResource::getUrl('create', panel: 'spa'))
-        ->assertPresent('.fi-sc-form button[type="submit"]')
-        ->click('.fi-sc-form button[type="submit"]')
-        ->assertScript("window.location.pathname !== '/spa/tickets/create'", true)
+        ->click('[data-testid="create-ticket"]')
+        ->assertPathIsNot('/spa/tickets/create')
         ->assertPathIs('/spa/tickets/*')
         ->back()
         ->assertPathIs('/spa/tickets/create')
-        ->assertPresent('.fi-sc-form button[type="submit"]')
-        ->wait(1)
-        ->click('.fi-sc-form button[type="submit"]')
-        ->assertScript("window.location.pathname !== '/spa/tickets/create'", true)
+        ->click('[data-testid="create-ticket"]')
+        ->assertPathIsNot('/spa/tickets/create')
         ->assertPathIs('/spa/tickets/*');
 
     expect(Ticket::count())->toBe(2);
 });
 
-it('re-authorizes viewAny on Livewire updates after the initial mount of a create page', function (): void {
+it('re-authorizes `viewAny()` on Livewire updates after the initial mount of a create page', function (): void {
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 
     $component = livewire(CreateTicket::class);

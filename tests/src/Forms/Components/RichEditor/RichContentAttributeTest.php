@@ -4,6 +4,7 @@ use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\TextColor;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\PostWithRichContent;
 use Filament\Tests\TestCase;
 
 uses(TestCase::class);
@@ -196,13 +197,13 @@ describe('`getTextColors()` logic', function (): void {
 
     it('passes through `TextColor` objects unchanged', function (): void {
         $post = Post::factory()->create();
-        $tc = TextColor::make('#ff0000', 'red');
+        $textColor = TextColor::make('#ff0000', 'red');
         $attribute = RichContentAttribute::make($post, 'content')
-            ->textColors(['red' => $tc]);
+            ->textColors(['red' => $textColor]);
 
         $colors = $attribute->getTextColors();
 
-        expect($colors['red'])->toBe($tc);
+        expect($colors['red'])->toBe($textColor);
     });
 });
 
@@ -283,6 +284,43 @@ describe('link protocols', function (): void {
 });
 
 describe('`toHtml()` and `toText()`', function (): void {
+    it('renders model custom blocks with lazy data using `renderRichContent()`', function (bool $isGrouped): void {
+        $post = new PostWithRichContent([
+            'title' => 'Draft announcement',
+            'content' => json_encode([
+                'type' => 'doc',
+                'content' => [
+                    [
+                        'type' => 'customBlock',
+                        'attrs' => [
+                            'id' => 'attribute-block-a',
+                            'config' => ['heading' => 'Latest news: '],
+                        ],
+                    ],
+                ],
+            ]),
+        ]);
+
+        $blocks = [
+            AttributeTestBlockA::class => static fn (): array => ['message' => $post->title],
+            AttributeTestBlockB::class => static function (): array {
+                throw new RuntimeException('Data for an unused block must not be evaluated.');
+            },
+        ];
+
+        $post->registerRichContent('content')
+            ->customBlocks($isGrouped ? ['News' => $blocks] : $blocks);
+
+        $post->title = 'Published announcement';
+
+        expect($post->renderRichContent('content'))
+            ->toContain('<div>Latest news: Published announcement</div>')
+            ->not->toContain('Draft announcement');
+    })->with([
+        'ungrouped blocks' => false,
+        'grouped blocks' => true,
+    ]);
+
     it('returns empty string from `toHtml()` when content is blank', function (): void {
         $post = Post::factory()->create(['content' => null]);
         $attribute = RichContentAttribute::make($post, 'content');
@@ -326,7 +364,7 @@ class AttributeTestBlockA extends RichContentCustomBlock
 
     public static function toHtml(array $config, array $data): ?string
     {
-        return '<div>A</div>';
+        return '<div>' . ($config['heading'] ?? 'A') . ($data['message'] ?? '') . '</div>';
     }
 }
 

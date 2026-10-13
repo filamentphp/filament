@@ -22,6 +22,8 @@ class PostsReorderableTable extends Component implements HasActions, HasSchemas,
 
     public bool $reorderable = true;
 
+    public bool $reorderAuthorized = true;
+
     /**
      * @var array<int | string> | null
      */
@@ -40,6 +42,7 @@ class PostsReorderableTable extends Component implements HasActions, HasSchemas,
                 Tables\Columns\TextColumn::make('title'),
             ])
             ->reorderable('sort', condition: $this->reorderable, direction: $this->direction)
+            ->authorizeReorder($this->reorderAuthorized)
             ->beforeReordering(function (array $order): void {
                 $this->beforeReorderingOrder = $order;
             })

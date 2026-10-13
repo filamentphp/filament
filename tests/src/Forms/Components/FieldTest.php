@@ -1,22 +1,31 @@
 <?php
 
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
+use Illuminate\Support\MessageBag;
+use Illuminate\Support\ViewErrorBag;
 use Illuminate\View\ComponentAttributeBag;
 
 uses(TestCase::class);
-
-// Field is abstract (no view), so we test via TextInput which extends it directly.
 
 describe('construction', function (): void {
     it('can be constructed with a name', function (): void {
         $field = TextInput::make('email');
 
         expect($field->getName())->toBe('email');
+    });
+
+    it('can be instantiated with a default name', function (): void {
+        expect(IdField::make()->getName())->toBe('id');
+    });
+
+    it('can override the default name', function (): void {
+        expect(IdField::make('identifier')->getName())->toBe('identifier');
     });
 
     it('throws `InvalidArgumentException` when name is `null`', function (): void {
@@ -261,21 +270,19 @@ describe('extra field wrapper attributes', function (): void {
     });
 });
 
-describe('slot methods return fluent `$this`', function (): void {
-    it('returns fluent `$this` from all slot methods', function (): void {
-        $field = TextInput::make('name');
+it('returns fluent `$this` from all slot methods', function (): void {
+    $field = TextInput::make('name');
 
-        expect($field->aboveLabel([]))->toBe($field);
-        expect($field->belowLabel([]))->toBe($field);
-        expect($field->beforeLabel([]))->toBe($field);
-        expect($field->afterLabel([]))->toBe($field);
-        expect($field->aboveContent([]))->toBe($field);
-        expect($field->belowContent([]))->toBe($field);
-        expect($field->beforeContent([]))->toBe($field);
-        expect($field->afterContent([]))->toBe($field);
-        expect($field->aboveErrorMessage([]))->toBe($field);
-        expect($field->belowErrorMessage([]))->toBe($field);
-    });
+    expect($field->aboveLabel([]))->toBe($field);
+    expect($field->belowLabel([]))->toBe($field);
+    expect($field->beforeLabel([]))->toBe($field);
+    expect($field->afterLabel([]))->toBe($field);
+    expect($field->aboveContent([]))->toBe($field);
+    expect($field->belowContent([]))->toBe($field);
+    expect($field->beforeContent([]))->toBe($field);
+    expect($field->afterContent([]))->toBe($field);
+    expect($field->aboveErrorMessage([]))->toBe($field);
+    expect($field->belowErrorMessage([]))->toBe($field);
 });
 
 it('returns `false` for `hasNullableBooleanState()`', function (): void {
@@ -304,3 +311,85 @@ describe('label visibility', function (): void {
         expect($field->isLabelHidden())->toBeTrue();
     });
 });
+
+describe('field wrappers', function (): void {
+    it('can use a custom view via `fieldWrapperView()`', function (): void {
+        $html = Schema::make(Livewire::make())
+            ->components([
+                TextInput::make('name')->fieldWrapperView('custom-field-wrapper'),
+            ])
+            ->toHtml();
+
+        expect($html)->toContain('custom-field-wrapper-view', 'data-label="Name"', '<input');
+    });
+
+    it('can use a Blade component alias via `fieldWrapperView()`', function (): void {
+        // The `$errors` view error bag is usually shared by the `ShareErrorsFromSession` middleware.
+        view()->share('errors', new ViewErrorBag);
+
+        $html = Schema::make(Livewire::make())
+            ->components([
+                TextInput::make('name')->fieldWrapperView('test-plugin-wrapper'),
+            ])
+            ->toHtml();
+
+        expect($html)->toContain('field-wrapper-blade-component', 'fi-fo-field', 'Name', '<input');
+    });
+});
+
+describe('validation messages for nested recursive rules', function (): void {
+    $renderCheckboxListWithErrors = function (array $messages, ?string $fieldWrapperView = null): string {
+        $previousErrors = view()->shared('errors');
+
+        view()->share('errors', (new ViewErrorBag)->put('default', new MessageBag($messages)));
+
+        try {
+            $checkboxList = CheckboxList::make('choices')
+                ->options(['alpha' => 'Alpha'])
+                ->showAllValidationMessages();
+
+            if (filled($fieldWrapperView)) {
+                $checkboxList->fieldWrapperView($fieldWrapperView);
+            }
+
+            return Schema::make(Livewire::make())
+                ->statePath('data')
+                ->components([$checkboxList])
+                ->toHtml();
+        } finally {
+            view()->share('errors', $previousErrors);
+        }
+    };
+
+    it('renders a single per-element message', function () use ($renderCheckboxListWithErrors): void {
+        $html = $renderCheckboxListWithErrors(['data.choices.0' => ['The first choice is invalid.']]);
+
+        expect($html)->toContain('The first choice is invalid.');
+    });
+
+    it('renders every per-element message when more than one index fails', function () use ($renderCheckboxListWithErrors): void {
+        $html = $renderCheckboxListWithErrors([
+            'data.choices.0' => ['The first choice is invalid.'],
+            'data.choices.1' => ['The second choice is invalid.'],
+        ]);
+
+        expect($html)->toContain('The first choice is invalid.', 'The second choice is invalid.');
+    });
+
+    it('renders a per-element message through a Blade field wrapper', function () use ($renderCheckboxListWithErrors): void {
+        $html = $renderCheckboxListWithErrors(
+            ['data.choices.0' => ['The first choice is invalid.']],
+            fieldWrapperView: 'test-plugin-wrapper',
+        );
+
+        expect($html)->toContain('The first choice is invalid.');
+    });
+});
+
+class IdField extends TextInput
+{
+    public static function getDefaultName(): ?string
+    {
+        return 'id';
+    }
+}

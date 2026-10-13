@@ -23,9 +23,9 @@ ToggleButtons::make('status')
 
 <AutoScreenshot name="forms/fields/toggle-buttons/simple" alt="Toggle buttons" version="6.x" />
 
-By default, you can select one option at a time. Activating the selected button again clears the field, setting its state to `null`. Selecting another button replaces the current selection. You can use Tab to move between buttons and Space or Enter to select or clear an option.
+By default, the field stores one selected option. Selecting that option again clears the field to `null`.
 
-If you use `required()`, you must select an option before submitting the form, but you can still clear the selection while editing. When using [`multiple()`](#selecting-multiple-buttons), options retain checkbox behavior and can be selected or cleared independently.
+`required()` prevents submitting an empty value, but does not prevent clearing the selection while editing. Use [`multiple()`](#selecting-multiple-buttons) to store more than one option.
 
 ## Changing the color of option buttons
 

@@ -32,69 +32,6 @@ beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
 
-it('can load state from a `HasOne` relationship using eager loaded data without additional queries', function (): void {
-    $user = User::factory()->create();
-    $profile = Profile::factory()->create(['user_id' => $user->id]);
-
-    $freshUser = $user->fresh();
-    expect($freshUser->relationLoaded('profile'))->toBeFalse();
-
-    DB::enableQueryLog();
-    DB::flushQueryLog();
-
-    livewire(SectionWithHasOneRelationship::class, ['record' => $freshUser])
-        ->assertSchemaStateSet(function (array $state) use ($profile) {
-            expect($state['profile']['bio'])->toBe($profile->bio);
-
-            return [];
-        });
-
-    $queriesWithoutEagerLoading = count(DB::getQueryLog());
-
-    $eagerUser = $user->fresh();
-    $eagerUser->load('profile');
-    expect($eagerUser->relationLoaded('profile'))->toBeTrue();
-
-    DB::flushQueryLog();
-
-    livewire(SectionWithHasOneRelationship::class, ['record' => $eagerUser])
-        ->assertSchemaStateSet(function (array $state) use ($profile) {
-            expect($state['profile']['bio'])->toBe($profile->bio);
-
-            return [];
-        });
-
-    $queriesWithEagerLoading = count(DB::getQueryLog());
-    DB::disableQueryLog();
-
-    $queriesSaved = $queriesWithoutEagerLoading - $queriesWithEagerLoading;
-    expect($queriesSaved)->toBe(1, "Expected to save 1 query with eager loading, but saved {$queriesSaved}");
-});
-
-it('can set `aside()`', function (): void {
-    $section = Section::make('Test');
-
-    expect($section->isAside())->toBeFalse();
-
-    $section->aside();
-
-    expect($section->isAside())->toBeTrue();
-
-    $section->aside(false);
-
-    expect($section->isAside())->toBeFalse();
-});
-
-it('can set `formBefore()`', function (): void {
-    $section = Section::make('Test');
-
-    expect($section->isFormBefore())->toBeFalse();
-
-    $section->formBefore();
-
-    expect($section->isFormBefore())->toBeTrue();
-});
-
 it('returns correct `getHeadingsCount()`', function (): void {
     $sectionWithHeading = Section::make('My Section');
 
@@ -103,340 +40,6 @@ it('returns correct `getHeadingsCount()`', function (): void {
     $sectionWithoutHeading = Section::make();
 
     expect($sectionWithoutHeading->getHeadingsCount())->toBe(0);
-});
-
-it('configures a supplied `Schema` as section content', function (): void {
-    $childSchema = Schema::make()
-        ->components([
-            TextInput::make('name'),
-        ])
-        ->extraAttributes([
-            'class' => 'custom-content',
-            'data-testid' => 'section-content',
-        ]);
-
-    $section = Section::make('Test')
-        ->schema($childSchema)
-        ->container(Schema::make(TestLivewire::make()));
-
-    $section->getChildSchema();
-    $childSchemaHtml = $childSchema->toEmbeddedHtml();
-
-    expect($section->getChildSchema())
-        ->toBe($childSchema)
-        ->and($childSchema->getExtraAttributes())
-        ->toHaveKey('data-testid', 'section-content')
-        ->and($childSchema->getExtraAttributes()['class'])
-        ->toContain('custom-content')
-        ->and($childSchemaHtml)
-        ->toContain('custom-content')
-        ->toContain('fi-section-content')
-        ->and(substr_count($childSchemaHtml, 'fi-section-content'))
-        ->toBe(1);
-});
-
-it('does not evaluate schema `extraAttributes()` when configuring section content', function (): void {
-    $extraAttributesEvaluationCount = 0;
-    $childSchema = Schema::make()
-        ->components([
-            TextInput::make('name'),
-        ])
-        ->extraAttributes(static function () use (&$extraAttributesEvaluationCount): array {
-            $extraAttributesEvaluationCount++;
-
-            return ['class' => 'custom-content'];
-        });
-    $section = Section::make('Test')
-        ->schema($childSchema)
-        ->container(Schema::make(TestLivewire::make()));
-
-    $section->getChildSchema();
-
-    expect($extraAttributesEvaluationCount)->toBe(0);
-
-    $childSchemaHtml = $childSchema->toEmbeddedHtml();
-
-    expect($extraAttributesEvaluationCount)
-        ->toBe(1)
-        ->and($childSchemaHtml)
-        ->toContain('custom-content')
-        ->and(substr_count($childSchemaHtml, 'fi-section-content'))
-        ->toBe(1);
-});
-
-it('does not duplicate content classes when a configured supplied `Schema` is cloned with `getClone()`', function (): void {
-    $container = Schema::make(TestLivewire::make());
-    $section = Section::make('Test')
-        ->schema(
-            Schema::make()
-                ->components([
-                    TextInput::make('name'),
-                ])
-                ->extraAttributes(['class' => 'custom-content']),
-        )
-        ->container($container);
-
-    $section->getChildSchema();
-
-    $clonedSection = $section
-        ->getClone()
-        ->container($container);
-    $clonedChildSchema = $clonedSection->getChildSchema();
-    $twiceClonedChildSchema = $clonedSection
-        ->getClone()
-        ->container($container)
-        ->getChildSchema();
-
-    expect(substr_count($clonedChildSchema->toEmbeddedHtml(), 'fi-section-content'))
-        ->toBe(1)
-        ->and(substr_count($twiceClonedChildSchema->toEmbeddedHtml(), 'fi-section-content'))
-        ->toBe(1);
-});
-
-it('renders section content classes on deferred loading placeholders', function (): void {
-    $extraAttributesEvaluationCount = 0;
-    $childSchema = Schema::make()
-        ->components([
-            TextInput::make('name'),
-        ])
-        ->extraAttributes(static function () use (&$extraAttributesEvaluationCount): array {
-            $extraAttributesEvaluationCount++;
-
-            return ['class' => 'custom-content'];
-        })
-        ->deferLoading();
-    $section = Section::make('Test')
-        ->key('details')
-        ->schema($childSchema)
-        ->container(
-            Schema::make(TestLivewire::make())
-                ->key('form'),
-        );
-
-    $section->getChildSchema();
-
-    expect($extraAttributesEvaluationCount)->toBe(0);
-
-    $childSchemaHtml = $childSchema->toEmbeddedHtml();
-
-    expect($extraAttributesEvaluationCount)
-        ->toBe(1)
-        ->and($childSchemaHtml)
-        ->toContain('fi-sc-loading')
-        ->toContain('custom-content')
-        ->and(substr_count($childSchemaHtml, 'fi-section-content'))
-        ->toBe(1);
-});
-
-it('can set `aside()` with a `Closure`', function (): void {
-    $section = Section::make('Test')
-        ->aside(static fn (): bool => true);
-
-    expect($section->isAside())->toBeTrue();
-});
-
-it('returns `false` for `isAside()` when set to `null`', function (): void {
-    $section = Section::make('Test')
-        ->aside()
-        ->aside(null);
-
-    expect($section->isAside())->toBeFalse();
-});
-
-it('can set `formBefore()` with a `Closure`', function (): void {
-    $section = Section::make('Test')
-        ->formBefore(static fn (): bool => true);
-
-    expect($section->isFormBefore())->toBeTrue();
-});
-
-it('can construct `Section` with an array of components', function (): void {
-    $section = Section::make([
-        TextInput::make('name'),
-        TextInput::make('email'),
-    ]);
-
-    expect($section->getHeading())->toBeNull();
-    expect($section->getHeadingsCount())->toBe(0);
-});
-
-it('returns fluent `$this` from slot methods', function (): void {
-    $section = Section::make('Test');
-
-    expect($section->afterHeader([]))->toBe($section);
-    expect($section->footer([]))->toBe($section);
-    expect($section->beforeLabel([]))->toBe($section);
-    expect($section->afterLabel([]))->toBe($section);
-    expect($section->aboveContent([]))->toBe($section);
-    expect($section->belowContent([]))->toBe($section);
-});
-
-describe('collapsing', function (): void {
-    it('defaults `isCollapsible()` to `false`', function (): void {
-        $section = Section::make('Test');
-
-        expect($section->isCollapsible())->toBeFalse();
-    });
-
-    it('can set `collapsible()`', function (): void {
-        $section = Section::make('Test')->collapsible();
-
-        expect($section->isCollapsible())->toBeTrue();
-    });
-
-    it('can set `collapsible()` with a `Closure`', function (): void {
-        $section = Section::make('Test')
-            ->collapsible(static fn (): bool => true);
-
-        expect($section->isCollapsible())->toBeTrue();
-    });
-
-    it('can undo `collapsible()` with `null`', function (): void {
-        $section = Section::make('Test')
-            ->collapsible()
-            ->collapsible(null);
-
-        expect($section->isCollapsible())->toBeFalse();
-    });
-
-    it('defaults `isCollapsed()` to `false`', function (): void {
-        $section = Section::make('Test');
-
-        expect($section->isCollapsed())->toBeFalse();
-    });
-
-    it('can set `collapsed()` and it implies `collapsible()`', function (): void {
-        $section = Section::make('Test')->collapsed();
-
-        expect($section->isCollapsed())->toBeTrue();
-        expect($section->isCollapsible())->toBeTrue();
-    });
-
-    it('can set `collapsed()` without making collapsible', function (): void {
-        $section = Section::make('Test')->collapsed(shouldMakeComponentCollapsible: false);
-
-        expect($section->isCollapsed())->toBeTrue();
-        expect($section->isCollapsible())->toBeFalse();
-    });
-
-    it('does not override explicit `collapsible()` when `collapsed()` is called', function (): void {
-        $section = Section::make('Test')
-            ->collapsible(false)
-            ->collapsed();
-
-        expect($section->isCollapsed())->toBeTrue();
-        expect($section->isCollapsible())->toBeFalse();
-    });
-
-    it('can set `collapsed()` with a `Closure`', function (): void {
-        $section = Section::make('Test')
-            ->collapsed(static fn (): bool => true);
-
-        expect($section->isCollapsed())->toBeTrue();
-    });
-
-    it('defaults `shouldPersistCollapsed()` to `false`', function (): void {
-        $section = Section::make('Test');
-
-        expect($section->shouldPersistCollapsed())->toBeFalse();
-    });
-
-    it('can set `persistCollapsed()`', function (): void {
-        $section = Section::make('Test')->persistCollapsed();
-
-        expect($section->shouldPersistCollapsed())->toBeTrue();
-    });
-
-    it('can set `persistCollapsed()` with a `Closure`', function (): void {
-        $section = Section::make('Test')
-            ->persistCollapsed(static fn (): bool => true);
-
-        expect($section->shouldPersistCollapsed())->toBeTrue();
-    });
-});
-
-describe('compact', function (): void {
-    it('defaults `isCompact()` to `false`', function (): void {
-        $section = Section::make('Test');
-
-        expect($section->isCompact())->toBeFalse();
-    });
-
-    it('can set `compact()`', function (): void {
-        $section = Section::make('Test')->compact();
-
-        expect($section->isCompact())->toBeTrue();
-    });
-
-    it('can set `compact()` with a `Closure`', function (): void {
-        $section = Section::make('Test')
-            ->compact(static fn (): bool => true);
-
-        expect($section->isCompact())->toBeTrue();
-    });
-});
-
-describe('containment', function (): void {
-    it('defaults `isContained()` to `true`', function (): void {
-        $section = Section::make('Test');
-
-        expect($section->isContained())->toBeTrue();
-    });
-
-    it('can set `contained()` to `false`', function (): void {
-        $section = Section::make('Test')->contained(false);
-
-        expect($section->isContained())->toBeFalse();
-    });
-
-    it('can set `contained()` with a `Closure`', function (): void {
-        $section = Section::make('Test')
-            ->contained(static fn (): bool => false);
-
-        expect($section->isContained())->toBeFalse();
-    });
-});
-
-describe('divided', function (): void {
-    it('defaults `isDivided()` to `false`', function (): void {
-        $section = Section::make('Test');
-
-        expect($section->isDivided())->toBeFalse();
-    });
-
-    it('can set `divided()`', function (): void {
-        $section = Section::make('Test')->divided();
-
-        expect($section->isDivided())->toBeTrue();
-    });
-
-    it('can set `divided()` with a `Closure`', function (): void {
-        $section = Section::make('Test')
-            ->divided(static fn (): bool => true);
-
-        expect($section->isDivided())->toBeTrue();
-    });
-});
-
-describe('secondary', function (): void {
-    it('defaults `isSecondary()` to `false`', function (): void {
-        $section = Section::make('Test');
-
-        expect($section->isSecondary())->toBeFalse();
-    });
-
-    it('can set `secondary()`', function (): void {
-        $section = Section::make('Test')->secondary();
-
-        expect($section->isSecondary())->toBeTrue();
-    });
-
-    it('can set `secondary()` with a `Closure`', function (): void {
-        $section = Section::make('Test')
-            ->secondary(static fn (): bool => true);
-
-        expect($section->isSecondary())->toBeTrue();
-    });
 });
 
 describe('heading', function (): void {
@@ -668,6 +271,220 @@ describe('icon size', function (): void {
     });
 });
 
+it('can set `aside()`', function (): void {
+    $section = Section::make('Test');
+
+    expect($section->isAside())->toBeFalse();
+
+    $section->aside();
+
+    expect($section->isAside())->toBeTrue();
+
+    $section->aside(false);
+
+    expect($section->isAside())->toBeFalse();
+});
+
+it('can set `aside()` with a `Closure`', function (): void {
+    $section = Section::make('Test')
+        ->aside(static fn (): bool => true);
+
+    expect($section->isAside())->toBeTrue();
+});
+
+it('returns `false` for `isAside()` when set to `null`', function (): void {
+    $section = Section::make('Test')
+        ->aside()
+        ->aside(null);
+
+    expect($section->isAside())->toBeFalse();
+});
+
+it('can set `formBefore()`', function (): void {
+    $section = Section::make('Test');
+
+    expect($section->isFormBefore())->toBeFalse();
+
+    $section->formBefore();
+
+    expect($section->isFormBefore())->toBeTrue();
+});
+
+it('can set `formBefore()` with a `Closure`', function (): void {
+    $section = Section::make('Test')
+        ->formBefore(static fn (): bool => true);
+
+    expect($section->isFormBefore())->toBeTrue();
+});
+
+describe('collapsing', function (): void {
+    it('defaults `isCollapsible()` to `false`', function (): void {
+        $section = Section::make('Test');
+
+        expect($section->isCollapsible())->toBeFalse();
+    });
+
+    it('can set `collapsible()`', function (): void {
+        $section = Section::make('Test')->collapsible();
+
+        expect($section->isCollapsible())->toBeTrue();
+    });
+
+    it('can set `collapsible()` with a `Closure`', function (): void {
+        $section = Section::make('Test')
+            ->collapsible(static fn (): bool => true);
+
+        expect($section->isCollapsible())->toBeTrue();
+    });
+
+    it('can undo `collapsible()` with `null`', function (): void {
+        $section = Section::make('Test')
+            ->collapsible()
+            ->collapsible(null);
+
+        expect($section->isCollapsible())->toBeFalse();
+    });
+
+    it('defaults `isCollapsed()` to `false`', function (): void {
+        $section = Section::make('Test');
+
+        expect($section->isCollapsed())->toBeFalse();
+    });
+
+    it('can set `collapsed()` and it implies `collapsible()`', function (): void {
+        $section = Section::make('Test')->collapsed();
+
+        expect($section->isCollapsed())->toBeTrue();
+        expect($section->isCollapsible())->toBeTrue();
+    });
+
+    it('can set `collapsed()` without making collapsible', function (): void {
+        $section = Section::make('Test')->collapsed(shouldMakeComponentCollapsible: false);
+
+        expect($section->isCollapsed())->toBeTrue();
+        expect($section->isCollapsible())->toBeFalse();
+    });
+
+    it('does not override explicit `collapsible()` when `collapsed()` is called', function (): void {
+        $section = Section::make('Test')
+            ->collapsible(false)
+            ->collapsed();
+
+        expect($section->isCollapsed())->toBeTrue();
+        expect($section->isCollapsible())->toBeFalse();
+    });
+
+    it('can set `collapsed()` with a `Closure`', function (): void {
+        $section = Section::make('Test')
+            ->collapsed(static fn (): bool => true);
+
+        expect($section->isCollapsed())->toBeTrue();
+    });
+
+    it('defaults `shouldPersistCollapsed()` to `false`', function (): void {
+        $section = Section::make('Test');
+
+        expect($section->shouldPersistCollapsed())->toBeFalse();
+    });
+
+    it('can set `persistCollapsed()`', function (): void {
+        $section = Section::make('Test')->persistCollapsed();
+
+        expect($section->shouldPersistCollapsed())->toBeTrue();
+    });
+
+    it('can set `persistCollapsed()` with a `Closure`', function (): void {
+        $section = Section::make('Test')
+            ->persistCollapsed(static fn (): bool => true);
+
+        expect($section->shouldPersistCollapsed())->toBeTrue();
+    });
+});
+
+describe('compact', function (): void {
+    it('defaults `isCompact()` to `false`', function (): void {
+        $section = Section::make('Test');
+
+        expect($section->isCompact())->toBeFalse();
+    });
+
+    it('can set `compact()`', function (): void {
+        $section = Section::make('Test')->compact();
+
+        expect($section->isCompact())->toBeTrue();
+    });
+
+    it('can set `compact()` with a `Closure`', function (): void {
+        $section = Section::make('Test')
+            ->compact(static fn (): bool => true);
+
+        expect($section->isCompact())->toBeTrue();
+    });
+});
+
+describe('containment', function (): void {
+    it('defaults `isContained()` to `true`', function (): void {
+        $section = Section::make('Test');
+
+        expect($section->isContained())->toBeTrue();
+    });
+
+    it('can set `contained()` to `false`', function (): void {
+        $section = Section::make('Test')->contained(false);
+
+        expect($section->isContained())->toBeFalse();
+    });
+
+    it('can set `contained()` with a `Closure`', function (): void {
+        $section = Section::make('Test')
+            ->contained(static fn (): bool => false);
+
+        expect($section->isContained())->toBeFalse();
+    });
+});
+
+describe('divided', function (): void {
+    it('defaults `isDivided()` to `false`', function (): void {
+        $section = Section::make('Test');
+
+        expect($section->isDivided())->toBeFalse();
+    });
+
+    it('can set `divided()`', function (): void {
+        $section = Section::make('Test')->divided();
+
+        expect($section->isDivided())->toBeTrue();
+    });
+
+    it('can set `divided()` with a `Closure`', function (): void {
+        $section = Section::make('Test')
+            ->divided(static fn (): bool => true);
+
+        expect($section->isDivided())->toBeTrue();
+    });
+});
+
+describe('secondary', function (): void {
+    it('defaults `isSecondary()` to `false`', function (): void {
+        $section = Section::make('Test');
+
+        expect($section->isSecondary())->toBeFalse();
+    });
+
+    it('can set `secondary()`', function (): void {
+        $section = Section::make('Test')->secondary();
+
+        expect($section->isSecondary())->toBeTrue();
+    });
+
+    it('can set `secondary()` with a `Closure`', function (): void {
+        $section = Section::make('Test')
+            ->secondary(static fn (): bool => true);
+
+        expect($section->isSecondary())->toBeTrue();
+    });
+});
+
 describe('extra Alpine attributes', function (): void {
     it('returns empty array for `getExtraAlpineAttributes()` by default', function (): void {
         $section = Section::make('Test');
@@ -700,6 +517,7 @@ describe('extra Alpine attributes', function (): void {
         expect($section->getExtraAlpineAttributes())->toBe(['x-data' => '{}']);
     });
 });
+
 describe('header actions', function (): void {
     it('returns an empty array from `getHeaderActions()` by default', function (): void {
         $section = Section::make('Test');
@@ -1004,6 +822,272 @@ describe('footer actions', function (): void {
     });
 });
 
+it('can construct `Section` with an array of components', function (): void {
+    $section = Section::make([
+        TextInput::make('name'),
+        TextInput::make('email'),
+    ]);
+
+    expect($section->getHeading())->toBeNull();
+    expect($section->getHeadingsCount())->toBe(0);
+});
+
+it('returns fluent `$this` from slot methods', function (): void {
+    $section = Section::make('Test');
+
+    expect($section->afterHeader([]))->toBe($section);
+    expect($section->footer([]))->toBe($section);
+    expect($section->beforeLabel([]))->toBe($section);
+    expect($section->afterLabel([]))->toBe($section);
+    expect($section->aboveContent([]))->toBe($section);
+    expect($section->belowContent([]))->toBe($section);
+});
+
+it('can load state from a `HasOne` relationship using eager loaded data without additional queries', function (): void {
+    $user = User::factory()->create();
+    $profile = Profile::factory()->create(['user_id' => $user->id]);
+
+    $freshUser = $user->fresh();
+    expect($freshUser->relationLoaded('profile'))->toBeFalse();
+
+    DB::enableQueryLog();
+    DB::flushQueryLog();
+
+    livewire(SectionWithHasOneRelationship::class, ['record' => $freshUser])
+        ->assertSchemaStateSet(function (array $state) use ($profile) {
+            expect($state['profile']['bio'])->toBe($profile->bio);
+
+            return [];
+        });
+
+    $queriesWithoutEagerLoading = count(DB::getQueryLog());
+
+    $eagerUser = $user->fresh();
+    $eagerUser->load('profile');
+    expect($eagerUser->relationLoaded('profile'))->toBeTrue();
+
+    DB::flushQueryLog();
+
+    livewire(SectionWithHasOneRelationship::class, ['record' => $eagerUser])
+        ->assertSchemaStateSet(function (array $state) use ($profile) {
+            expect($state['profile']['bio'])->toBe($profile->bio);
+
+            return [];
+        });
+
+    $queriesWithEagerLoading = count(DB::getQueryLog());
+    DB::disableQueryLog();
+
+    $queriesSaved = $queriesWithoutEagerLoading - $queriesWithEagerLoading;
+    expect($queriesSaved)->toBe(1, "Expected to save 1 query with eager loading, but saved {$queriesSaved}");
+});
+
+it('configures a supplied `Schema` as section content', function (): void {
+    $childSchema = Schema::make()
+        ->components([
+            TextInput::make('name'),
+        ])
+        ->extraAttributes([
+            'class' => 'custom-content',
+            'data-testid' => 'section-content',
+        ]);
+
+    $section = Section::make('Test')
+        ->schema($childSchema)
+        ->container(Schema::make(TestLivewire::make()));
+
+    $section->getChildSchema();
+    $childSchemaHtml = $childSchema->toEmbeddedHtml();
+
+    expect($section->getChildSchema())
+        ->toBe($childSchema)
+        ->and($childSchema->getExtraAttributes())
+        ->toHaveKey('data-testid', 'section-content')
+        ->and($childSchema->getExtraAttributes()['class'])
+        ->toContain('custom-content')
+        ->and($childSchemaHtml)
+        ->toContain('custom-content')
+        ->toContain('fi-section-content')
+        ->and(substr_count($childSchemaHtml, 'fi-section-content'))
+        ->toBe(1);
+});
+
+it('does not evaluate schema `extraAttributes()` when configuring section content', function (): void {
+    $extraAttributesEvaluationCount = 0;
+    $childSchema = Schema::make()
+        ->components([
+            TextInput::make('name'),
+        ])
+        ->extraAttributes(static function () use (&$extraAttributesEvaluationCount): array {
+            $extraAttributesEvaluationCount++;
+
+            return ['class' => 'custom-content'];
+        });
+    $section = Section::make('Test')
+        ->schema($childSchema)
+        ->container(Schema::make(TestLivewire::make()));
+
+    $section->getChildSchema();
+
+    expect($extraAttributesEvaluationCount)->toBe(0);
+
+    $childSchemaHtml = $childSchema->toEmbeddedHtml();
+
+    expect($extraAttributesEvaluationCount)
+        ->toBe(1)
+        ->and($childSchemaHtml)
+        ->toContain('custom-content')
+        ->and(substr_count($childSchemaHtml, 'fi-section-content'))
+        ->toBe(1);
+});
+
+it('does not duplicate content classes when a configured supplied `Schema` is cloned with `getClone()`', function (): void {
+    $container = Schema::make(TestLivewire::make());
+    $section = Section::make('Test')
+        ->schema(
+            Schema::make()
+                ->components([
+                    TextInput::make('name'),
+                ])
+                ->extraAttributes(['class' => 'custom-content']),
+        )
+        ->container($container);
+
+    $section->getChildSchema();
+
+    $clonedSection = $section
+        ->getClone()
+        ->container($container);
+    $clonedChildSchema = $clonedSection->getChildSchema();
+    $twiceClonedChildSchema = $clonedSection
+        ->getClone()
+        ->container($container)
+        ->getChildSchema();
+
+    expect(substr_count($clonedChildSchema->toEmbeddedHtml(), 'fi-section-content'))
+        ->toBe(1)
+        ->and(substr_count($twiceClonedChildSchema->toEmbeddedHtml(), 'fi-section-content'))
+        ->toBe(1);
+});
+
+it('renders section content classes on deferred loading placeholders', function (): void {
+    $extraAttributesEvaluationCount = 0;
+    $childSchema = Schema::make()
+        ->components([
+            TextInput::make('name'),
+        ])
+        ->extraAttributes(static function () use (&$extraAttributesEvaluationCount): array {
+            $extraAttributesEvaluationCount++;
+
+            return ['class' => 'custom-content'];
+        })
+        ->deferLoading();
+    $section = Section::make('Test')
+        ->key('details')
+        ->schema($childSchema)
+        ->container(
+            Schema::make(TestLivewire::make())
+                ->key('form'),
+        );
+
+    $section->getChildSchema();
+
+    expect($extraAttributesEvaluationCount)->toBe(0);
+
+    $childSchemaHtml = $childSchema->toEmbeddedHtml();
+
+    expect($extraAttributesEvaluationCount)
+        ->toBe(1)
+        ->and($childSchemaHtml)
+        ->toContain('fi-sc-loading')
+        ->toContain('custom-content')
+        ->and(substr_count($childSchemaHtml, 'fi-section-content'))
+        ->toBe(1);
+});
+
+describe('rendering', function (): void {
+    it('can render with heading', function (): void {
+        livewire(RenderSectionWithHeading::class)->assertSuccessful()->assertSee('My Section');
+    });
+
+    it('can render with `heading()` set via `Closure`', function (): void {
+        livewire(RenderSectionWithClosureHeading::class)->assertSuccessful()->assertSee('Dynamic');
+    });
+
+    it('can render with `description()`', function (): void {
+        livewire(RenderSectionWithDescription::class)->assertSuccessful()->assertSee('Description text');
+    });
+
+    it('can render with `description()` set via `Closure`', function (): void {
+        livewire(RenderSectionWithClosureDescription::class)->assertSuccessful();
+    });
+
+    it('can render with `collapsible()`', function (): void {
+        livewire(RenderSectionWithCollapsible::class)
+            ->assertSuccessful()
+            ->assertDontSeeHtml('wire:loading.attr="disabled"');
+    });
+
+    it('can render with `collapsed()`', function (): void {
+        livewire(RenderSectionWithCollapsed::class)->assertSuccessful();
+    });
+
+    it('can render with `compact()`', function (): void {
+        livewire(RenderSectionWithCompact::class)->assertSuccessful();
+    });
+
+    it('can render with `contained(false)`', function (): void {
+        livewire(RenderSectionWithContainedFalse::class)->assertSuccessful();
+    });
+
+    it('can render with `aside()`', function (): void {
+        livewire(RenderSectionWithAside::class)->assertSuccessful();
+    });
+
+    it('can render with `aside()` set via `Closure`', function (): void {
+        livewire(RenderSectionWithClosureAside::class)->assertSuccessful();
+    });
+
+    it('can render with `divided()`', function (): void {
+        livewire(RenderSectionWithDivided::class)->assertSuccessful();
+    });
+
+    it('can render with `secondary()`', function (): void {
+        livewire(RenderSectionWithSecondary::class)->assertSuccessful();
+    });
+
+    it('can render with `icon()`', function (): void {
+        livewire(RenderSectionWithIcon::class)->assertSuccessful();
+    });
+
+    it('can render with `icon()` set via `Closure`', function (): void {
+        livewire(RenderSectionWithClosureIcon::class)->assertSuccessful();
+    });
+
+    it('can render with `iconColor()`', function (): void {
+        livewire(RenderSectionWithIconColor::class)->assertSuccessful();
+    });
+
+    it('can render with `iconSize()`', function (): void {
+        livewire(RenderSectionWithIconSize::class)->assertSuccessful();
+    });
+});
+
+it('can render and collapse a `contained(false)` section in the browser', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/section-browser-test')
+        ->assertVisible('#form\.shipping_address')
+        ->click('.fi-section-collapse-btn')
+        ->assertMissing('#form\.shipping_address')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    visit('/section-browser-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
+});
+
 class SectionWithHeaderActions extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
@@ -1115,89 +1199,6 @@ class SectionWithHasOneRelationship extends Component implements HasActions, Has
         return view('livewire.form');
     }
 }
-
-describe('rendering', function (): void {
-    it('can render with heading', function (): void {
-        livewire(RenderSectionWithHeading::class)->assertSuccessful()->assertSee('My Section');
-    });
-
-    it('can render with `heading()` set via `Closure`', function (): void {
-        livewire(RenderSectionWithClosureHeading::class)->assertSuccessful()->assertSee('Dynamic');
-    });
-
-    it('can render with `description()`', function (): void {
-        livewire(RenderSectionWithDescription::class)->assertSuccessful()->assertSee('Description text');
-    });
-
-    it('can render with `description()` set via `Closure`', function (): void {
-        livewire(RenderSectionWithClosureDescription::class)->assertSuccessful();
-    });
-
-    it('can render with `collapsible()`', function (): void {
-        livewire(RenderSectionWithCollapsible::class)
-            ->assertSuccessful()
-            ->assertDontSeeHtml('wire:loading.attr="disabled"');
-    });
-
-    it('can render with `collapsed()`', function (): void {
-        livewire(RenderSectionWithCollapsed::class)->assertSuccessful();
-    });
-
-    it('can render with `compact()`', function (): void {
-        livewire(RenderSectionWithCompact::class)->assertSuccessful();
-    });
-
-    it('can render with `contained(false)`', function (): void {
-        livewire(RenderSectionWithContainedFalse::class)->assertSuccessful();
-    });
-
-    it('can render with `aside()`', function (): void {
-        livewire(RenderSectionWithAside::class)->assertSuccessful();
-    });
-
-    it('can render with `aside()` set via `Closure`', function (): void {
-        livewire(RenderSectionWithClosureAside::class)->assertSuccessful();
-    });
-
-    it('can render with `divided()`', function (): void {
-        livewire(RenderSectionWithDivided::class)->assertSuccessful();
-    });
-
-    it('can render with `secondary()`', function (): void {
-        livewire(RenderSectionWithSecondary::class)->assertSuccessful();
-    });
-
-    it('can render with `icon()`', function (): void {
-        livewire(RenderSectionWithIcon::class)->assertSuccessful();
-    });
-
-    it('can render with `icon()` set via `Closure`', function (): void {
-        livewire(RenderSectionWithClosureIcon::class)->assertSuccessful();
-    });
-
-    it('can render with `iconColor()`', function (): void {
-        livewire(RenderSectionWithIconColor::class)->assertSuccessful();
-    });
-
-    it('can render with `iconSize()`', function (): void {
-        livewire(RenderSectionWithIconSize::class)->assertSuccessful();
-    });
-});
-
-it('can render and collapse a `contained(false)` section in the browser', function (): void {
-    $this->actingAs(User::factory()->create());
-
-    visit('/section-browser-test')
-        ->assertVisible('#form\.shipping_address')
-        ->click('.fi-section-collapse-btn')
-        ->assertMissing('#form\.shipping_address')
-        ->assertNoSmoke()
-        ->assertNoAccessibilityIssues();
-
-    visit('/section-browser-test')
-        ->inDarkMode()
-        ->assertNoAccessibilityIssues();
-});
 
 class RenderSectionWithHeading extends Component implements HasSchemas
 {

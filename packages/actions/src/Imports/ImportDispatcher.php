@@ -94,7 +94,7 @@ class ImportDispatcher
                                     'count' => Number::format($failedRowsCount),
                                 ]))
                                 ->color('danger')
-                                ->url(URL::signedRoute('filament.imports.failed-rows.download', ['authGuard' => $authGuard, 'import' => $import], absolute: false), shouldOpenInNewTab: true)
+                                ->url(rtrim(request()->getBaseUrl(), '/') . URL::signedRoute('filament.imports.failed-rows.download', ['authGuard' => $authGuard, 'import' => $import], absolute: false), shouldOpenInNewTab: true)
                                 ->markAsRead(),
                         ]),
                     )

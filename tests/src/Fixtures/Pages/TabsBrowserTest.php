@@ -35,14 +35,22 @@ class TabsBrowserTest extends Page
 
     public bool $showEnclosingDropdown = false;
 
+    public bool $isRightToLeft = false;
+
     public bool $hasDisabledProfileHeader = false;
+
+    public bool $hasNativeValidation = false;
+
+    public bool $isSaved = false;
 
     public function mount(): void
     {
         $this->showKeyboardTabs = request()->boolean('keyboard');
         $this->showOverflowTabs = request()->boolean('overflow');
         $this->showEnclosingDropdown = request()->boolean('dropdown');
+        $this->isRightToLeft = request()->boolean('rtl');
         $this->hasDisabledProfileHeader = request()->boolean('disabled-profile');
+        $this->hasNativeValidation = request()->boolean('native-validation');
         $this->form->fill();
     }
 
@@ -73,7 +81,8 @@ class TabsBrowserTest extends Page
                             ->schema([
                                 TextInput::make('phone')
                                     ->label('Phone Number')
-                                    ->tel(),
+                                    ->tel()
+                                    ->required(fn (): bool => $this->hasNativeValidation),
                             ]),
                         Tab::make('Billing')->key('billing')->id('profile-billing')
                             ->visible(fn (): bool => $this->hasDisabledProfileHeader),
@@ -106,6 +115,7 @@ class TabsBrowserTest extends Page
                 Tabs::make('Keyboard tabs')
                     ->key('keyboard')
                     ->id('keyboard-tabs')
+                    ->extraAttributes(['dir' => $this->isRightToLeft ? 'rtl' : 'ltr'])
                     ->visible(fn (): bool => $this->showKeyboardTabs)
                     ->tabs([
                         Tab::make('Account')->key('account')->visibleJs('showAll')->schema([
@@ -155,5 +165,7 @@ class TabsBrowserTest extends Page
     public function save(): void
     {
         $this->form->getState();
+
+        $this->isSaved = true;
     }
 }

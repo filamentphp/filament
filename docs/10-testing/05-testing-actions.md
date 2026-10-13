@@ -36,10 +36,10 @@ livewire(ListInvoices::class)
     ->callAction(TestAction::make('send')->table($invoice));
 
 livewire(ListInvoices::class)
-    ->assertActionVisible(TestAction::make('send')->table($invoice))
+    ->assertActionVisible(TestAction::make('send')->table($invoice));
 
 livewire(ListInvoices::class)
-    ->assertActionExists(TestAction::make('send')->table($invoice))
+    ->assertActionExists(TestAction::make('send')->table($invoice));
 ```
 
 ### Testing table header actions
@@ -54,10 +54,10 @@ livewire(ListInvoices::class)
     ->callAction(TestAction::make('create')->table());
 
 livewire(ListInvoices::class)
-    ->assertActionVisible(TestAction::make('create')->table())
+    ->assertActionVisible(TestAction::make('create')->table());
 
 livewire(ListInvoices::class)
-    ->assertActionExists(TestAction::make('create')->table())
+    ->assertActionExists(TestAction::make('create')->table());
 ```
 
 ### Testing table bulk actions
@@ -75,10 +75,10 @@ livewire(ListInvoices::class)
     ->callAction(TestAction::make('send')->table()->bulk());
 
 livewire(ListInvoices::class)
-    ->assertActionVisible(TestAction::make('send')->table()->bulk())
+    ->assertActionVisible(TestAction::make('send')->table()->bulk());
 
 livewire(ListInvoices::class)
-    ->assertActionExists(TestAction::make('send')->table()->bulk())
+    ->assertActionExists(TestAction::make('send')->table()->bulk());
 ```
 
 ## Testing actions in a schema
@@ -95,10 +95,10 @@ livewire(EditInvoice::class)
     ->callAction(TestAction::make('send')->schemaComponent('customer_id'));
 
 livewire(EditInvoice::class)
-    ->assertActionVisible(TestAction::make('send')->schemaComponent('customer_id'))
+    ->assertActionVisible(TestAction::make('send')->schemaComponent('customer_id'));
 
 livewire(EditInvoice::class)
-    ->assertActionExists(TestAction::make('send')->schemaComponent('customer_id'))
+    ->assertActionExists(TestAction::make('send')->schemaComponent('customer_id'));
 ```
 
 ## Testing actions inside another action's schema / form
@@ -172,7 +172,7 @@ it('can send invoices', function () {
         ->mountAction('send')
         ->fillForm([
             'email' => $email = fake()->email(),
-        ])
+        ]);
 });
 ```
 
@@ -433,10 +433,10 @@ livewire(ManageInvoices::class)
     ->callAction(TestAction::make('send')->arguments(['invoice' => $invoice->getKey()]));
 
 livewire(ManageInvoices::class)
-    ->assertActionVisible(TestAction::make('send')->arguments(['invoice' => $invoice->getKey()]))
+    ->assertActionVisible(TestAction::make('send')->arguments(['invoice' => $invoice->getKey()]));
 
 livewire(ManageInvoices::class)
-    ->assertActionExists(TestAction::make('send')->arguments(['invoice' => $invoice->getKey()]))
+    ->assertActionExists(TestAction::make('send')->arguments(['invoice' => $invoice->getKey()]));
 ```
 
 ## Testing if an action has been halted
@@ -499,7 +499,7 @@ use function Pest\Livewire\livewire;
 $invoice = Invoice::factory()->create();
 
 livewire(ManageInvoices::class)
-    ->callAction(TestAction::make(SendInvoiceAction::class)->table($invoice);
+    ->callAction(TestAction::make(SendInvoiceAction::class)->table($invoice));
 ```
 
 If you have an action class that extends the `Action` class, you can add a `getDefaultName()` static method to the class, which will be used to discover the name of the action. It also allows users to omit the name of the action from the `make()` method when instantiating it. For example:

@@ -106,7 +106,8 @@ describe('creating records', function (): void {
             ->fillForm([
                 'name' => Str::random(),
             ])
-            ->assertActionMounted(TestAction::make(CreateAction::class)->table());
+            ->unmountAction()
+            ->assertActionNotMounted();
 
         expect(Department::count())->toBe($initialCount);
     });

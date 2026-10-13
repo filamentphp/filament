@@ -4,6 +4,7 @@ namespace Filament\Tables\Filters;
 
 use Closure;
 use Filament\Forms\Components\Repeater;
+use Filament\QueryBuilder\Concerns\HasConstraints;
 use Filament\QueryBuilder\Constraints\Constraint;
 use Filament\QueryBuilder\Constraints\Operators\Operator;
 use Filament\QueryBuilder\Forms\Components\RuleBuilder;
@@ -17,15 +18,14 @@ use LogicException;
 
 class QueryBuilder extends BaseFilter
 {
+    use HasConstraints;
+
     /**
      * @var array<string, ?int> | null
      */
     protected ?array $constraintPickerColumns = [];
 
     protected string | Closure | null $constraintPickerWidth = null;
-
-    /** @var array<Constraint> */
-    protected array $constraints = [];
 
     protected int | Closure | null $maxRules = 100;
 
@@ -48,7 +48,7 @@ class QueryBuilder extends BaseFilter
             RuleBuilder::make('rules')
                 ->label($filter->getLabel())
                 ->hiddenLabel()
-                ->constraints($filter->getConstraints())
+                ->constraints($filter->getGroupedConstraints())
                 ->blockPickerColumns($filter->getConstraintPickerColumns())
                 ->blockPickerWidth($filter->getConstraintPickerWidth())
                 ->maxRules($filter->getMaxRules())
@@ -508,19 +508,7 @@ class QueryBuilder extends BaseFilter
     }
 
     /**
-     * @param  array<Constraint>  $constraints
-     */
-    public function constraints(array $constraints): static
-    {
-        foreach ($constraints as $constraint) {
-            $this->constraints[$constraint->getName()] = $constraint;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return array<Constraint>
+     * @return array<string, Constraint>
      */
     public function getConstraints(): array
     {

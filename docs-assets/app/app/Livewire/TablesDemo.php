@@ -1568,6 +1568,30 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ], layout: FiltersLayout::AboveContent);
     }
 
+    public function filtersQueryBuilderGrouped(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                QueryBuilder::make()
+                    ->constraints([
+                        'Content' => [
+                            TextConstraint::make('title'),
+                            BooleanConstraint::make('is_featured'),
+                        ],
+                        'Publishing' => [
+                            SelectConstraint::make('status')
+                                ->options([
+                                    'draft' => 'Draft',
+                                    'reviewing' => 'Reviewing',
+                                    'published' => 'Published',
+                                ]),
+                            DateConstraint::make('created_at'),
+                        ],
+                    ])
+                    ->constraintPickerColumns(3),
+            ], layout: FiltersLayout::AboveContent);
+    }
+
     public function actionsTable(Table $table): Table
     {
         return $this->postsTable($table)

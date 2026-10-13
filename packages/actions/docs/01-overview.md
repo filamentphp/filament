@@ -7,9 +7,7 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
-"Action" is a word that is used quite a bit within the Laravel community. Traditionally, action PHP classes handle "doing" something in your application's business logic. For instance, logging a user in, sending an email, or creating a new user record in the database.
-
-In Filament, actions also handle "doing" something in your app. However, they are a bit different from traditional actions. They are designed to be used in the context of a user interface. For instance, you might have a button to delete a client record, which opens a modal to confirm your decision. When the user clicks the "Delete" button in the modal, the client is deleted. This whole workflow is an "action".
+Actions combine a trigger button with the code to run when it is clicked. They can also open a modal to collect input or request confirmation. For example, this action confirms before deleting a client:
 
 ```php
 use Filament\Actions\Action;
@@ -20,10 +18,10 @@ Action::make('delete')
 ```
 
 <Aside variant="warning">
-    If `$client` or `$post` in these examples is stored in a public Livewire property, Filament does not re-query or authorize it on later requests. Re-query and authorize the model before using it in an action. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+    If `$client` or `$post` in these examples is stored in a public Livewire property, Filament does not re-query or authorize it on later requests. Re-query and authorize the model before using it in an action, including any tenant or ownership restrictions your application requires. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information. For URL actions, authorize access in the destination route or page.
 </Aside>
 
-Actions can also collect extra information from the user. For instance, you might have a button to email a client. When the user clicks the button, a modal opens to collect the email subject and body. When the user clicks the "Send" button in the modal, the email is sent:
+To collect input before running an action, define its modal's schema. The submitted data is available in the `action()` function:
 
 ```php
 use Filament\Actions\Action;
@@ -47,7 +45,7 @@ Action::make('sendEmail')
 
 <UtilityInjection set="actions" version="6.x">As well as `$data`, the `action()` function can inject various utilities as parameters.</UtilityInjection>
 
-Usually, actions get executed without redirecting the user away from the page. This is because we extensively use Livewire. However, actions can be much simpler, and don't even need a modal. You can pass a URL to an action, and when the user clicks on the button, they are redirected to that page:
+Actions usually run without navigating away from the page. To make a trigger link to another page instead, use `url()`:
 
 ```php
 use Filament\Actions\Action;
@@ -252,7 +250,7 @@ Action::make('edit')
 ```
 
 <Aside variant="info">
-    In a panel resource or relation manager, policy-backed CRUD actions such as `CreateAction`, `EditAction`, and `DeleteAction` automatically use the resource model's policy, unless resource authorization is skipped. Other actions, including attach, associate, detach, and dissociate actions, must be authorized explicitly when needed. For more information, visit the [resource authorization](../resources/overview#authorization) section.
+    In a panel resource or relation manager, policy-backed CRUD actions such as `CreateAction`, `EditAction`, and `DeleteAction` use the resource or related model's policy. By default, missing policies or policy methods allow access, and skipping resource authorization bypasses the resource's policy checks. Built-in bulk delete, force-delete, and restore actions check their `*Any()` abilities rather than each record's policy unless you enable [individual record authorization](../tables/actions#authorizing-bulk-actions). These defaults do not apply to custom actions or standalone Livewire components. Attach, associate, detach, and dissociate actions also need explicit authorization when access must be restricted. See [resource authorization](../resources/overview#authorization).
 </Aside>
 
 If your policy method returns a [response message](https://laravel.com/docs/authorization#policy-responses), you can disable the action instead of hiding it, and add a tooltip containing the message, using the `authorizationTooltip()` method:
@@ -652,7 +650,7 @@ Action::make('delete')
 
 If the action opens a modal, the rate limit will be applied when the modal is submitted.
 
-If an action is opened with arguments or for a specific Eloquent record, the rate limit will apply to each unique combination of arguments or record for each action. The rate limit is also unique to the current Livewire component / page in a panel.
+The limit is separate for each IP address, Livewire component class, and action context, including its arguments and record. It is not a combined limit across all records or arguments. For a shared limit, such as a per-user quota across records, use a [custom rate limit key](#customizing-the-rate-limit-behavior).
 
 <UtilityInjection set="actions" version="6.x">As well as allowing a static value, the `rateLimit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -703,7 +701,8 @@ use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\RateLimiter;
 
 Action::make('delete')
-    ->mountUsing(function () {
+    ->requiresConfirmation()
+    ->mountUsing(function (Action $action) {
         if (RateLimiter::tooManyAttempts(
             $rateLimitKey = 'delete:' . auth()->id(),
             maxAttempts: 5,
@@ -714,12 +713,14 @@ Action::make('delete')
                 ->danger()
                 ->send();
 
-            return;
+            $action->halt();
         }
 
-         RateLimiter::hit($rateLimitKey);
+        RateLimiter::hit($rateLimitKey);
     })
 ```
+
+Call `$action->halt()` to prevent the modal from opening; returning from `mountUsing()` alone does not stop it. This limits modal openings, not submissions. Keep submission-time limiting if the operation also needs it. If the action has form fields, [fill its schema in `mountUsing()`](modals#executing-code-when-the-modal-opens) as well.
 
 If you want to rate limit when an action is run, you can do so in the `action()` method:
 
@@ -743,7 +744,7 @@ Action::make('delete')
             return;
         }
 
-         RateLimiter::hit($rateLimitKey);
+        RateLimiter::hit($rateLimitKey);
 
         // ...
     })

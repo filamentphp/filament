@@ -38,7 +38,7 @@ While the plugin object is extremely helpful, it is not required to build a plug
 
 ### Registering assets
 
-All [asset registration](../advanced/assets), including CSS, JS and Alpine Components, should be done through the plugin's service provider in the `packageBooted()` method. This allows Filament to register the assets with the Asset Manager and load them when needed.
+Register [assets](../advanced/assets) shared by standalone components, including lazily loaded CSS, JavaScript, and Alpine components, in the plugin service provider's `packageBooted()` method. For assets that should load on every page of a particular panel, use [`$panel->assets()`](../panel-configuration#registering-assets-for-a-panel) in the plugin object's `register()` method. This avoids loading panel-specific assets in panels that do not use your plugin.
 
 ## Creating a plugin
 
@@ -56,28 +56,14 @@ This will ask you a series of questions to configure the plugin. Once you've ans
 
 ## Upgrading existing plugins
 
-Since every plugin varies greatly in its scope of use and functionality, there is no one size fits all approaches to upgrading existing plugins. However, one thing to note, that is consistent to all plugins is the deprecation of the `PluginServiceProvider`.
-
-In your plugin service provider, you will need to change it to extend the PackageServiceProvider instead. You will also need to add a static `$name` property to the service provider. This property is used to register the plugin with Filament. Here is an example of what your service provider might look like:
-
-```php
-class MyPluginServiceProvider extends PackageServiceProvider
-{
-    public static string $name = 'my-plugin';
-
-    public function configurePackage(Package $package): void
-    {
-        $package->name(static::$name);
-    }
-}
-```
+To update a plugin from Filament 3 to 4, follow the [upgrade guide](../upgrade-guide) for the packages your plugin uses. Update its Composer constraints and test it in a Filament 4 application, including any custom views, styles, and JavaScript.
 
 ### Helpful links
 
 Please read this guide in its entirety before upgrading your plugin. It will help you understand the concepts and how to build your plugin.
 
 1. [Filament Asset Management](../advanced/assets)
-2. [Panel Plugin Development](../plugins)
+2. [Panel Plugin Development](panel-plugins)
 3. [Icon Management](../styling/icons)
 4. [Colors Management](../styling/colors)
 5. [CSS Hooks](../styling/css-hooks)

@@ -28,171 +28,174 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can load state from a `BelongsToMany` relationship using eager loaded data without additional queries', function (): void {
-    $user = User::factory()->create();
-    $teams = Team::factory()->count(3)->create();
-    $user->teams()->attach($teams);
+describe('eager loading', function (): void {
+    it('can load state from a `BelongsToMany` relationship using eager loaded data without additional queries', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(3)->create();
+        $user->teams()->attach($teams);
 
-    $freshUser = $user->fresh();
-    expect($freshUser->relationLoaded('teams'))->toBeFalse();
+        $freshUser = $user->fresh();
+        expect($freshUser->relationLoaded('teams'))->toBeFalse();
 
-    DB::enableQueryLog();
-    DB::flushQueryLog();
+        DB::enableQueryLog();
+        DB::flushQueryLog();
 
-    livewire(TableSelectWithBelongsToManyRelationship::class, ['record' => $freshUser])
-        ->assertSchemaStateSet(function (array $state) use ($teams) {
-            expect(collect($state['teams'])->sort()->values()->all())
-                ->toBe($teams->pluck('id')->map(fn ($id) => (string) $id)->sort()->values()->all());
+        livewire(TableSelectWithBelongsToManyRelationship::class, ['record' => $freshUser])
+            ->assertSchemaStateSet(function (array $state) use ($teams) {
+                expect(collect($state['teams'])->sort()->values()->all())
+                    ->toBe($teams->pluck('id')->map(fn ($id) => (string) $id)->sort()->values()->all());
 
-            return [];
-        });
+                return [];
+            });
 
-    $queriesWithoutEagerLoading = count(DB::getQueryLog());
+        $queriesWithoutEagerLoading = count(DB::getQueryLog());
 
-    $eagerUser = $user->fresh();
-    $eagerUser->load('teams');
-    expect($eagerUser->relationLoaded('teams'))->toBeTrue();
+        $eagerUser = $user->fresh();
+        $eagerUser->load('teams');
+        expect($eagerUser->relationLoaded('teams'))->toBeTrue();
 
-    DB::flushQueryLog();
+        DB::flushQueryLog();
 
-    livewire(TableSelectWithBelongsToManyRelationship::class, ['record' => $eagerUser])
-        ->assertSchemaStateSet(function (array $state) use ($teams) {
-            expect(collect($state['teams'])->sort()->values()->all())
-                ->toBe($teams->pluck('id')->map(fn ($id) => (string) $id)->sort()->values()->all());
+        livewire(TableSelectWithBelongsToManyRelationship::class, ['record' => $eagerUser])
+            ->assertSchemaStateSet(function (array $state) use ($teams) {
+                expect(collect($state['teams'])->sort()->values()->all())
+                    ->toBe($teams->pluck('id')->map(fn ($id) => (string) $id)->sort()->values()->all());
 
-            return [];
-        });
+                return [];
+            });
 
-    $queriesWithEagerLoading = count(DB::getQueryLog());
-    DB::disableQueryLog();
+        $queriesWithEagerLoading = count(DB::getQueryLog());
+        DB::disableQueryLog();
 
-    $queriesSaved = $queriesWithoutEagerLoading - $queriesWithEagerLoading;
-    expect($queriesSaved)->toBe(1, "Expected to save 1 query with eager loading, but saved {$queriesSaved}");
-});
+        $queriesSaved = $queriesWithoutEagerLoading - $queriesWithEagerLoading;
+        expect($queriesSaved)->toBe(1, "Expected to save 1 query with eager loading, but saved {$queriesSaved}");
+    });
 
-it('can load state from a `BelongsTo` relationship using eager loaded data without additional queries', function (): void {
-    $team = Team::factory()->create();
-    $user = User::factory()->create(['team_id' => $team->id]);
+    it('can load state from a `BelongsTo` relationship using eager loaded data without additional queries', function (): void {
+        $team = Team::factory()->create();
+        $user = User::factory()->create(['team_id' => $team->id]);
 
-    $freshUser = $user->fresh();
-    expect($freshUser->relationLoaded('team'))->toBeFalse();
+        $freshUser = $user->fresh();
+        expect($freshUser->relationLoaded('team'))->toBeFalse();
 
-    DB::enableQueryLog();
-    DB::flushQueryLog();
+        DB::enableQueryLog();
+        DB::flushQueryLog();
 
-    livewire(TableSelectWithBelongsToRelationship::class, ['record' => $freshUser])
-        ->assertSchemaStateSet([
-            'team_id' => (string) $team->id,
-        ]);
+        livewire(TableSelectWithBelongsToRelationship::class, ['record' => $freshUser])
+            ->assertSchemaStateSet([
+                'team_id' => (string) $team->id,
+            ]);
 
-    $queriesWithoutEagerLoading = count(DB::getQueryLog());
+        $queriesWithoutEagerLoading = count(DB::getQueryLog());
 
-    $eagerUser = $user->fresh();
-    $eagerUser->load('team');
-    expect($eagerUser->relationLoaded('team'))->toBeTrue();
+        $eagerUser = $user->fresh();
+        $eagerUser->load('team');
+        expect($eagerUser->relationLoaded('team'))->toBeTrue();
 
-    DB::flushQueryLog();
+        DB::flushQueryLog();
 
-    livewire(TableSelectWithBelongsToRelationship::class, ['record' => $eagerUser])
-        ->assertSchemaStateSet([
-            'team_id' => (string) $team->id,
-        ]);
+        livewire(TableSelectWithBelongsToRelationship::class, ['record' => $eagerUser])
+            ->assertSchemaStateSet([
+                'team_id' => (string) $team->id,
+            ]);
 
-    $queriesWithEagerLoading = count(DB::getQueryLog());
-    DB::disableQueryLog();
+        $queriesWithEagerLoading = count(DB::getQueryLog());
+        DB::disableQueryLog();
 
-    $queriesSaved = $queriesWithoutEagerLoading - $queriesWithEagerLoading;
-    expect($queriesSaved)->toBe(1, "Expected to save 1 query with eager loading, but saved {$queriesSaved}");
-});
+        $queriesSaved = $queriesWithoutEagerLoading - $queriesWithEagerLoading;
+        expect($queriesSaved)->toBe(1, "Expected to save 1 query with eager loading, but saved {$queriesSaved}");
+    });
 
-it('can load state from a `HasMany` relationship using eager loaded data without additional queries', function (): void {
-    $user = User::factory()->create();
-    $posts = Post::factory()->count(3)->create(['author_id' => $user->id]);
+    it('can load state from a `HasMany` relationship using eager loaded data without additional queries', function (): void {
+        $user = User::factory()->create();
+        $posts = Post::factory()->count(3)->create(['author_id' => $user->id]);
 
-    $freshUser = $user->fresh();
-    expect($freshUser->relationLoaded('posts'))->toBeFalse();
+        $freshUser = $user->fresh();
+        expect($freshUser->relationLoaded('posts'))->toBeFalse();
 
-    DB::enableQueryLog();
-    DB::flushQueryLog();
+        DB::enableQueryLog();
+        DB::flushQueryLog();
 
-    livewire(TableSelectWithHasManyRelationship::class, ['record' => $freshUser])
-        ->assertSchemaStateSet(function (array $state) use ($posts) {
-            expect(collect($state['posts'])->sort()->values()->all())
-                ->toBe($posts->pluck('id')->map(fn ($id) => (string) $id)->sort()->values()->all());
+        livewire(TableSelectWithHasManyRelationship::class, ['record' => $freshUser])
+            ->assertSchemaStateSet(function (array $state) use ($posts) {
+                expect(collect($state['posts'])->sort()->values()->all())
+                    ->toBe($posts->pluck('id')->map(fn ($id) => (string) $id)->sort()->values()->all());
 
-            return [];
-        });
+                return [];
+            });
 
-    $queriesWithoutEagerLoading = count(DB::getQueryLog());
+        $queriesWithoutEagerLoading = count(DB::getQueryLog());
 
-    $eagerUser = $user->fresh();
-    $eagerUser->load('posts');
-    expect($eagerUser->relationLoaded('posts'))->toBeTrue();
+        $eagerUser = $user->fresh();
+        $eagerUser->load('posts');
+        expect($eagerUser->relationLoaded('posts'))->toBeTrue();
 
-    DB::flushQueryLog();
+        DB::flushQueryLog();
 
-    livewire(TableSelectWithHasManyRelationship::class, ['record' => $eagerUser])
-        ->assertSchemaStateSet(function (array $state) use ($posts) {
-            expect(collect($state['posts'])->sort()->values()->all())
-                ->toBe($posts->pluck('id')->map(fn ($id) => (string) $id)->sort()->values()->all());
+        livewire(TableSelectWithHasManyRelationship::class, ['record' => $eagerUser])
+            ->assertSchemaStateSet(function (array $state) use ($posts) {
+                expect(collect($state['posts'])->sort()->values()->all())
+                    ->toBe($posts->pluck('id')->map(fn ($id) => (string) $id)->sort()->values()->all());
 
-            return [];
-        });
+                return [];
+            });
 
-    $queriesWithEagerLoading = count(DB::getQueryLog());
-    DB::disableQueryLog();
+        $queriesWithEagerLoading = count(DB::getQueryLog());
+        DB::disableQueryLog();
 
-    $queriesSaved = $queriesWithoutEagerLoading - $queriesWithEagerLoading;
-    expect($queriesSaved)->toBe(1, "Expected to save 1 query with eager loading, but saved {$queriesSaved}");
-});
+        $queriesSaved = $queriesWithoutEagerLoading - $queriesWithEagerLoading;
+        expect($queriesSaved)->toBe(1, "Expected to save 1 query with eager loading, but saved {$queriesSaved}");
+    });
 
-it('can load state from a `BelongsToMany` relationship inside a Repeater using eager loaded data without additional queries', function (): void {
-    $undoRepeaterFake = Repeater::fake();
+    it('can load state from a `BelongsToMany` relationship inside a `Repeater` using eager loaded data without additional queries', function (): void {
+        $undoRepeaterFake = Repeater::fake();
 
-    $company = Company::factory()->create();
-    $teams = Team::factory()->count(2)->create(['company_id' => $company->id]);
-    $users = User::factory()->count(3)->create();
+        $company = Company::factory()->create();
+        $teams = Team::factory()->count(2)->create(['company_id' => $company->id]);
+        $users = User::factory()->count(3)->create();
 
-    foreach ($teams as $team) {
-        $team->users()->attach($users);
-    }
+        foreach ($teams as $team) {
+            $team->users()->attach($users);
+        }
 
-    DB::enableQueryLog();
-    DB::flushQueryLog();
+        DB::enableQueryLog();
+        DB::flushQueryLog();
 
-    livewire(RepeaterWithTableSelectBelongsToManyRelationship::class, ['record' => $company->fresh()])
-        ->assertSchemaStateSet(function (array $state) use ($users) {
-            expect($state['teams'])->toHaveCount(2);
-            foreach ($state['teams'] as $teamState) {
-                expect(collect($teamState['users'])->sort()->values()->all())
-                    ->toBe($users->pluck('id')->map(fn ($id) => (string) $id)->sort()->values()->all());
-            }
+        livewire(RepeaterWithTableSelectBelongsToManyRelationship::class, ['record' => $company->fresh()])
+            ->assertSchemaStateSet(function (array $state) use ($users) {
+                expect($state['teams'])->toHaveCount(2);
+                foreach ($state['teams'] as $teamState) {
+                    expect(collect($teamState['users'])->sort()->values()->all())
+                        ->toBe($users->pluck('id')->map(fn ($id) => (string) $id)->sort()->values()->all());
+                }
 
-            return [];
-        });
+                return [];
+            });
 
-    $queriesWithoutEagerLoading = count(DB::getQueryLog());
+        $queriesWithoutEagerLoading = count(DB::getQueryLog());
 
-    DB::flushQueryLog();
+        DB::flushQueryLog();
 
-    livewire(RepeaterWithTableSelectBelongsToManyRelationshipEagerLoaded::class, ['record' => $company->fresh()])
-        ->assertSchemaStateSet(function (array $state) use ($users) {
-            expect($state['teams'])->toHaveCount(2);
-            foreach ($state['teams'] as $teamState) {
-                expect(collect($teamState['users'])->sort()->values()->all())
-                    ->toBe($users->pluck('id')->map(fn ($id) => (string) $id)->sort()->values()->all());
-            }
+        livewire(RepeaterWithTableSelectBelongsToManyRelationshipEagerLoaded::class, ['record' => $company->fresh()])
+            ->assertSchemaStateSet(function (array $state) use ($users) {
+                expect($state['teams'])->toHaveCount(2);
+                foreach ($state['teams'] as $teamState) {
+                    expect(collect($teamState['users'])->sort()->values()->all())
+                        ->toBe($users->pluck('id')->map(fn ($id) => (string) $id)->sort()->values()->all());
+                }
 
-            return [];
-        });
+                return [];
+            });
 
-    $queriesWithEagerLoading = count(DB::getQueryLog());
-    DB::disableQueryLog();
+        $queriesWithEagerLoading = count(DB::getQueryLog());
+        DB::disableQueryLog();
 
-    $queriesSaved = $queriesWithoutEagerLoading - $queriesWithEagerLoading;
-    expect($queriesSaved)->toBe(1, "Expected to save 1 query with eager loading, but saved {$queriesSaved}");
+        $queriesSaved = $queriesWithoutEagerLoading - $queriesWithEagerLoading;
+        expect($queriesSaved)->toBe(1, "Expected to save 1 query with eager loading, but saved {$queriesSaved}");
 
-    $undoRepeaterFake();
+        $undoRepeaterFake();
+    });
+
 });
 
 describe('loading relationships', function (): void {
@@ -203,7 +206,6 @@ describe('loading relationships', function (): void {
 
         livewire(TableSelectWithBelongsToRelationship::class, ['record' => $user])
             ->assertFormComponentExists('team_id', function (TableSelect $component) use ($otherTeam): bool {
-                // Pre-fill the state, then call fillStateFromRelationship - it should not overwrite
                 $component->state((string) $otherTeam->id);
                 $component->fillStateFromRelationship();
 
@@ -298,7 +300,6 @@ describe('saving relationships', function (): void {
             ->assertFormComponentExists('team_id', function (TableSelect $component) use ($team): bool {
                 $component->saveStateToRelationship();
 
-                // associate() sets the foreign key on the in-memory model
                 expect($component->getRecord()->team_id)->toBe($team->id);
 
                 return true;
@@ -313,20 +314,17 @@ describe('saving relationships', function (): void {
 
         livewire(TableSelectWithBelongsToRelationship::class, ['record' => $user])
             ->assertFormComponentExists('team_id', function (TableSelect $component) use ($teamA, $teamB): bool {
-                // Mimic the post-create state where wasRecentlyCreated is true and the FK is already filled
                 $component->getRecord()->wasRecentlyCreated = true;
                 $component->getRecord()->team_id = $teamA->id;
 
                 $component->state((string) $teamB->id);
                 $component->saveStateToRelationship();
 
-                // Security guard kicks in: pre-existing FK is preserved on the in-memory model
                 expect($component->getRecord()->team_id)->toBe($teamA->id);
 
                 return true;
             });
 
-        // The persisted record is unchanged too
         expect($user->fresh()->team_id)->toBe($teamA->id);
     });
 
@@ -339,7 +337,6 @@ describe('saving relationships', function (): void {
             ->fillForm(['posts' => $orphanPosts->pluck('id')->map(fn ($id) => (string) $id)->all()])
             ->call('save');
 
-        // Existing post should be detached (author_id nulled) and orphan posts re-associated
         expect($existingPost->fresh()->author_id)->toBeNull();
         foreach ($orphanPosts as $post) {
             expect($post->fresh()->author_id)->toBe($user->id);
@@ -375,7 +372,6 @@ describe('saving relationships', function (): void {
                 return true;
             });
 
-        // Posts and their author_id are unchanged - the early return prevents any mutation
         foreach ($posts as $post) {
             expect($post->fresh()->author_id)->toBe($user->id);
         }
@@ -387,7 +383,6 @@ describe('saving relationships', function (): void {
         $team = Team::factory()->create(['company_id' => $companyA->id]);
         $user = User::factory()->create(['team_id' => $team->id]);
 
-        // Sanity check via znck/eloquent-belongs-to-through
         expect($user->company?->id)->toBe($companyA->id);
 
         livewire(TableSelectWithBelongsToThroughRelationship::class, ['record' => $user])

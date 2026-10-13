@@ -2,6 +2,7 @@
 
 namespace Filament\Schemas;
 
+use Closure;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Testing\TestsSchemas;
 use Filament\Support\Assets\AlpineComponent;
@@ -74,6 +75,14 @@ class SchemasServiceProvider extends PackageServiceProvider
             }
 
             abort_unless($component->isFileUploadForSchemaComponent($params[0] ?? ''), 403);
+        });
+
+        on('call', function (object $component, string $method, array $params): ?Closure {
+            if (($method !== '_uploadErrored') || ! method_exists($component, 'handleFileUploadValidationError')) {
+                return null;
+            }
+
+            return static fn () => $component->handleFileUploadValidationError($params['name'] ?? $params[0]);
         });
     }
 }

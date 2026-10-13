@@ -28,10 +28,6 @@ Action::make('delete')
     The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` closure.
 </Aside>
 
-<Aside variant="info">
-    Confirmation modals use the `alertdialog` ARIA role instead of `dialog`, so screen readers announce them as alerts and automatically read the modal's description when they open.
-</Aside>
-
 ## Controlling modal content
 
 ### Customizing the modal's heading, description, and submit action label
@@ -737,12 +733,12 @@ Action::make('second')
 ```
 
 <Aside variant="warning">
-    Reading an action's data must not have the side effects of submitting it, so the hooks that run before dehydration are skipped, as they are for the repeater's `getItemState()`. A newly uploaded file can therefore remain a `TemporaryUploadedFile` instead of becoming a stored path. `mutateDataUsing()` is not applied either, and the action's `beforeFormValidated()` and `afterFormValidated()` hooks do not run.
+    `getValidatedData()` validates the data without submitting the parent action. It skips `beforeStateDehydrated()` hooks, so a newly uploaded file can remain a `TemporaryUploadedFile` instead of a stored path. It also skips `mutateDataUsing()`, `beforeFormValidated()`, and `afterFormValidated()`.
 </Aside>
 
 ### Filling in the data of a parent action
 
-A nested action can write into the schema data of a mounted parent action, using `fillData()`. Only keys for fields in that action's schema are filled, and other keys are ignored. The data is hydrated by the action's schema, so nested state and dot-notation keys land where the action reads them, and the action validates it with its own rules when it is submitted:
+Use `fillData()` to update fields in a mounted parent action's schema. It accepts nested arrays or dot-notation keys, ignores keys that do not belong to schema fields, and leaves validation until the parent action is submitted:
 
 ```php
 use Filament\Actions\Action;

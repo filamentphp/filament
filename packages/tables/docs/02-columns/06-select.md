@@ -44,14 +44,6 @@ SelectColumn::make('status')
 
 <AutoScreenshot name="tables/columns/select/javascript" alt="Table with JavaScript select column" version="6.x" />
 
-### Using the keyboard
-
-You can open the JavaScript select using `Enter`, `Space`, or an arrow key. Use `ArrowUp` and `ArrowDown` to highlight an enabled option, then `Enter` to select and save it. Highlighting an option does not save a change.
-
-When search is disabled, you can also use `Home` and `End` to highlight the first and last enabled options, type an option's initial characters to highlight it, or use `Space` to select it. When search is enabled, focus stays in the search input while you navigate options, and text-editing keys retain their usual behavior.
-
-Press `Escape` to close the options and return to the select button. `Tab` and `Shift+Tab` follow the normal tab order and close the options without selecting the highlighted option.
-
 ## Searching options
 
 You may enable a search input to allow easier access to many options, using the `searchableOptions()` method:
@@ -479,4 +471,6 @@ SelectColumn::make()
 
 ### Authorization
 
-The select column does not automatically check Laravel Model Policies before saving changes. When a user updates a value via the select column, Filament checks whether the column is `disabled()` but does not run any `update` policy gate check. This means that if a user can see a record in the table and the column is not disabled, they can update that column's value regardless of any `update` policy you have defined. If you need to restrict who can edit this column, you should use the `disabled()` method to conditionally prevent editing based on your own authorization logic, for example `disabled(fn ($record) => $record->user_id !== auth()->id())`. Alternatively, consider using a full edit page or modal action where Filament's resource authorization is enforced.
+Select columns do not automatically check model policies. Without an authorization check, users can update the column for records accessible through the table query, even if the record's `update()` policy denies access to its edit page. Use `disabled()` with your authorization logic, for example `disabled(fn ($record) => $record->user_id !== auth()->id())`. Filament checks this condition on the server before saving.
+
+Check permission for the specific attribute being changed. If the column updates a related model or pivot, authorize that operation too. Alternatively, use a resource edit page or a policy-backed `EditAction` to apply the resource's edit authorization.

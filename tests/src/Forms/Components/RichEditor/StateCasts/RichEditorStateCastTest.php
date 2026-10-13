@@ -81,7 +81,7 @@ describe('`set()`', function (): void {
         expect($foundText)->toBe('From Htmlable');
     });
 
-    it('resolves image `src` from `data-id` using the editor\'s `getFileAttachmentUrl` callback', function (): void {
+    it('resolves image `src` from `data-id` using the editor\'s `getFileAttachmentUrlUsing()` callback', function (): void {
         $editor = makeStateCastEditor();
 
         $editor->getFileAttachmentUrlUsing(static function (string $file): string {
@@ -103,7 +103,7 @@ describe('`set()`', function (): void {
         expect($srcs['uploads/avatar.jpg'] ?? null)->toBe('https://cdn.test/uploads/avatar.jpg');
     });
 
-    it('falls back to `getFileAttachmentUrlFromAnotherRecord` when the primary resolver returns `null`', function (): void {
+    it('falls back to `getFileAttachmentUrlFromAnotherRecord()` when the primary resolver returns `null`', function (): void {
         $editor = makeStateCastEditor();
 
         $editor->getFileAttachmentUrlUsing(static fn (): ?string => null);
@@ -541,7 +541,6 @@ describe('`get()`', function (): void {
 
         $cast = new RichEditorStateCast($editor);
 
-        // Create a custom block node without label/preview attrs
         $document = [
             'type' => 'doc',
             'content' => [
@@ -577,7 +576,6 @@ describe('`get()`', function (): void {
 
         $cast = new RichEditorStateCast($editor);
 
-        // Create a custom block node without shouldApplyProseStylingToPreview attr
         $document = [
             'type' => 'doc',
             'content' => [

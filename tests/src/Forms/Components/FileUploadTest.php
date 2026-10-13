@@ -20,7 +20,6 @@ use InvalidArgumentException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\MimeTypeDetection\ExtensionMimeTypeDetector;
-use Livewire\Exceptions\RootTagMissingFromViewException;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 use function Filament\Tests\livewire;
@@ -32,24 +31,20 @@ beforeEach(function (): void {
 });
 
 describe('file conversion', function (): void {
-    it('should convert `UploadedFile` objects to `TemporaryUploadedFile`', function (): void {
-        try {
-            livewire(TestComponentWithFileUpload::class)
-                ->fillForm([
-                    'single-file' => UploadedFile::fake()->image('single-file.jpg'),
-                    'multiple-files' => [
-                        UploadedFile::fake()->image('multiple-file1.jpg'),
-                        UploadedFile::fake()->image('multiple-file2.jpg'),
-                    ],
-                ])
-                ->assertSchemaStateSet(function (array $data): void {
-                    expect($data['single-file'][0])->toBeInstanceOf(TemporaryUploadedFile::class)
-                        ->and($data['multiple-files'][0])->toBeInstanceOf(TemporaryUploadedFile::class)
-                        ->and($data['multiple-files'][1])->toBeInstanceOf(TemporaryUploadedFile::class);
-                });
-        } catch (RootTagMissingFromViewException $exception) {
-            // Flaky test
-        }
+    it('converts `UploadedFile` objects to `TemporaryUploadedFile`', function (): void {
+        livewire(TestComponentWithFileUpload::class)
+            ->fillForm([
+                'single-file' => UploadedFile::fake()->image('single-file.jpg'),
+                'multiple-files' => [
+                    UploadedFile::fake()->image('multiple-file1.jpg'),
+                    UploadedFile::fake()->image('multiple-file2.jpg'),
+                ],
+            ])
+            ->assertSchemaStateSet(function (array $data): void {
+                expect($data['single-file'][0])->toBeInstanceOf(TemporaryUploadedFile::class)
+                    ->and($data['multiple-files'][0])->toBeInstanceOf(TemporaryUploadedFile::class)
+                    ->and($data['multiple-files'][1])->toBeInstanceOf(TemporaryUploadedFile::class);
+            });
     });
 });
 
@@ -773,1173 +768,1178 @@ class TestComponentWithNestedMinSizeFileUpload extends Livewire
     }
 }
 
-it('can set `avatar()` mode', function (): void {
-    $upload = FileUpload::make('photo');
+describe('configuration', function (): void {
+    describe('presentation and image editing', function (): void {
+        it('can set `avatar()` mode', function (): void {
+            $upload = FileUpload::make('photo');
 
-    expect($upload->isAvatar())->toBeFalse();
+            expect($upload->isAvatar())->toBeFalse();
 
-    $upload->avatar();
+            $upload->avatar();
 
-    expect($upload->isAvatar())->toBeTrue();
-});
+            expect($upload->isAvatar())->toBeTrue();
+        });
 
-it('can set `panelLayout()`', function (): void {
-    $upload = FileUpload::make('file');
+        it('can set `panelLayout()`', function (): void {
+            $upload = FileUpload::make('file');
 
-    expect($upload->getPanelLayout())->toBe('compact');
+            expect($upload->getPanelLayout())->toBe('compact');
 
-    $upload->panelLayout('grid');
+            $upload->panelLayout('grid');
 
-    expect($upload->getPanelLayout())->toBe('grid');
-});
+            expect($upload->getPanelLayout())->toBe('grid');
+        });
 
-it('can set `panelAspectRatio()`', function (): void {
-    $upload = FileUpload::make('file');
+        it('can set `panelAspectRatio()`', function (): void {
+            $upload = FileUpload::make('file');
 
-    expect($upload->getPanelAspectRatio())->toBeNull();
+            expect($upload->getPanelAspectRatio())->toBeNull();
 
-    $upload->panelAspectRatio('16:9');
+            $upload->panelAspectRatio('16:9');
 
-    expect($upload->getPanelAspectRatio())->toBe('16:9');
-});
+            expect($upload->getPanelAspectRatio())->toBe('16:9');
+        });
 
-it('can set `imageEditor()`', function (): void {
-    $upload = FileUpload::make('photo');
+        it('can set `imageEditor()`', function (): void {
+            $upload = FileUpload::make('photo');
 
-    expect($upload->hasImageEditor())->toBeFalse();
+            expect($upload->hasImageEditor())->toBeFalse();
 
-    $upload->imageEditor();
+            $upload->imageEditor();
 
-    expect($upload->hasImageEditor())->toBeTrue();
-});
+            expect($upload->hasImageEditor())->toBeTrue();
+        });
 
-it('can set `circleCropper()`', function (): void {
-    $upload = FileUpload::make('photo');
+        it('can set `circleCropper()`', function (): void {
+            $upload = FileUpload::make('photo');
 
-    expect($upload->hasCircleCropper())->toBeFalse();
+            expect($upload->hasCircleCropper())->toBeFalse();
 
-    $upload->circleCropper();
+            $upload->circleCropper();
 
-    expect($upload->hasCircleCropper())->toBeTrue();
-});
+            expect($upload->hasCircleCropper())->toBeTrue();
+        });
 
-it('can set `appendFiles()`', function (): void {
-    $upload = FileUpload::make('files');
+        it('can set `appendFiles()`', function (): void {
+            $upload = FileUpload::make('files');
 
-    expect($upload->shouldAppendFiles())->toBeFalse();
+            expect($upload->shouldAppendFiles())->toBeFalse();
 
-    $upload->appendFiles();
+            $upload->appendFiles();
 
-    expect($upload->shouldAppendFiles())->toBeTrue();
-});
+            expect($upload->shouldAppendFiles())->toBeTrue();
+        });
 
-it('can set `orientImagesFromExif()`', function (): void {
-    $upload = FileUpload::make('photo');
+        it('can set `orientImagesFromExif()`', function (): void {
+            $upload = FileUpload::make('photo');
 
-    expect($upload->shouldOrientImagesFromExif())->toBeTrue();
+            expect($upload->shouldOrientImagesFromExif())->toBeTrue();
 
-    $upload->orientImagesFromExif(false);
+            $upload->orientImagesFromExif(false);
 
-    expect($upload->shouldOrientImagesFromExif())->toBeFalse();
-});
+            expect($upload->shouldOrientImagesFromExif())->toBeFalse();
+        });
 
-it('can set `imagePreviewHeight()`', function (): void {
-    $upload = FileUpload::make('photo');
+        it('can set `imagePreviewHeight()`', function (): void {
+            $upload = FileUpload::make('photo');
 
-    expect($upload->getImagePreviewHeight())->toBeNull();
+            expect($upload->getImagePreviewHeight())->toBeNull();
 
-    $upload->imagePreviewHeight('200');
+            $upload->imagePreviewHeight('200');
 
-    expect($upload->getImagePreviewHeight())->toBe('200');
-});
+            expect($upload->getImagePreviewHeight())->toBe('200');
+        });
 
-it('can set `imageEditorMode()`', function (): void {
-    $upload = FileUpload::make('photo');
+        it('can set `imageEditorMode()`', function (): void {
+            $upload = FileUpload::make('photo');
 
-    expect($upload->getImageEditorMode())->toBe(1);
+            expect($upload->getImageEditorMode())->toBe(1);
 
-    $upload->imageEditorMode(2);
+            $upload->imageEditorMode(2);
 
-    expect($upload->getImageEditorMode())->toBe(2);
-});
+            expect($upload->getImageEditorMode())->toBe(2);
+        });
 
-it('can set `imageEditorEmptyFillColor()`', function (): void {
-    $upload = FileUpload::make('photo');
+        it('can set `imageEditorEmptyFillColor()`', function (): void {
+            $upload = FileUpload::make('photo');
 
-    expect($upload->getImageEditorEmptyFillColor())->toBeNull();
+            expect($upload->getImageEditorEmptyFillColor())->toBeNull();
 
-    $upload->imageEditorEmptyFillColor('#ffffff');
+            $upload->imageEditorEmptyFillColor('#ffffff');
 
-    expect($upload->getImageEditorEmptyFillColor())->toBe('#ffffff');
-});
+            expect($upload->getImageEditorEmptyFillColor())->toBe('#ffffff');
+        });
 
-it('can set `imageCropAspectRatio()`', function (): void {
-    $upload = FileUpload::make('photo');
+        it('can set `imageCropAspectRatio()`', function (): void {
+            $upload = FileUpload::make('photo');
 
-    expect($upload->getImageCropAspectRatio())->toBeNull();
+            expect($upload->getImageCropAspectRatio())->toBeNull();
 
-    $upload->imageCropAspectRatio('16:9');
+            $upload->imageCropAspectRatio('16:9');
 
-    expect($upload->getImageCropAspectRatio())->toBe('16:9');
-});
+            expect($upload->getImageCropAspectRatio())->toBe('16:9');
+        });
 
-it('can set `automaticallyCropImagesToAspectRatio()`', function (): void {
-    $upload = FileUpload::make('photo');
+        it('can set `automaticallyCropImagesToAspectRatio()`', function (): void {
+            $upload = FileUpload::make('photo');
 
-    expect($upload->shouldAutomaticallyCropImagesToAspectRatio())->toBeFalse();
+            expect($upload->shouldAutomaticallyCropImagesToAspectRatio())->toBeFalse();
 
-    $upload->automaticallyCropImagesToAspectRatio();
+            $upload->automaticallyCropImagesToAspectRatio();
 
-    expect($upload->shouldAutomaticallyCropImagesToAspectRatio())->toBeTrue();
-});
+            expect($upload->shouldAutomaticallyCropImagesToAspectRatio())->toBeTrue();
+        });
 
-it('can set `automaticallyResizeImagesMode()`', function (): void {
-    $upload = FileUpload::make('photo');
+        it('can set `automaticallyResizeImagesMode()`', function (): void {
+            $upload = FileUpload::make('photo');
 
-    expect($upload->getAutomaticallyResizeImagesMode())->toBeNull();
+            expect($upload->getAutomaticallyResizeImagesMode())->toBeNull();
 
-    $upload->automaticallyResizeImagesMode('cover');
+            $upload->automaticallyResizeImagesMode('cover');
 
-    expect($upload->getAutomaticallyResizeImagesMode())->toBe('cover');
-});
+            expect($upload->getAutomaticallyResizeImagesMode())->toBe('cover');
+        });
 
-it('can set `automaticallyResizeImagesToHeight()`', function (): void {
-    $upload = FileUpload::make('photo');
+        it('can set `automaticallyResizeImagesToHeight()`', function (): void {
+            $upload = FileUpload::make('photo');
 
-    expect($upload->getAutomaticallyResizeImagesHeight())->toBeNull();
+            expect($upload->getAutomaticallyResizeImagesHeight())->toBeNull();
 
-    $upload->automaticallyResizeImagesToHeight('600');
+            $upload->automaticallyResizeImagesToHeight('600');
 
-    expect($upload->getAutomaticallyResizeImagesHeight())->toBe('600');
-});
+            expect($upload->getAutomaticallyResizeImagesHeight())->toBe('600');
+        });
 
-it('can set `automaticallyResizeImagesToWidth()`', function (): void {
-    $upload = FileUpload::make('photo');
+        it('can set `automaticallyResizeImagesToWidth()`', function (): void {
+            $upload = FileUpload::make('photo');
 
-    expect($upload->getAutomaticallyResizeImagesWidth())->toBeNull();
+            expect($upload->getAutomaticallyResizeImagesWidth())->toBeNull();
 
-    $upload->automaticallyResizeImagesToWidth('800');
+            $upload->automaticallyResizeImagesToWidth('800');
 
-    expect($upload->getAutomaticallyResizeImagesWidth())->toBe('800');
-});
+            expect($upload->getAutomaticallyResizeImagesWidth())->toBe('800');
+        });
 
-it('defaults `shouldAutomaticallyUpscaleImagesWhenResizing()` to `true`', function (): void {
-    $upload = FileUpload::make('photo');
+        it('defaults `shouldAutomaticallyUpscaleImagesWhenResizing()` to `true`', function (): void {
+            $upload = FileUpload::make('photo');
 
-    expect($upload->shouldAutomaticallyUpscaleImagesWhenResizing())->toBeTrue();
+            expect($upload->shouldAutomaticallyUpscaleImagesWhenResizing())->toBeTrue();
 
-    $upload->automaticallyUpscaleImagesWhenResizing(false);
+            $upload->automaticallyUpscaleImagesWhenResizing(false);
 
-    expect($upload->shouldAutomaticallyUpscaleImagesWhenResizing())->toBeFalse();
-});
+            expect($upload->shouldAutomaticallyUpscaleImagesWhenResizing())->toBeFalse();
+        });
 
-it('can disable `editableSvgs()`', function (): void {
-    $upload = FileUpload::make('icon');
+        it('can disable `editableSvgs()`', function (): void {
+            $upload = FileUpload::make('icon');
 
-    expect($upload->canEditSvgs())->toBeTrue();
+            expect($upload->canEditSvgs())->toBeTrue();
 
-    $upload->editableSvgs(false);
+            $upload->editableSvgs(false);
 
-    expect($upload->canEditSvgs())->toBeFalse();
-});
+            expect($upload->canEditSvgs())->toBeFalse();
+        });
 
-it('can set `confirmSvgEditing()`', function (): void {
-    $upload = FileUpload::make('icon');
+        it('can set `confirmSvgEditing()`', function (): void {
+            $upload = FileUpload::make('icon');
 
-    expect($upload->isSvgEditingConfirmed())->toBeFalse();
+            expect($upload->isSvgEditingConfirmed())->toBeFalse();
 
-    $upload->confirmSvgEditing();
+            $upload->confirmSvgEditing();
 
-    expect($upload->isSvgEditingConfirmed())->toBeTrue();
-});
+            expect($upload->isSvgEditingConfirmed())->toBeTrue();
+        });
 
-it('can set `imageEditorViewportWidth()` and `imageEditorViewportHeight()`', function (): void {
-    $upload = FileUpload::make('photo');
+        it('can set `imageEditorViewportWidth()` and `imageEditorViewportHeight()`', function (): void {
+            $upload = FileUpload::make('photo');
 
-    expect($upload->getImageEditorViewportWidth())->toBeNull();
-    expect($upload->getImageEditorViewportHeight())->toBeNull();
+            expect($upload->getImageEditorViewportWidth())->toBeNull();
+            expect($upload->getImageEditorViewportHeight())->toBeNull();
 
-    $upload->imageEditorViewportWidth(1920)->imageEditorViewportHeight(1080);
+            $upload->imageEditorViewportWidth(1920)->imageEditorViewportHeight(1080);
 
-    expect($upload->getImageEditorViewportWidth())->toBe(1920);
-    expect($upload->getImageEditorViewportHeight())->toBe(1080);
-});
+            expect($upload->getImageEditorViewportWidth())->toBe(1920);
+            expect($upload->getImageEditorViewportHeight())->toBe(1080);
+        });
 
-it('can set `mimeTypeMap()`', function (): void {
-    $upload = FileUpload::make('file');
+        it('can set `mimeTypeMap()`', function (): void {
+            $upload = FileUpload::make('file');
 
-    expect($upload->getMimeTypeMap())->toBe([]);
+            expect($upload->getMimeTypeMap())->toBe([]);
 
-    $upload->mimeTypeMap(['jpg' => 'image/jpeg', 'png' => 'image/png']);
+            $upload->mimeTypeMap(['jpg' => 'image/jpeg', 'png' => 'image/png']);
 
-    expect($upload->getMimeTypeMap())->toBe(['jpg' => 'image/jpeg', 'png' => 'image/png']);
-});
+            expect($upload->getMimeTypeMap())->toBe(['jpg' => 'image/jpeg', 'png' => 'image/png']);
+        });
 
-it('can set position properties', function (): void {
-    $upload = FileUpload::make('file');
+        it('can set position properties', function (): void {
+            $upload = FileUpload::make('file');
 
-    expect($upload->getLoadingIndicatorPosition())->toBe('right');
-    expect($upload->getRemoveUploadedFileButtonPosition())->toBe('left');
-    expect($upload->getUploadButtonPosition())->toBe('right');
-    expect($upload->getUploadProgressIndicatorPosition())->toBe('right');
+            expect($upload->getLoadingIndicatorPosition())->toBe('right');
+            expect($upload->getRemoveUploadedFileButtonPosition())->toBe('left');
+            expect($upload->getUploadButtonPosition())->toBe('right');
+            expect($upload->getUploadProgressIndicatorPosition())->toBe('right');
 
-    $upload
-        ->loadingIndicatorPosition('left')
-        ->removeUploadedFileButtonPosition('right')
-        ->uploadButtonPosition('left')
-        ->uploadProgressIndicatorPosition('left');
+            $upload
+                ->loadingIndicatorPosition('left')
+                ->removeUploadedFileButtonPosition('right')
+                ->uploadButtonPosition('left')
+                ->uploadProgressIndicatorPosition('left');
 
-    expect($upload->getLoadingIndicatorPosition())->toBe('left');
-    expect($upload->getRemoveUploadedFileButtonPosition())->toBe('right');
-    expect($upload->getUploadButtonPosition())->toBe('left');
-    expect($upload->getUploadProgressIndicatorPosition())->toBe('left');
-});
+            expect($upload->getLoadingIndicatorPosition())->toBe('left');
+            expect($upload->getRemoveUploadedFileButtonPosition())->toBe('right');
+            expect($upload->getUploadButtonPosition())->toBe('left');
+            expect($upload->getUploadProgressIndicatorPosition())->toBe('left');
+        });
 
-it('can set `imageEditor()` with a `Closure`', function (): void {
-    $upload = FileUpload::make('photo')
-        ->imageEditor(static fn (): bool => true);
+        it('can set `imageEditor()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageEditor(static fn (): bool => true);
 
-    expect($upload->hasImageEditor())->toBeTrue();
-});
+            expect($upload->hasImageEditor())->toBeTrue();
+        });
 
-it('can set `circleCropper()` with a `Closure`', function (): void {
-    $upload = FileUpload::make('photo')
-        ->circleCropper(static fn (): bool => true);
+        it('can set `circleCropper()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('photo')
+                ->circleCropper(static fn (): bool => true);
 
-    expect($upload->hasCircleCropper())->toBeTrue();
-});
+            expect($upload->hasCircleCropper())->toBeTrue();
+        });
 
-describe('boolean properties', function (): void {
-    it('defaults `isDeletable()` to `true`', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->isDeletable())->toBeTrue();
     });
 
-    it('can set `deletable()` to `false`', function (): void {
-        $upload = FileUpload::make('file')->deletable(false);
-        expect($upload->isDeletable())->toBeFalse();
-    });
+    describe('boolean properties', function (): void {
+        it('defaults `isDeletable()` to `true`', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->isDeletable())->toBeTrue();
+        });
 
-    it('can set `deletable()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->deletable(static fn (): bool => false);
-        expect($upload->isDeletable())->toBeFalse();
-    });
+        it('can set `deletable()` to `false`', function (): void {
+            $upload = FileUpload::make('file')->deletable(false);
+            expect($upload->isDeletable())->toBeFalse();
+        });
 
-    it('defaults `isDownloadable()` to `false`', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->isDownloadable())->toBeFalse();
-    });
+        it('can set `deletable()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->deletable(static fn (): bool => false);
+            expect($upload->isDeletable())->toBeFalse();
+        });
 
-    it('can set `downloadable()`', function (): void {
-        $upload = FileUpload::make('file')->downloadable();
-        expect($upload->isDownloadable())->toBeTrue();
-    });
+        it('defaults `isDownloadable()` to `false`', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->isDownloadable())->toBeFalse();
+        });
 
-    it('can set `downloadable()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->downloadable(static fn (): bool => true);
-        expect($upload->isDownloadable())->toBeTrue();
-    });
+        it('can set `downloadable()`', function (): void {
+            $upload = FileUpload::make('file')->downloadable();
+            expect($upload->isDownloadable())->toBeTrue();
+        });
 
-    it('defaults `isOpenable()` to `false`', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->isOpenable())->toBeFalse();
-    });
+        it('can set `downloadable()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->downloadable(static fn (): bool => true);
+            expect($upload->isDownloadable())->toBeTrue();
+        });
 
-    it('can set `openable()`', function (): void {
-        $upload = FileUpload::make('file')->openable();
-        expect($upload->isOpenable())->toBeTrue();
-    });
+        it('defaults `isOpenable()` to `false`', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->isOpenable())->toBeFalse();
+        });
 
-    it('can set `openable()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->openable(static fn (): bool => true);
-        expect($upload->isOpenable())->toBeTrue();
-    });
+        it('can set `openable()`', function (): void {
+            $upload = FileUpload::make('file')->openable();
+            expect($upload->isOpenable())->toBeTrue();
+        });
 
-    it('defaults `isPasteable()` to `true`', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->isPasteable())->toBeTrue();
-    });
+        it('can set `openable()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->openable(static fn (): bool => true);
+            expect($upload->isOpenable())->toBeTrue();
+        });
 
-    it('can set `pasteable()` to `false`', function (): void {
-        $upload = FileUpload::make('file')->pasteable(false);
-        expect($upload->isPasteable())->toBeFalse();
-    });
+        it('defaults `isPasteable()` to `true`', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->isPasteable())->toBeTrue();
+        });
 
-    it('can set `pasteable()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->pasteable(static fn (): bool => false);
-        expect($upload->isPasteable())->toBeFalse();
-    });
+        it('can set `pasteable()` to `false`', function (): void {
+            $upload = FileUpload::make('file')->pasteable(false);
+            expect($upload->isPasteable())->toBeFalse();
+        });
 
-    it('defaults `isPreviewable()` to `true`', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->isPreviewable())->toBeTrue();
-    });
+        it('can set `pasteable()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->pasteable(static fn (): bool => false);
+            expect($upload->isPasteable())->toBeFalse();
+        });
 
-    it('can set `previewable()` to `false`', function (): void {
-        $upload = FileUpload::make('file')->previewable(false);
-        expect($upload->isPreviewable())->toBeFalse();
-    });
+        it('defaults `isPreviewable()` to `true`', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->isPreviewable())->toBeTrue();
+        });
 
-    it('can set `previewable()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->previewable(static fn (): bool => false);
-        expect($upload->isPreviewable())->toBeFalse();
-    });
+        it('can set `previewable()` to `false`', function (): void {
+            $upload = FileUpload::make('file')->previewable(false);
+            expect($upload->isPreviewable())->toBeFalse();
+        });
 
-    it('defaults `isReorderable()` to `false`', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->isReorderable())->toBeFalse();
-    });
+        it('can set `previewable()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->previewable(static fn (): bool => false);
+            expect($upload->isPreviewable())->toBeFalse();
+        });
 
-    it('can set `reorderable()`', function (): void {
-        $upload = FileUpload::make('file')->reorderable();
-        expect($upload->isReorderable())->toBeTrue();
-    });
+        it('defaults `isReorderable()` to `false`', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->isReorderable())->toBeFalse();
+        });
 
-    it('can set `reorderable()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->reorderable(static fn (): bool => true);
-        expect($upload->isReorderable())->toBeTrue();
-    });
+        it('can set `reorderable()`', function (): void {
+            $upload = FileUpload::make('file')->reorderable();
+            expect($upload->isReorderable())->toBeTrue();
+        });
 
-    it('defaults `isMultiple()` to `false`', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->isMultiple())->toBeFalse();
-    });
+        it('can set `reorderable()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->reorderable(static fn (): bool => true);
+            expect($upload->isReorderable())->toBeTrue();
+        });
 
-    it('can set `multiple()`', function (): void {
-        $upload = FileUpload::make('file')->multiple();
-        expect($upload->isMultiple())->toBeTrue();
-    });
+        it('defaults `isMultiple()` to `false`', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->isMultiple())->toBeFalse();
+        });
 
-    it('can set `multiple()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->multiple(static fn (): bool => true);
-        expect($upload->isMultiple())->toBeTrue();
-    });
+        it('can set `multiple()`', function (): void {
+            $upload = FileUpload::make('file')->multiple();
+            expect($upload->isMultiple())->toBeTrue();
+        });
 
-    it('defaults `shouldPreserveFilenames()` to `false`', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->shouldPreserveFilenames())->toBeFalse();
-    });
+        it('can set `multiple()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->multiple(static fn (): bool => true);
+            expect($upload->isMultiple())->toBeTrue();
+        });
 
-    it('can set `preserveFilenames()`', function (): void {
-        $upload = FileUpload::make('file')->preserveFilenames();
-        expect($upload->shouldPreserveFilenames())->toBeTrue();
-    });
+        it('defaults `shouldPreserveFilenames()` to `false`', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->shouldPreserveFilenames())->toBeFalse();
+        });
 
-    it('can set `preserveFilenames()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->preserveFilenames(static fn (): bool => true);
-        expect($upload->shouldPreserveFilenames())->toBeTrue();
-    });
+        it('can set `preserveFilenames()`', function (): void {
+            $upload = FileUpload::make('file')->preserveFilenames();
+            expect($upload->shouldPreserveFilenames())->toBeTrue();
+        });
 
-    it('defaults `shouldMoveFiles()` to `false`', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->shouldMoveFiles())->toBeFalse();
-    });
+        it('can set `preserveFilenames()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->preserveFilenames(static fn (): bool => true);
+            expect($upload->shouldPreserveFilenames())->toBeTrue();
+        });
 
-    it('can set `moveFiles()`', function (): void {
-        $upload = FileUpload::make('file')->moveFiles();
-        expect($upload->shouldMoveFiles())->toBeTrue();
-    });
+        it('defaults `shouldMoveFiles()` to `false`', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->shouldMoveFiles())->toBeFalse();
+        });
 
-    it('can set `moveFiles()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->moveFiles(static fn (): bool => true);
-        expect($upload->shouldMoveFiles())->toBeTrue();
-    });
+        it('can set `moveFiles()`', function (): void {
+            $upload = FileUpload::make('file')->moveFiles();
+            expect($upload->shouldMoveFiles())->toBeTrue();
+        });
 
-    it('defaults `shouldStoreFiles()` to `true`', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->shouldStoreFiles())->toBeTrue();
-    });
+        it('can set `moveFiles()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->moveFiles(static fn (): bool => true);
+            expect($upload->shouldMoveFiles())->toBeTrue();
+        });
 
-    it('can set `storeFiles()` to `false`', function (): void {
-        $upload = FileUpload::make('file')->storeFiles(false);
-        expect($upload->shouldStoreFiles())->toBeFalse();
-    });
+        it('defaults `shouldStoreFiles()` to `true`', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->shouldStoreFiles())->toBeTrue();
+        });
 
-    it('can set `storeFiles()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->storeFiles(static fn (): bool => false);
-        expect($upload->shouldStoreFiles())->toBeFalse();
-    });
+        it('can set `storeFiles()` to `false`', function (): void {
+            $upload = FileUpload::make('file')->storeFiles(false);
+            expect($upload->shouldStoreFiles())->toBeFalse();
+        });
 
-    it('defaults `shouldFetchFileInformation()` to `true`', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->shouldFetchFileInformation())->toBeTrue();
-    });
+        it('can set `storeFiles()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->storeFiles(static fn (): bool => false);
+            expect($upload->shouldStoreFiles())->toBeFalse();
+        });
 
-    it('can set `fetchFileInformation()` to `false`', function (): void {
-        $upload = FileUpload::make('file')->fetchFileInformation(false);
-        expect($upload->shouldFetchFileInformation())->toBeFalse();
-    });
+        it('defaults `shouldFetchFileInformation()` to `true`', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->shouldFetchFileInformation())->toBeTrue();
+        });
 
-    it('can set `fetchFileInformation()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->fetchFileInformation(static fn (): bool => false);
-        expect($upload->shouldFetchFileInformation())->toBeFalse();
+        it('can set `fetchFileInformation()` to `false`', function (): void {
+            $upload = FileUpload::make('file')->fetchFileInformation(false);
+            expect($upload->shouldFetchFileInformation())->toBeFalse();
+        });
+
+        it('can set `fetchFileInformation()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->fetchFileInformation(static fn (): bool => false);
+            expect($upload->shouldFetchFileInformation())->toBeFalse();
+        });
     });
-});
 
-describe('file constraints', function (): void {
-    it('can set `acceptedFileTypes()`', function (): void {
-        $upload = FileUpload::make('file')
-            ->acceptedFileTypes(['image/jpeg', 'image/png']);
+    describe('file constraints', function (): void {
+        it('returns `null` for `getAcceptedFileTypes()` by default', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->getAcceptedFileTypes())->toBeNull();
+        });
 
-        expect($upload->getAcceptedFileTypes())->toBe(['image/jpeg', 'image/png']);
-    });
+        it('can set `acceptedFileTypes()`', function (): void {
+            $upload = FileUpload::make('file')
+                ->acceptedFileTypes(['image/jpeg', 'image/png']);
 
-    it('returns `null` for `getAcceptedFileTypes()` by default', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->getAcceptedFileTypes())->toBeNull();
-    });
+            expect($upload->getAcceptedFileTypes())->toBe(['image/jpeg', 'image/png']);
+        });
 
-    it('can set `acceptedFileTypes()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->acceptedFileTypes(static fn (): array => ['application/pdf']);
+        it('can set `acceptedFileTypes()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->acceptedFileTypes(static fn (): array => ['application/pdf']);
 
-        expect($upload->getAcceptedFileTypes())->toBe(['application/pdf']);
-    });
+            expect($upload->getAcceptedFileTypes())->toBe(['application/pdf']);
+        });
 
-    it('can set `directory()`', function (): void {
-        $upload = FileUpload::make('file')->directory('uploads/photos');
-        expect($upload->getDirectory())->toBe('uploads/photos');
-    });
+        it('returns `null` for `getDirectory()` by default', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->getDirectory())->toBeNull();
+        });
 
-    it('returns `null` for `getDirectory()` by default', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->getDirectory())->toBeNull();
-    });
+        it('can set `directory()`', function (): void {
+            $upload = FileUpload::make('file')->directory('uploads/photos');
+            expect($upload->getDirectory())->toBe('uploads/photos');
+        });
 
-    it('can set `directory()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->directory(static fn (): string => 'dynamic/path');
+        it('can set `directory()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->directory(static fn (): string => 'dynamic/path');
 
-        expect($upload->getDirectory())->toBe('dynamic/path');
-    });
+            expect($upload->getDirectory())->toBe('dynamic/path');
+        });
 
-    it('can set `maxFiles()`', function (): void {
-        $upload = FileUpload::make('file')->maxFiles(5);
-        expect($upload->getMaxFiles())->toBe(5);
-    });
+        it('returns `null` for `getMaxFiles()` by default', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->getMaxFiles())->toBeNull();
+        });
 
-    it('returns `null` for `getMaxFiles()` by default', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->getMaxFiles())->toBeNull();
-    });
+        it('can set `maxFiles()`', function (): void {
+            $upload = FileUpload::make('file')->maxFiles(5);
+            expect($upload->getMaxFiles())->toBe(5);
+        });
 
-    it('can set `maxFiles()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->maxFiles(static fn (): int => 10);
+        it('can set `maxFiles()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->maxFiles(static fn (): int => 10);
 
-        expect($upload->getMaxFiles())->toBe(10);
-    });
+            expect($upload->getMaxFiles())->toBe(10);
+        });
 
-    it('can set `minFiles()`', function (): void {
-        $upload = FileUpload::make('file')->minFiles(2);
-        expect($upload->getMinFiles())->toBe(2);
-    });
+        it('returns `null` for `getMinFiles()` by default', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->getMinFiles())->toBeNull();
+        });
 
-    it('returns `null` for `getMinFiles()` by default', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->getMinFiles())->toBeNull();
-    });
+        it('can set `minFiles()`', function (): void {
+            $upload = FileUpload::make('file')->minFiles(2);
+            expect($upload->getMinFiles())->toBe(2);
+        });
 
-    it('can set `minFiles()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->minFiles(static fn (): int => 3);
+        it('can set `minFiles()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->minFiles(static fn (): int => 3);
 
-        expect($upload->getMinFiles())->toBe(3);
-    });
+            expect($upload->getMinFiles())->toBe(3);
+        });
 
-    it('can set `maxSize()`', function (): void {
-        $upload = FileUpload::make('file')->maxSize(1024);
-        expect($upload->getMaxSize())->toBe(1024);
-    });
+        it('returns `null` for `getMaxSize()` by default', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->getMaxSize())->toBeNull();
+        });
 
-    it('returns `null` for `getMaxSize()` by default', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->getMaxSize())->toBeNull();
-    });
+        it('can set `maxSize()`', function (): void {
+            $upload = FileUpload::make('file')->maxSize(1024);
+            expect($upload->getMaxSize())->toBe(1024);
+        });
 
-    it('can set `maxSize()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->maxSize(static fn (): int => 2048);
+        it('can set `maxSize()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->maxSize(static fn (): int => 2048);
 
-        expect($upload->getMaxSize())->toBe(2048);
-    });
+            expect($upload->getMaxSize())->toBe(2048);
+        });
 
-    it('can set `minSize()`', function (): void {
-        $upload = FileUpload::make('file')->minSize(100);
-        expect($upload->getMinSize())->toBe(100);
-    });
+        it('returns `null` for `getMinSize()` by default', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->getMinSize())->toBeNull();
+        });
 
-    it('returns `null` for `getMinSize()` by default', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->getMinSize())->toBeNull();
-    });
+        it('can set `minSize()`', function (): void {
+            $upload = FileUpload::make('file')->minSize(100);
+            expect($upload->getMinSize())->toBe(100);
+        });
 
-    it('can set `minSize()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->minSize(static fn (): int => 50);
+        it('can set `minSize()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->minSize(static fn (): int => 50);
 
-        expect($upload->getMinSize())->toBe(50);
-    });
+            expect($upload->getMinSize())->toBe(50);
+        });
 
-    it('can set `maxParallelUploads()`', function (): void {
-        $upload = FileUpload::make('file')->maxParallelUploads(3);
-        expect($upload->getMaxParallelUploads())->toBe(3);
-    });
+        it('returns `null` for `getMaxParallelUploads()` by default', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->getMaxParallelUploads())->toBeNull();
+        });
 
-    it('returns `null` for `getMaxParallelUploads()` by default', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->getMaxParallelUploads())->toBeNull();
-    });
+        it('can set `maxParallelUploads()`', function (): void {
+            $upload = FileUpload::make('file')->maxParallelUploads(3);
+            expect($upload->getMaxParallelUploads())->toBe(3);
+        });
 
-    it('can set `maxParallelUploads()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->maxParallelUploads(static fn (): int => 5);
+        it('can set `maxParallelUploads()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->maxParallelUploads(static fn (): int => 5);
 
-        expect($upload->getMaxParallelUploads())->toBe(5);
+            expect($upload->getMaxParallelUploads())->toBe(5);
+        });
     });
-});
 
-describe('disk name logic', function (): void {
-    it('falls back to `local` when default disk is `public` and custom visibility is `private`', function (): void {
-        Config::set('filament.default_filesystem_disk', 'public');
+    describe('disk name logic', function (): void {
+        it('falls back to `local` when default disk is `public` and custom visibility is `private`', function (): void {
+            Config::set('filament.default_filesystem_disk', 'public');
 
-        $upload = FileUpload::make('file')->visibility('private');
+            $upload = FileUpload::make('file')->visibility('private');
 
-        expect($upload->getDiskName())->toBe('local');
-    });
+            expect($upload->getDiskName())->toBe('local');
+        });
 
-    it('uses `public` disk when default is `public` and no custom visibility', function (): void {
-        Config::set('filament.default_filesystem_disk', 'public');
+        it('uses `public` disk when default is `public` and no custom visibility', function (): void {
+            Config::set('filament.default_filesystem_disk', 'public');
 
-        $upload = FileUpload::make('file');
+            $upload = FileUpload::make('file');
 
-        expect($upload->getDiskName())->toBe('public');
-    });
+            expect($upload->getDiskName())->toBe('public');
+        });
 
-    it('can set `disk()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->disk(static fn (): string => 's3');
+        it('can set `disk()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->disk(static fn (): string => 's3');
 
-        expect($upload->getDiskName())->toBe('s3');
+            expect($upload->getDiskName())->toBe('s3');
+        });
     });
-});
-
-describe('visibility logic', function (): void {
-    it('returns `private` for `getVisibility()` when disk is `local`', function (): void {
-        $upload = FileUpload::make('file')->disk('local');
-        expect($upload->getVisibility())->toBe('private');
-    });
 
-    it('returns `public` for `getVisibility()` when disk is `public`', function (): void {
-        $upload = FileUpload::make('file')->disk('public');
-        expect($upload->getVisibility())->toBe('public');
-    });
+    describe('visibility logic', function (): void {
+        it('returns `private` for `getVisibility()` when disk is `local`', function (): void {
+            $upload = FileUpload::make('file')->disk('local');
+            expect($upload->getVisibility())->toBe('private');
+        });
 
-    it('returns custom visibility from `getCustomVisibility()` when set', function (): void {
-        $upload = FileUpload::make('file')->visibility('public');
-        expect($upload->getCustomVisibility())->toBe('public');
-    });
+        it('returns `public` for `getVisibility()` when disk is `public`', function (): void {
+            $upload = FileUpload::make('file')->disk('public');
+            expect($upload->getVisibility())->toBe('public');
+        });
 
-    it('returns `null` from `getCustomVisibility()` by default', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->getCustomVisibility())->toBeNull();
-    });
+        it('returns custom visibility from `getCustomVisibility()` when set', function (): void {
+            $upload = FileUpload::make('file')->visibility('public');
+            expect($upload->getCustomVisibility())->toBe('public');
+        });
 
-    it('can set `visibility()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->visibility(static fn (): string => 'public');
+        it('returns `null` from `getCustomVisibility()` by default', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->getCustomVisibility())->toBeNull();
+        });
 
-        expect($upload->getVisibility())->toBe('public');
-    });
-});
-
-describe('aspect ratio', function (): void {
-    it('can set `imageAspectRatio()` with a colon-separated string', function (): void {
-        $upload = FileUpload::make('photo')->imageAspectRatio('16:9');
-        expect($upload->getImageAspectRatio())->toBe('16:9');
-    });
+        it('can set `visibility()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->visibility(static fn (): string => 'public');
 
-    it('normalizes slash-separated aspect ratio to colon format', function (): void {
-        $upload = FileUpload::make('photo')->imageAspectRatio('16/9');
-        expect($upload->getImageAspectRatio())->toBe('16:9');
+            expect($upload->getVisibility())->toBe('public');
+        });
     });
 
-    it('normalizes numeric aspect ratio to `N:1` format', function (): void {
-        $upload = FileUpload::make('photo')->imageAspectRatio('2');
-        expect($upload->getImageAspectRatio())->toBe('2:1');
-    });
+    describe('aspect ratio', function (): void {
+        it('can set `imageAspectRatio()` with a colon-separated string', function (): void {
+            $upload = FileUpload::make('photo')->imageAspectRatio('16:9');
+            expect($upload->getImageAspectRatio())->toBe('16:9');
+        });
 
-    it('returns `null` for `getImageAspectRatio()` by default', function (): void {
-        $upload = FileUpload::make('photo');
-        expect($upload->getImageAspectRatio())->toBeNull();
-    });
+        it('normalizes slash-separated aspect ratio to colon format', function (): void {
+            $upload = FileUpload::make('photo')->imageAspectRatio('16/9');
+            expect($upload->getImageAspectRatio())->toBe('16:9');
+        });
 
-    it('can set `imageAspectRatio()` with an array', function (): void {
-        $upload = FileUpload::make('photo')->imageAspectRatio(['16:9', '4:3']);
-        expect($upload->getImageAspectRatio())->toBe(['16:9', '4:3']);
-    });
+        it('normalizes numeric aspect ratio to `N:1` format', function (): void {
+            $upload = FileUpload::make('photo')->imageAspectRatio('2');
+            expect($upload->getImageAspectRatio())->toBe('2:1');
+        });
 
-    it('normalizes aspect ratios in array format', function (): void {
-        $upload = FileUpload::make('photo')->imageAspectRatio(['16/9', '4']);
-        expect($upload->getImageAspectRatio())->toBe(['16:9', '4:1']);
-    });
+        it('returns `null` for `getImageAspectRatio()` by default', function (): void {
+            $upload = FileUpload::make('photo');
+            expect($upload->getImageAspectRatio())->toBeNull();
+        });
 
-    it('can set `imageAspectRatio()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageAspectRatio(static fn (): string => '1:1');
+        it('can set `imageAspectRatio()` with an array', function (): void {
+            $upload = FileUpload::make('photo')->imageAspectRatio(['16:9', '4:3']);
+            expect($upload->getImageAspectRatio())->toBe(['16:9', '4:3']);
+        });
 
-        expect($upload->getImageAspectRatio())->toBe('1:1');
-    });
+        it('normalizes aspect ratios in array format', function (): void {
+            $upload = FileUpload::make('photo')->imageAspectRatio(['16/9', '4']);
+            expect($upload->getImageAspectRatio())->toBe(['16:9', '4:1']);
+        });
 
-    it('returns `null` from `normalizeAspectRatio()` for non-numeric strings', function (): void {
-        $upload = FileUpload::make('photo')->imageAspectRatio('invalid');
-        expect($upload->getImageAspectRatio())->toBeNull();
-    });
-});
-
-describe('image editor mode validation', function (): void {
-    it('throws `InvalidArgumentException` for `imageEditorMode()` with mode `0`', function (): void {
-        FileUpload::make('photo')->imageEditorMode(0);
-    })->throws(InvalidArgumentException::class);
-
-    it('throws `InvalidArgumentException` for `imageEditorMode()` with mode `4`', function (): void {
-        FileUpload::make('photo')->imageEditorMode(4);
-    })->throws(InvalidArgumentException::class);
-
-    it('accepts valid `imageEditorMode()` values `1`, `2`, `3`', function (int $mode): void {
-        $upload = FileUpload::make('photo')->imageEditorMode($mode);
-        expect($upload->getImageEditorMode())->toBe($mode);
-    })->with([1, 2, 3]);
-});
-
-describe('item panel aspect ratio', function (): void {
-    it('returns `1` for `getItemPanelAspectRatio()` when panel layout is `grid` and no explicit ratio', function (): void {
-        $upload = FileUpload::make('file')->panelLayout('grid');
-        expect($upload->getItemPanelAspectRatio())->toBe(1);
-    });
+        it('can set `imageAspectRatio()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageAspectRatio(static fn (): string => '1:1');
 
-    it('returns `null` for `getItemPanelAspectRatio()` by default with compact layout', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->getItemPanelAspectRatio())->toBeNull();
-    });
+            expect($upload->getImageAspectRatio())->toBe('1:1');
+        });
 
-    it('converts string ratio in `getItemPanelAspectRatio()` to float', function (): void {
-        $upload = FileUpload::make('file')->itemPanelAspectRatio('16:9');
-        $ratio = $upload->getItemPanelAspectRatio();
-        expect($ratio)->toBeFloat();
-        expect(round($ratio, 2))->toBe(1.78);
+        it('returns `null` from `normalizeAspectRatio()` for non-numeric strings', function (): void {
+            $upload = FileUpload::make('photo')->imageAspectRatio('invalid');
+            expect($upload->getImageAspectRatio())->toBeNull();
+        });
     });
 
-    it('returns numeric ratio as-is from `getItemPanelAspectRatio()`', function (): void {
-        $upload = FileUpload::make('file')->itemPanelAspectRatio(1.5);
-        expect($upload->getItemPanelAspectRatio())->toBe(1.5);
-    });
-});
-
-describe('`hasImageEditor()` implicit activation', function (): void {
-    it('returns `true` for `hasImageEditor()` when `automaticallyOpenImageEditorForAspectRatio()` is enabled', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageAspectRatio('16:9')
-            ->automaticallyOpenImageEditorForAspectRatio();
-
-        expect($upload->hasImageEditor())->toBeTrue();
-    });
+    describe('image editor mode validation', function (): void {
+        it('throws `InvalidArgumentException` for `imageEditorMode()` with mode `0`', function (): void {
+            FileUpload::make('photo')->imageEditorMode(0);
+        })->throws(InvalidArgumentException::class);
 
-    it('returns `isImageEditorExplicitlyEnabled()` as `false` even when implicitly active', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageAspectRatio('16:9')
-            ->automaticallyOpenImageEditorForAspectRatio();
+        it('throws `InvalidArgumentException` for `imageEditorMode()` with mode `4`', function (): void {
+            FileUpload::make('photo')->imageEditorMode(4);
+        })->throws(InvalidArgumentException::class);
 
-        expect($upload->isImageEditorExplicitlyEnabled())->toBeFalse();
+        it('accepts valid `imageEditorMode()` values `1`, `2`, `3`', function (int $mode): void {
+            $upload = FileUpload::make('photo')->imageEditorMode($mode);
+            expect($upload->getImageEditorMode())->toBe($mode);
+        })->with([1, 2, 3]);
     });
-});
-
-describe('`automaticallyOpenImageEditorForAspectRatio()` validation', function (): void {
-    it('throws when used with `multiple()`', function (): void {
-        $upload = FileUpload::make('photo')
-            ->multiple()
-            ->imageAspectRatio('16:9')
-            ->automaticallyOpenImageEditorForAspectRatio();
-
-        $upload->shouldAutomaticallyOpenImageEditorForAspectRatio();
-    })->throws(InvalidArgumentException::class);
-
-    it('throws when no `imageAspectRatio()` is set', function (): void {
-        $upload = FileUpload::make('photo')
-            ->automaticallyOpenImageEditorForAspectRatio();
-
-        $upload->shouldAutomaticallyOpenImageEditorForAspectRatio();
-    })->throws(InvalidArgumentException::class);
-
-    it('throws when `imageAspectRatio()` has multiple ratios', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageAspectRatio(['16:9', '4:3'])
-            ->automaticallyOpenImageEditorForAspectRatio();
-
-        $upload->shouldAutomaticallyOpenImageEditorForAspectRatio();
-    })->throws(InvalidArgumentException::class);
-});
-
-describe('`storeFileNamesIn()`', function (): void {
-    it('returns `null` for `getFileNamesStatePath()` by default', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->getFileNamesStatePath())->toBeNull()
-            ->and($upload->getFileNamesStatePath(isAbsolute: false))->toBeNull();
+
+    describe('item panel aspect ratio', function (): void {
+        it('returns `1` for `getItemPanelAspectRatio()` when panel layout is `grid` and no explicit ratio', function (): void {
+            $upload = FileUpload::make('file')->panelLayout('grid');
+            expect($upload->getItemPanelAspectRatio())->toBe(1);
+        });
+
+        it('returns `null` for `getItemPanelAspectRatio()` by default with compact layout', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->getItemPanelAspectRatio())->toBeNull();
+        });
+
+        it('converts string ratio in `getItemPanelAspectRatio()` to float', function (): void {
+            $upload = FileUpload::make('file')->itemPanelAspectRatio('16:9');
+            $ratio = $upload->getItemPanelAspectRatio();
+            expect($ratio)->toBeFloat();
+            expect(round($ratio, 2))->toBe(1.78);
+        });
+
+        it('returns numeric ratio as-is from `getItemPanelAspectRatio()`', function (): void {
+            $upload = FileUpload::make('file')->itemPanelAspectRatio(1.5);
+            expect($upload->getItemPanelAspectRatio())->toBe(1.5);
+        });
     });
+
+    describe('`hasImageEditor()` implicit activation', function (): void {
+        it('returns `true` for `hasImageEditor()` when `automaticallyOpenImageEditorForAspectRatio()` is enabled', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageAspectRatio('16:9')
+                ->automaticallyOpenImageEditorForAspectRatio();
 
-    it('can set `storeFileNamesIn()` and resolve the state path', function (): void {
-        $livewire = Livewire::make();
-
-        Schema::make($livewire)
-            ->statePath('data')
-            ->components([
-                $upload = FileUpload::make('file')->storeFileNamesIn('original_filename'),
-            ])
-            ->fill();
-
-        expect($upload->getFileNamesStatePath())->toBe('data.original_filename')
-            ->and($upload->getFileNamesStatePath(isAbsolute: false))->toBe('original_filename');
+            expect($upload->hasImageEditor())->toBeTrue();
+        });
+
+        it('returns `isImageEditorExplicitlyEnabled()` as `false` even when implicitly active', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageAspectRatio('16:9')
+                ->automaticallyOpenImageEditorForAspectRatio();
+
+            expect($upload->isImageEditorExplicitlyEnabled())->toBeFalse();
+        });
     });
+
+    describe('`automaticallyOpenImageEditorForAspectRatio()` validation', function (): void {
+        it('throws when used with `multiple()`', function (): void {
+            $upload = FileUpload::make('photo')
+                ->multiple()
+                ->imageAspectRatio('16:9')
+                ->automaticallyOpenImageEditorForAspectRatio();
 
-    it('can store, read, and remove file names using a `Closure` path', function (bool $isMultiple, string $prefix, string $expectedPath): void {
-        $livewire = Livewire::make()->data(['unrelated' => 'keep']);
-        $upload = FileUpload::make('attachment')
-            ->container(Schema::make($livewire)->statePath('data.section'))
-            ->multiple($isMultiple)
-            ->storeFileNamesIn(static fn (BaseFileUpload $component): string => "{$prefix}{$component->getName()}_names");
-
-        expect($upload->getFileNamesStatePath())->toBe($expectedPath)
-            ->and($upload->getFileNamesStatePath(isAbsolute: false))->toBe("{$prefix}attachment_names");
-
-        $upload->storeFileName('uploads/notes.txt', 'Meeting notes.txt');
-        $upload->storeFileName('uploads/report.txt', 'Annual report.txt');
-
-        $expectedNames = $isMultiple ? [
-            'uploads/notes.txt' => 'Meeting notes.txt',
-            'uploads/report.txt' => 'Annual report.txt',
-        ] : 'Annual report.txt';
-
-        expect(data_get($livewire, $expectedPath))->toBe($expectedNames)
-            ->and($upload->getStoredFileNames())->toBe($expectedNames);
-
-        $upload->removeStoredFileName('uploads/report.txt');
-
-        $expectedNames = $isMultiple ? ['uploads/notes.txt' => 'Meeting notes.txt'] : null;
-
-        expect(data_get($livewire, $expectedPath))->toBe($expectedNames)
-            ->and($upload->getStoredFileNames())->toBe($expectedNames)
-            ->and($livewire->data['unrelated'])->toBe('keep');
-    })->with([false, true])->with([
-        'sibling' => ['', 'data.section.attachment_names'],
-        'parent' => ['../', 'data.attachment_names'],
-        'absolute' => ['/data.', 'data.attachment_names'],
-    ]);
-
-    it('reevaluates the `Closure` path and skips file name changes when it returns `null`', function (bool $isMultiple): void {
-        $livewire = Livewire::make()->data([]);
-        $statePath = 'original_names';
-        $upload = FileUpload::make('attachment')
-            ->container(Schema::make($livewire)->statePath('data'))
-            ->multiple($isMultiple)
-            ->storeFileNamesIn(static function () use (&$statePath): ?string {
-                return $statePath;
-            });
-
-        $upload->storeFileName('uploads/report.txt', 'Original report.txt');
-
-        $statePath = 'revised_names';
-        expect($upload->getFileNamesStatePath())->toBe('data.revised_names');
-        $upload->storeFileName('uploads/report.txt', 'Revised report.txt');
-
-        $expectedData = [
-            'original_names' => $isMultiple ? ['uploads/report.txt' => 'Original report.txt'] : 'Original report.txt',
-            'revised_names' => $isMultiple ? ['uploads/report.txt' => 'Revised report.txt'] : 'Revised report.txt',
-        ];
-
-        expect($livewire->data)->toBe($expectedData)
-            ->and($upload->getStoredFileNames())->toBe($expectedData['revised_names']);
-
-        $statePath = null;
-        $upload->storeFileName('uploads/report.txt', 'Ignored report.txt');
-        $upload->removeStoredFileName('uploads/report.txt');
-
-        expect($upload->getFileNamesStatePath())->toBeNull()
-            ->and($upload->getStoredFileNames())->toBe($isMultiple ? [] : null)
-            ->and($livewire->data)->toBe($expectedData);
-    })->with([false, true]);
-
-    it('uses the `Closure` path for file metadata, validation, and dehydration', function (): void {
-        Storage::fake('local');
-        Storage::disk('local')->put('uploads/report.txt', 'report');
-
-        $statePath = 'original_names';
-        $schema = Schema::make(Livewire::make())
-            ->statePath('data.section')
-            ->components([
-                $upload = FileUpload::make('attachments')
-                    ->disk('local')
-                    ->multiple()
-                    ->preventFilePathTampering(allowFilePathUsing: static fn (string $file): bool => $file === 'uploads/report.txt')
-                    ->storeFileNamesIn(static function () use (&$statePath): ?string {
-                        return $statePath;
-                    }),
-            ])
-            ->fill([
-                'attachments' => ['uploads/report.txt'],
-                'original_names' => ['uploads/report.txt' => 'Annual report.txt'],
-            ]);
-
-        expect(array_column($upload->getUploadedFiles(), 'name'))->toBe(['Annual report.txt'])
-            ->and($schema->getValidationRules()['data.section.original_names'])->toBe(['nullable'])
-            ->and($schema->getState())->toBe([
-                'attachments' => ['uploads/report.txt'],
-                'original_names' => ['uploads/report.txt' => 'Annual report.txt'],
-            ]);
-
-        $statePath = null;
-
-        expect(array_column($upload->getUploadedFiles(), 'name'))->toBe(['report.txt'])
-            ->and($schema->getValidationRules())->not->toHaveKey('data.section.original_names')
-            ->and($schema->getState())->toBe([
-                'attachments' => ['uploads/report.txt'],
-            ]);
+            $upload->shouldAutomaticallyOpenImageEditorForAspectRatio();
+        })->throws(InvalidArgumentException::class);
+
+        it('throws when no `imageAspectRatio()` is set', function (): void {
+            $upload = FileUpload::make('photo')
+                ->automaticallyOpenImageEditorForAspectRatio();
+
+            $upload->shouldAutomaticallyOpenImageEditorForAspectRatio();
+        })->throws(InvalidArgumentException::class);
+
+        it('throws when `imageAspectRatio()` has multiple ratios', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageAspectRatio(['16:9', '4:3'])
+                ->automaticallyOpenImageEditorForAspectRatio();
+
+            $upload->shouldAutomaticallyOpenImageEditorForAspectRatio();
+        })->throws(InvalidArgumentException::class);
     });
+
+    describe('`storeFileNamesIn()`', function (): void {
+        it('returns `null` for `getFileNamesStatePath()` by default', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->getFileNamesStatePath())->toBeNull()
+                ->and($upload->getFileNamesStatePath(isAbsolute: false))->toBeNull();
+        });
+
+        it('can set `storeFileNamesIn()` and resolve the state path', function (): void {
+            $livewire = Livewire::make();
 
-    it('uses an overridden `getFileNamesStatePath()` for resolving, storing, reading, and removing file names', function (): void {
-        $livewire = Livewire::make()->data([]);
-        $upload = (new class('attachment') extends FileUpload
-        {
-            public function getFileNamesStatePath(bool $isAbsolute = true): ?string
+            Schema::make($livewire)
+                ->statePath('data')
+                ->components([
+                    $upload = FileUpload::make('file')->storeFileNamesIn('original_filename'),
+                ])
+                ->fill();
+
+            expect($upload->getFileNamesStatePath())->toBe('data.original_filename')
+                ->and($upload->getFileNamesStatePath(isAbsolute: false))->toBe('original_filename');
+        });
+
+        it('can store, read, and remove file names using a `Closure` path', function (bool $isMultiple, string $prefix, string $expectedPath): void {
+            $livewire = Livewire::make()->data(['unrelated' => 'keep']);
+            $upload = FileUpload::make('attachment')
+                ->container(Schema::make($livewire)->statePath('data.section'))
+                ->multiple($isMultiple)
+                ->storeFileNamesIn(static fn (BaseFileUpload $component): string => "{$prefix}{$component->getName()}_names");
+
+            expect($upload->getFileNamesStatePath())->toBe($expectedPath)
+                ->and($upload->getFileNamesStatePath(isAbsolute: false))->toBe("{$prefix}attachment_names");
+
+            $upload->storeFileName('uploads/notes.txt', 'Meeting notes.txt');
+            $upload->storeFileName('uploads/report.txt', 'Annual report.txt');
+
+            $expectedNames = $isMultiple ? [
+                'uploads/notes.txt' => 'Meeting notes.txt',
+                'uploads/report.txt' => 'Annual report.txt',
+            ] : 'Annual report.txt';
+
+            expect(data_get($livewire, $expectedPath))->toBe($expectedNames)
+                ->and($upload->getStoredFileNames())->toBe($expectedNames);
+
+            $upload->removeStoredFileName('uploads/report.txt');
+
+            $expectedNames = $isMultiple ? ['uploads/notes.txt' => 'Meeting notes.txt'] : null;
+
+            expect(data_get($livewire, $expectedPath))->toBe($expectedNames)
+                ->and($upload->getStoredFileNames())->toBe($expectedNames)
+                ->and($livewire->data['unrelated'])->toBe('keep');
+        })->with([false, true])->with([
+            'sibling' => ['', 'data.section.attachment_names'],
+            'parent' => ['../', 'data.attachment_names'],
+            'absolute' => ['/data.', 'data.attachment_names'],
+        ]);
+
+        it('reevaluates the `Closure` path and skips file name changes when it returns `null`', function (bool $isMultiple): void {
+            $livewire = Livewire::make()->data([]);
+            $statePath = 'original_names';
+            $upload = FileUpload::make('attachment')
+                ->container(Schema::make($livewire)->statePath('data'))
+                ->multiple($isMultiple)
+                ->storeFileNamesIn(static function () use (&$statePath): ?string {
+                    return $statePath;
+                });
+
+            $upload->storeFileName('uploads/report.txt', 'Original report.txt');
+
+            $statePath = 'revised_names';
+            expect($upload->getFileNamesStatePath())->toBe('data.revised_names');
+            $upload->storeFileName('uploads/report.txt', 'Revised report.txt');
+
+            $expectedData = [
+                'original_names' => $isMultiple ? ['uploads/report.txt' => 'Original report.txt'] : 'Original report.txt',
+                'revised_names' => $isMultiple ? ['uploads/report.txt' => 'Revised report.txt'] : 'Revised report.txt',
+            ];
+
+            expect($livewire->data)->toBe($expectedData)
+                ->and($upload->getStoredFileNames())->toBe($expectedData['revised_names']);
+
+            $statePath = null;
+            $upload->storeFileName('uploads/report.txt', 'Ignored report.txt');
+            $upload->removeStoredFileName('uploads/report.txt');
+
+            expect($upload->getFileNamesStatePath())->toBeNull()
+                ->and($upload->getStoredFileNames())->toBe($isMultiple ? [] : null)
+                ->and($livewire->data)->toBe($expectedData);
+        })->with([false, true]);
+
+        it('uses the `Closure` path for file metadata, validation, and dehydration', function (): void {
+            Storage::fake('local');
+            Storage::disk('local')->put('uploads/report.txt', 'report');
+
+            $statePath = 'original_names';
+            $schema = Schema::make(Livewire::make())
+                ->statePath('data.section')
+                ->components([
+                    $upload = FileUpload::make('attachments')
+                        ->disk('local')
+                        ->multiple()
+                        ->preventFilePathTampering(allowFilePathUsing: static fn (string $file): bool => $file === 'uploads/report.txt')
+                        ->storeFileNamesIn(static function () use (&$statePath): ?string {
+                            return $statePath;
+                        }),
+                ])
+                ->fill([
+                    'attachments' => ['uploads/report.txt'],
+                    'original_names' => ['uploads/report.txt' => 'Annual report.txt'],
+                ]);
+
+            expect(array_column($upload->getUploadedFiles(), 'name'))->toBe(['Annual report.txt'])
+                ->and($schema->getValidationRules()['data.section.original_names'])->toBe(['nullable'])
+                ->and($schema->getState())->toBe([
+                    'attachments' => ['uploads/report.txt'],
+                    'original_names' => ['uploads/report.txt' => 'Annual report.txt'],
+                ]);
+
+            $statePath = null;
+
+            expect(array_column($upload->getUploadedFiles(), 'name'))->toBe(['report.txt'])
+                ->and($schema->getValidationRules())->not->toHaveKey('data.section.original_names')
+                ->and($schema->getState())->toBe([
+                    'attachments' => ['uploads/report.txt'],
+                ]);
+        });
+
+        it('uses an overridden `getFileNamesStatePath()` for resolving, storing, reading, and removing file names', function (): void {
+            $livewire = Livewire::make()->data([]);
+            $upload = (new class('attachment') extends FileUpload
             {
-                return $isAbsolute ? 'data.original_names' : '../original_names';
-            }
-        })
-            ->container(Schema::make($livewire)->statePath('data.section'))
-            ->storeFileNamesIn('unused_names');
+                public function getFileNamesStatePath(bool $isAbsolute = true): ?string
+                {
+                    return $isAbsolute ? 'data.original_names' : '../original_names';
+                }
+            })
+                ->container(Schema::make($livewire)->statePath('data.section'))
+                ->storeFileNamesIn('unused_names');
 
-        expect($upload->getFileNamesStatePath())->toBe('data.original_names');
+            expect($upload->getFileNamesStatePath())->toBe('data.original_names');
 
-        $upload->storeFileName('uploads/report.txt', 'Annual report.txt');
+            $upload->storeFileName('uploads/report.txt', 'Annual report.txt');
 
-        expect($livewire->data)->toBe(['original_names' => 'Annual report.txt'])
-            ->and($upload->getStoredFileNames())->toBe('Annual report.txt');
+            expect($livewire->data)->toBe(['original_names' => 'Annual report.txt'])
+                ->and($upload->getStoredFileNames())->toBe('Annual report.txt');
 
-        $upload->removeStoredFileName('uploads/report.txt');
+            $upload->removeStoredFileName('uploads/report.txt');
 
-        expect($livewire->data)->toBe(['original_names' => null]);
-    });
-});
-
-describe('uploading message', function (): void {
-    it('returns a default `getUploadingMessage()`', function (): void {
-        $upload = FileUpload::make('file');
-        expect($upload->getUploadingMessage())->toBeString();
-        expect($upload->getUploadingMessage())->not->toBeEmpty();
+            expect($livewire->data)->toBe(['original_names' => null]);
+        });
     });
 
-    it('can set `uploadingMessage()`', function (): void {
-        $upload = FileUpload::make('file')->uploadingMessage('Please wait...');
-        expect($upload->getUploadingMessage())->toBe('Please wait...');
+    describe('uploading message', function (): void {
+        it('returns a default `getUploadingMessage()`', function (): void {
+            $upload = FileUpload::make('file');
+            expect($upload->getUploadingMessage())->toBeString();
+            expect($upload->getUploadingMessage())->not->toBeEmpty();
+        });
+
+        it('can set `uploadingMessage()`', function (): void {
+            $upload = FileUpload::make('file')->uploadingMessage('Please wait...');
+            expect($upload->getUploadingMessage())->toBe('Please wait...');
+        });
+
+        it('can set `uploadingMessage()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->uploadingMessage(static fn (): string => 'Uploading your file...');
+
+            expect($upload->getUploadingMessage())->toBe('Uploading your file...');
+        });
     });
 
-    it('can set `uploadingMessage()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->uploadingMessage(static fn (): string => 'Uploading your file...');
-
-        expect($upload->getUploadingMessage())->toBe('Uploading your file...');
-    });
-});
-
-describe('`image()` convenience method', function (): void {
-    it('sets accepted file types to `image/*`', function (): void {
-        $upload = FileUpload::make('photo')->image();
-        expect($upload->getAcceptedFileTypes())->toBe(['image/*']);
-    });
-});
-
-describe('`getValidationRules()` structure', function (): void {
-    it('includes `maxFiles` rule when `maxFiles()` is set', function (): void {
-        $upload = FileUpload::make('files')->maxFiles(5);
-        $rules = $upload->getValidationRules();
-        $stringRules = array_filter($rules, fn ($rule) => is_string($rule));
-
-        expect($stringRules)->toContain('max:5');
+    describe('`image()` convenience method', function (): void {
+        it('sets accepted file types to `image/*`', function (): void {
+            $upload = FileUpload::make('photo')->image();
+            expect($upload->getAcceptedFileTypes())->toBe(['image/*']);
+        });
     });
 
-    it('includes `minFiles` rule when `minFiles()` is set', function (): void {
-        $upload = FileUpload::make('files')->minFiles(2);
-        $rules = $upload->getValidationRules();
-        $stringRules = array_filter($rules, fn ($rule) => is_string($rule));
+    describe('`getValidationRules()` structure', function (): void {
+        it('includes `maxFiles` rule when `maxFiles()` is set', function (): void {
+            $upload = FileUpload::make('files')->maxFiles(5);
+            $rules = $upload->getValidationRules();
+            $stringRules = array_filter($rules, fn ($rule) => is_string($rule));
 
-        expect($stringRules)->toContain('min:2');
+            expect($stringRules)->toContain('max:5');
+        });
+
+        it('includes `minFiles` rule when `minFiles()` is set', function (): void {
+            $upload = FileUpload::make('files')->minFiles(2);
+            $rules = $upload->getValidationRules();
+            $stringRules = array_filter($rules, fn ($rule) => is_string($rule));
+
+            expect($stringRules)->toContain('min:2');
+        });
+
+        it('always includes `array` rule', function (): void {
+            $upload = FileUpload::make('files');
+            $rules = $upload->getValidationRules();
+            $stringRules = array_filter($rules, fn ($rule) => is_string($rule));
+
+            expect($stringRules)->toContain('array');
+        });
     });
 
-    it('always includes `array` rule', function (): void {
-        $upload = FileUpload::make('files');
-        $rules = $upload->getValidationRules();
-        $stringRules = array_filter($rules, fn ($rule) => is_string($rule));
+    describe('`getAutomaticallyCropImagesAspectRatio()` logic', function (): void {
+        it('returns `null` when `automaticallyCropImagesToAspectRatio()` is not enabled', function (): void {
+            $upload = FileUpload::make('photo')->imageAspectRatio('16:9');
+            expect($upload->getAutomaticallyCropImagesAspectRatio())->toBeNull();
+        });
 
-        expect($stringRules)->toContain('array');
-    });
-});
+        it('returns `null` when enabled but no aspect ratio set', function (): void {
+            $upload = FileUpload::make('photo')->automaticallyCropImagesToAspectRatio();
+            expect($upload->getAutomaticallyCropImagesAspectRatio())->toBeNull();
+        });
 
-describe('`getAutomaticallyCropImagesAspectRatio()` logic', function (): void {
-    it('returns `null` when `automaticallyCropImagesToAspectRatio()` is not enabled', function (): void {
-        $upload = FileUpload::make('photo')->imageAspectRatio('16:9');
-        expect($upload->getAutomaticallyCropImagesAspectRatio())->toBeNull();
-    });
+        it('returns the first ratio from an array when enabled', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageAspectRatio(['16:9', '4:3'])
+                ->automaticallyCropImagesToAspectRatio();
 
-    it('returns `null` when enabled but no aspect ratio set', function (): void {
-        $upload = FileUpload::make('photo')->automaticallyCropImagesToAspectRatio();
-        expect($upload->getAutomaticallyCropImagesAspectRatio())->toBeNull();
-    });
+            expect($upload->getAutomaticallyCropImagesAspectRatio())->toBe('16:9');
+        });
 
-    it('returns the first ratio from an array when enabled', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageAspectRatio(['16:9', '4:3'])
-            ->automaticallyCropImagesToAspectRatio();
+        it('returns the string ratio when enabled', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageAspectRatio('4:3')
+                ->automaticallyCropImagesToAspectRatio();
 
-        expect($upload->getAutomaticallyCropImagesAspectRatio())->toBe('16:9');
-    });
-
-    it('returns the string ratio when enabled', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageAspectRatio('4:3')
-            ->automaticallyCropImagesToAspectRatio();
-
-        expect($upload->getAutomaticallyCropImagesAspectRatio())->toBe('4:3');
-    });
-});
-
-describe('`getImageEditorViewportHeight()` logic', function (): void {
-    it('returns explicit value when no resize height or crop ratio', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageEditorViewportHeight(600);
-
-        expect($upload->getImageEditorViewportHeight())->toBe(600);
+            expect($upload->getAutomaticallyCropImagesAspectRatio())->toBe('4:3');
+        });
     });
 
-    it('returns `null` by default', function (): void {
-        $upload = FileUpload::make('photo');
+    describe('`getImageEditorViewportHeight()` logic', function (): void {
+        it('returns explicit value when no resize height or crop ratio', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageEditorViewportHeight(600);
 
-        expect($upload->getImageEditorViewportHeight())->toBeNull();
+            expect($upload->getImageEditorViewportHeight())->toBe(600);
+        });
+
+        it('returns `null` by default', function (): void {
+            $upload = FileUpload::make('photo');
+
+            expect($upload->getImageEditorViewportHeight())->toBeNull();
+        });
+
+        it('computes from `automaticallyResizeImagesToHeight()` when set', function (): void {
+            $upload = FileUpload::make('photo')
+                ->automaticallyResizeImagesToHeight('400')
+                ->automaticallyResizeImagesToWidth('800');
+
+            $height = $upload->getImageEditorViewportHeight();
+
+            expect($height)->toBeInt();
+            expect($height)->toBeGreaterThan(0);
+        });
+
+        it('computes from crop aspect ratio when no resize height', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageAspectRatio('16:9')
+                ->automaticallyCropImagesToAspectRatio();
+
+            expect($upload->getImageEditorViewportHeight())->toBe(9);
+        });
     });
 
-    it('computes from `automaticallyResizeImagesToHeight()` when set', function (): void {
-        $upload = FileUpload::make('photo')
-            ->automaticallyResizeImagesToHeight('400')
-            ->automaticallyResizeImagesToWidth('800');
+    describe('`getImageEditorViewportWidth()` logic', function (): void {
+        it('returns explicit value when no resize width or crop ratio', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageEditorViewportWidth(800);
 
-        $height = $upload->getImageEditorViewportHeight();
+            expect($upload->getImageEditorViewportWidth())->toBe(800);
+        });
 
-        expect($height)->toBeInt();
-        expect($height)->toBeGreaterThan(0);
+        it('returns `null` by default', function (): void {
+            $upload = FileUpload::make('photo');
+
+            expect($upload->getImageEditorViewportWidth())->toBeNull();
+        });
+
+        it('computes from `automaticallyResizeImagesToWidth()` when set', function (): void {
+            $upload = FileUpload::make('photo')
+                ->automaticallyResizeImagesToWidth('800')
+                ->automaticallyResizeImagesToHeight('400');
+
+            $width = $upload->getImageEditorViewportWidth();
+
+            expect($width)->toBeInt();
+            expect($width)->toBeGreaterThan(0);
+        });
+
+        it('computes from crop aspect ratio when no resize width', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageAspectRatio('16:9')
+                ->automaticallyCropImagesToAspectRatio();
+
+            expect($upload->getImageEditorViewportWidth())->toBe(16);
+        });
     });
 
-    it('computes from crop aspect ratio when no resize height', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageAspectRatio('16:9')
-            ->automaticallyCropImagesToAspectRatio();
+    describe('`getAutomaticallyOpenImageEditorForAspectRatio()` logic', function (): void {
+        it('returns `null` when not enabled', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageAspectRatio('16:9');
 
-        expect($upload->getImageEditorViewportHeight())->toBe(9);
-    });
-});
+            expect($upload->getAutomaticallyOpenImageEditorForAspectRatio())->toBeNull();
+        });
 
-describe('`getImageEditorViewportWidth()` logic', function (): void {
-    it('returns explicit value when no resize width or crop ratio', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageEditorViewportWidth(800);
+        it('returns a float when enabled with a string ratio', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageAspectRatio('16:9')
+                ->automaticallyOpenImageEditorForAspectRatio();
 
-        expect($upload->getImageEditorViewportWidth())->toBe(800);
-    });
+            $ratio = $upload->getAutomaticallyOpenImageEditorForAspectRatio();
 
-    it('returns `null` by default', function (): void {
-        $upload = FileUpload::make('photo');
+            expect($ratio)->toBeFloat();
+            expect(round($ratio, 4))->toBe(round(16 / 9, 4));
+        });
 
-        expect($upload->getImageEditorViewportWidth())->toBeNull();
-    });
+        it('returns a float from array ratio (uses first element)', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageAspectRatio(['4:3'])
+                ->automaticallyOpenImageEditorForAspectRatio();
 
-    it('computes from `automaticallyResizeImagesToWidth()` when set', function (): void {
-        $upload = FileUpload::make('photo')
-            ->automaticallyResizeImagesToWidth('800')
-            ->automaticallyResizeImagesToHeight('400');
+            $ratio = $upload->getAutomaticallyOpenImageEditorForAspectRatio();
 
-        $width = $upload->getImageEditorViewportWidth();
-
-        expect($width)->toBeInt();
-        expect($width)->toBeGreaterThan(0);
+            expect($ratio)->toBeFloat();
+            expect(round($ratio, 4))->toBe(round(4 / 3, 4));
+        });
     });
 
-    it('computes from crop aspect ratio when no resize width', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageAspectRatio('16:9')
-            ->automaticallyCropImagesToAspectRatio();
+    describe('`getImageEditorAspectRatioOptionsForJs()` logic', function (): void {
+        it('returns empty array when fewer than 2 options', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageEditorAspectRatioOptions(['16:9']);
 
-        expect($upload->getImageEditorViewportWidth())->toBe(16);
-    });
-});
+            expect($upload->getImageEditorAspectRatioOptionsForJs())->toBe([]);
+        });
 
-describe('`getAutomaticallyOpenImageEditorForAspectRatio()` logic', function (): void {
-    it('returns `null` when not enabled', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageAspectRatio('16:9');
+        it('returns mapped options when 2 or more options provided', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageEditorAspectRatioOptions(['16:9', '4:3']);
 
-        expect($upload->getAutomaticallyOpenImageEditorForAspectRatio())->toBeNull();
-    });
+            $options = $upload->getImageEditorAspectRatioOptionsForJs();
 
-    it('returns a float when enabled with a string ratio', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageAspectRatio('16:9')
-            ->automaticallyOpenImageEditorForAspectRatio();
+            expect($options)->toHaveCount(2);
+            expect(array_keys($options))->toBe(['16:9', '4:3']);
+        });
 
-        $ratio = $upload->getAutomaticallyOpenImageEditorForAspectRatio();
+        it('includes `null` option as "no fixed" label', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageEditorAspectRatioOptions([null, '16:9']);
 
-        expect($ratio)->toBeFloat();
-        expect(round($ratio, 4))->toBe(round(16 / 9, 4));
-    });
+            $options = $upload->getImageEditorAspectRatioOptionsForJs();
 
-    it('returns a float from array ratio (uses first element)', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageAspectRatio(['4:3'])
-            ->automaticallyOpenImageEditorForAspectRatio();
+            expect($options)->toHaveCount(2);
+            expect(array_values($options)[1])->toBeFloat();
+        });
 
-        $ratio = $upload->getAutomaticallyOpenImageEditorForAspectRatio();
+        it('includes automatic crop ratio when set', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageAspectRatio('1:1')
+                ->automaticallyCropImagesToAspectRatio()
+                ->imageEditorAspectRatioOptions(['16:9']);
 
-        expect($ratio)->toBeFloat();
-        expect(round($ratio, 4))->toBe(round(4 / 3, 4));
-    });
-});
+            $options = $upload->getImageEditorAspectRatioOptionsForJs();
 
-describe('`getImageEditorAspectRatioOptionsForJs()` logic', function (): void {
-    it('returns empty array when fewer than 2 options', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageEditorAspectRatioOptions(['16:9']);
+            expect($options)->toHaveCount(2);
+        });
 
-        expect($upload->getImageEditorAspectRatioOptionsForJs())->toBe([]);
-    });
+        it('deduplicates ratios', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageAspectRatio('16:9')
+                ->automaticallyCropImagesToAspectRatio()
+                ->imageEditorAspectRatioOptions(['16:9', '4:3']);
 
-    it('returns mapped options when 2 or more options provided', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageEditorAspectRatioOptions(['16:9', '4:3']);
+            $options = $upload->getImageEditorAspectRatioOptionsForJs();
 
-        $options = $upload->getImageEditorAspectRatioOptionsForJs();
-
-        expect($options)->toHaveCount(2);
-        expect(array_keys($options))->toBe(['16:9', '4:3']);
+            expect($options)->toHaveCount(2);
+        });
     });
 
-    it('includes `null` option as "no fixed" label', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageEditorAspectRatioOptions([null, '16:9']);
+    describe('`imageEditorAspectRatioOptions()`', function (): void {
+        it('can set `imageEditorAspectRatioOptions()`', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageEditorAspectRatioOptions(['16:9', '4:3', '1:1']);
 
-        $options = $upload->getImageEditorAspectRatioOptionsForJs();
+            $options = $upload->getImageEditorAspectRatioOptionsForJs();
+            expect($options)->toHaveCount(3);
+        });
 
-        expect($options)->toHaveCount(2);
-        expect(array_values($options)[1])->toBeFloat();
+        it('can set `imageEditorAspectRatioOptions()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('photo')
+                ->imageEditorAspectRatioOptions(static fn (): array => ['16:9', '1:1']);
+
+            $options = $upload->getImageEditorAspectRatioOptionsForJs();
+            expect($options)->toHaveCount(2);
+        });
     });
 
-    it('includes automatic crop ratio when set', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageAspectRatio('1:1')
-            ->automaticallyCropImagesToAspectRatio()
-            ->imageEditorAspectRatioOptions(['16:9']);
+    describe('`Closure` support for `FileUpload` configuration', function (): void {
+        it('can set `appendFiles()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->appendFiles(static fn (): bool => true);
 
-        $options = $upload->getImageEditorAspectRatioOptionsForJs();
+            expect($upload->shouldAppendFiles())->toBeTrue();
+        });
 
-        expect($options)->toHaveCount(2);
+        it('can set `orientImagesFromExif()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('photo')
+                ->orientImagesFromExif(static fn (): bool => false);
+
+            expect($upload->shouldOrientImagesFromExif())->toBeFalse();
+        });
+
+        it('can set `automaticallyCropImagesToAspectRatio()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('photo')
+                ->automaticallyCropImagesToAspectRatio(static fn (): bool => true);
+
+            expect($upload->shouldAutomaticallyCropImagesToAspectRatio())->toBeTrue();
+        });
+
+        it('can set `editableSvgs()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('icon')
+                ->editableSvgs(static fn (): bool => false);
+
+            expect($upload->canEditSvgs())->toBeFalse();
+        });
+
+        it('can set `confirmSvgEditing()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('icon')
+                ->confirmSvgEditing(static fn (): bool => true);
+
+            expect($upload->isSvgEditingConfirmed())->toBeTrue();
+        });
+
+        it('can set `panelLayout()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->panelLayout(static fn (): string => 'grid');
+
+            expect($upload->getPanelLayout())->toBe('grid');
+        });
+
+        it('can set `panelAspectRatio()` with a `Closure`', function (): void {
+            $upload = FileUpload::make('file')
+                ->panelAspectRatio(static fn (): string => '16:9');
+
+            expect($upload->getPanelAspectRatio())->toBe('16:9');
+        });
     });
 
-    it('deduplicates ratios', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageAspectRatio('16:9')
-            ->automaticallyCropImagesToAspectRatio()
-            ->imageEditorAspectRatioOptions(['16:9', '4:3']);
-
-        $options = $upload->getImageEditorAspectRatioOptionsForJs();
-
-        expect($options)->toHaveCount(2);
-    });
-});
-
-describe('`imageEditorAspectRatioOptions()`', function (): void {
-    it('can set `imageEditorAspectRatioOptions()`', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageEditorAspectRatioOptions(['16:9', '4:3', '1:1']);
-
-        // We access options indirectly through getImageEditorAspectRatioOptionsForJs
-        $options = $upload->getImageEditorAspectRatioOptionsForJs();
-        expect($options)->toHaveCount(3);
-    });
-
-    it('can set `imageEditorAspectRatioOptions()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('photo')
-            ->imageEditorAspectRatioOptions(static fn (): array => ['16:9', '1:1']);
-
-        $options = $upload->getImageEditorAspectRatioOptionsForJs();
-        expect($options)->toHaveCount(2);
-    });
-});
-
-describe('Closure support for FileUpload-specific methods', function (): void {
-    it('can set `appendFiles()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->appendFiles(static fn (): bool => true);
-
-        expect($upload->shouldAppendFiles())->toBeTrue();
-    });
-
-    it('can set `orientImagesFromExif()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('photo')
-            ->orientImagesFromExif(static fn (): bool => false);
-
-        expect($upload->shouldOrientImagesFromExif())->toBeFalse();
-    });
-
-    it('can set `automaticallyCropImagesToAspectRatio()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('photo')
-            ->automaticallyCropImagesToAspectRatio(static fn (): bool => true);
-
-        expect($upload->shouldAutomaticallyCropImagesToAspectRatio())->toBeTrue();
-    });
-
-    it('can set `editableSvgs()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('icon')
-            ->editableSvgs(static fn (): bool => false);
-
-        expect($upload->canEditSvgs())->toBeFalse();
-    });
-
-    it('can set `confirmSvgEditing()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('icon')
-            ->confirmSvgEditing(static fn (): bool => true);
-
-        expect($upload->isSvgEditingConfirmed())->toBeTrue();
-    });
-
-    it('can set `panelLayout()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->panelLayout(static fn (): string => 'grid');
-
-        expect($upload->getPanelLayout())->toBe('grid');
-    });
-
-    it('can set `panelAspectRatio()` with a `Closure`', function (): void {
-        $upload = FileUpload::make('file')
-            ->panelAspectRatio(static fn (): string => '16:9');
-
-        expect($upload->getPanelAspectRatio())->toBe('16:9');
-    });
 });
 
 describe('rendering', function (): void {
@@ -2189,44 +2189,20 @@ describe('rendering', function (): void {
     });
 });
 
-it('can render `FileUpload` in the browser', function (): void {
-    $this->actingAs(User::factory()->create());
+describe('browser rendering', function (): void {
+    it('can render `FileUpload` in the browser', function (): void {
+        $this->actingAs(User::factory()->create());
 
-    visit('/file-upload-browser-test')
-        ->assertNoSmoke()
-        ->assertNoAccessibilityIssues();
+        $page = visit('/file-upload-browser-test');
 
-    visit('/file-upload-browser-test')
-        ->inDarkMode()
-        ->assertNoSmoke()
-        ->assertNoAccessibilityIssues();
-});
+        $page
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
 
-it('does not refetch file metadata when reordering files', function (): void {
-    $this->actingAs(User::factory()->create());
-
-    $fileUploadAlpineData = "Alpine.\$data(document.querySelector('.fi-fo-file-upload'))";
-    $fileUploadLivewireComponent = "Livewire.find(document.querySelector('.fi-fo-file-upload').closest('[wire\\\\:id]').getAttribute('wire:id'))";
-
-    $page = visit('/file-upload-browser-test?testReordering=1')
-        ->wait(1);
-
-    $page->script("window.initialUploadedFileUrls = Object.fromEntries(Object.entries({$fileUploadAlpineData}.fileKeyIndex).map(([fileKey, file]) => [fileKey, file.url]))");
-
-    $page->script("{$fileUploadLivewireComponent}.call('reorderAttachments')");
-
-    $page
-        ->wait(1)
-        ->assertScript("Object.keys({$fileUploadAlpineData}.fileKeyIndex).join(',')", 'second-key,first-key')
-        ->assertScript("{$fileUploadAlpineData}.fileKeyIndex['first-key'].url === window.initialUploadedFileUrls['first-key']", true)
-        ->assertScript("{$fileUploadAlpineData}.fileKeyIndex['second-key'].url === window.initialUploadedFileUrls['second-key']", true);
-
-    $page->script("{$fileUploadLivewireComponent}.call('replaceAttachment')");
-
-    $page
-        ->wait(1)
-        ->assertScript("{$fileUploadAlpineData}.fileKeyIndex['first-key'].name", 'replacement.txt')
-        ->assertScript("{$fileUploadAlpineData}.fileKeyIndex['first-key'].url !== window.initialUploadedFileUrls['first-key']", true);
+        $page->inDarkMode()
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+    });
 });
 
 class RenderFileUploadWithAvatar extends Livewire
@@ -2833,24 +2809,27 @@ class TestComponentWithFileUploadRecordPreventingTamperingAndCustomMessage exten
     }
 }
 
-describe('`hydrateFiles()` branches', function (): void {
+describe('state hydration', function (): void {
     $makeField = function (callable $configure): FileUpload {
-        $field = FileUpload::make('document')
-            ->container(Schema::make(Livewire::make())->statePath('data'));
+        $field = FileUpload::make('document');
 
         $configure($field);
+
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$field]);
+
+        $field->container($schema);
 
         return $field;
     };
 
-    it('filters out files that do not exist on disk when `shouldFetchFileInformation` is true', function () use ($makeField): void {
+    it('filters out files that do not exist on disk when `$shouldFetchFileInformation` is true', function () use ($makeField): void {
         Storage::fake('local');
         Storage::disk('local')->put('uploads/exists.jpg', 'data');
 
         $field = $makeField(static fn (FileUpload $field) => $field->multiple());
-        $field->rawState(['uploads/exists.jpg', 'uploads/missing.jpg']);
-
-        $field->hydrateFiles();
+        $field->getContainer()->fill(['document' => ['uploads/exists.jpg', 'uploads/missing.jpg']]);
 
         expect(array_values($field->getRawState()))->toBe(['uploads/exists.jpg']);
     });
@@ -2860,21 +2839,16 @@ describe('`hydrateFiles()` branches', function (): void {
         Storage::disk('local')->put('uploads/file.jpg', 'data');
 
         $field = $makeField(static fn (FileUpload $field) => $field->multiple());
-        $field->rawState(['uploads/file.jpg', '']);
-
-        $field->hydrateFiles();
+        $field->getContainer()->fill(['document' => ['uploads/file.jpg', '']]);
 
         expect(array_values($field->getRawState()))->toBe(['uploads/file.jpg']);
     });
 
     it('keeps all non-blank entries when `fetchFileInformation(false)` is set', function () use ($makeField): void {
-        // Don't create files on disk; with fetchFileInformation off, existence is not checked
         $field = $makeField(static fn (FileUpload $field) => $field
             ->multiple()
             ->fetchFileInformation(false));
-        $field->rawState(['uploads/imaginary-1.jpg', 'uploads/imaginary-2.jpg']);
-
-        $field->hydrateFiles();
+        $field->getContainer()->fill(['document' => ['uploads/imaginary-1.jpg', 'uploads/imaginary-2.jpg']]);
 
         expect(array_values($field->getRawState()))->toBe(['uploads/imaginary-1.jpg', 'uploads/imaginary-2.jpg']);
     });
@@ -2890,7 +2864,7 @@ describe('`getUploadedFile()` branches', function (): void {
         return $field;
     };
 
-    it('returns `null` when the file does not exist and `shouldFetchFileInformation` is true', function () use ($makeField): void {
+    it('returns `null` when the file does not exist and `$shouldFetchFileInformation` is true', function () use ($makeField): void {
         Storage::fake('local');
 
         $field = $makeField(static fn (FileUpload $field) => $field);
@@ -2924,7 +2898,6 @@ describe('`getUploadedFile()` branches', function (): void {
     });
 
     it('returns `size: 0` and `type: null` when `fetchFileInformation(false)` is set', function () use ($makeField): void {
-        // Disk does not have the file; fetchFileInformation(false) skips existence + size + type
         $field = $makeField(static fn (FileUpload $field) => $field->fetchFileInformation(false));
 
         $result = $field->getUploadedFile('uploads/never-stored.jpg', null);
@@ -2938,7 +2911,6 @@ describe('`getUploadedFile()` branches', function (): void {
         Storage::fake('local');
         Storage::disk('local')->put('uploads/private.jpg', 'data');
 
-        // The fake `local` disk does not support temporaryUrl; the catch falls back to url()
         $field = $makeField(static fn (FileUpload $field) => $field->visibility('private'));
 
         $result = $field->getUploadedFile('uploads/private.jpg', null);
@@ -3006,6 +2978,7 @@ describe('`saveUploadedFile()` branches', function (): void {
 
     it('stores the server-detected `mimetype` instead of the temporary storage metadata', function () use ($makeField): void {
         Storage::fake('tmp-for-tests');
+        Storage::fake('public');
 
         $temporaryDiskRoot = Storage::disk('tmp-for-tests')->path('');
         $temporaryDiskAdapter = new LocalFilesystemAdapter(
@@ -3037,7 +3010,7 @@ describe('`saveUploadedFile()` branches', function (): void {
             {
                 $this->storedOptions = $options;
 
-                return trim("{$path}/{$name}", '/');
+                return parent::storeAs($path, $name, $options);
             }
         };
 
@@ -3054,10 +3027,11 @@ describe('`saveUploadedFile()` branches', function (): void {
             ->and($file->storedOptions)->toBe([
                 'disk' => 'public',
                 'mimetype' => 'image/png',
-            ]);
+            ])
+            ->and(Storage::disk('public')->get($path))->toBe($pngContents);
     });
 
-    it('does not call `setVisibility(public)` when visibility is private', function () use ($makeField, $makeTemporaryUploadedFile): void {
+    it('persists the file to the configured local disk when visibility is `private`', function () use ($makeField, $makeTemporaryUploadedFile): void {
         Storage::fake('local');
 
         $field = $makeField(static fn (FileUpload $field) => $field

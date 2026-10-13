@@ -16,6 +16,12 @@
             x-data="{ isSecondaryDropdownShown: false }"
             data-testid="secondary-dropdown-container"
         >
+            <x-filament::button
+                data-testid="show-secondary-dropdown"
+                x-on:click="isSecondaryDropdownShown = true"
+            >
+                Show secondary filters
+            </x-filament::button>
             <template x-if="isSecondaryDropdownShown">
                 <x-filament::dropdown :menu="false">
                     <x-slot name="trigger">
@@ -61,7 +67,10 @@
         </x-filament::dropdown>
 
         <x-filament::input.wrapper>
-            <x-filament::input data-testid="after-nested-menu" />
+            <x-filament::input
+                aria-label="Additional filter"
+                data-testid="after-nested-menu"
+            />
         </x-filament::input.wrapper>
     </x-filament::dropdown>
 

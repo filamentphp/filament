@@ -1416,8 +1416,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         $blocks = $this->resolveCustomBlocks();
         $result = [];
 
-        foreach ($blocks as $value) {
-            if (is_array($value)) {
+        foreach ($blocks as $key => $value) {
+            if (is_string($key) && is_a($key, RichContentCustomBlock::class, allow_string: true)) {
+                $result[] = $key;
+            } elseif (is_array($value)) {
                 foreach ($value as $innerKey => $innerValue) {
                     $result[] = is_string($innerKey) ? $innerKey : $innerValue;
                 }
@@ -1465,7 +1467,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         $groups = collect();
 
         foreach ($blocks as $key => $value) {
-            if (is_string($key) && is_array($value)) {
+            if (is_string($key) && is_a($key, RichContentCustomBlock::class, allow_string: true)) {
+                $ungrouped[] = $key;
+            } elseif (is_string($key) && is_array($value)) {
                 $groupBlocks = [];
 
                 foreach ($value as $innerKey => $innerValue) {

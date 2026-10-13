@@ -2,9 +2,9 @@ import * as TipTapCore from '@tiptap/core'
 import * as TipTapPmState from '@tiptap/pm/state'
 import * as TipTapPmView from '@tiptap/pm/view'
 import * as TipTapPmModel from '@tiptap/pm/model'
-import getExtensions from './rich-editor/extensions'
+import getExtensions from './rich-editor/extensions.js'
 import { BubbleMenuPlugin } from '@tiptap/extension-bubble-menu'
-import { observeFieldAccessibility } from '../utils/field-accessibility'
+import { observeFieldAccessibility } from '../utilities/field-accessibility.js'
 import normalizeSearchString from '../../../../support/resources/js/utilities/normalize-search-string.js'
 
 const { Editor } = TipTapCore

@@ -7,19 +7,25 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Facades\FilamentView;
 use Filament\Tables;
+use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Filament\Tables\View\TablesRenderHook;
+use Filament\Tests\Fixtures\Livewire\TicketDepartmentsReorderableTable;
+use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Pages\TableRenderHooksBrowserTest;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -201,7 +207,7 @@ describe('headings', function (): void {
         expect($table->getRootHeadingLevel())->toBe(3);
     });
 
-    it('computes heading tag from level', function (): void {
+    it('computes `getHeadingTag()` from the heading level', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
 
         expect($table->getHeadingTag())->toBe('h2');
@@ -293,16 +299,139 @@ describe('sorting', function (): void {
         'combined `$sort` injection' => [true],
     ]);
 
-    it('preserves mapped sorting for a toggled-hidden `defaultSort()` column', function (): void {
+    it('preserves selected mapped sorting for a toggled-hidden `defaultSort()` column', function (): void {
         $firstPost = Post::factory()->create(['title' => 'Charlie']);
         $secondPost = Post::factory()->create(['title' => 'Alpha']);
 
         livewire(MappedDefaultSortTableTestComponent::class)
             ->assertCanSeeTableRecords([$secondPost, $firstPost], inOrder: true)
             ->set('tableSort', 'display_title:desc')
-            ->assertSet('tableSort', 'display_title:desc')
-            ->assertCanSeeTableRecords([$secondPost, $firstPost], inOrder: true);
+            ->assertCanSeeTableRecords([$firstPost, $secondPost], inOrder: true);
     });
+
+    it('applies `defaultSort()` to a toggled-hidden aggregate column', function (bool $usesDefaultSortClosure, string $direction): void {
+        $firstUser = User::factory()->create(['name' => 'Charlie']);
+        $secondUser = User::factory()->create(['name' => 'Alpha']);
+        $thirdUser = User::factory()->create(['name' => 'Bravo']);
+
+        Post::factory()->count(2)->for($firstUser, 'author')->create();
+        Post::factory()->for($thirdUser, 'author')->create();
+
+        $expectedUsers = $direction === 'desc'
+            ? [$firstUser, $thirdUser, $secondUser]
+            : [$secondUser, $thirdUser, $firstUser];
+
+        $component = livewire(ToggleableSortableTableTestComponent::class, [
+            'defaultSortColumn' => 'posts_count',
+            'defaultSortDirection' => $direction,
+            'usesDefaultSortClosure' => $usesDefaultSortClosure,
+        ]);
+
+        $tableColumns = $component->get('tableColumns');
+        $tableColumns[1]['isToggled'] = false;
+
+        $component
+            ->call('applyTableColumnManager', $tableColumns)
+            ->assertCanSeeTableRecords($expectedUsers, inOrder: true);
+    })->with([
+        'string ascending' => [false, 'asc'],
+        'string descending' => [false, 'desc'],
+        'Closure ascending' => [true, 'asc'],
+        'Closure descending' => [true, 'desc'],
+    ]);
+
+    it('preserves the selected direction when a `defaultSort()` aggregate column is toggled off', function (string $direction): void {
+        $firstUser = User::factory()->create(['name' => 'Charlie']);
+        $secondUser = User::factory()->create(['name' => 'Alpha']);
+        $thirdUser = User::factory()->create(['name' => 'Bravo']);
+
+        Post::factory()->count(2)->for($firstUser, 'author')->create();
+        Post::factory()->for($thirdUser, 'author')->create();
+
+        $expectedUsers = $direction === 'desc'
+            ? [$firstUser, $thirdUser, $secondUser]
+            : [$secondUser, $thirdUser, $firstUser];
+
+        $component = livewire(ToggleableSortableTableTestComponent::class, [
+            'defaultSortColumn' => 'posts_count',
+        ])->sortTable('posts_count', $direction);
+
+        $tableColumns = $component->get('tableColumns');
+        $tableColumns[1]['isToggled'] = false;
+
+        $component
+            ->call('applyTableColumnManager', $tableColumns)
+            ->assertCanSeeTableRecords($expectedUsers, inOrder: true);
+    })->with(['asc', 'desc']);
+});
+
+describe('pagination', function (): void {
+    it('respects scoped bounds when selecting the current page with `allowDuplicates()`', function (bool $usesOffset): void {
+        $ticket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+        foreach ([3, 5, 7] as $quantity) {
+            $ticket->departments()->attach($department, ['quantity' => $quantity]);
+        }
+
+        $expectedQuantity = $usesOffset ? 5 : 3;
+        $expectedKey = DB::table('department_ticket')->where('quantity', $expectedQuantity)->value('id');
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table
+                ->paginationPageOptions([10])
+                ->defaultSort('department_ticket.id')
+                ->selectCurrentPageOnly()
+                ->modifyQueryUsing(static fn (Builder $query): Builder => $query->withGlobalScope(
+                    'selectionBounds',
+                    static fn (Builder $query): Builder => $query->limit(1)->offset($usesOffset ? 1 : 0),
+                )),
+            during: function () use ($ticket, $expectedQuantity, $expectedKey): void {
+                $component = livewire(TicketDepartmentsReorderableTable::class, [
+                    'ticketKey' => $ticket->getKey(),
+                    'duplicates' => true,
+                    'isPaginated' => true,
+                ]);
+
+                expect($component->instance()->getTableRecords()->pluck('quantity')->all())->toBe([$expectedQuantity]);
+                expect($component->instance()->getAllSelectableTableRecordKeys())->toBe([(string) $expectedKey]);
+            },
+        );
+    })->with([false, true]);
+
+    it('uses pivot keys when selecting records across cursor pages with `allowDuplicates()`', function (bool $sortsByPivotKey): void {
+        $ticket = Ticket::factory()->create();
+        $otherTicket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+        $otherTicket->departments()->attach($department);
+        $otherTicket->departments()->attach($department);
+        foreach ([3, 5, 7] as $quantity) {
+            $ticket->departments()->attach($department, ['quantity' => $quantity]);
+        }
+
+        $expectedKey = DB::table('department_ticket')->where('quantity', 5)->value('id');
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table
+                ->paginationPageOptions([1])
+                ->paginationMode(PaginationMode::Cursor)
+                ->selectCurrentPageOnly()
+                ->defaultSort($sortsByPivotKey ? 'department_ticket.id' : null),
+            during: function () use ($ticket, $expectedKey): void {
+                $component = livewire(TicketDepartmentsReorderableTable::class, [
+                    'ticketKey' => $ticket->getKey(),
+                    'duplicates' => true,
+                    'isPaginated' => true,
+                ]);
+                $records = $component->instance()->getTableRecords();
+                expect($records->pluck('quantity')->all())->toBe([3]);
+
+                $component->call('setPage', $records->nextCursor()->encode(), $component->instance()->getTablePaginationPageName());
+
+                expect($component->instance()->getTableRecords()->pluck('quantity')->all())->toBe([5]);
+                expect($component->instance()->getAllSelectableTableRecordKeys())->toBe([(string) $expectedKey]);
+            },
+        );
+    })->with([false, true]);
 });
 
 describe('session persistence', function (): void {
@@ -829,16 +958,16 @@ describe('rendering', function (): void {
             ->assertPresent($individualSearchInput . ':focus')
             ->keys($individualSearchInput, 'r')
             ->assertValue($individualSearchInput, 'Shor')
-            // Let the debounced search finish before opening another page.
-            ->wait(2)
             ->assertMissing('.fi-ta-records[inert]');
 
         $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
 
         $page
-            ->click('Published')
+            ->assertAttribute('[data-tab-key="published"]', 'data-tab-available', 'true')
+            ->click('[data-tab-key="published"]')
             ->assertPresent('.fi-ta-content-loading .fi-ta-records[inert]')
-            ->assertMissing('.fi-ta-records[inert]');
+            ->assertMissing('.fi-ta-records[inert]')
+            ->assertAttribute('[data-tab-key="published"]', 'aria-selected', 'true');
 
         Post::query()->delete();
 
@@ -939,6 +1068,12 @@ class LoadingSkeletonSortableTableTestComponent extends SortableTableTestCompone
 
 class ToggleableSortableTableTestComponent extends TableTestComponent
 {
+    public string $defaultSortColumn = 'email';
+
+    public string $defaultSortDirection = 'asc';
+
+    public bool $usesDefaultSortClosure = false;
+
     public function table(Table $table): Table
     {
         return $table
@@ -952,7 +1087,10 @@ class ToggleableSortableTableTestComponent extends TableTestComponent
                     ->sortable()
                     ->toggleable(),
             ])
-            ->defaultSort('email')
+            ->defaultSort(
+                $this->usesDefaultSortClosure ? fn (): string => $this->defaultSortColumn : $this->defaultSortColumn,
+                $this->defaultSortDirection,
+            )
             ->persistSortInSession();
     }
 }

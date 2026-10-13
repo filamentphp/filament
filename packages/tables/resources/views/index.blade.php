@@ -24,6 +24,7 @@
     use Illuminate\Contracts\Pagination\LengthAwarePaginator;
     use Illuminate\Contracts\Pagination\Paginator;
     use Illuminate\Contracts\Support\Htmlable;
+    use Illuminate\Database\Eloquent\Model;
     use Illuminate\Database\Query\Builder;
     use Illuminate\Support\Number;
     use Illuminate\Support\Str;
@@ -233,6 +234,7 @@
                 canTrackDeselectedRecords: @js($canTrackDeselectedRecords()),
                 currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
                 maxSelectableRecords: @js($maxSelectableRecords),
+                reorderMessage: @js(__('filament-tables::table.reordering.moved')),
                 selectsCurrentPageOnly: @js($selectsCurrentPageOnly),
                 $wire,
             })"
@@ -248,6 +250,17 @@
         value="{{ $allSelectableRecordsCount }}"
         x-ref="allSelectableRecordsCount"
     />
+
+    @if ($isReorderable)
+        <span
+            wire:ignore
+            x-ref="tableReorderStatus"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            class="fi-sr-only"
+        ></span>
+    @endif
 
     <div
         @class([
@@ -791,7 +804,7 @@
                     {{
                         \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
                             'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                            'wire:target' => 'reorderTable',
+                            'wire:target' => 'reorderTable,moveTableRecord',
                         ]))
                     }}
 
@@ -1100,12 +1113,9 @@
                         @else
                             <div
                                 @if ($isReorderable)
-                                    x-on:end.stop="
-                                        $wire.reorderTable(
-                                            $event.target.sortable.toArray(),
-                                            $event.item.getAttribute('x-sortable-item'),
-                                        )
-                                    "
+                                    x-ref="tableReorderRecords"
+                                    x-on:start.stop="startTableReorder($event)"
+                                    x-on:end.stop="reorderTableRecords($event)"
                                     x-sortable
                                     data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
                                 @endif
@@ -1297,13 +1307,45 @@
                                         @endphp
 
                                         @if ($isReordering)
+                                            @php
+                                                $reorderLabel = ($record instanceof Model && ($hasCustomRecordTitle() || filled($getRecordTitleAttribute()))) ? $getRecordTitle($record) : $recordKey;
+                                                $reorderPosition = $loop->iteration;
+                                                $reorderCount = $loop->count;
+                                                $reorderDescriptionId = $this->getId() . '-table-reorder-' . md5($recordKey);
+                                            @endphp
+
                                             <button
-                                                aria-label="{{ __('filament-tables::table.actions.reorder_record.label', ['key' => $recordKey]) }}"
+                                                aria-hidden="true"
+                                                tabindex="-1"
                                                 class="fi-ta-reorder-handle fi-icon-btn"
                                                 type="button"
                                             >
                                                 {{ \Filament\Support\generate_icon_html(Heroicon::Bars2, alias: TablesIconAlias::REORDER_HANDLE) }}
                                             </button>
+
+                                            <span
+                                                id="{{ $reorderDescriptionId }}"
+                                                class="fi-sr-only"
+                                                data-table-reorder-label="{{ $reorderLabel }}"
+                                            >
+                                                {{ __('filament-tables::table.reordering.position', ['label' => $reorderLabel, 'position' => $reorderPosition, 'count' => $reorderCount]) }}
+                                            </span>
+
+                                            <div class="fi-sr-only">
+                                                @foreach (['up', 'down'] as $direction)
+                                                    <button
+                                                        type="button"
+                                                        aria-describedby="{{ $reorderDescriptionId }}"
+                                                        @disabled(($direction === 'up') ? ($reorderPosition === 1) : ($reorderPosition === $reorderCount))
+                                                        tabindex="-1"
+                                                        data-table-reorder-direction="{{ $direction }}"
+                                                        x-bind:aria-disabled="tableReorderOperation !== null || $el.disabled"
+                                                        x-on:click.stop="moveTableRecord($event, @js($recordKey), @js($direction))"
+                                                    >
+                                                        {{ __('filament-tables::table.actions.move_record_' . $direction . '.label', ['label' => $reorderLabel]) }}
+                                                    </button>
+                                                @endforeach
+                                            </div>
                                         @elseif ($recordIsSelectable)
                                             <input
                                                 aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
@@ -2109,12 +2151,9 @@
                                 <tbody
                                     class="fi-ta-records"
                                     @if ($isReorderable)
-                                        x-on:end.stop="
-                                            $wire.reorderTable(
-                                                $event.target.sortable.toArray(),
-                                                $event.item.getAttribute('x-sortable-item'),
-                                            )
-                                        "
+                                        x-ref="tableReorderRecords"
+                                        x-on:start.stop="startTableReorder($event)"
+                                        x-on:end.stop="reorderTableRecords($event)"
                                         x-sortable
                                         data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
                                     @endif
@@ -2357,13 +2396,45 @@
                                             >
                                                 @if ($isReordering)
                                                     <td class="fi-ta-cell">
+                                                        @php
+                                                            $reorderLabel = ($record instanceof Model && ($hasCustomRecordTitle() || filled($getRecordTitleAttribute()))) ? $getRecordTitle($record) : $recordKey;
+                                                            $reorderPosition = $loop->iteration;
+                                                            $reorderCount = $loop->count;
+                                                            $reorderDescriptionId = $this->getId() . '-table-reorder-' . md5($recordKey);
+                                                        @endphp
+
                                                         <button
-                                                            aria-label="{{ __('filament-tables::table.actions.reorder_record.label', ['key' => $recordKey]) }}"
+                                                            aria-hidden="true"
+                                                            tabindex="-1"
                                                             class="fi-ta-reorder-handle fi-icon-btn"
                                                             type="button"
                                                         >
                                                             {{ \Filament\Support\generate_icon_html(Heroicon::Bars2, alias: TablesIconAlias::REORDER_HANDLE) }}
                                                         </button>
+
+                                                        <span
+                                                            id="{{ $reorderDescriptionId }}"
+                                                            class="fi-sr-only"
+                                                            data-table-reorder-label="{{ $reorderLabel }}"
+                                                        >
+                                                            {{ __('filament-tables::table.reordering.position', ['label' => $reorderLabel, 'position' => $reorderPosition, 'count' => $reorderCount]) }}
+                                                        </span>
+
+                                                        <div class="fi-sr-only">
+                                                            @foreach (['up', 'down'] as $direction)
+                                                                <button
+                                                                    type="button"
+                                                                    aria-describedby="{{ $reorderDescriptionId }}"
+                                                                    @disabled(($direction === 'up') ? ($reorderPosition === 1) : ($reorderPosition === $reorderCount))
+                                                                    tabindex="-1"
+                                                                    data-table-reorder-direction="{{ $direction }}"
+                                                                    x-bind:aria-disabled="tableReorderOperation !== null || $el.disabled"
+                                                                    x-on:click.stop="moveTableRecord($event, @js($recordKey), @js($direction))"
+                                                                >
+                                                                    {{ __('filament-tables::table.actions.move_record_' . $direction . '.label', ['label' => $reorderLabel]) }}
+                                                                </button>
+                                                            @endforeach
+                                                        </div>
                                                     </td>
                                                 @endif
 

@@ -10,6 +10,18 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\HtmlString;
 
+$writePublishedOverride = function (string $relativePath, string $contents): string {
+    $path = resource_path('views/vendor/' . $relativePath);
+
+    if (! is_dir(dirname($path))) {
+        mkdir(dirname($path), recursive: true);
+    }
+
+    file_put_contents($path, $contents);
+
+    return $path;
+};
+
 uses(TestCase::class)->group('serial');
 
 describe('view', function (): void {
@@ -172,19 +184,11 @@ describe('HTML rendering', function (): void {
     });
 });
 
-describe('published view override', function (): void {
-    $resetOverrideCache = function (): void {
-        $cache = (new ReflectionClass(ViewComponent::class))
-            ->getProperty('hasPublishedEmbeddedViewOverrideCache');
-        $cache->setValue(null, []);
-    };
-
-    beforeEach($resetOverrideCache);
-
-    afterEach(function () use ($resetOverrideCache): void {
+describe('published view override', function () use ($writePublishedOverride): void {
+    afterEach(function (): void {
         foreach ([
             resource_path('views/vendor/filament-forms/test-override.blade.php'),
-            resource_path('views/vendor/filament-forms/components/text-input.blade.php'),
+            resource_path('views/vendor/filament-forms/test-text-input-override.blade.php'),
         ] as $path) {
             if (file_exists($path)) {
                 unlink($path);
@@ -199,8 +203,6 @@ describe('published view override', function (): void {
                 @rmdir($directory);
             }
         }
-
-        $resetOverrideCache();
     });
 
     it('returns the path declared in the property from `getPublishedViewOverrideCheckPath()`', function (): void {
@@ -216,59 +218,44 @@ describe('published view override', function (): void {
     });
 
     it('renders `toEmbeddedHtml()` when no published override exists', function (): void {
-        $component = new EmbeddedViewComponent;
+        $component = new class extends EmbeddedViewComponent
+        {
+            protected ?string $publishedViewOverrideCheckPath = 'filament-forms::unpublished-test-override';
+        };
 
         expect($component->toHtml())->toBe('embedded');
     });
 
-    it('renders the published Blade override instead of `toEmbeddedHtml()` when one exists', function (): void {
-        writePublishedOverride('filament-forms/test-override.blade.php', 'PUBLISHED OVERRIDE');
+    it('renders the published Blade override instead of `toEmbeddedHtml()` when one exists', function () use ($writePublishedOverride): void {
+        $writePublishedOverride('filament-forms/test-override.blade.php', 'PUBLISHED OVERRIDE');
 
         $component = new EmbeddedViewComponent;
 
         expect($component->toHtml())->toBe('PUBLISHED OVERRIDE');
     });
 
-    it('caches the override-detection result by view path', function (): void {
-        $path = writePublishedOverride('filament-forms/test-override.blade.php', 'X');
-
-        expect(ViewComponent::hasPublishedEmbeddedViewOverride('filament-forms::test-override'))->toBeTrue();
-
-        unlink($path);
-
-        expect(ViewComponent::hasPublishedEmbeddedViewOverride('filament-forms::test-override'))->toBeTrue();
-    });
-
     it('returns `false` from `hasPublishedEmbeddedViewOverride()` for a path without a namespace', function (): void {
         expect(ViewComponent::hasPublishedEmbeddedViewOverride('no-namespace.view'))->toBeFalse();
     });
 
-    it('honours a published override on a real form component (`TextInput`)', function (): void {
-        writePublishedOverride('filament-forms/components/text-input.blade.php', 'PUBLISHED-TEXT-INPUT-SENTINEL');
+    it('honours a published override on a real form component (`TextInput`)', function () use ($writePublishedOverride): void {
+        app('view');
+
+        $writePublishedOverride('filament-forms/test-text-input-override.blade.php', 'PUBLISHED-TEXT-INPUT-SENTINEL');
 
         Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
-                $input = TextInput::make('name'),
+                $input = new class('name') extends TextInput
+                {
+                    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::test-text-input-override';
+                },
             ])
             ->fill();
 
         expect($input->toHtml())->toContain('PUBLISHED-TEXT-INPUT-SENTINEL');
     });
 });
-
-function writePublishedOverride(string $relativePath, string $contents): string
-{
-    $path = resource_path('views/vendor/' . $relativePath);
-
-    if (! is_dir(dirname($path))) {
-        mkdir(dirname($path), recursive: true);
-    }
-
-    file_put_contents($path, $contents);
-
-    return $path;
-}
 
 class ConcreteViewComponent extends ViewComponent
 {
@@ -285,10 +272,7 @@ class EmbeddedViewComponent extends ViewComponent implements HasEmbeddedView
     }
 }
 
-class ViewComponentWithoutView extends ViewComponent
-{
-    // No $view property
-}
+class ViewComponentWithoutView extends ViewComponent {}
 
 class EmptyViewComponent extends ViewComponent
 {

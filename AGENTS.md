@@ -52,14 +52,17 @@ it('returns null for getImageCropAspectRatio by default')
 
 ## Development Commands
 
-**Introduce new tests only for actual frontend or backend behavior changes.** Styling changes and bug fixes that restore existing intended behavior should not introduce new tests. Verify those fixes using existing tests and, for styling, visual inspection. For frontend behavior changes, add browser tests using Pest Browser with `visit()`. Always call `assertNoAccessibilityIssues()` in both light and dark modes (`->inDarkMode()`).
+**Introduce new tests only for actual frontend or backend behavior changes.** Styling changes and bug fixes that restore existing intended behavior should not introduce new tests. Verify those fixes using existing tests and, for styling, visual inspection. For frontend behavior changes, add browser tests using Pest Browser with `visit()`. Check representative stable states with `assertNoAccessibilityIssues()` in both light and dark modes, using the page returned by `inDarkMode()`. Report dependency-related accessibility limitations rather than suppressing violations or waiting for private framework markup.
 
 - Keep inexpensive non-browser coverage of supported configuration and rendering paths, including setters, getters, `Closure` evaluation, and successful rendering.
 - In browser tests, do not assert exact translated copy, CSS classes, inline styles, utility classes, incidental HTML, or computed visual styling unless that output proves the behavior under test.
-- Prefer stable semantic selectors or `data-testid` hooks for browser interactions. Do not use presentation classes or visible copy merely as readiness checks.
+- Prefer native Pest Browser / Playwright interactions and assertions with stable semantic selectors or `data-testid` hooks. Do not inspect framework/component internals, replace component methods, simulate private lifecycle calls, or synchronize on private markup such as NProgress. Use custom JavaScript only for public integration setup or observable facts that native APIs cannot reasonably express. Do not use presentation classes or visible copy merely as readiness checks.
+- Wait for observable readiness or outcomes, not fixed delays. Server-rendered presence, default attributes, or enabled state do not necessarily establish readiness. Perform each interaction once; do not replay actions inside polling assertions or add whole-test retries to hide failures.
+- If coverage cannot be made durable without implementation coupling, remove the assertion or scenario and its exclusive fixtures, and report the lost coverage. Do not force results, weaken meaningful outcomes, or add test-only production APIs to retain coverage numbers.
 - Before adding a browser test, search the file for the same route and setup. Combine related assertions into one coherently named test and reuse the page; use another visit only when isolation or a state reset is required.
-- Keep light- and dark-mode accessibility checks for the same scenario together. Do not repeat database, authentication, or browser setup solely to split those checks into separate tests.
+- Run behavior scenarios once unless the theme changes the behavior. Keep light- and dark-mode accessibility checks together for representative distinct states (such as open popups, errors, and disabled controls), not every interaction or dataset permutation. Reuse existing coverage instead of repeating equivalent whole-document scans or setup.
 - Keep each test focused on one behavior and each test file focused on its owning component or feature. Separate scenarios only when combining them would obscure the behavior or introduce order-dependent state.
+- For asynchronous JavaScript changes, exercise out-of-order completion, failure/cancellation, and destruction with pending work. Use the real integration where mocked callbacks would hide its contract. This validation does not automatically require new permanent tests.
 
 ```bash
 composer test              # Run all tests (SQLite + commands + PHPStan)
@@ -157,10 +160,15 @@ Interfaces in `Contracts/` directories.
 
 ## Coding Standards
 
+### JavaScript organization
+
+Use `components/` for eager and lazy Alpine factories, `stores/` for Alpine stores, `utilities/` for shared helpers and composition, and `components/<feature>/` for feature-private internals. Keep registration in `index.js`. Use kebab-case filenames and explicit `.js` extensions on relative JavaScript imports. Follow the owning package's frontend naming convention; check registration and markup usage before renaming existing names.
+
 ### JavaScript lifecycle cleanup
 
-- Alpine components and directives must release resources they own in `destroy()` or `cleanup()`, including listeners on surviving ancestors or global objects, observers, animation loops, and third-party instances. Listeners attached only to removed subtree elements do not need separate cleanup.
-- Guard asynchronous initialization and callbacks when they could create surviving resources or cause observable stale behavior after destruction. Use the third-party instance's real teardown API, verified against its source when necessary.
+- Alpine components and directives must release resources they own in `destroy()` or `cleanup()`, including listeners on surviving ancestors or global objects, observers, animation loops, and third-party instances. Retain the same callback reference when adding and removing listeners. Listeners attached only to removed subtree elements do not need separate cleanup.
+- Guard asynchronous initialization and callbacks when they could create surviving resources or cause observable stale behavior after destruction. After asynchronous work, verify the owner and target are still current; saved document positions alone do not establish identity. Verify third-party completion, failure, cancellation, and teardown contracts against their implementation when necessary, and use their real teardown API.
+- Balance processing-start/finish signals exactly once per operation, including failure, cancellation, and destruction. For batches, restore busy/editable state only after every task settles; preserve the original state.
 - Do not add cleanup solely for short-lived timers; cancel or guard them when their callback could still cause stale behavior after destruction.
 
 ### PHPDoc
@@ -224,12 +232,16 @@ Hook class naming:
 
 ## Writing Documentation
 
-**Always update documentation for user-facing features** in `packages/{package}/docs/`.
+**Always update documentation for user-facing features** in the owning page under `docs/` or `packages/{package}/docs/`.
 
 - **Tone**: Direct, second person ("You may set...", "You can do this using...")
-- **Structure**: Start with `## Introduction`, show simplest code first
+- **Audience**: Document how developers configure, extend, and troubleshoot Filament, not how end users operate it. Explain built-in interactions or internal behavior only when they affect a developer's decision, integration, or consequential limitation.
+- **Structure**: Start with `## Introduction`, briefly explain the purpose, and show the simplest useful example. Defer optional configuration and specialized integration details to later sections.
 - **Section order**: Review the full page and analogous pages, then place sections by reader importance and logical flow, not by when they were added. Do not default new sections to the top.
-- **Hierarchy**: Keep foundational and common workflows before specialized content, and nest narrower topics under their parent section.
+- **Hierarchy**: Keep foundational and common workflows before specialized content, and nest narrower topics under their parent section. Place consequential warnings beside the first affected recipe, even when the full explanation belongs later.
+- **Security and accessibility**: State what Filament provides, where that protection or support stops, and what the application developer must implement. Preserve meaningful security, accessibility, compatibility, and data-loss guidance; do not replace precise boundaries with broad assurances.
+- **Examples**: Keep examples focused on the API being taught. Do not add application-specific authorization, re-querying, or defensive boilerplate to unrelated recipes; explain those responsibilities in an adjacent warning and link to the dedicated guidance. Examples must still demonstrate correct API usage and must not imply protections Filament does not provide.
+- **Accuracy and repetition**: Check behavioral claims and examples against the current branch's implementation. Explain shared contracts in their owning section and link from contextual recipes, retaining any caveat needed to use that recipe safely.
 - **Headings**: Use gerunds ("Setting the type" not "Type settings", "Enabling search" not "Search")
 - **Formatting**: Backticks for code (`method()`, `ClassName`), include `use` statements
 - **Asides**: `<Aside variant="tip|info|danger">...</Aside>`

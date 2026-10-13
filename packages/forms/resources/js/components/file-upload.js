@@ -9,11 +9,11 @@ import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orien
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginImageResize from 'filepond-plugin-image-resize'
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform'
-import FilePondPluginMediaPreview from './file-upload/filepond-plugin-media-preview'
+import FilePondPluginMediaPreview from './file-upload/filepond-plugin-media-preview.js'
 import {
     observeFieldAccessibility,
     setFieldAccessibilityAttributes,
-} from '../utils/field-accessibility'
+} from '../utilities/field-accessibility.js'
 
 FilePond.registerPlugin(FilePondPluginFileValidateSize)
 FilePond.registerPlugin(FilePondPluginFileValidateType)

@@ -309,11 +309,19 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
      */
     public function getDefaultStateCasts(): array
     {
-        return [
-            ...parent::getDefaultStateCasts(),
-            ...($this->hasStripCharacters() ? [app(StripCharactersStateCast::class, ['characters' => $this->getStripCharacters()])] : []),
-            ...($this->isNumeric() ? [app(NumberStateCast::class, ['isNullable' => true, 'isInteger' => $this->isInteger()])] : []),
-        ];
+        $casts = parent::getDefaultStateCasts();
+
+        if ($this->isNumeric()) {
+            $casts[] = app(NumberStateCast::class, [
+                'isNullable' => true,
+                'isInteger' => $this->isInteger(),
+                'stripCharacters' => $this->getStripCharacters(),
+            ]);
+        } elseif ($this->hasStripCharacters()) {
+            $casts[] = app(StripCharactersStateCast::class, ['characters' => $this->getStripCharacters()]);
+        }
+
+        return $casts;
     }
 
     public function toEmbeddedHtml(): string

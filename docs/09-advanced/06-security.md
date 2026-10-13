@@ -20,7 +20,13 @@ This page covers key security considerations when building applications with Fil
 
 Filament automatically checks [Laravel Model Policies](https://laravel.com/docs/authorization#creating-policies) for standard CRUD operations on [resources](../resources/overview#authorization). When a policy exists for a resource's model, Filament will check methods like `viewAny()`, `create()`, `update()`, `view()`, `delete()`, and others before allowing access to the corresponding pages and actions.
 
+<Aside variant="warning">
+    By default, a missing resource policy or policy method does not deny access: Filament allows the operation unless a Gate before callback denies it. Define the policy methods your application needs, or enable [strict authorization](../panel-configuration#strict-authorization-mode) to detect missing policies and methods. Strict mode does not add authorization to custom actions, inline editable columns, or other code that does not use resource authorization. Skipping authorization on a resource bypasses its policy checks even in strict mode.
+</Aside>
+
 However, Filament's automatic authorization only covers these built-in resource operations. Any custom functionality you add — custom actions, custom pages, custom Livewire components, API endpoints, or other business logic — must be authorized by you. Filament cannot know your application's authorization requirements beyond the standard CRUD operations it provides.
+
+Resource access and record scoping are separate. A `viewAny()` check controls access to the resource; it does not filter its table through each record's `view()` policy. Likewise, built-in bulk delete, force-delete, and restore actions check their `*Any()` abilities, not each record's policy by default. Apply query restrictions for records a user must not see, and enable [individual record authorization](../tables/actions#authorizing-bulk-actions) when a bulk operation needs per-record checks.
 
 ### Authorization and the Livewire request lifecycle
 
@@ -157,7 +163,7 @@ TextColumn::make('website')
     ->url(fn (string $state): ?string => Str::sanitizeUrl($state))
 ```
 
-You can call the helper anywhere a URL is being passed to a Filament configuration method (`url()`, `image()`, `icon()` when given a URL, `openUrlInNewTab()` callbacks, and so on). Internally Filament already runs every file URL it emits from components like `FileUpload` and `SpatieMediaLibraryFileUpload` through this helper.
+Use the helper when providing an untrusted URL, such as a column, entry, or action's `url()`. `FileUpload` and `SpatieMediaLibraryFileUpload` already sanitize their preview, open, and download URLs; that does not authorize access to the underlying files.
 
 If you need to allow additional schemes — for example `mailto:` or `tel:` — pass them in as the second argument. The default allowlist is replaced by what you pass, so include `http` and `https` if you still want them:
 

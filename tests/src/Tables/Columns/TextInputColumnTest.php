@@ -23,288 +23,301 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('renders one error-aware text input tooltip with or without a configured hint', function (?string $tooltip): void {
-    $post = Post::factory()->create();
-    $column = livewire(TestTableWithTextInputColumn::class)->instance()->getTable()->getColumn('rating');
-    $html = $column->record($post)->tooltip($tooltip)->toEmbeddedHtml();
+describe('state updates and relationship persistence', function (): void {
+    it('reports a missing persistence target without changing custom `null` callback results', function (): void {
+        $post = Post::factory()->create(['author_id' => null]);
+        $column = TextInputColumn::make('author.name')->record($post);
 
-    expect(substr_count($html, 'x-tooltip='))->toBe(1)
-        ->and($html)->toContain('error === undefined ? ' . ($tooltip ? '{' : 'false'))
-        ->toContain('content: error')
-        ->toContain('allowHTML: false');
-})->with([null, 'Edit rating']);
+        expect($column->updateState('Updated name'))->toBe(['error' => __('filament-tables::table.columns.editable.unavailable')])
+            ->and($post->fresh()->author_id)->toBeNull();
 
-it('injects `$state` and a `null` `$relatedRecord` into update callbacks without a relationship', function (): void {
-    $calls = [];
+        $column->updateStateUsing(static fn (): mixed => null);
 
-    $column = TextInputColumn::make('name')
-        ->record(new User(['name' => 'Original name']))
-        ->beforeStateUpdated(static function (string $state, ?User $relatedRecord) use (&$calls): void {
-            $calls[] = ['before', $state, $relatedRecord];
-        })
-        ->updateStateUsing(static function (string $state, ?User $relatedRecord) use (&$calls): string {
-            $calls[] = ['update', $state, $relatedRecord];
+        expect($column->updateState('Updated name'))->toBeNull();
+    });
+});
 
-            return strtoupper($state);
-        })
-        ->afterStateUpdated(static function (string $state, ?User $relatedRecord) use (&$calls): void {
-            $calls[] = ['after', $state, $relatedRecord];
-        });
+describe('update callbacks and relationship targets', function (): void {
+    it('injects `$state` and a `null` `$relatedRecord` into update callbacks without a relationship', function (): void {
+        $calls = [];
 
-    expect($column->updateState('updated'))->toBe('UPDATED')
-        ->and($calls)->toBe([
-            ['before', 'updated', null],
-            ['update', 'updated', null],
-            ['after', 'updated', null],
+        $column = TextInputColumn::make('name')
+            ->record(new User(['name' => 'Original name']))
+            ->beforeStateUpdated(static function (string $state, ?User $relatedRecord) use (&$calls): void {
+                $calls[] = ['before', $state, $relatedRecord];
+            })
+            ->updateStateUsing(static function (string $state, ?User $relatedRecord) use (&$calls): string {
+                $calls[] = ['update', $state, $relatedRecord];
+
+                return strtoupper($state);
+            })
+            ->afterStateUpdated(static function (string $state, ?User $relatedRecord) use (&$calls): void {
+                $calls[] = ['after', $state, $relatedRecord];
+            });
+
+        expect($column->updateState('updated'))->toBe('UPDATED')
+            ->and($calls)->toBe([
+                ['before', 'updated', null],
+                ['update', 'updated', null],
+                ['after', 'updated', null],
+            ]);
+    });
+
+    it('resolves one relationship model for all update callbacks without cached rendering state', function (): void {
+        $author = User::factory()->create(['name' => 'Original name']);
+        $post = Post::factory()->create(['author_id' => $author->getKey()]);
+        $callbackRelatedRecords = [];
+
+        $column = TextInputColumn::make('author.name')
+            ->record($post)
+            ->beforeStateUpdated(static function (User $relatedRecord) use (&$callbackRelatedRecords): void {
+                $callbackRelatedRecords[] = $relatedRecord;
+            })
+            ->updateStateUsing(static function (string $state, Post $record, User $relatedRecord) use (&$callbackRelatedRecords, $post): string {
+                expect($state)->toBe('Updated name');
+                expect($record)->toBe($post);
+
+                $callbackRelatedRecords[] = $relatedRecord;
+
+                return strtoupper($state);
+            })
+            ->afterStateUpdated(static function (User $relatedRecord) use (&$callbackRelatedRecords): void {
+                $callbackRelatedRecords[] = $relatedRecord;
+            });
+
+        expect($column->updateState('Updated name'))->toBe('UPDATED NAME')
+            ->and($callbackRelatedRecords)->toHaveCount(3)
+            ->and($callbackRelatedRecords[0])->toBe($callbackRelatedRecords[1])
+            ->and($callbackRelatedRecords[1])->toBe($callbackRelatedRecords[2])
+            ->and($callbackRelatedRecords[0]->is($author))->toBeTrue();
+    });
+
+    it('preserves constrained eager loads in `updateStateUsing()`', function (): void {
+        $author = User::factory()->create();
+        $draft = Post::factory()->create([
+            'author_id' => $author->getKey(),
+            'is_published' => false,
+            'title' => 'Draft title',
         ]);
+        $published = Post::factory()->create([
+            'author_id' => $author->getKey(),
+            'is_published' => true,
+            'title' => 'Published title',
+        ]);
+
+        livewire(TestTableWithConstrainedRelationshipTextInputColumn::class)
+            ->assertSee('Published title')
+            ->assertDontSee('Draft title')
+            ->call('updateTableColumnState', 'posts.title', (string) $author->getKey(), 'Updated title')
+            ->assertHasNoErrors();
+
+        expect($published->refresh()->title)->toBe('Updated title')
+            ->and($draft->refresh()->title)->toBe('Draft title');
+    });
+
+    it('resolves the default relationship persistence target after `beforeStateUpdated()`', function (): void {
+        $originalAuthor = User::factory()->create(['name' => 'Original author']);
+        $replacementAuthor = User::factory()->create(['name' => 'Replacement author']);
+        $post = Post::factory()->create(['author_id' => $originalAuthor->getKey()]);
+        $afterRelatedRecord = null;
+
+        $column = TextInputColumn::make('author.name')
+            ->record($post)
+            ->beforeStateUpdated(static function (User $relatedRecord) use ($post, $replacementAuthor): void {
+                expect($relatedRecord->is($post->author))->toBeTrue();
+
+                $post->author()->associate($replacementAuthor);
+                $post->save();
+            })
+            ->afterStateUpdated(static function (User $relatedRecord) use (&$afterRelatedRecord): void {
+                $afterRelatedRecord = $relatedRecord;
+            });
+
+        expect($column->updateState('Updated replacement'))->toBe('Updated replacement')
+            ->and($originalAuthor->refresh()->name)->toBe('Original author')
+            ->and($replacementAuthor->refresh()->name)->toBe('Updated replacement')
+            ->and($afterRelatedRecord)->toBeInstanceOf(User::class)
+            ->and($afterRelatedRecord->is($replacementAuthor))->toBeTrue();
+    });
+
+    it('recomputes a nested `MorphTo` persistence path after `beforeStateUpdated()`', function (): void {
+        $team = Team::factory()->create(['name' => 'Original team']);
+        $user = User::factory()->create(['team_id' => $team->getKey()]);
+        $profile = Profile::factory()->create();
+        $image = Image::factory()->for($profile, 'imageable')->create();
+        $afterRelatedRecord = null;
+
+        $column = TextInputColumn::make('imageable.team.name')
+            ->record($image)
+            ->beforeStateUpdated(static function () use ($image, $user): void {
+                $image->imageable()->associate($user);
+                $image->save();
+            })
+            ->afterStateUpdated(static function (Team $relatedRecord) use (&$afterRelatedRecord): void {
+                $afterRelatedRecord = $relatedRecord;
+            });
+
+        expect($column->updateState('Updated team'))->toBe('Updated team')
+            ->and($team->refresh()->name)->toBe('Updated team')
+            ->and($afterRelatedRecord)->toBeInstanceOf(Team::class)
+            ->and($afterRelatedRecord->is($team))->toBeTrue();
+    });
 });
 
-it('resolves one relationship model for all update callbacks without cached rendering state', function (): void {
-    $author = User::factory()->create(['name' => 'Original name']);
-    $post = Post::factory()->create(['author_id' => $author->getKey()]);
-    $callbackRelatedRecords = [];
+describe('type', function (): void {
+    it('can set `type()` and get with `getType()`', function (): void {
+        expect(TextInputColumn::make('rating')->type('number')->getType())->toBe('number');
+    });
 
-    $column = TextInputColumn::make('author.name')
-        ->record($post)
-        ->beforeStateUpdated(static function (User $relatedRecord) use (&$callbackRelatedRecords): void {
-            $callbackRelatedRecords[] = $relatedRecord;
-        })
-        ->updateStateUsing(static function (string $state, Post $record, User $relatedRecord) use (&$callbackRelatedRecords, $post): string {
-            expect($state)->toBe('Updated name');
-            expect($record)->toBe($post);
+    it('defaults `getType()` to `text`', function (): void {
+        expect(TextInputColumn::make('rating')->getType())->toBe('text');
+    });
 
-            $callbackRelatedRecords[] = $relatedRecord;
-
-            return strtoupper($state);
-        })
-        ->afterStateUpdated(static function (User $relatedRecord) use (&$callbackRelatedRecords): void {
-            $callbackRelatedRecords[] = $relatedRecord;
-        });
-
-    expect($column->updateState('Updated name'))->toBe('UPDATED NAME')
-        ->and($callbackRelatedRecords)->toHaveCount(3)
-        ->and($callbackRelatedRecords[0])->toBe($callbackRelatedRecords[1])
-        ->and($callbackRelatedRecords[1])->toBe($callbackRelatedRecords[2])
-        ->and($callbackRelatedRecords[0]->is($author))->toBeTrue();
+    it('can set `type()` with a `Closure`', function (): void {
+        expect(TextInputColumn::make('rating')->type(static fn (): string => 'email')->getType())->toBe('email');
+    });
 });
 
-it('preserves constrained eager loads in `updateStateUsing()`', function (): void {
-    $author = User::factory()->create();
-    $draft = Post::factory()->create([
-        'author_id' => $author->getKey(),
-        'is_published' => false,
-        'title' => 'Draft title',
-    ]);
-    $published = Post::factory()->create([
-        'author_id' => $author->getKey(),
-        'is_published' => true,
-        'title' => 'Published title',
-    ]);
+describe('mask', function (): void {
+    it('can set `mask()` and get with `getMask()`', function (): void {
+        expect(TextInputColumn::make('phone')->mask('999-999-9999')->getMask())->toBe('999-999-9999');
+    });
 
-    livewire(TestTableWithConstrainedRelationshipTextInputColumn::class)
-        ->assertSee('Published title')
-        ->assertDontSee('Draft title')
-        ->call('updateTableColumnState', 'posts.title', (string) $author->getKey(), 'Updated title')
-        ->assertHasNoErrors();
+    it('defaults `getMask()` to `null`', function (): void {
+        expect(TextInputColumn::make('rating')->getMask())->toBeNull();
+    });
 
-    expect($published->refresh()->title)->toBe('Updated title')
-        ->and($draft->refresh()->title)->toBe('Draft title');
+    it('can set `mask()` with a `Closure`', function (): void {
+        expect(TextInputColumn::make('phone')->mask(static fn (): string => '(999) 999-9999')->getMask())->toBe('(999) 999-9999');
+    });
+
+    it('can set `mask()` with `RawJs`', function (): void {
+        $column = TextInputColumn::make('price')
+            ->mask(RawJs::make('$money($input)'));
+
+        expect($column->getMask())->toBeInstanceOf(RawJs::class);
+    });
 });
 
-it('resolves the default relationship persistence target after `beforeStateUpdated()`', function (): void {
-    $originalAuthor = User::factory()->create(['name' => 'Original author']);
-    $replacementAuthor = User::factory()->create(['name' => 'Replacement author']);
-    $post = Post::factory()->create(['author_id' => $originalAuthor->getKey()]);
-    $afterRelatedRecord = null;
+describe('affixes', function (): void {
+    it('can set `prefix()` and get with `getPrefixLabel()`', function (): void {
+        expect(TextInputColumn::make('price')->prefix('$')->getPrefixLabel())->toBe('$');
+    });
 
-    $column = TextInputColumn::make('author.name')
-        ->record($post)
-        ->beforeStateUpdated(static function (User $relatedRecord) use ($post, $replacementAuthor): void {
-            expect($relatedRecord->is($post->author))->toBeTrue();
+    it('defaults `getPrefixLabel()` to `null`', function (): void {
+        expect(TextInputColumn::make('price')->getPrefixLabel())->toBeNull();
+    });
 
-            $post->author()->associate($replacementAuthor);
-            $post->save();
-        })
-        ->afterStateUpdated(static function (User $relatedRecord) use (&$afterRelatedRecord): void {
-            $afterRelatedRecord = $relatedRecord;
-        });
+    it('can set `suffix()` and get with `getSuffixLabel()`', function (): void {
+        expect(TextInputColumn::make('price')->suffix('USD')->getSuffixLabel())->toBe('USD');
+    });
 
-    expect($column->updateState('Updated replacement'))->toBe('Updated replacement')
-        ->and($originalAuthor->refresh()->name)->toBe('Original author')
-        ->and($replacementAuthor->refresh()->name)->toBe('Updated replacement')
-        ->and($afterRelatedRecord)->toBeInstanceOf(User::class)
-        ->and($afterRelatedRecord->is($replacementAuthor))->toBeTrue();
+    it('defaults `getSuffixLabel()` to `null`', function (): void {
+        expect(TextInputColumn::make('price')->getSuffixLabel())->toBeNull();
+    });
+
+    it('can set `inlinePrefix()` and get with `isPrefixInline()`', function (): void {
+        expect(TextInputColumn::make('price')->inlinePrefix()->isPrefixInline())->toBeTrue();
+    });
+
+    it('defaults `isPrefixInline()` to `false`', function (): void {
+        expect(TextInputColumn::make('price')->isPrefixInline())->toBeFalse();
+    });
+
+    it('can set `inlineSuffix()` and get with `isSuffixInline()`', function (): void {
+        expect(TextInputColumn::make('price')->inlineSuffix()->isSuffixInline())->toBeTrue();
+    });
+
+    it('defaults `isSuffixInline()` to `false`', function (): void {
+        expect(TextInputColumn::make('price')->isSuffixInline())->toBeFalse();
+    });
+
+    it('can set `prefixIcon()` and get with `getPrefixIcon()`', function (): void {
+        expect(TextInputColumn::make('price')->prefixIcon('heroicon-o-currency-dollar')->getPrefixIcon())->toBe('heroicon-o-currency-dollar');
+    });
+
+    it('defaults `getPrefixIcon()` to `null`', function (): void {
+        expect(TextInputColumn::make('price')->getPrefixIcon())->toBeNull();
+    });
+
+    it('can set `suffixIcon()` and get with `getSuffixIcon()`', function (): void {
+        expect(TextInputColumn::make('price')->suffixIcon('heroicon-o-check')->getSuffixIcon())->toBe('heroicon-o-check');
+    });
+
+    it('defaults `getSuffixIcon()` to `null`', function (): void {
+        expect(TextInputColumn::make('price')->getSuffixIcon())->toBeNull();
+    });
+
+    it('can set `prefixIconColor()` and get with `getPrefixIconColor()`', function (): void {
+        expect(TextInputColumn::make('price')->prefixIconColor('success')->getPrefixIconColor())->toBe('success');
+    });
+
+    it('defaults `getPrefixIconColor()` to `null`', function (): void {
+        expect(TextInputColumn::make('price')->getPrefixIconColor())->toBeNull();
+    });
+
+    it('can set `suffixIconColor()` and get with `getSuffixIconColor()`', function (): void {
+        expect(TextInputColumn::make('price')->suffixIconColor('danger')->getSuffixIconColor())->toBe('danger');
+    });
+
+    it('defaults `getSuffixIconColor()` to `null`', function (): void {
+        expect(TextInputColumn::make('price')->getSuffixIconColor())->toBeNull();
+    });
+
+    it('can set `prefix()` with inline and get `isPrefixInline()`', function (): void {
+        $column = TextInputColumn::make('price')
+            ->prefix('$', isInline: true);
+
+        expect($column->getPrefixLabel())->toBe('$');
+        expect($column->isPrefixInline())->toBeTrue();
+    });
+
+    it('can set `suffix()` with inline and get `isSuffixInline()`', function (): void {
+        $column = TextInputColumn::make('price')
+            ->suffix('USD', isInline: true);
+
+        expect($column->getSuffixLabel())->toBe('USD');
+        expect($column->isSuffixInline())->toBeTrue();
+    });
+
+    it('can set `prefixIcon()` with inline', function (): void {
+        $column = TextInputColumn::make('price')
+            ->prefixIcon('heroicon-o-dollar', isInline: true);
+
+        expect($column->getPrefixIcon())->toBe('heroicon-o-dollar');
+        expect($column->isPrefixInline())->toBeTrue();
+    });
+
+    it('can set `prefix()` with a `Closure`', function (): void {
+        expect(TextInputColumn::make('price')->prefix(static fn (): string => '€')->getPrefixLabel())->toBe('€');
+    });
+
+    it('can set `suffix()` with a `Closure`', function (): void {
+        expect(TextInputColumn::make('price')->suffix(static fn (): string => 'EUR')->getSuffixLabel())->toBe('EUR');
+    });
+
+    it('can set `prefixIconColor()` with a `Closure`', function (): void {
+        expect(TextInputColumn::make('price')->prefixIconColor(static fn (): string => 'info')->getPrefixIconColor())->toBe('info');
+    });
 });
 
-it('recomputes a nested `MorphTo` persistence path after `beforeStateUpdated()`', function (): void {
-    $team = Team::factory()->create(['name' => 'Original team']);
-    $user = User::factory()->create(['team_id' => $team->getKey()]);
-    $profile = Profile::factory()->create();
-    $image = Image::factory()->for($profile, 'imageable')->create();
-    $afterRelatedRecord = null;
+describe('rendering values', function (): void {
+    it('can render', function (): void {
+        Post::factory()->count(5)->create();
 
-    $column = TextInputColumn::make('imageable.team.name')
-        ->record($image)
-        ->beforeStateUpdated(static function () use ($image, $user): void {
-            $image->imageable()->associate($user);
-            $image->save();
-        })
-        ->afterStateUpdated(static function (Team $relatedRecord) use (&$afterRelatedRecord): void {
-            $afterRelatedRecord = $relatedRecord;
-        });
+        livewire(TestTableWithTextInputColumn::class)
+            ->assertSuccessful()
+            ->assertCanRenderTableColumn('rating');
+    });
 
-    expect($column->updateState('Updated team'))->toBe('Updated team')
-        ->and($team->refresh()->name)->toBe('Updated team')
-        ->and($afterRelatedRecord)->toBeInstanceOf(Team::class)
-        ->and($afterRelatedRecord->is($team))->toBeTrue();
-});
+    it('can display different values', function (): void {
+        Post::factory()->create(['rating' => 1]);
+        Post::factory()->create(['rating' => 5]);
+        Post::factory()->create(['rating' => 10]);
 
-it('can set `type()` and get with `getType()`', function (): void {
-    expect(TextInputColumn::make('rating')->type('number')->getType())->toBe('number');
-});
-
-it('defaults `getType()` to `text`', function (): void {
-    expect(TextInputColumn::make('rating')->getType())->toBe('text');
-});
-
-it('can set `mask()` and get with `getMask()`', function (): void {
-    expect(TextInputColumn::make('phone')->mask('999-999-9999')->getMask())->toBe('999-999-9999');
-});
-
-it('defaults `getMask()` to `null`', function (): void {
-    expect(TextInputColumn::make('rating')->getMask())->toBeNull();
-});
-
-it('can set `prefix()` and get with `getPrefixLabel()`', function (): void {
-    expect(TextInputColumn::make('price')->prefix('$')->getPrefixLabel())->toBe('$');
-});
-
-it('defaults `getPrefixLabel()` to `null`', function (): void {
-    expect(TextInputColumn::make('price')->getPrefixLabel())->toBeNull();
-});
-
-it('can set `suffix()` and get with `getSuffixLabel()`', function (): void {
-    expect(TextInputColumn::make('price')->suffix('USD')->getSuffixLabel())->toBe('USD');
-});
-
-it('defaults `getSuffixLabel()` to `null`', function (): void {
-    expect(TextInputColumn::make('price')->getSuffixLabel())->toBeNull();
-});
-
-it('can set `inlinePrefix()` and get with `isPrefixInline()`', function (): void {
-    expect(TextInputColumn::make('price')->inlinePrefix()->isPrefixInline())->toBeTrue();
-});
-
-it('defaults `isPrefixInline()` to `false`', function (): void {
-    expect(TextInputColumn::make('price')->isPrefixInline())->toBeFalse();
-});
-
-it('can set `inlineSuffix()` and get with `isSuffixInline()`', function (): void {
-    expect(TextInputColumn::make('price')->inlineSuffix()->isSuffixInline())->toBeTrue();
-});
-
-it('defaults `isSuffixInline()` to `false`', function (): void {
-    expect(TextInputColumn::make('price')->isSuffixInline())->toBeFalse();
-});
-
-it('can set `prefixIcon()` and get with `getPrefixIcon()`', function (): void {
-    expect(TextInputColumn::make('price')->prefixIcon('heroicon-o-currency-dollar')->getPrefixIcon())->toBe('heroicon-o-currency-dollar');
-});
-
-it('defaults `getPrefixIcon()` to `null`', function (): void {
-    expect(TextInputColumn::make('price')->getPrefixIcon())->toBeNull();
-});
-
-it('can set `suffixIcon()` and get with `getSuffixIcon()`', function (): void {
-    expect(TextInputColumn::make('price')->suffixIcon('heroicon-o-check')->getSuffixIcon())->toBe('heroicon-o-check');
-});
-
-it('defaults `getSuffixIcon()` to `null`', function (): void {
-    expect(TextInputColumn::make('price')->getSuffixIcon())->toBeNull();
-});
-
-it('can set `prefixIconColor()` and get with `getPrefixIconColor()`', function (): void {
-    expect(TextInputColumn::make('price')->prefixIconColor('success')->getPrefixIconColor())->toBe('success');
-});
-
-it('defaults `getPrefixIconColor()` to `null`', function (): void {
-    expect(TextInputColumn::make('price')->getPrefixIconColor())->toBeNull();
-});
-
-it('can set `suffixIconColor()` and get with `getSuffixIconColor()`', function (): void {
-    expect(TextInputColumn::make('price')->suffixIconColor('danger')->getSuffixIconColor())->toBe('danger');
-});
-
-it('defaults `getSuffixIconColor()` to `null`', function (): void {
-    expect(TextInputColumn::make('price')->getSuffixIconColor())->toBeNull();
-});
-
-it('can set `type()` with a `Closure`', function (): void {
-    expect(TextInputColumn::make('rating')->type(static fn (): string => 'email')->getType())->toBe('email');
-});
-
-it('can set `mask()` with a `Closure`', function (): void {
-    expect(TextInputColumn::make('phone')->mask(static fn (): string => '(999) 999-9999')->getMask())->toBe('(999) 999-9999');
-});
-
-it('can set `mask()` with `RawJs`', function (): void {
-    $column = TextInputColumn::make('price')
-        ->mask(RawJs::make('$money($input)'));
-
-    expect($column->getMask())->toBeInstanceOf(RawJs::class);
-});
-
-it('can set `prefix()` with inline and get `isPrefixInline()`', function (): void {
-    $column = TextInputColumn::make('price')
-        ->prefix('$', isInline: true);
-
-    expect($column->getPrefixLabel())->toBe('$');
-    expect($column->isPrefixInline())->toBeTrue();
-});
-
-it('can set `suffix()` with inline and get `isSuffixInline()`', function (): void {
-    $column = TextInputColumn::make('price')
-        ->suffix('USD', isInline: true);
-
-    expect($column->getSuffixLabel())->toBe('USD');
-    expect($column->isSuffixInline())->toBeTrue();
-});
-
-it('can set `prefixIcon()` with inline', function (): void {
-    $column = TextInputColumn::make('price')
-        ->prefixIcon('heroicon-o-dollar', isInline: true);
-
-    expect($column->getPrefixIcon())->toBe('heroicon-o-dollar');
-    expect($column->isPrefixInline())->toBeTrue();
-});
-
-it('can set `prefix()` with a `Closure`', function (): void {
-    expect(TextInputColumn::make('price')->prefix(static fn (): string => '€')->getPrefixLabel())->toBe('€');
-});
-
-it('can set `suffix()` with a `Closure`', function (): void {
-    expect(TextInputColumn::make('price')->suffix(static fn (): string => 'EUR')->getSuffixLabel())->toBe('EUR');
-});
-
-it('can set `prefixIconColor()` with a `Closure`', function (): void {
-    expect(TextInputColumn::make('price')->prefixIconColor(static fn (): string => 'info')->getPrefixIconColor())->toBe('info');
-});
-
-it('can render', function (): void {
-    Post::factory()->count(5)->create();
-
-    livewire(TestTableWithTextInputColumn::class)
-        ->assertSuccessful()
-        ->assertCanRenderTableColumn('rating');
-});
-
-it('can display different values', function (): void {
-    Post::factory()->create(['rating' => 1]);
-    Post::factory()->create(['rating' => 5]);
-    Post::factory()->create(['rating' => 10]);
-
-    livewire(TestTableWithTextInputColumn::class)
-        ->assertSuccessful();
+        livewire(TestTableWithTextInputColumn::class)
+            ->assertSuccessful();
+    });
 });
 
 describe('rendering', function (): void {

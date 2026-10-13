@@ -1,7 +1,7 @@
 import {
     observeFieldAccessibility,
     setFieldAccessibilityAttributes,
-} from '../utils/field-accessibility'
+} from '../utilities/field-accessibility.js'
 
 window.CodeMirror = require('codemirror/lib/codemirror')
 
@@ -42,7 +42,7 @@ require('codemirror/mode/vue/vue')
 require('codemirror/mode/xml/xml')
 require('codemirror/mode/yaml/yaml')
 
-require('./markdown-editor/EasyMDE')
+require('./markdown-editor/EasyMDE.js')
 
 CodeMirror.commands.tabAndIndentMarkdownList = function (codemirror) {
     var ranges = codemirror.listSelections()
@@ -150,6 +150,10 @@ export default function markdownEditorFormComponent({
                 minHeight: minHeight ?? '3rem',
                 placeholder,
                 previewImagesInEditor: true,
+                shortcuts: {
+                    togglePreview: null,
+                    toggleSideBySide: null,
+                },
                 spellChecker: false,
                 status: [
                     {

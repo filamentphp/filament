@@ -189,6 +189,10 @@ export default ({ id, isScrollLocked = true, shouldRestoreFocus = true }) => ({
         }
 
         this.$nextTick(() => {
+            if (this.isDestroyed) {
+                return
+            }
+
             this.previouslyFocusedElement.focus({ preventScroll: true })
             this.previouslyFocusedElement = null
         })
