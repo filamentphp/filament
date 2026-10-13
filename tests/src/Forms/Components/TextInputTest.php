@@ -430,8 +430,8 @@ describe('state', function (): void {
         [null, null],
     ]);
 
-    it('strips characters before applying the `numeric()` state cast when the state is set through `formatStateUsing()`', function (): void {
-        livewire(TestComponentWithNumericAndStripCharactersAndFormatState::class)
+    it('preserves `numeric()` state after `formatStateUsing()` adds stripped characters', function (): void {
+        livewire(TestComponentWithFormattedNumericTextInput::class)
             ->call('save')
             ->assertSet('data.price', 1234.56);
     });
@@ -768,7 +768,7 @@ class TestComponentWithNumericAndStripCharacters extends Livewire
     }
 }
 
-class TestComponentWithNumericAndStripCharactersAndFormatState extends Livewire
+class TestComponentWithFormattedNumericTextInput extends Livewire
 {
     public $data = [];
 
@@ -784,7 +784,7 @@ class TestComponentWithNumericAndStripCharactersAndFormatState extends Livewire
                 TextInput::make('price')
                     ->numeric()
                     ->stripCharacters(',')
-                    ->formatStateUsing(fn (mixed $state): ?string => blank($state) ? null : number_format((float) $state, 2)),
+                    ->formatStateUsing(static fn (mixed $state): string => number_format((float) $state, 2)),
             ])
             ->statePath('data');
     }
