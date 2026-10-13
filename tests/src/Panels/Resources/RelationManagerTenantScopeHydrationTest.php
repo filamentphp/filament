@@ -25,71 +25,6 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-class RelationManagerTenantScopeHydrationOwnerPolicy
-{
-    public function viewAny(User $user): bool
-    {
-        return true;
-    }
-
-    public function view(User $user, User $owner): bool
-    {
-        return true;
-    }
-
-    public function update(User $user, User $owner): bool
-    {
-        return true;
-    }
-}
-
-class RelationManagerTenantScopeHydrationPostPolicy
-{
-    public function viewAny(User $user): bool
-    {
-        return true;
-    }
-
-    public function update(User $user, Post $post): bool
-    {
-        return true;
-    }
-}
-
-class RelationManagerTenantScopeHydrationOwnerPage extends EditRecord
-{
-    protected static string $resource = TenantScopedUserResource::class;
-}
-
-class RelationManagerTenantScopeHydrationNonResourcePage extends Page
-{
-    protected string $view = 'pages.settings';
-}
-
-class TenantScopedPostsRelationManager extends RelationManager
-{
-    public static int | string | null $deniedOwnerKey = null;
-
-    protected static string $relationship = 'posts';
-
-    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
-    {
-        return ((string) $ownerRecord->getKey() !== (string) static::$deniedOwnerKey)
-            && TenantScopedUserResource::getEloquentQuery()->whereKey($ownerRecord->getKey())->exists()
-            && parent::canViewForRecord($ownerRecord, $pageClass);
-    }
-
-    public function table(Table $table): Table
-    {
-        return $table->recordActions([EditAction::make()]);
-    }
-
-    public function form(Schema $schema): Schema
-    {
-        return $schema->components([TextInput::make('title')->required()]);
-    }
-}
-
 beforeEach(function (): void {
     TenantScopedPostsRelationManager::$deniedOwnerKey = null;
 
@@ -312,3 +247,68 @@ it('preserves a soft-deleted owner approved by its resource on mount and later r
     expect($component->instance()->getOwnerRecord()->is($ticket))->toBeTrue()
         ->and($component->instance()->getOwnerRecord()->trashed())->toBeTrue();
 })->with([false, true]);
+
+class RelationManagerTenantScopeHydrationOwnerPolicy
+{
+    public function viewAny(User $user): bool
+    {
+        return true;
+    }
+
+    public function view(User $user, User $owner): bool
+    {
+        return true;
+    }
+
+    public function update(User $user, User $owner): bool
+    {
+        return true;
+    }
+}
+
+class RelationManagerTenantScopeHydrationPostPolicy
+{
+    public function viewAny(User $user): bool
+    {
+        return true;
+    }
+
+    public function update(User $user, Post $post): bool
+    {
+        return true;
+    }
+}
+
+class RelationManagerTenantScopeHydrationOwnerPage extends EditRecord
+{
+    protected static string $resource = TenantScopedUserResource::class;
+}
+
+class RelationManagerTenantScopeHydrationNonResourcePage extends Page
+{
+    protected string $view = 'pages.settings';
+}
+
+class TenantScopedPostsRelationManager extends RelationManager
+{
+    public static int | string | null $deniedOwnerKey = null;
+
+    protected static string $relationship = 'posts';
+
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        return ((string) $ownerRecord->getKey() !== (string) static::$deniedOwnerKey)
+            && TenantScopedUserResource::getEloquentQuery()->whereKey($ownerRecord->getKey())->exists()
+            && parent::canViewForRecord($ownerRecord, $pageClass);
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table->recordActions([EditAction::make()]);
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema->components([TextInput::make('title')->required()]);
+    }
+}

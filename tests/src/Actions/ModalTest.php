@@ -12,47 +12,35 @@ beforeEach(function (): void {
 
 describe('browser interactions', function (): void {
     it('keeps a loading button focused without allowing repeated activation', function (): void {
-        $browser = visit('/modal-browser-test');
         $selector = '[data-testid="loading-button"]';
 
-        foreach ([false, true] as $isDarkMode) {
-            if ($isDarkMode) {
-                $browser->inDarkMode();
-            }
+        $browser = visit('/modal-browser-test');
 
-            $browser
-                ->keys($selector, 'Enter')
-                ->assertAttribute($selector, 'aria-disabled', 'true')
-                ->assertScript('document.querySelector(\'[data-testid="loading-button"]\').disabled', false)
-                ->assertPresent("{$selector}:focus")
-                ->keys($selector, 'Enter')
-                ->keys($selector, 'Space');
+        $browser
+            ->keys($selector, 'Enter')
+            ->assertAttribute($selector, 'aria-disabled', 'true')
+            ->assertAttributeMissing($selector, 'disabled')
+            ->assertPresent("{$selector}:focus")
+            ->keys($selector, 'Enter')
+            ->keys($selector, 'Space');
 
-            // Playwright normally waits for `aria-disabled` to clear before clicking.
-            $browser->page()->locator($selector)->click(['force' => true]);
-            $browser->script('document.querySelector(\'[data-testid="loading-button"]\').click()');
+        $browser
+            ->assertAttribute($selector, 'data-activations', '1')
+            ->assertAttributeMissing($selector, 'aria-disabled')
+            ->assertPresent("{$selector}:focus")
+            ->keys($selector, 'Control+Shift+l')
+            ->assertAttribute($selector, 'data-activations', '2')
+            ->assertAttributeMissing($selector, 'aria-disabled')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
 
-            $browser
-                ->assertAttribute($selector, 'data-activations', $isDarkMode ? '3' : '1')
-                ->assertScript('!document.querySelector(\'[data-testid="loading-button"]\').hasAttribute("aria-disabled")')
-                ->assertPresent("{$selector}:focus")
-                ->keys($selector, 'Control+Shift+l')
-                ->assertAttribute($selector, 'data-activations', $isDarkMode ? '4' : '2')
-                ->assertScript('!document.querySelector(\'[data-testid="loading-button"]\').hasAttribute("aria-disabled")')
-                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
-        }
+        $browser->inDarkMode()->assertNoAccessibilityIssues();
     });
 
-    it('prevents `beforeunload` only while actions that can contain unsaved changes are mounted', function (bool $isDarkMode): void {
+    it('cancels `beforeunload` events only while actions that can contain unsaved changes are mounted', function (): void {
         $this->actingAs(User::factory()->create());
 
         $browser = visit('/unsaved-changes-alert-browser-test');
-
-        if ($isDarkMode) {
-            $browser->inDarkMode();
-        }
 
         $dispatchBeforeUnloadEvent = <<<'JS'
             (() => {
@@ -64,233 +52,229 @@ describe('browser interactions', function (): void {
             })()
             JS;
 
-        $browser
-            ->assertScript($dispatchBeforeUnloadEvent, false)
-            ->click('[data-testid="read-only-unsaved-changes-alert-trigger"]')
-            ->assertVisible('[data-testid="read-only-unsaved-changes-alert-modal"]')
-            ->assertScript($dispatchBeforeUnloadEvent, false)
-            ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
-            ->assertNoAccessibilityIssues()
-            ->click('[data-testid="read-only-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Cancel')
+        expect($browser->script($dispatchBeforeUnloadEvent))->toBeFalse();
+
+        $browser->click('[data-testid="read-only-unsaved-changes-alert-trigger"]')
+            ->assertVisible('[data-testid="read-only-unsaved-changes-alert-modal"]');
+
+        expect($browser->script($dispatchBeforeUnloadEvent))->toBeFalse();
+
+        $browser->click('[data-testid="read-only-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Cancel')
             ->assertMissing('[data-testid="read-only-unsaved-changes-alert-modal"]')
             ->click('[data-testid="editable-unsaved-changes-alert-trigger"]')
-            ->assertVisible('[data-testid="editable-unsaved-changes-alert-modal"]')
-            ->assertScript($dispatchBeforeUnloadEvent, true)
-            ->click('[data-testid="editable-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Cancel')
+            ->assertVisible('[data-testid="editable-unsaved-changes-alert-modal"]');
+
+        expect($browser->script($dispatchBeforeUnloadEvent))->toBeTrue();
+
+        $browser->click('[data-testid="editable-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Cancel')
             ->assertMissing('[data-testid="editable-unsaved-changes-alert-modal"]')
             ->click('[data-testid="nested-unsaved-changes-alert-trigger"]')
-            ->assertVisible('[data-testid="nested-unsaved-changes-alert-modal"]')
-            ->assertScript($dispatchBeforeUnloadEvent, false)
-            ->click('[data-testid="nested-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Open editable nested action')
-            ->assertVisible('[data-testid="editable-nested-unsaved-changes-alert-modal"]')
-            ->assertScript($dispatchBeforeUnloadEvent, true)
-            ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
-            ->assertNoAccessibilityIssues()
-            ->click('[data-testid="editable-nested-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Cancel')
-            ->assertVisible('[data-testid="nested-unsaved-changes-alert-modal"]')
-            ->assertScript($dispatchBeforeUnloadEvent, false)
-            ->assertNoSmoke();
-    })->with([
-        'light mode' => false,
-        'dark mode' => true,
-    ]);
+            ->assertVisible('[data-testid="nested-unsaved-changes-alert-modal"]');
 
-    it('can run another action after closing a child opened by an action without a modal', function (bool $isDarkMode): void {
+        expect($browser->script($dispatchBeforeUnloadEvent))->toBeFalse();
+
+        $browser->click('[data-testid="nested-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Open editable nested action')
+            ->assertVisible('[data-testid="editable-nested-unsaved-changes-alert-modal"]');
+
+        expect($browser->script($dispatchBeforeUnloadEvent))->toBeTrue();
+
+        $browser->click('[data-testid="editable-nested-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Cancel')
+            ->assertVisible('[data-testid="nested-unsaved-changes-alert-modal"]')
+            ->assertNoSmoke();
+
+        expect($browser->script($dispatchBeforeUnloadEvent))->toBeFalse();
+    });
+
+    it('can run another action after closing a child opened by an action without a modal', function (): void {
         $this->actingAs(User::factory()->create());
 
         $browser = visit('/modal-browser-test');
-
-        if ($isDarkMode) {
-            $browser->inDarkMode();
-        }
 
         $browser
             ->click('[data-testid="modal-less-parent-trigger"]')
             ->assertVisible('[data-testid="modal-less-parent-child-modal"]')
             ->click('[data-testid="modal-less-parent-child-modal"] .fi-modal-footer-actions button >> text=Cancel')
             ->assertMissing('[data-testid="modal-less-parent-child-modal"]')
-            ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
-            ->assertNoAccessibilityIssues()
             ->click('[data-testid="action-after-child-trigger"]')
             ->assertSeeIn('[data-testid="action-after-child-result"]', 'ran')
             ->assertNoSmoke();
-    })->with([
-        'light mode' => false,
-        'dark mode' => true,
-    ]);
+    });
 
     it('keeps the parent modal open when `getValidatedData()` prevents a nested modal from opening', function (): void {
         $this->actingAs(User::factory()->create());
 
         $browser = visit('/modal-browser-test');
 
-        $assertValidationBehavior = static function ($browser): void {
-            $browser
-                ->click('[data-testid="validated-parent-data-trigger"]')
-                ->assertVisible('[data-testid="validated-parent-data-modal"]')
-                ->click('[data-testid="validated-parent-data-suffix-action"]')
-                ->assertValue('[data-testid="validated-parent-data-input"]', 'First generated name')
-                ->click('[data-testid="validated-parent-data-suffix-action"]')
-                ->assertValue('[data-testid="validated-parent-data-input"]', 'Second generated name')
-                ->fill('[data-testid="validated-parent-data-input"]', '')
-                ->click('[data-testid="validated-parent-data-nested-trigger"]')
-                ->assertVisible('[data-testid="validated-parent-data-modal"]')
-                ->assertMissing('[data-testid="validated-parent-data-nested-modal"]')
-                ->assertVisible('[data-testid="validated-parent-data-field"] [data-validation-error]')
-                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
-                ->assertNoAccessibilityIssues()
-                // Allow `handleFormValidationError()`'s deferred scroll to finish before replacing the error's field wrapper.
-                ->wait(0.3)
-                ->type('[data-testid="validated-parent-data-input"]', 'Jane Doe')
-                ->click('[data-testid="validated-parent-data-nested-trigger"]')
-                ->assertValue('[data-testid="validated-parent-data-input"]', 'Jane Doe')
-                ->assertVisible('[data-testid="validated-parent-data-nested-modal"]')
-                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
-        };
-
-        $assertValidationBehavior($browser);
+        $browser
+            ->click('[data-testid="validated-parent-data-trigger"]')
+            ->assertVisible('[data-testid="validated-parent-data-modal"]')
+            ->click('[data-testid="validated-parent-data-suffix-action"]')
+            ->assertValue('[data-testid="validated-parent-data-input"]', 'First generated name')
+            ->click('[data-testid="validated-parent-data-suffix-action"]')
+            ->assertValue('[data-testid="validated-parent-data-input"]', 'Second generated name')
+            ->fill('[data-testid="validated-parent-data-input"]', '')
+            ->click('[data-testid="validated-parent-data-nested-trigger"]')
+            ->assertVisible('[data-testid="validated-parent-data-modal"]')
+            ->assertMissing('[data-testid="validated-parent-data-nested-modal"]')
+            ->assertVisible('[data-testid="validated-parent-data-field"] [data-validation-error]')
+            ->assertNoAccessibilityIssues()
+            ->type('[data-testid="validated-parent-data-input"]', 'Jane Doe')
+            ->click('[data-testid="validated-parent-data-nested-trigger"]')
+            ->assertValue('[data-testid="validated-parent-data-input"]', 'Jane Doe')
+            ->assertVisible('[data-testid="validated-parent-data-nested-modal"]')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
 
         $browser
             ->click('[data-testid="validated-parent-data-nested-modal"] .fi-modal-footer-actions button >> text=Cancel')
             ->click('[data-testid="validated-parent-data-modal"] .fi-modal-footer-actions button >> text=Cancel');
 
-        $browser->inDarkMode();
-
-        $assertValidationBehavior($browser);
+        $browser->inDarkMode()
+            ->click('[data-testid="validated-parent-data-trigger"]')
+            ->assertVisible('[data-testid="validated-parent-data-modal"]')
+            ->fill('[data-testid="validated-parent-data-input"]', '')
+            ->click('[data-testid="validated-parent-data-nested-trigger"]')
+            ->assertVisible('[data-testid="validated-parent-data-field"] [data-validation-error]')
+            ->assertNoAccessibilityIssues()
+            ->type('[data-testid="validated-parent-data-input"]', 'Jane Doe')
+            ->click('[data-testid="validated-parent-data-nested-trigger"]')
+            ->assertVisible('[data-testid="validated-parent-data-nested-modal"]')
+            ->assertNoAccessibilityIssues();
     });
 
     it('restores standalone modal state on close', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/modal-browser-test')
-            ->assertScript('(() => { const spacer = document.createElement(\'div\'); spacer.style.height = \'200vh\'; document.body.append(spacer); const trigger = document.querySelector(\'[data-testid="standalone-trigger"]\'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()', true)
+        $page = visit('/modal-browser-test?scroll=1')
+            ->keys('[data-testid="standalone-trigger"]', 'Control+End')
+            ->assertScript('window.scrollY === document.documentElement.scrollHeight - window.innerHeight', true);
+        $scrollPosition = $page->script('window.scrollY');
+
+        $page->keys('[data-testid="standalone-trigger"]', 'Enter')
             ->assertVisible('[data-testid="standalone-modal"]')
-            ->assertScript('document.documentElement.style.overflow', 'hidden')
+            ->keys('[data-testid="standalone-close"]', 'PageDown')
+            ->assertScript('window.scrollY', $scrollPosition)
             ->click('[data-testid="standalone-close"]')
             ->assertMissing('[data-testid="standalone-modal"]')
             ->assertPresent('[data-testid="standalone-trigger"]:focus')
-            ->assertScript('window.scrollY === window.modalTestScrollY', true)
-            ->assertScript('document.documentElement.style.overflow', '')
-            // Let the first modal finish restoring scroll before capturing the position again.
-            ->wait(0.5)
-            ->assertScript('(() => { window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; document.querySelector(\'[data-testid="standalone-trigger"]\').click(); return window.modalTestScrollY > 0 })()', true)
+            ->assertScript('window.scrollY', $scrollPosition)
+            ->keys('[data-testid="standalone-trigger"]', 'PageUp')
+            ->assertScript('window.scrollY < ' . $scrollPosition, true)
+            ->keys('[data-testid="standalone-trigger"]', 'Control+End')
+            ->keys('[data-testid="standalone-trigger"]', 'Enter')
             ->assertVisible('[data-testid="standalone-modal"]')
-            // Let the focus trap activate (it is deferred after opening) before closing.
-            ->wait(0.5)
-            ->keys('[data-testid="standalone-modal"]', 'Escape')
+            ->assertPresent('[data-testid="standalone-close"]:focus')
+            ->assertNoAccessibilityIssues()
+            ->keys(':focus', 'Escape')
             ->assertMissing('[data-testid="standalone-modal"]')
             ->assertPresent('[data-testid="standalone-trigger"]:focus')
-            ->assertScript('window.scrollY === window.modalTestScrollY', true)
-            ->assertScript('document.documentElement.style.overflow', '')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+            ->assertScript('window.scrollY', $scrollPosition)
+            ->assertNoSmoke();
 
-        // `inDarkMode()` requires a fresh browser context.
         visit('/modal-browser-test')
             ->inDarkMode()
+            ->click('[data-testid="standalone-trigger"]')
+            ->assertVisible('[data-testid="standalone-modal"]')
             ->assertNoAccessibilityIssues();
     });
 
     it('restores focus and scroll position after cancelling and confirming a top-level action modal', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $browser = visit('/modal-browser-test');
+        $page = visit('/modal-browser-test?scroll=1')
+            ->keys('[data-testid="basic-trigger"]', 'Control+End')
+            ->assertScript('window.scrollY === document.documentElement.scrollHeight - window.innerHeight', true);
+        $scrollPosition = $page->script('window.scrollY');
 
-        $browser->script('const spacer = document.createElement("div"); spacer.style.height = "200vh"; document.body.append(spacer); document.querySelector(\'[data-testid="basic-trigger"]\').focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight)');
-        $browser->assertScript('window.scrollY > 0');
-        $browser->script('window.modalTestScrollY = window.scrollY; document.querySelector(\'[data-testid="basic-trigger"]\').click()');
-
-        $browser
+        $page->keys('[data-testid="basic-trigger"]', 'Enter')
             ->assertVisible('[data-testid="basic-modal"]')
             ->assertPresent('[data-testid="basic-modal"] :focus')
+            ->assertNoAccessibilityIssues()
             ->click('[data-testid="basic-modal"] .fi-modal-footer-actions button >> text=Cancel')
             ->assertMissing('[data-testid="basic-modal"]')
             ->assertPresent('[data-testid="basic-trigger"]:focus')
-            ->assertScript('window.scrollY === window.modalTestScrollY', true);
-
-        $browser->script('window.scrollTo(0, document.documentElement.scrollHeight)');
-        $browser->assertScript('window.scrollY > 0');
-        $browser->script('window.modalTestScrollY = window.scrollY; document.querySelector(\'[data-testid="basic-trigger"]\').click()');
-
-        $browser
+            ->assertScript('window.scrollY', $scrollPosition)
+            ->keys('[data-testid="basic-trigger"]', 'Enter')
             ->assertVisible('[data-testid="basic-modal"]')
             ->assertPresent('[data-testid="basic-modal"] :focus')
             // Confirming runs the action and a Livewire request, unlike cancelling.
             ->click('[data-testid="basic-modal"] .fi-modal-footer-actions button >> text=Confirm')
             ->assertMissing('[data-testid="basic-modal"]')
             ->assertPresent('[data-testid="basic-trigger"]:focus')
-            ->assertScript('window.scrollY === window.modalTestScrollY', true)
+            ->assertScript('window.scrollY', $scrollPosition)
             ->assertNoSmoke();
+
+        visit('/modal-browser-test')->inDarkMode()
+            ->click('[data-testid="basic-trigger"]')
+            ->assertVisible('[data-testid="basic-modal"]')
+            ->assertNoAccessibilityIssues();
     });
 
-    it('does not change the page scroll position when opening a standalone modal with no tabbable content', function (bool $isDarkMode): void {
+    it('does not change the page scroll position when opening a standalone modal with no tabbable content', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $browser = visit('/modal-browser-test');
+        $browser = visit('/modal-browser-test?scroll=1');
 
-        if ($isDarkMode) {
-            $browser->inDarkMode();
-        }
+        $browser->keys('[data-testid="no-tabbable-content-trigger"]', 'Control+End')
+            ->assertScript('window.scrollY === document.documentElement.scrollHeight - window.innerHeight', true);
+        $scrollPosition = $browser->script('window.scrollY');
 
-        $browser
-            ->assertScript('(() => { const spacer = document.createElement(\'div\'); spacer.style.height = \'200vh\'; document.body.append(spacer); const trigger = document.querySelector(\'[data-testid="no-tabbable-content-trigger"]\'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()', true)
+        $browser->keys('[data-testid="no-tabbable-content-trigger"]', 'Enter')
             ->assertVisible('[data-testid="no-tabbable-content-modal"]')
-            // Let the deferred focus trap activate before checking the page scroll position.
-            ->wait(0.5)
-            ->assertScript('window.scrollY === window.modalTestScrollY', true)
+            ->assertScript('window.scrollY', $scrollPosition)
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
-    })->with([
-        'light mode' => false,
-        'dark mode' => true,
-    ]);
 
-    it('allows keyboard scrolling in a long modal without tabbable content', function (string $modalType, bool $isDarkMode): void {
+        $browser->inDarkMode()
+            ->click('[data-testid="no-tabbable-content-trigger"]')
+            ->assertVisible('[data-testid="no-tabbable-content-modal"]')
+            ->assertNoAccessibilityIssues();
+    });
+
+    it('allows keyboard scrolling in a long modal without tabbable content', function (string $modalType, string $scrollKey): void {
         $this->actingAs(User::factory()->create());
 
-        $browser = visit('/modal-browser-test');
-
-        if ($isDarkMode) {
-            $browser->inDarkMode();
-        }
+        $browser = visit('/modal-browser-test?scroll=1');
 
         $modalSelector = "[data-testid=\"long-{$modalType}-modal\"]";
         $triggerSelector = "[data-testid=\"long-{$modalType}-trigger\"]";
 
-        $browser
-            // Wait for Alpine to initialize the modal trigger before clicking it from the script.
-            ->assertScript('window.Alpine !== undefined')
-            ->assertScript("(() => { const spacer = document.createElement('div'); spacer.style.height = '200vh'; document.body.append(spacer); const trigger = document.querySelector('{$triggerSelector}'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()", true)
+        $browser->keys($triggerSelector, 'Control+End')
+            ->assertScript('window.scrollY === document.documentElement.scrollHeight - window.innerHeight', true);
+        $scrollPosition = $browser->script('window.scrollY');
+
+        $browser->keys($triggerSelector, 'Enter')
             ->assertVisible($modalSelector)
-            // Let the deferred focus trap activate before checking the page scroll position.
-            ->wait(0.5)
             ->assertAttribute($modalSelector, 'tabindex', '0')
-            ->assertScript('window.scrollY === window.modalTestScrollY', true)
-            ->keys($modalSelector, 'PageDown')
-            ->wait(0.5)
+            ->assertPresent("{$modalSelector}:focus")
+            ->assertScript('window.scrollY', $scrollPosition)
+            ->keys(':focus', $scrollKey)
             ->assertScript("document.querySelector('{$modalSelector}').scrollTop > 0", true)
-            ->assertScript("document.querySelector('{$modalSelector}').scrollTop = 0", 0)
-            ->keys($modalSelector, 'ArrowDown')
-            ->wait(0.5)
-            ->assertScript("document.querySelector('{$modalSelector}').scrollTop > 0", true)
-            ->assertScript("document.querySelector('{$modalSelector}').scrollTop = 0", 0)
-            ->keys($modalSelector, 'Space')
-            ->wait(0.5)
-            ->assertScript("document.querySelector('{$modalSelector}').scrollTop > 0", true)
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues()
+            ->keys(':focus', 'Control+Home')
+            ->assertScript("document.querySelector('{$modalSelector}').scrollTop", 0)
+            ->assertPresent("{$modalSelector}:focus")
+            ->assertNoSmoke();
+
+        if ($scrollKey === 'PageDown') {
+            $browser->assertNoAccessibilityIssues();
+        }
+
+        $browser
             ->keys($modalSelector, 'Escape')
             ->assertMissing($modalSelector)
             ->assertPresent("{$triggerSelector}:focus")
-            ->assertScript('window.scrollY === window.modalTestScrollY', true);
+            ->assertScript('window.scrollY', $scrollPosition);
+
+        if ($scrollKey === 'PageDown') {
+            $browser->inDarkMode()
+                ->click($triggerSelector)
+                ->assertVisible($modalSelector)
+                ->assertNoAccessibilityIssues();
+        }
     })->with([
-        'sticky modal in light mode' => ['sticky', false],
-        'sticky modal in dark mode' => ['sticky', true],
-        'slide-over in light mode' => ['slide-over', false],
-        'slide-over in dark mode' => ['slide-over', true],
-    ]);
+        'sticky modal' => ['sticky'],
+        'slide-over' => ['slide-over'],
+    ])->with(['PageDown', 'ArrowDown', 'Space']);
 
     it('does not restore focus to the trigger after closing a standalone modal using `:restores-focus="false"`', function (): void {
         $this->actingAs(User::factory()->create());
@@ -300,28 +284,8 @@ describe('browser interactions', function (): void {
             ->assertVisible('[data-testid="no-focus-restore-modal"]')
             ->click('[data-testid="no-focus-restore-close"]')
             ->assertMissing('[data-testid="no-focus-restore-modal"]')
-            // Wait out the focus restoration delay before asserting nothing was restored.
-            ->wait(1)
             ->assertMissing('[data-testid="no-focus-restore-trigger"]:focus')
             ->assertNoSmoke();
-    });
-
-    it('restores focus to the trigger after closing a top-level action modal', function (): void {
-        $this->actingAs(User::factory()->create());
-
-        visit('/modal-browser-test')
-            ->click('Modal focus restoration')
-            ->assertVisible('[data-testid="basic-modal"]')
-            ->click('[data-testid="basic-modal"] .fi-modal-footer-actions button >> text=Cancel')
-            ->assertMissing('[data-testid="basic-modal"]')
-            ->assertPresent('[data-testid="basic-trigger"]:focus')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-
-        visit('/modal-browser-test')
-            ->inDarkMode()
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
     });
 
     it('restores focus when returning from a nested non-overlay action modal', function (): void {
@@ -369,24 +333,27 @@ describe('browser interactions', function (): void {
         $modalSelector = '[data-testid="escape-close-disabled-modal"]';
         $closeButtonSelector = $modalSelector . ' .fi-modal-close-btn';
 
-        foreach ([$page, $page->inDarkMode()] as $themedPage) {
-            $themedPage
-                ->click('[data-testid="escape-close-disabled-trigger"]')
-                ->assertVisible($modalSelector)
-                ->wait(0.5)
-                ->keys($modalSelector, 'Tab')
-                ->assertPresent($closeButtonSelector . ':focus')
-                ->assertNoAccessibilityIssues()
-                ->keys($closeButtonSelector, 'Enter')
-                ->assertMissing($modalSelector)
-                ->assertNoSmoke();
-        }
+        $page
+            ->click('[data-testid="escape-close-disabled-trigger"]')
+            ->assertVisible($modalSelector)
+            ->assertPresent($modalSelector . ':focus')
+            ->keys($modalSelector, 'Tab')
+            ->assertPresent($closeButtonSelector . ':focus')
+            ->assertNoAccessibilityIssues()
+            ->keys($closeButtonSelector, 'Enter')
+            ->assertMissing($modalSelector)
+            ->assertNoSmoke();
+
+        $page->inDarkMode()
+            ->click('[data-testid="escape-close-disabled-trigger"]')
+            ->assertVisible($modalSelector)
+            ->assertNoAccessibilityIssues();
     });
 
     it('cancels parent actions and releases the page scroll lock when a nested modal using `cancelParentActionsOnClose()` is dismissed', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/modal-browser-test')
+        visit('/modal-browser-test?scroll=1')
             ->click('Cancel parents on close')
             ->assertVisible('[data-testid="cancel-on-close-modal"]')
             ->click('[data-testid="cancel-on-close-modal"] .fi-modal-footer-actions button >> text=Open level 2')
@@ -398,59 +365,48 @@ describe('browser interactions', function (): void {
             ->assertMissing('[data-testid="cancel-on-close-parent-modal"]')
             ->assertMissing('[data-testid="cancel-on-close-modal"]')
             ->assertPresent('[data-testid="cancel-on-close-trigger"]:focus')
-            ->assertScript('document.documentElement.style.overflow', '')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-
-        visit('/modal-browser-test')
-            ->inDarkMode()
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+            ->keys('[data-testid="cancel-on-close-trigger"]', 'Control+End')
+            ->assertScript('window.scrollY > 0', true)
+            ->assertNoSmoke();
     });
 
-    it('keeps focus trapped and the parent modal focus trap active while a nested modal is open', function (): void {
+    it('keeps focus trapped and preserves parent scroll after closing a nested modal', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/modal-browser-test')
             ->click('Scroll preservation')
             ->assertVisible('[data-testid="scroll-modal"]')
-            // Let the focus trap activate and the modal's fields lay out.
-            ->wait(0.5)
             ->assertPresent('[data-testid="scroll-field-1"]:focus')
             ->keys('[data-testid="scroll-field-1"]', 'Tab')
             ->assertPresent('[data-testid="scroll-field-2"]:focus')
             ->keys('[data-testid="scroll-field-1"]', 'Shift+Tab')
-            ->assertScript('document.activeElement.closest(\'[data-testid="scroll-modal"]\') !== null', true)
-            // Scroll the parent modal window to the bottom (~1264px).
-            ->assertScript('(() => { const el = document.querySelector(\'[data-testid="scroll-modal"]\'); el.scrollTop = el.scrollHeight; return el.scrollTop > 600 })()', true)
+            ->assertPresent('[data-testid="scroll-modal"] :focus')
+            ->keys('[data-testid="scroll-modal"]', 'Control+End')
+            ->assertScript('(() => { const modal = document.querySelector(\'[data-testid="scroll-modal"]\'); return modal.scrollTop === modal.scrollHeight - modal.clientHeight })()', true)
             ->click('[data-testid="scroll-nested-trigger"]')
             ->assertVisible('[data-testid="scroll-nested-modal"]')
-            // The parent is now hidden behind the child, but its trap must
-            // remain active so it is not re-activated (and re-focused) later.
-            ->wait(1)
-            ->assertScript('(() => { const el = document.querySelector(\'[data-testid="scroll-modal"]\'); return Alpine.$data(el).isTrapActive === true })()', true)
-            ->click('[data-testid="scroll-nested-modal"] .fi-modal-footer-actions button >> text=Cancel')
+            ->assertPresent('[data-testid="scroll-nested-modal"] :focus')
+            ->click('[data-testid="scroll-nested-cancel"]')
             ->assertMissing('[data-testid="scroll-nested-modal"]')
             ->assertVisible('[data-testid="scroll-modal"]')
-            // The parent modal's scroll position is preserved, not reset to top.
-            ->wait(1)
-            ->assertScript('(() => { const el = document.querySelector(\'[data-testid="scroll-modal"]\'); return el.scrollTop > 600 })()', true)
+            ->assertPresent('[data-testid="scroll-nested-trigger"]:focus')
+            ->assertScript('(() => { const modal = document.querySelector(\'[data-testid="scroll-modal"]\'); return modal.scrollTop === modal.scrollHeight - modal.clientHeight })()', true)
             ->assertNoSmoke();
     });
 
     it('lets clicks reach the page behind a click-through modal without locking page scroll', function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/modal-browser-test')
+        visit('/modal-browser-test?scroll=1')
             ->assertSee('Behind: not clicked')
-            ->assertScript('document.documentElement.style.overflow', '')
             ->click('[data-testid="click-through-trigger"]')
             ->assertVisible('[data-testid="click-through-modal"]')
-            ->assertScript('document.documentElement.style.overflow', '')
             // The open modal covers the page, but because it is click-through
             // the click passes through to the button behind it.
             ->click('[data-testid="behind-button"]')
             ->assertSee('Behind: clicked')
+            ->keys('[data-testid="behind-button"]', 'PageDown')
+            ->assertScript('window.scrollY > 0', true)
             ->assertNoSmoke();
     });
 

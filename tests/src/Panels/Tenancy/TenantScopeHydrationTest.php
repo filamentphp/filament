@@ -20,26 +20,6 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-class TenantScopeHydrationPostPolicy
-{
-    public function viewAny(User $user): bool
-    {
-        return true;
-    }
-
-    public function view(User $user, Post $post): bool
-    {
-        return true;
-    }
-
-    public function update(User $user, Post $post): bool
-    {
-        app()->instance('tenant-scope-hydration-policy-reached', true);
-
-        return app('tenant-scope-hydration-policy-allowed');
-    }
-}
-
 beforeEach(function (): void {
     Gate::policy(Post::class, TenantScopeHydrationPostPolicy::class);
     Gate::policy(ModelRouteBindingHydrationPost::class, TenantScopeHydrationPostPolicy::class);
@@ -325,6 +305,26 @@ it('does not intercept `resolveScopedModelProperties()` on an unrelated panel pa
         ->assertSuccessful()
         ->assertSet('hasResolvedModelProperties', true);
 });
+
+class TenantScopeHydrationPostPolicy
+{
+    public function viewAny(User $user): bool
+    {
+        return true;
+    }
+
+    public function view(User $user, Post $post): bool
+    {
+        return true;
+    }
+
+    public function update(User $user, Post $post): bool
+    {
+        app()->instance('tenant-scope-hydration-policy-reached', true);
+
+        return app('tenant-scope-hydration-policy-allowed');
+    }
+}
 
 class UnrelatedModelRestorationPage extends PanelPage
 {

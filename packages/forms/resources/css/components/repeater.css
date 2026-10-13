@@ -1,5 +1,5 @@
 .fi-fo-repeater {
-    @apply grid gap-y-4;
+    @apply grid gap-y-4 outline-none;
 
     & .fi-fo-repeater-actions {
         @apply flex gap-x-3;
@@ -14,7 +14,7 @@
     }
 
     & .fi-fo-repeater-item {
-        @apply rounded-xl bg-white shadow-xs ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10;
+        @apply rounded-xl bg-white shadow-xs ring-1 ring-gray-950/5 outline-none dark:bg-white/5 dark:ring-white/10;
 
         &.fi-collapsed {
             & .fi-fo-repeater-item-header-collapsible-actions {

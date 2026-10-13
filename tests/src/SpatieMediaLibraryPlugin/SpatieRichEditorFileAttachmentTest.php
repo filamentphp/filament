@@ -9,24 +9,25 @@ use Illuminate\Support\Facades\Storage;
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
-$makeTipTapDoc = function (array $content = []): array {
+
+$makeTipTapDocument = static function (array $content = []): array {
     return [
         'type' => 'doc',
         'content' => $content,
     ];
 };
 
-$makeImage = function (string $id, ?string $src = null): array {
+$makeImage = static function (string $id, ?string $source = null): array {
     return [
         'type' => 'image',
         'attrs' => [
             'id' => $id,
-            'src' => $src,
+            'src' => $source,
         ],
     ];
 };
 
-$makeParagraph = function (string $text): array {
+$makeParagraph = static function (string $text): array {
     return [
         'type' => 'paragraph',
         'content' => [
@@ -40,12 +41,12 @@ beforeEach(function (): void {
     Storage::fake('public');
 });
 
-describe('create', function () use ($makeTipTapDoc, $makeParagraph, $makeImage): void {
-    test('it creates a record with a file attachment as Spatie media', function () use ($makeTipTapDoc, $makeParagraph, $makeImage): void {
+describe('create', function () use ($makeTipTapDocument, $makeParagraph, $makeImage): void {
+    it('creates a record with a file attachment as Spatie media', function () use ($makeTipTapDocument, $makeParagraph, $makeImage): void {
         livewire(RichEditorFileAttachmentForm::class)
             ->call('createWithAttachments', ['temp-upload-1'], [
                 'title' => 'Post With Image',
-                'content' => $makeTipTapDoc([
+                'content' => $makeTipTapDocument([
                     $makeParagraph('Hello world'),
                     $makeImage('temp-upload-1', 'blob:temporary'),
                 ]),
@@ -58,11 +59,11 @@ describe('create', function () use ($makeTipTapDoc, $makeParagraph, $makeImage):
         expect($record->getMedia('content'))->toHaveCount(1);
     });
 
-    test('it stores the media UUID in the saved content', function () use ($makeTipTapDoc, $makeParagraph, $makeImage): void {
+    it('stores the media UUID in the saved content', function () use ($makeTipTapDocument, $makeParagraph, $makeImage): void {
         livewire(RichEditorFileAttachmentForm::class)
             ->call('createWithAttachments', ['temp-upload-1'], [
                 'title' => 'Post With Image',
-                'content' => $makeTipTapDoc([
+                'content' => $makeTipTapDocument([
                     $makeParagraph('Before image'),
                     $makeImage('temp-upload-1', 'blob:temporary'),
                 ]),
@@ -74,11 +75,11 @@ describe('create', function () use ($makeTipTapDoc, $makeParagraph, $makeImage):
         expect($record->content)->toContain($media->uuid);
     });
 
-    test('it creates multiple media from multiple file attachments', function () use ($makeTipTapDoc, $makeImage, $makeParagraph): void {
+    it('creates multiple media from multiple file attachments', function () use ($makeTipTapDocument, $makeImage, $makeParagraph): void {
         livewire(RichEditorFileAttachmentForm::class)
             ->call('createWithAttachments', ['temp-1', 'temp-2', 'temp-3'], [
                 'title' => 'Post With Multiple Images',
-                'content' => $makeTipTapDoc([
+                'content' => $makeTipTapDocument([
                     $makeImage('temp-1', 'blob:temp'),
                     $makeParagraph('Between images'),
                     $makeImage('temp-2', 'blob:temp'),
@@ -91,11 +92,11 @@ describe('create', function () use ($makeTipTapDoc, $makeParagraph, $makeImage):
         expect($record->getMedia('content'))->toHaveCount(3);
     });
 
-    test('it creates a record with text-only content and no media', function () use ($makeTipTapDoc, $makeParagraph): void {
+    it('creates a record with text-only content and no media', function () use ($makeTipTapDocument, $makeParagraph): void {
         livewire(RichEditorFileAttachmentForm::class)
             ->call('createWithAttachments', [], [
                 'title' => 'Text Only Post',
-                'content' => $makeTipTapDoc([
+                'content' => $makeTipTapDocument([
                     $makeParagraph('Just text, no images'),
                 ]),
             ]);
@@ -107,11 +108,11 @@ describe('create', function () use ($makeTipTapDoc, $makeParagraph, $makeImage):
     });
 });
 
-describe('update', function () use ($makeTipTapDoc, $makeParagraph, $makeImage): void {
-    test('it adds new media when adding an image to existing content', function () use ($makeTipTapDoc, $makeParagraph, $makeImage): void {
+describe('update', function () use ($makeTipTapDocument, $makeParagraph, $makeImage): void {
+    it('adds new media when adding an image to existing content', function () use ($makeTipTapDocument, $makeParagraph, $makeImage): void {
         $record = MediaPostWithRichContent::create([
             'title' => 'Original',
-            'content' => json_encode($makeTipTapDoc([
+            'content' => json_encode($makeTipTapDocument([
                 $makeParagraph('Original text'),
             ])),
         ]);
@@ -119,7 +120,7 @@ describe('update', function () use ($makeTipTapDoc, $makeParagraph, $makeImage):
         livewire(RichEditorFileAttachmentForm::class, ['recordId' => $record->id])
             ->call('saveWithAttachments', ['new-image-1'], [
                 'title' => 'Updated',
-                'content' => $makeTipTapDoc([
+                'content' => $makeTipTapDocument([
                     $makeParagraph('Updated text'),
                     $makeImage('new-image-1', 'blob:temporary'),
                 ]),
@@ -131,7 +132,7 @@ describe('update', function () use ($makeTipTapDoc, $makeParagraph, $makeImage):
         expect($record->getMedia('content'))->toHaveCount(1);
     });
 
-    test('it removes orphaned media when removing an image from content', function () use ($makeTipTapDoc, $makeParagraph, $makeImage): void {
+    it('removes orphaned media when removing an image from content', function () use ($makeTipTapDocument, $makeParagraph, $makeImage): void {
         $record = MediaPostWithRichContent::create(['title' => 'Original']);
 
         $media = $record
@@ -140,7 +141,7 @@ describe('update', function () use ($makeTipTapDoc, $makeParagraph, $makeImage):
             ->toMediaCollection('content');
 
         $record->update([
-            'content' => json_encode($makeTipTapDoc([
+            'content' => json_encode($makeTipTapDocument([
                 $makeParagraph('Text with image'),
                 $makeImage($media->uuid, $media->getUrl()),
             ])),
@@ -149,7 +150,7 @@ describe('update', function () use ($makeTipTapDoc, $makeParagraph, $makeImage):
         livewire(RichEditorFileAttachmentForm::class, ['recordId' => $record->id])
             ->call('saveWithAttachments', [], [
                 'title' => 'Updated',
-                'content' => $makeTipTapDoc([
+                'content' => $makeTipTapDocument([
                     $makeParagraph('Text without image'),
                 ]),
             ]);
@@ -159,7 +160,7 @@ describe('update', function () use ($makeTipTapDoc, $makeParagraph, $makeImage):
         expect($record->getMedia('content'))->toHaveCount(0);
     });
 
-    test('it keeps existing media and adds new media when editing content', function () use ($makeTipTapDoc, $makeImage): void {
+    it('keeps existing media and adds new media when editing content', function () use ($makeTipTapDocument, $makeImage): void {
         $record = MediaPostWithRichContent::create(['title' => 'Original']);
 
         $existingMedia = $record
@@ -168,7 +169,7 @@ describe('update', function () use ($makeTipTapDoc, $makeParagraph, $makeImage):
             ->toMediaCollection('content');
 
         $record->update([
-            'content' => json_encode($makeTipTapDoc([
+            'content' => json_encode($makeTipTapDocument([
                 $makeImage($existingMedia->uuid, $existingMedia->getUrl()),
             ])),
         ]);
@@ -176,7 +177,7 @@ describe('update', function () use ($makeTipTapDoc, $makeParagraph, $makeImage):
         livewire(RichEditorFileAttachmentForm::class, ['recordId' => $record->id])
             ->call('saveWithAttachments', ['new-upload'], [
                 'title' => 'Updated',
-                'content' => $makeTipTapDoc([
+                'content' => $makeTipTapDocument([
                     $makeImage($existingMedia->uuid, $existingMedia->getUrl()),
                     $makeImage('new-upload', 'blob:temporary'),
                 ]),
@@ -190,7 +191,7 @@ describe('update', function () use ($makeTipTapDoc, $makeParagraph, $makeImage):
         expect($mediaUuids)->toContain($existingMedia->uuid);
     });
 
-    test('it replaces media when swapping one image for another', function () use ($makeTipTapDoc, $makeImage): void {
+    it('replaces media when swapping one image for another', function () use ($makeTipTapDocument, $makeImage): void {
         $record = MediaPostWithRichContent::create(['title' => 'Original']);
 
         $oldMedia = $record
@@ -199,7 +200,7 @@ describe('update', function () use ($makeTipTapDoc, $makeParagraph, $makeImage):
             ->toMediaCollection('content');
 
         $record->update([
-            'content' => json_encode($makeTipTapDoc([
+            'content' => json_encode($makeTipTapDocument([
                 $makeImage($oldMedia->uuid, $oldMedia->getUrl()),
             ])),
         ]);
@@ -207,7 +208,7 @@ describe('update', function () use ($makeTipTapDoc, $makeParagraph, $makeImage):
         livewire(RichEditorFileAttachmentForm::class, ['recordId' => $record->id])
             ->call('saveWithAttachments', ['replacement'], [
                 'title' => 'Updated',
-                'content' => $makeTipTapDoc([
+                'content' => $makeTipTapDocument([
                     $makeImage('replacement', 'blob:temporary'),
                 ]),
             ]);
@@ -218,7 +219,7 @@ describe('update', function () use ($makeTipTapDoc, $makeParagraph, $makeImage):
         expect($record->getMedia('content')->first()->uuid)->not->toBe($oldMedia->uuid);
     });
 
-    test('it rejects content referencing another record\'s media when `preventFileAttachmentPathTampering()` is enabled', function () use ($makeTipTapDoc, $makeImage, $makeParagraph): void {
+    it('rejects content referencing another record\'s media when `preventFileAttachmentPathTampering()` is enabled', function () use ($makeTipTapDocument, $makeImage, $makeParagraph): void {
         RichEditor::configureUsing(fn (RichEditor $component): RichEditor => $component->preventFileAttachmentPathTampering());
 
         $otherRecord = MediaPostWithRichContent::create(['title' => 'Other']);
@@ -229,14 +230,14 @@ describe('update', function () use ($makeTipTapDoc, $makeParagraph, $makeImage):
             ->toMediaCollection('content');
 
         $otherRecord->update([
-            'content' => json_encode($makeTipTapDoc([
+            'content' => json_encode($makeTipTapDocument([
                 $makeImage($otherMedia->uuid, $otherMedia->getUrl()),
             ])),
         ]);
 
         $record = MediaPostWithRichContent::create([
             'title' => 'Original',
-            'content' => json_encode($makeTipTapDoc([
+            'content' => json_encode($makeTipTapDocument([
                 $makeParagraph('No images here'),
             ])),
         ]);
@@ -244,7 +245,7 @@ describe('update', function () use ($makeTipTapDoc, $makeParagraph, $makeImage):
         livewire(RichEditorFileAttachmentForm::class, ['recordId' => $record->id])
             ->call('saveWithAttachments', [], [
                 'title' => 'Updated',
-                'content' => $makeTipTapDoc([
+                'content' => $makeTipTapDocument([
                     $makeImage($otherMedia->uuid, $otherMedia->getUrl()),
                 ]),
             ])

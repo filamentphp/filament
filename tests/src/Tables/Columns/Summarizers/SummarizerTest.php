@@ -44,6 +44,12 @@ describe('`Summarizer` base class', function (): void {
         expect($summarizer)->toBeInstanceOf(Summarizer::class);
     });
 
+    it('returns `null` from `getSelectedState()` by default', function (): void {
+        $summarizer = Summarizer::make();
+
+        expect($summarizer->getSelectedState())->toBeNull();
+    });
+
     it('can set `selectedState()`', function (): void {
         $summarizer = Summarizer::make()
             ->selectedState(['key' => 'value']);
@@ -64,26 +70,20 @@ describe('`Summarizer` base class', function (): void {
 
         expect($summarizer->getSelectStatements('rating'))->toBe([]);
     });
-
-    it('returns `null` from `getSelectedState()` by default', function (): void {
-        $summarizer = Summarizer::make();
-
-        expect($summarizer->getSelectedState())->toBeNull();
-    });
 });
 
 describe('`Average` summarizer', function (): void {
     it('can be constructed with `make()`', function (): void {
-        $avg = Average::make();
+        $average = Average::make();
 
-        expect($avg)->toBeInstanceOf(Average::class);
-        expect($avg)->toBeInstanceOf(Summarizer::class);
+        expect($average)->toBeInstanceOf(Average::class);
+        expect($average)->toBeInstanceOf(Summarizer::class);
     });
 
     it('can set an ID', function (): void {
-        $avg = Average::make('avg-rating');
+        $average = Average::make('avg-rating');
 
-        expect($avg->getId())->toBe('avg-rating');
+        expect($average->getId())->toBe('avg-rating');
     });
 });
 

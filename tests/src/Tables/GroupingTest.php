@@ -549,184 +549,190 @@ it('can group records with nullable `BelongsTo` -> `HasOneThrough` relationship'
         ->assertCanSeeTableRecords($allPosts);
 });
 
-it('can handle array records in `getKey()`', function (): void {
-    $livewire = livewire(PostsTable::class)->instance();
-    $group = Group::make('status')->table($livewire->getTable());
+describe('array records', function (): void {
+    it('can handle array records in `getKey()`', function (): void {
+        $livewire = livewire(PostsTable::class)->instance();
+        $group = Group::make('status')->table($livewire->getTable());
 
-    $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
+        $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
 
-    expect($group->getKey($arrayRecord))->toBe('active');
+        expect($group->getKey($arrayRecord))->toBe('active');
+    });
+
+    it('can handle array records in `getStringKey()`', function (): void {
+        $livewire = livewire(PostsTable::class)->instance();
+        $group = Group::make('status')->table($livewire->getTable());
+
+        $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
+
+        expect($group->getStringKey($arrayRecord))->toBe('active');
+    });
+
+    it('can handle array records in `getTitle()`', function (): void {
+        $livewire = livewire(PostsTable::class)->instance();
+        $group = Group::make('status')->table($livewire->getTable());
+
+        $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
+
+        expect($group->getTitle($arrayRecord))->toBe('active');
+    });
+
+    it('can handle array records in `getDescription()`', function (): void {
+        $livewire = livewire(PostsTable::class)->instance();
+        $group = Group::make('status')
+            ->getDescriptionFromRecordUsing(fn (array $record): string => 'User: ' . $record['name'])
+            ->table($livewire->getTable());
+
+        $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
+
+        expect($group->getDescription($arrayRecord, 'Active'))->toBe('User: John');
+    });
+
+    it('can use custom `getKeyFromRecordUsing()` with array records', function (): void {
+        $livewire = livewire(PostsTable::class)->instance();
+        $group = Group::make('status')
+            ->getKeyFromRecordUsing(fn (array $record): string => strtoupper($record['status']))
+            ->table($livewire->getTable());
+
+        $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
+
+        expect($group->getKey($arrayRecord))->toBe('ACTIVE')
+            ->and($group->getStringKey($arrayRecord))->toBe('ACTIVE');
+    });
+
+    it('can use custom `getTitleFromRecordUsing()` with array records', function (): void {
+        $livewire = livewire(PostsTable::class)->instance();
+        $group = Group::make('status')
+            ->getTitleFromRecordUsing(fn (array $record): string => 'Status: ' . ucfirst($record['status']))
+            ->table($livewire->getTable());
+
+        $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
+
+        expect($group->getTitle($arrayRecord))->toBe('Status: Active');
+    });
+
+    it('can get grouped selectable record keys for array tables', function (): void {
+        livewire(GroupedCustomDataTable::class)
+            ->set('tableGrouping', 'status')
+            ->tap(function (Testable $testable): void {
+                /** @var GroupedCustomDataTable $livewire */
+                $livewire = $testable->instance();
+
+                $activeKeys = $livewire->getGroupedSelectableTableRecordKeys('active');
+                $inactiveKeys = $livewire->getGroupedSelectableTableRecordKeys('inactive');
+
+                expect($activeKeys)
+                    ->toHaveCount(3)
+                    ->each->toBeString()
+                    ->and($inactiveKeys)
+                    ->toHaveCount(2)
+                    ->each->toBeString();
+            });
+    });
+
+    it('returns an empty array for a non-existent group in array tables', function (): void {
+        livewire(GroupedCustomDataTable::class)
+            ->set('tableGrouping', 'status')
+            ->tap(function (Testable $testable): void {
+                /** @var GroupedCustomDataTable $livewire */
+                $livewire = $testable->instance();
+
+                $keys = $livewire->getGroupedSelectableTableRecordKeys('nonexistent');
+
+                expect($keys)->toBeEmpty();
+            });
+    });
 });
 
-it('can handle array records in `getStringKey()`', function (): void {
-    $livewire = livewire(PostsTable::class)->instance();
-    $group = Group::make('status')->table($livewire->getTable());
+describe('grouped selection', function (): void {
+    it('only includes filtered records in `getGroupedSelectableTableRecordKeys()` for a `null` relationship group', function (): void {
+        $user = User::factory()->create();
 
-    $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
+        $publishedPostWithoutAuthor = Post::factory()->create(['author_id' => null, 'is_published' => true]);
+        Post::factory()->create(['author_id' => null, 'is_published' => false]);
+        Post::factory()->create(['author_id' => $user->id, 'is_published' => true]);
 
-    expect($group->getStringKey($arrayRecord))->toBe('active');
+        livewire(PostsTable::class)
+            ->set('tableGrouping', 'author.name')
+            ->filterTable('is_published')
+            ->tap(function (Testable $testable) use ($publishedPostWithoutAuthor): void {
+                /** @var PostsTable $livewire */
+                $livewire = $testable->instance();
+
+                $keys = $livewire->getGroupedSelectableTableRecordKeys(null);
+
+                expect($keys)->toBe([(string) $publishedPostWithoutAuthor->id]);
+            });
+    });
 });
 
-it('can handle array records in `getTitle()`', function (): void {
-    $livewire = livewire(PostsTable::class)->instance();
-    $group = Group::make('status')->table($livewire->getTable());
+describe('group configuration', function (): void {
+    it('can set `collapsible()` and get with `isCollapsible()`', function (): void {
+        expect(Group::make('status')->collapsible()->isCollapsible())->toBeTrue();
+    });
 
-    $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
+    it('defaults `isCollapsible()` to `false`', function (): void {
+        expect(Group::make('status')->isCollapsible())->toBeFalse();
+    });
 
-    expect($group->getTitle($arrayRecord))->toBe('active');
-});
+    it('can set `column()` and get with `getColumn()`', function (): void {
+        expect(Group::make('status')->column('custom_column')->getColumn())->toBe('custom_column');
+    });
 
-it('can handle array records in `getDescription()`', function (): void {
-    $livewire = livewire(PostsTable::class)->instance();
-    $group = Group::make('status')
-        ->getDescriptionFromRecordUsing(fn (array $record): string => 'User: ' . $record['name'])
-        ->table($livewire->getTable());
+    it('returns `getId()` from `getColumn()` when no custom column is set', function (): void {
+        expect(Group::make('status')->getColumn())->toBe('status');
+    });
 
-    $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
+    it('can set `date()` and get with `isDate()`', function (): void {
+        expect(Group::make('created_at')->date()->isDate())->toBeTrue();
+    });
 
-    expect($group->getDescription($arrayRecord, 'Active'))->toBe('User: John');
-});
+    it('defaults `isDate()` to `false`', function (): void {
+        expect(Group::make('created_at')->isDate())->toBeFalse();
+    });
 
-it('can use custom `getKeyFromRecordUsing()` with array records', function (): void {
-    $livewire = livewire(PostsTable::class)->instance();
-    $group = Group::make('status')
-        ->getKeyFromRecordUsing(fn (array $record): string => strtoupper($record['status']))
-        ->table($livewire->getTable());
+    it('can set `label()` and get with `getLabel()`', function (): void {
+        expect(Group::make('status')->label('Status Group')->getLabel())->toBe('Status Group');
+    });
 
-    $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
+    it('generates a default label from `getId()` when no label is set', function (): void {
+        expect(Group::make('author_name')->getLabel())->toBe('Author name');
+    });
 
-    expect($group->getKey($arrayRecord))->toBe('ACTIVE')
-        ->and($group->getStringKey($arrayRecord))->toBe('ACTIVE');
-});
+    it('can set `titlePrefixedWithLabel()` to `false` and get with `isTitlePrefixedWithLabel()`', function (): void {
+        expect(Group::make('status')->titlePrefixedWithLabel(false)->isTitlePrefixedWithLabel())->toBeFalse();
+    });
 
-it('can use custom `getTitleFromRecordUsing()` with array records', function (): void {
-    $livewire = livewire(PostsTable::class)->instance();
-    $group = Group::make('status')
-        ->getTitleFromRecordUsing(fn (array $record): string => 'Status: ' . ucfirst($record['status']))
-        ->table($livewire->getTable());
+    it('defaults `isTitlePrefixedWithLabel()` to `true`', function (): void {
+        expect(Group::make('status')->isTitlePrefixedWithLabel())->toBeTrue();
+    });
 
-    $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
+    it('can set `id()` and get with `getId()`', function (): void {
+        $group = Group::make('status')
+            ->id('custom-id');
 
-    expect($group->getTitle($arrayRecord))->toBe('Status: Active');
-});
+        expect($group->getId())->toBe('custom-id');
+    });
 
-it('can get grouped selectable record keys for array tables', function (): void {
-    livewire(GroupedCustomDataTable::class)
-        ->set('tableGrouping', 'status')
-        ->tap(function (Testable $testable): void {
-            /** @var GroupedCustomDataTable $livewire */
-            $livewire = $testable->instance();
+    it('can set `label()` with a `Closure`', function (): void {
+        $group = Group::make('status')
+            ->label(static fn (): string => 'Dynamic Label');
 
-            $activeKeys = $livewire->getGroupedSelectableTableRecordKeys('active');
-            $inactiveKeys = $livewire->getGroupedSelectableTableRecordKeys('inactive');
+        expect($group->getLabel())->toBe('Dynamic Label');
+    });
 
-            expect($activeKeys)
-                ->toHaveCount(3)
-                ->each->toBeString()
-                ->and($inactiveKeys)
-                ->toHaveCount(2)
-                ->each->toBeString();
-        });
-});
+    it('returns fluent `$this` from callback setters', function (): void {
+        $group = Group::make('status');
 
-it('returns an empty array for a non-existent group in array tables', function (): void {
-    livewire(GroupedCustomDataTable::class)
-        ->set('tableGrouping', 'status')
-        ->tap(function (Testable $testable): void {
-            /** @var GroupedCustomDataTable $livewire */
-            $livewire = $testable->instance();
-
-            $keys = $livewire->getGroupedSelectableTableRecordKeys('nonexistent');
-
-            expect($keys)->toBeEmpty();
-        });
-});
-
-it('only includes filtered records in `getGroupedSelectableTableRecordKeys()` for a `null` relationship group', function (): void {
-    $user = User::factory()->create();
-
-    $publishedPostWithoutAuthor = Post::factory()->create(['author_id' => null, 'is_published' => true]);
-    Post::factory()->create(['author_id' => null, 'is_published' => false]);
-    Post::factory()->create(['author_id' => $user->id, 'is_published' => true]);
-
-    livewire(PostsTable::class)
-        ->set('tableGrouping', 'author.name')
-        ->filterTable('is_published')
-        ->tap(function (Testable $testable) use ($publishedPostWithoutAuthor): void {
-            /** @var PostsTable $livewire */
-            $livewire = $testable->instance();
-
-            $keys = $livewire->getGroupedSelectableTableRecordKeys(null);
-
-            expect($keys)->toBe([(string) $publishedPostWithoutAuthor->id]);
-        });
-});
-
-it('can set `collapsible()` and get with `isCollapsible()`', function (): void {
-    expect(Group::make('status')->collapsible()->isCollapsible())->toBeTrue();
-});
-
-it('defaults `isCollapsible()` to `false`', function (): void {
-    expect(Group::make('status')->isCollapsible())->toBeFalse();
-});
-
-it('can set `column()` and get with `getColumn()`', function (): void {
-    expect(Group::make('status')->column('custom_column')->getColumn())->toBe('custom_column');
-});
-
-it('returns `getId()` from `getColumn()` when no custom column is set', function (): void {
-    expect(Group::make('status')->getColumn())->toBe('status');
-});
-
-it('can set `date()` and get with `isDate()`', function (): void {
-    expect(Group::make('created_at')->date()->isDate())->toBeTrue();
-});
-
-it('defaults `isDate()` to `false`', function (): void {
-    expect(Group::make('created_at')->isDate())->toBeFalse();
-});
-
-it('can set `label()` and get with `getLabel()`', function (): void {
-    expect(Group::make('status')->label('Status Group')->getLabel())->toBe('Status Group');
-});
-
-it('generates a default label from `getId()` when no label is set', function (): void {
-    expect(Group::make('author_name')->getLabel())->toBe('Author name');
-});
-
-it('can set `titlePrefixedWithLabel()` to `false` and get with `isTitlePrefixedWithLabel()`', function (): void {
-    expect(Group::make('status')->titlePrefixedWithLabel(false)->isTitlePrefixedWithLabel())->toBeFalse();
-});
-
-it('defaults `isTitlePrefixedWithLabel()` to `true`', function (): void {
-    expect(Group::make('status')->isTitlePrefixedWithLabel())->toBeTrue();
-});
-
-it('can set `id()` and get with `getId()`', function (): void {
-    $group = Group::make('status')
-        ->id('custom-id');
-
-    expect($group->getId())->toBe('custom-id');
-});
-
-it('can set `label()` with a `Closure`', function (): void {
-    $group = Group::make('status')
-        ->label(static fn (): string => 'Dynamic Label');
-
-    expect($group->getLabel())->toBe('Dynamic Label');
-});
-
-it('returns fluent `$this` from callback setters', function (): void {
-    $group = Group::make('status');
-
-    expect($group->getDescriptionFromRecordUsing(static fn () => 'desc'))->toBe($group);
-    expect($group->getDescriptionUsing(static fn () => 'desc'))->toBe($group);
-    expect($group->getTitleFromRecordUsing(static fn () => 'title'))->toBe($group);
-    expect($group->getKeyFromRecordUsing(static fn () => 'key'))->toBe($group);
-    expect($group->groupQueryUsing(static fn ($query) => $query))->toBe($group);
-    expect($group->orderQueryUsing(static fn ($query) => $query))->toBe($group);
-    expect($group->scopeQueryUsing(static fn ($query) => $query))->toBe($group);
-    expect($group->scopeQueryByKeyUsing(static fn ($query) => $query))->toBe($group);
+        expect($group->getDescriptionFromRecordUsing(static fn () => 'desc'))->toBe($group);
+        expect($group->getDescriptionUsing(static fn () => 'desc'))->toBe($group);
+        expect($group->getTitleFromRecordUsing(static fn () => 'title'))->toBe($group);
+        expect($group->getKeyFromRecordUsing(static fn () => 'key'))->toBe($group);
+        expect($group->groupQueryUsing(static fn ($query) => $query))->toBe($group);
+        expect($group->orderQueryUsing(static fn ($query) => $query))->toBe($group);
+        expect($group->scopeQueryUsing(static fn ($query) => $query))->toBe($group);
+        expect($group->scopeQueryByKeyUsing(static fn ($query) => $query))->toBe($group);
+    });
 });
 
 it('can group records by `BelongsTo` relationship that uses `withTrashed()` when the related model is soft-deleted', function (): void {

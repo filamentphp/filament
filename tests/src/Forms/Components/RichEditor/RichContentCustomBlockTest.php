@@ -8,7 +8,94 @@ use Illuminate\Support\HtmlString;
 
 uses(TestCase::class);
 
-// Concrete subclasses for testing the abstract base class
+describe('label', function (): void {
+    it('auto-generates label from kebab-case ID', function (): void {
+        expect(TestCalloutBlock::getLabel())->toBe('Callout Block');
+    });
+
+    it('auto-generates label from simple ID', function (): void {
+        expect(TestSimpleBlock::getLabel())->toBe('Quote');
+    });
+});
+
+describe('icon', function (): void {
+    it('returns `null` from `getIcon()` by default', function (): void {
+        expect(TestCalloutBlock::getIcon())->toBeNull();
+    });
+
+    it('can return an `Htmlable` icon', function (): void {
+        expect(TestBlockWithIcon::getIcon())->toBeInstanceOf(Htmlable::class);
+    });
+});
+
+describe('preview label', function (): void {
+    it('returns label from `getPreviewLabel()` by default', function (): void {
+        expect(TestCalloutBlock::getPreviewLabel([]))->toBe('Callout Block');
+    });
+
+    it('can return a dynamic label based on `$config`', function (): void {
+        expect(TestBlockWithPreview::getPreviewLabel(['text' => 'World']))->toBe('Preview: World');
+    });
+
+    it('handles missing config keys gracefully', function (): void {
+        expect(TestBlockWithPreview::getPreviewLabel([]))->toBe('Preview: empty');
+    });
+});
+
+describe('preview rendering', function (): void {
+    it('returns `null` from `toPreviewHtml()` by default', function (): void {
+        expect(TestCalloutBlock::toPreviewHtml([]))->toBeNull();
+    });
+
+    it('receives `$config` and can use it in output', function (): void {
+        expect(TestBlockWithPreview::toPreviewHtml(['text' => 'Hello']))->toBe('<p>Hello</p>');
+    });
+});
+
+describe('HTML rendering', function (): void {
+    it('returns `null` from `toHtml()` by default', function (): void {
+        expect(TestCalloutBlock::toHtml([], []))->toBeNull();
+    });
+
+    it('receives both `$config` and `$data`', function (): void {
+        expect(TestBlockWithPreview::toHtml(['text' => 'Test'], ['extra' => 'value']))->toBe('<div>Test: value</div>');
+    });
+});
+
+describe('editor action', function (): void {
+    it('hides modal from `configureEditorAction()` by default', function (): void {
+        $action = Action::make('test')->modalHeading('Configure block');
+
+        expect($action->shouldOpenModal())->toBeTrue();
+
+        $result = TestCalloutBlock::configureEditorAction($action);
+
+        expect($result)->toBe($action)
+            ->and($result->shouldOpenModal())->toBeFalse();
+    });
+
+    it('can return the action without hiding the modal', function (): void {
+        $action = Action::make('test')->modalHeading('Configure block');
+        $result = TestBlockWithPreview::configureEditorAction($action);
+
+        expect($result)->toBe($action)
+            ->and($result->shouldOpenModal())->toBeTrue();
+    });
+});
+
+describe('preview prose styling', function (): void {
+    it('returns `false` by default', function (): void {
+        expect(TestCalloutBlock::shouldApplyProseStylingToPreview([]))->toBeFalse();
+    });
+
+    it('returns `true` when overridden', function (): void {
+        expect(TestBlockWithProsePreview::shouldApplyProseStylingToPreview([]))->toBeTrue();
+    });
+
+    it('receives `$config` parameter', function (bool $applyProseStyling): void {
+        expect(TestBlockWithProsePreview::shouldApplyProseStylingToPreview(['applyProseStyling' => $applyProseStyling]))->toBe($applyProseStyling);
+    })->with([false, true]);
+});
 
 class TestCalloutBlock extends RichContentCustomBlock
 {
@@ -58,7 +145,7 @@ class TestBlockWithPreview extends RichContentCustomBlock
 
     public static function toHtml(array $config, array $data): ?string
     {
-        return '<div>' . ($config['text'] ?? '') . '</div>';
+        return '<div>' . ($config['text'] ?? '') . ': ' . ($data['extra'] ?? '') . '</div>';
     }
 
     public static function configureEditorAction(Action $action): Action
@@ -81,93 +168,6 @@ class TestBlockWithProsePreview extends RichContentCustomBlock
 
     public static function shouldApplyProseStylingToPreview(array $config): bool
     {
-        return true;
+        return $config['applyProseStyling'] ?? true;
     }
 }
-
-describe('`getLabel()` logic', function (): void {
-    it('auto-generates label from kebab-case ID', function (): void {
-        expect(TestCalloutBlock::getLabel())->toBe('Callout Block');
-    });
-
-    it('auto-generates label from simple ID', function (): void {
-        expect(TestSimpleBlock::getLabel())->toBe('Quote');
-    });
-});
-
-describe('default implementations', function (): void {
-    it('returns `null` from `getIcon()` by default', function (): void {
-        expect(TestCalloutBlock::getIcon())->toBeNull();
-    });
-
-    it('returns `null` from `toHtml()` by default', function (): void {
-        expect(TestCalloutBlock::toHtml([], []))->toBeNull();
-    });
-
-    it('returns label from `getPreviewLabel()` by default', function (): void {
-        expect(TestCalloutBlock::getPreviewLabel([]))->toBe('Callout Block');
-    });
-
-    it('returns `null` from `toPreviewHtml()` by default', function (): void {
-        expect(TestCalloutBlock::toPreviewHtml([]))->toBeNull();
-    });
-
-    it('hides modal from `configureEditorAction()` by default', function (): void {
-        $action = Action::make('test');
-        $result = TestCalloutBlock::configureEditorAction($action);
-
-        expect($result)->toBe($action);
-    });
-});
-
-describe('`getIcon()`', function (): void {
-    it('can return an `Htmlable` icon', function (): void {
-        expect(TestBlockWithIcon::getIcon())->toBeInstanceOf(Htmlable::class);
-    });
-});
-
-describe('`toPreviewHtml()` with config', function (): void {
-    it('receives `$config` and can use it in output', function (): void {
-        expect(TestBlockWithPreview::toPreviewHtml(['text' => 'Hello']))->toBe('<p>Hello</p>');
-    });
-});
-
-describe('`getPreviewLabel()` with config', function (): void {
-    it('can return a dynamic label based on `$config`', function (): void {
-        expect(TestBlockWithPreview::getPreviewLabel(['text' => 'World']))->toBe('Preview: World');
-    });
-
-    it('handles missing config keys gracefully', function (): void {
-        expect(TestBlockWithPreview::getPreviewLabel([]))->toBe('Preview: empty');
-    });
-});
-
-describe('`toHtml()` with config and data', function (): void {
-    it('receives both `$config` and `$data`', function (): void {
-        expect(TestBlockWithPreview::toHtml(['text' => 'Test'], ['extra' => 'value']))->toBe('<div>Test</div>');
-    });
-});
-
-describe('`configureEditorAction()`', function (): void {
-    it('can return the action without hiding the modal', function (): void {
-        $action = Action::make('test');
-        $result = TestBlockWithPreview::configureEditorAction($action);
-
-        expect($result)->toBe($action);
-    });
-});
-
-describe('`shouldApplyProseStylingToPreview()` logic', function (): void {
-    it('returns `false` by default', function (): void {
-        expect(TestCalloutBlock::shouldApplyProseStylingToPreview([]))->toBeFalse();
-    });
-
-    it('returns `true` when overridden', function (): void {
-        expect(TestBlockWithProsePreview::shouldApplyProseStylingToPreview([]))->toBeTrue();
-    });
-
-    it('receives `$config` parameter', function (): void {
-        // The method receives config, so subclasses can make conditional decisions
-        expect(TestBlockWithProsePreview::shouldApplyProseStylingToPreview(['title' => 'Test']))->toBeTrue();
-    });
-});

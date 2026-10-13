@@ -6,29 +6,14 @@ define('TESTBENCH_WORKING_PATH', dirname(__DIR__));
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// Load .env.testing file if it exists
-// Using safeLoad() to avoid overriding environment variables that are already set
+// Load `.env.testing` without overriding environment variables that are already set.
 if (file_exists(__DIR__ . '/../.env.testing')) {
     $dotenv = Dotenv::createImmutable(__DIR__ . '/..', '.env.testing');
     $dotenv->safeLoad();
 }
 
-/*
-|--------------------------------------------------------------------------
-| Pre-generate Real-Time Facade Cache Files
-|--------------------------------------------------------------------------
-|
-| Real-time facades are generated on-demand by Laravel's AliasLoader and
-| cached as PHP files in storage/framework/cache/. When running tests in
-| parallel, multiple workers may try to generate the same facade file
-| simultaneously, causing a race condition where one worker reads an
-| incomplete file written by another.
-|
-| We pre-generate these facade files here to avoid the race condition.
-| This runs in each worker, but file_put_contents with LOCK_EX ensures
-| atomic writes, and checking file existence first minimizes contention.
-|
-*/
+// Pre-generate real-time facades before tests can load them through `AliasLoader`.
+// Parallel workers share this cache, so writes use `LOCK_EX` to serialize writers.
 
 $facadesToPregenerate = [
     'Facades\\Livewire\\Features\\SupportFileUploads\\GenerateSignedUploadUrl',

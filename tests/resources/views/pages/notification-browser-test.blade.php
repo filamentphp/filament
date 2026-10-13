@@ -38,7 +38,11 @@
         </button>
 
         @if ($this->isInlineNotificationShown)
-            <div data-testid="inline-notification">
+            <div
+                data-testid="inline-notification"
+                x-data="{ hasExpired: false }"
+                x-on:notification-closed.camel.window="if ($event.detail.id === 'inline-timed-notification') hasExpired = true"
+            >
                 {!!
                     Notification::make('inline-timed-notification')
                         ->title('Inline timed notification')
@@ -46,6 +50,10 @@
                         ->duration(300)
                         ->toEmbeddedHtml()
                 !!}
+                <output
+                    data-testid="inline-notification-expiry"
+                    x-text="hasExpired ? 'Expired' : 'Active'"
+                ></output>
             </div>
         @endif
 

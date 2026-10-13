@@ -17,14 +17,12 @@ describe('resource routes', function (): void {
     });
 
     it('registers resource configuration routes with correct slugs', function (): void {
-        // Featured posts route
         $featuredRouteName = 'filament.configuration.resources.featured-posts.index';
         $featuredRoute = Route::getRoutes()->getByName($featuredRouteName);
 
         expect($featuredRoute)->not->toBeNull();
         expect($featuredRoute->uri())->toContain('featured-posts');
 
-        // Archived posts route
         $archivedRouteName = 'filament.configuration.resources.archived-posts.index';
         $archivedRoute = Route::getRoutes()->getByName($archivedRouteName);
 
@@ -43,29 +41,27 @@ describe('page routes', function (): void {
     });
 
     it('registers page configuration routes with correct slugs', function (): void {
-        // General settings route
         $generalRouteName = 'filament.configuration.pages.general-settings';
         $generalRoute = Route::getRoutes()->getByName($generalRouteName);
 
         expect($generalRoute)->not->toBeNull();
         expect($generalRoute->uri())->toContain('general-settings');
 
-        // Advanced settings route
         $advancedRouteName = 'filament.configuration.pages.advanced-settings';
         $advancedRoute = Route::getRoutes()->getByName($advancedRouteName);
 
         expect($advancedRoute)->not->toBeNull();
         expect($advancedRoute->uri())->toContain('advanced-settings');
     });
+});
 
+describe('configuration middleware', function (): void {
     it('applies resource configuration middleware to configuration routes', function (): void {
-        // Featured posts route should have configuration middleware
         $featuredRouteName = 'filament.configuration.resources.featured-posts.index';
         $featuredRoute = Route::getRoutes()->getByName($featuredRouteName);
 
         expect($featuredRoute->middleware())->toContain('resource-configuration:featured');
 
-        // Archived posts route should have configuration middleware
         $archivedRouteName = 'filament.configuration.resources.archived-posts.index';
         $archivedRoute = Route::getRoutes()->getByName($archivedRouteName);
 
@@ -73,13 +69,11 @@ describe('page routes', function (): void {
     });
 
     it('applies page configuration middleware to configuration routes', function (): void {
-        // General settings route should have configuration middleware
         $generalRouteName = 'filament.configuration.pages.general-settings';
         $generalRoute = Route::getRoutes()->getByName($generalRouteName);
 
         expect($generalRoute->middleware())->toContain('page-configuration:general');
 
-        // Advanced settings route should have configuration middleware
         $advancedRouteName = 'filament.configuration.pages.advanced-settings';
         $advancedRoute = Route::getRoutes()->getByName($advancedRouteName);
 
@@ -116,12 +110,10 @@ it('generates correct URLs for resource configurations', function (): void {
     $featuredUrl = ConfigurablePostResource::getUrl(configuration: 'featured');
     $archivedUrl = ConfigurablePostResource::getUrl(configuration: 'archived');
 
-    // URLs should be different
     expect($defaultUrl)->not->toBe($featuredUrl);
     expect($defaultUrl)->not->toBe($archivedUrl);
     expect($featuredUrl)->not->toBe($archivedUrl);
 
-    // URLs should contain correct slugs
     expect($defaultUrl)->toContain('/configurable-posts');
     expect($featuredUrl)->toContain('/featured-posts');
     expect($archivedUrl)->toContain('/archived-posts');
@@ -132,12 +124,10 @@ it('generates correct URLs for page configurations', function (): void {
     $generalUrl = ConfigurableSettings::getUrl(configuration: 'general');
     $advancedUrl = ConfigurableSettings::getUrl(configuration: 'advanced');
 
-    // URLs should be different
     expect($defaultUrl)->not->toBe($generalUrl);
     expect($defaultUrl)->not->toBe($advancedUrl);
     expect($generalUrl)->not->toBe($advancedUrl);
 
-    // URLs should contain correct slugs
     expect($defaultUrl)->toContain('/configurable-settings');
     expect($generalUrl)->toContain('/general-settings');
     expect($advancedUrl)->toContain('/advanced-settings');

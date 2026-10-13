@@ -238,31 +238,35 @@ export default ({ livewireId }) => ({
             this.restoringFocusTarget.nestingIndex = actionNestingIndex
         }
 
-        requestAnimationFrame(() =>
+        this.$nextTick(() =>
             requestAnimationFrame(() =>
-                this.$nextTick(async () => {
-                    if (this.isDestroyed) return
+                requestAnimationFrame(() =>
+                    this.$nextTick(async () => {
+                        if (this.isDestroyed) return
 
-                    if (!previouslyFocusedElement.restore) {
-                        previouslyFocusedElement.focus({ preventScroll: true })
-                        return
-                    }
-
-                    const { controller } = previouslyFocusedElement
-                    if (controller.signal.aborted) return
-
-                    try {
-                        await previouslyFocusedElement.restore()
-                    } finally {
-                        controller.abort()
-                        if (
-                            this.restoringFocusTarget ===
-                            previouslyFocusedElement
-                        ) {
-                            this.restoringFocusTarget = null
+                        if (!previouslyFocusedElement.restore) {
+                            previouslyFocusedElement.focus({
+                                preventScroll: true,
+                            })
+                            return
                         }
-                    }
-                }),
+
+                        const { controller } = previouslyFocusedElement
+                        if (controller.signal.aborted) return
+
+                        try {
+                            await previouslyFocusedElement.restore()
+                        } finally {
+                            controller.abort()
+                            if (
+                                this.restoringFocusTarget ===
+                                previouslyFocusedElement
+                            ) {
+                                this.restoringFocusTarget = null
+                            }
+                        }
+                    }),
+                ),
             ),
         )
     },

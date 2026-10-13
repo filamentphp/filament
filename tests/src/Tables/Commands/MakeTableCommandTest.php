@@ -40,12 +40,15 @@ it('can generate a table class with generated columns', function (): void {
     $this->artisan('make:filament-table', [
         'name' => 'PostsTable',
         'model' => 'Post',
+        '--model-namespace' => 'Filament\Tests\Fixtures\Models',
         '--generate' => true,
         '--no-interaction' => true,
     ]);
 
     assertFileExists($path = app_path('Filament/Tables/PostsTable.php'));
     expect(file_get_contents($path))
+        ->toContain("TextColumn::make('title')", "IconColumn::make('is_published')")
+        ->not->toContain("::make('location')")
         ->toMatchSnapshot();
 });
 

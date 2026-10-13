@@ -643,143 +643,6 @@ describe('soft-deletable nested resource', function (): void {
 
 });
 
-class NamedCompanyTeamResource extends CompanyTeamResource
-{
-    public static function resolveRecordRouteBinding(int | string $key, ?Closure $modifyQuery = null): ?Model
-    {
-        if (app()->bound('nested-parent-binding-replacement')) {
-            return app('nested-parent-binding-replacement');
-        }
-
-        return parent::resolveRecordRouteBinding($key, function (Builder $query) use ($modifyQuery): Builder {
-            $query = $modifyQuery ? $modifyQuery($query) : $query;
-            app()->instance('nested-parent-used-write-connection', $query->getQuery()->useWritePdo);
-
-            return app()->bound('nested-parent-binding-denied') ? $query->whereRaw('1 = 0') : $query;
-        });
-    }
-
-    public static function getRecordRouteKeyName(): ?string
-    {
-        return 'name';
-    }
-}
-
-class EditUserPostWithCustomParentResolver extends EditUserPost
-{
-    public static ?User $replacementParentRecord = null;
-
-    /** @var array<string, int | string> */
-    public static array $testParentRecordRouteParameters = [];
-
-    protected function getParentRecordRouteParameters(): array
-    {
-        return static::$testParentRecordRouteParameters;
-    }
-
-    protected function resolveParentRecord(array $parameters): User
-    {
-        if (static::$replacementParentRecord) {
-            return static::$replacementParentRecord;
-        }
-
-        return User::query()->findOrFail($parameters['author']);
-    }
-}
-
-class DeepNestedUserResource extends UserResource
-{
-    public static function getParentResourceRegistration(): ?ParentResourceRegistration
-    {
-        return NamedCompanyTeamResource::asParent(static::class)
-            ->relationship('users')
-            ->inverseRelationship('teams');
-    }
-}
-
-class CreateDeepNestedUser extends CreateRecord
-{
-    /** @var array<string, int | string> */
-    public static array $testParentRecordRouteParameters = [];
-
-    protected static string $resource = DeepNestedUserResource::class;
-
-    protected function getParentRecordRouteParameters(): array
-    {
-        return static::$testParentRecordRouteParameters;
-    }
-}
-
-class EditDeepNestedUser extends EditRecord
-{
-    /** @var array<string, int | string> */
-    public static array $testParentRecordRouteParameters = [];
-
-    protected static string $resource = DeepNestedUserResource::class;
-
-    protected function getParentRecordRouteParameters(): array
-    {
-        return static::$testParentRecordRouteParameters;
-    }
-}
-
-class ListDeepNestedUsers extends ListRecords
-{
-    public static bool $hasBooted = false;
-
-    public static bool $hasMounted = false;
-
-    protected static string $resource = DeepNestedUserResource::class;
-
-    public function boot(): void
-    {
-        static::$hasBooted = true;
-    }
-
-    public function mount(): void
-    {
-        static::$hasMounted = true;
-
-        parent::mount();
-    }
-}
-
-class DeepNestedPageTableWidget extends Widget
-{
-    use InteractsWithPageTable;
-
-    public int $pageTableRecordsCount = 0;
-
-    public ?Model $parentRecordOverride = null;
-
-    protected string $view = 'pages.settings';
-
-    protected function getTablePageMountParameters(): array
-    {
-        return $this->parentRecordOverride ? ['parentRecord' => $this->parentRecordOverride] : [];
-    }
-
-    public function getResolvedTablePage(): ListDeepNestedUsers
-    {
-        return $this->getTablePageInstance();
-    }
-
-    public function loadPageTable(): void
-    {
-        $this->pageTableRecordsCount = $this->getPageTableQuery()->count();
-    }
-
-    protected function getTablePage(): string
-    {
-        return ListDeepNestedUsers::class;
-    }
-}
-
-class ListTicketDepartments extends ListRecords
-{
-    protected static string $resource = TicketDepartmentResource::class;
-}
-
 describe('non-soft-deletable nested resource', function (): void {
     it('does not require parent record `view` or `update` access', function (): void {
         Gate::policy(Company::class, NestedCompanyPolicy::class);
@@ -1249,4 +1112,141 @@ class EditNestedTeamUser extends EditRecord
 
         abort_unless(app('can-access-nested-parent-record'), 403);
     }
+}
+
+class NamedCompanyTeamResource extends CompanyTeamResource
+{
+    public static function resolveRecordRouteBinding(int | string $key, ?Closure $modifyQuery = null): ?Model
+    {
+        if (app()->bound('nested-parent-binding-replacement')) {
+            return app('nested-parent-binding-replacement');
+        }
+
+        return parent::resolveRecordRouteBinding($key, function (Builder $query) use ($modifyQuery): Builder {
+            $query = $modifyQuery ? $modifyQuery($query) : $query;
+            app()->instance('nested-parent-used-write-connection', $query->getQuery()->useWritePdo);
+
+            return app()->bound('nested-parent-binding-denied') ? $query->whereRaw('1 = 0') : $query;
+        });
+    }
+
+    public static function getRecordRouteKeyName(): ?string
+    {
+        return 'name';
+    }
+}
+
+class EditUserPostWithCustomParentResolver extends EditUserPost
+{
+    public static ?User $replacementParentRecord = null;
+
+    /** @var array<string, int | string> */
+    public static array $testParentRecordRouteParameters = [];
+
+    protected function getParentRecordRouteParameters(): array
+    {
+        return static::$testParentRecordRouteParameters;
+    }
+
+    protected function resolveParentRecord(array $parameters): User
+    {
+        if (static::$replacementParentRecord) {
+            return static::$replacementParentRecord;
+        }
+
+        return User::query()->findOrFail($parameters['author']);
+    }
+}
+
+class DeepNestedUserResource extends UserResource
+{
+    public static function getParentResourceRegistration(): ?ParentResourceRegistration
+    {
+        return NamedCompanyTeamResource::asParent(static::class)
+            ->relationship('users')
+            ->inverseRelationship('teams');
+    }
+}
+
+class CreateDeepNestedUser extends CreateRecord
+{
+    /** @var array<string, int | string> */
+    public static array $testParentRecordRouteParameters = [];
+
+    protected static string $resource = DeepNestedUserResource::class;
+
+    protected function getParentRecordRouteParameters(): array
+    {
+        return static::$testParentRecordRouteParameters;
+    }
+}
+
+class EditDeepNestedUser extends EditRecord
+{
+    /** @var array<string, int | string> */
+    public static array $testParentRecordRouteParameters = [];
+
+    protected static string $resource = DeepNestedUserResource::class;
+
+    protected function getParentRecordRouteParameters(): array
+    {
+        return static::$testParentRecordRouteParameters;
+    }
+}
+
+class ListDeepNestedUsers extends ListRecords
+{
+    public static bool $hasBooted = false;
+
+    public static bool $hasMounted = false;
+
+    protected static string $resource = DeepNestedUserResource::class;
+
+    public function boot(): void
+    {
+        static::$hasBooted = true;
+    }
+
+    public function mount(): void
+    {
+        static::$hasMounted = true;
+
+        parent::mount();
+    }
+}
+
+class DeepNestedPageTableWidget extends Widget
+{
+    use InteractsWithPageTable;
+
+    public int $pageTableRecordsCount = 0;
+
+    public ?Model $parentRecordOverride = null;
+
+    protected string $view = 'pages.settings';
+
+    protected function getTablePageMountParameters(): array
+    {
+        return $this->parentRecordOverride ? ['parentRecord' => $this->parentRecordOverride] : [];
+    }
+
+    public function getResolvedTablePage(): ListDeepNestedUsers
+    {
+        return $this->getTablePageInstance();
+    }
+
+    public function loadPageTable(): void
+    {
+        $this->pageTableRecordsCount = $this->getPageTableQuery()->count();
+    }
+
+    protected function getTablePage(): string
+    {
+        return ListDeepNestedUsers::class;
+    }
+}
+
+class ListTicketDepartments extends ListRecords
+{
+    protected static string $resource = TicketDepartmentResource::class;
 }

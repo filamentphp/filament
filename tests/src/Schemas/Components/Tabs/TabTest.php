@@ -295,17 +295,17 @@ describe('deferred badge', function (): void {
         expect($tab->isBadgeDeferred())->toBeTrue();
     });
 
-    it('can unset `deferBadge()`', function (): void {
-        $tab = Tab::make('Test')->deferBadge()->deferBadge(false);
-
-        expect($tab->isBadgeDeferred())->toBeFalse();
-    });
-
     it('can set `deferBadge()` with a `Closure`', function (): void {
         $tab = Tab::make('Test')
             ->deferBadge(static fn (): bool => true);
 
         expect($tab->isBadgeDeferred())->toBeTrue();
+    });
+
+    it('can unset `deferBadge()`', function (): void {
+        $tab = Tab::make('Test')->deferBadge()->deferBadge(false);
+
+        expect($tab->isBadgeDeferred())->toBeFalse();
     });
 });
 
@@ -346,18 +346,18 @@ describe('exclude query when resolving record', function (): void {
         expect($tab->shouldExcludeQueryWhenResolvingRecord())->toBeTrue();
     });
 
+    it('can set `excludeQueryWhenResolvingRecord()` with a `Closure`', function (): void {
+        $tab = Tab::make('Test')
+            ->excludeQueryWhenResolvingRecord(static fn (): bool => true);
+
+        expect($tab->shouldExcludeQueryWhenResolvingRecord())->toBeTrue();
+    });
+
     it('can set `excludeQueryWhenResolvingRecord()` to `false`', function (): void {
         $tab = Tab::make('Test')
             ->excludeQueryWhenResolvingRecord()
             ->excludeQueryWhenResolvingRecord(false);
 
         expect($tab->shouldExcludeQueryWhenResolvingRecord())->toBeFalse();
-    });
-
-    it('can set `excludeQueryWhenResolvingRecord()` with a `Closure`', function (): void {
-        $tab = Tab::make('Test')
-            ->excludeQueryWhenResolvingRecord(static fn (): bool => true);
-
-        expect($tab->shouldExcludeQueryWhenResolvingRecord())->toBeTrue();
     });
 });

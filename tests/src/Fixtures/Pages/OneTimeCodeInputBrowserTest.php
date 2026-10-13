@@ -20,8 +20,11 @@ class OneTimeCodeInputBrowserTest extends Page
 
     public ?array $data = [];
 
+    public bool $isRightToLeft = false;
+
     public function mount(): void
     {
+        $this->isRightToLeft = request()->boolean('rtl');
         $this->form->fill();
     }
 
