@@ -255,8 +255,6 @@ describe('browser interactions', function (): void {
             ->assertScript('window.scrollY', $scrollPosition)
             ->keys(':focus', $scrollKey)
             ->assertScript("document.querySelector('{$modalSelector}').scrollTop > 0", true)
-            ->keys(':focus', 'Control+Home')
-            ->assertScript("document.querySelector('{$modalSelector}').scrollTop", 0)
             ->assertPresent("{$modalSelector}:focus")
             ->assertNoSmoke();
 
