@@ -25,23 +25,29 @@ export default function checkboxListFormComponent({ livewireId }) {
 
             this.unsubscribeLivewireHook = Livewire.interceptMessage(
                 ({ message, onSuccess }) => {
-                    onSuccess(() => {
-                        this.$nextTick(() => {
-                            if (message.component.id !== livewireId) {
-                                return
-                            }
+                    if (message.component.id !== livewireId) {
+                        return
+                    }
 
-                            this.checkboxListOptions = Array.from(
-                                this.$root.querySelectorAll(
-                                    '.fi-fo-checkbox-list-option',
-                                ),
-                            )
+                    onSuccess(({ onMorphed }) =>
+                        onMorphed(() => {
+                            this.$nextTick(() => {
+                                if (!this.$root.isConnected) {
+                                    return
+                                }
 
-                            this.updateVisibleCheckboxListOptions()
+                                this.checkboxListOptions = Array.from(
+                                    this.$root.querySelectorAll(
+                                        '.fi-fo-checkbox-list-option',
+                                    ),
+                                )
 
-                            this.checkIfAllCheckboxesAreChecked()
-                        })
-                    })
+                                this.updateVisibleCheckboxListOptions()
+
+                                this.checkIfAllCheckboxesAreChecked()
+                            })
+                        }),
+                    )
                 },
             )
 

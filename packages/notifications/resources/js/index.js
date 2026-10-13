@@ -15,18 +15,32 @@ document.addEventListener('alpine:init', () => {
 })
 
 document.addEventListener('livewire:init', () => {
-    Livewire.hook('request', ({ succeed }) => {
-        succeed(({ json }) => {
+    Livewire.interceptRequest(({ request, onSuccess }) => {
+        onSuccess(({ json }) => {
             if (
                 !json.filamentNotifications ||
-                json.components.some((component) => component.effects.redirect)
+                json.components.some((component) => component.effects?.redirect)
             ) {
                 return
             }
 
             // Wait for morphs and their component initialization, without relying
             // on any bundled component's element surviving the response.
-            window.Alpine.nextTick(() => Livewire.dispatch('notificationsSent'))
+            Promise.all(
+                Array.from(
+                    request.getActiveMessages(),
+                    (message) =>
+                        new Promise((resolve) => {
+                            message.addInterceptor(({ onFinish }) =>
+                                onFinish(resolve),
+                            )
+                        }),
+                ),
+            ).then(() =>
+                window.Alpine.nextTick(() =>
+                    Livewire.dispatch('notificationsSent'),
+                ),
+            )
         })
     })
 })

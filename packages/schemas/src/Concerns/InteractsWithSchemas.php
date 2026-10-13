@@ -304,8 +304,26 @@ trait InteractsWithSchemas
             return;
         }
 
+        $statePaths = [$statePath];
+        $state = data_get($this, $statePath);
+
+        if (is_array($state)) {
+            $oldState = $this->getOldSchemaState($statePath);
+
+            // Livewire 4 consolidates array replacements into one update.
+            foreach (Arr::dot($state) + Arr::dot(is_array($oldState) ? $oldState : []) as $childStatePath => $value) {
+                if (data_get($state, $childStatePath) === data_get($oldState, $childStatePath)) {
+                    continue;
+                }
+
+                $statePaths[] = "{$statePath}.{$childStatePath}";
+            }
+        }
+
         foreach ($this->getCachedSchemas() as $schema) {
-            $schema->callAfterStateUpdated($statePath);
+            foreach ($statePaths as $updatedStatePath) {
+                $schema->callAfterStateUpdated($updatedStatePath);
+            }
         }
     }
 

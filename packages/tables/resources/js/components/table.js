@@ -45,8 +45,6 @@ export default ({
 
     tableReorderRoot: null,
 
-    unsubscribeTableReorderHook: null,
-
     init() {
         this.tableReorderRoot = this.$root
         this.livewireId =
@@ -150,56 +148,6 @@ export default ({
         )
     },
 
-    requestTableReorder(request, method = null) {
-        return new Promise((resolve, reject) => {
-            const unsubscribe = Livewire.hook(
-                'commit',
-                ({ component, commit, fail }) => {
-                    if (
-                        component.id !== this.livewireId ||
-                        (method &&
-                            !commit.calls.some(
-                                (call) => call.method === method,
-                            ))
-                    )
-                        return
-
-                    // Livewire 3 does not reject method-call promises on request failure.
-                    fail(() => {
-                        cleanup()
-                        reject(new Error('Table reordering request failed.'))
-                    })
-                },
-            )
-            const cleanup = () => {
-                unsubscribe()
-                if (this.unsubscribeTableReorderHook === unsubscribe) {
-                    this.unsubscribeTableReorderHook = null
-                }
-            }
-            this.unsubscribeTableReorderHook = unsubscribe
-
-            Promise.resolve()
-                .then(() => {
-                    if (
-                        this.tableReorderOperation &&
-                        this.tableReorderRoot.isConnected
-                    )
-                        return request()
-                })
-                .then(
-                    (response) => {
-                        cleanup()
-                        resolve(response)
-                    },
-                    (error) => {
-                        cleanup()
-                        reject(error)
-                    },
-                )
-        })
-    },
-
     async finishTableReorder(request) {
         const operation = this.tableReorderOperation
         if (!operation) return
@@ -209,12 +157,7 @@ export default ({
         records?.sortable?.option('disabled', true)
 
         try {
-            await this.requestTableReorder(
-                request,
-                operation.direction === 'drag'
-                    ? 'reorderTable'
-                    : 'moveTableRecord',
-            )
+            await request()
         } catch {
             if (
                 this.tableReorderOperation !== operation ||
@@ -223,7 +166,7 @@ export default ({
                 return
             // Recover the server order after a failed drag without announcing an unverified move.
             try {
-                await this.requestTableReorder(() => $wire.$refresh())
+                await $wire.$refresh()
             } catch {
                 if (
                     this.tableReorderOperation !== operation ||
@@ -684,8 +627,6 @@ export default ({
     destroy() {
         this.tableReorderOperation = null
         cancelAnimationFrame(this.tableReorderFrame)
-        this.unsubscribeTableReorderHook?.()
-        this.unsubscribeTableReorderHook = null
         this.cleanUpFiltersDropdown?.()
         this.livewireEventListenersController?.abort()
         this.unsubscribeLivewireHook?.()
@@ -730,32 +671,35 @@ export const tableFilters = () => ({
         const actionName = action.dataset.tableFilterAction
 
         this.removeActionCommitHook?.()
-        this.removeActionCommitHook = this.$wire.$hook(
-            'commit',
-            ({ succeed }) => {
+        this.removeActionCommitHook = Livewire.interceptMessage(
+            ({ message, onSuccess }) => {
+                if (message.component.id !== this.$wire.$id) return
+
                 this.removeActionCommitHook?.()
                 this.removeActionCommitHook = null
 
-                succeed(() => {
-                    this.actionFocusFrame = requestAnimationFrame(() => {
-                        this.actionFocusFrame = null
+                onSuccess(({ onMorphed }) =>
+                    onMorphed(() => {
+                        this.actionFocusFrame = requestAnimationFrame(() => {
+                            this.actionFocusFrame = null
 
-                        if (
-                            !this.$el.isConnected ||
-                            this.$el.closest('.fi-dropdown-panel')?.style
-                                .display !== 'block' ||
-                            document.activeElement !== document.body
-                        ) {
-                            return
-                        }
+                            if (
+                                !this.$el.isConnected ||
+                                this.$el.closest('.fi-dropdown-panel')?.style
+                                    .display !== 'block' ||
+                                document.activeElement !== document.body
+                            ) {
+                                return
+                            }
 
-                        this.$el
-                            .querySelector(
-                                `[data-table-filter-action="${actionName}"]`,
-                            )
-                            ?.focus()
-                    })
-                })
+                            this.$el
+                                .querySelector(
+                                    `[data-table-filter-action="${actionName}"]`,
+                                )
+                                ?.focus()
+                        })
+                    }),
+                )
             },
         )
     },

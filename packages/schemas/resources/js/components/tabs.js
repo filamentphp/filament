@@ -152,7 +152,9 @@ export default function tabsSchemaComponent({
                 ({ message, onSuccess }) => {
                     if (message.component.id !== livewireId) return
 
-                    onSuccess(() => this.scheduleUpdate())
+                    onSuccess(({ onMorphed }) =>
+                        onMorphed(() => this.scheduleUpdate()),
+                    )
                 },
             )
 

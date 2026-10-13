@@ -29,41 +29,38 @@ export default function editableTableColumn({
         unsubscribeRequestHook: null,
 
         initEditableColumn() {
-            this.unsubscribeLivewireHook = Livewire.hook(
-                'commit',
-                ({ component, commit, succeed, fail }) => {
-                    if (component.id !== this.$wire.$id) {
+            this.unsubscribeLivewireHook = Livewire.interceptMessage(
+                ({ message, onSuccess }) => {
+                    if (message.component.id !== this.$wire.$id) {
                         return
                     }
 
-                    const isSaveCommit = commit.calls.some(isMatchingSaveCall)
+                    const isSaveCommit = message.calls.some(isMatchingSaveCall)
                     const isRefreshCommit = this.isRefreshing
 
-                    if (isSaveCommit || isRefreshCommit) {
-                        // Livewire 3 does not settle method-call promises on failure.
-                        fail(() => this.handleSaveFailure())
-                    }
-
-                    succeed(({ effects }) => {
-                        if (isSaveCommit || isRefreshCommit) {
-                            this.hasRenderedState = Boolean(effects.html)
-                        }
-
-                        if (isRefreshCommit) {
-                            // Release ownership before Livewire sends another queued commit.
-                            this.isRefreshing = false
-                        }
-
-                        if (!effects.html) {
-                            return
-                        }
-
-                        this.$nextTick(() => {
-                            if (!this.isDestroyed && !this.isLoading) {
-                                this.syncServerState()
+                    onSuccess(({ payload, onMorphed }) =>
+                        onMorphed(() => {
+                            const effects = payload.effects
+                            if (isSaveCommit || isRefreshCommit) {
+                                this.hasRenderedState = Boolean(effects.html)
                             }
-                        })
-                    })
+
+                            if (isRefreshCommit) {
+                                // Release ownership before Livewire sends another queued commit.
+                                this.isRefreshing = false
+                            }
+
+                            if (!effects.html) {
+                                return
+                            }
+
+                            this.$nextTick(() => {
+                                if (!this.isDestroyed && !this.isLoading) {
+                                    this.syncServerState()
+                                }
+                            })
+                        }),
+                    )
                 },
             )
 
@@ -84,11 +81,10 @@ export default function editableTableColumn({
                 this.hasRenderedState = false
                 this.status = messages?.saving
 
-                this.unsubscribeRequestHook = Livewire.hook(
-                    'request',
-                    ({ payload, respond }) => {
+                this.unsubscribeRequestHook = Livewire.interceptRequest(
+                    ({ request, onResponse }) => {
                         if (
-                            !JSON.parse(payload).components.some(
+                            !request.payload.components.some(
                                 (component) =>
                                     JSON.parse(component.snapshot).memo.id ===
                                         this.$wire.$id &&
@@ -101,15 +97,16 @@ export default function editableTableColumn({
                             return
                         }
 
-                        respond(({ response }) => {
+                        onResponse(({ response }) => {
                             const readResponseText =
                                 response.text.bind(response)
 
-                            // Livewire 3's failure hook misses interrupted response bodies.
+                            // Livewire 4.4.7 does not catch failures while reading non-streamed response bodies.
                             response.text = async () => {
                                 try {
                                     return await readResponseText()
                                 } catch (exception) {
+                                    request.cancel()
                                     this.handleSaveFailure()
 
                                     throw exception

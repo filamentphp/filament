@@ -10,9 +10,12 @@ document.addEventListener('livewire:init', () => {
     }
 
     Livewire.interceptMessage(({ message, onSuccess }) => {
-        onSuccess(({ payload }) => {
-            queueMicrotask(() => {
-                if (payload.effects?.html) {
+        onSuccess(({ payload, onMorph }) => {
+            onMorph(() => {
+                if (
+                    payload.effects?.html ||
+                    !message.component.el.isConnected
+                ) {
                     return
                 }
 
@@ -72,7 +75,13 @@ document.addEventListener('livewire:init', () => {
                     })
 
                     window.Alpine.morph(el, to, {
-                        updating: (el, toEl, childrenOnly, skip) => {
+                        updating: (
+                            el,
+                            toEl,
+                            childrenOnly,
+                            skip,
+                            skipChildren,
+                        ) => {
                             if (isntElement(el)) {
                                 return
                             }
@@ -93,6 +102,10 @@ document.addEventListener('livewire:init', () => {
 
                             if (el.__livewire_ignore_self === true) {
                                 childrenOnly()
+                            }
+
+                            if (el.__livewire_ignore_children === true) {
+                                return skipChildren()
                             }
 
                             if (
