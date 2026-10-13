@@ -1,0 +1,191 @@
+<?php
+
+use Filament\Infolists\Components\SpatieTagsEntry;
+use Filament\Schemas\Schema;
+use Filament\SpatieLaravelTagsPlugin\Types\AllTagTypes;
+use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\Article;
+use Filament\Tests\TestCase;
+use Spatie\Tags\Tag;
+
+uses(TestCase::class);
+
+describe('type', function (): void {
+    it('defaults `getType()` to `AllTagTypes`', function (): void {
+        $entry = SpatieTagsEntry::make('tags');
+
+        expect($entry->getType())->toBeInstanceOf(AllTagTypes::class);
+    });
+
+    it('defaults `isAnyTagTypeAllowed()` to `true`', function (): void {
+        $entry = SpatieTagsEntry::make('tags');
+
+        expect($entry->isAnyTagTypeAllowed())->toBeTrue();
+    });
+
+    it('can set `type()` with a string', function (): void {
+        $entry = SpatieTagsEntry::make('tags')
+            ->type('category');
+
+        expect($entry->getType())->toBe('category');
+        expect($entry->isAnyTagTypeAllowed())->toBeFalse();
+    });
+
+    it('can set `type()` with a `Closure`', function (): void {
+        $entry = SpatieTagsEntry::make('tags')
+            ->type(static fn (): string => 'dynamic');
+
+        expect($entry->getType())->toBe('dynamic');
+        expect($entry->isAnyTagTypeAllowed())->toBeFalse();
+    });
+
+    it('can set `type()` to `AllTagTypes` to allow any type', function (): void {
+        $entry = SpatieTagsEntry::make('tags')
+            ->type('category')
+            ->type(new AllTagTypes);
+
+        expect($entry->getType())->toBeInstanceOf(AllTagTypes::class);
+        expect($entry->isAnyTagTypeAllowed())->toBeTrue();
+    });
+
+    it('can set `type()` to `null`', function (): void {
+        $entry = SpatieTagsEntry::make('tags')
+            ->type(null);
+
+        expect($entry->getType())->toBeNull();
+        expect($entry->isAnyTagTypeAllowed())->toBeFalse();
+    });
+});
+
+it('is configured as a badge by default', function (): void {
+    $entry = SpatieTagsEntry::make('tags');
+
+    expect($entry->isBadge())->toBeTrue();
+});
+
+describe('state from tags', function (): void {
+    it('can retrieve tag names as state', function (): void {
+        $record = Article::factory()->create();
+        $record->attachTags(['Laravel', 'PHP']);
+        $record->load('tags');
+
+        $entry = SpatieTagsEntry::make('tags')
+            ->container(
+                Schema::make(Livewire::make())
+                    ->record($record)
+            );
+
+        $state = $entry->getState();
+
+        expect($state)->toContain('Laravel');
+        expect($state)->toContain('PHP');
+        expect($state)->toHaveCount(2);
+    });
+
+    it('injects the tag model while rendering each item', function (): void {
+        $record = Article::factory()->create();
+        $record->attachTags(['Laravel', 'PHP']);
+        $record->load('tags');
+
+        $entry = SpatieTagsEntry::make('tags')
+            ->formatStateUsing(static fn (Tag $relatedRecord, string $state): string => "{$relatedRecord->getKey()}:{$state}")
+            ->container(
+                Schema::make(Livewire::make())
+                    ->record($record)
+            );
+
+        foreach ($record->tags as $tag) {
+            expect($entry->toEmbeddedHtml())->toContain("{$tag->getKey()}:{$tag->name}");
+        }
+    });
+
+    it('returns only tags of the specified type', function (): void {
+        $record = Article::factory()->create();
+        $record->attachTag('Laravel', 'framework');
+        $record->attachTag('PHP', 'language');
+        $record->load('tags');
+
+        $entry = SpatieTagsEntry::make('tags')
+            ->type('framework')
+            ->container(
+                Schema::make(Livewire::make())
+                    ->record($record)
+            );
+
+        $state = $entry->getState();
+
+        expect($state)->toContain('Laravel');
+        expect($state)->not->toContain('PHP');
+        expect($state)->toHaveCount(1);
+    });
+
+    it('returns tags of all types when `AllTagTypes` is set', function (): void {
+        $record = Article::factory()->create();
+        $record->attachTag('Laravel', 'framework');
+        $record->attachTag('PHP', 'language');
+        $record->attachTag('Untyped');
+        $record->load('tags');
+
+        $entry = SpatieTagsEntry::make('tags')
+            ->type(new AllTagTypes)
+            ->container(
+                Schema::make(Livewire::make())
+                    ->record($record)
+            );
+
+        $state = $entry->getState();
+
+        expect($state)->toContain('Laravel');
+        expect($state)->toContain('PHP');
+        expect($state)->toContain('Untyped');
+        expect($state)->toHaveCount(3);
+    });
+
+    it('returns empty array when record has no tags', function (): void {
+        $record = Article::factory()->create();
+        $record->load('tags');
+
+        $entry = SpatieTagsEntry::make('tags')
+            ->container(
+                Schema::make(Livewire::make())
+                    ->record($record)
+            );
+
+        $state = $entry->getState();
+
+        expect($state)->toBe([]);
+    });
+
+    it('wraps a non-array custom state in an array', function (): void {
+        $record = Article::factory()->create();
+        $record->load('tags');
+
+        $entry = SpatieTagsEntry::make('tags')
+            ->state('Laravel')
+            ->container(
+                Schema::make(Livewire::make())
+                    ->record($record)
+            );
+
+        expect($entry->getState())->toBe(['Laravel']);
+    });
+
+    it('deduplicates tag names in state', function (): void {
+        $record = Article::factory()->create();
+        $record->attachTag('Laravel', 'framework');
+        $record->attachTag('Laravel', 'topic');
+        $record->attachTag('PHP', 'language');
+        $record->load('tags');
+
+        $entry = SpatieTagsEntry::make('tags')
+            ->container(
+                Schema::make(Livewire::make())
+                    ->record($record)
+            );
+
+        $state = $entry->getState();
+
+        expect($record->tags)->toHaveCount(3)
+            ->and(array_values($state))->toBe(['Laravel', 'PHP']);
+    });
+});

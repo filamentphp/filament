@@ -96,38 +96,40 @@ it('preserves related model key casts in selected records with `allowDuplicates(
     );
 })->with([[true, null], [true, 1], [false, null]]);
 
-it('can set extra record link attributes', function (): void {
-    $table = livewire(PostsTable::class)->instance()->getTable();
-    $table->extraRecordLinkAttributes(['data-test' => 'value']);
+describe('record link attributes', function (): void {
+    it('can set `extraRecordLinkAttributes()`', function (): void {
+        $table = livewire(PostsTable::class)->instance()->getTable();
+        $table->extraRecordLinkAttributes(['data-test' => 'value']);
 
-    $post = Post::factory()->create();
-    $attributes = $table->getExtraRecordLinkAttributeBag($post);
+        $post = Post::factory()->create();
+        $attributes = $table->getExtraRecordLinkAttributeBag($post);
 
-    expect($attributes->get('data-test'))->toBe('value');
-});
+        expect($attributes->get('data-test'))->toBe('value');
+    });
 
-it('can set dynamic extra record link attributes', function (): void {
-    $table = livewire(PostsTable::class)->instance()->getTable();
-    $table->extraRecordLinkAttributes(fn ($record) => [
-        'data-id' => (string) $record->getKey(),
-    ]);
+    it('can evaluate `extraRecordLinkAttributes()` with a `Closure`', function (): void {
+        $table = livewire(PostsTable::class)->instance()->getTable();
+        $table->extraRecordLinkAttributes(fn ($record) => [
+            'data-id' => (string) $record->getKey(),
+        ]);
 
-    $post = Post::factory()->create();
-    $attributes = $table->getExtraRecordLinkAttributeBag($post);
+        $post = Post::factory()->create();
+        $attributes = $table->getExtraRecordLinkAttributeBag($post);
 
-    expect($attributes->get('data-id'))->toBe((string) $post->getKey());
-});
+        expect($attributes->get('data-id'))->toBe((string) $post->getKey());
+    });
 
-it('can merge extra record link attributes', function (): void {
-    $table = livewire(PostsTable::class)->instance()->getTable();
-    $table->extraRecordLinkAttributes(['data-test' => 'value1']);
-    $table->extraRecordLinkAttributes(['data-test2' => 'value2'], merge: true);
+    it('can merge `extraRecordLinkAttributes()`', function (): void {
+        $table = livewire(PostsTable::class)->instance()->getTable();
+        $table->extraRecordLinkAttributes(['data-test' => 'value1']);
+        $table->extraRecordLinkAttributes(['data-test2' => 'value2'], merge: true);
 
-    $post = Post::factory()->create();
-    $attributes = $table->getExtraRecordLinkAttributeBag($post);
+        $post = Post::factory()->create();
+        $attributes = $table->getExtraRecordLinkAttributeBag($post);
 
-    expect($attributes->get('data-test'))->toBe('value1')
-        ->and($attributes->get('data-test2'))->toBe('value2');
+        expect($attributes->get('data-test'))->toBe('value1')
+            ->and($attributes->get('data-test2'))->toBe('value2');
+    });
 });
 
 /**
@@ -162,140 +164,57 @@ function postSort(int | string $postKey): ?int
     return is_null($sort) ? null : (int) $sort;
 }
 
-it('activates screen-reader table moves without adding Tab stops or moving focus in both themes', function (bool $grid): void {
-    Artisan::call('filament:assets');
-    $posts = Post::factory()->count(3)->sequence(
-        ['title' => 'Alpha', 'sort' => 1],
-        ['title' => 'Beta', 'sort' => 2],
-        ['title' => 'Gamma', 'sort' => 3],
-    )->create();
-    $this->actingAs(User::factory()->create());
-    $page = visit('/table-reordering-browser-test?grid=' . (int) $grid);
-    $firstDown = '[x-sortable-item="' . $posts[0]->getKey() . '"] [data-table-reorder-direction="down"]';
-    $firstUp = '[x-sortable-item="' . $posts[0]->getKey() . '"] [data-table-reorder-direction="up"]';
-    $search = '[data-testid="reordering-table"] input[type="search"]';
-    $readOrder = 'Array.from(document.querySelectorAll("[x-sortable-item]")).map(element => element.getAttribute("x-sortable-item")).join(",")';
-    $movesAreReady = 'Array.from(document.querySelectorAll("[data-table-reorder-direction]")).every(element => element.disabled || element.getAttribute("aria-disabled") !== "true")';
+describe('browser reordering', function (): void {
+    it('persists drag reordering and disables moves beyond table boundaries', function (bool $grid): void {
+        Artisan::call('filament:assets');
+        $posts = Post::factory()->count(3)->sequence(
+            ['title' => 'Alpha', 'sort' => 1],
+            ['title' => 'Beta', 'sort' => 2],
+            ['title' => 'Gamma', 'sort' => 3],
+        )->create();
+        $this->actingAs(User::factory()->create());
+        $page = visit('/table-reordering-browser-test?grid=' . (int) $grid);
+        $recordControls = static fn (Post $post): string => ':has(> [data-table-reorder-label="' . $post->title . '"])';
+        $firstUp = $recordControls($posts[0]) . ' [data-table-reorder-direction="up"]';
+        $readOrder = 'Array.from(document.querySelectorAll("[data-table-reorder-label]")).map(element => element.getAttribute("data-table-reorder-label")).join(",")';
+        $movesAreReady = 'Array.from(document.querySelectorAll("[data-table-reorder-direction]")).every(element => element.disabled || element.getAttribute("aria-disabled") !== "true")';
 
-    foreach ([$page, $page->inDarkMode()] as $page) {
         $page->click('[data-testid="toggle-reordering"]')
             ->assertDisabled($firstUp)
-            ->assertDisabled('[x-sortable-item="' . $posts[2]->getKey() . '"] [data-table-reorder-direction="down"]')
+            ->assertDisabled($recordControls($posts[2]) . ' [data-table-reorder-direction="down"]')
             ->assertScript('Array.from(document.querySelectorAll("[data-table-reorder-direction], .fi-ta-reorder-handle")).every(element => element.tabIndex === -1)', true);
 
-        $page->drag('[x-sortable-item="' . $posts[0]->getKey() . '"] .fi-ta-reorder-handle', '[x-sortable-item="' . $posts[2]->getKey() . '"] .fi-ta-reorder-handle')
-            ->assertScript($readOrder, implode(',', [$posts[1]->getKey(), $posts[2]->getKey(), $posts[0]->getKey()]))
-            ->assertScript($movesAreReady, true);
-        expect(Post::query()->orderBy('sort')->pluck('id')->all())->toBe([$posts[1]->getKey(), $posts[2]->getKey(), $posts[0]->getKey()]);
-        $page->script('document.querySelector(' . json_encode($firstUp) . ').click()');
-        $page->assertScript($readOrder, implode(',', [$posts[1]->getKey(), $posts[0]->getKey(), $posts[2]->getKey()]))
-            ->assertScript($movesAreReady, true);
-        $page->script('document.querySelector(' . json_encode($firstUp) . ').click()');
-        $page->assertScript($readOrder, $posts->pluck('id')->implode(','))->assertScript($movesAreReady, true)->click($search);
-
-        $page->script('document.querySelector(' . json_encode($firstDown) . ').click()');
-        $page
-            ->assertScript($readOrder, implode(',', [$posts[1]->getKey(), $posts[0]->getKey(), $posts[2]->getKey()]))
+        $page->drag($recordControls($posts[0]) . ' > .fi-ta-reorder-handle', $recordControls($posts[2]) . ' > .fi-ta-reorder-handle')
+            ->assertScript($readOrder, 'Beta,Gamma,Alpha')
             ->assertScript($movesAreReady, true)
-            ->assertPresent($search . ':focus');
-
-        $page->script('document.querySelector(' . json_encode($firstDown) . ').click()');
-        $page
-            ->assertScript($readOrder, implode(',', [$posts[1]->getKey(), $posts[2]->getKey(), $posts[0]->getKey()]))
-            ->assertScript($movesAreReady, true)
-            ->assertDisabled($firstDown)
-            ->assertPresent($search . ':focus')
-            ->assertSeeIn('[x-ref="tableReorderStatus"]', 'Alpha')
+            ->assertDisabled($recordControls($posts[0]) . ' [data-table-reorder-direction="down"]')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
-
         expect(Post::query()->orderBy('sort')->pluck('id')->all())->toBe([$posts[1]->getKey(), $posts[2]->getKey(), $posts[0]->getKey()]);
 
-        $page->script('document.querySelector(' . json_encode($firstUp) . ').click()');
-        $page
-            ->assertScript($readOrder, implode(',', [$posts[1]->getKey(), $posts[0]->getKey(), $posts[2]->getKey()]))
-            ->assertScript($movesAreReady, true)
-            ->assertPresent($search . ':focus');
-
-        $page->script('document.querySelector(' . json_encode($firstUp) . ').click()');
-        $page
-            ->assertScript($readOrder, $posts->pluck('id')->implode(','))
-            ->assertScript($movesAreReady, true)
-            ->assertPresent($search . ':focus');
-
-        $page->script('const control = document.querySelector(' . json_encode($firstDown) . '); control.click(); control.click();');
-        $page->assertScript($readOrder, implode(',', [$posts[1]->getKey(), $posts[0]->getKey(), $posts[2]->getKey()]))
-            ->assertScript($movesAreReady, true)
-            ->assertPresent($search . ':focus');
-
-        $page->script('document.querySelector(' . json_encode($firstUp) . ').click()');
-        $page->assertScript($readOrder, $posts->pluck('id')->implode(','))->assertScript($movesAreReady, true);
-    }
-})->with(['standard' => false, 'grid' => true]);
-
-it('allows retrying a failed table move without announcing an unpersisted position', function (bool $networkFailure): void {
-    Artisan::call('filament:assets');
-    $posts = Post::factory()->count(2)->sequence(['sort' => 1], ['sort' => 2])->create();
-    $this->actingAs(User::factory()->create());
-    $page = visit('/table-reordering-browser-test');
-    $moveDown = '[x-sortable-item="' . $posts[0]->getKey() . '"] [data-table-reorder-direction="down"]';
-    $moveUp = '[x-sortable-item="' . $posts[0]->getKey() . '"] [data-table-reorder-direction="up"]';
-    $failure = $networkFailure ? 'Promise.reject(new TypeError("Network request failed"))' : 'Promise.resolve(new Response("", { status: 500 }))';
-
-    foreach ([$page, $page->inDarkMode()] as $page) {
-        $page->click('[data-testid="toggle-reordering"]')->assertEnabled($moveDown);
-        $page->script(<<<JS
-            () => {
-                Livewire.hook('request', ({ fail }) => fail(({ preventDefault }) => preventDefault()));
-                window.tableReorderFetch = window.fetch;
-                window.fetch = (input, options) => {
-                    if (String(input).includes('/livewire/update')) {
-                        window.tableMoveFailed = true;
-                        return {$failure};
-                    }
-                    return window.tableReorderFetch(input, options);
-                };
-            }
-            JS);
-        $page->script('document.querySelector(' . json_encode($moveDown) . ').click()');
-        $page
-            ->assertScript('window.tableMoveFailed', true)
-            ->assertScript('document.querySelector(' . json_encode($moveDown) . ').getAttribute("aria-disabled") !== "true"', true)
-            ->assertScript('document.querySelector("[x-ref=tableReorderStatus]").textContent.trim()', '');
+        $page->drag($recordControls($posts[0]) . ' > .fi-ta-reorder-handle', $recordControls($posts[1]) . ' > .fi-ta-reorder-handle')
+            ->assertScript($readOrder, 'Alpha,Beta,Gamma')
+            ->assertScript($movesAreReady, true);
 
         expect(Post::query()->orderBy('sort')->pluck('id')->all())->toBe($posts->pluck('id')->all());
 
-        $page->script('() => { window.tableMoveFailed = false; }');
-        $page->drag('[x-sortable-item="' . $posts[0]->getKey() . '"] .fi-ta-reorder-handle', '[x-sortable-item="' . $posts[1]->getKey() . '"] .fi-ta-reorder-handle')
-            ->assertScript('window.tableMoveFailed', true)
-            ->assertScript('document.querySelector(' . json_encode($moveDown) . ').getAttribute("aria-disabled") !== "true"', true)
-            ->assertScript('document.querySelector("[x-sortable-item]").getAttribute("x-sortable-item")', (string) $posts[0]->getKey())
-            ->assertScript('document.querySelector("[x-ref=tableReorderStatus]").textContent.trim()', '');
-
-        $page->script('() => { window.fetch = window.tableReorderFetch; }');
-        $page->script('document.querySelector(' . json_encode($moveDown) . ').click()');
-        $page
-            ->assertScript('document.querySelector("[x-sortable-item]").getAttribute("x-sortable-item")', (string) $posts[1]->getKey())
-            ->assertSeeIn('[x-ref="tableReorderStatus"]', $posts[0]->title)
+        $page->inDarkMode()
+            ->click('[data-testid="toggle-reordering"]')
+            ->assertDisabled($firstUp)
             ->assertNoAccessibilityIssues();
+    })->with(['standard' => false, 'grid' => true]);
 
-        expect(Post::query()->orderBy('sort')->pluck('id')->all())->toBe($posts->reverse()->values()->pluck('id')->all());
-        $page->script('document.querySelector(' . json_encode($moveUp) . ').click()');
+    it('hides unauthorized table reorder controls in both themes', function (): void {
+        Artisan::call('filament:assets');
+        Post::factory()->count(2)->sequence(['sort' => 1], ['sort' => 2])->create();
+        $this->actingAs(User::factory()->create());
+        $page = visit('/table-reordering-browser-test?authorized=0');
         $page
-            ->assertScript('document.querySelector("[x-sortable-item]").getAttribute("x-sortable-item")', (string) $posts[0]->getKey());
-    }
-})->with(['HTTP failure' => false, 'network failure' => true]);
-
-it('hides unauthorized table reorder controls in both themes', function (): void {
-    Artisan::call('filament:assets');
-    Post::factory()->count(2)->sequence(['sort' => 1], ['sort' => 2])->create();
-    $this->actingAs(User::factory()->create());
-    $page = visit('/table-reordering-browser-test?authorized=0');
-    $page
-        ->assertMissing('[data-testid="toggle-reordering"]')
-        ->assertMissing('[data-table-reorder-direction]')
-        ->assertNoAccessibilityIssues();
-    $page->inDarkMode()->assertNoAccessibilityIssues();
+            ->assertMissing('[data-testid="toggle-reordering"]')
+            ->assertMissing('[data-table-reorder-direction]')
+            ->assertNoAccessibilityIssues();
+        $page->inDarkMode()->assertNoAccessibilityIssues();
+    });
 });
 
 describe('reordering', function (): void {

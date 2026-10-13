@@ -197,13 +197,13 @@ describe('rendering', function (): void {
 it('can render `CodeEditor` in the browser', function (): void {
     $this->actingAs(User::factory()->create());
 
-    visit('/code-editor-browser-test')
+    $page = visit('/code-editor-browser-test');
+
+    $page
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
 
-    visit('/code-editor-browser-test')
-        ->inDarkMode()
-        ->assertNoSmoke()
+    $page->inDarkMode()
         ->assertNoAccessibilityIssues();
 });
 

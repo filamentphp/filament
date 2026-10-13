@@ -118,7 +118,7 @@ describe('`configureUsing()`', function (): void {
 });
 
 describe('`configure()`', function (): void {
-    it('calls `setUp` callback during configuration', function (): void {
+    it('calls `$setUp` callback during configuration', function (): void {
         $setUpCalled = false;
 
         $component = new TestConfigurableComponent;

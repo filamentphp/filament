@@ -172,17 +172,17 @@ document.addEventListener('alpine:init', () => {
                         elementToExpand = elementToExpand.parentNode
                     }
 
-                    setTimeout(
-                        () =>
-                            error
-                                .closest('[data-field-wrapper]')
-                                .scrollIntoView({
-                                    behavior: 'smooth',
-                                    block: 'start',
-                                    inline: 'start',
-                                }),
-                        200,
-                    )
+                    setTimeout(() => {
+                        if (!error.isConnected) {
+                            return
+                        }
+
+                        error.closest('[data-field-wrapper]')?.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                            inline: 'start',
+                        })
+                    }, 200)
                 })
             },
 

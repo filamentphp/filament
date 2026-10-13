@@ -17,120 +17,65 @@ beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
 
-it('can render', function (): void {
-    livewire(TestComponentWithColorPicker::class)
-        ->assertSuccessful();
-});
+describe('format', function (): void {
+    it('defaults to `hex` format', function (): void {
+        $picker = ColorPicker::make('color');
 
-it('can set and get state', function (): void {
-    livewire(TestComponentWithColorPicker::class)
-        ->fillForm(['color' => '#ff0000'])
-        ->assertSchemaStateSet(['color' => '#ff0000']);
-});
+        expect($picker->getFormat())->toBe('hex');
+    });
 
-it('can render with RGB format', function (): void {
-    livewire(TestComponentWithRgbColorPicker::class)
-        ->assertSuccessful();
-});
+    it('can set `hex()` format', function (): void {
+        $picker = ColorPicker::make('color')
+            ->rgb()
+            ->hex();
 
-it('can render with RGBA format', function (): void {
-    livewire(TestComponentWithRgbaColorPicker::class)
-        ->assertSuccessful();
-});
+        expect($picker->getFormat())->toBe('hex');
+    });
 
-it('defaults to `hex` format', function (): void {
-    $picker = ColorPicker::make('color');
+    it('can set `hsl()` format', function (): void {
+        $picker = ColorPicker::make('color')
+            ->hsl();
 
-    expect($picker->getFormat())->toBe('hex');
-});
+        expect($picker->getFormat())->toBe('hsl');
+    });
 
-it('can set `hex()` format', function (): void {
-    $picker = ColorPicker::make('color')
-        ->rgb()
-        ->hex();
+    it('can set `rgb()` format', function (): void {
+        $picker = ColorPicker::make('color')
+            ->rgb();
 
-    expect($picker->getFormat())->toBe('hex');
-});
+        expect($picker->getFormat())->toBe('rgb');
+    });
 
-it('can set `hsl()` format', function (): void {
-    $picker = ColorPicker::make('color')
-        ->hsl();
+    it('can set `rgba()` format', function (): void {
+        $picker = ColorPicker::make('color')
+            ->rgba();
 
-    expect($picker->getFormat())->toBe('hsl');
-});
+        expect($picker->getFormat())->toBe('rgba');
+    });
 
-it('can set `rgb()` format', function (): void {
-    $picker = ColorPicker::make('color')
-        ->rgb();
+    it('returns fluent `$this` from format helpers', function (): void {
+        $picker = ColorPicker::make('color');
 
-    expect($picker->getFormat())->toBe('rgb');
-});
+        expect($picker->hex())->toBe($picker);
+        expect($picker->hsl())->toBe($picker);
+        expect($picker->rgb())->toBe($picker);
+        expect($picker->rgba())->toBe($picker);
+        expect($picker->format('hex'))->toBe($picker);
+    });
 
-it('can set `rgba()` format', function (): void {
-    $picker = ColorPicker::make('color')
-        ->rgba();
+    it('can set custom `format()`', function (): void {
+        $picker = ColorPicker::make('color')
+            ->format('hsla');
 
-    expect($picker->getFormat())->toBe('rgba');
-});
+        expect($picker->getFormat())->toBe('hsla');
+    });
 
-it('can set custom `format()`', function (): void {
-    $picker = ColorPicker::make('color')
-        ->format('hsla');
+    it('can set `format()` with a `Closure`', function (): void {
+        $picker = ColorPicker::make('color')
+            ->format(static fn (): string => 'hsl');
 
-    expect($picker->getFormat())->toBe('hsla');
-});
-
-class TestComponentWithColorPicker extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->schema([
-                ColorPicker::make('color'),
-            ])
-            ->statePath('data');
-    }
-}
-
-class TestComponentWithRgbColorPicker extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->schema([
-                ColorPicker::make('color')->rgb(),
-            ])
-            ->statePath('data');
-    }
-}
-
-class TestComponentWithRgbaColorPicker extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->schema([
-                ColorPicker::make('color')->rgba(),
-            ])
-            ->statePath('data');
-    }
-}
-
-it('can set `format()` with a `Closure`', function (): void {
-    $picker = ColorPicker::make('color')
-        ->format(static fn (): string => 'hsl');
-
-    expect($picker->getFormat())->toBe('hsl');
-});
-
-it('returns fluent `$this` from format helpers', function (): void {
-    $picker = ColorPicker::make('color');
-
-    expect($picker->hex())->toBe($picker);
-    expect($picker->hsl())->toBe($picker);
-    expect($picker->rgb())->toBe($picker);
-    expect($picker->rgba())->toBe($picker);
-    expect($picker->format('hex'))->toBe($picker);
+        expect($picker->getFormat())->toBe('hsl');
+    });
 });
 
 describe('placeholder', function (): void {
@@ -311,7 +256,30 @@ describe('affixes', function (): void {
     });
 });
 
+describe('state', function (): void {
+    it('can set and get state', function (): void {
+        livewire(TestComponentWithColorPicker::class)
+            ->fillForm(['color' => '#ff0000'])
+            ->assertSchemaStateSet(['color' => '#ff0000']);
+    });
+});
+
 describe('rendering', function (): void {
+    it('can render', function (): void {
+        livewire(TestComponentWithColorPicker::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with RGB format', function (): void {
+        livewire(TestComponentWithRgbColorPicker::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with RGBA format', function (): void {
+        livewire(TestComponentWithRgbaColorPicker::class)
+            ->assertSuccessful();
+    });
+
     it('can render with `hsl()` format', function (): void {
         livewire(RenderColorPickerWithHsl::class)
             ->assertSuccessful();
@@ -426,17 +394,55 @@ describe('rendering', function (): void {
     });
 });
 
-it('can render `ColorPicker` in the browser', function (): void {
-    $this->actingAs(User::factory()->create());
+describe('browser interactions', function (): void {
+    it('can render `ColorPicker` in the browser', function (): void {
+        $this->actingAs(User::factory()->create());
 
-    visit('/color-picker-test')
-        ->assertNoSmoke()
-        ->assertNoAccessibilityIssues();
+        visit('/color-picker-test')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
 
-    visit('/color-picker-test')
-        ->inDarkMode()
-        ->assertNoAccessibilityIssues();
+        visit('/color-picker-test')
+            ->inDarkMode()
+            ->assertNoAccessibilityIssues();
+    });
 });
+
+class TestComponentWithColorPicker extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ColorPicker::make('color'),
+            ])
+            ->statePath('data');
+    }
+}
+
+class TestComponentWithRgbColorPicker extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ColorPicker::make('color')->rgb(),
+            ])
+            ->statePath('data');
+    }
+}
+
+class TestComponentWithRgbaColorPicker extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ColorPicker::make('color')->rgba(),
+            ])
+            ->statePath('data');
+    }
+}
 
 class RenderColorPickerWithHsl extends Livewire
 {

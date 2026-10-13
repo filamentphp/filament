@@ -7,7 +7,7 @@ use function PHPUnit\Framework\assertCount;
 
 uses(TestCase::class);
 
-it('can extract the search into words using whitespace', function (): void {
+it('can use `extractTableSearchWords()` for whitespace and quoted phrases', function (): void {
     $trait = new class
     {
         use CanSearchRecords {
@@ -22,10 +22,9 @@ it('can extract the search into words using whitespace', function (): void {
     assertCount(2, $trait->extractTableSearchWords("testy 　 \u{3164} \u{1160}  test"));
     assertCount(3, $trait->extractTableSearchWords('testy   tasty   test'));
 
-    // test count when string contains phrases
     assertCount(1, $trait->extractTableSearchWords('"phrase one"'));
     assertCount(3, $trait->extractTableSearchWords('"phrase one" test "number 2"'));
-    // test word/phrase split content, *within double quotes multiple adjacent spaces are compressed to single space.
+
     $this->assertSame(
         ['test', 'phrase one'],
         $trait->extractTableSearchWords('test   "phrase    one"')
@@ -36,11 +35,10 @@ it('can extract the search into words using whitespace', function (): void {
         $trait->extractTableSearchWords('"phrase one"   test  "number   2"')
     );
 
-    // an empty search string should return an empty array
     $this->assertSame([], $trait->extractTableSearchWords(''));
 });
 
-it('can trim the search query', function (): void {
+it('can use `getTableSearch()` to trim whitespace and normalize blank searches', function (): void {
     $trait = new class
     {
         use CanSearchRecords;

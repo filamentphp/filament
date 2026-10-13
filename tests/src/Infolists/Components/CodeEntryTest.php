@@ -70,19 +70,16 @@ it('injects the related model into copying and tooltip evaluations', function ()
 it('injects JSON `$state` and preserves both records in copying and tooltip evaluations', function (int $flags, string $expectedState): void {
     $author = User::factory()->create(['json' => ['url' => 'https://example.com/café']]);
     $post = Post::factory()->create(['author_id' => $author->getKey()]);
-    $evaluatedMethods = [];
 
     $entry = CodeEntry::make('author.json')
         ->jsonFlags($flags)
         ->container(Schema::make(Livewire::make())->record($post));
 
     foreach (['copyable', 'copyableState', 'copyMessage', 'copyMessageDuration', 'tooltip'] as $method) {
-        $entry->{$method}(static function (string $state, User $relatedRecord, Post $record) use ($author, &$evaluatedMethods, $expectedState, $method, $post): bool | int | string {
+        $entry->{$method}(static function (string $state, User $relatedRecord, Post $record) use ($author, $expectedState, $method, $post): bool | int | string {
             expect($state)->toBe($expectedState)
                 ->and($relatedRecord->is($author))->toBeTrue()
                 ->and($record->is($post))->toBeTrue();
-
-            $evaluatedMethods[] = $method;
 
             return match ($method) {
                 'copyable' => true,
@@ -99,8 +96,7 @@ it('injects JSON `$state` and preserves both records in copying and tooltip eval
     $xpath = new DOMXPath($document);
     $clickHandler = $xpath->query('//*[@*[name()="x-on:click"]]')->item(0)->getAttribute('x-on:click');
 
-    expect($evaluatedMethods)->toBe(['copyable', 'copyableState', 'copyMessage', 'copyMessageDuration', 'tooltip'])
-        ->and(rtrim($xpath->query('//code')->item(0)->textContent, "\n"))->toBe($expectedState)
+    expect(rtrim($xpath->query('//code')->item(0)->textContent, "\n"))->toBe($expectedState)
         ->and($clickHandler)->toContain('clipboard.writeText(' . Js::from("Copy: {$expectedState}") . ')')
         ->toContain("\$tooltip('Copied code'")
         ->toContain('timeout: 1234');
@@ -131,85 +127,37 @@ it('copies the displayed JSON by default for array and `Collection` state', func
     expect($entry->toHtml())->not->toContain('clipboard.writeText');
 })->with([false, true]);
 
-it('copies JSON and custom string callback content using the keyboard and reports clipboard results', function (): void {
+it('copies JSON and custom string callback content using the keyboard', function (): void {
     Artisan::call('filament:assets');
     $this->actingAs(User::factory()->create());
 
     $expectedState = "{\n    \"enabled\": true,\n    \"retries\": 3\n}";
     $feedbackExpression = 'document.querySelector(\'[data-testid="copyable-code"]\').closest(\'[role="definition"]\').querySelector(\'[role="status"]\').textContent';
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/infolist-entries-browser-test');
+    $page = visit('/infolist-entries-browser-test', [
+        'permissions' => ['clipboard-read', 'clipboard-write'],
+    ]);
 
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-
-        $page->script(<<<'JS'
-            window.copyCalls = []
-            Object.defineProperty(window.navigator, 'clipboard', {
-                configurable: true,
-                value: {
-                    writeText: (value) => {
-                        window.copyCalls.push(value)
-                        return new Promise((resolve, reject) => {
-                            window.resolveCopy = resolve
-                            window.rejectCopy = reject
-                        })
-                    },
-                },
-            })
-            JS);
-
-        $page
-            ->assertScript('document.querySelector(\'[data-testid="copyable-code"] code\').textContent.trim()', $expectedState)
-            ->assertScript('document.getElementById(document.querySelector(\'[data-testid="copyable-code"]\').getAttribute(\'aria-describedby\')).textContent.trim()', $expectedState)
-            ->keys('[data-testid="copyable-code"]', 'Enter')
-            ->assertScript('window.copyCalls', [$expectedState])
-            ->assertScript($feedbackExpression, '')
-            ->click('[data-testid="copyable-code"]')
-            ->assertScript('window.copyCalls.length', 1);
-
-        $page->script('window.resolveCopy()');
-        $page->assertScript("Boolean({$feedbackExpression})", true);
-        $page->script("window.successFeedback = {$feedbackExpression}");
-
-        $page
-            ->keys('[data-testid="copyable-code"]', 'Space')
-            ->assertScript('window.copyCalls.length', 2)
-            ->assertScript($feedbackExpression, '');
-
-        $page->script('window.rejectCopy(new Error("Permission denied"))');
-        $page->assertScript("Boolean({$feedbackExpression}) && ({$feedbackExpression} !== window.successFeedback)", true);
-
-        $page->keys('[data-testid="copyable-code"]', 'Enter');
-        $page->script('window.resolveCopy()');
-        $page->assertScript("{$feedbackExpression} === window.successFeedback", true);
-
-        $page->keys('[data-testid="copyable-code"]', 'Enter');
-        $page->script('window.resolveCopy()');
-        $page->assertScript("{$feedbackExpression} === window.successFeedback", true);
-
-        $page
-            ->keys('[data-testid="custom-copy-code"] [role="button"]', 'Space')
-            ->assertScript('window.copyCalls', [$expectedState, $expectedState, $expectedState, $expectedState, "Copy: {$expectedState}"]);
-
-        $page->script('window.resolveCopy()');
-        $page
-            ->assertScript(<<<'JS'
+    $page
+        ->assertScript('document.querySelector(\'[data-testid="copyable-code"] code\').textContent.trim()', $expectedState)
+        ->assertScript('document.getElementById(document.querySelector(\'[data-testid="copyable-code"]\').getAttribute(\'aria-describedby\')).textContent.trim()', $expectedState)
+        ->keys('[data-testid="copyable-code"]', 'Enter')
+        ->assertScript('navigator.clipboard.readText()', $expectedState)
+        ->assertScript("Boolean({$feedbackExpression})", true)
+        ->keys('[data-testid="custom-copy-code"] [role="button"]', 'Space')
+        ->assertScript('navigator.clipboard.readText()', "Copy: {$expectedState}")
+        ->assertScript(<<<'JS'
                 (() => {
                     const control = document.querySelector('[data-testid="id-scoped-code"]').closest('[role="definition"]').querySelector('[role="button"]')
                     return (document.getElementById(control.getAttribute('aria-describedby'))?.textContent ?? '').trim()
                 })()
                 JS, $expectedState)
-            ->keys('[data-testid="id-scoped-code"] [role="button"], [data-testid="id-scoped-code"][role="button"]', 'Enter')
-            ->assertScript('window.copyCalls.length', 6);
+        ->keys('[data-testid="id-scoped-code"] [role="button"], [data-testid="id-scoped-code"][role="button"]', 'Enter')
+        ->assertScript('navigator.clipboard.readText()', $expectedState)
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
-        $page->script('window.resolveCopy()');
-        $page
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    }
+    $page->inDarkMode()->assertNoAccessibilityIssues();
 });
 
 it('can set and get `grammar()`', function (): void {

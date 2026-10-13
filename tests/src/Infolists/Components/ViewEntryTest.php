@@ -13,18 +13,18 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can render', function (): void {
-    livewire(TestComponentWithViewEntry::class)
-        ->assertSuccessful()
-        ->assertSeeText('Custom:')
-        ->assertSeeText('Custom Content');
-});
-
 it('can set a custom `view()`', function (): void {
     $entry = ViewEntry::make('custom')
         ->view('filament.infolists.entries.custom-entry');
 
     expect($entry->getView())->toBe('filament.infolists.entries.custom-entry');
+});
+
+it('can render', function (): void {
+    livewire(TestComponentWithViewEntry::class)
+        ->assertSuccessful()
+        ->assertSeeText('Custom:')
+        ->assertSeeText('Custom Content');
 });
 
 class TestComponentWithViewEntry extends Component implements HasSchemas

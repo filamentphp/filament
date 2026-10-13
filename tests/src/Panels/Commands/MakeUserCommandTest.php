@@ -13,9 +13,10 @@ $removeDefaultPanel = function (): void {
     $registry = app(PanelRegistry::class);
 
     foreach ($registry->all() as $panel) {
-        invade($panel)->isDefault = false;
+        $panel->default(false);
     }
 
+    // Clear the public cached `defaultPanel`; the registry has no invalidation method.
     $registry->defaultPanel = null;
 
     expect(fn (): mixed => Filament::getDefaultPanel())
@@ -107,32 +108,32 @@ it('fails when Filament has not been installed', function (): void {
     expect(User::query()->count())->toBe(0);
 });
 
-it('can create a user in the panel given by `--panel` when no default panel is set', function () use ($removeDefaultPanel): void {
-    $removeDefaultPanel();
+describe('without a default panel', function () use ($removeDefaultPanel): void {
+    beforeEach($removeDefaultPanel);
 
-    $this->artisan('make:filament-user', [
-        '--panel' => 'admin',
-        '--name' => 'Dan Harrin',
-        '--email' => 'dan@filamentphp.com',
-        '--password' => 'password',
-        '--no-interaction' => true,
-    ])->assertSuccessful();
+    it('can create a user in the panel given by `--panel`', function (): void {
+        $this->artisan('make:filament-user', [
+            '--panel' => 'admin',
+            '--name' => 'Dan Harrin',
+            '--email' => 'dan@filamentphp.com',
+            '--password' => 'password',
+            '--no-interaction' => true,
+        ])->assertSuccessful();
 
-    expect(User::query()->where('email', 'dan@filamentphp.com')->exists())
-        ->toBeTrue();
-});
+        expect(User::query()->where('email', 'dan@filamentphp.com')->exists())
+            ->toBeTrue();
+    });
 
-it('can prompt for the panel when no default panel is set', function () use ($removeDefaultPanel): void {
-    $removeDefaultPanel();
+    it('can prompt for the panel', function (): void {
+        $this->artisan('make:filament-user', [
+            '--name' => 'Dan Harrin',
+            '--email' => 'dan@filamentphp.com',
+            '--password' => 'password',
+        ])
+            ->expectsQuestion('Which panel would you like to create this user in?', 'admin')
+            ->assertSuccessful();
 
-    $this->artisan('make:filament-user', [
-        '--name' => 'Dan Harrin',
-        '--email' => 'dan@filamentphp.com',
-        '--password' => 'password',
-    ])
-        ->expectsQuestion('Which panel would you like to create this user in?', 'admin')
-        ->assertSuccessful();
-
-    expect(User::query()->where('email', 'dan@filamentphp.com')->exists())
-        ->toBeTrue();
+        expect(User::query()->where('email', 'dan@filamentphp.com')->exists())
+            ->toBeTrue();
+    });
 });

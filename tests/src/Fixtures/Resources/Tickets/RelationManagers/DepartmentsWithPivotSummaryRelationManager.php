@@ -16,10 +16,8 @@ class DepartmentsWithPivotSummaryRelationManager extends RelationManager
         return $table
             ->columns([
                 TextColumn::make('name'),
-                // Test implicit pivot column (just `quantity`)
                 TextColumn::make('quantity')
                     ->summarize(Sum::make('quantity_sum')),
-                // Test explicit pivot column (`pivot.price`)
                 TextColumn::make('pivot.price')
                     ->summarize(Sum::make('price_sum')),
             ]);

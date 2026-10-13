@@ -25,114 +25,114 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can be constructed with `make()` and a name', function (): void {
-    $column = TextColumn::make('title');
+describe('construction and mounting', function (): void {
+    it('can be constructed with `make()` and a name', function (): void {
+        $column = TextColumn::make('title');
 
-    expect($column)->toBeInstanceOf(Column::class);
-    expect($column->getName())->toBe('title');
-});
+        expect($column)->toBeInstanceOf(Column::class);
+        expect($column->getName())->toBe('title');
+    });
 
-it('can implement `Editable` with a one-argument `updateState()` method', function (): void {
-    $column = new class('title') extends Column implements Editable
-    {
-        use Tables\Columns\Concerns\CanBeValidated;
-
-        public function updateState(mixed $state): mixed
+    it('can implement `Editable` with a one-argument `updateState()` method', function (): void {
+        $column = new class('title') extends Column implements Editable
         {
-            return $state;
+            use Tables\Columns\Concerns\CanBeValidated;
+
+            public function updateState(mixed $state): mixed
+            {
+                return $state;
+            }
+        };
+
+        expect($column->updateState('Updated title'))->toBe('Updated title');
+    });
+
+    it('throws `LogicException` from `make()` when name is blank', function (): void {
+        expect(static fn () => TextColumn::make(''))
+            ->toThrow(LogicException::class, 'must have a unique name');
+    });
+
+    it('returns `null` for `getDefaultName()`', function (): void {
+        expect(Column::getDefaultName())->toBeNull();
+    });
+
+    it('throws `LogicException` from `getTable()` when not mounted', function (): void {
+        $column = TextColumn::make('title');
+
+        expect(static fn () => $column->getTable())
+            ->toThrow(LogicException::class, 'is not mounted to a table');
+    });
+});
+
+describe('relationship state and containers', function (): void {
+    it('can call `getStateFromRecord()` for a relationship without mounting the column', function (string $container): void {
+        $author = User::factory()->create();
+        $post = Post::factory()->create(['author_id' => $author->getKey()]);
+        $column = TextColumn::make('author.name')->record($post);
+
+        match ($container) {
+            'stack' => Stack::make([$column])->getColumns(),
+            'nested' => Stack::make([Split::make([$column])])->getColumns(),
+            'group' => ColumnGroup::make('Author', [$column])->getColumns(),
+            default => null,
+        };
+
+        expect($column->hasTable())->toBeFalse()
+            ->and($column->getStateFromRecord())->toBe($author->name);
+    })->with(['none', 'stack', 'nested', 'group']);
+
+    it('preserves `$relatedRecord` in column containers across records and rendering paths', function (string $container, bool $combinedUrl, bool $decorated): void {
+        $firstAuthor = User::factory()->create(['name' => 'Shared author']);
+        $secondAuthor = User::factory()->create(['name' => 'Shared author']);
+        $firstPost = Post::factory()->create(['author_id' => $firstAuthor->getKey()]);
+        $secondPost = Post::factory()->create(['author_id' => $secondAuthor->getKey()]);
+        $firstTeam = Team::factory()->create(['name' => 'Shared team']);
+        $secondTeam = Team::factory()->create(['name' => 'Shared team']);
+        $thirdTeam = Team::factory()->create(['name' => 'Other team']);
+        $firstAuthor->teams()->attach([$firstTeam->getKey(), $secondTeam->getKey()]);
+        $secondAuthor->teams()->attach($thirdTeam);
+
+        $component = livewire(RenderRelatedRecordColumnsInContainers::class, compact('container', 'combinedUrl', 'decorated'))
+            ->assertSuccessful();
+
+        preg_match_all('/<a\b[^>]*href="([^"]+)"/', $component->html(), $matches);
+
+        expect($matches[1])->toBe($combinedUrl ? [
+            "/posts/{$firstPost->getKey()}/authors/{$firstAuthor->getKey()}/Shared%20author",
+            "/posts/{$firstPost->getKey()}/teams/{$firstTeam->getKey()}/Shared%20team",
+            "/posts/{$firstPost->getKey()}/teams/{$secondTeam->getKey()}/Shared%20team",
+            "/posts/{$secondPost->getKey()}/authors/{$secondAuthor->getKey()}/Shared%20author",
+            "/posts/{$secondPost->getKey()}/teams/{$thirdTeam->getKey()}/Other%20team",
+        ] : [
+            "/authors/{$firstAuthor->getKey()}",
+            "/teams/{$firstTeam->getKey()}",
+            "/teams/{$secondTeam->getKey()}",
+            "/authors/{$secondAuthor->getKey()}",
+            "/teams/{$thirdTeam->getKey()}",
+        ]);
+
+        $column = $component->instance()->getTable()->getColumn('author.teams.name');
+
+        foreach ([$firstPost, $secondPost, $firstPost] as $post) {
+            $column->record($post);
+
+            expect(collect($column->getRelatedRecords())->map->getKey()->all())
+                ->toBe($post->is($firstPost) ? [$firstTeam->getKey(), $secondTeam->getKey()] : [$thirdTeam->getKey()]);
         }
-    };
-
-    expect($column->updateState('Updated title'))->toBe('Updated title');
+    })->with(['stack', 'nested', 'group'])->with([false, true])->with([false, true]);
 });
 
-it('throws `LogicException` from `make()` when name is blank', function (): void {
-    expect(static fn () => TextColumn::make(''))
-        ->toThrow(LogicException::class, 'must have a unique name');
-});
+describe('browser accessibility', function (): void {
+    it('renders relationship item URLs inside `Stack` accessibly in light and dark modes', function (): void {
+        Artisan::call('filament:assets');
+        $author = User::factory()->create(['name' => 'Alex Morgan']);
+        $post = Post::factory()->create(['author_id' => $author->getKey()]);
+        $firstTeam = Team::factory()->create(['name' => 'Research']);
+        $secondTeam = Team::factory()->create(['name' => 'Delivery']);
+        $author->teams()->attach([$firstTeam->getKey(), $secondTeam->getKey()]);
+        $this->actingAs($author);
 
-it('returns `null` for `getDefaultName()`', function (): void {
-    expect(Column::getDefaultName())->toBeNull();
-});
-
-it('throws `LogicException` from `getTable()` when not mounted', function (): void {
-    $column = TextColumn::make('title');
-
-    expect(static fn () => $column->getTable())
-        ->toThrow(LogicException::class, 'is not mounted to a table');
-});
-
-it('can call `getStateFromRecord()` for a relationship without mounting the column', function (string $container): void {
-    $author = User::factory()->create();
-    $post = Post::factory()->create(['author_id' => $author->getKey()]);
-    $column = TextColumn::make('author.name')->record($post);
-
-    match ($container) {
-        'stack' => Stack::make([$column])->getColumns(),
-        'nested' => Stack::make([Split::make([$column])])->getColumns(),
-        'group' => ColumnGroup::make('Author', [$column])->getColumns(),
-        default => null,
-    };
-
-    expect($column->hasTable())->toBeFalse()
-        ->and($column->getStateFromRecord())->toBe($author->name);
-})->with(['none', 'stack', 'nested', 'group']);
-
-it('preserves `$relatedRecord` in column containers across records and rendering paths', function (string $container, bool $combinedUrl, bool $decorated): void {
-    $firstAuthor = User::factory()->create(['name' => 'Shared author']);
-    $secondAuthor = User::factory()->create(['name' => 'Shared author']);
-    $firstPost = Post::factory()->create(['author_id' => $firstAuthor->getKey()]);
-    $secondPost = Post::factory()->create(['author_id' => $secondAuthor->getKey()]);
-    $firstTeam = Team::factory()->create(['name' => 'Shared team']);
-    $secondTeam = Team::factory()->create(['name' => 'Shared team']);
-    $thirdTeam = Team::factory()->create(['name' => 'Other team']);
-    $firstAuthor->teams()->attach([$firstTeam->getKey(), $secondTeam->getKey()]);
-    $secondAuthor->teams()->attach($thirdTeam);
-
-    $component = livewire(RenderRelatedRecordColumnsInContainers::class, compact('container', 'combinedUrl', 'decorated'))
-        ->assertSuccessful();
-
-    preg_match_all('/<a\b[^>]*href="([^"]+)"/', $component->html(), $matches);
-
-    expect($matches[1])->toBe($combinedUrl ? [
-        "/posts/{$firstPost->getKey()}/authors/{$firstAuthor->getKey()}/Shared%20author",
-        "/posts/{$firstPost->getKey()}/teams/{$firstTeam->getKey()}/Shared%20team",
-        "/posts/{$firstPost->getKey()}/teams/{$secondTeam->getKey()}/Shared%20team",
-        "/posts/{$secondPost->getKey()}/authors/{$secondAuthor->getKey()}/Shared%20author",
-        "/posts/{$secondPost->getKey()}/teams/{$thirdTeam->getKey()}/Other%20team",
-    ] : [
-        "/authors/{$firstAuthor->getKey()}",
-        "/teams/{$firstTeam->getKey()}",
-        "/teams/{$secondTeam->getKey()}",
-        "/authors/{$secondAuthor->getKey()}",
-        "/teams/{$thirdTeam->getKey()}",
-    ]);
-
-    $column = $component->instance()->getTable()->getColumn('author.teams.name');
-
-    foreach ([$firstPost, $secondPost, $firstPost] as $post) {
-        $column->record($post);
-
-        expect(collect($column->getRelatedRecords())->map->getKey()->all())
-            ->toBe($post->is($firstPost) ? [$firstTeam->getKey(), $secondTeam->getKey()] : [$thirdTeam->getKey()]);
-    }
-})->with(['stack', 'nested', 'group'])->with([false, true])->with([false, true]);
-
-it('renders relationship item URLs inside `Stack` accessibly in light and dark modes', function (): void {
-    Artisan::call('filament:assets');
-    $author = User::factory()->create(['name' => 'Alex Morgan']);
-    $post = Post::factory()->create(['author_id' => $author->getKey()]);
-    $firstTeam = Team::factory()->create(['name' => 'Research']);
-    $secondTeam = Team::factory()->create(['name' => 'Delivery']);
-    $author->teams()->attach([$firstTeam->getKey(), $secondTeam->getKey()]);
-    $this->actingAs($author);
-
-    foreach ([false, true] as $isDarkMode) {
         $page = visit('/columns-browser-test?relatedRecordLayout=true');
-
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
 
         $page->assertNoSmoke()
             ->assertScript('[...document.querySelectorAll(\'[data-testid="related-record-layout"] a\')].map(anchor => anchor.getAttribute("href"))', [
@@ -141,19 +141,23 @@ it('renders relationship item URLs inside `Stack` accessibly in light and dark m
                 "/posts/{$post->getKey()}/teams/{$secondTeam->getKey()}/Delivery",
             ])
             ->assertNoAccessibilityIssues();
-    }
+
+        $page->inDarkMode()->assertNoAccessibilityIssues();
+    });
 });
 
-it('can call `getStateFromRecord()` with keyless records after mounting the column', function (): void {
-    $column = livewire(RenderColumnWithCustomLabel::class)
-        ->instance()
-        ->getTable()
-        ->getColumn('title');
+describe('keyless record state', function (): void {
+    it('can call `getStateFromRecord()` with keyless records after mounting the column', function (): void {
+        $column = livewire(RenderColumnWithCustomLabel::class)
+            ->instance()
+            ->getTable()
+            ->getColumn('title');
 
-    expect($column->record(['title' => 'Array title'])->getStateFromRecord())
-        ->toBe('Array title')
-        ->and($column->record(new Post(['title' => 'Model title']))->getStateFromRecord())
-        ->toBe('Model title');
+        expect($column->record(['title' => 'Array title'])->getStateFromRecord())
+            ->toBe('Array title')
+            ->and($column->record(new Post(['title' => 'Model title']))->getStateFromRecord())
+            ->toBe('Model title');
+    });
 });
 
 describe('label', function (): void {
@@ -284,8 +288,7 @@ describe('width', function (): void {
 });
 
 describe('grow', function (): void {
-    it('can check `canGrow()` default', function (): void {
-        // TextColumn defaults to grow=true; other columns may differ
+    it('defaults `canGrow()` to `true` for `TextColumn`', function (): void {
         $column = TextColumn::make('title');
 
         expect($column->canGrow())->toBeTrue();
