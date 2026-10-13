@@ -33,7 +33,7 @@ class RegenerateAppAuthenticationRecoveryCodesAction
     public static function make(AppAuthentication $appAuthentication): Action
     {
         $rateLimitAuthenticationAttempt = static function (string $passwordStatePath): void {
-            $rateLimitingKey = 'filament-regenerate-recovery-codes:' . Filament::getUserScopedAuthIdentifier();
+            $rateLimitingKey = 'filament:auth:regenerate_recovery_codes:rate_limit:' . Filament::getUserScopedAuthIdentifier();
 
             if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
                 throw ValidationException::withMessages([

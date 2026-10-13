@@ -34,6 +34,8 @@ use Illuminate\Validation\Rules\Password;
 use LogicException;
 use SensitiveParameter;
 
+use function Filament\Support\encode_key_segments;
+
 /**
  * @property-read Action $loginAction
  * @property-read Schema $form
@@ -132,7 +134,7 @@ class Register extends SimplePage
             return false;
         }
 
-        $rateLimitingKey = 'filament-register:' . sha1(Filament::getAuthGuard() . '|' . $this->getUserModel() . '|' . $email);
+        $rateLimitingKey = 'filament:auth:register:rate_limit:' . hash('sha256', encode_key_segments(Filament::getAuthGuard(), $this->getUserModel(), $email));
 
         if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 2)) {
             $this->getRateLimitedNotification(new TooManyRequestsException(

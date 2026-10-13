@@ -32,6 +32,8 @@ use LogicException;
 use PragmaRX\Google2FAQRCode\Google2FA;
 use SensitiveParameter;
 
+use function Filament\Support\encode_key_segments;
+
 class AppAuthentication implements MultiFactorAuthenticationProvider
 {
     use HasCacheStore;
@@ -185,19 +187,16 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         // last accepted code rather than a marker for one specific code. RFC 6238 requires that
         // a successful verification rejects that code and every earlier one, not just a repeat
         // of the same code.
-        $cacheKey = 'filament.app_authentication_codes.' . md5($secret);
+        $cacheKey = 'filament:auth:app_authentication:code:' . hash('sha256', $secret);
+        $legacyCacheKey = 'filament.app_authentication_codes.' . md5($secret);
         $cache = $this->getCacheRepository();
 
-        $verifyCode = function (?Lock $lock, Repository $cache) use ($cacheKey, $code, $secret): bool {
+        $verifyCode = function (?Lock $lock, Repository $cache) use ($cacheKey, $legacyCacheKey, $code, $secret): bool {
             // Passing an initial `$lastAcceptedTimestamp` makes `verifyKeyNewer()` return the
             // matched period instead of `true`, so future codes are cached correctly.
-            $lastAcceptedTimestamp = $cache->get($cacheKey);
+            $lastAcceptedTimestamp = $this->getLastAcceptedCodeTimestamp($cache, $cacheKey, $legacyCacheKey);
 
-            if (is_string($lastAcceptedTimestamp) && ctype_digit($lastAcceptedTimestamp)) {
-                $lastAcceptedTimestamp = (int) $lastAcceptedTimestamp;
-            }
-
-            if (($lastAcceptedTimestamp !== null) && (! is_int($lastAcceptedTimestamp))) {
+            if ($lastAcceptedTimestamp === false) {
                 return false;
             }
 
@@ -209,32 +208,56 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
                 return false;
             }
 
-            $lastAcceptedTimestamp = $cache->get($cacheKey);
-
-            if (is_string($lastAcceptedTimestamp) && ctype_digit($lastAcceptedTimestamp)) {
-                $lastAcceptedTimestamp = (int) $lastAcceptedTimestamp;
-            }
+            $lastAcceptedTimestamp = $this->getLastAcceptedCodeTimestamp($cache, $cacheKey, $legacyCacheKey);
 
             if (
-                (($lastAcceptedTimestamp !== null) && ((! is_int($lastAcceptedTimestamp)) || ($timestamp <= $lastAcceptedTimestamp)))
+                ($lastAcceptedTimestamp === false)
+                || (($lastAcceptedTimestamp !== null) && ($timestamp <= $lastAcceptedTimestamp))
                 || (($lock !== null) && (! $lock->isOwnedByCurrentProcess()))
             ) {
                 return false;
             }
 
-            return $cache->forever($cacheKey, $timestamp);
+            // Preserve replay protection for workers still using the old key during deployment.
+            return $cache->forever($legacyCacheKey, $timestamp) && $cache->forever($cacheKey, $timestamp);
         };
 
-        return $this->executeWithCacheLock($cache, "{$cacheKey}.lock", $verifyCode);
+        return $this->executeWithCacheLock($cache, "{$cacheKey}:lock", $verifyCode);
+    }
+
+    protected function getLastAcceptedCodeTimestamp(Repository $cache, string $cacheKey, string $legacyCacheKey): int | false | null
+    {
+        $lastAcceptedTimestamp = null;
+
+        foreach ([$cacheKey, $legacyCacheKey] as $key) {
+            $timestamp = $cache->get($key);
+
+            if (is_string($timestamp) && ctype_digit($timestamp)) {
+                $timestamp = (int) $timestamp;
+            }
+
+            if ($timestamp === null) {
+                continue;
+            }
+
+            if (! is_int($timestamp)) {
+                return false;
+            }
+
+            $lastAcceptedTimestamp = ($lastAcceptedTimestamp === null) ? $timestamp : max($lastAcceptedTimestamp, $timestamp);
+        }
+
+        return $lastAcceptedTimestamp;
     }
 
     public function verifyRecoveryCode(#[SensitiveParameter] string $recoveryCode, ?HasAppAuthenticationRecovery $user = null): bool
     {
         $user ??= Filament::auth()->user();
 
-        $lockKey = 'filament.app_authentication_recovery_codes.' . md5(
-            $user::class . ':' . (($user instanceof Authenticatable) ? $user->getAuthIdentifier() : spl_object_id($user)),
-        );
+        $lockKey = 'filament:auth:app_authentication:recovery_codes:' . hash(
+            'sha256',
+            encode_key_segments($user::class, (string) (($user instanceof Authenticatable) ? $user->getAuthIdentifier() : spl_object_id($user))),
+        ) . ':lock';
 
         $cache = $this->getCacheRepository();
         $connection = $user->getConnection(); /** @phpstan-ignore-line */

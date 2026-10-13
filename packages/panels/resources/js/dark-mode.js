@@ -1,6 +1,6 @@
 document.addEventListener('alpine:init', () => {
     const theme =
-        localStorage.getItem('theme') ??
+        localStorage.getItem('filament:theme:mode') ??
         getComputedStyle(document.documentElement).getPropertyValue(
             '--default-theme-mode',
         )
@@ -17,7 +17,7 @@ document.addEventListener('alpine:init', () => {
     window.addEventListener('theme-changed', (event) => {
         let theme = event.detail
 
-        localStorage.setItem('theme', theme)
+        localStorage.setItem('filament:theme:mode', theme)
 
         if (theme === 'system') {
             theme = window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -31,7 +31,7 @@ document.addEventListener('alpine:init', () => {
     window
         .matchMedia('(prefers-color-scheme: dark)')
         .addEventListener('change', (event) => {
-            if (localStorage.getItem('theme') === 'system') {
+            if (localStorage.getItem('filament:theme:mode') === 'system') {
                 window.Alpine.store('theme', event.matches ? 'dark' : 'light')
             }
         })

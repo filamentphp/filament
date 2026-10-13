@@ -41,6 +41,8 @@ use Illuminate\Support\Facades\Event;
 use Livewire\Component;
 use LogicException;
 
+use function Filament\Support\encode_key_segments;
+
 class FilamentManager
 {
     protected ?string $currentDomain = null;
@@ -636,7 +638,7 @@ class FilamentManager
         $userClass = $user::class;
         $authIdentifier = (string) $user->getAuthIdentifier();
 
-        return hash('sha256', strlen($guard) . ":{$guard}" . strlen($userClass) . ":{$userClass}" . strlen($authIdentifier) . ":{$authIdentifier}");
+        return hash('sha256', encode_key_segments($guard, $userClass, $authIdentifier));
     }
 
     /**

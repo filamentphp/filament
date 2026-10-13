@@ -9,6 +9,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\ComponentAttributeBag;
 use Symfony\Component\Process\Process;
 
+use function Filament\Support\encode_key_segments;
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_pattern;
@@ -16,6 +17,12 @@ use function Filament\Support\is_path_within_directory;
 use function Filament\Support\prepare_inherited_attributes;
 
 uses(TestCase::class);
+
+it('encodes key segments with byte lengths using `encode_key_segments()`', function (): void {
+    expect(encode_key_segments('a:b', 'c'))->toBe('3:a:b1:c')
+        ->and(encode_key_segments('a', 'b:c'))->toBe('1:a3:b:c')
+        ->and(encode_key_segments('', 'é|:', '42'))->toBe('0:4:é|:2:42');
+});
 
 it('generates patterns with literal LIKE wildcard characters using `generate_search_pattern()`', function (bool $hasLeadingWildcard, bool $hasTrailingWildcard, string $expected): void {
     expect(generate_search_pattern('café!_100%[draft]\\path', $hasLeadingWildcard, $hasTrailingWildcard))

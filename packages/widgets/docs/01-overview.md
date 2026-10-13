@@ -305,7 +305,7 @@ Handling data from the filter action is the same as handling data from the filte
 
 ### Persisting widget filters in the user's session
 
-By default, the dashboard filters applied will persist in the user's session between page loads. To disable this, override the `$persistsFiltersInSession` property in the dashboard page class:
+By default, the dashboard filters applied will persist in the user's session between page loads. If you use [tenancy](../users/tenancy), filters are persisted separately for each tenant. To disable persistence, override the `$persistsFiltersInSession` property in the dashboard page class:
 
 ```php
 use Filament\Pages\Dashboard as BaseDashboard;

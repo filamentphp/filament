@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use RuntimeException;
 
+use function Filament\Support\encode_key_segments;
+
 class NotificationMailbox
 {
     protected const MAX_PENDING_NOTIFICATIONS = 50;
@@ -36,12 +38,12 @@ class NotificationMailbox
 
         // Existing session entropy makes concurrent initialization deterministic,
         // without allowing a revoked cookie to reconstruct the mailbox address.
-        if (! session()->has('notifications.mailbox')) {
+        if (! session()->has('filament.notifications.mailbox')) {
             $this->pendingNotifications = [];
 
-            session()->put('notifications.mailbox', hash_hmac(
+            session()->put('filament.notifications.mailbox', hash_hmac(
                 'sha256',
-                session()->getId() . '|' . session()->token(),
+                encode_key_segments(session()->getId(), session()->token()),
                 config('app.key'),
             ));
         }
@@ -55,7 +57,7 @@ class NotificationMailbox
             $this->pendingNotifications = array_slice([...$this->pull(), ...$this->pendingNotifications], -static::MAX_PENDING_NOTIFICATIONS);
         }
 
-        session()->put('notifications.mailbox', Str::random(40));
+        session()->put('filament.notifications.mailbox', Str::random(40));
     }
 
     public function hasPendingNotifications(): bool
@@ -105,7 +107,7 @@ class NotificationMailbox
     {
         $this->initializeScope();
 
-        return session()->get('notifications.mailbox');
+        return session()->get('filament.notifications.mailbox');
     }
 
     protected function mutate(Closure $callback): mixed
