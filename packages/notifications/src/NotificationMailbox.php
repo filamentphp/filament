@@ -36,10 +36,10 @@ class NotificationMailbox
 
         // Existing session entropy makes concurrent initialization deterministic,
         // without allowing a revoked cookie to reconstruct the mailbox address.
-        if (! session()->has('filament.notification_mailbox')) {
+        if (! session()->has('notifications.mailbox')) {
             $this->pendingNotifications = [];
 
-            session()->put('filament.notification_mailbox', hash_hmac(
+            session()->put('notifications.mailbox', hash_hmac(
                 'sha256',
                 session()->getId() . '|' . session()->token(),
                 config('app.key'),
@@ -55,7 +55,7 @@ class NotificationMailbox
             $this->pendingNotifications = array_slice([...$this->pull(), ...$this->pendingNotifications], -static::MAX_PENDING_NOTIFICATIONS);
         }
 
-        session()->put('filament.notification_mailbox', Str::random(40));
+        session()->put('notifications.mailbox', Str::random(40));
     }
 
     public function hasPendingNotifications(): bool
@@ -105,7 +105,7 @@ class NotificationMailbox
     {
         $this->initializeScope();
 
-        return session()->get('filament.notification_mailbox');
+        return session()->get('notifications.mailbox');
     }
 
     protected function mutate(Closure $callback): mixed
