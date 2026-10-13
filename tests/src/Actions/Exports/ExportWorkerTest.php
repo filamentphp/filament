@@ -228,7 +228,7 @@ if (getenv('EXPORT_WORKER_DIRECTORY') === false) {
             $database->exec('CREATE TABLE sentinel (value TEXT)');
             $database->exec("INSERT INTO sentinel VALUES ('untouched')");
             $database = null;
-            $hash = hash_file('sha256', $directory . '/database.sqlite');
+            $hash = hash_file('md5', $directory . '/database.sqlite');
             $phase = 'worker';
             $childDirectory = $directory;
 
@@ -267,7 +267,7 @@ if (getenv('EXPORT_WORKER_DIRECTORY') === false) {
             $process->setTimeout(30)->run();
             expect($process->isSuccessful())->toBeFalse()
                 ->and($process->getOutput() . $process->getErrorOutput())->toContain('Rejected export worker ' . $rejection . '.')
-                ->and(hash_file('sha256', $directory . '/database.sqlite'))->toBe($hash)
+                ->and(hash_file('md5', $directory . '/database.sqlite'))->toBe($hash)
                 ->and(glob($directory . '/*.pid'))->toBe([]);
         } finally {
             if (is_link($alias)) {

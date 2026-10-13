@@ -925,6 +925,8 @@ public function getJobConnection(): ?string
 By default, the export system will only process one job at a time from each export. This is to prevent the server from being overloaded, and other jobs from being delayed by large exports. That functionality is defined in the `WithoutOverlapping` middleware on the exporter class:
 
 ```php
+use Illuminate\Queue\Middleware\WithoutOverlapping;
+
 public function getJobMiddleware(): array
 {
     return [

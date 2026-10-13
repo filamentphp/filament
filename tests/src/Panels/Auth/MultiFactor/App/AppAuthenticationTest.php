@@ -1012,7 +1012,8 @@ describe('security', function (): void {
             $secret,
             shouldPreventCodeReuse: true,
         ))->toBeFalse()
-            ->and(Cache::get('filament.app_authentication_codes.' . md5($secret)))->toBeNull();
+            ->and(Cache::get('filament.app_authentication_codes.' . md5($secret)))->toBeNull()
+            ->and(Cache::get('filament:auth:app_authentication:code:' . hash('sha256', $secret)))->toBeNull();
     });
 
     it('does not move the TOTP replay watermark backwards after a cache lock expires', function (): void {
