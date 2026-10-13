@@ -594,8 +594,26 @@
     ul li + li:where(:not(.fi-not-prose, .fi-not-prose *)),
     li > ol:where(:not(.fi-not-prose, .fi-not-prose *)),
     li > ul:where(:not(.fi-not-prose, .fi-not-prose *)),
-    li > * + p:where(:not(.fi-not-prose, .fi-not-prose *)) {
+    li > * + p:where(:not(.fi-not-prose, .fi-not-prose *)),
+    li > * + blockquote:where(:not(.fi-not-prose, .fi-not-prose *)),
+    li blockquote > p + p:where(:not(.fi-not-prose, .fi-not-prose *)) {
         margin-top: var(--spacing);
+    }
+
+    li > :is(pre, table, hr):where(:not(.fi-not-prose, .fi-not-prose *)) {
+        margin-block: calc(var(--spacing) * 4);
+
+        &:first-child {
+            margin-top: 0;
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    li > hr + h2:where(:not(.fi-not-prose, .fi-not-prose *)) {
+        margin-top: calc(var(--spacing) * 4);
     }
 
     ol li:where(:not(.fi-not-prose, .fi-not-prose *))::marker,
