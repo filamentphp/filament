@@ -2112,7 +2112,9 @@ describe('browser interactions', function (): void {
                     ->assertCount('[role="tooltip"]:visible', 0)
                     ->keys(':focus', 'Escape')
                     ->assertPresent($content . ':focus')
-                    ->keys(':focus', ['ArrowRight', 'ArrowLeft'])
+                    ->keys(':focus', 'ArrowRight')
+                    ->assertScript('window.getSelection().isCollapsed', true)
+                    ->keys(':focus', 'ArrowLeft')
                     ->assertScript('window.getSelection().isCollapsed', true);
             }
 
