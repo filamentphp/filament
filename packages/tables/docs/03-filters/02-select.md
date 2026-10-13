@@ -79,6 +79,18 @@ SelectFilter::make('author')
     ->relationship('author', 'name')
 ```
 
+### Searching select filter options
+
+You may enable a search input to allow easier access to many options, using the `searchable()` method:
+
+```php
+use Filament\Tables\Filters\SelectFilter;
+
+SelectFilter::make('author')
+    ->relationship('author', 'name')
+    ->searchable()
+```
+
 ### Preloading the select filter relationship options
 
 If you'd like to populate the searchable options from the database when the page is loaded, instead of when the user searches, you can use the `preload()` method:
@@ -113,6 +125,21 @@ SelectFilter::make('author')
     ->emptyRelationshipOptionLabel('No author')
 ```
 
+### Customizing relationship option labels
+
+You can use `getOptionLabelFromRecordUsing()` to customize each option's label using its related record. The default active-filter indicator uses the same labels:
+
+```php
+use App\Models\User;
+use Filament\Tables\Filters\SelectFilter;
+
+SelectFilter::make('author')
+    ->relationship('author', 'name')
+    ->getOptionLabelFromRecordUsing(fn (User $record): string => "{$record->name} ({$record->email})")
+```
+
+This also works with `multiple()`. The callback is evaluated by the filter's [select field](../../forms/select#customizing-the-relationship-option-labels), so it can use the same utility injection as other select fields.
+
 ### Customizing the select filter relationship query
 
 You may customize the database query that retrieves options using the third parameter of the `relationship()` method:
@@ -123,18 +150,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 SelectFilter::make('author')
     ->relationship('author', 'name', fn (Builder $query) => $query->withTrashed())
-```
-
-### Searching select filter options
-
-You may enable a search input to allow easier access to many options, using the `searchable()` method:
-
-```php
-use Filament\Tables\Filters\SelectFilter;
-
-SelectFilter::make('author')
-    ->relationship('author', 'name')
-    ->searchable()
 ```
 
 ## Disable placeholder selection
@@ -180,4 +195,3 @@ SelectFilter::make('status')
 ```
 
 <UtilityInjection set="tableFilters" version="4.x">As well as allowing a static value, the `default()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
-

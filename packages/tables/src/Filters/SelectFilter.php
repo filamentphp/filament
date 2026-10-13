@@ -52,12 +52,33 @@ class SelectFilter extends BaseFilter
         );
 
         $this->indicateUsing(static function (SelectFilter $filter, array $state): array {
-            if ($filter->isMultiple()) {
-                if (blank($state['values'] ?? null)) {
-                    return [];
-                }
+            if (blank($filter->isMultiple() ? ($state['values'] ?? null) : ($state['value'] ?? null))) {
+                return [];
+            }
 
-                if ($filter->queriesRelationships()) {
+            $relationshipOptionLabels = null;
+
+            if ($filter->queriesRelationships()) {
+                $relationshipOptionLabels = $filter->getTable()->withAppliedFiltersFormState(static function () use ($filter): ?array {
+                    $select = $filter->getTable()->getFiltersForm()->getComponentByStatePath(
+                        $filter->getName() . '.' . ($filter->isMultiple() ? 'values' : 'value'),
+                        withHidden: true,
+                    );
+
+                    if (! $select instanceof Select) {
+                        return null;
+                    }
+
+                    return $filter->isMultiple()
+                        ? $select->getOptionLabels(withDefaults: false)
+                        : [$select->getOptionLabel(withDefault: false)];
+                });
+            }
+
+            if ($filter->isMultiple()) {
+                if ($relationshipOptionLabels !== null) {
+                    $labels = $relationshipOptionLabels;
+                } elseif ($filter->queriesRelationships()) {
                     $relationshipQuery = $filter->getRelationshipQuery();
 
                     $labels = [];
@@ -81,9 +102,7 @@ class SelectFilter extends BaseFilter
                                 fn (Builder $query, string $relationshipKey) => $query->whereIn($relationshipKey, $filter->getRelationshipQueryValues($state['values'])),
                                 fn (Builder $query) => $query->whereKey($state['values'])
                             )
-                            ->get()
-                            ->map(fn (Model $record): ?string => $filter->getOptionLabelFromRecord($record))
-                            ->filter(fn (?string $label): bool => filled($label))
+                            ->pluck($relationshipQuery->qualifyColumn($filter->getRelationshipTitleAttribute()))
                             ->all(),
                     ];
                 } else {
@@ -108,26 +127,23 @@ class SelectFilter extends BaseFilter
                 return [$indicator];
             }
 
-            if (blank($state['value'] ?? null)) {
-                return [];
-            }
-
-            if ($filter->queriesRelationships()) {
+            if ($relationshipOptionLabels !== null) {
+                $label = $relationshipOptionLabels[0] ?? null;
+            } elseif ($filter->queriesRelationships()) {
                 if (
                     $filter->hasEmptyRelationshipOption() &&
                     ($state['value'] === static::EMPTY_RELATIONSHIP_OPTION_KEY)
                 ) {
                     $label = $filter->getEmptyRelationshipOptionLabel();
                 } else {
-                    $record = $filter->getRelationshipQuery()
+                    $label = $filter->getRelationshipQuery()
                         ->when(
                             $filter->getRelationshipKey(),
                             fn (Builder $query, string $relationshipKey) => $query->where($relationshipKey, $state['value']),
                             fn (Builder $query) => $query->whereKey($state['value'])
                         )
-                        ->first();
-
-                    $label = $record ? $filter->getOptionLabelFromRecord($record) : null;
+                        ->first()
+                        ?->getAttributeValue($filter->getRelationshipTitleAttribute());
                 }
             } else {
                 $label = collect($filter->getOptions())
@@ -413,38 +429,6 @@ class SelectFilter extends BaseFilter
         }
 
         return $options;
-    }
-
-    /**
-     * The label a related record shows in the filter's indicator — the same
-     * one its option carries: the `getOptionLabelFromRecordUsing()` callback
-     * when set, otherwise the relationship title attribute (`->` JSON paths
-     * included).
-     */
-    public function getOptionLabelFromRecord(Model $record): ?string
-    {
-        if ($this->getOptionLabelFromRecordUsing) {
-            return $this->evaluate(
-                $this->getOptionLabelFromRecordUsing,
-                namedInjections: [
-                    'record' => $record,
-                ],
-                typedInjections: [
-                    Model::class => $record,
-                    $record::class => $record,
-                ],
-            );
-        }
-
-        $relationshipTitleAttribute = $this->getRelationshipTitleAttribute();
-
-        if (str_contains($relationshipTitleAttribute, '->')) {
-            $relationshipTitleAttribute = str_replace('->', '.', $relationshipTitleAttribute);
-        }
-
-        $label = data_get($record, $relationshipTitleAttribute);
-
-        return filled($label) ? (string) $label : null;
     }
 
     public function getOptionLabelFromRelationship(Select $select): mixed

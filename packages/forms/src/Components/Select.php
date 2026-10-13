@@ -98,6 +98,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected ?Model $cachedSelectedRecord = null;
 
+    protected mixed $cachedSelectedRecordState = null;
+
+    protected ?string $cachedSelectedRecordStatePath = null;
+
     protected bool | Closure $isMultiple = false;
 
     protected ?Closure $getOptionLabelUsing = null;
@@ -1561,15 +1565,26 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     public function getSelectedRecord(): ?Model
     {
-        if ($this->cachedSelectedRecord) {
+        $state = $this->getState();
+        $statePath = $this->getStatePath();
+
+        if (
+            $this->cachedSelectedRecord &&
+            ($this->cachedSelectedRecordState === $state) &&
+            ($this->cachedSelectedRecordStatePath === $statePath)
+        ) {
             return $this->cachedSelectedRecord;
         }
 
-        if (blank($this->getState())) {
-            return null;
+        if (blank($state)) {
+            return $this->cachedSelectedRecord = null;
         }
 
-        return $this->cachedSelectedRecord = $this->evaluate($this->getSelectedRecordUsing);
+        $this->cachedSelectedRecord = $this->evaluate($this->getSelectedRecordUsing);
+        $this->cachedSelectedRecordState = $state;
+        $this->cachedSelectedRecordStatePath = $statePath;
+
+        return $this->cachedSelectedRecord;
     }
 
     public function hasRelationship(): bool
