@@ -44,23 +44,22 @@ it('renders labels and wrapper URLs accessibly in light and dark modes', functio
     Post::factory()->create(['title' => 'Quarterly report', 'content' => 'Review summary']);
     $this->actingAs(User::factory()->create());
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/columns-browser-test');
+    $page = visit('/columns-browser-test');
 
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
+    $page
+        ->assertNoSmoke()
+        ->assertScript('document.querySelector(\'[data-testid="enum-label-column"]\').textContent.trim()', 'User Management')
+        ->assertScript('document.querySelectorAll(\'[data-testid="linked-column"] a\').length', 1)
+        ->assertScript('document.querySelectorAll(\'[data-testid="disabled-column"] a\').length', 0)
+        ->assertNoAccessibilityIssues()
+        ->click('[data-testid="toggle-reordering"]')
+        ->assertScript('document.querySelectorAll(\'[data-testid="linked-column"] a\').length', 0)
+        ->assertNoAccessibilityIssues();
 
-        $page
-            ->assertNoSmoke()
-            ->assertScript('document.querySelector(\'[data-testid="enum-label-column"]\').textContent.trim()', 'User Management')
-            ->assertScript('document.querySelectorAll(\'[data-testid="linked-column"] a\').length', 1)
-            ->assertScript('document.querySelectorAll(\'[data-testid="disabled-column"] a\').length', 0)
-            ->assertNoAccessibilityIssues()
-            ->click('[data-testid="toggle-reordering"]')
-            ->assertScript('document.querySelectorAll(\'[data-testid="linked-column"] a\').length', 0)
-            ->assertNoAccessibilityIssues();
-    }
+    $page->inDarkMode()->assertNoAccessibilityIssues()
+        ->click('[data-testid="toggle-reordering"]')
+        ->assertMissing('[data-testid="linked-column"] a')
+        ->assertNoAccessibilityIssues();
 });
 
 it('can set `badge()`', function (): void {

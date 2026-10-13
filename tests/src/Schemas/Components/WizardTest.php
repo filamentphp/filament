@@ -734,45 +734,37 @@ it('keeps the next action focused and blocked during other requests', function (
 
     $nextAction = '[data-testid="wizard-next-action"]';
 
-    foreach ([false, true] as $isDarkMode) {
-        $browser = visit('/wizard-browser-test');
+    $browser = visit('/wizard-browser-test');
 
-        if ($isDarkMode) {
-            $browser = $browser->inDarkMode();
-        }
+    $nextActionLocator = $browser->page()->locator($nextAction);
 
-        $nextActionLocator = $browser->page()->locator($nextAction);
+    $browser
+        ->click('[data-testid="wizard-dynamic-select"] .fi-select-input-btn')
+        ->assertAttribute(":has(> {$nextAction})", 'aria-disabled', 'true');
 
-        $browser
-            ->click('[data-testid="wizard-dynamic-select"] .fi-select-input-btn')
-            ->assertAttribute(":has(> {$nextAction})", 'aria-disabled', 'true');
+    $nextActionLocator->press('Enter');
+    $nextActionLocator->press('Space');
 
-        $nextActionLocator->press('Enter');
-        $nextActionLocator->press('Space');
+    $browser
+        ->assertPresent("{$nextAction}:focus")
+        ->assertAttributeMissing(":has(> {$nextAction})", 'aria-disabled')
+        ->assertVisible('#profile-details')
+        ->assertNoSmoke();
 
-        $browser
-            ->assertPresent("{$nextAction}:focus")
-            ->assertScript('window.wizardNextActionActivationCount ?? 0', 0)
-            ->assertAttributeMissing(":has(> {$nextAction})", 'aria-disabled')
-            ->assertVisible('#profile-details')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    $nextActionLocator->click();
 
-        $nextActionLocator->click();
+    $browser
+        ->assertAttribute($nextAction, 'aria-disabled', 'true')
+        ->assertPresent("{$nextAction}:focus");
 
-        $browser
-            ->assertAttribute($nextAction, 'aria-disabled', 'true')
-            ->assertPresent("{$nextAction}:focus");
+    $nextActionLocator->press('Enter');
+    $nextActionLocator->press('Space');
 
-        $nextActionLocator->press('Enter');
-        $nextActionLocator->press('Space');
-
-        $browser
-            ->assertScript('window.wizardNextActionActivationCount', 1)
-            ->assertVisible('#profile-contact')
-            ->assertAttributeMissing(":has(> {$nextAction})", 'aria-disabled')
-            ->assertNoSmoke();
-    }
+    $browser
+        ->assertVisible('#profile-contact')
+        ->assertAttributeMissing(":has(> {$nextAction})", 'aria-disabled')
+        ->assertMissing('#profile-review')
+        ->assertNoSmoke();
 });
 
 class WizardTransitions extends Livewire

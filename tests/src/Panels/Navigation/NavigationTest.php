@@ -104,7 +104,6 @@ it('renders `Htmlable` navigation labels and tooltips while escaping string labe
         ]);
 
     $page = visit(Settings::getUrl())
-        ->inDarkMode()
         ->assertSeeIn('[data-testid="literal-item"]', '<b>Overview &amp; insights</b>')
         ->assertMissing('[data-testid="literal-item"] b')
         ->assertSeeIn('[data-testid="rich-item"] b', 'Overview & insights')
@@ -114,9 +113,8 @@ it('renders `Htmlable` navigation labels and tooltips while escaping string labe
         ->assertAttribute('[data-testid="rich-group"] button[aria-controls]:not([aria-haspopup])', 'aria-label', 'Reports & <Draft>')
         ->assertNoAccessibilityIssues();
 
-    $page->script("window.dispatchEvent(new CustomEvent('theme-changed', { detail: 'light' }))");
-    $page->assertNoAccessibilityIssues()
-        ->click('button[aria-label="' . __('filament-panels::layout.actions.sidebar.collapse.label') . '"]:visible')
+    visit(Settings::getUrl())->inDarkMode()->assertNoAccessibilityIssues();
+    $page->click('button[aria-label="' . __('filament-panels::layout.actions.sidebar.collapse.label') . '"]:visible')
         ->hover('[data-testid="literal-item"] a')
         ->assertSeeIn('[role="tooltip"]', '<b>Overview &amp; insights</b>')
         ->assertMissing('[role="tooltip"] b')

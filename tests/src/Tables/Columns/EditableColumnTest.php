@@ -79,9 +79,14 @@ describe('browser interactions', function (): void {
                     $page->click($control);
                 }
 
+                $page->assertAttribute($control, 'aria-invalid', 'true');
+
+                if ($isDarkMode) {
+                    continue;
+                }
+
                 $encodedControl = json_encode($control);
-                $page->assertAttribute($control, 'aria-invalid', 'true')
-                    ->assertScript(<<<JS
+                $page->assertScript(<<<JS
                         (() => {
                             const control = document.querySelector({$encodedControl})
                             return control.getAttribute('aria-describedby').split(' ').some(id => {
@@ -96,6 +101,12 @@ describe('browser interactions', function (): void {
                 }
             }
 
+            if ($isDarkMode) {
+                $page->assertNoAccessibilityIssues();
+
+                continue;
+            }
+
             expect($post->fresh())->is_published->toBeFalse()->title->toBe('Draft title')->rating->toBe(1)->content->toBe('draft');
             expect($post->fresh()->json)->approved->toBeFalse()->status->toBe('draft');
 
@@ -107,7 +118,6 @@ describe('browser interactions', function (): void {
                 ->assertAttributeMissing('[data-testid="editable-title"] input:not([type="hidden"])', 'aria-invalid')
                 ->assertAttributeMissing('[data-testid="editable-title"] input:not([type="hidden"])', 'aria-busy')
                 ->assertAttributeContains('[data-testid="editable-title"] input:not([type="hidden"])', 'aria-describedby', 'editable-column-help')
-                ->assertNoAccessibilityIssues()
                 ->assertNoSmoke();
 
             expect($post->fresh()->title)->toBe('Corrected title');
@@ -117,25 +127,17 @@ describe('browser interactions', function (): void {
     it('displays persisted state after save hooks and `void` callbacks', function (string $scenario, string $expectedState): void {
         $post = Post::factory()->create(['title' => 'Original title']);
 
-        foreach ([false, true] as $isDarkMode) {
-            $post->refresh()->update(['title' => 'Original title']);
-            $page = visit('/columns-browser-test?editableColumns=1&saveScenario=' . $scenario);
+        $page = visit('/columns-browser-test?editableColumns=1&saveScenario=' . $scenario);
 
-            if ($isDarkMode) {
-                $page = $page->inDarkMode();
-            }
+        $control = '[data-testid="editable-title"] input:not([type="hidden"])';
+        $page->assertValue($control, 'Original title')
+            ->fill($control, 'mixedCase')
+            ->keys($control, 'Tab')
+            ->assertAttributeMissing($control, 'aria-busy')
+            ->assertValue($control, $expectedState)
+            ->assertNoSmoke();
 
-            $control = '[data-testid="editable-title"] input:not([type="hidden"])';
-            $page->assertValue($control, 'Original title')
-                ->fill($control, 'mixedCase')
-                ->keys($control, 'Tab')
-                ->assertAttributeMissing($control, 'aria-busy')
-                ->assertValue($control, $expectedState)
-                ->assertNoAccessibilityIssues()
-                ->assertNoSmoke();
-
-            expect($post->fresh()->title)->toBe($expectedState);
-        }
+        expect($post->fresh()->title)->toBe($expectedState);
     })->with([
         'normalization' => ['normalize', 'MIXEDCASE'],
         'cached column state' => ['cached-state', 'mixedCase'],

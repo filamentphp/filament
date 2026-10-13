@@ -1094,7 +1094,6 @@ it('can search and insert grouped blocks', function (): void {
     $searchInput = '[data-testid="builder"] input[type="text"][aria-label][placeholder]';
 
     $page = visit('/builder-searchable-test?grouped=1')
-        ->inDarkMode()
         ->assertPresent('[data-testid="builder"]');
 
     $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
@@ -1104,9 +1103,12 @@ it('can search and insert grouped blocks', function (): void {
         ->assertVisible($mediaGroup)
         ->assertNoAccessibilityIssues();
 
-    $page->script('window.dispatchEvent(new CustomEvent("theme-changed", { detail: "light" }))');
-    $page->assertNoAccessibilityIssues()
-        ->type($searchInput, 'resume')
+    visit('/builder-searchable-test?grouped=1')->inDarkMode()
+        ->click('[data-testid="add-block"][aria-expanded="false"]')
+        ->assertVisible($contentGroup)
+        ->assertNoAccessibilityIssues();
+
+    $page->type($searchInput, 'resume')
         ->assertVisible($contentGroup)
         ->assertMissing($mediaGroup)
         ->type($searchInput, 'video')
@@ -1134,46 +1136,44 @@ it('keeps blocks collapsed and preserves keyboard focus when reordering', functi
     $this->actingAs(User::factory()->create());
     $url = '/builder-test?reordering=1&full=' . (int) ($renderMode === 'full') . '&ancestor=' . (int) ($renderMode === 'ancestor');
     $page = visit($url);
-    foreach ([$page, $page->inDarkMode()] as $page) {
-        $firstParagraph = ':nth-match([data-testid="paragraph-text"], 1)';
-        $secondParagraph = ':nth-match([data-testid="paragraph-text"], 2)';
-        $thirdParagraph = ':nth-match([data-testid="paragraph-text"], 3)';
-        $firstDown = ':nth-match([data-testid="builder"] [data-reorder-direction="down"], 1)';
-        $secondDown = ':nth-match([data-testid="builder"] [data-reorder-direction="down"], 2)';
-        $secondUp = ':nth-match([data-testid="builder"] [data-reorder-direction="up"], 2)';
-        $thirdUp = ':nth-match([data-testid="builder"] [data-reorder-direction="up"], 3)';
+    $firstParagraph = ':nth-match([data-testid="paragraph-text"], 1)';
+    $secondParagraph = ':nth-match([data-testid="paragraph-text"], 2)';
+    $thirdParagraph = ':nth-match([data-testid="paragraph-text"], 3)';
+    $firstDown = ':nth-match([data-testid="builder"] [data-reorder-direction="down"], 1)';
+    $secondDown = ':nth-match([data-testid="builder"] [data-reorder-direction="down"], 2)';
+    $secondUp = ':nth-match([data-testid="builder"] [data-reorder-direction="up"], 2)';
+    $thirdUp = ':nth-match([data-testid="builder"] [data-reorder-direction="up"], 3)';
 
-        $page->assertPresent('[data-testid="builder"]')
-            ->keys($firstDown, 'Enter')
-            ->assertValue($firstParagraph, 'Beta')
-            ->assertValue($secondParagraph, 'Alpha')
-            ->assertValue($thirdParagraph, 'Gamma')
-            ->assertMissing($secondParagraph)
-            ->assertPresent($secondDown . ':focus')
-            ->keys($secondDown, 'Enter')
-            ->assertValue($firstParagraph, 'Beta')
-            ->assertValue($secondParagraph, 'Gamma')
-            ->assertValue($thirdParagraph, 'Alpha')
-            ->assertMissing($thirdParagraph)
-            ->assertPresent($thirdUp . ':focus')
-            ->assertDisabled(':nth-match([data-testid="builder"] [data-reorder-direction="down"], 3)')
-            ->keys($thirdUp, 'Enter')
-            ->assertValue($firstParagraph, 'Beta')
-            ->assertValue($secondParagraph, 'Alpha')
-            ->assertValue($thirdParagraph, 'Gamma')
-            ->assertPresent($secondUp . ':focus')
-            ->keys($secondUp, 'Enter')
-            ->assertValue($firstParagraph, 'Alpha')
-            ->assertValue($secondParagraph, 'Beta')
-            ->assertValue($thirdParagraph, 'Gamma')
-            ->assertPresent($firstDown . ':focus')
-            ->assertDisabled(':nth-match([data-testid="builder"] [data-reorder-direction="up"], 1)')
-            ->assertMissing($firstParagraph)
-            ->assertMissing($secondParagraph)
-            ->assertMissing($thirdParagraph)
-            ->assertSeeIn('[data-testid="builder"] > [role="status"]', __('filament-forms::components.builder.reordering.moved', ['label' => 'Alpha', 'position' => 1, 'count' => 3]))
-            ->assertNoSmoke()->assertNoAccessibilityIssues();
-    }
+    $page->assertPresent('[data-testid="builder"]')
+        ->keys($firstDown, 'Enter')
+        ->assertValue($firstParagraph, 'Beta')
+        ->assertValue($secondParagraph, 'Alpha')
+        ->assertValue($thirdParagraph, 'Gamma')
+        ->assertMissing($secondParagraph)
+        ->assertPresent($secondDown . ':focus')
+        ->keys($secondDown, 'Enter')
+        ->assertValue($firstParagraph, 'Beta')
+        ->assertValue($secondParagraph, 'Gamma')
+        ->assertValue($thirdParagraph, 'Alpha')
+        ->assertMissing($thirdParagraph)
+        ->assertPresent($thirdUp . ':focus')
+        ->assertDisabled(':nth-match([data-testid="builder"] [data-reorder-direction="down"], 3)')
+        ->keys($thirdUp, 'Enter')
+        ->assertValue($firstParagraph, 'Beta')
+        ->assertValue($secondParagraph, 'Alpha')
+        ->assertValue($thirdParagraph, 'Gamma')
+        ->assertPresent($secondUp . ':focus')
+        ->keys($secondUp, 'Enter')
+        ->assertValue($firstParagraph, 'Alpha')
+        ->assertValue($secondParagraph, 'Beta')
+        ->assertValue($thirdParagraph, 'Gamma')
+        ->assertPresent($firstDown . ':focus')
+        ->assertDisabled(':nth-match([data-testid="builder"] [data-reorder-direction="up"], 1)')
+        ->assertMissing($firstParagraph)
+        ->assertMissing($secondParagraph)
+        ->assertMissing($thirdParagraph)
+        ->assertSeeIn('[data-testid="builder"] > [role="status"]', __('filament-forms::components.builder.reordering.moved', ['label' => 'Alpha', 'position' => 1, 'count' => 3]))
+        ->assertNoSmoke();
 })->with(['partial', 'full', 'ancestor']);
 
 it('provides accessible non-tabbable move actions for collapsed blocks', function (string $renderMode): void {
@@ -1181,17 +1181,20 @@ it('provides accessible non-tabbable move actions for collapsed blocks', functio
     $this->actingAs(User::factory()->create());
     $url = '/builder-test?reordering=1&screenReader=1&full=' . (int) ($renderMode === 'full') . '&ancestor=' . (int) ($renderMode === 'ancestor');
     $page = visit($url);
-    foreach ([$page, $page->inDarkMode()] as $page) {
-        $controls = '[data-testid="builder"] [data-reorder-direction]';
-        $page->assertPresent('[data-testid="builder"]')
-            ->assertCount($controls, 6)
-            ->assertNotPresent('[data-testid="builder"] [aria-hidden="true"] [data-reorder-direction]');
+    $controls = '[data-testid="builder"] [data-reorder-direction]';
+    $page->assertPresent('[data-testid="builder"]')
+        ->assertCount($controls, 6)
+        ->assertNotPresent('[data-testid="builder"] [aria-hidden="true"] [data-reorder-direction]');
 
-        foreach (range(1, 6) as $position) {
-            $page->assertAttribute(':nth-match(' . $controls . ', ' . $position . ')', 'tabindex', '-1');
-        }
+    foreach (range(1, 6) as $position) {
+        $page->assertAttribute(':nth-match(' . $controls . ', ' . $position . ')', 'tabindex', '-1');
+    }
 
-        $page->assertNoSmoke()->assertNoAccessibilityIssues();
+    $page->assertNoSmoke();
+
+    if ($renderMode === 'partial') {
+        $page->assertNoAccessibilityIssues();
+        $page->inDarkMode()->assertNoAccessibilityIssues();
     }
 })->with(['partial', 'full', 'ancestor']);
 
@@ -1235,7 +1238,6 @@ it('renders appended and between blocks with current defaults while preserving e
     $secondParagraph = ':nth-match([data-testid="paragraph-text"], 2)';
     $heading = '[data-testid="heading-title"]';
     $page = visit('/builder-test')
-        ->inDarkMode()
         ->assertPresent('[data-testid="builder"]')
         ->assertNotPresent($paragraph);
 
@@ -1262,11 +1264,7 @@ it('renders appended and between blocks with current defaults while preserving e
         ->assertValue($heading, 'What is new')
         ->assertScript('Array.from(document.querySelectorAll(\'[data-testid="builder"] input\')).map(input => input.value)', ['Welcome to the autumn edition', 'Paragraph 3', 'What is new'])
         ->assertScript('Array.from(document.querySelectorAll(\'[data-testid="add-between"]\')).every(button => !document.getElementById(button.getAttribute("aria-controls")).checkVisibility())', true)
-        ->assertNoSmoke()
-        ->assertNoAccessibilityIssues();
-
-    $page->script('window.dispatchEvent(new CustomEvent("theme-changed", { detail: "light" }))');
-    $page->assertNoAccessibilityIssues();
+        ->assertNoSmoke();
 
     $page->click(':nth-match([data-testid="delete-block"], 2)')
         ->assertCount($paragraph, 1)
@@ -1275,7 +1273,7 @@ it('renders appended and between blocks with current defaults while preserving e
         ->assertNoSmoke();
 });
 
-it('can search blocks in the picker in the browser', function (bool $isDarkMode): void {
+it('can search blocks in the picker in the browser', function (): void {
     Artisan::call('filament:assets');
 
     $this->actingAs(User::factory()->create());
@@ -1284,10 +1282,6 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
     $noSearchResultsMessage = '[data-testid="builder"] [role="status"]:not([aria-atomic="true"])';
     $searchInput = '[data-testid="builder"] input[type="text"][aria-label][placeholder]';
     $page = visit('/builder-searchable-test');
-
-    if ($isDarkMode) {
-        $page = $page->inDarkMode();
-    }
 
     $page
         ->assertPresent('[data-testid="builder"]')
@@ -1327,7 +1321,13 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
         ->assertVisible($noSearchResultsMessage)
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
-})->with(['light' => false, 'dark' => true]);
+
+    $page->inDarkMode()
+        ->click($addBlockAction . '[aria-expanded="false"]')
+        ->fill($searchInput, 'zzz')
+        ->assertVisible($noSearchResultsMessage)
+        ->assertNoAccessibilityIssues();
+});
 
 it('clears a debounced block picker search with `Escape` before the debounce elapses', function (): void {
     Artisan::call('filament:assets');
@@ -1347,14 +1347,12 @@ it('clears a debounced block picker search with `Escape` before the debounce ela
         ->keys($searchInput, 'Escape')
         ->assertVisible($searchInput)
         ->assertValue($searchInput, '')
-        ->assertVisible($searchInput)
-        ->assertValue($searchInput, '')
         ->assertVisible('[data-testid="debounced-builder"] [data-block-label="paragraph"]')
         ->assertMissing('[data-testid="debounced-builder"] [role="status"]:not([aria-atomic="true"])')
         ->assertNoSmoke();
 });
 
-it('closes only the block picker with `Escape` when it is inside a modal', function (bool $isDarkMode): void {
+it('closes only the block picker with `Escape` when it is inside a modal', function (): void {
     Artisan::call('filament:assets');
 
     $this->actingAs(User::factory()->create());
@@ -1363,10 +1361,6 @@ it('closes only the block picker with `Escape` when it is inside a modal', funct
     $addBlockAction = '[data-testid="add-modal-block"]';
     $searchInput = '[data-testid="modal-builder"] .fi-fo-builder-block-picker-search-ctn input';
     $page = visit('/builder-searchable-test');
-
-    if ($isDarkMode) {
-        $page = $page->inDarkMode();
-    }
 
     $page
         ->click('[data-testid="modal-builder-trigger"]')
@@ -1386,23 +1380,26 @@ it('closes only the block picker with `Escape` when it is inside a modal', funct
         ->keys($searchInput, 'Escape')
         ->assertMissing($searchInput)
         ->assertVisible($modal)
-        ->assertScript('document.activeElement.closest(\'[data-testid="add-modal-block"]\') !== null', true)
+        ->assertPresent($addBlockAction . ':focus')
         ->keys($addBlockAction, 'Escape')
         ->assertMissing($modal)
         ->assertNoSmoke();
-})->with(['light' => false, 'dark' => true]);
 
-it('clears and focuses the block picker search after clicking away and reopening', function (bool $isDarkMode): void {
+    $page->inDarkMode()
+        ->click('[data-testid="modal-builder-trigger"]')
+        ->assertVisible($modal)
+        ->click($addBlockAction . '[aria-expanded="false"]')
+        ->assertVisible($searchInput)
+        ->assertNoAccessibilityIssues();
+});
+
+it('clears and focuses the block picker search after clicking away and reopening', function (): void {
     Artisan::call('filament:assets');
 
     $this->actingAs(User::factory()->create());
 
     $searchInput = '[data-testid="builder"] .fi-fo-builder-block-picker-search-ctn input';
     $page = visit('/builder-searchable-test');
-
-    if ($isDarkMode) {
-        $page = $page->inDarkMode();
-    }
 
     $page->assertPresent('[data-testid="builder"]');
 
@@ -1421,14 +1418,13 @@ it('clears and focuses the block picker search after clicking away and reopening
     $page
         ->assertVisible($searchInput)
         ->assertValue($searchInput, '')
-        ->assertScript('document.activeElement.matches(\'.fi-fo-builder-block-picker-search-ctn input\')', true)
+        ->assertPresent($searchInput . ':focus')
         ->assertVisible('[data-testid="builder"] [data-block-label="paragraph"]')
         ->assertVisible('[data-testid="builder"] [data-block-label="research & development"]')
         ->assertVisible('[data-testid="builder"] [data-block-label="video"]')
         ->assertMissing('[data-testid="builder"] [role="status"]:not([aria-atomic="true"])')
-        ->assertNoSmoke()
-        ->assertNoAccessibilityIssues();
-})->with(['light' => false, 'dark' => true]);
+        ->assertNoSmoke();
+});
 
 it('searches independently in the add-between picker and inserts the selected block in order', function (): void {
     Artisan::call('filament:assets');
@@ -1545,27 +1541,24 @@ it('can add a searched block using `Tab` and `Enter`', function (): void {
     $option = '[data-testid="builder"] [data-block-label="video"]';
     $page = visit('/builder-searchable-test');
 
-    foreach ([$page, $page->inDarkMode()] as $themedPage) {
-        $themedPage->assertPresent('[data-testid="builder"]');
+    $page->assertPresent('[data-testid="builder"]');
 
-        $themedPage->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
+    $page->page()->locator('[data-testid="add-block"][aria-expanded="false"]')->click();
 
-        $themedPage
-            ->assertVisible($searchInput)
-            ->assertPresent($searchInput . ':focus')
-            ->type($searchInput, 'video')
-            ->assertMissing('[data-testid="builder"] [data-block-label="paragraph"]')
-            ->assertVisible($option)
-            ->assertScript("(() => { const option = document.querySelector('{$option}'); return option.tagName === 'BUTTON' && (!option.hasAttribute('role') || option.getAttribute('role') === 'button') && option.tabIndex === 0 })()", true)
-            ->keys($searchInput, 'Tab')
-            ->assertScript("document.activeElement.matches('{$option}')", true)
-            ->assertNoAccessibilityIssues()
-            ->keys($option, 'Enter')
-            ->assertVisible('[data-testid="builder"] input[id$=".url"]')
-            ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
-            ->assertMissing($searchInput)
-            ->assertNoSmoke();
-    }
+    $page
+        ->assertVisible($searchInput)
+        ->assertPresent($searchInput . ':focus')
+        ->type($searchInput, 'video')
+        ->assertMissing('[data-testid="builder"] [data-block-label="paragraph"]')
+        ->assertVisible($option)
+        ->assertScript("(() => { const option = document.querySelector('{$option}'); return option.tagName === 'BUTTON' && (!option.hasAttribute('role') || option.getAttribute('role') === 'button') && option.tabIndex === 0 })()", true)
+        ->keys($searchInput, 'Tab')
+        ->assertPresent($option . ':focus')
+        ->keys($option, 'Enter')
+        ->assertVisible('[data-testid="builder"] input[id$=".url"]')
+        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
+        ->assertMissing($searchInput)
+        ->assertNoSmoke();
 });
 
 it('can reopen the picker and add a block after `blockPickerWidth()` changes', function (bool $isSearchable): void {

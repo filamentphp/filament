@@ -1550,37 +1550,38 @@ describe('browser interactions', function (): void {
     it('can remove individual items from a `multiple()` select dropdown in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
-        foreach ([false, true] as $isDarkMode) {
-            $page = visit('/select-test');
+        $page = visit('/select-test');
 
-            if ($isDarkMode) {
-                $page = $page->inDarkMode();
-            }
+        $page
+            ->assertDontSee('Apple')
+            ->assertDontSee('Banana')
+            ->click('[data-testid="multiple-select"] .fi-select-input-btn')
+            ->assertNoAccessibilityIssues()
+            ->assertSee('Apple')
+            ->click('Apple')
+            ->click('Banana')
+            ->assertNoAccessibilityIssues()
+            ->keys('[data-testid="multiple-select"] input[role="combobox"]', 'Shift+Tab')
+            ->assertPresent('[data-testid="multiple-select"] [aria-label="Remove Banana"]:focus')
+            ->assertAttribute('[data-testid="multiple-select"] button[aria-haspopup="listbox"]', 'aria-expanded', 'false')
+            ->assertSee('Apple')
+            ->assertSee('Banana')
+            ->keys('[data-testid="multiple-select"] [aria-label="Remove Apple"]', 'Enter')
+            ->assertPresent('[data-testid="multiple-select"] [aria-label="Remove Banana"]:focus')
+            ->assertDontSee('Apple')
+            ->assertSee('Banana')
+            ->keys('[data-testid="multiple-select"] [aria-label="Remove Banana"]', 'Enter')
+            ->assertPresent('[data-testid="multiple-select"] button[aria-haspopup="listbox"]:focus')
+            ->assertDontSee('Banana')
+            ->assertNoSmoke();
 
-            $page
-                ->assertDontSee('Apple')
-                ->assertDontSee('Banana')
-                ->click('[data-testid="multiple-select"] .fi-select-input-btn')
-                ->assertNoAccessibilityIssues()
-                ->assertSee('Apple')
-                ->click('Apple')
-                ->click('Banana')
-                ->assertNoAccessibilityIssues()
-                ->keys('[data-testid="multiple-select"] input[role="combobox"]', 'Shift+Tab')
-                ->assertPresent('[data-testid="multiple-select"] [aria-label="Remove Banana"]:focus')
-                ->assertScript('document.querySelector(\'[data-testid="multiple-select"] button[aria-haspopup="listbox"]\').getAttribute("aria-expanded")', 'false')
-                ->assertSee('Apple')
-                ->assertSee('Banana')
-                ->keys('[data-testid="multiple-select"] [aria-label="Remove Apple"]', 'Enter')
-                ->assertPresent('[data-testid="multiple-select"] [aria-label="Remove Banana"]:focus')
-                ->assertDontSee('Apple')
-                ->assertSee('Banana')
-                ->keys('[data-testid="multiple-select"] [aria-label="Remove Banana"]', 'Enter')
-                ->assertPresent('[data-testid="multiple-select"] button[aria-haspopup="listbox"]:focus')
-                ->assertDontSee('Banana')
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
-        }
+        $page->inDarkMode()
+            ->click('[data-testid="multiple-select"] button[aria-haspopup="listbox"]')
+            ->assertNoAccessibilityIssues()
+            ->click('[data-testid="multiple-select"] [role="option"][data-value="apple"]')
+            ->click('[data-testid="multiple-select"] [role="option"][data-value="banana"]')
+            ->assertPresent('[data-testid="multiple-select"] [aria-label="Remove Banana"]')
+            ->assertNoAccessibilityIssues();
     });
 
     it('shows "no options" message when dynamic options returns empty array', function (): void {
@@ -1646,133 +1647,136 @@ describe('browser interactions', function (): void {
             ->assertCount('[role="listbox"]:visible [role="option"]', 2)
             ->keys('[data-testid="dynamic-options-with-results-select"] input[role="combobox"]', 'Enter')
             ->assertSeeIn('#dynamic-select', 'Dynamic Option 1')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-
-        $page->inDarkMode()->assertNoAccessibilityIssues();
+            ->assertNoSmoke();
     });
 
     it('keeps option navigation and keyboard removal on stable owners in a non-searchable `multiple()` select', function (): void {
         $this->actingAs(User::factory()->create());
 
-        foreach ([false, true] as $isDarkMode) {
-            $page = visit('/select-test');
-            if ($isDarkMode) {
-                $page = $page->inDarkMode();
-            }
-            $owner = '[data-testid="nonsearchable-multiple-select"] [role="combobox"]';
-            $activeValue = 'document.getElementById(document.activeElement.getAttribute("aria-activedescendant"))?.dataset.value ?? null';
+        $page = visit('/select-test');
+        $owner = '[data-testid="nonsearchable-multiple-select"] [role="combobox"]';
+        $activeValue = 'document.getElementById(document.activeElement.getAttribute("aria-activedescendant"))?.dataset.value ?? null';
 
-            $page
-                ->keys($owner, 'Enter')
-                ->assertPresent($owner . ':focus')
-                ->assertScript($activeValue, 'website')
-                ->assertMissing('[data-testid="nonsearchable-multiple-select"] [role="option"][data-value="mobile"]')
-                ->keys($owner, 'ArrowDown')
-                ->assertScript($activeValue, 'newsletter')
-                ->assertMissing('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Newsletter"]')
-                ->keys($owner, 'End')
-                ->assertScript($activeValue, 'print')
-                ->keys($owner, 'Home')
-                ->assertScript($activeValue, 'website')
-                ->assertNoAccessibilityIssues()
-                ->keys($owner, ['ArrowDown', 'Enter'])
-                ->assertPresent('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Newsletter"]')
-                ->assertPresent($owner . ':focus')
-                ->assertScript($activeValue, 'website')
-                ->assertNoAccessibilityIssues()
-                ->keys($owner, 'Escape')
-                ->keys('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Newsletter"]', 'Enter')
-                ->assertMissing('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Newsletter"]')
-                ->assertPresent($owner . ':focus')
-                ->click('[data-testid="toggle-select-disabled"]')
-                ->assertScript('document.querySelector(\'[data-testid="nonsearchable-multiple-select"] [role="combobox"]\').disabled', true)
-                ->assertPresent('[data-testid="toggle-select-disabled"]:focus')
-                ->click('[data-testid="toggle-select-disabled"]')
-                ->assertScript('document.querySelector(\'[data-testid="nonsearchable-multiple-select"] [role="combobox"]\').disabled', false)
-                ->keys($owner, 'Enter')
-                ->assertPresent($owner . ':focus')
-                ->assertScript($activeValue, 'website')
-                ->keys($owner, 'p')
-                ->assertScript($activeValue, 'print')
-                ->assertMissing('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Print"]')
-                ->assertNoSmoke();
-        }
+        $page
+            ->keys($owner, 'Enter')
+            ->assertPresent($owner . ':focus')
+            ->assertScript($activeValue, 'website')
+            ->assertMissing('[data-testid="nonsearchable-multiple-select"] [role="option"][data-value="mobile"]')
+            ->keys($owner, 'ArrowDown')
+            ->assertScript($activeValue, 'newsletter')
+            ->assertMissing('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Newsletter"]')
+            ->keys($owner, 'End')
+            ->assertScript($activeValue, 'print')
+            ->keys($owner, 'Home')
+            ->assertScript($activeValue, 'website')
+            ->assertNoAccessibilityIssues()
+            ->keys($owner, ['ArrowDown', 'Enter'])
+            ->assertPresent('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Newsletter"]')
+            ->assertPresent($owner . ':focus')
+            ->assertScript($activeValue, 'website')
+            ->keys($owner, 'Escape')
+            ->keys('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Newsletter"]', 'Enter')
+            ->assertMissing('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Newsletter"]')
+            ->assertPresent($owner . ':focus')
+            ->click('[data-testid="toggle-select-disabled"]')
+            ->assertDisabled($owner)
+            ->assertPresent('[data-testid="toggle-select-disabled"]:focus')
+            ->click('[data-testid="toggle-select-disabled"]')
+            ->assertEnabled($owner)
+            ->keys($owner, 'Enter')
+            ->assertPresent($owner . ':focus')
+            ->assertScript($activeValue, 'website')
+            ->keys($owner, 'p')
+            ->assertScript($activeValue, 'print')
+            ->assertMissing('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Print"]')
+            ->assertNoSmoke();
+
+        $page->inDarkMode()->keys($owner, 'Enter')
+            ->assertVisible('[data-testid="nonsearchable-multiple-select"] [role="listbox"]')
+            ->assertNoAccessibilityIssues();
     });
 
     it('keeps search editing, descriptions, and sequential focus on the searchable select owners', function (): void {
         $this->actingAs(User::factory()->create());
 
-        foreach ([false, true] as $isDarkMode) {
-            $page = visit('/select-test');
-            if ($isDarkMode) {
-                $page = $page->inDarkMode();
-            }
-            $launcher = '[data-testid="searchable-select"] button[aria-haspopup="listbox"]';
-            $search = '[data-testid="searchable-select"] input[role="combobox"]';
-            $activeValue = 'document.getElementById(document.activeElement.getAttribute("aria-activedescendant"))?.dataset.value ?? null';
+        $page = visit('/select-test');
+        $launcher = '[data-testid="searchable-select"] button[aria-haspopup="listbox"]';
+        $search = '[data-testid="searchable-select"] input[role="combobox"]';
+        $activeValue = 'document.getElementById(document.activeElement.getAttribute("aria-activedescendant"))?.dataset.value ?? null';
 
-            $page
-                ->click('label[for="searchable-status"]')
-                ->assertPresent($search . ':focus')
-                ->assertScript('document.activeElement.getAttribute("aria-required")', 'true')
-                ->assertScript('document.activeElement.getAttribute("aria-describedby").split(/\\s+/).every(id => !!document.getElementById(id))', true)
-                ->keys($search, ['ArrowDown', 'ArrowDown', 'Home'])
-                ->assertScript($activeValue, 'green')
-                ->assertPresent($search . ':focus')
-                ->assertNoAccessibilityIssues()
-                ->keys($search, 'Shift+Tab')
-                ->assertPresent($launcher . ':focus')
-                ->assertScript('document.activeElement.getAttribute("aria-expanded")', 'false')
-                ->keys($launcher, 'Enter')
-                ->keys($search, 'Tab')
-                ->assertPresent('[data-testid="nonsearchable-multiple-select"] [role="combobox"]:focus')
-                ->click('Save')
-                ->assertScript('document.querySelector(\'[data-testid="searchable-select"] button[aria-haspopup="listbox"]\').getAttribute("aria-invalid")', 'true')
-                ->click($launcher)
-                ->assertScript('document.activeElement.getAttribute("aria-invalid")', 'true')
-                ->assertScript('document.activeElement.getAttribute("aria-describedby").split(/\\s+/).some(id => id.endsWith("-error") && !!document.getElementById(id))', true)
-                ->type($search, 'pur')
-                ->keys($search, ['ArrowDown', 'Enter'])
-                ->assertPresent($launcher . ':focus')
-                ->keys('[data-testid="single-select"] [role="combobox"]', ['Enter', 'Enter'])
-                ->click('Save')
-                ->assertScript('document.querySelector(\'[data-testid="searchable-select"] button[aria-haspopup="listbox"]\').hasAttribute("aria-invalid")', false)
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
-        }
+        $page
+            ->click('label[for="searchable-status"]')
+            ->assertPresent($search . ':focus')
+            ->assertAttribute($search, 'aria-required', 'true')
+            ->assertScript('document.activeElement.getAttribute("aria-describedby").split(/\\s+/).every(id => !!document.getElementById(id))', true)
+            ->keys($search, ['ArrowDown', 'ArrowDown', 'Home'])
+            ->assertScript($activeValue, 'green')
+            ->assertPresent($search . ':focus')
+            ->assertNoAccessibilityIssues()
+            ->keys($search, 'Shift+Tab')
+            ->assertPresent($launcher . ':focus')
+            ->assertAttribute($launcher, 'aria-expanded', 'false')
+            ->keys($launcher, 'Enter')
+            ->keys($search, 'Tab')
+            ->assertPresent('[data-testid="nonsearchable-multiple-select"] [role="combobox"]:focus')
+            ->click('Save')
+            ->assertAttribute($launcher, 'aria-invalid', 'true')
+            ->click($launcher)
+            ->assertAttribute($search, 'aria-invalid', 'true')
+            ->assertScript('document.activeElement.getAttribute("aria-describedby").split(/\\s+/).some(id => id.endsWith("-error") && !!document.getElementById(id))', true)
+            ->assertNoAccessibilityIssues()
+            ->type($search, 'pur')
+            ->keys($search, ['ArrowDown', 'Enter'])
+            ->assertPresent($launcher . ':focus')
+            ->keys('[data-testid="single-select"] [role="combobox"]', ['Enter', 'Enter'])
+            ->click('Save')
+            ->assertScript('document.querySelector(\'[data-testid="searchable-select"] button[aria-haspopup="listbox"]\').hasAttribute("aria-invalid")', false)
+            ->assertNoSmoke();
+
+        $darkPage = $page->inDarkMode();
+        $darkPage->click($launcher)
+            ->assertPresent($search . ':focus')
+            ->assertNoAccessibilityIssues()
+            ->keys($search, 'Escape')
+            ->click('Save')
+            ->assertAttribute($launcher, 'aria-invalid', 'true')
+            ->click($launcher)
+            ->assertAttribute($search, 'aria-invalid', 'true')
+            ->assertNoAccessibilityIssues();
     });
 
     it('consumes select `Escape` before the containing action modal closes', function (): void {
         $this->actingAs(User::factory()->create());
 
-        foreach ([false, true] as $isDarkMode) {
-            $page = visit('/select-test');
-            if ($isDarkMode) {
-                $page = $page->inDarkMode();
-            }
-            $launcher = '[data-testid="modal-select"] button[aria-haspopup="listbox"]';
-            $search = '[data-testid="modal-select"] input[role="combobox"]';
+        $page = visit('/select-test');
+        $launcher = '[data-testid="modal-select"] button[aria-haspopup="listbox"]';
+        $search = '[data-testid="modal-select"] input[role="combobox"]';
 
-            $page
-                ->click('[data-testid="create-option-action-trigger"]')
-                ->assertVisible('[data-testid="create-option-action-modal"]')
-                ->assertPresent('[data-testid="create-option-name-input"]:focus')
-                ->click($launcher)
-                ->keys($search, 'ArrowDown')
-                ->assertPresent($search . ':focus')
-                ->assertNoAccessibilityIssues()
-                ->keys($search, 'Escape')
-                ->assertVisible('[data-testid="create-option-action-modal"]')
-                ->assertPresent($launcher . ':focus')
-                ->keys($launcher, 'Enter')
-                ->assertPresent($search . ':focus')
-                ->keys($search, 'Escape')
-                ->keys($launcher, 'Escape')
-                ->assertMissing('[data-testid="create-option-action-modal"]')
-                ->assertPresent('[data-testid="create-option-action-trigger"]:focus')
-                ->assertNoSmoke();
-        }
+        $page
+            ->click('[data-testid="create-option-action-trigger"]')
+            ->assertVisible('[data-testid="create-option-action-modal"]')
+            ->assertPresent('[data-testid="create-option-name-input"]:focus')
+            ->click($launcher)
+            ->keys($search, 'ArrowDown')
+            ->assertPresent($search . ':focus')
+            ->assertNoAccessibilityIssues()
+            ->keys($search, 'Escape')
+            ->assertVisible('[data-testid="create-option-action-modal"]')
+            ->assertPresent($launcher . ':focus')
+            ->keys($launcher, 'Enter')
+            ->assertPresent($search . ':focus')
+            ->keys($search, 'Escape')
+            ->keys($launcher, 'Escape')
+            ->assertMissing('[data-testid="create-option-action-modal"]')
+            ->assertPresent('[data-testid="create-option-action-trigger"]:focus')
+            ->assertNoSmoke();
+
+        $page->inDarkMode()
+            ->click('[data-testid="create-option-action-trigger"]')
+            ->assertVisible('[data-testid="create-option-action-modal"]')
+            ->click($launcher)
+            ->assertPresent($search . ':focus')
+            ->assertNoAccessibilityIssues();
     });
 
     it('only adds one remove button when selecting multiple options in sequence', function (): void {

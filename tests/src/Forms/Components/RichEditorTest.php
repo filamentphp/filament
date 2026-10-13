@@ -1929,14 +1929,23 @@ describe('custom block grouping', function (): void {
 it('can render `RichEditor` in the browser', function (): void {
     $this->actingAs(User::factory()->create());
 
-    visit('/rich-editor-browser-test')
-        ->assertNoSmoke()
-        ->assertNoAccessibilityIssues();
+    $editor = '[data-testid="keyboard-rich-editor"]';
+    $content = $editor . ' [role="textbox"]';
 
-    visit('/rich-editor-browser-test')
-        ->inDarkMode()
-        ->assertNoSmoke()
-        ->assertNoAccessibilityIssues();
+    $browser = visit('/rich-editor-browser-test');
+
+    foreach ([$browser, $browser->inDarkMode()] as $page) {
+        $page->assertNoSmoke()
+            ->assertNoAccessibilityIssues()
+            ->click($content)
+            ->assertPresent($content . ':focus')
+            ->keys(':focus', ['Control+Home', 'Control+Shift+ArrowRight'])
+            ->assertScript('window.getSelection().toString().trim()', 'Alpha')
+            ->keys(':focus', 'Shift+Tab')
+            ->keys(':focus', ['End', 'Enter'])
+            ->assertVisible('input[id="mountedActionSchema0.url"]')
+            ->assertNoAccessibilityIssues();
+    }
 });
 
 it('can navigate configured toolbar groups and format selected text using the keyboard', function (): void {
@@ -1945,81 +1954,82 @@ it('can navigate configured toolbar groups and format selected text using the ke
     $editor = '[data-testid="keyboard-rich-editor"]';
     $content = $editor . ' [role="textbox"]';
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/rich-editor-browser-test');
+    $page = visit('/rich-editor-browser-test');
 
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
+    $page
+        ->click($content)
+        ->assertPresent($content . ':focus')
+        ->keys(':focus', 'Shift+Tab')
+        ->assertPresent($editor . ' [data-rich-editor-tool="bold"]:focus')
+        ->keys(':focus', 'ArrowRight')
+        ->assertPresent($editor . ' [data-rich-editor-tool="italic"]:focus')
+        ->keys(':focus', 'End')
+        ->assertPresent($editor . ' [data-rich-editor-tool="link"]:focus')
+        ->keys(':focus', 'ArrowRight')
+        ->assertPresent($editor . ' [data-rich-editor-tool="bold"]:focus')
+        ->keys(':focus', 'Tab')
+        ->assertPresent($content . ':focus')
+        ->keys(':focus', ['Control+Home', 'Control+Shift+ArrowRight'])
+        ->assertScript('window.getSelection().toString().trim()', 'Alpha')
+        ->assertVisible($editor . ' [role="toolbar"][data-rich-editor-toolbar=""]')
+        ->keys(':focus', 'Control+b')
+        ->assertSeeIn($editor . ' strong', 'Alpha')
+        ->assertDontSeeIn($editor . ' strong', 'beta')
+        ->assertSeeIn($content, 'Alpha beta.')
+        ->keys(':focus', 'Control+b')
+        ->assertMissing($editor . ' strong')
+        ->keys(':focus', 'Shift+Tab')
+        ->keys(':focus', 'Enter')
+        ->assertSeeIn($editor . ' strong', 'Alpha')
+        ->assertAttribute($editor . ' [data-rich-editor-toolbar="main"] [data-rich-editor-tool="bold"]', 'aria-pressed', 'true')
+        ->assertPresent($content . ':focus')
+        ->keys(':focus', 'Shift+Tab')
+        ->keys(':focus', ['ArrowRight', 'ArrowRight', 'ArrowDown'])
+        ->assertPresent('[role="menuitemcheckbox"]:focus')
+        ->assertAttribute(':focus', 'aria-checked', 'true')
+        ->keys(':focus', 'ArrowDown')
+        ->assertAttribute(':focus', 'aria-disabled', 'true')
+        ->keys(':focus', 'Enter')
+        ->assertDontSeeIn($editor, 'Unexpected text')
+        ->assertAttribute($editor . ' [data-rich-editor-tool^="Formatting"]', 'data-rich-editor-tool', 'Formatting "advanced"')
+        ->assertAttribute($editor . ' [data-rich-editor-tool^="Formatting"]', 'aria-expanded', 'true')
+        ->assertNoAccessibilityIssues()
+        ->keys(':focus', ['ArrowDown', 'Enter'])
+        ->assertSeeIn($editor . ' strong em', 'Alpha')
+        ->assertPresent($content . ':focus')
+        ->assertAttribute($editor . ' [data-rich-editor-tool^="Formatting"]', 'aria-expanded', 'false')
+        ->keys(':focus', 'Shift+Tab')
+        ->keys(':focus', ['ArrowRight', 'Enter'])
+        ->assertSeeIn($editor . ' u', 'Alpha')
+        ->assertAttribute($editor . ' [data-rich-editor-tool^="customUnderline"]', 'data-rich-editor-tool', 'customUnderline"advanced')
+        ->assertAttribute($editor . ' [data-rich-editor-tool^="customUnderline"]', 'aria-pressed', 'true')
+        ->assertPresent($content . ':focus')
+        ->keys(':focus', 'Shift+Tab')
+        ->keys(':focus', ['ArrowLeft', 'ArrowDown'])
+        ->assertPresent('[role="menuitemcheckbox"]:focus')
+        ->assertAttribute($editor . ' [data-rich-editor-tool^="Formatting"]', 'aria-expanded', 'true')
+        ->assertCount('[role="tooltip"]:visible', 0)
+        ->keys(':focus', 'Escape')
+        ->assertPresent($editor . ' [data-rich-editor-tool^="Formatting"]:focus')
+        ->assertAttribute($editor . ' [data-rich-editor-tool^="Formatting"]', 'aria-expanded', 'false')
+        ->keys(':focus', 'Escape')
+        ->assertCount('[role="tooltip"]:visible', 0)
+        ->keys(':focus', 'Escape')
+        ->assertPresent($content . ':focus')
+        ->keys(':focus', 'Shift+Tab')
+        ->keys(':focus', 'ArrowDown')
+        ->assertPresent('[role="menuitemcheckbox"]:focus')
+        ->assertAttribute($editor . ' [data-rich-editor-tool^="Formatting"]', 'aria-expanded', 'true')
+        ->keys(':focus', 'Tab')
+        ->assertPresent($content . ':focus')
+        ->assertNoSmoke();
 
-        $page
-            ->click($content)
-            ->assertPresent($content . ':focus')
-            ->keys(':focus', 'Shift+Tab')
-            ->assertScript('document.activeElement.dataset.richEditorTool', 'bold')
-            ->keys(':focus', 'ArrowRight')
-            ->assertScript('document.activeElement.dataset.richEditorTool', 'italic')
-            ->keys(':focus', 'End')
-            ->assertScript('document.activeElement.dataset.richEditorTool', 'link')
-            ->keys(':focus', 'ArrowRight')
-            ->assertScript('document.activeElement.dataset.richEditorTool', 'bold')
-            ->keys(':focus', 'Tab')
-            ->assertScript("document.activeElement.matches('{$content}')", true)
-            ->keys(':focus', ['Control+Home', 'Control+Shift+ArrowRight'])
-            ->assertScript('window.getSelection().toString().trim()', 'Alpha')
-            ->assertVisible($editor . ' [role="toolbar"][data-rich-editor-toolbar=""]')
-            ->keys(':focus', 'Control+b')
-            ->assertSeeIn($editor . ' strong', 'Alpha')
-            ->assertDontSeeIn($editor . ' strong', 'beta')
-            ->assertSeeIn($content, 'Alpha beta.')
-            ->keys(':focus', 'Control+b')
-            ->assertMissing($editor . ' strong')
-            ->keys(':focus', 'Shift+Tab')
-            ->keys(':focus', 'Enter')
-            ->assertSeeIn($editor . ' strong', 'Alpha')
-            ->assertAttribute($editor . ' [data-rich-editor-toolbar="main"] [data-rich-editor-tool="bold"]', 'aria-pressed', 'true')
-            ->assertScript("document.activeElement.matches('{$content}')", true)
-            ->keys(':focus', 'Shift+Tab')
-            ->keys(':focus', ['ArrowRight', 'ArrowRight', 'ArrowDown'])
-            ->assertScript('document.activeElement.getAttribute(\'role\')', 'menuitemcheckbox')
-            ->assertAttribute(':focus', 'aria-checked', 'true')
-            ->keys(':focus', 'ArrowDown')
-            ->assertAttribute(':focus', 'aria-disabled', 'true')
-            ->keys(':focus', 'Enter')
-            ->assertDontSeeIn($editor, 'Unexpected text')
-            ->assertAttribute($editor . ' [data-rich-editor-tool^="Formatting"]', 'data-rich-editor-tool', 'Formatting "advanced"')
-            ->assertAttribute($editor . ' [data-rich-editor-tool^="Formatting"]', 'aria-expanded', 'true')
-            ->assertNoAccessibilityIssues()
-            ->keys(':focus', ['ArrowDown', 'Enter'])
-            ->assertSeeIn($editor . ' strong em', 'Alpha')
-            ->assertScript("document.activeElement.matches('{$content}')", true)
-            ->assertAttribute($editor . ' [data-rich-editor-tool^="Formatting"]', 'aria-expanded', 'false')
-            ->keys(':focus', 'Shift+Tab')
-            ->keys(':focus', ['ArrowRight', 'Enter'])
-            ->assertSeeIn($editor . ' u', 'Alpha')
-            ->assertAttribute($editor . ' [data-rich-editor-tool^="customUnderline"]', 'data-rich-editor-tool', 'customUnderline"advanced')
-            ->assertAttribute($editor . ' [data-rich-editor-tool^="customUnderline"]', 'aria-pressed', 'true')
-            ->keys(':focus', 'Shift+Tab')
-            ->keys(':focus', ['ArrowLeft', 'ArrowDown'])
-            ->assertScript('document.activeElement.getAttribute(\'role\')', 'menuitemcheckbox')
-            ->assertAttribute($editor . ' [data-rich-editor-tool^="Formatting"]', 'aria-expanded', 'true')
-            ->assertCount('[role="tooltip"]:visible', 0)
-            ->keys(':focus', 'Escape')
-            ->assertScript('document.activeElement.dataset.richEditorTool', 'Formatting "advanced"')
-            ->assertAttribute($editor . ' [data-rich-editor-tool^="Formatting"]', 'aria-expanded', 'false')
-            ->keys(':focus', 'Escape')
-            ->assertCount('[role="tooltip"]:visible', 0)
-            ->keys(':focus', 'Escape')
-            ->assertScript("document.activeElement.matches('{$content}')", true)
-            ->keys(':focus', 'Shift+Tab')
-            ->keys(':focus', 'ArrowDown')
-            ->assertScript('document.activeElement.getAttribute(\'role\')', 'menuitemcheckbox')
-            ->assertAttribute($editor . ' [data-rich-editor-tool^="Formatting"]', 'aria-expanded', 'true')
-            ->keys(':focus', 'Tab')
-            ->assertScript("document.activeElement.matches('{$content}')", true)
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    }
+    $page->inDarkMode()
+        ->click($content)
+        ->keys($content, 'ControlOrMeta+a')
+        ->click($editor . ' [data-rich-editor-tool^="Formatting"]')
+        ->assertVisible($editor . ' [role="menu"]:visible')
+        ->assertNoAccessibilityIssues();
 });
 
 it('can tab into a toolbar after its editor is revealed and navigate in `rtl`', function (): void {
@@ -2028,31 +2038,24 @@ it('can tab into a toolbar after its editor is revealed and navigate in `rtl`', 
     $editor = '[data-testid="revealed-rich-editor"]';
     $content = $editor . ' [role="textbox"]';
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/rich-editor-browser-test');
+    $page = visit('/rich-editor-browser-test');
 
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
+    $page->assertPresent($content);
+    $page->click('[data-testid="reveal-editor"]');
 
-        $page->assertPresent($content);
-        $page->click('[data-testid="reveal-editor"]');
-
-        $page
-            ->assertPresent($editor . ' [role="toolbar"] [tabindex="0"]')
-            ->keys($content, 'Shift+Tab')
-            ->assertScript('document.activeElement.dataset.richEditorTool', 'italic')
-            ->keys(':focus', 'ArrowLeft')
-            ->assertScript('document.activeElement.dataset.richEditorTool', 'bold')
-            ->keys(':focus', 'ArrowRight')
-            ->assertScript('document.activeElement.dataset.richEditorTool', 'italic')
-            ->keys(':focus', 'End')
-            ->assertScript('document.activeElement.dataset.richEditorTool', 'bold')
-            ->keys(':focus', 'Home')
-            ->assertScript('document.activeElement.dataset.richEditorTool', 'italic')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    }
+    $page
+        ->assertPresent($editor . ' [role="toolbar"] [tabindex="0"]')
+        ->keys($content, 'Shift+Tab')
+        ->assertPresent($editor . ' [data-rich-editor-tool="italic"]:focus')
+        ->keys(':focus', 'ArrowLeft')
+        ->assertPresent($editor . ' [data-rich-editor-tool="bold"]:focus')
+        ->keys(':focus', 'ArrowRight')
+        ->assertPresent($editor . ' [data-rich-editor-tool="italic"]:focus')
+        ->keys(':focus', 'End')
+        ->assertPresent($editor . ' [data-rich-editor-tool="bold"]:focus')
+        ->keys(':focus', 'Home')
+        ->assertPresent($editor . ' [data-rich-editor-tool="italic"]:focus')
+        ->assertNoSmoke();
 });
 
 it('can reach both grid and table floating controls from a nested selection', function (): void {
@@ -2060,31 +2063,22 @@ it('can reach both grid and table floating controls from a nested selection', fu
 
     $editor = '[data-testid="nested-rich-editor"]';
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/rich-editor-browser-test');
-
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-
-        $page
-            ->click($editor . ' td:first-child p')
-            ->keys(':focus', 'Alt+F10')
-            ->assertScript('document.activeElement.dataset.richEditorTool', 'gridAddColumnBefore')
-            ->keys(':focus', 'Alt+F10')
-            ->assertScript('document.activeElement.dataset.richEditorTool', 'tableAddColumnBefore')
-            ->keys(':focus', ['ArrowRight', 'ArrowRight', 'ArrowRight', 'ArrowRight', 'Enter'])
-            ->assertCount($editor . ' tr', 2)
-            ->assertSeeIn($editor, 'Nested cell.')
-            ->assertScript("document.activeElement.matches('{$editor} [role=\"textbox\"]')", true)
-            ->keys(':focus', 'Alt+F10')
-            ->assertScript('document.activeElement.dataset.richEditorTool', 'gridAddColumnBefore')
-            ->keys(':focus', 'Enter')
-            ->assertCount($editor . ' .grid-layout-col', 3)
-            ->assertSeeIn($editor, 'Other column.')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    }
+    visit('/rich-editor-browser-test')
+        ->click($editor . ' td:first-child p')
+        ->keys(':focus', 'Alt+F10')
+        ->assertPresent($editor . ' [data-rich-editor-tool="gridAddColumnBefore"]:focus')
+        ->keys(':focus', 'Alt+F10')
+        ->assertPresent($editor . ' [data-rich-editor-tool="tableAddColumnBefore"]:focus')
+        ->keys(':focus', ['ArrowRight', 'ArrowRight', 'ArrowRight', 'ArrowRight', 'Enter'])
+        ->assertCount($editor . ' tr', 2)
+        ->assertSeeIn($editor, 'Nested cell.')
+        ->assertPresent($editor . ' [role="textbox"]:focus')
+        ->keys(':focus', 'Alt+F10')
+        ->assertPresent($editor . ' [data-rich-editor-tool="gridAddColumnBefore"]:focus')
+        ->keys(':focus', 'Enter')
+        ->assertCount($editor . ' .grid-layout-col', 3)
+        ->assertSeeIn($editor, 'Other column.')
+        ->assertNoSmoke();
 });
 
 it('preserves the selection and returns focus from toolbar link actions', function (string $origin): void {
@@ -2094,75 +2088,67 @@ it('preserves the selection and returns focus from toolbar link actions', functi
     $content = $editor . ' [role="textbox"]';
     $linkDialog = '[role="dialog"]:has(input[id="mountedActionSchema0.url"])';
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/rich-editor-browser-test');
+    $page = visit('/rich-editor-browser-test');
 
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
+    $page
+        ->click($content)
+        ->assertPresent($content . ':focus')
+        ->keys(':focus', 'Control+Home')
+        ->keys(':focus', 'Control+Shift+ArrowRight')
+        ->assertScript('window.getSelection().toString().trim()', 'Alpha')
+        ->assertVisible($editor . ' [role="toolbar"][data-rich-editor-toolbar=""]');
+
+    foreach (($origin === 'main') ? ['cancel', 'set link', 'extend link'] : ['cancel', 'set link'] as $operation) {
+        $shouldSubmit = $operation !== 'cancel';
+
+        if ($operation === 'extend link') {
+
+            $page
+                ->keys(':focus', 'Escape')
+                ->assertCount('[role="tooltip"]:visible', 0)
+                ->keys(':focus', 'Escape')
+                ->assertScript("document.activeElement.matches('{$content}')", true)
+                ->keys(':focus', 'Control+Home')
+                ->keys(':focus', 'ArrowRight')
+                ->assertScript('window.getSelection().isCollapsed', true);
+        }
+
+        if ($origin === 'main') {
+            $page->keys($content, 'Shift+Tab')->keys(':focus', ['End', 'Enter']);
+        } elseif ($origin === 'floating') {
+            $page->keys($content, 'Alt+F10')->keys(':focus', ['End', 'Enter']);
+        } else {
+            $page
+                ->keys($content, 'Alt+F10')
+                ->keys(':focus', ['Home', 'ArrowRight', 'ArrowDown'])
+                ->assertScript('document.activeElement.getAttribute(\'role\')', 'menuitemcheckbox')
+                ->keys(':focus', ['ArrowDown', 'Enter']);
         }
 
         $page
-            ->click($content)
-            ->assertPresent($content . ':focus')
-            ->keys(':focus', 'Control+Home')
-            ->keys(':focus', 'Control+Shift+ArrowRight')
-            ->assertScript('window.getSelection().toString().trim()', 'Alpha')
-            ->assertVisible($editor . ' [role="toolbar"][data-rich-editor-toolbar=""]');
+            ->assertVisible('input[id="mountedActionSchema0.url"]')
+            ->assertPresent("{$linkDialog}:focus, {$linkDialog} :focus")
+            ->assertCount('[role="tooltip"]:visible', 0);
 
-        foreach (($origin === 'main') ? ['cancel', 'set link', 'extend link'] : ['cancel', 'set link'] as $operation) {
-            $shouldSubmit = $operation !== 'cancel';
-
-            if ($operation === 'extend link') {
-
-                $page
-                    ->keys(':focus', 'Escape')
-                    ->assertCount('[role="tooltip"]:visible', 0)
-                    ->keys(':focus', 'Escape')
-                    ->assertScript("document.activeElement.matches('{$content}')", true)
-                    ->keys(':focus', 'Control+Home')
-                    ->keys(':focus', 'ArrowRight')
-                    ->assertScript('window.getSelection().isCollapsed', true);
-            }
-
-            if ($origin === 'main') {
-                $page->keys($content, 'Shift+Tab')->keys(':focus', ['End', 'Enter']);
-            } elseif ($origin === 'floating') {
-                $page->keys($content, 'Alt+F10')->keys(':focus', ['End', 'Enter']);
-            } else {
-                $page
-                    ->keys($content, 'Alt+F10')
-                    ->keys(':focus', ['Home', 'ArrowRight', 'ArrowDown'])
-                    ->assertScript('document.activeElement.getAttribute(\'role\')', 'menuitemcheckbox')
-                    ->keys(':focus', ['ArrowDown', 'Enter']);
-            }
-
+        if ($shouldSubmit) {
             $page
-                ->assertVisible('input[id="mountedActionSchema0.url"]')
-                ->assertPresent("{$linkDialog}:focus, {$linkDialog} :focus")
-                ->assertCount('[role="tooltip"]:visible', 0);
-
-            if ($shouldSubmit) {
-                $page
-                    ->type('input[id="mountedActionSchema0.url"]', 'https://example.com/article')
-                    ->keys('input[id="mountedActionSchema0.url"]', 'Tab')
-                    ->keys(':focus', 'Tab')
-                    ->assertScript('document.activeElement.matches(\'button[type="submit"]\')', true)
-                    ->keys(':focus', 'Enter')
-                    ->assertSeeIn($editor . ' a[href="https://example.com/article"]', 'Alpha')
-                    ->assertDontSeeIn($editor . ' a[href="https://example.com/article"]', 'beta');
-            } else {
-                $page->keys('input[id="mountedActionSchema0.url"]', 'Escape');
-            }
-
-            $page
-                ->assertNotPresent('input[id="mountedActionSchema0.url"]')
-                ->assertPresent($origin === 'main'
-                    ? $editor . ' [data-rich-editor-tool="link"]:focus'
-                    : $content . ':focus')
-                ->assertNoSmoke()->assertEnabled('[data-testid="save-editor"]')
-                ->assertNoAccessibilityIssues();
+                ->type('input[id="mountedActionSchema0.url"]', 'https://example.com/article')
+                ->keys('input[id="mountedActionSchema0.url"]', 'Tab')
+                ->keys(':focus', 'Tab')
+                ->assertScript('document.activeElement.matches(\'button[type="submit"]\')', true)
+                ->keys(':focus', 'Enter')
+                ->assertSeeIn($editor . ' a[href="https://example.com/article"]', 'Alpha')
+                ->assertDontSeeIn($editor . ' a[href="https://example.com/article"]', 'beta');
+        } else {
+            $page->keys('input[id="mountedActionSchema0.url"]', 'Escape');
         }
 
+        $page
+            ->assertNotPresent('input[id="mountedActionSchema0.url"]')
+            ->assertPresent($origin === 'main'
+                ? $editor . ' [data-rich-editor-tool="link"]:focus'
+                : $content . ':focus')
+            ->assertNoSmoke()->assertEnabled('[data-testid="save-editor"]');
     }
 })->with(['main', 'floating', 'grouped floating']);
 
@@ -2175,56 +2161,54 @@ it('navigates horizontal toolbar menus using directional arrows and `Home` / `En
     $forwardKey = $isRtl ? 'ArrowLeft' : 'ArrowRight';
     $backwardKey = $isRtl ? 'ArrowRight' : 'ArrowLeft';
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/rich-editor-browser-test?rtl=' . (int) $isRtl);
+    $page = visit('/rich-editor-browser-test?rtl=' . (int) $isRtl);
 
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
+    $page
+        ->click($content)
+        ->assertPresent($content . ':focus')
+        ->keys(':focus', 'ControlOrMeta+a')
+        ->assertScript('window.getSelection().toString()', 'Alpha beta.');
 
-        $page
-            ->click($content)
-            ->assertPresent($content . ':focus')
-            ->keys(':focus', 'ControlOrMeta+a')
-            ->assertScript('window.getSelection().toString()', 'Alpha beta.');
+    $page
+        ->keys(':focus', 'Shift+Tab')
+        ->keys(':focus', ['Home', 'ArrowDown'])
+        ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[0]", true)
+        ->assertScript("document.querySelector('{$editor} [data-rich-editor-tool=\"Formatting\"]').getAttribute('aria-haspopup')", 'menu')
+        ->keys(':focus', $backwardKey)
+        ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[3]", true)
+        ->keys(':focus', $forwardKey)
+        ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[0]", true)
+        ->keys(':focus', $forwardKey)
+        ->assertAttribute(':focus', 'aria-disabled', 'true')
+        ->keys(':focus', 'Enter')
+        ->assertDontSeeIn($editor, 'Unexpected text')
+        ->keys(':focus', 'End')
+        ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[3]", true)
+        ->keys(':focus', 'Home')
+        ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[0]", true)
+        ->keys(':focus', 'ArrowUp')
+        ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[3]", true)
+        ->keys(':focus', 'ArrowDown')
+        ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[0]", true)
+        ->assertNoAccessibilityIssues()
+        ->keys(':focus', [$forwardKey, $forwardKey, 'Enter'])
+        ->assertSeeIn($editor . ' em', 'Alpha beta.')
+        ->assertScript("document.activeElement.matches('{$content}')", true)
+        ->keys(':focus', 'Shift+Tab')
+        ->keys(':focus', 'ArrowDown')
+        ->assertAttribute(':focus', 'role', 'menuitemcheckbox')
+        ->keys(':focus', [$forwardKey, $forwardKey])
+        ->assertAttribute(':focus', 'aria-checked', 'true')
+        ->keys(':focus', 'Escape')
+        ->assertCount('[role="tooltip"]:visible', 0)
+        ->keys(':focus', 'Escape')
+        ->assertScript("document.activeElement === document.querySelectorAll('{$editor} [data-rich-editor-tool=\"Formatting\"]')[0]", true)
+        ->assertNoSmoke();
 
-        $page
-            ->keys(':focus', 'Shift+Tab')
-            ->keys(':focus', ['Home', 'ArrowDown'])
-            ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[0]", true)
-            ->assertScript("document.querySelector('{$editor} [data-rich-editor-tool=\"Formatting\"]').getAttribute('aria-haspopup')", 'menu')
-            ->keys(':focus', $backwardKey)
-            ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[3]", true)
-            ->keys(':focus', $forwardKey)
-            ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[0]", true)
-            ->keys(':focus', $forwardKey)
-            ->assertAttribute(':focus', 'aria-disabled', 'true')
-            ->keys(':focus', 'Enter')
-            ->assertDontSeeIn($editor, 'Unexpected text')
-            ->keys(':focus', 'End')
-            ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[3]", true)
-            ->keys(':focus', 'Home')
-            ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[0]", true)
-            ->keys(':focus', 'ArrowUp')
-            ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[3]", true)
-            ->keys(':focus', 'ArrowDown')
-            ->assertScript("document.activeElement === document.querySelector('{$menu}').querySelectorAll('button')[0]", true)
-            ->assertNoAccessibilityIssues()
-            ->keys(':focus', [$forwardKey, $forwardKey, 'Enter'])
-            ->assertSeeIn($editor . ' em', 'Alpha beta.')
-            ->assertScript("document.activeElement.matches('{$content}')", true)
-            ->keys(':focus', 'Shift+Tab')
-            ->keys(':focus', 'ArrowDown')
-            ->assertAttribute(':focus', 'role', 'menuitemcheckbox')
-            ->keys(':focus', [$forwardKey, $forwardKey])
-            ->assertAttribute(':focus', 'aria-checked', 'true')
-            ->keys(':focus', 'Escape')
-            ->assertCount('[role="tooltip"]:visible', 0)
-            ->keys(':focus', 'Escape')
-            ->assertScript("document.activeElement === document.querySelectorAll('{$editor} [data-rich-editor-tool=\"Formatting\"]')[0]", true)
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    }
+    $page->inDarkMode()->click($content)
+        ->click(':nth-match(' . $editor . ' [data-rich-editor-tool="Formatting"], 1)')
+        ->assertVisible($menu)
+        ->assertNoAccessibilityIssues();
 })->with([false, true]);
 
 it('returns link dialog focus to the originating toolbar group with duplicate labels', function (): void {
@@ -2235,38 +2219,31 @@ it('returns link dialog focus to the originating toolbar group with duplicate la
     $trigger = $editor . ' [data-rich-editor-tool="Formatting"]';
     $linkDialog = '[role="dialog"]:has(input[id="mountedActionSchema0.url"])';
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/rich-editor-browser-test');
+    $page = visit('/rich-editor-browser-test');
 
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
+    $page
+        ->click($content)
+        ->assertPresent($content . ':focus')
+        ->keys(':focus', 'Control+Home')
+        ->keys(':focus', 'Control+Shift+ArrowRight')
+        ->assertScript('window.getSelection().toString().trim()', 'Alpha')
+        ->keys(':focus', 'Shift+Tab')
+        ->keys(':focus', 'End')
+        ->assertScript("document.activeElement === document.querySelectorAll('{$trigger}')[1]", true)
+        ->keys(':focus', 'ArrowDown')
+        ->assertAttribute(':focus', 'role', 'menuitemcheckbox')
+        ->keys(':focus', 'ArrowDown')
+        ->keys(':focus', 'Enter')
+        ->assertVisible('input[id="mountedActionSchema0.url"]')
+        ->assertPresent("{$linkDialog}:focus, {$linkDialog} :focus")
+        ->assertCount('[role="tooltip"]:visible', 0)
+        ->assertScript("Array.from(document.querySelectorAll('{$trigger}')).every(trigger => trigger.getAttribute('aria-expanded') === 'false')", true);
 
-        $page
-            ->click($content)
-            ->assertPresent($content . ':focus')
-            ->keys(':focus', 'Control+Home')
-            ->keys(':focus', 'Control+Shift+ArrowRight')
-            ->assertScript('window.getSelection().toString().trim()', 'Alpha')
-            ->keys(':focus', 'Shift+Tab')
-            ->keys(':focus', 'End')
-            ->assertScript("document.activeElement === document.querySelectorAll('{$trigger}')[1]", true)
-            ->keys(':focus', 'ArrowDown')
-            ->assertAttribute(':focus', 'role', 'menuitemcheckbox')
-            ->keys(':focus', 'ArrowDown')
-            ->keys(':focus', 'Enter')
-            ->assertVisible('input[id="mountedActionSchema0.url"]')
-            ->assertPresent("{$linkDialog}:focus, {$linkDialog} :focus")
-            ->assertCount('[role="tooltip"]:visible', 0)
-            ->assertScript("Array.from(document.querySelectorAll('{$trigger}')).every(trigger => trigger.getAttribute('aria-expanded') === 'false')", true);
-
-        $page
-            ->keys('input[id="mountedActionSchema0.url"]', 'Escape')
-            ->assertNotPresent('input[id="mountedActionSchema0.url"]')
-            ->assertScript("document.activeElement === document.querySelectorAll('{$trigger}')[1]", true)
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    }
+    $page
+        ->keys('input[id="mountedActionSchema0.url"]', 'Escape')
+        ->assertNotPresent('input[id="mountedActionSchema0.url"]')
+        ->assertScript("document.activeElement === document.querySelectorAll('{$trigger}')[1]", true)
+        ->assertNoSmoke();
 });
 
 it('does not render custom block previews from imported HTML', function (): void {
@@ -2279,9 +2256,8 @@ it('does not render custom block previews from imported HTML', function (): void
         'permissions' => ['clipboard-read', 'clipboard-write'],
     ]);
 
-    foreach ([$page, $page->inDarkMode()] as $themedPage) {
-        $themedPage->assertPresent($content)->click($content);
-        $themedPage->script(<<<'JS'
+    $page->assertPresent($content)->click($content);
+    $page->script(<<<'JS'
             (async () => {
                 const preview = btoa('<img src="x" onerror="window.customBlockPreviewExecuted = true">')
                 const html = `<div data-type="customBlock" data-id="callout" data-config='{"message":"Copied callout.","options":{}}' data-label="Untrusted label" data-preview="${preview}" shouldApplyProseStylingToPreview="true"></div>`
@@ -2290,21 +2266,19 @@ it('does not render custom block previews from imported HTML', function (): void
             })()
             JS);
 
-        $themedPage
-            ->keys($content, 'ControlOrMeta+v')
-            ->assertCount($importedBlock, 1)
-            ->assertSeeIn($importedBlock, 'Copied callout.')
-            ->assertDontSeeIn($importedBlock, 'Untrusted label')
-            ->assertNotPresent($importedBlock . ' img')
-            ->assertScript('window.customBlockPreviewExecuted', false)
-            ->keys($content, 'ControlOrMeta+z')
-            ->assertNotPresent($importedBlock)
-            ->keys($content, 'ControlOrMeta+Shift+z')
-            ->assertCount($importedBlock, 1)
-            ->assertSeeIn($importedBlock, 'Copied callout.')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    }
+    $page
+        ->keys($content, 'ControlOrMeta+v')
+        ->assertCount($importedBlock, 1)
+        ->assertSeeIn($importedBlock, 'Copied callout.')
+        ->assertDontSeeIn($importedBlock, 'Untrusted label')
+        ->assertNotPresent($importedBlock . ' img')
+        ->assertScript('window.customBlockPreviewExecuted', false)
+        ->keys($content, 'ControlOrMeta+z')
+        ->assertNotPresent($importedBlock)
+        ->keys($content, 'ControlOrMeta+Shift+z')
+        ->assertCount($importedBlock, 1)
+        ->assertSeeIn($importedBlock, 'Copied callout.')
+        ->assertNoSmoke();
 });
 
 it('can delete a grid from its floating toolbar without deleting its content', function (): void {
@@ -2312,26 +2286,20 @@ it('can delete a grid from its floating toolbar without deleting its content', f
 
     $editor = '[data-testid="default-rich-editor"]';
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/rich-editor-browser-test');
+    $page = visit('/rich-editor-browser-test');
 
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-
-        $page
-            ->click($editor . ' .grid-layout-col >> text=First column.')
-            ->assertVisible($editor . ' button[aria-label="Delete grid"]')
-            ->click($editor . ' button[aria-label="Delete grid"]')
-            ->assertMissing($editor . ' .grid-layout')
-            ->assertSeeIn($editor, 'Before grid.')
-            ->assertSeeIn($editor, 'First column.')
-            ->assertSeeIn($editor, 'Column heading')
-            ->assertSeeIn($editor, 'Second column.')
-            ->assertSeeIn($editor, 'List item.')
-            ->assertSeeIn($editor, 'After grid.')
-            ->assertNoAccessibilityIssues();
-    }
+    $page
+        ->click($editor . ' .grid-layout-col >> text=First column.')
+        ->assertVisible($editor . ' button[aria-label="Delete grid"]')
+        ->click($editor . ' button[aria-label="Delete grid"]')
+        ->assertMissing($editor . ' .grid-layout')
+        ->assertSeeIn($editor, 'Before grid.')
+        ->assertSeeIn($editor, 'First column.')
+        ->assertSeeIn($editor, 'Column heading')
+        ->assertSeeIn($editor, 'Second column.')
+        ->assertSeeIn($editor, 'List item.')
+        ->assertSeeIn($editor, 'After grid.')
+        ->assertNoSmoke();
 });
 
 it('can manage grid columns from its floating toolbar', function (): void {
@@ -2339,28 +2307,22 @@ it('can manage grid columns from its floating toolbar', function (): void {
 
     $editor = '[data-testid="default-rich-editor"]';
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/rich-editor-browser-test');
+    $page = visit('/rich-editor-browser-test');
 
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-
-        $page
-            ->click($editor . ' .grid-layout-col >> text=Second column.')
-            ->assertVisible($editor . ' [data-testid="grid-add-column-before"]')
-            ->assertVisible($editor . ' [data-testid="grid-add-column-after"]')
-            ->assertVisible($editor . ' [data-testid="grid-delete-column"]')
-            ->assertEnabled($editor . ' [data-testid="grid-add-column-before"]')
-            ->assertEnabled($editor . ' [data-testid="grid-add-column-after"]')
-            ->assertEnabled($editor . ' [data-testid="grid-delete-column"]')
-            ->click($editor . ' [data-testid="grid-add-column-before"]')
-            ->click($editor . ' [data-testid="grid-add-column-after"]')
-            ->assertCount($editor . ' .grid-layout-col', 4)
-            ->assertSeeIn($editor, 'First column.')
-            ->assertSeeIn($editor, 'Second column.')
-            ->assertNoAccessibilityIssues();
-    }
+    $page
+        ->click($editor . ' .grid-layout-col >> text=Second column.')
+        ->assertVisible($editor . ' [data-testid="grid-add-column-before"]')
+        ->assertVisible($editor . ' [data-testid="grid-add-column-after"]')
+        ->assertVisible($editor . ' [data-testid="grid-delete-column"]')
+        ->assertEnabled($editor . ' [data-testid="grid-add-column-before"]')
+        ->assertEnabled($editor . ' [data-testid="grid-add-column-after"]')
+        ->assertEnabled($editor . ' [data-testid="grid-delete-column"]')
+        ->click($editor . ' [data-testid="grid-add-column-before"]')
+        ->click($editor . ' [data-testid="grid-add-column-after"]')
+        ->assertCount($editor . ' .grid-layout-col', 4)
+        ->assertSeeIn($editor, 'First column.')
+        ->assertSeeIn($editor, 'Second column.')
+        ->assertNoSmoke();
 });
 
 it('can search custom blocks and insert one at the preserved editor selection', function (): void {

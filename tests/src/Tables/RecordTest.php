@@ -103,26 +103,29 @@ it('persists drag reordering and disables moves beyond table boundaries', functi
     $readOrder = 'Array.from(document.querySelectorAll("[x-sortable-item]")).map(element => element.getAttribute("x-sortable-item")).join(",")';
     $movesAreReady = 'Array.from(document.querySelectorAll("[data-table-reorder-direction]")).every(element => element.disabled || element.getAttribute("aria-disabled") !== "true")';
 
-    foreach ([$page, $page->inDarkMode()] as $page) {
-        $page->click('[data-testid="toggle-reordering"]')
-            ->assertDisabled($firstUp)
-            ->assertDisabled('[x-sortable-item="' . $posts[2]->getKey() . '"] [data-table-reorder-direction="down"]')
-            ->assertScript('Array.from(document.querySelectorAll("[data-table-reorder-direction], .fi-ta-reorder-handle")).every(element => element.tabIndex === -1)', true);
+    $page->click('[data-testid="toggle-reordering"]')
+        ->assertDisabled($firstUp)
+        ->assertDisabled('[x-sortable-item="' . $posts[2]->getKey() . '"] [data-table-reorder-direction="down"]')
+        ->assertScript('Array.from(document.querySelectorAll("[data-table-reorder-direction], .fi-ta-reorder-handle")).every(element => element.tabIndex === -1)', true);
 
-        $page->drag('[x-sortable-item="' . $posts[0]->getKey() . '"] .fi-ta-reorder-handle', '[x-sortable-item="' . $posts[2]->getKey() . '"] .fi-ta-reorder-handle')
-            ->assertScript($readOrder, implode(',', [$posts[1]->getKey(), $posts[2]->getKey(), $posts[0]->getKey()]))
-            ->assertScript($movesAreReady, true)
-            ->assertDisabled('[x-sortable-item="' . $posts[0]->getKey() . '"] [data-table-reorder-direction="down"]')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-        expect(Post::query()->orderBy('sort')->pluck('id')->all())->toBe([$posts[1]->getKey(), $posts[2]->getKey(), $posts[0]->getKey()]);
+    $page->drag('[x-sortable-item="' . $posts[0]->getKey() . '"] .fi-ta-reorder-handle', '[x-sortable-item="' . $posts[2]->getKey() . '"] .fi-ta-reorder-handle')
+        ->assertScript($readOrder, implode(',', [$posts[1]->getKey(), $posts[2]->getKey(), $posts[0]->getKey()]))
+        ->assertScript($movesAreReady, true)
+        ->assertDisabled('[x-sortable-item="' . $posts[0]->getKey() . '"] [data-table-reorder-direction="down"]')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+    expect(Post::query()->orderBy('sort')->pluck('id')->all())->toBe([$posts[1]->getKey(), $posts[2]->getKey(), $posts[0]->getKey()]);
 
-        $page->drag('[x-sortable-item="' . $posts[0]->getKey() . '"] .fi-ta-reorder-handle', '[x-sortable-item="' . $posts[1]->getKey() . '"] .fi-ta-reorder-handle')
-            ->assertScript($readOrder, $posts->pluck('id')->implode(','))
-            ->assertScript($movesAreReady, true);
+    $page->drag('[x-sortable-item="' . $posts[0]->getKey() . '"] .fi-ta-reorder-handle', '[x-sortable-item="' . $posts[1]->getKey() . '"] .fi-ta-reorder-handle')
+        ->assertScript($readOrder, $posts->pluck('id')->implode(','))
+        ->assertScript($movesAreReady, true);
 
-        expect(Post::query()->orderBy('sort')->pluck('id')->all())->toBe($posts->pluck('id')->all());
-    }
+    expect(Post::query()->orderBy('sort')->pluck('id')->all())->toBe($posts->pluck('id')->all());
+
+    $page->inDarkMode()
+        ->click('[data-testid="toggle-reordering"]')
+        ->assertDisabled($firstUp)
+        ->assertNoAccessibilityIssues();
 })->with(['standard' => false, 'grid' => true]);
 
 it('hides unauthorized table reorder controls in both themes', function (): void {

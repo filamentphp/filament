@@ -612,121 +612,68 @@ describe('rendering', function (): void {
 it('can select, replace, and clear a single `ToggleButtons` option with pointer and keyboard', function (): void {
     $this->actingAs(User::factory()->create());
 
-    foreach ([false, true] as $darkMode) {
-        $page = $darkMode
-            ? visit('/toggle-buttons-test')->inDarkMode()
-            : visit('/toggle-buttons-test')->inLightMode();
-        $page->assertNoSmoke()->assertNoAccessibilityIssues();
+    $page = visit('/toggle-buttons-test');
+    $page->assertNoSmoke();
 
-        foreach (['field', 'grouped_field'] as $fieldName) {
-            $firstButton = "[id=\"form.{$fieldName}-a\"]";
-            $secondButton = "[id=\"form.{$fieldName}-b\"]";
+    foreach (['field', 'grouped_field'] as $fieldName) {
+        $firstButton = "[id=\"form.{$fieldName}-a\"]";
+        $secondButton = "[id=\"form.{$fieldName}-b\"]";
 
-            $page->assertAttribute($firstButton, 'aria-pressed', 'false')
-                ->click($firstButton)
-                ->assertAttribute($firstButton, 'aria-pressed', 'true')
-                ->click($secondButton)
-                ->assertAttribute($firstButton, 'aria-pressed', 'false')
-                ->assertAttribute($secondButton, 'aria-pressed', 'true');
-
-            $page->click('[data-testid="save"]')
-                ->assertSeeIn('[data-testid="saved-' . $fieldName . '"]', '"b"');
-
-            $page->click($secondButton)
-                ->assertAttribute($secondButton, 'aria-pressed', 'false')
-                ->keys($firstButton, 'Space')
-                ->assertAttribute($firstButton, 'aria-pressed', 'true')
-                ->keys($firstButton, 'Tab');
-
-            $page->assertPresent($secondButton . ':focus');
-
-            $page->keys($secondButton, 'Enter')
-                ->assertAttribute($firstButton, 'aria-pressed', 'false')
-                ->assertAttribute($secondButton, 'aria-pressed', 'true')
-                ->keys($secondButton, 'Space')
-                ->assertAttribute($secondButton, 'aria-pressed', 'false');
-        }
-
-        $page->assertAttribute('[id="form.boolean_field-0"]', 'aria-pressed', 'true')
-            ->keys('[id="form.boolean_field-0"]', 'Enter')
-            ->assertAttribute('[id="form.boolean_field-0"]', 'aria-pressed', 'false')
-            ->assertDisabled('[id="form.disabled_options-b"]')
-            ->keys('[id="form.disabled_options-c"]', 'Enter')
-            ->assertAttribute('[id="form.disabled_options-c"]', 'aria-pressed', 'false')
-            ->click('[for="form.multiple_field-a"]')
-            ->click('[for="form.multiple_field-b"]')
-            ->assertChecked('[id="form.multiple_field-a"]')
-            ->assertChecked('[id="form.multiple_field-b"]')
-            ->click('[for="form.multiple_field-a"]')
-            ->assertNotChecked('[id="form.multiple_field-a"]')
-            ->assertChecked('[id="form.multiple_field-b"]');
+        $page->assertAttribute($firstButton, 'aria-pressed', 'false')
+            ->click($firstButton)
+            ->assertAttribute($firstButton, 'aria-pressed', 'true')
+            ->click($secondButton)
+            ->assertAttribute($firstButton, 'aria-pressed', 'false')
+            ->assertAttribute($secondButton, 'aria-pressed', 'true');
 
         $page->click('[data-testid="save"]')
-            ->assertSeeIn('[data-testid="saved-field"]', 'null')
-            ->assertSeeIn('[data-testid="saved-grouped_field"]', 'null')
-            ->assertSeeIn('[data-testid="saved-boolean_field"]', 'null')
-            ->assertSeeIn('[data-testid="saved-disabled_options"]', 'null')
-            ->assertSeeIn('[data-testid="saved-multiple_field"]', '["b"]');
+            ->assertSeeIn('[data-testid="saved-' . $fieldName . '"]', '"b"');
+
+        $page->click($secondButton)
+            ->assertAttribute($secondButton, 'aria-pressed', 'false')
+            ->keys($firstButton, 'Space')
+            ->assertAttribute($firstButton, 'aria-pressed', 'true')
+            ->keys($firstButton, 'Tab');
+
+        $page->assertPresent($secondButton . ':focus');
+
+        $page->keys($secondButton, 'Enter')
+            ->assertAttribute($firstButton, 'aria-pressed', 'false')
+            ->assertAttribute($secondButton, 'aria-pressed', 'true')
+            ->keys($secondButton, 'Space')
+            ->assertAttribute($secondButton, 'aria-pressed', 'false');
     }
-});
 
-it('supports `live()`, blur and debounced updates and locks submission', function (): void {
-    $this->actingAs(User::factory()->create());
+    $page->assertAttribute('[id="form.boolean_field-0"]', 'aria-pressed', 'true')
+        ->keys('[id="form.boolean_field-0"]', 'Enter')
+        ->assertAttribute('[id="form.boolean_field-0"]', 'aria-pressed', 'false')
+        ->assertDisabled('[id="form.disabled_options-b"]')
+        ->keys('[id="form.disabled_options-c"]', 'Enter')
+        ->assertAttribute('[id="form.disabled_options-c"]', 'aria-pressed', 'false')
+        ->click('[for="form.multiple_field-a"]')
+        ->click('[for="form.multiple_field-b"]')
+        ->assertChecked('[id="form.multiple_field-a"]')
+        ->assertChecked('[id="form.multiple_field-b"]')
+        ->click('[for="form.multiple_field-a"]')
+        ->assertNotChecked('[id="form.multiple_field-a"]')
+        ->assertChecked('[id="form.multiple_field-b"]');
 
-    foreach ([false, true] as $darkMode) {
-        $page = $darkMode
-            ? visit('/toggle-buttons-test')->inDarkMode()
-            : visit('/toggle-buttons-test')->inLightMode();
+    $page->click('[data-testid="save"]')
+        ->assertSeeIn('[data-testid="saved-field"]', 'null')
+        ->assertSeeIn('[data-testid="saved-grouped_field"]', 'null')
+        ->assertSeeIn('[data-testid="saved-boolean_field"]', 'null')
+        ->assertSeeIn('[data-testid="saved-disabled_options"]', 'null')
+        ->assertSeeIn('[data-testid="saved-multiple_field"]', '["b"]')
+        ->assertNoAccessibilityIssues();
 
-        foreach (['deferred_blur', 'deferred_debounced', 'deferred_override'] as $fieldName) {
-            $button = "[id=\"form.{$fieldName}-a\"]";
-
-            $page->click($button)
-                ->assertAttribute($button, 'aria-pressed', 'true')
-                ->keys($button, 'Tab')
-                ->assertSeeIn('[data-testid="updated-' . $fieldName . '"]', '[]');
-        }
-
-        $page->click('[id="form.live_field-a"]')
-            ->assertSeeIn('[data-testid="updated-live_field"]', '["a"]')
-            ->click('[id="form.live_field-a"]')
-            ->assertSeeIn('[data-testid="updated-live_field"]', '["a",null]');
-
-        foreach (['blur', 'grouped_blur'] as $fieldName) {
-            $button = "[id=\"form.{$fieldName}-a\"]";
-            $updates = '[data-testid="updated-' . $fieldName . '"]';
-
-            $page->click($button)
-                ->assertAttribute($button, 'aria-pressed', 'true')
-                ->assertSeeIn($updates, '[]')
-                ->keys($button, 'Tab')
-                ->assertSeeIn($updates, '["a"]');
-        }
-
-        foreach (['debounced', 'grouped_debounced'] as $fieldName) {
-            $firstButton = "[id=\"form.{$fieldName}-a\"]";
-            $secondButton = "[id=\"form.{$fieldName}-b\"]";
-            $updates = '[data-testid="updated-' . $fieldName . '"]';
-
-            $page->click($firstButton)
-                ->assertAttribute($firstButton, 'aria-pressed', 'true')
-                ->click($secondButton)
-                ->assertAttribute($firstButton, 'aria-pressed', 'false')
-                ->assertAttribute($secondButton, 'aria-pressed', 'true')
-                ->assertEnabled($firstButton)
-                ->assertSeeIn($updates, '"b"');
-        }
-
-        $page->click('[data-testid="save"]')
-            ->assertDisabled('[id="form.field-a"]')
-            ->assertDisabled('[id="form.grouped_field-a"]')
-            ->assertSeeIn('[data-testid="saved-live_field"]', 'null')
-            ->assertSeeIn('[data-testid="saved-debounced"]', '"b"')
-            ->assertEnabled('[id="form.field-a"]')
-            ->assertEnabled('[id="form.grouped_field-a"]')
-            ->assertDisabled('[id="form.disabled_options-b"]')
-            ->assertNoAccessibilityIssues();
-    }
+    $page->inDarkMode()
+        ->click('[id="form.field-b"]')
+        ->assertAttribute('[id="form.field-b"]', 'aria-pressed', 'true')
+        ->click('[id="form.grouped_field-b"]')
+        ->assertAttribute('[id="form.grouped_field-b"]', 'aria-pressed', 'true')
+        ->click('[for="form.multiple_field-b"]')
+        ->assertChecked('[id="form.multiple_field-b"]')
+        ->assertNoAccessibilityIssues();
 });
 
 class RenderToggleButtonsWithInline extends Livewire

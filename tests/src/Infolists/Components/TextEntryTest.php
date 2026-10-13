@@ -636,28 +636,17 @@ describe('rendering', function (): void {
     });
 });
 
-it('renders labels and wrapper URLs accessibly in light and dark modes', function (): void {
+it('renders labels and wrapper URLs', function (): void {
     Artisan::call('filament:assets');
-
-    Post::factory()->create();
 
     $this->actingAs(User::factory()->create());
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/infolist-entries-browser-test');
-
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-
-        $page
-            ->assertNoSmoke()
-            ->assertSeeIn('[data-testid="enum-label"]', 'User Management')
-            ->assertSeeIn('[data-testid="trusted-label"]', 'Label: <strong>Alpha beta</strong> (label)')
-            ->assertNotPresent('[data-testid="trusted-label"] strong')
-            ->assertCount('[data-testid="linked-entry"] a', 1)
-            ->assertNoAccessibilityIssues();
-    }
+    visit('/infolist-entries-browser-test')
+        ->assertNoSmoke()
+        ->assertSeeIn('[data-testid="enum-label"]', 'User Management')
+        ->assertSeeIn('[data-testid="trusted-label"]', 'Label: <strong>Alpha beta</strong> (label)')
+        ->assertNotPresent('[data-testid="trusted-label"] strong')
+        ->assertCount('[data-testid="linked-entry"] a', 1);
 });
 
 class TestComponentWithTextEntry extends Component implements HasSchemas

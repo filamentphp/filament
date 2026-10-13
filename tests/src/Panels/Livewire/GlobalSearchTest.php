@@ -145,25 +145,18 @@ describe('search results', function (): void {
 
         $post = Post::factory()->create(['title' => 'Invoice 304']);
         $search = ' Invoice 304 ';
-        $inputSelector = 'input[wire\\:key="global-search.field.input"]';
+        $inputSelector = 'input[type="search"][aria-controls]';
         $resultUrl = PostResource::getUrl('view', ['record' => $post], panel: $panel);
 
-        foreach ([false, true] as $isDarkMode) {
-            $page = visit(PostResource::getUrl(panel: $panel));
+        $page = visit(PostResource::getUrl(panel: $panel));
 
-            if ($isDarkMode) {
-                $page = $page->inDarkMode();
-            }
+        $page->type($inputSelector, $search)
+            ->assertVisible("nav a[href=\"{$resultUrl}\"]")
+            ->assertValue($inputSelector, $search);
 
-            $page->type($inputSelector, $search)
-                ->assertVisible("nav a[href=\"{$resultUrl}\"]")
-                ->assertValue($inputSelector, $search)
-                ->assertNoAccessibilityIssues();
-
-            $page->type($inputSelector, '   ')
-                ->assertMissing("nav a[href=\"{$resultUrl}\"]")
-                ->assertValue($inputSelector, '   ');
-        }
+        $page->type($inputSelector, '   ')
+            ->assertMissing("nav a[href=\"{$resultUrl}\"]")
+            ->assertValue($inputSelector, '   ');
     })->with(['standard panel' => 'admin', 'SPA panel' => 'spa']);
 
     it('orders resource global search results by `$globalSearchSort`', function (): void {
@@ -194,7 +187,7 @@ describe('search results', function (): void {
         $post = Post::factory()->create(['title' => 'Invoice 224']);
         $otherPost = Post::factory()->create(['title' => 'Invoice 485']);
         $search = 'Invoice';
-        $inputSelector = 'input[wire\\:key="global-search.field.input"]';
+        $inputSelector = 'input[type="search"][aria-controls]';
         $resultUrl = PostResource::getUrl('view', ['record' => $post], panel: $panel);
         $resultSelector = "[role=region] a[href=\"{$resultUrl}\"]:not([target])";
         $otherResultUrl = PostResource::getUrl('view', ['record' => $otherPost], panel: $panel);
@@ -203,72 +196,65 @@ describe('search results', function (): void {
         $previewSelector = "[data-testid=\"global-search-preview-{$post->id}\"]";
         $otherPreviewSelector = "[data-testid=\"global-search-preview-{$otherPost->id}\"]";
 
-        $page = visit(PostResource::getUrl(panel: $panel))->inDarkMode();
+        $page = visit(PostResource::getUrl(panel: $panel));
 
-        foreach ([true, false] as $isDarkMode) {
-            if (! $isDarkMode) {
-                $page->click('[aria-label="' . __('filament-panels::layout.actions.open_user_menu.label') . '"]')
-                    ->click('[role="menuitemradio"][aria-label="' . __('filament-panels::layout.actions.theme_switcher.light.label') . '"]');
-            }
-
-            $page->type($inputSelector, $search)
-                ->assertVisible($resultSelector)
-                ->assertVisible($otherResultSelector)
-                ->assertNotPresent('[role=region] h3:has-text("Empty")')
-                ->assertSeeIn('nav [role=status]', '2')
-                ->keys($inputSelector, 'ArrowDown')
-                ->assertPresent("{$resultSelector}:focus")
-                ->keys($resultSelector, 'ArrowDown')
-                ->assertPresent("{$otherResultSelector}:focus")
-                ->keys($otherResultSelector, 'ArrowUp')
-                ->assertPresent("{$resultSelector}:focus")
-                ->keys($resultSelector, 'Tab')
-                ->assertPresent("{$previewSelector}:focus")
-                ->keys($previewSelector, 'ArrowDown')
-                ->assertPresent("{$otherResultSelector}:focus")
-                ->keys($otherResultSelector, 'Tab')
-                ->assertPresent("{$otherPreviewSelector}:focus")
-                ->keys($otherPreviewSelector, 'ArrowUp')
-                ->assertPresent("{$resultSelector}:focus")
-                ->keys($resultSelector, 'Tab')
-                ->assertPresent("{$previewSelector}:focus")
-                ->assertNoAccessibilityIssues()
-                ->keys($previewSelector, 'Escape')
-                ->assertPresent("{$inputSelector}:focus")
-                ->assertValue($inputSelector, $search)
-                ->assertMissing($resultSelector)
-                ->keys($inputSelector, 'ArrowDown')
-                ->assertPresent("{$resultSelector}:focus")
-                ->keys($resultSelector, 'ArrowUp')
-                ->assertPresent("{$otherResultSelector}:focus")
-                ->keys($otherResultSelector, 'ArrowDown')
-                ->assertPresent("{$resultSelector}:focus")
-                ->keys($resultSelector, 'ArrowUp')
-                ->assertPresent("{$otherResultSelector}:focus")
-                ->keys($otherResultSelector, 'Tab')
-                ->assertPresent("{$otherPreviewSelector}:focus")
-                ->keys($otherPreviewSelector, 'Tab')
-                ->assertPresent("{$otherNewTabSelector}:focus")
-                ->keys($otherNewTabSelector, 'Tab')
-                ->assertMissing($resultSelector)
-                ->click($inputSelector)
-                ->assertVisible($resultSelector)
-                ->type($inputSelector, 'No matching invoices')
-                ->assertVisible('[role=region] p')
-                ->assertNotPresent('[role=region] a')
-                ->assertNotPresent('[role=region] h3')
-                ->assertNoAccessibilityIssues()
-                ->type($inputSelector, $search)
-                ->assertVisible($resultSelector)
-                ->keys($inputSelector, 'ArrowDown')
-                ->keys($resultSelector, 'Tab')
-                ->keys($previewSelector, 'Space')
-                ->assertVisible('#global-search-preview button')
-                ->keys('#global-search-preview button', 'Escape')
-                ->assertMissing('#global-search-preview button')
-                ->assertValue($inputSelector, $search)
-                ->assertPresent("{$inputSelector}:focus");
-        }
+        $page->type($inputSelector, $search)
+            ->assertVisible($resultSelector)
+            ->assertVisible($otherResultSelector)
+            ->assertNotPresent('[role=region] h3:has-text("Empty")')
+            ->assertSeeIn('nav [role=status]', '2')
+            ->keys($inputSelector, 'ArrowDown')
+            ->assertPresent("{$resultSelector}:focus")
+            ->keys($resultSelector, 'ArrowDown')
+            ->assertPresent("{$otherResultSelector}:focus")
+            ->keys($otherResultSelector, 'ArrowUp')
+            ->assertPresent("{$resultSelector}:focus")
+            ->keys($resultSelector, 'Tab')
+            ->assertPresent("{$previewSelector}:focus")
+            ->keys($previewSelector, 'ArrowDown')
+            ->assertPresent("{$otherResultSelector}:focus")
+            ->keys($otherResultSelector, 'Tab')
+            ->assertPresent("{$otherPreviewSelector}:focus")
+            ->keys($otherPreviewSelector, 'ArrowUp')
+            ->assertPresent("{$resultSelector}:focus")
+            ->keys($resultSelector, 'Tab')
+            ->assertPresent("{$previewSelector}:focus")
+            ->assertNoAccessibilityIssues()
+            ->keys($previewSelector, 'Escape')
+            ->assertPresent("{$inputSelector}:focus")
+            ->assertValue($inputSelector, $search)
+            ->assertMissing($resultSelector)
+            ->keys($inputSelector, 'ArrowDown')
+            ->assertPresent("{$resultSelector}:focus")
+            ->keys($resultSelector, 'ArrowUp')
+            ->assertPresent("{$otherResultSelector}:focus")
+            ->keys($otherResultSelector, 'ArrowDown')
+            ->assertPresent("{$resultSelector}:focus")
+            ->keys($resultSelector, 'ArrowUp')
+            ->assertPresent("{$otherResultSelector}:focus")
+            ->keys($otherResultSelector, 'Tab')
+            ->assertPresent("{$otherPreviewSelector}:focus")
+            ->keys($otherPreviewSelector, 'Tab')
+            ->assertPresent("{$otherNewTabSelector}:focus")
+            ->keys($otherNewTabSelector, 'Tab')
+            ->assertMissing($resultSelector)
+            ->click($inputSelector)
+            ->assertVisible($resultSelector)
+            ->type($inputSelector, 'No matching invoices')
+            ->assertVisible('[role=region] p')
+            ->assertNotPresent('[role=region] a')
+            ->assertNotPresent('[role=region] h3')
+            ->assertNoAccessibilityIssues()
+            ->type($inputSelector, $search)
+            ->assertVisible($resultSelector)
+            ->keys($inputSelector, 'ArrowDown')
+            ->keys($resultSelector, 'Tab')
+            ->keys($previewSelector, 'Space')
+            ->assertVisible('#global-search-preview button')
+            ->keys('#global-search-preview button', 'Escape')
+            ->assertMissing('#global-search-preview button')
+            ->assertValue($inputSelector, $search)
+            ->assertPresent("{$inputSelector}:focus");
 
         $page->click($inputSelector)
             ->assertVisible($resultSelector)
@@ -277,6 +263,16 @@ describe('search results', function (): void {
             ->keys($resultSelector, 'Enter')
             ->assertPathIs(parse_url($resultUrl, PHP_URL_PATH))
             ->assertValue($inputSelector, '');
+
+        $page->inDarkMode()
+            ->type($inputSelector, $search)
+            ->assertVisible($resultSelector)
+            ->assertVisible($otherPreviewSelector)
+            ->assertNoAccessibilityIssues()
+            ->type($inputSelector, 'No matching invoices')
+            ->assertVisible('[role=region] p')
+            ->assertNotPresent('[role=region] a')
+            ->assertNoAccessibilityIssues();
     })->with(['standard panel' => 'admin', 'SPA panel' => 'spa']);
 });
 

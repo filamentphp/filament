@@ -67,7 +67,10 @@
         </x-filament::dropdown>
 
         <x-filament::input.wrapper>
-            <x-filament::input data-testid="after-nested-menu" />
+            <x-filament::input
+                aria-label="Additional filter"
+                data-testid="after-nested-menu"
+            />
         </x-filament::input.wrapper>
     </x-filament::dropdown>
 

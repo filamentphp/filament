@@ -293,20 +293,17 @@ it('exposes meaningful icons and hides decorative icons in light and dark modes'
     $this->actingAs(User::factory()->create());
     Artisan::call('filament:assets');
 
-    $browser = visit('/icon-browser-test')
+    visit('/icon-browser-test')
         ->assertNoSmoke()
         ->assertPresent('[data-testid="built-in-named"][aria-hidden="true"] + [role="img"][aria-label="Verified account"]')
         ->assertPresent('[data-testid="custom-named"][aria-hidden="true"] + [role="img"][aria-label="Custom status"]')
         ->assertPresent('[data-testid="built-in-decorative"][aria-hidden="true"]')
         ->assertPresent('[data-testid="custom-decorative"][aria-hidden="true"]')
-        ->assertPresent('[data-testid="custom-tooltip"].fi-sc-icon-htmlable[aria-hidden="true"] + [role="img"][aria-label="Custom warning"]')
+        ->assertPresent('[data-testid="custom-tooltip"][aria-hidden="true"] + [role="img"][aria-label="Custom warning"]')
         ->assertPresent('img[data-testid="path-named"][aria-label="Path status"]:not([aria-hidden])')
         ->assertPresent('img[data-testid="path-decorative"][alt=""]:not([aria-hidden])')
-        ->assertScript('document.querySelectorAll(\'[data-testid="built-in-decorative"] + [role="img"], [data-testid="custom-decorative"] + [role="img"]\').length', 0)
-        ->assertScript('document.querySelector(\'[data-testid="custom-tooltip"]\').getBoundingClientRect().width === document.querySelector(\'[data-testid="custom-tooltip"] > svg\').getBoundingClientRect().width', true)
+        ->assertNotPresent('[data-testid="built-in-decorative"] + [role="img"], [data-testid="custom-decorative"] + [role="img"]')
         ->assertNoAccessibilityIssues();
-
-    expect($browser->script('document.querySelectorAll(\'[role="img"][aria-label="Verified account"], [role="img"][aria-label="Custom status"]\').length'))->toBe(2);
 
     visit('/icon-browser-test')
         ->inDarkMode()

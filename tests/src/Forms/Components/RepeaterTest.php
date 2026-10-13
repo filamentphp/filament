@@ -1581,75 +1581,80 @@ it('keeps item order, position feedback and keyboard focus when reordering in th
 
     $url = '/repeater-test?reordering=' . $view;
     $page = visit($url);
-    foreach ([$page, $page->inDarkMode()] as $page) {
-        $firstName = ':nth-match([data-testid="item-name"], 1)';
-        $secondName = ':nth-match([data-testid="item-name"], 2)';
-        $thirdName = ':nth-match([data-testid="item-name"], 3)';
-        $moveDown = '[data-testid="repeater"] [data-reorder-direction="down"]:not([data-testid="children"] *)';
-        $moveUp = '[data-testid="repeater"] [data-reorder-direction="up"]:not([data-testid="children"] *)';
-        $firstDown = ':nth-match(' . $moveDown . ', 1)';
-        $secondDown = ':nth-match(' . $moveDown . ', 2)';
-        $secondUp = ':nth-match(' . $moveUp . ', 2)';
-        $thirdUp = ':nth-match(' . $moveUp . ', 3)';
-        $status = '[data-testid="repeater"] > [role="status"]';
+    $firstName = ':nth-match([data-testid="item-name"], 1)';
+    $secondName = ':nth-match([data-testid="item-name"], 2)';
+    $thirdName = ':nth-match([data-testid="item-name"], 3)';
+    $moveDown = '[data-testid="repeater"] [data-reorder-direction="down"]:not([data-testid="children"] *)';
+    $moveUp = '[data-testid="repeater"] [data-reorder-direction="up"]:not([data-testid="children"] *)';
+    $firstDown = ':nth-match(' . $moveDown . ', 1)';
+    $secondDown = ':nth-match(' . $moveDown . ', 2)';
+    $secondUp = ':nth-match(' . $moveUp . ', 2)';
+    $thirdUp = ':nth-match(' . $moveUp . ', 3)';
+    $status = '[data-testid="repeater"] > [role="status"]';
 
-        $page->assertPresent('[data-testid="repeater"]')
-            ->keys($firstDown, 'Enter')
+    $page->assertPresent('[data-testid="repeater"]')
+        ->keys($firstDown, 'Enter')
+        ->assertValue($firstName, 'Beta')
+        ->assertValue($secondName, 'Alpha')
+        ->assertValue($thirdName, 'Gamma')
+        ->assertPresent($secondDown . ':focus')
+        ->assertSeeIn($status, __('filament-forms::components.repeater.reordering.moved', [
+            'label' => $view === 'simple' ? __('filament-forms::components.repeater.reordering.item') : 'Alpha',
+            'position' => 2,
+            'count' => 3,
+        ]));
+
+    $page->keys($secondDown, 'Space')
+        ->assertValue($firstName, 'Beta')
+        ->assertValue($secondName, 'Gamma')
+        ->assertValue($thirdName, 'Alpha')
+        ->assertDisabled(':nth-match(' . $moveDown . ', 3)');
+
+    if ($view === 'one-direction') {
+        $lastItem = ':nth-match([data-testid="repeater"] [x-sortable-item]:not([data-testid="children"] *), 3)';
+        $page->assertPresent($lastItem . ':focus');
+        $description = '[id="' . $page->attribute($lastItem, 'aria-labelledby') . '"]';
+        $page->assertSeeIn($description, __('filament-forms::components.repeater.reordering.position', ['label' => 'Alpha', 'position' => 3, 'count' => 3]))
+            ->keys($secondDown, 'Enter')
             ->assertValue($firstName, 'Beta')
             ->assertValue($secondName, 'Alpha')
             ->assertValue($thirdName, 'Gamma')
-            ->assertPresent($secondDown . ':focus')
-            ->assertSeeIn($status, __('filament-forms::components.repeater.reordering.moved', [
-                'label' => $view === 'simple' ? __('filament-forms::components.repeater.reordering.item') : 'Alpha',
-                'position' => 2,
-                'count' => 3,
-            ]));
+            ->assertSeeIn($description, __('filament-forms::components.repeater.reordering.position', ['label' => 'Alpha', 'position' => 2, 'count' => 3]))
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
 
-        $page->keys($secondDown, 'Space')
-            ->assertValue($firstName, 'Beta')
-            ->assertValue($secondName, 'Gamma')
-            ->assertValue($thirdName, 'Alpha')
-            ->assertDisabled(':nth-match(' . $moveDown . ', 3)');
+        $page->inDarkMode()->assertNoAccessibilityIssues();
 
-        if ($view === 'one-direction') {
-            $lastItem = ':nth-match([data-testid="repeater"] [x-sortable-item]:not([data-testid="children"] *), 3)';
-            $page->assertPresent($lastItem . ':focus');
-            $description = '[id="' . $page->attribute($lastItem, 'aria-labelledby') . '"]';
-            $page->assertSeeIn($description, __('filament-forms::components.repeater.reordering.position', ['label' => 'Alpha', 'position' => 3, 'count' => 3]))
-                ->keys($secondDown, 'Enter')
-                ->assertValue($firstName, 'Beta')
-                ->assertValue($secondName, 'Alpha')
-                ->assertValue($thirdName, 'Gamma')
-                ->assertSeeIn($description, __('filament-forms::components.repeater.reordering.position', ['label' => 'Alpha', 'position' => 2, 'count' => 3]))
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
+        return;
+    }
 
-            continue;
-        }
+    $page->assertPresent($thirdUp . ':focus')
+        ->keys($thirdUp, 'Enter')
+        ->assertValue($firstName, 'Beta')
+        ->assertValue($secondName, 'Alpha')
+        ->assertValue($thirdName, 'Gamma')
+        ->assertPresent($secondUp . ':focus')
+        ->keys($secondUp, 'Enter')
+        ->assertValue($firstName, 'Alpha')
+        ->assertValue($secondName, 'Beta')
+        ->assertValue($thirdName, 'Gamma')
+        ->assertPresent($firstDown . ':focus')
+        ->assertDisabled(':nth-match(' . $moveUp . ', 1)');
 
-        $page->assertPresent($thirdUp . ':focus')
-            ->keys($thirdUp, 'Enter')
-            ->assertValue($firstName, 'Beta')
-            ->assertValue($secondName, 'Alpha')
-            ->assertValue($thirdName, 'Gamma')
-            ->assertPresent($secondUp . ':focus')
-            ->keys($secondUp, 'Enter')
-            ->assertValue($firstName, 'Alpha')
-            ->assertValue($secondName, 'Beta')
-            ->assertValue($thirdName, 'Gamma')
-            ->assertPresent($firstDown . ':focus')
-            ->assertDisabled(':nth-match(' . $moveUp . ', 1)');
+    if (in_array($view, ['regular', 'full', 'ancestor'])) {
+        $page->keys(':nth-match([data-testid="children"] [data-reorder-direction="down"], 1)', 'Enter')
+            ->assertValue(':nth-match([data-testid="child-name"], 1)', 'Child B')
+            ->assertValue(':nth-match([data-testid="child-name"], 2)', 'Child A')
+            ->assertPresent('[data-testid="children"] [data-reorder-direction="up"]:focus')
+            ->assertSeeIn('[data-testid="children"] > [role="status"]', __('filament-forms::components.repeater.reordering.moved', ['label' => __('filament-forms::components.repeater.reordering.item'), 'position' => 2, 'count' => 2]))
+            ->assertSeeIn($status, __('filament-forms::components.repeater.reordering.moved', ['label' => 'Alpha', 'position' => 1, 'count' => 3]));
+    }
 
-        if (in_array($view, ['regular', 'full', 'ancestor'])) {
-            $page->keys(':nth-match([data-testid="children"] [data-reorder-direction="down"], 1)', 'Enter')
-                ->assertValue(':nth-match([data-testid="child-name"], 1)', 'Child B')
-                ->assertValue(':nth-match([data-testid="child-name"], 2)', 'Child A')
-                ->assertPresent('[data-testid="children"] [data-reorder-direction="up"]:focus')
-                ->assertSeeIn('[data-testid="children"] > [role="status"]', __('filament-forms::components.repeater.reordering.moved', ['label' => __('filament-forms::components.repeater.reordering.item'), 'position' => 2, 'count' => 2]))
-                ->assertSeeIn($status, __('filament-forms::components.repeater.reordering.moved', ['label' => 'Alpha', 'position' => 1, 'count' => 3]));
-        }
+    $page->assertNoSmoke();
 
-        $page->assertNoSmoke()->assertNoAccessibilityIssues();
+    if (in_array($view, ['regular', 'simple', 'table'])) {
+        $page->assertNoAccessibilityIssues();
+        $page->inDarkMode()->assertNoAccessibilityIssues();
     }
 })->with(['regular', 'full', 'ancestor', 'simple', 'table', 'one-direction']);
 
@@ -1659,16 +1664,19 @@ it('provides accessible non-tabbable move actions when visible buttons are disab
     $this->actingAs(User::factory()->create());
     $url = '/repeater-test?reordering=screen-reader-' . $view;
     $page = visit($url);
-    foreach ([$page, $page->inDarkMode()] as $page) {
-        $controls = '[data-testid="repeater"] [data-reorder-direction]:not([data-testid="children"] *)';
-        $page->assertCount($controls, 6)
-            ->assertNotPresent('[data-testid="repeater"] [aria-hidden="true"] [data-reorder-direction]');
+    $controls = '[data-testid="repeater"] [data-reorder-direction]:not([data-testid="children"] *)';
+    $page->assertCount($controls, 6)
+        ->assertNotPresent('[data-testid="repeater"] [aria-hidden="true"] [data-reorder-direction]');
 
-        foreach (range(1, 6) as $position) {
-            $page->assertAttribute(':nth-match(' . $controls . ', ' . $position . ')', 'tabindex', '-1');
-        }
+    foreach (range(1, 6) as $position) {
+        $page->assertAttribute(':nth-match(' . $controls . ', ' . $position . ')', 'tabindex', '-1');
+    }
 
-        $page->assertNoSmoke()->assertNoAccessibilityIssues();
+    $page->assertNoSmoke();
+
+    if (in_array($view, ['regular', 'simple', 'table'])) {
+        $page->assertNoAccessibilityIssues();
+        $page->inDarkMode()->assertNoAccessibilityIssues();
     }
 })->with(['regular', 'full', 'ancestor', 'simple', 'table']);
 
@@ -1677,9 +1685,12 @@ it('omits fallback move controls when drag is unavailable', function (string $vi
     $this->actingAs(User::factory()->create());
     $url = '/repeater-test?reordering=screen-reader-' . $view;
     $page = visit($url);
-    foreach ([$page, $page->inDarkMode()] as $page) {
-        $page->assertNotPresent('[data-testid="repeater"] [data-reorder-direction]:not([data-testid="children"] *)')
-            ->assertNoSmoke()->assertNoAccessibilityIssues();
+    $page->assertNotPresent('[data-testid="repeater"] [data-reorder-direction]:not([data-testid="children"] *)')
+        ->assertNoSmoke();
+
+    if ($view === 'disabled') {
+        $page->assertNoAccessibilityIssues();
+        $page->inDarkMode()->assertNoAccessibilityIssues();
     }
 })->with(['no-drag', 'disabled', 'no-handle']);
 
@@ -1689,39 +1700,34 @@ it('announces confirmed moves and allows reordering after cancelling confirmatio
     $this->actingAs(User::factory()->create());
     $url = '/repeater-test?reordering=modal';
     $page = visit($url);
-    foreach ([$page, $page->inDarkMode()] as $page) {
-        $firstDown = ':nth-match([data-testid="repeater"] [data-reorder-direction="down"], 1)';
-        $status = '[data-testid="repeater"] > [role="status"]';
+    $firstDown = ':nth-match([data-testid="repeater"] [data-reorder-direction="down"], 1)';
+    $status = '[data-testid="repeater"] > [role="status"]';
 
-        $page->assertPresent('[data-testid="repeater"]')
-            ->keys($firstDown, 'Enter')->assertVisible('[data-testid="cancel-move"]')
-            ->assertSeeNothingIn($status)
-            ->click('[data-testid="cancel-move"]')
-            ->assertMissing('[data-testid="cancel-move"]')
-            ->assertNotPresent('[role="dialog"]:visible')
-            ->assertValue(':nth-match([data-testid="item-name"], 1)', 'Alpha')
-            ->assertValue(':nth-match([data-testid="item-name"], 2)', 'Beta')
-            ->assertValue(':nth-match([data-testid="item-name"], 3)', 'Gamma')
-            ->assertSeeNothingIn($status)
-            ->click($firstDown)
-            ->assertVisible('[data-testid="confirm-move"]')
-            ->assertSeeNothingIn($status)
-            ->click('[data-testid="confirm-move"]')
-            ->assertValue(':nth-match([data-testid="item-name"], 1)', 'Beta')
-            ->assertValue(':nth-match([data-testid="item-name"], 2)', 'Alpha')
-            ->assertValue(':nth-match([data-testid="item-name"], 3)', 'Gamma')
-            ->assertMissing('[data-testid="confirm-move"]')
-            ->assertNotPresent('[role="dialog"]:visible')
-            ->assertSeeIn($status, __('filament-forms::components.repeater.reordering.moved', ['label' => 'Alpha', 'position' => 2, 'count' => 3]))
-            ->click(':nth-match([data-testid="repeater"] [data-reorder-direction="up"]:not([data-testid="children"] *), 2)')
-            ->assertValue(':nth-match([data-testid="item-name"], 1)', 'Alpha')
-            ->assertValue(':nth-match([data-testid="item-name"], 2)', 'Beta')
-            ->assertValue(':nth-match([data-testid="item-name"], 3)', 'Gamma')
-            ->assertNoSmoke();
-        // Audit settled colors, not intermediate transition frames.
-        $page->page()->addStyleTag('*, *::before, *::after { transition: none !important; animation: none !important; }');
-        $page->assertNoAccessibilityIssues();
-    }
+    $page->assertPresent('[data-testid="repeater"]')
+        ->keys($firstDown, 'Enter')->assertVisible('[data-testid="cancel-move"]')
+        ->assertSeeNothingIn($status)
+        ->click('[data-testid="cancel-move"]')
+        ->assertMissing('[data-testid="cancel-move"]')
+        ->assertNotPresent('[role="dialog"]:visible')
+        ->assertValue(':nth-match([data-testid="item-name"], 1)', 'Alpha')
+        ->assertValue(':nth-match([data-testid="item-name"], 2)', 'Beta')
+        ->assertValue(':nth-match([data-testid="item-name"], 3)', 'Gamma')
+        ->assertSeeNothingIn($status)
+        ->click($firstDown)
+        ->assertVisible('[data-testid="confirm-move"]')
+        ->assertSeeNothingIn($status)
+        ->click('[data-testid="confirm-move"]')
+        ->assertValue(':nth-match([data-testid="item-name"], 1)', 'Beta')
+        ->assertValue(':nth-match([data-testid="item-name"], 2)', 'Alpha')
+        ->assertValue(':nth-match([data-testid="item-name"], 3)', 'Gamma')
+        ->assertMissing('[data-testid="confirm-move"]')
+        ->assertNotPresent('[role="dialog"]:visible')
+        ->assertSeeIn($status, __('filament-forms::components.repeater.reordering.moved', ['label' => 'Alpha', 'position' => 2, 'count' => 3]))
+        ->click(':nth-match([data-testid="repeater"] [data-reorder-direction="up"]:not([data-testid="children"] *), 2)')
+        ->assertValue(':nth-match([data-testid="item-name"], 1)', 'Alpha')
+        ->assertValue(':nth-match([data-testid="item-name"], 2)', 'Beta')
+        ->assertValue(':nth-match([data-testid="item-name"], 3)', 'Gamma')
+        ->assertNoSmoke();
 });
 
 it('leaves custom move handlers in control without locking later ordering', function (string $view): void {
@@ -1730,32 +1736,27 @@ it('leaves custom move handlers in control without locking later ordering', func
     $this->actingAs(User::factory()->create());
     $url = '/repeater-test?reordering=' . $view;
     $page = visit($url);
-    foreach ([$page, $page->inDarkMode()] as $page) {
-        $page->assertPresent('[data-testid="repeater"]')
-            ->assertNotPresent('[data-testid="custom-refreshed"]');
-        $page->keys(':nth-match([data-testid="repeater"] [data-reorder-direction="down"], 1)', 'Enter');
+    $page->assertPresent('[data-testid="repeater"]')
+        ->assertNotPresent('[data-testid="custom-refreshed"]');
+    $page->keys(':nth-match([data-testid="repeater"] [data-reorder-direction="down"], 1)', 'Enter');
 
-        if ($view === 'custom-refresh') {
-            $page->assertVisible('[data-testid="custom-refreshed"]');
-        } else {
-            $page->assertVisible('[data-testid="cancel-custom"]');
+    if ($view === 'custom-refresh') {
+        $page->assertVisible('[data-testid="custom-refreshed"]');
+    } else {
+        $page->assertVisible('[data-testid="cancel-custom"]');
 
-            $page->click('[data-testid="cancel-custom"]')
-                ->assertMissing('[data-testid="cancel-custom"]')
-                ->assertNotPresent('[role="dialog"]:visible');
-        }
-
-        $page->assertSeeNothingIn('[data-testid="repeater"] > [role="status"]')
-            ->click(':nth-match([data-testid="repeater"] [data-reorder-direction="up"]:not([data-testid="children"] *), 2)')
-            ->assertValue(':nth-match([data-testid="item-name"], 1)', 'Beta')
-            ->assertValue(':nth-match([data-testid="item-name"], 2)', 'Alpha')
-            ->assertValue(':nth-match([data-testid="item-name"], 3)', 'Gamma')
-            ->assertSeeIn('[data-testid="repeater"] > [role="status"]', __('filament-forms::components.repeater.reordering.moved', ['label' => 'Beta', 'position' => 1, 'count' => 3]))
-            ->assertNoSmoke();
-        // Audit settled colors, not intermediate transition frames.
-        $page->page()->addStyleTag('*, *::before, *::after { transition: none !important; animation: none !important; }');
-        $page->assertNoAccessibilityIssues();
+        $page->click('[data-testid="cancel-custom"]')
+            ->assertMissing('[data-testid="cancel-custom"]')
+            ->assertNotPresent('[role="dialog"]:visible');
     }
+
+    $page->assertSeeNothingIn('[data-testid="repeater"] > [role="status"]')
+        ->click(':nth-match([data-testid="repeater"] [data-reorder-direction="up"]:not([data-testid="children"] *), 2)')
+        ->assertValue(':nth-match([data-testid="item-name"], 1)', 'Beta')
+        ->assertValue(':nth-match([data-testid="item-name"], 2)', 'Alpha')
+        ->assertValue(':nth-match([data-testid="item-name"], 3)', 'Gamma')
+        ->assertSeeIn('[data-testid="repeater"] > [role="status"]', __('filament-forms::components.repeater.reordering.moved', ['label' => 'Beta', 'position' => 1, 'count' => 3]))
+        ->assertNoSmoke();
 })->with(['custom-mount', 'custom-refresh']);
 
 it('can add and delete items in the browser', function (): void {

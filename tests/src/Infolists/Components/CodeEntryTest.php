@@ -134,34 +134,30 @@ it('copies JSON and custom string callback content using the keyboard', function
     $expectedState = "{\n    \"enabled\": true,\n    \"retries\": 3\n}";
     $feedbackExpression = 'document.querySelector(\'[data-testid="copyable-code"]\').closest(\'[role="definition"]\').querySelector(\'[role="status"]\').textContent';
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/infolist-entries-browser-test', [
-            'permissions' => ['clipboard-read', 'clipboard-write'],
-        ]);
+    $page = visit('/infolist-entries-browser-test', [
+        'permissions' => ['clipboard-read', 'clipboard-write'],
+    ]);
 
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-
-        $page
-            ->assertScript('document.querySelector(\'[data-testid="copyable-code"] code\').textContent.trim()', $expectedState)
-            ->assertScript('document.getElementById(document.querySelector(\'[data-testid="copyable-code"]\').getAttribute(\'aria-describedby\')).textContent.trim()', $expectedState)
-            ->keys('[data-testid="copyable-code"]', 'Enter')
-            ->assertScript('navigator.clipboard.readText()', $expectedState)
-            ->assertScript("Boolean({$feedbackExpression})", true)
-            ->keys('[data-testid="custom-copy-code"] [role="button"]', 'Space')
-            ->assertScript('navigator.clipboard.readText()', "Copy: {$expectedState}")
-            ->assertScript(<<<'JS'
+    $page
+        ->assertScript('document.querySelector(\'[data-testid="copyable-code"] code\').textContent.trim()', $expectedState)
+        ->assertScript('document.getElementById(document.querySelector(\'[data-testid="copyable-code"]\').getAttribute(\'aria-describedby\')).textContent.trim()', $expectedState)
+        ->keys('[data-testid="copyable-code"]', 'Enter')
+        ->assertScript('navigator.clipboard.readText()', $expectedState)
+        ->assertScript("Boolean({$feedbackExpression})", true)
+        ->keys('[data-testid="custom-copy-code"] [role="button"]', 'Space')
+        ->assertScript('navigator.clipboard.readText()', "Copy: {$expectedState}")
+        ->assertScript(<<<'JS'
                 (() => {
                     const control = document.querySelector('[data-testid="id-scoped-code"]').closest('[role="definition"]').querySelector('[role="button"]')
                     return (document.getElementById(control.getAttribute('aria-describedby'))?.textContent ?? '').trim()
                 })()
                 JS, $expectedState)
-            ->keys('[data-testid="id-scoped-code"] [role="button"], [data-testid="id-scoped-code"][role="button"]', 'Enter')
-            ->assertScript('navigator.clipboard.readText()', $expectedState)
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    }
+        ->keys('[data-testid="id-scoped-code"] [role="button"], [data-testid="id-scoped-code"][role="button"]', 'Enter')
+        ->assertScript('navigator.clipboard.readText()', $expectedState)
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()->assertNoAccessibilityIssues();
 });
 
 it('can set and get `grammar()`', function (): void {

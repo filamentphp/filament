@@ -68,13 +68,12 @@ it('renders and searches `Htmlable` tenant names while escaping string names', f
         }
     });
 
-    $page = visit(Dashboard::getUrl(panel: 'tenant-menu-flat', tenant: $tenant))->inDarkMode();
+    $page = visit(Dashboard::getUrl(panel: 'tenant-menu-flat', tenant: $tenant));
     $tenantTrigger = 'button:has(img[alt*="Research"])';
 
     $page->assertSeeIn("{$tenantTrigger} b", 'Research & billing');
     $page->assertNoAccessibilityIssues();
-    $page->script("window.dispatchEvent(new CustomEvent('theme-changed', { detail: 'light' }))");
-    $page->assertNoAccessibilityIssues();
+    $page->inDarkMode()->assertNoAccessibilityIssues();
     $page->click('button[aria-label="' . __('filament-panels::layout.actions.sidebar.collapse.label') . '"]:visible')
         ->hover($tenantTrigger)
         ->assertSeeIn('[role="tooltip"] b', 'Research & billing');
@@ -86,23 +85,23 @@ it('renders and searches `Htmlable` tenant names while escaping string names', f
     $page->click($tenantTrigger)
         ->assertSeeIn("a[href=\"{$literalTenantUrl}\"]", '<b>Archives</b>')
         ->assertMissing("a[href=\"{$literalTenantUrl}\"] b")
-        ->type('input[x-model="search"]', 'Support & sales')
+        ->type('input[type="search"]:visible', 'Support & sales')
         ->assertVisible("a[href=\"{$switchableTenantUrl}\"]")
         ->assertMissing("a[href=\"{$literalTenantUrl}\"]:visible")
-        ->type('input[x-model="search"]', 'MALAGA')
+        ->type('input[type="search"]:visible', 'MALAGA')
         ->assertVisible("a[href=\"{$accentedTenantUrl}\"]")
         ->assertMissing("a[href=\"{$switchableTenantUrl}\"]:visible")
         ->assertSeeIn("a[href=\"{$accentedTenantUrl}\"]", 'Málaga')
-        ->fill('input[x-model="search"]', "Ma\u{0301}laga")
+        ->fill('input[type="search"]:visible', "Ma\u{0301}laga")
         ->assertVisible("a[href=\"{$accentedTenantUrl}\"]")
-        ->fill('input[x-model="search"]', 'Súppórt & sales')
+        ->fill('input[type="search"]:visible', 'Súppórt & sales')
         ->assertVisible("a[href=\"{$switchableTenantUrl}\"]")
         ->assertMissing("a[href=\"{$accentedTenantUrl}\"]:visible")
-        ->clear('input[x-model="search"]')
+        ->clear('input[type="search"]:visible')
         ->assertVisible("a[href=\"{$accentedTenantUrl}\"]")
         ->assertVisible("a[href=\"{$switchableTenantUrl}\"]")
         ->assertVisible("a[href=\"{$literalTenantUrl}\"]")
-        ->type('input[x-model="search"]', '<b>Archives</b>')
+        ->type('input[type="search"]:visible', '<b>Archives</b>')
         ->assertVisible("a[href=\"{$literalTenantUrl}\"]")
         ->assertMissing("a[href=\"{$switchableTenantUrl}\"]:visible")
         ->click("a[href=\"{$literalTenantUrl}\"]")

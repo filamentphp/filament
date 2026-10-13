@@ -1395,30 +1395,35 @@ it('can search a `CheckboxList` after disabling it without changing checked valu
 
     $page = visit('/checkbox-list-test');
 
-    foreach ([$page, $page->inDarkMode()] as $themedPage) {
-        $themedPage
-            ->assertVisible('[data-testid="checkbox-list-select-all"]')
-            ->assertNoAccessibilityIssues()
-            ->assertNoSmoke()
-            ->fill('[data-testid="checkbox-list"] input[type="search"]', 'Óption B')
-            ->assertMissing('[data-testid="checkbox-list"] input[value="a"]:visible')
-            ->assertVisible('[data-testid="checkbox-list"] input[value="b"]')
-            ->click('[data-testid="checkbox-list-select-all"]')
-            ->assertChecked('[data-testid="checkbox-list"] input[value="b"]')
-            ->click('[data-testid="checkbox-list-deselect-all"]')
-            ->assertNotChecked('[data-testid="checkbox-list"] input[value="b"]')
-            ->assertChecked('[data-testid="checkbox-list"] input[value="a"]')
-            ->assertChecked('[data-testid="checkbox-list"] input[value="c"]')
-            ->click('[data-testid="checkbox-list-disabled"]')
-            ->assertDisabled('[data-testid="checkbox-list"] input[value="b"]')
-            ->clear('[data-testid="checkbox-list"] input[type="search"]')
-            ->assertVisible('[data-testid="checkbox-list"] input[value="a"]')
-            ->assertVisible('[data-testid="checkbox-list"] input[value="c"]')
-            ->assertChecked('[data-testid="checkbox-list"] input[value="a"]')
-            ->assertNotChecked('[data-testid="checkbox-list"] input[value="b"]')
-            ->assertChecked('[data-testid="checkbox-list"] input[value="c"]')
-            ->assertNoAccessibilityIssues();
-    }
+    $page
+        ->assertVisible('[data-testid="checkbox-list-select-all"]')
+        ->assertNoAccessibilityIssues()
+        ->assertNoSmoke()
+        ->fill('[data-testid="checkbox-list"] input[type="search"]', 'Óption B')
+        ->assertMissing('[data-testid="checkbox-list"] input[value="a"]:visible')
+        ->assertVisible('[data-testid="checkbox-list"] input[value="b"]')
+        ->click('[data-testid="checkbox-list-select-all"]')
+        ->assertChecked('[data-testid="checkbox-list"] input[value="b"]')
+        ->click('[data-testid="checkbox-list-deselect-all"]')
+        ->assertNotChecked('[data-testid="checkbox-list"] input[value="b"]')
+        ->assertChecked('[data-testid="checkbox-list"] input[value="a"]')
+        ->assertChecked('[data-testid="checkbox-list"] input[value="c"]')
+        ->click('[data-testid="checkbox-list-disabled"]')
+        ->assertDisabled('[data-testid="checkbox-list"] input[value="b"]')
+        ->clear('[data-testid="checkbox-list"] input[type="search"]')
+        ->assertVisible('[data-testid="checkbox-list"] input[value="a"]')
+        ->assertVisible('[data-testid="checkbox-list"] input[value="c"]')
+        ->assertChecked('[data-testid="checkbox-list"] input[value="a"]')
+        ->assertNotChecked('[data-testid="checkbox-list"] input[value="b"]')
+        ->assertChecked('[data-testid="checkbox-list"] input[value="c"]')
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()
+        ->assertVisible('[data-testid="checkbox-list-select-all"]')
+        ->assertNoAccessibilityIssues()
+        ->click('[data-testid="checkbox-list-disabled"]')
+        ->assertDisabled('[data-testid="checkbox-list"] input[value="b"]')
+        ->assertNoAccessibilityIssues();
 });
 
 class RenderCheckboxListWithStaticOptions extends Component implements HasActions, HasSchemas

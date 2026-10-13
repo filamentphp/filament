@@ -45,6 +45,7 @@
 
     <x-filament::modal
         id="standalone-browser-test-modal"
+        aria-label="Standalone modal"
         :extra-modal-window-attribute-bag="new ComponentAttributeBag(['data-testid' => 'standalone-modal'])"
     >
         <x-slot name="trigger">

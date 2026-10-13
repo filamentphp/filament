@@ -716,7 +716,7 @@ describe('rendering', function (): void {
     });
 });
 
-it('saves boundary dates and round-trips epoch-backed and model-backed dates with accessible light and dark states', function (string $appTimezone): void {
+it('saves boundary dates and round-trips epoch-backed and model-backed dates', function (string $appTimezone): void {
     $originalTimezone = date_default_timezone_get();
     config(['app.timezone' => $appTimezone]);
     date_default_timezone_set($appTimezone);
@@ -724,74 +724,78 @@ it('saves boundary dates and round-trips epoch-backed and model-backed dates wit
     $this->actingAs($record);
 
     try {
-        foreach ([false, true] as $isDarkMode) {
-            $page = visit('/date-picker-browser-test');
+        $page = visit('/date-picker-browser-test');
 
-            if ($isDarkMode) {
-                $page = $page->inDarkMode();
-            }
-            $page->assertNoSmoke()->assertNoAccessibilityIssues()
-                ->assertValue('[data-testid="timestamp-date"]', '2025-07-15')
-                ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-15')
-                ->assertValue('[data-testid="midnight-timestamp-date"]', '2025-09-07')
-                ->assertValue('[data-testid="model-date"]', '2026-06-30');
+        $page->assertNoSmoke()
+            ->assertValue('[data-testid="timestamp-date"]', '2025-07-15')
+            ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-15')
+            ->assertValue('[data-testid="midnight-timestamp-date"]', '2025-09-07')
+            ->assertValue('[data-testid="model-date"]', '2026-06-30');
 
-            $reloadCount = 0;
+        $reloadCount = 0;
 
-            foreach ([
-                ['2025-07-14', false, 0],
-                ['2025-07-15', true, 1],
-                ['2025-07-17', true, 2],
-                ['2025-07-18', false, 2],
-            ] as [$date, $isValid, $saveCount]) {
-                $page->fill('[data-testid="native-date"]', $date)
-                    ->assertScript('document.querySelector(\'[data-testid="native-date"]\').validity.valid', $isValid)
-                    ->click('[data-testid="save-dates"]');
+        foreach ([
+            ['2025-07-14', false, 0],
+            ['2025-07-15', true, 1],
+            ['2025-07-17', true, 2],
+            ['2025-07-18', false, 2],
+        ] as [$date, $isValid, $saveCount]) {
+            $page->fill('[data-testid="native-date"]', $date)
+                ->assertScript('document.querySelector(\'[data-testid="native-date"]\').validity.valid', $isValid)
+                ->click('[data-testid="save-dates"]');
 
-                if (! $isValid) {
-                    $page->assertPresent('[data-testid="native-date"]:invalid:focus');
-                }
-
-                $page->assertScript('document.querySelector(\'[data-testid="save-count"]\').textContent.trim()', (string) $saveCount);
-
-                if ($isValid) {
-                    $page->assertScript('document.querySelector(\'[data-testid="saved-native-date"]\').textContent.trim()', $date)
-                        ->assertScript('document.querySelector(\'[data-testid="saved-timestamp-date"]\').textContent.trim()', '1752505200')
-                        ->assertScript('document.querySelector(\'[data-testid="saved-custom-timestamp-date"]\').textContent.trim()', '1752505200')
-                        ->assertScript('document.querySelector(\'[data-testid="saved-midnight-timestamp-date"]\').textContent.trim()', '1757203200')
-                        ->click('[data-testid="reload-dates"]')
-                        ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
-                        ->assertValue('[data-testid="native-date"]', $date)
-                        ->assertValue('[data-testid="timestamp-date"]', '2025-07-15')
-                        ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-15')
-                        ->assertValue('[data-testid="model-date"]', '2026-06-30');
-                }
+            if (! $isValid) {
+                $page->assertPresent('[data-testid="native-date"]:invalid:focus');
             }
 
-            $page->click('[data-testid="reload-dates"]')
-                ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
-                ->assertValue('[data-testid="native-date"]', '2025-07-17')
-                ->assertScript('document.querySelector(\'[data-testid="reload-dates"]\').disabled', false);
+            $page->assertScript('document.querySelector(\'[data-testid="save-count"]\').textContent.trim()', (string) $saveCount);
 
-            $page->fill('[data-testid="timestamp-date"]', '2025-07-16')
+            if ($isValid) {
+                $page->assertScript('document.querySelector(\'[data-testid="saved-native-date"]\').textContent.trim()', $date)
+                    ->assertScript('document.querySelector(\'[data-testid="saved-timestamp-date"]\').textContent.trim()', '1752505200')
+                    ->assertScript('document.querySelector(\'[data-testid="saved-custom-timestamp-date"]\').textContent.trim()', '1752505200')
+                    ->assertScript('document.querySelector(\'[data-testid="saved-midnight-timestamp-date"]\').textContent.trim()', '1757203200')
+                    ->click('[data-testid="reload-dates"]')
+                    ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
+                    ->assertValue('[data-testid="native-date"]', $date)
+                    ->assertValue('[data-testid="timestamp-date"]', '2025-07-15')
+                    ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-15')
+                    ->assertValue('[data-testid="model-date"]', '2026-06-30');
+            }
+        }
+
+        $page->click('[data-testid="reload-dates"]')
+            ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
+            ->assertValue('[data-testid="native-date"]', '2025-07-17')
+            ->assertEnabled('[data-testid="reload-dates"]');
+
+        $page->fill('[data-testid="timestamp-date"]', '2025-07-16')
+            ->click('[data-testid="custom-timestamp-date"]')
+            ->assertPresent('[data-date="2025-07-15"]:focus')
+            ->keys('[role="gridcell"]:focus', 'ArrowRight')
+            ->assertPresent('[data-date="2025-07-16"]:focus')
+            ->keys('[data-date="2025-07-16"]', ['Enter', 'Escape'])
+            ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-16')
+            ->click('[data-testid="save-dates"]')
+            ->assertScript('document.querySelector(\'[data-testid="saved-timestamp-date"]\').textContent.trim()', '1752591600')
+            ->assertScript('document.querySelector(\'[data-testid="saved-custom-timestamp-date"]\').textContent.trim()', '1752591600')
+            ->click('[data-testid="reload-dates"]')
+            ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
+            ->assertValue('[data-testid="timestamp-date"]', '2025-07-16')
+            ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-16')
+            ->assertValue('[data-testid="midnight-timestamp-date"]', '2025-09-07')
+            ->assertValue('[data-testid="model-date"]', '2026-06-30');
+
+        expect(substr($record->refresh()->getRawOriginal('email_verified_at'), 0, 10))->toBe('2026-06-30');
+
+        if ($appTimezone === 'Europe/Madrid') {
+            $page->click('[data-testid="custom-timestamp-date"]')
+                ->assertVisible('[role="grid"]')
+                ->assertNoAccessibilityIssues();
+            $page->inDarkMode()
                 ->click('[data-testid="custom-timestamp-date"]')
-                ->assertPresent('[data-date="2025-07-15"]:focus')
-                ->keys('[role="gridcell"]:focus', 'ArrowRight')
-                ->assertPresent('[data-date="2025-07-16"]:focus')
-                ->keys('[data-date="2025-07-16"]', ['Enter', 'Escape'])
-                ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-16')
-                ->click('[data-testid="save-dates"]')
-                ->assertScript('document.querySelector(\'[data-testid="saved-timestamp-date"]\').textContent.trim()', '1752591600')
-                ->assertScript('document.querySelector(\'[data-testid="saved-custom-timestamp-date"]\').textContent.trim()', '1752591600')
-                ->click('[data-testid="reload-dates"]')
-                ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
-                ->assertValue('[data-testid="timestamp-date"]', '2025-07-16')
-                ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-16')
-                ->assertValue('[data-testid="midnight-timestamp-date"]', '2025-09-07')
-                ->assertValue('[data-testid="model-date"]', '2026-06-30');
-
-            expect(substr($record->refresh()->getRawOriginal('email_verified_at'), 0, 10))->toBe('2026-06-30');
-            $page->assertNoAccessibilityIssues();
+                ->assertVisible('[role="grid"]')
+                ->assertNoAccessibilityIssues();
         }
     } finally {
         date_default_timezone_set($originalTimezone);

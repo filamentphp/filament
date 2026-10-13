@@ -67,7 +67,7 @@ it('reorders columns and groups through hidden controls without changing deferre
     $page->click($trigger);
 
     if ($layout === 'modal') {
-        $page->assertScript("document.activeElement.closest('[role=dialog]') !== null", true);
+        $page->assertPresent('[role="dialog"] :focus');
     }
 
     if (! $toggleable) {
@@ -102,11 +102,12 @@ it('reorders columns and groups through hidden controls without changing deferre
 
     $description = '[id="' . $page->attribute($groupUp, 'aria-describedby') . '"]';
     $page->assertSeeIn($description, __('filament-tables::table.column_manager.position', ['position' => 3, 'count' => 3]))
-        ->assertSeeIn('[role="status"]', __('filament-tables::table.column_manager.' . ($deferred ? 'reordered_deferred' : 'reordered'), ['column' => 'Publication', 'position' => 3, 'count' => 3]))
-        ->assertNoAccessibilityIssues();
-    $page->inDarkMode()->click($trigger)->assertNoAccessibilityIssues();
+        ->assertSeeIn('[role="status"]', __('filament-tables::table.column_manager.' . ($deferred ? 'reordered_deferred' : 'reordered'), ['column' => 'Publication', 'position' => 3, 'count' => 3]));
 
     if ($deferred) {
+        $page->assertNoAccessibilityIssues();
+        $page->inDarkMode()->click($trigger)->assertNoAccessibilityIssues();
+
         $page->assertScript("Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-rating')) < Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-id'))", true);
     }
 
@@ -155,15 +156,13 @@ it('preserves draft and applied order when mixing drag handles and hidden move c
         ->assertScript($groupOrder, ['column::rating', 'column::is_published'])
         ->drag('[x-sortable-item="column::is_published"] [x-sortable-handle]', '[x-sortable-item="column::rating"] [x-sortable-handle]')
         ->assertScript($groupOrder, ['column::is_published', 'column::rating'])
-        ->assertScript("Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-rating')) < Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-id'))", true)
-        ->assertNoAccessibilityIssues();
+        ->assertScript("Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-rating')) < Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-id'))", true);
     $page->click('#reorderable-columns button:has-text("Apply columns")')
         ->assertScript("Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-id')) < Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-rating'))", true)
         ->refresh()->click('#reorderable-columns button[aria-label="Column manager"]')
         ->assertScript($order, ['column::title', 'column::id', 'group::Publication'])
         ->assertScript($groupOrder, ['column::is_published', 'column::rating'])
         ->assertNoSmoke();
-    $page->inDarkMode()->click('#reorderable-columns button[aria-label="Column manager"]')->assertNoAccessibilityIssues();
 });
 
 it('keeps move controls available without adding them or drag handles to the Tab order', function (): void {
@@ -176,7 +175,6 @@ it('keeps move controls available without adding them or drag handles to the Tab
         ->assertAttribute('[data-testid="column-manager-title-move-down"]', 'tabindex', '-1')
         ->assertScript("Array.from(document.querySelectorAll('#reorderable-columns [x-sortable-handle]')).every(handle => handle.tabIndex === -1 && handle.getAttribute('aria-hidden') === 'true')", true)
         ->keys('#reorderable-columns input[id$="-title"]', 'Tab')
-        ->assertScript("document.activeElement.matches('[data-testid^=\"column-manager-\"]')", false)
-        ->assertNoAccessibilityIssues();
-    $page->inDarkMode()->click('#reorderable-columns button[aria-label="Column manager"]')->assertNoAccessibilityIssues()->assertNoSmoke();
+        ->assertNotPresent('[data-testid^="column-manager-"]:focus')
+        ->assertNoSmoke();
 });

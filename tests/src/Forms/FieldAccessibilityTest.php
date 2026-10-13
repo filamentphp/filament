@@ -610,30 +610,27 @@ it('updates accessible error descriptions after validation in the browser', func
     Artisan::call('filament:assets');
     $this->actingAs(User::factory()->create());
 
-    foreach ([false, true] as $darkMode) {
-        $page = $darkMode
-            ? visit('/field-accessibility-test', ['reducedMotion' => 'reduce'])->inDarkMode()
-            : visit('/field-accessibility-test', ['reducedMotion' => 'reduce'])->inLightMode();
-        $page->assertAttribute('[data-testid="name"]', 'aria-describedby', 'form.name-helper-text')
-            ->assertAttribute('[data-testid="delivery"]', 'aria-describedby', 'form.delivery-helper-text')
-            ->assertAttribute('[data-testid="interests"]', 'aria-describedby', 'form.interests-helper-text form.interests-required')
-            ->assertAttribute('[data-testid="notes"]', 'aria-describedby', 'privacy-note');
-        expect($page->script('document.getElementById("form.name-helper-text").textContent.trim()'))->toBe('This appears on your membership card.')
-            ->and($page->script('document.querySelector("[data-testid=name]").required'))->toBeTrue()
-            ->and($page->script('document.getElementById("form.delivery-helper-text").textContent.trim()'))->toBe('Choose how to receive your card.');
-        $page->assertNoAccessibilityIssues();
+    $page = visit('/field-accessibility-test', ['reducedMotion' => 'reduce'])->inLightMode();
+    $page->assertAttribute('[data-testid="name"]', 'aria-describedby', 'form.name-helper-text')
+        ->assertAttribute('[data-testid="delivery"]', 'aria-describedby', 'form.delivery-helper-text')
+        ->assertAttribute('[data-testid="interests"]', 'aria-describedby', 'form.interests-helper-text form.interests-required')
+        ->assertAttribute('[data-testid="notes"]', 'aria-describedby', 'privacy-note');
+    expect($page->script('document.getElementById("form.name-helper-text").textContent.trim()'))->toBe('This appears on your membership card.')
+        ->and($page->script('document.querySelector("[data-testid=name]").required'))->toBeTrue()
+        ->and($page->script('document.getElementById("form.delivery-helper-text").textContent.trim()'))->toBe('Choose how to receive your card.');
+    $page->assertNoAccessibilityIssues();
 
-        $page->select('[data-testid="delivery"]', 'post')
-            ->assertScript('document.querySelector("[data-testid=delivery]").hasAttribute("aria-describedby")', false)
-            ->assertScript('document.getElementById("form.delivery-helper-text")', null);
-        $page->select('[data-testid="delivery"]', '')
-            ->assertAttribute('[data-testid="delivery"]', 'aria-describedby', 'form.delivery-helper-text');
-        expect($page->script('document.getElementById("form.delivery-helper-text").textContent.trim()'))->toBe('Choose how to receive your card.');
+    $page->select('[data-testid="delivery"]', 'post')
+        ->assertScript('document.querySelector("[data-testid=delivery]").hasAttribute("aria-describedby")', false)
+        ->assertScript('document.getElementById("form.delivery-helper-text")', null);
+    $page->select('[data-testid="delivery"]', '')
+        ->assertAttribute('[data-testid="delivery"]', 'aria-describedby', 'form.delivery-helper-text');
+    expect($page->script('document.getElementById("form.delivery-helper-text").textContent.trim()'))->toBe('Choose how to receive your card.');
 
-        $page->click('[data-testid="save"]')
-            ->assertAttribute('[data-testid="name"]', 'aria-invalid', 'true')
-            ->assertEnabled('[data-testid="save"]');
-        $errors = $page->script(<<<'JS'
+    $page->click('[data-testid="save"]')
+        ->assertAttribute('[data-testid="name"]', 'aria-invalid', 'true')
+        ->assertEnabled('[data-testid="save"]');
+    $errors = $page->script(<<<'JS'
         (() => {
             const form = document.querySelector('[data-testid="membership-form"]');
             const controls = [...form.querySelectorAll('[aria-invalid="true"]')];
@@ -648,88 +645,94 @@ it('updates accessible error descriptions after validation in the browser', func
             };
         })()
         JS);
-        expect($errors['count'])->toBeGreaterThan(5)
-            ->and($errors['resolved'])->toBeTrue()
-            ->and($errors['liveErrors'])->toBe(0)
-            ->and($errors['requiredCheckboxes'])->toBe(0)
-            ->and($errors['readonlyRequired'])->toBeFalse()
-            ->and($errors['disabledRequired'])->toBeFalse()
-            ->and($errors['repeatedIds'])->toBe(['form.guests.first.name', 'form.guests.second.name']);
-        foreach (['[data-testid="name"]', '[data-testid="delivery"]', '[data-testid="consent"]', '[data-testid="contact"] input[value="email"]', '[data-testid="interests"] input[value="walking"]', '[data-testid="days"] input[value="weekday"]', '[data-testid="guest-first"]', '[data-testid="guest-second"]'] as $selector) {
-            $page->assertAttribute($selector, 'aria-invalid', 'true');
-            expect($page->script('(() => { const control = document.querySelector(' . json_encode($selector) . '); return control.getAttribute("aria-describedby").split(" ").some(id => document.getElementById(id)?.matches("[data-validation-error]")); })()'))->toBeTrue();
-        }
-        $page->assertAttribute('[data-testid="notes"]', 'aria-describedby', 'privacy-note')
-            ->assertAttribute('[data-testid="name"]', 'aria-describedby', 'form.name-helper-text form.name-error')
-            ->assertNoAccessibilityIssues();
-
-        $page->fill('[data-testid="name"]', 'Alex Morgan')
-            ->fill('[data-testid="guest-first"]', 'Jamie Morgan')
-            ->fill('[data-testid="guest-second"]', 'Taylor Morgan')
-            ->select('[data-testid="delivery"]', 'post')
-            ->check('[data-testid="consent"]')
-            ->check('[data-testid="contact"] input[value="email"]')
-            ->check('[data-testid="interests"] input[value="walking"]')
-            ->click('[data-testid="days"] label[for$="-weekday"]')
-            ->click('[data-testid="save"]')
-            ->assertPresent('[data-testid="saved"]')
-            ->assertEnabled('[data-testid="save"]');
-        expect($page->script('document.querySelectorAll("[data-validation-error], [aria-invalid=true]").length'))->toBe(0)
-            ->and($page->script('document.querySelector("[data-testid=delivery]").hasAttribute("aria-describedby")'))->toBeFalse()
-            ->and($page->script('document.getElementById("form.delivery-helper-text")'))->toBeNull()
-            ->and($page->script('document.getElementById("form.interests-helper-text")'))->toBeNull()
-            ->and($page->script('[...document.querySelectorAll("[data-testid^=guest-]")].map(control => control.id)'))->toBe($errors['repeatedIds']);
-        $page->assertAttribute('[data-testid="name"]', 'aria-describedby', 'form.name-helper-text')
-            ->assertAttribute('[data-testid="interests"]', 'aria-describedby', 'form.interests-required')
-            ->assertAttribute('[data-testid="notes"]', 'aria-describedby', 'privacy-note');
-        $page->assertNoAccessibilityIssues();
-
-        $valueControls = [
-            'code' => '[data-testid="additional-code"] [contenteditable="true"]',
-            'markdown' => '[data-testid="additional-markdown"] textarea[aria-label]',
-            'rich' => '[data-testid="additional-rich"] [contenteditable="true"]',
-            'date' => '[data-testid="additional-date"] [role="combobox"]',
-            'slider' => '[data-testid="additional-slider"] [role="slider"]',
-            'color' => '[data-testid="additional-color"] input',
-            'code_digits' => '[data-testid="additional-code_digits"] input[id]',
-            'attachment' => '[data-testid="additional-attachment"] input[type="file"]',
-        ];
-        foreach ($valueControls as $name => $selector) {
-            $page->assertAttribute($selector, 'aria-describedby', 'additionalForm.' . $name . '-helper-text');
-        }
-        $page->click('[data-testid="validate-additional"]');
-        foreach ($valueControls as $name => $selector) {
-            $page->assertAttribute($selector, 'aria-describedby', 'additionalForm.' . $name . '-helper-text additionalForm.' . $name . '-error')
-                ->assertAttribute($selector, 'aria-invalid', 'true');
-        }
-        foreach (['tags', 'metadata', 'members', 'blocks'] as $name) {
-            $page->assertAttribute('[data-testid="additional-' . $name . '"]', 'aria-describedby', 'additionalForm.' . $name . '-helper-text additionalForm.' . $name . '-error');
-        }
-        $page->assertScript('[...document.querySelectorAll("[data-testid=additional-range] [role=slider]")].map(handle => handle.getAttribute("aria-describedby"))', ['additionalForm.range-helper-text additionalForm.range-error', 'additionalForm.range-helper-text additionalForm.range-error'])
-            ->assertAttribute('[data-testid="additional-tags"] input', 'aria-describedby', 'additionalForm.tags-helper-text additionalForm.tags-error')
-            ->assertAttribute('[data-testid="additional-custom_attachment"] input[type="file"]', 'aria-describedby', 'custom-file-note')
-            ->assertAttribute('[data-testid="additional-attachment"] .filepond--label-action', 'aria-describedby', 'additionalForm.attachment-helper-text additionalForm.attachment-error')
-            ->assertAttribute('[data-testid="additional-composed_attachment"] input[type="file"]', 'aria-describedby', 'custom-file-note additionalForm.composed_attachment-helper-text additionalForm.composed_attachment-error')
-            ->assertAttribute('[data-testid="additional-composed_attachment"] .filepond--label-action', 'aria-describedby', 'custom-file-note additionalForm.composed_attachment-helper-text additionalForm.composed_attachment-error');
-        expect($page->script('document.querySelectorAll("[data-testid=additional-form] [role=group][aria-invalid], [data-testid=additional-tags] input[aria-invalid], [data-testid=additional-metadata] input[aria-invalid], [data-testid=additional-range] [role=slider][aria-invalid], [data-testid=additional-custom_attachment] input[aria-invalid]").length'))->toBe(0)
-            ->and($page->script('[...document.querySelectorAll("[data-testid=additional-code_digits] input")].every(input => input.getAttribute("aria-invalid") === "true")'))->toBeTrue()
-            ->and($page->script('[...document.querySelectorAll("[data-testid=additional-form] [aria-describedby]")].every(control => control.getAttribute("aria-describedby").split(/\\s+/).every(id => document.querySelectorAll(`[id="${id}"]`).length === 1))'))->toBeTrue();
-        $page->assertNoAccessibilityIssues();
-
-        $page->fill($valueControls['code'], 'const updated = true;')
-            ->fill($valueControls['rich'], 'Updated welcome message.')
-            ->click('[data-testid="accept-additional"]');
-        foreach ($valueControls as $selector) {
-            $page->assertScript('document.querySelector(' . json_encode($selector) . ').hasAttribute("aria-describedby")', false)
-                ->assertScript('document.querySelector(' . json_encode($selector) . ').hasAttribute("aria-invalid")', false);
-        }
-        $page->assertSeeIn($valueControls['code'], 'const updated = true;')
-            ->assertSeeIn($valueControls['rich'], 'Updated welcome message.')
-            ->assertAttribute('[data-testid="additional-custom_attachment"] input[type="file"]', 'aria-describedby', 'custom-file-note')
-            ->assertAttribute('[data-testid="additional-composed_attachment"] input[type="file"]', 'aria-describedby', 'custom-file-note')
-            ->assertAttribute('[data-testid="additional-composed_attachment"] .filepond--label-action', 'aria-describedby', 'custom-file-note')
-            ->assertScript('document.querySelector("[data-testid=additional-attachment] .filepond--label-action").hasAttribute("aria-describedby")', false)
-            ->assertScript('document.querySelectorAll("[data-testid=additional-form] [data-validation-error]").length', 0)
-            ->assertNoAccessibilityIssues();
+    expect($errors['count'])->toBeGreaterThan(5)
+        ->and($errors['resolved'])->toBeTrue()
+        ->and($errors['liveErrors'])->toBe(0)
+        ->and($errors['requiredCheckboxes'])->toBe(0)
+        ->and($errors['readonlyRequired'])->toBeFalse()
+        ->and($errors['disabledRequired'])->toBeFalse()
+        ->and($errors['repeatedIds'])->toBe(['form.guests.first.name', 'form.guests.second.name']);
+    foreach (['[data-testid="name"]', '[data-testid="delivery"]', '[data-testid="consent"]', '[data-testid="contact"] input[value="email"]', '[data-testid="interests"] input[value="walking"]', '[data-testid="days"] input[value="weekday"]', '[data-testid="guest-first"]', '[data-testid="guest-second"]'] as $selector) {
+        $page->assertAttribute($selector, 'aria-invalid', 'true');
+        expect($page->script('(() => { const control = document.querySelector(' . json_encode($selector) . '); return control.getAttribute("aria-describedby").split(" ").some(id => document.getElementById(id)?.matches("[data-validation-error]")); })()'))->toBeTrue();
     }
+    $page->assertAttribute('[data-testid="notes"]', 'aria-describedby', 'privacy-note')
+        ->assertAttribute('[data-testid="name"]', 'aria-describedby', 'form.name-helper-text form.name-error')
+        ->assertNoAccessibilityIssues();
+
+    $page->fill('[data-testid="name"]', 'Alex Morgan')
+        ->fill('[data-testid="guest-first"]', 'Jamie Morgan')
+        ->fill('[data-testid="guest-second"]', 'Taylor Morgan')
+        ->select('[data-testid="delivery"]', 'post')
+        ->check('[data-testid="consent"]')
+        ->check('[data-testid="contact"] input[value="email"]')
+        ->check('[data-testid="interests"] input[value="walking"]')
+        ->click('[data-testid="days"] label[for$="-weekday"]')
+        ->click('[data-testid="save"]')
+        ->assertPresent('[data-testid="saved"]')
+        ->assertEnabled('[data-testid="save"]');
+    expect($page->script('document.querySelectorAll("[data-validation-error], [aria-invalid=true]").length'))->toBe(0)
+        ->and($page->script('document.querySelector("[data-testid=delivery]").hasAttribute("aria-describedby")'))->toBeFalse()
+        ->and($page->script('document.getElementById("form.delivery-helper-text")'))->toBeNull()
+        ->and($page->script('document.getElementById("form.interests-helper-text")'))->toBeNull()
+        ->and($page->script('[...document.querySelectorAll("[data-testid^=guest-]")].map(control => control.id)'))->toBe($errors['repeatedIds']);
+    $page->assertAttribute('[data-testid="name"]', 'aria-describedby', 'form.name-helper-text')
+        ->assertAttribute('[data-testid="interests"]', 'aria-describedby', 'form.interests-required')
+        ->assertAttribute('[data-testid="notes"]', 'aria-describedby', 'privacy-note');
+
+    $valueControls = [
+        'code' => '[data-testid="additional-code"] [contenteditable="true"]',
+        'markdown' => '[data-testid="additional-markdown"] textarea[aria-label]',
+        'rich' => '[data-testid="additional-rich"] [contenteditable="true"]',
+        'date' => '[data-testid="additional-date"] [role="combobox"]',
+        'slider' => '[data-testid="additional-slider"] [role="slider"]',
+        'color' => '[data-testid="additional-color"] input',
+        'code_digits' => '[data-testid="additional-code_digits"] input[id]',
+        'attachment' => '[data-testid="additional-attachment"] input[type="file"]',
+    ];
+    foreach ($valueControls as $name => $selector) {
+        $page->assertAttribute($selector, 'aria-describedby', 'additionalForm.' . $name . '-helper-text');
+    }
+    $page->click('[data-testid="validate-additional"]');
+    foreach ($valueControls as $name => $selector) {
+        $page->assertAttribute($selector, 'aria-describedby', 'additionalForm.' . $name . '-helper-text additionalForm.' . $name . '-error')
+            ->assertAttribute($selector, 'aria-invalid', 'true');
+    }
+    foreach (['tags', 'metadata', 'members', 'blocks'] as $name) {
+        $page->assertAttribute('[data-testid="additional-' . $name . '"]', 'aria-describedby', 'additionalForm.' . $name . '-helper-text additionalForm.' . $name . '-error');
+    }
+    $page->assertScript('[...document.querySelectorAll("[data-testid=additional-range] [role=slider]")].map(handle => handle.getAttribute("aria-describedby"))', ['additionalForm.range-helper-text additionalForm.range-error', 'additionalForm.range-helper-text additionalForm.range-error'])
+        ->assertAttribute('[data-testid="additional-tags"] input', 'aria-describedby', 'additionalForm.tags-helper-text additionalForm.tags-error')
+        ->assertAttribute('[data-testid="additional-custom_attachment"] input[type="file"]', 'aria-describedby', 'custom-file-note')
+        ->assertAttribute('[data-testid="additional-attachment"] .filepond--label-action', 'aria-describedby', 'additionalForm.attachment-helper-text additionalForm.attachment-error')
+        ->assertAttribute('[data-testid="additional-composed_attachment"] input[type="file"]', 'aria-describedby', 'custom-file-note additionalForm.composed_attachment-helper-text additionalForm.composed_attachment-error')
+        ->assertAttribute('[data-testid="additional-composed_attachment"] .filepond--label-action', 'aria-describedby', 'custom-file-note additionalForm.composed_attachment-helper-text additionalForm.composed_attachment-error');
+    expect($page->script('document.querySelectorAll("[data-testid=additional-form] [role=group][aria-invalid], [data-testid=additional-tags] input[aria-invalid], [data-testid=additional-metadata] input[aria-invalid], [data-testid=additional-range] [role=slider][aria-invalid], [data-testid=additional-custom_attachment] input[aria-invalid]").length'))->toBe(0)
+        ->and($page->script('[...document.querySelectorAll("[data-testid=additional-code_digits] input")].every(input => input.getAttribute("aria-invalid") === "true")'))->toBeTrue()
+        ->and($page->script('[...document.querySelectorAll("[data-testid=additional-form] [aria-describedby]")].every(control => control.getAttribute("aria-describedby").split(/\\s+/).every(id => document.querySelectorAll(`[id="${id}"]`).length === 1))'))->toBeTrue();
+    $page->assertNoAccessibilityIssues();
+
+    $page->fill($valueControls['code'], 'const updated = true;')
+        ->fill($valueControls['rich'], 'Updated welcome message.')
+        ->click('[data-testid="accept-additional"]');
+    foreach ($valueControls as $selector) {
+        $page->assertScript('document.querySelector(' . json_encode($selector) . ').hasAttribute("aria-describedby")', false)
+            ->assertScript('document.querySelector(' . json_encode($selector) . ').hasAttribute("aria-invalid")', false);
+    }
+    $page->assertSeeIn($valueControls['code'], 'const updated = true;')
+        ->assertSeeIn($valueControls['rich'], 'Updated welcome message.')
+        ->assertAttribute('[data-testid="additional-custom_attachment"] input[type="file"]', 'aria-describedby', 'custom-file-note')
+        ->assertAttribute('[data-testid="additional-composed_attachment"] input[type="file"]', 'aria-describedby', 'custom-file-note')
+        ->assertAttribute('[data-testid="additional-composed_attachment"] .filepond--label-action', 'aria-describedby', 'custom-file-note')
+        ->assertScript('document.querySelector("[data-testid=additional-attachment] .filepond--label-action").hasAttribute("aria-describedby")', false)
+        ->assertScript('document.querySelectorAll("[data-testid=additional-form] [data-validation-error]").length', 0)
+        ->assertNoSmoke();
+
+    visit('/field-accessibility-test', ['reducedMotion' => 'reduce'])->inDarkMode()
+        ->assertNoAccessibilityIssues()
+        ->click('[data-testid="save"]')
+        ->assertAttribute('[data-testid="name"]', 'aria-invalid', 'true')
+        ->click('[data-testid="validate-additional"]')
+        ->assertAttribute('[data-testid="additional-rich"] [contenteditable="true"]', 'aria-invalid', 'true')
+        ->assertNoAccessibilityIssues();
 });

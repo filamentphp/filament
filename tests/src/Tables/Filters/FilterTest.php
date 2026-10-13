@@ -350,7 +350,7 @@ it('focuses lazy and empty filter configurations', function (string $focusScenar
     'empty schema fallback' => ['empty', '.fi-ta-filters'],
 ]);
 
-it('contains filters `Escape` handling inside an enclosing modal', function (bool $isDarkMode): void {
+it('contains filters `Escape` handling inside an enclosing modal', function (): void {
     Artisan::call('filament:assets');
 
     $this->actingAs(User::factory()->create());
@@ -360,10 +360,6 @@ it('contains filters `Escape` handling inside an enclosing modal', function (boo
     $tableModal = '[data-testid="table-modal"]';
 
     $page = visit('/filters-modal-browser-test');
-
-    if ($isDarkMode) {
-        $page = $page->inDarkMode();
-    }
 
     $page
         ->click('[data-testid="table-modal-trigger"]')
@@ -383,7 +379,14 @@ it('contains filters `Escape` handling inside an enclosing modal', function (boo
         ->keys($filtersTrigger, 'Escape')
         ->assertMissing($tableModal)
         ->assertNoSmoke();
-})->with(['light' => false, 'dark' => true]);
+
+    $page->inDarkMode()
+        ->click('[data-testid="table-modal-trigger"]')
+        ->assertVisible($tableModal)
+        ->keys($filtersTrigger, 'Enter')
+        ->assertVisible($publishedFilter)
+        ->assertNoAccessibilityIssues();
+});
 
 it('can use a custom attribute for the `SelectFilter`', function (): void {
     $posts = Post::factory()->count(10)->create();

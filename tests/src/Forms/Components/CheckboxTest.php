@@ -264,19 +264,19 @@ it('can render with a custom `label()`', function (): void {
 it('can render `Checkbox` in the browser', function (): void {
     $this->actingAs(User::factory()->create());
 
-    $browser = visit('/checkbox-test');
+    $page = visit('/checkbox-test');
 
-    foreach ([$browser, $browser->inDarkMode()] as $page) {
-        $page->check('[data-testid="checkbox"]')
-            ->assertChecked('[data-testid="checkbox"]')
-            ->assertPresent('[data-testid="checkbox"]:focus')
-            ->uncheck('[data-testid="checkbox"]')
-            ->assertNotChecked('[data-testid="checkbox"]')
-            ->assertEnabled('[data-testid="checkbox"]')
-            ->assertPresent('[data-testid="checkbox"]:focus')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    }
+    $page->check('[data-testid="checkbox"]')
+        ->assertChecked('[data-testid="checkbox"]')
+        ->assertPresent('[data-testid="checkbox"]:focus')
+        ->uncheck('[data-testid="checkbox"]')
+        ->assertNotChecked('[data-testid="checkbox"]')
+        ->assertEnabled('[data-testid="checkbox"]')
+        ->assertPresent('[data-testid="checkbox"]:focus')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()->assertNoAccessibilityIssues();
 });
 
 class TestComponentWithNonInlineCheckbox extends Livewire

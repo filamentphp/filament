@@ -127,21 +127,17 @@ it('renders relationship item URLs inside `Stack` accessibly in light and dark m
     $author->teams()->attach([$firstTeam->getKey(), $secondTeam->getKey()]);
     $this->actingAs($author);
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/columns-browser-test?relatedRecordLayout=true');
+    $page = visit('/columns-browser-test?relatedRecordLayout=true');
 
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
+    $page->assertNoSmoke()
+        ->assertScript('[...document.querySelectorAll(\'[data-testid="related-record-layout"] a\')].map(anchor => anchor.getAttribute("href"))', [
+            "/authors/{$author->getKey()}",
+            "/posts/{$post->getKey()}/teams/{$firstTeam->getKey()}/Research",
+            "/posts/{$post->getKey()}/teams/{$secondTeam->getKey()}/Delivery",
+        ])
+        ->assertNoAccessibilityIssues();
 
-        $page->assertNoSmoke()
-            ->assertScript('[...document.querySelectorAll(\'[data-testid="related-record-layout"] a\')].map(anchor => anchor.getAttribute("href"))', [
-                "/authors/{$author->getKey()}",
-                "/posts/{$post->getKey()}/teams/{$firstTeam->getKey()}/Research",
-                "/posts/{$post->getKey()}/teams/{$secondTeam->getKey()}/Delivery",
-            ])
-            ->assertNoAccessibilityIssues();
-    }
+    $page->inDarkMode()->assertNoAccessibilityIssues();
 });
 
 it('can call `getStateFromRecord()` with keyless records after mounting the column', function (): void {

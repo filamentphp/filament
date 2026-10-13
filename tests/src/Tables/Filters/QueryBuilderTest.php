@@ -5045,30 +5045,40 @@ it('preserves constraint picker groups inside nested OR conditions', function ()
 
     $page = visit('/query-builder-table-test?grouped=1');
 
-    foreach ([$page, $page->inDarkMode()] as $page) {
-        $page->click('button[title="Filter"]');
-        $page->page()->locator($addRule)->click();
+    $page->click('button[title="Filter"]');
+    $page->page()->locator($addRule)->click();
 
-        $page
-            ->assertVisible($contentGroup)
-            ->assertVisible($detailsGroup)
-            ->assertVisible($logicGroup)
-            ->assertNoAccessibilityIssues()
-            ->click($logicGroup . ' button')
-            ->assertMissing($logicGroup)
-            ->assertCount($addRule, 3);
+    $page
+        ->assertVisible($contentGroup)
+        ->assertVisible($detailsGroup)
+        ->assertVisible($logicGroup)
+        ->assertNoAccessibilityIssues()
+        ->click($logicGroup . ' button')
+        ->assertMissing($logicGroup)
+        ->assertCount($addRule, 3);
 
-        $page->page()->locator(':nth-match(' . $addRule . ', 2)')->click();
+    $page->page()->locator(':nth-match(' . $addRule . ', 2)')->click();
 
-        $page
-            ->assertVisible($contentGroup)
-            ->assertVisible($detailsGroup)
-            ->assertVisible($logicGroup)
-            ->click($detailsGroup . ' button')
-            ->assertNoSmoke()
-            ->assertMissing($detailsGroup)
-            ->assertNoAccessibilityIssues();
-    }
+    $page
+        ->assertVisible($contentGroup)
+        ->assertVisible($detailsGroup)
+        ->assertVisible($logicGroup)
+        ->click($detailsGroup . ' button')
+        ->assertNoSmoke()
+        ->assertMissing($detailsGroup)
+        ->assertNoAccessibilityIssues();
+
+    $darkPage = $page->inDarkMode();
+    $darkPage->click('button[title="Filter"]');
+    $darkPage->page()->locator($addRule)->click();
+    $darkPage->assertVisible($logicGroup)
+        ->assertNoAccessibilityIssues()
+        ->click($logicGroup . ' button')
+        ->assertCount($addRule, 3);
+    $darkPage->page()->locator(':nth-match(' . $addRule . ', 2)')->click();
+    $darkPage->click($detailsGroup . ' button')
+        ->assertMissing($detailsGroup)
+        ->assertNoAccessibilityIssues();
 });
 
 describe('rule limits', function () use ($applyQueryBuilderFilter): void {

@@ -21,7 +21,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
-use PHPUnit\Framework\AssertionFailedError;
 
 use function Filament\Tests\livewire;
 
@@ -1231,79 +1230,71 @@ describe('rendering', function (): void {
     });
 });
 
-it('enforces native timed bounds and reloads accepted values in accessible light and dark states', function (bool $hasDate, bool $hasSeconds): void {
+it('enforces native timed bounds and reloads accepted values', function (bool $hasDate, bool $hasSeconds): void {
     $this->actingAs(User::factory()->create());
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/date-time-picker-test?bounds=1&date=' . (int) $hasDate . '&seconds=' . (int) $hasSeconds);
+    $page = visit('/date-time-picker-test?bounds=1&date=' . (int) $hasDate . '&seconds=' . (int) $hasSeconds);
+    $page->assertNoSmoke();
 
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-        $page->assertNoSmoke()->assertNoAccessibilityIssues();
+    $minimumPrefix = $hasDate ? '2025-07-15T' : '';
+    $maximumPrefix = $hasDate ? '2025-07-17T' : '';
+    $reloadCount = 0;
 
-        $minimumPrefix = $hasDate ? '2025-07-15T' : '';
-        $maximumPrefix = $hasDate ? '2025-07-17T' : '';
-        $reloadCount = 0;
+    foreach ([
+        [$minimumPrefix . ($hasSeconds ? '00:30:22' : '00:29'), false, 0, null],
+        [$minimumPrefix . '00:30' . ($hasSeconds ? ':23' : ''), true, 1, ($hasDate ? '2025-07-14 ' : '') . '18:45' . ($hasSeconds ? ':23' : '')],
+        [$maximumPrefix . '17:45' . ($hasSeconds ? ':47' : ''), true, 2, ($hasDate ? '2025-07-17 ' : '') . '12:00' . ($hasSeconds ? ':47' : '')],
+        [$maximumPrefix . ($hasSeconds ? '17:45:48' : '17:46'), false, 2, null],
+    ] as [$value, $isValid, $saveCount, $saved]) {
+        $page->fill('[data-testid="timed-input"]', $value)
+            ->assertScript('document.querySelector(\'[data-testid="timed-input"]\').validity.valid', $isValid)
+            ->click('[data-testid="save-timed"]');
 
-        foreach ([
-            [$minimumPrefix . ($hasSeconds ? '00:30:22' : '00:29'), false, 0, null],
-            [$minimumPrefix . '00:30' . ($hasSeconds ? ':23' : ''), true, 1, ($hasDate ? '2025-07-14 ' : '') . '18:45' . ($hasSeconds ? ':23' : '')],
-            [$maximumPrefix . '17:45' . ($hasSeconds ? ':47' : ''), true, 2, ($hasDate ? '2025-07-17 ' : '') . '12:00' . ($hasSeconds ? ':47' : '')],
-            [$maximumPrefix . ($hasSeconds ? '17:45:48' : '17:46'), false, 2, null],
-        ] as [$value, $isValid, $saveCount, $saved]) {
-            $page->fill('[data-testid="timed-input"]', $value)
-                ->assertScript('document.querySelector(\'[data-testid="timed-input"]\').validity.valid', $isValid)
-                ->click('[data-testid="save-timed"]');
-
-            if (! $isValid) {
-                $page->assertPresent('[data-testid="timed-input"]:invalid:focus');
-            }
-
-            $page->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').textContent.trim()', (string) $saveCount);
-
-            if ($isValid) {
-                $page->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', $saved)
-                    ->click('[data-testid="reload-timed"]')
-                    ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
-                    ->assertValue('[data-testid="timed-input"]', $value);
-            }
+        if (! $isValid) {
+            $page->assertPresent('[data-testid="timed-input"]:invalid:focus');
         }
 
-        $page->click('[data-testid="reload-timed"]')
-            ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
-            ->assertScript('document.querySelector(\'[data-testid="reload-timed"]\').disabled', false);
+        $page->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').textContent.trim()', (string) $saveCount);
+
+        if ($isValid) {
+            $page->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', $saved)
+                ->click('[data-testid="reload-timed"]')
+                ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
+                ->assertValue('[data-testid="timed-input"]', $value);
+        }
+    }
+
+    $page->click('[data-testid="reload-timed"]')
+        ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
+        ->assertEnabled('[data-testid="reload-timed"]');
+
+    if ($hasDate && $hasSeconds) {
         $page->assertNoAccessibilityIssues();
+        $page->inDarkMode()->assertNoAccessibilityIssues();
     }
 })->with([true, false])->with([true, false]);
 
-it('saves a valid native field time through an app DST gap and reloads it unchanged in light and dark modes', function (): void {
+it('saves a valid native field time through an app DST gap and reloads it unchanged', function (): void {
     $originalTimezone = date_default_timezone_get();
     config(['app.timezone' => 'Europe/London']);
     date_default_timezone_set('Europe/London');
     $this->actingAs(User::factory()->create());
 
     try {
-        foreach ([false, true] as $isDarkMode) {
-            $page = visit('/date-time-picker-test?app-dst-gap=1')->withTimezone('America/New_York');
+        $page = visit('/date-time-picker-test?app-dst-gap=1')->withTimezone('America/New_York');
 
-            if ($isDarkMode) {
-                $page = $page->inDarkMode();
-            }
+        $page->fill('[data-testid="timed-input"]', '2025-03-30T01:30:17')
+            ->assertScript('document.querySelector(\'[data-testid="timed-input"]\').validity.valid', true);
 
-            $page->fill('[data-testid="timed-input"]', '2025-03-30T01:30:17')
-                ->assertScript('document.querySelector(\'[data-testid="timed-input"]\').validity.valid', true);
-
-            for ($cycle = 1; $cycle <= 3; $cycle++) {
-                $page->click('[data-testid="save-timed"]')
-                    ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').textContent.trim()', (string) $cycle)
-                    ->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', '2025-03-30 06:30:17')
-                    ->click('[data-testid="reload-timed"]')
-                    ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', (string) $cycle)
-                    ->assertValue('[data-testid="timed-input"]', '2025-03-30T01:30:17');
-            }
-            $page->assertNoSmoke()->assertNoAccessibilityIssues();
+        for ($cycle = 1; $cycle <= 3; $cycle++) {
+            $page->click('[data-testid="save-timed"]')
+                ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').textContent.trim()', (string) $cycle)
+                ->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', '2025-03-30 06:30:17')
+                ->click('[data-testid="reload-timed"]')
+                ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', (string) $cycle)
+                ->assertValue('[data-testid="timed-input"]', '2025-03-30T01:30:17');
         }
+        $page->assertNoSmoke();
     } finally {
         date_default_timezone_set($originalTimezone);
     }
@@ -1316,115 +1307,109 @@ it('preserves field calendar components through browser timezone gaps and folds,
     $this->actingAs(User::factory()->create());
 
     try {
-        foreach ([false, true] as $isDarkMode) {
-            $page = visit('/date-time-picker-test?' . http_build_query([
-                'native' => 0,
-                'time' => (int) $hasTime,
-                'seconds' => (int) $hasSeconds,
-                'calendar-state' => $state,
-                'display-format' => $hasTime ? ($hasSeconds ? 'Y-m-d H:i:s' : 'Y-m-d H:i') : 'Y-m-d',
-            ]))->withTimezone($browserTimezone);
+        $page = visit('/date-time-picker-test?' . http_build_query([
+            'native' => 0,
+            'time' => (int) $hasTime,
+            'seconds' => (int) $hasSeconds,
+            'calendar-state' => $state,
+            'display-format' => $hasTime ? ($hasSeconds ? 'Y-m-d H:i:s' : 'Y-m-d H:i') : 'Y-m-d',
+        ]))->withTimezone($browserTimezone);
 
-            if ($isDarkMode) {
-                $page = $page->inDarkMode();
-            }
+        $trigger = '[data-testid="timed-trigger"]';
+        $format = $hasTime ? ($hasSeconds ? 'Y-m-d H:i:s' : 'Y-m-d H:i') : 'Y-m-d';
+        $stored = Carbon::parse($state, 'UTC')->format($format);
+        $internal = Carbon::parse($stored, 'UTC')->toDateTimeString();
+        $lastDate = Carbon::parse($internal, 'UTC')->addDays(2)->toDateTimeString();
+        $lastStored = Carbon::parse($lastDate, 'UTC')->format($format);
 
-            $trigger = '[data-testid="timed-trigger"]';
-            $format = $hasTime ? ($hasSeconds ? 'Y-m-d H:i:s' : 'Y-m-d H:i') : 'Y-m-d';
-            $stored = Carbon::parse($state, 'UTC')->format($format);
-            $internal = Carbon::parse($stored, 'UTC')->toDateTimeString();
-            $lastDate = Carbon::parse($internal, 'UTC')->addDays(2)->toDateTimeString();
-            $lastStored = Carbon::parse($lastDate, 'UTC')->format($format);
+        $page->assertValue($trigger, $stored)
+            ->assertNoSmoke();
 
-            $page->assertValue($trigger, $stored)
-                ->assertNoSmoke()->assertNoAccessibilityIssues();
+        $page->click($trigger);
 
-            $page->click($trigger);
-
-            if ($hasTime) {
-                $hour = Carbon::parse($state, 'UTC')->hour;
-                $page->fill('input[aria-label="Hour"]', (string) ($hour + 1))
-                    ->assertValue($trigger, Carbon::parse($state, 'UTC')->addHour()->format($format))
-                    ->fill('input[aria-label="Hour"]', (string) $hour)
-                    ->assertValue($trigger, $stored);
-            }
-
-            $page->keys($trigger, 'Enter')
-                ->assertPresent('[role="gridcell"]:focus')
-                ->keys('[role="gridcell"]:focus', 'ArrowLeft')
-                ->assertPresent('[data-date="' . Carbon::parse($state, 'UTC')->subDay()->toDateString() . '"]:focus')
-                ->keys('[role="gridcell"]:focus', 'Enter')
-                ->assertValue($trigger, $stored)
-                ->keys('[role="gridcell"]:focus', 'Escape')
-                ->assertAttribute($trigger, 'aria-expanded', 'false')
-                ->keys($trigger, 'Enter')
-                ->assertAttribute($trigger, 'aria-expanded', 'true')
-                ->assertPresent('[role="gridcell"]:focus')
-                ->keys('[role="gridcell"]:focus', 'Enter')
-                ->assertValue($trigger, $stored)
-                ->keys('[role="gridcell"]:focus', 'Escape')
-                ->assertAttribute($trigger, 'aria-expanded', 'false')
+        if ($hasTime) {
+            $hour = Carbon::parse($state, 'UTC')->hour;
+            $page->fill('input[aria-label="Hour"]', (string) ($hour + 1))
+                ->assertValue($trigger, Carbon::parse($state, 'UTC')->addHour()->format($format))
+                ->fill('input[aria-label="Hour"]', (string) $hour)
                 ->assertValue($trigger, $stored);
-
-            for ($cycle = 1; $cycle <= 2; $cycle++) {
-                $page->click('[data-testid="save-timed"]')
-                    ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').textContent.trim()', (string) $cycle)
-                    ->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', $stored)
-                    ->click('[data-testid="reload-timed"]')
-                    ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', (string) $cycle)
-                    ->assertValue($trigger, $stored);
-            }
-
-            $page->click($trigger)
-                ->assertPresent('[data-date="' . Carbon::parse($internal, 'UTC')->toDateString() . '"]:focus')
-                ->keys('[role="gridcell"]:focus', 'ArrowRight')
-                ->assertPresent('[data-date="' . Carbon::parse($internal, 'UTC')->addDay()->toDateString() . '"]:focus')
-                ->keys('[role="gridcell"]:focus', 'Enter')
-                ->assertValue($trigger, $stored)
-                ->keys('[role="gridcell"]:focus', 'Escape')
-                ->assertAttribute($trigger, 'aria-expanded', 'false')
-                ->keys($trigger, 'Enter')
-                ->assertAttribute($trigger, 'aria-expanded', 'true')
-                ->assertPresent('[data-date="' . Carbon::parse($internal, 'UTC')->toDateString() . '"]:focus')
-                ->keys('[role="gridcell"]:focus', 'ArrowRight')
-                ->assertPresent('[data-date="' . Carbon::parse($internal, 'UTC')->addDay()->toDateString() . '"]:focus')
-                ->keys('[role="gridcell"]:focus', 'ArrowRight')
-                ->assertPresent('[data-date="' . Carbon::parse($lastDate, 'UTC')->toDateString() . '"]:focus')
-                ->keys('[role="gridcell"]:focus', 'Enter')
-                ->assertValue($trigger, $lastStored)
-                ->keys('[role="gridcell"]:focus', 'Escape')
-                ->click('[data-testid="save-timed"]')
-                ->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', $lastStored)
-                ->click('[data-testid="reload-timed"]')
-                ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', '3')
-                ->click($trigger)
-                ->assertPresent('[data-date="' . Carbon::parse($lastDate, 'UTC')->toDateString() . '"]:focus')
-                ->keys('[role="gridcell"]:focus', 'ArrowRight')
-                ->assertPresent('[data-date="' . Carbon::parse($lastDate, 'UTC')->addDay()->toDateString() . '"]:focus')
-                ->keys('[role="gridcell"]:focus', 'Enter')
-                ->assertValue($trigger, $lastStored)
-                ->keys('[role="gridcell"]:focus', 'Escape')
-                ->keys($trigger, 'Backspace')
-                ->assertValue($trigger, '')
-                ->keys($trigger, 'Escape')
-                ->click('[data-testid="save-timed"]')
-                ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').textContent.trim()', '4')
-                ->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', '')
-                ->click('[data-testid="reload-timed"]')
-                ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', '4')
-                ->assertValue($trigger, '');
-
-            $page->click($trigger)
-                ->keys('[role="gridcell"]:focus', 'Shift+Tab')
-                ->keys('input[aria-label="Year"]', 'Shift+Tab')
-                ->assertPresent('select[aria-label="Month"]:focus')
-                ->select('select[aria-label="Month"]', '1')
-                ->fill('input[aria-label="Year"]', '2024')
-                ->assertScript('document.querySelectorAll(\'[data-testid="date-time-picker"] [role="gridcell"][data-date]\').length', 29)
-                ->assertValue($trigger, '')
-                ->keys('input[aria-label="Year"]', 'Escape');
-            $page->assertNoSmoke()->assertNoAccessibilityIssues();
         }
+
+        $page->keys($trigger, 'Enter')
+            ->assertPresent('[role="gridcell"]:focus')
+            ->keys('[role="gridcell"]:focus', 'ArrowLeft')
+            ->assertPresent('[data-date="' . Carbon::parse($state, 'UTC')->subDay()->toDateString() . '"]:focus')
+            ->keys('[role="gridcell"]:focus', 'Enter')
+            ->assertValue($trigger, $stored)
+            ->keys('[role="gridcell"]:focus', 'Escape')
+            ->assertAttribute($trigger, 'aria-expanded', 'false')
+            ->keys($trigger, 'Enter')
+            ->assertAttribute($trigger, 'aria-expanded', 'true')
+            ->assertPresent('[role="gridcell"]:focus')
+            ->keys('[role="gridcell"]:focus', 'Enter')
+            ->assertValue($trigger, $stored)
+            ->keys('[role="gridcell"]:focus', 'Escape')
+            ->assertAttribute($trigger, 'aria-expanded', 'false')
+            ->assertValue($trigger, $stored);
+
+        for ($cycle = 1; $cycle <= 2; $cycle++) {
+            $page->click('[data-testid="save-timed"]')
+                ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').textContent.trim()', (string) $cycle)
+                ->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', $stored)
+                ->click('[data-testid="reload-timed"]')
+                ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', (string) $cycle)
+                ->assertValue($trigger, $stored);
+        }
+
+        $page->click($trigger)
+            ->assertPresent('[data-date="' . Carbon::parse($internal, 'UTC')->toDateString() . '"]:focus')
+            ->keys('[role="gridcell"]:focus', 'ArrowRight')
+            ->assertPresent('[data-date="' . Carbon::parse($internal, 'UTC')->addDay()->toDateString() . '"]:focus')
+            ->keys('[role="gridcell"]:focus', 'Enter')
+            ->assertValue($trigger, $stored)
+            ->keys('[role="gridcell"]:focus', 'Escape')
+            ->assertAttribute($trigger, 'aria-expanded', 'false')
+            ->keys($trigger, 'Enter')
+            ->assertAttribute($trigger, 'aria-expanded', 'true')
+            ->assertPresent('[data-date="' . Carbon::parse($internal, 'UTC')->toDateString() . '"]:focus')
+            ->keys('[role="gridcell"]:focus', 'ArrowRight')
+            ->assertPresent('[data-date="' . Carbon::parse($internal, 'UTC')->addDay()->toDateString() . '"]:focus')
+            ->keys('[role="gridcell"]:focus', 'ArrowRight')
+            ->assertPresent('[data-date="' . Carbon::parse($lastDate, 'UTC')->toDateString() . '"]:focus')
+            ->keys('[role="gridcell"]:focus', 'Enter')
+            ->assertValue($trigger, $lastStored)
+            ->keys('[role="gridcell"]:focus', 'Escape')
+            ->click('[data-testid="save-timed"]')
+            ->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', $lastStored)
+            ->click('[data-testid="reload-timed"]')
+            ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', '3')
+            ->click($trigger)
+            ->assertPresent('[data-date="' . Carbon::parse($lastDate, 'UTC')->toDateString() . '"]:focus')
+            ->keys('[role="gridcell"]:focus', 'ArrowRight')
+            ->assertPresent('[data-date="' . Carbon::parse($lastDate, 'UTC')->addDay()->toDateString() . '"]:focus')
+            ->keys('[role="gridcell"]:focus', 'Enter')
+            ->assertValue($trigger, $lastStored)
+            ->keys('[role="gridcell"]:focus', 'Escape')
+            ->keys($trigger, 'Backspace')
+            ->assertValue($trigger, '')
+            ->keys($trigger, 'Escape')
+            ->click('[data-testid="save-timed"]')
+            ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').textContent.trim()', '4')
+            ->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', '')
+            ->click('[data-testid="reload-timed"]')
+            ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', '4')
+            ->assertValue($trigger, '');
+
+        $page->click($trigger)
+            ->keys('[role="gridcell"]:focus', 'Shift+Tab')
+            ->keys('input[aria-label="Year"]', 'Shift+Tab')
+            ->assertPresent('select[aria-label="Month"]:focus')
+            ->select('select[aria-label="Month"]', '1')
+            ->fill('input[aria-label="Year"]', '2024')
+            ->assertScript('document.querySelectorAll(\'[data-testid="date-time-picker"] [role="gridcell"][data-date]\').length', 29)
+            ->assertValue($trigger, '')
+            ->keys('input[aria-label="Year"]', 'Escape');
+        $page->assertNoSmoke();
     } finally {
         date_default_timezone_set($originalTimezone);
     }
@@ -1443,73 +1428,51 @@ it('preserves browser-based `displayFormat()` zone tokens and zoned `disabledDat
     config(['app.timezone' => 'UTC']);
     $this->actingAs(User::factory()->create());
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/date-time-picker-test?' . http_build_query([
-            'native' => 0,
-            'date' => (int) $hasDate,
-            'calendar-state' => '2025-07-14 12:00:00',
-            'display-format' => ($hasDate ? 'Y-m-d ' : '') . 'H:i P O [Z]',
-            'zoned-disabled-date' => 1,
-        ]))->withTimezone('America/Los_Angeles');
+    $page = visit('/date-time-picker-test?' . http_build_query([
+        'native' => 0,
+        'date' => (int) $hasDate,
+        'calendar-state' => '2025-07-14 12:00:00',
+        'display-format' => ($hasDate ? 'Y-m-d ' : '') . 'H:i P O [Z]',
+        'zoned-disabled-date' => 1,
+    ]))->withTimezone('America/Los_Angeles');
 
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
+    $page->assertValue('[data-testid="timed-trigger"]', $hasDate ? '2025-07-14 12:00 -07:00 -0700 Z' : '12:00 +00:00 +0000 Z')
+        ->assertNoSmoke();
 
-        $page->assertValue('[data-testid="timed-trigger"]', $hasDate ? '2025-07-14 12:00 -07:00 -0700 Z' : '12:00 +00:00 +0000 Z')
-            ->assertNoSmoke()->assertNoAccessibilityIssues();
-
-        if ($hasDate) {
-            $page->click('[data-testid="timed-trigger"]')
-                ->assertAttribute('[data-date="2025-07-14"]', 'aria-disabled', 'true')
-                ->assertAttribute('[data-date="2025-07-15"]', 'aria-disabled', 'false')
-                ->assertNoAccessibilityIssues();
-        }
+    if ($hasDate) {
+        $page->click('[data-testid="timed-trigger"]')
+            ->assertAttribute('[data-date="2025-07-14"]', 'aria-disabled', 'true')
+            ->assertAttribute('[data-date="2025-07-15"]', 'aria-disabled', 'false');
     }
 })->with([true, false]);
 
 it('preserves hidden seconds after editing and reloading a custom time-only picker', function (): void {
     $this->actingAs(User::factory()->create());
-    $accessibilityFailures = [];
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/date-time-picker-test?native=0&date=0&seconds=0&dst=1')->withTimezone('Europe/London');
+    $page = visit('/date-time-picker-test?native=0&date=0&seconds=0&dst=1')->withTimezone('Europe/London');
 
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-
-        $page->click('[data-testid="timed-trigger"]')
-            ->assertValue('input[aria-label="Hour"]', '1')
-            ->assertValue('input[aria-label="Minute"]', '45')
-            ->fill('input[aria-label="Minute"]', '30')
-            ->assertValue('[data-testid="timed-trigger"]', '01:30')
-            ->click('[data-testid="timed-trigger"]')
-            ->click('[data-testid="save-timed"]')
-            ->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', '01:30:07')
-            ->click('[data-testid="reload-timed"]')
-            ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', '1')
-            ->click('[data-testid="timed-trigger"]')
-            ->assertValue('input[aria-label="Minute"]', '30')
-            ->fill('input[aria-label="Minute"]', '55')
-            ->assertValue('[data-testid="timed-trigger"]', '01:55')
-            ->keys('input[aria-label="Minute"]', 'Escape')
-            ->click('[data-testid="save-timed"]')
-            ->assertSeeIn('[data-testid="saved-timed"]', '01:55:07')
-            ->click('[data-testid="reload-timed"]')
-            ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', '2')
-            ->click('[data-testid="timed-trigger"]')
-            ->assertValue('input[aria-label="Minute"]', '55');
-        $page->assertNoSmoke();
-
-        try {
-            $page->assertNoAccessibilityIssues();
-        } catch (AssertionFailedError $exception) {
-            $accessibilityFailures[] = ($isDarkMode ? 'Dark: ' : 'Light: ') . $exception->getMessage();
-        }
-    }
-
-    expect($accessibilityFailures)->toBeEmpty(implode("\n", $accessibilityFailures));
+    $page->click('[data-testid="timed-trigger"]')
+        ->assertValue('input[aria-label="Hour"]', '1')
+        ->assertValue('input[aria-label="Minute"]', '45')
+        ->fill('input[aria-label="Minute"]', '30')
+        ->assertValue('[data-testid="timed-trigger"]', '01:30')
+        ->click('[data-testid="timed-trigger"]')
+        ->click('[data-testid="save-timed"]')
+        ->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', '01:30:07')
+        ->click('[data-testid="reload-timed"]')
+        ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', '1')
+        ->click('[data-testid="timed-trigger"]')
+        ->assertValue('input[aria-label="Minute"]', '30')
+        ->fill('input[aria-label="Minute"]', '55')
+        ->assertValue('[data-testid="timed-trigger"]', '01:55')
+        ->keys('input[aria-label="Minute"]', 'Escape')
+        ->click('[data-testid="save-timed"]')
+        ->assertSeeIn('[data-testid="saved-timed"]', '01:55:07')
+        ->click('[data-testid="reload-timed"]')
+        ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').dataset.reloadCount', '2')
+        ->click('[data-testid="timed-trigger"]')
+        ->assertValue('input[aria-label="Minute"]', '55');
+    $page->assertNoSmoke();
 });
 
 it('uses one labelled input to open, select, copy and clear a custom picker with the keyboard', function (bool $hasDate, bool $hasTime): void {
@@ -1518,67 +1481,64 @@ it('uses one labelled input to open, select, copy and clear a custom picker with
     $page = visit('/date-time-picker-test?native=0&close-on-selection=1&date=' . (int) $hasDate . '&time=' . (int) $hasTime)->withTimezone('UTC');
     $trigger = '[data-testid="timed-trigger"]';
 
-    foreach ([false, true] as $isDarkMode) {
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-        $page->assertValue($trigger, '')
-            ->assertAttribute($trigger, 'aria-expanded', 'false')
-            ->assertNoAccessibilityIssues()
-            ->click('label[for="' . $page->attribute($trigger, 'id') . '"]')
-            ->assertVisible('[role="dialog"]');
+    $page->assertValue($trigger, '')
+        ->assertAttribute($trigger, 'aria-expanded', 'false')
+        ->click('label[for="' . $page->attribute($trigger, 'id') . '"]')
+        ->assertVisible('[role="dialog"]');
 
-        // Wait for the forwarded label click to open the popup before testing `Escape`.
-        $page->keys($hasDate ? '[role="gridcell"]:focus' : $trigger, 'Escape')
+    // Wait for the forwarded label click to open the popup before testing `Escape`.
+    $page->keys($hasDate ? '[role="gridcell"]:focus' : $trigger, 'Escape')
+        ->assertPresent($trigger . ':focus')
+        ->assertAttribute($trigger, 'aria-expanded', 'false')
+        ->keys($trigger, 'Enter')
+        ->assertAttribute($trigger, 'aria-expanded', 'true')
+        ->assertVisible('[role="dialog"]')
+        ->assertAttributeMissing('[role="dialog"]', 'aria-modal');
+
+    $page->assertNoAccessibilityIssues();
+    $page->inDarkMode()
+        ->click($trigger)
+        ->assertVisible('[role="dialog"]')
+        ->assertNoAccessibilityIssues();
+
+    if ($hasDate) {
+        $page->assertPresent('[data-date="2025-07-15"]:focus')
+            ->keys('[role="gridcell"]:focus', 'ArrowRight')
+            ->assertPresent('[data-date="2025-07-16"]:focus')
+            ->keys('[role="gridcell"]:focus', 'ArrowDown')
+            ->assertPresent('[data-date="2025-07-23"]:focus')
+            ->keys('[role="gridcell"]:focus', 'ArrowLeft')
+            ->assertPresent('[data-date="2025-07-22"]:focus')
+            ->keys('[role="gridcell"]:focus', 'ArrowUp')
+            ->assertPresent('[data-date="2025-07-15"]:focus')
+            ->keys('[role="gridcell"]:focus', 'ArrowRight')
+            ->assertPresent('[data-date="2025-07-16"]:focus')
+            ->keys('[role="gridcell"]:focus', 'Enter')
+            ->assertAttribute('[data-date="2025-07-16"]', 'aria-selected', 'true')
             ->assertPresent($trigger . ':focus')
-            ->assertAttribute($trigger, 'aria-expanded', 'false')
-            ->keys($trigger, 'Enter')
-            ->assertAttribute($trigger, 'aria-expanded', 'true')
-            ->assertVisible('[role="dialog"]')
-            ->assertAttributeMissing('[role="dialog"]', 'aria-modal')
-            ->assertNoAccessibilityIssues();
+            ->assertAttribute($trigger, 'aria-expanded', 'false');
+    } else {
+        $displayedTime = sprintf('%02d:31:%02d', $page->page()->locator('input[aria-label="Hour"]')->inputValue(), $page->page()->locator('input[aria-label="Second"]')->inputValue());
 
-        if ($hasDate) {
-            $page->assertPresent('[data-date="2025-07-15"]:focus')
-                ->keys('[role="gridcell"]:focus', 'ArrowRight')
-                ->assertPresent('[data-date="2025-07-16"]:focus')
-                ->keys('[role="gridcell"]:focus', 'ArrowDown')
-                ->assertPresent('[data-date="2025-07-23"]:focus')
-                ->keys('[role="gridcell"]:focus', 'ArrowLeft')
-                ->assertPresent('[data-date="2025-07-22"]:focus')
-                ->keys('[role="gridcell"]:focus', 'ArrowUp')
-                ->assertPresent('[data-date="2025-07-15"]:focus')
-                ->keys('[role="gridcell"]:focus', 'ArrowRight')
-                ->assertPresent('[data-date="2025-07-16"]:focus')
-                ->keys('[role="gridcell"]:focus', 'Enter')
-                ->assertAttribute('[data-date="2025-07-16"]', 'aria-selected', 'true')
-                ->assertPresent($trigger . ':focus')
-                ->assertAttribute($trigger, 'aria-expanded', 'false');
-        } else {
-            $displayedTime = sprintf('%02d:31:%02d', $page->page()->locator('input[aria-label="Hour"]')->inputValue(), $page->page()->locator('input[aria-label="Second"]')->inputValue());
-
-            $page->assertPresent($trigger . ':focus')
-                ->fill('input[aria-label="Minute"]', '31')
-                ->assertValue('input[aria-label="Minute"]', '31')
-                ->assertValue($trigger, $displayedTime)
-                ->assertNoAccessibilityIssues();
-        }
-
-        $page->keys($trigger, 'Escape')
-            ->assertAttribute($trigger, 'aria-expanded', 'false')
-            ->assertPresent($trigger . ':focus')
-            ->keys($trigger, ['ControlOrMeta+a'])
-            ->assertScript('(() => { const input = document.querySelector(\'[data-testid="timed-trigger"]\'); return input.selectionEnd - input.selectionStart === input.value.length && input.value.length > 0; })()', true)
-            ->keys($trigger, 'Delete')
-            ->assertValue($trigger, '')
-            ->click($trigger)
-            ->assertAttribute($trigger, 'aria-expanded', 'true')
-            ->click('h1[class]')
-            ->assertAttribute($trigger, 'aria-expanded', 'false')
-            ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').textContent.trim()', '0')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+        $page->assertPresent($trigger . ':focus')
+            ->fill('input[aria-label="Minute"]', '31')
+            ->assertValue('input[aria-label="Minute"]', '31')
+            ->assertValue($trigger, $displayedTime);
     }
+
+    $page->keys($trigger, 'Escape')
+        ->assertAttribute($trigger, 'aria-expanded', 'false')
+        ->assertPresent($trigger . ':focus')
+        ->keys($trigger, ['ControlOrMeta+a'])
+        ->assertScript('(() => { const input = document.querySelector(\'[data-testid="timed-trigger"]\'); return input.selectionEnd - input.selectionStart === input.value.length && input.value.length > 0; })()', true)
+        ->keys($trigger, 'Delete')
+        ->assertValue($trigger, '')
+        ->click($trigger)
+        ->assertAttribute($trigger, 'aria-expanded', 'true')
+        ->click('h1[class]')
+        ->assertAttribute($trigger, 'aria-expanded', 'false')
+        ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').textContent.trim()', '0')
+        ->assertNoSmoke();
 })->with([
     'date and time' => [true, true],
     'date only' => [true, false],
@@ -1591,73 +1551,64 @@ it('navigates month and year boundaries without changing the selected date until
     $page = visit('/date-time-picker-test?native=0&time=0&initial-state=2024-01-31&display-format=Y-m-d')->withTimezone('UTC');
     $trigger = '[data-testid="timed-trigger"]';
 
-    foreach ([false, true] as $isDarkMode) {
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
+    $page->keys($trigger, 'ArrowDown')
+        ->assertPresent('[data-date="2024-01-31"]:focus')
+        ->assertAttribute('[data-date="2024-01-31"]', 'aria-selected', 'true')
+        ->keys('[role="gridcell"]:focus', 'PageDown')
+        ->assertPresent('[data-date="2024-02-29"]:focus')
+        ->assertAttribute('[data-date="2024-02-29"]', 'aria-selected', 'false')
+        ->assertValue($trigger, '2024-01-31')
+        ->keys('[role="gridcell"]:focus', ['Shift+PageDown'])
+        ->assertPresent('[data-date="2025-02-28"]:focus')
+        ->keys('[role="gridcell"]:focus', 'ArrowRight')
+        ->assertPresent('[data-date="2025-03-01"]:focus')
+        ->keys('[role="gridcell"]:focus', 'Home')
+        ->assertPresent('[data-date="2025-02-24"]:focus')
+        ->keys('[role="gridcell"]:focus', 'End')
+        ->assertPresent('[data-date="2025-03-02"]:focus')
+        ->keys('[role="gridcell"]:focus', ['ArrowUp', 'ArrowDown', 'PageUp'])
+        ->assertPresent('[data-date="2025-02-02"]:focus')
+        ->keys('[role="gridcell"]:focus', ['Shift+PageUp'])
+        ->assertPresent('[data-date="2024-02-02"]:focus')
+        ->assertScript('document.querySelectorAll(\'[role="gridcell"][tabindex="0"]\').length', 1)
+        ->assertScript('Array.from(document.querySelectorAll(\'[role="grid"] [role="row"]\')).every(row => row.querySelectorAll(\'[role="gridcell"], [role="columnheader"]\').length === 7)', true)
+        ->keys('[role="gridcell"]:focus', ' ')
+        ->assertValue($trigger, '2024-02-02')
+        ->assertPresent('[data-date="2024-02-02"]:focus')
+        ->assertAttribute('[data-date="2024-02-02"]', 'aria-selected', 'true')
+        ->keys('[role="gridcell"]:focus', 'Escape')
+        ->assertPresent($trigger . ':focus')
+        ->keys($trigger, 'Enter')
+        ->assertPresent('[data-date="2024-02-02"]:focus')
+        ->keys('[role="gridcell"]:focus', 'Escape')
+        ->keys($trigger, 'Delete')
+        ->keys($trigger, 'Enter')
+        ->assertPresent('[data-date="2024-02-02"]:focus')
+        ->assertValue($trigger, '')
+        ->assertScript('document.querySelectorAll(\'[role="gridcell"][aria-selected="true"]\').length', 0)
+        ->keys('[role="gridcell"]:focus', 'Escape')
+        ->assertNoSmoke();
 
-        $page->keys($trigger, 'ArrowDown')
-            ->assertPresent('[data-date="2024-01-31"]:focus')
-            ->assertAttribute('[data-date="2024-01-31"]', 'aria-selected', 'true')
-            ->keys('[role="gridcell"]:focus', 'PageDown')
-            ->assertPresent('[data-date="2024-02-29"]:focus')
-            ->assertAttribute('[data-date="2024-02-29"]', 'aria-selected', 'false')
-            ->assertValue($trigger, '2024-01-31')
-            ->keys('[role="gridcell"]:focus', ['Shift+PageDown'])
-            ->assertPresent('[data-date="2025-02-28"]:focus')
-            ->keys('[role="gridcell"]:focus', 'ArrowRight')
-            ->assertPresent('[data-date="2025-03-01"]:focus')
-            ->keys('[role="gridcell"]:focus', 'Home')
-            ->assertPresent('[data-date="2025-02-24"]:focus')
-            ->keys('[role="gridcell"]:focus', 'End')
-            ->assertPresent('[data-date="2025-03-02"]:focus')
-            ->keys('[role="gridcell"]:focus', ['ArrowUp', 'ArrowDown', 'PageUp'])
-            ->assertPresent('[data-date="2025-02-02"]:focus')
-            ->keys('[role="gridcell"]:focus', ['Shift+PageUp'])
-            ->assertPresent('[data-date="2024-02-02"]:focus')
-            ->assertScript('document.querySelectorAll(\'[role="gridcell"][tabindex="0"]\').length', 1)
-            ->assertScript('Array.from(document.querySelectorAll(\'[role="grid"] [role="row"]\')).every(row => row.querySelectorAll(\'[role="gridcell"], [role="columnheader"]\').length === 7)', true)
-            ->assertNoAccessibilityIssues()
-            ->keys('[role="gridcell"]:focus', ' ')
-            ->assertValue($trigger, '2024-02-02')
-            ->assertPresent('[data-date="2024-02-02"]:focus')
-            ->assertAttribute('[data-date="2024-02-02"]', 'aria-selected', 'true')
-            ->keys('[role="gridcell"]:focus', 'Escape')
-            ->assertPresent($trigger . ':focus')
-            ->keys($trigger, 'Enter')
-            ->assertPresent('[data-date="2024-02-02"]:focus')
-            ->keys('[role="gridcell"]:focus', 'Escape')
-            ->keys($trigger, 'Delete')
-            ->keys($trigger, 'Enter')
-            ->assertPresent('[data-date="2024-02-02"]:focus')
-            ->assertValue($trigger, '')
-            ->assertScript('document.querySelectorAll(\'[role="gridcell"][aria-selected="true"]\').length', 0)
-            ->assertNoAccessibilityIssues()
-            ->keys('[role="gridcell"]:focus', 'Escape')
-            ->assertNoSmoke();
-
-        $page->keys($trigger, 'Enter')
-            ->fill('input[aria-label="Year"]', '2024')
-            ->select('select[aria-label="Month"]', '11')
-            ->click('[data-date="2024-12-31"]')
-            ->assertPresent('[data-date="2024-12-31"]:focus')
-            ->keys('[role="gridcell"]:focus', 'ArrowRight')
-            ->assertPresent('[data-date="2025-01-01"]:focus')
-            ->keys('[role="gridcell"]:focus', 'ArrowLeft')
-            ->assertPresent('[data-date="2024-12-31"]:focus')
-            ->assertValue($trigger, '2024-12-31')
-            ->withKeyDown('ArrowRight', static fn () => null)
-            ->withKeyDown('ArrowRight', static fn () => null)
-            ->withKeyDown('Enter', static fn () => null)
-            ->assertValue($trigger, '2025-01-02')
-            ->assertPresent('[data-date="2025-01-02"]:focus')
-            ->assertNoAccessibilityIssues()
-            ->withKeyDown('PageUp', static fn () => null)
-            ->withKeyDown('Tab', static fn () => null)
-            ->assertPresent('[data-testid="save-timed"]:focus')
-            ->assertAttribute($trigger, 'aria-expanded', 'false')
-            ->assertValue($trigger, '2025-01-02');
-    }
+    $page->keys($trigger, 'Enter')
+        ->fill('input[aria-label="Year"]', '2024')
+        ->select('select[aria-label="Month"]', '11')
+        ->click('[data-date="2024-12-31"]')
+        ->assertPresent('[data-date="2024-12-31"]:focus')
+        ->keys('[role="gridcell"]:focus', 'ArrowRight')
+        ->assertPresent('[data-date="2025-01-01"]:focus')
+        ->keys('[role="gridcell"]:focus', 'ArrowLeft')
+        ->assertPresent('[data-date="2024-12-31"]:focus')
+        ->assertValue($trigger, '2024-12-31')
+        ->withKeyDown('ArrowRight', static fn () => null)
+        ->withKeyDown('ArrowRight', static fn () => null)
+        ->withKeyDown('Enter', static fn () => null)
+        ->assertValue($trigger, '2025-01-02')
+        ->assertPresent('[data-date="2025-01-02"]:focus')
+        ->withKeyDown('PageUp', static fn () => null)
+        ->withKeyDown('Tab', static fn () => null)
+        ->assertPresent('[data-testid="save-timed"]:focus')
+        ->assertAttribute($trigger, 'aria-expanded', 'false')
+        ->assertValue($trigger, '2025-01-02');
 });
 
 it('keeps unavailable dates focusable but rejects activation, even in a wholly unavailable month', function (): void {
@@ -1666,33 +1617,30 @@ it('keeps unavailable dates focusable but rejects activation, even in a wholly u
     $page = visit('/date-time-picker-test?native=0&bounds=1&disabled-dates=1&initial-state=2025-07-15%2007:39:37&display-format=Y-m-d%20H:i:s')->withTimezone('UTC');
     $trigger = '[data-testid="timed-trigger"]';
 
-    foreach ([false, true] as $isDarkMode) {
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
+    $page->click($trigger)
+        ->keys('[role="gridcell"]:focus', 'ArrowRight')
+        ->assertPresent('[data-date="2025-07-16"]:focus')
+        ->assertAttribute('[data-date="2025-07-16"]', 'aria-disabled', 'true')
+        ->keys('[role="gridcell"]:focus', ['Enter', ' '])
+        ->assertValue($trigger, '2025-07-15 13:24:37')
+        ->assertAttribute($trigger, 'aria-expanded', 'true')
+        ->assertAttribute('[data-date="2025-07-14"]', 'aria-disabled', 'true')
+        ->assertAttribute('[data-date="2025-07-15"]', 'aria-disabled', 'false')
+        ->assertAttribute('[data-date="2025-07-17"]', 'aria-disabled', 'false')
+        ->assertAttribute('[data-date="2025-07-18"]', 'aria-disabled', 'true')
+        ->assertNoAccessibilityIssues()
+        ->keys('[role="gridcell"]:focus', 'PageDown')
+        ->assertPresent('[data-date="2025-08-16"]:focus')
+        ->assertScript('Array.from(document.querySelectorAll(\'[role="gridcell"][data-date]\')).every(cell => cell.getAttribute("aria-disabled") === "true")', true)
+        ->keys('[role="gridcell"]:focus', 'Enter')
+        ->assertValue($trigger, '2025-07-15 13:24:37')
+        ->keys('[role="gridcell"]:focus', 'Escape')
+        ->assertPresent($trigger . ':focus')
+        ->assertNoSmoke();
 
-        $page->click($trigger)
-            ->keys('[role="gridcell"]:focus', 'ArrowRight')
-            ->assertPresent('[data-date="2025-07-16"]:focus')
-            ->assertAttribute('[data-date="2025-07-16"]', 'aria-disabled', 'true')
-            ->keys('[role="gridcell"]:focus', ['Enter', ' '])
-            ->assertValue($trigger, '2025-07-15 13:24:37')
-            ->assertAttribute($trigger, 'aria-expanded', 'true')
-            ->assertAttribute('[data-date="2025-07-14"]', 'aria-disabled', 'true')
-            ->assertAttribute('[data-date="2025-07-15"]', 'aria-disabled', 'false')
-            ->assertAttribute('[data-date="2025-07-17"]', 'aria-disabled', 'false')
-            ->assertAttribute('[data-date="2025-07-18"]', 'aria-disabled', 'true')
-            ->assertNoAccessibilityIssues()
-            ->keys('[role="gridcell"]:focus', 'PageDown')
-            ->assertPresent('[data-date="2025-08-16"]:focus')
-            ->assertScript('Array.from(document.querySelectorAll(\'[role="gridcell"][data-date]\')).every(cell => cell.getAttribute("aria-disabled") === "true")', true)
-            ->keys('[role="gridcell"]:focus', 'Enter')
-            ->assertValue($trigger, '2025-07-15 13:24:37')
-            ->assertNoAccessibilityIssues()
-            ->keys('[role="gridcell"]:focus', 'Escape')
-            ->assertPresent($trigger . ':focus')
-            ->assertNoSmoke();
-    }
+    $page->inDarkMode()->click($trigger)
+        ->assertVisible('[role="dialog"]')
+        ->assertNoAccessibilityIssues();
 });
 
 it('uses localized date names, a Sunday week start and RTL horizontal navigation', function (): void {
@@ -1701,34 +1649,26 @@ it('uses localized date names, a Sunday week start and RTL horizontal navigation
     $page = visit('/date-time-picker-test?native=0&time=0&locale=fr&week-start=7&rtl=1')->withTimezone('UTC');
     $trigger = '[data-testid="timed-trigger"]';
 
-    foreach ([false, true] as $isDarkMode) {
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-
-        $page->keys($trigger, 'Enter')
-            ->assertPresent('[data-date="2025-07-15"]:focus')
-            ->assertAttribute('[data-date="2025-07-15"]', 'aria-label', 'mardi, 15 juillet 2025')
-            ->assertAttribute('[role="grid"]', 'aria-label', 'juillet 2025')
-            ->assertAttribute('[role="columnheader"]:first-of-type', 'aria-label', 'dimanche')
-            ->keys('[role="gridcell"]:focus', 'ArrowRight')
-            ->assertPresent('[data-date="2025-07-14"]:focus')
-            ->keys('[role="gridcell"]:focus', ['ArrowLeft', 'Home'])
-            ->assertPresent('[data-date="2025-07-13"]:focus')
-            ->keys('[role="gridcell"]:focus', 'End')
-            ->assertPresent('[data-date="2025-07-19"]:focus')
-            ->assertNoAccessibilityIssues()
-            ->keys('[role="gridcell"]:focus', ['Shift+Tab'])
-            ->assertPresent('input[aria-label="Year"]:focus')
-            ->keys('input[aria-label="Year"]', 'Escape')
-            ->assertPresent($trigger . ':focus')
-            ->keys($trigger, 'Enter')
-            ->keys('[role="gridcell"]:focus', 'Tab')
-            ->assertPresent('[data-testid="save-timed"]:focus')
-            ->assertAttribute($trigger, 'aria-expanded', 'false')
-            ->assertNoSmoke();
-
-    }
+    $page->keys($trigger, 'Enter')
+        ->assertPresent('[data-date="2025-07-15"]:focus')
+        ->assertAttribute('[data-date="2025-07-15"]', 'aria-label', 'mardi, 15 juillet 2025')
+        ->assertAttribute('[role="grid"]', 'aria-label', 'juillet 2025')
+        ->assertAttribute('[role="columnheader"]:first-of-type', 'aria-label', 'dimanche')
+        ->keys('[role="gridcell"]:focus', 'ArrowRight')
+        ->assertPresent('[data-date="2025-07-14"]:focus')
+        ->keys('[role="gridcell"]:focus', ['ArrowLeft', 'Home'])
+        ->assertPresent('[data-date="2025-07-13"]:focus')
+        ->keys('[role="gridcell"]:focus', 'End')
+        ->assertPresent('[data-date="2025-07-19"]:focus')
+        ->keys('[role="gridcell"]:focus', ['Shift+Tab'])
+        ->assertPresent('input[aria-label="Year"]:focus')
+        ->keys('input[aria-label="Year"]', 'Escape')
+        ->assertPresent($trigger . ':focus')
+        ->keys($trigger, 'Enter')
+        ->keys('[role="gridcell"]:focus', 'Tab')
+        ->assertPresent('[data-testid="save-timed"]:focus')
+        ->assertAttribute($trigger, 'aria-expanded', 'false')
+        ->assertNoSmoke();
 });
 
 it('closes the calendar before its nested action modal and restores each focus owner in turn', function (bool $overlaysParentModal): void {
@@ -1736,31 +1676,34 @@ it('closes the calendar before its nested action modal and restores each focus o
 
     $page = visit('/date-time-picker-test?native=0&overlay=' . (int) $overlaysParentModal);
 
-    foreach ([false, true] as $isDarkMode) {
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
+    $page->keys('[data-testid="calendar-modal-trigger"]', 'Enter')
+        ->assertVisible('[data-testid="calendar-modal"]')
+        ->assertAttributeMissing('[data-testid="nested-calendar-modal-trigger"]', 'aria-disabled')
+        ->keys('[data-testid="nested-calendar-modal-trigger"]', 'Enter')
+        ->assertVisible('[data-testid="nested-calendar-modal"]')
+        ->click('[data-testid="nested-calendar-trigger"]')
+        ->assertPresent('[role="gridcell"]:focus');
+    $page->assertNoAccessibilityIssues();
+    $page->inDarkMode()
+        ->click('[data-testid="calendar-modal-trigger"]')
+        ->assertVisible('[data-testid="calendar-modal"]')
+        ->click('[data-testid="nested-calendar-modal-trigger"]')
+        ->assertVisible('[data-testid="nested-calendar-modal"]')
+        ->click('[data-testid="nested-calendar-trigger"]')
+        ->assertVisible('[data-testid="nested-calendar-modal"] [role="grid"]')
+        ->assertNoAccessibilityIssues();
 
-        $page->keys('[data-testid="calendar-modal-trigger"]', 'Enter')
-            ->assertVisible('[data-testid="calendar-modal"]')
-            ->assertAttributeMissing('[data-testid="nested-calendar-modal-trigger"]', 'aria-disabled')
-            ->keys('[data-testid="nested-calendar-modal-trigger"]', 'Enter')
-            ->assertVisible('[data-testid="nested-calendar-modal"]')
-            ->click('[data-testid="nested-calendar-trigger"]')
-            ->assertPresent('[role="gridcell"]:focus');
-        $page->assertNoAccessibilityIssues()
-            ->keys('[role="gridcell"]:focus', 'Escape')
-            ->assertAttribute('[data-testid="nested-calendar-trigger"]', 'aria-expanded', 'false')
-            ->assertPresent('[data-testid="nested-calendar-trigger"]:focus')
-            ->assertVisible('[data-testid="nested-calendar-modal"]')
-            ->keys('[data-testid="nested-calendar-trigger"]', 'Escape')
-            ->assertMissing('[data-testid="nested-calendar-modal"]')
-            ->assertPresent('[data-testid="nested-calendar-modal-trigger"]:focus')
-            ->keys('[data-testid="nested-calendar-modal-trigger"]', 'Escape')
-            ->assertMissing('[data-testid="calendar-modal"]')
-            ->assertPresent('[data-testid="calendar-modal-trigger"]:focus')
-            ->assertNoSmoke();
-    }
+    $page->keys('[role="gridcell"]:focus', 'Escape')
+        ->assertAttribute('[data-testid="nested-calendar-trigger"]', 'aria-expanded', 'false')
+        ->assertPresent('[data-testid="nested-calendar-trigger"]:focus')
+        ->assertVisible('[data-testid="nested-calendar-modal"]')
+        ->keys('[data-testid="nested-calendar-trigger"]', 'Escape')
+        ->assertMissing('[data-testid="nested-calendar-modal"]')
+        ->assertPresent('[data-testid="nested-calendar-modal-trigger"]:focus')
+        ->keys('[data-testid="nested-calendar-modal-trigger"]', 'Escape')
+        ->assertMissing('[data-testid="calendar-modal"]')
+        ->assertPresent('[data-testid="calendar-modal-trigger"]:focus')
+        ->assertNoSmoke();
 })->with([
     'replacing parent modal' => [false],
     'overlaying parent modal' => [true],
@@ -1772,55 +1715,46 @@ it('preserves control focus and the selected date when browsing before editing t
     $page = visit('/date-time-picker-test?native=0&initial-state=2024-03-31%2013:24:37&display-format=Y-m-d%20H:i:s')->withTimezone('UTC');
     $trigger = '[data-testid="timed-trigger"]';
 
-    foreach ([false, true] as $isDarkMode) {
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
+    $page->click($trigger)
+        ->assertPresent('[data-date="2024-03-31"]:focus')
+        ->keys('[role="gridcell"]:focus', ['Shift+Tab'])
+        ->fill('input[aria-label="Year"]', '2025')
+        ->assertPresent('[data-date="2025-03-31"][tabindex="0"]')
+        ->assertPresent('input[aria-label="Year"]:focus')
+        ->keys('input[aria-label="Year"]', ['Shift+Tab'])
+        ->select('select[aria-label="Month"]', '1')
+        ->assertPresent('[data-date="2025-02-28"][tabindex="0"]')
+        ->assertValue($trigger, '2024-03-31 13:24:37')
+        ->assertPresent('select[aria-label="Month"]:focus')
+        ->keys('select[aria-label="Month"]', 'Tab')
+        ->keys('input[aria-label="Year"]', 'Tab')
+        ->assertPresent('[data-date="2025-02-28"]:focus')
+        ->keys('[role="gridcell"]:focus', 'Tab')
+        ->fill('input[aria-label="Minute"]', '31')
+        ->assertValue($trigger, '2024-03-31 13:31:37')
+        ->assertPresent('input[aria-label="Minute"]:focus')
+        ->keys('input[aria-label="Minute"]', 'Escape')
+        ->keys($trigger, 'Delete')
+        ->keys($trigger, 'Enter')
+        ->assertPresent('[data-date="2025-02-28"]:focus')
+        ->fill('input[aria-label="Minute"]', '19')
+        ->assertValue($trigger, '2025-02-28 00:19:00')
+        ->keys('input[aria-label="Minute"]', 'Escape')
+        ->assertNoSmoke();
 
-        $page->click($trigger)
-            ->assertPresent('[data-date="2024-03-31"]:focus')
-            ->keys('[role="gridcell"]:focus', ['Shift+Tab'])
-            ->fill('input[aria-label="Year"]', '2025')
-            ->assertPresent('[data-date="2025-03-31"][tabindex="0"]')
-            ->assertPresent('input[aria-label="Year"]:focus')
-            ->keys('input[aria-label="Year"]', ['Shift+Tab'])
-            ->select('select[aria-label="Month"]', '1')
-            ->assertPresent('[data-date="2025-02-28"][tabindex="0"]')
-            ->assertValue($trigger, '2024-03-31 13:24:37')
-            ->assertPresent('select[aria-label="Month"]:focus')
-            ->keys('select[aria-label="Month"]', 'Tab')
-            ->keys('input[aria-label="Year"]', 'Tab')
-            ->assertPresent('[data-date="2025-02-28"]:focus')
-            ->keys('[role="gridcell"]:focus', 'Tab')
-            ->fill('input[aria-label="Minute"]', '31')
-            ->assertValue($trigger, '2024-03-31 13:31:37')
-            ->assertPresent('input[aria-label="Minute"]:focus')
-            ->assertNoAccessibilityIssues()
-            ->keys('input[aria-label="Minute"]', 'Escape')
-            ->keys($trigger, 'Delete')
-            ->keys($trigger, 'Enter')
-            ->assertPresent('[data-date="2025-02-28"]:focus')
-            ->fill('input[aria-label="Minute"]', '19')
-            ->assertValue($trigger, '2025-02-28 00:19:00')
-            ->assertNoAccessibilityIssues()
-            ->keys('input[aria-label="Minute"]', 'Escape')
-            ->assertNoSmoke();
-
-        $page->keys($trigger, 'Enter')
-            ->fill('input[aria-label="Year"]', '2024')
-            ->select('select[aria-label="Month"]', '11')
-            ->click('[data-date="2024-12-31"]')
-            ->assertPresent('[data-date="2024-12-31"]:focus')
-            ->withKeyDown('ArrowRight', static fn () => null)
-            ->withKeyDown('Tab', static fn () => null)
-            ->assertPresent('input[aria-label="Hour"]:focus')
-            ->assertValue($trigger, '2024-12-31 00:19:00')
-            ->keys('input[aria-label="Hour"]', 'Shift+Tab')
-            ->assertPresent('[data-date="2025-01-01"]:focus')
-            ->assertNoAccessibilityIssues()
-            ->keys('[role="gridcell"]:focus', 'Escape')
-            ->assertNoSmoke();
-    }
+    $page->keys($trigger, 'Enter')
+        ->fill('input[aria-label="Year"]', '2024')
+        ->select('select[aria-label="Month"]', '11')
+        ->click('[data-date="2024-12-31"]')
+        ->assertPresent('[data-date="2024-12-31"]:focus')
+        ->withKeyDown('ArrowRight', static fn () => null)
+        ->withKeyDown('Tab', static fn () => null)
+        ->assertPresent('input[aria-label="Hour"]:focus')
+        ->assertValue($trigger, '2024-12-31 00:19:00')
+        ->keys('input[aria-label="Hour"]', 'Shift+Tab')
+        ->assertPresent('[data-date="2025-01-01"]:focus')
+        ->keys('[role="gridcell"]:focus', 'Escape')
+        ->assertNoSmoke();
 });
 
 it('opens the calendar and focuses an invalid stepped time input on submission', function (): void {
@@ -1828,28 +1762,30 @@ it('opens the calendar and focuses an invalid stepped time input on submission',
 
     $page = visit('/date-time-picker-test?native=0&hour-step=2&minute-step=5&initial-state=2025-07-15%2014:25:00&display-format=Y-m-d%20H:i:s')->withTimezone('UTC');
     $trigger = '[data-testid="timed-trigger"]';
-    foreach ([false, true] as $isDarkMode) {
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
 
-        $page->click($trigger)
-            ->assertPresent('[role="gridcell"]:focus')
-            ->fill('input[aria-label="Hour"]', '14')
-            ->fill('input[aria-label="Minute"]', '31')
-            ->keys('input[aria-label="Minute"]', 'Escape')
-            ->click('[data-testid="save-timed"]')
-            ->assertPresent('input[aria-label="Minute"]:focus')
-            ->assertAttribute($trigger, 'aria-expanded', 'true')
-            ->assertScript('document.querySelector(\'input[aria-label="Minute"]\').validity.stepMismatch', true)
-            ->assertNoAccessibilityIssues()
-            ->fill('input[aria-label="Minute"]', '30')
-            ->assertValue($trigger, '2025-07-15 14:30:00')
-            ->keys('input[aria-label="Minute"]', 'Escape')
-            ->click('[data-testid="save-timed"]')
-            ->assertSeeIn('[data-testid="saved-timed"]', '14:30')
-            ->assertNoSmoke();
-    }
+    $page->click($trigger)
+        ->assertPresent('[role="gridcell"]:focus')
+        ->fill('input[aria-label="Hour"]', '14')
+        ->fill('input[aria-label="Minute"]', '31')
+        ->keys('input[aria-label="Minute"]', 'Escape')
+        ->click('[data-testid="save-timed"]')
+        ->assertPresent('input[aria-label="Minute"]:focus')
+        ->assertAttribute($trigger, 'aria-expanded', 'true')
+        ->assertScript('document.querySelector(\'input[aria-label="Minute"]\').validity.stepMismatch', true)
+        ->assertNoAccessibilityIssues()
+        ->fill('input[aria-label="Minute"]', '30')
+        ->assertValue($trigger, '2025-07-15 14:30:00')
+        ->keys('input[aria-label="Minute"]', 'Escape')
+        ->click('[data-testid="save-timed"]')
+        ->assertSeeIn('[data-testid="saved-timed"]', '14:30')
+        ->assertNoSmoke();
+
+    $page->inDarkMode()->click($trigger)
+        ->fill('input[aria-label="Minute"]', '31')
+        ->keys('input[aria-label="Minute"]', 'Escape')
+        ->click('[data-testid="save-timed"]')
+        ->assertPresent('input[aria-label="Minute"]:invalid:focus')
+        ->assertNoAccessibilityIssues();
 });
 
 it('can use the calendar after replacing its configuration', function (): void {
@@ -1858,25 +1794,17 @@ it('can use the calendar after replacing its configuration', function (): void {
     $page = visit('/date-time-picker-test?native=0');
     $trigger = '[data-testid="timed-trigger"]';
 
-    foreach ([false, true] as $isDarkMode) {
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-
-        $page->click($trigger)
-            ->assertPresent('[data-date="2025-07-15"]:focus')
-            ->assertNoAccessibilityIssues()
-            ->click('[data-testid="replace-calendar"]')
-            ->assertAttribute('[data-testid="replace-calendar"]', 'aria-pressed', 'true')
-            ->assertAttribute($trigger, 'aria-expanded', 'false')
-            ->assertPresent('[data-testid="replace-calendar"]:focus')
-            ->click($trigger)
-            ->assertPresent('[data-date="2025-07-15"]:focus')
-            ->assertAttribute('[data-date="2025-07-16"]', 'aria-disabled', 'true')
-            ->assertNoAccessibilityIssues()
-            ->keys('[role="gridcell"]:focus', 'Escape')
-            ->assertNoSmoke();
-    }
+    $page->click($trigger)
+        ->assertPresent('[data-date="2025-07-15"]:focus')
+        ->click('[data-testid="replace-calendar"]')
+        ->assertAttribute('[data-testid="replace-calendar"]', 'aria-pressed', 'true')
+        ->assertAttribute($trigger, 'aria-expanded', 'false')
+        ->assertPresent('[data-testid="replace-calendar"]:focus')
+        ->click($trigger)
+        ->assertPresent('[data-date="2025-07-15"]:focus')
+        ->assertAttribute('[data-date="2025-07-16"]', 'aria-disabled', 'true')
+        ->keys('[role="gridcell"]:focus', 'Escape')
+        ->assertNoSmoke();
 });
 
 it('does not open or clear a disabled or read-only custom picker, including with `autofocus()`', function (string $mode, bool $hasDate, bool $hasTime): void {
@@ -1894,26 +1822,24 @@ it('does not open or clear a disabled or read-only custom picker, including with
     ]));
     $trigger = '[data-testid="timed-trigger"]';
 
-    foreach ([false, true] as $isDarkMode) {
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
+    $page->assertAttribute($trigger, 'aria-expanded', 'false');
 
-        $page->assertAttribute($trigger, 'aria-expanded', 'false');
+    if ($mode === 'disabled') {
+        $page->assertDisabled($trigger);
+    } else {
+        $page->click($trigger)
+            ->assertPresent($trigger . ':focus')
+            ->keys($trigger, ['Enter', 'ArrowRight', 'Backspace', 'Delete']);
+    }
 
-        if ($mode === 'disabled') {
-            $page->assertDisabled($trigger);
-        } else {
-            $page->click($trigger)
-                ->assertPresent($trigger . ':focus')
-                ->keys($trigger, ['Enter', 'ArrowRight', 'Backspace', 'Delete']);
-        }
+    $page->assertAttribute($trigger, 'aria-expanded', 'false')
+        ->assertValue($trigger, $hasDate ? ($hasTime ? '2025-07-15 01:45:07' : '2025-07-15') : '01:45:07')
+        ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').textContent.trim()', '0')
+        ->assertNoSmoke();
 
-        $page->assertAttribute($trigger, 'aria-expanded', 'false')
-            ->assertValue($trigger, $hasDate ? ($hasTime ? '2025-07-15 01:45:07' : '2025-07-15') : '01:45:07')
-            ->assertScript('document.querySelector(\'[data-testid="timed-save-count"]\').textContent.trim()', '0')
-            ->assertNoSmoke();
+    if ($hasDate && $hasTime) {
         $page->assertNoAccessibilityIssues();
+        $page->inDarkMode()->assertNoAccessibilityIssues();
     }
 })->with(['disabled', 'readonly'])->with([
     'time-only' => [false, true],

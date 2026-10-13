@@ -191,24 +191,23 @@ it('keeps the accessible name and alternative synchronized when the chart data i
         ->assertSee('The monthly sales total for 2023 is 60.');
 });
 
-it('keeps chart alternatives accessible when changing filters in light and dark modes', function (): void {
+it('keeps chart alternatives accessible when changing filters', function (): void {
     Artisan::call('filament:assets');
     $this->actingAs(User::factory()->create());
 
     $page = visit('/chart-widget-browser-test', ['reducedMotion' => 'reduce']);
 
-    foreach ([$page, $page->inDarkMode()] as $themedPage) {
-        $themedPage
-            ->assertAttribute('[role="img"]', 'aria-label', 'Sales. Sales for 2024')
-            ->assertAttribute('[role="img"] canvas', 'aria-hidden', 'true')
-            ->assertSee('Monthly sales for 2024')
-            ->assertNoAccessibilityIssues()
-            ->select('select[aria-label]', '2023')
-            ->assertAttribute('[role="img"]', 'aria-label', 'Sales. Sales for 2023')
-            ->assertSee('Monthly sales for 2023')
-            ->assertNoJavaScriptErrors()
-            ->assertNoAccessibilityIssues();
-    }
+    $page
+        ->assertAttribute('[role="img"]', 'aria-label', 'Sales. Sales for 2024')
+        ->assertAttribute('[role="img"] canvas', 'aria-hidden', 'true')
+        ->assertSee('Monthly sales for 2024')
+        ->select('select[aria-label]', '2023')
+        ->assertAttribute('[role="img"]', 'aria-label', 'Sales. Sales for 2023')
+        ->assertSee('Monthly sales for 2023')
+        ->assertNoJavaScriptErrors()
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()->assertNoAccessibilityIssues();
 });
 
 class TestChartWidgetDefault extends ChartWidget

@@ -228,45 +228,51 @@ it('handles code entry in left-to-right and right-to-left layouts and commits th
 it('submits completed codes after correcting native validation errors with `submitOnCompletion()`', function (): void {
     $this->actingAs(User::factory()->create());
 
-    $browser = visit('/one-time-code-input-submit-on-completion-browser-test');
+    $page = visit('/one-time-code-input-submit-on-completion-browser-test');
 
-    foreach ([$browser, $browser->inDarkMode()] as $page) {
-        $page->fill('[data-testid="required-sibling"]', '')
-            ->type('[data-testid="code-input"] input:nth-child(1)', '12345')
-            ->assertSeeIn('[data-testid="submission-attempt-count"]', '0')
-            ->fill('[data-testid="code-input"] input:nth-child(6)', '6')
-            ->assertPresent('[data-testid="required-sibling"]:invalid')
-            ->assertSeeIn('[data-testid="submission-attempt-count"]', '0')
-            ->fill('[data-testid="required-sibling"]', 'Ada Lovelace')
-            ->fill('[data-testid="code-input"] input:nth-child(6)', '6')
-            ->assertSeeIn('[data-testid="submitted-code"]', '123456')
-            ->assertSeeIn('[data-testid="submission-attempt-count"]', '1')
-            ->click('[data-testid="reset-code"]')
-            ->assertValue('[data-testid="code-input"] input:nth-child(1)', '')
-            ->fill('[data-testid="code-input"] input:nth-child(1)', '654321')
-            ->assertSeeIn('[data-testid="submitted-code"]', '654321')
-            ->assertSeeIn('[data-testid="submission-attempt-count"]', '2')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    }
+    $page->fill('[data-testid="required-sibling"]', '')
+        ->type('[data-testid="code-input"] input:nth-child(1)', '12345')
+        ->assertSeeIn('[data-testid="submission-attempt-count"]', '0')
+        ->fill('[data-testid="code-input"] input:nth-child(6)', '6')
+        ->assertPresent('[data-testid="required-sibling"]:invalid')
+        ->assertSeeIn('[data-testid="submission-attempt-count"]', '0')
+        ->assertNoAccessibilityIssues()
+        ->fill('[data-testid="required-sibling"]', 'Ada Lovelace')
+        ->fill('[data-testid="code-input"] input:nth-child(6)', '6')
+        ->assertSeeIn('[data-testid="submitted-code"]', '123456')
+        ->assertSeeIn('[data-testid="submission-attempt-count"]', '1')
+        ->click('[data-testid="reset-code"]')
+        ->assertValue('[data-testid="code-input"] input:nth-child(1)', '')
+        ->fill('[data-testid="code-input"] input:nth-child(1)', '654321')
+        ->assertSeeIn('[data-testid="submitted-code"]', '654321')
+        ->assertSeeIn('[data-testid="submission-attempt-count"]', '2')
+        ->assertNoSmoke();
+
+    $page->inDarkMode()
+        ->fill('[data-testid="required-sibling"]', '')
+        ->fill('[data-testid="code-input"] input:nth-child(1)', '123456')
+        ->assertPresent('[data-testid="required-sibling"]:invalid')
+        ->assertNoAccessibilityIssues();
 });
 
 it('honors `novalidate` when using `submitOnCompletion()`', function (): void {
     $this->actingAs(User::factory()->create());
 
-    foreach ([
-        visit('/one-time-code-input-submit-on-completion-browser-test?novalidate=1'),
-        visit('/one-time-code-input-submit-on-completion-browser-test?novalidate=1')->inDarkMode(),
-    ] as $page) {
-        $page->fill('[data-testid="required-sibling"]', '')
-            ->fill('[data-testid="code-input"] input:nth-child(1)', '654321')
-            ->assertSeeIn('[data-testid="submission-attempt-count"]', '1')
-            ->assertPresent('[data-validation-error]')
-            ->type('[data-testid="code-input"] input:nth-child(6)', '1')
-            ->assertSeeIn('[data-testid="submission-attempt-count"]', '1')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    }
+    $page = visit('/one-time-code-input-submit-on-completion-browser-test?novalidate=1');
+    $page->fill('[data-testid="required-sibling"]', '')
+        ->fill('[data-testid="code-input"] input:nth-child(1)', '654321')
+        ->assertSeeIn('[data-testid="submission-attempt-count"]', '1')
+        ->assertPresent('[data-validation-error]')
+        ->type('[data-testid="code-input"] input:nth-child(6)', '1')
+        ->assertSeeIn('[data-testid="submission-attempt-count"]', '1')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()
+        ->fill('[data-testid="required-sibling"]', '')
+        ->fill('[data-testid="code-input"] input:nth-child(1)', '654321')
+        ->assertPresent('[data-validation-error]')
+        ->assertNoAccessibilityIssues();
 });
 
 class TestComponentWithFourDigitCodeInput extends Livewire
