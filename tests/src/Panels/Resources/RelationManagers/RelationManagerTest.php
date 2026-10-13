@@ -16,14 +16,18 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
+use Filament\Resources\Pages\Enums\ContentTabPosition;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
+use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicketWithContentTabs;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\ContentTabsDepartmentsRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManagerWithTabs;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAttachTableSelectAndModifiedQueryRelationManager;
@@ -38,6 +42,7 @@ use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -862,6 +867,218 @@ it('does not defer the tab badge loading by default', function (): void {
     expect($tab->isBadgeDeferred())->toBeFalse();
 });
 
+it('can customize relation manager tabs without combining them with content', function (): void {
+    $component = livewire(NonCombinedContentPage::class, ['record' => Ticket::factory()->create()->getRouteKey()])
+        ->assertSuccessful();
+
+    $tabs = $component->instance()->getSchema('content')->getComponents()[1]->getChildSchema()->getComponents(withOriginalKeys: true);
+
+    expect(array_keys($tabs))->toBe([3, 'departments'])
+        ->and($tabs[3]->getLabel())->toBe('Factory departments')
+        ->and($tabs['departments']->getLabel())->toBe('Factory departments');
+});
+
+describe('combined tabs', function (): void {
+    it('preserves the default content key and singular customization hooks', function (): void {
+        $component = livewire(DefaultCombinedContentPage::class, ['record' => Ticket::factory()->create()->getRouteKey()])
+            ->assertSuccessful();
+
+        $tabs = $component->instance()->getSchema('content')->getComponents()[0]->getChildSchema()->getComponents(withOriginalKeys: true);
+
+        expect(array_keys($tabs))->toBe(['', 0])
+            ->and($tabs['']->getLabel())->toBe('Legacy content')
+            ->and($tabs['']->getIcon())->toBe('heroicon-m-pencil')
+            ->and($tabs['']->getBadge())->toBe('Legacy badge');
+    });
+
+    it('preserves sparse numeric and named manager keys in the default combined order', function (bool $isContentAfter): void {
+        $component = livewire(EditTicketWithContentTabs::class, ['record' => Ticket::factory()->create()->getRouteKey()])
+            ->set('hasCustomTabs', false)
+            ->set('isContentAfter', $isContentAfter)
+            ->assertSuccessful();
+
+        $tabs = $component->instance()->getSchema('content')->getComponents()[0]->getChildSchema()->getComponents(withOriginalKeys: true);
+
+        expect(array_keys($tabs))->toBe($isContentAfter
+            ? [3, 'departments', 9, '']
+            : ['', 3, 'departments', 9])
+            ->and($tabs['']->getBadge())->toBe('Primary')
+            ->and($tabs[3]->getBadge())->toBe('Managers')
+            ->and(array_keys($component->instance()->getRelationManagerTabComponents(except: ['3', 'departments'])))->toBe([9]);
+    })->with([false, true]);
+
+    it('preserves named manager keys and the legacy empty content slot', function (string $managerKey, bool $isContentAfter): void {
+        KeyedCombinedContentPage::$managerKey = $managerKey;
+
+        $component = livewire(KeyedCombinedContentPage::class, ['record' => Ticket::factory()->create()->getRouteKey()])
+            ->set('isContentAfter', $isContentAfter)
+            ->assertSuccessful();
+
+        $tabs = $component->instance()->getSchema('content')->getComponents()[0]->getChildSchema()->getComponents(withOriginalKeys: true);
+
+        expect(array_keys($tabs))->toBe($managerKey === '' ? [''] : ($isContentAfter ? [$managerKey, ''] : ['', $managerKey]))
+            ->and($tabs['']->getLabel())->toBe('Legacy content');
+
+        if ($managerKey !== '') {
+            $component
+                ->set('activeRelationManager', $managerKey)
+                ->assertSuccessful();
+        }
+    })->with(['', 'content:view'])->with([false, true]);
+
+    it('interleaves content and generated manager or group tabs while rendering only the active content', function (bool $hasGroupedManagers): void {
+        $component = livewire(EditTicketWithContentTabs::class, ['record' => Ticket::factory()->create()->getRouteKey()])
+            ->set('hasGroupedManagers', $hasGroupedManagers)
+            ->assertSuccessful();
+
+        $tabs = $component->instance()->getSchema('content')->getComponents()[0]->getChildSchema()->getComponents(withOriginalKeys: true);
+
+        expect(array_keys($tabs))->toBe(['view', 3, '', 'departments', 'preferences', 9]);
+
+        $component
+            ->set('activeRelationManager', 'view')
+            ->assertSee('Ticket overview')
+            ->assertDontSee('Preferences not saved')
+            ->assertDontSee('Configured departments (fr)')
+            ->set('activeRelationManager', 'preferences')
+            ->assertSee('Preferences not saved')
+            ->assertDontSee('Ticket overview')
+            ->set('activeRelationManager', '3')
+            ->assertSee('Configured departments (fr)')
+            ->assertDontSee('Preferences not saved')
+            ->assertDontSee('Ticket overview');
+    })->with([false, true]);
+
+    it('retains configured grouped managers, badges, filtering and lazy defaults', function (): void {
+        $ticket = Ticket::factory()->hasAttached(Department::factory()->state(['name' => 'Visible department']))->create();
+
+        $component = livewire(MixedAuthorizationContentPage::class, ['record' => $ticket->getRouteKey()])
+            ->set('hasGroupedManagers', true)
+            ->set('activeRelationManager', '3')
+            ->assertSee('Configured departments (fr)')
+            ->assertSee('Secondary departments (fr)')
+            ->assertSee('Visible department')
+            ->assertSee('Grouped')
+            ->assertDontSee('Denied departments');
+
+        $tabs = $component->instance()->getSchema('content')->getComponents()[0]->getChildSchema()->getComponents(withOriginalKeys: true);
+        $groupedManagers = $tabs[3]->getChildSchema()->getComponents();
+
+        expect(array_map(static fn ($manager): ?string => $manager->getKey(isAbsolute: false), $groupedManagers))->toBe([
+            ContentTabsDepartmentsRelationManager::class . '-2',
+            ContentTabsDepartmentsRelationManager::class . '-secondary',
+        ])
+            ->and($groupedManagers[0]->getComponentProperties()['lazy'])->toBeFalse()
+            ->and($tabs['departments']->getChildSchema()->getComponents()[0]->getComponentProperties()['lazy'])->toBeTrue();
+
+        app()->bind(DepartmentPolicy::class . '::viewAny', static fn (): bool => false);
+
+        $deniedComponent = livewire(MixedAuthorizationContentPage::class, ['record' => $ticket->getRouteKey()])
+            ->set('hasGroupedManagers', true)
+            ->assertDontSee('Managers')
+            ->assertDontSee('Department group')
+            ->assertDontSee('Visible department')
+            ->set('activeRelationManager', 'view')
+            ->assertSee('Ticket overview');
+
+        expect($deniedComponent->instance()->getRelationManagerTabComponent(3))->toBeNull()
+            ->and($deniedComponent->instance()->getRelationManagerTabComponent('departments'))->toBeNull()
+            ->and($deniedComponent->instance()->getRelationManagerTabComponent('missing'))->toBeNull();
+    });
+
+    it('renders content tabs without managers and excludes hidden or removed tabs', function (): void {
+        livewire(EditTicketWithContentTabs::class, ['record' => Ticket::factory()->create()->getRouteKey()])
+            ->set('hasManagers', false)
+            ->set('activeRelationManager', 'preferences')
+            ->assertSee('Preferences not saved')
+            ->set('isPreferencesHidden', true)
+            ->assertDontSee('Preferences not saved')
+            ->set('isPreferencesHidden', false)
+            ->assertSee('Preferences not saved')
+            ->set('isPreferencesRemoved', true)
+            ->assertDontSee('Preferences not saved')
+            ->set('activeRelationManager', 'view')
+            ->assertSee('Ticket overview');
+    });
+
+    it('switches resource content with URL reload and history and submits named forms independently', function (): void {
+        Artisan::call('filament:assets');
+        $ticket = Ticket::factory()->hasAttached(Department::factory()->state(['name' => 'Browser department']))->create();
+        $url = "/tickets/{$ticket->getRouteKey()}/content-tabs";
+
+        $page = visit($url);
+        $page->assertVisible('#edit-ticket-tab')
+            ->fill('#edit-note', 'Updated ticket')
+            ->click('[data-testid="save-ticket"]')
+            ->assertSee('Edit saved')
+            ->click('[role="tab"][aria-controls="overview-tab"]')
+            ->assertVisible('#overview-tab')
+            ->assertMissing('#edit-ticket-tab input')
+            ->assertQueryStringHas('relation', 'view')
+            ->refresh()
+            ->assertVisible('#overview-tab')
+            ->assertNoAccessibilityIssues();
+
+        visit($url . '?relation=view')->inDarkMode()
+            ->assertVisible('#overview-tab')
+            ->assertNoAccessibilityIssues();
+
+        $page->click('[role="tab"][aria-controls="preferences-tab"]')
+            ->assertVisible('#preferences-tab')
+            ->fill('#preference-nickname', 'Independent preference')
+            ->click('Save preferences')
+            ->assertSee('Independent preference')
+            ->click('[role="tab"][aria-controls="edit-ticket-tab"]')
+            ->assertVisible('#edit-ticket-tab')
+            ->assertSee('Edit not saved')
+            ->assertQueryStringMissing('relation')
+            ->fill('#edit-note', 'Updated ticket')
+            ->click('[data-testid="save-ticket"]')
+            ->assertSee('Edit saved')
+            ->click('[role="tab"][aria-controls="preferences-tab"]')
+            ->assertVisible('#preferences-tab')
+            ->assertSee('Independent preference')
+            ->assertNoAccessibilityIssues();
+
+        visit($url . '?relation=preferences')->inDarkMode()
+            ->assertVisible('#preferences-tab')
+            ->assertNoAccessibilityIssues();
+
+        $page->click('[role="tab"][aria-controls="edit-ticket-tab"]')
+            ->assertVisible('#edit-ticket-tab')
+            ->refresh()
+            ->assertVisible('#edit-ticket-tab')
+            ->assertQueryStringMissing('relation')
+            ->click('[role="tab"][aria-controls="configured-manager-tab"]')
+            ->assertSee('Browser department')
+            ->assertQueryStringHas('relation', '3')
+            ->refresh()
+            ->assertSee('Browser department')
+            ->navigate($url . '?relation=view')
+            ->assertVisible('#overview-tab')
+            ->back()
+            ->assertSee('Browser department')
+            ->forward()
+            ->assertVisible('#overview-tab')
+            ->click('[role="tab"][aria-controls="preferences-tab"]')
+            ->assertVisible('#preferences-tab')
+            ->click('Hide preferences')
+            ->assertVisible('#overview-tab')
+            ->assertQueryStringHas('relation', 'view')
+            ->navigate($url . '?relation=view')
+            ->assertVisible('#overview-tab')
+            ->click('[role="tab"][aria-controls="preferences-tab"]')
+            ->assertVisible('#preferences-tab')
+            ->click('Remove preferences')
+            ->assertVisible('#overview-tab')
+            ->navigate($url . '?no-managers=1&hidden=1&relation=preferences')
+            ->assertVisible('#overview-tab')
+            ->navigate($url . '?no-managers=1&removed=1&relation=preferences')
+            ->assertVisible('#overview-tab')
+            ->assertNoSmoke();
+    });
+});
+
 class RecordUrlResolutionRelationManager extends RelationManager
 {
     /** @var array<int | string | null> */
@@ -1003,5 +1220,97 @@ class RelationManagerAuthorizationPage extends EditTicket
         return static::$grouped
             ? [RelationGroup::make('Departments', [AuthorizationRelationManager::make()])]
             : [AuthorizationRelationManager::class];
+    }
+}
+
+class DefaultCombinedContentPage extends EditTicket
+{
+    public function hasCombinedRelationManagerTabsWithContent(): bool
+    {
+        return true;
+    }
+
+    public function getContentTabLabel(): ?string
+    {
+        return 'Legacy content';
+    }
+
+    public function getContentTabIcon(): ?string
+    {
+        return 'heroicon-m-pencil';
+    }
+
+    public function getContentTabComponent(): Tab
+    {
+        return parent::getContentTabComponent()->badge('Legacy badge');
+    }
+
+    protected function getAllRelationManagers(): array
+    {
+        return [ContentTabsDepartmentsRelationManager::class];
+    }
+}
+
+class KeyedCombinedContentPage extends DefaultCombinedContentPage
+{
+    public static string $managerKey = '';
+
+    public bool $isContentAfter = false;
+
+    public function getContentTabPosition(): ?ContentTabPosition
+    {
+        return $this->isContentAfter ? ContentTabPosition::After : null;
+    }
+
+    protected function getAllRelationManagers(): array
+    {
+        return [static::$managerKey => (static::$managerKey === '')
+            ? RelationGroup::make('Unused manager', [ContentTabsDepartmentsRelationManager::class])
+                ->tab(static fn (): Tab => throw new LogicException('The legacy empty-key manager tab must not be constructed.'))
+            : ContentTabsDepartmentsRelationManager::class];
+    }
+}
+
+class MixedAuthorizationContentPage extends EditTicketWithContentTabs
+{
+    protected function getAllRelationManagers(): array
+    {
+        if (! $this->hasGroupedManagers) {
+            return parent::getAllRelationManagers();
+        }
+
+        return array_replace(parent::getAllRelationManagers(), [
+            3 => RelationGroup::make('Department group', [
+                2 => ContentTabsDepartmentsRelationManager::make(['heading' => 'Configured departments', 'lazy' => false]),
+                'secondary' => ContentTabsDepartmentsRelationManager::make(['heading' => 'Secondary departments', 'lazy' => false]),
+                11 => DeniedContentTabsDepartmentsRelationManager::make(['heading' => 'Denied departments', 'lazy' => false]),
+            ])->badge('Grouped'),
+        ]);
+    }
+}
+
+class DeniedContentTabsDepartmentsRelationManager extends ContentTabsDepartmentsRelationManager
+{
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        return false;
+    }
+}
+
+class NonCombinedContentPage extends EditTicket
+{
+    public function getCombinedTabComponents(): array
+    {
+        throw new LogicException('The combined tab hook must only be used in combined mode.');
+    }
+
+    public function getRelationManagerTabComponent(string | int $key): ?Tab
+    {
+        return parent::getRelationManagerTabComponent($key)?->label('Factory departments');
+    }
+
+    protected function getAllRelationManagers(): array
+    {
+        return [3 => ContentTabsDepartmentsRelationManager::class, 'departments' => ContentTabsDepartmentsRelationManager::class];
     }
 }

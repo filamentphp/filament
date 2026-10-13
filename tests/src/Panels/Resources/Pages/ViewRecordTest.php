@@ -7,6 +7,10 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\TicketMessage;
@@ -355,3 +359,51 @@ it('action with modal and custom model can be called without relationship errors
         ->assertHasNoFormErrors()
         ->assertDispatched('simple-modal-action-called');
 });
+
+it('preserves content tab customization for infolists and disabled forms', function (bool $hasInfolist): void {
+    $component = livewire(CombinedContentViewTicket::class, ['record' => Ticket::factory()->create()->getRouteKey()])
+        ->set('hasOverviewInfolist', $hasInfolist)
+        ->assertSuccessful();
+
+    $tabs = $component->instance()->getSchema('content')->getComponents()[0]->getChildSchema()->getComponents(withOriginalKeys: true);
+
+    expect(array_keys($tabs))->toBe([''])
+        ->and($tabs['']->getLabel())->toBe('Ticket details')
+        ->and($tabs['']->getBadge())->toBe('Read only');
+
+    if ($hasInfolist) {
+        $component
+            ->assertSee('Read-only overview')
+            ->assertDontSeeHtml('id="view-ticket-note"');
+    } else {
+        $component
+            ->assertFormFieldDisabled('note')
+            ->assertSeeHtml('id="view-ticket-note"')
+            ->assertDontSee('Read-only overview');
+    }
+})->with([false, true]);
+
+class CombinedContentViewTicket extends ViewTicket
+{
+    public bool $hasOverviewInfolist = false;
+
+    public function hasCombinedRelationManagerTabsWithContent(): bool
+    {
+        return true;
+    }
+
+    public function getContentTabComponent(): Tab
+    {
+        return parent::getContentTabComponent()->label('Ticket details')->badge('Read only');
+    }
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema->components($this->hasOverviewInfolist ? [TextEntry::make('summary')->state('Read-only overview')] : []);
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema->components([TextInput::make('note')->id('view-ticket-note')]);
+    }
+}
