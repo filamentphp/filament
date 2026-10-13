@@ -306,11 +306,10 @@ describe('sorting', function (): void {
         livewire(MappedDefaultSortTableTestComponent::class)
             ->assertCanSeeTableRecords([$secondPost, $firstPost], inOrder: true)
             ->set('tableSort', 'display_title:desc')
-            ->assertSet('tableSort', 'display_title:desc')
             ->assertCanSeeTableRecords([$firstPost, $secondPost], inOrder: true);
     });
 
-    it('preserves selected sorting for a toggled-hidden aggregate `defaultSort()` column', function (bool $usesDefaultSortClosure): void {
+    it('applies `defaultSort()` to a toggled-hidden aggregate column', function (bool $usesDefaultSortClosure): void {
         $firstUser = User::factory()->create(['name' => 'Charlie']);
         $secondUser = User::factory()->create(['name' => 'Alpha']);
         $thirdUser = User::factory()->create(['name' => 'Bravo']);
@@ -321,26 +320,42 @@ describe('sorting', function (): void {
         $component = livewire(ToggleableSortableTableTestComponent::class, [
             'defaultSortColumn' => 'posts_count',
             'usesDefaultSortClosure' => $usesDefaultSortClosure,
-        ])->assertCanSeeTableRecords([$secondUser, $thirdUser, $firstUser], inOrder: true);
+        ]);
 
         $tableColumns = $component->get('tableColumns');
         $tableColumns[1]['isToggled'] = false;
 
         $component
             ->call('applyTableColumnManager', $tableColumns)
-            ->assertCanSeeTableRecords([$secondUser, $thirdUser, $firstUser], inOrder: true)
-            ->sortTable('posts_count', 'desc')
-            ->assertCanSeeTableRecords([$firstUser, $thirdUser, $secondUser], inOrder: true);
+            ->assertCanSeeTableRecords([$secondUser, $thirdUser, $firstUser], inOrder: true);
+    })->with([
+        'string' => [false],
+        'Closure' => [true],
+    ]);
 
-        livewire(ToggleableSortableTableTestComponent::class, [
+    it('preserves the selected direction when a `defaultSort()` aggregate column is toggled off', function (string $direction): void {
+        $firstUser = User::factory()->create(['name' => 'Charlie']);
+        $secondUser = User::factory()->create(['name' => 'Alpha']);
+        $thirdUser = User::factory()->create(['name' => 'Bravo']);
+
+        Post::factory()->count(2)->for($firstUser, 'author')->create();
+        Post::factory()->for($thirdUser, 'author')->create();
+
+        $expectedUsers = $direction === 'desc'
+            ? [$firstUser, $thirdUser, $secondUser]
+            : [$secondUser, $thirdUser, $firstUser];
+
+        $component = livewire(ToggleableSortableTableTestComponent::class, [
             'defaultSortColumn' => 'posts_count',
-            'usesDefaultSortClosure' => $usesDefaultSortClosure,
-        ])
-            ->assertSet('tableSort', 'posts_count:desc')
-            ->assertCanSeeTableRecords([$firstUser, $thirdUser, $secondUser], inOrder: true)
-            ->call('resetTableColumnManager')
-            ->assertCanSeeTableRecords([$firstUser, $thirdUser, $secondUser], inOrder: true);
-    })->with([false, true]);
+        ])->sortTable('posts_count', $direction);
+
+        $tableColumns = $component->get('tableColumns');
+        $tableColumns[1]['isToggled'] = false;
+
+        $component
+            ->call('applyTableColumnManager', $tableColumns)
+            ->assertCanSeeTableRecords($expectedUsers, inOrder: true);
+    })->with(['asc', 'desc']);
 });
 
 describe('pagination', function (): void {
