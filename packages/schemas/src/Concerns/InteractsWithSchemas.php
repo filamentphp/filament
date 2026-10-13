@@ -316,12 +316,23 @@ trait InteractsWithSchemas
                     continue;
                 }
 
+                // Added or removed branches are one update, not updates to every field inside them.
+                while (str_contains($childStatePath, '.')) {
+                    $parentStatePath = Str::beforeLast($childStatePath, '.');
+
+                    if (Arr::has($state, $parentStatePath) && is_array($oldState) && Arr::has($oldState, $parentStatePath)) {
+                        break;
+                    }
+
+                    $childStatePath = $parentStatePath;
+                }
+
                 $statePaths[] = "{$statePath}.{$childStatePath}";
             }
         }
 
         foreach ($this->getCachedSchemas() as $schema) {
-            foreach ($statePaths as $updatedStatePath) {
+            foreach (array_unique($statePaths) as $updatedStatePath) {
                 $schema->callAfterStateUpdated($updatedStatePath);
             }
         }
