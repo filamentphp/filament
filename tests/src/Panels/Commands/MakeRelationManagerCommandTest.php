@@ -43,11 +43,10 @@ beforeEach(function (): void {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentOrDefaultPanel())->resources = [
-        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+    Filament::getCurrentOrDefaultPanel()->resources([
         app()->getNamespace() . 'Filament\\Resources\\Teams\\TeamResource',
         app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
-    ];
+    ]);
 
     MakeRelationManagerCommand::$shouldCheckModelsForSoftDeletes = false;
 });

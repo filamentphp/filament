@@ -31,20 +31,20 @@ class DepartmentsRelationManagerWithTabs extends RelationManager
 
     public function getTabs(): array
     {
-        $aNames = Tab::make('Names starting with A')
+        $namesStartingWithA = Tab::make('Names starting with A')
             ->modifyQueryUsing(fn ($query) => $query->where('name', 'LIKE', 'A%'));
 
-        $other = Tab::make('Other names')
+        $otherNames = Tab::make('Other names')
             ->modifyQueryUsing(fn ($query) => $query->where('name', 'NOT LIKE', 'A%'));
 
         if ($this->shouldExcludeTabQueryWhenResolvingRecord) {
-            $aNames->excludeQueryWhenResolvingRecord();
-            $other->excludeQueryWhenResolvingRecord();
+            $namesStartingWithA->excludeQueryWhenResolvingRecord();
+            $otherNames->excludeQueryWhenResolvingRecord();
         }
 
         return [
-            'a_names' => $aNames,
-            'other' => $other,
+            'a_names' => $namesStartingWithA,
+            'other' => $otherNames,
         ];
     }
 }

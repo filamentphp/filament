@@ -3,6 +3,7 @@
 namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\Page;
@@ -38,6 +39,10 @@ class CheckboxListTest extends Page
                     ->default(['a', 'c'])
                     ->searchable()
                     ->bulkToggleable()
+                    ->selectAllAction(static fn (Action $action): Action => $action
+                        ->extraAttributes(['data-testid' => 'checkbox-list-select-all']))
+                    ->deselectAllAction(static fn (Action $action): Action => $action
+                        ->extraAttributes(['data-testid' => 'checkbox-list-deselect-all']))
                     ->disabled(static fn (Get $get): bool => (bool) $get('disabled'))
                     ->extraFieldWrapperAttributes(['data-testid' => 'checkbox-list']),
             ])

@@ -207,7 +207,7 @@ describe('headings', function (): void {
         expect($table->getRootHeadingLevel())->toBe(3);
     });
 
-    it('computes heading tag from level', function (): void {
+    it('computes `getHeadingTag()` from the heading level', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
 
         expect($table->getHeadingTag())->toBe('h2');
@@ -904,8 +904,6 @@ describe('rendering', function (): void {
             ->assertPresent($individualSearchInput . ':focus')
             ->keys($individualSearchInput, 'r')
             ->assertValue($individualSearchInput, 'Shor')
-            // Let the debounced search finish before opening another page.
-            ->wait(2)
             ->assertMissing('.fi-ta-records[inert]');
 
         $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
@@ -914,8 +912,8 @@ describe('rendering', function (): void {
             ->assertAttribute('[data-tab-key="published"]', 'data-tab-available', 'true')
             ->click('[data-tab-key="published"]')
             ->assertPresent('.fi-ta-content-loading .fi-ta-records[inert]')
-            ->assertAttribute('[x-ref="tabsData"]', 'data-active-tab', 'published')
-            ->assertMissing('.fi-ta-records[inert]');
+            ->assertMissing('.fi-ta-records[inert]')
+            ->assertAttribute('[data-tab-key="published"]', 'aria-selected', 'true');
 
         Post::query()->delete();
 

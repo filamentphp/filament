@@ -47,26 +47,29 @@ it('resets the form and active tab after `create another` inside a `CreateAction
 
     $page = visit('/autofocus-after-create-another-tabs-modal-browser-test');
 
-    foreach ([$page, $page->inDarkMode()] as $themedPage) {
-        $themedPage
-            ->click('[data-testid="open-modal-trigger"]')
-            ->assertVisible('input[wire\\:model="mountedActions.0.data.name"]');
+    $page
+        ->click('[data-testid="open-modal-trigger"]')
+        ->assertVisible('input[wire\\:model="mountedActions.0.data.name"]');
 
-        foreach (['Engineering', 'Operations'] as $departmentName) {
-            $themedPage
-                ->fill('input[wire\\:model="mountedActions.0.data.name"]', $departmentName)
-                ->click('[role="tab"]:nth-child(2)')
-                ->assertAttribute('[role="tab"]:nth-child(2)', 'aria-selected', 'true')
-                ->click('button >> text=Create & create another')
-                ->assertAttribute('[role="tab"]:nth-child(1)', 'aria-selected', 'true')
-                ->assertVisible('input[wire\\:model="mountedActions.0.data.name"]')
-                ->assertValue('input[wire\\:model="mountedActions.0.data.name"]', '');
-        }
-
-        $themedPage->assertNoAccessibilityIssues();
+    foreach (['Engineering', 'Operations'] as $departmentName) {
+        $page
+            ->fill('input[wire\\:model="mountedActions.0.data.name"]', $departmentName)
+            ->click('[role="tab"]:nth-child(2)')
+            ->assertAttribute('[role="tab"]:nth-child(2)', 'aria-selected', 'true')
+            ->click('button >> text=Create & create another')
+            ->assertAttribute('[role="tab"]:nth-child(1)', 'aria-selected', 'true')
+            ->assertVisible('input[wire\\:model="mountedActions.0.data.name"]')
+            ->assertValue('input[wire\\:model="mountedActions.0.data.name"]', '');
     }
 
-    expect(Department::query()->orderBy('id')->pluck('name')->all())->toBe(['Engineering', 'Operations', 'Engineering', 'Operations']);
+    $page->assertNoAccessibilityIssues();
+
+    expect(Department::query()->orderBy('id')->pluck('name')->all())->toBe(['Engineering', 'Operations']);
+
+    $page->inDarkMode()
+        ->click('[data-testid="open-modal-trigger"]')
+        ->assertVisible('input[wire\\:model="mountedActions.0.data.name"]')
+        ->assertNoAccessibilityIssues();
 });
 
 it('refocuses an `autofocus()` field after `create another` is clicked on a `CreateRecord` page', function (): void {

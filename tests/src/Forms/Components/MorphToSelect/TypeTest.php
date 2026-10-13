@@ -194,7 +194,7 @@ describe('fluent API', function (): void {
     });
 });
 
-describe('`getOptionsUsing` closure', function (): void {
+describe('`getOptionsUsing()` callback', function (): void {
     it('returns options keyed by ID with title attribute values', function (): void {
         $users = User::factory()->count(3)->create();
 
@@ -274,7 +274,7 @@ describe('`getOptionsUsing` closure', function (): void {
     });
 });
 
-describe('`getOptionLabelUsing` closure', function (): void {
+describe('`getOptionLabelUsing()` callback', function (): void {
     it('resolves label from title attribute for a given value', function (): void {
         $user = User::factory()->create(['name' => 'Jane Doe']);
 
@@ -340,14 +340,13 @@ describe('`getOptionLabelUsing` closure', function (): void {
             ])
             ->fill();
 
-        // modifyOptionsQueryUsing filters out the record
         $label = $select->evaluate($type->getOptionLabelUsing, ['value' => $user->id]);
 
         expect($label)->toBeNull();
     });
 });
 
-describe('`getSearchResultsUsing` closure', function (): void {
+describe('`getSearchResultsUsing()` callback', function (): void {
     it('returns matching records by title attribute', function (): void {
         User::factory()->create(['name' => 'Alice Smith']);
         User::factory()->create(['name' => 'Bob Jones']);
@@ -424,8 +423,6 @@ describe('`getSearchResultsUsing` closure', function (): void {
             ])
             ->fill();
 
-        // Search for "Smith" — without modifyOptionsQueryUsing would return 0 (no "Smith" alone),
-        // but the query modification pre-filters to "Alice Smith", then search finds "Smith" in it
         $results = $select->evaluate($type->getSearchResultsUsing, ['search' => 'Smith']);
 
         expect($results)->toHaveCount(1);

@@ -15,36 +15,31 @@ it('can be instantiated', function (): void {
     expect($field->getName())->toBe('custom');
 });
 
-it('can set and get a `component()` class', function (): void {
-    $field = LivewireField::make('custom')
-        ->component('App\\Livewire\\MyComponent');
-    expect($field->getComponent())->toBe('App\\Livewire\\MyComponent');
-});
+describe('component', function (): void {
+    it('can set and get a `component()` class', function (): void {
+        $field = LivewireField::make('custom')
+            ->component('App\\Livewire\\MyComponent');
 
-it('can set `lazy()` mode', function (): void {
-    $field = LivewireField::make('custom');
-    expect($field->isLazy())->toBeFalse();
-    $field->lazy();
-    expect($field->isLazy())->toBeTrue();
-});
+        expect($field->getComponent())->toBe('App\\Livewire\\MyComponent');
+    });
 
-it('can set and get `data()`', function (): void {
-    $field = LivewireField::make('custom')
-        ->data(['key' => 'value', 'foo' => 'bar']);
-    expect($field->getData())->toBe(['key' => 'value', 'foo' => 'bar']);
-});
-
-it('returns empty array for `getData()` by default', function (): void {
-    $field = LivewireField::make('custom');
-    expect($field->getData())->toBe([]);
-});
-
-describe('Closure support', function (): void {
     it('can set `component()` with a `Closure`', function (): void {
         $field = LivewireField::make('custom')
             ->component(static fn (): string => 'App\\Livewire\\DynamicComponent');
 
         expect($field->getComponent())->toBe('App\\Livewire\\DynamicComponent');
+    });
+});
+
+describe('lazy loading', function (): void {
+    it('can set `lazy()` mode', function (): void {
+        $field = LivewireField::make('custom');
+
+        expect($field->isLazy())->toBeFalse();
+
+        $field->lazy();
+
+        expect($field->isLazy())->toBeTrue();
     });
 
     it('can set `lazy()` with a `Closure`', function (): void {
@@ -52,6 +47,21 @@ describe('Closure support', function (): void {
             ->lazy(static fn (): bool => true);
 
         expect($field->isLazy())->toBeTrue();
+    });
+});
+
+describe('data', function (): void {
+    it('returns an empty array for `getData()` by default', function (): void {
+        $field = LivewireField::make('custom');
+
+        expect($field->getData())->toBe([]);
+    });
+
+    it('can set and get `data()`', function (): void {
+        $field = LivewireField::make('custom')
+            ->data(['key' => 'value', 'foo' => 'bar']);
+
+        expect($field->getData())->toBe(['key' => 'value', 'foo' => 'bar']);
     });
 
     it('can set `data()` with a `Closure`', function (): void {
@@ -62,7 +72,7 @@ describe('Closure support', function (): void {
     });
 });
 
-describe('`getComponentProperties()` logic', function (): void {
+describe('component properties', function (): void {
     it('includes `wire:model` with state path', function (): void {
         Schema::make(Livewire::make())
             ->statePath('data')

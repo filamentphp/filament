@@ -19,20 +19,57 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can set `trueLabel()` and get with `getTrueLabel()`', function (): void {
-    expect(TernaryFilter::make('is_published')->trueLabel('Yes')->getTrueLabel())->toBe('Yes');
+describe('true label', function (): void {
+    it('can set `trueLabel()` and get with `getTrueLabel()`', function (): void {
+        expect(TernaryFilter::make('is_published')->trueLabel('Yes')->getTrueLabel())->toBe('Yes');
+    });
+
+    it('can set `trueLabel()` with a `Closure` and get with `getTrueLabel()`', function (): void {
+        expect(TernaryFilter::make('is_published')->trueLabel(static fn (): string => 'Yes')->getTrueLabel())->toBe('Yes');
+    });
 });
 
-it('can set `falseLabel()` and get with `getFalseLabel()`', function (): void {
-    expect(TernaryFilter::make('is_published')->falseLabel('No')->getFalseLabel())->toBe('No');
+describe('false label', function (): void {
+    it('can set `falseLabel()` and get with `getFalseLabel()`', function (): void {
+        expect(TernaryFilter::make('is_published')->falseLabel('No')->getFalseLabel())->toBe('No');
+    });
+
+    it('can set `falseLabel()` with a `Closure` and get with `getFalseLabel()`', function (): void {
+        expect(TernaryFilter::make('is_published')->falseLabel(static fn (): string => 'No')->getFalseLabel())->toBe('No');
+    });
 });
 
-it('can set `trueLabel()` with a closure and get with `getTrueLabel()`', function (): void {
-    expect(TernaryFilter::make('is_published')->trueLabel(static fn (): string => 'Yes')->getTrueLabel())->toBe('Yes');
+describe('default state', function (): void {
+    it('converts boolean `true` default to `1`', function (): void {
+        $filter = TernaryFilter::make('is_published')
+            ->default(true);
+
+        expect($filter->getDefaultState())->toBe(1);
+    });
+
+    it('converts boolean `false` default to `0`', function (): void {
+        $filter = TernaryFilter::make('is_published')
+            ->default(false);
+
+        expect($filter->getDefaultState())->toBe(0);
+    });
+
+    it('passes through non-boolean default unchanged', function (): void {
+        $filter = TernaryFilter::make('is_published')
+            ->default(null);
+
+        expect($filter->getDefaultState())->toBeNull();
+    });
 });
 
-it('can set `falseLabel()` with a closure and get with `getFalseLabel()`', function (): void {
-    expect(TernaryFilter::make('is_published')->falseLabel(static fn (): string => 'No')->getFalseLabel())->toBe('No');
+describe('form field', function (): void {
+    it('returns a `Select` component from `getFormField()`', function (): void {
+        $filter = TernaryFilter::make('is_published');
+
+        $field = $filter->getFormField();
+
+        expect($field)->toBeInstanceOf(Select::class);
+    });
 });
 
 it('can render table with `TernaryFilter`', function (): void {
@@ -100,39 +137,6 @@ describe('`nullable()` filtering', function (): void {
             ->filterTable('content', 0)
             ->assertCanSeeTableRecords(Post::whereNull('content')->get())
             ->assertCanNotSeeTableRecords(Post::whereNotNull('content')->get());
-    });
-});
-
-describe('`getDefaultState()` logic', function (): void {
-    it('converts boolean `true` default to `1`', function (): void {
-        $filter = TernaryFilter::make('is_published')
-            ->default(true);
-
-        expect($filter->getDefaultState())->toBe(1);
-    });
-
-    it('converts boolean `false` default to `0`', function (): void {
-        $filter = TernaryFilter::make('is_published')
-            ->default(false);
-
-        expect($filter->getDefaultState())->toBe(0);
-    });
-
-    it('passes through non-boolean default unchanged', function (): void {
-        $filter = TernaryFilter::make('is_published')
-            ->default(null);
-
-        expect($filter->getDefaultState())->toBeNull();
-    });
-});
-
-describe('`getFormField()`', function (): void {
-    it('returns a `Select` component', function (): void {
-        $filter = TernaryFilter::make('is_published');
-
-        $field = $filter->getFormField();
-
-        expect($field)->toBeInstanceOf(Select::class);
     });
 });
 

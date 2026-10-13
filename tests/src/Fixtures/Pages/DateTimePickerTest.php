@@ -38,6 +38,8 @@ class DateTimePickerTest extends Page
 
     public bool $isNative = true;
 
+    public bool $isRightToLeft = false;
+
     public bool $hasDstLimits = false;
 
     public bool $hasAppDstGap = false;
@@ -78,6 +80,7 @@ class DateTimePickerTest extends Page
         $this->hasSeconds = request()->boolean('seconds', true);
         $this->hasLimits = request()->boolean('bounds');
         $this->isNative = request()->boolean('native', true);
+        $this->isRightToLeft = request()->boolean('rtl');
         $this->hasDstLimits = request()->boolean('dst');
         $this->hasAppDstGap = request()->boolean('app-dst-gap');
         $this->calendarState = request()->query('calendar-state');
@@ -90,7 +93,8 @@ class DateTimePickerTest extends Page
         $this->closesOnDateSelection = request()->boolean('close-on-selection');
         $this->hourStep = request()->integer('hour-step', 1);
         $this->minuteStep = request()->integer('minute-step', 1);
-        $this->form->fill($this->calendarState !== null ? ['field' => $this->calendarState] : ($this->hasDstLimits ? ['field' => '01:45:07'] : []));
+        $initialState = request()->query('initial-state', $this->calendarState);
+        $this->form->fill($initialState !== null ? ['field' => $initialState] : ($this->hasDstLimits ? ['field' => '01:45:07'] : []));
     }
 
     public function form(Schema $form): Schema
@@ -112,7 +116,7 @@ class DateTimePickerTest extends Page
             ->placeholder('Choose a date or time')
             ->seconds($this->hasSeconds)
             ->displayFormat($this->displayFormat)
-            ->extraAttributes(['data-testid' => 'date-time-picker'])
+            ->extraAttributes(['data-testid' => 'date-time-picker', 'dir' => $this->isRightToLeft ? 'rtl' : 'ltr'])
             ->extraInputAttributes(['data-testid' => 'timed-input'])
             ->extraTriggerAttributes(['data-testid' => 'timed-trigger']);
 
