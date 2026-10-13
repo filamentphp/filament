@@ -188,15 +188,18 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         // a successful verification rejects that code and every earlier one, not just a repeat
         // of the same code.
         $cacheKey = 'filament:auth:app_authentication:code:' . hash('sha256', $secret);
-        $legacyCacheKey = 'filament.app_authentication_codes.' . md5($secret);
         $cache = $this->getCacheRepository();
 
-        $verifyCode = function (?Lock $lock, Repository $cache) use ($cacheKey, $legacyCacheKey, $code, $secret): bool {
+        $verifyCode = function (?Lock $lock, Repository $cache) use ($cacheKey, $code, $secret): bool {
             // Passing an initial `$lastAcceptedTimestamp` makes `verifyKeyNewer()` return the
             // matched period instead of `true`, so future codes are cached correctly.
-            $lastAcceptedTimestamp = $this->getLastAcceptedCodeTimestamp($cache, $cacheKey, $legacyCacheKey);
+            $lastAcceptedTimestamp = $cache->get($cacheKey);
 
-            if ($lastAcceptedTimestamp === false) {
+            if (is_string($lastAcceptedTimestamp) && ctype_digit($lastAcceptedTimestamp)) {
+                $lastAcceptedTimestamp = (int) $lastAcceptedTimestamp;
+            }
+
+            if (($lastAcceptedTimestamp !== null) && (! is_int($lastAcceptedTimestamp))) {
                 return false;
             }
 
@@ -208,46 +211,23 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
                 return false;
             }
 
-            $lastAcceptedTimestamp = $this->getLastAcceptedCodeTimestamp($cache, $cacheKey, $legacyCacheKey);
+            $lastAcceptedTimestamp = $cache->get($cacheKey);
+
+            if (is_string($lastAcceptedTimestamp) && ctype_digit($lastAcceptedTimestamp)) {
+                $lastAcceptedTimestamp = (int) $lastAcceptedTimestamp;
+            }
 
             if (
-                ($lastAcceptedTimestamp === false)
-                || (($lastAcceptedTimestamp !== null) && ($timestamp <= $lastAcceptedTimestamp))
+                (($lastAcceptedTimestamp !== null) && ((! is_int($lastAcceptedTimestamp)) || ($timestamp <= $lastAcceptedTimestamp)))
                 || (($lock !== null) && (! $lock->isOwnedByCurrentProcess()))
             ) {
                 return false;
             }
 
-            // Preserve replay protection for workers still using the old key during deployment.
-            return $cache->forever($legacyCacheKey, $timestamp) && $cache->forever($cacheKey, $timestamp);
+            return $cache->forever($cacheKey, $timestamp);
         };
 
         return $this->executeWithCacheLock($cache, "{$cacheKey}:lock", $verifyCode);
-    }
-
-    protected function getLastAcceptedCodeTimestamp(Repository $cache, string $cacheKey, string $legacyCacheKey): int | false | null
-    {
-        $lastAcceptedTimestamp = null;
-
-        foreach ([$cacheKey, $legacyCacheKey] as $key) {
-            $timestamp = $cache->get($key);
-
-            if (is_string($timestamp) && ctype_digit($timestamp)) {
-                $timestamp = (int) $timestamp;
-            }
-
-            if ($timestamp === null) {
-                continue;
-            }
-
-            if (! is_int($timestamp)) {
-                return false;
-            }
-
-            $lastAcceptedTimestamp = ($lastAcceptedTimestamp === null) ? $timestamp : max($lastAcceptedTimestamp, $timestamp);
-        }
-
-        return $lastAcceptedTimestamp;
     }
 
     public function verifyRecoveryCode(#[SensitiveParameter] string $recoveryCode, ?HasAppAuthenticationRecovery $user = null): bool

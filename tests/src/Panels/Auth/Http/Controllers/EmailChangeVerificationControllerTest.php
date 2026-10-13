@@ -9,7 +9,7 @@ use League\Uri\Components\Query;
 
 uses(TestCase::class);
 
-it('can verify an email change using current and legacy cache keys', function (string $cacheKeyFormat): void {
+it('can verify an email change', function (): void {
     $userToVerify = User::factory()->create();
     $newEmail = fake()->email();
 
@@ -19,14 +19,7 @@ it('can verify an email change using current and legacy cache keys', function (s
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 
     $verificationSignature = Query::new($verificationUrl)->get('signature');
-
-    if ($cacheKeyFormat !== 'legacy') {
-        cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
-    }
-
-    if ($cacheKeyFormat !== 'current') {
-        cache()->put($verificationSignature, true, ttl: now()->addHour());
-    }
+    cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
 
     $this
         ->actingAs($userToVerify)
@@ -38,11 +31,10 @@ it('can verify an email change using current and legacy cache keys', function (s
     expect($userToVerify->refresh())
         ->email->toBe($newEmail);
 
-    expect(cache()->has("filament:auth:email_change:verification:{$verificationSignature}"))->toBeFalse()
-        ->and(cache()->has($verificationSignature))->toBeFalse();
+    expect(cache()->has("filament:auth:email_change:verification:{$verificationSignature}"))->toBeFalse();
 
     $this->get($verificationUrl)->assertForbidden();
-})->with(['current', 'legacy', 'both']);
+});
 
 it('can verify an email with a custom slug', function (): void {
     Filament::setCurrentPanel('slugs');

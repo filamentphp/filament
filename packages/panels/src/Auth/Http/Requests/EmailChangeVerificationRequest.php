@@ -13,7 +13,7 @@ class EmailChangeVerificationRequest extends FormRequest
     {
         $signature = $this->query('signature');
 
-        if ((! cache()->has("filament:auth:email_change:verification:{$signature}")) && (! cache()->has($signature))) {
+        if (! cache()->has("filament:auth:email_change:verification:{$signature}")) {
             return false;
         }
 
@@ -50,23 +50,14 @@ class EmailChangeVerificationRequest extends FormRequest
             ->exists();
 
         $signature = $this->query('signature');
+        $cacheKey = "filament:auth:email_change:verification:{$signature}";
         $cache = cache();
-        $wasPending = false;
-        $wasRemoved = true;
 
-        foreach (["filament:auth:email_change:verification:{$signature}", $signature] as $cacheKey) {
-            if (! $cache->has($cacheKey)) {
-                continue;
-            }
-
-            $wasPending = true;
-
-            if ((! $cache->forget($cacheKey)) && ($cache->get($cacheKey) !== null)) {
-                $wasRemoved = false;
-            }
+        if ((! $cache->has($cacheKey)) || ((! $cache->forget($cacheKey)) && ($cache->get($cacheKey) !== null))) {
+            return false;
         }
 
-        if ($isEmailTaken || (! $wasPending) || (! $wasRemoved)) {
+        if ($isEmailTaken) {
             return false;
         }
 

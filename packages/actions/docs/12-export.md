@@ -975,7 +975,7 @@ By default, the export system will tag each job with the ID of the export. This 
 ```php
 public function getJobTags(): array
 {
-    return ["export{$this->export->getKey()}"];
+    return ["filament:export:{$this->export->getKey()}"];
 }
 ```
 
