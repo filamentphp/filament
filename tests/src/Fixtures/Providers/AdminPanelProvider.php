@@ -63,6 +63,7 @@ use Filament\Tests\Fixtures\Pages\RepeaterTest;
 use Filament\Tests\Fixtures\Pages\RichEditorBrowserTest;
 use Filament\Tests\Fixtures\Pages\RichEditorMinimalControlsBrowserTest;
 use Filament\Tests\Fixtures\Pages\SchemaCachingBrowserTest;
+use Filament\Tests\Fixtures\Pages\ScopedActionsBrowserTest;
 use Filament\Tests\Fixtures\Pages\SectionBrowserTest;
 use Filament\Tests\Fixtures\Pages\SelectTest;
 use Filament\Tests\Fixtures\Pages\Settings;
@@ -87,6 +88,7 @@ use Filament\Tests\Fixtures\Resources\PostCategories\PostCategoryResource;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\Shop\Products\ProductResource;
 use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\ScopedDepartmentsRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
@@ -113,6 +115,9 @@ class AdminPanelProvider extends PanelProvider
             ->emailVerification()
             ->profile()
             ->unsavedChangesAlerts(static fn (): bool => request()->routeIs('filament.admin.pages.unsaved-changes-alert-browser-test'))
+            ->livewireComponents([
+                ScopedDepartmentsRelationManager::class,
+            ])
             ->renderHook(
                 TablesRenderHook::CONTENT_BEFORE,
                 static fn (): string => '<div data-testid="table-content-before-hook">Before table content</div>',
@@ -138,6 +143,7 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
                 Actions::class,
+                ScopedActionsBrowserTest::class,
                 AfterStateUpdatedJsTest::class,
                 AuthorizableSettings::class,
                 AutofocusAfterCreateAnotherTabsModalBrowserTest::class,

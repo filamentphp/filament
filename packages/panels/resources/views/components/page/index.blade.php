@@ -137,16 +137,6 @@
 
     @if (! ($this instanceof HasTable))
         <x-filament-actions::modals />
-    @elseif ($this->isTableLoaded() && filled($this->defaultTableAction))
-        <div
-            wire:init="mountAction(@js($this->defaultTableAction) , @if (filled($this->defaultTableActionArguments)) @js($this->defaultTableActionArguments) @else {} @endif , @js($this->getDefaultTableActionUrlContext()))"
-        ></div>
-    @endif
-
-    @if (filled($this->defaultAction))
-        <div
-            wire:init="mountAction(@js($this->defaultAction) , @if (filled($this->defaultActionArguments)) @js($this->defaultActionArguments) @else {} @endif , @js($this->getDefaultActionUrlContext()))"
-        ></div>
     @endif
 
     {{ FilamentView::renderHook(PanelsRenderHook::PAGE_END, scopes: $this->getRenderHookScopes()) }}

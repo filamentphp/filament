@@ -8,7 +8,9 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Tests\Fixtures\Pages\ScopedActionsBrowserTest;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\ScopedDepartmentsRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -27,6 +29,8 @@ class SpaPanelProvider extends PanelProvider
             ->path('spa')
             ->login()
             ->spa()
+            ->pages([ScopedActionsBrowserTest::class])
+            ->livewireComponents([ScopedDepartmentsRelationManager::class])
             ->resources([
                 PostResource::class,
                 TicketResource::class,

@@ -17,6 +17,10 @@
         @endforeach
     </div>
 
+    @if ($this->shouldMountDefaultActions())
+        <div wire:init="mountDefaultActions"></div>
+    @endif
+
     @php
         $this->hasActionsModalRendered = true;
     @endphp
