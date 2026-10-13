@@ -361,19 +361,20 @@ describe('browser interactions', function (): void {
         }
     });
 
-    it('focuses lazy and empty filter configurations', function (string $focusScenario, string $focusedSelector): void {
+    it('focuses available controls and empty filter configurations', function (string $focusScenario, string $focusedSelector): void {
         Artisan::call('filament:assets');
 
         $this->actingAs(User::factory()->create());
 
         visit("/filters-reset-action-browser-test?focusScenario={$focusScenario}")
+            ->assertPresent($focusedSelector)
             ->keys('[data-testid="filters-trigger"]', 'Enter')
             ->assertPresent($focusedSelector . ':focus')
             ->keys($focusedSelector, 'Escape')
             ->assertPresent('[data-testid="filters-trigger"]:focus')
             ->assertNoSmoke();
     })->with([
-        'lazy select first' => ['selectFirst', '[data-testid="status-filter"] button[aria-haspopup="listbox"]'],
+        'custom select first' => ['selectFirst', '[data-testid="status-filter"] button[aria-haspopup="listbox"]'],
         'disabled focusable control first' => ['disabledFirst', '[data-testid="published-filter"]'],
         'hidden control first' => ['hiddenFirst', '[data-testid="published-filter"]'],
         'disabled control fallback' => ['disabled', 'div[tabindex="-1"]:has(> div [data-testid="filters-reset-action"])'],
