@@ -374,7 +374,7 @@ abstract class Importer
     {
         return [
             (new WithoutOverlapping("import{$this->import->getKey()}"))->expireAfter(600), // Legacy
-            (new WithoutOverlapping("filament:imports:job:{$this->import->getKey()}:lock"))->expireAfter(600),
+            (new WithoutOverlapping("filament:imports:{$this->import->getKey()}"))->expireAfter(600),
         ];
     }
 
