@@ -880,7 +880,7 @@ By default, the import system will tag each job with the ID of the import. This 
 ```php
 public function getJobTags(): array
 {
-    return ["import{$this->import->getKey()}"];
+    return ["filament:import:{$this->import->getKey()}"];
 }
 ```
 

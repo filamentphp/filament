@@ -369,6 +369,16 @@ You should review your provider's implementation for Eloquent-specific method ca
 See the [custom avatar provider documentation](../users/overview#using-a-different-avatar-provider) for more details.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('actions')">
+<span slot="summary">Import and export job tags are now namespaced</span>
+
+Default job tags have changed from `import{id}` and `export{id}` to `filament:import:{id}` and `filament:export:{id}`, respectively.
+
+If you filter or monitor jobs using these tags, update your filters to the new formats. Previously recorded tags are not rewritten. If you override `getJobTags()` in an importer or exporter, your overrides remain in effect; review any code that relies on the previous defaults.
+
+See the [import job tags documentation](../actions/import#customizing-the-import-job-tags) and [export job tags documentation](../actions/export#customizing-the-export-job-tags) for the updated examples.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('tables')">
 <span slot="summary">Legacy query builder constraint namespaces have been removed</span>
 

@@ -373,7 +373,6 @@ abstract class Importer
     public function getJobMiddleware(): array
     {
         return [
-            (new WithoutOverlapping("import{$this->import->getKey()}"))->expireAfter(600), // Legacy
             (new WithoutOverlapping("filament:imports:{$this->import->getKey()}"))->expireAfter(600),
         ];
     }
@@ -396,7 +395,7 @@ abstract class Importer
      */
     public function getJobTags(): array
     {
-        return ["import{$this->import->getKey()}"];
+        return ["filament:import:{$this->import->getKey()}"];
     }
 
     public function getJobQueue(): ?string
