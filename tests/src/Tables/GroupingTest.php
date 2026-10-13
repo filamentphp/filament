@@ -1064,7 +1064,7 @@ describe('session persistence', function (): void {
         $livewire = livewire(PostsTableWithGroupPersistedInSession::class)->instance();
 
         expect($livewire->getTableGroupingSessionKey())
-            ->toBe('tables.' . md5($livewire::class) . '_grouping');
+            ->toBe('filament.tables.' . hash('sha256', $livewire::class) . '.grouping');
     });
 
     it('can persist the grouping in the user\'s session', function (): void {

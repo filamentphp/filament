@@ -1787,7 +1787,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                             wire:key="<?= e($item->getLivewireKey()) ?>.item"
                             x-data="item(<?= Js::from([
                                 'isCollapsed' => $this->isCollapsed($item),
-                                'collapseKey' => $persistCollapsed ? "builder-{$key}-{$itemKey}-isCollapsed" : null,
+                                'collapseKey' => $persistCollapsed ? "filament:builder:collapsed:{$key}-{$itemKey}" : null,
                             ]) ?>)"
                             x-on:builder-expand.window="expandFromEvent"
                             x-on:builder-collapse.window="collapseFromEvent"

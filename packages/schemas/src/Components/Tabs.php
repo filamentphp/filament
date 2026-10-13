@@ -366,7 +366,7 @@ class Tabs extends Component implements HasEmbeddedView
                 isTabPersistedInQueryString: <?= Js::from($this->isTabPersistedInQueryString()) ?>,
                 livewireId: <?= Js::from($this->getLivewire()->getId()) ?>,
                 schemaKey: <?= Js::from($this->getRootContainer()->getKey()) ?>,
-                tab: <?php if ($this->isTabPersisted() && filled($id)) { ?>$persist(null).as(<?= Js::from($id) ?>)<?php } else { ?><?= Js::from(null) ?><?php } ?>,
+                tab: <?php if ($this->isTabPersisted() && filled($id)) { ?>$persist(null).as(<?= Js::from("filament:tabs:active:{$id}") ?>)<?php } else { ?><?= Js::from(null) ?><?php } ?>,
                 tabQueryStringKey: <?= Js::from($this->getTabQueryStringKey()) ?>,
             })"
             x-load

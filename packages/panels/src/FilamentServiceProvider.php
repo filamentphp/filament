@@ -110,7 +110,7 @@ class FilamentServiceProvider extends PackageServiceProvider
         RateLimiter::for(
             'filament-authentication',
             static fn (): Limit => Limit::perMinute(6)
-                ->by(Filament::getUserScopedAuthIdentifier()),
+                ->by('filament:auth:rate_limit:' . Filament::getUserScopedAuthIdentifier()),
         );
 
         Blade::components([

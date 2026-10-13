@@ -9,7 +9,7 @@
             $dispatch('theme-changed', theme)
         })
 
-        theme = localStorage.getItem('theme') || @js(filament()->getDefaultThemeMode()->value)
+        theme = localStorage.getItem('filament:theme:mode') || @js(filament()->getDefaultThemeMode()->value)
     "
     role="group"
     aria-label="{{ __('filament-panels::layout.actions.theme_switcher.label') }}"

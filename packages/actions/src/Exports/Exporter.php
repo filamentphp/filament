@@ -130,7 +130,8 @@ abstract class Exporter
     public function getJobMiddleware(): array
     {
         return [
-            (new WithoutOverlapping("export{$this->export->getKey()}"))->expireAfter(600),
+            (new WithoutOverlapping("export{$this->export->getKey()}"))->expireAfter(600), // Legacy
+            (new WithoutOverlapping("filament:exports:job:{$this->export->getKey()}:lock"))->expireAfter(600),
         ];
     }
 

@@ -45,7 +45,7 @@ class SetUpAppAuthenticationAction
     public static function make(AppAuthentication $appAuthentication): Action
     {
         $rateLimitAuthenticationAttempt = static function (string $passwordStatePath): void {
-            $rateLimitingKey = 'filament-set-up-app-authentication:' . Filament::getUserScopedAuthIdentifier();
+            $rateLimitingKey = 'filament:auth:set_up_app_authentication:rate_limit:' . Filament::getUserScopedAuthIdentifier();
 
             if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
                 throw ValidationException::withMessages([

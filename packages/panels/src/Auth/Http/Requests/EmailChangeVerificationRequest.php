@@ -11,7 +11,9 @@ class EmailChangeVerificationRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        if (! cache()->has($this->query('signature'))) {
+        $signature = $this->query('signature');
+
+        if ((! cache()->has("filament:auth:email_change:verification:{$signature}")) && (! cache()->has($signature))) {
             return false;
         }
 
@@ -47,7 +49,10 @@ class EmailChangeVerificationRequest extends FormRequest
             ->useWritePdo()
             ->exists();
 
-        cache()->forget($this->query('signature'));
+        $signature = $this->query('signature');
+
+        cache()->forget("filament:auth:email_change:verification:{$signature}");
+        cache()->forget($signature);
 
         if ($isEmailTaken) {
             return false;

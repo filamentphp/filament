@@ -103,7 +103,7 @@ describe('saving profile', function (): void {
         Notification::assertSentOnDemand(VerifyEmailChange::class, function (VerifyEmailChange $notification): bool {
             $verificationSignature = Query::new($notification->url)->get('signature');
 
-            return cache()->has($verificationSignature);
+            return cache()->has("filament:auth:email_change:verification:{$verificationSignature}") && (! cache()->has($verificationSignature));
         });
     });
 

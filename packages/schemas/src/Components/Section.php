@@ -361,7 +361,7 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
 
             <section
                 x-data="{
-                    isCollapsed: <?php if ($shouldPersistCollapsed) { ?>$persist(<?= Js::from($isCollapsed) ?>).as(`section-${<?= Js::from($collapseId) ?> ?? $el.id}-isCollapsed`)<?php } else { ?><?= Js::from($isCollapsed) ?><?php } ?>,
+                    isCollapsed: <?php if ($shouldPersistCollapsed) { ?>$persist(<?= Js::from($isCollapsed) ?>).as(`filament:section:collapsed:${<?= Js::from($collapseId) ?> ?? $el.id}`)<?php } else { ?><?= Js::from($isCollapsed) ?><?php } ?>,
                 }"
                 <?php if ($collapsible) { ?>
                     x-on:collapse-section.window="if ($event.detail.id == (<?= Js::from($collapseId) ?> ?? $el.id)) isCollapsed = true"
