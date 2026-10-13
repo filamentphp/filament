@@ -262,9 +262,9 @@ public function table(Table $table): Table
 
 The second parameter is optional and defaults to `'asc'`.
 
-For Eloquent tables, if a sortable column is toggled off, Filament ignores user-selected sorting on that column unless its name matches the column configured with `defaultSort()`. In that case, Filament continues to use the selected direction. Default sorting still applies when its column is toggled off, including loading any relationship aggregates configured on that column.
+If you pass the name of a table column as the first parameter, Filament will use that column's sorting behavior (custom sorting columns or query function). This also applies when the column is toggled off, and preserves any sort direction the user has selected for that column.
 
-If you pass the name of a table column as the first parameter, Filament will use that column's sorting behavior (custom sorting columns or query function). However, if you need to sort by a column that doesn’t exist in the table or in the database, you should pass a query function instead:
+If you need to sort by a column that doesn’t exist in the table or in the database, you should pass a query function instead:
 
 ```php
 use Filament\Tables\Table;
