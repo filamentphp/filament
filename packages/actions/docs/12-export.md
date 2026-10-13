@@ -930,7 +930,7 @@ use Illuminate\Queue\Middleware\WithoutOverlapping;
 public function getJobMiddleware(): array
 {
     return [
-        (new WithoutOverlapping("filament:exports:job:{$this->export->getKey()}:lock"))->expireAfter(600),
+        (new WithoutOverlapping("filament:exports:{$this->export->getKey()}"))->expireAfter(600),
     ];
 }
 ```
