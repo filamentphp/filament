@@ -461,37 +461,37 @@ describe('session persistence', function (): void {
             ->and($table->persistsRecordsPerPageInSession())->toBeTrue();
     });
 
-    it('uses the identifier for every table session key while preserving default keys and tenant-scoped filter keys', function (): void {
+    it('uses SHA-256 scopes and the identifier for every table session key while preserving tenant scoping', function (): void {
         /** @var PersistedTableTestComponent $defaultTable */
         $defaultTable = livewire(PersistedTableTestComponent::class)->instance();
         $defaultNamespace = $defaultTable::class;
 
-        expect($defaultTable->getTablePerPageSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_per_page')
-            ->and($defaultTable->getTableSearchSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_search')
-            ->and($defaultTable->getTableColumnSearchesSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_column_search')
-            ->and($defaultTable->getTableSortSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_sort')
-            ->and($defaultTable->getTableGroupingSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_grouping')
-            ->and($defaultTable->getTableFiltersSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_filters')
-            ->and($defaultTable->getTableColumnsSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_columns')
-            ->and($defaultTable->getHasReorderedTableColumnsSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_has_reordered_columns');
+        expect($defaultTable->getTablePerPageSessionKey())->toBe('filament.tables.' . hash('sha256', $defaultNamespace) . '.per_page')
+            ->and($defaultTable->getTableSearchSessionKey())->toBe('filament.tables.' . hash('sha256', $defaultNamespace) . '.search')
+            ->and($defaultTable->getTableColumnSearchesSessionKey())->toBe('filament.tables.' . hash('sha256', $defaultNamespace) . '.column_search')
+            ->and($defaultTable->getTableSortSessionKey())->toBe('filament.tables.' . hash('sha256', $defaultNamespace) . '.sort')
+            ->and($defaultTable->getTableGroupingSessionKey())->toBe('filament.tables.' . hash('sha256', $defaultNamespace) . '.grouping')
+            ->and($defaultTable->getTableFiltersSessionKey())->toBe('filament.tables.' . hash('sha256', $defaultNamespace) . '.filters')
+            ->and($defaultTable->getTableColumnsSessionKey())->toBe('filament.tables.' . hash('sha256', $defaultNamespace) . '.columns')
+            ->and($defaultTable->getHasReorderedTableColumnsSessionKey())->toBe('filament.tables.' . hash('sha256', $defaultNamespace) . '.has_reordered_columns');
 
         /** @var QueryStringTableTestComponent $queryStringTable */
         $queryStringTable = livewire(QueryStringTableTestComponent::class)->instance();
 
-        expect($queryStringTable->getTableSearchSessionKey())->toBe('tables.' . md5($queryStringTable::class) . '_search');
+        expect($queryStringTable->getTableSearchSessionKey())->toBe('filament.tables.' . hash('sha256', $queryStringTable::class) . '.search');
 
         /** @var PersistedTableTestComponent $identifiedTable */
         $identifiedTable = livewire(PersistedTableTestComponent::class, ['tableIdentifier' => 'first'])->instance();
-        $identifiedNamespace = md5($identifiedTable::class) . '.' . md5('first');
+        $identifiedNamespace = hash('sha256', $identifiedTable::class) . '.' . hash('sha256', 'first');
 
-        expect($identifiedTable->getTablePerPageSessionKey())->toBe("tables.{$identifiedNamespace}_per_page")
-            ->and($identifiedTable->getTableSearchSessionKey())->toBe("tables.{$identifiedNamespace}_search")
-            ->and($identifiedTable->getTableColumnSearchesSessionKey())->toBe("tables.{$identifiedNamespace}_column_search")
-            ->and($identifiedTable->getTableSortSessionKey())->toBe("tables.{$identifiedNamespace}_sort")
-            ->and($identifiedTable->getTableGroupingSessionKey())->toBe("tables.{$identifiedNamespace}_grouping")
-            ->and($identifiedTable->getTableFiltersSessionKey())->toBe("tables.{$identifiedNamespace}_filters")
-            ->and($identifiedTable->getTableColumnsSessionKey())->toBe("tables.{$identifiedNamespace}_columns")
-            ->and($identifiedTable->getHasReorderedTableColumnsSessionKey())->toBe("tables.{$identifiedNamespace}_has_reordered_columns");
+        expect($identifiedTable->getTablePerPageSessionKey())->toBe("filament.tables.{$identifiedNamespace}.per_page")
+            ->and($identifiedTable->getTableSearchSessionKey())->toBe("filament.tables.{$identifiedNamespace}.search")
+            ->and($identifiedTable->getTableColumnSearchesSessionKey())->toBe("filament.tables.{$identifiedNamespace}.column_search")
+            ->and($identifiedTable->getTableSortSessionKey())->toBe("filament.tables.{$identifiedNamespace}.sort")
+            ->and($identifiedTable->getTableGroupingSessionKey())->toBe("filament.tables.{$identifiedNamespace}.grouping")
+            ->and($identifiedTable->getTableFiltersSessionKey())->toBe("filament.tables.{$identifiedNamespace}.filters")
+            ->and($identifiedTable->getTableColumnsSessionKey())->toBe("filament.tables.{$identifiedNamespace}.columns")
+            ->and($identifiedTable->getHasReorderedTableColumnsSessionKey())->toBe("filament.tables.{$identifiedNamespace}.has_reordered_columns");
 
         /** @var PersistedTableTestComponent $secondIdentifiedTable */
         $secondIdentifiedTable = livewire(PersistedTableTestComponent::class, ['tableIdentifier' => 'second'])->instance();
@@ -512,13 +512,16 @@ describe('session persistence', function (): void {
         /** @var PersistedTableTestComponent $secondTenantTable */
         $secondTenantTable = livewire(PersistedTableTestComponent::class, ['tableIdentifier' => 'first'])->instance();
 
-        expect($firstTenantFilterSessionKey)->toBe('tables.' . md5($defaultNamespace . "|{$firstTenant->getKey()}") . '.' . md5('first') . '_filters')
-            ->and($firstTenantSearchSessionKey)->toBe('tables.' . md5($defaultNamespace . "|{$firstTenant->getKey()}") . '.' . md5('first') . '_search')
-            ->and($firstTenantColumnSearchesSessionKey)->toBe('tables.' . md5($defaultNamespace . "|{$firstTenant->getKey()}") . '.' . md5('first') . '_column_search')
-            ->and($secondTenantTable->getTableFiltersSessionKey())->toBe('tables.' . md5($defaultNamespace . "|{$secondTenant->getKey()}") . '.' . md5('first') . '_filters')
-            ->and($secondTenantTable->getTableSearchSessionKey())->toBe('tables.' . md5($defaultNamespace . "|{$secondTenant->getKey()}") . '.' . md5('first') . '_search')
-            ->and($secondTenantTable->getTableColumnSearchesSessionKey())->toBe('tables.' . md5($defaultNamespace . "|{$secondTenant->getKey()}") . '.' . md5('first') . '_column_search')
-            ->and($secondTenantTable->getTableSortSessionKey())->toBe("tables.{$identifiedNamespace}_sort");
+        $firstTenantNamespace = strlen($defaultNamespace) . ':' . $defaultNamespace . strlen((string) $firstTenant->getKey()) . ':' . $firstTenant->getKey();
+        $secondTenantNamespace = strlen($defaultNamespace) . ':' . $defaultNamespace . strlen((string) $secondTenant->getKey()) . ':' . $secondTenant->getKey();
+
+        expect($firstTenantFilterSessionKey)->toBe('filament.tables.' . hash('sha256', $firstTenantNamespace) . '.' . hash('sha256', 'first') . '.filters')
+            ->and($firstTenantSearchSessionKey)->toBe('filament.tables.' . hash('sha256', $firstTenantNamespace) . '.' . hash('sha256', 'first') . '.search')
+            ->and($firstTenantColumnSearchesSessionKey)->toBe('filament.tables.' . hash('sha256', $firstTenantNamespace) . '.' . hash('sha256', 'first') . '.column_search')
+            ->and($secondTenantTable->getTableFiltersSessionKey())->toBe('filament.tables.' . hash('sha256', $secondTenantNamespace) . '.' . hash('sha256', 'first') . '.filters')
+            ->and($secondTenantTable->getTableSearchSessionKey())->toBe('filament.tables.' . hash('sha256', $secondTenantNamespace) . '.' . hash('sha256', 'first') . '.search')
+            ->and($secondTenantTable->getTableColumnSearchesSessionKey())->toBe('filament.tables.' . hash('sha256', $secondTenantNamespace) . '.' . hash('sha256', 'first') . '.column_search')
+            ->and($secondTenantTable->getTableSortSessionKey())->toBe("filament.tables.{$identifiedNamespace}.sort");
 
         Filament::setTenant(null);
     });
@@ -578,7 +581,7 @@ describe('session persistence', function (): void {
             ->assertSet('tableColumns', fn (array $columns): bool => $columns !== $reorderedColumns);
     });
 
-    it('restores every persisted feature from the existing default session keys', function (): void {
+    it('restores every persisted feature from the default session keys', function (): void {
         Post::factory()->count(3)->create();
 
         $defaultTable = livewire(PersistedTableTestComponent::class);
@@ -586,20 +589,20 @@ describe('session persistence', function (): void {
         $namespace = PersistedTableTestComponent::class;
 
         session()->put([
-            'tables.' . md5($namespace) . '_per_page' => 5,
-            'tables.' . md5($namespace) . '_search' => 'legacy search',
-            'tables.' . md5($namespace) . '_column_search' => ['title' => 'legacy column search'],
-            'tables.' . md5($namespace) . '_sort' => 'title:desc',
-            'tables.' . md5($namespace) . '_grouping' => 'title:desc',
-            'tables.' . md5($namespace) . '_filters' => ['is_published' => ['isActive' => true]],
-            'tables.' . md5($namespace) . '_columns' => $reorderedColumns,
-            'tables.' . md5($namespace) . '_has_reordered_columns' => true,
+            'filament.tables.' . hash('sha256', $namespace) . '.per_page' => 5,
+            'filament.tables.' . hash('sha256', $namespace) . '.search' => 'saved search',
+            'filament.tables.' . hash('sha256', $namespace) . '.column_search' => ['title' => 'saved column search'],
+            'filament.tables.' . hash('sha256', $namespace) . '.sort' => 'title:desc',
+            'filament.tables.' . hash('sha256', $namespace) . '.grouping' => 'title:desc',
+            'filament.tables.' . hash('sha256', $namespace) . '.filters' => ['is_published' => ['isActive' => true]],
+            'filament.tables.' . hash('sha256', $namespace) . '.columns' => $reorderedColumns,
+            'filament.tables.' . hash('sha256', $namespace) . '.has_reordered_columns' => true,
         ]);
 
         livewire(PersistedTableTestComponent::class)
             ->assertSet('tableRecordsPerPage', 5)
-            ->assertSet('tableSearch', 'legacy search')
-            ->assertSet('tableColumnSearches.title', 'legacy column search')
+            ->assertSet('tableSearch', 'saved search')
+            ->assertSet('tableColumnSearches.title', 'saved column search')
             ->assertSet('tableSort', 'title:desc')
             ->assertSet('tableGrouping', 'title:desc')
             ->assertSet('tableFilters.is_published.isActive', true)
@@ -661,8 +664,8 @@ describe('session persistence', function (): void {
         $namespace = PersistedTableTestComponent::class;
 
         session()->put([
-            'tables.' . md5($namespace) . '_search' => 'legacy search',
-            'tables.' . md5($namespace) . '_column_search' => ['title' => 'legacy column search'],
+            'filament.tables.' . hash('sha256', $namespace) . '.search' => 'saved search',
+            'filament.tables.' . hash('sha256', $namespace) . '.column_search' => ['title' => 'saved column search'],
         ]);
 
         Filament::setTenant(Team::factory()->create(), isQuiet: true);
@@ -672,8 +675,8 @@ describe('session persistence', function (): void {
 
         Filament::setTenant(null);
         livewire(PersistedTableTestComponent::class)
-            ->assertSet('tableSearch', 'legacy search')
-            ->assertSet('tableColumnSearches.title', 'legacy column search');
+            ->assertSet('tableSearch', 'saved search')
+            ->assertSet('tableColumnSearches.title', 'saved column search');
     });
 
     it('keeps tenant and identifier dimensions unambiguous when persisting filters', function (): void {

@@ -154,12 +154,12 @@
 
             <script>
                 var collapsedGroups = JSON.parse(
-                    localStorage.getItem('collapsedGroups'),
+                    localStorage.getItem('filament:sidebar:collapsed_groups'),
                 )
 
                 if (collapsedGroups === null || collapsedGroups === 'null') {
                     localStorage.setItem(
-                        'collapsedGroups',
+                        'filament:sidebar:collapsed_groups',
                         JSON.stringify(@js(
                         collect($navigation)
                             ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
@@ -171,7 +171,7 @@
                 }
 
                 collapsedGroups = JSON.parse(
-                    localStorage.getItem('collapsedGroups'),
+                    localStorage.getItem('filament:sidebar:collapsed_groups'),
                 )
 
                 document

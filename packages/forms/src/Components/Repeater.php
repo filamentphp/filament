@@ -1687,7 +1687,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                             wire:key="<?= e($item->getLivewireKey()) ?>.item"
                             x-data="item(<?= Js::from([
                                 'isCollapsed' => $this->isCollapsed($item),
-                                'collapseKey' => $persistCollapsed ? "repeater-{$key}-{$itemKey}-isCollapsed" : null,
+                                'collapseKey' => $persistCollapsed ? "filament:repeater:collapsed:{$key}-{$itemKey}" : null,
                             ]) ?>)"
                             x-on:repeater-expand.window="expandFromEvent"
                             x-on:repeater-collapse.window="collapseFromEvent"

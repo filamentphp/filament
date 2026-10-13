@@ -200,7 +200,7 @@ describe('validation', function (): void {
 
         $user = auth()->user();
 
-        $rateLimitingKey = 'filament-set-up-app-authentication:' . Filament::getUserScopedAuthIdentifier($user);
+        $rateLimitingKey = 'filament:auth:set_up_app_authentication:rate_limit:' . Filament::getUserScopedAuthIdentifier($user);
 
         foreach (range(1, 5) as $attempt) {
             RateLimiter::hit($rateLimitingKey);
@@ -333,7 +333,7 @@ it('can throttle code verification attempts per user', function (): void {
     $user = auth()->user();
 
     // Pre-fill the per-user rate limiter to simulate 5 prior attempts
-    $rateLimitingKey = 'filament-set-up-app-authentication:' . Filament::getUserScopedAuthIdentifier($user);
+    $rateLimitingKey = 'filament:auth:set_up_app_authentication:rate_limit:' . Filament::getUserScopedAuthIdentifier($user);
 
     foreach (range(1, 5) as $i) {
         RateLimiter::hit($rateLimitingKey);

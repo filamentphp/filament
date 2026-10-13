@@ -31,7 +31,11 @@ class BlockEmailChangeVerificationRequest extends FormRequest
 
     public function fulfill(): bool
     {
-        return (bool) cache()->pull($this->query('verificationSignature'));
+        $signature = $this->query('verificationSignature');
+        $wasPending = cache()->pull("filament:auth:email_change:verification:{$signature}");
+        $wasPendingInLegacyCache = cache()->pull($signature);
+
+        return (bool) ($wasPending || $wasPendingInLegacyCache);
     }
 
     public function withValidator(Validator $validator): Validator

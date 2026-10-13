@@ -290,6 +290,33 @@ describe('failure cases', function (): void {
         expect($emailAuthentication->verifyCode($code, $userToAuthenticate))->toBeFalse();
     });
 
+    it('can consume a legacy email code once and replaces it when a new code is sent', function (): void {
+        $emailAuthentication = EmailAuthentication::make()
+            ->generateCodesUsing(static fn (): string => '654321');
+        $userToAuthenticate = User::factory()->hasEmailAuthentication()->create();
+        $scope = hash('sha256', Filament::getUserScopedAuthIdentifier($userToAuthenticate) . '|' . session()->getId());
+        $legacyCacheKey = "filament.email_authentication_codes.{$scope}";
+        $legacyCode = ['hash' => Hash::make('123456'), 'expiresAt' => now()->addMinutes(4)];
+
+        Cache::put($legacyCacheKey, $legacyCode, now()->addMinutes(4));
+
+        expect($emailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeFalse()
+            ->and($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeTrue()
+            ->and($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse();
+
+        Cache::put($legacyCacheKey, $legacyCode, now()->addMinutes(4));
+
+        expect($emailAuthentication->sendCode($userToAuthenticate))->toBeTrue();
+
+        // Even if an old worker leaves a legacy entry, the new code takes precedence.
+        Cache::put($legacyCacheKey, $legacyCode, now()->addMinutes(4));
+
+        expect($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse()
+            ->and($emailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeTrue()
+            ->and($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse()
+            ->and($emailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeFalse();
+    });
+
     it('keeps the latest email code usable when stale session data is persisted', function (): void {
         /** @var EmailAuthentication $emailAuthentication */
         $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
@@ -502,7 +529,7 @@ describe('failure cases', function (): void {
 
         // Sending is exhausted for the second user, so reaching their challenge
         // issues no code of its own.
-        $victimRateLimitingKey = 'filament-email-authentication:' . Filament::getUserScopedAuthIdentifier($victim);
+        $victimRateLimitingKey = 'filament:auth:email_authentication:rate_limit:' . Filament::getUserScopedAuthIdentifier($victim);
 
         RateLimiter::hit($victimRateLimitingKey);
         RateLimiter::hit($victimRateLimitingKey);

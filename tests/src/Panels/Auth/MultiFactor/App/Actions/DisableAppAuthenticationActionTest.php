@@ -507,7 +507,7 @@ describe('throttling', function (): void {
         $user = auth()->user();
 
         // Pre-fill the per-user rate limiter to simulate 5 prior attempts
-        $rateLimitingKey = 'filament-disable-app-authentication:' . Filament::getUserScopedAuthIdentifier($user);
+        $rateLimitingKey = 'filament:auth:disable_app_authentication:rate_limit:' . Filament::getUserScopedAuthIdentifier($user);
 
         foreach (range(1, 5) as $i) {
             RateLimiter::hit($rateLimitingKey);
@@ -535,7 +535,7 @@ describe('throttling', function (): void {
         $user = auth()->user();
 
         // Pre-fill the per-user rate limiter to simulate 5 prior attempts
-        $rateLimitingKey = 'filament-disable-app-authentication:' . Filament::getUserScopedAuthIdentifier($user);
+        $rateLimitingKey = 'filament:auth:disable_app_authentication:rate_limit:' . Filament::getUserScopedAuthIdentifier($user);
 
         foreach (range(1, 5) as $i) {
             RateLimiter::hit($rateLimitingKey);

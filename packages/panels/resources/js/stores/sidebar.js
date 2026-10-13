@@ -1,10 +1,14 @@
 const breakpoint = 1024
 
 export default () => ({
-    isOpen: window.Alpine.$persist(true).as('isOpen'),
-    isOpenDesktop: window.Alpine.$persist(true).as('isOpenDesktop'),
+    isOpen: window.Alpine.$persist(true).as('filament:sidebar:open'),
+    isOpenDesktop: window.Alpine.$persist(true).as(
+        'filament:sidebar:desktop_open',
+    ),
 
-    collapsedGroups: window.Alpine.$persist(null).as('collapsedGroups'),
+    collapsedGroups: window.Alpine.$persist(null).as(
+        'filament:sidebar:collapsed_groups',
+    ),
 
     scrollTop: 0,
 

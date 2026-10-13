@@ -467,7 +467,7 @@ class SupportServiceProvider extends PackageServiceProvider
                         return '<options=bold>NOT AVAILABLE</>';
                     }
 
-                    $path = app()->bootstrapPath('cache/filament/panels');
+                    $path = (config('filament.cache_path') ?? base_path('bootstrap/cache/filament')) . DIRECTORY_SEPARATOR . 'panels';
 
                     return File::isDirectory($path) && ! File::isEmptyDirectory($path)
                         ? '<fg=green;options=bold>CACHED</>'

@@ -44,7 +44,7 @@
 <section
     {{-- TODO: Investigate Livewire bug - https://github.com/filamentphp/filament/pull/8511 --}}
     x-data="{
-        isCollapsed: @if ($persistCollapsed) $persist(@js($collapsed)).as(`section-${@js($collapseId) ?? $el.id}-isCollapsed`) @else @js($collapsed) @endif,
+        isCollapsed: @if ($persistCollapsed) $persist(@js($collapsed)).as(`filament:section:collapsed:${@js($collapseId) ?? $el.id}`) @else @js($collapsed) @endif,
     }"
     @if ($collapsible)
         x-id="['fi-section-content']"

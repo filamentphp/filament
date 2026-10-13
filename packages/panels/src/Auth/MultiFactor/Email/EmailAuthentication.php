@@ -28,6 +28,8 @@ use Illuminate\Support\Facades\RateLimiter;
 use LogicException;
 use SensitiveParameter;
 
+use function Filament\Support\encode_key_segments;
+
 class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenticationProvider
 {
     use HasCacheStore;
@@ -78,7 +80,7 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
             throw new LogicException("Model [{$userClass}] does not have a [notify()] method.");
         }
 
-        $rateLimitingKey = 'filament-email-authentication:' . Filament::getUserScopedAuthIdentifier($user);
+        $rateLimitingKey = 'filament:auth:email_authentication:rate_limit:' . Filament::getUserScopedAuthIdentifier($user);
 
         if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 2)) {
             return false;
@@ -91,20 +93,27 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
         $codeHash = Hash::make($code);
         $codeExpiresAt = now()->addMinutes($codeExpiryMinutes);
         $codeCacheKey = $this->getCodeCacheKey($user);
+        $legacyCodeCacheKey = $this->getLegacyCodeCacheKey($user);
         $cache = $this->getCacheRepository();
 
         $wasStored = $this->executeWithCacheLock(
             $cache,
-            "{$codeCacheKey}.lock",
-            function (?Lock $lock, Repository $cache) use ($codeCacheKey, $codeExpiresAt, $codeHash): bool {
+            "{$codeCacheKey}:lock",
+            function (?Lock $lock, Repository $cache) use ($codeCacheKey, $legacyCodeCacheKey, $codeExpiresAt, $codeHash): bool {
                 if (($lock !== null) && (! $lock->isOwnedByCurrentProcess())) {
                     return false;
                 }
 
-                return $cache->put($codeCacheKey, [
+                if (! $cache->put($codeCacheKey, [
                     'hash' => $codeHash,
                     'expiresAt' => $codeExpiresAt,
-                ], $codeExpiresAt);
+                ], $codeExpiresAt)) {
+                    return false;
+                }
+
+                $cache->forget($legacyCodeCacheKey);
+
+                return true;
             },
         );
 
@@ -165,9 +174,11 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
 
         $cache = $this->getCacheRepository();
         $codeCacheKey = $this->getCodeCacheKey($user);
+        $legacyCodeCacheKey = $this->getLegacyCodeCacheKey($user);
 
-        return $this->executeWithCacheLock($cache, "{$codeCacheKey}.lock", function (?Lock $lock, Repository $cache) use ($code, $codeCacheKey): bool {
-            $activeCode = $cache->get($codeCacheKey);
+        return $this->executeWithCacheLock($cache, "{$codeCacheKey}:lock", function (?Lock $lock, Repository $cache) use ($code, $codeCacheKey, $legacyCodeCacheKey): bool {
+            $activeCodeCacheKey = $cache->has($codeCacheKey) ? $codeCacheKey : $legacyCodeCacheKey;
+            $activeCode = $cache->get($activeCodeCacheKey);
             $activeCodeHash = is_array($activeCode) ? ($activeCode['hash'] ?? null) : null;
             $activeCodeExpiresAt = is_array($activeCode) ? ($activeCode['expiresAt'] ?? null) : null;
 
@@ -180,18 +191,23 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
                 return false;
             }
 
-            $currentCode = $cache->get($codeCacheKey);
+            $currentCode = $cache->get($activeCodeCacheKey);
             $currentCodeHash = is_array($currentCode) ? ($currentCode['hash'] ?? null) : null;
 
             if (
                 (! is_string($currentCodeHash))
                 || (! hash_equals($activeCodeHash, $currentCodeHash))
+                || (($activeCodeCacheKey === $legacyCodeCacheKey) && $cache->has($codeCacheKey))
                 || (($lock !== null) && (! $lock->isOwnedByCurrentProcess()))
             ) {
                 return false;
             }
 
-            return $cache->forget($codeCacheKey);
+            if ((($activeCodeCacheKey === $legacyCodeCacheKey) || $cache->has($legacyCodeCacheKey)) && (! $cache->forget($legacyCodeCacheKey))) {
+                return false;
+            }
+
+            return ($activeCodeCacheKey === $legacyCodeCacheKey) || $cache->forget($codeCacheKey);
         });
     }
 
@@ -204,6 +220,17 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
      * @param  Authenticatable&Model&HasEmailAuthentication  $user
      */
     protected function getCodeCacheKey(HasEmailAuthentication $user): string
+    {
+        return 'filament:auth:email_authentication:code:' . hash(
+            'sha256',
+            encode_key_segments(Filament::getUserScopedAuthIdentifier($user), session()->getId()),
+        );
+    }
+
+    /**
+     * @param  Authenticatable&Model&HasEmailAuthentication  $user
+     */
+    protected function getLegacyCodeCacheKey(HasEmailAuthentication $user): string
     {
         return 'filament.email_authentication_codes.' . hash(
             'sha256',

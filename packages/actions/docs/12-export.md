@@ -928,7 +928,7 @@ By default, the export system will only process one job at a time from each expo
 public function getJobMiddleware(): array
 {
     return [
-        (new WithoutOverlapping("export{$this->export->getKey()}"))->expireAfter(600),
+        (new WithoutOverlapping("filament:exports:job:{$this->export->getKey()}:lock"))->expireAfter(600),
     ];
 }
 ```
