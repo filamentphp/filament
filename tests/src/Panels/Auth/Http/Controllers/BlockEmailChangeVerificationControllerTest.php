@@ -58,7 +58,7 @@ it('cannot block an email change when signed in as another user', function (): v
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 
     $verificationSignature = Query::new($verificationUrl)->get('signature');
-    cache()->put($verificationSignature, true, ttl: now()->addHour());
+    cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
 
     $blockVerificationUrl = Filament::getBlockEmailChangeVerificationUrl($userToVerify, $newEmail, $verificationSignature);
 
@@ -85,7 +85,7 @@ it('cannot block an email change once it has been verified', function (): void {
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 
     $verificationSignature = Query::new($verificationUrl)->get('signature');
-    cache()->put($verificationSignature, true, ttl: now()->addHour());
+    cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
 
     $this
         ->actingAs($userToVerify)
