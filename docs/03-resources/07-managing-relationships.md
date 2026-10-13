@@ -928,12 +928,12 @@ public function getContentTabPosition(): ?ContentTabPosition
 
 ### Mixing content and relation manager tabs
 
-To add your own tabs or change their order, override `getCombinedTabComponents()` on the Edit or View page. Use `getRelationManagerTabComponent()` to place a relation manager between your content tabs:
+To add your own tabs or change their order, override `getTabComponents()` on the Edit or View page. Use `getRelationManagerTabComponent()` to place a relation manager between your content tabs:
 
 ```php
 use Filament\Schemas\Components\Tabs\Tab;
 
-public function getCombinedTabComponents(): array
+public function getTabComponents(): array
 {
     return [
         'overview' => Tab::make('Overview')

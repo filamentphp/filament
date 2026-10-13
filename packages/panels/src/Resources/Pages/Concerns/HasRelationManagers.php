@@ -122,7 +122,7 @@ trait HasRelationManagers
     /**
      * @return array<string | int, Tab | null>
      */
-    public function getCombinedTabComponents(): array
+    public function getTabComponents(): array
     {
         // The empty key has always represented content in combined tabs.
         $tabs = $this->getRelationManagerTabComponents(except: ['']);
@@ -211,7 +211,7 @@ trait HasRelationManagers
                 ->livewireProperty('activeRelationManager')
                 ->contained(false)
                 ->tabs($hasCombinedRelationManagerTabsWithContent
-                    ? fn (): array => array_filter($this->getCombinedTabComponents())
+                    ? fn (): array => array_filter($this->getTabComponents())
                     : $this->getRelationManagerTabComponents());
         }
 

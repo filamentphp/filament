@@ -1429,7 +1429,7 @@ class DeniedContentTabsDepartmentsRelationManager extends ContentTabsDepartments
 
 class NonCombinedContentPage extends EditTicket
 {
-    public function getCombinedTabComponents(): array
+    public function getTabComponents(): array
     {
         throw new LogicException('The combined tab hook must only be used in combined mode.');
     }
