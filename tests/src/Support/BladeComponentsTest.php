@@ -297,3 +297,25 @@ it('preserves explicit modal window focus attributes', function (): void {
 
     expect($modalWindowMatches[0])->toContain('tabindex="-1"');
 });
+
+it('renders a modal `eyebrow` above the heading without changing the accessible name', function (): void {
+    $html = Blade::render(<<<'BLADE'
+        <x-filament::modal id="edit-post" eyebrow="Edit post" heading="Getting started">
+            Content
+        </x-filament::modal>
+        BLADE);
+
+    expect($html)
+        ->toContain('aria-labelledby="edit-post.heading"')
+        ->toMatch('/class="fi-modal-eyebrow"[^>]*>\s*Edit post\s*<\/p>\s*<h2[^>]*id="edit-post\.heading"/');
+});
+
+it('does not render a modal `eyebrow` without a heading', function (): void {
+    $html = Blade::render(<<<'BLADE'
+        <x-filament::modal eyebrow="Edit post">
+            Content
+        </x-filament::modal>
+        BLADE);
+
+    expect($html)->not->toContain('fi-modal-eyebrow');
+});

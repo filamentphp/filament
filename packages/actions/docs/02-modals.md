@@ -48,6 +48,21 @@ Action::make('delete')
 
 <AutoScreenshot name="actions/modal/confirmation-custom-text" alt="Confirmation modal with custom text" version="4.x" />
 
+#### Adding an eyebrow above the modal heading
+
+You may add an eyebrow, a short line of text displayed above the modal heading, using the `modalEyebrow()` method. This is useful when the heading names a specific record and the eyebrow names the operation being performed on it:
+
+```php
+use App\Models\Post;
+use Filament\Actions\EditAction;
+
+EditAction::make()
+    ->modalEyebrow('Edit post')
+    ->modalHeading(fn (Post $record): string => $record->title)
+```
+
+The eyebrow is not part of the modal's accessible name, which is still taken from the heading. The eyebrow is only rendered when the modal has a heading.
+
 ### Rendering a schema in a modal
 
 Filament allows you to render a [schema](../schemas) in a modal, which allows you to render any of the available components to build a UI. Usually, it is useful to build a form in the schema that can collect extra information from the user before the action runs, but any UI can be rendered:

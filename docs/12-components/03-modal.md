@@ -78,6 +78,26 @@ You can add a description, below the heading, to a modal by using the `descripti
 
 <AutoScreenshot name="components/modal/heading" alt="A modal with heading and description" version="4.x" />
 
+## Adding an eyebrow to a modal
+
+You can add an eyebrow, a short line of text displayed above the heading, to a modal by using the `eyebrow` slot:
+
+```blade
+<x-filament::modal>
+    <x-slot name="eyebrow">
+        Edit post
+    </x-slot>
+
+    <x-slot name="heading">
+        Getting started with Filament
+    </x-slot>
+
+    {{-- Modal content --}}
+</x-filament::modal>
+```
+
+The eyebrow is only rendered when the modal has a heading, and it is not part of the modal's accessible name.
+
 ## Adding an icon to a modal
 
 You can add an [icon](../styling/icons) to a modal by using the `icon` attribute:

@@ -161,6 +161,14 @@ class ModalBrowserTest extends Page
                 ->modalContent(new HtmlString('<p>You can still scroll the page behind this modal.</p>'))
                 ->extraAttributes(['data-testid' => 'click-through-trigger'])
                 ->extraModalWindowAttributes(['data-testid' => 'click-through-modal']),
+            Action::make('eyebrow')
+                ->label('Eyebrow')
+                ->modalSubmitAction(false)
+                ->modalEyebrow('Edit post')
+                ->modalHeading('Getting started with Filament')
+                ->modalDescription('Update the post before publishing it.')
+                ->extraAttributes(['data-testid' => 'eyebrow-trigger'])
+                ->extraModalWindowAttributes(['data-testid' => 'eyebrow-modal']),
             Action::make('cancelParentActionsOnClose')
                 ->label('Cancel parents on close')
                 ->modalSubmitAction(false)
