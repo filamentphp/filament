@@ -2,6 +2,7 @@
 
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Actions\CreateAction;
+use Filament\Notifications\Notification;
 use Filament\Tests\TestCase;
 use Illuminate\Auth\Access\Response;
 
@@ -15,7 +16,7 @@ describe('success notifications', function (): void {
 
         $action->sendSuccessNotification();
 
-        expect(session()->get('filament.notifications'))->not()->toBeNull();
+        Notification::assertNotified();
     });
 
     it('will not send a success notification when disabled via `successNotification(null)`', function (): void {
@@ -26,7 +27,7 @@ describe('success notifications', function (): void {
 
         $action->sendSuccessNotification();
 
-        expect(session()->get('filament.notifications'))->toBeNull();
+        Notification::assertNotNotified();
     });
 });
 
@@ -39,7 +40,7 @@ describe('failure notifications', function (): void {
 
         $action->sendFailureNotification();
 
-        expect(session()->get('filament.notifications'))->not()->toBeNull();
+        Notification::assertNotified('Creation Failed');
     });
 
     it('will not send a failure notification by default', function (): void {
@@ -49,7 +50,7 @@ describe('failure notifications', function (): void {
 
         $action->sendFailureNotification();
 
-        expect(session()->get('filament.notifications'))->toBeNull();
+        Notification::assertNotNotified();
     });
 
     it('will not send a failure notification when disabled via `failureNotification(null)`', function (): void {
@@ -61,7 +62,7 @@ describe('failure notifications', function (): void {
 
         $action->sendFailureNotification();
 
-        expect(session()->get('filament.notifications'))->toBeNull();
+        Notification::assertNotNotified();
     });
 });
 
@@ -76,7 +77,7 @@ describe('unauthorized notifications', function (): void {
 
         $action->sendUnauthorizedNotification($authorizationResponse);
 
-        expect(session()->get('filament.notifications'))->not()->toBeNull();
+        Notification::assertNotified('Unauthorized Action');
     });
 
     it('will not send an unauthorized notification by default', function (): void {
@@ -86,7 +87,7 @@ describe('unauthorized notifications', function (): void {
 
         $action->sendUnauthorizedNotification($authorizationResponse);
 
-        expect(session()->get('filament.notifications'))->toBeNull();
+        Notification::assertNotNotified();
     });
 
     it('will not send an unauthorized notification when disabled via `unauthorizedNotification(null)`', function (): void {
@@ -100,7 +101,7 @@ describe('unauthorized notifications', function (): void {
 
         $action->sendUnauthorizedNotification($authorizationResponse);
 
-        expect(session()->get('filament.notifications'))->toBeNull();
+        Notification::assertNotNotified();
     });
 });
 
@@ -114,7 +115,7 @@ describe('rate limited notifications', function (): void {
 
         $action->sendRateLimitedNotification($exception);
 
-        expect(session()->get('filament.notifications'))->not()->toBeNull();
+        Notification::assertNotified();
     });
 
     it('will not send a rate limited notification when disabled via `rateLimitedNotification(null)`', function (): void {
@@ -127,6 +128,6 @@ describe('rate limited notifications', function (): void {
 
         $action->sendRateLimitedNotification($exception);
 
-        expect(session()->get('filament.notifications'))->toBeNull();
+        Notification::assertNotNotified();
     });
 });

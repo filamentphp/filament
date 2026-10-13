@@ -8,6 +8,8 @@ use Filament\Actions\Exports\Jobs\ExportCompletion;
 use Filament\Actions\Exports\Jobs\PrepareCsvExport;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Actions\Testing\TestAction;
+use Filament\Notifications\Livewire\Notifications;
+use Filament\Notifications\NotificationMailbox;
 use Filament\Tests\Actions\TestCase;
 use Filament\Tests\Fixtures\Exports\ActionPostExporter;
 use Filament\Tests\Fixtures\Exports\ExportActions;
@@ -64,9 +66,15 @@ it('submits a real form and completes a synchronous export using the configured 
     $contents = implode('', array_map(static fn (string $file): string => str_ends_with($file, '.csv') ? Storage::disk('local')->get($file) : '', $files));
     expect($contents)->toContain('Post title', 'Included')->not->toContain('Too low', 'Too high');
     expect(ActionPostExporter::$getterCalls)->toBe(['queue', 'connection', 'batch']);
-    $notifications = session('filament.claimed_notifications') ?? session('filament.notifications');
-    expect($notifications)->toHaveCount(1);
-    expect(reset($notifications)['body'])->toBe('Exported 1 posts');
+
+    app(NotificationMailbox::class)->flush();
+    $notifications = livewire(Notifications::class)
+        ->dispatch('notificationsSent')
+        ->assertCount('notifications', 1)
+        ->get('notifications');
+
+    expect($notifications->first()->getBody())->toBe('Exported 1 posts');
+
     if (in_array(ExportFormat::Xlsx, $formats)) {
         Storage::disk('local')->assertExists($export->getFileDirectory() . '/selected-posts.xlsx');
         $reader = new Reader;
@@ -185,15 +193,20 @@ it('honors nullable queue settings and explicit connections when dispatching and
         return true;
     });
 
-    session()->forget(['filament.notifications', 'filament.claimed_notifications']);
+    app(NotificationMailbox::class)->flush();
+    livewire(Notifications::class)->dispatch('notificationsSent');
     $fake = ExportAction::fake();
     livewire(ExportActions::class)->callAction('export')->assertHasNoErrors();
     $fake->assertDispatchedTimes(ActionPostExporter::class);
 
-    $notifications = session('filament.claimed_notifications') ?? session('filament.notifications') ?? [];
-    expect($notifications)->toHaveCount($expectsStartedNotification ? 1 : 0);
+    app(NotificationMailbox::class)->flush();
+    $notifications = livewire(Notifications::class)
+        ->dispatch('notificationsSent')
+        ->assertCount('notifications', $expectsStartedNotification ? 1 : 0)
+        ->get('notifications');
+
     if ($expectsStartedNotification) {
-        expect(reset($notifications)['title'])->toBe(__('filament-actions::export.notifications.started.title'));
+        expect($notifications->first()->getTitle())->toBe(__('filament-actions::export.notifications.started.title'));
     }
 })->with([
     'null settings with synchronous default' => ['sync', null, null, null, false],

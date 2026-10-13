@@ -76,6 +76,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Cache Store
+    |--------------------------------------------------------------------------
+    |
+    | This is the cache store Filament will use. You may use any of the stores
+    | defined in `config/cache.php`.
+    |
+    | When set to `null`, the application's default cache store will be used.
+    |
+    */
+
+    'cache_store' => null,
+
+    /*
+    |--------------------------------------------------------------------------
     | Cache Path
     |--------------------------------------------------------------------------
     |
