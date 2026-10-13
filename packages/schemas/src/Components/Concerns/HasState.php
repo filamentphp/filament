@@ -652,7 +652,7 @@ trait HasState
 
     public function state(mixed $state): static
     {
-        foreach (array_reverse($this->getStateCasts()) as $stateCast) {
+        foreach ($this->getStateCasts() as $stateCast) {
             $state = $stateCast->set($state);
         }
 
