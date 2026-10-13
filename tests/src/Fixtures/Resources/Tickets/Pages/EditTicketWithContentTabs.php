@@ -60,10 +60,10 @@ class EditTicketWithContentTabs extends EditTicket
         return parent::getContentTabComponent()->label('Edit ticket')->id('edit-ticket-tab')->badge('Primary');
     }
 
-    public function getCombinedTabComponents(): array
+    public function getTabComponents(): array
     {
         if (! $this->hasCustomTabs) {
-            return parent::getCombinedTabComponents();
+            return parent::getTabComponents();
         }
 
         return [
