@@ -335,8 +335,8 @@ describe('browser interactions', function (): void {
         $page
             ->click('[data-testid="escape-close-disabled-trigger"]')
             ->assertVisible($modalSelector)
-            ->assertPresent($modalSelector . ':focus')
-            ->keys($modalSelector, 'Tab')
+            ->assertPresent($modalSelector . ' :focus')
+            ->keys(':focus', 'Tab')
             ->assertPresent($closeButtonSelector . ':focus')
             ->assertNoAccessibilityIssues()
             ->keys($closeButtonSelector, 'Enter')

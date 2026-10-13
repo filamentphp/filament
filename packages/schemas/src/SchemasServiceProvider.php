@@ -74,7 +74,7 @@ class SchemasServiceProvider extends PackageServiceProvider
                 return;
             }
 
-            abort_unless($component->isFileUploadForSchemaComponent($params[0] ?? ''), 403);
+            abort_unless($component->isFileUploadForSchemaComponent($params['name'] ?? $params[0] ?? ''), 403);
         });
 
         on('call', function (object $component, string $method, array $params): ?Closure {

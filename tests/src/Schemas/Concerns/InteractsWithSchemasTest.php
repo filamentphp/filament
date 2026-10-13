@@ -244,11 +244,11 @@ describe('upload validation', function (): void {
         'markdown editor attachment' => [MarkdownEditor::class, 'componentFileAttachments.data.downloadable_file', null, 'downloadable file'],
     ]);
 
-    it('uses friendly field names for generic upload failures and leaves unrelated uploads unchanged', function (string $uploadComponent, string $uploadPath, string $placeholder, string $expectedAttribute): void {
+    it('uses friendly field names for generic upload failures and leaves unrelated uploads unchanged', function (string $uploadComponent, string $uploadPath, string $placeholder, string $expectedAttribute, string $livewireComponent = UploadValidationTestComponent::class): void {
         __('validation.uploaded');
         app('translator')->addLines(['validation.uploaded' => "The {$placeholder} failed to upload."], 'en');
 
-        $component = livewire(UploadValidationTestComponent::class, ['uploadComponent' => $uploadComponent])
+        $component = livewire($livewireComponent, ['uploadComponent' => $uploadComponent])
             ->call('_uploadErrored', name: $uploadPath, errorsInJson: null, isMultiple: false)
             ->assertHasErrors([$uploadPath])
             ->assertDispatched('upload:errored', name: $uploadPath);
@@ -260,7 +260,7 @@ describe('upload validation', function (): void {
         'editor attachment' => [RichEditor::class, 'componentFileAttachments.data.downloadable_file.24b0c021-dcd4-4b43-ad0c-3b5c241225ee', ':attribute', 'downloadable file'],
         'capitalized file upload' => [FileUpload::class, 'data.downloadable_file.24b0c021-dcd4-4b43-ad0c-3b5c241225ee', ':Attribute', 'Downloadable file'],
         'uppercase editor attachment' => [RichEditor::class, 'componentFileAttachments.data.downloadable_file.24b0c021-dcd4-4b43-ad0c-3b5c241225ee', ':ATTRIBUTE', 'DOWNLOADABLE FILE'],
-        'unrelated upload' => [FileUpload::class, 'data.other_upload', ':attribute', 'data.other_upload'],
+        'unrelated upload' => [FileUpload::class, 'data.other_upload', ':attribute', 'data.other_upload', UnrestrictedUploadValidationTestComponent::class],
     ]);
 
     it('preserves translated attribute names for generic upload failures', function (): void {
@@ -460,6 +460,14 @@ class UploadValidationTestComponent extends Livewire
         return $schema
             ->components([$field])
             ->statePath('data');
+    }
+}
+
+class UnrestrictedUploadValidationTestComponent extends UploadValidationTestComponent
+{
+    public function shouldRestrictFileUploadsToSchemaComponents(): bool
+    {
+        return false;
     }
 }
 

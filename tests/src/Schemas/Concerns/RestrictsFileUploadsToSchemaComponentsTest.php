@@ -140,17 +140,23 @@ it('blocks `_startUpload` for a property name that exists on neither of the mult
         ->assertForbidden();
 });
 
-it('blocks `_uploadErrored` for a property path that does not map to any schema component', function (): void {
+it('blocks `_uploadErrored` for a property path that does not map to any schema component', function (array $arguments): void {
     livewire(RestrictedUploadsTestComponentWithFileUpload::class)
-        ->call('_uploadErrored', 'data.somethingElse.fileKey', null, false)
+        ->call('_uploadErrored', ...$arguments)
         ->assertForbidden();
-});
+})->with([
+    'positional arguments' => [['data.somethingElse.fileKey', null, false]],
+    'named arguments' => [['name' => 'data.somethingElse.fileKey', 'errorsInJson' => null, 'isMultiple' => false]],
+]);
 
-it('allows `_uploadErrored` when the property path maps to a `FileUpload` field', function (): void {
+it('allows `_uploadErrored` when the property path maps to a `FileUpload` field', function (array $arguments): void {
     livewire(RestrictedUploadsTestComponentWithFileUpload::class)
-        ->call('_uploadErrored', 'data.photo.fileKey', null, false)
+        ->call('_uploadErrored', ...$arguments)
         ->assertDispatched('upload:errored');
-});
+})->with([
+    'positional arguments' => [['data.photo.fileKey', null, false]],
+    'named arguments' => [['name' => 'data.photo.fileKey', 'errorsInJson' => null, 'isMultiple' => false]],
+]);
 
 it('blocks `_removeUpload` for a property path that does not map to any schema component', function (): void {
     livewire(RestrictedUploadsTestComponentWithFileUpload::class)
