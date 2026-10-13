@@ -1057,10 +1057,23 @@ describe('relationship options and search', function (): void {
 
     it('can get `getOptionLabel()` from `BelongsTo` relationship with preload', function (): void {
         $author = User::factory()->create(['name' => 'Test Author']);
+        $otherAuthor = User::factory()->create(['name' => 'Other Author']);
         $post = Post::factory()->create(['author_id' => $author->id]);
 
         livewire(TestSelectWithPreloadedBelongsToRelationship::class, ['record' => $post])
-            ->assertFormComponentExists('author_id', function (Select $select) use ($author): bool {
+            ->assertFormComponentExists('author_id', function (Select $select) use ($author, $otherAuthor): bool {
+                expect($select->getOptionLabel())->toBe($author->name);
+
+                $select->state($otherAuthor->getKey());
+
+                expect($select->getOptionLabel())->toBe($otherAuthor->name);
+
+                $select->state(null);
+
+                expect($select->getOptionLabel())->toBeNull();
+
+                $select->state($author->getKey());
+
                 expect($select->getOptionLabel())->toBe($author->name);
 
                 return true;

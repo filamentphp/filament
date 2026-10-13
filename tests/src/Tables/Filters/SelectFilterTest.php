@@ -160,6 +160,103 @@ describe('filtering records', function (): void {
     });
 });
 
+describe('indicators', function (): void {
+    it('shows custom relationship labels in applied indicators with injected `Select` utilities', function (): void {
+        $author = User::factory()->create(['name' => 'Jane Author', 'email' => 'jane@example.com']);
+        $otherAuthor = User::factory()->create(['name' => 'Alex Author', 'email' => 'alex@example.com']);
+
+        livewire(TestTableWithRecordLabelSelectFilter::class)
+            ->filterTable('author', $author->getKey())
+            ->assertSee('Author: Jane Author (jane@example.com)')
+            ->set('tableDeferredFilters.author.value', $otherAuthor->getKey())
+            ->assertSee('Author: Jane Author (jane@example.com)')
+            ->assertDontSee('Author: Alex Author (alex@example.com)')
+            ->call('applyTableFilters')
+            ->assertSee('Author: Alex Author (alex@example.com)')
+            ->assertDontSee('Author: Jane Author (jane@example.com)');
+    });
+
+    it('uses `modifyFormFieldUsing()` labels in applied multiple-filter indicators', function (): void {
+        $jane = User::factory()->create(['name' => 'Jane Author', 'email' => 'jane@example.com']);
+        $john = User::factory()->create(['name' => 'John Author', 'email' => 'john@example.com']);
+
+        livewire(TestTableWithMultipleRecordLabelSelectFilter::class)
+            ->filterTable('author', [$jane->getKey(), $john->getKey()])
+            ->assertSee('Author: Jane Author (jane@example.com) & John Author (john@example.com)')
+            ->set('tableDeferredFilters.author.values', [$john->getKey()])
+            ->assertSee('Author: Jane Author (jane@example.com) & John Author (john@example.com)')
+            ->assertDontSee('Author: John Author (john@example.com)')
+            ->call('applyTableFilters')
+            ->assertSee('Author: John Author (john@example.com)')
+            ->assertDontSee('Author: Jane Author (jane@example.com)');
+    });
+
+    it('still shows the title attribute in the indicator without a record label callback', function (): void {
+        $author = User::factory()->create(['name' => 'Jane Author']);
+
+        livewire(TestTableWithSelectFilter::class)
+            ->filterTable('author', $author->getKey())
+            ->assertSee('Author: Jane Author');
+    });
+});
+
+class TestTableWithRecordLabelSelectFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'email')
+                    ->getOptionLabelFromRecordUsing(static fn (Select $component, User $record): string => "{$record->name} ({$record->getAttribute($component->getRelationshipTitleAttribute())})"),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithMultipleRecordLabelSelectFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'email')
+                    ->getOptionLabelFromRecordUsing(static fn (User $record): string => $record->name)
+                    ->modifyFormFieldUsing(static fn (Select $field): Select => $field
+                        ->key('author-picker')
+                        ->getOptionLabelFromRecordUsing(static fn (Select $component, User $record): string => "{$record->name} ({$record->getAttribute($component->getRelationshipTitleAttribute())})"))
+                    ->multiple(),
+            ])
+            ->filtersFormSchema(static fn (array $filters): array => [$filters['author']->key('author-filter')]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
 class TestTableWithSelectFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
