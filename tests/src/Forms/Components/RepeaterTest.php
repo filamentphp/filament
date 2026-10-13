@@ -1973,8 +1973,10 @@ describe('browser interactions', function (): void {
         $secondUp = ':nth-match(' . $moveUp . ', 2)';
         $thirdUp = ':nth-match(' . $moveUp . ', 3)';
         $status = '[data-testid="repeater"] > [role="status"]';
+        $firstDragHandle = ':nth-match([data-testid="repeater"] button[aria-label="' . __('filament-forms::components.repeater.actions.reorder.label') . '"], 1)';
 
-        $page->assertPresent('[data-testid="repeater"]')
+        $page->assertAttribute($firstDragHandle, 'tabindex', '-1')
+            ->assertAttribute($firstDragHandle, 'aria-hidden', 'true')
             ->keys($firstDown, 'Enter')
             ->assertValue($firstName, 'Beta')
             ->assertValue($secondName, 'Alpha')
