@@ -304,37 +304,8 @@ trait InteractsWithSchemas
             return;
         }
 
-        $statePaths = [$statePath];
-        $state = data_get($this, $statePath);
-
-        if (is_array($state)) {
-            $oldState = $this->getOldSchemaState($statePath);
-
-            // Livewire 4 consolidates array replacements into one update.
-            foreach (Arr::dot($state) + Arr::dot(is_array($oldState) ? $oldState : []) as $childStatePath => $value) {
-                if (data_get($state, $childStatePath) === data_get($oldState, $childStatePath)) {
-                    continue;
-                }
-
-                // Added or removed branches are one update, not updates to every field inside them.
-                while (str_contains($childStatePath, '.')) {
-                    $parentStatePath = Str::beforeLast($childStatePath, '.');
-
-                    if (Arr::has($state, $parentStatePath) && is_array($oldState) && Arr::has($oldState, $parentStatePath)) {
-                        break;
-                    }
-
-                    $childStatePath = $parentStatePath;
-                }
-
-                $statePaths[] = "{$statePath}.{$childStatePath}";
-            }
-        }
-
         foreach ($this->getCachedSchemas() as $schema) {
-            foreach (array_unique($statePaths) as $updatedStatePath) {
-                $schema->callAfterStateUpdated($updatedStatePath);
-            }
+            $schema->callAfterStateUpdated($statePath);
         }
     }
 
