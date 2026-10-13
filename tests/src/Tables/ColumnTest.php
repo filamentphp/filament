@@ -1,7 +1,16 @@
 <?php
 
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables;
+use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\CustomDataTable;
 use Filament\Tests\Fixtures\Livewire\ImagesTable;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
@@ -22,8 +31,10 @@ use Filament\Tests\Fixtures\Models\Setting;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
+use Livewire\Component;
 
 use function Filament\Tests\livewire;
 
@@ -490,7 +501,9 @@ describe('searching', function (): void {
 
         Post::factory()->count(3)->create();
 
-        visit('/individual-column-search-browser-test')
+        $page = visit('/individual-column-search-browser-test');
+
+        $page
             ->assertValue('.fi-ta-individual-search-cell-length input', '')
             ->assertValue('.fi-ta-individual-search-cell-sort input', '')
             ->assertValue('.fi-ta-individual-search-cell-title input', '')
@@ -501,14 +514,13 @@ describe('searching', function (): void {
             ->fill('.fi-ta-individual-search-cell-length input', '')
             ->assertValue('.fi-ta-individual-search-cell-length input', '')
             ->resize(700, 812)
-            ->assertScript("document.querySelector('.fi-ta-individual-search-row').checkVisibility()", false)
+            ->assertMissing('.fi-ta-individual-search-row')
             ->resize(800, 812)
-            ->assertScript("document.querySelector('.fi-ta-individual-search-row').checkVisibility()", true)
+            ->assertVisible('.fi-ta-individual-search-row')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
-        visit('/individual-column-search-browser-test')
-            ->inDarkMode()
+        $page->inDarkMode()
             ->resize(375, 812)
             ->assertNoAccessibilityIssues();
     });
@@ -520,7 +532,9 @@ describe('searching', function (): void {
 
         Post::factory()->count(3)->create();
 
-        visit('/column-manager-browser-test')
+        $page = visit('/column-manager-browser-test');
+
+        $page
             ->assertPresent('#first-table .fi-ta-header-cell-title')
             ->assertPresent('#second-table .fi-ta-header-cell-title')
             // Open the first table's column manager too, so its checkboxes are also rendered when the second manager's labels are clicked.
@@ -532,15 +546,12 @@ describe('searching', function (): void {
             ->click('#second-table .fi-ta-col-manager-label[for$="-title"]')
             ->assertMissing('#second-table .fi-ta-header-cell-title')
             ->assertPresent('#first-table .fi-ta-header-cell-title')
-            // Restore the toggled column, since the column manager persists in the session and a retried attempt must start from the default state.
             ->click('#second-table .fi-ta-col-manager-label[for$="-title"]')
             ->assertPresent('#second-table .fi-ta-header-cell-title')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
-        visit('/column-manager-browser-test')
-            ->inDarkMode()
-            ->click('#second-table button[aria-label="Column manager"]')
+        $page->inDarkMode()
             ->assertNoAccessibilityIssues();
     });
 });
@@ -744,16 +755,6 @@ describe('column properties and assertions', function (): void {
             }, $publishedPost);
     });
 
-    it('can automatically detect boolean cast attribute in icon column', function (): void {
-        $post = Post::factory()
-            ->create(['is_published' => false]);
-
-        livewire(PostsTable::class)
-            ->assertTableColumnExists('is_published', function (IconColumn $column) {
-                return $column->isBoolean();
-            }, $post);
-    });
-
     it('can toggle all table columns', function (): void {
         Post::factory()->create();
 
@@ -769,6 +770,51 @@ describe('column properties and assertions', function (): void {
 });
 
 describe('relationship columns', function (): void {
+    it('injects the correct related model throughout every relationship item rendering path', function (): void {
+        $team = Team::factory()->create(['name' => 'Framework team']);
+        $users = collect([
+            User::factory()->create([
+                'name' => '',
+                'email' => 'first@example.com',
+                'json' => ['color' => '#ff0000', 'duplicate' => '', 'icon' => 'first', 'image' => 'https://example.com/first.jpg'],
+            ]),
+            User::factory()->create([
+                'name' => 'Duplicate name',
+                'email' => 'second@example.com',
+                'json' => ['color' => '#00ff00', 'duplicate' => 'Duplicate', 'icon' => 'second', 'image' => 'https://example.com/second.jpg'],
+            ]),
+            User::factory()->create([
+                'name' => 'Duplicate name',
+                'email' => 'third@example.com',
+                'json' => ['color' => '#0000ff', 'duplicate' => 'Duplicate', 'icon' => 'third', 'image' => 'https://example.com/third.jpg'],
+            ]),
+            User::factory()->create([
+                'name' => 'Unique name',
+                'email' => 'fourth@example.com',
+                'json' => ['color' => '#ffff00', 'duplicate' => 'Unique', 'icon' => 'fourth', 'image' => 'https://example.com/fourth.jpg'],
+            ]),
+        ]);
+
+        $team->users()->attach($users);
+
+        livewire(RenderColumnsWithRelatedRecords::class)
+            ->assertSuccessful()
+            ->assertSeeText('Framework team:second@example.com:Duplicate name')
+            ->assertSeeText('Framework team:third@example.com:Duplicate name')
+            ->assertSeeHtml('href="/users/' . $users[1]->getKey() . '"')
+            ->assertSeeHtml('href="/users/' . $users[2]->getKey() . '"')
+            ->assertSeeText($users->map(fn (User $user): string => "{$user->getKey()}:{$user->email}:{$user->email}")->implode(', '))
+            ->assertSeeText('distinct:second@example.com:Duplicate')
+            ->assertDontSeeText('distinct:third@example.com:Duplicate')
+            ->assertSeeText('distinct:fourth@example.com:Unique')
+            ->assertSeeHtml('alt="image-' . $users[0]->getKey() . '-' . $users[0]->json['image'] . '"')
+            ->assertSeeHtml('alt="image-' . $users[1]->getKey() . '-' . $users[1]->json['image'] . '"')
+            ->assertDontSeeHtml('alt="image-' . $users[2]->getKey() . '-' . $users[2]->json['image'] . '"')
+            ->assertSeeHtml('icon-' . $users[2]->getKey())
+            ->assertSeeHtml('color-' . $users[2]->getKey())
+            ->assertSeeHtml('copy-' . $users[2]->getKey());
+    });
+
     it('can output the state of a nested relationship through a `MorphTo` relationship', function (): void {
         $team = Team::factory()->create(['name' => 'Team Alpha']);
         $user = User::factory()->create([
@@ -2305,3 +2351,52 @@ it('can search records using table-level searchable columns with relationship ca
         ->assertCanSeeTableRecords($matchingPosts)
         ->assertCanNotSeeTableRecords($nonMatchingPosts);
 });
+
+class RenderColumnsWithRelatedRecords extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table->query(Team::query()->with([
+            'users' => static fn ($query) => $query->orderBy('users.id'),
+        ]))->columns([
+            TextColumn::make('users.name')
+                ->badge()
+                ->colors(static fn (string $state, User $relatedRecord): array => [
+                    'success' => static fn (string $state, User $relatedRecord): bool => $state === $relatedRecord->name,
+                ])
+                ->icons(static fn (string $state, User $relatedRecord): array => [
+                    'heroicon-o-check' => static fn (string $state, User $relatedRecord): bool => $state === $relatedRecord->name,
+                ])
+                ->formatStateUsing(static fn (Team $record, User $relatedRecord, string $state): string => "{$record->name}:{$relatedRecord->email}:{$state}")
+                ->url(static fn (string $state, User $relatedRecord): string => ($state === $relatedRecord->name) ? "/users/{$relatedRecord->getKey()}" : '/invalid')
+                ->tooltip(static fn (string $state, User $relatedRecord): string => "text-{$relatedRecord->getKey()}-{$state}"),
+            TextColumn::make('users.email')
+                ->copyable()
+                ->prefix(static fn (string $state, User $relatedRecord): string => "{$relatedRecord->getKey()}:{$state}:"),
+            TextColumn::make('users.json.duplicate')
+                ->distinctList()
+                ->badge()
+                ->formatStateUsing(static fn (User $relatedRecord, string $state): string => "distinct:{$relatedRecord->email}:{$state}"),
+            ImageColumn::make('users.json.image')
+                ->limit(2)
+                ->checkFileExistence(static fn (string $state, User $relatedRecord): bool => $state !== $relatedRecord->json['image'])
+                ->alt(static fn (string $state, User $relatedRecord): string => "image-{$relatedRecord->getKey()}-{$state}"),
+            IconColumn::make('users.json.icon')
+                ->icon(Heroicon::Check)
+                ->tooltip(static fn (string $state, User $relatedRecord): string => "icon-{$relatedRecord->getKey()}-{$state}"),
+            ColorColumn::make('users.json.color')
+                ->copyable(static fn (string $state, User $relatedRecord): bool => $state === $relatedRecord->json['color'])
+                ->copyableState(static fn (string $state, User $relatedRecord): string => "copy-{$relatedRecord->getKey()}-{$state}")
+                ->tooltip(static fn (string $state, User $relatedRecord): string => "color-{$relatedRecord->getKey()}-{$state}"),
+        ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}

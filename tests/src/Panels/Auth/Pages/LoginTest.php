@@ -23,20 +23,23 @@ beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
 
-it('can render page', function (): void {
-    expect(Filament::getLoginUrl())->toEndWith('/login');
+describe('routing', function (): void {
+    it('can render the login page', function (): void {
+        expect(Filament::getLoginUrl())->toEndWith('/login');
 
-    $this->get(Filament::getLoginUrl())
-        ->assertSuccessful();
-});
+        $this->get(Filament::getLoginUrl())
+            ->assertSuccessful();
+    });
 
-it('can render page with a custom slug', function (): void {
-    Filament::setCurrentPanel('slugs');
+    it('can render page with a custom slug', function (): void {
+        Filament::setCurrentPanel('slugs');
 
-    expect(Filament::getLoginUrl())->toEndWith('/login-test');
+        expect(Filament::getLoginUrl())->toEndWith('/login-test');
 
-    $this->get(Filament::getLoginUrl())
-        ->assertSuccessful();
+        $this->get(Filament::getLoginUrl())
+            ->assertSuccessful();
+    });
+
 });
 
 describe('authentication', function (): void {
@@ -515,7 +518,7 @@ describe('rate limiting', function (): void {
 
         $userToAuthenticate = User::factory()->create();
 
-        foreach (range(1, 5) as $i) {
+        foreach (range(1, 5) as $attempt) {
             livewire(Login::class)
                 ->fillForm([
                     'email' => $userToAuthenticate->email,
@@ -565,8 +568,12 @@ describe('validation', function (): void {
 
 });
 
-it('can fill the login form, authenticate, and redirect to the dashboard in the browser', function (): void {
+it('can fill the login form, authenticate, and redirect to the dashboard', function (): void {
     $user = User::factory()->create();
+
+    visit(Filament::getLoginUrl())->inDarkMode()
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 
     visit(Filament::getLoginUrl())
         ->assertNoSmoke()
@@ -574,18 +581,12 @@ it('can fill the login form, authenticate, and redirect to the dashboard in the 
         ->type('input[type="email"]', $user->email)
         ->type('input[type="password"]', 'password')
         ->click('button[type="submit"]')
-        ->assertVisible('.fi-page')
         ->assertPathIs('/')
+        ->assertVisible('main#fi-main-content')
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
 
-    visit(Filament::getLoginUrl())
-        ->inDarkMode()
-        ->assertNoSmoke()
-        ->assertNoAccessibilityIssues();
-
-    visit(Filament::getUrl())
-        ->inDarkMode()
+    visit(Filament::getUrl())->inDarkMode()
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
 });
@@ -599,7 +600,7 @@ it('does not lock out a user when an attacker exhausts login attempts from a dif
     $attackerIp = '192.168.1.100';
     $attackerKey = 'filament-login:' . sha1($attackerIp . '|' . $userToAuthenticate->email);
 
-    foreach (range(1, 5) as $i) {
+    foreach (range(1, 5) as $attempt) {
         RateLimiter::hit($attackerKey);
     }
 

@@ -207,7 +207,7 @@ describe('headings', function (): void {
         expect($table->getRootHeadingLevel())->toBe(3);
     });
 
-    it('computes heading tag from level', function (): void {
+    it('computes `getHeadingTag()` from the heading level', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
 
         expect($table->getHeadingTag())->toBe('h2');

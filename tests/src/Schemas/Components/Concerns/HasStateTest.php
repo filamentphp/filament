@@ -15,7 +15,9 @@ beforeEach(function (): void {
 it('can use `$set()` in `afterStateUpdatedJs()` to set another field value', function (): void {
     $this->actingAs(User::factory()->create());
 
-    visit('/after-state-updated-js-test')
+    $page = visit('/after-state-updated-js-test');
+
+    $page
         ->fill('#form\.name', 'John Doe')
         ->assertValue('#form\.email', 'john.doe@example.com')
         ->fill('#form\.name', 'Jane Smith')
@@ -27,8 +29,7 @@ it('can use `$set()` in `afterStateUpdatedJs()` to set another field value', fun
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
 
-    visit('/after-state-updated-js-test')
-        ->inDarkMode()
+    $page->inDarkMode()
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
 });

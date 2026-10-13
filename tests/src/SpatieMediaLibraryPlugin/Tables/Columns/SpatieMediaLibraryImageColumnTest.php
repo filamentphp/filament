@@ -172,18 +172,14 @@ describe('state from media', function (): void {
             ->usingFileName('first.jpg')
             ->toMediaCollection('avatars');
 
-        $column = livewire(SpatieMediaLibraryTableForm::class)
-            ->instance()
-            ->getTable()
-            ->getColumn('media')
-            ->record($record)
-            ->recordKey((string) $record->getKey())
-            ->conversion(static fn (string $state, Media $relatedRecord): string => $state === $relatedRecord->uuid ? '' : 'missing')
-            ->alt(static fn (string $state, Media $relatedRecord): string => "media-{$relatedRecord->getKey()}-{$state}");
+        SpatieMediaLibraryImageColumn::configureUsing(static function (SpatieMediaLibraryImageColumn $column): void {
+            $column
+                ->conversion(static fn (string $state, Media $relatedRecord): string => $state === $relatedRecord->uuid ? '' : 'missing')
+                ->alt(static fn (string $state, Media $relatedRecord): string => "media-{$relatedRecord->getKey()}-{$state}");
+        });
 
-        $column->clearCachedState();
-
-        expect($column->toEmbeddedHtml())->toContain('alt="media-' . $media->getKey() . '-' . $media->uuid . '"');
+        livewire(SpatieMediaLibraryTableForm::class)
+            ->assertSeeHtml('alt="media-' . $media->getKey() . '-' . $media->uuid . '"');
     });
 
     it('can render column for a record without media', function (): void {

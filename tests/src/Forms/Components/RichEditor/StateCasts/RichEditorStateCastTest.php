@@ -540,7 +540,6 @@ describe('`get()`', function (): void {
 
         $cast = new RichEditorStateCast($editor);
 
-        // Create a custom block node without label/preview attrs
         $document = [
             'type' => 'doc',
             'content' => [
@@ -576,7 +575,6 @@ describe('`get()`', function (): void {
 
         $cast = new RichEditorStateCast($editor);
 
-        // Create a custom block node without shouldApplyProseStylingToPreview attr
         $document = [
             'type' => 'doc',
             'content' => [

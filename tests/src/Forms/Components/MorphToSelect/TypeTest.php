@@ -340,7 +340,6 @@ describe('`getOptionLabelUsing()` callback', function (): void {
             ])
             ->fill();
 
-        // modifyOptionsQueryUsing filters out the record
         $label = $select->evaluate($type->getOptionLabelUsing, ['value' => $user->id]);
 
         expect($label)->toBeNull();
@@ -424,8 +423,6 @@ describe('`getSearchResultsUsing()` callback', function (): void {
             ])
             ->fill();
 
-        // Search for "Smith" — without modifyOptionsQueryUsing would return 0 (no "Smith" alone),
-        // but the query modification pre-filters to "Alice Smith", then search finds "Smith" in it
         $results = $select->evaluate($type->getSearchResultsUsing, ['search' => 'Smith']);
 
         expect($results)->toHaveCount(1);

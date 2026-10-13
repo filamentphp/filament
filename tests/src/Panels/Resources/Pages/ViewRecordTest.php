@@ -73,7 +73,7 @@ it('can refresh data', function (): void {
     ]);
 });
 
-it('can ticket messages page without a policy', function (): void {
+it('can render ticket messages page without a policy', function (): void {
     $message = TicketMessage::factory()
         ->create();
 
@@ -81,7 +81,7 @@ it('can ticket messages page without a policy', function (): void {
         ->assertSuccessful();
 });
 
-it('can render tickets page if the policy viewAny returns true', function (): void {
+it('can render tickets page if the policy `viewAny()` returns `true`', function (): void {
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 
     $ticket = Ticket::factory()
@@ -91,7 +91,7 @@ it('can render tickets page if the policy viewAny returns true', function (): vo
         ->assertSuccessful();
 });
 
-it('can render tickets page if the policy viewAny returns an allowed response', function (): void {
+it('can render tickets page if the policy `viewAny()` returns an allowed response', function (): void {
     app()->bind(TicketPolicy::class . '::viewAny', fn (): Response => Response::allow());
 
     $ticket = Ticket::factory()
@@ -115,7 +115,7 @@ it('does not render ticket messages page without a policy if authorization is st
     Filament::getCurrentOrDefaultPanel()->strictAuthorization(false);
 });
 
-it('does not render tickets page if the policy viewAny returns false', function (): void {
+it('does not render tickets page if the policy `viewAny()` returns `false`', function (): void {
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => false);
 
     $ticket = Ticket::factory()
@@ -127,7 +127,7 @@ it('does not render tickets page if the policy viewAny returns false', function 
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
 
-it('does not render tickets page if the policy viewAny returns a denied response', function (): void {
+it('does not render tickets page if the policy `viewAny()` returns a denied response', function (): void {
     app()->bind(TicketPolicy::class . '::viewAny', fn (): Response => Response::deny());
 
     $ticket = Ticket::factory()
@@ -139,7 +139,7 @@ it('does not render tickets page if the policy viewAny returns a denied response
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
 
-it('can render tickets page if the policy view returns true', function (): void {
+it('can render tickets page if the policy `view()` returns `true`', function (): void {
     app()->bind(TicketPolicy::class . '::view', fn (): bool => true);
 
     $ticket = Ticket::factory()
@@ -149,7 +149,7 @@ it('can render tickets page if the policy view returns true', function (): void 
         ->assertSuccessful();
 });
 
-it('can render tickets page if the policy view returns an allowed response', function (): void {
+it('can render tickets page if the policy `view()` returns an allowed response', function (): void {
     app()->bind(TicketPolicy::class . '::view', fn (): Response => Response::allow());
 
     $ticket = Ticket::factory()
@@ -161,7 +161,7 @@ it('can render tickets page if the policy view returns an allowed response', fun
     app()->bind(TicketPolicy::class . '::view', fn (): bool => true);
 });
 
-it('does not render tickets page if the policy view returns false', function (): void {
+it('does not render tickets page if the policy `view()` returns `false`', function (): void {
     app()->bind(TicketPolicy::class . '::view', fn (): bool => false);
 
     $ticket = Ticket::factory()
@@ -173,7 +173,7 @@ it('does not render tickets page if the policy view returns false', function ():
     app()->bind(TicketPolicy::class . '::view', fn (): bool => true);
 });
 
-it('does not render tickets page if the policy view returns a denied response', function (): void {
+it('does not render tickets page if the policy `view()` returns a denied response', function (): void {
     app()->bind(TicketPolicy::class . '::view', fn (): Response => Response::deny());
 
     $ticket = Ticket::factory()
@@ -185,7 +185,7 @@ it('does not render tickets page if the policy view returns a denied response', 
     app()->bind(TicketPolicy::class . '::view', fn (): bool => true);
 });
 
-it('re-authorizes view on Livewire updates after the initial mount', function (): void {
+it('re-authorizes `view()` on Livewire updates after the initial mount', function (): void {
     $ticket = Ticket::factory()
         ->create();
 
@@ -202,7 +202,7 @@ it('re-authorizes view on Livewire updates after the initial mount', function ()
     app()->bind(TicketPolicy::class . '::view', fn (): bool => true);
 });
 
-it('re-authorizes viewAny on Livewire updates after the initial mount of a view page', function (): void {
+it('re-authorizes `viewAny()` on Livewire updates after the initial mount of a view page', function (): void {
     $ticket = Ticket::factory()
         ->create();
 

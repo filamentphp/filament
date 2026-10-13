@@ -22,7 +22,7 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-describe('`Component` base class', function (): void {
+describe('collapsing', function (): void {
     it('defaults `isCollapsible()` to `false`', function (): void {
         $stack = Stack::make([]);
 
@@ -72,6 +72,9 @@ describe('`Component` base class', function (): void {
         expect($stack->isCollapsed())->toBeFalse();
     });
 
+});
+
+describe('schema and mounting', function (): void {
     it('returns fluent `$this` from `schema()`', function (): void {
         $stack = Stack::make([]);
 

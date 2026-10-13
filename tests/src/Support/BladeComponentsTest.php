@@ -11,10 +11,7 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 
-uses(TestCase::class);
-
-function embeddedHtmlGenerator(): object
-{
+$embeddedHtmlGenerator = function (): object {
     return new class
     {
         use CanGenerateBadgeHtml;
@@ -23,7 +20,9 @@ function embeddedHtmlGenerator(): object
         use CanGenerateIconButtonHtml;
         use CanGenerateLinkHtml;
     };
-}
+};
+
+uses(TestCase::class);
 
 it('uses the `fi-disabled` class instead of the `disabled` attribute on loading Blade buttons', function (): void {
     $htmlOutputs = [
@@ -42,8 +41,8 @@ it('uses the `fi-disabled` class instead of the `disabled` attribute on loading 
     }
 });
 
-it('uses the `fi-disabled` class instead of the `disabled` attribute on loading embedded buttons', function (): void {
-    $generator = embeddedHtmlGenerator();
+it('uses the `fi-disabled` class instead of the `disabled` attribute on loading embedded buttons', function () use ($embeddedHtmlGenerator): void {
+    $generator = $embeddedHtmlGenerator();
 
     $htmlOutputs = [
         $generator->generateBadgeHtml(
@@ -78,10 +77,10 @@ it('uses the `fi-disabled` class instead of the `disabled` attribute on loading 
     }
 });
 
-it('renders dropdown items with menu item semantics', function (): void {
+it('renders dropdown items with menu item semantics', function () use ($embeddedHtmlGenerator): void {
     $htmlOutputs = [
         Blade::render('<x-filament::dropdown.list.item disabled>Save</x-filament::dropdown.list.item>'),
-        embeddedHtmlGenerator()->generateDropdownItemHtml(
+        $embeddedHtmlGenerator()->generateDropdownItemHtml(
             attributes: new ComponentAttributeBag,
             isDisabled: true,
             label: 'Save',
@@ -97,10 +96,10 @@ it('renders dropdown items with menu item semantics', function (): void {
     }
 });
 
-it('preserves specialized dropdown item roles', function (): void {
+it('preserves specialized dropdown item roles', function () use ($embeddedHtmlGenerator): void {
     $htmlOutputs = [
         Blade::render('<x-filament::dropdown.list.item role="menuitemradio">Light</x-filament::dropdown.list.item>'),
-        embeddedHtmlGenerator()->generateDropdownItemHtml(
+        $embeddedHtmlGenerator()->generateDropdownItemHtml(
             attributes: new ComponentAttributeBag(['role' => 'menuitemradio']),
             label: 'Light',
         ),
@@ -125,8 +124,8 @@ it('preserves custom loading classes on Blade buttons', function (): void {
     }
 });
 
-it('preserves custom loading classes on embedded buttons', function (): void {
-    $generator = embeddedHtmlGenerator();
+it('preserves custom loading classes on embedded buttons', function () use ($embeddedHtmlGenerator): void {
+    $generator = $embeddedHtmlGenerator();
     $attributes = new ComponentAttributeBag([
         'wire:click' => 'save',
         'wire:loading.class' => 'custom-loading',
@@ -197,8 +196,8 @@ it('reflects the initial state in the `aria-checked` attribute of the toggle Bla
         ->toContain('aria-checked="false"');
 });
 
-it('escapes the `aria-label` in the embedded icon-button generator against attribute breakout', function (): void {
-    $html = embeddedHtmlGenerator()->generateIconButtonHtml(
+it('escapes the `aria-label` in the embedded icon-button generator against attribute breakout', function () use ($embeddedHtmlGenerator): void {
+    $html = $embeddedHtmlGenerator()->generateIconButtonHtml(
         attributes: new ComponentAttributeBag,
         icon: 'heroicon-o-pencil',
         label: new HtmlString('x" onmouseover="alert(1)"'),
@@ -209,8 +208,8 @@ it('escapes the `aria-label` in the embedded icon-button generator against attri
         ->not->toContain('onmouseover="alert(1)"');
 });
 
-it('does not double-encode entities in the embedded icon-button generator `aria-label`', function (): void {
-    $html = embeddedHtmlGenerator()->generateIconButtonHtml(
+it('does not double-encode entities in the embedded icon-button generator `aria-label`', function () use ($embeddedHtmlGenerator): void {
+    $html = $embeddedHtmlGenerator()->generateIconButtonHtml(
         attributes: new ComponentAttributeBag,
         icon: 'heroicon-o-pencil',
         label: new HtmlString('Terms &amp; conditions'),
@@ -221,8 +220,8 @@ it('does not double-encode entities in the embedded icon-button generator `aria-
         ->not->toContain('&amp;amp;');
 });
 
-it('escapes the sr-only `aria-label` in the embedded button generator against attribute breakout', function (): void {
-    $html = embeddedHtmlGenerator()->generateButtonHtml(
+it('escapes the sr-only `aria-label` in the embedded button generator against attribute breakout', function () use ($embeddedHtmlGenerator): void {
+    $html = $embeddedHtmlGenerator()->generateButtonHtml(
         attributes: new ComponentAttributeBag,
         isLabelSrOnly: true,
         label: new HtmlString('x" onmouseover="alert(1)"'),
@@ -233,8 +232,8 @@ it('escapes the sr-only `aria-label` in the embedded button generator against at
         ->not->toContain('onmouseover="alert(1)"');
 });
 
-it('escapes the sr-only `aria-label` in the embedded link generator against attribute breakout', function (): void {
-    $html = embeddedHtmlGenerator()->generateLinkHtml(
+it('escapes the sr-only `aria-label` in the embedded link generator against attribute breakout', function () use ($embeddedHtmlGenerator): void {
+    $html = $embeddedHtmlGenerator()->generateLinkHtml(
         attributes: new ComponentAttributeBag,
         href: 'https://example.com',
         isLabelSrOnly: true,
@@ -247,8 +246,8 @@ it('escapes the sr-only `aria-label` in the embedded link generator against attr
         ->not->toContain('onmouseover="alert(1)"');
 });
 
-it('does not double-encode entities in the embedded link generator sr-only `aria-label`', function (): void {
-    $html = embeddedHtmlGenerator()->generateLinkHtml(
+it('does not double-encode entities in the embedded link generator sr-only `aria-label`', function () use ($embeddedHtmlGenerator): void {
+    $html = $embeddedHtmlGenerator()->generateLinkHtml(
         attributes: new ComponentAttributeBag,
         href: 'https://example.com',
         isLabelSrOnly: true,

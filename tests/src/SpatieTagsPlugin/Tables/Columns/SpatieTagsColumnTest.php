@@ -99,18 +99,14 @@ describe('rendering with tags', function (): void {
         $record = Article::factory()->create();
         $record->attachTags(['Laravel', 'PHP']);
 
-        $column = livewire(SpatieTagsColumnTable::class)
-            ->instance()
-            ->getTable()
-            ->getColumn('tags')
-            ->record($record)
-            ->recordKey((string) $record->getKey())
-            ->formatStateUsing(static fn (Tag $relatedRecord, string $state): string => "{$relatedRecord->getKey()}:{$state}");
+        SpatieTagsColumn::configureUsing(static function (SpatieTagsColumn $column): void {
+            $column->formatStateUsing(static fn (Tag $relatedRecord, string $state): string => "{$relatedRecord->getKey()}:{$state}");
+        });
 
-        $column->clearCachedState();
+        $component = livewire(SpatieTagsColumnTable::class);
 
         foreach ($record->tags as $tag) {
-            expect($column->toEmbeddedHtml())->toContain("{$tag->getKey()}:{$tag->name}");
+            $component->assertSee("{$tag->getKey()}:{$tag->name}");
         }
     });
 

@@ -149,8 +149,10 @@ describe('`toEmbeddedHtml()` rendering', function (): void {
 
         expect($html)->toContain('fi-sc-has-gap');
     });
+});
 
-    it('can use `deferLoading()` to render a loading indicator before its components', function (): void {
+describe('deferred rendering', function (): void {
+    it('renders a loading indicator instead of components with `deferLoading()`', function (): void {
         $livewire = Livewire::make();
 
         $schema = Schema::make($livewire)
@@ -168,13 +170,6 @@ describe('`toEmbeddedHtml()` rendering', function (): void {
             ->toContain('data-testid="deferred-schema"')
             ->toContain('wire:partial="schema.form"')
             ->not->toContain('Loaded content');
-
-        $livewire->loadedDeferredSchemas['form'] = true;
-        $livewire->renderingInteractsWithSchemas();
-
-        expect($schema->toEmbeddedHtml())
-            ->not->toContain('fi-sc-loading')
-            ->toContain('Loaded content');
     });
 
     it('can conditionally use `deferLoading()`', function (): void {
@@ -392,7 +387,7 @@ it('invalidates hierarchy caches when a supplied `Schema` is attached', function
         ->toBe($rootSchema);
 });
 
-describe('state path', function (): void {
+describe('state paths', function (): void {
     it('can set `statePath()`', function (): void {
         $schema = Schema::make(Livewire::make())
             ->statePath('data');

@@ -24,6 +24,368 @@ beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
 
+it('returns fluent `$this` from `steps()`', function (): void {
+    $wizard = Wizard::make();
+
+    $result = $wizard->steps([]);
+
+    expect($result)->toBe($wizard);
+});
+
+it('returns `next` for `getNextActionName()`', function (): void {
+    $wizard = Wizard::make();
+
+    expect($wizard->getNextActionName())->toBe('next');
+});
+
+it('returns default label from `getNextAction()` without modifier', function (): void {
+    $wizard = Wizard::make();
+
+    $action = $wizard->getNextAction();
+
+    expect($action->getLabel())->toBeString();
+    expect($action->getLabel())->not->toBeEmpty();
+});
+
+it('can modify `nextAction()` using callback', function (): void {
+    $wizard = Wizard::make()
+        ->nextAction(static fn ($action) => $action->label('Continue'));
+
+    $nextAction = $wizard->getNextAction();
+
+    expect($nextAction->getLabel())->toBe('Continue');
+});
+
+it('can clear `nextAction()` modifier with `null`', function (): void {
+    $wizard = Wizard::make()
+        ->nextAction(static fn ($action) => $action->label('Custom'))
+        ->nextAction(null);
+
+    $action = $wizard->getNextAction();
+
+    expect($action->getLabel())->not->toBe('Custom');
+});
+
+it('returns `previous` for `getPreviousActionName()`', function (): void {
+    $wizard = Wizard::make();
+
+    expect($wizard->getPreviousActionName())->toBe('previous');
+});
+
+it('can modify `previousAction()` using callback', function (): void {
+    $wizard = Wizard::make()
+        ->previousAction(static fn ($action) => $action->label('Go Back'));
+
+    $previousAction = $wizard->getPreviousAction();
+
+    expect($previousAction->getLabel())->toBe('Go Back');
+});
+
+it('can clear `previousAction()` modifier with `null`', function (): void {
+    $wizard = Wizard::make()
+        ->previousAction(static fn ($action) => $action->label('Custom'))
+        ->previousAction(null);
+
+    $action = $wizard->getPreviousAction();
+
+    expect($action->getLabel())->not->toBe('Custom');
+});
+
+describe('label', function (): void {
+    it('returns `null` for `getLabel()` by default', function (): void {
+        $wizard = Wizard::make();
+
+        expect($wizard->getLabel())->toBeNull();
+    });
+
+    it('can set `label()`', function (): void {
+        $wizard = Wizard::make()->label('Registration');
+
+        expect($wizard->getLabel())->toBe('Registration');
+    });
+
+    it('can set `label()` with a `Closure`', function (): void {
+        $wizard = Wizard::make()
+            ->label(static fn (): string => 'Dynamic Label');
+
+        expect($wizard->getLabel())->toBe('Dynamic Label');
+    });
+
+    it('can set `label()` with an `Htmlable`', function (): void {
+        $htmlable = new HtmlString('<strong>Bold</strong>');
+        $wizard = Wizard::make()->label($htmlable);
+
+        expect($wizard->getLabel())->toBe($htmlable);
+    });
+
+    it('reports `hasCustomLabel()` as `false` by default', function (): void {
+        $wizard = Wizard::make();
+
+        expect($wizard->hasCustomLabel())->toBeFalse();
+    });
+
+    it('reports `hasCustomLabel()` as `true` after `label()` is set', function (): void {
+        $wizard = Wizard::make()->label('Custom');
+
+        expect($wizard->hasCustomLabel())->toBeTrue();
+    });
+
+    it('defaults `isLabelHidden()` to `false`', function (): void {
+        $wizard = Wizard::make();
+
+        expect($wizard->isLabelHidden())->toBeFalse();
+    });
+
+    it('can set `hiddenLabel()`', function (): void {
+        $wizard = Wizard::make()->hiddenLabel();
+
+        expect($wizard->isLabelHidden())->toBeTrue();
+    });
+
+    it('can set `hiddenLabel()` with a `Closure`', function (): void {
+        $wizard = Wizard::make()
+            ->hiddenLabel(static fn (): bool => true);
+
+        expect($wizard->isLabelHidden())->toBeTrue();
+    });
+
+    it('can translate label with `translateLabel()`', function (): void {
+        $wizard = Wizard::make()
+            ->label('validation.required')
+            ->translateLabel();
+
+        expect($wizard->getLabel())->toBe(__('validation.required'));
+    });
+});
+
+it('can set `skippable()`', function (): void {
+    $wizard = Wizard::make();
+
+    expect($wizard->isSkippable())->toBeFalse();
+
+    $wizard->skippable();
+
+    expect($wizard->isSkippable())->toBeTrue();
+});
+
+it('can set `skippable()` with a `Closure`', function (): void {
+    $wizard = Wizard::make()
+        ->skippable(static fn (): bool => true);
+
+    expect($wizard->isSkippable())->toBeTrue();
+});
+
+it('can set `startOnStep()`', function (): void {
+    $wizard = Wizard::make();
+
+    expect($wizard->getStartStep())->toBe(1);
+
+    $wizard->startOnStep(3);
+
+    expect($wizard->getStartStep())->toBe(3);
+});
+
+it('can set `startOnStep()` with a `Closure`', function (): void {
+    $wizard = Wizard::make()
+        ->startOnStep(static fn (): int => 4);
+
+    expect($wizard->getStartStep())->toBe(4);
+});
+
+it('defaults `getCurrentStepIndex()` to `0`', function (): void {
+    $wizard = Wizard::make();
+
+    expect($wizard->getCurrentStepIndex())->toBe(0);
+});
+
+it('calculates `getCurrentStepIndex()` from `startOnStep()`', function (): void {
+    $wizard = Wizard::make()
+        ->startOnStep(2);
+
+    expect($wizard->getCurrentStepIndex())->toBe(1);
+});
+
+it('can set `persistStepInQueryString()`', function (): void {
+    $wizard = Wizard::make();
+
+    expect($wizard->isStepPersistedInQueryString())->toBeFalse();
+
+    $wizard->persistStepInQueryString();
+
+    expect($wizard->isStepPersistedInQueryString())->toBeTrue();
+    expect($wizard->getStepQueryStringKey())->toBe('step');
+});
+
+it('can set custom key for `persistStepInQueryString()`', function (): void {
+    $wizard = Wizard::make()
+        ->persistStepInQueryString('wizardStep');
+
+    expect($wizard->getStepQueryStringKey())->toBe('wizardStep');
+});
+
+it('can set `persistStepInQueryString()` with a `Closure`', function (): void {
+    $wizard = Wizard::make()
+        ->persistStepInQueryString(static fn (): string => 'dynamicKey');
+
+    expect($wizard->getStepQueryStringKey())->toBe('dynamicKey');
+    expect($wizard->isStepPersistedInQueryString())->toBeTrue();
+});
+
+it('can clear `persistStepInQueryString()` with `null`', function (): void {
+    $wizard = Wizard::make()
+        ->persistStepInQueryString()
+        ->persistStepInQueryString(null);
+
+    expect($wizard->isStepPersistedInQueryString())->toBeFalse();
+    expect($wizard->getStepQueryStringKey())->toBeNull();
+});
+
+it('can set `cancelAction()`', function (): void {
+    $wizard = Wizard::make();
+
+    expect($wizard->getCancelAction())->toBeNull();
+
+    $wizard->cancelAction('<button>Cancel</button>');
+
+    expect($wizard->getCancelAction())->toBe('<button>Cancel</button>');
+});
+
+it('can set `cancelAction()` with an `Htmlable`', function (): void {
+    $htmlable = new HtmlString('<button>Cancel Now</button>');
+    $wizard = Wizard::make()->cancelAction($htmlable);
+
+    expect($wizard->getCancelAction())->toBe($htmlable);
+});
+
+it('can clear `cancelAction()` with `null`', function (): void {
+    $wizard = Wizard::make()
+        ->cancelAction('<button>Cancel</button>')
+        ->cancelAction(null);
+
+    expect($wizard->getCancelAction())->toBeNull();
+});
+
+it('can set `submitAction()`', function (): void {
+    $wizard = Wizard::make();
+
+    expect($wizard->getSubmitAction())->toBeNull();
+
+    $wizard->submitAction('<button>Submit</button>');
+
+    expect($wizard->getSubmitAction())->toBe('<button>Submit</button>');
+});
+
+it('can set `submitAction()` with an `Htmlable`', function (): void {
+    $htmlable = new HtmlString('<button>Submit Now</button>');
+    $wizard = Wizard::make()->submitAction($htmlable);
+
+    expect($wizard->getSubmitAction())->toBe($htmlable);
+});
+
+it('can clear `submitAction()` with `null`', function (): void {
+    $wizard = Wizard::make()
+        ->submitAction('<button>Submit</button>')
+        ->submitAction(null);
+
+    expect($wizard->getSubmitAction())->toBeNull();
+});
+
+it('can set `alpineSubmitHandler()`', function (): void {
+    $wizard = Wizard::make();
+
+    expect($wizard->getAlpineSubmitHandler())->toBeNull();
+
+    $wizard->alpineSubmitHandler('submitForm()');
+
+    expect($wizard->getAlpineSubmitHandler())->toBe('submitForm()');
+});
+
+it('can set `alpineSubmitHandler()` with a `Closure`', function (): void {
+    $wizard = Wizard::make()
+        ->alpineSubmitHandler(static fn (): string => 'dynamicHandler()');
+
+    expect($wizard->getAlpineSubmitHandler())->toBe('dynamicHandler()');
+});
+
+it('can clear `alpineSubmitHandler()` with `null`', function (): void {
+    $wizard = Wizard::make()
+        ->alpineSubmitHandler('handler()')
+        ->alpineSubmitHandler(null);
+
+    expect($wizard->getAlpineSubmitHandler())->toBeNull();
+});
+
+it('can set `hiddenHeader()`', function (): void {
+    $wizard = Wizard::make();
+
+    expect($wizard->isHeaderHidden())->toBeFalse();
+
+    $wizard->hiddenHeader();
+
+    expect($wizard->isHeaderHidden())->toBeTrue();
+});
+
+it('can set `hiddenHeader()` with a `Closure`', function (): void {
+    $wizard = Wizard::make()
+        ->hiddenHeader(static fn (): bool => true);
+
+    expect($wizard->isHeaderHidden())->toBeTrue();
+});
+
+describe('containment', function (): void {
+    it('defaults `isContained()` to `true`', function (): void {
+        $wizard = Wizard::make();
+
+        expect($wizard->isContained())->toBeTrue();
+    });
+
+    it('can set `contained()` to `false`', function (): void {
+        $wizard = Wizard::make()->contained(false);
+
+        expect($wizard->isContained())->toBeFalse();
+    });
+
+    it('can set `contained()` with a `Closure`', function (): void {
+        $wizard = Wizard::make()
+            ->contained(static fn (): bool => false);
+
+        expect($wizard->isContained())->toBeFalse();
+    });
+});
+
+describe('extra Alpine attributes', function (): void {
+    it('returns empty array for `getExtraAlpineAttributes()` by default', function (): void {
+        $wizard = Wizard::make();
+
+        expect($wizard->getExtraAlpineAttributes())->toBe([]);
+    });
+
+    it('can set `extraAlpineAttributes()`', function (): void {
+        $wizard = Wizard::make()
+            ->extraAlpineAttributes(['x-on:click' => 'open = true']);
+
+        expect($wizard->getExtraAlpineAttributes())->toBe(['x-on:click' => 'open = true']);
+    });
+
+    it('can merge `extraAlpineAttributes()`', function (): void {
+        $wizard = Wizard::make()
+            ->extraAlpineAttributes(['x-on:click' => 'open = true'])
+            ->extraAlpineAttributes(['x-bind:class' => 'active'], merge: true);
+
+        $attributes = $wizard->getExtraAlpineAttributes();
+
+        expect($attributes)->toHaveKey('x-on:click', 'open = true');
+        expect($attributes)->toHaveKey('x-bind:class', 'active');
+    });
+
+    it('can set `extraAlpineAttributes()` with a `Closure`', function (): void {
+        $wizard = Wizard::make()
+            ->extraAlpineAttributes(static fn (): array => ['x-data' => '{}']);
+
+        expect($wizard->getExtraAlpineAttributes())->toBe(['x-data' => '{}']);
+    });
+});
+
 it('restores query-string steps using absolute keys and legacy IDs', function (mixed $query, int $expected): void {
     request()->query->replace(['step' => $query, 'delivery_step' => 'form.delivery.wizard.details']);
 
@@ -70,68 +432,6 @@ it('prefers query-string step keys before legacy IDs', function (string $query, 
     'absolute key before another step custom ID' => ['form.wizard.contact', 2],
     'legacy custom ID' => ['profile-contact', 2],
 ]);
-
-it('persists independent wizards across reload and browser history', function (): void {
-    $this->actingAs(User::factory()->create());
-
-    $browser = visit('/wizard-browser-test')
-        ->assertVisible('#profile-details')
-        ->assertVisible('#delivery-details')
-        ->click('[data-testid="wizard-next-action"]')
-        ->assertVisible('#profile-contact')
-        ->assertVisible('#delivery-details')
-        ->click('[data-testid="delivery-next-action"]')
-        ->assertVisible('#delivery-contact');
-
-    expect($browser->script('new URL(location.href).searchParams.get("step")'))->toBe('form.wizard.contact');
-    expect($browser->script('new URL(location.href).searchParams.get("delivery_step")'))->toBe('form.delivery.wizard.contact');
-
-    $browser->click('a[href$="/tabs-browser-test"]:visible')
-        ->assertVisible('#profile-tabs')
-        ->back()->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
-        ->forward()->assertVisible('#profile-tabs')
-        ->back()->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
-        ->click('[data-testid="wizard-next-action"]')
-        ->assertVisible('#profile-review')->assertVisible('#delivery-contact');
-
-    expect($browser->script('new URL(location.href).searchParams.get("step")'))->toBe('form.wizard.review');
-
-    $browser->refresh()->assertVisible('#profile-review')->assertVisible('#delivery-contact')
-        ->assertNoAccessibilityIssues()
-        ->navigate('/wizard-browser-test?step=form.wizard.details&delivery_step=form.delivery.wizard.details')
-        ->assertVisible('#profile-details')->assertVisible('#delivery-details')
-        ->back()->assertVisible('#profile-review')->assertVisible('#delivery-contact')
-        ->forward()->assertVisible('#profile-details')->assertVisible('#delivery-details')
-        ->navigate('/wizard-browser-test?step=profile-contact&delivery_step=delivery-contact')
-        ->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
-        ->navigate('/wizard-browser-test?step=removed&delivery_step=delivery-contact')
-        ->assertVisible('#profile-details')->assertVisible('#delivery-contact')
-        ->assertNoSmoke();
-
-    visit('/wizard-browser-test?step=form.wizard.contact&delivery_step=form.delivery.wizard.contact')->inDarkMode()
-        ->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
-        ->assertNoAccessibilityIssues();
-});
-
-it('advances to the resolved visible step when a validation hook hides its own step', function (): void {
-    $this->actingAs(User::factory()->create());
-
-    $browser = visit('/wizard-browser-test?hide_contact_after_validation=1')
-        ->assertVisible('#profile-details')
-        ->click('[data-testid="wizard-next-action"]')
-        ->assertVisible('#profile-contact')
-        ->click('[data-testid="wizard-next-action"]')
-        ->assertVisible('#profile-review')
-        ->assertMissing('#profile-contact')
-        ->hover('#profile-review')
-        ->assertNoAccessibilityIssues()
-        ->assertNoSmoke();
-
-    expect($browser->script('new URL(location.href).searchParams.get("step")'))->toBe('form.wizard.review');
-
-    visit('/wizard-browser-test?step=form.wizard.review')->inDarkMode()
-        ->assertVisible('#profile-review')->assertNoAccessibilityIssues();
-});
 
 it('rejects invalid `nextStep()` indexes before hooks or state changes', function (array $arguments, bool $skippable): void {
     $component = livewire(WizardTransitions::class, ['skippable' => $skippable])
@@ -286,369 +586,6 @@ it('checks `previousStep()` bounds without changing valid backward navigation', 
     'past last' => [['currentStepIndex' => 3], 2],
 ]);
 
-it('can set `skippable()`', function (): void {
-    $wizard = Wizard::make();
-
-    expect($wizard->isSkippable())->toBeFalse();
-
-    $wizard->skippable();
-
-    expect($wizard->isSkippable())->toBeTrue();
-});
-
-it('can set `startOnStep()`', function (): void {
-    $wizard = Wizard::make();
-
-    expect($wizard->getStartStep())->toBe(1);
-
-    $wizard->startOnStep(3);
-
-    expect($wizard->getStartStep())->toBe(3);
-});
-
-it('can set `persistStepInQueryString()`', function (): void {
-    $wizard = Wizard::make();
-
-    expect($wizard->isStepPersistedInQueryString())->toBeFalse();
-
-    $wizard->persistStepInQueryString();
-
-    expect($wizard->isStepPersistedInQueryString())->toBeTrue();
-    expect($wizard->getStepQueryStringKey())->toBe('step');
-});
-
-it('can set custom key for `persistStepInQueryString()`', function (): void {
-    $wizard = Wizard::make()
-        ->persistStepInQueryString('wizardStep');
-
-    expect($wizard->getStepQueryStringKey())->toBe('wizardStep');
-});
-
-it('can set `cancelAction()`', function (): void {
-    $wizard = Wizard::make();
-
-    expect($wizard->getCancelAction())->toBeNull();
-
-    $wizard->cancelAction('<button>Cancel</button>');
-
-    expect($wizard->getCancelAction())->toBe('<button>Cancel</button>');
-});
-
-it('can set `submitAction()`', function (): void {
-    $wizard = Wizard::make();
-
-    expect($wizard->getSubmitAction())->toBeNull();
-
-    $wizard->submitAction('<button>Submit</button>');
-
-    expect($wizard->getSubmitAction())->toBe('<button>Submit</button>');
-});
-
-it('can set `alpineSubmitHandler()`', function (): void {
-    $wizard = Wizard::make();
-
-    expect($wizard->getAlpineSubmitHandler())->toBeNull();
-
-    $wizard->alpineSubmitHandler('submitForm()');
-
-    expect($wizard->getAlpineSubmitHandler())->toBe('submitForm()');
-});
-
-it('can set `hiddenHeader()`', function (): void {
-    $wizard = Wizard::make();
-
-    expect($wizard->isHeaderHidden())->toBeFalse();
-
-    $wizard->hiddenHeader();
-
-    expect($wizard->isHeaderHidden())->toBeTrue();
-});
-
-it('returns `next` for `getNextActionName()`', function (): void {
-    $wizard = Wizard::make();
-
-    expect($wizard->getNextActionName())->toBe('next');
-});
-
-it('returns `previous` for `getPreviousActionName()`', function (): void {
-    $wizard = Wizard::make();
-
-    expect($wizard->getPreviousActionName())->toBe('previous');
-});
-
-it('calculates `getCurrentStepIndex()` from `startOnStep()`', function (): void {
-    $wizard = Wizard::make()
-        ->startOnStep(2);
-
-    expect($wizard->getCurrentStepIndex())->toBe(1);
-});
-
-it('can modify `nextAction()` using callback', function (): void {
-    $wizard = Wizard::make()
-        ->nextAction(static fn ($action) => $action->label('Continue'));
-
-    $nextAction = $wizard->getNextAction();
-
-    expect($nextAction->getLabel())->toBe('Continue');
-});
-
-it('can modify `previousAction()` using callback', function (): void {
-    $wizard = Wizard::make()
-        ->previousAction(static fn ($action) => $action->label('Go Back'));
-
-    $previousAction = $wizard->getPreviousAction();
-
-    expect($previousAction->getLabel())->toBe('Go Back');
-});
-
-it('can set `skippable()` with a `Closure`', function (): void {
-    $wizard = Wizard::make()
-        ->skippable(static fn (): bool => true);
-
-    expect($wizard->isSkippable())->toBeTrue();
-});
-
-it('can set `startOnStep()` with a `Closure`', function (): void {
-    $wizard = Wizard::make()
-        ->startOnStep(static fn (): int => 4);
-
-    expect($wizard->getStartStep())->toBe(4);
-});
-
-it('can set `hiddenHeader()` with a `Closure`', function (): void {
-    $wizard = Wizard::make()
-        ->hiddenHeader(static fn (): bool => true);
-
-    expect($wizard->isHeaderHidden())->toBeTrue();
-});
-
-it('can set `alpineSubmitHandler()` with a `Closure`', function (): void {
-    $wizard = Wizard::make()
-        ->alpineSubmitHandler(static fn (): string => 'dynamicHandler()');
-
-    expect($wizard->getAlpineSubmitHandler())->toBe('dynamicHandler()');
-});
-
-it('can clear `persistStepInQueryString()` with `null`', function (): void {
-    $wizard = Wizard::make()
-        ->persistStepInQueryString()
-        ->persistStepInQueryString(null);
-
-    expect($wizard->isStepPersistedInQueryString())->toBeFalse();
-    expect($wizard->getStepQueryStringKey())->toBeNull();
-});
-
-it('returns fluent `$this` from `steps()`', function (): void {
-    $wizard = Wizard::make();
-
-    $result = $wizard->steps([]);
-
-    expect($result)->toBe($wizard);
-});
-
-it('defaults `getCurrentStepIndex()` to `0`', function (): void {
-    $wizard = Wizard::make();
-
-    expect($wizard->getCurrentStepIndex())->toBe(0);
-});
-
-it('returns default label from `getNextAction()` without modifier', function (): void {
-    $wizard = Wizard::make();
-
-    $action = $wizard->getNextAction();
-
-    expect($action->getLabel())->toBeString();
-    expect($action->getLabel())->not->toBeEmpty();
-});
-
-it('can clear `nextAction()` modifier with `null`', function (): void {
-    $wizard = Wizard::make()
-        ->nextAction(static fn ($action) => $action->label('Custom'))
-        ->nextAction(null);
-
-    $action = $wizard->getNextAction();
-
-    // After clearing, should return default label, not 'Custom'
-    expect($action->getLabel())->not->toBe('Custom');
-});
-
-it('can set `persistStepInQueryString()` with a `Closure`', function (): void {
-    $wizard = Wizard::make()
-        ->persistStepInQueryString(static fn (): string => 'dynamicKey');
-
-    expect($wizard->getStepQueryStringKey())->toBe('dynamicKey');
-    expect($wizard->isStepPersistedInQueryString())->toBeTrue();
-});
-
-it('can set `cancelAction()` with an `Htmlable`', function (): void {
-    $htmlable = new HtmlString('<button>Cancel Now</button>');
-    $wizard = Wizard::make()->cancelAction($htmlable);
-
-    expect($wizard->getCancelAction())->toBe($htmlable);
-});
-
-it('can clear `cancelAction()` with `null`', function (): void {
-    $wizard = Wizard::make()
-        ->cancelAction('<button>Cancel</button>')
-        ->cancelAction(null);
-
-    expect($wizard->getCancelAction())->toBeNull();
-});
-
-it('can set `submitAction()` with an `Htmlable`', function (): void {
-    $htmlable = new HtmlString('<button>Submit Now</button>');
-    $wizard = Wizard::make()->submitAction($htmlable);
-
-    expect($wizard->getSubmitAction())->toBe($htmlable);
-});
-
-it('can clear `submitAction()` with `null`', function (): void {
-    $wizard = Wizard::make()
-        ->submitAction('<button>Submit</button>')
-        ->submitAction(null);
-
-    expect($wizard->getSubmitAction())->toBeNull();
-});
-
-it('can clear `previousAction()` modifier with `null`', function (): void {
-    $wizard = Wizard::make()
-        ->previousAction(static fn ($action) => $action->label('Custom'))
-        ->previousAction(null);
-
-    $action = $wizard->getPreviousAction();
-
-    expect($action->getLabel())->not->toBe('Custom');
-});
-
-it('can clear `alpineSubmitHandler()` with `null`', function (): void {
-    $wizard = Wizard::make()
-        ->alpineSubmitHandler('handler()')
-        ->alpineSubmitHandler(null);
-
-    expect($wizard->getAlpineSubmitHandler())->toBeNull();
-});
-
-describe('label', function (): void {
-    it('returns `null` for `getLabel()` by default', function (): void {
-        $wizard = Wizard::make();
-
-        expect($wizard->getLabel())->toBeNull();
-    });
-
-    it('can set `label()`', function (): void {
-        $wizard = Wizard::make()->label('Registration');
-
-        expect($wizard->getLabel())->toBe('Registration');
-    });
-
-    it('can set `label()` with a `Closure`', function (): void {
-        $wizard = Wizard::make()
-            ->label(static fn (): string => 'Dynamic Label');
-
-        expect($wizard->getLabel())->toBe('Dynamic Label');
-    });
-
-    it('can set `label()` with an `Htmlable`', function (): void {
-        $htmlable = new HtmlString('<strong>Bold</strong>');
-        $wizard = Wizard::make()->label($htmlable);
-
-        expect($wizard->getLabel())->toBe($htmlable);
-    });
-
-    it('reports `hasCustomLabel()` as `false` by default', function (): void {
-        $wizard = Wizard::make();
-
-        expect($wizard->hasCustomLabel())->toBeFalse();
-    });
-
-    it('reports `hasCustomLabel()` as `true` after `label()` is set', function (): void {
-        $wizard = Wizard::make()->label('Custom');
-
-        expect($wizard->hasCustomLabel())->toBeTrue();
-    });
-
-    it('defaults `isLabelHidden()` to `false`', function (): void {
-        $wizard = Wizard::make();
-
-        expect($wizard->isLabelHidden())->toBeFalse();
-    });
-
-    it('can set `hiddenLabel()`', function (): void {
-        $wizard = Wizard::make()->hiddenLabel();
-
-        expect($wizard->isLabelHidden())->toBeTrue();
-    });
-
-    it('can set `hiddenLabel()` with a `Closure`', function (): void {
-        $wizard = Wizard::make()
-            ->hiddenLabel(static fn (): bool => true);
-
-        expect($wizard->isLabelHidden())->toBeTrue();
-    });
-
-    it('can translate label with `translateLabel()`', function (): void {
-        $wizard = Wizard::make()
-            ->label('validation.required')
-            ->translateLabel();
-
-        expect($wizard->getLabel())->toBe(__('validation.required'));
-    });
-});
-
-describe('containment', function (): void {
-    it('defaults `isContained()` to `true`', function (): void {
-        $wizard = Wizard::make();
-
-        expect($wizard->isContained())->toBeTrue();
-    });
-
-    it('can set `contained()` to `false`', function (): void {
-        $wizard = Wizard::make()->contained(false);
-
-        expect($wizard->isContained())->toBeFalse();
-    });
-
-    it('can set `contained()` with a `Closure`', function (): void {
-        $wizard = Wizard::make()
-            ->contained(static fn (): bool => false);
-
-        expect($wizard->isContained())->toBeFalse();
-    });
-});
-
-describe('extra Alpine attributes', function (): void {
-    it('returns empty array for `getExtraAlpineAttributes()` by default', function (): void {
-        $wizard = Wizard::make();
-
-        expect($wizard->getExtraAlpineAttributes())->toBe([]);
-    });
-
-    it('can set `extraAlpineAttributes()`', function (): void {
-        $wizard = Wizard::make()
-            ->extraAlpineAttributes(['x-on:click' => 'open = true']);
-
-        expect($wizard->getExtraAlpineAttributes())->toBe(['x-on:click' => 'open = true']);
-    });
-
-    it('can merge `extraAlpineAttributes()`', function (): void {
-        $wizard = Wizard::make()
-            ->extraAlpineAttributes(['x-on:click' => 'open = true'])
-            ->extraAlpineAttributes(['x-bind:class' => 'active'], merge: true);
-
-        $attributes = $wizard->getExtraAlpineAttributes();
-
-        expect($attributes)->toHaveKey('x-on:click', 'open = true');
-        expect($attributes)->toHaveKey('x-bind:class', 'active');
-    });
-
-    it('can set `extraAlpineAttributes()` with a `Closure`', function (): void {
-        $wizard = Wizard::make()
-            ->extraAlpineAttributes(static fn (): array => ['x-data' => '{}']);
-
-        expect($wizard->getExtraAlpineAttributes())->toBe(['x-data' => '{}']);
-    });
-});
-
 describe('rendering', function (): void {
     it('can render', function (): void {
         livewire(RenderWizard::class)->assertSuccessful();
@@ -694,6 +631,67 @@ describe('rendering', function (): void {
         livewire(RenderWizardWithCustomNextActionLivewireTarget::class)
             ->assertSeeHtml('wire:target="customTarget"');
     });
+});
+
+it('persists independent wizards across reload and browser history', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $browser = visit('/wizard-browser-test')
+        ->assertVisible('#profile-details')
+        ->assertVisible('#delivery-details')
+        ->click('[data-testid="wizard-next-action"]')
+        ->assertVisible('#profile-contact')
+        ->assertVisible('#delivery-details')
+        ->click('[data-testid="delivery-next-action"]')
+        ->assertVisible('#delivery-contact');
+
+    $browser->assertQueryStringHas('step', 'form.wizard.contact')
+        ->assertQueryStringHas('delivery_step', 'form.delivery.wizard.contact');
+
+    $browser->click('a[href$="/tabs-browser-test"]:visible')
+        ->assertVisible('#profile-tabs')
+        ->back()->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
+        ->forward()->assertVisible('#profile-tabs')
+        ->back()->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
+        ->click('[data-testid="wizard-next-action"]')
+        ->assertVisible('#profile-review')->assertVisible('#delivery-contact');
+
+    $browser->assertQueryStringHas('step', 'form.wizard.review');
+
+    $browser->refresh()->assertVisible('#profile-review')->assertVisible('#delivery-contact')
+        ->assertNoAccessibilityIssues()
+        ->navigate('/wizard-browser-test?step=form.wizard.details&delivery_step=form.delivery.wizard.details')
+        ->assertVisible('#profile-details')->assertVisible('#delivery-details')
+        ->back()->assertVisible('#profile-review')->assertVisible('#delivery-contact')
+        ->forward()->assertVisible('#profile-details')->assertVisible('#delivery-details')
+        ->navigate('/wizard-browser-test?step=profile-contact&delivery_step=delivery-contact')
+        ->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
+        ->navigate('/wizard-browser-test?step=removed&delivery_step=delivery-contact')
+        ->assertVisible('#profile-details')->assertVisible('#delivery-contact')
+        ->assertNoSmoke();
+
+    visit('/wizard-browser-test?step=form.wizard.contact&delivery_step=form.delivery.wizard.contact')->inDarkMode()
+        ->assertVisible('#profile-contact')->assertVisible('#delivery-contact')
+        ->assertNoAccessibilityIssues();
+});
+
+it('advances to the resolved visible step when a validation hook hides its own step', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $browser = visit('/wizard-browser-test?hide_contact_after_validation=1')
+        ->assertVisible('#profile-details')
+        ->click('[data-testid="wizard-next-action"]')
+        ->assertVisible('#profile-contact')
+        ->click('[data-testid="wizard-next-action"]')
+        ->assertVisible('#profile-review')
+        ->assertMissing('#profile-contact')
+        ->assertNoAccessibilityIssues()
+        ->assertNoSmoke();
+
+    $browser->assertQueryStringHas('step', 'form.wizard.review');
+
+    visit('/wizard-browser-test?step=form.wizard.review')->inDarkMode()
+        ->assertVisible('#profile-review')->assertNoAccessibilityIssues();
 });
 
 it('can render `Wizard` in the browser', function (): void {

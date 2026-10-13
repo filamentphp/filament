@@ -254,7 +254,7 @@ describe('rendering and authorization', function (): void {
             ->and($table->getRecordUrl($editActionDepartment))->toBeNull();
     });
 
-    it('can render relation manager if the policy viewAny returns true', function (): void {
+    it('can render relation manager if the policy `viewAny()` returns `true`', function (): void {
         app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
 
         $ticket = Ticket::factory()
@@ -265,7 +265,7 @@ describe('rendering and authorization', function (): void {
         )->toBeTrue();
     });
 
-    it('can render relation manager if the policy viewAny returns an allowed response', function (): void {
+    it('can render relation manager if the policy `viewAny()` returns an allowed response', function (): void {
         app()->bind(DepartmentPolicy::class . '::viewAny', fn (): Response => Response::allow());
 
         $ticket = Ticket::factory()
@@ -278,7 +278,7 @@ describe('rendering and authorization', function (): void {
         app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
     });
 
-    it('does not render relation manager if the policy viewAny returns false', function (): void {
+    it('does not render relation manager if the policy `viewAny()` returns `false`', function (): void {
         app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => false);
 
         $ticket = Ticket::factory()
@@ -291,7 +291,7 @@ describe('rendering and authorization', function (): void {
         app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
     });
 
-    it('does not render relation manager if the policy viewAny returns a denied response', function (): void {
+    it('does not render relation manager if the policy `viewAny()` returns a denied response', function (): void {
         app()->bind(DepartmentPolicy::class . '::viewAny', fn (): Response => Response::deny());
 
         $ticket = Ticket::factory()

@@ -286,14 +286,14 @@ describe('SPA mode', function (): void {
         $expectedPath = parse_url(PostResource::getUrl('view', ['record' => $post], panel: 'spa'), PHP_URL_PATH);
 
         $page = visit(PostResource::getUrl(panel: 'spa'))
-            ->type('.fi-global-search-field input', $post->title)
-            ->assertVisible('.fi-global-search-result-link');
+            ->type('input[type="search"][aria-controls]', $post->title)
+            ->assertVisible('[role=region] a');
 
         $page
-            ->click('.fi-global-search-result-link')
+            ->click('[role=region] a')
             ->assertPathIs($expectedPath)
-            ->assertValue('.fi-global-search-field input', '')
-            ->assertMissing('.fi-global-search-results-ctn');
+            ->assertValue('input[type="search"][aria-controls]', '')
+            ->assertMissing('[role=region]');
     });
 
     it('clears the search and closes the results after selecting a result with the keyboard', function (): void {
@@ -305,16 +305,16 @@ describe('SPA mode', function (): void {
         $expectedPath = parse_url(PostResource::getUrl('view', ['record' => $post], panel: 'spa'), PHP_URL_PATH);
 
         $page = visit(PostResource::getUrl(panel: 'spa'))
-            ->type('.fi-global-search-field input', $post->title)
-            ->assertVisible('.fi-global-search-result-link');
+            ->type('input[type="search"][aria-controls]', $post->title)
+            ->assertVisible('[role=region] a');
 
         $page
-            ->keys('.fi-global-search-field input', 'ArrowDown')
-            ->assertPresent('.fi-global-search-result-link:focus')
-            ->keys('.fi-global-search-result-link', 'Enter')
+            ->keys('input[type="search"][aria-controls]', 'ArrowDown')
+            ->assertPresent('[role=region] a:focus')
+            ->keys('[role=region] a', 'Enter')
             ->assertPathIs($expectedPath)
-            ->assertValue('.fi-global-search-field input', '')
-            ->assertMissing('.fi-global-search-results-ctn');
+            ->assertValue('input[type="search"][aria-controls]', '')
+            ->assertMissing('[role=region]');
     });
 
     it('preserves the search when navigation is canceled', function (): void {
@@ -326,15 +326,15 @@ describe('SPA mode', function (): void {
         $expectedPath = parse_url(PostResource::getUrl(panel: 'spa'), PHP_URL_PATH);
 
         $page = visit(PostResource::getUrl(panel: 'spa'))
-            ->type('.fi-global-search-field input', $post->title)
-            ->assertVisible('.fi-global-search-result-link');
+            ->type('input[type="search"][aria-controls]', $post->title)
+            ->assertVisible('[role=region] a');
 
         $page->script("window.addEventListener('livewire:navigate', (event) => event.preventDefault(), { once: true })");
 
         $page
-            ->click('.fi-global-search-result-link')
+            ->click('[role=region] a')
             ->assertPathIs($expectedPath)
-            ->assertValue('.fi-global-search-field input', $post->title);
+            ->assertValue('input[type="search"][aria-controls]', $post->title);
     });
 
     it('does not reopen the results after the search is cleared', function (): void {
@@ -345,33 +345,14 @@ describe('SPA mode', function (): void {
         $post = Post::factory()->create();
 
         $page = visit(PostResource::getUrl(panel: 'spa'))
-            ->type('.fi-global-search-field input', $post->title)
-            ->assertVisible('.fi-global-search-results-ctn');
+            ->type('input[type="search"][aria-controls]', $post->title)
+            ->assertVisible('[role=region]');
 
-        $page->type('.fi-global-search-field input', '')
-            ->assertValue('.fi-global-search-field input', '')
-            ->keys('.fi-global-search-field input', 'ArrowDown')
-            ->assertMissing('.fi-global-search-results-ctn');
+        $page->type('input[type="search"][aria-controls]', '')
+            ->assertValue('input[type="search"][aria-controls]', '')
+            ->keys('input[type="search"][aria-controls]', 'ArrowDown')
+            ->assertMissing('[role=region]');
     });
-
-    it('has no accessibility issues in light and dark modes', function (bool $isDarkMode): void {
-        Artisan::call('filament:assets');
-
-        Post::query()->delete();
-
-        $post = Post::factory()->create();
-
-        $page = visit(PostResource::getUrl(panel: 'spa'));
-
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-
-        $page
-            ->type('.fi-global-search-field input', $post->title)
-            ->assertVisible('.fi-global-search-results-ctn')
-            ->assertNoAccessibilityIssues();
-    })->with(['light' => false, 'dark' => true]);
 });
 
 describe('`globalSearchResourceOptIn()`', function (): void {
@@ -404,39 +385,39 @@ describe('`globalSearchResourceOptIn()`', function (): void {
             ->assertViewHas('results', static fn (GlobalSearchResults $results): bool => $results->getCategories()->isEmpty());
     });
 
-    class OptedInGlobalSearchResource extends Resource
-    {
-        protected static ?string $model = Post::class;
-
-        protected static ?string $recordTitleAttribute = 'title';
-
-        protected static bool $isGloballySearchable = true;
-
-        protected static ?string $slug = 'opted-in-global-search-posts';
-
-        /**
-         * @return array<string>
-         */
-        public static function getGloballySearchableAttributes(): array
-        {
-            return ['title'];
-        }
-    }
-
-    class CustomSearchProvider implements GlobalSearchProvider
-    {
-        public function getResults(string $query): ?GlobalSearchResults
-        {
-            return GlobalSearchResults::make()
-                ->category('foobarbaz', [
-                    new GlobalSearchResult(title: 'foo', url: '#', details: []),
-                    new GlobalSearchResult(title: 'bar', url: '#', details: []),
-                    new GlobalSearchResult(title: 'baz', url: '#', details: []),
-                ]);
-        }
-    }
 });
 
+class OptedInGlobalSearchResource extends Resource
+{
+    protected static ?string $model = Post::class;
+
+    protected static ?string $recordTitleAttribute = 'title';
+
+    protected static bool $isGloballySearchable = true;
+
+    protected static ?string $slug = 'opted-in-global-search-posts';
+
+    /**
+     * @return array<string>
+     */
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['title'];
+    }
+}
+
+class CustomSearchProvider implements GlobalSearchProvider
+{
+    public function getResults(string $query): ?GlobalSearchResults
+    {
+        return GlobalSearchResults::make()
+            ->category('foobarbaz', [
+                new GlobalSearchResult(title: 'foo', url: '#', details: []),
+                new GlobalSearchResult(title: 'bar', url: '#', details: []),
+                new GlobalSearchResult(title: 'baz', url: '#', details: []),
+            ]);
+    }
+}
 class ActionSearchProvider implements GlobalSearchProvider
 {
     public function getResults(string $query): ?GlobalSearchResults

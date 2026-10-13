@@ -6,7 +6,6 @@ use Filament\Tests\TestCase;
 uses(TestCase::class);
 
 afterEach(function (): void {
-    // Reset static state between tests
     ArrayRecord::keyName('__key');
 });
 

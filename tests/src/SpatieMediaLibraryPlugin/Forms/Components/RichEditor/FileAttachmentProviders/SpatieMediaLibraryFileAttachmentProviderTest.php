@@ -263,9 +263,6 @@ describe('media operations', function (): void {
         $provider = SpatieMediaLibraryFileAttachmentProvider::make()
             ->attribute($attribute);
 
-        $tempFile = tempnam(sys_get_temp_dir(), 'test');
-        file_put_contents($tempFile, 'file-content');
-
         $file = Mockery::mock(TemporaryUploadedFile::class);
         $file->shouldReceive('exists')->andReturn(true);
         $file->shouldReceive('get')->andReturn('file-content');
@@ -277,8 +274,6 @@ describe('media operations', function (): void {
         expect($uuid)->toBeString();
         expect($record->getMedia('content'))->toHaveCount(1);
         expect($record->getMedia('content')->first()->uuid)->toBe($uuid);
-
-        @unlink($tempFile);
     });
 
     it('uses `hashName()` to derive the stored file attachment extension from its MIME type', function (): void {
@@ -326,7 +321,7 @@ describe('media operations', function (): void {
         $provider = SpatieMediaLibraryFileAttachmentProvider::make()
             ->attribute($attribute);
 
-        // Keep only media2
+        // Keep only `$media2`.
         $provider->cleanUpFileAttachments([$media2->uuid]);
 
         $record->refresh();

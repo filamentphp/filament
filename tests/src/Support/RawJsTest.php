@@ -21,15 +21,12 @@ it('can be constructed with `make()`', function (): void {
 it('stores raw JavaScript without encoding', function (): void {
     $rawJs = RawJs::make('document.title');
 
-    // RawJs stores the JS as-is, unlike Js::from() which JSON-encodes
     expect((string) $rawJs)->toBe('document.title');
 });
 
 it('does not JSON-encode strings like `Js::from()` would', function (): void {
     $rawJs = RawJs::make("alert('hello')");
 
-    // Js::from("alert('hello')") would produce a quoted JSON string
-    // RawJs keeps it as raw JS
     expect((string) $rawJs)->toBe("alert('hello')");
 });
 

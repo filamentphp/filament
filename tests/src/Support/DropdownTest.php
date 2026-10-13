@@ -61,12 +61,12 @@ it('keeps an opted-out popup open when closing a nested menu', function (): void
         ->click('[data-testid="dropdown-trigger"]')
         ->assertVisible('[data-testid="nested-menu-trigger"]')
         ->keys('[data-testid="nested-menu-trigger"]', 'Enter')
-        ->assertScript("document.activeElement.matches('[data-testid=\"nested-menu-item\"]')", true)
+        ->assertPresent('[data-testid="nested-menu-item"]:focus')
         ->keys('[data-testid="nested-menu-item"]', 'Tab')
         ->assertMissing('[data-testid="nested-menu-item"]')
-        ->assertVisible('.fi-select-input-btn')
+        ->assertVisible('button[aria-haspopup="listbox"]')
         ->assertAttribute('[data-testid="dropdown-trigger"]', 'aria-expanded', 'true')
-        ->assertScript("document.activeElement.matches('[data-testid=\"after-nested-menu\"]')", true)
+        ->assertPresent('[data-testid="after-nested-menu"]:focus')
         ->assertNoSmoke();
 });
 
@@ -135,11 +135,11 @@ it('keeps `aria-expanded` in sync with the panel after a Livewire request', func
 
     $page
         ->click('[data-testid="refresh"]')
-        ->waitForText('Refreshed 1 times')
+        ->assertSee('Refreshed 1 times')
         ->click('[data-testid="dropdown-trigger"]')
         ->assertVisible('.fi-select-input-btn')
         ->assertAttribute('[data-testid="dropdown-trigger"]', 'aria-expanded', 'true')
-        ->click('h1[class]')
+        ->click('nav[aria-label="Topbar"]')
         ->assertMissing('.fi-select-input-btn')
         ->assertAttribute('[data-testid="dropdown-trigger"]', 'aria-expanded', 'false')
         ->assertNoSmoke();

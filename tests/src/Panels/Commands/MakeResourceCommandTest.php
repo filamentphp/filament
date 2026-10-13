@@ -112,7 +112,7 @@ it('can generate a resource class', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/PostResource.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -129,7 +129,7 @@ it('can generate a resource class with a record title attribute', function (): v
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/PostResource.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -145,7 +145,7 @@ it('can generate a resource form', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/Schemas/PostForm.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -162,7 +162,7 @@ it('can generate a resource infolist', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/Schemas/PostInfolist.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -178,7 +178,7 @@ it('can generate a resource table', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/Tables/PostsTable.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -194,7 +194,7 @@ it('can generate a resource list page', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/Pages/ListPosts.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -210,7 +210,7 @@ it('can generate a resource create page', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/Pages/CreatePost.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -226,7 +226,7 @@ it('can generate a resource edit page', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/Pages/EditPost.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -243,7 +243,7 @@ it('can generate a resource view page', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/Pages/ViewPost.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -260,7 +260,7 @@ it('can generate a resource class with embedded form', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/PostResource.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -278,7 +278,7 @@ it('can generate a resource class with embedded infolist', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/PostResource.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -295,7 +295,7 @@ it('can generate a resource class with embedded table', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/PostResource.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -312,7 +312,7 @@ it('can generate the resource form content', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/Schemas/PostForm.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -330,7 +330,7 @@ it('can generate the resource infolist content', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/Schemas/PostInfolist.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -347,7 +347,7 @@ it('can generate the resource table content', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/Tables/PostsTable.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -367,7 +367,7 @@ it('can generate the form, infolist, and table content embedded in a resource cl
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/PostResource.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -403,7 +403,7 @@ it('can generate a resource class with soft-deletes', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/PostResource.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -420,7 +420,7 @@ it('can generate a resource table with soft-deletes', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/Tables/PostsTable.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -437,7 +437,7 @@ it('can generate a resource edit page with soft-deletes', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/Pages/EditPost.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -466,7 +466,7 @@ it('can generate a simple resource class', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/PostResource.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -487,7 +487,7 @@ it('can generate a simple resource manage page', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/Pages/ManagePosts.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -506,7 +506,7 @@ it('can generate a simple resource class without embedded schemas and table', fu
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Posts/PostResource.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -522,7 +522,7 @@ it('can generate a resource class in a nested directory', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Blog/Posts/PostResource.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -538,7 +538,7 @@ it('can generate a resource form in a nested directory', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Blog/Posts/Schemas/PostForm.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -555,7 +555,7 @@ it('can generate a resource infolist in a nested directory', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Blog/Posts/Schemas/PostInfolist.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -571,7 +571,7 @@ it('can generate a resource table in a nested directory', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Blog/Posts/Tables/PostsTable.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -587,7 +587,7 @@ it('can generate a resource list page in a nested directory', function (): void 
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Blog/Posts/Pages/ListPosts.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -603,7 +603,7 @@ it('can generate a resource create page in a nested directory', function (): voi
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Blog/Posts/Pages/CreatePost.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -619,7 +619,7 @@ it('can generate a resource edit page in a nested directory', function (): void 
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Blog/Posts/Pages/EditPost.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -636,7 +636,7 @@ it('can generate a resource view page in a nested directory', function (): void 
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Blog/Posts/Pages/ViewPost.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -653,7 +653,7 @@ it('can generate a simple resource manage page in a nested directory', function 
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Blog/Posts/Pages/ManagePosts.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -672,21 +672,20 @@ it('can generate a nested resource class', function (): void {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentOrDefaultPanel())->resources = [
-        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+    Filament::getCurrentOrDefaultPanel()->resources([
         app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
-    ];
+    ]);
 
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
-        '--nested' => 'Users',
+        '--nested' => 'User',
         '--model-namespace' => 'Filament\Tests\Fixtures\Models',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Users/Resources/Posts/PostResource.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -705,10 +704,9 @@ it('can generate a nested resource class with a plural parent resource name', fu
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentOrDefaultPanel())->resources = [
-        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+    Filament::getCurrentOrDefaultPanel()->resources([
         app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
-    ];
+    ]);
 
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
@@ -719,7 +717,7 @@ it('can generate a nested resource class with a plural parent resource name', fu
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Users/Resources/Posts/PostResource.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -738,10 +736,9 @@ it('can generate a nested resource class with a parent resource name with `Resou
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentOrDefaultPanel())->resources = [
-        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+    Filament::getCurrentOrDefaultPanel()->resources([
         app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
-    ];
+    ]);
 
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
@@ -752,7 +749,7 @@ it('can generate a nested resource class with a parent resource name with `Resou
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Users/Resources/Posts/PostResource.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -771,10 +768,9 @@ it('can generate a nested resource form', function (): void {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentOrDefaultPanel())->resources = [
-        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+    Filament::getCurrentOrDefaultPanel()->resources([
         app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
-    ];
+    ]);
 
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
@@ -785,7 +781,7 @@ it('can generate a nested resource form', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Users/Resources/Posts/Schemas/PostForm.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -804,10 +800,9 @@ it('can generate a nested resource infolist', function (): void {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentOrDefaultPanel())->resources = [
-        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+    Filament::getCurrentOrDefaultPanel()->resources([
         app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
-    ];
+    ]);
 
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
@@ -819,7 +814,7 @@ it('can generate a nested resource infolist', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Users/Resources/Posts/Schemas/PostInfolist.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -838,10 +833,9 @@ it('can generate a nested resource create page', function (): void {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentOrDefaultPanel())->resources = [
-        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+    Filament::getCurrentOrDefaultPanel()->resources([
         app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
-    ];
+    ]);
 
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
@@ -852,7 +846,7 @@ it('can generate a nested resource create page', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Users/Resources/Posts/Pages/CreatePost.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -871,10 +865,9 @@ it('can generate a nested resource edit page', function (): void {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentOrDefaultPanel())->resources = [
-        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+    Filament::getCurrentOrDefaultPanel()->resources([
         app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
-    ];
+    ]);
 
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
@@ -885,7 +878,7 @@ it('can generate a nested resource edit page', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Users/Resources/Posts/Pages/EditPost.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -904,10 +897,9 @@ it('can generate a nested resource view page', function (): void {
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentOrDefaultPanel())->resources = [
-        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+    Filament::getCurrentOrDefaultPanel()->resources([
         app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
-    ];
+    ]);
 
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
@@ -919,7 +911,7 @@ it('can generate a nested resource view page', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Users/Resources/Posts/Pages/ViewPost.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
@@ -938,10 +930,9 @@ it('can generate a nested resource class in a nested directory', function (): vo
     require_once app_path('Filament/Resources/Users/Pages/CreateUser.php');
     require_once app_path('Filament/Resources/Users/Pages/EditUser.php');
 
-    invade(Filament::getCurrentOrDefaultPanel())->resources = [
-        ...invade(Filament::getCurrentOrDefaultPanel())->resources,
+    Filament::getCurrentOrDefaultPanel()->resources([
         app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
-    ];
+    ]);
 
     $this->artisan('make:filament-resource', [
         'model' => 'Blog/Post',
@@ -952,7 +943,7 @@ it('can generate a nested resource class in a nested directory', function (): vo
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Users/Resources/Blog/Posts/PostResource.php'));
-    expect(file_get_contents($path));
+    expect(file_get_contents($path))->toBeString()->toStartWith('<?php');
     if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();

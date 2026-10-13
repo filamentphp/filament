@@ -19,7 +19,6 @@ it('reports binary columns that cannot be generated as schema components', funct
         'modelFqn' => Post::class,
     ]);
 
-    // Generating reads the model schema, which records `binary` columns as skipped.
     expect($generator->generate())
         ->not->toContain("'location'");
 
@@ -33,7 +32,6 @@ it('does not report binary columns that are already `$hidden` on the model', fun
         'modelFqn' => PostWithHiddenLocation::class,
     ]);
 
-    // The `binary` column is still skipped, but as it is already `$hidden` there is nothing to warn about.
     expect($generator->generate())
         ->not->toContain("'location'");
 

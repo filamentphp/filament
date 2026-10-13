@@ -72,10 +72,10 @@ it('closes an action group before dismissing its notification with `Escape`', fu
         ->keys($groupedAction, 'Escape')
         ->assertMissing($groupedAction)
         ->assertVisible($notification)
-        ->assertScript("document.activeElement.matches('{$groupTrigger}')", true)
+        ->assertPresent($groupTrigger . ':focus')
         ->keys($groupTrigger, 'Escape')
         ->assertMissing($notification)
-        ->assertScript("document.activeElement.matches('{$groupedOrigin}')", true);
+        ->assertPresent($groupedOrigin . ':focus');
 });
 
 it('supports keyboard navigation in an action group menu', function (): void {
@@ -149,14 +149,14 @@ it('preserves keyboard activation of explicitly styled nested action group trigg
     visit('/notification-browser-test')
         ->keys('[data-testid="responsive-action-group"]:visible', 'Enter')
         ->assertVisible($trigger)
-        ->assertScript("!document.querySelector('{$trigger}').hasAttribute('role')", true)
+        ->assertAttributeMissing($trigger, 'role')
         ->keys($trigger, 'Enter')
-        ->assertScript("document.activeElement.matches('{$item}')", true)
+        ->assertPresent($item . ':focus')
         ->keys($item, 'Escape')
         ->assertMissing($item)
-        ->assertScript("document.activeElement.matches('{$trigger}')", true)
+        ->assertPresent($trigger . ':focus')
         ->keys($trigger, ' ')
-        ->assertScript("document.activeElement.matches('{$item}')", true)
+        ->assertPresent($item . ':focus')
         ->assertNoSmoke();
 });
 
@@ -173,7 +173,7 @@ it('synchronizes a responsive action group trigger across breakpoints', function
         ->assertScript("(() => { const trigger = Array.from(document.querySelectorAll('[data-testid=\"responsive-action-group\"]')).find((trigger) => trigger.checkVisibility()); return trigger.id === document.getElementById(trigger.getAttribute('aria-controls')).getAttribute('aria-labelledby') })()", true)
         ->assertScript("(() => { const ids = Array.from(document.querySelectorAll('[data-testid=\"responsive-action-group\"]')).map((trigger) => trigger.id).filter(Boolean); return ids.length === new Set(ids).size })()", true)
         ->keys($trigger, 'Enter')
-        ->assertScript("document.activeElement.matches('{$item}')", true)
+        ->assertPresent($item . ':focus')
         ->resize(900, 812)
         ->assertMissing($item)
         ->assertAttribute($trigger, 'aria-expanded', 'false')
@@ -191,7 +191,7 @@ it('has no accessibility issues in an open action group menu in light and dark m
             ->keys('[data-testid="action-group"]', 'Enter')
             ->assertVisible('[data-testid="grouped-action"]')
             ->keys('[data-testid="grouped-action"]', 'ArrowDown')
-            ->assertScript("document.activeElement.matches('[data-testid=\"disabled-action\"]')", true)
+            ->assertPresent('[data-testid="disabled-action"]:focus')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
     }
@@ -206,16 +206,14 @@ it('removes notifications when navigating away', function (): void {
         ->assertMissing('.fi-no-notification');
 });
 
-it('has no accessibility issues in light and dark modes', function (bool $isDarkMode): void {
+it('has no accessibility issues in light and dark modes', function (): void {
     $page = visit('/notification-browser-test');
 
-    if ($isDarkMode) {
-        $page = $page->inDarkMode();
+    foreach ([$page, $page->inDarkMode()] as $themedPage) {
+        $themedPage
+            ->click('[data-testid="send-persistent-notification"]')
+            ->assertVisible('.fi-no-notification')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
     }
-
-    $page
-        ->click('[data-testid="send-persistent-notification"]')
-        ->assertVisible('.fi-no-notification')
-        ->assertNoSmoke()
-        ->assertNoAccessibilityIssues();
-})->with(['light' => false, 'dark' => true]);
+});

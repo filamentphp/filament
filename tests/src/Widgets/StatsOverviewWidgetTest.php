@@ -133,14 +133,14 @@ it('renders `placeholder()` for values considered blank by `blank()`', function 
 it('renders accessible charts in light and dark modes', function (): void {
     $this->actingAs(User::factory()->create());
 
-    visit('/stats-overview-widget-browser-test')
+    $page = visit('/stats-overview-widget-browser-test');
+
+    $page
         ->assertVisible('[data-testid="orders-stat"] canvas')
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
 
-    // `inDarkMode()` requires a fresh browser context.
-    visit('/stats-overview-widget-browser-test')
-        ->inDarkMode()
+    $page->inDarkMode()
         ->assertVisible('[data-testid="orders-stat"] canvas')
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();

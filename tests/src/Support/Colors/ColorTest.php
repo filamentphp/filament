@@ -206,12 +206,10 @@ it('generates a palette via `rgb()` that matches `generatePalette()`', function 
 });
 
 it('identifies a light color via `isLight()`', function (): void {
-    // White is very light
     expect(Color::isLight('#ffffff'))->toBeTrue();
 });
 
 it('identifies a dark color as not light via `isLight()`', function (): void {
-    // Black is very dark
     expect(Color::isLight('#000000'))->toBeFalse();
 });
 

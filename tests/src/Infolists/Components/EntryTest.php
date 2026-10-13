@@ -7,8 +7,6 @@ use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
-// Tests `Entry` through its concrete subclass, `TextEntry`.
-
 describe('construction', function (): void {
     it('can be constructed with a name', function (): void {
         $entry = TextEntry::make('title');

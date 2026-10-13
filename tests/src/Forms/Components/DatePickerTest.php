@@ -23,20 +23,263 @@ beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
 
-it('can render', function (): void {
-    livewire(TestComponentWithDatePicker::class)
-        ->assertSuccessful();
+describe('`hasTime()` override', function (): void {
+    it('returns `false` for `hasTime()`', function (): void {
+        $picker = DatePicker::make('date');
+
+        expect($picker->hasTime())->toBeFalse();
+    });
+
+    it('returns `true` for `hasDate()`', function (): void {
+        $picker = DatePicker::make('date');
+
+        expect($picker->hasDate())->toBeTrue();
+    });
+});
+
+describe('computed formats', function (): void {
+    it('returns date-only format `Y-m-d` from `getFormat()` by default', function (): void {
+        $picker = DatePicker::make('date');
+
+        expect($picker->getFormat())->toBe('Y-m-d');
+    });
+
+    it('can use custom `format()`', function (): void {
+        $picker = DatePicker::make('date')
+            ->format('d-m-Y');
+
+        expect($picker->getFormat())->toBe('d-m-Y');
+    });
+
+    it('can use custom `format()` with a `Closure`', function (): void {
+        $picker = DatePicker::make('date')
+            ->format(static fn (): string => 'm/d/Y');
+
+        expect($picker->getFormat())->toBe('m/d/Y');
+    });
+
+    it('returns `date` from `getType()`', function (): void {
+        $picker = DatePicker::make('date');
+
+        expect($picker->getType())->toBe('date');
+    });
+
+    it('returns default date display format from `getDisplayFormat()`', function (): void {
+        $picker = DatePicker::make('date');
+
+        expect($picker->getDisplayFormat())->toBe('M j, Y');
+    });
+
+    it('can override `displayFormat()`', function (): void {
+        $picker = DatePicker::make('date')
+            ->displayFormat('d/m/Y');
+
+        expect($picker->getDisplayFormat())->toBe('d/m/Y');
+    });
+
+    it('can override `displayFormat()` with a `Closure`', function (): void {
+        $picker = DatePicker::make('date')
+            ->displayFormat(static fn (): string => 'Y.m.d');
+
+        expect($picker->getDisplayFormat())->toBe('Y.m.d');
+    });
+
+    it('returns `null` from `getStep()` since no time', function (): void {
+        $picker = DatePicker::make('date');
+
+        expect($picker->getStep())->toBeNull();
+    });
+
+    it('returns `Y-m-d` from `getInternalFormat()` when native', function (): void {
+        $picker = DatePicker::make('date')->native();
+
+        expect($picker->getInternalFormat())->toBe('Y-m-d');
+    });
+});
+
+describe('date constraints', function (): void {
+    it('returns `null` for `getMinDate()` by default', function (): void {
+        $picker = DatePicker::make('date');
+
+        expect($picker->getMinDate())->toBeNull();
+    });
+
+    it('can set `minDate()`', function (): void {
+        $picker = DatePicker::make('date')
+            ->minDate('2024-01-01');
+
+        expect($picker->getMinDate())->toBe('2024-01-01 00:00:00');
+    });
+
+    it('can set `minDate()` with a `Closure`', function (): void {
+        $picker = DatePicker::make('date')
+            ->minDate(static fn (): string => '2024-06-01');
+
+        expect($picker->getMinDate())->toBe('2024-06-01 00:00:00');
+    });
+
+    it('returns `null` for `getMaxDate()` by default', function (): void {
+        $picker = DatePicker::make('date');
+
+        expect($picker->getMaxDate())->toBeNull();
+    });
+
+    it('can set `maxDate()`', function (): void {
+        $picker = DatePicker::make('date')
+            ->maxDate('2024-12-31');
+
+        expect($picker->getMaxDate())->toBe('2024-12-31 23:59:59');
+    });
+
+    it('can set `maxDate()` with a `Closure`', function (): void {
+        $picker = DatePicker::make('date')
+            ->maxDate(static fn (): string => '2025-01-01');
+
+        expect($picker->getMaxDate())->toBe('2025-01-01 23:59:59');
+    });
+
+    it('returns empty array for `getDisabledDates()` by default', function (): void {
+        $picker = DatePicker::make('date');
+
+        expect($picker->getDisabledDates())->toBe([]);
+    });
+
+    it('can set `disabledDates()`', function (): void {
+        $picker = DatePicker::make('date')
+            ->disabledDates(['2024-12-25', '2024-01-01']);
+
+        expect($picker->getDisabledDates())->toBe(['2024-12-25', '2024-01-01']);
+    });
+
+    it('can set `disabledDates()` with a `Closure`', function (): void {
+        $picker = DatePicker::make('date')
+            ->disabledDates(static fn (): array => ['2024-07-04']);
+
+        expect($picker->getDisabledDates())->toBe(['2024-07-04']);
+    });
+});
+
+describe('first day of week', function (): void {
+    it('defaults `getFirstDayOfWeek()` to `1` (Monday)', function (): void {
+        $picker = DatePicker::make('date');
+
+        expect($picker->getFirstDayOfWeek())->toBe(1);
+    });
+
+    it('can set `firstDayOfWeek()`', function (): void {
+        $picker = DatePicker::make('date')
+            ->firstDayOfWeek(0);
+
+        expect($picker->getFirstDayOfWeek())->toBe(0);
+    });
+
+    it('falls back to Monday for out-of-range `firstDayOfWeek()` values', function (): void {
+        $picker = DatePicker::make('date')
+            ->firstDayOfWeek(8);
+
+        expect($picker->getFirstDayOfWeek())->toBe(1);
+    });
+
+    it('falls back to Monday for negative `firstDayOfWeek()` values', function (): void {
+        $picker = DatePicker::make('date')
+            ->firstDayOfWeek(-1);
+
+        expect($picker->getFirstDayOfWeek())->toBe(1);
+    });
+
+    it('can use `weekStartsOnMonday()` shortcut', function (): void {
+        $picker = DatePicker::make('date')
+            ->weekStartsOnMonday();
+
+        expect($picker->getFirstDayOfWeek())->toBe(1);
+    });
+
+    it('can use `weekStartsOnSunday()` shortcut', function (): void {
+        $picker = DatePicker::make('date')
+            ->weekStartsOnSunday();
+
+        expect($picker->getFirstDayOfWeek())->toBe(7);
+    });
+});
+
+describe('close on date selection', function (): void {
+    it('defaults `shouldCloseOnDateSelection()` to `false`', function (): void {
+        $picker = DatePicker::make('date');
+
+        expect($picker->shouldCloseOnDateSelection())->toBeFalse();
+    });
+
+    it('can set `closeOnDateSelection()`', function (): void {
+        $picker = DatePicker::make('date')
+            ->closeOnDateSelection();
+
+        expect($picker->shouldCloseOnDateSelection())->toBeTrue();
+    });
+
+    it('can set `closeOnDateSelection()` with a `Closure`', function (): void {
+        $picker = DatePicker::make('date')
+            ->closeOnDateSelection(static fn (): bool => true);
+
+        expect($picker->shouldCloseOnDateSelection())->toBeTrue();
+    });
+});
+
+describe('locale', function (): void {
+    it('returns app locale for `getLocale()` by default', function (): void {
+        $picker = DatePicker::make('date');
+
+        expect($picker->getLocale())->toBe(config('app.locale'));
+    });
+
+    it('can set `locale()`', function (): void {
+        $picker = DatePicker::make('date')
+            ->locale('fr');
+
+        expect($picker->getLocale())->toBe('fr');
+    });
+
+    it('can set `locale()` with a `Closure`', function (): void {
+        $picker = DatePicker::make('date')
+            ->locale(static fn (): string => 'de');
+
+        expect($picker->getLocale())->toBe('de');
+    });
+});
+
+describe('timezone', function (): void {
+    it('returns app timezone for `getTimezone()` when `hasTime()` is `false`', function (): void {
+        $picker = DatePicker::make('date');
+
+        expect($picker->getTimezone())->toBe(config('app.timezone'));
+    });
+
+    it('can set `timezone()`', function (): void {
+        $picker = DatePicker::make('date')
+            ->timezone('America/New_York');
+
+        expect($picker->getTimezone())->toBe('America/New_York');
+    });
+});
+
+describe('native', function (): void {
+    it('defaults `isNative()` to `true`', function (): void {
+        $picker = DatePicker::make('date');
+
+        expect($picker->isNative())->toBeTrue();
+    });
+
+    it('can set `native()` to `false`', function (): void {
+        $picker = DatePicker::make('date')
+            ->native(false);
+
+        expect($picker->isNative())->toBeFalse();
+    });
 });
 
 it('can set and get state', function (): void {
     livewire(TestComponentWithDatePicker::class)
         ->fillForm(['date' => '2024-01-15'])
         ->assertSchemaStateSet(['date' => '2024-01-15']);
-});
-
-it('can render with min and max date', function (): void {
-    livewire(TestComponentWithDatePickerMinMax::class)
-        ->assertSuccessful();
 });
 
 it('accepts the entire boundary dates and rejects adjacent dates when `hasTime()` is `false`', function (string $pickerClass, string $source, bool $isNative): void {
@@ -370,257 +613,14 @@ it('preserves the app year for a partial `defaultFocusedDate()` format', functio
         ->getDefaultFocusedDate())->toBe('2024-02-29 00:00:00');
 });
 
-describe('`hasTime()` override', function (): void {
-    it('returns `false` for `hasTime()`', function (): void {
-        $picker = DatePicker::make('date');
-
-        expect($picker->hasTime())->toBeFalse();
-    });
-
-    it('returns `true` for `hasDate()`', function (): void {
-        $picker = DatePicker::make('date');
-
-        expect($picker->hasDate())->toBeTrue();
-    });
+it('can render', function (): void {
+    livewire(TestComponentWithDatePicker::class)
+        ->assertSuccessful();
 });
 
-describe('computed formats', function (): void {
-    it('returns date-only format `Y-m-d` from `getFormat()` by default', function (): void {
-        $picker = DatePicker::make('date');
-
-        expect($picker->getFormat())->toBe('Y-m-d');
-    });
-
-    it('returns `date` from `getType()`', function (): void {
-        $picker = DatePicker::make('date');
-
-        expect($picker->getType())->toBe('date');
-    });
-
-    it('returns default date display format from `getDisplayFormat()`', function (): void {
-        $picker = DatePicker::make('date');
-
-        expect($picker->getDisplayFormat())->toBe('M j, Y');
-    });
-
-    it('can override `displayFormat()`', function (): void {
-        $picker = DatePicker::make('date')
-            ->displayFormat('d/m/Y');
-
-        expect($picker->getDisplayFormat())->toBe('d/m/Y');
-    });
-
-    it('can override `displayFormat()` with a `Closure`', function (): void {
-        $picker = DatePicker::make('date')
-            ->displayFormat(static fn (): string => 'Y.m.d');
-
-        expect($picker->getDisplayFormat())->toBe('Y.m.d');
-    });
-
-    it('returns `null` from `getStep()` since no time', function (): void {
-        $picker = DatePicker::make('date');
-
-        expect($picker->getStep())->toBeNull();
-    });
-
-    it('can use custom `format()`', function (): void {
-        $picker = DatePicker::make('date')
-            ->format('d-m-Y');
-
-        expect($picker->getFormat())->toBe('d-m-Y');
-    });
-
-    it('can use custom `format()` with a `Closure`', function (): void {
-        $picker = DatePicker::make('date')
-            ->format(static fn (): string => 'm/d/Y');
-
-        expect($picker->getFormat())->toBe('m/d/Y');
-    });
-
-    it('returns `Y-m-d` from `getInternalFormat()` when native', function (): void {
-        $picker = DatePicker::make('date')->native();
-
-        expect($picker->getInternalFormat())->toBe('Y-m-d');
-    });
-});
-
-describe('date constraints', function (): void {
-    it('returns `null` for `getMinDate()` by default', function (): void {
-        $picker = DatePicker::make('date');
-
-        expect($picker->getMinDate())->toBeNull();
-    });
-
-    it('can set `minDate()`', function (): void {
-        $picker = DatePicker::make('date')
-            ->minDate('2024-01-01');
-
-        expect($picker->getMinDate())->toBe('2024-01-01 00:00:00');
-    });
-
-    it('can set `minDate()` with a `Closure`', function (): void {
-        $picker = DatePicker::make('date')
-            ->minDate(static fn (): string => '2024-06-01');
-
-        expect($picker->getMinDate())->toBe('2024-06-01 00:00:00');
-    });
-
-    it('returns `null` for `getMaxDate()` by default', function (): void {
-        $picker = DatePicker::make('date');
-
-        expect($picker->getMaxDate())->toBeNull();
-    });
-
-    it('can set `maxDate()`', function (): void {
-        $picker = DatePicker::make('date')
-            ->maxDate('2024-12-31');
-
-        expect($picker->getMaxDate())->toBe('2024-12-31 23:59:59');
-    });
-
-    it('can set `maxDate()` with a `Closure`', function (): void {
-        $picker = DatePicker::make('date')
-            ->maxDate(static fn (): string => '2025-01-01');
-
-        expect($picker->getMaxDate())->toBe('2025-01-01 23:59:59');
-    });
-
-    it('returns empty array for `getDisabledDates()` by default', function (): void {
-        $picker = DatePicker::make('date');
-
-        expect($picker->getDisabledDates())->toBe([]);
-    });
-
-    it('can set `disabledDates()`', function (): void {
-        $picker = DatePicker::make('date')
-            ->disabledDates(['2024-12-25', '2024-01-01']);
-
-        expect($picker->getDisabledDates())->toBe(['2024-12-25', '2024-01-01']);
-    });
-
-    it('can set `disabledDates()` with a `Closure`', function (): void {
-        $picker = DatePicker::make('date')
-            ->disabledDates(static fn (): array => ['2024-07-04']);
-
-        expect($picker->getDisabledDates())->toBe(['2024-07-04']);
-    });
-});
-
-describe('first day of week', function (): void {
-    it('defaults `getFirstDayOfWeek()` to `1` (Monday)', function (): void {
-        $picker = DatePicker::make('date');
-
-        expect($picker->getFirstDayOfWeek())->toBe(1);
-    });
-
-    it('can set `firstDayOfWeek()`', function (): void {
-        $picker = DatePicker::make('date')
-            ->firstDayOfWeek(0);
-
-        expect($picker->getFirstDayOfWeek())->toBe(0);
-    });
-
-    it('clamps out-of-range values to `null` in `firstDayOfWeek()`', function (): void {
-        $picker = DatePicker::make('date')
-            ->firstDayOfWeek(8);
-
-        expect($picker->getFirstDayOfWeek())->toBe(1);
-    });
-
-    it('clamps negative values to `null` in `firstDayOfWeek()`', function (): void {
-        $picker = DatePicker::make('date')
-            ->firstDayOfWeek(-1);
-
-        expect($picker->getFirstDayOfWeek())->toBe(1);
-    });
-
-    it('can use `weekStartsOnMonday()` shortcut', function (): void {
-        $picker = DatePicker::make('date')
-            ->weekStartsOnMonday();
-
-        expect($picker->getFirstDayOfWeek())->toBe(1);
-    });
-
-    it('can use `weekStartsOnSunday()` shortcut', function (): void {
-        $picker = DatePicker::make('date')
-            ->weekStartsOnSunday();
-
-        expect($picker->getFirstDayOfWeek())->toBe(7);
-    });
-});
-
-describe('close on date selection', function (): void {
-    it('defaults `shouldCloseOnDateSelection()` to `false`', function (): void {
-        $picker = DatePicker::make('date');
-
-        expect($picker->shouldCloseOnDateSelection())->toBeFalse();
-    });
-
-    it('can set `closeOnDateSelection()`', function (): void {
-        $picker = DatePicker::make('date')
-            ->closeOnDateSelection();
-
-        expect($picker->shouldCloseOnDateSelection())->toBeTrue();
-    });
-
-    it('can set `closeOnDateSelection()` with a `Closure`', function (): void {
-        $picker = DatePicker::make('date')
-            ->closeOnDateSelection(static fn (): bool => true);
-
-        expect($picker->shouldCloseOnDateSelection())->toBeTrue();
-    });
-});
-
-describe('locale', function (): void {
-    it('returns app locale for `getLocale()` by default', function (): void {
-        $picker = DatePicker::make('date');
-
-        expect($picker->getLocale())->toBe(config('app.locale'));
-    });
-
-    it('can set `locale()`', function (): void {
-        $picker = DatePicker::make('date')
-            ->locale('fr');
-
-        expect($picker->getLocale())->toBe('fr');
-    });
-
-    it('can set `locale()` with a `Closure`', function (): void {
-        $picker = DatePicker::make('date')
-            ->locale(static fn (): string => 'de');
-
-        expect($picker->getLocale())->toBe('de');
-    });
-});
-
-describe('timezone', function (): void {
-    it('returns app timezone for `getTimezone()` when `hasTime()` is false', function (): void {
-        $picker = DatePicker::make('date');
-
-        expect($picker->getTimezone())->toBe(config('app.timezone'));
-    });
-
-    it('can set `timezone()`', function (): void {
-        $picker = DatePicker::make('date')
-            ->timezone('America/New_York');
-
-        expect($picker->getTimezone())->toBe('America/New_York');
-    });
-});
-
-describe('native', function (): void {
-    it('defaults `isNative()` to `true`', function (): void {
-        $picker = DatePicker::make('date');
-
-        expect($picker->isNative())->toBeTrue();
-    });
-
-    it('can set `native()` to `false`', function (): void {
-        $picker = DatePicker::make('date')
-            ->native(false);
-
-        expect($picker->isNative())->toBeFalse();
-    });
+it('can render with `minDate()` and `maxDate()`', function (): void {
+    livewire(TestComponentWithDatePickerMinMax::class)
+        ->assertSuccessful();
 });
 
 describe('rendering', function (): void {
@@ -756,7 +756,7 @@ it('saves boundary dates and round-trips epoch-backed and model-backed dates', f
                     ->assertScript('document.querySelector(\'[data-testid="saved-custom-timestamp-date"]\').textContent.trim()', '1752505200')
                     ->assertScript('document.querySelector(\'[data-testid="saved-midnight-timestamp-date"]\').textContent.trim()', '1757203200')
                     ->click('[data-testid="reload-dates"]')
-                    ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
+                    ->assertAttribute('[data-testid="save-count"]', 'data-reload-count', (string) ++$reloadCount)
                     ->assertValue('[data-testid="native-date"]', $date)
                     ->assertValue('[data-testid="timestamp-date"]', '2025-07-15')
                     ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-15')
@@ -765,7 +765,7 @@ it('saves boundary dates and round-trips epoch-backed and model-backed dates', f
         }
 
         $page->click('[data-testid="reload-dates"]')
-            ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
+            ->assertAttribute('[data-testid="save-count"]', 'data-reload-count', (string) ++$reloadCount)
             ->assertValue('[data-testid="native-date"]', '2025-07-17')
             ->assertEnabled('[data-testid="reload-dates"]');
 
@@ -780,7 +780,7 @@ it('saves boundary dates and round-trips epoch-backed and model-backed dates', f
             ->assertScript('document.querySelector(\'[data-testid="saved-timestamp-date"]\').textContent.trim()', '1752591600')
             ->assertScript('document.querySelector(\'[data-testid="saved-custom-timestamp-date"]\').textContent.trim()', '1752591600')
             ->click('[data-testid="reload-dates"]')
-            ->assertScript('document.querySelector(\'[data-testid="save-count"]\').dataset.reloadCount', (string) ++$reloadCount)
+            ->assertAttribute('[data-testid="save-count"]', 'data-reload-count', (string) ++$reloadCount)
             ->assertValue('[data-testid="timestamp-date"]', '2025-07-16')
             ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-16')
             ->assertValue('[data-testid="midnight-timestamp-date"]', '2025-09-07')

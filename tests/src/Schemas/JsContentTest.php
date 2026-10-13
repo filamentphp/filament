@@ -33,7 +33,6 @@ it('JSON-encodes the content inside `toHtml()`', function (): void {
 
     $html = $jsContent->toHtml();
 
-    // Js::from wraps the string in quotes for safe JS embedding
     expect($html)->toContain('document.title');
 });
 
@@ -42,7 +41,6 @@ it('escapes special characters in `toHtml()`', function (): void {
 
     $html = $jsContent->toHtml();
 
-    // Should not contain unescaped single quotes that could break out
     expect($html)->toContain('x-text=');
     expect($html)->toContain('eval(');
 });

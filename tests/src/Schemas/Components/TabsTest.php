@@ -27,6 +27,310 @@ beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
 
+describe('label', function (): void {
+    it('can be constructed with a label', function (): void {
+        $tabs = Tabs::make('Settings');
+
+        expect($tabs->getLabel())->toBe('Settings');
+    });
+
+    it('returns `null` for `getLabel()` when no label given', function (): void {
+        $tabs = Tabs::make();
+
+        expect($tabs->getLabel())->toBeNull();
+    });
+
+    it('can set `label()` with a `Closure`', function (): void {
+        $tabs = Tabs::make()
+            ->label(static fn (): string => 'Dynamic');
+
+        expect($tabs->getLabel())->toBe('Dynamic');
+    });
+
+    it('can set `label()` with an `Htmlable`', function (): void {
+        $htmlable = new HtmlString('<strong>Bold</strong>');
+        $tabs = Tabs::make()->label($htmlable);
+
+        expect($tabs->getLabel())->toBe($htmlable);
+    });
+
+    it('reports `hasCustomLabel()` as `false` by default', function (): void {
+        $tabs = Tabs::make();
+
+        expect($tabs->hasCustomLabel())->toBeFalse();
+    });
+
+    it('reports `hasCustomLabel()` as `true` after `label()` is set', function (): void {
+        $tabs = Tabs::make('Label');
+
+        expect($tabs->hasCustomLabel())->toBeTrue();
+    });
+
+    it('defaults `isLabelHidden()` to `false`', function (): void {
+        $tabs = Tabs::make('Test');
+
+        expect($tabs->isLabelHidden())->toBeFalse();
+    });
+
+    it('can set `hiddenLabel()`', function (): void {
+        $tabs = Tabs::make('Test')->hiddenLabel();
+
+        expect($tabs->isLabelHidden())->toBeTrue();
+    });
+
+    it('can set `hiddenLabel()` with a `Closure`', function (): void {
+        $tabs = Tabs::make('Test')
+            ->hiddenLabel(static fn (): bool => true);
+
+        expect($tabs->isLabelHidden())->toBeTrue();
+    });
+
+    it('can translate label with `translateLabel()`', function (): void {
+        $tabs = Tabs::make()
+            ->label('validation.required')
+            ->translateLabel();
+
+        expect($tabs->getLabel())->toBe(__('validation.required'));
+    });
+});
+
+it('returns fluent `$this` from `tabs()`', function (): void {
+    $tabs = Tabs::make('Test');
+
+    $result = $tabs->tabs([]);
+
+    expect($result)->toBe($tabs);
+});
+
+describe('active tab', function (): void {
+    it('can set `activeTab()`', function (): void {
+        $tabs = Tabs::make('Test');
+
+        expect($tabs->getActiveTab())->toBe(1);
+
+        $tabs->activeTab(3);
+
+        expect($tabs->getActiveTab())->toBe(3);
+    });
+
+    it('can set `activeTab()` with a `Closure`', function (): void {
+        $tabs = Tabs::make('Test')
+            ->activeTab(static fn (): int => 2);
+
+        expect($tabs->getActiveTab())->toBe(2);
+    });
+});
+
+describe('query-string persistence', function (): void {
+    it('can set `persistTabInQueryString()`', function (): void {
+        $tabs = Tabs::make('Test');
+
+        expect($tabs->isTabPersistedInQueryString())->toBeFalse();
+
+        $tabs->persistTabInQueryString();
+
+        expect($tabs->isTabPersistedInQueryString())->toBeTrue();
+        expect($tabs->getTabQueryStringKey())->toBe('tab');
+    });
+
+    it('can set custom key for `persistTabInQueryString()`', function (): void {
+        $tabs = Tabs::make('Test')
+            ->persistTabInQueryString('activeTab');
+
+        expect($tabs->getTabQueryStringKey())->toBe('activeTab');
+    });
+
+    it('can set `persistTabInQueryString()` with a `Closure`', function (): void {
+        $tabs = Tabs::make('Test')
+            ->persistTabInQueryString(static fn (): string => 'dynamicKey');
+
+        expect($tabs->getTabQueryStringKey())->toBe('dynamicKey');
+        expect($tabs->isTabPersistedInQueryString())->toBeTrue();
+    });
+
+    it('can clear `persistTabInQueryString()` with `null`', function (): void {
+        $tabs = Tabs::make('Test')
+            ->persistTabInQueryString()
+            ->persistTabInQueryString(null);
+
+        expect($tabs->isTabPersistedInQueryString())->toBeFalse();
+        expect($tabs->getTabQueryStringKey())->toBeNull();
+    });
+});
+
+describe('tab persistence', function (): void {
+    it('defaults `isTabPersisted()` to `false`', function (): void {
+        $tabs = Tabs::make('Test');
+
+        expect($tabs->isTabPersisted())->toBeFalse();
+    });
+
+    it('can set `persistTab()`', function (): void {
+        $tabs = Tabs::make('Test')->persistTab();
+
+        expect($tabs->isTabPersisted())->toBeTrue();
+    });
+
+    it('can set `persistTab()` to `false`', function (): void {
+        $tabs = Tabs::make('Test')->persistTab()->persistTab(false);
+
+        expect($tabs->isTabPersisted())->toBeFalse();
+    });
+
+    it('can set `persistTab()` with a `Closure`', function (): void {
+        $tabs = Tabs::make('Test')
+            ->persistTab(static fn (): bool => true);
+
+        expect($tabs->isTabPersisted())->toBeTrue();
+    });
+});
+
+describe('Livewire property', function (): void {
+    it('can set `livewireProperty()`', function (): void {
+        $tabs = Tabs::make('Test');
+
+        expect($tabs->getLivewireProperty())->toBeNull();
+
+        $tabs->livewireProperty('activeTab');
+
+        expect($tabs->getLivewireProperty())->toBe('activeTab');
+    });
+
+    it('can set `livewireProperty()` with a `Closure`', function (): void {
+        $tabs = Tabs::make('Test')
+            ->livewireProperty(static fn (): string => 'dynamicProp');
+
+        expect($tabs->getLivewireProperty())->toBe('dynamicProp');
+    });
+});
+
+describe('scrolling', function (): void {
+    it('defaults to scrollable', function (): void {
+        $tabs = Tabs::make('Test');
+
+        expect($tabs->isScrollable())->toBeTrue();
+    });
+
+    it('can disable `scrollable()`', function (): void {
+        $tabs = Tabs::make('Test')
+            ->scrollable(false);
+
+        expect($tabs->isScrollable())->toBeFalse();
+    });
+
+    it('can set `scrollable()` with a `Closure`', function (): void {
+        $tabs = Tabs::make('Test')
+            ->scrollable(static fn (): bool => false);
+
+        expect($tabs->isScrollable())->toBeFalse();
+    });
+});
+
+describe('orientation', function (): void {
+    it('can set `vertical()`', function (): void {
+        $tabs = Tabs::make('Test');
+
+        expect($tabs->isVertical())->toBeFalse();
+
+        $tabs->vertical();
+
+        expect($tabs->isVertical())->toBeTrue();
+    });
+
+    it('can set `vertical()` with a `Closure`', function (): void {
+        $tabs = Tabs::make('Test')
+            ->vertical(static fn (): bool => true);
+
+        expect($tabs->isVertical())->toBeTrue();
+    });
+});
+
+describe('containment', function (): void {
+    it('defaults `isContained()` to `true`', function (): void {
+        $tabs = Tabs::make('Test');
+
+        expect($tabs->isContained())->toBeTrue();
+    });
+
+    it('can set `contained()` to `false`', function (): void {
+        $tabs = Tabs::make('Test')->contained(false);
+
+        expect($tabs->isContained())->toBeFalse();
+    });
+
+    it('can set `contained()` with a `Closure`', function (): void {
+        $tabs = Tabs::make('Test')
+            ->contained(static fn (): bool => false);
+
+        expect($tabs->isContained())->toBeFalse();
+    });
+});
+
+describe('extra Alpine attributes', function (): void {
+    it('returns empty array for `getExtraAlpineAttributes()` by default', function (): void {
+        $tabs = Tabs::make('Test');
+
+        expect($tabs->getExtraAlpineAttributes())->toBe([]);
+    });
+
+    it('can set `extraAlpineAttributes()`', function (): void {
+        $tabs = Tabs::make('Test')
+            ->extraAlpineAttributes(['x-on:click' => 'open = true']);
+
+        expect($tabs->getExtraAlpineAttributes())->toBe(['x-on:click' => 'open = true']);
+    });
+
+    it('can merge `extraAlpineAttributes()`', function (): void {
+        $tabs = Tabs::make('Test')
+            ->extraAlpineAttributes(['x-on:click' => 'open = true'])
+            ->extraAlpineAttributes(['x-bind:class' => 'active'], merge: true);
+
+        $attributes = $tabs->getExtraAlpineAttributes();
+
+        expect($attributes)->toHaveKey('x-on:click', 'open = true');
+        expect($attributes)->toHaveKey('x-bind:class', 'active');
+    });
+
+    it('can set `extraAlpineAttributes()` with a `Closure`', function (): void {
+        $tabs = Tabs::make('Test')
+            ->extraAlpineAttributes(static fn (): array => ['x-data' => '{}']);
+
+        expect($tabs->getExtraAlpineAttributes())->toBe(['x-data' => '{}']);
+    });
+});
+
+describe('render hooks', function (): void {
+    it('defaults to empty arrays for render hooks', function (): void {
+        $tabs = Tabs::make('Test');
+
+        expect($tabs->getStartRenderHooks())->toBe([]);
+        expect($tabs->getEndRenderHooks())->toBe([]);
+    });
+
+    it('can set `startRenderHooks()`', function (): void {
+        $tabs = Tabs::make('Test')
+            ->startRenderHooks(['hook-a', 'hook-b']);
+
+        expect($tabs->getStartRenderHooks())->toBe(['hook-a', 'hook-b']);
+    });
+
+    it('can set `endRenderHooks()`', function (): void {
+        $tabs = Tabs::make('Test')
+            ->endRenderHooks(['hook-c']);
+
+        expect($tabs->getEndRenderHooks())->toBe(['hook-c']);
+    });
+});
+
+describe('render hook scopes', function (): void {
+    it('returns empty array for `getRenderHookScopes()` when Livewire does not implement `HasRenderHookScopes`', function (): void {
+        $tabs = Tabs::make('Test')
+            ->container(Schema::make(Livewire::make()));
+
+        expect($tabs->getRenderHookScopes())->toBe([]);
+    });
+});
+
 it('restores query-string tabs using relative keys and legacy IDs', function (mixed $query, int $expected): void {
     request()->query->replace(['tab' => $query, 'delivery_tab' => 'account']);
 
@@ -74,6 +378,168 @@ it('prefers query-string tab keys before legacy IDs', function (string $query, i
     'legacy default absolute ID' => ['form.profile.billing', 3],
 ]);
 
+it('can detect deferred badges with `hasDeferredBadges()`', function (): void {
+    livewire(TabsWithDeferredBadges::class)
+        ->assertOk();
+});
+
+it('can return deferred tab badges with `getDeferredTabBadges()`', function (): void {
+    livewire(TabsWithDeferredBadges::class)
+        ->call('callSchemaComponentMethod', 'form.test-tabs', 'getDeferredTabBadges')
+        ->assertReturned(function (array $badges): bool {
+            expect($badges)->toHaveCount(1);
+            expect($badges)->toHaveKey('1');
+            expect($badges['1']['badge'])->toBe('42');
+            expect($badges)->not->toHaveKey('0');
+
+            return true;
+        });
+});
+
+it('can call an `Action` nested inside a tab that uses `livewireProperty()`', function (): void {
+    livewire(TabsWithLivewirePropertyAction::class)
+        ->callAction(TestAction::make('set_value')->schemaComponent('test-tabs.first'))
+        ->assertSet('actionCalled', true);
+});
+
+it('renders `wire:click="$set(...)"` on each tab when `livewireProperty()` is set', function (): void {
+    $livewire = new class extends Livewire
+    {
+        public ?string $activeTab = 'all';
+    };
+
+    Schema::make($livewire)
+        ->components([
+            $tabs = Tabs::make()
+                ->livewireProperty('activeTab')
+                ->tabs([
+                    'all' => Tab::make('All'),
+                    'active' => Tab::make('Active'),
+                ]),
+        ])
+        ->fill();
+
+    $html = $tabs->toHtml();
+
+    expect($html)
+        ->toContain("\$set('activeTab', 'all')")
+        ->toContain("\$set('activeTab', 'active')")
+        ->not->toContain('wire:loading.attr="disabled"');
+});
+
+it('can opt out of panels using `tabPanels()` and a `Closure`', function (): void {
+    $livewire = new class extends Livewire
+    {
+        public ?string $activeTab = 'all';
+    };
+
+    Schema::make($livewire)->components([
+        $tabs = Tabs::make('Status')->livewireProperty('activeTab')->tabPanels(static fn (): bool => false)->tabs([
+            'all' => Tab::make('All'),
+            'active' => Tab::make('Active'),
+        ]),
+    ])->fill();
+
+    expect($tabs->hasTabPanels())->toBeFalse()
+        ->and($tabs->toHtml())->toContain('role="group"', 'aria-pressed="true"')
+        ->not->toContain('role="tab"', 'role="tabpanel"', 'aria-controls=');
+
+    expect($tabs->tabPanels()->hasTabPanels())->toBeTrue();
+});
+
+it('links stable tab IDs to custom and empty panel IDs without changing keys', function (): void {
+    $livewire = new class extends Livewire
+    {
+        public ?string $activeTab = null;
+    };
+
+    Schema::make($livewire)->key('form')->components([
+        $tabs = Tabs::make('Details')->key('details')->livewireProperty('activeTab')->tabs([
+            '' => $empty = Tab::make('All'),
+            '0' => $zero = Tab::make('Zero')->id('zero-panel')->extraAttributes(['id' => 'zero-header']),
+        ]),
+        $otherTabs = Tabs::make('Other')->key('other')->scrollable(false)->tabs([
+            $other = Tab::make(new HtmlString('All &amp; <strong>&quot;other&quot;</strong>'))->key('')->extraAttributes(['id' => 'other-header']),
+        ]),
+        Group::make([
+            Tabs::make()->tabs([$billing = Tab::make('Account')->key('account')]),
+        ])->key('billing'),
+        Group::make([
+            Tabs::make()->tabs([$shipping = Tab::make('Account')->key('account')]),
+        ])->key('shipping'),
+    ])->fill();
+
+    $html = $tabs->toHtml();
+    expect($empty->getKey(isAbsolute: false))->toBe('')
+        ->and($zero->getKey(isAbsolute: false))->toBe('0')
+        ->and($zero->getPanelId())->toBe('zero-panel')
+        ->and($zero->getTabId())->toBe('zero-header')
+        ->and(substr_count($html, 'id="zero-header"'))->toBe(1)
+        ->and(substr_count($otherTabs->toHtml(), 'id="other-header"'))->toBe(1)
+        ->and($otherTabs->toHtml())->toContain('aria-label="More tabs: All &amp; &quot;other&quot;"')
+        ->and($empty->getTabId())->not->toBe($other->getTabId())
+        ->and($billing->getPanelId())->toBe('form.billing.account')
+        ->and($shipping->getPanelId())->toBe('form.shipping.account')
+        ->and($billing->getTabId())->not->toBe($shipping->getTabId())
+        ->and($html)->toContain(
+            'id="' . $empty->getTabId() . '"',
+            'aria-labelledby="' . $empty->getTabId() . '"',
+            'aria-controls="' . $empty->getPanelId() . '"',
+            'id="' . $empty->getPanelId() . '"',
+            'aria-controls="zero-panel"',
+            'aria-labelledby="zero-header"',
+            'id="zero-panel"',
+        );
+});
+
+describe('rendering', function (): void {
+    it('can render basic `Tabs`', function (): void {
+        livewire(RenderTabs::class)->assertSuccessful();
+    });
+
+    it('can render a tab badge icon with a `BackedEnum`', function (): void {
+        livewire(RenderTabsWithBackedEnumBadgeIcon::class)
+            ->assertSuccessful()
+            ->assertSee('Available');
+    });
+
+    it('can render with `scrollable(false)`', function (): void {
+        livewire(RenderTabsWithScrollableFalse::class)->assertSuccessful();
+    });
+
+    it('can render with `scrollable()` set via `Closure`', function (): void {
+        livewire(RenderTabsWithClosureScrollable::class)->assertSuccessful();
+    });
+
+    it('can render with `vertical()`', function (): void {
+        livewire(RenderTabsWithVertical::class)->assertSuccessful();
+    });
+
+    it('can render with `vertical()` set via `Closure`', function (): void {
+        livewire(RenderTabsWithClosureVertical::class)->assertSuccessful();
+    });
+
+    it('can render with `contained(false)`', function (): void {
+        livewire(RenderTabsWithContainedFalse::class)->assertSuccessful();
+    });
+
+    it('can render with `persistTabInQueryString()`', function (): void {
+        livewire(RenderTabsWithPersistTab::class)->assertSuccessful();
+    });
+
+    it('can render with `persistTab()`', function (): void {
+        livewire(RenderTabsWithPersistTabLocal::class)->assertSuccessful();
+    });
+
+    it('can render with label', function (): void {
+        livewire(RenderTabsWithLabel::class)->assertSuccessful()->assertSee('My Tabs');
+    });
+
+    it('can render with `label()` set via `Closure`', function (): void {
+        livewire(RenderTabsWithClosureLabel::class)->assertSuccessful()->assertSee('Dynamic');
+    });
+});
+
 it('persists independent tabs across reload and browser history', function (): void {
     $this->actingAs(User::factory()->create());
 
@@ -83,8 +549,8 @@ it('persists independent tabs across reload and browser history', function (): v
         ->click('#profile-tabs [data-tab-key="contact"]')
         ->assertVisible('#profile-contact');
 
-    expect($browser->script('new URL(location.href).searchParams.get("tab")'))->toBe('contact');
-    expect($browser->script('new URL(location.href).searchParams.get("delivery_tab")'))->toBe('contact');
+    $browser->assertQueryStringHas('tab', 'contact')
+        ->assertQueryStringHas('delivery_tab', 'contact');
 
     $browser->click('a[href$="/wizard-browser-test"]:visible')
         ->assertVisible('#profile-wizard')
@@ -158,410 +624,255 @@ it('prioritizes visible native validation errors before revealing invalid fields
     'hidden invalid field before visible invalid field' => ['contact', '+44 7700 900123', 'account', 'alex'],
 ]);
 
-it('can detect deferred badges with `hasDeferredBadges()`', function (): void {
-    livewire(TabsWithDeferredBadges::class)
-        ->assertOk();
+it('can render `Tabs` in the browser', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/tabs-browser-test')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    visit('/tabs-browser-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
 });
 
-it('can return deferred tab badges with `getDeferredTabBadges()`', function (): void {
-    livewire(TabsWithDeferredBadges::class)
-        ->call('callSchemaComponentMethod', 'form.test-tabs', 'getDeferredTabBadges')
-        ->assertReturned(function (array $badges): bool {
-            expect($badges)->toHaveCount(1);
-            expect($badges)->toHaveKey('1');
-            expect($badges['1']['badge'])->toBe('42');
-            expect($badges)->not->toHaveKey('0');
+it('keeps non-scrollable `Tabs` in one keyboard sequence and accessible tablist', function (): void {
+    $this->actingAs(User::factory()->create());
 
-            return true;
-        });
+    $trigger = '#overflow-tabs [data-tabs-overflow-trigger]:visible';
+    $popup = '#overflow-tabs .fi-sc-tabs-overflow-panel';
+    $overview = '#overflow-tabs [data-tab-key="overview"]';
+    $contact = '#overflow-tabs [data-tab-key="contact"]';
+    $billing = '#overflow-tabs [data-tab-key="billing"]';
+    $notifications = '#overflow-tabs [data-tab-key="notifications"]';
+
+    $page = visit('/tabs-browser-test?overflow=1');
+
+    $page
+        ->resize(375, 812)
+        ->assertVisible($trigger)
+        ->assertAttribute($trigger, 'aria-hidden', 'true')
+        ->assertAttribute($trigger, 'tabindex', '-1')
+        ->assertAttribute($overview, 'aria-selected', 'true')
+        ->keys($overview, 'ArrowRight')
+        ->assertVisible($contact)
+        ->assertVisible($popup)
+        ->assertPresent($contact . ':focus')
+        ->assertAttribute($contact, 'role', 'tab')
+        ->assertScript('document.activeElement.closest("[aria-hidden=true]") === null', true)
+        ->assertScript('document.activeElement.getAttribute("aria-controls") === document.querySelector("#overflow-tabs > [role=tabpanel][aria-labelledby=\"" + document.activeElement.id + "\"]").id', true)
+        ->assertAttribute($overview, 'aria-selected', 'true')
+        ->keys($contact, 'End')
+        ->assertPresent($notifications . ':focus')
+        ->keys($notifications, 'ArrowRight')
+        ->assertPresent($overview . ':focus');
+
+    $page->keys($overview, 'ArrowRight')
+        ->assertPresent($contact . ':focus')
+        ->keys($contact, 'Enter')
+        ->assertAttribute($contact, 'aria-selected', 'true')
+        ->assertVisible($contact)
+        ->assertPresent($contact . ':focus');
+    $page->keys($contact, 'End')
+        ->resize(375, 180)
+        ->assertPresent($notifications . ':focus')
+        ->assertScript('document.activeElement.getBoundingClientRect().top >= 0 && document.activeElement.getBoundingClientRect().bottom <= innerHeight', true);
+    $page->keys($notifications, 'Home')
+        ->assertPresent($overview . ':focus')
+        ->assertScript('document.activeElement.getBoundingClientRect().top >= 0 && document.activeElement.getBoundingClientRect().bottom <= innerHeight', true);
+
+    $page->resize(375, 812)
+        ->click('#profile-tabs > [role=tabpanel]:visible input')
+        ->assertPresent('#profile-tabs input:focus')
+        ->assertMissing($popup)
+        ->keys($overview, 'Home')
+        ->keys($overview, 'ArrowRight')
+        ->assertPresent($contact . ':focus')
+        ->keys($contact, 'Escape')
+        ->assertMissing($popup)
+        ->assertPresent('#overflow-tabs > [role=tabpanel]:focus')
+        ->assertScript('document.activeElement.id === document.querySelector("#overflow-tabs [role=tab][aria-selected=true]").getAttribute("aria-controls")', true)
+        ->keys(':focus', 'Shift+Tab')
+        ->assertPresent($contact . ':focus')
+        ->assertVisible($contact)
+        ->keys($contact, 'Tab')
+        ->assertMissing($popup)
+        ->assertPresent('#overflow-tabs > [role=tabpanel]:focus')
+        ->assertScript('document.activeElement.id === document.querySelector("#overflow-tabs [role=tab][aria-selected=true]").getAttribute("aria-controls")', true);
+
+    $page->keys($overview, 'End')
+        ->assertPresent($notifications . ':focus')
+        ->resize(1920, 900)
+        ->assertMissing($trigger)
+        ->assertMissing($popup)
+        ->assertVisible($contact)
+        ->assertVisible($notifications)
+        ->assertPresent($notifications . ':focus')
+        ->keys($notifications, 'Home')
+        ->assertPresent($overview . ':focus');
+    $page
+        ->keys($overview, 'End')
+        ->resize(375, 180)
+        ->assertVisible($notifications)
+        ->assertPresent($notifications . ':focus')
+        ->assertScript('document.activeElement.getBoundingClientRect().top >= 0 && document.activeElement.getBoundingClientRect().bottom <= innerHeight', true)
+        ->keys($notifications, 'Home')
+        ->keys($overview, 'ArrowRight')
+        ->resize(375, 812)
+        ->assertVisible($contact)
+        ->assertPresent($contact . ':focus')
+        ->assertAttribute($contact, 'aria-selected', 'true');
+    $page->assertNoAccessibilityIssues()
+        ->keys($contact, 'Home')
+        ->keys($overview, 'Enter')
+        ->assertAttribute($overview, 'aria-selected', 'true')
+        ->keys($overview, 'Escape');
+
+    $page->inDarkMode()->resize(375, 812)
+        ->keys($overview, 'ArrowRight')
+        ->assertVisible($popup)
+        ->assertPresent($contact . ':focus')
+        ->assertNoAccessibilityIssues();
 });
 
-it('can set `activeTab()`', function (): void {
-    $tabs = Tabs::make('Test');
+it('dismisses tab overflow before an enclosing dropdown', function (): void {
+    $this->actingAs(User::factory()->create());
+    $page = visit('/tabs-browser-test?overflow=1&dropdown=1');
+    $dropdownTrigger = '[data-testid=enclosing-dropdown-trigger]';
+    $popup = '#overflow-tabs .fi-sc-tabs-overflow-panel';
+    $overview = '#overflow-tabs [data-tab-key=overview]';
+    $notifications = '#overflow-tabs [data-tab-key=notifications]';
 
-    expect($tabs->getActiveTab())->toBe(1);
+    $page->resize(375, 812)
+        ->click($dropdownTrigger)
+        ->assertAttribute($dropdownTrigger, 'aria-expanded', 'true')
+        ->assertVisible($overview)
+        ->keys($overview, 'End')
+        ->assertVisible($notifications)
+        ->assertVisible($popup)
+        ->assertPresent($notifications . ':focus')
+        ->keys($notifications, 'Escape')
+        ->assertMissing($popup)
+        ->assertPresent('#overflow-tabs > [role=tabpanel]:focus')
+        ->assertAttribute($dropdownTrigger, 'aria-expanded', 'true')
+        ->assertVisible($overview)
+        ->assertAttribute($overview, 'aria-selected', 'true');
+    $page->assertNoAccessibilityIssues()
+        ->keys('#overflow-tabs > [role=tabpanel]:visible', 'Escape')
+        ->assertAttribute($dropdownTrigger, 'aria-expanded', 'false')
+        ->assertMissing($overview . ':visible')
+        ->assertPresent($dropdownTrigger . ':focus');
 
-    $tabs->activeTab(3);
-
-    expect($tabs->getActiveTab())->toBe(3);
+    $page->inDarkMode()->resize(375, 812)
+        ->click($dropdownTrigger)
+        ->assertVisible($overview)
+        ->assertNoAccessibilityIssues();
 });
 
-it('can set `persistTabInQueryString()`', function (): void {
-    $tabs = Tabs::make('Test');
+it('uses manual activation, roving focus and scoped `tabpanel` relationships', function (bool $isRightToLeft): void {
+    $this->actingAs(User::factory()->create());
+    $page = visit('/tabs-browser-test?keyboard=1&rtl=' . (int) $isRightToLeft);
+    $account = '#keyboard-tabs [role=tablist][aria-label="Keyboard tabs"] [data-tab-key="account"]';
+    $contact = '#keyboard-tabs [role=tablist][aria-label="Keyboard tabs"] [data-tab-key="contact"]';
+    $readonly = '#keyboard-tabs [role=tablist][aria-label="Keyboard tabs"] [data-tab-key="readonly"]';
+    $forwardKey = $isRightToLeft ? 'ArrowLeft' : 'ArrowRight';
+    $backwardKey = $isRightToLeft ? 'ArrowRight' : 'ArrowLeft';
 
-    expect($tabs->isTabPersistedInQueryString())->toBeFalse();
+    $page->assertAttribute($account, 'aria-selected', 'true')
+        ->keys($account, $forwardKey)
+        ->assertPresent($contact . ':focus')
+        ->assertAttribute($account, 'aria-selected', 'true')
+        ->assertAttribute($contact, 'tabindex', '0')
+        ->assertAttribute($account, 'tabindex', '-1')
+        ->keys($contact, 'End')
+        ->assertPresent($readonly . ':focus')
+        ->keys($readonly, $forwardKey)
+        ->assertPresent($account . ':focus')
+        ->keys($account, $backwardKey)
+        ->assertPresent($readonly . ':focus')
+        ->keys($readonly, 'Enter')->assertAttribute($readonly, 'aria-selected', 'true')
+        ->assertDisabled('#keyboard-tabs > [role=tabpanel]:visible input')
+        ->keys($account, 'End')->keys($readonly, 'Home')
+        ->keys($account, $forwardKey)->keys($contact, 'Enter')
+        ->assertAttribute($contact, 'aria-selected', 'true')
+        ->assertPresent($contact . ':focus')
+        ->keys($contact, 'Tab')
+        ->assertPresent('#keyboard-tabs > [role=tabpanel]:focus')
+        ->assertScript('Array.from(document.querySelectorAll("[role=tab]")).every(tab => { const panel = document.getElementById(tab.getAttribute("aria-controls")); return panel && panel.getAttribute("aria-labelledby") === tab.id })', true)
+        ->assertScript('new Set(Array.from(document.querySelectorAll("[id]"), element => element.id)).size === document.querySelectorAll("[id]").length', true)
+        ->keys($account, 'Enter')
+        ->keys('#nested-tabs [data-tab-key="account"]', $forwardKey)
+        ->assertPresent('#nested-tabs :focus')
+        ->keys('#nested-tabs [data-tab-key="contact"]', 'Enter')
+        ->assertAttribute($account, 'aria-selected', 'true')
+        ->refresh()
+        ->assertAttribute('#nested-tabs [data-tab-key="contact"]', 'aria-selected', 'true')
+        ->assertAttribute($account, 'aria-selected', 'true');
 
-    $tabs->persistTabInQueryString();
+    $page->keys($account, $forwardKey)->assertPresent($contact . ':focus')
+        ->keys($contact, $backwardKey)->assertPresent($account . ':focus')
+        ->assertAttribute('#vertical-tabs [role=tablist]', 'aria-orientation', 'vertical')
+        ->keys('#vertical-tabs [data-tab-key="account"]', 'ArrowDown')
+        ->assertPresent('#vertical-tabs [data-tab-key="contact"]:focus')
+        ->keys('#vertical-tabs [data-tab-key="contact"]', 'Home')
+        ->keys('#vertical-tabs [data-tab-key="account"]', 'ArrowUp')
+        ->assertPresent('#vertical-tabs [data-tab-key="contact"]:focus')
+        ->click('#profile-tabs [data-tab-key="contact"]')
+        ->click('[data-testid=save]')->assertVisible('#profile-account')
+        ->assertNoSmoke()->assertNoAccessibilityIssues();
 
-    expect($tabs->isTabPersistedInQueryString())->toBeTrue();
-    expect($tabs->getTabQueryStringKey())->toBe('tab');
+    $page->inDarkMode()
+        ->assertVisible('#keyboard-tabs')
+        ->assertNoAccessibilityIssues();
+})->with([false, true]);
+
+it('reconciles client-hidden tabs without stealing outside focus', function (): void {
+    $this->actingAs(User::factory()->create());
+    $page = visit('/tabs-browser-test?keyboard=1');
+    $contact = '#keyboard-tabs [role=tablist][aria-label="Keyboard tabs"] [data-tab-key="contact"]';
+    $account = '#keyboard-tabs [role=tablist][aria-label="Keyboard tabs"] [data-tab-key="account"]';
+
+    $page->keys($contact, 'Enter')->click('[data-testid=hide-contact]')
+        ->assertAttribute($account, 'aria-selected', 'true')
+        ->assertPresent('[data-testid=hide-contact]:focus')
+        ->click('[data-testid=hide-all]')
+        ->assertNotPresent('#keyboard-tabs > [role=tabpanel]:visible')
+        ->assertMissing('#keyboard-tabs [role=tablist][aria-label="Keyboard tabs"] [role=tab][aria-selected=true]')
+        ->assertNoSmoke();
 });
 
-it('can set custom key for `persistTabInQueryString()`', function (): void {
-    $tabs = Tabs::make('Test')
-        ->persistTabInQueryString('activeTab');
-
-    expect($tabs->getTabQueryStringKey())->toBe('activeTab');
-});
-
-it('can set `startRenderHooks()`', function (): void {
-    $tabs = Tabs::make('Test')
-        ->startRenderHooks(['hook-a', 'hook-b']);
-
-    expect($tabs->getStartRenderHooks())->toBe(['hook-a', 'hook-b']);
-});
-
-it('can set `endRenderHooks()`', function (): void {
-    $tabs = Tabs::make('Test')
-        ->endRenderHooks(['hook-c']);
-
-    expect($tabs->getEndRenderHooks())->toBe(['hook-c']);
-});
-
-it('can set `livewireProperty()`', function (): void {
-    $tabs = Tabs::make('Test');
-
-    expect($tabs->getLivewireProperty())->toBeNull();
-
-    $tabs->livewireProperty('activeTab');
-
-    expect($tabs->getLivewireProperty())->toBe('activeTab');
-});
-
-it('defaults to scrollable', function (): void {
-    $tabs = Tabs::make('Test');
-
-    expect($tabs->isScrollable())->toBeTrue();
-});
-
-it('can disable `scrollable()`', function (): void {
-    $tabs = Tabs::make('Test')
-        ->scrollable(false);
-
-    expect($tabs->isScrollable())->toBeFalse();
-});
-
-it('can set `vertical()`', function (): void {
-    $tabs = Tabs::make('Test');
-
-    expect($tabs->isVertical())->toBeFalse();
-
-    $tabs->vertical();
-
-    expect($tabs->isVertical())->toBeTrue();
-});
-
-it('can set `activeTab()` with a `Closure`', function (): void {
-    $tabs = Tabs::make('Test')
-        ->activeTab(static fn (): int => 2);
-
-    expect($tabs->getActiveTab())->toBe(2);
-});
-
-it('can clear `persistTabInQueryString()` with `null`', function (): void {
-    $tabs = Tabs::make('Test')
-        ->persistTabInQueryString()
-        ->persistTabInQueryString(null);
-
-    expect($tabs->isTabPersistedInQueryString())->toBeFalse();
-    expect($tabs->getTabQueryStringKey())->toBeNull();
-});
-
-it('can set `scrollable()` with a `Closure`', function (): void {
-    $tabs = Tabs::make('Test')
-        ->scrollable(static fn (): bool => false);
-
-    expect($tabs->isScrollable())->toBeFalse();
-});
-
-it('can set `vertical()` with a `Closure`', function (): void {
-    $tabs = Tabs::make('Test')
-        ->vertical(static fn (): bool => true);
-
-    expect($tabs->isVertical())->toBeTrue();
-});
-
-it('can set `livewireProperty()` with a `Closure`', function (): void {
-    $tabs = Tabs::make('Test')
-        ->livewireProperty(static fn (): string => 'dynamicProp');
-
-    expect($tabs->getLivewireProperty())->toBe('dynamicProp');
-});
-
-it('renders `wire:click="$set(...)"` on each tab when `livewireProperty()` is set', function (): void {
-    $livewire = new class extends Livewire
-    {
-        public ?string $activeTab = 'all';
-    };
-
-    Schema::make($livewire)
-        ->components([
-            $tabs = Tabs::make()
-                ->livewireProperty('activeTab')
-                ->tabs([
-                    'all' => Tab::make('All'),
-                    'active' => Tab::make('Active'),
-                ]),
-        ])
-        ->fill();
-
-    $html = $tabs->toHtml();
-
-    expect($html)
-        ->toContain("\$set('activeTab', 'all')")
-        ->toContain("\$set('activeTab', 'active')")
-        ->not->toContain('wire:loading.attr="disabled"');
-});
-
-it('can call an `Action` nested inside a tab that uses `livewireProperty()`', function (): void {
-    livewire(TabsWithLivewirePropertyAction::class)
-        ->callAction(TestAction::make('set_value')->schemaComponent('test-tabs.first'))
-        ->assertSet('actionCalled', true);
-});
-
-it('can opt out of panels using `tabPanels()` and a `Closure`', function (): void {
-    $livewire = new class extends Livewire
-    {
-        public ?string $activeTab = 'all';
-    };
-
-    Schema::make($livewire)->components([
-        $tabs = Tabs::make('Status')->livewireProperty('activeTab')->tabPanels(static fn (): bool => false)->tabs([
-            'all' => Tab::make('All'),
-            'active' => Tab::make('Active'),
-        ]),
-    ])->fill();
-
-    expect($tabs->hasTabPanels())->toBeFalse()
-        ->and($tabs->toHtml())->toContain('role="group"', 'aria-pressed="true"')
-        ->not->toContain('role="tab"', 'role="tabpanel"', 'aria-controls=');
-
-    expect($tabs->tabPanels()->hasTabPanels())->toBeTrue();
-});
-
-it('links stable tab IDs to custom and empty panel IDs without changing keys', function (): void {
-    $livewire = new class extends Livewire
-    {
-        public ?string $activeTab = null;
-    };
-
-    Schema::make($livewire)->key('form')->components([
-        $tabs = Tabs::make('Details')->key('details')->livewireProperty('activeTab')->tabs([
-            '' => $empty = Tab::make('All'),
-            '0' => $zero = Tab::make('Zero')->id('zero-panel')->extraAttributes(['id' => 'zero-header']),
-        ]),
-        $otherTabs = Tabs::make('Other')->key('other')->scrollable(false)->tabs([
-            $other = Tab::make(new HtmlString('All &amp; <strong>&quot;other&quot;</strong>'))->key('')->extraAttributes(['id' => 'other-header']),
-        ]),
-        Group::make([
-            Tabs::make()->tabs([$billing = Tab::make('Account')->key('account')]),
-        ])->key('billing'),
-        Group::make([
-            Tabs::make()->tabs([$shipping = Tab::make('Account')->key('account')]),
-        ])->key('shipping'),
-    ])->fill();
-
-    $html = $tabs->toHtml();
-    expect($empty->getKey(isAbsolute: false))->toBe('')
-        ->and($zero->getKey(isAbsolute: false))->toBe('0')
-        ->and($zero->getPanelId())->toBe('zero-panel')
-        ->and($zero->getTabId())->toBe('zero-header')
-        ->and(substr_count($html, 'id="zero-header"'))->toBe(1)
-        ->and(substr_count($otherTabs->toHtml(), 'id="other-header"'))->toBe(1)
-        ->and($otherTabs->toHtml())->toContain('aria-label="More tabs: All &amp; &quot;other&quot;"')
-        ->and($empty->getTabId())->not->toBe($other->getTabId())
-        ->and($billing->getPanelId())->toBe('form.billing.account')
-        ->and($shipping->getPanelId())->toBe('form.shipping.account')
-        ->and($billing->getTabId())->not->toBe($shipping->getTabId())
-        ->and($html)->toContain(
-            'id="' . $empty->getTabId() . '"',
-            'aria-labelledby="' . $empty->getTabId() . '"',
-            'aria-controls="' . $empty->getPanelId() . '"',
-            'id="' . $empty->getPanelId() . '"',
-            'aria-controls="zero-panel"',
-            'aria-labelledby="zero-header"',
-            'id="zero-panel"',
-        );
-});
-
-it('returns fluent `$this` from `tabs()`', function (): void {
-    $tabs = Tabs::make('Test');
-
-    $result = $tabs->tabs([]);
-
-    expect($result)->toBe($tabs);
-});
-
-it('defaults to empty arrays for render hooks', function (): void {
-    $tabs = Tabs::make('Test');
-
-    expect($tabs->getStartRenderHooks())->toBe([]);
-    expect($tabs->getEndRenderHooks())->toBe([]);
-});
-
-it('can set `persistTabInQueryString()` with a `Closure`', function (): void {
-    $tabs = Tabs::make('Test')
-        ->persistTabInQueryString(static fn (): string => 'dynamicKey');
-
-    expect($tabs->getTabQueryStringKey())->toBe('dynamicKey');
-    expect($tabs->isTabPersistedInQueryString())->toBeTrue();
-});
-
-describe('tab persistence', function (): void {
-    it('defaults `isTabPersisted()` to `false`', function (): void {
-        $tabs = Tabs::make('Test');
-
-        expect($tabs->isTabPersisted())->toBeFalse();
-    });
-
-    it('can set `persistTab()`', function (): void {
-        $tabs = Tabs::make('Test')->persistTab();
-
-        expect($tabs->isTabPersisted())->toBeTrue();
-    });
-
-    it('can set `persistTab()` to `false`', function (): void {
-        $tabs = Tabs::make('Test')->persistTab()->persistTab(false);
-
-        expect($tabs->isTabPersisted())->toBeFalse();
-    });
-
-    it('can set `persistTab()` with a `Closure`', function (): void {
-        $tabs = Tabs::make('Test')
-            ->persistTab(static fn (): bool => true);
-
-        expect($tabs->isTabPersisted())->toBeTrue();
-    });
-});
-
-describe('label', function (): void {
-    it('can be constructed with a label', function (): void {
-        $tabs = Tabs::make('Settings');
-
-        expect($tabs->getLabel())->toBe('Settings');
-    });
-
-    it('returns `null` for `getLabel()` when no label given', function (): void {
-        $tabs = Tabs::make();
-
-        expect($tabs->getLabel())->toBeNull();
-    });
-
-    it('can set `label()` with a `Closure`', function (): void {
-        $tabs = Tabs::make()
-            ->label(static fn (): string => 'Dynamic');
-
-        expect($tabs->getLabel())->toBe('Dynamic');
-    });
-
-    it('can set `label()` with an `Htmlable`', function (): void {
-        $htmlable = new HtmlString('<strong>Bold</strong>');
-        $tabs = Tabs::make()->label($htmlable);
-
-        expect($tabs->getLabel())->toBe($htmlable);
-    });
-
-    it('reports `hasCustomLabel()` as `false` by default', function (): void {
-        $tabs = Tabs::make();
-
-        expect($tabs->hasCustomLabel())->toBeFalse();
-    });
-
-    it('reports `hasCustomLabel()` as `true` after `label()` is set', function (): void {
-        $tabs = Tabs::make('Label');
-
-        expect($tabs->hasCustomLabel())->toBeTrue();
-    });
-
-    it('defaults `isLabelHidden()` to `false`', function (): void {
-        $tabs = Tabs::make('Test');
-
-        expect($tabs->isLabelHidden())->toBeFalse();
-    });
-
-    it('can set `hiddenLabel()`', function (): void {
-        $tabs = Tabs::make('Test')->hiddenLabel();
-
-        expect($tabs->isLabelHidden())->toBeTrue();
-    });
-
-    it('can set `hiddenLabel()` with a `Closure`', function (): void {
-        $tabs = Tabs::make('Test')
-            ->hiddenLabel(static fn (): bool => true);
-
-        expect($tabs->isLabelHidden())->toBeTrue();
-    });
-
-    it('can translate label with `translateLabel()`', function (): void {
-        $tabs = Tabs::make()
-            ->label('validation.required')
-            ->translateLabel();
-
-        expect($tabs->getLabel())->toBe(__('validation.required'));
-    });
-});
-
-describe('containment', function (): void {
-    it('defaults `isContained()` to `true`', function (): void {
-        $tabs = Tabs::make('Test');
-
-        expect($tabs->isContained())->toBeTrue();
-    });
-
-    it('can set `contained()` to `false`', function (): void {
-        $tabs = Tabs::make('Test')->contained(false);
-
-        expect($tabs->isContained())->toBeFalse();
-    });
-
-    it('can set `contained()` with a `Closure`', function (): void {
-        $tabs = Tabs::make('Test')
-            ->contained(static fn (): bool => false);
-
-        expect($tabs->isContained())->toBeFalse();
-    });
-});
-
-describe('extra Alpine attributes', function (): void {
-    it('returns empty array for `getExtraAlpineAttributes()` by default', function (): void {
-        $tabs = Tabs::make('Test');
-
-        expect($tabs->getExtraAlpineAttributes())->toBe([]);
-    });
-
-    it('can set `extraAlpineAttributes()`', function (): void {
-        $tabs = Tabs::make('Test')
-            ->extraAlpineAttributes(['x-on:click' => 'open = true']);
-
-        expect($tabs->getExtraAlpineAttributes())->toBe(['x-on:click' => 'open = true']);
-    });
-
-    it('can merge `extraAlpineAttributes()`', function (): void {
-        $tabs = Tabs::make('Test')
-            ->extraAlpineAttributes(['x-on:click' => 'open = true'])
-            ->extraAlpineAttributes(['x-bind:class' => 'active'], merge: true);
-
-        $attributes = $tabs->getExtraAlpineAttributes();
-
-        expect($attributes)->toHaveKey('x-on:click', 'open = true');
-        expect($attributes)->toHaveKey('x-bind:class', 'active');
-    });
-
-    it('can set `extraAlpineAttributes()` with a `Closure`', function (): void {
-        $tabs = Tabs::make('Test')
-            ->extraAlpineAttributes(static fn (): array => ['x-data' => '{}']);
-
-        expect($tabs->getExtraAlpineAttributes())->toBe(['x-data' => '{}']);
-    });
-});
-
-describe('render hook scopes', function (): void {
-    it('returns empty array for `getRenderHookScopes()` when Livewire does not implement `HasRenderHookScopes`', function (): void {
-        $tabs = Tabs::make('Test')
-            ->container(Schema::make(Livewire::make()));
-
-        expect($tabs->getRenderHookScopes())->toBe([]);
-    });
+it('retains lazy panel shells and selection through `Livewire` morphs', function (): void {
+    $this->actingAs(User::factory()->create());
+    $page = visit('/tabs-browser-test?keyboard=1');
+    $empty = '#dynamic-tabs [data-tab-key=""]';
+    $zero = '#dynamic-tabs [data-tab-key="0"]';
+    $second = '#dynamic-tabs [data-tab-key="second"]';
+
+    // Let initial autofocus finish before keyboard navigation, so it cannot steal the tab header focus.
+    $page->assertPresent('#keyboard-tabs input[autofocus]:focus')
+        ->assertAttribute($second, 'aria-selected', 'true')
+        ->assertCount('#dynamic-tabs > [role=tabpanel]', 4)
+        ->assertScript('document.getElementById(document.querySelector(\'#dynamic-tabs [data-tab-key=""]\').getAttribute("aria-controls")).childElementCount', 0)
+        ->keys($second, 'Home')->assertPresent($empty . ':focus')
+        ->keys($empty, ' ')->assertAttribute($empty, 'aria-selected', 'true')
+        ->keys($empty, 'ArrowRight')->keys($zero, 'Enter')
+        ->assertAttribute($zero, 'aria-selected', 'true')
+        ->assertPresent($zero . ':focus')
+        ->keys('#dynamic-tabs [data-tab-key="unavailable"]', 'Enter')
+        ->assertAttribute($zero, 'aria-selected', 'true')
+        ->keys($second, 'Enter')->assertAttribute($second, 'aria-selected', 'true');
+    $page
+        ->click('[data-testid=remove-tab]')->assertMissing($second)
+        ->assertAttribute($zero, 'aria-selected', 'true')
+        ->assertPresent('[data-testid=remove-tab]:focus')
+        ->click('[data-testid=remove-zero]')->assertMissing($zero)
+        ->assertAttribute($empty, 'aria-selected', 'true')
+        ->assertNotPresent('#filter-tabs [role=tab], #filter-tabs [role=tabpanel]')
+        ->keys('#filter-tabs [data-tab-key="all"]', 'Tab')
+        ->assertPresent('#filter-tabs [data-tab-key="published"]:focus')
+        ->keys('#filter-tabs [data-tab-key="published"]', 'Enter')
+        ->assertAttribute('#filter-tabs [data-tab-key="published"]', 'aria-pressed', 'true');
+    $page->assertNoSmoke();
 });
 
 class TabsWithDeferredBadges extends Component implements HasActions, HasSchemas
@@ -642,306 +953,6 @@ class TabsWithLivewirePropertyAction extends Component implements HasActions, Ha
         return view('livewire.form');
     }
 }
-
-describe('rendering', function (): void {
-    it('can render basic `Tabs`', function (): void {
-        livewire(RenderTabs::class)->assertSuccessful();
-    });
-
-    it('can render a tab badge icon with a `BackedEnum`', function (): void {
-        livewire(RenderTabsWithBackedEnumBadgeIcon::class)
-            ->assertSuccessful()
-            ->assertSee('Available');
-    });
-
-    it('can render with `scrollable(false)`', function (): void {
-        livewire(RenderTabsWithScrollableFalse::class)->assertSuccessful();
-    });
-
-    it('can render with `scrollable()` set via `Closure`', function (): void {
-        livewire(RenderTabsWithClosureScrollable::class)->assertSuccessful();
-    });
-
-    it('can render with `vertical()`', function (): void {
-        livewire(RenderTabsWithVertical::class)->assertSuccessful();
-    });
-
-    it('can render with `vertical()` set via `Closure`', function (): void {
-        livewire(RenderTabsWithClosureVertical::class)->assertSuccessful();
-    });
-
-    it('can render with `contained(false)`', function (): void {
-        livewire(RenderTabsWithContainedFalse::class)->assertSuccessful();
-    });
-
-    it('can render with `persistTabInQueryString()`', function (): void {
-        livewire(RenderTabsWithPersistTab::class)->assertSuccessful();
-    });
-
-    it('can render with `persistTab()`', function (): void {
-        livewire(RenderTabsWithPersistTabLocal::class)->assertSuccessful();
-    });
-
-    it('can render with label', function (): void {
-        livewire(RenderTabsWithLabel::class)->assertSuccessful()->assertSee('My Tabs');
-    });
-
-    it('can render with `label()` set via `Closure`', function (): void {
-        livewire(RenderTabsWithClosureLabel::class)->assertSuccessful()->assertSee('Dynamic');
-    });
-});
-
-it('can render `Tabs` in the browser', function (): void {
-    $this->actingAs(User::factory()->create());
-
-    visit('/tabs-browser-test')
-        ->assertNoSmoke()
-        ->assertNoAccessibilityIssues();
-
-    visit('/tabs-browser-test')
-        ->inDarkMode()
-        ->assertNoAccessibilityIssues();
-});
-
-it('keeps non-scrollable `Tabs` in one keyboard sequence and accessible tablist', function (): void {
-    $this->actingAs(User::factory()->create());
-
-    $trigger = '#overflow-tabs [data-tabs-overflow-trigger]:visible';
-    $popup = '#overflow-tabs .fi-sc-tabs-overflow-panel';
-    $overview = '#overflow-tabs [data-tab-key="overview"]';
-    $contact = '#overflow-tabs [data-tab-key="contact"]';
-    $billing = '#overflow-tabs [data-tab-key="billing"]';
-    $notifications = '#overflow-tabs [data-tab-key="notifications"]';
-
-    $page = visit('/tabs-browser-test?overflow=1');
-
-    $page
-        ->resize(375, 812)
-        ->assertVisible($trigger)
-        ->assertAttribute($trigger, 'aria-hidden', 'true')
-        ->assertAttribute($trigger, 'tabindex', '-1')
-        ->assertAttribute($overview, 'aria-selected', 'true')
-        ->keys($overview, 'ArrowRight')
-        ->assertVisible($contact)
-        ->assertVisible($popup)
-        ->assertScript('document.activeElement.dataset.tabKey', 'contact')
-        ->assertScript('document.activeElement.getAttribute("role")', 'tab')
-        ->assertScript('document.activeElement.closest("[aria-hidden=true]") === null', true)
-        ->assertScript('document.activeElement.getAttribute("aria-controls") === document.querySelector("#overflow-tabs > [role=tabpanel][aria-labelledby=\"" + document.activeElement.id + "\"]").id', true)
-        ->assertAttribute($overview, 'aria-selected', 'true')
-        ->keys($contact, 'End')
-        ->assertScript('document.activeElement.dataset.tabKey', 'notifications')
-        ->keys($notifications, 'ArrowRight')
-        ->assertScript('document.activeElement.dataset.tabKey', 'overview');
-
-    $page->keys($overview, 'ArrowRight')
-        ->assertScript('document.activeElement.dataset.tabKey', 'contact')
-        ->keys($contact, 'Enter')
-        ->assertAttribute($contact, 'aria-selected', 'true')
-        ->assertVisible($contact)
-        ->assertScript('document.activeElement.dataset.tabKey', 'contact');
-    $page->keys($contact, 'End')
-        ->resize(375, 180)
-        ->assertScript('document.activeElement.dataset.tabKey', 'notifications')
-        ->assertScript('document.activeElement.getBoundingClientRect().top >= 0 && document.activeElement.getBoundingClientRect().bottom <= innerHeight', true);
-    $page->keys($notifications, 'Home')
-        ->assertScript('document.activeElement.dataset.tabKey', 'overview')
-        ->assertScript('document.activeElement.getBoundingClientRect().top >= 0 && document.activeElement.getBoundingClientRect().bottom <= innerHeight', true);
-
-    $page->resize(375, 812)
-        ->click('#profile-tabs > [role=tabpanel]:visible input')
-        ->assertScript('document.activeElement.matches("#profile-tabs input")', true)
-        ->assertMissing($popup)
-        ->keys($overview, 'Home')
-        ->keys($overview, 'ArrowRight')
-        ->assertScript('document.activeElement.dataset.tabKey', 'contact')
-        ->keys($contact, 'Escape')
-        ->assertMissing($popup)
-        ->assertPresent('#overflow-tabs > [role=tabpanel]:focus')
-        ->assertScript('document.activeElement.id === document.querySelector("#overflow-tabs [role=tab][aria-selected=true]").getAttribute("aria-controls")', true)
-        ->keys(':focus', 'Shift+Tab')
-        ->assertScript('document.activeElement.dataset.tabKey', 'contact')
-        ->assertVisible($contact)
-        ->keys($contact, 'Tab')
-        ->assertMissing($popup)
-        ->assertPresent('#overflow-tabs > [role=tabpanel]:focus')
-        ->assertScript('document.activeElement.id === document.querySelector("#overflow-tabs [role=tab][aria-selected=true]").getAttribute("aria-controls")', true);
-
-    $page->keys($overview, 'End')
-        ->assertScript('document.activeElement.dataset.tabKey', 'notifications')
-        ->resize(1920, 900)
-        ->assertMissing($trigger)
-        ->assertMissing($popup)
-        ->assertVisible($contact)
-        ->assertVisible($notifications)
-        ->assertScript('document.activeElement.dataset.tabKey', 'notifications')
-        ->keys($notifications, 'Home')
-        ->assertScript('document.activeElement.dataset.tabKey', 'overview');
-    $page
-        ->keys($overview, 'End')
-        ->resize(375, 180)
-        ->assertVisible($notifications)
-        ->assertScript('document.activeElement.dataset.tabKey', 'notifications')
-        ->assertScript('document.activeElement.getBoundingClientRect().top >= 0 && document.activeElement.getBoundingClientRect().bottom <= innerHeight', true)
-        ->keys($notifications, 'Home')
-        ->keys($overview, 'ArrowRight')
-        ->resize(375, 812)
-        ->assertVisible($contact)
-        ->assertScript('document.activeElement.dataset.tabKey', 'contact')
-        ->assertAttribute($contact, 'aria-selected', 'true');
-    $page->assertNoAccessibilityIssues()
-        ->keys($contact, 'Home')
-        ->keys($overview, 'Enter')
-        ->assertAttribute($overview, 'aria-selected', 'true')
-        ->keys($overview, 'Escape');
-
-    $page->inDarkMode()->resize(375, 812)
-        ->keys($overview, 'ArrowRight')
-        ->assertVisible($popup)
-        ->assertPresent($contact . ':focus')
-        ->assertNoAccessibilityIssues();
-});
-
-it('dismisses tab overflow before an enclosing dropdown', function (): void {
-    $this->actingAs(User::factory()->create());
-    $page = visit('/tabs-browser-test?overflow=1&dropdown=1');
-    $dropdownTrigger = '[data-testid=enclosing-dropdown-trigger]';
-    $popup = '#overflow-tabs .fi-sc-tabs-overflow-panel';
-    $overview = '#overflow-tabs [data-tab-key=overview]';
-    $notifications = '#overflow-tabs [data-tab-key=notifications]';
-
-    $page->resize(375, 812)
-        ->click($dropdownTrigger)
-        ->assertAttribute($dropdownTrigger, 'aria-expanded', 'true')
-        ->assertVisible($overview)
-        ->keys($overview, 'End')
-        ->assertVisible($notifications)
-        ->assertVisible($popup)
-        ->assertScript('document.activeElement.dataset.tabKey', 'notifications')
-        ->keys($notifications, 'Escape')
-        ->assertMissing($popup)
-        ->assertPresent('#overflow-tabs > [role=tabpanel]:focus')
-        ->assertAttribute($dropdownTrigger, 'aria-expanded', 'true')
-        ->assertVisible($overview)
-        ->assertAttribute($overview, 'aria-selected', 'true');
-    $page->assertNoAccessibilityIssues()
-        ->keys('#overflow-tabs > [role=tabpanel]:visible', 'Escape')
-        ->assertAttribute($dropdownTrigger, 'aria-expanded', 'false')
-        ->assertMissing($overview . ':visible')
-        ->assertScript('document.activeElement.dataset.testid', 'enclosing-dropdown-trigger');
-
-    $page->inDarkMode()->resize(375, 812)
-        ->click($dropdownTrigger)
-        ->assertVisible($overview)
-        ->assertNoAccessibilityIssues();
-});
-
-it('uses manual activation, roving focus and scoped `tabpanel` relationships', function (bool $isRightToLeft): void {
-    $this->actingAs(User::factory()->create());
-    $page = visit('/tabs-browser-test?keyboard=1&rtl=' . (int) $isRightToLeft);
-    $account = '#keyboard-tabs [role=tablist][aria-label="Keyboard tabs"] [data-tab-key="account"]';
-    $contact = '#keyboard-tabs [role=tablist][aria-label="Keyboard tabs"] [data-tab-key="contact"]';
-    $readonly = '#keyboard-tabs [role=tablist][aria-label="Keyboard tabs"] [data-tab-key="readonly"]';
-    $forwardKey = $isRightToLeft ? 'ArrowLeft' : 'ArrowRight';
-    $backwardKey = $isRightToLeft ? 'ArrowRight' : 'ArrowLeft';
-
-    $page->assertAttribute($account, 'aria-selected', 'true')
-        ->keys($account, $forwardKey)
-        ->assertScript('document.activeElement.dataset.tabKey', 'contact')
-        ->assertAttribute($account, 'aria-selected', 'true')
-        ->assertAttribute($contact, 'tabindex', '0')
-        ->assertAttribute($account, 'tabindex', '-1')
-        ->keys($contact, 'End')
-        ->assertScript('document.activeElement.dataset.tabKey', 'readonly')
-        ->keys($readonly, $forwardKey)
-        ->assertScript("document.activeElement.matches('{$account}')", true)
-        ->keys($account, $backwardKey)
-        ->assertScript('document.activeElement.dataset.tabKey', 'readonly')
-        ->keys($readonly, 'Enter')->assertAttribute($readonly, 'aria-selected', 'true')
-        ->assertDisabled('#keyboard-tabs > [role=tabpanel]:visible input')
-        ->keys($account, 'End')->keys($readonly, 'Home')
-        ->keys($account, $forwardKey)->keys($contact, 'Enter')
-        ->assertAttribute($contact, 'aria-selected', 'true')
-        ->assertScript("document.activeElement.matches('{$contact}')", true)
-        ->keys($contact, 'Tab')
-        ->assertScript('document.activeElement.getAttribute("role")', 'tabpanel')
-        ->assertScript('Array.from(document.querySelectorAll("[role=tab]")).every(tab => { const panel = document.getElementById(tab.getAttribute("aria-controls")); return panel && panel.getAttribute("aria-labelledby") === tab.id })', true)
-        ->assertScript('new Set(Array.from(document.querySelectorAll("[id]"), element => element.id)).size === document.querySelectorAll("[id]").length', true)
-        ->keys($account, 'Enter')
-        ->keys('#nested-tabs [data-tab-key="account"]', $forwardKey)
-        ->assertPresent('#nested-tabs :focus')
-        ->keys('#nested-tabs [data-tab-key="contact"]', 'Enter')
-        ->assertAttribute($account, 'aria-selected', 'true')
-        ->refresh()
-        ->assertAttribute('#nested-tabs [data-tab-key="contact"]', 'aria-selected', 'true')
-        ->assertAttribute($account, 'aria-selected', 'true');
-
-    $page->keys($account, $forwardKey)->assertScript('document.activeElement.dataset.tabKey', 'contact')
-        ->keys($contact, $backwardKey)->assertScript('document.activeElement.dataset.tabKey', 'account')
-        ->assertAttribute('#vertical-tabs [role=tablist]', 'aria-orientation', 'vertical')
-        ->keys('#vertical-tabs [data-tab-key="account"]', 'ArrowDown')
-        ->assertScript('document.activeElement.dataset.tabKey', 'contact')
-        ->keys('#vertical-tabs [data-tab-key="contact"]', 'Home')
-        ->keys('#vertical-tabs [data-tab-key="account"]', 'ArrowUp')
-        ->assertScript('document.activeElement.dataset.tabKey', 'contact')
-        ->click('#profile-tabs [data-tab-key="contact"]')
-        ->click('[data-testid=save]')->assertVisible('#profile-account')
-        ->assertNoSmoke()->assertNoAccessibilityIssues();
-
-    $page->inDarkMode()
-        ->assertVisible('#keyboard-tabs')
-        ->assertNoAccessibilityIssues();
-})->with([false, true]);
-
-it('reconciles client-hidden tabs without stealing outside focus', function (): void {
-    $this->actingAs(User::factory()->create());
-    $page = visit('/tabs-browser-test?keyboard=1');
-    $contact = '#keyboard-tabs [role=tablist][aria-label="Keyboard tabs"] [data-tab-key="contact"]';
-    $account = '#keyboard-tabs [role=tablist][aria-label="Keyboard tabs"] [data-tab-key="account"]';
-
-    $page->keys($contact, 'Enter')->click('[data-testid=hide-contact]')
-        ->assertAttribute($account, 'aria-selected', 'true')
-        ->assertScript('document.activeElement.dataset.testid', 'hide-contact')
-        ->click('[data-testid=hide-all]')
-        ->assertScript('Array.from(document.querySelectorAll("#keyboard-tabs > [role=tabpanel]")).some(panel => panel.checkVisibility())', false)
-        ->assertMissing('#keyboard-tabs [role=tablist][aria-label="Keyboard tabs"] [role=tab][aria-selected=true]')
-        ->assertNoSmoke();
-});
-
-it('retains lazy panel shells and selection through `Livewire` morphs', function (): void {
-    $this->actingAs(User::factory()->create());
-    $page = visit('/tabs-browser-test?keyboard=1');
-    $empty = '#dynamic-tabs [data-tab-key=""]';
-    $zero = '#dynamic-tabs [data-tab-key="0"]';
-    $second = '#dynamic-tabs [data-tab-key="second"]';
-
-    // Let initial autofocus finish before keyboard navigation, so it cannot steal the tab header focus.
-    $page->assertPresent('#keyboard-tabs input[autofocus]:focus')
-        ->assertAttribute($second, 'aria-selected', 'true')
-        ->assertScript('document.querySelectorAll("#dynamic-tabs > [role=tabpanel]").length', 4)
-        ->assertScript('document.getElementById(document.querySelector(\'#dynamic-tabs [data-tab-key=""]\').getAttribute("aria-controls")).childElementCount', 0)
-        ->keys($second, 'Home')->assertScript('document.activeElement.dataset.tabKey', '')
-        ->keys($empty, ' ')->assertAttribute($empty, 'aria-selected', 'true')
-        ->keys($empty, 'ArrowRight')->keys($zero, 'Enter')
-        ->assertAttribute($zero, 'aria-selected', 'true')
-        ->assertScript('document.activeElement.dataset.tabKey', '0')
-        ->keys('#dynamic-tabs [data-tab-key="unavailable"]', 'Enter')
-        ->assertAttribute($zero, 'aria-selected', 'true')
-        ->keys($second, 'Enter')->assertAttribute($second, 'aria-selected', 'true');
-    $page
-        ->click('[data-testid=remove-tab]')->assertMissing($second)
-        ->assertAttribute($zero, 'aria-selected', 'true')
-        ->assertScript('document.activeElement.dataset.testid', 'remove-tab')
-        ->click('[data-testid=remove-zero]')->assertMissing($zero)
-        ->assertAttribute($empty, 'aria-selected', 'true')
-        ->assertScript('document.querySelectorAll("#filter-tabs [role=tab], #filter-tabs [role=tabpanel]").length', 0)
-        ->keys('#filter-tabs [data-tab-key="all"]', 'Tab')
-        ->assertScript('document.activeElement.dataset.tabKey', 'published')
-        ->keys('#filter-tabs [data-tab-key="published"]', 'Enter')
-        ->assertAttribute('#filter-tabs [data-tab-key="published"]', 'aria-pressed', 'true')
-        ->hover('[data-testid=hide-contact]');
-    $page->assertNoSmoke();
-});
 
 class RenderTabs extends Component implements HasSchemas
 {

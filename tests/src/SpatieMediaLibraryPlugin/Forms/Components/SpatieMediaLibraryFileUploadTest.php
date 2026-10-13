@@ -471,28 +471,28 @@ describe('integration', function (): void {
             ->usingFileName('a1.jpg')
             ->toMediaCollection('avatars');
 
-        $bMedia1 = $recordB->addMediaFromString('b1')
+        $firstOtherRecordMedia = $recordB->addMediaFromString('b1')
             ->usingFileName('b1.jpg')
             ->toMediaCollection('avatars');
 
-        $bMedia2 = $recordB->addMediaFromString('b2')
+        $secondOtherRecordMedia = $recordB->addMediaFromString('b2')
             ->usingFileName('b2.jpg')
             ->toMediaCollection('avatars');
 
-        $originalBOrder = [
-            $bMedia1->uuid => $bMedia1->order_column,
-            $bMedia2->uuid => $bMedia2->order_column,
+        $originalOtherRecordOrder = [
+            $firstOtherRecordMedia->uuid => $firstOtherRecordMedia->order_column,
+            $secondOtherRecordMedia->uuid => $secondOtherRecordMedia->order_column,
         ];
 
         livewire(ReorderableSpatieMediaLibraryFileUploadForm::class, ['record' => $recordA->fresh()])
             ->set('data.avatar', [
-                $bMedia2->uuid => $bMedia2->uuid,
-                $bMedia1->uuid => $bMedia1->uuid,
+                $secondOtherRecordMedia->uuid => $secondOtherRecordMedia->uuid,
+                $firstOtherRecordMedia->uuid => $firstOtherRecordMedia->uuid,
             ])
             ->call('save');
 
-        expect($bMedia1->fresh()->order_column)->toBe($originalBOrder[$bMedia1->uuid]);
-        expect($bMedia2->fresh()->order_column)->toBe($originalBOrder[$bMedia2->uuid]);
+        expect($firstOtherRecordMedia->fresh()->order_column)->toBe($originalOtherRecordOrder[$firstOtherRecordMedia->uuid]);
+        expect($secondOtherRecordMedia->fresh()->order_column)->toBe($originalOtherRecordOrder[$secondOtherRecordMedia->uuid]);
     });
 
     it('does not reorder media in another collection on the same record when submitted UUIDs are tampered', function (): void {
@@ -502,28 +502,28 @@ describe('integration', function (): void {
             ->usingFileName('a1.jpg')
             ->toMediaCollection('avatars');
 
-        $doc1 = $record->addMediaFromString('d1')
+        $firstDocument = $record->addMediaFromString('d1')
             ->usingFileName('d1.pdf')
             ->toMediaCollection('documents');
 
-        $doc2 = $record->addMediaFromString('d2')
+        $secondDocument = $record->addMediaFromString('d2')
             ->usingFileName('d2.pdf')
             ->toMediaCollection('documents');
 
         $originalDocumentsOrder = [
-            $doc1->uuid => $doc1->order_column,
-            $doc2->uuid => $doc2->order_column,
+            $firstDocument->uuid => $firstDocument->order_column,
+            $secondDocument->uuid => $secondDocument->order_column,
         ];
 
         livewire(ReorderableSpatieMediaLibraryFileUploadForm::class, ['record' => $record->fresh()])
             ->set('data.avatar', [
-                $doc2->uuid => $doc2->uuid,
-                $doc1->uuid => $doc1->uuid,
+                $secondDocument->uuid => $secondDocument->uuid,
+                $firstDocument->uuid => $firstDocument->uuid,
             ])
             ->call('save');
 
-        expect($doc1->fresh()->order_column)->toBe($originalDocumentsOrder[$doc1->uuid]);
-        expect($doc2->fresh()->order_column)->toBe($originalDocumentsOrder[$doc2->uuid]);
+        expect($firstDocument->fresh()->order_column)->toBe($originalDocumentsOrder[$firstDocument->uuid]);
+        expect($secondDocument->fresh()->order_column)->toBe($originalDocumentsOrder[$secondDocument->uuid]);
     });
 
     it('does not attach another record\'s media when its UUID is submitted', function (): void {
@@ -532,19 +532,19 @@ describe('integration', function (): void {
         $recordA = MediaPost::factory()->create();
         $recordB = MediaPost::factory()->create();
 
-        $bMedia = $recordB->addMediaFromString('b1')
+        $otherRecordMedia = $recordB->addMediaFromString('b1')
             ->usingFileName('b1.jpg')
             ->toMediaCollection('avatars');
 
         livewire(SpatieMediaLibraryFileUploadForm::class, ['record' => $recordA->fresh()])
-            ->set('data.avatar', [$bMedia->uuid => $bMedia->uuid])
+            ->set('data.avatar', [$otherRecordMedia->uuid => $otherRecordMedia->uuid])
             ->call('save')
             ->assertHasNoFormErrors();
 
         // The submitted UUID belongs to another record, so it must not be attached
         // here, and the other record must keep its media intact.
         expect($recordA->fresh()->getMedia('avatars'))->toHaveCount(0);
-        expect($recordB->fresh()->getMedia('avatars')->pluck('uuid')->all())->toBe([$bMedia->uuid]);
+        expect($recordB->fresh()->getMedia('avatars')->pluck('uuid')->all())->toBe([$otherRecordMedia->uuid]);
     });
 
     it('does not expose another record\'s media through the field when its UUID is submitted', function (): void {
@@ -553,12 +553,12 @@ describe('integration', function (): void {
         $recordA = MediaPost::factory()->create();
         $recordB = MediaPost::factory()->create();
 
-        $bMedia = $recordB->addMediaFromString('b1')
+        $otherRecordMedia = $recordB->addMediaFromString('b1')
             ->usingFileName('b1.jpg')
             ->toMediaCollection('avatars');
 
         $component = livewire(SpatieMediaLibraryFileUploadForm::class, ['record' => $recordA->fresh()])
-            ->set('data.avatar', [$bMedia->uuid => $bMedia->uuid])
+            ->set('data.avatar', [$otherRecordMedia->uuid => $otherRecordMedia->uuid])
             ->instance();
 
         $field = $component->form->getComponents()[0];
@@ -566,8 +566,8 @@ describe('integration', function (): void {
 
         // Resolving the file is scoped to the current record's media, so the other
         // record's file name and URL are never resolved.
-        expect($uploadedFiles[$bMedia->uuid]['name'] ?? null)->toBeNull();
-        expect($uploadedFiles[$bMedia->uuid]['url'] ?? null)->toBeNull();
+        expect($uploadedFiles[$otherRecordMedia->uuid]['name'] ?? null)->toBeNull();
+        expect($uploadedFiles[$otherRecordMedia->uuid]['url'] ?? null)->toBeNull();
     });
 });
 

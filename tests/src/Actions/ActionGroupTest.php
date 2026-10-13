@@ -502,3 +502,46 @@ describe('serialization', function (): void {
         expect($restored->getFlatActions())->toHaveCount(2);
     });
 });
+
+describe('rendering', function (): void {
+    it('renders an `ActionGroup` with a dropdown trigger', function (): void {
+        $group = ActionGroup::make([
+            Action::make('first')->label('First'),
+            Action::make('second')->label('Second'),
+        ])->label('Open menu');
+
+        $html = $group->toHtml();
+
+        expect($html)
+            ->toContain('fi-dropdown')
+            ->toContain('Open menu');
+    });
+
+    it('renders an `ActionGroup` containing all child action labels', function (): void {
+        $group = ActionGroup::make([
+            Action::make('alpha')->label('Alpha'),
+            Action::make('bravo')->label('Bravo'),
+            Action::make('charlie')->label('Charlie'),
+        ]);
+
+        $html = $group->toHtml();
+
+        expect($html)
+            ->toContain('Alpha')
+            ->toContain('Bravo')
+            ->toContain('Charlie');
+    });
+
+    it('skips hidden actions in `ActionGroup` rendering', function (): void {
+        $group = ActionGroup::make([
+            Action::make('visible')->label('Visible Action'),
+            Action::make('hidden')->label('Hidden Action')->hidden(),
+        ]);
+
+        $html = $group->toHtml();
+
+        expect($html)
+            ->toContain('Visible Action')
+            ->not->toContain('Hidden Action');
+    });
+});

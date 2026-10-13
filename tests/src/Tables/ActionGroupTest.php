@@ -16,15 +16,15 @@ it('scopes row and bulk `ActionGroup` menu attributes and keyboard interactions'
     $secondPost = Post::factory()->create(['title' => 'Second record']);
 
     $firstGroup = "[data-testid=\"inspect-{$firstPost->id}\"]";
-    $firstTrigger = "{$firstGroup} > .fi-dropdown-trigger button";
+    $firstTrigger = "{$firstGroup} [aria-haspopup=\"menu\"]";
     $firstItem = "{$firstGroup} [data-testid=\"inspect-item\"]";
     $disabledItem = "{$firstGroup} [data-testid=\"disabled-item\"]";
     $adjacentGroup = "[data-testid=\"more-{$firstPost->id}\"]";
-    $adjacentTrigger = "{$adjacentGroup} > .fi-dropdown-trigger button";
+    $adjacentTrigger = "{$adjacentGroup} [aria-haspopup=\"menu\"]";
     $linkItem = "{$adjacentGroup} [data-testid=\"link-item\"]";
     $secondGroup = "[data-testid=\"inspect-{$secondPost->id}\"]";
-    $secondTrigger = "{$secondGroup} > .fi-dropdown-trigger button";
-    $bulkTrigger = '[data-testid="bulk-group"] > .fi-dropdown-trigger [aria-haspopup="menu"]';
+    $secondTrigger = "{$secondGroup} [aria-haspopup=\"menu\"]";
+    $bulkTrigger = '[data-testid="bulk-group"] [aria-haspopup="menu"]';
     $bulkItem = '[data-testid="count-item"]';
     $disabledBulkItem = '[data-testid="disabled-bulk-item"]';
 
@@ -36,53 +36,53 @@ it('scopes row and bulk `ActionGroup` menu attributes and keyboard interactions'
         ->assertAttribute($firstTrigger, 'aria-expanded', 'true')
         ->assertAttribute($adjacentTrigger, 'aria-expanded', 'false')
         ->assertAttribute($secondTrigger, 'aria-expanded', 'false')
-        ->assertScript("document.activeElement.matches('{$firstItem}')", true)
+        ->assertPresent($firstItem . ':focus')
         ->assertAttribute($firstItem, 'role', 'menuitem')
         ->assertAttribute($firstItem, 'tabindex', '-1')
         ->keys($firstItem, 'ArrowDown')
-        ->assertScript("document.activeElement.matches('{$disabledItem}')", true)
+        ->assertPresent($disabledItem . ':focus')
         ->assertAttribute($disabledItem, 'aria-disabled', 'true')
         ->keys($disabledItem, 'Enter')
         ->assertSeeIn('[data-testid="last-action"]', 'None')
         ->keys($disabledItem, 'ArrowDown')
-        ->assertScript("document.activeElement.matches('{$firstItem}')", true)
+        ->assertPresent($firstItem . ':focus')
         ->assertNoAccessibilityIssues()
         ->keys($firstItem, 'Tab')
         ->assertAttribute($firstTrigger, 'aria-expanded', 'false')
-        ->assertScript("document.activeElement.matches('{$adjacentTrigger}')", true)
+        ->assertPresent($adjacentTrigger . ':focus')
         ->keys($adjacentTrigger, 'ArrowUp')
-        ->assertScript("document.activeElement.matches('{$linkItem}')", true)
+        ->assertPresent($linkItem . ':focus')
         ->assertAttribute($linkItem, 'role', 'menuitem')
         ->keys($linkItem, 'Escape')
-        ->assertScript("document.activeElement.matches('{$adjacentTrigger}')", true)
+        ->assertPresent($adjacentTrigger . ':focus')
         ->keys($secondTrigger, 'Enter')
-        ->assertScript("document.activeElement.matches('{$secondGroup} [data-testid=\"inspect-item\"]')", true)
+        ->assertPresent("{$secondGroup} [data-testid=\"inspect-item\"]:focus")
         ->keys("{$secondGroup} [data-testid=\"inspect-item\"]", 'Enter')
         ->assertSeeIn('[data-testid="last-action"]', 'Second record')
-        ->assertScript("document.activeElement.matches('{$secondTrigger}')", true)
+        ->assertPresent($secondTrigger . ':focus')
         ->keys($firstTrigger, 'Enter')
-        ->assertScript("document.activeElement.matches('{$firstItem}')", true)
+        ->assertPresent($firstItem . ':focus')
         ->keys($firstItem, 'Escape')
         ->click('thead input[type="checkbox"]')
         ->assertVisible($bulkTrigger)
         ->keys($bulkTrigger, 'ArrowUp')
-        ->assertScript("document.activeElement.matches('{$disabledBulkItem}')", true)
+        ->assertPresent($disabledBulkItem . ':focus')
         ->assertAttribute($disabledBulkItem, 'aria-disabled', 'true')
         ->keys($disabledBulkItem, 'Enter')
         ->assertSeeIn('[data-testid="last-action"]', 'Second record')
         ->assertScript('(() => { const trigger = document.querySelector(\'[data-testid="bulk-group"] [aria-haspopup="menu"]\'); const panel = document.getElementById(trigger.getAttribute("aria-controls")); return panel.getAttribute("role") === "menu" && panel.getAttribute("aria-labelledby") === trigger.id && trigger.getAttribute("aria-expanded") === "true"; })()', true)
         ->assertNoAccessibilityIssues()
         ->keys($disabledBulkItem, 'ArrowDown')
-        ->assertScript("document.activeElement.matches('{$bulkItem}')", true)
+        ->assertPresent($bulkItem . ':focus')
         ->keys($bulkItem, 'Enter')
         ->assertSeeIn('[data-testid="last-action"]', 'Selected 2')
-        ->assertScript("document.activeElement.matches('{$bulkTrigger}')", true)
+        ->assertPresent($bulkTrigger . ':focus')
         ->assertAttribute($bulkTrigger, 'aria-expanded', 'false')
         ->keys($bulkTrigger, 'Enter')
-        ->assertScript("document.activeElement.matches('{$bulkItem}')", true)
+        ->assertPresent($bulkItem . ':focus')
         ->assertAttribute($bulkItem, 'role', 'menuitem')
         ->keys($bulkItem, 'Escape')
-        ->assertScript("document.activeElement.matches('{$bulkTrigger}')", true)
+        ->assertPresent($bulkTrigger . ':focus')
         ->click('thead input[type="checkbox"]')
         ->assertMissing($bulkTrigger)
         ->assertNoSmoke();

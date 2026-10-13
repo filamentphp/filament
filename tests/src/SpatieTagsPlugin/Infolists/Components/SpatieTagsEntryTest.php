@@ -172,7 +172,9 @@ describe('state from tags', function (): void {
 
     it('deduplicates tag names in state', function (): void {
         $record = Article::factory()->create();
-        $record->attachTags(['Laravel', 'PHP']);
+        $record->attachTag('Laravel', 'framework');
+        $record->attachTag('Laravel', 'topic');
+        $record->attachTag('PHP', 'language');
         $record->load('tags');
 
         $entry = SpatieTagsEntry::make('tags')
@@ -183,7 +185,7 @@ describe('state from tags', function (): void {
 
         $state = $entry->getState();
 
-        expect($state)->toHaveCount(2);
-        expect(count($state))->toBe(count(array_unique($state)));
+        expect($record->tags)->toHaveCount(3)
+            ->and(array_values($state))->toBe(['Laravel', 'PHP']);
     });
 });

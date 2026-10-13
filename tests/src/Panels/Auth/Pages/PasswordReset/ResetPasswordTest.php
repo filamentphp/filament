@@ -6,14 +6,23 @@ use Filament\Notifications\Notification;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
+beforeEach(function (): void {
+    // Livewire's test headers apply only to mounting, not subsequent action requests.
+    Event::listen(RouteMatched::class, function (RouteMatched $event): void {
+        if ($clientIp = config('testing.reset_password_ip')) {
+            $event->request->server->set('REMOTE_ADDR', $clientIp);
+        }
+    });
+});
 
 it('can render page', function (): void {
     $userToResetPassword = User::factory()->make();
@@ -221,20 +230,21 @@ describe('validation', function (): void {
 });
 
 it('can throttle reset password attempts per email', function (): void {
-    Event::fake();
+    Event::fake([PasswordReset::class]);
 
     $this->assertGuest();
 
     $userToResetPassword = User::factory()->create();
 
-    // Clear the IP-based rate limiter between attempts to isolate the
-    // email-based rate limit (simulates an attacker rotating IPs).
-    $clearIpRateLimiter = function (): void {
-        RateLimiter::clear('livewire-rate-limiter:' . sha1(ResetPassword::class . '|resetPassword|' . request()->ip()));
+    // Rotate request IPs to isolate the email-based rate limit.
+    $rotateRequestIp = function (): void {
+        static $requestNumber = 0;
+
+        config()->set('testing.reset_password_ip', '192.0.2.' . ++$requestNumber);
     };
 
     foreach (range(1, 2) as $i) {
-        $clearIpRateLimiter();
+        $rotateRequestIp();
 
         $token = Password::createToken($userToResetPassword);
 
@@ -251,7 +261,7 @@ it('can throttle reset password attempts per email', function (): void {
 
     Event::assertDispatchedTimes(PasswordReset::class, times: 2);
 
-    $clearIpRateLimiter();
+    $rotateRequestIp();
 
     // The 3rd attempt should be rate limited by email
     $token = Password::createToken($userToResetPassword);
@@ -268,7 +278,7 @@ it('can throttle reset password attempts per email', function (): void {
 
     Event::assertDispatchedTimes(PasswordReset::class, times: 2);
 
-    $clearIpRateLimiter();
+    $rotateRequestIp();
 
     // A different email should not be affected
     $secondUser = User::factory()->create();
@@ -288,18 +298,49 @@ it('can throttle reset password attempts per email', function (): void {
 });
 
 it('scopes reset password rate limits by password broker', function (): void {
-    $email = fake()->unique()->safeEmail();
-    $resetPassword = livewire(ResetPassword::class)->instance();
+    Event::fake([PasswordReset::class]);
+
     $defaultPasswordBroker = Password::getDefaultDriver();
+    config()->set('auth.passwords.another-broker', config("auth.passwords.{$defaultPasswordBroker}"));
+    $user = User::factory()->create();
+    $token = Password::broker($defaultPasswordBroker)->createToken($user);
+    $panel = Filament::getCurrentOrDefaultPanel();
 
-    expect(invade($resetPassword)->isResetPasswordRateLimited($email))->toBeFalse();
+    foreach ([null, $defaultPasswordBroker, $defaultPasswordBroker] as $attemptIndex => $broker) {
+        $panel->authPasswordBroker($broker);
 
-    Filament::getCurrentOrDefaultPanel()->authPasswordBroker($defaultPasswordBroker);
+        config()->set('testing.reset_password_ip', '192.0.2.' . ($attemptIndex + 1));
 
-    expect(invade($resetPassword)->isResetPasswordRateLimited($email))->toBeFalse()
-        ->and(invade($resetPassword)->isResetPasswordRateLimited($email))->toBeTrue();
+        $resetPassword = livewire(ResetPassword::class, ['email' => $user->email, 'token' => $token])
+            ->set('password', '')
+            ->set('passwordConfirmation', 'new-password')
+            ->call('resetPassword')
+            ->assertNoRedirect();
 
-    Filament::getCurrentOrDefaultPanel()->authPasswordBroker('another-broker');
+        if ($attemptIndex < 2) {
+            $resetPassword->assertHasErrors(['password' => ['required']]);
+        } else {
+            $resetPassword->assertHasNoErrors()->assertNotified(
+                __('filament-panels::auth/pages/password-reset/reset-password.notifications.throttled.title')
+            );
+        }
+    }
 
-    expect(invade($resetPassword)->isResetPasswordRateLimited($email))->toBeFalse();
+    Event::assertNotDispatched(PasswordReset::class);
+    $this->assertCredentials(['email' => $user->email, 'password' => 'password']);
+
+    $panel->authPasswordBroker('another-broker');
+
+    config()->set('testing.reset_password_ip', '192.0.2.4');
+
+    livewire(ResetPassword::class, ['email' => $user->email, 'token' => $token])
+        ->set('password', 'new-password')
+        ->set('passwordConfirmation', 'new-password')
+        ->call('resetPassword')
+        ->assertHasNoErrors()
+        ->assertNotified(Notification::make()->success()->title(__('passwords.reset')))
+        ->assertRedirect(Filament::getLoginUrl());
+
+    Event::assertDispatchedTimes(PasswordReset::class, times: 1);
+    $this->assertCredentials(['email' => $user->email, 'password' => 'new-password']);
 });

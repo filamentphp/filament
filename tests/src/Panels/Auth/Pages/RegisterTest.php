@@ -4,16 +4,26 @@ use Filament\Auth\Events\Registered;
 use Filament\Auth\Notifications\VerifyEmail;
 use Filament\Auth\Pages\Register;
 use Filament\Facades\Filament;
+use Filament\Tests\Fixtures\Models\ConfiguredTenantScopedUser;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
+beforeEach(function (): void {
+    // Livewire's test headers apply only to mounting, not subsequent action requests.
+    Event::listen(RouteMatched::class, function (RouteMatched $event): void {
+        if ($clientIp = config('testing.registration_ip')) {
+            $event->request->server->set('REMOTE_ADDR', $clientIp);
+        }
+    });
+});
 
 it('can render page', function (): void {
     expect(Filament::getRegistrationUrl())->toEndWith('/register');
@@ -206,20 +216,21 @@ describe('validation', function (): void {
 
 it('can throttle registration attempts per email', function (): void {
     Notification::fake();
-    Event::fake();
+    Event::fake([Registered::class]);
 
     $this->assertGuest();
 
     $email = fake()->unique()->safeEmail();
 
-    // Clear the IP-based rate limiter between attempts to isolate the
-    // email-based rate limit (simulates an attacker rotating IPs).
-    $clearIpRateLimiter = function (): void {
-        RateLimiter::clear('livewire-rate-limiter:' . sha1(Register::class . '|register|' . request()->ip()));
+    // Rotate request IPs to isolate the email-based rate limit.
+    $rotateRequestIp = function (): void {
+        static $requestNumber = 0;
+
+        config()->set('testing.registration_ip', '192.0.2.' . ++$requestNumber);
     };
 
     foreach (range(1, 2) as $i) {
-        $clearIpRateLimiter();
+        $rotateRequestIp();
 
         livewire(Register::class)
             ->fillForm([
@@ -237,7 +248,7 @@ it('can throttle registration attempts per email', function (): void {
         }
     }
 
-    $clearIpRateLimiter();
+    $rotateRequestIp();
 
     // The 3rd attempt should be rate limited by email
     livewire(Register::class)
@@ -253,7 +264,7 @@ it('can throttle registration attempts per email', function (): void {
 
     $this->assertGuest();
 
-    $clearIpRateLimiter();
+    $rotateRequestIp();
 
     // A different email should not be affected
     $differentEmail = fake()->unique()->safeEmail();
@@ -272,13 +283,67 @@ it('can throttle registration attempts per email', function (): void {
 });
 
 it('scopes registration rate limits by authentication guard and user model', function (): void {
+    Notification::fake();
+    Event::fake([Registered::class]);
+
+    config()->set('auth.guards.another-guard', config('auth.guards.web'));
+    config()->set('auth.providers.scoped-users', [
+        'driver' => 'eloquent',
+        'model' => ConfiguredTenantScopedUser::class,
+    ]);
+    config()->set('auth.guards.scoped-users', [
+        'driver' => 'session',
+        'provider' => 'scoped-users',
+    ]);
+
     $email = fake()->unique()->safeEmail();
-    $registration = livewire(Register::class)->instance();
+    $panel = Filament::getCurrentOrDefaultPanel();
+    $originalGuard = $panel->getAuthGuard();
 
-    expect(invade($registration)->isRegisterRateLimited($email))->toBeFalse()
-        ->and(invade($registration)->isRegisterRateLimited($email))->toBeFalse();
+    foreach ([$originalGuard, 'another-guard', 'scoped-users'] as $guardIndex => $guard) {
+        $panel->authGuard($guard);
 
-    Filament::getCurrentOrDefaultPanel()->authGuard('another-guard');
+        foreach (range(1, 3) as $attempt) {
+            config()->set('testing.registration_ip', '192.0.2.' . (($guardIndex * 3) + $attempt));
 
-    expect(invade($registration)->isRegisterRateLimited($email))->toBeFalse();
+            $registration = livewire(Register::class)
+                ->fillForm([
+                    'name' => '',
+                    'email' => $email,
+                    'password' => 'password',
+                    'passwordConfirmation' => 'password',
+                ])
+                ->call('register')
+                ->assertNoRedirect();
+
+            if ($attempt < 3) {
+                $registration->assertHasFormErrors(['name' => ['required']]);
+            } else {
+                $registration->assertHasNoFormErrors()->assertNotified(
+                    __('filament-panels::auth/pages/register.notifications.throttled.title')
+                );
+            }
+        }
+    }
+
+    // Keep the guard unchanged while switching its provider's user model.
+    config()->set('auth.guards.scoped-users.provider', 'users');
+    auth()->forgetGuards();
+
+    config()->set('testing.registration_ip', '192.0.2.10');
+
+    livewire(Register::class)
+        ->fillForm([
+            'name' => fake()->name(),
+            'email' => $email,
+            'password' => 'password',
+            'passwordConfirmation' => 'password',
+        ])
+        ->call('register')
+        ->assertHasNoFormErrors()
+        ->assertRedirect(Filament::getUrl());
+
+    $this->assertAuthenticated('scoped-users');
+    Event::assertDispatchedTimes(Registered::class, times: 1);
+    Notification::assertSentTimes(VerifyEmail::class, expectedCount: 1);
 });

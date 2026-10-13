@@ -550,173 +550,176 @@ describe('relationship filtering', function (): void {
             ->assertCanNotSeeTableRecords($postsWithAuthor2);
     });
 
-    class TestTableWithSearchableRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
-    {
-        use InteractsWithActions;
-        use InteractsWithSchemas;
-        use Tables\Concerns\InteractsWithTable;
-
-        public function table(Table $table): Table
-        {
-            return $table
-                ->query(Post::query())
-                ->columns([
-                    Tables\Columns\TextColumn::make('title'),
-                    Tables\Columns\TextColumn::make('author.name'),
-                ])
-                ->filters([
-                    SelectFilter::make('author')
-                        ->relationship('author', 'name')
-                        ->searchable(),
-                ]);
-        }
-
-        public function render(): View
-        {
-            return view('livewire.table');
-        }
-    }
-
-    class TestTableWithPreloadedRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
-    {
-        use InteractsWithActions;
-        use InteractsWithSchemas;
-        use Tables\Concerns\InteractsWithTable;
-
-        public function table(Table $table): Table
-        {
-            return $table
-                ->query(Post::query())
-                ->columns([
-                    Tables\Columns\TextColumn::make('title'),
-                    Tables\Columns\TextColumn::make('author.name'),
-                ])
-                ->filters([
-                    SelectFilter::make('author')
-                        ->relationship('author', 'name')
-                        ->preload(),
-                ]);
-        }
-
-        public function render(): View
-        {
-            return view('livewire.table');
-        }
-    }
-
-    class TestTableWithModifiedRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
-    {
-        use InteractsWithActions;
-        use InteractsWithSchemas;
-        use Tables\Concerns\InteractsWithTable;
-
-        public function table(Table $table): Table
-        {
-            return $table
-                ->query(Post::query())
-                ->columns([
-                    Tables\Columns\TextColumn::make('title'),
-                    Tables\Columns\TextColumn::make('author.name'),
-                ])
-                ->filters([
-                    SelectFilter::make('author')
-                        ->relationship(
-                            'author',
-                            'name',
-                            modifyQueryUsing: fn ($query) => $query->orderBy('name'),
-                        )
-                        ->preload(),
-                ]);
-        }
-
-        public function render(): View
-        {
-            return view('livewire.table');
-        }
-    }
-
-    class TestTableWithScopeFilteredRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
-    {
-        use InteractsWithActions;
-        use InteractsWithSchemas;
-        use Tables\Concerns\InteractsWithTable;
-
-        public function table(Table $table): Table
-        {
-            return $table
-                ->query(Post::query())
-                ->columns([
-                    Tables\Columns\TextColumn::make('title'),
-                    Tables\Columns\TextColumn::make('author.name'),
-                ])
-                ->filters([
-                    SelectFilter::make('author')
-                        ->relationship(
-                            'author',
-                            'name',
-                            modifyQueryUsing: fn ($query) => $query->where('name', 'like', 'Alpha%'),
-                        )
-                        ->preload(),
-                ]);
-        }
-
-        public function render(): View
-        {
-            return view('livewire.table');
-        }
-    }
-
-    class TestTableWithCustomRelationshipLabelFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
-    {
-        use InteractsWithActions;
-        use InteractsWithSchemas;
-        use Tables\Concerns\InteractsWithTable;
-
-        public function table(Table $table): Table
-        {
-            return $table
-                ->query(Post::query())
-                ->columns([
-                    Tables\Columns\TextColumn::make('title'),
-                    Tables\Columns\TextColumn::make('author.name'),
-                ])
-                ->filters([
-                    SelectFilter::make('author')
-                        ->relationship('author', 'name')
-                        ->getOptionLabelFromRecordUsing(fn (User $record): string => "{$record->name} ({$record->email})")
-                        ->preload(),
-                ]);
-        }
-
-        public function render(): View
-        {
-            return view('livewire.table');
-        }
-    }
 });
 
-it('can set `multiple()` with a `Closure`', function (): void {
-    $filter = SelectFilter::make('status')
-        ->multiple(static fn (): bool => true);
+class TestTableWithSearchableRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
 
-    expect($filter->isMultiple())->toBeTrue();
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('author.name'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'name')
+                    ->searchable(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithPreloadedRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('author.name'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'name')
+                    ->preload(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithModifiedRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('author.name'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship(
+                        'author',
+                        'name',
+                        modifyQueryUsing: fn ($query) => $query->orderBy('name'),
+                    )
+                    ->preload(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithScopeFilteredRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('author.name'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship(
+                        'author',
+                        'name',
+                        modifyQueryUsing: fn ($query) => $query->where('name', 'like', 'Alpha%'),
+                    )
+                    ->preload(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithCustomRelationshipLabelFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('author.name'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'name')
+                    ->getOptionLabelFromRecordUsing(fn (User $record): string => "{$record->name} ({$record->email})")
+                    ->preload(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+describe('selection configuration', function (): void {
+    it('can set `multiple()` with a `Closure`', function (): void {
+        $filter = SelectFilter::make('status')
+            ->multiple(static fn (): bool => true);
+
+        expect($filter->isMultiple())->toBeTrue();
+    });
+
+    it('can set `native()` with a `Closure`', function (): void {
+        $filter = SelectFilter::make('status')
+            ->native(static fn (): bool => false);
+
+        expect($filter->isNative())->toBeFalse();
+    });
+
+    it('can set `optionsLimit()` with a `Closure`', function (): void {
+        $filter = SelectFilter::make('status')
+            ->optionsLimit(static fn (): int => 200);
+
+        expect($filter->getOptionsLimit())->toBe(200);
+    });
 });
 
-it('can set `native()` with a `Closure`', function (): void {
-    $filter = SelectFilter::make('status')
-        ->native(static fn (): bool => false);
-
-    expect($filter->isNative())->toBeFalse();
-});
-
-it('can set `optionsLimit()` with a `Closure`', function (): void {
-    $filter = SelectFilter::make('status')
-        ->optionsLimit(static fn (): int => 200);
-
-    expect($filter->getOptionsLimit())->toBe(200);
-});
-
-it('can set `static()` to prevent query modification', function (): void {
+it('returns fluent `$this` from `static()`', function (): void {
     $filter = SelectFilter::make('status');
 
     $result = $filter->static();
@@ -847,12 +850,12 @@ describe('placeholder', function (): void {
     });
 });
 
-describe('relationship branch coverage', function (): void {
+describe('relationship options and labels', function (): void {
     /**
      * Wires the SelectFilter form field to a Schema with the table's model so that
      * relationship-based methods like `getOptions()` can resolve the model instance.
      */
-    $wireField = function (SelectFilter $filter, string $modelClass = Post::class): Select {
+    $wireField = static function (SelectFilter $filter, string $modelClass = Post::class): Select {
         return $filter->getFormField()->container(
             Schema::make(TestLivewireFixture::make())->model($modelClass),
         );

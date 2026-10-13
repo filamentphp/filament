@@ -16,41 +16,17 @@ beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
 
-it('can toggle state by clicking in the browser', function (): void {
-    $this->actingAs(User::factory()->create());
-
-    visit('/toggle-test')
-        ->assertAttribute('[data-testid="toggle"]', 'aria-checked', 'false')
-        ->click('[data-testid="toggle"]')
-        ->assertAttribute('[data-testid="toggle"]', 'aria-checked', 'true')
-        ->click('[data-testid="toggle"]')
-        ->assertAttribute('[data-testid="toggle"]', 'aria-checked', 'false')
-        ->assertNoSmoke()
-        ->assertNoAccessibilityIssues();
-
-    visit('/toggle-test')
-        ->inDarkMode()
-        ->assertNoAccessibilityIssues();
-});
-
-it('keeps `helperText()` visible after toggling off when `inlineLabel()` and `live()` are used', function (): void {
-    $this->actingAs(User::factory()->create());
-
-    visit('/toggle-test')
-        ->assertSee('Live inline label helper text')
-        ->click('[data-testid="live-inline-label-toggle"]')
-        ->assertAttribute('[data-testid="live-inline-label-toggle"]', 'aria-checked', 'true')
-        ->assertSee('Live inline label helper text')
-        ->click('[data-testid="live-inline-label-toggle"]')
-        ->assertAttribute('[data-testid="live-inline-label-toggle"]', 'aria-checked', 'false')
-        ->assertSee('Live inline label helper text')
-        ->assertNoSmoke();
-});
-
 it('can set and get `onColor()`', function (): void {
     $toggle = Toggle::make('active');
     expect($toggle->getOnColor())->toBeNull();
     $toggle->onColor('success');
+    expect($toggle->getOnColor())->toBe('success');
+});
+
+it('can set `onColor()` with a `Closure`', function (): void {
+    $toggle = Toggle::make('active')
+        ->onColor(static fn (): string => 'success');
+
     expect($toggle->getOnColor())->toBe('success');
 });
 
@@ -61,6 +37,13 @@ it('can set and get `offColor()`', function (): void {
     expect($toggle->getOffColor())->toBe('danger');
 });
 
+it('can set `offColor()` with a `Closure`', function (): void {
+    $toggle = Toggle::make('active')
+        ->offColor(static fn (): string => 'danger');
+
+    expect($toggle->getOffColor())->toBe('danger');
+});
+
 it('can set and get `onIcon()`', function (): void {
     $toggle = Toggle::make('active');
     expect($toggle->getOnIcon())->toBeNull();
@@ -68,10 +51,24 @@ it('can set and get `onIcon()`', function (): void {
     expect($toggle->getOnIcon())->toBe(Heroicon::OutlinedCheck);
 });
 
+it('can set `onIcon()` with a `Closure`', function (): void {
+    $toggle = Toggle::make('active')
+        ->onIcon(static fn () => Heroicon::OutlinedCheck);
+
+    expect($toggle->getOnIcon())->toBe(Heroicon::OutlinedCheck);
+});
+
 it('can set and get `offIcon()`', function (): void {
     $toggle = Toggle::make('active');
     expect($toggle->getOffIcon())->toBeNull();
     $toggle->offIcon(Heroicon::OutlinedXMark);
+    expect($toggle->getOffIcon())->toBe(Heroicon::OutlinedXMark);
+});
+
+it('can set `offIcon()` with a `Closure`', function (): void {
+    $toggle = Toggle::make('active')
+        ->offIcon(static fn () => Heroicon::OutlinedXMark);
+
     expect($toggle->getOffIcon())->toBe(Heroicon::OutlinedXMark);
 });
 
@@ -83,14 +80,12 @@ it('can set `inline()`', function (): void {
     expect($toggle->isInline())->toBeFalse();
 });
 
-it('can render a toggle with `onColor()`', function (): void {
-    livewire(TestComponentWithColoredToggle::class)
-        ->assertSuccessful();
-});
+it('can set `inline()` with a `Closure`', function (): void {
+    $toggle = Toggle::make('active')
+        ->container(Schema::make(Livewire::make()))
+        ->inline(static fn (): bool => false);
 
-it('can render a toggle with icons', function (): void {
-    livewire(TestComponentWithIconToggle::class)
-        ->assertSuccessful();
+    expect($toggle->isInline())->toBeFalse();
 });
 
 it('defaults state to `false`', function (): void {
@@ -129,42 +124,14 @@ describe('`accepted()` and `declined()` validation', function (): void {
     });
 });
 
-describe('Closure support', function (): void {
-    it('can set `onColor()` with a `Closure`', function (): void {
-        $toggle = Toggle::make('active')
-            ->onColor(static fn (): string => 'success');
+it('can render a toggle with `onColor()`', function (): void {
+    livewire(TestComponentWithColoredToggle::class)
+        ->assertSuccessful();
+});
 
-        expect($toggle->getOnColor())->toBe('success');
-    });
-
-    it('can set `offColor()` with a `Closure`', function (): void {
-        $toggle = Toggle::make('active')
-            ->offColor(static fn (): string => 'danger');
-
-        expect($toggle->getOffColor())->toBe('danger');
-    });
-
-    it('can set `onIcon()` with a `Closure`', function (): void {
-        $toggle = Toggle::make('active')
-            ->onIcon(static fn () => Heroicon::OutlinedCheck);
-
-        expect($toggle->getOnIcon())->toBe(Heroicon::OutlinedCheck);
-    });
-
-    it('can set `offIcon()` with a `Closure`', function (): void {
-        $toggle = Toggle::make('active')
-            ->offIcon(static fn () => Heroicon::OutlinedXMark);
-
-        expect($toggle->getOffIcon())->toBe(Heroicon::OutlinedXMark);
-    });
-
-    it('can set `inline()` with a `Closure`', function (): void {
-        $toggle = Toggle::make('active')
-            ->container(Schema::make(Livewire::make()))
-            ->inline(static fn (): bool => false);
-
-        expect($toggle->isInline())->toBeFalse();
-    });
+it('can render a toggle with icons', function (): void {
+    livewire(TestComponentWithIconToggle::class)
+        ->assertSuccessful();
 });
 
 describe('rendering', function (): void {
@@ -217,6 +184,38 @@ describe('rendering', function (): void {
 
         expect($html)->toContain('fi-toggle-on fi-hidden');
     });
+});
+
+it('can toggle state by clicking in the browser', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/toggle-test');
+
+    $page
+        ->assertAttribute('[data-testid="toggle"]', 'aria-checked', 'false')
+        ->click('[data-testid="toggle"]')
+        ->assertAttribute('[data-testid="toggle"]', 'aria-checked', 'true')
+        ->click('[data-testid="toggle"]')
+        ->assertAttribute('[data-testid="toggle"]', 'aria-checked', 'false')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()
+        ->assertNoAccessibilityIssues();
+});
+
+it('keeps `helperText()` visible after toggling off when `inlineLabel()` and `live()` are used', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/toggle-test')
+        ->assertSee('Live inline label helper text')
+        ->click('[data-testid="live-inline-label-toggle"]')
+        ->assertAttribute('[data-testid="live-inline-label-toggle"]', 'aria-checked', 'true')
+        ->assertSee('Live inline label helper text')
+        ->click('[data-testid="live-inline-label-toggle"]')
+        ->assertAttribute('[data-testid="live-inline-label-toggle"]', 'aria-checked', 'false')
+        ->assertSee('Live inline label helper text')
+        ->assertNoSmoke();
 });
 
 class TestComponentWithAcceptedToggle extends Livewire

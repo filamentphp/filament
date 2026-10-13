@@ -1,7 +1,6 @@
 <?php
 
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Enums\ActionStatus;
@@ -14,6 +13,7 @@ use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
+use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
@@ -207,8 +207,7 @@ it('returns `callMountedAction` for `getLivewireCallMountedActionName()`', funct
 it('can use deprecated `hold()` as alias for `halt()`', function (): void {
     $action = Action::make('test');
 
-    // `hold()` should not throw (it calls `halt()` internally)
-    expect($action)->toBeInstanceOf(Action::class);
+    expect(fn () => $action->hold())->toThrow(Halt::class);
 });
 
 it('can set `keyBindings()` with a string', function (): void {
@@ -492,15 +491,14 @@ describe('construction and properties', function (): void {
         $action = Action::make('test')
             ->actionJs('alert("hi")');
 
-        // actionJs stores the string for client-side action
-        expect($action)->toBeInstanceOf(Action::class);
+        expect($action->getCustomAlpineClickHandler())->toBe('alert("hi")');
     });
 
     it('can set `actionJs()` with a `Closure`', function (): void {
         $action = Action::make('test')
             ->actionJs(static fn (): string => 'alert("dynamic")');
 
-        expect($action)->toBeInstanceOf(Action::class);
+        expect($action->getCustomAlpineClickHandler())->toBe('alert("dynamic")');
     });
 
     it('can convert to array with `toArray()`', function (): void {
@@ -542,7 +540,7 @@ describe('construction and properties', function (): void {
         $action = Action::make('test')
             ->withAttributes(['data-test' => 'value']);
 
-        expect($action)->toBeInstanceOf(Action::class);
+        expect($action->getExtraAttributes())->toBe(['data-test' => 'value']);
     });
 });
 describe('properties', function (): void {
@@ -1015,47 +1013,6 @@ describe('rendering', function (): void {
         $html = Action::make('test')->url('/foo"><script>')->toHtml();
 
         expect($html)->not->toContain('"><script>');
-    });
-
-    it('renders an `ActionGroup` with a dropdown trigger', function (): void {
-        $group = ActionGroup::make([
-            Action::make('first')->label('First'),
-            Action::make('second')->label('Second'),
-        ])->label('Open menu');
-
-        $html = $group->toHtml();
-
-        expect($html)
-            ->toContain('fi-dropdown')
-            ->toContain('Open menu');
-    });
-
-    it('renders an `ActionGroup` containing all child action labels', function (): void {
-        $group = ActionGroup::make([
-            Action::make('alpha')->label('Alpha'),
-            Action::make('bravo')->label('Bravo'),
-            Action::make('charlie')->label('Charlie'),
-        ]);
-
-        $html = $group->toHtml();
-
-        expect($html)
-            ->toContain('Alpha')
-            ->toContain('Bravo')
-            ->toContain('Charlie');
-    });
-
-    it('skips hidden actions in `ActionGroup` rendering', function (): void {
-        $group = ActionGroup::make([
-            Action::make('visible')->label('Visible Action'),
-            Action::make('hidden')->label('Hidden Action')->hidden(),
-        ]);
-
-        $html = $group->toHtml();
-
-        expect($html)
-            ->toContain('Visible Action')
-            ->not->toContain('Hidden Action');
     });
 
     it('renders a `link()` `Action` with an icon and a label', function (): void {
@@ -1607,23 +1564,17 @@ describe('notifications', function (): void {
             ->callAction('shows-notification-with-id')
             ->assertNotNotified('An incorrect notification');
 
-        $this->expectException('PHPUnit\Framework\ExpectationFailedException');
-        $this->expectExceptionMessage('The notification with the given configuration was sent');
-
-        livewire(Actions::class)
+        expect(fn () => livewire(Actions::class)
             ->callAction('shows-notification-with-id')
             ->assertNotNotified(
                 Notification::make()
                     ->title('A notification')
                     ->success()
-            );
+            ))->toThrow('PHPUnit\Framework\ExpectationFailedException', 'The notification with the given configuration was sent');
 
-        $this->expectException('PHPUnit\Framework\ExpectationFailedException');
-        $this->expectExceptionMessage('The notification with the given title was sent');
-
-        livewire(Actions::class)
+        expect(fn () => livewire(Actions::class)
             ->callAction('shows-notification-with-id')
-            ->assertNotNotified('A notification');
+            ->assertNotNotified('A notification'))->toThrow('PHPUnit\Framework\ExpectationFailedException', 'The notification with the given title was sent');
     });
 
     it('will raise an exception if a notification was not sent checking notification object', function (): void {

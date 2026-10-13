@@ -380,7 +380,7 @@ describe('browser interactions', function (): void {
             ->keys('[data-testid="scroll-field-1"]', 'Tab')
             ->assertPresent('[data-testid="scroll-field-2"]:focus')
             ->keys('[data-testid="scroll-field-1"]', 'Shift+Tab')
-            ->assertScript('document.activeElement.closest(\'[data-testid="scroll-modal"]\') !== null', true)
+            ->assertPresent('[data-testid="scroll-modal"] :focus')
             ->keys('[data-testid="scroll-modal"]', 'Control+End')
             ->assertScript('(() => { const modal = document.querySelector(\'[data-testid="scroll-modal"]\'); return modal.scrollTop === modal.scrollHeight - modal.clientHeight })()', true)
             ->click('[data-testid="scroll-nested-trigger"]')

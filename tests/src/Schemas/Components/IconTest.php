@@ -293,7 +293,9 @@ it('exposes meaningful icons and hides decorative icons in light and dark modes'
     $this->actingAs(User::factory()->create());
     Artisan::call('filament:assets');
 
-    visit('/icon-browser-test')
+    $page = visit('/icon-browser-test');
+
+    $page
         ->assertNoSmoke()
         ->assertPresent('[data-testid="built-in-named"][aria-hidden="true"] + [role="img"][aria-label="Verified account"]')
         ->assertPresent('[data-testid="custom-named"][aria-hidden="true"] + [role="img"][aria-label="Custom status"]')
@@ -305,7 +307,6 @@ it('exposes meaningful icons and hides decorative icons in light and dark modes'
         ->assertNotPresent('[data-testid="built-in-decorative"] + [role="img"], [data-testid="custom-decorative"] + [role="img"]')
         ->assertNoAccessibilityIssues();
 
-    visit('/icon-browser-test')
-        ->inDarkMode()
+    $page->inDarkMode()
         ->assertNoAccessibilityIssues();
 });

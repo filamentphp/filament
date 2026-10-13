@@ -232,7 +232,6 @@ describe('merge tags', function (): void {
 
         $html = $renderer->toUnsafeHtml();
 
-        // Should not throw errors and should render the separators
         expect($html)->toContain(' | ');
     });
 
@@ -1688,33 +1687,6 @@ describe('CSS injection', function (): void {
     });
 });
 
-// Concrete test blocks for getCustomBlockHtml tests
-class RendererTestAlertBlock extends RichContentCustomBlock
-{
-    public static function getId(): string
-    {
-        return 'alert';
-    }
-
-    public static function toHtml(array $config, array $data): ?string
-    {
-        return '<div class="alert-' . ($config['type'] ?? 'info') . '">' . ($data['message'] ?? '') . '</div>';
-    }
-}
-
-class RendererTestBannerBlock extends RichContentCustomBlock
-{
-    public static function getId(): string
-    {
-        return 'banner';
-    }
-
-    public static function toHtml(array $config, array $data): ?string
-    {
-        return '<div class="banner">' . ($config['text'] ?? '') . '</div>';
-    }
-}
-
 describe('`getMergeTagValue()` logic', function (): void {
     it('resolves a merge tag value', function (): void {
         $renderer = RichContentRenderer::make('')
@@ -1811,7 +1783,7 @@ describe('`getCustomBlockHtml()` logic', function (): void {
     });
 });
 
-describe('`processCustomBlocks()` end-to-end rendering', function (): void {
+describe('custom block rendering', function (): void {
     it('renders custom block HTML in output', function (): void {
         $renderer = RichContentRenderer::make([
             'type' => 'doc',
@@ -2011,11 +1983,11 @@ describe('`getTextColors()` logic', function (): void {
     });
 
     it('passes through `TextColor` objects unchanged', function (): void {
-        $tc = TextColor::make('#ff0000', 'red');
+        $textColor = TextColor::make('#ff0000', 'red');
         $renderer = RichContentRenderer::make('')
-            ->textColors(['red' => $tc]);
+            ->textColors(['red' => $textColor]);
 
-        expect($renderer->getTextColors()['red'])->toBe($tc);
+        expect($renderer->getTextColors()['red'])->toBe($textColor);
     });
 });
 
@@ -2057,7 +2029,6 @@ describe('file attachment URLs', function (): void {
         $url = $renderer->getFileAttachmentUrl('photos/avatar.jpg');
 
         expect($url)->toBeString();
-        // Temporary URLs include a signature parameter under the `Storage::fake` driver.
         expect($url)->toContain('photos/avatar.jpg');
     });
 
@@ -2215,7 +2186,7 @@ describe('file attachment URLs', function (): void {
 });
 
 describe('output sanitization', function (): void {
-    it('strips `<script>` tags from the rendered HTML via `sanitizeHtml`', function (): void {
+    it('strips `<script>` tags from the rendered HTML via `toHtml()`', function (): void {
         $html = RichContentRenderer::make('<p>Hello</p><script>alert(1)</script>')->toHtml();
 
         expect($html)->toContain('Hello');
@@ -2229,3 +2200,29 @@ describe('output sanitization', function (): void {
         expect($html)->toContain('<em>italic</em>');
     });
 });
+
+class RendererTestAlertBlock extends RichContentCustomBlock
+{
+    public static function getId(): string
+    {
+        return 'alert';
+    }
+
+    public static function toHtml(array $config, array $data): ?string
+    {
+        return '<div class="alert-' . ($config['type'] ?? 'info') . '">' . ($data['message'] ?? '') . '</div>';
+    }
+}
+
+class RendererTestBannerBlock extends RichContentCustomBlock
+{
+    public static function getId(): string
+    {
+        return 'banner';
+    }
+
+    public static function toHtml(array $config, array $data): ?string
+    {
+        return '<div class="banner">' . ($config['text'] ?? '') . '</div>';
+    }
+}

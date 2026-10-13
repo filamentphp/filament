@@ -134,5 +134,5 @@ describe('notifications', function (): void {
 
 class DerivedGeneralSettings extends SettingsPage
 {
-    // No $settings property — should derive from class name
+    // Omit `$settings` so `getSettings()` derives it from the class name.
 }

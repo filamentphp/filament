@@ -86,7 +86,6 @@ it('can prepare query for no constraints for a BelongsToMany relationship', func
         ->column->getValue($user->teams()->getGrammar())->toBe("CASE WHEN role = 'some_other_role' THEN 1 ELSE 2 END")
         ->direction->toBe('asc');
 
-    // Add a raw order with a direction
     $preparedQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints(
         $user->teams()->orderByRaw('role DESC')
     );

@@ -13,8 +13,6 @@ use Illuminate\View\ComponentAttributeBag;
 
 uses(TestCase::class);
 
-// Field is abstract (no view), so we test via TextInput which extends it directly.
-
 describe('construction', function (): void {
     it('can be constructed with a name', function (): void {
         $field = TextInput::make('email');
@@ -272,21 +270,19 @@ describe('extra field wrapper attributes', function (): void {
     });
 });
 
-describe('slot methods return fluent `$this`', function (): void {
-    it('returns fluent `$this` from all slot methods', function (): void {
-        $field = TextInput::make('name');
+it('returns fluent `$this` from all slot methods', function (): void {
+    $field = TextInput::make('name');
 
-        expect($field->aboveLabel([]))->toBe($field);
-        expect($field->belowLabel([]))->toBe($field);
-        expect($field->beforeLabel([]))->toBe($field);
-        expect($field->afterLabel([]))->toBe($field);
-        expect($field->aboveContent([]))->toBe($field);
-        expect($field->belowContent([]))->toBe($field);
-        expect($field->beforeContent([]))->toBe($field);
-        expect($field->afterContent([]))->toBe($field);
-        expect($field->aboveErrorMessage([]))->toBe($field);
-        expect($field->belowErrorMessage([]))->toBe($field);
-    });
+    expect($field->aboveLabel([]))->toBe($field);
+    expect($field->belowLabel([]))->toBe($field);
+    expect($field->beforeLabel([]))->toBe($field);
+    expect($field->afterLabel([]))->toBe($field);
+    expect($field->aboveContent([]))->toBe($field);
+    expect($field->belowContent([]))->toBe($field);
+    expect($field->beforeContent([]))->toBe($field);
+    expect($field->afterContent([]))->toBe($field);
+    expect($field->aboveErrorMessage([]))->toBe($field);
+    expect($field->belowErrorMessage([]))->toBe($field);
 });
 
 it('returns `false` for `hasNullableBooleanState()`', function (): void {

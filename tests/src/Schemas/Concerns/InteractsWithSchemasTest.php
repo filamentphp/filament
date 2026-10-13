@@ -142,14 +142,15 @@ it('renders a customized no-argument schema accessibly in light and dark modes',
 
     $this->actingAs(User::factory()->create());
 
-    visit('/schema-caching-browser-test')
+    $page = visit('/schema-caching-browser-test');
+
+    $page
         ->assertSee('Customized no-argument schema')
         ->assertPresent('[data-testid="customized-no-argument-schema"][data-default-hook="base"][data-subclass-hook="applied"]')
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
 
-    visit('/schema-caching-browser-test')
-        ->inDarkMode()
+    $page->inDarkMode()
         ->assertPresent('[data-testid="customized-no-argument-schema"]')
         ->assertNoAccessibilityIssues();
 });

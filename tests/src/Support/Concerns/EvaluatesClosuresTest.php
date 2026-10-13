@@ -103,10 +103,7 @@ it('will instantiate empty Models from container if bound as scoped', function (
     });
 });
 
-class RecordModel extends Model
-{
-    //
-}
+class RecordModel extends Model {}
 
 class IsEvaluatingClosures
 {

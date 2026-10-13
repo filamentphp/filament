@@ -84,7 +84,6 @@ describe('deduplication and clearing', function (): void {
         $panel->cacheComponents();
         $panel->restoreCachedComponents();
 
-        // Calling `resources()` again with cached components should not add duplicates
         $countBefore = count($panel->getResources());
         $panel->resources([PostResource::class]);
         $countAfter = count($panel->getResources());
@@ -98,7 +97,6 @@ describe('deduplication and clearing', function (): void {
         $panel->cacheComponents();
         $panel->restoreCachedComponents();
 
-        // Calling `pages()` again with cached components should not add duplicates
         $countBefore = count($panel->getPages());
         $panel->pages([Settings::class]);
         $countAfter = count($panel->getPages());
@@ -127,11 +125,9 @@ describe('configuration preservation', function (): void {
         $panel->cacheComponents();
         $panel->restoreCachedComponents();
 
-        // Verify configurations still exist
         $configurations = $panel->getResourceConfigurations();
         expect($configurations)->toHaveCount(2);
 
-        // Verify configuration properties are preserved (not just class and key)
         $featuredConfig = $panel->getResourceConfiguration(ConfigurablePostResource::class, 'featured');
         expect($featuredConfig)->not->toBeNull();
         expect($featuredConfig->getSlug())->toBe('featured-posts');
@@ -157,11 +153,9 @@ describe('configuration preservation', function (): void {
         $panel->cacheComponents();
         $panel->restoreCachedComponents();
 
-        // Verify configurations still exist
         $configurations = $panel->getPageConfigurations();
         expect($configurations)->toHaveCount(2);
 
-        // Verify configuration properties are preserved (not just class and key)
         $generalConfig = $panel->getPageConfiguration(ConfigurableSettings::class, 'general');
         expect($generalConfig)->not->toBeNull();
         expect($generalConfig->getSlug())->toBe('general-settings');
