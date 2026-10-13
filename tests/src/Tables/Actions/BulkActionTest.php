@@ -1,12 +1,21 @@
 <?php
 
+use Filament\Actions\BulkAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Grouping\Group;
+use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\SelectablePostsTable;
+use Filament\Tests\Fixtures\Livewire\TicketDepartmentsReorderableTable;
+use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Tables\TestCase;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -197,6 +206,171 @@ it('can state whether bulk actions exist in order', function (): void {
     livewire(PostsTable::class)
         ->assertTableBulkActionsExistInOrder(['exists', 'existsInOrder']);
 });
+
+it('only deletes search matches when selecting all relationship records with `allowDuplicates()`', function (bool $duplicates, string $action): void {
+    $ticket = Ticket::factory()->create();
+    $matchingDepartments = Department::factory()->count(3)->create(['name' => 'Sales']);
+    $otherDepartments = Department::factory()->count(2)->create(['name' => 'Engineering']);
+    $ticket->departments()->attach($matchingDepartments->merge($otherDepartments)->modelKeys());
+
+    livewire(TicketDepartmentsReorderableTable::class, ['ticketKey' => $ticket->getKey(), 'duplicates' => $duplicates])
+        ->searchTable('Sales')
+        ->set('isTrackingDeselectedTableRecords', true)
+        ->callTableBulkAction($action, []);
+
+    foreach ($matchingDepartments as $department) {
+        assertSoftDeleted($department);
+    }
+
+    expect(Department::query()->whereIn('id', $otherDepartments->modelKeys())->count())->toBe(2);
+})->with([false, true])->with(['delete', 'queryBulkDelete']);
+
+it('respects search filters scopes and exclusions when selecting all with `allowDuplicates()`', function (string $constraint, string $action): void {
+    $ticket = Ticket::factory()->create();
+    $sales = Department::factory()->create(['name' => 'Sales']);
+    $engineering = Department::factory()->create(['name' => 'Engineering']);
+    foreach ([1, 5, 7, 9] as $quantity) {
+        $ticket->departments()->attach($sales, ['quantity' => $quantity]);
+    }
+    $ticket->departments()->attach($engineering, ['quantity' => 1]);
+    $ticket->departments()->attach(Department::factory()->create(['name' => 'Sales', 'deleted_at' => now()]), ['quantity' => 11]);
+    $excludedKeys = DB::table('department_ticket')->whereIn('quantity', [1, 7])->where('department_id', $sales->getKey())->pluck('id')->all();
+    $expectedQuantities = match ($constraint) {
+        'max', 'scopeLimit', 'globalScopeLimit' => [9],
+        'scopeOffset', 'globalScopeOffset' => [5],
+        default => [5, 9],
+    };
+
+    Table::configureUsing(
+        static function (Table $table) use ($constraint): void {
+            if ($constraint === 'filter') {
+                $table->filters([
+                    Filter::make('quantity')->query(static fn (Builder $query): Builder => $query->where('department_ticket.quantity', '>', 1)),
+                ])->deferFilters(false);
+            } elseif ($constraint === 'scope') {
+                $table->modifyQueryUsing(static fn (Builder $query): Builder => (clone $query)->where('department_ticket.quantity', '>', 1));
+            } elseif (in_array($constraint, ['max', 'scopeLimit', 'scopeOffset', 'globalScopeLimit', 'globalScopeOffset'])) {
+                $table
+                    ->defaultSort('department_ticket.quantity', 'desc')
+                    ->checkIfRecordIsSelectableUsing(static fn (): bool => true)
+                    ->modifyQueryUsing(static fn (Builder $query): Builder => $query->where('department_ticket.quantity', '>', 1));
+
+                if ($constraint === 'max') {
+                    $table->maxSelectableRecords(1);
+                } elseif ($constraint === 'scopeLimit') {
+                    $table->modifyQueryUsing(static fn (Builder $query): Builder => $query->limit(1));
+                } elseif ($constraint === 'globalScopeLimit') {
+                    $table->modifyQueryUsing(static fn (Builder $query): Builder => $query->withGlobalScope(
+                        'selectionLimit',
+                        static fn (Builder $query): Builder => $query->limit(1),
+                    ));
+                } elseif ($constraint === 'globalScopeOffset') {
+                    $table->modifyQueryUsing(static fn (Builder $query): Builder => $query->withGlobalScope(
+                        'selectionOffset',
+                        static fn (Builder $query): Builder => $query->limit(1)->offset(1),
+                    ));
+                } else {
+                    $table->modifyQueryUsing(static fn (Builder $query): Builder => $query->limit(1)->offset(1));
+                }
+            }
+        },
+        during: function () use ($ticket, $constraint, $action, $excludedKeys, $expectedQuantities): void {
+            $component = livewire(TicketDepartmentsReorderableTable::class, ['ticketKey' => $ticket->getKey(), 'duplicates' => true]);
+
+            if ($constraint === 'search') {
+                $component->searchTable('Sales');
+            } elseif ($constraint === 'columnSearch') {
+                $component->searchTableColumns(['name' => 'Sales']);
+            } elseif ($constraint === 'filter') {
+                $component->filterTable('quantity');
+            }
+
+            BulkAction::configureUsing(
+                static fn (BulkAction $bulkAction) => $bulkAction->chunkSelectedRecords($action === 'chunked' ? 1 : null),
+                during: static fn () => $component
+                    ->set('isTrackingDeselectedTableRecords', true)
+                    ->set('deselectedTableRecords', $excludedKeys)
+                    ->callTableBulkAction($action === 'chunked' ? 'customBulk' : $action, [])
+                    ->assertDispatched('customBulk-called', quantities: $expectedQuantities),
+            );
+        },
+    );
+})->with(['search', 'columnSearch', 'filter', 'scope', 'max', 'scopeLimit', 'scopeOffset', 'globalScopeLimit', 'globalScopeOffset'])->with(['customBulk', 'queryBulk', 'chunked']);
+
+it('checks selectability per pivot row when selecting all with `allowDuplicates()`', function (string $action, bool $crossesBatchBoundary): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create();
+    $quantities = $crossesBatchBoundary ? [3, ...array_fill(0, 998, 5), 7, 5, 11] : [3, 5, 7];
+
+    foreach ($quantities as $quantity) {
+        $ticket->departments()->attach($department, ['quantity' => $quantity]);
+    }
+
+    Table::configureUsing(
+        static fn (Table $table): Table => $table->checkIfRecordIsSelectableUsing(static fn (Department $record): bool => $record->quantity !== 5),
+        during: static fn () => BulkAction::configureUsing(
+            static fn (BulkAction $bulkAction) => $bulkAction->chunkSelectedRecords($action === 'chunked' ? 1 : null),
+            during: static fn () => livewire(TicketDepartmentsReorderableTable::class, ['ticketKey' => $ticket->getKey(), 'duplicates' => true])
+                ->set('isTrackingDeselectedTableRecords', true)
+                ->callTableBulkAction($action === 'chunked' ? 'customBulk' : $action, [])
+                ->assertDispatched('customBulk-called', quantities: $crossesBatchBoundary ? [3, 7, 11] : [3, 7]),
+        ),
+    );
+})->with([
+    'fetched' => ['customBulk', false],
+    'query' => ['queryBulk', false],
+    'chunked' => ['chunked', false],
+    'query across batch boundary' => ['queryBulk', true],
+]);
+
+it('uses pivot keys for explicit selection with `allowDuplicates()`', function (string $selection, bool $checksSelectability, string $action): void {
+    $ticket = Ticket::factory()->create();
+    $otherTicket = Ticket::factory()->create();
+    $sales = Department::factory()->create(['name' => 'Sales']);
+    $engineering = Department::factory()->create(['name' => 'Engineering']);
+    $otherTicket->departments()->attach($sales);
+    $otherTicket->departments()->attach($sales);
+    $ticket->departments()->attach($sales, ['quantity' => 3]);
+    $ticket->departments()->attach($sales, ['quantity' => 7]);
+    $ticket->departments()->attach($engineering, ['quantity' => 9]);
+    $selectsCurrentPageOnly = in_array($selection, ['page', 'groupPage']);
+
+    Table::configureUsing(
+        static fn (Table $table): Table => $table
+            ->deselectAllRecordsWhenFiltered(false)
+            ->selectCurrentPageOnly($selectsCurrentPageOnly)
+            ->paginationPageOptions($selectsCurrentPageOnly ? [1] : null)
+            ->defaultSort('department_ticket.id')
+            ->groups([Group::make('name')])
+            ->modifyQueryUsing(static fn (Builder $query): Builder => $query->withGlobalScope(
+                'projection',
+                static fn (Builder $query): Builder => $query->select('departments.*')->withCount('tickets'),
+            ))
+            ->checkIfRecordIsSelectableUsing($checksSelectability ? static fn (Department $record): bool => $record->quantity !== 7 : null),
+        during: function () use ($ticket, $selection, $selectsCurrentPageOnly, $action, $checksSelectability): void {
+            $component = livewire(TicketDepartmentsReorderableTable::class, [
+                'ticketKey' => $ticket->getKey(),
+                'duplicates' => true,
+                'isPaginated' => $selectsCurrentPageOnly,
+            ])->searchTable('Sales');
+
+            if (in_array($selection, ['group', 'groupPage'])) {
+                $component->set('tableGrouping', 'name:asc');
+            }
+
+            $keys = in_array($selection, ['group', 'groupPage']) ?
+                $component->instance()->getGroupedSelectableTableRecordKeys('Sales') :
+                $component->instance()->getAllSelectableTableRecordKeys();
+
+            BulkAction::configureUsing(
+                static fn (BulkAction $bulkAction) => $bulkAction->chunkSelectedRecords($action === 'chunked' ? 1 : null),
+                during: static fn () => $component->searchTable('Engineering')
+                    ->callTableBulkAction($action === 'chunked' ? 'customBulk' : $action, $keys)
+                    ->assertDispatched('customBulk-called', quantities: ($selectsCurrentPageOnly || $checksSelectability) ? [3] : [3, 7]),
+            );
+        },
+    );
+})->with(['all', 'page', 'group', 'groupPage'])->with([false, true])->with(['customBulk', 'queryBulk', 'chunked']);
 
 it('does not receive non-selectable records when using select all', function (): void {
     // 2 published (selectable) and 1 unpublished (non-selectable)

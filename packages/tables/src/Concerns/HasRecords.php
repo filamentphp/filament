@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Support\ArrayRecord;
+use Filament\Tables\Enums\PaginationMode;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -176,6 +177,10 @@ trait HasRecords
             throw new LogicException("Table [{$livewireClass}] must have a [query()], [relationship()], or [records()].");
         }
 
+        if ($this->getTable()->hasPivotRecordKeys()) {
+            $query = $this->applyPivotRecordKeyToTableQuery($query);
+        }
+
         if (
             (! $this->getTable()->isPaginated()) ||
             ($this->isTableReordering() && (! $this->getTable()->isPaginatedWhileReordering()))
@@ -232,6 +237,10 @@ trait HasRecords
             $column->applyRelationshipAggregates($query);
         }
 
+        if ($table->hasPivotRecordKeys()) {
+            $this->applyPivotRecordKeyToTableQuery($query->getQuery());
+        }
+
         $record = $table->selectPivotDataInQuery($query)->first();
 
         return $record?->setRawAttributes($record->getRawOriginal());
@@ -266,6 +275,10 @@ trait HasRecords
             return $record->getKey();
         }
 
+        if (array_key_exists('filament_pivot_key', $record->getAttributes())) {
+            return $record->getAttribute('filament_pivot_key');
+        }
+
         /** @var BelongsToMany $relationship */
         $relationship = $table->getRelationship();
 
@@ -273,6 +286,37 @@ trait HasRecords
         $pivotKeyName = app($pivotClass)->getKeyName();
 
         return $record->getAttributeValue($pivotKeyName);
+    }
+
+    protected function getQualifiedTablePivotKeyName(): string
+    {
+        /** @var BelongsToMany $relationship */
+        $relationship = $this->getTable()->getRelationship();
+
+        return $relationship->qualifyPivotColumn(app($relationship->getPivotClass())->getKeyName());
+    }
+
+    protected function applyPivotRecordKeyToTableQuery(Builder $query): Builder
+    {
+        $qualifiedKeyName = $this->getQualifiedTablePivotKeyName();
+        $query->addSelect("{$qualifiedKeyName} as filament_pivot_key");
+
+        if ($this->getTable()->getPaginationMode() === PaginationMode::Cursor) {
+            foreach ($query->getQuery()->orders ?? [] as $orderIndex => $order) {
+                if (($order['column'] ?? null) === $qualifiedKeyName) {
+                    $query->getQuery()->orders[$orderIndex]['column'] = 'filament_pivot_key';
+                }
+            }
+
+            if (! in_array('filament_pivot_key', array_column($query->getQuery()->orders ?? [], 'column'), true)) {
+                $query->orderBy('filament_pivot_key');
+            }
+        }
+
+        return $query->withGlobalScope('filamentPivotRecordKey', function (Builder $query) use ($qualifiedKeyName): void {
+            $this->getTable()->selectPivotDataInQuery($query);
+            $query->addSelect("{$qualifiedKeyName} as filament_pivot_key");
+        });
     }
 
     public function getAllTableRecordsCount(): int
