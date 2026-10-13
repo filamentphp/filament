@@ -410,6 +410,20 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke();
     });
 
+    it('renders an accessible modal eyebrow using `modalEyebrow()`', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $browser = visit('/modal-browser-test');
+
+        $browser
+            ->click('[data-testid="eyebrow-trigger"]')
+            ->assertVisible('[data-testid="eyebrow-modal"] .fi-modal-eyebrow')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        $browser->inDarkMode()->assertNoAccessibilityIssues();
+    });
+
     it('restores focus after a nested overlay action cancels its parent action', function (): void {
         $this->actingAs(User::factory()->create());
 

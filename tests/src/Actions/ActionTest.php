@@ -694,6 +694,21 @@ describe('properties', function (): void {
         expect($action->getModalDescription())->toBe('Are you sure you want to proceed?');
         expect($action->getModalWidth())->toBe(Width::TwoExtraLarge);
     });
+
+    it('returns `null` for `getModalEyebrow()` by default', function (): void {
+        $action = Action::make('test');
+
+        expect($action->getModalEyebrow())->toBeNull();
+        expect($action->hasModalEyebrow())->toBeFalse();
+    });
+
+    it('can set a modal eyebrow via `modalEyebrow()`', function (): void {
+        $action = Action::make('test')
+            ->modalEyebrow(static fn (): string => 'Edit post');
+
+        expect($action->getModalEyebrow())->toBe('Edit post');
+        expect($action->hasModalEyebrow())->toBeTrue();
+    });
 });
 describe('visibility and state', function (): void {
     it('can hide an action', function (): void {
