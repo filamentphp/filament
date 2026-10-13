@@ -4,6 +4,7 @@ namespace Filament\Notifications\Livewire;
 
 use Filament\Notifications\Collection;
 use Filament\Notifications\Notification;
+use Filament\Notifications\NotificationMailbox;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -28,17 +29,12 @@ class Notifications extends Component
     public function mount(): void
     {
         $this->notifications = new Collection;
-        $this->pullNotificationsFromSession();
     }
 
     #[On('notificationsSent')]
     public function pullNotificationsFromSession(): void
     {
-        $notifications = session()->pull('filament.claimed_notifications')
-            ?? session()->pull('filament.notifications')
-            ?? [];
-
-        foreach ($notifications as $notification) {
+        foreach (app(NotificationMailbox::class)->pull() as $notification) {
             $notification = Notification::fromArray($notification);
 
             $this->pushNotification($notification);

@@ -13,3 +13,20 @@ window.FilamentNotification = Notification
 document.addEventListener('alpine:init', () => {
     window.Alpine.data('notificationComponent', notification)
 })
+
+document.addEventListener('livewire:init', () => {
+    Livewire.hook('request', ({ succeed }) => {
+        succeed(({ json }) => {
+            if (
+                !json.filamentNotifications ||
+                json.components.some((component) => component.effects.redirect)
+            ) {
+                return
+            }
+
+            // Wait for morphs and their component initialization, without relying
+            // on any bundled component's element surviving the response.
+            window.Alpine.nextTick(() => Livewire.dispatch('notificationsSent'))
+        })
+    })
+})

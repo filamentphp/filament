@@ -251,7 +251,8 @@ describe('search results', function (): void {
             ->keys($resultSelector, 'Tab')
             ->keys($previewSelector, 'Space')
             ->assertVisible('#global-search-preview button')
-            ->keys('#global-search-preview button', 'Escape')
+            ->assertPresent('#global-search-preview :focus')
+            ->keys(':focus', 'Escape')
             ->assertMissing('#global-search-preview button')
             ->assertValue($inputSelector, $search)
             ->assertPresent("{$inputSelector}:focus");

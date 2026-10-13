@@ -8,6 +8,8 @@ use Filament\Actions\Imports\ImportDispatcher;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Livewire\Notifications;
+use Filament\Notifications\NotificationMailbox;
 use Filament\Tests\Actions\TestCase;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
@@ -74,13 +76,18 @@ it('runs synchronous imports and completion notifications with the original guar
     assertDatabaseHas('posts', ['title' => 'First post']);
     assertDatabaseCount('failed_import_rows', 1);
 
-    $notifications = session('filament.claimed_notifications');
-    expect($notifications)->toHaveCount(1);
-    $notification = array_values($notifications)[0];
-    expect($notification['title'])->toBe('Dispatch completed')
-        ->and($notification['status'])->toBe('warning')
-        ->and($notification['duration'])->toBe('persistent')
-        ->and($notification['actions'][0]['url'])->toContain('authGuard=staff');
+    app(NotificationMailbox::class)->flush();
+    $notification = livewire(Notifications::class)
+        ->dispatch('notificationsSent')
+        ->assertCount('notifications', 1)
+        ->get('notifications')
+        ->first();
+
+    expect($notification)
+        ->getTitle()->toBe('Dispatch completed')
+        ->getStatus()->toBe('warning')
+        ->getDuration()->toBe('persistent');
+    expect($notification->getActions()[0]->getUrl())->toContain('authGuard=staff');
 });
 
 it('preserves importer batch metadata and the asynchronous started notification', function (): void {

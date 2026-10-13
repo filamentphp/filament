@@ -12,6 +12,20 @@ beforeEach(function (): void {
     $this->actingAs(User::factory()->create());
 });
 
+it('delivers notifications once across redirects', function (string $redirect): void {
+    visit('/notification-browser-test')
+        ->click("[data-testid=\"send-{$redirect}-redirect-notification\"]")
+        ->assertQueryStringHas('redirected', '1')
+        ->assertCount('.fi-no .fi-no-notification', 1)
+        ->assertSeeIn('.fi-no .fi-no-notification', 'Redirect notification')
+        ->assertNoSmoke()
+        ->refresh()
+        ->click('[data-testid="send-persistent-notification"]')
+        ->assertCount('.fi-no .fi-no-notification', 1)
+        ->assertSeeIn('.fi-no .fi-no-notification', 'Persistent notification')
+        ->assertNoSmoke();
+})->with(['full', 'spa']);
+
 it('dispatches `notificationClosed` when inline notifications expire', function (): void {
     visit('/notification-browser-test')
         ->click('[data-testid="show-inline-notification"]')

@@ -1,19 +1,15 @@
 <?php
 
-use BladeUI\Icons\Factory;
-use BladeUI\Icons\IconsManifest;
 use Filament\Actions\Action;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\IconPosition;
+use Filament\Notifications\NotificationMailbox;
 use Filament\Support\Enums\IconSize;
-use Filament\Support\Enums\Size;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Notifications\CustomNotification;
 use Filament\Tests\TestCase;
 use Illuminate\Notifications\DatabaseNotification as DatabaseNotificationModel;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\AssertionFailedError;
 
@@ -63,145 +59,38 @@ describe('rendering', function (): void {
     });
 });
 
-describe('session transport', function (): void {
+describe('delivery', function (): void {
     it('can send notifications', function (): void {
-        $iconSets = Arr::only(app(Factory::class)->all(), 'heroicons');
-        $icons = app(IconsManifest::class)->getManifest($iconSets);
+        Notification::assertNotNotified();
 
-        $getRandomColor = function (): string {
-            return Arr::random([
-                'danger',
-                'gray',
-                'info',
-                'primary',
-                'success',
-                'warning',
-            ]);
-        };
-
-        $getRandomIcon = function () use ($icons): string {
-            return 'heroicon-' . collect($icons)->flatten()->random();
-        };
-
-        expect(session()->get('filament.notifications'))
-            ->toBeEmpty();
-
-        Notification::make($id = Str::random())
+        $notification = Notification::make('saved')
             ->actions([
-                Action::make($actionName = Str::random())
-                    ->close($shouldClose = (bool) rand(0, 1))
-                    ->color($actionColor = $getRandomColor())
-                    ->disabled($isActionDisabled = (bool) rand(0, 1))
-                    ->dispatch($actionEvent = Str::random(), $actionEventData = [Str::random()])
-                    ->extraAttributes($actionExtraAttributes = ['x' . Str::random(15) => Str::random()]) // Attributes must start with a letter
-                    ->icon($actionIcon = $getRandomIcon())
-                    ->iconPosition($actionIconPosition = Arr::random([IconPosition::After, IconPosition::Before]))
-                    ->label($actionLabel = Str::random())
-                    ->outlined($isActionOutlined = (bool) rand(0, 1))
-                    ->size($actionSize = Arr::random([Size::ExtraSmall, Size::Small, Size::Medium, Size::Large, Size::ExtraLarge]))
-                    ->url(
-                        $actionUrl = Str::random(),
-                        shouldOpenInNewTab: $shouldActionOpenUrlInNewTab = (bool) rand(0, 1),
-                    ),
+                Action::make('view')
+                    ->label('View record')
+                    ->url('/records/1', shouldOpenInNewTab: true)
+                    ->close(),
             ])
-            ->body($body = Str::random())
-            ->duration($duration = rand(1, 10))
-            ->icon($icon = $getRandomIcon())
-            ->iconColor($iconColor = $getRandomColor())
-            ->title($title = Str::random())
+            ->title('Saved')
+            ->body('The record has been saved.')
+            ->success()
+            ->persistent()
             ->send();
 
-        $notifications = session()->get('filament.notifications');
+        app(NotificationMailbox::class)->flush();
 
-        expect($notifications)
-            ->toBeArray()
-            ->toHaveCount(1);
+        $component = livewire(Notifications::class)
+            ->dispatch('notificationsSent')
+            ->assertCount('notifications', 1);
 
-        $notification = Arr::last($notifications);
+        expect($component->get('notifications')->first()->toArray())->toBe($notification->toArray());
 
-        expect($notification)
-            ->toBeArray()
-            ->id->toBe($id)
-            ->body->toBe($body)
-            ->duration->toBe($duration)
-            ->icon->toBe($icon)
-            ->iconColor->toBe($iconColor)
-            ->title->toBe($title);
-
-        $actions = $notification['actions'];
-
-        expect($actions)
-            ->toBeArray();
-
-        $action = Arr::first($actions);
-
-        expect($action)
-            ->toBeArray()
-            ->name->toBe($actionName)
-            ->color->toBe($actionColor)
-            ->event->toBe($actionEvent)
-            ->eventData->toBe($actionEventData)
-            ->extraAttributes->toBe($actionExtraAttributes)
-            ->icon->toBe($actionIcon)
-            ->iconPosition->toBe($actionIconPosition)
-            ->isOutlined->toBe($isActionOutlined)
-            ->isDisabled->toBe($isActionDisabled)
-            ->label->toBe($actionLabel)
-            ->shouldClose->toBe($shouldClose)
-            ->shouldOpenUrlInNewTab->toBe($shouldActionOpenUrlInNewTab)
-            ->size->toBe($actionSize)
-            ->url->toBe($actionUrl);
-
-        $component = livewire(Notifications::class);
-
-        $component
-            ->dispatch('notificationsSent');
-
-        expect($component->instance()->notifications)
-            ->toBeInstanceOf(Collection::class)
-            ->toHaveCount(1);
-
-        $notification = $component->instance()->notifications->first();
-
-        expect($notification)
-            ->toBeInstanceOf(Notification::class)
-            ->getId()->toBe($id)
-            ->getBody()->toBe($body)
-            ->getDuration()->toBe($duration)
-            ->getIcon()->toBe($icon)
-            ->getIconColor()->toBe($iconColor)
-            ->getTitle()->toBe($title);
-
-        $actions = $notification->getActions();
-
-        expect($actions)
-            ->toBeArray();
-
-        $action = Arr::first($actions);
-
-        expect($action)
-            ->toBeInstanceOf(Action::class)
-            ->getName()->toBe($actionName)
-            ->getColor()->toBe($actionColor)
-            ->getEvent()->toBe($actionEvent)
-            ->getEventData()->toBe($actionEventData)
-            ->getExtraAttributes()->toBe($actionExtraAttributes)
-            ->getIcon()->toBe($actionIcon)
-            ->getIconPosition()->toBe($actionIconPosition)
-            ->isOutlined()->toBe($isActionOutlined)
-            ->isDisabled()->toBe($isActionDisabled)
-            ->getLabel()->toBe($actionLabel)
-            ->shouldClose()->toBe($shouldClose)
-            ->shouldOpenUrlInNewTab()->toBe($shouldActionOpenUrlInNewTab)
-            ->getSize()->toBe($actionSize)
-            ->getUrl()->toBe($actionUrl);
-
-        expect(session()->get('filament.notifications'))
-            ->toBeEmpty();
+        livewire(Notifications::class)->dispatch('notificationsSent')->assertCount('notifications', 0);
     });
 
     it('can close notifications', function (): void {
         ($notification = Notification::make())->send();
+
+        app(NotificationMailbox::class)->flush();
 
         $component = livewire(Notifications::class);
 
@@ -271,7 +160,9 @@ describe('notification assertions', function (): void {
 
 describe('events', function (): void {
     $getLastNotificationAction = static function (): Action {
-        return livewire(Notifications::class)->instance()->notifications->first()->getActions()[0];
+        app(NotificationMailbox::class)->flush();
+
+        return livewire(Notifications::class)->dispatch('notificationsSent')->get('notifications')->first()->getActions()[0];
     };
 
     it('can dispatch an event using `dispatch()`', function () use ($getLastNotificationAction): void {
@@ -335,13 +226,7 @@ it('can resolve custom notification object from data', function (): void {
         ->title($title = Str::random())
         ->send();
 
-    $notifications = session()->get('filament.notifications');
-
-    expect($notifications)
-        ->toBeArray()
-        ->toHaveCount(1);
-
-    $notification = Arr::last($notifications);
+    app(NotificationMailbox::class)->flush();
 
     $component = livewire(Notifications::class);
 
@@ -436,21 +321,20 @@ describe('serialization', function (): void {
         expect($restoredNotification->getIconSize())->toBe(IconSize::Large);
     });
 
-    it('preserves notification icon sizes through the session', function (): void {
+    it('preserves notification icon sizes through delivery', function (): void {
         Notification::make()
             ->icon(Heroicon::Bell)
             ->iconSize(IconSize::Small)
             ->send();
 
-        $notificationsComponent = livewire(Notifications::class);
+        app(NotificationMailbox::class)->flush();
+
+        $notificationsComponent = livewire(Notifications::class)->dispatch('notificationsSent');
         $restoredNotification = $notificationsComponent->instance()->notifications->first();
 
         expect($restoredNotification)
             ->getIcon()->toBe('heroicon-c-bell')
             ->getIconSize()->toBe(IconSize::Small);
-
-        expect(session()->get('filament.notifications'))
-            ->toBeEmpty();
     });
 
     it('preserves notification icon sizes through broadcast messages', function (): void {

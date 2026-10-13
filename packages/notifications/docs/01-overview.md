@@ -6,7 +6,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
-Notifications are sent using a `Notification` object that's constructed through a fluent API. Calling the `send()` method on the `Notification` object will dispatch the notification and display it in your application. As the session is used to flash notifications, they can be sent from anywhere in your code, including JavaScript, not just Livewire components.
+Notifications are sent using a `Notification` object that's constructed through a fluent API. Calling the `send()` method on the `Notification` object will dispatch the notification and display it in your application. Notifications can be sent from PHP or JavaScript, not just Livewire components.
 
 ```php
 <?php

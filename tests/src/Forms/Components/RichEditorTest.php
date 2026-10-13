@@ -1960,6 +1960,9 @@ describe('browser interactions', function (): void {
         $page
             ->click($content)
             ->assertPresent($content . ':focus')
+            ->keys(':focus', ['Control+Home', 'Control+Shift+ArrowRight'])
+            ->assertScript('window.getSelection().toString().trim()', 'Alpha')
+            ->assertVisible($editor . ' [role="toolbar"][data-rich-editor-toolbar=""]')
             ->keys(':focus', 'Shift+Tab')
             ->assertPresent($editor . ' [data-rich-editor-tool="bold"]:focus')
             ->keys(':focus', 'ArrowRight')
@@ -1970,7 +1973,6 @@ describe('browser interactions', function (): void {
             ->assertPresent($editor . ' [data-rich-editor-tool="bold"]:focus')
             ->keys(':focus', 'Tab')
             ->assertPresent($content . ':focus')
-            ->keys(':focus', ['Control+Home', 'Control+Shift+ArrowRight'])
             ->assertScript('window.getSelection().toString().trim()', 'Alpha')
             ->assertVisible($editor . ' [role="toolbar"][data-rich-editor-toolbar=""]')
             ->keys(':focus', 'Control+b')
@@ -2101,6 +2103,7 @@ describe('browser interactions', function (): void {
 
         foreach (($origin === 'main') ? ['cancel', 'set link', 'extend link'] : ['cancel', 'set link'] as $operation) {
             $shouldSubmit = $operation !== 'cancel';
+            $url = ($operation === 'extend link') ? 'https://example.com/revised-article' : 'https://example.com/article';
 
             if ($operation === 'extend link') {
 
@@ -2109,8 +2112,7 @@ describe('browser interactions', function (): void {
                     ->assertCount('[role="tooltip"]:visible', 0)
                     ->keys(':focus', 'Escape')
                     ->assertPresent($content . ':focus')
-                    ->keys(':focus', 'Control+Home')
-                    ->keys(':focus', 'ArrowRight')
+                    ->keys(':focus', ['ArrowRight', 'ArrowLeft'])
                     ->assertScript('window.getSelection().isCollapsed', true);
             }
 
@@ -2131,15 +2133,23 @@ describe('browser interactions', function (): void {
                 ->assertPresent("{$linkDialog}:focus, {$linkDialog} :focus")
                 ->assertCount('[role="tooltip"]:visible', 0);
 
+            if ($operation === 'extend link') {
+                $page->assertValue('input[id="mountedActionSchema0.url"]', 'https://example.com/article');
+            }
+
             if ($shouldSubmit) {
                 $page
-                    ->type('input[id="mountedActionSchema0.url"]', 'https://example.com/article')
+                    ->type('input[id="mountedActionSchema0.url"]', $url)
                     ->keys('input[id="mountedActionSchema0.url"]', 'Tab')
                     ->keys(':focus', 'Tab')
                     ->assertPresent('button[type="submit"]:focus')
                     ->keys(':focus', 'Enter')
-                    ->assertSeeIn($editor . ' a[href="https://example.com/article"]', 'Alpha')
-                    ->assertDontSeeIn($editor . ' a[href="https://example.com/article"]', 'beta');
+                    ->assertSeeIn($editor . ' a[href="' . $url . '"]', 'Alpha')
+                    ->assertDontSeeIn($editor . ' a[href="' . $url . '"]', 'beta');
+
+                if ($operation === 'extend link') {
+                    $page->assertMissing($editor . ' a[href="https://example.com/article"]');
+                }
             } else {
                 $page->keys('input[id="mountedActionSchema0.url"]', 'Escape');
             }

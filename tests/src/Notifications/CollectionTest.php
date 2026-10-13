@@ -124,7 +124,7 @@ describe('validation and HTTP updates', function (): void {
             ]],
         ], ['X-Livewire' => 'true'])->assertStatus(419);
 
-        expect(session()->get('filament.notifications'))->toHaveCount(1);
+        Notification::assertNotified('Queued');
         Exceptions::assertNothingReported();
     })->with([
         'scalar notification among valid notifications' => fn (): array => [
