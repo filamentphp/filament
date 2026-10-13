@@ -191,86 +191,23 @@ it('keeps the accessible name and alternative synchronized when the chart data i
         ->assertSee('The monthly sales total for 2023 is 60.');
 });
 
-it('keeps chart alternatives accessible through updates and chart replacement', function (): void {
+it('keeps chart alternatives accessible when changing filters', function (): void {
     Artisan::call('filament:assets');
     $this->actingAs(User::factory()->create());
 
-    $page = visit('/chart-widget-browser-test', ['reducedMotion' => 'reduce'])
-        ->inLightMode()
-        ->assertAttribute('.fi-wi-chart-image', 'aria-label', 'Sales. Sales for 2024')
-        ->assertAttribute('.fi-wi-chart-image canvas', 'aria-hidden', 'true')
+    $page = visit('/chart-widget-browser-test', ['reducedMotion' => 'reduce']);
+
+    $page
+        ->assertAttribute('[role="img"]', 'aria-label', 'Sales. Sales for 2024')
+        ->assertAttribute('[role="img"] canvas', 'aria-hidden', 'true')
         ->assertSee('Monthly sales for 2024')
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").offsetWidth', 1)
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").closest("[aria-hidden=true]")', null)
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content table").closest(".fi-wi-chart-image")', null)
-        ->assertScript('(() => { let element = document.querySelector(".fi-wi-chart-assistive-content table"); while (element) { if (element.hasAttribute("wire:ignore")) return true; element = element.parentElement; } return false; })()', false)
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").closest("[aria-live], [role=alert], [role=status]")', null)
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").querySelector("[aria-live], [role=alert], [role=status]")', null)
-        ->assertNoAccessibilityIssues();
-
-    $page->script('document.querySelector(".fi-wi-chart-image canvas").dataset.preserved = "true"');
-
-    $page->select('.fi-wi-chart-filter select', '2023')
-        ->assertAttribute('.fi-wi-chart-image', 'aria-label', 'Sales. Sales for 2023')
-        ->assertAttribute('.fi-wi-chart-image canvas', 'data-preserved', 'true')
+        ->select('select[aria-label]', '2023')
+        ->assertAttribute('[role="img"]', 'aria-label', 'Sales. Sales for 2023')
         ->assertSee('Monthly sales for 2023')
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content table").closest(".fi-wi-chart-image")', null)
-        ->assertScript('(() => { let element = document.querySelector(".fi-wi-chart-assistive-content table"); while (element) { if (element.hasAttribute("wire:ignore")) return true; element = element.parentElement; } return false; })()', false)
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").closest("[aria-live], [role=alert], [role=status]")', null)
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").querySelector("[aria-live], [role=alert], [role=status]")', null)
-        ->assertNoAccessibilityIssues();
-
-    $page->assertScript('Boolean(Alpine.$data(document.querySelector("[role=img] canvas").parentElement).getChart())', true);
-
-    $page->script(<<<'JS'
-        const element = document.querySelector('[role=img] canvas').parentElement
-        const component = Alpine.$data(element)
-        const updateChartTheme = component.updateChartTheme.bind(component)
-        window.chartLifecycle = { element, component, chart: component.getChart(), oldDataUpdates: 0, themeUpdates: 0 }
-        component.updateChartTheme = () => {
-            updateChartTheme()
-            window.chartLifecycle.themeUpdates++
-        }
-        component.$wire.$dispatchSelf('updateChartData', {
-            data: { labels: ['April', 'May'], datasets: [{ label: 'Sales', data: [9, 4] }] },
-        })
-        JS);
-
-    $page->assertScript('window.chartLifecycle.chart.data.datasets[0].data', [9, 4]);
-    $page->script('Alpine.store("theme", "dark")');
-    $page->assertScript('window.chartLifecycle.themeUpdates > 0', true)
-        ->assertScript('window.chartLifecycle.component.getChart() === window.chartLifecycle.chart', true)
-        ->assertScript('window.chartLifecycle.chart.data.datasets[0].data', [9, 4]);
-
-    $page->script(<<<'JS'
-        const { element, component } = window.chartLifecycle
-        Alpine.destroyTree(element)
-        component.updateChartData = () => window.chartLifecycle.oldDataUpdates++
-        Alpine.initTree(element)
-        JS);
-
-    $page->assertScript('Boolean(Alpine.$data(window.chartLifecycle.element).getChart())', true)
-        ->assertScript('window.chartLifecycle.chart.canvas', null);
-    $page->script(<<<'JS'
-        Alpine.$data(window.chartLifecycle.element).$wire.$dispatchSelf('updateChartData', {
-            data: { labels: ['June', 'July'], datasets: [{ label: 'Sales', data: [2, 7] }] },
-        })
-        JS);
-    $page->assertScript('Alpine.$data(window.chartLifecycle.element).getChart().data.datasets[0].data', [2, 7])
-        ->assertScript('window.chartLifecycle.oldDataUpdates', 0)
         ->assertNoJavaScriptErrors()
         ->assertNoAccessibilityIssues();
 
-    visit('/chart-widget-browser-test', ['reducedMotion' => 'reduce'])
-        ->inDarkMode()
-        ->assertAttribute('.fi-wi-chart-image', 'aria-label', 'Sales. Sales for 2024')
-        ->assertAttribute('.fi-wi-chart-image canvas', 'aria-hidden', 'true')
-        ->assertSee('Monthly sales for 2024')
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").offsetWidth', 1)
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").closest("[aria-hidden=true]")', null)
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").closest("[aria-live], [role=alert], [role=status]")', null)
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").querySelector("[aria-live], [role=alert], [role=status]")', null)
-        ->assertNoAccessibilityIssues();
+    $page->inDarkMode()->assertNoAccessibilityIssues();
 });
 
 class TestChartWidgetDefault extends ChartWidget

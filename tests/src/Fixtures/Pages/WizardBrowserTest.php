@@ -70,7 +70,6 @@ class WizardBrowserTest extends Page
                     ->id('profile-wizard')
                     ->persistStepInQueryString()
                     ->nextAction(static fn (Action $action): Action => $action
-                        ->actionJs('window.wizardNextActionActivationCount = (window.wizardNextActionActivationCount ?? 0) + 1')
                         ->extraAttributes([
                             'data-testid' => 'wizard-next-action',
                         ]))

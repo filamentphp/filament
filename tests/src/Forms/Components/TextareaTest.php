@@ -33,100 +33,86 @@ it('can `trim()` whitespace from `Textarea`', function (mixed $input, mixed $exp
     ["\t\n　", ''],
 ]);
 
-it('can set `autosize()`', function (): void {
-    $textarea = Textarea::make('content');
+describe('autosizing', function (): void {
+    it('can set `autosize()`', function (): void {
+        $textarea = Textarea::make('content');
 
-    expect($textarea->shouldAutosize())->toBeFalse();
+        expect($textarea->shouldAutosize())->toBeFalse();
 
-    $textarea->autosize();
+        $textarea->autosize();
 
-    expect($textarea->shouldAutosize())->toBeTrue();
+        expect($textarea->shouldAutosize())->toBeTrue();
+    });
+
+    it('can set `autosize()` with a `Closure`', function (): void {
+        $textarea = Textarea::make('content')
+            ->autosize(static fn (): bool => true);
+
+        expect($textarea->shouldAutosize())->toBeTrue();
+    });
+
+    it('can undo `autosize()` with `false`', function (): void {
+        $textarea = Textarea::make('content')
+            ->autosize()
+            ->autosize(false);
+
+        expect($textarea->shouldAutosize())->toBeFalse();
+    });
 });
 
-it('can set `cols()`', function (): void {
-    $textarea = Textarea::make('content');
+describe('columns', function (): void {
+    it('can set `cols()`', function (): void {
+        $textarea = Textarea::make('content');
 
-    expect($textarea->getCols())->toBeNull();
+        expect($textarea->getCols())->toBeNull();
 
-    $textarea->cols(40);
+        $textarea->cols(40);
 
-    expect($textarea->getCols())->toBe(40);
+        expect($textarea->getCols())->toBe(40);
+    });
+
+    it('can set `cols()` with a `Closure`', function (): void {
+        $textarea = Textarea::make('content')
+            ->cols(static fn (): int => 60);
+
+        expect($textarea->getCols())->toBe(60);
+    });
+
+    it('can clear `cols()` with `null`', function (): void {
+        $textarea = Textarea::make('content')
+            ->cols(40)
+            ->cols(null);
+
+        expect($textarea->getCols())->toBeNull();
+    });
 });
 
-it('can set `rows()`', function (): void {
-    $textarea = Textarea::make('content');
+describe('rows', function (): void {
+    it('can set `rows()`', function (): void {
+        $textarea = Textarea::make('content');
 
-    expect($textarea->getRows())->toBeNull();
+        expect($textarea->getRows())->toBeNull();
 
-    $textarea->rows(10);
+        $textarea->rows(10);
 
-    expect($textarea->getRows())->toBe(10);
+        expect($textarea->getRows())->toBe(10);
+    });
+
+    it('can set `rows()` with a `Closure`', function (): void {
+        $textarea = Textarea::make('content')
+            ->rows(static fn (): int => 15);
+
+        expect($textarea->getRows())->toBe(15);
+    });
+
+    it('can clear `rows()` with `null`', function (): void {
+        $textarea = Textarea::make('content')
+            ->rows(10)
+            ->rows(null);
+
+        expect($textarea->getRows())->toBeNull();
+    });
 });
-
-it('can set `autosize()` with a `Closure`', function (): void {
-    $textarea = Textarea::make('content')
-        ->autosize(static fn (): bool => true);
-
-    expect($textarea->shouldAutosize())->toBeTrue();
-});
-
-it('can undo `autosize()` with `false`', function (): void {
-    $textarea = Textarea::make('content')
-        ->autosize()
-        ->autosize(false);
-
-    expect($textarea->shouldAutosize())->toBeFalse();
-});
-
-it('can set `cols()` with a `Closure`', function (): void {
-    $textarea = Textarea::make('content')
-        ->cols(static fn (): int => 60);
-
-    expect($textarea->getCols())->toBe(60);
-});
-
-it('can set `rows()` with a `Closure`', function (): void {
-    $textarea = Textarea::make('content')
-        ->rows(static fn (): int => 15);
-
-    expect($textarea->getRows())->toBe(15);
-});
-
-it('can clear `cols()` with `null`', function (): void {
-    $textarea = Textarea::make('content')
-        ->cols(40)
-        ->cols(null);
-
-    expect($textarea->getCols())->toBeNull();
-});
-
-it('can clear `rows()` with `null`', function (): void {
-    $textarea = Textarea::make('content')
-        ->rows(10)
-        ->rows(null);
-
-    expect($textarea->getRows())->toBeNull();
-});
-
-class TestComponentWithTextareaTrim extends Livewire
-{
-    public $data = [];
-
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->schema([
-                Textarea::make('description')
-                    ->trim(),
-            ])
-            ->statePath('data');
-    }
-
-    public function save(): void
-    {
-        $this->data = $this->form->getState();
-    }
-}
 
 describe('autocomplete', function (): void {
     it('returns `null` for `getAutocomplete()` by default', function (): void {
@@ -295,12 +281,13 @@ describe('rendering', function (): void {
 it('can render `Textarea` in the browser', function (): void {
     $this->actingAs(User::factory()->create());
 
-    visit('/textarea-test')
+    $page = visit('/textarea-test');
+
+    $page
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
 
-    visit('/textarea-test')
-        ->inDarkMode()
+    $page->inDarkMode()
         ->assertNoAccessibilityIssues();
 });
 
@@ -445,5 +432,25 @@ class RenderTextareaWithClosurePlaceholder extends Livewire
     public function form(Schema $form): Schema
     {
         return $form->schema([Textarea::make('content')->placeholder(static fn (): string => 'Dynamic')])->statePath('data');
+    }
+}
+
+class TestComponentWithTextareaTrim extends Livewire
+{
+    public $data = [];
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Textarea::make('description')
+                    ->trim(),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->data = $this->form->getState();
     }
 }

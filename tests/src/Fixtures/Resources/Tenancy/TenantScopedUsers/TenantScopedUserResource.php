@@ -11,8 +11,7 @@ class TenantScopedUserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    // Use 'teams' (BelongsToMany) relationship for tenant ownership
-    // This is needed to test the duplicate pivot insertion bug
+    // Many-to-many ownership exercises duplicate pivot insertion prevention.
     protected static ?string $tenantOwnershipRelationshipName = 'teams';
 
     protected static ?string $slug = 'tenant-scoped-users';

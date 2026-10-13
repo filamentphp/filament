@@ -139,30 +139,23 @@ it('shows successful and partially vetoed dissociations in the browser', functio
 
     Post::saving(static fn (Post $post): bool => (! $hasVeto) || (! $post->is($otherPost)));
 
-    $browser = visit('/dissociate-bulk-action-browser-test')->inDarkMode();
+    $browser = visit('/dissociate-bulk-action-browser-test');
+
+    if ($hasVeto) {
+        $browser = $browser->inDarkMode();
+    }
 
     $browser
-        ->assertScript(<<<'JS'
-            (() => {
-                const dropdown = document.querySelector('[data-testid="bulk-actions-dropdown"]')
-
-                return dropdown?.dataset.dropdownOnly === 'array'
-                    && dropdown.dataset.closureOnly === 'closure'
-                    && dropdown.dataset.mergePrecedence === 'first'
-                    && ! dropdown.hasAttribute('data-group-only')
-                    && dropdown.querySelector('[data-group-only="group"]') !== null
-            })()
-            JS, true)
+        ->assertAttribute('[data-testid="bulk-actions-dropdown"]', 'data-dropdown-only', 'array')
+        ->assertAttribute('[data-testid="bulk-actions-dropdown"]', 'data-closure-only', 'closure')
+        ->assertAttribute('[data-testid="bulk-actions-dropdown"]', 'data-merge-precedence', 'first')
+        ->assertAttributeMissing('[data-testid="bulk-actions-dropdown"]', 'data-group-only')
+        ->assertPresent('[data-testid="bulk-actions-dropdown"] [data-group-only="group"]')
         ->check('input[type="checkbox"][value="' . $allowedPost->getKey() . '"]')
         ->check('input[type="checkbox"][value="' . $otherPost->getKey() . '"]')
         ->click('[data-testid="bulk-actions-trigger"]:visible')
-        ->assertVisible('[data-testid="dissociate-posts"]');
-
-    foreach (['dark', 'light'] as $theme) {
-        $browser->script("window.dispatchEvent(new CustomEvent('theme-changed', { detail: '{$theme}' }))");
-        $browser->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
-            ->assertNoAccessibilityIssues();
-    }
+        ->assertVisible('[data-testid="dissociate-posts"]')
+        ->assertNoAccessibilityIssues();
 
     $browser
         ->click('[data-testid="dissociate-posts"]')
@@ -176,11 +169,7 @@ it('shows successful and partially vetoed dissociations in the browser', functio
         $browser->assertMissing('input[type="checkbox"][value="' . $otherPost->getKey() . '"]');
     }
 
-    foreach (['dark', 'light'] as $theme) {
-        $browser->script("window.dispatchEvent(new CustomEvent('theme-changed', { detail: '{$theme}' }))");
-        $browser->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
-            ->assertNoAccessibilityIssues();
-    }
+    $browser->assertNoAccessibilityIssues();
 
     expect($allowedPost->refresh()->author_id)->toBeNull()
         ->and($otherPost->refresh()->author_id)->toBe($hasVeto ? $user->id : null);

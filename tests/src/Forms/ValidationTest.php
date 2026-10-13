@@ -18,7 +18,7 @@ use Illuminate\Validation\ValidationException;
 uses(TestCase::class);
 
 describe('basic validation', function (): void {
-    test('fields can be required', function (): void {
+    test('fields can be `required()`', function (): void {
         $rules = [];
 
         try {
@@ -37,7 +37,7 @@ describe('basic validation', function (): void {
             ->toContain('Required');
     });
 
-    test('fields use custom validation rules', function (): void {
+    test('fields use custom validation rules through `rule()`', function (): void {
         $rules = [];
 
         try {
@@ -58,7 +58,7 @@ describe('basic validation', function (): void {
             ->toContain('Email');
     });
 
-    test('fields can be conditionally validated', function (): void {
+    test('fields can be conditionally `required()`', function (bool $isRequired): void {
         $rules = [];
 
         try {
@@ -66,7 +66,7 @@ describe('basic validation', function (): void {
                 ->statePath('data')
                 ->components([
                     $field = (new Field(Str::random()))
-                        ->required($isRequired = rand(0, 1)),
+                        ->required($isRequired),
                 ])
                 ->validate();
         } catch (ValidationException $exception) {
@@ -80,9 +80,9 @@ describe('basic validation', function (): void {
             expect($rules)
                 ->not->toContain('Required');
         }
-    });
+    })->with([false, true]);
 
-    test('fields are validated if they are not dehydrated', function (): void {
+    test('fields are validated when `dehydrated(false)`', function (): void {
         $rules = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -96,7 +96,7 @@ describe('basic validation', function (): void {
             ->not->toBeEmpty();
     });
 
-    test('fields are not validated if they are not dehydrated and configured as such', function (): void {
+    test('`validatedWhenNotDehydrated(false)` skips only non-dehydrated fields', function (): void {
         $rules = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -124,7 +124,7 @@ describe('basic validation', function (): void {
             ->not->toBeEmpty();
     });
 
-    test('fields can be required if', function (): void {
+    test('fields can be `requiredIf()` another field matches', function (): void {
         $rules = [];
         $errors = [];
 
@@ -132,16 +132,16 @@ describe('basic validation', function (): void {
             Schema::make(Livewire::make())
                 ->statePath('data')
                 ->components([
-                    $field1 = (new Field('one'))
+                    (new Field('one'))
                         ->default('foo'),
-                    $field2 = (new Field('two'))
+                    $field = (new Field('two'))
                         ->requiredIf('one', 'foo'),
                 ])
                 ->fill()
                 ->validate();
         } catch (ValidationException $exception) {
-            $rules = array_keys($exception->validator->failed()[$field2->getStatePath()]);
-            $errors = $exception->validator->errors()->get($field2->getStatePath());
+            $rules = array_keys($exception->validator->failed()[$field->getStatePath()]);
+            $errors = $exception->validator->errors()->get($field->getStatePath());
         }
 
         expect($rules)
@@ -151,7 +151,7 @@ describe('basic validation', function (): void {
             ->toContain('The two field is required when one is foo.');
     });
 
-    test('fields can be required unless', function (): void {
+    test('fields can be `requiredUnless()` another field matches', function (): void {
         $rules = [];
         $errors = [];
 
@@ -159,16 +159,16 @@ describe('basic validation', function (): void {
             Schema::make(Livewire::make())
                 ->statePath('data')
                 ->components([
-                    $field1 = (new Field('one'))
+                    (new Field('one'))
                         ->default('bar'),
-                    $field2 = (new Field('two'))
+                    $field = (new Field('two'))
                         ->requiredUnless('one', 'foo'),
                 ])
                 ->fill()
                 ->validate();
         } catch (ValidationException $exception) {
-            $rules = array_keys($exception->validator->failed()[$field2->getStatePath()]);
-            $errors = $exception->validator->errors()->get($field2->getStatePath());
+            $rules = array_keys($exception->validator->failed()[$field->getStatePath()]);
+            $errors = $exception->validator->errors()->get($field->getStatePath());
         }
 
         expect($rules)
@@ -1141,7 +1141,7 @@ class ReadReplicaValidationUser extends User
     protected $table = 'users';
 }
 
-describe('enum and label validation', function (): void {
+describe('enum validation', function (): void {
     test('conditional validation rules support enum instances', function (string $rule, BackedEnum $defaultValue, BackedEnum | array $enumValue): void {
         $rules = [];
 
@@ -1170,7 +1170,7 @@ describe('enum and label validation', function (): void {
         ['requiredIf', IntegerBackedEnum::One, [IntegerBackedEnum::One, IntegerBackedEnum::Two]],
     ]);
 
-    test('in/notIn validation rules support enum instances', function (string $rule, BackedEnum $value): void {
+    test('`in()` and `notIn()` validation rules support enum instances', function (string $rule, BackedEnum $value): void {
         $rules = [];
 
         try {
@@ -1190,7 +1190,9 @@ describe('enum and label validation', function (): void {
         ['notIn', StringBackedEnum::One],
         ['in', StringBackedEnum::Three],
     ]);
+});
 
+describe('validation attributes', function (): void {
     test('fields with `Htmlable` labels use the default label for validation attribute', function (): void {
         $field = (new Field('user_name'))
             ->label(JsContent::make('dynamicLabel'));

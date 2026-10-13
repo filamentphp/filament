@@ -45,6 +45,7 @@
 
     <x-filament::modal
         id="standalone-browser-test-modal"
+        aria-label="Standalone modal"
         :extra-modal-window-attribute-bag="new ComponentAttributeBag(['data-testid' => 'standalone-modal'])"
     >
         <x-slot name="trigger">
@@ -148,4 +149,19 @@
             Close
         </x-filament::button>
     </x-filament::modal>
+
+    @if ($hasScrollableContent)
+        <article>
+            @foreach (range(1, 24) as $section)
+                <section>
+                    <h3>Service agreement section {{ $section }}</h3>
+                    <p>
+                        Review the service scope, response times, renewal terms,
+                        and account responsibilities before accepting this
+                        agreement.
+                    </p>
+                </section>
+            @endforeach
+        </article>
+    @endif
 </x-filament-panels::page>
