@@ -370,6 +370,18 @@ See the [custom avatar provider documentation](../users/overview#using-a-differe
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
+<span slot="summary">Legacy query builder constraint namespaces have been removed</span>
+
+The compatibility classes and traits under `Filament\Tables\Filters\QueryBuilder\Constraints` have been removed. Use the corresponding classes and traits under `Filament\QueryBuilder\Constraints` instead. For example, import `Filament\QueryBuilder\Constraints\TextConstraint` instead of `Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint`.
+
+The automated upgrade script updates PHP references to these constraints, their operators, and their traits, including custom subclasses and PHPDoc types. Review references stored as strings or outside PHP files and update them manually. The table filter itself remains `Filament\Tables\Filters\QueryBuilder`, and its configuration is unchanged.
+
+Grouped imports may be left unused after their references are updated. You can remove these unused imports manually.
+
+See the [query builder documentation](../tables/filters/query-builder) for the current namespaces.
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('tables')">
 <span slot="summary">Deprecated column-toggle render hook constants have been removed</span>
 
 The deprecated `TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER` and `TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE` constants have been removed. Use `TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER` and `TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE` instead.

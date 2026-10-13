@@ -19,10 +19,10 @@ use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMinOpe
 use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
 use Filament\QueryBuilder\Constraints\SelectConstraint;
 use Filament\QueryBuilder\Constraints\SelectConstraint\Operators\IsOperator as SelectIsOperator;
+use Filament\QueryBuilder\Constraints\TextConstraint;
 use Filament\QueryBuilder\Forms\Components\RuleBuilder;
 use Filament\Support\Facades\FilamentTimezone;
 use Filament\Tables\Filters\QueryBuilder;
-use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tests\Fixtures\Livewire\PostsQueryBuilderTable;
 use Filament\Tests\Fixtures\Livewire\PostsQueryBuilderTableWithScopedAuthor;
 use Filament\Tests\Fixtures\Livewire\UsersQueryBuilderTable;

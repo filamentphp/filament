@@ -79,7 +79,7 @@ use Illuminate\Database\Eloquent\Model as Record;
 
 class CustomAvatarProvider implements Provider
 {
-    public function get(\Illuminate\Database\Eloquent\Model|\Illuminate\Contracts\Auth\Authenticatable $user): string
+    public function get(Record|Authenticatable $user): string
     {
         return 'https://example.com/avatar.svg';
     }
@@ -87,12 +87,12 @@ class CustomAvatarProvider implements Provider
 
 interface CustomAvatarProviderContract extends Provider
 {
-    public function get(\Illuminate\Database\Eloquent\Model|\Illuminate\Contracts\Auth\Authenticatable $record): string;
+    public function get(Record|Authenticatable $record): string;
 }
 
 class InheritedAvatarProvider extends UiAvatarsProvider
 {
-    public function get(\Illuminate\Database\Eloquent\Model|\Illuminate\Contracts\Auth\Authenticatable|null $record): string
+    public function get(Record|Authenticatable|null $record): string
     {
         return 'https://example.com/avatar.svg';
     }
