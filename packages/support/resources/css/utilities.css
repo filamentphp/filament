@@ -742,6 +742,7 @@
         vertical-align: top;
     }
 
+    tbody th:where(:not(.fi-not-prose, .fi-not-prose *)),
     tbody td:where(:not(.fi-not-prose, .fi-not-prose *)),
     tfoot td:where(:not(.fi-not-prose, .fi-not-prose *)) {
         padding-top: 0.8em;
@@ -750,11 +751,13 @@
         padding-inline-start: 0.6em;
     }
 
+    tbody th:first-child:where(:not(.fi-not-prose, .fi-not-prose *)),
     tbody td:first-child:where(:not(.fi-not-prose, .fi-not-prose *)),
     tfoot td:first-child:where(:not(.fi-not-prose, .fi-not-prose *)) {
         padding-inline-start: 0;
     }
 
+    tbody th:last-child:where(:not(.fi-not-prose, .fi-not-prose *)),
     tbody td:last-child:where(:not(.fi-not-prose, .fi-not-prose *)),
     tfoot td:last-child:where(:not(.fi-not-prose, .fi-not-prose *)) {
         padding-inline-end: 0;
