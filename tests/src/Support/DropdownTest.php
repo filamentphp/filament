@@ -211,11 +211,14 @@ it('closes a rich editor toolbar menu before its dropdown on `Escape`', function
 
     $page = visit('/dropdown-test');
 
+    $content = '[data-testid="rich-editor-content"]';
     $trigger = '[data-rich-editor-tool="Headings"]';
     $menu = '[role="menu"]:visible';
 
     $page
         ->click('[data-testid="dropdown-trigger"]')
+        ->type($content, 'Draft content')
+        ->assertSeeIn($content, 'Draft content')
         ->click($trigger)
         ->assertVisible($menu)
         ->assertNoAccessibilityIssues()
@@ -231,6 +234,8 @@ it('closes a rich editor toolbar menu before its dropdown on `Escape`', function
 
     $page->inDarkMode()
         ->click('[data-testid="dropdown-trigger"]')
+        ->type($content, 'Draft content')
+        ->assertSeeIn($content, 'Draft content')
         ->click($trigger)
         ->assertVisible($menu)
         ->assertNoAccessibilityIssues();
