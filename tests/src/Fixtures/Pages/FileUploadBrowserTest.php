@@ -21,12 +21,7 @@ class FileUploadBrowserTest extends Page
 
     public function mount(): void
     {
-        $this->form->fill(request()->boolean('testReordering') ? [
-            'attachment' => [
-                'first-key' => 'first.txt',
-                'second-key' => 'second.txt',
-            ],
-        ] : []);
+        $this->form->fill();
     }
 
     public function form(Schema $form): Schema
@@ -48,16 +43,6 @@ class FileUploadBrowserTest extends Page
                     }),
             ])
             ->statePath('data');
-    }
-
-    public function replaceAttachment(): void
-    {
-        $this->data['attachment']['first-key'] = 'replacement.txt';
-    }
-
-    public function reorderAttachments(): void
-    {
-        $this->data['attachment'] = array_reverse($this->data['attachment'], preserve_keys: true);
     }
 
     public function save(): void

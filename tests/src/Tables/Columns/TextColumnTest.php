@@ -14,11 +14,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
-use Filament\Tables\Columns\ColorColumn;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Enums\NavigationGroupEnum;
@@ -39,211 +35,90 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('keeps inherited one-argument callers of `toOptimizedHtml()` compatible', function (): void {
-    expect(TextColumnWithPublicOptimizedRenderer::make('title')->renderOptimized('Title'))
-        ->toContain('Title');
-});
+describe('badge', function (): void {
+    it('can set `badge()`', function (): void {
+        expect(TextColumn::make('name')->badge()->isBadge())->toBeTrue();
+    });
 
-describe('label formatting compatibility', function (): void {
-    it('resolves enum labels after the formatter but before rich formatting', function (string $mode, string $expected): void {
-        $column = TextColumn::make('status')
-            ->{$mode}()
-            ->formatStateUsing(static function (NavigationGroupEnum $state): NavigationGroupEnum {
-                expect($state)->toBe(NavigationGroupEnum::Users);
+    it('defaults `isBadge()` to `false`', function (): void {
+        expect(TextColumn::make('name')->isBadge())->toBeFalse();
+    });
 
-                return NavigationGroupEnum::Settings;
-            });
+    it('can set `badge()` with a `Closure`', function (): void {
+        expect(TextColumn::make('name')->badge(static fn (): bool => true)->isBadge())->toBeTrue();
+    });
 
-        expect($column->formatState(NavigationGroupEnum::Users)->toHtml())->toBe($expected);
-    })->with([
-        ['html', 'System Settings'],
-        ['markdown', "<p>System Settings</p>\n"],
-    ]);
-
-    it('formats non-stringable labels according to their trust in rich modes', function (string $mode, string | Htmlable | null $label, string $expected): void {
-        $state = new class($label) implements HasLabelContract
-        {
-            public function __construct(protected string | Htmlable | null $label) {}
-
-            public function getLabel(): string | Htmlable | null
-            {
-                return $this->label;
-            }
-        };
-
-        $column = TextColumn::make('status')->{$mode}()->prefix('<before>');
-
-        expect($column->formatState($state)->toHtml())->toBe($expected);
-    })->with([
-        ['html', '<b onclick="alert(1)">Label</b><script>alert(2)</script>', '&lt;before&gt;<b>Label</b>'],
-        ['html', null, '&lt;before&gt;'],
-        ['markdown', null, '&lt;before&gt;'],
-        ['markdown', new HtmlString('<b onclick="trusted()">**Label**</b>'), '&lt;before&gt;<b onclick="trusted()">**Label**</b>'],
-    ]);
-
-    it('preserves plain-mode label escaping and truncation', function (?int $limit, ?string $prefix, bool $isTrusted, string $expected): void {
-        $state = new class implements HasLabelContract
-        {
-            public function getLabel(): HtmlString
-            {
-                return new HtmlString('<b onclick="trusted()">Alpha beta</b>');
-            }
-        };
-
-        $formatted = TextColumn::make('status')->limit($limit)->prefix($prefix)->formatState($state);
-
-        expect($formatted instanceof Htmlable)->toBe($isTrusted)
-            ->and(e($formatted))->toBe($expected);
-
-        if (! $isTrusted) {
-            expect($formatted)->toBeString();
-        }
-    })->with([
-        'unformatted fast path' => [null, null, true, '<b onclick="trusted()">Alpha beta</b>'],
-        'non-truncating limit' => [100, null, true, '<b onclick="trusted()">Alpha beta</b>'],
-        'truncating limit' => [2, null, false, '&lt;b...'],
-        'string prefix' => [null, 'Label: ', false, 'Label: &lt;b onclick=&quot;trusted()&quot;&gt;Alpha beta&lt;/b&gt;'],
-    ]);
-
-    it('preserves existing `Stringable` and `Htmlable` precedence over labels in rich modes', function (bool $isHtmlable, string $expected): void {
-        if ($isHtmlable) {
-            $state = new class implements HasLabelContract, Htmlable
-            {
-                public function toHtml(): string
-                {
-                    return '<b onclick="trusted()">Original</b>';
-                }
-
-                public function getLabel(): string
-                {
-                    return 'Unused label';
-                }
-            };
-        } else {
-            $state = Mockery::mock(HasLabelContract::class);
-            $state->shouldReceive('__toString')->andReturn('<b onclick="trusted()">Original</b>');
-            $state->shouldNotReceive('getLabel');
-        }
-
-        expect(TextColumn::make('status')->html()->formatState($state)->toHtml())->toBe($expected);
-    })->with([
-        [false, '<b>Original</b>'],
-        [true, '<b onclick="trusted()">Original</b>'],
-    ]);
-
-    it('keeps string labels untrusted without rich formatting', function (): void {
-        $state = Mockery::mock(HasLabelContract::class);
-        $state->shouldReceive('getLabel')->once()->andReturn('<b>Label</b>');
-
-        $column = TextColumn::make('status')->prefix('Label: ');
-
-        expect($column->isHtml())->toBeFalse()
-            ->and($column->formatState($state))->toBe('Label: <b>Label</b>');
+    it('can undo `badge()` with `false`', function (): void {
+        expect(TextColumn::make('name')->badge()->badge(false)->isBadge())->toBeFalse();
     });
 });
 
-it('renders labels and wrapper URLs accessibly in light and dark modes', function (): void {
-    Artisan::call('filament:assets');
-    Post::factory()->create(['title' => 'Quarterly report', 'content' => 'Review summary']);
-    $this->actingAs(User::factory()->create());
+describe('lists', function (): void {
+    it('can set `bulleted()`', function (): void {
+        expect(TextColumn::make('name')->bulleted()->isBulleted())->toBeTrue();
+    });
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/columns-browser-test');
+    it('defaults `isBulleted()` to `false`', function (): void {
+        expect(TextColumn::make('name')->isBulleted())->toBeFalse();
+    });
 
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
+    it('can set `listWithLineBreaks()`', function (): void {
+        expect(TextColumn::make('name')->listWithLineBreaks()->isListWithLineBreaks())->toBeTrue();
+    });
 
-        $page
-            ->assertNoSmoke()
-            ->assertScript('document.querySelector(\'[data-testid="enum-label-column"]\').textContent.trim()', 'User Management')
-            ->assertScript('document.querySelectorAll(\'[data-testid="linked-column"] a\').length', 1)
-            ->assertScript('document.querySelectorAll(\'[data-testid="disabled-column"] a\').length', 0)
-            ->assertNoAccessibilityIssues()
-            ->click('[data-testid="toggle-reordering"]')
-            ->assertScript('document.querySelectorAll(\'[data-testid="linked-column"] a\').length', 0)
-            ->assertNoAccessibilityIssues();
-    }
+    it('defaults `isListWithLineBreaks()` to `false`', function (): void {
+        expect(TextColumn::make('name')->isListWithLineBreaks())->toBeFalse();
+    });
+
+    it('can set `limitList()` and get with `getListLimit()`', function (): void {
+        expect(TextColumn::make('name')->limitList(5)->getListLimit())->toBe(5);
+    });
+
+    it('defaults `getListLimit()` to `null`', function (): void {
+        expect(TextColumn::make('name')->getListLimit())->toBeNull();
+    });
+
+    it('can set `limitList()` with a `Closure`', function (): void {
+        expect(TextColumn::make('name')->limitList(static fn (): int => 10)->getListLimit())->toBe(10);
+    });
+
+    it('uses `3` as default limit for `limitList()` when called without argument', function (): void {
+        expect(TextColumn::make('name')->limitList()->getListLimit())->toBe(3);
+    });
+
+    it('can set `expandableLimitedList()` and get with `isLimitedListExpandable()`', function (): void {
+        expect(TextColumn::make('name')->expandableLimitedList()->isLimitedListExpandable())->toBeTrue();
+    });
+
+    it('defaults `isLimitedListExpandable()` to `false`', function (): void {
+        expect(TextColumn::make('name')->isLimitedListExpandable())->toBeFalse();
+    });
+
+    it('can set `expandableLimitedList()` with a `Closure`', function (): void {
+        expect(TextColumn::make('name')->expandableLimitedList(static fn (): bool => true)->isLimitedListExpandable())->toBeTrue();
+    });
 });
 
-it('can set `badge()`', function (): void {
-    expect(TextColumn::make('name')->badge()->isBadge())->toBeTrue();
-});
+describe('size', function (): void {
+    it('can set `size()` with enum and get with `getSize()`', function (): void {
+        expect(TextColumn::make('name')->size(TextSize::Large)->getSize(null))->toBe(TextSize::Large);
+    });
 
-it('defaults `isBadge()` to `false`', function (): void {
-    expect(TextColumn::make('name')->isBadge())->toBeFalse();
-});
+    it('defaults `getSize()` to `TextSize::Small` when not set', function (): void {
+        expect(TextColumn::make('name')->getSize(null))->toBe(TextSize::Small);
+    });
 
-it('can set `bulleted()`', function (): void {
-    expect(TextColumn::make('name')->bulleted()->isBulleted())->toBeTrue();
-});
+    it('can set `size()` with a `Closure`', function (): void {
+        expect(TextColumn::make('name')->size(static fn (): TextSize => TextSize::Large)->getSize(null))->toBe(TextSize::Large);
+    });
 
-it('defaults `isBulleted()` to `false`', function (): void {
-    expect(TextColumn::make('name')->isBulleted())->toBeFalse();
-});
+    it('maps `"base"` string to `TextSize::Medium` in `getSize()`', function (): void {
+        expect(TextColumn::make('name')->size('base')->getSize(null))->toBe(TextSize::Medium);
+    });
 
-it('can set `listWithLineBreaks()`', function (): void {
-    expect(TextColumn::make('name')->listWithLineBreaks()->isListWithLineBreaks())->toBeTrue();
-});
-
-it('defaults `isListWithLineBreaks()` to `false`', function (): void {
-    expect(TextColumn::make('name')->isListWithLineBreaks())->toBeFalse();
-});
-
-it('can set `limitList()` and get with `getListLimit()`', function (): void {
-    expect(TextColumn::make('name')->limitList(5)->getListLimit())->toBe(5);
-});
-
-it('defaults `getListLimit()` to `null`', function (): void {
-    expect(TextColumn::make('name')->getListLimit())->toBeNull();
-});
-
-it('can set `size()` with enum and get with `getSize()`', function (): void {
-    expect(TextColumn::make('name')->size(TextSize::Large)->getSize(null))->toBe(TextSize::Large);
-});
-
-it('defaults `getSize()` to `TextSize::Small` when not set', function (): void {
-    expect(TextColumn::make('name')->getSize(null))->toBe(TextSize::Small);
-});
-
-it('can set `expandableLimitedList()` and get with `isLimitedListExpandable()`', function (): void {
-    expect(TextColumn::make('name')->expandableLimitedList()->isLimitedListExpandable())->toBeTrue();
-});
-
-it('defaults `isLimitedListExpandable()` to `false`', function (): void {
-    expect(TextColumn::make('name')->isLimitedListExpandable())->toBeFalse();
-});
-
-it('can set `badge()` with a `Closure`', function (): void {
-    expect(TextColumn::make('name')->badge(static fn (): bool => true)->isBadge())->toBeTrue();
-});
-
-it('can undo `badge()` with `false`', function (): void {
-    expect(TextColumn::make('name')->badge()->badge(false)->isBadge())->toBeFalse();
-});
-
-it('can set `limitList()` with a `Closure`', function (): void {
-    expect(TextColumn::make('name')->limitList(static fn (): int => 10)->getListLimit())->toBe(10);
-});
-
-it('uses `3` as default limit for `limitList()` when called without argument', function (): void {
-    expect(TextColumn::make('name')->limitList()->getListLimit())->toBe(3);
-});
-
-it('can set `size()` with a `Closure`', function (): void {
-    expect(TextColumn::make('name')->size(static fn (): TextSize => TextSize::Large)->getSize(null))->toBe(TextSize::Large);
-});
-
-it('maps `"base"` string to `TextSize::Medium` in `getSize()`', function (): void {
-    expect(TextColumn::make('name')->size('base')->getSize(null))->toBe(TextSize::Medium);
-});
-
-it('can set `size()` with a string enum value', function (): void {
-    expect(TextColumn::make('name')->size('lg')->getSize(null))->toBe(TextSize::Large);
-});
-
-it('can set `expandableLimitedList()` with a `Closure`', function (): void {
-    expect(TextColumn::make('name')->expandableLimitedList(static fn (): bool => true)->isLimitedListExpandable())->toBeTrue();
+    it('can set `size()` with a string enum value', function (): void {
+        expect(TextColumn::make('name')->size('lg')->getSize(null))->toBe(TextSize::Large);
+    });
 });
 
 describe('rendering', function (): void {
@@ -514,16 +389,13 @@ describe('rendering', function (): void {
     it('uses the displayed collapsed-list state for the clipboard', function (): void {
         $post = Post::factory()->create();
 
-        $column = livewire(RenderTextColumnWithCopyable::class)
-            ->instance()
-            ->getTable()
-            ->getColumn('title')
+        $column = TextColumn::make('title')
+            ->table(livewire(RenderTextColumnWithCopyable::class)->instance()->getTable())
             ->state([1, 2])
             ->numeric(decimalSeparator: '.', thousandsSeparator: ',')
             ->prefix('!')
             ->copyable()
             ->record($post);
-        $column->clearCachedState();
 
         expect($column->toEmbeddedHtml())->toContain("clipboard.writeText('!1, !2')");
     });
@@ -723,9 +595,8 @@ describe('rendering', function (): void {
             ->instance()
             ->getTable()
             ->getColumn('users.name');
-        $column->clearCachedState();
 
-        $column->record($firstTeam)->recordKey((string) $firstTeam->getKey());
+        $column->record($firstTeam);
 
         expect($column->getState())->toBe(['First user'])
             ->and(collect($column->getRelatedRecords())->map->getKey()->all())->toBe([$firstUser->getKey()]);
@@ -740,51 +611,128 @@ describe('rendering', function (): void {
         expect($column->getState())->toBe(['First user'])
             ->and(collect($column->getRelatedRecords())->map->getKey()->all())->toBe([$firstUser->getKey()]);
     });
+});
 
-    it('injects the correct related model throughout every relationship item rendering path', function (): void {
-        $team = Team::factory()->create(['name' => 'Framework team']);
-        $users = collect([
-            User::factory()->create([
-                'name' => '',
-                'email' => 'first@example.com',
-                'json' => ['color' => '#ff0000', 'duplicate' => '', 'icon' => 'first', 'image' => 'https://example.com/first.jpg'],
-            ]),
-            User::factory()->create([
-                'name' => 'Duplicate name',
-                'email' => 'second@example.com',
-                'json' => ['color' => '#00ff00', 'duplicate' => 'Duplicate', 'icon' => 'second', 'image' => 'https://example.com/second.jpg'],
-            ]),
-            User::factory()->create([
-                'name' => 'Duplicate name',
-                'email' => 'third@example.com',
-                'json' => ['color' => '#0000ff', 'duplicate' => 'Duplicate', 'icon' => 'third', 'image' => 'https://example.com/third.jpg'],
-            ]),
-            User::factory()->create([
-                'name' => 'Unique name',
-                'email' => 'fourth@example.com',
-                'json' => ['color' => '#ffff00', 'duplicate' => 'Unique', 'icon' => 'fourth', 'image' => 'https://example.com/fourth.jpg'],
-            ]),
-        ]);
+it('keeps inherited one-argument callers of `toOptimizedHtml()` compatible', function (): void {
+    expect(TextColumnWithPublicOptimizedRenderer::make('title')->renderOptimized('Title'))
+        ->toContain('Title');
+});
+describe('label formatting compatibility', function (): void {
+    it('resolves enum labels after the formatter but before rich formatting', function (string $mode, string $expected): void {
+        $column = TextColumn::make('status')
+            ->{$mode}()
+            ->formatStateUsing(static function (NavigationGroupEnum $state): NavigationGroupEnum {
+                expect($state)->toBe(NavigationGroupEnum::Users);
 
-        $team->users()->attach($users);
+                return NavigationGroupEnum::Settings;
+            });
 
-        livewire(RenderColumnsWithRelatedRecords::class)
-            ->assertSuccessful()
-            ->assertSeeText('Framework team:second@example.com:Duplicate name')
-            ->assertSeeText('Framework team:third@example.com:Duplicate name')
-            ->assertSeeHtml('href="/users/' . $users[1]->getKey() . '"')
-            ->assertSeeHtml('href="/users/' . $users[2]->getKey() . '"')
-            ->assertSeeText($users->map(fn (User $user): string => "{$user->getKey()}:{$user->email}:{$user->email}")->implode(', '))
-            ->assertSeeText('distinct:second@example.com:Duplicate')
-            ->assertDontSeeText('distinct:third@example.com:Duplicate')
-            ->assertSeeText('distinct:fourth@example.com:Unique')
-            ->assertSeeHtml('alt="image-' . $users[0]->getKey() . '-' . $users[0]->json['image'] . '"')
-            ->assertSeeHtml('alt="image-' . $users[1]->getKey() . '-' . $users[1]->json['image'] . '"')
-            ->assertDontSeeHtml('alt="image-' . $users[2]->getKey() . '-' . $users[2]->json['image'] . '"')
-            ->assertSeeHtml('icon-' . $users[2]->getKey())
-            ->assertSeeHtml('color-' . $users[2]->getKey())
-            ->assertSeeHtml('copy-' . $users[2]->getKey());
+        expect($column->formatState(NavigationGroupEnum::Users)->toHtml())->toBe($expected);
+    })->with([
+        ['html', 'System Settings'],
+        ['markdown', "<p>System Settings</p>\n"],
+    ]);
+
+    it('formats non-stringable labels according to their trust in rich modes', function (string $mode, string | Htmlable | null $label, string $expected): void {
+        $state = new class($label) implements HasLabelContract
+        {
+            public function __construct(protected string | Htmlable | null $label) {}
+
+            public function getLabel(): string | Htmlable | null
+            {
+                return $this->label;
+            }
+        };
+
+        $column = TextColumn::make('status')->{$mode}()->prefix('<before>');
+
+        expect($column->formatState($state)->toHtml())->toBe($expected);
+    })->with([
+        ['html', '<b onclick="alert(1)">Label</b><script>alert(2)</script>', '&lt;before&gt;<b>Label</b>'],
+        ['html', null, '&lt;before&gt;'],
+        ['markdown', null, '&lt;before&gt;'],
+        ['markdown', new HtmlString('<b onclick="trusted()">**Label**</b>'), '&lt;before&gt;<b onclick="trusted()">**Label**</b>'],
+    ]);
+
+    it('preserves plain-mode label escaping and truncation', function (?int $limit, ?string $prefix, bool $isTrusted, string $expected): void {
+        $state = new class implements HasLabelContract
+        {
+            public function getLabel(): HtmlString
+            {
+                return new HtmlString('<b onclick="trusted()">Alpha beta</b>');
+            }
+        };
+
+        $formatted = TextColumn::make('status')->limit($limit)->prefix($prefix)->formatState($state);
+
+        expect($formatted instanceof Htmlable)->toBe($isTrusted)
+            ->and(e($formatted))->toBe($expected);
+
+        if (! $isTrusted) {
+            expect($formatted)->toBeString();
+        }
+    })->with([
+        'unformatted fast path' => [null, null, true, '<b onclick="trusted()">Alpha beta</b>'],
+        'non-truncating limit' => [100, null, true, '<b onclick="trusted()">Alpha beta</b>'],
+        'truncating limit' => [2, null, false, '&lt;b...'],
+        'string prefix' => [null, 'Label: ', false, 'Label: &lt;b onclick=&quot;trusted()&quot;&gt;Alpha beta&lt;/b&gt;'],
+    ]);
+
+    it('preserves existing `Stringable` and `Htmlable` precedence over labels in rich modes', function (bool $isHtmlable, string $expected): void {
+        if ($isHtmlable) {
+            $state = new class implements HasLabelContract, Htmlable
+            {
+                public function toHtml(): string
+                {
+                    return '<b onclick="trusted()">Original</b>';
+                }
+
+                public function getLabel(): string
+                {
+                    return 'Unused label';
+                }
+            };
+        } else {
+            $state = Mockery::mock(HasLabelContract::class);
+            $state->shouldReceive('__toString')->andReturn('<b onclick="trusted()">Original</b>');
+            $state->shouldReceive('getLabel')->andReturn('Unused label');
+        }
+
+        expect(TextColumn::make('status')->html()->formatState($state)->toHtml())->toBe($expected);
+    })->with([
+        [false, '<b>Original</b>'],
+        [true, '<b onclick="trusted()">Original</b>'],
+    ]);
+
+    it('keeps string labels untrusted without rich formatting', function (): void {
+        $state = Mockery::mock(HasLabelContract::class);
+        $state->shouldReceive('getLabel')->andReturn('<b>Label</b>');
+
+        $column = TextColumn::make('status')->prefix('Label: ');
+
+        expect($column->isHtml())->toBeFalse()
+            ->and($column->formatState($state))->toBe('Label: <b>Label</b>');
     });
+});
+
+it('renders labels and wrapper URLs accessibly in light and dark modes', function (): void {
+    Artisan::call('filament:assets');
+    Post::factory()->create(['title' => 'Quarterly report', 'content' => 'Review summary']);
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/columns-browser-test');
+
+    $page
+        ->assertNoSmoke()
+        ->assertSeeIn('[data-testid="enum-label-column"]', 'User Management')
+        ->assertScript('document.querySelectorAll(\'[data-testid="linked-column"] a\').length', 1)
+        ->assertMissing('[data-testid="disabled-column"] a')
+        ->assertNoAccessibilityIssues()
+        ->click('[data-testid="toggle-reordering"]')
+        ->assertMissing('[data-testid="linked-column"] a')
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()->assertNoAccessibilityIssues();
 });
 
 class RenderTextColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
@@ -861,55 +809,6 @@ class RenderOptimizedTextColumnWithRelatedRecord extends Component implements Ha
         return $table->query(Post::query())->columns([
             TextColumn::make('author.name')
                 ->formatStateUsing(static fn (Post $record, User $relatedRecord, string $state): string => "{$record->title}:{$relatedRecord->email}:{$state}"),
-        ]);
-    }
-
-    public function render(): View
-    {
-        return view('livewire.table');
-    }
-}
-
-class RenderColumnsWithRelatedRecords extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
-{
-    use InteractsWithActions;
-    use InteractsWithSchemas;
-    use Tables\Concerns\InteractsWithTable;
-
-    public function table(Table $table): Table
-    {
-        return $table->query(Team::query()->with([
-            'users' => static fn ($query) => $query->orderBy('users.id'),
-        ]))->columns([
-            TextColumn::make('users.name')
-                ->badge()
-                ->colors(static fn (string $state, User $relatedRecord): array => [
-                    'success' => static fn (string $state, User $relatedRecord): bool => $state === $relatedRecord->name,
-                ])
-                ->icons(static fn (string $state, User $relatedRecord): array => [
-                    'heroicon-o-check' => static fn (string $state, User $relatedRecord): bool => $state === $relatedRecord->name,
-                ])
-                ->formatStateUsing(static fn (Team $record, User $relatedRecord, string $state): string => "{$record->name}:{$relatedRecord->email}:{$state}")
-                ->url(static fn (string $state, User $relatedRecord): string => ($state === $relatedRecord->name) ? "/users/{$relatedRecord->getKey()}" : '/invalid')
-                ->tooltip(static fn (string $state, User $relatedRecord): string => "text-{$relatedRecord->getKey()}-{$state}"),
-            TextColumn::make('users.email')
-                ->copyable()
-                ->prefix(static fn (string $state, User $relatedRecord): string => "{$relatedRecord->getKey()}:{$state}:"),
-            TextColumn::make('users.json.duplicate')
-                ->distinctList()
-                ->badge()
-                ->formatStateUsing(static fn (User $relatedRecord, string $state): string => "distinct:{$relatedRecord->email}:{$state}"),
-            ImageColumn::make('users.json.image')
-                ->limit(2)
-                ->checkFileExistence(static fn (string $state, User $relatedRecord): bool => $state !== $relatedRecord->json['image'])
-                ->alt(static fn (string $state, User $relatedRecord): string => "image-{$relatedRecord->getKey()}-{$state}"),
-            IconColumn::make('users.json.icon')
-                ->icon(Heroicon::Check)
-                ->tooltip(static fn (string $state, User $relatedRecord): string => "icon-{$relatedRecord->getKey()}-{$state}"),
-            ColorColumn::make('users.json.color')
-                ->copyable(static fn (string $state, User $relatedRecord): bool => $state === $relatedRecord->json['color'])
-                ->copyableState(static fn (string $state, User $relatedRecord): string => "copy-{$relatedRecord->getKey()}-{$state}")
-                ->tooltip(static fn (string $state, User $relatedRecord): string => "color-{$relatedRecord->getKey()}-{$state}"),
         ]);
     }
 

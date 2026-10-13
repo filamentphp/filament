@@ -30,9 +30,8 @@ describe('key', function (): void {
     it('returns the key set by `make()`', function (): void {
         $response = DenyResponse::make('delete', 'Denied.');
 
-        if ($response instanceof DenyResponse) {
-            expect($response->getKey())->toBe('delete');
-        }
+        expect($response)->toBeInstanceOf(DenyResponse::class);
+        expect($response->getKey())->toBe('delete');
     });
 
     it('can set `key()` directly', function (): void {
@@ -92,11 +91,9 @@ describe('message with `Closure`', function (): void {
     it('can return `null` from the `Closure` to fall back to parent message', function (): void {
         $response = DenyResponse::make('action', 'Fallback message');
 
-        if ($response instanceof DenyResponse) {
-            $response->getMessageUsing(static fn (): ?string => null);
-        }
+        expect($response)->toBeInstanceOf(DenyResponse::class);
+        $response->getMessageUsing(static fn (): ?string => null);
 
-        // When Closure returns null, falls back to parent message
         expect($response->message())->toBe('Fallback message');
     });
 });
@@ -115,7 +112,6 @@ describe('`getMessageUsing()`', function (): void {
         $response->getMessageUsing(static fn (): string => 'callback');
         $response->getMessageUsing(null);
 
-        // With no callback, falls back to parent::message()
         expect($response->message())->toBeNull();
     });
 });

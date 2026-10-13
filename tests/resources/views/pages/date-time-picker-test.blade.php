@@ -16,6 +16,7 @@
             type="button"
             wire:click="$toggle('hasDisabledDates')"
             data-testid="replace-calendar"
+            :aria-pressed="$hasDisabledDates ? 'true' : 'false'"
         >
             Toggle unavailable date
         </x-filament::button>

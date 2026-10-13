@@ -104,7 +104,6 @@ it('renders `Htmlable` navigation labels and tooltips while escaping string labe
         ]);
 
     $page = visit(Settings::getUrl())
-        ->inDarkMode()
         ->assertSeeIn('[data-testid="literal-item"]', '<b>Overview &amp; insights</b>')
         ->assertMissing('[data-testid="literal-item"] b')
         ->assertSeeIn('[data-testid="rich-item"] b', 'Overview & insights')
@@ -114,9 +113,8 @@ it('renders `Htmlable` navigation labels and tooltips while escaping string labe
         ->assertAttribute('[data-testid="rich-group"] button[aria-controls]:not([aria-haspopup])', 'aria-label', 'Reports & <Draft>')
         ->assertNoAccessibilityIssues();
 
-    $page->script("window.dispatchEvent(new CustomEvent('theme-changed', { detail: 'light' }))");
-    $page->assertNoAccessibilityIssues()
-        ->click('button[aria-label="' . __('filament-panels::layout.actions.sidebar.collapse.label') . '"]:visible')
+    visit(Settings::getUrl())->inDarkMode()->assertNoAccessibilityIssues();
+    $page->click('button[aria-label="' . __('filament-panels::layout.actions.sidebar.collapse.label') . '"]:visible')
         ->hover('[data-testid="literal-item"] a')
         ->assertSeeIn('[role="tooltip"]', '<b>Overview &amp; insights</b>')
         ->assertMissing('[role="tooltip"] b')
@@ -142,7 +140,6 @@ describe('registration and ordering', function (): void {
 
         $itemLabels = $allItems->map(fn (NavigationItem $item) => $item->getLabel());
 
-        // Verify core pages and resources are registered
         expect($itemLabels)
             ->toContain('Dashboard')
             ->toContain('Companies')
@@ -150,7 +147,6 @@ describe('registration and ordering', function (): void {
             ->toContain('Posts')
             ->toContain('Products');
 
-        // Verify navigation groups contain expected items
         $groupLabels = $groups->map(fn (NavigationGroup $group) => $group->getLabel());
         expect($groupLabels)->toContain(null)->toContain('Blog')->toContain('Shop');
 
@@ -433,7 +429,6 @@ describe('navigation item key', function (): void {
 
 describe('sub-navigation parent-child', function (): void {
     it('can establish parent-child relationships in sub-navigation', function (): void {
-        // Create a test class that uses the `HasSubNavigation` trait
         $page = new class extends Page
         {
             protected string $view = 'filament-panels::pages.page';
@@ -452,17 +447,14 @@ describe('sub-navigation parent-child', function (): void {
 
         $navigation = $page->getCachedSubNavigation();
 
-        // Should have one group
         expect($navigation)->toHaveCount(1);
 
         $group = $navigation[0];
         $items = $group->getItems();
 
-        // Should only have the parent item at the top level (child is nested)
         expect($items)->toHaveCount(1);
         expect($items[0]->getLabel())->toBe('Users');
 
-        // Parent should have the child item
         $childItems = $items[0]->getChildItems();
         expect($childItems)->toHaveCount(1);
         expect($childItems->first()->getLabel())->toBe('Products');
@@ -492,7 +484,6 @@ describe('sub-navigation parent-child', function (): void {
         $group = $navigation[0];
         $items = collect($group->getItems());
 
-        // Should have two top-level items: Settings and Users
         expect($items)->toHaveCount(2);
 
         $settings = $items->first(fn ($i) => $i->getLabel() === 'Settings');
@@ -528,7 +519,6 @@ describe('sub-navigation parent-child', function (): void {
         $group = $navigation[0];
         $items = collect($group->getItems());
 
-        // Only Settings should appear (Products has non-existent parent and is dropped)
         expect($items)->toHaveCount(1);
         expect($items->first()->getLabel())->toBe('Settings');
     });
@@ -555,17 +545,14 @@ describe('sub-navigation parent-child', function (): void {
 
         $navigation = $page->getCachedSubNavigation();
 
-        // Find the System group
         $systemGroup = collect($navigation)->first(fn ($g) => $g->getLabel() === 'System');
         expect($systemGroup)->not()->toBeNull();
 
         $items = collect($systemGroup->getItems());
 
-        // Should only have Users at top level
         expect($items)->toHaveCount(1);
         expect($items->first()->getLabel())->toBe('Users');
 
-        // Users should have Roles as child
         $childItems = $items->first()->getChildItems();
         expect($childItems)->toHaveCount(1);
         expect($childItems->first()->getLabel())->toBe('Roles');
@@ -596,11 +583,9 @@ describe('sub-navigation parent-child', function (): void {
         $group = $navigation[0];
         $items = $group->getItems();
 
-        // Should only have Users at top level
         expect($items)->toHaveCount(1);
         expect($items[0]->getLabel())->toBe('Users');
 
-        // Users should have both Roles and Permissions as children
         $childItems = $items[0]->getChildItems();
         expect($childItems)->toHaveCount(2);
 
@@ -735,15 +720,12 @@ describe('sub-navigation parent-child', function (): void {
 
 describe('cluster sub-navigation', function (): void {
     it('can use enum `HasLabel` for cluster sub-navigation groups', function (): void {
-        // Access a page within the cluster
         $this->get(ManageAdmins::getUrl())->assertSuccessful();
 
-        // Get the page instance to test sub-navigation (pages within cluster also have sub-navigation)
         $component = livewire(ManageAdmins::class);
 
         $subNavigation = $component->instance()->getCachedSubNavigation();
 
-        // Should have groups with proper labels from `HasLabel` interface
         $groupLabels = collect($subNavigation)
             ->filter(fn (NavigationGroup $group) => filled($group->getLabel()))
             ->map(fn (NavigationGroup $group) => $group->getLabel())
@@ -759,7 +741,6 @@ describe('cluster sub-navigation', function (): void {
     });
 
     it('can disable sub-navigation for a cluster', function (): void {
-        // Access a page within the cluster that has sub-navigation disabled
         $this->get(ClusteredPageWithoutSubNavigation::getUrl())->assertSuccessful();
 
         $component = livewire(ClusteredPageWithoutSubNavigation::class);
@@ -781,7 +762,6 @@ describe('cluster sub-navigation', function (): void {
     });
 
     it('can disable sub-navigation for resource pages in a cluster', function (): void {
-        // Create a test resource page that would be in a cluster with sub-navigation disabled
         $listRecordsPage = new class extends ListRecords
         {
             protected static ?string $cluster = WithoutSubNavigationCluster::class;
@@ -795,10 +775,8 @@ describe('cluster sub-navigation', function (): void {
     });
 
     it('can check if cluster should register sub-navigation', function (): void {
-        // Test that `UserManagement` cluster has sub-navigation enabled by default
         expect(UserManagement::shouldRegisterSubNavigation())->toBeTrue();
 
-        // Test that `WithoutSubNavigationCluster` has sub-navigation disabled
         expect(WithoutSubNavigationCluster::shouldRegisterSubNavigation())->toBeFalse();
     });
 });

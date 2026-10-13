@@ -28,6 +28,657 @@ beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
 
+describe('configuration', function (): void {
+    describe('`boolean()`', function (): void {
+        it('can set `boolean()` options', function (): void {
+            $select = Select::make('active')
+                ->boolean();
+
+            $options = $select->getOptions();
+
+            expect($options)->toHaveCount(2);
+            expect($options[1])->toBe('Yes');
+            expect($options[0])->toBe('No');
+        });
+
+        it('can set custom labels for `boolean()`', function (): void {
+            $select = Select::make('active')
+                ->boolean(trueLabel: 'Enabled', falseLabel: 'Disabled');
+
+            $options = $select->getOptions();
+
+            expect($options[1])->toBe('Enabled');
+            expect($options[0])->toBe('Disabled');
+        });
+
+        it('can set `boolean()` with custom `$placeholder`', function (): void {
+            $select = Select::make('active')
+                ->boolean(placeholder: 'Choose...');
+
+            $options = $select->getOptions();
+
+            expect($options)->toHaveCount(2);
+            expect($select->getPlaceholder())->toBe('Choose...');
+        });
+    });
+
+    describe('dropdown properties', function (): void {
+        it('can set `reorderable()`', function (): void {
+            $select = Select::make('items');
+
+            expect($select->isReorderable())->toBeFalse();
+
+            $select->reorderable();
+
+            expect($select->isReorderable())->toBeTrue();
+        });
+
+        it('can set `position()`', function (): void {
+            $select = Select::make('category');
+
+            expect($select->getPosition())->toBeNull();
+
+            $select->position('bottom');
+
+            expect($select->getPosition())->toBe('bottom');
+        });
+
+        it('can set `forceSearchCaseInsensitive()`', function (): void {
+            $select = Select::make('category');
+
+            expect($select->isSearchForcedCaseInsensitive())->toBeNull();
+
+            $select->forceSearchCaseInsensitive();
+
+            expect($select->isSearchForcedCaseInsensitive())->toBeTrue();
+        });
+
+        it('can disable `wrapOptionLabels()`', function (): void {
+            $select = Select::make('category');
+
+            expect($select->canOptionLabelsWrap())->toBeTrue();
+
+            $select->wrapOptionLabels(false);
+
+            expect($select->canOptionLabelsWrap())->toBeFalse();
+        });
+
+        it('can set `dynamicOptions()`', function (): void {
+            $select = Select::make('category');
+
+            expect($select->hasDynamicOptions())->toBeFalse();
+
+            $select->dynamicOptions();
+
+            expect($select->hasDynamicOptions())->toBeTrue();
+        });
+
+        it('can set `maxItemsMessage()`', function (): void {
+            $select = Select::make('items')
+                ->multiple()
+                ->maxItemsMessage('Too many items');
+
+            expect($select->getMaxItemsMessage())->toBe('Too many items');
+        });
+    });
+
+    describe('option actions', function (): void {
+        it('returns `createOption` for `getCreateOptionActionName()`', function (): void {
+            $select = Select::make('category');
+
+            expect($select->getCreateOptionActionName())->toBe('createOption');
+        });
+
+        it('returns `editOption` for `getEditOptionActionName()`', function (): void {
+            $select = Select::make('category');
+
+            expect($select->getEditOptionActionName())->toBe('editOption');
+        });
+
+        it('returns `false` for `hasCreateOptionActionFormSchema()` by default', function (): void {
+            $select = Select::make('category');
+
+            expect($select->hasCreateOptionActionFormSchema())->toBeFalse();
+        });
+
+        it('returns `true` for `hasCreateOptionActionFormSchema()` when set', function (): void {
+            $select = Select::make('category')
+                ->createOptionForm([
+                    TextInput::make('name'),
+                ]);
+
+            expect($select->hasCreateOptionActionFormSchema())->toBeTrue();
+        });
+
+        it('returns `false` for `hasEditOptionActionFormSchema()` by default', function (): void {
+            $select = Select::make('category');
+
+            expect($select->hasEditOptionActionFormSchema())->toBeFalse();
+        });
+
+        it('returns `true` for `hasEditOptionActionFormSchema()` when set', function (): void {
+            $select = Select::make('category')
+                ->editOptionForm([
+                    TextInput::make('name'),
+                ]);
+
+            expect($select->hasEditOptionActionFormSchema())->toBeTrue();
+        });
+
+        it('can set `createOptionUsing()` and retrieve with `getCreateOptionUsing()`', function (): void {
+            $select = Select::make('category');
+
+            expect($select->getCreateOptionUsing())->toBeNull();
+
+            $callback = static fn (array $data): int => 1;
+            $select->createOptionUsing($callback);
+
+            expect($select->getCreateOptionUsing())->toBe($callback);
+        });
+
+        it('can set `updateOptionUsing()` and retrieve with `getUpdateOptionUsing()`', function (): void {
+            $select = Select::make('category');
+
+            expect($select->getUpdateOptionUsing())->toBeNull();
+
+            $callback = static function (array $data): void {};
+            $select->updateOptionUsing($callback);
+
+            expect($select->getUpdateOptionUsing())->toBe($callback);
+        });
+
+        it('can set `createOptionModalHeading()`', function (): void {
+            $select = Select::make('category');
+
+            expect($select->getCreateOptionModalHeading())->toBeNull();
+
+            $select->createOptionModalHeading('New Category');
+
+            expect($select->getCreateOptionModalHeading())->toBe('New Category');
+        });
+
+        it('can set `editOptionModalHeading()`', function (): void {
+            $select = Select::make('category');
+
+            expect($select->getEditOptionModalHeading())->toBeNull();
+
+            $select->editOptionModalHeading('Edit Category');
+
+            expect($select->getEditOptionModalHeading())->toBe('Edit Category');
+        });
+
+        it('returns fluent `$this` from `manageOptionForm()`', function (): void {
+            $select = Select::make('category');
+
+            $result = $select->manageOptionForm([
+                TextInput::make('name'),
+            ]);
+
+            expect($result)->toBe($select);
+            expect($select->hasCreateOptionActionFormSchema())->toBeTrue();
+            expect($select->hasEditOptionActionFormSchema())->toBeTrue();
+        });
+    });
+
+    describe('dropdown `Closure` configuration', function (): void {
+        it('can set `reorderable()` with a `Closure`', function (): void {
+            $select = Select::make('tags')
+                ->multiple()
+                ->reorderable(static fn (): bool => true);
+
+            expect($select->isReorderable())->toBeTrue();
+        });
+
+        it('can set `optionsLimit()` with a `Closure`', function (): void {
+            $select = Select::make('category')
+                ->optionsLimit(static fn (): int => 200);
+
+            expect($select->getOptionsLimit())->toBe(200);
+        });
+    });
+
+    describe('relationship label callbacks', function (): void {
+        it('returns `false` for `hasOptionLabelFromRecordUsingCallback()` by default', function (): void {
+            $select = Select::make('category');
+
+            expect($select->hasOptionLabelFromRecordUsingCallback())->toBeFalse();
+        });
+
+        it('returns `true` for `hasOptionLabelFromRecordUsingCallback()` when set', function (): void {
+            $select = Select::make('category')
+                ->getOptionLabelFromRecordUsing(static fn ($record): string => $record->name);
+
+            expect($select->hasOptionLabelFromRecordUsingCallback())->toBeTrue();
+        });
+
+    });
+
+    describe('`Closure` support', function (): void {
+        it('can set `multiple()` with a `Closure`', function (): void {
+            $select = Select::make('tags')
+                ->multiple(static fn (): bool => true);
+
+            expect($select->isMultiple())->toBeTrue();
+        });
+
+        it('can set `position()` with a `Closure`', function (): void {
+            $select = Select::make('status')
+                ->position(static fn (): string => 'above');
+
+            expect($select->getPosition())->toBe('above');
+        });
+
+        it('can set `dynamicOptions()` with a `Closure`', function (): void {
+            $select = Select::make('status')
+                ->dynamicOptions(static fn (): bool => true);
+
+            expect($select->hasDynamicOptions())->toBeTrue();
+        });
+
+        it('can set `maxItemsMessage()` with a `Closure`', function (): void {
+            $select = Select::make('tags')
+                ->maxItemsMessage(static fn (): string => 'Too many!');
+
+            expect($select->getMaxItemsMessage())->toBe('Too many!');
+        });
+    });
+
+    describe('relationship metadata', function (): void {
+        it('returns `false` for `hasRelationship()` by default', function (): void {
+            $select = Select::make('team_id');
+
+            expect($select->hasRelationship())->toBeFalse();
+        });
+
+        it('returns `true` for `hasRelationship()` after `relationship()` is called', function (): void {
+            $select = Select::make('team_id')
+                ->relationship('team', 'name');
+
+            expect($select->hasRelationship())->toBeTrue();
+        });
+
+        it('returns `null` for `getRelationshipName()` by default', function (): void {
+            $select = Select::make('team_id');
+
+            expect($select->getRelationshipName())->toBeNull();
+        });
+
+        it('uses field name when `relationship()` name is `null`', function (): void {
+            $select = Select::make('team')
+                ->relationship(titleAttribute: 'name');
+
+            expect($select->getRelationshipName())->toBe('team');
+        });
+
+        it('returns `null` for `getRelationshipTitleAttribute()` by default', function (): void {
+            $select = Select::make('team_id');
+
+            expect($select->getRelationshipTitleAttribute())->toBeNull();
+        });
+    });
+
+    describe('search columns', function (): void {
+        it('returns `null` for `getSearchColumns()` by default', function (): void {
+            $select = Select::make('team_id');
+
+            expect($select->getSearchColumns())->toBeNull();
+        });
+
+        it('can set search columns via `searchable()` with array', function (): void {
+            $select = Select::make('team_id')
+                ->searchable(['name', 'email']);
+
+            expect($select->getSearchColumns())->toBe(['name', 'email']);
+            expect($select->isSearchable())->toBeTrue();
+        });
+    });
+
+    describe('`hasDynamicOptions()` logic', function (): void {
+        it('returns `false` by default', function (): void {
+            $select = Select::make('status');
+
+            expect($select->hasDynamicOptions())->toBeFalse();
+        });
+
+        it('can be cleared with `null` to revert to default', function (): void {
+            $select = Select::make('status')
+                ->dynamicOptions()
+                ->dynamicOptions(null);
+
+            expect($select->hasDynamicOptions())->toBeFalse();
+        });
+    });
+});
+
+describe('options', function (): void {
+    it('can get `getOptions()` from static array', function (): void {
+        $select = Select::make('category')
+            ->options([
+                'electronics' => 'Electronics',
+                'clothing' => 'Clothing',
+            ]);
+
+        expect($select->getOptions())->toBe([
+            'electronics' => 'Electronics',
+            'clothing' => 'Clothing',
+        ]);
+    });
+
+    it('can get `getOptions()` from closure', function (): void {
+        $select = Select::make('category')
+            ->options(fn (): array => [
+                'electronics' => 'Electronics',
+                'clothing' => 'Clothing',
+            ]);
+
+        expect($select->getOptions())->toBe([
+            'electronics' => 'Electronics',
+            'clothing' => 'Clothing',
+        ]);
+    });
+
+    it('can get `getOptions()` from enum class string', function (): void {
+        $select = Select::make('category')
+            ->options(StringBackedEnum::class);
+
+        $options = $select->getOptions();
+
+        expect($options)->toBe([
+            'one' => 'One',
+            'two' => 'Two',
+            'three' => 'Three',
+        ]);
+    });
+
+    it('can check if option is disabled using `isOptionDisabled()`', function (): void {
+        $select = Select::make('category')
+            ->options([
+                'active' => 'Active',
+                'inactive' => 'Inactive',
+                'archived' => 'Archived',
+            ])
+            ->disableOptionWhen(fn (string $value): bool => $value === 'archived');
+
+        expect($select->isOptionDisabled('active', 'Active'))->toBeFalse();
+        expect($select->isOptionDisabled('archived', 'Archived'))->toBeTrue();
+    });
+
+    it('can get enabled options using `getEnabledOptions()`', function (): void {
+        $select = Select::make('category')
+            ->options([
+                'active' => 'Active',
+                'inactive' => 'Inactive',
+                'archived' => 'Archived',
+            ])
+            ->disableOptionWhen(fn (string $value): bool => $value === 'archived');
+
+        expect($select->getEnabledOptions())->toBe([
+            'active' => 'Active',
+            'inactive' => 'Inactive',
+        ]);
+    });
+
+    it('can get enabled options from grouped options using `getEnabledOptions()`', function (): void {
+        $select = Select::make('category')
+            ->options([
+                'Status' => [
+                    'active' => 'Active',
+                    'archived' => 'Archived',
+                ],
+                'Type' => [
+                    'normal' => 'Normal',
+                    'premium' => 'Premium',
+                ],
+            ])
+            ->disableOptionWhen(fn (string $value): bool => in_array($value, ['archived', 'premium']));
+
+        expect($select->getEnabledOptions())->toBe([
+            'active' => 'Active',
+            'normal' => 'Normal',
+        ]);
+    });
+
+    it('returns `true` for `hasDisabledOptions()` when closure is set', function (): void {
+        $select = Select::make('category')
+            ->options(['a' => 'A', 'b' => 'B'])
+            ->disableOptionWhen(fn (string $value): bool => $value === 'b');
+
+        expect($select->hasDisabledOptions())->toBeTrue();
+    });
+
+    it('returns `false` for `hasDisabledOptions()` when no closure is set', function (): void {
+        $select = Select::make('category')
+            ->options(['a' => 'A', 'b' => 'B']);
+
+        expect($select->hasDisabledOptions())->toBeFalse();
+    });
+});
+
+describe('JS transform and properties', function (): void {
+    it('can transform options for JS using default transformer', function (): void {
+        $select = Select::make('category')
+            ->options([
+                'electronics' => 'Electronics',
+                'clothing' => 'Clothing',
+            ]);
+
+        $transformed = $select->getOptionsForJs();
+
+        expect($transformed)->toBe([
+            ['label' => 'Electronics', 'value' => 'electronics', 'isDisabled' => false],
+            ['label' => 'Clothing', 'value' => 'clothing', 'isDisabled' => false],
+        ]);
+    });
+
+    it('can transform grouped options for JS', function (): void {
+        $select = Select::make('category')
+            ->options([
+                'Electronics' => [
+                    'phone' => 'Phone',
+                    'laptop' => 'Laptop',
+                ],
+            ]);
+
+        $transformed = $select->getOptionsForJs();
+
+        expect($transformed)->toBe([
+            [
+                'label' => 'Electronics',
+                'options' => [
+                    ['label' => 'Phone', 'value' => 'phone', 'isDisabled' => false],
+                    ['label' => 'Laptop', 'value' => 'laptop', 'isDisabled' => false],
+                ],
+            ],
+        ]);
+    });
+
+    it('marks disabled options in JS transform', function (): void {
+        $select = Select::make('category')
+            ->options([
+                'active' => 'Active',
+                'archived' => 'Archived',
+            ])
+            ->disableOptionWhen(fn (string $value): bool => $value === 'archived');
+
+        $transformed = $select->getOptionsForJs();
+
+        expect($transformed)->toBe([
+            ['label' => 'Active', 'value' => 'active', 'isDisabled' => false],
+            ['label' => 'Archived', 'value' => 'archived', 'isDisabled' => true],
+        ]);
+    });
+
+    it('can use custom `transformOptionsForJsUsing()` callback', function (): void {
+        $select = Select::make('category')
+            ->options([
+                'electronics' => 'Electronics',
+            ])
+            ->transformOptionsForJsUsing(fn (Select $component, array $options): array => collect($options)
+                ->map(fn ($label, $value): array => ['id' => $value, 'name' => $label])
+                ->values()
+                ->all());
+
+        $transformed = $select->getOptionsForJs();
+
+        expect($transformed)->toBe([
+            ['id' => 'electronics', 'name' => 'Electronics'],
+        ]);
+    });
+
+    it('returns empty array when transforming empty options', function (): void {
+        $select = Select::make('category')
+            ->options([]);
+
+        expect($select->getOptionsForJs())->toBe([]);
+    });
+
+    it('can check `isMultiple()` returns correct value', function (): void {
+        $singleSelect = Select::make('category');
+        $multipleSelect = Select::make('categories')->multiple();
+
+        expect($singleSelect->isMultiple())->toBeFalse();
+        expect($multipleSelect->isMultiple())->toBeTrue();
+    });
+
+    it('can check `isSearchable()` defaults to `true` for multiple select', function (): void {
+        $singleSelect = Select::make('category');
+        $multipleSelect = Select::make('categories')->multiple();
+
+        expect($singleSelect->isSearchable())->toBeFalse();
+        expect($multipleSelect->isSearchable())->toBeTrue();
+    });
+
+    it('can get search results using `getSearchResultsUsing()`', function (): void {
+        $select = Select::make('category')
+            ->getSearchResultsUsing(fn (string $search): array => [
+                'result1' => "Found: {$search}",
+            ]);
+
+        $results = $select->getSearchResults('test');
+
+        expect($results)->toBe([
+            'result1' => 'Found: test',
+        ]);
+    });
+
+    it('returns empty array for `getSearchResults()` when no callback is set', function (): void {
+        $select = Select::make('category');
+
+        expect($select->getSearchResults('test'))->toBe([]);
+    });
+
+    it('can get options limit using `getOptionsLimit()`', function (): void {
+        $defaultSelect = Select::make('category');
+        $limitedSelect = Select::make('category')->optionsLimit(100);
+
+        expect($defaultSelect->getOptionsLimit())->toBe(50);
+        expect($limitedSelect->getOptionsLimit())->toBe(100);
+    });
+});
+
+describe('option labels', function (): void {
+    it('can get `getOptionLabel()` from flat options', function (): void {
+        livewire(TestSelectWithFlatOptions::class)
+            ->fillForm(['category' => 'electronics'])
+            ->assertFormComponentExists('category', function (Select $select): bool {
+                expect($select->getOptionLabel())->toBe('Electronics');
+
+                return true;
+            });
+    });
+
+    it('can get `getOptionLabel()` from grouped options', function (): void {
+        livewire(TestSelectWithGroupedOptions::class)
+            ->fillForm(['product' => 'laptop'])
+            ->assertFormComponentExists('product', function (Select $select): bool {
+                expect($select->getOptionLabel())->toBe('Laptop');
+
+                return true;
+            });
+    });
+
+    it('returns state as default when option not found in `getOptionLabel()`', function (): void {
+        livewire(TestSelectWithFlatOptions::class)
+            ->fillForm(['category' => 'unknown'])
+            ->assertFormComponentExists('category', function (Select $select): bool {
+                expect($select->getOptionLabel())->toBe('unknown');
+
+                return true;
+            });
+    });
+
+    it('returns `null` when option not found and `withDefault` is `false` in `getOptionLabel()`', function (): void {
+        livewire(TestSelectWithFlatOptions::class)
+            ->fillForm(['category' => 'unknown'])
+            ->assertFormComponentExists('category', function (Select $select): bool {
+                expect($select->getOptionLabel(withDefault: false))->toBeNull();
+
+                return true;
+            });
+    });
+
+    it('can get `getOptionLabel()` using custom `getOptionLabelUsing()` closure', function (): void {
+        livewire(TestSelectWithCustomOptionLabel::class)
+            ->fillForm(['category' => 'electronics'])
+            ->assertFormComponentExists('category', function (Select $select): bool {
+                expect($select->getOptionLabel())->toBe('ELECTRONICS');
+
+                return true;
+            });
+    });
+
+    it('can get `getOptionLabels()` from flat options for multiple select', function (): void {
+        livewire(TestMultipleSelectWithFlatOptions::class)
+            ->fillForm(['categories' => ['electronics', 'books']])
+            ->assertFormComponentExists('categories', function (Select $select): bool {
+                expect($select->getOptionLabels())->toBe([
+                    'electronics' => 'Electronics',
+                    'books' => 'Books',
+                ]);
+
+                return true;
+            });
+    });
+
+    it('can get `getOptionLabels()` from grouped options for multiple select', function (): void {
+        livewire(TestMultipleSelectWithGroupedOptions::class)
+            ->fillForm(['products' => ['laptop', 'shirt']])
+            ->assertFormComponentExists('products', function (Select $select): bool {
+                expect($select->getOptionLabels())->toBe([
+                    'laptop' => 'Laptop',
+                    'shirt' => 'Shirt',
+                ]);
+
+                return true;
+            });
+    });
+
+    it('returns value as default when option not found in `getOptionLabels()`', function (): void {
+        livewire(TestMultipleSelectWithFlatOptions::class)
+            ->fillForm(['categories' => ['electronics', 'unknown']])
+            ->assertFormComponentExists('categories', function (Select $select): bool {
+                expect($select->getOptionLabels())->toBe([
+                    'electronics' => 'Electronics',
+                    'unknown' => 'unknown',
+                ]);
+
+                return true;
+            });
+    });
+
+    it('excludes missing options when `withDefaults` is `false` in `getOptionLabels()`', function (): void {
+        livewire(TestMultipleSelectWithFlatOptions::class)
+            ->fillForm(['categories' => ['electronics', 'unknown']])
+            ->assertFormComponentExists('categories', function (Select $select): bool {
+                expect($select->getOptionLabels(withDefaults: false))->toBe([
+                    'electronics' => 'Electronics',
+                ]);
+
+                return true;
+            });
+    });
+});
+
 describe('validation', function (): void {
     it('can automatically validate valid options', function (): void {
         livewire(TestComponentWithSelect::class)
@@ -255,92 +906,8 @@ describe('validation', function (): void {
     });
 });
 
-describe('`BelongsToMany` relationship', function (): void {
-    it('can use `BelongsToMany` relationship as multiple select', function (): void {
-        $user = User::factory()->create();
-        $teams = Team::factory()->count(3)->create();
-        $user->teams()->attach($teams);
-
-        expect($user->teams)->toHaveCount(3);
-
-        livewire(TestComponentWithBelongsToManyMultipleSelect::class, ['record' => $user])
-            ->assertSchemaStateSet([
-                'teams' => $teams->pluck('id')->map(fn ($id) => (string) $id)->all(),
-            ]);
-    });
-
-    it('can save `BelongsToMany` relationship as multiple select', function (): void {
-        $user = User::factory()->create();
-        $teams = Team::factory()->count(3)->create();
-        $user->teams()->attach($teams->first());
-
-        expect($user->teams)->toHaveCount(1);
-
-        $newTeamIds = $teams->take(2)->pluck('id')->map(fn ($id) => (string) $id)->all();
-
-        livewire(TestComponentWithBelongsToManyMultipleSelect::class, ['record' => $user])
-            ->fillForm(['teams' => $newTeamIds])
-            ->call('save');
-
-        $user->refresh();
-        expect($user->teams)->toHaveCount(2);
-        expect($user->teams->pluck('id')->sort()->values()->all())->toBe($teams->take(2)->pluck('id')->sort()->values()->all());
-    });
-
-    it('invalidates the cached `BelongsToMany` relationship after save so a subsequent reload does not re-attach detached rows', function (): void {
-        $user = User::factory()->create();
-        $teams = Team::factory()->count(2)->create();
-        $user->teams()->attach($teams);
-
-        $component = livewire(TestComponentWithEagerLoadedBelongsToManyMultipleSelect::class, ['record' => $user])
-            ->fillForm(['teams' => []])
-            ->call('save');
-
-        expect($user->fresh()->teams)->toHaveCount(0)
-            ->and($component->instance()->data['teams'])->toBe([]);
-
-        $component->call('save');
-
-        expect($user->fresh()->teams)->toHaveCount(0);
-    });
-
-    it('can use `BelongsToMany` relationship as single select', function (): void {
-        $user = User::factory()->create();
-        $teams = Team::factory()->count(3)->create();
-        $user->teams()->attach($teams);
-
-        expect($user->teams)->toHaveCount(3);
-
-        livewire(TestComponentWithBelongsToManySelect::class, ['record' => $user])
-            ->assertSchemaStateSet([
-                'teams' => (string) $teams->first()->id,
-            ]);
-    });
-
-    it('can save `BelongsToMany` relationship as single select', function (): void {
-        $user = User::factory()->create();
-        $teams = Team::factory()->count(3)->create();
-        $user->teams()->attach($teams->take(2));
-
-        expect($user->teams)->toHaveCount(2);
-
-        $newTeamId = (string) $teams->last()->id;
-
-        livewire(TestComponentWithBelongsToManySelect::class, ['record' => $user])
-            ->fillForm(['teams' => $newTeamId])
-            ->call('save');
-
-        $user->refresh();
-        expect($user->teams)->toHaveCount(1);
-        expect($user->teams->first()->id)->toBe($teams->last()->id);
-    });
-});
-
-describe('options and search branches', function (): void {
+describe('relationship options and search', function (): void {
     it('caches relationship options on the component to avoid duplicate queries for repeated `getOptions()` calls', function (): void {
-        // Why this matters: a Select inside a Repeater can have `getOptions()` invoked many times during a
-        // render cycle (once per item lifecycle hook, validation, view rendering). Without caching, that
-        // becomes a query per repeater item. The cache keeps the load to a single query for the whole cycle.
         Team::factory()->count(3)->create();
 
         $select = Select::make('teams')
@@ -372,9 +939,6 @@ describe('options and search branches', function (): void {
     });
 
     it('does not cache `getOptions()` when `modifyQueryUsing()` is set, since the closure can vary per repeater item', function (): void {
-        // Why this matters: `modifyQueryUsing` callbacks frequently inject `Get` / `$record` etc., which may
-        // produce different option lists for different sibling rows in a Repeater. Caching here would leak
-        // the first row's options to every other row, so the cache must be skipped.
         Team::factory()->count(3)->create();
 
         $select = Select::make('teams')
@@ -420,7 +984,6 @@ describe('options and search branches', function (): void {
             ->assertFormComponentExists('teams', function (Select $component): bool {
                 $results = $component->getSearchResults('');
 
-                // The custom DESC order must win because the method skips orderBy when orders exist
                 $names = array_values($results);
                 expect($names)->toBe(['Bravo', 'Alpha']);
 
@@ -458,9 +1021,163 @@ describe('options and search branches', function (): void {
                 return true;
             });
     });
+
+    it('can get `getOptions()` from `BelongsTo` relationship', function (): void {
+        $users = User::factory()->count(3)->create();
+
+        livewire(TestSelectWithBelongsToRelationship::class)
+            ->assertFormComponentExists('author_id', function (Select $select) use ($users): bool {
+                $options = $select->getOptions();
+
+                expect($options)->toHaveCount(3);
+                expect(array_values($options))->toContain($users[0]->name);
+                expect(array_values($options))->toContain($users[1]->name);
+                expect(array_values($options))->toContain($users[2]->name);
+
+                return true;
+            });
+    });
+
+    it('can get `getSearchResults()` from `BelongsTo` relationship', function (): void {
+        User::factory()->create(['name' => 'John Doe']);
+        User::factory()->create(['name' => 'Jane Smith']);
+        User::factory()->create(['name' => 'Bob Johnson']);
+
+        livewire(TestSelectWithSearchableBelongsToRelationship::class)
+            ->assertFormComponentExists('author_id', function (Select $select): bool {
+                $results = $select->getSearchResults('John');
+
+                expect($results)->toHaveCount(2);
+                expect(array_values($results))->toContain('John Doe');
+                expect(array_values($results))->toContain('Bob Johnson');
+
+                return true;
+            });
+    });
+
+    it('can get `getOptionLabel()` from `BelongsTo` relationship with preload', function (): void {
+        $author = User::factory()->create(['name' => 'Test Author']);
+        $post = Post::factory()->create(['author_id' => $author->id]);
+
+        livewire(TestSelectWithPreloadedBelongsToRelationship::class, ['record' => $post])
+            ->assertFormComponentExists('author_id', function (Select $select) use ($author): bool {
+                expect($select->getOptionLabel())->toBe($author->name);
+
+                return true;
+            });
+    });
+
+    it('can get `getOptions()` from `BelongsToMany` relationship with preload', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(3)->create();
+
+        livewire(TestSelectWithPreloadedBelongsToManyRelationship::class, ['record' => $user])
+            ->assertFormComponentExists('teams', function (Select $select) use ($teams): bool {
+                $options = $select->getOptions();
+
+                expect($options)->toHaveCount(3);
+                expect(array_values($options))->toContain($teams[0]->name);
+                expect(array_values($options))->toContain($teams[1]->name);
+                expect(array_values($options))->toContain($teams[2]->name);
+
+                return true;
+            });
+    });
+
+    it('can get `getSearchResults()` from `BelongsToMany` relationship', function (): void {
+        Team::factory()->create(['name' => 'Alpha Team']);
+        Team::factory()->create(['name' => 'Beta Team']);
+        Team::factory()->create(['name' => 'Gamma Group']);
+
+        livewire(TestSelectWithSearchableBelongsToManyRelationship::class)
+            ->assertFormComponentExists('teams', function (Select $select): bool {
+                $results = $select->getSearchResults('Team');
+
+                expect($results)->toHaveCount(2);
+                expect(array_values($results))->toContain('Alpha Team');
+                expect(array_values($results))->toContain('Beta Team');
+
+                return true;
+            });
+    });
+
+    it('can get `getOptionLabels()` from `BelongsToMany` relationship with preload', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(2)->create();
+        $user->teams()->attach($teams);
+
+        livewire(TestSelectWithPreloadedBelongsToManyRelationship::class, ['record' => $user])
+            ->assertFormComponentExists('teams', function (Select $select) use ($teams): bool {
+                $labels = $select->getOptionLabels();
+
+                expect($labels)->toHaveCount(2);
+                expect(array_values($labels))->toContain($teams[0]->name);
+                expect(array_values($labels))->toContain($teams[1]->name);
+
+                return true;
+            });
+    });
+
+    it('returns empty array for `getOptions()` when relationship is searchable without preload', function (): void {
+        User::factory()->count(3)->create();
+
+        livewire(TestSelectWithSearchableBelongsToRelationship::class)
+            ->assertFormComponentExists('author_id', function (Select $select): bool {
+                expect($select->getOptions())->toBe([]);
+
+                return true;
+            });
+    });
+
+    it('returns options when relationship is searchable with preload', function (): void {
+        $users = User::factory()->count(3)->create();
+        $post = Post::factory()->create(['author_id' => $users[0]->id]);
+
+        livewire(TestSelectWithPreloadedBelongsToRelationship::class, ['record' => $post])
+            ->assertFormComponentExists('author_id', function (Select $select): bool {
+                $options = $select->getOptions();
+
+                expect($options)->toHaveCount(3);
+
+                return true;
+            });
+    });
+
+    it('can use `modifyQueryUsing` to filter relationship options', function (): void {
+        User::factory()->create(['name' => 'Admin User']);
+        User::factory()->create(['name' => 'Normal User']);
+        User::factory()->create(['name' => 'Admin Manager']);
+
+        livewire(TestSelectWithModifiedRelationshipQuery::class)
+            ->assertFormComponentExists('author_id', function (Select $select): bool {
+                $options = $select->getOptions();
+
+                expect($options)->toHaveCount(2);
+                expect(array_values($options))->toContain('Admin User');
+                expect(array_values($options))->toContain('Admin Manager');
+                expect(array_values($options))->not->toContain('Normal User');
+
+                return true;
+            });
+    });
+
+    it('can use `getOptionLabelFromRecordUsing()` for custom relationship labels', function (): void {
+        User::factory()->create(['name' => 'John', 'email' => 'john@example.com']);
+        User::factory()->create(['name' => 'Jane', 'email' => 'jane@example.com']);
+
+        livewire(TestSelectWithCustomRelationshipLabel::class)
+            ->assertFormComponentExists('author_id', function (Select $select): bool {
+                $options = $select->getOptions();
+
+                expect(array_values($options))->toContain('John (john@example.com)');
+                expect(array_values($options))->toContain('Jane (jane@example.com)');
+
+                return true;
+            });
+    });
 });
 
-describe('save state branches', function (): void {
+describe('relationship state', function (): void {
     it('returns early from `fillStateFromRelationship()` when state is already filled', function (): void {
         $teams = Team::factory()->count(2)->create();
         $user = User::factory()->create(['team_id' => $teams->first()->id]);
@@ -535,18 +1252,19 @@ describe('save state branches', function (): void {
         $teamB = Team::factory()->create();
         $user = User::factory()->create(['team_id' => $teamA->id]);
 
-        livewire(SelectWithBelongsToRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('team_id', function (Select $component) use ($teamA, $teamB): bool {
-                $component->getRecord()->wasRecentlyCreated = true;
-                $component->getRecord()->team_id = $teamA->id;
+        $schema = Schema::make(Livewire::make())
+            ->model($user)
+            ->statePath('data')
+            ->components([
+                $select = Select::make('team_id')->relationship('team', 'name'),
+            ])
+            ->fill();
 
-                $component->state((string) $teamB->id);
-                $component->saveStateToRelationship();
+        $select->state((string) $teamB->id);
+        $schema->getState();
 
-                expect($component->getRecord()->team_id)->toBe($teamA->id);
-
-                return true;
-            });
+        expect($user->team_id)->toBe($teamA->id)
+            ->and($user->fresh()->team_id)->toBe($teamA->id);
     });
 
     it('treats saving a `HasManyThrough` relationship as a no-op', function (): void {
@@ -617,6 +1335,122 @@ describe('save state branches', function (): void {
 
                 return [];
             });
+    });
+});
+
+describe('`BelongsToMany` relationship', function (): void {
+    it('can use `BelongsToMany` relationship as multiple select', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(3)->create();
+        $user->teams()->attach($teams);
+
+        expect($user->teams)->toHaveCount(3);
+
+        livewire(TestComponentWithBelongsToManyMultipleSelect::class, ['record' => $user])
+            ->assertSchemaStateSet([
+                'teams' => $teams->pluck('id')->map(fn ($id) => (string) $id)->all(),
+            ]);
+    });
+
+    it('can save `BelongsToMany` relationship as multiple select', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(3)->create();
+        $user->teams()->attach($teams->first());
+
+        expect($user->teams)->toHaveCount(1);
+
+        $newTeamIds = $teams->take(2)->pluck('id')->map(fn ($id) => (string) $id)->all();
+
+        livewire(TestComponentWithBelongsToManyMultipleSelect::class, ['record' => $user])
+            ->fillForm(['teams' => $newTeamIds])
+            ->call('save');
+
+        $user->refresh();
+        expect($user->teams)->toHaveCount(2);
+        expect($user->teams->pluck('id')->sort()->values()->all())->toBe($teams->take(2)->pluck('id')->sort()->values()->all());
+    });
+
+    it('invalidates the cached `BelongsToMany` relationship after save so a subsequent reload does not re-attach detached rows', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(2)->create();
+        $user->teams()->attach($teams);
+
+        $component = livewire(TestComponentWithEagerLoadedBelongsToManyMultipleSelect::class, ['record' => $user])
+            ->fillForm(['teams' => []])
+            ->call('save');
+
+        expect($user->fresh()->teams)->toHaveCount(0);
+
+        $component->assertSchemaStateSet(['teams' => []]);
+
+        $component->call('save');
+
+        expect($user->fresh()->teams)->toHaveCount(0);
+    });
+
+    it('can use `BelongsToMany` relationship as single select', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(3)->create();
+        $user->teams()->attach($teams);
+
+        expect($user->teams)->toHaveCount(3);
+
+        livewire(TestComponentWithBelongsToManySelect::class, ['record' => $user])
+            ->assertSchemaStateSet([
+                'teams' => (string) $teams->first()->id,
+            ]);
+    });
+
+    it('can save `BelongsToMany` relationship as single select', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(3)->create();
+        $user->teams()->attach($teams->take(2));
+
+        expect($user->teams)->toHaveCount(2);
+
+        $newTeamId = (string) $teams->last()->id;
+
+        livewire(TestComponentWithBelongsToManySelect::class, ['record' => $user])
+            ->fillForm(['teams' => $newTeamId])
+            ->call('save');
+
+        $user->refresh();
+        expect($user->teams)->toHaveCount(1);
+        expect($user->teams->first()->id)->toBe($teams->last()->id);
+    });
+
+    it('can save `BelongsToMany` with `pivotData()` via `syncWithPivotValues()`', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(2)->create();
+
+        livewire(TestSelectWithBelongsToManyAndPivotData::class, ['record' => $user])
+            ->fillForm(['teams' => $teams->pluck('id')->map(fn ($id) => (string) $id)->all()])
+            ->call('save');
+
+        $pivotRows = DB::table('team_user')
+            ->where('user_id', $user->id)
+            ->get();
+
+        expect($pivotRows)->toHaveCount(2);
+        expect($pivotRows->first()->role)->toBe('editor');
+        expect($pivotRows->last()->role)->toBe('editor');
+    });
+
+    it('can detach and re-sync `BelongsToMany` with `pivotData()`', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(3)->create();
+        $user->teams()->attach($teams);
+
+        livewire(TestSelectWithBelongsToManyAndPivotData::class, ['record' => $user])
+            ->fillForm(['teams' => $teams->take(1)->pluck('id')->map(fn ($id) => (string) $id)->all()])
+            ->call('save');
+
+        $pivotRows = DB::table('team_user')
+            ->where('user_id', $user->id)
+            ->get();
+
+        expect($pivotRows)->toHaveCount(1);
+        expect($pivotRows->first()->role)->toBe('editor');
     });
 });
 
@@ -917,6 +1751,536 @@ describe('eager loading', function (): void {
 
         $queriesSaved = $queriesWithoutEagerLoading - $queriesWithEagerLoading;
         expect($queriesSaved)->toBe(2, "Expected to save 2 queries with eager loading, but saved {$queriesSaved}");
+    });
+});
+
+describe('rendering', function (): void {
+    it('can render with static `options()`', function (): void {
+        livewire(RenderSelectWithStaticOptions::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('Electronics')
+            ->assertSeeHtml('Clothing');
+    });
+
+    it('can render with `options()` from `Closure`', function (): void {
+        livewire(RenderSelectWithClosureOptions::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('Electronics');
+    });
+
+    it('can render with `options()` from enum', function (): void {
+        livewire(RenderSelectWithEnumOptions::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('One')
+            ->assertSeeHtml('Two');
+    });
+
+    it('can render with `multiple()`', function (): void {
+        livewire(RenderSelectWithMultiple::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with `multiple()` set via `Closure`', function (): void {
+        livewire(RenderSelectWithClosureMultiple::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with `searchable()`', function (): void {
+        livewire(RenderSelectWithSearchable::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with `boolean()`', function (): void {
+        livewire(RenderSelectWithBoolean::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('Yes')
+            ->assertSeeHtml('No');
+    });
+
+    it('can render with `boolean()` custom labels', function (): void {
+        livewire(RenderSelectWithBooleanCustomLabels::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('Enabled')
+            ->assertSeeHtml('Disabled');
+    });
+
+    it('can render with `boolean()` custom placeholder', function (): void {
+        livewire(RenderSelectWithBooleanCustomPlaceholder::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('Choose...');
+    });
+
+    it('can render with `reorderable()`', function (): void {
+        livewire(RenderSelectWithReorderable::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with `reorderable()` set via `Closure`', function (): void {
+        livewire(RenderSelectWithClosureReorderable::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with `position()`', function (): void {
+        livewire(RenderSelectWithPosition::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with `position()` set via `Closure`', function (): void {
+        livewire(RenderSelectWithClosurePosition::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with `wrapOptionLabels(false)`', function (): void {
+        livewire(RenderSelectWithNoWrapOptionLabels::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with `dynamicOptions()`', function (): void {
+        livewire(RenderSelectWithDynamicOptions::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with `dynamicOptions()` set via `Closure`', function (): void {
+        livewire(RenderSelectWithClosureDynamicOptions::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with `maxItemsMessage()`', function (): void {
+        livewire(RenderSelectWithMaxItemsMessage::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with `maxItemsMessage()` set via `Closure`', function (): void {
+        livewire(RenderSelectWithClosureMaxItemsMessage::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with `optionsLimit()` set via `Closure`', function (): void {
+        livewire(RenderSelectWithClosureOptionsLimit::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with `disableOptionWhen()`', function (): void {
+        livewire(RenderSelectWithDisabledOption::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('Active')
+            ->assertSeeHtml('Archived');
+    });
+
+    it('can render with `allowHtml()`', function (): void {
+        livewire(RenderSelectWithAllowHtml::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with `native(false)`', function (): void {
+        livewire(RenderSelectWithNonNative::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with `createOptionForm()`', function (): void {
+        livewire(RenderSelectWithCreateOptionForm::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with `editOptionForm()`', function (): void {
+        livewire(RenderSelectWithEditOptionForm::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with grouped options', function (): void {
+        livewire(RenderSelectWithGroupedOptions::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('Phone')
+            ->assertSeeHtml('Laptop');
+    });
+
+    it('can render with `placeholder()`', function (): void {
+        livewire(RenderSelectWithPlaceholder::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('Select an option...');
+    });
+});
+
+describe('browser interactions', function (): void {
+    it('can select, search, and clear options in select dropdowns in the browser', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $browser = visit('/select-test');
+
+        $browser
+            ->assertDontSee('One')
+            ->assertDontSee('Two')
+            ->click('[data-testid="single-select"] .fi-select-input-btn')
+            ->assertSee('One')
+            ->assertSee('Two')
+            ->click('Two')
+            ->assertDontSee('One')
+            ->assertSee('Two')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        $browser
+            ->assertDontSee('Apple')
+            ->assertDontSee('Cherry')
+            ->click('[data-testid="multiple-select"] .fi-select-input-btn')
+            ->assertSee('Apple')
+            ->click('Apple')
+            ->click('Cherry')
+            ->keys('[data-testid="multiple-select"] .fi-select-input-btn', 'Escape')
+            ->assertSee('Apple')
+            ->assertSee('Cherry')
+            ->assertNoSmoke();
+
+        $browser
+            ->assertDontSee('Purple')
+            ->click('[data-testid="searchable-select"] .fi-select-input-btn')
+            ->assertSee('Red')
+            ->assertSee('Purple')
+            ->type('[data-testid="searchable-select"] .fi-select-input-search-ctn input', 'púr')
+            ->assertSee('Purple')
+            ->assertDontSee('Red')
+            ->click('Purple')
+            ->assertSee('Purple')
+            ->assertNoSmoke();
+
+        $browser
+            ->assertDontSee('Active')
+            ->click('[data-testid="clearable-select"] .fi-select-input-btn')
+            ->assertSee('Active')
+            ->click('Active')
+            ->assertSee('Active')
+            ->click('[data-testid="clearable-select"] .fi-select-input-value-remove-btn')
+            ->assertDontSee('Active')
+            ->assertNoSmoke();
+
+        visit('/select-test')
+            ->inDarkMode()
+            ->assertNoAccessibilityIssues();
+    });
+
+    it('can navigate options using keyboard in a `native(false)` select dropdown in the browser', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/select-test')
+            ->assertDontSee('Two')
+            ->click('[data-testid="single-select"] .fi-select-input-btn')
+            ->assertSee('One')
+            ->assertPresent('[data-testid="single-select"] [role="combobox"]:focus')
+            ->assertScript('document.querySelectorAll(\'[data-testid="single-select"] [role="option"][tabindex="0"]\').length', 0)
+            ->keys('[data-testid="single-select"] [role="combobox"]', ['ArrowDown', 'Enter'])
+            ->assertDontSee('One')
+            ->assertSee('Two')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        visit('/select-test')
+            ->inDarkMode()
+            ->keys('[data-testid="single-select"] [role="combobox"]', 'Enter')
+            ->assertNoAccessibilityIssues();
+    });
+
+    it('can create an option using `createOptionForm()` in the browser', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/select-test')
+            ->assertDontSee('New status')
+            ->click('[data-testid="create-option-action-trigger"]')
+            ->assertVisible('[data-testid="create-option-action-modal"]')
+            ->assertPresent('[data-testid="create-option-name-input"]:focus')
+            ->click('Cancel')
+            ->assertPresent('[data-testid="create-option-action-trigger"]:focus')
+            ->click('[data-testid="create-option-action-trigger"]')
+            ->assertVisible('[data-testid="create-option-action-modal"]')
+            ->assertPresent('[data-testid="create-option-name-input"]:focus')
+            ->type('[data-testid="create-option-name-input"]', 'New status')
+            ->click('[data-testid="create-option-action-modal"] button[type="submit"]')
+            ->assertMissing('[data-testid="create-option-action-modal"]')
+            ->assertSee('New status')
+            ->assertPresent('[data-testid="create-option-action-trigger"]:focus')
+            ->assertNoSmoke();
+    });
+
+    it('can remove individual items from a `multiple()` select dropdown in the browser', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/select-test');
+
+        $page
+            ->assertDontSee('Apple')
+            ->assertDontSee('Banana')
+            ->click('[data-testid="multiple-select"] .fi-select-input-btn')
+            ->assertNoAccessibilityIssues()
+            ->assertSee('Apple')
+            ->click('Apple')
+            ->click('Banana')
+            ->assertNoAccessibilityIssues()
+            ->keys('[data-testid="multiple-select"] input[role="combobox"]', 'Shift+Tab')
+            ->assertPresent('[data-testid="multiple-select"] [aria-label="Remove Banana"]:focus')
+            ->assertAttribute('[data-testid="multiple-select"] button[aria-haspopup="listbox"]', 'aria-expanded', 'false')
+            ->assertSee('Apple')
+            ->assertSee('Banana')
+            ->keys('[data-testid="multiple-select"] [aria-label="Remove Apple"]', 'Enter')
+            ->assertPresent('[data-testid="multiple-select"] [aria-label="Remove Banana"]:focus')
+            ->assertDontSee('Apple')
+            ->assertSee('Banana')
+            ->keys('[data-testid="multiple-select"] [aria-label="Remove Banana"]', 'Enter')
+            ->assertPresent('[data-testid="multiple-select"] button[aria-haspopup="listbox"]:focus')
+            ->assertDontSee('Banana')
+            ->assertNoSmoke();
+
+        $page->inDarkMode()
+            ->click('[data-testid="multiple-select"] button[aria-haspopup="listbox"]')
+            ->assertNoAccessibilityIssues()
+            ->click('[data-testid="multiple-select"] [role="option"][data-value="apple"]')
+            ->click('[data-testid="multiple-select"] [role="option"][data-value="banana"]')
+            ->assertPresent('[data-testid="multiple-select"] [aria-label="Remove Banana"]')
+            ->assertNoAccessibilityIssues();
+    });
+
+    it('shows "no options" message when dynamic options returns empty array', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/select-test')
+            ->click('[data-testid="dynamic-empty-options-select"] .fi-select-input-btn')
+            ->assertSeeIn('[data-testid="dynamic-empty-options-select"] [role="status"]', 'No options available')
+            ->assertNoSmoke();
+    });
+
+    it('shows options when dynamic options returns options', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/select-test')
+            ->click('[data-testid="dynamic-with-options-select"] .fi-select-input-btn')
+            ->assertSee('Option 1')
+            ->assertSee('Option 2')
+            ->assertMissing('[data-testid="dynamic-with-options-select"] .fi-select-input-message')
+            ->assertNoSmoke();
+    });
+
+    it('shows "no options" message when dynamic options and search returns empty array', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/select-test')
+            ->click('[data-testid="dynamic-options-and-search-empty-select"] .fi-select-input-btn')
+            ->assertSeeIn('[data-testid="dynamic-options-and-search-empty-select"] [role="status"]', 'No options available')
+            ->assertNoSmoke();
+    });
+
+    it('shows "no options" message when static options is empty array', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/select-test')
+            ->click('[data-testid="static-empty-options-select"] .fi-select-input-btn')
+            ->assertSeeIn('[data-testid="static-empty-options-select"] [role="status"]', 'No options available')
+            ->assertNoSmoke();
+    });
+
+    it('shows options when dynamic options returns non-empty array', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/select-test')
+            ->click('[data-testid="dynamic-options-with-results-select"] .fi-select-input-btn')
+            ->assertSee('Dynamic Option 1')
+            ->assertSee('Dynamic Option 2')
+            ->assertMissing('[data-testid="dynamic-options-with-results-select"] .fi-select-input-message')
+            ->assertNoSmoke();
+    });
+
+    it('restores initial options when clearing an unmatched search', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/select-test');
+
+        $page
+            ->click('#dynamic-select')
+            ->assertCount('[role="listbox"]:visible [role="option"]', 2)
+            ->type('[data-testid="dynamic-options-with-results-select"] input[role="combobox"]', 'result')
+            ->assertMissing('[role="listbox"]:visible [role="option"]')
+            ->clear('[data-testid="dynamic-options-with-results-select"] input[role="combobox"]')
+            ->assertCount('[role="listbox"]:visible [role="option"]', 2)
+            ->keys('[data-testid="dynamic-options-with-results-select"] input[role="combobox"]', 'Enter')
+            ->assertSeeIn('#dynamic-select', 'Dynamic Option 1')
+            ->assertNoSmoke();
+    });
+
+    it('keeps option navigation and keyboard removal on stable owners in a non-searchable `multiple()` select', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/select-test');
+        $owner = '[data-testid="nonsearchable-multiple-select"] [role="combobox"]';
+        $activeValue = 'document.getElementById(document.activeElement.getAttribute("aria-activedescendant"))?.dataset.value ?? null';
+
+        $page
+            ->keys($owner, 'Enter')
+            ->assertPresent($owner . ':focus')
+            ->assertScript($activeValue, 'website')
+            ->assertMissing('[data-testid="nonsearchable-multiple-select"] [role="option"][data-value="mobile"]')
+            ->keys($owner, 'ArrowDown')
+            ->assertScript($activeValue, 'newsletter')
+            ->assertMissing('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Newsletter"]')
+            ->keys($owner, 'End')
+            ->assertScript($activeValue, 'print')
+            ->keys($owner, 'Home')
+            ->assertScript($activeValue, 'website')
+            ->assertNoAccessibilityIssues()
+            ->keys($owner, ['ArrowDown', 'Enter'])
+            ->assertPresent('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Newsletter"]')
+            ->assertPresent($owner . ':focus')
+            ->assertScript($activeValue, 'website')
+            ->keys($owner, 'Escape')
+            ->keys('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Newsletter"]', 'Enter')
+            ->assertMissing('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Newsletter"]')
+            ->assertPresent($owner . ':focus')
+            ->click('[data-testid="toggle-select-disabled"]')
+            ->assertDisabled($owner)
+            ->assertPresent('[data-testid="toggle-select-disabled"]:focus')
+            ->click('[data-testid="toggle-select-disabled"]')
+            ->assertEnabled($owner)
+            ->keys($owner, 'Enter')
+            ->assertPresent($owner . ':focus')
+            ->assertScript($activeValue, 'website')
+            ->keys($owner, 'p')
+            ->assertScript($activeValue, 'print')
+            ->assertMissing('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Print"]')
+            ->assertNoSmoke();
+
+        $page->inDarkMode()->keys($owner, 'Enter')
+            ->assertVisible('[data-testid="nonsearchable-multiple-select"] [role="listbox"]')
+            ->assertNoAccessibilityIssues();
+    });
+
+    it('keeps search editing, descriptions, and sequential focus on the searchable select owners', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/select-test');
+        $launcher = '[data-testid="searchable-select"] button[aria-haspopup="listbox"]';
+        $search = '[data-testid="searchable-select"] input[role="combobox"]';
+        $activeValue = 'document.getElementById(document.activeElement.getAttribute("aria-activedescendant"))?.dataset.value ?? null';
+
+        $page
+            ->click('label[for="searchable-status"]')
+            ->assertPresent($search . ':focus')
+            ->assertAttribute($search, 'aria-required', 'true')
+            ->assertScript('document.activeElement.getAttribute("aria-describedby").split(/\\s+/).every(id => !!document.getElementById(id))', true)
+            ->keys($search, ['ArrowDown', 'ArrowDown', 'Home'])
+            ->assertScript($activeValue, 'green')
+            ->assertPresent($search . ':focus')
+            ->assertNoAccessibilityIssues()
+            ->keys($search, 'Shift+Tab')
+            ->assertPresent($launcher . ':focus')
+            ->assertAttribute($launcher, 'aria-expanded', 'false')
+            ->keys($launcher, 'Enter')
+            ->keys($search, 'Tab')
+            ->assertPresent('[data-testid="nonsearchable-multiple-select"] [role="combobox"]:focus')
+            ->click('Save')
+            ->assertAttribute($launcher, 'aria-invalid', 'true')
+            ->click($launcher)
+            ->assertAttribute($search, 'aria-invalid', 'true')
+            ->assertScript('document.activeElement.getAttribute("aria-describedby").split(/\\s+/).some(id => id.endsWith("-error") && !!document.getElementById(id))', true)
+            ->assertNoAccessibilityIssues()
+            ->type($search, 'pur')
+            ->keys($search, ['ArrowDown', 'Enter'])
+            ->assertPresent($launcher . ':focus')
+            ->keys('[data-testid="single-select"] [role="combobox"]', ['Enter', 'Enter'])
+            ->click('Save')
+            ->assertScript('document.querySelector(\'[data-testid="searchable-select"] button[aria-haspopup="listbox"]\').hasAttribute("aria-invalid")', false)
+            ->assertNoSmoke();
+
+        $darkPage = $page->inDarkMode();
+        $darkPage->click($launcher)
+            ->assertPresent($search . ':focus')
+            ->assertNoAccessibilityIssues()
+            ->keys($search, 'Escape')
+            ->click('Save')
+            ->assertAttribute($launcher, 'aria-invalid', 'true')
+            ->click($launcher)
+            ->assertAttribute($search, 'aria-invalid', 'true')
+            ->assertNoAccessibilityIssues();
+    });
+
+    it('consumes select `Escape` before the containing action modal closes', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/select-test');
+        $launcher = '[data-testid="modal-select"] button[aria-haspopup="listbox"]';
+        $search = '[data-testid="modal-select"] input[role="combobox"]';
+
+        $page
+            ->click('[data-testid="create-option-action-trigger"]')
+            ->assertVisible('[data-testid="create-option-action-modal"]')
+            ->assertPresent('[data-testid="create-option-name-input"]:focus')
+            ->click($launcher)
+            ->keys($search, 'ArrowDown')
+            ->assertPresent($search . ':focus')
+            ->assertNoAccessibilityIssues()
+            ->keys($search, 'Escape')
+            ->assertVisible('[data-testid="create-option-action-modal"]')
+            ->assertPresent($launcher . ':focus')
+            ->keys($launcher, 'Enter')
+            ->assertPresent($search . ':focus')
+            ->keys($search, 'Escape')
+            ->keys($launcher, 'Escape')
+            ->assertMissing('[data-testid="create-option-action-modal"]')
+            ->assertPresent('[data-testid="create-option-action-trigger"]:focus')
+            ->assertNoSmoke();
+
+        $page->inDarkMode()
+            ->click('[data-testid="create-option-action-trigger"]')
+            ->assertVisible('[data-testid="create-option-action-modal"]')
+            ->assertPresent('[data-testid="create-option-name-input"]:focus')
+            ->click($launcher)
+            ->assertPresent($search . ':focus')
+            ->assertNoAccessibilityIssues();
+    });
+
+    it('only adds one remove button when selecting multiple options in sequence', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/select-test')
+            ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
+            ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-btn')
+            ->assertSee('First')
+            ->click('First')
+            ->assertVisible('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
+            ->assertCount('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn', 1)
+            ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-btn')
+            ->assertSee('Second')
+            ->click('Second')
+            ->assertVisible('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
+            ->assertCount('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn', 1)
+            ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-btn')
+            ->assertSee('Third')
+            ->click('Third')
+            ->assertCount('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn', 1)
+            ->assertNoSmoke();
+    });
+
+    it('removes the clear button when selection is cleared', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/select-test')
+            ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
+            ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-btn')
+            ->assertSee('First')
+            ->click('First')
+            ->assertVisible('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
+            ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
+            ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
+            ->assertNoSmoke();
+    });
+
+    it('does not show another native `Select` option for a missing value in the browser', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/select-test')
+            ->select('[data-testid="native-dynamic-options-context-select"]', 'first')
+            ->assertPresent('[data-testid="native-dynamic-options-value-select"] option[value="first_only"]')
+            ->select('[data-testid="native-dynamic-options-value-select"]', 'first_only')
+            ->assertValue('[data-testid="native-dynamic-options-value-select"]', 'first_only')
+            ->select('[data-testid="native-dynamic-options-context-select"]', 'second')
+            ->assertMissing('[data-testid="native-dynamic-options-value-select"] option[value="first_only"]')
+            ->assertValue('[data-testid="native-dynamic-options-value-select"]', '')
+            ->assertNoSmoke();
     });
 });
 
@@ -1445,890 +2809,6 @@ class RepeaterWithSelectBelongsToManyRelationshipEagerLoaded extends Component i
         return view('livewire.form');
     }
 }
-
-describe('browser interactions', function (): void {
-    it('can select, search, and clear options in select dropdowns in the browser', function (): void {
-        $this->actingAs(User::factory()->create());
-
-        $browser = visit('/select-test');
-
-        $browser
-            ->assertDontSee('One')
-            ->assertDontSee('Two')
-            ->click('[data-testid="single-select"] .fi-select-input-btn')
-            ->assertSee('One')
-            ->assertSee('Two')
-            ->click('Two')
-            ->assertDontSee('One')
-            ->assertSee('Two')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-
-        $browser
-            ->assertDontSee('Apple')
-            ->assertDontSee('Cherry')
-            ->click('[data-testid="multiple-select"] .fi-select-input-btn')
-            ->assertSee('Apple')
-            ->click('Apple')
-            ->click('Cherry')
-            ->keys('[data-testid="multiple-select"] .fi-select-input-btn', 'Escape')
-            ->assertSee('Apple')
-            ->assertSee('Cherry')
-            ->assertNoSmoke();
-
-        $browser
-            ->assertDontSee('Purple')
-            ->click('[data-testid="searchable-select"] .fi-select-input-btn')
-            ->assertSee('Red')
-            ->assertSee('Purple')
-            ->type('[data-testid="searchable-select"] .fi-select-input-search-ctn input', 'púr')
-            ->assertSee('Purple')
-            ->assertDontSee('Red')
-            ->click('Purple')
-            ->assertSee('Purple')
-            ->assertNoSmoke();
-
-        $browser
-            ->assertDontSee('Active')
-            ->click('[data-testid="clearable-select"] .fi-select-input-btn')
-            ->assertSee('Active')
-            ->click('Active')
-            ->assertSee('Active')
-            ->click('[data-testid="clearable-select"] .fi-select-input-value-remove-btn')
-            ->assertDontSee('Active')
-            ->assertNoSmoke();
-
-        visit('/select-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
-
-    it('can navigate options using keyboard in a `native(false)` select dropdown in the browser', function (): void {
-        $this->actingAs(User::factory()->create());
-
-        visit('/select-test')
-            ->assertDontSee('Two')
-            ->click('[data-testid="single-select"] .fi-select-input-btn')
-            ->assertSee('One')
-            ->assertPresent('[data-testid="single-select"] [role="combobox"]:focus')
-            ->assertScript('document.querySelectorAll(\'[data-testid="single-select"] [role="option"][tabindex="0"]\').length', 0)
-            ->keys('[data-testid="single-select"] [role="combobox"]', ['ArrowDown', 'Enter'])
-            ->assertDontSee('One')
-            ->assertSee('Two')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-
-        visit('/select-test')
-            ->inDarkMode()
-            ->keys('[data-testid="single-select"] [role="combobox"]', 'Enter')
-            ->assertNoAccessibilityIssues();
-    });
-
-    it('can create an option using `createOptionForm()` in the browser', function (): void {
-        $this->actingAs(User::factory()->create());
-
-        visit('/select-test')
-            ->assertDontSee('New status')
-            ->click('[data-testid="create-option-action-trigger"]')
-            ->assertVisible('[data-testid="create-option-action-modal"]')
-            ->assertPresent('[data-testid="create-option-name-input"]:focus')
-            ->click('Cancel')
-            // Focus should be restored after canceling the create option modal.
-            ->assertPresent('[data-testid="create-option-action-trigger"]:focus')
-            ->click('[data-testid="create-option-action-trigger"]')
-            ->assertVisible('[data-testid="create-option-action-modal"]')
-            ->assertPresent('[data-testid="create-option-name-input"]:focus')
-            ->type('[data-testid="create-option-name-input"]', 'New status')
-            ->click('[data-testid="create-option-action-modal"] button[type="submit"]')
-            ->assertMissing('[data-testid="create-option-action-modal"]')
-            ->assertSee('New status')
-            // Focus should also be restored after submitting the create option modal.
-            ->assertPresent('[data-testid="create-option-action-trigger"]:focus')
-            ->assertNoSmoke();
-    });
-
-    it('can remove individual items from a `multiple()` select dropdown in the browser', function (): void {
-        $this->actingAs(User::factory()->create());
-
-        foreach ([false, true] as $isDarkMode) {
-            $page = visit('/select-test');
-
-            if ($isDarkMode) {
-                $page = $page->inDarkMode();
-            }
-
-            $page
-                ->assertDontSee('Apple')
-                ->assertDontSee('Banana')
-                ->click('[data-testid="multiple-select"] .fi-select-input-btn')
-                ->assertNoAccessibilityIssues()
-                ->assertSee('Apple')
-                ->click('Apple')
-                ->click('Banana')
-                ->assertNoAccessibilityIssues()
-                ->keys('[data-testid="multiple-select"] input[role="combobox"]', 'Shift+Tab')
-                ->assertPresent('[data-testid="multiple-select"] [aria-label="Remove Banana"]:focus')
-                ->assertScript('document.querySelector(\'[data-testid="multiple-select"] button[aria-haspopup="listbox"]\').getAttribute("aria-expanded")', 'false')
-                ->assertSee('Apple')
-                ->assertSee('Banana')
-                ->keys('[data-testid="multiple-select"] [aria-label="Remove Apple"]', 'Enter')
-                ->assertPresent('[data-testid="multiple-select"] [aria-label="Remove Banana"]:focus')
-                ->assertDontSee('Apple')
-                ->assertSee('Banana')
-                ->keys('[data-testid="multiple-select"] [aria-label="Remove Banana"]', 'Enter')
-                ->assertPresent('[data-testid="multiple-select"] button[aria-haspopup="listbox"]:focus')
-                ->assertDontSee('Banana')
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
-        }
-    });
-
-    it('shows "no options" message when dynamic options returns empty array', function (): void {
-        $this->actingAs(User::factory()->create());
-
-        visit('/select-test')
-            ->click('[data-testid="dynamic-empty-options-select"] .fi-select-input-btn')
-            ->assertSeeIn('[data-testid="dynamic-empty-options-select"] [role="status"]', 'No options available')
-            ->assertNoSmoke();
-    });
-
-    it('shows options when dynamic options returns options', function (): void {
-        $this->actingAs(User::factory()->create());
-
-        visit('/select-test')
-            ->click('[data-testid="dynamic-with-options-select"] .fi-select-input-btn')
-            ->assertSee('Option 1')
-            ->assertSee('Option 2')
-            ->assertMissing('[data-testid="dynamic-with-options-select"] .fi-select-input-message')
-            ->assertNoSmoke();
-    });
-
-    it('shows "no options" message when dynamic options and search returns empty array', function (): void {
-        $this->actingAs(User::factory()->create());
-
-        visit('/select-test')
-            ->click('[data-testid="dynamic-options-and-search-empty-select"] .fi-select-input-btn')
-            ->assertSeeIn('[data-testid="dynamic-options-and-search-empty-select"] [role="status"]', 'No options available')
-            ->assertNoSmoke();
-    });
-
-    it('shows "no options" message when static options is empty array', function (): void {
-        $this->actingAs(User::factory()->create());
-
-        visit('/select-test')
-            ->click('[data-testid="static-empty-options-select"] .fi-select-input-btn')
-            ->assertSeeIn('[data-testid="static-empty-options-select"] [role="status"]', 'No options available')
-            ->assertNoSmoke();
-    });
-
-    it('shows options when dynamic options returns non-empty array', function (): void {
-        $this->actingAs(User::factory()->create());
-
-        visit('/select-test')
-            ->click('[data-testid="dynamic-options-with-results-select"] .fi-select-input-btn')
-            ->assertSee('Dynamic Option 1')
-            ->assertSee('Dynamic Option 2')
-            ->assertMissing('[data-testid="dynamic-options-with-results-select"] .fi-select-input-message')
-            ->assertNoSmoke();
-    });
-
-    it('keeps initial options when clearing a pending search', function (): void {
-        $this->actingAs(User::factory()->create());
-
-        $page = visit('/select-test');
-
-        $page
-            ->click('#dynamic-select')
-            ->assertCount('[role="listbox"]:visible [role="option"]', 2)
-            ->type('[data-testid="dynamic-options-with-results-select"] input[role="combobox"]', 'result')
-            ->assertMissing('[role="listbox"]:visible [role="option"]')
-            ->clear('[data-testid="dynamic-options-with-results-select"] input[role="combobox"]')
-            ->wait(1.5)
-            ->assertCount('[role="listbox"]:visible [role="option"]', 2)
-            ->keys('[data-testid="dynamic-options-with-results-select"] input[role="combobox"]', 'Enter')
-            ->assertSeeIn('#dynamic-select', 'Dynamic Option 1')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-
-        $page->inDarkMode()->assertNoAccessibilityIssues();
-    });
-
-    it('keeps option navigation and keyboard removal on stable owners in a non-searchable `multiple()` select', function (): void {
-        $this->actingAs(User::factory()->create());
-
-        foreach ([false, true] as $isDarkMode) {
-            $page = visit('/select-test');
-            if ($isDarkMode) {
-                $page = $page->inDarkMode();
-            }
-            $owner = '[data-testid="nonsearchable-multiple-select"] [role="combobox"]';
-            $activeValue = 'document.getElementById(document.activeElement.getAttribute("aria-activedescendant"))?.dataset.value ?? null';
-
-            $page
-                ->keys($owner, 'Enter')
-                ->assertPresent($owner . ':focus')
-                ->assertScript($activeValue, 'website')
-                ->assertMissing('[data-testid="nonsearchable-multiple-select"] [role="option"][data-value="mobile"]')
-                ->keys($owner, 'ArrowDown')
-                ->assertScript($activeValue, 'newsletter')
-                ->assertMissing('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Newsletter"]')
-                ->keys($owner, 'End')
-                ->assertScript($activeValue, 'print')
-                ->keys($owner, 'Home')
-                ->assertScript($activeValue, 'website')
-                ->assertNoAccessibilityIssues()
-                ->keys($owner, ['ArrowDown', 'Enter'])
-                ->assertPresent('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Newsletter"]')
-                ->assertPresent($owner . ':focus')
-                ->assertScript($activeValue, 'website')
-                ->assertNoAccessibilityIssues()
-                ->keys($owner, 'Escape')
-                ->keys('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Newsletter"]', 'Enter')
-                ->assertMissing('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Newsletter"]')
-                ->assertPresent($owner . ':focus')
-                ->click('[data-testid="toggle-select-disabled"]')
-                ->assertScript('document.querySelector(\'[data-testid="nonsearchable-multiple-select"] [role="combobox"]\').disabled', true)
-                ->assertPresent('[data-testid="toggle-select-disabled"]:focus')
-                ->click('[data-testid="toggle-select-disabled"]')
-                ->assertScript('document.querySelector(\'[data-testid="nonsearchable-multiple-select"] [role="combobox"]\').disabled', false)
-                ->keys($owner, 'Enter')
-                ->assertPresent($owner . ':focus')
-                ->assertScript($activeValue, 'website')
-                ->keys($owner, 'p')
-                ->assertScript($activeValue, 'print')
-                ->assertMissing('[data-testid="nonsearchable-multiple-select"] [aria-label="Remove Print"]')
-                ->assertNoSmoke();
-        }
-    });
-
-    it('keeps search editing, descriptions, and sequential focus on the searchable select owners', function (): void {
-        $this->actingAs(User::factory()->create());
-
-        foreach ([false, true] as $isDarkMode) {
-            $page = visit('/select-test');
-            if ($isDarkMode) {
-                $page = $page->inDarkMode();
-            }
-            $launcher = '[data-testid="searchable-select"] button[aria-haspopup="listbox"]';
-            $search = '[data-testid="searchable-select"] input[role="combobox"]';
-            $activeValue = 'document.getElementById(document.activeElement.getAttribute("aria-activedescendant"))?.dataset.value ?? null';
-
-            $page
-                ->click('label[for="searchable-status"]')
-                ->assertPresent($search . ':focus')
-                ->assertScript('document.activeElement.getAttribute("aria-required")', 'true')
-                ->assertScript('document.activeElement.getAttribute("aria-describedby").split(/\\s+/).every(id => !!document.getElementById(id))', true)
-                ->keys($search, ['ArrowDown', 'ArrowDown', 'Home'])
-                ->assertScript($activeValue, 'green')
-                ->assertPresent($search . ':focus')
-                ->assertNoAccessibilityIssues()
-                ->keys($search, 'Shift+Tab')
-                ->assertPresent($launcher . ':focus')
-                ->assertScript('document.activeElement.getAttribute("aria-expanded")', 'false')
-                ->keys($launcher, 'Enter')
-                ->keys($search, 'Tab')
-                ->assertPresent('[data-testid="nonsearchable-multiple-select"] [role="combobox"]:focus')
-                ->click('Save')
-                ->assertScript('document.querySelector(\'[data-testid="searchable-select"] button[aria-haspopup="listbox"]\').getAttribute("aria-invalid")', 'true')
-                ->click($launcher)
-                ->assertScript('document.activeElement.getAttribute("aria-invalid")', 'true')
-                ->assertScript('document.activeElement.getAttribute("aria-describedby").split(/\\s+/).some(id => id.endsWith("-error") && !!document.getElementById(id))', true)
-                // Let the schema's 200 ms validation scroll finish before removing its error node.
-                ->wait(0.3)
-                ->type($search, 'pur')
-                ->keys($search, ['ArrowDown', 'Enter'])
-                ->assertPresent($launcher . ':focus')
-                ->keys('[data-testid="single-select"] [role="combobox"]', ['Enter', 'Enter'])
-                ->click('Save')
-                ->assertScript('document.querySelector(\'[data-testid="searchable-select"] button[aria-haspopup="listbox"]\').hasAttribute("aria-invalid")', false)
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
-        }
-    });
-
-    it('consumes select `Escape` before the containing action modal closes', function (): void {
-        $this->actingAs(User::factory()->create());
-
-        foreach ([false, true] as $isDarkMode) {
-            $page = visit('/select-test');
-            if ($isDarkMode) {
-                $page = $page->inDarkMode();
-            }
-            $launcher = '[data-testid="modal-select"] button[aria-haspopup="listbox"]';
-            $search = '[data-testid="modal-select"] input[role="combobox"]';
-
-            $page
-                ->click('[data-testid="create-option-action-trigger"]')
-                ->assertVisible('[data-testid="create-option-action-modal"]')
-                ->assertPresent('[data-testid="create-option-name-input"]:focus')
-                ->click($launcher)
-                ->keys($search, 'ArrowDown')
-                ->assertPresent($search . ':focus')
-                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
-                ->assertNoAccessibilityIssues()
-                ->keys($search, 'Escape')
-                ->assertVisible('[data-testid="create-option-action-modal"]')
-                ->assertPresent($launcher . ':focus')
-                ->keys($launcher, 'Enter')
-                ->assertPresent($search . ':focus')
-                ->keys($search, 'Escape')
-                ->keys($launcher, 'Escape')
-                ->assertMissing('[data-testid="create-option-action-modal"]')
-                ->assertPresent('[data-testid="create-option-action-trigger"]:focus')
-                ->assertNoSmoke();
-        }
-    });
-
-    it('only adds one remove button when selecting multiple options in sequence', function (): void {
-        $this->actingAs(User::factory()->create());
-
-        visit('/select-test')
-            // Verify no remove button initially (placeholder shown)
-            ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
-            // Select first option
-            ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-btn')
-            ->assertSee('First')
-            ->click('First')
-            // Verify exactly one remove button exists
-            ->assertVisible('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
-            ->assertScript('document.querySelectorAll(\'[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn\').length', 1)
-            // Select second option
-            ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-btn')
-            ->assertSee('Second')
-            ->click('Second')
-            // Verify still exactly one remove button exists (not duplicated)
-            ->assertVisible('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
-            ->assertScript('document.querySelectorAll(\'[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn\').length', 1)
-            // Select third option
-            ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-btn')
-            ->assertSee('Third')
-            ->click('Third')
-            // Verify still exactly one remove button exists
-            ->assertScript('document.querySelectorAll(\'[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn\').length', 1)
-            ->assertNoSmoke();
-    });
-
-    it('removes the clear button when selection is cleared', function (): void {
-        $this->actingAs(User::factory()->create());
-
-        visit('/select-test')
-            // Verify no remove button initially
-            ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
-            // Select an option
-            ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-btn')
-            ->assertSee('First')
-            ->click('First')
-            // Verify remove button exists
-            ->assertVisible('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
-            // Clear the selection
-            ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
-            // Verify the remove button is gone.
-            ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
-            ->assertNoSmoke();
-    });
-
-    it('does not show another native `Select` option for a missing value in the browser', function (): void {
-        $this->actingAs(User::factory()->create());
-
-        visit('/select-test')
-            ->select('[data-testid="native-dynamic-options-context-select"]', 'first')
-            ->waitForEvent('networkidle')
-            ->select('[data-testid="native-dynamic-options-value-select"]', 'first_only')
-            ->assertValue('[data-testid="native-dynamic-options-value-select"]', 'first_only')
-            ->select('[data-testid="native-dynamic-options-context-select"]', 'second')
-            ->waitForEvent('networkidle')
-            ->assertValue('[data-testid="native-dynamic-options-value-select"]', '')
-            ->assertNoSmoke();
-    });
-});
-
-describe('option labels', function (): void {
-    it('can get `getOptionLabel()` from flat options', function (): void {
-        livewire(TestSelectWithFlatOptions::class)
-            ->fillForm(['category' => 'electronics'])
-            ->assertFormComponentExists('category', function (Select $select): bool {
-                expect($select->getOptionLabel())->toBe('Electronics');
-
-                return true;
-            });
-    });
-
-    it('can get `getOptionLabel()` from grouped options', function (): void {
-        livewire(TestSelectWithGroupedOptions::class)
-            ->fillForm(['product' => 'laptop'])
-            ->assertFormComponentExists('product', function (Select $select): bool {
-                expect($select->getOptionLabel())->toBe('Laptop');
-
-                return true;
-            });
-    });
-
-    it('returns state as default when option not found in `getOptionLabel()`', function (): void {
-        livewire(TestSelectWithFlatOptions::class)
-            ->fillForm(['category' => 'unknown'])
-            ->assertFormComponentExists('category', function (Select $select): bool {
-                expect($select->getOptionLabel())->toBe('unknown');
-
-                return true;
-            });
-    });
-
-    it('returns `null` when option not found and `withDefault` is `false` in `getOptionLabel()`', function (): void {
-        livewire(TestSelectWithFlatOptions::class)
-            ->fillForm(['category' => 'unknown'])
-            ->assertFormComponentExists('category', function (Select $select): bool {
-                expect($select->getOptionLabel(withDefault: false))->toBeNull();
-
-                return true;
-            });
-    });
-
-    it('can get `getOptionLabel()` using custom `getOptionLabelUsing()` closure', function (): void {
-        livewire(TestSelectWithCustomOptionLabel::class)
-            ->fillForm(['category' => 'electronics'])
-            ->assertFormComponentExists('category', function (Select $select): bool {
-                expect($select->getOptionLabel())->toBe('ELECTRONICS');
-
-                return true;
-            });
-    });
-
-    it('can get `getOptionLabels()` from flat options for multiple select', function (): void {
-        livewire(TestMultipleSelectWithFlatOptions::class)
-            ->fillForm(['categories' => ['electronics', 'books']])
-            ->assertFormComponentExists('categories', function (Select $select): bool {
-                expect($select->getOptionLabels())->toBe([
-                    'electronics' => 'Electronics',
-                    'books' => 'Books',
-                ]);
-
-                return true;
-            });
-    });
-
-    it('can get `getOptionLabels()` from grouped options for multiple select', function (): void {
-        livewire(TestMultipleSelectWithGroupedOptions::class)
-            ->fillForm(['products' => ['laptop', 'shirt']])
-            ->assertFormComponentExists('products', function (Select $select): bool {
-                expect($select->getOptionLabels())->toBe([
-                    'laptop' => 'Laptop',
-                    'shirt' => 'Shirt',
-                ]);
-
-                return true;
-            });
-    });
-
-    it('returns value as default when option not found in `getOptionLabels()`', function (): void {
-        livewire(TestMultipleSelectWithFlatOptions::class)
-            ->fillForm(['categories' => ['electronics', 'unknown']])
-            ->assertFormComponentExists('categories', function (Select $select): bool {
-                expect($select->getOptionLabels())->toBe([
-                    'electronics' => 'Electronics',
-                    'unknown' => 'unknown',
-                ]);
-
-                return true;
-            });
-    });
-
-    it('excludes missing options when `withDefaults` is `false` in `getOptionLabels()`', function (): void {
-        livewire(TestMultipleSelectWithFlatOptions::class)
-            ->fillForm(['categories' => ['electronics', 'unknown']])
-            ->assertFormComponentExists('categories', function (Select $select): bool {
-                expect($select->getOptionLabels(withDefaults: false))->toBe([
-                    'electronics' => 'Electronics',
-                ]);
-
-                return true;
-            });
-    });
-
-});
-
-describe('options', function (): void {
-    it('can get `getOptions()` from static array', function (): void {
-        $select = Select::make('category')
-            ->options([
-                'electronics' => 'Electronics',
-                'clothing' => 'Clothing',
-            ]);
-
-        expect($select->getOptions())->toBe([
-            'electronics' => 'Electronics',
-            'clothing' => 'Clothing',
-        ]);
-    });
-
-    it('can get `getOptions()` from closure', function (): void {
-        $select = Select::make('category')
-            ->options(fn (): array => [
-                'electronics' => 'Electronics',
-                'clothing' => 'Clothing',
-            ]);
-
-        expect($select->getOptions())->toBe([
-            'electronics' => 'Electronics',
-            'clothing' => 'Clothing',
-        ]);
-    });
-
-    it('can get `getOptions()` from enum class string', function (): void {
-        $select = Select::make('category')
-            ->options(StringBackedEnum::class);
-
-        $options = $select->getOptions();
-
-        expect($options)->toBe([
-            'one' => 'One',
-            'two' => 'Two',
-            'three' => 'Three',
-        ]);
-    });
-
-    it('can check if option is disabled using `isOptionDisabled()`', function (): void {
-        $select = Select::make('category')
-            ->options([
-                'active' => 'Active',
-                'inactive' => 'Inactive',
-                'archived' => 'Archived',
-            ])
-            ->disableOptionWhen(fn (string $value): bool => $value === 'archived');
-
-        expect($select->isOptionDisabled('active', 'Active'))->toBeFalse();
-        expect($select->isOptionDisabled('archived', 'Archived'))->toBeTrue();
-    });
-
-    it('can get enabled options using `getEnabledOptions()`', function (): void {
-        $select = Select::make('category')
-            ->options([
-                'active' => 'Active',
-                'inactive' => 'Inactive',
-                'archived' => 'Archived',
-            ])
-            ->disableOptionWhen(fn (string $value): bool => $value === 'archived');
-
-        expect($select->getEnabledOptions())->toBe([
-            'active' => 'Active',
-            'inactive' => 'Inactive',
-        ]);
-    });
-
-    it('can get enabled options from grouped options using `getEnabledOptions()`', function (): void {
-        $select = Select::make('category')
-            ->options([
-                'Status' => [
-                    'active' => 'Active',
-                    'archived' => 'Archived',
-                ],
-                'Type' => [
-                    'normal' => 'Normal',
-                    'premium' => 'Premium',
-                ],
-            ])
-            ->disableOptionWhen(fn (string $value): bool => in_array($value, ['archived', 'premium']));
-
-        expect($select->getEnabledOptions())->toBe([
-            'active' => 'Active',
-            'normal' => 'Normal',
-        ]);
-    });
-
-    it('returns `true` for `hasDisabledOptions()` when closure is set', function (): void {
-        $select = Select::make('category')
-            ->options(['a' => 'A', 'b' => 'B'])
-            ->disableOptionWhen(fn (string $value): bool => $value === 'b');
-
-        expect($select->hasDisabledOptions())->toBeTrue();
-    });
-
-    it('returns `false` for `hasDisabledOptions()` when no closure is set', function (): void {
-        $select = Select::make('category')
-            ->options(['a' => 'A', 'b' => 'B']);
-
-        expect($select->hasDisabledOptions())->toBeFalse();
-    });
-
-});
-
-describe('JS transform and properties', function (): void {
-    it('can transform options for JS using default transformer', function (): void {
-        $select = Select::make('category')
-            ->options([
-                'electronics' => 'Electronics',
-                'clothing' => 'Clothing',
-            ]);
-
-        $transformed = $select->getOptionsForJs();
-
-        expect($transformed)->toBe([
-            ['label' => 'Electronics', 'value' => 'electronics', 'isDisabled' => false],
-            ['label' => 'Clothing', 'value' => 'clothing', 'isDisabled' => false],
-        ]);
-    });
-
-    it('can transform grouped options for JS', function (): void {
-        $select = Select::make('category')
-            ->options([
-                'Electronics' => [
-                    'phone' => 'Phone',
-                    'laptop' => 'Laptop',
-                ],
-            ]);
-
-        $transformed = $select->getOptionsForJs();
-
-        expect($transformed)->toBe([
-            [
-                'label' => 'Electronics',
-                'options' => [
-                    ['label' => 'Phone', 'value' => 'phone', 'isDisabled' => false],
-                    ['label' => 'Laptop', 'value' => 'laptop', 'isDisabled' => false],
-                ],
-            ],
-        ]);
-    });
-
-    it('marks disabled options in JS transform', function (): void {
-        $select = Select::make('category')
-            ->options([
-                'active' => 'Active',
-                'archived' => 'Archived',
-            ])
-            ->disableOptionWhen(fn (string $value): bool => $value === 'archived');
-
-        $transformed = $select->getOptionsForJs();
-
-        expect($transformed)->toBe([
-            ['label' => 'Active', 'value' => 'active', 'isDisabled' => false],
-            ['label' => 'Archived', 'value' => 'archived', 'isDisabled' => true],
-        ]);
-    });
-
-    it('can use custom `transformOptionsForJsUsing()` callback', function (): void {
-        $select = Select::make('category')
-            ->options([
-                'electronics' => 'Electronics',
-            ])
-            ->transformOptionsForJsUsing(fn (Select $component, array $options): array => collect($options)
-                ->map(fn ($label, $value): array => ['id' => $value, 'name' => $label])
-                ->values()
-                ->all());
-
-        $transformed = $select->getOptionsForJs();
-
-        expect($transformed)->toBe([
-            ['id' => 'electronics', 'name' => 'Electronics'],
-        ]);
-    });
-
-    it('returns empty array when transforming empty options', function (): void {
-        $select = Select::make('category')
-            ->options([]);
-
-        expect($select->getOptionsForJs())->toBe([]);
-    });
-
-    it('can check `isMultiple()` returns correct value', function (): void {
-        $singleSelect = Select::make('category');
-        $multipleSelect = Select::make('categories')->multiple();
-
-        expect($singleSelect->isMultiple())->toBeFalse();
-        expect($multipleSelect->isMultiple())->toBeTrue();
-    });
-
-    it('can check `isSearchable()` defaults to `true` for multiple select', function (): void {
-        $singleSelect = Select::make('category');
-        $multipleSelect = Select::make('categories')->multiple();
-
-        expect($singleSelect->isSearchable())->toBeFalse();
-        expect($multipleSelect->isSearchable())->toBeTrue();
-    });
-
-    it('can get search results using `getSearchResultsUsing()`', function (): void {
-        $select = Select::make('category')
-            ->getSearchResultsUsing(fn (string $search): array => [
-                'result1' => "Found: {$search}",
-            ]);
-
-        $results = $select->getSearchResults('test');
-
-        expect($results)->toBe([
-            'result1' => 'Found: test',
-        ]);
-    });
-
-    it('returns empty array for `getSearchResults()` when no callback is set', function (): void {
-        $select = Select::make('category');
-
-        expect($select->getSearchResults('test'))->toBe([]);
-    });
-
-    it('can get options limit using `getOptionsLimit()`', function (): void {
-        $defaultSelect = Select::make('category');
-        $limitedSelect = Select::make('category')->optionsLimit(100);
-
-        expect($defaultSelect->getOptionsLimit())->toBe(50);
-        expect($limitedSelect->getOptionsLimit())->toBe(100);
-    });
-
-});
-
-describe('relationship options', function (): void {
-    it('can get `getOptions()` from `BelongsTo` relationship', function (): void {
-        $users = User::factory()->count(3)->create();
-
-        livewire(TestSelectWithBelongsToRelationship::class)
-            ->assertFormComponentExists('author_id', function (Select $select) use ($users): bool {
-                $options = $select->getOptions();
-
-                expect($options)->toHaveCount(3);
-                expect(array_values($options))->toContain($users[0]->name);
-                expect(array_values($options))->toContain($users[1]->name);
-                expect(array_values($options))->toContain($users[2]->name);
-
-                return true;
-            });
-    });
-
-    it('can get `getSearchResults()` from `BelongsTo` relationship', function (): void {
-        User::factory()->create(['name' => 'John Doe']);
-        User::factory()->create(['name' => 'Jane Smith']);
-        User::factory()->create(['name' => 'Bob Johnson']);
-
-        livewire(TestSelectWithSearchableBelongsToRelationship::class)
-            ->assertFormComponentExists('author_id', function (Select $select): bool {
-                $results = $select->getSearchResults('John');
-
-                expect($results)->toHaveCount(2);
-                expect(array_values($results))->toContain('John Doe');
-                expect(array_values($results))->toContain('Bob Johnson');
-
-                return true;
-            });
-    });
-
-    it('can get `getOptionLabel()` from `BelongsTo` relationship with preload', function (): void {
-        $author = User::factory()->create(['name' => 'Test Author']);
-        $post = Post::factory()->create(['author_id' => $author->id]);
-
-        livewire(TestSelectWithPreloadedBelongsToRelationship::class, ['record' => $post])
-            ->assertFormComponentExists('author_id', function (Select $select) use ($author): bool {
-                expect($select->getOptionLabel())->toBe($author->name);
-
-                return true;
-            });
-    });
-
-    it('can get `getOptions()` from `BelongsToMany` relationship with preload', function (): void {
-        $user = User::factory()->create();
-        $teams = Team::factory()->count(3)->create();
-
-        livewire(TestSelectWithPreloadedBelongsToManyRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('teams', function (Select $select) use ($teams): bool {
-                $options = $select->getOptions();
-
-                expect($options)->toHaveCount(3);
-                expect(array_values($options))->toContain($teams[0]->name);
-                expect(array_values($options))->toContain($teams[1]->name);
-                expect(array_values($options))->toContain($teams[2]->name);
-
-                return true;
-            });
-    });
-
-    it('can get `getSearchResults()` from `BelongsToMany` relationship', function (): void {
-        Team::factory()->create(['name' => 'Alpha Team']);
-        Team::factory()->create(['name' => 'Beta Team']);
-        Team::factory()->create(['name' => 'Gamma Group']);
-
-        livewire(TestSelectWithSearchableBelongsToManyRelationship::class)
-            ->assertFormComponentExists('teams', function (Select $select): bool {
-                $results = $select->getSearchResults('Team');
-
-                expect($results)->toHaveCount(2);
-                expect(array_values($results))->toContain('Alpha Team');
-                expect(array_values($results))->toContain('Beta Team');
-
-                return true;
-            });
-    });
-
-    it('can get `getOptionLabels()` from `BelongsToMany` relationship with preload', function (): void {
-        $user = User::factory()->create();
-        $teams = Team::factory()->count(2)->create();
-        $user->teams()->attach($teams);
-
-        livewire(TestSelectWithPreloadedBelongsToManyRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('teams', function (Select $select) use ($teams): bool {
-                $labels = $select->getOptionLabels();
-
-                expect($labels)->toHaveCount(2);
-                expect(array_values($labels))->toContain($teams[0]->name);
-                expect(array_values($labels))->toContain($teams[1]->name);
-
-                return true;
-            });
-    });
-
-    it('returns empty array for `getOptions()` when relationship is searchable without preload', function (): void {
-        User::factory()->count(3)->create();
-
-        livewire(TestSelectWithSearchableBelongsToRelationship::class)
-            ->assertFormComponentExists('author_id', function (Select $select): bool {
-                expect($select->getOptions())->toBe([]);
-
-                return true;
-            });
-    });
-
-    it('returns options when relationship is searchable with preload', function (): void {
-        $users = User::factory()->count(3)->create();
-        $post = Post::factory()->create(['author_id' => $users[0]->id]);
-
-        livewire(TestSelectWithPreloadedBelongsToRelationship::class, ['record' => $post])
-            ->assertFormComponentExists('author_id', function (Select $select): bool {
-                $options = $select->getOptions();
-
-                expect($options)->toHaveCount(3);
-
-                return true;
-            });
-    });
-
-    it('can use `modifyQueryUsing` to filter relationship options', function (): void {
-        User::factory()->create(['name' => 'Admin User']);
-        User::factory()->create(['name' => 'Normal User']);
-        User::factory()->create(['name' => 'Admin Manager']);
-
-        livewire(TestSelectWithModifiedRelationshipQuery::class)
-            ->assertFormComponentExists('author_id', function (Select $select): bool {
-                $options = $select->getOptions();
-
-                expect($options)->toHaveCount(2);
-                expect(array_values($options))->toContain('Admin User');
-                expect(array_values($options))->toContain('Admin Manager');
-                expect(array_values($options))->not->toContain('Normal User');
-
-                return true;
-            });
-    });
-
-    it('can use `getOptionLabelFromRecordUsing()` for custom relationship labels', function (): void {
-        User::factory()->create(['name' => 'John', 'email' => 'john@example.com']);
-        User::factory()->create(['name' => 'Jane', 'email' => 'jane@example.com']);
-
-        livewire(TestSelectWithCustomRelationshipLabel::class)
-            ->assertFormComponentExists('author_id', function (Select $select): bool {
-                $options = $select->getOptions();
-
-                expect(array_values($options))->toContain('John (john@example.com)');
-                expect(array_values($options))->toContain('Jane (jane@example.com)');
-
-                return true;
-            });
-    });
-});
 
 class TestSelectWithFlatOptions extends Livewire
 {
@@ -3014,498 +3494,6 @@ class TestComponentWithMultipleDisabledOptions extends Livewire
         $this->form->getState();
     }
 }
-
-it('can set `boolean()` options', function (): void {
-    $select = Select::make('active')
-        ->boolean();
-
-    $options = $select->getOptions();
-
-    expect($options)->toHaveCount(2);
-    expect($options[1])->toBe('Yes');
-    expect($options[0])->toBe('No');
-});
-
-it('can set custom labels for `boolean()`', function (): void {
-    $select = Select::make('active')
-        ->boolean(trueLabel: 'Enabled', falseLabel: 'Disabled');
-
-    $options = $select->getOptions();
-
-    expect($options[1])->toBe('Enabled');
-    expect($options[0])->toBe('Disabled');
-});
-
-it('can set `reorderable()`', function (): void {
-    $select = Select::make('items');
-
-    expect($select->isReorderable())->toBeFalse();
-
-    $select->reorderable();
-
-    expect($select->isReorderable())->toBeTrue();
-});
-
-it('can set `position()`', function (): void {
-    $select = Select::make('category');
-
-    expect($select->getPosition())->toBeNull();
-
-    $select->position('bottom');
-
-    expect($select->getPosition())->toBe('bottom');
-});
-
-it('can set `forceSearchCaseInsensitive()`', function (): void {
-    $select = Select::make('category');
-
-    expect($select->isSearchForcedCaseInsensitive())->toBeNull();
-
-    $select->forceSearchCaseInsensitive();
-
-    expect($select->isSearchForcedCaseInsensitive())->toBeTrue();
-});
-
-it('can disable `wrapOptionLabels()`', function (): void {
-    $select = Select::make('category');
-
-    expect($select->canOptionLabelsWrap())->toBeTrue();
-
-    $select->wrapOptionLabels(false);
-
-    expect($select->canOptionLabelsWrap())->toBeFalse();
-});
-
-it('can set `dynamicOptions()`', function (): void {
-    $select = Select::make('category');
-
-    expect($select->hasDynamicOptions())->toBeFalse();
-
-    $select->dynamicOptions();
-
-    expect($select->hasDynamicOptions())->toBeTrue();
-});
-
-it('can set `maxItemsMessage()`', function (): void {
-    $select = Select::make('items')
-        ->multiple()
-        ->maxItemsMessage('Too many items');
-
-    expect($select->getMaxItemsMessage())->toBe('Too many items');
-});
-
-it('returns `createOption` for `getCreateOptionActionName()`', function (): void {
-    $select = Select::make('category');
-
-    expect($select->getCreateOptionActionName())->toBe('createOption');
-});
-
-it('returns `editOption` for `getEditOptionActionName()`', function (): void {
-    $select = Select::make('category');
-
-    expect($select->getEditOptionActionName())->toBe('editOption');
-});
-
-it('returns `false` for `hasCreateOptionActionFormSchema()` by default', function (): void {
-    $select = Select::make('category');
-
-    expect($select->hasCreateOptionActionFormSchema())->toBeFalse();
-});
-
-it('returns `true` for `hasCreateOptionActionFormSchema()` when set', function (): void {
-    $select = Select::make('category')
-        ->createOptionForm([
-            TextInput::make('name'),
-        ]);
-
-    expect($select->hasCreateOptionActionFormSchema())->toBeTrue();
-});
-
-it('returns `false` for `hasEditOptionActionFormSchema()` by default', function (): void {
-    $select = Select::make('category');
-
-    expect($select->hasEditOptionActionFormSchema())->toBeFalse();
-});
-
-it('returns `true` for `hasEditOptionActionFormSchema()` when set', function (): void {
-    $select = Select::make('category')
-        ->editOptionForm([
-            TextInput::make('name'),
-        ]);
-
-    expect($select->hasEditOptionActionFormSchema())->toBeTrue();
-});
-
-it('can set `createOptionUsing()` and retrieve with `getCreateOptionUsing()`', function (): void {
-    $select = Select::make('category');
-
-    expect($select->getCreateOptionUsing())->toBeNull();
-
-    $callback = static fn (array $data): int => 1;
-    $select->createOptionUsing($callback);
-
-    expect($select->getCreateOptionUsing())->toBe($callback);
-});
-
-it('can set `updateOptionUsing()` and retrieve with `getUpdateOptionUsing()`', function (): void {
-    $select = Select::make('category');
-
-    expect($select->getUpdateOptionUsing())->toBeNull();
-
-    $callback = static function (array $data): void {};
-    $select->updateOptionUsing($callback);
-
-    expect($select->getUpdateOptionUsing())->toBe($callback);
-});
-
-it('can set `createOptionModalHeading()`', function (): void {
-    $select = Select::make('category');
-
-    expect($select->getCreateOptionModalHeading())->toBeNull();
-
-    $select->createOptionModalHeading('New Category');
-
-    expect($select->getCreateOptionModalHeading())->toBe('New Category');
-});
-
-it('can set `editOptionModalHeading()`', function (): void {
-    $select = Select::make('category');
-
-    expect($select->getEditOptionModalHeading())->toBeNull();
-
-    $select->editOptionModalHeading('Edit Category');
-
-    expect($select->getEditOptionModalHeading())->toBe('Edit Category');
-});
-
-it('can set `boolean()` with custom `$placeholder`', function (): void {
-    $select = Select::make('active')
-        ->boolean(placeholder: 'Choose...');
-
-    $options = $select->getOptions();
-
-    expect($options)->toHaveCount(2);
-    expect($select->getPlaceholder())->toBe('Choose...');
-});
-
-it('returns fluent `$this` from `manageOptionForm()`', function (): void {
-    $select = Select::make('category');
-
-    $result = $select->manageOptionForm([
-        TextInput::make('name'),
-    ]);
-
-    expect($result)->toBe($select);
-    expect($select->hasCreateOptionActionFormSchema())->toBeTrue();
-    expect($select->hasEditOptionActionFormSchema())->toBeTrue();
-});
-
-it('can set `reorderable()` with a `Closure`', function (): void {
-    $select = Select::make('tags')
-        ->multiple()
-        ->reorderable(static fn (): bool => true);
-
-    expect($select->isReorderable())->toBeTrue();
-});
-
-it('can set `optionsLimit()` with a `Closure`', function (): void {
-    $select = Select::make('category')
-        ->optionsLimit(static fn (): int => 200);
-
-    expect($select->getOptionsLimit())->toBe(200);
-});
-
-it('returns `false` for `hasOptionLabelFromRecordUsingCallback()` by default', function (): void {
-    $select = Select::make('category');
-
-    expect($select->hasOptionLabelFromRecordUsingCallback())->toBeFalse();
-});
-
-it('returns `true` for `hasOptionLabelFromRecordUsingCallback()` when set', function (): void {
-    $select = Select::make('category')
-        ->getOptionLabelFromRecordUsing(static fn ($record): string => $record->name);
-
-    expect($select->hasOptionLabelFromRecordUsingCallback())->toBeTrue();
-});
-
-describe('Closure support', function (): void {
-    it('can set `multiple()` with a `Closure`', function (): void {
-        $select = Select::make('tags')
-            ->multiple(static fn (): bool => true);
-
-        expect($select->isMultiple())->toBeTrue();
-    });
-
-    it('can set `position()` with a `Closure`', function (): void {
-        $select = Select::make('status')
-            ->position(static fn (): string => 'above');
-
-        expect($select->getPosition())->toBe('above');
-    });
-
-    it('can set `dynamicOptions()` with a `Closure`', function (): void {
-        $select = Select::make('status')
-            ->dynamicOptions(static fn (): bool => true);
-
-        expect($select->hasDynamicOptions())->toBeTrue();
-    });
-
-    it('can set `maxItemsMessage()` with a `Closure`', function (): void {
-        $select = Select::make('tags')
-            ->maxItemsMessage(static fn (): string => 'Too many!');
-
-        expect($select->getMaxItemsMessage())->toBe('Too many!');
-    });
-});
-
-describe('relationship metadata', function (): void {
-    it('returns `false` for `hasRelationship()` by default', function (): void {
-        $select = Select::make('team_id');
-
-        expect($select->hasRelationship())->toBeFalse();
-    });
-
-    it('returns `true` for `hasRelationship()` after `relationship()` is called', function (): void {
-        $select = Select::make('team_id')
-            ->relationship('team', 'name');
-
-        expect($select->hasRelationship())->toBeTrue();
-    });
-
-    it('returns `null` for `getRelationshipName()` by default', function (): void {
-        $select = Select::make('team_id');
-
-        expect($select->getRelationshipName())->toBeNull();
-    });
-
-    it('uses field name when `relationship()` name is `null`', function (): void {
-        $select = Select::make('team')
-            ->relationship(titleAttribute: 'name');
-
-        expect($select->getRelationshipName())->toBe('team');
-    });
-
-    it('returns `null` for `getRelationshipTitleAttribute()` by default', function (): void {
-        $select = Select::make('team_id');
-
-        expect($select->getRelationshipTitleAttribute())->toBeNull();
-    });
-});
-
-describe('search columns', function (): void {
-    it('returns `null` for `getSearchColumns()` by default', function (): void {
-        $select = Select::make('team_id');
-
-        expect($select->getSearchColumns())->toBeNull();
-    });
-
-    it('can set search columns via `searchable()` with array', function (): void {
-        $select = Select::make('team_id')
-            ->searchable(['name', 'email']);
-
-        expect($select->getSearchColumns())->toBe(['name', 'email']);
-        expect($select->isSearchable())->toBeTrue();
-    });
-});
-
-describe('`hasDynamicOptions()` logic', function (): void {
-    it('returns `false` by default', function (): void {
-        $select = Select::make('status');
-
-        expect($select->hasDynamicOptions())->toBeFalse();
-    });
-
-    it('can be cleared with `null` to revert to default', function (): void {
-        $select = Select::make('status')
-            ->dynamicOptions()
-            ->dynamicOptions(null);
-
-        expect($select->hasDynamicOptions())->toBeFalse();
-    });
-});
-
-describe('saveRelationshipsUsing BelongsToMany with pivot data', function (): void {
-    it('can save `BelongsToMany` with `pivotData()` via `syncWithPivotValues()`', function (): void {
-        $user = User::factory()->create();
-        $teams = Team::factory()->count(2)->create();
-
-        livewire(TestSelectWithBelongsToManyAndPivotData::class, ['record' => $user])
-            ->fillForm(['teams' => $teams->pluck('id')->map(fn ($id) => (string) $id)->all()])
-            ->call('save');
-
-        $pivotRows = DB::table('team_user')
-            ->where('user_id', $user->id)
-            ->get();
-
-        expect($pivotRows)->toHaveCount(2);
-        expect($pivotRows->first()->role)->toBe('editor');
-        expect($pivotRows->last()->role)->toBe('editor');
-    });
-
-    it('can detach and re-sync `BelongsToMany` with `pivotData()`', function (): void {
-        $user = User::factory()->create();
-        $teams = Team::factory()->count(3)->create();
-        $user->teams()->attach($teams);
-
-        livewire(TestSelectWithBelongsToManyAndPivotData::class, ['record' => $user])
-            ->fillForm(['teams' => $teams->take(1)->pluck('id')->map(fn ($id) => (string) $id)->all()])
-            ->call('save');
-
-        $pivotRows = DB::table('team_user')
-            ->where('user_id', $user->id)
-            ->get();
-
-        expect($pivotRows)->toHaveCount(1);
-        expect($pivotRows->first()->role)->toBe('editor');
-    });
-});
-
-describe('rendering', function (): void {
-    it('can render with static `options()`', function (): void {
-        livewire(RenderSelectWithStaticOptions::class)
-            ->assertSuccessful()
-            ->assertSeeHtml('Electronics')
-            ->assertSeeHtml('Clothing');
-    });
-
-    it('can render with `options()` from `Closure`', function (): void {
-        livewire(RenderSelectWithClosureOptions::class)
-            ->assertSuccessful()
-            ->assertSeeHtml('Electronics');
-    });
-
-    it('can render with `options()` from enum', function (): void {
-        livewire(RenderSelectWithEnumOptions::class)
-            ->assertSuccessful()
-            ->assertSeeHtml('One')
-            ->assertSeeHtml('Two');
-    });
-
-    it('can render with `multiple()`', function (): void {
-        livewire(RenderSelectWithMultiple::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with `multiple()` set via `Closure`', function (): void {
-        livewire(RenderSelectWithClosureMultiple::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with `searchable()`', function (): void {
-        livewire(RenderSelectWithSearchable::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with `boolean()`', function (): void {
-        livewire(RenderSelectWithBoolean::class)
-            ->assertSuccessful()
-            ->assertSeeHtml('Yes')
-            ->assertSeeHtml('No');
-    });
-
-    it('can render with `boolean()` custom labels', function (): void {
-        livewire(RenderSelectWithBooleanCustomLabels::class)
-            ->assertSuccessful()
-            ->assertSeeHtml('Enabled')
-            ->assertSeeHtml('Disabled');
-    });
-
-    it('can render with `boolean()` custom placeholder', function (): void {
-        livewire(RenderSelectWithBooleanCustomPlaceholder::class)
-            ->assertSuccessful()
-            ->assertSeeHtml('Choose...');
-    });
-
-    it('can render with `reorderable()`', function (): void {
-        livewire(RenderSelectWithReorderable::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with `reorderable()` set via `Closure`', function (): void {
-        livewire(RenderSelectWithClosureReorderable::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with `position()`', function (): void {
-        livewire(RenderSelectWithPosition::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with `position()` set via `Closure`', function (): void {
-        livewire(RenderSelectWithClosurePosition::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with `wrapOptionLabels(false)`', function (): void {
-        livewire(RenderSelectWithNoWrapOptionLabels::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with `dynamicOptions()`', function (): void {
-        livewire(RenderSelectWithDynamicOptions::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with `dynamicOptions()` set via `Closure`', function (): void {
-        livewire(RenderSelectWithClosureDynamicOptions::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with `maxItemsMessage()`', function (): void {
-        livewire(RenderSelectWithMaxItemsMessage::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with `maxItemsMessage()` set via `Closure`', function (): void {
-        livewire(RenderSelectWithClosureMaxItemsMessage::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with `optionsLimit()` set via `Closure`', function (): void {
-        livewire(RenderSelectWithClosureOptionsLimit::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with `disableOptionWhen()`', function (): void {
-        livewire(RenderSelectWithDisabledOption::class)
-            ->assertSuccessful()
-            ->assertSeeHtml('Active')
-            ->assertSeeHtml('Archived');
-    });
-
-    it('can render with `allowHtml()`', function (): void {
-        livewire(RenderSelectWithAllowHtml::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with `native(false)`', function (): void {
-        livewire(RenderSelectWithNonNative::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with `createOptionForm()`', function (): void {
-        livewire(RenderSelectWithCreateOptionForm::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with `editOptionForm()`', function (): void {
-        livewire(RenderSelectWithEditOptionForm::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with grouped options', function (): void {
-        livewire(RenderSelectWithGroupedOptions::class)
-            ->assertSuccessful()
-            ->assertSeeHtml('Phone')
-            ->assertSeeHtml('Laptop');
-    });
-
-    it('can render with `placeholder()`', function (): void {
-        livewire(RenderSelectWithPlaceholder::class)
-            ->assertSuccessful()
-            ->assertSeeHtml('Select an option...');
-    });
-});
 
 class RenderSelectWithStaticOptions extends Livewire
 {

@@ -1,8 +1,4 @@
 <x-filament-panels::page>
-    <button type="button" data-testid="outside-reordering">
-        Outside the field
-    </button>
-
     @if ($hasRefreshed)
         <p data-testid="custom-refreshed">Items refreshed</p>
     @endif

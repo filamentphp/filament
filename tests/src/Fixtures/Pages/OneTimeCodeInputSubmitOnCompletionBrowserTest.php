@@ -23,8 +23,11 @@ class OneTimeCodeInputSubmitOnCompletionBrowserTest extends Page
 
     public ?string $submittedCode = null;
 
+    public bool $hasNativeValidation = true;
+
     public function mount(): void
     {
+        $this->hasNativeValidation = ! request()->boolean('novalidate');
         $this->form->fill();
     }
 

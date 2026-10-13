@@ -94,12 +94,13 @@ it('can call `controlActions()`', function (): void {
 it('has no accessibility issues in light and dark modes', function (): void {
     $this->actingAs(User::factory()->create());
 
-    visit('/callout-browser-test')
+    $page = visit('/callout-browser-test');
+
+    $page
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
 
-    visit('/callout-browser-test')
-        ->inDarkMode()
+    $page->inDarkMode()
         ->assertNoAccessibilityIssues();
 });
 

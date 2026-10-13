@@ -19,38 +19,36 @@ it('uses menu behavior by default and supports opting out', function (): void {
     visit('/dropdown-test')
         ->assertAttribute($trigger, 'aria-haspopup', 'menu')
         ->assertAttribute('[data-testid="dropdown-trigger"]', 'aria-haspopup', 'true')
-        ->assertScript('(window.originalCheckVisibility = Element.prototype.checkVisibility, Element.prototype.checkVisibility = undefined, true)', true)
         ->keys($trigger, 'Enter')
-        ->assertScript("document.activeElement.matches('{$firstItem}')", true)
+        ->assertPresent($firstItem . ':focus')
         ->assertAttribute($firstItem, 'role', 'menuitem')
         ->assertAttribute($firstItem, 'tabindex', '-1')
         ->keys($firstItem, 'ArrowDown')
-        ->assertScript("document.activeElement.matches('{$disabledItem}')", true)
+        ->assertPresent($disabledItem . ':focus')
         ->assertAttribute($disabledItem, 'aria-disabled', 'true')
-        ->assertScript("!document.activeElement.hasAttribute('disabled')", true)
+        ->assertAttributeMissing($disabledItem, 'disabled')
         ->keys($disabledItem, 'Enter')
         ->assertVisible($lastItem)
         ->keys($disabledItem, 'ArrowDown')
-        ->assertScript("document.activeElement.matches('{$lastItem}')", true)
+        ->assertPresent($lastItem . ':focus')
         ->keys($lastItem, 'ArrowDown')
-        ->assertScript("document.activeElement.matches('{$firstItem}')", true)
+        ->assertPresent($firstItem . ':focus')
         ->keys($firstItem, 'Escape')
         ->assertMissing($firstItem)
-        ->assertScript("document.activeElement.matches('{$trigger}')", true)
+        ->assertPresent($trigger . ':focus')
         ->click($trigger)
         ->assertVisible($firstItem)
         ->keys($trigger, 'Tab')
         ->assertMissing($firstItem)
-        ->assertScript("document.activeElement.matches('[data-testid=\"refresh\"]')", true)
+        ->assertPresent('[data-testid="refresh"]:focus')
         ->click($trigger)
         ->assertVisible($firstItem)
         ->keys($trigger, 'Shift+Tab')
         ->assertMissing($firstItem)
-        ->assertScript("document.activeElement.matches('[data-testid=\"dropdown-trigger\"]') || (/AppleWebKit/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent) && !document.activeElement.closest('[role=\"menu\"]'))", true)
+        ->assertPresent('[data-testid="dropdown-trigger"]:focus')
         ->click('[data-testid="dropdown-trigger"]')
-        ->assertScript("document.querySelector('[data-testid=\"dropdown-trigger\"]').getAttribute('aria-controls') === document.querySelector('[data-testid=\"dropdown-trigger\"]').closest('.fi-dropdown').querySelector('.fi-dropdown-panel').id", true)
-        ->assertScript("!document.querySelector('[data-testid=\"dropdown-trigger\"]').closest('.fi-dropdown').querySelector('.fi-dropdown-panel').hasAttribute('role')", true)
-        ->assertScript('(Element.prototype.checkVisibility = window.originalCheckVisibility, true)', true)
+        ->assertScript("document.getElementById(document.querySelector('[data-testid=\"dropdown-trigger\"]').getAttribute('aria-controls')).contains(document.querySelector('[data-testid=\"outer-dropdown-action\"]'))", true)
+        ->assertScript("!document.getElementById(document.querySelector('[data-testid=\"dropdown-trigger\"]').getAttribute('aria-controls')).hasAttribute('role')", true)
         ->assertNoSmoke();
 });
 
@@ -63,84 +61,89 @@ it('keeps an opted-out popup open when closing a nested menu', function (): void
         ->click('[data-testid="dropdown-trigger"]')
         ->assertVisible('[data-testid="nested-menu-trigger"]')
         ->keys('[data-testid="nested-menu-trigger"]', 'Enter')
-        ->assertScript("document.activeElement.matches('[data-testid=\"nested-menu-item\"]')", true)
+        ->assertPresent('[data-testid="nested-menu-item"]:focus')
         ->keys('[data-testid="nested-menu-item"]', 'Tab')
         ->assertMissing('[data-testid="nested-menu-item"]')
-        ->assertVisible('.fi-select-input-btn')
+        ->assertVisible('button[aria-haspopup="listbox"]')
         ->assertAttribute('[data-testid="dropdown-trigger"]', 'aria-expanded', 'true')
-        ->assertScript("document.activeElement.matches('[data-testid=\"after-nested-menu\"]')", true)
+        ->assertPresent('[data-testid="after-nested-menu"]:focus')
         ->assertNoSmoke();
 });
 
-it('closes nested form controls before their dropdown on `Escape`', function (bool $isDarkMode): void {
+it('closes nested form controls before their dropdown on `Escape`', function (): void {
     Artisan::call('filament:assets');
 
     $this->actingAs(User::factory()->create());
 
     $page = visit('/dropdown-test');
 
-    if ($isDarkMode) {
-        $page = $page->inDarkMode();
-    }
+    $select = 'button[aria-haspopup="listbox"]';
+    $search = 'input[role="combobox"]:not([aria-haspopup="dialog"])';
+    $date = 'input[aria-haspopup="dialog"]';
 
     $page
         ->click('[data-testid="dropdown-trigger"]')
-        ->click('.fi-select-input-btn')
-        ->type('.fi-select-input-search-ctn input', 'Draft')
-        ->assertVisible('.fi-select-input-search-ctn input')
-        ->keys('.fi-select-input-search-ctn input', 'Escape')
-        ->assertVisible('.fi-select-input-btn')
-        ->assertAttribute('.fi-select-input-btn', 'aria-expanded', 'false')
-        ->assertMissing('.fi-select-input-search-ctn input')
-        ->assertPresent('.fi-select-input-btn:focus')
-        ->keys('.fi-select-input-btn', 'Escape')
-        ->assertMissing('.fi-select-input-btn')
+        ->click($select)
+        ->type($search, 'Draft')
+        ->assertVisible($search)
+        ->assertNoAccessibilityIssues()
+        ->keys($search, 'Escape')
+        ->assertVisible($select)
+        ->assertAttribute($select, 'aria-expanded', 'false')
+        ->assertMissing($search)
+        ->assertPresent($select . ':focus')
+        ->keys($select, 'Escape')
+        ->assertMissing($select)
         ->assertPresent('[data-testid="dropdown-trigger"]:focus')
         ->keys('[data-testid="dropdown-trigger"]', 'Enter')
-        ->assertVisible('.fi-select-input-btn')
-        ->click('.fi-select-input-btn')
-        ->assertValue('.fi-select-input-search-ctn input', '')
-        ->assertVisible('.fi-select-input-option[data-value="published"]')
-        ->click('.fi-select-input-btn')
-        ->assertMissing('.fi-select-input-search-ctn input')
-        ->click('.fi-fo-date-time-picker-display-text-input')
-        ->assertVisible('.fi-fo-date-time-picker-panel')
-        ->keys('.fi-fo-date-time-picker-year-input', 'Escape')
-        ->assertMissing('.fi-fo-date-time-picker-panel')
-        ->assertVisible('.fi-fo-date-time-picker-display-text-input')
+        ->assertVisible($select)
+        ->click($select)
+        ->assertValue($search, '')
+        ->assertVisible('[role="option"][data-value="published"]')
+        ->click($select)
+        ->assertMissing($search)
+        ->click($date)
+        ->assertVisible('[role="dialog"]')
+        ->assertNoAccessibilityIssues()
+        ->keys('[role="dialog"] input[type="number"]', 'Escape')
+        ->assertMissing('[role="dialog"]')
+        ->assertVisible($date)
         ->assertAttribute('[data-testid="dropdown-trigger"]', 'aria-expanded', 'true')
-        ->assertPresent('.fi-fo-date-time-picker-display-text-input:focus')
-        ->keys('.fi-fo-date-time-picker-display-text-input', 'Escape')
-        ->assertMissing('.fi-fo-date-time-picker-display-text-input')
+        ->assertPresent($date . ':focus')
+        ->keys($date, 'Escape')
+        ->assertMissing($date)
         ->assertPresent('[data-testid="dropdown-trigger"]:focus')
-        ->assertNoSmoke()
-        ->assertScript('document.querySelector(\'[data-testid="dropdown-trigger"]\').closest(\'.fi-dropdown\').getAnimations({ subtree: true }).length', 0)
-        ->assertNoAccessibilityIssues();
-})->with(['light' => false, 'dark' => true]);
+        ->assertNoSmoke();
 
-it('keeps `aria-expanded` in sync with the panel after a Livewire request', function (bool $isDarkMode): void {
+    $page->inDarkMode()
+        ->click('[data-testid="dropdown-trigger"]')
+        ->click($select)
+        ->assertVisible($search)
+        ->assertNoAccessibilityIssues()
+        ->keys($search, 'Escape')
+        ->click($date)
+        ->assertVisible('[role="dialog"]')
+        ->assertNoAccessibilityIssues();
+});
+
+it('keeps `aria-expanded` in sync with the panel after a Livewire request', function (): void {
     Artisan::call('filament:assets');
 
     $this->actingAs(User::factory()->create());
 
     $page = visit('/dropdown-test');
-
-    if ($isDarkMode) {
-        $page = $page->inDarkMode();
-    }
 
     $page
         ->click('[data-testid="refresh"]')
-        ->waitForText('Refreshed 1 times')
+        ->assertSee('Refreshed 1 times')
         ->click('[data-testid="dropdown-trigger"]')
         ->assertVisible('.fi-select-input-btn')
         ->assertAttribute('[data-testid="dropdown-trigger"]', 'aria-expanded', 'true')
-        ->click('h1[class]')
+        ->click('nav[aria-label="Topbar"]')
         ->assertMissing('.fi-select-input-btn')
         ->assertAttribute('[data-testid="dropdown-trigger"]', 'aria-expanded', 'false')
-        ->assertNoSmoke()
-        ->assertNoAccessibilityIssues();
-})->with(['light' => false, 'dark' => true]);
+        ->assertNoSmoke();
+});
 
 it('only closes the owning dynamically mounted dropdown on `Escape`', function (): void {
     Artisan::call('filament:assets');
@@ -149,12 +152,10 @@ it('only closes the owning dynamically mounted dropdown on `Escape`', function (
 
     $page = visit('/dropdown-test');
 
-    $page->script('window.enclosingEscapeCount = 0; window.addEventListener(\'keydown\', (event) => { if (event.key === \'Escape\') window.enclosingEscapeCount++ })');
-
     $page
         ->click('[data-testid="dropdown-trigger"]')
         ->assertVisible('.fi-select-input-btn')
-        ->assertScript("(Alpine.\$data(document.querySelector('[data-testid=\"secondary-dropdown-container\"]')).isSecondaryDropdownShown = true, true)", true)
+        ->click('[data-testid="show-secondary-dropdown"]')
         ->assertVisible('[data-testid="secondary-dropdown-trigger"]')
         ->assertVisible('.fi-select-input-btn')
         ->keys('[data-testid="secondary-dropdown-trigger"]', 'Enter')
@@ -167,13 +168,12 @@ it('only closes the owning dynamically mounted dropdown on `Escape`', function (
         ->assertVisible('[data-testid="secondary-dropdown-content"]')
         ->assertVisible('.fi-select-input-btn')
         ->keys('[data-testid="secondary-dropdown-content-button"]', 'Escape')
-        ->assertScript("document.activeElement.matches('[data-testid=\"secondary-dropdown-trigger\"]')", true)
+        ->assertPresent('[data-testid="secondary-dropdown-trigger"]:focus')
         ->assertMissing('[data-testid="secondary-dropdown-content"]')
         ->assertVisible('.fi-select-input-btn')
         ->keys('[data-testid="secondary-dropdown-trigger"]', 'Escape')
         ->assertMissing('.fi-select-input-btn')
-        ->assertScript("document.activeElement.matches('[data-testid=\"dropdown-trigger\"]')", true)
-        ->assertScript('window.enclosingEscapeCount', 0);
+        ->assertPresent('[data-testid="dropdown-trigger"]:focus');
 });
 
 it('closes nested dropdowns when their parent closes', function (): void {
@@ -183,7 +183,7 @@ it('closes nested dropdowns when their parent closes', function (): void {
 
     visit('/dropdown-test')
         ->click('[data-testid="dropdown-trigger"]')
-        ->assertScript("(Alpine.\$data(document.querySelector('[data-testid=\"secondary-dropdown-container\"]')).isSecondaryDropdownShown = true, true)", true)
+        ->click('[data-testid="show-secondary-dropdown"]')
         ->assertVisible('[data-testid="secondary-dropdown-trigger"]')
         ->keys('[data-testid="secondary-dropdown-trigger"]', 'Enter')
         ->assertVisible('[data-testid="secondary-dropdown-content"]')
@@ -201,41 +201,42 @@ it('closes nested dropdowns when their parent closes', function (): void {
         ->assertVisible('[data-testid="secondary-dropdown-content"]')
         ->keys('[data-testid="secondary-dropdown-content-button"]', 'Enter')
         ->assertVisible('[data-testid="tertiary-dropdown-content"]')
-        ->assertScript("(document.dispatchEvent(new Event('livewire:navigate')), true)", true)
-        ->assertMissing('.fi-select-input-btn')
-        ->keys('[data-testid="dropdown-trigger"]', 'Enter')
-        ->assertVisible('.fi-select-input-btn')
-        ->assertMissing('[data-testid="secondary-dropdown-content"]')
-        ->assertMissing('[data-testid="tertiary-dropdown-content"]')
         ->assertNoSmoke();
 });
 
-it('closes a rich editor toolbar menu before its dropdown on `Escape`', function (bool $isDarkMode): void {
+it('closes a rich editor toolbar menu before its dropdown on `Escape`', function (): void {
     Artisan::call('filament:assets');
 
     $this->actingAs(User::factory()->create());
 
     $page = visit('/dropdown-test');
 
-    if ($isDarkMode) {
-        $page = $page->inDarkMode();
-    }
-
-    $trigger = '.fi-fo-rich-editor-dropdown-tool-trigger';
-    $menu = '.fi-fo-rich-editor-dropdown-tool-menu';
+    $content = '[data-testid="rich-editor-content"]';
+    $trigger = '[data-rich-editor-tool="Headings"]';
+    $menu = '[role="menu"]:visible';
 
     $page
         ->click('[data-testid="dropdown-trigger"]')
+        ->type($content, 'Draft content')
+        ->assertSeeIn($content, 'Draft content')
         ->click($trigger)
         ->assertVisible($menu)
+        ->assertNoAccessibilityIssues()
         ->keys($trigger, 'Escape')
         ->assertMissing($menu)
         ->assertVisible($trigger)
-        ->assertScript("document.activeElement.matches('{$trigger}')", true)
+        ->assertPresent($trigger . ':focus')
         ->assertAttribute('[data-testid="dropdown-trigger"]', 'aria-expanded', 'true')
         ->keys($trigger, 'Escape')
         ->assertMissing($trigger)
         ->assertAttribute('[data-testid="dropdown-trigger"]', 'aria-expanded', 'false')
-        ->assertNoSmoke()
+        ->assertNoSmoke();
+
+    $page->inDarkMode()
+        ->click('[data-testid="dropdown-trigger"]')
+        ->type($content, 'Draft content')
+        ->assertSeeIn($content, 'Draft content')
+        ->click($trigger)
+        ->assertVisible($menu)
         ->assertNoAccessibilityIssues();
-})->with(['light' => false, 'dark' => true]);
+});

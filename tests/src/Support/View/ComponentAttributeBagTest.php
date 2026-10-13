@@ -368,7 +368,7 @@ describe('`gridColumn()`', function (): void {
     ]);
 });
 
-describe('macros via `__call` / `hasMacro`', function (): void {
+describe('macros via `__call()` / `hasMacro()`', function (): void {
     it('routes a macro registered on Laravel\'s base bag through the Filament subclass', function (): void {
         // The override exists so user-registered macros on the Laravel base class still resolve
         // when called on the Filament subclass — this is the fallback path in `ComponentAttributeBag::__call`.

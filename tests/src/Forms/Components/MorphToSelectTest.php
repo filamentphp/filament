@@ -46,14 +46,28 @@ it('can set `typeSelectToggleButtons()`', function (): void {
     expect($component->hasTypeSelectToggleButtons())->toBeTrue();
 });
 
-it('can set `optionsLimit()`', function (): void {
-    $component = MorphToSelect::make('commentable')->optionsLimit(25);
-    expect($component->getOptionsLimit())->toBe(25);
+it('can set `typeSelectToggleButtons()` with a `Closure`', function (): void {
+    $component = MorphToSelect::make('commentable')
+        ->typeSelectToggleButtons(static fn (): bool => true);
+
+    expect($component->hasTypeSelectToggleButtons())->toBeTrue();
 });
 
 it('has a default `optionsLimit()` of `50`', function (): void {
     $component = MorphToSelect::make('commentable');
     expect($component->getOptionsLimit())->toBe(50);
+});
+
+it('can set `optionsLimit()`', function (): void {
+    $component = MorphToSelect::make('commentable')->optionsLimit(25);
+    expect($component->getOptionsLimit())->toBe(25);
+});
+
+it('can set `optionsLimit()` with a `Closure`', function (): void {
+    $component = MorphToSelect::make('commentable')
+        ->optionsLimit(static fn (): int => 100);
+
+    expect($component->getOptionsLimit())->toBe(100);
 });
 
 it('can set `required()`', function (): void {
@@ -63,16 +77,39 @@ it('can set `required()`', function (): void {
     expect($component->isRequired())->toBeTrue();
 });
 
+it('can set `required()` with a `Closure`', function (): void {
+    $component = MorphToSelect::make('commentable')
+        ->required(static fn (): bool => true);
+
+    expect($component->isRequired())->toBeTrue();
+});
+
 it('can set `modifyTypeSelectUsing()` callback', function (): void {
     $callback = static fn () => null;
     $component = MorphToSelect::make('commentable')->modifyTypeSelectUsing($callback);
     expect($component->getModifyTypeSelectUsingCallback())->toBe($callback);
 });
 
+it('can clear `modifyTypeSelectUsing()` with `null`', function (): void {
+    $component = MorphToSelect::make('commentable')
+        ->modifyTypeSelectUsing(static fn () => null)
+        ->modifyTypeSelectUsing(null);
+
+    expect($component->getModifyTypeSelectUsingCallback())->toBeNull();
+});
+
 it('can set `modifyKeySelectUsing()` callback', function (): void {
     $callback = static fn () => null;
     $component = MorphToSelect::make('commentable')->modifyKeySelectUsing($callback);
     expect($component->getModifyKeySelectUsingCallback())->toBe($callback);
+});
+
+it('can clear `modifyKeySelectUsing()` with `null`', function (): void {
+    $component = MorphToSelect::make('commentable')
+        ->modifyKeySelectUsing(static fn () => null)
+        ->modifyKeySelectUsing(null);
+
+    expect($component->getModifyKeySelectUsingCallback())->toBeNull();
 });
 
 it('throws `InvalidArgumentException` when name is blank', function (): void {
@@ -107,31 +144,8 @@ describe('label auto-generation', function (): void {
     });
 });
 
-describe('Closure support', function (): void {
-    it('can set `required()` with a `Closure`', function (): void {
-        $component = MorphToSelect::make('commentable')
-            ->required(static fn (): bool => true);
-
-        expect($component->isRequired())->toBeTrue();
-    });
-
-    it('can set `optionsLimit()` with a `Closure`', function (): void {
-        $component = MorphToSelect::make('commentable')
-            ->optionsLimit(static fn (): int => 100);
-
-        expect($component->getOptionsLimit())->toBe(100);
-    });
-
-    it('can set `typeSelectToggleButtons()` with a `Closure`', function (): void {
-        $component = MorphToSelect::make('commentable')
-            ->typeSelectToggleButtons(static fn (): bool => true);
-
-        expect($component->hasTypeSelectToggleButtons())->toBeTrue();
-    });
-});
-
 describe('validation', function (): void {
-    it('rejects an existing value excluded by `modifyOptionsQueryUsing` on a `MorphTo` type', function (): void {
+    it('rejects an existing value excluded by `modifyOptionsQueryUsing()` on a `MorphTo` type', function (): void {
         $inScopePost = Post::factory()->create(['title' => 'Alpha Article']);
         $outOfScopePost = Post::factory()->create(['title' => 'Beta Article']);
 
@@ -152,7 +166,7 @@ describe('validation', function (): void {
             ->assertHasFormErrors(['imageable_id' => ['in']]);
     });
 
-    it('validates against a `modifyOptionsQueryUsing` query that adds a join without an ambiguous column error', function (): void {
+    it('validates against a `modifyOptionsQueryUsing()` query that adds a join without an ambiguous column error', function (): void {
         $author = User::factory()->create();
         $post = Post::factory()->create(['title' => 'Alpha Article', 'author_id' => $author->getKey()]);
 
@@ -163,24 +177,6 @@ describe('validation', function (): void {
             ])
             ->call('save')
             ->assertHasNoFormErrors();
-    });
-});
-
-describe('modifier callback clearing', function (): void {
-    it('can clear `modifyTypeSelectUsing()` with `null`', function (): void {
-        $component = MorphToSelect::make('commentable')
-            ->modifyTypeSelectUsing(static fn () => null)
-            ->modifyTypeSelectUsing(null);
-
-        expect($component->getModifyTypeSelectUsingCallback())->toBeNull();
-    });
-
-    it('can clear `modifyKeySelectUsing()` with `null`', function (): void {
-        $component = MorphToSelect::make('commentable')
-            ->modifyKeySelectUsing(static fn () => null)
-            ->modifyKeySelectUsing(null);
-
-        expect($component->getModifyKeySelectUsingCallback())->toBeNull();
     });
 });
 
@@ -214,8 +210,6 @@ class TestComponentWithMorphToSelectAndJoinQuery extends Component implements Ha
                     ->types([
                         MorphToSelect\Type::make(Post::class)
                             ->titleAttribute('title')
-                            // The join brings in a second `id` column, so any unqualified
-                            // reference to the key must be qualified to avoid an ambiguous column error.
                             ->modifyOptionsQueryUsing(fn ($query) => $query->join('users', 'users.id', '=', 'posts.author_id')),
                     ]),
             ])

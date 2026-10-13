@@ -196,7 +196,7 @@ describe('formula injection protection', function (): void {
 });
 
 describe('visibility', function (): void {
-    test('is visible by default', function (): void {
+    it('is visible by default', function (): void {
         $column = ExportColumn::make('title');
 
         expect($column->isVisible())->toBeTrue();
@@ -253,7 +253,7 @@ describe('visibility', function (): void {
         expect($column->isHidden())->toBeTrue();
     });
 
-    test('`hidden()` takes priority over `visible()`', function (): void {
+    it('gives `hidden()` priority over `visible()`', function (): void {
         $column = ExportColumn::make('title')
             ->hidden()
             ->visible();

@@ -256,7 +256,9 @@ describe('nested actions', function (): void {
             ->assertActionNotMounted()
             ->assertNotDispatched('grouped-parent-called');
     });
+});
 
+describe('arguments and halting', function (): void {
     it('can call an action with arguments', function (): void {
         livewire(PostsTable::class)
             ->callAction(TestAction::make('arguments')->table()->arguments([
@@ -401,7 +403,9 @@ describe('visibility and properties', function (): void {
             ->assertTableActionExists('attachMultiple', fn (AttachAction $action) => $action->isMultiple())
             ->assertTableActionDoesNotExist(AttachAction::class, fn (AttachAction $action) => $action->isMultiple());
     });
+});
 
+describe('replication', function (): void {
     it('can replicate a record', function (): void {
         $post = Post::factory()->create();
 

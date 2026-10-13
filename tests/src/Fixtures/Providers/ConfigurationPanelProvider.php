@@ -28,16 +28,13 @@ class ConfigurationPanelProvider extends PanelProvider
             ->path('configuration')
             ->login()
             ->resources([
-                // Default resource (no configuration)
                 ConfigurablePostResource::class,
-                // Featured posts configuration
                 ConfigurablePostResource::make('featured')
                     ->slug('featured-posts')
                     ->navigationLabel('Featured Posts')
                     ->navigationGroup('Featured Content')
                     ->navigationSort(1)
                     ->featured(),
-                // Archived posts configuration
                 ConfigurablePostResource::make('archived')
                     ->slug('archived-posts')
                     ->navigationLabel('Archived Posts')
@@ -47,16 +44,13 @@ class ConfigurationPanelProvider extends PanelProvider
             ])
             ->pages([
                 Pages\Dashboard::class,
-                // Default page (no configuration)
                 ConfigurableSettings::class,
-                // General settings configuration
                 ConfigurableSettings::make('general')
                     ->slug('general-settings')
                     ->navigationLabel('General Settings')
                     ->navigationGroup('Settings')
                     ->navigationSort(1)
                     ->settingsCategory('general'),
-                // Advanced settings configuration
                 ConfigurableSettings::make('advanced')
                     ->slug('advanced-settings')
                     ->navigationLabel('Advanced Settings')
