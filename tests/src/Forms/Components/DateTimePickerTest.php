@@ -1456,17 +1456,20 @@ describe('browser interactions', function (): void {
 
         $page = visit('/date-time-picker-test?native=0&date=0&seconds=0&dst=1')->withTimezone('Europe/London');
 
-        $page->click('[data-testid="timed-trigger"]')
+        $page->assertValue('[data-testid="timed-trigger"]', '01:45')
+            ->click('[data-testid="timed-trigger"]')
+            ->assertVisible('input[aria-label="Minute"]')
             ->assertValue('input[aria-label="Hour"]', '1')
             ->assertValue('input[aria-label="Minute"]', '45')
             ->fill('input[aria-label="Minute"]', '30')
             ->assertValue('[data-testid="timed-trigger"]', '01:30')
             ->click('[data-testid="timed-trigger"]')
             ->click('[data-testid="save-timed"]')
-            ->assertScript('document.querySelector(\'[data-testid="saved-timed"]\').textContent.trim()', '01:30:07')
+            ->assertSeeIn('[data-testid="saved-timed"]', '01:30:07')
             ->click('[data-testid="reload-timed"]')
             ->assertAttribute('[data-testid="timed-save-count"]', 'data-reload-count', '1')
             ->click('[data-testid="timed-trigger"]')
+            ->assertVisible('input[aria-label="Minute"]')
             ->assertValue('input[aria-label="Minute"]', '30')
             ->fill('input[aria-label="Minute"]', '55')
             ->assertValue('[data-testid="timed-trigger"]', '01:55')
