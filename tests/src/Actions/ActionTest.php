@@ -27,6 +27,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use Livewire\Livewire;
 
 use function Filament\Tests\livewire;
 
@@ -1399,7 +1400,7 @@ describe('authorization enforcement', function (): void {
 });
 describe('actions mounted from a URL query parameter', function (): void {
     // The `?action=` / `?tableAction=` query string parameters open an action on page
-    // load via a `wire:init="mountAction(...)"` call carrying a `mountedFromUrl` context
+    // load via `mountDefaultActions()` carrying a `mountedFromUrl` context
     // flag. An action mounted this way may only open its modal — it must never run its
     // `action()` closure with no interaction, or a crafted link could trigger it.
 
@@ -1410,9 +1411,109 @@ describe('actions mounted from a URL query parameter', function (): void {
             ->assertNotDispatched('arguments-called');
     });
 
+    it('mounts legacy and explicitly targeted page actions only once, preserving arguments and context', function (?string $target): void {
+        Livewire::withQueryParams([
+            'action' => 'arguments',
+            ...($target === null ? [] : ['actionComponent' => $target]),
+            'actionArguments' => ['source' => 'email'],
+            'actionContext' => ['source' => 'notification', 'mountedFromUrl' => false],
+        ]);
+
+        $component = livewire(Actions::class)
+            ->call('mountDefaultActions')
+            ->assertSet('mountedActions.0.name', 'arguments')
+            ->assertSet('mountedActions.0.arguments.source', 'email')
+            ->assertSet('mountedActions.0.context.source', 'notification')
+            ->assertSet('mountedActions.0.context.mountedFromUrl', true)
+            ->assertNotDispatched('arguments-called');
+
+        $component->call('unmountAction')
+            ->call('$refresh')
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted()
+            ->mountAction('arguments')
+            ->assertSet('mountedActions.0.name', 'arguments');
+    })->with([null, 'page']);
+
+    it('does not consume a URL addressed to another component', function (): void {
+        Livewire::withQueryParams(['action' => 'arguments', 'actionComponent' => 'departments']);
+
+        livewire(Actions::class)
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+    });
+
+    it('supports opt-in standalone tables and mounts table parents before ordinary nested URL actions', function (bool $deferTableLoading): void {
+        $post = Post::factory()->create();
+        Livewire::withQueryParams([
+            'actionComponent' => 'posts',
+            'tableAction' => 'view',
+            'tableActionRecord' => (string) $post->getKey(),
+            'action' => 'confirm',
+        ]);
+
+        livewire(TableActionTestComponent::class)
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+
+        $component = livewire(TableActionTestComponent::class, ['actionUrlIdentifier' => 'posts', 'deferTableLoading' => $deferTableLoading]);
+
+        if ($deferTableLoading) {
+            $component->call('mountDefaultActions')
+                ->assertActionNotMounted()
+                ->call('loadTable');
+        }
+
+        $component
+            ->call('mountDefaultActions')
+            ->assertSet('mountedActions.0.name', 'view')
+            ->assertSet('mountedActions.1.name', 'confirm')
+            ->call('unmountAction', true)
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+    })->with([false, true]);
+
+    it('still mounts an ordinary URL action when its table default cannot mount', function (): void {
+        Livewire::withQueryParams([
+            'actionComponent' => 'posts',
+            'tableAction' => 'missing',
+            'action' => 'overview',
+            'actionArguments' => ['source' => 'email'],
+            'actionContext' => ['source' => 'notification'],
+        ]);
+
+        livewire(TableActionTestComponent::class, ['actionUrlIdentifier' => 'posts'])
+            ->call('mountDefaultActions')
+            ->assertSet('mountedActions.0.name', 'overview')
+            ->assertSet('mountedActions.0.arguments.source', 'email')
+            ->assertSet('mountedActions.0.context.source', 'notification')
+            ->assertSet('mountedActions.0.context.mountedFromUrl', true);
+    });
+
     it('does not run an action mounted from the URL when it has no modal', function (): void {
         livewire(Actions::class)
             ->call('mountAction', 'simple', [], ['mountedFromUrl' => true])
+            ->assertNotDispatched('simple-called');
+    });
+
+    it('does not automatically run modal-less URL actions through the initializer', function (): void {
+        Livewire::withQueryParams([
+            'action' => 'simple',
+            'actionContext' => ['mountedFromUrl' => false],
+        ]);
+
+        livewire(Actions::class)
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted()
+            ->assertNotDispatched('simple-called');
+    });
+
+    it('does not run modal-less table URL actions', function (): void {
+        Livewire::withQueryParams(['actionComponent' => 'posts', 'tableAction' => 'simple']);
+
+        livewire(TableActionTestComponent::class, ['actionUrlIdentifier' => 'posts'])
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted()
             ->assertNotDispatched('simple-called');
     });
 
@@ -1444,7 +1545,34 @@ describe('actions mounted from a URL query parameter', function (): void {
             ->call('mountAction', 'simple', [], $component->instance()->getDefaultActionUrlContext())
             ->assertNotDispatched('simple-called');
     });
+
+    it('handles malformed URL action data without mounting an action', function (array $parameters): void {
+        Livewire::withQueryParams($parameters);
+
+        livewire(Actions::class)
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+    })->with([
+        [['action' => ['arguments']]],
+        [['action' => 'arguments', 'actionComponent' => ['page']]],
+        [['action' => 'arguments', 'actionContext' => ['schemaComponent' => ['form']]]],
+        [['action' => 'arguments', 'actionContext' => ['recordKey' => ['123']]]],
+        [['action' => 'unknown']],
+        [['action' => 'enforcementUnauthorized']],
+    ]);
+
+    it('accepts numeric action names and identifiers decoded by `#[Url]`', function (string $parameter): void {
+        Livewire::withQueryParams([
+            $parameter => '123',
+            ...($parameter === 'action' ? [] : ['actionComponent' => '123']),
+        ]);
+
+        livewire($parameter === 'action' ? Actions::class : TableActionTestComponent::class, $parameter === 'action' ? [] : ['actionUrlIdentifier' => '123'])
+            ->call('mountDefaultActions')
+            ->assertSet('mountedActions.0.name', '123');
+    })->with(['action', 'tableAction']);
 });
+
 describe('validation', function (): void {
     it('can validate an action\'s data', function (): void {
         livewire(Actions::class)
@@ -2035,10 +2163,31 @@ class TableActionTestComponent extends Component implements HasActions, HasSchem
     use InteractsWithSchemas;
     use Tables\Concerns\InteractsWithTable;
 
+    public ?string $actionUrlIdentifier = null;
+
+    public bool $deferTableLoading = false;
+
+    public function getDefaultActionUrlIdentifier(): ?string
+    {
+        return $this->actionUrlIdentifier;
+    }
+
+    public function overviewAction(): Action
+    {
+        return Action::make('overview')->requiresConfirmation()->action(static fn () => null);
+    }
+
     public function table(Table $table): Table
     {
-        return $table->query(Post::query())->columns([
+        return $table->query(Post::query())->deferLoading($this->deferTableLoading)->columns([
             TextColumn::make('title'),
+        ])->recordActions([
+            Action::make('view')->requiresConfirmation()->registerModalActions([
+                Action::make('confirm')->requiresConfirmation()->action(static fn () => null),
+            ])->action(static fn () => null),
+        ])->headerActions([
+            Action::make('123')->requiresConfirmation()->action(static fn () => null),
+            Action::make('simple')->action(fn () => $this->dispatch('simple-called')),
         ]);
     }
 

@@ -1,6 +1,8 @@
 <?php
 
 use Filament\Tests\Actions\TestCase;
+use Filament\Tests\Fixtures\Models\Department;
+use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\User;
 use Illuminate\Support\Facades\Artisan;
 
@@ -425,6 +427,83 @@ describe('browser interactions', function (): void {
             ->assertMissing('[data-testid="overlay-cancel-modal"]')
             ->assertMissing('[data-testid="overlay-modal"]')
             ->assertPresent('[data-testid="overlay-trigger"]:focus')
+            ->assertNoSmoke();
+    });
+});
+
+describe('action deep links', function (): void {
+    it('routes an ordinary action deep link away from a page with the same action name', function (): void {
+        $ticket = Ticket::factory()->hasAttached(Department::factory())->create();
+        $browser = visit('/scoped-actions-browser-test?' . http_build_query([
+            'ticket' => $ticket->getKey(),
+            'tab' => 'summary',
+            'actionComponent' => 'departments',
+            'action' => 'view',
+        ]));
+
+        $browser->click('[data-testid="page-view-trigger"]')
+            ->assertVisible('[data-testid="page-modal"]')
+            ->click('[data-testid="dismiss-ticket-overview"]')
+            ->assertMissing('[data-testid="page-modal"]')
+            ->assertQueryStringHas('action', 'view')
+            ->assertQueryStringHas('actionComponent', 'departments')
+            ->click('[role="tab"] >> text=Departments')
+            ->assertVisible('[data-testid="departments-modal"]')
+            ->assertMissing('[data-testid="other-departments-modal"]')
+            ->assertMissing('[data-testid="page-modal"]')
+            ->click('[data-testid="dismiss-department-overview"]')
+            ->assertMissing('[data-testid="departments-modal"]')
+            ->click('[role="tab"] >> text=Summary')
+            ->click('[role="tab"] >> text=Departments')
+            ->assertMissing('[data-testid="departments-modal"]')
+            ->assertMissing('[data-testid="other-departments-modal"]')
+            ->assertNoSmoke();
+    });
+
+    it('opens only the targeted lazy embedded action and permits closing and reopening it', function (): void {
+        $ticket = Ticket::factory()->hasAttached(Department::factory())->create();
+        $department = $ticket->departments->first();
+        $browser = visit('/scoped-actions-browser-test?' . http_build_query([
+            'ticket' => $ticket->getKey(),
+            'tab' => 'departments',
+            'actionComponent' => 'departments',
+            'tableAction' => 'view',
+            'tableActionRecord' => $department->getKey(),
+        ]));
+
+        $browser->assertVisible('[data-testid="departments-table-modal"]')
+            ->assertMissing('[data-testid="other-departments-table-modal"]')
+            ->assertMissing('[data-testid="page-modal"]')
+            ->assertNoAccessibilityIssues();
+
+        $browser->inDarkMode()
+            ->assertVisible('[data-testid="departments-table-modal"]')
+            ->assertNoAccessibilityIssues();
+
+        $browser->click('[data-testid="dismiss-department-record"]')
+            ->assertMissing('[data-testid="departments-table-modal"]')
+            ->click('[data-testid="departments-view-trigger"]')
+            ->assertVisible('[data-testid="departments-table-modal"]')
+            ->click('[data-testid="dismiss-department-record"]')
+            ->assertMissing('[data-testid="departments-table-modal"]')
+            ->click('[data-testid="toggle-departments"]')
+            ->assertMissing('[data-testid="departments-view-trigger"]')
+            ->click('[data-testid="toggle-departments"]')
+            ->assertVisible('[data-testid="departments-table-modal"]')
+            ->assertNoSmoke();
+    });
+
+    it('consumes a fresh deep link after SPA navigation without reopening it during the same lifetime', function (): void {
+        $ticket = Ticket::factory()->hasAttached(Department::factory())->create();
+        $browser = visit('/spa/scoped-actions-browser-test?ticket=' . $ticket->getKey());
+
+        $browser->click('[data-testid="department-deep-link"]')
+            ->assertVisible('[data-testid="departments-modal"]')
+            ->assertMissing('[data-testid="page-modal"]')
+            ->click('[data-testid="dismiss-department-overview"]')
+            ->assertMissing('[data-testid="departments-modal"]')
+            ->click('[data-testid="department-deep-link"]')
+            ->assertVisible('[data-testid="departments-modal"]')
             ->assertNoSmoke();
     });
 });
