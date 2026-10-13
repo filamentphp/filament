@@ -361,7 +361,7 @@ describe('relationship filling', function (): void {
             });
     });
 
-    test('a `Grid->relationship()` fills a cast field correctly (issue #19665 repro)', function (): void {
+    test('a `Grid` with `relationship()` fills a cast field correctly', function (): void {
         config(['app.timezone' => 'UTC']);
 
         $user = User::factory()->create();
@@ -379,7 +379,7 @@ describe('relationship filling', function (): void {
             });
     });
 
-    test('a `Fieldset->relationship()` fills a cast field correctly', function (): void {
+    test('a `Fieldset` with `relationship()` fills a cast field correctly', function (): void {
         config(['app.timezone' => 'UTC']);
 
         $user = User::factory()->create();
@@ -409,7 +409,7 @@ describe('relationship filling', function (): void {
             });
     });
 
-    test('multiple `Group->relationship()` components do not overwrite cast state set by an earlier group (issue #18826)', function (): void {
+    test('multiple `Group` components with `relationship()` do not overwrite cast state set by an earlier group', function (): void {
         config(['app.timezone' => 'UTC']);
 
         $user = User::factory()->create();
@@ -427,8 +427,7 @@ describe('relationship filling', function (): void {
             });
     });
 
-    test('nested `->relationship()` sections (relationship inside a relationship) each fill correctly', function (): void {
-        // `User` `hasOne` `Profile`; `Profile` `belongsTo` `Company`.
+    test('nested `relationship()` sections each fill correctly', function (): void {
         $user = User::factory()->create();
         $company = Company::factory()->create(['name' => 'Acme, Inc.']);
         Profile::factory()->create([

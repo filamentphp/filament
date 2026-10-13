@@ -128,19 +128,9 @@ Action::make('quickView')
     ->dispatch('quickView', [$record->id])
 ```
 
-## Navigating results and actions with the keyboard
-
-You can press Down arrow from the search field to open the current results and focus the first result link. Up and Down arrows move between result links, skipping their actions. From a standard action, these arrows move to the previous or next result's link. Use Tab and Shift+Tab to move through result links and their independent actions in normal focus order. Activating a result link navigates to that record; activating an action keeps its configured URL or Livewire event behavior.
-
-Press Escape to close the results without clearing your search. If you were browsing a result or action, focus returns to the search field. You can reopen the results with Down arrow, or by focusing the field again after leaving it. Moving focus outside global search closes the results without moving your focus back.
-
-Global search exposes a labelled results region, rather than a listbox, so result links and actions remain independent controls. Its status region provides loading, failure, and displayed-result-count messages. The count reflects the results shown after resource limits, not the total number of matching records in the database. Your search is cleared after navigation in both standard and SPA panels; it is not saved between page loads.
-
-If a request fails or has not completed after 30 seconds, the status message advises you to reload the page. This does not cancel the request or change Livewire's transport behavior.
-
 ## Limiting the number of global search results
 
-By default, global search will return up to 50 results per resource. You can customize this on the resource label by overriding the `$globalSearchResultsLimit` property:
+By default, global search will return up to 50 results per resource. You can customize this on the resource class by overriding the `$globalSearchResultsLimit` property:
 
 ```php
 protected static int $globalSearchResultsLimit = 20;
@@ -154,11 +144,11 @@ By default, global search results are ordered alphabetically by resource name. Y
 protected static ?int $globalSearchSort = 3;
 ```
 
-Now, navigation items with a lower sort value will appear before those with a higher sort value - the order is ascending.
+Resources with a lower sort value will appear before those with a higher sort value.
 
 ## Disabling global search
 
-As [explained above](#title), global search is automatically enabled once you set a title attribute for your resource. Sometimes you may want to specify the title attribute while not enabling global search.
+As [explained above](#setting-global-search-result-titles), global search is automatically enabled once you set a title attribute for your resource. Sometimes you may want to specify the title attribute while not enabling global search.
 
 This can be achieved by disabling global search in the [configuration](../panel-configuration):
 

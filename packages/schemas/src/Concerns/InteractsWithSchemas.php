@@ -14,6 +14,7 @@ use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Renderless;
@@ -649,6 +650,39 @@ trait InteractsWithSchemas
     public function getDefaultTestingSchemaName(): ?string
     {
         return array_key_first($this->getCachedSchemas());
+    }
+
+    public function handleFileUploadValidationError(string $name): void
+    {
+        $statePath = str_starts_with($name, 'componentFileAttachments.')
+            ? substr($name, strlen('componentFileAttachments.'))
+            : $name;
+
+        $component = $this->getSchemaComponentForFileUpload($statePath)
+            ?? $this->getSchemaComponentForFileUpload((string) str($statePath)->beforeLast('.'));
+
+        if (! $component instanceof Field) {
+            return;
+        }
+
+        $validationAttribute = $component->getValidationAttribute();
+        $errorBag = $this->getErrorBag();
+
+        foreach ($errorBag->messages() as $attribute => $attributeMessages) {
+            if (($attribute !== $name) && ! str_starts_with($attribute, "{$name}.")) {
+                continue;
+            }
+
+            $errorBag->forget($attribute);
+
+            foreach ($attributeMessages as $message) {
+                $errorBag->add($attribute, strtr($message, [
+                    Str::upper($attribute) => Str::upper($validationAttribute),
+                    Str::ucfirst($attribute) => Str::ucfirst($validationAttribute),
+                    $attribute => $validationAttribute,
+                ]));
+            }
+        }
     }
 
     public function isFileUploadForSchemaComponent(string $name): bool

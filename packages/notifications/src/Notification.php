@@ -166,10 +166,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
 
     public function send(): static
     {
-        session()->push(
-            'filament.notifications',
-            $this->toArray(),
-        );
+        app(NotificationMailbox::class)->push($this->toArray());
 
         return $this;
     }
@@ -255,8 +252,11 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
 
     public static function assertNotified(Notification | string | null $notification = null): void
     {
+        app(NotificationMailbox::class)->flush();
+
         $notificationsLivewireComponent = new Notifications;
         $notificationsLivewireComponent->mount();
+        $notificationsLivewireComponent->pullNotificationsFromSession();
         $notifications = $notificationsLivewireComponent->notifications;
 
         $expectedNotification = null;
@@ -300,8 +300,11 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
 
     public static function assertNotNotified(Notification | string | null $notification = null): void
     {
+        app(NotificationMailbox::class)->flush();
+
         $notificationsLivewireComponent = new Notifications;
         $notificationsLivewireComponent->mount();
+        $notificationsLivewireComponent->pullNotificationsFromSession();
         $notifications = $notificationsLivewireComponent->notifications;
 
         $expectedNotification = null;
@@ -368,8 +371,8 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
                 // would replay every stored danger notification as an assertive burst.
                 'role' => ($status === 'danger' && ! $this->isInline) ? 'alert' : null,
                 'wire:key' => "{$this->getId()}.notifications.{$this->getId()}",
-                'x-on:close-notification.window' => "if (\$event.detail.id == '{$this->getId()}') close()",
-            ], escape: false)
+                'x-on:close-notification.window' => 'if ($event.detail.id == ' . Js::from($this->getId()) . ') close()',
+            ])
             ->color(NotificationComponent::class, $this->getColor() ?? 'gray')
             ->class([
                 'fi-no-notification',

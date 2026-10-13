@@ -78,4 +78,5 @@ it('does not send a notification', function () {
                 ->title('Unable to create post')
                 ->body('Something went wrong.'),
         );
+});
 ```

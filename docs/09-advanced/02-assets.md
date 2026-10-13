@@ -9,7 +9,7 @@ All packages in the Filament ecosystem share an asset management system. This al
 
 ## The `FilamentAsset` facade
 
-The `FilamentAsset` facade is used to register files into the asset system. These files may be sourced from anywhere in the filesystem, but are then copied into the `/public` directory of the application when the `php artisan filament:assets` command is run. By copying them into the `/public` directory for you, we can predictably load them in Blade views, and also ensure that third party packages are able to load their assets without having to worry about where they are located.
+Use `FilamentAsset` to register asset files from your application or a plugin. Running `php artisan filament:assets` copies them into the application's `/public` directory.
 
 Assets always have a unique ID chosen by you, which is used as the file name when the asset is copied into the `/public` directory. This ID is also used to reference the asset in Blade views. While the ID is unique, if you are registering assets for a plugin, then you do not need to worry about IDs clashing with other plugins, since the asset will be copied into a directory named after your plugin.
 
@@ -81,11 +81,11 @@ Tailwind builds are unique to every application - they contain a minimal set of 
 
 This means that when they build their Tailwind CSS file, it will include all the utility classes that are used in your plugin's views, as well as the utility classes that are used in their application and the Filament core.
 
-However, with this technique, there might be extra complications for users who use your plugin with the [Panel Builder](../panel-configuration). If they have a [custom theme](../styling#creating-a-custom-theme), they will be fine, since they are building their own CSS file anyway using Tailwind CSS. However, if they are using the default stylesheet which is shipped with the Panel Builder, you might have to be careful about the utility classes that you use in your plugin's views. For instance, if you use a utility class that is not included in the default stylesheet, the user is not compiling it themselves, and it will not be included in the final CSS file. This means that your plugin's views might not look as expected. This is one of the few situations where I would recommend compiling and [registering](#registering-css-files) a Tailwind CSS-compiled stylesheet in your plugin.
+If your plugin must also work with Filament's default stylesheet, [register a compiled stylesheet](#registering-css-files) containing the styles it needs. The default stylesheet does not include every Tailwind utility used by third-party plugins, and users without a custom theme are not compiling those utilities themselves.
 
 ### Lazy loading CSS
 
-By default, all CSS files registered with the asset system are loaded in the `<head>` of every Filament page. This is the simplest way to load CSS files, but sometimes they may be quite heavy and not required on every page. In this case, you can leverage the [Alpine.js Lazy Load Assets](https://github.com/tanthammar/alpine-lazy-load-assets) package that comes bundled with Filament. It allows you to easily load CSS files on-demand using Alpine.js. The premise is very simple, you use the `x-load-css` directive on an element, and when that element is loaded onto the page, the specified CSS files are loaded into the `<head>` of the page. This is perfect for both small UI elements and entire pages that require a CSS file:
+Registered CSS files load on every Filament page by default. To load a file only where it is needed, register it with `loadedOnRequest()` and use the bundled `x-load-css` directive on the element that requires it:
 
 ```blade
 <div
@@ -170,7 +170,7 @@ Now, when the `php artisan filament:assets` command is run, this JavaScript file
 
 ### Lazy loading JavaScript
 
-By default, all JavaScript files registered with the asset system are loaded at the bottom of every Filament page. This is the simplest way to load JavaScript files, but sometimes they may be quite heavy and not required on every page. In this case, you can leverage the [Alpine.js Lazy Load Assets](https://github.com/tanthammar/alpine-lazy-load-assets) package that comes bundled with Filament. It allows you to easily load JavaScript files on-demand using Alpine.js. The premise is very simple, you use the `x-load-js` directive on an element, and when that element is loaded onto the page, the specified JavaScript files are loaded at the bottom of the page. This is perfect for both small UI elements and entire pages that require a JavaScript file:
+Registered JavaScript files load on every Filament page by default. To load a file only where it is needed, register it with `loadedOnRequest()` and use the bundled `x-load-js` directive on the element that requires it:
 
 ```blade
 <div

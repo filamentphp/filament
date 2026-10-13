@@ -8,7 +8,7 @@ import {
     PointElement,
 } from 'chart.js'
 
-import readCustomProperties from '../../../custom-properties'
+import readCustomProperties from '../../../utilities/custom-properties.js'
 
 Chart.register(
     CategoryScale,

@@ -32,6 +32,7 @@ use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\QueryBuilderItem;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Pages\QueryBuilderTableTest;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Support\Facades\Artisan;
 use Livewire\Features\SupportTesting\Testable;
@@ -39,13 +40,14 @@ use Livewire\Features\SupportTesting\Testable;
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
 $applyQueryBuilderFilter = function (array $rules) {
     return fn ($livewire) => $livewire
         ->set('tableDeferredFilters.query_builder.rules', $rules)
         ->call('applyTableFilters');
 };
 
-describe('text constraints', function () use ($applyQueryBuilderFilter): void {
+describe('`TextConstraint` operators', function () use ($applyQueryBuilderFilter): void {
     it('can filter records using text constraint with contains operator', function () use ($applyQueryBuilderFilter): void {
         $posts = Post::factory()->count(10)->create([
             'title' => 'Test Post Title',
@@ -378,7 +380,7 @@ describe('settings type safety', function () use ($applyQueryBuilderFilter): voi
     });
 });
 
-describe('boolean constraints', function () use ($applyQueryBuilderFilter): void {
+describe('boolean constraint operators', function () use ($applyQueryBuilderFilter): void {
     it('can filter records using boolean constraint with is true operator', function () use ($applyQueryBuilderFilter): void {
         $publishedPosts = Post::factory()->count(10)->create([
             'is_published' => true,
@@ -428,7 +430,7 @@ describe('boolean constraints', function () use ($applyQueryBuilderFilter): void
     });
 });
 
-describe('number constraints', function () use ($applyQueryBuilderFilter): void {
+describe('`NumberConstraint` operators', function () use ($applyQueryBuilderFilter): void {
     it('can filter records using number constraint with minimum operator', function () use ($applyQueryBuilderFilter): void {
         $highRatedPosts = Post::factory()->count(5)->create([
             'rating' => 8,
@@ -598,7 +600,7 @@ describe('number constraints', function () use ($applyQueryBuilderFilter): void 
     });
 });
 
-describe('date constraints', function () use ($applyQueryBuilderFilter): void {
+describe('`DateConstraint` operators', function () use ($applyQueryBuilderFilter): void {
     it('can filter records using date constraint with is after operator', function () use ($applyQueryBuilderFilter): void {
         $recentPosts = Post::factory()->count(5)->create([
             'created_at' => now()->addDays(5),
@@ -674,7 +676,7 @@ describe('date constraints', function () use ($applyQueryBuilderFilter): void {
     });
 });
 
-describe('select constraints', function () use ($applyQueryBuilderFilter): void {
+describe('`SelectConstraint` operators', function () use ($applyQueryBuilderFilter): void {
     it('can filter records using select constraint', function () use ($applyQueryBuilderFilter): void {
         $targetPosts = Post::factory()->count(5)->create([
             'rating' => 3,
@@ -750,7 +752,7 @@ describe('select constraints', function () use ($applyQueryBuilderFilter): void 
     });
 });
 
-describe('relationship constraints', function () use ($applyQueryBuilderFilter): void {
+describe('`RelationshipConstraint` operators', function () use ($applyQueryBuilderFilter): void {
     it('can filter records using relationship constraint with text operator', function () use ($applyQueryBuilderFilter): void {
         $author = User::factory()->create(['name' => 'John Doe']);
         Post::factory()->count(5)->create(['author_id' => $author->id]);
@@ -846,7 +848,7 @@ describe('relationship constraints', function () use ($applyQueryBuilderFilter):
             ->assertCanNotSeeTableRecords($nonMatchingUsers);
     });
 
-    it('still matches in-scope `isRelatedTo` values when `modifyRelationshipQueryUsing` is set', function () use ($applyQueryBuilderFilter): void {
+    it('still matches in-scope `isRelatedTo` values when `modifyRelationshipQueryUsing()` is set', function () use ($applyQueryBuilderFilter): void {
         $inScopeAuthor = User::factory()->create(['name' => 'Alpha Author']);
         $outOfScopeAuthor = User::factory()->create(['name' => 'Beta Author']);
 
@@ -867,7 +869,7 @@ describe('relationship constraints', function () use ($applyQueryBuilderFilter):
             ->assertCanNotSeeTableRecords($outOfScopePosts);
     });
 
-    it('applies `modifyRelationshipQueryUsing` inside the `whereHas` subquery to defend against a bypassed tampered value', function (): void {
+    it('applies `modifyRelationshipQueryUsing()` inside the `whereHas()` subquery to defend against a bypassed tampered value', function (): void {
         // Defense-in-depth: form validation is the primary defense and would reject the
         // out-of-scope value before reaching `apply()`. This test bypasses validation
         // by invoking `apply()` directly to confirm the operator does not leak rows
@@ -891,7 +893,7 @@ describe('relationship constraints', function () use ($applyQueryBuilderFilter):
         expect($filtered->count())->toBe(0);
     });
 
-    it('applies `modifyRelationshipQueryUsing` inside `IsEmptyOperator` count check', function () use ($applyQueryBuilderFilter): void {
+    it('applies `modifyRelationshipQueryUsing()` inside `IsEmptyOperator` count check', function () use ($applyQueryBuilderFilter): void {
         // Author A has 1 published + 0 unpublished — should NOT match isEmpty under the published-only scope.
         // Author B has 0 published + 2 unpublished — SHOULD match isEmpty under the scope (no published posts).
         // Author C has no posts at all — SHOULD match isEmpty.
@@ -917,7 +919,7 @@ describe('relationship constraints', function () use ($applyQueryBuilderFilter):
             ->assertCanNotSeeTableRecords([$authorA]);
     });
 
-    it('applies `modifyRelationshipQueryUsing` inside `HasMinOperator` count check', function () use ($applyQueryBuilderFilter): void {
+    it('applies `modifyRelationshipQueryUsing()` inside `HasMinOperator` count check', function () use ($applyQueryBuilderFilter): void {
         $authorWithTwoPublished = User::factory()->create(['name' => 'Two Published']);
         Post::factory()->count(2)->create(['author_id' => $authorWithTwoPublished->id, 'is_published' => true]);
 
@@ -938,7 +940,7 @@ describe('relationship constraints', function () use ($applyQueryBuilderFilter):
             ->assertCanNotSeeTableRecords([$authorWithUnpublishedOnly]);
     });
 
-    it('applies `modifyRelationshipQueryUsing` inside `HasMaxOperator` count check', function () use ($applyQueryBuilderFilter): void {
+    it('applies `modifyRelationshipQueryUsing()` inside `HasMaxOperator` count check', function () use ($applyQueryBuilderFilter): void {
         $authorWithOnePublished = User::factory()->create(['name' => 'One Published']);
         Post::factory()->create(['author_id' => $authorWithOnePublished->id, 'is_published' => true]);
         Post::factory()->count(5)->create(['author_id' => $authorWithOnePublished->id, 'is_published' => false]);
@@ -963,7 +965,7 @@ describe('relationship constraints', function () use ($applyQueryBuilderFilter):
             ->assertCanNotSeeTableRecords([$authorWithThreePublished]);
     });
 
-    it('applies `modifyRelationshipQueryUsing` inside `EqualsOperator` count check', function () use ($applyQueryBuilderFilter): void {
+    it('applies `modifyRelationshipQueryUsing()` inside `EqualsOperator` count check', function () use ($applyQueryBuilderFilter): void {
         $authorWithTwoPublished = User::factory()->create(['name' => 'Two Published']);
         Post::factory()->count(2)->create(['author_id' => $authorWithTwoPublished->id, 'is_published' => true]);
         Post::factory()->count(3)->create(['author_id' => $authorWithTwoPublished->id, 'is_published' => false]);
@@ -987,7 +989,7 @@ describe('relationship constraints', function () use ($applyQueryBuilderFilter):
             ->assertCanNotSeeTableRecords([$authorWithFivePublished]);
     });
 
-    it('inverts the scope inside `whereDoesntHave` when `isRelatedTo.inverse` is used with `modifyRelationshipQueryUsing`', function (): void {
+    it('inverts the scope inside `whereDoesntHave()` when `isRelatedTo.inverse` is used with `modifyRelationshipQueryUsing()`', function (): void {
         $inScopeAuthor = User::factory()->create(['name' => 'Alpha Author']);
         $outOfScopeAuthor = User::factory()->create(['name' => 'Beta Author']);
 
@@ -1034,7 +1036,7 @@ describe('relationship constraints', function () use ($applyQueryBuilderFilter):
     });
 });
 
-describe('nullable constraints', function () use ($applyQueryBuilderFilter): void {
+describe('nullable constraint operators', function () use ($applyQueryBuilderFilter): void {
     it('can filter records using nullable constraint with is filled operator', function () use ($applyQueryBuilderFilter): void {
         $filledPosts = Post::factory()->count(5)->create([
             'content' => 'Some content here',
@@ -1391,7 +1393,7 @@ describe('complex rules', function () use ($applyQueryBuilderFilter): void {
     });
 });
 
-describe('relationship method constraints', function () use ($applyQueryBuilderFilter): void {
+describe('`relationship()` constraints', function () use ($applyQueryBuilderFilter): void {
     it('can filter records using text constraint with relationship method', function () use ($applyQueryBuilderFilter): void {
         $matchingAuthor = User::factory()->create(['email' => 'john@example.com']);
         $matchingPosts = Post::factory()->count(5)->create(['author_id' => $matchingAuthor->id]);
@@ -1652,14 +1654,12 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
     });
 
     it('can filter records using number constraint with sum aggregate on relationship', function (): void {
-        // Create user with high total rating across all posts
         $highTotalUser = User::factory()->create();
         Post::factory()->count(3)->create([
             'author_id' => $highTotalUser->id,
             'rating' => 8, // Total: 24
         ]);
 
-        // Create user with low total rating across all posts
         $lowTotalUser = User::factory()->create();
         Post::factory()->count(3)->create([
             'author_id' => $lowTotalUser->id,
@@ -1684,14 +1684,12 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
     });
 
     it('can filter records using number constraint with average aggregate on relationship', function (): void {
-        // Create user with high average rating
         $highAvgUser = User::factory()->create();
         Post::factory()->count(3)->create([
             'author_id' => $highAvgUser->id,
             'rating' => 9, // Average: 9
         ]);
 
-        // Create user with low average rating
         $lowAvgUser = User::factory()->create();
         Post::factory()->count(3)->create([
             'author_id' => $lowAvgUser->id,
@@ -1716,7 +1714,6 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
     });
 
     it('can filter records using number constraint with min aggregate on relationship', function (): void {
-        // Create user where even the lowest rating is high
         $highMinUser = User::factory()->create();
         Post::factory()->create([
             'author_id' => $highMinUser->id,
@@ -1731,7 +1728,6 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
             'rating' => 10,
         ]);
 
-        // Create user with at least one low rating
         $lowMinUser = User::factory()->create();
         Post::factory()->create([
             'author_id' => $lowMinUser->id,
@@ -1873,7 +1869,6 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
     });
 
     it('can filter records using number constraint with max aggregate on relationship', function (): void {
-        // Create user with at least one very high rating
         $highMaxUser = User::factory()->create();
         Post::factory()->create([
             'author_id' => $highMaxUser->id,
@@ -1884,7 +1879,6 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
             'rating' => 5,
         ]);
 
-        // Create user where even the highest rating is low
         $lowMaxUser = User::factory()->create();
         Post::factory()->create([
             'author_id' => $lowMaxUser->id,
@@ -1913,14 +1907,12 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
     });
 
     it('can filter records using number constraint with aggregate and inverse operator', function (): void {
-        // Create user with high average rating
         $highAvgUser = User::factory()->create();
         Post::factory()->count(3)->create([
             'author_id' => $highAvgUser->id,
             'rating' => 9,
         ]);
 
-        // Create user with low average rating
         $lowAvgUser = User::factory()->create();
         Post::factory()->count(3)->create([
             'author_id' => $lowAvgUser->id,
@@ -1945,12 +1937,10 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
     });
 
     it('can filter records using number constraint with sum aggregate on `BelongsToMany` relationship', function (): void {
-        // Create user with high total budget across all teams
         $highTotalUser = User::factory()->create();
         $highTeams = Team::factory()->count(3)->create(['budget' => 5000]); // Total: 15000
         $highTotalUser->teams()->attach($highTeams->pluck('id'));
 
-        // Create user with low total budget across all teams
         $lowTotalUser = User::factory()->create();
         $lowTeams = Team::factory()->count(2)->create(['budget' => 1000]); // Total: 2000
         $lowTotalUser->teams()->attach($lowTeams->pluck('id'));
@@ -1973,12 +1963,10 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
     });
 
     it('can filter records using number constraint with average aggregate on `BelongsToMany` relationship', function (): void {
-        // Create user with high average budget
         $highAvgUser = User::factory()->create();
         $highTeams = Team::factory()->count(3)->create(['budget' => 8000]); // Average: 8000
         $highAvgUser->teams()->attach($highTeams->pluck('id'));
 
-        // Create user with low average budget
         $lowAvgUser = User::factory()->create();
         $lowTeams = Team::factory()->count(3)->create(['budget' => 2000]); // Average: 2000
         $lowAvgUser->teams()->attach($lowTeams->pluck('id'));
@@ -2001,7 +1989,6 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
     });
 
     it('can filter records using number constraint with min aggregate on `BelongsToMany` relationship', function (): void {
-        // Create user where even the lowest budget is high
         $highMinUser = User::factory()->create();
         $highMinTeams = collect([
             Team::factory()->create(['budget' => 6000]),
@@ -2010,7 +1997,6 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
         ]);
         $highMinUser->teams()->attach($highMinTeams->pluck('id'));
 
-        // Create user with at least one low budget team
         $lowMinUser = User::factory()->create();
         $lowMinTeams = collect([
             Team::factory()->create(['budget' => 1000]), // This is the min
@@ -2036,7 +2022,6 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
     });
 
     it('can filter records using number constraint with max aggregate on `BelongsToMany` relationship', function (): void {
-        // Create user with at least one very high budget team
         $highMaxUser = User::factory()->create();
         $highMaxTeams = collect([
             Team::factory()->create(['budget' => 15000]), // This is the max
@@ -2044,7 +2029,6 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
         ]);
         $highMaxUser->teams()->attach($highMaxTeams->pluck('id'));
 
-        // Create user where even the highest budget is low
         $lowMaxUser = User::factory()->create();
         $lowMaxTeams = collect([
             Team::factory()->create(['budget' => 2000]),
@@ -2070,12 +2054,10 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
     });
 
     it('can filter records using number constraint with aggregate and inverse operator on `BelongsToMany` relationship', function (): void {
-        // Create user with high average budget
         $highAvgUser = User::factory()->create();
         $highTeams = Team::factory()->count(3)->create(['budget' => 8000]);
         $highAvgUser->teams()->attach($highTeams->pluck('id'));
 
-        // Create user with low average budget
         $lowAvgUser = User::factory()->create();
         $lowTeams = Team::factory()->count(3)->create(['budget' => 2000]);
         $lowAvgUser->teams()->attach($lowTeams->pluck('id'));
@@ -2097,7 +2079,7 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
             ->assertCanNotSeeTableRecords([$highAvgUser]);
     });
 
-    it('applies `modifyRelationshipQueryUsing` to the `sum` aggregate subquery, hiding scoped-out rows', function () use ($applyQueryBuilderFilter): void {
+    it('applies `modifyRelationshipQueryUsing()` to the `sum` aggregate subquery, hiding scoped-out rows', function () use ($applyQueryBuilderFilter): void {
         $inScopeUser = User::factory()->create();
         Post::factory()->create(['author_id' => $inScopeUser->id, 'rating' => 5, 'is_published' => true]);
         Post::factory()->create(['author_id' => $inScopeUser->id, 'rating' => 3, 'is_published' => true]);
@@ -2121,7 +2103,7 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
             ->assertCanNotSeeTableRecords([$outOfScopeUser]);
     });
 
-    it('applies `modifyRelationshipQueryUsing` to the `max` aggregate subquery, hiding scoped-out rows', function () use ($applyQueryBuilderFilter): void {
+    it('applies `modifyRelationshipQueryUsing()` to the `max` aggregate subquery, hiding scoped-out rows', function () use ($applyQueryBuilderFilter): void {
         $inScopeUser = User::factory()->create();
         Post::factory()->create(['author_id' => $inScopeUser->id, 'rating' => 8, 'is_published' => true]);
 
@@ -2144,7 +2126,7 @@ describe('relationship method constraints', function () use ($applyQueryBuilderF
             ->assertCanNotSeeTableRecords([$outOfScopeUser]);
     });
 
-    it('applies `modifyRelationshipQueryUsing` to the `equals` aggregate subquery, hiding scoped-out rows', function () use ($applyQueryBuilderFilter): void {
+    it('applies `modifyRelationshipQueryUsing()` to the `equals` aggregate subquery, hiding scoped-out rows', function () use ($applyQueryBuilderFilter): void {
         $inScopeUser = User::factory()->create();
         Post::factory()->create(['author_id' => $inScopeUser->id, 'rating' => 4, 'is_published' => true]);
         Post::factory()->create(['author_id' => $inScopeUser->id, 'rating' => 4, 'is_published' => true]);
@@ -2431,14 +2413,12 @@ describe('legacy `relationship()` method', function () use ($applyQueryBuilderFi
     });
 
     it('can filter records using number constraint with sum aggregate on relationship (legacy `relationship()`)', function (): void {
-        // Create user with high total rating across all posts
         $highTotalUser = User::factory()->create();
         Post::factory()->count(3)->create([
             'author_id' => $highTotalUser->id,
             'rating' => 8, // Total: 24
         ]);
 
-        // Create user with low total rating across all posts
         $lowTotalUser = User::factory()->create();
         Post::factory()->count(3)->create([
             'author_id' => $lowTotalUser->id,
@@ -2463,14 +2443,12 @@ describe('legacy `relationship()` method', function () use ($applyQueryBuilderFi
     });
 
     it('can filter records using number constraint with average aggregate on relationship (legacy `relationship()`)', function (): void {
-        // Create user with high average rating
         $highAvgUser = User::factory()->create();
         Post::factory()->count(3)->create([
             'author_id' => $highAvgUser->id,
             'rating' => 9, // Average: 9
         ]);
 
-        // Create user with low average rating
         $lowAvgUser = User::factory()->create();
         Post::factory()->count(3)->create([
             'author_id' => $lowAvgUser->id,
@@ -2495,7 +2473,6 @@ describe('legacy `relationship()` method', function () use ($applyQueryBuilderFi
     });
 
     it('can filter records using number constraint with min aggregate on relationship (legacy `relationship()`)', function (): void {
-        // Create user where even the lowest rating is high
         $highMinUser = User::factory()->create();
         Post::factory()->create([
             'author_id' => $highMinUser->id,
@@ -2510,7 +2487,6 @@ describe('legacy `relationship()` method', function () use ($applyQueryBuilderFi
             'rating' => 10,
         ]);
 
-        // Create user with at least one low rating
         $lowMinUser = User::factory()->create();
         Post::factory()->create([
             'author_id' => $lowMinUser->id,
@@ -2539,7 +2515,6 @@ describe('legacy `relationship()` method', function () use ($applyQueryBuilderFi
     });
 
     it('can filter records using number constraint with max aggregate on relationship (legacy `relationship()`)', function (): void {
-        // Create user with at least one very high rating
         $highMaxUser = User::factory()->create();
         Post::factory()->create([
             'author_id' => $highMaxUser->id,
@@ -2550,7 +2525,6 @@ describe('legacy `relationship()` method', function () use ($applyQueryBuilderFi
             'rating' => 5,
         ]);
 
-        // Create user where even the highest rating is low
         $lowMaxUser = User::factory()->create();
         Post::factory()->create([
             'author_id' => $lowMaxUser->id,
@@ -2579,14 +2553,12 @@ describe('legacy `relationship()` method', function () use ($applyQueryBuilderFi
     });
 
     it('can filter records using number constraint with aggregate and inverse operator (legacy `relationship()`)', function (): void {
-        // Create user with high average rating
         $highAvgUser = User::factory()->create();
         Post::factory()->count(3)->create([
             'author_id' => $highAvgUser->id,
             'rating' => 9,
         ]);
 
-        // Create user with low average rating
         $lowAvgUser = User::factory()->create();
         Post::factory()->count(3)->create([
             'author_id' => $lowAvgUser->id,
@@ -2611,12 +2583,10 @@ describe('legacy `relationship()` method', function () use ($applyQueryBuilderFi
     });
 
     it('can filter records using number constraint with sum aggregate on `BelongsToMany` relationship (legacy `relationship()`)', function (): void {
-        // Create user with high total budget across all teams
         $highTotalUser = User::factory()->create();
         $highTeams = Team::factory()->count(3)->create(['budget' => 5000]); // Total: 15000
         $highTotalUser->teams()->attach($highTeams->pluck('id'));
 
-        // Create user with low total budget across all teams
         $lowTotalUser = User::factory()->create();
         $lowTeams = Team::factory()->count(2)->create(['budget' => 1000]); // Total: 2000
         $lowTotalUser->teams()->attach($lowTeams->pluck('id'));
@@ -2639,12 +2609,10 @@ describe('legacy `relationship()` method', function () use ($applyQueryBuilderFi
     });
 
     it('can filter records using number constraint with average aggregate on `BelongsToMany` relationship (legacy `relationship()`)', function (): void {
-        // Create user with high average budget
         $highAvgUser = User::factory()->create();
         $highTeams = Team::factory()->count(3)->create(['budget' => 8000]); // Average: 8000
         $highAvgUser->teams()->attach($highTeams->pluck('id'));
 
-        // Create user with low average budget
         $lowAvgUser = User::factory()->create();
         $lowTeams = Team::factory()->count(3)->create(['budget' => 2000]); // Average: 2000
         $lowAvgUser->teams()->attach($lowTeams->pluck('id'));
@@ -2667,7 +2635,6 @@ describe('legacy `relationship()` method', function () use ($applyQueryBuilderFi
     });
 
     it('can filter records using number constraint with min aggregate on `BelongsToMany` relationship (legacy `relationship()`)', function (): void {
-        // Create user where even the lowest budget is high
         $highMinUser = User::factory()->create();
         $highMinTeams = collect([
             Team::factory()->create(['budget' => 6000]),
@@ -2676,7 +2643,6 @@ describe('legacy `relationship()` method', function () use ($applyQueryBuilderFi
         ]);
         $highMinUser->teams()->attach($highMinTeams->pluck('id'));
 
-        // Create user with at least one low budget team
         $lowMinUser = User::factory()->create();
         $lowMinTeams = collect([
             Team::factory()->create(['budget' => 1000]), // This is the min
@@ -2702,7 +2668,6 @@ describe('legacy `relationship()` method', function () use ($applyQueryBuilderFi
     });
 
     it('can filter records using number constraint with max aggregate on `BelongsToMany` relationship (legacy `relationship()`)', function (): void {
-        // Create user with at least one very high budget team
         $highMaxUser = User::factory()->create();
         $highMaxTeams = collect([
             Team::factory()->create(['budget' => 15000]), // This is the max
@@ -2710,7 +2675,6 @@ describe('legacy `relationship()` method', function () use ($applyQueryBuilderFi
         ]);
         $highMaxUser->teams()->attach($highMaxTeams->pluck('id'));
 
-        // Create user where even the highest budget is low
         $lowMaxUser = User::factory()->create();
         $lowMaxTeams = collect([
             Team::factory()->create(['budget' => 2000]),
@@ -2736,12 +2700,10 @@ describe('legacy `relationship()` method', function () use ($applyQueryBuilderFi
     });
 
     it('can filter records using number constraint with aggregate and inverse operator on `BelongsToMany` relationship (legacy `relationship()`)', function (): void {
-        // Create user with high average budget
         $highAvgUser = User::factory()->create();
         $highTeams = Team::factory()->count(3)->create(['budget' => 8000]);
         $highAvgUser->teams()->attach($highTeams->pluck('id'));
 
-        // Create user with low average budget
         $lowAvgUser = User::factory()->create();
         $lowTeams = Team::factory()->count(3)->create(['budget' => 2000]);
         $lowAvgUser->teams()->attach($lowTeams->pluck('id'));
@@ -3336,8 +3298,6 @@ describe('absolute and relative date filtering', function () use ($applyQueryBui
             ->assertCanNotSeeTableRecords($recentPosts);
     });
 
-    // Relative Date Filtering Tests - IsBeforeOperator
-
     it('can filter records using date constraint with is before operator in `absolute` mode', function () use ($applyQueryBuilderFilter): void {
         $oldPosts = Post::factory()->count(5)->create([
             'created_at' => now()->subDays(5),
@@ -3849,20 +3809,15 @@ describe('absolute and relative date filtering', function () use ($applyQueryBui
             ->assertCanNotSeeTableRecords($soonPosts);
     });
 
-    // Combined relative date tests
-
     it('can filter records using combined `relative` date constraints', function () use ($applyQueryBuilderFilter): void {
-        // Posts created in the last month but before next week
         $matchingPosts = Post::factory()->count(5)->create([
             'created_at' => now()->subDays(10),
         ]);
 
-        // Posts created more than a month ago
         $oldPosts = Post::factory()->count(5)->create([
             'created_at' => now()->subMonths(2),
         ]);
 
-        // Posts created in the future
         $futurePosts = Post::factory()->count(5)->create([
             'created_at' => now()->addWeeks(2),
         ]);
@@ -3921,19 +3876,16 @@ describe('absolute and relative date filtering', function () use ($applyQueryBui
     });
 
     it('can filter records using `relative` date constraint with OR rules', function () use ($applyQueryBuilderFilter): void {
-        // Posts created in the past week
         $recentPosts = Post::factory()->count(3)->create([
             'created_at' => now()->subDays(3),
             'is_published' => false,
         ]);
 
-        // Published posts (regardless of date)
         $publishedPosts = Post::factory()->count(3)->create([
             'created_at' => now()->subMonths(3),
             'is_published' => true,
         ]);
 
-        // Old unpublished posts
         $oldUnpublishedPosts = Post::factory()->count(5)->create([
             'created_at' => now()->subMonths(2),
             'is_published' => false,
@@ -4003,8 +3955,6 @@ describe('absolute and relative date filtering', function () use ($applyQueryBui
             ->assertCanSeeTableRecords($recentPosts)
             ->assertCanNotSeeTableRecords($oldPosts);
     });
-
-    // Time-Based Date Filtering Tests
 
     it('can filter records using datetime constraint with is after operator in `absolute` mode', function () use ($applyQueryBuilderFilter): void {
         $beforeThresholdPost = Post::factory()->create([
@@ -4646,8 +4596,6 @@ describe('absolute and relative date filtering', function () use ($applyQueryBui
             ->assertCanNotSeeTableRecords($nearFuturePosts);
     });
 
-    // IsBeforeOperator Time-Based Tests
-
     it('can filter records using datetime constraint with is before operator in `absolute` mode', function () use ($applyQueryBuilderFilter): void {
         $beforeThresholdPost = Post::factory()->create([
             'published_at' => '2026-07-13 09:00:00',
@@ -4889,69 +4837,196 @@ describe('absolute and relative date filtering', function () use ($applyQueryBui
     });
 });
 
-describe('properties', function (): void {
+describe('properties', function () use ($applyQueryBuilderFilter): void {
+    it('keeps grouped `constraints()` addressable by name and allows them to be regrouped', function (): void {
+        $queryBuilder = QueryBuilder::make()->table(livewire(PostsQueryBuilderTable::class)->instance()->getTable())
+            ->constraints([
+                'Content' => [TextConstraint::make('title'), TextConstraint::make('content')],
+                DateConstraint::make('published_at'),
+                'Empty' => [],
+            ]);
+
+        expect(array_keys($queryBuilder->getConstraints()))->toBe(['title', 'content', 'published_at'])
+            ->and($queryBuilder->getConstraint('title')?->getName())->toBe('title')
+            ->and(array_keys($queryBuilder->getGroupedConstraints()))->toBe([0, 'Content']);
+
+        $queryBuilder->constraints(['Publishing' => [TextConstraint::make('title')], TextConstraint::make('content')]);
+
+        expect(array_keys($queryBuilder->getGroupedConstraints()))->toBe([0, 1, 'Publishing'])
+            ->and($queryBuilder->getGroupedConstraints()['Publishing'][0]->getName())->toBe('title');
+
+        $queryBuilder = QueryBuilder::make()->table($queryBuilder->getTable())
+            ->constraints([TextConstraint::make('title')])
+            ->constraints([
+                'Publishing' => [DateConstraint::make('published_at')],
+                'Content' => [TextConstraint::make('title')],
+            ]);
+
+        expect(array_keys($queryBuilder->getGroupedConstraints()))->toBe(['Publishing', 'Content']);
+    });
+
+    it('applies nested rules with grouped constraints without changing query semantics', function () use ($applyQueryBuilderFilter): void {
+        $this->actingAs(User::factory()->create());
+
+        $titleMatch = Post::factory()->create(['title' => 'Autumn news', 'content' => 'Ordinary update']);
+        $contentMatch = Post::factory()->create(['title' => 'Other news', 'content' => 'Autumn highlights']);
+        $nonMatch = Post::factory()->create(['title' => 'Other news', 'content' => 'Ordinary update']);
+
+        livewire(QueryBuilderTableTest::class, ['grouped' => true])
+            ->tap($applyQueryBuilderFilter([
+                ['type' => 'or', 'data' => ['groups' => [
+                    ['rules' => [['type' => 'title', 'data' => ['operator' => 'contains', 'settings' => ['text' => 'Autumn']]]]],
+                    ['rules' => [['type' => 'content', 'data' => ['operator' => 'contains', 'settings' => ['text' => 'Autumn']]]]],
+                ]]],
+            ]))
+            ->assertCanSeeTableRecords([$titleMatch, $contentMatch])
+            ->assertCanNotSeeTableRecords([$nonMatch]);
+    });
+
     it('returns `queryBuilder` from `getDefaultName()`', function (): void {
         expect(QueryBuilder::getDefaultName())->toBe('queryBuilder');
     });
 
-    it('can set `constraintPickerColumns()` with int', function (): void {
-        $qb = QueryBuilder::make();
-        $qb->constraintPickerColumns(3);
+    it('can set `constraintPickerColumns()` with an integer', function (): void {
+        $queryBuilder = QueryBuilder::make();
+        $queryBuilder->constraintPickerColumns(3);
 
-        expect($qb->getConstraintPickerColumns('lg'))->toBe(3);
+        expect($queryBuilder->getConstraintPickerColumns('lg'))->toBe(3);
     });
 
-    it('can set `constraintPickerColumns()` with array', function (): void {
-        $qb = QueryBuilder::make();
-        $qb->constraintPickerColumns(['default' => 1, 'sm' => 2, 'lg' => 3]);
+    it('can set `constraintPickerColumns()` with an array', function (): void {
+        $queryBuilder = QueryBuilder::make();
+        $queryBuilder->constraintPickerColumns(['default' => 1, 'sm' => 2, 'lg' => 3]);
 
-        expect($qb->getConstraintPickerColumns('default'))->toBe(1);
-        expect($qb->getConstraintPickerColumns('sm'))->toBe(2);
-        expect($qb->getConstraintPickerColumns('lg'))->toBe(3);
+        expect($queryBuilder->getConstraintPickerColumns('default'))->toBe(1);
+        expect($queryBuilder->getConstraintPickerColumns('sm'))->toBe(2);
+        expect($queryBuilder->getConstraintPickerColumns('lg'))->toBe(3);
     });
 
-    it('returns default columns when `constraintPickerColumns()` not set', function (): void {
-        $qb = QueryBuilder::make();
-        $columns = $qb->getConstraintPickerColumns();
+    it('returns default columns when `constraintPickerColumns()` is not set', function (): void {
+        $queryBuilder = QueryBuilder::make();
+        $columns = $queryBuilder->getConstraintPickerColumns();
 
         expect($columns)->toBeArray();
     });
 
     it('returns `null` for unset breakpoint in `getConstraintPickerColumns()`', function (): void {
-        $qb = QueryBuilder::make();
+        $queryBuilder = QueryBuilder::make();
 
-        expect($qb->getConstraintPickerColumns('2xl'))->toBeNull();
+        expect($queryBuilder->getConstraintPickerColumns('2xl'))->toBeNull();
     });
 
     it('can set `constraintPickerWidth()`', function (): void {
-        $qb = QueryBuilder::make();
-        $qb->constraintPickerWidth('xl');
+        $queryBuilder = QueryBuilder::make();
+        $queryBuilder->constraintPickerWidth('xl');
 
-        expect($qb->getConstraintPickerWidth())->toBe('xl');
+        expect($queryBuilder->getConstraintPickerWidth())->toBe('xl');
     });
 
     it('can set `constraintPickerWidth()` with a `Closure`', function (): void {
-        $qb = QueryBuilder::make();
-        $qb->constraintPickerWidth(static fn (): string => 'lg');
+        $queryBuilder = QueryBuilder::make();
+        $queryBuilder->constraintPickerWidth(static fn (): string => 'lg');
 
-        expect($qb->getConstraintPickerWidth())->toBe('lg');
+        expect($queryBuilder->getConstraintPickerWidth())->toBe('lg');
     });
 
     it('returns `null` for `getConstraintPickerWidth()` by default', function (): void {
-        $qb = QueryBuilder::make();
+        $queryBuilder = QueryBuilder::make();
 
-        expect($qb->getConstraintPickerWidth())->toBeNull();
+        expect($queryBuilder->getConstraintPickerWidth())->toBeNull();
     });
 
     it('can set `constraints()` and retrieve with `getConstraint()`', function (): void {
         $constraint = TextConstraint::make('title');
 
-        $qb = QueryBuilder::make()
+        $queryBuilder = QueryBuilder::make()
+            ->table(livewire(PostsQueryBuilderTable::class)->instance()->getTable())
             ->constraints([$constraint]);
 
-        // getConstraints/getConstraint need a table model, tested via integration
-        expect($qb)->toBeInstanceOf(QueryBuilder::class);
+        expect($queryBuilder->getConstraint('title'))->toBe($constraint)
+            ->and($queryBuilder->getConstraints())->toBe(['title' => $constraint]);
     });
+});
+
+it('groups the OR block using its translated heading only when attributes are grouped', function (bool $hasGroups, ?string $label): void {
+    $this->actingAs(User::factory()->create());
+
+    if ($label !== null) {
+        app('translator')->get('filament-query-builder::query-builder');
+        app('translator')->addLines(['query-builder.form.or_groups.block.picker_group' => $label], 'en', 'filament-query-builder');
+    }
+
+    $label ??= 'Logic';
+    $livewire = livewire(QueryBuilderTableTest::class, ['grouped' => $hasGroups]);
+    $filter = $livewire->instance()->getTable()->getFilter('query_builder');
+    $builder = $filter->getSchema()->getComponent(static fn ($component): bool => $component instanceof RuleBuilder);
+
+    $html = $builder->toHtml();
+    $document = new DOMDocument;
+    @$document->loadHTML($html);
+    $xpath = new DOMXPath($document);
+
+    $orButtons = $xpath->query('//button[normalize-space(.)="OR condition"]');
+
+    expect($orButtons->length)->toBe(1)
+        ->and($xpath->query('ancestor::*[@role="group" and @aria-label="' . $label . '"]', $orButtons->item(0))->length)->toBe((int) ($hasGroups && ($label !== '')));
+
+    if ($hasGroups && ($label === 'Content')) {
+        expect($xpath->query('//*[@role="group" and @aria-label="Content"]//button')->length)->toBe(2);
+    }
+})->with(['flat' => false, 'grouped' => true])->with([
+    'default' => null,
+    'custom' => 'Conditions',
+    'numeric' => '0',
+    'existing group' => 'Content',
+    'ungrouped' => '',
+]);
+
+it('preserves constraint picker groups inside nested OR conditions', function (): void {
+    Artisan::call('filament:assets');
+    $this->actingAs(User::factory()->create());
+
+    $addRule = '.fi-fo-builder-block-picker > .fi-dropdown-trigger button[aria-haspopup="menu"]';
+    $contentGroup = '[role="group"][aria-label="Content"]:visible';
+    $detailsGroup = '[role="group"][aria-label="Details"]:visible';
+    $logicGroup = '[role="group"][aria-label="Logic"]:visible';
+
+    $page = visit('/query-builder-table-test?grouped=1');
+
+    $page->click('button[title="Filter"]');
+    $page->page()->locator($addRule)->click();
+
+    $page
+        ->assertVisible($contentGroup)
+        ->assertVisible($detailsGroup)
+        ->assertVisible($logicGroup)
+        ->assertNoAccessibilityIssues()
+        ->click($logicGroup . ' button')
+        ->assertMissing($logicGroup)
+        ->assertCount($addRule, 3);
+
+    $page->page()->locator(':nth-match(' . $addRule . ', 2)')->click();
+
+    $page
+        ->assertVisible($contentGroup)
+        ->assertVisible($detailsGroup)
+        ->assertVisible($logicGroup)
+        ->click($detailsGroup . ' button')
+        ->assertNoSmoke()
+        ->assertMissing($detailsGroup)
+        ->assertNoAccessibilityIssues();
+
+    $darkPage = $page->inDarkMode();
+    $darkPage->click('button[title="Filter"]');
+    $darkPage->page()->locator($addRule)->click();
+    $darkPage->assertVisible($logicGroup)
+        ->assertNoAccessibilityIssues()
+        ->click($logicGroup . ' button')
+        ->assertCount($addRule, 3);
+    $darkPage->page()->locator(':nth-match(' . $addRule . ', 2)')->click();
+    $darkPage->click($detailsGroup . ' button')
+        ->assertMissing($detailsGroup)
+        ->assertNoAccessibilityIssues();
 });
 
 describe('rule limits', function () use ($applyQueryBuilderFilter): void {
@@ -5024,7 +5099,6 @@ describe('rule limits', function () use ($applyQueryBuilderFilter): void {
             ],
         ];
 
-        // This tree has 5 structural nodes (an "or" block + 2 groups + 2 conditions) but only 2 leaf conditions, so a `maxRules(2)` limit is not exceeded.
         $tree = [
             [
                 'type' => 'or',
@@ -5039,7 +5113,6 @@ describe('rule limits', function () use ($applyQueryBuilderFilter): void {
 
         expect(QueryBuilder::make()->maxRules(2)->exceedsRuleLimits($tree))->toBeFalse();
 
-        // Adding a 3rd leaf condition tips it over.
         $tree[0]['data']['groups'][0]['rules'][] = $rule;
 
         expect(QueryBuilder::make()->maxRules(2)->exceedsRuleLimits($tree))->toBeTrue();
@@ -5054,7 +5127,6 @@ describe('rule limits', function () use ($applyQueryBuilderFilter): void {
             ],
         ];
 
-        // Wrap the rule in three levels of "or" blocks, nesting the inner rule at a depth of 4.
         for ($iteration = 0; $iteration < 3; $iteration++) {
             $rule = [
                 'type' => 'or',
@@ -5175,10 +5247,8 @@ describe('rule limits', function () use ($applyQueryBuilderFilter): void {
             ],
         ];
 
-        // A flat tree counts each condition.
         expect($ruleBuilder->countTreeRules([$rule, $rule]))->toBe(2);
 
-        // The "or" block and its groups are structural containers, so only the 3 nested conditions count (plus the 1 top-level one), not the "or" block or its 2 groups.
         $tree = [
             $rule,
             [

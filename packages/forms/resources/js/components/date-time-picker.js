@@ -14,7 +14,7 @@ import utc from 'dayjs/plugin/utc'
 import {
     observeFieldAccessibility,
     setFieldAccessibilityAttributes,
-} from '../utils/field-accessibility'
+} from '../utilities/field-accessibility.js'
 
 dayjs.extend(advancedFormat)
 dayjs.extend(customParseFormat)
@@ -974,6 +974,7 @@ const locales = {
     fr: require('dayjs/locale/fr'),
     he: require('dayjs/locale/he'),
     hi: require('dayjs/locale/hi'),
+    hr: require('dayjs/locale/hr'),
     hu: require('dayjs/locale/hu'),
     hy: require('dayjs/locale/hy-am'),
     id: require('dayjs/locale/id'),

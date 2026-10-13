@@ -225,9 +225,7 @@ public function panel(Panel $panel): Panel
 
 ### Enabling SPA prefetching
 
-SPA prefetching enhances the user experience by automatically prefetching pages when users hover over links, making navigation feel even more responsive. This feature utilizes [Livewire's `wire:navigate.hover` functionality](https://livewire.laravel.com/docs/navigate#prefetching-links).
-
-To enable SPA mode with prefetching, you can pass the `hasPrefetching: true` parameter to the `spa()` method:
+To prefetch SPA pages when users hover over links, pass `hasPrefetching: true` to `spa()`. This uses [Livewire's link prefetching](https://livewire.laravel.com/docs/navigate#prefetching-links) and respects your [SPA URL exceptions](#disabling-spa-navigation-for-specific-urls):
 
 ```php
 use Filament\Panel;
@@ -239,12 +237,6 @@ public function panel(Panel $panel): Panel
         ->spa(hasPrefetching: true);
 }
 ```
-
-When prefetching is enabled, all links within your panel will automatically include `wire:navigate.hover`, which prefetches the page content when users hover over the link. This works seamlessly with [URL exceptions](#disabling-spa-navigation-for-specific-urls) - any URLs excluded from SPA mode will also be excluded from prefetching.
-
-<Aside variant="info">
-    Prefetching only works when SPA mode is enabled. If you disable SPA mode, prefetching will also be disabled automatically.
-</Aside>
 
 <Aside variant="warning">
     Prefetching heavy pages can lead to increased bandwidth usage and server load, especially if users hover over many links in quick succession. Use this feature judiciously, particularly if your app has pages with large amounts of data or complex queries.

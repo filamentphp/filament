@@ -1,12 +1,12 @@
-import collapsibleItem from '../utils/collapsible-item.js'
-import reordering from '../utils/reordering.js'
+import collapsibleItem from '../utilities/collapsible-item.js'
+import reordering from '../utilities/reordering.js'
 import normalizeSearchString from '../../../../support/resources/js/utilities/normalize-search-string.js'
 
 export default function builderFormComponent({ statePath, ...configuration }) {
     return {
         ...reordering(configuration),
 
-        builderFormComponentBlockPicker,
+        blockPicker,
 
         collapseAll() {
             this.$dispatch('builder-collapse', statePath)
@@ -30,7 +30,7 @@ export default function builderFormComponent({ statePath, ...configuration }) {
     }
 }
 
-function builderFormComponentBlockPicker() {
+function blockPicker() {
     return {
         search: '',
 
@@ -108,7 +108,7 @@ function builderFormComponentBlockPicker() {
             }
 
             this.clearSearch()
-            this.$refs.searchInput?.focus()
+            this.$refs.searchInput?.focus({ preventScroll: true })
         },
 
         clearSearch() {
@@ -140,6 +140,15 @@ function builderFormComponentBlockPicker() {
             return normalizeSearchString(
                 blockElement.dataset.blockLabel,
             ).includes(normalizeSearchString(this.search))
+        },
+
+        isGroupVisible(groupElement) {
+            return (
+                this.blockLabels.length > 0 &&
+                Array.from(
+                    groupElement.querySelectorAll('[data-block-label]'),
+                ).some((element) => this.isBlockVisible(element))
+            )
         },
 
         get hasNoSearchResults() {

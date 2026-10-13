@@ -22,6 +22,13 @@ class QueryBuilderTableTest extends Page implements HasTable
 
     protected static ?int $navigationSort = 8;
 
+    public bool $hasGroupedConstraints = false;
+
+    public function mount(bool $grouped = false): void
+    {
+        $this->hasGroupedConstraints = $grouped || request()->boolean('grouped');
+    }
+
     public function table(Table $table): Table
     {
         return $table
@@ -32,10 +39,14 @@ class QueryBuilderTableTest extends Page implements HasTable
             ])
             ->filters([
                 QueryBuilder::make('query_builder')
-                    ->constraints([
+                    ->constraints($this->hasGroupedConstraints ? [
+                        'Content' => [TextConstraint::make('title')],
+                        'Details' => [TextConstraint::make('content')],
+                    ] : [
                         TextConstraint::make('title'),
                         TextConstraint::make('content'),
-                    ]),
+                    ])
+                    ->constraintPickerColumns($this->hasGroupedConstraints ? 3 : 1),
             ]);
     }
 

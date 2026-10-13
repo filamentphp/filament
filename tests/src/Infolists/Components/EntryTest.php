@@ -1,17 +1,25 @@
 <?php
 
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
 
 uses(TestCase::class);
-
-// Testing Entry via TextEntry (concrete subclass)
 
 describe('construction', function (): void {
     it('can be constructed with a name', function (): void {
         $entry = TextEntry::make('title');
 
         expect($entry->getName())->toBe('title');
+    });
+
+    it('can be instantiated with a default name', function (): void {
+        expect(IdEntry::make()->getName())->toBe('id');
+    });
+
+    it('can override the default name', function (): void {
+        expect(IdEntry::make('identifier')->getName())->toBe('identifier');
     });
 
     it('throws `LogicException` when name is blank', function (): void {
@@ -98,6 +106,56 @@ describe('label visibility', function (): void {
     });
 });
 
+describe('hint icon tooltip', function (): void {
+    it('can set a tooltip via the second parameter of `hintIcon()`', function (): void {
+        $entry = TextEntry::make('test')
+            ->container(Schema::make(Livewire::make()))
+            ->hintIcon('heroicon-o-information-circle', 'Example tooltip');
+
+        expect($entry->getHintIconTooltip())->toBe('Example tooltip');
+    });
+
+    it('preserves an existing tooltip when calling `hintIcon()` without a tooltip', function (): void {
+        $entry = TextEntry::make('test')
+            ->container(Schema::make(Livewire::make()))
+            ->hintIconTooltip('Example tooltip')
+            ->hintIcon('heroicon-o-information-circle');
+
+        expect($entry->getHintIconTooltip())->toBe('Example tooltip');
+    });
+
+    it('can clear a tooltip by explicitly passing `null` to `hintIcon()`', function (): void {
+        $entry = TextEntry::make('test')
+            ->container(Schema::make(Livewire::make()))
+            ->hintIconTooltip('Example tooltip')
+            ->hintIcon('heroicon-o-information-circle', null);
+
+        expect($entry->getHintIconTooltip())->toBeNull();
+    });
+});
+
+describe('entry wrappers', function (): void {
+    it('can use a custom view via `entryWrapperView()`', function (): void {
+        $html = Schema::make(Livewire::make())
+            ->components([
+                TextEntry::make('name')->state('Dan')->entryWrapperView('custom-entry-wrapper'),
+            ])
+            ->toHtml();
+
+        expect($html)->toContain('custom-entry-wrapper-view', 'data-label="Name"', 'Dan');
+    });
+
+    it('can use a Blade component alias via `entryWrapperView()`', function (): void {
+        $html = Schema::make(Livewire::make())
+            ->components([
+                TextEntry::make('name')->state('Dan')->entryWrapperView('test-plugin-entry-wrapper'),
+            ])
+            ->toHtml();
+
+        expect($html)->toContain('entry-wrapper-blade-component', 'fi-in-entry', 'Name', 'Dan');
+    });
+});
+
 describe('slot methods return fluent `$this`', function (): void {
     it('returns fluent `$this` from all slot methods', function (): void {
         $entry = TextEntry::make('title');
@@ -112,3 +170,11 @@ describe('slot methods return fluent `$this`', function (): void {
         expect($entry->afterContent([]))->toBe($entry);
     });
 });
+
+class IdEntry extends TextEntry
+{
+    public static function getDefaultName(): ?string
+    {
+        return 'id';
+    }
+}

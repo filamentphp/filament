@@ -33,6 +33,7 @@ use Filament\Tests\Fixtures\Pages\CheckboxTest;
 use Filament\Tests\Fixtures\Pages\CodeEditorBrowserTest;
 use Filament\Tests\Fixtures\Pages\ColorPickerTest;
 use Filament\Tests\Fixtures\Pages\ColumnManagerBrowserTest;
+use Filament\Tests\Fixtures\Pages\ColumnManagerReorderingBrowserTest;
 use Filament\Tests\Fixtures\Pages\ColumnsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatabaseNotificationsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatePickerBrowserTest;
@@ -69,6 +70,7 @@ use Filament\Tests\Fixtures\Pages\SliderBrowserTest;
 use Filament\Tests\Fixtures\Pages\StatsOverviewWidgetBrowserTest;
 use Filament\Tests\Fixtures\Pages\TableActionGroupsBrowserTest;
 use Filament\Tests\Fixtures\Pages\TableRenderHooksBrowserTest;
+use Filament\Tests\Fixtures\Pages\TableReorderingBrowserTest;
 use Filament\Tests\Fixtures\Pages\TabsBrowserTest;
 use Filament\Tests\Fixtures\Pages\TagsInputTest;
 use Filament\Tests\Fixtures\Pages\TextareaTest;
@@ -151,6 +153,7 @@ class AdminPanelProvider extends PanelProvider
                 ChartWidgetBrowserTest::class,
                 CodeEditorBrowserTest::class,
                 ColumnManagerBrowserTest::class,
+                ColumnManagerReorderingBrowserTest::class,
                 ColumnsBrowserTest::class,
                 CheckboxTest::class,
                 ColorPickerTest::class,
@@ -188,6 +191,7 @@ class AdminPanelProvider extends PanelProvider
                 StatsOverviewWidgetBrowserTest::class,
                 TableActionGroupsBrowserTest::class,
                 TableRenderHooksBrowserTest::class,
+                TableReorderingBrowserTest::class,
                 TabsBrowserTest::class,
                 TagsInputTest::class,
                 TextareaTest::class,

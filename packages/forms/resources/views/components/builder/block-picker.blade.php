@@ -38,7 +38,7 @@
 
     $listAttributes = $searchable
         ? new FilamentComponentAttributeBag([
-            'x-data' => 'builderFormComponentBlockPicker()',
+            'x-data' => 'blockPicker()',
         ])
         : new FilamentComponentAttributeBag;
 @endphp

@@ -4,6 +4,7 @@ namespace Filament\Tests\Tables;
 
 use Filament\Tests\Fixtures\Livewire\PostsColumnManagerTable;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\ReorderableColumnsTable;
 use Filament\Tests\Fixtures\Livewire\SecondPostsColumnManagerTable;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Finder\Finder;
@@ -16,6 +17,7 @@ class TablesServiceProvider extends ServiceProvider
         foreach ([
             PostsTable::class,
             PostsColumnManagerTable::class,
+            ReorderableColumnsTable::class,
             SecondPostsColumnManagerTable::class,
         ] as $component) {
             [$namespace, $componentName] = app(Finder::class)->parseNamespaceAndName($component);

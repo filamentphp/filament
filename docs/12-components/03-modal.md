@@ -40,7 +40,7 @@ $this->dispatch('open-modal', id: 'edit-user');
 
 Or from Alpine.js:
 
-```php
+```js
 $dispatch('open-modal', { id: 'edit-user' })
 ```
 
@@ -263,4 +263,3 @@ By default, the trigger button will open the modal even if it is disabled, since
     {{-- Modal content --}}
 </x-filament::modal>
 ```
-

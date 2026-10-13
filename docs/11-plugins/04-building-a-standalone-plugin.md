@@ -2,15 +2,15 @@
 title: Build a standalone plugin
 ---
 
-## Preface
-
-Please read the docs on [panel plugin development](../plugins/panel-plugins) and the [getting started guide](getting-started) before continuing.
-
 ## Introduction
 
 In this walkthrough, we'll build a simple plugin that adds a new form component that can be used in forms. This also means it will be available to users in their panels.
 
-You can find the final code for this plugin at [https://github.com/awcodes/headings](https://github.com/awcodes/headings).
+You can find the original plugin at [awcodes/headings](https://github.com/awcodes/headings). The examples below use Filament 4 APIs.
+
+## Preface
+
+Please read the [getting started guide](getting-started) and the documentation on [custom form fields](../forms/custom-fields) before continuing.
 
 ## Step 1: Create the plugin
 
@@ -28,26 +28,9 @@ Remove the following directories and files:
 5. `src/Facades`
 6. `stubs`
 
-Now we can clean up our `composer.json` file to remove unneeded options.
+Remove the database factory autoload mapping and facade alias from `composer.json`. Keep the `Awcodes\Headings\` mapping for `src/` and the service provider registration under `extra.laravel.providers`.
 
-```json
-"autoload": {
-    "psr-4": {
-        // We can remove the database factories
-        "Awcodes\\Headings\\Database\\Factories\\": "database/factories/"
-    }
-},
-"extra": {
-    "laravel": {
-        // We can remove the facade
-        "aliases": {
-            "Headings": "Awcodes\\Headings\\Facades\\ClockWidget"
-        }
-    }
-},
-```
-
-Normally, Filament recommends that users style their plugins with a custom filament theme, but for the sake of example let's provide our own stylesheet that can be loaded asynchronously using the new `x-load` features in Filament v3. So, let's update our `package.json` file to include `cssnano`, `postcss`, `postcss-cli` and `postcss-nesting` to build our stylesheet.
+For this example, you'll provide a stylesheet that loads only where the component is used, using `x-load-css`. Update `package.json` to include `cssnano`, `postcss`, `postcss-cli` and `postcss-nesting` to build it.
 
 ```json
 {
@@ -149,7 +132,17 @@ class Heading extends Component
 
     public static function make(string | int $level): static
     {
-        return app(static::class, ['level' => $level]);
+        $component = app(static::class, ['level' => $level]);
+        $component->configure();
+
+        return $component;
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->defaultColor(Color::Amber);
     }
 
     public function content(string | Closure $content): static
@@ -164,11 +157,6 @@ class Heading extends Component
         $this->level = $level;
 
         return $this;
-    }
-
-    public function getColor(): array
-    {
-        return $this->evaluate($this->color) ?? Color::Amber;
     }
 
     public function getContent(): string
@@ -187,7 +175,7 @@ class Heading extends Component
 
 Next, we'll need to create the view for our component. Create a new file at `resources/views/heading.blade.php` and add the following code.
 
-We are using x-load to asynchronously load stylesheet, so it's only loaded when necessary. You can learn more about this in the [Core Concepts](../advanced/assets#lazy-loading-css) section of the docs.
+Use `x-load-css` to load the stylesheet only where the component is rendered. The attribute bag's `color()` method supplies Filament's text color variables for both light and dark mode. See [lazy loading CSS](../advanced/assets#lazy-loading-css) and [colors](../styling/colors) for more information.
 
 ```blade
 @php
@@ -200,16 +188,8 @@ We are using x-load to asynchronously load stylesheet, so it's only loaded when 
     x-load-css="[@js(\Filament\Support\Facades\FilamentAsset::getStyleHref('headings', package: 'awcodes/headings'))]"
     {{
         $attributes
-            ->class([
-                'headings-component',
-                match ($color) {
-                    'gray' => 'text-gray-600 dark:text-gray-400',
-                    default => 'text-custom-500',
-                },
-            ])
-            ->style([
-                \Filament\Support\get_color_css_variables($color, [500]) => $color !== 'gray',
-            ])
+            ->class(['headings-component'])
+            ->color(\Filament\Schemas\View\Components\TextComponent::class, $color)
     }}
 >
     {{ $getContent() }}
@@ -222,30 +202,43 @@ Next, let's provide some custom styling for our field. We'll add the following t
 
 ```css
 .headings-component {
+    color: var(--gray-600);
+
+    .dark & {
+        color: var(--gray-400);
+    }
+
+    &.fi-color {
+        color: var(--text);
+
+        .dark & {
+            color: var(--dark-text);
+        }
+    }
+
     &:is(h1, h2, h3, h4, h5, h6) {
          font-weight: 700;
          letter-spacing: -.025em;
          line-height: 1.1;
      }
 
-    &h1 {
+    &:is(h1) {
          font-size: 2rem;
      }
 
-    &h2 {
+    &:is(h2) {
          font-size: 1.75rem;
      }
 
-    &h3 {
+    &:is(h3) {
          font-size: 1.5rem;
      }
 
-    &h4 {
+    &:is(h4) {
          font-size: 1.25rem;
      }
 
-    &h5,
-    &h6 {
+    &:is(h5, h6) {
          font-size: 1rem;
      }
 }
@@ -263,6 +256,7 @@ You'll want to update your `README.md` file to include instructions on how to in
 
 ```php
 use Awcodes\Headings\Heading;
+use Filament\Support\Colors\Color;
 
 Heading::make(2)
     ->content('Product Information')

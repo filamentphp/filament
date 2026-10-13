@@ -42,6 +42,18 @@ trait CanUpdateState
         return $this;
     }
 
+    /**
+     * @return array<string, string>
+     */
+    public function getUpdateStateMessages(): array
+    {
+        return [
+            'saving' => __('filament-tables::table.columns.editable.saving'),
+            'saved' => __('filament-tables::table.columns.editable.saved'),
+            'failure' => __('filament-tables::table.columns.editable.failure'),
+        ];
+    }
+
     public function updateState(mixed $state): mixed
     {
         if (blank($state)) {
@@ -99,7 +111,7 @@ trait CanUpdateState
         }
 
         if (! ($recordToUpdate instanceof Model)) {
-            return null;
+            return ['error' => __('filament-tables::table.columns.editable.unavailable')];
         }
 
         $recordToUpdate->setAttribute((string) str($columnName)->replace('.', '->'), $state);
