@@ -764,6 +764,7 @@ it('preserves focus and selection when revealing a password in the browser', fun
     $hidePasswordAction = '[data-testid="hide-password"]';
 
     $page = visit('/text-input-test')
+        ->assertAttributeMissing($hidePasswordAction, 'x-cloak')
         ->type($input, 'secret-value');
 
     $page->script("document.querySelector('{$input}').setSelectionRange(1, 6, 'backward')");
@@ -845,7 +846,8 @@ it('preserves focus when revealing a password with responsive actions in the bro
     $hidePasswordAction = "[data-testid=\"hide-responsive-password\"].{$actionClass}";
 
     $page = visit('/text-input-test')
-        ->resize($width, 812);
+        ->resize($width, 812)
+        ->assertAttributeMissing($hidePasswordAction, 'x-cloak');
 
     $page->script("document.querySelector('{$passwordInput}').focus(); document.querySelector('{$passwordInput}').setSelectionRange(1, 6, 'backward')");
 
@@ -866,6 +868,7 @@ it('preserves focus when revealing a password with responsive actions in the bro
     visit('/text-input-test')
         ->inDarkMode()
         ->resize($width, 812)
+        ->assertAttributeMissing($hidePasswordAction, 'x-cloak')
         ->click($showPasswordAction)
         ->assertAttribute($passwordInput, 'type', 'text')
         ->assertScript("document.activeElement.matches('{$hidePasswordAction}')", true)
