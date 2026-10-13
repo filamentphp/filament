@@ -239,15 +239,17 @@ describe('published view override', function () use ($writePublishedOverride): v
     });
 
     it('honours a published override on a real form component (`TextInput`)', function () use ($writePublishedOverride): void {
+        app('view');
+
         $writePublishedOverride('filament-forms/test-text-input-override.blade.php', 'PUBLISHED-TEXT-INPUT-SENTINEL');
 
         Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
-                $input = (new class('name') extends TextInput
+                $input = new class('name') extends TextInput
                 {
                     protected ?string $publishedViewOverrideCheckPath = 'filament-forms::test-text-input-override';
-                })->view('filament-forms::test-text-input-override'),
+                },
             ])
             ->fill();
 
