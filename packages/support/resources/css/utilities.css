@@ -590,11 +590,6 @@
         padding-inline-start: calc(var(--spacing) * 3);
     }
 
-    ol li + li:where(:not(.fi-not-prose, .fi-not-prose *)),
-    ul li + li:where(:not(.fi-not-prose, .fi-not-prose *)) {
-        margin-top: calc(var(--spacing) * 4);
-    }
-
     ol li:where(:not(.fi-not-prose, .fi-not-prose *))::marker,
     ul li:where(:not(.fi-not-prose, .fi-not-prose *))::marker {
         color: var(--prose-marker-color);
