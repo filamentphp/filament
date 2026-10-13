@@ -146,16 +146,14 @@ test('actions will not interfere with database transactions on an error', functi
         ])
             ->callAction('randomize_title');
     } catch (Exception $exception) {
-        // This can be caught and handled somewhere else, code continues...
+        // Inspect the transaction level after the action exception is handled.
     }
-
-    // Original transaction level should be unaffected...
 
     expect(DB::transactionLevel())
         ->toBe($transactionLevel);
 });
 
-it('can ticket messages page without a policy', function (): void {
+it('can render ticket messages page without a policy', function (): void {
     $message = TicketMessage::factory()
         ->create();
 
@@ -163,7 +161,7 @@ it('can ticket messages page without a policy', function (): void {
         ->assertSuccessful();
 });
 
-it('can render page if the policy viewAny returns true', function (): void {
+it('can render page if the policy `viewAny()` returns `true`', function (): void {
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 
     $ticket = Ticket::factory()
@@ -173,7 +171,7 @@ it('can render page if the policy viewAny returns true', function (): void {
         ->assertSuccessful();
 });
 
-it('can render page if the policy viewAny returns an allowed response', function (): void {
+it('can render page if the policy `viewAny()` returns an allowed response', function (): void {
     app()->bind(TicketPolicy::class . '::viewAny', fn (): Response => Response::allow());
 
     $ticket = Ticket::factory()
@@ -197,7 +195,7 @@ it('does not render page without a policy if authorization is strict', function 
     Filament::getCurrentOrDefaultPanel()->strictAuthorization(false);
 });
 
-it('does not render page if the policy viewAny returns false', function (): void {
+it('does not render page if the policy `viewAny()` returns `false`', function (): void {
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => false);
 
     $ticket = Ticket::factory()
@@ -209,7 +207,7 @@ it('does not render page if the policy viewAny returns false', function (): void
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
 
-it('does not render page if the policy viewAny returns a denied response', function (): void {
+it('does not render page if the policy `viewAny()` returns a denied response', function (): void {
     app()->bind(TicketPolicy::class . '::viewAny', fn (): Response => Response::deny());
 
     $ticket = Ticket::factory()
@@ -221,7 +219,7 @@ it('does not render page if the policy viewAny returns a denied response', funct
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
 
-it('can render page if the policy update returns true', function (): void {
+it('can render page if the policy `update()` returns `true`', function (): void {
     app()->bind(TicketPolicy::class . '::update', fn (): bool => true);
 
     $ticket = Ticket::factory()
@@ -231,7 +229,7 @@ it('can render page if the policy update returns true', function (): void {
         ->assertSuccessful();
 });
 
-it('can render page if the policy update returns an allowed response', function (): void {
+it('can render page if the policy `update()` returns an allowed response', function (): void {
     app()->bind(TicketPolicy::class . '::update', fn (): Response => Response::allow());
 
     $ticket = Ticket::factory()
@@ -243,7 +241,7 @@ it('can render page if the policy update returns an allowed response', function 
     app()->bind(TicketPolicy::class . '::update', fn (): bool => true);
 });
 
-it('does not render page if the policy update returns false', function (): void {
+it('does not render page if the policy `update()` returns `false`', function (): void {
     app()->bind(TicketPolicy::class . '::update', fn (): bool => false);
 
     $ticket = Ticket::factory()
@@ -255,7 +253,7 @@ it('does not render page if the policy update returns false', function (): void 
     app()->bind(TicketPolicy::class . '::update', fn (): bool => true);
 });
 
-it('does not render page if the policy update returns a denied response', function (): void {
+it('does not render page if the policy `update()` returns a denied response', function (): void {
     app()->bind(TicketPolicy::class . '::update', fn (): Response => Response::deny());
 
     $ticket = Ticket::factory()
@@ -267,7 +265,7 @@ it('does not render page if the policy update returns a denied response', functi
     app()->bind(TicketPolicy::class . '::update', fn (): bool => true);
 });
 
-it('re-authorizes update on Livewire updates after the initial mount', function (): void {
+it('re-authorizes `update()` on Livewire updates after the initial mount', function (): void {
     $ticket = Ticket::factory()
         ->create();
 
@@ -284,7 +282,7 @@ it('re-authorizes update on Livewire updates after the initial mount', function 
     app()->bind(TicketPolicy::class . '::update', fn (): bool => true);
 });
 
-it('re-authorizes viewAny on Livewire updates after the initial mount of an edit page', function (): void {
+it('re-authorizes `viewAny()` on Livewire updates after the initial mount of an edit page', function (): void {
     $ticket = Ticket::factory()
         ->create();
 

@@ -33,7 +33,7 @@ it('can render without seconds', function (): void {
         ->assertSuccessful();
 });
 
-describe('`hasDate()` override effects', function (): void {
+describe('time-only configuration', function (): void {
     it('returns `false` for `hasDate()`', function (): void {
         $picker = TimePicker::make('time');
 
@@ -104,12 +104,13 @@ describe('`hasDate()` override effects', function (): void {
 it('has no accessibility issues in light and dark modes', function (): void {
     $this->actingAs(User::factory()->create());
 
-    visit('/time-picker-browser-test')
+    $page = visit('/time-picker-browser-test');
+
+    $page
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
 
-    visit('/time-picker-browser-test')
-        ->inDarkMode()
+    $page->inDarkMode()
         ->assertNoAccessibilityIssues();
 });
 

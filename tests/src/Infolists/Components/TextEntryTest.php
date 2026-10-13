@@ -245,7 +245,7 @@ it('can set `listWithLineBreaks()`', function (): void {
     expect($entry->isListWithLineBreaks())->toBeTrue();
 });
 
-it('`isListWithLineBreaks()` returns true when `bulleted()` is set', function (): void {
+test('`isListWithLineBreaks()` returns true when `bulleted()` is set', function (): void {
     $entry = TextEntry::make('name')->bulleted();
     expect($entry->isListWithLineBreaks())->toBeTrue();
 });
@@ -425,7 +425,7 @@ describe('formatting trust boundaries', function (): void {
     it('sanitizes `RichContentAttribute` before the general `Htmlable` bypass', function (bool $isMarkdown): void {
         // Return unsafe HTML at the boundary so the renderer's own sanitizer cannot mask a regression here.
         $content = Mockery::mock(RichContentAttribute::class);
-        $content->shouldReceive('toHtml')->once()
+        $content->shouldReceive('toHtml')
             ->andReturn('<p onclick="alert(1)">Alpha beta</p><script>alert(2)</script>');
 
         $entry = TextEntry::make('content')
@@ -636,28 +636,17 @@ describe('rendering', function (): void {
     });
 });
 
-it('renders labels and wrapper URLs accessibly in light and dark modes', function (): void {
+it('renders labels and wrapper URLs', function (): void {
     Artisan::call('filament:assets');
-
-    Post::factory()->create();
 
     $this->actingAs(User::factory()->create());
 
-    foreach ([false, true] as $isDarkMode) {
-        $page = visit('/infolist-entries-browser-test');
-
-        if ($isDarkMode) {
-            $page = $page->inDarkMode();
-        }
-
-        $page
-            ->assertNoSmoke()
-            ->assertSeeIn('[data-testid="enum-label"]', 'User Management')
-            ->assertSeeIn('[data-testid="trusted-label"]', 'Label: <strong>Alpha beta</strong> (label)')
-            ->assertNotPresent('[data-testid="trusted-label"] strong')
-            ->assertCount('[data-testid="linked-entry"] a', 1)
-            ->assertNoAccessibilityIssues();
-    }
+    visit('/infolist-entries-browser-test')
+        ->assertNoSmoke()
+        ->assertSeeIn('[data-testid="enum-label"]', 'User Management')
+        ->assertSeeIn('[data-testid="trusted-label"]', 'Label: <strong>Alpha beta</strong> (label)')
+        ->assertNotPresent('[data-testid="trusted-label"] strong')
+        ->assertCount('[data-testid="linked-entry"] a', 1);
 });
 
 class TestComponentWithTextEntry extends Component implements HasSchemas

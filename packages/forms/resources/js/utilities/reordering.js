@@ -205,11 +205,7 @@ export default function reordering({
                             }
                             return
                         }
-                        if (
-                            !rendersOwner(effects) ||
-                            cancelling ||
-                            isDescendantAction
-                        ) {
+                        if (!rendersOwner(effects) || isDescendantAction) {
                             this.resynchronize(operation)
                             return
                         }

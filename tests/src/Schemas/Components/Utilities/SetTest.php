@@ -21,6 +21,7 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -185,7 +186,7 @@ it('applies state casts from rebuilt child components with `__invoke()`', functi
         ->toBe(StringBackedEnum::Three);
 });
 
-it('action-injected `Set` uses rebuilt nested child components', function (): void {
+test('action-injected `Set` uses rebuilt nested child components', function (): void {
     $livewire = Livewire::make();
 
     Schema::make($livewire)
@@ -268,6 +269,86 @@ it('can set `skipComponentsChildContainersWhileSearching()`', function (): void 
     $result = $set->skipComponentsChildContainersWhileSearching(false);
 
     expect($result)->toBe($set);
+});
+describe('Livewire field updates', function (): void {
+    it('can set the value of a field', function (): void {
+        livewire(new class extends Livewire
+        {
+            public function form(Schema $form): Schema
+            {
+                return $form->components([
+                    TextInput::make('foo'),
+                    TextInput::make('bar')->live()->afterStateUpdated(fn (Set $set, $state) => $set('foo', $state)),
+                ])->statePath('data');
+            }
+        })
+            ->fillForm(['bar' => $value = Str::random()])
+            ->assertSchemaStateSet(['foo' => $value]);
+    });
+
+    it('can set the value of a field and call its updated hook', function (): void {
+        livewire(new class extends Livewire
+        {
+            public function form(Schema $form): Schema
+            {
+                return $form->components([
+                    TextInput::make('foo')->afterStateUpdated(fn (Set $set) => $set('baz', 'qux')),
+                    TextInput::make('bar')->live()->afterStateUpdated(fn (Set $set, $state) => $set('foo', $state, shouldCallUpdatedHooks: true)),
+                ])->statePath('data');
+            }
+        })
+            ->fillForm(['bar' => $value = Str::random()])
+            ->assertSchemaStateSet(['foo' => $value, 'baz' => 'qux']);
+    });
+
+    it('can set the value of a nested field', function (): void {
+        livewire(new class extends Livewire
+        {
+            public function form(Schema $form): Schema
+            {
+                return $form->components([
+                    Section::make()->statePath('nested')->schema([TextInput::make('foo')]),
+                    TextInput::make('bar')->live()->afterStateUpdated(fn (Set $set, $state) => $set('nested.foo', $state)),
+                ])->statePath('data');
+            }
+        })
+            ->fillForm(['bar' => $value = Str::random()])
+            ->assertSchemaStateSet(['nested.foo' => $value]);
+    });
+
+    it('can set the value of a parent level field', function (): void {
+        livewire(new class extends Livewire
+        {
+            public function form(Schema $form): Schema
+            {
+                return $form->components([
+                    TextInput::make('foo'),
+                    Section::make()->statePath('nested')->schema([
+                        TextInput::make('bar')->live()->afterStateUpdated(fn (Set $set, $state) => $set('../foo', $state)),
+                    ]),
+                ])->statePath('data');
+            }
+        })
+            ->fillForm(['nested.bar' => $value = Str::random()])
+            ->assertSchemaStateSet(['foo' => $value]);
+    });
+
+    it('can set the value of a parent level field with a nested field', function (): void {
+        livewire(new class extends Livewire
+        {
+            public function form(Schema $form): Schema
+            {
+                return $form->components([
+                    Section::make()->statePath('nestedOne')->schema([TextInput::make('foo')]),
+                    Section::make()->statePath('nestedTwo')->schema([
+                        TextInput::make('bar')->live()->afterStateUpdated(fn (Set $set, $state) => $set('../nestedOne.foo', $state)),
+                    ]),
+                ])->statePath('data');
+            }
+        })
+            ->fillForm(['nestedTwo.bar' => $value = Str::random()])
+            ->assertSchemaStateSet(['nestedOne.foo' => $value]);
+    });
 });
 
 class SetTestComponent extends Component implements HasActions, HasSchemas

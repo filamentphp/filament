@@ -68,6 +68,7 @@ class KeyValueTest extends Page
                     ->reorderable()
                     ->reorderAnimationDuration(0)
                     ->required()
+                    ->addAction(static fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'add-accessible-row']))
                     ->extraAttributes(['data-testid' => 'accessible-key-value']),
 
                 KeyValue::make('hidden_reorder_action')

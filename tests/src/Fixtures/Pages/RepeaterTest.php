@@ -73,19 +73,6 @@ class RepeaterTest extends Page
                 $repeater->moveDownAction(static fn (Action $action): Action => $action->action("mountAction('chooseDestination')"));
             } elseif ($this->reorderingView === 'custom-refresh') {
                 $repeater->moveDownAction(static fn (Action $action): Action => $action->action('refreshItems()'));
-            } elseif (in_array($this->reorderingView, ['custom-child-cancel', 'custom-child-submit'])) {
-                $repeater->moveDownAction(static fn (Action $action): Action => $action
-                    ->registerModalActions([
-                        Action::make('chooseChildDestination')
-                            ->requiresConfirmation()
-                            ->modalSubmitAction(static fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'submit-custom']))
-                            ->modalCancelAction(static fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'cancel-custom']))
-                            ->action(static fn (): null => null),
-                    ])
-                    ->action(static function (Action $action): void {
-                        $action->getLivewire()->mountAction('chooseChildDestination');
-                        $action->halt();
-                    }));
             } elseif ($reorderingView === 'one-direction') {
                 $repeater->moveUpAction(static fn (Action $action): Action => $action->hidden());
             }

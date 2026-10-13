@@ -23,10 +23,11 @@ class RichEditorBrowserTest extends Page
 
     public ?array $data = [];
 
-    public int $editorVersion = 0;
+    public bool $isRtl = false;
 
     public function mount(): void
     {
+        $this->isRtl = request()->boolean('rtl');
         $this->form->fill();
     }
 
@@ -97,7 +98,6 @@ class RichEditorBrowserTest extends Page
                     ])
                     ->extraAttributes(fn (): array => [
                         'data-testid' => 'keyboard-rich-editor',
-                        'wire:key' => "keyboard-editor-{$this->editorVersion}",
                     ]),
                 RichEditor::make('duplicateGroupsContent')
                     ->label('Duplicate toolbar groups')
@@ -116,7 +116,7 @@ class RichEditorBrowserTest extends Page
                     ])
                     ->extraAttributes(fn (): array => [
                         'data-testid' => 'duplicate-groups-rich-editor',
-                        'wire:key' => "duplicate-groups-editor-{$this->editorVersion}",
+                        'dir' => $this->isRtl ? 'rtl' : 'ltr',
                     ]),
                 RichEditor::make('nestedContent')
                     ->label('Nested layout')
@@ -134,17 +134,11 @@ class RichEditorBrowserTest extends Page
                     ->toolbarButtons([['italic', 'bold']])
                     ->extraAttributes([
                         'data-testid' => 'revealed-rich-editor',
-                        'x-data' => '{ isVisible: false }',
-                        'x-show' => 'isVisible',
+                        'x-show' => 'isEditorVisible',
+                        'dir' => 'rtl',
                     ]),
             ])
             ->statePath('data');
-    }
-
-    public function remountEditor(): void
-    {
-        $this->editorVersion++;
-        $this->forceRender();
     }
 
     public function save(): void

@@ -107,9 +107,9 @@ it('renders the navigation hierarchy in breadcrumbs', function (): void {
 
     visit(PostResource::getUrl())
         ->assertScript(<<<'JS'
-            Array.from(document.querySelectorAll('.fi-breadcrumbs-item-label')).map((item) => [
+            Array.from(document.querySelectorAll('nav ol > li')).map((item) => [
                 item.textContent.trim(),
-                item.href ? new URL(item.href).pathname : null,
+                item.querySelector('a') ? new URL(item.querySelector('a').href).pathname : null,
             ])
             JS, [
             ['Blog', null],

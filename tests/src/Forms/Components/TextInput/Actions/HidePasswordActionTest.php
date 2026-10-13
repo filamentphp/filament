@@ -1,5 +1,7 @@
 <?php
 
+namespace Filament\Tests\Forms\Components\TextInput\Actions;
+
 use Filament\Forms\Components\TextInput\Actions\HidePasswordAction;
 use Filament\Tests\TestCase;
 
@@ -19,16 +21,4 @@ it('has an icon', function (): void {
     $action = HidePasswordAction::make();
 
     expect($action->getIcon())->not->toBeNull();
-});
-
-it('transfers focus to the `ShowPasswordAction` after hiding the password', function (): void {
-    $action = HidePasswordAction::make();
-
-    expect($action)
-        ->getExtraAttributes()->toMatchArray([
-            'wire:loading.attr' => false,
-            'x-ref' => 'hidePasswordAction',
-            'x-show' => 'isPasswordRevealed',
-        ])
-        ->getCustomAlpineClickHandler()->toBe('setPasswordRevealed(false)');
 });

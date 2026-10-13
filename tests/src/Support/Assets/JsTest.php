@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
@@ -115,6 +116,16 @@ describe('relative public path', function (): void {
 });
 
 describe('`getHtml()`', function (): void {
+    it('renders module scripts only when `module()` is enabled', function (): void {
+        FilamentAsset::register([Js::make('test-js', 'test.js')]);
+
+        expect(FilamentAsset::renderScripts())->not->toContain('type="module"');
+
+        FilamentAsset::register([Js::make('test-js-with-module', 'test.js')->module()]);
+
+        expect(FilamentAsset::renderScripts())->toContain('type="module"');
+    });
+
     it('returns an `Htmlable` instance', function (): void {
         $js = Js::make('script')
             ->package('my-package');

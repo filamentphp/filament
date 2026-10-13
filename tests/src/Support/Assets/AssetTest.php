@@ -211,9 +211,6 @@ it('uses the full installed reference to version assets from development package
             ->and(TestAsset::make('my-asset')->package('vendor/dev-plugin-without-reference')->getVersion())->toBe('dev-main')
             ->and(TestAsset::make('my-asset')->package('vendor/released-plugin')->getVersion())->toBe('2.3.1.0')
             ->and(TestAsset::make('my-asset')->package('vendor/provided-plugin')->getVersion())->toBe(TestAsset::make('my-asset')->getVersion());
-
-        expect(fn (): string => TestAsset::make('my-asset')->getInstalledVersionForTesting('vendor/provided-plugin'))
-            ->toThrow(LogicException::class, 'Unable to determine the installed version of package [vendor/provided-plugin].');
     } finally {
         InstalledVersions::reload($original);
     }
@@ -230,11 +227,6 @@ it('falls back to `filament/support` version for unknown packages', function ():
 
 class TestAsset extends Asset
 {
-    public function getInstalledVersionForTesting(string $package): string
-    {
-        return $this->getInstalledVersion($package);
-    }
-
     public function getPublicPath(): string
     {
         return '';

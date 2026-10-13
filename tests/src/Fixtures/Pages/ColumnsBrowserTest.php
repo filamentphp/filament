@@ -40,6 +40,19 @@ class ColumnsBrowserTest extends Page implements HasTable
     #[Url]
     public string $saveScenario = 'success';
 
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('allowColumnEdits')
+                ->label('Allow column edits')
+                ->visible(fn (): bool => $this->editableColumns)
+                ->extraAttributes(['data-testid' => 'allow-column-edits'])
+                ->action(function (): void {
+                    $this->saveScenario = 'success';
+                }),
+        ];
+    }
+
     public function table(Table $table): Table
     {
         if ($this->editableColumns) {
@@ -63,11 +76,7 @@ class ColumnsBrowserTest extends Page implements HasTable
                         if ($this->saveScenario === 'cached-state') {
                             $column->getState();
                         }
-
-                        abort_if($this->saveScenario === 'failure', 500);
-                        abort_if($this->saveScenario === 'forbidden', 403);
-                    })
-                    ->afterStateUpdated(fn () => abort_if($this->saveScenario === 'post-save-failure', 500));
+                    });
 
                 if (method_exists($column, 'extraInputAttributes')) {
                     $column->extraInputAttributes(['aria-describedby' => 'editable-column-help']);

@@ -197,13 +197,13 @@ describe('`getTextColors()` logic', function (): void {
 
     it('passes through `TextColor` objects unchanged', function (): void {
         $post = Post::factory()->create();
-        $tc = TextColor::make('#ff0000', 'red');
+        $textColor = TextColor::make('#ff0000', 'red');
         $attribute = RichContentAttribute::make($post, 'content')
-            ->textColors(['red' => $tc]);
+            ->textColors(['red' => $textColor]);
 
         $colors = $attribute->getTextColors();
 
-        expect($colors['red'])->toBe($tc);
+        expect($colors['red'])->toBe($textColor);
     });
 });
 
