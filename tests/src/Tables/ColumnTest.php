@@ -286,14 +286,19 @@ describe('searching', function (): void {
     });
 
     it('can search posts with relationship', function (): void {
-        $posts = Post::factory()->count(10)->create();
-
-        $author = $posts->first()->author->name;
+        $matchingPost = Post::factory()->create([
+            'author_id' => User::factory()->state(['name' => 'Morgan Ashford']),
+            'title' => 'Project update',
+        ]);
+        $notMatchingPosts = Post::factory()->count(2)->sequence(
+            ['author_id' => User::factory()->state(['name' => 'Morgan Vale'])],
+            ['author_id' => User::factory()->state(['name' => 'Taylor Ashford'])],
+        )->create(['title' => 'Project update']);
 
         livewire(PostsTable::class)
-            ->searchTable($author)
-            ->assertCanSeeTableRecords($posts->where('author.name', $author))
-            ->assertCanNotSeeTableRecords($posts->where('author.name', '!=', $author));
+            ->searchTable('Morgan Ashford')
+            ->assertCanSeeTableRecords([$matchingPost])
+            ->assertCanNotSeeTableRecords($notMatchingPosts);
     });
 
     it('can search posts with JSON column', function (): void {
