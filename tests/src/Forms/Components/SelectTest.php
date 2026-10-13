@@ -2227,6 +2227,7 @@ describe('browser interactions', function (): void {
         $page->inDarkMode()
             ->click('[data-testid="create-option-action-trigger"]')
             ->assertVisible('[data-testid="create-option-action-modal"]')
+            ->assertPresent('[data-testid="create-option-name-input"]:focus')
             ->click($launcher)
             ->assertPresent($search . ':focus')
             ->assertNoAccessibilityIssues();
