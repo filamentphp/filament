@@ -590,6 +590,14 @@
         padding-inline-start: calc(var(--spacing) * 3);
     }
 
+    ol li + li:where(:not(.fi-not-prose, .fi-not-prose *)),
+    ul li + li:where(:not(.fi-not-prose, .fi-not-prose *)),
+    li > ol:where(:not(.fi-not-prose, .fi-not-prose *)),
+    li > ul:where(:not(.fi-not-prose, .fi-not-prose *)),
+    li > p + p:where(:not(.fi-not-prose, .fi-not-prose *)) {
+        margin-top: var(--spacing);
+    }
+
     ol li:where(:not(.fi-not-prose, .fi-not-prose *))::marker,
     ul li:where(:not(.fi-not-prose, .fi-not-prose *))::marker {
         color: var(--prose-marker-color);
