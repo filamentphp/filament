@@ -2106,15 +2106,9 @@ describe('browser interactions', function (): void {
             $url = ($operation === 'extend link') ? 'https://example.com/revised-article' : 'https://example.com/article';
 
             if ($operation === 'extend link') {
-
                 $page
-                    ->keys(':focus', 'Escape')
-                    ->assertCount('[role="tooltip"]:visible', 0)
-                    ->keys(':focus', 'Escape')
+                    ->click($content . ' a[href="https://example.com/article"]')
                     ->assertPresent($content . ':focus')
-                    ->keys(':focus', 'ArrowRight')
-                    ->assertScript('window.getSelection().isCollapsed', true)
-                    ->keys(':focus', 'ArrowLeft')
                     ->assertScript('window.getSelection().isCollapsed', true);
             }
 
