@@ -160,6 +160,101 @@ describe('filtering records', function (): void {
     });
 });
 
+describe('indicators', function (): void {
+    it('shows the option label in the indicator, not the raw title column, with `getOptionLabelFromRecordUsing()`', function (): void {
+        $author = User::factory()->create(['name' => 'Jane Author', 'email' => 'jane@example.com']);
+        Post::factory()->create(['author_id' => $author->getKey()]);
+
+        $component = livewire(TestTableWithRecordLabelSelectFilter::class)
+            ->filterTable('author', $author->getKey());
+
+        $labels = collect($component->instance()->getTable()->getFilterIndicators())
+            ->map(fn (Tables\Filters\Indicator $indicator): string => $indicator->getLabel());
+
+        expect($labels->all())->toBe(['Author: Jane Author']);
+    });
+
+    it('shows the option labels in the indicator of a multiple filter with `getOptionLabelFromRecordUsing()`', function (): void {
+        $jane = User::factory()->create(['name' => 'Jane Author', 'email' => 'jane@example.com']);
+        $john = User::factory()->create(['name' => 'John Author', 'email' => 'john@example.com']);
+        Post::factory()->create(['author_id' => $jane->getKey()]);
+
+        $component = livewire(TestTableWithMultipleRecordLabelSelectFilter::class)
+            ->filterTable('author', [$jane->getKey(), $john->getKey()]);
+
+        $labels = collect($component->instance()->getTable()->getFilterIndicators())
+            ->map(fn (Tables\Filters\Indicator $indicator): string => $indicator->getLabel());
+
+        expect($labels->all())->toBe(['Author: Jane Author & John Author']);
+    });
+
+    it('still shows the title attribute in the indicator without a record label callback', function (): void {
+        $author = User::factory()->create(['name' => 'Jane Author']);
+        Post::factory()->create(['author_id' => $author->getKey()]);
+
+        $component = livewire(TestTableWithSelectFilter::class)
+            ->filterTable('author', $author->getKey());
+
+        $labels = collect($component->instance()->getTable()->getFilterIndicators())
+            ->map(fn (Tables\Filters\Indicator $indicator): string => $indicator->getLabel());
+
+        expect($labels->all())->toBe(['Author: Jane Author']);
+    });
+});
+
+class TestTableWithRecordLabelSelectFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'email')
+                    ->getOptionLabelFromRecordUsing(fn (User $record): string => $record->name),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithMultipleRecordLabelSelectFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'email')
+                    ->getOptionLabelFromRecordUsing(fn (User $record): string => $record->name)
+                    ->multiple(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
 class TestTableWithSelectFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
