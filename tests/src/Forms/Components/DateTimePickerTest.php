@@ -1561,7 +1561,8 @@ describe('browser interactions', function (): void {
         $page = visit('/date-time-picker-test?native=0&time=0&initial-state=2024-01-31&display-format=Y-m-d')->withTimezone('UTC');
         $trigger = '[data-testid="timed-trigger"]';
 
-        $page->keys($trigger, 'ArrowDown')
+        $page->assertValue($trigger, '2024-01-31')
+            ->keys($trigger, 'ArrowDown')
             ->assertPresent('[data-date="2024-01-31"]:focus')
             ->assertAttribute('[data-date="2024-01-31"]', 'aria-selected', 'true')
             ->keys('[role="gridcell"]:focus', 'PageDown')

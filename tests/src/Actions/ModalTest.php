@@ -152,7 +152,8 @@ describe('browser interactions', function (): void {
 
         $page->keys('[data-testid="standalone-trigger"]', 'Enter')
             ->assertVisible('[data-testid="standalone-modal"]')
-            ->keys('[data-testid="standalone-close"]', 'PageDown')
+            ->assertPresent('[data-testid="standalone-close"]:focus')
+            ->keys(':focus', 'PageDown')
             ->assertScript('window.scrollY', $scrollPosition)
             ->click('[data-testid="standalone-close"]')
             ->assertMissing('[data-testid="standalone-modal"]')
@@ -161,6 +162,7 @@ describe('browser interactions', function (): void {
             ->keys('[data-testid="standalone-trigger"]', 'PageUp')
             ->assertScript('window.scrollY < ' . $scrollPosition, true)
             ->keys('[data-testid="standalone-trigger"]', 'Control+End')
+            ->assertScript('window.scrollY', $scrollPosition)
             ->keys('[data-testid="standalone-trigger"]', 'Enter')
             ->assertVisible('[data-testid="standalone-modal"]')
             ->assertPresent('[data-testid="standalone-close"]:focus')
@@ -175,6 +177,7 @@ describe('browser interactions', function (): void {
             ->inDarkMode()
             ->click('[data-testid="standalone-trigger"]')
             ->assertVisible('[data-testid="standalone-modal"]')
+            ->assertPresent('[data-testid="standalone-close"]:focus')
             ->assertNoAccessibilityIssues();
     });
 
