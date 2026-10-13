@@ -525,6 +525,44 @@ The JavaScript string has access to `$get()` and `$set()` utilities, which allow
     Any JavaScript string passed to the `actionJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value.
 </Aside>
 
+## Opening an action from a URL
+
+You can link to an action modal on a Filament page using `?action=sendEmail`. For a table action, use `?tableAction=view&tableActionRecord=123`. Unqualified links target the page, not its embedded Livewire components. You can also explicitly target the page using `actionComponent=page`.
+
+You may pass arguments using `actionArguments[source]=email` or `tableActionArguments[source]=email`, and ordinary action context using `actionContext[...]`.
+
+<Aside variant="danger">
+    Targeting routes the link; it does not authorize access. Keep route, page, component, and action authorization in place. Table records are resolved through the target component's table query or relationship, not a global model lookup. Arguments and context are user-controlled input: validate and authorize their use in your action. URL mounting forces `mountedFromUrl` to `true` and does not execute modal-less actions automatically, but modal initialization hooks still run, so do not put unconfirmed mutations in them.
+</Aside>
+
+### Targeting an embedded Livewire component
+
+To enable deep links for a relation manager or another Livewire component using `InteractsWithActions`, override `getDefaultActionUrlIdentifier()` on that component:
+
+```php
+public function getDefaultActionUrlIdentifier(): ?string
+{
+    return 'departments';
+}
+```
+
+Then include its identifier in the link:
+
+```text
+?actionComponent=departments&action=sendEmail
+?actionComponent=departments&tableAction=view&tableActionRecord=123
+```
+
+Use a stable identifier unique to each component instance on the page. Do not use Livewire's runtime component ID, or reuse the reserved `page` identifier for an embedded component. Components returning `null` (the default outside pages) do not automatically open URL actions. Custom component views must render `<x-filament-actions::modals />`; Filament tables already include it.
+
+If the component is inside an inactive tab, your link must also select that tab using the page's existing URL state. For example, a page binding its active content tab to `?tab=` could use `?tab=departments&actionComponent=departments&tableAction=view&tableActionRecord=123`. The action target does not select tabs or render otherwise absent components.
+
+### Initializing URL actions
+
+An action is initialized once per component lifetime, so closing its modal or re-rendering the component does not reopen it. Deferred table actions wait until the table has loaded. Prefer linking to one action at a time rather than combining `action` and `tableAction`.
+
+Closing an ordinary action removes its action parameters from the URL. Table action parameters remain; a newly mounted component, including after navigation or destroying and recreating a child, can consume a link still present in the URL again.
+
 ## Action utility injection
 
 The vast majority of methods used to configure actions accept functions as parameters instead of hardcoded values:

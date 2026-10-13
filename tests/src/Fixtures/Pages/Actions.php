@@ -409,6 +409,9 @@ class Actions extends Page
                 ->requiresConfirmation()
                 ->unsavedChangesAlert()
                 ->action(static fn () => null),
+            Action::make('123')
+                ->requiresConfirmation()
+                ->action(static fn () => null),
         ];
     }
 

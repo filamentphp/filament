@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 use ReflectionMethod;
 use ReflectionNamedType;
@@ -78,6 +79,16 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     #[Url(as: 'tableActionArguments')]
     public $defaultTableActionArguments = null;
 
+    /** @var mixed */
+    #[Url(as: 'actionComponent')]
+    public $defaultActionComponent = null;
+
+    #[Locked]
+    public bool $hasDefaultActionMounted = false;
+
+    #[Locked]
+    public bool $hasDefaultTableActionMounted = false;
+
     /**
      * @var array<string, Action>
      */
@@ -89,6 +100,79 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     protected ?array $cachedMountedActions = null;
 
     protected bool $hasActionsModalRendered = false;
+
+    public function getDefaultActionUrlIdentifier(): ?string
+    {
+        return null;
+    }
+
+    protected function getDefaultActionUrlTarget(): mixed
+    {
+        return $this->defaultActionComponent;
+    }
+
+    protected function isDefaultActionUrlTarget(): bool
+    {
+        $identifier = $this->getDefaultActionUrlIdentifier();
+        $target = $this->getDefaultActionUrlTarget();
+
+        return filled($identifier) && is_scalar($target) && ((string) $target === $identifier);
+    }
+
+    public function shouldMountDefaultActions(): bool
+    {
+        if (! $this->isDefaultActionUrlTarget()) {
+            return false;
+        }
+
+        if ((! $this->hasDefaultTableActionMounted) && is_scalar($this->defaultTableAction) && filled($this->defaultTableAction) && ($this instanceof HasTable) && (! $this->isTableLoaded())) {
+            return false;
+        }
+
+        return ((! $this->hasDefaultActionMounted) && is_scalar($this->defaultAction) && filled($this->defaultAction))
+            || ((! $this->hasDefaultTableActionMounted) && is_scalar($this->defaultTableAction) && filled($this->defaultTableAction) && ($this instanceof HasTable) && $this->isTableLoaded());
+    }
+
+    public function mountDefaultActions(): void
+    {
+        if (! $this->shouldMountDefaultActions()) {
+            return;
+        }
+
+        $defaultAction = $this->defaultAction;
+        $defaultActionArguments = $this->defaultActionArguments;
+        $defaultActionContext = $this->getDefaultActionUrlContext();
+
+        if ((! $this->hasDefaultTableActionMounted) && is_scalar($this->defaultTableAction) && filled($this->defaultTableAction) && ($this instanceof HasTable) && $this->isTableLoaded()) {
+            $this->hasDefaultTableActionMounted = true;
+
+            if (($this->defaultTableActionRecord === null) || is_string($this->defaultTableActionRecord) || is_int($this->defaultTableActionRecord)) {
+                $this->mountAction(
+                    (string) $this->defaultTableAction,
+                    is_array($this->defaultTableActionArguments) ? $this->defaultTableActionArguments : [],
+                    $this->getDefaultTableActionUrlContext(),
+                );
+            }
+        }
+
+        if ((! $this->hasDefaultActionMounted) && is_scalar($defaultAction) && filled($defaultAction)) {
+            $this->hasDefaultActionMounted = true;
+
+            if (isset($defaultActionContext['schemaComponent']) && (! is_string($defaultActionContext['schemaComponent']))) {
+                return;
+            }
+
+            if (isset($defaultActionContext['recordKey']) && (! is_string($defaultActionContext['recordKey'])) && (! is_int($defaultActionContext['recordKey']))) {
+                return;
+            }
+
+            $this->mountAction(
+                (string) $defaultAction,
+                is_array($defaultActionArguments) ? $defaultActionArguments : [],
+                $defaultActionContext,
+            );
+        }
+    }
 
     /**
      * Context for the `mountAction()` call that opens the `?action=` default action on
@@ -880,11 +964,13 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         if (! count($this->mountedActions)) {
             $action?->clearRecordAfter();
 
-            // Setting these to `null` creates a bug where the properties are
-            // actually set to `'null'` strings and remain in the URL.
-            $this->defaultAction = [];
-            $this->defaultActionArguments = [];
-            $this->defaultActionContext = [];
+            if ($this->isDefaultActionUrlTarget()) {
+                // Setting these to `null` creates a bug where the properties are
+                // actually set to `'null'` strings and remain in the URL.
+                $this->defaultAction = [];
+                $this->defaultActionArguments = [];
+                $this->defaultActionContext = [];
+            }
 
             return;
         }

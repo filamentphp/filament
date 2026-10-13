@@ -1215,3 +1215,20 @@ To disable this behavior, you may override the `$isLazy` property on the relatio
 ```php
 protected static bool $isLazy = false;
 ```
+
+## Opening relation manager actions from a URL
+
+Relation managers do not consume page action links by default. To explicitly target a relation manager, override `getDefaultActionUrlIdentifier()` to return a stable identifier:
+
+```php
+public function getDefaultActionUrlIdentifier(): ?string
+{
+    return 'departments';
+}
+```
+
+You can then use `?actionComponent=departments&tableAction=view&tableActionRecord=123`. Targeting does not grant access: relation manager and action authorization still apply, and the record must resolve through the manager's table query or relationship.
+
+Include the page's tab parameter to select and render that relation manager too. For example, a manually embedded manager in a content tab bound to `?tab=` can use `?tab=departments&actionComponent=departments&tableAction=view&tableActionRecord=123`.
+
+Each embedded instance needs a unique identifier. No custom relation manager Blade initializer is necessary: its table includes the shared action modals. Lazy managers initialize after they mount, and deferred tables wait until they load. See [opening an action from a URL](../actions/overview#opening-an-action-from-a-url) for arguments, custom views, and lifecycle limits.

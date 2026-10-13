@@ -34,11 +34,13 @@ use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithMo
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPivotAndModifiedQueryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPivotSummaryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithSubquerySelectAndDetachRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\ScopedDepartmentsRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Livewire\Livewire;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertDatabaseHas;
@@ -549,6 +551,134 @@ describe('rendering and authorization', function (): void {
 
         assertDatabaseHas(Department::class, ['name' => $name]);
     });
+});
+
+describe('scoped default action URLs', function (): void {
+    it('only mounts the explicitly targeted embedded instance', function (string $parameter): void {
+        $ticket = Ticket::factory()->hasAttached(Department::factory())->create();
+
+        Livewire::withQueryParams([
+            $parameter => 'view',
+            'actionComponent' => 'departments',
+            'tableActionRecord' => (string) $ticket->departments->first()->getKey(),
+        ]);
+
+        livewire(EditTicket::class, ['record' => $ticket->getKey()])
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+
+        livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+
+        livewire(ScopedDepartmentsRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+            'actionUrlIdentifier' => 'other-departments',
+        ])
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+
+        livewire(ScopedDepartmentsRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+        ])
+            ->call('mountDefaultActions')
+            ->assertSet('mountedActions.0.name', 'view')
+            ->call('unmountAction')
+            ->call('$refresh')
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+    })->with(['action', 'tableAction']);
+
+    it('leaves untargeted embedded actions closed', function (string $identifier): void {
+        $ticket = Ticket::factory()->create();
+        Livewire::withQueryParams(['action' => 'view']);
+
+        livewire(ScopedDepartmentsRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+            'actionUrlIdentifier' => $identifier,
+        ])
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+    })->with(['departments', 'page']);
+
+    it('waits for a deferred table before consuming its URL action', function (): void {
+        $ticket = Ticket::factory()->hasAttached(Department::factory())->create();
+        Livewire::withQueryParams([
+            'tableAction' => 'view',
+            'actionComponent' => 'departments',
+            'tableActionRecord' => (string) $ticket->departments->first()->getKey(),
+            'tableActionArguments' => ['source' => 'email'],
+        ]);
+
+        livewire(ScopedDepartmentsRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+            'deferTableLoading' => true,
+        ])
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted()
+            ->call('loadTable')
+            ->call('mountDefaultActions')
+            ->assertSet('mountedActions.0.name', 'view')
+            ->assertSet('mountedActions.0.arguments.source', 'email')
+            ->assertSet('mountedActions.0.context.mountedFromUrl', true)
+            ->call('unmountAction')
+            ->call('loadTable')
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+    });
+
+    it('preserves record action authorization for URL mounts', function (): void {
+        app()->bind(DepartmentPolicy::class . '::view', fn (): bool => false);
+        $ticket = Ticket::factory()->hasAttached(Department::factory())->create();
+        Livewire::withQueryParams([
+            'tableAction' => 'view',
+            'actionComponent' => 'departments',
+            'tableActionRecord' => (string) $ticket->departments->first()->getKey(),
+        ]);
+
+        livewire(ScopedDepartmentsRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+        ])
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+    });
+
+    it('rejects foreign, query-excluded, deleted, unknown and malformed URL records', function (string $recordState): void {
+        $ticket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+
+        if ($recordState === 'excluded') {
+            $ticket->departments()->attach($department);
+            $department->update(['name' => 'Excluded department']);
+        }
+
+        if ($recordState === 'deleted') {
+            $ticket->departments()->attach($department);
+            $department->forceDelete();
+        }
+
+        Livewire::withQueryParams([
+            'tableAction' => 'view',
+            'actionComponent' => 'departments',
+            'tableActionRecord' => match ($recordState) {
+                'malformed' => [$department->getKey()],
+                'unknown' => (string) (Department::query()->max('id') + 1),
+                default => (string) $department->getKey(),
+            },
+        ]);
+
+        livewire(ScopedDepartmentsRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+        ])
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+    })->with(['foreign', 'excluded', 'deleted', 'unknown', 'malformed']);
 });
 
 describe('attaching records', function (): void {
