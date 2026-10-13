@@ -803,46 +803,6 @@ Filament also checks `canViewForRecord()` before a relation manager's `mount()` 
 
 Keep sensitive work out of the relation manager's `boot()` and lazy `placeholder()` methods, which can run before this authorization check. If you need sensitive work in these methods, authorize it separately.
 
-## Combining the relation manager tabs with the form
-
-On the Edit or View page class, override the `hasCombinedRelationManagerTabsWithContent()` method:
-
-```php
-public function hasCombinedRelationManagerTabsWithContent(): bool
-{
-    return true;
-}
-```
-
-<AutoScreenshot name="panels/resources/editing-combined-tabs" alt="Resource edit page with combined relation manager tabs" version="4.x" />
-
-### Customizing the content tab
-
-On the Edit or View page class, override the `getContentTabComponent()` method, and use any [Tab](../schemas/tabs) customization methods:
-
-```php
-use Filament\Schemas\Components\Tabs\Tab;
-
-public function getContentTabComponent(): Tab
-{
-    return Tab::make('Settings')
-        ->icon('heroicon-m-cog');
-}
-```
-
-### Setting the position of the form tab
-
-By default, the form tab is rendered before the relation tabs. To render it after, you can override the `getContentTabPosition()` method on the Edit or View page class:
-
-```php
-use Filament\Resources\Pages\Enums\ContentTabPosition;
-
-public function getContentTabPosition(): ?ContentTabPosition
-{
-    return ContentTabPosition::After;
-}
-```
-
 ## Customizing relation manager tabs
 
 To customize the tab for a relation manager, override the `getTabComponent()` method, and use any [Tab](../schemas/tabs) customization methods:
@@ -921,6 +881,154 @@ RelationGroup::make('Contacts', [
     ->badge(fn (Model $ownerRecord): string => (string) $ownerRecord->contacts()->count())
     ->deferBadge();
 ```
+
+## Combining the relation manager tabs with the form
+
+On the Edit or View page class, override the `hasCombinedRelationManagerTabsWithContent()` method:
+
+```php
+public function hasCombinedRelationManagerTabsWithContent(): bool
+{
+    return true;
+}
+```
+
+<AutoScreenshot name="panels/resources/editing-combined-tabs" alt="Resource edit page with combined relation manager tabs" version="4.x" />
+
+### Customizing the content tab
+
+On the Edit or View page class, override the `getContentTabComponent()` method, and use any [Tab](../schemas/tabs) customization methods:
+
+```php
+use Filament\Schemas\Components\Tabs\Tab;
+
+public function getContentTabComponent(): Tab
+{
+    return Tab::make('Settings')
+        ->icon('heroicon-m-cog');
+}
+```
+
+### Setting the position of the form tab
+
+By default, the form tab is rendered before the relation tabs. To render it after, you can override the `getContentTabPosition()` method on the Edit or View page class:
+
+```php
+use Filament\Resources\Pages\Enums\ContentTabPosition;
+
+public function getContentTabPosition(): ?ContentTabPosition
+{
+    return ContentTabPosition::After;
+}
+```
+
+<Aside variant="info">
+    Numeric relation manager keys are now preserved in this position. If your existing `?relation=` links used reindexed keys, update them to match the keys in `getRelations()`.
+</Aside>
+
+### Mixing content and relation manager tabs
+
+To add your own tabs or change their order, override `getCombinedTabComponents()` on the Edit or View page. Use `getRelationManagerTabComponent()` to place a relation manager between your content tabs:
+
+```php
+use Filament\Schemas\Components\Tabs\Tab;
+
+public function getCombinedTabComponents(): array
+{
+    return [
+        'overview' => Tab::make('Overview')
+            ->schema([
+                // ...
+            ]),
+        'comments' => $this->getRelationManagerTabComponent('comments'),
+        '' => $this->getContentTabComponent()->label('Edit'),
+        'tags' => $this->getRelationManagerTabComponent('tags'),
+    ];
+}
+```
+
+The `comments` and `tags` keys come from your resource's `getRelations()` array:
+
+```php
+use App\Filament\Resources\Posts\RelationManagers\CommentsRelationManager;
+use App\Filament\Resources\Posts\RelationManagers\TagsRelationManager;
+
+public static function getRelations(): array
+{
+    return [
+        'comments' => CommentsRelationManager::class,
+        'tags' => TagsRelationManager::class,
+    ];
+}
+```
+
+You can also pass numeric keys to `getRelationManagerTabComponent()`. For a [relation group](#grouping-relation-managers), this returns one tab containing its authorized managers.
+
+Generated tabs keep their usual authorization, badges, configuration, and lazy loading. The helper returns `null` for unavailable managers, so their tabs are omitted. You can customize any tab using the usual [Tab methods](../schemas/tabs), including `label()`, `icon()`, and `badge()`.
+
+The array order controls the tab order instead of `getContentTabPosition()`. Keep the empty key (`''`) for the standard form or infolist tab. Other keys are used in the URL, such as `?relation=overview`, so choose unique keys and keep existing manager keys to preserve links.
+
+<Aside variant="danger">
+    An Edit page still requires edit permission, including on read-only tabs. Use a View page for view-only access.
+</Aside>
+
+#### Including the remaining relation managers
+
+If you have built your tabs in a `$tabs` array, you can append any relation managers you have not already placed:
+
+```php
+return $tabs + $this->getRelationManagerTabComponents(except: array_keys($tabs));
+```
+
+Use the registered manager keys in `$tabs` so these managers are excluded from the remaining tabs.
+
+#### Changing the tab query string key
+
+Combined tabs use `?relation=` by default, including content tabs. To use `?tab=` instead, redeclare `$activeRelationManager` on your Edit or View page with Livewire's `Url` attribute:
+
+```php
+use Livewire\Attributes\Url;
+
+#[Url(as: 'tab')]
+public ?string $activeRelationManager = null;
+```
+
+Keep the property name unchanged. You can also set `history: true` on the attribute to navigate between tabs with the browser's back and forward buttons. Existing `?relation=` links will no longer select a tab on this page.
+
+#### Adding a separately submitted form
+
+To give a content tab its own submit handler, wrap the form in a `Form` component:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Tabs\Tab;
+
+Tab::make('Preferences')
+    ->schema([
+        Form::make([EmbeddedSchema::make('preferencesForm')])
+            ->livewireSubmitHandler('savePreferences')
+            ->footer([
+                Actions::make([
+                    Action::make('savePreferences')
+                        ->label('Save preferences')
+                        ->submit('savePreferences'),
+                ]),
+            ]),
+    ])
+```
+
+Define `preferencesForm()` as a [named form](../components/form#using-multiple-forms) with its own `statePath()`. Fill it in `mount()`, after `parent::mount($record)`, and use `$this->preferencesForm->getState()` in `savePreferences()` to validate and save its data independently of the resource form.
+
+<Aside variant="danger">
+    Hiding a tab does not protect its submit handler. Authorize custom saves in your application.
+</Aside>
+
+#### Building a custom page layout
+
+For a different page layout, override `content()` and compose `Tabs::make()->livewireProperty('activeTab')` yourself. You can reuse the relation manager tab helpers there too, rather than embedding and configuring managers manually.
 
 ## Sharing a resource's form and table with a relation manager
 
