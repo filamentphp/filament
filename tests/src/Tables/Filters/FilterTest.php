@@ -265,9 +265,10 @@ describe('browser interactions', function (): void {
         $colorFilter = '[data-testid="color-filter"] input';
         $colorPanel = '[data-testid="color-filter"] [role="dialog"]';
 
-        $page = visit('/filters-reset-action-browser-test?focus=1')->resize(375, 812);
+        $page = visit('/filters-reset-action-browser-test?focus=1');
 
         $page
+            ->resize(375, 812)
             ->keys($filtersTrigger, 'Enter')
             ->assertPresent($publishedFilter . ':focus')
             ->keys($publishedFilter, 'Escape')
@@ -339,6 +340,7 @@ describe('browser interactions', function (): void {
         foreach ([false, true] as $isDarkMode) {
             if ($isDarkMode) {
                 $page = $page->inDarkMode();
+                $page->resize(375, 812);
             }
 
             $page
