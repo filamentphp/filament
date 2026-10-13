@@ -83,6 +83,7 @@ describe('column manager reordering', function (): void {
 
         $page->assertDisabled($titleUp)
             ->assertMissing('[data-testid="column-manager-internal-move-up"]')
+            ->assertVisible($titleDown)
             ->keys($titleDown, 'Enter')
             ->assertScript($order, ['group::Publication', 'column::title', 'column::id'])
             ->assertPresent($titleDown . ':focus')
