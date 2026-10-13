@@ -1909,6 +1909,9 @@ describe('browser interactions', function (): void {
         $thirdUp = ':nth-match([data-testid="builder"] [data-reorder-direction="up"], 3)';
 
         $page->assertPresent('[data-testid="builder"]')
+            ->assertMissing($firstParagraph)
+            ->assertMissing($secondParagraph)
+            ->assertMissing($thirdParagraph)
             ->keys($firstDown, 'Enter')
             ->assertValue($firstParagraph, 'Beta')
             ->assertValue($secondParagraph, 'Alpha')
