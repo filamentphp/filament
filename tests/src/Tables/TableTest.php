@@ -299,16 +299,70 @@ describe('sorting', function (): void {
         'combined `$sort` injection' => [true],
     ]);
 
-    it('preserves mapped sorting for a toggled-hidden `defaultSort()` column', function (): void {
+    it('preserves selected mapped sorting for a toggled-hidden `defaultSort()` column', function (): void {
         $firstPost = Post::factory()->create(['title' => 'Charlie']);
         $secondPost = Post::factory()->create(['title' => 'Alpha']);
 
         livewire(MappedDefaultSortTableTestComponent::class)
             ->assertCanSeeTableRecords([$secondPost, $firstPost], inOrder: true)
             ->set('tableSort', 'display_title:desc')
-            ->assertSet('tableSort', 'display_title:desc')
-            ->assertCanSeeTableRecords([$secondPost, $firstPost], inOrder: true);
+            ->assertCanSeeTableRecords([$firstPost, $secondPost], inOrder: true);
     });
+
+    it('applies `defaultSort()` to a toggled-hidden aggregate column', function (bool $usesDefaultSortClosure, string $direction): void {
+        $firstUser = User::factory()->create(['name' => 'Charlie']);
+        $secondUser = User::factory()->create(['name' => 'Alpha']);
+        $thirdUser = User::factory()->create(['name' => 'Bravo']);
+
+        Post::factory()->count(2)->for($firstUser, 'author')->create();
+        Post::factory()->for($thirdUser, 'author')->create();
+
+        $expectedUsers = $direction === 'desc'
+            ? [$firstUser, $thirdUser, $secondUser]
+            : [$secondUser, $thirdUser, $firstUser];
+
+        $component = livewire(ToggleableSortableTableTestComponent::class, [
+            'defaultSortColumn' => 'posts_count',
+            'defaultSortDirection' => $direction,
+            'usesDefaultSortClosure' => $usesDefaultSortClosure,
+        ]);
+
+        $tableColumns = $component->get('tableColumns');
+        $tableColumns[1]['isToggled'] = false;
+
+        $component
+            ->call('applyTableColumnManager', $tableColumns)
+            ->assertCanSeeTableRecords($expectedUsers, inOrder: true);
+    })->with([
+        'string ascending' => [false, 'asc'],
+        'string descending' => [false, 'desc'],
+        'Closure ascending' => [true, 'asc'],
+        'Closure descending' => [true, 'desc'],
+    ]);
+
+    it('preserves the selected direction when a `defaultSort()` aggregate column is toggled off', function (string $direction): void {
+        $firstUser = User::factory()->create(['name' => 'Charlie']);
+        $secondUser = User::factory()->create(['name' => 'Alpha']);
+        $thirdUser = User::factory()->create(['name' => 'Bravo']);
+
+        Post::factory()->count(2)->for($firstUser, 'author')->create();
+        Post::factory()->for($thirdUser, 'author')->create();
+
+        $expectedUsers = $direction === 'desc'
+            ? [$firstUser, $thirdUser, $secondUser]
+            : [$secondUser, $thirdUser, $firstUser];
+
+        $component = livewire(ToggleableSortableTableTestComponent::class, [
+            'defaultSortColumn' => 'posts_count',
+        ])->sortTable('posts_count', $direction);
+
+        $tableColumns = $component->get('tableColumns');
+        $tableColumns[1]['isToggled'] = false;
+
+        $component
+            ->call('applyTableColumnManager', $tableColumns)
+            ->assertCanSeeTableRecords($expectedUsers, inOrder: true);
+    })->with(['asc', 'desc']);
 });
 
 describe('pagination', function (): void {
@@ -1014,6 +1068,12 @@ class LoadingSkeletonSortableTableTestComponent extends SortableTableTestCompone
 
 class ToggleableSortableTableTestComponent extends TableTestComponent
 {
+    public string $defaultSortColumn = 'email';
+
+    public string $defaultSortDirection = 'asc';
+
+    public bool $usesDefaultSortClosure = false;
+
     public function table(Table $table): Table
     {
         return $table
@@ -1027,7 +1087,10 @@ class ToggleableSortableTableTestComponent extends TableTestComponent
                     ->sortable()
                     ->toggleable(),
             ])
-            ->defaultSort('email')
+            ->defaultSort(
+                $this->usesDefaultSortClosure ? fn (): string => $this->defaultSortColumn : $this->defaultSortColumn,
+                $this->defaultSortDirection,
+            )
             ->persistSortInSession();
     }
 }
