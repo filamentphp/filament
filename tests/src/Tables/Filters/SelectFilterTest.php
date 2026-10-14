@@ -18,6 +18,7 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -241,7 +242,7 @@ class TestTableWithMultipleRecordLabelSelectFilter extends Component implements 
             ])
             ->filters([
                 SelectFilter::make('author')
-                    ->relationship('author', 'email')
+                    ->relationship('author', 'email', modifyQueryUsing: static fn (Builder $query): Builder => $query->orderBy('name'))
                     ->getOptionLabelFromRecordUsing(static fn (User $record): string => $record->name)
                     ->modifyFormFieldUsing(static fn (Select $field): Select => $field
                         ->key('author-picker')
