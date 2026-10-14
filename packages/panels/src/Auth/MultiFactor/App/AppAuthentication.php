@@ -157,6 +157,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
             class_exists(Writer::class)
             && class_exists(ImageRenderer::class)
             && (! extension_loaded('imagick'))
+            && (! str_starts_with($inlineQrCode, 'data:'))
         ) {
             $inlineQrCode = 'data:image/svg+xml;base64,' . base64_encode($inlineQrCode);
         }
