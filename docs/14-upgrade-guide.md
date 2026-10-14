@@ -402,6 +402,14 @@ See the [table render hook documentation](../advanced/render-hooks#table-builder
 </Disclosure>
 
 <Disclosure open>
+<span slot="summary">The deprecated `IconSize::ExtraExtraLarge` alias has been removed</span>
+
+Replace `Filament\Support\Enums\IconSize::ExtraExtraLarge` with `IconSize::TwoExtraLarge`. The removed constant was an alias of the same enum case, so the underlying value remains `2xl` and the icon size is unchanged.
+
+The automated upgrade script updates PHP constant references for you. Update references stored as strings, dynamically accessed constants, and references outside PHP files manually.
+</Disclosure>
+
+<Disclosure open>
 <span slot="summary">The deprecated badge delete button icon alias has been removed</span>
 
 The deprecated `SupportIconAlias::BADGE_DELETE_BUTTON` constant has been removed. Remove any icon registrations that use it and customize the `.fi-badge-delete-btn-icon` CSS class instead. There is no replacement icon alias, so this change must be handled manually rather than by the automated upgrade script.

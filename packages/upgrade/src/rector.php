@@ -53,6 +53,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->ruleWithConfiguration(RenameClassConstFetchRector::class, [
+        new RenameClassConstFetch('Filament\\Support\\Enums\\IconSize', 'ExtraExtraLarge', 'TwoExtraLarge'),
         new RenameClassConstFetch('Filament\\Tables\\View\\TablesRenderHook', 'TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER', 'TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER'),
         new RenameClassConstFetch('Filament\\Tables\\View\\TablesRenderHook', 'TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE', 'TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE'),
     ]);
