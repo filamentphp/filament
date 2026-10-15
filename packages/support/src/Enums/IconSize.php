@@ -15,9 +15,4 @@ enum IconSize: string
     case ExtraLarge = 'xl';
 
     case TwoExtraLarge = '2xl';
-
-    /**
-     * @deprecated Use `TwoExtraLarge` instead.
-     */
-    public const ExtraExtraLarge = self::TwoExtraLarge;
 }
