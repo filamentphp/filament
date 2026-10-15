@@ -19,6 +19,7 @@ use function Filament\Support\encode_key_segments;
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_pattern;
+use function Filament\Support\generate_search_term_expression;
 use function Filament\Support\is_database_driver_supported;
 use function Filament\Support\is_path_within_directory;
 use function Filament\Support\prepare_inherited_attributes;
@@ -55,9 +56,11 @@ it('recognizes supported drivers with `is_database_driver_supported()`', functio
     'MongoDB' => ['mongodb', false],
 ]);
 
-it('uses `whereLike()` with its expected wildcard escaping for unsupported database drivers', function (): void {
-    $databaseConnection = Mockery::mock(Connection::class);
-    $databaseConnection->shouldReceive('getDriverName')->twice()->andReturn('mongodb');
+it('uses `whereLike()` without SQL expressions and with literal wildcards for unsupported database drivers', function (): void {
+    $databaseConnection = new Connection(null, config: [
+        'driver' => 'mongodb',
+        'search_collation' => 'utf8mb4_unicode_ci',
+    ]);
 
     $baseQuery = new class($databaseConnection, new Grammar($databaseConnection), new Processor) extends QueryBuilder
     {
@@ -76,8 +79,13 @@ it('uses `whereLike()` with its expected wildcard escaping for unsupported datab
 
     $returnedQuery = apply_search_constraint(
         $query,
-        'profile.name',
-        generate_search_pattern('café!_100%[draft]\\path\\%\\_wow!!', hasLeadingWildcard: true, hasTrailingWildcard: true, databaseConnection: $databaseConnection),
+        generate_search_column_expression('profile.name', true, $databaseConnection),
+        generate_search_pattern(
+            generate_search_term_expression('Café!_100%[draft]\\path\\%\\_wow!!', true, $databaseConnection),
+            hasLeadingWildcard: true,
+            hasTrailingWildcard: true,
+            databaseConnection: $databaseConnection,
+        ),
         boolean: 'or',
         isInverse: true,
     );
@@ -85,7 +93,7 @@ it('uses `whereLike()` with its expected wildcard escaping for unsupported datab
     expect($returnedQuery)
         ->toBe($query)
         ->and($baseQuery->whereLikeArguments)
-        ->toBe(['profile.name', '%café!\\_100\\%[draft]\\path\\\\%\\\\_wow!!%', false, 'or', true]);
+        ->toBe(['profile.name', '%Café!\\_100\\%[draft]\\path\\\\%\\\\_wow!!%', false, 'or', true]);
 });
 
 it('builds a fresh index of application classes and excludes symlinked path repository classes with `discover_app_classes()` when Composer uses a custom vendor directory', function (): void {

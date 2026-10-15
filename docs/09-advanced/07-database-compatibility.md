@@ -31,6 +31,8 @@ public function whereLike(
 
 This is a standard Laravel query builder method rather than a Filament-specific extension. Eloquent normally forwards the call to the underlying query builder. Filament calls it without checking `method_exists()` and passes `false` for `$caseSensitive`. The driver implementation should interpret `%` and `_` as multi-character and single-character wildcards respectively, honor the boolean and negation arguments, apply a case-insensitive search, and return the builder.
 
+For these drivers, Filament passes the column name and search term without SQL `lower()` expressions, PostgreSQL casts, or the configured `search_collation`. The driver is responsible for case-insensitive matching even when the component explicitly forces it. Literal `%` and `_` characters in user input are escaped as `\%` and `\_`; the driver must distinguish these from the wildcards Filament adds around the search term.
+
 ## Ordering by a relationship
 
 Filament normally orders records by a relationship attribute using a correlated SQL subquery. A custom Eloquent builder can implement the operation directly instead:
@@ -106,3 +108,7 @@ public function newUnattachedQuery(): Builder
 ```
 
 The method should return a new Eloquent query for the related model, preserve any relevant relationship constraints, exclude records already attached to the current parent record, and remain independently modifiable by Filament. Filament uses this method in table select fields that exclude already-attached records, including attach actions configured with `tableSelect()`.
+
+<Aside variant="info">
+    This method only replaces the unattached-record query. It does not provide pivot-record support. Relationship tables configured with `allowDuplicates()` still require independently addressable pivot records: the driver must support selecting, filtering, and ordering by their qualified keys, including the `filament_pivot_key` alias used for selection and cursor pagination. A relationship that only stores related IDs without separate pivot records cannot support this configuration through `newUnattachedQuery()` alone.
+</Aside>

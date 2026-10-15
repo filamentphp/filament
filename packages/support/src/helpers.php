@@ -267,6 +267,10 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
      */
     function generate_search_column_expression(string $column, ?bool $isSearchForcedCaseInsensitive, Connection $databaseConnection): string | Expression
     {
+        if (! is_database_driver_supported($databaseConnection)) {
+            return $column;
+        }
+
         $driverName = $databaseConnection->getDriverName();
 
         if ($driverName === 'pgsql' && str_contains($column, '.')) {
@@ -349,6 +353,10 @@ if (! function_exists('Filament\Support\generate_search_term_expression')) {
      */
     function generate_search_term_expression(string $search, ?bool $isSearchForcedCaseInsensitive, Connection $databaseConnection): string
     {
+        if (! is_database_driver_supported($databaseConnection)) {
+            return $search;
+        }
+
         $isSearchForcedCaseInsensitive ??= match ($databaseConnection->getDriverName()) {
             'pgsql' => true,
             default => false,
