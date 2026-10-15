@@ -33,10 +33,6 @@ This is a standard Laravel query builder method rather than a Filament-specific 
 
 For these drivers, Filament passes the column name and search term without SQL `lower()` expressions, PostgreSQL casts, or the configured `search_collation`. The driver is responsible for case-insensitive matching even when the component explicitly forces it. Literal `%` and `_` characters in user input are escaped as `\%` and `\_`; the driver must distinguish these from the wildcards Filament adds around the search term.
 
-<Aside variant="info">
-    Literal searching also depends on the driver's pattern translation. For example, `mongodb/laravel-mongodb` 5.11.0 interprets the pattern `foo\%` as literal `foo%`, so searches for text ending in a backslash do not retain their intended meaning when Filament appends a wildcard. Doubling the backslash does not restore wildcard matching in that driver. Verify your driver's escaping behavior before relying on literal backslash searches, or provide a custom search callback using its native query API.
-</Aside>
-
 ## Ordering by a relationship
 
 Filament normally orders records by a relationship attribute using a correlated SQL subquery. A custom Eloquent builder can implement the operation directly instead:
