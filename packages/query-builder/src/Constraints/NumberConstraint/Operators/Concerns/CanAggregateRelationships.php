@@ -77,7 +77,9 @@ trait CanAggregateRelationships
                 $aggregate,
                 $operator,
                 $value,
-                $modifyRelationshipQueryUsing,
+                $modifyRelationshipQueryUsing
+                    ? fn (Builder $relationshipQuery): Builder => $this->evaluate($modifyRelationshipQueryUsing, ['query' => $relationshipQuery]) ?? $relationshipQuery
+                    : null,
             );
         }
 
