@@ -20,7 +20,13 @@ This page covers key security considerations when building applications with Fil
 
 Filament automatically checks [Laravel Model Policies](https://laravel.com/docs/authorization#creating-policies) for standard CRUD operations on [resources](../resources/overview#authorization). When a policy exists for a resource's model, Filament will check methods like `viewAny()`, `create()`, `update()`, `view()`, `delete()`, and others before allowing access to the corresponding pages and actions.
 
+<Aside variant="warning">
+    By default, a missing resource policy or policy method does not deny access: Filament allows the operation unless a Gate before callback denies it. Define the policy methods your application needs, or enable [strict authorization](../panel-configuration#strict-authorization-mode) to detect missing policies and methods. Strict mode does not add authorization to custom actions, inline editable columns, or other code that does not use resource authorization. Skipping authorization on a resource bypasses its policy checks even in strict mode.
+</Aside>
+
 However, Filament's automatic authorization only covers these built-in resource operations. Any custom functionality you add — custom actions, custom pages, custom Livewire components, API endpoints, or other business logic — must be authorized by you. Filament cannot know your application's authorization requirements beyond the standard CRUD operations it provides.
+
+Resource access and record scoping are separate. A `viewAny()` check controls access to the resource; it does not filter its table through each record's `view()` policy. Likewise, built-in bulk delete, force-delete, and restore actions check their `*Any()` abilities, not each record's policy by default. Apply query restrictions for records a user must not see, and enable [individual record authorization](../tables/actions#authorizing-bulk-actions) when a bulk operation needs per-record checks.
 
 ### Authorization and the Livewire request lifecycle
 
@@ -40,23 +46,31 @@ When a public Livewire property contains an Eloquent model, Livewire stores the 
 
 Livewire does not reuse the query that originally loaded the model. Its restoration query does not apply Filament resource or table queries, and Laravel does not apply the model's global scopes by default.
 
-#### Re-querying built-in model properties
+#### Re-querying models with resource or tenant context
 
-On later requests, Filament runs another query for these built-in properties:
+On later requests, Filament restores these built-in properties using the context owned by their component:
 
-- Resource page `$record`: the resource query, including nested parent scoping.
-- Nested resource page `$parentRecord`: the parent resource query when the page has route context; otherwise, the model's global scopes.
-- Relation manager `$ownerRecord`: the model's global scopes.
-- Widget `$record` and `$parentRecord`: the model's global scopes.
-- Modal table select `$record` and tenant registration `$tenant`: the model's global scopes.
+- Resource page `$record`: the page's record resolver and resource route binding query, including nested parent scoping. These queries preserve intentional query customizations, such as allowing soft-deleted records.
+- Nested resource page `$parentRecord`: the parent resource route binding queries. When ancestor route parameters are available, Filament validates the full ancestor chain. Without those parameters, Filament validates a supplied parent through its immediate parent resource's binding query and preserves its model identity; it does not reconstruct missing ancestors.
 - Tenant profile `$tenant`: the panel's current tenant.
 
 If the query can no longer find the model, Filament returns a 404 response. Any policy or component authorization check runs separately.
 
+This protection does not follow a model into another Livewire component. A relation manager or widget cannot reliably reconstruct the resource query that originally loaded a model passed to it. Filament leaves these properties to Livewire's native restoration instead of applying a different query with all global scopes:
+
+- Relation manager `$ownerRecord`.
+- Widget `$record` and `$parentRecord`.
+- Modal table select `$record`.
+- Tenant registration `$tenant`.
+
+These properties are not automatically re-queried against their original resource query or the model's global scopes. You must enforce any tenant, ownership, or other record-access restrictions before using them. A request to a child component does not run the parent page's record binding or authorization again.
+
+`InteractsWithPageTable` is a specific exception when accessing table data: it knows the table's page class. For a resource page, it resolves the synthetic page's parent and checks ancestor resource access before booting or mounting that page, using the nested resource rules above. It does not check the parent record's `view()` or `update()` policy, or validate other uses of the widget's own model properties.
+
 Table row actions resolve their record through the table query. Attach and associate actions resolve selected records through their configured relationship or options query. Filament does not provide either guarantee for model values passed to custom Livewire methods or action arguments.
 
 <Aside variant="warning">
-    A scoped query is not an authorization check. For example, a widget's `canView()` method controls access to the widget, but it does not authorize the widget's `$record`. If access depends on a policy or another condition, authorize the model yourself.
+    Component authorization is separate from record scoping. A relation manager still runs `canViewForRecord()`, and a widget still runs `canView()`. Neither automatically reapplies the parent resource's query or authorizes a passed-in record. For a relation manager, enforce owner-record restrictions in `canViewForRecord()`. For widget or custom component code, query and authorize records before accessing them.
 </Aside>
 
 #### Protecting your own model properties
@@ -69,9 +83,9 @@ Filament does not re-query model values that belong to your application, includi
 - models nested inside arrays, collections, form state, or other public properties, and
 - model values passed through custom Livewire method or action arguments.
 
-Do not assume that these models still pass the query or authorization rules that applied when they were first loaded. Store a scalar key instead, then query and authorize the model when you need it. You may also re-query and authorize a restored model before using it.
+Do not assume that these models, or the passed-in built-in properties listed above, still pass the query or authorization rules that applied when they were first loaded. For your own properties, store a scalar key instead, then query and authorize the model when you need it. You may also re-query and authorize a restored model before using it.
 
-For example, store a locked record ID and use a computed property to query and authorize the record when you access it:
+For example, store a locked record ID and use a computed property to query and authorize the record when you access it. Include any tenant or ownership constraints your application requires in the query, and authorize the intended operation. This example checks `view` access:
 
 ```php
 use App\Models\Post;
@@ -93,14 +107,14 @@ public function post(): Post
 }
 ```
 
-Relationships use their relationship query and the related model's global scopes. Filament does not automatically run a policy for every related model that your code accesses.
+When a relationship is queried, it uses its relationship query and the related model's global scopes. Accessing an already-loaded relationship does not run that query again. Filament does not automatically run a policy for every related model that your code accesses.
 
 ### Running code before authorization
 
 On a later Livewire request:
 
 1. Livewire restores public properties. This can run an unscoped model query, Eloquent retrieval events, and callbacks such as a Livewire form object's `boot()` method.
-2. Filament re-queries the built-in model properties listed above. A model that no longer passes this query is rejected before your component lifecycle hooks run.
+2. For resource pages and tenant profile pages, Filament restores the context-aware properties listed above. A resource-bound model that no longer passes its query is rejected before your component lifecycle hooks run. This step does not re-query passed-in properties on relation managers, widgets, or other child components.
 3. Filament runs the component's applicable authorization checks. Passing the query in the previous step does not mean that the model is authorized.
 
 Some lifecycle hooks can run before step 3:
@@ -149,7 +163,7 @@ TextColumn::make('website')
     ->url(fn (string $state): ?string => Str::sanitizeUrl($state))
 ```
 
-You can call the helper anywhere a URL is being passed to a Filament configuration method (`url()`, `image()`, `icon()` when given a URL, `openUrlInNewTab()` callbacks, and so on). Internally Filament already runs every file URL it emits from components like `FileUpload` and `SpatieMediaLibraryFileUpload` through this helper.
+Use the helper when providing an untrusted URL, such as a column, entry, or action's `url()`. `FileUpload` and `SpatieMediaLibraryFileUpload` already sanitize their preview, open, and download URLs; that does not authorize access to the underlying files.
 
 If you need to allow additional schemes — for example `mailto:` or `tel:` — pass them in as the second argument. The default allowlist is replaced by what you pass, so include `http` and `https` if you still want them:
 

@@ -15,207 +15,149 @@ beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
 
-it('can trim whitespace from TagsInput array values', function (mixed $input, mixed $expected): void {
-    livewire(TestComponentWithTagsInputTrim::class)
-        ->fillForm(['tags' => $input])
-        ->call('save')
-        ->assertSet('data.tags', $expected);
-})->with([
-    [['  tag1  ', '  tag2  ', 'tag3'], ['tag1', 'tag2', 'tag3']],
-    [['tag1', 'tag2', 'tag3'], ['tag1', 'tag2', 'tag3']],
-    [null, null],
-    [[], []],
-    [['  tag1  ', 123, '  tag2  '], ['tag1', 123, 'tag2']],
-    [["\t tag1 \n", "\n tag2 \t"], ['tag1', 'tag2']],
-    [['　tag1　', '　tag2　'], ['tag1', 'tag2']],
-    [[" \t　tag1　\n ", "　 tag2\t "], ['tag1', 'tag2']],
-    [['   ', "\t\n　"], ['', '']],
-    [['  tag1  ', null, true, '　tag2　'], ['tag1', null, true, 'tag2']],
-]);
+describe('`separator()`', function (): void {
+    it('uses `","` when calling `separator()` without an argument', function (): void {
+        $input = TagsInput::make('tags')
+            ->separator();
 
-it('can strip characters from TagsInput array values', function (mixed $input, mixed $expected): void {
-    livewire(TestComponentWithTagsInputStripCharacters::class)
-        ->fillForm(['tags' => $input])
-        ->call('save')
-        ->assertSet('data.tags', $expected);
-})->with([
-    [['tag,1', 'tag.2', 'tag3'], ['tag1', 'tag2', 'tag3']],
-    [['tag1', 'tag2', 'tag3'], ['tag1', 'tag2', 'tag3']],
-    [null, null],
-    [[], []],
-]);
+        expect($input->getSeparator())->toBe(',');
+    });
 
-class TestComponentWithTagsInputTrim extends Livewire
-{
-    public $data = [];
+    it('can set `separator()`', function (): void {
+        $input = TagsInput::make('tags');
 
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->schema([
-                TagsInput::make('tags')
-                    ->trim(),
-            ])
-            ->statePath('data');
-    }
+        expect($input->getSeparator())->toBeNull();
 
-    public function save(): void
-    {
-        $this->data = $this->form->getState();
-    }
-}
+        $input->separator(',');
 
-class TestComponentWithTagsInputStripCharacters extends Livewire
-{
-    public $data = [];
+        expect($input->getSeparator())->toBe(',');
+    });
 
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->schema([
-                TagsInput::make('tags')
-                    ->stripCharacters([',', '.']),
-            ])
-            ->statePath('data');
-    }
+    it('can set `separator()` with a `Closure`', function (): void {
+        $input = TagsInput::make('tags')
+            ->separator(static fn (): string => ';');
 
-    public function save(): void
-    {
-        $this->data = $this->form->getState();
-    }
-}
+        expect($input->getSeparator())->toBe(';');
+    });
 
-it('can set `separator()`', function (): void {
-    $input = TagsInput::make('tags');
+    it('can clear `separator()` with `null`', function (): void {
+        $input = TagsInput::make('tags')
+            ->separator(',')
+            ->separator(null);
 
-    expect($input->getSeparator())->toBeNull();
-
-    $input->separator(',');
-
-    expect($input->getSeparator())->toBe(',');
+        expect($input->getSeparator())->toBeNull();
+    });
 });
 
-it('can set `splitKeys()`', function (): void {
-    $input = TagsInput::make('tags')
-        ->splitKeys(['Tab', ',']);
+describe('`splitKeys()`', function (): void {
+    it('defaults `getSplitKeys()` to empty array', function (): void {
+        $input = TagsInput::make('tags');
 
-    expect($input->getSplitKeys())->toBe(['Tab', ',']);
+        expect($input->getSplitKeys())->toBe([]);
+    });
+
+    it('can set `splitKeys()`', function (): void {
+        $input = TagsInput::make('tags')
+            ->splitKeys(['Tab', ',']);
+
+        expect($input->getSplitKeys())->toBe(['Tab', ',']);
+    });
+
+    it('can set `splitKeys()` with a `Closure`', function (): void {
+        $input = TagsInput::make('tags')
+            ->splitKeys(static fn (): array => ['Enter', 'Tab']);
+
+        expect($input->getSplitKeys())->toBe(['Enter', 'Tab']);
+    });
 });
 
-it('can set `suggestions()`', function (): void {
-    $input = TagsInput::make('tags')
-        ->suggestions(['PHP', 'Laravel', 'Filament']);
+describe('`suggestions()`', function (): void {
+    it('defaults `getSuggestions()` to empty array', function (): void {
+        $input = TagsInput::make('tags');
 
-    expect($input->getSuggestions())->toBe(['PHP', 'Laravel', 'Filament']);
+        expect($input->getSuggestions())->toBe([]);
+    });
+
+    it('can set `suggestions()`', function (): void {
+        $input = TagsInput::make('tags')
+            ->suggestions(['PHP', 'Laravel', 'Filament']);
+
+        expect($input->getSuggestions())->toBe(['PHP', 'Laravel', 'Filament']);
+    });
+
+    it('can set `suggestions()` with an `Arrayable`', function (): void {
+        $input = TagsInput::make('tags')
+            ->suggestions(collect(['X', 'Y', 'Z']));
+
+        expect($input->getSuggestions())->toBe(['X', 'Y', 'Z']);
+    });
+
+    it('can set `suggestions()` with a `Closure`', function (): void {
+        $input = TagsInput::make('tags')
+            ->suggestions(static fn (): array => ['A', 'B', 'C']);
+
+        expect($input->getSuggestions())->toBe(['A', 'B', 'C']);
+    });
 });
 
-it('can set `reorderable()`', function (): void {
-    $input = TagsInput::make('tags');
+describe('`reorderable()`', function (): void {
+    it('can set `reorderable()`', function (): void {
+        $input = TagsInput::make('tags');
 
-    expect($input->isReorderable())->toBeFalse();
+        expect($input->isReorderable())->toBeFalse();
 
-    $input->reorderable();
+        $input->reorderable();
 
-    expect($input->isReorderable())->toBeTrue();
+        expect($input->isReorderable())->toBeTrue();
+    });
+
+    it('can set `reorderable()` with a `Closure`', function (): void {
+        $input = TagsInput::make('tags')
+            ->reorderable(static fn (): bool => true);
+
+        expect($input->isReorderable())->toBeTrue();
+    });
 });
 
-it('can set `tagPrefix()`', function (): void {
-    $input = TagsInput::make('tags');
+describe('`tagPrefix()`', function (): void {
+    it('can set `tagPrefix()`', function (): void {
+        $input = TagsInput::make('tags');
 
-    expect($input->getTagPrefix())->toBeNull();
+        expect($input->getTagPrefix())->toBeNull();
 
-    $input->tagPrefix('#');
+        $input->tagPrefix('#');
 
-    expect($input->getTagPrefix())->toBe('#');
+        expect($input->getTagPrefix())->toBe('#');
+    });
+
+    it('can set `tagPrefix()` with a `Closure`', function (): void {
+        $input = TagsInput::make('tags')
+            ->tagPrefix(static fn (): string => '@');
+
+        expect($input->getTagPrefix())->toBe('@');
+    });
 });
 
-it('can set `tagSuffix()`', function (): void {
-    $input = TagsInput::make('tags');
+describe('`tagSuffix()`', function (): void {
+    it('can set `tagSuffix()`', function (): void {
+        $input = TagsInput::make('tags');
 
-    expect($input->getTagSuffix())->toBeNull();
+        expect($input->getTagSuffix())->toBeNull();
 
-    $input->tagSuffix('!');
+        $input->tagSuffix('!');
 
-    expect($input->getTagSuffix())->toBe('!');
+        expect($input->getTagSuffix())->toBe('!');
+    });
+
+    it('can set `tagSuffix()` with a `Closure`', function (): void {
+        $input = TagsInput::make('tags')
+            ->tagSuffix(static fn (): string => '…');
+
+        expect($input->getTagSuffix())->toBe('…');
+    });
 });
 
-it('defaults `getSplitKeys()` to empty array', function (): void {
-    $input = TagsInput::make('tags');
-
-    expect($input->getSplitKeys())->toBe([]);
-});
-
-it('defaults `getSuggestions()` to empty array', function (): void {
-    $input = TagsInput::make('tags');
-
-    expect($input->getSuggestions())->toBe([]);
-});
-
-it('uses `","` as default separator when called without argument', function (): void {
-    $input = TagsInput::make('tags')
-        ->separator();
-
-    expect($input->getSeparator())->toBe(',');
-});
-
-it('can set `separator()` with a `Closure`', function (): void {
-    $input = TagsInput::make('tags')
-        ->separator(static fn (): string => ';');
-
-    expect($input->getSeparator())->toBe(';');
-});
-
-it('can set `splitKeys()` with a `Closure`', function (): void {
-    $input = TagsInput::make('tags')
-        ->splitKeys(static fn (): array => ['Enter', 'Tab']);
-
-    expect($input->getSplitKeys())->toBe(['Enter', 'Tab']);
-});
-
-it('can set `suggestions()` with a `Closure`', function (): void {
-    $input = TagsInput::make('tags')
-        ->suggestions(static fn (): array => ['A', 'B', 'C']);
-
-    expect($input->getSuggestions())->toBe(['A', 'B', 'C']);
-});
-
-it('can set `suggestions()` with an `Arrayable`', function (): void {
-    $input = TagsInput::make('tags')
-        ->suggestions(collect(['X', 'Y', 'Z']));
-
-    expect($input->getSuggestions())->toBe(['X', 'Y', 'Z']);
-});
-
-it('can set `tagPrefix()` with a `Closure`', function (): void {
-    $input = TagsInput::make('tags')
-        ->tagPrefix(static fn (): string => '@');
-
-    expect($input->getTagPrefix())->toBe('@');
-});
-
-it('can set `tagSuffix()` with a `Closure`', function (): void {
-    $input = TagsInput::make('tags')
-        ->tagSuffix(static fn (): string => '…');
-
-    expect($input->getTagSuffix())->toBe('…');
-});
-
-it('can set `reorderable()` with a `Closure`', function (): void {
-    $input = TagsInput::make('tags')
-        ->reorderable(static fn (): bool => true);
-
-    expect($input->isReorderable())->toBeTrue();
-});
-
-it('can clear `separator()` with `null`', function (): void {
-    $input = TagsInput::make('tags')
-        ->separator(',')
-        ->separator(null);
-
-    expect($input->getSeparator())->toBeNull();
-});
-
-describe('`afterStateHydrated` closure', function (): void {
+describe('state hydration', function (): void {
     it('keeps array state as-is, including blank values', function (): void {
         $livewire = Livewire::make();
         $state = [1 => '', 3 => ' ', 5 => '0', 7 => 'one'];
@@ -280,7 +222,7 @@ describe('`afterStateHydrated` closure', function (): void {
     });
 });
 
-describe('`dehydrateStateUsing` closure', function (): void {
+describe('state dehydration', function (): void {
     it('joins array state with separator without filtering array values', function (array $state, string $separator, string $expected): void {
         $schema = Schema::make(Livewire::make())
             ->statePath('data')
@@ -298,17 +240,37 @@ describe('`dehydrateStateUsing` closure', function (): void {
     ]);
 });
 
-class TagsInputWithSeparator extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->schema([
-                TagsInput::make('tags')->separator(','),
-            ])
-            ->statePath('data');
-    }
-}
+describe('state', function (): void {
+    it('can trim whitespace from `TagsInput` array values', function (mixed $input, mixed $expected): void {
+        livewire(TestComponentWithTagsInputTrim::class)
+            ->fillForm(['tags' => $input])
+            ->call('save')
+            ->assertSet('data.tags', $expected);
+    })->with([
+        [['  tag1  ', '  tag2  ', 'tag3'], ['tag1', 'tag2', 'tag3']],
+        [['tag1', 'tag2', 'tag3'], ['tag1', 'tag2', 'tag3']],
+        [null, null],
+        [[], []],
+        [['  tag1  ', 123, '  tag2  '], ['tag1', 123, 'tag2']],
+        [["\t tag1 \n", "\n tag2 \t"], ['tag1', 'tag2']],
+        [['　tag1　', '　tag2　'], ['tag1', 'tag2']],
+        [[" \t　tag1　\n ", "　 tag2\t "], ['tag1', 'tag2']],
+        [['   ', "\t\n　"], ['', '']],
+        [['  tag1  ', null, true, '　tag2　'], ['tag1', null, true, 'tag2']],
+    ]);
+
+    it('can strip characters from `TagsInput` array values', function (mixed $input, mixed $expected): void {
+        livewire(TestComponentWithTagsInputStripCharacters::class)
+            ->fillForm(['tags' => $input])
+            ->call('save')
+            ->assertSet('data.tags', $expected);
+    })->with([
+        [['tag,1', 'tag.2', 'tag3'], ['tag1', 'tag2', 'tag3']],
+        [['tag1', 'tag2', 'tag3'], ['tag1', 'tag2', 'tag3']],
+        [null, null],
+        [[], []],
+    ]);
+});
 
 describe('rendering', function (): void {
     it('can render with `splitKeys()`', function (): void {
@@ -360,29 +322,32 @@ describe('rendering', function (): void {
     });
 });
 
-it('can add and remove tags in the browser', function (): void {
-    retry(10, function (): void {
+describe('browser interactions', function (): void {
+    it('can add and remove tags in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/tags-input-test')
-            ->assertScript("JSON.stringify(Array.from(document.querySelectorAll('[data-testid=\"separator-tags\"] .fi-badge-label [x-text=\"tag\"]'), (element) => element.textContent))", '["alpha","0"]')
+            ->assertCount('[data-testid="separator-tags"] button[aria-label]', 2)
+            ->assertPresent(':nth-match([data-testid="separator-tags"] button[aria-label], 1)[aria-label$=": alpha"]')
+            ->assertPresent(':nth-match([data-testid="separator-tags"] button[aria-label], 2)[aria-label$=": 0"]')
             ->assertDontSee('MyNewTag')
             ->type('[data-testid="basic-tags"] input', 'MyNewTag')
             ->keys('[data-testid="basic-tags"] input', 'Enter')
             ->assertSee('MyNewTag')
-            ->assertSee('MyNewTag')
-            ->click('[data-testid="basic-tags"] .fi-badge-delete-btn')
-            ->assertNotPresent('[data-testid="basic-tags"] .fi-badge') // The live region briefly announces the removal, so assert on the badge element instead of the page text.
+            ->click('[data-testid="basic-tags"] button[aria-label]')
+            ->assertNotPresent('[data-testid="basic-tags"] button[aria-label]') // The live region briefly announces the removal, so assert on the removal button instead of the page text.
             ->type('[data-testid="basic-tags"] input', 'alpha')
             ->keys('[data-testid="basic-tags"] input', ',', ',')
             ->type('[data-testid="basic-tags"] input', '0')
             ->keys('[data-testid="basic-tags"] input', ',')
-            ->assertScript("JSON.stringify(Array.from(document.querySelectorAll('[data-testid=\"basic-tags\"] .fi-badge-label [x-text=\"tag\"]'), (element) => element.textContent))", '["alpha","0"]')
+            ->assertCount('[data-testid="basic-tags"] button[aria-label]', 2)
+            ->assertPresent(':nth-match([data-testid="basic-tags"] button[aria-label], 1)[aria-label$=": alpha"]')
+            ->assertPresent(':nth-match([data-testid="basic-tags"] button[aria-label], 2)[aria-label$=": 0"]')
             ->type('[data-testid="basic-tags"] input', '50% off $&')
             ->keys('[data-testid="basic-tags"] input', 'Enter')
             ->assertSee('50% off $&')
             // `$` sequences in a tag must not be treated as `String.replace()` substitution patterns in the live region announcement.
-            ->assertScript('document.querySelector(\'[data-testid="basic-tags"] [x-ref="liveRegion"]\').textContent.includes(\'50% off $&\')', true)
+            ->assertSeeIn('[data-testid="basic-tags"] [aria-live="polite"]', '50% off $&')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
@@ -391,6 +356,58 @@ it('can add and remove tags in the browser', function (): void {
             ->assertNoAccessibilityIssues();
     });
 });
+
+class TestComponentWithTagsInputTrim extends Livewire
+{
+    public $data = [];
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                TagsInput::make('tags')
+                    ->trim(),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->data = $this->form->getState();
+    }
+}
+
+class TestComponentWithTagsInputStripCharacters extends Livewire
+{
+    public $data = [];
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                TagsInput::make('tags')
+                    ->stripCharacters([',', '.']),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->data = $this->form->getState();
+    }
+}
+
+class TagsInputWithSeparator extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                TagsInput::make('tags')->separator(','),
+            ])
+            ->statePath('data');
+    }
+}
 
 class RenderTagsInputWithSplitKeys extends Livewire
 {

@@ -4,6 +4,12 @@ return [
 
     'builder' => [
 
+        'reordering' => [
+            'item' => 'Block',
+            'position' => ':label, position :position of :count',
+            'moved' => ':label moved to position :position of :count',
+        ],
+
         'actions' => [
 
             'clone' => [
@@ -164,6 +170,8 @@ return [
 
     'file_upload' => [
 
+        'placeholder' => 'No files uploaded',
+
         'actions' => [
 
             'download' => [
@@ -316,6 +324,14 @@ return [
                 'label' => 'Delete row',
             ],
 
+            'move_down' => [
+                'label' => 'Move down',
+            ],
+
+            'move_up' => [
+                'label' => 'Move up',
+            ],
+
             'reorder' => [
                 'label' => 'Reorder row',
             ],
@@ -344,6 +360,12 @@ return [
                 'label' => 'Value',
             ],
 
+        ],
+
+        'reordering' => [
+            'row' => 'Row',
+            'position' => ':label, position :position of :count',
+            'moved' => ':label moved to position :position of :count',
         ],
 
     ],
@@ -404,6 +426,12 @@ return [
     ],
 
     'repeater' => [
+
+        'reordering' => [
+            'item' => 'Item',
+            'position' => ':label, position :position of :count',
+            'moved' => ':label moved to position :position of :count',
+        ],
 
         'columns' => [
 
@@ -831,6 +859,8 @@ return [
             'false' => 'No',
         ],
 
+        'error_message' => 'The options could not be loaded. Please try again.',
+
         'loading_message' => 'Loading...',
 
         'max_items_message' => 'Only :count can be selected.',
@@ -840,6 +870,8 @@ return [
         'no_search_results_message' => 'No options match your search.',
 
         'placeholder' => 'Select an option',
+
+        'required_description' => 'Select an option.',
 
         'searching_message' => 'Searching...',
 

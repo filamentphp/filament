@@ -130,7 +130,7 @@ Livewire::make(Chart::class)
 </Aside>
 
 <Aside variant="warning">
-    A custom Livewire component does not inherit the parent component's model scoping or authorization. Re-query and authorize models in its public properties, including a record passed into the component. Do the same for model arguments passed to a lazy component's `mount()` method. Filament components such as widgets still run their own documented checks. See [Eloquent model restoration in Livewire](../../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+    A custom Livewire component does not inherit the parent component's model scoping or authorization. Re-query and authorize models in its public properties, including a record passed into the component. Do the same for model arguments passed to a lazy component's `mount()` method. Filament components such as widgets still run their own documented checks. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
 </Aside>
 
 If you are rendering multiple of the same Livewire component, please make sure to pass a unique `key()` to each:
@@ -372,7 +372,7 @@ class Chart extends Component
 
     public function __construct(string | Closure | null $heading = null)
     {
-        $this->heading($heading)
+        $this->heading($heading);
     }
 
     public static function make(string | Closure | null $heading = null): static

@@ -51,6 +51,23 @@ it('can list posts', function (): void {
         ->assertCanSeeTableRecords($posts);
 });
 
+it('uses no-panel filters without changing default queries or pagination updates', function (): void {
+    $published = Post::factory()->create(['is_published' => true]);
+    $draft = Post::factory()->create(['is_published' => false]);
+
+    livewire(ListPostsWithTabs::class)
+        ->assertSet('activeTab', 'published')
+        ->assertSeeHtml('role="group"')
+        ->assertDontSeeHtml('role="tabpanel"')
+        ->assertCanSeeTableRecords([$published])
+        ->assertCanNotSeeTableRecords([$draft])
+        ->call('setPage', 2)
+        ->set('activeTab', 'draft')
+        ->assertSet('paginators.page', 1)
+        ->assertCanSeeTableRecords([$draft])
+        ->assertCanNotSeeTableRecords([$published]);
+});
+
 it('can render post titles', function (): void {
     Post::factory()->count(10)->create();
 
@@ -199,10 +216,8 @@ test('table actions will not interfere with database transactions on an error', 
         livewire(ListPosts::class)
             ->callTableAction('randomize_title', $post);
     } catch (Exception $exception) {
-        // This can be caught and handled somewhere else, code continues...
+        // Inspect the transaction level after the action exception is handled.
     }
-
-    // Original transaction level should be unaffected...
 
     expect(DB::transactionLevel())
         ->toBe($transactionLevel);
@@ -216,7 +231,7 @@ it('can render ticket messages page without a policy', function (): void {
         ->assertSuccessful();
 });
 
-it('can render tickets page if the policy viewAny returns true', function (): void {
+it('can render tickets page if the policy `viewAny()` returns `true`', function (): void {
     Ticket::factory(10)
         ->create();
 
@@ -226,7 +241,7 @@ it('can render tickets page if the policy viewAny returns true', function (): vo
         ->assertSuccessful();
 });
 
-it('can render tickets page if the policy viewAny returns an allowed response', function (): void {
+it('can render tickets page if the policy `viewAny()` returns an allowed response', function (): void {
     Ticket::factory(10)
         ->create();
 
@@ -250,7 +265,7 @@ it('does not render ticket messages page without a policy if authorization is st
     Filament::getCurrentOrDefaultPanel()->strictAuthorization(false);
 });
 
-it('does not render tickets page if the policy viewAny returns false', function (): void {
+it('does not render tickets page if the policy `viewAny()` returns `false`', function (): void {
     Ticket::factory(10)
         ->create();
 
@@ -262,7 +277,7 @@ it('does not render tickets page if the policy viewAny returns false', function 
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
 
-it('does not render tickets page if the policy viewAny returns a denied response', function (): void {
+it('does not render tickets page if the policy `viewAny()` returns a denied response', function (): void {
     Ticket::factory(10)
         ->create();
 

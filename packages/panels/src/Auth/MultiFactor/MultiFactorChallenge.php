@@ -172,7 +172,7 @@ class MultiFactorChallenge
 
     protected function getRateLimiterKey(Authenticatable $user): string
     {
-        return 'filament-multi-factor-challenge:' . Filament::getUserScopedAuthIdentifier($user);
+        return 'filament:auth:multi_factor_challenge:rate_limit:' . Filament::getUserScopedAuthIdentifier($user);
     }
 
     public function getMaxRateLimiterAttempts(): int

@@ -21,6 +21,11 @@ trait BelongsToTable
         return $this->table;
     }
 
+    public function hasTable(): bool
+    {
+        return isset($this->table);
+    }
+
     public function getLivewire(): HasTable
     {
         return $this->getTable()->getLivewire();

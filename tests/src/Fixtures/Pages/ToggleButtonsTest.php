@@ -19,6 +19,8 @@ class ToggleButtonsTest extends Page
 
     public ?array $data = [];
 
+    public array $saved = [];
+
     public function mount(): void
     {
         $this->form->fill();
@@ -41,7 +43,25 @@ class ToggleButtonsTest extends Page
                         'b' => Heroicon::XMark,
                     ])
                     ->size(Size::ExtraSmall)
-                    ->grouped(),
+                    ->grouped()
+                    ->extraAttributes(['data-testid' => 'grouped-toggle-buttons']),
+                ToggleButtons::make('boolean_field')
+                    ->label('Boolean ToggleButtons')
+                    ->boolean()
+                    ->default(false)
+                    ->grouped()
+                    ->extraAttributes(['data-testid' => 'boolean-toggle-buttons']),
+                ToggleButtons::make('disabled_options')
+                    ->label('Disabled options')
+                    ->options(['a' => 'Available', 'b' => 'Unavailable', 'c' => 'Unavailable with tooltip'])
+                    ->disableOptionWhen(static fn (string $value): bool => $value !== 'a')
+                    ->tooltips(['c' => 'This option is unavailable.'])
+                    ->extraAttributes(['data-testid' => 'disabled-toggle-buttons']),
+                ToggleButtons::make('multiple_field')
+                    ->label('Multiple ToggleButtons')
+                    ->options(['a' => 'Option A', 'b' => 'Option B'])
+                    ->multiple()
+                    ->extraAttributes(['data-testid' => 'multiple-toggle-buttons']),
                 ToggleButtons::make('fullWidthStacked')
                     ->label('Full-width stacked ToggleButtons')
                     ->options(['a' => 'Option A', 'b' => 'Option B'])
@@ -65,8 +85,8 @@ class ToggleButtonsTest extends Page
             ->statePath('data');
     }
 
-    public function save(): void
+    public function save(): array
     {
-        $this->form->getState();
+        return $this->saved = $this->form->getState();
     }
 }

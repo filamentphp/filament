@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Grammars\SqlServerGrammar;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -80,7 +81,7 @@ class ImportColumn extends Component
     protected string | array | Closure | null $resolveRelationshipUsing = null;
 
     /**
-     * @var array<Model | Collection>
+     * @var array<Model | array{records: ?Collection, hasAllRelatedRecords: ?bool} | null>
      */
     protected array $resolvedRelatedRecords = [];
 
@@ -423,7 +424,10 @@ class ImportColumn extends Component
                         $values = array_unique($values);
                     }
 
-                    if ($records?->count() >= count($values)) {
+                    if (
+                        ($records?->count() >= count($values)) &&
+                        ($this->resolvedRelatedRecords[json_encode($state)]['hasAllRelatedRecords'] ?? true)
+                    ) {
                         return;
                     }
 
@@ -510,29 +514,35 @@ class ImportColumn extends Component
         $encodedState = json_encode($state);
 
         if (array_key_exists($encodedState, $this->resolvedRelatedRecords)) {
-            return $this->resolvedRelatedRecords[$encodedState];
+            return $this->resolvedRelatedRecords[$encodedState]['records'];
         }
 
         /** @var BelongsToMany $relationship */
         $relationship = Relation::noConstraints(fn () => $this->getRelationship());
         $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
-        if (blank($this->resolveRelationshipUsing)) {
-            return $this->resolvedRelatedRecords[$encodedState] = $relationshipQuery
-                ->whereIn($relationship->getQualifiedRelatedKeyName(), $state)
-                ->get();
-        }
-
-        $resolveUsing = $this->evaluate($this->resolveRelationshipUsing, [
-            'state' => $state,
-        ]);
+        $resolveUsing = blank($this->resolveRelationshipUsing)
+            ? $relationship->getQualifiedRelatedKeyName()
+            : $this->evaluate($this->resolveRelationshipUsing, [
+                'state' => $state,
+            ]);
 
         if (blank($resolveUsing)) {
-            return $this->resolvedRelatedRecords[$encodedState] = null;
+            $this->resolvedRelatedRecords[$encodedState] = [
+                'records' => null,
+                'hasAllRelatedRecords' => null,
+            ];
+
+            return null;
         }
 
         if ($resolveUsing instanceof Collection) {
-            return $this->resolvedRelatedRecords[$encodedState] = $resolveUsing;
+            $this->resolvedRelatedRecords[$encodedState] = [
+                'records' => $resolveUsing,
+                'hasAllRelatedRecords' => null,
+            ];
+
+            return $resolveUsing;
         }
 
         if (! (is_array($resolveUsing) || is_string($resolveUsing))) {
@@ -541,22 +551,73 @@ class ImportColumn extends Component
 
         $resolveUsing = Arr::wrap($resolveUsing);
 
-        $relationshipQuery->where(function (Builder $query) use ($resolveUsing, $state): void {
-            $isFirst = true;
+        $applyLookup = static function (Builder $query, array $values) use ($resolveUsing): void {
+            $query->where(static function (Builder $query) use ($resolveUsing, $values): void {
+                $isFirst = true;
 
-            foreach ($resolveUsing as $columnToResolve) {
-                $whereClause = $isFirst ? 'whereIn' : 'orWhereIn';
+                foreach ($resolveUsing as $columnToResolve) {
+                    $whereClause = $isFirst ? 'whereIn' : 'orWhereIn';
 
-                $query->{$whereClause}(
-                    $columnToResolve,
-                    $state,
-                );
+                    $query->{$whereClause}(
+                        $columnToResolve,
+                        $values,
+                    );
 
-                $isFirst = false;
+                    $isFirst = false;
+                }
+            });
+        };
+
+        $recordsQuery = clone $relationshipQuery;
+        $applyLookup($recordsQuery, $state);
+        $records = $recordsQuery->get();
+        $values = array_filter($state, filled(...));
+        $hasAllRelatedRecords = null;
+
+        if (count(array_filter($values, is_scalar(...))) === count($values)) {
+            $hasAllRelatedRecords = true;
+
+            foreach (collect($values)->uniqueStrict() as $value) {
+                $query = clone $relationshipQuery;
+                $applyLookup($query, [$value]);
+
+                if ($query->getQuery()->getGrammar() instanceof SqlServerGrammar) {
+                    // SQL Server's `exists()` replaces the projection, invalidating ordered `DISTINCT` queries.
+                    // Preserve it without running the result callbacks that `first()` would invoke.
+                    $query = $query->toBase();
+                    $query->applyBeforeQueryCallbacks();
+                    $query->limit(1);
+
+                    $hasRelatedRecord = $query->getConnection()->selectOne(
+                        $query->toSql(),
+                        $query->getBindings(),
+                        ! $query->useWritePdo,
+                    ) !== null;
+                } else {
+                    $hasRelatedRecord = $query->exists();
+                }
+
+                if ($hasRelatedRecord) {
+                    continue;
+                }
+
+                $hasAllRelatedRecords = false;
+
+                break;
             }
-        });
+        }
 
-        return $this->resolvedRelatedRecords[$encodedState] = $relationshipQuery->get();
+        $this->resolvedRelatedRecords[$encodedState] = [
+            'records' => $records,
+            'hasAllRelatedRecords' => $hasAllRelatedRecords,
+        ];
+
+        return $records;
+    }
+
+    public function clearResolvedRelatedRecords(): void
+    {
+        $this->resolvedRelatedRecords = [];
     }
 
     /**

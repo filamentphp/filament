@@ -7,21 +7,27 @@ use Filament\Tests\TestCase;
 uses(TestCase::class);
 
 describe('options', function (): void {
-    it('returns static array options', function (): void {
+    it('returns an empty array from `getOptions()` by default', function (): void {
+        $action = SelectAction::make('test');
+
+        expect($action->getOptions())->toBe([]);
+    });
+
+    it('can set `options()` with an array', function (): void {
         $action = SelectAction::make('test')
             ->options(['a' => 'Option A', 'b' => 'Option B']);
 
         expect($action->getOptions())->toBe(['a' => 'Option A', 'b' => 'Option B']);
     });
 
-    it('returns options from `Closure`', function (): void {
+    it('can set `options()` with a `Closure`', function (): void {
         $action = SelectAction::make('test')
             ->options(static fn (): array => ['x' => 'X', 'y' => 'Y']);
 
         expect($action->getOptions())->toBe(['x' => 'X', 'y' => 'Y']);
     });
 
-    it('returns options from enum class string', function (): void {
+    it('can set `options()` with an enum class string', function (): void {
         $action = SelectAction::make('test')
             ->options(StringBackedEnum::class);
 
@@ -33,17 +39,11 @@ describe('options', function (): void {
         expect($options)->toHaveKey('three');
     });
 
-    it('returns options from `Arrayable`', function (): void {
+    it('can set `options()` with an `Arrayable`', function (): void {
         $action = SelectAction::make('test')
             ->options(collect(['a' => 'Option A', 'b' => 'Option B']));
 
         expect($action->getOptions())->toBe(['a' => 'Option A', 'b' => 'Option B']);
-    });
-
-    it('returns empty array when no options set', function (): void {
-        $action = SelectAction::make('test');
-
-        expect($action->getOptions())->toBe([]);
     });
 });
 

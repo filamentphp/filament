@@ -23,6 +23,10 @@ ToggleButtons::make('status')
 
 <AutoScreenshot name="forms/fields/toggle-buttons/simple" alt="Toggle buttons" version="4.x" />
 
+By default, the field stores one selected option. Selecting that option again clears the field to `null`.
+
+`required()` prevents submitting an empty value, but does not prevent clearing the selection while editing. Use [`multiple()`](#selecting-multiple-buttons) to store more than one option.
+
 ## Changing the color of option buttons
 
 You can change the [color](../styling/colors) of the option buttons using the `colors()` method. Each key in the array should correspond to an option value:

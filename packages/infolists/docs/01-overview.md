@@ -129,7 +129,7 @@ TextEntry::make('name')
 ### Hiding an entry's label
 
 <Aside variant="tip">
-    If you're looking to hide an entry's label, it might be the case that you are trying to use an entry for arbitrary text or UI. Entries are specifically designed to display data in a structured way, but [Prime components](../schemas/overview#prime-components) are simple components that are used to render basic stand-alone static content, such as text, images, and buttons (actions). You may want to consider using a Prime component instead.
+    If you need arbitrary text or UI rather than a labelled data entry, consider a [prime component](../schemas/primes), such as text, an image, or a button (action).
 </Aside>
 
 It may be tempting to set the label to an empty string to hide it, but this is not recommended. Setting the label to an empty string will not communicate the purpose of the entry to screen readers, even if the purpose is clear visually. Instead, you should use the `hiddenLabel()` method, so it is hidden visually but still accessible to screen readers:
@@ -613,7 +613,7 @@ TextEntry::make('name')
 
 ### Adding extra content above an entry's label
 
-You can insert extra content above an entry's label using the `aboveLabel()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+You can insert extra content above an entry's label using the `aboveLabel()` method. You can [pass any content](#adding-extra-content-to-an-entry) to this method, like text, a schema component, an action, or an action group:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -633,7 +633,7 @@ TextEntry::make('name')
 
 ### Adding extra content before an entry's label
 
-You can insert extra content before an entry's label using the `beforeLabel()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+You can insert extra content before an entry's label using the `beforeLabel()` method. You can [pass any content](#adding-extra-content-to-an-entry) to this method, like text, a schema component, an action, or an action group:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -650,7 +650,7 @@ TextEntry::make('name')
 
 ### Adding extra content after an entry's label
 
-You can insert extra content after an entry's label using the `afterLabel()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+You can insert extra content after an entry's label using the `afterLabel()` method. You can [pass any content](#adding-extra-content-to-an-entry) to this method, like text, a schema component, an action, or an action group:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -689,7 +689,7 @@ TextEntry::make('name')
 
 ### Adding extra content below an entry's label
 
-You can insert extra content below an entry's label using the `belowLabel()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+You can insert extra content below an entry's label using the `belowLabel()` method. You can [pass any content](#adding-extra-content-to-an-entry) to this method, like text, a schema component, an action, or an action group:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -708,12 +708,12 @@ TextEntry::make('name')
 <AutoScreenshot name="infolists/entries/below-label" alt="Infolist entry with extra content below label" version="4.x" />
 
 <Aside variant="info">
-    This may seem like the same as the [`aboveContent()` method](#adding-extra-content-above-a-entries-content). However, when using [inline labels](#inline-labels), the `aboveContent()` method will place the content above the entry, not below the label, since the label is displayed in a separate column to the entry content.
+    This may seem like the same as the [`aboveContent()` method](#adding-extra-content-above-an-entry%E2%80%99s-content). However, when using [inline labels](#inline-labels), the `aboveContent()` method will place the content above the entry, not below the label, since the label is displayed in a separate column to the entry content.
 </Aside>
 
 ### Adding extra content above an entry's content
 
-You can insert extra content above an entry's content using the `aboveContent()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+You can insert extra content above an entry's content using the `aboveContent()` method. You can [pass any content](#adding-extra-content-to-an-entry) to this method, like text, a schema component, an action, or an action group:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -732,12 +732,12 @@ TextEntry::make('name')
 <AutoScreenshot name="infolists/entries/above-content" alt="Infolist entry with extra content above content" version="4.x" />
 
 <Aside variant="info">
-    This may seem like the same as the [`belowLabel()` method](#adding-extra-content-below-a-entries-label). However, when using [inline labels](#inline-labels), the `belowLabel()` method will place the content below the label, not above the entry's content, since the label is displayed in a separate column to the entry content.
+    This may seem like the same as the [`belowLabel()` method](#adding-extra-content-below-an-entry%E2%80%99s-label). However, when using [inline labels](#inline-labels), the `belowLabel()` method will place the content below the label, not above the entry's content, since the label is displayed in a separate column to the entry content.
 </Aside>
 
 ### Adding extra content before an entry's content
 
-You can insert extra content before an entry's content using the `beforeContent()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+You can insert extra content before an entry's content using the `beforeContent()` method. You can [pass any content](#adding-extra-content-to-an-entry) to this method, like text, a schema component, an action, or an action group:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -754,7 +754,7 @@ TextEntry::make('name')
 
 ### Adding extra content after an entry's content
 
-You can insert extra content after an entry's content using the `afterContent()` method. You can [pass any content](#adding-extra-content-to-a-entry) to this method, like text, a schema component, an action, or an action group:
+You can insert extra content after an entry's content using the `afterContent()` method. You can [pass any content](#adding-extra-content-to-an-entry) to this method, like text, a schema component, an action, or an action group:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -861,6 +861,21 @@ function (?Model $record) {
     // ...
 }
 ```
+
+### Injecting the current related record
+
+When an entry displays multiple values from a relationship, you may inject the Eloquent record that contains the current value into functions that customize each item using a `$relatedRecord` parameter:
+
+```php
+use App\Models\Tag;
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('tags.name')
+    ->badge()
+    ->color(fn (Tag $relatedRecord): string => $relatedRecord->color)
+```
+
+The `$record` parameter continues to contain the current schema record. The `$relatedRecord` parameter is only available while an individual relationship value is being evaluated. If multiple text values are joined into a comma-separated list, item styling is evaluated for the joined list instead. Use `badge()` or `listWithLineBreaks()` to evaluate item styling for each related record.
 
 ### Injecting the current operation
 

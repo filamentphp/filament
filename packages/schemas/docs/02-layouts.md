@@ -18,7 +18,7 @@ Filament's grid system allows you to create responsive, multi-column layouts usi
 - [Callout](callouts)
 - [Empty state](empty-states)
 
-You may also [create your own custom layout components](custom-components#custom-layout-components) to display components however you wish.
+You may also [create your own custom layout components](custom-components#custom-component-classes) to display components however you wish.
 
 ## Grid system
 

@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\View\FormsIconAlias;
+use Filament\QueryBuilder\Concerns\HasConstraints;
 use Filament\QueryBuilder\Constraints\Constraint;
 use Filament\QueryBuilder\View\QueryBuilderIconAlias;
 use Filament\Schemas\Components\Actions;
@@ -20,12 +21,11 @@ use Illuminate\Support\Str;
 
 class RuleBuilder extends Builder
 {
+    use HasConstraints;
+
     public const OR_BLOCK_NAME = 'or';
 
     public const OR_BLOCK_GROUPS_REPEATER_NAME = 'groups';
-
-    /** @var array<Constraint> */
-    protected array $constraints = [];
 
     protected int | Closure | null $maxRules = null;
 
@@ -42,102 +42,107 @@ class RuleBuilder extends Builder
         $this
             ->label(__('filament-query-builder::query-builder.form.rules.label'))
             ->blocks(function (): array {
-                return [
-                    ...array_map(
-                        fn (Constraint $constraint): Builder\Block => $constraint->getBuilderBlock(),
-                        $this->getConstraints(),
-                    ),
-                    Builder\Block::make(static::OR_BLOCK_NAME)
-                        ->label(__('filament-query-builder::query-builder.form.or_groups.block.label'))
-                        ->icon(FilamentIcon::resolve(QueryBuilderIconAlias::OR_GROUP_BLOCK) ?? Heroicon::Slash)
-                        ->schema([
-                            Flex::make(function (Flex $component): array {
-                                /** @var RuleBuilder $builder */
-                                $builder = $component->getContainer()->getParentComponent()->getContainer()->getParentComponent();
+                $blocks = array_map(
+                    static fn (Constraint | array $constraints): Builder\Block | array => is_array($constraints)
+                        ? array_map(static fn (Constraint $constraint): Builder\Block => $constraint->getBuilderBlock(), $constraints)
+                        : $constraints->getBuilderBlock(),
+                    $this->getGroupedConstraints(),
+                );
 
-                                return [
-                                    Repeater::make(static::OR_BLOCK_GROUPS_REPEATER_NAME)
-                                        ->label(__('filament-query-builder::query-builder.form.or_groups.label'))
-                                        ->schema([
-                                            Flex::make([
-                                                static::make('rules')
-                                                    ->hiddenLabel()
-                                                    ->partiallyRenderAfterActionsCalled($builder->shouldPartiallyRenderAfterActionsCalled())
-                                                    ->constraints($this->getConstraints())
-                                                    ->blockPickerColumns($this->getBlockPickerColumns())
-                                                    ->blockPickerWidth($this->getBlockPickerWidth())
-                                                    ->maxRules($this->getMaxRules())
-                                                    ->maxNestingDepth($this->getMaxNestingDepth())
-                                                    ->nestingDepth($this->getNestingDepth() + 1)
-                                                    ->rootRuleBuilder($this->getRootRuleBuilder()),
-                                                Actions::make(function (Actions $component): array {
-                                                    /** @var Repeater $repeater */
-                                                    $repeater = $component->getContainer()->getParentComponent()->getContainer()->getParentComponent();
+                $orBlock = Builder\Block::make(static::OR_BLOCK_NAME)
+                    ->label(__('filament-query-builder::query-builder.form.or_groups.block.label'))
+                    ->icon(FilamentIcon::resolve(QueryBuilderIconAlias::OR_GROUP_BLOCK) ?? Heroicon::Slash)
+                    ->schema([
+                        Flex::make(function (Flex $component): array {
+                            /** @var RuleBuilder $builder */
+                            $builder = $component->getContainer()->getParentComponent()->getContainer()->getParentComponent();
 
-                                                    return [
-                                                        Action::make($deleteActionName = $repeater->getDeleteActionName())
-                                                            ->label(__('filament-forms::components.repeater.actions.delete.label'))
-                                                            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_DELETE) ?? Heroicon::Trash)
-                                                            ->color('danger')
-                                                            ->iconButton()
-                                                            ->size(Size::Small)
-                                                            ->action($repeater->getAction($deleteActionName)(['item' => (string) str($component->getContainer()->getParentComponent()->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler())
-                                                            ->visible(fn (Get $get): bool => blank($get('rules')) && (count($repeater->getRawState()) > 2)),
-                                                    ];
-                                                })->grow(false),
-                                            ])
-                                                ->verticallyAlignCenter()
-                                                ->extraAttributes([
-                                                    'role' => 'group',
-                                                    'aria-label' => __('filament-query-builder::query-builder.form.or_groups.group.label'),
-                                                ]),
+                            return [
+                                Repeater::make(static::OR_BLOCK_GROUPS_REPEATER_NAME)
+                                    ->label(__('filament-query-builder::query-builder.form.or_groups.label'))
+                                    ->schema([
+                                        Flex::make([
+                                            static::make('rules')
+                                                ->hiddenLabel()
+                                                ->partiallyRenderAfterActionsCalled($builder->shouldPartiallyRenderAfterActionsCalled())
+                                                ->constraints($this->getGroupedConstraints())
+                                                ->blockPickerColumns($this->getBlockPickerColumns())
+                                                ->blockPickerWidth($this->getBlockPickerWidth())
+                                                ->maxRules($this->getMaxRules())
+                                                ->maxNestingDepth($this->getMaxNestingDepth())
+                                                ->nestingDepth($this->getNestingDepth() + 1)
+                                                ->rootRuleBuilder($this->getRootRuleBuilder()),
+                                            Actions::make(function (Actions $component): array {
+                                                /** @var Repeater $repeater */
+                                                $repeater = $component->getContainer()->getParentComponent()->getContainer()->getParentComponent();
+
+                                                return [
+                                                    Action::make($deleteActionName = $repeater->getDeleteActionName())
+                                                        ->label(__('filament-forms::components.repeater.actions.delete.label'))
+                                                        ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_DELETE) ?? Heroicon::Trash)
+                                                        ->color('danger')
+                                                        ->iconButton()
+                                                        ->size(Size::Small)
+                                                        ->action($repeater->getAction($deleteActionName)(['item' => (string) str($component->getContainer()->getParentComponent()->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler())
+                                                        ->visible(fn (Get $get): bool => blank($get('rules')) && (count($repeater->getRawState()) > 2)),
+                                                ];
+                                            })->grow(false),
                                         ])
-                                        ->addAction(fn (Action $action, Repeater $component) => $action
-                                            ->label(__('filament-query-builder::query-builder.actions.add_rule_group.label'))
-                                            ->icon(FilamentIcon::resolve(QueryBuilderIconAlias::OR_GROUP_ADD_GROUP_ACTION) ?? Heroicon::Plus)
-                                            ->hidden(fn (): bool => filled(array_filter($component->getRawState(), fn (array $itemState): bool => blank($itemState['rules']))))
-                                            ->disabled(fn (): bool => $this->isAtRuleLimit())
-                                            ->tooltip(fn (): ?string => $this->getRuleLimitReachedTooltip()))
-                                        ->addActionAlignment(Alignment::End)
-                                        ->labelBetweenItems(__('filament-query-builder::query-builder.item_separators.or'))
-                                        ->itemHeaders(false)
-                                        ->defaultItems(2)
-                                        ->minItems(2)
-                                        ->cloneable()
-                                        ->cloneAction(fn (Action $action) => $action
-                                            ->disabled(fn (): bool => $this->isAtRuleLimit())
-                                            ->tooltip(fn (): ?string => $this->getRuleLimitReachedTooltip()))
-                                        ->hiddenLabel()
-                                        ->generateUuidUsing(fn (): string => Str::random(4))
-                                        ->partiallyRenderAfterActionsCalled($builder->shouldPartiallyRenderAfterActionsCalled()),
-                                    Actions::make([
-                                        Action::make($cloneActionName = $builder->getCloneActionName())
-                                            ->label(__('filament-forms::components.builder.actions.clone.label'))
-                                            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_CLONE) ?? Heroicon::Square2Stack)
-                                            ->color('gray')
-                                            ->iconButton()
-                                            ->size(Size::Small)
-                                            ->disabled(fn (): bool => $builder->isAtRuleLimit())
-                                            ->tooltip(fn (): ?string => $builder->getRuleLimitReachedTooltip())
-                                            ->action($builder->getAction($cloneActionName)(['item' => (string) str($component->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler()),
-                                        Action::make($deleteActionName = $builder->getDeleteActionName())
-                                            ->label(__('filament-forms::components.builder.actions.delete.label'))
-                                            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_DELETE) ?? Heroicon::Trash)
-                                            ->color('danger')
-                                            ->iconButton()
-                                            ->size(Size::Small)
-                                            ->action($builder->getAction($deleteActionName)(['item' => (string) str($component->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler()),
-                                    ])->grow(false),
-                                ];
-                            })
-                                // Name the whole OR condition as a group so screen readers convey the boundary of
-                                // each OR-joined branch of the query (WCAG 1.3.1).
-                                ->extraAttributes([
-                                    'role' => 'group',
-                                    'aria-label' => __('filament-query-builder::query-builder.form.or_groups.block.label'),
-                                ]),
-                        ]),
-                ];
+                                            ->verticallyAlignCenter()
+                                            ->extraAttributes([
+                                                'role' => 'group',
+                                                'aria-label' => __('filament-query-builder::query-builder.form.or_groups.group.label'),
+                                            ]),
+                                    ])
+                                    ->addAction(fn (Action $action, Repeater $component) => $action
+                                        ->label(__('filament-query-builder::query-builder.actions.add_rule_group.label'))
+                                        ->icon(FilamentIcon::resolve(QueryBuilderIconAlias::OR_GROUP_ADD_GROUP_ACTION) ?? Heroicon::Plus)
+                                        ->hidden(fn (): bool => filled(array_filter($component->getRawState(), fn (array $itemState): bool => blank($itemState['rules']))))
+                                        ->disabled(fn (): bool => $this->isAtRuleLimit())
+                                        ->tooltip(fn (): ?string => $this->getRuleLimitReachedTooltip()))
+                                    ->addActionAlignment(Alignment::End)
+                                    ->labelBetweenItems(__('filament-query-builder::query-builder.item_separators.or'))
+                                    ->itemHeaders(false)
+                                    ->defaultItems(2)
+                                    ->minItems(2)
+                                    ->cloneable()
+                                    ->cloneAction(fn (Action $action) => $action
+                                        ->disabled(fn (): bool => $this->isAtRuleLimit())
+                                        ->tooltip(fn (): ?string => $this->getRuleLimitReachedTooltip()))
+                                    ->hiddenLabel()
+                                    ->generateUuidUsing(fn (): string => Str::random(4))
+                                    ->partiallyRenderAfterActionsCalled($builder->shouldPartiallyRenderAfterActionsCalled()),
+                                Actions::make([
+                                    Action::make($cloneActionName = $builder->getCloneActionName())
+                                        ->label(__('filament-forms::components.builder.actions.clone.label'))
+                                        ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_CLONE) ?? Heroicon::Square2Stack)
+                                        ->color('gray')
+                                        ->iconButton()
+                                        ->size(Size::Small)
+                                        ->disabled(fn (): bool => $builder->isAtRuleLimit())
+                                        ->tooltip(fn (): ?string => $builder->getRuleLimitReachedTooltip())
+                                        ->action($builder->getAction($cloneActionName)(['item' => (string) str($component->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler()),
+                                    Action::make($deleteActionName = $builder->getDeleteActionName())
+                                        ->label(__('filament-forms::components.builder.actions.delete.label'))
+                                        ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_DELETE) ?? Heroicon::Trash)
+                                        ->color('danger')
+                                        ->iconButton()
+                                        ->size(Size::Small)
+                                        ->action($builder->getAction($deleteActionName)(['item' => (string) str($component->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler()),
+                                ])->grow(false),
+                            ];
+                        })
+                            // Name the whole OR condition as a group so screen readers convey the boundary of
+                            // each OR-joined branch of the query (WCAG 1.3.1).
+                            ->extraAttributes([
+                                'role' => 'group',
+                                'aria-label' => __('filament-query-builder::query-builder.form.or_groups.block.label'),
+                            ]),
+                    ]);
+
+                $blocks[] = $orBlock;
+
+                return $blocks;
             })
             ->addAction(fn (Action $action) => $action
                 ->label(__('filament-query-builder::query-builder.actions.add_rule.label'))
@@ -157,24 +162,13 @@ class RuleBuilder extends Builder
             ->extraAttributes(['class' => 'fi-fo-builder-not-contained']);
     }
 
-    /**
-     * @param  array<Constraint>  $constraints
-     */
-    public function constraints(array $constraints): static
+    protected function getBlockGroup(Builder\Block $block): ?string
     {
-        foreach ($constraints as $constraint) {
-            $this->constraints[$constraint->getName()] = $constraint;
+        if (($block->getName() === static::OR_BLOCK_NAME) && filled($this->blockGroups)) {
+            return __('filament-query-builder::query-builder.form.or_groups.block.picker_group');
         }
 
-        return $this;
-    }
-
-    /**
-     * @return array<Constraint>
-     */
-    public function getConstraints(): array
-    {
-        return $this->evaluate($this->constraints);
+        return parent::getBlockGroup($block);
     }
 
     public function getConstraint(string $name): ?Constraint

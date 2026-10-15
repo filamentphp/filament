@@ -13,6 +13,7 @@ use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Js;
 
 class KeyValue extends Field implements HasEmbeddedView
 {
@@ -381,34 +382,53 @@ class KeyValue extends Field implements HasEmbeddedView
         $isAddable = $this->isAddable();
         $isDeletable = $this->isDeletable();
         $isDisabled = $this->isDisabled();
-        $isReorderable = $this->isReorderable();
+        $reorderAction = $this->getAction('reorder');
+        $isReorderable = (! $isDisabled) && $this->isReorderable() && $reorderAction->isVisible() && (! $reorderAction->isDisabled());
         $keyPlaceholder = $this->getKeyPlaceholder();
         $livewireKey = $this->getLivewireKey();
         $statePath = $this->getStatePath();
         $valuePlaceholder = $this->getValuePlaceholder();
 
         $wrapperAttributes = $this->getExtraAttributeBag()
+            ->merge([
+                'aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby'] ?? null,
+                'aria-labelledby' => e("{$id}-label"),
+                'role' => 'group',
+            ], escape: false)
             ->class(['fi-fo-key-value']);
 
         $alpineDivAttributes = $this->getExtraAlpineAttributeBag()
             ->class(['fi-fo-key-value-table-ctn']);
+
+        if (! $this->modifyReorderActionUsing) {
+            $reorderAction->extraAttributes([
+                'x-bind:tabindex' => 'rows.length > 1 ? -1 : 0',
+                'x-bind:aria-hidden' => "rows.length > 1 ? 'true' : null",
+            ], merge: true);
+        }
 
         ob_start(); ?>
 
         <div
             x-load
             x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('key-value', 'filament/forms')) ?>"
+            x-id="['key-value-row']"
             x-data="keyValueFormComponent({
                         state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')") ?>,
+                        reordering: <?= e(Js::from($isReorderable ? [
+                            'row' => __('filament-forms::components.key_value.reordering.row'),
+                            'position' => __('filament-forms::components.key_value.reordering.position'),
+                            'moved' => __('filament-forms::components.key_value.reordering.moved'),
+                        ] : [])) ?>,
                     })"
             wire:ignore
-            wire:key="<?= e($livewireKey) ?>.<?= e(substr(md5(serialize([$isDisabled])), 0, 64)) ?>"
+            wire:key="<?= e($livewireKey) ?>.<?= e(substr(md5(serialize([$isDisabled, $isReorderable])), 0, 64)) ?>"
             <?= $alpineDivAttributes->toHtml() ?>
         >
                 <table aria-labelledby="<?= e($id) ?>-label" id="<?= e($id) ?>" class="fi-fo-key-value-table">
                     <thead>
                         <tr>
-                            <?php if ($isReorderable && (! $isDisabled)) { ?>
+                            <?php if ($isReorderable) { ?>
                                 <th
                                     scope="col"
                                     x-show="rows.length"
@@ -446,21 +466,47 @@ class KeyValue extends Field implements HasEmbeddedView
                         <?php } ?>
                     >
                         <template
-                            x-bind:key="index"
+                            x-bind:key="row.id"
                             x-for="(row, index) in rows"
                         >
                             <tr
                                 <?php if ($isReorderable) { ?>
-                                    x-bind:x-sortable-item="row.key"
+                                    x-bind:x-sortable-item="row.id"
                                 <?php } ?>
                             >
-                                <?php if ($isReorderable && (! $isDisabled)) { ?>
+                                <?php if ($isReorderable) { ?>
                                     <td class="fi-has-action">
+                                        <span
+                                            class="fi-sr-only"
+                                            data-reorder-description
+                                            x-bind:id="$id('key-value-row') + '-' + row.id"
+                                            x-text="rowDescription(row, index)"
+                                        ></span>
                                         <div
                                             x-sortable-handle
                                             class="fi-fo-key-value-table-row-sortable-handle"
                                         >
-                                            <?= $this->getAction('reorder')->toHtml() ?>
+                                            <?= $reorderAction->toHtml() ?>
+                                        </div>
+                                        <div class="fi-sr-only">
+                                            <button
+                                                type="button"
+                                                tabindex="-1"
+                                                data-reorder-hidden
+                                                data-reorder-direction="up"
+                                                x-on:click.stop="moveRow(row.id, index - 1)"
+                                                x-bind:disabled="index === 0"
+                                                x-bind:aria-describedby="$id('key-value-row') + '-' + row.id"
+                                            ><?= e(__('filament-forms::components.key_value.actions.move_up.label')) ?></button>
+                                            <button
+                                                type="button"
+                                                tabindex="-1"
+                                                data-reorder-hidden
+                                                data-reorder-direction="down"
+                                                x-on:click.stop="moveRow(row.id, index + 1)"
+                                                x-bind:disabled="index === rows.length - 1"
+                                                x-bind:aria-describedby="$id('key-value-row') + '-' + row.id"
+                                            ><?= e(__('filament-forms::components.key_value.actions.move_down.label')) ?></button>
                                         </div>
                                     </td>
                                 <?php } ?>
@@ -500,6 +546,10 @@ class KeyValue extends Field implements HasEmbeddedView
                         </template>
                     </tbody>
                 </table>
+
+            <?php if ($isReorderable) { ?>
+                <span x-ref="reorderStatus" class="fi-sr-only" role="status" aria-live="polite" aria-atomic="true"></span>
+            <?php } ?>
 
             <?php if ($isAddable && (! $isDisabled)) { ?>
                 <div

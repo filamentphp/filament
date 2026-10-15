@@ -130,17 +130,20 @@ it('renders `placeholder()` for values considered blank by `blank()`', function 
     'whitespace-only string' => ['   '],
 ]);
 
-it('has no accessibility issues in light and dark modes', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+it('renders accessible charts in light and dark modes', function (): void {
+    $this->actingAs(User::factory()->create());
 
-        visit('/stats-overview-widget-browser-test')
-            ->assertNoAccessibilityIssues();
+    $page = visit('/stats-overview-widget-browser-test');
 
-        visit('/stats-overview-widget-browser-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+    $page
+        ->assertVisible('[data-testid="orders-stat"] canvas')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()
+        ->assertVisible('[data-testid="orders-stat"] canvas')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 });
 
 class TestStatsOverviewWidgetDefault extends StatsOverviewWidget

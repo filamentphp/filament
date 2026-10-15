@@ -38,7 +38,6 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Concerns\CanBeLazy;
 use Filament\Support\Enums\IconPosition;
-use Filament\Support\Livewire\Contracts\HasScopedModelProperties;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Filament\View\PanelsRenderHook;
@@ -52,7 +51,7 @@ use Livewire\Component;
 
 use function Filament\authorize;
 
-class RelationManager extends Component implements HasActions, HasRenderHookScopes, HasSchemas, HasScopedModelProperties, HasTable
+class RelationManager extends Component implements HasActions, HasRenderHookScopes, HasSchemas, HasTable
 {
     use CanAuthorizeAccess;
     use CanBeLazy;
@@ -73,40 +72,6 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
 
     #[Locked]
     public ?string $pageClass = null;
-
-    protected bool $hasResolvedScopedModelPropertiesForRequest = false;
-
-    /** @param array<string, mixed> | null $properties */
-    public function resolveScopedModelProperties(?array $properties = null): void
-    {
-        if (($properties === null) && $this->hasResolvedScopedModelPropertiesForRequest) {
-            return;
-        }
-
-        $ownerRecord = $properties['ownerRecord'] ?? $this->ownerRecord ?? null;
-
-        if (! ($ownerRecord instanceof Model)) {
-            return;
-        }
-
-        $currentOwnerRecord = $this->ownerRecord ?? null;
-
-        if (($properties !== null) && ($currentOwnerRecord instanceof Model)) {
-            abort_unless(
-                ($currentOwnerRecord::class === $ownerRecord::class) && ((string) $currentOwnerRecord->getKey() === (string) $ownerRecord->getKey()),
-                404,
-            );
-        }
-
-        $ownerRecord = $ownerRecord->newQuery()
-            ->useWritePdo()
-            ->find($ownerRecord->getKey());
-
-        abort_unless($ownerRecord !== null, 404);
-
-        $this->ownerRecord = $ownerRecord;
-        $this->hasResolvedScopedModelPropertiesForRequest = true;
-    }
 
     /**
      * @deprecated Override the `table()` method to configure the table.

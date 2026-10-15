@@ -33,6 +33,8 @@ class TextInputTest extends Page
             ->schema([
                 TextInput::make('name')
                     ->label('Name')
+                    ->prefix('Prefix')
+                    ->suffix('Suffix')
                     ->required()
                     ->extraAttributes(['data-testid' => 'text-input']),
 
@@ -45,6 +47,7 @@ class TextInputTest extends Page
                     ->label('Password')
                     ->password()
                     ->revealable()
+                    ->default('secret-value')
                     ->prefixAction(
                         Action::make('post')
                             ->icon(Heroicon::Star)

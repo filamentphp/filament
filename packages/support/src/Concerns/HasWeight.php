@@ -4,6 +4,7 @@ namespace Filament\Support\Concerns;
 
 use Closure;
 use Filament\Support\Enums\FontWeight;
+use Illuminate\Database\Eloquent\Model;
 
 trait HasWeight
 {
@@ -16,10 +17,11 @@ trait HasWeight
         return $this;
     }
 
-    public function getWeight(mixed $state = null): FontWeight | string | null
+    public function getWeight(mixed $state = null, ?Model $relatedRecord = null): FontWeight | string | null
     {
         $weight = $this->evaluate($this->weight, [
             'state' => $state,
+            'relatedRecord' => $relatedRecord,
         ]);
 
         if (! is_string($weight)) {

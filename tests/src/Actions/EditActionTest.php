@@ -85,7 +85,8 @@ it('does not update record when `EditAction` is cancelled', function (): void {
         ->fillForm([
             'name' => 'Changed Name',
         ])
-        ->assertActionMounted(TestAction::make(EditAction::class)->table($department));
+        ->unmountAction()
+        ->assertActionNotMounted();
 
     expect($department->refresh()->name)->toBe('Original Name');
 });
@@ -138,7 +139,9 @@ it('preserves original record when `EditAction` is cancelled after filling form'
         ->mountAction(TestAction::make(EditAction::class)->table($department))
         ->fillForm([
             'name' => 'Attempted Change',
-        ]);
+        ])
+        ->unmountAction()
+        ->assertActionNotMounted();
 
     expect($department->refresh()->name)->toBe('Do Not Change');
 });

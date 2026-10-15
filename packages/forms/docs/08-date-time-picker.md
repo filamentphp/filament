@@ -77,9 +77,15 @@ public function boot(): void
 
 This is useful if you want to set a default timezone for all date-time pickers in your application. It is also used in other places where timezones are used in Filament.
 
-<Aside variant="warning">
-    Timezone conversion only applies to fields with a time input. `DatePicker` and `DateTimePicker::make()->time(false)` preserve the calendar date when loading and saving, ignoring both `timezone()` and Filament's default timezone. This applies to native and JavaScript pickers, even with a custom storage `format()`. Use a `DateTimePicker` with a time input if you need timezone conversion.
-</Aside>
+### Timezones for date-only fields
+
+`DatePicker` and `DateTimePicker::make()->time(false)` use the app's timezone, ignoring both `timezone()` and Filament's default timezone. Plain dates are interpreted in the app's timezone; values with an offset or timezone, including Eloquent's serialized dates, are converted to the app's timezone before determining the selected date. This applies to native and JavaScript pickers, including custom calendar storage formats.
+
+Use a `DateTimePicker` with a time input if you need to preserve the time as well as the date.
+
+#### Storing date-only values as Unix timestamps
+
+A storage `format()` containing an unescaped `U` token is an exception: it uses `timezone()` or the app's timezone to determine the selected date. Filament's default timezone still does not apply to these date-only fields.
 
 ## Enabling the JavaScript date picker
 
@@ -97,7 +103,7 @@ DatePicker::make('date_of_birth')
 <AutoScreenshot name="forms/fields/date-time-picker/javascript" alt="JavaScript-based date time picker" version="4.x" />
 
 <Aside variant="info">
-    The JavaScript date picker does not support full keyboard input in the same way that the native date picker does. If you require full keyboard input, you should use the native date picker.
+    The JavaScript date picker does not allow direct date entry. Use the native date picker if users need to type dates.
 </Aside>
 
 ### Customizing the display format
@@ -315,7 +321,7 @@ DatePicker::make('date_of_birth')
     ->readonly()
 ```
 
-Please note that this setting is only enforced on native date pickers. If you're using the [JavaScript date picker](#enabling-the-javascript-date-picker), you'll need to use [`disabled()`](overview#disabling-a-field).
+This setting applies to both native and [JavaScript date pickers](#enabling-the-javascript-date-picker). Read-only JavaScript date pickers remain focusable, but cannot open the picker or clear the value.
 
 There are a few differences, compared to [`disabled()`](overview#disabling-a-field):
 

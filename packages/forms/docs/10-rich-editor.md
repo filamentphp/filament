@@ -161,7 +161,7 @@ RichEditor::make('content')
     ])
 ```
 
-By default, the first button's icon is used as the dropdown trigger, and it updates reactively to reflect the currently active button. Clicking on the trigger reveals the grouped buttons.
+By default, the dropdown trigger uses the currently active button's icon, or the first button's icon if none is active.
 
 You can set a fixed icon for the dropdown trigger using the `icon()` method. When a custom icon is set, the trigger icon remains static and does not change based on the active button:
 
@@ -518,7 +518,7 @@ The callback receives the path exactly as submitted by the client. Use exact tru
 
 <UtilityInjection set="formFields" version="4.x" extras="File;;string;;$file;;The submitted `data-id` value being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
 
-The validation error message can be customized via [`validationMessages()`](validation#customizing-validation-messages) using the `tampered` key:
+The validation error message can be customized via [`validationMessages()`](validation#validation-messages) using the `tampered` key:
 
 ```php
 use Filament\Forms\Components\RichEditor;
@@ -695,8 +695,6 @@ RichEditor::make('content')
 
 This setting applies to all custom blocks with previews in the editor. Blocks without a preview keep their usual header and label. Disabled editors do not display edit or delete buttons.
 
-The buttons stay at the top beside tall previews. Previews shorter than the buttons are vertically centered, with enough space for both buttons.
-
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `minimalCustomBlockControls()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Rendering content with custom blocks
@@ -863,7 +861,7 @@ RichEditor::make('content')
     ->searchableCustomBlocks()
 ```
 
-Search matches block labels and group names, ignoring capitalization and surrounding whitespace. When a group name matches, all blocks in that group appear. If nothing matches, the panel displays a message. Clearing the search restores all blocks.
+Search matches block labels and group names, ignoring capitalization and surrounding whitespace. Matching a group name displays all blocks in that group.
 
 Search works with both the list and [grid](#displaying-custom-blocks-in-a-grid) layouts. It is disabled by default, and you can pass `false` to `searchableCustomBlocks()` to disable it.
 
@@ -907,9 +905,7 @@ class HeadingBlock extends RichContentCustomBlock
 }
 ```
 
-When `shouldApplyProseStylingToPreview()` returns `true`, the block's preview will be styled with the prose typography styles defined in the rich editor, including proper margins, font sizes, and other text formatting. By default, this method returns `false`, so previews are displayed with minimal styling.
-
-You can make this decision based on the block's configuration, allowing different blocks to have different preview styling:
+You can also choose the preview styling based on the block's configuration:
 
 ```php
 public static function shouldApplyProseStylingToPreview(array $config): bool
@@ -1111,7 +1107,7 @@ RichContentRenderer::make($record->content)
 ```
 
 <Aside variant="tip">
-    The string returned from the `url()` closure is rendered directly into the `href` attribute of an `<a>` tag, so if any part of the URL is built from user input you should make sure it cannot resolve to a scheme like `javascript:` or `data:` that the browser would execute. The simplest way to guarantee this is to wrap the return value in Filament's [`Str::sanitizeUrl()`](../../advanced/security#validating-user-input) helper, which only allows `http`/`https` and relative URLs:
+    The string returned from the `url()` closure is rendered directly into the `href` attribute of an `<a>` tag, so if any part of the URL is built from user input you should make sure it cannot resolve to a scheme like `javascript:` or `data:` that the browser would execute. The simplest way to guarantee this is to wrap the return value in Filament's [`Str::sanitizeUrl()`](../advanced/security#validating-user-input) helper, which only allows `http`/`https` and relative URLs:
 
     ```php
     use Illuminate\Support\Str;
@@ -1144,8 +1140,8 @@ class Post extends Model implements HasRichContent
             ->fileAttachmentsDisk('s3')
             ->fileAttachmentsVisibility('private')
             ->customBlocks([
-                HeroBlock::class => [
-                    'categoryUrl' => fn (): string => $this->category->getUrl(),
+                HeroBlock::class => fn (): array => [
+                    'categoryUrl' => $this->category->getUrl(),
                 ],
                 CallToActionBlock::class,
             ])
@@ -1504,6 +1500,10 @@ RichContentRenderer::make($record->content)
         HighlightRichContentPlugin::make(),
     ])
 ```
+
+### Configuring custom toolbar controls
+
+Use `toggle()` to expose a tool's formatting state, and `disabledWhenNotActive()` to disable it when its active expression is false. Use `action()` for Filament action modals to preserve editor selection and focus. If you use `jsHandler()` to open your own dialog or another asynchronous interface, manage its focus and return focus to a valid editor or toolbar control when it closes.
 
 ### Enabling or disabling toolbar buttons from a plugin
 

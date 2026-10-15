@@ -188,3 +188,25 @@ The dropdown content can have a maximum height using the `max-height` attribute,
 ```
 
 <AutoScreenshot name="components/dropdown/max-height" alt="A dropdown with a maximum height" version="4.x" />
+
+## Displaying content other than a menu
+
+If your dropdown contains form fields or other content that is not an action menu, set `:menu="false"` to preserve the content's native keyboard interactions:
+
+```blade
+<x-filament::dropdown :menu="false">
+    <x-slot name="trigger">
+        <x-filament::button>
+            Edit notes
+        </x-filament::button>
+    </x-slot>
+
+    <label for="dropdown-notes">Notes</label>
+
+    <x-filament::input.wrapper>
+        <x-filament::input id="dropdown-notes" wire:model="notes" />
+    </x-filament::input.wrapper>
+</x-filament::dropdown>
+```
+
+Use form components or native buttons and links in these popups, rather than `dropdown.list.item`, which renders menu-item semantics.

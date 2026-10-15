@@ -1,5 +1,5 @@
 .fi-fo-builder {
-    @apply grid grid-cols-1 gap-y-4;
+    @apply grid grid-cols-1 gap-y-4 outline-none;
 
     & .fi-fo-builder-actions {
         @apply flex gap-x-3;
@@ -18,7 +18,7 @@
     }
 
     & .fi-fo-builder-item {
-        @apply rounded-xl bg-white shadow-xs ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10;
+        @apply rounded-xl bg-white shadow-xs ring-1 ring-gray-950/5 outline-none dark:bg-white/5 dark:ring-white/10;
 
         &.fi-collapsed {
             & .fi-fo-builder-item-header-collapsible-actions {
@@ -171,24 +171,36 @@
     }
 
     & .fi-fo-builder-block-picker {
-        @apply flex justify-center;
+        @apply mx-auto flex w-fit max-w-full justify-center;
 
         & .fi-dropdown-panel {
             @apply overflow-y-auto;
         }
 
-        & .fi-dropdown-list > .fi-grid {
+        & .fi-dropdown-list .fi-grid {
             @apply gap-x-0;
+        }
+
+        & .fi-fo-builder-block-picker-group {
+            @apply break-inside-avoid-column;
+
+            &:not(:last-child) {
+                @apply mb-2;
+            }
+        }
+
+        & .fi-fo-builder-block-picker-group-label {
+            @apply px-2 py-1.5 text-sm font-semibold text-gray-950 dark:text-white;
         }
 
         &.fi-align-start,
         &.fi-align-left {
-            @apply justify-start;
+            @apply ms-0 justify-start;
         }
 
         &.fi-align-end,
         &.fi-align-right {
-            @apply justify-end;
+            @apply me-0 justify-end;
         }
     }
 }

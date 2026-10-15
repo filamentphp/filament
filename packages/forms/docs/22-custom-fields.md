@@ -5,49 +5,9 @@ import Aside from "@components/Aside.astro"
 
 ## Introduction
 
-Livewire components are PHP classes that have their state stored in the user's browser. When a network request is made, the state is sent to the server, and filled into public properties on the Livewire component class, where it can be accessed in the same way as any other class property in PHP can be.
-
-Imagine you had a Livewire component with a public property called `$name`. You could bind that property to an input field in the HTML of the Livewire component in one of two ways: with the [`wire:model` attribute](https://livewire.laravel.com/docs/properties#data-binding), or by [entangling](https://livewire.laravel.com/docs/javascript#the-wire-object) it with an Alpine.js property:
-
-```blade
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
->
-    <input wire:model="name" />
-    
-    <!-- Or -->
-    
-    <div x-data="{ state: $wire.$entangle('name') }">
-        <input x-model="state" />
-    </div>
-</x-dynamic-component>
-```
-
-When the user types into the input field, the `$name` property is updated in the Livewire component class. When the user submits the form, the `$name` property is sent to the server, where it can be saved.
-
-This is the basis of how fields work in Filament. Each field is assigned to a public property in the Livewire component class, which is where the state of the field is stored. We call the name of this property the "state path" of the field. You can access the state path of a field using the `$getStatePath()` function in the field's view:
-
-```blade
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
->
-    <input wire:model="{{ $getStatePath() }}" />
-
-    <!-- Or -->
-    
-    <div x-data="{ state: $wire.$entangle('{{ $getStatePath() }}') }">
-        <input x-model="state" />
-    </div>
-</x-dynamic-component>
-```
-
-If your component heavily relies on third party libraries, we advise that you asynchronously load the Alpine.js component using the Filament asset system. This ensures that the Alpine.js component is only loaded when it's needed, and not on every page load. To find out how to do this, check out our [Assets documentation](../advanced/assets#asynchronous-alpinejs-components).
+You may create your own custom field classes and views, which you can reuse across your project, and even release as a plugin to the community.
 
 ## Custom field classes
-
-You may create your own custom field classes and views, which you can reuse across your project, and even release as a plugin to the community.
 
 To create a custom field class and view, you may use the following command:
 
@@ -71,6 +31,29 @@ It will also create a view file at `resources/views/filament/forms/components/lo
 <Aside variant="info">
     Filament form fields are **not** Livewire components. Defining public properties and methods on a form field class will not make them accessible in the Blade view.
 </Aside>
+
+## Binding a field to its state
+
+A field's state is stored in a public property on its Livewire component. Use `$getStatePath()` in the field's view to bind to the correct property, including when the field is nested inside a repeater or another component. You can bind with [`wire:model`](https://livewire.laravel.com/docs/properties#data-binding) or [entangle an Alpine.js property](https://livewire.laravel.com/docs/javascript#the-wire-object):
+
+```blade
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :field="$field"
+>
+    <input wire:model="{{ $getStatePath() }}" />
+
+    <!-- Or -->
+
+    <div x-data="{ state: $wire.$entangle('{{ $getStatePath() }}') }">
+        <input x-model="state" />
+    </div>
+</x-dynamic-component>
+```
+
+See [obeying state binding modifiers](#obeying-state-binding-modifiers) to support options such as `live()` and `debounce()`. Preserve the field's [accessibility associations](overview#preserving-accessibility-in-custom-field-views) when creating its control markup.
+
+If your field uses third-party JavaScript libraries, you can [load its Alpine.js component asynchronously](../advanced/assets#asynchronous-alpine-js-components) so those assets are only loaded when needed.
 
 ## Accessing the state of another component in the Blade view
 
@@ -230,7 +213,7 @@ class LocationPicker extends Field
 }
 ```
 
-Now, you can pass a static value or a function to the `zoom()` method, and [inject any utility](overview#component-utility-injection) as a parameter:
+Now, you can pass a static value or a function to the `zoom()` method, and [inject any utility](overview#field-utility-injection) as a parameter:
 
 ```php
 use App\Filament\Forms\Components\LocationPicker;

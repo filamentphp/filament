@@ -1,4 +1,8 @@
 import noUiSlider from 'nouislider'
+import {
+    observeFieldAccessibility,
+    setFieldAccessibilityAttributes,
+} from '../utilities/field-accessibility.js'
 
 export default function sliderFormComponent({
     arePipsStepped,
@@ -27,6 +31,7 @@ export default function sliderFormComponent({
         state,
 
         slider: null,
+        accessibilityObserver: null,
 
         init() {
             this.slider = noUiSlider.create(this.$el, {
@@ -77,6 +82,17 @@ export default function sliderFormComponent({
                     )
             }
 
+            const handles = this.$el.querySelectorAll('.noUi-handle')
+
+            this.accessibilityObserver = observeFieldAccessibility(
+                this.$el,
+                (attributes) => {
+                    handles.forEach((handle) =>
+                        setFieldAccessibilityAttributes(handle, attributes),
+                    )
+                },
+            )
+
             if (isDisabled) {
                 this.slider.disable()
             }
@@ -91,6 +107,7 @@ export default function sliderFormComponent({
         },
 
         destroy() {
+            this.accessibilityObserver?.disconnect()
             this.slider.destroy()
             this.slider = null
         },

@@ -30,7 +30,10 @@ class DatePickerBrowserTest extends Page
 
     public function mount(): void
     {
+        $record = auth()->user()->mergeCasts(['email_verified_at' => 'date']);
+
         $this->form->fill();
+        $this->form->fillPartially($record->attributesToArray(), ['email_verified_at']);
     }
 
     public function form(Schema $form): Schema
@@ -43,6 +46,29 @@ class DatePickerBrowserTest extends Page
                     ->minDate(Carbon::parse('2025-07-15 09:30:23', 'Asia/Tokyo'))
                     ->maxDate(static fn () => CarbonImmutable::parse('2025-07-17 17:45:47', 'America/New_York'))
                     ->extraInputAttributes(['data-testid' => 'native-date']),
+                DatePicker::make('timestamp')
+                    ->label('Timestamp date')
+                    ->format('U')
+                    ->timezone('Asia/Tokyo')
+                    ->default('1752505200')
+                    ->extraInputAttributes(['data-testid' => 'timestamp-date']),
+                DatePicker::make('customTimestamp')
+                    ->label('Custom timestamp date')
+                    ->native(false)
+                    ->format('U')
+                    ->displayFormat('Y-m-d')
+                    ->timezone('Asia/Tokyo')
+                    ->default('1752505200')
+                    ->extraTriggerAttributes(['data-testid' => 'custom-timestamp-date']),
+                DatePicker::make('midnightTimestamp')
+                    ->label('Midnight timestamp date')
+                    ->format('U')
+                    ->timezone('UTC')
+                    ->default('1757203200')
+                    ->extraInputAttributes(['data-testid' => 'midnight-timestamp-date']),
+                DatePicker::make('email_verified_at')
+                    ->label('Verified date')
+                    ->extraInputAttributes(['data-testid' => 'model-date']),
             ])
             ->statePath('data');
     }
@@ -50,12 +76,19 @@ class DatePickerBrowserTest extends Page
     public function save(): void
     {
         $this->saved = $this->form->getState();
+        auth()->user()->mergeCasts(['email_verified_at' => 'date'])
+            ->update(['email_verified_at' => $this->saved['email_verified_at']]);
         $this->saveCount++;
     }
 
     public function reloadForm(): void
     {
-        $this->form->fill($this->saved);
+        $record = auth()->user()->refresh()->mergeCasts(['email_verified_at' => 'date']);
+
+        $this->form->fill([
+            ...$this->saved,
+            'email_verified_at' => $record->attributesToArray()['email_verified_at'],
+        ]);
         $this->reloadCount++;
     }
 }

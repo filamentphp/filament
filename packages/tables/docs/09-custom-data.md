@@ -49,6 +49,12 @@ public function table(Table $table): Table
     The array keys `(e.g., 1, 2, 3)` represent the record IDs. Use unique and consistent keys to ensure proper diffing and state tracking. This helps prevent issues with record integrity during Livewire interactions and updates.
 </Aside>
 
+## Securing custom data
+
+Filament does not apply Eloquent global scopes or automatically check model policies for array records. Your `records()` callback must return only data the current user may access, including any tenant or ownership restrictions. Apply those restrictions at the data source before sorting or paginating. Search terms, filters, and record selections are client-controlled and must not determine which data the user is authorized to access.
+
+Authorize custom actions explicitly, using an `authorize()` callback or a check in the action's callback before accessing or changing data. Permission to display a row does not imply permission to create, update, or delete it. For URL actions, the destination route must authorize access independently. If you use an API credential, its access to the upstream service does not establish the current user's permission to perform an operation.
+
 ## Columns
 
 [Columns](columns) in the table work similarly to how they do when using [Eloquent models](https://laravel.com/docs/eloquent), but with one key difference: instead of referring to a model attribute or relationship, the column name represents a key in the array returned by the `records()` function.
@@ -152,7 +158,7 @@ In this example, specific columns like `title` do not need to be `searchable()` 
 
 #### Searching individual columns
 
-The [individual column searches](#searching-individually) feature provides a way to render a search field separately for each column, allowing more precise filtering. When using custom data, you need to implement this feature yourself.
+The [individual column searches](#searching-individual-columns) feature provides a way to render a search field separately for each column, allowing more precise filtering. When using custom data, you need to implement this feature yourself.
 
 Instead of injecting `$search` into the `records()` function, you can inject an array of `$columnSearches`, which contains the search queries for each column.
 
@@ -335,7 +341,7 @@ In this example, the `forPage()` method is used to paginate the data. This proba
 
 ## Actions
 
-[Actions](actions) in the table work similarly to how they do when using [Eloquent models](https://laravel.com/docs/eloquent). The only difference is that the `$record` parameter in the action's callback function will be an `array` instead of a `Model`.
+[Actions](actions) receive an `array` instead of a `Model` in their `$record` parameter. These are custom actions, so apply the [authorization checks described above](#securing-custom-data), including authorization in the destination route for the URL action below.
 
 ```php
 use Filament\Actions\Action;
@@ -380,7 +386,11 @@ public function table(Table $table): Table
 
 ### Bulk actions
 
-For actions that interact with a single record, the record is always present on the current table page, so the `records()` method can be used to fetch the data. However for bulk actions, records can be selected across pagination pages. If you would like to use a bulk action that selects records across pages, you need to give Filament a way to fetch records across pages, otherwise it will only return the records from the current page. The `resolveSelectedRecordsUsing()` method should accept a function which has a `$keys` parameter, and returns an array of record data:
+For actions that interact with a single record, the record is always present on the current table page, so the `records()` method can be used to fetch the data. However for bulk actions, records can be selected across pagination pages. If you would like to use a bulk action that selects records across pages, you need to give Filament a way to fetch records across pages, otherwise it will only return the records from the current page. The `resolveSelectedRecordsUsing()` method should accept a function which has a `$keys` parameter, and returns a `Collection` of record data:
+
+<Aside variant="warning">
+    Treat `$keys` as client-controlled. The resolver must only return records the current user may access, with the same tenant and ownership restrictions as `records()`. Authorize the intended operation on each returned record before processing it; selection is not authorization.
+</Aside>
 
 ```php
 use Filament\Actions\BulkAction;
@@ -394,8 +404,8 @@ public function table(Table $table): Table
         ->records(function (): array {
             // ...
         })
-        ->resolveSelectedRecordsUsing(function (array $keys): array {
-            return Arr::only([
+        ->resolveSelectedRecordsUsing(function (array $keys): Collection {
+            return collect(Arr::only([
                 1 => [
                     'title' => 'First item',
                     'slug' => 'first-item',
@@ -411,7 +421,7 @@ public function table(Table $table): Table
                     'slug' => 'third-item',
                     'is_featured' => true,
                 ],
-            ], $keys);
+            ], $keys));
         })
         ->columns([
             // ...
@@ -428,7 +438,7 @@ public function table(Table $table): Table
 
 However, if your user uses the "Select All" button to select all records across pagination pages, Filament will internally switch to tracking *deselected* records instead of selected records. This is an efficient mechanism in significantly large datasets. You can inject two additional parameters into the `resolveSelectedRecordsUsing()` method to handle this case: `$isTrackingDeselectedKeys` and `$deselectedKeys`.
 
-`$isTrackingDeselectedKeys` is a boolean that indicates whether the user is tracking deselected keys. If it's `true`, `$deselectedKeys` will contain the keys of the records that are currently deselected. You can use this information to filter out the deselected records from the array of records returned by the `resolveSelectedRecordsUsing()` method:
+`$isTrackingDeselectedKeys` is a boolean that indicates whether the user is tracking deselected keys. If it's `true`, `$deselectedKeys` will contain the keys of the records that are currently deselected. You can use this information to filter out the deselected records from the collection returned by the `resolveSelectedRecordsUsing()` method:
 
 ```php
 use Filament\Actions\BulkAction;
@@ -446,7 +456,7 @@ public function table(Table $table): Table
             array $keys,
             bool $isTrackingDeselectedKeys,
             array $deselectedKeys
-        ): array {
+        ): Collection {
             $records = [
                 1 => [
                     'title' => 'First item',
@@ -466,16 +476,16 @@ public function table(Table $table): Table
             ];
             
             if ($isTrackingDeselectedKeys) {
-                return Arr::except(
+                return collect(Arr::except(
                     $records,
                     $deselectedKeys,
-                );
+                ));
             }
             
-            return Arr::only(
+            return collect(Arr::only(
                 $records,
                 $keys,
-            );
+            ));
         })
         ->columns([
             // ...
@@ -494,6 +504,10 @@ public function table(Table $table): Table
 
 [Filament's table builder](overview/#introduction) allows you to populate tables with data fetched from any external source—not just [Eloquent models](https://laravel.com/docs/eloquent). This is particularly useful when you want to display data from a REST API or a third-party service.
 
+<Aside variant="warning">
+    The examples in this section use DummyJSON, a demonstration API. Before adapting them for production, add authentication, authorization for each operation, input validation, error handling, and rate limiting appropriate to your API. Filament does not automatically authorize array records or scope them to a tenant. Follow the [custom data security guidance](#securing-custom-data). DummyJSON simulates create, update, and delete requests without persisting changes.
+</Aside>
+
 ### Fetching data from an external API
 
 The example below demonstrates how to consume data from [DummyJSON](https://dummyjson.com), a free fake REST API for placeholder JSON, and display it in a [Filament table](overview/#introduction):
@@ -509,8 +523,9 @@ public function table(Table $table): Table
     return $table
         ->records(fn (): array => Http::baseUrl('https://dummyjson.com')
             ->get('products')
-            ->collect()
-            ->get('products', [])
+            ->collect('products')
+            ->keyBy('id')
+            ->all()
         )
         ->columns([
             TextColumn::make('title'),
@@ -521,11 +536,7 @@ public function table(Table $table): Table
 }
 ```
 
-`get('products')` makes a `GET` request to [`https://dummyjson.com/products`](https://dummyjson.com/products). The `collect()` method converts the JSON response into a [Laravel collection](https://laravel.com/docs/collections#main-content). Finally, `get('products', [])` retrieves the array of products from the response. If the key is missing, it safely returns an empty array.
-
-<Aside variant="warning">
-    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
-</Aside>
+The `records()` callback returns the response's products keyed by their stable `id`. Keep these keys across sorting, filtering, and pagination so a selection or mounted action continues to identify the same product even if the API changes the order of its results. Handle failed requests separately rather than treating an empty array as a successful response.
 
 <Aside variant="info">
     DummyJSON returns 30 items by default. You can use the [limit and skip](#external-api-pagination) query parameters to paginate through all items or use [`limit=0`](https://dummyjson.com/docs/products#products-limit_skip) to get all items.
@@ -575,8 +586,9 @@ public function table(Table $table): Table
                 ]);
 
             return $response
-                ->collect()
-                ->get('products', []);
+                ->collect('products')
+                ->keyBy('id')
+                ->all();
         })
         ->columns([
             TextColumn::make('title'),
@@ -587,15 +599,7 @@ public function table(Table $table): Table
         ]);
 }
 ```
-`get('products')` makes a `GET` request to [`https://dummyjson.com/products`](https://dummyjson.com/products). The request includes two parameters: `sortBy`, which specifies the column to sort by (e.g., category), and `order`, which specifies the direction of the sort (e.g., asc or desc). The `collect()` method converts the JSON response into a [Laravel collection](https://laravel.com/docs/collections#main-content). Finally, `get('products', [])` retrieves the array of products from the response. If the key is missing, it safely returns an empty array.
-
-<Aside variant="warning">
-    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
-</Aside>
-
-<Aside variant="info">
-    DummyJSON returns 30 items by default. You can use the [limit and skip](#external-api-pagination) query parameters to paginate through all items or use [`limit=0`](https://dummyjson.com/docs/products#products-limit_skip) to get all items.
-</Aside>
+Pass `$sortColumn` as `sortBy` and `$sortDirection` as `order` to let the API sort the results. Use [pagination](#external-api-pagination) to fetch more than the API's default page of results.
 
 ### External API searching
 
@@ -616,8 +620,9 @@ public function table(Table $table): Table
                 ]);
 
             return $response
-                ->collect()
-                ->get('products', []);
+                ->collect('products')
+                ->keyBy('id')
+                ->all();
         })
         ->columns([
             TextColumn::make('title'),
@@ -629,15 +634,7 @@ public function table(Table $table): Table
 }
 ```
 
-`get('products/search')` makes a `GET` request to [`https://dummyjson.com/products/search`](https://dummyjson.com/products/search). The request includes the `q` parameter, which is used to filter the results based on the `search` query. The `collect()` method converts the JSON response into a [Laravel collection](https://laravel.com/docs/collections#main-content). Finally, `get('products', [])` retrieves the array of products from the response. If the key is missing, it safely returns an empty array.
-
-<Aside variant="warning">
-    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
-</Aside>
-
-<Aside variant="info">
-    DummyJSON returns 30 items by default. You can use the [limit and skip](#external-api-pagination) query parameters to paginate through all items or use [`limit=0`](https://dummyjson.com/docs/products#products-limit_skip) to get all items.
-</Aside>
+Pass `$search` as the `q` parameter to the search endpoint. Use [pagination](#external-api-pagination) to fetch more than the API's default page of matching results.
 
 ### External API filtering
 
@@ -664,8 +661,9 @@ public function table(Table $table): Table
                 ->get($endpoint);
 
             return $response
-                ->collect()
-                ->get('products', []);
+                ->collect('products')
+                ->keyBy('id')
+                ->all();
         })
         ->columns([
             TextColumn::make('title'),
@@ -685,21 +683,18 @@ public function table(Table $table): Table
 }
 ```
 
-If a category filter is selected, the request is made to `/products/category/{category}`; otherwise, it defaults to `/products`. The `get()` method sends a `GET` request to the appropriate endpoint. The `collect()` method converts the JSON response into a [Laravel collection](https://laravel.com/docs/collections#main-content). Finally, `get('products', [])` retrieves the array of products from the response. If the key is missing, it safely returns an empty array.
-
-<Aside variant="warning">
-    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
-</Aside>
-
-<Aside variant="info">
-    DummyJSON returns 30 items by default. You can use the [limit and skip](#external-api-pagination) query parameters to paginate through all items or use [`limit=0`](https://dummyjson.com/docs/products#products-limit_skip) to get all items.
-</Aside>
+Read the selected category from `$filters['category']['value']` and choose the category endpoint, or the products endpoint when no category is selected. Use [pagination](#external-api-pagination) to fetch more than the API's default page of results.
 
 ### External API pagination
 
 You can enable [pagination](overview#pagination) when using an external API as the table data source. Filament will pass the current page and the number of records per page to your `records()` function. The example below demonstrates how to construct a `LengthAwarePaginator` manually and fetch paginated data from the [DummyJSON](https://dummyjson.com/docs/products#products-limit_skip) API, which uses `limit` and `skip` parameters for pagination:
 
 ```php
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Http;
+
 public function table(Table $table): Table
 {
     return $table
@@ -714,7 +709,7 @@ public function table(Table $table): Table
                 ->collect();
 
             return new LengthAwarePaginator(
-                items: $response['products'],
+                items: collect($response['products'])->keyBy('id'),
                 total: $response['total'],
                 perPage: $recordsPerPage,
                 currentPage: $page
@@ -729,14 +724,7 @@ public function table(Table $table): Table
 }
 ```
 
-`$page` and `$recordsPerPage` are automatically injected by Filament based on the current pagination state.
-The calculated `skip` value tells the API how many records to skip before returning results for the current page.
-The response contains `products` (the paginated items) and `total` (the total number of available items).
-These values are passed to a `LengthAwarePaginator`, which Filament uses to render pagination controls correctly.
-
-<Aside variant="warning">
-    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
-</Aside>
+Use the injected `$page` and `$recordsPerPage` to calculate the API's `skip` offset. Return a `LengthAwarePaginator` containing the current page's items and the API's total count, so Filament can display the correct pagination controls.
 
 ### External API actions
 
@@ -746,9 +734,13 @@ Filament provides a variety of [built-in actions](../actions/overview#available-
 
 The examples below demonstrate how to create and use actions with an external API using [DummyJSON](https://dummyjson.com) as a simulated API source.
 
+<Aside variant="warning">
+    These examples do not implement application authorization. Check the current user's permission for each operation and record before loading modal data or sending an API request, and enforce tenant or ownership restrictions in your API or server-side data access. Modal confirmation, form validation, and API authentication do not replace those checks. See [securing custom data](#securing-custom-data).
+</Aside>
+
 #### External API create action example
 
-The create action in this example provides a [modal form](../actions/modals#rendering-a-form-in-a-modal) that allows users to create a new product using an external API. When the form is submitted, a `POST` request is sent to the API to create the new product.
+The create action in this example provides a [modal form](../actions/modals#rendering-a-form-in-a-modal) that sends a `POST` request to the API. DummyJSON simulates creation without persisting the product. Before using this recipe with a real API, [authorize creation](#securing-custom-data) and handle failed requests before showing a success notification.
 
 ```php
 use Filament\Actions\Action;
@@ -767,8 +759,9 @@ public function table(Table $table): Table
     return $table
         ->records(fn (): array => Http::baseUrl($baseUrl)
             ->get('products')
-            ->collect()
-            ->get('products', [])
+            ->collect('products')
+            ->keyBy('id')
+            ->all()
         )
         ->columns([
             TextColumn::make('title'),
@@ -815,14 +808,6 @@ public function table(Table $table): Table
 - [`schema()`](../actions/modals#rendering-a-schema-in-a-modal) defines the form fields displayed in the modal.
 - `action()` defines the logic that will be executed when the user submits the form.
 
-<Aside variant="warning">
-    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
-</Aside>
-
-<Aside variant="warning">
-    [`DummyJSON`](https://dummyjson.com/docs/products#products-update) API will not add it into the server. It will simulate a `POST` request and will return the new created product with a new id.
-</Aside>
-
 If you don't need a modal, you can directly redirect users to a specified URL when they click the create action button. In this case, you can define a custom URL pointing to the product creation page:
 
 ```php
@@ -834,7 +819,7 @@ Action::make('create')
 
 #### External API edit action example
 
-The edit action in this example provides a [modal form](../actions/modals#rendering-a-form-in-a-modal) for editing product details fetched from an external API. Users can update fields such as the product title and category, and the changes will be sent to the external API using a `PUT` request.
+The edit action in this example provides a [modal form](../actions/modals#rendering-a-form-in-a-modal) for editing product details and sends a `PUT` request. DummyJSON simulates updates without persisting them. Before using this recipe with a real API, [authorize access and updates to the product](#securing-custom-data) and handle failed requests before showing a success notification.
 
 ```php
 use Filament\Actions\Action;
@@ -854,8 +839,9 @@ public function table(Table $table): Table
     return $table
         ->records(fn (): array => Http::baseUrl($baseUrl)
             ->get('products')
-            ->collect()
-            ->get('products', [])
+            ->collect('products')
+            ->keyBy('id')
+            ->all()
         )
         ->columns([
             TextColumn::make('title'),
@@ -906,14 +892,6 @@ public function table(Table $table): Table
 - [`schema()`](../actions/modals#rendering-a-schema-in-a-modal) defines the form fields displayed in the modal.
 - `action()` defines the logic that will be executed when the user submits the form.
 
-<Aside variant="warning">
-    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
-</Aside>
-
-<Aside variant="warning">
-    [`DummyJSON`](https://dummyjson.com/docs/products#products-update) API will not update it into the server. It will simulate a `PUT`/`PATCH` request and will return updated product with modified data.
-</Aside>
-
 If you don't need a modal, you can directly redirect users to a specified URL when they click the action button. You can achieve this by defining a URL with a dynamic route that includes the `record` parameter:
 
 ```php
@@ -926,6 +904,8 @@ Action::make('edit')
 #### External API view action example
 
 The view action in this example opens a [modal](../actions/modals) displaying detailed product information fetched from an external API. This allows you to build a user interface with various components such as [text entries](../infolists/text-entry) and [images](../infolists/image-entry).
+
+For private data, [authorize access to the product](#securing-custom-data) before fetching or displaying these details. A read-only modal does not make its contents public or authorize access.
 
 ```php
 use Filament\Actions\Action;
@@ -948,8 +928,9 @@ public function table(Table $table): Table
             ->get('products', [
                 'select' => 'id,title,description,brand,category,thumbnail,price',
             ])
-            ->collect()
-            ->get('products', [])
+            ->collect('products')
+            ->keyBy('id')
+            ->all()
         )
         ->columns([
             TextColumn::make('title'),
@@ -993,10 +974,6 @@ public function table(Table $table): Table
 - [`modalSubmitAction(false)`](../actions/modals#modifying-the-default-modal-footer-action-button) disables the submit button, making this a read-only view action.
 - [`modalCancelActionLabel()`](../actions/modals#modifying-the-default-modal-footer-action-button) customizes the label for the close button.
 
-<Aside variant="warning">
-    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
-</Aside>
-
 <Aside variant="info">
     The [`select`](https://dummyjson.com/docs/products#products-limit_skip) parameter is used to limit the fields returned by the API. This helps reduce payload size and improves performance when rendering the table.
 </Aside>
@@ -1012,7 +989,7 @@ Action::make('view')
 
 #### External API delete action example
 
-The delete action in this example allows users to delete a product fetched from an external API.
+The delete action in this example sends a `DELETE` request for a product. DummyJSON simulates deletion without persisting it. Before using this recipe with a real API, [authorize deletion of the product](#securing-custom-data) and handle failed requests before showing a success notification. Asking for confirmation does not authorize deletion.
 
 ```php
 use Filament\Actions\Action;
@@ -1029,8 +1006,9 @@ public function table(Table $table): Table
     return $table
         ->records(fn (): array => Http::baseUrl($baseUrl)
             ->get('products')
-            ->collect()
-            ->get('products', [])
+            ->collect('products')
+            ->keyBy('id')
+            ->all()
         )
         ->columns([
             TextColumn::make('title'),
@@ -1074,23 +1052,13 @@ public function table(Table $table): Table
 - [`requiresConfirmation()`](../actions/modals#confirmation-modals) ensures that the user must confirm the deletion before it is executed.
 - `action()` defines the logic that will be executed when the user confirms the submission.
 
-<Aside variant="warning">
-    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
-</Aside>
-
-<Aside variant="warning">
-    [`DummyJSON`](https://dummyjson.com/docs/products#products-update) API will not delete it into the server. It will simulate a `DELETE` request and will return deleted product with `isDeleted` and `deletedOn` keys.
-</Aside>
-
 ### External API full example
 
-This example demonstrates how to combine [sorting](#external-api-sorting), [search](#external-api-searching), [category filtering](#external-api-filtering), and [pagination](#external-api-pagination) when using an external API as the data source. The API used here is [DummyJSON](https://dummyjson.com), which supports these features individually but **does not allow combining all of them in a single request**. This is because each feature uses a different endpoint:
+This example adds [sorting](#external-api-sorting) and [pagination](#external-api-pagination) to the products, search, and category endpoints. When a search is entered, it uses `/products/search`; otherwise, it uses the selected category's endpoint or `/products`.
 
-- [Search](#external-api-searching) is performed through the `/products/search` endpoint using the `q` parameter.
-- [Category filtering](#external-api-filtering) uses the `/products/category/{category}` endpoint.
-- [Sorting](#external-api-sorting) is handled by sending `sortBy` and `order` parameters to the `/products` endpoint.
-
-The only feature that can be combined with each of the above is [pagination](#external-api-pagination), since the `limit` and `skip` parameters are supported across all three endpoints.
+<Aside variant="warning">
+    In this example, search takes precedence over the category filter: selecting a category does not restrict search results. If your application needs both constraints, use an API that supports them together, or filter the complete matching dataset before paginating. A client-controlled filter must never be your authorization boundary. For private data, enforce the [current user's access restrictions](#securing-custom-data) on every endpoint, regardless of the search or filters they choose.
+</Aside>
 
 ```php
 use Filament\Tables\Columns\ImageColumn;
@@ -1129,7 +1097,7 @@ public function table(Table $table): Table
             $skip = ($page - 1) * $recordsPerPage;
 
             // Base query parameters for all requests
-            $params = [
+            $parameters = [
                 'limit' => $recordsPerPage,
                 'skip' => $skip,
                 'select' => 'id,title,brand,category,thumbnail,price,sku,stock',
@@ -1137,21 +1105,21 @@ public function table(Table $table): Table
 
             // Add search query if applicable
             if (filled($search)) {
-                $params['q'] = $search;
+                $parameters['q'] = $search;
             }
 
             // Add sorting parameters
-            if ($endpoint === 'products' && $sortColumn) {
-                $params['sortBy'] = $sortColumn;
-                $params['order'] = $sortDirection ?? 'asc';
+            if ($sortColumn) {
+                $parameters['sortBy'] = $sortColumn;
+                $parameters['order'] = $sortDirection ?? 'asc';
             }
 
             $response = Http::baseUrl($baseUrl)
-                ->get($endpoint, $params)
+                ->get($endpoint, $parameters)
                 ->collect();
 
             return new LengthAwarePaginator(
-                items: $response['products'],
+                items: collect($response['products'])->keyBy('id'),
                 total: $response['total'],
                 perPage: $recordsPerPage,
                 currentPage: $page
@@ -1186,14 +1154,6 @@ public function table(Table $table): Table
         ->searchable();
 }
 ```
-
-<Aside variant="warning">
-    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.
-</Aside>
-
-<Aside variant="warning">
-    The [DummyJSON](https://dummyjson.com) API does not support combining sorting, search, and category filtering in a single request.
-</Aside>
 
 <Aside variant="info">
     The [`select`](https://dummyjson.com/docs/products#products-limit_skip) parameter is used to limit the fields returned by the API. This helps reduce payload size and improves performance when rendering the table.

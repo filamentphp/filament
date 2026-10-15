@@ -111,7 +111,7 @@ use Livewire\Component;
  * @method static string | null getTenantBillingUrl(array<string, mixed> $parameters = [], Model | null $tenant = null)
  * @method static array<Action> getTenantMenuItems()
  * @method static string | null getTenantModel()
- * @method static string getTenantName(Model $tenant)
+ * @method static string | Htmlable getTenantName(Model $tenant)
  * @method static string getTenantOwnershipRelationshipName()
  * @method static string | null getTenantProfilePage()
  * @method static string | null getTenantRegistrationPage()

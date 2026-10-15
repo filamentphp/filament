@@ -46,7 +46,7 @@ class WizardBrowserTest extends Page
                         ->key('details')
                         ->id('profile-details')
                         ->beforeValidation(static function (): void {
-                            delay(1);
+                            delay(3);
                         })
                         ->schema([
                             WizardBrowserTestSelect::make('status')
@@ -69,9 +69,10 @@ class WizardBrowserTest extends Page
                 ])
                     ->id('profile-wizard')
                     ->persistStepInQueryString()
-                    ->nextAction(static fn (Action $action): Action => $action->extraAttributes([
-                        'data-testid' => 'wizard-next-action',
-                    ]))
+                    ->nextAction(static fn (Action $action): Action => $action
+                        ->extraAttributes([
+                            'data-testid' => 'wizard-next-action',
+                        ]))
                     ->key('wizard'),
                 Group::make([
                     Wizard::make([

@@ -5,6 +5,7 @@ namespace Filament\Tests\Fixtures\Pages;
 use BackedEnum;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TimePicker;
 use Filament\Pages\Page;
@@ -37,9 +38,31 @@ class DateTimePickerTest extends Page
 
     public bool $isNative = true;
 
+    public bool $isRightToLeft = false;
+
     public bool $hasDstLimits = false;
 
     public bool $hasAppDstGap = false;
+
+    public ?string $calendarState = null;
+
+    public ?string $displayFormat = null;
+
+    public bool $hasZonedDisabledDate = false;
+
+    public bool $hasDisabledDates = false;
+
+    public string $calendarLocale = 'en';
+
+    public int $calendarWeekStart = 1;
+
+    public bool $overlaysParentCalendarModal = false;
+
+    public bool $closesOnDateSelection = false;
+
+    public int $hourStep = 1;
+
+    public int $minuteStep = 1;
 
     public array $saved = [];
 
@@ -57,9 +80,21 @@ class DateTimePickerTest extends Page
         $this->hasSeconds = request()->boolean('seconds', true);
         $this->hasLimits = request()->boolean('bounds');
         $this->isNative = request()->boolean('native', true);
+        $this->isRightToLeft = request()->boolean('rtl');
         $this->hasDstLimits = request()->boolean('dst');
         $this->hasAppDstGap = request()->boolean('app-dst-gap');
-        $this->form->fill($this->hasDstLimits ? ['field' => '01:45:07'] : []);
+        $this->calendarState = request()->query('calendar-state');
+        $this->displayFormat = request()->query('display-format');
+        $this->hasZonedDisabledDate = request()->boolean('zoned-disabled-date');
+        $this->hasDisabledDates = request()->boolean('disabled-dates');
+        $this->calendarLocale = request()->string('locale', 'en')->toString();
+        $this->calendarWeekStart = request()->integer('week-start', 1);
+        $this->overlaysParentCalendarModal = request()->boolean('overlay');
+        $this->closesOnDateSelection = request()->boolean('close-on-selection');
+        $this->hourStep = request()->integer('hour-step', 1);
+        $this->minuteStep = request()->integer('minute-step', 1);
+        $initialState = request()->query('initial-state', $this->calendarState);
+        $this->form->fill($initialState !== null ? ['field' => $initialState] : ($this->hasDstLimits ? ['field' => '01:45:07'] : []));
     }
 
     public function form(Schema $form): Schema
@@ -71,10 +106,17 @@ class DateTimePickerTest extends Page
             ->disabled($this->isDisabled)
             ->readOnly($this->isReadOnly)
             ->autofocus($this->isAutofocused)
+            ->locale($this->calendarLocale)
+            ->firstDayOfWeek($this->calendarWeekStart)
+            ->closeOnDateSelection($this->closesOnDateSelection)
+            ->hoursStep($this->hourStep)
+            ->minutesStep($this->minuteStep)
+            ->disabledDates($this->hasDisabledDates ? ['2025-07-16'] : [])
             ->defaultFocusedDate('2025-07-15 13:24:37')
             ->placeholder('Choose a date or time')
             ->seconds($this->hasSeconds)
-            ->extraAttributes(['data-testid' => 'date-time-picker'])
+            ->displayFormat($this->displayFormat)
+            ->extraAttributes(['data-testid' => 'date-time-picker', 'dir' => $this->isRightToLeft ? 'rtl' : 'ltr'])
             ->extraInputAttributes(['data-testid' => 'timed-input'])
             ->extraTriggerAttributes(['data-testid' => 'timed-trigger']);
 
@@ -95,9 +137,47 @@ class DateTimePickerTest extends Page
             $field->timezone('America/New_York');
         }
 
+        if ($this->calendarState !== null) {
+            $date = Carbon::parse($this->calendarState, 'UTC');
+            $field->timezone('UTC')
+                ->defaultFocusedDate($this->calendarState)
+                ->minDate($date->copy()->startOfDay()->toDateTimeString())
+                ->maxDate($date->copy()->addDays(2)->endOfDay()->toDateTimeString())
+                ->disabledDates([$date->copy()->addDay()->toDateString()]);
+        }
+
+        if ($this->hasZonedDisabledDate) {
+            $field->disabledDates(['2025-07-15T00:00:00Z']);
+        }
+
         return $form
             ->schema([$field])
             ->statePath('data');
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('calendarModal')
+                ->schema([
+                    DateTimePicker::make('parentDate')->native(false),
+                ])
+                ->modalSubmitAction(false)
+                ->extraAttributes(['data-testid' => 'calendar-modal-trigger'])
+                ->extraModalWindowAttributes(['data-testid' => 'calendar-modal'])
+                ->extraModalFooterActions([
+                    Action::make('nestedCalendarModal')
+                        ->schema([
+                            DateTimePicker::make('nestedDate')
+                                ->native(false)
+                                ->extraTriggerAttributes(['data-testid' => 'nested-calendar-trigger']),
+                        ])
+                        ->overlayParentActions($this->overlaysParentCalendarModal)
+                        ->modalSubmitAction(false)
+                        ->extraAttributes(['data-testid' => 'nested-calendar-modal-trigger'])
+                        ->extraModalWindowAttributes(['data-testid' => 'nested-calendar-modal']),
+                ]),
+        ];
     }
 
     public function save(): void

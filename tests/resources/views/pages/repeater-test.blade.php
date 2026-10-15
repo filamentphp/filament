@@ -1,4 +1,8 @@
 <x-filament-panels::page>
+    @if ($hasRefreshed)
+        <p data-testid="custom-refreshed">Items refreshed</p>
+    @endif
+
     <form wire:submit="save">
         {{ $this->form }}
 

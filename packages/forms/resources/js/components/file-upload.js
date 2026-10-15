@@ -9,7 +9,11 @@ import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orien
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginImageResize from 'filepond-plugin-image-resize'
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform'
-import FilePondPluginMediaPreview from './file-upload/filepond-plugin-media-preview'
+import FilePondPluginMediaPreview from './file-upload/filepond-plugin-media-preview.js'
+import {
+    observeFieldAccessibility,
+    setFieldAccessibilityAttributes,
+} from '../utilities/field-accessibility.js'
 
 FilePond.registerPlugin(FilePondPluginFileValidateSize)
 FilePond.registerPlugin(FilePondPluginFileValidateType)
@@ -117,6 +121,7 @@ export default function fileUploadFormComponent({
         visibilityObserver: null,
 
         intersectionObserver: null,
+        accessibilityObserver: null,
 
         isInitializing: false,
 
@@ -176,8 +181,6 @@ export default function fileUploadFormComponent({
                 return
             }
 
-            FilePond.setOptions(locales[locale] ?? locales['en'])
-
             const files = await this.getFiles()
 
             if (isDestroyed) {
@@ -186,12 +189,16 @@ export default function fileUploadFormComponent({
                 return
             }
 
-            this.pond = FilePond.create(this.$refs.input, {
+            const input = this.$refs.input
+            const inputLabelledBy = input.getAttribute('aria-labelledby')
+
+            this.pond = FilePond.create(input, {
+                ...(locales[locale] ?? locales['en']),
                 acceptedFileTypes,
                 allowImageExifOrientation: shouldOrientImageFromExif,
-                allowPaste: isPasteable,
-                allowRemove: isDeletable,
-                allowReorder: isReorderable,
+                allowPaste: isPasteable && !isDisabled,
+                allowRemove: isDeletable && !isDisabled,
+                allowReorder: isReorderable && !isDisabled,
                 allowImagePreview: isPreviewable,
                 allowVideoPreview: isPreviewable,
                 allowAudioPreview: isPreviewable,
@@ -230,12 +237,57 @@ export default function fileUploadFormComponent({
                     shouldAutomaticallyUpscaleImagesWhenResizing,
                 imageTransformOutputStripImageHead: false,
                 itemInsertLocation: shouldAppendFiles ? 'after' : 'before',
-                ...(placeholder && { labelIdle: placeholder }),
+                ...(placeholder !== null && { labelIdle: placeholder }),
                 maxFiles,
                 maxFileSize: maxSize,
                 mediaPreviewHeight: imagePreviewHeight,
                 minFileSize: minSize,
                 ...(maxParallelUploads && { maxParallelUploads }),
+                oninit: () => {
+                    if (isDestroyed) {
+                        return
+                    }
+
+                    const browser =
+                        this.pond.element.querySelector('.filepond--browser')
+
+                    if (inputLabelledBy) {
+                        browser?.setAttribute(
+                            'aria-labelledby',
+                            inputLabelledBy,
+                        )
+                    }
+
+                    const description =
+                        browser?.getAttribute('aria-describedby')
+                    const sync = (attributes, source) => {
+                        const browseDescription = attributes['aria-describedby']
+
+                        if (
+                            source.hasAttribute(
+                                'data-preserve-filepond-description',
+                            )
+                        ) {
+                            attributes['aria-describedby'] =
+                                [description, attributes['aria-describedby']]
+                                    .filter(Boolean)
+                                    .join(' ') || null
+                        }
+
+                        setFieldAccessibilityAttributes(browser, attributes)
+                        setFieldAccessibilityAttributes(
+                            this.pond.element.querySelector(
+                                '.filepond--label-action',
+                            ),
+                            { 'aria-describedby': browseDescription },
+                        )
+                    }
+
+                    this.accessibilityObserver = observeFieldAccessibility(
+                        this.$el,
+                        sync,
+                    )
+                },
                 styleButtonProcessItemPosition: uploadButtonPosition,
                 styleButtonRemoveItemPosition: removeUploadedFileButtonPosition,
                 styleItemPanelAspectRatio: itemPanelAspectRatio,
@@ -328,7 +380,7 @@ export default function fileUploadFormComponent({
                         load()
                     },
                 },
-                allowImageEdit: isImageEditorExplicitlyEnabled,
+                allowImageEdit: isImageEditorExplicitlyEnabled && !isDisabled,
                 imageEditEditor: {
                     open: (file) => this.loadEditor(file),
                     onconfirm: () => {},
@@ -1068,6 +1120,7 @@ export default function fileUploadFormComponent({
 
             this.visibilityObserver?.disconnect()
             this.intersectionObserver?.disconnect()
+            this.accessibilityObserver?.disconnect()
 
             this.destroyEditor()
 

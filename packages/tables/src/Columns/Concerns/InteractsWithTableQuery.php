@@ -166,7 +166,7 @@ trait InteractsWithTableQuery
         $canOrderByRelationAggregate = (! is_database_driver_supported($query->getConnection())) && method_exists($query, $orderByRelationAggregateMethod);
         $relationshipAggregates = $canOrderByRelationAggregate ? $this->getRelationshipAggregates() : [];
 
-        foreach (array_reverse($this->getSortColumns($query->getModel())) as $sortColumn) {
+        foreach ($this->getSortColumns($query->getModel()) as $sortColumn) {
             $sortColumn = $this->getJsonSafeColumnName($sortColumn, $query->getModel()->getTable());
             $relationshipAggregateForSortColumn = $this->getRelationshipAggregateForSortColumn($query, $relationshipAggregates, $sortColumn);
 

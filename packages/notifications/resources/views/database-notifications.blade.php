@@ -114,21 +114,12 @@
             @if ($broadcastChannel = $this->getBroadcastChannel())
                 @script
                     <script>
-                        window.addEventListener('EchoLoaded', () => {
-                            window.Echo.private(@js($broadcastChannel)).listen(
-                                '.database-notifications.sent',
-                                () => {
-                                    setTimeout(
-                                        () => $wire.call('$refresh'),
-                                        500,
-                                    )
-                                },
-                            )
+                        setUpFilamentBroadcastNotifications({
+                            $wire,
+                            broadcastChannel: @js($broadcastChannel),
+                            event: '.database-notifications.sent',
+                            onNotification: () => $wire.call('$refresh'),
                         })
-
-                        if (window.Echo) {
-                            window.dispatchEvent(new CustomEvent('EchoLoaded'))
-                        }
                     </script>
                 @endscript
             @endif

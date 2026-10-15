@@ -1,3 +1,8 @@
+import {
+    observeFieldAccessibility,
+    setFieldAccessibilityAttributes,
+} from '../utilities/field-accessibility.js'
+
 window.CodeMirror = require('codemirror/lib/codemirror')
 
 require('codemirror')
@@ -37,7 +42,7 @@ require('codemirror/mode/vue/vue')
 require('codemirror/mode/xml/xml')
 require('codemirror/mode/yaml/yaml')
 
-require('./markdown-editor/EasyMDE')
+require('./markdown-editor/EasyMDE.js')
 
 CodeMirror.commands.tabAndIndentMarkdownList = function (codemirror) {
     var ranges = codemirror.listSelections()
@@ -111,6 +116,7 @@ export default function markdownEditorFormComponent({
         resizeObserver: null,
 
         intersectionObserver: null,
+        accessibilityObserver: null,
 
         async init() {
             // If the editor is inside a modal, wait for the modal transition to finish before initializing the editor.
@@ -144,6 +150,10 @@ export default function markdownEditorFormComponent({
                 minHeight: minHeight ?? '3rem',
                 placeholder,
                 previewImagesInEditor: true,
+                shortcuts: {
+                    togglePreview: null,
+                    toggleSideBySide: null,
+                },
                 spellChecker: false,
                 status: [
                     {
@@ -261,6 +271,15 @@ export default function markdownEditorFormComponent({
             if (setUpUsing) {
                 setUpUsing(this)
             }
+
+            this.accessibilityObserver = observeFieldAccessibility(
+                this.$el,
+                (attributes) =>
+                    setFieldAccessibilityAttributes(
+                        this.editor.codemirror.getInputField(),
+                        attributes,
+                    ),
+            )
 
             // If the editor initializes while hidden, such as in a collapsed
             // section or an inactive tab, CodeMirror renders no lines, and no
@@ -487,6 +506,7 @@ export default function markdownEditorFormComponent({
 
         destroy() {
             isDestroyed = true
+            this.accessibilityObserver?.disconnect()
 
             this.resizeObserver?.disconnect()
             this.resizeObserver = null

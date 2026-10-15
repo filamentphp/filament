@@ -96,7 +96,7 @@ class ManagePost extends Component implements HasActions, HasSchemas
 ```
 
 <Aside variant="warning">
-    `$post` is a model property on a regular Livewire component. Filament does not re-query or authorize it on later requests. Re-query and authorize the post before using it in the action. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+    `$post` is a model property on a regular Livewire component. Filament does not re-query or authorize it on later requests. Re-query and authorize the post before using it in the action, including any tenant or ownership restrictions your application requires. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
 </Aside>
 
 Finally, you need to render the action in your view. To do this, you can use `{{ $this->deleteAction }}`, where you replace `deleteAction` with the name of your action method:
@@ -129,7 +129,7 @@ You also need `<x-filament-actions::modals />` which injects the HTML required t
 
 Sometimes, you may wish to pass arguments to your action. For example, if you're rendering the same action multiple times in the same view, but each time for a different model, you could pass the model ID as an argument, and then retrieve it later. To do this, you can invoke the action in your view and pass in the arguments as an array:
 
-```php
+```blade
 <div>
     @foreach ($posts as $post)
         <h2>{{ $post->title }}</h2>
@@ -159,6 +159,10 @@ public function deleteAction(): Action
         });
 }
 ```
+
+<Aside variant="warning">
+    Action arguments are client-controlled. Always query and authorize the requested record, including any tenant or ownership restrictions, before acting on it.
+</Aside>
 
 ## Hiding actions in a Livewire view
 

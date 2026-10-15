@@ -1416,8 +1416,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         $blocks = $this->resolveCustomBlocks();
         $result = [];
 
-        foreach ($blocks as $value) {
-            if (is_array($value)) {
+        foreach ($blocks as $key => $value) {
+            if (is_string($key) && is_a($key, RichContentCustomBlock::class, allow_string: true)) {
+                $result[] = $key;
+            } elseif (is_array($value)) {
                 foreach ($value as $innerKey => $innerValue) {
                     $result[] = is_string($innerKey) ? $innerKey : $innerValue;
                 }
@@ -1465,7 +1467,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         $groups = collect();
 
         foreach ($blocks as $key => $value) {
-            if (is_string($key) && is_array($value)) {
+            if (is_string($key) && is_a($key, RichContentCustomBlock::class, allow_string: true)) {
+                $ungrouped[] = $key;
+            } elseif (is_string($key) && is_array($value)) {
                 $groupBlocks = [];
 
                 foreach ($value as $innerKey => $innerValue) {
@@ -1699,7 +1703,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         $mentions = $this->getMentionsForJs();
         $toolbarButtons = $this->getToolbarButtons();
         $tools = $this->getTools();
-        $floatingToolbars = $this->getFloatingToolbars();
+        $floatingToolbars = $isDisabled ? [] : $this->getFloatingToolbars();
         $linkProtocols = $this->getLinkProtocols();
         $fileAttachmentsMaxSize = $this->getFileAttachmentsMaxSize();
         $fileAttachmentsAcceptedFileTypes = $this->getFileAttachmentsAcceptedFileTypes();
@@ -1724,6 +1728,12 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
             ]))
             ->class(['fi-fo-rich-editor']);
 
+        $extraInputAttributeBag = $this->getExtraInputAttributeBag();
+        $accessibilityAttributes = $extraInputAttributeBag
+            ->merge($wrapperAttributes->getAttributes(), escape: false)
+            ->merge($this->getAccessibilityAttributes(), escape: false)
+            ->only(['aria-describedby', 'aria-invalid']);
+
         $contentAttributes = (new FilamentComponentAttributeBag)
             ->merge(['x-ref' => 'editor'], escape: false)
             ->class(['fi-fo-rich-editor-content', 'fi-prose']);
@@ -1741,8 +1751,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
         ob_start(); ?>
 
+        <div hidden data-field-accessibility <?= $accessibilityAttributes->toHtml() ?>></div>
         <div
             aria-labelledby="<?= e($id) ?>-label"
+            data-rich-editor-key="<?= e($key) ?>"
             id="<?= e($id) ?>"
             role="group"
             x-load
@@ -1772,7 +1784,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                                     { search: query, char },
                                 )
                             },
-                            hasResizableImages: <?= Js::from($this->hasResizableImages()) ?>,
+                            hasResizableImages: <?= Js::from((! $isDisabled) && $this->hasResizableImages()) ?>,
                             hasMinimalCustomBlockControls: <?= Js::from($this->hasMinimalCustomBlockControls()) ?>,
                             hasStickyToolbar: <?= Js::from($this->hasStickyToolbar()) ?>,
                             isDisabled: <?= Js::from($isDisabled) ?>,
@@ -1797,16 +1809,17 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
             x-bind:class="{
                 'fi-fo-rich-editor-uploading-file': isUploadingFile,
             }"
+            x-on:keydown="handleToolbarKeydown($event)"
+            x-on:focusin="handleToolbarFocusin($event)"
+            x-on:focusout="handleToolbarFocusout($event)"
             wire:ignore
             wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled])), 0, 64) ?>"
         >
             <?php if ((! $isDisabled) && filled($toolbarButtons)) { ?>
-                <?php // `role="toolbar"` is withheld until the APG roving-tabindex/arrow-key pattern is
-                      // implemented: the tools are `tabindex="-1"` with no arrow-key navigation, so announcing
-                      // a toolbar would promise keyboard behaviour that does not exist. The `aria-label`
-                      // still names the group.?>
                 <div
                     class="fi-fo-rich-editor-toolbar <?= $this->hasStickyToolbar() ? 'fi-fo-rich-editor-sticky-toolbar' : '' ?>"
+                    data-rich-editor-toolbar="main"
+                    role="toolbar"
                     x-ref="toolbar"
                     aria-label="<?= e(__('filament-forms::components.rich_editor.toolbar.label')) ?>"
                 >
@@ -1845,12 +1858,15 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                 ></span>
             </div>
 
-            <div <?= $this->getExtraInputAttributeBag()->class(['fi-fo-rich-editor-main'])->toHtml() ?>>
+            <div <?= $extraInputAttributeBag->class(['fi-fo-rich-editor-main'])->toHtml() ?>>
                 <div <?= $contentAttributes->toHtml() ?>>
                     <?php foreach ($floatingToolbars as $nodeName => $buttons) { ?>
                         <div
                             x-ref="floatingToolbar::<?= e($nodeName) ?>"
                             class="fi-fo-rich-editor-floating-toolbar fi-not-prose"
+                            data-rich-editor-toolbar
+                            role="toolbar"
+                            aria-label="<?= e(__('filament-forms::components.rich_editor.toolbar.label')) ?>"
                         >
                             <?php foreach ($buttons as $button) { ?>
                                 <?php if (is_string($button)) { ?>

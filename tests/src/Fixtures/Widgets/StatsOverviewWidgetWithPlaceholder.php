@@ -14,7 +14,9 @@ class StatsOverviewWidgetWithPlaceholder extends StatsOverviewWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total orders', 0),
+            Stat::make('Total orders', 0)
+                ->chart([13, 4, 21, 9])
+                ->extraAttributes(['data-testid' => 'orders-stat']),
             Stat::make('Conversion rate', null)
                 ->placeholder('Not available'),
         ];

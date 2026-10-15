@@ -17,7 +17,6 @@
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\GridDirection;
     use Filament\Support\Enums\Width;
-    use Filament\Support\Facades\FilamentAsset;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Illuminate\Contracts\Support\Htmlable;
     use Illuminate\Support\Js;
@@ -39,16 +38,13 @@
 
     $listAttributes = $searchable
         ? new FilamentComponentAttributeBag([
-            'x-load' => true,
-            'x-load-src' => FilamentAsset::getAlpineComponentSrc('builder', 'filament/forms'),
-            'x-data' => 'builderBlockPickerFormComponent()',
-            'x-on:dropdown-escape' => 'handleEscape($event)',
-            'data-dropdown-escape' => true,
+            'x-data' => 'blockPicker()',
         ])
         : new FilamentComponentAttributeBag;
 @endphp
 
 <x-filament::dropdown
+    :menu="! $searchable"
     :placement="$placement"
     shift
     :width="$width"
@@ -74,9 +70,7 @@
                 <div class="fi-fo-builder-block-picker-search-ctn">
                     <x-filament::input
                         type="text"
-                        data-dropdown-autofocus
                         x-ref="searchInput"
-                        x-on:dropdown-autofocus="clearSearch()"
                         x-on:keydown.enter.prevent=""
                         :attributes="
                             \Filament\Support\prepare_inherited_attributes(
@@ -124,6 +118,8 @@
 
                     <x-filament::dropdown.list.item
                         :icon="$blockIcon"
+                        :role="$searchable ? 'button' : 'menuitem'"
+                        :tabindex="$searchable ? 0 : -1"
                         x-on:click="close"
                         :wire:click="$wireClickAction"
                         :wire:key="$searchable ? md5($wireClickAction . $blockSearchLabel) : null"

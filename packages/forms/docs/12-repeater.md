@@ -140,7 +140,7 @@ Repeater::make('members')
 
 ## Reordering items
 
-A button is displayed on each item to allow the user to drag and drop to reorder it in the list.
+Items can be reordered by dragging. To provide visible controls for keyboard users, enable [reordering with buttons](#reordering-items-with-buttons).
 
 ### Preventing the user from reordering items
 
@@ -160,7 +160,7 @@ Repeater::make('members')
 
 ### Reordering items with buttons
 
-You may use the `reorderableWithButtons()` method to enable reordering items with buttons to move the item up and down:
+You may use `reorderableWithButtons()` to display move up and move down buttons:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -201,6 +201,8 @@ Repeater::make('members')
     ])
     ->reorderableWithDragAndDrop(false)
 ```
+
+This also removes the visually hidden fallback buttons. Explicitly enabled visible move buttons remain available. Use `reorderable(false)` to prevent all reordering.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `reorderableWithDragAndDrop()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -250,30 +252,6 @@ Repeater::make('qualifications')
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `collapsible()` and `collapsed()` methods also accept functions to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 If collapsed items contain components that are expensive to render, you can [defer the loading of their schemas](#deferring-the-loading-of-repeater-item-schemas) until they are expanded.
-
-## Deferring the loading of repeater item schemas
-
-If a repeater's item schema is expensive to render, you can pass a `Schema` object to `schema()` and use `deferLoading()`. This is particularly useful when items are [collapsed](#collapsing-items) by default. Each item schema will be loaded independently when its item is expanded and enters the viewport:
-
-```php
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
-
-Repeater::make('members')
-    ->schema(
-        Schema::make()
-            ->components([
-                TextInput::make('name'),
-                TextInput::make('email')
-                    ->email(),
-            ])
-            ->deferLoading(),
-    )
-    ->collapsed()
-```
-
-Repeater item schemas automatically receive unique keys from their item state paths. You can learn more about deferred schemas in the [schema overview](../schemas/overview#deferring-the-loading-of-a-child-schema).
 
 ## Cloning items
 
@@ -926,6 +904,30 @@ This method will automatically enable the `distinct()` and `live()` methods on t
     ```
 </Aside>
 
+## Deferring the loading of repeater item schemas
+
+If a repeater's item schema is expensive to render, you can pass a `Schema` object to `schema()` and use `deferLoading()`. This is particularly useful when items are [collapsed](#collapsing-items) by default. Each item schema will be loaded independently when its item is expanded and enters the viewport:
+
+```php
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
+
+Repeater::make('members')
+    ->schema(
+        Schema::make()
+            ->components([
+                TextInput::make('name'),
+                TextInput::make('email')
+                    ->email(),
+            ])
+            ->deferLoading(),
+    )
+    ->collapsed()
+```
+
+Repeater item schemas automatically receive unique keys from their item state paths. You can learn more about deferred schemas in the [schema overview](../schemas/overview#deferring-the-loading-of-a-child-schema).
+
 ## Customizing the repeater item actions
 
 This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../actions/overview). The following methods are available to customize the actions:
@@ -976,8 +978,10 @@ Repeater::make('members')
 ```
 
 <Aside variant="info">
-    The `collapseAction()`, `collapseAllAction()`, `expandAction()`, `expandAllAction()` and `reorderAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
+    The `collapseAction()`, `collapseAllAction()`, `expandAction()` and `expandAllAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
 </Aside>
+
+Completing a drag that changes the item order invokes `reorderAction()`, which supports `requiresConfirmation()`. Clicking the drag handle alone does not invoke the action.
 
 ### Adding extra item actions to a repeater
 

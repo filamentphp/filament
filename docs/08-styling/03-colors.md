@@ -2,12 +2,13 @@
 title: Colors
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import Aside from "@components/Aside.astro"
 
 ## Introduction
 
-Filament uses CSS variables to define its color palette. These CSS variables are mapped to Tailwind classes in the preset file that you load when installing Filament. The reason why Filament uses CSS variables is that it allows the framework to pass a color palette from PHP via a `<style>` element that gets rendered as part of the `@filamentStyles` Blade directive.
+You can configure Filament's color palettes in PHP and use their names in PHP or Blade components. Filament selects shades from each palette for light and dark mode.
 
-By default, Filament's Tailwind preset file ships with 6 colors:
+Filament provides 6 colors by default:
 
 - `primary`, which is [Tailwind's `amber` color](https://tailwindcss.com/docs/customizing-colors) by default
 - `success`, which is [Tailwind's `green` color](https://tailwindcss.com/docs/customizing-colors) by default
@@ -128,13 +129,7 @@ FilamentColor::register([
 
 ## How Filament selects accessible shades
 
-When you assign a color to a Filament component (for example `->color('primary')`), Filament receives the entire 11-shade palette and decides at runtime which shade to use for the background, text, hover state, dark-mode variants, and so on. The selection is driven by [WCAG 2.1 contrast ratios](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html): for each slot, Filament walks the palette and picks the lightest (or darkest, depending on context) shade that meets the minimum contrast against the surface the component sits on.
-
-This design means:
-
-- You only need to register one palette per color name. Per-component shade selection is automatic.
-- The same color can render differently across components — a `success` button uses one bg/text combination, a `success` badge another — because each component applies contrast rules suited to its visual role.
-- If you swap a palette out (for example, switching `primary` from amber to a darker hue), every component that uses it re-derives its shades to stay accessible.
+Filament selects shades using [WCAG 2.1 contrast ratios](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html). The same palette can produce different shades in a button, badge, or link because each component has different backgrounds and contrast requirements. Changing a registered palette updates these choices automatically.
 
 The contrast thresholds Filament uses come from WCAG 2.1:
 
@@ -143,19 +138,17 @@ The contrast thresholds Filament uses come from WCAG 2.1:
 
 The `Filament\Support\Colors\Color` class exposes these as constants — `WCAG_AA_TEXT`, `WCAG_AA_LARGE_TEXT`, `WCAG_AA_NON_TEXT`, `WCAG_AAA_TEXT`, `WCAG_AAA_LARGE_TEXT` — so you can reference them by name when customizing.
 
+<Aside variant="warning">
+    Shade selection uses fallback shades when a palette cannot meet the requested contrast. It does not guarantee accessibility for every custom palette or background. Check contrast in light and dark mode, including hover states, after customizing colors or component styles.
+</Aside>
+
 ### Why some buttons render dark text instead of white
 
-For solid buttons, Filament builds a "best text shade per background shade" lookup up-front, then picks the actual button background by checking which candidate background shades end up paired with light text.
-
-For vibrant colors like red, blue, or indigo, shade `600` is dark enough that white text passes the 4.5:1 contrast threshold. The resolver picks `bg: 600`, `hover:bg: 500`, with white text — the path most colors take.
-
-For pale colors like yellow, amber, or lime, even shade `600` is bright enough that *dark* text passes contrast better than white. The resolver detects this and falls back to a paler background — `bg: 400` — paired with dark text. The result is a yellow button with dark text on a light-yellow background, instead of an unreadable white-on-yellow combination.
-
-This behavior is intentional. Forcing every color into the same `bg: 600, text: white` pattern would produce inaccessible combinations for warm or pale palettes. The two-path design keeps `success` and `danger` looking like solid coloured buttons while `warning` (typically amber) reads correctly with its lighter background.
+Solid buttons prefer backgrounds that support light text. Pale palettes such as yellow, amber, or lime may instead use a lighter background with dark text to preserve contrast. Avoid overriding these buttons to always use white text without checking the resulting contrast.
 
 ## Customizing shade selection
 
-If you need to override how a particular component picks its shades — for example, to enforce WCAG AAA contrast across the app, or to bias buttons toward darker shades — you can extend the relevant view component and rebind it through Laravel's container.
+If you need to override how a particular component picks its shades — for example, to target WCAG AAA contrast or prefer darker button backgrounds — you can extend the relevant view component and rebind it through Laravel's container.
 
 Filament exposes three color-map classes for this purpose, all under the `Filament\Support\View\Components\ColorMaps` namespace. Each follows the same fluent shape — `make($palette)` to start, chained configuration setters, then `get()` to return an `array<string, int>` mapping slot names (such as `bg`, `text`, `dark:hover:bg`) to shade numbers.
 
@@ -235,12 +228,7 @@ ButtonComponentColorMap::make($color)
 
 `minContrastRatio()` sets the minimum WCAG ratio between bg and text. Defaults to `Color::WCAG_AA_TEXT` (`4.5`); set to `WCAG_AAA_TEXT` (`7.0`) for AAA.
 
-`lightBackground()` and `darkBackground()` share the same shape `(bg, hover, alternateHover?)` and the same selection algorithm — they differ only in which mode they configure. Each call appends a candidate to the list for that mode, evaluated in order using two passes:
-
-1. **Preferred** — walk the list and stop at the first candidate whose `bg` produces light text. For that candidate, use `hover` if it also produces light text; otherwise use `alternateHover` if *it* produces light text; otherwise skip.
-2. **Fallback** — if nothing qualified in pass 1, take the *last* candidate. Hover is `hover` when its text-lightness is consistent with `bg`'s, otherwise `alternateHover`. The consistency check avoids a text-color flicker on hover.
-
-`alternateHover` is treated identically on any candidate — first, last, or middle. It's only consulted when the main `hover` isn't appropriate.
+`lightBackground()` and `darkBackground()` accept `(bg, hover, alternateHover?)`. Chain candidates in preference order. Filament prefers candidates that support light text in both resting and hover states, using `alternateHover` when the main hover shade is unsuitable. The final candidate is the fallback. Provide a pale-friendly fallback to support palettes that need dark text.
 
 To express a color-aware cascade — "use 800 if the palette can carry it, otherwise 700, otherwise 600, falling back to a paler bg with dark text for yellows" — chain candidates and end with a pale-friendly fallback:
 
@@ -260,7 +248,7 @@ The last candidate doubles as the fallback when no candidate produces light text
 
 ### `IconButtonComponentColorMap`
 
-Returns the four icon slots (`text`, `hover:text`, `dark:text`, `dark:hover:text`) for icon-only buttons. Hover variants are derived from the resting shade by a fixed `100`-shade offset that intensifies the icon. At least one `lightSurface()` and one `darkSurface()` are required.
+Returns the four icon slots (`text`, `hover:text`, `dark:text`, `dark:hover:text`) for icon-only buttons. At least one `lightSurface()` and one `darkSurface()` are required.
 
 ```php
 use Filament\Support\Colors\Color;
@@ -283,7 +271,7 @@ IconButtonComponentColorMap::make($color)
 
 ### Worked example: AAA contrast for buttons
 
-Here is a complete subclass that enforces WCAG AAA contrast on solid buttons and biases the background choice toward darker shades:
+Here is a complete subclass that targets WCAG AAA contrast and prefers darker button backgrounds. Verify the rendered contrast with your palettes and backgrounds, since fallback shades may not meet the target:
 
 ```php
 namespace App\View\Components;

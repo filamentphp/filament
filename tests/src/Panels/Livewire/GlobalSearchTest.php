@@ -1,0 +1,546 @@
+<?php
+
+use Filament\Actions\Action;
+use Filament\Facades\Filament;
+use Filament\GlobalSearch\GlobalSearchResult;
+use Filament\GlobalSearch\GlobalSearchResults;
+use Filament\GlobalSearch\Providers\Contracts\GlobalSearchProvider;
+use Filament\Livewire\GlobalSearch;
+use Filament\Resources\Resource;
+use Filament\Support\Facades\FilamentView;
+use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Resources\Posts\PostResource;
+use Filament\Tests\Fixtures\Resources\Users\UserResource;
+use Filament\Tests\Panels\GlobalSearch\TestCase;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Sequence;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\SQLiteConnection;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
+use function Filament\Tests\livewire;
+
+uses(TestCase::class);
+
+describe('search results', function (): void {
+    it('can render', function (): void {
+        livewire(GlobalSearch::class)
+            ->assertSeeHtml('search');
+    });
+
+    it('can retrieve search results', function (): void {
+        $post = Post::factory()->create();
+
+        livewire(GlobalSearch::class)
+            ->set('search', $post->title)
+            ->assertDispatched('open-global-search-results')
+            ->assertSee($post->title);
+    });
+
+    it('can retrieve limited search results', function (): void {
+        $title = Str::random();
+
+        $posts = Post::factory()
+            ->count(4)
+            ->state(new Sequence(
+                ['title' => "{$title} 0"],
+                ['title' => "{$title} 1"],
+                ['title' => "{$title} 2"],
+                ['title' => "{$title} 3"],
+            ))
+            ->create();
+
+        livewire(GlobalSearch::class)
+            ->set('search', $title)
+            ->assertDispatched('open-global-search-results')
+            ->assertSee($posts[0]->title)
+            ->assertSee($posts[1]->title)
+            ->assertSee($posts[2]->title)
+            ->assertDontSee($posts[3]->title);
+    });
+
+    it('can retrieve results via custom search provider', function (): void {
+        Filament::getCurrentOrDefaultPanel()->globalSearch(CustomSearchProvider::class);
+
+        livewire(GlobalSearch::class)
+            ->set('search', 'foo')
+            ->assertDispatched('open-global-search-results')
+            ->assertSee(['foo', 'bar', 'baz']);
+    });
+
+    it('passes the normalized search to the provider without changing `$search`', function (string $search, string $expectedQuery): void {
+        Filament::getCurrentOrDefaultPanel()->globalSearch(CustomSearchProvider::class);
+
+        $provider = $this->spy(CustomSearchProvider::class);
+        $provider->shouldReceive('getResults')->andReturn(
+            GlobalSearchResults::make()->category('Invoices', [
+                new GlobalSearchResult(title: 'Invoice found', url: '/invoices/304', details: []),
+            ]),
+        );
+
+        livewire(GlobalSearch::class)
+            ->set('search', $search)
+            ->assertSet('search', $search)
+            ->assertDispatched('open-global-search-results')
+            ->assertSee('Invoice found')
+            ->assertSeeHtml('href="/invoices/304"');
+
+        $provider->shouldHaveReceived('getResults')->withArgs(static fn (string $query): bool => $query === $expectedQuery);
+    })->with([
+        'surrounding spaces' => [' invoice ', 'invoice'],
+        'surrounding tabs and newlines' => ["\t invoice\r\n", 'invoice'],
+        'internal spaces' => [' invoice  overdue ', 'invoice  overdue'],
+        'zero' => ['0', '0'],
+        'padded zero' => [' 0 ', '0'],
+    ]);
+
+    it('does not call the provider for a blank search', function (string $search): void {
+        Filament::getCurrentOrDefaultPanel()->globalSearch(CustomSearchProvider::class);
+
+        $provider = $this->spy(CustomSearchProvider::class);
+
+        livewire(GlobalSearch::class)
+            ->set('search', $search)
+            ->assertSet('search', $search)
+            ->assertNotDispatched('open-global-search-results')
+            ->assertViewHas('results', null);
+
+        $provider->shouldNotHaveReceived('getResults');
+    })->with(['empty' => '', 'spaces' => '   ', 'tabs and newlines' => " \t\r\n "]);
+
+    it('lets a custom provider apply its minimum length to the normalized search', function (string $search, string $expectedQuery, bool $hasResults): void {
+        Filament::getCurrentOrDefaultPanel()->globalSearch(CustomSearchProvider::class);
+
+        $minimumLength = 3;
+        $provider = $this->spy(CustomSearchProvider::class);
+        $provider->shouldReceive('getResults')->andReturnUsing(static function (string $query) use ($minimumLength): ?GlobalSearchResults {
+            if (mb_strlen($query) < $minimumLength) {
+                return null;
+            }
+
+            return GlobalSearchResults::make()->category('Invoices', [
+                new GlobalSearchResult(title: 'Invoice found', url: '/invoices/304', details: []),
+            ]);
+        });
+
+        $component = livewire(GlobalSearch::class)
+            ->set('search', $search)
+            ->assertSet('search', $search);
+
+        if ($hasResults) {
+            $component->assertSee('Invoice found')->assertDispatched('open-global-search-results');
+        } else {
+            $component->assertDontSee('Invoice found')->assertViewHas('results', null)->assertNotDispatched('open-global-search-results');
+        }
+
+        $provider->shouldHaveReceived('getResults')->withArgs(static fn (string $query): bool => $query === $expectedQuery);
+    })->with([
+        'below minimum' => [' ab ', 'ab', false],
+        'at minimum' => [' abc ', 'abc', true],
+    ]);
+
+    it('shows normalized search results while preserving the displayed input', function (string $panel): void {
+        Artisan::call('filament:assets');
+
+        $post = Post::factory()->create(['title' => 'Invoice 304']);
+        $search = ' Invoice 304 ';
+        $inputSelector = 'input[type="search"][aria-controls]';
+        $resultUrl = PostResource::getUrl('view', ['record' => $post], panel: $panel);
+
+        $page = visit(PostResource::getUrl(panel: $panel));
+
+        $page->type($inputSelector, $search)
+            ->assertVisible("nav a[href=\"{$resultUrl}\"]")
+            ->assertValue($inputSelector, $search);
+
+        $page->type($inputSelector, '   ')
+            ->assertMissing("nav a[href=\"{$resultUrl}\"]")
+            ->assertValue($inputSelector, '   ');
+    })->with(['standard panel' => 'admin', 'SPA panel' => 'spa']);
+
+    it('orders resource global search results by `$globalSearchSort`', function (): void {
+        User::factory()->create([
+            'name' => 'Test',
+        ]);
+
+        Post::factory()->create([
+            'title' => 'Test',
+        ]);
+
+        $provider = Filament::getCurrentOrDefaultPanel()->getGlobalSearchProvider();
+        $results = $provider->getResults('Test');
+
+        $categories = $results->getCategories()->keys()->all();
+
+        expect($categories[0])->toBe('users');
+        expect($categories[1])->toBe('posts');
+    });
+
+    it('uses the related database driver when generating a relationship search pattern', function (): void {
+        $parentConnectionName = 'parent-search-test';
+        $relatedConnectionName = 'related-search-test';
+        $defaultConnection = DB::connection();
+
+        DB::extend('parent-search-test', fn (array $configuration): ParentSearchTestConnection => new ParentSearchTestConnection(
+            $defaultConnection->getPdo(),
+            $defaultConnection->getDatabaseName(),
+            $defaultConnection->getTablePrefix(),
+            $configuration,
+        ));
+
+        DB::extend('related-search-test', fn (array $configuration): RelatedSearchTestConnection => new RelatedSearchTestConnection(
+            $defaultConnection->getPdo(),
+            $defaultConnection->getDatabaseName(),
+            $defaultConnection->getTablePrefix(),
+            $configuration,
+        ));
+
+        config()->set("database.connections.{$parentConnectionName}", [
+            'driver' => 'parent-search-test',
+            'database' => $defaultConnection->getDatabaseName(),
+            'prefix' => $defaultConnection->getTablePrefix(),
+        ]);
+        config()->set("database.connections.{$relatedConnectionName}", [
+            'driver' => 'related-search-test',
+            'database' => $defaultConnection->getDatabaseName(),
+            'prefix' => $defaultConnection->getTablePrefix(),
+        ]);
+
+        try {
+            $query = HybridSearchPostResource::applyRelationshipSearch(HybridSearchPost::query(), 'MiXeD%_');
+
+            expect($query->getBindings())->toContain('%MiXeD\\%\\_%');
+        } finally {
+            DB::purge($parentConnectionName);
+            DB::purge($relatedConnectionName);
+            config()->offsetUnset("database.connections.{$parentConnectionName}");
+            config()->offsetUnset("database.connections.{$relatedConnectionName}");
+        }
+    });
+
+    it('keeps result links and independent actions reachable with the keyboard', function (string $panel): void {
+        Artisan::call('filament:assets');
+        Filament::getPanel($panel)->globalSearch(ActionSearchProvider::class);
+        FilamentView::registerRenderHook(PanelsRenderHook::GLOBAL_SEARCH_END, static fn (): string => Blade::render(
+            '<x-filament::modal id="global-search-preview" heading="Invoice preview">Preview requested.</x-filament::modal>',
+        ));
+
+        $post = Post::factory()->create(['title' => 'Invoice 224']);
+        $otherPost = Post::factory()->create(['title' => 'Invoice 485']);
+        $search = 'Invoice';
+        $inputSelector = 'input[type="search"][aria-controls]';
+        $resultUrl = PostResource::getUrl('view', ['record' => $post], panel: $panel);
+        $resultSelector = "[role=region] a[href=\"{$resultUrl}\"]:not([target])";
+        $otherResultUrl = PostResource::getUrl('view', ['record' => $otherPost], panel: $panel);
+        $otherResultSelector = "[role=region] a[href=\"{$otherResultUrl}\"]:not([target])";
+        $otherNewTabSelector = "[role=region] a[href=\"{$otherResultUrl}\"][target=\"_blank\"]";
+        $previewSelector = "[data-testid=\"global-search-preview-{$post->id}\"]";
+        $otherPreviewSelector = "[data-testid=\"global-search-preview-{$otherPost->id}\"]";
+
+        $page = visit(PostResource::getUrl(panel: $panel));
+
+        $page->type($inputSelector, $search)
+            ->assertVisible($resultSelector)
+            ->assertVisible($otherResultSelector)
+            ->assertNotPresent('[role=region] h3:has-text("Empty")')
+            ->assertSeeIn('nav [role=status]', '2')
+            ->keys($inputSelector, 'ArrowDown')
+            ->assertPresent("{$resultSelector}:focus")
+            ->keys($resultSelector, 'ArrowDown')
+            ->assertPresent("{$otherResultSelector}:focus")
+            ->keys($otherResultSelector, 'ArrowUp')
+            ->assertPresent("{$resultSelector}:focus")
+            ->keys($resultSelector, 'Tab')
+            ->assertPresent("{$previewSelector}:focus")
+            ->keys($previewSelector, 'ArrowDown')
+            ->assertPresent("{$otherResultSelector}:focus")
+            ->keys($otherResultSelector, 'Tab')
+            ->assertPresent("{$otherPreviewSelector}:focus")
+            ->keys($otherPreviewSelector, 'ArrowUp')
+            ->assertPresent("{$resultSelector}:focus")
+            ->keys($resultSelector, 'Tab')
+            ->assertPresent("{$previewSelector}:focus")
+            ->assertNoAccessibilityIssues()
+            ->keys($previewSelector, 'Escape')
+            ->assertPresent("{$inputSelector}:focus")
+            ->assertValue($inputSelector, $search)
+            ->assertMissing($resultSelector)
+            ->keys($inputSelector, 'ArrowDown')
+            ->assertPresent("{$resultSelector}:focus")
+            ->keys($resultSelector, 'ArrowUp')
+            ->assertPresent("{$otherResultSelector}:focus")
+            ->keys($otherResultSelector, 'ArrowDown')
+            ->assertPresent("{$resultSelector}:focus")
+            ->keys($resultSelector, 'ArrowUp')
+            ->assertPresent("{$otherResultSelector}:focus")
+            ->keys($otherResultSelector, 'Tab')
+            ->assertPresent("{$otherPreviewSelector}:focus")
+            ->keys($otherPreviewSelector, 'Tab')
+            ->assertPresent("{$otherNewTabSelector}:focus")
+            ->keys($otherNewTabSelector, 'Tab')
+            ->assertMissing($resultSelector)
+            ->click($inputSelector)
+            ->assertVisible($resultSelector)
+            ->type($inputSelector, 'No matching invoices')
+            ->assertVisible('[role=region] p')
+            ->assertNotPresent('[role=region] a')
+            ->assertNotPresent('[role=region] h3')
+            ->assertNoAccessibilityIssues()
+            ->type($inputSelector, $search)
+            ->assertVisible($resultSelector)
+            ->keys($inputSelector, 'ArrowDown')
+            ->keys($resultSelector, 'Tab')
+            ->keys($previewSelector, 'Space')
+            ->assertVisible('#global-search-preview button')
+            ->assertPresent('#global-search-preview :focus')
+            ->keys(':focus', 'Escape')
+            ->assertMissing('#global-search-preview button')
+            ->assertValue($inputSelector, $search)
+            ->assertPresent("{$inputSelector}:focus");
+
+        $page->click($inputSelector)
+            ->assertVisible($resultSelector)
+            ->keys($inputSelector, 'ArrowDown')
+            ->assertPresent("{$resultSelector}:focus")
+            ->keys($resultSelector, 'Enter')
+            ->assertPathIs(parse_url($resultUrl, PHP_URL_PATH))
+            ->assertValue($inputSelector, '');
+
+        $page->inDarkMode()
+            ->type($inputSelector, $search)
+            ->assertVisible($resultSelector)
+            ->assertVisible($otherPreviewSelector)
+            ->assertNoAccessibilityIssues()
+            ->type($inputSelector, 'No matching invoices')
+            ->assertVisible('[role=region] p')
+            ->assertNotPresent('[role=region] a')
+            ->assertNoAccessibilityIssues();
+    })->with(['standard panel' => 'admin', 'SPA panel' => 'spa']);
+});
+
+describe('SPA mode', function (): void {
+    it('clears the search and closes the results after clicking a result', function (): void {
+        Artisan::call('filament:assets');
+
+        Post::query()->delete();
+
+        $post = Post::factory()->create();
+        $expectedPath = parse_url(PostResource::getUrl('view', ['record' => $post], panel: 'spa'), PHP_URL_PATH);
+
+        $page = visit(PostResource::getUrl(panel: 'spa'))
+            ->type('input[type="search"][aria-controls]', $post->title)
+            ->assertVisible('[role=region] a');
+
+        $page
+            ->click('[role=region] a')
+            ->assertPathIs($expectedPath)
+            ->assertValue('input[type="search"][aria-controls]', '')
+            ->assertMissing('[role=region]');
+    });
+
+    it('clears the search and closes the results after selecting a result with the keyboard', function (): void {
+        Artisan::call('filament:assets');
+
+        Post::query()->delete();
+
+        $post = Post::factory()->create();
+        $expectedPath = parse_url(PostResource::getUrl('view', ['record' => $post], panel: 'spa'), PHP_URL_PATH);
+
+        $page = visit(PostResource::getUrl(panel: 'spa'))
+            ->type('input[type="search"][aria-controls]', $post->title)
+            ->assertVisible('[role=region] a');
+
+        $page
+            ->keys('input[type="search"][aria-controls]', 'ArrowDown')
+            ->assertPresent('[role=region] a:focus')
+            ->keys('[role=region] a', 'Enter')
+            ->assertPathIs($expectedPath)
+            ->assertValue('input[type="search"][aria-controls]', '')
+            ->assertMissing('[role=region]');
+    });
+
+    it('preserves the search when navigation is canceled', function (): void {
+        Artisan::call('filament:assets');
+
+        Post::query()->delete();
+
+        $post = Post::factory()->create();
+        $expectedPath = parse_url(PostResource::getUrl(panel: 'spa'), PHP_URL_PATH);
+
+        $page = visit(PostResource::getUrl(panel: 'spa'))
+            ->type('input[type="search"][aria-controls]', $post->title)
+            ->assertVisible('[role=region] a');
+
+        $page->script("window.addEventListener('livewire:navigate', (event) => event.preventDefault(), { once: true })");
+
+        $page
+            ->click('[role=region] a')
+            ->assertPathIs($expectedPath)
+            ->assertValue('input[type="search"][aria-controls]', $post->title);
+    });
+
+    it('does not reopen the results after the search is cleared', function (): void {
+        Artisan::call('filament:assets');
+
+        Post::query()->delete();
+
+        $post = Post::factory()->create();
+
+        $page = visit(PostResource::getUrl(panel: 'spa'))
+            ->type('input[type="search"][aria-controls]', $post->title)
+            ->assertVisible('[role=region]');
+
+        $page->type('input[type="search"][aria-controls]', '')
+            ->assertValue('input[type="search"][aria-controls]', '')
+            ->keys('input[type="search"][aria-controls]', 'ArrowDown')
+            ->assertMissing('[role=region]');
+    });
+});
+
+describe('`globalSearchResourceOptIn()`', function (): void {
+    it('excludes resources without explicit `$isGloballySearchable` when `globalSearchResourceOptIn()` is enabled', function (): void {
+        Filament::getCurrentOrDefaultPanel()->globalSearchResourceOptIn();
+
+        expect(PostResource::canGloballySearch())->toBeFalse();
+        expect(UserResource::canGloballySearch())->toBeFalse();
+    });
+
+    it('includes resources with explicit `$isGloballySearchable` when `globalSearchResourceOptIn()` is enabled', function (): void {
+        Filament::getCurrentOrDefaultPanel()->globalSearchResourceOptIn();
+
+        expect(OptedInGlobalSearchResource::canGloballySearch())->toBeTrue();
+    });
+
+    it('includes all resources by default without `globalSearchResourceOptIn()`', function (): void {
+        expect(PostResource::canGloballySearch())->toBeTrue();
+        expect(UserResource::canGloballySearch())->toBeTrue();
+        expect(OptedInGlobalSearchResource::canGloballySearch())->toBeTrue();
+    });
+
+    it('does not return search results for resources without explicit `$isGloballySearchable` when `globalSearchResourceOptIn()` is enabled', function (): void {
+        Filament::getCurrentOrDefaultPanel()->globalSearchResourceOptIn();
+
+        $post = Post::factory()->create();
+
+        livewire(GlobalSearch::class)
+            ->set('search', $post->title)
+            ->assertViewHas('results', static fn (GlobalSearchResults $results): bool => $results->getCategories()->isEmpty());
+    });
+
+});
+
+class OptedInGlobalSearchResource extends Resource
+{
+    protected static ?string $model = Post::class;
+
+    protected static ?string $recordTitleAttribute = 'title';
+
+    protected static bool $isGloballySearchable = true;
+
+    protected static ?string $slug = 'opted-in-global-search-posts';
+
+    /**
+     * @return array<string>
+     */
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['title'];
+    }
+}
+
+class CustomSearchProvider implements GlobalSearchProvider
+{
+    public function getResults(string $query): ?GlobalSearchResults
+    {
+        return GlobalSearchResults::make()
+            ->category('foobarbaz', [
+                new GlobalSearchResult(title: 'foo', url: '#', details: []),
+                new GlobalSearchResult(title: 'bar', url: '#', details: []),
+                new GlobalSearchResult(title: 'baz', url: '#', details: []),
+            ]);
+    }
+}
+class ActionSearchProvider implements GlobalSearchProvider
+{
+    public function getResults(string $query): ?GlobalSearchResults
+    {
+        if (mb_strlen($query) < 3) {
+            return null;
+        }
+
+        $results = Post::query()->where('title', 'like', "{$query}%")->orderBy('id')->get()
+            ->map(static fn (Post $post): GlobalSearchResult => new GlobalSearchResult(
+                title: $post->title,
+                url: PostResource::getUrl('view', ['record' => $post]),
+                actions: [
+                    Action::make('preview')
+                        ->dispatch('open-modal', ['id' => 'global-search-preview'])
+                        ->extraAttributes(['data-testid' => "global-search-preview-{$post->id}"]),
+                    Action::make('openInNewTab')
+                        ->url(PostResource::getUrl('view', ['record' => $post]), shouldOpenInNewTab: true),
+                ],
+            ));
+
+        return GlobalSearchResults::make()
+            ->category('Empty', [])
+            ->category('Invoices', $results->take(1))
+            ->category('Archived invoices', $results->skip(1));
+    }
+}
+
+class ParentSearchTestConnection extends SQLiteConnection
+{
+    public function getDriverName()
+    {
+        return 'pgsql';
+    }
+}
+
+class RelatedSearchTestConnection extends SQLiteConnection
+{
+    public function getDriverName()
+    {
+        return 'related-search-test';
+    }
+}
+
+class HybridSearchPost extends Post
+{
+    protected $connection = 'parent-search-test';
+
+    protected $table = 'posts';
+
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(HybridSearchUser::class, 'author_id');
+    }
+}
+
+class HybridSearchUser extends User
+{
+    protected $connection = 'related-search-test';
+
+    protected $table = 'users';
+}
+
+class HybridSearchPostResource extends Resource
+{
+    protected static ?string $model = HybridSearchPost::class;
+
+    public static function applyRelationshipSearch(Builder $query, string $search): Builder
+    {
+        static::applyGlobalSearchAttributeConstraints($query, $search);
+
+        return $query;
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['author.name'];
+    }
+}

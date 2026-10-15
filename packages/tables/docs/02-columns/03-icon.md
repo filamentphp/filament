@@ -21,7 +21,7 @@ IconColumn::make('status')
     })
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">The `icon()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="4.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">The `icon()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="tables/columns/icon/simple" alt="Icon column" version="4.x" />
 
@@ -50,7 +50,7 @@ IconColumn::make('status')
     })
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">The `color()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="4.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">The `color()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="tables/columns/icon/color" alt="Icon column with color" version="4.x" />
 
@@ -66,7 +66,7 @@ IconColumn::make('status')
     ->size(IconSize::Medium)
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="4.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="tables/columns/icon/medium" alt="Medium-sized icon column" version="4.x" />
 
@@ -94,7 +94,7 @@ IconColumn::make('is_featured')
     ->boolean(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `boolean()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="4.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `boolean()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the boolean icons
 
@@ -110,7 +110,7 @@ IconColumn::make('is_featured')
     ->falseIcon(Heroicon::OutlinedXMark)
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing static values, the `trueIcon()` and `falseIcon()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="4.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `trueIcon()` and `falseIcon()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 <AutoScreenshot name="tables/columns/icon/boolean-icon" alt="Icon column to display a boolean with custom icons" version="4.x" />
 
@@ -127,7 +127,7 @@ IconColumn::make('is_featured')
     ->falseColor('warning')
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing static values, the `trueColor()` and `falseColor()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="4.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `trueColor()` and `falseColor()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 <AutoScreenshot name="tables/columns/icon/boolean-color" alt="Icon column to display a boolean with custom colors" version="4.x" />
 

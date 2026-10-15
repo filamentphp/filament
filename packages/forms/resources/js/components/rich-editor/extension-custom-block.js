@@ -1,5 +1,4 @@
 import { mergeAttributes, Node } from '@tiptap/core'
-import { Node as ProseMirrorNode } from '@tiptap/pm/model'
 import { Plugin } from '@tiptap/pm/state'
 
 export default Node.create({
@@ -228,7 +227,7 @@ export default Node.create({
     addKeyboardShortcuts() {
         return {
             Backspace: () =>
-                this.editor.commands.command(({ tr, state }) => {
+                this.editor.commands.command(({ state }) => {
                     let isCustomBlock = false
                     const { selection } = state
                     const { empty, anchor } = selection
@@ -237,15 +236,9 @@ export default Node.create({
                         return false
                     }
 
-                    // Store node and position for later use
-                    let customBlockNode = new ProseMirrorNode()
-                    let customBlockPos = 0
-
-                    state.doc.nodesBetween(anchor - 1, anchor, (node, pos) => {
+                    state.doc.nodesBetween(anchor - 1, anchor, (node) => {
                         if (node.type.name === this.name) {
                             isCustomBlock = true
-                            customBlockNode = node
-                            customBlockPos = pos
                             return false
                         }
                     })
@@ -319,26 +312,44 @@ export default Node.create({
 
             if (customBlocks.length) {
                 let hydratedCustomBlockPreviews
+                let timeout
 
                 try {
-                    hydratedCustomBlockPreviews =
-                        await getCustomBlockPreviewsUsing(customBlocks)
+                    hydratedCustomBlockPreviews = await Promise.race([
+                        getCustomBlockPreviewsUsing(customBlocks),
+                        new Promise((resolve, reject) => {
+                            timeout = setTimeout(
+                                () =>
+                                    reject(
+                                        new Error('Preview request timed out'),
+                                    ),
+                                30000,
+                            )
+                        }),
+                    ])
                 } catch (error) {
-                    console.error(
-                        'Failed to hydrate custom block previews',
-                        error,
-                    )
-                    hydratedCustomBlockPreviews = []
-                }
+                    if (!this.editor.isDestroyed) {
+                        console.error(
+                            'Failed to hydrate custom block previews',
+                            error,
+                        )
+                    }
 
-                customBlockFingerprints.forEach((fingerprint) => {
-                    pendingCustomBlockPreviews.delete(fingerprint)
-                    customBlockPreviews.set(fingerprint, null)
-                })
+                    return
+                } finally {
+                    clearTimeout(timeout)
+                    customBlockFingerprints.forEach((fingerprint) => {
+                        pendingCustomBlockPreviews.delete(fingerprint)
+                    })
+                }
 
                 if (this.editor.isDestroyed) {
                     return
                 }
+
+                customBlockFingerprints.forEach((fingerprint) => {
+                    customBlockPreviews.set(fingerprint, null)
+                })
 
                 hydratedCustomBlockPreviews.forEach((preview) => {
                     const fingerprint = customBlockFingerprints[preview.key]

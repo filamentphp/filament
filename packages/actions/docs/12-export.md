@@ -484,13 +484,13 @@ public static function modifyQuery(Builder $query): Builder
 
 ### Customizing the storage disk
 
-By default, exported files will be uploaded to the storage disk defined in the [configuration file](../introduction/installation#publishing-configuration), which is `public` by default. You can set the `FILESYSTEM_DISK` environment variable to change this.
+Exports use the storage disk defined in the [configuration file](../introduction/installation#publishing-configuration), which defaults to `local`. You can change it using the `FILESYSTEM_DISK` environment variable. If the configured disk is `public` and a `local` disk exists, exports use `local` instead. Explicitly setting `fileDisk('public')` overrides that fallback.
 
-While using the `public` disk a good default for many parts of Filament, using it for exports would result in exported files being stored in a public location. As such, if the default filesystem disk is `public` and a `local` disk exists in your `config/filesystems.php`, Filament will use the `local` disk for exports instead. If you override the disk to be `public` for an `ExportAction` or inside an exporter class, Filament will use that.
+<Aside variant="warning">
+    Use private storage for exports, such as a non-public `local` disk or `s3` with a private access policy. Filament's [download authorization](#authorization) does not protect files exposed directly by your storage disk or web server.
+</Aside>
 
-In production, you should use a disk such as `s3` with a private access policy, to prevent unauthorized access to the exported files.
-
-If you want to use a different disk for a specific export, you can pass the disk name to the `disk()` method on the action:
+To use a different disk for a specific export, pass its name to `fileDisk()` on the action:
 
 ```php
 use Filament\Actions\ExportAction;
@@ -768,7 +768,7 @@ public function makeXlsxRow(array $values, ?Style $style = null): Row
                 (new Style())->setFontSize(12),
             ),
             default => Cell::fromValue($values[$columnIndex]),
-        },
+        };
     }
     
     return new Row($cells, $style);
@@ -925,10 +925,12 @@ public function getJobConnection(): ?string
 By default, the export system will only process one job at a time from each export. This is to prevent the server from being overloaded, and other jobs from being delayed by large exports. That functionality is defined in the `WithoutOverlapping` middleware on the exporter class:
 
 ```php
+use Illuminate\Queue\Middleware\WithoutOverlapping;
+
 public function getJobMiddleware(): array
 {
     return [
-        (new WithoutOverlapping("export{$this->export->getKey()}"))->expireAfter(600),
+        (new WithoutOverlapping("filament:exports:{$this->export->getKey()}"))->expireAfter(600),
     ];
 }
 ```
@@ -1027,7 +1029,7 @@ public function view(User $user, Export $export): bool
 
 The export system does not perform per-record authorization checks. When an export is triggered, all records matching the table query (or the model's full dataset, if used outside a table) are included in the export without consulting your application's [Laravel policies](https://laravel.com/docs/authorization#creating-policies). This means that if a user is allowed to trigger an export, they may receive records they would not normally be authorized to view through your application's UI.
 
-If you need to restrict which records are exported, you should scope the query using the [`modifyQueryUsing()` method](#modifying-the-eloquent-query):
+If you need to restrict which records are exported, you should scope the query using the [`modifyQueryUsing()` method](#modifying-the-export-query):
 
 ```php
 use Illuminate\Database\Eloquent\Builder;

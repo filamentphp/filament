@@ -98,16 +98,17 @@
 
         @if (! filament()->hasDarkMode())
             <script>
-                localStorage.setItem('theme', 'light')
+                localStorage.setItem('filament:theme:mode', 'light')
             </script>
         @elseif (filament()->hasDarkModeForced())
             <script>
-                localStorage.setItem('theme', 'dark')
+                localStorage.setItem('filament:theme:mode', 'dark')
             </script>
         @else
             <script>
                 const loadDarkMode = () => {
-                    window.theme = localStorage.getItem('theme') ?? @js(filament()->getDefaultThemeMode()->value)
+                    window.theme =
+                        localStorage.getItem('filament:theme:mode') ?? @js(filament()->getDefaultThemeMode()->value)
 
                     if (
                         window.theme === 'dark' ||

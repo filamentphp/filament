@@ -10,6 +10,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -18,178 +19,236 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can set `disk()` and get with `getDiskName()`', function (): void {
-    expect(ImageColumn::make('avatar')->disk('s3')->getDiskName())->toBe('s3');
+describe('disk', function (): void {
+    it('can set `disk()` and get with `getDiskName()`', function (): void {
+        expect(ImageColumn::make('avatar')->disk('s3')->getDiskName())->toBe('s3');
+    });
 });
 
-it('can set `imageHeight()` and get with `getImageHeight()`', function (): void {
-    expect(ImageColumn::make('avatar')->imageHeight(100)->getImageHeight())->toBe('100px');
+describe('dimensions', function (): void {
+    it('can set `imageHeight()` and get with `getImageHeight()`', function (): void {
+        expect(ImageColumn::make('avatar')->imageHeight(100)->getImageHeight())->toBe('100px');
+    });
+
+    it('can set `imageHeight()` with string and get with `getImageHeight()`', function (): void {
+        expect(ImageColumn::make('avatar')->imageHeight('4rem')->getImageHeight())->toBe('4rem');
+    });
+
+    it('defaults `getImageHeight()` to `null`', function (): void {
+        expect(ImageColumn::make('avatar')->getImageHeight())->toBeNull();
+    });
+
+    it('can set `imageWidth()` and get with `getImageWidth()`', function (): void {
+        expect(ImageColumn::make('avatar')->imageWidth(80)->getImageWidth())->toBe('80px');
+    });
+
+    it('defaults `getImageWidth()` to `null`', function (): void {
+        expect(ImageColumn::make('avatar')->getImageWidth())->toBeNull();
+    });
+
+    it('can set `imageSize()` and it sets both height and width', function (): void {
+        $column = ImageColumn::make('avatar')->imageSize(64);
+
+        expect($column->getImageHeight())->toBe('64px');
+        expect($column->getImageWidth())->toBe('64px');
+    });
 });
 
-it('can set `imageHeight()` with string and get with `getImageHeight()`', function (): void {
-    expect(ImageColumn::make('avatar')->imageHeight('4rem')->getImageHeight())->toBe('4rem');
+describe('shape', function (): void {
+    it('can set `circular()` and get with `isCircular()`', function (): void {
+        expect(ImageColumn::make('avatar')->circular()->isCircular())->toBeTrue();
+    });
+
+    it('defaults `isCircular()` to `false`', function (): void {
+        expect(ImageColumn::make('avatar')->isCircular())->toBeFalse();
+    });
+
+    it('can set `square()` and get with `isSquare()`', function (): void {
+        expect(ImageColumn::make('avatar')->square()->isSquare())->toBeTrue();
+    });
+
+    it('defaults `isSquare()` to `false`', function (): void {
+        expect(ImageColumn::make('avatar')->isSquare())->toBeFalse();
+    });
+
+    it('can set `circular()` with a `Closure`', function (): void {
+        expect(ImageColumn::make('avatar')->circular(static fn (): bool => true)->isCircular())->toBeTrue();
+    });
+
+    it('can undo `circular()` with `false`', function (): void {
+        expect(ImageColumn::make('avatar')->circular()->circular(false)->isCircular())->toBeFalse();
+    });
 });
 
-it('defaults `getImageHeight()` to `null`', function (): void {
-    expect(ImageColumn::make('avatar')->getImageHeight())->toBeNull();
+describe('fallback image', function (): void {
+    it('can set `defaultImageUrl()` and get with `getDefaultImageUrl()`', function (): void {
+        expect(ImageColumn::make('avatar')->defaultImageUrl('https://example.com/default.jpg')->getDefaultImageUrl())->toBe('https://example.com/default.jpg');
+    });
+
+    it('defaults `getDefaultImageUrl()` to `null`', function (): void {
+        expect(ImageColumn::make('avatar')->getDefaultImageUrl())->toBeNull();
+    });
 });
 
-it('can set `imageWidth()` and get with `getImageWidth()`', function (): void {
-    expect(ImageColumn::make('avatar')->imageWidth(80)->getImageWidth())->toBe('80px');
+describe('stacking and limits', function (): void {
+    it('can set `stacked()` and get with `isStacked()`', function (): void {
+        expect(ImageColumn::make('avatar')->stacked()->isStacked())->toBeTrue();
+    });
+
+    it('defaults `isStacked()` to `false`', function (): void {
+        expect(ImageColumn::make('avatar')->isStacked())->toBeFalse();
+    });
+
+    it('can set `overlap()` and get with `getOverlap()`', function (): void {
+        expect(ImageColumn::make('avatar')->overlap(3)->getOverlap())->toBe(3);
+    });
+
+    it('defaults `getOverlap()` to `null`', function (): void {
+        expect(ImageColumn::make('avatar')->getOverlap())->toBeNull();
+    });
+
+    it('can set `ring()` and get with `getRing()`', function (): void {
+        expect(ImageColumn::make('avatar')->ring(2)->getRing())->toBe(2);
+    });
+
+    it('defaults `getRing()` to `null`', function (): void {
+        expect(ImageColumn::make('avatar')->getRing())->toBeNull();
+    });
+
+    it('can set `limit()` and get with `getLimit()`', function (): void {
+        expect(ImageColumn::make('avatar')->limit(5)->getLimit())->toBe(5);
+    });
+
+    it('defaults `getLimit()` to `null`', function (): void {
+        expect(ImageColumn::make('avatar')->getLimit())->toBeNull();
+    });
+
+    it('can set `limitedRemainingText()` and get with `hasLimitedRemainingText()`', function (): void {
+        expect(ImageColumn::make('avatar')->limitedRemainingText()->hasLimitedRemainingText())->toBeTrue();
+    });
+
+    it('defaults `hasLimitedRemainingText()` to `false`', function (): void {
+        expect(ImageColumn::make('avatar')->hasLimitedRemainingText())->toBeFalse();
+    });
 });
 
-it('defaults `getImageWidth()` to `null`', function (): void {
-    expect(ImageColumn::make('avatar')->getImageWidth())->toBeNull();
+describe('file visibility and existence', function (): void {
+    it('can set `checkFileExistence()` to `false` and get with `shouldCheckFileExistence()`', function (): void {
+        expect(ImageColumn::make('avatar')->checkFileExistence(false)->shouldCheckFileExistence())->toBeFalse();
+    });
+
+    it('defaults `shouldCheckFileExistence()` to `true`', function (): void {
+        expect(ImageColumn::make('avatar')->shouldCheckFileExistence())->toBeTrue();
+    });
+
+    it('can set `visibility()` and get with `getCustomVisibility()`', function (): void {
+        expect(ImageColumn::make('avatar')->visibility('private')->getCustomVisibility())->toBe('private');
+    });
+
+    it('can set `checkFileExistence()` with a `Closure`', function (): void {
+        expect(ImageColumn::make('avatar')->checkFileExistence(static fn (): bool => false)->shouldCheckFileExistence())->toBeFalse();
+    });
 });
 
-it('can set `circular()` and get with `isCircular()`', function (): void {
-    expect(ImageColumn::make('avatar')->circular()->isCircular())->toBeTrue();
+describe('dynamic stacking and limits', function (): void {
+    it('can set `stacked()` with a `Closure`', function (): void {
+        expect(ImageColumn::make('avatar')->stacked(static fn (): bool => true)->isStacked())->toBeTrue();
+    });
+
+    it('can set `overlap()` with a `Closure`', function (): void {
+        expect(ImageColumn::make('avatar')->overlap(static fn (): int => 5)->getOverlap())->toBe(5);
+    });
+
+    it('can set `ring()` with a `Closure`', function (): void {
+        expect(ImageColumn::make('avatar')->ring(static fn (): int => 4)->getRing())->toBe(4);
+    });
+
+    it('can set `limit()` with a `Closure`', function (): void {
+        expect(ImageColumn::make('avatar')->limit(static fn (): int => 10)->getLimit())->toBe(10);
+    });
+
+    it('uses `3` as default limit for `limit()` when called without argument', function (): void {
+        expect(ImageColumn::make('avatar')->limit()->getLimit())->toBe(3);
+    });
 });
 
-it('defaults `isCircular()` to `false`', function (): void {
-    expect(ImageColumn::make('avatar')->isCircular())->toBeFalse();
+describe('image attributes and remaining text', function (): void {
+    it('can set `extraImgAttributes()`', function (): void {
+        $column = ImageColumn::make('avatar')
+            ->extraImgAttributes(['loading' => 'lazy', 'alt' => 'User avatar']);
+
+        $attributes = $column->getExtraImgAttributes();
+
+        expect($attributes)->toHaveKey('loading');
+        expect($attributes['loading'])->toBe('lazy');
+    });
+
+    it('can set `limitedRemainingTextSize()` and get with `getLimitedRemainingTextSize()`', function (): void {
+        expect(ImageColumn::make('avatar')->limitedRemainingTextSize('sm')->getLimitedRemainingTextSize())->not->toBeNull();
+    });
+
+    it('defaults `getLimitedRemainingTextSize()` to `null`', function (): void {
+        expect(ImageColumn::make('avatar')->getLimitedRemainingTextSize())->toBeNull();
+    });
 });
 
-it('can set `square()` and get with `isSquare()`', function (): void {
-    expect(ImageColumn::make('avatar')->square()->isSquare())->toBeTrue();
+describe('state and related record injection', function (): void {
+    it('injects `$state` and `$relatedRecord` into per-item image configuration', function (): void {
+        $state = 'avatar.jpg';
+        $relatedRecord = new User(['email' => 'user@example.com']);
+
+        $column = ImageColumn::make('avatar')
+            ->disk(static fn (string $state, User $relatedRecord): string => (($state === 'avatar.jpg') && ($relatedRecord->email === 'user@example.com')) ? 's3' : 'public')
+            ->visibility(static fn (string $state, User $relatedRecord): string => (($state === 'avatar.jpg') && ($relatedRecord->email === 'user@example.com')) ? 'private' : 'public')
+            ->defaultImageUrl(static fn (string $state, User $relatedRecord): string => "https://example.com/{$relatedRecord->email}/{$state}")
+            ->extraImgAttributes(static fn (string $state, User $relatedRecord): array => ['data-image' => "{$relatedRecord->email}:{$state}"])
+            ->checkFileExistence(static fn (string $state, User $relatedRecord): bool => ($state !== 'avatar.jpg') || ($relatedRecord->email !== 'user@example.com'));
+
+        expect($column->getDiskName($state, $relatedRecord))->toBe('s3')
+            ->and($column->getCustomVisibility($state, $relatedRecord))->toBe('private')
+            ->and($column->getDefaultImageUrl($state, $relatedRecord))->toBe('https://example.com/user@example.com/avatar.jpg')
+            ->and($column->getExtraImgAttributes($state, $relatedRecord))->toBe(['data-image' => 'user@example.com:avatar.jpg'])
+            ->and($column->shouldCheckFileExistence($state, $relatedRecord))->toBeFalse();
+    });
+
+    it('preserves implicit `$state` injection when per-item getter state is omitted', function (): void {
+        $column = ImageColumn::make('avatar')
+            ->table(livewire(TestTableWithImageColumn::class)->instance()->getTable())
+            ->record(new User)
+            ->state('avatar.jpg')
+            ->disk(static fn (?string $state): string => $state ?? 'local');
+
+        expect($column->getDiskName())->toBe('avatar.jpg')
+            ->and($column->getDiskName(null))->toBe('local');
+    });
+
+    it('injects a singular `$relatedRecord` into `defaultImageUrl()` when relationship state is blank', function (): void {
+        $author = User::factory()->create(['json' => ['image' => null]]);
+        Post::factory()->create(['author_id' => $author->getKey()]);
+
+        livewire(RenderImageColumnWithBlankRelatedState::class)
+            ->assertSuccessful()
+            ->assertSeeHtml("src=\"https://example.com/{$author->getKey()}.jpg\"");
+    });
 });
 
-it('defaults `isSquare()` to `false`', function (): void {
-    expect(ImageColumn::make('avatar')->isSquare())->toBeFalse();
-});
+describe('rendering and escaping', function (): void {
+    it('can render', function (): void {
+        Post::factory()->count(5)->create();
 
-it('can set `defaultImageUrl()` and get with `getDefaultImageUrl()`', function (): void {
-    expect(ImageColumn::make('avatar')->defaultImageUrl('https://example.com/default.jpg')->getDefaultImageUrl())->toBe('https://example.com/default.jpg');
-});
+        livewire(TestTableWithImageColumn::class)
+            ->assertSuccessful();
+    });
 
-it('defaults `getDefaultImageUrl()` to `null`', function (): void {
-    expect(ImageColumn::make('avatar')->getDefaultImageUrl())->toBeNull();
-});
+    it('escapes `"` in `src`', function (): void {
+        Post::factory()->create([
+            'title' => 'data:image/png,"',
+        ]);
 
-it('can set `stacked()` and get with `isStacked()`', function (): void {
-    expect(ImageColumn::make('avatar')->stacked()->isStacked())->toBeTrue();
-});
-
-it('defaults `isStacked()` to `false`', function (): void {
-    expect(ImageColumn::make('avatar')->isStacked())->toBeFalse();
-});
-
-it('can set `overlap()` and get with `getOverlap()`', function (): void {
-    expect(ImageColumn::make('avatar')->overlap(3)->getOverlap())->toBe(3);
-});
-
-it('defaults `getOverlap()` to `null`', function (): void {
-    expect(ImageColumn::make('avatar')->getOverlap())->toBeNull();
-});
-
-it('can set `ring()` and get with `getRing()`', function (): void {
-    expect(ImageColumn::make('avatar')->ring(2)->getRing())->toBe(2);
-});
-
-it('defaults `getRing()` to `null`', function (): void {
-    expect(ImageColumn::make('avatar')->getRing())->toBeNull();
-});
-
-it('can set `limit()` and get with `getLimit()`', function (): void {
-    expect(ImageColumn::make('avatar')->limit(5)->getLimit())->toBe(5);
-});
-
-it('defaults `getLimit()` to `null`', function (): void {
-    expect(ImageColumn::make('avatar')->getLimit())->toBeNull();
-});
-
-it('can set `limitedRemainingText()` and get with `hasLimitedRemainingText()`', function (): void {
-    expect(ImageColumn::make('avatar')->limitedRemainingText()->hasLimitedRemainingText())->toBeTrue();
-});
-
-it('defaults `hasLimitedRemainingText()` to `false`', function (): void {
-    expect(ImageColumn::make('avatar')->hasLimitedRemainingText())->toBeFalse();
-});
-
-it('can set `checkFileExistence()` to `false` and get with `shouldCheckFileExistence()`', function (): void {
-    expect(ImageColumn::make('avatar')->checkFileExistence(false)->shouldCheckFileExistence())->toBeFalse();
-});
-
-it('defaults `shouldCheckFileExistence()` to `true`', function (): void {
-    expect(ImageColumn::make('avatar')->shouldCheckFileExistence())->toBeTrue();
-});
-
-it('can set `visibility()` and get with `getCustomVisibility()`', function (): void {
-    expect(ImageColumn::make('avatar')->visibility('private')->getCustomVisibility())->toBe('private');
-});
-
-it('can set `circular()` with a `Closure`', function (): void {
-    expect(ImageColumn::make('avatar')->circular(static fn (): bool => true)->isCircular())->toBeTrue();
-});
-
-it('can undo `circular()` with `false`', function (): void {
-    expect(ImageColumn::make('avatar')->circular()->circular(false)->isCircular())->toBeFalse();
-});
-
-it('can set `stacked()` with a `Closure`', function (): void {
-    expect(ImageColumn::make('avatar')->stacked(static fn (): bool => true)->isStacked())->toBeTrue();
-});
-
-it('can set `overlap()` with a `Closure`', function (): void {
-    expect(ImageColumn::make('avatar')->overlap(static fn (): int => 5)->getOverlap())->toBe(5);
-});
-
-it('can set `ring()` with a `Closure`', function (): void {
-    expect(ImageColumn::make('avatar')->ring(static fn (): int => 4)->getRing())->toBe(4);
-});
-
-it('can set `limit()` with a `Closure`', function (): void {
-    expect(ImageColumn::make('avatar')->limit(static fn (): int => 10)->getLimit())->toBe(10);
-});
-
-it('uses `3` as default limit for `limit()` when called without argument', function (): void {
-    expect(ImageColumn::make('avatar')->limit()->getLimit())->toBe(3);
-});
-
-it('can set `imageSize()` and it sets both height and width', function (): void {
-    $column = ImageColumn::make('avatar')->imageSize(64);
-
-    expect($column->getImageHeight())->toBe('64px');
-    expect($column->getImageWidth())->toBe('64px');
-});
-
-it('can set `extraImgAttributes()`', function (): void {
-    $column = ImageColumn::make('avatar')
-        ->extraImgAttributes(['loading' => 'lazy', 'alt' => 'User avatar']);
-
-    $attributes = $column->getExtraImgAttributes();
-
-    expect($attributes)->toHaveKey('loading');
-    expect($attributes['loading'])->toBe('lazy');
-});
-
-it('can set `limitedRemainingTextSize()` and get with `getLimitedRemainingTextSize()`', function (): void {
-    expect(ImageColumn::make('avatar')->limitedRemainingTextSize('sm')->getLimitedRemainingTextSize())->not->toBeNull();
-});
-
-it('defaults `getLimitedRemainingTextSize()` to `null`', function (): void {
-    expect(ImageColumn::make('avatar')->getLimitedRemainingTextSize())->toBeNull();
-});
-
-it('can set `checkFileExistence()` with a `Closure`', function (): void {
-    expect(ImageColumn::make('avatar')->checkFileExistence(static fn (): bool => false)->shouldCheckFileExistence())->toBeFalse();
-});
-
-it('can render', function (): void {
-    Post::factory()->count(5)->create();
-
-    livewire(TestTableWithImageColumn::class)
-        ->assertSuccessful();
-});
-
-it('escapes `"` in `src`', function (): void {
-    Post::factory()->create([
-        'title' => 'data:image/png,"',
-    ]);
-
-    livewire(TestTableWithImageColumn::class)
-        ->assertSuccessful()
-        ->assertSeeHtml('data:image/png,&quot;');
+        livewire(TestTableWithImageColumn::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('data:image/png,&quot;');
+    });
 });
 
 describe('rendering', function (): void {
@@ -307,6 +366,28 @@ class TestTableWithImageColumn extends Component implements HasActions, HasSchem
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
                 ImageColumn::make('title'),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class RenderImageColumnWithBlankRelatedState extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                ImageColumn::make('author.json.image')
+                    ->defaultImageUrl(static fn (mixed $state, User $relatedRecord): string => "https://example.com/{$relatedRecord->getKey()}.jpg"),
             ]);
     }
 

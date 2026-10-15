@@ -45,6 +45,8 @@ ActionGroup::make([
 
 <AutoScreenshot name="tables/actions/group-button" alt="Table with button action group" version="4.x" />
 
+When you render multiple groups together, use distinct `label()` values so users can distinguish their triggers, including when only icons are visible.
+
 ### Adding a tooltip to the group trigger button
 
 You may add a tooltip to the group trigger button using the `tooltip()` method:

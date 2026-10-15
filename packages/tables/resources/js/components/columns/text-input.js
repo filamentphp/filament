@@ -1,73 +1,11 @@
-export default function textInputTableColumn({ name, recordKey, state }) {
+import editableTableColumn from '../../utilities/editable-table-column.js'
+
+export default function textInputTableColumn(configuration) {
     return {
-        error: undefined,
-
-        isLoading: false,
-
-        state,
-
-        unsubscribeLivewireHook: null,
+        ...editableTableColumn(configuration),
 
         init() {
-            this.unsubscribeLivewireHook = Livewire.hook(
-                'commit',
-                ({ component, commit, succeed, fail, respond }) => {
-                    succeed(({ snapshot, effect }) => {
-                        this.$nextTick(() => {
-                            if (this.isLoading) {
-                                return
-                            }
-
-                            if (
-                                component.id !==
-                                this.$root.closest('[wire\\:id]')?.attributes[
-                                    'wire:id'
-                                ].value
-                            ) {
-                                return
-                            }
-
-                            const serverState = this.getServerState()
-
-                            if (
-                                serverState === undefined ||
-                                this.getNormalizedState() === serverState
-                            ) {
-                                return
-                            }
-
-                            this.state = serverState
-                        })
-                    })
-                },
-            )
-
-            this.$watch('state', async () => {
-                const serverState = this.getServerState()
-
-                if (
-                    serverState === undefined ||
-                    this.getNormalizedState() === serverState
-                ) {
-                    return
-                }
-
-                this.isLoading = true
-
-                const response = await this.$wire.updateTableColumnState(
-                    name,
-                    recordKey,
-                    this.state,
-                )
-
-                this.error = response?.error ?? undefined
-
-                if (!this.error && this.$refs.serverState) {
-                    this.$refs.serverState.value = this.getNormalizedState()
-                }
-
-                this.isLoading = false
-            })
+            this.initEditableColumn()
         },
 
         getServerState() {
@@ -81,20 +19,6 @@ export default function textInputTableColumn({ name, recordKey, state }) {
                       '\\' + String.fromCharCode(34),
                       String.fromCharCode(34),
                   )
-        },
-
-        getNormalizedState() {
-            const state = Alpine.raw(this.state)
-
-            if ([null, undefined].includes(state)) {
-                return ''
-            }
-
-            return state
-        },
-
-        destroy() {
-            this.unsubscribeLivewireHook?.()
         },
     }
 }

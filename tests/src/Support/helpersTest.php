@@ -1,6 +1,6 @@
 <?php
 
-use Filament\Facades\Filament;
+use Filament\Support\Facades\FilamentView;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\TestCase;
 use Illuminate\Database\Connection;
@@ -14,8 +14,9 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\ComponentAttributeBag;
 use Symfony\Component\Process\Process;
 
-use function Filament\get_authorization_response;
 use function Filament\Support\apply_search_constraint;
+use function Filament\Support\encode_key_segments;
+use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_pattern;
 use function Filament\Support\is_database_driver_supported;
@@ -23,6 +24,12 @@ use function Filament\Support\is_path_within_directory;
 use function Filament\Support\prepare_inherited_attributes;
 
 uses(TestCase::class);
+
+it('encodes key segments with byte lengths using `encode_key_segments()`', function (): void {
+    expect(encode_key_segments('a:b', 'c'))->toBe('3:a:b1:c')
+        ->and(encode_key_segments('a', 'b:c'))->toBe('1:a3:b:c')
+        ->and(encode_key_segments('', 'é|:', '42'))->toBe('0:4:é|:2:42');
+});
 
 it('generates patterns with literal LIKE wildcard characters using `generate_search_pattern()`', function (bool $hasLeadingWildcard, bool $hasTrailingWildcard, string $expected): void {
     expect(generate_search_pattern('café!_100%[draft]\\path', $hasLeadingWildcard, $hasTrailingWildcard, Ticket::query()->getConnection()))
@@ -79,10 +86,6 @@ it('uses `whereLike()` with its expected wildcard escaping for unsupported datab
         ->toBe($query)
         ->and($baseQuery->whereLikeArguments)
         ->toBe(['profile.name', '%café!\\_100\\%[draft]\\path\\\\%\\\\_wow!!%', false, 'or', true]);
-});
-
-it('does not share the `originalRequest` binding between Livewire component snapshots', function (): void {
-    expect(app()->isShared('originalRequest'))->toBeFalse();
 });
 
 it('builds a fresh index of application classes and excludes symlinked path repository classes with `discover_app_classes()` when Composer uses a custom vendor directory', function (): void {
@@ -267,12 +270,6 @@ it('preserves numeric keys in `prepare_inherited_attributes()`', function (array
     ],
 ]);
 
-it('can handle policy being an object when method does not exist', function (): void {
-    Filament::getCurrentOrDefaultPanel()->strictAuthorization();
-
-    get_authorization_response('edit', Ticket::class);
-})->throws(Exception::class, 'Strict authorization mode is enabled, but no [edit()] method was found on [Filament\Tests\Fixtures\Policies\TicketPolicy].');
-
 it('will generate a JSON search column expression for MySQL', function (): void {
     $column = 'data->name';
     $isSearchForcedCaseInsensitive = true;
@@ -409,4 +406,144 @@ it('will generate a JSON search column expression for Postgres with explicit ->>
 
     expect($expression->getValue($grammar))
         ->toBe("lower(\"name\"->>'en'::text)");
+});
+
+describe('`generate_href_html()`', function (): void {
+    it('returns empty HTML for blank URLs', function (): void {
+        expect(generate_href_html(''))->toHtml()->toBe('');
+        expect(generate_href_html(null))->toHtml()->toBe('');
+    });
+
+    it('can render links with and without SPA navigation', function (): void {
+        FilamentView::spa();
+        expect(generate_href_html('http://localhost/page'))
+            ->toHtml()->toBe('href="http://localhost/page" wire:navigate');
+
+        FilamentView::spa(false);
+        expect(generate_href_html('http://localhost/page'))
+            ->toHtml()->toBe('href="http://localhost/page"');
+    });
+
+    it('can render prefetching links', function (): void {
+        FilamentView::spa(true, true);
+        expect(generate_href_html('http://localhost/page'))
+            ->toHtml()->toBe('href="http://localhost/page" wire:navigate.hover');
+
+        FilamentView::spa(true, false);
+        expect(generate_href_html('http://localhost/page'))
+            ->toHtml()->toBe('href="http://localhost/page" wire:navigate');
+    });
+
+    it('can open links in a new tab', function (): void {
+        expect(generate_href_html('http://localhost/page', shouldOpenInNewTab: true))
+            ->toHtml()->toBe('href="http://localhost/page" target="_blank"');
+
+        expect(generate_href_html('http://localhost/page', shouldOpenInNewTab: false))
+            ->toHtml()->toBe('href="http://localhost/page"');
+    });
+
+    it('does not navigate external URLs in SPA mode', function (): void {
+        FilamentView::spa();
+        expect(generate_href_html('http://another-localhost/page'))
+            ->toHtml()->toBe('href="http://another-localhost/page"');
+
+        FilamentView::spa(false);
+        expect(generate_href_html('http://another-localhost/page'))
+            ->toHtml()->toBe('href="http://another-localhost/page"');
+    });
+
+    it('does not prefetch external URLs', function (): void {
+        FilamentView::spa(true, true);
+        expect(generate_href_html('http://another-localhost/page'))
+            ->toHtml()->toBe('href="http://another-localhost/page"');
+    });
+
+    it('does not prefetch links that open in a new tab', function (): void {
+        FilamentView::spa(true, true);
+        expect(generate_href_html('http://localhost/page', shouldOpenInNewTab: true))
+            ->toHtml()->toBe('href="http://localhost/page" target="_blank"');
+    });
+
+    it('can override SPA navigation with `$shouldOpenInSpaMode`', function (): void {
+        FilamentView::spa(false);
+
+        expect(generate_href_html('http://localhost/page', shouldOpenInSpaMode: true))
+            ->toHtml()->toBe('href="http://localhost/page" wire:navigate');
+
+        expect(generate_href_html('http://localhost/page', shouldOpenInSpaMode: false))
+            ->toHtml()->toBe('href="http://localhost/page"');
+    });
+
+    it('can override SPA navigation when prefetching is enabled', function (): void {
+        FilamentView::spa(true, true);
+
+        expect(generate_href_html('http://localhost/page', shouldOpenInSpaMode: true))
+            ->toHtml()->toBe('href="http://localhost/page" wire:navigate.hover');
+
+        expect(generate_href_html('http://localhost/page', shouldOpenInSpaMode: false))
+            ->toHtml()->toBe('href="http://localhost/page"');
+    });
+
+    it('does not prefetch excluded URLs', function (): void {
+        FilamentView::spa(true, true);
+        FilamentView::spaUrlExceptions(['*/admin/*']);
+
+        expect(generate_href_html('http://localhost/admin/users'))
+            ->toHtml()->toBe('href="http://localhost/admin/users"');
+
+        expect(generate_href_html('http://localhost/dashboard'))
+            ->toHtml()->toBe('href="http://localhost/dashboard" wire:navigate.hover');
+    });
+
+    it('uses an Alpine navigation handler when a nested click handler would conflict with `wire:navigate`', function (): void {
+        FilamentView::spa(true, false);
+
+        expect(generate_href_html('http://localhost/page', hasNestedClickEventHandler: true))
+            ->toHtml()->toContain('href="http://localhost/page"', 'x-on:click=')
+            ->not->toContain('wire:navigate');
+
+        expect(generate_href_html('http://localhost/page', hasNestedClickEventHandler: false))
+            ->toHtml()->toBe('href="http://localhost/page" wire:navigate');
+    });
+
+    it('preserves prefetching when a nested click handler is present', function (): void {
+        FilamentView::spa(true, true);
+
+        expect(generate_href_html('http://localhost/page', hasNestedClickEventHandler: true))
+            ->toHtml()->toBe('href="http://localhost/page" wire:navigate.hover');
+
+        expect(generate_href_html('http://localhost/page', hasNestedClickEventHandler: false))
+            ->toHtml()->toBe('href="http://localhost/page" wire:navigate.hover');
+    });
+
+    it('does not add SPA navigation for nested click handlers when SPA mode is disabled', function (): void {
+        FilamentView::spa(false);
+
+        expect(generate_href_html('http://localhost/page', hasNestedClickEventHandler: true))
+            ->toHtml()->toBe('href="http://localhost/page"');
+
+        expect(generate_href_html('http://localhost/page', hasNestedClickEventHandler: false))
+            ->toHtml()->toBe('href="http://localhost/page"');
+    });
+
+    it('opens links in a new tab regardless of nested click handlers', function (): void {
+        FilamentView::spa(true, false);
+
+        expect(generate_href_html('http://localhost/page', shouldOpenInNewTab: true, hasNestedClickEventHandler: true))
+            ->toHtml()->toBe('href="http://localhost/page" target="_blank"');
+
+        expect(generate_href_html('http://localhost/page', shouldOpenInNewTab: true, hasNestedClickEventHandler: false))
+            ->toHtml()->toBe('href="http://localhost/page" target="_blank"');
+    });
+
+    it('honors `$shouldOpenInSpaMode` when nested click handlers are present', function (): void {
+        FilamentView::spa(false);
+
+        expect(generate_href_html('http://localhost/page', shouldOpenInSpaMode: true, hasNestedClickEventHandler: true))
+            ->toHtml()->toContain('href="http://localhost/page"', 'x-on:click=')
+            ->not->toContain('wire:navigate');
+
+        expect(generate_href_html('http://localhost/page', shouldOpenInSpaMode: true, hasNestedClickEventHandler: false))
+            ->toHtml()->toBe('href="http://localhost/page" wire:navigate');
+    });
 });

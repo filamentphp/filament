@@ -59,6 +59,7 @@ class ColorEntry extends Entry implements HasEmbeddedView
         }
 
         $state = Arr::wrap($state);
+        $relatedRecords = $this->getRelatedRecordsForState($state);
 
         $alignment = $this->getAlignment();
 
@@ -71,30 +72,26 @@ class ColorEntry extends Entry implements HasEmbeddedView
         ob_start(); ?>
 
         <div <?= $attributes->toHtml() ?>>
-            <?php foreach ($state as $stateItem) { ?>
+            <?php foreach ($state as $stateItemIndex => $stateItem) { ?>
                 <?php
-                $isCopyable = $this->isCopyable($stateItem);
-
-                $copyableStateJs = $isCopyable
-                    ? Js::from($this->getCopyableState($stateItem) ?? $stateItem)
-                    : null;
-                $copyMessageJs = $isCopyable
-                    ? Js::from($this->getCopyMessage($stateItem))
-                    : null;
-                $copyMessageDurationJs = $isCopyable
-                    ? Js::from($this->getCopyMessageDuration($stateItem))
-                    : null;
-
-                $tooltip = $this->getTooltip($stateItem);
+                $relatedRecord = $relatedRecords[$stateItemIndex] ?? null;
+                $isCopyable = $this->isCopyable($stateItem, $relatedRecord);
+                $copyableStateJs = $isCopyable ? Js::from($this->getCopyableState($stateItem, $relatedRecord) ?? $stateItem) : null;
+                $copyMessageJs = $isCopyable ? Js::from($this->getCopyMessage($stateItem, $relatedRecord)) : null;
+                $copyMessageDurationJs = $isCopyable ? Js::from($this->getCopyMessageDuration($stateItem, $relatedRecord)) : null;
+                $tooltip = $this->getTooltip($stateItem, $relatedRecord);
 
                 $sanitizedColor = Str::sanitizeCssColor($stateItem);
+                $copyLabelJs = Js::from(__('filament::components/copyable.label', [
+                    'label' => $sanitizedColor ?? $this->getName(),
+                ]));
+                $copyFailureMessageJs = Js::from(__('filament::components/copyable.messages.failed'));
 
                 // The colour value is the swatch's only information, so expose it (or the
                 // developer's tooltip text) as an accessible name on the `role="img"` swatch.
                 // Only the sanitized colour is used, so an invalid value is never announced.
-                // The copyable swatch is an interactive control that needs separate treatment (an
-                // accessible name and keyboard operability), so it is not named here — matching
-                // `ColorColumn`.
+                // `filamentCopyable` supplies button semantics and a name only when the
+                // copyable swatch is not inside another interactive control.
                 $accessibleLabel = $isCopyable
                     ? null
                     : (filled($tooltip)
@@ -106,13 +103,20 @@ class ColorEntry extends Entry implements HasEmbeddedView
                     ->merge([
                         'role' => filled($accessibleLabel) ? 'img' : null,
                         'aria-label' => filled($accessibleLabel) ? e($accessibleLabel) : null,
+                        'x-data' => $isCopyable ? 'filamentCopyable' : null,
+                        'x-bind' => $isCopyable ? 'bindings' : null,
+                        'x-bind:aria-label' => $isCopyable ? "isStandalone ? {$copyLabelJs} : null" : null,
                         'x-on:click' => $isCopyable
                             ? <<<JS
-                            window.navigator.clipboard.writeText({$copyableStateJs})
-                            \$tooltip({$copyMessageJs}, {
-                                theme: \$store.theme,
-                                timeout: {$copyMessageDurationJs},
-                            })
+                            if (isStandalone) {
+                                copy({$copyableStateJs}, {$copyMessageJs}, {$copyMessageDurationJs}, {$copyFailureMessageJs})
+                            } else {
+                                window.navigator.clipboard.writeText({$copyableStateJs})
+                                \$tooltip({$copyMessageJs}, {
+                                    theme: \$store.theme,
+                                    timeout: {$copyMessageDurationJs},
+                                })
+                            }
                             JS
                             : null,
                         'x-tooltip' => filled($tooltip)

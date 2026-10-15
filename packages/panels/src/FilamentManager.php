@@ -41,6 +41,8 @@ use Illuminate\Support\Facades\Event;
 use Livewire\Component;
 use LogicException;
 
+use function Filament\Support\encode_key_segments;
+
 class FilamentManager
 {
     protected ?string $currentDomain = null;
@@ -323,7 +325,9 @@ class FilamentManager
     public function getNameForDefaultAvatar(Model | Authenticatable $record): string
     {
         if ($this->getTenantModel() === $record::class) {
-            return $this->getTenantName($record);
+            $name = $this->getTenantName($record);
+
+            return ($name instanceof Htmlable) ? html_entity_decode(strip_tags($name->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8') : $name;
         }
 
         return $this->getUserName($record);
@@ -504,7 +508,7 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getTenantModel();
     }
 
-    public function getTenantName(Model $tenant): string
+    public function getTenantName(Model $tenant): string | Htmlable
     {
         if ($tenant instanceof HasName) {
             return $tenant->getFilamentName();
@@ -614,7 +618,9 @@ class FilamentManager
     public function getUserName(Model | Authenticatable $user): string
     {
         if ($user instanceof HasName) {
-            return $user->getFilamentName();
+            $name = $user->getFilamentName();
+
+            return ($name instanceof Htmlable) ? html_entity_decode(strip_tags($name->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8') : $name;
         }
 
         return $user->getAttributeValue('name');
@@ -632,7 +638,7 @@ class FilamentManager
         $userClass = $user::class;
         $authIdentifier = (string) $user->getAuthIdentifier();
 
-        return hash('sha256', strlen($guard) . ":{$guard}" . strlen($userClass) . ":{$userClass}" . strlen($authIdentifier) . ":{$authIdentifier}");
+        return hash('sha256', encode_key_segments($guard, $userClass, $authIdentifier));
     }
 
     /**

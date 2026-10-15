@@ -320,7 +320,9 @@ Builder::make('content')
 
 ## Reordering items
 
-A button is displayed on each item to allow the user to drag and drop to reorder it in the list.
+Blocks can be reordered by dragging. To provide visible controls for keyboard users, enable [reordering with buttons](#reordering-items-with-buttons).
+
+When some blocks are hidden, reordering places the visible blocks first and retains the hidden blocks after them in the stored state.
 
 ### Preventing the user from reordering items
 
@@ -340,7 +342,7 @@ Builder::make('content')
 
 ### Reordering items with buttons
 
-You may use the `reorderableWithButtons()` method to enable reordering items with buttons to move the item up and down:
+You may use `reorderableWithButtons()` to display move up and move down buttons:
 
 ```php
 use Filament\Forms\Components\Builder;
@@ -381,6 +383,8 @@ Builder::make('content')
     ])
     ->reorderableWithDragAndDrop(false)
 ```
+
+This also removes the visually hidden fallback buttons. Explicitly enabled visible move buttons remain available. Use `reorderable(false)` to prevent all reordering.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `reorderableWithDragAndDrop()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -431,35 +435,6 @@ Builder::make('content')
 
 If collapsed items contain components that are expensive to render, you can [defer the loading of their block schemas](#deferring-the-loading-of-block-schemas) until they are expanded.
 
-## Deferring the loading of block schemas
-
-If a block's schema is expensive to render, you can pass a `Schema` object to `schema()` and use `deferLoading()`. This is particularly useful when items are [collapsed](#collapsing-items) by default. Each block item schema will be loaded independently when its item is expanded and enters the viewport:
-
-```php
-use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Builder\Block;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
-
-Builder::make('content')
-    ->blocks([
-        Block::make('heading')
-            ->schema(
-                Schema::make()
-                    ->components([
-                        TextInput::make('content')
-                            ->label('Heading')
-                            ->required(),
-                    ])
-                    ->deferLoading(),
-            ),
-        // ...
-    ])
-    ->collapsed()
-```
-
-Builder block item schemas automatically receive unique keys from their item state paths. You can learn more about deferred schemas in the [schema overview](../schemas/overview#deferring-the-loading-of-a-child-schema).
-
 ## Cloning items
 
 You may allow builder items to be duplicated using the `cloneable()` method:
@@ -477,6 +452,39 @@ Builder::make('content')
 <AutoScreenshot name="forms/fields/builder/cloneable" alt="Cloneable repeater" version="4.x" />
 
 ## Customizing the block picker
+
+### Grouping blocks
+
+You may group blocks under headings by using named arrays in `blocks()`:
+
+```php
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+
+Builder::make('content')
+    ->blocks([
+        'Content' => [
+            Block::make('heading')
+                ->schema([TextInput::make('text')]),
+            Block::make('paragraph')
+                ->schema([Textarea::make('text')]),
+        ],
+        'Media' => [
+            Block::make('video')
+                ->schema([TextInput::make('url')->url()]),
+        ],
+    ])
+```
+
+Groups appear in the order they are defined. You may include ungrouped blocks alongside named groups; ungrouped blocks appear first without a heading. Grouping only affects the picker, not the order or stored state of the blocks you add.
+
+Use group names that PHP keeps as string array keys. Integer keys (including numeric strings such as `'2026'`, which PHP converts to integers) are treated as ungrouped lists of blocks.
+
+<AutoScreenshot name="forms/fields/builder/grouped-blocks" alt="Builder with grouped blocks in the picker" version="4.x" />
+
+When you configure multiple columns using `blockPickerColumns()`, groups flow down each column before moving to the next. Groups stay together, and their heights are balanced across the columns. Otherwise, groups are stacked vertically. Searching hides groups with no matching blocks.
 
 ### Changing the number of columns in the block picker
 
@@ -611,7 +619,7 @@ You are trying to retrieve the value of `client_id` from inside the builder item
 
 `$get()` is relative to the current builder item, so `$get('client_id')` is looking for `$get('builder.item1.client_id')`.
 
-You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('builder.client_id')` and `$get('../client_id')` is `$get('client_id')`.
+You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('builder.client_id')` and `$get('../../client_id')` is `$get('client_id')`.
 
 The special case of `$get()` with no arguments, or `$get('')` or `$get('./')`, will always return the full data array for the current builder item.
 
@@ -635,6 +643,35 @@ Builder::make('content')
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minItems()` and `maxItems()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Deferring the loading of block schemas
+
+If a block's schema is expensive to render, you can pass a `Schema` object to `schema()` and use `deferLoading()`. This is particularly useful when items are [collapsed](#collapsing-items) by default. Each block item schema will be loaded independently when its item is expanded and enters the viewport:
+
+```php
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
+
+Builder::make('content')
+    ->blocks([
+        Block::make('heading')
+            ->schema(
+                Schema::make()
+                    ->components([
+                        TextInput::make('content')
+                            ->label('Heading')
+                            ->required(),
+                    ])
+                    ->deferLoading(),
+            ),
+        // ...
+    ])
+    ->collapsed()
+```
+
+Builder block item schemas automatically receive unique keys from their item state paths. You can learn more about deferred schemas in the [schema overview](../schemas/overview#deferring-the-loading-of-a-child-schema).
 
 ## Customizing the builder item actions
 
@@ -687,8 +724,10 @@ Builder::make('content')
 ```
 
 <Aside variant="info">
-    The `addAction()`, `addBetweenAction()`, `collapseAction()`, `collapseAllAction()`, `expandAction()`, `expandAllAction()` and `reorderAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
+    The `addAction()`, `addBetweenAction()`, `collapseAction()`, `collapseAllAction()`, `expandAction()` and `expandAllAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
 </Aside>
+
+Completing a drag that changes the block order invokes `reorderAction()`, which supports `requiresConfirmation()`. Clicking the drag handle alone does not invoke the action.
 
 ### Adding extra item actions to a builder
 

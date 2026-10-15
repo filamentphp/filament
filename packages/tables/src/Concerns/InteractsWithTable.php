@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\WithPagination;
 
+use function Filament\Support\encode_key_segments;
+
 trait InteractsWithTable
 {
     use CanBeStriped;
@@ -260,16 +262,16 @@ trait InteractsWithTable
         $namespace = $this::class;
 
         if ($isTenantScoped && class_exists(Filament::class) && filled($tenantKey = Filament::getTenant()?->getKey())) {
-            $namespace .= '|' . $tenantKey;
+            $namespace = encode_key_segments($namespace, (string) $tenantKey);
         }
 
-        $table = md5($namespace);
+        $table = hash('sha256', $namespace);
 
         if (filled($identifier = $this->getTable()->getIdentifier())) {
-            $table .= '.' . md5($identifier);
+            $table .= '.' . hash('sha256', $identifier);
         }
 
-        return "tables.{$table}_{$key}";
+        return "filament.tables.{$table}.{$key}";
     }
 
     public function getActiveTableLocale(): ?string

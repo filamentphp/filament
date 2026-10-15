@@ -169,7 +169,7 @@ class EditProfile extends Page
             return;
         }
 
-        $rateLimitingKey = 'filament-edit-profile:' . Filament::getUserScopedAuthIdentifier();
+        $rateLimitingKey = 'filament:auth:edit_profile:rate_limit:' . Filament::getUserScopedAuthIdentifier();
 
         if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
             $this->getRateLimitedNotification(new TooManyRequestsException(
@@ -257,7 +257,7 @@ class EditProfile extends Page
 
         $verificationSignature = Query::new($notification->url)->get('signature');
 
-        cache()->put($verificationSignature, true, ttl: now()->addHour());
+        cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
 
         $record->notify(app(NoticeOfEmailChangeRequest::class, [/** @phpstan-ignore-line */
             'blockVerificationUrl' => Filament::getBlockEmailChangeVerificationUrl($record, $newEmail, $verificationSignature),

@@ -5,6 +5,7 @@ export default ({
     canTrackDeselectedRecords,
     currentSelectionLivewireProperty,
     maxSelectableRecords,
+    reorderMessage,
     selectsCurrentPageOnly,
     $wire,
 }) => ({
@@ -38,7 +39,16 @@ export default ({
 
     unsubscribeLivewireHook: null,
 
+    tableReorderOperation: null,
+
+    tableReorderFrame: null,
+
+    tableReorderRoot: null,
+
+    unsubscribeTableReorderHook: null,
+
     init() {
+        this.tableReorderRoot = this.$root
         this.livewireId =
             this.$root.closest('[wire\\:id]')?.attributes['wire:id'].value
 
@@ -83,6 +93,209 @@ export default ({
                 }
             },
         )
+    },
+
+    getTableReorderItems() {
+        return Array.from(
+            this.tableReorderRoot.querySelector('[x-ref="tableReorderRecords"]')
+                ?.children ?? [],
+        ).filter((element) => element.hasAttribute('x-sortable-item'))
+    },
+
+    beginTableReorder(recordKey, direction) {
+        if (this.tableReorderOperation) return false
+
+        this.tableReorderOperation = {
+            recordKey,
+            direction,
+            before: this.getTableReorderItems().map((element) =>
+                element.getAttribute('x-sortable-item'),
+            ),
+        }
+
+        return true
+    },
+
+    startTableReorder(event) {
+        if (event.target !== this.$refs.tableReorderRecords) return
+        this.beginTableReorder(
+            event.item.getAttribute('x-sortable-item'),
+            'drag',
+        )
+    },
+
+    async reorderTableRecords(event) {
+        if (event.target !== this.$refs.tableReorderRecords) return
+        if (event.oldDraggableIndex === event.newDraggableIndex) {
+            this.tableReorderOperation = null
+            return
+        }
+
+        await this.finishTableReorder(() =>
+            $wire.reorderTable(
+                event.target.sortable.toArray(),
+                event.item.getAttribute('x-sortable-item'),
+            ),
+        )
+    },
+
+    async moveTableRecord(event, recordKey, direction) {
+        if (
+            event.currentTarget.disabled ||
+            !this.beginTableReorder(recordKey, direction)
+        )
+            return
+        await this.finishTableReorder(() =>
+            $wire.moveTableRecord(recordKey, direction),
+        )
+    },
+
+    requestTableReorder(request, method = null) {
+        return new Promise((resolve, reject) => {
+            const unsubscribe = Livewire.hook(
+                'commit',
+                ({ component, commit, fail }) => {
+                    if (
+                        component.id !== this.livewireId ||
+                        (method &&
+                            !commit.calls.some(
+                                (call) => call.method === method,
+                            ))
+                    )
+                        return
+
+                    // Livewire 3 does not reject method-call promises on request failure.
+                    fail(() => {
+                        cleanup()
+                        reject(new Error('Table reordering request failed.'))
+                    })
+                },
+            )
+            const cleanup = () => {
+                unsubscribe()
+                if (this.unsubscribeTableReorderHook === unsubscribe) {
+                    this.unsubscribeTableReorderHook = null
+                }
+            }
+            this.unsubscribeTableReorderHook = unsubscribe
+
+            Promise.resolve()
+                .then(() => {
+                    if (
+                        this.tableReorderOperation &&
+                        this.tableReorderRoot.isConnected
+                    )
+                        return request()
+                })
+                .then(
+                    (response) => {
+                        cleanup()
+                        resolve(response)
+                    },
+                    (error) => {
+                        cleanup()
+                        reject(error)
+                    },
+                )
+        })
+    },
+
+    async finishTableReorder(request) {
+        const operation = this.tableReorderOperation
+        if (!operation) return
+        const records = this.tableReorderRoot.querySelector(
+            '[x-ref="tableReorderRecords"]',
+        )
+        records?.sortable?.option('disabled', true)
+
+        try {
+            await this.requestTableReorder(
+                request,
+                operation.direction === 'drag'
+                    ? 'reorderTable'
+                    : 'moveTableRecord',
+            )
+        } catch {
+            if (
+                this.tableReorderOperation !== operation ||
+                !this.tableReorderRoot.isConnected
+            )
+                return
+            // Recover the server order after a failed drag without announcing an unverified move.
+            try {
+                await this.requestTableReorder(() => $wire.$refresh())
+            } catch {
+                if (
+                    this.tableReorderOperation !== operation ||
+                    !this.tableReorderRoot.isConnected
+                )
+                    return
+
+                this.tableReorderRoot
+                    .querySelector('[x-ref="tableReorderRecords"]')
+                    ?.sortable?.sort(operation.before)
+            }
+        }
+
+        if (
+            this.tableReorderOperation !== operation ||
+            !this.tableReorderRoot.isConnected
+        )
+            return
+
+        this.tableReorderFrame = requestAnimationFrame(() => {
+            this.tableReorderFrame = null
+            if (
+                this.tableReorderOperation !== operation ||
+                !this.tableReorderRoot.isConnected
+            )
+                return
+
+            const items = this.getTableReorderItems()
+            const after = items.map((element) =>
+                element.getAttribute('x-sortable-item'),
+            )
+            const beforePeers = operation.before.filter((key) =>
+                after.includes(key),
+            )
+            const afterPeers = after.filter((key) =>
+                operation.before.includes(key),
+            )
+            const item = items.find(
+                (element) =>
+                    element.getAttribute('x-sortable-item') ===
+                    operation.recordKey,
+            )
+            const moved =
+                item &&
+                beforePeers.indexOf(operation.recordKey) !==
+                    afterPeers.indexOf(operation.recordKey)
+
+            const status = this.tableReorderRoot.querySelector(
+                '[x-ref="tableReorderStatus"]',
+            )
+
+            if (moved && status) {
+                const label = item.querySelector('[data-table-reorder-label]')
+                    ?.dataset.tableReorderLabel
+                status.textContent = reorderMessage.replace(
+                    /:label|:position|:count/g,
+                    (placeholder) =>
+                        ({
+                            ':label': label,
+                            ':position': String(
+                                after.indexOf(operation.recordKey) + 1,
+                            ),
+                            ':count': String(after.length),
+                        })[placeholder],
+                )
+            }
+
+            this.tableReorderOperation = null
+            this.tableReorderRoot
+                .querySelector('[x-ref="tableReorderRecords"]')
+                ?.sortable?.option('disabled', false)
+        })
     },
 
     mountAction(...args) {
@@ -469,6 +682,10 @@ export default ({
     },
 
     destroy() {
+        this.tableReorderOperation = null
+        cancelAnimationFrame(this.tableReorderFrame)
+        this.unsubscribeTableReorderHook?.()
+        this.unsubscribeTableReorderHook = null
         this.cleanUpFiltersDropdown?.()
         this.livewireEventListenersController?.abort()
         this.unsubscribeLivewireHook?.()
@@ -481,6 +698,27 @@ export const tableFilters = () => ({
     actionFocusFrame: null,
 
     removeActionCommitHook: null,
+
+    dropdownPanel: null,
+
+    dropdownOpenedListener: null,
+
+    init() {
+        this.dropdownPanel = this.$el.closest('.fi-dropdown-panel')
+        this.dropdownOpenedListener = (event) => {
+            if (!event.detail.shouldAutofocus) {
+                return
+            }
+
+            this.focusFirstControl()
+            this.$el.focus()
+        }
+
+        this.dropdownPanel?.addEventListener(
+            'dropdown-opened',
+            this.dropdownOpenedListener,
+        )
+    },
 
     rememberActionFocus(event) {
         const action = event.target.closest('[data-table-filter-action]')
@@ -570,5 +808,10 @@ export const tableFilters = () => ({
 
         this.removeActionCommitHook?.()
         this.removeActionCommitHook = null
+
+        this.dropdownPanel?.removeEventListener(
+            'dropdown-opened',
+            this.dropdownOpenedListener,
+        )
     },
 })

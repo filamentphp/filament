@@ -130,7 +130,7 @@ Action::make('quickView')
 
 ## Limiting the number of global search results
 
-By default, global search will return up to 50 results per resource. You can customize this on the resource label by overriding the `$globalSearchResultsLimit` property:
+By default, global search will return up to 50 results per resource. You can customize this on the resource class by overriding the `$globalSearchResultsLimit` property:
 
 ```php
 protected static int $globalSearchResultsLimit = 20;
@@ -144,11 +144,11 @@ By default, global search results are ordered alphabetically by resource name. Y
 protected static ?int $globalSearchSort = 3;
 ```
 
-Now, navigation items with a lower sort value will appear before those with a higher sort value - the order is ascending.
+Resources with a lower sort value will appear before those with a higher sort value.
 
 ## Disabling global search
 
-As [explained above](#title), global search is automatically enabled once you set a title attribute for your resource. Sometimes you may want to specify the title attribute while not enabling global search.
+As [explained above](#setting-global-search-result-titles), global search is automatically enabled once you set a title attribute for your resource. Sometimes you may want to specify the title attribute while not enabling global search.
 
 This can be achieved by disabling global search in the [configuration](../panel-configuration):
 

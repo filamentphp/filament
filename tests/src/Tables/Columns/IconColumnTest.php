@@ -11,6 +11,10 @@ use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Tables\Fixtures\PostsTableWithIconColumnStaticUrl;
+use Filament\Tests\Tables\Fixtures\PostsTableWithIconColumnUrl;
+use Filament\Tests\Tables\Fixtures\PostsTableWithIconColumnUrlNewTab;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -19,128 +23,202 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can set `boolean()` and get with `isBoolean()`', function (): void {
-    expect(IconColumn::make('active')->boolean()->isBoolean())->toBeTrue();
+describe('boolean configuration', function (): void {
+    it('can automatically detect boolean cast attribute in icon column', function (): void {
+        $post = Post::factory()
+            ->create(['is_published' => false]);
+
+        livewire(TestTableWithImplicitBooleanIconColumn::class)
+            ->assertTableColumnExists('is_published', function (IconColumn $column) {
+                return $column->isBoolean();
+            }, $post);
+    });
+
+    it('can set `boolean()` and get with `isBoolean()`', function (): void {
+        expect(IconColumn::make('active')->boolean()->isBoolean())->toBeTrue();
+    });
+
+    it('can undo `boolean()` with `false`', function (): void {
+        expect(IconColumn::make('active')->boolean()->boolean(false)->isBoolean())->toBeFalse();
+    });
+
+    it('can set `boolean()` with a `Closure`', function (): void {
+        expect(IconColumn::make('active')->boolean(static fn (): bool => true)->isBoolean())->toBeTrue();
+    });
 });
 
-it('can set `size()` and get with `getSize()`', function (): void {
-    expect(IconColumn::make('active')->size(IconSize::Small)->getSize(null))->toBe(IconSize::Small);
+describe('size', function (): void {
+    it('can set `size()` and get with `getSize()`', function (): void {
+        expect(IconColumn::make('active')->size(IconSize::Small)->getSize(null))->toBe(IconSize::Small);
+    });
+
+    it('defaults `getSize()` to `null` when not set', function (): void {
+        expect(IconColumn::make('active')->getSize(null))->toBeNull();
+    });
+
+    it('can set `size()` with a `Closure`', function (): void {
+        expect(IconColumn::make('active')->size(static fn (): IconSize => IconSize::Large)->getSize(null))->toBe(IconSize::Large);
+    });
+
+    it('can set `size()` with a string enum value', function (): void {
+        expect(IconColumn::make('active')->size('lg')->getSize(null))->toBe(IconSize::Large);
+    });
 });
 
-it('defaults `getSize()` to `null` when not set', function (): void {
-    expect(IconColumn::make('active')->getSize(null))->toBeNull();
+describe('boolean colors and icons', function (): void {
+    it('can set `falseColor()` and get with `getFalseColor()`', function (): void {
+        expect(IconColumn::make('active')->falseColor('warning')->getFalseColor())->toBe('warning');
+    });
+
+    it('defaults `getFalseColor()` to `danger`', function (): void {
+        expect(IconColumn::make('active')->boolean()->getFalseColor())->toBe('danger');
+    });
+
+    it('can set `falseIcon()` and get with `getFalseIcon()`', function (): void {
+        expect(IconColumn::make('active')->falseIcon('heroicon-o-x-mark')->getFalseIcon())->toBe('heroicon-o-x-mark');
+    });
+
+    it('can set `trueColor()` and get with `getTrueColor()`', function (): void {
+        expect(IconColumn::make('active')->trueColor('info')->getTrueColor())->toBe('info');
+    });
+
+    it('defaults `getTrueColor()` to `success`', function (): void {
+        expect(IconColumn::make('active')->boolean()->getTrueColor())->toBe('success');
+    });
+
+    it('can set `trueIcon()` and get with `getTrueIcon()`', function (): void {
+        expect(IconColumn::make('active')->trueIcon('heroicon-o-check')->getTrueIcon())->toBe('heroicon-o-check');
+    });
 });
 
-it('can set `falseColor()` and get with `getFalseColor()`', function (): void {
-    expect(IconColumn::make('active')->falseColor('warning')->getFalseColor())->toBe('warning');
+describe('list layout', function (): void {
+    it('can set `listWithLineBreaks()` and get with `isListWithLineBreaks()`', function (): void {
+        expect(IconColumn::make('active')->listWithLineBreaks()->isListWithLineBreaks())->toBeTrue();
+    });
+
+    it('defaults `isListWithLineBreaks()` to `false`', function (): void {
+        expect(IconColumn::make('active')->isListWithLineBreaks())->toBeFalse();
+    });
 });
 
-it('defaults `getFalseColor()` to `danger`', function (): void {
-    expect(IconColumn::make('active')->boolean()->getFalseColor())->toBe('danger');
+describe('rendering boolean states', function (): void {
+    it('can render', function (): void {
+        Post::factory()->count(5)->create();
+
+        livewire(TestTableWithIconColumn::class)
+            ->assertSuccessful()
+            ->assertCanRenderTableColumn('is_published');
+    });
+
+    it('can display true state', function (): void {
+        Post::factory()->create(['is_published' => true]);
+
+        livewire(TestTableWithIconColumn::class)
+            ->assertSuccessful();
+    });
+
+    it('can display false state', function (): void {
+        Post::factory()->create(['is_published' => false]);
+
+        livewire(TestTableWithIconColumn::class)
+            ->assertSuccessful();
+    });
 });
 
-it('can set `falseIcon()` and get with `getFalseIcon()`', function (): void {
-    expect(IconColumn::make('active')->falseIcon('heroicon-o-x-mark')->getFalseIcon())->toBe('heroicon-o-x-mark');
+describe('state and related record injection', function (): void {
+    it('injects `$state` and `$relatedRecord` into boolean configuration', function (): void {
+        $relatedRecord = new User(['email' => 'user@example.com']);
+
+        $column = IconColumn::make('active')
+            ->boolean(static fn (bool $state, User $relatedRecord): bool => is_bool($state) && ($relatedRecord->email === 'user@example.com'))
+            ->trueColor(static fn (bool $state, User $relatedRecord): string => ($state && ($relatedRecord->email === 'user@example.com')) ? 'info' : 'danger')
+            ->falseColor(static fn (bool $state, User $relatedRecord): string => ((! $state) && ($relatedRecord->email === 'user@example.com')) ? 'warning' : 'danger')
+            ->trueIcon(static fn (bool $state, User $relatedRecord): string => ($state && ($relatedRecord->email === 'user@example.com')) ? 'true-icon' : 'wrong-icon')
+            ->falseIcon(static fn (bool $state, User $relatedRecord): string => ((! $state) && ($relatedRecord->email === 'user@example.com')) ? 'false-icon' : 'wrong-icon');
+
+        expect($column->getColor(true, $relatedRecord))->toBe('info')
+            ->and($column->getColor(false, $relatedRecord))->toBe('warning')
+            ->and($column->getIcon(true, $relatedRecord))->toBe('true-icon')
+            ->and($column->getIcon(false, $relatedRecord))->toBe('false-icon');
+    });
+
+    it('preserves implicit `$state` injection when boolean getter state is omitted', function (): void {
+        $column = IconColumn::make('active')
+            ->table(livewire(TestTableWithIconColumn::class)->instance()->getTable())
+            ->record(new User)
+            ->state(true)
+            ->trueColor(static fn (?bool $state): string => $state ? 'info' : 'danger');
+
+        expect($column->getTrueColor())->toBe('info')
+            ->and($column->getTrueColor(null))->toBe('danger');
+    });
 });
 
-it('can set `trueColor()` and get with `getTrueColor()`', function (): void {
-    expect(IconColumn::make('active')->trueColor('info')->getTrueColor())->toBe('info');
+describe('boolean icon resolution', function (): void {
+    it('can set `true()` with combined icon and color', function (): void {
+        $column = IconColumn::make('active')
+            ->true('heroicon-o-star', 'warning');
+
+        expect($column->getTrueIcon())->toBe('heroicon-o-star');
+        expect($column->getTrueColor())->toBe('warning');
+    });
+
+    it('can set `false()` with combined icon and color', function (): void {
+        $column = IconColumn::make('active')
+            ->false('heroicon-o-x-circle', 'gray');
+
+        expect($column->getFalseIcon())->toBe('heroicon-o-x-circle');
+        expect($column->getFalseColor())->toBe('gray');
+    });
+
+    it('can resolve `getIcon()` for true state in boolean mode', function (): void {
+        $column = IconColumn::make('active')
+            ->boolean();
+
+        $icon = $column->getIcon(true);
+
+        expect($icon)->not->toBeNull();
+    });
+
+    it('can resolve `getIcon()` for false state in boolean mode', function (): void {
+        $column = IconColumn::make('active')
+            ->boolean();
+
+        $icon = $column->getIcon(false);
+
+        expect($icon)->not->toBeNull();
+    });
+
+    it('returns fluent `$this` from `options()`', function (): void {
+        $column = IconColumn::make('active');
+
+        $result = $column->options(['active' => 'heroicon-o-check', 'inactive' => 'heroicon-o-x-mark']);
+
+        expect($result)->toBe($column);
+    });
 });
 
-it('defaults `getTrueColor()` to `success`', function (): void {
-    expect(IconColumn::make('active')->boolean()->getTrueColor())->toBe('success');
-});
+describe('URLs', function (): void {
+    it('can render a state-based URL', function (): void {
+        Post::factory()->create();
 
-it('can set `trueIcon()` and get with `getTrueIcon()`', function (): void {
-    expect(IconColumn::make('active')->trueIcon('heroicon-o-check')->getTrueIcon())->toBe('heroicon-o-check');
-});
+        livewire(PostsTableWithIconColumnUrl::class)
+            ->assertSeeHtml('href="https://example.com/icon-link"');
+    });
 
-it('can set `listWithLineBreaks()` and get with `isListWithLineBreaks()`', function (): void {
-    expect(IconColumn::make('active')->listWithLineBreaks()->isListWithLineBreaks())->toBeTrue();
-});
+    it('can render a static URL', function (): void {
+        Post::factory()->create();
 
-it('defaults `isListWithLineBreaks()` to `false`', function (): void {
-    expect(IconColumn::make('active')->isListWithLineBreaks())->toBeFalse();
-});
+        livewire(PostsTableWithIconColumnStaticUrl::class)
+            ->assertSeeHtml('href="https://example.com/static-link"');
+    });
 
-it('can render', function (): void {
-    Post::factory()->count(5)->create();
+    it('can render a URL that opens in a new tab', function (): void {
+        Post::factory()->create();
 
-    livewire(TestTableWithIconColumn::class)
-        ->assertSuccessful()
-        ->assertCanRenderTableColumn('is_published');
-});
-
-it('can display true state', function (): void {
-    Post::factory()->create(['is_published' => true]);
-
-    livewire(TestTableWithIconColumn::class)
-        ->assertSuccessful();
-});
-
-it('can display false state', function (): void {
-    Post::factory()->create(['is_published' => false]);
-
-    livewire(TestTableWithIconColumn::class)
-        ->assertSuccessful();
-});
-
-it('can undo `boolean()` with `false`', function (): void {
-    expect(IconColumn::make('active')->boolean()->boolean(false)->isBoolean())->toBeFalse();
-});
-
-it('can set `boolean()` with a `Closure`', function (): void {
-    expect(IconColumn::make('active')->boolean(static fn (): bool => true)->isBoolean())->toBeTrue();
-});
-
-it('can set `true()` with combined icon and color', function (): void {
-    $column = IconColumn::make('active')
-        ->true('heroicon-o-star', 'warning');
-
-    expect($column->getTrueIcon())->toBe('heroicon-o-star');
-    expect($column->getTrueColor())->toBe('warning');
-});
-
-it('can set `false()` with combined icon and color', function (): void {
-    $column = IconColumn::make('active')
-        ->false('heroicon-o-x-circle', 'gray');
-
-    expect($column->getFalseIcon())->toBe('heroicon-o-x-circle');
-    expect($column->getFalseColor())->toBe('gray');
-});
-
-it('can resolve `getIcon()` for true state in boolean mode', function (): void {
-    $column = IconColumn::make('active')
-        ->boolean();
-
-    $icon = $column->getIcon(true);
-
-    expect($icon)->not->toBeNull();
-});
-
-it('can resolve `getIcon()` for false state in boolean mode', function (): void {
-    $column = IconColumn::make('active')
-        ->boolean();
-
-    $icon = $column->getIcon(false);
-
-    expect($icon)->not->toBeNull();
-});
-
-it('can set `size()` with a `Closure`', function (): void {
-    expect(IconColumn::make('active')->size(static fn (): IconSize => IconSize::Large)->getSize(null))->toBe(IconSize::Large);
-});
-
-it('can set `size()` with a string enum value', function (): void {
-    expect(IconColumn::make('active')->size('lg')->getSize(null))->toBe(IconSize::Large);
-});
-
-it('returns fluent `$this` from `options()`', function (): void {
-    $column = IconColumn::make('active');
-
-    $result = $column->options(['active' => 'heroicon-o-check', 'inactive' => 'heroicon-o-x-mark']);
-
-    expect($result)->toBe($column);
+        livewire(PostsTableWithIconColumnUrlNewTab::class)
+            ->assertSeeHtml('target="_blank"');
+    });
 });
 
 describe('rendering', function (): void {
@@ -226,6 +304,25 @@ class TestTableWithIconColumn extends Component implements HasActions, HasSchema
                 IconColumn::make('is_published')
                     ->boolean(),
             ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithImplicitBooleanIconColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table->query(Post::query())->columns([
+            IconColumn::make('is_published'),
+        ]);
     }
 
     public function render(): View

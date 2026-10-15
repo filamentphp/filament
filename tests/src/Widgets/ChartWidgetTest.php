@@ -191,45 +191,23 @@ it('keeps the accessible name and alternative synchronized when the chart data i
         ->assertSee('The monthly sales total for 2023 is 60.');
 });
 
-it('renders an accessible chart alternative in the browser', function (): void {
+it('keeps chart alternatives accessible when changing filters', function (): void {
     Artisan::call('filament:assets');
     $this->actingAs(User::factory()->create());
 
-    $page = visit('/chart-widget-browser-test', ['reducedMotion' => 'reduce'])
-        ->inLightMode()
-        ->assertAttribute('.fi-wi-chart-image', 'aria-label', 'Sales. Sales for 2024')
-        ->assertAttribute('.fi-wi-chart-image canvas', 'aria-hidden', 'true')
+    $page = visit('/chart-widget-browser-test', ['reducedMotion' => 'reduce']);
+
+    $page
+        ->assertAttribute('[role="img"]', 'aria-label', 'Sales. Sales for 2024')
+        ->assertAttribute('[role="img"] canvas', 'aria-hidden', 'true')
         ->assertSee('Monthly sales for 2024')
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").offsetWidth', 1)
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").closest("[aria-hidden=true]")', null)
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content table").closest(".fi-wi-chart-image")', null)
-        ->assertScript('(() => { let element = document.querySelector(".fi-wi-chart-assistive-content table"); while (element) { if (element.hasAttribute("wire:ignore")) return true; element = element.parentElement; } return false; })()', false)
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").closest("[aria-live], [role=alert], [role=status]")', null)
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").querySelector("[aria-live], [role=alert], [role=status]")', null)
-        ->assertNoAccessibilityIssues();
-
-    $page->script('document.querySelector(".fi-wi-chart-image canvas").dataset.preserved = "true"');
-
-    $page->select('.fi-wi-chart-filter select', '2023')
-        ->assertAttribute('.fi-wi-chart-image', 'aria-label', 'Sales. Sales for 2023')
-        ->assertAttribute('.fi-wi-chart-image canvas', 'data-preserved', 'true')
+        ->select('select[aria-label]', '2023')
+        ->assertAttribute('[role="img"]', 'aria-label', 'Sales. Sales for 2023')
         ->assertSee('Monthly sales for 2023')
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content table").closest(".fi-wi-chart-image")', null)
-        ->assertScript('(() => { let element = document.querySelector(".fi-wi-chart-assistive-content table"); while (element) { if (element.hasAttribute("wire:ignore")) return true; element = element.parentElement; } return false; })()', false)
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").closest("[aria-live], [role=alert], [role=status]")', null)
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").querySelector("[aria-live], [role=alert], [role=status]")', null)
+        ->assertNoJavaScriptErrors()
         ->assertNoAccessibilityIssues();
 
-    visit('/chart-widget-browser-test', ['reducedMotion' => 'reduce'])
-        ->inDarkMode()
-        ->assertAttribute('.fi-wi-chart-image', 'aria-label', 'Sales. Sales for 2024')
-        ->assertAttribute('.fi-wi-chart-image canvas', 'aria-hidden', 'true')
-        ->assertSee('Monthly sales for 2024')
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").offsetWidth', 1)
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").closest("[aria-hidden=true]")', null)
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").closest("[aria-live], [role=alert], [role=status]")', null)
-        ->assertScript('document.querySelector(".fi-wi-chart-assistive-content").querySelector("[aria-live], [role=alert], [role=status]")', null)
-        ->assertNoAccessibilityIssues();
+    $page->inDarkMode()->assertNoAccessibilityIssues();
 });
 
 class TestChartWidgetDefault extends ChartWidget

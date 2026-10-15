@@ -539,11 +539,18 @@ class Slider extends Field implements Contracts\HasNestedRecursiveValidationRule
                 'fi-fo-slider-has-tooltips' => $this->hasTooltips(),
                 'fi-fo-slider-vertical' => $isVertical,
             ]);
+        $accessibilityAttributes = $attributes
+            ->merge([
+                'aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby'],
+                'aria-invalid' => $this->isMultiple() ? null : $this->getAccessibilityAttributes()['aria-invalid'],
+            ], escape: false)
+            ->only(['aria-describedby', 'aria-invalid']);
 
         $alpineComponentSrc = FilamentAsset::getAlpineComponentSrc('slider', 'filament/forms');
 
         ob_start(); ?>
 
+        <div hidden data-field-accessibility <?= $accessibilityAttributes->toHtml() ?>></div>
         <div
             x-load
             x-load-src="<?= e($alpineComponentSrc) ?>"

@@ -33,7 +33,7 @@ public static function infolist(Schema $schema): Schema
 }
 ```
 
-The `components()` method is used to define the structure of your infolist. It is an array of [entries](../infolists/overview#available-entries) and [layout components](../schemas/layouts#available-layout-components), in the order they should appear in your infolist.
+The `components()` method is used to define the structure of your infolist. It is an array of [entries](../infolists/overview#defining-entries) and [layout components](../schemas/layouts#basic-layout-components), in the order they should appear in your infolist.
 
 Check out the Infolists docs for a [guide](../infolists) on how to build infolists with Filament.
 
@@ -115,13 +115,7 @@ Action::make('approve')
     })
 ```
 
-This method accepts an array of form state paths to refresh from the page's current record. If you pass the path of a field containing nested fields, those nested fields are also refreshed. State outside the refreshed paths is retained unless your own customization code changes it.
-
-Before the selected state is refreshed, the current record data is passed through the page's `mutateFormDataBeforeFill()` method. Each refreshed field then runs its normal state hydration logic, such as relationship loading, state casts, and `afterStateHydrated()` callbacks. The page's [`beforeFill()` and `afterFill()` lifecycle hooks](#lifecycle-hooks) are not run, since they apply when filling the entire form.
-
-The `refreshFormData()` method does not retrieve a fresh copy of the record from the database. If the record was updated elsewhere, you should refresh the record before refreshing the form data. Relationship data is loaded according to the behavior of each form component and may use relationships that are already loaded on the record.
-
-Be careful when refreshing relationship fields or other parent state paths, since state within those paths may be replaced. Refilling the entire form instead may also replace state in fields and relationships outside the paths that you intended to refresh.
+Pass the form state paths you want to refresh. Other fields retain their state unless your customization code changes it. `refreshFormData()` uses the page's current record, so call `$this->getRecord()->refresh()` first if it was updated elsewhere. For hydration behavior and precautions when refreshing relationships or parent paths, see [refreshing form data on Edit pages](editing-records#refreshing-form-data).
 
 ## Lifecycle hooks
 

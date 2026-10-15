@@ -49,6 +49,8 @@ const releaseScrollLock = () => {
 export default ({ id, isScrollLocked = true, shouldRestoreFocus = true }) => ({
     isOpen: false,
 
+    isDestroyed: false,
+
     isWindowVisible: false,
 
     isTrapActive: false,
@@ -67,6 +69,10 @@ export default ({ id, isScrollLocked = true, shouldRestoreFocus = true }) => ({
 
     init() {
         this.$nextTick(() => {
+            if (this.isDestroyed || !this.$el.isConnected) {
+                return
+            }
+
             this.isWindowVisible = this.isOpen
 
             this.setUpTextSelectionClosePrevention()
@@ -183,6 +189,10 @@ export default ({ id, isScrollLocked = true, shouldRestoreFocus = true }) => ({
         }
 
         this.$nextTick(() => {
+            if (this.isDestroyed) {
+                return
+            }
+
             this.previouslyFocusedElement.focus({ preventScroll: true })
             this.previouslyFocusedElement = null
         })
@@ -197,6 +207,10 @@ export default ({ id, isScrollLocked = true, shouldRestoreFocus = true }) => ({
 
         this.restorePreviouslyFocusedElement()
 
+        if (!this.$el.isConnected) {
+            return
+        }
+
         this.$dispatch('modal-closed', { id })
     },
 
@@ -206,12 +220,30 @@ export default ({ id, isScrollLocked = true, shouldRestoreFocus = true }) => ({
 
     open() {
         this.$nextTick(() => {
+            if (this.isDestroyed || !this.$el.isConnected) {
+                return
+            }
+
             if (shouldRestoreFocus) {
                 this.previouslyFocusedElement = document.activeElement
             }
 
             this.isOpen = true
-            this.isTrapActive = true
+
+            // Wait for Alpine's root `x-show` and window transition to remove `display: none`.
+            requestAnimationFrame(() =>
+                requestAnimationFrame(() => {
+                    if (
+                        this.isDestroyed ||
+                        !this.isOpen ||
+                        !this.$el.isConnected
+                    ) {
+                        return
+                    }
+
+                    this.isTrapActive = true
+                }),
+            )
 
             // Click-through modals let you interact with the page behind them,
             // so they must not lock scrolling.
@@ -230,6 +262,8 @@ export default ({ id, isScrollLocked = true, shouldRestoreFocus = true }) => ({
     },
 
     destroy() {
+        this.isDestroyed = true
+
         // Release in case the modal is removed while still holding the lock.
         this.releaseScrollLock()
 

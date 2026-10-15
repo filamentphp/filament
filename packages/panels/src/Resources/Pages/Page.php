@@ -25,7 +25,6 @@ use Filament\Resources\Events\RecordSaved;
 use Filament\Resources\Events\RecordUpdated;
 use Filament\Resources\Pages\Concerns\CanAuthorizeResourceAccess;
 use Filament\Resources\Pages\Concerns\InteractsWithParentRecord;
-use Filament\Support\Livewire\Contracts\HasScopedModelProperties;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -38,7 +37,7 @@ use LogicException;
 
 use function Filament\Support\original_request;
 
-abstract class Page extends BasePage implements HasScopedModelProperties
+abstract class Page extends BasePage
 {
     use CanAuthorizeResourceAccess;
     use InteractsWithParentRecord;
@@ -47,26 +46,23 @@ abstract class Page extends BasePage implements HasScopedModelProperties
 
     protected static bool $isDiscovered = false;
 
-    /** @param array<string, mixed> | null $properties */
-    public function resolveScopedModelProperties(?array $properties = null): void
+    public function resolveScopedModelProperties(): void
     {
         try {
             $this->mountParentRecord();
-
-            if (method_exists($this, 'resolveRecordPropertyFromLivewire')) {
-                $this->resolveRecordPropertyFromLivewire();
-
-                return;
-            }
-
-            if (! (($this->record ?? null) instanceof Model)) {
-                return;
-            }
-
-            $this->record = $this->resolveRecordFromLivewire($this->record);
+            $this->resolveRecordPropertyFromLivewire();
         } catch (ModelNotFoundException) {
             abort(404);
         }
+    }
+
+    protected function resolveRecordPropertyFromLivewire(): void
+    {
+        if (! (($this->record ?? null) instanceof Model)) {
+            return;
+        }
+
+        $this->record = $this->resolveRecordFromLivewire($this->record);
     }
 
     protected function resolveRecordFromLivewire(Model $model): Model

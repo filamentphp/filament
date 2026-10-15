@@ -130,7 +130,10 @@ class ModalTableSelect extends Field implements HasEmbeddedView
             ]) ?? $action;
         }
 
-        return $action;
+        return $action->extraAttributes(
+            fn (): array => ['aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby']],
+            merge: true,
+        );
     }
 
     public function getTableSelect(): TableSelect
@@ -921,6 +924,7 @@ class ModalTableSelect extends Field implements HasEmbeddedView
                 'role' => 'group',
             ], escape: false)
             ->merge($extraAttributes, escape: false)
+            ->merge(['aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby'] ?? null], escape: false)
             ->class([
                 'fi-fo-modal-table-select',
                 'fi-fo-modal-table-select-disabled' => $isDisabled,

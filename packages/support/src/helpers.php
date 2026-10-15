@@ -31,6 +31,13 @@ use Illuminate\View\ComponentSlot;
 use ReflectionClass;
 use Throwable;
 
+if (! function_exists('Filament\Support\encode_key_segments')) {
+    function encode_key_segments(string ...$segments): string
+    {
+        return implode('', array_map(static fn (string $segment): string => strlen($segment) . ':' . $segment, $segments));
+    }
+}
+
 if (! function_exists('Filament\Support\format_money')) {
     /**
      * @deprecated Use `Illuminate\Support\Number::currency()` instead.

@@ -16,30 +16,8 @@ beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
 
-test('fields can be required', function (): void {
-    $errors = [];
-
-    try {
-        Schema::make(Livewire::make())
-            ->statePath('data')
-            ->components([
-                $field = (new MarkdownEditor('content'))
-                    ->required(),
-            ])
-            ->fill([
-                'content' => '',
-            ])
-            ->validate();
-    } catch (ValidationException $exception) {
-        $errors = $exception->validator->errors()->get($field->getStatePath());
-    }
-
-    expect($errors)
-        ->toContain('The content field is required.');
-});
-
 describe('toolbar buttons', function (): void {
-    test('can get default toolbar buttons using `getDefaultToolbarButtons()`', function (): void {
+    it('can get default toolbar buttons using `getDefaultToolbarButtons()`', function (): void {
         $markdownEditor = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -59,7 +37,7 @@ describe('toolbar buttons', function (): void {
             ->and($defaultButtons[4])->toEqual(['undo', 'redo']);
     });
 
-    test('can overwrite toolbar buttons array using `toolbarButtons()`', function (): void {
+    it('can replace toolbar buttons using `toolbarButtons()`', function (): void {
         $markdownEditor = MarkdownEditor::make('content')
             ->toolbarButtons([
                 ['bold', 'italic'],
@@ -75,21 +53,7 @@ describe('toolbar buttons', function (): void {
             ->and($buttons[1])->toEqual(['undo', 'redo']);
     });
 
-    test('can overwrite toolbar buttons with closure using `toolbarButtons()`', function (): void {
-        $markdownEditor = MarkdownEditor::make('content')
-            ->toolbarButtons(fn () => [
-                ['bold', 'italic'],
-            ]);
-
-        $buttons = $markdownEditor->getToolbarButtons();
-
-        expect($buttons)
-            ->toBeArray()
-            ->toHaveCount(1)
-            ->and($buttons[0])->toEqual(['bold', 'italic']);
-    });
-
-    test('can disable specific toolbar buttons using `disableToolbarButtons()`', function (): void {
+    it('can disable specific toolbar buttons using `disableToolbarButtons()`', function (): void {
         $schema = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -101,7 +65,6 @@ describe('toolbar buttons', function (): void {
 
         $buttons = $markdownEditor->getToolbarButtons();
 
-        // Check that `bold`, `italic`, and `attachFiles` buttons are not present
         $flatButtons = array_merge(...$buttons);
 
         expect($flatButtons)
@@ -113,7 +76,7 @@ describe('toolbar buttons', function (): void {
             ->toContain('undo');
     });
 
-    test('can enable additional toolbar buttons using `enableToolbarButtons()`', function (): void {
+    it('can enable additional toolbar buttons using `enableToolbarButtons()`', function (): void {
         $schema = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -125,7 +88,6 @@ describe('toolbar buttons', function (): void {
 
         $buttons = $markdownEditor->getToolbarButtons();
 
-        // Check that all default buttons plus `underline` and `subscript` are present
         $flatButtons = array_merge(...$buttons);
 
         expect($flatButtons)
@@ -135,7 +97,7 @@ describe('toolbar buttons', function (): void {
             ->toContain('subscript');
     });
 
-    test('can disable all toolbar buttons using `disableAllToolbarButtons()`', function (): void {
+    it('can disable all toolbar buttons using `disableAllToolbarButtons()`', function (): void {
         $schema = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -150,7 +112,7 @@ describe('toolbar buttons', function (): void {
         expect($buttons)->toBeArray()->toBeEmpty();
     });
 
-    test('can conditionally disable all toolbar buttons using `disableAllToolbarButtons()`', function (): void {
+    it('can conditionally disable all toolbar buttons using `disableAllToolbarButtons()`', function (): void {
         $markdownEditor = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -164,7 +126,7 @@ describe('toolbar buttons', function (): void {
         expect($buttons)->toBeArray()->not->toBeEmpty();
     });
 
-    test('can check if toolbar button exists using `hasToolbarButton()`', function (): void {
+    it('can check if a toolbar button exists using `hasToolbarButton()`', function (): void {
         $markdownEditor = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -178,7 +140,7 @@ describe('toolbar buttons', function (): void {
             ->and($markdownEditor->hasToolbarButton('nonexistent'))->toBeFalse();
     });
 
-    test('can check if toolbar button exists with array using `hasToolbarButton()`', function (): void {
+    it('can check if any toolbar button in an array exists using `hasToolbarButton()`', function (): void {
         $markdownEditor = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -188,10 +150,10 @@ describe('toolbar buttons', function (): void {
 
         expect($markdownEditor->hasToolbarButton(['bold', 'italic']))->toBeTrue()
             ->and($markdownEditor->hasToolbarButton(['nonexistent1', 'nonexistent2']))->toBeFalse()
-            ->and($markdownEditor->hasToolbarButton(['bold', 'nonexistent']))->toBeTrue(); // At least one exists
+            ->and($markdownEditor->hasToolbarButton(['bold', 'nonexistent']))->toBeTrue();
     });
 
-    test('can check if custom toolbar buttons are set using `hasCustomToolbarButtons()`', function (): void {
+    it('can check if custom toolbar buttons are set using `hasCustomToolbarButtons()`', function (): void {
         $markdownEditor = MarkdownEditor::make('content');
 
         expect($markdownEditor->hasCustomToolbarButtons())->toBeFalse();
@@ -211,9 +173,6 @@ describe('toolbar buttons', function (): void {
 
         $buttons = $markdownEditor->getToolbarButtons();
 
-        // The `getToolbarButtons()` method groups consecutive non-array buttons together.
-        // When an array is encountered, it becomes its own group, and any preceding
-        // non-array buttons are grouped into their own group at the end.
         expect($buttons)
             ->toBeArray()
             ->toHaveCount(2)
@@ -238,7 +197,7 @@ describe('toolbar buttons', function (): void {
             ->and($buttons[1])->toEqual(['undo', 'redo']);
     });
 
-    test('cannot use `disableToolbarButtons()` when using closure', function (): void {
+    it('cannot use `disableToolbarButtons()` when using a `Closure`', function (): void {
         $markdownEditor = MarkdownEditor::make('content')
             ->toolbarButtons(fn () => [['bold', 'italic']]);
 
@@ -246,7 +205,7 @@ describe('toolbar buttons', function (): void {
             ->toThrow(LogicException::class, 'You cannot use the `disableToolbarButtons()` method when the toolbar buttons are dynamically returned from a function.');
     });
 
-    test('cannot use `enableToolbarButtons()` when using closure', function (): void {
+    it('cannot use `enableToolbarButtons()` when using a `Closure`', function (): void {
         $markdownEditor = MarkdownEditor::make('content')
             ->toolbarButtons(fn () => [['bold', 'italic']]);
 
@@ -254,6 +213,19 @@ describe('toolbar buttons', function (): void {
             ->toThrow(LogicException::class, 'You cannot use the `enableToolbarButtons()` method when the toolbar buttons are dynamically returned from a function.');
     });
 
+    it('can set toolbar buttons with a `Closure` using `toolbarButtons()`', function (): void {
+        $markdownEditor = MarkdownEditor::make('content')
+            ->toolbarButtons(fn () => [
+                ['bold', 'italic'],
+            ]);
+
+        $buttons = $markdownEditor->getToolbarButtons();
+
+        expect($buttons)
+            ->toBeArray()
+            ->toHaveCount(1)
+            ->and($buttons[0])->toEqual(['bold', 'italic']);
+    });
 });
 
 describe('file attachments', function (): void {
@@ -370,7 +342,6 @@ describe('file attachments', function (): void {
         $markdownEditor->disableToolbarButtons(['attachFiles']);
         $markdownEditor->fileAttachments(true);
 
-        // File attachments are enabled (drag/drop works), but the toolbar button remains hidden
         expect($markdownEditor->hasFileAttachments())->toBeTrue()
             ->and($markdownEditor->hasToolbarButton('attachFiles'))->toBeFalse();
     });
@@ -468,40 +439,6 @@ describe('height constraints', function (): void {
 
         expect($editor->getMaxHeight())->toBe('50rem');
     });
-
-    it('applies `minHeight()` and `maxHeight()` to disabled content', function (): void {
-        $html = Schema::make(Livewire::make())
-            ->statePath('data')
-            ->components([
-                MarkdownEditor::make('content')
-                    ->disabled()
-                    ->minHeight('8rem')
-                    ->maxHeight('12rem'),
-            ])
-            ->getComponents()[0]
-            ->toHtml();
-
-        expect($html)->toContain('--min-height: 8rem')
-            ->and($html)->toContain('--max-height: 12rem')
-            ->and($html)->toContain('tabindex="0"');
-    });
-
-    it('does not constrain disabled content after clearing `minHeight()` and `maxHeight()`', function (): void {
-        $html = Schema::make(Livewire::make())
-            ->statePath('data')
-            ->components([
-                MarkdownEditor::make('content')
-                    ->disabled()
-                    ->minHeight(null)
-                    ->maxHeight(null),
-            ])
-            ->getComponents()[0]
-            ->toHtml();
-
-        expect($html)->not->toContain('--min-height')
-            ->and($html)->not->toContain('--max-height')
-            ->and($html)->not->toContain('tabindex="0"');
-    });
 });
 
 describe('length constraints', function (): void {
@@ -516,6 +453,15 @@ describe('length constraints', function (): void {
             ->maxLength(1000);
 
         expect($editor->getMaxLength())->toBe(1000);
+    });
+
+    it('generates `max` rule from `maxLength()`', function (): void {
+        $editor = MarkdownEditor::make('content')
+            ->maxLength(1000);
+
+        $rules = $editor->getLengthValidationRules();
+
+        expect($rules)->toContain('max:1000');
     });
 
     it('can set `maxLength()` with a `Closure`', function (): void {
@@ -538,6 +484,15 @@ describe('length constraints', function (): void {
         expect($editor->getMinLength())->toBe(10);
     });
 
+    it('generates `min` rule from `minLength()`', function (): void {
+        $editor = MarkdownEditor::make('content')
+            ->minLength(10);
+
+        $rules = $editor->getLengthValidationRules();
+
+        expect($rules)->toContain('min:10');
+    });
+
     it('can set `minLength()` with a `Closure`', function (): void {
         $editor = MarkdownEditor::make('content')
             ->minLength(static fn (): int => 5);
@@ -552,24 +507,6 @@ describe('length constraints', function (): void {
         expect($editor->getLength())->toBe(100);
         expect($editor->getMinLength())->toBe(100);
         expect($editor->getMaxLength())->toBe(100);
-    });
-
-    it('generates `max` rule from `maxLength()`', function (): void {
-        $editor = MarkdownEditor::make('content')
-            ->maxLength(1000);
-
-        $rules = $editor->getLengthValidationRules();
-
-        expect($rules)->toContain('max:1000');
-    });
-
-    it('generates `min` rule from `minLength()`', function (): void {
-        $editor = MarkdownEditor::make('content')
-            ->minLength(10);
-
-        $rules = $editor->getLengthValidationRules();
-
-        expect($rules)->toContain('min:10');
     });
 
     it('generates `size` rule from `length()`', function (): void {
@@ -604,7 +541,82 @@ describe('placeholder', function (): void {
     });
 });
 
+describe('validation', function (): void {
+    test('fields can be required', function (): void {
+        $errors = [];
+
+        try {
+            Schema::make(Livewire::make())
+                ->statePath('data')
+                ->components([
+                    $field = (new MarkdownEditor('content'))
+                        ->required(),
+                ])
+                ->fill([
+                    'content' => '',
+                ])
+                ->validate();
+        } catch (ValidationException $exception) {
+            $errors = $exception->validator->errors()->get($field->getStatePath());
+        }
+
+        expect($errors)
+            ->toContain('The content field is required.');
+    });
+});
+
 describe('rendering', function (): void {
+    it('applies `minHeight()` and `maxHeight()` to disabled content', function (): void {
+        $html = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                MarkdownEditor::make('content')
+                    ->disabled()
+                    ->minHeight('8rem')
+                    ->maxHeight('12rem'),
+            ])
+            ->getComponents()[0]
+            ->toHtml();
+
+        expect($html)->toContain('--min-height: 8rem')
+            ->and($html)->toContain('--max-height: 12rem')
+            ->and($html)->toContain('tabindex="0"');
+    });
+
+    it('injects the implicit `$state` into CommonMark configuration for disabled content', function (): void {
+        $html = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                MarkdownEditor::make('content')
+                    ->disabled()
+                    ->commonMarkOptions(static fn (string $state): array => [
+                        'html_input' => $state === '<strong>Allowed</strong>' ? 'allow' : 'strip',
+                    ]),
+            ])
+            ->fill(['content' => '<strong>Allowed</strong>'])
+            ->getComponents()[0]
+            ->toHtml();
+
+        expect($html)->toContain('<strong>Allowed</strong>');
+    });
+
+    it('does not constrain disabled content after clearing `minHeight()` and `maxHeight()`', function (): void {
+        $html = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                MarkdownEditor::make('content')
+                    ->disabled()
+                    ->minHeight(null)
+                    ->maxHeight(null),
+            ])
+            ->getComponents()[0]
+            ->toHtml();
+
+        expect($html)->not->toContain('--min-height')
+            ->and($html)->not->toContain('--max-height')
+            ->and($html)->not->toContain('tabindex="0"');
+    });
+
     it('can render', function (): void {
         livewire(RenderMarkdownEditor::class)
             ->assertSuccessful();
@@ -681,8 +693,8 @@ describe('rendering', function (): void {
     });
 });
 
-it('can render `MarkdownEditor` in the browser', function (): void {
-    retry(10, function (): void {
+describe('browser interactions', function (): void {
+    it('can render `MarkdownEditor` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/markdown-editor-browser-test')

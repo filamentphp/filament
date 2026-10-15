@@ -7,7 +7,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 Filament's tables can use [Actions](../actions). They are buttons that can be added to the [end of any table row](#record-actions), or even in the [header](#header-actions) or [toolbar](#toolbar-actions) of a table. For instance, you may want an action to "create" a new record in the header, and then "edit" and "delete" actions on each row. [Bulk actions](#bulk-actions) can be used to execute code when records in the table are selected. Additionally, actions can be added to any [table column](#column-actions), such that each cell in that column is a trigger for your action.
 
-It's highly advised that you read the documentation about [customizing action trigger buttons](../actions/overview) and [action modals](../actions/modals) to that you are aware of the full capabilities of actions.
+For more ways to customize actions, see [action trigger buttons](../actions/overview) and [action modals](../actions/modals).
 
 ## Record actions
 
@@ -43,6 +43,8 @@ Action::make('delete')
 ```
 
 All methods on the action accept callback functions, where you can access the current table `$record` that was clicked.
+
+Custom actions must be [authorized explicitly](../actions/overview#authorization). For URL actions, the destination route must also authorize access.
 
 <AutoScreenshot name="tables/actions/simple" alt="Table with actions" version="4.x" />
 
@@ -128,6 +130,8 @@ public function table(Table $table): Table
 }
 ```
 
+Authorize access to the source record and permission to update each selected record before copying data. Selecting a record does not authorize the operation.
+
 ## Bulk actions
 
 Tables also support "bulk actions". These can be used when the user selects rows in the table. Traditionally, when rows are selected, a "bulk actions" button appears. When the user clicks this button, they are presented with a dropdown menu of actions to choose from. You can put them in the `$table->toolbarActions()` or `$table->headerActions()` methods:
@@ -156,6 +160,8 @@ BulkAction::make('delete')
 ```
 
 The function allows you to access the current table `$records` that are selected. It is an Eloquent collection of models.
+
+Custom bulk actions need explicit authorization. See [authorizing bulk actions](#authorizing-bulk-actions) to check each selected record's policy before processing it.
 
 <AutoScreenshot name="tables/actions/bulk" alt="Table with bulk action" version="4.x" />
 
@@ -245,6 +251,7 @@ Alongside [individual record authorization](#authorizing-bulk-actions) messages,
 ```php
 use Filament\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 BulkAction::make('delete')
     ->requiresConfirmation()
@@ -293,6 +300,7 @@ You may use a `BulkActionGroup` object to [group multiple bulk actions together]
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 
 public function table(Table $table): Table
 {
@@ -306,7 +314,11 @@ public function table(Table $table): Table
                     ->requiresConfirmation()
                     ->action(fn (Collection $records) => $records->each->forceDelete()),
             ]),
-            BulkAction::make('export')->button()->action(fn (Collection $records) => ...),
+            BulkAction::make('export')
+                ->button()
+                ->action(function (Collection $records) {
+                    // Export the selected records...
+                }),
         ]);
 }
 ```
@@ -318,6 +330,7 @@ Alternatively, if all of your bulk actions are grouped, you can use the shorthan
 ```php
 use Filament\Actions\BulkAction;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 
 public function table(Table $table): Table
 {

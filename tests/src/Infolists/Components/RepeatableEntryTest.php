@@ -28,26 +28,14 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can render', function (): void {
-    livewire(TestComponentWithRepeatableEntry::class)
-        ->assertSuccessful()
-        ->assertSchemaComponentStateSet('items.0.name', 'First Item', 'infolist')
-        ->assertSeeText('First Item')
-        ->assertSchemaComponentStateSet('items.1.name', 'Second Item', 'infolist')
-        ->assertSeeText('Second Item');
+it('returns `null` for `getTableColumns()` by default', function (): void {
+    $entry = RepeatableEntry::make('items');
+    expect($entry->getTableColumns())->toBeNull();
 });
 
-it('can render nested entries', function (): void {
-    livewire(TestComponentWithNestedRepeatableEntry::class)
-        ->assertSuccessful()
-        ->assertSchemaComponentStateSet('users.0.name', 'John', 'infolist')
-        ->assertSeeText('John')
-        ->assertSchemaComponentStateSet('users.0.email', 'john@example.com', 'infolist')
-        ->assertSeeText('john@example.com')
-        ->assertSchemaComponentStateSet('users.1.name', 'Jane', 'infolist')
-        ->assertSeeText('Jane')
-        ->assertSchemaComponentStateSet('users.1.email', 'jane@example.com', 'infolist')
-        ->assertSeeText('jane@example.com');
+test('`isTable()` returns `false` when no table columns are set', function (): void {
+    $entry = RepeatableEntry::make('items');
+    expect($entry->isTable())->toBeFalse();
 });
 
 it('can set `table()` columns', function (): void {
@@ -61,17 +49,7 @@ it('can set `table()` columns', function (): void {
     expect($entry->getTableColumns())->toBe($columns);
 });
 
-it('returns `null` for `getTableColumns()` by default', function (): void {
-    $entry = RepeatableEntry::make('items');
-    expect($entry->getTableColumns())->toBeNull();
-});
-
-it('`isTable()` returns `false` when no table columns are set', function (): void {
-    $entry = RepeatableEntry::make('items');
-    expect($entry->isTable())->toBeFalse();
-});
-
-it('`isTable()` returns `true` when table columns are set', function (): void {
+test('`isTable()` returns `true` when table columns are set', function (): void {
     $entry = RepeatableEntry::make('items')->table([TableColumn::make('Name')]);
     expect($entry->isTable())->toBeTrue();
 });
@@ -96,36 +74,6 @@ it('returns fluent `$this` from `table()`', function (): void {
     $entry = RepeatableEntry::make('items');
 
     expect($entry->table([]))->toBe($entry);
-});
-
-describe('rendering', function (): void {
-    it('can render with `contained(false)`', function (): void {
-        livewire(RenderRepeatableEntryWithContainedFalse::class)->assertSuccessful();
-    });
-
-    it('can render with `contained()` set via `Closure`', function (): void {
-        livewire(RenderRepeatableEntryWithClosureContained::class)->assertSuccessful();
-    });
-
-    it('can render with `grid()` int', function (): void {
-        livewire(RenderRepeatableEntryWithGridInt::class)->assertSuccessful();
-    });
-
-    it('can render with `grid()` array', function (): void {
-        livewire(RenderRepeatableEntryWithGridArray::class)->assertSuccessful();
-    });
-
-    it('can render with `grid()` set via `Closure`', function (): void {
-        livewire(RenderRepeatableEntryWithClosureGrid::class)->assertSuccessful();
-    });
-
-    it('can render with `table()` columns', function (): void {
-        livewire(RenderRepeatableEntryWithTable::class)->assertSuccessful();
-    });
-
-    it('can render with `table()` columns set via `Closure`', function (): void {
-        livewire(RenderRepeatableEntryWithClosureTable::class)->assertSuccessful();
-    });
 });
 
 describe('containment', function (): void {
@@ -174,6 +122,691 @@ describe('grid layout', function (): void {
         expect($entry->getGridColumns('lg'))->toBe(4);
     });
 });
+
+describe('item collections', function (): void {
+    it('can read a state `Closure` using `$get()` repeatedly without recursion', function (): void {
+        $stateEvaluationCount = 0;
+        $livewire = Livewire::make();
+        $livewire->data = [
+            'results' => [
+                'rows' => [
+                    ['name' => 'First result'],
+                ],
+            ],
+        ];
+
+        $schema = Schema::make($livewire)
+            ->statePath('data')
+            ->components([
+                $entry = RepeatableEntry::make('results')
+                    ->state(function (Get $get) use (&$stateEvaluationCount): array {
+                        $stateEvaluationCount++;
+
+                        if ($stateEvaluationCount > 5) {
+                            throw new RuntimeException('The state closure was evaluated recursively.');
+                        }
+
+                        return $get('results.rows');
+                    })
+                    ->schema([
+                        TextEntry::make('name'),
+                    ]),
+            ]);
+
+        $schema->getComponents();
+
+        expect($entry->getItems())
+            ->toHaveCount(1)
+            ->and($entry->getItems())
+            ->toHaveCount(1);
+    });
+
+    it('builds one schema per item keyed by the item key', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->state([
+                'items' => [
+                    ['name' => 'First'],
+                    ['name' => 'Second'],
+                    ['name' => 'Third'],
+                ],
+            ])
+            ->components([
+                RepeatableEntry::make('items')
+                    ->schema([
+                        TextEntry::make('name'),
+                    ]),
+            ]);
+
+        $entry = $schema->getComponents()[0];
+
+        $items = $entry->getItems();
+
+        expect($items)->toHaveCount(3)
+            ->and(array_keys($items))->toBe(array_keys($entry->getState()))
+            ->and(array_values($items)[0])->toBeInstanceOf(Schema::class);
+    });
+
+    it('rebuilds `getItems()` when an object item collection is mutated', function (): void {
+        $itemsState = (object) [
+            'first' => ['name' => 'First'],
+            'second' => ['name' => 'Second'],
+        ];
+        $schema = Schema::make(Livewire::make())
+            ->state(['items' => $itemsState])
+            ->components([
+                RepeatableEntry::make('items')
+                    ->schema([
+                        TextEntry::make('name'),
+                    ]),
+            ]);
+
+        $entry = $schema->getComponents()[0];
+        expect($entry->getItems())->toHaveCount(2);
+
+        unset($itemsState->second);
+
+        expect($entry->getItems())
+            ->toHaveCount(1)
+            ->toHaveKey('first')
+            ->not->toHaveKey('second');
+    });
+
+    it('builds and rebuilds `getItems()` from an `ArrayObject` item collection', function (): void {
+        $itemsState = new ArrayObject([
+            'first' => ['name' => 'First'],
+            'second' => ['name' => 'Second'],
+        ]);
+        $schema = Schema::make(Livewire::make())
+            ->state(['items' => $itemsState])
+            ->components([
+                RepeatableEntry::make('items')
+                    ->schema([
+                        TextEntry::make('name'),
+                    ]),
+            ]);
+
+        $entry = $schema->getComponents()[0];
+        $firstItems = $entry->getItems();
+
+        expect($firstItems)->toHaveCount(2);
+
+        unset($itemsState['second']);
+
+        expect($entry->getItems())
+            ->toHaveCount(1)
+            ->toHaveKey('first')
+            ->not->toHaveKey('second');
+    });
+
+    it('reuses a materialized `Generator` item collection', function (): void {
+        $itemsState = (static function (): Generator {
+            yield 'first' => ['name' => 'First'];
+        })();
+        $entry = RepeatableEntry::make('items')
+            ->state($itemsState)
+            ->schema([
+                TextEntry::make('name'),
+            ]);
+        $schema = Schema::make(Livewire::make())
+            ->components([
+                $source = TextEntry::make('source'),
+                $entry,
+            ]);
+
+        $schema->getComponents();
+
+        $firstItems = $entry->getItems();
+        $firstItems['first']->getComponents();
+
+        expect($entry->getItems())
+            ->toHaveCount(1)
+            ->toHaveKey('first')
+            ->and($source->makeGetUtility()('/items.first.name'))
+            ->toBe('First');
+
+        $entry->state((static function (): Generator {
+            yield 'second' => ['name' => 'Second'];
+        })());
+
+        expect($entry->getItems())
+            ->toHaveKey('second')
+            ->not->toHaveKey('first');
+    });
+
+    it('reads object-backed item values through repeated `$get()` calls', function (): void {
+        $itemsState = (object) collect(range(0, 9))
+            ->mapWithKeys(static fn (int $itemIndex): array => ["item{$itemIndex}" => ['name' => "Item {$itemIndex}"]])
+            ->all();
+        $entry = RepeatableEntry::make('items');
+        $schema = Schema::make(Livewire::make())
+            ->state(['items' => $itemsState])
+            ->components([
+                $source = TextEntry::make('source'),
+                $entry->schema([
+                    TextEntry::make('name'),
+                ]),
+            ]);
+
+        $schema->getComponents();
+
+        foreach ($entry->getItems() as $item) {
+            $item->getComponents();
+        }
+
+        $get = $source->makeGetUtility();
+
+        foreach (range(0, 9) as $itemIndex) {
+            expect($get("/items.item{$itemIndex}.name"))->toBe("Item {$itemIndex}");
+        }
+
+        foreach (range(0, 9) as $itemIndex) {
+            expect($get("/items.item{$itemIndex}.name"))->toBe("Item {$itemIndex}");
+        }
+    });
+
+    it('updates `getItems()` to reflect a new item count', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->state([
+                'items' => [
+                    ['name' => 'First'],
+                    ['name' => 'Second'],
+                ],
+            ])
+            ->components([
+                RepeatableEntry::make('items')
+                    ->schema([
+                        TextEntry::make('name'),
+                    ]),
+            ]);
+
+        $entry = $schema->getComponents()[0];
+
+        $firstItems = $entry->getItems();
+
+        expect($firstItems)->toHaveCount(2);
+
+        $schema->state([
+            'items' => [
+                ['name' => 'First'],
+                ['name' => 'Second'],
+                ['name' => 'Third'],
+            ],
+        ]);
+
+        expect($entry->getItems())
+            ->toHaveCount(3);
+    });
+});
+
+describe('nested state resolution', function (): void {
+    it('can resolve state for `RepeatableEntry` within nested sections with `statePath()`', function (): void {
+        livewire(TestRepeatableEntryInNestedSections::class)
+            ->assertSuccessful()
+            ->assertSchemaComponentStateSet('page.block.items.0.name', 'Item One', 'infolist')
+            ->assertSeeText('Item One')
+            ->assertSchemaComponentStateSet('page.block.items.1.name', 'Item Two', 'infolist')
+            ->assertSeeText('Item Two');
+    });
+
+    it('can resolve state for nested `RepeatableEntry`', function (): void {
+        livewire(TestNestedRepeatableEntryState::class)
+            ->assertSuccessful()
+            ->assertSchemaComponentStateSet('users.0.name', 'User Alice', 'infolist')
+            ->assertSeeText('User Alice')
+            ->assertSchemaComponentStateSet('users.0.comments.0.text', 'Comment from Alice: Hello', 'infolist')
+            ->assertSeeText('Comment from Alice: Hello')
+            ->assertSchemaComponentStateSet('users.0.comments.1.text', 'Comment from Alice: World', 'infolist')
+            ->assertSeeText('Comment from Alice: World')
+            ->assertSchemaComponentStateSet('users.1.name', 'User Bob', 'infolist')
+            ->assertSeeText('User Bob')
+            ->assertSchemaComponentStateSet('users.1.comments.0.text', 'Comment from Bob: Hi', 'infolist')
+            ->assertSeeText('Comment from Bob: Hi');
+    });
+
+    it('can resolve state for deeply nested `RepeatableEntry` within sections', function (): void {
+        livewire(TestDeeplyNestedRepeatableEntry::class)
+            ->assertSuccessful()
+            ->assertSchemaComponentStateSet('store.categories.0.name', 'Category A', 'infolist')
+            ->assertSeeText('Category A')
+            ->assertSchemaComponentStateSet('store.categories.0.products.0.name', 'Product 1', 'infolist')
+            ->assertSeeText('Product 1')
+            ->assertSchemaComponentStateSet('store.categories.0.products.0.variants.0.sku', 'SKU-001', 'infolist')
+            ->assertSeeText('SKU-001')
+            ->assertSchemaComponentStateSet('store.categories.0.products.0.variants.1.sku', 'SKU-002', 'infolist')
+            ->assertSeeText('SKU-002')
+            ->assertSchemaComponentStateSet('store.categories.0.products.1.name', 'Product 2', 'infolist')
+            ->assertSeeText('Product 2');
+    });
+
+});
+
+describe('relationships', function (): void {
+    it('can rebuild items when a loaded relationship `Collection` is mutated in place', function (): void {
+        $user = User::factory()
+            ->has(Post::factory()->count(2), 'posts')
+            ->create()
+            ->load('posts');
+
+        $schema = Schema::make(Livewire::make())
+            ->record($user)
+            ->components([
+                RepeatableEntry::make('posts')
+                    ->schema([
+                        TextEntry::make('title'),
+                    ]),
+            ]);
+
+        $entry = $schema->getComponents()[0];
+
+        expect($entry->getItems())->toHaveCount(2);
+
+        $user->posts->pop();
+
+        expect($entry->getState())->toHaveCount(1)
+            ->and($entry->getItems())->toHaveCount(1);
+    });
+
+    it('can resolve state for relationship-based `RepeatableEntry`', function (): void {
+        $user = User::factory()
+            ->has(Post::factory()->count(2)->sequence(
+                ['title' => 'First Post', 'content' => 'Content 1'],
+                ['title' => 'Second Post', 'content' => 'Content 2'],
+            ), 'posts')
+            ->create(['name' => 'Test User']);
+
+        livewire(TestRelationshipRepeatableEntry::class, ['user' => $user])
+            ->assertSuccessful()
+            ->assertSchemaComponentStateSet('name', 'Test User', 'infolist')
+            ->assertSeeText('Test User')
+            ->assertSchemaComponentStateSet('posts.0.title', 'First Post', 'infolist')
+            ->assertSeeText('First Post')
+            ->assertSchemaComponentStateSet('posts.1.title', 'Second Post', 'infolist')
+            ->assertSeeText('Second Post');
+    });
+
+    it('can resolve state for relationship-based `RepeatableEntry` within nested sections', function (): void {
+        $user = User::factory()
+            ->has(Post::factory()->count(2)->sequence(
+                ['title' => 'Post A'],
+                ['title' => 'Post B'],
+            ), 'posts')
+            ->create();
+
+        livewire(TestRelationshipRepeatableEntryInSection::class, ['user' => $user])
+            ->assertSuccessful()
+            ->assertSchemaComponentStateSet('posts.0.title', 'Post A', 'infolist')
+            ->assertSeeText('Post A')
+            ->assertSchemaComponentStateSet('posts.1.title', 'Post B', 'infolist')
+            ->assertSeeText('Post B');
+    });
+
+    it('does not render a related record\'s row after an `Action` deletes it, without a page refresh', function (): void {
+        $user = User::factory()
+            ->has(Post::factory()->count(2)->sequence(
+                ['title' => 'Delete me without a refresh'],
+                ['title' => 'Keep me rendered'],
+            ), 'posts')
+            ->create();
+
+        $component = livewire(TestRelationshipRepeatableEntryWithDeleteAction::class, ['user' => $user])
+            ->assertSeeText('Delete me without a refresh')
+            ->assertSeeText('Keep me rendered')
+            ->callAction(TestAction::make('deletePost')->schemaComponent('posts.0.title'));
+
+        expect(Post::query()->where('title', 'Delete me without a refresh')->exists())->toBeFalse();
+        expect($user->posts()->count())->toBe(1);
+
+        $component
+            ->assertSeeText('Keep me rendered')
+            ->assertDontSeeText('Delete me without a refresh');
+    });
+
+});
+
+it('correctly asserts entry state within `RepeatableEntry` using `assertSchemaComponentStateSet()`', function (): void {
+    livewire(TestRepeatableEntryStateAssertions::class)
+        ->assertSuccessful()
+        ->assertSchemaComponentStateSet('items.0.name', 'First', 'infolist')
+        ->assertSeeText('First')
+        ->assertSchemaComponentStateSet('items.1.name', 'Second', 'infolist')
+        ->assertSeeText('Second');
+});
+
+it('correctly asserts nested `RepeatableEntry` state using `assertSchemaComponentStateSet()`', function (): void {
+    livewire(TestNestedRepeatableEntryStateAssertions::class)
+        ->assertSuccessful()
+        ->assertSchemaComponentStateSet('users.0.name', 'Alice', 'infolist')
+        ->assertSeeText('Alice')
+        ->assertSchemaComponentStateSet('users.0.posts.0.title', 'Post A', 'infolist')
+        ->assertSeeText('Post A')
+        ->assertSchemaComponentStateSet('users.0.posts.1.title', 'Post B', 'infolist')
+        ->assertSeeText('Post B');
+});
+
+it('can render', function (): void {
+    livewire(TestComponentWithRepeatableEntry::class)
+        ->assertSuccessful()
+        ->assertSchemaComponentStateSet('items.0.name', 'First Item', 'infolist')
+        ->assertSeeText('First Item')
+        ->assertSchemaComponentStateSet('items.1.name', 'Second Item', 'infolist')
+        ->assertSeeText('Second Item');
+});
+
+it('can render nested entries', function (): void {
+    livewire(TestComponentWithNestedRepeatableEntry::class)
+        ->assertSuccessful()
+        ->assertSchemaComponentStateSet('users.0.name', 'John', 'infolist')
+        ->assertSeeText('John')
+        ->assertSchemaComponentStateSet('users.0.email', 'john@example.com', 'infolist')
+        ->assertSeeText('john@example.com')
+        ->assertSchemaComponentStateSet('users.1.name', 'Jane', 'infolist')
+        ->assertSeeText('Jane')
+        ->assertSchemaComponentStateSet('users.1.email', 'jane@example.com', 'infolist')
+        ->assertSeeText('jane@example.com');
+});
+
+describe('rendering', function (): void {
+    it('can render with `contained(false)`', function (): void {
+        livewire(RenderRepeatableEntryWithContainedFalse::class)->assertSuccessful();
+    });
+
+    it('can render with `contained()` set via `Closure`', function (): void {
+        livewire(RenderRepeatableEntryWithClosureContained::class)->assertSuccessful();
+    });
+
+    it('can render with `grid()` int', function (): void {
+        livewire(RenderRepeatableEntryWithGridInt::class)->assertSuccessful();
+    });
+
+    it('can render with `grid()` array', function (): void {
+        livewire(RenderRepeatableEntryWithGridArray::class)->assertSuccessful();
+    });
+
+    it('can render with `grid()` set via `Closure`', function (): void {
+        livewire(RenderRepeatableEntryWithClosureGrid::class)->assertSuccessful();
+    });
+
+    it('can render with `table()` columns', function (): void {
+        livewire(RenderRepeatableEntryWithTable::class)->assertSuccessful();
+    });
+
+    it('can render with `table()` columns set via `Closure`', function (): void {
+        livewire(RenderRepeatableEntryWithClosureTable::class)->assertSuccessful();
+    });
+});
+
+it('can render `RepeatableEntry` within form schema', function (): void {
+    livewire(TestRepeatableEntryInForm::class)
+        ->assertSuccessful()
+        ->assertSchemaComponentStateSet('tags.0.label', 'Tag One', 'form')
+        ->assertSeeText('Tag One')
+        ->assertSchemaComponentStateSet('tags.1.label', 'Tag Two', 'form')
+        ->assertSeeText('Tag Two');
+});
+
+class TestRelationshipRepeatableEntry extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public User $user;
+
+    public function mount(User $user): void
+    {
+        $this->user = $user;
+    }
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->record($this->user)
+            ->components([
+                TextEntry::make('name'),
+                RepeatableEntry::make('posts')
+                    ->schema([
+                        TextEntry::make('title'),
+                    ]),
+            ]);
+    }
+
+    public function render(): string
+    {
+        return <<<'BLADE'
+        <div>
+            {{ $this->infolist }}
+        </div>
+        BLADE;
+    }
+}
+
+class TestRelationshipRepeatableEntryInSection extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public User $user;
+
+    public function mount(User $user): void
+    {
+        $this->user = $user;
+    }
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->record($this->user)
+            ->components([
+                Section::make('User Details')
+                    ->schema([
+                        TextEntry::make('name'),
+                        Section::make('Posts')
+                            ->schema([
+                                RepeatableEntry::make('posts')
+                                    ->schema([
+                                        TextEntry::make('title'),
+                                    ]),
+                            ]),
+                    ]),
+            ]);
+    }
+
+    public function render(): string
+    {
+        return <<<'BLADE'
+        <div>
+            {{ $this->infolist }}
+        </div>
+        BLADE;
+    }
+}
+
+class TestRelationshipRepeatableEntryWithDeleteAction extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public User $user;
+
+    public function mount(User $user): void
+    {
+        $this->user = $user;
+    }
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->record($this->user)
+            ->components([
+                RepeatableEntry::make('posts')
+                    ->schema([
+                        TextEntry::make('title')
+                            ->registerActions([
+                                Action::make('deletePost')
+                                    ->action(function (Post $record): void {
+                                        $record->delete();
+
+                                        $this->user->setRelation('posts', $this->user->posts()->get());
+                                    }),
+                            ]),
+                    ]),
+            ]);
+    }
+
+    public function render(): string
+    {
+        return <<<'BLADE'
+        <div>
+            {{ $this->infolist }}
+        </div>
+        BLADE;
+    }
+}
+
+class TestRepeatableEntryInNestedSections extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->state([
+                'page' => [
+                    'block' => [
+                        'items' => [
+                            ['name' => 'Item One'],
+                            ['name' => 'Item Two'],
+                        ],
+                    ],
+                ],
+            ])
+            ->components([
+                Section::make('Page')
+                    ->statePath('page')
+                    ->schema([
+                        Section::make('Block')
+                            ->statePath('block')
+                            ->schema([
+                                RepeatableEntry::make('items')
+                                    ->schema([
+                                        TextEntry::make('name'),
+                                    ]),
+                            ]),
+                    ]),
+            ]);
+    }
+
+    public function render(): string
+    {
+        return <<<'BLADE'
+        <div>
+            {{ $this->infolist }}
+        </div>
+        BLADE;
+    }
+}
+
+class TestNestedRepeatableEntryState extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->state([
+                'users' => [
+                    [
+                        'name' => 'User Alice',
+                        'comments' => [
+                            ['text' => 'Comment from Alice: Hello'],
+                            ['text' => 'Comment from Alice: World'],
+                        ],
+                    ],
+                    [
+                        'name' => 'User Bob',
+                        'comments' => [
+                            ['text' => 'Comment from Bob: Hi'],
+                        ],
+                    ],
+                ],
+            ])
+            ->components([
+                RepeatableEntry::make('users')
+                    ->schema([
+                        TextEntry::make('name'),
+                        RepeatableEntry::make('comments')
+                            ->schema([
+                                TextEntry::make('text'),
+                            ]),
+                    ]),
+            ]);
+    }
+
+    public function render(): string
+    {
+        return <<<'BLADE'
+        <div>
+            {{ $this->infolist }}
+        </div>
+        BLADE;
+    }
+}
+
+class TestDeeplyNestedRepeatableEntry extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->state([
+                'store' => [
+                    'categories' => [
+                        [
+                            'name' => 'Category A',
+                            'products' => [
+                                [
+                                    'name' => 'Product 1',
+                                    'variants' => [
+                                        ['sku' => 'SKU-001'],
+                                        ['sku' => 'SKU-002'],
+                                    ],
+                                ],
+                                [
+                                    'name' => 'Product 2',
+                                    'variants' => [],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ])
+            ->components([
+                Section::make('Store')
+                    ->statePath('store')
+                    ->schema([
+                        RepeatableEntry::make('categories')
+                            ->schema([
+                                TextEntry::make('name'),
+                                RepeatableEntry::make('products')
+                                    ->schema([
+                                        TextEntry::make('name'),
+                                        RepeatableEntry::make('variants')
+                                            ->schema([
+                                                TextEntry::make('sku'),
+                                            ]),
+                                    ]),
+                            ]),
+                    ]),
+            ]);
+    }
+
+    public function render(): string
+    {
+        return <<<'BLADE'
+        <div>
+            {{ $this->infolist }}
+        </div>
+        BLADE;
+    }
+}
 
 class TestComponentWithRepeatableEntry extends Component implements HasSchemas
 {
@@ -238,404 +871,6 @@ class TestComponentWithNestedRepeatableEntry extends Component implements HasSch
     }
 }
 
-describe('nested state resolution', function (): void {
-    it('can resolve state for `RepeatableEntry` within nested sections with `statePath()`', function (): void {
-        livewire(TestRepeatableEntryInNestedSections::class)
-            ->assertSuccessful()
-            ->assertSchemaComponentStateSet('page.block.items.0.name', 'Item One', 'infolist')
-            ->assertSeeText('Item One')
-            ->assertSchemaComponentStateSet('page.block.items.1.name', 'Item Two', 'infolist')
-            ->assertSeeText('Item Two');
-    });
-
-    class TestRepeatableEntryInNestedSections extends Component implements HasSchemas
-    {
-        use InteractsWithSchemas;
-
-        public function infolist(Schema $schema): Schema
-        {
-            return $schema
-                ->state([
-                    'page' => [
-                        'block' => [
-                            'items' => [
-                                ['name' => 'Item One'],
-                                ['name' => 'Item Two'],
-                            ],
-                        ],
-                    ],
-                ])
-                ->components([
-                    Section::make('Page')
-                        ->statePath('page')
-                        ->schema([
-                            Section::make('Block')
-                                ->statePath('block')
-                                ->schema([
-                                    RepeatableEntry::make('items')
-                                        ->schema([
-                                            TextEntry::make('name'),
-                                        ]),
-                                ]),
-                        ]),
-                ]);
-        }
-
-        public function render(): string
-        {
-            return <<<'BLADE'
-            <div>
-                {{ $this->infolist }}
-            </div>
-            BLADE;
-        }
-    }
-
-    it('can resolve state for nested `RepeatableEntry`', function (): void {
-        livewire(TestNestedRepeatableEntryState::class)
-            ->assertSuccessful()
-            ->assertSchemaComponentStateSet('users.0.name', 'User Alice', 'infolist')
-            ->assertSeeText('User Alice')
-            ->assertSchemaComponentStateSet('users.0.comments.0.text', 'Comment from Alice: Hello', 'infolist')
-            ->assertSeeText('Comment from Alice: Hello')
-            ->assertSchemaComponentStateSet('users.0.comments.1.text', 'Comment from Alice: World', 'infolist')
-            ->assertSeeText('Comment from Alice: World')
-            ->assertSchemaComponentStateSet('users.1.name', 'User Bob', 'infolist')
-            ->assertSeeText('User Bob')
-            ->assertSchemaComponentStateSet('users.1.comments.0.text', 'Comment from Bob: Hi', 'infolist')
-            ->assertSeeText('Comment from Bob: Hi');
-    });
-
-    class TestNestedRepeatableEntryState extends Component implements HasSchemas
-    {
-        use InteractsWithSchemas;
-
-        public function infolist(Schema $schema): Schema
-        {
-            return $schema
-                ->state([
-                    'users' => [
-                        [
-                            'name' => 'User Alice',
-                            'comments' => [
-                                ['text' => 'Comment from Alice: Hello'],
-                                ['text' => 'Comment from Alice: World'],
-                            ],
-                        ],
-                        [
-                            'name' => 'User Bob',
-                            'comments' => [
-                                ['text' => 'Comment from Bob: Hi'],
-                            ],
-                        ],
-                    ],
-                ])
-                ->components([
-                    RepeatableEntry::make('users')
-                        ->schema([
-                            TextEntry::make('name'),
-                            RepeatableEntry::make('comments')
-                                ->schema([
-                                    TextEntry::make('text'),
-                                ]),
-                        ]),
-                ]);
-        }
-
-        public function render(): string
-        {
-            return <<<'BLADE'
-            <div>
-                {{ $this->infolist }}
-            </div>
-            BLADE;
-        }
-    }
-
-    it('can resolve state for deeply nested `RepeatableEntry` within sections', function (): void {
-        livewire(TestDeeplyNestedRepeatableEntry::class)
-            ->assertSuccessful()
-            ->assertSchemaComponentStateSet('store.categories.0.name', 'Category A', 'infolist')
-            ->assertSeeText('Category A')
-            ->assertSchemaComponentStateSet('store.categories.0.products.0.name', 'Product 1', 'infolist')
-            ->assertSeeText('Product 1')
-            ->assertSchemaComponentStateSet('store.categories.0.products.0.variants.0.sku', 'SKU-001', 'infolist')
-            ->assertSeeText('SKU-001')
-            ->assertSchemaComponentStateSet('store.categories.0.products.0.variants.1.sku', 'SKU-002', 'infolist')
-            ->assertSeeText('SKU-002')
-            ->assertSchemaComponentStateSet('store.categories.0.products.1.name', 'Product 2', 'infolist')
-            ->assertSeeText('Product 2');
-    });
-
-    class TestDeeplyNestedRepeatableEntry extends Component implements HasSchemas
-    {
-        use InteractsWithSchemas;
-
-        public function infolist(Schema $schema): Schema
-        {
-            return $schema
-                ->state([
-                    'store' => [
-                        'categories' => [
-                            [
-                                'name' => 'Category A',
-                                'products' => [
-                                    [
-                                        'name' => 'Product 1',
-                                        'variants' => [
-                                            ['sku' => 'SKU-001'],
-                                            ['sku' => 'SKU-002'],
-                                        ],
-                                    ],
-                                    [
-                                        'name' => 'Product 2',
-                                        'variants' => [],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ])
-                ->components([
-                    Section::make('Store')
-                        ->statePath('store')
-                        ->schema([
-                            RepeatableEntry::make('categories')
-                                ->schema([
-                                    TextEntry::make('name'),
-                                    RepeatableEntry::make('products')
-                                        ->schema([
-                                            TextEntry::make('name'),
-                                            RepeatableEntry::make('variants')
-                                                ->schema([
-                                                    TextEntry::make('sku'),
-                                                ]),
-                                        ]),
-                                ]),
-                        ]),
-                ]);
-        }
-
-        public function render(): string
-        {
-            return <<<'BLADE'
-            <div>
-                {{ $this->infolist }}
-            </div>
-            BLADE;
-        }
-    }
-
-});
-
-describe('relationships', function (): void {
-    it('can rebuild items when a loaded relationship `Collection` is mutated in place', function (): void {
-        $user = User::factory()
-            ->has(Post::factory()->count(2), 'posts')
-            ->create()
-            ->load('posts');
-
-        $schema = Schema::make(Livewire::make())
-            ->record($user)
-            ->components([
-                RepeatableEntry::make('posts')
-                    ->schema([
-                        TextEntry::make('title'),
-                    ]),
-            ]);
-
-        $entry = $schema->getComponents()[0];
-
-        expect($entry->getItems())->toHaveCount(2);
-
-        $user->posts->pop();
-
-        expect($entry->getState())->toHaveCount(1)
-            ->and($entry->getItems())->toHaveCount(1);
-    });
-
-    it('can resolve state for relationship-based `RepeatableEntry`', function (): void {
-        $user = User::factory()
-            ->has(Post::factory()->count(2)->sequence(
-                ['title' => 'First Post', 'content' => 'Content 1'],
-                ['title' => 'Second Post', 'content' => 'Content 2'],
-            ), 'posts')
-            ->create(['name' => 'Test User']);
-
-        livewire(TestRelationshipRepeatableEntry::class, ['user' => $user])
-            ->assertSuccessful()
-            ->assertSchemaComponentStateSet('name', 'Test User', 'infolist')
-            ->assertSeeText('Test User')
-            ->assertSchemaComponentStateSet('posts.0.title', 'First Post', 'infolist')
-            ->assertSeeText('First Post')
-            ->assertSchemaComponentStateSet('posts.1.title', 'Second Post', 'infolist')
-            ->assertSeeText('Second Post');
-    });
-
-    class TestRelationshipRepeatableEntry extends Component implements HasSchemas
-    {
-        use InteractsWithSchemas;
-
-        public User $user;
-
-        public function mount(User $user): void
-        {
-            $this->user = $user;
-        }
-
-        public function infolist(Schema $schema): Schema
-        {
-            return $schema
-                ->record($this->user)
-                ->components([
-                    TextEntry::make('name'),
-                    RepeatableEntry::make('posts')
-                        ->schema([
-                            TextEntry::make('title'),
-                        ]),
-                ]);
-        }
-
-        public function render(): string
-        {
-            return <<<'BLADE'
-            <div>
-                {{ $this->infolist }}
-            </div>
-            BLADE;
-        }
-    }
-
-    it('can resolve state for relationship-based `RepeatableEntry` within nested sections', function (): void {
-        $user = User::factory()
-            ->has(Post::factory()->count(2)->sequence(
-                ['title' => 'Post A'],
-                ['title' => 'Post B'],
-            ), 'posts')
-            ->create();
-
-        livewire(TestRelationshipRepeatableEntryInSection::class, ['user' => $user])
-            ->assertSuccessful()
-            ->assertSchemaComponentStateSet('posts.0.title', 'Post A', 'infolist')
-            ->assertSeeText('Post A')
-            ->assertSchemaComponentStateSet('posts.1.title', 'Post B', 'infolist')
-            ->assertSeeText('Post B');
-    });
-
-    class TestRelationshipRepeatableEntryInSection extends Component implements HasSchemas
-    {
-        use InteractsWithSchemas;
-
-        public User $user;
-
-        public function mount(User $user): void
-        {
-            $this->user = $user;
-        }
-
-        public function infolist(Schema $schema): Schema
-        {
-            return $schema
-                ->record($this->user)
-                ->components([
-                    Section::make('User Details')
-                        ->schema([
-                            TextEntry::make('name'),
-                            Section::make('Posts')
-                                ->schema([
-                                    RepeatableEntry::make('posts')
-                                        ->schema([
-                                            TextEntry::make('title'),
-                                        ]),
-                                ]),
-                        ]),
-                ]);
-        }
-
-        public function render(): string
-        {
-            return <<<'BLADE'
-            <div>
-                {{ $this->infolist }}
-            </div>
-            BLADE;
-        }
-    }
-
-    it('does not render a related record\'s row after an `Action` deletes it, without a page refresh', function (): void {
-        $user = User::factory()
-            ->has(Post::factory()->count(2)->sequence(
-                ['title' => 'Delete me without a refresh'],
-                ['title' => 'Keep me rendered'],
-            ), 'posts')
-            ->create();
-
-        $component = livewire(TestRelationshipRepeatableEntryWithDeleteAction::class, ['user' => $user])
-            ->assertSeeText('Delete me without a refresh')
-            ->assertSeeText('Keep me rendered')
-            ->callAction(TestAction::make('deletePost')->schemaComponent('posts.0.title'));
-
-        expect(Post::query()->where('title', 'Delete me without a refresh')->exists())->toBeFalse();
-        expect($user->posts()->count())->toBe(1);
-
-        $component
-            ->assertSeeText('Keep me rendered')
-            ->assertDontSeeText('Delete me without a refresh');
-    });
-
-    class TestRelationshipRepeatableEntryWithDeleteAction extends Component implements HasActions, HasSchemas
-    {
-        use InteractsWithActions;
-        use InteractsWithSchemas;
-
-        public User $user;
-
-        public function mount(User $user): void
-        {
-            $this->user = $user;
-        }
-
-        public function infolist(Schema $schema): Schema
-        {
-            return $schema
-                ->record($this->user)
-                ->components([
-                    RepeatableEntry::make('posts')
-                        ->schema([
-                            TextEntry::make('title')
-                                ->registerActions([
-                                    Action::make('deletePost')
-                                        ->action(function (Post $record): void {
-                                            $record->delete();
-
-                                            $this->user->setRelation('posts', $this->user->posts()->get());
-                                        }),
-                                ]),
-                        ]),
-                ]);
-        }
-
-        public function render(): string
-        {
-            return <<<'BLADE'
-            <div>
-                {{ $this->infolist }}
-            </div>
-            BLADE;
-        }
-    }
-
-});
-
-it('correctly asserts entry state within `RepeatableEntry` using `assertSchemaComponentStateSet()`', function (): void {
-    livewire(TestRepeatableEntryStateAssertions::class)
-        ->assertSuccessful()
-        ->assertSchemaComponentStateSet('items.0.name', 'First', 'infolist')
-        ->assertSeeText('First')
-        ->assertSchemaComponentStateSet('items.1.name', 'Second', 'infolist')
-        ->assertSeeText('Second');
-});
-
 class TestRepeatableEntryStateAssertions extends Component implements HasSchemas
 {
     use InteractsWithSchemas;
@@ -666,17 +901,6 @@ class TestRepeatableEntryStateAssertions extends Component implements HasSchemas
             BLADE;
     }
 }
-
-it('correctly asserts nested `RepeatableEntry` state using `assertSchemaComponentStateSet()`', function (): void {
-    livewire(TestNestedRepeatableEntryStateAssertions::class)
-        ->assertSuccessful()
-        ->assertSchemaComponentStateSet('users.0.name', 'Alice', 'infolist')
-        ->assertSeeText('Alice')
-        ->assertSchemaComponentStateSet('users.0.posts.0.title', 'Post A', 'infolist')
-        ->assertSeeText('Post A')
-        ->assertSchemaComponentStateSet('users.0.posts.1.title', 'Post B', 'infolist')
-        ->assertSeeText('Post B');
-});
 
 class TestNestedRepeatableEntryStateAssertions extends Component implements HasSchemas
 {
@@ -717,15 +941,6 @@ class TestNestedRepeatableEntryStateAssertions extends Component implements HasS
             BLADE;
     }
 }
-
-it('can render `RepeatableEntry` within form schema', function (): void {
-    livewire(TestRepeatableEntryInForm::class)
-        ->assertSuccessful()
-        ->assertSchemaComponentStateSet('tags.0.label', 'Tag One', 'form')
-        ->assertSeeText('Tag One')
-        ->assertSchemaComponentStateSet('tags.1.label', 'Tag Two', 'form')
-        ->assertSeeText('Tag Two');
-});
 
 class TestRepeatableEntryInForm extends Component implements HasSchemas
 {
@@ -892,259 +1107,3 @@ class RenderRepeatableEntryWithClosureTable extends Component implements HasSche
         return '<div>{{ $this->infolist }}</div>';
     }
 }
-
-describe('`getItems()` memoization', function (): void {
-    it('does not recursively evaluate a state `Closure` using `$get()` while checking cache freshness', function (): void {
-        $stateEvaluationCount = 0;
-        $livewire = Livewire::make();
-        $livewire->data = [
-            'results' => [
-                'rows' => [
-                    ['name' => 'First result'],
-                ],
-            ],
-        ];
-
-        $schema = Schema::make($livewire)
-            ->statePath('data')
-            ->components([
-                $entry = RepeatableEntry::make('results')
-                    ->state(function (Get $get) use (&$stateEvaluationCount): array {
-                        $stateEvaluationCount++;
-
-                        if ($stateEvaluationCount > 5) {
-                            throw new RuntimeException('The state closure was evaluated recursively.');
-                        }
-
-                        return $get('results.rows');
-                    })
-                    ->schema([
-                        TextEntry::make('name'),
-                    ]),
-            ]);
-
-        $schema->getComponents();
-
-        expect($entry->getItems())
-            ->toHaveCount(1)
-            ->and($entry->getItems())
-            ->toHaveCount(1)
-            ->and($stateEvaluationCount)
-            ->toBe(2);
-    });
-
-    it('builds one schema per item keyed by the item key', function (): void {
-        $schema = Schema::make(Livewire::make())
-            ->state([
-                'items' => [
-                    ['name' => 'First'],
-                    ['name' => 'Second'],
-                    ['name' => 'Third'],
-                ],
-            ])
-            ->components([
-                RepeatableEntry::make('items')
-                    ->schema([
-                        TextEntry::make('name'),
-                    ]),
-            ]);
-
-        $entry = $schema->getComponents()[0];
-
-        $items = $entry->getItems();
-
-        expect($items)->toHaveCount(3)
-            ->and(array_keys($items))->toBe(array_keys($entry->getState()))
-            ->and(array_values($items)[0])->toBeInstanceOf(Schema::class);
-    });
-
-    it('memoizes `getItems()` so repeated calls return the same instances', function (): void {
-        $schema = Schema::make(Livewire::make())
-            ->state([
-                'items' => [
-                    ['name' => 'First'],
-                    ['name' => 'Second'],
-                ],
-            ])
-            ->components([
-                RepeatableEntry::make('items')
-                    ->schema([
-                        TextEntry::make('name'),
-                    ]),
-            ]);
-
-        $entry = $schema->getComponents()[0];
-
-        expect($entry->getItems())->toBe($entry->getItems());
-    });
-
-    it('rebuilds `getItems()` when an object item collection is mutated', function (): void {
-        $itemsState = (object) [
-            'first' => ['name' => 'First'],
-            'second' => ['name' => 'Second'],
-        ];
-        $schema = Schema::make(Livewire::make())
-            ->state(['items' => $itemsState])
-            ->components([
-                RepeatableEntry::make('items')
-                    ->schema([
-                        TextEntry::make('name'),
-                    ]),
-            ]);
-
-        $entry = $schema->getComponents()[0];
-        $firstItems = $entry->getItems();
-
-        unset($itemsState->second);
-
-        expect($entry->getItems())
-            ->toHaveCount(1)
-            ->not->toBe($firstItems);
-    });
-
-    it('builds and rebuilds `getItems()` from an `ArrayObject` item collection', function (): void {
-        $itemsState = new ArrayObject([
-            'first' => ['name' => 'First'],
-            'second' => ['name' => 'Second'],
-        ]);
-        $schema = Schema::make(Livewire::make())
-            ->state(['items' => $itemsState])
-            ->components([
-                RepeatableEntry::make('items')
-                    ->schema([
-                        TextEntry::make('name'),
-                    ]),
-            ]);
-
-        $entry = $schema->getComponents()[0];
-        $firstItems = $entry->getItems();
-
-        expect($firstItems)->toHaveCount(2);
-
-        unset($itemsState['second']);
-
-        expect($entry->getItems())
-            ->toHaveCount(1)
-            ->not->toBe($firstItems);
-    });
-
-    it('reuses a materialized `Generator` item collection', function (): void {
-        $itemsState = (static function (): Generator {
-            yield 'first' => ['name' => 'First'];
-        })();
-        $entry = RepeatableEntry::make('items')
-            ->state($itemsState)
-            ->schema([
-                TextEntry::make('name'),
-            ]);
-        $schema = Schema::make(Livewire::make())
-            ->components([
-                $source = TextEntry::make('source'),
-                $entry,
-            ]);
-
-        $schema->getComponents();
-
-        $firstItems = $entry->getItems();
-        $firstItems['first']->getComponents();
-
-        expect($entry->getItems())
-            ->toBe($firstItems)
-            ->and($source->makeGetUtility()('/items.first.name'))
-            ->toBe('First');
-
-        $entry->clearCachedChildSchemas();
-
-        expect($entry->getItems())->toHaveCount(1);
-
-        $entry->state((static function (): Generator {
-            yield 'second' => ['name' => 'Second'];
-        })());
-
-        expect($entry->getItems())
-            ->toHaveKey('second')
-            ->not->toHaveKey('first');
-    });
-
-    it('validates cached object item schemas without normalizing the entire collection', function (): void {
-        $itemsState = (object) collect(range(0, 9))
-            ->mapWithKeys(static fn (int $itemIndex): array => ["item{$itemIndex}" => ['name' => "Item {$itemIndex}"]])
-            ->all();
-        $entry = new class('items') extends RepeatableEntry
-        {
-            public int $normalizationCount = 0;
-
-            protected function normalizeItemsState(mixed $state): mixed
-            {
-                $this->normalizationCount++;
-
-                return parent::normalizeItemsState($state);
-            }
-        };
-        $schema = Schema::make(Livewire::make())
-            ->state(['items' => $itemsState])
-            ->components([
-                $source = TextEntry::make('source'),
-                $entry->schema([
-                    TextEntry::make('name'),
-                ]),
-            ]);
-
-        $schema->getComponents();
-
-        foreach ($entry->getItems() as $item) {
-            $item->getComponents();
-        }
-
-        $get = $source->makeGetUtility();
-
-        foreach (range(0, 9) as $itemIndex) {
-            expect($get("/items.item{$itemIndex}.name"))->toBe("Item {$itemIndex}");
-        }
-
-        $entry->normalizationCount = 0;
-
-        foreach (range(0, 9) as $itemIndex) {
-            expect($get("/items.item{$itemIndex}.name"))->toBe("Item {$itemIndex}");
-        }
-
-        expect($entry->normalizationCount)->toBe(0);
-    });
-
-    it('rebuilds `getItems()` to reflect the new item count after the cache is cleared', function (): void {
-        $schema = Schema::make(Livewire::make())
-            ->state([
-                'items' => [
-                    ['name' => 'First'],
-                    ['name' => 'Second'],
-                ],
-            ])
-            ->components([
-                RepeatableEntry::make('items')
-                    ->schema([
-                        TextEntry::make('name'),
-                    ]),
-            ]);
-
-        $entry = $schema->getComponents()[0];
-
-        $firstItems = $entry->getItems();
-
-        expect($firstItems)->toHaveCount(2);
-
-        $schema->state([
-            'items' => [
-                ['name' => 'First'],
-                ['name' => 'Second'],
-                ['name' => 'Third'],
-            ],
-        ]);
-
-        // Mirrors the state-update lifecycle's `clearCachedChildSchemas()` call.
-        $entry->clearCachedChildSchemas();
-
-        expect($entry->getItems())
-            ->toHaveCount(3)
-            ->not->toBe($firstItems);
-    });
-});

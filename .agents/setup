@@ -224,7 +224,7 @@ install_demo_dependencies() {
         COMPOSER=composer.orb.json composer --working-dir="$demo_root" install --prefer-dist --no-interaction
     fi
 
-    npm --prefix "$demo_root" ci --ignore-scripts
+    npm --prefix "$demo_root" ci --ignore-scripts --prefer-offline --no-audit --no-fund
     npm --prefix "$demo_root" run build
 }
 
@@ -252,7 +252,11 @@ initialize_demo_application() {
 
     if [[ ! -s "$demo_root/database/database.sqlite" ]]; then
         mkdir -p "$demo_root/database"
-        touch "$demo_root/database/database.sqlite"
+        # Temporarily use WAL to avoid a rollback journal for every seeded record.
+        php -r '
+            $database = new PDO("sqlite:" . $argv[1]);
+            $database->exec("PRAGMA journal_mode = WAL");
+        ' "$demo_root/database/database.sqlite"
         database_was_created=true
     fi
 
@@ -263,6 +267,11 @@ initialize_demo_application() {
     if [[ "$database_was_created" == true ]]; then
         php "$demo_root/artisan" migrate --force
         php "$demo_root/artisan" db:seed --force
+        # Restore the default journal mode so the snapshot needs only the database file.
+        php -r '
+            $database = new PDO("sqlite:" . $argv[1]);
+            $database->exec("PRAGMA journal_mode = DELETE");
+        ' "$demo_root/database/database.sqlite"
     else
         php "$demo_root/artisan" migrate --force
     fi
@@ -300,12 +309,12 @@ cd "$repository_root"
 run_step 'Installing PHP 8.4 and extensions' install_php
 run_step 'Installing Composer' install_composer
 run_step 'Installing Filament Composer dependencies' composer install --prefer-dist --no-interaction --no-scripts
-run_step 'Installing Filament Node.js dependencies' npm ci --ignore-scripts
+run_step 'Installing Filament Node.js dependencies' npm ci --ignore-scripts --prefer-offline --no-audit --no-fund
 run_step 'Installing Playwright Chromium' npx playwright install --with-deps chromium
 run_step 'Building Filament assets' npm run build
 run_step 'Installing docs screenshot application Composer dependencies' composer --working-dir="$repository_root/docs-assets/app" install --prefer-dist --no-interaction
-run_step 'Installing docs screenshot application Node.js dependencies' npm --prefix "$repository_root/docs-assets/app" ci --ignore-scripts
-run_step 'Installing docs screenshot generator dependencies' npm --prefix "$repository_root/docs-assets/screenshots" ci
+run_step 'Installing docs screenshot application Node.js dependencies' npm --prefix "$repository_root/docs-assets/app" ci --ignore-scripts --prefer-offline --no-audit --no-fund
+run_step 'Installing docs screenshot generator dependencies' npm --prefix "$repository_root/docs-assets/screenshots" ci --prefer-offline --no-audit --no-fund
 run_step 'Initializing the docs screenshot application' initialize_docs_screenshot_application
 run_step 'Building the docs screenshot application assets' npm --prefix "$repository_root/docs-assets/app" run build
 run_step 'Preparing the matching Filament demo checkout' prepare_demo_checkout

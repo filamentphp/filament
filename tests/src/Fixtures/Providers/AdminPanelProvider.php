@@ -19,9 +19,7 @@ use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster\Pages\Clustered
 use Filament\Tests\Fixtures\Pages\Actions;
 use Filament\Tests\Fixtures\Pages\AfterStateUpdatedJsTest;
 use Filament\Tests\Fixtures\Pages\AuthorizableSettings;
-use Filament\Tests\Fixtures\Pages\AutofocusAfterCreateAnotherTabsBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusAfterCreateAnotherTabsModalBrowserTest;
-use Filament\Tests\Fixtures\Pages\AutofocusAfterCreateAnotherWizardBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusBasicBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusSecondTabBrowserTest;
@@ -35,6 +33,7 @@ use Filament\Tests\Fixtures\Pages\CheckboxTest;
 use Filament\Tests\Fixtures\Pages\CodeEditorBrowserTest;
 use Filament\Tests\Fixtures\Pages\ColorPickerTest;
 use Filament\Tests\Fixtures\Pages\ColumnManagerBrowserTest;
+use Filament\Tests\Fixtures\Pages\ColumnManagerReorderingBrowserTest;
 use Filament\Tests\Fixtures\Pages\ColumnsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatabaseNotificationsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatePickerBrowserTest;
@@ -47,13 +46,16 @@ use Filament\Tests\Fixtures\Pages\FileUploadBrowserTest;
 use Filament\Tests\Fixtures\Pages\FiltersModalBrowserTest;
 use Filament\Tests\Fixtures\Pages\FiltersResetActionBrowserTest;
 use Filament\Tests\Fixtures\Pages\IconBrowserTest;
+use Filament\Tests\Fixtures\Pages\IndistinctStateBrowserTest;
 use Filament\Tests\Fixtures\Pages\IndividualColumnSearchBrowserTest;
 use Filament\Tests\Fixtures\Pages\InfolistEntriesBrowserTest;
 use Filament\Tests\Fixtures\Pages\KeyValueTest;
 use Filament\Tests\Fixtures\Pages\ManageSiteSettings;
 use Filament\Tests\Fixtures\Pages\MarkdownEditorBrowserTest;
 use Filament\Tests\Fixtures\Pages\ModalBrowserTest;
+use Filament\Tests\Fixtures\Pages\NotificationBrowserTest;
 use Filament\Tests\Fixtures\Pages\OneTimeCodeInputBrowserTest;
+use Filament\Tests\Fixtures\Pages\OneTimeCodeInputSubmitOnCompletionBrowserTest;
 use Filament\Tests\Fixtures\Pages\PartialRenderingTest;
 use Filament\Tests\Fixtures\Pages\QueryBuilderTableTest;
 use Filament\Tests\Fixtures\Pages\RadioTest;
@@ -61,12 +63,15 @@ use Filament\Tests\Fixtures\Pages\RepeaterTest;
 use Filament\Tests\Fixtures\Pages\RichEditorBrowserTest;
 use Filament\Tests\Fixtures\Pages\RichEditorMinimalControlsBrowserTest;
 use Filament\Tests\Fixtures\Pages\SchemaCachingBrowserTest;
+use Filament\Tests\Fixtures\Pages\ScopedActionsBrowserTest;
 use Filament\Tests\Fixtures\Pages\SectionBrowserTest;
 use Filament\Tests\Fixtures\Pages\SelectTest;
 use Filament\Tests\Fixtures\Pages\Settings;
 use Filament\Tests\Fixtures\Pages\SliderBrowserTest;
 use Filament\Tests\Fixtures\Pages\StatsOverviewWidgetBrowserTest;
+use Filament\Tests\Fixtures\Pages\TableActionGroupsBrowserTest;
 use Filament\Tests\Fixtures\Pages\TableRenderHooksBrowserTest;
+use Filament\Tests\Fixtures\Pages\TableReorderingBrowserTest;
 use Filament\Tests\Fixtures\Pages\TabsBrowserTest;
 use Filament\Tests\Fixtures\Pages\TagsInputTest;
 use Filament\Tests\Fixtures\Pages\TextareaTest;
@@ -83,6 +88,7 @@ use Filament\Tests\Fixtures\Resources\PostCategories\PostCategoryResource;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\Shop\Products\ProductResource;
 use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\ScopedDepartmentsRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
@@ -109,6 +115,9 @@ class AdminPanelProvider extends PanelProvider
             ->emailVerification()
             ->profile()
             ->unsavedChangesAlerts(static fn (): bool => request()->routeIs('filament.admin.pages.unsaved-changes-alert-browser-test'))
+            ->livewireComponents([
+                ScopedDepartmentsRelationManager::class,
+            ])
             ->renderHook(
                 TablesRenderHook::CONTENT_BEFORE,
                 static fn (): string => '<div data-testid="table-content-before-hook">Before table content</div>',
@@ -134,11 +143,10 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
                 Actions::class,
+                ScopedActionsBrowserTest::class,
                 AfterStateUpdatedJsTest::class,
                 AuthorizableSettings::class,
-                AutofocusAfterCreateAnotherTabsBrowserTest::class,
                 AutofocusAfterCreateAnotherTabsModalBrowserTest::class,
-                AutofocusAfterCreateAnotherWizardBrowserTest::class,
                 AutofocusBasicBrowserTest::class,
                 AutofocusBrowserTest::class,
                 AutofocusSecondTabBrowserTest::class,
@@ -151,6 +159,7 @@ class AdminPanelProvider extends PanelProvider
                 ChartWidgetBrowserTest::class,
                 CodeEditorBrowserTest::class,
                 ColumnManagerBrowserTest::class,
+                ColumnManagerReorderingBrowserTest::class,
                 ColumnsBrowserTest::class,
                 CheckboxTest::class,
                 ColorPickerTest::class,
@@ -164,13 +173,16 @@ class AdminPanelProvider extends PanelProvider
                 FiltersModalBrowserTest::class,
                 FiltersResetActionBrowserTest::class,
                 IconBrowserTest::class,
+                IndistinctStateBrowserTest::class,
                 IndividualColumnSearchBrowserTest::class,
                 InfolistEntriesBrowserTest::class,
                 KeyValueTest::class,
                 ManageSiteSettings::class,
                 MarkdownEditorBrowserTest::class,
                 ModalBrowserTest::class,
+                NotificationBrowserTest::class,
                 OneTimeCodeInputBrowserTest::class,
+                OneTimeCodeInputSubmitOnCompletionBrowserTest::class,
                 PartialRenderingTest::class,
                 QueryBuilderTableTest::class,
                 RadioTest::class,
@@ -183,7 +195,9 @@ class AdminPanelProvider extends PanelProvider
                 Settings::class,
                 SliderBrowserTest::class,
                 StatsOverviewWidgetBrowserTest::class,
+                TableActionGroupsBrowserTest::class,
                 TableRenderHooksBrowserTest::class,
+                TableReorderingBrowserTest::class,
                 TabsBrowserTest::class,
                 TagsInputTest::class,
                 TextareaTest::class,

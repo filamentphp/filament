@@ -1,6 +1,44 @@
 .fi-ta-image {
     @apply flex w-full items-center gap-1.5;
 
+    .fi-ta-content-loading > .fi-ta-content &,
+    .fi-ta-content-loading > .fi-ta-table > .fi-ta-records > .fi-ta-row & {
+        @apply relative w-fit max-w-full text-transparent;
+
+        &.fi-align-center {
+            @apply mx-auto;
+        }
+
+        &.fi-align-end,
+        &.fi-align-right {
+            @apply ms-auto;
+        }
+
+        &::after {
+            @apply absolute inset-y-4 start-3 aspect-square;
+            animation: var(--loading-skeleton-animation);
+            background-color: var(--loading-skeleton-background-color);
+            border-radius: var(--loading-skeleton-border-radius);
+            content: '';
+        }
+
+        &.fi-inline::after {
+            @apply inset-y-0 start-0;
+        }
+
+        .fi-ta-table-stacked-on-mobile &::after {
+            @apply inset-y-0 start-0 sm:inset-y-4 sm:start-3;
+        }
+
+        &.fi-circular::after {
+            @apply rounded-full;
+        }
+
+        & > * {
+            @apply opacity-0;
+        }
+    }
+
     & img {
         @apply max-w-none object-cover object-center;
     }

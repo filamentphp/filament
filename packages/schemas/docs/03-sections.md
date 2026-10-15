@@ -182,31 +182,6 @@ Section::make('Cart')
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing static values, the `persistCollapsed()` and `id()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-## Deferring the loading of section content
-
-If the content of a section is expensive to render, you can pass a `Schema` object to `schema()` and use `deferLoading()`. This is particularly useful for a section that is [collapsed](#collapsing-sections) by default. The section and its header will render immediately, while its content will not be loaded until the section is expanded and the content enters the viewport:
-
-```php
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
-
-Section::make('Customer details')
-    ->key('customerDetails')
-    ->schema(
-        Schema::make()
-            ->components([
-                TextInput::make('name'),
-                TextInput::make('email')
-                    ->email(),
-            ])
-            ->deferLoading(),
-    )
-    ->collapsed()
-```
-
-Every deferred schema must have a unique key. In this example, the child schema inherits its key from the section. You can learn more in the [schema overview](overview#deferring-the-loading-of-a-child-schema).
-
 ## Compact section styling
 
 When nesting sections, you can use a more compact styling:
@@ -327,3 +302,28 @@ Section::make('Heading')
 <AutoScreenshot name="schemas/layout/section/columns" alt="Section with grid columns" version="4.x" />
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Deferring the loading of section content
+
+If the content of a section is expensive to render, you can pass a `Schema` object to `schema()` and use `deferLoading()`. This is particularly useful for a section that is [collapsed](#collapsing-sections) by default. The section and its header will render immediately, while its content will not be loaded until the section is expanded and the content enters the viewport:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+
+Section::make('Customer details')
+    ->key('customerDetails')
+    ->schema(
+        Schema::make()
+            ->components([
+                TextInput::make('name'),
+                TextInput::make('email')
+                    ->email(),
+            ])
+            ->deferLoading(),
+    )
+    ->collapsed()
+```
+
+Every deferred schema must have a unique key. In this example, the child schema inherits its key from the section. You can learn more in the [schema overview](overview#deferring-the-loading-of-a-child-schema).

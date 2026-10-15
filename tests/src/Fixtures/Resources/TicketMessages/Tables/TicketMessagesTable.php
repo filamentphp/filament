@@ -16,9 +16,7 @@ class TicketMessagesTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->columns([
-                //
-            ])
+            ->columns([])
             ->filters([
                 TrashedFilter::make(),
             ])

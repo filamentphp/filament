@@ -52,7 +52,7 @@ it('rejects a failed export file write and can execute the original serialized p
     };
     $payload = serialize($job);
     $failingDisk = Mockery::mock($disk);
-    $write = $failingDisk->shouldReceive($stage === 'xlsx' ? 'putFileAs' : 'put')->once();
+    $write = $failingDisk->shouldReceive($stage === 'xlsx' ? 'putFileAs' : 'put');
     $temporaryFile = null;
     $write->andReturnUsing(function (...$arguments) use ($stage, $throws, $path, &$temporaryFile): bool {
         if ($stage === 'xlsx') {

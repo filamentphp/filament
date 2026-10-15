@@ -30,13 +30,9 @@ class CheckboxTest extends Page
                 Checkbox::make('field')
                     ->label('Test Checkbox')
                     ->inline()
+                    ->live()
                     ->extraAttributes(['data-testid' => 'checkbox']),
             ])
             ->statePath('data');
-    }
-
-    public function save(): void
-    {
-        $this->form->getState();
     }
 }

@@ -81,11 +81,14 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
         $statePath = $this->getStatePath();
         $minHeight = $this->getMinHeight();
         $maxHeight = $this->getMaxHeight();
+        $extraAttributeBag = $this->getExtraAttributeBag();
 
         if ($isDisabled) {
             $wrapperAttributes = (new FilamentComponentAttributeBag)
+                ->merge($extraAttributeBag->only(['aria-describedby'])->getAttributes(), escape: false)
                 ->merge([
                     'aria-labelledby' => "{$id}-label",
+                    'aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby'],
                     'id' => $id,
                     'role' => 'group',
                     'tabindex' => filled($maxHeight) ? '0' : null,
@@ -99,7 +102,11 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
             ob_start(); ?>
 
             <div <?= $wrapperAttributes->toHtml() ?>>
-                <?= str($this->getState())->markdown($this->getCommonMarkOptions(), $this->getCommonMarkExtensions())->sanitizeHtml() ?>
+                <?php if (filled($this->getState())) { ?>
+                    <?= str($this->getState())->markdown($this->getCommonMarkOptions(), $this->getCommonMarkExtensions())->sanitizeHtml() ?>
+                <?php } else { ?>
+                    <span class="fi-fo-markdown-editor-placeholder"><?= e($this->getPlaceholder()) ?></span>
+                <?php } ?>
             </div>
 
             <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
@@ -110,11 +117,17 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
         $fileAttachmentsMaxSize = $this->getFileAttachmentsMaxSize();
         $fileAttachmentsAcceptedFileTypes = $this->getFileAttachmentsAcceptedFileTypes();
 
-        $wrapperAttributes = $this->getExtraAttributeBag()
+        $wrapperAttributes = $extraAttributeBag
             ->class(['fi-fo-markdown-editor']);
+        $extraAlpineAttributeBag = $this->getExtraAlpineAttributeBag();
+        $accessibilityAttributes = $extraAlpineAttributeBag
+            ->merge($wrapperAttributes->getAttributes(), escape: false)
+            ->merge($this->getAccessibilityAttributes(), escape: false)
+            ->only(['aria-describedby', 'aria-invalid']);
 
         ob_start(); ?>
 
+        <div hidden data-field-accessibility <?= $accessibilityAttributes->toHtml() ?>></div>
         <div
             aria-labelledby="<?= e($id) ?>-label"
             id="<?= e($id) ?>"
@@ -163,7 +176,7 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
                         },
                     })"
             wire:ignore
-            <?= $this->getExtraAlpineAttributeBag()->toHtml() ?>
+            <?= $extraAlpineAttributeBag->toHtml() ?>
         >
             <textarea x-ref="editor" x-cloak></textarea>
         </div>

@@ -1,12 +1,19 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Http\Middleware\Authenticate;
+use Filament\Livewire\Sidebar;
 use Filament\Livewire\Topbar;
+use Filament\Models\Contracts\HasName;
+use Filament\Pages\Dashboard;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\HtmlString;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\actingAs;
@@ -18,6 +25,89 @@ beforeEach(function (): void {
 
     // Grant access so the injected `profile` and `register` items resolve as visible.
     Gate::before(fn (): bool => true);
+});
+
+it('preserves `Htmlable` tenant names and uses plain text for default avatars and user names', function (): void {
+    $tenant = new class extends Team implements HasName
+    {
+        public function getFilamentName(): Htmlable
+        {
+            return new class implements Htmlable
+            {
+                public function toHtml(): string
+                {
+                    return '<strong>Research &amp; billing</strong>';
+                }
+            };
+        }
+    };
+
+    Filament::getCurrentOrDefaultPanel()->tenant($tenant::class);
+
+    expect(Filament::getTenantName($tenant))->toBeInstanceOf(Htmlable::class)
+        ->and(Filament::getTenantName($tenant)->toHtml())->toBe('<strong>Research &amp; billing</strong>')
+        ->and(Filament::getNameForDefaultAvatar($tenant))->toBe('Research & billing')
+        ->and(Filament::getUserName($tenant))->toBe('Research & billing');
+});
+
+it('renders and searches `Htmlable` tenant names while escaping string names', function (): void {
+    Artisan::call('filament:assets');
+    $this->withoutMiddleware(Authenticate::class);
+
+    Filament::setCurrentPanel('tenant-menu-flat');
+    Filament::getCurrentPanel()->sidebarCollapsibleOnDesktop()->searchableTenantMenu();
+
+    $tenant = Team::factory()->create(['name' => '<b>Research &amp; billing</b>']);
+    $switchableTenant = Team::factory()->create(['name' => '<b>Support &amp; sales</b>']);
+    $literalTenant = Team::factory()->create(['name' => '<b>Archives</b>']);
+    $accentedTenant = Team::factory()->create(['name' => 'Málaga']);
+
+    Team::retrieved(static function (Team $team) use ($literalTenant): void {
+        if (! $team->is($literalTenant)) {
+            $team->name = new HtmlString($team->name);
+        }
+    });
+
+    $page = visit(Dashboard::getUrl(panel: 'tenant-menu-flat', tenant: $tenant));
+    $tenantTrigger = 'button:has(img[alt*="Research"])';
+
+    $page->assertSeeIn("{$tenantTrigger} b", 'Research & billing');
+    $page->assertNoAccessibilityIssues();
+    $page->inDarkMode()->assertNoAccessibilityIssues();
+    $page->click('button[aria-label="' . __('filament-panels::layout.actions.sidebar.collapse.label') . '"]:visible')
+        ->hover($tenantTrigger)
+        ->assertSeeIn('[role="tooltip"] b', 'Research & billing');
+
+    $switchableTenantUrl = Filament::getUrl($switchableTenant);
+    $literalTenantUrl = Filament::getUrl($literalTenant);
+    $accentedTenantUrl = Filament::getUrl($accentedTenant);
+
+    $page->click($tenantTrigger)
+        ->assertSeeIn("a[href=\"{$literalTenantUrl}\"]", '<b>Archives</b>')
+        ->assertMissing("a[href=\"{$literalTenantUrl}\"] b")
+        ->type('input[type="search"]:visible', 'Support & sales')
+        ->assertVisible("a[href=\"{$switchableTenantUrl}\"]")
+        ->assertMissing("a[href=\"{$literalTenantUrl}\"]:visible")
+        ->type('input[type="search"]:visible', 'MALAGA')
+        ->assertVisible("a[href=\"{$accentedTenantUrl}\"]")
+        ->assertMissing("a[href=\"{$switchableTenantUrl}\"]:visible")
+        ->assertSeeIn("a[href=\"{$accentedTenantUrl}\"]", 'Málaga')
+        ->fill('input[type="search"]:visible', "Ma\u{0301}laga")
+        ->assertVisible("a[href=\"{$accentedTenantUrl}\"]")
+        ->fill('input[type="search"]:visible', 'Súppórt & sales')
+        ->assertVisible("a[href=\"{$switchableTenantUrl}\"]")
+        ->assertMissing("a[href=\"{$accentedTenantUrl}\"]:visible")
+        ->clear('input[type="search"]:visible')
+        ->assertVisible("a[href=\"{$accentedTenantUrl}\"]")
+        ->assertVisible("a[href=\"{$switchableTenantUrl}\"]")
+        ->assertVisible("a[href=\"{$literalTenantUrl}\"]")
+        ->type('input[type="search"]:visible', '<b>Archives</b>')
+        ->assertVisible("a[href=\"{$literalTenantUrl}\"]")
+        ->assertMissing("a[href=\"{$switchableTenantUrl}\"]:visible")
+        ->click("a[href=\"{$literalTenantUrl}\"]")
+        ->hover('button:has(img[alt*="Archives"])')
+        ->assertSeeIn('[role="tooltip"]', '<b>Archives</b>')
+        ->assertMissing('[role="tooltip"] b');
 });
 
 describe('grouped tenant menu items', function (): void {
@@ -91,5 +181,20 @@ describe('flat tenant menu items', function (): void {
             ->assertNotified('first ran')
             ->callAction('second')
             ->assertNotified('second ran');
+    });
+
+    it('keeps searchable tenant popup controls in the tab order without menu semantics', function (): void {
+        Filament::getCurrentPanel()->searchableTenantMenu();
+
+        $document = new DOMDocument;
+        @$document->loadHTML(livewire(Sidebar::class)->html());
+
+        $xpath = new DOMXPath($document);
+        $tenantMenu = $xpath->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' fi-tenant-menu ')]")->item(0);
+
+        expect($tenantMenu)->not->toBeNull()
+            ->and($xpath->query('.//*[@role="menuitem"]', $tenantMenu))->toHaveCount(0)
+            ->and($xpath->query('.//*[@role="button" and @tabindex="0"]', $tenantMenu))->toHaveCount(2)
+            ->and($xpath->query('.//a[contains(concat(" ", normalize-space(@class), " "), " fi-dropdown-list-item ") and not(@tabindex)]', $tenantMenu))->toHaveCount(1);
     });
 });

@@ -15,6 +15,15 @@
     </form>
 
     <output data-testid="saved-native-date">{{ $saved['date'] ?? '' }}</output>
+    <output data-testid="saved-timestamp-date">
+        {{ $saved['timestamp'] ?? '' }}
+    </output>
+    <output data-testid="saved-custom-timestamp-date">
+        {{ $saved['customTimestamp'] ?? '' }}
+    </output>
+    <output data-testid="saved-midnight-timestamp-date">
+        {{ $saved['midnightTimestamp'] ?? '' }}
+    </output>
     <span data-testid="save-count" data-reload-count="{{ $reloadCount }}">
         {{ $saveCount }}
     </span>

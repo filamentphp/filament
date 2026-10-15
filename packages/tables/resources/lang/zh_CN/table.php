@@ -12,6 +12,10 @@ return [
                 'label' => '应用列设置',
             ],
 
+            'reorder' => [
+                'label' => '调整列顺序',
+            ],
+
             'reset' => [
                 'label' => '重置',
             ],
@@ -24,6 +28,15 @@ return [
 
         'actions' => [
             'label' => '操作',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => '是',
+                'false' => '否',
+            ],
+
         ],
 
         'select' => [
@@ -115,6 +128,10 @@ return [
             'label' => '调整排序',
         ],
 
+        'reorder_record' => [
+            'label' => '调整记录 :key 的顺序',
+        ],
+
         'filter' => [
             'label' => '筛选',
         ],
@@ -129,6 +146,10 @@ return [
 
         'column_manager' => [
             'label' => '列管理',
+        ],
+
+        'toggle_record_content' => [
+            'label' => '展开或收起记录 :key',
         ],
 
     ],
@@ -219,7 +240,11 @@ return [
 
     ],
 
+    'loading' => '加载中...',
+
     'reorder_indicator' => '拖放条目调整排序',
+
+    'result_count' => '{0} 暂无结果|[1,*] :count 条结果',
 
     'selection_indicator' => [
 

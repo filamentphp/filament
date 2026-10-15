@@ -1,9 +1,20 @@
 import dayjs from 'dayjs/esm'
+import {
+    autoUpdate,
+    computePosition,
+    flip,
+    offset,
+    shift,
+} from '@floating-ui/dom'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import localeData from 'dayjs/plugin/localeData'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
+import {
+    observeFieldAccessibility,
+    setFieldAccessibilityAttributes,
+} from '../utilities/field-accessibility.js'
 
 dayjs.extend(advancedFormat)
 dayjs.extend(customParseFormat)
@@ -23,14 +34,30 @@ export default function dateTimePickerFormComponent({
     shouldCloseOnDateSelection,
     state,
 }) {
-    const timezone = dayjs.tz.guess()
+    const calendarLocale = (locales[locale] ?? locales['en']).name
 
     return {
-        daysInFocusedMonth: [],
+        weeksInFocusedMonth: [],
 
         displayText: '',
 
-        emptyDaysInFocusedMonth: [],
+        renderedMonth: null,
+
+        isPanelOpen: false,
+
+        isPanelReady: false,
+
+        isDestroyed: false,
+
+        panelGeneration: 0,
+
+        focusGeneration: 0,
+
+        positionGeneration: 0,
+
+        positioningCleanup: null,
+
+        accessibilityObserver: null,
 
         focusedDate: null,
 
@@ -54,15 +81,22 @@ export default function dateTimePickerFormComponent({
 
         dayLabels: [],
 
+        fullDayLabels: [],
+
         months: [],
 
         init() {
             dayjs.locale(locales[locale] ?? locales['en'])
 
             this.$nextTick(() => {
-                this.focusedDate ??= (
-                    this.getDefaultFocusedDate() ?? dayjs()
-                ).tz(timezone)
+                if (this.isDestroyed) {
+                    return
+                }
+
+                const date = this.getDefaultFocusedDate()
+                this.focusedDate ??= hasDate
+                    ? (date ?? this.getToday()).locale(calendarLocale)
+                    : (date ?? dayjs()).tz(dayjs.tz.guess())
                 this.focusedMonth ??= this.focusedDate.month()
                 this.focusedYear ??= this.focusedDate.year()
             })
@@ -70,7 +104,7 @@ export default function dateTimePickerFormComponent({
             let date =
                 this.getSelectedDate() ??
                 this.getDefaultFocusedDate() ??
-                dayjs().tz(timezone).hour(0).minute(0).second(0)
+                this.getToday().hour(0).minute(0).second(0)
 
             if (this.dateIsOutsideLimits(date)) {
                 date = null
@@ -84,10 +118,21 @@ export default function dateTimePickerFormComponent({
             this.setMonths()
             this.setDayLabels()
 
+            this.accessibilityObserver = observeFieldAccessibility(
+                this.$el,
+                (attributes) =>
+                    setFieldAccessibilityAttributes(
+                        this.$refs.button,
+                        attributes,
+                    ),
+            )
+
             if (isAutofocused) {
-                this.$nextTick(() =>
-                    this.togglePanelVisibility(this.$refs.button),
-                )
+                this.$nextTick(() => {
+                    if (!this.isDestroyed) {
+                        this.togglePanelVisibility()
+                    }
+                })
             }
 
             this.$watch('focusedMonth', () => {
@@ -112,7 +157,7 @@ export default function dateTimePickerFormComponent({
                 let year = +this.focusedYear
 
                 if (!Number.isInteger(year)) {
-                    year = dayjs().tz(timezone).year()
+                    year = this.getToday().year()
 
                     this.focusedYear = year
                 }
@@ -125,6 +170,9 @@ export default function dateTimePickerFormComponent({
             })
 
             this.$watch('focusedDate', () => {
+                const shouldFocusCalendar =
+                    hasDate &&
+                    this.$refs.calendar?.contains(document.activeElement)
                 let month = this.focusedDate.month()
                 let year = this.focusedDate.year()
 
@@ -137,6 +185,10 @@ export default function dateTimePickerFormComponent({
                 }
 
                 this.setupDaysGrid()
+
+                if (shouldFocusCalendar) {
+                    this.focusCalendarDate()
+                }
             })
 
             this.$watch('hour', () => {
@@ -265,7 +317,17 @@ export default function dateTimePickerFormComponent({
                 this.$refs?.disabledDates &&
                 JSON.parse(this.$refs.disabledDates.value ?? []).some(
                     (disabledDate) => {
-                        disabledDate = dayjs(disabledDate)
+                        // Preserve browser-calendar projection for explicitly zoned and other non-canonical values.
+                        disabledDate = !hasDate
+                            ? dayjs(disabledDate)
+                            : typeof disabledDate === 'string' &&
+                                /^\d{4}-\d{2}-\d{2}(?:[ T]\d{2}:\d{2}(?::\d{2}(?:\.\d{1,6})?)?)?$/.test(
+                                    disabledDate,
+                                )
+                              ? dayjs.utc(disabledDate)
+                              : dayjs.utc(
+                                    dayjs(disabledDate).format('YYYY-MM-DD'),
+                                )
 
                         if (!disabledDate.isValid()) {
                             return false
@@ -297,7 +359,7 @@ export default function dateTimePickerFormComponent({
         },
 
         dayIsDisabled(day) {
-            this.focusedDate ??= dayjs().tz(timezone)
+            this.focusedDate ??= this.getToday()
 
             return this.dateIsDisabled(this.focusedDate.date(day))
         },
@@ -309,7 +371,7 @@ export default function dateTimePickerFormComponent({
                 return false
             }
 
-            this.focusedDate ??= dayjs().tz(timezone)
+            this.focusedDate ??= this.getToday()
 
             return (
                 selectedDate.date() === day &&
@@ -319,7 +381,7 @@ export default function dateTimePickerFormComponent({
         },
 
         dayIsToday(day) {
-            let date = dayjs().tz(timezone)
+            let date = this.getToday()
             this.focusedDate ??= date
 
             return (
@@ -330,31 +392,194 @@ export default function dateTimePickerFormComponent({
         },
 
         focusPreviousDay() {
-            this.focusedDate ??= dayjs().tz(timezone)
+            this.focusedDate ??= this.getToday()
 
             this.focusedDate = this.focusedDate.subtract(1, 'day')
         },
 
         focusPreviousWeek() {
-            this.focusedDate ??= dayjs().tz(timezone)
+            this.focusedDate ??= this.getToday()
 
             this.focusedDate = this.focusedDate.subtract(1, 'week')
         },
 
         focusNextDay() {
-            this.focusedDate ??= dayjs().tz(timezone)
+            this.focusedDate ??= this.getToday()
 
             this.focusedDate = this.focusedDate.add(1, 'day')
         },
 
         focusNextWeek() {
-            this.focusedDate ??= dayjs().tz(timezone)
+            this.focusedDate ??= this.getToday()
 
             this.focusedDate = this.focusedDate.add(1, 'week')
         },
 
+        handleTriggerKeydown(event) {
+            if (
+                event.altKey ||
+                event.ctrlKey ||
+                event.metaKey ||
+                ![
+                    'Enter',
+                    ' ',
+                    'ArrowLeft',
+                    'ArrowRight',
+                    'ArrowUp',
+                    'ArrowDown',
+                ].includes(event.key)
+            ) {
+                return
+            }
+
+            event.preventDefault()
+            event.stopPropagation()
+
+            if (this.isOpen()) {
+                this.focusCalendarDate()
+            } else {
+                this.togglePanelVisibility()
+            }
+        },
+
+        handleFocusOut(event) {
+            const generation = this.panelGeneration
+
+            if (
+                event.relatedTarget &&
+                !this.$refs.calendar?.contains(event.relatedTarget)
+            ) {
+                this.focusGeneration++
+            }
+
+            const focusGeneration = this.focusGeneration
+
+            this.$nextTick(() =>
+                requestAnimationFrame(() => {
+                    if (
+                        !this.isDestroyed &&
+                        generation === this.panelGeneration &&
+                        focusGeneration === this.focusGeneration &&
+                        this.isOpen() &&
+                        !this.$el.contains(document.activeElement)
+                    ) {
+                        this.closePanel()
+                    }
+                }),
+            )
+        },
+
+        handleCalendarKeydown(event) {
+            if (event.altKey || event.ctrlKey || event.metaKey) {
+                return
+            }
+
+            const isRtl =
+                getComputedStyle(this.$refs.calendar).direction === 'rtl'
+            const weekDay = (this.focusedDate.day() - firstDayOfWeek + 7) % 7
+            let focusedDate = this.focusedDate
+
+            switch (event.key) {
+                case 'ArrowLeft':
+                    focusedDate = focusedDate.add(isRtl ? 1 : -1, 'day')
+                    break
+                case 'ArrowRight':
+                    focusedDate = focusedDate.add(isRtl ? -1 : 1, 'day')
+                    break
+                case 'ArrowUp':
+                    focusedDate = focusedDate.subtract(7, 'day')
+                    break
+                case 'ArrowDown':
+                    focusedDate = focusedDate.add(7, 'day')
+                    break
+                case 'Home':
+                    focusedDate = focusedDate.subtract(weekDay, 'day')
+                    break
+                case 'End':
+                    focusedDate = focusedDate.add(6 - weekDay, 'day')
+                    break
+                case 'PageUp':
+                case 'PageDown':
+                    focusedDate = focusedDate.add(
+                        event.key === 'PageUp' ? -1 : 1,
+                        event.shiftKey ? 'year' : 'month',
+                    )
+                    break
+                case 'Enter':
+                case ' ':
+                    this.selectDate()
+                    event.preventDefault()
+                    event.stopPropagation()
+
+                    return
+                case 'Tab':
+                    this.$refs.calendar
+                        .querySelector(
+                            `[data-date="${this.focusedDate.format('YYYY-MM-DD')}"]`,
+                        )
+                        ?.focus({ preventScroll: true })
+
+                    return
+                default:
+                    return
+            }
+
+            event.preventDefault()
+            event.stopPropagation()
+
+            if (this.renderedMonth !== focusedDate.format('YYYY-MM')) {
+                // Keep keyboard events in the grid while Alpine replaces the focused row.
+                this.$refs.calendar.focus({ preventScroll: true })
+            }
+
+            this.focusedDate = focusedDate
+            this.focusCalendarDate()
+        },
+
+        focusCalendarDate(generation = ++this.focusGeneration) {
+            const focusDate = () => {
+                if (
+                    this.isDestroyed ||
+                    !this.$el.isConnected ||
+                    !this.isOpen() ||
+                    generation !== this.focusGeneration
+                ) {
+                    return
+                }
+
+                this.$refs.calendar
+                    ?.querySelector(
+                        `[data-date="${this.focusedDate.format('YYYY-MM-DD')}"]`,
+                    )
+                    ?.focus({ preventScroll: true })
+            }
+
+            this.$nextTick(() =>
+                this.isPanelReady
+                    ? focusDate()
+                    : requestAnimationFrame(focusDate),
+            )
+        },
+
+        getCalendarLabel() {
+            return (
+                this.focusedDate?.locale(calendarLocale).format('MMMM YYYY') ??
+                ''
+            )
+        },
+
+        getDayLabel(day) {
+            return this.focusedDate
+                .date(day)
+                .locale(calendarLocale)
+                .format('dddd, D MMMM YYYY')
+        },
+
         getDayLabels() {
-            const labels = dayjs.weekdaysShort()
+            const labels = dayjs()
+                .locale(calendarLocale)
+                .localeData()
+                .weekdaysShort()
 
             if (firstDayOfWeek === 0) {
                 return labels
@@ -375,7 +600,7 @@ export default function dateTimePickerFormComponent({
         },
 
         getDateLimit(value) {
-            const date = hasDate ? dayjs(value) : dayjs.utc(value)
+            const date = dayjs.utc(value)
 
             return date.isValid() ? date : null
         },
@@ -406,7 +631,11 @@ export default function dateTimePickerFormComponent({
                 return null
             }
 
-            let date = hasDate ? dayjs(this.state) : dayjs.utc(this.state)
+            let date = dayjs.utc(this.state)
+
+            if (hasDate) {
+                date = date.locale(calendarLocale)
+            }
 
             if (!date.isValid()) {
                 return null
@@ -420,9 +649,11 @@ export default function dateTimePickerFormComponent({
                 return null
             }
 
-            let defaultFocusedDate = hasDate
-                ? dayjs(this.defaultFocusedDate)
-                : dayjs.utc(this.defaultFocusedDate)
+            let defaultFocusedDate = dayjs.utc(this.defaultFocusedDate)
+
+            if (hasDate) {
+                defaultFocusedDate = defaultFocusedDate.locale(calendarLocale)
+            }
 
             if (!defaultFocusedDate.isValid()) {
                 return null
@@ -431,18 +662,118 @@ export default function dateTimePickerFormComponent({
             return defaultFocusedDate
         },
 
-        togglePanelVisibility() {
+        getToday() {
+            // Use UTC only as a neutral calendar, preserving the browser's local date.
+            return hasDate
+                ? dayjs.utc(dayjs().format('YYYY-MM-DD')).locale(calendarLocale)
+                : dayjs().tz(dayjs.tz.guess())
+        },
+
+        togglePanelVisibility(shouldFocusCalendar = true) {
+            if (this.isDestroyed) {
+                return
+            }
+
+            if (hasDate && this.isOpen()) {
+                this.closePanel(true)
+
+                return
+            }
+
             if (!this.isOpen()) {
                 this.focusedDate =
                     this.getSelectedDate() ??
                     this.focusedDate ??
                     this.getMinDate() ??
-                    dayjs().tz(timezone)
+                    this.getToday()
 
                 this.setupDaysGrid()
             }
 
-            this.$refs.panel.toggle(this.$refs.button)
+            if (!hasDate) {
+                this.$refs.panel.toggle(this.$refs.button)
+
+                return
+            }
+
+            this.isPanelOpen = true
+            const generation = ++this.panelGeneration
+            const focusGeneration = ++this.focusGeneration
+
+            this.$nextTick(() =>
+                requestAnimationFrame(() => {
+                    if (
+                        this.isDestroyed ||
+                        !this.$el.isConnected ||
+                        !this.isOpen() ||
+                        generation !== this.panelGeneration
+                    ) {
+                        return
+                    }
+
+                    this.isPanelReady = true
+                    this.positioningCleanup = autoUpdate(
+                        this.$refs.button,
+                        this.$refs.panel,
+                        () => {
+                            const positionGeneration = ++this.positionGeneration
+
+                            computePosition(
+                                this.$refs.button,
+                                this.$refs.panel,
+                                {
+                                    placement: 'bottom-start',
+                                    middleware: [offset(8), flip(), shift()],
+                                },
+                            ).then(({ x, y }) => {
+                                if (
+                                    this.isDestroyed ||
+                                    !this.$el.isConnected ||
+                                    !this.isOpen() ||
+                                    generation !== this.panelGeneration ||
+                                    positionGeneration !==
+                                        this.positionGeneration
+                                ) {
+                                    return
+                                }
+
+                                Object.assign(this.$refs.panel.style, {
+                                    left: `${x}px`,
+                                    top: `${y}px`,
+                                })
+                            })
+                        },
+                    )
+
+                    if (
+                        shouldFocusCalendar &&
+                        focusGeneration === this.focusGeneration
+                    ) {
+                        this.focusCalendarDate(focusGeneration)
+                    }
+                }),
+            )
+        },
+
+        closePanel(shouldRestoreFocus = false) {
+            if (!hasDate) {
+                this.$refs.panel.close()
+            } else {
+                this.isPanelOpen = false
+                this.isPanelReady = false
+                this.panelGeneration++
+                this.focusGeneration++
+                this.positioningCleanup?.()
+                this.positioningCleanup = null
+            }
+
+            if (
+                shouldRestoreFocus &&
+                !this.isDestroyed &&
+                this.$refs.button.isConnected
+            ) {
+                this.$refs.button.focus({ preventScroll: true })
+            }
         },
 
         selectDate(day = null) {
@@ -450,51 +781,99 @@ export default function dateTimePickerFormComponent({
                 this.setFocusedDay(day)
             }
 
-            this.focusedDate ??= dayjs().tz(timezone)
+            this.focusedDate ??= this.getToday()
+
+            if (hasDate && this.dateIsDisabled(this.focusedDate)) {
+                return
+            }
 
             this.setState(this.focusedDate)
 
             if (shouldCloseOnDateSelection) {
-                this.togglePanelVisibility()
+                if (hasDate) {
+                    this.closePanel(true)
+                } else {
+                    this.togglePanelVisibility()
+                }
             }
         },
 
         setDisplayText() {
-            this.displayText = this.getSelectedDate()
-                ? this.getSelectedDate().format(displayFormat)
-                : ''
+            const date = this.getSelectedDate()
+
+            if (!date) {
+                this.displayText = ''
+
+                return
+            }
+
+            if (!hasDate) {
+                this.displayText = date.format(displayFormat)
+
+                return
+            }
+
+            // Keep browser-based zone and epoch tokens without letting them normalize calendar components.
+            const browserDate = dayjs(this.state)
+            const format = (displayFormat || 'YYYY-MM-DDTHH:mm:ssZ').replace(
+                /\[[^\]]+]|ZZ|Z|zzz|z|X|x/g,
+                (token) =>
+                    token.startsWith('[')
+                        ? token
+                        : `[${browserDate.format(token)}]`,
+            )
+
+            this.displayText = date.format(format)
         },
 
         setMonths() {
-            this.months = dayjs.months()
+            this.months = dayjs().locale(calendarLocale).localeData().months()
         },
 
         setDayLabels() {
             this.dayLabels = this.getDayLabels()
+            const labels = dayjs()
+                .locale(calendarLocale)
+                .localeData()
+                .weekdays()
+            this.fullDayLabels = [
+                ...labels.slice(firstDayOfWeek % 7),
+                ...labels.slice(0, firstDayOfWeek % 7),
+            ]
         },
 
         setupDaysGrid() {
-            this.focusedDate ??= dayjs().tz(timezone)
+            this.focusedDate ??= this.getToday()
 
-            this.emptyDaysInFocusedMonth = Array.from(
-                {
-                    length: this.focusedDate.date(8 - firstDayOfWeek).day(),
-                },
-                (_, i) => i + 1,
-            )
+            const month = this.focusedDate.format('YYYY-MM')
 
-            this.daysInFocusedMonth = Array.from(
-                {
-                    length: this.focusedDate.daysInMonth(),
-                },
-                (_, i) => i + 1,
+            if (this.renderedMonth === month) {
+                return
+            }
+
+            this.renderedMonth = month
+            const emptyDays =
+                (this.focusedDate.startOf('month').day() - firstDayOfWeek + 7) %
+                7
+            const daysInMonth = this.focusedDate.daysInMonth()
+
+            this.weeksInFocusedMonth = Array.from(
+                { length: Math.ceil((emptyDays + daysInMonth) / 7) },
+                (_, week) =>
+                    Array.from({ length: 7 }, (_, column) => {
+                        const day = week * 7 + column - emptyDays + 1
+
+                        return day > 0 && day <= daysInMonth ? day : null
+                    }),
             )
         },
 
         setFocusedDay(day) {
-            this.focusedDate = (this.focusedDate ?? dayjs().tz(timezone)).date(
-                day,
-            )
+            if (this.focusedDate?.date() === day) {
+                return
+            }
+
+            this.focusedDate = (this.focusedDate ?? this.getToday()).date(day)
         },
 
         setState(date) {
@@ -523,25 +902,55 @@ export default function dateTimePickerFormComponent({
         },
 
         timeInputInvalid(event) {
-            const el = event.target
+            const input = event.target
 
             if (!this.isOpen()) {
                 event.preventDefault()
-                this.togglePanelVisibility()
+                this.togglePanelVisibility(false)
+            }
+
+            if (hasDate && !this.isPanelReady) {
+                event.preventDefault()
             }
 
             if (!this.hasValidationMessage) {
                 this.hasValidationMessage = true
+                const generation = this.panelGeneration
 
-                this.$nextTick(() => {
-                    el.reportValidity()
+                const reportValidity = () => {
+                    if (
+                        !hasDate ||
+                        (!this.isDestroyed &&
+                            input.isConnected &&
+                            this.isOpen() &&
+                            generation === this.panelGeneration)
+                    ) {
+                        input.reportValidity()
+                    }
                     this.hasValidationMessage = false
-                })
+                }
+
+                this.$nextTick(() =>
+                    hasDate
+                        ? requestAnimationFrame(reportValidity)
+                        : reportValidity(),
+                )
             }
         },
 
         isOpen() {
-            return this.$refs.panel?.style.display === 'block'
+            return hasDate
+                ? this.isPanelOpen
+                : this.$refs.panel?.style.display === 'block'
+        },
+
+        destroy() {
+            this.isDestroyed = true
+            this.accessibilityObserver?.disconnect()
+
+            if (hasDate) {
+                this.closePanel()
+            }
         },
     }
 }
@@ -565,6 +974,7 @@ const locales = {
     fr: require('dayjs/locale/fr'),
     he: require('dayjs/locale/he'),
     hi: require('dayjs/locale/hi'),
+    hr: require('dayjs/locale/hr'),
     hu: require('dayjs/locale/hu'),
     hy: require('dayjs/locale/hy-am'),
     id: require('dayjs/locale/id'),

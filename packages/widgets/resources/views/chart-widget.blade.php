@@ -56,6 +56,7 @@
 
                 @if (method_exists($this, 'getFiltersSchema'))
                     <x-filament::dropdown
+                        :menu="false"
                         placement="bottom-end"
                         shift
                         width="xs"

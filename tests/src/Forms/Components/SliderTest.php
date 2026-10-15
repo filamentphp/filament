@@ -17,36 +17,6 @@ beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
 
-it('can render', function (): void {
-    livewire(TestComponentWithSlider::class)
-        ->assertSuccessful();
-});
-
-it('can set and get state', function (): void {
-    livewire(TestComponentWithSlider::class)
-        ->fillForm(['value' => 50])
-        ->assertSchemaStateSet(['value' => 50]);
-});
-
-it('can render with custom range', function (): void {
-    livewire(TestComponentWithCustomRangeSlider::class)
-        ->assertSuccessful();
-});
-
-it('validates min value', function (): void {
-    livewire(TestComponentWithSliderValidation::class)
-        ->fillForm(['value' => -10])
-        ->call('save')
-        ->assertHasFormErrors(['value']);
-});
-
-it('validates max value', function (): void {
-    livewire(TestComponentWithSliderValidation::class)
-        ->fillForm(['value' => 200])
-        ->call('save')
-        ->assertHasFormErrors(['value']);
-});
-
 describe('min/max values', function (): void {
     it('defaults `getMinValue()` to `0`', function (): void {
         $slider = Slider::make('value');
@@ -69,6 +39,14 @@ describe('min/max values', function (): void {
         expect($slider->getMaxValue())->toBe(50);
     });
 
+    it('can use `range()` shortcut to set both', function (): void {
+        $slider = Slider::make('value')
+            ->range(10, 90);
+
+        expect($slider->getMinValue())->toBe(10);
+        expect($slider->getMaxValue())->toBe(90);
+    });
+
     it('can set `minValue()` with a `Closure`', function (): void {
         $slider = Slider::make('value')
             ->minValue(static fn (): int => 5);
@@ -81,14 +59,6 @@ describe('min/max values', function (): void {
             ->maxValue(static fn (): int => 200);
 
         expect($slider->getMaxValue())->toBe(200);
-    });
-
-    it('can use `range()` shortcut to set both', function (): void {
-        $slider = Slider::make('value')
-            ->range(10, 90);
-
-        expect($slider->getMinValue())->toBe(10);
-        expect($slider->getMaxValue())->toBe(90);
     });
 });
 
@@ -202,18 +172,18 @@ describe('pips', function (): void {
         expect($slider->getPipsMode())->toBeNull();
     });
 
+    it('defaults `arePipsStepped()` to `false`', function (): void {
+        $slider = Slider::make('value');
+
+        expect($slider->arePipsStepped())->toBeFalse();
+    });
+
     it('can set `pips()` with mode and density', function (): void {
         $slider = Slider::make('value')
             ->pips(Slider\Enums\PipsMode::Range, density: 5);
 
         expect($slider->getPipsMode())->toBe(Slider\Enums\PipsMode::Range);
         expect($slider->getPipsDensity())->toBe(5);
-    });
-
-    it('defaults `arePipsStepped()` to `false`', function (): void {
-        $slider = Slider::make('value');
-
-        expect($slider->arePipsStepped())->toBeFalse();
     });
 
     it('can set `steppedPips()`', function (): void {
@@ -252,17 +222,17 @@ describe('differences', function (): void {
         expect($slider->getMinDifference())->toBeNull();
     });
 
+    it('returns `null` for `getMaxDifference()` by default', function (): void {
+        $slider = Slider::make('value');
+
+        expect($slider->getMaxDifference())->toBeNull();
+    });
+
     it('can set `minDifference()`', function (): void {
         $slider = Slider::make('value')
             ->minDifference(10);
 
         expect($slider->getMinDifference())->toBe(10);
-    });
-
-    it('returns `null` for `getMaxDifference()` by default', function (): void {
-        $slider = Slider::make('value');
-
-        expect($slider->getMaxDifference())->toBeNull();
     });
 
     it('can set `maxDifference()`', function (): void {
@@ -273,71 +243,18 @@ describe('differences', function (): void {
     });
 });
 
-describe('default state from `setUp()` closure', function (): void {
-    it('defaults state to `minValue` (0)', function (): void {
+describe('default state', function (): void {
+    it('defaults state to `minValue()` (`0`)', function (): void {
         $slider = Slider::make('value');
 
         expect($slider->getDefaultState())->toBe(0);
     });
 
-    it('defaults state to custom `minValue`', function (): void {
+    it('defaults state to custom `minValue()`', function (): void {
         $slider = Slider::make('value')
             ->minValue(25);
 
         expect($slider->getDefaultState())->toBe(25);
-    });
-});
-
-describe('step validation closures', function (): void {
-    it('validates `step()` of `1` as `integer`', function (): void {
-        livewire(TestComponentWithStepSliderInteger::class)
-            ->fillForm(['value' => 5])
-            ->call('save')
-            ->assertHasNoFormErrors();
-    });
-
-    it('rejects non-integer when `step()` is `1`', function (): void {
-        livewire(TestComponentWithStepSliderInteger::class)
-            ->fillForm(['value' => 5.5])
-            ->call('save')
-            ->assertHasFormErrors(['value']);
-    });
-
-    it('validates `step()` of `0.5` as `multiple_of:0.5`', function (): void {
-        livewire(TestComponentWithStepSliderDecimal::class)
-            ->fillForm(['value' => 2.5])
-            ->call('save')
-            ->assertHasNoFormErrors();
-    });
-
-    it('rejects non-multiple when `step()` is `0.5`', function (): void {
-        livewire(TestComponentWithStepSliderDecimal::class)
-            ->fillForm(['value' => 2.3])
-            ->call('save')
-            ->assertHasFormErrors(['value']);
-    });
-});
-
-describe('padded validation closures', function (): void {
-    it('rejects values below min with padding', function (): void {
-        livewire(TestComponentWithPaddedSlider::class)
-            ->fillForm(['value' => 5])
-            ->call('save')
-            ->assertHasFormErrors(['value']);
-    });
-
-    it('accepts values within padded range', function (): void {
-        livewire(TestComponentWithPaddedSlider::class)
-            ->fillForm(['value' => 15])
-            ->call('save')
-            ->assertHasNoFormErrors();
-    });
-
-    it('rejects values above max with padding', function (): void {
-        livewire(TestComponentWithPaddedSlider::class)
-            ->fillForm(['value' => 95])
-            ->call('save')
-            ->assertHasFormErrors(['value']);
     });
 });
 
@@ -422,13 +339,6 @@ describe('pips values and filter', function (): void {
         expect($slider->getPipsValues())->toBeNull();
     });
 
-    it('can set `pipsValues()` with an array', function (): void {
-        $slider = Slider::make('value')
-            ->pipsValues([0, 25, 50, 75, 100]);
-
-        expect($slider->getPipsValues())->toBe([0, 25, 50, 75, 100]);
-    });
-
     it('returns `null` for `getPipsFilter()` by default', function (): void {
         $slider = Slider::make('value');
 
@@ -439,6 +349,13 @@ describe('pips values and filter', function (): void {
         $slider = Slider::make('value');
 
         expect($slider->getPipsFormatter())->toBeNull();
+    });
+
+    it('can set `pipsValues()` with an array', function (): void {
+        $slider = Slider::make('value')
+            ->pipsValues([0, 25, 50, 75, 100]);
+
+        expect($slider->getPipsValues())->toBe([0, 25, 50, 75, 100]);
     });
 });
 
@@ -464,7 +381,90 @@ describe('step', function (): void {
     });
 });
 
+describe('state', function (): void {
+    it('can set and get state', function (): void {
+        livewire(TestComponentWithSlider::class)
+            ->fillForm(['value' => 50])
+            ->assertSchemaStateSet(['value' => 50]);
+    });
+});
+
+describe('validation', function (): void {
+    it('validates min value', function (): void {
+        livewire(TestComponentWithSliderValidation::class)
+            ->fillForm(['value' => -10])
+            ->call('save')
+            ->assertHasFormErrors(['value']);
+    });
+
+    it('validates max value', function (): void {
+        livewire(TestComponentWithSliderValidation::class)
+            ->fillForm(['value' => 200])
+            ->call('save')
+            ->assertHasFormErrors(['value']);
+    });
+
+    it('validates `step()` of `1` as `integer`', function (): void {
+        livewire(TestComponentWithStepSliderInteger::class)
+            ->fillForm(['value' => 5])
+            ->call('save')
+            ->assertHasNoFormErrors();
+    });
+
+    it('rejects non-integer when `step()` is `1`', function (): void {
+        livewire(TestComponentWithStepSliderInteger::class)
+            ->fillForm(['value' => 5.5])
+            ->call('save')
+            ->assertHasFormErrors(['value']);
+    });
+
+    it('validates `step()` of `0.5` as `multiple_of:0.5`', function (): void {
+        livewire(TestComponentWithStepSliderDecimal::class)
+            ->fillForm(['value' => 2.5])
+            ->call('save')
+            ->assertHasNoFormErrors();
+    });
+
+    it('rejects non-multiple when `step()` is `0.5`', function (): void {
+        livewire(TestComponentWithStepSliderDecimal::class)
+            ->fillForm(['value' => 2.3])
+            ->call('save')
+            ->assertHasFormErrors(['value']);
+    });
+
+    it('rejects values below min with padding', function (): void {
+        livewire(TestComponentWithPaddedSlider::class)
+            ->fillForm(['value' => 5])
+            ->call('save')
+            ->assertHasFormErrors(['value']);
+    });
+
+    it('accepts values within padded range', function (): void {
+        livewire(TestComponentWithPaddedSlider::class)
+            ->fillForm(['value' => 15])
+            ->call('save')
+            ->assertHasNoFormErrors();
+    });
+
+    it('rejects values above max with padding', function (): void {
+        livewire(TestComponentWithPaddedSlider::class)
+            ->fillForm(['value' => 95])
+            ->call('save')
+            ->assertHasFormErrors(['value']);
+    });
+});
+
 describe('rendering', function (): void {
+    it('can render', function (): void {
+        livewire(TestComponentWithSlider::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with custom range', function (): void {
+        livewire(TestComponentWithCustomRangeSlider::class)
+            ->assertSuccessful();
+    });
+
     it('can render with `minValue()` set via `Closure`', function (): void {
         livewire(RenderSliderWithClosureMinValue::class)->assertSuccessful();
     });
@@ -570,8 +570,8 @@ describe('rendering', function (): void {
     });
 });
 
-it('can render `Slider` in the browser', function (): void {
-    retry(10, function (): void {
+describe('browser interactions', function (): void {
+    it('can render `Slider` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/slider-browser-test')

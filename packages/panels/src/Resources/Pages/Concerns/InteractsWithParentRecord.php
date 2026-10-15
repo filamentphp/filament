@@ -57,16 +57,6 @@ trait InteractsWithParentRecord
         $this->authorizeParentRecordAccess();
     }
 
-    public function setParentRecordFromPageTableWidget(?Model $parentRecord): void
-    {
-        $this->parentRecord = $parentRecord;
-        $this->hasResolvedParentRecordForRequest = true;
-
-        if (static::getParentResource()) {
-            $this->authorizeParentRecordAccess();
-        }
-    }
-
     /**
      * @return array<string, mixed>
      */
@@ -93,28 +83,45 @@ trait InteractsWithParentRecord
      */
     protected function resolveParentRecord(array $parameters): Model
     {
-        if ((! count($parameters)) && $this->parentRecord) {
-            $parentRecord = $this->parentRecord->newQuery()
-                ->useWritePdo()
-                ->find($this->parentRecord->getKey());
-
-            if ($parentRecord === null) {
-                throw (new ModelNotFoundException)->setModel($this->parentRecord::class, [$this->parentRecord->getKey()]);
-            }
-
-            return $parentRecord;
-        }
-
         $modifyQuery = fn (Builder $query): Builder => $query->useWritePdo();
 
         $parentResourceRegistration = static::getResource()::getParentResourceRegistration();
         $parentRecord = null;
         $parentResourceRegistrations = [];
+        $hasParentRecordRouteParameters = false;
 
         while ($parentResourceRegistration) {
             $parentResourceRegistrations[] = $parentResourceRegistration;
 
+            if (array_key_exists($parentResourceRegistration->getParentRouteParameterName(), $parameters)) {
+                $hasParentRecordRouteParameters = true;
+            }
+
             $parentResourceRegistration = $parentResourceRegistration->getParentResource()::getParentResourceRegistration();
+        }
+
+        if ((! $hasParentRecordRouteParameters) && $this->parentRecord) {
+            $parentResource = $parentResourceRegistrations[0]->getParentResource();
+            $parentRecordKey = filled($routeKeyName = $parentResource::getRecordRouteKeyName())
+                ? $this->parentRecord->getAttribute($routeKeyName)
+                : $this->parentRecord->getRouteKey();
+
+            if ((! is_int($parentRecordKey)) && (! is_string($parentRecordKey))) {
+                throw (new ModelNotFoundException)->setModel($parentResource::getModel());
+            }
+
+            $parentRecord = $parentResource::resolveRecordRouteBinding(
+                $parentRecordKey,
+                fn (Builder $query): Builder => $query->useWritePdo()->whereKey($this->parentRecord->getKey()),
+            );
+
+            if (($parentRecord === null)
+                || ($parentRecord::class !== $this->parentRecord::class)
+                || ((string) $parentRecord->getKey() !== (string) $this->parentRecord->getKey())) {
+                throw (new ModelNotFoundException)->setModel($parentResource::getModel(), [$parentRecordKey]);
+            }
+
+            return $parentRecord;
         }
 
         if (count($parentResourceRegistrations)) {

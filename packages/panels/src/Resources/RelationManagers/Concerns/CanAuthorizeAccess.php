@@ -13,7 +13,6 @@ trait CanAuthorizeAccess
         }
 
         // Runs before the relation manager's `mount()` or `hydrate()`, including lazy mounts.
-        $this->resolveScopedModelProperties();
         abort_unless(static::canViewForRecord($this->ownerRecord, $this->pageClass ?? static::class), 403);
 
         $this->hasAuthorizedAccess = true;

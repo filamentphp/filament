@@ -47,15 +47,17 @@ To display a widget on a resource page, use the `getHeaderWidgets()` or `getFoot
 namespace App\Filament\Resources\Customers\Pages;
 
 use App\Filament\Resources\Customers\CustomerResource;
+use App\Filament\Resources\Customers\Widgets\CustomerOverview;
+use Filament\Resources\Pages\ListRecords;
 
 class ListCustomers extends ListRecords
 {
-    public static string $resource = CustomerResource::class;
+    protected static string $resource = CustomerResource::class;
 
     protected function getHeaderWidgets(): array
     {
         return [
-            CustomerResource\Widgets\CustomerOverview::class,
+            CustomerOverview::class,
         ];
     }
 }
@@ -76,7 +78,7 @@ public ?Model $record = null;
 ```
 
 <Aside variant="warning">
-    On every Livewire request, Filament re-queries `$record` and `$parentRecord` using their global scopes. It does not use the resource query or run a policy for either record. The widget's `canView()` method only controls access to the widget. Check any other record access rules yourself. Filament does not re-query other model properties that you add to the widget. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+    Filament leaves widget model properties, including `$record` and `$parentRecord`, to Livewire's native restoration. It does not reapply global scopes, the resource query, or a policy for those records. A request to the widget does not reauthorize the parent page. The widget's `canView()` method controls access to the widget, not its records. Query and authorize records before using them, including any tenant or ownership restrictions. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
 </Aside>
 
 ## Accessing page table data in the widget
@@ -131,7 +133,11 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 Stat::make('Total Products', $this->getPageTableRecords()->count()),
 ```
 
-## Accessing the total table records count
+<Aside variant="warning">
+    `InteractsWithPageTable` uses the page's table query, not each record's `view()` policy. Add query restrictions for records that must not be included in the widget's data. For nested resources, parent binding and ancestor resource access checks do not replace parent-record policy checks. This trait also does not protect other uses of model properties on your widget. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for the binding rules and your authorization responsibilities.
+</Aside>
+
+### Accessing the total table records count
 
 If you need the total count of all records for the table query without executing an additional count query, you can use the `$tableRecordsCount` property:
 
@@ -146,10 +152,12 @@ Stat::make('Total Products', $this->tableRecordsCount),
 When registering a widget on a resource page, you can use the `make()` method to pass an array of [Livewire properties](https://livewire.laravel.com/docs/properties) to it:
 
 ```php
+use App\Filament\Resources\Customers\Widgets\CustomerOverview;
+
 protected function getHeaderWidgets(): array
 {
     return [
-        CustomerResource\Widgets\CustomerOverview::make([
+        CustomerOverview::make([
             'status' => 'active',
         ]),
     ];

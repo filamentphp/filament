@@ -22,6 +22,8 @@ FileUpload::make('attachment')
 </Aside>
 
 <Aside variant="danger">
+    Restrict [accepted file types](#file-type-validation) using `acceptedFileTypes()` or `image()`, and configure your web server so uploaded files cannot execute as code.
+
     By default, `FileUpload` accepts any string path within the configured disk — the field value is a client-controlled string and a tampered request can submit any other file on the same disk. If the disk holds files for more than one user, tenant, or record, call [`preventFilePathTampering()`](#authorizing-existing-file-paths) on the field, or use a dedicated disk containing only files that the current user may access. Setting `directory()` only changes where new uploads are stored; it does not restrict which existing paths can be submitted.
 </Aside>
 
@@ -47,7 +49,7 @@ FileUpload::make('attachment')
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `disk()`, `directory()` and `visibility()` methods accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters. </UtilityInjection>
 
 <Aside variant="warning">
-    The default visibility is decided by a literal string match against the disk name: a disk literally named `public` is treated as publicly visible, and any other disk name defaults to `private`. A custom disk that happens to be named `public` will therefore be treated as public even if its underlying configuration is private, and a custom publicly-visible disk under a different name will default to private. To avoid confusion, either give custom disks unambiguous names or set `visibility()` explicitly on each field.
+    The default visibility depends on the disk's name, not its filesystem configuration: a disk named `public` defaults to public visibility, and other disks default to private. Set `visibility()` explicitly when using a custom disk whose name does not reflect its intended visibility.
 </Aside>
 
 <Aside variant="info">
@@ -119,13 +121,13 @@ By default, a random file name will be generated for newly-uploaded files. This 
 
 ### Security implications of controlling file names
 
-Before using the `preserveFilenames()` or `getUploadedFileNameForStorageUsing()` methods, please be aware of the security implications. If you allow users to upload files with their own file names, there are ways that they can exploit this to upload malicious files. **This applies even if you use the [`acceptedFileTypes()`](#file-type-validation) method** to restrict the types of files that can be uploaded, since it uses Laravel's `mimetypes` rule which does not validate the extension of the file, only its mime type, which could be manipulated.
+Before using `preserveFilenames()` or `getUploadedFileNameForStorageUsing()`, consider the risk of storing user-controlled file names. [`acceptedFileTypes()`](#file-type-validation) uses Laravel's `mimetypes` rule to validate the detected MIME type. Laravel also blocks common PHP file extensions, but this is not a general allowlist of safe file extensions or a substitute for secure web server configuration.
 
-This is specifically an issue with the `getClientOriginalName()` method on the `TemporaryUploadedFile` object, which the `preserveFilenames()` method uses. By default, Filament uses Laravel's `hashName()` method to generate a random file name and determine the file extension from the file's mime type.
+By default, Filament uses Laravel's `hashName()` to generate a random name with an extension based on the detected MIME type. `preserveFilenames()` uses the client-supplied name instead.
 
-Using these methods **with the `local` or `public` filesystem disks** will make your app vulnerable to remote code execution if the attacker uploads a PHP file with a deceptive mime type. **Using an S3 disk protects you from this specific attack vector**, as S3 will not execute PHP files in the same way that your server might when serving files from local storage.
+If you serve uploaded files from a `local` or `public` disk, configure the web server so it cannot execute them as code. Executable uploads can otherwise lead to remote code execution, depending on the file validation, naming callback, and server configuration. S3 does not execute PHP files, which avoids this specific attack vector; it does not replace file validation or access controls.
 
-If you are using the `local` or `public` disk, you should consider using the [`storeFileNamesIn()` method](#storing-original-file-names-independently) to store the original file names in a separate column in your database, and keep the randomly generated file names in the file system. This way, you can still display the original file names to users, while keeping the file system secure.
+To display original names without using them as storage paths, use [`storeFileNamesIn()`](#storing-original-file-names-independently) and keep the randomly generated names on disk.
 
 On top of this security issue, you should also be aware that allowing users to upload files with their own file names can lead to conflicts with existing files, and can make it difficult to manage your storage. Users could upload files with the same name and overwrite the other's content if you do not scope them to a specific directory, so these features should in all cases only be accessible to trusted users.
 
@@ -242,7 +244,7 @@ The callback receives the path exactly as submitted by the client. Use exact tru
 
 <UtilityInjection set="formFields" version="4.x" extras="File;;string;;$file;;The submitted file path being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
 
-The validation error message can be customized via [`validationMessages()`](validation#customizing-validation-messages) using the `tampered` key:
+The validation error message can be customized via [`validationMessages()`](validation#validation-messages) using the `tampered` key:
 
 ```php
 use Filament\Forms\Components\FileUpload;

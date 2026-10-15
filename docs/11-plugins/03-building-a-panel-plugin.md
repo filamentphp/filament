@@ -3,15 +3,15 @@ title: Build a panel plugin
 ---
 import Aside from "@components/Aside.astro"
 
+## Introduction
+
+In this walkthrough, you'll build a plugin that adds a clock widget to a panel.
+
+You can find the original plugin at [awcodes/clock-widget](https://github.com/awcodes/clock-widget). The examples below use Filament 4 APIs.
+
 ## Preface
 
 Please read the docs on [panel plugin development](../plugins/panel-plugins) and the [getting started guide](getting-started) before continuing.
-
-## Introduction
-
-In this walkthrough, we'll build a simple plugin that adds a new form field that can be used in forms. This also means it will be available to users in their panels.
-
-You can find the final code for this plugin at [https://github.com/awcodes/clock-widget](https://github.com/awcodes/clock-widget).
 
 ## Step 1: Create the plugin
 
@@ -37,24 +37,7 @@ Since Filament recommends that users style their plugins with a custom filament 
 1. `resources/css`
 2. `postcss.config.js`
 
-Now we can clean up our `composer.json` file to remove unneeded options.
-
-```json
-"autoload": {
-    "psr-4": {
-        // We can remove the database factories
-        "Awcodes\\ClockWidget\\Database\\Factories\\": "database/factories/"
-    }
-},
-"extra": {
-    "laravel": {
-        // We can remove the facade
-        "aliases": {
-            "ClockWidget": "Awcodes\\ClockWidget\\Facades\\ClockWidget"
-        }
-    }
-},
-```
+Remove the database factory autoload mapping and facade alias from `composer.json`. Keep the `Awcodes\ClockWidget\` mapping for `src/` and the service provider registration under `extra.laravel.providers`.
 
 The last step is to update the `package.json` file to remove unneeded options. Replace the contents of `package.json` with the following.
 
@@ -85,12 +68,14 @@ You may also remove the Testing directories and files, but we'll leave them in f
 Now that we have our plugin cleaned up, we can start adding our code. The boilerplate in the `src/ClockWidgetServiceProvider.php` file has a lot going on so, let's delete everything and start from scratch.
 
 <Aside variant="info">
-    In this example, we will be registering an [async Alpine component](../advanced/assets#asynchronous-alpinejs-components). Since these assets are only loaded on request, we can register them as normal in the `packageBooted()` method. If you are registering assets, like CSS or JS files, that get loaded on every page regardless of if they are used or not, you should register them in the `register()` method of the `Plugin` configuration object, using [`$panel->assets()`](../panel-configuration#registering-assets-for-a-panel). Otherwise, if you register them in the `packageBooted()` method, they will be loaded in every panel, regardless of whether or not the plugin has been registered for that panel.
+    Register this [asynchronous Alpine component](../advanced/assets#asynchronous-alpine-js-components) in `packageBooted()`, since it only loads where the widget is used. For assets that should load on every page of a particular panel, use [`$panel->assets()`](../panel-configuration#registering-assets-for-a-panel) in a plugin object's `register()` method instead. Registering those assets globally would load them in panels that do not use your plugin.
 </Aside>
 
 We need to be able to register our Widget with the panel and load our Alpine component when the widget is used. To do this, we'll need to add the following to the `packageBooted` method in our service provider. This will register our widget component with Livewire and our Alpine component with the Filament Asset Manager.
 
 ```php
+namespace Awcodes\ClockWidget;
+
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Facades\FilamentAsset;
 use Livewire\Livewire;
@@ -128,17 +113,19 @@ class ClockWidgetServiceProvider extends PackageServiceProvider
 Now we can create our widget. We'll first need to extend Filament's `Widget` class in our `ClockWidget.php` file and tell it where to find the view for the widget. Since we are using the PackageServiceProvider to register our views, we can use the `::` syntax to tell Filament where to find the view.
 
 ```php
+namespace Awcodes\ClockWidget;
+
 use Filament\Widgets\Widget;
 
 class ClockWidget extends Widget
 {
-    protected static string $view = 'clock-widget::widget';
+    protected string $view = 'clock-widget::widget';
 }
 ```
 
 Next, we'll need to create the view for our widget. Create a new file at `resources/views/widget.blade.php` and add the following code. We'll make use of Filament's Blade components to save time on writing the HTML for the widget.
 
-We are using async Alpine to load our Alpine component, so we'll need to add the `x-load` attribute to the div to tell Alpine to load our component. You can learn more about this in the [Core Concepts](../advanced/assets#asynchronous-alpinejs-components) section of the docs.
+Use `x-load` and `x-load-src` to load the Alpine component when the widget is rendered. See [asynchronous Alpine.js components](../advanced/assets#asynchronous-alpine-js-components) for more information.
 
 ```blade
 <x-filament-widgets::widget>
@@ -166,16 +153,20 @@ Next, we need to write our Alpine component in `src/js/index.js`. And build our 
 export default function clockWidget() {
     return {
         time: new Date().toLocaleTimeString(),
+        interval: null,
         init() {
-            setInterval(() => {
+            this.interval = setInterval(() => {
                 this.time = new Date().toLocaleTimeString();
             }, 1000);
-        }
+        },
+        destroy() {
+            clearInterval(this.interval);
+        },
     }
 }
 ```
 
-We should also add translations for the text in the widget so users can translate the widget into their language. We'll add the translations to `resources/lang/en/widget.php`.
+Add translations for the widget text in `resources/lang/en/clock-widget.php`:
 
 ```php
 return [
@@ -191,13 +182,14 @@ You'll want to update your `README.md` file to include instructions on how to in
 ```php
 // Register the plugin and/or Widget in your Panel provider:
 
-use Awcodes\ClockWidget\ClockWidgetWidget;
+use Awcodes\ClockWidget\ClockWidget;
+use Filament\Panel;
 
 public function panel(Panel $panel): Panel
 {
     return $panel
         ->widgets([
-            ClockWidgetWidget::class,
+            ClockWidget::class,
         ]);
 }
 ```

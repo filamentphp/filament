@@ -361,7 +361,7 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
 
             <section
                 x-data="{
-                    isCollapsed: <?php if ($shouldPersistCollapsed) { ?>$persist(<?= Js::from($isCollapsed) ?>).as(`section-${<?= Js::from($collapseId) ?> ?? $el.id}-isCollapsed`)<?php } else { ?><?= Js::from($isCollapsed) ?><?php } ?>,
+                    isCollapsed: <?php if ($shouldPersistCollapsed) { ?>$persist(<?= Js::from($isCollapsed) ?>).as(`filament:section:collapsed:${<?= Js::from($collapseId) ?> ?? $el.id}`)<?php } else { ?><?= Js::from($isCollapsed) ?><?php } ?>,
                 }"
                 <?php if ($collapsible) { ?>
                     x-on:collapse-section.window="if ($event.detail.id == (<?= Js::from($collapseId) ?> ?? $el.id)) isCollapsed = true"
@@ -425,7 +425,6 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
                                 $collapseButtonAttributes = (new FilamentComponentAttributeBag)
                                     ->merge([
                                         'type' => 'button',
-                                        'wire:loading.attr' => 'disabled',
                                         'x-on:click.stop' => 'isCollapsed = ! isCollapsed',
                                         // The button only contains a decorative chevron, so give it an accessible
                                         // name. Static values cover the pre-Alpine/no-JS render; `x-bind` keeps the

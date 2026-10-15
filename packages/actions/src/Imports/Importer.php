@@ -78,6 +78,10 @@ abstract class Importer
         $this->originalData = $this->data = $data;
         $this->record = null;
 
+        foreach ($this->getCachedColumns() as $column) {
+            $column->clearResolvedRelatedRecords();
+        }
+
         $this->remapData();
         $this->castData();
 
@@ -366,7 +370,8 @@ abstract class Importer
     public function getJobMiddleware(): array
     {
         return [
-            (new WithoutOverlapping("import{$this->import->getKey()}"))->expireAfter(600),
+            (new WithoutOverlapping("import{$this->import->getKey()}"))->expireAfter(600), // Legacy
+            (new WithoutOverlapping("filament:imports:{$this->import->getKey()}"))->expireAfter(600),
         ];
     }
 

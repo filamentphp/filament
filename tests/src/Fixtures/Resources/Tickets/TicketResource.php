@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\CreateTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
+use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicketWithContentTabs;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\ListTickets;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\ManageTicketDepartments;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\ViewTicket;
@@ -42,9 +43,7 @@ class TicketResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
@@ -55,6 +54,7 @@ class TicketResource extends Resource
             'view' => ViewTicket::route('/{record}'),
             'edit' => EditTicket::route('/{record}/edit'),
             'departments' => ManageTicketDepartments::route('/{record}/departments'),
+            'content-tabs' => EditTicketWithContentTabs::route('/{record}/content-tabs'),
         ];
     }
 

@@ -7,6 +7,9 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\TextSize;
+use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Livewire\Component;
 
@@ -68,6 +71,18 @@ it('can set `defaultImageUrl()`', function (): void {
 it('returns `null` for `getDefaultImageUrl()` by default', function (): void {
     $entry = ImageEntry::make('image');
     expect($entry->getDefaultImageUrl())->toBeNull();
+});
+
+it('injects a singular `$relatedRecord` into `defaultImageUrl()` when relationship state is blank', function (): void {
+    $author = User::factory()->create(['json' => ['image' => null]]);
+    $post = Post::factory()->create(['author_id' => $author->getKey()]);
+
+    $html = ImageEntry::make('author.json.image')
+        ->defaultImageUrl(static fn (mixed $state, User $relatedRecord): string => "https://example.com/{$relatedRecord->getKey()}.jpg")
+        ->container(Schema::make(Livewire::make())->record($post))
+        ->toHtml();
+
+    expect($html)->toContain("https://example.com/{$author->getKey()}.jpg");
 });
 
 it('can set `limit()`', function (): void {
@@ -223,6 +238,24 @@ it('can set `overlap()` with a `Closure`', function (): void {
 
 it('can set `checkFileExistence()` with a `Closure`', function (): void {
     expect(ImageEntry::make('photo')->checkFileExistence(static fn (): bool => false)->shouldCheckFileExistence())->toBeFalse();
+});
+
+it('injects `$state` and `$relatedRecord` into per-item image configuration', function (): void {
+    $state = 'avatar.jpg';
+    $relatedRecord = new User(['email' => 'user@example.com']);
+
+    $entry = ImageEntry::make('avatar')
+        ->disk(static fn (string $state, User $relatedRecord): string => (($state === 'avatar.jpg') && ($relatedRecord->email === 'user@example.com')) ? 's3' : 'public')
+        ->visibility(static fn (string $state, User $relatedRecord): string => (($state === 'avatar.jpg') && ($relatedRecord->email === 'user@example.com')) ? 'private' : 'public')
+        ->defaultImageUrl(static fn (string $state, User $relatedRecord): string => "https://example.com/{$relatedRecord->email}/{$state}")
+        ->extraImgAttributes(static fn (string $state, User $relatedRecord): array => ['data-image' => "{$relatedRecord->email}:{$state}"])
+        ->checkFileExistence(static fn (string $state, User $relatedRecord): bool => ($state !== 'avatar.jpg') || ($relatedRecord->email !== 'user@example.com'));
+
+    expect($entry->getDiskName($state, $relatedRecord))->toBe('s3')
+        ->and($entry->getCustomVisibility($state, $relatedRecord))->toBe('private')
+        ->and($entry->getDefaultImageUrl($state, $relatedRecord))->toBe('https://example.com/user@example.com/avatar.jpg')
+        ->and($entry->getExtraImgAttributes($state, $relatedRecord))->toBe(['data-image' => 'user@example.com:avatar.jpg'])
+        ->and($entry->shouldCheckFileExistence($state, $relatedRecord))->toBeFalse();
 });
 
 it('defaults `isStacked()` to `false`', function (): void {

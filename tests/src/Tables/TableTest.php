@@ -7,19 +7,25 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Facades\FilamentView;
 use Filament\Tables;
+use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Filament\Tables\View\TablesRenderHook;
+use Filament\Tests\Fixtures\Livewire\TicketDepartmentsReorderableTable;
+use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Pages\TableRenderHooksBrowserTest;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -53,6 +59,43 @@ describe('defer loading', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
 
         expect($table->isLoadingDeferred())->toBeFalse();
+    });
+});
+
+describe('loading skeleton', function (): void {
+    it('defaults `hasLoadingSkeleton()` to `false`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        expect($table->hasLoadingSkeleton())->toBeFalse();
+    });
+
+    it('can set and evaluate `loadingSkeleton()`', function (): void {
+        $table = livewire(LoadingSkeletonTableTestComponent::class)->instance()->getTable();
+
+        expect($table->hasLoadingSkeleton())
+            ->toBeTrue()
+            ->and($table->loadingSkeleton(static fn (): bool => false)->hasLoadingSkeleton())
+            ->toBeFalse();
+    });
+
+    it('can configure `loadingSkeleton()` globally', function (): void {
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->loadingSkeleton(),
+            function (): void {
+                $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+                expect($table->hasLoadingSkeleton())->toBeTrue();
+            },
+        );
+    });
+
+    it('targets direct property updates and methods that change the displayed records', function (): void {
+        expect(Table::LOADING_TARGETS)
+            ->toContain('activeTab')
+            ->toContain('resetTableColumnSearch')
+            ->toContain('resetTableSearch')
+            ->toContain('tableSort')
+            ->toContain('setPage');
     });
 });
 
@@ -164,7 +207,7 @@ describe('headings', function (): void {
         expect($table->getRootHeadingLevel())->toBe(3);
     });
 
-    it('computes heading tag from level', function (): void {
+    it('computes `getHeadingTag()` from the heading level', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
 
         expect($table->getHeadingTag())->toBe('h2');
@@ -202,6 +245,195 @@ describe('content grid', function (): void {
     });
 });
 
+describe('sorting', function (): void {
+    it('ignores a persisted sort on a toggled-hidden column until it is shown again', function (string $sortColumn): void {
+        $firstUser = User::factory()->create(['name' => 'Charlie', 'email' => 'bravo@example.com']);
+        $secondUser = User::factory()->create(['name' => 'Alpha', 'email' => 'charlie@example.com']);
+        $thirdUser = User::factory()->create(['name' => 'Bravo', 'email' => 'alpha@example.com']);
+
+        Post::factory()->count(2)->for($firstUser, 'author')->create();
+        Post::factory()->for($thirdUser, 'author')->create();
+
+        $component = livewire(ToggleableSortableTableTestComponent::class)
+            ->sortTable($sortColumn)
+            ->assertCanSeeTableRecords([$secondUser, $thirdUser, $firstUser], inOrder: true);
+
+        $tableColumns = array_map(static function (array $column) use ($sortColumn): array {
+            if ($column['name'] === $sortColumn) {
+                $column['isToggled'] = false;
+            }
+
+            return $column;
+        }, $component->get('tableColumns'));
+
+        $component
+            ->call('applyTableColumnManager', $tableColumns)
+            ->assertCanSeeTableRecords([$thirdUser, $firstUser, $secondUser], inOrder: true);
+
+        livewire(ToggleableSortableTableTestComponent::class)
+            ->assertSet('tableSort', "{$sortColumn}:asc")
+            ->assertCanSeeTableRecords([$thirdUser, $firstUser, $secondUser], inOrder: true)
+            ->call('resetTableColumnManager')
+            ->assertCanSeeTableRecords([$secondUser, $thirdUser, $firstUser], inOrder: true);
+    })->with(['name', 'posts_count']);
+
+    it('ignores a persisted custom-data sort on a toggled-hidden column until it is shown again', function (bool $usesSortTuple): void {
+        $component = livewire(ToggleableSortableCustomDataTableTestComponent::class, ['usesSortTuple' => $usesSortTuple])
+            ->sortTable('title', 'desc')
+            ->assertCanSeeTableRecords([2, 1, 3], inOrder: true);
+
+        $tableColumns = $component->get('tableColumns');
+        $tableColumns[0]['isToggled'] = false;
+
+        $component
+            ->call('applyTableColumnManager', $tableColumns)
+            ->assertCanSeeTableRecords([1, 2, 3], inOrder: true);
+
+        livewire(ToggleableSortableCustomDataTableTestComponent::class, ['usesSortTuple' => $usesSortTuple])
+            ->assertSet('tableSort', 'title:desc')
+            ->assertCanSeeTableRecords([1, 2, 3], inOrder: true)
+            ->call('resetTableColumnManager')
+            ->assertCanSeeTableRecords([2, 1, 3], inOrder: true);
+    })->with([
+        'separate `$sortColumn` and `$sortDirection` injections' => [false],
+        'combined `$sort` injection' => [true],
+    ]);
+
+    it('preserves selected mapped sorting for a toggled-hidden `defaultSort()` column', function (): void {
+        $firstPost = Post::factory()->create(['title' => 'Charlie']);
+        $secondPost = Post::factory()->create(['title' => 'Alpha']);
+
+        livewire(MappedDefaultSortTableTestComponent::class)
+            ->assertCanSeeTableRecords([$secondPost, $firstPost], inOrder: true)
+            ->set('tableSort', 'display_title:desc')
+            ->assertCanSeeTableRecords([$firstPost, $secondPost], inOrder: true);
+    });
+
+    it('applies `defaultSort()` to a toggled-hidden aggregate column', function (bool $usesDefaultSortClosure, string $direction): void {
+        $firstUser = User::factory()->create(['name' => 'Charlie']);
+        $secondUser = User::factory()->create(['name' => 'Alpha']);
+        $thirdUser = User::factory()->create(['name' => 'Bravo']);
+
+        Post::factory()->count(2)->for($firstUser, 'author')->create();
+        Post::factory()->for($thirdUser, 'author')->create();
+
+        $expectedUsers = $direction === 'desc'
+            ? [$firstUser, $thirdUser, $secondUser]
+            : [$secondUser, $thirdUser, $firstUser];
+
+        $component = livewire(ToggleableSortableTableTestComponent::class, [
+            'defaultSortColumn' => 'posts_count',
+            'defaultSortDirection' => $direction,
+            'usesDefaultSortClosure' => $usesDefaultSortClosure,
+        ]);
+
+        $tableColumns = $component->get('tableColumns');
+        $tableColumns[1]['isToggled'] = false;
+
+        $component
+            ->call('applyTableColumnManager', $tableColumns)
+            ->assertCanSeeTableRecords($expectedUsers, inOrder: true);
+    })->with([
+        'string ascending' => [false, 'asc'],
+        'string descending' => [false, 'desc'],
+        'Closure ascending' => [true, 'asc'],
+        'Closure descending' => [true, 'desc'],
+    ]);
+
+    it('preserves the selected direction when a `defaultSort()` aggregate column is toggled off', function (string $direction): void {
+        $firstUser = User::factory()->create(['name' => 'Charlie']);
+        $secondUser = User::factory()->create(['name' => 'Alpha']);
+        $thirdUser = User::factory()->create(['name' => 'Bravo']);
+
+        Post::factory()->count(2)->for($firstUser, 'author')->create();
+        Post::factory()->for($thirdUser, 'author')->create();
+
+        $expectedUsers = $direction === 'desc'
+            ? [$firstUser, $thirdUser, $secondUser]
+            : [$secondUser, $thirdUser, $firstUser];
+
+        $component = livewire(ToggleableSortableTableTestComponent::class, [
+            'defaultSortColumn' => 'posts_count',
+        ])->sortTable('posts_count', $direction);
+
+        $tableColumns = $component->get('tableColumns');
+        $tableColumns[1]['isToggled'] = false;
+
+        $component
+            ->call('applyTableColumnManager', $tableColumns)
+            ->assertCanSeeTableRecords($expectedUsers, inOrder: true);
+    })->with(['asc', 'desc']);
+});
+
+describe('pagination', function (): void {
+    it('respects scoped bounds when selecting the current page with `allowDuplicates()`', function (bool $usesOffset): void {
+        $ticket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+        foreach ([3, 5, 7] as $quantity) {
+            $ticket->departments()->attach($department, ['quantity' => $quantity]);
+        }
+
+        $expectedQuantity = $usesOffset ? 5 : 3;
+        $expectedKey = DB::table('department_ticket')->where('quantity', $expectedQuantity)->value('id');
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table
+                ->paginationPageOptions([10])
+                ->defaultSort('department_ticket.id')
+                ->selectCurrentPageOnly()
+                ->modifyQueryUsing(static fn (Builder $query): Builder => $query->withGlobalScope(
+                    'selectionBounds',
+                    static fn (Builder $query): Builder => $query->limit(1)->offset($usesOffset ? 1 : 0),
+                )),
+            during: function () use ($ticket, $expectedQuantity, $expectedKey): void {
+                $component = livewire(TicketDepartmentsReorderableTable::class, [
+                    'ticketKey' => $ticket->getKey(),
+                    'duplicates' => true,
+                    'isPaginated' => true,
+                ]);
+
+                expect($component->instance()->getTableRecords()->pluck('quantity')->all())->toBe([$expectedQuantity]);
+                expect($component->instance()->getAllSelectableTableRecordKeys())->toBe([(string) $expectedKey]);
+            },
+        );
+    })->with([false, true]);
+
+    it('uses pivot keys when selecting records across cursor pages with `allowDuplicates()`', function (bool $sortsByPivotKey): void {
+        $ticket = Ticket::factory()->create();
+        $otherTicket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+        $otherTicket->departments()->attach($department);
+        $otherTicket->departments()->attach($department);
+        foreach ([3, 5, 7] as $quantity) {
+            $ticket->departments()->attach($department, ['quantity' => $quantity]);
+        }
+
+        $expectedKey = DB::table('department_ticket')->where('quantity', 5)->value('id');
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table
+                ->paginationPageOptions([1])
+                ->paginationMode(PaginationMode::Cursor)
+                ->selectCurrentPageOnly()
+                ->defaultSort($sortsByPivotKey ? 'department_ticket.id' : null),
+            during: function () use ($ticket, $expectedKey): void {
+                $component = livewire(TicketDepartmentsReorderableTable::class, [
+                    'ticketKey' => $ticket->getKey(),
+                    'duplicates' => true,
+                    'isPaginated' => true,
+                ]);
+                $records = $component->instance()->getTableRecords();
+                expect($records->pluck('quantity')->all())->toBe([3]);
+
+                $component->call('setPage', $records->nextCursor()->encode(), $component->instance()->getTablePaginationPageName());
+
+                expect($component->instance()->getTableRecords()->pluck('quantity')->all())->toBe([5]);
+                expect($component->instance()->getAllSelectableTableRecordKeys())->toBe([(string) $expectedKey]);
+            },
+        );
+    })->with([false, true]);
+});
+
 describe('session persistence', function (): void {
     it('can toggle all session persistence with `persistInSession()`', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
@@ -229,37 +461,37 @@ describe('session persistence', function (): void {
             ->and($table->persistsRecordsPerPageInSession())->toBeTrue();
     });
 
-    it('uses the identifier for every table session key while preserving default keys and tenant-scoped filter keys', function (): void {
+    it('uses SHA-256 scopes and the identifier for every table session key while preserving tenant scoping', function (): void {
         /** @var PersistedTableTestComponent $defaultTable */
         $defaultTable = livewire(PersistedTableTestComponent::class)->instance();
         $defaultNamespace = $defaultTable::class;
 
-        expect($defaultTable->getTablePerPageSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_per_page')
-            ->and($defaultTable->getTableSearchSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_search')
-            ->and($defaultTable->getTableColumnSearchesSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_column_search')
-            ->and($defaultTable->getTableSortSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_sort')
-            ->and($defaultTable->getTableGroupingSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_grouping')
-            ->and($defaultTable->getTableFiltersSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_filters')
-            ->and($defaultTable->getTableColumnsSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_columns')
-            ->and($defaultTable->getHasReorderedTableColumnsSessionKey())->toBe('tables.' . md5($defaultNamespace) . '_has_reordered_columns');
+        expect($defaultTable->getTablePerPageSessionKey())->toBe('filament.tables.' . hash('sha256', $defaultNamespace) . '.per_page')
+            ->and($defaultTable->getTableSearchSessionKey())->toBe('filament.tables.' . hash('sha256', $defaultNamespace) . '.search')
+            ->and($defaultTable->getTableColumnSearchesSessionKey())->toBe('filament.tables.' . hash('sha256', $defaultNamespace) . '.column_search')
+            ->and($defaultTable->getTableSortSessionKey())->toBe('filament.tables.' . hash('sha256', $defaultNamespace) . '.sort')
+            ->and($defaultTable->getTableGroupingSessionKey())->toBe('filament.tables.' . hash('sha256', $defaultNamespace) . '.grouping')
+            ->and($defaultTable->getTableFiltersSessionKey())->toBe('filament.tables.' . hash('sha256', $defaultNamespace) . '.filters')
+            ->and($defaultTable->getTableColumnsSessionKey())->toBe('filament.tables.' . hash('sha256', $defaultNamespace) . '.columns')
+            ->and($defaultTable->getHasReorderedTableColumnsSessionKey())->toBe('filament.tables.' . hash('sha256', $defaultNamespace) . '.has_reordered_columns');
 
         /** @var QueryStringTableTestComponent $queryStringTable */
         $queryStringTable = livewire(QueryStringTableTestComponent::class)->instance();
 
-        expect($queryStringTable->getTableSearchSessionKey())->toBe('tables.' . md5($queryStringTable::class) . '_search');
+        expect($queryStringTable->getTableSearchSessionKey())->toBe('filament.tables.' . hash('sha256', $queryStringTable::class) . '.search');
 
         /** @var PersistedTableTestComponent $identifiedTable */
         $identifiedTable = livewire(PersistedTableTestComponent::class, ['tableIdentifier' => 'first'])->instance();
-        $identifiedNamespace = md5($identifiedTable::class) . '.' . md5('first');
+        $identifiedNamespace = hash('sha256', $identifiedTable::class) . '.' . hash('sha256', 'first');
 
-        expect($identifiedTable->getTablePerPageSessionKey())->toBe("tables.{$identifiedNamespace}_per_page")
-            ->and($identifiedTable->getTableSearchSessionKey())->toBe("tables.{$identifiedNamespace}_search")
-            ->and($identifiedTable->getTableColumnSearchesSessionKey())->toBe("tables.{$identifiedNamespace}_column_search")
-            ->and($identifiedTable->getTableSortSessionKey())->toBe("tables.{$identifiedNamespace}_sort")
-            ->and($identifiedTable->getTableGroupingSessionKey())->toBe("tables.{$identifiedNamespace}_grouping")
-            ->and($identifiedTable->getTableFiltersSessionKey())->toBe("tables.{$identifiedNamespace}_filters")
-            ->and($identifiedTable->getTableColumnsSessionKey())->toBe("tables.{$identifiedNamespace}_columns")
-            ->and($identifiedTable->getHasReorderedTableColumnsSessionKey())->toBe("tables.{$identifiedNamespace}_has_reordered_columns");
+        expect($identifiedTable->getTablePerPageSessionKey())->toBe("filament.tables.{$identifiedNamespace}.per_page")
+            ->and($identifiedTable->getTableSearchSessionKey())->toBe("filament.tables.{$identifiedNamespace}.search")
+            ->and($identifiedTable->getTableColumnSearchesSessionKey())->toBe("filament.tables.{$identifiedNamespace}.column_search")
+            ->and($identifiedTable->getTableSortSessionKey())->toBe("filament.tables.{$identifiedNamespace}.sort")
+            ->and($identifiedTable->getTableGroupingSessionKey())->toBe("filament.tables.{$identifiedNamespace}.grouping")
+            ->and($identifiedTable->getTableFiltersSessionKey())->toBe("filament.tables.{$identifiedNamespace}.filters")
+            ->and($identifiedTable->getTableColumnsSessionKey())->toBe("filament.tables.{$identifiedNamespace}.columns")
+            ->and($identifiedTable->getHasReorderedTableColumnsSessionKey())->toBe("filament.tables.{$identifiedNamespace}.has_reordered_columns");
 
         /** @var PersistedTableTestComponent $secondIdentifiedTable */
         $secondIdentifiedTable = livewire(PersistedTableTestComponent::class, ['tableIdentifier' => 'second'])->instance();
@@ -280,13 +512,16 @@ describe('session persistence', function (): void {
         /** @var PersistedTableTestComponent $secondTenantTable */
         $secondTenantTable = livewire(PersistedTableTestComponent::class, ['tableIdentifier' => 'first'])->instance();
 
-        expect($firstTenantFilterSessionKey)->toBe('tables.' . md5($defaultNamespace . "|{$firstTenant->getKey()}") . '.' . md5('first') . '_filters')
-            ->and($firstTenantSearchSessionKey)->toBe('tables.' . md5($defaultNamespace . "|{$firstTenant->getKey()}") . '.' . md5('first') . '_search')
-            ->and($firstTenantColumnSearchesSessionKey)->toBe('tables.' . md5($defaultNamespace . "|{$firstTenant->getKey()}") . '.' . md5('first') . '_column_search')
-            ->and($secondTenantTable->getTableFiltersSessionKey())->toBe('tables.' . md5($defaultNamespace . "|{$secondTenant->getKey()}") . '.' . md5('first') . '_filters')
-            ->and($secondTenantTable->getTableSearchSessionKey())->toBe('tables.' . md5($defaultNamespace . "|{$secondTenant->getKey()}") . '.' . md5('first') . '_search')
-            ->and($secondTenantTable->getTableColumnSearchesSessionKey())->toBe('tables.' . md5($defaultNamespace . "|{$secondTenant->getKey()}") . '.' . md5('first') . '_column_search')
-            ->and($secondTenantTable->getTableSortSessionKey())->toBe("tables.{$identifiedNamespace}_sort");
+        $firstTenantNamespace = strlen($defaultNamespace) . ':' . $defaultNamespace . strlen((string) $firstTenant->getKey()) . ':' . $firstTenant->getKey();
+        $secondTenantNamespace = strlen($defaultNamespace) . ':' . $defaultNamespace . strlen((string) $secondTenant->getKey()) . ':' . $secondTenant->getKey();
+
+        expect($firstTenantFilterSessionKey)->toBe('filament.tables.' . hash('sha256', $firstTenantNamespace) . '.' . hash('sha256', 'first') . '.filters')
+            ->and($firstTenantSearchSessionKey)->toBe('filament.tables.' . hash('sha256', $firstTenantNamespace) . '.' . hash('sha256', 'first') . '.search')
+            ->and($firstTenantColumnSearchesSessionKey)->toBe('filament.tables.' . hash('sha256', $firstTenantNamespace) . '.' . hash('sha256', 'first') . '.column_search')
+            ->and($secondTenantTable->getTableFiltersSessionKey())->toBe('filament.tables.' . hash('sha256', $secondTenantNamespace) . '.' . hash('sha256', 'first') . '.filters')
+            ->and($secondTenantTable->getTableSearchSessionKey())->toBe('filament.tables.' . hash('sha256', $secondTenantNamespace) . '.' . hash('sha256', 'first') . '.search')
+            ->and($secondTenantTable->getTableColumnSearchesSessionKey())->toBe('filament.tables.' . hash('sha256', $secondTenantNamespace) . '.' . hash('sha256', 'first') . '.column_search')
+            ->and($secondTenantTable->getTableSortSessionKey())->toBe("filament.tables.{$identifiedNamespace}.sort");
 
         Filament::setTenant(null);
     });
@@ -346,7 +581,7 @@ describe('session persistence', function (): void {
             ->assertSet('tableColumns', fn (array $columns): bool => $columns !== $reorderedColumns);
     });
 
-    it('restores every persisted feature from the existing default session keys', function (): void {
+    it('restores every persisted feature from the default session keys', function (): void {
         Post::factory()->count(3)->create();
 
         $defaultTable = livewire(PersistedTableTestComponent::class);
@@ -354,20 +589,20 @@ describe('session persistence', function (): void {
         $namespace = PersistedTableTestComponent::class;
 
         session()->put([
-            'tables.' . md5($namespace) . '_per_page' => 5,
-            'tables.' . md5($namespace) . '_search' => 'legacy search',
-            'tables.' . md5($namespace) . '_column_search' => ['title' => 'legacy column search'],
-            'tables.' . md5($namespace) . '_sort' => 'title:desc',
-            'tables.' . md5($namespace) . '_grouping' => 'title:desc',
-            'tables.' . md5($namespace) . '_filters' => ['is_published' => ['isActive' => true]],
-            'tables.' . md5($namespace) . '_columns' => $reorderedColumns,
-            'tables.' . md5($namespace) . '_has_reordered_columns' => true,
+            'filament.tables.' . hash('sha256', $namespace) . '.per_page' => 5,
+            'filament.tables.' . hash('sha256', $namespace) . '.search' => 'saved search',
+            'filament.tables.' . hash('sha256', $namespace) . '.column_search' => ['title' => 'saved column search'],
+            'filament.tables.' . hash('sha256', $namespace) . '.sort' => 'title:desc',
+            'filament.tables.' . hash('sha256', $namespace) . '.grouping' => 'title:desc',
+            'filament.tables.' . hash('sha256', $namespace) . '.filters' => ['is_published' => ['isActive' => true]],
+            'filament.tables.' . hash('sha256', $namespace) . '.columns' => $reorderedColumns,
+            'filament.tables.' . hash('sha256', $namespace) . '.has_reordered_columns' => true,
         ]);
 
         livewire(PersistedTableTestComponent::class)
             ->assertSet('tableRecordsPerPage', 5)
-            ->assertSet('tableSearch', 'legacy search')
-            ->assertSet('tableColumnSearches.title', 'legacy column search')
+            ->assertSet('tableSearch', 'saved search')
+            ->assertSet('tableColumnSearches.title', 'saved column search')
             ->assertSet('tableSort', 'title:desc')
             ->assertSet('tableGrouping', 'title:desc')
             ->assertSet('tableFilters.is_published.isActive', true)
@@ -429,8 +664,8 @@ describe('session persistence', function (): void {
         $namespace = PersistedTableTestComponent::class;
 
         session()->put([
-            'tables.' . md5($namespace) . '_search' => 'legacy search',
-            'tables.' . md5($namespace) . '_column_search' => ['title' => 'legacy column search'],
+            'filament.tables.' . hash('sha256', $namespace) . '.search' => 'saved search',
+            'filament.tables.' . hash('sha256', $namespace) . '.column_search' => ['title' => 'saved column search'],
         ]);
 
         Filament::setTenant(Team::factory()->create(), isQuiet: true);
@@ -440,8 +675,8 @@ describe('session persistence', function (): void {
 
         Filament::setTenant(null);
         livewire(PersistedTableTestComponent::class)
-            ->assertSet('tableSearch', 'legacy search')
-            ->assertSet('tableColumnSearches.title', 'legacy column search');
+            ->assertSet('tableSearch', 'saved search')
+            ->assertSet('tableColumnSearches.title', 'saved column search');
     });
 
     it('keeps tenant and identifier dimensions unambiguous when persisting filters', function (): void {
@@ -507,6 +742,69 @@ describe('rendering', function (): void {
     it('can render a table with custom empty state', function (): void {
         livewire(EmptyStateTableTestComponent::class)
             ->assertSuccessful();
+    });
+
+    it('renders a delayed loading state for updates that change the displayed records', function (): void {
+        Post::factory()->create();
+
+        $html = livewire(TableTestComponent::class)
+            ->assertSuccessful()
+            ->html();
+
+        expect($html)
+            ->toContain('data-testid="table-loading-state"')
+            ->toContain('wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') . '.block')
+            ->not->toContain('wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') . '="fi-ta-content-loading"')
+            ->not->toContain('wire:loading.attr.delay.' . config('filament.livewire_loading_delay', 'default') . '="inert"')
+            ->toContain('wire:target="' . implode(',', Table::LOADING_TARGETS) . '"')
+            ->and(strpos($html, 'data-testid="table-loading-state"'))
+            ->toBeLessThan(strpos($html, 'class="fi-ta-table"'));
+    });
+
+    it('renders a delayed loading skeleton when enabled', function (): void {
+        Post::factory()->create();
+
+        $html = livewire(LoadingSkeletonTableTestComponent::class)
+            ->assertSuccessful()
+            ->html();
+
+        expect($html)
+            ->toContain('wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') . '="fi-ta-content-loading"');
+        expect($html)
+            ->toContain('wire:loading.attr.delay.' . config('filament.livewire_loading_delay', 'default') . '="inert"');
+    });
+
+    it('preserves the header sort loading indicator when the loading skeleton is disabled', function (): void {
+        Post::factory()->create();
+
+        $html = livewire(SortableTableTestComponent::class)
+            ->assertSuccessful()
+            ->html();
+
+        expect(substr_count($html, 'wire:target="sortTable(\'title\')"'))->toBe(3);
+    });
+
+    it('preserves the header sort loading indicator when the loading skeleton is enabled', function (): void {
+        Post::factory()->create();
+
+        $html = livewire(LoadingSkeletonSortableTableTestComponent::class)
+            ->assertSuccessful()
+            ->html();
+
+        expect(substr_count($html, 'wire:target="sortTable(\'title\')"'))->toBe(3);
+    });
+
+    it('replaces the empty state icon with a loading indicator during updates that change the displayed records', function (): void {
+        $html = livewire(EmptyStateTableTestComponent::class)
+            ->assertSuccessful()
+            ->html();
+
+        expect($html)
+            ->toContain('wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default'))
+            ->toContain('wire:loading.delay.' . config('filament.livewire_loading_delay', 'default'))
+            ->toContain('wire:target="' . implode(',', Table::LOADING_TARGETS) . '"')
+            ->toContain('fi-loading-indicator')
+            ->not->toContain('wire:loading.class.delay.' . config('filament.livewire_loading_delay', 'default') . '="fi-ta-content-loading"');
     });
 
     it('can render `CONTENT_BEFORE` and `CONTENT_AFTER` hooks around the table content', function (): void {
@@ -611,41 +909,81 @@ describe('rendering', function (): void {
     it('keeps `CONTENT_BEFORE` and `CONTENT_AFTER` around the table content after an update', function (): void {
         Artisan::call('filament:assets');
 
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-            Post::query()->delete();
+        Post::query()->delete();
 
-            Post::factory()->count(2)->create();
+        Post::factory()->count(2)->create();
 
-            $hookOrderScript = <<<'JS'
-                (() => {
-                    const contentBefore = document.querySelector('[data-testid="table-content-before-hook"]')
-                    const contentAfter = document.querySelector('[data-testid="table-content-after-hook"]')
-                    const tableContent = contentBefore?.nextElementSibling
-                    const pagination = contentAfter?.nextElementSibling
+        $hookOrder = '[data-testid="table-content-before-hook"] + .fi-ta-content-ctn + [data-testid="table-content-after-hook"] + nav.fi-pagination';
 
-                    return contentBefore?.parentElement === contentAfter?.parentElement
-                        && tableContent?.classList.contains('fi-ta-content-ctn')
-                        && tableContent?.nextElementSibling === contentAfter
-                        && pagination?.matches('nav.fi-pagination')
-                })()
-                JS;
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->assertDontSee('Created by render hook test')
+            ->assertPresent($hookOrder)
+            ->click('[data-testid="create-post"]')
+            ->assertSee('Created by render hook test')
+            ->assertPresent($hookOrder)
+            ->assertNoAccessibilityIssues();
 
-            visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
-                ->assertDontSee('Created by render hook test')
-                ->assertScript($hookOrderScript, true)
-                ->click('[data-testid="create-post"]')
-                ->assertSee('Created by render hook test')
-                ->assertScript($hookOrderScript, true)
-                ->assertNoAccessibilityIssues();
-
-            visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
-                ->inDarkMode()
-                ->assertScript($hookOrderScript, true)
-                ->assertNoAccessibilityIssues();
-        });
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->inDarkMode()
+            ->assertPresent($hookOrder)
+            ->assertNoAccessibilityIssues();
     });
+
+    it('renders accessible table loading states in light and dark modes', function (): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        Post::query()->delete();
+
+        Post::factory()->create(['title' => 'Short']);
+        Post::factory()->create(['title' => 'A much longer title']);
+
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->assertAttribute('[data-testid="table-loading-state"]', 'role', 'status')
+            ->assertAttribute('[data-testid="table-loading-state"]', 'aria-live', 'polite')
+            ->assertNoAccessibilityIssues();
+
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->inDarkMode()
+            ->assertPresent('[data-testid="table-loading-state"]')
+            ->assertNoAccessibilityIssues();
+
+        $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
+        $individualSearchInput = '.fi-ta-individual-search-row input';
+
+        $page
+            ->type($individualSearchInput, 'Sho')
+            ->assertPresent('.fi-ta-records[inert]')
+            ->assertMissing('tbody[inert] .fi-ta-individual-search-row input')
+            ->assertPresent($individualSearchInput . ':focus')
+            ->keys($individualSearchInput, 'r')
+            ->assertValue($individualSearchInput, 'Shor')
+            ->assertMissing('.fi-ta-records[inert]');
+
+        $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
+
+        $page
+            ->assertAttribute('[data-tab-key="published"]', 'data-tab-available', 'true')
+            ->click('[data-tab-key="published"]')
+            ->assertPresent('.fi-ta-content-loading .fi-ta-records[inert]')
+            ->assertMissing('.fi-ta-records[inert]')
+            ->assertAttribute('[data-tab-key="published"]', 'aria-selected', 'true');
+
+        Post::query()->delete();
+
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->assertPresent('.fi-ta-empty-state-icon-bg .fi-loading-indicator')
+            ->assertNoAccessibilityIssues();
+
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->inDarkMode()
+            ->assertPresent('.fi-ta-empty-state-icon-bg .fi-loading-indicator')
+            ->assertNoAccessibilityIssues();
+    });
+
 });
 
 function registerTableContentRenderHooks(string $scope, ?array &$contentBeforeData, ?array &$contentAfterData): void
@@ -698,6 +1036,107 @@ class StripedTableTestComponent extends TableTestComponent
     {
         return parent::table($table)
             ->striped();
+    }
+}
+
+class LoadingSkeletonTableTestComponent extends TableTestComponent
+{
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->loadingSkeleton();
+    }
+}
+
+class SortableTableTestComponent extends TableTestComponent
+{
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->columns([
+                Tables\Columns\TextColumn::make('title')
+                    ->sortable(),
+            ]);
+    }
+}
+
+class LoadingSkeletonSortableTableTestComponent extends SortableTableTestComponent
+{
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->loadingSkeleton();
+    }
+}
+
+class ToggleableSortableTableTestComponent extends TableTestComponent
+{
+    public string $defaultSortColumn = 'email';
+
+    public string $defaultSortDirection = 'asc';
+
+    public bool $usesDefaultSortClosure = false;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(User::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('name')
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('posts_count')
+                    ->counts('posts')
+                    ->sortable()
+                    ->toggleable(),
+            ])
+            ->defaultSort(
+                $this->usesDefaultSortClosure ? fn (): string => $this->defaultSortColumn : $this->defaultSortColumn,
+                $this->defaultSortDirection,
+            )
+            ->persistSortInSession();
+    }
+}
+
+class ToggleableSortableCustomDataTableTestComponent extends TableTestComponent
+{
+    public bool $usesSortTuple = false;
+
+    public function table(Table $table): Table
+    {
+        $records = collect([
+            1 => ['id' => 1, 'title' => 'Bravo'],
+            2 => ['id' => 2, 'title' => 'Charlie'],
+            3 => ['id' => 3, 'title' => 'Alpha'],
+        ]);
+
+        return $table
+            ->records($this->usesSortTuple
+                ? static fn (array $sort): Collection => $records->sortBy($sort[0] ?? 'id', descending: $sort[1] === 'desc')
+                : static fn (?string $sortColumn, ?string $sortDirection): Collection => $records->sortBy($sortColumn ?? 'id', descending: $sortDirection === 'desc'))
+            ->columns([
+                Tables\Columns\TextColumn::make('title')
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('id'),
+            ])
+            ->persistSortInSession();
+    }
+}
+
+class MappedDefaultSortTableTestComponent extends TableTestComponent
+{
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('display_title')
+                    ->state(static fn (Post $record): string => $record->title)
+                    ->sortable(['title'])
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->defaultSort('display_title');
     }
 }
 

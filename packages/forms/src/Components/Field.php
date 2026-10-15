@@ -620,9 +620,8 @@ class Field extends Component implements Contracts\HasValidationRules
         $loadingIndicatorTarget = $hasLoadingIndicator ? html_entity_decode((string) $wireTarget, ENT_QUOTES) : null;
         $loadingDelay = config('filament.livewire_loading_delay', 'default');
 
-        $hasFocusInputListener = $attributes->has('x-on:focus-input.stop');
-        $canClickPrefixAffix = $hasFocusInputListener && ($prefixIcon || filled($prefix));
-        $canClickSuffixAffix = $hasFocusInputListener && ($suffixIcon || filled($suffix));
+        $canClickPrefixAffix = $prefixIcon || filled($prefix);
+        $canClickSuffixAffix = $suffixIcon || filled($suffix);
 
         $wrapperAttributes = $attributes
             ->except(['wire:target', 'tabindex'])
@@ -670,16 +669,13 @@ class Field extends Component implements Contracts\HasValidationRules
 
                 if ($canClickPrefixAffix) {
                     $prefixDivAttributes = $prefixDivAttributes->merge([
-                        'x-on:click' => '$dispatch(\'focus-input\')',
+                        'x-on:click' => "if (! \$event.target.closest('.fi-input-wrp-actions')) \$dispatch('focus-input')",
                     ], escape: false);
                 }
                 ?>
                 <div <?= $prefixDivAttributes->toHtml() ?>>
                     <?php if (count($prefixActions)) { ?>
-                        <div
-                            class="fi-input-wrp-actions"
-                            <?php if ($canClickPrefixAffix) { ?>x-on:click.stop<?php } ?>
-                        >
+                        <div class="fi-input-wrp-actions">
                             <?php foreach ($prefixActions as $prefixAction) { ?>
                                 <?= $prefixAction->toHtml() ?>
                             <?php } ?>
@@ -737,7 +733,7 @@ class Field extends Component implements Contracts\HasValidationRules
 
                 if ($canClickSuffixAffix) {
                     $suffixDivAttributes = $suffixDivAttributes->merge([
-                        'x-on:click' => '$dispatch(\'focus-input\')',
+                        'x-on:click' => "if (! \$event.target.closest('.fi-input-wrp-actions')) \$dispatch('focus-input')",
                     ], escape: false);
                 }
                 ?>
@@ -759,10 +755,7 @@ class Field extends Component implements Contracts\HasValidationRules
                     )?->toHtml() ?>
 
                     <?php if (count($suffixActions)) { ?>
-                        <div
-                            class="fi-input-wrp-actions"
-                            <?php if ($canClickSuffixAffix) { ?>x-on:click.stop<?php } ?>
-                        >
+                        <div class="fi-input-wrp-actions">
                             <?php foreach ($suffixActions as $suffixAction) { ?>
                                 <?= $suffixAction->toHtml() ?>
                             <?php } ?>

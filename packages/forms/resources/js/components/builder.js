@@ -1,10 +1,48 @@
-export default function builderBlockPickerFormComponent() {
+import collapsibleItem from '../utilities/collapsible-item.js'
+import reordering from '../utilities/reordering.js'
+import normalizeSearchString from '../../../../support/resources/js/utilities/normalize-search-string.js'
+
+export default function builderFormComponent({ statePath, ...configuration }) {
+    return {
+        ...reordering(configuration),
+
+        blockPicker,
+
+        collapseAll() {
+            this.$dispatch('builder-collapse', statePath)
+        },
+
+        expandAll() {
+            this.$dispatch('builder-expand', statePath)
+        },
+
+        editItem(item) {
+            this.$wire.mountAction(
+                'edit',
+                { item },
+                { schemaComponent: configuration.schemaComponent },
+            )
+        },
+
+        item(configuration) {
+            return collapsibleItem({ statePath, ...configuration })
+        },
+    }
+}
+
+function blockPicker() {
     return {
         search: '',
 
         blockLabels: [],
 
         observer: null,
+
+        dropdownPanel: null,
+
+        dropdownOpenedListener: null,
+
+        dropdownEscapeListener: null,
 
         init() {
             const syncBlockLabels = () => {
@@ -23,6 +61,54 @@ export default function builderBlockPickerFormComponent() {
                 attributes: true,
                 attributeFilter: ['data-block-label'],
             })
+
+            this.setUpDropdownAutofocus()
+
+            this.dropdownEscapeListener = (event) => {
+                this.handleEscape(event)
+                event.stopPropagation()
+            }
+            this.$root.addEventListener(
+                'dropdown-escape',
+                this.dropdownEscapeListener,
+            )
+        },
+
+        setUpDropdownAutofocus() {
+            this.dropdownPanel = this.$root.closest('.fi-dropdown-panel')
+            this.dropdownOpenedListener = () => this.autofocusSearch()
+
+            this.dropdownPanel?.addEventListener(
+                'dropdown-opened',
+                this.dropdownOpenedListener,
+            )
+
+            const dropdownTrigger = this.dropdownPanel
+                ?.closest('.fi-dropdown')
+                ?.querySelector(
+                    ':scope > .fi-dropdown-trigger button, :scope > .fi-dropdown-trigger a, :scope > .fi-dropdown-trigger [tabindex]',
+                )
+
+            if (
+                this.dropdownPanel?.style.display !== 'block' ||
+                document.activeElement !== dropdownTrigger
+            ) {
+                return
+            }
+
+            this.autofocusSearch()
+        },
+
+        autofocusSearch() {
+            if (
+                !this.$root.isConnected ||
+                this.dropdownPanel?.style.display !== 'block'
+            ) {
+                return
+            }
+
+            this.clearSearch()
+            this.$refs.searchInput?.focus({ preventScroll: true })
         },
 
         clearSearch() {
@@ -51,8 +137,17 @@ export default function builderBlockPickerFormComponent() {
                 return true
             }
 
-            return blockElement.dataset.blockLabel.includes(
-                this.search.toLowerCase(),
+            return normalizeSearchString(
+                blockElement.dataset.blockLabel,
+            ).includes(normalizeSearchString(this.search))
+        },
+
+        isGroupVisible(groupElement) {
+            return (
+                this.blockLabels.length > 0 &&
+                Array.from(
+                    groupElement.querySelectorAll('[data-block-label]'),
+                ).some((element) => this.isBlockVisible(element))
             )
         },
 
@@ -62,12 +157,23 @@ export default function builderBlockPickerFormComponent() {
             }
 
             return !this.blockLabels.some((label) =>
-                label.includes(this.search.toLowerCase()),
+                normalizeSearchString(label).includes(
+                    normalizeSearchString(this.search),
+                ),
             )
         },
 
         destroy() {
             this.observer?.disconnect()
+
+            this.dropdownPanel?.removeEventListener(
+                'dropdown-opened',
+                this.dropdownOpenedListener,
+            )
+            this.$root.removeEventListener(
+                'dropdown-escape',
+                this.dropdownEscapeListener,
+            )
         },
     }
 }

@@ -11,6 +11,7 @@ use Filament\Support\Enums\ArgumentValue;
 use Filament\Support\Facades\FilamentTimezone;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Number;
@@ -65,14 +66,14 @@ trait CanFormatState
     {
         $this->isDate = true;
 
-        $this->formatStateUsing(static function (TextColumn $column, $state) use ($format, $timezone): ?string {
+        $this->formatStateUsing(static function (TextColumn $column, $state, ?Model $relatedRecord) use ($format, $timezone): ?string {
             if (blank($state)) {
                 return null;
             }
 
             return Carbon::parse($state)
-                ->setTimezone($column->evaluate($timezone) ?? $column->getTimezone())
-                ->translatedFormat($column->evaluate($format) ?? $column->getTable()->getDefaultDateDisplayFormat());
+                ->setTimezone($column->evaluate($timezone, ['state' => $state, 'relatedRecord' => $relatedRecord]) ?? $column->getTimezone($state, $relatedRecord))
+                ->translatedFormat($column->evaluate($format, ['state' => $state, 'relatedRecord' => $relatedRecord]) ?? $column->getTable()->getDefaultDateDisplayFormat());
         });
 
         return $this;
@@ -95,14 +96,14 @@ trait CanFormatState
 
         $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultIsoDateDisplayFormat();
 
-        $this->formatStateUsing(static function (TextColumn $column, $state) use ($format, $timezone): ?string {
+        $this->formatStateUsing(static function (TextColumn $column, $state, ?Model $relatedRecord) use ($format, $timezone): ?string {
             if (blank($state)) {
                 return null;
             }
 
             return Carbon::parse($state)
-                ->setTimezone($column->evaluate($timezone) ?? $column->getTimezone())
-                ->isoFormat($column->evaluate($format) ?? $column->getTable()->getDefaultIsoDateDisplayFormat());
+                ->setTimezone($column->evaluate($timezone, ['state' => $state, 'relatedRecord' => $relatedRecord]) ?? $column->getTimezone($state, $relatedRecord))
+                ->isoFormat($column->evaluate($format, ['state' => $state, 'relatedRecord' => $relatedRecord]) ?? $column->getTable()->getDefaultIsoDateDisplayFormat());
         });
 
         return $this;
@@ -123,13 +124,13 @@ trait CanFormatState
     {
         $this->isDateTime = true;
 
-        $this->formatStateUsing(static function (TextColumn $column, $state) use ($timezone): ?string {
+        $this->formatStateUsing(static function (TextColumn $column, $state, ?Model $relatedRecord) use ($timezone): ?string {
             if (blank($state)) {
                 return null;
             }
 
             return Carbon::parse($state)
-                ->setTimezone($column->evaluate($timezone) ?? $column->getTimezone())
+                ->setTimezone($column->evaluate($timezone, ['state' => $state, 'relatedRecord' => $relatedRecord]) ?? $column->getTimezone($state, $relatedRecord))
                 ->diffForHumans();
         });
 
@@ -138,14 +139,14 @@ trait CanFormatState
 
     public function dateTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
-        $this->tooltip(static function (TextColumn $column, mixed $state) use ($format, $timezone): ?string {
+        $this->tooltip(static function (TextColumn $column, mixed $state, ?Model $relatedRecord) use ($format, $timezone): ?string {
             if (blank($state)) {
                 return null;
             }
 
             return Carbon::parse($state)
-                ->setTimezone($column->evaluate($timezone) ?? $column->getTimezone())
-                ->translatedFormat($column->evaluate($format) ?? $column->getTable()->getDefaultDateDisplayFormat());
+                ->setTimezone($column->evaluate($timezone, ['state' => $state, 'relatedRecord' => $relatedRecord]) ?? $column->getTimezone($state, $relatedRecord))
+                ->translatedFormat($column->evaluate($format, ['state' => $state, 'relatedRecord' => $relatedRecord]) ?? $column->getTable()->getDefaultDateDisplayFormat());
         });
 
         return $this;
@@ -171,13 +172,13 @@ trait CanFormatState
 
     public function sinceTooltip(string | Closure | null $timezone = null): static
     {
-        $this->tooltip(static function (TextColumn $column, mixed $state) use ($timezone): ?string {
+        $this->tooltip(static function (TextColumn $column, mixed $state, ?Model $relatedRecord) use ($timezone): ?string {
             if (blank($state)) {
                 return null;
             }
 
             return Carbon::parse($state)
-                ->setTimezone($column->evaluate($timezone) ?? $column->getTimezone())
+                ->setTimezone($column->evaluate($timezone, ['state' => $state, 'relatedRecord' => $relatedRecord]) ?? $column->getTimezone($state, $relatedRecord))
                 ->diffForHumans();
         });
 
@@ -188,14 +189,14 @@ trait CanFormatState
     {
         $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultIsoDateDisplayFormat();
 
-        $this->tooltip(static function (TextColumn $column, mixed $state) use ($format, $timezone): ?string {
+        $this->tooltip(static function (TextColumn $column, mixed $state, ?Model $relatedRecord) use ($format, $timezone): ?string {
             if (blank($state)) {
                 return null;
             }
 
             return Carbon::parse($state)
-                ->setTimezone($column->evaluate($timezone) ?? $column->getTimezone())
-                ->isoFormat($column->evaluate($format) ?? $column->getTable()->getDefaultIsoDateDisplayFormat());
+                ->setTimezone($column->evaluate($timezone, ['state' => $state, 'relatedRecord' => $relatedRecord]) ?? $column->getTimezone($state, $relatedRecord))
+                ->isoFormat($column->evaluate($format, ['state' => $state, 'relatedRecord' => $relatedRecord]) ?? $column->getTable()->getDefaultIsoDateDisplayFormat());
         });
 
         return $this;
@@ -223,7 +224,7 @@ trait CanFormatState
     {
         $this->isMoney = true;
 
-        $this->formatStateUsing(static function (TextColumn $column, $state) use ($currency, $divideBy, $locale, $decimalPlaces): ?string {
+        $this->formatStateUsing(static function (TextColumn $column, $state, ?Model $relatedRecord) use ($currency, $divideBy, $locale, $decimalPlaces): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -232,11 +233,11 @@ trait CanFormatState
                 return $state;
             }
 
-            $currency = $column->evaluate($currency) ?? $column->getTable()->getDefaultCurrency();
-            $locale = $column->evaluate($locale) ?? $column->getTable()->getDefaultNumberLocale() ?? config('app.locale');
-            $decimalPlaces = $column->evaluate($decimalPlaces);
+            $currency = $column->evaluate($currency, ['state' => $state, 'relatedRecord' => $relatedRecord]) ?? $column->getTable()->getDefaultCurrency();
+            $locale = $column->evaluate($locale, ['state' => $state, 'relatedRecord' => $relatedRecord]) ?? $column->getTable()->getDefaultNumberLocale() ?? config('app.locale');
+            $decimalPlaces = $column->evaluate($decimalPlaces, ['state' => $state, 'relatedRecord' => $relatedRecord]);
 
-            if ($divideBy = $column->evaluate($divideBy)) {
+            if ($divideBy = $column->evaluate($divideBy, ['state' => $state, 'relatedRecord' => $relatedRecord])) {
                 $state /= $divideBy;
             }
 
@@ -258,7 +259,7 @@ trait CanFormatState
     {
         $this->isNumeric = true;
 
-        $this->formatStateUsing(static function (TextColumn $column, $state) use ($decimalPlaces, $decimalSeparator, $locale, $maxDecimalPlaces, $thousandsSeparator): ?string {
+        $this->formatStateUsing(static function (TextColumn $column, $state, ?Model $relatedRecord) use ($decimalPlaces, $decimalSeparator, $locale, $maxDecimalPlaces, $thousandsSeparator): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -267,9 +268,9 @@ trait CanFormatState
                 return $state;
             }
 
-            $decimalPlaces = $column->evaluate($decimalPlaces);
-            $decimalSeparator = $column->evaluate($decimalSeparator);
-            $thousandsSeparator = $column->evaluate($thousandsSeparator);
+            $decimalPlaces = $column->evaluate($decimalPlaces, ['state' => $state, 'relatedRecord' => $relatedRecord]);
+            $decimalSeparator = $column->evaluate($decimalSeparator, ['state' => $state, 'relatedRecord' => $relatedRecord]);
+            $thousandsSeparator = $column->evaluate($thousandsSeparator, ['state' => $state, 'relatedRecord' => $relatedRecord]);
 
             if (
                 ($decimalSeparator !== ArgumentValue::Default) ||
@@ -283,13 +284,13 @@ trait CanFormatState
                 );
             }
 
-            $locale = $column->evaluate($locale) ?? $column->getTable()->getDefaultNumberLocale() ?? config('app.locale');
+            $locale = $column->evaluate($locale, ['state' => $state, 'relatedRecord' => $relatedRecord]) ?? $column->getTable()->getDefaultNumberLocale() ?? config('app.locale');
 
             if ($locale instanceof BackedEnum) {
                 $locale = (string) $locale->value;
             }
 
-            return Number::format($state, $decimalPlaces, $column->evaluate($maxDecimalPlaces), $locale);
+            return Number::format($state, $decimalPlaces, $column->evaluate($maxDecimalPlaces, ['state' => $state, 'relatedRecord' => $relatedRecord]), $locale);
         });
 
         return $this;
@@ -374,7 +375,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function formatState(mixed $state): mixed
+    public function formatState(mixed $state, ?Model $relatedRecord = null): mixed
     {
         if (! $this->hasStateFormatting()) {
             if ($state instanceof LabelInterface) {
@@ -384,10 +385,12 @@ trait CanFormatState
             return $state;
         }
 
-        $isHtml = $this->isHtml();
+        $stateItem = $state;
+        $isHtml = $this->isHtml($stateItem, $relatedRecord);
 
         $state = $this->evaluate($this->formatStateUsing ?? $state, [
-            'state' => $state,
+            'state' => $stateItem,
+            'relatedRecord' => $relatedRecord,
         ]);
 
         if (is_array($state)) {
@@ -413,8 +416,12 @@ trait CanFormatState
         } elseif ($isHtml) {
             $state ??= '';
 
-            if ($this->isMarkdown()) {
-                $state = Str::markdown($state, $this->getCommonMarkOptions(), $this->getCommonMarkExtensions());
+            if ($this->isMarkdown($stateItem, $relatedRecord)) {
+                $state = Str::markdown(
+                    $state,
+                    $this->getCommonMarkOptions($stateItem, $relatedRecord),
+                    $this->getCommonMarkExtensions($stateItem, $relatedRecord),
+                );
             }
 
             $state = Str::sanitizeHtml($state);
@@ -425,17 +432,17 @@ trait CanFormatState
         }
 
         if (! $isHtml) {
-            if ($characterLimit = $this->getCharacterLimit()) {
-                $state = Str::limit($state, $characterLimit, $this->getCharacterLimitEnd());
+            if ($characterLimit = $this->getCharacterLimit($stateItem, $relatedRecord)) {
+                $state = Str::limit($state, $characterLimit, $this->getCharacterLimitEnd($stateItem, $relatedRecord));
             }
 
-            if ($wordLimit = $this->getWordLimit()) {
-                $state = Str::words($state, $wordLimit, $this->getWordLimitEnd());
+            if ($wordLimit = $this->getWordLimit($stateItem, $relatedRecord)) {
+                $state = Str::words($state, $wordLimit, $this->getWordLimitEnd($stateItem, $relatedRecord));
             }
         }
 
-        $prefix = $this->getPrefix();
-        $suffix = $this->getSuffix();
+        $prefix = $this->getPrefix($stateItem, $relatedRecord);
+        $suffix = $this->getSuffix($stateItem, $relatedRecord);
 
         if (
             (($prefix instanceof Htmlable) || ($suffix instanceof Htmlable)) &&
@@ -468,49 +475,51 @@ trait CanFormatState
         return $isHtml ? new HtmlString($state) : $state;
     }
 
-    public function getCharacterLimit(): ?int
+    public function getCharacterLimit(mixed $state = null, ?Model $relatedRecord = null): ?int
     {
-        return $this->evaluate($this->characterLimit);
+        return $this->evaluate($this->characterLimit, $this->getStateEvaluationParameters($state, $relatedRecord, hasState: func_num_args() > 0));
     }
 
-    public function getCharacterLimitEnd(): ?string
+    public function getCharacterLimitEnd(mixed $state = null, ?Model $relatedRecord = null): ?string
     {
-        return $this->evaluate($this->characterLimitEnd);
+        return $this->evaluate($this->characterLimitEnd, $this->getStateEvaluationParameters($state, $relatedRecord, hasState: func_num_args() > 0));
     }
 
-    public function getWordLimit(): ?int
+    public function getWordLimit(mixed $state = null, ?Model $relatedRecord = null): ?int
     {
-        return $this->evaluate($this->wordLimit);
+        return $this->evaluate($this->wordLimit, $this->getStateEvaluationParameters($state, $relatedRecord, hasState: func_num_args() > 0));
     }
 
-    public function getWordLimitEnd(): ?string
+    public function getWordLimitEnd(mixed $state = null, ?Model $relatedRecord = null): ?string
     {
-        return $this->evaluate($this->wordLimitEnd);
+        return $this->evaluate($this->wordLimitEnd, $this->getStateEvaluationParameters($state, $relatedRecord, hasState: func_num_args() > 0));
     }
 
-    public function getTimezone(): string
+    public function getTimezone(mixed $state = null, ?Model $relatedRecord = null): string
     {
-        return $this->evaluate($this->timezone) ?? ($this->isDateTime() ? FilamentTimezone::get() : config('app.timezone'));
+        return $this->evaluate($this->timezone, $this->getStateEvaluationParameters($state, $relatedRecord, hasState: func_num_args() > 0)) ?? ($this->isDateTime() ? FilamentTimezone::get() : config('app.timezone'));
     }
 
-    public function isHtml(): bool
+    public function isHtml(mixed $state = null, ?Model $relatedRecord = null): bool
     {
-        return $this->evaluate($this->isHtml) || $this->isMarkdown();
+        $hasState = func_num_args() > 0;
+
+        return $this->evaluate($this->isHtml, $this->getStateEvaluationParameters($state, $relatedRecord, $hasState)) || ($hasState ? $this->isMarkdown($state, $relatedRecord) : $this->isMarkdown());
     }
 
-    public function getPrefix(): string | Htmlable | null
+    public function getPrefix(mixed $state = null, ?Model $relatedRecord = null): string | Htmlable | null
     {
-        return $this->evaluate($this->prefix);
+        return $this->evaluate($this->prefix, $this->getStateEvaluationParameters($state, $relatedRecord, hasState: func_num_args() > 0));
     }
 
-    public function getSuffix(): string | Htmlable | null
+    public function getSuffix(mixed $state = null, ?Model $relatedRecord = null): string | Htmlable | null
     {
-        return $this->evaluate($this->suffix);
+        return $this->evaluate($this->suffix, $this->getStateEvaluationParameters($state, $relatedRecord, hasState: func_num_args() > 0));
     }
 
-    public function isMarkdown(): bool
+    public function isMarkdown(mixed $state = null, ?Model $relatedRecord = null): bool
     {
-        return (bool) $this->evaluate($this->isMarkdown);
+        return (bool) $this->evaluate($this->isMarkdown, $this->getStateEvaluationParameters($state, $relatedRecord, hasState: func_num_args() > 0));
     }
 
     public function isDate(): bool

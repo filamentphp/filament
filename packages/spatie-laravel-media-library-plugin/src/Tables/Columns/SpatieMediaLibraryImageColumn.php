@@ -26,7 +26,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
     {
         parent::setUp();
 
-        $this->defaultImageUrl(function (SpatieMediaLibraryImageColumn $column, Model $record): ?string {
+        $this->defaultImageUrl(function (SpatieMediaLibraryImageColumn $column, Model $record, mixed $state, ?Model $relatedRecord): ?string {
             if ($column->hasRelationship($record)) {
                 $record = $column->getRelationshipResults($record);
             }
@@ -44,7 +44,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
                     continue;
                 }
 
-                $url = $record->getFallbackMediaUrl($collection, $column->getConversion() ?? '');
+                $url = $record->getFallbackMediaUrl($collection, $column->getConversion($state, $relatedRecord) ?? '');
 
                 if (blank($url)) {
                     continue;
@@ -83,13 +83,17 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         return $this->evaluate($this->collection);
     }
 
-    public function getConversion(): ?string
+    public function getConversion(mixed $state = null, ?Model $relatedRecord = null): ?string
     {
-        return $this->evaluate($this->conversion);
+        return $this->evaluate(
+            $this->conversion,
+            $this->getStateEvaluationParameters($state, $relatedRecord, hasState: func_num_args() > 0),
+        );
     }
 
-    public function getImageUrl(?string $state = null): ?string
+    public function getImageUrl(?string $state = null, ?Model $relatedRecord = null): ?string
     {
+        $hasState = func_num_args() > 0;
         $record = $this->getRecord();
 
         if ($this->hasRelationship($record)) {
@@ -108,9 +112,9 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
                 continue;
             }
 
-            $conversion = $this->getConversion();
+            $conversion = $hasState ? $this->getConversion($state, $relatedRecord) : $this->getConversion();
 
-            if ($this->getVisibility() === 'private') {
+            if (($hasState ? $this->getVisibility($state, $relatedRecord) : $this->getVisibility()) === 'private') {
                 try {
                     return $media->getTemporaryUrl(
                         now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
@@ -142,29 +146,34 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
             $records = Arr::wrap($record);
 
             $state = [];
+            $relatedRecords = [];
 
             $collection = $this->getCollection() ?? 'default';
 
             foreach ($records as $record) {
                 /** @var Model $record */
-                $state = [
-                    ...$state,
-                    ...$record->getRelationValue('media')
-                        ->when(
-                            ! $collection instanceof AllMediaCollections,
-                            fn (MediaCollection $mediaCollection) => $mediaCollection->filter(fn (Media $media): bool => $media->getAttributeValue('collection_name') === $collection),
-                        )
-                        ->when(
-                            $this->hasMediaFilter(),
-                            fn (Collection $media) => $this->filterMedia($media)
-                        )
-                        ->sortBy('order_column')
-                        ->pluck('uuid')
-                        ->all(),
-                ];
+                $media = $record->getRelationValue('media')
+                    ->when(
+                        ! $collection instanceof AllMediaCollections,
+                        fn (MediaCollection $mediaCollection) => $mediaCollection->filter(fn (Media $media): bool => $media->getAttributeValue('collection_name') === $collection),
+                    )
+                    ->when(
+                        $this->hasMediaFilter(),
+                        fn (Collection $media) => $this->filterMedia($media)
+                    )
+                    ->sortBy('order_column');
+
+                foreach ($media as $mediaItem) {
+                    $state[] = $mediaItem->getAttributeValue('uuid');
+                    $relatedRecords[] = $mediaItem;
+                }
             }
 
-            return array_unique($state);
+            $state = array_unique($state);
+
+            $this->cacheRelatedRecords(array_intersect_key($relatedRecords, $state));
+
+            return $state;
         });
     }
 

@@ -14,12 +14,13 @@
     }
 }
 
-.fi-topbar-open-sidebar-btn {
-    @apply mx-0!;
+.fi-topbar-open-sidebar-btn,
+.fi-topbar-close-sidebar-btn {
+    @apply ms-0! me-4! lg:me-0!;
 }
 
 .fi-topbar-close-sidebar-btn {
-    @apply mx-0! lg:hidden;
+    @apply lg:hidden;
 }
 
 .fi-topbar-open-collapse-sidebar-btn {

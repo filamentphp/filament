@@ -3,6 +3,7 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 
 trait CanBeCopied
 {
@@ -42,31 +43,35 @@ trait CanBeCopied
         return $this;
     }
 
-    public function isCopyable(mixed $state): bool
+    public function isCopyable(mixed $state, ?Model $relatedRecord = null): bool
     {
         return (bool) $this->evaluate($this->isCopyable, [
             'state' => $state,
+            'relatedRecord' => $relatedRecord,
         ]);
     }
 
-    public function getCopyableState(mixed $state): ?string
+    public function getCopyableState(mixed $state, ?Model $relatedRecord = null): ?string
     {
         return $this->evaluate($this->copyableState, [
             'state' => $state,
+            'relatedRecord' => $relatedRecord,
         ]);
     }
 
-    public function getCopyMessage(mixed $state): string
+    public function getCopyMessage(mixed $state, ?Model $relatedRecord = null): string
     {
         return $this->evaluate($this->copyMessage, [
             'state' => $state,
+            'relatedRecord' => $relatedRecord,
         ]) ?? __('filament::components/copyable.messages.copied');
     }
 
-    public function getCopyMessageDuration(mixed $state): int
+    public function getCopyMessageDuration(mixed $state, ?Model $relatedRecord = null): int
     {
         return $this->evaluate($this->copyMessageDuration, [
             'state' => $state,
+            'relatedRecord' => $relatedRecord,
         ]) ?? 2000;
     }
 

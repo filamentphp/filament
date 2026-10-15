@@ -68,6 +68,11 @@ trait HasState
 
     protected string | Closure | null $separator = null;
 
+    /**
+     * @var array<Model>
+     */
+    protected array $relatedRecords = [];
+
     protected bool | Closure $isDistinctList = false;
 
     /**
@@ -978,6 +983,8 @@ trait HasState
      */
     public function getConstantState(): mixed
     {
+        $this->relatedRecords = [];
+
         if ($this->hasConstantState) {
             $state = $this->evaluate($this->getConstantStateUsing);
         } else {
@@ -1055,14 +1062,22 @@ trait HasState
      */
     public function getConstantStateFromRecord(Model $record): mixed
     {
+        $this->relatedRecords = [];
+
         $relationship = $this->getStateRelationship($record);
 
         if ($relationship) {
-            $relationshipAttribute = $this->getStateRelationshipAttribute();
+            $relationshipAttribute = $this->getStateRelationshipAttribute(record: $record);
+            $relatedRecords = [];
+            $relationshipResults = $this->getStateRelationshipResults($record);
 
-            $state = collect($this->getStateRelationshipResults($record))
+            if ((count($relationshipResults) === 1) && (! $this->hasMultipleStateRelationship($record))) {
+                $this->relatedRecords = [reset($relationshipResults)];
+            }
+
+            $state = collect($relationshipResults)
                 ->reduce(
-                    function (Collection $carry, Model $record) use ($relationshipAttribute): Collection {
+                    function (Collection $carry, Model $record) use (&$relatedRecords, $relationshipAttribute): Collection {
                         if (
                             ($record instanceof HasRichContent) &&
                             $record->hasRichContentAttribute($relationshipAttribute)
@@ -1076,16 +1091,28 @@ trait HasState
                             return $carry;
                         }
 
+                        $relatedRecords[] = $record;
+
                         return $carry->push($state);
                     },
                     initial: collect(),
                 )
-                ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
+                ->when(
+                    $this->isDistinctList(),
+                    function (Collection $state) use (&$relatedRecords): Collection {
+                        $uniqueStateKeys = $state->unique()->keys();
+                        $relatedRecords = Arr::only($relatedRecords, $uniqueStateKeys->all());
+
+                        return $state->only($uniqueStateKeys);
+                    },
+                )
                 ->values();
 
             if (! $state->count()) {
                 return null;
             }
+
+            $this->relatedRecords = array_values($relatedRecords);
 
             if (($state->count() < 2) && (! $this->hasMultipleStateRelationship($record))) {
                 return $state->first();

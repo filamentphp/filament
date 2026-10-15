@@ -924,7 +924,7 @@ class Action extends ViewComponent implements Arrayable
         // Match `ComponentAttributeBag::__toString()` attribute escaping (only `"` → `\"`).
         $handler = str_replace('"', '\\"', $handler);
 
-        return "<button type=\"button\" wire:loading.attr=\"disabled\" wire:click=\"{$handler}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}<span class=\"fi-link-label\">{$label}</span></button>";
+        return "<button type=\"button\" wire:loading.attr=\"aria-disabled\" wire:loading.class=\"fi-disabled\" wire:click=\"{$handler}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}<span class=\"fi-link-label\">{$label}</span></button>";
     }
 
     protected function canRenderOptimizedGrouped(): bool
@@ -1006,7 +1006,7 @@ class Action extends ViewComponent implements Arrayable
         // Match `ComponentAttributeBag::__toString()` attribute escaping (only `"` → `\"`).
         $handlerEscaped = str_replace('"', '\\"', $handler);
 
-        return "<button type=\"button\" wire:loading.attr=\"disabled\" wire:click=\"{$handlerEscaped}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
+        return "<button type=\"button\" wire:loading.attr=\"aria-disabled\" wire:loading.class=\"fi-disabled\" wire:click=\"{$handlerEscaped}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
     }
 
     protected function toBadgeHtml(): string

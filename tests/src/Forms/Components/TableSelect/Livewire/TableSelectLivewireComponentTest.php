@@ -30,8 +30,9 @@ it('renders a blade string', function (): void {
     expect($component->render())->toBe('{{ $this->table }}');
 });
 
-it('restores its `record` property through global scopes', function (): void {
+it('preserves native restoration for a scope-excluded `record`', function (): void {
     $post = Post::factory()->create();
+    $post->delete();
     $component = livewire(TableSelectLivewireComponent::class, [
         'record' => $post,
         'tableConfiguration' => base64_encode(PostsTableWithSessionPersistence::class),
@@ -41,12 +42,15 @@ it('restores its `record` property through global scopes', function (): void {
     try {
         Post::addGlobalScope(
             'exclude-table-select-record',
-            fn (Builder $query): Builder => $query->whereKeyNot($post->getKey()),
+            static fn (Builder $query): Builder => $query->whereKeyNot($post->getKey()),
         );
 
         $component
             ->set('tableSearch', 'search')
-            ->assertNotFound();
+            ->assertSuccessful();
+
+        expect($component->instance()->record->is($post))->toBeTrue()
+            ->and($component->instance()->record->trashed())->toBeTrue();
     } finally {
         Post::setAllGlobalScopes($globalScopes);
     }
@@ -112,8 +116,8 @@ describe('session persistence', function (): void {
     });
 
     it('does not load table state from the session', function (): void {
-        session()->put('tables.' . md5(TableSelectLivewireComponent::class) . '_per_page', 25);
-        session()->put('tables.' . md5(TableSelectLivewireComponent::class) . '_columns', [
+        session()->put('filament.tables.' . hash('sha256', TableSelectLivewireComponent::class) . '.per_page', 25);
+        session()->put('filament.tables.' . hash('sha256', TableSelectLivewireComponent::class) . '.columns', [
             [
                 'type' => TableSelectLivewireComponent::TABLE_COLUMN_MANAGER_COLUMN_TYPE,
                 'name' => 'title',

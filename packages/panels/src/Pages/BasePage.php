@@ -52,6 +52,16 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
     #[On('refresh-page')]
     public function refresh(): void {}
 
+    public function getDefaultActionUrlIdentifier(): ?string
+    {
+        return 'page';
+    }
+
+    protected function getDefaultActionUrlTarget(): mixed
+    {
+        return $this->defaultActionComponent ?? 'page';
+    }
+
     public function render(): View
     {
         return view($this->getView(), $this->getViewData())

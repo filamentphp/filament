@@ -314,12 +314,24 @@ class Wizard extends Component implements HasEmbeddedView
         if ($this->isStepPersistedInQueryString()) {
             $queryStringStep = request()->query($this->getStepQueryStringKey());
 
-            foreach ($this->getSteps() as $index => $step) {
-                if ($step->getKey() !== $queryStringStep) {
-                    continue;
+            if (is_string($queryStringStep)) {
+                $steps = $this->getSteps();
+
+                foreach ($steps as $index => $step) {
+                    if ($step->getKey() !== $queryStringStep) {
+                        continue;
+                    }
+
+                    return $index + 1;
                 }
 
-                return $index + 1;
+                foreach ($steps as $index => $step) {
+                    if ($step->getId() !== $queryStringStep) {
+                        continue;
+                    }
+
+                    return $index + 1;
+                }
             }
         }
 
@@ -568,10 +580,11 @@ class Wizard extends Component implements HasEmbeddedView
                 <div
                     x-cloak
                     <?php if (! $nextAction->isDisabled()) { ?>
-                        x-on:click="requestNextStep()"
+                        x-on:click.capture="if ($el.hasAttribute('aria-disabled')) { $event.preventDefault(); $event.stopImmediatePropagation() }"
+                        x-on:click="if (! $el.hasAttribute('aria-disabled')) requestNextStep()"
                     <?php } ?>
                     x-bind:class="{ 'fi-hidden': isLastStep() }"
-                    wire:loading.attr="inert"
+                    wire:loading.attr="aria-disabled"
                 >
                     <?= $nextAction->toHtml() ?>
                 </div>

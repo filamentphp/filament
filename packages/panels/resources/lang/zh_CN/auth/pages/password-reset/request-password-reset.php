@@ -32,6 +32,10 @@ return [
 
     'notifications' => [
 
+        'sent' => [
+            'body' => '账号不存在时，您不会收到邮件。',
+        ],
+
         'throttled' => [
             'title' => '尝试次数过多',
             'body' => '请在 :seconds 秒后重试。',

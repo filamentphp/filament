@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Arr;
 
@@ -14,7 +15,7 @@ trait CanFixIndistinctState
         $this->distinct($condition);
         $this->live(condition: $condition);
 
-        $this->afterStateUpdated(static function (Component $component, mixed $state, Set $set) use ($condition): void {
+        $this->afterStateUpdated(static function (Component $component, mixed $state, Get $get, Set $set) use ($condition): void {
             if (! $component->evaluate($condition)) {
                 return;
             }
@@ -46,23 +47,38 @@ trait CanFixIndistinctState
             }
 
             if (is_array($state)) {
-                collect($repeaterSiblingState)
-                    ->filter(fn (array $itemState): bool => filled(array_intersect(data_get($itemState, $componentItemStatePath, []), $state)))
-                    ->map(fn (array $itemState): array => collect(data_get($itemState, $componentItemStatePath) ?? [])
-                        ->diff($state)
-                        ->values()
-                        ->all())
-                    ->each(fn (array $newSiblingItemState, string $itemKey) => $set(
-                        path: "{$repeaterStatePath}.{$itemKey}.{$componentItemStatePath}",
-                        state: $newSiblingItemState,
+                foreach (array_keys($repeaterSiblingState) as $itemKey) {
+                    $siblingItemStatePath = "{$repeaterStatePath}.{$itemKey}.{$componentItemStatePath}";
+
+                    $siblingItemComponentState = (array) $get(
+                        path: $siblingItemStatePath,
                         isAbsolute: true,
-                    ));
+                    );
+
+                    $newSiblingItemState = array_filter(
+                        $siblingItemComponentState,
+                        static fn (mixed $siblingItemComponentStateValue): bool => ! in_array($siblingItemComponentStateValue, $state, strict: true),
+                    );
+
+                    if (count($newSiblingItemState) === count($siblingItemComponentState)) {
+                        continue;
+                    }
+
+                    $set(
+                        path: $siblingItemStatePath,
+                        state: array_values($newSiblingItemState),
+                        isAbsolute: true,
+                    );
+                }
 
                 return;
             }
 
             collect($repeaterSiblingState)
-                ->map(fn (array $itemState): mixed => data_get($itemState, $componentItemStatePath))
+                ->map(fn (array $itemState, string $itemKey): mixed => $get(
+                    path: "{$repeaterStatePath}.{$itemKey}.{$componentItemStatePath}",
+                    isAbsolute: true,
+                ))
                 ->filter(function (mixed $siblingItemComponentState) use ($state): bool {
                     if ($siblingItemComponentState === false) {
                         return false;

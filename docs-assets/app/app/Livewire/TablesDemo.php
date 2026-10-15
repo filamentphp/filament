@@ -208,6 +208,41 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ]);
     }
 
+    public function loadingSkeleton(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->heading('Team members')
+            ->description('Manage your team and their account access.')
+            ->loadingSkeleton()
+            ->columns([
+                ImageColumn::make('avatar')
+                    ->circular(),
+                TextColumn::make('name')
+                    ->description(fn (User $record): string => $record->email)
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('job')
+                    ->label('Role')
+                    ->badge(),
+                IconColumn::make('email_verified_at')
+                    ->label('Verified')
+                    ->boolean()
+                    ->getStateUsing(fn (User $record): bool => filled($record->email_verified_at)),
+                TextColumn::make('phone')
+                    ->label('Phone'),
+            ])
+            ->actions([
+                Action::make('view')
+                    ->icon(Heroicon::OutlinedEye)
+                    ->iconButton(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
     public function sortableColumns(Table $table): Table
     {
         return $this->usersTable($table)
@@ -1530,6 +1565,30 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                             ]),
                         DateConstraint::make('created_at'),
                     ]),
+            ], layout: FiltersLayout::AboveContent);
+    }
+
+    public function filtersQueryBuilderGrouped(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                QueryBuilder::make()
+                    ->constraints([
+                        'Content' => [
+                            TextConstraint::make('title'),
+                            BooleanConstraint::make('is_featured'),
+                        ],
+                        'Publishing' => [
+                            SelectConstraint::make('status')
+                                ->options([
+                                    'draft' => 'Draft',
+                                    'reviewing' => 'Reviewing',
+                                    'published' => 'Published',
+                                ]),
+                            DateConstraint::make('created_at'),
+                        ],
+                    ])
+                    ->constraintPickerColumns(3),
             ], layout: FiltersLayout::AboveContent);
     }
 

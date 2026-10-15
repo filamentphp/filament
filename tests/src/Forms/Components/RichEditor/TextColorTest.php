@@ -7,56 +7,56 @@ uses(TestCase::class);
 
 describe('construction', function (): void {
     it('can be constructed with label and color', function (): void {
-        $tc = TextColor::make('Red', '#ff0000');
+        $textColor = TextColor::make('Red', '#ff0000');
 
-        expect($tc->getLabel())->toBe('Red');
-        expect($tc->getColor())->toBe('#ff0000');
+        expect($textColor->getLabel())->toBe('Red');
+        expect($textColor->getColor())->toBe('#ff0000');
     });
 
     it('can be constructed with label, color, and dark color', function (): void {
-        $tc = TextColor::make('Red', '#ff0000', '#cc0000');
+        $textColor = TextColor::make('Red', '#ff0000', '#cc0000');
 
-        expect($tc->getLabel())->toBe('Red');
-        expect($tc->getColor())->toBe('#ff0000');
-        expect($tc->getDarkColor())->toBe('#cc0000');
+        expect($textColor->getLabel())->toBe('Red');
+        expect($textColor->getColor())->toBe('#ff0000');
+        expect($textColor->getDarkColor())->toBe('#cc0000');
     });
 });
 
-describe('`getDarkColor()` fallback logic', function (): void {
+describe('dark color', function (): void {
     it('returns dark color when explicitly set', function (): void {
-        $tc = TextColor::make('Red', '#ff0000', '#cc0000');
+        $textColor = TextColor::make('Red', '#ff0000', '#cc0000');
 
-        expect($tc->getDarkColor())->toBe('#cc0000');
+        expect($textColor->getDarkColor())->toBe('#cc0000');
     });
 
     it('falls back to `getColor()` when dark color is `null`', function (): void {
-        $tc = TextColor::make('Red', '#ff0000');
+        $textColor = TextColor::make('Red', '#ff0000');
 
-        expect($tc->getDarkColor())->toBe('#ff0000');
+        expect($textColor->getDarkColor())->toBe('#ff0000');
     });
 
     it('returns `null` when both color and dark color are `null`', function (): void {
-        $tc = TextColor::make('Label');
+        $textColor = TextColor::make('Label');
 
-        expect($tc->getDarkColor())->toBeNull();
+        expect($textColor->getDarkColor())->toBeNull();
     });
 });
 
-describe('`getSafeLabelHtml()`', function (): void {
+describe('label escaping', function (): void {
     it('returns escaped label', function (): void {
-        $tc = TextColor::make('<script>alert("xss")</script>', '#000');
+        $textColor = TextColor::make('<script>alert("xss")</script>', '#000');
 
-        expect($tc->getSafeLabelHtml())->toBe('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;');
+        expect($textColor->getSafeLabelHtml())->toBe('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;');
     });
 
     it('returns plain label unchanged', function (): void {
-        $tc = TextColor::make('Red', '#ff0000');
+        $textColor = TextColor::make('Red', '#ff0000');
 
-        expect($tc->getSafeLabelHtml())->toBe('Red');
+        expect($textColor->getSafeLabelHtml())->toBe('Red');
     });
 });
 
-describe('`getDefaults()` logic', function (): void {
+describe('default colors', function (): void {
     it('returns an array of `TextColor` objects', function (): void {
         $defaults = TextColor::getDefaults();
 

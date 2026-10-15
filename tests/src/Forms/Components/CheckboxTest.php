@@ -18,94 +18,6 @@ beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
 
-it('can render', function (): void {
-    livewire(TestComponentWithCheckbox::class)
-        ->assertSuccessful();
-});
-
-it('can set and get boolean state', function (): void {
-    livewire(TestComponentWithCheckbox::class)
-        ->fillForm(['accepted' => true])
-        ->assertSchemaStateSet(['accepted' => true]);
-});
-
-it('can render inline', function (): void {
-    livewire(TestComponentWithInlineCheckbox::class)
-        ->assertSuccessful();
-});
-
-it('can validate with `accepted()` rule', function (): void {
-    livewire(TestComponentWithAcceptedCheckbox::class)
-        ->fillForm(['terms' => false])
-        ->call('save')
-        ->assertHasFormErrors(['terms' => ['accepted']]);
-});
-
-it('passes validation when `accepted()` checkbox is checked', function (): void {
-    livewire(TestComponentWithAcceptedCheckbox::class)
-        ->fillForm(['terms' => true])
-        ->call('save')
-        ->assertHasNoFormErrors();
-});
-
-class TestComponentWithCheckbox extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->schema([
-                Checkbox::make('accepted'),
-            ])
-            ->statePath('data');
-    }
-}
-
-class TestComponentWithInlineCheckbox extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->schema([
-                Checkbox::make('accepted')->inline(),
-            ])
-            ->statePath('data');
-    }
-}
-
-class TestComponentWithDeclinedCheckbox extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->schema([
-                Checkbox::make('marketing')->declined(),
-            ])
-            ->statePath('data');
-    }
-
-    public function save(): void
-    {
-        $this->form->getState();
-    }
-}
-
-class TestComponentWithAcceptedCheckbox extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->schema([
-                Checkbox::make('terms')->accepted(),
-            ])
-            ->statePath('data');
-    }
-
-    public function save(): void
-    {
-        $this->form->getState();
-    }
-}
-
 describe('inline', function (): void {
     it('defaults `isInline()` to `true`', function (): void {
         Schema::make(Livewire::make())
@@ -129,11 +41,6 @@ describe('inline', function (): void {
         expect($checkbox->isInline())->toBeFalse();
     });
 
-    it('can render with `inline(false)`', function (): void {
-        livewire(TestComponentWithNonInlineCheckbox::class)
-            ->assertSuccessful();
-    });
-
     it('can set `inline()` with a `Closure`', function (): void {
         Schema::make(Livewire::make())
             ->statePath('data')
@@ -144,11 +51,6 @@ describe('inline', function (): void {
             ->fill();
 
         expect($checkbox->isInline())->toBeFalse();
-    });
-
-    it('can render with `inline()` set via `Closure`', function (): void {
-        livewire(TestComponentWithClosureInlineCheckbox::class)
-            ->assertSuccessful();
     });
 
     it('returns `false` for `isInline()` when `inlineLabel()` is set', function (): void {
@@ -164,26 +66,6 @@ describe('inline', function (): void {
         expect($checkbox->isInline())->toBeFalse();
     });
 
-    it('can render with `inline()` and `inlineLabel()`', function (): void {
-        livewire(TestComponentWithInlineLabelCheckbox::class)
-            ->assertSuccessful();
-    });
-});
-
-describe('`declined()` validation', function (): void {
-    it('fails validation when `declined()` checkbox is checked', function (): void {
-        livewire(TestComponentWithDeclinedCheckbox::class)
-            ->fillForm(['marketing' => true])
-            ->call('save')
-            ->assertHasFormErrors(['marketing' => ['declined']]);
-    });
-
-    it('passes validation when `declined()` checkbox is unchecked', function (): void {
-        livewire(TestComponentWithDeclinedCheckbox::class)
-            ->fillForm(['marketing' => false])
-            ->call('save')
-            ->assertHasNoFormErrors();
-    });
 });
 
 describe('extra input attributes', function (): void {
@@ -192,11 +74,6 @@ describe('extra input attributes', function (): void {
             ->extraInputAttributes(['data-test' => 'foo']);
 
         expect($checkbox->getExtraInputAttributes())->toBe(['data-test' => 'foo']);
-    });
-
-    it('can render with `extraInputAttributes()`', function (): void {
-        livewire(TestComponentWithExtraInputAttributesCheckbox::class)
-            ->assertSuccessful();
     });
 
     it('can merge `extraInputAttributes()`', function (): void {
@@ -208,11 +85,6 @@ describe('extra input attributes', function (): void {
 
         expect($attributes)->toHaveKey('data-a', '1');
         expect($attributes)->toHaveKey('data-b', '2');
-    });
-
-    it('can render with merged `extraInputAttributes()`', function (): void {
-        livewire(TestComponentWithMergedExtraInputAttributesCheckbox::class)
-            ->assertSuccessful();
     });
 
     it('replaces `extraInputAttributes()` without merge', function (): void {
@@ -233,12 +105,7 @@ describe('extra input attributes', function (): void {
         expect($checkbox->getExtraInputAttributes())->toBe(['data-dynamic' => 'value']);
     });
 
-    it('can render with `extraInputAttributes()` set via `Closure`', function (): void {
-        livewire(TestComponentWithClosureExtraInputAttributesCheckbox::class)
-            ->assertSuccessful();
-    });
-
-    it('returns an `ComponentAttributeBag` from `getExtraInputAttributeBag()`', function (): void {
+    it('returns a `ComponentAttributeBag` from `getExtraInputAttributeBag()`', function (): void {
         $checkbox = Checkbox::make('accepted')
             ->extraInputAttributes(['data-test' => 'bar']);
 
@@ -255,6 +122,81 @@ it('defaults state to `false`', function (): void {
     expect($checkbox->getDefaultState())->toBeFalse();
 });
 
+it('can set and get boolean state', function (): void {
+    livewire(TestComponentWithCheckbox::class)
+        ->fillForm(['accepted' => true])
+        ->assertSchemaStateSet(['accepted' => true]);
+});
+
+it('can validate with `accepted()` rule', function (): void {
+    livewire(TestComponentWithAcceptedCheckbox::class)
+        ->fillForm(['terms' => false])
+        ->call('save')
+        ->assertHasFormErrors(['terms' => ['accepted']]);
+});
+
+it('passes validation when `accepted()` checkbox is checked', function (): void {
+    livewire(TestComponentWithAcceptedCheckbox::class)
+        ->fillForm(['terms' => true])
+        ->call('save')
+        ->assertHasNoFormErrors();
+});
+
+describe('`declined()` validation', function (): void {
+    it('fails validation when `declined()` checkbox is checked', function (): void {
+        livewire(TestComponentWithDeclinedCheckbox::class)
+            ->fillForm(['marketing' => true])
+            ->call('save')
+            ->assertHasFormErrors(['marketing' => ['declined']]);
+    });
+
+    it('passes validation when `declined()` checkbox is unchecked', function (): void {
+        livewire(TestComponentWithDeclinedCheckbox::class)
+            ->fillForm(['marketing' => false])
+            ->call('save')
+            ->assertHasNoFormErrors();
+    });
+});
+
+it('can render with `inline(false)`', function (): void {
+    livewire(TestComponentWithNonInlineCheckbox::class)
+        ->assertSuccessful();
+});
+
+it('can render with `inline()` set via `Closure`', function (): void {
+    livewire(TestComponentWithClosureInlineCheckbox::class)
+        ->assertSuccessful();
+});
+
+it('can render with `inline()` and `inlineLabel()`', function (): void {
+    livewire(TestComponentWithInlineLabelCheckbox::class)
+        ->assertSuccessful();
+});
+it('can render with `extraInputAttributes()`', function (): void {
+    livewire(TestComponentWithExtraInputAttributesCheckbox::class)
+        ->assertSuccessful();
+});
+
+it('can render with merged `extraInputAttributes()`', function (): void {
+    livewire(TestComponentWithMergedExtraInputAttributesCheckbox::class)
+        ->assertSuccessful();
+});
+
+it('can render with `extraInputAttributes()` set via `Closure`', function (): void {
+    livewire(TestComponentWithClosureExtraInputAttributesCheckbox::class)
+        ->assertSuccessful();
+});
+
+it('can render', function (): void {
+    livewire(TestComponentWithCheckbox::class)
+        ->assertSuccessful();
+});
+
+it('can render inline', function (): void {
+    livewire(TestComponentWithInlineCheckbox::class)
+        ->assertSuccessful();
+});
+
 it('can render with a custom `label()`', function (): void {
     livewire(TestComponentWithLabelledCheckbox::class)
         ->assertSuccessful()
@@ -262,17 +204,21 @@ it('can render with a custom `label()`', function (): void {
 });
 
 it('can render `Checkbox` in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->create());
 
-        visit('/checkbox-test')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+    $page = visit('/checkbox-test');
 
-        visit('/checkbox-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
+    $page->check('[data-testid="checkbox"]')
+        ->assertChecked('[data-testid="checkbox"]')
+        ->assertPresent('[data-testid="checkbox"]:focus')
+        ->uncheck('[data-testid="checkbox"]')
+        ->assertNotChecked('[data-testid="checkbox"]')
+        ->assertEnabled('[data-testid="checkbox"]')
+        ->assertPresent('[data-testid="checkbox"]:focus')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()->assertNoAccessibilityIssues();
 });
 
 class TestComponentWithNonInlineCheckbox extends Livewire
@@ -364,5 +310,63 @@ class TestComponentWithLabelledCheckbox extends Livewire
                     ->label('I Accept the Terms'),
             ])
             ->statePath('data');
+    }
+}
+
+class TestComponentWithCheckbox extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Checkbox::make('accepted'),
+            ])
+            ->statePath('data');
+    }
+}
+
+class TestComponentWithInlineCheckbox extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Checkbox::make('accepted')->inline(),
+            ])
+            ->statePath('data');
+    }
+}
+
+class TestComponentWithDeclinedCheckbox extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Checkbox::make('marketing')->declined(),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithAcceptedCheckbox extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Checkbox::make('terms')->accepted(),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
     }
 }

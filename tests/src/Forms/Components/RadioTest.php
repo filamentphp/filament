@@ -17,33 +17,6 @@ beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
 
-it('can render', function (): void {
-    livewire(TestComponentWithRadio::class)
-        ->assertSuccessful();
-});
-
-it('can set and get state', function (): void {
-    livewire(TestComponentWithRadio::class)
-        ->fillForm(['status' => 'active'])
-        ->assertSchemaStateSet(['status' => 'active']);
-});
-
-it('can render inline', function (): void {
-    livewire(TestComponentWithInlineRadio::class)
-        ->assertSuccessful();
-});
-
-it('can render boolean mode', function (): void {
-    livewire(TestComponentWithBooleanRadio::class)
-        ->assertSuccessful();
-});
-
-it('can set boolean state', function (): void {
-    livewire(TestComponentWithBooleanRadio::class)
-        ->fillForm(['is_active' => 1])
-        ->assertSchemaStateSet(['is_active' => true]);
-});
-
 it('can set `boolean()` options', function (): void {
     $radio = Radio::make('active')
         ->boolean();
@@ -65,6 +38,14 @@ it('can set custom labels for `boolean()`', function (): void {
     expect($options[0])->toBe('Off');
 });
 
+it('returns fluent `$this` from `boolean()`', function (): void {
+    $radio = Radio::make('status');
+
+    $result = $radio->boolean();
+
+    expect($result)->toBe($radio);
+});
+
 it('can set `inline()`', function (): void {
     $radio = Radio::make('status');
 
@@ -73,6 +54,21 @@ it('can set `inline()`', function (): void {
     $radio->inline();
 
     expect($radio->isInline())->toBeTrue();
+});
+
+it('can set `inline()` with a `Closure`', function (): void {
+    $radio = Radio::make('status')
+        ->inline(static fn (): bool => true);
+
+    expect($radio->isInline())->toBeTrue();
+});
+
+it('can undo `inline()` with `false`', function (): void {
+    $radio = Radio::make('status')
+        ->inline()
+        ->inline(false);
+
+    expect($radio->isInline())->toBeFalse();
 });
 
 it('converts boolean default state to `int`', function (): void {
@@ -84,6 +80,83 @@ it('converts boolean default state to `int`', function (): void {
     $radio->default(false);
 
     expect($radio->getDefaultState())->toBe(0);
+});
+
+it('passes through non-boolean `getDefaultState()` unchanged', function (): void {
+    $radio = Radio::make('status')
+        ->default('active');
+
+    expect($radio->getDefaultState())->toBe('active');
+});
+
+it('returns `null` for `getDefaultState()` when no default set', function (): void {
+    $radio = Radio::make('status');
+
+    expect($radio->getDefaultState())->toBeNull();
+});
+
+it('returns `true` for `hasNullableBooleanState()`', function (): void {
+    $radio = Radio::make('status');
+
+    expect($radio->hasNullableBooleanState())->toBeTrue();
+});
+
+describe('disabled options', function (): void {
+    it('can disable specific options with `disableOptionWhen()`', function (): void {
+        $radio = Radio::make('status')
+            ->options([
+                'active' => 'Active',
+                'inactive' => 'Inactive',
+                'archived' => 'Archived',
+            ])
+            ->disableOptionWhen(static fn (string $value): bool => $value === 'archived');
+
+        $enabled = $radio->getEnabledOptions();
+
+        expect($enabled)->toBe([
+            'active' => 'Active',
+            'inactive' => 'Inactive',
+        ]);
+    });
+
+    it('returns only enabled option keys from `getInValidationRuleValues()`', function (): void {
+        $radio = Radio::make('status')
+            ->options([
+                'active' => 'Active',
+                'inactive' => 'Inactive',
+                'archived' => 'Archived',
+            ])
+            ->disableOptionWhen(static fn (string $value): bool => $value === 'archived');
+
+        $validValues = $radio->getInValidationRuleValues();
+
+        expect($validValues)->toBe(['active', 'inactive']);
+    });
+});
+
+describe('descriptions', function (): void {
+    it('can set `descriptions()` and retrieve with `getDescription()`', function (): void {
+        $radio = Radio::make('priority')
+            ->options(['low' => 'Low', 'high' => 'High'])
+            ->descriptions(['low' => 'Not urgent', 'high' => 'Urgent']);
+
+        expect($radio->getDescription('low'))->toBe('Not urgent');
+        expect($radio->getDescription('high'))->toBe('Urgent');
+        expect($radio->hasDescription('low'))->toBeTrue();
+        expect($radio->hasDescription('missing'))->toBeFalse();
+    });
+});
+
+it('can set and get state', function (): void {
+    livewire(TestComponentWithRadio::class)
+        ->fillForm(['status' => 'active'])
+        ->assertSchemaStateSet(['status' => 'active']);
+});
+
+it('can set boolean state', function (): void {
+    livewire(TestComponentWithBooleanRadio::class)
+        ->fillForm(['is_active' => 1])
+        ->assertSchemaStateSet(['is_active' => true]);
 });
 
 describe('validation', function (): void {
@@ -117,6 +190,73 @@ describe('validation', function (): void {
             ->call('save')
             ->assertHasNoFormErrors();
     });
+});
+
+it('can render', function (): void {
+    livewire(TestComponentWithRadio::class)
+        ->assertSuccessful();
+});
+
+it('can render inline', function (): void {
+    livewire(TestComponentWithInlineRadio::class)
+        ->assertSuccessful();
+});
+
+it('can render boolean mode', function (): void {
+    livewire(TestComponentWithBooleanRadio::class)
+        ->assertSuccessful();
+});
+
+describe('rendering', function (): void {
+    it('can render with `inline()` set via `Closure`', function (): void {
+        livewire(RenderRadioWithClosureInline::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with `inline(false)` after `inline()`', function (): void {
+        livewire(RenderRadioWithInlineUndone::class)
+            ->assertSuccessful();
+    });
+
+    it('can render with `disableOptionWhen()`', function (): void {
+        livewire(RenderRadioWithDisabledOption::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('Active')
+            ->assertSeeHtml('Archived');
+    });
+
+    it('can render with `descriptions()`', function (): void {
+        livewire(RenderRadioWithDescriptions::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('Not urgent')
+            ->assertSeeHtml('Urgent');
+    });
+
+    it('can render with custom `boolean()` labels', function (): void {
+        livewire(RenderRadioWithCustomBooleanLabels::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('On')
+            ->assertSeeHtml('Off');
+    });
+
+    it('can render option values containing double quotes', function (): void {
+        livewire(RenderRadioWithQuotedOptionValues::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('value="1/2&quot; wrench"');
+    });
+});
+
+it('can render `Radio` in the browser', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/radio-test');
+
+    $page
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()
+        ->assertNoAccessibilityIssues();
 });
 
 class TestComponentWithRadioValidation extends Livewire
@@ -208,147 +348,6 @@ class TestComponentWithBooleanRadio extends Livewire
             ->statePath('data');
     }
 }
-
-it('can set `inline()` with a `Closure`', function (): void {
-    $radio = Radio::make('status')
-        ->inline(static fn (): bool => true);
-
-    expect($radio->isInline())->toBeTrue();
-});
-
-it('can undo `inline()` with `false`', function (): void {
-    $radio = Radio::make('status')
-        ->inline()
-        ->inline(false);
-
-    expect($radio->isInline())->toBeFalse();
-});
-
-it('returns `true` for `hasNullableBooleanState()`', function (): void {
-    $radio = Radio::make('status');
-
-    expect($radio->hasNullableBooleanState())->toBeTrue();
-});
-
-it('passes through non-boolean `getDefaultState()` unchanged', function (): void {
-    $radio = Radio::make('status')
-        ->default('active');
-
-    expect($radio->getDefaultState())->toBe('active');
-});
-
-it('returns `null` for `getDefaultState()` when no default set', function (): void {
-    $radio = Radio::make('status');
-
-    expect($radio->getDefaultState())->toBeNull();
-});
-
-it('returns fluent `$this` from `boolean()`', function (): void {
-    $radio = Radio::make('status');
-
-    $result = $radio->boolean();
-
-    expect($result)->toBe($radio);
-});
-
-describe('disabled options', function (): void {
-    it('can disable specific options with `disableOptionWhen()`', function (): void {
-        $radio = Radio::make('status')
-            ->options([
-                'active' => 'Active',
-                'inactive' => 'Inactive',
-                'archived' => 'Archived',
-            ])
-            ->disableOptionWhen(static fn (string $value): bool => $value === 'archived');
-
-        $enabled = $radio->getEnabledOptions();
-
-        expect($enabled)->toBe([
-            'active' => 'Active',
-            'inactive' => 'Inactive',
-        ]);
-    });
-
-    it('returns only enabled option keys from `getInValidationRuleValues()`', function (): void {
-        $radio = Radio::make('status')
-            ->options([
-                'active' => 'Active',
-                'inactive' => 'Inactive',
-                'archived' => 'Archived',
-            ])
-            ->disableOptionWhen(static fn (string $value): bool => $value === 'archived');
-
-        $validValues = $radio->getInValidationRuleValues();
-
-        expect($validValues)->toBe(['active', 'inactive']);
-    });
-});
-
-describe('descriptions on Radio', function (): void {
-    it('can set `descriptions()` and retrieve with `getDescription()`', function (): void {
-        $radio = Radio::make('priority')
-            ->options(['low' => 'Low', 'high' => 'High'])
-            ->descriptions(['low' => 'Not urgent', 'high' => 'Urgent']);
-
-        expect($radio->getDescription('low'))->toBe('Not urgent');
-        expect($radio->getDescription('high'))->toBe('Urgent');
-        expect($radio->hasDescription('low'))->toBeTrue();
-        expect($radio->hasDescription('missing'))->toBeFalse();
-    });
-});
-
-describe('rendering', function (): void {
-    it('can render with `inline()` set via `Closure`', function (): void {
-        livewire(RenderRadioWithClosureInline::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with `inline(false)` after `inline()`', function (): void {
-        livewire(RenderRadioWithInlineUndone::class)
-            ->assertSuccessful();
-    });
-
-    it('can render with `disableOptionWhen()`', function (): void {
-        livewire(RenderRadioWithDisabledOption::class)
-            ->assertSuccessful()
-            ->assertSeeHtml('Active')
-            ->assertSeeHtml('Archived');
-    });
-
-    it('can render with `descriptions()`', function (): void {
-        livewire(RenderRadioWithDescriptions::class)
-            ->assertSuccessful()
-            ->assertSeeHtml('Not urgent')
-            ->assertSeeHtml('Urgent');
-    });
-
-    it('can render with custom `boolean()` labels', function (): void {
-        livewire(RenderRadioWithCustomBooleanLabels::class)
-            ->assertSuccessful()
-            ->assertSeeHtml('On')
-            ->assertSeeHtml('Off');
-    });
-
-    it('can render option values containing double quotes', function (): void {
-        livewire(RenderRadioWithQuotedOptionValues::class)
-            ->assertSuccessful()
-            ->assertSeeHtml('value="1/2&quot; wrench"');
-    });
-});
-
-it('can render `Radio` in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
-
-        visit('/radio-test')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-
-        visit('/radio-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
-});
 
 class RenderRadioWithClosureInline extends Livewire
 {

@@ -107,15 +107,17 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
         } . '-color-picker';
 
         $inputAttributes = $this->getExtraInputAttributeBag()
+            ->merge($this->getAccessibilityAttributes(), escape: false)
             ->merge([
-                // `aria-expanded` / `aria-haspopup` are not supported on a plain textbox, so only
-                // `aria-controls` (a global ARIA attribute) associates the input with its panel.
                 'aria-controls' => "{$id}-panel",
+                'aria-expanded' => 'false',
+                'aria-haspopup' => 'dialog',
                 'autocomplete' => 'off',
                 'disabled' => $isDisabled,
                 'id' => $id,
                 'placeholder' => filled($placeholder) ? e($placeholder) : null,
                 'required' => $this->isRequired(),
+                'role' => 'combobox',
                 'type' => 'text',
                 'x-model' . ($isLiveDebounced ? '.debounce.' . $liveDebounce : null) => 'state',
                 'x-on:blur' => $isLiveOnBlur ? 'isOpen() ? null : commitState()' : null,
@@ -148,9 +150,10 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
                         liveDebounce: <?= Js::from($liveDebounce) ?>,
                         state: $wire.$entangle('<?= e($statePath) ?>'),
                     })"
-            x-on:dropdown-escape="$refs.panel.close()"
+            x-on:dropdown-escape="if (isOpen()) { closePanelAndRestoreFocus(); $event.preventDefault() }"
             x-on:keydown.esc="isOpen() && $event.stopPropagation()"
             x-on:focusout="if (isOpen() && ! $el.contains($event.relatedTarget)) $refs.panel.close()"
+            wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled])), 0, 64) ?>"
             <?= $this->getExtraAlpineAttributeBag()->class(['fi-input-wrp-content'])->toHtml() ?>
         >
             <input
