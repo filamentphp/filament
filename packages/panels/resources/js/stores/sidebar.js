@@ -5,6 +5,9 @@ export default () => ({
     isOpenDesktop: window.Alpine.$persist(true).as(
         'filament:sidebar:desktop_open',
     ),
+    isMobile:
+        typeof window !== 'undefined' ? window.innerWidth < breakpoint : false,
+    previouslyFocusedElement: null,
 
     collapsedGroups: window.Alpine.$persist(null).as(
         'filament:sidebar:collapsed_groups',
@@ -24,6 +27,10 @@ export default () => ({
 
             if (nav) {
                 this.scrollTop = nav.scrollTop
+            }
+
+            if (this.isMobile && this.isOpen) {
+                this.close()
             }
         })
 
@@ -55,6 +62,8 @@ export default () => ({
             const isMobile = currentWidth < breakpoint
             const isDesktop = currentWidth >= breakpoint
 
+            this.isMobile = isMobile
+
             // Resize desktop to mobile
             if (wasDesktop && isMobile) {
                 this.isOpenDesktop = this.isOpen
@@ -72,6 +81,8 @@ export default () => ({
         })
 
         this.resizeObserver.observe(document.body)
+
+        this.isMobile = window.innerWidth < breakpoint
 
         if (window.innerWidth < breakpoint) {
             if (this.isOpen) {
@@ -109,13 +120,55 @@ export default () => ({
         if (window.innerWidth >= breakpoint) {
             this.isOpenDesktop = false
         }
+
+        if (this.isMobile) {
+            requestAnimationFrame(() => {
+                const elementToFocus = this.previouslyFocusedElement
+                    ?.isConnected
+                    ? this.previouslyFocusedElement
+                    : document.querySelector(
+                          '.fi-topbar-open-sidebar-btn, .fi-layout-sidebar-toggle-btn',
+                      )
+
+                elementToFocus?.focus()
+                this.previouslyFocusedElement = null
+            })
+        }
     },
 
     open() {
+        if (this.isMobile) {
+            this.previouslyFocusedElement = document.activeElement
+        }
+
         this.isOpen = true
 
         if (window.innerWidth >= breakpoint) {
             this.isOpenDesktop = true
+        }
+
+        if (this.isMobile) {
+            requestAnimationFrame(() => {
+                const sidebar = document.querySelector('.fi-main-sidebar')
+
+                if (!sidebar) {
+                    return
+                }
+
+                const closeButton = sidebar.querySelector(
+                    '.fi-sidebar-close-btn',
+                )
+                const activeItem = sidebar.querySelector(
+                    '.fi-sidebar-item.fi-active .fi-sidebar-item-btn, .fi-sidebar-item.fi-active a',
+                )
+                const firstFocusable = sidebar.querySelector(
+                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+                )
+
+                const target = closeButton ?? activeItem ?? firstFocusable
+
+                target?.focus()
+            })
         }
     },
 })

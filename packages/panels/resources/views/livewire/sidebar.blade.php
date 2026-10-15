@@ -21,6 +21,8 @@
             x-cloak="-lg"
         @endif
         x-bind:class="{ 'fi-sidebar-open': $store.sidebar.isOpen }"
+        x-bind:inert="(! $store.sidebar.isOpen) && ($store.sidebar.isMobile || @js($isSidebarFullyCollapsibleOnDesktop))"
+        x-on:keydown.window.escape="if ($store.sidebar.isMobile && $store.sidebar.isOpen) $store.sidebar.close()"
         id="fi-main-sidebar"
         class="fi-sidebar fi-main-sidebar"
     >
@@ -98,6 +100,23 @@
                 </div>
 
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_LOGO_AFTER) }}
+
+                <x-filament::icon-button
+                    color="gray"
+                    :icon="\Filament\Support\Icons\Heroicon::OutlinedXMark"
+                    :icon-alias="[
+                        \Filament\View\PanelsIconAlias::SIDEBAR_CLOSE_BUTTON,
+                        \Filament\View\PanelsIconAlias::TOPBAR_CLOSE_SIDEBAR_BUTTON,
+                    ]"
+                    icon-size="lg"
+                    :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
+                    x-cloak
+                    x-data="{}"
+                    aria-controls="fi-main-sidebar"
+                    x-bind:aria-expanded="$store.sidebar.isOpen"
+                    x-on:click="$store.sidebar.close()"
+                    class="fi-sidebar-close-btn"
+                />
             </header>
         </div>
 

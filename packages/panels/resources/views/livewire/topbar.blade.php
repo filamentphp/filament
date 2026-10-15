@@ -21,6 +21,8 @@
 
     <nav
         aria-label="{{ __('filament-panels::layout.topbar.label') }}"
+        x-data="{}"
+        x-bind:inert="$store.sidebar.isMobile && $store.sidebar.isOpen"
         class="fi-topbar"
     >
         {{ FilamentView::renderHook(PanelsRenderHook::TOPBAR_START) }}

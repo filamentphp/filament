@@ -45,7 +45,10 @@
             @if ($isSidebarFullyCollapsibleOnDesktop)
                 x-data="{}"
                 x-bind:class="{ 'lg:fi-hidden': $store.sidebar.isOpen }"
+            @else
+                x-data="{}"
             @endif
+            x-bind:inert="$store.sidebar.isMobile && $store.sidebar.isOpen"
             @class([
                 'fi-layout-sidebar-toggle-btn-ctn',
                 'lg:fi-hidden' => ! $isSidebarFullyCollapsibleOnDesktop,
@@ -98,10 +101,13 @@
                 }"
                 x-bind:style="'display: flex; opacity:1;'"
                 {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
-            @elseif (! ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop || $hasTopNavigation || (! $hasNavigation)))
+            @else
                 x-data="{}"
-                x-bind:style="'display: flex; opacity:1;'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
+                @if (! ($hasTopNavigation || (! $hasNavigation)))
+                    x-bind:style="'display: flex; opacity:1;'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
+                @endif
             @endif
+            x-bind:inert="$store.sidebar.isMobile && $store.sidebar.isOpen"
             class="fi-main-ctn"
         >
             {{ FilamentView::renderHook(PanelsRenderHook::CONTENT_BEFORE, scopes: $renderHookScopes) }}
