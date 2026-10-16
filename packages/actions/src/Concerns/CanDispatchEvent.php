@@ -59,49 +59,6 @@ trait CanDispatchEvent
         return $this;
     }
 
-    /**
-     * @deprecated Use `dispatch()` instead.
-     *
-     * @param  array<int, mixed> | Closure  $data
-     */
-    public function emit(
-        string | Closure | null $event,
-        array | Closure $data = [],
-    ): static {
-        $this->dispatch($event, $data);
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `dispatchSelf()` instead.
-     *
-     * @param  array<int, mixed> | Closure  $data
-     */
-    public function emitSelf(
-        string | Closure | null $event,
-        array | Closure $data = [],
-    ): static {
-        $this->dispatchSelf($event, $data);
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `dispatchTo()` instead.
-     *
-     * @param  array<int, mixed> | Closure  $data
-     */
-    public function emitTo(
-        string $component,
-        string | Closure | null $event,
-        array | Closure $data = [],
-    ): static {
-        $this->dispatchTo($component, $event, $data);
-
-        return $this;
-    }
-
     public function getEvent(): ?string
     {
         return $this->evaluate($this->event);

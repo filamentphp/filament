@@ -344,7 +344,7 @@ class ActionsDemo extends Component implements HasActions, HasSchemas
                 'title' => '10 Tips for Better Laravel Performance',
                 'content' => 'In this article, we explore proven strategies for optimizing your Laravel applications, from query optimization to caching techniques.',
             ])
-            ->disabledForm()
+            ->disabledSchema()
             ->modalSubmitActionLabel('Approve')
             ->action(fn () => null);
     }

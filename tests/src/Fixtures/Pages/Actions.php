@@ -105,9 +105,9 @@ class Actions extends Page
                                 ])
                                 ->action(fn (array $mountedActions) => $this->dispatch(
                                     'data-test-called',
-                                    foo: $mountedActions[0]->getRawFormData()['foo'],
-                                    bar: $mountedActions[1]->getRawFormData()['bar'],
-                                    baz: $mountedActions[2]->getRawFormData()['baz'],
+                                    foo: $mountedActions[0]->getRawData()['foo'],
+                                    bar: $mountedActions[1]->getRawData()['bar'],
+                                    baz: $mountedActions[2]->getRawData()['baz'],
                                 )),
                             Action::make('testArguments')
                                 ->action(function (array $mountedActions): void {

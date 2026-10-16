@@ -345,6 +345,37 @@ See the [security documentation](../advanced/security#restricting-livewire-file-
 
 ### Low-impact changes
 
+<Disclosure open x-show="packages.includes('actions')">
+<span slot="summary">Deprecated action method aliases have been removed</span>
+
+The following deprecated methods on `Filament\Actions\Action` and its subclasses have been removed. Use their replacements instead:
+
+| Removed method | Replacement |
+| --- | --- |
+| `emit()` | `dispatch()` |
+| `emitSelf()` | `dispatchSelf()` |
+| `emitTo()` | `dispatchTo()` |
+| `disableForm()`, `disabledForm()` | `disabledSchema()` |
+| `form()` | `schema()` |
+| `getForm()` | `getSchema()` |
+| `isFormDisabled()` | `isSchemaDisabled()` |
+| `mutateFormDataUsing()` | `mutateDataUsing()` |
+| `formData()` | `data()` |
+| `resetFormData()` | `resetData()` |
+| `getFormData()` | `getData()` |
+| `getRawFormData()` | `getRawData()` |
+
+The automated upgrade script renames instance calls when it can identify the receiver as an `Action` or subclass, including nullsafe calls and first-class callables. It also changes the named argument `form:` to `schema:` when replacing `form()`. Other parameter names are unchanged. Methods with these names on unrelated types, such as a resource's `form()`, are not renamed.
+
+Custom method declarations are not renamed. Calls whose receiver is known to override an alias or its replacement are left unchanged, since overrides may change parameter names, defaults, or behavior. This also applies to overrides inherited from another subclass. A receiver typed as the base `Action` may still contain a custom subclass at runtime. If you override any of these methods, migrate the alias declarations and calls manually, and review any automated changes to ensure they preserve your custom behavior and forwarded arguments.
+
+Class-qualified calls, such as `parent::disabledForm()`, are left unchanged and must be migrated manually. The removed wrappers called the replacement methods through `$this`, so simply renaming a `parent::` call could bypass a replacement method overridden in your subclass. Preserve that dispatch behavior when updating these calls.
+
+Calls to `form()` that unpack arguments, such as `form(...$arguments)`, are also left unchanged. Rename the method and change any unpacked named-argument key from `'form'` to `'schema'` manually.
+
+You must also manually update dynamic method names, string or array callbacks, calls whose receiver type cannot be determined, and references outside PHP files. If you invoke a migrated first-class callable with named arguments, update `form:` to `schema:` at that invocation yourself. If you use these concerns directly on a class that does not extend `Action`, update its calls manually.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('panels')">
 <span slot="summary">Custom avatar providers must accept non-Eloquent users</span>
 
