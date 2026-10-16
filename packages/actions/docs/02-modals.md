@@ -144,7 +144,7 @@ Action::make('updateAuthor')
 
 ##### Disabling all form fields
 
-You may wish to disable all form fields in the modal, ensuring the user cannot edit them. You may do so using the `disabledForm()` method:
+You may wish to disable all form fields in the modal, ensuring the user cannot edit them. You may do so using the `disabledSchema()` method:
 
 ```php
 use App\Models\Post;
@@ -157,7 +157,7 @@ Action::make('approvePost')
         TextInput::make('title'),
         Textarea::make('content'),
     ])
-    ->disabledForm()
+    ->disabledSchema()
     ->action(function (Post $record): void {
         $record->approve();
     })
