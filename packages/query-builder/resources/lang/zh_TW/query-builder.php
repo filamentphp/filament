@@ -14,8 +14,13 @@ return [
 
             'label' => '條件群組',
 
+            'group' => [
+                'label' => '群組',
+            ],
+
             'block' => [
                 'label' => '或條件群組 (OR)',
+                'picker_group' => '邏輯',
                 'or' => '或',
             ],
 
@@ -34,6 +39,8 @@ return [
     ],
 
     'no_rules' => '（無規則）',
+
+    'max_rules_reached_tooltip' => '規則數量已達上限（:count 條）。',
 
     'item_separators' => [
         'and' => '且',
@@ -146,6 +153,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => '秒',
+                'minute' => '分鐘',
+                'hour' => '小時',
+                'day' => '天',
+                'week' => '週',
+                'month' => '月',
+                'quarter' => '季',
+                'year' => '年',
+            ],
+
+            'presets' => [
+                'past_decade' => '過去十年',
+                'past_5_years' => '過去 5 年',
+                'past_2_years' => '過去 2 年',
+                'past_year' => '過去一年',
+                'past_6_months' => '過去 6 個月',
+                'past_quarter' => '過去一季',
+                'past_month' => '過去一個月',
+                'past_2_weeks' => '過去 2 週',
+                'past_week' => '過去一週',
+                'past_hour' => '過去一小時',
+                'past_minute' => '過去一分鐘',
+                'this_decade' => '這十年',
+                'this_year' => '今年',
+                'this_quarter' => '本季',
+                'this_month' => '本月',
+                'today' => '今天',
+                'this_hour' => '這一小時',
+                'this_minute' => '這一分鐘',
+                'next_minute' => '未來一分鐘',
+                'next_hour' => '未來一小時',
+                'next_week' => '未來一週',
+                'next_2_weeks' => '未來 2 週',
+                'next_month' => '未來一個月',
+                'next_quarter' => '未來一季',
+                'next_6_months' => '未來 6 個月',
+                'next_year' => '未來一年',
+                'next_2_years' => '未來 2 年',
+                'next_5_years' => '未來 5 年',
+                'next_decade' => '未來十年',
+                'custom' => '自訂',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +209,40 @@ return [
 
                 'year' => [
                     'label' => '年份',
+                ],
+
+                'mode' => [
+
+                    'label' => '日期類型',
+
+                    'options' => [
+                        'absolute' => '指定日期',
+                        'relative' => '相對時間區間',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => '時間範圍',
+                ],
+
+                'relative_value' => [
+                    'label' => '數量',
+                ],
+
+                'relative_unit' => [
+                    'label' => '時間單位',
+                ],
+
+                'tense' => [
+
+                    'label' => '時間方向',
+
+                    'options' => [
+                        'past' => '過去',
+                        'future' => '未來',
+                    ],
+
                 ],
 
             ],

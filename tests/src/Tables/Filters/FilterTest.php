@@ -371,6 +371,7 @@ describe('browser interactions', function (): void {
             ->keys('[data-testid="filters-trigger"]', 'Enter')
             ->assertPresent($focusedSelector . ':focus')
             ->keys($focusedSelector, 'Escape')
+            ->assertMissing($focusedSelector)
             ->assertPresent('[data-testid="filters-trigger"]:focus')
             ->assertNoSmoke();
     })->with([

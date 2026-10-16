@@ -18,31 +18,32 @@ it('loads deferred sections, tabs, and wizard steps as they are revealed', funct
     $page = visit('/deferred-schema-loading-browser-test', ['reducedMotion' => 'reduce']);
 
     $page->assertPresent('[data-testid="viewport-deferred-section"] [role="status"][aria-busy="true"]')
-        ->assertMissing('#form\.deferredDetails\.deferred_name')
-        ->assertMissing('#form\.deferredTabs\.profileTab\.profile_name')
-        ->assertMissing('#form\.deferredTabs\.preferencesTab\.timezone')
-        ->assertMissing('#form\.deferredWizard\.accountStep\.account_name')
-        ->assertMissing('#form\.deferredWizard\.confirmationStep\.confirmation_note')
+        ->assertNotPresent('#form\.deferredDetails\.deferred_name')
+        ->assertNotPresent('#form\.deferredTabs\.profileTab\.profile_name')
+        ->assertNotPresent('#form\.deferredTabs\.preferencesTab\.timezone')
+        ->assertNotPresent('#form\.deferredWizard\.accountStep\.account_name')
+        ->assertNotPresent('#form\.deferredWizard\.confirmationStep\.confirmation_note')
+        ->assertPresent('[data-testid="concealed-deferred-section"] [aria-busy="true"]')
+        ->assertNotPresent('#form\.concealedDeferredDetails\.concealed_deferred_name')
         ->assertNoAccessibilityIssues();
+
+    $page->page()->locator('[data-testid="concealed-deferred-section"] [aria-expanded]')->click();
+    $page->assertVisible('#form\.concealedDeferredDetails\.concealed_deferred_name')
+        ->assertMissing('[data-testid="concealed-deferred-section"] [aria-busy="true"]');
 
     $page->page()->locator('[data-testid="viewport-deferred-section"]')->scrollIntoViewIfNeeded();
     $page->assertVisible('#form\.deferredDetails\.deferred_name')
-        ->assertMissing('[data-testid="viewport-deferred-section"] [aria-busy="true"]')
-        ->assertPresent('[data-testid="concealed-deferred-section"] [aria-busy="true"]')
-        ->assertMissing('#form\.concealedDeferredDetails\.concealed_deferred_name')
-        ->click('[data-testid="concealed-deferred-section"] [aria-expanded="false"]')
-        ->assertVisible('#form\.concealedDeferredDetails\.concealed_deferred_name')
-        ->assertMissing('[data-testid="concealed-deferred-section"] [aria-busy="true"]');
+        ->assertMissing('[data-testid="viewport-deferred-section"] [aria-busy="true"]');
 
     $page->page()->locator('[data-testid="deferred-tabs"]')->scrollIntoViewIfNeeded();
     $page->assertVisible('#form\.deferredTabs\.profileTab\.profile_name')
-        ->assertMissing('#form\.deferredTabs\.preferencesTab\.timezone')
+        ->assertNotPresent('#form\.deferredTabs\.preferencesTab\.timezone')
         ->click('[data-testid="deferred-tabs"] [role="tab"] >> text=Preferences')
         ->assertVisible('#form\.deferredTabs\.preferencesTab\.timezone');
 
     $page->page()->locator('[data-testid="deferred-wizard"]')->scrollIntoViewIfNeeded();
     $page->assertVisible('#form\.deferredWizard\.accountStep\.account_name')
-        ->assertMissing('#form\.deferredWizard\.confirmationStep\.confirmation_note')
+        ->assertNotPresent('#form\.deferredWizard\.confirmationStep\.confirmation_note')
         ->click('Next')
         ->assertVisible('#form\.deferredWizard\.confirmationStep\.confirmation_note')
         ->assertNoSmoke()
@@ -51,10 +52,10 @@ it('loads deferred sections, tabs, and wizard steps as they are revealed', funct
     $darkPage = $page->inDarkMode();
     $darkPage->assertPresent('[data-testid="viewport-deferred-section"] [aria-busy="true"]')
         ->assertNoAccessibilityIssues();
+    $darkPage->page()->locator('[data-testid="concealed-deferred-section"] [aria-expanded]')->click();
+    $darkPage->assertVisible('#form\.concealedDeferredDetails\.concealed_deferred_name');
     $darkPage->page()->locator('[data-testid="viewport-deferred-section"]')->scrollIntoViewIfNeeded();
-    $darkPage->assertVisible('#form\.deferredDetails\.deferred_name')
-        ->click('[data-testid="concealed-deferred-section"] [aria-expanded="false"]')
-        ->assertVisible('#form\.concealedDeferredDetails\.concealed_deferred_name');
+    $darkPage->assertVisible('#form\.deferredDetails\.deferred_name');
     $darkPage->page()->locator('[data-testid="deferred-tabs"]')->scrollIntoViewIfNeeded();
     $darkPage->click('[data-testid="deferred-tabs"] [role="tab"] >> text=Preferences')
         ->assertVisible('#form\.deferredTabs\.preferencesTab\.timezone');
@@ -69,7 +70,7 @@ it('loads a deferred schema when it contains a validation error', function (): v
     $this->actingAs(User::factory()->create());
 
     visit('/deferred-schema-loading-browser-test')
-        ->assertMissing('#form\.deferredDetails\.deferred_name')
+        ->assertNotPresent('#form\.deferredDetails\.deferred_name')
         ->click('Validate')
         ->assertVisible('#form\.deferredDetails\.deferred_name')
         ->assertVisible('[data-testid="viewport-deferred-section"] [data-validation-error]')
