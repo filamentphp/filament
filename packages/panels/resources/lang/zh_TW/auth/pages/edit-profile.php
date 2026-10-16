@@ -55,6 +55,11 @@ return [
             'title' => '已儲存',
         ],
 
+        'throttled' => [
+            'title' => '請求次數過多，請在 :seconds 秒後再試一次。',
+            'body' => '請在 :seconds 秒後再試一次。',
+        ],
+
     ],
 
     'actions' => [
