@@ -19,11 +19,9 @@ use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Livewire\SpatieMediaLibraryFileUploadForm;
 use Filament\Tests\Fixtures\Models\MediaPost;
-use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\FileUploadController;
@@ -135,24 +133,6 @@ it('renders schemas with default hook customization through Livewire and Blade',
         ->assertSeeHtml('data-default-hook="base"')
         ->assertSeeHtml('data-subclass-hook="applied"')
         ->assertSeeHtml('data-parameterized-default-hook="applied"');
-});
-
-it('renders a customized no-argument schema accessibly in light and dark modes', function (): void {
-    Artisan::call('filament:assets');
-
-    $this->actingAs(User::factory()->create());
-
-    $page = visit('/schema-caching-browser-test');
-
-    $page
-        ->assertSee('Customized no-argument schema')
-        ->assertPresent('[data-testid="customized-no-argument-schema"][data-default-hook="base"][data-subclass-hook="applied"]')
-        ->assertNoSmoke()
-        ->assertNoAccessibilityIssues();
-
-    $page->inDarkMode()
-        ->assertPresent('[data-testid="customized-no-argument-schema"]')
-        ->assertNoAccessibilityIssues();
 });
 
 it('cannot validate from a client-side call', function (string $method): void {

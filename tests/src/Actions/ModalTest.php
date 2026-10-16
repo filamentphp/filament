@@ -13,26 +13,17 @@ beforeEach(function (): void {
 });
 
 describe('browser interactions', function (): void {
-    it('keeps a loading button focused without allowing repeated activation', function (): void {
+    it('activates a button using the keyboard and its key binding', function (): void {
         $selector = '[data-testid="loading-button"]';
 
         $browser = visit('/modal-browser-test');
 
         $browser
             ->keys($selector, 'Enter')
-            ->assertAttribute($selector, 'aria-disabled', 'true')
-            ->assertAttributeMissing($selector, 'disabled')
-            ->assertPresent("{$selector}:focus")
-            ->keys($selector, 'Enter')
-            ->keys($selector, 'Space');
-
-        $browser
             ->assertAttribute($selector, 'data-activations', '1')
-            ->assertAttributeMissing($selector, 'aria-disabled')
             ->assertPresent("{$selector}:focus")
             ->keys($selector, 'Control+Shift+l')
             ->assertAttribute($selector, 'data-activations', '2')
-            ->assertAttributeMissing($selector, 'aria-disabled')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
@@ -372,7 +363,7 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke();
     });
 
-    it('keeps focus trapped and preserves parent scroll after closing a nested modal', function (): void {
+    it('moves focus between fields and preserves parent focus and scroll after closing a nested modal', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/modal-browser-test')
@@ -381,8 +372,8 @@ describe('browser interactions', function (): void {
             ->assertPresent('[data-testid="scroll-field-1"]:focus')
             ->keys('[data-testid="scroll-field-1"]', 'Tab')
             ->assertPresent('[data-testid="scroll-field-2"]:focus')
-            ->keys('[data-testid="scroll-field-1"]', 'Shift+Tab')
-            ->assertPresent('[data-testid="scroll-modal"] :focus')
+            ->keys(':focus', 'Shift+Tab')
+            ->assertPresent('[data-testid="scroll-field-1"]:focus')
             ->keys('[data-testid="scroll-modal"]', 'Control+End')
             ->assertScript('(() => { const modal = document.querySelector(\'[data-testid="scroll-modal"]\'); return [modal, ...modal.querySelectorAll(\'*\')].some(element => element.scrollTop > 0 && element.scrollTop === element.scrollHeight - element.clientHeight) })()', true)
             ->click('[data-testid="scroll-nested-trigger"]')

@@ -18,6 +18,15 @@ import 'tippy.js/dist/tippy.css'
 import 'tippy.js/themes/light.css'
 
 document.addEventListener('alpine:init', () => {
+    // Temporary compatibility fix. Remove once the minimum supported Livewire
+    // version bundles Alpine's fix: https://github.com/alpinejs/alpine/pull/4922
+    window.Alpine.interceptClone((existingElement, incomingElement) => {
+        // Preserve cloaks on elements still waiting for initialization.
+        if (existingElement.hasAttribute?.('x-cloak') === false) {
+            incomingElement.removeAttribute?.('x-cloak')
+        }
+    })
+
     window.Alpine.plugin(AlpineFloatingUI)
     window.Alpine.plugin(AlpineLazyLoadAssets)
     window.Alpine.plugin(AsyncAlpine)

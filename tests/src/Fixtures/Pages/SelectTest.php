@@ -11,8 +11,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-use function Amp\delay;
-
 class SelectTest extends Page
 {
     protected string $view = 'pages.select-test';
@@ -140,11 +138,7 @@ class SelectTest extends Page
                         'dynamic1' => 'Dynamic Option 1',
                         'dynamic2' => 'Dynamic Option 2',
                     ])
-                    ->getSearchResultsUsing(static function (string $search): array {
-                        delay(1);
-
-                        return ['result1' => 'Search Result 1'];
-                    })
+                    ->getSearchResultsUsing(static fn (string $search): array => ['result1' => 'Search Result 1'])
                     ->getOptionLabelUsing(fn ($value): ?string => match ($value) {
                         'dynamic1' => 'Dynamic Option 1',
                         'dynamic2' => 'Dynamic Option 2',

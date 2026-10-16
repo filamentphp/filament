@@ -33,14 +33,6 @@ class NotificationBrowserTest extends Page
         ];
     }
 
-    public function sendTimedNotification(): void
-    {
-        Notification::make('timed-notification')
-            ->title('Timed notification')
-            ->duration(800)
-            ->send();
-    }
-
     public function sendPersistentNotification(): void
     {
         Notification::make('persistent-notification')
