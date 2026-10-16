@@ -63,6 +63,9 @@ describe('document generation', function (): void {
     });
 
     it('generates deterministic rich content using the Faker seed', function (): void {
+        // Collect old `Generator` instances before their destructors can reset the seed.
+        gc_collect_cycles();
+
         fake()->seed(1234);
 
         $firstDocument = fake()->filamentRichContent()
@@ -198,6 +201,9 @@ describe('document generation', function (): void {
     });
 
     it('generates deterministic image URLs using an available image service', function (): void {
+        // Collect old `Generator` instances before their destructors can reset the seed.
+        gc_collect_cycles();
+
         fake()->seed(2345);
 
         $firstImage = fake()->filamentRichContent()
