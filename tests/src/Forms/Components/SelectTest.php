@@ -2099,7 +2099,7 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke();
     });
 
-    it('restores initial options when clearing an unmatched search', function (): void {
+    it('restores initial options when clearing a search', function (): void {
         $this->actingAs(User::factory()->create());
 
         $page = visit('/select-test');
@@ -2108,7 +2108,7 @@ describe('browser interactions', function (): void {
             ->click('#dynamic-select')
             ->assertCount('[role="listbox"]:visible [role="option"]', 2)
             ->type('[data-testid="dynamic-options-with-results-select"] input[role="combobox"]', 'result')
-            ->assertMissing('[role="listbox"]:visible [role="option"]')
+            ->assertSeeIn('[data-testid="dynamic-options-with-results-select"] [role="option"]', 'Search Result 1')
             ->clear('[data-testid="dynamic-options-with-results-select"] input[role="combobox"]')
             ->assertCount('[role="listbox"]:visible [role="option"]', 2)
             ->keys('[data-testid="dynamic-options-with-results-select"] input[role="combobox"]', 'Enter')

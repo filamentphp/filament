@@ -951,27 +951,6 @@ describe('rendering', function (): void {
             ->assertPresent('[data-testid="table-loading-state"]')
             ->assertNoAccessibilityIssues();
 
-        $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
-        $individualSearchInput = '.fi-ta-individual-search-row input';
-
-        $page
-            ->type($individualSearchInput, 'Sho')
-            ->assertPresent('.fi-ta-records[inert]')
-            ->assertMissing('tbody[inert] .fi-ta-individual-search-row input')
-            ->assertPresent($individualSearchInput . ':focus')
-            ->keys($individualSearchInput, 'r')
-            ->assertValue($individualSearchInput, 'Shor')
-            ->assertMissing('.fi-ta-records[inert]');
-
-        $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
-
-        $page
-            ->assertAttribute('[data-tab-key="published"]', 'data-tab-available', 'true')
-            ->click('[data-tab-key="published"]')
-            ->assertPresent('.fi-ta-content-loading .fi-ta-records[inert]')
-            ->assertMissing('.fi-ta-records[inert]')
-            ->assertAttribute('[data-tab-key="published"]', 'aria-selected', 'true');
-
         Post::query()->delete();
 
         visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))

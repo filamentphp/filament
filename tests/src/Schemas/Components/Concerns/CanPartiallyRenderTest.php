@@ -25,15 +25,15 @@ it('can partially render specified fields and the current component after state 
     $page
         ->fill('#form\.product_name', $productName)
         ->assertValue('#form\.product_slug', Str::slug($productName))
-        ->assertSee($productSku)
+        ->assertSeeIn('.product-sku', $productSku)
         ->assertNoSmoke();
 
     $postTitle = 'A guide to summer travel';
-    $postDate = $page->text('.post-date');
+    $postReference = $page->text('.post-reference');
 
     $page
         ->fill('#form\.post_title', $postTitle)
         ->assertSee('/' . Str::slug($postTitle))
-        ->assertSee($postDate)
+        ->assertSeeIn('.post-reference', $postReference)
         ->assertNoSmoke();
 });
