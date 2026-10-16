@@ -422,6 +422,34 @@ Grouped imports may be left unused after their references are updated. You can r
 See the [query builder documentation](../tables/filters/query-builder) for the current namespaces.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('actions') || packages.includes('tables')">
+<span slot="summary">Deprecated action and filter convenience classes have been removed</span>
+
+Replace `Filament\Actions\ButtonAction` and `Filament\Actions\IconButtonAction` with `Filament\Actions\Action`, calling `button()` or `iconButton()` immediately after `make()`. Replace `Filament\Tables\Filters\MultiSelectFilter` with `Filament\Tables\Filters\SelectFilter`, calling `multiple()`:
+
+```php
+use Filament\Actions\Action;
+use Filament\Tables\Filters\SelectFilter;
+
+Action::make('save')->button();
+Action::make('edit')->iconButton()->icon('heroicon-m-pencil');
+SelectFilter::make('status')->multiple()->options([
+    'draft' => 'Draft',
+    'published' => 'Published',
+]);
+```
+
+The automated upgrade script updates direct `ButtonAction::make()`, `IconButtonAction::make()`, and `MultiSelectFilter::make()` calls, including aliased imports and fully qualified names. It inserts `button()`, `iconButton()`, or `multiple()` immediately after `make()` and preserves the existing chain. Subsequent configuration still takes precedence.
+
+The script also renames PHP class references to `Action` or `SelectFilter`, including parameter and return types, PHPDoc, custom parent classes, `instanceof` checks, and `::class` references. This makes common usages easier to migrate, but replacing a specialized class with its parent can broaden the scope of your configuration and type checks. Review these cases before using the migrated code:
+
+- **Global configuration and container bindings:** Renamed `configureUsing()` calls and bindings using `::class` now target the parent class, so configuration previously limited to button actions, icon-button actions, or multi-select filters can affect unrelated actions or select filters. Move that configuration to individual components or a custom subclass if it should remain scoped. Review base-class configuration too: the new explicit methods run after all `make()` configuration callbacks, whereas the old action styles ran during `setUp()`, and the old filter was already multiple throughout configuration. Important action configuration that changed the view could previously override the wrapper's style, but now runs before the explicit style method. Configuration callbacks that inspect the view or multiplicity may also observe different values.
+- **Custom subclasses:** The script changes the parent class but does not add configuration to your subclass. Call `button()`, `iconButton()`, or `multiple()` after `parent::setUp()` in your subclass's `setUp()` method where needed. Factories on custom subclasses are not given these methods automatically.
+- **Class identity:** Renamed types and `instanceof` checks accept all instances of the parent class, not just instances of the former convenience class. Review code that relied on distinguishing those components.
+- **Other construction paths and references:** Dynamic static calls, direct constructors, and first-class factory callables have their class references renamed, but do not receive the explicit configuration methods. Add the required configuration manually where needed. References stored as strings or outside PHP files must be updated manually. Remove unused imports of the deleted classes after reviewing the migration.
+
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('tables')">
 <span slot="summary">Deprecated column-toggle render hook constants have been removed</span>
 

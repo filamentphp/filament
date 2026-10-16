@@ -2,6 +2,7 @@
 
 use Composer\InstalledVersions;
 use Filament\Upgrade\Rector\RenameDeprecatedActionMethodsRector;
+use Filament\Upgrade\Rector\ReplaceConvenienceClassesRector;
 use Filament\Upgrade\Rector\WidenAvatarProviderParameterTypeRector;
 use Rector\Config\RectorConfig;
 use Rector\Removing\Rector\Class_\RemoveTraitUseRector;
@@ -17,6 +18,9 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->importNames();
 
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
+        'Filament\\Actions\\ButtonAction' => 'Filament\\Actions\\Action',
+        'Filament\\Actions\\IconButtonAction' => 'Filament\\Actions\\Action',
+        'Filament\\Tables\\Filters\\MultiSelectFilter' => 'Filament\\Tables\\Filters\\SelectFilter',
         'Filament\\Tables\\Filters\\QueryBuilder\\Constraints\\Constraint' => 'Filament\\QueryBuilder\\Constraints\\Constraint',
         'Filament\\Tables\\Filters\\QueryBuilder\\Constraints\\BooleanConstraint' => 'Filament\\QueryBuilder\\Constraints\\BooleanConstraint',
         'Filament\\Tables\\Filters\\QueryBuilder\\Constraints\\BooleanConstraint\\Operators\\IsTrueOperator' => 'Filament\\QueryBuilder\\Constraints\\BooleanConstraint\\Operators\\IsTrueOperator',
@@ -60,5 +64,6 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->rule(RenameDeprecatedActionMethodsRector::class);
+    $rectorConfig->rule(ReplaceConvenienceClassesRector::class);
     $rectorConfig->rule(WidenAvatarProviderParameterTypeRector::class);
 };
