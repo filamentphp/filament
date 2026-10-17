@@ -76,7 +76,7 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => '嘗試登入次數過多。請在 :seconds 秒後重試。',
+            'title' => '嘗試登入次數過多',
             'body' => '請在 :seconds 秒後再試一次。',
         ],
 
