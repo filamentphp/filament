@@ -32,6 +32,7 @@ use Filament\Support\View\Components\IconButtonComponent;
 use Filament\Support\View\Components\SectionComponent\IconComponent;
 use Filament\Support\View\SupportIconAlias;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
@@ -392,31 +393,38 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
                         <?= generate_icon_html($icon, attributes: (new FilamentComponentAttributeBag)
                             ->color(IconComponent::class, $iconColor), size: $iconSize ?? IconSize::Large)?->toHtml() ?>
 
-                        <?php if ($hasHeading || $hasDescription) { ?>
-                            <div class="fi-section-header-text-ctn">
-                                <?php if ($hasHeading) { ?>
-                                    <<?= $headingTag ?>
-                                        <?php if (filled($headingId)) { ?>id="<?= e($headingId) ?>"<?php } ?>
-                                        class="fi-section-header-heading"
-                                    >
-                                        <?= e($heading) ?>
-                                    </<?= $headingTag ?>>
+                        <?php if ($hasHeading || $hasDescription || $hasAfterHeader) { ?>
+                            <div class="<?= Arr::toCssClasses([
+                                'fi-section-header-content',
+                                'fi-section-header-content-has-heading' => $hasHeading || $hasDescription,
+                            ]) ?>">
+                                <?php if ($hasHeading || $hasDescription) { ?>
+                                    <div class="fi-section-header-text-ctn">
+                                        <?php if ($hasHeading) { ?>
+                                            <<?= $headingTag ?>
+                                                <?php if (filled($headingId)) { ?>id="<?= e($headingId) ?>"<?php } ?>
+                                                class="fi-section-header-heading"
+                                            >
+                                                <?= e($heading) ?>
+                                            </<?= $headingTag ?>>
+                                        <?php } ?>
+
+                                        <?php if ($hasDescription) { ?>
+                                            <p
+                                                <?php if (filled($descriptionId)) { ?>id="<?= e($descriptionId) ?>"<?php } ?>
+                                                class="fi-section-header-description"
+                                            >
+                                                <?= e($description) ?>
+                                            </p>
+                                        <?php } ?>
+                                    </div>
                                 <?php } ?>
 
-                                <?php if ($hasDescription) { ?>
-                                    <p
-                                        <?php if (filled($descriptionId)) { ?>id="<?= e($descriptionId) ?>"<?php } ?>
-                                        class="fi-section-header-description"
-                                    >
-                                        <?= e($description) ?>
-                                    </p>
+                                <?php if ($hasAfterHeader) { ?>
+                                    <div class="fi-section-header-after-ctn">
+                                        <?= $afterHeader ?>
+                                    </div>
                                 <?php } ?>
-                            </div>
-                        <?php } ?>
-
-                        <?php if ($hasAfterHeader) { ?>
-                            <div class="fi-section-header-after-ctn">
-                                <?= $afterHeader ?>
                             </div>
                         <?php } ?>
 
