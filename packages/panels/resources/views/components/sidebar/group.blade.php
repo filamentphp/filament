@@ -83,18 +83,13 @@
             <x-slot name="trigger">
                 <button
                     aria-label="{{ $labelText }}"
-                    x-data="{ tooltip: false }"
-                    x-effect="
-                        tooltip = $store.sidebar.isOpen
-                            ? false
-                            : {
-                                  content: @js($labelHtml),
-                                  allowHTML: @js($label instanceof Htmlable),
-                                  placement: document.dir === 'rtl' ? 'left' : 'right',
-                                  theme: $store.theme,
-                              }
+                    x-data="filamentSidebarTooltip"
+                    x-tooltip="
+                        getTooltip({
+                            content: @js($labelHtml),
+                            allowHTML: @js($label instanceof Htmlable),
+                        })
                     "
-                    x-tooltip="tooltip"
                     class="fi-sidebar-group-dropdown-trigger-btn"
                 >
                     {{ \Filament\Support\generate_icon_html($icon, size: IconSize::Large) }}

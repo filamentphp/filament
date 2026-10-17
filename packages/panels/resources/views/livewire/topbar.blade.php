@@ -9,7 +9,11 @@
     use Filament\View\PanelsRenderHook;
 @endphp
 
-<div class="fi-topbar-ctn">
+<div
+    x-data="filamentSidebarBackground"
+    x-bind:inert="$store.sidebar.isOpenMobile && ! hasOpenModal"
+    class="fi-topbar-ctn"
+>
     @php
         $isRtl = __('filament-panels::layout.direction') === 'rtl';
         $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
@@ -36,7 +40,7 @@
                 x-data="{}"
                 aria-controls="fi-main-sidebar"
                 x-bind:aria-expanded="$store.sidebar.isOpen"
-                x-on:click="$store.sidebar.open()"
+                x-on:click="$store.sidebar.open($event.currentTarget)"
                 x-show="! $store.sidebar.isOpen"
                 class="fi-topbar-open-sidebar-btn"
             />
