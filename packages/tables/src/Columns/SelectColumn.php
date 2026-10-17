@@ -798,7 +798,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         $databaseConnection = $query->getConnection();
 
         $isForcedCaseInsensitive = $this->isOptionsSearchForcedCaseInsensitive();
-        $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true);
+        $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true, databaseConnection: $databaseConnection);
 
         $query->where(function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $searchPattern): Builder {
             $isFirst = true;
