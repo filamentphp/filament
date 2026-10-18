@@ -23,6 +23,26 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 
 uses(TestCase::class);
+/** @param array<array<string, mixed>> $rows */
+$tenantImportJob = function (array $rows): string {
+    $import = Import::create([
+        'user_id' => auth()->id(),
+        'file_name' => 'users.csv',
+        'file_path' => 'users.csv',
+        'importer' => TenantUserImporter::class,
+        'total_rows' => count($rows),
+    ]);
+    $dispatcher = Bus::getFacadeRoot();
+    Bus::fake();
+
+    try {
+        app(ImportDispatcher::class)->dispatch($import, [$rows], ['name' => 'name', 'email' => 'email'], [], ImportCsv::class, 'web');
+
+        return serialize(Bus::batched(static fn (): bool => true)->sole()->jobs->sole());
+    } finally {
+        Bus::swap($dispatcher);
+    }
+};
 
 beforeEach(function (): void {
     app()->bind(Authenticatable::class, TenantImportUser::class);
@@ -32,7 +52,7 @@ beforeEach(function (): void {
     Filament::setTenant(null);
 });
 
-it('preserves tenant scoping and association across serialized import chunks without leaking context', function (): void {
+it('preserves tenant scoping and association across serialized import chunks without leaking context', function () use ($tenantImportJob): void {
     $firstTenant = Team::factory()->create();
     $secondTenant = Team::factory()->create();
     $this->importingUser->teams()->attach([$firstTenant->getKey(), $secondTenant->getKey()]);
@@ -42,7 +62,7 @@ it('preserves tenant scoping and association across serialized import chunks wit
     $secondRecord->teams()->attach($secondTenant);
 
     Filament::setTenant($firstTenant);
-    $firstJob = tenantImportJob([
+    $firstJob = $tenantImportJob([
         ['id' => $firstRecord->getKey(), 'name' => 'First tenant updated'],
         ['id' => $secondRecord->getKey(), 'name' => 'Cross-tenant overwrite'],
         ['name' => 'First tenant created', 'email' => 'first-import@example.com'],
@@ -57,7 +77,7 @@ it('preserves tenant scoping and association across serialized import chunks wit
     auth('imports')->setUser($this->importingUser);
     Filament::setCurrentPanel($secondPanel);
     Filament::setTenant($secondTenant);
-    $secondJob = tenantImportJob([
+    $secondJob = $tenantImportJob([
         ['id' => $secondRecord->getKey(), 'name' => 'Second tenant updated'],
         ['name' => 'Second tenant created', 'email' => 'second-import@example.com'],
     ]);
@@ -99,13 +119,13 @@ it('preserves tenant scoping and association across serialized import chunks wit
         ]);
 });
 
-it('fails closed and restores context when an import tenant is deleted or access is revoked', function (bool $deleteTenant): void {
+it('fails closed and restores context when an import tenant is deleted or access is revoked', function (bool $deleteTenant) use ($tenantImportJob): void {
     $tenant = Team::factory()->create();
     $this->importingUser->teams()->attach($tenant);
     $record = User::factory()->create(['name' => 'Original']);
     $record->teams()->attach($tenant);
     Filament::setTenant($tenant);
-    $job = tenantImportJob([['id' => $record->getKey(), 'name' => 'Unauthorized']]);
+    $job = $tenantImportJob([['id' => $record->getKey(), 'name' => 'Unauthorized']]);
 
     if ($deleteTenant) {
         $this->importingUser->teams()->detach($tenant);
@@ -126,14 +146,14 @@ it('fails closed and restores context when an import tenant is deleted or access
         ->and(auth()->user())->toBeNull();
 })->with(['deleted tenant' => true, 'revoked access' => false]);
 
-it('restores context when import processing or an auth restoration listener throws', function (bool $throwsDuringRestoration): void {
+it('restores context when import processing or an auth restoration listener throws', function (bool $throwsDuringRestoration) use ($tenantImportJob): void {
     config()->set('auth.guards.imports', config('auth.guards.web'));
     Filament::getCurrentPanel()->authGuard('imports');
     auth('imports')->setUser($this->importingUser);
     $tenant = Team::factory()->create();
     $this->importingUser->teams()->attach($tenant);
     Filament::setTenant($tenant);
-    $job = tenantImportJob([['name' => 'Created', 'email' => 'failure-import@example.com']]);
+    $job = $tenantImportJob([['name' => 'Created', 'email' => 'failure-import@example.com']]);
     Filament::setCurrentPanel(null);
     Filament::setTenant(null);
     auth()->forgetGuards();
@@ -159,28 +179,6 @@ it('restores context when import processing or an auth restoration listener thro
         ->and($guard->id())->toBe($previousUser?->getKey())
         ->and($panelGuard->user())->toBeNull();
 })->with(['processing failure' => false, 'auth restoration failure' => true]);
-
-/** @param array<array<string, mixed>> $rows */
-function tenantImportJob(array $rows): string
-{
-    $import = Import::create([
-        'user_id' => auth()->id(),
-        'file_name' => 'users.csv',
-        'file_path' => 'users.csv',
-        'importer' => TenantUserImporter::class,
-        'total_rows' => count($rows),
-    ]);
-    $dispatcher = Bus::getFacadeRoot();
-    Bus::fake();
-
-    try {
-        app(ImportDispatcher::class)->dispatch($import, [$rows], ['name' => 'name', 'email' => 'email'], [], ImportCsv::class, 'web');
-
-        return serialize(Bus::batched(static fn (): bool => true)->sole()->jobs->sole());
-    } finally {
-        Bus::swap($dispatcher);
-    }
-}
 
 class TenantUserImporter extends Importer
 {
