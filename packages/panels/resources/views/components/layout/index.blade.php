@@ -30,7 +30,12 @@
         'fi-body-has-top-navigation' => $hasTopNavigation,
     ])
 >
-    <a href="#fi-main-content" class="fi-skip-link fi-sr-only">
+    <a
+        x-data="{}"
+        x-bind:inert="$store.sidebar.isOpenMobile"
+        href="#fi-main-content"
+        class="fi-skip-link fi-sr-only"
+    >
         {{ __('filament-panels::layout.skip_to_content.label') }}
     </a>
 
@@ -42,8 +47,9 @@
         {{ FilamentView::renderHook(PanelsRenderHook::TOPBAR_AFTER, scopes: $renderHookScopes) }}
     @elseif ($hasNavigation)
         <div
+            x-data="{}"
+            x-bind:inert="$store.sidebar.isOpenMobile"
             @if ($isSidebarFullyCollapsibleOnDesktop)
-                x-data="{}"
                 x-bind:class="{ 'lg:fi-hidden': $store.sidebar.isOpen }"
             @endif
             @class([
@@ -61,7 +67,7 @@
                 x-data="{}"
                 aria-controls="fi-main-sidebar"
                 x-bind:aria-expanded="$store.sidebar.isOpen"
-                x-on:click="$store.sidebar.open()"
+                x-on:click="$store.sidebar.open($event.currentTarget)"
                 class="fi-layout-sidebar-toggle-btn"
             />
         </div>
@@ -84,22 +90,21 @@
         @endif
 
         <div
+            x-data="filamentSidebarBackground"
+            x-bind:inert="$store.sidebar.isOpenMobile && ! hasOpenModal"
             @if ($isSidebarCollapsibleOnDesktop)
-                x-data="{}"
                 x-bind:class="{
                     'fi-main-ctn-sidebar-open': $store.sidebar.isOpen,
                 }"
                 x-bind:style="'display: flex; opacity:1;'"
                 {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
             @elseif ($isSidebarFullyCollapsibleOnDesktop)
-                x-data="{}"
                 x-bind:class="{
                     'fi-main-ctn-sidebar-open': $store.sidebar.isOpen,
                 }"
                 x-bind:style="'display: flex; opacity:1;'"
                 {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
             @elseif (! ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop || $hasTopNavigation || (! $hasNavigation)))
-                x-data="{}"
                 x-bind:style="'display: flex; opacity:1;'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
             @endif
             class="fi-main-ctn"

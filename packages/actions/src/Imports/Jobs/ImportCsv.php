@@ -18,6 +18,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use LogicException;
 use Throwable;
 
 class ImportCsv implements ShouldQueue
@@ -62,6 +63,11 @@ class ImportCsv implements ShouldQueue
         return $this->importer->getJobMiddleware();
     }
 
+    public function getImport(): Import
+    {
+        return $this->import;
+    }
+
     public function handle(): void
     {
         if ($this->batch()?->cancelled()) {
@@ -71,9 +77,16 @@ class ImportCsv implements ShouldQueue
         /** @var Authenticatable $user */
         $user = $this->import->user;
 
-        auth()->setUser($user);
+        $guard = auth()->guard();
+        $previousUser = $guard->user();
+
+        if ((! $previousUser) && (! method_exists($guard, 'forgetUser'))) {
+            throw new LogicException('The import auth guard must implement [forgetUser()] to restore its guest state.');
+        }
 
         try {
+            $guard->setUser($user);
+
             $processedRows = 0;
             $successfulRows = 0;
 
@@ -136,7 +149,11 @@ class ImportCsv implements ShouldQueue
                 $successfulRows,
             ));
         } finally {
-            auth()->forgetGuards();
+            if ($previousUser) {
+                $guard->setUser($previousUser);
+            } else {
+                $guard->forgetUser();
+            }
         }
     }
 

@@ -60,7 +60,9 @@ it('accounts for mixed rows and preserves only permitted original values in the 
         $job = new ImportCsv($this->import, $rows, $columnMap, $options);
     }
 
-    auth()->setUser(User::factory()->create());
+    $guard = auth()->guard();
+    $previousUser = User::factory()->create();
+    $guard->setUser($previousUser);
     $job->handle();
 
     expect($this->import->refresh()->processed_rows)->toBe(7)
@@ -70,7 +72,8 @@ it('accounts for mixed rows and preserves only permitted original values in the 
             ['title' => 'First', 'content' => 'secret-first', 'author_id' => $this->import->user_id],
             ['title' => 'Last', 'content' => 'secret-last', 'author_id' => $this->import->user_id],
         ])
-        ->and(auth()->guard()->hasUser())->toBeFalse();
+        ->and(auth()->id())->toBe($previousUser->getKey())
+        ->and($guard->id())->toBe($previousUser->getKey());
 
     $expectedData = [
         ['Headline' => '', ...($masked ? [] : ['Credential' => 'secret-invalid']), 'Notes' => 'ordinary-invalid'],
@@ -99,6 +102,8 @@ it('accounts for mixed rows and preserves only permitted original values in the 
 })->with(['array rows' => false, 'dispatched and rehydrated rows' => true])->with(['ordinary' => false, 'sensitive' => true]);
 
 it('rolls back rows and counters on a persistence exception before retrying the original serialized import', function (): void {
+    $guard = auth()->guard();
+    $previousUser = $guard->user();
     $payload = serialize(new ImportCsv($this->import, [
         ['title' => 'First', 'content' => 'secret-first'],
         ['title' => '', 'content' => 'secret-invalid'],
@@ -113,7 +118,8 @@ it('rolls back rows and counters on a persistence exception before retrying the 
             ->and($this->import->successful_rows)->toBe(2)
             ->and($this->import->failedRows()->count())->toBe(0)
             ->and(Post::query()->count())->toBe(0)
-            ->and(auth()->guard()->hasUser())->toBeFalse();
+            ->and(auth()->id())->toBe($previousUser->getKey())
+            ->and($guard->id())->toBe($previousUser->getKey());
     } finally {
         Event::forget($event);
     }

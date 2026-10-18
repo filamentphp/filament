@@ -81,25 +81,36 @@
                     ->color(IconComponent::class, $iconColor), size: $iconSize ?? IconSize::Large)
             }}
 
-            @if ($hasHeading || $hasDescription)
-                <div class="fi-section-header-text-ctn">
-                    @if ($hasHeading)
-                        <{{ $headingTag }} class="fi-section-header-heading">
-                            {{ $heading }}
-                        </{{ $headingTag }}>
+            @if ($hasHeading || $hasDescription || (! is_slot_empty($afterHeader)))
+                <div
+                    @class([
+                        'fi-section-header-content',
+                        'fi-section-header-content-has-heading' => $hasHeading || $hasDescription,
+                    ])
+                >
+                    @if ($hasHeading || $hasDescription)
+                        <div class="fi-section-header-text-ctn">
+                            @if ($hasHeading)
+                                <{{ $headingTag }}
+                                    class="fi-section-header-heading"
+                                >
+                                    {{ $heading }}
+                                </{{ $headingTag }}>
+                            @endif
+
+                            @if ($hasDescription)
+                                <p class="fi-section-header-description">
+                                    {{ $description }}
+                                </p>
+                            @endif
+                        </div>
                     @endif
 
-                    @if ($hasDescription)
-                        <p class="fi-section-header-description">
-                            {{ $description }}
-                        </p>
+                    @if (! is_slot_empty($afterHeader))
+                        <div class="fi-section-header-after-ctn">
+                            {{ $afterHeader }}
+                        </div>
                     @endif
-                </div>
-            @endif
-
-            @if (! is_slot_empty($afterHeader))
-                <div class="fi-section-header-after-ctn">
-                    {{ $afterHeader }}
                 </div>
             @endif
 

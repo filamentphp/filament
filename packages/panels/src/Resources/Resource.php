@@ -13,6 +13,7 @@ use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Macroable;
+use ReflectionMethod;
 
 /**
  * @template TModel of Model = Model
@@ -76,8 +77,11 @@ abstract class Resource
             ->modelLabel(static::getModelLabel(...))
             ->pluralModelLabel(static::getPluralModelLabel(...))
             ->recordTitleAttribute(static::getRecordTitleAttribute(...))
-            ->recordTitle(static::getRecordTitle(...))
             ->authorizeReorder(static::canReorder(...));
+
+        if ((new ReflectionMethod(static::class, 'getRecordTitle'))->getDeclaringClass()->getName() !== self::class) {
+            $table->recordTitle(static::getRecordTitle(...));
+        }
 
         static::table($table); /** @phpstan-ignore staticMethod.resultUnused */
     }

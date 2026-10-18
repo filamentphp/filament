@@ -17,13 +17,21 @@
 
     {{-- format-ignore-start --}}
     <div
-        x-data="{}"
+        x-data="filamentSidebar({
+            hasTopNavigation: @js(filament()->hasTopNavigation()),
+            isSidebarCollapsibleOnDesktop: @js($isSidebarCollapsibleOnDesktop),
+            isSidebarFullyCollapsibleOnDesktop: @js($isSidebarFullyCollapsibleOnDesktop),
+        })"
         @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
             x-cloak
         @else
             x-cloak="-lg"
         @endif
         x-bind:class="{ 'fi-sidebar-open': $store.sidebar.isOpen }"
+        x-bind:inert="isHidden"
+        x-effect="focusInitialNavigation()"
+        x-on:keydown.tab="handleTab($event)"
+        x-on:keydown.escape.document="handleEscape($event)"
         id="fi-main-sidebar"
         class="fi-sidebar fi-main-sidebar"
     >
@@ -156,43 +164,39 @@
             </ul>
 
             <script @if (filled($cspNonce)) nonce="{{ $cspNonce }}" @endif>
-                var collapsedGroups = JSON.parse(
-                    localStorage.getItem('filament:sidebar:collapsed_groups'),
-                )
-
-                if (collapsedGroups === null || collapsedGroups === 'null') {
-                    localStorage.setItem(
-                        'filament:sidebar:collapsed_groups',
-                        JSON.stringify(@js(
-                        collect($navigation)
-                            ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
-                            ->map(fn (\Filament\Navigation\NavigationGroup $group): ?string => ($label = $group->getLabel()) instanceof \Illuminate\Contracts\Support\Htmlable ? $label->toHtml() : $label)
-                            ->values()
-                            ->all()
-                    )),
+                if (! window.Alpine?.store('sidebar')) {
+                    let collapsedGroups = JSON.parse(
+                        localStorage.getItem('filament:sidebar:collapsed_groups'),
                     )
+
+                    if (collapsedGroups === null || collapsedGroups === 'null') {
+                        collapsedGroups = @js(
+                            collect($navigation)
+                                ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
+                                ->map(fn (\Filament\Navigation\NavigationGroup $group): ?string => ($label = $group->getLabel()) instanceof \Illuminate\Contracts\Support\Htmlable ? $label->toHtml() : $label)
+                                ->values()
+                                ->all()
+                        )
+
+                        localStorage.setItem(
+                            'filament:sidebar:collapsed_groups',
+                            JSON.stringify(collapsedGroups),
+                        )
+                    }
+
+                    document.currentScript
+                        .closest('nav')
+                        .querySelectorAll('.fi-sidebar-group')
+                        .forEach((group) => {
+                            if (! collapsedGroups.includes(group.dataset.groupLabel)) {
+                                return
+                            }
+
+                            // Hide collapsed groups before Alpine initializes to avoid a flash.
+                            group.querySelector('.fi-sidebar-group-items').style.display = 'none'
+                            group.classList.add('fi-collapsed')
+                        })
                 }
-
-                collapsedGroups = JSON.parse(
-                    localStorage.getItem('filament:sidebar:collapsed_groups'),
-                )
-
-                document
-                    .querySelectorAll('.fi-sidebar-group')
-                    .forEach((group) => {
-                        if (
-                            !collapsedGroups.includes(group.dataset.groupLabel)
-                        ) {
-                            return
-                        }
-
-                        // Alpine.js loads too slow, so attempt to hide a
-                        // collapsed sidebar group earlier.
-                        group.querySelector(
-                            '.fi-sidebar-group-items',
-                        ).style.display = 'none'
-                        group.classList.add('fi-collapsed')
-                    })
             </script>
 
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_NAV_END) }}
