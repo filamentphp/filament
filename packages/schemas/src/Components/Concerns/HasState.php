@@ -9,6 +9,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -399,13 +400,26 @@ trait HasState
             $container = $parentContainer;
         }
 
-        foreach ($container->getFlatComponents(withActions: false, withHidden: true) as $component) {
-            if ($component === $this) {
+        return $this->searchOtherComponentWithStatePath($container, $statePath);
+    }
+
+    protected function searchOtherComponentWithStatePath(Schema $container, string $statePath): bool
+    {
+        foreach ($container->getComponents(withActions: false, withHidden: true) as $component) {
+            $componentStatePath = $component->getStatePath();
+
+            if (($component !== $this) && $component->hasStatePath() && ($componentStatePath === $statePath)) {
+                return true;
+            }
+
+            if (filled($componentStatePath) && (! str_starts_with($statePath, "{$componentStatePath}."))) {
                 continue;
             }
 
-            if ($component->hasStatePath() && $component->getStatePath() === $statePath) {
-                return true;
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                if ($this->searchOtherComponentWithStatePath($childSchema, $statePath)) {
+                    return true;
+                }
             }
         }
 

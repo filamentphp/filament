@@ -26,9 +26,9 @@ trait HasState
     protected bool | Closure $shouldPartiallyRender = false;
 
     /**
-     * @var array<string, bool> | null
+     * @var array<string, bool>
      */
-    protected ?array $dehydratedComponentsCache = null;
+    protected array $dehydratedComponentsCache = [];
 
     /**
      * @param  array<string, mixed> | object | null  $state
@@ -161,43 +161,38 @@ trait HasState
         }
     }
 
-    /**
-     * @return array<string, bool>
-     */
-    protected function buildDehydratedComponentsCache(): array
+    protected function searchDehydratedComponent(string $statePath): bool
     {
-        $cache = [];
-
         foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
+            $componentStatePath = $component->getStatePath();
+
+            $isMatch = $component->hasStatePath() && ($componentStatePath === $statePath);
+
+            if ((! $isMatch) && filled($componentStatePath) && (! str_starts_with($statePath, "{$componentStatePath}."))) {
+                continue;
+            }
+
             if (! $component->isDehydrated()) {
                 continue;
             }
 
-            if ($component->hasStatePath()) {
-                $cache[$component->getStatePath()] = true;
+            if ($isMatch) {
+                return true;
             }
-
-            $childCaches = [];
 
             foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
-                $childCaches[] = $childSchema->buildDehydratedComponentsCache();
-            }
-
-            if ($childCaches !== []) {
-                $cache = array_merge($cache, ...$childCaches);
+                if ($childSchema->searchDehydratedComponent($statePath)) {
+                    return true;
+                }
             }
         }
 
-        return $cache;
+        return false;
     }
 
     public function hasDehydratedComponent(string $statePath): bool
     {
-        if ($this->dehydratedComponentsCache === null) {
-            $this->dehydratedComponentsCache = $this->buildDehydratedComponentsCache();
-        }
-
-        return $this->dehydratedComponentsCache[$statePath] ?? false;
+        return $this->dehydratedComponentsCache[$statePath] ??= $this->searchDehydratedComponent($statePath);
     }
 
     /**

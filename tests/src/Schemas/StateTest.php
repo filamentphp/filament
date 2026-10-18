@@ -736,6 +736,74 @@ describe('dehydrating state', function (): void {
             ->getState()->toBe(['data' => null]);
     });
 
+    test('`getStateSnapshot()` does not evaluate components on other state paths to exclude non-dehydrated components', function (): void {
+        $otherStatePathEvaluationCount = 0;
+
+        $countEvaluation = function () use (&$otherStatePathEvaluationCount): bool {
+            $otherStatePathEvaluationCount++;
+
+            return false;
+        };
+
+        $schema = StateTestLivewire::make()
+            ->data([
+                'first' => [
+                    'excluded' => Str::random(),
+                    'included' => $state = Str::random(),
+                ],
+            ])
+            ->getSchema('form')
+            ->statePath('data')
+            ->components([
+                (new Component)
+                    ->statePath('first')
+                    ->schema([
+                        Field::make('excluded')
+                            ->dehydrated(false),
+                        Field::make('included'),
+                    ]),
+                (new Component)
+                    ->statePath('second')
+                    ->hidden($countEvaluation)
+                    ->schema([
+                        Field::make('field')
+                            ->hidden($countEvaluation),
+                    ]),
+            ]);
+
+        $component = $schema->getComponentByStatePath('first', withHidden: true);
+
+        expect($component->getChildSchema()->getStateSnapshot())
+            ->toBe(['included' => $state])
+            ->and($otherStatePathEvaluationCount)->toBe(0);
+    });
+
+    test('hidden components do not have their child schemas evaluated during state dehydration', function (): void {
+        $helperTextEvaluationCount = 0;
+
+        $schema = StateTestLivewire::make()
+            ->data([
+                'hidden' => Str::random(),
+                'visible' => $state = Str::random(),
+            ])
+            ->getSchema('form')
+            ->statePath('data')
+            ->components([
+                Field::make('hidden')
+                    ->hidden()
+                    ->helperText(function () use (&$helperTextEvaluationCount): string {
+                        $helperTextEvaluationCount++;
+
+                        return Str::random();
+                    }),
+                Field::make('visible'),
+            ]);
+
+        expect($schema->getStateSnapshot())
+            ->toBe(['visible' => $state])
+            ->and($helperTextEvaluationCount)->toBe(0);
+    });
+
     test('disabled components are excluded from state dehydration', function (): void {
         $schema = StateTestLivewire::make()->getSchema('form')
             ->statePath('data')
