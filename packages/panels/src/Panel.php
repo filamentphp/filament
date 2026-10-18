@@ -50,6 +50,8 @@ class Panel extends Component
 
     protected bool | Closure $isDefault = false;
 
+    protected bool $isTenancyBooted = false;
+
     /**
      * @var array<array-key, Closure>
      */
@@ -84,20 +86,7 @@ class Panel extends Component
 
     public function boot(): void
     {
-        if ($this->hasTenancy()) {
-            $resourceClasses = array_unique([
-                ...$this->getResources(),
-                ...array_map(
-                    static fn (ResourceConfiguration $configuration): string => $configuration->getResource(),
-                    $this->getResourceConfigurations(),
-                ),
-            ]);
-
-            foreach ($resourceClasses as $resource) {
-                $resource::observeTenancyModelCreation($this);
-                $resource::registerTenancyModelGlobalScope($this);
-            }
-        }
+        $this->bootTenancy();
 
         $this->registerAssets();
 
@@ -123,6 +112,28 @@ class Panel extends Component
         foreach ($this->bootCallbacks as $callback) {
             $callback($this);
         }
+    }
+
+    public function bootTenancy(): void
+    {
+        if ($this->isTenancyBooted || (! $this->hasTenancy())) {
+            return;
+        }
+
+        $resourceClasses = array_unique([
+            ...$this->getResources(),
+            ...array_map(
+                static fn (ResourceConfiguration $configuration): string => $configuration->getResource(),
+                $this->getResourceConfigurations(),
+            ),
+        ]);
+
+        foreach ($resourceClasses as $resource) {
+            $resource::observeTenancyModelCreation($this);
+            $resource::registerTenancyModelGlobalScope($this);
+        }
+
+        $this->isTenancyBooted = true;
     }
 
     public function bootUsing(?Closure $callback): static
