@@ -804,6 +804,87 @@ describe('dehydrating state', function (): void {
             ->and($helperTextEvaluationCount)->toBe(0);
     });
 
+    test('the value of excluded components that share a state path is removed', function (Closure $exclude): void {
+        $schema = StateTestLivewire::make()
+            ->data([
+                'group' => [
+                    'shared' => Str::random(),
+                    'other' => $state = Str::random(),
+                ],
+            ])
+            ->getSchema('form')
+            ->statePath('data')
+            ->components([
+                (new Component)
+                    ->statePath('group')
+                    ->schema([
+                        $exclude(Field::make('shared')),
+                        $exclude(Field::make('shared')),
+                        Field::make('other'),
+                    ]),
+            ]);
+
+        expect($schema->getStateSnapshot())
+            ->toBe(['group' => ['other' => $state]]);
+    })->with([
+        'not dehydrated' => fn (): Closure => fn (Field $field): Field => $field->dehydrated(false),
+        'hidden' => fn (): Closure => fn (Field $field): Field => $field->hidden(),
+    ]);
+
+    test('PROBE2', function (string $variant): void {
+        $schema = StateTestLivewire::make()
+            ->data(['group' => ['shared' => $variant === 'random' ? Str::random() : 'S', 'other' => 'O']])
+            ->getSchema('form')
+            ->statePath('data')
+            ->components([
+                (new Component)->statePath('group')->schema([
+                    Field::make('shared')->dehydrated(false),
+                    Field::make('shared')->dehydrated(false),
+                    Field::make('other'),
+                ]),
+            ]);
+
+        dump($schema->getStateSnapshot());
+    })->with(['fixed', 'random']);
+
+    test('a component\'s dehydration is decided once while excluding the non-dehydrated components below it', function (): void {
+        $dehydrationEvaluationCount = 0;
+
+        $schema = StateTestLivewire::make()
+            ->data([
+                'group' => [
+                    'first' => Str::random(),
+                    'second' => Str::random(),
+                    'third' => Str::random(),
+                    'included' => $state = Str::random(),
+                ],
+            ])
+            ->getSchema('form')
+            ->statePath('data')
+            ->components([
+                (new Component)
+                    ->statePath('group')
+                    ->dehydrated(function () use (&$dehydrationEvaluationCount): bool {
+                        $dehydrationEvaluationCount++;
+
+                        return true;
+                    })
+                    ->schema([
+                        Field::make('first')
+                            ->dehydrated(false),
+                        Field::make('second')
+                            ->dehydrated(false),
+                        Field::make('third')
+                            ->dehydrated(false),
+                        Field::make('included'),
+                    ]),
+            ]);
+
+        expect($schema->getStateSnapshot())
+            ->toBe(['group' => ['included' => $state]])
+            ->and($dehydrationEvaluationCount)->toBe(-1);
+    });
+
     test('disabled components are excluded from state dehydration', function (): void {
         $schema = StateTestLivewire::make()->getSchema('form')
             ->statePath('data')
