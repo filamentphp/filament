@@ -301,6 +301,7 @@ class AttachAction extends Action
 
                 return $relationshipQuery
                     ->pluck($titleAttribute, $relationship->getQualifiedRelatedKeyName())
+                    ->map(fn (mixed $title): mixed => $this->hasCustomRecordTitleAttribute() ? $title : $this->formatRecordTitle($title))
                     ->all();
             }
 
