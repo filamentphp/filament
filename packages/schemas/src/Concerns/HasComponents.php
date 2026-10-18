@@ -31,6 +31,11 @@ trait HasComponents
     protected ?array $cachedComponents = null;
 
     /**
+     * @var array{withStatePath: array<string, array<Component>>, withoutStatePath: array<Component>} | null
+     */
+    protected ?array $componentsIndexedByStatePath = null;
+
+    /**
      * @var array<array<array<string, Component>>>
      */
     protected array $cachedComponentsByStatePath = [];
@@ -54,6 +59,7 @@ trait HasComponents
 
         $this->components = $components;
         $this->cachedComponents = null;
+        $this->componentsIndexedByStatePath = null;
         $this->cachedComponentsWithHidden = [];
         $this->cachedFlatComponents = [];
 
@@ -469,6 +475,7 @@ trait HasComponents
         }
 
         $this->cachedComponents = null;
+        $this->componentsIndexedByStatePath = null;
         $this->cachedComponentsWithHidden = [];
         $this->cachedFlatComponents = [];
         $this->cachedComponentsByStatePath = [];

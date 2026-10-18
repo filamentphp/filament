@@ -804,7 +804,12 @@ describe('dehydrating state', function (): void {
             ->and($helperTextEvaluationCount)->toBe(0);
     });
 
-    test('the value of excluded components that share a state path is removed', function (Closure $exclude): void {
+    test('the value of excluded components that share a state path is removed', function (string $exclusion): void {
+        $exclude = fn (Field $field): Field => match ($exclusion) {
+            'not dehydrated' => $field->dehydrated(false),
+            'hidden' => $field->hidden(),
+        };
+
         $schema = StateTestLivewire::make()
             ->data([
                 'group' => [
@@ -827,25 +832,9 @@ describe('dehydrating state', function (): void {
         expect($schema->getStateSnapshot())
             ->toBe(['group' => ['other' => $state]]);
     })->with([
-        'not dehydrated' => fn (): Closure => fn (Field $field): Field => $field->dehydrated(false),
-        'hidden' => fn (): Closure => fn (Field $field): Field => $field->hidden(),
+        'not dehydrated',
+        'hidden',
     ]);
-
-    test('PROBE2', function (string $variant): void {
-        $schema = StateTestLivewire::make()
-            ->data(['group' => ['shared' => $variant === 'random' ? Str::random() : 'S', 'other' => 'O']])
-            ->getSchema('form')
-            ->statePath('data')
-            ->components([
-                (new Component)->statePath('group')->schema([
-                    Field::make('shared')->dehydrated(false),
-                    Field::make('shared')->dehydrated(false),
-                    Field::make('other'),
-                ]),
-            ]);
-
-        dump($schema->getStateSnapshot());
-    })->with(['fixed', 'random']);
 
     test('a component\'s dehydration is decided once while excluding the non-dehydrated components below it', function (): void {
         $dehydrationEvaluationCount = 0;
@@ -882,7 +871,7 @@ describe('dehydrating state', function (): void {
 
         expect($schema->getStateSnapshot())
             ->toBe(['group' => ['included' => $state]])
-            ->and($dehydrationEvaluationCount)->toBe(-1);
+            ->and($dehydrationEvaluationCount)->toBe(3);
     });
 
     test('disabled components are excluded from state dehydration', function (): void {

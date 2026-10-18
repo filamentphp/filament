@@ -9,6 +9,7 @@ use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use LogicException;
+use WeakMap;
 
 trait HasState
 {
@@ -29,6 +30,11 @@ trait HasState
      * @var array<string, bool>
      */
     protected array $dehydratedComponentsCache = [];
+
+    /**
+     * @var WeakMap<Component, bool> | null
+     */
+    protected ?WeakMap $componentDehydrationDecisions = null;
 
     /**
      * @param  array<string, mixed> | object | null  $state
@@ -161,27 +167,36 @@ trait HasState
         }
     }
 
-    protected function searchDehydratedComponent(string $statePath): bool
+    /**
+     * Only components on the branch of the `statePath` are visited: a
+     * component whose own `statePath` is not a prefix of it cannot contain it.
+     *
+     * @param  array<string>  $ancestorStatePaths
+     * @param  WeakMap<Component, bool>  $dehydrationDecisions
+     */
+    protected function searchDehydratedComponent(string $statePath, array $ancestorStatePaths, WeakMap $dehydrationDecisions): bool
     {
-        foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
-            $componentStatePath = $component->getStatePath();
+        $index = $this->getComponentsIndexedByStatePath();
 
-            $isMatch = $component->hasStatePath() && ($componentStatePath === $statePath);
-
-            if ((! $isMatch) && filled($componentStatePath) && (! str_starts_with($statePath, "{$componentStatePath}."))) {
-                continue;
-            }
-
-            if (! $component->isDehydrated()) {
-                continue;
-            }
-
-            if ($isMatch) {
+        foreach ($index['withStatePath'][$statePath] ?? [] as $component) {
+            if ($dehydrationDecisions[$component] ??= $component->isDehydrated()) {
                 return true;
+            }
+        }
+
+        $branchComponents = $index['withoutStatePath'];
+
+        foreach ($ancestorStatePaths as $ancestorStatePath) {
+            array_push($branchComponents, ...($index['withStatePath'][$ancestorStatePath] ?? []));
+        }
+
+        foreach ($branchComponents as $component) {
+            if (! ($dehydrationDecisions[$component] ??= $component->isDehydrated())) {
+                continue;
             }
 
             foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
-                if ($childSchema->searchDehydratedComponent($statePath)) {
+                if ($childSchema->searchDehydratedComponent($statePath, $ancestorStatePaths, $dehydrationDecisions)) {
                     return true;
                 }
             }
@@ -190,9 +205,47 @@ trait HasState
         return false;
     }
 
+    /**
+     * @return array{withStatePath: array<string, array<Component>>, withoutStatePath: array<Component>}
+     */
+    protected function getComponentsIndexedByStatePath(): array
+    {
+        if ($this->componentsIndexedByStatePath !== null) {
+            return $this->componentsIndexedByStatePath;
+        }
+
+        $index = ['withStatePath' => [], 'withoutStatePath' => []];
+
+        foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
+            if ($component->hasStatePath()) {
+                $index['withStatePath'][$component->getStatePath()][] = $component;
+            } else {
+                $index['withoutStatePath'][] = $component;
+            }
+        }
+
+        return $this->componentsIndexedByStatePath = $index;
+    }
+
     public function hasDehydratedComponent(string $statePath): bool
     {
-        return $this->dehydratedComponentsCache[$statePath] ??= $this->searchDehydratedComponent($statePath);
+        if (array_key_exists($statePath, $this->dehydratedComponentsCache)) {
+            return $this->dehydratedComponentsCache[$statePath];
+        }
+
+        $ancestorStatePaths = [];
+        $ancestorStatePath = $statePath;
+
+        while (($separatorPosition = strrpos($ancestorStatePath, '.')) !== false) {
+            $ancestorStatePath = substr($ancestorStatePath, 0, $separatorPosition);
+            $ancestorStatePaths[] = $ancestorStatePath;
+        }
+
+        return $this->dehydratedComponentsCache[$statePath] = $this->searchDehydratedComponent(
+            $statePath,
+            $ancestorStatePaths,
+            $this->componentDehydrationDecisions ??= new WeakMap,
+        );
     }
 
     /**
