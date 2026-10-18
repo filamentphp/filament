@@ -451,6 +451,10 @@ ImportColumn::make('skus')
 
 ## Updating existing records when importing
 
+<Aside variant="danger">
+    Importing does not automatically check model policies. Add [per-record authorization](#per-record-authorization) when users should only be able to update certain records.
+</Aside>
+
 When generating an importer class, you will see this `resolveRecord()` method:
 
 ```php
@@ -1091,6 +1095,14 @@ If you need per-record authorization during import, you should add checks in you
 <Aside variant="danger">
     If your application allows untrusted users to trigger imports, you should implement per-record authorization checks to prevent unauthorized record creation or modification.
 </Aside>
+
+### Importing tenant-aware records
+
+When you start an import using `ImportAction` in a tenant-aware panel with a current tenant, Filament restores that panel and tenant for each import chunk. This applies the resources' tenant global scopes and new-record association. Each chunk checks that the tenant still exists and the importing user can still access it.
+
+This does not apply custom `Resource::getEloquentQuery()` restrictions or replace [per-record authorization](#per-record-authorization). Models without a tenant-scoped resource in the panel, queries that remove tenant scopes, and imports started outside this context need your own tenant constraints and associations.
+
+The restored context covers row processing and importer lifecycle hooks, not custom job middleware or batch completion callbacks.
 
 ### CSV formula injection
 
