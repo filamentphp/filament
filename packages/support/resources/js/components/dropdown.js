@@ -180,11 +180,7 @@ export default ({ isMenu = true } = {}) => ({
         const triggerContainer = this.getTriggerContainer()
         const triggers = this.getTriggers()
 
-        // Checking visibility reads computed styles, which forces a style recalculation of the
-        // whole document whenever the DOM has changed since the last read. `init()` interleaves
-        // this read with attribute writes, so a table with a dropdown on every row recalculated
-        // the page once per call, per row. A single trigger is the trigger whether it is visible
-        // or not, so only pay for the check when there is a choice to make.
+        // Avoid forcing style recalculation when there is only one trigger to choose from.
         const visibleTrigger =
             triggers.length > 1
                 ? triggers.find((trigger) => this.isElementVisible(trigger))
