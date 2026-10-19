@@ -858,7 +858,7 @@ return [
             'true' => 'Kyllä',
             'false' => 'Ei',
         ],
-        
+
         'error_message' => 'Valintoja ei voitu ladata. Yritä uudelleen.',
 
         'loading_message' => 'Ladataan...',
@@ -921,7 +921,7 @@ return [
     ],
 
     'toggle_buttons' => [
-        
+
         'required_description' => 'Valitse vähintään yksi vaihtoehto.',
 
         'boolean' => [

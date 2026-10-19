@@ -50,7 +50,7 @@ return [
             'label' => 'Toiminta|Toiminnat',
         ],
 
-         'editable' => [
+        'editable' => [
             'saving' => 'Tallennetaan muutokset...',
             'saved' => 'Muutos tallennettu.',
             'failure' => 'Tallennus ei voitu vahvistaa. Päivitä sivu ennen kuin yrität uudelleen.',

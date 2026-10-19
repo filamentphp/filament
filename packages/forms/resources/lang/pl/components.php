@@ -922,7 +922,7 @@ return [
 
     'toggle_buttons' => [
 
-    'required_description' => 'Wybierz przynajmniej jedną opcję.',
+        'required_description' => 'Wybierz przynajmniej jedną opcję.',
 
         'boolean' => [
             'true' => 'Tak',

@@ -5,7 +5,7 @@ return [
     'field' => [
         'label' => 'Yleinen haku',
         'placeholder' => 'Hae',
-        'instructions' => 'Selaa tuloksia painamalla alanuolta. Käytä ylä- ja alanuolia tulosten välillä liikkumiseen ja Tab-näppäintä siirtyäksesi tuloksiin liittyviin toimintoihin. Sulje tulokset painamalla Escape-näppäintä.'
+        'instructions' => 'Selaa tuloksia painamalla alanuolta. Käytä ylä- ja alanuolia tulosten välillä liikkumiseen ja Tab-näppäintä siirtyäksesi tuloksiin liittyviin toimintoihin. Sulje tulokset painamalla Escape-näppäintä.',
     ],
 
     'results_label' => 'Yleisen haun tulokset',
