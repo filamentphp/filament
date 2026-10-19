@@ -67,7 +67,7 @@ class NotificationMailbox
 
     public function hasPublishedNotifications(): bool
     {
-        return $this->mutate(static fn (Repository $cache, string $key): bool => $cache->has($key));
+        return Cache::store(config('filament.cache_store'))->has($this->getCacheKey());
     }
 
     public function flush(): void
@@ -110,11 +110,16 @@ class NotificationMailbox
         return session()->get('filament.notifications.mailbox');
     }
 
+    protected function getCacheKey(): string
+    {
+        return 'filament:notifications:' . $this->getScope();
+    }
+
     protected function mutate(Closure $callback): mixed
     {
         $cache = Cache::store(config('filament.cache_store'));
         $store = $cache->getStore();
-        $key = 'filament:notifications:' . $this->getScope();
+        $key = $this->getCacheKey();
 
         if (! $store instanceof LockProvider) {
             return $callback($cache, $key);
