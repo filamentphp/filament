@@ -1,9 +1,11 @@
 <?php
 
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
@@ -603,6 +605,36 @@ describe('dehydrating state', function (): void {
             ->getState()->toBe([]);
     });
 
+    test('`getItemState()` does not evaluate child schemas of hidden components', function (): void {
+        $helperTextEvaluationCount = 0;
+
+        $repeater = Repeater::make('members')
+            ->schema([
+                Field::make('hidden')
+                    ->hidden()
+                    ->helperText(function () use (&$helperTextEvaluationCount): string {
+                        $helperTextEvaluationCount++;
+
+                        return Str::random();
+                    }),
+                Field::make('visible'),
+            ]);
+
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$repeater])
+            ->fill(['members' => [
+                ['hidden' => Str::random(), 'visible' => $state = Str::random()],
+            ]]);
+
+        $itemKeys = array_keys($repeater->getItems());
+        $helperTextEvaluationCount = 0;
+
+        expect($repeater->getItemState($itemKeys[0]))
+            ->toBe(['visible' => $state])
+            ->and($helperTextEvaluationCount)->toBe(0);
+    });
+
     test('`dehydratedWhenHidden()` includes hidden fields and children of hidden components', function (): void {
         $schema = StateTestLivewire::make()->getSchema('form')
             ->statePath('data')
@@ -673,15 +705,27 @@ describe('dehydrating state', function (): void {
             ->statePath('data')
             ->components([
                 Field::make($statePath = Str::random())
-                    ->default(Str::random()),
+                    ->default($state = Str::random()),
                 Field::make($statePath)
                     ->default(Str::random())
                     ->dehydrated(false),
             ])
             ->fill();
 
-        expect($schema)
-            ->getState()->not()->toBe([]);
+        expect($schema->getState())
+            ->toBe([$statePath => $state]);
+
+        $rootSchema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                Section::make('Details')
+                    ->statePath('details')
+                    ->schema($schema),
+            ])
+            ->fill(['details' => ['data' => [$statePath => $updatedState = Str::random()]]]);
+
+        expect($rootSchema->getState())
+            ->toBe(['details' => ['data' => [$statePath => $updatedState]]]);
     });
 
     test('hidden components are not excluded from state dehydration if there is another visible field with the same name', function (): void {
@@ -714,6 +758,52 @@ describe('dehydrating state', function (): void {
             ->getState()->not()->toBe([]);
     });
 
+    test('`getState()` preserves shared state only while a component using the state path is included', function (string $exclusion): void {
+        $exclude = static fn (Field $field): Field => match ($exclusion) {
+            'not dehydrated' => $field->dehydrated(false),
+            'hidden' => $field->hidden(),
+        };
+        $shouldIncludeShared = false;
+
+        $schema = StateTestLivewire::make()
+            ->data([
+                'group' => [
+                    'shared' => $sharedState = Str::random(),
+                    'other' => $state = Str::random(),
+                ],
+            ])
+            ->getSchema('form')
+            ->statePath('data')
+            ->components([
+                Section::make('Details')
+                    ->statePath('group')
+                    ->schema([
+                        $exclude(Field::make('shared')),
+                        $exclude(Field::make('shared')),
+                        Field::make('other'),
+                    ])
+                    ->footer(function () use (&$shouldIncludeShared): array {
+                        return $shouldIncludeShared ? [Field::make('shared')] : [];
+                    }),
+            ]);
+
+        expect($schema->getState())
+            ->toBe(['group' => ['other' => $state]]);
+
+        $shouldIncludeShared = true;
+
+        expect($schema->getState())
+            ->toEqual(['group' => ['shared' => $sharedState, 'other' => $state]]);
+
+        $shouldIncludeShared = false;
+
+        expect($schema->getState())
+            ->toBe(['group' => ['other' => $state]]);
+    })->with([
+        'not dehydrated',
+        'hidden',
+    ]);
+
     test('components in a hidden parent component with a grandparent component with a state path are excluded from state dehydration', function (): void {
         $schema = StateTestLivewire::make()->getSchema('form')
             ->statePath('data')
@@ -734,144 +824,6 @@ describe('dehydrating state', function (): void {
 
         expect($schema)
             ->getState()->toBe(['data' => null]);
-    });
-
-    test('`getStateSnapshot()` does not evaluate components on other state paths to exclude non-dehydrated components', function (): void {
-        $otherStatePathEvaluationCount = 0;
-
-        $countEvaluation = function () use (&$otherStatePathEvaluationCount): bool {
-            $otherStatePathEvaluationCount++;
-
-            return false;
-        };
-
-        $schema = StateTestLivewire::make()
-            ->data([
-                'first' => [
-                    'excluded' => Str::random(),
-                    'included' => $state = Str::random(),
-                ],
-            ])
-            ->getSchema('form')
-            ->statePath('data')
-            ->components([
-                (new Component)
-                    ->statePath('first')
-                    ->schema([
-                        Field::make('excluded')
-                            ->dehydrated(false),
-                        Field::make('included'),
-                    ]),
-                (new Component)
-                    ->statePath('second')
-                    ->hidden($countEvaluation)
-                    ->schema([
-                        Field::make('field')
-                            ->hidden($countEvaluation),
-                    ]),
-            ]);
-
-        $component = $schema->getComponentByStatePath('first', withHidden: true);
-
-        expect($component->getChildSchema()->getStateSnapshot())
-            ->toBe(['included' => $state])
-            ->and($otherStatePathEvaluationCount)->toBe(0);
-    });
-
-    test('hidden components do not have their child schemas evaluated during state dehydration', function (): void {
-        $helperTextEvaluationCount = 0;
-
-        $schema = StateTestLivewire::make()
-            ->data([
-                'hidden' => Str::random(),
-                'visible' => $state = Str::random(),
-            ])
-            ->getSchema('form')
-            ->statePath('data')
-            ->components([
-                Field::make('hidden')
-                    ->hidden()
-                    ->helperText(function () use (&$helperTextEvaluationCount): string {
-                        $helperTextEvaluationCount++;
-
-                        return Str::random();
-                    }),
-                Field::make('visible'),
-            ]);
-
-        expect($schema->getStateSnapshot())
-            ->toBe(['visible' => $state])
-            ->and($helperTextEvaluationCount)->toBe(0);
-    });
-
-    test('the value of excluded components that share a state path is removed', function (string $exclusion): void {
-        $exclude = fn (Field $field): Field => match ($exclusion) {
-            'not dehydrated' => $field->dehydrated(false),
-            'hidden' => $field->hidden(),
-        };
-
-        $schema = StateTestLivewire::make()
-            ->data([
-                'group' => [
-                    'shared' => Str::random(),
-                    'other' => $state = Str::random(),
-                ],
-            ])
-            ->getSchema('form')
-            ->statePath('data')
-            ->components([
-                (new Component)
-                    ->statePath('group')
-                    ->schema([
-                        $exclude(Field::make('shared')),
-                        $exclude(Field::make('shared')),
-                        Field::make('other'),
-                    ]),
-            ]);
-
-        expect($schema->getStateSnapshot())
-            ->toBe(['group' => ['other' => $state]]);
-    })->with([
-        'not dehydrated',
-        'hidden',
-    ]);
-
-    test('a component\'s dehydration is decided once while excluding the non-dehydrated components below it', function (): void {
-        $dehydrationEvaluationCount = 0;
-
-        $schema = StateTestLivewire::make()
-            ->data([
-                'group' => [
-                    'first' => Str::random(),
-                    'second' => Str::random(),
-                    'third' => Str::random(),
-                    'included' => $state = Str::random(),
-                ],
-            ])
-            ->getSchema('form')
-            ->statePath('data')
-            ->components([
-                (new Component)
-                    ->statePath('group')
-                    ->dehydrated(function () use (&$dehydrationEvaluationCount): bool {
-                        $dehydrationEvaluationCount++;
-
-                        return true;
-                    })
-                    ->schema([
-                        Field::make('first')
-                            ->dehydrated(false),
-                        Field::make('second')
-                            ->dehydrated(false),
-                        Field::make('third')
-                            ->dehydrated(false),
-                        Field::make('included'),
-                    ]),
-            ]);
-
-        expect($schema->getStateSnapshot())
-            ->toBe(['group' => ['included' => $state]])
-            ->and($dehydrationEvaluationCount)->toBe(3);
     });
 
     test('disabled components are excluded from state dehydration', function (): void {
@@ -1024,6 +976,132 @@ describe('dehydrating state', function (): void {
             ->toBe([
                 $statePath => $state . '_DEHYDRATED',
             ]);
+    });
+
+    test('`getState()` and `getItemState()` do not evaluate components on unrelated state paths', function (): void {
+        $otherStatePathEvaluationCount = 0;
+
+        $countEvaluation = function () use (&$otherStatePathEvaluationCount): bool {
+            $otherStatePathEvaluationCount++;
+
+            return false;
+        };
+
+        $schema = StateTestLivewire::make()
+            ->data([
+                'first' => [
+                    'excluded' => Str::random(),
+                    'included' => $state = Str::random(),
+                ],
+            ])
+            ->getSchema('form')
+            ->statePath('data')
+            ->components([
+                (new Component)
+                    ->statePath('first')
+                    ->schema([
+                        Field::make('excluded')
+                            ->dehydrated(false),
+                        Field::make('included'),
+                    ]),
+                (new Component)
+                    ->statePath('second')
+                    ->hidden($countEvaluation)
+                    ->schema([
+                        Field::make('field')
+                            ->hidden($countEvaluation),
+                    ]),
+            ]);
+
+        $component = $schema->getComponentByStatePath('first', withHidden: true);
+
+        expect($component->getChildSchema()->getState())
+            ->toBe(['included' => $state])
+            ->and($otherStatePathEvaluationCount)->toBe(0);
+
+        $repeater = Repeater::make('members')
+            ->schema([
+                Section::make('Details')
+                    ->schema([
+                        TextInput::make('excluded')
+                            ->saved(false),
+                        TextInput::make('included'),
+                    ])
+                    ->footer(function (Get $get) use (&$otherStatePathEvaluationCount): array {
+                        if ($get('included') === 'Second') {
+                            $otherStatePathEvaluationCount++;
+                        }
+
+                        return [];
+                    }),
+            ]);
+
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$repeater])
+            ->fill(['members' => [
+                ['excluded' => 'Not saved', 'included' => 'First'],
+                ['excluded' => 'Not saved', 'included' => 'Second'],
+            ]]);
+
+        $itemKeys = array_keys($repeater->getItems());
+        $otherStatePathEvaluationCount = 0;
+
+        expect($repeater->getItemState($itemKeys[0]))
+            ->toBe(['included' => 'First'])
+            ->and($otherStatePathEvaluationCount)->toBe(0);
+    });
+
+    test('`getState()` does not repeat ancestor dehydration checks or child schema evaluations for additional excluded fields', function (): void {
+        $dehydrationEvaluationCounts = [];
+        $footerEvaluationCounts = [];
+
+        foreach ([1, 3] as $excludedFieldCount) {
+            $dehydrationEvaluationCount = 0;
+            $footerEvaluationCount = 0;
+            $excludedFields = [];
+            $state = ['included' => Str::random()];
+
+            foreach (range(1, $excludedFieldCount) as $position) {
+                $fieldName = "excluded_{$position}";
+                $state[$fieldName] = Str::random();
+                $excludedFields[] = Field::make($fieldName)
+                    ->dehydrated(false);
+            }
+
+            $schema = StateTestLivewire::make()
+                ->data(['group' => $state])
+                ->getSchema('form')
+                ->statePath('data')
+                ->components([
+                    Section::make('Details')
+                        ->statePath('group')
+                        ->dehydrated(function () use (&$dehydrationEvaluationCount): bool {
+                            $dehydrationEvaluationCount++;
+
+                            return true;
+                        })
+                        ->schema([
+                            ...$excludedFields,
+                            Field::make('included'),
+                        ])
+                        ->footer(function () use (&$footerEvaluationCount): array {
+                            $footerEvaluationCount++;
+
+                            return [];
+                        }),
+                ]);
+
+            expect($schema->getState())
+                ->toBe(['group' => ['included' => $state['included']]]);
+
+            $dehydrationEvaluationCounts[] = $dehydrationEvaluationCount;
+            $footerEvaluationCounts[] = $footerEvaluationCount;
+        }
+
+        expect($dehydrationEvaluationCounts[1])
+            ->toBe($dehydrationEvaluationCounts[0])
+            ->and($footerEvaluationCounts[1])->toBe($footerEvaluationCounts[0]);
     });
 });
 

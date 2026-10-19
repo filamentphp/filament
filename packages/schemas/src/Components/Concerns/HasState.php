@@ -403,11 +403,11 @@ trait HasState
         return $this->searchOtherComponentWithStatePath($container, $statePath);
     }
 
-    protected function searchOtherComponentWithStatePath(Schema $container, string $statePath, bool &$isAfterThisComponent = false): bool
+    protected function searchOtherComponentWithStatePath(Schema $container, string $statePath, bool &$hasPassedThisComponent = false): bool
     {
         foreach ($container->getComponents(withActions: false, withHidden: true) as $component) {
             if ($component === $this) {
-                $isAfterThisComponent = true;
+                $hasPassedThisComponent = true;
 
                 continue;
             }
@@ -417,7 +417,7 @@ trait HasState
             if (
                 $component->hasStatePath() &&
                 ($componentStatePath === $statePath) &&
-                ($isAfterThisComponent || ($component->getKey() !== $this->getKey()))
+                ($hasPassedThisComponent || ($component->getKey() !== $this->getKey()))
             ) {
                 return true;
             }
@@ -426,8 +426,8 @@ trait HasState
                 continue;
             }
 
-            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
-                if ($this->searchOtherComponentWithStatePath($childSchema, $statePath, $isAfterThisComponent)) {
+            foreach ($container->getChildSchemasForStatePathSearch($component) as $childSchema) {
+                if ($this->searchOtherComponentWithStatePath($childSchema, $statePath, $hasPassedThisComponent)) {
                     return true;
                 }
             }
