@@ -153,15 +153,8 @@ trait HasBulkActions
         $tableGrouping = $this->getTableGrouping();
 
         if (! $this->getTable()->hasQuery()) {
-            $groupColumn = $tableGrouping->getColumn();
-
             $records = $this->getTableRecords()
-                ->filter(static function (array $record) use ($groupColumn, $group): bool {
-                    $key = $record[$groupColumn] ?? null;
-                    $stringKey = filled($key) ? strval($key) : null;
-
-                    return $stringKey === $group;
-                });
+                ->filter(static fn (array $record): bool => $tableGrouping->getStringKey($record) === $group);
 
             if (! $this->getTable()->checksIfRecordIsSelectable()) {
                 return $records
