@@ -103,7 +103,7 @@ class GridAction
                             ->label(__('filament-forms::components.rich_editor.actions.grid.modal.form.is_asymmetric.label'))
                             ->columnSpanFull()
                             ->visibleJs(<<<'JS'
-                                $get('columns') === 2
+                                Number($get('columns')) === 2
                             JS),
                         TextInput::make('columns')
                             ->label(__('filament-forms::components.rich_editor.actions.grid.modal.form.columns.label'))
