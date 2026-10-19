@@ -10,7 +10,7 @@ return [
 
     'results_label' => 'Wyniki wyszukiwania globalnego',
 
-    'results_count' => ':count wynik.|:count wyników.',
+    'results_count' => ':count wynik.|:count wyniki.|:count wyników.',
 
     'loading_message' => 'Wyszukiwanie...',
 
