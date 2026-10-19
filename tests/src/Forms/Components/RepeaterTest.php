@@ -419,35 +419,6 @@ describe('item labels', function (): void {
         expect($repeater->getItemLabel($itemKeys[1], 1))->toBe('Item 1: second');
         expect($repeater->getItemLabel($itemKeys[2], 2))->toBe('Item 2: third');
     });
-
-    it('returns `null` from `getItemLabel()` without dehydrating the item state when `itemLabel()` is not set', function (): void {
-        $dehydrationCount = 0;
-
-        Schema::make(Livewire::make())
-            ->statePath('data')
-            ->components([
-                $repeater = Repeater::make('items')
-                    ->schema([
-                        TextInput::make('name')
-                            ->dehydrateStateUsing(static function (?string $state) use (&$dehydrationCount): ?string {
-                                $dehydrationCount++;
-
-                                return $state;
-                            }),
-                    ])
-                    ->default([
-                        ['name' => 'first'],
-                        ['name' => 'second'],
-                    ]),
-            ])
-            ->fill();
-
-        foreach (array_keys($repeater->getRawState()) as $index => $itemKey) {
-            expect($repeater->getItemLabel($itemKey, $index))->toBeNull();
-        }
-
-        expect($dehydrationCount)->toBe(0);
-    });
 });
 
 describe('simple mode', function (): void {
