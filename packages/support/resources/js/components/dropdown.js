@@ -179,9 +179,12 @@ export default ({ isMenu = true } = {}) => ({
     getTrigger() {
         const triggerContainer = this.getTriggerContainer()
         const triggers = this.getTriggers()
-        const visibleTrigger = triggers.find((trigger) =>
-            this.isElementVisible(trigger),
-        )
+
+        // Avoid forcing style recalculation when there is only one trigger to choose from.
+        const visibleTrigger =
+            triggers.length > 1
+                ? triggers.find((trigger) => this.isElementVisible(trigger))
+                : triggers[0]
 
         if (
             this.activeTrigger?.isConnected &&
