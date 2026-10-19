@@ -145,6 +145,44 @@ it('keeps `aria-expanded` in sync with the panel after a Livewire request', func
         ->assertNoSmoke();
 });
 
+it('does not read computed styles to pick the only trigger of a dropdown', function (): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    visit('/dropdown-test')
+        ->assertScript(<<<'JS'
+            (() => {
+                const dropdown = document.querySelector('[data-testid="menu-dropdown-trigger"]').closest('.fi-dropdown').cloneNode(true)
+                const getComputedStyle = window.getComputedStyle
+                let triggerStyleReads = 0
+
+                window.getComputedStyle = (element, ...args) => {
+                    if (element.closest?.('.fi-dropdown-trigger') && dropdown.contains(element)) {
+                        triggerStyleReads++
+                    }
+
+                    return getComputedStyle(element, ...args)
+                }
+
+                try {
+                    Alpine.mutateDom(() => document.body.append(dropdown))
+                    Alpine.initTree(dropdown)
+                } finally {
+                    window.getComputedStyle = getComputedStyle
+                }
+
+                const isMenuTrigger = dropdown.querySelector('.fi-dropdown-trigger button').getAttribute('aria-haspopup') === 'menu'
+
+                Alpine.destroyTree(dropdown)
+                dropdown.remove()
+
+                return isMenuTrigger && (triggerStyleReads === 0)
+            })()
+            JS, true)
+        ->assertNoSmoke();
+});
+
 it('only closes the owning dynamically mounted dropdown on `Escape`', function (): void {
     Artisan::call('filament:assets');
 
