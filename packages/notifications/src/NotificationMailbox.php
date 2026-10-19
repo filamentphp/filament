@@ -3,6 +3,7 @@
 namespace Filament\Notifications;
 
 use Closure;
+use Illuminate\Cache\FileStore;
 use Illuminate\Cache\Repository;
 use Illuminate\Contracts\Cache\LockProvider;
 use Illuminate\Support\Facades\Cache;
@@ -67,7 +68,15 @@ class NotificationMailbox
 
     public function hasPublishedNotifications(): bool
     {
-        return Cache::store(config('filament.cache_store'))->has($this->getCacheKey());
+        $cache = Cache::store(config('filament.cache_store'));
+
+        // `FileStore::get()` can delete expired entries after reading them, so an
+        // unlocked `has()` could delete notifications published in the meantime.
+        if ($cache->getStore() instanceof FileStore) {
+            return $this->mutate(static fn (Repository $cache, string $key): bool => $cache->has($key));
+        }
+
+        return $cache->has($this->getCacheKey());
     }
 
     public function flush(): void

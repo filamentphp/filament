@@ -13,7 +13,6 @@ use Illuminate\Foundation\Http\Middleware\TrimStrings;
 use Illuminate\Session\Store;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Sleep;
 use Livewire\Livewire;
 
 use function Filament\Tests\livewire;
@@ -338,28 +337,5 @@ describe('response middleware', function (): void {
         livewire(Notifications::class)->dispatch('notificationsSent')
             ->assertCount('notifications', 1)
             ->assertSee('Sent by global middleware');
-    });
-});
-
-describe('concurrent requests', function (): void {
-    it('checks for published notifications without waiting for the mailbox lock', function (): void {
-        Notification::make()->title('Saved')->send();
-
-        $mailbox = app(NotificationMailbox::class);
-        $mailbox->flush();
-
-        // Another request of the same session is publishing or pulling notifications.
-        $scope = (fn (): string => $this->getScope())->call($mailbox);
-        $lock = Cache::store(config('filament.cache_store'))->lock("filament:notifications:{$scope}:lock", 10);
-
-        expect($lock->get())->toBeTrue();
-
-        Sleep::fake(syncWithCarbon: true);
-
-        expect($mailbox->hasPublishedNotifications())->toBeTrue();
-
-        Sleep::assertNeverSlept();
-
-        $lock->release();
     });
 });
