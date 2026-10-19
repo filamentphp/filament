@@ -20,6 +20,7 @@ return [
 
             'block' => [
                 'label' => 'Disjunktio (OR)',
+                'picker_group' => 'Logiikka',
                 'or' => 'OR',
             ],
 
