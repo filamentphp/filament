@@ -1,7 +1,6 @@
 ---
 title: Singular resources
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

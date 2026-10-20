@@ -132,7 +132,7 @@ livewire(ManageInvoices::class)
 
 ## Testing resource `getFormActions()`
 
-For details on how to test custom actions in the `getFormActions()` of a resource page, refer to the [Testing resources](testing-resources#testing-create--edit-page-getformactions) documentation.
+For details on how to test custom actions in the `getFormActions()` of a resource page, refer to the [Testing resources](testing-resources#testing-create-edit-page-getformactions) documentation.
 
 ## Testing forms in action modals
 

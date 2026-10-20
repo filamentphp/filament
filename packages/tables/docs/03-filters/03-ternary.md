@@ -1,7 +1,6 @@
 ---
 title: Ternary filters
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 

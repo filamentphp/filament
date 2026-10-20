@@ -1,7 +1,6 @@
 ---
 title: Creating records
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 <AutoScreenshot name="panels/resources/creating" alt="Resource create page" version="6.x" />
 

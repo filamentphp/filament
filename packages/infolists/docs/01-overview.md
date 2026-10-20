@@ -1,9 +1,6 @@
 ---
 title: Overview
 ---
-import Aside from "@components/Aside.astro"
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -708,7 +705,7 @@ TextEntry::make('name')
 <AutoScreenshot name="infolists/entries/below-label" alt="Infolist entry with extra content below label" version="6.x" />
 
 <Aside variant="info">
-    This may seem like the same as the [`aboveContent()` method](#adding-extra-content-above-an-entry%E2%80%99s-content). However, when using [inline labels](#inline-labels), the `aboveContent()` method will place the content above the entry, not below the label, since the label is displayed in a separate column to the entry content.
+    This may seem like the same as the [`aboveContent()` method](#adding-extra-content-above-an-entrys-content). However, when using [inline labels](#inline-labels), the `aboveContent()` method will place the content above the entry, not below the label, since the label is displayed in a separate column to the entry content.
 </Aside>
 
 ### Adding extra content above an entry's content
@@ -732,7 +729,7 @@ TextEntry::make('name')
 <AutoScreenshot name="infolists/entries/above-content" alt="Infolist entry with extra content above content" version="6.x" />
 
 <Aside variant="info">
-    This may seem like the same as the [`belowLabel()` method](#adding-extra-content-below-an-entry%E2%80%99s-label). However, when using [inline labels](#inline-labels), the `belowLabel()` method will place the content below the label, not above the entry's content, since the label is displayed in a separate column to the entry content.
+    This may seem like the same as the [`belowLabel()` method](#adding-extra-content-below-an-entrys-label). However, when using [inline labels](#inline-labels), the `belowLabel()` method will place the content below the label, not above the entry's content, since the label is displayed in a separate column to the entry content.
 </Aside>
 
 ### Adding extra content before an entry's content

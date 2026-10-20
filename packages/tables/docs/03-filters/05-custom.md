@@ -1,8 +1,6 @@
 ---
 title: Custom filters
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Custom filter schemas
 

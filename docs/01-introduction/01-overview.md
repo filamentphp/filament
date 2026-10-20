@@ -2,8 +2,6 @@
 title: What is Filament?
 contents: false
 ---
-import Aside from "@components/Aside.astro"
-import Disclosure from "@components/Disclosure.astro"
 
 ## Introduction
 

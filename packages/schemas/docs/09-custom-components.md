@@ -1,8 +1,6 @@
 ---
 title: Custom components
 ---
-import Aside from "@components/Aside.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Inserting a Blade view into a schema
 

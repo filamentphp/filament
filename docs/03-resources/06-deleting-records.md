@@ -1,7 +1,6 @@
 ---
 title: Deleting records
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 <AutoScreenshot name="panels/resources/deleting" alt="A delete confirmation modal" version="6.x" />
 

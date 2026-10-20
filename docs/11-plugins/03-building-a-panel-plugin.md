@@ -1,7 +1,6 @@
 ---
 title: Build a panel plugin
 ---
-import Aside from "@components/Aside.astro"
 
 ## Introduction
 
@@ -68,7 +67,7 @@ You may also remove the Testing directories and files, but we'll leave them in f
 Now that we have our plugin cleaned up, we can start adding our code. The boilerplate in the `src/ClockWidgetServiceProvider.php` file has a lot going on so, let's delete everything and start from scratch.
 
 <Aside variant="info">
-    Register this [asynchronous Alpine component](../advanced/assets#asynchronous-alpine-js-components) in `packageBooted()`, since it only loads where the widget is used. For assets that should load on every page of a particular panel, use [`$panel->assets()`](../panel-configuration#registering-assets-for-a-panel) in a plugin object's `register()` method instead. Registering those assets globally would load them in panels that do not use your plugin.
+    Register this [asynchronous Alpine component](../advanced/assets#asynchronous-alpinejs-components) in `packageBooted()`, since it only loads where the widget is used. For assets that should load on every page of a particular panel, use [`$panel->assets()`](../panel-configuration#registering-assets-for-a-panel) in a plugin object's `register()` method instead. Registering those assets globally would load them in panels that do not use your plugin.
 </Aside>
 
 We need to be able to register our Widget with the panel and load our Alpine component when the widget is used. To do this, we'll need to add the following to the `packageBooted` method in our service provider. This will register our widget component with Livewire and our Alpine component with the Filament Asset Manager.
@@ -125,7 +124,7 @@ class ClockWidget extends Widget
 
 Next, we'll need to create the view for our widget. Create a new file at `resources/views/widget.blade.php` and add the following code. We'll make use of Filament's Blade components to save time on writing the HTML for the widget.
 
-Use `x-load` and `x-load-src` to load the Alpine component when the widget is rendered. See [asynchronous Alpine.js components](../advanced/assets#asynchronous-alpine-js-components) for more information.
+Use `x-load` and `x-load-src` to load the Alpine component when the widget is rendered. See [asynchronous Alpine.js components](../advanced/assets#asynchronous-alpinejs-components) for more information.
 
 ```blade
 <x-filament-widgets::widget>

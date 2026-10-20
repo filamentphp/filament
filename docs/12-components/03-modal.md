@@ -2,7 +2,6 @@
 title: Modal Blade component
 ---
 
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 

@@ -1,8 +1,6 @@
 ---
 title: Toggle
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -147,4 +145,3 @@ Toggle::make('is_under_18')
 ```
 
 <UtilityInjection set="formFields" version="6.x">As well as allowing a static value, the `declined()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
-

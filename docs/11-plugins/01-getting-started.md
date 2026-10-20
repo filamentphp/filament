@@ -1,7 +1,6 @@
 ---
 title: Getting started
 ---
-import Aside from "@components/Aside.astro"
 
 ## Introduction
 

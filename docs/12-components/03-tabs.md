@@ -2,7 +2,6 @@
 title: Tabs Blade component
 ---
 
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 

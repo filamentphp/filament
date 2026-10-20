@@ -659,7 +659,7 @@
                                                 :reset-action="$filtersResetAction"
                                                 :reset-action-position="$filtersResetActionPosition"
                                                 x-data="filamentTableFilters"
-                                                x-on:click="rememberActionFocus($event)"
+                                                x-on:click="handleActionClick($event)"
                                                 tabindex="-1"
                                             />
                                         </x-filament::dropdown>

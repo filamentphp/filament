@@ -451,12 +451,13 @@ describe('rendering', function (): void {
             ->assertSeeHtml('Above description');
     });
 
-    it('renders a `lineClamp()` as a `--line-clamp` style', function (): void {
+    it('renders a `lineClamp()` as a `--line-clamp` style and the `fi-ta-text-has-line-clamp` class', function (): void {
         Post::factory()->create();
 
         livewire(RenderTextColumnWithLineClamp::class)
             ->assertSuccessful()
-            ->assertSeeHtml('--line-clamp: 2');
+            ->assertSeeHtml('--line-clamp: 2')
+            ->assertSeeHtml('fi-ta-text-has-line-clamp');
     });
 
     it('renders a `wrap()` as the `fi-wrapped` class', function (): void {

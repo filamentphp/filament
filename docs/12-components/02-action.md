@@ -1,7 +1,6 @@
 ---
 title: Rendering an action in a Livewire component
 ---
-import Aside from "@components/Aside.astro"
 
 <Aside variant="warning">
     Before proceeding, make sure `filament/actions` is installed in your project. You can check by running:

@@ -1,7 +1,6 @@
 ---
 title: Layout
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## The problem with traditional table layouts
 
