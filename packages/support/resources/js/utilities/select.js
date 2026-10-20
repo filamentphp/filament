@@ -265,6 +265,15 @@ export class Select {
             event.preventDefault(),
         )
 
+        // Pressing the dropdown's own scrollbar targets the dropdown itself.
+        // Classic (non-overlay) scrollbars, as on Windows, move focus out of
+        // the select on press, which closes the dropdown before it can scroll.
+        this.dropdown.addEventListener('mousedown', (event) => {
+            if (event.target === this.dropdown) {
+                event.preventDefault()
+            }
+        })
+
         // Create a visually hidden live region to announce loading / empty / limit messages,
         // before `renderOptions()` since it may announce a "no options" message
         this.statusRegion = document.createElement('div')
