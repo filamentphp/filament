@@ -29,9 +29,9 @@ Filter::make('created_at')
     })
 ```
 
-<UtilityInjection set="formFields" version="6.x" extras="Query;;Illuminate\Database\Eloquent\Builder;;$query;;The Eloquent query builder to modify.||Data;;array<string, mixed>;;$data;;The data from the filter's form fields.">The `query()` function can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" extras="Query;;Illuminate\Database\Eloquent\Builder;;$query;;The Eloquent query builder to modify.||Data;;array<string, mixed>;;$data;;The data from the filter's form fields.">The `query()` function can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/filters/custom-form" alt="Table with custom filter schema" version="6.x" />
+<AutoScreenshot name="tables/filters/custom-form" alt="Table with custom filter schema" />
 
 ### Setting default values for custom filter fields
 
@@ -53,7 +53,7 @@ Filter::make('created_at')
 
 When a filter is active, an indicator is displayed above the table content to signal that the table query has been scoped.
 
-<AutoScreenshot name="tables/filters/indicators" alt="Table with filter indicators" version="6.x" />
+<AutoScreenshot name="tables/filters/indicators" alt="Table with filter indicators" />
 
 By default, the label of the filter is used as the indicator. You can override this using the `indicator()` method:
 

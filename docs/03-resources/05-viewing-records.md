@@ -2,7 +2,7 @@
 title: Viewing records
 ---
 
-<AutoScreenshot name="panels/resources/viewing" alt="Resource view page" version="6.x" />
+<AutoScreenshot name="panels/resources/viewing" alt="Resource view page" />
 
 ## Creating a resource with a View page
 

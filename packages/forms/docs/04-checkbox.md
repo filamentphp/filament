@@ -12,7 +12,7 @@ use Filament\Forms\Components\Checkbox;
 Checkbox::make('is_admin')
 ```
 
-<AutoScreenshot name="forms/fields/checkbox/simple" alt="Checkbox" version="6.x" />
+<AutoScreenshot name="forms/fields/checkbox/simple" alt="Checkbox" />
 
 If you're saving the boolean value using Eloquent, you should be sure to add a `boolean` [cast](https://laravel.com/docs/eloquent-mutators#attribute-casting) to the model property:
 
@@ -48,7 +48,7 @@ Checkbox::make('is_admin')
     ->inline()
 ```
 
-<AutoScreenshot name="forms/fields/checkbox/inline" alt="Checkbox with its label inline" version="6.x" />
+<AutoScreenshot name="forms/fields/checkbox/inline" alt="Checkbox with its label inline" />
 
 When the checkbox is stacked, its label is above it:
 
@@ -59,9 +59,9 @@ Checkbox::make('is_admin')
     ->inline(false)
 ```
 
-<UtilityInjection set="formFields" version="6.x">As well as allowing a static value, the `inline()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `inline()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/checkbox/not-inline" alt="Checkbox with its label above" version="6.x" />
+<AutoScreenshot name="forms/fields/checkbox/not-inline" alt="Checkbox with its label above" />
 
 ## Checkbox validation
 
@@ -87,7 +87,7 @@ Checkbox::make('terms_of_service')
     ->accepted(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="6.x">As well as allowing a static value, the `accepted()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `accepted()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Declined validation
 
@@ -109,4 +109,4 @@ Checkbox::make('is_under_18')
     ->declined(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="6.x">As well as allowing a static value, the `declined()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `declined()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>

@@ -39,7 +39,7 @@ For example, the state of this entry might be represented as:
 ]
 ```
 
-<AutoScreenshot name="infolists/entries/repeatable/simple" alt="Repeatable entry" version="6.x" />
+<AutoScreenshot name="infolists/entries/repeatable/simple" alt="Repeatable entry" />
 
 Alternatively, `comments` and `author` could be Eloquent relationships, `title` and `content` could be attributes on the comment model, and `name` could be an attribute on the author model. Filament will automatically handle the relationship loading and display the data in the same way.
 
@@ -59,9 +59,9 @@ RepeatableEntry::make('comments')
 
 This method accepts the same options as the `columns()` method of the [grid](../schemas/layouts#grid-system). This allows you to responsively customize the number of grid columns at various breakpoints.
 
-<UtilityInjection set="infolistEntries" version="6.x">As well as allowing a static value, the `grid()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `grid()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/repeatable/grid" alt="Repeatable entry in grid layout" version="6.x" />
+<AutoScreenshot name="infolists/entries/repeatable/grid" alt="Repeatable entry in grid layout" />
 
 ## Removing the styled container
 
@@ -77,9 +77,9 @@ RepeatableEntry::make('comments')
     ->contained(false)
 ```
 
-<UtilityInjection set="infolistEntries" version="6.x">As well as allowing a static value, the `contained()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `contained()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/repeatable/contained-false" alt="Repeatable entry without styled container" version="6.x" />
+<AutoScreenshot name="infolists/entries/repeatable/contained-false" alt="Repeatable entry without styled container" />
 
 ## Table repeatable layout
 
@@ -105,7 +105,7 @@ RepeatableEntry::make('comments')
     ])
 ```
 
-<AutoScreenshot name="infolists/entries/repeatable/table" alt="Repeatable entry with table layout" version="6.x" />
+<AutoScreenshot name="infolists/entries/repeatable/table" alt="Repeatable entry with table layout" />
 
 The labels displayed in the header of the table are passed to the `TableColumn::make()` method. If you want to provide an accessible label for a column but do not wish to display it, you can use the `hiddenHeaderLabel()` method:
 

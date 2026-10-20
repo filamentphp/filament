@@ -12,7 +12,7 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')
 ```
 
-<AutoScreenshot name="tables/columns/text/simple" alt="Text column" version="6.x" />
+<AutoScreenshot name="tables/columns/text/simple" alt="Text column" />
 
 ## Customizing the color
 
@@ -25,9 +25,9 @@ TextColumn::make('status')
     ->color('primary')
 ```
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/color" alt="Text column in the primary color" version="6.x" />
+<AutoScreenshot name="tables/columns/text/color" alt="Text column in the primary color" />
 
 ## Adding an icon
 
@@ -41,9 +41,9 @@ TextColumn::make('email')
     ->icon(Heroicon::Envelope)
 ```
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">The `icon()` method also accepts a function to dynamically calculate the icon. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">The `icon()` method also accepts a function to dynamically calculate the icon. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/icon" alt="Text column with icon" version="6.x" />
+<AutoScreenshot name="tables/columns/text/icon" alt="Text column with icon" />
 
 You may set the position of an icon using `iconPosition()`:
 
@@ -57,9 +57,9 @@ TextColumn::make('email')
     ->iconPosition(IconPosition::After) // `IconPosition::Before` or `IconPosition::After`
 ```
 
-<UtilityInjection set="tableColumns" version="6.x">The `iconPosition()` method also accepts a function to dynamically calculate the icon position. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">The `iconPosition()` method also accepts a function to dynamically calculate the icon position. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/icon-after" alt="Text column with icon after" version="6.x" />
+<AutoScreenshot name="tables/columns/text/icon-after" alt="Text column with icon after" />
 
 The icon color defaults to the text color, but you may customize the icon [color](../../styling/colors) separately using `iconColor()`:
 
@@ -72,9 +72,9 @@ TextColumn::make('email')
     ->iconColor('primary')
 ```
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">The `iconColor()` method also accepts a function to dynamically calculate the icon color. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">The `iconColor()` method also accepts a function to dynamically calculate the icon color. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/icon-color" alt="Text column with icon in the primary color" version="6.x" />
+<AutoScreenshot name="tables/columns/text/icon-color" alt="Text column with icon in the primary color" />
 
 ## Displaying as a "badge"
 
@@ -93,7 +93,7 @@ TextColumn::make('status')
     })
 ```
 
-<AutoScreenshot name="tables/columns/text/badge" alt="Text column as badge" version="6.x" />
+<AutoScreenshot name="tables/columns/text/badge" alt="Text column as badge" />
 
 You may add other things to the badge, like an [icon](#adding-an-icon).
 
@@ -106,7 +106,7 @@ TextColumn::make('status')
     ->badge(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="6.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Formatting
 
@@ -123,7 +123,7 @@ TextColumn::make('status')
 
 In this case, the `status` column in the database might contain values like `draft`, `reviewing`, `published`, or `rejected`, but the formatted state will be the translated version of these values.
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">The function passed to `formatStateUsing()` can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">The function passed to `formatStateUsing()` can inject various utilities as parameters.</UtilityInjection>
 
 ### Date formatting
 
@@ -142,7 +142,7 @@ TextColumn::make('created_at')
     ->time()
 ```
 
-<AutoScreenshot name="tables/columns/text/date" alt="Text column with date formatting" version="6.x" />
+<AutoScreenshot name="tables/columns/text/date" alt="Text column with date formatting" />
 
 You may customize the date format by passing a custom format string to the `date()`, `dateTime()`, or `time()` method. You may use any [PHP date formatting tokens](https://www.php.net/manual/en/datetime.format.php):
 
@@ -159,7 +159,7 @@ TextColumn::make('created_at')
     ->time('H:i:s')
 ```
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `date()`, `dateTime()`, and `time()` methods also accept a function to dynamically calculate the format. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `date()`, `dateTime()`, and `time()` methods also accept a function to dynamically calculate the format. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 #### Date formatting using Carbon macro formats
 
@@ -193,7 +193,7 @@ TextColumn::make('created_at')
     ->isoTime('LT')
 ```
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `isoDate()`, `isoDateTime()`, and `isoTime()` methods also accept a function to dynamically calculate the format. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `isoDate()`, `isoDateTime()`, and `isoTime()` methods also accept a function to dynamically calculate the format. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 #### Relative date formatting
 
@@ -206,7 +206,7 @@ TextColumn::make('created_at')
     ->since()
 ```
 
-<AutoScreenshot name="tables/columns/text/since" alt="Text column with relative date formatting" version="6.x" />
+<AutoScreenshot name="tables/columns/text/since" alt="Text column with relative date formatting" />
 
 #### Displaying a formatting date in a tooltip
 
@@ -244,7 +244,7 @@ TextColumn::make('created_at')
     ->sinceTooltip()
 ```
 
-<AutoScreenshot name="tables/columns/text/date-tooltip" alt="Text column with a date tooltip on relative dates" version="6.x" />
+<AutoScreenshot name="tables/columns/text/date-tooltip" alt="Text column with a date tooltip on relative dates" />
 
 #### Setting the timezone for date formatting
 
@@ -267,7 +267,7 @@ TextColumn::make('created_at')
     ->dateTime()
 ```
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `timezone()` method also accepts a function to dynamically calculate the timezone. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `timezone()` method also accepts a function to dynamically calculate the timezone. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 If you do not pass a `timezone()` to the column, it will use Filament's default timezone. You can set Filament's default timezone using the `FilamentTimezone::set()` method in the `boot()` method of a service provider such as `AppServiceProvider`:
 
@@ -297,7 +297,7 @@ TextColumn::make('stock')
     ->numeric()
 ```
 
-<AutoScreenshot name="tables/columns/text/numeric" alt="Text column with numeric formatting" version="6.x" />
+<AutoScreenshot name="tables/columns/text/numeric" alt="Text column with numeric formatting" />
 
 If you would like to customize the number of decimal places used to format the number with, you can use the `decimalPlaces` argument:
 
@@ -308,7 +308,7 @@ TextColumn::make('stock')
     ->numeric(decimalPlaces: 0)
 ```
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `decimalPlaces` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `decimalPlaces` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 By default, your app's locale will be used to format the number suitably. If you would like to customize the locale used, you can pass it to the `locale` argument:
 
@@ -319,7 +319,7 @@ TextColumn::make('stock')
     ->numeric(locale: 'nl')
 ```
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `locale` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `locale` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Money formatting
 
@@ -332,9 +332,9 @@ TextColumn::make('price')
     ->money('EUR')
 ```
 
-<AutoScreenshot name="tables/columns/text/money" alt="Text column with money formatting" version="6.x" />
+<AutoScreenshot name="tables/columns/text/money" alt="Text column with money formatting" />
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `money()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `money()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 There is also a `divideBy` argument for `money()` that allows you to divide the original value by a number before formatting it. This could be useful if your database stores the price in cents, for example:
 
@@ -345,7 +345,7 @@ TextColumn::make('price')
     ->money('EUR', divideBy: 100)
 ```
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `divideBy` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `divideBy` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 By default, your app's locale will be used to format the money suitably. If you would like to customize the locale used, you can pass it to the `locale` argument:
 
@@ -356,7 +356,7 @@ TextColumn::make('price')
     ->money('EUR', locale: 'nl')
 ```
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `locale` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `locale` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 If you would like to customize the number of decimal places used to format the number with, you can use the `decimalPlaces` argument:
 
@@ -367,7 +367,7 @@ TextColumn::make('price')
     ->money('EUR', decimalPlaces: 3)
 ```
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `decimalPlaces` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `decimalPlaces` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Rendering Markdown
 
@@ -380,7 +380,7 @@ TextColumn::make('description')
     ->markdown()
 ```
 
-<AutoScreenshot name="tables/columns/text/markdown" alt="Text column with Markdown rendering" version="6.x" />
+<AutoScreenshot name="tables/columns/text/markdown" alt="Text column with Markdown rendering" />
 
 Optionally, you may pass a boolean value to control if the text should be rendered as Markdown or not:
 
@@ -391,7 +391,7 @@ TextColumn::make('description')
     ->markdown(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="6.x">As well as allowing a static value, the `markdown()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `markdown()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Rendering HTML
 
@@ -404,7 +404,7 @@ TextColumn::make('description')
     ->html()
 ```
 
-<AutoScreenshot name="tables/columns/text/html" alt="Text column with HTML rendering" version="6.x" />
+<AutoScreenshot name="tables/columns/text/html" alt="Text column with HTML rendering" />
 
 Optionally, you may pass a boolean value to control if the text should be rendered as HTML or not:
 
@@ -415,7 +415,7 @@ TextColumn::make('description')
     ->html(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="6.x">As well as allowing a static value, the `html()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `html()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="danger">
     Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider restricting the default configuration. See the [security documentation](../../advanced/security#customizing-the-sanitizer) for details on how to customize the sanitizer.
@@ -463,9 +463,9 @@ TextColumn::make('title')
     ->description(fn (Post $record): string => $record->description)
 ```
 
-<UtilityInjection set="tableColumns" version="6.x">The function passed to `description()` can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">The function passed to `description()` can inject various utilities as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/description" alt="Text column with description" version="6.x" />
+<AutoScreenshot name="tables/columns/text/description" alt="Text column with description" />
 
 By default, the description is displayed below the main text, but you can move it using `'above'` as the second parameter:
 
@@ -476,7 +476,7 @@ TextColumn::make('title')
     ->description(fn (Post $record): string => $record->description, position: 'above')
 ```
 
-<AutoScreenshot name="tables/columns/text/description-above" alt="Text column with description above the content" version="6.x" />
+<AutoScreenshot name="tables/columns/text/description-above" alt="Text column with description above the content" />
 
 ## Listing multiple values
 
@@ -498,9 +498,9 @@ TextColumn::make('authors.name')
     ->listWithLineBreaks(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="6.x">As well as allowing a static value, the `listWithLineBreaks()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `listWithLineBreaks()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/list" alt="Text column with values displayed on separate lines" version="6.x" />
+<AutoScreenshot name="tables/columns/text/list" alt="Text column with values displayed on separate lines" />
 
 ### Adding bullet points to the list
 
@@ -522,9 +522,9 @@ TextColumn::make('authors.name')
     ->bulleted(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="6.x">As well as allowing a static value, the `bulleted()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `bulleted()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/bulleted" alt="Text column with bulleted list of values" version="6.x" />
+<AutoScreenshot name="tables/columns/text/bulleted" alt="Text column with bulleted list of values" />
 
 ### Limiting the number of values in the list
 
@@ -538,7 +538,7 @@ TextColumn::make('authors.name')
     ->limitList(3)
 ```
 
-<UtilityInjection set="tableColumns" version="6.x">As well as allowing a static value, the `limitList()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `limitList()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 #### Expanding the limited list
 
@@ -568,9 +568,9 @@ TextColumn::make('authors.name')
     ->expandableLimitedList(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="6.x">As well as allowing a static value, the `expandableLimitedList()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `expandableLimitedList()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/expandable-limited-list" alt="Text column with an expandable limited list" version="6.x" />
+<AutoScreenshot name="tables/columns/text/expandable-limited-list" alt="Text column with an expandable limited list" />
 
 ### Splitting a single value into multiple list items
 
@@ -584,9 +584,9 @@ TextColumn::make('tags')
     ->separator(',')
 ```
 
-<AutoScreenshot name="tables/columns/text/separator-badge" alt="Text column with badges from comma-separated values" version="6.x" />
+<AutoScreenshot name="tables/columns/text/separator-badge" alt="Text column with badges from comma-separated values" />
 
-<UtilityInjection set="tableColumns" version="6.x">As well as allowing a static value, the `separator()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `separator()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Customizing the text size
 
@@ -602,7 +602,7 @@ TextColumn::make('title')
     ->size(TextSize::Large)
 ```
 
-<AutoScreenshot name="tables/columns/text/large" alt="Text column in a large font size" version="6.x" />
+<AutoScreenshot name="tables/columns/text/large" alt="Text column in a large font size" />
 
 ## Customizing the font weight
 
@@ -618,9 +618,9 @@ TextColumn::make('title')
     ->weight(FontWeight::Bold)
 ```
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `weight()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `weight()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/bold" alt="Text column in a bold font" version="6.x" />
+<AutoScreenshot name="tables/columns/text/bold" alt="Text column in a bold font" />
 
 ## Customizing the font family
 
@@ -636,9 +636,9 @@ TextColumn::make('email')
     ->fontFamily(FontFamily::Mono)
 ```
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `fontFamily()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `fontFamily()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/mono" alt="Text column in a monospaced font" version="6.x" />
+<AutoScreenshot name="tables/columns/text/mono" alt="Text column in a monospaced font" />
 
 ## Handling long text
 
@@ -653,9 +653,9 @@ TextColumn::make('description')
     ->limit(50)
 ```
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `limit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `limit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/limit" alt="Text column with limited text length" version="6.x" />
+<AutoScreenshot name="tables/columns/text/limit" alt="Text column with limited text length" />
 
 By default, when text is truncated, an ellipsis (`...`) is appended to the end of the text. You may customize this by passing a custom string to the `end` argument:
 
@@ -666,7 +666,7 @@ TextColumn::make('description')
     ->limit(50, end: ' (more)')
 ```
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `end` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `end` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You may also reuse the value that is being passed to `limit()` in a function, by getting it using the `getCharacterLimit()` method:
 
@@ -698,9 +698,9 @@ TextColumn::make('description')
     ->words(10)
 ```
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `words()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `words()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/words" alt="Text column with limited word count" version="6.x" />
+<AutoScreenshot name="tables/columns/text/words" alt="Text column with limited word count" />
 
 By default, when text is truncated, an ellipsis (`...`) is appended to the end of the text. You may customize this by passing a custom string to the `end` argument:
 
@@ -711,7 +711,7 @@ TextColumn::make('description')
     ->words(10, end: ' (more)')
 ```
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `end` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `end` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Allowing text wrapping
 
@@ -733,9 +733,9 @@ TextColumn::make('description')
     ->wrap(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="6.x">As well as allowing a static value, the `wrap()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `wrap()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/wrap" alt="Text column with wrapping text" version="6.x" />
+<AutoScreenshot name="tables/columns/text/wrap" alt="Text column with wrapping text" />
 
 #### Limiting text to a specific number of lines
 
@@ -749,9 +749,9 @@ TextColumn::make('description')
     ->lineClamp(2)
 ```
 
-<UtilityInjection set="tableColumns" version="6.x">As well as allowing a static value, the `lineClamp()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `lineClamp()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/line-clamp" alt="Text column with line clamping" version="6.x" />
+<AutoScreenshot name="tables/columns/text/line-clamp" alt="Text column with line clamping" />
 
 ## Allowing the text to be copied to the clipboard
 
@@ -766,7 +766,7 @@ TextColumn::make('email')
     ->copyMessageDuration(1500)
 ```
 
-<AutoScreenshot name="tables/columns/text/copyable" alt="Text column with a button to copy it" version="6.x" />
+<AutoScreenshot name="tables/columns/text/copyable" alt="Text column with a button to copy it" />
 
 Optionally, you may pass a boolean value to control if the text should be copyable or not:
 
@@ -777,7 +777,7 @@ TextColumn::make('email')
     ->copyable(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="6.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `copyable()`, `copyMessage()`, and `copyMessageDuration()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `copyable()`, `copyMessage()`, and `copyMessageDuration()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="warning">
     This feature only works when SSL is enabled for the app.

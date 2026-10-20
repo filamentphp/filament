@@ -29,7 +29,7 @@ class ListUsers extends Component
 <x-filament::pagination :paginator="$users" />
 ```
 
-<AutoScreenshot name="components/pagination/simple" alt="Pagination" version="6.x" />
+<AutoScreenshot name="components/pagination/simple" alt="Pagination" />
 
 Alternatively, you can use simple pagination or cursor pagination, which will just render a "previous" and "next" button:
 
@@ -40,7 +40,7 @@ User::query()->simplePaginate(10)
 User::query()->cursorPaginate(10)
 ```
 
-<AutoScreenshot name="components/pagination/simple-paginator" alt="Simple pagination" version="6.x" />
+<AutoScreenshot name="components/pagination/simple-paginator" alt="Simple pagination" />
 
 ## Allowing the user to customize the number of items per page
 
@@ -74,7 +74,7 @@ class ListUsers extends Component
 />
 ```
 
-<AutoScreenshot name="components/pagination/page-options" alt="Pagination with page size options" version="6.x" />
+<AutoScreenshot name="components/pagination/page-options" alt="Pagination with page size options" />
 
 ## Displaying links to the first and the last page
 
@@ -87,4 +87,4 @@ Extreme links are the first and last page links. You can add them by passing the
 />
 ```
 
-<AutoScreenshot name="components/pagination/extreme-links" alt="Pagination with extreme links" version="6.x" />
+<AutoScreenshot name="components/pagination/extreme-links" alt="Pagination with extreme links" />

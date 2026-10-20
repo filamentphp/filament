@@ -2,7 +2,7 @@
 title: Editing records
 ---
 
-<AutoScreenshot name="panels/resources/editing" alt="Resource edit page" version="6.x" />
+<AutoScreenshot name="panels/resources/editing" alt="Resource edit page" />
 
 ## Customizing data before filling the form
 
@@ -278,7 +278,7 @@ Section::make('Rate limiting')
 
 The `$operation` helper is available, to ensure that the action is only visible when the form is being edited.
 
-<AutoScreenshot name="panels/resources/editing-section-actions" alt="Resource edit page with section footer save action" version="6.x" />
+<AutoScreenshot name="panels/resources/editing-section-actions" alt="Resource edit page with section footer save action" />
 
 ## Halting the saving process
 
@@ -347,7 +347,7 @@ class EditUser extends EditRecord
 }
 ```
 
-<AutoScreenshot name="panels/resources/editing-header-actions" alt="Resource edit page with custom header actions" version="6.x" />
+<AutoScreenshot name="panels/resources/editing-header-actions" alt="Resource edit page with custom header actions" />
 
 Or, a new button next to "Save" below the form:
 
@@ -399,7 +399,7 @@ protected function getFormActions(): array
 }
 ```
 
-<AutoScreenshot name="panels/resources/editing-save-in-header" alt="Resource edit page with save action in the header" version="6.x" />
+<AutoScreenshot name="panels/resources/editing-save-in-header" alt="Resource edit page with save action in the header" />
 
 ## Creating another Edit page
 
