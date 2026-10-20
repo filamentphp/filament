@@ -122,51 +122,8 @@ class RichEditorStateCast implements StateCast
         });
 
         $this->hydrateMentionLabels($editor);
-        $this->normalizeListItemContent($editor);
 
         return $editor->getDocument();
-    }
-
-    /**
-     * https://github.com/filamentphp/filament/issues/19529
-     * https://github.com/filamentphp/filament/issues/20785
-     */
-    protected function normalizeListItemContent(Editor $editor): void
-    {
-        $editor->descendants(function (object &$node): void {
-            if ($node->type !== 'listItem') {
-                return;
-            }
-
-            if (! isset($node->content) || ! is_array($node->content)) {
-                return;
-            }
-
-            $content = [];
-            $paragraph = null;
-
-            foreach ($node->content as $childNode) {
-                if (! in_array($childNode->type, ['text', 'hardBreak', 'image', 'mention', 'mergeTag'], true)) {
-                    $content[] = $childNode;
-                    $paragraph = null;
-
-                    continue;
-                }
-
-                if (! $paragraph) {
-                    $paragraph = (object) [
-                        'type' => 'paragraph',
-                        'content' => [],
-                    ];
-
-                    $content[] = $paragraph;
-                }
-
-                $paragraph->content[] = $childNode;
-            }
-
-            $node->content = $content;
-        });
     }
 
     protected function hydrateMentionLabels(Editor $editor): void

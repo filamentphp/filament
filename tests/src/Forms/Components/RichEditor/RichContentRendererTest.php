@@ -1191,6 +1191,14 @@ describe('mentions', function (): void {
         expect($html)->toContain('<span');
         expect($html)->toContain('data-type="mention"');
         expect($html)->toContain('@John Doe');
+
+        $document = RichContentRenderer::make($html)->getEditor()->getDocument();
+        $mention = $document['content'][0]['content'][0];
+
+        expect($mention['type'])->toBe('mention')
+            ->and($mention['attrs']['id'])->toBe('1')
+            ->and($mention['attrs']['label'])->toBe('John Doe')
+            ->and($mention)->not->toHaveKey('content');
     });
 
     it('hydrates mention labels from `MentionProvider` when label is missing', function (): void {
@@ -1253,6 +1261,14 @@ describe('mentions', function (): void {
         expect($html)->toContain('href="/users/1"');
         expect($html)->toContain('data-type="mention"');
         expect($html)->toContain('@John Doe');
+
+        $document = RichContentRenderer::make($html)->getEditor()->getDocument();
+        $mention = $document['content'][0]['content'][0];
+
+        expect($mention['type'])->toBe('mention')
+            ->and($mention['attrs']['href'])->toBe('/users/1')
+            ->and($mention['attrs']['char'])->toBe('@')
+            ->and($mention)->not->toHaveKey('content');
     });
 
     it('batch fetches labels for multiple mentions with the same char', function (): void {
