@@ -6,7 +6,7 @@ title: Query builder
 
 The query builder allows you to define a complex set of conditions to filter the data in your table. It is able to handle unlimited nesting of conditions, which you can group together with "and" and "or" operations.
 
-<AutoScreenshot name="tables/filters/query-builder" alt="Query builder filter" version="5.x" />
+<AutoScreenshot name="tables/filters/query-builder" alt="Query builder filter" />
 
 To use it, you need to define a set of "constraints" that will be used to filter the data. Filament includes some built-in constraints, that follow common data types, but you can also define your own custom constraints.
 
@@ -542,7 +542,7 @@ When you configure multiple columns using `constraintPickerColumns()`, groups fl
 
 When you group attributes, the OR condition appears in a separate "Logic" group. If you do not group attributes, the OR condition remains ungrouped.
 
-<AutoScreenshot name="tables/filters/query-builder-grouped" alt="Query builder with grouped attributes and logic in the picker" version="5.x" />
+<AutoScreenshot name="tables/filters/query-builder-grouped" alt="Query builder with grouped attributes and logic in the picker" />
 
 ### Changing the number of columns in the constraint picker
 

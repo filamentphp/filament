@@ -19,7 +19,7 @@ ViewAction::make()
     ])
 ```
 
-<AutoScreenshot name="actions/view-action/modal" alt="View action modal" version="5.x" />
+<AutoScreenshot name="actions/view-action/modal" alt="View action modal" />
 
 ## Customizing data before filling the form
 
@@ -36,4 +36,4 @@ ViewAction::make()
     })
 ```
 
-<UtilityInjection set="actions" version="5.x">As well as `$data`, the `mutateRecordDataUsing()` function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="actions">As well as `$data`, the `mutateRecordDataUsing()` function can inject various utilities as parameters.</UtilityInjection>

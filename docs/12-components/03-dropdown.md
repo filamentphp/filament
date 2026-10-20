@@ -31,7 +31,7 @@ The dropdown component allows you to render a dropdown menu with a button that t
 </x-filament::dropdown>
 ```
 
-<AutoScreenshot name="components/dropdown/simple" alt="A dropdown menu with action items" version="5.x" />
+<AutoScreenshot name="components/dropdown/simple" alt="A dropdown menu with action items" />
 
 ## Using a dropdown item as an anchor link
 
@@ -72,7 +72,7 @@ By default, the color of a dropdown item is "gray". You can change it to be `dan
 </x-filament::dropdown.list.item>
 ```
 
-<AutoScreenshot name="components/dropdown/colors" alt="Dropdown items in different colors" version="5.x" />
+<AutoScreenshot name="components/dropdown/colors" alt="Dropdown items in different colors" />
 
 ## Adding an icon to a dropdown item
 
@@ -84,7 +84,7 @@ You can add an [icon](../styling/icons) to a dropdown item by using the `icon` a
 </x-filament::dropdown.list.item>
 ```
 
-<AutoScreenshot name="components/dropdown/icons" alt="Dropdown items with icons" version="5.x" />
+<AutoScreenshot name="components/dropdown/icons" alt="Dropdown items with icons" />
 
 ### Changing the icon color of a dropdown item
 
@@ -112,7 +112,7 @@ By default, the icon color uses the [same color as the item itself](#changing-th
 </x-filament::dropdown.list.item>
 ```
 
-<AutoScreenshot name="components/dropdown/icon-colors" alt="Dropdown items with different icon colors" version="5.x" />
+<AutoScreenshot name="components/dropdown/icon-colors" alt="Dropdown items with different icon colors" />
 
 ## Adding an image to a dropdown item
 
@@ -124,7 +124,7 @@ You can add a circular image to a dropdown item by using the `image` attribute:
 </x-filament::dropdown.list.item>
 ```
 
-<AutoScreenshot name="components/dropdown/image" alt="Dropdown items with images" version="5.x" />
+<AutoScreenshot name="components/dropdown/image" alt="Dropdown items with images" />
 
 ## Adding a badge to a dropdown item
 
@@ -152,7 +152,7 @@ You can [change the color](badge#changing-the-color-of-the-badge) of the badge u
 </x-filament::dropdown.list.item>
 ```
 
-<AutoScreenshot name="components/dropdown/badge" alt="Dropdown items with badges" version="5.x" />
+<AutoScreenshot name="components/dropdown/badge" alt="Dropdown items with badges" />
 
 ## Setting the placement of a dropdown
 
@@ -174,7 +174,7 @@ The dropdown may be set to a width by using the `width` attribute. Options corre
 </x-filament::dropdown>
 ```
 
-<AutoScreenshot name="components/dropdown/width" alt="A dropdown with a custom width" version="5.x" />
+<AutoScreenshot name="components/dropdown/width" alt="A dropdown with a custom width" />
 
 ## Controlling the maximum height of a dropdown
 
@@ -186,7 +186,7 @@ The dropdown content can have a maximum height using the `max-height` attribute,
 </x-filament::dropdown>
 ```
 
-<AutoScreenshot name="components/dropdown/max-height" alt="A dropdown with a maximum height" version="5.x" />
+<AutoScreenshot name="components/dropdown/max-height" alt="A dropdown with a maximum height" />
 
 ## Displaying content other than a menu
 

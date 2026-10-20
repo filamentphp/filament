@@ -12,7 +12,7 @@ use Filament\Tables\Columns\ColorColumn;
 ColorColumn::make('color')
 ```
 
-<AutoScreenshot name="tables/columns/color/simple" alt="Color column" version="5.x" />
+<AutoScreenshot name="tables/columns/color/simple" alt="Color column" />
 
 ## Allowing the color to be copied to the clipboard
 
@@ -27,7 +27,7 @@ ColorColumn::make('color')
     ->copyMessageDuration(1500)
 ```
 
-<AutoScreenshot name="tables/columns/color/copyable" alt="Color column with a button to copy it" version="5.x" />
+<AutoScreenshot name="tables/columns/color/copyable" alt="Color column with a button to copy it" />
 
 Optionally, you may pass a boolean value to control if the text should be copyable or not:
 
@@ -38,7 +38,7 @@ ColorColumn::make('color')
     ->copyable(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `copyable()`, `copyMessage()`, and `copyMessageDuration()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `copyable()`, `copyMessage()`, and `copyMessageDuration()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Wrapping multiple color blocks
 
@@ -51,7 +51,7 @@ ColorColumn::make('color')
     ->wrap()
 ```
 
-<AutoScreenshot name="tables/columns/color/wrap" alt="Color column with wrapping" version="5.x" />
+<AutoScreenshot name="tables/columns/color/wrap" alt="Color column with wrapping" />
 
 <Aside variant="tip">
     The "width" for wrapping is affected by the column label, so you may need to use a shorter or hidden label to wrap more tightly.

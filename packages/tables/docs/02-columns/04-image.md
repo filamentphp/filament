@@ -16,7 +16,7 @@ In this case, the `avatar` state could contain `users/avatars/4281246003439.jpg`
 
 Alternatively, the state could contain an absolute URL to an image, such as `https://example.com/images/avatar.jpg`.
 
-<AutoScreenshot name="tables/columns/image/simple" alt="Image column" version="5.x" />
+<AutoScreenshot name="tables/columns/image/simple" alt="Image column" />
 
 ## Setting the alt text
 
@@ -29,7 +29,7 @@ ImageColumn::make('avatar')
     ->alt('User avatar')
 ```
 
-<UtilityInjection set="tableColumns" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `alt()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters, including the `$state` of the current image.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `alt()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters, including the `$state` of the current image.</UtilityInjection>
 
 If you do not set any alt text, the image is rendered with an empty `alt` attribute, which marks it as decorative for assistive technology.
 
@@ -48,7 +48,7 @@ ImageColumn::make('header_image')
     ->disk('s3')
 ```
 
-<UtilityInjection set="tableColumns" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `disk()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `disk()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Public images
 
@@ -61,7 +61,7 @@ ImageColumn::make('header_image')
     ->visibility('public')
 ```
 
-<UtilityInjection set="tableColumns" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `visibility()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `visibility()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Customizing the size
 
@@ -80,9 +80,9 @@ ImageColumn::make('avatar')
     ->imageSize(40)
 ```
 
-<AutoScreenshot name="tables/columns/image/size" alt="Image column with custom size" version="5.x" />
+<AutoScreenshot name="tables/columns/image/size" alt="Image column with custom size" />
 
-<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static values, the `imageWidth()`, `imageHeight()` and `imageSize()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static values, the `imageWidth()`, `imageHeight()` and `imageSize()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Square images
 
@@ -96,7 +96,7 @@ ImageColumn::make('avatar')
     ->square()
 ```
 
-<AutoScreenshot name="tables/columns/image/square" alt="Square image column" version="5.x" />
+<AutoScreenshot name="tables/columns/image/square" alt="Square image column" />
 
 Optionally, you may pass a boolean value to control if the image should be square or not:
 
@@ -108,7 +108,7 @@ ImageColumn::make('avatar')
     ->square(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `square()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `square()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Circular images
 
@@ -122,7 +122,7 @@ ImageColumn::make('avatar')
     ->circular()
 ```
 
-<AutoScreenshot name="tables/columns/image/circular" alt="Circular image column" version="5.x" />
+<AutoScreenshot name="tables/columns/image/circular" alt="Circular image column" />
 
 Optionally, you may pass a boolean value to control if the image should be circular or not:
 
@@ -134,7 +134,7 @@ ImageColumn::make('avatar')
     ->circular(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `circular()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `circular()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Adding a default image URL
 
@@ -147,7 +147,7 @@ ImageColumn::make('header_image')
     ->defaultImageUrl(url('storage/posts/header-images/default.jpg'))
 ```
 
-<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `defaultImageUrl()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `defaultImageUrl()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Stacking images
 
@@ -162,7 +162,7 @@ ImageColumn::make('colleagues.avatar')
     ->stacked()
 ```
 
-<AutoScreenshot name="tables/columns/image/stacked" alt="Stacked image column" version="5.x" />
+<AutoScreenshot name="tables/columns/image/stacked" alt="Stacked image column" />
 
 Optionally, you may pass a boolean value to control if the images should be stacked or not:
 
@@ -175,7 +175,7 @@ ImageColumn::make('colleagues.avatar')
     ->stacked(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `stacked()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `stacked()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the stacked ring width
 
@@ -191,9 +191,9 @@ ImageColumn::make('colleagues.avatar')
     ->ring(5)
 ```
 
-<AutoScreenshot name="tables/columns/image/stacked-ring" alt="Image column with stacked ring width" version="5.x" />
+<AutoScreenshot name="tables/columns/image/stacked-ring" alt="Image column with stacked ring width" />
 
-<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `ring()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `ring()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the stacked overlap
 
@@ -209,9 +209,9 @@ ImageColumn::make('colleagues.avatar')
     ->overlap(2)
 ```
 
-<AutoScreenshot name="tables/columns/image/stacked-overlap" alt="Image column with stacked overlap" version="5.x" />
+<AutoScreenshot name="tables/columns/image/stacked-overlap" alt="Image column with stacked overlap" />
 
-<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `overlap()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `overlap()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Setting a limit
 
@@ -227,9 +227,9 @@ ImageColumn::make('colleagues.avatar')
     ->limit(3)
 ```
 
-<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `limit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `limit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/image/limited" alt="Limited image column" version="5.x" />
+<AutoScreenshot name="tables/columns/image/limited" alt="Limited image column" />
 
 ### Showing the remaining images count
 
@@ -246,7 +246,7 @@ ImageColumn::make('colleagues.avatar')
     ->limitedRemainingText()
 ```
 
-<AutoScreenshot name="tables/columns/image/limited-remaining-text" alt="Limited image column with remaining text" version="5.x" />
+<AutoScreenshot name="tables/columns/image/limited-remaining-text" alt="Limited image column with remaining text" />
 
 Optionally, you may pass a boolean value to control if the remaining text should be displayed or not:
 
@@ -261,7 +261,7 @@ ImageColumn::make('colleagues.avatar')
     ->limitedRemainingText(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `limitedRemainingText()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `limitedRemainingText()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 #### Customizing the limited remaining text size
 
@@ -279,7 +279,7 @@ ImageColumn::make('colleagues.avatar')
     ->limitedRemainingText(size: TextSize::Large)
 ```
 
-<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `limitedRemainingText()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing a static value, the `limitedRemainingText()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Prevent file existence checks
 
@@ -292,7 +292,7 @@ ImageColumn::make('attachment')
     ->checkFileExistence(false)
 ```
 
-<UtilityInjection set="tableColumns" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `checkFileExistence()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `checkFileExistence()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Wrapping multiple images
 
@@ -325,6 +325,6 @@ ImageColumn::make('logo')
     ])
 ```
 
-<UtilityInjection set="tableColumns" version="5.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `extraImgAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `extraImgAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 By default, calling `extraImgAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
