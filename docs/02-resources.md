@@ -179,7 +179,7 @@ By default, resources are generated with three pages:
 
 - List has a [table](#tables) for displaying, searching and deleting resource records. From here, you are able to access the create and edit pages. It is routed to `/`.
 - Create has a [form](#forms) that is able to create a resource record. It is routed to `/create`.
-- Edit has a [form](#forms) that is able to update a resource record, along with the [relation managers](#relations-multiple) registered to your resource. It is routed to `/{record}/edit`.
+- Edit has a [form](#forms) that is able to update a resource record, along with the [relation managers](#managing-multiple-related-records) registered to your resource. It is routed to `/{record}/edit`.
 
 ### Customizing Default Pages
 
@@ -359,7 +359,7 @@ By passing a callback to the `url()` method, you can get access to each row's re
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The `viewAny` action may be used to completely disable resources and remove them from the navigation menu.
 
-Filament also includes a powerful role-based authorization system, which is set up out of the box with the default users table. You may also implement roles functionality in a [custom users table](#users).
+Filament also includes a powerful role-based authorization system, which is set up out of the box with the default users table. You may also implement roles functionality in a [custom users table](getting-started#users).
 
 You may create roles, such as `Manager`, using:
 
