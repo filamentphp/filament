@@ -201,7 +201,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             }
         }
 
-        $url ??= $storage->url($file);
+        $url ??= str_replace(' ', '%20', $storage->url($file));
 
         return [
             'name' => ($this->isMultiple() ? ($storedFileNames[$file] ?? null) : $storedFileNames) ?? basename($file),

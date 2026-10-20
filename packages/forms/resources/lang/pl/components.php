@@ -4,6 +4,12 @@ return [
 
     'builder' => [
 
+        'reordering' => [
+            'item' => 'Blok',
+            'position' => ':label, pozycja :position z :count',
+            'moved' => ':label przeniesiono na pozycję :position z :count',
+        ],
+
         'actions' => [
 
             'clone' => [
@@ -116,6 +122,8 @@ return [
 
     'checkbox_list' => [
 
+        'required_description' => 'Wybierz przynajmniej jedną opcję.',
+
         'actions' => [
 
             'deselect_all' => [
@@ -131,7 +139,9 @@ return [
     ],
 
     'color_picker' => [
+
         'panel_label' => 'Wybór koloru',
+
     ],
 
     'date_time_picker' => [
@@ -159,6 +169,8 @@ return [
     ],
 
     'file_upload' => [
+
+        'placeholder' => 'Brak przesłanych plików',
 
         'actions' => [
 
@@ -312,6 +324,14 @@ return [
                 'label' => 'Usuń wiersz',
             ],
 
+            'move_down' => [
+                'label' => 'Przenieś w dół',
+            ],
+
+            'move_up' => [
+                'label' => 'Przenieś w górę',
+            ],
+
             'reorder' => [
                 'label' => 'Przenieś wiersz',
             ],
@@ -340,6 +360,12 @@ return [
                 'label' => 'Wartość',
             ],
 
+        ],
+
+        'reordering' => [
+            'row' => 'Wiersz',
+            'position' => ':label, pozycja :position z :count',
+            'moved' => ':label przeniesiono na pozycję :position z :count',
         ],
 
     ],
@@ -400,6 +426,12 @@ return [
     ],
 
     'repeater' => [
+
+        'reordering' => [
+            'item' => 'Element',
+            'position' => ':label, pozycja :position z :count',
+            'moved' => ':label przeniesiono na pozycję :position z :count',
+        ],
 
         'columns' => [
 
@@ -827,6 +859,8 @@ return [
             'false' => 'Nie',
         ],
 
+        'error_message' => 'Opcje nie mogły zostać załadowane. Spróbuj ponownie.',
+
         'loading_message' => 'Wczytywanie...',
 
         'max_items_message' => 'Można wybrać tylko :count elementów.',
@@ -836,6 +870,8 @@ return [
         'no_search_results_message' => 'Żadne wyniki nie pasują do Twojego wyszukiwania.',
 
         'placeholder' => 'Wybierz z listy',
+
+        'required_description' => 'Wybierz opcję.',
 
         'searching_message' => 'Szukanie...',
 
@@ -885,6 +921,8 @@ return [
     ],
 
     'toggle_buttons' => [
+
+        'required_description' => 'Wybierz przynajmniej jedną opcję.',
 
         'boolean' => [
             'true' => 'Tak',
