@@ -792,6 +792,48 @@ describe('configuration and state', function (): void {
             expect($firstListItem['content'][0]['content'][0]['type'])->toBe('text');
             expect($firstListItem['content'][0]['content'][0]['text'])->toBe('Already wrapped');
         });
+
+        test('nested lists are kept next to the wrapped text of their list item on fill', function (): void {
+            $schema = Schema::make(Livewire::make())
+                ->statePath('data')
+                ->components([
+                    RichEditor::make('content')->json(),
+                ])
+                ->fill([
+                    'content' => '<ul><li>One<ul><li>Two</li></ul>Three</li></ul>',
+                ]);
+
+            $state = $schema->getState()['content'];
+
+            $bulletList = collect($state['content'])->firstWhere('type', 'bulletList');
+            $firstListItem = $bulletList['content'][0];
+
+            expect(array_column($firstListItem['content'], 'type'))->toBe(['paragraph', 'bulletList', 'paragraph']);
+            expect($firstListItem['content'][0]['content'][0]['text'])->toBe('One');
+            expect($firstListItem['content'][1]['content'][0]['content'][0]['type'])->toBe('paragraph');
+            expect($firstListItem['content'][1]['content'][0]['content'][0]['content'][0]['text'])->toBe('Two');
+            expect($firstListItem['content'][2]['content'][0]['text'])->toBe('Three');
+        });
+
+        test('list items starting with an image are wrapped in paragraphs on fill', function (): void {
+            $schema = Schema::make(Livewire::make())
+                ->statePath('data')
+                ->components([
+                    RichEditor::make('content')->json(),
+                ])
+                ->fill([
+                    'content' => '<ul><li><img src="https://example.com/image.png"> Caption</li></ul>',
+                ]);
+
+            $state = $schema->getState()['content'];
+
+            $bulletList = collect($state['content'])->firstWhere('type', 'bulletList');
+            $firstListItem = $bulletList['content'][0];
+
+            expect(array_column($firstListItem['content'], 'type'))->toBe(['paragraph']);
+            expect(array_column($firstListItem['content'][0]['content'], 'type'))->toBe(['image', 'text']);
+            expect($firstListItem['content'][0]['content'][1]['text'])->toBe(' Caption');
+        });
     });
 
     describe('link HTML attributes', function (): void {

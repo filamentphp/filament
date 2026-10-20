@@ -129,6 +129,7 @@ class RichEditorStateCast implements StateCast
 
     /**
      * https://github.com/filamentphp/filament/issues/19529
+     * https://github.com/filamentphp/filament/issues/20785
      */
     protected function normalizeListItemContent(Editor $editor): void
     {
@@ -141,16 +142,30 @@ class RichEditorStateCast implements StateCast
                 return;
             }
 
-            $firstChild = $node->content[0] ?? null;
+            $content = [];
+            $paragraph = null;
 
-            if (! $firstChild || $firstChild->type !== 'text') {
-                return;
+            foreach ($node->content as $childNode) {
+                if (! in_array($childNode->type, ['text', 'hardBreak', 'image', 'mention', 'mergeTag'], true)) {
+                    $content[] = $childNode;
+                    $paragraph = null;
+
+                    continue;
+                }
+
+                if (! $paragraph) {
+                    $paragraph = (object) [
+                        'type' => 'paragraph',
+                        'content' => [],
+                    ];
+
+                    $content[] = $paragraph;
+                }
+
+                $paragraph->content[] = $childNode;
             }
 
-            $node->content = [(object) [
-                'type' => 'paragraph',
-                'content' => $node->content,
-            ]];
+            $node->content = $content;
         });
     }
 
