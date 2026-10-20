@@ -52,7 +52,7 @@ describe('column preferences', function (): void {
 });
 
 describe('column manager reordering', function (): void {
-    it('reorders columns and groups through hidden controls without changing deferred application or close semantics', function (string $layout, bool $deferred, bool $toggleable = true): void {
+    it('reorders columns and groups and closes deferred dropdowns after applying', function (string $layout, bool $deferred, bool $toggleable = true): void {
         Artisan::call('filament:assets');
         $this->actingAs(User::factory()->create());
         Post::factory()->create();
@@ -121,6 +121,13 @@ describe('column manager reordering', function (): void {
 
         if ($deferred) {
             $page->click('#reorderable-columns button:has-text("Apply columns")');
+
+            if ($layout === 'dropdown') {
+                $page->assertAttribute($trigger, 'aria-expanded', 'false')
+                    ->assertPresent($trigger . ':focus');
+            }
+        } else {
+            $page->assertAttribute($trigger, 'aria-expanded', 'true');
         }
 
         $page->assertScript("Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-id')) < Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-rating'))", true)
