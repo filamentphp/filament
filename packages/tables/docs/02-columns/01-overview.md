@@ -922,8 +922,6 @@ public function table(Table $table): Table
 }
 ```
 
-The column manager dropdown closes automatically after a successful apply request updates the table. Live column manager changes do not close the dropdown.
-
 #### Displaying the column manager in a modal
 
 To render the column manager in a modal instead of in a dropdown, you may use the `columnManagerLayout()` method:

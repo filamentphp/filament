@@ -233,7 +233,7 @@ Hook class naming:
 
 ## Writing Documentation
 
-**Update documentation for developer-facing features and changes to supported usage** in the owning page under `docs/` or `packages/{package}/docs/`. Do not add documentation merely because a change is visible to end users. Automatic styling and layout improvements, fixes that restore intended behavior, and implementation details need documentation only when they change how developers configure, use, extend, or integrate Filament, or introduce consequential compatibility or accessibility limitations.
+**Update documentation for developer-facing features and changes to supported usage** in the owning page under `docs/` or `packages/{package}/docs/`. Do not add documentation merely because a change is visible to end users. Automatic styling, layout, and interaction changes (such as dropdown closing or focus restoration), fixes that restore intended behavior, and implementation details need documentation only when they change how developers configure, use, extend, or integrate Filament, or introduce consequential compatibility or accessibility limitations. A change to default end-user behavior alone is not a change to supported developer usage and does not need documentation.
 
 - **Tone**: Direct, second person ("You may set...", "You can do this using...")
 - **Audience**: Document how developers configure, extend, and troubleshoot Filament, not how end users operate it. Explain built-in interactions or internal behavior only when they affect a developer's decision, integration, or consequential limitation.

@@ -164,8 +164,6 @@ public function table(Table $table): Table
 }
 ```
 
-The filters dropdown closes automatically after a successful apply request updates the table, keeping the action's loading indicator visible while the request is running.
-
 ## Deselecting records when filters change
 
 By default, all records will be deselected when the filters change. Using the `deselectAllRecordsWhenFiltered(false)` method, you can disable this behavior:
