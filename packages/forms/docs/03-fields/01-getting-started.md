@@ -16,7 +16,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')
 ```
 
-<AutoScreenshot name="forms/fields/simple" alt="Form field" version="3.x" />
+<AutoScreenshot name="forms/fields/simple" alt="Form field" />
 
 ## Available fields
 
@@ -116,7 +116,7 @@ TextInput::make('name')
     ->helperText(view('name-helper-text'))
 ```
 
-<AutoScreenshot name="forms/fields/helper-text" alt="Form field with helper text" version="3.x" />
+<AutoScreenshot name="forms/fields/helper-text" alt="Form field with helper text" />
 
 ## Adding a hint next to the label
 
@@ -147,7 +147,7 @@ TextInput::make('password')
     ->hint(view('forgotten-password-hint'))
 ```
 
-<AutoScreenshot name="forms/fields/hint" alt="Form field with hint" version="3.x" />
+<AutoScreenshot name="forms/fields/hint" alt="Form field with hint" />
 
 ### Changing the text color of the hint
 
@@ -161,7 +161,7 @@ RichEditor::make('content')
     ->hintColor('primary')
 ```
 
-<AutoScreenshot name="forms/fields/hint-color" alt="Form field with hint color" version="3.x" />
+<AutoScreenshot name="forms/fields/hint-color" alt="Form field with hint color" />
 
 ### Adding an icon aside the hint
 
@@ -175,7 +175,7 @@ RichEditor::make('content')
     ->hintIcon('heroicon-m-language')
 ```
 
-<AutoScreenshot name="forms/fields/hint-icon" alt="Form field with hint icon" version="3.x" />
+<AutoScreenshot name="forms/fields/hint-icon" alt="Form field with hint icon" />
 
 #### Adding a tooltip to a hint icon
 
@@ -228,7 +228,7 @@ TextInput::make('name')
     ->disabled()
 ```
 
-<AutoScreenshot name="forms/fields/disabled" alt="Disabled form field" version="3.x" />
+<AutoScreenshot name="forms/fields/disabled" alt="Disabled form field" />
 
 Optionally, you may pass a boolean value to control if the field should be disabled or not:
 
@@ -291,7 +291,7 @@ TextInput::make('name')
     ->placeholder('John Doe')
 ```
 
-<AutoScreenshot name="forms/fields/placeholder" alt="Form field with placeholder" version="3.x" />
+<AutoScreenshot name="forms/fields/placeholder" alt="Form field with placeholder" />
 
 ## Marking a field as required
 

@@ -14,7 +14,7 @@ ImageEntry::make('header_image')
 
 The entry must contain the path to the image, relative to the root directory of its storage disk, or an absolute URL to it.
 
-<AutoScreenshot name="infolists/entries/image/simple" alt="Image entry" version="3.x" />
+<AutoScreenshot name="infolists/entries/image/simple" alt="Image entry" />
 
 ## Managing the image disk
 
@@ -67,7 +67,7 @@ ImageEntry::make('author.avatar')
     ->square()
 ```
 
-<AutoScreenshot name="infolists/entries/image/square" alt="Square image entry" version="3.x" />
+<AutoScreenshot name="infolists/entries/image/square" alt="Square image entry" />
 
 ## Circular image
 
@@ -81,7 +81,7 @@ ImageEntry::make('author.avatar')
     ->circular()
 ```
 
-<AutoScreenshot name="infolists/entries/image/circular" alt="Circular image entry" version="3.x" />
+<AutoScreenshot name="infolists/entries/image/circular" alt="Circular image entry" />
 
 ## Adding a default image URL
 
@@ -107,7 +107,7 @@ ImageEntry::make('colleagues.avatar')
     ->stacked()
 ```
 
-<AutoScreenshot name="infolists/entries/image/stacked" alt="Stacked image entry" version="3.x" />
+<AutoScreenshot name="infolists/entries/image/stacked" alt="Stacked image entry" />
 
 ### Customizing the stacked ring width
 
@@ -151,7 +151,7 @@ ImageEntry::make('colleagues.avatar')
     ->limit(3)
 ```
 
-<AutoScreenshot name="infolists/entries/image/limited" alt="Limited image entry" version="3.x" />
+<AutoScreenshot name="infolists/entries/image/limited" alt="Limited image entry" />
 
 ### Showing the remaining images count
 
@@ -168,7 +168,7 @@ ImageEntry::make('colleagues.avatar')
     ->limitedRemainingText()
 ```
 
-<AutoScreenshot name="infolists/entries/image/limited-remaining-text" alt="Limited image entry with remaining text" version="3.x" />
+<AutoScreenshot name="infolists/entries/image/limited-remaining-text" alt="Limited image entry with remaining text" />
 
 #### Showing the limited remaining text separately
 
@@ -185,7 +185,7 @@ ImageEntry::make('colleagues.avatar')
     ->limitedRemainingText(isSeparate: true)
 ```
 
-<AutoScreenshot name="infolists/entries/image/limited-remaining-text-separately" alt="Limited image entry with remaining text separately" version="3.x" />
+<AutoScreenshot name="infolists/entries/image/limited-remaining-text-separately" alt="Limited image entry with remaining text separately" />
 
 #### Customizing the limited remaining text size
 

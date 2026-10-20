@@ -29,7 +29,7 @@ Filter::make('created_at')
     })
 ```
 
-<AutoScreenshot name="tables/filters/custom-form" alt="Table with custom filter form" version="3.x" />
+<AutoScreenshot name="tables/filters/custom-form" alt="Table with custom filter form" />
 
 ### Setting default values for custom filter fields
 
@@ -51,7 +51,7 @@ Filter::make('created_at')
 
 When a filter is active, an indicator is displayed above the table content to signal that the table query has been scoped.
 
-<AutoScreenshot name="tables/filters/indicators" alt="Table with filter indicators" version="3.x" />
+<AutoScreenshot name="tables/filters/indicators" alt="Table with filter indicators" />
 
 By default, the label of the filter is used as the indicator. You can override this using the `indicator()` method:
 

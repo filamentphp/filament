@@ -17,7 +17,7 @@ ToggleButtons::make('status')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/toggle-buttons/simple" alt="Toggle buttons" version="3.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/simple" alt="Toggle buttons" />
 
 ## Changing the color of option buttons
 
@@ -41,7 +41,7 @@ ToggleButtons::make('status')
 
 If you are using an enum for the options, you can use the [`HasColor` interface](../../support/enums#enum-colors) to define colors instead.
 
-<AutoScreenshot name="forms/fields/toggle-buttons/colors" alt="Toggle buttons with different colors" version="3.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/colors" alt="Toggle buttons with different colors" />
 
 ## Adding icons to option buttons
 
@@ -65,7 +65,7 @@ ToggleButtons::make('status')
 
 If you are using an enum for the options, you can use the [`HasIcon` interface](../../support/enums#enum-icons) to define icons instead.
 
-<AutoScreenshot name="forms/fields/toggle-buttons/icons" alt="Toggle buttons with icons" version="3.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/icons" alt="Toggle buttons with icons" />
 
 If you want to display only icons, you can use `hiddenButtonLabels()` to hide the option labels.
 
@@ -81,7 +81,7 @@ ToggleButtons::make('feedback')
 
 The options will have [colors](#changing-the-color-of-option-buttons) and [icons](#adding-icons-to-option-buttons) set up automatically, but you can override these with `colors()` or `icons()`.
 
-<AutoScreenshot name="forms/fields/toggle-buttons/boolean" alt="Boolean toggle buttons" version="3.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/boolean" alt="Boolean toggle buttons" />
 
 ## Positioning the options inline with each other
 
@@ -94,7 +94,7 @@ ToggleButtons::make('feedback')
     ->inline()
 ```
 
-<AutoScreenshot name="forms/fields/toggle-buttons/inline" alt="Inline toggle buttons" version="3.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/inline" alt="Inline toggle buttons" />
 
 ## Grouping option buttons
 
@@ -107,7 +107,7 @@ ToggleButtons::make('feedback')
     ->grouped()
 ```
 
-<AutoScreenshot name="forms/fields/toggle-buttons/grouped" alt="Grouped toggle buttons" version="3.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/grouped" alt="Grouped toggle buttons" />
 
 ## Selecting multiple buttons
 
@@ -126,7 +126,7 @@ ToggleButtons::make('technologies')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/toggle-buttons/multiple" alt="Multiple toggle buttons selected" version="3.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/multiple" alt="Multiple toggle buttons selected" />
 
 These options are returned in JSON format. If you're saving them using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
@@ -157,7 +157,7 @@ ToggleButtons::make('technologies')
     ->columns(2)
 ```
 
-<AutoScreenshot name="forms/fields/toggle-buttons/columns" alt="Toggle buttons with 2 columns" version="3.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/columns" alt="Toggle buttons with 2 columns" />
 
 This method accepts the same options as the `columns()` method of the [grid](../layout/grid). This allows you to responsively customize the number of columns at various breakpoints.
 
@@ -176,7 +176,7 @@ ToggleButtons::make('technologies')
     ->gridDirection('row')
 ```
 
-<AutoScreenshot name="forms/fields/toggle-buttons/rows" alt="Toggle buttons with 2 rows" version="3.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/rows" alt="Toggle buttons with 2 rows" />
 
 ## Disabling specific options
 
@@ -194,7 +194,7 @@ ToggleButtons::make('status')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
 ```
 
-<AutoScreenshot name="forms/fields/toggle-buttons/disabled-option" alt="Toggle buttons with disabled option" version="3.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/disabled-option" alt="Toggle buttons with disabled option" />
 
 If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
 

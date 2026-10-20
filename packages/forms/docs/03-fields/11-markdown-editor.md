@@ -12,7 +12,7 @@ use Filament\Forms\Components\MarkdownEditor;
 MarkdownEditor::make('content')
 ```
 
-<AutoScreenshot name="forms/fields/markdown-editor/simple" alt="Markdown editor" version="3.x" />
+<AutoScreenshot name="forms/fields/markdown-editor/simple" alt="Markdown editor" />
 
 ## Security
 

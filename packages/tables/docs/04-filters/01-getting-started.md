@@ -18,7 +18,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/filters/simple" alt="Table with filter" version="3.x" />
+<AutoScreenshot name="tables/filters/simple" alt="Table with filter" />
 
 Filters may be created using the static `make()` method, passing its unique name. You should then pass a callback to `query()` which applies your filter's scope:
 
@@ -78,7 +78,7 @@ Filter::make('is_featured')
     ->toggle()
 ```
 
-<AutoScreenshot name="tables/filters/toggle" alt="Table with toggle filter" version="3.x" />
+<AutoScreenshot name="tables/filters/toggle" alt="Table with toggle filter" />
 
 ### Applying the filter by default
 
@@ -218,7 +218,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/filters/custom-trigger-action" alt="Table with custom filters trigger action" version="3.x" />
+<AutoScreenshot name="tables/filters/custom-trigger-action" alt="Table with custom filters trigger action" />
 
 ## Table filter utility injection
 

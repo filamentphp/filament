@@ -17,7 +17,7 @@ Radio::make('status')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/radio/simple" alt="Radio" version="3.x" />
+<AutoScreenshot name="forms/fields/radio/simple" alt="Radio" />
 
 ## Setting option descriptions
 
@@ -39,7 +39,7 @@ Radio::make('status')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/radio/option-descriptions" alt="Radio with option descriptions" version="3.x" />
+<AutoScreenshot name="forms/fields/radio/option-descriptions" alt="Radio with option descriptions" />
 
 Be sure to use the same `key` in the descriptions array as the `key` in the option array so the right description matches the right option.
 
@@ -53,7 +53,7 @@ Radio::make('feedback')
     ->boolean()
 ```
 
-<AutoScreenshot name="forms/fields/radio/boolean" alt="Boolean radio" version="3.x" />
+<AutoScreenshot name="forms/fields/radio/boolean" alt="Boolean radio" />
 
 ## Positioning the options inline with the label
 
@@ -66,7 +66,7 @@ Radio::make('feedback')
     ->inline()
 ```
 
-<AutoScreenshot name="forms/fields/radio/inline" alt="Inline radio" version="3.x" />
+<AutoScreenshot name="forms/fields/radio/inline" alt="Inline radio" />
 
 ## Positioning the options inline with each other but below the label
 
@@ -80,7 +80,7 @@ Radio::make('feedback')
     ->inlineLabel(false)
 ```
 
-<AutoScreenshot name="forms/fields/radio/inline-under-label" alt="Inline radio under label" version="3.x" />
+<AutoScreenshot name="forms/fields/radio/inline-under-label" alt="Inline radio under label" />
 
 ## Disabling specific options
 
@@ -98,7 +98,7 @@ Radio::make('status')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
 ```
 
-<AutoScreenshot name="forms/fields/radio/disabled-option" alt="Radio with disabled option" version="3.x" />
+<AutoScreenshot name="forms/fields/radio/disabled-option" alt="Radio with disabled option" />
 
 If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
 

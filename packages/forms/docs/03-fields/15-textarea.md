@@ -12,7 +12,7 @@ use Filament\Forms\Components\Textarea;
 Textarea::make('description')
 ```
 
-<AutoScreenshot name="forms/fields/textarea/simple" alt="Textarea" version="3.x" />
+<AutoScreenshot name="forms/fields/textarea/simple" alt="Textarea" />
 
 ## Resizing the textarea
 

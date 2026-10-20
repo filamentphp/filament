@@ -12,7 +12,7 @@ use Filament\Infolists\Components\ColorEntry;
 ColorEntry::make('color')
 ```
 
-<AutoScreenshot name="infolists/entries/color/simple" alt="Color entry" version="3.x" />
+<AutoScreenshot name="infolists/entries/color/simple" alt="Color entry" />
 
 ## Allowing the color to be copied to the clipboard
 
@@ -27,4 +27,4 @@ ColorEntry::make('color')
     ->copyMessageDuration(1500)
 ```
 
-<AutoScreenshot name="infolists/entries/color/copyable" alt="Color entry with a button to copy it" version="3.x" />
+<AutoScreenshot name="infolists/entries/color/copyable" alt="Color entry with a button to copy it" />

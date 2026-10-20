@@ -42,7 +42,7 @@ TextEntry::make('title')
 TextEntry::make('author.name')
 ```
 
-<AutoScreenshot name="infolists/entries/simple" alt="Entries in an infolist" version="3.x" />
+<AutoScreenshot name="infolists/entries/simple" alt="Entries in an infolist" />
 
 ## Available entries
 
@@ -122,7 +122,7 @@ TextEntry::make('title')
     ->placeholder('Untitled')
 ```
 
-<AutoScreenshot name="infolists/entries/placeholder" alt="Entry with a placeholder for empty state" version="3.x" />
+<AutoScreenshot name="infolists/entries/placeholder" alt="Entry with a placeholder for empty state" />
 
 ## Adding helper text below the entry
 
@@ -153,7 +153,7 @@ TextEntry::make('name')
     ->helperText(view('name-helper-text'))
 ```
 
-<AutoScreenshot name="infolists/entries/helper-text" alt="Entry with helper text" version="3.x" />
+<AutoScreenshot name="infolists/entries/helper-text" alt="Entry with helper text" />
 
 ## Adding a hint next to the label
 
@@ -187,7 +187,7 @@ TextEntry::make('apiKey')
     ->hint(view('api-key-hint'))
 ```
 
-<AutoScreenshot name="infolists/entries/hint" alt="Entry with hint" version="3.x" />
+<AutoScreenshot name="infolists/entries/hint" alt="Entry with hint" />
 
 ### Changing the text color of the hint
 
@@ -202,7 +202,7 @@ TextEntry::make('apiKey')
     ->hintColor('primary')
 ```
 
-<AutoScreenshot name="infolists/entries/hint-color" alt="Entry with hint color" version="3.x" />
+<AutoScreenshot name="infolists/entries/hint-color" alt="Entry with hint color" />
 
 ### Adding an icon aside the hint
 
@@ -217,7 +217,7 @@ TextEntry::make('apiKey')
     ->hintIcon('heroicon-m-question-mark-circle')
 ```
 
-<AutoScreenshot name="infolists/entries/hint-icon" alt="Entry with hint icon" version="3.x" />
+<AutoScreenshot name="infolists/entries/hint-icon" alt="Entry with hint icon" />
 
 #### Adding a tooltip to a hint icon
 
@@ -270,7 +270,7 @@ TextEntry::make('title')
     ->tooltip('Shown at the top of the page')
 ```
 
-<AutoScreenshot name="infolists/entries/tooltips" alt="Entry with tooltip" version="3.x" />
+<AutoScreenshot name="infolists/entries/tooltips" alt="Entry with tooltip" />
 
 This method also accepts a closure that can access the current infolist record:
 

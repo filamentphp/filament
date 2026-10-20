@@ -51,7 +51,7 @@ TextInput::make('cost')
     )
 ```
 
-<AutoScreenshot name="forms/fields/actions/suffix" alt="Text input with suffix action" version="3.x" />
+<AutoScreenshot name="forms/fields/actions/suffix" alt="Text input with suffix action" />
 
 Notice `$set` and `$state` injected into the `action()` function in this example. This is [form component action utility injection](#form-component-action-utility-injection).
 
@@ -99,7 +99,7 @@ TextInput::make('cost')
 
 Notice `$set` and `$state` injected into the `action()` function in this example. This is [form component action utility injection](#form-component-action-utility-injection).
 
-<AutoScreenshot name="forms/fields/actions/hint" alt="Text input with hint action" version="3.x" />
+<AutoScreenshot name="forms/fields/actions/hint" alt="Text input with hint action" />
 
 #### Passing multiple hint actions to a field
 
@@ -177,7 +177,7 @@ Actions::make([
 ]),
 ```
 
-<AutoScreenshot name="forms/layout/actions/anonymous/simple" alt="Anonymous actions" version="3.x" />
+<AutoScreenshot name="forms/layout/actions/anonymous/simple" alt="Anonymous actions" />
 
 #### Making the independent form actions consume the full width of the form
 
@@ -191,7 +191,7 @@ Actions::make([
 ])->fullWidth(),
 ```
 
-<AutoScreenshot name="forms/layout/actions/anonymous/full-width" alt="Anonymous actions consuming the full width" version="3.x" />
+<AutoScreenshot name="forms/layout/actions/anonymous/full-width" alt="Anonymous actions consuming the full width" />
 
 #### Controlling the horizontal alignment of independent form actions
 
@@ -206,7 +206,7 @@ Actions::make([
 ])->alignment(Alignment::Center),
 ```
 
-<AutoScreenshot name="forms/layout/actions/anonymous/horizontally-aligned-center" alt="Anonymous actions horizontally aligned to the center" version="3.x" />
+<AutoScreenshot name="forms/layout/actions/anonymous/horizontally-aligned-center" alt="Anonymous actions horizontally aligned to the center" />
 
 #### Controlling the vertical alignment of independent form actions
 
@@ -221,7 +221,7 @@ Actions::make([
 ])->verticalAlignment(VerticalAlignment::End),
 ```
 
-<AutoScreenshot name="forms/layout/actions/anonymous/vertically-aligned-end" alt="Anonymous actions vertically aligned to the end" version="3.x" />
+<AutoScreenshot name="forms/layout/actions/anonymous/vertically-aligned-end" alt="Anonymous actions vertically aligned to the end" />
 
 ## Form component action utility injection
 

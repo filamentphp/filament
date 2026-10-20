@@ -17,7 +17,7 @@ Select::make('status')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/select/simple" alt="Select" version="3.x" />
+<AutoScreenshot name="forms/fields/select/simple" alt="Select" />
 
 ## Enabling the JavaScript select
 
@@ -35,7 +35,7 @@ Select::make('status')
     ->native(false)
 ```
 
-<AutoScreenshot name="forms/fields/select/javascript" alt="JavaScript select" version="3.x" />
+<AutoScreenshot name="forms/fields/select/javascript" alt="JavaScript select" />
 
 ## Searching options
 
@@ -50,7 +50,7 @@ Select::make('author_id')
     ->searchable()
 ```
 
-<AutoScreenshot name="forms/fields/select/searchable" alt="Searchable select" version="3.x" />
+<AutoScreenshot name="forms/fields/select/searchable" alt="Searchable select" />
 
 ### Returning custom search results
 
@@ -86,7 +86,7 @@ Select::make('technologies')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/select/multiple" alt="Multi-select" version="3.x" />
+<AutoScreenshot name="forms/fields/select/multiple" alt="Multi-select" />
 
 These options are returned in JSON format. If you're saving them using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
@@ -134,7 +134,7 @@ Select::make('status')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/select/grouped" alt="Grouped select" version="3.x" />
+<AutoScreenshot name="forms/fields/select/grouped" alt="Grouped select" />
 
 ## Integrating with an Eloquent relationship
 
@@ -290,11 +290,11 @@ Select::make('author_id')
     ]),
 ```
 
-<AutoScreenshot name="forms/fields/select/create-option" alt="Select with create option button" version="3.x" />
+<AutoScreenshot name="forms/fields/select/create-option" alt="Select with create option button" />
 
 The form opens in a modal, where the user can fill it with data. Upon form submission, the new record is selected by the field.
 
-<AutoScreenshot name="forms/fields/select/create-option-modal" alt="Select with create option modal" version="3.x" />
+<AutoScreenshot name="forms/fields/select/create-option-modal" alt="Select with create option modal" />
 
 #### Customizing new option creation
 
@@ -331,11 +331,11 @@ Select::make('author_id')
     ]),
 ```
 
-<AutoScreenshot name="forms/fields/select/edit-option" alt="Select with edit option button" version="3.x" />
+<AutoScreenshot name="forms/fields/select/edit-option" alt="Select with edit option button" />
 
 The form opens in a modal, where the user can fill it with data. Upon form submission, the data from the form is saved back to the record.
 
-<AutoScreenshot name="forms/fields/select/edit-option-modal" alt="Select with edit option modal" version="3.x" />
+<AutoScreenshot name="forms/fields/select/edit-option-modal" alt="Select with edit option modal" />
 
 ### Handling `MorphTo` relationships
 
@@ -474,7 +474,7 @@ Select::make('domain')
     ->suffix('.com')
 ```
 
-<AutoScreenshot name="forms/fields/select/affix" alt="Select with affixes" version="3.x" />
+<AutoScreenshot name="forms/fields/select/affix" alt="Select with affixes" />
 
 ### Using icons as affixes
 
@@ -487,7 +487,7 @@ Select::make('domain')
     ->suffixIcon('heroicon-m-globe-alt')
 ```
 
-<AutoScreenshot name="forms/fields/select/suffix-icon" alt="Select with suffix icon" version="3.x" />
+<AutoScreenshot name="forms/fields/select/suffix-icon" alt="Select with suffix icon" />
 
 #### Setting the affix icon's color
 

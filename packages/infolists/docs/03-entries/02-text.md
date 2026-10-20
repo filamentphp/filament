@@ -12,7 +12,7 @@ use Filament\Infolists\Components\TextEntry;
 TextEntry::make('title')
 ```
 
-<AutoScreenshot name="infolists/entries/text/simple" alt="Text entry" version="3.x" />
+<AutoScreenshot name="infolists/entries/text/simple" alt="Text entry" />
 
 ## Displaying as a "badge"
 
@@ -31,7 +31,7 @@ TextEntry::make('status')
     })
 ```
 
-<AutoScreenshot name="infolists/entries/text/badge" alt="Text entry as badge" version="3.x" />
+<AutoScreenshot name="infolists/entries/text/badge" alt="Text entry as badge" />
 
 You may add other things to the badge, like an [icon](#adding-an-icon).
 
@@ -202,7 +202,7 @@ TextEntry::make('authors.name')
     ->listWithLineBreaks()
 ```
 
-<AutoScreenshot name="infolists/entries/text/list" alt="Text entry with multiple values" version="3.x" />
+<AutoScreenshot name="infolists/entries/text/list" alt="Text entry with multiple values" />
 
 ### Adding bullet points to the list
 
@@ -216,7 +216,7 @@ TextEntry::make('authors.name')
     ->bulleted()
 ```
 
-<AutoScreenshot name="infolists/entries/text/bullet-list" alt="Text entry with multiple values and bullet points" version="3.x" />
+<AutoScreenshot name="infolists/entries/text/bullet-list" alt="Text entry with multiple values and bullet points" />
 
 ### Limiting the number of values in the list
 
@@ -324,7 +324,7 @@ TextEntry::make('status')
     ->color('primary')
 ```
 
-<AutoScreenshot name="infolists/entries/text/color" alt="Text entry in the primary color" version="3.x" />
+<AutoScreenshot name="infolists/entries/text/color" alt="Text entry in the primary color" />
 
 ## Adding an icon
 
@@ -337,7 +337,7 @@ TextEntry::make('email')
     ->icon('heroicon-m-envelope')
 ```
 
-<AutoScreenshot name="infolists/entries/text/icon" alt="Text entry with icon" version="3.x" />
+<AutoScreenshot name="infolists/entries/text/icon" alt="Text entry with icon" />
 
 You may set the position of an icon using `iconPosition()`:
 
@@ -350,7 +350,7 @@ TextEntry::make('email')
     ->iconPosition(IconPosition::After) // `IconPosition::Before` or `IconPosition::After`
 ```
 
-<AutoScreenshot name="infolists/entries/text/icon-after" alt="Text entry with icon after" version="3.x" />
+<AutoScreenshot name="infolists/entries/text/icon-after" alt="Text entry with icon after" />
 
 The icon color defaults to the text color, but you may customize the icon color separately using `iconColor()`:
 
@@ -362,7 +362,7 @@ TextEntry::make('email')
     ->iconColor('primary')
 ```
 
-<AutoScreenshot name="infolists/entries/text/icon-color" alt="Text entry with icon in the primary color" version="3.x" />
+<AutoScreenshot name="infolists/entries/text/icon-color" alt="Text entry with icon in the primary color" />
 
 ## Customizing the text size
 
@@ -377,7 +377,7 @@ TextEntry::make('title')
     ->size(TextEntry\TextEntrySize::Large)
 ```
 
-<AutoScreenshot name="infolists/entries/text/large" alt="Text entry in a large font size" version="3.x" />
+<AutoScreenshot name="infolists/entries/text/large" alt="Text entry in a large font size" />
 
 ## Customizing the font weight
 
@@ -393,7 +393,7 @@ TextEntry::make('title')
     ->weight(FontWeight::Bold)
 ```
 
-<AutoScreenshot name="infolists/entries/text/bold" alt="Text entry in a bold font" version="3.x" />
+<AutoScreenshot name="infolists/entries/text/bold" alt="Text entry in a bold font" />
 
 ## Customizing the font family
 
@@ -410,7 +410,7 @@ TextEntry::make('apiKey')
     ->fontFamily(FontFamily::Mono)
 ```
 
-<AutoScreenshot name="infolists/entries/text/mono" alt="Text entry in a monospaced font" version="3.x" />
+<AutoScreenshot name="infolists/entries/text/mono" alt="Text entry in a monospaced font" />
 
 ## Allowing the text to be copied to the clipboard
 
@@ -426,4 +426,4 @@ TextEntry::make('apiKey')
     ->copyMessageDuration(1500)
 ```
 
-<AutoScreenshot name="infolists/entries/text/copyable" alt="Text entry with a button to copy it" version="3.x" />
+<AutoScreenshot name="infolists/entries/text/copyable" alt="Text entry with a button to copy it" />

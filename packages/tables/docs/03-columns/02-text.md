@@ -12,7 +12,7 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')
 ```
 
-<AutoScreenshot name="tables/columns/text/simple" alt="Text column" version="3.x" />
+<AutoScreenshot name="tables/columns/text/simple" alt="Text column" />
 
 ## Displaying as a "badge"
 
@@ -31,7 +31,7 @@ TextColumn::make('status')
     })
 ```
 
-<AutoScreenshot name="tables/columns/text/badge" alt="Text column as badge" version="3.x" />
+<AutoScreenshot name="tables/columns/text/badge" alt="Text column as badge" />
 
 You may add other things to the badge, like an [icon](#adding-an-icon).
 
@@ -48,7 +48,7 @@ TextColumn::make('title')
     ->description(fn (Post $record): string => $record->description)
 ```
 
-<AutoScreenshot name="tables/columns/text/description" alt="Text column with description" version="3.x" />
+<AutoScreenshot name="tables/columns/text/description" alt="Text column with description" />
 
 By default, the description is displayed below the main text, but you can move it above using the second parameter:
 
@@ -59,7 +59,7 @@ TextColumn::make('title')
     ->description(fn (Post $record): string => $record->description, position: 'above')
 ```
 
-<AutoScreenshot name="tables/columns/text/description-above" alt="Text column with description above the content" version="3.x" />
+<AutoScreenshot name="tables/columns/text/description-above" alt="Text column with description above the content" />
 
 ## Date formatting
 
@@ -369,7 +369,7 @@ TextColumn::make('status')
     ->color('primary')
 ```
 
-<AutoScreenshot name="tables/columns/text/color" alt="Text column in the primary color" version="3.x" />
+<AutoScreenshot name="tables/columns/text/color" alt="Text column in the primary color" />
 
 ## Adding an icon
 
@@ -382,7 +382,7 @@ TextColumn::make('email')
     ->icon('heroicon-m-envelope')
 ```
 
-<AutoScreenshot name="tables/columns/text/icon" alt="Text column with icon" version="3.x" />
+<AutoScreenshot name="tables/columns/text/icon" alt="Text column with icon" />
 
 You may set the position of an icon using `iconPosition()`:
 
@@ -395,7 +395,7 @@ TextColumn::make('email')
     ->iconPosition(IconPosition::After) // `IconPosition::Before` or `IconPosition::After`
 ```
 
-<AutoScreenshot name="tables/columns/text/icon-after" alt="Text column with icon after" version="3.x" />
+<AutoScreenshot name="tables/columns/text/icon-after" alt="Text column with icon after" />
 
 The icon color defaults to the text color, but you may customize the icon color separately using `iconColor()`:
 
@@ -407,7 +407,7 @@ TextColumn::make('email')
     ->iconColor('primary')
 ```
 
-<AutoScreenshot name="tables/columns/text/icon-color" alt="Text column with icon in the primary color" version="3.x" />
+<AutoScreenshot name="tables/columns/text/icon-color" alt="Text column with icon in the primary color" />
 
 ## Customizing the text size
 
@@ -422,7 +422,7 @@ TextColumn::make('title')
     ->size(TextColumn\TextColumnSize::Large)
 ```
 
-<AutoScreenshot name="tables/columns/text/large" alt="Text column in a large font size" version="3.x" />
+<AutoScreenshot name="tables/columns/text/large" alt="Text column in a large font size" />
 
 ## Customizing the font weight
 
@@ -438,7 +438,7 @@ TextColumn::make('title')
     ->weight(FontWeight::Bold)
 ```
 
-<AutoScreenshot name="tables/columns/text/bold" alt="Text column in a bold font" version="3.x" />
+<AutoScreenshot name="tables/columns/text/bold" alt="Text column in a bold font" />
 
 ## Customizing the font family
 
@@ -454,7 +454,7 @@ TextColumn::make('email')
     ->fontFamily(FontFamily::Mono)
 ```
 
-<AutoScreenshot name="tables/columns/text/mono" alt="Text column in a monospaced font" version="3.x" />
+<AutoScreenshot name="tables/columns/text/mono" alt="Text column in a monospaced font" />
 
 ## Allowing the text to be copied to the clipboard
 
@@ -469,7 +469,7 @@ TextColumn::make('email')
     ->copyMessageDuration(1500)
 ```
 
-<AutoScreenshot name="tables/columns/text/copyable" alt="Text column with a button to copy it" version="3.x" />
+<AutoScreenshot name="tables/columns/text/copyable" alt="Text column with a button to copy it" />
 
 ### Customizing the text that is copied to the clipboard
 

@@ -49,7 +49,7 @@ TextEntry::make('cost')
     )
 ```
 
-<AutoScreenshot name="infolists/entries/actions/suffix" alt="Text entry with suffix action" version="3.x" />
+<AutoScreenshot name="infolists/entries/actions/suffix" alt="Text entry with suffix action" />
 
 #### Passing multiple affix actions to a entry
 
@@ -94,7 +94,7 @@ TextEntry::make('cost')
     )
 ```
 
-<AutoScreenshot name="infolists/entries/actions/hint" alt="Text entry with hint action" version="3.x" />
+<AutoScreenshot name="infolists/entries/actions/hint" alt="Text entry with hint action" />
 
 #### Passing multiple hint actions to a entry
 
@@ -176,7 +176,7 @@ Actions::make([
 ]),
 ```
 
-<AutoScreenshot name="infolists/layout/actions/anonymous/simple" alt="Anonymous actions" version="3.x" />
+<AutoScreenshot name="infolists/layout/actions/anonymous/simple" alt="Anonymous actions" />
 
 #### Making the independent infolist actions consume the full width of the infolist
 
@@ -190,7 +190,7 @@ Actions::make([
 ])->fullWidth(),
 ```
 
-<AutoScreenshot name="infolists/layout/actions/anonymous/full-width" alt="Anonymous actions consuming the full width" version="3.x" />
+<AutoScreenshot name="infolists/layout/actions/anonymous/full-width" alt="Anonymous actions consuming the full width" />
 
 #### Controlling the horizontal alignment of independent infolist actions
 
@@ -205,7 +205,7 @@ Actions::make([
 ])->alignment(Alignment::Center),
 ```
 
-<AutoScreenshot name="infolists/layout/actions/anonymous/horizontally-aligned-center" alt="Anonymous actions horizontally aligned to the center" version="3.x" />
+<AutoScreenshot name="infolists/layout/actions/anonymous/horizontally-aligned-center" alt="Anonymous actions horizontally aligned to the center" />
 
 #### Controlling the vertical alignment of independent infolist actions
 
@@ -220,4 +220,4 @@ Actions::make([
 ])->verticalAlignment(VerticalAlignment::End),
 ```
 
-<AutoScreenshot name="infolists/layout/actions/anonymous/vertically-aligned-end" alt="Anonymous actions vertically aligned to the end" version="3.x" />
+<AutoScreenshot name="infolists/layout/actions/anonymous/vertically-aligned-end" alt="Anonymous actions vertically aligned to the end" />

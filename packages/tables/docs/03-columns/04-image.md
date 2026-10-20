@@ -14,7 +14,7 @@ ImageColumn::make('avatar')
 
 The column in the database must contain the path to the image, relative to the root directory of its storage disk.
 
-<AutoScreenshot name="tables/columns/image/simple" alt="Image column" version="3.x" />
+<AutoScreenshot name="tables/columns/image/simple" alt="Image column" />
 
 ## Managing the image disk
 
@@ -66,7 +66,7 @@ ImageColumn::make('avatar')
     ->square()
 ```
 
-<AutoScreenshot name="tables/columns/image/square" alt="Square image column" version="3.x" />
+<AutoScreenshot name="tables/columns/image/square" alt="Square image column" />
 
 ## Circular image
 
@@ -79,7 +79,7 @@ ImageColumn::make('avatar')
     ->circular()
 ```
 
-<AutoScreenshot name="tables/columns/image/circular" alt="Circular image column" version="3.x" />
+<AutoScreenshot name="tables/columns/image/circular" alt="Circular image column" />
 
 ## Adding a default image URL
 
@@ -104,7 +104,7 @@ ImageColumn::make('colleagues.avatar')
     ->stacked()
 ```
 
-<AutoScreenshot name="tables/columns/image/stacked" alt="Stacked image column" version="3.x" />
+<AutoScreenshot name="tables/columns/image/stacked" alt="Stacked image column" />
 
 ### Customizing the stacked ring width
 
@@ -156,7 +156,7 @@ ImageColumn::make('colleagues.avatar')
     ->limit(3)
 ```
 
-<AutoScreenshot name="tables/columns/image/limited" alt="Limited image column" version="3.x" />
+<AutoScreenshot name="tables/columns/image/limited" alt="Limited image column" />
 
 ### Showing the remaining images count
 
@@ -172,7 +172,7 @@ ImageColumn::make('colleagues.avatar')
     ->limitedRemainingText()
 ```
 
-<AutoScreenshot name="tables/columns/image/limited-remaining-text" alt="Limited image column with remaining text" version="3.x" />
+<AutoScreenshot name="tables/columns/image/limited-remaining-text" alt="Limited image column with remaining text" />
 
 #### Showing the limited remaining text separately
 
@@ -188,7 +188,7 @@ ImageColumn::make('colleagues.avatar')
     ->limitedRemainingText(isSeparate: true)
 ```
 
-<AutoScreenshot name="tables/columns/image/limited-remaining-text-separately" alt="Limited image column with remaining text separately" version="3.x" />
+<AutoScreenshot name="tables/columns/image/limited-remaining-text-separately" alt="Limited image column with remaining text separately" />
 
 #### Customizing the limited remaining text size
 

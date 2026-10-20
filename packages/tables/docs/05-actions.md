@@ -43,7 +43,7 @@ Action::make('delete')
 
 All methods on the action accept callback functions, where you can access the current table `$record` that was clicked.
 
-<AutoScreenshot name="tables/actions/simple" alt="Table with actions" version="3.x" />
+<AutoScreenshot name="tables/actions/simple" alt="Table with actions" />
 
 ### Positioning row actions before columns
 
@@ -62,7 +62,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/actions/before-columns" alt="Table with actions before columns" version="3.x" />
+<AutoScreenshot name="tables/actions/before-columns" alt="Table with actions before columns" />
 
 ### Positioning row actions before the checkbox column
 
@@ -81,7 +81,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/actions/before-cells" alt="Table with actions before cells" version="3.x" />
+<AutoScreenshot name="tables/actions/before-cells" alt="Table with actions before cells" />
 
 ### Accessing the selected table rows
 
@@ -142,7 +142,7 @@ BulkAction::make('delete')
 
 The function allows you to access the current table `$records` that are selected. It is an Eloquent collection of models.
 
-<AutoScreenshot name="tables/actions/bulk" alt="Table with bulk action" version="3.x" />
+<AutoScreenshot name="tables/actions/bulk" alt="Table with bulk action" />
 
 ### Grouping bulk actions
 
@@ -259,7 +259,7 @@ public function table(Table $table): Table
 
 This is useful for things like "create" actions, which are not related to any specific table row, or bulk actions that need to be more visible.
 
-<AutoScreenshot name="tables/actions/header" alt="Table with header actions" version="3.x" />
+<AutoScreenshot name="tables/actions/header" alt="Table with header actions" />
 
 ## Column actions
 
@@ -304,7 +304,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/actions/group" alt="Table with action group" version="3.x" />
+<AutoScreenshot name="tables/actions/group" alt="Table with action group" />
 
 ### Choosing an action group button style
 
@@ -320,7 +320,7 @@ ActionGroup::make([
 ])->iconButton()
 ```
 
-<AutoScreenshot name="tables/actions/group-icon-button" alt="Table with icon button action group" version="3.x" />
+<AutoScreenshot name="tables/actions/group-icon-button" alt="Table with icon button action group" />
 
 "Button" triggers have a background color, label, and optionally an [icon](#setting-the-action-group-button-icon). You can switch to that style with the `button()` method:
 
@@ -334,7 +334,7 @@ ActionGroup::make([
     ->label('Actions')
 ```
 
-<AutoScreenshot name="tables/actions/group-button" alt="Table with button action group" version="3.x" />
+<AutoScreenshot name="tables/actions/group-button" alt="Table with button action group" />
 
 "Link" triggers have no background color. They must have a label and optionally an [icon](#setting-the-action-group-button-icon). They look like a link that you might find embedded within text. You can switch to that style with the `link()` method:
 
@@ -348,7 +348,7 @@ ActionGroup::make([
     ->label('Actions')
 ```
 
-<AutoScreenshot name="tables/actions/group-link" alt="Table with link action group" version="3.x" />
+<AutoScreenshot name="tables/actions/group-link" alt="Table with link action group" />
 
 ### Setting the action group button icon
 
@@ -362,7 +362,7 @@ ActionGroup::make([
 ])->icon('heroicon-m-ellipsis-horizontal');
 ```
 
-<AutoScreenshot name="tables/actions/group-icon" alt="Table with customized action group icon" version="3.x" />
+<AutoScreenshot name="tables/actions/group-icon" alt="Table with customized action group icon" />
 
 ### Setting the action group button color
 
@@ -376,7 +376,7 @@ ActionGroup::make([
 ])->color('info');
 ```
 
-<AutoScreenshot name="tables/actions/group-color" alt="Table with customized action group color" version="3.x" />
+<AutoScreenshot name="tables/actions/group-color" alt="Table with customized action group color" />
 
 ### Setting the action group button size
 
@@ -391,7 +391,7 @@ ActionGroup::make([
 ])->size(ActionSize::Small);
 ```
 
-<AutoScreenshot name="tables/actions/group-small" alt="Table with small action group" version="3.x" />
+<AutoScreenshot name="tables/actions/group-small" alt="Table with small action group" />
 
 ### Setting the action group tooltip
 
@@ -405,7 +405,7 @@ ActionGroup::make([
 ])->tooltip('Actions');
 ```
 
-<AutoScreenshot name="tables/actions/group-tooltip" alt="Table with action group tooltip" version="3.x" />
+<AutoScreenshot name="tables/actions/group-tooltip" alt="Table with action group tooltip" />
 
 ## Table action utility injection
 

@@ -12,7 +12,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')
 ```
 
-<AutoScreenshot name="forms/fields/text-input/simple" alt="Text input" version="3.x" />
+<AutoScreenshot name="forms/fields/text-input/simple" alt="Text input" />
 
 ## Setting the HTML input type
 
@@ -129,7 +129,7 @@ TextInput::make('domain')
     ->suffix('.com')
 ```
 
-<AutoScreenshot name="forms/fields/text-input/affix" alt="Text input with affixes" version="3.x" />
+<AutoScreenshot name="forms/fields/text-input/affix" alt="Text input with affixes" />
 
 ### Using icons as affixes
 
@@ -143,7 +143,7 @@ TextInput::make('domain')
     ->suffixIcon('heroicon-m-globe-alt')
 ```
 
-<AutoScreenshot name="forms/fields/text-input/suffix-icon" alt="Text input with suffix icon" version="3.x" />
+<AutoScreenshot name="forms/fields/text-input/suffix-icon" alt="Text input with suffix icon" />
 
 #### Setting the affix icon's color
 
@@ -170,7 +170,7 @@ TextInput::make('password')
     ->revealable()
 ```
 
-<AutoScreenshot name="forms/fields/text-input/revealable-password" alt="Text input with revealable password" version="3.x" />
+<AutoScreenshot name="forms/fields/text-input/revealable-password" alt="Text input with revealable password" />
 
 ## Input masking
 

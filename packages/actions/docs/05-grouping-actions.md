@@ -14,7 +14,7 @@ ActionGroup::make([
 ])
 ```
 
-<AutoScreenshot name="actions/group/simple" alt="Action group" version="3.x" />
+<AutoScreenshot name="actions/group/simple" alt="Action group" />
 
 This page is about customizing the look of the group's trigger button and dropdown.
 
@@ -35,7 +35,7 @@ ActionGroup::make([
     ->button()
 ```
 
-<AutoScreenshot name="actions/group/customized" alt="Action group with custom trigger style" version="3.x" />
+<AutoScreenshot name="actions/group/customized" alt="Action group with custom trigger style" />
 
 ## Setting the placement of the dropdown
 
@@ -48,7 +48,7 @@ ActionGroup::make([
     ->dropdownPlacement('top-start')
 ```
 
-<AutoScreenshot name="actions/group/placement" alt="Action group with top placement style" version="3.x" />
+<AutoScreenshot name="actions/group/placement" alt="Action group with top placement style" />
 
 ## Adding dividers between actions
 
@@ -65,7 +65,7 @@ ActionGroup::make([
 
 The `dropdown(false)` method puts the actions inside the parent dropdown, instead of a new nested dropdown.
 
-<AutoScreenshot name="actions/group/nested" alt="Action groups nested with dividers" version="3.x" />
+<AutoScreenshot name="actions/group/nested" alt="Action groups nested with dividers" />
 
 ## Setting the width of the dropdown
 
