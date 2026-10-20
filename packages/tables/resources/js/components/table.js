@@ -753,7 +753,19 @@ export const tableFilters = () => ({
                 this.removeActionCommitHook?.()
                 this.removeActionCommitHook = null
 
-                succeed(() => {
+                succeed(({ snapshot }) => {
+                    if (
+                        Object.keys(
+                            JSON.parse(snapshot).memo.errors ?? {},
+                        ).some(
+                            (field) =>
+                                field === 'tableDeferredFilters' ||
+                                field.startsWith('tableDeferredFilters.'),
+                        )
+                    ) {
+                        return
+                    }
+
                     this.actionFocusFrame = requestAnimationFrame(() => {
                         this.actionFocusFrame = null
 

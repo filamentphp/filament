@@ -18,6 +18,8 @@ export default function filamentTableColumnManager({ columns, isLive }) {
 
         dropdownRevision: 0,
 
+        applyDropdownRevision: 0,
+
         hasReordered: false,
 
         reorderAnnouncement: '',
@@ -42,7 +44,7 @@ export default function filamentTableColumnManager({ columns, isLive }) {
                     )
                         return
 
-                    const dropdownRevision = this.dropdownRevision
+                    const dropdownRevision = this.applyDropdownRevision
 
                     // Livewire 3 does not reject method-call promises on request failure.
                     fail(() => {
@@ -367,6 +369,7 @@ export default function filamentTableColumnManager({ columns, isLive }) {
         },
 
         async applyTableColumnManager() {
+            this.applyDropdownRevision = this.dropdownRevision
             this.isLoading = true
 
             try {
