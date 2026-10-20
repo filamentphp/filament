@@ -69,7 +69,7 @@ TextInput::make('name')->id('name-field')
 
 ### Setting a default value
 
-Fields may have a default value. This will be filled if the [form's `fill()` method](getting-started#default-data) is called without any arguments. To define a default value, use the `default()` method:
+Fields may have a default value. This will be filled if the [form's `fill()` method](getting-started#initializing-forms) is called without any arguments. To define a default value, use the `default()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;

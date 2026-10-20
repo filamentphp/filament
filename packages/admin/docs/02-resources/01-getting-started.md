@@ -314,7 +314,7 @@ Select::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
-More information is available in the [Form docs](../../forms/fields#populating-automatically-from-a-belongstomany-relationship).
+More information is available in the [Form docs](../../forms/fields#populating-automatically-from-a-relationship).
 
 #### Checkbox list field
 
@@ -466,7 +466,7 @@ public static function getPluralModelLabel(): string
 
 ## Navigation
 
-Filament will automatically generate a navigation menu item for your resource using the [plural label](#plural-label).
+Filament will automatically generate a navigation menu item for your resource using the [plural label](#plural-model-label).
 
 If you'd like to customize the navigation item label, you may use the `$navigationLabel` property:
 
