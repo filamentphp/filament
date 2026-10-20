@@ -18,12 +18,11 @@ concurrency:
 
 jobs:
   sync-docs:
-    # Deploy the site's `docs:update` command before opting in. The token must
+    # Deploy the site's `docs:update` command before enabling this workflow. The token must
     # only allow running/viewing commands on the site's production environment.
     if: >-
-      vars.DOCS_UPDATES_ENABLED == 'true' &&
-      (github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'release' && !github.event.release.draft && !github.event.release.prerelease))
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'release' && !github.event.release.draft && !github.event.release.prerelease)
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
