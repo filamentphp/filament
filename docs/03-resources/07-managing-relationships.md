@@ -113,7 +113,7 @@ public static function getRelations(): array
 
 Once a table and form have been defined for the relation manager, visit the [Edit](editing-records) or [View](viewing-records) page of your resource to see it in action.
 
-<AutoScreenshot name="panels/resources/relation-manager" alt="Relation manager" version="4.x" />
+<AutoScreenshot name="panels/resources/relation-manager" alt="Relation manager" />
 
 ### Customizing the relation manager's URL parameter
 
@@ -302,7 +302,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="panels/resources/relation-manager-attach" alt="Relation manager attach modal" version="4.x" />
+<AutoScreenshot name="panels/resources/relation-manager-attach" alt="Relation manager attach modal" />
 
 <Aside variant="danger">
     `AssociateAction`, `AttachAction`, `DetachAction`, and `DissociateAction` (and their bulk variants) only check the relation manager's `isReadOnly()` state — they do not consult any model policy method by default. Bulk delete, force-delete, and restore actions use the `deleteAny()`, `forceDeleteAny()`, and `restoreAny()` policy methods (one call for the whole batch) for performance. If you need per-record authorization on a bulk action, call [`authorizeIndividualRecords('ability')`](../tables/actions#authorizing-bulk-actions) on it, accepting the extra query cost.
@@ -779,7 +779,7 @@ public static function getRelations(): array
 }
 ```
 
-<AutoScreenshot name="panels/resources/relation-manager-grouped" alt="Relation managers with grouped tabs" version="4.x" />
+<AutoScreenshot name="panels/resources/relation-manager-grouped" alt="Relation managers with grouped tabs" />
 
 ## Conditionally showing relation managers
 
@@ -818,7 +818,7 @@ public static function getTabComponent(Model $ownerRecord, string $pageClass): T
 }
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing static values, the `badgeColor()` and `badgeTooltip()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing static values, the `badgeColor()` and `badgeTooltip()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 If you are using a [relation group](#grouping-relation-managers), you can use the `tab()` method:
 
@@ -837,7 +837,7 @@ RelationGroup::make('Contacts', [
         ->icon('heroicon-m-document-text'));
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing static values, the `badgeColor()` and `badgeTooltip()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing static values, the `badgeColor()` and `badgeTooltip()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ### Deferring the loading of relation manager tab badges
 
@@ -890,7 +890,7 @@ public function hasCombinedRelationManagerTabsWithContent(): bool
 }
 ```
 
-<AutoScreenshot name="panels/resources/editing-combined-tabs" alt="Resource edit page with combined relation manager tabs" version="4.x" />
+<AutoScreenshot name="panels/resources/editing-combined-tabs" alt="Resource edit page with combined relation manager tabs" />
 
 ### Customizing the content tab
 

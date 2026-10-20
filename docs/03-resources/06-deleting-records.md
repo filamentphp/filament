@@ -2,11 +2,11 @@
 title: Deleting records
 ---
 
-<AutoScreenshot name="panels/resources/deleting" alt="A delete confirmation modal" version="4.x" />
+<AutoScreenshot name="panels/resources/deleting" alt="A delete confirmation modal" />
 
 ## Handling soft-deletes
 
-<AutoScreenshot name="panels/resources/trashed" alt="A resource listing with the trashed filter" version="4.x" />
+<AutoScreenshot name="panels/resources/trashed" alt="A resource listing with the trashed filter" />
 
 ### Creating a resource with soft-delete
 

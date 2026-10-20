@@ -26,7 +26,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<AutoScreenshot name="panels/navigation/user-menu" alt="User menu with custom menu item" version="4.x" />
+<AutoScreenshot name="panels/navigation/user-menu" alt="User menu with custom menu item" />
 
 ## Grouping user menu items
 
@@ -60,7 +60,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<AutoScreenshot name="panels/navigation/user-menu-grouping" alt="User menu items split into separate groups" version="4.x" />
+<AutoScreenshot name="panels/navigation/user-menu-grouping" alt="User menu items split into separate groups" />
 
 <Aside variant="info">
     The `logout` item is added to the last group by default. To place it yourself, register it explicitly in any group using the `logout` array key. Since its default `sort()` puts it at the end of its group, adjust the sort if you want it elsewhere within the group:
@@ -93,7 +93,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<AutoScreenshot name="panels/navigation/user-menu-sidebar" alt="User menu moved to the sidebar" version="4.x" />
+<AutoScreenshot name="panels/navigation/user-menu-sidebar" alt="User menu moved to the sidebar" />
 
 ## Customizing the profile link
 

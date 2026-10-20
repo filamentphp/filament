@@ -22,7 +22,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/grouping" alt="Table with grouping" version="4.x" />
+<AutoScreenshot name="tables/grouping" alt="Table with grouping" />
 
 ### Setting the default grouping direction
 
@@ -55,7 +55,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/grouping-selectable" alt="Table with selectable grouping" version="4.x" />
+<AutoScreenshot name="tables/grouping-selectable" alt="Table with selectable grouping" />
 
 You can use both `groups()` and `defaultGroup()` together to allow users to choose between different groupings, but have a default grouping set:
 
@@ -161,7 +161,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/grouping-descriptions" alt="Table with group descriptions" version="4.x" />
+<AutoScreenshot name="tables/grouping-descriptions" alt="Table with group descriptions" />
 
 ## Setting a group key
 
@@ -199,7 +199,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/grouping-date" alt="Table with date grouping" version="4.x" />
+<AutoScreenshot name="tables/grouping-date" alt="Table with date grouping" />
 
 ## Collapsible groups
 
@@ -219,7 +219,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/grouping-collapsible" alt="Table with collapsible groups" version="4.x" />
+<AutoScreenshot name="tables/grouping-collapsible" alt="Table with collapsible groups" />
 
 ### Collapsing groups by default
 
@@ -269,7 +269,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/grouping-groups-only" alt="Table with groups only mode" version="4.x" />
+<AutoScreenshot name="tables/grouping-groups-only" alt="Table with groups only mode" />
 
 ## Customizing the Eloquent query ordering behavior
 

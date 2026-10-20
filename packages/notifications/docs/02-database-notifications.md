@@ -2,7 +2,7 @@
 title: Database notifications
 ---
 
-<AutoScreenshot name="notifications/database" alt="Database notifications" version="4.x" />
+<AutoScreenshot name="notifications/database" alt="Database notifications" />
 
 ## Setting up the notifications database table
 

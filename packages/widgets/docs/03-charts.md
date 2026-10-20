@@ -51,7 +51,7 @@ class BlogPostsChart extends ChartWidget
 
 Now, check out your widget in the dashboard.
 
-<AutoScreenshot name="widgets/chart/line" alt="Line chart" version="4.x" />
+<AutoScreenshot name="widgets/chart/line" alt="Line chart" />
 
 ## Available chart types
 
@@ -68,21 +68,21 @@ Below is a list of available chart widget classes which you may extend, and thei
 
 For example, you could use a bar chart by returning `'bar'` from the `getType()` method:
 
-<AutoScreenshot name="widgets/chart/bar" alt="Bar chart" version="4.x" />
+<AutoScreenshot name="widgets/chart/bar" alt="Bar chart" />
 
 Here are examples of the other available chart types:
 
-<AutoScreenshot name="widgets/chart/pie" alt="Pie chart" version="4.x" />
+<AutoScreenshot name="widgets/chart/pie" alt="Pie chart" />
 
-<AutoScreenshot name="widgets/chart/doughnut" alt="Doughnut chart" version="4.x" />
+<AutoScreenshot name="widgets/chart/doughnut" alt="Doughnut chart" />
 
-<AutoScreenshot name="widgets/chart/radar" alt="Radar chart" version="4.x" />
+<AutoScreenshot name="widgets/chart/radar" alt="Radar chart" />
 
-<AutoScreenshot name="widgets/chart/polar-area" alt="Polar area chart" version="4.x" />
+<AutoScreenshot name="widgets/chart/polar-area" alt="Polar area chart" />
 
-<AutoScreenshot name="widgets/chart/scatter" alt="Scatter chart" version="4.x" />
+<AutoScreenshot name="widgets/chart/scatter" alt="Scatter chart" />
 
-<AutoScreenshot name="widgets/chart/bubble" alt="Bubble chart" version="4.x" />
+<AutoScreenshot name="widgets/chart/bubble" alt="Bubble chart" />
 
 ## Customizing the chart color
 
@@ -180,7 +180,7 @@ protected function getData(): array
 }
 ```
 
-<AutoScreenshot name="widgets/chart/filter" alt="Chart with filter" version="4.x" />
+<AutoScreenshot name="widgets/chart/filter" alt="Chart with filter" />
 
 <Aside variant="danger">
     The `$filter` property is user-controllable. Although the `<select>` element only offers the keys returned from `getFilters()`, a crafted request can set `$this->filter` to any string, so it is not limited to those keys. You must ensure the value is valid before using it in a query — for example, by checking it against the keys of `getFilters()`, or by using a `match` expression with a safe default. Never interpolate `$this->filter` directly into a raw query.
@@ -231,7 +231,7 @@ protected function getData(): array
 
 The `$this->filters` array will always reflect the current form data. Please note that this data is not validated, as it is available live and not intended to be used for anything other than querying the database. You must ensure that the data is valid before using it.
 
-<AutoScreenshot name="widgets/chart/custom-filters" alt="Chart with custom filters" version="4.x" />
+<AutoScreenshot name="widgets/chart/custom-filters" alt="Chart with custom filters" />
 
 <Aside variant="info">
     If you want to add filters that apply to multiple widgets at once, see [filtering widget data](overview#filtering-widget-data) in the dashboard.
@@ -426,7 +426,7 @@ You may place a maximum height on the chart to ensure that it doesn't get too bi
 protected ?string $maxHeight = '300px';
 ```
 
-<AutoScreenshot name="widgets/chart/max-height" alt="Chart with maximum height" version="4.x" />
+<AutoScreenshot name="widgets/chart/max-height" alt="Chart with maximum height" />
 
 ## Setting chart configuration options
 
@@ -563,7 +563,7 @@ public function getDescription(): ?string
 }
 ```
 
-<AutoScreenshot name="widgets/chart/description" alt="Chart with description" version="4.x" />
+<AutoScreenshot name="widgets/chart/description" alt="Chart with description" />
 
 ## Disabling lazy loading
 
@@ -583,7 +583,7 @@ You may allow the chart to be collapsible by setting the `$isCollapsible` proper
 protected bool $isCollapsible = true;
 ```
 
-<AutoScreenshot name="widgets/chart/collapsible" alt="Collapsible chart" version="4.x" />
+<AutoScreenshot name="widgets/chart/collapsible" alt="Collapsible chart" />
 
 ## Providing an accessible alternative
 

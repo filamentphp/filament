@@ -45,7 +45,7 @@ All methods on the action accept callback functions, where you can access the cu
 
 Custom actions must be [authorized explicitly](../actions/overview#authorization). For URL actions, the destination route must also authorize access.
 
-<AutoScreenshot name="tables/actions/simple" alt="Table with actions" version="4.x" />
+<AutoScreenshot name="tables/actions/simple" alt="Table with actions" />
 
 ### Positioning record actions before columns
 
@@ -64,7 +64,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/actions/before-columns" alt="Table with actions before columns" version="4.x" />
+<AutoScreenshot name="tables/actions/before-columns" alt="Table with actions before columns" />
 
 ### Positioning record actions before the checkbox column
 
@@ -83,7 +83,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/actions/before-cells" alt="Table with actions before cells" version="4.x" />
+<AutoScreenshot name="tables/actions/before-cells" alt="Table with actions before cells" />
 
 ### Global record action settings
 
@@ -162,7 +162,7 @@ The function allows you to access the current table `$records` that are selected
 
 Custom bulk actions need explicit authorization. See [authorizing bulk actions](#authorizing-bulk-actions) to check each selected record's policy before processing it.
 
-<AutoScreenshot name="tables/actions/bulk" alt="Table with bulk action" version="4.x" />
+<AutoScreenshot name="tables/actions/bulk" alt="Table with bulk action" />
 
 ### Authorizing bulk actions
 
@@ -322,7 +322,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/actions/bulk-not-grouped" alt="Table with grouped and ungrouped bulk actions" version="4.x" />
+<AutoScreenshot name="tables/actions/bulk-not-grouped" alt="Table with grouped and ungrouped bulk actions" />
 
 Alternatively, if all of your bulk actions are grouped, you can use the shorthand `groupedBulkActions()` method:
 
@@ -480,7 +480,7 @@ public function table(Table $table): Table
 
 This is useful for things like "create" actions, which are not related to any specific table row, or bulk actions that need to be more visible.
 
-<AutoScreenshot name="tables/actions/header" alt="Table with header actions" version="4.x" />
+<AutoScreenshot name="tables/actions/header" alt="Table with header actions" />
 
 ## Toolbar actions
 
@@ -500,7 +500,7 @@ public function table(Table $table): Table
 
 This is useful for things like "create" actions, which are not related to any specific table row, or bulk actions that need to be more visible.
 
-<AutoScreenshot name="tables/actions/toolbar" alt="Table with toolbar actions" version="4.x" />
+<AutoScreenshot name="tables/actions/toolbar" alt="Table with toolbar actions" />
 
 ## Column actions
 
@@ -533,4 +533,4 @@ public function table(Table $table): Table
 
 You may find out more about customizing action groups in the [Actions documentation](../actions/grouping-actions).
 
-<AutoScreenshot name="tables/actions/group" alt="Table with action group" version="4.x" />
+<AutoScreenshot name="tables/actions/group" alt="Table with action group" />
