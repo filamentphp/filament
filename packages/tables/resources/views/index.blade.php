@@ -51,7 +51,6 @@
     $contentFooter = $getContentFooter();
     $filterIndicators = $getFilterIndicators();
     $filtersApplyAction = $getFiltersApplyAction();
-    $shouldCloseFiltersDropdownOnApply = $shouldCloseFiltersDropdownOnApply();
     $filtersResetAction = $getFiltersResetAction();
     $filtersForm = $getFiltersForm();
     $filtersFormWidth = $getFiltersFormWidth();
@@ -136,7 +135,6 @@
     $hasReorderableColumns = $hasReorderableColumns();
     $hasToggleableColumns = $hasToggleableColumns();
     $columnManagerApplyAction = $getColumnManagerApplyAction();
-    $shouldCloseColumnManagerDropdownOnApply = $shouldCloseColumnManagerDropdownOnApply();
     $columnManagerTriggerAction = $getColumnManagerTriggerAction();
     $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFilters || count($filterIndicators) || $hasColumnManager;
     $hasHeaderToolbar = $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFiltersTrigger || $hasColumnManager;
@@ -660,9 +658,7 @@
                                                 :heading-tag="$secondLevelHeadingTag"
                                                 :reset-action="$filtersResetAction"
                                                 :reset-action-position="$filtersResetActionPosition"
-                                                x-data="filamentTableFilters({
-                                                    shouldCloseDropdownOnApply: {{ $shouldCloseFiltersDropdownOnApply ? 'true' : 'false' }},
-                                                })"
+                                                x-data="filamentTableFilters"
                                                 x-on:click="handleActionClick($event)"
                                                 tabindex="-1"
                                             />
@@ -781,7 +777,6 @@
                                                 :has-toggleable-columns="$hasToggleableColumns"
                                                 :heading-tag="$secondLevelHeadingTag"
                                                 :reorder-animation-duration="$getReorderAnimationDuration()"
-                                                :should-close-dropdown-on-apply="$shouldCloseColumnManagerDropdownOnApply"
                                             />
                                         </x-filament::dropdown>
                                     @endif

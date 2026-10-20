@@ -29,8 +29,6 @@ class FiltersResetActionBrowserTest extends Page implements HasTable
 
     public bool $hasDeferredFilters = false;
 
-    public bool $shouldCloseFiltersDropdownOnApply = false;
-
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedFunnel;
 
     protected static bool $shouldRegisterNavigation = false;
@@ -40,7 +38,6 @@ class FiltersResetActionBrowserTest extends Page implements HasTable
         $this->focusScenario = request()->string('focusScenario')->toString();
         $this->hasFocusLifecycleFilters = request()->boolean('focus');
         $this->hasDeferredFilters = request()->boolean('deferred');
-        $this->shouldCloseFiltersDropdownOnApply = request()->boolean('closeOnApply');
     }
 
     public function table(Table $table): Table
@@ -114,7 +111,6 @@ class FiltersResetActionBrowserTest extends Page implements HasTable
                 default => $this->hasFocusLifecycleFilters ? [$publishedFilter, $detailsFilter] : [$publishedFilter],
             })
             ->deferFilters($this->hasDeferredFilters)
-            ->closeFiltersDropdownOnApply($this->shouldCloseFiltersDropdownOnApply)
             ->filtersTriggerAction(
                 static fn (Action $action) => $action
                     ->extraAttributes(['data-testid' => 'filters-trigger']),

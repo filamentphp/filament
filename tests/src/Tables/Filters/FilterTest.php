@@ -382,7 +382,7 @@ describe('browser interactions', function (): void {
         'empty schema fallback' => ['empty', 'div[tabindex="-1"]:has(> div [data-testid="filters-reset-action"])'],
     ]);
 
-    it('closes the filters dropdown once deferred filters are applied with `closeFiltersDropdownOnApply()`', function (): void {
+    it('closes the filters dropdown only after successfully applying with pointer or keyboard', function (): void {
         Artisan::call('filament:assets');
 
         $this->actingAs(User::factory()->create());
@@ -394,18 +394,37 @@ describe('browser interactions', function (): void {
         $publishedFilter = '[data-testid="published-filter"]';
         $applyAction = '[data-table-filter-action="apply"]';
 
-        $page = visit('/filters-reset-action-browser-test?deferred=1&closeOnApply=1');
+        $page = visit('/filters-reset-action-browser-test?deferred=1');
 
         $page
             ->click($filtersTrigger)
             ->click($publishedFilter)
+            ->assertVisible($publishedFilter)
+            ->assertSee('Draft post');
+
+        $page->script(<<<'JS'
+            (() => {
+                const originalFetch = window.fetch
+                window.fetch = (url, options) => {
+                    window.fetch = originalFetch
+                    const controller = new AbortController()
+                    controller.abort()
+                    return originalFetch(url, { ...options, signal: controller.signal })
+                        .finally(() => window.applyRequestFailed = true)
+                }
+            })()
+            JS);
+
+        $page->click($applyAction)
+            ->assertScript('window.applyRequestFailed', true)
             ->assertVisible($publishedFilter)
             ->assertSee('Draft post')
             ->click($applyAction)
             ->assertMissing($publishedFilter)
             ->assertPresent($filtersTrigger . ':focus')
             ->assertSee('Published post')
-            ->assertDontSee('Draft post');
+            ->assertDontSee('Draft post')
+            ->assertNoAccessibilityIssues();
 
         $page
             ->keys($filtersTrigger, 'Enter')
@@ -416,23 +435,8 @@ describe('browser interactions', function (): void {
             ->assertPresent($filtersTrigger . ':focus')
             ->assertSee('Draft post')
             ->assertNoSmoke();
-    });
 
-    it('keeps the filters dropdown open after applying deferred filters by default', function (): void {
-        Artisan::call('filament:assets');
-
-        $this->actingAs(User::factory()->create());
-
-        Post::factory()->create(['title' => 'Published post', 'is_published' => true]);
-        Post::factory()->create(['title' => 'Draft post', 'is_published' => false]);
-
-        visit('/filters-reset-action-browser-test?deferred=1')
-            ->click('[data-testid="filters-trigger"]')
-            ->click('[data-testid="published-filter"]')
-            ->click('[data-table-filter-action="apply"]')
-            ->assertDontSee('Draft post')
-            ->assertVisible('[data-testid="published-filter"]')
-            ->assertNoSmoke();
+        $page->inDarkMode()->assertNoAccessibilityIssues();
     });
 
     it('contains filters `Escape` handling inside an enclosing modal', function (): void {

@@ -692,12 +692,12 @@ export default ({
     },
 })
 
-export const tableFilters = ({ shouldCloseDropdownOnApply = false } = {}) => ({
-    shouldCloseDropdownOnApply,
-
+export const tableFilters = () => ({
     focusFrame: null,
 
     actionFocusFrame: null,
+
+    actionRevision: 0,
 
     removeActionCommitHook: null,
 
@@ -708,6 +708,8 @@ export const tableFilters = ({ shouldCloseDropdownOnApply = false } = {}) => ({
     init() {
         this.dropdownPanel = this.$el.closest('.fi-dropdown-panel')
         this.dropdownOpenedListener = (event) => {
+            this.actionRevision++
+
             if (!event.detail.shouldAutofocus) {
                 return
             }
@@ -730,19 +732,24 @@ export const tableFilters = ({ shouldCloseDropdownOnApply = false } = {}) => ({
         }
 
         const actionName = action.dataset.tableFilterAction
+        const method = action.getAttribute('wire:click')?.split('(')[0]
         const shouldCloseDropdown =
-            this.shouldCloseDropdownOnApply &&
-            actionName === 'apply' &&
-            this.dropdownPanel !== null
+            actionName === 'apply' && this.dropdownPanel !== null
 
-        if (!shouldCloseDropdown && event.detail !== 0) {
+        if (!method || (!shouldCloseDropdown && event.detail !== 0)) {
             return
         }
+
+        const actionRevision = ++this.actionRevision
 
         this.removeActionCommitHook?.()
         this.removeActionCommitHook = this.$wire.$hook(
             'commit',
-            ({ succeed }) => {
+            ({ commit, succeed }) => {
+                if (!commit.calls.some((call) => call.method === method)) {
+                    return
+                }
+
                 this.removeActionCommitHook?.()
                 this.removeActionCommitHook = null
 
@@ -751,9 +758,9 @@ export const tableFilters = ({ shouldCloseDropdownOnApply = false } = {}) => ({
                         this.actionFocusFrame = null
 
                         if (
+                            this.actionRevision !== actionRevision ||
                             !this.$el.isConnected ||
-                            this.$el.closest('.fi-dropdown-panel')?.style
-                                .display !== 'block'
+                            this.dropdownPanel?.style.display !== 'block'
                         ) {
                             return
                         }
@@ -831,6 +838,8 @@ export const tableFilters = ({ shouldCloseDropdownOnApply = false } = {}) => ({
     },
 
     destroy() {
+        this.actionRevision++
+
         if (this.actionFocusFrame !== null) {
             cancelAnimationFrame(this.actionFocusFrame)
             this.actionFocusFrame = null

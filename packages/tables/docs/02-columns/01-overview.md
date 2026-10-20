@@ -922,24 +922,7 @@ public function table(Table $table): Table
 }
 ```
 
-#### Closing the column manager dropdown after applying
-
-By default, the column manager dropdown stays open after the user clicks the "Apply" button. To close it once the columns have been applied, use the `closeColumnManagerDropdownOnApply()` method:
-
-```php
-use Filament\Tables\Table;
-
-public function table(Table $table): Table
-{
-    return $table
-        ->columns([
-            // ...
-        ])
-        ->closeColumnManagerDropdownOnApply();
-}
-```
-
-When the column manager is [displayed in a modal](#displaying-the-column-manager-in-a-modal), the modal is always closed when the user clicks the "Apply" button.
+The column manager dropdown closes automatically after a successful apply request updates the table. Live column manager changes do not close the dropdown.
 
 #### Displaying the column manager in a modal
 

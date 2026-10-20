@@ -52,7 +52,7 @@ describe('column preferences', function (): void {
 });
 
 describe('column manager reordering', function (): void {
-    it('reorders columns and groups through hidden controls without changing deferred application or close semantics', function (string $layout, bool $deferred, bool $toggleable = true): void {
+    it('reorders columns and groups and closes deferred dropdowns after applying', function (string $layout, bool $deferred, bool $toggleable = true): void {
         Artisan::call('filament:assets');
         $this->actingAs(User::factory()->create());
         Post::factory()->create();
@@ -121,6 +121,13 @@ describe('column manager reordering', function (): void {
 
         if ($deferred) {
             $page->click('#reorderable-columns button:has-text("Apply columns")');
+
+            if ($layout === 'dropdown') {
+                $page->assertAttribute($trigger, 'aria-expanded', 'false')
+                    ->assertPresent($trigger . ':focus');
+            }
+        } else {
+            $page->assertAttribute($trigger, 'aria-expanded', 'true');
         }
 
         $page->assertScript("Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-id')) < Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-rating'))", true)
@@ -138,6 +145,42 @@ describe('column manager reordering', function (): void {
         'deferred modal' => ['modal', true],
         'no toggleable columns' => ['dropdown', true, false],
     ]);
+
+    it('keeps the column manager open after a failed apply request and allows retrying', function (): void {
+        Artisan::call('filament:assets');
+        $this->actingAs(User::factory()->create());
+        Post::factory()->create();
+
+        $trigger = '#reorderable-columns button[aria-label="Column manager"]';
+        $applyAction = '#reorderable-columns button:has-text("Apply columns")';
+
+        $page = visit('/column-manager-reordering-browser-test');
+        $page->click($trigger)
+            ->click('#reorderable-columns input[id$="-title"]');
+
+        $page->script(<<<'JS'
+            (() => {
+                const originalFetch = window.fetch
+                window.fetch = (url, options) => {
+                    window.fetch = originalFetch
+                    const controller = new AbortController()
+                    controller.abort()
+                    return originalFetch(url, { ...options, signal: controller.signal })
+                        .finally(() => window.applyRequestFailed = true)
+                }
+            })()
+            JS);
+
+        $page->click($applyAction)
+            ->assertScript('window.applyRequestFailed', true)
+            ->assertAttribute($trigger, 'aria-expanded', 'true')
+            ->assertEnabled($applyAction)
+            ->assertVisible('#reorderable-columns th:has-text("Title")')
+            ->click($applyAction)
+            ->assertAttribute($trigger, 'aria-expanded', 'false')
+            ->assertPresent($trigger . ':focus')
+            ->assertMissing('#reorderable-columns th:has-text("Title")');
+    });
 
     it('preserves draft and applied order when mixing drag handles and hidden move controls', function (): void {
         Artisan::call('filament:assets');
@@ -181,48 +224,6 @@ describe('column manager reordering', function (): void {
             ->assertScript("Array.from(document.querySelectorAll('#reorderable-columns .fi-ta-col-manager-reorder-handle')).every(handle => handle.tabIndex === -1 && handle.getAttribute('aria-hidden') === 'true')", true)
             ->keys('#reorderable-columns input[id$="-title"]', 'Tab')
             ->assertNotPresent('[data-testid^="column-manager-"]:focus')
-            ->assertNoSmoke();
-    });
-});
-
-describe('closing the column manager dropdown on apply', function (): void {
-    it('closes the dropdown once deferred columns are applied with `closeColumnManagerDropdownOnApply()`', function (): void {
-        Artisan::call('filament:assets');
-        $this->actingAs(User::factory()->create());
-        Post::factory()->create();
-
-        $trigger = '#reorderable-columns button[aria-label="Column manager"]';
-        $titleDown = '[data-testid="column-manager-title-move-down"]';
-        $titleIsAfterRating = "Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-title')) > Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-rating'))";
-
-        visit('/column-manager-reordering-browser-test?closeOnApply=1')
-            ->click($trigger)
-            ->assertVisible($titleDown)
-            ->keys($titleDown, 'Enter')
-            ->assertEnabled('[data-testid="column-manager-title-move-up"]')
-            ->assertScript($titleIsAfterRating, false)
-            ->click('#reorderable-columns button:has-text("Apply columns")')
-            ->assertMissing($titleDown)
-            ->assertPresent($trigger . ':focus')
-            ->assertScript($titleIsAfterRating, true)
-            ->assertNoSmoke();
-    });
-
-    it('keeps the dropdown open after applying deferred columns by default', function (): void {
-        Artisan::call('filament:assets');
-        $this->actingAs(User::factory()->create());
-        Post::factory()->create();
-
-        $titleDown = '[data-testid="column-manager-title-move-down"]';
-
-        visit('/column-manager-reordering-browser-test')
-            ->click('#reorderable-columns button[aria-label="Column manager"]')
-            ->assertVisible($titleDown)
-            ->keys($titleDown, 'Enter')
-            ->assertEnabled('[data-testid="column-manager-title-move-up"]')
-            ->click('#reorderable-columns button:has-text("Apply columns")')
-            ->assertScript("Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-title')) > Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-rating'))", true)
-            ->assertVisible($titleDown)
             ->assertNoSmoke();
     });
 });

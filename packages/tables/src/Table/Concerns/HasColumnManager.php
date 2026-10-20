@@ -34,8 +34,6 @@ trait HasColumnManager
 
     protected bool | Closure $hasDeferredColumnManager = true;
 
-    protected bool | Closure $shouldCloseColumnManagerDropdownOnApply = false;
-
     protected ?Closure $modifyColumnManagerApplyActionUsing = null;
 
     protected bool | Closure $persistsColumnsInSession = true;
@@ -50,13 +48,6 @@ trait HasColumnManager
     public function deferColumnManager(bool | Closure $condition = true): static
     {
         $this->hasDeferredColumnManager = $condition;
-
-        return $this;
-    }
-
-    public function closeColumnManagerDropdownOnApply(bool | Closure $condition = true): static
-    {
-        $this->shouldCloseColumnManagerDropdownOnApply = $condition;
 
         return $this;
     }
@@ -87,11 +78,6 @@ trait HasColumnManager
     public function hasDeferredColumnManager(): bool
     {
         return (bool) $this->evaluate($this->hasDeferredColumnManager);
-    }
-
-    public function shouldCloseColumnManagerDropdownOnApply(): bool
-    {
-        return (bool) $this->evaluate($this->shouldCloseColumnManagerDropdownOnApply);
     }
 
     public function columnManagerApplyAction(?Closure $callback): static

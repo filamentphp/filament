@@ -1,8 +1,4 @@
-export default function filamentTableColumnManager({
-    columns,
-    isLive,
-    shouldCloseDropdownOnApply = false,
-}) {
+export default function filamentTableColumnManager({ columns, isLive }) {
     return {
         error: undefined,
 
@@ -14,7 +10,13 @@ export default function filamentTableColumnManager({
 
         isLive,
 
-        shouldCloseDropdownOnApply,
+        removeApplyCommitHook: null,
+
+        dropdownPanel: null,
+
+        dropdownOpenedListener: null,
+
+        dropdownRevision: 0,
 
         hasReordered: false,
 
@@ -23,6 +25,43 @@ export default function filamentTableColumnManager({
         focusRevision: 0,
 
         init() {
+            this.dropdownPanel = this.$el.closest('.fi-dropdown-panel')
+            this.dropdownOpenedListener = () => this.dropdownRevision++
+            this.dropdownPanel?.addEventListener(
+                'dropdown-opened',
+                this.dropdownOpenedListener,
+            )
+
+            this.removeApplyCommitHook = this.$wire.$hook(
+                'commit',
+                ({ commit, succeed, fail }) => {
+                    if (
+                        !commit.calls.some(
+                            (call) => call.method === 'applyTableColumnManager',
+                        )
+                    )
+                        return
+
+                    const dropdownRevision = this.dropdownRevision
+
+                    // Livewire 3 does not reject method-call promises on request failure.
+                    fail(() => {
+                        this.error = 'Failed to update column visibility'
+                        this.isLoading = false
+                    })
+                    succeed(() =>
+                        requestAnimationFrame(() => {
+                            if (
+                                !this.isLive &&
+                                this.dropdownRevision === dropdownRevision
+                            ) {
+                                this.closeDropdown()
+                            }
+                        }),
+                    )
+                },
+            )
+
             if (!this.columns || this.columns.length === 0) {
                 this.columns = []
 
@@ -342,10 +381,6 @@ export default function filamentTableColumnManager({
                 this.hasReordered = false
                 this.error = undefined
 
-                if (!this.isLive && this.shouldCloseDropdownOnApply) {
-                    this.closeDropdown()
-                }
-
                 return true
             } catch (error) {
                 this.error = 'Failed to update column visibility'
@@ -359,9 +394,13 @@ export default function filamentTableColumnManager({
         },
 
         closeDropdown() {
-            const panel = this.$el.closest('.fi-dropdown-panel')
+            const panel = this.dropdownPanel
 
-            if (!this.$el.isConnected || panel?.style.display !== 'block') {
+            if (
+                !this.$el.isConnected ||
+                this.$el.closest('.fi-dropdown-panel') !== panel ||
+                panel?.style.display !== 'block'
+            ) {
                 return
             }
 
@@ -381,6 +420,15 @@ export default function filamentTableColumnManager({
             this.deferredColumns = JSON.parse(JSON.stringify(this.columns))
             this.hasReordered = false
             this.reorderAnnouncement = ''
+        },
+
+        destroy() {
+            this.dropdownRevision++
+            this.removeApplyCommitHook?.()
+            this.dropdownPanel?.removeEventListener(
+                'dropdown-opened',
+                this.dropdownOpenedListener,
+            )
         },
     }
 }
