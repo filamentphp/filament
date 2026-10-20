@@ -62,6 +62,34 @@ describe('defer loading', function (): void {
     });
 });
 
+describe('closing dropdowns on apply', function (): void {
+    it('defaults `shouldCloseFiltersDropdownOnApply()` to `false`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        expect($table->shouldCloseFiltersDropdownOnApply())->toBeFalse();
+    });
+
+    it('can set `closeFiltersDropdownOnApply()`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        expect($table->closeFiltersDropdownOnApply()->shouldCloseFiltersDropdownOnApply())->toBeTrue()
+            ->and($table->closeFiltersDropdownOnApply(static fn (): bool => false)->shouldCloseFiltersDropdownOnApply())->toBeFalse();
+    });
+
+    it('defaults `shouldCloseColumnManagerDropdownOnApply()` to `false`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        expect($table->shouldCloseColumnManagerDropdownOnApply())->toBeFalse();
+    });
+
+    it('can set `closeColumnManagerDropdownOnApply()`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        expect($table->closeColumnManagerDropdownOnApply()->shouldCloseColumnManagerDropdownOnApply())->toBeTrue()
+            ->and($table->closeColumnManagerDropdownOnApply(static fn (): bool => false)->shouldCloseColumnManagerDropdownOnApply())->toBeFalse();
+    });
+});
+
 describe('loading skeleton', function (): void {
     it('defaults `hasLoadingSkeleton()` to `false`', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();

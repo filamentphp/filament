@@ -382,6 +382,59 @@ describe('browser interactions', function (): void {
         'empty schema fallback' => ['empty', 'div[tabindex="-1"]:has(> div [data-testid="filters-reset-action"])'],
     ]);
 
+    it('closes the filters dropdown once deferred filters are applied with `closeFiltersDropdownOnApply()`', function (): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        Post::factory()->create(['title' => 'Published post', 'is_published' => true]);
+        Post::factory()->create(['title' => 'Draft post', 'is_published' => false]);
+
+        $filtersTrigger = '[data-testid="filters-trigger"]';
+        $publishedFilter = '[data-testid="published-filter"]';
+        $applyAction = '[data-table-filter-action="apply"]';
+
+        $page = visit('/filters-reset-action-browser-test?deferred=1&closeOnApply=1');
+
+        $page
+            ->click($filtersTrigger)
+            ->click($publishedFilter)
+            ->assertVisible($publishedFilter)
+            ->assertSee('Draft post')
+            ->click($applyAction)
+            ->assertMissing($publishedFilter)
+            ->assertPresent($filtersTrigger . ':focus')
+            ->assertSee('Published post')
+            ->assertDontSee('Draft post');
+
+        $page
+            ->keys($filtersTrigger, 'Enter')
+            ->assertPresent($publishedFilter . ':focus')
+            ->keys($publishedFilter, 'Space')
+            ->keys($applyAction, 'Enter')
+            ->assertMissing($publishedFilter)
+            ->assertPresent($filtersTrigger . ':focus')
+            ->assertSee('Draft post')
+            ->assertNoSmoke();
+    });
+
+    it('keeps the filters dropdown open after applying deferred filters by default', function (): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        Post::factory()->create(['title' => 'Published post', 'is_published' => true]);
+        Post::factory()->create(['title' => 'Draft post', 'is_published' => false]);
+
+        visit('/filters-reset-action-browser-test?deferred=1')
+            ->click('[data-testid="filters-trigger"]')
+            ->click('[data-testid="published-filter"]')
+            ->click('[data-table-filter-action="apply"]')
+            ->assertDontSee('Draft post')
+            ->assertVisible('[data-testid="published-filter"]')
+            ->assertNoSmoke();
+    });
+
     it('contains filters `Escape` handling inside an enclosing modal', function (): void {
         Artisan::call('filament:assets');
 

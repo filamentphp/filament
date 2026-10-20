@@ -43,6 +43,8 @@ trait HasFilters
 
     protected bool | Closure $hasDeferredFilters = true;
 
+    protected bool | Closure $shouldCloseFiltersDropdownOnApply = false;
+
     protected ?Closure $modifyFiltersApplyActionUsing = null;
 
     protected ?Closure $modifyFiltersResetActionUsing = null;
@@ -61,6 +63,18 @@ trait HasFilters
     public function hasDeferredFilters(): bool
     {
         return (bool) $this->evaluate($this->hasDeferredFilters);
+    }
+
+    public function closeFiltersDropdownOnApply(bool | Closure $condition = true): static
+    {
+        $this->shouldCloseFiltersDropdownOnApply = $condition;
+
+        return $this;
+    }
+
+    public function shouldCloseFiltersDropdownOnApply(): bool
+    {
+        return (bool) $this->evaluate($this->shouldCloseFiltersDropdownOnApply);
     }
 
     public function filtersApplyAction(?Closure $callback): static

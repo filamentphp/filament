@@ -692,7 +692,9 @@ export default ({
     },
 })
 
-export const tableFilters = () => ({
+export const tableFilters = ({ shouldCloseDropdownOnApply = false } = {}) => ({
+    shouldCloseDropdownOnApply,
+
     focusFrame: null,
 
     actionFocusFrame: null,
@@ -720,14 +722,22 @@ export const tableFilters = () => ({
         )
     },
 
-    rememberActionFocus(event) {
+    handleActionClick(event) {
         const action = event.target.closest('[data-table-filter-action]')
 
-        if (event.detail !== 0 || action === null) {
+        if (action === null) {
             return
         }
 
         const actionName = action.dataset.tableFilterAction
+        const shouldCloseDropdown =
+            this.shouldCloseDropdownOnApply &&
+            actionName === 'apply' &&
+            this.dropdownPanel !== null
+
+        if (!shouldCloseDropdown && event.detail !== 0) {
+            return
+        }
 
         this.removeActionCommitHook?.()
         this.removeActionCommitHook = this.$wire.$hook(
@@ -743,9 +753,18 @@ export const tableFilters = () => ({
                         if (
                             !this.$el.isConnected ||
                             this.$el.closest('.fi-dropdown-panel')?.style
-                                .display !== 'block' ||
-                            document.activeElement !== document.body
+                                .display !== 'block'
                         ) {
+                            return
+                        }
+
+                        if (shouldCloseDropdown) {
+                            this.closeDropdown()
+
+                            return
+                        }
+
+                        if (document.activeElement !== document.body) {
                             return
                         }
 
@@ -758,6 +777,22 @@ export const tableFilters = () => ({
                 })
             },
         )
+    },
+
+    closeDropdown() {
+        const dropdown = window.Alpine.$data(
+            this.dropdownPanel.closest('.fi-dropdown'),
+        )
+
+        const shouldFocusTrigger =
+            document.activeElement === document.body ||
+            this.dropdownPanel.contains(document.activeElement)
+
+        dropdown?.close()
+
+        if (shouldFocusTrigger) {
+            dropdown?.getTrigger()?.focus()
+        }
     },
 
     focusFirstControl() {

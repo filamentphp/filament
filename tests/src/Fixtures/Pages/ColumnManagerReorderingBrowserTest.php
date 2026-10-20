@@ -16,6 +16,7 @@ class ColumnManagerReorderingBrowserTest extends Page
                 'deferred' => request()->boolean('deferred', true),
                 'persist' => request()->boolean('persist', true),
                 'toggleable' => request()->boolean('toggleable', true),
+                'closeOnApply' => request()->boolean('closeOnApply'),
                 'layout' => request()->query('layout', 'dropdown'),
             ])->key('reorderableColumns')->id('reorderable-columns'),
         ]);

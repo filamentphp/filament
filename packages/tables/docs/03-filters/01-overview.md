@@ -164,6 +164,25 @@ public function table(Table $table): Table
 }
 ```
 
+### Closing the filters dropdown after applying
+
+By default, the filters dropdown stays open after the user clicks the "Apply" button. To close it once the filters have been applied, use the `closeFiltersDropdownOnApply()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->closeFiltersDropdownOnApply();
+}
+```
+
+The dropdown closes after the table has been updated, so the "Apply" button's loading indicator remains visible until then. If the filters are [rendered in a modal](layout#displaying-filters-in-a-modal), the modal is always closed when the user clicks the "Apply" button.
+
 ## Deselecting records when filters change
 
 By default, all records will be deselected when the filters change. Using the `deselectAllRecordsWhenFiltered(false)` method, you can disable this behavior:

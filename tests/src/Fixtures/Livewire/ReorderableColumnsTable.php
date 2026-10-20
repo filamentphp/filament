@@ -16,6 +16,8 @@ class ReorderableColumnsTable extends PostsColumnManagerTable
 
     public bool $toggleable = true;
 
+    public bool $closeOnApply = false;
+
     public bool $introduced = false;
 
     public string $layout = 'dropdown';
@@ -48,6 +50,7 @@ class ReorderableColumnsTable extends PostsColumnManagerTable
             ->reorderableColumns()
             ->reorderAnimationDuration(0)
             ->deferColumnManager($this->deferred)
+            ->closeColumnManagerDropdownOnApply($this->closeOnApply)
             ->persistColumnsInSession($this->persist)
             ->columnManagerLayout($this->layout === 'modal' ? ColumnManagerLayout::Modal : ColumnManagerLayout::Dropdown)
             ->columnManagerWidth('2xl')

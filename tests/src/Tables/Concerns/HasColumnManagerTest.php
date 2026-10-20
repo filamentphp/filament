@@ -184,3 +184,45 @@ describe('column manager reordering', function (): void {
             ->assertNoSmoke();
     });
 });
+
+describe('closing the column manager dropdown on apply', function (): void {
+    it('closes the dropdown once deferred columns are applied with `closeColumnManagerDropdownOnApply()`', function (): void {
+        Artisan::call('filament:assets');
+        $this->actingAs(User::factory()->create());
+        Post::factory()->create();
+
+        $trigger = '#reorderable-columns button[aria-label="Column manager"]';
+        $titleDown = '[data-testid="column-manager-title-move-down"]';
+        $titleIsAfterRating = "Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-title')) > Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-rating'))";
+
+        visit('/column-manager-reordering-browser-test?closeOnApply=1')
+            ->click($trigger)
+            ->assertVisible($titleDown)
+            ->keys($titleDown, 'Enter')
+            ->assertEnabled('[data-testid="column-manager-title-move-up"]')
+            ->assertScript($titleIsAfterRating, false)
+            ->click('#reorderable-columns button:has-text("Apply columns")')
+            ->assertMissing($titleDown)
+            ->assertPresent($trigger . ':focus')
+            ->assertScript($titleIsAfterRating, true)
+            ->assertNoSmoke();
+    });
+
+    it('keeps the dropdown open after applying deferred columns by default', function (): void {
+        Artisan::call('filament:assets');
+        $this->actingAs(User::factory()->create());
+        Post::factory()->create();
+
+        $titleDown = '[data-testid="column-manager-title-move-down"]';
+
+        visit('/column-manager-reordering-browser-test')
+            ->click('#reorderable-columns button[aria-label="Column manager"]')
+            ->assertVisible($titleDown)
+            ->keys($titleDown, 'Enter')
+            ->assertEnabled('[data-testid="column-manager-title-move-up"]')
+            ->click('#reorderable-columns button:has-text("Apply columns")')
+            ->assertScript("Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-title')) > Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-rating'))", true)
+            ->assertVisible($titleDown)
+            ->assertNoSmoke();
+    });
+});

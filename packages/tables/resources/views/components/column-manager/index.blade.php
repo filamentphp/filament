@@ -6,6 +6,7 @@
     'headingTag' => 'h3',
     'reorderAnimationDuration' => 300,
     'resetActionPosition' => null,
+    'shouldCloseDropdownOnApply' => false,
 ])
 
 @php
@@ -19,6 +20,8 @@
     x-data="filamentTableColumnManager({
                 columns: $wire.entangle('tableColumns'),
                 isLive: {{ $applyAction->isVisible() ? 'false' : 'true' }},
+                shouldCloseDropdownOnApply:
+                    {{ $shouldCloseDropdownOnApply ? 'true' : 'false' }},
             })"
     class="fi-ta-col-manager"
 >

@@ -1,4 +1,8 @@
-export default function filamentTableColumnManager({ columns, isLive }) {
+export default function filamentTableColumnManager({
+    columns,
+    isLive,
+    shouldCloseDropdownOnApply = false,
+}) {
     return {
         error: undefined,
 
@@ -9,6 +13,8 @@ export default function filamentTableColumnManager({ columns, isLive }) {
         columns,
 
         isLive,
+
+        shouldCloseDropdownOnApply,
 
         hasReordered: false,
 
@@ -336,6 +342,10 @@ export default function filamentTableColumnManager({ columns, isLive }) {
                 this.hasReordered = false
                 this.error = undefined
 
+                if (!this.isLive && this.shouldCloseDropdownOnApply) {
+                    this.closeDropdown()
+                }
+
                 return true
             } catch (error) {
                 this.error = 'Failed to update column visibility'
@@ -345,6 +355,25 @@ export default function filamentTableColumnManager({ columns, isLive }) {
                 return false
             } finally {
                 this.isLoading = false
+            }
+        },
+
+        closeDropdown() {
+            const panel = this.$el.closest('.fi-dropdown-panel')
+
+            if (!this.$el.isConnected || panel?.style.display !== 'block') {
+                return
+            }
+
+            const dropdown = window.Alpine.$data(panel.closest('.fi-dropdown'))
+            const shouldFocusTrigger =
+                document.activeElement === document.body ||
+                panel.contains(document.activeElement)
+
+            dropdown?.close()
+
+            if (shouldFocusTrigger) {
+                dropdown?.getTrigger()?.focus()
             }
         },
 
