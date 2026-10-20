@@ -638,6 +638,8 @@ export const tableFilters = () => ({
 
     actionFocusFrame: null,
 
+    actionRevision: 0,
+
     removeActionCommitHook: null,
 
     dropdownPanel: null,
@@ -647,6 +649,8 @@ export const tableFilters = () => ({
     init() {
         this.dropdownPanel = this.$el.closest('.fi-dropdown-panel')
         this.dropdownOpenedListener = (event) => {
+            this.actionRevision++
+
             if (!event.detail.shouldAutofocus) {
                 return
             }
@@ -661,34 +665,70 @@ export const tableFilters = () => ({
         )
     },
 
-    rememberActionFocus(event) {
+    handleActionClick(event) {
         const action = event.target.closest('[data-table-filter-action]')
 
-        if (event.detail !== 0 || action === null) {
+        if (action === null) {
             return
         }
 
         const actionName = action.dataset.tableFilterAction
+        const method = action.getAttribute('wire:click')?.split('(')[0]
+        const shouldCloseDropdown =
+            actionName === 'apply' && this.dropdownPanel !== null
+
+        if (!method || (!shouldCloseDropdown && event.detail !== 0)) {
+            return
+        }
+
+        const actionRevision = ++this.actionRevision
 
         this.removeActionCommitHook?.()
         this.removeActionCommitHook = Livewire.interceptMessage(
             ({ message, onSuccess }) => {
-                if (message.component.id !== this.$wire.$id) return
+                if (
+                    message.component.id !== this.$wire.$id ||
+                    !message
+                        .getActions()
+                        .some((action) => action.name === method)
+                ) {
+                    return
+                }
 
                 this.removeActionCommitHook?.()
                 this.removeActionCommitHook = null
 
-                onSuccess(({ onMorphed }) =>
+                onSuccess(({ payload, onMorphed }) => {
+                    if (
+                        Object.keys(payload.snapshot.memo.errors ?? {}).some(
+                            (field) =>
+                                field === 'tableDeferredFilters' ||
+                                field.startsWith('tableDeferredFilters.'),
+                        )
+                    ) {
+                        return
+                    }
+
                     onMorphed(() => {
                         this.actionFocusFrame = requestAnimationFrame(() => {
                             this.actionFocusFrame = null
 
                             if (
+                                message.isCancelled() ||
+                                this.actionRevision !== actionRevision ||
                                 !this.$el.isConnected ||
-                                this.$el.closest('.fi-dropdown-panel')?.style
-                                    .display !== 'block' ||
-                                document.activeElement !== document.body
+                                this.dropdownPanel?.style.display !== 'block'
                             ) {
+                                return
+                            }
+
+                            if (shouldCloseDropdown) {
+                                this.closeDropdown()
+
+                                return
+                            }
+
+                            if (document.activeElement !== document.body) {
                                 return
                             }
 
@@ -698,10 +738,26 @@ export const tableFilters = () => ({
                                 )
                                 ?.focus()
                         })
-                    }),
-                )
+                    })
+                })
             },
         )
+    },
+
+    closeDropdown() {
+        const dropdown = window.Alpine.$data(
+            this.dropdownPanel.closest('.fi-dropdown'),
+        )
+
+        const shouldFocusTrigger =
+            document.activeElement === document.body ||
+            this.dropdownPanel.contains(document.activeElement)
+
+        dropdown?.close()
+
+        if (shouldFocusTrigger) {
+            dropdown?.getTrigger()?.focus()
+        }
     },
 
     focusFirstControl() {
@@ -740,6 +796,8 @@ export const tableFilters = () => ({
     },
 
     destroy() {
+        this.actionRevision++
+
         if (this.actionFocusFrame !== null) {
             cancelAnimationFrame(this.actionFocusFrame)
             this.actionFocusFrame = null
