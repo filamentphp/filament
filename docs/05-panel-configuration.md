@@ -1,8 +1,6 @@
 ---
 title: Panel configuration
 ---
-import Aside from "@components/Aside.astro"
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 

@@ -1,7 +1,6 @@
 ---
 title: Enum tricks
 ---
-import Aside from "@components/Aside.astro"
 
 ## Introduction
 

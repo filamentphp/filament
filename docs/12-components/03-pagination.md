@@ -2,7 +2,6 @@
 title: Pagination Blade component
 ---
 
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 

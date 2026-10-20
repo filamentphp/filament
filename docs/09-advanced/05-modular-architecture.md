@@ -1,7 +1,6 @@
 ---
 title: Modular architecture (DDD)
 ---
-import Aside from "@components/Aside.astro"
 
 ## Introduction
 

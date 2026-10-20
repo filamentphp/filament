@@ -2,9 +2,6 @@
 title: Installation
 contents: false
 ---
-import Aside from "@components/Aside.astro"
-import RadioGroup from "@components/RadioGroup.astro"
-import RadioGroupOption from "@components/RadioGroupOption.astro"
 
 Filament requires the following to run:
 

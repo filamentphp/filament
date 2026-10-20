@@ -2,7 +2,6 @@
 title: Input Blade component
 ---
 
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 

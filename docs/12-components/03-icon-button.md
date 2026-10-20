@@ -2,7 +2,6 @@
 title: Icon button Blade component
 ---
 
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 

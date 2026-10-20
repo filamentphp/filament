@@ -1,8 +1,6 @@
 ---
 title: Using widgets on resource pages
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import Aside from "@components/Aside.astro"
 
 ## Introduction
 

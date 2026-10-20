@@ -1,9 +1,6 @@
 ---
 title: Listing records
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import Aside from "@components/Aside.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 <AutoScreenshot name="panels/resources/listing" alt="Resource listing page" version="5.x" />
 

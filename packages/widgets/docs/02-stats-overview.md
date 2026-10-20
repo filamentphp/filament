@@ -1,7 +1,6 @@
 ---
 title: Stats overview widgets
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 

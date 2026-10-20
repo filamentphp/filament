@@ -1,7 +1,6 @@
 ---
 title: Filter layout
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Positioning filters into grid columns
 

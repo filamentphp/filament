@@ -2,7 +2,6 @@
 title: Security
 ---
 
-import Aside from "@components/Aside.astro"
 
 ## Introduction
 

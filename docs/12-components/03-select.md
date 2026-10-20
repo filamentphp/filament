@@ -2,7 +2,6 @@
 title: Select Blade component
 ---
 
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 

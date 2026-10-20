@@ -1,7 +1,6 @@
 ---
 title: Editing records
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 <AutoScreenshot name="panels/resources/editing" alt="Resource edit page" version="5.x" />
 
