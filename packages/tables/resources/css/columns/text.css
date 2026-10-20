@@ -26,9 +26,9 @@
                 .fi-wrapped,
                 .fi-ta-text-has-descriptions,
                 .fi-ta-text-has-line-breaks,
-                .fi-ta-text-list-limited
-            )::after,
-        &:has(> .fi-ta-text-item[style*='--line-clamp'])::after {
+                .fi-ta-text-list-limited,
+                .fi-ta-text-has-line-clamp
+            )::after {
             @apply inset-y-4 h-auto translate-y-0;
         }
 
@@ -40,9 +40,9 @@
                 .fi-wrapped,
                 .fi-ta-text-has-descriptions,
                 .fi-ta-text-has-line-breaks,
-                .fi-ta-text-list-limited
-            )::after,
-        &.fi-inline:has(> .fi-ta-text-item[style*='--line-clamp'])::after {
+                .fi-ta-text-list-limited,
+                .fi-ta-text-has-line-clamp
+            )::after {
             @apply inset-y-0;
         }
 
@@ -55,10 +55,9 @@
                 .fi-wrapped,
                 .fi-ta-text-has-descriptions,
                 .fi-ta-text-has-line-breaks,
-                .fi-ta-text-list-limited
-            )::after,
-        .fi-ta-table-stacked-on-mobile
-            &:has(> .fi-ta-text-item[style*='--line-clamp'])::after {
+                .fi-ta-text-list-limited,
+                .fi-ta-text-has-line-clamp
+            )::after {
             @apply inset-y-0 sm:inset-y-4;
         }
 
