@@ -1,7 +1,6 @@
 ---
 title: Empty state
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
