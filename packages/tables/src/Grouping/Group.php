@@ -238,6 +238,10 @@ class Group extends Component
             $key = $key->toDateString();
         }
 
+        if (is_bool($key)) {
+            $key = (int) $key;
+        }
+
         return filled($key) ? strval($key) : null;
     }
 

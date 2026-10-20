@@ -114,6 +114,8 @@ export default function fileUploadFormComponent({
 
         editingFile: {},
 
+        editingFileId: null,
+
         currentRatio: '',
 
         editor: {},
@@ -297,10 +299,14 @@ export default function fileUploadFormComponent({
                 styleProgressIndicatorPosition: uploadProgressIndicatorPosition,
                 server: {
                     load: async (source, load) => {
+                        const uploadedFile =
+                            this.fileKeyIndex[this.uploadedFileIndex[source]]
                         let response = await fetch(source, {
                             cache: 'no-store',
                         })
                         let blob = await response.blob()
+
+                        blob.name = uploadedFile?.name
 
                         load(blob)
                     },
@@ -494,8 +500,8 @@ export default function fileUploadFormComponent({
                 )
             })
 
-            this.pond.on('initfile', async (fileItem) => {
-                if (isDestroyed) {
+            this.pond.on('addfile', async (error, fileItem) => {
+                if (isDestroyed || error) {
                     return
                 }
 
@@ -510,8 +516,8 @@ export default function fileUploadFormComponent({
                 this.insertDownloadLink(fileItem)
             })
 
-            this.pond.on('initfile', async (fileItem) => {
-                if (isDestroyed) {
+            this.pond.on('addfile', async (error, fileItem) => {
+                if (isDestroyed || error) {
                     return
                 }
 
@@ -797,21 +803,15 @@ export default function fileUploadFormComponent({
 
         closeEditor() {
             if (this.isEditorOpenedForAspectRatio) {
-                const fileItem = this.pond
-                    .getFiles()
-                    .find(
-                        (uploadedFile) =>
-                            uploadedFile.filename === this.editingFile.name,
-                    )
-
-                if (fileItem) {
-                    this.pond.removeFile(fileItem.id, { revert: true })
+                if (this.editingFileId) {
+                    this.pond.removeFile(this.editingFileId, { revert: true })
                 }
 
                 this.isEditorOpenedForAspectRatio = false
             }
 
             this.editingFile = {}
+            this.editingFileId = null
 
             this.isEditorOpen = false
 
@@ -906,6 +906,10 @@ export default function fileUploadFormComponent({
                 return
             }
 
+            this.editingFileId = this.pond
+                .getFiles()
+                .find((uploadedFile) => uploadedFile.file === file)?.id
+
             this.fixImageDimensions(file, (editingFile) => {
                 if (isDestroyed) {
                     return
@@ -993,15 +997,8 @@ export default function fileUploadFormComponent({
                         return
                     }
 
-                    const editingFileItem = this.pond
-                        .getFiles()
-                        .find(
-                            (uploadedFile) =>
-                                uploadedFile.filename === this.editingFile.name,
-                        )
-
-                    if (editingFileItem) {
-                        this.pond.removeFile(editingFileItem.id, {
+                    if (this.editingFileId) {
+                        this.pond.removeFile(this.editingFileId, {
                             revert: true,
                         })
                     }

@@ -532,6 +532,7 @@ class Tabs extends Component implements HasEmbeddedView
                             x-ref="overflowPanel"
                             x-show="isOverflowOpen"
                             aria-hidden="true"
+                            x-on:mousedown.self.prevent
                             x-on:scroll="scheduleUpdate()"
                             x-on:click.outside="if (! $el.closest('.fi-sc-tabs').querySelector('[x-ref=tablist]').contains($event.target) && ! getOverflowTrigger()?.contains($event.target)) dismissOverflow()"
                             class="fi-dropdown-panel fi-sc-tabs-overflow-panel"

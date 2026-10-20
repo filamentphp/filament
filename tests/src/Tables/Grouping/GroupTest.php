@@ -164,6 +164,15 @@ describe('key from record', function (): void {
         expect($key)->toBeNull();
     });
 
+    it('converts boolean keys to numeric strings in `getStringKey()`', function (): void {
+        $group = Group::make('is_published');
+
+        expect($group->getStringKey(['is_published' => false]))
+            ->toBe('0')
+            ->and($group->getStringKey(['is_published' => true]))
+            ->toBe('1');
+    });
+
     it('converts date key to date string format', function (): void {
         $group = Group::make('created_at')
             ->date();

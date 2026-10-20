@@ -265,6 +265,15 @@ export class Select {
             event.preventDefault(),
         )
 
+        // Pressing the dropdown's own scrollbar targets the dropdown itself.
+        // Classic (non-overlay) scrollbars, as on Windows, move focus out of
+        // the select on press, which closes the dropdown before it can scroll.
+        this.dropdown.addEventListener('mousedown', (event) => {
+            if (event.target === this.dropdown) {
+                event.preventDefault()
+            }
+        })
+
         // Create a visually hidden live region to announce loading / empty / limit messages,
         // before `renderOptions()` since it may announce a "no options" message
         this.statusRegion = document.createElement('div')
@@ -1368,6 +1377,8 @@ export class Select {
         const searchId = ++this.activeSearchId
         this.typeahead = ''
         this.hasOptionsError = false
+        const dropdownWidth = `${this.selectButton.offsetWidth}px`
+
         // Make dropdown visible but with position absolute by default, or fixed in containers with .fi-fixed-positioning-context class, and opacity 0 for measurement
         this.dropdown.style.display = 'block'
         this.dropdown.style.opacity = '0'
@@ -1382,7 +1393,7 @@ export class Select {
             ? 'fixed'
             : 'absolute'
         // Set width immediately to match the select button
-        this.dropdown.style.width = `${this.selectButton.offsetWidth}px`
+        this.dropdown.style.width = dropdownWidth
         this.selectButton.setAttribute('aria-expanded', 'true')
         this.searchInput?.setAttribute('aria-expanded', 'true')
         this.isOpen = true

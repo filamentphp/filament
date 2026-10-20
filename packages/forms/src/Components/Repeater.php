@@ -1304,14 +1304,17 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
 
     public function getItemLabel(string $key, ?int $index = null): string | Htmlable | null
     {
-        $container = $this->getChildSchema($key);
+        $container = null;
+        $getContainer = function () use ($key, &$container): ?Schema {
+            return $container ??= $this->getChildSchema($key);
+        };
 
         return $this->evaluate($this->itemLabel, [
-            'container' => $container,
-            'item' => $container,
+            'container' => $getContainer,
+            'item' => $getContainer,
             'key' => $key,
-            'schema' => $container,
-            'state' => $container->getStateSnapshot(),
+            'schema' => $getContainer,
+            'state' => static fn (): array => $getContainer()->getStateSnapshot(),
             'uuid' => $key,
             'index' => $index,
         ]);

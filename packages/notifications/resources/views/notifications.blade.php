@@ -3,7 +3,7 @@
     use Filament\Support\Enums\VerticalAlignment;
 @endphp
 
-<div x-init="$wire.pullNotificationsFromSession()">
+<div x-data="notificationsComponent()">
     <div
         @class([
             'fi-no',
