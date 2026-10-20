@@ -4,8 +4,8 @@ namespace Filament\Notifications;
 
 use Closure;
 use Illuminate\Cache\FileStore;
-use Illuminate\Cache\Repository;
 use Illuminate\Contracts\Cache\LockProvider;
+use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -16,7 +16,7 @@ class NotificationMailbox
 {
     protected const MAX_PENDING_NOTIFICATIONS = 50;
 
-    /** @var array<array<string, mixed>> */
+    /** @var array<array{notification: array<string, mixed>, batch?: ?string}> */
     protected array $pendingNotifications = [];
 
     /** @param array<string, mixed> $notification */
@@ -24,7 +24,7 @@ class NotificationMailbox
     {
         $this->initializeScope();
 
-        $this->pendingNotifications[] = $notification;
+        $this->pendingNotifications[] = ['notification' => $notification];
 
         if (count($this->pendingNotifications) > static::MAX_PENDING_NOTIFICATIONS) {
             array_shift($this->pendingNotifications);
@@ -55,7 +55,7 @@ class NotificationMailbox
         $this->initializeScope();
 
         if ($shouldPreservePublishedNotifications) {
-            $this->pendingNotifications = array_slice([...$this->pull(), ...$this->pendingNotifications], -static::MAX_PENDING_NOTIFICATIONS);
+            $this->pendingNotifications = array_slice([...$this->pullEntries(), ...$this->pendingNotifications], -static::MAX_PENDING_NOTIFICATIONS);
         }
 
         session()->put('filament.notifications.mailbox', Str::random(40));
@@ -69,26 +69,34 @@ class NotificationMailbox
     public function hasPublishedNotifications(): bool
     {
         $cache = Cache::store(config('filament.cache_store'));
+        $hasUnownedNotifications = static fn (Repository $cache, string $key): bool => collect($cache->get($key) ?? [])
+            ->contains(static fn (array $entry): bool => ! isset($entry['batch']));
 
         // `FileStore::get()` can delete expired entries after reading them, so an
-        // unlocked `has()` could delete notifications published in the meantime.
+        // unlocked read could delete notifications published in the meantime.
         if ($cache->getStore() instanceof FileStore) {
-            return $this->mutate(static fn (Repository $cache, string $key): bool => $cache->has($key));
+            return $this->mutate($hasUnownedNotifications);
         }
 
-        return $cache->has($this->getCacheKey());
+        return $hasUnownedNotifications($cache, $this->getCacheKey());
     }
 
-    public function flush(): void
+    public function flush(?string $batch = null): void
     {
         if (! $this->hasPendingNotifications()) {
             return;
         }
 
-        $this->mutate(function (Repository $cache, string $key): void {
+        $this->mutate(function (Repository $cache, string $key) use ($batch): void {
             if (! $cache->put(
                 $key,
-                array_slice([...($cache->get($key) ?? []), ...$this->pendingNotifications], -static::MAX_PENDING_NOTIFICATIONS),
+                array_slice([
+                    ...($cache->get($key) ?? []),
+                    ...array_map(
+                        static fn (array $entry): array => $entry + ['batch' => $batch],
+                        $this->pendingNotifications,
+                    ),
+                ], -static::MAX_PENDING_NOTIFICATIONS),
                 now()->addMinutes(max(1, (int) config('session.lifetime', 120))),
             )) {
                 throw new RuntimeException('Could not store Filament notifications in the mailbox.');
@@ -98,14 +106,50 @@ class NotificationMailbox
         $this->pendingNotifications = [];
     }
 
-    /** @return array<array<string, mixed>> */
-    public function pull(): array
+    /**
+     * @param  array<string>  $batches
+     * @return array<array<string, mixed>>
+     */
+    public function pull(array $batches = []): array
     {
-        return $this->mutate(function (Repository $cache, string $key): array {
-            $notifications = $cache->get($key) ?? [];
+        return array_map(
+            static fn (array $entry): array => $entry['notification'],
+            $this->pullEntries($batches),
+        );
+    }
 
-            if (count($notifications) && ! $cache->forget($key)) {
-                throw new RuntimeException('Could not remove Filament notifications from the mailbox.');
+    /**
+     * @param  ?array<string>  $batches
+     * @return array<array{notification: array<string, mixed>, batch: ?string}>
+     */
+    protected function pullEntries(?array $batches = null): array
+    {
+        return $this->mutate(function (Repository $cache, string $key) use ($batches): array {
+            $notifications = [];
+            $remaining = [];
+
+            foreach ($cache->get($key) ?? [] as $entry) {
+                // Mailboxes published before response ownership was introduced
+                // contain bare notifications, which remain unowned catch-up work.
+                if (! array_key_exists('notification', $entry)) {
+                    $entry = ['notification' => $entry, 'batch' => null];
+                }
+
+                if (($batches === null) || ($entry['batch'] === null) || in_array($entry['batch'], $batches, strict: true)) {
+                    $notifications[] = $entry;
+                } else {
+                    $remaining[] = $entry;
+                }
+            }
+
+            if (count($notifications)) {
+                $wasStored = count($remaining)
+                    ? $cache->put($key, $remaining, now()->addMinutes(max(1, (int) config('session.lifetime', 120))))
+                    : $cache->forget($key);
+
+                if (! $wasStored) {
+                    throw new RuntimeException('Could not remove Filament notifications from the mailbox.');
+                }
             }
 
             return $notifications;

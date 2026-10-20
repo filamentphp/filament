@@ -31,10 +31,16 @@ class Notifications extends Component
         $this->notifications = new Collection;
     }
 
+    /** @param array<string> $batches */
     #[On('notificationsSent')]
-    public function pullNotificationsFromSession(): void
+    public function pullNotificationsFromSession(array $batches = []): void
     {
-        foreach (app(NotificationMailbox::class)->pull() as $notification) {
+        validator(['batches' => $batches], [
+            'batches' => ['array', 'max:50'],
+            'batches.*' => ['required', 'string', 'regex:/\A[a-f0-9]{40}\z/'],
+        ])->validate();
+
+        foreach (app(NotificationMailbox::class)->pull($batches) as $notification) {
             $notification = Notification::fromArray($notification);
 
             $this->pushNotification($notification);
