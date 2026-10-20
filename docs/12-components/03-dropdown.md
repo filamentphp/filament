@@ -2,7 +2,6 @@
 title: Dropdown Blade component
 ---
 
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 

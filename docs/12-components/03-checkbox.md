@@ -2,7 +2,6 @@
 title: Checkbox Blade component
 ---
 
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 

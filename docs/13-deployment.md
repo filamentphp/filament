@@ -1,7 +1,6 @@
 ---
 title: Deploying to production
 ---
-import Aside from "@components/Aside.astro"
 
 ## Introduction
 
@@ -63,7 +62,7 @@ You should see `opcache.enable => 1`. If not, enable it by adding the following 
 opcache.enable=1 # Enable OPcache
 ```
 
-From the [Laravel Forge documentation](https://forge.laravel.com/docs/servers/php.html#opcache):
+From the [Laravel Forge documentation](https://laravel.com/forge/docs/servers/php#opcache):
 
 <Aside variant="tip">
     Optimizing the PHP OPcache for production will configure OPcache to store your compiled PHP code in memory to greatly improve performance.

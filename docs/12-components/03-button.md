@@ -2,7 +2,6 @@
 title: Button Blade component
 ---
 
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 

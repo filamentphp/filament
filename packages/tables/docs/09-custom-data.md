@@ -1,7 +1,6 @@
 ---
 title: Custom data
 ---
-import Aside from "@components/Aside.astro"
 
 ## Introduction
 

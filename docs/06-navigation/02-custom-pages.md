@@ -1,8 +1,6 @@
 ---
 title: Custom pages
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import Aside from "@components/Aside.astro"
 
 ## Introduction
 

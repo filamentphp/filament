@@ -1,10 +1,6 @@
 ---
 title: Upgrade guide
 ---
-import Aside from "@components/Aside.astro"
-import Checkbox from "@components/Checkbox.astro"
-import Checkboxes from "@components/Checkboxes.astro"
-import Disclosure from "@components/Disclosure.astro"
 
 <Aside variant="info">
     If you see anything missing from this guide, please don’t hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/4.x/docs/14-upgrade-guide.md) to our repository! Any help is appreciated!

@@ -2,8 +2,6 @@
 title: Loading indicator Blade component
 ---
 
-import Aside from "@components/Aside.astro"
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 

@@ -1,7 +1,6 @@
 ---
 title: Custom entries
 ---
-import Aside from "@components/Aside.astro"
 
 ## Introduction
 

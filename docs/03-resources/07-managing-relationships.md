@@ -1,9 +1,6 @@
 ---
 title: Managing relationships
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import Aside from "@components/Aside.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Choosing the right tool for the job
 

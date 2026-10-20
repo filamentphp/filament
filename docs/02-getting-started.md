@@ -1,8 +1,6 @@
 ---
 title: Getting started
 ---
-import Aside from "@components/Aside.astro"
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 Once you have [installed Filament](introduction/installation#installing-the-panel-builder), you can start building your application.
 

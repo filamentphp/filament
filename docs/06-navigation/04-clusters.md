@@ -1,7 +1,6 @@
 ---
 title: Clusters
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 

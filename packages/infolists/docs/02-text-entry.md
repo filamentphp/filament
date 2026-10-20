@@ -1,9 +1,6 @@
 ---
 title: Text entry
 ---
-import Aside from "@components/Aside.astro"
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -166,7 +163,7 @@ TextEntry::make('created_at')
 
 #### Date formatting using Carbon macro formats
 
-You may use also the `isoDate()`, `isoDateTime()`, and `isoTime()` methods to format the entry's state using [Carbon's macro-formats](https://carbon.nesbot.com/docs/#available-macro-formats):
+You may use also the `isoDate()`, `isoDateTime()`, and `isoTime()` methods to format the entry's state using [Carbon's macro-formats](https://carbon.nesbot.com/guide/getting-started/localization.html#iso-format-available-replacements):
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -181,7 +178,7 @@ TextEntry::make('created_at')
     ->isoTime()
 ```
 
-You may customize the date format by passing a custom macro format string to the `isoDate()`, `isoDateTime()`, or `isoTime()` method. You may use any [Carbon's macro-formats](https://carbon.nesbot.com/docs/#available-macro-formats):
+You may customize the date format by passing a custom macro format string to the `isoDate()`, `isoDateTime()`, or `isoTime()` method. You may use any [Carbon's macro-formats](https://carbon.nesbot.com/guide/getting-started/localization.html#iso-format-available-replacements):
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -200,7 +197,7 @@ TextEntry::make('created_at')
 
 #### Relative date formatting
 
-You may use the `since()` method to format the entry's state using [Carbon's `diffForHumans()`](https://carbon.nesbot.com/docs/#api-humandiff):
+You may use the `since()` method to format the entry's state using [Carbon's `diffForHumans()`](https://carbon.nesbot.com/guide/date-time-manipulation/difference-for-humans.html):
 
 ```php
 use Filament\Infolists\Components\TextEntry;
