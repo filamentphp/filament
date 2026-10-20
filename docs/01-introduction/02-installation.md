@@ -11,27 +11,10 @@ Filament requires the following to run:
 
 Installation comes in two flavors, depending on whether you want to build an app using our panel builder or use the components within your app's Blade views:
 
-<div x-data="{ package: (window.location.hash === '#components') ? 'components' : 'panels' }">
+<Tabs>
+<Tab title="Panel builder" value="panels">
 
-<RadioGroup model="package">
-    <RadioGroupOption value="panels">
-        Panel builder
-
-        <span slot="description">
-            Most people choose this option to build a panel (e.g., admin panel) for their app. The panel builder combines all the individual components into a cohesive framework. You can create as many panels as you like within a Laravel installation, but you only need to install it once.
-        </span>
-    </RadioGroupOption>
-
-    <RadioGroupOption value="components">
-        Individual components
-
-        <span slot="description">
-            If you are using Blade to build your app from scratch, you can install individual components from Filament to enrich your UI.
-        </span>
-    </RadioGroupOption>
-</RadioGroup>
-
-<div x-show="package === 'panels'" x-cloak>
+Most people choose this option to build a panel (e.g., admin panel) for their app. The panel builder combines all the individual components into a cohesive framework. You can create as many panels as you like within a Laravel installation, but you only need to install it once.
 
 ## Installing the panel builder
 
@@ -67,13 +50,10 @@ php artisan make:filament-user
 
 Open `/admin` in your web browser, sign in, and [start building your app](../getting-started)!
 
-</div>
+</Tab>
+<Tab title="Individual components" value="components">
 
-<div
-    x-show="package === 'components'"
-    x-data="{ laravelProject: 'new' }"
-    x-cloak
->
+If you are using Blade to build your app from scratch, you can install individual components from Filament to enrich your UI.
 
 ## Installing the individual components
 
@@ -109,25 +89,10 @@ You can install additional packages later in your project without having to repe
 
 If you only want to use the set of [Blade UI components](../components), you'll need to require `filament/support` at this stage.
 
-<RadioGroup model="laravelProject">
-    <RadioGroupOption value="new">
-        New Laravel projects
+<Tabs>
+<Tab title="New Laravel projects" value="new">
 
-        <span slot="description">
-            Get started with Filament components quickly by running a simple command. Note that this will overwrite any modified files in your app, so it's only suitable for new Laravel projects.
-        </span>
-    </RadioGroupOption>
-
-    <RadioGroupOption value="existing">
-        Existing Laravel projects
-
-        <span slot="description">
-            If you have an existing Laravel project, you can still install Filament, but should do so manually to preserve your existing functionality.
-        </span>
-    </RadioGroupOption>
-</RadioGroup>
-
-<div x-show="laravelProject === 'new'" x-cloak>
+Get started with Filament components quickly by running a simple command. Note that this will overwrite any modified files in your app, so it's only suitable for new Laravel projects.
 
 To quickly set up Filament in a new Laravel project, run the following commands to install [Livewire](https://livewire.laravel.com), [Alpine.js](https://alpinejs.dev), and [Tailwind CSS](https://tailwindcss.com):
 
@@ -147,9 +112,10 @@ npm run dev
 
 During scaffolding, if you have the [Notifications](../notifications) package installed, Filament will ask if you want to install the required Livewire component into your default layout file. This component is required if you want to send flash notifications to users through Filament.
 
-</div>
+</Tab>
+<Tab title="Existing Laravel projects" value="existing">
 
-<div x-show="laravelProject === 'existing'" x-cloak>
+If you have an existing Laravel project, you can still install Filament, but should do so manually to preserve your existing functionality.
 
 Run the following command to install the Filament frontend assets:
 
@@ -274,9 +240,8 @@ The important parts of this are the `@filamentStyles` in the `<head>` of the lay
     The `@livewire('notifications')` line is required in the layout only if you have the [Notifications](../notifications) package installed and want to send flash notifications to users through Filament.
 </Aside>
 
-</div>
-
-</div>
+</Tab>
+</Tabs>
 
 ## Publishing configuration
 
@@ -288,4 +253,5 @@ php artisan vendor:publish --tag=filament-config
 
 This command creates `config/filament.php`, where you can configure options like the default filesystem disk, file generation flags, and UI defaults. Re-run the publish command any time you want to pull in newly added configuration keys before tweaking them to suit your project.
 
-</div>
+</Tab>
+</Tabs>
