@@ -4,50 +4,84 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      release-tag:
+        description: Stable Filament release tag (validates the trigger, not a rollback target)
+        required: true
+        type: string
 
-permissions:
-  contents: read
+permissions: {}
+
+concurrency:
+  group: docs-update-${{ vars.DOCS_CLOUD_ENVIRONMENT_ID }}
+  cancel-in-progress: false
 
 jobs:
   sync-docs:
+    # Deploy the site's `docs:update` command before opting in. The token must
+    # only allow running/viewing commands on the site's production environment.
+    if: >-
+      vars.DOCS_UPDATES_ENABLED == 'true' &&
+      (github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'release' && !github.event.release.draft && !github.event.release.prerelease))
     runs-on: ubuntu-latest
+    timeout-minutes: 35
     steps:
-      - name: Checkout docs repository
-        # persist-credentials: true is required so the final `git push` to
-        # filamentphp/mintlify-docs uses the GH_ACCESS_TOKEN written into
-        # docs/.git/config. Subsequent steps in this job are maintainer-controlled.
-        # zizmor: ignore[artipacked]
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          repository: filamentphp/mintlify-docs
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
-          path: docs
-
-      - name: Set up Node
-        # setup-node's default npm cache is harmless here: the job only runs `node sync.js`
-        # (read-only against the docs repo's working tree) and then pushes to a separate
-        # repo via PAT. No cache contents reach a release-distributed artifact, so the
-        # cache-poisoning vector zizmor flags doesn't apply.
-        # zizmor: ignore[cache-poisoning]
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: '20'
-
-      - name: Run sync script
-        working-directory: docs
-        run: node sync.js
-
-      - name: Commit and push changes
-        working-directory: docs
+      - name: Update documentation in the deployed site
         env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release-tag }}
+          CLOUD_ENVIRONMENT: ${{ vars.DOCS_CLOUD_ENVIRONMENT_ID }}
+          CLOUD_TOKEN: ${{ secrets.DOCS_CLOUD_TOKEN }}
+        shell: bash
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Sync documentation from release ${RELEASE_TAG}"
-            git push
+          set -euo pipefail
+          if [[ ! "$RELEASE_TAG" =~ ^v[1-5]\.[0-9]+\.[0-9]+$ ]]; then
+            echo 'Only stable tags for supported documentation versions are accepted.' >&2
+            exit 1
           fi
+          if [[ ! "$CLOUD_ENVIRONMENT" =~ ^[A-Za-z0-9-]+$ || -z "$CLOUD_TOKEN" ]]; then
+            echo 'Configure DOCS_CLOUD_ENVIRONMENT_ID and the scoped DOCS_CLOUD_TOKEN secret.' >&2
+            exit 1
+          fi
+
+          # Never automatically retry this POST: a lost response may still mean the command started.
+          if ! response=$(curl --silent --show-error --fail-with-body --connect-timeout 10 --max-time 60 \
+            --request POST "https://cloud.laravel.com/api/environments/$CLOUD_ENVIRONMENT/commands" \
+            --header "Authorization: Bearer $CLOUD_TOKEN" --header 'Accept: application/json' \
+            --header 'Content-Type: application/json' \
+            --data '{"command":"php artisan docs:update --no-interaction"}'); then
+            echo 'Cloud submission failed or its response was lost. Inspect Cloud command history and docs:status before retrying.' >&2
+            exit 1
+          fi
+          if ! command_id=$(jq -er '.data.id | strings | select(test("^[A-Za-z0-9-]+$"))' <<< "$response"); then
+            echo 'Cloud returned no valid command ID. Inspect Cloud command history and docs:status before retrying.' >&2
+            exit 1
+          fi
+          echo "Cloud command ID: $command_id"
+          echo "Cloud command ID: $command_id" >> "$GITHUB_STEP_SUMMARY"
+
+          deadline=$((SECONDS + 1800))
+          while (( SECONDS < deadline )); do
+            response=$(curl --silent --show-error --fail-with-body --connect-timeout 10 --max-time 30 \
+              --retry 2 --retry-all-errors \
+              "https://cloud.laravel.com/api/commands/$command_id" \
+              --header "Authorization: Bearer $CLOUD_TOKEN" --header 'Accept: application/json')
+            status=$(jq -er '.data.attributes.status' <<< "$response")
+            case "$status" in
+              command.success|command.failure)
+                # Remote command output is data, not GitHub workflow commands.
+                marker=$(cat /proc/sys/kernel/random/uuid)
+                echo "::stop-commands::$marker"
+                jq -r '.data.attributes.output // "", .data.attributes.failure_reason // empty' <<< "$response"
+                echo "::$marker::"
+                if [[ "$status" == command.success ]] && jq -e '.data.attributes.exit_code == 0' <<< "$response" > /dev/null; then
+                  exit 0
+                fi
+                exit 1
+                ;;
+              pending|command.created|command.running) sleep 10 ;;
+              *) echo "Unknown Cloud command status: $status. Inspect command $command_id before retrying." >&2; exit 1 ;;
+            esac
+          done
+          echo "Stopped waiting for Cloud command $command_id; it may still be running. Inspect Cloud status and docs:status before retrying." >&2
+          exit 1
