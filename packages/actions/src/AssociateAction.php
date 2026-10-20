@@ -89,7 +89,7 @@ class AssociateAction extends Action
 
             $hasFailed = false;
 
-            foreach (($this->isMultiple ? $record : [$record]) as $record) {
+            foreach (($this->isMultiple() ? $record : [$record]) as $record) {
                 if (! $record instanceof Model) {
                     continue;
                 }
