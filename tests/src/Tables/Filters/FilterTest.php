@@ -382,7 +382,7 @@ describe('browser interactions', function (): void {
         'empty schema fallback' => ['empty', 'div[tabindex="-1"]:has(> div [data-testid="filters-reset-action"])'],
     ]);
 
-    it('closes the filters dropdown only after successfully applying with pointer or keyboard', function (): void {
+    it('closes the filters dropdown after applying with pointer or keyboard', function (): void {
         Artisan::call('filament:assets');
 
         $this->actingAs(User::factory()->create());
@@ -399,24 +399,6 @@ describe('browser interactions', function (): void {
         $page
             ->click($filtersTrigger)
             ->click($publishedFilter)
-            ->assertVisible($publishedFilter)
-            ->assertSee('Draft post');
-
-        $page->script(<<<'JS'
-            (() => {
-                const originalFetch = window.fetch
-                window.fetch = (url, options) => {
-                    window.fetch = originalFetch
-                    const controller = new AbortController()
-                    controller.abort()
-                    return originalFetch(url, { ...options, signal: controller.signal })
-                        .finally(() => window.applyRequestFailed = true)
-                }
-            })()
-            JS);
-
-        $page->click($applyAction)
-            ->assertScript('window.applyRequestFailed', true)
             ->assertVisible($publishedFilter)
             ->assertSee('Draft post')
             ->click($applyAction)

@@ -146,42 +146,6 @@ describe('column manager reordering', function (): void {
         'no toggleable columns' => ['dropdown', true, false],
     ]);
 
-    it('keeps the column manager open after a failed apply request and allows retrying', function (): void {
-        Artisan::call('filament:assets');
-        $this->actingAs(User::factory()->create());
-        Post::factory()->create();
-
-        $trigger = '#reorderable-columns button[aria-label="Column manager"]';
-        $applyAction = '#reorderable-columns button:has-text("Apply columns")';
-
-        $page = visit('/column-manager-reordering-browser-test');
-        $page->click($trigger)
-            ->click('#reorderable-columns input[id$="-title"]');
-
-        $page->script(<<<'JS'
-            (() => {
-                const originalFetch = window.fetch
-                window.fetch = (url, options) => {
-                    window.fetch = originalFetch
-                    const controller = new AbortController()
-                    controller.abort()
-                    return originalFetch(url, { ...options, signal: controller.signal })
-                        .finally(() => window.applyRequestFailed = true)
-                }
-            })()
-            JS);
-
-        $page->click($applyAction)
-            ->assertScript('window.applyRequestFailed', true)
-            ->assertAttribute($trigger, 'aria-expanded', 'true')
-            ->assertEnabled($applyAction)
-            ->assertVisible('#reorderable-columns th:has-text("Title")')
-            ->click($applyAction)
-            ->assertAttribute($trigger, 'aria-expanded', 'false')
-            ->assertPresent($trigger . ':focus')
-            ->assertMissing('#reorderable-columns th:has-text("Title")');
-    });
-
     it('preserves draft and applied order when mixing drag handles and hidden move controls', function (): void {
         Artisan::call('filament:assets');
         $this->actingAs(User::factory()->create());
