@@ -38,7 +38,7 @@ If you're looking for dedicated help with your Filament project, we're here for 
 
 ## Google
 
-Since we make use of [Answer Overflow](https://www.answeroverflow.com/c/883083792112300104) on our [Discord](#discord) server, you are often one Google search away from finding an answer to your question or at least a hint on how to solve your problem. You may also find results from [GitHub](#github), the [Laracasts forum](#laracasts), or even Stack Overflow.
+Since we make use of [Answer Overflow](https://www.answeroverflow.com/c/883083792112300104) on our [Discord](#discord) server, you are often one Google search away from finding an answer to your question or at least a hint on how to solve your problem. You may also find results from [GitHub](#github), the [Laracasts forum](https://laracasts.com/discuss), or even Stack Overflow.
 
 ## Helping others
 
