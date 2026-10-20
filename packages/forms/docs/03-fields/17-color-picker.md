@@ -1,7 +1,6 @@
 ---
 title: Color picker
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

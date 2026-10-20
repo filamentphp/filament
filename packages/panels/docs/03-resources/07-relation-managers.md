@@ -1,7 +1,6 @@
 ---
 title: Managing relationships
 ---
-import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Choosing the right tool for the job
 
@@ -17,7 +16,7 @@ Filament provides many ways to manage relationships in the app. Which feature yo
 
 > These are compatible with `BelongsTo`, `MorphTo` and `BelongsToMany` relationships.
 
-Using a [select](../../forms/fields/select#integrating-with-an-eloquent-relationship), users will be able to choose from a list of existing records. You may also [add a button that allows you to create a new record inside a modal](../../forms/fields/select#creating-new-records), without leaving the page.
+Using a [select](../../forms/fields/select#integrating-with-an-eloquent-relationship), users will be able to choose from a list of existing records. You may also [add a button that allows you to create a new record inside a modal](../../forms/fields/select#creating-a-new-option-in-a-modal), without leaving the page.
 
 When using a `BelongsToMany` relationship with a select, you'll be able to select multiple options, not just one. Records will be automatically added to your pivot table when you submit the form. If you wish, you can swap out the multi-select dropdown with a simple [checkbox list](../../forms/fields/checkbox-list#integrating-with-an-eloquent-relationship). Both components work in the same way.
 
@@ -55,13 +54,6 @@ In this example, the `title`, `description` and `image` are automatically loaded
 This feature is explained more in depth in the [Forms documentation](../../forms/advanced#saving-data-to-relationships). Please visit that page for more information about how to use it.
 
 ## Creating a relation manager
-
-<LaracastsBanner
-    title="Relation Managers"
-    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding relation managers to Filament resources."
-    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/13"
-    series="rapid-laravel-development"
-/>
 
 To create a relation manager, you can use the `make:filament-relation-manager` command:
 
@@ -164,7 +156,7 @@ By default, you will not be able to interact with deleted records in the relatio
 php artisan make:filament-relation-manager CategoryResource posts title --soft-deletes
 ```
 
-You can find out more about soft deleting [here](#deleting-records).
+You can find out more about soft deleting [here](#deleting-related-records).
 
 ## Listing related records
 

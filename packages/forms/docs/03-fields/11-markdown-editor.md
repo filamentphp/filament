@@ -1,7 +1,6 @@
 ---
 title: Markdown editor
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

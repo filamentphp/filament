@@ -1,7 +1,6 @@
 ---
 title: Sending notifications
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

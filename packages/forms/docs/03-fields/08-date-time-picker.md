@@ -1,7 +1,6 @@
 ---
 title: Date-time picker
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

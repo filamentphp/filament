@@ -1,7 +1,6 @@
 ---
 title: Color column
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -65,4 +64,3 @@ ColorColumn::make('color')
 ```
 
 Note: the "width" for wrapping is affected by the column label, so you may need to use a shorter or hidden label to wrap more tightly.
-

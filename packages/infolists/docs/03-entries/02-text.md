@@ -1,7 +1,6 @@
 ---
 title: Text entry
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -47,7 +46,7 @@ TextEntry::make('created_at')
     ->dateTime()
 ```
 
-You may use the `since()` method to format the entry's state using [Carbon's `diffForHumans()`](https://carbon.nesbot.com/docs/#api-humandiff):
+You may use the `since()` method to format the entry's state using [Carbon's `diffForHumans()`](https://carbon.nesbot.com/guide/date-time-manipulation/difference-for-humans.html):
 
 ```php
 use Filament\Infolists\Components\TextEntry;

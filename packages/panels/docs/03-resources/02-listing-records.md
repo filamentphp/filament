@@ -125,7 +125,7 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 
 Users may access the List page if the `viewAny()` method of the model policy returns `true`.
 
-The `reorder()` method is used to control [reordering a record](#reordering-records).
+The `reorder()` method is used to control [reordering a record](../../tables/advanced#reordering-records).
 
 ## Customizing the table Eloquent query
 

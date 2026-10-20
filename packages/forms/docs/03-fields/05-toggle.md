@@ -1,7 +1,6 @@
 ---
 title: Toggle
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

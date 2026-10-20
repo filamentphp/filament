@@ -1,7 +1,6 @@
 ---
 title: Select column
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

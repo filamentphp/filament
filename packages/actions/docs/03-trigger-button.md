@@ -1,7 +1,6 @@
 ---
 title: Trigger button
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

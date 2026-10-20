@@ -1,7 +1,6 @@
 ---
 title: Text column
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -73,7 +72,7 @@ TextColumn::make('created_at')
     ->dateTime()
 ```
 
-You may use the `since()` method to format the column's state using [Carbon's `diffForHumans()`](https://carbon.nesbot.com/docs/#api-humandiff):
+You may use the `since()` method to format the column's state using [Carbon's `diffForHumans()`](https://carbon.nesbot.com/guide/date-time-manipulation/difference-for-humans.html):
 
 ```php
 use Filament\Tables\Columns\TextColumn;

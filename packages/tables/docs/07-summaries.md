@@ -1,7 +1,6 @@
 ---
 title: Summaries
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

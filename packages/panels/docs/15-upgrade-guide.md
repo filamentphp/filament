@@ -193,7 +193,7 @@ When using simple resources, remove the `CanCreateRecords`, `CanDeleteRecords`, 
 
 We also deprecated type-specific relation manager classes. Any classes extending `BelongsToManyRelationManager`, `HasManyRelationManager`, `HasManyThroughRelationManager`, `MorphManyRelationManager`, or `MorphToManyRelationManager` should now extend `\Filament\Resources\RelationManagers\RelationManager`. You can also remove the `CanAssociateRecords`, `CanAttachRecords`, `CanCreateRecords`, `CanDeleteRecords`, `CanDetachRecords`, `CanDisassociateRecords`, `CanEditRecords`, and `CanViewRecords` traits from relation managers.
 
-To learn more about v2.13 changes, read our [blog post](https://v2.filamentphp.com/blog/v2130-admin-resources).
+To learn more about v2.13 changes, read the [release notes](https://github.com/filamentphp/filament/releases/tag/v2.13.0).
 
 #### Blade components
 

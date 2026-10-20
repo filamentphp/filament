@@ -1,7 +1,6 @@
 ---
 title: Placeholder
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -33,7 +32,7 @@ Placeholder::make('documentation')
 
 ## Dynamically generating placeholder content
 
-By passing a closure to the `content()` method, you may dynamically generate placeholder content. You have access to any closure parameter explained in the [advanced closure customization](../advanced#closure-customization) documentation:
+By passing a closure to the `content()` method, you may dynamically generate placeholder content. You have access to any closure parameter explained in the [form component utility injection](../advanced#form-component-utility-injection) documentation:
 
 ```php
 use Filament\Forms\Components\Placeholder;

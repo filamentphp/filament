@@ -1,7 +1,6 @@
 ---
 title: Advanced
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Pagination
 

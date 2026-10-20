@@ -1,7 +1,6 @@
 ---
 title: Textarea
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

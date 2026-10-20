@@ -1,7 +1,6 @@
 ---
 title: Key-value entry
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

@@ -1,7 +1,6 @@
 ---
 title: Fieldset
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

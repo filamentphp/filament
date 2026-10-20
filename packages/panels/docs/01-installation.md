@@ -72,7 +72,7 @@ If you're not using the [`filament:optimize` command](#optimizing-filament-for-p
 
 ### Enabling OPcache on your server
 
-From the [Laravel Forge documentation](https://forge.laravel.com/docs/servers/php.html#opcache):
+From the [Laravel Forge documentation](https://laravel.com/forge/docs/servers/php#opcache):
 
 > Optimizing the PHP OPcache for production will configure OPcache to store your compiled PHP code in memory to greatly improve performance.
 

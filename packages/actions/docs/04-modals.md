@@ -1,7 +1,6 @@
 ---
 title: Modals
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

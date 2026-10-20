@@ -1,7 +1,6 @@
 ---
 title: Repeatable entry
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

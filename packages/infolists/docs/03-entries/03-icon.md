@@ -1,7 +1,6 @@
 ---
 title: Icon entry
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

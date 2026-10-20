@@ -1,8 +1,6 @@
 ---
 title: Select filters
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
 
@@ -142,4 +140,3 @@ SelectFilter::make('status')
     ->multiple()
     ->default(['draft', 'reviewing'])
 ```
-

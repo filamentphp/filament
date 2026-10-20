@@ -1,7 +1,6 @@
 ---
 title: Rich editor
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

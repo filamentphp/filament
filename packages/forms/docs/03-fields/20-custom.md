@@ -1,14 +1,6 @@
 ---
 title: Custom fields
 ---
-import LaracastsBanner from "@components/LaracastsBanner.astro"
-
-<LaracastsBanner
-    title="Build a Custom Form Field"
-    description="Watch the Build Advanced Components for Filament series on Laracasts - it will teach you how to build components, and you'll get to know all the internal tools to help you."
-    url="https://laracasts.com/series/build-advanced-components-for-filament/episodes/6"
-    series="building-advanced-components"
-/>
 
 ## View fields
 
@@ -44,7 +36,7 @@ However, more complex configuration can be achieved with a [custom field class](
 
 You may create your own custom field classes and views, which you can reuse across your project, and even release as a plugin to the community.
 
-> If you're just creating a simple custom field to use once, you could instead use a [view field](#view) to render any custom Blade file.
+> If you're just creating a simple custom field to use once, you could instead use a [view field](#view-fields) to render any custom Blade file.
 
 To create a custom field class and view, you may use the following command:
 

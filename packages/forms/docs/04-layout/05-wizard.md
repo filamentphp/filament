@@ -1,7 +1,6 @@
 ---
 title: Wizard
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

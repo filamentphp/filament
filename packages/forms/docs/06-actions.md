@@ -1,7 +1,6 @@
 ---
 title: Actions
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

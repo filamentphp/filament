@@ -1,7 +1,6 @@
 ---
 title: Checkbox column
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

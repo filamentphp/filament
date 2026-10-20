@@ -1,7 +1,6 @@
 ---
 title: Color entry
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

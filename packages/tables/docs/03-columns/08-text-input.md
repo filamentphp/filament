@@ -1,7 +1,6 @@
 ---
 title: Text input column
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

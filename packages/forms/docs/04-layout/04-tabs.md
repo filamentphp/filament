@@ -1,7 +1,6 @@
 ---
 title: Tabs
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -238,4 +237,3 @@ Tabs::make('Tabs')
     ])
     ->persistTabInQueryString('settings-tab')
 ```
-

@@ -1,7 +1,6 @@
 ---
 title: Toggle column
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

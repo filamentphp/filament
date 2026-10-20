@@ -1,7 +1,6 @@
 ---
 title: Repeater
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

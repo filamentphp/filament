@@ -1,7 +1,6 @@
 ---
 title: Builder
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

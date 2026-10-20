@@ -1,7 +1,6 @@
 ---
 title: Radio
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

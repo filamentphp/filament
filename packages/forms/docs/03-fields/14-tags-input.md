@@ -1,7 +1,6 @@
 ---
 title: Tags input
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

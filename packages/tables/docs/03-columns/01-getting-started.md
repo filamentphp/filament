@@ -1,17 +1,8 @@
 ---
 title: Getting started
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
-
-<LaracastsBanner
-    title="Table Columns"
-    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding columns to Filament resource tables."
-    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/9"
-    series="rapid-laravel-development"
-/>
 
 Column classes can be found in the `Filament\Tables\Columns` namespace. You can put them inside the `$table->columns()` method:
 
@@ -324,7 +315,7 @@ TextColumn::make('title')
 
 #### Action modals
 
-You may open [action modals](../actions#modals) by passing in an `Action` object to the `action()` method:
+You may open [action modals](../../actions/modals) by passing in an `Action` object to the `action()` method:
 
 ```php
 use Filament\Tables\Actions\Action;

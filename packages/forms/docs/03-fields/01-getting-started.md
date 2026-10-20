@@ -1,7 +1,6 @@
 ---
 title: Getting started
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -77,7 +76,7 @@ TextInput::make('name')
 
 ## Setting a default value
 
-Fields may have a default value. This will be filled if the [form's `fill()` method](getting-started#default-data) is called without any arguments. To define a default value, use the `default()` method:
+Fields may have a default value. This will be filled if the [form's `fill()` method](../adding-a-form-to-a-livewire-component#resetting-a-forms-data) is called without any arguments. To define a default value, use the `default()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;

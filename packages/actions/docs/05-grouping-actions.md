@@ -1,7 +1,6 @@
 ---
 title: Grouping actions
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

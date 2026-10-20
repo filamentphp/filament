@@ -1,16 +1,8 @@
 ---
 title: Getting started
 ---
-import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
-
-<LaracastsBanner
-    title="Introduction to Filament"
-    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you how to get started with the resources."
-    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/2"
-    series="rapid-laravel-development"
-/>
 
 Resources are static classes that are used to build CRUD interfaces for your Eloquent models. They describe how administrators should be able to interact with data from your app - using tables and forms.
 
@@ -114,13 +106,6 @@ This is required for features like [global search](global-search) to work.
 
 ## Resource forms
 
-<LaracastsBanner
-    title="Basic Form Inputs"
-    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding a form to your resource."
-    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/3"
-    series="rapid-laravel-development"
-/>
-
 Resource classes contain a `form()` method that is used to build the forms on the [Create](creating-records) and [Edit](editing-records) pages:
 
 ```php
@@ -170,13 +155,6 @@ Forms\Components\TextInput::make('password')
 
 ## Resource tables
 
-<LaracastsBanner
-    title="Table Columns"
-    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding a table to your resource."
-    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/9"
-    series="rapid-laravel-development"
-/>
-
 Resource classes contain a `table()` method that is used to build the table on the [List page](listing-records):
 
 ```php
@@ -221,7 +199,7 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 - `delete()` is used to prevent a single record from being deleted. `deleteAny()` is used to prevent records from being bulk deleted. Filament uses the `deleteAny()` method because iterating through multiple records and checking the `delete()` policy is not very performant.
 - `forceDelete()` is used to prevent a single soft-deleted record from being force-deleted. `forceDeleteAny()` is used to prevent records from being bulk force-deleted. Filament uses the `forceDeleteAny()` method because iterating through multiple records and checking the `forceDelete()` policy is not very performant.
 - `restore()` is used to prevent a single soft-deleted record from being restored. `restoreAny()` is used to prevent records from being bulk restored. Filament uses the `restoreAny()` method because iterating through multiple records and checking the `restore()` policy is not very performant.
-- `reorder()` is used to control [reordering a record](listing-records#reordering-records).
+- `reorder()` is used to control [reordering a record](../../tables/advanced#reordering-records).
 
 ### Skipping authorization
 
@@ -281,7 +259,7 @@ protected static bool $hasTitleCaseModelLabel = false;
 
 ## Resource navigation items
 
-Filament will automatically generate a navigation menu item for your resource using the [plural label](#plural-label).
+Filament will automatically generate a navigation menu item for your resource using the [plural label](#customizing-the-plural-model-label).
 
 If you'd like to customize the navigation item label, you may use the `$navigationLabel` property:
 

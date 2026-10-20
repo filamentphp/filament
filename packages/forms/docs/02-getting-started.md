@@ -1,7 +1,6 @@
 ---
 title: Getting started
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 

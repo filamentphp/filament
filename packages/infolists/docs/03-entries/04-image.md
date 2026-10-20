@@ -1,7 +1,6 @@
 ---
 title: Image entry
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
