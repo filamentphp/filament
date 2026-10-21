@@ -55,10 +55,14 @@ use Filament\Actions\EditAction;
 
 EditAction::make()
     ->modalEyebrow('Edit post')
-    ->modalHeading(fn (Post $record): string => $record->title)
+    ->modalHeading(static fn (Post $record): string => $record->title)
 ```
 
-The eyebrow is not part of the modal's accessible name, which is still taken from the heading. The eyebrow is only rendered when the modal has a heading.
+<UtilityInjection set="actions">The `modalEyebrow()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+The eyebrow requires a heading and is not included in the modal's accessible name.
+
+<AutoScreenshot name="actions/modal/eyebrow" alt="An edit post form with an eyebrow above the post title" />
 
 ### Rendering a schema in a modal
 

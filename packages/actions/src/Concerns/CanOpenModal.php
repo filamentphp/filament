@@ -727,6 +727,7 @@ trait CanOpenModal
         }
 
         return $this->hasCustomModalHeading() ||
+            $this->hasModalEyebrow() ||
             $this->hasModalDescription() ||
             $this->hasModalContent() ||
             $this->hasModalContentFooter() ||

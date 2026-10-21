@@ -178,7 +178,7 @@
         }
 
         & .fi-modal-eyebrow {
-            @apply mb-1 text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400;
+            @apply mb-1 text-xs font-medium text-gray-500 dark:text-gray-400;
         }
 
         & .fi-modal-heading {

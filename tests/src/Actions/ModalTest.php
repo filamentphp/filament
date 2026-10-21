@@ -30,6 +30,25 @@ describe('browser interactions', function (): void {
         $browser->inDarkMode()->assertNoAccessibilityIssues();
     });
 
+    it('renders an accessible modal eyebrow using `modalEyebrow()`', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $browser = visit('/modal-browser-test');
+
+        $browser
+            ->click('[data-testid="eyebrow-trigger"]')
+            ->assertVisible('[data-testid="eyebrow-modal"]')
+            ->assertSeeIn('[data-testid="eyebrow-modal"]', 'Edit post')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        $browser->inDarkMode()
+            ->click('[data-testid="eyebrow-trigger"]')
+            ->assertVisible('[data-testid="eyebrow-modal"]')
+            ->assertSeeIn('[data-testid="eyebrow-modal"]', 'Edit post')
+            ->assertNoAccessibilityIssues();
+    });
+
     it('cancels `beforeunload` events only while actions that can contain unsaved changes are mounted', function (): void {
         $this->actingAs(User::factory()->create());
 
@@ -402,20 +421,6 @@ describe('browser interactions', function (): void {
             ->keys('[data-testid="behind-button"]', 'PageDown')
             ->assertScript('window.scrollY > 0', true)
             ->assertNoSmoke();
-    });
-
-    it('renders an accessible modal eyebrow using `modalEyebrow()`', function (): void {
-        $this->actingAs(User::factory()->create());
-
-        $browser = visit('/modal-browser-test');
-
-        $browser
-            ->click('[data-testid="eyebrow-trigger"]')
-            ->assertVisible('[data-testid="eyebrow-modal"] .fi-modal-eyebrow')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-
-        $browser->inDarkMode()->assertNoAccessibilityIssues();
     });
 
     it('restores focus after a nested overlay action cancels its parent action', function (): void {

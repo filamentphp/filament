@@ -696,19 +696,36 @@ describe('properties', function (): void {
         expect($action->getModalWidth())->toBe(Width::TwoExtraLarge);
     });
 
-    it('returns `null` for `getModalEyebrow()` by default', function (): void {
+    it('can set and clear a modal eyebrow using `modalEyebrow()`', function (): void {
         $action = Action::make('test');
+
+        expect($action->getModalEyebrow())->toBeNull();
+        expect($action->hasModalEyebrow())->toBeFalse();
+
+        $action->modalEyebrow(static fn (): string => 'Edit post');
+
+        expect($action->getModalEyebrow())->toBe('Edit post');
+        expect($action->hasModalEyebrow())->toBeTrue();
+
+        $action->modalEyebrow(null);
 
         expect($action->getModalEyebrow())->toBeNull();
         expect($action->hasModalEyebrow())->toBeFalse();
     });
 
-    it('can set a modal eyebrow via `modalEyebrow()`', function (): void {
+    it('opens a modal for `modalEyebrow()` unless explicitly disabled', function (): void {
         $action = Action::make('test')
-            ->modalEyebrow(static fn (): string => 'Edit post');
+            ->modalEyebrow('Edit post');
 
-        expect($action->getModalEyebrow())->toBe('Edit post');
-        expect($action->hasModalEyebrow())->toBeTrue();
+        expect($action->shouldOpenModal())->toBeTrue();
+
+        $action->modalHidden();
+
+        expect($action->shouldOpenModal())->toBeFalse();
+
+        $action->modalHidden(false)->modal(false);
+
+        expect($action->shouldOpenModal())->toBeFalse();
     });
 });
 describe('visibility and state', function (): void {

@@ -278,6 +278,61 @@ it('binds `aria-controls` on the collapse button when a collapsible section has 
         ->toContain('x-bind:aria-controls');
 });
 
+it('renders a modal `eyebrow` above the heading without changing the accessible name', function (): void {
+    $html = Blade::render(<<<'BLADE'
+        <x-filament::modal id="edit-post" heading="Getting started">
+            <x-slot name="eyebrow">Edit post</x-slot>
+
+            Content
+        </x-filament::modal>
+        BLADE);
+
+    expect($html)
+        ->toContain('aria-labelledby="edit-post.heading"')
+        ->toContain('id="edit-post.heading"');
+
+    expect((string) Str::of($html)->before('<h2'))->toContain('Edit post');
+});
+
+it('renders a modal `eyebrow` with escaped text or trusted `Htmlable` content', function (string | HtmlString $eyebrow, string $expected): void {
+    $html = Blade::render(<<<'BLADE'
+        <x-filament::modal :eyebrow="$eyebrow" heading="Getting started">
+            Content
+        </x-filament::modal>
+        BLADE, ['eyebrow' => $eyebrow]);
+
+    expect($html)
+        ->toContain($expected)
+        ->toContain('aria-label="Getting started"');
+})->with([
+    'string' => ['<strong>Edit post</strong>', '&lt;strong&gt;Edit post&lt;/strong&gt;'],
+    'Htmlable' => [new HtmlString('<strong>Edit post</strong>'), '<strong>Edit post</strong>'],
+]);
+
+it('does not render a modal `eyebrow` without a filled heading', function (?string $heading): void {
+    $html = Blade::render(<<<'BLADE'
+        <x-filament::modal eyebrow="Edit post" :heading="$heading">
+            Content
+        </x-filament::modal>
+        BLADE, ['heading' => $heading]);
+
+    expect($html)->not->toContain('Edit post');
+})->with([null, '', ' ']);
+
+it('does not render a modal `eyebrow` when using a custom `header` slot', function (): void {
+    $html = Blade::render(<<<'BLADE'
+        <x-filament::modal eyebrow="Edit post" heading="Getting started">
+            <x-slot name="header">Custom header</x-slot>
+
+            Content
+        </x-filament::modal>
+        BLADE);
+
+    expect($html)
+        ->toContain('Custom header')
+        ->not->toContain('Edit post');
+});
+
 it('preserves explicit modal window focus attributes', function (): void {
     $html = Blade::render(<<<'BLADE'
         <x-filament::modal
@@ -296,26 +351,4 @@ it('preserves explicit modal window focus attributes', function (): void {
     preg_match('/<(?:div|form)(?=[^>]*\bfi-modal-window\b)(?![^>]*\bfi-modal-window-ctn\b)[^>]*>/', $html, $modalWindowMatches);
 
     expect($modalWindowMatches[0])->toContain('tabindex="-1"');
-});
-
-it('renders a modal `eyebrow` above the heading without changing the accessible name', function (): void {
-    $html = Blade::render(<<<'BLADE'
-        <x-filament::modal id="edit-post" eyebrow="Edit post" heading="Getting started">
-            Content
-        </x-filament::modal>
-        BLADE);
-
-    expect($html)
-        ->toContain('aria-labelledby="edit-post.heading"')
-        ->toMatch('/class="fi-modal-eyebrow"[^>]*>\s*Edit post\s*<\/p>\s*<h2[^>]*id="edit-post\.heading"/');
-});
-
-it('does not render a modal `eyebrow` without a heading', function (): void {
-    $html = Blade::render(<<<'BLADE'
-        <x-filament::modal eyebrow="Edit post">
-            Content
-        </x-filament::modal>
-        BLADE);
-
-    expect($html)->not->toContain('fi-modal-eyebrow');
 });

@@ -84,7 +84,7 @@ You can add an eyebrow, a short line of text displayed above the heading, to a m
 ```blade
 <x-filament::modal>
     <x-slot name="eyebrow">
-        Edit post
+        Publish post
     </x-slot>
 
     <x-slot name="heading">
@@ -95,7 +95,9 @@ You can add an eyebrow, a short line of text displayed above the heading, to a m
 </x-filament::modal>
 ```
 
-The eyebrow is only rendered when the modal has a heading, and it is not part of the modal's accessible name.
+The eyebrow requires a heading and is not rendered when you use a custom `header` slot. The modal's accessible name comes from the heading, not the eyebrow.
+
+<AutoScreenshot name="components/modal/eyebrow" alt="A publish confirmation modal with an eyebrow above the post title" />
 
 ## Adding an icon to a modal
 
