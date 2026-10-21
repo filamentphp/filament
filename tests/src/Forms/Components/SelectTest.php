@@ -5,6 +5,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
@@ -17,6 +18,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Artisan;
@@ -1135,7 +1137,25 @@ describe('relationship options and search', function (): void {
             });
     });
 
-    it('can resolve multiple relationship labels for numeric-looking string primary keys', function (): void {
+    it('can read its state in a relationship name callback', function (bool $usesGet): void {
+        $team = Team::factory()->create();
+
+        Schema::make(Livewire::make())
+            ->model(User::class)
+            ->statePath('data')
+            ->components([
+                $select = Select::make('team_id')
+                    ->relationship($usesGet
+                        ? static fn (Get $get): string => $get('team_id') ? 'team' : 'posts'
+                        : static fn ($state): string => $state ? 'team' : 'posts', 'name'),
+            ])
+            ->fill(['team_id' => (string) $team->getKey()]);
+
+        expect($select->getState())->toBe($team->getKey())
+            ->and($select->getOptionLabel())->toBe($team->name);
+    })->with(['`$state`' => false, '`Get`' => true]);
+
+    it('preserves numeric-looking string primary keys when resolving relationship labels', function (bool $isMultiple): void {
         DatabaseSchema::create('select_categories', function (Blueprint $table): void {
             $table->string('id')->primary();
             $table->string('name');
@@ -1148,21 +1168,25 @@ describe('relationship options and search', function (): void {
                 ['id' => 'ABC', 'name' => 'Alphabetic category'],
             ]);
 
+            $fieldName = $isMultiple ? 'children' : 'parent_id';
+
             Schema::make(Livewire::make())
                 ->model(SelectCategoryWithStringKey::class)
                 ->statePath('data')
                 ->components([
-                    $select = Select::make('children')
-                        ->relationship('children', 'name')
-                        ->multiple(),
+                    $select = Select::make($fieldName)
+                        ->relationship($isMultiple ? 'children' : 'parent', 'name')
+                        ->multiple($isMultiple),
                 ])
-                ->fill(['children' => ['123']]);
+                ->fill([$fieldName => $isMultiple ? ['123'] : '123']);
 
-            expect($select->getOptionLabels())->toBe([123 => 'Numeric category']);
+            expect($isMultiple ? $select->getOptionLabels() : $select->getOptionLabel())
+                ->toBe($isMultiple ? [123 => 'Numeric category'] : 'Numeric category');
+            expect($select->getState())->toBe($isMultiple ? ['123'] : '123');
         } finally {
             DatabaseSchema::dropIfExists('select_categories');
         }
-    });
+    })->with(['single' => false, 'multiple' => true]);
 
     it('returns empty array for `getOptions()` when relationship is searchable without preload', function (): void {
         User::factory()->count(3)->create();
@@ -4091,5 +4115,10 @@ class SelectCategoryWithStringKey extends Model
     public function children(): HasMany
     {
         return $this->hasMany(self::class, 'parent_id');
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'parent_id');
     }
 }

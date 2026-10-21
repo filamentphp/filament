@@ -133,6 +133,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected bool $shouldIgnoreRelationshipRecord = false;
 
+    protected bool $isResolvingRelationshipForStateCasts = false;
+
     protected ?Collection $cachedRelationshipRecords = null;
 
     /**
@@ -1748,11 +1750,24 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             return parent::getDefaultStateCasts();
         }
 
-        if ($this->isMultiple()) {
-            return [app(OptionsArrayStateCast::class)];
+        $shouldCastToInteger = true;
+
+        // Relationship name callbacks may read this field's state, so nested reads use the default cast.
+        if (! $this->isResolvingRelationshipForStateCasts) {
+            $this->isResolvingRelationshipForStateCasts = true;
+
+            try {
+                $shouldCastToInteger = (! $this->hasRelationship()) || ($this->getRelationship()->getRelated()->getKeyType() !== 'string');
+            } finally {
+                $this->isResolvingRelationshipForStateCasts = false;
+            }
         }
 
-        return [app(OptionStateCast::class, ['isNullable' => true])];
+        if ($this->isMultiple()) {
+            return [app(OptionsArrayStateCast::class, ['shouldCastToInteger' => $shouldCastToInteger])];
+        }
+
+        return [app(OptionStateCast::class, ['isNullable' => true, 'shouldCastToInteger' => $shouldCastToInteger])];
     }
 
     /**
