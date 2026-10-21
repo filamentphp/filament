@@ -34,6 +34,7 @@ class TableReorderingBrowserTest extends Page implements Tables\Contracts\HasTab
             ->contentGrid($this->grid ? ['md' => 2] : null)
             ->recordTitleAttribute('title')
             ->reorderable('sort')
+            ->reorderAnimationDuration(0)
             ->authorizeReorder($this->authorized)
             ->defaultSort('sort')
             ->paginated(false)
