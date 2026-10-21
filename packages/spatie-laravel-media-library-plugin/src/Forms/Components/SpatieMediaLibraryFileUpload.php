@@ -88,7 +88,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             }
 
             /** @var ?Media $media */
-            $media = $component->getRecord()->getRelationValue('media')->firstWhere('uuid', $file);
+            $media = $component->getRecord()->getRelationValue('media')->first(static fn (Media $media): bool => strtolower($media->uuid) === strtolower($file));
 
             $url = null;
 
@@ -157,18 +157,18 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         });
 
         $this->reorderUploadedFilesUsing(static function (SpatieMediaLibraryFileUpload $component, ?Model $record, array $rawState): array {
-            $uuids = array_filter(array_keys($rawState));
+            $uuids = array_map(strtolower(...), array_filter(array_keys($rawState)));
 
             $collectionName = $component->getCollection() ?? 'default';
 
-            $recordMediaUuids = $record?->getRelationValue('media')
+            $recordMediaIds = $record?->getRelationValue('media')
                 ?->where('collection_name', $collectionName)
-                ?->pluck('uuid')
+                ?->mapWithKeys(static fn (Media $media): array => [strtolower($media->uuid) => $media->getKey()])
                 ?->all() ?? [];
 
             $uuids = array_values(array_filter(
                 $uuids,
-                static fn (string $uuid): bool => in_array($uuid, $recordMediaUuids, strict: true),
+                static fn (string $uuid): bool => array_key_exists($uuid, $recordMediaIds),
             ));
 
             if (empty($uuids)) {
@@ -178,12 +178,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $mediaClass = ($record && method_exists($record, 'getMediaModel')) ? $record->getMediaModel() : null;
             $mediaClass ??= config('media-library.media_model', Media::class);
 
-            $mappedIds = $mediaClass::query()->whereIn('uuid', $uuids)->pluck(app($mediaClass)->getKeyName(), 'uuid')->toArray();
-
-            $mediaClass::setNewOrder([
-                ...array_flip($uuids),
-                ...$mappedIds,
-            ]);
+            $mediaClass::setNewOrder(array_map(static fn (string $uuid) => $recordMediaIds[$uuid], array_values(array_unique($uuids))));
 
             return $rawState;
         });
@@ -262,9 +257,11 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         /** @var Model&HasMedia $record */
         $record = $this->getRecord();
 
+        $uuids = array_map(strtolower(...), array_keys($this->getRawState() ?? []));
+
         $record
             ->getMedia($this->getCollection() ?? 'default')
-            ->whereNotIn('uuid', array_keys($this->getRawState() ?? []))
+            ->reject(static fn (Media $media): bool => in_array(strtolower($media->uuid), $uuids, strict: true))
             ->when($this->hasMediaFilter(), fn (Collection $media): Collection => $this->filterMedia($media))
             ->each(fn (Media $media) => $media->delete());
     }

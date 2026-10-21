@@ -25,6 +25,9 @@ class Post extends Model
     protected function casts(): array
     {
         return [
+            'author_id' => 'integer',
+            'rating' => 'integer',
+            'sort' => 'integer',
             'string_backed_enum' => StringBackedEnum::class,
             'is_published' => 'boolean',
             'tags' => 'array',

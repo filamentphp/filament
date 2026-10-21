@@ -7,8 +7,10 @@ use Filament\Actions\Imports\Models\Import;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 
@@ -52,8 +54,9 @@ class DownloadPolicyWithoutView {}
 
 class DownloadCustomUser extends User
 {
-    // Reuse a separate fixture table to exercise colliding IDs across user models.
-    protected $table = 'teams';
+    public $incrementing = false;
+
+    protected $table = 'download_custom_users';
 }
 
 beforeEach(function (): void {
@@ -182,6 +185,13 @@ it('retains owner authorization when a registered policy has no `view()` method'
 
 it('distinguishes a custom owner model from a default user with the same ID', function (string $type, bool $polymorphic): void {
     [$download, $route, $parameters, $content] = createSensitiveDownload($type, $this->owner);
+
+    Schema::create('download_custom_users', function (Blueprint $table): void {
+        $table->bigInteger('id')->primary();
+        $table->string('name');
+        $table->rememberToken();
+        $table->timestamps();
+    });
 
     $customOwner = DownloadCustomUser::create(['id' => $this->owner->getKey(), 'name' => 'Custom owner']);
 
