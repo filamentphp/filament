@@ -161,14 +161,15 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
             $collectionName = $component->getCollection() ?? 'default';
 
-            $recordMediaIds = $record?->getRelationValue('media')
+            $recordMediaUuids = $record?->getRelationValue('media')
                 ?->where('collection_name', $collectionName)
-                ?->mapWithKeys(static fn (Media $media): array => [strtolower($media->uuid) => $media->getKey()])
+                ?->pluck('uuid')
+                ?->mapWithKeys(static fn (string $uuid): array => [strtolower($uuid) => $uuid])
                 ?->all() ?? [];
 
             $uuids = array_values(array_filter(
                 $uuids,
-                static fn (string $uuid): bool => array_key_exists($uuid, $recordMediaIds),
+                static fn (string $uuid): bool => array_key_exists($uuid, $recordMediaUuids),
             ));
 
             if (empty($uuids)) {
@@ -178,7 +179,19 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $mediaClass = ($record && method_exists($record, 'getMediaModel')) ? $record->getMediaModel() : null;
             $mediaClass ??= config('media-library.media_model', Media::class);
 
-            $mediaClass::setNewOrder(array_map(static fn (string $uuid) => $recordMediaIds[$uuid], array_values(array_unique($uuids))));
+            $mappedIds = array_change_key_case($mediaClass::query()
+                ->whereIn('uuid', array_map(static fn (string $uuid): string => $recordMediaUuids[$uuid], $uuids))
+                ->pluck(app($mediaClass)->getKeyName(), 'uuid')
+                ->all());
+            $orderedIds = [];
+
+            foreach (array_unique($uuids) as $uuid) {
+                if (array_key_exists($uuid, $mappedIds)) {
+                    $orderedIds[] = $mappedIds[$uuid];
+                }
+            }
+
+            $mediaClass::setNewOrder($orderedIds);
 
             return $rawState;
         });

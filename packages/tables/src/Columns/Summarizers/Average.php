@@ -5,6 +5,7 @@ namespace Filament\Tables\Columns\Summarizers;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Grammars\SqlServerGrammar;
 use Illuminate\Support\Str;
+use LogicException;
 
 class Average extends Summarizer
 {
@@ -19,9 +20,26 @@ class Average extends Summarizer
 
     public function summarize(Builder $query, string $attribute): int | float | null
     {
-        if ($query->getGrammar() instanceof SqlServerGrammar) {
-            $attribute = $query->raw('cast(' . $query->getGrammar()->wrap($attribute) . ' as float)');
+        if (! ($query->getGrammar() instanceof SqlServerGrammar)) {
+            return $query->avg($attribute);
         }
+
+        $query = clone $query;
+
+        $query->beforeQuery(function (Builder $query): void {
+            if ($query->distinct && ($query->unions || $query->havings)) {
+                throw new LogicException('SQL Server average summaries do not support combining distinct() with union(), unionAll(), or having() on the summary query.');
+            }
+
+            $column = $query->getGrammar()->columnize(is_array($query->distinct) ? $query->distinct : $query->aggregate['columns']);
+            $arguments = $this->getSqlServerAverageArguments($column, (bool) $query->distinct);
+
+            $query->aggregate = [
+                'function' => 'coalesce',
+                'columns' => array_map($query->raw(...), $arguments),
+            ];
+            $query->distinct = false;
+        });
 
         return $query->avg($attribute);
     }
@@ -34,11 +52,28 @@ class Average extends Summarizer
         $column = $this->getQuery()->getGrammar()->wrap($column);
 
         if ($this->getQuery()->getGrammar() instanceof SqlServerGrammar) {
-            $column = "cast({$column} as float)";
+            $arguments = implode(', ', $this->getSqlServerAverageArguments($column));
+
+            return [
+                $this->getSelectAlias() => "coalesce({$arguments})",
+            ];
         }
 
         return [
             $this->getSelectAlias() => "avg({$column})",
+        ];
+    }
+
+    /**
+     * @return array<string>
+     */
+    protected function getSqlServerAverageArguments(string $column, bool $isDistinct = false): array
+    {
+        $distinct = $isDistinct ? 'distinct ' : '';
+
+        return [
+            "avg({$distinct}case when sql_variant_property({$column}, 'BaseType') not in ('tinyint', 'smallint', 'int', 'bigint') then {$column} end)",
+            "avg({$distinct}cast({$column} as float))",
         ];
     }
 
