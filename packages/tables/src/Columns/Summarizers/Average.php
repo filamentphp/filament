@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Summarizers;
 
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\Grammars\SqlServerGrammar;
 use Illuminate\Support\Str;
 
 class Average extends Summarizer
@@ -18,6 +19,10 @@ class Average extends Summarizer
 
     public function summarize(Builder $query, string $attribute): int | float | null
     {
+        if ($query->getGrammar() instanceof SqlServerGrammar) {
+            $attribute = $query->raw('cast(' . $query->getGrammar()->wrap($attribute) . ' as float)');
+        }
+
         return $query->avg($attribute);
     }
 
@@ -27,6 +32,10 @@ class Average extends Summarizer
     public function getSelectStatements(string $column): array
     {
         $column = $this->getQuery()->getGrammar()->wrap($column);
+
+        if ($this->getQuery()->getGrammar() instanceof SqlServerGrammar) {
+            $column = "cast({$column} as float)";
+        }
 
         return [
             $this->getSelectAlias() => "avg({$column})",

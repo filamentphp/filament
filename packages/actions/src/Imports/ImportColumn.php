@@ -586,7 +586,10 @@ class ImportColumn extends Component
                     // Preserve it without running the result callbacks that `first()` would invoke.
                     $query = $query->toBase();
                     $query->applyBeforeQueryCallbacks();
-                    $query->limit(1);
+
+                    if ($query->groupLimit === null) {
+                        $query->limit(1);
+                    }
 
                     $hasRelatedRecord = $query->getConnection()->selectOne(
                         $query->toSql(),

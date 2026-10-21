@@ -179,7 +179,7 @@ describe('state from media', function (): void {
         });
 
         livewire(SpatieMediaLibraryTableForm::class)
-            ->assertSeeHtml('alt="media-' . $media->getKey() . '-' . $media->uuid . '"');
+            ->assertSeeHtml('alt="media-' . $media->getKey() . '-' . $media->fresh()->uuid . '"');
     });
 
     it('can render column for a record without media', function (): void {

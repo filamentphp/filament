@@ -126,14 +126,7 @@ it('can sort posts by author', function (): void {
 });
 
 it('can sort posts with default sort key', function (): void {
-
-    $faker = fake()->unique();
-    Post::factory()->count(10)->state(function () use ($faker) {
-        return [
-            'id' => $faker->randomDigit(),
-            'title' => 'Lorem Ipsum',
-        ];
-    })->create();
+    Post::factory()->count(10)->create(['title' => 'Lorem Ipsum']);
 
     $sortedAsc = Post::query()->orderBy('title')->orderBy('id')->get();
     $sortedDesc = Post::query()->orderByDesc('title')->orderByDesc('id')->get();

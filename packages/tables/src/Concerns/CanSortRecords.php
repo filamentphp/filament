@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Grammars\SqlServerGrammar;
 
 trait CanSortRecords
 {
@@ -126,6 +127,17 @@ trait CanSortRecords
 
         if ($defaultSort instanceof Builder) {
             $query = $defaultSort;
+        }
+
+        if ($query->getQuery()->getGrammar() instanceof SqlServerGrammar) {
+            $query->getQuery()->orders = collect($query->getQuery()->orders)
+                ->unique(static function (array $order, int $index) use ($query): string {
+                    $column = $order['column'] ?? null;
+
+                    return is_string($column) ? $query->qualifyColumn($column) : "expression:{$index}";
+                })
+                ->values()
+                ->all();
         }
 
         if (! $this->getTable()->hasDefaultKeySort()) {

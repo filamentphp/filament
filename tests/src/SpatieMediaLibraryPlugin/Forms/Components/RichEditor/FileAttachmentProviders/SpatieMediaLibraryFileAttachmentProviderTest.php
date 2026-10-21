@@ -273,7 +273,7 @@ describe('media operations', function (): void {
 
         expect($uuid)->toBeString();
         expect($record->getMedia('content'))->toHaveCount(1);
-        expect($record->getMedia('content')->first()->uuid)->toBe($uuid);
+        expect(strtolower($record->getMedia('content')->first()->uuid))->toBe(strtolower($uuid));
     });
 
     it('uses `hashName()` to derive the stored file attachment extension from its MIME type', function (): void {
@@ -327,6 +327,6 @@ describe('media operations', function (): void {
         $record->refresh();
 
         expect($record->getMedia('content'))->toHaveCount(1);
-        expect($record->getMedia('content')->first()->uuid)->toBe($media2->uuid);
+        expect($record->getMedia('content')->first()->uuid)->toBe($media2->fresh()->uuid);
     });
 });
