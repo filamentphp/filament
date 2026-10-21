@@ -4,11 +4,14 @@ use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileA
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Tests\Fixtures\Models\MediaPost;
+use Filament\Tests\Fixtures\Models\MediaPostWithConversions;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Spatie\MediaLibrary\Conversions\ImageGenerators\Image;
 
 uses(TestCase::class);
 
@@ -44,6 +47,34 @@ describe('collection', function (): void {
             ->collection(null);
 
         expect($provider->getCollection())->toBe('content');
+    });
+});
+
+describe('conversion', function (): void {
+    it('returns `null` for `getConversion()` by default', function (): void {
+        expect(SpatieMediaLibraryFileAttachmentProvider::make()->getConversion())->toBeNull();
+    });
+
+    it('can set `conversion()`', function (): void {
+        $provider = SpatieMediaLibraryFileAttachmentProvider::make();
+
+        expect($provider->conversion('thumb'))->toBe($provider)
+            ->and($provider->getConversion())->toBe('thumb');
+    });
+
+    it('can set `conversion()` with a `Closure`', function (): void {
+        $provider = SpatieMediaLibraryFileAttachmentProvider::make()
+            ->conversion(static fn (): string => 'thumb');
+
+        expect($provider->getConversion())->toBe('thumb');
+    });
+
+    it('can clear `conversion()` with `null`', function (): void {
+        $provider = SpatieMediaLibraryFileAttachmentProvider::make()
+            ->conversion('thumb')
+            ->conversion(null);
+
+        expect($provider->getConversion())->toBeNull();
     });
 });
 
@@ -237,6 +268,62 @@ describe('media operations', function (): void {
         expect($url)->toBeString();
         expect($url)->toContain('attachment.jpg');
     });
+
+    it('resolves available conversions and falls back to original attachments', function (?string $conversion, bool $isQueued, string $expectedDisk, string $expectedFile, ?string $visibility): void {
+        $this->freezeTime();
+
+        config()->set('media-library.image_generators', [Image::class]);
+        config()->set('media-library.queue_conversions_by_default', $isQueued);
+        config()->set('media-library.version_urls', false);
+        config()->set('filesystems.disks.conversions', [
+            'driver' => 'local',
+        ]);
+
+        Storage::fake('public', ['url' => 'https://originals.example']);
+        Storage::fake('conversions', ['url' => 'https://conversions.example']);
+
+        if ($isQueued) {
+            Queue::fake();
+        }
+
+        foreach (['public', 'conversions'] as $diskName) {
+            // Laravel binds the URL builder to the filesystem adapter, so it cannot be `static`.
+            Storage::disk($diskName)->buildTemporaryUrlsUsing(
+                fn (string $path, DateTimeInterface $expiration): string => ($visibility === 'private')
+                    ? throw new RuntimeException('This driver does not support creating temporary URLs.')
+                    : "https://signed-{$diskName}.example/{$path}?expires={$expiration->getTimestamp()}",
+            );
+        }
+
+        $record = MediaPostWithConversions::create(['title' => 'Post with an attachment']);
+        $media = $record->addMedia(UploadedFile::fake()->image('attachment.jpg'))
+            ->storingConversionsOnDisk('conversions')
+            ->toMediaCollection('content');
+
+        $provider = SpatieMediaLibraryFileAttachmentProvider::make()
+            ->conversion($conversion);
+        RichContentAttribute::make($record->fresh(), 'content')
+            ->fileAttachmentsVisibility($visibility)
+            ->fileAttachmentProvider($provider);
+
+        $expectedPath = "{$media->getKey()}/{$expectedFile}";
+        Storage::disk($expectedDisk)->assertExists($expectedPath);
+
+        $expectedUrl = ($visibility === null)
+            ? "https://signed-{$expectedDisk}.example/{$expectedPath}?expires=" . now()->addMinutes(30)->endOfHour()->getTimestamp()
+            : (($expectedDisk === 'public') ? 'https://originals.example/' : 'https://conversions.example/') . $expectedPath;
+
+        expect($provider->getFileAttachmentUrl($media->uuid))->toBe($expectedUrl);
+    })->with([
+        'generated conversion' => ['thumb', false, 'conversions', 'conversions/attachment-thumb.webp'],
+        'queued conversion' => ['thumb', true, 'public', 'attachment.jpg'],
+        'unregistered conversion' => ['missing', false, 'public', 'attachment.jpg'],
+        'no conversion' => [null, false, 'public', 'attachment.jpg'],
+    ])->with([
+        'public URLs' => ['public'],
+        'default private URLs' => [null],
+        'unsupported temporary URLs' => ['private'],
+    ]);
 
     it('returns `null` from `getFileAttachmentUrl()` for a non-existent UUID', function (): void {
         $record = MediaPost::factory()->create();

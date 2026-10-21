@@ -22,7 +22,7 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
 
     protected ?string $collection = null;
 
-    protected ?string $conversion = null;
+    protected string | Closure | null $conversion = null;
 
     protected bool | Closure $shouldPreserveFilenames = false;
 
@@ -45,7 +45,7 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
         return $this;
     }
 
-    public function conversion(?string $conversion): static
+    public function conversion(string | Closure | null $conversion): static
     {
         $this->conversion = $conversion;
 
@@ -123,20 +123,24 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
         }
 
         $fileAttachment = $media->get($file);
+        $conversion = $this->getConversion();
+
+        if (blank($conversion) || (! $fileAttachment->hasGeneratedConversion($conversion))) {
+            $conversion = '';
+        }
 
         if ($this->attribute->getFileAttachmentsVisibility() === 'private') {
             try {
                 return $fileAttachment->getTemporaryUrl(
                     now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
+                    $conversion,
                 );
             } catch (Throwable $exception) {
                 // This driver does not support creating temporary URLs.
             }
         }
 
-        return $this->conversion
-            ? $fileAttachment->getUrl($this->conversion)
-            : $fileAttachment->getUrl();
+        return $fileAttachment->getUrl($conversion);
     }
 
     public function saveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
@@ -180,6 +184,11 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
     public function getCollection(): string
     {
         return $this->collection ?? $this->attribute->getName();
+    }
+
+    public function getConversion(): ?string
+    {
+        return $this->evaluate($this->conversion);
     }
 
     public function shouldPreserveFilenames(): bool

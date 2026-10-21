@@ -239,7 +239,7 @@ class Post extends Model implements HasRichContent
 }
 ```
 
-You can specify a media conversion to be used for the rendered attachments using the `conversion()` method:
+You can specify a [media conversion registered on your model](https://spatie.be/docs/laravel-medialibrary/v11/converting-images/defining-conversions) to use for attachments in the editor and rendered rich content using the `conversion()` method:
 
 ```php
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
@@ -247,6 +247,8 @@ use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibr
 SpatieMediaLibraryFileAttachmentProvider::make()
     ->conversion('rich-editor-attachments')
 ```
+
+If the conversion has not been generated for an attachment, for example while it is queued, the original file is used instead. Private attachments use temporary URLs for the selected conversion, when supported by the storage disk. Omit `conversion()` or pass `null` to use the original files.
 
 > Before preserving original filenames, please review the [security implications of controlling file names](https://filamentphp.com/docs/forms/file-upload#security-implications-of-controlling-file-names). Only enable this feature for trusted users.
 
