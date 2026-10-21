@@ -10,6 +10,7 @@ class OptionStateCast implements StateCast
 {
     public function __construct(
         protected bool $isNullable = true,
+        protected bool $shouldCastToInteger = true,
     ) {}
 
     public function get(mixed $state): string | int | null
@@ -32,6 +33,10 @@ class OptionStateCast implements StateCast
 
         if ($state instanceof Stringable) {
             $state = (string) $state;
+        }
+
+        if (! $this->shouldCastToInteger) {
+            return strval($state);
         }
 
         if (
