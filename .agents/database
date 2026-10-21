@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+action="${1:-}"
+database="${2:-}"
+repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+if [[ "$action" != start && "$action" != stop && "$action" != run ]] ||
+    [[ "$database" != mysql && "$database" != pgsql && "$database" != sqlsrv ]]; then
+    echo 'Usage: .agents/database start|stop mysql|pgsql|sqlsrv' >&2
+    exit 1
+fi
+
+case "$database" in
+    mysql)
+        image=mysql:8.0
+        port=3306
+        service=mysql
+        volume_path=/var/lib/mysql
+        container_arguments=(--env MYSQL_ALLOW_EMPTY_PASSWORD=yes --env MYSQL_ROOT_HOST=% --env MYSQL_DATABASE=testing)
+        query=(mysql --host=127.0.0.1 --user=root --database=testing --execute='SELECT 1')
+        ;;
+    pgsql)
+        image=postgres:15
+        port=5432
+        service=postgres
+        volume_path=/var/lib/postgresql/data
+        container_arguments=(--env POSTGRES_HOST_AUTH_METHOD=trust --env POSTGRES_DB=testing)
+        query=(psql --host=127.0.0.1 --username=postgres --dbname=testing --command='SELECT 1')
+        ;;
+    sqlsrv)
+        image=mcr.microsoft.com/mssql/server:2022-latest
+        port=1433
+        service=sqlserver
+        volume_path=/var/opt/mssql
+        container_arguments=(--env ACCEPT_EULA=Y --env MSSQL_PID=Developer --env MSSQL_SA_PASSWORD=Filament_Test123! --env MSSQL_MEMORY_LIMIT_MB=2048)
+        query=(bash -c 'SQLCMDPASSWORD="$MSSQL_SA_PASSWORD" /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -C -b -l 1 -Q "SELECT 1"')
+        ;;
+esac
+
+container="filament-$service"
+
+if [[ "$action" == stop ]]; then
+    amp orb service stop "$service"
+
+    # Keep Docker available if another database or unrelated container is using it.
+    if sudo docker info >/dev/null 2>&1 && [[ -z "$(sudo docker ps --quiet)" ]]; then
+        amp orb service stop docker-daemon
+    fi
+
+    exit 0
+fi
+
+if [[ "$action" == start ]]; then
+    amp orb service start docker-daemon --command 'sudo dockerd' --cwd "$repository_root"
+fi
+
+for attempt in {1..60}; do
+    if sudo docker info >/dev/null 2>&1; then
+        break
+    fi
+
+    if (( attempt == 60 )); then
+        echo 'Docker did not become ready.' >&2
+        exit 1
+    fi
+
+    sleep 1
+done
+
+if [[ "$action" == start ]]; then
+    amp orb service start "$service" --port "$port" --cwd "$repository_root" \
+        --command ".agents/database run $database"
+
+    for attempt in {1..120}; do
+        if sudo docker exec "$container" "${query[@]}" >/dev/null 2>&1; then
+            printf '%s is ready. Run composer test:%s or composer test:serial:%s.\n' "$service" "$database" "$database"
+            exit 0
+        fi
+
+        sleep 1
+    done
+
+    echo "$service did not become ready. Inspect: amp orb service logs $service" >&2
+    exit 1
+fi
+
+if [[ "$database" == sqlsrv ]] && ! sudo docker image inspect "$image" >/dev/null 2>&1; then
+    sudo docker load --input /var/cache/filament/sqlserver-2022.tar
+fi
+
+trap 'sudo docker stop --time 10 "$container" >/dev/null 2>&1 || true' EXIT
+trap 'exit 0' INT TERM
+
+if sudo docker container inspect "$container" >/dev/null 2>&1; then
+    sudo docker attach "$container" &
+else
+    sudo docker run --rm --name "$container" \
+        --publish "127.0.0.1:${PORT:-$port}:$port" \
+        --volume "$container:$volume_path" \
+        "${container_arguments[@]}" \
+        --cpus=2 \
+        "$image" &
+fi
+
+# Waiting on the child lets Bash run the stop trap immediately on service shutdown.
+wait "$!"

@@ -1,11 +1,4 @@
 services:
-  docker-daemon:
-    command: sudo dockerd
-    platforms: [linux]
-  sqlserver:
-    command: .agents/sqlserver
-    port: 1433
-    platforms: [linux]
   demo:
     command: >-
       php artisan optimize:clear &&
