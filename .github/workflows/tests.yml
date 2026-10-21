@@ -39,6 +39,11 @@ jobs:
             db: pgsql
             dependency-version: prefer-stable
           - php: 8.5
+            laravel: 13.*
+            testbench: 11.*
+            db: sqlsrv
+            dependency-version: prefer-stable
+          - php: 8.5
             laravel: 12.*
             testbench: 10.*
             db: mysql
@@ -48,6 +53,11 @@ jobs:
             testbench: 10.*
             db: pgsql
             dependency-version: prefer-stable
+          - php: 8.5
+            laravel: 12.*
+            testbench: 10.*
+            db: sqlsrv
+            dependency-version: prefer-stable
           - php: 8.4
             laravel: 11.*
             testbench: 9.*
@@ -57,6 +67,11 @@ jobs:
             laravel: 11.*
             testbench: 9.*
             db: pgsql
+            dependency-version: prefer-stable
+          - php: 8.4
+            laravel: 11.*
+            testbench: 9.*
+            db: sqlsrv
             dependency-version: prefer-stable
         exclude:
           - laravel: 11.*
@@ -81,6 +96,15 @@ jobs:
         ports:
           - 5432:5432
         options: --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=12
+      sqlserver:
+        image: ${{ matrix.db == 'sqlsrv' && 'mcr.microsoft.com/mssql/server:2022-latest' || '' }}
+        env:
+          ACCEPT_EULA: Y
+          MSSQL_PID: Developer
+          MSSQL_SA_PASSWORD: Filament_Test123!
+          MSSQL_MEMORY_LIMIT_MB: 2048
+        ports:
+          - 127.0.0.1:1433:1433
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -93,11 +117,21 @@ jobs:
           restore-keys: |
             composer-${{ matrix.php }}-${{ matrix.laravel }}-
             composer-${{ matrix.php }}-
+      - name: Install Microsoft ODBC driver
+        if: matrix.db == 'sqlsrv'
+        run: |
+          source /etc/os-release
+          configuration_package="$(mktemp --suffix=.deb)"
+          curl -fsSL "https://packages.microsoft.com/config/ubuntu/$VERSION_ID/packages-microsoft-prod.deb" -o "$configuration_package"
+          sudo dpkg -i "$configuration_package"
+          rm "$configuration_package"
+          sudo apt-get update
+          sudo ACCEPT_EULA=Y apt-get install -y --no-install-recommends msodbcsql18 unixodbc-dev
       - name: Set up PHP
         uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
         with:
           php-version: ${{ matrix.php }}
-          extensions: mbstring, pdo, pdo_sqlite, pdo_mysql, pdo_pgsql
+          extensions: mbstring, pdo, pdo_sqlite, pdo_mysql, pdo_pgsql${{ matrix.db == 'sqlsrv' && ', pdo_sqlsrv' || '' }}
           coverage: none
       - name: Install dependencies
         run: |
@@ -152,16 +186,32 @@ jobs:
             echo "Waiting for Postgres ($i) ..." && sleep 2
           done
           echo "Postgres did not become ready in time" && exit 1
+      - name: Wait for SQL Server and create testing database
+        if: matrix.db == 'sqlsrv'
+        env:
+          SQLSERVER_CONTAINER_ID: ${{ job.services.sqlserver.id }}
+          SQLCMDPASSWORD: Filament_Test123!
+        run: |
+          for attempt in {1..60}; do
+            if docker exec -e SQLCMDPASSWORD "$SQLSERVER_CONTAINER_ID" /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -C -b -l 5 -Q "SELECT 1"; then
+              docker exec -e SQLCMDPASSWORD "$SQLSERVER_CONTAINER_ID" /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -C -b -Q "CREATE DATABASE [testing]"
+              exit 0
+            fi
+            echo "Waiting for SQL Server ($attempt) ..." && sleep 2
+          done
+          echo "SQL Server did not become ready in time" && exit 1
       - name: Cache Blade views
         run: ./vendor/bin/testbench view:cache
       - name: Execute tests (parallel)
         run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --parallel --exclude-group=serial
         env:
           DB_PASSWORD: password
+          SQLSRV_PASSWORD: Filament_Test123!
       - name: Execute serial tests
         run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --group=serial
         env:
           DB_PASSWORD: password
+          SQLSRV_PASSWORD: Filament_Test123!
       - name: Upload failed browser screenshots
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

@@ -2,4 +2,17 @@
 
 set -euo pipefail
 
-# Long-running preview services are supervised through `.amp/services.yaml`.
+# Restore the supervised database and preview services after activation or resume.
+amp orb services ensure
+
+for attempt in {1..30}; do
+    if sudo docker exec filament-sqlserver bash -c \
+        'SQLCMDPASSWORD="$MSSQL_SA_PASSWORD" /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -C -b -l 1 -Q "SELECT 1"' >/dev/null 2>&1; then
+        exit 0
+    fi
+
+    sleep 1
+done
+
+echo 'SQL Server did not become ready to execute test queries.' >&2
+exit 1
