@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+for attempt in {1..60}; do
+    if sudo docker info >/dev/null 2>&1; then
+        break
+    fi
+
+    if (( attempt == 60 )); then
+        echo 'Docker did not become ready for SQL Server.' >&2
+        exit 1
+    fi
+
+    sleep 1
+done
+
+image=mcr.microsoft.com/mssql/server:2022-latest
+
+if ! sudo docker image inspect "$image" >/dev/null 2>&1; then
+    sudo docker load --input /var/cache/filament/sqlserver-2022.tar
+fi
+
+trap 'sudo docker stop --time 10 filament-sqlserver >/dev/null 2>&1 || true' EXIT
+trap 'exit 0' INT TERM
+
+if sudo docker container inspect filament-sqlserver >/dev/null 2>&1; then
+    sudo docker attach filament-sqlserver &
+else
+    sudo docker run --rm --name filament-sqlserver \
+        --publish "127.0.0.1:${PORT:-1433}:1433" \
+        --volume filament-sqlserver:/var/opt/mssql \
+        --env ACCEPT_EULA=Y \
+        --env MSSQL_PID=Developer \
+        --env MSSQL_SA_PASSWORD=Filament_Test123! \
+        --env MSSQL_MEMORY_LIMIT_MB=2048 \
+        --cpus=2 \
+        "$image" &
+fi
+
+# Waiting on the child lets Bash run the stop trap immediately on service shutdown.
+wait "$!"
