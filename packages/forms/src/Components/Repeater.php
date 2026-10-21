@@ -2275,6 +2275,11 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
     protected function getReorderingDescriptionHtml(array $items): string
     {
         $html = '<span wire:ignore x-ref="reorderStatus" class="fi-sr-only" role="status" aria-live="polite" aria-atomic="true"></span>';
+
+        // The item descriptions are wrapped in a single element so that adding or removing an item does not change the
+        // number of siblings before the items list. Otherwise, Livewire replaces the whole list instead of morphing it,
+        // which reinitializes every item's components and discards client-side state, such as unsaved file uploads.
+        $html .= '<div class="fi-sr-only">';
         $position = 0;
 
         foreach ($items as $itemKey => $item) {
@@ -2293,6 +2298,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
             $description = __('filament-forms::components.repeater.reordering.position', ['label' => $label, 'position' => ++$position, 'count' => count($items)]);
             $html .= '<span class="fi-sr-only" data-reorder-description="' . e($itemKey) . '" data-reorder-label="' . e($label) . '" id="' . e($this->getId() . '-item-' . md5((string) $itemKey)) . '">' . e($description) . '</span>';
         }
+
+        $html .= '</div>';
 
         return $html;
     }
