@@ -7,7 +7,7 @@
 }
 
 .fi-page-sub-navigation-sidebar-ctn {
-    @apply hidden w-72 flex-col md:flex;
+    @apply hidden w-(--sub-navigation-width) shrink-0 flex-col md:flex;
 }
 
 .fi-page-sub-navigation-sidebar {

@@ -288,6 +288,11 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()?->getSubNavigationPosition();
     }
 
+    public function getSubNavigationWidth(): string
+    {
+        return $this->getCurrentOrDefaultPanel()->getSubNavigationWidth();
+    }
+
     /**
      * @param  array<mixed>  $parameters
      */

@@ -149,6 +149,35 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Customizing the sub-navigation width
+
+You can customize the width of the sub-navigation sidebar using the `subNavigationWidth()` method. The default width is `18rem`:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->subNavigationWidth('20rem');
+}
+```
+
+To size the sidebar to fit its navigation labels, you can use `max-content`:
+
+```php
+$panel->subNavigationWidth('max-content');
+```
+
+You can also pass a function to calculate the width dynamically:
+
+```php
+$panel->subNavigationWidth(static fn (): string => '20rem');
+```
+
+This setting applies when the sub-navigation position is `SubNavigationPosition::Start` or `SubNavigationPosition::End`. It does not affect top tabs or the mobile dropdown.
+
 ## Lifecycle hooks
 
 Hooks may be used to execute code during a panel's lifecycle. `bootUsing()` is a hook that gets run on every request that takes place within that panel. If you have multiple panels, only the current panel's `bootUsing()` will be run. The function gets run from middleware, after all service providers have been booted:
