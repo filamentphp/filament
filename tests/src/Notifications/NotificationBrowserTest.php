@@ -29,7 +29,6 @@ it('delivers notifications once across redirects', function (string $redirect): 
 it('dispatches `notificationClosed` when inline notifications expire', function (): void {
     visit('/notification-browser-test')
         ->click('[data-testid="show-inline-notification"]')
-        ->assertVisible('[data-testid="inline-notification"] .fi-inline')
         ->assertSeeIn('[data-testid="inline-notification-expiry"]', 'Expired');
 });
 
@@ -51,19 +50,12 @@ it('restores focus only after explicit dismissal', function (): void {
         ->assertPresent($origin . ':focus');
 });
 
-it('does not move focus on passive expiry or external closure', function (): void {
+it('does not move focus on external closure', function (): void {
     $notification = '.fi-no-notification';
-    $timedOrigin = '[data-testid="send-short-timed-notification"]';
     $persistentOrigin = '[data-testid="send-persistent-notification"]';
     $externalClose = '[data-testid="close-notification-externally"]';
 
     visit('/notification-browser-test')
-        ->click($timedOrigin)
-        ->assertVisible($notification)
-        ->keys($timedOrigin, 'Tab')
-        ->assertPresent($persistentOrigin . ':focus')
-        ->assertMissing($notification)
-        ->assertPresent($persistentOrigin . ':focus')
         ->click($persistentOrigin)
         ->assertVisible($notification)
         ->click($externalClose)
@@ -213,7 +205,7 @@ it('has no accessibility issues in an open action group menu in light and dark m
 
 it('removes notifications when navigating away', function (): void {
     visit('/notification-browser-test')
-        ->click('[data-testid="send-short-timed-notification"]')
+        ->click('[data-testid="send-persistent-notification"]')
         ->assertVisible('.fi-no-notification')
         ->click('[data-testid="navigate-away"]')
         ->assertPathIs('/')

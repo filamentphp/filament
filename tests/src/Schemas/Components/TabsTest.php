@@ -728,7 +728,9 @@ it('keeps non-scrollable `Tabs` in one keyboard sequence and accessible tablist'
         ->assertAttribute($overview, 'aria-selected', 'true')
         ->keys($overview, 'Escape');
 
-    $page->inDarkMode()->resize(375, 812)
+    $page = $page->inDarkMode();
+    $page->resize(375, 812)
+        ->assertVisible($trigger)
         ->keys($overview, 'ArrowRight')
         ->assertVisible($popup)
         ->assertPresent($contact . ':focus')

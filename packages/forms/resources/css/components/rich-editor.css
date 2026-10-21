@@ -388,6 +388,10 @@
             @apply overflow-x-auto;
         }
 
+        & li > .tableWrapper:where(:not(.fi-not-prose, .fi-not-prose *)) {
+            @apply my-4 first:mt-0 last:mb-0;
+        }
+
         &.resize-cursor {
             @apply cursor-col-resize cursor-ew-resize;
         }

@@ -1,8 +1,6 @@
 ---
 title: Text input column
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -14,7 +12,7 @@ use Filament\Tables\Columns\TextInputColumn;
 TextInputColumn::make('email')
 ```
 
-<AutoScreenshot name="tables/columns/text-input/simple" alt="Text input column" version="4.x" />
+<AutoScreenshot name="tables/columns/text-input/simple" alt="Text input column" />
 
 ## Validation
 
@@ -74,9 +72,9 @@ TextInputColumn::make('domain')
     ->suffix('.com')
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing static values, the `prefix()` and `suffix()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing static values, the `prefix()` and `suffix()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text-input/affix" alt="Text input column with affixes" version="4.x" />
+<AutoScreenshot name="tables/columns/text-input/affix" alt="Text input column with affixes" />
 
 ### Using icons as affixes
 
@@ -91,9 +89,9 @@ TextInputColumn::make('domain')
     ->suffixIcon(Heroicon::CheckCircle)
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing static values, the `prefixIcon()` and `suffixIcon()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing static values, the `prefixIcon()` and `suffixIcon()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text-input/prefix-icon" alt="Text input column with prefix icon" version="4.x" />
+<AutoScreenshot name="tables/columns/text-input/prefix-icon" alt="Text input column with prefix icon" />
 
 #### Setting the affix icon's color
 
@@ -108,9 +106,9 @@ TextInputColumn::make('status')
     ->suffixIconColor('success')
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns">As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text-input/suffix-icon-color" alt="Text input column with suffix icon in color" version="4.x" />
+<AutoScreenshot name="tables/columns/text-input/suffix-icon-color" alt="Text input column with suffix icon in color" />
 
 ## Lifecycle hooks
 

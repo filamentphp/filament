@@ -6,4 +6,14 @@ return [
 
     'breadcrumb' => '檢視',
 
+    'navigation_label' => '檢視',
+
+    'content' => [
+
+        'tab' => [
+            'label' => '檢視',
+        ],
+
+    ],
+
 ];

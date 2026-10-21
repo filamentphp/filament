@@ -9,7 +9,7 @@ use League\Uri\Components\Query;
 
 uses(TestCase::class);
 
-it('can verify an email change', function (): void {
+it('can verify an email change using current and legacy cache keys', function (string $cacheKeyFormat): void {
     $userToVerify = User::factory()->create();
     $newEmail = fake()->email();
 
@@ -19,7 +19,14 @@ it('can verify an email change', function (): void {
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 
     $verificationSignature = Query::new($verificationUrl)->get('signature');
-    cache()->put($verificationSignature, true, ttl: now()->addHour());
+
+    if ($cacheKeyFormat !== 'legacy') {
+        cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
+    }
+
+    if ($cacheKeyFormat !== 'current') {
+        cache()->put($verificationSignature, true, ttl: now()->addHour());
+    }
 
     $this
         ->actingAs($userToVerify)
@@ -30,7 +37,12 @@ it('can verify an email change', function (): void {
 
     expect($userToVerify->refresh())
         ->email->toBe($newEmail);
-});
+
+    expect(cache()->has("filament:auth:email_change:verification:{$verificationSignature}"))->toBeFalse()
+        ->and(cache()->has($verificationSignature))->toBeFalse();
+
+    $this->get($verificationUrl)->assertForbidden();
+})->with(['current', 'legacy', 'both']);
 
 it('can verify an email with a custom slug', function (): void {
     Filament::setCurrentPanel('slugs');
@@ -41,7 +53,7 @@ it('can verify an email with a custom slug', function (): void {
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 
     $verificationSignature = Query::new($verificationUrl)->get('signature');
-    cache()->put($verificationSignature, true, ttl: now()->addHour());
+    cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
 
     expect($userToVerify)
         ->email->not->toBe($newEmail)
@@ -66,7 +78,7 @@ it('cannot verify an email when signed in as another user', function (): void {
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 
     $verificationSignature = Query::new($verificationUrl)->get('signature');
-    cache()->put($verificationSignature, true, ttl: now()->addHour());
+    cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
 
     $anotherUser = User::factory()->create();
 
@@ -91,7 +103,7 @@ it('cannot verify an email change to an address that has been taken since the ve
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 
     $verificationSignature = Query::new($verificationUrl)->get('signature');
-    cache()->put($verificationSignature, true, ttl: now()->addHour());
+    cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
 
     $this
         ->actingAs($userToVerify)
@@ -104,7 +116,7 @@ it('cannot verify an email change to an address that has been taken since the ve
     expect($userToVerify->refresh())
         ->email->toBe($originalEmail);
 
-    expect(cache()->has($verificationSignature))
+    expect(cache()->has("filament:auth:email_change:verification:{$verificationSignature}"))
         ->toBeFalse();
 });
 
@@ -118,7 +130,7 @@ it('cannot verify an email change with the same URL twice', function (): void {
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 
     $verificationSignature = Query::new($verificationUrl)->get('signature');
-    cache()->put($verificationSignature, true, ttl: now()->addHour());
+    cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
 
     $this
         ->actingAs($userToVerify)
@@ -128,7 +140,7 @@ it('cannot verify an email change with the same URL twice', function (): void {
     expect($userToVerify->refresh())
         ->email->toBe($newEmail);
 
-    expect(cache()->has($verificationSignature))
+    expect(cache()->has("filament:auth:email_change:verification:{$verificationSignature}"))
         ->toBeFalse();
 
     $this

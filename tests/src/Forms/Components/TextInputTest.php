@@ -651,10 +651,11 @@ describe('browser interactions', function (): void {
         $hidePasswordAction = '[data-testid="hide-password"]';
 
         $page = visit('/text-input-test')
-            ->type($input, 'secret-value');
+            ->assertValue($input, 'secret-value');
 
         $page
             ->keys($input, ['Home', ...array_fill(0, 6, 'ArrowRight'), ...array_fill(0, 5, 'Shift+ArrowLeft')])
+            ->assertScript("[document.querySelector('{$input}').selectionStart, document.querySelector('{$input}').selectionEnd, document.querySelector('{$input}').selectionDirection]", [1, 6, 'backward'])
             ->assertPresent($showPasswordAction . '[aria-label]:not([aria-label=""])')
             ->assertPresent($hidePasswordAction . '[aria-label]:not([aria-label=""])')
             ->assertScript("document.querySelector('{$showPasswordAction}').ariaLabel !== document.querySelector('{$hidePasswordAction}').ariaLabel", true)

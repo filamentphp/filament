@@ -1,4 +1,7 @@
 import notification from './components/notification.js'
+import notifications, {
+    setUpNotifications,
+} from './components/notifications.js'
 import {
     Action as NotificationAction,
     ActionGroup as NotificationActionGroup,
@@ -12,21 +15,7 @@ window.FilamentNotification = Notification
 
 document.addEventListener('alpine:init', () => {
     window.Alpine.data('notificationComponent', notification)
+    window.Alpine.data('notificationsComponent', notifications)
 })
 
-document.addEventListener('livewire:init', () => {
-    Livewire.hook('request', ({ succeed }) => {
-        succeed(({ json }) => {
-            if (
-                !json.filamentNotifications ||
-                json.components.some((component) => component.effects.redirect)
-            ) {
-                return
-            }
-
-            // Wait for morphs and their component initialization, without relying
-            // on any bundled component's element surviving the response.
-            window.Alpine.nextTick(() => Livewire.dispatch('notificationsSent'))
-        })
-    })
-})
+document.addEventListener('livewire:init', setUpNotifications)

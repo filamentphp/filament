@@ -6,10 +6,30 @@ return [
 
         'heading' => 'Sarakkeet',
 
+        'position' => 'Sijainti :position / :count.',
+
+        'position_in_group' => 'Sijainti :position / :count ryhmässä :group.',
+
+        'reordered' => ':column siirretty kohtaan :position / :count.',
+
+        'reordered_deferred' => ':column siirretty kohtaan :position / :count. Tallenna muutokset ottamalla sarakkeet käyttöön.',
+
+        'reordered_in_group' => ':column siirretty kohtaan :position / :count ryhmässä :group.',
+
+        'reordered_in_group_deferred' => ':column siirretty kohtaan :position / :count ryhmässä :group. Tallenna muutokset ottamalla sarakkeet käyttöön.',
+
         'actions' => [
 
             'apply' => [
                 'label' => 'Aseta sarakkeet',
+            ],
+
+            'move_up' => [
+                'label' => 'Siirrä :column ylös',
+            ],
+
+            'move_down' => [
+                'label' => 'Siirrä :column alas',
             ],
 
             'reorder' => [
@@ -28,6 +48,13 @@ return [
 
         'actions' => [
             'label' => 'Toiminta|Toiminnat',
+        ],
+
+        'editable' => [
+            'saving' => 'Tallennetaan muutokset...',
+            'saved' => 'Muutos tallennettu.',
+            'failure' => 'Tallennus ei voitu vahvistaa. Päivitä sivu ennen kuin yrität uudelleen.',
+            'unavailable' => 'Kohde ei ole enää muokattavissa.',
         ],
 
         'icon' => [
@@ -130,6 +157,14 @@ return [
 
         'reorder_record' => [
             'label' => 'Uudelleenjärjestele kohde :key',
+        ],
+
+        'move_record_up' => [
+            'label' => 'Siirrä :label ylös',
+        ],
+
+        'move_record_down' => [
+            'label' => 'Siirrä :label alas',
         ],
 
         'filter' => [
@@ -243,6 +278,11 @@ return [
     'loading' => 'Ladataan...',
 
     'reorder_indicator' => 'Raahaa ja pudota tietueet järjestykseen.',
+
+    'reordering' => [
+        'position' => ':label, sijainti :position / :count.',
+        'moved' => ':label siirretty kohtaan :position / :count.',
+    ],
 
     'result_count' => '{0} Ei tuloksia|{1} :count tulos|[2,*] :count tulosta',
 

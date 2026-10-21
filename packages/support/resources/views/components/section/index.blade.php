@@ -44,7 +44,7 @@
 <section
     {{-- TODO: Investigate Livewire bug - https://github.com/filamentphp/filament/pull/8511 --}}
     x-data="{
-        isCollapsed: @if ($persistCollapsed) $persist(@js($collapsed)).as(`section-${@js($collapseId) ?? $el.id}-isCollapsed`) @else @js($collapsed) @endif,
+        isCollapsed: @if ($persistCollapsed) $persist(@js($collapsed)).as(`filament:section:collapsed:${@js($collapseId) ?? $el.id}`) @else @js($collapsed) @endif,
     }"
     @if ($collapsible)
         x-id="['fi-section-content']"
@@ -81,25 +81,36 @@
                     ->color(IconComponent::class, $iconColor), size: $iconSize ?? IconSize::Large)
             }}
 
-            @if ($hasHeading || $hasDescription)
-                <div class="fi-section-header-text-ctn">
-                    @if ($hasHeading)
-                        <{{ $headingTag }} class="fi-section-header-heading">
-                            {{ $heading }}
-                        </{{ $headingTag }}>
+            @if ($hasHeading || $hasDescription || (! is_slot_empty($afterHeader)))
+                <div
+                    @class([
+                        'fi-section-header-content',
+                        'fi-section-header-content-has-heading' => $hasHeading || $hasDescription,
+                    ])
+                >
+                    @if ($hasHeading || $hasDescription)
+                        <div class="fi-section-header-text-ctn">
+                            @if ($hasHeading)
+                                <{{ $headingTag }}
+                                    class="fi-section-header-heading"
+                                >
+                                    {{ $heading }}
+                                </{{ $headingTag }}>
+                            @endif
+
+                            @if ($hasDescription)
+                                <p class="fi-section-header-description">
+                                    {{ $description }}
+                                </p>
+                            @endif
+                        </div>
                     @endif
 
-                    @if ($hasDescription)
-                        <p class="fi-section-header-description">
-                            {{ $description }}
-                        </p>
+                    @if (! is_slot_empty($afterHeader))
+                        <div class="fi-section-header-after-ctn">
+                            {{ $afterHeader }}
+                        </div>
                     @endif
-                </div>
-            @endif
-
-            @if (! is_slot_empty($afterHeader))
-                <div class="fi-section-header-after-ctn">
-                    {{ $afterHeader }}
                 </div>
             @endif
 

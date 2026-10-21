@@ -20,6 +20,7 @@ return [
 
             'block' => [
                 'label' => 'Alternatywa (OR)',
+                'picker_group' => 'Logiczne',
                 'or' => 'OR',
             ],
 

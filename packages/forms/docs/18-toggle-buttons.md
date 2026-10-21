@@ -1,8 +1,6 @@
 ---
 title: Toggle buttons
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -19,9 +17,9 @@ ToggleButtons::make('status')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static array, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/toggle-buttons/simple" alt="Toggle buttons" version="4.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/simple" alt="Toggle buttons" />
 
 By default, the field stores one selected option. Selecting that option again clears the field to `null`.
 
@@ -49,9 +47,9 @@ ToggleButtons::make('status')
 
 If you are using an enum for the options, you can use the [`HasColor` interface](../advanced/enums#enum-colors) to define colors instead.
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `colors()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static array, the `colors()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/toggle-buttons/colors" alt="Toggle buttons with different colors" version="4.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/colors" alt="Toggle buttons with different colors" />
 
 ## Adding icons to option buttons
 
@@ -74,15 +72,15 @@ ToggleButtons::make('status')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `icons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static array, the `icons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 If you are using an enum for the options, you can use the [`HasIcon` interface](../advanced/enums#enum-icons) to define icons instead.
 
-<AutoScreenshot name="forms/fields/toggle-buttons/icons" alt="Toggle buttons with icons" version="4.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/icons" alt="Toggle buttons with icons" />
 
 If you want to display only icons, you can use `hiddenButtonLabels()` to hide the option labels.
 
-<AutoScreenshot name="forms/fields/toggle-buttons/hidden-labels" alt="Toggle buttons with hidden labels" version="4.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/hidden-labels" alt="Toggle buttons with hidden labels" />
 
 ## Adding tooltips to option buttons
 
@@ -104,9 +102,9 @@ ToggleButtons::make('status')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `tooltips()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static array, the `tooltips()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/toggle-buttons/tooltips" alt="Toggle buttons with tooltips" version="4.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/tooltips" alt="Toggle buttons with tooltips" />
 
 ## Changing the button size
 
@@ -127,9 +125,9 @@ ToggleButtons::make('status')
 
 The available sizes are `Size::ExtraSmall`, `Size::Small`, `Size::Medium`, `Size::Large`, and `Size::ExtraLarge`. You can also pass their backed values (`'xs'`, `'sm'`, `'md'`, `'lg'`, and `'xl'`). Any other string is applied as a custom CSS class. Passing `null` restores the default medium size. The button size is also applied when using `grouped()`.
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/toggle-buttons/size" alt="Small toggle buttons" version="4.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/size" alt="Small toggle buttons" />
 
 ## Boolean options
 
@@ -145,7 +143,7 @@ ToggleButtons::make('feedback')
 
 The options will have [colors](#changing-the-color-of-option-buttons) and [icons](#adding-icons-to-option-buttons) set up automatically, but you can override these with `colors()` or `icons()`.
 
-<AutoScreenshot name="forms/fields/toggle-buttons/boolean" alt="Boolean toggle buttons" version="4.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/boolean" alt="Boolean toggle buttons" />
 
 To customize the "Yes" label, you can use the `trueLabel` argument on the `boolean()` method:
 
@@ -180,7 +178,7 @@ ToggleButtons::make('feedback')
     ->inline()
 ```
 
-<AutoScreenshot name="forms/fields/toggle-buttons/inline" alt="Inline toggle buttons" version="4.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/inline" alt="Inline toggle buttons" />
 
 Optionally, you may pass a boolean value to control if the buttons should be inline or not:
 
@@ -193,7 +191,7 @@ ToggleButtons::make('feedback')
     ->inline(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `inline()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `inline()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Grouping option buttons
 
@@ -208,7 +206,7 @@ ToggleButtons::make('feedback')
     ->grouped()
 ```
 
-<AutoScreenshot name="forms/fields/toggle-buttons/grouped" alt="Grouped toggle buttons" version="4.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/grouped" alt="Grouped toggle buttons" />
 
 Optionally, you may pass a boolean value to control if the buttons should be grouped or not:
 
@@ -221,7 +219,7 @@ ToggleButtons::make('feedback')
     ->grouped(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `grouped()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `grouped()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Filling the container's width
 
@@ -237,7 +235,7 @@ ToggleButtons::make('feedback')
     ->fullWidth()
 ```
 
-<AutoScreenshot name="forms/fields/toggle-buttons/full-width" alt="Full width toggle buttons" version="4.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/full-width" alt="Full width toggle buttons" />
 
 Optionally, you may pass a boolean value to control if the buttons should fill the container width or not:
 
@@ -251,7 +249,7 @@ ToggleButtons::make('feedback')
     ->fullWidth(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `fullWidth()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `fullWidth()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Selecting multiple buttons
 
@@ -270,7 +268,7 @@ ToggleButtons::make('technologies')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/toggle-buttons/multiple" alt="Multiple toggle buttons selected" version="4.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/multiple" alt="Multiple toggle buttons selected" />
 
 These options are returned in JSON format. If you're saving them using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
@@ -308,7 +306,7 @@ ToggleButtons::make('technologies')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `multiple()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `multiple()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Splitting options into columns
 
@@ -324,9 +322,9 @@ ToggleButtons::make('technologies')
     ->columns(2)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/toggle-buttons/columns" alt="Toggle buttons with 2 columns" version="4.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/columns" alt="Toggle buttons with 2 columns" />
 
 This method accepts the same options as the `columns()` method of the [grid](../schemas/layouts#grid-system). This allows you to responsively customize the number of columns at various breakpoints.
 
@@ -346,9 +344,9 @@ ToggleButtons::make('technologies')
     ->gridDirection(GridDirection::Row)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `gridDirection()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `gridDirection()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/toggle-buttons/rows" alt="Toggle buttons with 2 rows" version="4.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/rows" alt="Toggle buttons with 2 rows" />
 
 ## Disabling specific options
 
@@ -366,9 +364,9 @@ ToggleButtons::make('status')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Option value;;mixed;;$value;;The value of the option to disable.||Option label;;string | Illuminate\Contracts\Support\Htmlable;;$label;;The label of the option to disable.">You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" extras="Option value;;mixed;;$value;;The value of the option to disable.||Option label;;string | Illuminate\Contracts\Support\Htmlable;;$label;;The label of the option to disable.">You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/toggle-buttons/disabled-option" alt="Toggle buttons with disabled option" version="4.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/disabled-option" alt="Toggle buttons with disabled option" />
 
 If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
 

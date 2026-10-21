@@ -4,6 +4,12 @@ return [
 
     'builder' => [
 
+        'reordering' => [
+            'item' => 'Lohko',
+            'position' => ':label, sijainti :position / :count',
+            'moved' => ':label siirretty kohtaan :position / :count',
+        ],
+
         'actions' => [
 
             'clone' => [
@@ -104,9 +110,19 @@ return [
 
         ],
 
+        'block_picker' => [
+
+            'no_search_results_message' => 'Haun perusteella ei löytynyt lohkoja.',
+
+            'search_prompt' => 'Hae lohkoja',
+
+        ],
+
     ],
 
     'checkbox_list' => [
+
+        'required_description' => 'Valitse vähintään yksi vaihtoehto.',
 
         'actions' => [
 
@@ -128,7 +144,33 @@ return [
 
     ],
 
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'Kuukausi',
+        ],
+
+        'year_input' => [
+            'label' => 'Vuosi',
+        ],
+
+        'hour_input' => [
+            'label' => 'Tunti',
+        ],
+
+        'minute_input' => [
+            'label' => 'Minuutti',
+        ],
+
+        'second_input' => [
+            'label' => 'Sekuntti',
+        ],
+
+    ],
+
     'file_upload' => [
+
+        'placeholder' => 'Ei ladattuja tiedostoja',
 
         'actions' => [
 
@@ -282,6 +324,14 @@ return [
                 'label' => 'Poista rivi',
             ],
 
+            'move_down' => [
+                'label' => 'Siirrä alas',
+            ],
+
+            'move_up' => [
+                'label' => 'Siirrä ylös',
+            ],
+
             'reorder' => [
                 'label' => 'Järjestele rivi',
             ],
@@ -310,6 +360,12 @@ return [
                 'label' => 'Arvo',
             ],
 
+        ],
+
+        'reordering' => [
+            'row' => 'Rivi',
+            'position' => ':label, sijainti :position / :count',
+            'moved' => ':label siirretty kohtaan :position / :count',
         ],
 
     ],
@@ -370,6 +426,12 @@ return [
     ],
 
     'repeater' => [
+
+        'reordering' => [
+            'item' => 'Kohde',
+            'position' => ':label, sijainti :position / :count',
+            'moved' => ':label siirretty kohtaan :position / :count',
+        ],
 
         'columns' => [
 
@@ -469,6 +531,10 @@ return [
 
                 ],
 
+            ],
+
+            'close_panel' => [
+                'label' => 'Sulje paneeli',
             ],
 
             'custom_block' => [
@@ -635,6 +701,28 @@ return [
 
         ],
 
+        'custom_blocks' => [
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Poista lohko',
+                ],
+
+                'edit' => [
+                    'label' => 'Muokkaa lohkoa',
+                ],
+
+            ],
+
+            'no_search_results_message' => 'Haun perusteella ei löytynyt lohkoja.',
+
+            'search_label' => 'Hae lohkoja',
+
+            'search_prompt' => 'Hae lohkoja',
+
+        ],
+
         'file_attachments_accepted_file_types_message' => 'Lähetetyn tiedoston pitää olla tyyppiä:: :values.',
 
         'file_attachments_max_size_message' => 'Lähetetyt tiedostot eivät voi olla isompia kuin :max kilotavua.',
@@ -712,6 +800,10 @@ return [
 
         'actions' => [
 
+            'clear' => [
+                'label' => 'Tyhjennä valinta',
+            ],
+
             'create_option' => [
 
                 'label' => 'Uusi',
@@ -756,12 +848,18 @@ return [
 
             ],
 
+            'remove_option' => [
+                'label' => 'Poista :label',
+            ],
+
         ],
 
         'boolean' => [
             'true' => 'Kyllä',
             'false' => 'Ei',
         ],
+
+        'error_message' => 'Valintoja ei voitu ladata. Yritä uudelleen.',
 
         'loading_message' => 'Ladataan...',
 
@@ -773,7 +871,11 @@ return [
 
         'placeholder' => 'Valitse vaihtoehto',
 
+        'required_description' => 'Valitse vaihtoehto.',
+
         'searching_message' => 'Haetaan...',
+
+        'search_label' => 'Haku',
 
         'search_prompt' => 'Kirjoita hakeaksesi...',
 
@@ -819,6 +921,8 @@ return [
     ],
 
     'toggle_buttons' => [
+
+        'required_description' => 'Valitse vähintään yksi vaihtoehto.',
 
         'boolean' => [
             'true' => 'Kyllä',

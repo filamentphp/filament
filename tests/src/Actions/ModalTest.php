@@ -1,6 +1,8 @@
 <?php
 
 use Filament\Tests\Actions\TestCase;
+use Filament\Tests\Fixtures\Models\Department;
+use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\User;
 use Illuminate\Support\Facades\Artisan;
 
@@ -11,26 +13,17 @@ beforeEach(function (): void {
 });
 
 describe('browser interactions', function (): void {
-    it('keeps a loading button focused without allowing repeated activation', function (): void {
+    it('activates a button using the keyboard and its key binding', function (): void {
         $selector = '[data-testid="loading-button"]';
 
         $browser = visit('/modal-browser-test');
 
         $browser
             ->keys($selector, 'Enter')
-            ->assertAttribute($selector, 'aria-disabled', 'true')
-            ->assertAttributeMissing($selector, 'disabled')
-            ->assertPresent("{$selector}:focus")
-            ->keys($selector, 'Enter')
-            ->keys($selector, 'Space');
-
-        $browser
             ->assertAttribute($selector, 'data-activations', '1')
-            ->assertAttributeMissing($selector, 'aria-disabled')
             ->assertPresent("{$selector}:focus")
             ->keys($selector, 'Control+Shift+l')
             ->assertAttribute($selector, 'data-activations', '2')
-            ->assertAttributeMissing($selector, 'aria-disabled')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
@@ -152,7 +145,8 @@ describe('browser interactions', function (): void {
 
         $page->keys('[data-testid="standalone-trigger"]', 'Enter')
             ->assertVisible('[data-testid="standalone-modal"]')
-            ->keys('[data-testid="standalone-close"]', 'PageDown')
+            ->assertPresent('[data-testid="standalone-close"]:focus')
+            ->keys(':focus', 'PageDown')
             ->assertScript('window.scrollY', $scrollPosition)
             ->click('[data-testid="standalone-close"]')
             ->assertMissing('[data-testid="standalone-modal"]')
@@ -161,6 +155,7 @@ describe('browser interactions', function (): void {
             ->keys('[data-testid="standalone-trigger"]', 'PageUp')
             ->assertScript('window.scrollY < ' . $scrollPosition, true)
             ->keys('[data-testid="standalone-trigger"]', 'Control+End')
+            ->assertScript('window.scrollY', $scrollPosition)
             ->keys('[data-testid="standalone-trigger"]', 'Enter')
             ->assertVisible('[data-testid="standalone-modal"]')
             ->assertPresent('[data-testid="standalone-close"]:focus')
@@ -175,6 +170,7 @@ describe('browser interactions', function (): void {
             ->inDarkMode()
             ->click('[data-testid="standalone-trigger"]')
             ->assertVisible('[data-testid="standalone-modal"]')
+            ->assertPresent('[data-testid="standalone-close"]:focus')
             ->assertNoAccessibilityIssues();
     });
 
@@ -250,8 +246,6 @@ describe('browser interactions', function (): void {
             ->assertScript('window.scrollY', $scrollPosition)
             ->keys(':focus', $scrollKey)
             ->assertScript("document.querySelector('{$modalSelector}').scrollTop > 0", true)
-            ->keys(':focus', 'Control+Home')
-            ->assertScript("document.querySelector('{$modalSelector}').scrollTop", 0)
             ->assertPresent("{$modalSelector}:focus")
             ->assertNoSmoke();
 
@@ -370,7 +364,7 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke();
     });
 
-    it('keeps focus trapped and preserves parent scroll after closing a nested modal', function (): void {
+    it('moves focus between fields and preserves parent focus and scroll after closing a nested modal', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/modal-browser-test')
@@ -379,8 +373,8 @@ describe('browser interactions', function (): void {
             ->assertPresent('[data-testid="scroll-field-1"]:focus')
             ->keys('[data-testid="scroll-field-1"]', 'Tab')
             ->assertPresent('[data-testid="scroll-field-2"]:focus')
-            ->keys('[data-testid="scroll-field-1"]', 'Shift+Tab')
-            ->assertPresent('[data-testid="scroll-modal"] :focus')
+            ->keys(':focus', 'Shift+Tab')
+            ->assertPresent('[data-testid="scroll-field-1"]:focus')
             ->keys('[data-testid="scroll-modal"]', 'Control+End')
             ->assertScript('(() => { const modal = document.querySelector(\'[data-testid="scroll-modal"]\'); return modal.scrollTop === modal.scrollHeight - modal.clientHeight })()', true)
             ->click('[data-testid="scroll-nested-trigger"]')
@@ -437,6 +431,83 @@ describe('browser interactions', function (): void {
             ->assertMissing('[data-testid="overlay-cancel-modal"]')
             ->assertMissing('[data-testid="overlay-modal"]')
             ->assertPresent('[data-testid="overlay-trigger"]:focus')
+            ->assertNoSmoke();
+    });
+});
+
+describe('action deep links', function (): void {
+    it('routes an ordinary action deep link away from a page with the same action name', function (): void {
+        $ticket = Ticket::factory()->hasAttached(Department::factory())->create();
+        $browser = visit('/scoped-actions-browser-test?' . http_build_query([
+            'ticket' => $ticket->getKey(),
+            'tab' => 'summary',
+            'actionComponent' => 'departments',
+            'action' => 'view',
+        ]));
+
+        $browser->click('[data-testid="page-view-trigger"]')
+            ->assertVisible('[data-testid="page-modal"]')
+            ->click('[data-testid="dismiss-ticket-overview"]')
+            ->assertMissing('[data-testid="page-modal"]')
+            ->assertQueryStringHas('action', 'view')
+            ->assertQueryStringHas('actionComponent', 'departments')
+            ->click('[role="tab"] >> text=Departments')
+            ->assertVisible('[data-testid="departments-modal"]')
+            ->assertMissing('[data-testid="other-departments-modal"]')
+            ->assertMissing('[data-testid="page-modal"]')
+            ->click('[data-testid="dismiss-department-overview"]')
+            ->assertMissing('[data-testid="departments-modal"]')
+            ->click('[role="tab"] >> text=Summary')
+            ->click('[role="tab"] >> text=Departments')
+            ->assertMissing('[data-testid="departments-modal"]')
+            ->assertMissing('[data-testid="other-departments-modal"]')
+            ->assertNoSmoke();
+    });
+
+    it('opens only the targeted lazy embedded action and permits closing and reopening it', function (): void {
+        $ticket = Ticket::factory()->hasAttached(Department::factory())->create();
+        $department = $ticket->departments->first();
+        $browser = visit('/scoped-actions-browser-test?' . http_build_query([
+            'ticket' => $ticket->getKey(),
+            'tab' => 'departments',
+            'actionComponent' => 'departments',
+            'tableAction' => 'view',
+            'tableActionRecord' => $department->getKey(),
+        ]));
+
+        $browser->assertVisible('[data-testid="departments-table-modal"]')
+            ->assertMissing('[data-testid="other-departments-table-modal"]')
+            ->assertMissing('[data-testid="page-modal"]')
+            ->assertNoAccessibilityIssues();
+
+        $browser->inDarkMode()
+            ->assertVisible('[data-testid="departments-table-modal"]')
+            ->assertNoAccessibilityIssues();
+
+        $browser->click('[data-testid="dismiss-department-record"]')
+            ->assertMissing('[data-testid="departments-table-modal"]')
+            ->click('[data-testid="departments-view-trigger"]')
+            ->assertVisible('[data-testid="departments-table-modal"]')
+            ->click('[data-testid="dismiss-department-record"]')
+            ->assertMissing('[data-testid="departments-table-modal"]')
+            ->click('[data-testid="toggle-departments"]')
+            ->assertMissing('[data-testid="departments-view-trigger"]')
+            ->click('[data-testid="toggle-departments"]')
+            ->assertVisible('[data-testid="departments-table-modal"]')
+            ->assertNoSmoke();
+    });
+
+    it('consumes a fresh deep link after SPA navigation without reopening it during the same lifetime', function (): void {
+        $ticket = Ticket::factory()->hasAttached(Department::factory())->create();
+        $browser = visit('/spa/scoped-actions-browser-test?ticket=' . $ticket->getKey());
+
+        $browser->click('[data-testid="department-deep-link"]')
+            ->assertVisible('[data-testid="departments-modal"]')
+            ->assertMissing('[data-testid="page-modal"]')
+            ->click('[data-testid="dismiss-department-overview"]')
+            ->assertMissing('[data-testid="departments-modal"]')
+            ->click('[data-testid="department-deep-link"]')
+            ->assertVisible('[data-testid="departments-modal"]')
             ->assertNoSmoke();
     });
 });

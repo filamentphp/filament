@@ -1,8 +1,6 @@
 ---
 title: Overview
 ---
-import Aside from "@components/Aside.astro"
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
@@ -112,7 +110,7 @@ $schema
     ])
 ```
 
-<AutoScreenshot name="schemas/overview/example" alt="Example schema" version="4.x" />
+<AutoScreenshot name="schemas/overview/example" alt="Example schema" />
 
 [Grid](layouts#grid-component) is a layout component that renders multiple components together in a responsive grid. The number of columns in the grid is specified in the `make()` method. The `schema()` method is used to nest components within the grid.
 

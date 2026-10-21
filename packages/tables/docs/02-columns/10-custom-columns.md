@@ -1,7 +1,6 @@
 ---
 title: Custom columns
 ---
-import Aside from "@components/Aside.astro"
 
 ## Introduction
 

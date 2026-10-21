@@ -1486,10 +1486,12 @@ describe('browser interactions', function (): void {
     it('uses one labelled input to open, select, copy and clear a custom picker with the keyboard', function (bool $hasDate, bool $hasTime): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/date-time-picker-test?native=0&close-on-selection=1&date=' . (int) $hasDate . '&time=' . (int) $hasTime)->withTimezone('UTC');
+        $initialState = $hasDate ? ($hasTime ? '2025-07-15 13:24:37' : '2025-07-15') : '13:24:37';
+        $displayFormat = $hasDate ? ($hasTime ? 'Y-m-d H:i:s' : 'Y-m-d') : 'H:i:s';
+        $page = visit('/date-time-picker-test?native=0&close-on-selection=1&date=' . (int) $hasDate . '&time=' . (int) $hasTime . '&initial-state=' . urlencode($initialState) . '&display-format=' . urlencode($displayFormat))->withTimezone('UTC');
         $trigger = '[data-testid="timed-trigger"]';
 
-        $page->assertValue($trigger, '')
+        $page->assertValue($trigger, $initialState)
             ->assertAttribute($trigger, 'aria-expanded', 'false')
             ->click('label[for="' . $page->attribute($trigger, 'id') . '"]')
             ->assertVisible('[role="dialog"]');
@@ -1503,7 +1505,8 @@ describe('browser interactions', function (): void {
             ->assertAttributeMissing('[role="dialog"]', 'aria-modal');
 
         $page->assertNoAccessibilityIssues();
-        $page->inDarkMode()
+        $page = $page->inDarkMode();
+        $page->assertValue($trigger, $initialState)
             ->click($trigger)
             ->assertVisible('[role="dialog"]')
             ->assertNoAccessibilityIssues();
@@ -1558,7 +1561,8 @@ describe('browser interactions', function (): void {
         $page = visit('/date-time-picker-test?native=0&time=0&initial-state=2024-01-31&display-format=Y-m-d')->withTimezone('UTC');
         $trigger = '[data-testid="timed-trigger"]';
 
-        $page->keys($trigger, 'ArrowDown')
+        $page->assertValue($trigger, '2024-01-31')
+            ->keys($trigger, 'ArrowDown')
             ->assertPresent('[data-date="2024-01-31"]:focus')
             ->assertAttribute('[data-date="2024-01-31"]', 'aria-selected', 'true')
             ->keys('[role="gridcell"]:focus', 'PageDown')
@@ -1653,10 +1657,11 @@ describe('browser interactions', function (): void {
     it('uses localized date names, a Sunday week start and RTL horizontal navigation', function (): void {
         $this->actingAs(User::factory()->create());
 
-        $page = visit('/date-time-picker-test?native=0&time=0&locale=fr&week-start=7&rtl=1')->withTimezone('UTC');
+        $page = visit('/date-time-picker-test?native=0&time=0&locale=fr&week-start=7&rtl=1&initial-state=2025-07-15&display-format=Y-m-d')->withTimezone('UTC');
         $trigger = '[data-testid="timed-trigger"]';
 
-        $page->keys($trigger, 'Enter')
+        $page->assertValue($trigger, '2025-07-15')
+            ->keys($trigger, 'Enter')
             ->assertPresent('[data-date="2025-07-15"]:focus')
             ->assertAttribute('[data-date="2025-07-15"]', 'aria-label', 'mardi, 15 juillet 2025')
             ->assertAttribute('[role="grid"]', 'aria-label', 'juillet 2025')

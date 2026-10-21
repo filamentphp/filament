@@ -1,0 +1,461 @@
+{
+    "schema": 1,
+    "sets": {
+        "actions": [
+            {
+                "name": "Action",
+                "type": "Filament\\Actions\\Action",
+                "parameter": "$action",
+                "description": "The current action instance."
+            },
+            {
+                "name": "Arguments",
+                "type": "array<string, mixed>",
+                "parameter": "$arguments",
+                "description": "The array of arguments passed to the action when it was triggered."
+            },
+            {
+                "name": "Data",
+                "type": "array<string, mixed>",
+                "parameter": "$data",
+                "description": "The array of data submitted from form fields in the action's modal. It will be empty before the modal form is submitted."
+            },
+            {
+                "name": "Livewire",
+                "type": "Livewire\\Component",
+                "parameter": "$livewire",
+                "description": "The Livewire component instance."
+            },
+            {
+                "name": "Eloquent model FQN",
+                "type": "?string<Illuminate\\Database\\Eloquent\\Model>",
+                "parameter": "$model",
+                "description": "The Eloquent model FQN for the current action, if one is attached."
+            },
+            {
+                "name": "Eloquent record",
+                "type": "?Illuminate\\Database\\Eloquent\\Model",
+                "parameter": "$record",
+                "description": "The Eloquent record for the current action, if one is attached."
+            },
+            {
+                "name": "Selected Eloquent records",
+                "type": "Illuminate\\Support\\Collection|Illuminate\\Support\\LazyCollection",
+                "parameter": "$selectedRecords",
+                "description": "[Actions in tables only] The selected records, filtered by individual record authorization when it is enabled. Requires <code>accessSelectedRecords()</code>."
+            },
+            {
+                "name": "Selected Eloquent records query",
+                "type": "Illuminate\\Database\\Eloquent\\Builder",
+                "parameter": "$selectedRecordsQuery",
+                "description": "[Actions in Eloquent-query-backed tables only] The query for the selected records. Requires <code>accessSelectedRecords()</code>. Individual record authorization has not been applied to this query."
+            },
+            {
+                "name": "Mounted actions",
+                "type": "array<Filament\\Actions\\Action>",
+                "parameter": "$mountedActions",
+                "description": "The array of actions that are currently mounted in the Livewire component. This is useful for accessing data from parent actions."
+            },
+            {
+                "name": "Parent action",
+                "type": "?Filament\\Actions\\Action",
+                "parameter": "$parentAction",
+                "description": "The mounted parent action, or the containing parent action if one exists."
+            },
+            {
+                "name": "Schema",
+                "type": "Filament\\Schemas\\Schema",
+                "parameter": "$schema",
+                "description": "[Actions in schemas only] The schema object that this action belongs to."
+            },
+            {
+                "name": "Schema component",
+                "type": "Filament\\Schemas\\Components\\Component",
+                "parameter": "$schemaComponent",
+                "description": "[Actions in schemas only] The schema component that this action belongs to."
+            },
+            {
+                "name": "Schema get function",
+                "type": "Filament\\Schemas\\Components\\Utilities\\Get",
+                "parameter": "$schemaGet",
+                "description": "[Actions in schemas only] A function for retrieving values from the schema data. Validation is not run on form fields."
+            },
+            {
+                "name": "Schema set function",
+                "type": "Filament\\Schemas\\Components\\Utilities\\Set",
+                "parameter": "$schemaSet",
+                "description": "[Actions in schemas only] A function for setting values in the schema data."
+            },
+            {
+                "name": "Schema component state",
+                "type": "mixed",
+                "parameter": "$schemaComponentState",
+                "description": "[Actions in schemas only] The current value of the schema component."
+            },
+            {
+                "name": "Schema operation",
+                "type": "string",
+                "parameter": "$schemaOperation",
+                "description": "[Actions in schemas only] The current operation being performed by the schema. Usually <code>create</code>, <code>edit</code>, or <code>view</code>."
+            },
+            {
+                "name": "Schema state",
+                "type": "mixed",
+                "parameter": "$schemaState",
+                "description": "[Actions in schemas only] The current value of the schema that this action belongs to, like the current repeater item."
+            },
+            {
+                "name": "Table",
+                "type": "Filament\\Tables\\Table",
+                "parameter": "$table",
+                "description": "[Actions in tables only] The table object that this action belongs to."
+            }
+        ],
+        "actionGroups": [
+            {
+                "name": "Action group",
+                "type": "Filament\\Actions\\ActionGroup",
+                "parameter": "$group",
+                "description": "The current action group instance."
+            },
+            {
+                "name": "Livewire",
+                "type": "Livewire\\Component",
+                "parameter": "$livewire",
+                "description": "The Livewire component instance."
+            },
+            {
+                "name": "Eloquent model FQN",
+                "type": "?string<Illuminate\\Database\\Eloquent\\Model>",
+                "parameter": "$model",
+                "description": "The Eloquent model FQN for the current action group, if one is attached."
+            },
+            {
+                "name": "Eloquent record",
+                "type": "?Illuminate\\Database\\Eloquent\\Model",
+                "parameter": "$record",
+                "description": "The Eloquent record for the current action group, if one is attached."
+            },
+            {
+                "name": "Mounted actions",
+                "type": "array<Filament\\Actions\\Action>",
+                "parameter": "$mountedActions",
+                "description": "The array of actions that are currently mounted in the Livewire component. This is useful for accessing data from parent actions."
+            },
+            {
+                "name": "Schema",
+                "type": "Filament\\Schemas\\Schema",
+                "parameter": "$schema",
+                "description": "[Action groups in schemas only] The schema object that this action group belongs to."
+            },
+            {
+                "name": "Schema component",
+                "type": "Filament\\Schemas\\Components\\Component",
+                "parameter": "$schemaComponent",
+                "description": "[Action groups in schemas only] The schema component that this action group belongs to."
+            },
+            {
+                "name": "Schema get function",
+                "type": "Filament\\Schemas\\Components\\Utilities\\Get",
+                "parameter": "$schemaGet",
+                "description": "[Action groups in schemas only] A function for retrieving values from the schema data. Validation is not run on form fields."
+            },
+            {
+                "name": "Schema component state",
+                "type": "mixed",
+                "parameter": "$schemaComponentState",
+                "description": "[Action groups in schemas only] The current value of the schema component."
+            },
+            {
+                "name": "Schema operation",
+                "type": "string",
+                "parameter": "$schemaOperation",
+                "description": "[Action groups in schemas only] The current operation being performed by the schema. Usually <code>create</code>, <code>edit</code>, or <code>view</code>."
+            },
+            {
+                "name": "Schema state",
+                "type": "mixed",
+                "parameter": "$schemaState",
+                "description": "[Action groups in schemas only] The current value of the schema that this action group belongs to, like the current repeater item."
+            },
+            {
+                "name": "Table",
+                "type": "Filament\\Tables\\Table",
+                "parameter": "$table",
+                "description": "[Action groups in tables only] The table object that this action group belongs to."
+            }
+        ],
+        "formFields": [
+            {
+                "name": "Field",
+                "type": "Filament\\Forms\\Components\\Field",
+                "parameter": "$component",
+                "description": "The current field component instance."
+            },
+            {
+                "name": "Get function",
+                "type": "Filament\\Schemas\\Components\\Utilities\\Get",
+                "parameter": "$get",
+                "description": "A function for retrieving values from the current form data. Validation is not run."
+            },
+            {
+                "name": "Eloquent model FQN",
+                "type": "?string<Illuminate\\Database\\Eloquent\\Model>",
+                "parameter": "$model",
+                "description": "The Eloquent model FQN for the current schema."
+            },
+            {
+                "name": "Livewire",
+                "type": "Livewire\\Component",
+                "parameter": "$livewire",
+                "description": "The Livewire component instance."
+            },
+            {
+                "name": "Parent repeater item index",
+                "type": "int",
+                "parameter": "$parentRepeaterItemIndex",
+                "description": "The zero-based index of the nearest containing repeater item or builder block, or <code>0</code> when neither exists."
+            },
+            {
+                "name": "Raw state",
+                "type": "mixed",
+                "parameter": "$rawState",
+                "description": "The current value of the field, before state casts were applied. Validation is not run."
+            },
+            {
+                "name": "State",
+                "type": "mixed",
+                "parameter": "$state",
+                "description": "The current value of the field. Validation is not run."
+            },
+            {
+                "name": "Operation",
+                "type": "string",
+                "parameter": "$operation",
+                "description": "The current operation being performed by the schema. Usually <code>create</code>, <code>edit</code>, or <code>view</code>."
+            },
+            {
+                "name": "Eloquent record",
+                "type": "?Illuminate\\Database\\Eloquent\\Model",
+                "parameter": "$record",
+                "description": "The Eloquent record for the current schema."
+            }
+        ],
+        "exportColumns": [
+            {
+                "name": "Export column",
+                "type": "Filament\\Actions\\Exports\\ExportColumn",
+                "parameter": "$column",
+                "description": "The current export column instance."
+            },
+            {
+                "name": "Exporter",
+                "type": "?Filament\\Actions\\Exports\\Exporter",
+                "parameter": "$exporter",
+                "description": "The instance of the exporter class that is currently being used for exporting data."
+            },
+            {
+                "name": "Options",
+                "type": "array<string, mixed>",
+                "parameter": "$options",
+                "description": "The options that were defined when the export started."
+            },
+            {
+                "name": "Eloquent record",
+                "type": "?Illuminate\\Database\\Eloquent\\Model",
+                "parameter": "$record",
+                "description": "The Eloquent record that is currently being exported."
+            }
+        ],
+        "importColumns": [
+            {
+                "name": "Import column",
+                "type": "Filament\\Actions\\Imports\\ImportColumn",
+                "parameter": "$column",
+                "description": "The current import column instance."
+            },
+            {
+                "name": "Data",
+                "type": "array<string, mixed>",
+                "parameter": "$data",
+                "description": "The processed data for the record that is currently being imported."
+            },
+            {
+                "name": "Importer",
+                "type": "?Filament\\Actions\\Imports\\Importer",
+                "parameter": "$importer",
+                "description": "The instance of the importer class that is currently being used for importing data."
+            },
+            {
+                "name": "Options",
+                "type": "array<string, mixed>",
+                "parameter": "$options",
+                "description": "The options that were defined when the import started."
+            },
+            {
+                "name": "Original data",
+                "type": "array<string, mixed>",
+                "parameter": "$originalData",
+                "description": "The original data for the record that is currently being imported, before it was processed."
+            },
+            {
+                "name": "Eloquent record",
+                "type": "?Illuminate\\Database\\Eloquent\\Model",
+                "parameter": "$record",
+                "description": "The Eloquent record that is currently being imported."
+            }
+        ],
+        "infolistEntries": [
+            {
+                "name": "Entry",
+                "type": "Filament\\Infolists\\Components\\Entry",
+                "parameter": "$component",
+                "description": "The current entry component instance."
+            },
+            {
+                "name": "Get function",
+                "type": "Filament\\Schemas\\Components\\Utilities\\Get",
+                "parameter": "$get",
+                "description": "A function for retrieving values from the current schema data. Validation is not run on form fields."
+            },
+            {
+                "name": "Eloquent model FQN",
+                "type": "?string<Illuminate\\Database\\Eloquent\\Model>",
+                "parameter": "$model",
+                "description": "The Eloquent model FQN for the current schema."
+            },
+            {
+                "name": "Livewire",
+                "type": "Livewire\\Component",
+                "parameter": "$livewire",
+                "description": "The Livewire component instance."
+            },
+            {
+                "name": "Parent repeater item index",
+                "type": "int",
+                "parameter": "$parentRepeaterItemIndex",
+                "description": "The zero-based index of the nearest containing repeater item or builder block, or <code>0</code> when neither exists."
+            },
+            {
+                "name": "State",
+                "type": "mixed",
+                "parameter": "$state",
+                "description": "The current value of the entry."
+            },
+            {
+                "name": "Operation",
+                "type": "string",
+                "parameter": "$operation",
+                "description": "The current operation being performed by the schema. Usually <code>create</code>, <code>edit</code>, or <code>view</code>."
+            },
+            {
+                "name": "Eloquent record",
+                "type": "?Illuminate\\Database\\Eloquent\\Model",
+                "parameter": "$record",
+                "description": "The Eloquent record for the current schema."
+            }
+        ],
+        "schemaComponents": [
+            {
+                "name": "Component",
+                "type": "Filament\\Schemas\\Components\\Component",
+                "parameter": "$component",
+                "description": "The current component instance."
+            },
+            {
+                "name": "Get function",
+                "type": "Filament\\Schemas\\Components\\Utilities\\Get",
+                "parameter": "$get",
+                "description": "A function for retrieving values from the current schema data. Validation is not run on form fields."
+            },
+            {
+                "name": "Eloquent model FQN",
+                "type": "?string<Illuminate\\Database\\Eloquent\\Model>",
+                "parameter": "$model",
+                "description": "The Eloquent model FQN for the current schema."
+            },
+            {
+                "name": "Livewire",
+                "type": "Livewire\\Component",
+                "parameter": "$livewire",
+                "description": "The Livewire component instance."
+            },
+            {
+                "name": "Parent repeater item index",
+                "type": "int",
+                "parameter": "$parentRepeaterItemIndex",
+                "description": "The zero-based index of the nearest containing repeater item or builder block, or <code>0</code> when neither exists."
+            },
+            {
+                "name": "Operation",
+                "type": "string",
+                "parameter": "$operation",
+                "description": "The current operation being performed by the schema. Usually <code>create</code>, <code>edit</code>, or <code>view</code>."
+            },
+            {
+                "name": "Eloquent record",
+                "type": "?Illuminate\\Database\\Eloquent\\Model",
+                "parameter": "$record",
+                "description": "The Eloquent record for the current schema."
+            }
+        ],
+        "tableColumns": [
+            {
+                "name": "Column",
+                "type": "Filament\\Tables\\Columns\\Column",
+                "parameter": "$column",
+                "description": "The current column instance."
+            },
+            {
+                "name": "Livewire",
+                "type": "Livewire\\Component",
+                "parameter": "$livewire",
+                "description": "The Livewire component instance."
+            },
+            {
+                "name": "Row loop",
+                "type": "stdClass",
+                "parameter": "$rowLoop",
+                "description": "The <a href=\"https://laravel.com/docs/blade#the-loop-variable\" target=\"_blank\">row loop</a> object for the current table row."
+            },
+            {
+                "name": "State",
+                "type": "mixed",
+                "parameter": "$state",
+                "description": "The current value of the column, based on the current table row."
+            },
+            {
+                "name": "Eloquent record",
+                "type": "Illuminate\\Database\\Eloquent\\Model|array<string, mixed>|null",
+                "parameter": "$record",
+                "description": "The Eloquent record or custom data array for the current table row."
+            },
+            {
+                "name": "Table",
+                "type": "Filament\\Tables\\Table",
+                "parameter": "$table",
+                "description": "The current table instance."
+            }
+        ],
+        "tableFilters": [
+            {
+                "name": "Filter",
+                "type": "Filament\\Tables\\Filters\\BaseFilter",
+                "parameter": "$filter",
+                "description": "The current filter instance."
+            },
+            {
+                "name": "Livewire",
+                "type": "Livewire\\Component",
+                "parameter": "$livewire",
+                "description": "The Livewire component instance."
+            },
+            {
+                "name": "Table",
+                "type": "Filament\\Tables\\Table",
+                "parameter": "$table",
+                "description": "The current table instance."
+            }
+        ]
+    }
+}

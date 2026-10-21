@@ -1,10 +1,6 @@
 ---
 title: Upgrade guide
 ---
-import Aside from "@components/Aside.astro"
-import Checkbox from "@components/Checkbox.astro"
-import Checkboxes from "@components/Checkboxes.astro"
-import Disclosure from "@components/Disclosure.astro"
 
 <Aside variant="info">
     If you see anything missing from this guide, please don’t hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/4.x/docs/14-upgrade-guide.md) to our repository! Any help is appreciated!
@@ -148,11 +144,11 @@ return [
 To begin, filter the upgrade guide for your specific needs by selecting only the packages that you use in your project:
 
 <Checkboxes>
-    <Checkbox value="panels" model="packages">
+    <Checkbox value="panels">
         Panels
     </Checkbox>
 
-    <Checkbox value="forms" model="packages">
+    <Checkbox value="forms">
         Forms
 
         <span slot="description">
@@ -160,7 +156,7 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
         </span>
     </Checkbox>
 
-    <Checkbox value="infolists" model="packages">
+    <Checkbox value="infolists">
         Infolists
 
         <span slot="description">
@@ -168,7 +164,7 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
         </span>
     </Checkbox>
 
-    <Checkbox value="tables" model="packages">
+    <Checkbox value="tables">
         Tables
 
         <span slot="description">
@@ -176,7 +172,7 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
         </span>
     </Checkbox>
 
-    <Checkbox value="actions" model="packages">
+    <Checkbox value="actions">
         Actions
 
         <span slot="description">
@@ -184,7 +180,7 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
         </span>
     </Checkbox>
 
-    <Checkbox value="notifications" model="packages">
+    <Checkbox value="notifications">
         Notifications
 
         <span slot="description">
@@ -192,7 +188,7 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
         </span>
     </Checkbox>
 
-    <Checkbox value="widgets" model="packages">
+    <Checkbox value="widgets">
         Widgets
 
         <span slot="description">
@@ -200,11 +196,11 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
         </span>
     </Checkbox>
 
-    <Checkbox value="support" model="packages">
+    <Checkbox value="support">
         Blade UI components
     </Checkbox>
 
-    <Checkbox value="spatie-translatable-plugin" model="packages">
+    <Checkbox value="spatie-translatable-plugin">
         Spatie Translatable Plugin
     </Checkbox>
 </Checkboxes>

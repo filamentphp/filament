@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\WithPagination;
+use ReflectionMethod;
+
+use function Filament\Support\encode_key_segments;
 
 trait InteractsWithTable
 {
@@ -235,7 +238,10 @@ trait InteractsWithTable
             ->when($this->getTablePluralModelLabel(), fn (Table $table, string $pluralModelLabel): Table => $table->pluralModelLabel($pluralModelLabel))
             ->when($this->getTablePollingInterval(), fn (Table $table, string $pollingInterval): Table => $table->poll($pollingInterval))
             ->when($this->getTableRecordAction(), fn (Table $table, string $recordAction): Table => $table->recordAction($recordAction))
-            ->recordTitle(fn (Model $record): ?string => $this->getTableRecordTitle($record))
+            ->when(
+                (new ReflectionMethod($this, 'getTableRecordTitle'))->getFileName() !== (new ReflectionMethod(HasRecords::class, 'getTableRecordTitle'))->getFileName(),
+                fn (Table $table): Table => $table->recordTitle(fn (Model $record): ?string => $this->getTableRecordTitle($record)),
+            )
             ->when($this->getTableReorderColumn(), fn (Table $table, string $reorderColumn): Table => $table->reorderable($reorderColumn))
             ->when($this->shouldSelectCurrentPageOnly(), fn (Table $table): Table => $table->selectCurrentPageOnly())
             ->when($this->isTableStriped(), fn (Table $table): Table => $table->striped());
@@ -260,16 +266,16 @@ trait InteractsWithTable
         $namespace = $this::class;
 
         if ($isTenantScoped && class_exists(Filament::class) && filled($tenantKey = Filament::getTenant()?->getKey())) {
-            $namespace .= '|' . $tenantKey;
+            $namespace = encode_key_segments($namespace, (string) $tenantKey);
         }
 
-        $table = md5($namespace);
+        $table = hash('sha256', $namespace);
 
         if (filled($identifier = $this->getTable()->getIdentifier())) {
-            $table .= '.' . md5($identifier);
+            $table .= '.' . hash('sha256', $identifier);
         }
 
-        return "tables.{$table}_{$key}";
+        return "filament.tables.{$table}.{$key}";
     }
 
     public function getActiveTableLocale(): ?string

@@ -1,9 +1,6 @@
 ---
 title: Validation
 ---
-import Aside from "@components/Aside.astro"
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -13,7 +10,7 @@ In Laravel, validation rules are usually defined in arrays like `['required', 'm
 
 Filament includes many [dedicated validation methods](#available-rules), but you can also use any [other Laravel validation rules](#other-rules), including [custom validation rules](#custom-rules).
 
-<AutoScreenshot name="forms/validation" alt="A form with validation errors" version="4.x" />
+<AutoScreenshot name="forms/validation" alt="A form with validation errors" />
 
 <Aside variant="warning">
     Some default Laravel validation rules rely on the correct attribute names and won't work when passed via `rule()`/`rules()`. Use the dedicated validation methods whenever you can.
@@ -389,7 +386,7 @@ Field::make('name')->required()
 
 #### Marking a field as required
 
-By default, required fields will show an asterisk `*` next to their label. You may want to hide the asterisk on forms where all fields are required, or where it makes sense to add [extra content after the label](overview#adding-extra-content-after-a-field%E2%80%99s-label) to optional fields instead:
+By default, required fields will show an asterisk `*` next to their label. You may want to hide the asterisk on forms where all fields are required, or where it makes sense to add [extra content after the label](overview#adding-extra-content-after-a-fields-label) to optional fields instead:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -641,7 +638,7 @@ TextInput::make('name')
     ->validationAttribute('full name')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `validationAttribute()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `validationAttribute()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Validation messages
 
@@ -657,7 +654,7 @@ TextInput::make('email')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing an array of static value, the `validationMessages()` method also accepts a function for each message. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing an array of static value, the `validationMessages()` method also accepts a function for each message. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ### Allowing HTML in validation messages
 
@@ -691,4 +688,4 @@ TextInput::make('name')
     ->validatedWhenNotDehydrated(false)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `validatedWhenNotDehydrated()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `validatedWhenNotDehydrated()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>

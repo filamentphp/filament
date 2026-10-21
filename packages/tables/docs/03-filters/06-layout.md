@@ -1,7 +1,6 @@
 ---
 title: Filter layout
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Positioning filters into grid columns
 
@@ -20,7 +19,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/filters/grid-columns" alt="Table with filters in grid columns" version="4.x" />
+<AutoScreenshot name="tables/filters/grid-columns" alt="Table with filters in grid columns" />
 
 ## Controlling the width of the filters dropdown
 
@@ -74,7 +73,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/filters/modal" alt="Table with filters in a modal" version="4.x" />
+<AutoScreenshot name="tables/filters/modal" alt="Table with filters in a modal" />
 
 You may use the [trigger action API](overview#customizing-the-filters-trigger-action) to [customize the modal](../../actions/modals), including [using a `slideOver()`](../../actions/modals#using-a-slide-over-instead-of-a-modal).
 
@@ -95,7 +94,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/filters/above-content" alt="Table with filters above content" version="4.x" />
+<AutoScreenshot name="tables/filters/above-content" alt="Table with filters above content" />
 
 ### Allowing filters above the table content to be collapsed
 
@@ -113,7 +112,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/filters/above-content-collapsible" alt="Table with collapsible filters above content" version="4.x" />
+<AutoScreenshot name="tables/filters/above-content-collapsible" alt="Table with collapsible filters above content" />
 
 ## Displaying filters below the table content
 
@@ -132,7 +131,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/filters/below-content" alt="Table with filters below content" version="4.x" />
+<AutoScreenshot name="tables/filters/below-content" alt="Table with filters below content" />
 
 ## Displaying filters to the left or right of the table content
 
@@ -151,9 +150,9 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/filters/before-content" alt="Table with filters before content" version="4.x" />
+<AutoScreenshot name="tables/filters/before-content" alt="Table with filters before content" />
 
-<AutoScreenshot name="tables/filters/after-content" alt="Table with filters after content" version="4.x" />
+<AutoScreenshot name="tables/filters/after-content" alt="Table with filters after content" />
 
 ### Allowing filters to be collapsible when displayed to the left or right of the table content
 
@@ -223,7 +222,7 @@ public function table(Table $table): Table
 
 In this example, we have put two of the filters inside a [section](../../schemas/sections) component, and used the `columns()` method to specify that the section should have two columns. We have also used the `columnSpanFull()` method to specify that the section should span the full width of the filter form, which is also 2 columns wide. We have inserted each filter into the form schema by using the filter's name as the key in the `$filters` array.
 
-<AutoScreenshot name="tables/filters/custom-form-schema" alt="Table with custom filter form schema" version="4.x" />
+<AutoScreenshot name="tables/filters/custom-form-schema" alt="Table with custom filter form schema" />
 
 ## Displaying the reset action in the footer
 

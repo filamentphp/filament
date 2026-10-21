@@ -1,9 +1,6 @@
 ---
 title: Import action
 ---
-import Aside from "@components/Aside.astro"
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -38,7 +35,7 @@ ImportAction::make()
     ->importer(ProductImporter::class)
 ```
 
-<AutoScreenshot name="actions/import-action/modal" alt="Import action modal" version="4.x" />
+<AutoScreenshot name="actions/import-action/modal" alt="Import action modal" />
 
 If you want to add this action to the header of a table, you may do so like this:
 
@@ -163,7 +160,7 @@ ImportColumn::make('sku')
 
 Any rows that do not pass validation will not be imported. Instead, they will be compiled into a new CSV of "failed rows", which the user can download after the import has finished. The user will be shown a list of validation errors for each row that failed.
 
-<UtilityInjection set="importColumns" version="4.x">As well as allowing a static value, the `rules()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="importColumns">As well as allowing a static value, the `rules()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 #### Validating a column against an enum
 
@@ -185,7 +182,7 @@ The backing values of the enum are also used as the [example CSV data](#providin
     If the column [handles multiple values](#handling-multiple-values-in-a-single-column), each item in the array is validated against the enum.
 </Aside>
 
-<UtilityInjection set="importColumns" version="4.x">As well as allowing a static value, the `enum()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="importColumns">As well as allowing a static value, the `enum()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 When the enum is calculated dynamically, its cases are not automatically used as example CSV data, since the function may depend on the current row being imported. You can pass the example data to `examples()` yourself if required.
 
@@ -209,7 +206,7 @@ ImportColumn::make('price')
     })
 ```
 
-<UtilityInjection set="importColumns" version="4.x" extras="State;;mixed;;$state;;The state to cast, after it has been processed by other casting methods.||Original state;;mixed;;$originalState;;The state to cast, before it was processed by other casting methods.">As well as `$state`, the `castStateUsing()` method allows you to inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="importColumns" extras="State;;mixed;;$state;;The state to cast, after it has been processed by other casting methods.||Original state;;mixed;;$originalState;;The state to cast, before it was processed by other casting methods.">As well as `$state`, the `castStateUsing()` method allows you to inject various utilities into the function as parameters.</UtilityInjection>
 
 In this example, we pass in a function that is used to cast the `$state`. This function removes any non-numeric characters from the string, casts it to a float, and rounds it to two decimal places.
 
@@ -265,7 +262,7 @@ ImportColumn::make('price')
     })
 ```
 
-<UtilityInjection set="importColumns" version="4.x" extras="State;;mixed;;$state;;The state to cast, after it has been processed by other casting methods.||Original state;;mixed;;$originalState;;The state to cast, before it was processed by other casting methods.">As well as `$state`, the `castStateUsing()` method allows you to inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="importColumns" extras="State;;mixed;;$state;;The state to cast, after it has been processed by other casting methods.||Original state;;mixed;;$originalState;;The state to cast, before it was processed by other casting methods.">As well as `$state`, the `castStateUsing()` method allows you to inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Handling multiple values in a single column
 
@@ -278,7 +275,7 @@ ImportColumn::make('documentation_urls')
     ->multiple(',')
 ```
 
-<UtilityInjection set="importColumns" version="4.x">As well as allowing a static value, the `multiple()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="importColumns">As well as allowing a static value, the `multiple()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 In this example, we pass in a comma as the delimiter, so the values in the column will be split by commas, and cast to an array.
 
@@ -308,7 +305,7 @@ ImportColumn::make('customer_ratings')
     ->nestedRecursiveRules(['integer', 'min:1', 'max:5'])
 ```
 
-<UtilityInjection set="importColumns" version="4.x">As well as allowing a static value, the `nestedRecursiveRules()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="importColumns">As well as allowing a static value, the `nestedRecursiveRules()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Importing relationships
 
@@ -372,7 +369,7 @@ ImportColumn::make('author')
     })
 ```
 
-<UtilityInjection set="importColumns" version="4.x" extras="State;;mixed;;$state;;The state to resolve into a record.">The function passed to `resolveUsing` allows you to inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="importColumns" extras="State;;mixed;;$state;;The state to resolve into a record.">The function passed to `resolveUsing` allows you to inject various utilities into the function as parameters.</UtilityInjection>
 
 If you are using a `BelongsToMany` relationship, the `$state` will be an array, and you should return a collection of records that you have resolved:
 
@@ -435,7 +432,7 @@ ImportColumn::make('sku')
     })
 ```
 
-<UtilityInjection set="importColumns" version="4.x" extras="State;;mixed;;$state;;The state to fill into the record.">The function passed to the `fillRecordUsing()` method allows you to inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="importColumns" extras="State;;mixed;;$state;;The state to fill into the record.">The function passed to the `fillRecordUsing()` method allows you to inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Adding helper text below the import column
 
@@ -450,6 +447,10 @@ ImportColumn::make('skus')
 ```
 
 ## Updating existing records when importing
+
+<Aside variant="danger">
+    Importing does not automatically check model policies. Add [per-record authorization](#per-record-authorization) when users should only be able to update certain records.
+</Aside>
 
 When generating an importer class, you will see this `resolveRecord()` method:
 
@@ -668,7 +669,7 @@ ImportAction::make()
     ->maxRows(100000)
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `maxRows()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions">As well as allowing a static value, the `maxRows()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Changing the import chunk size
 
@@ -683,7 +684,7 @@ ImportAction::make()
     ->chunkSize(250)
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `chunkSize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions">As well as allowing a static value, the `chunkSize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="tip">
     If you are encountering memory or timeout issues when importing large CSV files, you may wish to reduce the chunk size.
@@ -702,7 +703,7 @@ ImportAction::make()
     ->csvDelimiter(';')
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `csvDelimiter()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions">As well as allowing a static value, the `csvDelimiter()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You can only specify a single character, otherwise an exception will be thrown.
 
@@ -719,7 +720,7 @@ ImportAction::make()
     ->headerOffset(5)
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `headerOffset()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions">As well as allowing a static value, the `headerOffset()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Customizing the completion notification
 
@@ -835,7 +836,7 @@ use Illuminate\Queue\Middleware\WithoutOverlapping;
 public function getJobMiddleware(): array
 {
     return [
-        (new WithoutOverlapping("import{$this->import->getKey()}"))->expireAfter(600),
+        (new WithoutOverlapping("filament:imports:{$this->import->getKey()}"))->expireAfter(600),
     ];
 }
 ```
@@ -940,7 +941,7 @@ ImportAction::make()
     ]),
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `fileRules()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions">As well as allowing a static value, the `fileRules()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Lifecycle hooks
 
@@ -1091,6 +1092,14 @@ If you need per-record authorization during import, you should add checks in you
 <Aside variant="danger">
     If your application allows untrusted users to trigger imports, you should implement per-record authorization checks to prevent unauthorized record creation or modification.
 </Aside>
+
+### Importing tenant-aware records
+
+When you start an import using `ImportAction` in a tenant-aware panel with a current tenant, Filament restores that panel and tenant for each import chunk. This applies the resources' tenant global scopes and new-record association. Each chunk checks that the tenant still exists and the importing user can still access it.
+
+This does not apply custom `Resource::getEloquentQuery()` restrictions or replace [per-record authorization](#per-record-authorization). Models without a tenant-scoped resource in the panel, queries that remove tenant scopes, and imports started outside this context need your own tenant constraints and associations.
+
+The restored context covers row processing and importer lifecycle hooks, not custom job middleware or batch completion callbacks.
 
 ### CSV formula injection
 

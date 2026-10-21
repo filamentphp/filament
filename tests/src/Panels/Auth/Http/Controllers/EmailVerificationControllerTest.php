@@ -67,7 +67,7 @@ it('cannot verify an email when signed in as another user', function (): void {
 
 it('scopes authentication route rate limits by authentication guard', function (): void {
     $user = User::factory()->create();
-    $rateLimiter = app(RateLimiter::class)->limiter('filament-authentication');
+    $rateLimiter = app(RateLimiter::class)->limiter('filament:auth');
 
     $this->actingAs($user);
 

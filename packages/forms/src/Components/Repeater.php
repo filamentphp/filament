@@ -1304,14 +1304,17 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
 
     public function getItemLabel(string $key, ?int $index = null): string | Htmlable | null
     {
-        $container = $this->getChildSchema($key);
+        $container = null;
+        $getContainer = function () use ($key, &$container): ?Schema {
+            return $container ??= $this->getChildSchema($key);
+        };
 
         return $this->evaluate($this->itemLabel, [
-            'container' => $container,
-            'item' => $container,
+            'container' => $getContainer,
+            'item' => $getContainer,
             'key' => $key,
-            'schema' => $container,
-            'state' => $container->getStateSnapshot(),
+            'schema' => $getContainer,
+            'state' => static fn (): array => $getContainer()->getStateSnapshot(),
             'uuid' => $key,
             'index' => $index,
         ]);
@@ -1687,7 +1690,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                             wire:key="<?= e($item->getLivewireKey()) ?>.item"
                             x-data="item(<?= Js::from([
                                 'isCollapsed' => $this->isCollapsed($item),
-                                'collapseKey' => $persistCollapsed ? "repeater-{$key}-{$itemKey}-isCollapsed" : null,
+                                'collapseKey' => $persistCollapsed ? "filament:repeater:collapsed:{$key}-{$itemKey}" : null,
                             ]) ?>)"
                             x-on:repeater-expand.window="expandFromEvent"
                             x-on:repeater-collapse.window="collapseFromEvent"

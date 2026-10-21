@@ -119,72 +119,108 @@ trait HasRelationManagers
         return null;
     }
 
-    public function getRelationManagersContentComponent(): Component
+    /**
+     * @return array<string | int, Tab | null>
+     */
+    public function getTabComponents(): array
     {
-        $managers = $this->getCachedRelationManagers();
-        $hasCombinedRelationManagerTabsWithContent = $this->hasCombinedRelationManagerTabsWithContent();
-        $ownerRecord = $this->getRecord();
+        // The empty key has always represented content in combined tabs.
+        $tabs = $this->getRelationManagerTabComponents(except: ['']);
+        $contentTab = ['' => $this->getContentTabComponent()];
 
-        $managerLivewireData = ['ownerRecord' => $ownerRecord, 'pageClass' => static::class];
+        return match ($this->getContentTabPosition()) {
+            ContentTabPosition::After => $tabs + $contentTab,
+            default => $contentTab + $tabs,
+        };
+    }
+
+    /**
+     * @param  array<string | int>  $except
+     * @return array<string | int, Tab>
+     */
+    public function getRelationManagerTabComponents(array $except = []): array
+    {
+        $tabs = [];
+
+        foreach (array_keys(array_diff_key($this->getCachedRelationManagers(), array_flip($except))) as $managerKey) {
+            if ($tab = $this->getRelationManagerTabComponent($managerKey)) {
+                $tabs[$managerKey] = $tab;
+            }
+        }
+
+        return $tabs;
+    }
+
+    public function getRelationManagerTabComponent(string | int $key): ?Tab
+    {
+        $manager = $this->getCachedRelationManagers()[$key] ?? null;
+
+        if (! $manager) {
+            return null;
+        }
+
+        $ownerRecord = $this->getRecord();
+        $managerLivewireData = $this->getRelationManagerLivewireData();
+
+        if ($manager instanceof RelationGroup) {
+            $manager->ownerRecord($ownerRecord);
+            $manager->pageClass(static::class);
+
+            return $manager->getTabComponent()
+                ->schema(fn (): array => collect($manager->getManagers())
+                    ->map(fn ($groupedManager, $groupedManagerKey): Livewire => Livewire::make(
+                        $normalizedGroupedManagerClass = $this->normalizeRelationManagerClass($groupedManager),
+                        [...$managerLivewireData, ...(($groupedManager instanceof RelationManagerConfiguration) ? [...$groupedManager->relationManager::getDefaultProperties(), ...$groupedManager->getProperties()] : $groupedManager::getDefaultProperties())],
+                    )->key("{$normalizedGroupedManagerClass}-{$groupedManagerKey}"))
+                    ->all());
+        }
+
+        $normalizedManagerClass = $this->normalizeRelationManagerClass($manager);
+
+        return $normalizedManagerClass::getTabComponent($ownerRecord, static::class)
+            ->schema(fn (): array => [
+                Livewire::make(
+                    $normalizedManagerClass,
+                    [...$managerLivewireData, ...(($manager instanceof RelationManagerConfiguration) ? [...$manager->relationManager::getDefaultProperties(), ...$manager->getProperties()] : $manager::getDefaultProperties())],
+                )->key($normalizedManagerClass),
+            ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getRelationManagerLivewireData(): array
+    {
+        $managerLivewireData = ['ownerRecord' => $this->getRecord(), 'pageClass' => static::class];
 
         if ($activeLocale = (property_exists($this, 'activeLocale') ? $this->activeLocale : null)) {
             $managerLivewireData['activeLocale'] = $activeLocale;
         }
 
+        return $managerLivewireData;
+    }
+
+    public function getRelationManagersContentComponent(): Component
+    {
+        $managers = $this->getCachedRelationManagers();
+        $hasCombinedRelationManagerTabsWithContent = $this->hasCombinedRelationManagerTabsWithContent();
+
         if ((count($managers) > 1) || $hasCombinedRelationManagerTabsWithContent) {
-            $tabs = $managers;
-
-            if ($hasCombinedRelationManagerTabsWithContent) {
-                match ($this->getContentTabPosition()) {
-                    ContentTabPosition::After => $tabs = array_merge($tabs, ['' => null]),
-                    default => $tabs = array_replace(['' => null], $tabs),
-                };
-            }
-
-            $tabs = collect($tabs)
-                ->map(function ($manager, string | int $tabKey) use ($hasCombinedRelationManagerTabsWithContent, $managerLivewireData, $ownerRecord): Tab {
-                    $tabKey = strval($tabKey);
-
-                    if (blank($tabKey) && $hasCombinedRelationManagerTabsWithContent) {
-                        return $this->getContentTabComponent();
-                    }
-
-                    if ($manager instanceof RelationGroup) {
-                        $manager->ownerRecord($ownerRecord);
-                        $manager->pageClass(static::class);
-
-                        return $manager->getTabComponent()
-                            ->schema(fn (): array => collect($manager->getManagers())
-                                ->map(fn ($groupedManager, $groupedManagerKey): Livewire => Livewire::make(
-                                    $normalizedGroupedManagerClass = $this->normalizeRelationManagerClass($groupedManager),
-                                    [...$managerLivewireData, ...(($groupedManager instanceof RelationManagerConfiguration) ? [...$groupedManager->relationManager::getDefaultProperties(), ...$groupedManager->getProperties()] : $groupedManager::getDefaultProperties())],
-                                )->key("{$normalizedGroupedManagerClass}-{$groupedManagerKey}"))
-                                ->all());
-                    }
-
-                    $normalizedManagerClass = $this->normalizeRelationManagerClass($manager);
-
-                    return $normalizedManagerClass::getTabComponent($ownerRecord, static::class)
-                        ->schema(fn (): array => [
-                            Livewire::make(
-                                $normalizedManagerClass,
-                                [...$managerLivewireData, ...(($manager instanceof RelationManagerConfiguration) ? [...$manager->relationManager::getDefaultProperties(), ...$manager->getProperties()] : $manager::getDefaultProperties())],
-                            )->key($normalizedManagerClass),
-                        ]);
-                })
-                ->all();
-
             return Tabs::make()
                 ->key('relationManagerTabs')
                 ->livewireProperty('activeRelationManager')
                 ->contained(false)
-                ->tabs($tabs);
+                ->tabs($hasCombinedRelationManagerTabsWithContent
+                    ? fn (): array => array_filter($this->getTabComponents())
+                    : $this->getRelationManagerTabComponents());
         }
 
         if (empty($managers)) {
             return Group::make()->hidden();
         }
 
+        $ownerRecord = $this->getRecord();
+        $managerLivewireData = $this->getRelationManagerLivewireData();
         $manager = Arr::first($managers);
 
         if ($manager instanceof RelationGroup) {

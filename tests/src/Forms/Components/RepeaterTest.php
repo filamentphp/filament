@@ -1970,8 +1970,10 @@ describe('browser interactions', function (): void {
         $secondUp = ':nth-match(' . $moveUp . ', 2)';
         $thirdUp = ':nth-match(' . $moveUp . ', 3)';
         $status = '[data-testid="repeater"] > [role="status"]';
+        $firstDragHandle = ':nth-match([data-testid="repeater"] button[aria-label="' . __('filament-forms::components.repeater.actions.reorder.label') . '"], 1)';
 
-        $page->assertPresent('[data-testid="repeater"]')
+        $page->assertAttribute($firstDragHandle, 'tabindex', '-1')
+            ->assertAttribute($firstDragHandle, 'aria-hidden', 'true')
             ->keys($firstDown, 'Enter')
             ->assertValue($firstName, 'Beta')
             ->assertValue($secondName, 'Alpha')
@@ -2086,8 +2088,7 @@ describe('browser interactions', function (): void {
             ->keys($firstDown, 'Enter')->assertVisible('[data-testid="cancel-move"]')
             ->assertSeeNothingIn($status)
             ->click('[data-testid="cancel-move"]')
-            ->assertMissing('[data-testid="cancel-move"]')
-            ->assertNotPresent('[role="dialog"]:visible')
+            ->assertNotPresent('[data-testid="cancel-move"]')
             ->assertValue(':nth-match([data-testid="item-name"], 1)', 'Alpha')
             ->assertValue(':nth-match([data-testid="item-name"], 2)', 'Beta')
             ->assertValue(':nth-match([data-testid="item-name"], 3)', 'Gamma')
@@ -2099,8 +2100,7 @@ describe('browser interactions', function (): void {
             ->assertValue(':nth-match([data-testid="item-name"], 1)', 'Beta')
             ->assertValue(':nth-match([data-testid="item-name"], 2)', 'Alpha')
             ->assertValue(':nth-match([data-testid="item-name"], 3)', 'Gamma')
-            ->assertMissing('[data-testid="confirm-move"]')
-            ->assertNotPresent('[role="dialog"]:visible')
+            ->assertNotPresent('[data-testid="confirm-move"]')
             ->assertSeeIn($status, __('filament-forms::components.repeater.reordering.moved', ['label' => 'Alpha', 'position' => 2, 'count' => 3]))
             ->click(':nth-match([data-testid="repeater"] [data-reorder-direction="up"]:not([data-testid="children"] *), 2)')
             ->assertValue(':nth-match([data-testid="item-name"], 1)', 'Alpha')

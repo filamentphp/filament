@@ -2,7 +2,6 @@
 title: Link Blade component
 ---
 
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
@@ -14,7 +13,7 @@ The link component is used to render a clickable link that can perform an action
 </x-filament::link>
 ```
 
-<AutoScreenshot name="components/link/simple" alt="A simple link" version="4.x" />
+<AutoScreenshot name="components/link/simple" alt="A simple link" />
 
 ## Using a link as a button
 
@@ -51,7 +50,7 @@ By default, the size of a link is "medium". You can make it "small", "large", "e
 </x-filament::link>
 ```
 
-<AutoScreenshot name="components/link/sizes" alt="Links in different sizes" version="4.x" />
+<AutoScreenshot name="components/link/sizes" alt="Links in different sizes" />
 
 ## Setting the font weight of a link
 
@@ -99,7 +98,7 @@ Alternatively, you can pass in a custom CSS class to define the weight:
 </x-filament::link>
 ```
 
-<AutoScreenshot name="components/link/weights" alt="Links in different font weights" version="4.x" />
+<AutoScreenshot name="components/link/weights" alt="Links in different font weights" />
 
 ## Changing the color of a link
 
@@ -127,7 +126,7 @@ By default, the color of a link is "primary". You can change it to be `danger`, 
 </x-filament::link>
 ```
 
-<AutoScreenshot name="components/link/colors" alt="Links in different colors" version="4.x" />
+<AutoScreenshot name="components/link/colors" alt="Links in different colors" />
 
 ## Adding an icon to a link
 
@@ -150,7 +149,7 @@ You can also change the icon's position to be after the text instead of before i
 </x-filament::link>
 ```
 
-<AutoScreenshot name="components/link/icon" alt="Links with icons" version="4.x" />
+<AutoScreenshot name="components/link/icon" alt="Links with icons" />
 
 ## Adding a tooltip to a link
 
@@ -188,4 +187,4 @@ You can [change the color](badge#changing-the-color-of-the-badge) of the badge u
 </x-filament::link>
 ```
 
-<AutoScreenshot name="components/link/badge" alt="Links with badges" version="4.x" />
+<AutoScreenshot name="components/link/badge" alt="Links with badges" />

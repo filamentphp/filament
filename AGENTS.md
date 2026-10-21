@@ -62,6 +62,7 @@ it('returns null for getImageCropAspectRatio by default')
 - Before adding a browser test, search the file for the same route and setup. Combine related assertions into one coherently named test and reuse the page; use another visit only when isolation or a state reset is required.
 - Run behavior scenarios once unless the theme changes the behavior. Keep light- and dark-mode accessibility checks together for representative distinct states (such as open popups, errors, and disabled controls), not every interaction or dataset permutation. Reuse existing coverage instead of repeating equivalent whole-document scans or setup.
 - Keep each test focused on one behavior and each test file focused on its owning component or feature. Separate scenarios only when combining them would obscure the behavior or introduce order-dependent state.
+- Before inserting tests, read the file's existing organization. Place new cases beside related coverage, reusing an appropriate `describe()` group when present; add a focused group only when it improves organization. Keep basic rendering and common scenarios before specialized configuration and edge cases. Do not default to inserting tests immediately after `uses()` or at the top of the file.
 - For asynchronous JavaScript changes, exercise out-of-order completion, failure/cancellation, and destruction with pending work. Use the real integration where mocked callbacks would hide its contract. This validation does not automatically require new permanent tests.
 
 ```bash
@@ -232,7 +233,7 @@ Hook class naming:
 
 ## Writing Documentation
 
-**Always update documentation for user-facing features** in the owning page under `docs/` or `packages/{package}/docs/`.
+**Update documentation for developer-facing features and changes to supported usage** in the owning page under `docs/` or `packages/{package}/docs/`. Do not add documentation merely because a change is visible to end users. Automatic styling, layout, and interaction changes (such as dropdown closing or focus restoration), fixes that restore intended behavior, and implementation details need documentation only when they change how developers configure, use, extend, or integrate Filament, or introduce consequential compatibility or accessibility limitations. A change to default end-user behavior alone is not a change to supported developer usage and does not need documentation.
 
 - **Tone**: Direct, second person ("You may set...", "You can do this using...")
 - **Audience**: Document how developers configure, extend, and troubleshoot Filament, not how end users operate it. Explain built-in interactions or internal behavior only when they affect a developer's decision, integration, or consequential limitation.

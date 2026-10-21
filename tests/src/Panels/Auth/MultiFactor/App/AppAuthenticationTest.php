@@ -908,6 +908,39 @@ describe('security', function (): void {
         expect($appAuthentication->verifyCode($earlierCode, $secret, shouldPreventCodeReuse: true))->toBeFalse();
     });
 
+    it('preserves TOTP replay protection across current and legacy cache keys', function (?int $currentOffset, ?int $legacyOffset): void {
+        $appAuthentication = AppAuthentication::make();
+        $userToAuthenticate = User::factory()->hasAppAuthentication()->create();
+        $secret = $appAuthentication->getSecret($userToAuthenticate);
+        $google2FA = app(Google2FA::class);
+        $timestamp = $google2FA->getTimestamp();
+        $cacheKey = 'filament:auth:app_authentication:code:' . hash('sha256', $secret);
+        $legacyCacheKey = 'filament.app_authentication_codes.' . md5($secret);
+
+        if ($currentOffset !== null) {
+            Cache::forever($cacheKey, $timestamp + $currentOffset);
+        }
+
+        if ($legacyOffset !== null) {
+            Cache::forever($legacyCacheKey, (string) ($timestamp + $legacyOffset));
+        }
+
+        expect($appAuthentication->verifyCode($google2FA->oathTotp($secret, $timestamp), $secret, shouldPreventCodeReuse: true))->toBeFalse()
+            ->and($appAuthentication->verifyCode($google2FA->oathTotp($secret, $timestamp + 1), $secret, shouldPreventCodeReuse: true))->toBeTrue()
+            ->and(Cache::get($cacheKey))->toBe($timestamp + 1)
+            ->and(Cache::get($legacyCacheKey))->toBe($timestamp + 1);
+
+        // A legacy worker may advance its watermark after the new key has been written.
+        Cache::forever($legacyCacheKey, $timestamp + 2);
+
+        expect($appAuthentication->verifyCode($google2FA->oathTotp($secret, $timestamp + 2), $secret, shouldPreventCodeReuse: true))->toBeFalse();
+    })->with([
+        'legacy only' => [null, 0],
+        'current only' => [0, null],
+        'legacy newer' => [-1, 0],
+        'current newer' => [0, -1],
+    ]);
+
     it('will not allow a TOTP code from a future time window to be reused', function (): void {
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
@@ -979,7 +1012,8 @@ describe('security', function (): void {
             $secret,
             shouldPreventCodeReuse: true,
         ))->toBeFalse()
-            ->and(Cache::get('filament.app_authentication_codes.' . md5($secret)))->toBeNull();
+            ->and(Cache::get('filament.app_authentication_codes.' . md5($secret)))->toBeNull()
+            ->and(Cache::get('filament:auth:app_authentication:code:' . hash('sha256', $secret)))->toBeNull();
     });
 
     it('does not move the TOTP replay watermark backwards after a cache lock expires', function (): void {

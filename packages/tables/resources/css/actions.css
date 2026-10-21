@@ -4,13 +4,13 @@
     .fi-ta-content-loading
         > .fi-ta-content
         &
-        :is(.fi-icon-btn, .fi-btn, .fi-link),
+        :is(.fi-icon-btn, .fi-btn, .fi-btn.fi-color, .fi-link),
     .fi-ta-content-loading
         > .fi-ta-table
         > .fi-ta-records
         > .fi-ta-row
         &
-        :is(.fi-icon-btn, .fi-btn, .fi-link) {
+        :is(.fi-icon-btn, .fi-btn, .fi-btn.fi-color, .fi-link) {
         @apply text-transparent shadow-none ring-0 transition-none;
         animation: var(--loading-skeleton-animation);
         background-color: var(--loading-skeleton-background-color);

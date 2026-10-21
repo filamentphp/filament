@@ -611,24 +611,27 @@ describe('array records', function (): void {
         expect($group->getTitle($arrayRecord))->toBe('Status: Active');
     });
 
-    it('can get grouped selectable record keys for array tables', function (): void {
-        livewire(GroupedCustomDataTable::class)
-            ->set('tableGrouping', 'status')
-            ->tap(function (Testable $testable): void {
-                /** @var GroupedCustomDataTable $livewire */
-                $livewire = $testable->instance();
+    it('can get grouped selectable record keys for array tables', function (bool $usesCustomKey): void {
+        Group::configureUsing(
+            static fn (Group $group) => $group->getKeyFromRecordUsing(
+                $usesCustomKey ? static fn (array $record): string => strtoupper($record['status']) : null,
+            ),
+            during: static fn () => livewire(GroupedCustomDataTable::class)
+                ->set('tableGrouping', 'status')
+                ->tap(function (Testable $testable) use ($usesCustomKey): void {
+                    /** @var GroupedCustomDataTable $livewire */
+                    $livewire = $testable->instance();
 
-                $activeKeys = $livewire->getGroupedSelectableTableRecordKeys('active');
-                $inactiveKeys = $livewire->getGroupedSelectableTableRecordKeys('inactive');
-
-                expect($activeKeys)
-                    ->toHaveCount(3)
-                    ->each->toBeString()
-                    ->and($inactiveKeys)
-                    ->toHaveCount(2)
-                    ->each->toBeString();
-            });
-    });
+                    expect($livewire->getGroupedSelectableTableRecordKeys($usesCustomKey ? 'ACTIVE' : 'active'))
+                        ->toBe(['1', '3', '5'])
+                        ->and($livewire->getGroupedSelectableTableRecordKeys($usesCustomKey ? 'INACTIVE' : 'inactive'))
+                        ->toBe(['2', '4']);
+                }),
+        );
+    })->with([
+        'default keys' => false,
+        'custom keys' => true,
+    ]);
 
     it('returns an empty array for a non-existent group in array tables', function (): void {
         livewire(GroupedCustomDataTable::class)
@@ -1064,7 +1067,7 @@ describe('session persistence', function (): void {
         $livewire = livewire(PostsTableWithGroupPersistedInSession::class)->instance();
 
         expect($livewire->getTableGroupingSessionKey())
-            ->toBe('tables.' . md5($livewire::class) . '_grouping');
+            ->toBe('filament.tables.' . hash('sha256', $livewire::class) . '.grouping');
     });
 
     it('can persist the grouping in the user\'s session', function (): void {

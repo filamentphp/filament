@@ -3,6 +3,7 @@ import * as TipTapPmState from '@tiptap/pm/state'
 import * as TipTapPmView from '@tiptap/pm/view'
 import * as TipTapPmModel from '@tiptap/pm/model'
 import getExtensions from './rich-editor/extensions.js'
+import normalizeListItemContent from './rich-editor/normalize-list-item-content.js'
 import { BubbleMenuPlugin } from '@tiptap/extension-bubble-menu'
 import { observeFieldAccessibility } from '../utilities/field-accessibility.js'
 import normalizeSearchString from '../../../../support/resources/js/utilities/normalize-search-string.js'
@@ -259,6 +260,8 @@ export default function richEditorFormComponent({
                 })
             }
 
+            let normalizedContent
+
             editor = new Editor({
                 editable: !isDisabled,
                 element: this.$refs.editor,
@@ -272,7 +275,21 @@ export default function richEditorFormComponent({
                 },
                 extensions: resolvedExtensions,
                 content: this.state,
+                onBeforeCreate: ({ editor }) => {
+                    normalizedContent = normalizeListItemContent(
+                        editor.options.content,
+                        editor.schema,
+                    )
+
+                    editor.setOptions({ content: normalizedContent })
+                },
             })
+
+            if (
+                JSON.stringify(normalizedContent) !== JSON.stringify(this.state)
+            ) {
+                this.state = normalizedContent
+            }
 
             accessibilityObserver = observeFieldAccessibility(
                 this.$el,
@@ -393,9 +410,14 @@ export default function richEditorFormComponent({
 
                     this.editorUpdatedAt = Date.now()
 
-                    this.state = editor.getJSON()
+                    const content = editor.getJSON()
 
-                    this.shouldUpdateState = false
+                    if (
+                        JSON.stringify(content) !== JSON.stringify(this.state)
+                    ) {
+                        this.shouldUpdateState = false
+                        this.state = content
+                    }
 
                     this.fileValidationMessage = null
 
@@ -435,7 +457,19 @@ export default function richEditorFormComponent({
                     return
                 }
 
-                editor.commands.setContent(this.state)
+                const normalizedContent = normalizeListItemContent(
+                    this.state,
+                    editor.schema,
+                )
+
+                editor.commands.setContent(normalizedContent)
+
+                const content = editor.getJSON()
+
+                if (JSON.stringify(content) !== JSON.stringify(this.state)) {
+                    this.shouldUpdateState = false
+                    this.state = content
+                }
             })
 
             const runCommandsHandler = (event) => {

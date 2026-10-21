@@ -714,86 +714,6 @@ describe('configuration and state', function (): void {
 
     });
 
-    describe('list item wrapping', function (): void {
-        test('list items with bare text content are wrapped in paragraphs on fill', function (): void {
-            $schema = Schema::make(Livewire::make())
-                ->statePath('data')
-                ->components([
-                    RichEditor::make('content')->json(),
-                ])
-                ->fill([
-                    'content' => '<ul><li>First item</li><li>Second item</li></ul>',
-                ]);
-
-            $state = $schema->getState()['content'];
-
-            $bulletList = collect($state['content'])->firstWhere('type', 'bulletList');
-
-            expect($bulletList)->not->toBeNull();
-
-            foreach ($bulletList['content'] as $listItem) {
-                expect($listItem['type'])->toBe('listItem');
-                expect($listItem['content'][0]['type'])->toBe('paragraph');
-            }
-
-            $firstParagraph = $bulletList['content'][0]['content'][0];
-            $secondParagraph = $bulletList['content'][1]['content'][0];
-
-            expect($firstParagraph['content'][0]['text'])->toBe('First item');
-            expect($secondParagraph['content'][0]['text'])->toBe('Second item');
-        });
-
-        test('list items with marked text content are wrapped in paragraphs on fill', function (): void {
-            $schema = Schema::make(Livewire::make())
-                ->statePath('data')
-                ->components([
-                    RichEditor::make('content')->json(),
-                ])
-                ->fill([
-                    'content' => '<ul><li><strong>Bold item</strong> with text</li></ul>',
-                ]);
-
-            $state = $schema->getState()['content'];
-
-            $bulletList = collect($state['content'])->firstWhere('type', 'bulletList');
-            $firstListItem = $bulletList['content'][0];
-            $paragraph = $firstListItem['content'][0];
-
-            expect($paragraph['type'])->toBe('paragraph');
-
-            $boldText = $paragraph['content'][0];
-            $plainText = $paragraph['content'][1];
-
-            expect($boldText['type'])->toBe('text');
-            expect($boldText['text'])->toBe('Bold item');
-            expect($boldText['marks'][0]['type'])->toBe('bold');
-
-            expect($plainText['type'])->toBe('text');
-            expect($plainText['text'])->toBe(' with text');
-            expect($plainText)->not->toHaveKey('marks');
-        });
-
-        test('list items already containing paragraphs are not double-wrapped on fill', function (): void {
-            $schema = Schema::make(Livewire::make())
-                ->statePath('data')
-                ->components([
-                    RichEditor::make('content')->json(),
-                ])
-                ->fill([
-                    'content' => '<ul><li><p>Already wrapped</p></li></ul>',
-                ]);
-
-            $state = $schema->getState()['content'];
-
-            $bulletList = collect($state['content'])->firstWhere('type', 'bulletList');
-            $firstListItem = $bulletList['content'][0];
-
-            expect($firstListItem['content'][0]['type'])->toBe('paragraph');
-            expect($firstListItem['content'][0]['content'][0]['type'])->toBe('text');
-            expect($firstListItem['content'][0]['content'][0]['text'])->toBe('Already wrapped');
-        });
-    });
-
     describe('link HTML attributes', function (): void {
         test('links without explicit HTML attributes do not gain them during HTML round-trip', function (): void {
             $schema = Schema::make(Livewire::make())
@@ -2106,13 +2026,9 @@ describe('browser interactions', function (): void {
             $url = ($operation === 'extend link') ? 'https://example.com/revised-article' : 'https://example.com/article';
 
             if ($operation === 'extend link') {
-
                 $page
-                    ->keys(':focus', 'Escape')
-                    ->assertCount('[role="tooltip"]:visible', 0)
-                    ->keys(':focus', 'Escape')
+                    ->click($content . ' a[href="https://example.com/article"]')
                     ->assertPresent($content . ':focus')
-                    ->keys(':focus', ['ArrowRight', 'ArrowLeft'])
                     ->assertScript('window.getSelection().isCollapsed', true);
             }
 

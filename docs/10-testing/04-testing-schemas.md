@@ -1,7 +1,6 @@
 ---
 title: Testing schemas
 ---
-import Aside from "@components/Aside.astro"
 
 ## Filling a form in a test
 

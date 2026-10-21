@@ -96,6 +96,7 @@
             x-bind:inert="! isOpen"
             x-bind:aria-hidden="! isOpen"
             x-cloak
+            x-on:mousedown.self.prevent
             x-on:click="linkActivated($event)"
             x-transition:enter-start="fi-transition-enter-start"
             x-transition:leave-end="fi-transition-leave-end"

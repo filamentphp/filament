@@ -1,9 +1,6 @@
 ---
 title: Tags input
 ---
-import Aside from "@components/Aside.astro"
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -17,7 +14,7 @@ use Filament\Forms\Components\TagsInput;
 TagsInput::make('tags')
 ```
 
-<AutoScreenshot name="forms/fields/tags-input/simple" alt="Tags input" version="4.x" />
+<AutoScreenshot name="forms/fields/tags-input/simple" alt="Tags input" />
 
 If you're saving the JSON tags using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
@@ -55,7 +52,7 @@ TagsInput::make('tags')
     ->separator(',')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `separator()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `separator()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Autocompleting tag suggestions
 
@@ -73,7 +70,7 @@ TagsInput::make('tags')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `suggestions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static array, the `suggestions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Defining split keys
 
@@ -88,7 +85,7 @@ TagsInput::make('tags')
 
 You can [read more about possible options for keys](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key).
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `splitKeys()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static array, the `splitKeys()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Adding a prefix and suffix to individual tags
 
@@ -101,9 +98,9 @@ TagsInput::make('percentages')
     ->tagSuffix('%')
 ```
 
-<AutoScreenshot name="forms/fields/tags-input/tag-prefix" alt="Tags input with tag prefix" version="4.x" />
+<AutoScreenshot name="forms/fields/tags-input/tag-prefix" alt="Tags input with tag prefix" />
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `tagPrefix()` and `tagSuffix()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing static values, the `tagPrefix()` and `tagSuffix()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ## Reordering tags
 
@@ -125,7 +122,7 @@ TagsInput::make('tags')
     ->reorderable(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `reorderable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `reorderable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Changing the color of tags
 
@@ -138,9 +135,9 @@ TagsInput::make('tags')
     ->color('danger')
 ```
 
-<AutoScreenshot name="forms/fields/tags-input/color" alt="Tags input with colored tags" version="4.x" />
+<AutoScreenshot name="forms/fields/tags-input/color" alt="Tags input with colored tags" />
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Trimming whitespace
 

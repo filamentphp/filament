@@ -2,7 +2,6 @@
 title: Checkbox Blade component
 ---
 
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
@@ -18,7 +17,7 @@ You can use the checkbox component to render a checkbox input that can be used t
 </label>
 ```
 
-<AutoScreenshot name="components/checkbox/simple" alt="Checkboxes with labels" version="4.x" />
+<AutoScreenshot name="components/checkbox/simple" alt="Checkboxes with labels" />
 
 ## Triggering the error state of the checkbox
 

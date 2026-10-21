@@ -2,6 +2,7 @@
 
 namespace Filament;
 
+use Filament\Actions\Imports\Jobs\ImportCsv;
 use Filament\Auth\Http\Responses\BlockEmailChangeVerificationResponse;
 use Filament\Auth\Http\Responses\Contracts\BlockEmailChangeVerificationResponse as BlockEmailChangeVerificationResponseContract;
 use Filament\Auth\Http\Responses\Contracts\EmailChangeVerificationResponse as EmailChangeVerificationResponseContract;
@@ -27,6 +28,7 @@ use Filament\Http\Middleware\IdentifyTenant;
 use Filament\Http\Middleware\SetUpPanel;
 use Filament\Livewire\ScopedModelPropertiesComponentHook;
 use Filament\Navigation\NavigationManager;
+use Filament\Queue\Middleware\RestoreImportTenant;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Assets\Font;
 use Filament\Support\Assets\Js;
@@ -96,6 +98,23 @@ class FilamentServiceProvider extends PackageServiceProvider
         $this->app->booting(static function (): void {
             app('livewire')->componentHook(app(ScopedModelPropertiesComponentHook::class));
         });
+
+        $this->app->resolving(ImportCsv::class, static function (ImportCsv $job): void {
+            $panel = Filament::getCurrentPanel();
+            $tenant = Filament::getTenant();
+
+            if ((! $panel?->hasTenancy()) || (! $tenant)) {
+                return;
+            }
+
+            $job->through([
+                ...$job->middleware,
+                app(RestoreImportTenant::class, [
+                    'panelId' => $panel->getId(),
+                    'tenantId' => $tenant->getKey(),
+                ]),
+            ]);
+        });
     }
 
     public function packageBooted(): void
@@ -108,7 +127,7 @@ class FilamentServiceProvider extends PackageServiceProvider
         });
 
         RateLimiter::for(
-            'filament-authentication',
+            'filament:auth',
             static fn (): Limit => Limit::perMinute(6)
                 ->by(Filament::getUserScopedAuthIdentifier()),
         );

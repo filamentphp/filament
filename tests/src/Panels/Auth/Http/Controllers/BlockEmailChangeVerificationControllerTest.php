@@ -8,7 +8,7 @@ use League\Uri\Components\Query;
 
 uses(TestCase::class);
 
-it('can block an email change', function (): void {
+it('can block an email change using current and legacy cache keys', function (string $cacheKeyFormat): void {
     $userToVerify = User::factory()->create();
     $newEmail = fake()->email();
 
@@ -18,7 +18,14 @@ it('can block an email change', function (): void {
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 
     $verificationSignature = Query::new($verificationUrl)->get('signature');
-    cache()->put($verificationSignature, true, ttl: now()->addHour());
+
+    if ($cacheKeyFormat !== 'legacy') {
+        cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
+    }
+
+    if ($cacheKeyFormat !== 'current') {
+        cache()->put($verificationSignature, true, ttl: now()->addHour());
+    }
 
     $blockVerificationUrl = Filament::getBlockEmailChangeVerificationUrl($userToVerify, $newEmail, $verificationSignature);
 
@@ -32,8 +39,8 @@ it('can block an email change', function (): void {
     expect($userToVerify->refresh())
         ->email->not->toBe($newEmail);
 
-    expect(cache()->has($verificationSignature))
-        ->toBeFalse();
+    expect(cache()->has($verificationSignature))->toBeFalse()
+        ->and(cache()->has("filament:auth:email_change:verification:{$verificationSignature}"))->toBeFalse();
 
     $this
         ->actingAs($userToVerify)
@@ -42,7 +49,7 @@ it('can block an email change', function (): void {
 
     expect($userToVerify->refresh())
         ->email->not->toBe($newEmail);
-});
+})->with(['current', 'legacy', 'both']);
 
 it('cannot block an email change when signed in as another user', function (): void {
     $userToVerify = User::factory()->create();
@@ -51,7 +58,7 @@ it('cannot block an email change when signed in as another user', function (): v
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 
     $verificationSignature = Query::new($verificationUrl)->get('signature');
-    cache()->put($verificationSignature, true, ttl: now()->addHour());
+    cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
 
     $blockVerificationUrl = Filament::getBlockEmailChangeVerificationUrl($userToVerify, $newEmail, $verificationSignature);
 
@@ -78,7 +85,7 @@ it('cannot block an email change once it has been verified', function (): void {
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 
     $verificationSignature = Query::new($verificationUrl)->get('signature');
-    cache()->put($verificationSignature, true, ttl: now()->addHour());
+    cache()->put("filament:auth:email_change:verification:{$verificationSignature}", true, ttl: now()->addHour());
 
     $this
         ->actingAs($userToVerify)

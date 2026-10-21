@@ -1,7 +1,6 @@
 ---
 title: Optimizing local development
 ---
-import Aside from "@components/Aside.astro"
 
 This section includes optional tips to optimize performance when running your Filament app locally.
 

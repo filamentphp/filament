@@ -11,12 +11,16 @@ use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Department;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\ManageTicketDepartments;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
+use Filament\Tests\Fixtures\Resources\Users\Pages\ManageUserPosts;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
 
@@ -39,6 +43,16 @@ it('can list departments', function (): void {
 
     livewire(ManageTicketDepartments::class, ['record' => $ticket->getKey()])
         ->assertCanSeeTableRecords($ticket->departments);
+});
+
+it('uses a fluent `recordTitleAttribute()` override with a nested related resource', function (): void {
+    $user = User::factory()->create();
+    $post = Post::factory()->for($user, 'author')->create(['title' => 'Contextual post']);
+
+    $component = livewire(ManageUserPostsWithRecordTitle::class, ['record' => $user->getKey()])
+        ->assertCanSeeTableRecords([$post]);
+
+    expect($component->instance()->getTable()->getRecordTitle($post))->toBe('Contextual post');
 });
 
 describe('authorization', function (): void {
@@ -248,3 +262,11 @@ it('renders actions based on policy', function (string $action, string $policyMe
     'restore bulk action with policy returning false' => fn (): array => [RestoreBulkAction::class, 'restoreAny', false, false, true, true, true],
     'restore bulk action with policy returning denied response' => fn (): array => [RestoreBulkAction::class, 'restoreAny', Response::deny(), false, true, true, true],
 ]);
+
+class ManageUserPostsWithRecordTitle extends ManageUserPosts
+{
+    public function table(Table $table): Table
+    {
+        return parent::table($table)->recordTitleAttribute('title');
+    }
+}

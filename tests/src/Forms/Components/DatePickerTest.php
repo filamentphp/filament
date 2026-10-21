@@ -793,6 +793,7 @@ it('saves boundary dates and round-trips epoch-backed and model-backed dates', f
                 ->assertVisible('[role="grid"]')
                 ->assertNoAccessibilityIssues();
             $page->inDarkMode()
+                ->assertValue('[data-testid="custom-timestamp-date"]', '2025-07-15')
                 ->click('[data-testid="custom-timestamp-date"]')
                 ->assertVisible('[role="grid"]')
                 ->assertNoAccessibilityIssues();

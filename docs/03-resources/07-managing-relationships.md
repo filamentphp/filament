@@ -1,9 +1,6 @@
 ---
 title: Managing relationships
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import Aside from "@components/Aside.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Choosing the right tool for the job
 
@@ -116,7 +113,7 @@ public static function getRelations(): array
 
 Once a table and form have been defined for the relation manager, visit the [Edit](editing-records) or [View](viewing-records) page of your resource to see it in action.
 
-<AutoScreenshot name="panels/resources/relation-manager" alt="Relation manager" version="4.x" />
+<AutoScreenshot name="panels/resources/relation-manager" alt="Relation manager" />
 
 ### Customizing the relation manager's URL parameter
 
@@ -305,7 +302,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="panels/resources/relation-manager-attach" alt="Relation manager attach modal" version="4.x" />
+<AutoScreenshot name="panels/resources/relation-manager-attach" alt="Relation manager attach modal" />
 
 <Aside variant="danger">
     `AssociateAction`, `AttachAction`, `DetachAction`, and `DissociateAction` (and their bulk variants) only check the relation manager's `isReadOnly()` state — they do not consult any model policy method by default. Bulk delete, force-delete, and restore actions use the `deleteAny()`, `forceDeleteAny()`, and `restoreAny()` policy methods (one call for the whole batch) for performance. If you need per-record authorization on a bulk action, call [`authorizeIndividualRecords('ability')`](../tables/actions#authorizing-bulk-actions) on it, accepting the extra query cost.
@@ -782,7 +779,7 @@ public static function getRelations(): array
 }
 ```
 
-<AutoScreenshot name="panels/resources/relation-manager-grouped" alt="Relation managers with grouped tabs" version="4.x" />
+<AutoScreenshot name="panels/resources/relation-manager-grouped" alt="Relation managers with grouped tabs" />
 
 ## Conditionally showing relation managers
 
@@ -803,46 +800,6 @@ Filament also checks `canViewForRecord()` before a relation manager's `mount()` 
 
 Keep sensitive work out of the relation manager's `boot()` and lazy `placeholder()` methods, which can run before this authorization check. If you need sensitive work in these methods, authorize it separately.
 
-## Combining the relation manager tabs with the form
-
-On the Edit or View page class, override the `hasCombinedRelationManagerTabsWithContent()` method:
-
-```php
-public function hasCombinedRelationManagerTabsWithContent(): bool
-{
-    return true;
-}
-```
-
-<AutoScreenshot name="panels/resources/editing-combined-tabs" alt="Resource edit page with combined relation manager tabs" version="4.x" />
-
-### Customizing the content tab
-
-On the Edit or View page class, override the `getContentTabComponent()` method, and use any [Tab](../schemas/tabs) customization methods:
-
-```php
-use Filament\Schemas\Components\Tabs\Tab;
-
-public function getContentTabComponent(): Tab
-{
-    return Tab::make('Settings')
-        ->icon('heroicon-m-cog');
-}
-```
-
-### Setting the position of the form tab
-
-By default, the form tab is rendered before the relation tabs. To render it after, you can override the `getContentTabPosition()` method on the Edit or View page class:
-
-```php
-use Filament\Resources\Pages\Enums\ContentTabPosition;
-
-public function getContentTabPosition(): ?ContentTabPosition
-{
-    return ContentTabPosition::After;
-}
-```
-
 ## Customizing relation manager tabs
 
 To customize the tab for a relation manager, override the `getTabComponent()` method, and use any [Tab](../schemas/tabs) customization methods:
@@ -861,7 +818,7 @@ public static function getTabComponent(Model $ownerRecord, string $pageClass): T
 }
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing static values, the `badgeColor()` and `badgeTooltip()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing static values, the `badgeColor()` and `badgeTooltip()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 If you are using a [relation group](#grouping-relation-managers), you can use the `tab()` method:
 
@@ -880,7 +837,7 @@ RelationGroup::make('Contacts', [
         ->icon('heroicon-m-document-text'));
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing static values, the `badgeColor()` and `badgeTooltip()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing static values, the `badgeColor()` and `badgeTooltip()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ### Deferring the loading of relation manager tab badges
 
@@ -921,6 +878,154 @@ RelationGroup::make('Contacts', [
     ->badge(fn (Model $ownerRecord): string => (string) $ownerRecord->contacts()->count())
     ->deferBadge();
 ```
+
+## Combining the relation manager tabs with the form
+
+On the Edit or View page class, override the `hasCombinedRelationManagerTabsWithContent()` method:
+
+```php
+public function hasCombinedRelationManagerTabsWithContent(): bool
+{
+    return true;
+}
+```
+
+<AutoScreenshot name="panels/resources/editing-combined-tabs" alt="Resource edit page with combined relation manager tabs" />
+
+### Customizing the content tab
+
+On the Edit or View page class, override the `getContentTabComponent()` method, and use any [Tab](../schemas/tabs) customization methods:
+
+```php
+use Filament\Schemas\Components\Tabs\Tab;
+
+public function getContentTabComponent(): Tab
+{
+    return Tab::make('Settings')
+        ->icon('heroicon-m-cog');
+}
+```
+
+### Setting the position of the form tab
+
+By default, the form tab is rendered before the relation tabs. To render it after, you can override the `getContentTabPosition()` method on the Edit or View page class:
+
+```php
+use Filament\Resources\Pages\Enums\ContentTabPosition;
+
+public function getContentTabPosition(): ?ContentTabPosition
+{
+    return ContentTabPosition::After;
+}
+```
+
+<Aside variant="info">
+    Numeric relation manager keys are now preserved in this position. If your existing `?relation=` links used reindexed keys, update them to match the keys in `getRelations()`.
+</Aside>
+
+### Mixing content and relation manager tabs
+
+To add your own tabs or change their order, override `getTabComponents()` on the Edit or View page. Use `getRelationManagerTabComponent()` to place a relation manager between your content tabs:
+
+```php
+use Filament\Schemas\Components\Tabs\Tab;
+
+public function getTabComponents(): array
+{
+    return [
+        'overview' => Tab::make('Overview')
+            ->schema([
+                // ...
+            ]),
+        'comments' => $this->getRelationManagerTabComponent('comments'),
+        '' => $this->getContentTabComponent()->label('Edit'),
+        'tags' => $this->getRelationManagerTabComponent('tags'),
+    ];
+}
+```
+
+The `comments` and `tags` keys come from your resource's `getRelations()` array:
+
+```php
+use App\Filament\Resources\Posts\RelationManagers\CommentsRelationManager;
+use App\Filament\Resources\Posts\RelationManagers\TagsRelationManager;
+
+public static function getRelations(): array
+{
+    return [
+        'comments' => CommentsRelationManager::class,
+        'tags' => TagsRelationManager::class,
+    ];
+}
+```
+
+You can also pass numeric keys to `getRelationManagerTabComponent()`. For a [relation group](#grouping-relation-managers), this returns one tab containing its authorized managers.
+
+Generated tabs keep their usual authorization, badges, configuration, and lazy loading. The helper returns `null` for unavailable managers, so their tabs are omitted. You can customize any tab using the usual [Tab methods](../schemas/tabs), including `label()`, `icon()`, and `badge()`.
+
+The array order controls the tab order instead of `getContentTabPosition()`. Keep the empty key (`''`) for the standard form or infolist tab. Other keys are used in the URL, such as `?relation=overview`, so choose unique keys and keep existing manager keys to preserve links.
+
+<Aside variant="danger">
+    An Edit page still requires edit permission, including on read-only tabs. Use a View page for view-only access.
+</Aside>
+
+#### Including the remaining relation managers
+
+If you have built your tabs in a `$tabs` array, you can append any relation managers you have not already placed:
+
+```php
+return $tabs + $this->getRelationManagerTabComponents(except: array_keys($tabs));
+```
+
+Use the registered manager keys in `$tabs` so these managers are excluded from the remaining tabs.
+
+#### Changing the tab query string key
+
+Combined tabs use `?relation=` by default, including content tabs. To use `?tab=` instead, redeclare `$activeRelationManager` on your Edit or View page with Livewire's `Url` attribute:
+
+```php
+use Livewire\Attributes\Url;
+
+#[Url(as: 'tab')]
+public ?string $activeRelationManager = null;
+```
+
+Keep the property name unchanged. You can also set `history: true` on the attribute to navigate between tabs with the browser's back and forward buttons. Existing `?relation=` links will no longer select a tab on this page.
+
+#### Adding a separately submitted form
+
+To give a content tab its own submit handler, wrap the form in a `Form` component:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Tabs\Tab;
+
+Tab::make('Preferences')
+    ->schema([
+        Form::make([EmbeddedSchema::make('preferencesForm')])
+            ->livewireSubmitHandler('savePreferences')
+            ->footer([
+                Actions::make([
+                    Action::make('savePreferences')
+                        ->label('Save preferences')
+                        ->submit('savePreferences'),
+                ]),
+            ]),
+    ])
+```
+
+Define `preferencesForm()` as a [named form](../components/form#using-multiple-forms) with its own `statePath()`. Fill it in `mount()`, after `parent::mount($record)`, and use `$this->preferencesForm->getState()` in `savePreferences()` to validate and save its data independently of the resource form.
+
+<Aside variant="danger">
+    Hiding a tab does not protect its submit handler. Authorize custom saves in your application.
+</Aside>
+
+#### Building a custom page layout
+
+For a different page layout, override `content()` and compose `Tabs::make()->livewireProperty('activeTab')` yourself. You can reuse the relation manager tab helpers there too, rather than embedding and configuring managers manually.
 
 ## Sharing a resource's form and table with a relation manager
 
@@ -1215,3 +1320,20 @@ To disable this behavior, you may override the `$isLazy` property on the relatio
 ```php
 protected static bool $isLazy = false;
 ```
+
+## Opening relation manager actions from a URL
+
+Relation managers do not consume page action links by default. To explicitly target a relation manager, override `getDefaultActionUrlIdentifier()` to return a stable identifier:
+
+```php
+public function getDefaultActionUrlIdentifier(): ?string
+{
+    return 'departments';
+}
+```
+
+You can then use `?actionComponent=departments&tableAction=view&tableActionRecord=123`. Targeting does not grant access: relation manager and action authorization still apply, and the record must resolve through the manager's table query or relationship.
+
+Include the page's tab parameter to select and render that relation manager too. For example, a manually embedded manager in a content tab bound to `?tab=` can use `?tab=departments&actionComponent=departments&tableAction=view&tableActionRecord=123`.
+
+Each embedded instance needs a unique identifier. No custom relation manager Blade initializer is necessary: its table includes the shared action modals. Lazy managers initialize after they mount, and deferred tables wait until they load. See [opening an action from a URL](../actions/overview#opening-an-action-from-a-url) for arguments, custom views, and lifecycle limits.

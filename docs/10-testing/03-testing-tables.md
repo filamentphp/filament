@@ -1,7 +1,6 @@
 ---
 title: Testing tables
 ---
-import Aside from "@components/Aside.astro"
 
 ## Testing that a table can render
 

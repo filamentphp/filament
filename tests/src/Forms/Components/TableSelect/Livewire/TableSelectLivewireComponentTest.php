@@ -116,8 +116,8 @@ describe('session persistence', function (): void {
     });
 
     it('does not load table state from the session', function (): void {
-        session()->put('tables.' . md5(TableSelectLivewireComponent::class) . '_per_page', 25);
-        session()->put('tables.' . md5(TableSelectLivewireComponent::class) . '_columns', [
+        session()->put('filament.tables.' . hash('sha256', TableSelectLivewireComponent::class) . '.per_page', 25);
+        session()->put('filament.tables.' . hash('sha256', TableSelectLivewireComponent::class) . '.columns', [
             [
                 'type' => TableSelectLivewireComponent::TABLE_COLUMN_MANAGER_COLUMN_TYPE,
                 'name' => 'title',

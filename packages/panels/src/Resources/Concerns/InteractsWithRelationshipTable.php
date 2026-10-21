@@ -246,6 +246,8 @@ trait InteractsWithRelationshipTable
             $table->pluralModelLabel($relatedResource::getPluralModelLabel());
 
             $relatedResource::configureTable($table);
+
+            $table->markRecordTitleAsInherited();
         }
 
         return $table;

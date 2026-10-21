@@ -1,7 +1,6 @@
 ---
 title: Ternary filters
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
@@ -13,7 +12,7 @@ use Filament\Tables\Filters\TernaryFilter;
 TernaryFilter::make('is_featured')
 ```
 
-<AutoScreenshot name="tables/filters/ternary" alt="Ternary filter" version="4.x" />
+<AutoScreenshot name="tables/filters/ternary" alt="Ternary filter" />
 
 ## Using a ternary filter with a nullable column
 

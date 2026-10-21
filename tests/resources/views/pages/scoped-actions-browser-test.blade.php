@@ -1,3 +1,3 @@
 <x-filament-panels::page>
-    {{ $this->extension }}
+    {{ $this->content }}
 </x-filament-panels::page>

@@ -1,9 +1,8 @@
 ---
 title: Creating records
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-<AutoScreenshot name="panels/resources/creating" alt="Resource create page" version="4.x" />
+<AutoScreenshot name="panels/resources/creating" alt="Resource create page" />
 
 ## Customizing data before saving
 
@@ -345,7 +344,7 @@ Alternatively, if you're creating records in a modal action, check out the [Acti
 
 Now, create a new record to see your wizard in action! Edit will still use the form defined within the resource class.
 
-<AutoScreenshot name="panels/resources/creating-wizard" alt="Resource create page with wizard" version="4.x" />
+<AutoScreenshot name="panels/resources/creating-wizard" alt="Resource create page with wizard" />
 
 If you'd like to allow free navigation, so all the steps are skippable, override the `hasSkippableSteps()` method:
 
@@ -516,7 +515,7 @@ protected function getFormActions(): array
 }
 ```
 
-<AutoScreenshot name="panels/resources/creating-header-action" alt="Resource create page with create action in the header" version="4.x" />
+<AutoScreenshot name="panels/resources/creating-header-action" alt="Resource create page with create action in the header" />
 
 ## Custom page content
 

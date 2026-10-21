@@ -56,7 +56,7 @@ class ActionsCrudDemo extends Component implements HasActions, HasSchemas, HasTa
             ->headerActions([
                 CreateAction::make()
                     ->model(Post::class)
-                    ->form(static::getPostForm()),
+                    ->schema(static::getPostForm()),
                 ImportAction::make()
                     ->importer(PostImporter::class),
                 ExportAction::make()
@@ -64,12 +64,12 @@ class ActionsCrudDemo extends Component implements HasActions, HasSchemas, HasTa
             ])
             ->actions([
                 ViewAction::make()
-                    ->form(static::getPostForm()),
+                    ->schema(static::getPostForm()),
                 EditAction::make()
-                    ->form(static::getPostForm()),
+                    ->schema(static::getPostForm()),
                 ReplicateAction::make()
                     ->excludeAttributes(['slug'])
-                    ->form([
+                    ->schema([
                         TextInput::make('title')
                             ->required()
                             ->maxLength(255),

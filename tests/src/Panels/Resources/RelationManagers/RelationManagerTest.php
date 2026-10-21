@@ -2,6 +2,7 @@
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\AssociateAction;
 use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -16,16 +17,28 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Select;
+use Filament\Resources\Pages\Enums\ContentTabPosition;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Tests\Fixtures\Enums\NavigationGroupEnum;
+use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Models\Department;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
+use Filament\Tests\Fixtures\Resources\Departments\DepartmentResource;
+use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
+use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicketWithContentTabs;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\ContentTabsDepartmentsRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManagerWithTabs;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAttachActionRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAttachTableSelectAndModifiedQueryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAttachTableSelectRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithDeferredBadgeRelationManager;
@@ -34,11 +47,18 @@ use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithMo
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPivotAndModifiedQueryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPivotSummaryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithSubquerySelectAndDetachRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\ScopedDepartmentsRelationManager;
+use Filament\Tests\Fixtures\Resources\Users\Pages\EditUser;
+use Filament\Tests\Fixtures\Resources\Users\RelationManagers\PostsWithAssociateActionRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
+use Livewire\Livewire;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertDatabaseHas;
@@ -155,6 +175,24 @@ describe('rendering and authorization', function (): void {
         'grouped actions' => 'grouped',
         'nested actions' => 'nested',
     ]);
+
+    it('removes replaced related resource `recordActions()` from lookup and record navigation', function (): void {
+        $ownerRecord = User::factory()->create();
+        $record = Post::factory()->for($ownerRecord, 'author')->create();
+
+        $component = livewire(RelatedResourcePostsRelationManager::class, ['ownerRecord' => $ownerRecord, 'pageClass' => EditUser::class]);
+        $table = $component->instance()->getTable();
+
+        expect($table->getAction('edit'))->toBeNull()
+            ->and($table->getAction('delete'))->toBeNull()
+            ->and($table->getAction('associate'))->toBeInstanceOf(AssociateAction::class)
+            ->and($table->getRecordUrl($record))->toBeNull()
+            ->and($table->getRecordAction($record))->toBeNull();
+
+        $component
+            ->mountAction(TestAction::make(EditAction::class)->table($record))
+            ->assertActionNotMounted();
+    });
 
     it('does not leak grouped action context from a previous record while resolving record URLs', function (): void {
         $ticket = Ticket::factory()->create();
@@ -551,6 +589,346 @@ describe('rendering and authorization', function (): void {
     });
 });
 
+describe('record titles and select labels', function (): void {
+    it('uses local record title attributes for related resource titles and record select labels', function (string $relationManager, string $actionClass, string $pageClass, string $ownerModel, string $relatedModel, array $attributes, string $titleAttribute, string $title): void {
+        $ownerRecord = $ownerModel::factory()->create();
+        $record = $relatedModel::factory()->create($attributes);
+        $otherRecord = $relatedModel::factory()->create([...$attributes, $titleAttribute => "Another {$title}"]);
+
+        $component = livewire($relationManager, ['ownerRecord' => $ownerRecord, 'pageClass' => $pageClass]);
+
+        expect($component->instance()->getTable()->getRecordTitle($record))->toBe($title)
+            ->and($component->instance()->getTable()->getRecordTitle($otherRecord))->toBe("Another {$title}");
+
+        $component
+            ->mountAction(TestAction::make($actionClass)->table())
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select) use ($record, $otherRecord, $title): bool {
+                expect($select->getOptions())->toEqual([$record->getKey() => $title, $otherRecord->getKey() => "Another {$title}"])
+                    ->and($select->getSearchResults('Another'))->toBe([$otherRecord->getKey() => "Another {$title}"])
+                    ->and($select->getSearchResults('Unmatched'))->toBe([]);
+
+                $select->state($record->getKey());
+
+                expect($select->getOptionLabel())->toBe($title);
+
+                return true;
+            });
+    })->with([
+        'associate' => [RelatedResourcePostsRelationManager::class, AssociateAction::class, EditUser::class, User::class, Post::class, ['author_id' => null, 'title' => 'Inherited title', 'content' => 'Contextual title'], 'content', 'Contextual title'],
+        'associate with a resource table title' => [TableTitlePostsWithAttributeRelationManager::class, AssociateAction::class, EditUser::class, User::class, Post::class, ['author_id' => null, 'title' => 'Inherited title', 'content' => 'Contextual title'], 'content', 'Contextual title'],
+        'associate with a resource title override' => [CustomTitlePostsWithAttributeRelationManager::class, AssociateAction::class, EditUser::class, User::class, Post::class, ['author_id' => null, 'title' => 'Inherited title', 'content' => 'Contextual title'], 'content', 'Contextual title'],
+        'associate with a static title attribute' => [StaticTitlePostsRelationManager::class, AssociateAction::class, EditUser::class, User::class, Post::class, ['author_id' => null, 'title' => 'Inherited title', 'content' => 'Contextual title'], 'content', 'Contextual title'],
+        'attach' => [RelatedResourceDepartmentsRelationManager::class, AttachAction::class, EditTicket::class, Ticket::class, Department::class, ['name' => 'Contextual department'], 'name', 'Contextual department'],
+    ]);
+
+    it('preserves custom resource and legacy `getTableRecordTitle()` titles in record selects', function (string $relationManager, string $actionClass, string $pageClass, string $ownerModel, string $relatedModel, array $attributes, string $title): void {
+        $ownerRecord = $ownerModel::factory()->create();
+        $record = $relatedModel::factory()->create($attributes);
+        $component = livewire($relationManager, ['ownerRecord' => $ownerRecord, 'pageClass' => $pageClass]);
+
+        expect($component->instance()->getTable()->getRecordTitle($record))->toBe($title);
+
+        $component
+            ->mountAction(TestAction::make($actionClass)->table())
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select) use ($record, $title): bool {
+                expect($select->getOptions())->toBe([$record->getKey() => $title])
+                    ->and($select->getSearchResults('Article'))->toBe([$record->getKey() => $title]);
+
+                $select->state($record->getKey());
+
+                expect($select->getOptionLabel())->toBe($title);
+
+                return true;
+            });
+    })->with([
+        'associate resource title' => [CustomTitlePostsRelationManager::class, AssociateAction::class, EditUser::class, User::class, Post::class, ['author_id' => null, 'title' => 'Article'], 'Resource: Article'],
+        'attach resource title' => [CustomTitleDepartmentsRelationManager::class, AttachAction::class, EditTicket::class, Ticket::class, Department::class, ['name' => 'Article department'], 'Resource: Article department'],
+        'associate legacy title' => [LegacyTitlePostsRelationManager::class, AssociateAction::class, EditUser::class, User::class, Post::class, ['author_id' => null, 'title' => 'Article'], 'Legacy: Article'],
+        'attach legacy title' => [LegacyTitleDepartmentsRelationManager::class, AttachAction::class, EditTicket::class, Ticket::class, Department::class, ['name' => 'Article department'], 'Legacy: Article department'],
+    ]);
+
+    it('loads attribute-based record select labels without retrieving models', function (string $relationManager, string $actionClass, string $pageClass, string $ownerModel, string $relatedModel, array $attributes, string $title): void {
+        $ownerRecord = $ownerModel::factory()->create();
+        $record = $relatedModel::factory()->create($attributes);
+        $component = livewire($relationManager, ['ownerRecord' => $ownerRecord, 'pageClass' => $pageClass]);
+        $retrievedRecordCount = 0;
+
+        Event::listen("eloquent.retrieved: {$relatedModel}", function () use (&$retrievedRecordCount): void {
+            $retrievedRecordCount++;
+        });
+
+        $component
+            ->mountAction(TestAction::make($actionClass)->table())
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select) use ($record, $title, &$retrievedRecordCount): bool {
+                if ($select->isPreloaded()) {
+                    expect($select->getOptions())->toBe([$record->getKey() => $title]);
+                }
+
+                expect($select->getSearchResults($title))->toBe([$record->getKey() => $title])
+                    ->and($retrievedRecordCount)->toBe(0);
+
+                $select->state($record->getKey());
+
+                expect($select->getOptionLabel())->toBe($title);
+
+                return true;
+            });
+    })->with([
+        'associate' => [AttributeTitlePostsRelationManager::class, AssociateAction::class, EditUser::class, User::class, Post::class, ['author_id' => null, 'title' => 'Inherited article'], 'Inherited article'],
+        'attach' => [AttributeTitleDepartmentsRelationManager::class, AttachAction::class, EditTicket::class, Ticket::class, Department::class, ['name' => 'Inherited department'], 'Inherited department'],
+        'associate with an overridden resource title attribute' => [CustomTitlePostsWithAttributeRelationManager::class, AssociateAction::class, EditUser::class, User::class, Post::class, ['author_id' => null, 'title' => 'Inherited article', 'content' => 'Contextual article'], 'Contextual article'],
+        'associate without a related resource' => [PostsWithAssociateActionRelationManager::class, AssociateAction::class, EditUser::class, User::class, Post::class, ['author_id' => null, 'title' => 'Article'], 'Article'],
+        'attach without a related resource' => [DepartmentsWithAttachActionRelationManager::class, AttachAction::class, EditTicket::class, Ticket::class, Department::class, ['name' => 'Department'], 'Department'],
+    ]);
+
+    it('orders attribute-based record select labels by title unless the query specifies an order', function (string $relationManager, string $actionClass, string $pageClass, string $ownerModel, string $relatedModel, string $titleAttribute, bool $hasCustomOrder): void {
+        $ownerRecord = $ownerModel::factory()->create();
+        $attributes = $relatedModel === Post::class ? ['author_id' => null] : [];
+        $lastRecord = $relatedModel::factory()->create([...$attributes, $titleAttribute => 'Zulu', 'created_at' => '2024-02-01 00:00:00']);
+        $firstRecord = $relatedModel::factory()->create([...$attributes, $titleAttribute => 'Alpha', 'created_at' => '2024-01-01 00:00:00']);
+
+        $actionClass::configureUsing(
+            static fn (Action $action) => $action->recordSelectOptionsQuery(
+                static fn (Builder $query): Builder => $hasCustomOrder ? $query->orderBy($titleAttribute, 'desc') : $query,
+            ),
+            during: function () use ($relationManager, $actionClass, $pageClass, $ownerRecord, $firstRecord, $lastRecord, $hasCustomOrder): void {
+                livewire($relationManager, ['ownerRecord' => $ownerRecord, 'pageClass' => $pageClass])
+                    ->mountAction(TestAction::make($actionClass)->table())
+                    ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select) use ($firstRecord, $lastRecord, $hasCustomOrder): bool {
+                        expect($select->getOptions())->toBe($hasCustomOrder
+                            ? [$lastRecord->getKey() => 'Zulu', $firstRecord->getKey() => 'Alpha']
+                            : [$firstRecord->getKey() => 'Alpha', $lastRecord->getKey() => 'Zulu']);
+
+                        return true;
+                    });
+            },
+        );
+    })->with([
+        'associate' => [AttributeTitlePostsRelationManager::class, AssociateAction::class, EditUser::class, User::class, Post::class, 'title'],
+        'attach' => [AttributeTitleDepartmentsRelationManager::class, AttachAction::class, EditTicket::class, Ticket::class, Department::class, 'name'],
+    ])->with([false, true]);
+
+    it('formats enum record title attributes for record select labels', function (string $enumClass, string $value, string $title): void {
+        $ownerRecord = User::factory()->create();
+        $record = Post::factory()->make(['author_id' => null])->mergeCasts(['string_backed_enum' => $enumClass]);
+        $record->string_backed_enum = $value;
+        $record->save();
+
+        AssociateAction::configureUsing(
+            static fn (AssociateAction $action) => $action->recordSelectOptionsQuery(
+                static fn (Builder $query): Builder => $query->withCasts(['string_backed_enum' => $enumClass]),
+            ),
+            during: function () use ($ownerRecord, $record, $value, $title): void {
+                livewire(EnumTitlePostsRelationManager::class, ['ownerRecord' => $ownerRecord, 'pageClass' => EditUser::class])
+                    ->mountAction(TestAction::make(AssociateAction::class)->table())
+                    ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select) use ($record, $value, $title): bool {
+                        expect($select->getOptions())->toBe([$record->getKey() => $title])
+                            ->and($select->getSearchResults($value))->toBe([$record->getKey() => $title]);
+
+                        $select->state($record->getKey());
+
+                        expect($select->getOptionLabel())->toBe($title);
+
+                        return true;
+                    });
+            },
+        );
+    })->with([
+        'backing value' => [StringBackedEnum::class, 'two', 'two'],
+        'label' => [NavigationGroupEnum::class, 'settings', 'System Settings'],
+    ]);
+
+    it('preserves the model label fallback for null and blank inherited record select labels', function (?string $title): void {
+        $ownerRecord = User::factory()->create();
+        $record = Post::factory()->create(['author_id' => null, 'content' => $title]);
+
+        $component = livewire(NullableTitlePostsRelationManager::class, ['ownerRecord' => $ownerRecord, 'pageClass' => EditUser::class]);
+
+        expect($component->instance()->getTable()->getRecordTitle($record))->toBe($title ?? 'post');
+
+        $component
+            ->mountAction(TestAction::make(AssociateAction::class)->table())
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select) use ($record): bool {
+                expect($select->getOptions())->toBe([$record->getKey() => 'post']);
+
+                $select->state($record->getKey());
+
+                expect($select->getOptionLabel())->toBe('post');
+
+                return true;
+            });
+    })->with([null, '', ' ']);
+
+    it('inherits a resource table `recordTitle()` until the relation manager explicitly configures its own title', function (): void {
+        $ownerRecord = User::factory()->create();
+        $record = Post::factory()->create(['author_id' => null, 'title' => 'Article', 'content' => 'Contextual title']);
+        $inheritedTitle = 'Table: Article';
+
+        $component = livewire(TableTitlePostsRelationManager::class, ['ownerRecord' => $ownerRecord, 'pageClass' => EditUser::class]);
+        $table = $component->instance()->getTable();
+
+        expect($table->getRecordTitle($record))->toBe($inheritedTitle);
+
+        $component
+            ->mountAction(TestAction::make(AssociateAction::class)->table())
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select) use ($record, $inheritedTitle): bool {
+                expect($select->getOptions())->toBe([$record->getKey() => $inheritedTitle]);
+
+                return true;
+            });
+
+        expect($table->recordTitleAttribute('title')->getRecordTitle($record))->toBe('Article')
+            ->and($table->recordTitleAttribute(static fn (): string => 'content')->getRecordTitle($record))->toBe('Contextual title')
+            ->and($table->recordTitleAttribute(null)->getRecordTitle($record))->toBe('post');
+    });
+
+    it('keeps explicit `recordTitle()` precedence over `recordTitleAttribute()` in either order', function (bool $isAttributeConfiguredFirst): void {
+        $ownerRecord = User::factory()->create();
+        $record = Post::factory()->create(['author_id' => null, 'title' => 'Article', 'content' => 'Contextual title']);
+        $table = livewire(TableTitlePostsRelationManager::class, ['ownerRecord' => $ownerRecord, 'pageClass' => EditUser::class])->instance()->getTable();
+
+        if ($isAttributeConfiguredFirst) {
+            $table->recordTitleAttribute('title');
+        }
+
+        $table->recordTitle(static fn (Post $record): string => "Explicit: {$record->content}");
+
+        if (! $isAttributeConfiguredFirst) {
+            $table->recordTitleAttribute('title');
+        }
+
+        expect($table->getRecordTitle($record))->toBe('Explicit: Contextual title');
+    })->with([true, false]);
+});
+
+describe('scoped default action URLs', function (): void {
+    it('only mounts the explicitly targeted embedded instance', function (string $parameter): void {
+        $ticket = Ticket::factory()->hasAttached(Department::factory())->create();
+
+        Livewire::withQueryParams([
+            $parameter => 'view',
+            'actionComponent' => 'departments',
+            'tableActionRecord' => (string) $ticket->departments->first()->getKey(),
+        ]);
+
+        livewire(EditTicket::class, ['record' => $ticket->getKey()])
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+
+        livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+
+        livewire(ScopedDepartmentsRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+            'actionUrlIdentifier' => 'other-departments',
+        ])
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+
+        livewire(ScopedDepartmentsRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+        ])
+            ->call('mountDefaultActions')
+            ->assertSet('mountedActions.0.name', 'view')
+            ->call('unmountAction')
+            ->call('$refresh')
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+    })->with(['action', 'tableAction']);
+
+    it('leaves untargeted embedded actions closed', function (string $identifier): void {
+        $ticket = Ticket::factory()->create();
+        Livewire::withQueryParams(['action' => 'view']);
+
+        livewire(ScopedDepartmentsRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+            'actionUrlIdentifier' => $identifier,
+        ])
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+    })->with(['departments', 'page']);
+
+    it('waits for a deferred table before consuming its URL action', function (): void {
+        $ticket = Ticket::factory()->hasAttached(Department::factory())->create();
+        Livewire::withQueryParams([
+            'tableAction' => 'view',
+            'actionComponent' => 'departments',
+            'tableActionRecord' => (string) $ticket->departments->first()->getKey(),
+            'tableActionArguments' => ['source' => 'email'],
+        ]);
+
+        livewire(ScopedDepartmentsRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+            'deferTableLoading' => true,
+        ])
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted()
+            ->call('loadTable')
+            ->call('mountDefaultActions')
+            ->assertSet('mountedActions.0.name', 'view')
+            ->assertSet('mountedActions.0.arguments.source', 'email')
+            ->assertSet('mountedActions.0.context.mountedFromUrl', true)
+            ->call('unmountAction')
+            ->call('loadTable')
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+    });
+
+    it('preserves record action authorization for URL mounts', function (): void {
+        app()->bind(DepartmentPolicy::class . '::view', fn (): bool => false);
+        $ticket = Ticket::factory()->hasAttached(Department::factory())->create();
+        Livewire::withQueryParams([
+            'tableAction' => 'view',
+            'actionComponent' => 'departments',
+            'tableActionRecord' => (string) $ticket->departments->first()->getKey(),
+        ]);
+
+        livewire(ScopedDepartmentsRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+        ])
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+    });
+
+    it('rejects foreign, query-excluded, deleted, unknown and malformed URL records', function (string $recordState): void {
+        $ticket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+
+        if ($recordState === 'excluded') {
+            $ticket->departments()->attach($department);
+            $department->update(['name' => 'Excluded department']);
+        }
+
+        if ($recordState === 'deleted') {
+            $ticket->departments()->attach($department);
+            $department->forceDelete();
+        }
+
+        Livewire::withQueryParams([
+            'tableAction' => 'view',
+            'actionComponent' => 'departments',
+            'tableActionRecord' => match ($recordState) {
+                'malformed' => [$department->getKey()],
+                'unknown' => (string) (Department::query()->max('id') + 1),
+                default => (string) $department->getKey(),
+            },
+        ]);
+
+        livewire(ScopedDepartmentsRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+        ])
+            ->call('mountDefaultActions')
+            ->assertActionNotMounted();
+    })->with(['foreign', 'excluded', 'deleted', 'unknown', 'malformed']);
+});
+
 describe('attaching records', function (): void {
     it('can attach a single record with table select', function (): void {
         $ticket = Ticket::factory()->create();
@@ -862,6 +1240,218 @@ it('does not defer the tab badge loading by default', function (): void {
     expect($tab->isBadgeDeferred())->toBeFalse();
 });
 
+it('can customize relation manager tabs without combining them with content', function (): void {
+    $component = livewire(NonCombinedContentPage::class, ['record' => Ticket::factory()->create()->getRouteKey()])
+        ->assertSuccessful();
+
+    $tabs = $component->instance()->getSchema('content')->getComponents()[1]->getChildSchema()->getComponents(withOriginalKeys: true);
+
+    expect(array_keys($tabs))->toBe([3, 'departments'])
+        ->and($tabs[3]->getLabel())->toBe('Factory departments')
+        ->and($tabs['departments']->getLabel())->toBe('Factory departments');
+});
+
+describe('combined tabs', function (): void {
+    it('preserves the default content key and singular customization hooks', function (): void {
+        $component = livewire(DefaultCombinedContentPage::class, ['record' => Ticket::factory()->create()->getRouteKey()])
+            ->assertSuccessful();
+
+        $tabs = $component->instance()->getSchema('content')->getComponents()[0]->getChildSchema()->getComponents(withOriginalKeys: true);
+
+        expect(array_keys($tabs))->toBe(['', 0])
+            ->and($tabs['']->getLabel())->toBe('Legacy content')
+            ->and($tabs['']->getIcon())->toBe('heroicon-m-pencil')
+            ->and($tabs['']->getBadge())->toBe('Legacy badge');
+    });
+
+    it('preserves sparse numeric and named manager keys in the default combined order', function (bool $isContentAfter): void {
+        $component = livewire(EditTicketWithContentTabs::class, ['record' => Ticket::factory()->create()->getRouteKey()])
+            ->set('hasCustomTabs', false)
+            ->set('isContentAfter', $isContentAfter)
+            ->assertSuccessful();
+
+        $tabs = $component->instance()->getSchema('content')->getComponents()[0]->getChildSchema()->getComponents(withOriginalKeys: true);
+
+        expect(array_keys($tabs))->toBe($isContentAfter
+            ? [3, 'departments', 9, '']
+            : ['', 3, 'departments', 9])
+            ->and($tabs['']->getBadge())->toBe('Primary')
+            ->and($tabs[3]->getBadge())->toBe('Managers')
+            ->and(array_keys($component->instance()->getRelationManagerTabComponents(except: ['3', 'departments'])))->toBe([9]);
+    })->with([false, true]);
+
+    it('preserves named manager keys and the legacy empty content slot', function (string $managerKey, bool $isContentAfter): void {
+        KeyedCombinedContentPage::$managerKey = $managerKey;
+
+        $component = livewire(KeyedCombinedContentPage::class, ['record' => Ticket::factory()->create()->getRouteKey()])
+            ->set('isContentAfter', $isContentAfter)
+            ->assertSuccessful();
+
+        $tabs = $component->instance()->getSchema('content')->getComponents()[0]->getChildSchema()->getComponents(withOriginalKeys: true);
+
+        expect(array_keys($tabs))->toBe($managerKey === '' ? [''] : ($isContentAfter ? [$managerKey, ''] : ['', $managerKey]))
+            ->and($tabs['']->getLabel())->toBe('Legacy content');
+
+        if ($managerKey !== '') {
+            $component
+                ->set('activeRelationManager', $managerKey)
+                ->assertSuccessful();
+        }
+    })->with(['', 'content:view'])->with([false, true]);
+
+    it('interleaves content and generated manager or group tabs while rendering only the active content', function (bool $hasGroupedManagers): void {
+        $component = livewire(EditTicketWithContentTabs::class, ['record' => Ticket::factory()->create()->getRouteKey()])
+            ->set('hasGroupedManagers', $hasGroupedManagers)
+            ->assertSuccessful();
+
+        $tabs = $component->instance()->getSchema('content')->getComponents()[0]->getChildSchema()->getComponents(withOriginalKeys: true);
+
+        expect(array_keys($tabs))->toBe(['view', 3, '', 'departments', 'preferences', 9]);
+
+        $component
+            ->set('activeRelationManager', 'view')
+            ->assertSee('Ticket overview')
+            ->assertDontSee('Preferences not saved')
+            ->assertDontSee('Configured departments (fr)')
+            ->set('activeRelationManager', 'preferences')
+            ->assertSee('Preferences not saved')
+            ->assertDontSee('Ticket overview')
+            ->set('activeRelationManager', '3')
+            ->assertSee('Configured departments (fr)')
+            ->assertDontSee('Preferences not saved')
+            ->assertDontSee('Ticket overview');
+    })->with([false, true]);
+
+    it('retains configured grouped managers, badges, filtering and lazy defaults', function (): void {
+        $ticket = Ticket::factory()->hasAttached(Department::factory()->state(['name' => 'Visible department']))->create();
+
+        $component = livewire(MixedAuthorizationContentPage::class, ['record' => $ticket->getRouteKey()])
+            ->set('hasGroupedManagers', true)
+            ->set('activeRelationManager', '3')
+            ->assertSee('Configured departments (fr)')
+            ->assertSee('Secondary departments (fr)')
+            ->assertSee('Visible department')
+            ->assertSee('Grouped')
+            ->assertDontSee('Denied departments');
+
+        $tabs = $component->instance()->getSchema('content')->getComponents()[0]->getChildSchema()->getComponents(withOriginalKeys: true);
+        $groupedManagers = $tabs[3]->getChildSchema()->getComponents();
+
+        expect(array_map(static fn ($manager): ?string => $manager->getKey(isAbsolute: false), $groupedManagers))->toBe([
+            ContentTabsDepartmentsRelationManager::class . '-2',
+            ContentTabsDepartmentsRelationManager::class . '-secondary',
+        ])
+            ->and($groupedManagers[0]->getComponentProperties()['lazy'])->toBeFalse()
+            ->and($tabs['departments']->getChildSchema()->getComponents()[0]->getComponentProperties()['lazy'])->toBeTrue();
+
+        app()->bind(DepartmentPolicy::class . '::viewAny', static fn (): bool => false);
+
+        $deniedComponent = livewire(MixedAuthorizationContentPage::class, ['record' => $ticket->getRouteKey()])
+            ->set('hasGroupedManagers', true)
+            ->assertDontSee('Managers')
+            ->assertDontSee('Department group')
+            ->assertDontSee('Visible department')
+            ->set('activeRelationManager', 'view')
+            ->assertSee('Ticket overview');
+
+        expect($deniedComponent->instance()->getRelationManagerTabComponent(3))->toBeNull()
+            ->and($deniedComponent->instance()->getRelationManagerTabComponent('departments'))->toBeNull()
+            ->and($deniedComponent->instance()->getRelationManagerTabComponent('missing'))->toBeNull();
+    });
+
+    it('renders content tabs without managers and excludes hidden or removed tabs', function (): void {
+        livewire(EditTicketWithContentTabs::class, ['record' => Ticket::factory()->create()->getRouteKey()])
+            ->set('hasManagers', false)
+            ->set('activeRelationManager', 'preferences')
+            ->assertSee('Preferences not saved')
+            ->set('isPreferencesHidden', true)
+            ->assertDontSee('Preferences not saved')
+            ->set('isPreferencesHidden', false)
+            ->assertSee('Preferences not saved')
+            ->set('isPreferencesRemoved', true)
+            ->assertDontSee('Preferences not saved')
+            ->set('activeRelationManager', 'view')
+            ->assertSee('Ticket overview');
+    });
+
+    it('switches resource content with URL reload and history and submits named forms independently', function (): void {
+        Artisan::call('filament:assets');
+        $ticket = Ticket::factory()->hasAttached(Department::factory()->state(['name' => 'Browser department']))->create();
+        $url = "/tickets/{$ticket->getRouteKey()}/content-tabs";
+
+        $page = visit($url);
+        $page->assertVisible('#edit-ticket-tab')
+            ->fill('#edit-note', 'Updated ticket')
+            ->click('[data-testid="save-ticket"]')
+            ->assertSee('Edit saved')
+            ->click('[role="tab"][aria-controls="overview-tab"]')
+            ->assertVisible('#overview-tab')
+            ->assertMissing('#edit-ticket-tab input')
+            ->assertQueryStringHas('relation', 'view')
+            ->refresh()
+            ->assertVisible('#overview-tab')
+            ->assertNoAccessibilityIssues();
+
+        visit($url . '?relation=view')->inDarkMode()
+            ->assertVisible('#overview-tab')
+            ->assertNoAccessibilityIssues();
+
+        $page->click('[role="tab"][aria-controls="preferences-tab"]')
+            ->assertVisible('#preferences-tab')
+            ->fill('#preference-nickname', 'Independent preference')
+            ->click('Save preferences')
+            ->assertSee('Independent preference')
+            ->click('[role="tab"][aria-controls="edit-ticket-tab"]')
+            ->assertVisible('#edit-ticket-tab')
+            ->assertSee('Edit not saved')
+            ->assertQueryStringMissing('relation')
+            ->fill('#edit-note', 'Updated ticket')
+            ->click('[data-testid="save-ticket"]')
+            ->assertSee('Edit saved')
+            ->click('[role="tab"][aria-controls="preferences-tab"]')
+            ->assertVisible('#preferences-tab')
+            ->assertSee('Independent preference')
+            ->assertNoAccessibilityIssues();
+
+        visit($url . '?relation=preferences')->inDarkMode()
+            ->assertVisible('#preferences-tab')
+            ->assertNoAccessibilityIssues();
+
+        $page->click('[role="tab"][aria-controls="edit-ticket-tab"]')
+            ->assertVisible('#edit-ticket-tab')
+            ->refresh()
+            ->assertVisible('#edit-ticket-tab')
+            ->assertQueryStringMissing('relation')
+            ->click('[role="tab"][aria-controls="configured-manager-tab"]')
+            ->assertSee('Browser department')
+            ->assertQueryStringHas('relation', '3')
+            ->refresh()
+            ->assertSee('Browser department')
+            ->navigate($url . '?relation=view')
+            ->assertVisible('#overview-tab')
+            ->back()
+            ->assertSee('Browser department')
+            ->forward()
+            ->assertVisible('#overview-tab')
+            ->click('[role="tab"][aria-controls="preferences-tab"]')
+            ->assertVisible('#preferences-tab')
+            ->click('Hide preferences')
+            ->assertVisible('#overview-tab')
+            ->assertQueryStringHas('relation', 'view')
+            ->navigate($url . '?relation=view')
+            ->assertVisible('#overview-tab')
+            ->click('[role="tab"][aria-controls="preferences-tab"]')
+            ->assertVisible('#preferences-tab')
+            ->click('Remove preferences')
+            ->assertVisible('#overview-tab')
+            ->navigate($url . '?no-managers=1&hidden=1&relation=preferences')
+            ->assertVisible('#overview-tab')
+            ->navigate($url . '?no-managers=1&removed=1&relation=preferences')
+            ->assertVisible('#overview-tab')
+            ->assertNoSmoke();
+    });
+});
+
 class RecordUrlResolutionRelationManager extends RelationManager
 {
     /** @var array<int | string | null> */
@@ -1003,5 +1593,259 @@ class RelationManagerAuthorizationPage extends EditTicket
         return static::$grouped
             ? [RelationGroup::make('Departments', [AuthorizationRelationManager::make()])]
             : [AuthorizationRelationManager::class];
+    }
+}
+
+class DefaultCombinedContentPage extends EditTicket
+{
+    public function hasCombinedRelationManagerTabsWithContent(): bool
+    {
+        return true;
+    }
+
+    public function getContentTabLabel(): ?string
+    {
+        return 'Legacy content';
+    }
+
+    public function getContentTabIcon(): ?string
+    {
+        return 'heroicon-m-pencil';
+    }
+
+    public function getContentTabComponent(): Tab
+    {
+        return parent::getContentTabComponent()->badge('Legacy badge');
+    }
+
+    protected function getAllRelationManagers(): array
+    {
+        return [ContentTabsDepartmentsRelationManager::class];
+    }
+}
+
+class KeyedCombinedContentPage extends DefaultCombinedContentPage
+{
+    public static string $managerKey = '';
+
+    public bool $isContentAfter = false;
+
+    public function getContentTabPosition(): ?ContentTabPosition
+    {
+        return $this->isContentAfter ? ContentTabPosition::After : null;
+    }
+
+    protected function getAllRelationManagers(): array
+    {
+        return [static::$managerKey => (static::$managerKey === '')
+            ? RelationGroup::make('Unused manager', [ContentTabsDepartmentsRelationManager::class])
+                ->tab(static fn (): Tab => throw new LogicException('The legacy empty-key manager tab must not be constructed.'))
+            : ContentTabsDepartmentsRelationManager::class];
+    }
+}
+
+class MixedAuthorizationContentPage extends EditTicketWithContentTabs
+{
+    protected function getAllRelationManagers(): array
+    {
+        if (! $this->hasGroupedManagers) {
+            return parent::getAllRelationManagers();
+        }
+
+        return array_replace(parent::getAllRelationManagers(), [
+            3 => RelationGroup::make('Department group', [
+                2 => ContentTabsDepartmentsRelationManager::make(['heading' => 'Configured departments', 'lazy' => false]),
+                'secondary' => ContentTabsDepartmentsRelationManager::make(['heading' => 'Secondary departments', 'lazy' => false]),
+                11 => DeniedContentTabsDepartmentsRelationManager::make(['heading' => 'Denied departments', 'lazy' => false]),
+            ])->badge('Grouped'),
+        ]);
+    }
+}
+
+class DeniedContentTabsDepartmentsRelationManager extends ContentTabsDepartmentsRelationManager
+{
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        return false;
+    }
+}
+
+class NonCombinedContentPage extends EditTicket
+{
+    public function getTabComponents(): array
+    {
+        throw new LogicException('The combined tab hook must only be used in combined mode.');
+    }
+
+    public function getRelationManagerTabComponent(string | int $key): ?Tab
+    {
+        return parent::getRelationManagerTabComponent($key)?->label('Factory departments');
+    }
+
+    protected function getAllRelationManagers(): array
+    {
+        return [3 => ContentTabsDepartmentsRelationManager::class, 'departments' => ContentTabsDepartmentsRelationManager::class];
+    }
+}
+
+class RelatedResourcePostsRelationManager extends PostsWithAssociateActionRelationManager
+{
+    protected static ?string $relatedResource = PostResource::class;
+
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->contentGrid(static fn (RelationManager $livewire): ?array => $livewire->getTable()->hasColumnsLayout() ? ['md' => 2] : null)
+            ->recordTitleAttribute('content')
+            ->recordActions([])
+            ->headerActions([AssociateAction::make()->preloadRecordSelect()]);
+    }
+}
+
+class RelatedResourceDepartmentsRelationManager extends DepartmentsWithAttachActionRelationManager
+{
+    protected static ?string $relatedResource = DepartmentWithRecordTitleResource::class;
+
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->headerActions([AttachAction::make()->preloadRecordSelect()]);
+    }
+}
+
+class DepartmentWithRecordTitleResource extends DepartmentResource
+{
+    protected static ?string $recordTitleAttribute = 'id';
+}
+
+class NullableTitlePostResource extends PostResource
+{
+    protected static ?string $recordTitleAttribute = 'content';
+}
+
+class NullableTitlePostsRelationManager extends RelatedResourcePostsRelationManager
+{
+    protected static ?string $relatedResource = NullableTitlePostResource::class;
+}
+
+class TableTitlePostResource extends PostResource
+{
+    public static function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->recordTitle(static fn (Post $record): string => "Table: {$record->title}");
+    }
+}
+
+class TableTitlePostsWithAttributeRelationManager extends RelatedResourcePostsRelationManager
+{
+    protected static ?string $relatedResource = TableTitlePostResource::class;
+}
+
+class AttributeTitlePostsRelationManager extends RelationManager
+{
+    protected static string $relationship = 'posts';
+
+    protected static ?string $relatedResource = PostResource::class;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->inverseRelationship('author')
+            ->headerActions([AssociateAction::make()->preloadRecordSelect()]);
+    }
+}
+
+class EnumTitlePostsRelationManager extends AttributeTitlePostsRelationManager
+{
+    public function table(Table $table): Table
+    {
+        return parent::table($table)->recordTitleAttribute('string_backed_enum');
+    }
+}
+
+class TableTitlePostsRelationManager extends AttributeTitlePostsRelationManager
+{
+    protected static ?string $relatedResource = TableTitlePostResource::class;
+}
+
+class AttributeTitleDepartmentResource extends DepartmentResource
+{
+    protected static ?string $recordTitleAttribute = 'name';
+}
+
+class AttributeTitleDepartmentsRelationManager extends RelationManager
+{
+    protected static string $relationship = 'departments';
+
+    protected static ?string $relatedResource = AttributeTitleDepartmentResource::class;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->inverseRelationship('tickets')
+            ->headerActions([AttachAction::make()->preloadRecordSelect()]);
+    }
+}
+
+class CustomTitlePostResource extends PostResource
+{
+    public static function getRecordTitle(?Model $record): ?string
+    {
+        return $record ? "Resource: {$record->getAttribute('title')}" : null;
+    }
+}
+
+class CustomTitlePostsRelationManager extends AttributeTitlePostsRelationManager
+{
+    protected static ?string $relatedResource = CustomTitlePostResource::class;
+}
+
+class StaticTitlePostsRelationManager extends CustomTitlePostsRelationManager
+{
+    protected static ?string $recordTitleAttribute = 'content';
+}
+
+class CustomTitlePostsWithAttributeRelationManager extends RelatedResourcePostsRelationManager
+{
+    protected static ?string $relatedResource = CustomTitlePostResource::class;
+}
+
+class CustomTitleDepartmentResource extends AttributeTitleDepartmentResource
+{
+    public static function getRecordTitle(?Model $record): ?string
+    {
+        return $record ? "Resource: {$record->getAttribute('name')}" : null;
+    }
+}
+
+class CustomTitleDepartmentsRelationManager extends AttributeTitleDepartmentsRelationManager
+{
+    protected static ?string $relatedResource = CustomTitleDepartmentResource::class;
+}
+
+class LegacyTitlePostsRelationManager extends PostsWithAssociateActionRelationManager
+{
+    public function getTableRecordTitle(mixed $post): ?string
+    {
+        return "Legacy: {$post->getAttribute('title')}";
+    }
+
+    public function table(Table $table): Table
+    {
+        return parent::table($table)->headerActions([AssociateAction::make()->preloadRecordSelect()]);
+    }
+}
+
+class LegacyTitleDepartmentsRelationManager extends DepartmentsWithAttachActionRelationManager
+{
+    public function getTableRecordTitle(Model $record): ?string
+    {
+        return "Legacy: {$record->getAttribute('name')}";
+    }
+
+    public function table(Table $table): Table
+    {
+        return parent::table($table)->headerActions([AttachAction::make()->preloadRecordSelect()]);
     }
 }

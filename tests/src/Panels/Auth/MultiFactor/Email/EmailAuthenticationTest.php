@@ -290,6 +290,127 @@ describe('failure cases', function (): void {
         expect($emailAuthentication->verifyCode($code, $userToAuthenticate))->toBeFalse();
     });
 
+    it('can consume a legacy email code once and replaces it when a new code is sent', function (): void {
+        $emailAuthentication = EmailAuthentication::make()
+            ->generateCodesUsing(static fn (): string => '654321');
+        $userToAuthenticate = User::factory()->hasEmailAuthentication()->create();
+        $scope = hash('sha256', Filament::getUserScopedAuthIdentifier($userToAuthenticate) . '|' . session()->getId());
+        $legacyCacheKey = "filament.email_authentication_codes.{$scope}";
+        $legacyCode = ['hash' => Hash::make('123456'), 'expiresAt' => now()->addMinutes(4)];
+
+        Cache::put($legacyCacheKey, $legacyCode, now()->addMinutes(4));
+
+        expect($emailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeFalse()
+            ->and($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeTrue()
+            ->and($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse();
+
+        Cache::put($legacyCacheKey, $legacyCode, now()->addMinutes(4));
+
+        expect($emailAuthentication->sendCode($userToAuthenticate))->toBeTrue();
+
+        // Even if an old worker leaves a legacy entry, the new code takes precedence.
+        Cache::put($legacyCacheKey, $legacyCode, now()->addMinutes(4));
+
+        expect($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse()
+            ->and($emailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeTrue()
+            ->and($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse()
+            ->and($emailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeFalse();
+    });
+
+    it('can consume a legacy session email code once even if stale session data is restored', function (): void {
+        $emailAuthentication = EmailAuthentication::make();
+        $userToAuthenticate = User::factory()->hasEmailAuthentication()->create();
+        $legacyCodeSessionKey = "filament_email_authentication_code:{$userToAuthenticate->getKey()}";
+        $legacyCodeExpirySessionKey = "filament_email_authentication_code_expires_at:{$userToAuthenticate->getKey()}";
+
+        session()->put($legacyCodeSessionKey, Hash::make('123456'));
+        session()->put($legacyCodeExpirySessionKey, now()->addMinutes(4));
+        $staleSessionData = session()->all();
+
+        expect($emailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeFalse()
+            ->and(session()->has($legacyCodeSessionKey))->toBeTrue()
+            ->and($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeTrue()
+            ->and(session()->has($legacyCodeSessionKey))->toBeFalse()
+            ->and(session()->has($legacyCodeExpirySessionKey))->toBeFalse();
+
+        session()->replace($staleSessionData);
+
+        expect($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse();
+
+        session()->regenerate();
+
+        expect($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse();
+    });
+
+    it('invalidates legacy session email codes when sending or consuming a cached code', function (string $cacheFormat): void {
+        $emailAuthentication = EmailAuthentication::make()
+            ->generateCodesUsing(static fn (): string => '654321');
+        $userToAuthenticate = User::factory()->hasEmailAuthentication()->create();
+        $legacyCodeSessionKey = "filament_email_authentication_code:{$userToAuthenticate->getKey()}";
+        $legacyCodeExpirySessionKey = "filament_email_authentication_code_expires_at:{$userToAuthenticate->getKey()}";
+
+        session()->put($legacyCodeSessionKey, Hash::make('111111'));
+        session()->put($legacyCodeExpirySessionKey, now()->addMinute());
+        $olderSessionData = session()->all();
+
+        session()->put($legacyCodeSessionKey, Hash::make('123456'));
+        session()->put($legacyCodeExpirySessionKey, now()->addMinutes(4));
+        $staleSessionData = session()->all();
+
+        if ($cacheFormat === 'current') {
+            expect($emailAuthentication->sendCode($userToAuthenticate))->toBeTrue()
+                ->and(session()->has($legacyCodeSessionKey))->toBeFalse()
+                ->and(session()->has($legacyCodeExpirySessionKey))->toBeFalse();
+        } else {
+            $scope = hash('sha256', Filament::getUserScopedAuthIdentifier($userToAuthenticate) . '|' . session()->getId());
+
+            Cache::put("filament.email_authentication_codes.{$scope}", [
+                'hash' => Hash::make('654321'),
+                'expiresAt' => now()->addMinutes(4),
+            ], now()->addMinutes(4));
+        }
+
+        session()->replace($staleSessionData);
+
+        expect($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse()
+            ->and($emailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeTrue()
+            ->and(session()->has($legacyCodeSessionKey))->toBeFalse()
+            ->and(session()->has($legacyCodeExpirySessionKey))->toBeFalse();
+
+        session()->replace($staleSessionData);
+
+        expect($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse()
+            ->and($emailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeFalse();
+
+        session()->replace($olderSessionData);
+
+        expect($emailAuthentication->verifyCode('111111', $userToAuthenticate))->toBeFalse();
+
+        expect($emailAuthentication->sendCode($userToAuthenticate))->toBeTrue()
+            ->and($emailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeTrue();
+
+        $this->travel(61)->seconds();
+        session()->replace($staleSessionData);
+
+        expect($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse();
+    })->with(['current', 'legacy']);
+
+    it('rejects expired or incomplete legacy session email codes', function (string $expiry): void {
+        $emailAuthentication = EmailAuthentication::make();
+        $userToAuthenticate = User::factory()->hasEmailAuthentication()->create();
+
+        session()->put("filament_email_authentication_code:{$userToAuthenticate->getKey()}", Hash::make('123456'));
+
+        if ($expiry !== 'missing') {
+            session()->put(
+                "filament_email_authentication_code_expires_at:{$userToAuthenticate->getKey()}",
+                ($expiry === 'expired') ? now()->subSecond() : 'invalid',
+            );
+        }
+
+        expect($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeFalse();
+    })->with(['expired', 'missing', 'invalid']);
+
     it('keeps the latest email code usable when stale session data is persisted', function (): void {
         /** @var EmailAuthentication $emailAuthentication */
         $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
@@ -409,6 +530,13 @@ describe('failure cases', function (): void {
         expect($emailAuthentication->sendCode($userToAuthenticate))->toBeFalse();
 
         Notification::assertNothingSent();
+
+        $legacyCodeSessionKey = "filament_email_authentication_code:{$userToAuthenticate->getKey()}";
+        session()->put($legacyCodeSessionKey, Hash::make('654321'));
+        session()->put("filament_email_authentication_code_expires_at:{$userToAuthenticate->getKey()}", now()->addMinutes(4));
+
+        expect($emailAuthentication->verifyCode('654321', $userToAuthenticate))->toBeFalse()
+            ->and(session()->has($legacyCodeSessionKey))->toBeTrue();
     });
 
     it('does not verify an email code when it cannot be consumed', function (): void {
@@ -502,7 +630,7 @@ describe('failure cases', function (): void {
 
         // Sending is exhausted for the second user, so reaching their challenge
         // issues no code of its own.
-        $victimRateLimitingKey = 'filament-email-authentication:' . Filament::getUserScopedAuthIdentifier($victim);
+        $victimRateLimitingKey = 'filament:auth:email_authentication:rate_limit:' . Filament::getUserScopedAuthIdentifier($victim);
 
         RateLimiter::hit($victimRateLimitingKey);
         RateLimiter::hit($victimRateLimitingKey);

@@ -10,8 +10,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
 
-use function Amp\delay;
-
 class ModalBrowserTest extends Page
 {
     protected string $view = 'pages.modal-browser-test';
@@ -36,8 +34,6 @@ class ModalBrowserTest extends Page
     public function activateLoadingButton(): void
     {
         $this->loadingButtonActivations++;
-
-        delay(1);
     }
 
     protected function getHeaderActions(): array

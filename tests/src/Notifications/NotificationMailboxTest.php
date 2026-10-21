@@ -115,7 +115,7 @@ describe('delivery', function (): void {
         $producer = livewire(NotificationBrowserTest::class);
         $consumer = livewire(Notifications::class);
 
-        $this->postJson(Livewire::getUpdateUri(), [
+        $response = $this->postJson(Livewire::getUpdateUri(), [
             'components' => [
                 [
                     'snapshot' => json_encode($producer->snapshot),
@@ -132,12 +132,59 @@ describe('delivery', function (): void {
             ->assertOk()
             ->assertJsonPath('components.0.effects.redirect', NotificationBrowserTest::getUrl(['redirected' => 1]));
 
-        livewire(Notifications::class)->dispatch('notificationsSent')
+        livewire(Notifications::class)->dispatch('notificationsSent')->assertCount('notifications', 0);
+
+        livewire(Notifications::class)->call('pullNotificationsFromSession', [$response->headers->get('X-Filament-Notifications')])
             ->assertCount('notifications', 1)
             ->assertSee('Redirect notification');
 
         livewire(Notifications::class)->dispatch('notificationsSent')->assertCount('notifications', 0);
     });
+
+    it('delivers a Livewire batch only to its response owner while retaining unowned catch-up', function (string $method, array $parameters, string $title): void {
+        $this->actingAs(User::factory()->create());
+        $producer = livewire(NotificationBrowserTest::class);
+
+        $response = $this->postJson(Livewire::getUpdateUri(), [
+            'components' => [[
+                'snapshot' => json_encode($producer->snapshot),
+                'updates' => [],
+                'calls' => [['method' => $method, 'params' => $parameters]],
+            ]],
+        ], ['X-Livewire' => 'true'])->assertOk()->assertJsonPath('filamentNotifications', true);
+
+        $batch = $response->headers->get('X-Filament-Notifications');
+
+        $this->postJson(Livewire::getUpdateUri(), [
+            'components' => [[
+                'snapshot' => json_encode($producer->snapshot),
+                'updates' => [],
+                'calls' => [],
+            ]],
+        ], ['X-Livewire' => 'true'])->assertOk()->assertJsonMissingPath('filamentNotifications');
+
+        livewire(Notifications::class)->call('pullNotificationsFromSession')->assertCount('notifications', 0);
+        expect($batch)->toMatch('/\A[a-f0-9]{40}\z/');
+
+        Route::middleware('web')->get('/notification-unowned-catch-up', static function () {
+            Notification::make()->title('Unowned catch-up')->send();
+
+            return response()->noContent();
+        });
+        $this->get('/notification-unowned-catch-up')->assertNoContent();
+
+        livewire(Notifications::class)->call('pullNotificationsFromSession')
+            ->assertCount('notifications', 1)->assertSee('Unowned catch-up')->assertDontSee($title);
+
+        livewire(Notifications::class)->call('pullNotificationsFromSession', [$batch])
+            ->assertCount('notifications', 1)->assertSee($title)->assertDontSee('Unowned catch-up');
+
+        livewire(Notifications::class)->call('pullNotificationsFromSession', [$batch])->assertCount('notifications', 0);
+    })->with([
+        'action' => ['sendPersistentNotification', [], 'Persistent notification'],
+        'full redirect' => ['sendRedirectNotification', [false], 'Redirect notification'],
+        'SPA redirect' => ['sendRedirectNotification', [true], 'Redirect notification'],
+    ]);
 });
 
 describe('session and authentication changes', function (): void {
@@ -181,6 +228,9 @@ describe('session and authentication changes', function (): void {
         }
 
         Route::middleware('web')->get('/notification-before-invalidation', static function () {
+            Notification::make('owned-before-invalidation')->title('Owned before invalidation')->send();
+            app(NotificationMailbox::class)->flush(str_repeat('a', 40));
+
             Notification::make('published-before-invalidation')->title('Published before invalidation')->send();
 
             return redirect('/');
@@ -209,7 +259,8 @@ describe('session and authentication changes', function (): void {
 
         $notifications = livewire(Notifications::class)->dispatch('notificationsSent')
             ->assertCount('notifications', $shouldInvalidate ? 1 : 3)
-            ->assertSee('After authentication change');
+            ->assertSee('After authentication change')
+            ->assertDontSee('Owned before invalidation');
 
         if ($shouldInvalidate) {
             $notifications
@@ -219,6 +270,13 @@ describe('session and authentication changes', function (): void {
             $notifications
                 ->assertSee('Published before invalidation')
                 ->assertSee('Pending before invalidation');
+        }
+
+        $ownedNotifications = livewire(Notifications::class)->call('pullNotificationsFromSession', [str_repeat('a', 40)])
+            ->assertCount('notifications', $shouldInvalidate ? 0 : 1);
+
+        if (! $shouldInvalidate) {
+            $ownedNotifications->assertSee('Owned before invalidation');
         }
 
         livewire(Notifications::class)->dispatch('notificationsSent')->assertCount('notifications', 0);
@@ -334,7 +392,7 @@ describe('response middleware', function (): void {
         expect($returnedPayload->numeric->{'0'})->toBe('first');
         expect($returnedPayload->list)->toBeArray()->toBeEmpty();
 
-        livewire(Notifications::class)->dispatch('notificationsSent')
+        livewire(Notifications::class)->call('pullNotificationsFromSession', [$response->headers->get('X-Filament-Notifications')])
             ->assertCount('notifications', 1)
             ->assertSee('Sent by global middleware');
     });

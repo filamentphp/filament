@@ -2,7 +2,10 @@
 
 namespace Filament\Pages\Dashboard\Concerns;
 
+use Filament\Facades\Filament;
 use Livewire\Attributes\Url;
+
+use function Filament\Support\encode_key_segments;
 
 trait HasFilters /** @phpstan-ignore trait.unused */
 {
@@ -78,9 +81,15 @@ trait HasFilters /** @phpstan-ignore trait.unused */
 
     public function getFiltersSessionKey(): string
     {
-        $livewire = md5($this::class);
+        $namespace = $this::class;
 
-        return "{$livewire}_filters";
+        if (filled($tenantKey = Filament::getTenant()?->getKey())) {
+            $namespace = encode_key_segments($namespace, (string) $tenantKey);
+        }
+
+        $livewire = hash('sha256', $namespace);
+
+        return "filament.dashboard.{$livewire}.filters";
     }
 
     public function persistsFiltersInSession(): bool

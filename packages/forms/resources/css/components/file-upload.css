@@ -49,6 +49,10 @@
         @apply h-auto! p-3!;
     }
 
+    & .filepond--drop-label[style*='visibility: hidden'] {
+        @apply min-h-0!;
+    }
+
     & .filepond--drop-label label {
         @apply p-0!;
     }
