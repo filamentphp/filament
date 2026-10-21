@@ -16,8 +16,12 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema as DatabaseSchema;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -1129,6 +1133,35 @@ describe('relationship options and search', function (): void {
 
                 return true;
             });
+    });
+
+    it('can resolve multiple relationship labels for numeric-looking string primary keys', function (): void {
+        DatabaseSchema::create('select_categories', function (Blueprint $table): void {
+            $table->string('id')->primary();
+            $table->string('name');
+            $table->string('parent_id')->nullable();
+        });
+
+        try {
+            DB::table('select_categories')->insert([
+                ['id' => '123', 'name' => 'Numeric category'],
+                ['id' => 'ABC', 'name' => 'Alphabetic category'],
+            ]);
+
+            Schema::make(Livewire::make())
+                ->model(SelectCategoryWithStringKey::class)
+                ->statePath('data')
+                ->components([
+                    $select = Select::make('children')
+                        ->relationship('children', 'name')
+                        ->multiple(),
+                ])
+                ->fill(['children' => ['123']]);
+
+            expect($select->getOptionLabels())->toBe([123 => 'Numeric category']);
+        } finally {
+            DatabaseSchema::dropIfExists('select_categories');
+        }
     });
 
     it('returns empty array for `getOptions()` when relationship is searchable without preload', function (): void {
@@ -4044,5 +4077,19 @@ class SelectWithJsonPathTitleAttribute extends Component implements HasActions, 
     public function render(): View
     {
         return view('livewire.form');
+    }
+}
+
+class SelectCategoryWithStringKey extends Model
+{
+    public $incrementing = false;
+
+    protected $table = 'select_categories';
+
+    protected $keyType = 'string';
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(self::class, 'parent_id');
     }
 }
