@@ -70,6 +70,7 @@ composer test              # Run all tests (SQLite + commands + PHPStan)
 composer test:sqlite       # Run tests with SQLite
 composer test:mysql        # Run tests with MySQL
 composer test:pgsql        # Run tests with PostgreSQL
+composer test:sqlsrv       # Run tests with SQL Server
 composer test:phpstan      # Run PHPStan static analysis
 composer cs                # Run all code style fixes (Rector + Pint + Prettier)
 
@@ -82,6 +83,10 @@ vendor/bin/pest tests/src/Forms/Components/FileUploadTest.php
 # Run a single test by name
 vendor/bin/pest --filter="it can use \`aspectRatio\(\)\` to force image cropping"
 ```
+
+### Starting test databases in Amp orbs
+
+The demo uses SQLite. MySQL, PostgreSQL, and SQL Server do not start automatically. Before running their tests, run `.agents/database start mysql`, `.agents/database start pgsql`, or `.agents/database start sqlsrv`. Stop the database afterward using the corresponding `.agents/database stop` command. Database volumes persist across stops; stopping the last container also stops Docker.
 
 ## Coding Patterns
 
