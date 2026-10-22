@@ -3,6 +3,7 @@
 namespace Filament\Pages\Concerns;
 
 use Filament\Facades\Filament;
+use Filament\Support\Attributes\ServerOnly;
 use Livewire\Attributes\Locked;
 
 trait HasUnsavedDataChangesAlert
@@ -12,6 +13,7 @@ trait HasUnsavedDataChangesAlert
 
     protected ?bool $hasUnsavedDataChangesAlert = null;
 
+    #[ServerOnly]
     public function mountHasUnsavedDataChangesAlert(): void
     {
         $this->rememberData();

@@ -3,6 +3,8 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Schemas\Schema;
+use Filament\Support\Attributes\Exposed;
+use Filament\Support\Attributes\ServerOnly;
 use Filament\Support\Components\Component;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\ColumnGroup;
@@ -34,6 +36,7 @@ trait HasColumnManager
 
     protected ?bool $hasReorderableTableColumns = null;
 
+    #[ServerOnly]
     public function initTableColumnManager(): void
     {
         if ($this->getTable()->hasColumnsLayout()) {
@@ -50,6 +53,7 @@ trait HasColumnManager
     /**
      * @return array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>
      */
+    #[ServerOnly]
     public function getDefaultTableColumnState(): array
     {
         return $this->cachedDefaultTableColumnState ??= collect($this->getTable()->getColumnsLayout())
@@ -66,6 +70,7 @@ trait HasColumnManager
     /**
      * @deprecated Use `applyTableColumnManager()` instead.
      */
+    #[ServerOnly]
     public function updatedToggledTableColumns(): void
     {
         $this->applyTableColumnManager();
@@ -74,6 +79,7 @@ trait HasColumnManager
     /**
      * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>|null  $state
      */
+    #[Exposed]
     public function applyTableColumnManager(?array $state = null, bool $wasReordered = false): void
     {
         if (filled($state)) {
@@ -100,6 +106,7 @@ trait HasColumnManager
         $this->persistTableColumns();
     }
 
+    #[Exposed]
     public function resetTableColumnManager(): void
     {
         $this->setTableColumns($this->getDefaultTableColumnState());
@@ -151,6 +158,7 @@ trait HasColumnManager
         return $this->tableColumnsToggleStateByName = $map;
     }
 
+    #[ServerOnly]
     public function isTableColumnToggledHidden(string $name): bool
     {
         return ! ($this->getTableColumnsToggleStateByName()[$name] ?? false);
@@ -164,11 +172,13 @@ trait HasColumnManager
         return $this->getTableColumnsSessionKey();
     }
 
+    #[ServerOnly]
     public function getTableColumnsSessionKey(): string
     {
         return $this->getTableSessionKey('columns');
     }
 
+    #[ServerOnly]
     public function getHasReorderedTableColumnsSessionKey(): string
     {
         return $this->getTableSessionKey('has_reordered_columns');

@@ -761,7 +761,7 @@ describe('session persistence', function (): void {
             ->assertSet('tableColumns', $reorderedColumns)
             ->set('tableRecordsPerPage', 10)
             ->call('resetTableSearch')
-            ->call('resetTableColumnSearches')
+            ->call('resetTableColumnSearch', 'title')
             ->set('tableSort', null)
             ->set('tableGrouping', null)
             ->resetTableFilters()

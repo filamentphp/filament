@@ -5,6 +5,8 @@ namespace Filament\Notifications\Livewire;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Notification;
 use Filament\Notifications\NotificationMailbox;
+use Filament\Support\Attributes\Exposed;
+use Filament\Support\Attributes\ServerOnly;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -26,12 +28,14 @@ class Notifications extends Component
 
     public static ?string $authGuard = null;
 
+    #[ServerOnly]
     public function mount(): void
     {
         $this->notifications = new Collection;
     }
 
     /** @param array<string> $batches */
+    #[Exposed]
     #[On('notificationsSent')]
     public function pullNotificationsFromSession(array $batches = []): void
     {
@@ -50,6 +54,7 @@ class Notifications extends Component
     /**
      * @param  array<string, mixed>  $notification
      */
+    #[Exposed]
     #[On('notificationSent')]
     public function pushNotificationFromEvent(array $notification): void
     {
@@ -58,6 +63,7 @@ class Notifications extends Component
         $this->pushNotification($notification);
     }
 
+    #[Exposed]
     #[On('notificationClosed')]
     public function removeNotification(string $id): void
     {
@@ -71,6 +77,7 @@ class Notifications extends Component
     /**
      * @param  array<string, mixed>  $notification
      */
+    #[Exposed]
     public function handleBroadcastNotification(array $notification): void
     {
         if (($notification['format'] ?? null) !== 'filament') {
@@ -88,11 +95,13 @@ class Notifications extends Component
         );
     }
 
+    #[ServerOnly]
     public function getUser(): Model | Authenticatable | null
     {
         return auth(static::$authGuard)->user();
     }
 
+    #[ServerOnly]
     public function getBroadcastChannel(): ?string
     {
         $user = $this->getUser();
@@ -110,21 +119,25 @@ class Notifications extends Component
         return "{$userClass}.{$user->getKey()}";
     }
 
+    #[ServerOnly]
     public static function alignment(Alignment $alignment): void
     {
         static::$alignment = $alignment;
     }
 
+    #[ServerOnly]
     public static function verticalAlignment(VerticalAlignment $alignment): void
     {
         static::$verticalAlignment = $alignment;
     }
 
+    #[ServerOnly]
     public static function authGuard(?string $guard): void
     {
         static::$authGuard = $guard;
     }
 
+    #[ServerOnly]
     public function render(): View
     {
         return view('filament-notifications::notifications');

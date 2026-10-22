@@ -6,6 +6,7 @@ use Filament\Tests\Fixtures\Pages\AuthorizableSettings;
 use Filament\Tests\Fixtures\Pages\Settings;
 use Filament\Tests\Panels\Pages\TestCase;
 use Illuminate\Validation\ValidationException;
+use Livewire\Exceptions\MethodNotFoundException;
 
 use function Filament\Tests\livewire;
 
@@ -14,6 +15,17 @@ uses(TestCase::class);
 it('can render page', function (): void {
     $this->get(Settings::getUrl())
         ->assertSuccessful();
+});
+
+it('allows exposed page listeners but blocks frontend calls to internal methods', function (): void {
+    $component = livewire(Settings::class)
+        ->dispatch('refresh-page')
+        ->assertSuccessful();
+
+    expect($component->instance()->getTitle())->toBe('Settings');
+
+    expect(fn () => $component->call('getTitle'))
+        ->toThrow(MethodNotFoundException::class);
 });
 
 it('can generate a slug based on the page name', function (): void {

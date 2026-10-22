@@ -24,6 +24,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
+use Livewire\Exceptions\MethodNotFoundException;
 use Livewire\Features\SupportFileUploads\FileUploadController;
 
 use function Filament\Tests\livewire;
@@ -140,10 +141,11 @@ it('cannot validate from a client-side call', function (string $method): void {
     // surface, but Livewire only withholds methods declared on its own base component,
     // and both are redeclared here. Running them from the client would execute every
     // schema's validation rules outside the flow that is supposed to gate them.
-    livewire(TestComponentWithValidation::class)
-        ->fillForm(['title' => ''])
-        ->call($method, ...(($method === 'validateOnly') ? ['data.title'] : []))
-        ->assertForbidden();
+    $component = livewire(TestComponentWithValidation::class)
+        ->fillForm(['title' => '']);
+
+    expect(fn () => $component->call($method, ...(($method === 'validateOnly') ? ['data.title'] : [])))
+        ->toThrow(MethodNotFoundException::class);
 })->with(['validateOnly', 'validate']);
 
 it('cannot validate from a client-side call alongside another method', function (): void {
@@ -152,7 +154,9 @@ it('cannot validate from a client-side call alongside another method', function 
 
     // Both calls are made in one request, so that an implementation which only
     // guarded the first call would be caught.
-    $this->withHeaders(['X-Livewire' => true])
+    $this->withoutExceptionHandling();
+
+    expect(fn () => $this->withHeaders(['X-Livewire' => true])
         ->post(app('livewire')->getUpdateUri(), [
             'components' => [
                 [
@@ -164,8 +168,7 @@ it('cannot validate from a client-side call alongside another method', function 
                     ],
                 ],
             ],
-        ])
-        ->assertForbidden();
+        ]))->toThrow(MethodNotFoundException::class);
 });
 
 it('can validate from the component itself', function (): void {

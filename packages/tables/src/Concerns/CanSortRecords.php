@@ -2,6 +2,8 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Support\Attributes\Exposed;
+use Filament\Support\Attributes\ServerOnly;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Grammars\SqlServerGrammar;
 
@@ -9,6 +11,7 @@ trait CanSortRecords
 {
     public ?string $tableSort = null;
 
+    #[Exposed]
     public function sortTable(?string $column = null, ?string $direction = null): void
     {
         if ($column === $this->getTableSortColumn()) {
@@ -26,6 +29,7 @@ trait CanSortRecords
         $this->updatedTableSort();
     }
 
+    #[ServerOnly]
     public function getTableSortColumn(): ?string
     {
         if (blank($this->tableSort)) {
@@ -35,6 +39,7 @@ trait CanSortRecords
         return (string) str($this->tableSort)->before(':');
     }
 
+    #[ServerOnly]
     public function getTableSortDirection(): ?string
     {
         if (blank($this->tableSort)) {
@@ -52,6 +57,7 @@ trait CanSortRecords
         };
     }
 
+    #[ServerOnly]
     public function updatedTableSort(): void
     {
         if ($this->getTable()->persistsSortInSession()) {
@@ -64,6 +70,7 @@ trait CanSortRecords
         $this->resetPage();
     }
 
+    #[ServerOnly]
     public function updatedTableSortDirection(): void
     {
         if ($this->getTable()->persistsSortInSession()) {
@@ -180,6 +187,7 @@ trait CanSortRecords
         return null;
     }
 
+    #[ServerOnly]
     public function getTableSortSessionKey(): string
     {
         return $this->getTableSessionKey('sort');

@@ -2,10 +2,13 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
+use Filament\Support\Attributes\ServerOnly;
+
 trait CanAuthorizeAccess
 {
     protected bool $hasAuthorizedAccess = false;
 
+    #[ServerOnly]
     public function bootCanAuthorizeAccess(): void
     {
         if ($this->hasAuthorizedAccess) {

@@ -16,6 +16,8 @@ use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Schema;
+use Filament\Support\Attributes\Exposed;
+use Filament\Support\Attributes\ServerOnly;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
@@ -56,11 +58,13 @@ class CreateRecord extends Page
      */
     public bool $isCreating = false;
 
+    #[ServerOnly]
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? __('filament-panels::resources/pages/create-record.breadcrumb');
     }
 
+    #[ServerOnly]
     public function mount(): void
     {
         $this->authorizeAccess();
@@ -75,6 +79,7 @@ class CreateRecord extends Page
         abort_unless(static::getResource()::canCreate(), 403);
     }
 
+    #[ServerOnly]
     public function hydrate(): void
     {
         $this->authorizeAccess();
@@ -89,6 +94,7 @@ class CreateRecord extends Page
         $this->callHook('afterFill');
     }
 
+    #[Exposed]
     public function create(bool $another = false): void
     {
         if ($this->isCreating) {
@@ -207,6 +213,7 @@ class CreateRecord extends Page
         return null;
     }
 
+    #[Exposed]
     public function createAnother(): void
     {
         $this->create(another: true);
@@ -299,6 +306,7 @@ class CreateRecord extends Page
             ->color('gray');
     }
 
+    #[ServerOnly]
     public function getTitle(): string | Htmlable
     {
         if (filled(static::$title)) {
@@ -310,6 +318,7 @@ class CreateRecord extends Page
         ]);
     }
 
+    #[ServerOnly]
     public function defaultForm(Schema $schema): Schema
     {
         if (! $schema->hasCustomColumns()) {
@@ -323,6 +332,7 @@ class CreateRecord extends Page
             ->statePath('data');
     }
 
+    #[ServerOnly]
     public function form(Schema $schema): Schema
     {
         return static::getResource()::form($schema);
@@ -370,11 +380,13 @@ class CreateRecord extends Page
         return $this->getModel();
     }
 
+    #[ServerOnly]
     public function canCreateAnother(): bool
     {
         return static::$canCreateAnother;
     }
 
+    #[ServerOnly]
     public static function disableCreateAnother(): void
     {
         static::$canCreateAnother = false;
@@ -383,11 +395,13 @@ class CreateRecord extends Page
     /**
      * @return ?TModel
      */
+    #[ServerOnly]
     public function getRecord(): ?Model
     {
         return $this->record;
     }
 
+    #[ServerOnly]
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -396,6 +410,7 @@ class CreateRecord extends Page
             ]);
     }
 
+    #[ServerOnly]
     public function getFormContentComponent(): Component
     {
         if (! $this->hasFormWrapper()) {
@@ -413,6 +428,7 @@ class CreateRecord extends Page
             ]);
     }
 
+    #[ServerOnly]
     public function getFormActionsContentComponent(): Component
     {
         return Actions::make($this->getFormActions())
@@ -422,6 +438,7 @@ class CreateRecord extends Page
             ->key('form-actions');
     }
 
+    #[ServerOnly]
     public function hasFormWrapper(): bool
     {
         return true;
@@ -430,6 +447,7 @@ class CreateRecord extends Page
     /**
      * @return array<string>
      */
+    #[ServerOnly]
     public function getPageClasses(): array
     {
         return [

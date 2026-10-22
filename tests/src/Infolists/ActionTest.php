@@ -12,6 +12,17 @@ use function Filament\Tests\livewire;
 uses(TestCase::class);
 
 describe('calling actions', function (): void {
+    it('can call deprecated infolist action endpoints from the frontend', function (): void {
+        livewire(InfolistActions::class)
+            ->call('mountInfolistAction', 'setValue', 'textEntry', 'infolist')
+            ->fillForm(['value' => 'updated'])
+            ->call('callMountedInfolistAction')
+            ->assertDispatched('foo', 'updated')
+            ->call('mountInfolistAction', 'setValue', 'textEntry', 'infolist')
+            ->call('unmountInfolistAction')
+            ->assertActionNotMounted();
+    });
+
     it('can call an action with data', function (): void {
         livewire(InfolistActions::class)
             ->callAction(TestAction::make('setValue')->schemaComponent('textEntry'), data: [

@@ -5,6 +5,7 @@ namespace Filament\Resources\Pages\Concerns;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
+use Filament\Support\Attributes\ServerOnly;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Locked;
@@ -27,16 +28,19 @@ trait InteractsWithRecord
         $this->hasResolvedRecordForRequest = true;
     }
 
+    #[ServerOnly]
     public function mountCanAuthorizeAccess(): void
     {
         abort_unless(static::canAccess(['record' => $this->getRecord()]), 403);
     }
 
+    #[ServerOnly]
     public function hydrateCanAuthorizeAccess(): void
     {
         abort_unless(static::canAccess(['record' => $this->getRecord()]), 403);
     }
 
+    #[ServerOnly]
     public function getRecord(): Model
     {
         abort_unless($this->record instanceof Model, 404);
@@ -44,11 +48,13 @@ trait InteractsWithRecord
         return $this->record;
     }
 
+    #[ServerOnly]
     public function hasRecord(): bool
     {
         return filled($this->record);
     }
 
+    #[ServerOnly]
     public function getRecordTitle(): string | Htmlable
     {
         $resource = static::getResource();
@@ -63,6 +69,7 @@ trait InteractsWithRecord
     /**
      * @return array<string>
      */
+    #[ServerOnly]
     public function getBreadcrumbs(): array
     {
         $breadcrumbs = $this->getResourceBreadcrumbs();
@@ -105,6 +112,7 @@ trait InteractsWithRecord
     /**
      * @return array<string, mixed>
      */
+    #[ServerOnly]
     public function getSubNavigationParameters(): array
     {
         return [
@@ -112,6 +120,7 @@ trait InteractsWithRecord
         ];
     }
 
+    #[ServerOnly]
     public function getSubNavigation(): array
     {
         return static::getResource()::getRecordSubNavigation($this);
@@ -120,6 +129,7 @@ trait InteractsWithRecord
     /**
      * @return array<string, mixed>
      */
+    #[ServerOnly]
     public function getWidgetData(): array
     {
         return [
@@ -135,16 +145,19 @@ trait InteractsWithRecord
         return $this->getRecord();
     }
 
+    #[ServerOnly]
     public function getDefaultActionRecord(Action $action): ?Model
     {
         return $this->hasRecord() ? $this->getRecord() : null;
     }
 
+    #[ServerOnly]
     public function getDefaultActionRecordTitle(Action $action): ?string
     {
         return $this->getRecordTitle();
     }
 
+    #[ServerOnly]
     public function getDefaultActionSuccessRedirectUrl(Action $action): ?string
     {
         return match (true) {

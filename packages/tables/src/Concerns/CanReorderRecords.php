@@ -2,6 +2,8 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Support\Attributes\Exposed;
+use Filament\Support\Attributes\ServerOnly;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -16,6 +18,7 @@ trait CanReorderRecords
     /**
      * @param  array<int | string>  $order
      */
+    #[Exposed]
     public function reorderTable(array $order, int | string | null $draggedRecordKey = null): void
     {
         if (! $this->getTable()->isReorderable()) {
@@ -63,6 +66,7 @@ trait CanReorderRecords
         $this->getTable()->callAfterReordering($order);
     }
 
+    #[Exposed]
     public function moveTableRecord(string $recordKey, string $direction): void
     {
         if (! $this->isTableReordering() || ! in_array($direction, ['up', 'down'], true)) {
@@ -107,11 +111,13 @@ trait CanReorderRecords
         );
     }
 
+    #[Exposed]
     public function toggleTableReordering(): void
     {
         $this->isTableReordering = ! $this->isTableReordering;
     }
 
+    #[ServerOnly]
     public function isTableReordering(): bool
     {
         return $this->getTable()->isReorderable() && $this->isTableReordering;

@@ -3,6 +3,7 @@
 namespace Filament\Pages\Dashboard\Concerns;
 
 use Filament\Facades\Filament;
+use Filament\Support\Attributes\ServerOnly;
 use Livewire\Attributes\Url;
 
 use function Filament\Support\encode_key_segments;
@@ -17,6 +18,7 @@ trait HasFilters /** @phpstan-ignore trait.unused */
 
     protected bool $persistsFiltersInSession = true;
 
+    #[ServerOnly]
     public function mountHasFilters(): void
     {
         $shouldPersistFiltersInSession = $this->persistsFiltersInSession();
@@ -69,6 +71,7 @@ trait HasFilters /** @phpstan-ignore trait.unused */
         }
     }
 
+    #[ServerOnly]
     public function updatedFilters(): void
     {
         if ($this->persistsFiltersInSession()) {
@@ -79,6 +82,7 @@ trait HasFilters /** @phpstan-ignore trait.unused */
         }
     }
 
+    #[ServerOnly]
     public function getFiltersSessionKey(): string
     {
         $namespace = $this::class;
@@ -92,6 +96,7 @@ trait HasFilters /** @phpstan-ignore trait.unused */
         return "filament.dashboard.{$livewire}.filters";
     }
 
+    #[ServerOnly]
     public function persistsFiltersInSession(): bool
     {
         return $this->persistsFiltersInSession;
