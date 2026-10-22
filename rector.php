@@ -3,7 +3,7 @@
 use Filament\Tests\Rector\Rules\AddUnexposedToLivewireMethodsRector;
 use Filament\Tests\Rector\Rules\MovePestTestClassesToEndRector;
 use Filament\Tests\Rector\Rules\ScopePestTestHelpersRector;
-use Rector\Caching\ValueObject\Storage\FileCacheStorage;
+use Rector\Caching\ValueObject\Storage\MemoryCacheStorage;
 use Rector\Config\RectorConfig;
 
 return RectorConfig::configure()
@@ -22,7 +22,8 @@ return RectorConfig::configure()
     ])
     ->withCache(
         cacheDirectory: __DIR__ . '/.rector.cache',
-        cacheClass: FileCacheStorage::class,
+        // Trait eligibility changes when another component starts using it.
+        cacheClass: MemoryCacheStorage::class,
     )
     ->withTypeCoverageLevel(0)
     ->withDeadCodeLevel(0)

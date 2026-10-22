@@ -5,6 +5,7 @@ namespace Filament\Tests\Rector\Rules;
 use Composer\ClassMapGenerator\ClassMapGenerator;
 use Filament\Support\Attributes\Exposed;
 use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Livewire\MethodAccess;
 use Livewire\Component;
 use PhpParser\Node;
 use PhpParser\Node\Attribute;
@@ -12,10 +13,14 @@ use PhpParser\Node\AttributeGroup;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Trait_;
+use PhpParser\Node\Stmt\TraitUseAdaptation\Alias;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\PhpParser\AstResolver;
 use Rector\PHPStan\ScopeFetcher;
 use Rector\Rector\AbstractRector;
+use RuntimeException;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 use function Filament\Support\is_path_within_directory;
@@ -31,7 +36,14 @@ class AddUnexposedToLivewireMethodsRector extends AbstractRector implements Conf
     /** @var ?array<string, true> */
     protected ?array $livewireTraits = null;
 
-    public function __construct(protected ReflectionProvider $reflectionProvider) {}
+    /** @var array<string, true> */
+    protected array $checkedTraitAliases = [];
+
+    public function __construct(
+        protected ReflectionProvider $reflectionProvider,
+        protected MethodAccess $methodAccess,
+        protected AstResolver $astResolver,
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -65,6 +77,9 @@ class AddUnexposedToLivewireMethodsRector extends AbstractRector implements Conf
             return null;
         }
 
+        // PHPStan silently drops trait aliases whose trait names use different casing.
+        $this->assertSupportedTraitAliases($class);
+
         $hasChanged = false;
 
         foreach ($node->getMethods() as $method) {
@@ -74,10 +89,16 @@ class AddUnexposedToLivewireMethodsRector extends AbstractRector implements Conf
 
             foreach ($method->attrGroups as $attributeGroup) {
                 foreach ($attributeGroup->attrs as $attribute) {
-                    if ($this->isNames($attribute->name, [Exposed::class, Unexposed::class])) {
+                    $attributeClass = $this->getName($attribute->name);
+
+                    if ($this->getMethodAccessAttributeClass($attributeClass) !== null) {
                         continue 3;
                     }
                 }
+            }
+
+            if ($this->methodAccess->getMethodAccess($class->getNativeReflection(), $method->name->toString()) === false) {
+                continue;
             }
 
             $method->attrGroups[] = new AttributeGroup([new Attribute(new FullyQualified(Unexposed::class))]);
@@ -85,6 +106,61 @@ class AddUnexposedToLivewireMethodsRector extends AbstractRector implements Conf
         }
 
         return $hasChanged ? $node : null;
+    }
+
+    protected function getMethodAccessAttributeClass(string $attributeClass): ?string
+    {
+        if (in_array($attributeClass, [Exposed::class, Unexposed::class], strict: true)) {
+            return $attributeClass;
+        }
+
+        if (! $this->reflectionProvider->hasClass($attributeClass)) {
+            return null;
+        }
+
+        $attribute = $this->reflectionProvider->getClass($attributeClass);
+
+        if ($attribute->isSubclassOf(Unexposed::class)) {
+            return Unexposed::class;
+        }
+
+        return $attribute->isSubclassOf(Exposed::class) ? Exposed::class : null;
+    }
+
+    protected function assertSupportedTraitAliases(ClassReflection $class): void
+    {
+        foreach ([$class, ...$class->getParents()] as $ancestor) {
+            foreach ([$ancestor, ...$ancestor->getTraits(true)] as $owner) {
+                if (isset($this->checkedTraitAliases[$owner->getName()])) {
+                    continue;
+                }
+
+                $node = $this->astResolver->resolveClassFromClassReflection($owner);
+
+                if (! $node) {
+                    throw new RuntimeException("Cannot inspect trait aliases in [{$owner->getName()}]. No method access annotations were added to this declaration.");
+                }
+
+                foreach ($node->getTraitUses() as $traitUse) {
+                    foreach ($traitUse->adaptations as $adaptation) {
+                        if ((! $adaptation instanceof Alias) || ($adaptation->newName === null)) {
+                            continue;
+                        }
+
+                        foreach ($adaptation->trait ? [$adaptation->trait] : $traitUse->traits as $traitName) {
+                            $name = $this->getName($traitName);
+                            $canonicalName = $this->reflectionProvider->getClass($name)->getName();
+
+                            if ($name !== $canonicalName) {
+                                throw new RuntimeException("Static reflection cannot safely inspect trait alias [{$adaptation->newName}] in [{$owner->getFileName()}:{$adaptation->getStartLine()}]. Use the canonical trait spelling [{$canonicalName}] instead of [{$name}], then rerun Rector. The original PHP is valid; this is a tooling limitation.");
+                            }
+                        }
+                    }
+                }
+
+                $this->checkedTraitAliases[$owner->getName()] = true;
+            }
+        }
     }
 
     /** @return array<string, true> */
@@ -125,5 +201,6 @@ class AddUnexposedToLivewireMethodsRector extends AbstractRector implements Conf
         $this->paths = $configuration['paths'];
         $this->componentPaths = $configuration['componentPaths'] ?? $this->paths;
         $this->livewireTraits = null;
+        $this->checkedTraitAliases = [];
     }
 }
