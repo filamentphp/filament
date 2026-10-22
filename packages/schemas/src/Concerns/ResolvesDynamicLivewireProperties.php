@@ -4,6 +4,7 @@ namespace Filament\Schemas\Concerns;
 
 use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Support\Attributes\ServerOnly;
 use Livewire\Exceptions\PropertyNotFoundException;
 
 trait ResolvesDynamicLivewireProperties
@@ -13,6 +14,7 @@ trait ResolvesDynamicLivewireProperties
      *
      * @throws PropertyNotFoundException
      */
+    #[ServerOnly]
     public function __get($property): mixed
     {
         try {

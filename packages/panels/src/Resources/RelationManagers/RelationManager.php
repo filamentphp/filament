@@ -36,6 +36,7 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasRenderHookScopes;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Attributes\ServerOnly;
 use Filament\Support\Concerns\CanBeLazy;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Contracts\HasTable;
@@ -117,6 +118,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
 
     protected static bool $isBadgeDeferred = false;
 
+    #[ServerOnly]
     public function mount(): void
     {
         $this->loadDefaultActiveTab();
@@ -125,6 +127,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     /**
      * @param  array<string, mixed>  $properties
      */
+    #[ServerOnly]
     public static function make(array $properties = []): RelationManagerConfiguration
     {
         return app(RelationManagerConfiguration::class, ['relationManager' => static::class, 'properties' => $properties]);
@@ -133,6 +136,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     /**
      * @return array<string>
      */
+    #[ServerOnly]
     public function getRenderHookScopes(): array
     {
         return [
@@ -141,6 +145,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
         ];
     }
 
+    #[ServerOnly]
     public function render(): View
     {
         return view($this->view, $this->getViewData());
@@ -154,6 +159,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
         return [];
     }
 
+    #[ServerOnly]
     public static function getTabComponent(Model $ownerRecord, string $pageClass): Tab
     {
         $isTabBadgeDeferred = static::isBadgeDeferred($ownerRecord, $pageClass);
@@ -169,36 +175,43 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
             ->iconPosition(static::getIconPosition($ownerRecord, $pageClass));
     }
 
+    #[ServerOnly]
     public static function getIcon(Model $ownerRecord, string $pageClass): string | BackedEnum | Htmlable | null
     {
         return static::$icon;
     }
 
+    #[ServerOnly]
     public static function getIconPosition(Model $ownerRecord, string $pageClass): IconPosition
     {
         return static::$iconPosition;
     }
 
+    #[ServerOnly]
     public static function getBadge(Model $ownerRecord, string $pageClass): ?string
     {
         return static::$badge;
     }
 
+    #[ServerOnly]
     public static function getBadgeColor(Model $ownerRecord, string $pageClass): ?string
     {
         return static::$badgeColor;
     }
 
+    #[ServerOnly]
     public static function getBadgeTooltip(Model $ownerRecord, string $pageClass): string | Htmlable | null
     {
         return static::$badgeTooltip;
     }
 
+    #[ServerOnly]
     public static function isBadgeDeferred(Model $ownerRecord, string $pageClass): bool
     {
         return static::$isBadgeDeferred;
     }
 
+    #[ServerOnly]
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return static::$title ?? static::getRelationshipTitle();
@@ -207,16 +220,19 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     /**
      * @return class-string<Page>
      */
+    #[ServerOnly]
     public function getPageClass(): string
     {
         return $this->pageClass;
     }
 
+    #[ServerOnly]
     public function getOwnerRecord(): Model
     {
         return $this->ownerRecord;
     }
 
+    #[ServerOnly]
     public function isReadOnly(): bool
     {
         if (blank($this->getPageClass())) {
@@ -239,6 +255,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
+    #[ServerOnly]
     public static function getRecordTitleAttribute(): ?string
     {
         return static::$recordTitleAttribute;
@@ -279,11 +296,13 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
+    #[ServerOnly]
     public function getInverseRelationshipName(): ?string
     {
         return static::$inverseRelationship;
     }
 
+    #[ServerOnly]
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
         if (static::shouldSkipAuthorization()) {
@@ -316,6 +335,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     /**
      * @return array<string, mixed>
      */
+    #[ServerOnly]
     public static function getDefaultProperties(): array
     {
         $properties = [];
@@ -327,6 +347,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
         return $properties;
     }
 
+    #[ServerOnly]
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -343,6 +364,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
         return $this->isReadOnly() ? false : $this->baseCanReorder();
     }
 
+    #[ServerOnly]
     public function getDefaultActionAuthorizationResponse(Action $action): ?Response
     {
         // Security: `AssociateAction`, `AttachAction`, `DetachAction`, and
@@ -370,6 +392,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
         };
     }
 
+    #[ServerOnly]
     public function getDefaultActionIndividualRecordAuthorizationResponseResolver(Action $action): ?Closure
     {
         return match (true) {
@@ -380,6 +403,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
         };
     }
 
+    #[ServerOnly]
     public function getDefaultActionSchemaResolver(Action $action): ?Closure
     {
         return match (true) {
@@ -389,6 +413,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
         };
     }
 
+    #[ServerOnly]
     public function getDefaultActionUrl(Action $action): ?string
     {
         $relatedResource = static::getRelatedResource();

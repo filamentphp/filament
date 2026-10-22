@@ -69,6 +69,8 @@ public function recalculateTotals(): void
 
 The nearest declaration with an access attribute determines access. A child can also apply `#[ServerOnly]` to block a parent's exposed method. If a declaration has both attributes, `#[ServerOnly]` takes precedence. Methods without either attribute anywhere in their inheritance chain retain Livewire's normal behavior. `#[Exposed]` does not bypass Livewire's visibility restrictions or make lifecycle methods callable.
 
+Filament's own component methods are marked `#[ServerOnly]` unless they are intended frontend entry points, which are marked `#[Exposed]`. New methods you declare in your application are not automatically restricted. However, overriding a Filament method inherits its access policy: add `#[Exposed]` to the override if your frontend integration needs to call a server-only method, and implement any required authorization before calling it.
+
 <Aside variant="danger">
     This attribute blocks direct client invocation, not calls made by other PHP code. An exposed action, listener, or forwarding method can still call the method internally. You must authorize those entry points yourself. The attribute does not prevent Livewire from invoking lifecycle hooks or rendering methods internally, and it does not protect public properties from client updates.
 </Aside>

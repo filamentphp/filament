@@ -4,6 +4,7 @@ namespace Filament\Livewire\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Filament\Support\Attributes\ServerOnly;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -24,6 +25,7 @@ trait HasTenantMenu
      */
     protected ?array $switchableTenants = null;
 
+    #[ServerOnly]
     public function bootHasTenantMenu(): void
     {
         if (Filament::auth()->guest()) {
@@ -44,6 +46,7 @@ trait HasTenantMenu
     /**
      * @return array<int, Collection<string, Action>>
      */
+    #[ServerOnly]
     public function getTenantMenuItemGroupsAfterSwitcher(): array
     {
         $this->getTenantMenuItems();
@@ -51,6 +54,7 @@ trait HasTenantMenu
         return $this->tenantMenuItemGroupsAfterSwitcher;
     }
 
+    #[ServerOnly]
     public function hasMultipleTenantMenuItemGroups(): bool
     {
         return Filament::getCurrentPanel()?->hasMultipleTenantMenuItemGroups() ?? false;

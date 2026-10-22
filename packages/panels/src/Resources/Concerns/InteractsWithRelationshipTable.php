@@ -5,6 +5,7 @@ namespace Filament\Resources\Concerns;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Schemas\Schema;
+use Filament\Support\Attributes\ServerOnly;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Auth\Access\Response;
@@ -32,36 +33,43 @@ trait InteractsWithRelationshipTable
 
     protected static ?string $relationshipTitle = null;
 
+    #[ServerOnly]
     public static function getRelatedResource(): ?string
     {
         return static::$relatedResource;
     }
 
+    #[ServerOnly]
     public static function checkPolicyExistence(bool $condition = true): void
     {
         static::$shouldCheckPolicyExistence = $condition;
     }
 
+    #[ServerOnly]
     public static function skipAuthorization(bool $condition = true): void
     {
         static::$shouldSkipAuthorization = $condition;
     }
 
+    #[ServerOnly]
     public static function shouldCheckPolicyExistence(): bool
     {
         return static::$shouldCheckPolicyExistence;
     }
 
+    #[ServerOnly]
     public static function shouldSkipAuthorization(): bool
     {
         return static::$shouldSkipAuthorization;
     }
 
+    #[ServerOnly]
     public function getRelationship(): Relation | Builder
     {
         return $this->getOwnerRecord()->{static::getRelationshipName()}();
     }
 
+    #[ServerOnly]
     public static function getRelationshipName(): string
     {
         if (isset(static::$relationship)) {
@@ -71,6 +79,7 @@ trait InteractsWithRelationshipTable
         return static::getRelatedResource()::getParentResourceRegistration()->getRelationshipName();
     }
 
+    #[ServerOnly]
     public function defaultForm(Schema $schema): Schema
     {
         if (! $schema->hasCustomColumns()) {
@@ -80,6 +89,7 @@ trait InteractsWithRelationshipTable
         return $schema;
     }
 
+    #[ServerOnly]
     public function form(Schema $schema): Schema
     {
         if (static::getRelatedResource()) {
@@ -89,6 +99,7 @@ trait InteractsWithRelationshipTable
         return $schema;
     }
 
+    #[ServerOnly]
     public function defaultInfolist(Schema $schema): Schema
     {
         if (! $schema->hasCustomColumns()) {
@@ -98,6 +109,7 @@ trait InteractsWithRelationshipTable
         return $schema;
     }
 
+    #[ServerOnly]
     public function infolist(Schema $schema): Schema
     {
         if (static::getRelatedResource()) {
@@ -433,6 +445,7 @@ trait InteractsWithRelationshipTable
         return $this->getViewAuthorizationResponse($record)->allowed();
     }
 
+    #[ServerOnly]
     public function getAuthorizationResponse(string $action, ?Model $record = null): Response
     {
         if (static::shouldSkipAuthorization()) {
@@ -458,6 +471,7 @@ trait InteractsWithRelationshipTable
         return $this->getAuthorizationResponse($action, $record)->allowed();
     }
 
+    #[ServerOnly]
     public static function getRelationshipTitle(): string
     {
         if (filled(static::$relationshipTitle)) {

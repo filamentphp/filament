@@ -13,6 +13,8 @@ use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Schema;
+use Filament\Support\Attributes\Exposed;
+use Filament\Support\Attributes\ServerOnly;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Throwable;
@@ -32,6 +34,7 @@ class SettingsPage extends Page
      */
     public ?array $data = [];
 
+    #[ServerOnly]
     public function mount(): void
     {
         $this->fillForm();
@@ -59,6 +62,7 @@ class SettingsPage extends Page
         return $data;
     }
 
+    #[Exposed]
     public function save(): void
     {
         if (! $this->canEdit()) {
@@ -107,6 +111,7 @@ class SettingsPage extends Page
         }
     }
 
+    #[ServerOnly]
     public function getSavedNotification(): ?Notification
     {
         $title = $this->getSavedNotificationTitle();
@@ -120,6 +125,7 @@ class SettingsPage extends Page
             ->title($title);
     }
 
+    #[ServerOnly]
     public function getSavedNotificationTitle(): ?string
     {
         return $this->getSavedNotificationMessage() ?? __('filament-spatie-laravel-settings-plugin::pages/settings-page.notifications.saved.title');
@@ -142,6 +148,7 @@ class SettingsPage extends Page
         return $data;
     }
 
+    #[ServerOnly]
     public static function getSettings(): string
     {
         return static::$settings ?? (string) str(class_basename(static::class))
@@ -153,6 +160,7 @@ class SettingsPage extends Page
     /**
      * @return array<Action | ActionGroup>
      */
+    #[ServerOnly]
     public function getFormActions(): array
     {
         return [
@@ -160,6 +168,7 @@ class SettingsPage extends Page
         ];
     }
 
+    #[ServerOnly]
     public function getSaveFormAction(): Action
     {
         $hasFormWrapper = $this->hasFormWrapper();
@@ -172,11 +181,13 @@ class SettingsPage extends Page
             ->visible($this->canEdit());
     }
 
+    #[ServerOnly]
     public function getSubmitFormAction(): Action
     {
         return $this->getSaveFormAction();
     }
 
+    #[ServerOnly]
     public function defaultForm(Schema $schema): Schema
     {
         return $schema
@@ -186,11 +197,13 @@ class SettingsPage extends Page
             ->statePath('data');
     }
 
+    #[ServerOnly]
     public function form(Schema $schema): Schema
     {
         return $schema;
     }
 
+    #[ServerOnly]
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -199,6 +212,7 @@ class SettingsPage extends Page
             ]);
     }
 
+    #[ServerOnly]
     public function getFormContentComponent(): Component
     {
         if (! $this->hasFormWrapper()) {
@@ -216,6 +230,7 @@ class SettingsPage extends Page
             ]);
     }
 
+    #[ServerOnly]
     public function getFormActionsContentComponent(): Component
     {
         return Actions::make($this->getFormActions())
@@ -230,6 +245,7 @@ class SettingsPage extends Page
         return 'save';
     }
 
+    #[ServerOnly]
     public function hasFormWrapper(): bool
     {
         return true;
@@ -240,11 +256,13 @@ class SettingsPage extends Page
         return false;
     }
 
+    #[ServerOnly]
     public function getRedirectUrl(): ?string
     {
         return null;
     }
 
+    #[ServerOnly]
     public function canEdit(): bool
     {
         return true;

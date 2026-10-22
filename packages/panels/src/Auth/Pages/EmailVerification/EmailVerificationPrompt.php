@@ -12,6 +12,7 @@ use Filament\Pages\SimplePage;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
+use Filament\Support\Attributes\ServerOnly;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\RateLimiter;
@@ -26,6 +27,7 @@ class EmailVerificationPrompt extends SimplePage
     use RestrictsFileUploadsToSchemaComponents;
     use WithRateLimiting;
 
+    #[ServerOnly]
     public function mount(): void
     {
         if ((! Filament::auth()->check()) || $this->getVerifiable()->hasVerifiedEmail()) {
@@ -59,6 +61,7 @@ class EmailVerificationPrompt extends SimplePage
         $user->notify($notification);
     }
 
+    #[ServerOnly]
     public function resendNotificationAction(): Action
     {
         return Action::make('resendNotification')
@@ -112,16 +115,19 @@ class EmailVerificationPrompt extends SimplePage
             ->danger();
     }
 
+    #[ServerOnly]
     public function getTitle(): string | Htmlable
     {
         return __('filament-panels::auth/pages/email-verification/email-verification-prompt.title');
     }
 
+    #[ServerOnly]
     public function getHeading(): string | Htmlable | null
     {
         return __('filament-panels::auth/pages/email-verification/email-verification-prompt.heading');
     }
 
+    #[ServerOnly]
     public function content(Schema $schema): Schema
     {
         return $schema

@@ -37,6 +37,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
+use Livewire\Exceptions\MethodNotFoundException;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertDatabaseMissing;
@@ -487,9 +488,10 @@ describe('soft-deletable nested resource', function (): void {
     })->with([false, true]);
 
     it('rejects direct Livewire calls to `resolveScopedModelProperties()` on resource pages', function (): void {
-        livewire(CreateUserPost::class, ['parentRecord' => User::factory()->create()])
-            ->call('resolveScopedModelProperties')
-            ->assertNotFound();
+        $component = livewire(CreateUserPost::class, ['parentRecord' => User::factory()->create()]);
+
+        expect(fn () => $component->call('resolveScopedModelProperties'))
+            ->toThrow(MethodNotFoundException::class);
     });
 
     it('can save', function (): void {

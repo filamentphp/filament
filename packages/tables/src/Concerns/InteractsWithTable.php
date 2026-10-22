@@ -3,6 +3,8 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Facades\Filament;
+use Filament\Support\Attributes\Exposed;
+use Filament\Support\Attributes\ServerOnly;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -46,6 +48,7 @@ trait InteractsWithTable
 
     protected bool $shouldMountInteractsWithTable = false;
 
+    #[ServerOnly]
     public function bootedInteractsWithTable(): void
     {
         $this->table = $this->table($this->makeTable());
@@ -184,16 +187,19 @@ trait InteractsWithTable
         }
     }
 
+    #[ServerOnly]
     public function mountInteractsWithTable(): void
     {
         $this->shouldMountInteractsWithTable = true;
     }
 
+    #[ServerOnly]
     public function table(Table $table): Table
     {
         return $table;
     }
 
+    #[ServerOnly]
     public function getTable(): Table
     {
         return $this->table;
@@ -252,6 +258,7 @@ trait InteractsWithTable
         return null;
     }
 
+    #[ServerOnly]
     public function getIdentifiedTableQueryStringPropertyNameFor(string $property): string
     {
         if (filled($identifier = $this->getTable()->getQueryStringIdentifier())) {
@@ -261,6 +268,7 @@ trait InteractsWithTable
         return $property;
     }
 
+    #[ServerOnly]
     public function getTableSessionKey(string $key, bool $isTenantScoped = false): string
     {
         $namespace = $this::class;
@@ -278,16 +286,19 @@ trait InteractsWithTable
         return "filament.tables.{$table}.{$key}";
     }
 
+    #[ServerOnly]
     public function getActiveTableLocale(): ?string
     {
         return null;
     }
 
+    #[ServerOnly]
     public function resetPage(?string $pageName = null): void
     {
         $this->resetLivewirePage($pageName ?? $this->getTablePaginationPageName());
     }
 
+    #[Exposed]
     public function setPage(int | string $page, ?string $pageName = null): void
     {
         $defaultPageName = $this->getTablePaginationPageName();
@@ -327,6 +338,7 @@ trait InteractsWithTable
         }
     }
 
+    #[ServerOnly]
     public function resetTable(): void
     {
         $this->bootedInteractsWithTable();

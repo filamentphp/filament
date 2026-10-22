@@ -25,6 +25,7 @@ use Filament\Resources\Events\RecordSaved;
 use Filament\Resources\Events\RecordUpdated;
 use Filament\Resources\Pages\Concerns\CanAuthorizeResourceAccess;
 use Filament\Resources\Pages\Concerns\InteractsWithParentRecord;
+use Filament\Support\Attributes\ServerOnly;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -46,6 +47,7 @@ abstract class Page extends BasePage
 
     protected static bool $isDiscovered = false;
 
+    #[ServerOnly]
     public function resolveScopedModelProperties(): void
     {
         try {
@@ -112,6 +114,7 @@ abstract class Page extends BasePage
     /**
      * @param  array<string, mixed>  $parameters
      */
+    #[ServerOnly]
     public function getResourceUrl(?string $name = null, array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = true): string
     {
         if (filled($name) && ($name !== 'index') && method_exists($this, 'getRecord')) {
@@ -121,6 +124,7 @@ abstract class Page extends BasePage
         return static::getResource()::getUrl($name, $parameters, $isAbsolute, $panel, $tenant, $shouldGuessMissingParameters);
     }
 
+    #[ServerOnly]
     public static function getRouteName(?Panel $panel = null): string
     {
         $panel ??= Filament::getCurrentOrDefaultPanel();
@@ -133,6 +137,7 @@ abstract class Page extends BasePage
     /**
      * @param  array<string, mixed>  $urlParameters
      */
+    #[ServerOnly]
     public static function getNavigationItems(array $urlParameters = []): array
     {
         return [
@@ -152,6 +157,7 @@ abstract class Page extends BasePage
     /**
      * @return string | array<string>
      */
+    #[ServerOnly]
     public static function getNavigationItemActiveRoutePattern(): string | array
     {
         return static::getRouteName();
@@ -160,6 +166,7 @@ abstract class Page extends BasePage
     /**
      * @param  array<string, mixed>  $parameters
      */
+    #[ServerOnly]
     public static function getNavigationUrl(array $parameters = []): string
     {
         return static::getUrl($parameters, shouldGuessMissingParameters: true);
@@ -168,11 +175,13 @@ abstract class Page extends BasePage
     /**
      * @param  array<string, mixed>  $parameters
      */
+    #[ServerOnly]
     public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false, ?string $configuration = null): string
     {
         return static::getResource()::getUrl(static::getResourcePageName(), $parameters, $isAbsolute, $panel, $tenant, $shouldGuessMissingParameters, $configuration);
     }
 
+    #[ServerOnly]
     public static function getResourcePageName(): string
     {
         return static::$cachedResourcePageNames[static::class] ??= static::resolveResourcePageName();
@@ -191,6 +200,7 @@ abstract class Page extends BasePage
         throw new LogicException('Page [' . static::class . '] is not registered to the resource [' . static::getResource() . '].');
     }
 
+    #[ServerOnly]
     public static function route(string $path): PageRegistration
     {
         return new PageRegistration(
@@ -201,31 +211,37 @@ abstract class Page extends BasePage
         );
     }
 
+    #[ServerOnly]
     public static function getEmailVerifiedMiddleware(Panel $panel): string
     {
         return static::getResource()::getEmailVerifiedMiddleware($panel);
     }
 
+    #[ServerOnly]
     public static function isEmailVerificationRequired(Panel $panel): bool
     {
         return static::getResource()::isEmailVerificationRequired($panel);
     }
 
+    #[ServerOnly]
     public static function getTenantSubscribedMiddleware(Panel $panel): string
     {
         return static::getResource()::getTenantSubscribedMiddleware($panel);
     }
 
+    #[ServerOnly]
     public static function isTenantSubscriptionRequired(Panel $panel): bool
     {
         return static::getResource()::isTenantSubscriptionRequired($panel);
     }
 
+    #[ServerOnly]
     public function getBreadcrumb(): ?string
     {
         return static::$breadcrumb ?? static::getTitle();
     }
 
+    #[ServerOnly]
     public function hasResourceBreadcrumbs(): bool
     {
         return true;
@@ -234,6 +250,7 @@ abstract class Page extends BasePage
     /**
      * @return array<string>
      */
+    #[ServerOnly]
     public function getResourceBreadcrumbs(): array
     {
         $breadcrumbs = [];
@@ -306,6 +323,7 @@ abstract class Page extends BasePage
     /**
      * @return array<string>
      */
+    #[ServerOnly]
     public function getBreadcrumbs(): array
     {
         return [
@@ -353,6 +371,7 @@ abstract class Page extends BasePage
     /**
      * @param  array<string, mixed>  $parameters
      */
+    #[ServerOnly]
     public static function shouldRegisterNavigation(array $parameters = []): bool
     {
         return parent::shouldRegisterNavigation();
@@ -361,6 +380,7 @@ abstract class Page extends BasePage
     /**
      * @param  array<string, mixed>  $parameters
      */
+    #[ServerOnly]
     public static function canAccess(array $parameters = []): bool
     {
         return parent::canAccess();
@@ -369,6 +389,7 @@ abstract class Page extends BasePage
     /**
      * @return class-string<Model>
      */
+    #[ServerOnly]
     public function getModel(): string
     {
         return static::getResource()::getModel();
@@ -377,6 +398,7 @@ abstract class Page extends BasePage
     /**
      * @return class-string
      */
+    #[ServerOnly]
     public static function getResource(): string
     {
         return static::$resource;
@@ -385,6 +407,7 @@ abstract class Page extends BasePage
     /**
      * @return array<string>
      */
+    #[ServerOnly]
     public function getRenderHookScopes(): array
     {
         return [
@@ -393,6 +416,7 @@ abstract class Page extends BasePage
         ];
     }
 
+    #[ServerOnly]
     public static function getSubNavigationPosition(): SubNavigationPosition
     {
         return static::getResource()::getSubNavigationPosition();
@@ -401,16 +425,19 @@ abstract class Page extends BasePage
     /**
      * @return class-string<Cluster> | null
      */
+    #[ServerOnly]
     public static function getCluster(): ?string
     {
         return static::getResource()::getCluster();
     }
 
+    #[ServerOnly]
     public function getSubNavigation(): array
     {
         return [];
     }
 
+    #[ServerOnly]
     public function getDefaultActionAuthorizationResponse(Action $action): ?Response
     {
         return match (true) {
@@ -428,6 +455,7 @@ abstract class Page extends BasePage
         };
     }
 
+    #[ServerOnly]
     public function getDefaultActionIndividualRecordAuthorizationResponseResolver(Action $action): ?Closure
     {
         return match (true) {
@@ -441,16 +469,19 @@ abstract class Page extends BasePage
     /**
      * @return ?class-string<Model>
      */
+    #[ServerOnly]
     public function getDefaultActionModel(Action $action): ?string
     {
         return $this->getModel();
     }
 
+    #[ServerOnly]
     public function getDefaultActionModelLabel(Action $action): ?string
     {
         return $this->getModelLabel() ?? static::getResource()::getModelLabel();
     }
 
+    #[ServerOnly]
     public function getDefaultActionRelationship(Action $action): ?Relation
     {
         if (
@@ -463,6 +494,7 @@ abstract class Page extends BasePage
         return null;
     }
 
+    #[ServerOnly]
     public function getDefaultActionUrl(Action $action): ?string
     {
         $actionModel = $action->getModel();
@@ -499,6 +531,7 @@ abstract class Page extends BasePage
     /**
      * @deprecated Override the resource's `getModelLabel()` method to configure the model label.
      */
+    #[ServerOnly]
     public function getModelLabel(): ?string
     {
         return null;

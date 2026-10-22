@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Closure;
+use Filament\Support\Attributes\Exposed;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Contracts\Editable;
@@ -13,6 +14,7 @@ use ReflectionMethod;
 
 trait HasColumns
 {
+    #[Exposed]
     public function callTableColumnAction(string $name, string $recordKey): mixed
     {
         $record = $this->getTableRecord($recordKey);
@@ -40,6 +42,7 @@ trait HasColumns
         return $column->record($record)->evaluate($action);
     }
 
+    #[Exposed]
     public function updateTableColumnState(string $column, string $record, mixed $input): mixed
     {
         $column = $this->getTable()->getColumn($column);
@@ -83,6 +86,7 @@ trait HasColumns
     /**
      * @param  array<string, mixed>  $arguments
      */
+    #[Exposed]
     public function callTableColumnMethod(string $name, string $recordKey, string $method, array $arguments = []): mixed
     {
         // Security: This method is callable from the frontend and dispatches
