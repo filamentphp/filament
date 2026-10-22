@@ -27,9 +27,26 @@ trait UnusedTrait
 
 class ChildComponent extends Component
 {
+    use ShadowedExposedMethods {
+        traitAction as aliasedTraitAction;
+    }
+
+    public function traitAction(): void {}
+
+    public function aliasedTraitAction(): void {}
+
+    public function inheritedTraitAction(): void {}
+
     public function internal(): void {}
 
     public static function configuration(): void {}
+
+    public function inheritedAction(): void {}
+
+    public function blockedAction(): void {}
+
+    #[FrontendAction]
+    public function customAction(): void {}
 
     #[Frontend]
     public function action(): void {}
@@ -78,11 +95,29 @@ trait UnusedTrait
 
 class ChildComponent extends Component
 {
+    use ShadowedExposedMethods {
+        traitAction as aliasedTraitAction;
+    }
+
+    public function traitAction(): void {}
+
+    public function aliasedTraitAction(): void {}
+
+    public function inheritedTraitAction(): void {}
+
     #[\Filament\Support\Attributes\Unexposed]
     public function internal(): void {}
 
     #[\Filament\Support\Attributes\Unexposed]
     public static function configuration(): void {}
+
+    public function inheritedAction(): void {}
+
+    #[\Filament\Support\Attributes\Unexposed]
+    public function blockedAction(): void {}
+
+    #[FrontendAction]
+    public function customAction(): void {}
 
     #[Frontend]
     public function action(): void {}
