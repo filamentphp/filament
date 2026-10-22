@@ -457,10 +457,6 @@ class Field extends Component implements Contracts\HasValidationRules
         ob_start(); ?>
 
         <div data-field-wrapper <?= $wrapperAttributes->toHtml() ?>>
-            <?php if (filled($requiredDescription = $this->getRequiredDescription())) { ?>
-                <span id="<?= e($id) ?>-required" class="fi-sr-only"><?= e($requiredDescription) ?></span>
-            <?php } ?>
-
             <?php if (filled($label) && $labelSrOnly) { ?>
                 <<?= $labelTag ?>
                     <?php if ($labelTag === 'label') { ?>
@@ -568,6 +564,10 @@ class Field extends Component implements Contracts\HasValidationRules
                         <?= $belowErrorMessageSchema?->toHtml() ?>
                     <?php } ?>
                 </div>
+            <?php } ?>
+
+            <?php if (filled($requiredDescription = $this->getRequiredDescription())) { ?>
+                <span id="<?= e($id) ?>-required" class="fi-sr-only"><?= e($requiredDescription) ?></span>
             <?php } ?>
         </div>
 
