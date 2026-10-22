@@ -1,6 +1,6 @@
 <?php
 
-use Filament\Tests\Rector\Rules\AddServerOnlyToLivewireMethodsRector;
+use Filament\Tests\Rector\Rules\AddUnexposedToLivewireMethodsRector;
 use Filament\Tests\Rector\Rules\MovePestTestClassesToEndRector;
 use Filament\Tests\Rector\Rules\ScopePestTestHelpersRector;
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
@@ -31,7 +31,7 @@ return RectorConfig::configure()
         ScopePestTestHelpersRector::class,
         MovePestTestClassesToEndRector::class,
     ])
-    ->withConfiguredRule(AddServerOnlyToLivewireMethodsRector::class, [
+    ->withConfiguredRule(AddUnexposedToLivewireMethodsRector::class, [
         'paths' => [__DIR__ . '/packages'],
         'componentPaths' => [
             __DIR__ . '/packages',

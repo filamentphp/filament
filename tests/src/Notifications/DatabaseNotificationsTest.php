@@ -15,7 +15,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
-use Livewire\Exceptions\MethodNotFoundException;
 
 use function Filament\Tests\livewire;
 
@@ -221,10 +220,9 @@ describe('user isolation', function (): void {
     })->with('database notification components')->with(['clearNotifications', 'markAllNotificationsAsRead']);
 
     it('does not return another user\'s notification data through `getNotification()`', function (string $component): void {
-        $livewire = livewire($component);
-
-        expect(fn () => $livewire->call('getNotification', $this->foreignNotification->getKey()))
-            ->toThrow(MethodNotFoundException::class);
+        livewire($component)
+            ->call('getNotification', $this->foreignNotification->getKey())
+            ->assertForbidden();
     })->with('database notification components');
 
     it('rejects unauthenticated rendering and hydrated mutations without changing rows', function (string $component, string $method): void {

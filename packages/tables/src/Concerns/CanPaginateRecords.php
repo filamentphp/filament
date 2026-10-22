@@ -2,7 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Tables\Enums\PaginationMode;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -22,7 +22,7 @@ trait CanPaginateRecords
 
     protected int | string | null $defaultTableRecordsPerPageSelectOption = null;
 
-    #[ServerOnly]
+    #[Unexposed]
     public function updatedTableRecordsPerPage(): void
     {
         if ($this->getTable()->enforcesPaginationPageOptions()) {
@@ -70,7 +70,7 @@ trait CanPaginateRecords
         return $records->onEachSide(0);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableRecordsPerPage(): int | string | null
     {
         if (
@@ -86,13 +86,13 @@ trait CanPaginateRecords
         return $this->tableRecordsPerPage;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTablePage(): int | string
     {
         return $this->getPage($this->getTablePaginationPageName());
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultTableRecordsPerPageSelectOption(): int | string
     {
         $defaultOption = $this->defaultTableRecordsPerPageSelectOption ?? $this->getTable()->getDefaultPaginationPageOption();
@@ -120,13 +120,13 @@ trait CanPaginateRecords
         return $pageOptions[0];
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTablePaginationPageName(): string
     {
         return $this->getIdentifiedTableQueryStringPropertyNameFor('page');
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTablePerPageSessionKey(): string
     {
         return $this->getTableSessionKey('per_page');

@@ -2,13 +2,13 @@
 
 namespace Filament\Widgets\Concerns;
 
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 
 trait CanAuthorizeAccess
 {
     protected bool $hasAuthorizedAccess = false;
 
-    #[ServerOnly]
+    #[Unexposed]
     public function bootCanAuthorizeAccess(): void
     {
         if ($this->hasAuthorizedAccess) {

@@ -20,7 +20,7 @@ use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsIconAlias;
@@ -46,7 +46,7 @@ class RequestPasswordReset extends SimplePage
      */
     public ?array $data = [];
 
-    #[ServerOnly]
+    #[Unexposed]
     public function mount(): void
     {
         if (Filament::auth()->check()) {
@@ -121,7 +121,7 @@ class RequestPasswordReset extends SimplePage
             ->danger();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function defaultForm(Schema $schema): Schema
     {
         return $schema
@@ -143,7 +143,7 @@ class RequestPasswordReset extends SimplePage
             ->success();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -162,7 +162,7 @@ class RequestPasswordReset extends SimplePage
             ->autofocus();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function loginAction(): Action
     {
         return Action::make('login')
@@ -175,13 +175,13 @@ class RequestPasswordReset extends SimplePage
             ->url(filament()->getLoginUrl());
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTitle(): string | Htmlable
     {
         return __('filament-panels::auth/pages/password-reset/request-password-reset.title');
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getHeading(): string | Htmlable | null
     {
         return __('filament-panels::auth/pages/password-reset/request-password-reset.heading');
@@ -209,7 +209,7 @@ class RequestPasswordReset extends SimplePage
         return true;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getSubheading(): string | Htmlable | null
     {
         if (! filament()->hasLogin()) {
@@ -219,7 +219,7 @@ class RequestPasswordReset extends SimplePage
         return $this->loginAction;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -230,7 +230,7 @@ class RequestPasswordReset extends SimplePage
             ]);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getFormContentComponent(): Component
     {
         return Form::make([EmbeddedSchema::make('form')])

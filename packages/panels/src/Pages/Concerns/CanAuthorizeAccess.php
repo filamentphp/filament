@@ -2,23 +2,23 @@
 
 namespace Filament\Pages\Concerns;
 
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 
 trait CanAuthorizeAccess
 {
-    #[ServerOnly]
+    #[Unexposed]
     public function mountCanAuthorizeAccess(): void
     {
         abort_unless(static::canAccess(), 403);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function hydrateCanAuthorizeAccess(): void
     {
         abort_unless(static::canAccess(), 403);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function canAccess(): bool
     {
         // Security: Custom pages default to allowing access for all

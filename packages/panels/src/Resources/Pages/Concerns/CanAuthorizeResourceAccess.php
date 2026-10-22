@@ -2,23 +2,23 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 
 trait CanAuthorizeResourceAccess
 {
-    #[ServerOnly]
+    #[Unexposed]
     public function mountCanAuthorizeResourceAccess(): void
     {
         static::authorizeResourceAccess();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function hydrateCanAuthorizeResourceAccess(): void
     {
         static::authorizeResourceAccess();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function authorizeResourceAccess(): void
     {
         abort_unless(static::getResource()::canAccess(), 403);

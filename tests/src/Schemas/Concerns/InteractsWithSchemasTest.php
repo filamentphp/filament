@@ -24,7 +24,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
-use Livewire\Exceptions\MethodNotFoundException;
 use Livewire\Features\SupportFileUploads\FileUploadController;
 
 use function Filament\Tests\livewire;
@@ -144,8 +143,8 @@ it('cannot validate from a client-side call', function (string $method): void {
     $component = livewire(TestComponentWithValidation::class)
         ->fillForm(['title' => '']);
 
-    expect(fn () => $component->call($method, ...(($method === 'validateOnly') ? ['data.title'] : [])))
-        ->toThrow(MethodNotFoundException::class);
+    $component->call($method, ...(($method === 'validateOnly') ? ['data.title'] : []))
+        ->assertForbidden();
 })->with(['validateOnly', 'validate']);
 
 it('cannot validate from a client-side call alongside another method', function (): void {
@@ -154,9 +153,7 @@ it('cannot validate from a client-side call alongside another method', function 
 
     // Both calls are made in one request, so that an implementation which only
     // guarded the first call would be caught.
-    $this->withoutExceptionHandling();
-
-    expect(fn () => $this->withHeaders(['X-Livewire' => true])
+    $this->withHeaders(['X-Livewire' => true])
         ->post(app('livewire')->getUpdateUri(), [
             'components' => [
                 [
@@ -168,7 +165,7 @@ it('cannot validate from a client-side call alongside another method', function 
                     ],
                 ],
             ],
-        ]))->toThrow(MethodNotFoundException::class);
+        ])->assertForbidden();
 });
 
 it('can validate from the component itself', function (): void {

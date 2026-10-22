@@ -10,7 +10,7 @@ use Filament\Forms\Components\Concerns\HasFileAttachments;
 use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
@@ -70,13 +70,13 @@ trait InteractsWithSchemas
 
     protected ?Schema $currentlyValidatingSchema = null;
 
-    #[ServerOnly]
+    #[Unexposed]
     public function renderingInteractsWithSchemas(): void
     {
         $this->renderedDeferredSchemas = [];
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function isCachingSchemas(): bool
     {
         return $this->isCachingSchemas;
@@ -224,7 +224,7 @@ trait InteractsWithSchemas
     /**
      * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function isDeferredSchemaLoaded(Schema $schema): bool
     {
         $schemaKey = $schema->getKey();
@@ -273,13 +273,13 @@ trait InteractsWithSchemas
     /**
      * @return class-string<TranslatableContentDriver> | null
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getFilamentTranslatableContentDriver(): ?string
     {
         return null;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function makeFilamentTranslatableContentDriver(): ?TranslatableContentDriver
     {
         $driver = $this->getFilamentTranslatableContentDriver();
@@ -291,19 +291,19 @@ trait InteractsWithSchemas
         return app($driver, ['activeLocale' => $this->getActiveSchemaLocale() ?? app()->getLocale()]);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getActiveSchemaLocale(): ?string
     {
         return null;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getOldSchemaState(string $statePath): mixed
     {
         return data_get($this->oldSchemaState, $statePath);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function updatingInteractsWithSchemas(string $statePath): void
     {
         $statePath = (string) str($statePath)->before('.');
@@ -311,7 +311,7 @@ trait InteractsWithSchemas
         $this->oldSchemaState[$statePath] ??= data_get($this, $statePath);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function updatedInteractsWithSchemas(string $statePath): void
     {
         if (app()->runningUnitTests() && $this->areSchemaStateUpdateHooksDisabledForTesting) {
@@ -350,7 +350,7 @@ trait InteractsWithSchemas
     /**
      * @param  array<Component>  $skipComponentsChildContainersWhileSearching
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getSchemaComponent(string $key, bool $withHidden = false, array $skipComponentsChildContainersWhileSearching = []): Component | Action | ActionGroup | null
     {
         if (! str($key)->contains('.')) {
@@ -486,7 +486,7 @@ trait InteractsWithSchemas
         return array_key_exists($name, $this->getCachedSchemas());
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getSchema(string $name): ?Schema
     {
         if ($this->hasCachedSchema($name)) {
@@ -499,7 +499,7 @@ trait InteractsWithSchemas
     /**
      * @return array<string, ?Schema>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getCachedSchemas(): array
     {
         if (! $this->isCachingSchemas) {
@@ -521,7 +521,7 @@ trait InteractsWithSchemas
      * @param  array<string, string>  $attributes
      * @return array<string, mixed>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function validate($rules = null, $messages = [], $attributes = []): array
     {
         try {
@@ -543,7 +543,7 @@ trait InteractsWithSchemas
      * @param  array<string, string>  $dataOverrides
      * @return array<string, mixed>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function validateOnly($field, $rules = null, $messages = [], $attributes = [], $dataOverrides = [])
     {
         try {
@@ -579,7 +579,7 @@ trait InteractsWithSchemas
     /**
      * @return array<string, array<mixed>>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getRules(): array
     {
         $rules = parent::getRules();
@@ -665,19 +665,19 @@ trait InteractsWithSchemas
         }
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function currentlyValidatingSchema(?Schema $schema): void
     {
         $this->currentlyValidatingSchema = $schema;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultTestingSchemaName(): ?string
     {
         return array_key_first($this->getCachedSchemas());
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function handleFileUploadValidationError(string $name): void
     {
         $statePath = str_starts_with($name, 'componentFileAttachments.')
@@ -711,7 +711,7 @@ trait InteractsWithSchemas
         }
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function isFileUploadForSchemaComponent(string $name): bool
     {
         if (str_starts_with($name, 'componentFileAttachments.')) {

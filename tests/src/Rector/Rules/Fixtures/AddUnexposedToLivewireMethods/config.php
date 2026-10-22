@@ -1,10 +1,10 @@
 <?php
 
-use Filament\Tests\Rector\Rules\AddServerOnlyToLivewireMethodsRector;
+use Filament\Tests\Rector\Rules\AddUnexposedToLivewireMethodsRector;
 use Rector\Config\RectorConfig;
 
 return RectorConfig::configure()
     ->withAutoloadPaths([__DIR__ . '/Source'])
-    ->withConfiguredRule(AddServerOnlyToLivewireMethodsRector::class, [
+    ->withConfiguredRule(AddUnexposedToLivewireMethodsRector::class, [
         'paths' => [__DIR__],
     ]);

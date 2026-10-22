@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Livewire\Attributes\Locked;
-use Livewire\Exceptions\MethodNotFoundException;
 
 use function Filament\Tests\livewire;
 
@@ -106,8 +105,8 @@ it('supports the legacy `$filters` property without exposing `__get()` to fronte
 
     expect($component->instance()->filters)->toBe(['status' => 'published']);
 
-    expect(fn () => $component->call('__get', 'filters'))
-        ->toThrow(MethodNotFoundException::class);
+    $component->call('__get', 'filters')
+        ->assertForbidden();
 });
 
 describe('authorization', function (): void {

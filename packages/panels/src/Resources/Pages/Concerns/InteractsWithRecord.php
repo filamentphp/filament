@@ -5,7 +5,7 @@ namespace Filament\Resources\Pages\Concerns;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Locked;
@@ -28,19 +28,19 @@ trait InteractsWithRecord
         $this->hasResolvedRecordForRequest = true;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function mountCanAuthorizeAccess(): void
     {
         abort_unless(static::canAccess(['record' => $this->getRecord()]), 403);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function hydrateCanAuthorizeAccess(): void
     {
         abort_unless(static::canAccess(['record' => $this->getRecord()]), 403);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getRecord(): Model
     {
         abort_unless($this->record instanceof Model, 404);
@@ -48,13 +48,13 @@ trait InteractsWithRecord
         return $this->record;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function hasRecord(): bool
     {
         return filled($this->record);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getRecordTitle(): string | Htmlable
     {
         $resource = static::getResource();
@@ -69,7 +69,7 @@ trait InteractsWithRecord
     /**
      * @return array<string>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getBreadcrumbs(): array
     {
         $breadcrumbs = $this->getResourceBreadcrumbs();
@@ -112,7 +112,7 @@ trait InteractsWithRecord
     /**
      * @return array<string, mixed>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getSubNavigationParameters(): array
     {
         return [
@@ -120,7 +120,7 @@ trait InteractsWithRecord
         ];
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getSubNavigation(): array
     {
         return static::getResource()::getRecordSubNavigation($this);
@@ -129,7 +129,7 @@ trait InteractsWithRecord
     /**
      * @return array<string, mixed>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getWidgetData(): array
     {
         return [
@@ -145,19 +145,19 @@ trait InteractsWithRecord
         return $this->getRecord();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionRecord(Action $action): ?Model
     {
         return $this->hasRecord() ? $this->getRecord() : null;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionRecordTitle(Action $action): ?string
     {
         return $this->getRecordTitle();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionSuccessRedirectUrl(Action $action): ?string
     {
         return match (true) {

@@ -3,7 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Tables\Filters\Indicator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -23,7 +23,7 @@ trait CanSearchRecords
      */
     public $tableSearch = '';
 
-    #[ServerOnly]
+    #[Unexposed]
     public function updatedTableSearch(): void
     {
         if ($this->getTable()->persistsSearchInSession()) {
@@ -43,7 +43,7 @@ trait CanSearchRecords
     /**
      * @param  string | null  $value
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function updatedTableColumnSearches($value = null, ?string $key = null): void
     {
         if (blank($value) && filled($key)) {
@@ -208,13 +208,13 @@ trait CanSearchRecords
         return $query;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableSearch(): ?string
     {
         return filled($this->tableSearch) ? Str::trim(strval($this->tableSearch)) : null;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function hasTableSearch(): bool
     {
         return filled($this->tableSearch);
@@ -233,7 +233,7 @@ trait CanSearchRecords
         $this->updatedTableColumnSearches(null, $column);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function resetTableColumnSearches(): void
     {
         $this->tableColumnSearches = [];
@@ -273,7 +273,7 @@ trait CanSearchRecords
         }
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableSearchIndicator(): Indicator
     {
         return Indicator::make(__('filament-tables::table.fields.search.indicator') . ': ' . $this->getTableSearch())
@@ -283,7 +283,7 @@ trait CanSearchRecords
     /**
      * @return array<Indicator>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableColumnSearchIndicators(): array
     {
         $indicators = [];
@@ -329,7 +329,7 @@ trait CanSearchRecords
     /**
      * @return array<string, string | null>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableColumnSearches(): array
     {
         // Example input of `$this->tableColumnSearches`:
@@ -372,13 +372,13 @@ trait CanSearchRecords
         // ]
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableSearchSessionKey(): string
     {
         return $this->getTableSessionKey('search', isTenantScoped: true);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableColumnSearchesSessionKey(): string
     {
         return $this->getTableSessionKey('column_search', isTenantScoped: true);

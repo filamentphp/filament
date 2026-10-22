@@ -5,7 +5,7 @@ namespace Filament\Widgets\ChartWidget\Concerns;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\View\WidgetsIconAlias;
@@ -22,19 +22,19 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
      */
     public ?array $deferredFilters = null;
 
-    #[ServerOnly]
+    #[Unexposed]
     public function filtersSchema(Schema $schema): Schema
     {
         return $schema;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function hasDeferredFilters(): bool
     {
         return property_exists($this, 'hasDeferredFilters') && $this->hasDeferredFilters;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function mountHasFiltersSchema(): void
     {
         $this->getFiltersSchema()->fill();
@@ -44,7 +44,7 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
         }
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getFiltersTriggerAction(): Action
     {
         return Action::make('filter')
@@ -55,7 +55,7 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
             ->livewireClickHandlerEnabled(false);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getFiltersSchema(): Schema
     {
         if ((! $this->isCachingSchemas) && $this->hasCachedSchema('filtersSchema')) {
@@ -74,7 +74,7 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
             );
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function updatedFilters(): void
     {
         $this->cachedData = null;
@@ -101,7 +101,7 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
         $this->cachedData = null;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getFiltersApplyAction(): Action
     {
         $action = Action::make('applyFilters')
@@ -116,7 +116,7 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
         return $action;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getFiltersResetAction(): Action
     {
         $action = Action::make('resetFilters')

@@ -3,7 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -117,7 +117,7 @@ trait CanReorderRecords
         $this->isTableReordering = ! $this->isTableReordering;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function isTableReordering(): bool
     {
         return $this->getTable()->isReorderable() && $this->isTableReordering;

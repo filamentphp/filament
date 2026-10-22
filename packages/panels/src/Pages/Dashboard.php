@@ -9,7 +9,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsIconAlias;
@@ -23,7 +23,7 @@ class Dashboard extends Page
 
     protected static ?int $navigationSort = -2;
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function getNavigationLabel(): string | Htmlable
     {
         return static::$navigationLabel ??
@@ -31,7 +31,7 @@ class Dashboard extends Page
             __('filament-panels::pages/dashboard.title');
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$navigationIcon
@@ -39,7 +39,7 @@ class Dashboard extends Page
             ?? (Filament::hasTopNavigation() ? Heroicon::Home : Heroicon::OutlinedHome);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function getRoutePath(Panel $panel): string
     {
         return static::$routePath;
@@ -48,7 +48,7 @@ class Dashboard extends Page
     /**
      * @return array<class-string<Widget> | WidgetConfiguration>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getWidgets(): array
     {
         return Filament::getWidgets();
@@ -59,7 +59,7 @@ class Dashboard extends Page
      *
      * @return array<class-string<Widget> | WidgetConfiguration>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getVisibleWidgets(): array
     {
         return $this->filterVisibleWidgets($this->getWidgets());
@@ -68,19 +68,19 @@ class Dashboard extends Page
     /**
      * @return int | array<string, ?int>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getColumns(): int | array
     {
         return 2;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTitle(): string | Htmlable
     {
         return static::$title ?? __('filament-panels::pages/dashboard.title');
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -90,13 +90,13 @@ class Dashboard extends Page
             ]);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getFiltersFormContentComponent(): Component
     {
         return EmbeddedSchema::make('filtersForm');
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getWidgetsContentComponent(): Component
     {
         return Grid::make($this->getColumns())

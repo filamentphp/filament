@@ -2,13 +2,13 @@
 
 namespace Filament\Pages\Concerns;
 
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 
 trait HasTopbar
 {
     protected bool $hasTopbar = true;
 
-    #[ServerOnly]
+    #[Unexposed]
     public function hasTopbar(): bool
     {
         return $this->hasTopbar;

@@ -2,11 +2,11 @@
 
 namespace Filament\Schemas\Concerns;
 
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 
 trait RestrictsFileUploadsToSchemaComponents
 {
-    #[ServerOnly]
+    #[Unexposed]
     public function shouldRestrictFileUploadsToSchemaComponents(): bool
     {
         return true;

@@ -15,7 +15,7 @@ use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -47,16 +47,16 @@ abstract class EditTenantProfile extends Page
 
     protected static bool $isDiscovered = false;
 
-    #[ServerOnly]
+    #[Unexposed]
     abstract public static function getLabel(): string;
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function getRelativeRouteName(Panel $panel): string
     {
         return 'profile';
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function getRouteName(?Panel $panel = null): string
     {
         $panel ??= Filament::getCurrentOrDefaultPanel();
@@ -64,13 +64,13 @@ abstract class EditTenantProfile extends Page
         return $panel->generateRouteName('tenant.' . static::getRelativeRouteName($panel));
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function isTenantSubscriptionRequired(Panel $panel): bool
     {
         return false;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function mount(): void
     {
         $this->tenant = Filament::getTenant();
@@ -80,13 +80,13 @@ abstract class EditTenantProfile extends Page
         $this->fillForm();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function hydrate(): void
     {
         abort_unless(static::canView($this->tenant), 404);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function resolveScopedModelProperties(): void
     {
         $this->tenant = Filament::getTenant();
@@ -196,7 +196,7 @@ abstract class EditTenantProfile extends Page
         return null;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function defaultForm(Schema $schema): Schema
     {
         return $schema
@@ -205,7 +205,7 @@ abstract class EditTenantProfile extends Page
             ->statePath('data');
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function form(Schema $schema): Schema
     {
         return $schema;
@@ -229,19 +229,19 @@ abstract class EditTenantProfile extends Page
             ->keyBindings(['mod+s']);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTitle(): string | Htmlable
     {
         return static::getLabel();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function getSlug(?Panel $panel = null): string
     {
         return static::$slug ?? 'profile';
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function canView(Model $tenant): bool
     {
         try {
@@ -251,7 +251,7 @@ abstract class EditTenantProfile extends Page
         }
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -260,7 +260,7 @@ abstract class EditTenantProfile extends Page
             ]);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getFormContentComponent(): Component
     {
         return Form::make([EmbeddedSchema::make('form')])

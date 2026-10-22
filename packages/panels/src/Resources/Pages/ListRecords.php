@@ -14,7 +14,7 @@ use Filament\Resources\Concerns\HasTabs;
 use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Schema;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\View\PanelsRenderHook;
@@ -55,7 +55,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     #[Url(as: 'tab')]
     public ?string $activeTab = null;
 
-    #[ServerOnly]
+    #[Unexposed]
     public function mount(): void
     {
         $this->authorizeAccess();
@@ -65,37 +65,37 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function authorizeAccess(): void {}
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getBreadcrumb(): ?string
     {
         return static::$breadcrumb ?? __('filament-panels::resources/pages/list-records.breadcrumb');
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function table(Table $table): Table
     {
         return $table;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTitle(): string | Htmlable
     {
         return static::$title ?? static::getResource()::getTitleCasePluralModelLabel();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function form(Schema $schema): Schema
     {
         return static::getResource()::form($schema);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function infolist(Schema $schema): Schema
     {
         return static::getResource()::infolist($schema);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionSchemaResolver(Action $action): ?Closure
     {
         return match (true) {
@@ -116,7 +116,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getPluralModelLabel(): ?string
     {
         return null;
@@ -235,7 +235,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     /**
      * @return array<NavigationItem | NavigationGroup>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getSubNavigation(): array
     {
         if (filled($cluster = static::getCluster()) && $cluster::shouldRegisterSubNavigation()) {
@@ -245,7 +245,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return [];
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -260,7 +260,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     /**
      * @return array<string>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getPageClasses(): array
     {
         return [

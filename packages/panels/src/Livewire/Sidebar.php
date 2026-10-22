@@ -9,7 +9,7 @@ use Filament\Livewire\Concerns\HasUserMenu;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -25,7 +25,7 @@ class Sidebar extends Component implements HasActions, HasSchemas
     #[On('refresh-sidebar')]
     public function refresh(): void {}
 
-    #[ServerOnly]
+    #[Unexposed]
     public function render(): View
     {
         return view('filament-panels::livewire.sidebar');

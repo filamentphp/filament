@@ -14,7 +14,7 @@ use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -39,22 +39,22 @@ abstract class RegisterTenant extends SimplePage
 
     public ?Model $tenant = null;
 
-    #[ServerOnly]
+    #[Unexposed]
     abstract public static function getLabel(): string;
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function getRelativeRouteName(Panel $panel): string
     {
         return 'registration';
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function isTenantSubscriptionRequired(Panel $panel): bool
     {
         return false;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function mount(): void
     {
         abort_unless(static::canView(), 404);
@@ -62,7 +62,7 @@ abstract class RegisterTenant extends SimplePage
         $this->form->fill();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function hydrate(): void
     {
         abort_unless(static::canView(), 404);
@@ -132,7 +132,7 @@ abstract class RegisterTenant extends SimplePage
         return Filament::getUrl($this->tenant);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function defaultForm(Schema $schema): Schema
     {
         return $schema
@@ -140,7 +140,7 @@ abstract class RegisterTenant extends SimplePage
             ->statePath('data');
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function form(Schema $schema): Schema
     {
         return $schema;
@@ -149,25 +149,25 @@ abstract class RegisterTenant extends SimplePage
     /**
      * @return class-string<Model>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getModel(): string
     {
         return Filament::getTenantModel();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTitle(): string | Htmlable
     {
         return static::getLabel();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function getSlug(?Panel $panel = null): string
     {
         return static::$slug ?? 'new';
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function hasLogo(): bool
     {
         return false;
@@ -183,7 +183,7 @@ abstract class RegisterTenant extends SimplePage
         ];
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getRegisterFormAction(): Action
     {
         return Action::make('register')
@@ -196,7 +196,7 @@ abstract class RegisterTenant extends SimplePage
         return true;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function canView(): bool
     {
         try {
@@ -206,7 +206,7 @@ abstract class RegisterTenant extends SimplePage
         }
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -215,7 +215,7 @@ abstract class RegisterTenant extends SimplePage
             ]);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getFormContentComponent(): Component
     {
         return Form::make([EmbeddedSchema::make('form')])
