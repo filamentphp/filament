@@ -3,9 +3,8 @@
 namespace Filament\Support\Livewire;
 
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Livewire\Component;
-use Livewire\Exceptions\MethodNotFoundException;
 use Livewire\Features\SupportEvents\SupportEvents;
 use ReflectionAttribute;
 use ReflectionClass;
@@ -17,9 +16,7 @@ class MethodAccess
      */
     public function __invoke(Component $component, string $method, array $parameters): void
     {
-        if ($this->isServerOnly($component, $method)) {
-            throw new MethodNotFoundException($method);
-        }
+        abort_if($this->isUnexposed($component, $method), 403);
 
         // Event listeners bypass normal method dispatch.
         if ($method !== '__dispatch') {
@@ -32,19 +29,17 @@ class MethodAccess
 
         $listenerMethod = SupportEvents::getListenerMethodName($component, $parameters[0]);
 
-        if ($this->isServerOnly($component, $listenerMethod)) {
-            throw new MethodNotFoundException($listenerMethod);
-        }
+        abort_if($this->isUnexposed($component, $listenerMethod), 403);
     }
 
-    protected function isServerOnly(Component $component, string $method): bool
+    protected function isUnexposed(Component $component, string $method): bool
     {
         $class = new ReflectionClass($component);
 
         while ($class && $class->hasMethod($method)) {
             $reflectionMethod = $class->getMethod($method);
 
-            if ($reflectionMethod->getAttributes(ServerOnly::class, ReflectionAttribute::IS_INSTANCEOF)) {
+            if ($reflectionMethod->getAttributes(Unexposed::class, ReflectionAttribute::IS_INSTANCEOF)) {
                 return true;
             }
 

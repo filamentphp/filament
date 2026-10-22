@@ -7,7 +7,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Widgets\StatsOverviewWidget\Concerns\HasChartData;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -38,7 +38,7 @@ class StatsOverviewWidget extends Widget implements HasSchemas
      */
     protected string $view = 'filament-widgets::stats-overview-widget';
 
-    #[ServerOnly]
+    #[Unexposed]
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -47,7 +47,7 @@ class StatsOverviewWidget extends Widget implements HasSchemas
             ]);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getSectionContentComponent(): Component
     {
         return Section::make()

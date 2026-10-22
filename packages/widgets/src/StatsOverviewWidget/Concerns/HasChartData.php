@@ -2,7 +2,7 @@
 
 namespace Filament\Widgets\StatsOverviewWidget\Concerns;
 
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Livewire\Attributes\Locked;
 
 trait HasChartData
@@ -13,19 +13,19 @@ trait HasChartData
     #[Locked]
     public array $chartDataChecksums = [];
 
-    #[ServerOnly]
+    #[Unexposed]
     public function mountHasChartData(): void
     {
         $this->chartDataChecksums = $this->getStatChartDataChecksums();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function renderingHasChartData(): void
     {
         $this->updateChartData();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function updateChartData(): void
     {
         foreach ($this->getCachedStats() as $stat) {

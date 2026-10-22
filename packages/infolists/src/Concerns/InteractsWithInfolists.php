@@ -5,14 +5,14 @@ namespace Filament\Infolists\Concerns;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 
 trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
 {
     /**
      * @deprecated Use `getSchema()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getInfolist(string $name): ?Schema
     {
         return $this->getSchema($name);
@@ -31,7 +31,7 @@ trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
      *
      * @deprecated Use `getCachedSchemas()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getCachedInfolists(): array
     {
         return $this->getCachedSchemas();
@@ -70,7 +70,7 @@ trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `mountedActionShouldOpenModal()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function mountedInfolistActionShouldOpenModal(?Action $mountedAction = null): bool
     {
         return $this->mountedActionShouldOpenModal($mountedAction);
@@ -79,7 +79,7 @@ trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `mountedActionHasForm()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function mountedInfolistActionHasForm(?Action $mountedAction = null): bool
     {
         return $this->mountedActionHasSchema($mountedAction);
@@ -88,7 +88,7 @@ trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `getMountedAction()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getMountedInfolistAction(): ?Action
     {
         return $this->getMountedAction();

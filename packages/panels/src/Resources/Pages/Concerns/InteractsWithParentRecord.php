@@ -2,7 +2,7 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +19,7 @@ trait InteractsWithParentRecord
     #[Locked]
     public ?Model $parentRecord = null;
 
-    #[ServerOnly]
+    #[Unexposed]
     public function bootInteractsWithParentRecord(): void
     {
         if (Livewire::isLivewireRequest()) {
@@ -29,7 +29,7 @@ trait InteractsWithParentRecord
         $this->mountParentRecord();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function hydrateInteractsWithParentRecord(): void
     {
         if (! static::getParentResource()) {
@@ -39,7 +39,7 @@ trait InteractsWithParentRecord
         $this->authorizeParentRecordAccess();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function mountParentRecord(): void
     {
         if ($this->hasResolvedParentRecordForRequest) {
@@ -174,13 +174,13 @@ trait InteractsWithParentRecord
         return $parentRecord;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getParentRecord(): ?Model
     {
         return $this->parentRecord;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getParentRecordTitle(): string | Htmlable | null
     {
         $resource = static::getParentResource();
@@ -192,7 +192,7 @@ trait InteractsWithParentRecord
         return $resource::getRecordTitle($this->getParentRecord());
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function getParentResource(): ?string
     {
         return static::getResource()::getParentResourceRegistration()?->getParentResource();

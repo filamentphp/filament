@@ -3,7 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Support\ArrayRecord;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Tables\Enums\PaginationMode;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -26,7 +26,7 @@ trait HasRecords
 
     protected Collection | Paginator | CursorPaginator | null $cachedTableRecords = null;
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getFilteredTableQuery(): ?Builder
     {
         $query = $this->getTable()->getQuery();
@@ -38,7 +38,7 @@ trait HasRecords
         return $this->filterTableQuery($query);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function filterTableQuery(Builder $query): Builder
     {
         $this->applyFiltersToTableQuery($query);
@@ -58,7 +58,7 @@ trait HasRecords
         return $query;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getFilteredSortedTableQuery(): ?Builder
     {
         $query = $this->getFilteredTableQuery();
@@ -74,7 +74,7 @@ trait HasRecords
         return $query;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableQueryForExport(): Builder
     {
         $query = $this->getTable()->getQuery();
@@ -98,7 +98,7 @@ trait HasRecords
         return $records;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableRecords(): Collection | Paginator | CursorPaginator
     {
         if (! $this->getTable()->hasQuery()) {
@@ -255,7 +255,7 @@ trait HasRecords
     /**
      * @return Model | array<string, mixed> | null
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableRecord(?string $key): Model | array | null
     {
         $record = $this->resolveTableRecord($key);
@@ -270,7 +270,7 @@ trait HasRecords
     /**
      * @param  Model | array<string, mixed>  $record
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableRecordKey(Model | array $record): string
     {
         if (is_array($record)) {
@@ -327,7 +327,7 @@ trait HasRecords
         });
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getAllTableRecordsCount(): int
     {
         if ($this->cachedTableRecords instanceof LengthAwarePaginator) {
@@ -337,7 +337,7 @@ trait HasRecords
         return $this->getFilteredTableQuery()->count();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function flushCachedTableRecords(): void
     {
         $this->cachedTableRecords = null;
@@ -346,7 +346,7 @@ trait HasRecords
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function allowsDuplicates(): bool
     {
         return $this->allowsDuplicates;
@@ -355,7 +355,7 @@ trait HasRecords
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableRecordTitle(Model $record): ?string
     {
         return null;
@@ -364,7 +364,7 @@ trait HasRecords
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableModelLabel(): ?string
     {
         return null;
@@ -373,7 +373,7 @@ trait HasRecords
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getTablePluralModelLabel(): ?string
     {
         return null;

@@ -6,7 +6,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Schemas\Schema;
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Illuminate\Database\Eloquent\Model;
 
 trait HasActions
@@ -53,7 +53,7 @@ trait HasActions
     /**
      * @deprecated Use `mountedActionShouldOpenModal()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function mountedTableActionShouldOpenModal(?Action $mountedAction = null): bool
     {
         return $this->mountedActionShouldOpenModal($mountedAction);
@@ -62,7 +62,7 @@ trait HasActions
     /**
      * @deprecated Use `mountedActionHasSchema()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function mountedTableActionHasForm(?Action $mountedAction = null): bool
     {
         return $this->mountedActionHasSchema($mountedAction);
@@ -71,7 +71,7 @@ trait HasActions
     /**
      * @deprecated Use `getMountedAction()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getMountedTableAction(): ?Action
     {
         return $this->getMountedAction();
@@ -80,7 +80,7 @@ trait HasActions
     /**
      * @deprecated Use `getMountedActionSchema()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getMountedTableActionForm(?Action $mountedAction = null): ?Schema
     {
         return $this->getMountedActionSchema(0, $mountedAction);
@@ -89,7 +89,7 @@ trait HasActions
     /**
      * @deprecated Use `getMountedAction()?->getRecord()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getMountedTableActionRecord(): ?Model
     {
         return $this->getMountedAction()?->getRecord();

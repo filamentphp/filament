@@ -5,7 +5,7 @@ namespace Filament\Widgets;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget\Concerns\HasEmptyState;
 use Filament\Widgets\Concerns\CanPoll;
@@ -49,7 +49,7 @@ abstract class ChartWidget extends Widget implements HasSchemas
      */
     protected string $view = 'filament-widgets::chart-widget';
 
-    #[ServerOnly]
+    #[Unexposed]
     public function mount(): void
     {
         $this->dataChecksum = $this->generateDataChecksum();
@@ -86,19 +86,19 @@ abstract class ChartWidget extends Widget implements HasSchemas
         return null;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getHeading(): string | Htmlable | null
     {
         return $this->heading;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDescription(): string | Htmlable | null
     {
         return $this->description;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getChartAssistiveContent(): string | View | Htmlable | null
     {
         return null;
@@ -129,25 +129,25 @@ abstract class ChartWidget extends Widget implements HasSchemas
         }
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function rendering(): void
     {
         $this->updateChartData();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getColor(): string
     {
         return $this->color;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function isCollapsible(): bool
     {
         return $this->isCollapsible;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function isEmpty(): bool
     {
         return empty($this->getCachedData());

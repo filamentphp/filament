@@ -24,7 +24,7 @@ use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Schema;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
@@ -76,7 +76,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     #[Url(as: 'tab')]
     public ?string $activeTab = null;
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$navigationIcon
@@ -85,7 +85,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
             ?? Heroicon::OutlinedRectangleStack;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function mount(int | string $record): void
     {
         $this->record = $this->resolveRecord($record);
@@ -102,7 +102,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         abort_unless(static::canAccess(['record' => $this->getRecord()]), 403);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function hydrate(): void
     {
         $this->authorizeAccess();
@@ -111,7 +111,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     /**
      * @param  array<string, mixed>  $parameters
      */
-    #[ServerOnly]
+    #[Unexposed]
     public static function canAccess(array $parameters = []): bool
     {
         if ($relatedResource = static::getRelatedResource()) {
@@ -137,13 +137,13 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         }
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? static::getRelationshipTitle();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function getNavigationLabel(): string | Htmlable
     {
         return static::$navigationLabel ?? static::getRelationshipTitle();
@@ -152,13 +152,13 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     /**
      * @return class-string<Page>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getPageClass(): string
     {
         return static::class;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getOwnerRecord(): Model
     {
         return $this->getRecord();
@@ -167,13 +167,13 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     /**
      * @return array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getRelationManagers(): array
     {
         return [];
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -191,7 +191,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     /**
      * @return array<string>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getPageClasses(): array
     {
         return [
@@ -201,7 +201,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         ];
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionRecord(Action $action): ?Model
     {
         if ($action instanceof CreateAction) {
@@ -215,7 +215,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         return $this->getRecord();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionRelationship(Action $action): ?Relation
     {
         if ($action instanceof CreateAction) {
@@ -228,7 +228,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     /**
      * @return ?class-string<Model>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionModel(Action $action): ?string
     {
         if ($action instanceof CreateAction) {
@@ -238,7 +238,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         return parent::getDefaultActionModel($action);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionModelLabel(Action $action): ?string
     {
         if ($action instanceof CreateAction) {
@@ -248,7 +248,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         return parent::getDefaultActionModelLabel($action);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionRecordTitle(Action $action): ?string
     {
         if ($action instanceof CreateAction) {
@@ -262,7 +262,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         return $this->getRecordTitle();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionSuccessRedirectUrl(Action $action): ?string
     {
         if ($action->getTable()) {
@@ -272,7 +272,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         return parent::getDefaultActionSuccessRedirectUrl($action);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionAuthorizationResponse(Action $action): ?Response
     {
         if ($action instanceof CreateAction) {
@@ -297,7 +297,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         return parent::getDefaultActionAuthorizationResponse($action);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionIndividualRecordAuthorizationResponseResolver(Action $action): ?Closure
     {
         return match (true) {
@@ -308,7 +308,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         };
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionSchemaResolver(Action $action): ?Closure
     {
         return match (true) {
@@ -318,7 +318,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         };
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionUrl(Action $action): ?string
     {
         $relatedResource = static::getRelatedResource();
@@ -356,7 +356,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         return null;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTitle(): string | Htmlable
     {
         if (filled(static::$title)) {
@@ -372,7 +372,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     /**
      * @return TModel
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getRecord(): Model
     {
         return $this->getBaseRecord();

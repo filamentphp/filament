@@ -6,7 +6,7 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Schemas\Schema;
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
@@ -78,7 +78,7 @@ trait HasBulkActions
     /**
      * @deprecated Use the `mountedActionShouldOpenModal()` method instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function mountedTableBulkActionShouldOpenModal(?BulkAction $mountedBulkAction = null): bool
     {
         return $this->mountedActionShouldOpenModal($mountedBulkAction);
@@ -87,13 +87,13 @@ trait HasBulkActions
     /**
      * @deprecated Use the `mountedActionHasSchema()` method instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function mountedTableBulkActionHasForm(?BulkAction $mountedBulkAction = null): bool
     {
         return $this->mountedActionHasSchema($mountedBulkAction);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function deselectAllTableRecords(): void
     {
         $this->dispatch('deselectAllTableRecords')->self();
@@ -157,7 +157,7 @@ trait HasBulkActions
     /**
      * @return array<string>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getGroupedSelectableTableRecordKeys(?string $group): array
     {
         $tableGrouping = $this->getTableGrouping();
@@ -232,7 +232,7 @@ trait HasBulkActions
         );
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getAllSelectableTableRecordsCount(): int
     {
         if ($this->getTable()->checksIfRecordIsSelectable()) {
@@ -259,7 +259,7 @@ trait HasBulkActions
         return $this->getFilteredTableQuery()?->count() ?? $this->cachedTableRecords->count();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getSelectedTableRecords(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): EloquentCollection | Collection | LazyCollection
     {
         if (isset($this->cachedSelectedTableRecords)) {
@@ -325,7 +325,7 @@ trait HasBulkActions
         return $this->cachedSelectedTableRecords = $resolvedSelectedRecords;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getSelectedTableRecordsQuery(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): Builder
     {
         $table = $this->getTable();
@@ -461,7 +461,7 @@ trait HasBulkActions
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function shouldSelectCurrentPageOnly(): bool
     {
         return false;
@@ -470,7 +470,7 @@ trait HasBulkActions
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function shouldDeselectAllRecordsWhenTableFiltered(): bool
     {
         return true;
@@ -479,7 +479,7 @@ trait HasBulkActions
     /**
      * @deprecated Use the `getMountedAction()` method instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getMountedTableBulkAction(): ?Action
     {
         return $this->getMountedAction();
@@ -488,7 +488,7 @@ trait HasBulkActions
     /**
      * @deprecated Use the `getMountedActionSchema()` method instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getMountedTableBulkActionForm(?BulkAction $mountedBulkAction = null): ?Schema
     {
         return $this->getMountedActionSchema(0, $mountedBulkAction);

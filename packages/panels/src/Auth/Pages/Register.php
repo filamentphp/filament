@@ -22,7 +22,7 @@ use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Auth\SessionGuard;
@@ -58,7 +58,7 @@ class Register extends SimplePage
      */
     protected string $userModel;
 
-    #[ServerOnly]
+    #[Unexposed]
     public function mount(): void
     {
         if (Filament::auth()->check()) {
@@ -186,14 +186,14 @@ class Register extends SimplePage
         $user->notify($notification);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function defaultForm(Schema $schema): Schema
     {
         return $schema
             ->statePath('data');
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -248,7 +248,7 @@ class Register extends SimplePage
             ->dehydrated(false);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function loginAction(): Action
     {
         return Action::make('login')
@@ -275,13 +275,13 @@ class Register extends SimplePage
         return $this->userModel = $provider->getModel();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTitle(): string | Htmlable
     {
         return __('filament-panels::auth/pages/register.title');
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getHeading(): string | Htmlable | null
     {
         return __('filament-panels::auth/pages/register.heading');
@@ -297,7 +297,7 @@ class Register extends SimplePage
         ];
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getRegisterFormAction(): Action
     {
         return Action::make('register')
@@ -319,7 +319,7 @@ class Register extends SimplePage
         return $data;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getSubheading(): string | Htmlable | null
     {
         if (! filament()->hasLogin()) {
@@ -329,7 +329,7 @@ class Register extends SimplePage
         return new HtmlString(__('filament-panels::auth/pages/register.actions.login.before') . ' ' . $this->loginAction->toHtml());
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -340,7 +340,7 @@ class Register extends SimplePage
             ]);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getFormContentComponent(): Component
     {
         return Form::make([EmbeddedSchema::make('form')])

@@ -3,7 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Grammars\SqlServerGrammar;
 
@@ -29,7 +29,7 @@ trait CanSortRecords
         $this->updatedTableSort();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableSortColumn(): ?string
     {
         if (blank($this->tableSort)) {
@@ -39,7 +39,7 @@ trait CanSortRecords
         return (string) str($this->tableSort)->before(':');
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableSortDirection(): ?string
     {
         if (blank($this->tableSort)) {
@@ -57,7 +57,7 @@ trait CanSortRecords
         };
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function updatedTableSort(): void
     {
         if ($this->getTable()->persistsSortInSession()) {
@@ -70,7 +70,7 @@ trait CanSortRecords
         $this->resetPage();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function updatedTableSortDirection(): void
     {
         if ($this->getTable()->persistsSortInSession()) {
@@ -187,7 +187,7 @@ trait CanSortRecords
         return null;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableSortSessionKey(): string
     {
         return $this->getTableSessionKey('sort');

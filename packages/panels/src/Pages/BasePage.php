@@ -9,7 +9,7 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasRenderHookScopes;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Support\Concerns\CanCallHooks;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Width;
@@ -55,7 +55,7 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
     #[On('refresh-page')]
     public function refresh(): void {}
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionUrlIdentifier(): ?string
     {
         return 'page';
@@ -66,7 +66,7 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
         return $this->defaultActionComponent ?? 'page';
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function render(): View
     {
         return view($this->getView(), $this->getViewData())
@@ -77,31 +77,31 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
             ]);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getView(): string
     {
         return $this->view;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getLayout(): string
     {
         return static::$layout;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getHeading(): string | Htmlable | null
     {
         return $this->heading ?? $this->getTitle();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getSubheading(): string | Htmlable | null
     {
         return $this->subheading;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTitle(): string | Htmlable
     {
         return static::$title ?? (string) str(class_basename(static::class))
@@ -110,7 +110,7 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
             ->ucwords();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getMaxContentWidth(): Width | string | null
     {
         return $this->maxContentWidth;
@@ -119,7 +119,7 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
     /**
      * @return array<mixed>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getExtraBodyAttributes(): array
     {
         return $this->extraBodyAttributes;
@@ -155,25 +155,25 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
         throw (new Halt)->rollBackDatabaseTransaction($shouldRollbackDatabaseTransaction);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function stickyFormActions(bool $condition = true): void
     {
         static::$formActionsAreSticky = $condition;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function alignFormActionsStart(): void
     {
         static::$formActionsAlignment = Alignment::Start;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function alignFormActionsCenter(): void
     {
         static::$formActionsAlignment = Alignment::Center;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function alignFormActionsEnd(): void
     {
         static::$formActionsAlignment = Alignment::End;
@@ -182,7 +182,7 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
     /**
      * @deprecated Use `alignFormActionsStart()` instead
      */
-    #[ServerOnly]
+    #[Unexposed]
     public static function alignFormActionsLeft(): void
     {
         static::alignFormActionsStart();
@@ -191,37 +191,37 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
     /**
      * @deprecated Use `alignFormActionsEnd()` instead
      */
-    #[ServerOnly]
+    #[Unexposed]
     public static function alignFormActionsRight(): void
     {
         static::alignFormActionsEnd();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getFormActionsAlignment(): string | Alignment
     {
         return static::$formActionsAlignment;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function areFormActionsSticky(): bool
     {
         return static::$formActionsAreSticky;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function hasInlineLabels(): bool
     {
         return static::$hasInlineLabels;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function formActionsAlignment(string | Alignment $alignment): void
     {
         static::$formActionsAlignment = $alignment;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function inlineLabels(bool $condition = true): void
     {
         static::$hasInlineLabels = $condition;
@@ -230,7 +230,7 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
     /**
      * @return array<string>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getRenderHookScopes(): array
     {
         return [static::class];

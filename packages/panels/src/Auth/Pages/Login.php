@@ -22,7 +22,7 @@ use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Support\Enums\Alignment;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Events\Attempting;
@@ -57,7 +57,7 @@ class Login extends SimplePage
     #[Locked]
     public ?string $userUndertakingMultiFactorAuthentication = null;
 
-    #[ServerOnly]
+    #[Unexposed]
     public function mount(): void
     {
         if (Filament::auth()->check()) {
@@ -254,14 +254,14 @@ class Login extends SimplePage
         ]);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function defaultForm(Schema $schema): Schema
     {
         return $schema
             ->statePath('data');
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -272,7 +272,7 @@ class Login extends SimplePage
             ]);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function defaultMultiFactorChallengeForm(Schema $schema): Schema
     {
         return $schema
@@ -331,7 +331,7 @@ class Login extends SimplePage
         return $data;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function multiFactorChallengeForm(Schema $schema): Schema
     {
         return $schema;
@@ -375,7 +375,7 @@ class Login extends SimplePage
         return $this->getMultiFactorChallenge()->getProviderPickerSchemaComponent($user);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function registerAction(): Action
     {
         return Action::make('register')
@@ -384,13 +384,13 @@ class Login extends SimplePage
             ->url(filament()->getRegistrationUrl());
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTitle(): string | Htmlable
     {
         return __('filament-panels::auth/pages/login.title');
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getHeading(): string | Htmlable | null
     {
         if (filled($this->userUndertakingMultiFactorAuthentication)) {
@@ -456,7 +456,7 @@ class Login extends SimplePage
         ];
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getSubheading(): string | Htmlable | null
     {
         if (filled($this->userUndertakingMultiFactorAuthentication)) {
@@ -470,7 +470,7 @@ class Login extends SimplePage
         return new HtmlString(__('filament-panels::auth/pages/login.actions.register.before') . ' ' . $this->registerAction->toHtml());
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -482,7 +482,7 @@ class Login extends SimplePage
             ]);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getFormContentComponent(): Component
     {
         return Form::make([EmbeddedSchema::make('form')])
@@ -497,7 +497,7 @@ class Login extends SimplePage
             ->visible(fn (): bool => blank($this->userUndertakingMultiFactorAuthentication));
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getMultiFactorChallengeFormContentComponent(): Component
     {
         return Form::make([EmbeddedSchema::make('multiFactorChallengeForm')])
@@ -511,7 +511,7 @@ class Login extends SimplePage
             ->visible(fn (): bool => filled($this->userUndertakingMultiFactorAuthentication));
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getMultiFactorChallengeFormActionsAlignment(): string | Alignment
     {
         return $this->getFormActionsAlignment();

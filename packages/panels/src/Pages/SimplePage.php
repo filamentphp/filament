@@ -2,7 +2,7 @@
 
 namespace Filament\Pages;
 
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 
 abstract class SimplePage extends BasePage
 {
@@ -22,7 +22,7 @@ abstract class SimplePage extends BasePage
         ];
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function hasLogo(): bool
     {
         return true;

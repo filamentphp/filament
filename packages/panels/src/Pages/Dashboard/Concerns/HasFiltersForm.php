@@ -3,25 +3,25 @@
 namespace Filament\Pages\Dashboard\Concerns;
 
 use Filament\Schemas\Schema;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 
 trait HasFiltersForm /** @phpstan-ignore trait.unused */
 {
     use HasFilters;
 
-    #[ServerOnly]
+    #[Unexposed]
     public function bootedHasFiltersForm(): void
     {
         $this->cacheSchema('filtersForm', $this->getFiltersForm());
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function filtersForm(Schema $schema): Schema
     {
         return $schema;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getFiltersForm(): Schema
     {
         if ((! $this->isCachingSchemas) && $this->hasCachedSchema('filtersForm')) {

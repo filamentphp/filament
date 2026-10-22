@@ -3,7 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 
 trait CanDeferLoading
 {
@@ -12,7 +12,7 @@ trait CanDeferLoading
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function isTableLoadingDeferred(): bool
     {
         return false;
@@ -24,7 +24,7 @@ trait CanDeferLoading
         $this->isTableLoaded = true;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function isTableLoaded(): bool
     {
         if (! $this->getTable()->isLoadingDeferred()) {

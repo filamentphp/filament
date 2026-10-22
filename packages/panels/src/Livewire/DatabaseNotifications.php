@@ -5,7 +5,7 @@ namespace Filament\Livewire;
 use Filament\Enums\DatabaseNotificationsPosition;
 use Filament\Facades\Filament;
 use Filament\Notifications\Livewire\DatabaseNotifications as BaseComponent;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
@@ -16,19 +16,19 @@ class DatabaseNotifications extends BaseComponent
     #[Locked]
     public ?DatabaseNotificationsPosition $position = null;
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getUser(): Model | Authenticatable | null
     {
         return Filament::auth()->user();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getPollingInterval(): ?string
     {
         return Filament::getDatabaseNotificationsPollingInterval();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTrigger(): ?View
     {
         return (($this->position ?? filament()->getDatabaseNotificationsPosition()) === DatabaseNotificationsPosition::Topbar)

@@ -6,17 +6,17 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Schema;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 
 trait HasWizard /** @phpstan-ignore trait.unused */
 {
-    #[ServerOnly]
+    #[Unexposed]
     public function getStartStep(): int
     {
         return 1;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function form(Schema $schema): Schema
     {
         return parent::form($schema)
@@ -26,7 +26,7 @@ trait HasWizard /** @phpstan-ignore trait.unused */
             ]);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getWizardComponent(): Component
     {
         return Wizard::make($this->getSteps())
@@ -38,19 +38,19 @@ trait HasWizard /** @phpstan-ignore trait.unused */
             ->contained(false);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function hasFormWrapper(): bool
     {
         return false;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getFormContentComponent(): Component
     {
         return EmbeddedSchema::make('form');
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getSteps(): array
     {
         return [];

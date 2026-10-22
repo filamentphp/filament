@@ -41,21 +41,21 @@ Panel access is also checked by `canAccessPanel()` on every request, including L
 
 ### Restricting methods to server-side calls
 
-Livewire exposes public component methods to client requests, even when there is no button or other UI that calls them. Use `protected` or `private` visibility for methods that do not need to be public. If a method must remain public so that other PHP objects can call it, you may add the `#[ServerOnly]` attribute:
+Livewire exposes public component methods to client requests, even when there is no button or other UI that calls them. Use `protected` or `private` visibility for methods that do not need to be public. If a method must remain public so that other PHP objects can call it, you may add the `#[Unexposed]` attribute:
 
 ```php
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 
-#[ServerOnly]
+#[Unexposed]
 public function recalculateTotals(): void
 {
     // ...
 }
 ```
 
-Filament rejects client calls to this method, including JavaScript calls, `wire:click` calls, and Livewire event listener dispatches, before executing the method. Direct PHP calls such as `$component->recalculateTotals()` and `$this->recalculateTotals()` still work, including during a Livewire request.
+Filament rejects client calls to this method, including JavaScript calls, `wire:click` calls, and Livewire event listener dispatches, with HTTP 403 before executing the method. Laravel does not report these HTTP exceptions by default. Direct PHP calls such as `$component->recalculateTotals()` and `$this->recalculateTotals()` still work, including during a Livewire request.
 
-Method access attributes are inherited when a child overrides a method without specifying its own access attribute. To allow frontend calls to an inherited `#[ServerOnly]` method, apply `#[Exposed]` to the override:
+Method access attributes are inherited when a child overrides a method without specifying its own access attribute. To allow frontend calls to an inherited `#[Unexposed]` method, apply `#[Exposed]` to the override:
 
 ```php
 use Filament\Support\Attributes\Exposed;
@@ -67,9 +67,9 @@ public function recalculateTotals(): void
 }
 ```
 
-The nearest declaration with an access attribute determines access. A child can also apply `#[ServerOnly]` to block a parent's exposed method. If a declaration has both attributes, `#[ServerOnly]` takes precedence. Methods without either attribute anywhere in their inheritance chain retain Livewire's normal behavior. `#[Exposed]` does not bypass Livewire's visibility restrictions or make lifecycle methods callable.
+The nearest declaration with an access attribute determines access. A child can also apply `#[Unexposed]` to block a parent's exposed method. If a declaration has both attributes, `#[Unexposed]` takes precedence. Methods without either attribute anywhere in their inheritance chain retain Livewire's normal behavior. `#[Exposed]` does not bypass Livewire's visibility restrictions or make lifecycle methods callable.
 
-Filament's own component methods are marked `#[ServerOnly]` unless they are intended frontend entry points, which are marked `#[Exposed]`. New methods you declare in your application are not automatically restricted. However, overriding a Filament method inherits its access policy: add `#[Exposed]` to the override if your frontend integration needs to call a server-only method, and implement any required authorization before calling it.
+Filament's own component methods are marked `#[Unexposed]` unless they are intended frontend entry points, which are marked `#[Exposed]`. New methods you declare in your application are not automatically restricted. However, overriding a Filament method inherits its access policy: add `#[Exposed]` to the override if your frontend integration needs to call an unexposed method, and implement any required authorization before calling it.
 
 <Aside variant="danger">
     This attribute blocks direct client invocation, not calls made by other PHP code. An exposed action, listener, or forwarding method can still call the method internally. You must authorize those entry points yourself. The attribute does not prevent Livewire from invoking lifecycle hooks or rendering methods internally, and it does not protect public properties from client updates.

@@ -5,8 +5,9 @@ use Filament\Pages\Page;
 use Filament\Tests\Fixtures\Pages\AuthorizableSettings;
 use Filament\Tests\Fixtures\Pages\Settings;
 use Filament\Tests\Panels\Pages\TestCase;
+use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Validation\ValidationException;
-use Livewire\Exceptions\MethodNotFoundException;
+use Livewire\Livewire;
 
 use function Filament\Tests\livewire;
 
@@ -17,16 +18,27 @@ it('can render page', function (): void {
         ->assertSuccessful();
 });
 
-it('allows exposed page listeners but blocks frontend calls to internal methods', function (): void {
+it('allows exposed page listeners but rejects internal methods with HTTP 403 without reporting', function (bool $isDebug): void {
+    config(['app.debug' => $isDebug]);
+
     $component = livewire(Settings::class)
         ->dispatch('refresh-page')
         ->assertSuccessful();
 
     expect($component->instance()->getTitle())->toBe('Settings');
 
-    expect(fn () => $component->call('getTitle'))
-        ->toThrow(MethodNotFoundException::class);
-});
+    Exceptions::fake();
+
+    $this->postJson(Livewire::getUpdateUri(), [
+        'components' => [[
+            'snapshot' => json_encode($component->snapshot),
+            'updates' => [],
+            'calls' => [['method' => 'getTitle', 'params' => []]],
+        ]],
+    ], ['X-Livewire' => 'true'])->assertForbidden();
+
+    Exceptions::assertNothingReported();
+})->with([false, true]);
 
 it('can generate a slug based on the page name', function (): void {
     expect(Settings::getSlug())

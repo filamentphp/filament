@@ -5,7 +5,7 @@ namespace Filament\Widgets\ChartWidget\Concerns;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\View\WidgetsIconAlias;
@@ -20,7 +20,7 @@ trait HasEmptyState
 
     protected string | BackedEnum | null $emptyStateIcon = null;
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getEmptyState(): View | Htmlable | null
     {
         return null;
@@ -29,25 +29,25 @@ trait HasEmptyState
     /**
      * @return array<Action | ActionGroup>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getEmptyStateActions(): array
     {
         return [];
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getEmptyStateDescription(): string | Htmlable | null
     {
         return $this->emptyStateDescription;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getEmptyStateHeading(): string | Htmlable
     {
         return $this->emptyStateHeading ?? __('filament-widgets::chart.empty.heading');
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getEmptyStateIcon(): string | BackedEnum | Htmlable
     {
         return $this->emptyStateIcon

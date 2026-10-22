@@ -13,7 +13,7 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
@@ -103,7 +103,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
     protected bool $hasActionsModalRendered = false;
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionUrlIdentifier(): ?string
     {
         return null;
@@ -122,7 +122,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         return filled($identifier) && is_scalar($target) && ((string) $target === $identifier);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function shouldMountDefaultActions(): bool
     {
         if (! $this->isDefaultActionUrlTarget()) {
@@ -186,7 +186,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
      *
      * @return array<string, mixed>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionUrlContext(): array
     {
         return array_merge(
@@ -198,7 +198,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     /**
      * @return array<string, mixed>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultTableActionUrlContext(): array
     {
         return [
@@ -208,7 +208,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         ];
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function bootedInteractsWithActions(): void
     {
         if (filled($originallyMountedActionIndex = array_key_last($this->mountedActions))) {
@@ -581,7 +581,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         }
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function cacheAction(Action $action): Action
     {
         $action->livewire($this);
@@ -600,7 +600,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         ];
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function mountedActionShouldOpenModal(?Action $mountedAction = null): bool
     {
         return ($mountedAction ?? $this->getMountedAction())->shouldOpenModal(
@@ -608,7 +608,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         );
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function mountedActionHasSchema(?Action $mountedAction = null): bool
     {
         return (bool) count($this->getMountedActionSchema(mountedAction: $mountedAction)?->getComponents() ?? []);
@@ -617,7 +617,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `mountedActionHasSchema()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function mountedActionHasForm(?Action $mountedAction = null): bool
     {
         return $this->mountedActionHasSchema($mountedAction);
@@ -626,7 +626,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     /**
      * @return array<Action>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getMountedActions(): array
     {
         if (blank($this->mountedActions ?? [])) {
@@ -640,7 +640,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         return $this->cacheMountedActions($this->mountedActions);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function cacheTraitActions(): void
     {
         foreach (class_uses_recursive($class = static::class) as $trait) {
@@ -655,7 +655,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         }
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getMountedAction(?int $actionNestingIndex = null): ?Action
     {
         if (! count($this->mountedActions ?? [])) {
@@ -675,7 +675,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         return Arr::last($this->cachedMountedActions);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function isActionMounted(Action $action): bool
     {
         $actionNestingIndex = $action->getNestingIndex();
@@ -864,7 +864,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     /**
      * @param  string | array<string | array<string, mixed>>  $actions
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getAction(string | array $actions, bool $isMounting = true): ?Action
     {
         $actions = array_map(
@@ -875,7 +875,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         return Arr::last($this->resolveActions($actions, $isMounting));
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getMountedActionSchemaName(): ?string
     {
         if (empty($this->mountedActions)) {
@@ -1018,7 +1018,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         );
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getOriginallyMountedActionIndex(): ?int
     {
         return $this->originallyMountedActionIndex;
@@ -1027,7 +1027,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     /**
      * @param  array<string, mixed>  $arguments
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function mergeMountedActionArguments(array $arguments): void
     {
         $this->mountedActions[array_key_last($this->mountedActions)]['arguments'] = array_merge(
@@ -1038,13 +1038,13 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         $this->getMountedAction()->mergeArguments($arguments);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionRecord(Action $action): ?Model
     {
         return null;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionRecordTitle(Action $action): ?string
     {
         return null;
@@ -1053,55 +1053,55 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     /**
      * @return ?class-string<Model>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionModel(Action $action): ?string
     {
         return null;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionModelLabel(Action $action): ?string
     {
         return null;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionUrl(Action $action): ?string
     {
         return null;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionSuccessRedirectUrl(Action $action): ?string
     {
         return null;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionFailureRedirectUrl(Action $action): ?string
     {
         return null;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionRelationship(Action $action): ?Relation
     {
         return null;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionSchemaResolver(Action $action): ?Closure
     {
         return null;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionAuthorizationResponse(Action $action): ?Response
     {
         return null;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getDefaultActionIndividualRecordAuthorizationResponseResolver(Action $action): ?Closure
     {
         return null;

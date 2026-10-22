@@ -2,17 +2,17 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 
 class ManageRecords extends ListRecords
 {
-    #[ServerOnly]
+    #[Unexposed]
     public function hasResourceBreadcrumbs(): bool
     {
         return false;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getBreadcrumb(): ?string
     {
         return static::$breadcrumb;

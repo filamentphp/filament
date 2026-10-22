@@ -4,7 +4,7 @@ namespace Filament\Livewire;
 
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\GlobalSearchResults;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -12,7 +12,7 @@ class GlobalSearch extends Component
 {
     public ?string $search = '';
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getResults(): ?GlobalSearchResults
     {
         $search = trim($this->search);
@@ -32,7 +32,7 @@ class GlobalSearch extends Component
         return $results;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function render(): View
     {
         return view('filament-panels::livewire.global-search', [

@@ -9,7 +9,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Illuminate\Database\Eloquent\Model;
 use LogicException;
 
@@ -24,7 +24,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     /**
      * @return array<string, Schema>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getCachedSchemas(): array
     {
         if (! $this->hasCachedForms) {
@@ -88,7 +88,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
      *
      * @return array<int | string, string | Schema>
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getTraitForms(): array
     {
         $forms = [];
@@ -116,7 +116,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `getSchema()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getForm(string $name): ?Schema
     {
         return $this->getSchema($name);
@@ -127,7 +127,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
      *
      * @deprecated Use `getCachedSchemas()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getCachedForms(): array
     {
         return $this->getCachedSchemas();
@@ -145,7 +145,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
         ];
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -194,7 +194,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `isCachingSchemas()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function isCachingForms(): bool
     {
         return $this->isCachingSchemas();
@@ -203,7 +203,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `getActiveSchemaLocale()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getActiveFormsLocale(): ?string
     {
         return $this->getActiveSchemaLocale();
@@ -212,7 +212,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `getOldSchemaState()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getOldFormState(string $statePath): mixed
     {
         return $this->getOldSchemaState($statePath);
@@ -245,7 +245,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `mountedActionShouldOpenModal()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function mountedFormComponentActionShouldOpenModal(?Action $mountedAction = null): bool
     {
         return $this->mountedActionShouldOpenModal($mountedAction);
@@ -254,7 +254,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `mountedActionHasForm()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function mountedFormComponentActionHasForm(?Action $mountedAction = null): bool
     {
         return $this->mountedActionHasSchema($mountedAction);
@@ -263,7 +263,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `getMountedAction()` instead.
      */
-    #[ServerOnly]
+    #[Unexposed]
     public function getMountedFormComponentAction(?int $actionNestingIndex = null): ?Action
     {
         return $this->getMountedAction($actionNestingIndex);

@@ -3,7 +3,7 @@
 namespace Filament\Widgets;
 
 use Filament\Facades\Filament;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 
 class AccountWidget extends Widget
 {
@@ -16,7 +16,7 @@ class AccountWidget extends Widget
      */
     protected string $view = 'filament-panels::widgets.account-widget';
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function canView(): bool
     {
         return Filament::auth()->check();

@@ -3,7 +3,7 @@
 namespace Filament\Tests\Rector\Fixtures\MethodAccess;
 
 use Filament\Support\Attributes\Exposed as Frontend;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 
 trait NestedTrait
 {
@@ -34,7 +34,7 @@ class ChildComponent extends Component
     #[Frontend]
     public function action(): void {}
 
-    #[ServerOnly]
+    #[Unexposed]
     public function alreadyProtected(): void {}
 
     protected function helper(): void {}
@@ -52,11 +52,11 @@ class UnrelatedClass
 namespace Filament\Tests\Rector\Fixtures\MethodAccess;
 
 use Filament\Support\Attributes\Exposed as Frontend;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 
 trait NestedTrait
 {
-    #[\Filament\Support\Attributes\ServerOnly]
+    #[\Filament\Support\Attributes\Unexposed]
     public function nested(): void {}
 }
 
@@ -64,7 +64,7 @@ trait UsedTrait
 {
     use NestedTrait;
 
-    #[\Filament\Support\Attributes\ServerOnly]
+    #[\Filament\Support\Attributes\Unexposed]
     public function internal(): void {}
 
     #[Frontend]
@@ -78,16 +78,16 @@ trait UnusedTrait
 
 class ChildComponent extends Component
 {
-    #[\Filament\Support\Attributes\ServerOnly]
+    #[\Filament\Support\Attributes\Unexposed]
     public function internal(): void {}
 
-    #[\Filament\Support\Attributes\ServerOnly]
+    #[\Filament\Support\Attributes\Unexposed]
     public static function configuration(): void {}
 
     #[Frontend]
     public function action(): void {}
 
-    #[ServerOnly]
+    #[Unexposed]
     public function alreadyProtected(): void {}
 
     protected function helper(): void {}

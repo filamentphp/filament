@@ -4,7 +4,7 @@ namespace Filament\Tests\Rector\Rules;
 
 use Composer\ClassMapGenerator\ClassMapGenerator;
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Livewire\Component;
 use PhpParser\Node;
 use PhpParser\Node\Attribute;
@@ -20,7 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 use function Filament\Support\is_path_within_directory;
 
-class AddServerOnlyToLivewireMethodsRector extends AbstractRector implements ConfigurableRectorInterface
+class AddUnexposedToLivewireMethodsRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /** @var array<string> */
     protected array $paths = [];
@@ -35,7 +35,7 @@ class AddServerOnlyToLivewireMethodsRector extends AbstractRector implements Con
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Mark public Livewire component and component trait methods as server-only unless explicitly exposed.', []);
+        return new RuleDefinition('Mark public Livewire component and component trait methods as unexposed unless explicitly exposed.', []);
     }
 
     /** @return array<class-string<Node>> */
@@ -74,13 +74,13 @@ class AddServerOnlyToLivewireMethodsRector extends AbstractRector implements Con
 
             foreach ($method->attrGroups as $attributeGroup) {
                 foreach ($attributeGroup->attrs as $attribute) {
-                    if ($this->isNames($attribute->name, [Exposed::class, ServerOnly::class])) {
+                    if ($this->isNames($attribute->name, [Exposed::class, Unexposed::class])) {
                         continue 3;
                     }
                 }
             }
 
-            $method->attrGroups[] = new AttributeGroup([new Attribute(new FullyQualified(ServerOnly::class))]);
+            $method->attrGroups[] = new AttributeGroup([new Attribute(new FullyQualified(Unexposed::class))]);
             $hasChanged = true;
         }
 

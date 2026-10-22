@@ -6,7 +6,7 @@ use Filament\QueryBuilder\Forms\Components\RuleBuilder;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\QueryBuilder;
@@ -28,7 +28,7 @@ trait HasFilters
      */
     public ?array $tableDeferredFilters = null;
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableFiltersForm(): Schema
     {
         if ((! $this->isCachingSchemas) && $this->hasCachedSchema('tableFiltersForm')) {
@@ -52,7 +52,7 @@ trait HasFilters
             );
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function updatedTableFilters(): void
     {
         if ($this->getTable()->hasDeferredFilters()) {
@@ -214,19 +214,19 @@ trait HasFilters
         });
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableFilterState(string $name): ?array
     {
         return Arr::get($this->tableFilters, $this->parseTableFilterName($name));
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableFilterFormState(string $name): ?array
     {
         return Arr::get($this->getTable()->hasDeferredFilters() ? $this->tableDeferredFilters : $this->tableFilters, $this->parseTableFilterName($name));
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function parseTableFilterName(string $name): string
     {
         if (! class_exists($name)) {
@@ -240,7 +240,7 @@ trait HasFilters
         return $name::getDefaultName();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTableFiltersSessionKey(): string
     {
         return $this->getTableSessionKey('filters', isTenantScoped: true);

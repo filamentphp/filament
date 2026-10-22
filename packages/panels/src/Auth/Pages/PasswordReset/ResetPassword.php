@@ -20,7 +20,7 @@ use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -55,7 +55,7 @@ class ResetPassword extends SimplePage
     #[Locked]
     public ?string $token = null;
 
-    #[ServerOnly]
+    #[Unexposed]
     public function mount(?string $email = null, #[SensitiveParameter] ?string $token = null): void
     {
         if (Filament::auth()->check()) {
@@ -172,7 +172,7 @@ class ResetPassword extends SimplePage
         return false;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -215,13 +215,13 @@ class ResetPassword extends SimplePage
             ->dehydrated(false);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getTitle(): string | Htmlable
     {
         return __('filament-panels::auth/pages/password-reset/reset-password.title');
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getHeading(): string | Htmlable | null
     {
         return __('filament-panels::auth/pages/password-reset/reset-password.heading');
@@ -237,7 +237,7 @@ class ResetPassword extends SimplePage
         ];
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getResetPasswordFormAction(): Action
     {
         return Action::make('resetPassword')
@@ -250,7 +250,7 @@ class ResetPassword extends SimplePage
         return true;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -261,7 +261,7 @@ class ResetPassword extends SimplePage
             ]);
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getFormContentComponent(): Component
     {
         return Form::make([EmbeddedSchema::make('form')])

@@ -6,7 +6,7 @@ use Filament\Notifications\Collection;
 use Filament\Notifications\Notification;
 use Filament\Notifications\NotificationMailbox;
 use Filament\Support\Attributes\Exposed;
-use Filament\Support\Attributes\ServerOnly;
+use Filament\Support\Attributes\Unexposed;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -28,7 +28,7 @@ class Notifications extends Component
 
     public static ?string $authGuard = null;
 
-    #[ServerOnly]
+    #[Unexposed]
     public function mount(): void
     {
         $this->notifications = new Collection;
@@ -95,13 +95,13 @@ class Notifications extends Component
         );
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getUser(): Model | Authenticatable | null
     {
         return auth(static::$authGuard)->user();
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function getBroadcastChannel(): ?string
     {
         $user = $this->getUser();
@@ -119,25 +119,25 @@ class Notifications extends Component
         return "{$userClass}.{$user->getKey()}";
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function alignment(Alignment $alignment): void
     {
         static::$alignment = $alignment;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function verticalAlignment(VerticalAlignment $alignment): void
     {
         static::$verticalAlignment = $alignment;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public static function authGuard(?string $guard): void
     {
         static::$authGuard = $guard;
     }
 
-    #[ServerOnly]
+    #[Unexposed]
     public function render(): View
     {
         return view('filament-notifications::notifications');
