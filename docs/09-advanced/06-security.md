@@ -39,6 +39,40 @@ Filament repeats its built-in authorization checks when a component mounts and o
 
 Panel access is also checked by `canAccessPanel()` on every request, including Livewire requests.
 
+### Restricting methods to server-side calls
+
+Livewire exposes public component methods to client requests, even when there is no button or other UI that calls them. Use `protected` or `private` visibility for methods that do not need to be public. If a method must remain public so that other PHP objects can call it, you may add the `#[ServerOnly]` attribute:
+
+```php
+use Filament\Support\Attributes\ServerOnly;
+
+#[ServerOnly]
+public function recalculateTotals(): void
+{
+    // ...
+}
+```
+
+Filament rejects client calls to this method, including JavaScript calls, `wire:click` calls, and Livewire event listener dispatches, before executing the method. Direct PHP calls such as `$component->recalculateTotals()` and `$this->recalculateTotals()` still work, including during a Livewire request.
+
+Method access attributes are inherited when a child overrides a method without specifying its own access attribute. To allow frontend calls to an inherited `#[ServerOnly]` method, apply `#[Exposed]` to the override:
+
+```php
+use Filament\Support\Attributes\Exposed;
+
+#[Exposed]
+public function recalculateTotals(): void
+{
+    parent::recalculateTotals();
+}
+```
+
+The nearest declaration with an access attribute determines access. A child can also apply `#[ServerOnly]` to block a parent's exposed method. If a declaration has both attributes, `#[ServerOnly]` takes precedence. Methods without either attribute anywhere in their inheritance chain retain Livewire's normal behavior. `#[Exposed]` does not bypass Livewire's visibility restrictions or make lifecycle methods callable.
+
+<Aside variant="danger">
+    This attribute blocks direct client invocation, not calls made by other PHP code. An exposed action, listener, or forwarding method can still call the method internally. You must authorize those entry points yourself. The attribute does not prevent Livewire from invoking lifecycle hooks or rendering methods internally, and it does not protect public properties from client updates.
+</Aside>
+
 ### Understanding Eloquent model restoration in Livewire
 
 When a public Livewire property contains an Eloquent model, Livewire stores the model's identifier in the component snapshot. On the next request, Livewire queries the database to restore it. A signed snapshot prevents a user from changing the identifier, but it does not prove that they are still allowed to access the model.
