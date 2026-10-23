@@ -77,6 +77,20 @@ Filament's own component methods are marked `#[Unexposed]` unless they are inten
     This attribute blocks direct client invocation, not calls made by other PHP code. An exposed action, listener, or forwarding method can still call the method internally. You must authorize those entry points yourself. The attribute does not prevent Livewire from invoking lifecycle hooks or rendering methods internally, and it does not protect public properties from client updates.
 </Aside>
 
+### Protecting server-managed component state
+
+Filament uses Livewire's `#[Locked]` attribute for server-managed public properties, including record identities, notification collections, table loading and reordering flags, default-action settings, and reactive widget inputs supplied by a parent page. Direct PHP assignments still work, but JavaScript assignments, `$wire.set()`, and other incoming property updates are rejected. Use the component's supported methods and events instead, such as `loadTable()`, `toggleTableReordering()`, `mountAction()`, and notification delivery events.
+
+Parent-driven updates to reactive widget inputs still work. For example, update dashboard filters on the parent page rather than assigning the widget's `$pageFilters` property from JavaScript. Ordinary editable form state, table filters, search, sorting, pagination, and selection remain writable on their owning components.
+
+Locked URL-bound properties, such as default-action settings and `$isTableReordering`, still accept their initial query string values. Keep their default replace-mode URL synchronization: push-history restoration requires client property writes and conflicts with `#[Locked]`.
+
+If you redeclare a locked property in an application component, add `#[Locked]` to the new declaration too. PHP does not inherit property attributes onto redeclarations.
+
+<Aside variant="danger">
+    Locking prevents direct property updates; it does not make initial URL values, method arguments, or event payloads trustworthy. It also does not hide serialized values, authorize records, or change Eloquent model restoration. Validate and authorize the input accepted by your own methods, actions, and listeners.
+</Aside>
+
 ### Understanding Eloquent model restoration in Livewire
 
 When a public Livewire property contains an Eloquent model, Livewire stores the model's identifier in the component snapshot. On the next request, Livewire queries the database to restore it. A signed snapshot prevents a user from changing the identifier, but it does not prove that they are still allowed to access the model.

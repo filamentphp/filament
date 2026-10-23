@@ -4,9 +4,11 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Support\Attributes\Exposed;
 use Filament\Support\Attributes\Unexposed;
+use Livewire\Attributes\Locked;
 
 trait CanDeferLoading
 {
+    #[Locked]
     public bool $isTableLoaded = false;
 
     /**

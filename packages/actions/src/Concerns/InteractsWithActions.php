@@ -49,40 +49,47 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
      * @var mixed
      */
     #[Url(as: 'action')]
+    #[Locked]
     public $defaultAction = null;
 
     /**
      * @var mixed
      */
     #[Url(as: 'actionArguments')]
+    #[Locked]
     public $defaultActionArguments = null;
 
     /**
      * @var mixed
      */
     #[Url(as: 'actionContext')]
+    #[Locked]
     public $defaultActionContext = null;
 
     /**
      * @var mixed
      */
     #[Url(as: 'tableAction')]
+    #[Locked]
     public $defaultTableAction = null;
 
     /**
      * @var mixed
      */
     #[Url(as: 'tableActionRecord')]
+    #[Locked]
     public $defaultTableActionRecord = null;
 
     /**
      * @var mixed
      */
     #[Url(as: 'tableActionArguments')]
+    #[Locked]
     public $defaultTableActionArguments = null;
 
     /** @var mixed */
     #[Url(as: 'actionComponent')]
+    #[Locked]
     public $defaultActionComponent = null;
 
     #[Locked]
