@@ -34,6 +34,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Js;
+use Livewire\Attributes\Locked;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
@@ -58,6 +59,7 @@ class EditRecord extends Page
      */
     public ?array $data = [];
 
+    #[Locked]
     public ?string $previousUrl = null;
 
     #[Unexposed]

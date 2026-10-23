@@ -1592,8 +1592,11 @@ describe('actions mounted from a URL query parameter', function (): void {
         // `$defaultActionContext` is populated from the `?actionContext=` query string, so
         // an attacker controls it. The context builder must always win, keeping any other
         // keys but forcing `mountedFromUrl` to `true`.
+        Livewire::withQueryParams([
+            'actionContext' => ['mountedFromUrl' => false, 'schemaComponent' => 'foo'],
+        ]);
+
         $context = livewire(Actions::class)
-            ->set('defaultActionContext', ['mountedFromUrl' => false, 'schemaComponent' => 'foo'])
             ->instance()
             ->getDefaultActionUrlContext();
 
@@ -1602,8 +1605,9 @@ describe('actions mounted from a URL query parameter', function (): void {
     });
 
     it('does not run a modal-less action even when the `actionContext` query string tries to unset `mountedFromUrl`', function (): void {
-        $component = livewire(Actions::class)
-            ->set('defaultActionContext', ['mountedFromUrl' => false]);
+        Livewire::withQueryParams(['actionContext' => ['mountedFromUrl' => false]]);
+
+        $component = livewire(Actions::class);
 
         $component
             ->call('mountAction', 'simple', [], $component->instance()->getDefaultActionUrlContext())

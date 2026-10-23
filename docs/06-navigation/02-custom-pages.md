@@ -76,7 +76,9 @@ You can also open an action when a page loads by setting the `$defaultAction` pr
 
 ```php
 use Filament\Actions\Action;
+use Livewire\Attributes\Locked;
 
+#[Locked]
 public $defaultAction = 'onboarding';
 
 public function onboardingAction(): Action
@@ -90,6 +92,9 @@ public function onboardingAction(): Action
 You can also pass an array of arguments to the default action using the `$defaultActionArguments` property:
 
 ```php
+use Livewire\Attributes\Locked;
+
+#[Locked]
 public $defaultActionArguments = ['step' => 2];
 ```
 

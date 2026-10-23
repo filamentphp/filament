@@ -12,14 +12,17 @@ use Filament\Support\Enums\VerticalAlignment;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
 class Notifications extends Component
 {
     // Used to check if Livewire messages should trigger notification animations.
+    #[Locked]
     public bool $isFilamentNotificationsComponent = true;
 
+    #[Locked]
     public Collection $notifications;
 
     public static Alignment $alignment = Alignment::Right;

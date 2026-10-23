@@ -20,6 +20,7 @@ use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Attributes\Locked;
 use Throwable;
 
 use function Filament\authorize;
@@ -37,6 +38,7 @@ abstract class RegisterTenant extends SimplePage
      */
     public ?array $data = [];
 
+    #[Locked]
     public ?Model $tenant = null;
 
     #[Unexposed]

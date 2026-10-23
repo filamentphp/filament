@@ -22,6 +22,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 
 class ListRecords extends Page implements Tables\Contracts\HasTable
@@ -32,6 +33,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     }
 
     #[Url(as: 'reordering')]
+    #[Locked]
     public bool $isTableReordering = false;
 
     /**

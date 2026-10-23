@@ -24,6 +24,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Js;
+use Livewire\Attributes\Locked;
 use Throwable;
 
 /**
@@ -37,6 +38,7 @@ class CreateRecord extends Page
     use HasUnsavedDataChangesAlert;
 
     /** @var ?TModel */
+    #[Locked]
     public ?Model $record = null;
 
     /**
@@ -44,6 +46,7 @@ class CreateRecord extends Page
      */
     public ?array $data = [];
 
+    #[Locked]
     public ?string $previousUrl = null;
 
     protected static bool $canCreateAnother = true;

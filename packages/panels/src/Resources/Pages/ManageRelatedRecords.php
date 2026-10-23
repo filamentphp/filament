@@ -35,6 +35,7 @@ use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 
 use function Filament\authorize;
@@ -50,9 +51,11 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     }
     use InteractsWithRelationshipTable;
 
+    #[Locked]
     public ?string $previousUrl = null;
 
     #[Url(as: 'reordering')]
+    #[Locked]
     public bool $isTableReordering = false;
 
     /**
