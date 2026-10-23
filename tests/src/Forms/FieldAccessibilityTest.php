@@ -574,7 +574,8 @@ describe('required controls', function (): void {
         $document = fieldAccessibilityDocument(Schema::make(Livewire::make())->components([$field])->toHtml());
         $group = $document->query('//*[@role="group" or @role="radiogroup"]')->item(0);
         expect($document->query('//*[@id="' . $group->getAttribute('aria-labelledby') . '"]')->length)->toBe(1)
-            ->and($group->getAttribute('aria-required'))->toBe(($field instanceof Radio && ! $disabled) ? 'true' : '');
+            ->and($group->getAttribute('role'))->toBe($multiple ? 'group' : 'radiogroup')
+            ->and($group->getAttribute('aria-required'))->toBe((! $multiple && ! $disabled) ? 'true' : '');
         foreach ($document->query('//input[not(@hidden)]') as $control) {
             expect($control->hasAttribute('required'))->toBe(! $multiple && ! $disabled)
                 ->and($control->hasAttribute('aria-required'))->toBeFalse();

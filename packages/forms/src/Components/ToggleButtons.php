@@ -131,6 +131,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
         $containerAttributes = $containerAttributes
             ->merge([
                 'aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby'] ?? null,
+                'aria-invalid' => (! $isMultiple) && $isRequired ? $this->getAccessibilityAttributes()['aria-invalid'] : null,
                 'aria-labelledby' => filled($this->getLabel()) ? e("{$id}-label") : null,
                 'aria-required' => (! $isMultiple) && $isRequired && (! $isDisabled) ? 'true' : null,
                 'role' => (! $isMultiple) && $isRequired ? 'radiogroup' : 'group',
@@ -258,6 +259,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
         $containerAttributes = $this->getExtraAttributeBag()
             ->merge([
                 'aria-describedby' => $this->getAccessibilityAttributes()['aria-describedby'] ?? null,
+                'aria-invalid' => (! $isMultiple) && $isRequired ? $this->getAccessibilityAttributes()['aria-invalid'] : null,
                 'aria-labelledby' => filled($this->getLabel()) ? e("{$id}-label") : null,
                 'aria-required' => (! $isMultiple) && $isRequired && (! $isDisabled) ? 'true' : null,
                 'role' => (! $isMultiple) && $isRequired ? 'radiogroup' : 'group',
