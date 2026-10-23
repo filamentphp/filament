@@ -209,6 +209,37 @@ describe('action lifecycle and configuration', function (): void {
     });
 });
 
+describe('selection limits', function (): void {
+    it('respects `maxSelectableRecords()` when chunking selected records', function (bool $tracksDeselectedRecords, bool $checksSelectability): void {
+        $posts = Post::factory()->count(7)->create();
+        $nonSelectableKey = $posts[2]->getKey();
+        $expectedDeletedKeys = $checksSelectability ? [$posts[1]->getKey(), $posts[3]->getKey()] : [$posts[1]->getKey(), $posts[2]->getKey(), $posts[3]->getKey()];
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table
+                ->maxSelectableRecords(3)
+                ->checkIfRecordIsSelectableUsing($checksSelectability ? static fn (Post $record): bool => $record->getKey() !== $nonSelectableKey : null),
+            during: static fn () => DeleteBulkAction::configureUsing(
+                static fn (DeleteBulkAction $action): DeleteBulkAction => $action->chunkSelectedRecords(2),
+                during: function () use ($posts, $tracksDeselectedRecords): void {
+                    $component = livewire(PostsTable::class);
+
+                    if ($tracksDeselectedRecords) {
+                        $component
+                            ->set('isTrackingDeselectedTableRecords', true)
+                            ->set('deselectedTableRecords', [$posts->first()->getKey()]);
+                    }
+
+                    $component->callTableBulkAction(DeleteBulkAction::class, $tracksDeselectedRecords ? [] : $posts->slice(1));
+                },
+            ),
+        );
+
+        expect(Post::onlyTrashed()->orderBy('id')->pluck('id')->all())->toBe($expectedDeletedKeys);
+        expect(Post::query()->orderBy('id')->pluck('id')->all())->toBe(array_values(array_diff($posts->modelKeys(), $expectedDeletedKeys)));
+    })->with([false, true])->with([false, true]);
+});
+
 describe('duplicate relationship selection', function (): void {
     it('only deletes search matches when selecting all relationship records with `allowDuplicates()`', function (bool $duplicates, string $action): void {
         $ticket = Ticket::factory()->create();
