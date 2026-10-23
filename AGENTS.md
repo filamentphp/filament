@@ -242,7 +242,7 @@ Hook class naming:
 
 - **Tone**: Direct, second person ("You may set...", "You can do this using...")
 - **Audience**: Document how developers configure, extend, and troubleshoot Filament, not how end users operate it. Explain built-in interactions or internal behavior only when they affect a developer's decision, integration, or consequential limitation.
-- **Structure**: Start with `## Introduction`, briefly explain the purpose, and show the simplest useful example. Defer optional configuration and specialized integration details to later sections.
+- **Structure**: Start with `## Introduction`, briefly explain the purpose, and show the simplest useful example. Defer optional configuration and specialized integration details to later sections. Split distinct tasks into short, focused subsections rather than collecting configuration, authorization, scoping, and data-handling guidance in one long section.
 - **Section order**: Review the full page and analogous pages, then place sections by reader importance and logical flow, not by when they were added. Do not default new sections to the top.
 - **Hierarchy**: Keep foundational and common workflows before specialized content, and nest narrower topics under their parent section. Place consequential warnings beside the first affected recipe, even when the full explanation belongs later.
 - **Security and accessibility**: State what Filament provides, where that protection or support stops, and what the application developer must implement. Preserve meaningful security, accessibility, compatibility, and data-loss guidance; do not replace precise boundaries with broad assurances.
