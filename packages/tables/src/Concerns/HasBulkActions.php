@@ -427,7 +427,10 @@ trait HasBulkActions
                 ->values()
                 ->all();
 
-            return $query->lazyById($chunkSize, $query->getModel()->getQualifiedKeyName(), $query->getModel()->getKeyName());
+            $limit = $query->getQuery()->limit;
+            $records = $query->lazyById($chunkSize, $query->getModel()->getQualifiedKeyName(), $query->getModel()->getKeyName());
+
+            return ($limit !== null) ? $records->take($limit) : $records;
         }
 
         $query = $this->applyPivotRecordKeyToTableQuery($query)->applyScopes()->withoutGlobalScopes();
