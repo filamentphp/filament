@@ -8,6 +8,7 @@ use Filament\Pages\BasePage;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Support\HtmlString;
 use Inertia\Response as InertiaResponse;
 use Livewire\Livewire;
@@ -21,6 +22,7 @@ trait InteractsWithInertia
 {
     abstract protected function getInertiaResponse(): InertiaResponse;
 
+    #[Unexposed]
     public function __invoke(): Response
     {
         $this->authorizeInertiaAccess();

@@ -113,6 +113,10 @@ it('does not rebuild props on shell updates and reauthorizes after access revoca
     expect(RequestState::$responses)->toBe(1);
 })->with('inertia shells');
 
+it('does not expose HTTP page invocation as a Livewire action', function (string $path, string $page): void {
+    Livewire::test($page)->call('__invoke')->assertForbidden();
+})->with('inertia shells');
+
 it('calls the SSR gateway `dispatch()` once and leaves the rendered root inert until the host mounts', function (string $path): void {
     config(['inertia.ssr.enabled' => true]);
     $this->mock(Gateway::class)->shouldReceive('dispatch')->once()
