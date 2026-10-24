@@ -4,12 +4,14 @@ use Filament\Tests\TestCase;
 use Illuminate\Process\PendingProcess;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Process;
+use Laravel\Prompts\Prompt;
 
 use function PHPUnit\Framework\assertFileExists;
 
 uses(TestCase::class)->group('serial');
 
 beforeEach(function (): void {
+    Prompt::fallbackWhen(true);
     Process::fake(['*' => Process::result(output: '10.0.0')]);
     Process::preventStrayProcesses();
 
