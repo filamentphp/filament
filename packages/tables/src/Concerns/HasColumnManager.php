@@ -3,8 +3,8 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Schemas\Schema;
-use Filament\Support\Attributes\Exposed;
 use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Component;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\ColumnGroup;

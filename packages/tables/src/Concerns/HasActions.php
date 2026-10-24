@@ -5,8 +5,8 @@ namespace Filament\Tables\Concerns;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Schemas\Schema;
-use Filament\Support\Attributes\Exposed;
 use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Exposed;
 use Illuminate\Database\Eloquent\Model;
 
 trait HasActions

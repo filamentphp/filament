@@ -2,8 +2,8 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Support\Attributes\Exposed;
 use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Exposed;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Grammars\SqlServerGrammar;
 

@@ -1,7 +1,7 @@
 <?php
 
-use Filament\Support\Attributes\Exposed;
 use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Tests\TestCase;
 use Livewire\Attributes\On;
 use Livewire\Component;

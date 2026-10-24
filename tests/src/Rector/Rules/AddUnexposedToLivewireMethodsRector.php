@@ -3,8 +3,8 @@
 namespace Filament\Tests\Rector\Rules;
 
 use Composer\ClassMapGenerator\ClassMapGenerator;
-use Filament\Support\Attributes\Exposed;
 use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Livewire\MethodAccess;
 use Livewire\Component;
 use PhpParser\Node;

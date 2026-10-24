@@ -2,8 +2,8 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Support\Attributes\Exposed;
 use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Exposed;
 use Livewire\Attributes\Locked;
 
 trait CanDeferLoading

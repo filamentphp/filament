@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\Rector\Fixtures\MethodAccess;
 
-use Filament\Support\Attributes\Exposed as Frontend;
+use Filament\Support\Components\Attributes\Exposed as Frontend;
 use Filament\Support\Attributes\Unexposed;
 
 trait NestedTrait
@@ -68,7 +68,7 @@ class UnrelatedClass
 
 namespace Filament\Tests\Rector\Fixtures\MethodAccess;
 
-use Filament\Support\Attributes\Exposed as Frontend;
+use Filament\Support\Components\Attributes\Exposed as Frontend;
 use Filament\Support\Attributes\Unexposed;
 
 trait NestedTrait

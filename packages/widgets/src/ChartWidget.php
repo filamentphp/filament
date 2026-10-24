@@ -4,8 +4,8 @@ namespace Filament\Widgets;
 
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
-use Filament\Support\Attributes\Exposed;
 use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget\Concerns\HasEmptyState;
 use Filament\Widgets\Concerns\CanPoll;

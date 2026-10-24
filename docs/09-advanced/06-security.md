@@ -58,7 +58,7 @@ Filament rejects client calls to this method, including JavaScript calls, `wire:
 Method access attributes are inherited when a child overrides a method without specifying its own access attribute. To allow frontend calls to an inherited `#[Unexposed]` method, apply `#[Exposed]` to the override:
 
 ```php
-use Filament\Support\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Exposed;
 
 #[Exposed]
 public function recalculateTotals(): void

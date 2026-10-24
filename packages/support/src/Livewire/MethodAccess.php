@@ -2,8 +2,8 @@
 
 namespace Filament\Support\Livewire;
 
-use Filament\Support\Attributes\Exposed;
 use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Exposed;
 use Livewire\Component;
 use Livewire\Features\SupportEvents\SupportEvents;
 use ReflectionAttribute;

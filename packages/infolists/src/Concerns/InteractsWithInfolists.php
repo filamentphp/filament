@@ -4,8 +4,8 @@ namespace Filament\Infolists\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
-use Filament\Support\Attributes\Exposed;
 use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Exposed;
 
 trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
 {
