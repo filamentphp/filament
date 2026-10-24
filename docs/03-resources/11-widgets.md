@@ -71,12 +71,14 @@ If you're using a widget on an [Edit](editing-records) or [View](viewing-records
 
 ```php
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Attributes\Locked;
 
+#[Locked]
 public ?Model $record = null;
 ```
 
 <Aside variant="warning">
-    Filament leaves widget model properties, including `$record` and `$parentRecord`, to Livewire's native restoration. It does not reapply global scopes, the resource query, or a policy for those records. A request to the widget does not reauthorize the parent page. The widget's `canView()` method controls access to the widget, not its records. Query and authorize records before using them, including any tenant or ownership restrictions. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+    `#[Locked]` prevents client-side updates to the property, but does not authorize access to the record. Filament leaves widget model properties, including `$record` and `$parentRecord`, to Livewire's native restoration. It does not reapply global scopes, the resource query, or a policy for those records. A request to the widget does not reauthorize the parent page. The widget's `canView()` method controls access to the widget, not its records. Query and authorize records before using them, including any tenant or ownership restrictions. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
 </Aside>
 
 ## Accessing page table data in the widget
@@ -166,9 +168,11 @@ This array of properties gets mapped to [public Livewire properties](https://liv
 
 ```php
 use Filament\Widgets\Widget;
+use Livewire\Attributes\Locked;
 
 class CustomerOverview extends Widget
 {
+    #[Locked]
     public string $status;
 
     // ...
@@ -176,3 +180,5 @@ class CustomerOverview extends Widget
 ```
 
 Now, you can access the `status` in the widget class using `$this->status`.
+
+The `#[Locked]` attribute prevents client-side changes to this server-provided configuration. You can still assign the property from PHP.
