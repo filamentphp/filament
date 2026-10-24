@@ -62,6 +62,7 @@ use Filament\Tests\Fixtures\Pages\RadioTest;
 use Filament\Tests\Fixtures\Pages\RepeaterTest;
 use Filament\Tests\Fixtures\Pages\RichEditorBrowserTest;
 use Filament\Tests\Fixtures\Pages\RichEditorMinimalControlsBrowserTest;
+use Filament\Tests\Fixtures\Pages\SchemaComponentScopeBrowserTest;
 use Filament\Tests\Fixtures\Pages\ScopedActionsBrowserTest;
 use Filament\Tests\Fixtures\Pages\SectionBrowserTest;
 use Filament\Tests\Fixtures\Pages\SelectTest;
@@ -142,6 +143,7 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
                 Actions::class,
+                SchemaComponentScopeBrowserTest::class,
                 ScopedActionsBrowserTest::class,
                 AfterStateUpdatedJsTest::class,
                 AuthorizableSettings::class,

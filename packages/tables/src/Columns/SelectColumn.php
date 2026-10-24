@@ -9,7 +9,7 @@ use Filament\Forms\Components\Concerns\CanSelectPlaceholder;
 use Filament\Forms\Components\Concerns\HasEnum;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasOptions;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Services\RelationshipJoiner;
@@ -375,7 +375,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     /**
      * @return array<array{'label': string, 'value': string}>
      */
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getOptionsForJs(): array
     {
@@ -389,7 +389,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         return $this;
     }
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getOptionLabel(bool $withDefault = true): ?string
     {
@@ -478,7 +478,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     /**
      * @return array<array{'label': string, 'value': string}>
      */
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getOptionsSearchResultsForJs(string $search): array
     {
@@ -955,24 +955,6 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                     canSelectPlaceholder: ' . Js::from($canSelectPlaceholder) . ',
                     clearButtonLabel: ' . Js::from(__('filament-forms::components.select.actions.clear.label')) . ',
                     errorMessage: ' . Js::from(__('filament-forms::components.select.error_message')) . ',
-                    getOptionLabelUsing: async () => {
-                        return await $wire.callTableColumnMethod(' . Js::from($name) . ', ' . Js::from($recordKey) . ', \'getOptionLabel\')
-                    },
-                    getOptionsUsing: async (request) => {
-                        return await request(
-                            $wire,
-                            \'callTableColumnMethod\',
-                            [' . Js::from($name) . ', ' . Js::from($recordKey) . ', \'getOptionsForJs\'],
-                        )
-                    },
-                    getSearchResultsUsing: async (search, request) => {
-                        return await request(
-                            $wire,
-                            \'callTableColumnMethod\',
-                            [' . Js::from($name) . ', ' . Js::from($recordKey) . ', \'getOptionsSearchResultsForJs\'],
-                            { search },
-                        )
-                    },
                     hasDynamicOptions: ' . Js::from($this->hasDynamicOptions()) . ',
                     hasDynamicSearchResults: ' . Js::from($this->hasDynamicOptionsSearchResults()) . ',
                     hasInitialNoOptionsMessage: ' . Js::from($this->hasInitialNoOptionsMessage()) . ',
