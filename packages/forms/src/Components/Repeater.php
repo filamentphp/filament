@@ -9,6 +9,7 @@ use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanBeCollapsed;
 use Filament\Schemas\Components\Concerns\CanBeCompact;
+use Filament\Schemas\Components\Concerns\CanLimitItemsForProcessing;
 use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
 use Filament\Schemas\Schema;
@@ -37,6 +38,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
 {
     use CanBeCollapsed;
     use CanBeCompact;
+    use CanLimitItemsForProcessing;
     use Concerns\CanBeCloned;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
@@ -887,6 +889,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
      */
     public function getDefaultChildSchemas(): array
     {
+        $this->ensureItemsCanBeProcessed($this->getItemsCount());
+
         $rawState = ($this->getRawState() ?? []);
 
         $this->cachedItemsRawStateStructure = array_map(is_array(...), $rawState);
@@ -1636,7 +1640,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
         ob_start(); ?>
 
         <div <?= $outerAttributes->toHtml() ?>>
-            <?= $this->getReorderingDescriptionHtml($items) ?>
+            <span wire:ignore x-ref="reorderStatus" class="fi-sr-only" role="status" aria-live="polite" aria-atomic="true"></span>
+
             <?php if ($collapseAllActionIsVisible || $expandAllActionIsVisible) { ?>
                 <div
                     <?= (new FilamentComponentAttributeBag)->class([
@@ -1803,6 +1808,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                     <?= $addAction->toHtml() ?>
                 </div>
             <?php } ?>
+
+            <?= $this->getReorderingDescriptionHtml($items) ?>
         </div>
 
         <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
@@ -1855,7 +1862,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
         ob_start(); ?>
 
         <div <?= $outerAttributes->toHtml() ?>>
-            <?= $this->getReorderingDescriptionHtml($items) ?>
+            <span wire:ignore x-ref="reorderStatus" class="fi-sr-only" role="status" aria-live="polite" aria-atomic="true"></span>
+
             <?php if ($itemCount) { ?>
                 <ul x-sortable <?= $itemsAttributes->toHtml() ?>>
                     <?php foreach ($items as $itemKey => $item) { ?>
@@ -1943,6 +1951,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                     <?= $addAction->toHtml() ?>
                 </div>
             <?php } ?>
+
+            <?= $this->getReorderingDescriptionHtml($items) ?>
         </div>
 
         <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
@@ -2002,7 +2012,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
         ob_start(); ?>
 
         <div <?= $outerAttributes->toHtml() ?>>
-            <?= $this->getReorderingDescriptionHtml($items) ?>
+            <span wire:ignore x-ref="reorderStatus" class="fi-sr-only" role="status" aria-live="polite" aria-atomic="true"></span>
+
             <?php if ($itemCount) { ?>
                 <table>
                     <thead>
@@ -2179,6 +2190,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                     <?= $addAction->toHtml() ?>
                 </div>
             <?php } ?>
+
+            <?= $this->getReorderingDescriptionHtml($items) ?>
         </div>
 
         <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
@@ -2274,7 +2287,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
     /** @param array<Schema> $items */
     protected function getReorderingDescriptionHtml(array $items): string
     {
-        $html = '<span wire:ignore x-ref="reorderStatus" class="fi-sr-only" role="status" aria-live="polite" aria-atomic="true"></span>';
+        $html = '';
         $position = 0;
 
         foreach ($items as $itemKey => $item) {

@@ -143,6 +143,10 @@ By default, a tab's underlying HTML tag is `<button>`. You can change it to be a
 
 Do not add tablist or tabpanel roles to these navigation links.
 
+<Aside variant="danger">
+    If you are passing user-controlled data to the `href` attribute, validate its scheme using [`Str::sanitizeUrl()`](../advanced/security#validating-user-input) before rendering it. HTML escaping alone does not prevent a `javascript:` URL from executing code when clicked.
+</Aside>
+
 ## Using vertical tabs
 
 You can render the tabs vertically by using the `vertical` attribute:

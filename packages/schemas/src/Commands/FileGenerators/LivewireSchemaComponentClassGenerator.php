@@ -8,6 +8,7 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Commands\FileGenerators\ClassGenerator;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 use Nette\PhpGenerator\ClassType;
@@ -38,6 +39,7 @@ class LivewireSchemaComponentClassGenerator extends ClassGenerator
             InteractsWithActions::class,
             InteractsWithSchemas::class,
             Schema::class,
+            Unexposed::class,
             View::class,
         ];
     }
@@ -94,6 +96,7 @@ class LivewireSchemaComponentClassGenerator extends ClassGenerator
     protected function addContentMethodToClass(ClassType $class): void
     {
         $method = $class->addMethod('content')
+            ->addAttribute(Unexposed::class)
             ->setPublic()
             ->setReturnType(Schema::class)
             ->setBody(<<<'PHP'
@@ -113,6 +116,7 @@ class LivewireSchemaComponentClassGenerator extends ClassGenerator
     protected function addRenderMethodToClass(ClassType $class): void
     {
         $method = $class->addMethod('render')
+            ->addAttribute(Unexposed::class)
             ->setPublic()
             ->setReturnType(View::class)
             ->setBody(new Literal(<<<'PHP'

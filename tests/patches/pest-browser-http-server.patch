@@ -1,0 +1,75 @@
+--- a/src/Drivers/LaravelHttpServer.php
++++ b/src/Drivers/LaravelHttpServer.php
+@@ -13,6 +13,7 @@
+ use Amp\Http\Server\RequestHandler\ClosureRequestHandler;
+ use Amp\Http\Server\Response;
+ use Amp\Http\Server\SocketHttpServer;
++use Amp\Socket\InternetAddress;
+ use Illuminate\Contracts\Debug\ExceptionHandler;
+ use Illuminate\Contracts\Http\Kernel as HttpKernel;
+ use Illuminate\Foundation\Testing\Concerns\WithoutExceptionHandlingHandler;
+@@ -50,6 +51,8 @@
+      */
+     private ?Throwable $lastThrowable = null;
+ 
++    private ?int $resolvedPort = null;
++
+     /**
+      * Creates a new laravel http server instance.
+      */
+@@ -99,13 +102,25 @@
+             return;
+         }
+ 
+-        $this->socket = $server = SocketHttpServer::createForDirectAccess(new NullLogger());
++        $server = SocketHttpServer::createForDirectAccess(new NullLogger());
+ 
+         $server->expose("{$this->host}:{$this->port}");
+         $server->start(
+             new ClosureRequestHandler($this->handleRequest(...)),
+             new DefaultErrorHandler(),
+         );
++
++        foreach ($server->getServers() as $socketServer) {
++            $address = $socketServer->getAddress();
++
++            if ($address instanceof InternetAddress) {
++                $this->resolvedPort = $address->getPort();
++
++                break;
++            }
++        }
++
++        $this->socket = $server;
+     }
+ 
+     /**
+@@ -202,7 +217,7 @@
+             throw new ServerNotFoundException('The HTTP server is not running.');
+         }
+ 
+-        return sprintf('http://%s:%d', $this->host, $this->port);
++        return sprintf('http://%s:%d', $this->host, $this->resolvedPort ?? $this->port);
+     }
+ 
+     /**
+@@ -264,7 +279,7 @@
+         // Set the Host header to match the configured host for subdomain routing
+         $configuredHost = Playwright::host();
+         if ($configuredHost !== null) {
+-            $hostHeader = sprintf('%s:%d', $configuredHost, $this->port);
++            $hostHeader = sprintf('%s:%d', $configuredHost, $this->resolvedPort ?? $this->port);
+             $symfonyRequest->headers->set('Host', $hostHeader);
+             // Also set SERVER_NAME for Laravel routing
+             $symfonyRequest->server->set('SERVER_NAME', $configuredHost);
+--- a/src/ServerManager.php
++++ b/src/ServerManager.php
+@@ -86,7 +86,7 @@
+         return $this->http ??= match (function_exists('app_path')) {
+             true => new LaravelHttpServer(
+                 self::DEFAULT_HOST, // Always bind to 127.0.0.1 for server
+-                Port::find(),
++                0,
+             ),
+             default => new NullableHttpServer(),
+         };

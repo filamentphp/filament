@@ -160,8 +160,8 @@ describe('state from media', function (): void {
 
         $state = $entry->getState();
 
-        expect($state)->toContain($media1->uuid);
-        expect($state)->toContain($media2->uuid);
+        expect($state)->toContain($media1->fresh()->uuid);
+        expect($state)->toContain($media2->fresh()->uuid);
         expect($state)->toHaveCount(2);
     });
 
@@ -196,7 +196,7 @@ describe('state from media', function (): void {
                     ->record($record)
             );
 
-        expect($entry->toEmbeddedHtml())->toContain('alt="media-' . $media->getKey() . '-' . $media->uuid . '"');
+        expect($entry->toEmbeddedHtml())->toContain('alt="media-' . $media->getKey() . '-' . $media->fresh()->uuid . '"');
     });
 
     it('only returns UUIDs from the specified collection', function (): void {
@@ -222,7 +222,7 @@ describe('state from media', function (): void {
         $state = $entry->getState();
 
         expect($state)->toHaveCount(1);
-        expect($state)->toContain($avatarMedia->uuid);
+        expect($state)->toContain($avatarMedia->fresh()->uuid);
     });
 
     it('returns UUIDs from all collections when `allCollections()` is used', function (): void {

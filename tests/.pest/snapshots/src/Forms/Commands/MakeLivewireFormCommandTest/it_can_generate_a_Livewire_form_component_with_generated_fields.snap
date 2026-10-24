@@ -12,6 +12,8 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Models\Post;
 use Illuminate\Contracts\View\View;
@@ -24,11 +26,13 @@ class CreatePostWithFields extends Component implements HasActions, HasSchemas
 
     public ?array $data = [];
 
+    #[Unexposed]
     public function mount(): void
     {
         $this->form->fill();
     }
 
+    #[Unexposed]
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -64,6 +68,7 @@ class CreatePostWithFields extends Component implements HasActions, HasSchemas
             ->model(Post::class);
     }
 
+    #[Exposed]
     public function create(): void
     {
         $data = $this->form->getState();
@@ -73,6 +78,7 @@ class CreatePostWithFields extends Component implements HasActions, HasSchemas
         $this->form->model($record)->saveRelationships();
     }
 
+    #[Unexposed]
     public function render(): View
     {
         return view('livewire.create-post-with-fields');

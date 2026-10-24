@@ -77,6 +77,8 @@ trait CanOpenModal
 
     protected string | Htmlable | Closure | null $modalDescription = null;
 
+    protected string | Htmlable | Closure | null $modalEyebrow = null;
+
     protected Width | string | Closure | null $modalWidth = null;
 
     protected bool | Closure | null $hasModal = null;
@@ -328,6 +330,13 @@ trait CanOpenModal
     public function modalDescription(string | Htmlable | Closure | null $description = null): static
     {
         $this->modalDescription = $description;
+
+        return $this;
+    }
+
+    public function modalEyebrow(string | Htmlable | Closure | null $eyebrow = null): static
+    {
+        $this->modalEyebrow = $eyebrow;
 
         return $this;
     }
@@ -659,6 +668,16 @@ trait CanOpenModal
         return filled($this->getModalDescription());
     }
 
+    public function getModalEyebrow(): string | Htmlable | null
+    {
+        return $this->evaluate($this->modalEyebrow);
+    }
+
+    public function hasModalEyebrow(): bool
+    {
+        return filled($this->getModalEyebrow());
+    }
+
     public function getModalWidth(): Width | string
     {
         if ($width = $this->evaluate($this->modalWidth)) {
@@ -708,6 +727,7 @@ trait CanOpenModal
         }
 
         return $this->hasCustomModalHeading() ||
+            $this->hasModalEyebrow() ||
             $this->hasModalDescription() ||
             $this->hasModalContent() ||
             $this->hasModalContentFooter() ||

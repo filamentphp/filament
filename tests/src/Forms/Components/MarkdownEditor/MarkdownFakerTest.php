@@ -21,6 +21,9 @@ it('generates deterministic Markdown using the Faker seed', function (): void {
     $firstMarkdownBuilder = $faker->filamentMarkdown();
     $secondMarkdownBuilder = $faker->filamentMarkdown();
 
+    // Collect old `Generator` instances before their destructors can reset the seed.
+    gc_collect_cycles();
+
     $faker->seed(1234);
 
     $firstMarkdown = $firstMarkdownBuilder

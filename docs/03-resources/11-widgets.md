@@ -71,7 +71,9 @@ If you're using a widget on an [Edit](editing-records) or [View](viewing-records
 
 ```php
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Attributes\Locked;
 
+#[Locked]
 public ?Model $record = null;
 ```
 
@@ -166,13 +168,15 @@ This array of properties gets mapped to [public Livewire properties](https://liv
 
 ```php
 use Filament\Widgets\Widget;
+use Livewire\Attributes\Locked;
 
 class CustomerOverview extends Widget
 {
+    #[Locked]
     public string $status;
 
     // ...
 }
 ```
 
-Now, you can access the `status` in the widget class using `$this->status`.
+Now, you can access the `status` in the widget class using `$this->status`. [`#[Locked]`](../advanced/security#protecting-server-managed-component-state) prevents client-side changes to this configuration.

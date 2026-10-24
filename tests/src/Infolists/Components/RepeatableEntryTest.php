@@ -2,11 +2,13 @@
 
 namespace Filament\Tests\Infolists\Components;
 
+use ArrayIterator;
 use ArrayObject;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\RepeatableEntry\TableColumn;
@@ -21,8 +23,11 @@ use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Generator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\LazyCollection;
 use Livewire\Component;
 use RuntimeException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 use function Filament\Tests\livewire;
 
@@ -338,6 +343,112 @@ describe('item collections', function (): void {
     });
 });
 
+describe('processing item limits', function (): void {
+    it('allows increasing, decreasing and disabling a global `maxItemsForProcessing()`', function (): void {
+        expect(RepeatableEntry::make('items')->getMaxItemsForProcessing())->toBeNull();
+
+        RepeatableEntry::configureUsing(
+            static fn (RepeatableEntry $entry) => $entry->maxItemsForProcessing(10),
+            during: function (): void {
+                expect(RepeatableEntry::make('items')->getMaxItemsForProcessing())->toBe(10);
+
+                foreach ([5, 20, null] as $limit) {
+                    $entry = RepeatableEntry::make('items');
+
+                    expect($entry->maxItemsForProcessing($limit))->toBe($entry)
+                        ->and($entry->getMaxItemsForProcessing())->toBe($limit);
+                }
+            },
+        );
+    });
+
+    it('rejects excessive item counts before evaluating schemas and preserves supported state types', function (mixed $state): void {
+        $entry = RepeatableEntry::make('items')
+            ->state($state)
+            ->maxItemsForProcessing(2)
+            ->schema(static fn () => throw new RuntimeException('Item schemas must not be evaluated.'));
+
+        Schema::make(Livewire::make())->components([$entry])->getComponents();
+
+        expect(fn () => $entry->getItems())->toThrow(function (HttpException $exception): void {
+            expect($exception->getStatusCode())->toBe(413);
+        });
+
+        expect($entry->getState())->toBe($state);
+
+        $entry->maxItemsForProcessing(3)->schema([TextEntry::make('name')]);
+
+        expect(array_keys($entry->getItems()))->toBe(['first', 'second', 'third'])
+            ->and($entry->getItems()['third']->getComponents()[0]->getState())->toBe('Third')
+            ->and($entry->getItems())->toHaveCount(3);
+    })->with([
+        'array' => fn (): array => ['first' => ['name' => 'First'], 'second' => ['name' => 'Second'], 'third' => ['name' => 'Third']],
+        'collection' => fn (): Collection => collect(['first' => ['name' => 'First'], 'second' => ['name' => 'Second'], 'third' => ['name' => 'Third']]),
+        'lazy collection' => fn (): LazyCollection => LazyCollection::make(['first' => ['name' => 'First'], 'second' => ['name' => 'Second'], 'third' => ['name' => 'Third']]),
+        'array object' => fn (): ArrayObject => new ArrayObject(['first' => ['name' => 'First'], 'second' => ['name' => 'Second'], 'third' => ['name' => 'Third']]),
+        'iterator' => fn (): ArrayIterator => new ArrayIterator(['first' => ['name' => 'First'], 'second' => ['name' => 'Second'], 'third' => ['name' => 'Third']]),
+        'generator' => function (): Generator {
+            yield 'first' => ['name' => 'First'];
+            yield 'second' => ['name' => 'Second'];
+            yield 'third' => ['name' => 'Third'];
+        },
+        'object' => fn (): object => (object) ['first' => ['name' => 'First'], 'second' => ['name' => 'Second'], 'third' => ['name' => 'Third']],
+    ]);
+
+    it('rejects item growth after caching and allows disabling the processing limit', function (): void {
+        $state = (object) ['first' => ['name' => 'First']];
+        $entry = RepeatableEntry::make('items')
+            ->state($state)
+            ->maxItemsForProcessing(1)
+            ->schema([TextEntry::make('name')]);
+
+        Schema::make(Livewire::make())->components([$entry])->getComponents();
+
+        expect($entry->getItems())->toHaveCount(1);
+
+        $state->second = ['name' => 'Second'];
+
+        expect(fn () => $entry->getItems())->toThrow(function (HttpException $exception): void {
+            expect($exception->getStatusCode())->toBe(413);
+        });
+
+        $entry->maxItemsForProcessing(null);
+
+        expect($entry->getItems())->toHaveCount(2);
+
+        $entry->state([])->maxItemsForProcessing(0);
+
+        expect($entry->getItems())->toBe([]);
+    });
+
+    it('applies processing limits when rendering ordinary and table repeatable entries', function (string $component): void {
+        RepeatableEntry::configureUsing(
+            static fn (RepeatableEntry $entry) => $entry->maxItemsForProcessing(1),
+            during: fn () => livewire($component)->assertSuccessful(),
+        );
+
+        RepeatableEntry::configureUsing(
+            static fn (RepeatableEntry $entry) => $entry->maxItemsForProcessing(0),
+            during: fn () => livewire($component)->assertStatus(413),
+        );
+    })->with([
+        'ordinary' => [RenderRepeatableEntryWithContainedFalse::class],
+        'table' => [RenderRepeatableEntryWithTable::class],
+    ]);
+
+    it('limits nested repeatable entries independently of the parent repeater', function (): void {
+        Repeater::fake();
+
+        $component = livewire(RepeatableEntryWithProcessingLimit::class)
+            ->set('data.items.0.children', [['name' => 'First'], ['name' => 'Second']])
+            ->assertSuccessful()
+            ->assertSeeText('Second');
+
+        $component->set('data.items.0.children', [['name' => 'First'], ['name' => 'Second'], ['name' => 'Third']])
+            ->assertStatus(413);
+    });
+});
+
 describe('nested state resolution', function (): void {
     it('can resolve state for `RepeatableEntry` within nested sections with `statePath()`', function (): void {
         livewire(TestRepeatableEntryInNestedSections::class)
@@ -543,6 +654,32 @@ it('can render `RepeatableEntry` within form schema', function (): void {
         ->assertSchemaComponentStateSet('tags.1.label', 'Tag Two', 'form')
         ->assertSeeText('Tag Two');
 });
+
+class RepeatableEntryWithProcessingLimit extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public array $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill(['items' => [['children' => [['name' => 'First']]]]]);
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema->statePath('data')->components([
+            Repeater::make('items')->maxItemsForProcessing(1)->schema([
+                RepeatableEntry::make('children')->maxItemsForProcessing(2)->schema([TextEntry::make('name')]),
+            ]),
+        ]);
+    }
+
+    public function render(): string
+    {
+        return '<div>{{ $this->form }}</div>';
+    }
+}
 
 class TestRelationshipRepeatableEntry extends Component implements HasSchemas
 {

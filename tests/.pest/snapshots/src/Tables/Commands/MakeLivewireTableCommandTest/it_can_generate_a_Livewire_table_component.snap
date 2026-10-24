@@ -7,6 +7,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -21,6 +22,7 @@ class ListBlogPosts extends Component implements HasActions, HasSchemas, HasTabl
     use InteractsWithTable;
     use InteractsWithSchemas;
 
+    #[Unexposed]
     public function table(Table $table): Table
     {
         return $table
@@ -44,6 +46,7 @@ class ListBlogPosts extends Component implements HasActions, HasSchemas, HasTabl
             ]);
     }
 
+    #[Unexposed]
     public function render(): View
     {
         return view('livewire.list-blog-posts');

@@ -30,6 +30,7 @@ class FileUploadBrowserTest extends Page
             ->schema([
                 FileUpload::make('attachment')
                     ->label('Attachment')
+                    ->extraAttributes(['data-testid' => 'attachment-upload'])
                     ->multiple()
                     ->reorderable()
                     ->fetchFileInformation(false)

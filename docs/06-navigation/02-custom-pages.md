@@ -76,7 +76,9 @@ You can also open an action when a page loads by setting the `$defaultAction` pr
 
 ```php
 use Filament\Actions\Action;
+use Livewire\Attributes\Locked;
 
+#[Locked]
 public $defaultAction = 'onboarding';
 
 public function onboardingAction(): Action
@@ -90,6 +92,9 @@ public function onboardingAction(): Action
 You can also pass an array of arguments to the default action using the `$defaultActionArguments` property:
 
 ```php
+use Livewire\Attributes\Locked;
+
+#[Locked]
 public $defaultActionArguments = ['step' => 2];
 ```
 
@@ -167,8 +172,13 @@ public function getWidgetData(): array
 Now, you can define a corresponding public `$stats` array property on the widget class, which will be automatically filled:
 
 ```php
+use Livewire\Attributes\Locked;
+
+#[Locked]
 public $stats = [];
 ```
+
+[`#[Locked]`](../advanced/security#protecting-server-managed-component-state) prevents client-side changes to this data.
 
 ### Passing properties to widgets on pages
 
@@ -191,9 +201,11 @@ This array of properties gets mapped to [public Livewire properties](https://liv
 
 ```php
 use Filament\Widgets\Widget;
+use Livewire\Attributes\Locked;
 
 class StatsOverviewWidget extends Widget
 {
+    #[Locked]
     public string $status;
 
     // ...

@@ -8,6 +8,8 @@ use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Columns\Summarizers\Values;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\TestCase;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Database\SqlServerConnection;
 
 uses(TestCase::class);
 
@@ -85,6 +87,23 @@ describe('`Average` summarizer', function (): void {
 
         expect($average->getId())->toBe('avg-rating');
     });
+
+    it('rejects SQL Server `distinct()` combined with unions or `having()` in a summary query', function (string $method, bool | array $distinct): void {
+        $connection = app(SqlServerConnection::class, [
+            'pdo' => static fn () => throw new RuntimeException('No database connection is needed to reject this query.'),
+        ]);
+        $query = $connection->query()->from('amounts')
+            ->beforeQuery(static fn (Builder $query): Builder => $query->distinct($distinct));
+
+        if ($method === 'having') {
+            $query->groupBy('amount')->having('amount', '>', 0);
+        } else {
+            $query->{$method}($connection->query()->from('other_amounts'));
+        }
+
+        expect(fn () => Average::make()->summarize($query, 'amount'))
+            ->toThrow(LogicException::class, 'SQL Server average summaries do not support combining distinct()');
+    })->with(['union', 'unionAll', 'having'])->with([[true], [['amount']]]);
 });
 
 describe('`Count` summarizer', function (): void {

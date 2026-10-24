@@ -10,6 +10,7 @@
     'closeEventName' => 'close-modal',
     'closeQuietlyEventName' => 'close-modal-quietly',
     'description' => null,
+    'eyebrow' => null,
     'restoresFocus' => true,
     'extraModalWindowAttributeBag' => null,
     'extraModalOverlayAttributeBag' => null,
@@ -56,6 +57,7 @@
 
     $hasContent = ! \Filament\Support\is_slot_empty($slot);
     $hasDescription = filled($description);
+    $hasEyebrow = filled($eyebrow);
     $hasFooter = (! \Filament\Support\is_slot_empty($footer)) || (is_array($footerActions) && count($footerActions)) || (! is_array($footerActions) && (! \Filament\Support\is_slot_empty($footerActions)));
     $hasHeading = filled($heading);
     $iconHtml = ($icon || $iconAlias) ? \Filament\Support\generate_icon_html($icon, $iconAlias, size: IconSize::Large) : null;
@@ -253,7 +255,7 @@
                     @endif
                     @class([
                         'fi-modal-header',
-                        'fi-vertical-align-center' => $hasIcon && $hasHeading && (! $hasDescription) && in_array($alignment, [Alignment::Start, Alignment::Left]),
+                        'fi-vertical-align-center' => $hasIcon && $hasHeading && (! $hasEyebrow) && (! $hasDescription) && in_array($alignment, [Alignment::Start, Alignment::Left]),
                     ])
                 >
                     @if ($closeButton)
@@ -284,6 +286,12 @@
                         @endif
 
                         <div>
+                            @if ($hasHeading && $hasEyebrow)
+                                <p class="fi-modal-eyebrow">
+                                    {{ $eyebrow }}
+                                </p>
+                            @endif
+
                             <h2
                                 @if ($headingId)
                                     id="{{ $headingId }}"

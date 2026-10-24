@@ -485,6 +485,10 @@ Select::make('author_id')
 
 <UtilityInjection set="formFields" extras="Schema;;Filament\Schemas\Schema;;$schema;;The schema object for the form in the modal.">As well as allowing a static value, the `createOptionForm()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<Aside variant="warning">
+    Creating an option does not automatically check the related model's `create()` policy, even when the select is used in a resource form. [Authorize the option action](#authorizing-option-actions) separately from the parent resource.
+</Aside>
+
 <AutoScreenshot name="forms/fields/select/create-option" alt="Select with create option button" />
 
 The form opens in a modal, where the user can fill it with data. Upon form submission, the new record is selected by the field.
@@ -530,11 +534,34 @@ Select::make('author_id')
 
 <UtilityInjection set="formFields" extras="Schema;;Filament\Schemas\Schema;;$schema;;The schema object for the form in the modal.">As well as allowing a static value, the `editOptionForm()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<Aside variant="warning">
+    Editing an option does not automatically check the selected record's `view()` or `update()` policy. [Authorize the option action](#authorizing-option-actions) before its modal is filled, not only when saving changes.
+</Aside>
+
 <AutoScreenshot name="forms/fields/select/edit-option" alt="Select with edit option button" />
 
 The form opens in a modal, where the user can fill it with data. Upon form submission, the data from the form is saved back to the record.
 
 <AutoScreenshot name="forms/fields/select/edit-option-modal" alt="Select with edit option modal" />
+
+#### Customizing the edit form data
+
+By default, the edit form is filled with the related record's non-hidden attributes, including attributes without a field in `editOptionForm()`. You can limit the data sent to the browser using `fillEditOptionActionFormUsing()`:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->editOptionForm([
+        // ...
+    ])
+    ->fillEditOptionActionFormUsing(
+        static fn (Select $component): array => $component->getSelectedRecord()?->only(['name', 'email']) ?? [],
+    )
+```
+
+Returning fewer attributes does not replace [action authorization](#authorizing-option-actions) or record scoping.
 
 #### Customizing option updates
 
@@ -555,6 +582,50 @@ Select::make('author_id')
 ```
 
 <UtilityInjection set="formFields" extras="Data;;array<string, mixed>;;$data;;The data from the form in the modal.||Schema;;Filament\Schemas\Schema;;$schema;;The schema object for the form in the modal.">The `updateOptionUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Authorizing option actions
+
+You are responsible for authorizing option creation and editing, separately from access to the form's parent record. Use `createOptionAction()` and `editOptionAction()` to [authorize the actions](../actions/overview#authorization). For example, in a panel, you can check the related model's policy using the panel's authenticated user:
+
+```php
+use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->createOptionForm([
+        // ...
+    ])
+    ->createOptionAction(
+        static fn (Action $action) => $action->authorize(
+            static fn (): bool => Filament::auth()->user()->can('create', User::class),
+        ),
+    )
+    ->editOptionForm([
+        // ...
+    ])
+    ->editOptionAction(
+        static fn (Action $action) => $action->authorize(static function (Select $component): bool {
+            $record = $component->getSelectedRecord();
+
+            return $record && Filament::auth()->user()->can('update', $record);
+        }),
+    )
+```
+
+Outside a panel, use your application's authentication guard instead of `Filament::auth()`.
+
+For editing, use `$component->getSelectedRecord()` to authorize the related record, not the action's injected `$record`, which may be the parent form record. If your application requires a separate `view()` policy check, include it in the authorization callback too.
+
+When customizing persistence with `createOptionUsing()` or `updateOptionUsing()`, authorize the operation your callback performs. See the [security guide](../advanced/security#custom-actions) for more information.
+
+#### Scoping editable options
+
+The selected ID is client-controlled form state. Use the [`relationship()` query's `modifyQueryUsing` argument](#customizing-the-relationship-query) to apply tenant or ownership restrictions when resolving the record for editing. A parent resource's query restrictions do not automatically scope the related model, and allowing a record to be selected does not authorize editing it.
+
+Relationship queries retain the related model's global scopes. However, without `modifyQueryUsing`, an already-loaded selected relationship may be reused without querying its current scopes again. Use `modifyQueryUsing` if these restrictions must be reapplied. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
 
 ### Handling `MorphTo` relationships
 

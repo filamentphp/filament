@@ -71,7 +71,7 @@ return [
         'heading' => 'Riepilogo',
 
         'subheadings' => [
-            'all' => 'Tutti gli :label',
+            'all' => 'Tutte le righe',
             'group' => 'Riepilogo :group',
             'page' => 'Questa pagina',
         ],

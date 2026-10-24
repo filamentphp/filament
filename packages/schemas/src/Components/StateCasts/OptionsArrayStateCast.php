@@ -9,6 +9,10 @@ use Stringable;
 
 class OptionsArrayStateCast implements StateCast
 {
+    public function __construct(
+        protected bool $shouldCastToInteger = true,
+    ) {}
+
     /**
      * @return array<string | int>
      */
@@ -45,6 +49,12 @@ class OptionsArrayStateCast implements StateCast
 
                 if ($stateItem instanceof Stringable) {
                     $stateItem = (string) $stateItem;
+                }
+
+                if (! $this->shouldCastToInteger) {
+                    $carry[] = strval($stateItem);
+
+                    return $carry;
                 }
 
                 if (

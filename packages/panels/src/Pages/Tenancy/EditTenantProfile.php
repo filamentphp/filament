@@ -14,6 +14,8 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -45,13 +47,16 @@ abstract class EditTenantProfile extends Page
 
     protected static bool $isDiscovered = false;
 
+    #[Unexposed]
     abstract public static function getLabel(): string;
 
+    #[Unexposed]
     public static function getRelativeRouteName(Panel $panel): string
     {
         return 'profile';
     }
 
+    #[Unexposed]
     public static function getRouteName(?Panel $panel = null): string
     {
         $panel ??= Filament::getCurrentOrDefaultPanel();
@@ -59,11 +64,13 @@ abstract class EditTenantProfile extends Page
         return $panel->generateRouteName('tenant.' . static::getRelativeRouteName($panel));
     }
 
+    #[Unexposed]
     public static function isTenantSubscriptionRequired(Panel $panel): bool
     {
         return false;
     }
 
+    #[Unexposed]
     public function mount(): void
     {
         $this->tenant = Filament::getTenant();
@@ -73,11 +80,13 @@ abstract class EditTenantProfile extends Page
         $this->fillForm();
     }
 
+    #[Unexposed]
     public function hydrate(): void
     {
         abort_unless(static::canView($this->tenant), 404);
     }
 
+    #[Unexposed]
     public function resolveScopedModelProperties(): void
     {
         $this->tenant = Filament::getTenant();
@@ -114,6 +123,7 @@ abstract class EditTenantProfile extends Page
         return $data;
     }
 
+    #[Exposed]
     public function save(): void
     {
         try {
@@ -186,6 +196,7 @@ abstract class EditTenantProfile extends Page
         return null;
     }
 
+    #[Unexposed]
     public function defaultForm(Schema $schema): Schema
     {
         return $schema
@@ -194,6 +205,7 @@ abstract class EditTenantProfile extends Page
             ->statePath('data');
     }
 
+    #[Unexposed]
     public function form(Schema $schema): Schema
     {
         return $schema;
@@ -217,16 +229,19 @@ abstract class EditTenantProfile extends Page
             ->keyBindings(['mod+s']);
     }
 
+    #[Unexposed]
     public function getTitle(): string | Htmlable
     {
         return static::getLabel();
     }
 
+    #[Unexposed]
     public static function getSlug(?Panel $panel = null): string
     {
         return static::$slug ?? 'profile';
     }
 
+    #[Unexposed]
     public static function canView(Model $tenant): bool
     {
         try {
@@ -236,6 +251,7 @@ abstract class EditTenantProfile extends Page
         }
     }
 
+    #[Unexposed]
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -244,6 +260,7 @@ abstract class EditTenantProfile extends Page
             ]);
     }
 
+    #[Unexposed]
     public function getFormContentComponent(): Component
     {
         return Form::make([EmbeddedSchema::make('form')])

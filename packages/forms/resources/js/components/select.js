@@ -5,10 +5,6 @@ export default function selectFormComponent({
     canSelectPlaceholder,
     clearButtonLabel,
     errorMessage,
-    getOptionLabelUsing,
-    getOptionLabelsUsing,
-    getOptionsUsing,
-    getSearchResultsUsing,
     hasDynamicOptions,
     hasDynamicSearchResults,
     hasInitialNoOptionsMessage,
@@ -55,10 +51,30 @@ export default function selectFormComponent({
                 clearButtonLabel,
                 element: this.$refs.select,
                 errorMessage,
-                getOptionLabelUsing,
-                getOptionLabelsUsing,
-                getOptionsUsing,
-                getSearchResultsUsing,
+                getOptionLabelUsing: () =>
+                    this.$callSchemaComponentMethod(
+                        'getOptionLabel',
+                        {},
+                        { async: true },
+                    ),
+                getOptionLabelsUsing: () =>
+                    this.$callSchemaComponentMethod(
+                        'getOptionLabelsForJs',
+                        {},
+                        { async: true },
+                    ),
+                getOptionsUsing: () =>
+                    this.$callSchemaComponentMethod(
+                        'getOptionsForJs',
+                        {},
+                        { async: true },
+                    ),
+                getSearchResultsUsing: (search) =>
+                    this.$callSchemaComponentMethod(
+                        'getSearchResultsForJs',
+                        { search },
+                        { async: true },
+                    ),
                 hasDynamicOptions,
                 hasDynamicSearchResults,
                 hasInitialNoOptionsMessage,

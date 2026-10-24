@@ -12,6 +12,7 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Livewire\Attributes\Url;
@@ -37,6 +38,7 @@ trait HasRelationManagers
     /**
      * @return array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration>
      */
+    #[Unexposed]
     public function getCachedRelationManagers(): array
     {
         if (! $this->hasRecord()) {
@@ -49,6 +51,7 @@ trait HasRelationManagers
     /**
      * @return array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration>
      */
+    #[Unexposed]
     public function getRelationManagers(): array
     {
         $managers = $this->getAllRelationManagers();
@@ -78,6 +81,7 @@ trait HasRelationManagers
         return $manager;
     }
 
+    #[Unexposed]
     public function renderingHasRelationManagers(): void
     {
         $managers = $this->getCachedRelationManagers();
@@ -93,27 +97,32 @@ trait HasRelationManagers
         $this->activeRelationManager = array_key_first($managers);
     }
 
+    #[Unexposed]
     public function hasCombinedRelationManagerTabsWithContent(): bool
     {
         return false;
     }
 
+    #[Unexposed]
     public function getContentTabComponent(): Tab
     {
         return Tab::make($this->getContentTabLabel())
             ->icon($this->getContentTabIcon());
     }
 
+    #[Unexposed]
     public function getContentTabLabel(): ?string
     {
         return null;
     }
 
+    #[Unexposed]
     public function getContentTabIcon(): string | BackedEnum | Htmlable | null
     {
         return null;
     }
 
+    #[Unexposed]
     public function getContentTabPosition(): ?ContentTabPosition
     {
         return null;
@@ -122,6 +131,7 @@ trait HasRelationManagers
     /**
      * @return array<string | int, Tab | null>
      */
+    #[Unexposed]
     public function getTabComponents(): array
     {
         // The empty key has always represented content in combined tabs.
@@ -138,6 +148,7 @@ trait HasRelationManagers
      * @param  array<string | int>  $except
      * @return array<string | int, Tab>
      */
+    #[Unexposed]
     public function getRelationManagerTabComponents(array $except = []): array
     {
         $tabs = [];
@@ -151,6 +162,7 @@ trait HasRelationManagers
         return $tabs;
     }
 
+    #[Unexposed]
     public function getRelationManagerTabComponent(string | int $key): ?Tab
     {
         $manager = $this->getCachedRelationManagers()[$key] ?? null;
@@ -200,6 +212,7 @@ trait HasRelationManagers
         return $managerLivewireData;
     }
 
+    #[Unexposed]
     public function getRelationManagersContentComponent(): Component
     {
         $managers = $this->getCachedRelationManagers();

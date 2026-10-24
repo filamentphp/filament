@@ -11,6 +11,8 @@ use Filament\Schemas\Schema;
 use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Support\Commands\FileGenerators\ClassGenerator;
 use Filament\Support\Commands\FileGenerators\Contracts\HasSkippedColumns;
+use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
@@ -52,6 +54,8 @@ class LivewireFormComponentClassGenerator extends ClassGenerator implements HasS
             InteractsWithActions::class,
             InteractsWithSchemas::class,
             Schema::class,
+            Exposed::class,
+            Unexposed::class,
             ...($this->hasPartialImports() ? [
                 'Filament\Forms',
                 'Filament\Schemas',
@@ -147,6 +151,7 @@ class LivewireFormComponentClassGenerator extends ClassGenerator implements HasS
         $submitAction = $this->getSubmitAction();
 
         $method = $class->addMethod('mount')
+            ->addAttribute(Unexposed::class)
             ->setPublic()
             ->setReturnType('void')
             ->setBody(match ($submitAction) {
@@ -169,6 +174,7 @@ class LivewireFormComponentClassGenerator extends ClassGenerator implements HasS
         $modelFqn = $this->getModelFqn();
 
         $method = $class->addMethod('form')
+            ->addAttribute(Unexposed::class)
             ->setPublic()
             ->setReturnType(Schema::class)
             ->setBody(
@@ -200,6 +206,7 @@ class LivewireFormComponentClassGenerator extends ClassGenerator implements HasS
         $modelFqn = $this->getModelFqn();
 
         $method = $class->addMethod($submitAction)
+            ->addAttribute(Exposed::class)
             ->setPublic()
             ->setReturnType('void')
             ->setBody(match ($submitAction) {
@@ -230,6 +237,7 @@ class LivewireFormComponentClassGenerator extends ClassGenerator implements HasS
     protected function addRenderMethodToClass(ClassType $class): void
     {
         $method = $class->addMethod('render')
+            ->addAttribute(Unexposed::class)
             ->setPublic()
             ->setReturnType(View::class)
             ->setBody(new Literal(<<<'PHP'

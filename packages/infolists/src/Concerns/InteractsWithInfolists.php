@@ -4,12 +4,15 @@ namespace Filament\Infolists\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 
 trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
 {
     /**
      * @deprecated Use `getSchema()` instead.
      */
+    #[Unexposed]
     public function getInfolist(string $name): ?Schema
     {
         return $this->getSchema($name);
@@ -28,6 +31,7 @@ trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
      *
      * @deprecated Use `getCachedSchemas()` instead.
      */
+    #[Unexposed]
     public function getCachedInfolists(): array
     {
         return $this->getCachedSchemas();
@@ -46,6 +50,7 @@ trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
      *
      * @param  array<string, mixed>  $arguments
      */
+    #[Exposed]
     public function callMountedInfolistAction(array $arguments = []): mixed
     {
         return $this->callMountedAction($arguments);
@@ -54,6 +59,7 @@ trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `mountAction()` instead.
      */
+    #[Exposed]
     public function mountInfolistAction(string $name, ?string $component = null, ?string $infolist = null): mixed
     {
         return $this->mountAction($name, context: [
@@ -64,6 +70,7 @@ trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `mountedActionShouldOpenModal()` instead.
      */
+    #[Unexposed]
     public function mountedInfolistActionShouldOpenModal(?Action $mountedAction = null): bool
     {
         return $this->mountedActionShouldOpenModal($mountedAction);
@@ -72,6 +79,7 @@ trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `mountedActionHasForm()` instead.
      */
+    #[Unexposed]
     public function mountedInfolistActionHasForm(?Action $mountedAction = null): bool
     {
         return $this->mountedActionHasSchema($mountedAction);
@@ -80,6 +88,7 @@ trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `getMountedAction()` instead.
      */
+    #[Unexposed]
     public function getMountedInfolistAction(): ?Action
     {
         return $this->getMountedAction();
@@ -88,6 +97,7 @@ trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `getMountedActionComponent()` instead.
      */
+    #[Exposed]
     public function unmountInfolistAction(bool $shouldCancelParentActions = true): void
     {
         $this->unmountAction(cancelParentActions: $shouldCancelParentActions ? null : false);

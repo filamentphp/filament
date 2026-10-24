@@ -79,12 +79,6 @@
             ])
     }}
 >
-    @if (($field instanceof Field) && filled($requiredDescription = $field->getRequiredDescription()))
-        <span id="{{ $id }}-required" class="fi-sr-only">
-            {{ $requiredDescription }}
-        </span>
-    @endif
-
     @if (filled($label) && $labelSrOnly)
         <{{ $labelTag }}
             @if ($labelTag === 'label')
@@ -210,5 +204,11 @@
                 {{ $belowErrorMessageSchema }}
             @endif
         </div>
+    @endif
+
+    @if (($field instanceof Field) && filled($requiredDescription = $field->getRequiredDescription()))
+        <span id="{{ $id }}-required" class="fi-sr-only">
+            {{ $requiredDescription }}
+        </span>
     @endif
 </div>

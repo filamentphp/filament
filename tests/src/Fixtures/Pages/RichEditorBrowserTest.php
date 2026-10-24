@@ -4,6 +4,7 @@ namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Pages\Page;
@@ -51,6 +52,10 @@ class RichEditorBrowserTest extends Page
                         </div>
                         <p>After grid.</p>
                         HTML)
+                    ->mentions([
+                        MentionProvider::make('@')
+                            ->getSearchResultsUsing(static fn (string $search): array => $search === 'Ali' ? ['author-7' => 'Alice Chen'] : []),
+                    ])
                     ->extraAttributes(['data-testid' => 'default-rich-editor']),
                 RichEditor::make('heightConstrainedContent')
                     ->label('Height constrained content')

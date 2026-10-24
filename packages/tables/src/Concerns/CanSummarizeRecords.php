@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Closure;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -17,6 +18,7 @@ trait CanSummarizeRecords
     /**
      * @param  Model | array<string, mixed> | null  $lastRecord
      */
+    #[Unexposed]
     public function shouldRenderTrailingGroupedTableSummary(Model | array | null $lastRecord): bool
     {
         if ($lastRecord === null) {
@@ -66,11 +68,13 @@ trait CanSummarizeRecords
         return $group->getStringKey($nextPageFirstRecord) !== $group->getStringKey($lastRecord);
     }
 
+    #[Unexposed]
     public function getAllTableSummaryQuery(): ?Builder
     {
         return $this->getFilteredTableQuery();
     }
 
+    #[Unexposed]
     public function getPageTableSummaryQuery(): ?Builder
     {
         return $this->getFilteredSortedTableQuery()?->forPage(
@@ -82,6 +86,7 @@ trait CanSummarizeRecords
     /**
      * @return array<string, mixed>
      */
+    #[Unexposed]
     public function getTableSummarySelectedState(?Builder $query = null, ?Closure $modifyQueryUsing = null): array
     {
         if (! $query) {

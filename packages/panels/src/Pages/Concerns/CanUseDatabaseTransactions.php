@@ -4,12 +4,14 @@ namespace Filament\Pages\Concerns;
 
 use Closure;
 use Filament\Facades\Filament;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Support\Facades\DB;
 
 trait CanUseDatabaseTransactions
 {
     protected ?bool $hasDatabaseTransactions = null;
 
+    #[Unexposed]
     public function hasDatabaseTransactions(): bool
     {
         return $this->hasDatabaseTransactions ?? Filament::getCurrentOrDefaultPanel()->hasDatabaseTransactions();

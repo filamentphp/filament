@@ -7,6 +7,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
@@ -17,6 +18,7 @@ use Livewire\Component;
 class InfolistActions extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
+    use InteractsWithInfolists;
     use InteractsWithSchemas;
 
     public function infolist(Schema $infolist): Schema

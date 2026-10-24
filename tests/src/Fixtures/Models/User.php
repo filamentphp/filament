@@ -48,6 +48,7 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     protected function casts(): array
     {
         return [
+            'team_id' => 'integer',
             'json' => 'array',
             'email_verified_at' => 'datetime',
         ];

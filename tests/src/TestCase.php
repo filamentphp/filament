@@ -41,6 +41,7 @@ use Filament\Tests\Fixtures\Providers\UserMenuGroupingPanelProvider;
 use Filament\Tests\Fixtures\Providers\UserMenuLogoutPlacementPanelProvider;
 use Filament\Tests\Fixtures\Providers\ViewComponentsServiceProvider;
 use Filament\Widgets\WidgetsServiceProvider;
+use Illuminate\Database\Connectors\SqlServerConnector;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
 use Kirschbaum\PowerJoins\PowerJoinsServiceProvider;
@@ -227,10 +228,23 @@ abstract class TestCase extends BaseTestCase
             ],
         ]);
 
+        $app['config']->set('database.connections.sqlsrv', [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('SQLSRV_PORT', env('DB_PORT', '1433')),
+            'database' => $databaseName,
+            'username' => env('SQLSRV_USERNAME', env('DB_USERNAME', 'sa')),
+            'password' => env('SQLSRV_PASSWORD', env('DB_PASSWORD', '')),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'encrypt' => env('SQLSRV_ENCRYPT', 'yes'),
+            'trust_server_certificate' => env('SQLSRV_TRUST_SERVER_CERTIFICATE', true),
+        ]);
+
         $connection = env('DB_CONNECTION', 'testing');
 
-        // Auto-create test databases for MySQL/PostgreSQL parallel workers.
-        if ($databaseSuffix !== '' && in_array($connection, ['mysql', 'pgsql'])) {
+        // Auto-create test databases for parallel workers, including the initial SQL Server database.
+        if ((($databaseSuffix !== '') && in_array($connection, ['mysql', 'pgsql'])) || ($connection === 'sqlsrv')) {
             $this->ensureDatabaseExists($connection, $databaseName, $app['config']->get("database.connections.{$connection}"));
         }
 
@@ -259,6 +273,17 @@ abstract class TestCase extends BaseTestCase
                 $result = $pdo->query("select 1 from pg_database where datname = '{$databaseName}'");
                 if ($result->fetchColumn() === false) {
                     $pdo->exec("create database \"{$databaseName}\"");
+                }
+            } elseif ($driver === 'sqlsrv') {
+                $pdo = app(SqlServerConnector::class)->connect([
+                    ...$configuration,
+                    'database' => 'master',
+                ]);
+                $statement = $pdo->prepare('select DB_ID(?)');
+                $statement->execute([$databaseName]);
+
+                if ($statement->fetchColumn() === null) {
+                    $pdo->exec('create database [' . str_replace(']', ']]', $databaseName) . ']');
                 }
             }
         } catch (PDOException) {

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\PostResource\RelationManagers;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class LinksRelationManager extends RelationManager
 {
@@ -16,7 +17,7 @@ class LinksRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('label'),
                 TextColumn::make('url')
-                    ->url(fn (string $state): string => $state, shouldOpenInNewTab: true),
+                    ->url(static fn (string $state): ?string => Str::sanitizeUrl($state), shouldOpenInNewTab: true),
             ]);
     }
 }

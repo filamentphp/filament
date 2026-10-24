@@ -8,9 +8,6 @@ export default function selectTableColumn({
     canSelectPlaceholder,
     clearButtonLabel,
     errorMessage,
-    getOptionLabelUsing,
-    getOptionsUsing,
-    getSearchResultsUsing,
     hasDynamicOptions,
     hasDynamicSearchResults,
     hasInitialNoOptionsMessage,
@@ -58,9 +55,31 @@ export default function selectTableColumn({
                     clearButtonLabel,
                     element: this.$refs.select,
                     errorMessage,
-                    getOptionLabelUsing,
-                    getOptionsUsing,
-                    getSearchResultsUsing,
+                    getOptionLabelUsing: () =>
+                        this.$wire.callTableColumnMethod(
+                            name,
+                            recordKey,
+                            'getOptionLabel',
+                        ),
+                    getOptionsUsing: () =>
+                        Livewire.fireAction(
+                            this.$wire.__instance,
+                            'callTableColumnMethod',
+                            [name, recordKey, 'getOptionsForJs'],
+                            { async: true },
+                        ),
+                    getSearchResultsUsing: (search) =>
+                        Livewire.fireAction(
+                            this.$wire.__instance,
+                            'callTableColumnMethod',
+                            [
+                                name,
+                                recordKey,
+                                'getOptionsSearchResultsForJs',
+                                { search },
+                            ],
+                            { async: true },
+                        ),
                     hasDynamicOptions,
                     hasDynamicSearchResults,
                     hasInitialNoOptionsMessage,

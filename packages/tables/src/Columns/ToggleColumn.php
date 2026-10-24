@@ -70,7 +70,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
 
         $buttonAttributes = (new FilamentComponentAttributeBag)
             ->merge([
-                'aria-disabled' => $this->isDisabled() ? 'true' : null,
+                'aria-disabled' => 'true',
                 'aria-label' => e(trim(strip_tags(($ariaLabel = $this->getLabel()) instanceof Htmlable ? $ariaLabel->toHtml() : $ariaLabel)), doubleEncode: false),
                 'disabled' => $this->isDisabled(),
                 'wire:loading.attr' => 'disabled',

@@ -72,7 +72,7 @@ describe('create', function () use ($makeTipTapDocument, $makeParagraph, $makeIm
         $record = MediaPostWithRichContent::first();
         $media = $record->getMedia('content')->first();
 
-        expect($record->content)->toContain($media->uuid);
+        expect(strtolower($record->content))->toContain(strtolower($media->uuid));
     });
 
     it('creates multiple media from multiple file attachments', function () use ($makeTipTapDocument, $makeImage, $makeParagraph): void {
@@ -188,7 +188,7 @@ describe('update', function () use ($makeTipTapDocument, $makeParagraph, $makeIm
         expect($record->getMedia('content'))->toHaveCount(2);
 
         $mediaUuids = $record->getMedia('content')->pluck('uuid')->all();
-        expect($mediaUuids)->toContain($existingMedia->uuid);
+        expect($mediaUuids)->toContain($existingMedia->fresh()->uuid);
     });
 
     it('replaces media when swapping one image for another', function () use ($makeTipTapDocument, $makeImage): void {
@@ -216,7 +216,7 @@ describe('update', function () use ($makeTipTapDocument, $makeParagraph, $makeIm
         $record->refresh();
 
         expect($record->getMedia('content'))->toHaveCount(1);
-        expect($record->getMedia('content')->first()->uuid)->not->toBe($oldMedia->uuid);
+        expect(strtolower($record->getMedia('content')->first()->uuid))->not->toBe(strtolower($oldMedia->uuid));
     });
 
     it('rejects content referencing another record\'s media when `preventFileAttachmentPathTampering()` is enabled', function () use ($makeTipTapDocument, $makeImage, $makeParagraph): void {
