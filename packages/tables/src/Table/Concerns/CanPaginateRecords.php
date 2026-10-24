@@ -16,6 +16,8 @@ trait CanPaginateRecords
 
     protected bool | Closure $persistsRecordsPerPageInSession = true;
 
+    protected bool | Closure $enforcesPaginationPageOptions = false;
+
     /**
      * @var array<int | string> | Closure | null
      */
@@ -95,6 +97,18 @@ trait CanPaginateRecords
         $this->paginationPageOptions = $options;
 
         return $this;
+    }
+
+    public function enforcePaginationPageOptions(bool | Closure $condition = true): static
+    {
+        $this->enforcesPaginationPageOptions = $condition;
+
+        return $this;
+    }
+
+    public function enforcesPaginationPageOptions(): bool
+    {
+        return (bool) $this->evaluate($this->enforcesPaginationPageOptions);
     }
 
     public function extremePaginationLinks(bool | Closure $condition = true): static

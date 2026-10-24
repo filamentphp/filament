@@ -7,6 +7,7 @@ use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Livewire\Attributes\Locked;
 
 trait CanPaginateRecords
 {
@@ -15,10 +16,17 @@ trait CanPaginateRecords
      */
     public $tableRecordsPerPage = null;
 
+    #[Locked]
+    public int | string | null $initialTableRecordsPerPage = null;
+
     protected int | string | null $defaultTableRecordsPerPageSelectOption = null;
 
     public function updatedTableRecordsPerPage(): void
     {
+        if ($this->getTable()->enforcesPaginationPageOptions()) {
+            $this->tableRecordsPerPage = $this->getTableRecordsPerPage();
+        }
+
         if ($this->getTable()->persistsRecordsPerPageInSession()) {
             session()->put([
                 $this->getTablePerPageSessionKey() => $this->getTableRecordsPerPage(),
@@ -62,6 +70,16 @@ trait CanPaginateRecords
 
     public function getTableRecordsPerPage(): int | string | null
     {
+        if (
+            $this->getTable()->enforcesPaginationPageOptions() &&
+            (
+                ((! is_int($this->tableRecordsPerPage)) && (! is_string($this->tableRecordsPerPage))) ||
+                (! in_array($this->tableRecordsPerPage, $this->getTable()->getPaginationPageOptions()))
+            )
+        ) {
+            return $this->getDefaultTableRecordsPerPageSelectOption();
+        }
+
         return $this->tableRecordsPerPage;
     }
 
@@ -79,7 +97,14 @@ trait CanPaginateRecords
 
         $pageOptions = $this->getTable()->getPaginationPageOptions();
 
-        if (in_array($option, $pageOptions)) {
+        if ($this->getTable()->enforcesPaginationPageOptions() && (! count($pageOptions))) {
+            return $defaultOption ?? $this->initialTableRecordsPerPage ?? 10;
+        }
+
+        if (
+            ((! $this->getTable()->enforcesPaginationPageOptions()) || is_int($option) || is_string($option)) &&
+            in_array($option, $pageOptions)
+        ) {
             return $option;
         }
 
