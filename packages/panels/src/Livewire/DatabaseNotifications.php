@@ -5,7 +5,7 @@ namespace Filament\Livewire;
 use Filament\Enums\DatabaseNotificationsPosition;
 use Filament\Facades\Filament;
 use Filament\Notifications\Livewire\DatabaseNotifications as BaseComponent;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;

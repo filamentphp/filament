@@ -4,7 +4,7 @@ namespace Filament\Pages\Concerns;
 
 use Closure;
 use Filament\Facades\Filament;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Support\Facades\DB;
 
 trait CanUseDatabaseTransactions

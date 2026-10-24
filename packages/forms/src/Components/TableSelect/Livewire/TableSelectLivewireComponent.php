@@ -6,7 +6,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Support\Services\RelationshipJoiner;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;

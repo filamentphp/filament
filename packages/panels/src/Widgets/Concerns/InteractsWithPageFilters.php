@@ -2,7 +2,7 @@
 
 namespace Filament\Widgets\Concerns;
 
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Reactive;
 

@@ -4,7 +4,7 @@ namespace Filament\Livewire;
 
 use Filament\Facades\Filament;
 use Filament\Notifications\Livewire\Notifications as BaseComponent;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 

@@ -3,7 +3,7 @@
 namespace Filament\Pages\Dashboard\Concerns;
 
 use Filament\Facades\Filament;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Livewire\Attributes\Url;
 
 use function Filament\Support\encode_key_segments;

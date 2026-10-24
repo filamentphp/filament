@@ -3,7 +3,7 @@
 namespace Filament\Pages\Dashboard\Concerns;
 
 use Filament\Schemas\Schema;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 
 trait HasFiltersForm /** @phpstan-ignore trait.unused */
 {

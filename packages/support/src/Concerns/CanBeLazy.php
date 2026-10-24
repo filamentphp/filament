@@ -2,7 +2,7 @@
 
 namespace Filament\Support\Concerns;
 
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Contracts\View\View;
 
 trait CanBeLazy

@@ -3,8 +3,8 @@
 namespace Filament\Tests\Rector\Fixtures\MethodAccess;
 
 use Attribute;
-use Filament\Support\Attributes\Unexposed;
 use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 
 trait ExposedMethods
 {

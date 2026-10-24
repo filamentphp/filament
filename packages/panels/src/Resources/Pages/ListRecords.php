@@ -14,7 +14,7 @@ use Filament\Resources\Concerns\HasTabs;
 use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Schema;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\View\PanelsRenderHook;

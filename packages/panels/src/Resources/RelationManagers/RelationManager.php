@@ -36,7 +36,7 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasRenderHookScopes;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Support\Concerns\CanBeLazy;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Contracts\HasTable;

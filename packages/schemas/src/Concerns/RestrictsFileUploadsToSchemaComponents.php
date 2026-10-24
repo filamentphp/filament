@@ -2,7 +2,7 @@
 
 namespace Filament\Schemas\Concerns;
 
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 
 trait RestrictsFileUploadsToSchemaComponents
 {

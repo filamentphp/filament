@@ -8,8 +8,8 @@ use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Schema;
-use Filament\Support\Attributes\Unexposed;
 use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Database\Eloquent\Model;
 use LogicException;
 

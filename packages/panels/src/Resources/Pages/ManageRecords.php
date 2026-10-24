@@ -2,7 +2,7 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 
 class ManageRecords extends ListRecords
 {

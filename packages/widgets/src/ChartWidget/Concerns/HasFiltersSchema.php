@@ -4,8 +4,8 @@ namespace Filament\Widgets\ChartWidget\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
-use Filament\Support\Attributes\Unexposed;
 use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\View\WidgetsIconAlias;

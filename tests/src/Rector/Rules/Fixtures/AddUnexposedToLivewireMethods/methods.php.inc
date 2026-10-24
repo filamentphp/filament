@@ -3,7 +3,7 @@
 namespace Filament\Tests\Rector\Fixtures\MethodAccess;
 
 use Filament\Support\Components\Attributes\Exposed as Frontend;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 
 trait NestedTrait
 {
@@ -69,11 +69,11 @@ class UnrelatedClass
 namespace Filament\Tests\Rector\Fixtures\MethodAccess;
 
 use Filament\Support\Components\Attributes\Exposed as Frontend;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 
 trait NestedTrait
 {
-    #[\Filament\Support\Attributes\Unexposed]
+    #[\Filament\Support\Components\Attributes\Unexposed]
     public function nested(): void {}
 }
 
@@ -81,7 +81,7 @@ trait UsedTrait
 {
     use NestedTrait;
 
-    #[\Filament\Support\Attributes\Unexposed]
+    #[\Filament\Support\Components\Attributes\Unexposed]
     public function internal(): void {}
 
     #[Frontend]
@@ -105,15 +105,15 @@ class ChildComponent extends Component
 
     public function inheritedTraitAction(): void {}
 
-    #[\Filament\Support\Attributes\Unexposed]
+    #[\Filament\Support\Components\Attributes\Unexposed]
     public function internal(): void {}
 
-    #[\Filament\Support\Attributes\Unexposed]
+    #[\Filament\Support\Components\Attributes\Unexposed]
     public static function configuration(): void {}
 
     public function inheritedAction(): void {}
 
-    #[\Filament\Support\Attributes\Unexposed]
+    #[\Filament\Support\Components\Attributes\Unexposed]
     public function blockedAction(): void {}
 
     #[FrontendAction]

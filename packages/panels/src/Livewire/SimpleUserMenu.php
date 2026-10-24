@@ -7,7 +7,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Livewire\Concerns\HasUserMenu;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 

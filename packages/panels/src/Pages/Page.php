@@ -17,7 +17,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Schema;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\View\PanelsRenderHook;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;

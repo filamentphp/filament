@@ -2,8 +2,8 @@
 
 namespace Filament\Support\Livewire;
 
-use Filament\Support\Attributes\Unexposed;
 use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Livewire\Component;
 use Livewire\Features\SupportEvents\SupportEvents;
 use ReflectionAttribute;
@@ -104,7 +104,7 @@ class MethodAccess
             ($traitMethod->getStartLine() === $implementation->getStartLine()) &&
             ($traitMethod->getEndLine() === $implementation->getEndLine()));
 
-        $isExposed = (bool) $traitMethods;
+        $isExposed = false;
 
         foreach ($selectedTraitMethods ?: $traitMethods as $traitMethod) {
             $access = $this->getDeclaredMethodAccess($traitMethod)
@@ -114,7 +114,7 @@ class MethodAccess
                 return true;
             }
 
-            $isExposed = $isExposed && ($access === false);
+            $isExposed = $isExposed || ($access === false);
         }
 
         return $isExposed ? false : null;

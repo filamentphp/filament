@@ -2,7 +2,7 @@
 
 namespace Filament\Widgets;
 
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Support\Concerns\CanBeLazy;
 use Filament\Widgets\Concerns\CanAuthorizeAccess;
 use Illuminate\Contracts\View\View;

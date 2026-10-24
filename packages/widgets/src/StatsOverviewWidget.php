@@ -7,7 +7,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Widgets\StatsOverviewWidget\Concerns\HasChartData;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 

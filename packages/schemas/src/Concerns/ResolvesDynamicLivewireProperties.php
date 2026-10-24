@@ -4,7 +4,7 @@ namespace Filament\Schemas\Concerns;
 
 use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Contracts\HasSchemas;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Livewire\Exceptions\PropertyNotFoundException;
 
 trait ResolvesDynamicLivewireProperties

@@ -4,7 +4,7 @@ namespace Filament\Livewire\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 

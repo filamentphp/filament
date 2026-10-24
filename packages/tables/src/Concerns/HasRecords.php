@@ -3,7 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Support\ArrayRecord;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Tables\Enums\PaginationMode;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;

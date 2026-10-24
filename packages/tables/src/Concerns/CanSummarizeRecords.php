@@ -3,7 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Closure;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;

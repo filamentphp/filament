@@ -2,7 +2,7 @@
 
 namespace Filament\Widgets\StatsOverviewWidget\Concerns;
 
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Livewire\Attributes\Locked;
 
 trait HasChartData

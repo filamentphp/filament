@@ -3,8 +3,8 @@
 namespace Filament\Tests\Rector\Rules;
 
 use Composer\ClassMapGenerator\ClassMapGenerator;
-use Filament\Support\Attributes\Unexposed;
 use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Support\Livewire\MethodAccess;
 use Livewire\Component;
 use PhpParser\Node;
@@ -33,7 +33,7 @@ class AddUnexposedToLivewireMethodsRector extends AbstractRector implements Conf
     /** @var array<string> */
     protected array $componentPaths = [];
 
-    /** @var ?array<string, true> */
+    /** @var ?array<string, array<string, ClassReflection>> */
     protected ?array $livewireTraits = null;
 
     /** @var array<string, true> */
@@ -101,6 +101,10 @@ class AddUnexposedToLivewireMethodsRector extends AbstractRector implements Conf
                 continue;
             }
 
+            if ($node instanceof Trait_) {
+                $this->assertTraitMethodDoesNotInheritExposure($class, $method->name->toString());
+            }
+
             $method->attrGroups[] = new AttributeGroup([new Attribute(new FullyQualified(Unexposed::class))]);
             $hasChanged = true;
         }
@@ -125,6 +129,40 @@ class AddUnexposedToLivewireMethodsRector extends AbstractRector implements Conf
         }
 
         return $attribute->isSubclassOf(Exposed::class) ? Exposed::class : null;
+    }
+
+    protected function assertTraitMethodDoesNotInheritExposure(ClassReflection $trait, string $method): void
+    {
+        foreach ($this->getLivewireTraits()[$trait->getName()] as $component) {
+            $this->assertSupportedTraitAliases($component);
+
+            $methods = [strtolower($method) => $method];
+            $aliases = [];
+
+            foreach ([$component, ...$component->getParents()] as $ancestor) {
+                foreach ([$ancestor, ...$ancestor->getTraits(true)] as $owner) {
+                    foreach ($owner->getNativeReflection()->getTraitAliases() as $alias => $original) {
+                        $aliases[] = [$alias, strtolower(explode('::', $original, 2)[1])];
+                    }
+                }
+            }
+
+            do {
+                $originalMethodCount = count($methods);
+
+                foreach ($aliases as [$alias, $original]) {
+                    if (isset($methods[$original])) {
+                        $methods[strtolower($alias)] = $alias;
+                    }
+                }
+            } while (count($methods) > $originalMethodCount);
+
+            foreach ($methods as $componentMethod) {
+                if ($this->methodAccess->getMethodAccess($component->getNativeReflection(), $componentMethod) === false) {
+                    throw new RuntimeException("Trait method [{$trait->getName()}::{$method}] is used by [{$component->getName()}::{$componentMethod}] with an exposed policy. Add an explicit `#[Exposed]` or `#[Unexposed]` attribute to the trait method before rerunning Rector; its consuming component can affect its access policy.");
+                }
+            }
+        }
     }
 
     protected function assertSupportedTraitAliases(ClassReflection $class): void
@@ -163,7 +201,7 @@ class AddUnexposedToLivewireMethodsRector extends AbstractRector implements Conf
         }
     }
 
-    /** @return array<string, true> */
+    /** @return array<string, array<string, ClassReflection>> */
     protected function getLivewireTraits(): array
     {
         if ($this->livewireTraits !== null) {
@@ -186,7 +224,7 @@ class AddUnexposedToLivewireMethodsRector extends AbstractRector implements Conf
 
                 foreach ($class->getAncestors() as $ancestor) {
                     foreach ($ancestor->getTraits(true) as $trait) {
-                        $this->livewireTraits[$trait->getName()] = true;
+                        $this->livewireTraits[$trait->getName()][$class->getName()] = $class;
                     }
                 }
             }

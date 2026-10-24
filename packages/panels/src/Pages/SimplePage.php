@@ -2,7 +2,7 @@
 
 namespace Filament\Pages;
 
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 
 abstract class SimplePage extends BasePage
 {

@@ -4,7 +4,7 @@ namespace Filament\Livewire;
 
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\GlobalSearchResults;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 

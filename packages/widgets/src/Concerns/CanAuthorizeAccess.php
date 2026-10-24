@@ -2,7 +2,7 @@
 
 namespace Filament\Widgets\Concerns;
 
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 
 trait CanAuthorizeAccess
 {

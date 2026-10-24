@@ -4,7 +4,7 @@ namespace Filament\Pages\Concerns;
 
 use Filament\Pages\PageConfiguration;
 use Filament\Panel;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 

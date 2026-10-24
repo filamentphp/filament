@@ -25,7 +25,7 @@ use Filament\Resources\Events\RecordSaved;
 use Filament\Resources\Events\RecordUpdated;
 use Filament\Resources\Pages\Concerns\CanAuthorizeResourceAccess;
 use Filament\Resources\Pages\Concerns\InteractsWithParentRecord;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

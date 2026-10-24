@@ -3,7 +3,7 @@
 namespace Filament\Widgets;
 
 use Filament\Facades\Filament;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 
 class AccountWidget extends Widget
 {

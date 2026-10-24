@@ -5,7 +5,7 @@ namespace Filament\Resources\Concerns;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Schemas\Schema;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Auth\Access\Response;

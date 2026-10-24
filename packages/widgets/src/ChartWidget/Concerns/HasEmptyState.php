@@ -5,7 +5,7 @@ namespace Filament\Widgets\ChartWidget\Concerns;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\View\WidgetsIconAlias;

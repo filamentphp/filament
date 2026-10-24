@@ -44,7 +44,7 @@ Panel access is also checked by `canAccessPanel()` on every request, including L
 Livewire exposes public component methods to client requests, even when there is no button or other UI that calls them. Use `protected` or `private` visibility for methods that do not need to be public. If a method must remain public so that other PHP objects can call it, you may add the `#[Unexposed]` attribute:
 
 ```php
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 
 #[Unexposed]
 public function recalculateTotals(): void
@@ -74,7 +74,7 @@ Attributes declared on traits also apply when a consuming class or trait replace
 Filament's own component methods are marked `#[Unexposed]` unless they are intended frontend entry points, which are marked `#[Exposed]`. New methods you declare in your application are not automatically restricted. However, overriding a Filament method inherits its access policy: add `#[Exposed]` to the override if your frontend integration needs to call an unexposed method, and implement any required authorization before calling it.
 
 <Aside variant="danger">
-    This attribute blocks direct client invocation, not calls made by other PHP code. An exposed action, listener, or forwarding method can still call the method internally. You must authorize those entry points yourself. The attribute does not prevent Livewire from invoking lifecycle hooks or rendering methods internally, and it does not protect public properties from client updates.
+    This attribute only controls Livewire component method calls, not methods on schema components or table columns. It blocks direct client invocation, not calls made by other PHP code. An exposed action, listener, or forwarding method can still call the method internally. You must authorize those entry points yourself. The attribute does not prevent Livewire from invoking lifecycle hooks or rendering methods internally, and it does not protect public properties from client updates.
 </Aside>
 
 ### Protecting server-managed component state

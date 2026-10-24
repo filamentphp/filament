@@ -6,7 +6,7 @@ use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Filament\Pages\PageConfiguration;
 use Filament\Panel;
-use Filament\Support\Attributes\Unexposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 
