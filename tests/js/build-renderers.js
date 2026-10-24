@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process'
 import { buildRendererStarters } from './build-renderer-starters.js'
 import { buildViteRenderers } from './build-vite-renderers.js'
 
-const { field: generatedEntryPoints } = await buildRendererStarters({
+const generatedEntryPoints = await buildRendererStarters({
     field: 'forms',
     component: {
         packageName: 'schemas',
@@ -44,8 +44,10 @@ await buildViteRenderers(
 // Plugin authors can also bundle plain JavaScript and React without Vite.
 const result = await build({
     entryPoints: [
-        generatedEntryPoints['generated-js'],
-        generatedEntryPoints['generated-react'],
+        generatedEntryPoints.field['generated-js'],
+        generatedEntryPoints.field['generated-react'],
+        generatedEntryPoints.widget['generated-js'],
+        generatedEntryPoints.widget['generated-react'],
     ],
     outdir: 'build/esbuild-renderer-smoke',
     bundle: true,

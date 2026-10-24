@@ -54,6 +54,10 @@ Typed starters install TypeScript 6 when TypeScript is missing, and preserve an 
 
 The command adds the renderer to the Laravel Vite plugin's `input` array, enables the Vue or Svelte compiler plugin when needed, and preserves the renderer's default export in production builds. React uses Vite's built-in JSX support. If your configuration cannot be updated automatically, the command prints the remaining manual steps instead of replacing it. Follow the [Vite module setup](../advanced/assets#building-lazy-loaded-es-modules) to complete them.
 
+<Aside variant="info">
+    Importing the renderer does not load CSS extracted by Vite, including styles added to Vue or Svelte components. Include those styles through your application's stylesheet or [register them separately](../advanced/assets#registering-css-files), even when the generator configures Vite successfully.
+</Aside>
+
 New TypeScript configurations use `"jsx": "react-jsx"` so Vite transforms React JSX. Existing configurations are preserved. If yours uses `"jsx": "preserve"`, change it to `"react-jsx"` or configure a React JSX transformer in Vite; otherwise Vite 8 can fail with `Unexpected JSX expression`.
 
 ## Passing configuration from PHP
