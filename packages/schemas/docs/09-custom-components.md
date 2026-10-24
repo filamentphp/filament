@@ -199,7 +199,7 @@ class Chart extends Component
 }
 ```
 
-Public properties can be changed from the client. If a parameter is server-provided configuration rather than editable state, add Livewire's `#[Locked]` attribute to its property and import `Livewire\Attributes\Locked`. You can still assign locked properties from PHP.
+For server-provided configuration that should not be editable, add [`#[Locked]`](../advanced/security#protecting-server-managed-component-state) to the property.
 
 #### Accessing the current record in the Livewire component
 
@@ -222,8 +222,6 @@ class Chart extends Component
     public ?Model $record = null;
 }
 ```
-
-The `#[Locked]` attribute prevents client-side updates to `$record`, but does not apply the parent component's model scoping or authorization. The [model scoping and authorization requirements above](#inserting-a-livewire-component-into-a-schema) still apply.
 
 Please be aware that when the record has not yet been created, it will be `null`. If you'd like to hide the Livewire component when the record is `null`, you can use the `hidden()` method:
 

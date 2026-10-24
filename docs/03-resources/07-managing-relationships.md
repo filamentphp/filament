@@ -1311,7 +1311,7 @@ class CommentsRelationManager extends RelationManager
 }
 ```
 
-Now, you can access the `status` in the relation manager class using `$this->status`. The `#[Locked]` attribute prevents client-side changes to this server-provided configuration. You can still assign the property from PHP.
+Now, you can access the `status` in the relation manager class using `$this->status`. [`#[Locked]`](../advanced/security#protecting-server-managed-component-state) prevents client-side changes to this configuration.
 
 ## Disabling lazy loading
 

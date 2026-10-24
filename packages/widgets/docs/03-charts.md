@@ -215,8 +215,6 @@ class BlogPostsChart extends ChartWidget
 }
 ```
 
-The `Schema` return type makes `filtersSchema()` unexposed to frontend calls by default; no additional attribute is needed. Filament can still call it from PHP to build the filters. See [restricting methods to server-side calls](../advanced/security#restricting-methods-to-server-side-calls).
-
 The filter values are accessible via the `$this->filters` array. You can use these values inside your `getData()` method:
 
 ```php

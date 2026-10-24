@@ -9,7 +9,9 @@ use Livewire\Component;
 use Livewire\Features\SupportEvents\SupportEvents;
 use ReflectionAttribute;
 use ReflectionClass;
+use ReflectionIntersectionType;
 use ReflectionNamedType;
+use ReflectionUnionType;
 
 class MethodAccess
 {
@@ -53,6 +55,22 @@ class MethodAccess
             $class = $reflectionMethod->getDeclaringClass()->getParentClass();
         }
 
-        return ($returnType instanceof ReflectionNamedType) && is_a($returnType->getName(), FilamentComponent::class, allow_string: true);
+        $returnTypes = [$returnType];
+
+        while ($returnTypes) {
+            $type = array_pop($returnTypes);
+
+            if (($type instanceof ReflectionUnionType) || ($type instanceof ReflectionIntersectionType)) {
+                array_push($returnTypes, ...$type->getTypes());
+
+                continue;
+            }
+
+            if (($type instanceof ReflectionNamedType) && is_a($type->getName(), FilamentComponent::class, allow_string: true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

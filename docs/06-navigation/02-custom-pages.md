@@ -178,7 +178,7 @@ use Livewire\Attributes\Locked;
 public $stats = [];
 ```
 
-The `#[Locked]` attribute prevents client-side changes to this server-provided data. You can still assign the property from PHP.
+[`#[Locked]`](../advanced/security#protecting-server-managed-component-state) prevents client-side changes to this data.
 
 ### Passing properties to widgets on pages
 
@@ -212,7 +212,7 @@ class StatsOverviewWidget extends Widget
 }
 ```
 
-Now, you can access the `status` in the widget class using `$this->status`. The `#[Locked]` attribute prevents client-side changes to this server-provided configuration.
+Now, you can access the `status` in the widget class using `$this->status`.
 
 ## Customizing the page title
 

@@ -4,6 +4,7 @@ use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Attributes\Unexposed;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Tables\Table;
 use Filament\Tests\TestCase;
 use Livewire\Attributes\On;
@@ -98,34 +99,38 @@ it('rejects component-returning methods before execution without an access attri
         ->assertForbidden();
 
     expect(UnexposedTestComponent::$executionCount)->toBe(0);
-})->with(['schema', 'table', 'action', 'customSchema']);
+})->with(['schema', 'table', 'action', 'customSchema', 'unionSchema', 'unionScalarSchema', 'intersectionSchema', 'unionIntersectionSchema']);
 
-it('rejects component-returning event listeners before execution', function (): void {
+it('rejects component-returning event listeners before execution', function (string $event): void {
     Livewire::test(ReturnTypeAccessTestComponent::class)
-        ->dispatch('schema-requested')
+        ->dispatch($event)
         ->assertForbidden();
 
     expect(UnexposedTestComponent::$executionCount)->toBe(0);
-});
+})->with(['schema-requested', 'union-schema-requested', 'intersection-schema-requested']);
 
-it('lets explicit exposure override the return-type default', function (string $componentClass): void {
+it('lets explicit exposure override the return-type default', function (string $componentClass, string $method): void {
     Livewire::test($componentClass)
-        ->call('exposedSchema')
+        ->call($method)
         ->assertSuccessful();
 
     expect(UnexposedTestComponent::$executionCount)->toBe(1);
 })->with([
-    'declared exposure' => [ReturnTypeAccessTestComponent::class],
-    'inherited exposure' => [InheritedReturnTypeAccessTestComponent::class],
+    'declared exposure' => [ReturnTypeAccessTestComponent::class, 'exposedSchema'],
+    'inherited exposure' => [InheritedReturnTypeAccessTestComponent::class, 'exposedSchema'],
+    'declared union exposure' => [ReturnTypeAccessTestComponent::class, 'exposedUnionSchema'],
+    'inherited union exposure' => [InheritedReturnTypeAccessTestComponent::class, 'exposedUnionSchema'],
+    'declared intersection exposure' => [ReturnTypeAccessTestComponent::class, 'exposedIntersectionSchema'],
+    'inherited intersection exposure' => [InheritedReturnTypeAccessTestComponent::class, 'exposedIntersectionSchema'],
 ]);
 
-it('does not infer component return types from mixed, array, union, or untyped declarations', function (string $method): void {
+it('does not restrict methods without a declared component return type', function (string $method): void {
     Livewire::test(ReturnTypeAccessTestComponent::class)
         ->call($method)
         ->assertSuccessful();
 
     expect(UnexposedTestComponent::$executionCount)->toBe(1);
-})->with(['mixedSchema', 'arraySchema', 'unionSchema', 'untypedSchema']);
+})->with(['mixedSchema', 'arraySchema', 'scalarUnion', 'nonComponentIntersection', 'untypedSchema']);
 
 trait HasUnexposedTestMethod
 {
@@ -271,6 +276,59 @@ class ReturnTypeAccessTestComponent extends UnexposedTestBaseComponent
         return Schema::make();
     }
 
+    #[On('union-schema-requested')]
+    public function unionScalarSchema(): Schema | string
+    {
+        static::$executionCount++;
+
+        return 'not a component';
+    }
+
+    public function intersectionSchema(): Schema & HasEmbeddedView
+    {
+        static::$executionCount++;
+
+        return Schema::make();
+    }
+
+    #[On('intersection-schema-requested')]
+    public function unionIntersectionSchema(): (Schema & HasEmbeddedView) | string
+    {
+        static::$executionCount++;
+
+        return 'not a component';
+    }
+
+    #[Exposed]
+    public function exposedUnionSchema(): Schema | string
+    {
+        static::$executionCount++;
+
+        return 'allowed';
+    }
+
+    #[Exposed]
+    public function exposedIntersectionSchema(): Schema & HasEmbeddedView
+    {
+        static::$executionCount++;
+
+        return Schema::make();
+    }
+
+    public function nonComponentIntersection(): Countable & IteratorAggregate
+    {
+        static::$executionCount++;
+
+        return app(ArrayObject::class);
+    }
+
+    public function scalarUnion(): int | string
+    {
+        static::$executionCount++;
+
+        return 3;
+    }
+
     public function untypedSchema()
     {
         static::$executionCount++;
@@ -284,5 +342,15 @@ class InheritedReturnTypeAccessTestComponent extends ReturnTypeAccessTestCompone
     public function exposedSchema(): ?Schema
     {
         return parent::exposedSchema();
+    }
+
+    public function exposedUnionSchema(): Schema | string
+    {
+        return parent::exposedUnionSchema();
+    }
+
+    public function exposedIntersectionSchema(): Schema & HasEmbeddedView
+    {
+        return parent::exposedIntersectionSchema();
     }
 }

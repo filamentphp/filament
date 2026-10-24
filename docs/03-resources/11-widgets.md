@@ -78,7 +78,7 @@ public ?Model $record = null;
 ```
 
 <Aside variant="warning">
-    `#[Locked]` prevents client-side updates to the property, but does not authorize access to the record. Filament leaves widget model properties, including `$record` and `$parentRecord`, to Livewire's native restoration. It does not reapply global scopes, the resource query, or a policy for those records. A request to the widget does not reauthorize the parent page. The widget's `canView()` method controls access to the widget, not its records. Query and authorize records before using them, including any tenant or ownership restrictions. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
+    Filament leaves widget model properties, including `$record` and `$parentRecord`, to Livewire's native restoration. It does not reapply global scopes, the resource query, or a policy for those records. A request to the widget does not reauthorize the parent page. The widget's `canView()` method controls access to the widget, not its records. Query and authorize records before using them, including any tenant or ownership restrictions. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
 </Aside>
 
 ## Accessing page table data in the widget
@@ -179,6 +179,4 @@ class CustomerOverview extends Widget
 }
 ```
 
-Now, you can access the `status` in the widget class using `$this->status`.
-
-The `#[Locked]` attribute prevents client-side changes to this server-provided configuration. You can still assign the property from PHP.
+Now, you can access the `status` in the widget class using `$this->status`. [`#[Locked]`](../advanced/security#protecting-server-managed-component-state) prevents client-side changes to this configuration.
