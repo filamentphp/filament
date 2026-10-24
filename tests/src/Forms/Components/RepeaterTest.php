@@ -1074,7 +1074,9 @@ describe('`fixIndistinctState()`', function (): void {
             'items.1.choice',
         ]);
     });
+});
 
+describe('`disableOptionsWhenSelectedInSiblingRepeaterItems()`', function (): void {
     it('can use select options from an enum with `disableOptionsWhenSelectedInSiblingRepeaterItems()`', function (): void {
         $undoRepeaterFake = Repeater::fake();
 
@@ -1093,6 +1095,32 @@ describe('`fixIndistinctState()`', function (): void {
             ]);
 
         $undoRepeaterFake();
+    });
+
+    it('disables enum options selected in sibling repeater items for multiple fields', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                Repeater::make('items')
+                    ->generateUuidUsing(false)
+                    ->schema([
+                        Select::make('choice')
+                            ->multiple()
+                            ->options(TestLetterEnum::class)
+                            ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+                    ]),
+            ]);
+
+        $schema->fill(['items' => [['choice' => ['A']], ['choice' => ['B']]]]);
+
+        expect($schema->getComponentByStatePath('items.0.choice', withHidden: true)->getEnabledOptions())->toBe([
+            'A' => 'A',
+            'C' => 'C',
+        ])
+            ->and($schema->getComponentByStatePath('items.1.choice', withHidden: true)->getEnabledOptions())->toBe([
+                'B' => 'B',
+                'C' => 'C',
+            ]);
     });
 });
 
