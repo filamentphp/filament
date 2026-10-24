@@ -140,10 +140,10 @@ it('prints the manual build instruction when the asset build is declined', funct
     $reflection = new ReflectionClass($command);
     $reflection->getProperty('packageManager')->setValue($command, 'yarn');
 
-    expect($command->buildAssets('field'))->toBeTrue();
+    expect($command->buildAssets('theme'))->toBeTrue();
 
     Process::assertNothingRan();
-    expect($command->getOutput()->getOutput()->fetch())->toContain('Run `yarn run build` to compile the field.');
+    expect($command->getOutput()->getOutput()->fetch())->toContain('Run `yarn run build` to compile the theme.');
 });
 
 it('skips all package manager processes when installation and building are skipped', function () use ($createJavaScriptPackageCommand): void {
