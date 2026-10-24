@@ -3,6 +3,8 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Facades\Filament;
+use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -46,6 +48,7 @@ trait InteractsWithTable
 
     protected bool $shouldMountInteractsWithTable = false;
 
+    #[Unexposed]
     public function bootedInteractsWithTable(): void
     {
         $this->table = $this->table($this->makeTable());
@@ -190,16 +193,19 @@ trait InteractsWithTable
         }
     }
 
+    #[Unexposed]
     public function mountInteractsWithTable(): void
     {
         $this->shouldMountInteractsWithTable = true;
     }
 
+    #[Unexposed]
     public function table(Table $table): Table
     {
         return $table;
     }
 
+    #[Unexposed]
     public function getTable(): Table
     {
         return $this->table;
@@ -258,6 +264,7 @@ trait InteractsWithTable
         return null;
     }
 
+    #[Unexposed]
     public function getIdentifiedTableQueryStringPropertyNameFor(string $property): string
     {
         if (filled($identifier = $this->getTable()->getQueryStringIdentifier())) {
@@ -267,6 +274,7 @@ trait InteractsWithTable
         return $property;
     }
 
+    #[Unexposed]
     public function getTableSessionKey(string $key, bool $isTenantScoped = false): string
     {
         $namespace = $this::class;
@@ -284,16 +292,19 @@ trait InteractsWithTable
         return "filament.tables.{$table}.{$key}";
     }
 
+    #[Unexposed]
     public function getActiveTableLocale(): ?string
     {
         return null;
     }
 
+    #[Unexposed]
     public function resetPage(?string $pageName = null): void
     {
         $this->resetLivewirePage($pageName ?? $this->getTablePaginationPageName());
     }
 
+    #[Exposed]
     public function setPage(int | string $page, ?string $pageName = null): void
     {
         $defaultPageName = $this->getTablePaginationPageName();
@@ -333,6 +344,7 @@ trait InteractsWithTable
         }
     }
 
+    #[Unexposed]
     public function resetTable(): void
     {
         $this->bootedInteractsWithTable();

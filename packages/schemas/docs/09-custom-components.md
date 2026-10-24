@@ -199,12 +199,15 @@ class Chart extends Component
 }
 ```
 
+For server-provided configuration that should not be editable, add [`#[Locked]`](../advanced/security#protecting-server-managed-component-state) to the property.
+
 #### Accessing the current record in the Livewire component
 
 You can access the current record in the Livewire component using the `$record` parameter in the `mount()` method, or the `$record` property:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Attributes\Locked;
 
 class Chart extends Component
 {
@@ -215,6 +218,7 @@ class Chart extends Component
     
     // or
     
+    #[Locked]
     public ?Model $record = null;
 }
 ```

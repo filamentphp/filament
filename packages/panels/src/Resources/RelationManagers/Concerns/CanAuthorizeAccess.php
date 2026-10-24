@@ -2,10 +2,13 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
+use Filament\Support\Components\Attributes\Unexposed;
+
 trait CanAuthorizeAccess
 {
     protected bool $hasAuthorizedAccess = false;
 
+    #[Unexposed]
     public function bootCanAuthorizeAccess(): void
     {
         if ($this->hasAuthorizedAccess) {

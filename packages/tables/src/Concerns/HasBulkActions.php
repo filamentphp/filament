@@ -5,6 +5,8 @@ namespace Filament\Tables\Concerns;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
@@ -37,6 +39,7 @@ trait HasBulkActions
      *
      * @param  array<string, mixed>  $arguments
      */
+    #[Exposed]
     public function callMountedTableBulkAction(array $arguments = []): mixed
     {
         return $this->callMountedAction($arguments);
@@ -47,6 +50,7 @@ trait HasBulkActions
      *
      * @param  array<int | string> | null  $selectedRecords
      */
+    #[Exposed]
     public function mountTableBulkAction(string $name, ?array $selectedRecords = null): mixed
     {
         if ($selectedRecords !== null) {
@@ -61,6 +65,7 @@ trait HasBulkActions
      *
      * @param  array<int | string> | null  $selectedRecords
      */
+    #[Exposed]
     public function replaceMountedTableBulkAction(string $name, ?array $selectedRecords = null): void
     {
         if ($selectedRecords !== null) {
@@ -73,6 +78,7 @@ trait HasBulkActions
     /**
      * @deprecated Use the `mountedActionShouldOpenModal()` method instead.
      */
+    #[Unexposed]
     public function mountedTableBulkActionShouldOpenModal(?BulkAction $mountedBulkAction = null): bool
     {
         return $this->mountedActionShouldOpenModal($mountedBulkAction);
@@ -81,11 +87,13 @@ trait HasBulkActions
     /**
      * @deprecated Use the `mountedActionHasSchema()` method instead.
      */
+    #[Unexposed]
     public function mountedTableBulkActionHasForm(?BulkAction $mountedBulkAction = null): bool
     {
         return $this->mountedActionHasSchema($mountedBulkAction);
     }
 
+    #[Unexposed]
     public function deselectAllTableRecords(): void
     {
         $this->dispatch('deselectAllTableRecords')->self();
@@ -94,6 +102,7 @@ trait HasBulkActions
     /**
      * @return array<string>
      */
+    #[Exposed]
     public function getAllSelectableTableRecordKeys(): array
     {
         $query = $this->getFilteredTableQuery();
@@ -148,6 +157,7 @@ trait HasBulkActions
     /**
      * @return array<string>
      */
+    #[Unexposed]
     public function getGroupedSelectableTableRecordKeys(?string $group): array
     {
         $tableGrouping = $this->getTableGrouping();
@@ -222,6 +232,7 @@ trait HasBulkActions
         );
     }
 
+    #[Unexposed]
     public function getAllSelectableTableRecordsCount(): int
     {
         if ($this->getTable()->checksIfRecordIsSelectable()) {
@@ -248,6 +259,7 @@ trait HasBulkActions
         return $this->getFilteredTableQuery()?->count() ?? $this->cachedTableRecords->count();
     }
 
+    #[Unexposed]
     public function getSelectedTableRecords(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): EloquentCollection | Collection | LazyCollection
     {
         if (isset($this->cachedSelectedTableRecords)) {
@@ -313,6 +325,7 @@ trait HasBulkActions
         return $this->cachedSelectedTableRecords = $resolvedSelectedRecords;
     }
 
+    #[Unexposed]
     public function getSelectedTableRecordsQuery(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): Builder
     {
         $table = $this->getTable();
@@ -451,6 +464,7 @@ trait HasBulkActions
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
+    #[Unexposed]
     public function shouldSelectCurrentPageOnly(): bool
     {
         return false;
@@ -459,6 +473,7 @@ trait HasBulkActions
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
+    #[Unexposed]
     public function shouldDeselectAllRecordsWhenTableFiltered(): bool
     {
         return true;
@@ -467,6 +482,7 @@ trait HasBulkActions
     /**
      * @deprecated Use the `getMountedAction()` method instead.
      */
+    #[Unexposed]
     public function getMountedTableBulkAction(): ?Action
     {
         return $this->getMountedAction();
@@ -475,6 +491,7 @@ trait HasBulkActions
     /**
      * @deprecated Use the `getMountedActionSchema()` method instead.
      */
+    #[Unexposed]
     public function getMountedTableBulkActionForm(?BulkAction $mountedBulkAction = null): ?Schema
     {
         return $this->getMountedActionSchema(0, $mountedBulkAction);

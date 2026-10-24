@@ -8,6 +8,8 @@ use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Database\Eloquent\Model;
 use LogicException;
 
@@ -22,6 +24,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     /**
      * @return array<string, Schema>
      */
+    #[Unexposed]
     public function getCachedSchemas(): array
     {
         if (! $this->hasCachedForms) {
@@ -85,6 +88,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
      *
      * @return array<int | string, string | Schema>
      */
+    #[Unexposed]
     public function getTraitForms(): array
     {
         $forms = [];
@@ -112,6 +116,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `getSchema()` instead.
      */
+    #[Unexposed]
     public function getForm(string $name): ?Schema
     {
         return $this->getSchema($name);
@@ -122,6 +127,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
      *
      * @deprecated Use `getCachedSchemas()` instead.
      */
+    #[Unexposed]
     public function getCachedForms(): array
     {
         return $this->getCachedSchemas();
@@ -139,6 +145,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
         ];
     }
 
+    #[Unexposed]
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -187,6 +194,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `isCachingSchemas()` instead.
      */
+    #[Unexposed]
     public function isCachingForms(): bool
     {
         return $this->isCachingSchemas();
@@ -195,6 +203,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `getActiveSchemaLocale()` instead.
      */
+    #[Unexposed]
     public function getActiveFormsLocale(): ?string
     {
         return $this->getActiveSchemaLocale();
@@ -203,6 +212,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `getOldSchemaState()` instead.
      */
+    #[Unexposed]
     public function getOldFormState(string $statePath): mixed
     {
         return $this->getOldSchemaState($statePath);
@@ -213,6 +223,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
      *
      * @param  array<string, mixed>  $arguments
      */
+    #[Exposed]
     public function callMountedFormComponentAction(array $arguments = []): mixed
     {
         return $this->callMountedAction($arguments);
@@ -223,6 +234,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
      *
      * @param  array<string, mixed>  $arguments
      */
+    #[Exposed]
     public function mountFormComponentAction(string $component, string $name, array $arguments = []): mixed
     {
         return $this->mountAction($name, $arguments, context: [
@@ -233,6 +245,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `mountedActionShouldOpenModal()` instead.
      */
+    #[Unexposed]
     public function mountedFormComponentActionShouldOpenModal(?Action $mountedAction = null): bool
     {
         return $this->mountedActionShouldOpenModal($mountedAction);
@@ -241,6 +254,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `mountedActionHasForm()` instead.
      */
+    #[Unexposed]
     public function mountedFormComponentActionHasForm(?Action $mountedAction = null): bool
     {
         return $this->mountedActionHasSchema($mountedAction);
@@ -249,6 +263,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `getMountedAction()` instead.
      */
+    #[Unexposed]
     public function getMountedFormComponentAction(?int $actionNestingIndex = null): ?Action
     {
         return $this->getMountedAction($actionNestingIndex);
@@ -257,6 +272,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     /**
      * @deprecated Use `unmountAction()` instead.
      */
+    #[Exposed]
     public function unmountFormComponentAction(bool $shouldCancelParentActions = true): void
     {
         $this->unmountAction(cancelParentActions: $shouldCancelParentActions ? null : false);

@@ -4,6 +4,7 @@ namespace Filament\Tests\Widgets;
 
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Filament\Widgets\ChartWidget;
@@ -32,11 +33,13 @@ it('initializes both `$filters` and `$deferredFilters` on mount when deferred', 
         ->assertSet('deferredFilters', ['year' => '2024']);
 });
 
-it('updates `$filters` immediately when deferred is disabled', function (): void {
+it('updates `$filters` immediately without exposing `filtersSchema()` when deferred is disabled', function (): void {
     Livewire::test(TestChartWidgetDefault::class)
         ->assertSet('filters', ['year' => '2024'])
         ->set('filters.year', '2023')
-        ->assertSet('filters', ['year' => '2023']);
+        ->assertSet('filters', ['year' => '2023'])
+        ->call('filtersSchema')
+        ->assertForbidden();
 });
 
 it('updates only `$deferredFilters` when changed with deferred enabled', function (): void {
@@ -299,6 +302,7 @@ class TestChartWidgetWithDynamicDeferredFilters extends ChartWidget
         return 'line';
     }
 
+    #[Unexposed]
     public function hasDeferredFilters(): bool
     {
         return true;

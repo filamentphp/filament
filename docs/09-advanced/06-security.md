@@ -39,6 +39,50 @@ Filament repeats its built-in authorization checks when a component mounts and o
 
 Panel access is also checked by `canAccessPanel()` on every request, including Livewire requests.
 
+### Restricting methods to server-side calls
+
+Livewire exposes public component methods to client requests, even when there is no button or other UI that calls them. Use `protected` or `private` visibility for methods that do not need to be public. If a method must remain public so that other PHP objects can call it, you may add the `#[Unexposed]` attribute:
+
+```php
+use Filament\Support\Components\Attributes\Unexposed;
+
+#[Unexposed]
+public function recalculateTotals(): void
+{
+    // ...
+}
+```
+
+Client calls to this method, including JavaScript calls, `wire:click`, and Livewire event listeners, receive HTTP 403. Direct PHP calls still work.
+
+Methods declaring a return type of `Filament\Support\Components\Component` or a subclass, such as `form(): Schema`, `table(): Table`, or `editAction(): Action`, are automatically unexposed. This includes nullable types and any union or intersection containing a component type, including intersections nested inside unions. Types such as `mixed` and arrays are not covered.
+
+Use `#[Exposed]` to allow frontend calls, overriding either `#[Unexposed]` inherited from a parent class or the return-type default:
+
+```php
+use Filament\Support\Components\Attributes\Exposed;
+
+#[Exposed]
+public function recalculateTotals(): void
+{
+    parent::recalculateTotals();
+}
+```
+
+Overrides inherit the nearest parent-class access attribute unless they declare their own. Imported trait methods and aliases retain their attributes, but replacing a trait method does not inherit its attributes: annotate the replacement when needed. Attributes on abstract or discarded trait methods do not apply. If both attributes appear on the same method, `#[Unexposed]` wins. Other methods retain Livewire's normal behavior.
+
+These restrictions apply to Livewire component methods, not methods on schema components or table columns. They do not replace authorization or prevent internal PHP calls, including lifecycle hooks. Authorize any frontend entry points that call sensitive code. `#[Exposed]` does not bypass Livewire's own method restrictions.
+
+### Protecting server-managed component state
+
+Filament uses Livewire's `#[Locked]` attribute to prevent client-side updates to server-managed public properties. PHP assignments still work. Use supported methods and events instead of `$wire.set()` to change this state, such as `toggleTableReordering()` or `mountAction()`. Update parent-driven widget inputs through the parent page.
+
+If you redeclare a locked property, add `#[Locked]` to the new declaration too; PHP does not inherit property attributes onto redeclarations.
+
+Locked URL properties still accept initial query string values, but must keep the default replace-mode URL synchronization: push-history restoration (`#[Url(history: true)]`) requires client updates and is incompatible with locking.
+
+Locking does not hide property values or authorize access to records. Initial URL values, method arguments, and event payloads still need validation and authorization.
+
 ### Understanding Eloquent model restoration in Livewire
 
 When a public Livewire property contains an Eloquent model, Livewire stores the model's identifier in the component snapshot. On the next request, Livewire queries the database to restore it. A signed snapshot prevents a user from changing the identifier, but it does not prove that they are still allowed to access the model.

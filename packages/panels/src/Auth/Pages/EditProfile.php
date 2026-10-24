@@ -24,6 +24,8 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
@@ -62,41 +64,49 @@ class EditProfile extends Page
 
     protected string $view;
 
+    #[Unexposed]
     public function getLayout(): string
     {
         return static::$layout ?? (static::isSimple() ? 'filament-panels::components.layout.simple' : 'filament-panels::components.layout.index');
     }
 
+    #[Unexposed]
     public static function isSimple(): bool
     {
         return Filament::isProfilePageSimple();
     }
 
+    #[Unexposed]
     public function getView(): string
     {
         return $this->view ?? 'filament-panels::auth.pages.edit-profile';
     }
 
+    #[Unexposed]
     public static function getLabel(): string
     {
         return static::$title ?? __('filament-panels::auth/pages/edit-profile.label');
     }
 
+    #[Unexposed]
     public static function getRelativeRouteName(Panel $panel): string
     {
         return 'profile';
     }
 
+    #[Unexposed]
     public static function isTenantSubscriptionRequired(Panel $panel): bool
     {
         return false;
     }
 
+    #[Unexposed]
     public function mount(): void
     {
         $this->fillForm();
     }
 
+    #[Unexposed]
     public function getUser(): Authenticatable & Model
     {
         $user = Filament::auth()->user();
@@ -121,6 +131,7 @@ class EditProfile extends Page
         $this->callHook('afterFill');
     }
 
+    #[Unexposed]
     public static function registerRoutes(Panel $panel, ?PageConfiguration $configuration = null): void
     {
         if (filled(static::getCluster())) {
@@ -134,6 +145,7 @@ class EditProfile extends Page
         static::routes($panel, $configuration);
     }
 
+    #[Unexposed]
     public static function getRouteName(?Panel $panel = null): string
     {
         $panel ??= Filament::getCurrentOrDefaultPanel();
@@ -159,6 +171,7 @@ class EditProfile extends Page
         return $data;
     }
 
+    #[Exposed]
     public function save(): void
     {
         try {
@@ -409,6 +422,7 @@ class EditProfile extends Page
             ->dehydrated(false);
     }
 
+    #[Unexposed]
     public function defaultForm(Schema $schema): Schema
     {
         return $schema
@@ -418,6 +432,7 @@ class EditProfile extends Page
             ->statePath('data');
     }
 
+    #[Unexposed]
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -459,21 +474,25 @@ class EditProfile extends Page
         return false;
     }
 
+    #[Unexposed]
     public function getFormActionsAlignment(): string | Alignment
     {
         return Alignment::Start;
     }
 
+    #[Unexposed]
     public function getTitle(): string | Htmlable
     {
         return static::getLabel();
     }
 
+    #[Unexposed]
     public static function getSlug(?Panel $panel = null): string
     {
         return static::$slug ?? 'profile';
     }
 
+    #[Unexposed]
     public function hasLogo(): bool
     {
         return false;
@@ -482,6 +501,7 @@ class EditProfile extends Page
     /**
      * @deprecated Use `getCancelFormAction()` instead.
      */
+    #[Unexposed]
     public function backAction(): Action
     {
         $url = filament()->getUrl();
@@ -505,6 +525,7 @@ class EditProfile extends Page
         ];
     }
 
+    #[Unexposed]
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -514,6 +535,7 @@ class EditProfile extends Page
             ]);
     }
 
+    #[Unexposed]
     public function getFormContentComponent(): Component
     {
         return Form::make([EmbeddedSchema::make('form')])
@@ -528,6 +550,7 @@ class EditProfile extends Page
             ]);
     }
 
+    #[Unexposed]
     public function getMultiFactorAuthenticationContentComponent(): ?Component
     {
         if (! Filament::hasMultiFactorAuthentication()) {

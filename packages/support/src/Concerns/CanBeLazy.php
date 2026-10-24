@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Concerns;
 
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Contracts\View\View;
 
 trait CanBeLazy
@@ -10,11 +11,13 @@ trait CanBeLazy
 
     protected ?string $placeholderHeight = null;
 
+    #[Unexposed]
     public static function isLazy(): bool
     {
         return static::$isLazy;
     }
 
+    #[Unexposed]
     public function placeholder(): View
     {
         return view(
@@ -29,6 +32,7 @@ trait CanBeLazy
     /**
      * @return array<string, mixed>
      */
+    #[Unexposed]
     public function getPlaceholderData(): array
     {
         return [
@@ -36,6 +40,7 @@ trait CanBeLazy
         ];
     }
 
+    #[Unexposed]
     public function getPlaceholderHeight(): ?string
     {
         return $this->placeholderHeight;

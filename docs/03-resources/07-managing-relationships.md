@@ -1300,16 +1300,18 @@ This array of properties gets mapped to [public Livewire properties](https://liv
 
 ```php
 use Filament\Resources\RelationManagers\RelationManager;
+use Livewire\Attributes\Locked;
 
 class CommentsRelationManager extends RelationManager
 {
+    #[Locked]
     public string $status;
 
     // ...
 }
 ```
 
-Now, you can access the `status` in the relation manager class using `$this->status`.
+Now, you can access the `status` in the relation manager class using `$this->status`. [`#[Locked]`](../advanced/security#protecting-server-managed-component-state) prevents client-side changes to this configuration.
 
 ## Disabling lazy loading
 
