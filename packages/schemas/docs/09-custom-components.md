@@ -41,7 +41,7 @@ For TypeScript, add `--typescript` or its alias `--ts`:
 php artisan make:filament-schema-component Chart --react --ts
 ```
 
-JavaScript schema components do not render child components. They are not form fields and do not provide field value binding, validation wrappers, or input callbacks. Use a [JavaScript field](../forms/custom-fields#generating-a-javascript-field) for an input, or a Blade component when you need to render a child schema.
+JavaScript schema components do not render child components. They are not form fields and do not provide field value binding, validation wrappers, or input callbacks. Use a [custom field](../forms/custom-fields) for an input, or a Blade component when you need to render a child schema.
 
 #### Customizing generation
 
@@ -56,7 +56,7 @@ The generated PHP class uses `HasJsRenderer` and loads its entry through `Vite::
 
 Nested names, such as `Reports/Chart`, place JavaScript files in a `reports/` subdirectory. TypeScript generation also configures the `@filament/schemas/js-component` [type alias](#typing-renderers).
 
-The command shares its npm/Yarn and Vite setup conventions with the field generator. It adds the renderer to the Laravel plugin's `input` array, enables the Vue or Svelte compiler plugin when needed, and preserves the renderer's default export in production builds. React uses Vite's built-in JSX support.
+The command adds the renderer to the Laravel plugin's `input` array, enables the Vue or Svelte compiler plugin when needed, and preserves the renderer's default export in production builds. React uses Vite's built-in JSX support.
 
 If your configuration cannot be updated automatically, the command prints the remaining manual steps instead of replacing it. Follow the [Vite module setup](../advanced/assets#building-lazy-loaded-es-modules) to complete them. For a plugin, use a [published module](#building-reusable-plugin-components) instead of the application's Vite manifest.
 
@@ -599,7 +599,7 @@ JsComponent::make()
 
 Give each instance a unique `key()`, especially when using the same renderer more than once. Filament loads the module when the component initializes. Each component gets its own mounted instance, even when the browser has already loaded the module for another component.
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `renderer()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `renderer()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Writing a renderer
 
@@ -719,7 +719,7 @@ export default function mountSalesSummary({ host, props: initialProps }) {
 
 Use `rendererConfiguration()` to supply JSON-serializable data intended for the browser, not secrets. Read it from `props.configuration`. Configuration is separate from built-in props such as `id`; modifying it in JavaScript does not write back to PHP.
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `rendererConfiguration()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `rendererConfiguration()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 For example, configure your renderer using another field's state:
 

@@ -188,7 +188,7 @@ class MakeComponentCommand extends Command
             $pendingActions = [];
 
             if ($this->isTypeScript && ! $this->configureTypeScript()) {
-                $pendingActions[] = 'Configure the @filament/schemas/js-component type alias in tsconfig.json: https://filamentphp.com/docs/4.x/schemas/custom-components#typing-renderers';
+                $pendingActions[] = 'Configure the @filament/schemas/js-component type alias in tsconfig.json: https://filamentphp.com/docs/5.x/schemas/custom-components#typing-renderers';
             }
 
             if (! $this->registerViteInput($this->renderer)) {
@@ -196,7 +196,7 @@ class MakeComponentCommand extends Command
             }
 
             if (! $this->configureRendererViteConfig()) {
-                $pendingActions[] = "Configure Vite to compile {$this->framework} and preserve the renderer's default export: https://filamentphp.com/docs/4.x/advanced/assets#building-lazy-loaded-es-modules";
+                $pendingActions[] = "Configure Vite to compile {$this->framework} and preserve the renderer's default export: https://filamentphp.com/docs/5.x/advanced/assets#building-lazy-loaded-es-modules";
             }
 
             if (filled($pendingActions)) {
