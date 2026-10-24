@@ -13,6 +13,8 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 uses(TestCase::class);
 
@@ -1910,6 +1912,172 @@ describe('custom block rendering', function (): void {
             ->toContain('<div class="banner">Welcome</div>');
     });
 
+    it('preserves registered custom block HTML while sanitizing other content via `toHtml()`', function (string | array $content): void {
+        $renderer = RichContentRenderer::make($content)
+            ->customBlocks([RendererTestInteractiveBlock::class])
+            ->mergeTags([
+                'untrusted' => new HtmlString('<p onclick="doSomething()">Outside block</p><iframe src="https://example.com/untrusted"></iframe>'),
+            ]);
+
+        $expected = '<section x-data="{ open: false }"><button x-on:click="open = ! open">&lt;First&gt;</button><iframe src="https://example.com/embed"></iframe></section>';
+
+        expect($renderer->toHtml())
+            ->toContain($expected)
+            ->toContain('<p>Outside block</p>')
+            ->not->toContain('onclick=')
+            ->not->toContain('https://example.com/untrusted');
+
+        expect($renderer->toHtml())->toContain($expected);
+        expect($renderer->toUnsafeHtml())->toContain('onclick=');
+    })->with([
+        'HTML' => '<div data-type="customBlock" data-id="interactive" data-config=\'{"label":"<First>"}\'></div><p><span data-type="mergeTag" data-id="untrusted"></span></p>',
+        'JSON' => [[
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'customBlock', 'attrs' => ['id' => 'interactive', 'config' => ['label' => '<First>']]],
+                ['type' => 'paragraph', 'content' => [['type' => 'mergeTag', 'attrs' => ['id' => 'untrusted']]]],
+            ],
+        ]],
+    ]);
+
+    it('preserves the order of nested and adjacent custom blocks via `toHtml()`', function (): void {
+        $html = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'blockquote', 'content' => [
+                    ['type' => 'customBlock', 'attrs' => ['id' => 'interactive', 'config' => ['label' => 'First']]],
+                ]],
+                ['type' => 'customBlock', 'attrs' => ['id' => 'interactive', 'config' => ['label' => 'Second']]],
+                ['type' => 'customBlock', 'attrs' => ['id' => 'unknown', 'config' => []]],
+                ['type' => 'blockquote', 'content' => [
+                    ['type' => 'customBlock', 'attrs' => ['id' => 'interactive', 'config' => ['label' => 'Third']]],
+                ]],
+            ],
+        ])->customBlocks([RendererTestInteractiveBlock::class])->toHtml();
+
+        expect($html)->toBe('<blockquote><section x-data="{ open: false }"><button x-on:click="open = ! open">First</button><iframe src="https://example.com/embed"></iframe></section></blockquote><section x-data="{ open: false }"><button x-on:click="open = ! open">Second</button><iframe src="https://example.com/embed"></iframe></section><blockquote><section x-data="{ open: false }"><button x-on:click="open = ! open">Third</button><iframe src="https://example.com/embed"></iframe></section></blockquote>');
+    });
+
+    it('honors application sanitizer policies when rendering custom blocks', function (Closure $configure, bool $shouldRenderBlock): void {
+        $this->app->extend(HtmlSanitizerConfig::class, $configure);
+
+        $html = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Before']]],
+                ['type' => 'customBlock', 'attrs' => ['id' => 'interactive', 'config' => ['label' => 'First']]],
+            ],
+        ])->customBlocks([RendererTestInteractiveBlock::class])->toHtml();
+
+        expect($html)->toContain('<p>Before</p>');
+
+        if ($shouldRenderBlock) {
+            expect($html)->toContain('<button x-on:click="open = ! open">First</button>');
+        } else {
+            expect($html)->not->toContain('First')->not->toContain('<iframe');
+        }
+    })->with([
+        'changed carrier elements' => [static fn (HtmlSanitizerConfig $config): HtmlSanitizerConfig => $config->forceAttribute('div', 'class', 'content'), false],
+        'blocked carrier elements' => [static fn (HtmlSanitizerConfig $config): HtmlSanitizerConfig => $config->blockElement('div'), false],
+        'dropped carrier elements' => [static fn (HtmlSanitizerConfig $config): HtmlSanitizerConfig => $config->dropElement('div'), false],
+        'dropped identifying attributes' => [static fn (HtmlSanitizerConfig $config): HtmlSanitizerConfig => $config->dropAttribute('data-id', '*'), false],
+    ]);
+
+    it('honors sanitizer input limits when rendering custom blocks', function (int $limit, bool $shouldRenderBefore, bool $shouldRenderBlock, bool $shouldRenderAfter): void {
+        $this->app->extend(HtmlSanitizerConfig::class, static fn (HtmlSanitizerConfig $config): HtmlSanitizerConfig => $config->withMaxInputLength($limit));
+
+        $html = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Before']]],
+                ['type' => 'customBlock', 'attrs' => ['id' => 'interactive', 'config' => ['label' => 'First']]],
+                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'After']]],
+            ],
+        ])->customBlocks([RendererTestInteractiveBlock::class])->toHtml();
+
+        expect(str_contains($html, 'Before'))->toBe($shouldRenderBefore)
+            ->and(str_contains($html, '<button x-on:click="open = ! open">First</button>'))->toBe($shouldRenderBlock)
+            ->and(str_contains($html, 'After'))->toBe($shouldRenderAfter);
+
+        if (! $shouldRenderBlock) {
+            expect($html)->not->toContain('First')->not->toContain('<iframe');
+        }
+    })->with([
+        'before the block' => [13, true, false, false],
+        'within the block placeholder' => [35, true, false, false],
+        'after all content' => [1000, true, true, true],
+        'empty allowance' => [0, false, false, false],
+        'unlimited' => [-1, true, true, true],
+    ]);
+
+    it('honors a replacement application sanitizer when rendering custom blocks', function (): void {
+        $this->app->instance(HtmlSanitizerInterface::class, new class implements HtmlSanitizerInterface
+        {
+            public function sanitize(string $input): string
+            {
+                return '<p>Withheld by the application sanitizer</p>';
+            }
+
+            public function sanitizeFor(string $element, string $input): string
+            {
+                return $this->sanitize($input);
+            }
+        });
+
+        $html = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'customBlock', 'attrs' => ['id' => 'interactive', 'config' => ['label' => 'First']]],
+            ],
+        ])->customBlocks([RendererTestInteractiveBlock::class])->toHtml();
+
+        expect($html)->toBe('<p>Withheld by the application sanitizer</p>');
+    });
+
+    it('does not insert custom block HTML into an attribute from surrounding content', function (string $quote): void {
+        $html = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [['type' => 'mergeTag', 'attrs' => ['id' => 'opening']]]],
+                ['type' => 'customBlock', 'attrs' => ['id' => 'interactive', 'config' => ['label' => 'First']]],
+                ['type' => 'paragraph', 'content' => [['type' => 'mergeTag', 'attrs' => ['id' => 'closing']]]],
+            ],
+        ])
+            ->customBlocks([RendererTestInteractiveBlock::class])
+            ->mergeTags([
+                'opening' => new HtmlString('<div title=' . $quote),
+                'closing' => new HtmlString($quote . '>After</div>'),
+            ])
+            ->toHtml();
+
+        expect($html)
+            ->toContain('After')
+            ->not->toContain('<section')
+            ->not->toContain('<iframe');
+    })->with([
+        'double-quoted attribute' => '"',
+        'single-quoted attribute' => "'",
+    ]);
+
+    it('does not trust stored `renderedCustomBlock` HTML via `toHtml()`', function (array $blocks, string $id): void {
+        $html = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'renderedCustomBlock', 'attrs' => ['id' => $id, 'config' => ['label' => 'Registered']], 'html' => '<iframe src="https://example.com/forged"></iframe>'],
+            ],
+        ])->customBlocks($blocks)->toHtml();
+
+        expect($html)->not->toContain('https://example.com/forged');
+
+        if ($blocks && ($id === 'interactive')) {
+            expect($html)->toContain('<button x-on:click="open = ! open">Registered</button>');
+        }
+    })->with([
+        'registered ID' => [[RendererTestInteractiveBlock::class], 'interactive'],
+        'unknown ID' => [[RendererTestInteractiveBlock::class], 'unknown'],
+        'no registered blocks' => [[], 'interactive'],
+    ]);
+
     it('skips custom blocks when no blocks are registered', function (): void {
         $renderer = RichContentRenderer::make([
             'type' => 'doc',
@@ -2240,5 +2408,18 @@ class RendererTestBannerBlock extends RichContentCustomBlock
     public static function toHtml(array $config, array $data): ?string
     {
         return '<div class="banner">' . ($config['text'] ?? '') . '</div>';
+    }
+}
+
+class RendererTestInteractiveBlock extends RichContentCustomBlock
+{
+    public static function getId(): string
+    {
+        return 'interactive';
+    }
+
+    public static function toHtml(array $config, array $data): string
+    {
+        return '<section x-data="{ open: false }"><button x-on:click="open = ! open">' . e($config['label']) . '</button><iframe src="https://example.com/embed"></iframe></section>';
     }
 }

@@ -211,6 +211,15 @@ class RichContentRenderer implements Htmlable
 
     protected function processCustomBlocks(Editor $editor): void
     {
+        $editor->descendants(function (object &$node): void {
+            if ($node->type !== 'renderedCustomBlock') {
+                return;
+            }
+
+            $node->type = 'customBlock';
+            unset($node->html);
+        });
+
         if (blank($this->customBlocks)) {
             return;
         }
@@ -562,6 +571,16 @@ class RichContentRenderer implements Htmlable
         // Security: This method returns unsanitized HTML. Only use for
         // internal processing — never render in Blade. Use `toHtml()`.
 
+        return $this->renderHtml(shouldSanitize: false);
+    }
+
+    public function toHtml(): string
+    {
+        return $this->renderHtml(shouldSanitize: true);
+    }
+
+    protected function renderHtml(bool $shouldSanitize): string
+    {
         $editor = $this->getEditor();
 
         $this->processCustomBlocks($editor);
@@ -570,16 +589,25 @@ class RichContentRenderer implements Htmlable
         $this->processMentions($editor);
         $this->processNodes($editor);
 
-        return $editor->getHTML();
-    }
+        if (! $shouldSanitize) {
+            return $editor->getHTML();
+        }
 
-    public function toHtml(): string
-    {
-        // Security: Always use `toHtml()` (not `toUnsafeHtml()`) when
-        // rendering user-provided rich content. This applies
-        // Symfony's `HtmlSanitizer` to prevent XSS.
+        $customBlockHtml = [];
 
-        return Str::sanitizeHtml($this->toUnsafeHtml());
+        $editor->descendants(function (object &$node) use (&$customBlockHtml): void {
+            if ($node->type !== 'renderedCustomBlock') {
+                return;
+            }
+
+            // Only registered block renderers may bypass sanitization. Incoming
+            // `renderedCustomBlock` nodes were reset by `processCustomBlocks()`.
+            $placeholder = '<div data-id="' . Str::random(40) . '"></div>';
+            $customBlockHtml[$placeholder] = $node->html ?? '';
+            $node->html = $placeholder;
+        });
+
+        return strtr(Str::sanitizeHtml($editor->getHTML()), $customBlockHtml);
     }
 
     public function toText(): string
