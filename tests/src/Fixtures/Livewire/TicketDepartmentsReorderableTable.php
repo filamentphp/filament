@@ -62,7 +62,7 @@ class TicketDepartmentsReorderableTable extends Component implements HasActions,
                 BulkAction::make('queryBulk')
                     ->fetchSelectedRecords(false)
                     ->action(function (BulkAction $action): void {
-                        $this->dispatch('customBulk-called', quantities: $action->getSelectedRecordsQuery()->pluck('department_ticket.quantity')->all());
+                        $this->dispatch('customBulk-called', quantities: $action->getSelectedRecordsQuery()->pluck('department_ticket.quantity')->map(static fn ($quantity): int => (int) $quantity)->all());
                     }),
                 DeleteBulkAction::make(),
                 DeleteBulkAction::make('queryBulkDelete')->fetchSelectedRecords(false),

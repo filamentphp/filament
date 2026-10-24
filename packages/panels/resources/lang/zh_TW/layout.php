@@ -4,6 +4,10 @@ return [
 
     'direction' => 'ltr',
 
+    'skip_to_content' => [
+        'label' => '跳至主要內容',
+    ],
+
     'actions' => [
 
         'billing' => [
@@ -16,6 +20,7 @@ return [
 
         'open_database_notifications' => [
             'label' => '通知',
+            'label_with_unread_count' => '{1} 通知，:count 則未讀|[2,*] 通知，:count 則未讀',
         ],
 
         'open_user_menu' => [
@@ -36,6 +41,8 @@ return [
 
         'theme_switcher' => [
 
+            'label' => '主題',
+
             'dark' => [
                 'label' => '切換至暗色模式',
             ],
@@ -50,6 +57,14 @@ return [
 
         ],
 
+    ],
+
+    'navigation' => [
+        'label' => '側邊欄導覽',
+    ],
+
+    'topbar' => [
+        'label' => '頂端列',
     ],
 
     'avatar' => [

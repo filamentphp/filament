@@ -55,7 +55,7 @@ it('resolves and counts eligible attachment keys with `allowDuplicates()`', func
             foreach ($expectedKeys as $index => $key) {
                 $record = $component->instance()->getTableRecord($key);
 
-                expect($record->quantity)->toBe($expectedQuantities[$index]);
+                expect((int) $record->quantity)->toBe($expectedQuantities[$index]);
                 expect($component->instance()->getTableRecordKey($record))->toBe($key);
             }
         },
@@ -83,7 +83,7 @@ it('preserves related model key casts in selected records with `allowDuplicates(
             $records = $component->instance()->getSelectedTableRecords($shouldFetchRecords, $chunkSize);
 
             if (! $shouldFetchRecords) {
-                expect($records->all())->toBe([$department->getKey()]);
+                expect($records->map(strval(...))->all())->toBe([(string) $department->getKey()]);
 
                 return;
             }
@@ -154,6 +154,7 @@ function pivotSortKeyedByDepartment(Ticket $ticket): array
     return DB::table('department_ticket')
         ->where('ticket_id', $ticket->getKey())
         ->pluck('sort', 'department_id')
+        ->map(static fn ($sort): int => (int) $sort)
         ->all();
 }
 
@@ -329,6 +330,7 @@ describe('reordering', function (): void {
         $sortByPivotKey = DB::table('department_ticket')
             ->where('ticket_id', $ticket->getKey())
             ->pluck('sort', 'id')
+            ->map(static fn ($sort): int => (int) $sort)
             ->all();
 
         foreach ($order as $index => $pivotKey) {

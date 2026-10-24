@@ -1,8 +1,6 @@
 ---
 title: Custom components
 ---
-import Aside from "@components/Aside.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Inserting a Blade view into a schema
 
@@ -160,7 +158,7 @@ use Filament\Schemas\Components\Livewire;
 Livewire::make(Chart::class, ['bar' => 'baz'])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 Now, those parameters will be passed to the Livewire component's `mount()` method:
 
@@ -425,8 +423,10 @@ class Chart extends Component
 }
 ```
 
-<Aside variant="info">
-    Only methods marked with `#[ExposedLivewireMethod]` can be called from JavaScript. This is a security measure to prevent arbitrary method execution.
+<Aside variant="warning">
+    Only methods marked with `#[ExposedLivewireMethod]` can be called through `$wire.callSchemaComponentMethod()`. The attribute does not authorize access to the method's data or operations. Validate client-supplied arguments and [authorize sensitive operations](../advanced/security#authorization) inside the method.
+
+    Exposed methods remain callable when the component is [disabled](../forms/overview#disabling-a-field), since read methods may still be needed to display its value. If a method changes the component's state and should respect its disabled state, check `$this->isDisabled()` before making changes.
 </Aside>
 
 #### Calling the method from JavaScript

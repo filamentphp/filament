@@ -89,7 +89,7 @@ class AssociateAction extends Action
 
             $hasFailed = false;
 
-            foreach (($this->isMultiple ? $record : [$record]) as $record) {
+            foreach (($this->isMultiple() ? $record : [$record]) as $record) {
                 if (! $record instanceof Model) {
                     continue;
                 }
@@ -294,6 +294,7 @@ class AssociateAction extends Action
 
                 return $relationshipQuery
                     ->pluck($titleAttribute, $relationship->getModel()->getQualifiedKeyName())
+                    ->map(fn (mixed $title): mixed => $this->hasCustomRecordTitleAttribute() ? $title : $this->formatRecordTitle($title))
                     ->all();
             }
 

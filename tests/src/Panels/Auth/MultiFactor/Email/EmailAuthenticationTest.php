@@ -717,7 +717,7 @@ describe('failure cases', function (): void {
 
     it('will not authenticate the user with a challenge code issued for another guard and model with the same authentication identifier', function (): void {
         Schema::create('email_authentication_users', function (Blueprint $table): void {
-            $table->id();
+            $table->bigInteger('id')->primary();
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
@@ -1234,6 +1234,10 @@ class OverlappingEmailAuthenticationCacheLock extends ArrayLock
 
 class EmailAuthenticationUser extends User
 {
+    public $incrementing = false;
+
+    protected $casts = ['id' => 'integer'];
+
     protected $table = 'email_authentication_users';
 
     public function canAccessPanel(Panel $panel): bool

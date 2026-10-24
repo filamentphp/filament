@@ -1,13 +1,10 @@
 ---
 title: Overview
 ---
-import Aside from "@components/Aside.astro"
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
-<AutoScreenshot name="infolists/overview" alt="Product infolist example" version="4.x" />
+<AutoScreenshot name="infolists/overview" alt="Product infolist example" />
 
 Filament's infolists package lets you display a read-only list of data for a specific entity. It's integrated into other Filament packages, such as inside [panel resources](../resources), [relation managers](../resources/managing-relationships), and [action modals](../actions). Understanding how to use the infolist builder will save you time when building custom Livewire applications or working with other Filament features.
 
@@ -37,7 +34,7 @@ TextEntry::make('title')
 TextEntry::make('author.name')
 ```
 
-<AutoScreenshot name="infolists/entries/simple" alt="Entries in an infolist" version="4.x" />
+<AutoScreenshot name="infolists/entries/simple" alt="Entries in an infolist" />
 
 ## Entry content (state)
 
@@ -78,7 +75,7 @@ TextEntry::make('title')
     ->state('Hello, world!')
 ```
 
-<UtilityInjection set="infolistEntries" except="$state" version="4.x">The `state()` method also accepts a function to dynamically calculate the state. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" except="$state">The `state()` method also accepts a function to dynamically calculate the state. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Setting the default state of an entry
 
@@ -102,7 +99,7 @@ TextEntry::make('title')
     ->placeholder('Untitled')
 ```
 
-<AutoScreenshot name="infolists/entries/placeholder" alt="Entry with a placeholder for empty state" version="4.x" />
+<AutoScreenshot name="infolists/entries/placeholder" alt="Entry with a placeholder for empty state" />
 
 ## Setting an entry's label
 
@@ -115,7 +112,7 @@ TextEntry::make('name')
     ->label('Full name')
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `label()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `label()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 Customizing the label in this way is useful if you wish to use a [translation string for localization](https://laravel.com/docs/localization#retrieving-translation-strings):
 
@@ -141,7 +138,7 @@ TextEntry::make('name')
     ->hiddenLabel()
 ```
 
-<AutoScreenshot name="infolists/entries/hidden-label" alt="Entry with a hidden label" version="4.x" />
+<AutoScreenshot name="infolists/entries/hidden-label" alt="Entry with a hidden label" />
 
 Optionally, you may pass a boolean value to control if the label should be hidden or not:
 
@@ -152,7 +149,7 @@ TextEntry::make('name')
     ->hiddenLabel(FeatureFlag::active())
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `hiddenLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `hiddenLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Opening a URL when an entry is clicked
 
@@ -184,7 +181,7 @@ TextEntry::make('title')
     ->url(fn (Post $record): string => PostResource::getUrl('edit', ['record' => $record]))
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">The function passed to `url()` can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">The function passed to `url()` can inject various utilities as parameters.</UtilityInjection>
 
 You may also choose to open the URL in a new tab:
 
@@ -206,7 +203,7 @@ TextEntry::make('title')
     ->openUrlInNewTab(FeatureFlag::active())
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `openUrlInNewTab()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `openUrlInNewTab()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="danger">
     If you are passing user-controlled data to the `url()` method, you should validate that the URL does not use a dangerous scheme such as `javascript:` or `data:`. Failing to do so could expose your application to XSS attacks. The simplest way to guard against this is to wrap the value in Filament's [`Str::sanitizeUrl()`](../advanced/security#validating-user-input) helper, which returns `null` for any URL that does not use `http`/`https` (or a relative path).
@@ -232,7 +229,7 @@ TextEntry::make('role')
     ->hidden(! FeatureFlag::active())
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `hidden()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `hidden()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 Alternatively, you may use the `visible()` method to control if the entry should be hidden or not. In some situations, this may help to make your code more readable:
 
@@ -243,7 +240,7 @@ TextEntry::make('role')
     ->visible(FeatureFlag::active())
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `visible()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `visible()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="info">
     If both `hidden()` and `visible()` are used, they both need to indicate that the entry should be visible for it to be shown.
@@ -386,7 +383,7 @@ TextInput::make('name')
     ->inlineLabel()
 ```
 
-<AutoScreenshot name="infolists/entries/inline-label" alt="Infolist entry with inline label" version="4.x" />
+<AutoScreenshot name="infolists/entries/inline-label" alt="Infolist entry with inline label" />
 
 Optionally, you may pass a boolean value to control if the label should be displayed inline or not:
 
@@ -397,7 +394,7 @@ TextInput::make('name')
     ->inlineLabel(FeatureFlag::active())
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `inlineLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `inlineLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Using inline labels in multiple places at once
 
@@ -418,7 +415,7 @@ Section::make('Details')
     ])
 ```
 
-<AutoScreenshot name="infolists/entries/inline-label/section" alt="Infolist entries with inline labels in a section" version="4.x" />
+<AutoScreenshot name="infolists/entries/inline-label/section" alt="Infolist entries with inline labels in a section" />
 
 You can also use `inlineLabel()` on the entire schema to display all labels inline:
 
@@ -464,9 +461,9 @@ TextEntry::make('title')
     ->tooltip('Shown at the top of the page')
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `tooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `tooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/tooltips" alt="Entry with tooltip" version="4.x" />
+<AutoScreenshot name="infolists/entries/tooltips" alt="Entry with tooltip" />
 
 ## Aligning entry content
 
@@ -495,9 +492,9 @@ TextEntry::make('title')
     ->alignment(Alignment::Center)
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `alignment()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `alignment()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/alignment" alt="Entries with different alignments" version="4.x" />
+<AutoScreenshot name="infolists/entries/alignment" alt="Entries with different alignments" />
 
 ## Adding extra content to an entry
 
@@ -514,7 +511,7 @@ The following slots are available for all entries:
 - `afterContent()`
 - `belowContent()`
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing static values, the slot methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing static values, the slot methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 To insert plain text, you can pass a string to these methods:
 
@@ -525,7 +522,7 @@ TextEntry::make('name')
     ->belowContent('This is the user\'s full name.')
 ```
 
-<AutoScreenshot name="infolists/entries/below-content/text" alt="Infolist entry with text below content" version="4.x" />
+<AutoScreenshot name="infolists/entries/below-content/text" alt="Infolist entry with text below content" />
 
 To insert a schema component, often a [prime component](../schemas/primes), you can pass the component to the method:
 
@@ -538,7 +535,7 @@ TextEntry::make('name')
     ->belowContent(Text::make('This is the user\'s full name.')->weight(FontWeight::Bold))
 ```
 
-<AutoScreenshot name="infolists/entries/below-content/component" alt="Infolist entry with component below content" version="4.x" />
+<AutoScreenshot name="infolists/entries/below-content/component" alt="Infolist entry with component below content" />
 
 To insert an [action](../actions) or [action group](../actions/grouping-actions), you can pass the action or action group to the method:
 
@@ -550,7 +547,7 @@ TextEntry::make('name')
     ->belowContent(Action::make('generate'))
 ```
 
-<AutoScreenshot name="infolists/entries/below-content/action" alt="Infolist entry with action below content" version="4.x" />
+<AutoScreenshot name="infolists/entries/below-content/action" alt="Infolist entry with action below content" />
 
 You can insert any combination of content into the slots by passing an array of content to the method:
 
@@ -568,7 +565,7 @@ TextEntry::make('name')
     ])
 ```
 
-<AutoScreenshot name="infolists/entries/below-content" alt="Infolist entry with multiple components below content" version="4.x" />
+<AutoScreenshot name="infolists/entries/below-content" alt="Infolist entry with multiple components below content" />
 
 You can also align the content in the slots by passing the array of content to either `Schema::start()` (default), `Schema::end()` or `Schema::between()`:
 
@@ -609,7 +606,7 @@ TextEntry::make('name')
     As you can see in the above example for `Schema::between()`, a [`Flex` component](../schemas/layouts#flex-component) is used to group the icon and text together so they do not have space between them. The icon uses `grow(false)` to prevent it from taking up half of the horizontal space, allowing the text to consume the remaining space.
 </Aside>
 
-<AutoScreenshot name="infolists/entries/below-content/alignment" alt="Infolist entry with aligned components below content" version="4.x" />
+<AutoScreenshot name="infolists/entries/below-content/alignment" alt="Infolist entry with aligned components below content" />
 
 ### Adding extra content above an entry's label
 
@@ -627,9 +624,9 @@ TextEntry::make('name')
     ])
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `aboveLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `aboveLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/above-label" alt="Infolist entry with extra content above label" version="4.x" />
+<AutoScreenshot name="infolists/entries/above-label" alt="Infolist entry with extra content above label" />
 
 ### Adding extra content before an entry's label
 
@@ -644,9 +641,9 @@ TextEntry::make('name')
     ->beforeLabel(Icon::make(Heroicon::Star))
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `beforeLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `beforeLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/before-label" alt="Infolist entry with extra content before label" version="4.x" />
+<AutoScreenshot name="infolists/entries/before-label" alt="Infolist entry with extra content before label" />
 
 ### Adding extra content after an entry's label
 
@@ -664,9 +661,9 @@ TextEntry::make('name')
     ])
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `afterLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `afterLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/after-label" alt="Infolist entry with extra content after label" version="4.x" />
+<AutoScreenshot name="infolists/entries/after-label" alt="Infolist entry with extra content after label" />
 
 By default, the content in the `afterLabel()` schema is aligned to the end of the container. If you wish to align it to the start of the container, you should pass a `Schema::start()` object containing the content:
 
@@ -683,9 +680,9 @@ TextEntry::make('name')
     ]))
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `afterLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `afterLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/after-label/aligned-start" alt="Infolist entry with extra content after label aligned to the start" version="4.x" />
+<AutoScreenshot name="infolists/entries/after-label/aligned-start" alt="Infolist entry with extra content after label aligned to the start" />
 
 ### Adding extra content below an entry's label
 
@@ -703,12 +700,12 @@ TextEntry::make('name')
     ])
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `belowLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `belowLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/below-label" alt="Infolist entry with extra content below label" version="4.x" />
+<AutoScreenshot name="infolists/entries/below-label" alt="Infolist entry with extra content below label" />
 
 <Aside variant="info">
-    This may seem like the same as the [`aboveContent()` method](#adding-extra-content-above-an-entry%E2%80%99s-content). However, when using [inline labels](#inline-labels), the `aboveContent()` method will place the content above the entry, not below the label, since the label is displayed in a separate column to the entry content.
+    This may seem like the same as the [`aboveContent()` method](#adding-extra-content-above-an-entrys-content). However, when using [inline labels](#inline-labels), the `aboveContent()` method will place the content above the entry, not below the label, since the label is displayed in a separate column to the entry content.
 </Aside>
 
 ### Adding extra content above an entry's content
@@ -727,12 +724,12 @@ TextEntry::make('name')
     ])
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `aboveContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `aboveContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/above-content" alt="Infolist entry with extra content above content" version="4.x" />
+<AutoScreenshot name="infolists/entries/above-content" alt="Infolist entry with extra content above content" />
 
 <Aside variant="info">
-    This may seem like the same as the [`belowLabel()` method](#adding-extra-content-below-an-entry%E2%80%99s-label). However, when using [inline labels](#inline-labels), the `belowLabel()` method will place the content below the label, not above the entry's content, since the label is displayed in a separate column to the entry content.
+    This may seem like the same as the [`belowLabel()` method](#adding-extra-content-below-an-entrys-label). However, when using [inline labels](#inline-labels), the `belowLabel()` method will place the content below the label, not above the entry's content, since the label is displayed in a separate column to the entry content.
 </Aside>
 
 ### Adding extra content before an entry's content
@@ -748,9 +745,9 @@ TextEntry::make('name')
     ->beforeContent(Icon::make(Heroicon::Star))
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `beforeContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `beforeContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/before-content" alt="Infolist entry with extra content before content" version="4.x" />
+<AutoScreenshot name="infolists/entries/before-content" alt="Infolist entry with extra content before content" />
 
 ### Adding extra content after an entry's content
 
@@ -765,9 +762,9 @@ TextEntry::make('name')
     ->afterContent(Icon::make(Heroicon::Star))
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `afterContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `afterContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/after-content" alt="Infolist entry with extra content after content" version="4.x" />
+<AutoScreenshot name="infolists/entries/after-content" alt="Infolist entry with extra content after content" />
 
 ## Adding extra HTML attributes to an entry
 
@@ -780,7 +777,7 @@ TextEntry::make('slug')
     ->extraAttributes(['class' => 'bg-gray-200'])
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `extraAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `extraAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
 
@@ -795,7 +792,7 @@ TextEntry::make('slug')
     ->extraEntryWrapperAttributes(['class' => 'components-locked'])
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `extraEntryWrapperAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `extraEntryWrapperAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 By default, calling `extraEntryWrapperAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
 

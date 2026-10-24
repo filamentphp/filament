@@ -2,7 +2,6 @@
 title: Tabs Blade component
 ---
 
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
@@ -24,7 +23,7 @@ The tabs Blade component provides styled navigation links or buttons. It does no
 </x-filament::tabs>
 ```
 
-<AutoScreenshot name="components/tabs/simple" alt="Tabs with icons" version="4.x" />
+<AutoScreenshot name="components/tabs/simple" alt="Tabs with icons" />
 
 ## Triggering the active state of the tab
 
@@ -84,7 +83,7 @@ Tabs may have an [icon](../styling/icons), which you can set using the `icon` at
 </x-filament::tabs>
 ```
 
-<AutoScreenshot name="components/tabs/icon" alt="Tabs with icons" version="4.x" />
+<AutoScreenshot name="components/tabs/icon" alt="Tabs with icons" />
 
 ### Setting the tab icon position
 
@@ -103,7 +102,7 @@ The icon of the tab may be positioned before or after the label using the `icon-
 </x-filament::tabs>
 ```
 
-<AutoScreenshot name="components/tabs/icon-position-after" alt="Tabs with icons positioned after the label" version="4.x" />
+<AutoScreenshot name="components/tabs/icon-position-after" alt="Tabs with icons positioned after the label" />
 
 ## Setting a tab badge
 
@@ -123,7 +122,7 @@ Tabs may have a [badge](badge), which you can set using the `badge` slot:
 </x-filament::tabs>
 ```
 
-<AutoScreenshot name="components/tabs/badge" alt="Tabs with badges" version="4.x" />
+<AutoScreenshot name="components/tabs/badge" alt="Tabs with badges" />
 
 ## Using a tab as an anchor link
 
@@ -143,6 +142,10 @@ By default, a tab's underlying HTML tag is `<button>`. You can change it to be a
 ```
 
 Do not add tablist or tabpanel roles to these navigation links.
+
+<Aside variant="danger">
+    If you are passing user-controlled data to the `href` attribute, validate its scheme using [`Str::sanitizeUrl()`](../advanced/security#validating-user-input) before rendering it. HTML escaping alone does not prevent a `javascript:` URL from executing code when clicked.
+</Aside>
 
 ## Using vertical tabs
 
@@ -164,4 +167,4 @@ You can render the tabs vertically by using the `vertical` attribute:
 </x-filament::tabs>
 ```
 
-<AutoScreenshot name="components/tabs/vertical" alt="Vertical tabs" version="4.x" />
+<AutoScreenshot name="components/tabs/vertical" alt="Vertical tabs" />

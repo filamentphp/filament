@@ -100,7 +100,7 @@ describe('acts on matching database notification IDs', function (): void {
 describe('user isolation', function (): void {
     beforeEach(function (): void {
         Schema::create('database_notification_users', function (Blueprint $table): void {
-            $table->id();
+            $table->bigInteger('id')->primary();
             $table->timestamps();
         });
 
@@ -317,6 +317,8 @@ describe('browser interactions', function (): void {
 
 class DatabaseNotificationsOtherUser extends User
 {
+    public $incrementing = false;
+
     protected $table = 'database_notification_users';
 }
 

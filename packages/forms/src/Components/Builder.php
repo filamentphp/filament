@@ -1724,7 +1724,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         ob_start(); ?>
 
         <div <?= $outerAttributes->toHtml() ?>>
-            <?= $this->getReorderingDescriptionHtml($items) ?>
+            <span wire:ignore x-ref="reorderStatus" class="fi-sr-only" role="status" aria-live="polite" aria-atomic="true"></span>
+
             <?php if ($collapseAllActionIsVisible || $expandAllActionIsVisible) { ?>
                 <div
                     <?= (new FilamentComponentAttributeBag)->class([
@@ -1949,6 +1950,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                     width: $blockPickerWidth,
                 ) ?>
             <?php } ?>
+
+            <?= $this->getReorderingDescriptionHtml($items) ?>
         </div>
 
         <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
@@ -1991,7 +1994,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
     /** @param array<Schema> $items */
     protected function getReorderingDescriptionHtml(array $items): string
     {
-        $html = '<span wire:ignore x-ref="reorderStatus" class="fi-sr-only" role="status" aria-live="polite" aria-atomic="true"></span>';
+        $html = '';
         $position = 0;
 
         foreach ($items as $itemKey => $item) {

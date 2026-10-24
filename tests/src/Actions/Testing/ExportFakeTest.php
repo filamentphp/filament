@@ -99,8 +99,8 @@ it('shares the fake between header and bulk actions and resets it with either en
             if ($records === null) {
                 return false;
             }
-            expect($query->orderBy('id')->pluck('id')->all())->toBe($posts->modelKeys())
-                ->and($records)->toBe([$posts[1]->id])
+            expect($query->reorder('id')->pluck('id')->all())->toBe($posts->modelKeys())
+                ->and(array_map(strval(...), $records))->toBe([(string) $posts[1]->id])
                 ->and($export->total_rows)->toBe(1);
 
             return true;

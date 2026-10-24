@@ -1,6 +1,10 @@
-const breakpoint = 1024
-
 export default () => ({
+    isMobile: false,
+
+    desktopMediaQuery: null,
+
+    desktopMediaQueryListener: null,
+
     isOpen: window.Alpine.$persist(true).as('filament:sidebar:open'),
     isOpenDesktop: window.Alpine.$persist(true).as(
         'filament:sidebar:desktop_open',
@@ -12,10 +16,14 @@ export default () => ({
 
     scrollTop: 0,
 
-    init() {
-        this.resizeObserver = null
+    previouslyFocusedElement: null,
 
-        this.setUpResizeObserver()
+    get isOpenMobile() {
+        return this.isMobile && this.isOpen
+    },
+
+    init() {
+        this.setUpMediaQuery()
 
         document.addEventListener('livewire:navigate', () => {
             const nav = document.querySelector(
@@ -27,8 +35,14 @@ export default () => ({
             }
         })
 
+        document.addEventListener('livewire:navigating', () => {
+            if (this.isMobile) {
+                this.close()
+            }
+        })
+
         document.addEventListener('livewire:navigated', () => {
-            this.setUpResizeObserver()
+            this.setUpMediaQuery()
 
             requestAnimationFrame(() => {
                 const nav = document.querySelector(
@@ -42,38 +56,41 @@ export default () => ({
         })
     },
 
-    setUpResizeObserver() {
-        if (this.resizeObserver) {
-            this.resizeObserver.disconnect()
-        }
+    setUpMediaQuery() {
+        this.desktopMediaQuery?.removeEventListener(
+            'change',
+            this.desktopMediaQueryListener,
+        )
 
-        let previousWidth = window.innerWidth
+        const breakpoint = window
+            .getComputedStyle(document.documentElement)
+            .getPropertyValue('--breakpoint-lg')
+            .trim()
 
-        this.resizeObserver = new ResizeObserver(() => {
-            const currentWidth = window.innerWidth
-            const wasDesktop = previousWidth >= breakpoint
-            const isMobile = currentWidth < breakpoint
-            const isDesktop = currentWidth >= breakpoint
+        this.desktopMediaQuery = window.matchMedia(`(min-width: ${breakpoint})`)
+        this.isMobile = !this.desktopMediaQuery.matches
 
-            // Resize desktop to mobile
-            if (wasDesktop && isMobile) {
+        this.desktopMediaQueryListener = ({ matches }) => {
+            this.isMobile = !matches
+
+            if (this.isMobile) {
                 this.isOpenDesktop = this.isOpen
 
                 if (this.isOpen) {
                     this.close()
                 }
-            }
-            // Resize mobile to desktop
-            else if (!wasDesktop && isDesktop) {
+            } else {
+                this.previouslyFocusedElement = null
                 this.isOpen = this.isOpenDesktop
             }
+        }
 
-            previousWidth = currentWidth
-        })
+        this.desktopMediaQuery.addEventListener(
+            'change',
+            this.desktopMediaQueryListener,
+        )
 
-        this.resizeObserver.observe(document.body)
-
-        if (window.innerWidth < breakpoint) {
+        if (this.isMobile) {
             if (this.isOpen) {
                 this.isOpenDesktop = true
                 this.close()
@@ -106,15 +123,37 @@ export default () => ({
     close() {
         this.isOpen = false
 
-        if (window.innerWidth >= breakpoint) {
+        const previouslyFocusedElement = this.previouslyFocusedElement
+
+        this.previouslyFocusedElement = null
+
+        if (previouslyFocusedElement) {
+            window.Alpine.nextTick(() => {
+                requestAnimationFrame(() => {
+                    if (
+                        this.isMobile &&
+                        !this.isOpen &&
+                        previouslyFocusedElement.isConnected
+                    ) {
+                        previouslyFocusedElement.focus({ preventScroll: true })
+                    }
+                })
+            })
+        }
+
+        if (!this.isMobile) {
             this.isOpenDesktop = false
         }
     },
 
-    open() {
+    open(trigger = document.activeElement) {
+        if (this.isMobile && !this.isOpen) {
+            this.previouslyFocusedElement = trigger
+        }
+
         this.isOpen = true
 
-        if (window.innerWidth >= breakpoint) {
+        if (!this.isMobile) {
             this.isOpenDesktop = true
         }
     },

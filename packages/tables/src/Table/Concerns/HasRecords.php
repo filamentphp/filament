@@ -25,6 +25,8 @@ trait HasRecords
 
     protected string | Closure | null $recordTitle = null;
 
+    protected bool $isRecordTitleInherited = false;
+
     protected string | Closure | null $recordTitleAttribute = null;
 
     protected ?Closure $dataSource = null;
@@ -76,6 +78,14 @@ trait HasRecords
     public function recordTitle(string | Closure | null $title): static
     {
         $this->recordTitle = $title;
+        $this->isRecordTitleInherited = false;
+
+        return $this;
+    }
+
+    public function markRecordTitleAsInherited(): static
+    {
+        $this->isRecordTitleInherited = true;
 
         return $this;
     }
@@ -83,6 +93,10 @@ trait HasRecords
     public function recordTitleAttribute(string | Closure | null $attribute): static
     {
         $this->recordTitleAttribute = $attribute;
+
+        if ($this->isRecordTitleInherited) {
+            $this->recordTitle(null);
+        }
 
         return $this;
     }

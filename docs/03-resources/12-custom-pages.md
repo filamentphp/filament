@@ -1,8 +1,6 @@
 ---
 title: Custom resource pages
 ---
-import Aside from "@components/Aside.astro"
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
@@ -32,7 +30,7 @@ public static function getPages(): array
 
 Any [parameters](https://laravel.com/docs/routing#route-parameters) defined in the route's path will be available to the page class, in an identical way to [Livewire](https://livewire.laravel.com/docs/components#accessing-route-parameters).
 
-<AutoScreenshot name="panels/resources/custom-page" alt="A custom resource page with a settings form" version="4.x" />
+<AutoScreenshot name="panels/resources/custom-page" alt="A custom resource page with a settings form" />
 
 ## Using a resource record
 

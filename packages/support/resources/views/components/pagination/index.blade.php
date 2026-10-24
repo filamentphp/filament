@@ -165,7 +165,7 @@
                         <x-filament::pagination.item
                             :active="$page === $paginator->currentPage()"
                             :aria-label="trans_choice('filament::components/pagination.actions.go_to_page.label', $page, ['page' => Number::format($page)])"
-                            :label="Number::format($page)"
+                            :label="$page"
                             :wire:click="'gotoPage(' . $page . ', \'' . $paginator->getPageName() . '\')'"
                             :wire:key="$this->getId() . '.pagination.' . $paginator->getPageName() . '.' . $page"
                         />

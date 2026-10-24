@@ -45,7 +45,7 @@ describe('search results', function (): void {
     it('can retrieve limited search results', function (): void {
         $title = Str::random();
 
-        $posts = Post::factory()
+        Post::factory()
             ->count(4)
             ->state(new Sequence(
                 ['title' => "{$title} 0"],
@@ -58,10 +58,8 @@ describe('search results', function (): void {
         livewire(GlobalSearch::class)
             ->set('search', $title)
             ->assertDispatched('open-global-search-results')
-            ->assertSee($posts[0]->title)
-            ->assertSee($posts[1]->title)
-            ->assertSee($posts[2]->title)
-            ->assertDontSee($posts[3]->title);
+            ->assertSee($title)
+            ->assertViewHas('results', static fn (GlobalSearchResults $results): bool => $results->getCategories()->get('posts')->count() === 3);
     });
 
     it('can retrieve results via custom search provider', function (): void {

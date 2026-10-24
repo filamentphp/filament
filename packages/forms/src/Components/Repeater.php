@@ -1304,14 +1304,17 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
 
     public function getItemLabel(string $key, ?int $index = null): string | Htmlable | null
     {
-        $container = $this->getChildSchema($key);
+        $container = null;
+        $getContainer = function () use ($key, &$container): ?Schema {
+            return $container ??= $this->getChildSchema($key);
+        };
 
         return $this->evaluate($this->itemLabel, [
-            'container' => $container,
-            'item' => $container,
+            'container' => $getContainer,
+            'item' => $getContainer,
             'key' => $key,
-            'schema' => $container,
-            'state' => $container->getStateSnapshot(),
+            'schema' => $getContainer,
+            'state' => static fn (): array => $getContainer()->getStateSnapshot(),
             'uuid' => $key,
             'index' => $index,
         ]);
@@ -1633,7 +1636,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
         ob_start(); ?>
 
         <div <?= $outerAttributes->toHtml() ?>>
-            <?= $this->getReorderingDescriptionHtml($items) ?>
+            <span wire:ignore x-ref="reorderStatus" class="fi-sr-only" role="status" aria-live="polite" aria-atomic="true"></span>
+
             <?php if ($collapseAllActionIsVisible || $expandAllActionIsVisible) { ?>
                 <div
                     <?= (new FilamentComponentAttributeBag)->class([
@@ -1800,6 +1804,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                     <?= $addAction->toHtml() ?>
                 </div>
             <?php } ?>
+
+            <?= $this->getReorderingDescriptionHtml($items) ?>
         </div>
 
         <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
@@ -1852,7 +1858,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
         ob_start(); ?>
 
         <div <?= $outerAttributes->toHtml() ?>>
-            <?= $this->getReorderingDescriptionHtml($items) ?>
+            <span wire:ignore x-ref="reorderStatus" class="fi-sr-only" role="status" aria-live="polite" aria-atomic="true"></span>
+
             <?php if ($itemCount) { ?>
                 <ul x-sortable <?= $itemsAttributes->toHtml() ?>>
                     <?php foreach ($items as $itemKey => $item) { ?>
@@ -1940,6 +1947,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                     <?= $addAction->toHtml() ?>
                 </div>
             <?php } ?>
+
+            <?= $this->getReorderingDescriptionHtml($items) ?>
         </div>
 
         <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
@@ -1999,7 +2008,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
         ob_start(); ?>
 
         <div <?= $outerAttributes->toHtml() ?>>
-            <?= $this->getReorderingDescriptionHtml($items) ?>
+            <span wire:ignore x-ref="reorderStatus" class="fi-sr-only" role="status" aria-live="polite" aria-atomic="true"></span>
+
             <?php if ($itemCount) { ?>
                 <table>
                     <thead>
@@ -2176,6 +2186,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
                     <?= $addAction->toHtml() ?>
                 </div>
             <?php } ?>
+
+            <?= $this->getReorderingDescriptionHtml($items) ?>
         </div>
 
         <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
@@ -2271,7 +2283,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
     /** @param array<Schema> $items */
     protected function getReorderingDescriptionHtml(array $items): string
     {
-        $html = '<span wire:ignore x-ref="reorderStatus" class="fi-sr-only" role="status" aria-live="polite" aria-atomic="true"></span>';
+        $html = '';
         $position = 0;
 
         foreach ($items as $itemKey => $item) {

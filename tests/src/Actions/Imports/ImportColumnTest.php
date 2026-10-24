@@ -278,7 +278,7 @@ describe('relationship columns', function (): void {
 
     it('checks differently typed scalar bindings separately and caches their coverage', function (array $state, array $expectedBindings) use ($makeColumn): void {
         $user = User::factory()->create();
-        Team::factory()->create(['id' => 37, 'name' => '1']);
+        Team::factory()->create(['name' => '1']);
         $column = $makeColumn($user)->multiple()->relationship(resolveUsing: 'name');
         $connection = $user->getConnection();
         $connection->flushQueryLog();

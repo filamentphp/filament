@@ -6,10 +6,34 @@ return [
 
         'heading' => '欄位管理',
 
+        'position' => '第 :position 個，共 :count 個。',
+
+        'position_in_group' => '在 :group 中第 :position 個，共 :count 個。',
+
+        'reordered' => ':column 已移到第 :position 個，共 :count 個。',
+
+        'reordered_deferred' => ':column 已移到第 :position 個，共 :count 個。套用欄位設定後才會儲存變更。',
+
+        'reordered_in_group' => ':column 已移到 :group 中第 :position 個，共 :count 個。',
+
+        'reordered_in_group_deferred' => ':column 已移到 :group 中第 :position 個，共 :count 個。套用欄位設定後才會儲存變更。',
+
         'actions' => [
 
             'apply' => [
                 'label' => '套用欄位設定',
+            ],
+
+            'move_up' => [
+                'label' => '上移 :column',
+            ],
+
+            'move_down' => [
+                'label' => '下移 :column',
+            ],
+
+            'reorder' => [
+                'label' => '調整欄位排序',
             ],
 
             'reset' => [
@@ -26,9 +50,27 @@ return [
             'label' => '操作',
         ],
 
+        'editable' => [
+            'saving' => '正在儲存變更...',
+            'saved' => '變更已儲存。',
+            'failure' => '無法確認是否已儲存，請重新整理頁面後再試一次。',
+            'unavailable' => '此項目已無法編輯。',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => '是',
+                'false' => '否',
+            ],
+
+        ],
+
         'select' => [
 
             'loading_message' => '載入中...',
+
+            'no_options_message' => '沒有可用的選項。',
 
             'no_search_results_message' => '無符合選項',
 
@@ -113,6 +155,18 @@ return [
             'label' => '調整排序',
         ],
 
+        'reorder_record' => [
+            'label' => '調整項目 :key 的排序',
+        ],
+
+        'move_record_up' => [
+            'label' => '上移 :label',
+        ],
+
+        'move_record_down' => [
+            'label' => '下移 :label',
+        ],
+
         'filter' => [
             'label' => '篩選',
         ],
@@ -127,6 +181,10 @@ return [
 
         'column_manager' => [
             'label' => '欄位管理',
+        ],
+
+        'toggle_record_content' => [
+            'label' => '展開或收合項目 :key',
         ],
 
     ],
@@ -217,7 +275,16 @@ return [
 
     ],
 
+    'loading' => '載入中...',
+
     'reorder_indicator' => '拖曳項目調整排序',
+
+    'reordering' => [
+        'position' => ':label，第 :position 個，共 :count 個。',
+        'moved' => ':label 已移到第 :position 個，共 :count 個。',
+    ],
+
+    'result_count' => '{0} 沒有結果|[1,*] 共 :count 筆結果',
 
     'selection_indicator' => [
 

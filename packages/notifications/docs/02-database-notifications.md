@@ -1,10 +1,8 @@
 ---
 title: Database notifications
 ---
-import Aside from "@components/Aside.astro"
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-<AutoScreenshot name="notifications/database" alt="Database notifications" version="4.x" />
+<AutoScreenshot name="notifications/database" alt="Database notifications" />
 
 ## Setting up the notifications database table
 

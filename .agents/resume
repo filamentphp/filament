@@ -2,4 +2,5 @@
 
 set -euo pipefail
 
-# Long-running preview services are supervised through `.amp/services.yaml`.
+# Restore the SQLite-backed preview only. Test databases are started on demand.
+amp orb services ensure

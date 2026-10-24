@@ -5,6 +5,7 @@
  * - Fixed upstream PR #33 `mediaPreviewHeight` implementation.
  * - Prevented audio controls from initiating file reordering.
  * - Corrected audio timeline positioning when the preview is transformed or resized.
+ * - Reused the audio timeline measurement when seeking to avoid forcing layout after moving the playhead.
  * - Added stable references for global audio drag listeners and an `AudioPlayer.destroy()` method to remove them.
  * - Reused the audio time-update listener so dragging suspends it without accumulating duplicate callbacks.
  * - Retained the `AudioPlayer` on the FilePond view and destroyed it through the view's `destroy` callback.
@@ -84,12 +85,17 @@ class AudioPlayer {
     }
 
     movePlayhead(event) {
-        this.audioElements.playhead.style.marginLeft = `${this.clickPercent(event) * 100}%`
+        const clickPercent = this.clickPercent(event)
+
+        this.audioElements.playhead.style.marginLeft = `${clickPercent * 100}%`
+
+        return clickPercent
     }
 
     timelineClicked(event) {
-        this.movePlayhead(event)
-        this.mediaEl.currentTime = this.duration * this.clickPercent(event)
+        const clickPercent = this.movePlayhead(event)
+
+        this.mediaEl.currentTime = this.duration * clickPercent
     }
 
     mouseDown() {
@@ -106,8 +112,7 @@ class AudioPlayer {
         window.removeEventListener('mousemove', this.movePlayheadHandler, true)
 
         if (this.onPlayhead) {
-            this.movePlayhead(event)
-            this.mediaEl.currentTime = this.duration * this.clickPercent(event)
+            this.timelineClicked(event)
             this.mediaEl.addEventListener(
                 'timeupdate',
                 this.timeUpdateHandler,

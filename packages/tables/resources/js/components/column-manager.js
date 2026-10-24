@@ -10,6 +10,16 @@ export default function filamentTableColumnManager({ columns, isLive }) {
 
         isLive,
 
+        removeApplyCommitHook: null,
+
+        dropdownPanel: null,
+
+        dropdownOpenedListener: null,
+
+        dropdownRevision: 0,
+
+        applyDropdownRevision: 0,
+
         hasReordered: false,
 
         reorderAnnouncement: '',
@@ -17,6 +27,43 @@ export default function filamentTableColumnManager({ columns, isLive }) {
         focusRevision: 0,
 
         init() {
+            this.dropdownPanel = this.$el.closest('.fi-dropdown-panel')
+            this.dropdownOpenedListener = () => this.dropdownRevision++
+            this.dropdownPanel?.addEventListener(
+                'dropdown-opened',
+                this.dropdownOpenedListener,
+            )
+
+            this.removeApplyCommitHook = this.$wire.$hook(
+                'commit',
+                ({ commit, succeed, fail }) => {
+                    if (
+                        !commit.calls.some(
+                            (call) => call.method === 'applyTableColumnManager',
+                        )
+                    )
+                        return
+
+                    const dropdownRevision = this.applyDropdownRevision
+
+                    // Livewire 3 does not reject method-call promises on request failure.
+                    fail(() => {
+                        this.error = 'Failed to update column visibility'
+                        this.isLoading = false
+                    })
+                    succeed(() =>
+                        requestAnimationFrame(() => {
+                            if (
+                                !this.isLive &&
+                                this.dropdownRevision === dropdownRevision
+                            ) {
+                                this.closeDropdown()
+                            }
+                        }),
+                    )
+                },
+            )
+
             if (!this.columns || this.columns.length === 0) {
                 this.columns = []
 
@@ -322,6 +369,7 @@ export default function filamentTableColumnManager({ columns, isLive }) {
         },
 
         async applyTableColumnManager() {
+            this.applyDropdownRevision = this.dropdownRevision
             this.isLoading = true
 
             try {
@@ -348,10 +396,42 @@ export default function filamentTableColumnManager({ columns, isLive }) {
             }
         },
 
+        closeDropdown() {
+            const panel = this.dropdownPanel
+
+            if (
+                !this.$el.isConnected ||
+                this.$el.closest('.fi-dropdown-panel') !== panel ||
+                panel?.style.display !== 'block'
+            ) {
+                return
+            }
+
+            const dropdown = window.Alpine.$data(panel.closest('.fi-dropdown'))
+            const shouldFocusTrigger =
+                document.activeElement === document.body ||
+                panel.contains(document.activeElement)
+
+            dropdown?.close()
+
+            if (shouldFocusTrigger) {
+                dropdown?.getTrigger()?.focus()
+            }
+        },
+
         resetDeferredColumns() {
             this.deferredColumns = JSON.parse(JSON.stringify(this.columns))
             this.hasReordered = false
             this.reorderAnnouncement = ''
+        },
+
+        destroy() {
+            this.dropdownRevision++
+            this.removeApplyCommitHook?.()
+            this.dropdownPanel?.removeEventListener(
+                'dropdown-opened',
+                this.dropdownOpenedListener,
+            )
         },
     }
 }

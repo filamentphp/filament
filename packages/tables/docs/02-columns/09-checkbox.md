@@ -1,7 +1,6 @@
 ---
 title: Checkbox column
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
@@ -13,7 +12,7 @@ use Filament\Tables\Columns\CheckboxColumn;
 CheckboxColumn::make('is_admin')
 ```
 
-<AutoScreenshot name="tables/columns/checkbox/simple" alt="Checkbox column" version="4.x" />
+<AutoScreenshot name="tables/columns/checkbox/simple" alt="Checkbox column" />
 
 ## Lifecycle hooks
 

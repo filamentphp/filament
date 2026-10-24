@@ -1,13 +1,12 @@
 ---
 title: Overview
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
 Filament allows you to build dynamic dashboards, comprised of "widgets". Each widget is an element on the dashboard that displays data in a specific way. For example, you can display [stats](stats-overview), [chart](charts), or a [table](#table-widgets).
 
-<AutoScreenshot name="panels/dashboard" alt="Dashboard with widgets" version="4.x" />
+<AutoScreenshot name="panels/dashboard" alt="Dashboard with widgets" />
 
 ## Creating a widget
 
@@ -155,7 +154,7 @@ protected int | string | array $columnSpan = [
 
 This is especially useful when using a [responsive widgets grid](#responsive-widgets-grid).
 
-<AutoScreenshot name="panels/dashboard-column-spans" alt="Dashboard with customized widget column spans" version="4.x" />
+<AutoScreenshot name="panels/dashboard-column-spans" alt="Dashboard with customized widget column spans" />
 
 ## Conditionally hiding widgets
 
@@ -229,7 +228,7 @@ class Dashboard extends BaseDashboard
 }
 ```
 
-<AutoScreenshot name="panels/dashboard-filters" alt="Dashboard with filter form" version="4.x" />
+<AutoScreenshot name="panels/dashboard-filters" alt="Dashboard with filter form" />
 
 In widget classes that require data from the filters, you need to add the `InteractsWithPageFilters` trait, which will allow you to use the `$this->pageFilters` property to access the raw data from the filters form:
 
@@ -301,7 +300,7 @@ class Dashboard extends BaseDashboard
 
 Handling data from the filter action is the same as handling data from the filters header form, except that the data is validated before being passed to the widget. The `InteractsWithPageFilters` trait still applies.
 
-<AutoScreenshot name="panels/dashboard-filter-action" alt="Dashboard with filter action modal" version="4.x" />
+<AutoScreenshot name="panels/dashboard-filter-action" alt="Dashboard with filter action modal" />
 
 ### Persisting widget filters in the user's session
 

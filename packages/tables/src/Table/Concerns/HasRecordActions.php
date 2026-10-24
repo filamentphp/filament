@@ -31,6 +31,8 @@ trait HasRecordActions
      */
     public function recordActions(array | ActionGroup $actions, RecordActionsPosition | string | Closure | null $position = null): static
     {
+        $this->removeCachedActions($this->getFlatRecordActions());
+
         $this->recordActions = [];
         $this->pushRecordActions($actions);
 
@@ -229,7 +231,7 @@ trait HasRecordActions
     {
         $flatActions = [];
 
-        foreach ($this->getRecordActions() as $action) {
+        foreach ($this->recordActions as $action) {
             if ($action instanceof ActionGroup) {
                 $flatActions = array_merge($flatActions, $action->getFlatActions());
             } else {

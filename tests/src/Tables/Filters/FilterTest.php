@@ -371,6 +371,7 @@ describe('browser interactions', function (): void {
             ->keys('[data-testid="filters-trigger"]', 'Enter')
             ->assertPresent($focusedSelector . ':focus')
             ->keys($focusedSelector, 'Escape')
+            ->assertMissing($focusedSelector)
             ->assertPresent('[data-testid="filters-trigger"]:focus')
             ->assertNoSmoke();
     })->with([
@@ -380,6 +381,45 @@ describe('browser interactions', function (): void {
         'disabled control fallback' => ['disabled', 'div[tabindex="-1"]:has(> div [data-testid="filters-reset-action"])'],
         'empty schema fallback' => ['empty', 'div[tabindex="-1"]:has(> div [data-testid="filters-reset-action"])'],
     ]);
+
+    it('closes the filters dropdown after applying with pointer or keyboard', function (): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        Post::factory()->create(['title' => 'Published post', 'is_published' => true]);
+        Post::factory()->create(['title' => 'Draft post', 'is_published' => false]);
+
+        $filtersTrigger = '[data-testid="filters-trigger"]';
+        $publishedFilter = '[data-testid="published-filter"]';
+        $applyAction = '[data-table-filter-action="apply"]';
+
+        $page = visit('/filters-reset-action-browser-test?deferred=1');
+
+        $page
+            ->click($filtersTrigger)
+            ->click($publishedFilter)
+            ->assertVisible($publishedFilter)
+            ->assertSee('Draft post')
+            ->click($applyAction)
+            ->assertMissing($publishedFilter)
+            ->assertPresent($filtersTrigger . ':focus')
+            ->assertSee('Published post')
+            ->assertDontSee('Draft post')
+            ->assertNoAccessibilityIssues();
+
+        $page
+            ->keys($filtersTrigger, 'Enter')
+            ->assertPresent($publishedFilter . ':focus')
+            ->keys($publishedFilter, 'Space')
+            ->keys($applyAction, 'Enter')
+            ->assertMissing($publishedFilter)
+            ->assertPresent($filtersTrigger . ':focus')
+            ->assertSee('Draft post')
+            ->assertNoSmoke();
+
+        $page->inDarkMode()->assertNoAccessibilityIssues();
+    });
 
     it('contains filters `Escape` handling inside an enclosing modal', function (): void {
         Artisan::call('filament:assets');

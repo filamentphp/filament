@@ -7,14 +7,6 @@
     <div>
         <button
             type="button"
-            wire:click="sendTimedNotification"
-            data-testid="send-short-timed-notification"
-        >
-            Send short timed notification
-        </button>
-
-        <button
-            type="button"
             wire:click="sendPersistentNotification"
             data-testid="send-persistent-notification"
         >

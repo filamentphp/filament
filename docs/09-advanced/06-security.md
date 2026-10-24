@@ -2,7 +2,6 @@
 title: Security
 ---
 
-import Aside from "@components/Aside.astro"
 
 ## Introduction
 
@@ -139,6 +138,8 @@ Inline editable table columns such as `ToggleColumn`, `TextInputColumn`, `Select
 
 When you create [custom actions](../actions/overview#authorization), you are responsible for authorizing them. Filament provides `visible()`, `hidden()`, and `authorize()` methods to help with this, but you must use them — they are not applied automatically. If an action modifies data or performs sensitive operations, always ensure it is authorized.
 
+This also applies to [Select option actions](../forms/select#authorizing-option-actions) enabled by `createOptionForm()` and `editOptionForm()`. Access to the parent resource does not authorize creating or editing related records. Authorize the option action itself so that unauthorized users cannot open its modal or submit it, and scope the related records separately.
+
 ### Testing authorization
 
 Your application should have a comprehensive test suite that verifies authorization is enforced correctly across all entry points — not just Filament's resource pages, but also any custom actions, custom pages, Livewire components, API routes, and other functionality. Filament provides [testing helpers](../testing/overview) for asserting that actions, pages, and resources behave correctly for different user roles.
@@ -151,7 +152,7 @@ Do not rely solely on Filament's built-in policy checks. Treat them as a helpful
 
 Many Filament configuration methods accept closures that can return dynamic values. Methods like `url()`, `icon()`, `html()`, and others are designed to be flexible, allowing developers to build rich, dynamic interfaces. However, when the values passed to these methods originate from user input or untrusted database content, it is your responsibility to validate and sanitize them appropriately.
 
-For example, the `url()` method on columns, entries, and actions renders an `<a href="...">` tag with whatever value you provide. If you pass a URL sourced from user input without validation, a malicious value like `javascript:alert(document.cookie)` could be rendered as a clickable link, leading to XSS. Always validate that URLs use a safe scheme such as `http` or `https` before passing them to Filament.
+For example, the `url()` method on columns, entries, and actions HTML-escapes the URL when rendering an `<a href="...">` tag, but does not restrict its scheme. The same applies to table [`recordUrl()`](../tables/overview#record-urls-clickable-rows) values and [Blade component](../components/link) `href` attributes. If you pass a URL sourced from user input without validation, a malicious value like `javascript:alert(document.cookie)` could be rendered as a clickable link, leading to XSS. Always validate that URLs use a safe scheme such as `http` or `https` before passing them to Filament.
 
 Filament ships a `Str::sanitizeUrl()` helper that returns the URL when it is schemeless (relative) or uses the `http`/`https` scheme, and returns `null` for anything else. Before checking the scheme, it decodes HTML entities and rejects control characters and raw whitespace. The return value is the original input unchanged when it passes the check; the helper does not HTML-escape or rewrite the URL. Filament escapes the value when its configuration methods render it into an HTML attribute. If you render the value yourself, escape it as an HTML attribute, including its ampersands.
 
@@ -163,7 +164,7 @@ TextColumn::make('website')
     ->url(fn (string $state): ?string => Str::sanitizeUrl($state))
 ```
 
-Use the helper when providing an untrusted URL, such as a column, entry, or action's `url()`. `FileUpload` and `SpatieMediaLibraryFileUpload` already sanitize their preview, open, and download URLs; that does not authorize access to the underlying files.
+Use the helper when providing an untrusted URL, including values read from a database. Filament does not call it automatically for `url()`, `recordUrl()`, or Blade component `href` attributes. `FileUpload` and `SpatieMediaLibraryFileUpload` already sanitize their preview, open, and download URLs; that does not authorize access to the underlying files.
 
 If you need to allow additional schemes — for example `mailto:` or `tel:` — pass them in as the second argument. The default allowlist is replaced by what you pass, so include `http` and `https` if you still want them:
 

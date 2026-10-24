@@ -1,8 +1,6 @@
 ---
 title: Callouts
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -16,9 +14,9 @@ Callout::make('New version available')
     ->info()
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing static values, the `make()` and `description()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing static values, the `make()` and `description()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/callout/simple" alt="Callout" version="4.x" />
+<AutoScreenshot name="schemas/layout/callout/simple" alt="Callout" />
 
 ## Using status variants
 
@@ -40,7 +38,7 @@ Callout::make('Connection failed')
     ->danger()
 ```
 
-<AutoScreenshot name="schemas/layout/callout/statuses" alt="Callout statuses" version="4.x" />
+<AutoScreenshot name="schemas/layout/callout/statuses" alt="Callout statuses" />
 
 ## Removing the background color
 
@@ -55,9 +53,9 @@ Callout::make('Scheduled maintenance')
     ->color(null)
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/callout/without-background" alt="Callout without background" version="4.x" />
+<AutoScreenshot name="schemas/layout/callout/without-background" alt="Callout without background" />
 
 ## Adding a custom icon
 
@@ -72,7 +70,7 @@ Callout::make('Pro tip')
     ->icon(Heroicon::OutlinedLightBulb)
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Changing the icon color
 
@@ -88,9 +86,9 @@ Callout::make('Pro tip')
     ->iconColor('primary')
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `iconColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `iconColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/callout/custom-icon" alt="Callout with custom icon" version="4.x" />
+<AutoScreenshot name="schemas/layout/callout/custom-icon" alt="Callout with custom icon" />
 
 ### Changing the icon size
 
@@ -106,9 +104,9 @@ Callout::make('Quick note')
     ->iconSize(IconSize::Small)
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `iconSize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `iconSize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/callout/icon-size" alt="Callout with small icon" version="4.x" />
+<AutoScreenshot name="schemas/layout/callout/icon-size" alt="Callout with small icon" />
 
 ## Using a custom background color
 
@@ -125,7 +123,7 @@ Callout::make('Pro tip')
     ->iconColor('primary')
 ```
 
-<AutoScreenshot name="schemas/layout/callout/custom-color" alt="Callout with custom color" version="4.x" />
+<AutoScreenshot name="schemas/layout/callout/custom-color" alt="Callout with custom color" />
 
 ## Adding actions to the callout footer
 
@@ -147,9 +145,9 @@ Callout::make('Your trial ends in 3 days')
     ])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `actions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `actions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/callout/actions" alt="Callout with actions" version="4.x" />
+<AutoScreenshot name="schemas/layout/callout/actions" alt="Callout with actions" />
 
 ### Changing the footer actions alignment
 
@@ -172,9 +170,9 @@ Callout::make('Updates available')
 
 The available alignment options are `Alignment::Start`, `Alignment::Center`, `Alignment::End`, and `Alignment::Between`.
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `footerActionsAlignment()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `footerActionsAlignment()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/callout/actions-aligned-end" alt="Callout with actions aligned to the end" version="4.x" />
+<AutoScreenshot name="schemas/layout/callout/actions-aligned-end" alt="Callout with actions aligned to the end" />
 
 ## Adding custom footer content
 
@@ -197,9 +195,9 @@ Callout::make('Backup complete')
     ])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `footer()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `footer()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/callout/footer" alt="Callout with custom footer content" version="4.x" />
+<AutoScreenshot name="schemas/layout/callout/footer" alt="Callout with custom footer content" />
 
 ## Adding custom control content
 
@@ -220,7 +218,7 @@ Callout::make('Backup complete')
     ])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `controls()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `controls()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Adding control actions to the callout
 
@@ -244,7 +242,7 @@ Callout::make('New version available')
     ->visible(fn (): bool => ! session()->get('new-version-callout-dismissed'))
 ```
 
-<AutoScreenshot name="schemas/layout/callout/control-actions" alt="Callout with control actions" version="4.x" />
+<AutoScreenshot name="schemas/layout/callout/control-actions" alt="Callout with control actions" />
 
 ## Announcing dynamically revealed callouts
 

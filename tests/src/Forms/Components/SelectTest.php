@@ -5,6 +5,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
@@ -16,8 +17,13 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema as DatabaseSchema;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -1131,6 +1137,57 @@ describe('relationship options and search', function (): void {
             });
     });
 
+    it('can read its state in a relationship name callback', function (bool $usesGet): void {
+        $team = Team::factory()->create();
+
+        Schema::make(Livewire::make())
+            ->model(User::class)
+            ->statePath('data')
+            ->components([
+                $select = Select::make('team_id')
+                    ->relationship($usesGet
+                        ? static fn (Get $get): string => $get('team_id') ? 'team' : 'posts'
+                        : static fn ($state): string => $state ? 'team' : 'posts', 'name'),
+            ])
+            ->fill(['team_id' => (string) $team->getKey()]);
+
+        expect($select->getState())->toBe($team->getKey())
+            ->and($select->getOptionLabel())->toBe($team->name);
+    })->with(['`$state`' => false, '`Get`' => true]);
+
+    it('preserves numeric-looking string primary keys when resolving relationship labels', function (bool $isMultiple): void {
+        DatabaseSchema::create('select_categories', function (Blueprint $table): void {
+            $table->string('id')->primary();
+            $table->string('name');
+            $table->string('parent_id')->nullable();
+        });
+
+        try {
+            DB::table('select_categories')->insert([
+                ['id' => '123', 'name' => 'Numeric category'],
+                ['id' => 'ABC', 'name' => 'Alphabetic category'],
+            ]);
+
+            $fieldName = $isMultiple ? 'children' : 'parent_id';
+
+            Schema::make(Livewire::make())
+                ->model(SelectCategoryWithStringKey::class)
+                ->statePath('data')
+                ->components([
+                    $select = Select::make($fieldName)
+                        ->relationship($isMultiple ? 'children' : 'parent', 'name')
+                        ->multiple($isMultiple),
+                ])
+                ->fill([$fieldName => $isMultiple ? ['123'] : '123']);
+
+            expect($isMultiple ? $select->getOptionLabels() : $select->getOptionLabel())
+                ->toBe($isMultiple ? [123 => 'Numeric category'] : 'Numeric category');
+            expect($select->getState())->toBe($isMultiple ? ['123'] : '123');
+        } finally {
+            DatabaseSchema::dropIfExists('select_categories');
+        }
+    })->with(['single' => false, 'multiple' => true]);
+
     it('returns empty array for `getOptions()` when relationship is searchable without preload', function (): void {
         User::factory()->count(3)->create();
 
@@ -2099,7 +2156,7 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke();
     });
 
-    it('restores initial options when clearing an unmatched search', function (): void {
+    it('restores initial options when clearing a search', function (): void {
         $this->actingAs(User::factory()->create());
 
         $page = visit('/select-test');
@@ -2108,7 +2165,7 @@ describe('browser interactions', function (): void {
             ->click('#dynamic-select')
             ->assertCount('[role="listbox"]:visible [role="option"]', 2)
             ->type('[data-testid="dynamic-options-with-results-select"] input[role="combobox"]', 'result')
-            ->assertMissing('[role="listbox"]:visible [role="option"]')
+            ->assertSeeIn('[data-testid="dynamic-options-with-results-select"] [role="option"]', 'Search Result 1')
             ->clear('[data-testid="dynamic-options-with-results-select"] input[role="combobox"]')
             ->assertCount('[role="listbox"]:visible [role="option"]', 2)
             ->keys('[data-testid="dynamic-options-with-results-select"] input[role="combobox"]', 'Enter')
@@ -4044,5 +4101,24 @@ class SelectWithJsonPathTitleAttribute extends Component implements HasActions, 
     public function render(): View
     {
         return view('livewire.form');
+    }
+}
+
+class SelectCategoryWithStringKey extends Model
+{
+    public $incrementing = false;
+
+    protected $table = 'select_categories';
+
+    protected $keyType = 'string';
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(self::class, 'parent_id');
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'parent_id');
     }
 }

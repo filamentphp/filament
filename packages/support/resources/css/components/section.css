@@ -178,8 +178,8 @@
             }
         }
 
-        & > .fi-section-header-after-ctn {
-            @apply self-center;
+        & > .fi-section-header-content > .fi-section-header-after-ctn {
+            @apply max-w-full shrink-0 self-center;
 
             &
                 .fi-sc-text:not(
@@ -216,8 +216,16 @@
         }
     }
 
+    & .fi-section-header-content {
+        @apply flex min-w-0 flex-wrap items-start gap-3;
+
+        &.fi-section-header-content-has-heading {
+            @apply flex-1;
+        }
+    }
+
     & .fi-section-header-text-ctn {
-        @apply grid flex-1 gap-y-1;
+        @apply grid w-max max-w-full flex-auto gap-y-1;
     }
 
     & .fi-section-header-heading {

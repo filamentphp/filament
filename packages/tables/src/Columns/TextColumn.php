@@ -389,13 +389,15 @@ class TextColumn extends Column implements HasEmbeddedView
             $isCollapsedList = true;
         }
 
+        $lineClamp = $this->getLineClamp();
+
         $attributes = $attributes
             ->class([
                 'fi-ta-text-has-badges' => $isBadge,
+                'fi-ta-text-has-line-clamp' => $lineClamp && (! $isBadge),
                 'fi-wrapped' => $this->canWrap(),
             ]);
 
-        $lineClamp = $this->getLineClamp();
         $iconPosition = $this->getIconPosition();
         $isBulleted = $this->isBulleted();
 

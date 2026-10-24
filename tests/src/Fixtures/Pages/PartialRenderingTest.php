@@ -59,10 +59,10 @@ class PartialRenderingTest extends Page
                             ->afterLabel(fn (Get $get): ?string => filled($get('post_title')) ?
                                 '/' . Str::slug($get('post_title')) :
                                 null),
-                        TextEntry::make('post_date')
-                            ->label('Post Date')
-                            ->state(fn (): string => now()->format('Y-m-d H:i:s'))
-                            ->extraAttributes(['class' => 'post-date']),
+                        TextEntry::make('post_reference')
+                            ->label('Post Reference')
+                            ->state(static fn (): string => Str::upper(Str::random(8)))
+                            ->extraAttributes(['class' => 'post-reference']),
                     ]),
             ])
             ->statePath('data');

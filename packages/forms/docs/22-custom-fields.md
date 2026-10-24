@@ -1,7 +1,6 @@
 ---
 title: Custom fields
 ---
-import Aside from "@components/Aside.astro"
 
 ## Introduction
 
@@ -53,7 +52,7 @@ A field's state is stored in a public property on its Livewire component. Use `$
 
 See [obeying state binding modifiers](#obeying-state-binding-modifiers) to support options such as `live()` and `debounce()`. Preserve the field's [accessibility associations](overview#preserving-accessibility-in-custom-field-views) when creating its control markup.
 
-If your field uses third-party JavaScript libraries, you can [load its Alpine.js component asynchronously](../advanced/assets#asynchronous-alpine-js-components) so those assets are only loaded when needed.
+If your field uses third-party JavaScript libraries, you can [load its Alpine.js component asynchronously](../advanced/assets#asynchronous-alpinejs-components) so those assets are only loaded when needed.
 
 ## Accessing the state of another component in the Blade view
 
@@ -274,8 +273,10 @@ class LocationPicker extends Field
 }
 ```
 
-<Aside variant="info">
-    Only methods marked with `#[ExposedLivewireMethod]` can be called from JavaScript. This is a security measure to prevent arbitrary method execution.
+<Aside variant="warning">
+    Only methods marked with `#[ExposedLivewireMethod]` can be called through `$wire.callSchemaComponentMethod()`. The attribute does not authorize access to the method's data or operations. Validate client-supplied arguments and [authorize sensitive operations](../advanced/security#authorization) inside the method.
+
+    Exposed methods remain callable when the field is [disabled](overview#disabling-a-field), since read methods may still be needed to display its value. If a method changes the field's value and should respect its disabled state, check `$this->isDisabled()` before making changes.
 </Aside>
 
 ### Calling the method from JavaScript

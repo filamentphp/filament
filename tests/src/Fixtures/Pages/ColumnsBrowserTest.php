@@ -40,19 +40,6 @@ class ColumnsBrowserTest extends Page implements HasTable
     #[Url]
     public string $saveScenario = 'success';
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Action::make('allowColumnEdits')
-                ->label('Allow column edits')
-                ->visible(fn (): bool => $this->editableColumns)
-                ->extraAttributes(['data-testid' => 'allow-column-edits'])
-                ->action(function (): void {
-                    $this->saveScenario = 'success';
-                }),
-        ];
-    }
-
     public function table(Table $table): Table
     {
         if ($this->editableColumns) {
@@ -71,22 +58,19 @@ class ColumnsBrowserTest extends Page implements HasTable
                 $column
                     ->extraAttributes(['data-testid' => 'editable-' . str_replace('.', '-', $column->getName())])
                     ->disabled(fn (): bool => $this->saveScenario === 'disabled')
-                    ->rules(fn (): array => $this->saveScenario === 'validation' ? ['in:rejected'] : [])
-                    ->beforeStateUpdated(function (Tables\Columns\Column $column): void {
-                        if ($this->saveScenario === 'cached-state') {
-                            $column->getState();
-                        }
-                    });
+                    ->rules(fn (): array => $this->saveScenario === 'validation' ? ['in:Corrected title'] : []);
 
                 if (method_exists($column, 'extraInputAttributes')) {
                     $column->extraInputAttributes(['aria-describedby' => 'editable-column-help']);
                 }
             }
 
-            if ($this->saveScenario === 'normalize') {
-                $columns[2]->updateStateUsing(static function (Post $record, string $state): void {
-                    $record->update(['title' => strtoupper($state)]);
-                });
+            if (in_array($this->saveScenario, ['normalize', 'validation'])) {
+                $columns[2]
+                    ->beforeStateUpdated(static fn (Tables\Columns\Column $column) => $column->getState())
+                    ->updateStateUsing(static function (Post $record, string $state): void {
+                        $record->update(['title' => strtoupper($state)]);
+                    });
             }
 
             if ($this->saveScenario === 'custom-records') {

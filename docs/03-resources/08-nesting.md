@@ -1,7 +1,6 @@
 ---
 title: Nested resources
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -11,7 +10,7 @@ For example, in a `CourseResource`, you may have a relation manager or page for 
 
 However, lessons may be too complex to be created and edited in a modal. You may wish that lessons had their own resource, so that creating and editing them would be a full page experience. This is a nested resource.
 
-<AutoScreenshot name="panels/resources/nested" alt="A nested resource listing comments under a post" version="4.x" />
+<AutoScreenshot name="panels/resources/nested" alt="A nested resource listing comments under a post" />
 
 ## Creating a nested resource
 

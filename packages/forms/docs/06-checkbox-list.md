@@ -1,9 +1,6 @@
 ---
 title: Checkbox list
 ---
-import Aside from "@components/Aside.astro"
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -21,9 +18,9 @@ CheckboxList::make('technologies')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static array, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/checkbox-list/simple" alt="Checkbox list" version="4.x" />
+<AutoScreenshot name="forms/fields/checkbox-list/simple" alt="Checkbox list" />
 
 These options are returned in JSON format. If you're saving them using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
@@ -69,9 +66,9 @@ CheckboxList::make('technologies')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `descriptions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static array, the `descriptions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/checkbox-list/option-descriptions" alt="Checkbox list with option descriptions" version="4.x" />
+<AutoScreenshot name="forms/fields/checkbox-list/option-descriptions" alt="Checkbox list with option descriptions" />
 
 <Aside variant="info">
     Be sure to use the same `key` in the descriptions array as the `key` in the option array so the right description matches the right option.
@@ -91,9 +88,9 @@ CheckboxList::make('technologies')
     ->columns(2)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/checkbox-list/columns" alt="Checkbox list with 2 columns" version="4.x" />
+<AutoScreenshot name="forms/fields/checkbox-list/columns" alt="Checkbox list with 2 columns" />
 
 This method accepts the same options as the `columns()` method of the [grid](../schemas/layouts#grid-system). This allows you to responsively customize the number of columns at various breakpoints.
 
@@ -113,9 +110,9 @@ CheckboxList::make('technologies')
     ->gridDirection(GridDirection::Row)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `gridDirection()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `gridDirection()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/checkbox-list/rows" alt="Checkbox list with 2 rows" version="4.x" />
+<AutoScreenshot name="forms/fields/checkbox-list/rows" alt="Checkbox list with 2 rows" />
 
 ## Searching options
 
@@ -131,7 +128,7 @@ CheckboxList::make('technologies')
     ->searchable()
 ```
 
-<AutoScreenshot name="forms/fields/checkbox-list/searchable" alt="Searchable checkbox list" version="4.x" />
+<AutoScreenshot name="forms/fields/checkbox-list/searchable" alt="Searchable checkbox list" />
 
 Optionally, you may pass a boolean value to control if the options should be searchable or not:
 
@@ -145,7 +142,7 @@ CheckboxList::make('technologies')
     ->searchable(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `searchable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Bulk toggling checkboxes
 
@@ -161,7 +158,7 @@ CheckboxList::make('technologies')
     ->bulkToggleable()
 ```
 
-<AutoScreenshot name="forms/fields/checkbox-list/bulk-toggleable" alt="Bulk toggleable checkbox list" version="4.x" />
+<AutoScreenshot name="forms/fields/checkbox-list/bulk-toggleable" alt="Bulk toggleable checkbox list" />
 
 Optionally, you may pass a boolean value to control if the checkboxes should be bulk toggleable or not:
 
@@ -175,7 +172,7 @@ CheckboxList::make('technologies')
     ->bulkToggleable(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `bulkToggleable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `bulkToggleable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Disabling specific options
 
@@ -194,9 +191,9 @@ CheckboxList::make('technologies')
     ->disableOptionWhen(fn (string $value): bool => $value === 'livewire')
 ```
 
-<AutoScreenshot name="forms/fields/checkbox-list/disabled-options" alt="Checkbox list with disabled option" version="4.x" />
+<AutoScreenshot name="forms/fields/checkbox-list/disabled-options" alt="Checkbox list with disabled option" />
 
-<UtilityInjection set="formFields" version="4.x" extras="Option value;;mixed;;$value;;The value of the option to disable.||Option label;;string | Illuminate\Contracts\Support\Htmlable;;$label;;The label of the option to disable.">You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" extras="Option value;;mixed;;$value;;The value of the option to disable.||Option label;;string | Illuminate\Contracts\Support\Htmlable;;$label;;The label of the option to disable.">You can inject various utilities into the function as parameters.</UtilityInjection>
 
 If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
 
@@ -235,7 +232,7 @@ CheckboxList::make('technology')
     ->allowHtml()
 ```
 
-<AutoScreenshot name="forms/fields/checkbox-list/html-labels" alt="Checkbox list with HTML labels" version="4.x" />
+<AutoScreenshot name="forms/fields/checkbox-list/html-labels" alt="Checkbox list with HTML labels" />
 
 <Aside variant="danger">
     Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
@@ -257,7 +254,7 @@ CheckboxList::make('technology')
     ->allowHtml(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `allowHtml()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `allowHtml()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Integrating with an Eloquent relationship
 
@@ -299,7 +296,7 @@ CheckboxList::make('technologies')
     )
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Query;;Illuminate\Database\Eloquent\Builder;;$query;;The Eloquent query builder to modify.">The `modifyQueryUsing` argument can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" extras="Query;;Illuminate\Database\Eloquent\Builder;;$query;;The Eloquent query builder to modify.">The `modifyQueryUsing` argument can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the relationship option labels
 
@@ -330,7 +327,7 @@ CheckboxList::make('authors')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Eloquent record;;Illuminate\Database\Eloquent\Model;;$record;;The Eloquent record to get the option label for.">The `getOptionLabelFromRecordUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" extras="Eloquent record;;Illuminate\Database\Eloquent\Model;;$record;;The Eloquent record to get the option label for.">The `getOptionLabelFromRecordUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the relationship option descriptions
 
@@ -348,7 +345,7 @@ CheckboxList::make('authors')
     ->getOptionDescriptionFromRecordUsing(fn (Model $record) => $record->notes)
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Eloquent record;;Illuminate\Database\Eloquent\Model;;$record;;The Eloquent record to get the option description for.">The `getOptionDescriptionFromRecordUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" extras="Eloquent record;;Illuminate\Database\Eloquent\Model;;$record;;The Eloquent record to get the option description for.">The `getOptionDescriptionFromRecordUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 
 ### Saving pivot data to the relationship
@@ -365,7 +362,7 @@ CheckboxList::make('primaryTechnologies')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `pivotData()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `pivotData()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Setting a custom no search results message
 
@@ -382,7 +379,7 @@ CheckboxList::make('technologies')
     ->noSearchResultsMessage('No technologies found.')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `noSearchResultsMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `noSearchResultsMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Setting a custom search prompt
 
@@ -399,7 +396,7 @@ CheckboxList::make('technologies')
     ->searchPrompt('Search for a technology')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchPrompt()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `searchPrompt()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Tweaking the search debounce
 
@@ -416,7 +413,7 @@ CheckboxList::make('technologies')
     ->searchDebounce(500)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchDebounce()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `searchDebounce()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Customizing the checkbox list action objects
 
@@ -440,4 +437,4 @@ CheckboxList::make('technologies')
     )
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Action;;Filament\Actions\Action;;$action;;The action object to customize.">The action registration methods can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" extras="Action;;Filament\Actions\Action;;$action;;The action object to customize.">The action registration methods can inject various utilities into the function as parameters.</UtilityInjection>

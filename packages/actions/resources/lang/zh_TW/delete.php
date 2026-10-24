@@ -54,6 +54,18 @@ return [
                 'title' => '已刪除',
             ],
 
+            'deleted_partial' => [
+                'title' => '已刪除 :total 筆中的 :count 筆',
+                'missing_authorization_failure_message' => '你沒有權限刪除 :count 筆資料。',
+                'missing_processing_failure_message' => '有 :count 筆資料無法刪除。',
+            ],
+
+            'deleted_none' => [
+                'title' => '刪除失敗',
+                'missing_authorization_failure_message' => '你沒有權限刪除 :count 筆資料。',
+                'missing_processing_failure_message' => '有 :count 筆資料無法刪除。',
+            ],
+
         ],
 
     ],

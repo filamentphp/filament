@@ -1,8 +1,6 @@
 ---
 title: Color entry
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -14,7 +12,7 @@ use Filament\Infolists\Components\ColorEntry;
 ColorEntry::make('color')
 ```
 
-<AutoScreenshot name="infolists/entries/color/simple" alt="Color entry" version="4.x" />
+<AutoScreenshot name="infolists/entries/color/simple" alt="Color entry" />
 
 ## Allowing the color to be copied to the clipboard
 
@@ -29,7 +27,7 @@ ColorEntry::make('color')
     ->copyMessageDuration(1500)
 ```
 
-<AutoScreenshot name="infolists/entries/color/copyable" alt="Color entry with a button to copy it" version="4.x" />
+<AutoScreenshot name="infolists/entries/color/copyable" alt="Color entry with a button to copy it" />
 
 Optionally, you may pass a boolean value to control if the color should be copyable or not:
 
@@ -40,4 +38,4 @@ ColorEntry::make('color')
     ->copyable(FeatureFlag::active())
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `copyable()`, `copyMessage()`, and `copyMessageDuration()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `copyable()`, `copyMessage()`, and `copyMessageDuration()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>

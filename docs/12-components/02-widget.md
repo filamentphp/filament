@@ -1,7 +1,6 @@
 ---
 title: Rendering a widget in a Blade view
 ---
-import Aside from "@components/Aside.astro"
 
 <Aside variant="warning">
     Before proceeding, make sure `filament/widgets` is installed in your project. You can check by running:

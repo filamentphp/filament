@@ -1,8 +1,6 @@
 ---
 title: Sections
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -18,9 +16,9 @@ Section::make('Rate limiting')
     ])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing static values, the `make()` and `description()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing static values, the `make()` and `description()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/section/simple" alt="Section" version="4.x" />
+<AutoScreenshot name="schemas/layout/section/simple" alt="Section" />
 
 You can also use a section without a header, which just wraps the components in a simple card:
 
@@ -33,7 +31,7 @@ Section::make()
     ])
 ```
 
-<AutoScreenshot name="schemas/layout/section/without-header" alt="Section without header" version="4.x" />
+<AutoScreenshot name="schemas/layout/section/without-header" alt="Section without header" />
 
 ## Adding an icon to the section's header
 
@@ -51,9 +49,9 @@ Section::make('Cart')
     ])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/section/icons" alt="Section with icon" version="4.x" />
+<AutoScreenshot name="schemas/layout/section/icons" alt="Section with icon" />
 
 ## Positioning the heading and description aside
 
@@ -70,7 +68,7 @@ Section::make('Rate limiting')
     ])
 ```
 
-<AutoScreenshot name="schemas/layout/section/aside" alt="Section with heading and description aside" version="4.x" />
+<AutoScreenshot name="schemas/layout/section/aside" alt="Section with heading and description aside" />
 
 Optionally, you may pass a boolean value to control if the section should be aside or not:
 
@@ -85,7 +83,7 @@ Section::make('Rate limiting')
     ])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `aside()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `aside()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Collapsing sections
 
@@ -115,7 +113,7 @@ Section::make('Cart')
     ->collapsed()
 ```
 
-<AutoScreenshot name="schemas/layout/section/collapsed" alt="Collapsed section" version="4.x" />
+<AutoScreenshot name="schemas/layout/section/collapsed" alt="Collapsed section" />
 
 Optionally, the `collapsible()` and `collapsed()` methods accept a boolean value to control if the section should be collapsible and collapsed or not:
 
@@ -131,7 +129,7 @@ Section::make('Cart')
     ->collapsed(FeatureFlag::active())
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing static values, the `collapsible()` and `collapsed()` methods also accept functions to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing static values, the `collapsible()` and `collapsed()` methods also accept functions to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 If a collapsed section contains components that are expensive to render, you can [defer the loading of its content](#deferring-the-loading-of-section-content) until the section is expanded.
 
@@ -180,7 +178,7 @@ Section::make('Cart')
     ->persistCollapsed(FeatureFlag::active())
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing static values, the `persistCollapsed()` and `id()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing static values, the `persistCollapsed()` and `id()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Compact section styling
 
@@ -197,7 +195,7 @@ Section::make('Rate limiting')
     ->compact()
 ```
 
-<AutoScreenshot name="schemas/layout/section/compact" alt="Compact section" version="4.x" />
+<AutoScreenshot name="schemas/layout/section/compact" alt="Compact section" />
 
 Optionally, the `compact()` method accepts a boolean value to control if the section should be compact or not:
 
@@ -212,7 +210,7 @@ Section::make('Rate limiting')
     ->compact(FeatureFlag::active())
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `compact()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `compact()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Secondary section styling
 
@@ -229,7 +227,7 @@ Section::make('Notes')
     ->compact()
 ```
 
-<AutoScreenshot name="schemas/layout/section/secondary" alt="Secondary section" version="4.x" />
+<AutoScreenshot name="schemas/layout/section/secondary" alt="Secondary section" />
 
 Optionally, the `secondary()` method accepts a boolean value to control if the section should be secondary or not:
 
@@ -260,9 +258,9 @@ Section::make('Rate limiting')
     ])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `afterHeader()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `afterHeader()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/section/header/actions" alt="Section with actions in the header" version="4.x" />
+<AutoScreenshot name="schemas/layout/section/header/actions" alt="Section with actions in the header" />
 
 ## Inserting actions and other components in the footer of a section
 
@@ -281,9 +279,9 @@ Section::make('Rate limiting')
     ])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `footer()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `footer()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/section/footer/actions" alt="Section with actions in the footer" version="4.x" />
+<AutoScreenshot name="schemas/layout/section/footer/actions" alt="Section with actions in the footer" />
 
 ## Using grid columns within a section
 
@@ -299,9 +297,9 @@ Section::make('Heading')
     ->columns(2)
 ```
 
-<AutoScreenshot name="schemas/layout/section/columns" alt="Section with grid columns" version="4.x" />
+<AutoScreenshot name="schemas/layout/section/columns" alt="Section with grid columns" />
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Deferring the loading of section content
 

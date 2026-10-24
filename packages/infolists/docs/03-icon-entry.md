@@ -1,8 +1,6 @@
 ---
 title: Icon entry
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -20,9 +18,9 @@ IconEntry::make('status')
     })
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">The `icon()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">The `icon()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/icon/simple" alt="Icon entry" version="4.x" />
+<AutoScreenshot name="infolists/entries/icon/simple" alt="Icon entry" />
 
 ## Customizing the color
 
@@ -49,9 +47,9 @@ IconEntry::make('status')
     })
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">The `color()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">The `color()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/icon/color" alt="Icon entry with color" version="4.x" />
+<AutoScreenshot name="infolists/entries/icon/color" alt="Icon entry with color" />
 
 ## Customizing the size
 
@@ -65,9 +63,9 @@ IconEntry::make('status')
     ->size(IconSize::Medium)
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/icon/medium" alt="Medium-sized icon entry" version="4.x" />
+<AutoScreenshot name="infolists/entries/icon/medium" alt="Medium-sized icon entry" />
 
 ## Handling booleans
 
@@ -82,7 +80,7 @@ IconEntry::make('is_featured')
 
 > If this attribute in the model class is already cast as a `bool` or `boolean`, Filament is able to detect this, and you do not need to use `boolean()` manually.
 
-<AutoScreenshot name="infolists/entries/icon/boolean" alt="Icon entry to display a boolean" version="4.x" />
+<AutoScreenshot name="infolists/entries/icon/boolean" alt="Icon entry to display a boolean" />
 
 Optionally, you may pass a boolean value to control if the icon should be boolean or not:
 
@@ -93,7 +91,7 @@ IconEntry::make('is_featured')
     ->boolean(FeatureFlag::active())
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `boolean()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `boolean()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the boolean icons
 
@@ -109,9 +107,9 @@ IconEntry::make('is_featured')
     ->falseIcon(Heroicon::OutlinedXMark)
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `trueIcon()` and `falseIcon()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `trueIcon()` and `falseIcon()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/icon/boolean-icon" alt="Icon entry to display a boolean with custom icons" version="4.x" />
+<AutoScreenshot name="infolists/entries/icon/boolean-icon" alt="Icon entry to display a boolean with custom icons" />
 
 ### Customizing the boolean colors
 
@@ -126,6 +124,6 @@ IconEntry::make('is_featured')
     ->falseColor('warning')
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `trueColor()` and `falseColor()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing static values, the `trueColor()` and `falseColor()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/icon/boolean-color" alt="Icon entry to display a boolean with custom colors" version="4.x" />
+<AutoScreenshot name="infolists/entries/icon/boolean-color" alt="Icon entry to display a boolean with custom colors" />

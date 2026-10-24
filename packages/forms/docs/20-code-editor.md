@@ -1,8 +1,6 @@
 ---
 title: Code editor
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -14,7 +12,7 @@ use Filament\Forms\Components\CodeEditor;
 CodeEditor::make('code')
 ```
 
-<AutoScreenshot name="forms/fields/code-editor/simple" alt="Code editor" version="4.x" />
+<AutoScreenshot name="forms/fields/code-editor/simple" alt="Code editor" />
 
 ## Using language syntax highlighting
 
@@ -44,9 +42,9 @@ CodeEditor::make('code')
     ->language(Language::JavaScript)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `language()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `language()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/code-editor/language" alt="Code editor with syntax highlighting" version="4.x" />
+<AutoScreenshot name="forms/fields/code-editor/language" alt="Code editor with syntax highlighting" />
 
 ## Allowing lines to wrap
 
@@ -59,4 +57,4 @@ CodeEditor::make('code')
     ->wrap()
 ```
 
-<AutoScreenshot name="forms/fields/code-editor/wrap" alt="Code editor with line wrapping" version="4.x" />
+<AutoScreenshot name="forms/fields/code-editor/wrap" alt="Code editor with line wrapping" />

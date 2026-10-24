@@ -1,7 +1,6 @@
 ---
 title: Configurable resources and pages
 ---
-import Aside from "@components/Aside.astro"
 
 ## Introduction
 

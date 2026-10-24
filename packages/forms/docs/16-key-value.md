@@ -1,8 +1,6 @@
 ---
 title: Key-value
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -14,7 +12,7 @@ use Filament\Forms\Components\KeyValue;
 KeyValue::make('meta')
 ```
 
-<AutoScreenshot name="forms/fields/key-value/simple" alt="Key-value" version="4.x" />
+<AutoScreenshot name="forms/fields/key-value/simple" alt="Key-value" />
 
 If you're saving the data in Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
@@ -52,7 +50,7 @@ KeyValue::make('meta')
     ->addActionLabel('Add property')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `addActionLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `addActionLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Preventing the user from adding rows
 
@@ -65,7 +63,7 @@ KeyValue::make('meta')
     ->addable(false)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `addable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `addable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Deleting rows
 
@@ -82,7 +80,7 @@ KeyValue::make('meta')
     ->deletable(false)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `deletable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `deletable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Editing keys
 
@@ -97,7 +95,7 @@ KeyValue::make('meta')
     ->keyLabel('Property name')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `keyLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `keyLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Adding key field placeholders
 
@@ -110,9 +108,9 @@ KeyValue::make('meta')
     ->keyPlaceholder('Property name')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `keyPlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `keyPlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/key-value/custom-labels" alt="Key-value with custom labels and placeholders" version="4.x" />
+<AutoScreenshot name="forms/fields/key-value/custom-labels" alt="Key-value with custom labels and placeholders" />
 
 ### Preventing the user from editing keys
 
@@ -125,7 +123,7 @@ KeyValue::make('meta')
     ->editableKeys(false)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `editableKeys()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `editableKeys()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Editing values
 
@@ -140,7 +138,7 @@ KeyValue::make('meta')
     ->valueLabel('Property value')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `valueLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `valueLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Adding value field placeholders
 
@@ -153,7 +151,7 @@ KeyValue::make('meta')
     ->valuePlaceholder('Property value')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `valuePlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `valuePlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Preventing the user from editing values
 
@@ -166,7 +164,7 @@ KeyValue::make('meta')
     ->editableValues(false)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `editableValues()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `editableValues()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Reordering rows
 
@@ -179,9 +177,9 @@ KeyValue::make('meta')
     ->reorderable()
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `reorderable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields">As well as allowing a static value, the `reorderable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/key-value/reorderable" alt="Key-value with reorderable rows" version="4.x" />
+<AutoScreenshot name="forms/fields/key-value/reorderable" alt="Key-value with reorderable rows" />
 
 ## Customizing the key-value action objects
 
@@ -204,4 +202,4 @@ KeyValue::make('meta')
     )
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Action;;Filament\Actions\Action;;$action;;The action object to customize.">The action registration methods can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" extras="Action;;Filament\Actions\Action;;$action;;The action object to customize.">The action registration methods can inject various utilities into the function as parameters.</UtilityInjection>

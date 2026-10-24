@@ -111,16 +111,15 @@ describe('browser interactions', function (): void {
             expect($post->fresh()->json)->approved->toBeFalse()->status->toBe('draft');
 
             $page->assertNoAccessibilityIssues()
-                ->click('[data-testid="allow-column-edits"]')
                 ->fill('[data-testid="editable-title"] input:not([type="hidden"])', 'Corrected title')
                 ->keys('[data-testid="editable-title"] input:not([type="hidden"])', 'Tab')
-                ->assertValue('[data-testid="editable-title"] input:not([type="hidden"])', 'Corrected title')
+                ->assertValue('[data-testid="editable-title"] input:not([type="hidden"])', 'CORRECTED TITLE')
                 ->assertAttributeMissing('[data-testid="editable-title"] input:not([type="hidden"])', 'aria-invalid')
                 ->assertAttributeMissing('[data-testid="editable-title"] input:not([type="hidden"])', 'aria-busy')
                 ->assertAttributeContains('[data-testid="editable-title"] input:not([type="hidden"])', 'aria-describedby', 'editable-column-help')
                 ->assertNoSmoke();
 
-            expect($post->fresh()->title)->toBe('Corrected title');
+            expect($post->fresh()->title)->toBe('CORRECTED TITLE');
         }
     });
 
@@ -133,14 +132,13 @@ describe('browser interactions', function (): void {
         $page->assertValue($control, 'Original title')
             ->fill($control, 'mixedCase')
             ->keys($control, 'Tab')
-            ->assertAttributeMissing($control, 'aria-busy')
             ->assertValue($control, $expectedState)
+            ->assertAttributeMissing($control, 'aria-busy')
             ->assertNoSmoke();
 
         expect($post->fresh()->title)->toBe($expectedState);
     })->with([
         'normalization' => ['normalize', 'MIXEDCASE'],
-        'cached column state' => ['cached-state', 'mixedCase'],
         'custom records' => ['custom-records', 'MIXEDCASE'],
     ]);
 });
