@@ -237,7 +237,6 @@ class TestChartWidgetDefault extends ChartWidget
         ];
     }
 
-    #[Unexposed]
     public function filtersSchema(Schema $schema): Schema
     {
         return $schema
@@ -279,7 +278,6 @@ class TestChartWidgetWithDeferredFiltersProperty extends ChartWidget
         ];
     }
 
-    #[Unexposed]
     public function filtersSchema(Schema $schema): Schema
     {
         return $schema
@@ -318,7 +316,6 @@ class TestChartWidgetWithDynamicDeferredFilters extends ChartWidget
         ];
     }
 
-    #[Unexposed]
     public function filtersSchema(Schema $schema): Schema
     {
         return $schema

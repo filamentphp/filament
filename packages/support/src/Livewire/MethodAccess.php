@@ -4,10 +4,12 @@ namespace Filament\Support\Livewire;
 
 use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Attributes\Unexposed;
+use Filament\Support\Components\Component as FilamentComponent;
 use Livewire\Component;
 use Livewire\Features\SupportEvents\SupportEvents;
 use ReflectionAttribute;
 use ReflectionClass;
+use ReflectionNamedType;
 
 class MethodAccess
 {
@@ -35,6 +37,7 @@ class MethodAccess
     protected function isUnexposed(Component $component, string $method): bool
     {
         $class = new ReflectionClass($component);
+        $returnType = $class->hasMethod($method) ? $class->getMethod($method)->getReturnType() : null;
 
         while ($class && $class->hasMethod($method)) {
             $reflectionMethod = $class->getMethod($method);
@@ -50,6 +53,6 @@ class MethodAccess
             $class = $reflectionMethod->getDeclaringClass()->getParentClass();
         }
 
-        return false;
+        return ($returnType instanceof ReflectionNamedType) && is_a($returnType->getName(), FilamentComponent::class, allow_string: true);
     }
 }

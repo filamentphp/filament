@@ -1,7 +1,10 @@
 <?php
 
+use Filament\Actions\Action;
+use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Attributes\Unexposed;
+use Filament\Tables\Table;
 use Filament\Tests\TestCase;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -89,6 +92,41 @@ it('does not inherit access attributes from a replaced trait method', function (
     expect(UnexposedTestComponent::$executionCount)->toBe(3);
 });
 
+it('rejects component-returning methods before execution without an access attribute', function (string $method): void {
+    Livewire::test(ReturnTypeAccessTestComponent::class)
+        ->call($method)
+        ->assertForbidden();
+
+    expect(UnexposedTestComponent::$executionCount)->toBe(0);
+})->with(['schema', 'table', 'action', 'customSchema']);
+
+it('rejects component-returning event listeners before execution', function (): void {
+    Livewire::test(ReturnTypeAccessTestComponent::class)
+        ->dispatch('schema-requested')
+        ->assertForbidden();
+
+    expect(UnexposedTestComponent::$executionCount)->toBe(0);
+});
+
+it('lets explicit exposure override the return-type default', function (string $componentClass): void {
+    Livewire::test($componentClass)
+        ->call('exposedSchema')
+        ->assertSuccessful();
+
+    expect(UnexposedTestComponent::$executionCount)->toBe(1);
+})->with([
+    'declared exposure' => [ReturnTypeAccessTestComponent::class],
+    'inherited exposure' => [InheritedReturnTypeAccessTestComponent::class],
+]);
+
+it('does not infer component return types from mixed, array, union, or untyped declarations', function (string $method): void {
+    Livewire::test(ReturnTypeAccessTestComponent::class)
+        ->call($method)
+        ->assertSuccessful();
+
+    expect(UnexposedTestComponent::$executionCount)->toBe(1);
+})->with(['mixedSchema', 'arraySchema', 'unionSchema', 'untypedSchema']);
+
 trait HasUnexposedTestMethod
 {
     #[Unexposed]
@@ -168,5 +206,83 @@ class ConflictingMethodAccessTestComponent extends ExposedUnexposedTestComponent
     public function unexposed(int $amount): int
     {
         return parent::unexposed($amount);
+    }
+}
+
+class ReturnTypeAccessTestSchema extends Schema {}
+
+class ReturnTypeAccessTestComponent extends UnexposedTestBaseComponent
+{
+    #[On('schema-requested')]
+    public function schema(): Schema
+    {
+        static::$executionCount++;
+
+        return Schema::make();
+    }
+
+    public function table(): ?Table
+    {
+        static::$executionCount++;
+
+        return null;
+    }
+
+    public function action(): Action
+    {
+        static::$executionCount++;
+
+        return Action::make('test');
+    }
+
+    public function customSchema(): ReturnTypeAccessTestSchema
+    {
+        static::$executionCount++;
+
+        return ReturnTypeAccessTestSchema::make();
+    }
+
+    #[Exposed]
+    public function exposedSchema(): ?Schema
+    {
+        static::$executionCount++;
+
+        return null;
+    }
+
+    public function mixedSchema(): mixed
+    {
+        static::$executionCount++;
+
+        return Schema::make();
+    }
+
+    public function arraySchema(): array
+    {
+        static::$executionCount++;
+
+        return [Schema::make()];
+    }
+
+    public function unionSchema(): Schema | Action
+    {
+        static::$executionCount++;
+
+        return Schema::make();
+    }
+
+    public function untypedSchema()
+    {
+        static::$executionCount++;
+
+        return Schema::make();
+    }
+}
+
+class InheritedReturnTypeAccessTestComponent extends ReturnTypeAccessTestComponent
+{
+    public function exposedSchema(): ?Schema
+    {
+        return parent::exposedSchema();
     }
 }

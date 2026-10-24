@@ -55,6 +55,10 @@ public function recalculateTotals(): void
 
 Filament rejects client calls to this method, including JavaScript calls, `wire:click` calls, and Livewire event listener dispatches, with HTTP 403 before executing the method. Laravel does not report these HTTP exceptions by default. Direct PHP calls such as `$component->recalculateTotals()` and `$this->recalculateTotals()` still work, including during a Livewire request.
 
+Methods declaring a return type of `Filament\Support\Components\Component` or a subclass are also unexposed by default, without an attribute. This includes `Schema`, `Table`, `Action`, fields, entries, columns, filters, and custom subclasses. For example, `form(): Schema`, `table(): Table`, and `editAction(): Action` are automatically restricted. Nullable types such as `?Schema` are included. Filament checks the declared type before executing the method; it does not infer component types from `mixed`, `object`, arrays, untyped methods, or union and intersection types.
+
+An explicit `#[Exposed]` overrides this return-type default. Explicit access attributes, including those inherited from parent classes, take priority over the default.
+
 Method access attributes are inherited from parent classes when a child overrides a method without specifying its own access attribute. To allow frontend calls to an inherited `#[Unexposed]` method, apply `#[Exposed]` to the override:
 
 ```php
@@ -67,19 +71,19 @@ public function recalculateTotals(): void
 }
 ```
 
-The nearest declaration in the parent-class chain with an access attribute determines access. A child can also apply `#[Unexposed]` to block a parent's exposed method. If a declaration has both attributes, `#[Unexposed]` takes precedence. Methods without either attribute anywhere in their parent-class chain retain Livewire's normal behavior. `#[Exposed]` does not bypass Livewire's visibility restrictions or make lifecycle methods callable.
+The nearest declaration in the parent-class chain with an access attribute determines access. A child can also apply `#[Unexposed]` to block a parent's exposed method. If a declaration has both attributes, `#[Unexposed]` takes precedence. Methods without either attribute anywhere in their parent-class chain use the return-type default described above; other methods retain Livewire's normal behavior. `#[Exposed]` does not bypass Livewire's visibility restrictions or make lifecycle methods callable.
 
 Trait methods use PHP's native attribute behavior:
 
 - Importing an annotated trait method, including under an alias, retains its attributes.
-- Replacing a trait method in a class or another trait does not inherit the replaced method's attributes. Repeat `#[Unexposed]` or `#[Exposed]` on the replacement.
-- Attributes on abstract trait requirements or methods discarded during trait conflict resolution do not establish access policy. Annotate the selected concrete implementation instead.
+- Replacing a trait method in a class or another trait does not inherit the replaced method's attributes. The replacement uses its own attributes, parent-class policy, or return-type default.
+- Attributes on abstract trait requirements or methods discarded during trait conflict resolution do not establish access policy. Annotate the selected concrete implementation if you need to override its default policy.
 
 Filament does not reconstruct displaced trait declarations or combine their policies at runtime. Parent-class inheritance still applies to the resulting method.
 
 Filament's own public component and component-trait method declarations carry explicit access attributes, including overrides: `#[Unexposed]` for internal methods and `#[Exposed]` for intended frontend entry points. The repository's Rector rule adds `#[Unexposed]` to declarations missing either attribute; it does not infer frontend exposure from parents or consumers. Intended frontend overrides must explicitly declare `#[Exposed]`.
 
-New methods you declare in your application are not automatically restricted. Overriding a Filament parent-class method inherits its access policy, but replacing a trait method requires an explicit attribute as described above. Add `#[Exposed]` if your frontend integration needs to call an unexposed method, and implement any required authorization before calling it.
+New methods you declare in your application are not automatically restricted unless their declared return type matches the component rule above. Overriding a Filament parent-class method inherits its access policy; replacing a trait method follows the rules above. Add `#[Exposed]` if your frontend integration needs to call an unexposed method, and implement any required authorization before calling it.
 
 <Aside variant="danger">
     This attribute only controls Livewire component method calls, not methods on schema components or table columns. It blocks direct client invocation, not calls made by other PHP code. An exposed action, listener, or forwarding method can still call the method internally. You must authorize those entry points yourself. The attribute does not prevent Livewire from invoking lifecycle hooks or rendering methods internally, and it does not protect public properties from client updates.
