@@ -26,6 +26,8 @@ trait HasRecords
 
     protected Collection | Paginator | CursorPaginator | null $cachedTableRecords = null;
 
+    protected bool $shouldApplyTableColumnRelationshipAggregates = true;
+
     #[Unexposed]
     public function getFilteredTableQuery(): ?Builder
     {
@@ -35,7 +37,14 @@ trait HasRecords
             return null;
         }
 
-        return $this->filterTableQuery($query);
+        $shouldApplyTableColumnRelationshipAggregates = $this->shouldApplyTableColumnRelationshipAggregates;
+        $this->shouldApplyTableColumnRelationshipAggregates = true;
+
+        try {
+            return $this->filterTableQuery($query);
+        } finally {
+            $this->shouldApplyTableColumnRelationshipAggregates = $shouldApplyTableColumnRelationshipAggregates;
+        }
     }
 
     #[Unexposed]
@@ -46,7 +55,9 @@ trait HasRecords
         $this->applySearchToTableQuery($query);
 
         foreach ($this->getTable()->getVisibleColumns() as $column) {
-            $column->applyRelationshipAggregates($query);
+            if ($this->shouldApplyTableColumnRelationshipAggregates) {
+                $column->applyRelationshipAggregates($query);
+            }
 
             if ($this->getTable()->isGroupsOnly()) {
                 continue;
