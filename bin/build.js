@@ -167,7 +167,7 @@ tableColumns.forEach((column) => {
     })
 })
 
-const widgets = ['chart', 'stats-overview/stat/chart']
+const widgets = ['chart', 'js-widget', 'stats-overview/stat/chart']
 
 widgets.forEach((widget) => {
     compile({

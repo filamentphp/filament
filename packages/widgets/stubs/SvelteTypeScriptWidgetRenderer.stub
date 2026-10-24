@@ -1,0 +1,17 @@
+import { mount, unmount } from 'svelte'
+import type { JsWidgetProps, JsWidgetRenderer } from '@filament/widgets/js-widget'
+import {{ componentName }} from './{{ componentName }}.svelte'
+
+type Configuration = { heading?: string; description?: string }
+
+const mount{{ componentName }}: JsWidgetRenderer<Configuration> = ({ host, props: initialProps }) => {
+    const props = $state<JsWidgetProps<Configuration>>({ ...initialProps })
+    const component = mount({{ componentName }}, { target: host, props })
+
+    return {
+        update: (nextProps) => { Object.assign(props, nextProps) },
+        destroy: () => unmount(component),
+    }
+}
+
+export default mount{{ componentName }}

@@ -51,6 +51,7 @@ use Filament\Tests\Fixtures\Pages\IndividualColumnSearchBrowserTest;
 use Filament\Tests\Fixtures\Pages\InfolistEntriesBrowserTest;
 use Filament\Tests\Fixtures\Pages\JsComponentBrowserTest;
 use Filament\Tests\Fixtures\Pages\JsFieldFrameworkTest;
+use Filament\Tests\Fixtures\Pages\JsWidgetBrowserTest;
 use Filament\Tests\Fixtures\Pages\KeyValueTest;
 use Filament\Tests\Fixtures\Pages\ManageSiteSettings;
 use Filament\Tests\Fixtures\Pages\MarkdownEditorBrowserTest;
@@ -95,6 +96,7 @@ use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Fixtures\Widgets\ChartWidgetWithAssistiveContent;
+use Filament\Tests\Fixtures\Widgets\JsWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -118,6 +120,7 @@ class AdminPanelProvider extends PanelProvider
             ->profile()
             ->unsavedChangesAlerts(static fn (): bool => request()->routeIs('filament.admin.pages.unsaved-changes-alert-browser-test'))
             ->livewireComponents([
+                JsWidget::class,
                 ScopedDepartmentsRelationManager::class,
             ])
             ->renderHook(
@@ -181,6 +184,7 @@ class AdminPanelProvider extends PanelProvider
                 InfolistEntriesBrowserTest::class,
                 JsComponentBrowserTest::class,
                 JsFieldFrameworkTest::class,
+                JsWidgetBrowserTest::class,
                 KeyValueTest::class,
                 ManageSiteSettings::class,
                 MarkdownEditorBrowserTest::class,
