@@ -84,6 +84,30 @@
     </x-slot>
 </x-filament::modal>
 
+<x-filament::modal id="demo-modal-eyebrow">
+    <x-slot name="eyebrow">
+        Publish post
+    </x-slot>
+
+    <x-slot name="heading">
+        Getting started with Filament
+    </x-slot>
+
+    <x-slot name="description">
+        This post will be visible to everyone. You can continue editing it after publishing.
+    </x-slot>
+
+    <x-slot name="footerActions">
+        <x-filament::button>
+            Publish
+        </x-filament::button>
+
+        <x-filament::button color="gray">
+            Cancel
+        </x-filament::button>
+    </x-slot>
+</x-filament::modal>
+
 <x-filament::modal id="demo-modal-footer">
     <x-slot name="heading">
         Edit profile

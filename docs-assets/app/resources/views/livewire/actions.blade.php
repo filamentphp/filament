@@ -61,6 +61,10 @@
         {{ $this->confirmationModalCustomTextAction }}
     </div>
 
+    <div id="modalEyebrowAction" class="p-16 flex items-center justify-center max-w-xl">
+        {{ $this->modalEyebrowAction }}
+    </div>
+
     <div id="modalIconAction" class="p-16 flex items-center justify-center max-w-xl">
         {{ $this->modalIconAction }}
     </div>

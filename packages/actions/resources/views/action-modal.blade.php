@@ -11,6 +11,7 @@
     $actionIsModalClosedByClickingAway = $action->isModalClosedByClickingAway();
     $actionIsModalClosedByEscaping = $action->isModalClosedByEscaping();
     $actionModalDescription = $action->getModalDescription();
+    $actionModalEyebrow = $action->getModalEyebrow();
     $actionExtraModalWindowAttributeBag = $action->getExtraModalWindowAttributeBag();
     $actionExtraModalOverlayAttributeBag = $action->getExtraModalOverlayAttributeBag();
     $actionModalFooterActions = $action->getVisibleModalFooterActions();
@@ -42,6 +43,7 @@
     :close-by-clicking-away="$actionIsModalClosedByClickingAway"
     :close-by-escaping="$actionIsModalClosedByEscaping"
     :description="$actionModalDescription"
+    :eyebrow="$actionModalEyebrow"
     :restores-focus="false"
     :extra-modal-window-attribute-bag="$actionExtraModalWindowAttributeBag"
     :extra-modal-overlay-attribute-bag="$actionExtraModalOverlayAttributeBag"
