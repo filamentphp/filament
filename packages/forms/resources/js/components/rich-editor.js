@@ -48,6 +48,8 @@ export default function richEditorFormComponent({
     maxFileSizeValidationMessage,
     mergeTags,
     mentions,
+    getMentionSearchResultsUsing,
+    getMentionLabelsUsing,
     noMergeTagSearchResultsMessage,
     placeholder,
     state,
@@ -125,10 +127,13 @@ export default function richEditorFormComponent({
                 maxFileSizeValidationMessage,
                 mergeTags,
                 mentions,
-                getMentionSearchResultsUsing: (search, char) =>
-                    this.$getMentionSearchResultsForJs({ search, char }),
-                getMentionLabelsUsing: (mentions) =>
-                    this.$getMentionLabelsForJs({ mentions }),
+                getMentionSearchResultsUsing:
+                    getMentionSearchResultsUsing ??
+                    ((search, char) =>
+                        this.$getMentionSearchResultsForJs({ search, char })),
+                getMentionLabelsUsing:
+                    getMentionLabelsUsing ??
+                    ((mentions) => this.$getMentionLabelsForJs({ mentions })),
                 noMergeTagSearchResultsMessage,
                 placeholder,
                 statePath,

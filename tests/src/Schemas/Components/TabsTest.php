@@ -891,6 +891,29 @@ it('retains lazy panel shells and selection through `Livewire` morphs', function
     $page->assertNoSmoke();
 });
 
+it('binds named and general exposed method calls to the active `Tab`', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/schema-component-scope-browser-test?scenario=tabs');
+
+    $page->click('#first-tab [data-testid=named-scope]')
+        ->assertSeeIn('#first-tab output', 'Tab: First tab: Named')
+        ->click('#first-tab [data-testid=general-scope]')
+        ->assertSeeIn('#first-tab output', 'Tab: First tab: General')
+        ->click('#method-tabs [data-tab-key=second]')
+        ->click('#second-tab [data-testid=named-scope]')
+        ->assertSeeIn('#second-tab output', 'Tab: Second tab: Named')
+        ->click('#second-tab [data-testid=general-scope]')
+        ->assertSeeIn('#second-tab output', 'Tab: Second tab: General')
+        ->click('#method-tabs [data-tab-key=first]')
+        ->click('#first-tab [data-testid=named-scope]')
+        ->assertSeeIn('#first-tab output', 'Tab: First tab: Named')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()->assertNoAccessibilityIssues();
+});
+
 class TabsWithDeferredBadges extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;

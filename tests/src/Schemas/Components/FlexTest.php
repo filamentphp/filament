@@ -7,6 +7,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Js;
 use Livewire\Component;
@@ -177,6 +178,33 @@ describe('rendering', function (): void {
     it('can render with `from()` set via `Closure`', function (): void {
         livewire(RenderFlexWithClosureFrom::class)->assertSuccessful();
     });
+});
+
+it('keeps Blade exposed methods bound to their fields when `Flex` children are reordered', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/schema-component-scope-browser-test?scenario=flex');
+    $state = "JSON.parse(document.querySelector('[data-testid=server-state]').textContent)";
+
+    $page->click('[data-blade-method=first] [data-testid=named-call]')
+        ->assertSeeIn('[data-blade-method=first] output', 'data.first: Named café')
+        ->assertScript("{$state}.first", 'Named café')
+        ->click('[data-blade-method=second] [data-testid=general-call]')
+        ->assertSeeIn('[data-blade-method=second] output', 'data.second: General café')
+        ->assertScript("{$state}.second", 'General café')
+        ->click('[data-testid=reverse-fields]')
+        ->assertScript("Array.from(document.querySelectorAll('[data-blade-method]'), element => element.dataset.bladeMethod)", ['second', 'first'])
+        ->click('[data-blade-method=second] [data-testid=named-call]')
+        ->assertSeeIn('[data-blade-method=second] output', 'data.second: Named café')
+        ->assertScript("{$state}.second", 'Named café')
+        ->click('[data-blade-method=first] [data-testid=general-call]')
+        ->assertSeeIn('[data-blade-method=first] output', 'data.first: General café')
+        ->assertScript("{$state}.first", 'General café')
+        ->assertScript("{$state}.second", 'Named café')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()->assertNoAccessibilityIssues();
 });
 
 class RenderFlex extends Component implements HasSchemas

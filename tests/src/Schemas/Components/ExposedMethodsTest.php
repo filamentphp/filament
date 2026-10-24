@@ -73,6 +73,62 @@ it('calls both attribute names while rejecting unannotated table column methods'
     expect($livewire->callTableColumnMethod('counter', '42', 'unannotated', ['value' => 7]))->toBeNull();
 });
 
+it('scopes exposed methods and embedded `$get()` and `$set()` in lists, tables and liberated layouts', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/schema-component-scope-browser-test');
+    $state = "JSON.parse(document.querySelector('[data-testid=server-state]').textContent)";
+
+    $page->click('[data-testid=list-select] button[aria-haspopup=listbox]')
+        ->fill('[data-testid=list-select] input[role=combobox]', 'Café')
+        ->click('[data-testid=list-select] [role=option]:has-text("Match Café")')
+        ->assertScript("{$state}.choice", 'chosen');
+
+    foreach (['list', 'liberated'] as $name) {
+        $page->click("[data-blade-method={$name}] [data-testid=named-call]")
+            ->assertSeeIn("[data-blade-method={$name}] output", "data.{$name}: Named café")
+            ->assertScript("{$state}.{$name}", 'Named café')
+            ->click("[data-blade-method={$name}] [data-testid=general-call]")
+            ->assertSeeIn("[data-blade-method={$name}] output", "data.{$name}: General café")
+            ->assertScript("{$state}.{$name}", 'General café');
+    }
+
+    $page->click('[data-blade-method=field] [data-testid=named-call] >> nth=1')
+        ->assertSeeIn('[data-blade-method=field] output >> nth=1', 'data.items.1.field: Named café')
+        ->assertScript("{$state}.items[1].field", 'Named café')
+        ->assertScript("{$state}.items[0].field", 'First field')
+        ->click('[data-blade-method=caption] [data-testid=named-call] >> nth=1')
+        ->assertSeeIn('[data-blade-method=caption] output >> nth=1', 'data.items.1.caption: Second caption: Named café')
+        ->click('[data-blade-method=caption] [data-testid=general-call] >> nth=0')
+        ->assertSeeIn('[data-blade-method=caption] output >> nth=0', 'data.items.0.caption: First caption: General café')
+        ->click('[data-testid=remove-first]')
+        ->assertCount('[data-blade-method=field]', 1)
+        ->click('[data-blade-method=field] [data-testid=general-call]')
+        ->assertSeeIn('[data-blade-method=field] output', 'data.items.1.field: General café')
+        ->assertScript("{$state}.items[1].field", 'General café')
+        ->click('[data-blade-method=caption] [data-testid=general-call]')
+        ->assertSeeIn('[data-blade-method=caption] output', 'data.items.1.caption: Second caption: General café');
+
+    $rootContent = '[data-field-wrapper]:has([data-blade-method=liberated]) [data-embedded-scope]';
+    $rowContent = 'td:has([data-blade-method=field]) [data-embedded-scope]';
+
+    $page->assertSeeIn($rootContent . ' span', 'Root "caption" <em>literal</em>')
+        ->assertSeeIn($rowContent . ' span', 'Second caption')
+        ->click($rootContent . ' button')
+        ->assertScript("{$state}.caption", 'Embedded café')
+        ->assertScript("{$state}.items[1].caption", 'Second caption')
+        ->assertSeeIn($rootContent . ' span', 'Embedded café')
+        ->assertSeeIn($rowContent . ' span', 'Second caption')
+        ->click($rowContent . ' button')
+        ->assertScript("{$state}.items[1].caption", 'Embedded café')
+        ->assertScript("{$state}.caption", 'Embedded café')
+        ->assertSeeIn($rowContent . ' span', 'Embedded café')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()->assertNoAccessibilityIssues();
+});
+
 trait ExposedCompatibilityMethods
 {
     #[Exposed]

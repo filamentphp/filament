@@ -5,6 +5,7 @@ use Filament\Tests\TestCase;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Process\PendingProcess;
 use Illuminate\Support\Facades\Process;
+use Laravel\Prompts\Prompt;
 
 uses(TestCase::class);
 
@@ -69,6 +70,9 @@ describe('Package manager prerequisites', function (): void {
 
         try {
             app()['env'] = 'local';
+
+            // Keep console expectations active while exercising the non-test collision check.
+            Prompt::fallbackWhen(true);
 
             $command = $this->artisan('make:filament-theme', [
                 '--panel' => 'admin',
