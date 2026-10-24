@@ -250,10 +250,6 @@ You can call methods on your custom field class from JavaScript in a Blade view.
 
 ### Exposing a method
 
-<Aside variant="info">
-    `#[Exposed]` replaces `#[ExposedLivewireMethod]`. Update your import to `Filament\Support\Components\Attributes\Exposed` and use `#[Exposed]`. The old attribute is deprecated but remains supported, so existing fields continue to work.
-</Aside>
-
 Add `#[Exposed]` to a public instance method on your field:
 
 ```php
@@ -278,7 +274,7 @@ class LocationPicker extends Field
 ```
 
 <Aside variant="warning">
-    Only methods marked with `#[Exposed]` (or the deprecated `#[ExposedLivewireMethod]`) can be called from JavaScript. The attribute does not authorize access to the method's data or operations. Validate client-supplied arguments and [authorize sensitive operations](../advanced/security#authorization) inside the method.
+    Only methods marked with `#[Exposed]` can be called from JavaScript. The attribute does not authorize access to the method's data or operations. Validate client-supplied arguments and [authorize sensitive operations](../advanced/security#authorization) inside the method.
 
     Exposed methods remain callable when the field is [disabled](overview#disabling-a-field), since read methods may still be needed to display its value. If a method changes the field's value and should respect its disabled state, check `$this->isDisabled()` before making changes.
 </Aside>
