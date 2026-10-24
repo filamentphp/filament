@@ -201,6 +201,8 @@ As a general rule: whenever you pass user-controlled data into a Filament config
 
 When rendering HTML content via methods like `html()` or `markdown()` on components such as `TextColumn` and `TextEntry`, Filament automatically sanitizes the output using Symfony's [HtmlSanitizer](https://symfony.com/doc/current/html_sanitizer.html) component. This removes potentially dangerous elements like `<script>` tags to help prevent XSS attacks.
 
+The rich content renderer sanitizes editor-authored content, but treats HTML returned by [registered custom blocks](../forms/rich-editor#rendering-content-with-custom-blocks) as trusted application HTML. Neither the block's final output nor its [preview](../forms/rich-editor#rendering-a-preview-for-a-custom-block) is automatically sanitized. Your block methods must escape or sanitize user-supplied configuration values before including them in HTML.
+
 ### Default sanitizer configuration
 
 Filament registers `HtmlSanitizerConfig` as a scoped binding in Laravel's service container with the following default configuration:
