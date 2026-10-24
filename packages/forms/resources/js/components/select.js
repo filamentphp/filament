@@ -8,10 +8,6 @@ export default function selectFormComponent({
     canSelectPlaceholder,
     clearButtonLabel,
     errorMessage,
-    getOptionLabelUsing,
-    getOptionLabelsUsing,
-    getOptionsUsing,
-    getSearchResultsUsing,
     hasDynamicOptions,
     hasDynamicSearchResults,
     hasInitialNoOptionsMessage,
@@ -61,28 +57,21 @@ export default function selectFormComponent({
                 clearButtonLabel,
                 element: this.$refs.select,
                 errorMessage,
-                getOptionLabelUsing:
-                    getOptionLabelUsing ?? (() => this.$getOptionLabel()),
-                getOptionLabelsUsing:
-                    getOptionLabelsUsing ??
-                    (() => this.$getOptionLabelsForJs()),
-                getOptionsUsing: optionRequests.wrap(
-                    getOptionsUsing ??
-                        ((request) =>
-                            request(this.$wire, 'callSchemaComponentMethod', [
-                                key,
-                                'getOptionsForJs',
-                            ])),
+                getOptionLabelUsing: () => this.$getOptionLabel(),
+                getOptionLabelsUsing: () => this.$getOptionLabelsForJs(),
+                getOptionsUsing: optionRequests.wrap((request) =>
+                    request(this.$wire, 'callSchemaComponentMethod', [
+                        key,
+                        'getOptionsForJs',
+                    ]),
                 ),
-                getSearchResultsUsing: optionRequests.wrap(
-                    getSearchResultsUsing ??
-                        ((search, request) =>
-                            request(
-                                this.$wire,
-                                'callSchemaComponentMethod',
-                                [key, 'getSearchResultsForJs'],
-                                { search },
-                            )),
+                getSearchResultsUsing: optionRequests.wrap((search, request) =>
+                    request(
+                        this.$wire,
+                        'callSchemaComponentMethod',
+                        [key, 'getSearchResultsForJs'],
+                        { search },
+                    ),
                 ),
                 hasDynamicOptions,
                 hasDynamicSearchResults,

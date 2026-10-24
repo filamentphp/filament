@@ -2204,9 +2204,10 @@ describe('browser rendering', function (): void {
             during: static function () use (&$deletedFiles, &$remainingFiles): void {
                 $page = visit('/file-upload-browser-test');
 
+                $page->assertPresent('[data-testid="attachment-upload"] fieldset:has(legend:text-is("first.txt"))');
+                $page->page()->locator('[data-testid="attachment-upload"] fieldset:has(legend:text-is("second.txt")) button:enabled')->click();
+
                 $page
-                    ->assertPresent('[data-testid="attachment-upload"] fieldset:has(legend:text-is("first.txt"))')
-                    ->click('[data-testid="attachment-upload"] fieldset:has(legend:text-is("second.txt")) button:enabled')
                     ->assertNotPresent('[data-testid="attachment-upload"] fieldset:has(legend:text-is("second.txt"))')
                     ->assertPresent('[data-testid="attachment-upload"] fieldset:has(legend:text-is("first.txt"))')
                     ->assertNoSmoke()
