@@ -591,6 +591,7 @@
                                             $filtersTriggerActionIsModalClosedByClickingAway = $filtersTriggerAction->isModalClosedByClickingAway();
                                             $filtersTriggerActionIsModalClosedByEscaping = $filtersTriggerAction->isModalClosedByEscaping();
                                             $filtersTriggerActionModalDescription = $filtersTriggerAction->getModalDescription();
+                                            $filtersTriggerActionModalEyebrow = $filtersTriggerAction->getModalEyebrow();
                                             $filtersTriggerActionExtraModalWindowAttributeBag = $filtersTriggerAction->getExtraModalWindowAttributeBag();
                                             $filtersTriggerActionExtraModalOverlayAttributeBag = $filtersTriggerAction->getExtraModalOverlayAttributeBag();
                                             $filtersTriggerActionVisibleModalFooterActions = $filtersTriggerAction->getVisibleModalFooterActions();
@@ -611,6 +612,7 @@
                                             :close-by-clicking-away="$filtersTriggerActionIsModalClosedByClickingAway"
                                             :close-by-escaping="$filtersTriggerActionIsModalClosedByEscaping"
                                             :description="$filtersTriggerActionModalDescription"
+                                            :eyebrow="$filtersTriggerActionModalEyebrow"
                                             :extra-modal-window-attribute-bag="$filtersTriggerActionExtraModalWindowAttributeBag"
                                             :extra-modal-overlay-attribute-bag="$filtersTriggerActionExtraModalOverlayAttributeBag"
                                             :footer-actions="$filtersTriggerActionVisibleModalFooterActions"
@@ -693,6 +695,7 @@
                                             $columnManagerTriggerActionIsModalClosedByClickingAway = $columnManagerTriggerAction->isModalClosedByClickingAway();
                                             $columnManagerTriggerActionIsModalClosedByEscaping = $columnManagerTriggerAction->isModalClosedByEscaping();
                                             $columnManagerTriggerActionModalDescription = $columnManagerTriggerAction->getModalDescription();
+                                            $columnManagerTriggerActionModalEyebrow = $columnManagerTriggerAction->getModalEyebrow();
                                             $columnManagerTriggerActionExtraModalWindowAttributeBag = $columnManagerTriggerAction->getExtraModalWindowAttributeBag();
                                             $columnManagerTriggerActionExtraModalOverlayAttributeBag = $columnManagerTriggerAction->getExtraModalOverlayAttributeBag();
                                             $columnManagerTriggerActionVisibleModalFooterActions = $columnManagerTriggerAction->getVisibleModalFooterActions();
@@ -713,6 +716,7 @@
                                             :close-by-clicking-away="$columnManagerTriggerActionIsModalClosedByClickingAway"
                                             :close-by-escaping="$columnManagerTriggerActionIsModalClosedByEscaping"
                                             :description="$columnManagerTriggerActionModalDescription"
+                                            :eyebrow="$columnManagerTriggerActionModalEyebrow"
                                             :extra-modal-window-attribute-bag="$columnManagerTriggerActionExtraModalWindowAttributeBag"
                                             :extra-modal-overlay-attribute-bag="$columnManagerTriggerActionExtraModalOverlayAttributeBag"
                                             :footer-actions="$columnManagerTriggerActionVisibleModalFooterActions"
