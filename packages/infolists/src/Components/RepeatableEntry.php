@@ -7,6 +7,7 @@ use Closure;
 use Exception;
 use Filament\Infolists\Components\RepeatableEntry\TableColumn;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Concerns\CanLimitItemsForProcessing;
 use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
@@ -23,6 +24,7 @@ use Traversable;
 class RepeatableEntry extends Entry implements HasEmbeddedView
 {
     use CanBeContained;
+    use CanLimitItemsForProcessing;
     use HasContainerGridLayout;
 
     /**
@@ -83,6 +85,8 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
     public function getDefaultChildSchemas(): array
     {
         $state = $this->normalizeItemsState($this->getState() ?? []);
+
+        $this->ensureItemsCanBeProcessed(is_array($state) ? count($state) : 0);
 
         $this->cachedItemsState = $state;
 
@@ -328,7 +332,10 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
                                     <?php $counter++ ?>
 
                                     <?php if ($component->isVisible()) { ?>
-                                        <td>
+                                        <td
+                                            wire:key="<?= e($component->getLivewireKey()) ?>"
+                                            x-data="filamentSchemaComponent(<?= Js::from($component->getAlpineScopeConfiguration()) ?>)"
+                                        >
                                             <?= $component->toHtml() ?>
                                         </td>
                                     <?php } else { ?>

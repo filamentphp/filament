@@ -27,6 +27,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 
 use function Filament\Tests\livewire;
 
@@ -366,6 +367,203 @@ describe('sorting', function (): void {
 });
 
 describe('pagination', function (): void {
+    it('can opt in to `enforcePaginationPageOptions()` and evaluate its condition', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        expect($table->enforcesPaginationPageOptions())->toBeFalse();
+
+        $table->enforcePaginationPageOptions();
+
+        expect($table->enforcesPaginationPageOptions())->toBeTrue();
+
+        $table->enforcePaginationPageOptions(static fn (): bool => false);
+
+        expect($table->enforcesPaginationPageOptions())->toBeFalse();
+    });
+
+    it('preserves unrestricted page sizes by default', function (): void {
+        $posts = Post::factory()->count(13)->create();
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->defaultSort('id'),
+            during: function () use ($posts): void {
+                livewire(TableTestComponent::class)
+                    ->set('tableRecordsPerPage', 7)
+                    ->assertSet('tableRecordsPerPage', 7)
+                    ->assertCanSeeTableRecords($posts->take(7), inOrder: true)
+                    ->assertCanNotSeeTableRecords($posts->skip(7));
+            },
+        );
+    });
+
+    it('enforces configured page sizes before rendering and persisting updates', function (PaginationMode $mode, bool $persistsInSession): void {
+        $posts = Post::factory()->count(13)->create();
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table
+                ->enforcePaginationPageOptions()
+                ->paginationPageOptions(static fn (): array => [3, 8])
+                ->defaultPaginationPageOption(8)
+                ->paginationMode($mode)
+                ->persistRecordsPerPageInSession($persistsInSession)
+                ->defaultSort('id'),
+            during: function () use ($posts, $persistsInSession): void {
+                $component = livewire(TableTestComponent::class);
+                $sessionKey = $component->instance()->getTablePerPageSessionKey();
+
+                foreach ([7, 'all', 1000000, null, true, []] as $pageSize) {
+                    $component
+                        ->set('tableRecordsPerPage', $pageSize)
+                        ->assertSuccessful()
+                        ->assertSet('tableRecordsPerPage', 8)
+                        ->assertCanSeeTableRecords($posts->take(8), inOrder: true)
+                        ->assertCanNotSeeTableRecords($posts->skip(8));
+
+                    expect(session()->has($sessionKey))->toBe($persistsInSession);
+
+                    if ($persistsInSession) {
+                        expect(session()->get($sessionKey))->toBe(8);
+                    }
+                }
+
+                $component
+                    ->set('tableRecordsPerPage', '3')
+                    ->assertSet('tableRecordsPerPage', '3')
+                    ->assertCanSeeTableRecords($posts->take(3), inOrder: true)
+                    ->assertCanNotSeeTableRecords($posts->skip(3));
+
+                livewire(TableTestComponent::class)
+                    ->assertSet('tableRecordsPerPage', $persistsInSession ? '3' : 8);
+            },
+        );
+    })->with([PaginationMode::Default, PaginationMode::Simple, PaginationMode::Cursor])->with([true, false]);
+
+    it('allows `all` when it is explicitly listed', function (): void {
+        $posts = Post::factory()->count(13)->create();
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table
+                ->enforcePaginationPageOptions()
+                ->paginated([3, 'all'])
+                ->defaultSort('id'),
+            during: function () use ($posts): void {
+                livewire(TableTestComponent::class)
+                    ->set('tableRecordsPerPage', 'all')
+                    ->assertSet('tableRecordsPerPage', 'all')
+                    ->assertCanSeeTableRecords($posts, inOrder: true);
+
+                livewire(TableTestComponent::class)
+                    ->assertSet('tableRecordsPerPage', 'all')
+                    ->assertCanSeeTableRecords($posts, inOrder: true);
+            },
+        );
+    });
+
+    it('uses a fixed PHP page size when no pagination options are listed', function (string $componentClass, ?int $defaultPageSize, int $expectedPageSize): void {
+        $posts = Post::factory()->count(13)->create();
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table
+                ->enforcePaginationPageOptions()
+                ->paginationPageOptions([])
+                ->defaultPaginationPageOption($defaultPageSize)
+                ->defaultSort('id'),
+            during: function () use ($posts, $componentClass, $expectedPageSize): void {
+                $component = livewire($componentClass)
+                    ->assertSet('tableRecordsPerPage', $expectedPageSize);
+                $sessionKey = $component->instance()->getTablePerPageSessionKey();
+
+                foreach (['all', 11, null] as $pageSize) {
+                    $component
+                        ->set('tableRecordsPerPage', $pageSize)
+                        ->assertSuccessful()
+                        ->assertSet('tableRecordsPerPage', $expectedPageSize)
+                        ->assertCanSeeTableRecords($posts->take($expectedPageSize), inOrder: true)
+                        ->assertCanNotSeeTableRecords($posts->skip($expectedPageSize));
+
+                    expect(session()->get($sessionKey))->toBe($expectedPageSize);
+                }
+
+                session()->put($sessionKey, 1000000);
+
+                livewire($componentClass)
+                    ->assertSet('tableRecordsPerPage', $expectedPageSize)
+                    ->assertCanSeeTableRecords($posts->take($expectedPageSize), inOrder: true)
+                    ->assertCanNotSeeTableRecords($posts->skip($expectedPageSize));
+            },
+        );
+    })->with([
+        'configured default' => [TableTestComponent::class, 7, 7],
+        'initialized Livewire property' => [FixedPageSizeTableTestComponent::class, null, 7],
+        'configured default overrides the initial property' => [FixedPageSizeTableTestComponent::class, 8, 8],
+        'no PHP size specified' => [TableTestComponent::class, null, 10],
+    ]);
+
+    it('prevents client updates to the initial PHP page size', function (): void {
+        $component = livewire(FixedPageSizeTableTestComponent::class);
+
+        expect(fn () => $component->set('initialTableRecordsPerPage', 'all'))
+            ->toThrow(CannotUpdateLockedPropertyException::class);
+    });
+
+    it('does not reuse an earlier client selection when a table becomes fixed-size', function (bool $startsEnforced): void {
+        $posts = Post::factory()->count(13)->create();
+        $enforcesOptions = $startsEnforced;
+        $hasOptions = $startsEnforced;
+
+        Table::configureUsing(
+            static function (Table $table) use (&$enforcesOptions, &$hasOptions, $startsEnforced): Table {
+                return $table
+                    ->enforcePaginationPageOptions(static function () use (&$enforcesOptions): bool {
+                        return $enforcesOptions;
+                    })
+                    ->paginationPageOptions(static function () use (&$hasOptions): array {
+                        return $hasOptions ? [7, 'all'] : [];
+                    })
+                    ->defaultPaginationPageOption($startsEnforced ? 7 : null)
+                    ->defaultSort('id');
+            },
+            during: function () use ($posts, &$enforcesOptions, &$hasOptions): void {
+                $component = livewire(FixedPageSizeTableTestComponent::class)
+                    ->set('tableRecordsPerPage', 'all')
+                    ->assertCanSeeTableRecords($posts, inOrder: true);
+
+                $enforcesOptions = true;
+                $hasOptions = false;
+
+                $component
+                    ->set('tableRecordsPerPage', 8)
+                    ->assertSet('tableRecordsPerPage', 7)
+                    ->assertCanSeeTableRecords($posts->take(7), inOrder: true)
+                    ->assertCanNotSeeTableRecords($posts->skip(7));
+            },
+        );
+    })->with([
+        'removing the options' => true,
+        'enabling enforcement' => false,
+    ]);
+
+    it('validates session page sizes against the configured options', function (mixed $pageSize, int | string $expectedPageSize): void {
+        Table::configureUsing(
+            static fn (Table $table): Table => $table
+                ->enforcePaginationPageOptions()
+                ->paginated([3, 8])
+                ->defaultPaginationPageOption(8),
+            during: function () use ($pageSize, $expectedPageSize): void {
+                $component = livewire(TableTestComponent::class);
+                $sessionKey = $component->instance()->getTablePerPageSessionKey();
+                session()->put($sessionKey, $pageSize);
+
+                livewire(TableTestComponent::class)
+                    ->assertSet('tableRecordsPerPage', $expectedPageSize);
+            },
+        );
+    })->with([
+        'numeric string' => ['3', '3'],
+        'off-list value' => [7, 3],
+        'boolean' => [true, 3],
+    ]);
+
     it('respects scoped bounds when selecting the current page with `allowDuplicates()`', function (bool $usesOffset): void {
         $ticket = Ticket::factory()->create();
         $department = Department::factory()->create();
@@ -1015,6 +1213,14 @@ class StripedTableTestComponent extends TableTestComponent
     {
         return parent::table($table)
             ->striped();
+    }
+}
+
+class FixedPageSizeTableTestComponent extends TableTestComponent
+{
+    public function mount(): void
+    {
+        $this->tableRecordsPerPage = 7;
     }
 }
 

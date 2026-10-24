@@ -48,8 +48,6 @@ export default function richEditorFormComponent({
     maxFileSizeValidationMessage,
     mergeTags,
     mentions,
-    getMentionSearchResultsUsing,
-    getMentionLabelsUsing,
     noMergeTagSearchResultsMessage,
     placeholder,
     state,
@@ -108,11 +106,11 @@ export default function richEditorFormComponent({
                     ),
                 floatingToolbars,
                 getCustomBlockPreviewsUsing: (customBlocks) =>
-                    this.$wire.callSchemaComponentMethod(
-                        key,
-                        'getCustomBlockPreviewsForJs',
-                        { customBlocks },
-                    ),
+                    this.$getCustomBlockPreviewsForJs({ customBlocks }),
+                getFileAttachmentUrlUsing: (attachment) =>
+                    this.$getUploadedFileAttachmentTemporaryUrl({
+                        attachment,
+                    }),
                 hasResizableImages,
                 hasMinimalCustomBlockControls,
                 insertCustomBlockUsing: (id, dragPosition = null) =>
@@ -127,8 +125,10 @@ export default function richEditorFormComponent({
                 maxFileSizeValidationMessage,
                 mergeTags,
                 mentions,
-                getMentionSearchResultsUsing,
-                getMentionLabelsUsing,
+                getMentionSearchResultsUsing: (search, char) =>
+                    this.$getMentionSearchResultsForJs({ search, char }),
+                getMentionLabelsUsing: (mentions) =>
+                    this.$getMentionLabelsForJs({ mentions }),
                 noMergeTagSearchResultsMessage,
                 placeholder,
                 statePath,

@@ -62,6 +62,8 @@ trait InteractsWithTable
             return;
         }
 
+        $this->initialTableRecordsPerPage ??= $this->tableRecordsPerPage ?? 10;
+
         $shouldPersistFiltersInSession = $this->getTable()->persistsFiltersInSession();
         $filtersSessionKey = $this->getTableFiltersSessionKey();
 
@@ -181,6 +183,10 @@ trait InteractsWithTable
 
         if ($this->getTable()->isPaginated()) {
             $this->tableRecordsPerPage ??= $this->getDefaultTableRecordsPerPageSelectOption();
+
+            if ($this->getTable()->enforcesPaginationPageOptions()) {
+                $this->tableRecordsPerPage = $this->getTableRecordsPerPage();
+            }
         }
     }
 

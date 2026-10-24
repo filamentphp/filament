@@ -45,6 +45,14 @@ class ModalBrowserTest extends Page
                 ->action(static fn () => null)
                 ->extraAttributes(['data-testid' => 'basic-trigger'])
                 ->extraModalWindowAttributes(['data-testid' => 'basic-modal']),
+            Action::make('eyebrow')
+                ->label('Eyebrow')
+                ->modalSubmitAction(false)
+                ->modalEyebrow('Edit post')
+                ->modalHeading('Getting started with Filament')
+                ->modalDescription('Update the post before publishing it.')
+                ->extraAttributes(['data-testid' => 'eyebrow-trigger'])
+                ->extraModalWindowAttributes(['data-testid' => 'eyebrow-modal']),
             Action::make('nonOverlayFocusRestoration')
                 ->label('Non-overlay focus restoration')
                 ->requiresConfirmation()

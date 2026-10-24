@@ -706,6 +706,34 @@ it('can render `Wizard` in the browser', function (): void {
         ->assertNoAccessibilityIssues();
 });
 
+it('binds exposed `Step` methods independently from `Wizard` navigation and autofocus', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/schema-component-scope-browser-test?scenario=wizard');
+
+    $page->assertPresent('#first-focus:focus')
+        ->click('#first-step [data-testid=named-scope]')
+        ->assertSeeIn('#first-step output', 'Step: First step: Named')
+        ->click('#first-step [data-testid=general-scope]')
+        ->assertSeeIn('#first-step output', 'Step: First step: General')
+        ->fill('#first-focus', 'Ready')
+        ->click('[data-testid=next-step]')
+        ->assertPresent('#second-focus:focus')
+        ->click('#second-step [data-testid=named-scope]')
+        ->assertSeeIn('#second-step output', 'Step: Second step: Named')
+        ->click('#second-step [data-testid=general-scope]')
+        ->assertSeeIn('#second-step output', 'Step: Second step: General')
+        ->click('[data-testid=previous-step]')
+        ->assertPresent('#first-focus:focus')
+        ->keys('#first-focus', 'Enter')
+        ->assertPresent('#second-focus:focus')
+        ->assertSeeIn('[data-testid=incorrect-step-calls]', '0')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()->assertNoAccessibilityIssues();
+});
+
 class WizardTransitions extends Livewire
 {
     public array $hooks = [];
