@@ -1,0 +1,16 @@
+{{ componentTypeImport }}
+const pages = import.meta.glob{{ globType }}('{{ pages }}/**/*.svelte')
+
+export function resolve(name{{ nameType }}) {
+    if (!name.startsWith('Filament/')) {
+        throw new Error(`Unknown Filament page: ${name}`)
+    }
+
+    const page = pages[`{{ pages }}/${name.slice('Filament/'.length)}.svelte`]
+
+    if (!page) {
+        throw new Error(`Unknown Filament page: ${name}`)
+    }
+
+    return page()
+}
