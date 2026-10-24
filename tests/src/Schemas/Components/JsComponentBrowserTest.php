@@ -78,3 +78,18 @@ it('shows an accessible renderer error without affecting sibling components', fu
         ->assertNoAccessibilityIssues()
         ->screenshotElement('main', 'js-schema-component-error-dark');
 });
+
+it('uses relative state and routes exposed methods separately from `$wire` methods', function (): void {
+    $page = visit('/js-component-browser-test?utilities=1');
+    $page->click('Use schema utilities')
+        ->assertSeeIn('[data-utilities-result]', 'Quarterly sales | data | Updated via utilities | Component: Updated via utilities | Component: Updated via utilities | Page: Updated via utilities')
+        ->assertValue('[id="form.caption"]', 'Updated via utilities')
+        ->assertSeeIn('[data-report]', 'Updated via utilities')
+        ->assertSeeIn('[data-comparison]', 'Previous quarter')
+        ->assertNoAccessibilityIssues()
+        ->assertNoSmoke();
+
+    $page->inDarkMode()
+        ->assertPresent('[data-utilities-result]')
+        ->assertNoAccessibilityIssues();
+});
