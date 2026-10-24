@@ -17,6 +17,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\View\PanelsRenderHook;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
@@ -83,6 +84,7 @@ abstract class Page extends BasePage
 
     protected string $view = 'filament-panels::pages.page';
 
+    #[Unexposed]
     public function getLayout(): string
     {
         return static::$layout ?? 'filament-panels::components.layout.index';
@@ -91,6 +93,7 @@ abstract class Page extends BasePage
     /**
      * @param  array<mixed>  $parameters
      */
+    #[Unexposed]
     public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false, ?string $configuration = null): string
     {
         if (filled($configuration)) {
@@ -111,6 +114,7 @@ abstract class Page extends BasePage
         return route(static::getRouteName($panel), $parameters, $isAbsolute);
     }
 
+    #[Unexposed]
     public static function registerRoutes(Panel $panel, ?PageConfiguration $configuration = null): void
     {
         if (filled(static::getCluster())) {
@@ -124,6 +128,7 @@ abstract class Page extends BasePage
         Route::name('pages.')->group(fn () => static::routes($panel, $configuration));
     }
 
+    #[Unexposed]
     public static function registerNavigationItems(): void
     {
         if (filled(static::getCluster())) {
@@ -145,6 +150,7 @@ abstract class Page extends BasePage
     /**
      * @return array<NavigationItem>
      */
+    #[Unexposed]
     public static function getNavigationItems(): array
     {
         $activeRoutePattern = static::getNavigationItemActiveRoutePattern();
@@ -167,11 +173,13 @@ abstract class Page extends BasePage
     /**
      * @return string | array<string>
      */
+    #[Unexposed]
     public static function getNavigationItemActiveRoutePattern(): string | array
     {
         return static::getRouteName();
     }
 
+    #[Unexposed]
     public static function getRouteName(?Panel $panel = null): string
     {
         $panel ??= Filament::getCurrentOrDefaultPanel();
@@ -182,6 +190,7 @@ abstract class Page extends BasePage
         return $panel->generateRouteName($routeName);
     }
 
+    #[Unexposed]
     public function getBreadcrumb(): ?string
     {
         return static::$breadcrumb;
@@ -190,6 +199,7 @@ abstract class Page extends BasePage
     /**
      * @return array<string | Htmlable>
      */
+    #[Unexposed]
     public function getBreadcrumbs(): array
     {
         $breadcrumb = $this->getBreadcrumb();
@@ -353,41 +363,49 @@ abstract class Page extends BasePage
         return null;
     }
 
+    #[Unexposed]
     public static function getNavigationGroup(): string | UnitEnum | null
     {
         return static::$navigationGroup;
     }
 
+    #[Unexposed]
     public static function navigationGroup(string | UnitEnum | null $group): void
     {
         static::$navigationGroup = $group;
     }
 
+    #[Unexposed]
     public static function getNavigationParentItem(): ?string
     {
         return static::$navigationParentItem;
     }
 
+    #[Unexposed]
     public static function navigationParentItem(?string $item): void
     {
         static::$navigationParentItem = $item;
     }
 
+    #[Unexposed]
     public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$navigationIcon;
     }
 
+    #[Unexposed]
     public static function navigationIcon(string | BackedEnum $icon): void
     {
         static::$navigationIcon = $icon;
     }
 
+    #[Unexposed]
     public static function getActiveNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$activeNavigationIcon ?? static::getNavigationIcon();
     }
 
+    #[Unexposed]
     public static function getNavigationLabel(): string | Htmlable
     {
         return static::$navigationLabel ?? static::$title ?? str(class_basename(static::class))
@@ -396,11 +414,13 @@ abstract class Page extends BasePage
             ->ucwords();
     }
 
+    #[Unexposed]
     public static function getNavigationBadge(): ?string
     {
         return null;
     }
 
+    #[Unexposed]
     public static function getNavigationBadgeTooltip(): string | Htmlable | null
     {
         return static::$navigationBadgeTooltip;
@@ -409,36 +429,43 @@ abstract class Page extends BasePage
     /**
      * @return string | array<string> | null
      */
+    #[Unexposed]
     public static function getNavigationBadgeColor(): string | array | null
     {
         return null;
     }
 
+    #[Unexposed]
     public static function getNavigationSort(): ?int
     {
         return static::$navigationSort;
     }
 
+    #[Unexposed]
     public static function navigationLabel(?string $label): void
     {
         static::$navigationLabel = $label;
     }
 
+    #[Unexposed]
     public static function navigationSort(?int $sort): void
     {
         static::$navigationSort = $sort;
     }
 
+    #[Unexposed]
     public static function getNavigationUrl(): string
     {
         return static::getUrl();
     }
 
+    #[Unexposed]
     public function getFooter(): ?View
     {
         return null;
     }
 
+    #[Unexposed]
     public function getHeader(): ?View
     {
         return null;
@@ -457,6 +484,7 @@ abstract class Page extends BasePage
      *
      * @return array<class-string<Widget> | WidgetConfiguration>
      */
+    #[Unexposed]
     public function getVisibleHeaderWidgets(): array
     {
         return $this->filterVisibleWidgets($this->getHeaderWidgets());
@@ -465,6 +493,7 @@ abstract class Page extends BasePage
     /**
      * @return int | array<string, ?int>
      */
+    #[Unexposed]
     public function getHeaderWidgetsColumns(): int | array
     {
         return 2;
@@ -483,6 +512,7 @@ abstract class Page extends BasePage
      *
      * @return array<class-string<Widget> | WidgetConfiguration>
      */
+    #[Unexposed]
     public function getVisibleFooterWidgets(): array
     {
         return $this->filterVisibleWidgets($this->getFooterWidgets());
@@ -515,6 +545,7 @@ abstract class Page extends BasePage
     /**
      * @return int | array<string, ?int>
      */
+    #[Unexposed]
     public function getFooterWidgetsColumns(): int | array
     {
         return 2;
@@ -523,16 +554,19 @@ abstract class Page extends BasePage
     /**
      * @return array<string, mixed>
      */
+    #[Unexposed]
     public function getWidgetData(): array
     {
         return [];
     }
 
+    #[Unexposed]
     public static function shouldRegisterNavigation(): bool
     {
         return static::$shouldRegisterNavigation;
     }
 
+    #[Unexposed]
     public static function isDiscovered(): bool
     {
         return static::$isDiscovered;
@@ -541,11 +575,13 @@ abstract class Page extends BasePage
     /**
      * @return class-string<Cluster> | null
      */
+    #[Unexposed]
     public static function getCluster(): ?string
     {
         return static::$cluster;
     }
 
+    #[Unexposed]
     public static function prependClusterSlug(Panel $panel, string $slug): string
     {
         if (filled($cluster = static::getCluster())) {
@@ -555,6 +591,7 @@ abstract class Page extends BasePage
         return $slug;
     }
 
+    #[Unexposed]
     public static function prependClusterRouteBaseName(Panel $panel, string $name): string
     {
         if (filled($cluster = static::getCluster())) {
@@ -564,6 +601,7 @@ abstract class Page extends BasePage
         return $name;
     }
 
+    #[Unexposed]
     public function content(Schema $schema): Schema
     {
         return $schema;
@@ -572,6 +610,7 @@ abstract class Page extends BasePage
     /**
      * @return array<string>
      */
+    #[Unexposed]
     public function getPageClasses(): array
     {
         return [];
@@ -582,6 +621,7 @@ abstract class Page extends BasePage
      * @param  array<string, mixed>  $data
      * @return array<Component | Action | ActionGroup>
      */
+    #[Unexposed]
     public function getWidgetsSchemaComponents(array $widgets, array $data = []): array
     {
         return collect($widgets)
@@ -602,6 +642,7 @@ abstract class Page extends BasePage
             ->all();
     }
 
+    #[Unexposed]
     public function headerWidgets(Schema $schema): Schema
     {
         return $schema
@@ -614,6 +655,7 @@ abstract class Page extends BasePage
             ->hidden(fn (): bool => empty($this->cachedHeaderWidgetsSchemaComponents ??= $this->getWidgetsSchemaComponents($this->getHeaderWidgets())));
     }
 
+    #[Unexposed]
     public function footerWidgets(Schema $schema): Schema
     {
         return $schema
@@ -626,6 +668,7 @@ abstract class Page extends BasePage
             ->hidden(fn (): bool => empty($this->cachedFooterWidgetsSchemaComponents ??= $this->getWidgetsSchemaComponents($this->getFooterWidgets())));
     }
 
+    #[Unexposed]
     public function getDefaultTestingSchemaName(): ?string
     {
         return $this->getSchema('form') ? 'form' : 'content';
@@ -634,6 +677,7 @@ abstract class Page extends BasePage
     /**
      * @return TConfiguration
      */
+    #[Unexposed]
     public static function make(string $key = 'default'): PageConfiguration
     {
         if (! static::$configurationClass) {
@@ -646,6 +690,7 @@ abstract class Page extends BasePage
     /**
      * @return ?TConfiguration
      */
+    #[Unexposed]
     public static function getConfiguration(?Panel $panel = null): ?PageConfiguration
     {
         $key = Filament::getCurrentPageConfigurationKey();
@@ -659,6 +704,7 @@ abstract class Page extends BasePage
         return $panel->getPageConfiguration(static::class, $key);
     }
 
+    #[Unexposed]
     public static function hasConfiguration(): bool
     {
         return static::getConfiguration() !== null;
@@ -670,6 +716,7 @@ abstract class Page extends BasePage
      * @param  Closure(): TReturn  $callback
      * @return TReturn
      */
+    #[Unexposed]
     public static function withConfiguration(string $key, Closure $callback): mixed
     {
         $configuration = Filament::getCurrentPanel()->getPageConfiguration(static::class, $key);

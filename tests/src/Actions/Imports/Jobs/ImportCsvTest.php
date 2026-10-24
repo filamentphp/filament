@@ -69,8 +69,8 @@ it('accounts for mixed rows and preserves only permitted original values in the 
         ->and($this->import->successful_rows)->toBe(4)
         ->and($this->import->getFailedRowsCount())->toBe(3)
         ->and(Post::query()->orderBy('id')->get(['title', 'content', 'author_id'])->toArray())->toBe([
-            ['title' => 'First', 'content' => 'secret-first', 'author_id' => $this->import->user_id],
-            ['title' => 'Last', 'content' => 'secret-last', 'author_id' => $this->import->user_id],
+            ['title' => 'First', 'content' => 'secret-first', 'author_id' => (int) $this->import->user_id],
+            ['title' => 'Last', 'content' => 'secret-last', 'author_id' => (int) $this->import->user_id],
         ])
         ->and(auth()->id())->toBe($previousUser->getKey())
         ->and($guard->id())->toBe($previousUser->getKey());

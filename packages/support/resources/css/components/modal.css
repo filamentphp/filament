@@ -189,6 +189,10 @@
             }
         }
 
+        & .fi-modal-eyebrow {
+            @apply mb-1 text-xs font-medium text-gray-500 dark:text-gray-400;
+        }
+
         & .fi-modal-heading {
             @apply text-base leading-6 font-semibold text-gray-950 dark:text-white;
         }
@@ -341,6 +345,7 @@
 
         &.fi-modal-window-has-close-btn {
             &.fi-align-center:not(.fi-modal-window-has-icon) {
+                & .fi-modal-eyebrow,
                 & .fi-modal-heading {
                     @apply ms-6;
                 }
@@ -349,6 +354,7 @@
             &:not(.fi-modal-window-has-icon),
             &.fi-align-start,
             &.fi-align-left {
+                & .fi-modal-eyebrow,
                 & .fi-modal-heading {
                     @apply me-6;
                 }

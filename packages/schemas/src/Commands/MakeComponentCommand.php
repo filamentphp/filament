@@ -107,6 +107,13 @@ class MakeComponentCommand extends Command
 
             $this->configureLocation();
 
+            if (! $this->option('force') && $this->checkForCollision([
+                $this->path,
+                ...(filled($this->view) ? [$this->viewPath] : []),
+            ])) {
+                throw new FailureCommandOutput;
+            }
+
             $this->createComponent();
             $this->createView();
         } catch (FailureCommandOutput) {
@@ -165,10 +172,6 @@ class MakeComponentCommand extends Command
 
     protected function createComponent(): void
     {
-        if (! $this->option('force') && $this->checkForCollision($this->path)) {
-            throw new FailureCommandOutput;
-        }
-
         $this->writeFile($this->path, app(ComponentClassGenerator::class, [
             'fqn' => $this->fqn,
             'view' => $this->view,
@@ -179,10 +182,6 @@ class MakeComponentCommand extends Command
     {
         if (blank($this->view)) {
             return;
-        }
-
-        if (! $this->option('force') && $this->checkForCollision($this->viewPath)) {
-            throw new FailureCommandOutput;
         }
 
         $this->copyStubToApp('ComponentView', $this->viewPath);

@@ -4,6 +4,7 @@ namespace Filament\Pages\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Support\Enums\Alignment;
 
 trait InteractsWithHeaderActions
@@ -15,6 +16,7 @@ trait InteractsWithHeaderActions
 
     protected ?Alignment $headerActionsAlignment = null;
 
+    #[Unexposed]
     public function cacheInteractsWithHeaderActions(): void
     {
         $actions = $this->getHeaderActions();
@@ -44,6 +46,7 @@ trait InteractsWithHeaderActions
     /**
      * @return array<Action | ActionGroup>
      */
+    #[Unexposed]
     public function getCachedHeaderActions(): array
     {
         return $this->cachedHeaderActions;
@@ -67,6 +70,7 @@ trait InteractsWithHeaderActions
         return [];
     }
 
+    #[Unexposed]
     public function getHeaderActionsAlignment(): ?Alignment
     {
         return $this->headerActionsAlignment;

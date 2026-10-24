@@ -67,6 +67,60 @@ EOF
     sudo update-alternatives --set php /usr/bin/php8.4
 }
 
+install_sqlserver() {
+    local required_packages=(msodbcsql18 unixodbc-dev php8.4-dev php-pear build-essential skopeo)
+    local missing_packages=()
+    local package
+
+    if ! command -v dockerd >/dev/null; then
+        required_packages+=(docker.io)
+    fi
+
+    for package in "${required_packages[@]}"; do
+        if ! dpkg-query -W -f='${Status}' "$package" 2>/dev/null | grep -Fq 'install ok installed'; then
+            missing_packages+=("$package")
+        fi
+    done
+
+    if (( ${#missing_packages[@]} > 0 )); then
+        if [[ ! -f /etc/apt/sources.list.d/microsoft-prod.list ]]; then
+            curl -fsSL https://packages.microsoft.com/keys/microsoft.asc |
+                gpg --dearmor | sudo tee /usr/share/keyrings/microsoft-prod.gpg >/dev/null
+            curl -fsSL https://packages.microsoft.com/config/debian/12/prod.list |
+                sudo tee /etc/apt/sources.list.d/microsoft-prod.list >/dev/null
+        fi
+
+        sudo apt-get update
+        sudo env ACCEPT_EULA=Y apt-get install -y --no-install-recommends "${missing_packages[@]}"
+
+        if [[ " ${missing_packages[*]} " == *' docker.io '* ]]; then
+            # The supervised orb service owns the Docker daemon instead.
+            sudo systemctl disable --now docker.service docker.socket containerd.service
+        fi
+    fi
+
+    if ! php8.4 --ri pdo_sqlsrv >/dev/null 2>&1; then
+        sudo pecl install pdo_sqlsrv-5.13.3
+        printf '; priority=30\nextension=pdo_sqlsrv.so\n' |
+            sudo tee /etc/php/8.4/mods-available/pdo_sqlsrv.ini >/dev/null
+        sudo phpenmod -v 8.4 -s cli pdo_sqlsrv
+    fi
+
+    # Cache the image in the snapshot without starting a daemon during setup.
+    if [[ ! -s /var/cache/filament/sqlserver-2022.tar ]]; then
+        sudo mkdir -p /var/cache/filament
+        sudo rm -f /var/cache/filament/sqlserver-2022.tar.tmp
+        sudo skopeo copy --retry-times 3 \
+            docker://mcr.microsoft.com/mssql/server:2022-latest \
+            docker-archive:/var/cache/filament/sqlserver-2022.tar.tmp:mcr.microsoft.com/mssql/server:2022-latest
+        sudo mv /var/cache/filament/sqlserver-2022.tar{.tmp,}
+    fi
+
+    if ! grep -q '^SQLSRV_PASSWORD=' "$repository_root/.env.testing" 2>/dev/null; then
+        printf '\nSQLSRV_PASSWORD=Filament_Test123!\n' >> "$repository_root/.env.testing"
+    fi
+}
+
 install_composer() {
     if command -v composer >/dev/null; then
         local composer_version
@@ -299,6 +353,7 @@ initialize_docs_screenshot_application() {
 cd "$repository_root"
 
 run_step 'Installing PHP 8.4 and extensions' install_php
+run_step 'Installing SQL Server test dependencies and caching its image' install_sqlserver
 run_step 'Installing Composer' install_composer
 run_step 'Installing Filament Composer dependencies' composer install --prefer-dist --no-interaction --no-scripts
 run_step 'Installing Filament Node.js dependencies' npm ci --ignore-scripts --prefer-offline --no-audit --no-fund

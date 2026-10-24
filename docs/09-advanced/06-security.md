@@ -39,6 +39,50 @@ Filament repeats its built-in authorization checks when a component mounts and o
 
 Panel access is also checked by `canAccessPanel()` on every request, including Livewire requests.
 
+### Restricting methods to server-side calls
+
+Livewire exposes public component methods to client requests, even when there is no button or other UI that calls them. Use `protected` or `private` visibility for methods that do not need to be public. If a method must remain public so that other PHP objects can call it, you may add the `#[Unexposed]` attribute:
+
+```php
+use Filament\Support\Components\Attributes\Unexposed;
+
+#[Unexposed]
+public function recalculateTotals(): void
+{
+    // ...
+}
+```
+
+Client calls to this method, including JavaScript calls, `wire:click`, and Livewire event listeners, receive HTTP 403. Direct PHP calls still work.
+
+Methods declaring a return type of `Filament\Support\Components\Component` or a subclass, such as `form(): Schema`, `table(): Table`, or `editAction(): Action`, are automatically unexposed. This includes nullable types and any union or intersection containing a component type, including intersections nested inside unions. Types such as `mixed` and arrays are not covered.
+
+Use `#[Exposed]` to allow frontend calls, overriding either `#[Unexposed]` inherited from a parent class or the return-type default:
+
+```php
+use Filament\Support\Components\Attributes\Exposed;
+
+#[Exposed]
+public function recalculateTotals(): void
+{
+    parent::recalculateTotals();
+}
+```
+
+Overrides inherit the nearest parent-class access attribute unless they declare their own. Imported trait methods and aliases retain their attributes, but replacing a trait method does not inherit its attributes: annotate the replacement when needed. Attributes on abstract or discarded trait methods do not apply. If both attributes appear on the same method, `#[Unexposed]` wins. Other methods retain Livewire's normal behavior.
+
+These restrictions apply to Livewire component methods, not methods on schema components or table columns. They do not replace authorization or prevent internal PHP calls, including lifecycle hooks. Authorize any frontend entry points that call sensitive code. `#[Exposed]` does not bypass Livewire's own method restrictions.
+
+### Protecting server-managed component state
+
+Filament uses Livewire's `#[Locked]` attribute to prevent client-side updates to server-managed public properties. PHP assignments still work. Use supported methods and events instead of `$wire.set()` to change this state, such as `toggleTableReordering()` or `mountAction()`. Update parent-driven widget inputs through the parent page.
+
+If you redeclare a locked property, add `#[Locked]` to the new declaration too; PHP does not inherit property attributes onto redeclarations.
+
+Locked URL properties still accept initial query string values, but must keep the default replace-mode URL synchronization: push-history restoration (`#[Url(history: true)]`) requires client updates and is incompatible with locking.
+
+Locking does not hide property values or authorize access to records. Initial URL values, method arguments, and event payloads still need validation and authorization.
+
 ### Understanding Eloquent model restoration in Livewire
 
 When a public Livewire property contains an Eloquent model, Livewire stores the model's identifier in the component snapshot. On the next request, Livewire queries the database to restore it. A signed snapshot prevents a user from changing the identifier, but it does not prove that they are still allowed to access the model.
@@ -138,6 +182,8 @@ Inline editable table columns such as `ToggleColumn`, `TextInputColumn`, `Select
 
 When you create [custom actions](../actions/overview#authorization), you are responsible for authorizing them. Filament provides `visible()`, `hidden()`, and `authorize()` methods to help with this, but you must use them — they are not applied automatically. If an action modifies data or performs sensitive operations, always ensure it is authorized.
 
+This also applies to [Select option actions](../forms/select#authorizing-option-actions) enabled by `createOptionForm()` and `editOptionForm()`. Access to the parent resource does not authorize creating or editing related records. Authorize the option action itself so that unauthorized users cannot open its modal or submit it, and scope the related records separately.
+
 ### Testing authorization
 
 Your application should have a comprehensive test suite that verifies authorization is enforced correctly across all entry points — not just Filament's resource pages, but also any custom actions, custom pages, Livewire components, API routes, and other functionality. Filament provides [testing helpers](../testing/overview) for asserting that actions, pages, and resources behave correctly for different user roles.
@@ -150,7 +196,7 @@ Do not rely solely on Filament's built-in policy checks. Treat them as a helpful
 
 Many Filament configuration methods accept closures that can return dynamic values. Methods like `url()`, `icon()`, `html()`, and others are designed to be flexible, allowing developers to build rich, dynamic interfaces. However, when the values passed to these methods originate from user input or untrusted database content, it is your responsibility to validate and sanitize them appropriately.
 
-For example, the `url()` method on columns, entries, and actions renders an `<a href="...">` tag with whatever value you provide. If you pass a URL sourced from user input without validation, a malicious value like `javascript:alert(document.cookie)` could be rendered as a clickable link, leading to XSS. Always validate that URLs use a safe scheme such as `http` or `https` before passing them to Filament.
+For example, the `url()` method on columns, entries, and actions HTML-escapes the URL when rendering an `<a href="...">` tag, but does not restrict its scheme. The same applies to table [`recordUrl()`](../tables/overview#record-urls-clickable-rows) values and [Blade component](../components/link) `href` attributes. If you pass a URL sourced from user input without validation, a malicious value like `javascript:alert(document.cookie)` could be rendered as a clickable link, leading to XSS. Always validate that URLs use a safe scheme such as `http` or `https` before passing them to Filament.
 
 Filament ships a `Str::sanitizeUrl()` helper that returns the URL when it is schemeless (relative) or uses the `http`/`https` scheme, and returns `null` for anything else. Before checking the scheme, it decodes HTML entities and rejects control characters and raw whitespace. The return value is the original input unchanged when it passes the check; the helper does not HTML-escape or rewrite the URL. Filament escapes the value when its configuration methods render it into an HTML attribute. If you render the value yourself, escape it as an HTML attribute, including its ampersands.
 
@@ -162,7 +208,7 @@ TextColumn::make('website')
     ->url(fn (string $state): ?string => Str::sanitizeUrl($state))
 ```
 
-Use the helper when providing an untrusted URL, such as a column, entry, or action's `url()`. `FileUpload` and `SpatieMediaLibraryFileUpload` already sanitize their preview, open, and download URLs; that does not authorize access to the underlying files.
+Use the helper when providing an untrusted URL, including values read from a database. Filament does not call it automatically for `url()`, `recordUrl()`, or Blade component `href` attributes. `FileUpload` and `SpatieMediaLibraryFileUpload` already sanitize their preview, open, and download URLs; that does not authorize access to the underlying files.
 
 If you need to allow additional schemes — for example `mailto:` or `tel:` — pass them in as the second argument. The default allowlist is replaced by what you pass, so include `http` and `https` if you still want them:
 
@@ -198,6 +244,8 @@ As a general rule: whenever you pass user-controlled data into a Filament config
 ## HTML sanitization
 
 When rendering HTML content via methods like `html()` or `markdown()` on components such as `TextColumn` and `TextEntry`, Filament automatically sanitizes the output using Symfony's [HtmlSanitizer](https://symfony.com/doc/current/html_sanitizer.html) component. This removes potentially dangerous elements like `<script>` tags to help prevent XSS attacks.
+
+The rich content renderer sanitizes editor-authored content, but treats HTML returned by [registered custom blocks](../forms/rich-editor#rendering-content-with-custom-blocks) as trusted application HTML. Neither the block's final output nor its [preview](../forms/rich-editor#rendering-a-preview-for-a-custom-block) is automatically sanitized. Your block methods must escape or sanitize user-supplied configuration values before including them in HTML.
 
 ### Default sanitizer configuration
 

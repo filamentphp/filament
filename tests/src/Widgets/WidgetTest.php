@@ -9,6 +9,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Pages\TableRenderHooksBrowserTest;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPosts;
 use Filament\Tests\TestCase;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
@@ -94,6 +95,18 @@ it('returns `[\'lazy\' => true]` from `getDefaultProperties()` when `$isLazy` is
 
 it('returns empty array from `getDefaultProperties()` when `$isLazy` is `false`', function (): void {
     expect(TestWidgetNotLazy::getDefaultProperties())->toBe([]);
+});
+
+it('supports the legacy `$filters` property without exposing `__get()` to frontend calls', function (): void {
+    $component = livewire(PageFiltersTestWidget::class, [
+        'lazy' => false,
+        'pageFilters' => ['status' => 'published'],
+    ])->assertSuccessful();
+
+    expect($component->instance()->filters)->toBe(['status' => 'published']);
+
+    $component->call('__get', 'filters')
+        ->assertForbidden();
 });
 
 describe('authorization', function (): void {
@@ -344,6 +357,13 @@ class TestWidget extends Widget
     {
         return [];
     }
+}
+
+class PageFiltersTestWidget extends Widget
+{
+    use InteractsWithPageFilters;
+
+    protected string $view = 'pages.settings';
 }
 
 class TestWidgetWithSort extends Widget

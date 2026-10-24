@@ -18,6 +18,8 @@ use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -51,6 +53,7 @@ class ResetPassword extends SimplePage
     #[Locked]
     public ?string $token = null;
 
+    #[Unexposed]
     public function mount(?string $email = null, #[SensitiveParameter] ?string $token = null): void
     {
         if (Filament::auth()->check()) {
@@ -64,6 +67,7 @@ class ResetPassword extends SimplePage
         ]);
     }
 
+    #[Exposed]
     public function resetPassword(): ?PasswordResetResponse
     {
         try {
@@ -166,6 +170,7 @@ class ResetPassword extends SimplePage
         return false;
     }
 
+    #[Unexposed]
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -208,11 +213,13 @@ class ResetPassword extends SimplePage
             ->dehydrated(false);
     }
 
+    #[Unexposed]
     public function getTitle(): string | Htmlable
     {
         return __('filament-panels::auth/pages/password-reset/reset-password.title');
     }
 
+    #[Unexposed]
     public function getHeading(): string | Htmlable | null
     {
         return __('filament-panels::auth/pages/password-reset/reset-password.heading');
@@ -228,6 +235,7 @@ class ResetPassword extends SimplePage
         ];
     }
 
+    #[Unexposed]
     public function getResetPasswordFormAction(): Action
     {
         return Action::make('resetPassword')
@@ -240,6 +248,7 @@ class ResetPassword extends SimplePage
         return true;
     }
 
+    #[Unexposed]
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -250,6 +259,7 @@ class ResetPassword extends SimplePage
             ]);
     }
 
+    #[Unexposed]
     public function getFormContentComponent(): Component
     {
         return Form::make([EmbeddedSchema::make('form')])

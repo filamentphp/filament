@@ -35,7 +35,10 @@ trait CanDisableOptionsWhenSelectedInSiblingRepeaterItems
 
                     return $siblingItemState;
                 })
-                ->diff(Arr::wrap(($state instanceof BackedEnum) ? $state->value : $state))
+                ->diff(array_map(
+                    static fn (mixed $value): mixed => ($value instanceof BackedEnum) ? $value->value : $value,
+                    Arr::wrap($state),
+                ))
                 ->filter(fn (mixed $siblingItemState): bool => filled($siblingItemState))
                 ->contains($value);
         });

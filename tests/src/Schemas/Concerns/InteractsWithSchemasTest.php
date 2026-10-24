@@ -140,9 +140,10 @@ it('cannot validate from a client-side call', function (string $method): void {
     // surface, but Livewire only withholds methods declared on its own base component,
     // and both are redeclared here. Running them from the client would execute every
     // schema's validation rules outside the flow that is supposed to gate them.
-    livewire(TestComponentWithValidation::class)
-        ->fillForm(['title' => ''])
-        ->call($method, ...(($method === 'validateOnly') ? ['data.title'] : []))
+    $component = livewire(TestComponentWithValidation::class)
+        ->fillForm(['title' => '']);
+
+    $component->call($method, ...(($method === 'validateOnly') ? ['data.title'] : []))
         ->assertForbidden();
 })->with(['validateOnly', 'validate']);
 
@@ -164,8 +165,7 @@ it('cannot validate from a client-side call alongside another method', function 
                     ],
                 ],
             ],
-        ])
-        ->assertForbidden();
+        ])->assertForbidden();
 });
 
 it('can validate from the component itself', function (): void {

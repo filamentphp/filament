@@ -17,7 +17,7 @@
         "laravel/prompts": "^0.3.5",
         "league/csv": "^9.27",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "livewire/livewire": "^4.4.7",
+        "livewire/livewire": "^4.4.8",
         "nunomaduro/termwind": "^2.0",
         "openspout/openspout": "^5.0",
         "orchestra/testbench": "^10.0|^11.0",
@@ -90,13 +90,19 @@
         "test:sqlite": "pest --configuration=phpunit.sqlite.xml --parallel --exclude-group=serial",
         "test:mysql": "pest --configuration=phpunit.mysql.xml --parallel --exclude-group=serial",
         "test:pgsql": "pest --configuration=phpunit.pgsql.xml --parallel --exclude-group=serial",
+        "test:sqlsrv": [
+            "Composer\\Config::disableProcessTimeout",
+            "pest --configuration=phpunit.sqlsrv.xml --parallel --exclude-group=serial"
+        ],
         "test:serial:sqlite": "pest --configuration=phpunit.sqlite.xml --group=serial",
         "test:serial:mysql": "pest --configuration=phpunit.mysql.xml --group=serial",
         "test:serial:pgsql": "pest --configuration=phpunit.pgsql.xml --group=serial",
+        "test:serial:sqlsrv": "pest --configuration=phpunit.sqlsrv.xml --group=serial",
         "test:all-databases": [
             "@test:sqlite",
             "@test:mysql",
-            "@test:pgsql"
+            "@test:pgsql",
+            "@test:sqlsrv"
         ],
         "test:phpstan": "phpstan analyse",
         "test": [

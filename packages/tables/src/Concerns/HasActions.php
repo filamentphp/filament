@@ -5,6 +5,8 @@ namespace Filament\Tables\Concerns;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Database\Eloquent\Model;
 
 trait HasActions
@@ -14,6 +16,7 @@ trait HasActions
      *
      * @param  array<string, mixed>  $arguments
      */
+    #[Exposed]
     public function callMountedTableAction(array $arguments = []): mixed
     {
         return $this->callMountedAction($arguments);
@@ -24,6 +27,7 @@ trait HasActions
      *
      * @param  array<string, mixed>  $arguments
      */
+    #[Exposed]
     public function mountTableAction(string $name, ?string $record = null, array $arguments = []): mixed
     {
         return $this->mountAction($name, $arguments, context: [
@@ -37,6 +41,7 @@ trait HasActions
      *
      * @param  array<string, mixed>  $arguments
      */
+    #[Exposed]
     public function replaceMountedTableAction(string $name, ?string $record = null, array $arguments = []): void
     {
         $this->mountAction($name, $arguments, context: [
@@ -48,6 +53,7 @@ trait HasActions
     /**
      * @deprecated Use `mountedActionShouldOpenModal()` instead.
      */
+    #[Unexposed]
     public function mountedTableActionShouldOpenModal(?Action $mountedAction = null): bool
     {
         return $this->mountedActionShouldOpenModal($mountedAction);
@@ -56,6 +62,7 @@ trait HasActions
     /**
      * @deprecated Use `mountedActionHasSchema()` instead.
      */
+    #[Unexposed]
     public function mountedTableActionHasForm(?Action $mountedAction = null): bool
     {
         return $this->mountedActionHasSchema($mountedAction);
@@ -64,6 +71,7 @@ trait HasActions
     /**
      * @deprecated Use `getMountedAction()` instead.
      */
+    #[Unexposed]
     public function getMountedTableAction(): ?Action
     {
         return $this->getMountedAction();
@@ -72,6 +80,7 @@ trait HasActions
     /**
      * @deprecated Use `getMountedActionSchema()` instead.
      */
+    #[Unexposed]
     public function getMountedTableActionForm(?Action $mountedAction = null): ?Schema
     {
         return $this->getMountedActionSchema(0, $mountedAction);
@@ -80,6 +89,7 @@ trait HasActions
     /**
      * @deprecated Use `getMountedAction()?->getRecord()` instead.
      */
+    #[Unexposed]
     public function getMountedTableActionRecord(): ?Model
     {
         return $this->getMountedAction()?->getRecord();
@@ -88,6 +98,7 @@ trait HasActions
     /**
      * @deprecated Use `unmountAction()` instead.
      */
+    #[Exposed]
     public function unmountTableAction(bool $shouldCancelParentActions = true): void
     {
         $this->unmountAction(cancelParentActions: $shouldCancelParentActions ? null : false);

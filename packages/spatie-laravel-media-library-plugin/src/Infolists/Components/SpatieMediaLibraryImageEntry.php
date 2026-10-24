@@ -108,7 +108,7 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
             /** @var Model $record */
 
             /** @var ?Media $media */
-            $media = $record->getRelationValue('media')->first(fn (Media $media): bool => $media->uuid === $state);
+            $media = $record->getRelationValue('media')->first(static fn (Media $media): bool => ($state !== null) && (strtolower($media->uuid) === strtolower($state)));
 
             if (! $media) {
                 continue;

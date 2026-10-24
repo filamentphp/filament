@@ -302,6 +302,16 @@ export default {
         },
         selector: '.fi-modal-window-ctn',
     },
+    'actions/modal/eyebrow': {
+        url: 'actions',
+        viewport: { width: 640, height: 360, deviceScaleFactor: 3 },
+        before: async (page) => {
+            await page.click('#modalEyebrowAction button')
+            await page.waitForSelector('#modal h2', { visible: true })
+            await blurActiveElement(page)
+        },
+        selector: '.fi-modal-window-ctn',
+    },
     'actions/modal/icon': {
         url: 'actions',
         viewport: {
@@ -7110,6 +7120,18 @@ export default {
                 window.dispatchEvent(new CustomEvent('open-modal', { detail: { id: 'demo-modal-heading' } }))
             })
             await new Promise((resolve) => setTimeout(resolve, 1000))
+        },
+    },
+    'components/modal/eyebrow': {
+        url: 'components/modal',
+        selector: '[data-fi-modal-id="demo-modal-eyebrow"] .fi-modal-window',
+        selectorPadding: 32,
+        viewport: { width: 576, height: 500, deviceScaleFactor: 3 },
+        before: async (page) => {
+            await page.evaluate(() => {
+                window.dispatchEvent(new CustomEvent('open-modal', { detail: { id: 'demo-modal-eyebrow' } }))
+            })
+            await page.waitForSelector('[data-fi-modal-id="demo-modal-eyebrow"] .fi-modal-window', { visible: true })
         },
     },
     'components/link/sizes': {

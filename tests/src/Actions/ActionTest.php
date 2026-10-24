@@ -695,6 +695,38 @@ describe('properties', function (): void {
         expect($action->getModalDescription())->toBe('Are you sure you want to proceed?');
         expect($action->getModalWidth())->toBe(Width::TwoExtraLarge);
     });
+
+    it('can set and clear a modal eyebrow using `modalEyebrow()`', function (): void {
+        $action = Action::make('test');
+
+        expect($action->getModalEyebrow())->toBeNull();
+        expect($action->hasModalEyebrow())->toBeFalse();
+
+        $action->modalEyebrow(static fn (): string => 'Edit post');
+
+        expect($action->getModalEyebrow())->toBe('Edit post');
+        expect($action->hasModalEyebrow())->toBeTrue();
+
+        $action->modalEyebrow(null);
+
+        expect($action->getModalEyebrow())->toBeNull();
+        expect($action->hasModalEyebrow())->toBeFalse();
+    });
+
+    it('opens a modal for `modalEyebrow()` unless explicitly disabled', function (): void {
+        $action = Action::make('test')
+            ->modalEyebrow('Edit post');
+
+        expect($action->shouldOpenModal())->toBeTrue();
+
+        $action->modalHidden();
+
+        expect($action->shouldOpenModal())->toBeFalse();
+
+        $action->modalHidden(false)->modal(false);
+
+        expect($action->shouldOpenModal())->toBeFalse();
+    });
 });
 describe('visibility and state', function (): void {
     it('can hide an action', function (): void {
@@ -807,6 +839,38 @@ describe('rendering', function (): void {
         expect($html)
             ->toContain('<button')
             ->toContain('wire:click="mountAction(');
+    });
+
+    it('renders embedded action HTML without `HasEmbeddedView` and respects configured views', function (): void {
+        $action = new class('test') extends Action
+        {
+            public function toEmbeddedHtml(): string
+            {
+                return 'embedded action';
+            }
+        };
+
+        expect($action->toHtml())->toBe('embedded action');
+
+        $action->defaultView(Action::BUTTON_VIEW);
+        expect($action->getView())->toBe(Action::BUTTON_VIEW)
+            ->and($action->toHtml())->not->toBe('embedded action');
+
+        $action->view('simple-component');
+        expect($action->toHtml())->toBe(view('simple-component')->render());
+    });
+
+    it('falls back to an action custom `render()` without a configured view', function (): void {
+        $action = new class('test') extends Action
+        {
+            public function render(): View
+            {
+                return view('simple-component');
+            }
+        };
+
+        expect($action->hasView())->toBeFalse()
+            ->and($action->toHtml())->toBe(view('simple-component')->render());
     });
 
     it('renders a `link()` action as an `<a>` when given a `url()`', function (): void {
@@ -1528,8 +1592,11 @@ describe('actions mounted from a URL query parameter', function (): void {
         // `$defaultActionContext` is populated from the `?actionContext=` query string, so
         // an attacker controls it. The context builder must always win, keeping any other
         // keys but forcing `mountedFromUrl` to `true`.
+        Livewire::withQueryParams([
+            'actionContext' => ['mountedFromUrl' => false, 'schemaComponent' => 'foo'],
+        ]);
+
         $context = livewire(Actions::class)
-            ->set('defaultActionContext', ['mountedFromUrl' => false, 'schemaComponent' => 'foo'])
             ->instance()
             ->getDefaultActionUrlContext();
 
@@ -1538,8 +1605,9 @@ describe('actions mounted from a URL query parameter', function (): void {
     });
 
     it('does not run a modal-less action even when the `actionContext` query string tries to unset `mountedFromUrl`', function (): void {
-        $component = livewire(Actions::class)
-            ->set('defaultActionContext', ['mountedFromUrl' => false]);
+        Livewire::withQueryParams(['actionContext' => ['mountedFromUrl' => false]]);
+
+        $component = livewire(Actions::class);
 
         $component
             ->call('mountAction', 'simple', [], $component->instance()->getDefaultActionUrlContext())

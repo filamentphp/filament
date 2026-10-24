@@ -1,7 +1,7 @@
 import tippy from 'tippy.js'
 
 const interactiveSelector =
-    'a[href], button, input, select, textarea, summary, [role="button"], [role="link"], [role="checkbox"], [role="switch"], [role="menuitem"], [tabindex]:not([tabindex="-1"]), [contenteditable]:not([contenteditable="false"])'
+    'a[href], button, input, select, textarea, summary, [role="button"], [role="link"], [role="checkbox"], [role="switch"], [role="menuitem"], [contenteditable]:not([contenteditable="false"])'
 
 export default () => ({
     isStandalone: false,
@@ -99,7 +99,9 @@ export default () => ({
 
         this.isStandalone =
             !this.$el.parentElement?.closest(interactiveSelector) &&
-            !this.$el.querySelector(interactiveSelector)
+            !this.$el.querySelector(
+                `${interactiveSelector}, [tabindex]:not([tabindex="-1"])`,
+            )
 
         if (!this.isStandalone) {
             this.clearFeedback()

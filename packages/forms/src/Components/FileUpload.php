@@ -847,7 +847,6 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
         $automaticallyResizeImagesWidth = $this->getAutomaticallyResizeImagesWidth();
         $isAvatar = $this->isAvatar();
         $isMultiple = $this->isMultiple();
-        $key = $this->getKey();
         $statePath = $this->getStatePath();
         $isDisabled = $this->isDisabled();
         $placeholder = $this->getPlaceholder();
@@ -911,27 +910,9 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                         automaticallyResizeImagesMode: <?= Js::from($this->getAutomaticallyResizeImagesMode()) ?>,
                         automaticallyResizeImagesHeight: <?= Js::from($automaticallyResizeImagesHeight) ?>,
                         automaticallyResizeImagesWidth: <?= Js::from($automaticallyResizeImagesWidth) ?>,
-                        cancelUploadUsing: (fileKey) => {
-                            $wire.cancelUpload(`<?= e($statePath) ?>.${fileKey}`)
-                        },
                         canEditSvgs: <?= Js::from($this->canEditSvgs()) ?>,
                         confirmSvgEditingMessage: <?= Js::from(__('filament-forms::components.file_upload.editor.svg.messages.confirmation')) ?>,
-                        deleteUploadedFileUsing: async (fileKey) => {
-                            return await $wire.callSchemaComponentMethod(
-                                <?= Js::from($key) ?>,
-                                'deleteUploadedFile',
-                                { fileKey },
-                            )
-                        },
                         disabledSvgEditingMessage: <?= Js::from(__('filament-forms::components.file_upload.editor.svg.messages.disabled')) ?>,
-                        getUploadedFilesUsing: async () => {
-                            return await Livewire.fireAction(
-                                $wire.__instance,
-                                'callSchemaComponentMethod',
-                                [<?= Js::from($key) ?>, 'getUploadedFiles'],
-                                { async: true },
-                            )
-                        },
                         hasCircleCropper: <?= Js::from($hasCircleCropper) ?>,
                         hasImageEditor: <?= Js::from($hasImageEditor) ?>,
                         imageEditorEmptyFillColor: <?= Js::from($this->getImageEditorEmptyFillColor()) ?>,
@@ -963,43 +944,17 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                         panelLayout: <?= Js::from($this->getPanelLayout()) ?>,
                         placeholder: <?= Js::from($placeholder) ?>,
                         removeUploadedFileButtonPosition: <?= Js::from($this->getRemoveUploadedFileButtonPosition()) ?>,
-                        removeUploadedFileUsing: async (fileKey) => {
-                            return await $wire.callSchemaComponentMethod(
-                                <?= Js::from($key) ?>,
-                                'removeUploadedFile',
-                                { fileKey },
-                            )
-                        },
-                        reorderUploadedFilesUsing: async (fileKeys) => {
-                            return await $wire.callSchemaComponentMethod(
-                                <?= Js::from($key) ?>,
-                                'reorderUploadedFiles',
-                                { fileKeys },
-                            )
-                        },
                         shouldAppendFiles: <?= Js::from($this->shouldAppendFiles()) ?>,
                         shouldAutomaticallyUpscaleImagesWhenResizing: <?= Js::from($this->shouldAutomaticallyUpscaleImagesWhenResizing()) ?>,
                         shouldOrientImageFromExif: <?= Js::from($this->shouldOrientImagesFromExif()) ?>,
                         shouldTransformImage: <?= Js::from($automaticallyCropImagesAspectRatio || $automaticallyResizeImagesHeight || $automaticallyResizeImagesWidth) ?>,
                         state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')") ?>,
+                        statePath: <?= Js::from($statePath) ?>,
                         uploadButtonPosition: <?= Js::from($this->getUploadButtonPosition()) ?>,
                         uploadingMessage: <?= Js::from($this->getUploadingMessage()) ?>,
                         downloadActionLabel: <?= Js::from(__('filament-forms::components.file_upload.actions.download.label')) ?>,
                         openActionLabel: <?= Js::from(__('filament-forms::components.file_upload.actions.open.label')) ?>,
                         uploadProgressIndicatorPosition: <?= Js::from($this->getUploadProgressIndicatorPosition()) ?>,
-                        uploadUsing: (fileKey, file, success, error, progress) => {
-                            $wire.upload(
-                                `<?= e($statePath) ?>.${fileKey}`,
-                                file,
-                                () => {
-                                    success(fileKey)
-                                },
-                                error,
-                                (progressEvent) => {
-                                    progress(true, progressEvent.detail.progress, 100)
-                                },
-                            )
-                        },
                     })"
             wire:ignore
             wire:key="<?= e($wireKey) ?>"

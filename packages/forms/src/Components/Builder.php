@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\Concerns\CanBeCollapsed;
+use Filament\Schemas\Components\Concerns\CanLimitItemsForProcessing;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
@@ -36,6 +37,7 @@ use function Filament\Support\generate_loading_indicator_html;
 class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 {
     use CanBeCollapsed;
+    use CanLimitItemsForProcessing;
     use Concerns\CanBeCloned;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
@@ -1029,6 +1031,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
      */
     public function getDefaultChildSchemas(): array
     {
+        $this->ensureItemsCanBeProcessed($this->getItemsCount());
+
         $rawState = $this->getRawState();
 
         $this->cachedItemsRawStateStructure = $this->getRawStateStructure($rawState);
@@ -1724,7 +1728,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         ob_start(); ?>
 
         <div <?= $outerAttributes->toHtml() ?>>
-            <?= $this->getReorderingDescriptionHtml($items) ?>
+            <span wire:ignore x-ref="reorderStatus" class="fi-sr-only" role="status" aria-live="polite" aria-atomic="true"></span>
+
             <?php if ($collapseAllActionIsVisible || $expandAllActionIsVisible) { ?>
                 <div
                     <?= (new FilamentComponentAttributeBag)->class([
@@ -1949,6 +1954,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                     width: $blockPickerWidth,
                 ) ?>
             <?php } ?>
+
+            <?= $this->getReorderingDescriptionHtml($items) ?>
         </div>
 
         <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
@@ -1991,7 +1998,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
     /** @param array<Schema> $items */
     protected function getReorderingDescriptionHtml(array $items): string
     {
-        $html = '<span wire:ignore x-ref="reorderStatus" class="fi-sr-only" role="status" aria-live="polite" aria-atomic="true"></span>';
+        $html = '';
         $position = 0;
 
         foreach ($items as $itemKey => $item) {

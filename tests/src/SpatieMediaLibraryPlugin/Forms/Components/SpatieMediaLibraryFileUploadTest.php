@@ -357,6 +357,7 @@ describe('integration', function (): void {
             ->toMediaCollection('avatars');
 
         $record = $record->fresh();
+        $mediaItem->refresh();
 
         livewire(SpatieMediaLibraryFileUploadForm::class, ['record' => $record])
             ->assertFormSet(function (array $state) use ($mediaItem): array {
@@ -539,7 +540,7 @@ describe('integration', function (): void {
         // The submitted UUID belongs to another record, so it must not be attached
         // here, and the other record must keep its media intact.
         expect($recordA->fresh()->getMedia('avatars'))->toHaveCount(0);
-        expect($recordB->fresh()->getMedia('avatars')->pluck('uuid')->all())->toBe([$otherRecordMedia->uuid]);
+        expect($recordB->fresh()->getMedia('avatars')->pluck('uuid')->all())->toBe([$otherRecordMedia->fresh()->uuid]);
     });
 
     it('does not expose another record\'s media through the field when its UUID is submitted', function (): void {
@@ -588,7 +589,7 @@ describe('reordering', function (): void {
             ->call('save');
 
         expect($record->fresh()->getMedia('avatars')->pluck('uuid')->all())
-            ->toBe([$secondMedia->uuid, $firstMedia->uuid]);
+            ->toBe([$secondMedia->fresh()->uuid, $firstMedia->fresh()->uuid]);
     });
 
     it('only updates stored media order when the dynamic `reorderable()` condition is `true`', function (): void {
@@ -616,13 +617,13 @@ describe('reordering', function (): void {
         $field->saveUploadedFiles();
 
         expect($record->fresh()->getMedia('avatars')->pluck('uuid')->all())
-            ->toBe([$firstMedia->uuid, $secondMedia->uuid]);
+            ->toBe([$firstMedia->fresh()->uuid, $secondMedia->fresh()->uuid]);
 
         $isReorderable = true;
         $field->saveUploadedFiles();
 
         expect($record->fresh()->getMedia('avatars')->pluck('uuid')->all())
-            ->toBe([$secondMedia->uuid, $firstMedia->uuid]);
+            ->toBe([$secondMedia->fresh()->uuid, $firstMedia->fresh()->uuid]);
     });
 
     it('keeps the stored media UUID in the state of a `reorderable()` field after saving an upload', function (): void {
@@ -671,6 +672,8 @@ describe('reordering', function (): void {
         $record->refresh();
 
         expect($record->getMedia('avatars'))->toHaveCount(2);
+
+        $existingMedia->refresh();
 
         $newMediaUuid = $record->getMedia('avatars')
             ->pluck('uuid')
@@ -726,11 +729,14 @@ describe('reordering', function (): void {
 
         expect($record->getMedia('avatars'))->toHaveCount(2);
 
+        $existingMedia->refresh();
+
         $newMediaUuid = $record->getMedia('avatars')
             ->pluck('uuid')
             ->first(static fn (string $uuid): bool => $uuid !== $existingMedia->uuid);
 
-        expect(array_values($field->getRawState()))->toBe([$existingMedia->uuid, $newMediaUuid]);
+        expect(array_map(strtolower(...), array_values($field->getRawState())))
+            ->toBe([strtolower($existingMedia->uuid), strtolower($newMediaUuid)]);
     });
 
     it('can save a single `reorderable()` file upload', function (): void {

@@ -28,6 +28,10 @@ By default, a button's underlying HTML tag is `<button>`. You can change it to b
 </x-filament::button>
 ```
 
+<Aside variant="danger">
+    If you are passing user-controlled data to the `href` attribute, validate its scheme using [`Str::sanitizeUrl()`](../advanced/security#validating-user-input) before rendering it. HTML escaping alone does not prevent a `javascript:` URL from executing code when clicked.
+</Aside>
+
 ## Setting the size of a button
 
 By default, the size of a button is "medium". You can make it "extra small", "small", "large" or "extra large" by using the `size` attribute:

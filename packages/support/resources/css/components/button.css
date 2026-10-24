@@ -107,10 +107,6 @@
                         @apply hover:bg-(--hover-bg) hover:text-(--hover-text) dark:hover:bg-(--dark-hover-bg) dark:hover:text-(--dark-hover-text);
                     }
 
-                    input:focus-visible + & {
-                        @apply z-1 ring-2 ring-gray-950/10 dark:ring-white/20;
-                    }
-
                     input:checked:focus-visible + & {
                         @apply ring-color-500/50 dark:ring-color-400/50;
                     }
@@ -125,6 +121,13 @@
 
     &:is(label, [aria-pressed]) {
         @apply cursor-pointer;
+
+        &.fi-force-enabled,
+        &:not(.fi-disabled):not([disabled]) {
+            input:focus-visible + & {
+                @apply z-1 ring-2 ring-gray-950/10 dark:ring-white/20;
+            }
+        }
 
         &
             > .fi-icon:is(

@@ -2,6 +2,8 @@
 
 namespace Filament\Pages;
 
+use Filament\Support\Components\Attributes\Unexposed;
+
 abstract class SimplePage extends BasePage
 {
     use Concerns\HasMaxWidth;
@@ -20,6 +22,7 @@ abstract class SimplePage extends BasePage
         ];
     }
 
+    #[Unexposed]
     public function hasLogo(): bool
     {
         return true;

@@ -5,7 +5,6 @@ namespace Filament\Tests\Forms\Components;
 use Filament\Actions\Action;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
@@ -17,9 +16,9 @@ use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
-use function Filament\Forms\array_move_after;
-use function Filament\Forms\array_move_before;
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
@@ -411,16 +410,16 @@ describe('boolean properties', function (): void {
         expect($builder->isReorderable())->toBeFalse();
     });
 
-    it('defaults `isReorderableWithButtons()` to `false`', function (string $fieldType): void {
+    it('defaults `isReorderableWithButtons()` to `false`', function (): void {
         Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
-                $field = $fieldType::make('content'),
+                $builder = Builder::make('content'),
             ])
             ->fill();
 
-        expect($field->isReorderableWithButtons())->toBeFalse();
-    })->with(['builder' => [Builder::class], 'repeater' => [Repeater::class]]);
+        expect($builder->isReorderableWithButtons())->toBeFalse();
+    });
 
     it('can set `reorderableWithButtons()`', function (): void {
         Schema::make(Livewire::make())
@@ -1098,26 +1097,26 @@ describe('UUID generation', function (): void {
         expect($builder->generateUuid())->toBe('custom-uuid-123');
     });
 
-    it('generates distinct UUIDs when enabled and preserves disabled and callback generation', function (string $fieldType): void {
+    it('generates distinct UUIDs when enabled and preserves disabled and callback generation', function (): void {
         foreach ([true, null] as $configuration) {
-            $field = $fieldType::make('items')->generateUuidUsing($configuration);
-            $first = $field->generateUuid();
-            $second = $field->generateUuid();
+            $builder = Builder::make('items')->generateUuidUsing($configuration);
+            $first = $builder->generateUuid();
+            $second = $builder->generateUuid();
 
             expect(Str::isUuid($first))->toBeTrue();
             expect(Str::isUuid($second))->toBeTrue();
             expect($first)->not->toBe($second);
         }
 
-        $field->generateUuidUsing(false);
-        expect($field->generateUuid())->toBeNull();
-        $field->generateUuidUsing(static fn ($component): string => $component->getName() . '-key');
-        expect($field->generateUuid())->toBe('items-key');
-        expect($field->generateUuid())->toBe('items-key');
-    })->with(['builder' => [Builder::class], 'repeater' => [Repeater::class]]);
+        $builder->generateUuidUsing(false);
+        expect($builder->generateUuid())->toBeNull();
+        $builder->generateUuidUsing(static fn ($component): string => $component->getName() . '-key');
+        expect($builder->generateUuid())->toBe('items-key');
+        expect($builder->generateUuid())->toBe('items-key');
+    });
 });
 
-describe('`hydrateItems()`', function (): void {
+describe('state hydration', function (): void {
     it('rekeys items with UUIDs when hydrating from numeric-keyed `rawState`', function (): void {
         livewire(TestComponentWithBuilderFilledFromMount::class, [
             'initialData' => [
@@ -1206,7 +1205,7 @@ describe('item schemas', function (): void {
             'second' => ['type' => 'one', 'data' => ['foo' => 'Second stored block']],
         ];
 
-        livewire(ItemStateTestComponent::class)
+        livewire(BuilderWithItemActions::class)
             ->set('data.group.items', $items)
             ->tap(function ($livewire): void {
                 expect($livewire->instance()->form->getComponentByStatePath('group.items')->getItems())->toHaveCount(2);
@@ -1253,13 +1252,94 @@ describe('item schemas', function (): void {
             ->fillForm($data)
             ->assertSchemaStateSet($data);
     });
+});
 
-    it('can save a builder block containing a repeater and hidden field', function (): void {
-        livewire(TestComponentWithBuilderRepeaterAndHiddenField::class)
-            ->assertSuccessful()
-            ->call('save')
-            ->assertHasNoFormErrors();
+describe('processing item limits', function (): void {
+    it('allows overriding a global `maxItemsForProcessing()` independently of `maxItems()`', function (): void {
+        expect(Builder::make('items')->getMaxItemsForProcessing())->toBeNull();
+
+        Builder::configureUsing(
+            static fn (Builder $component) => $component->maxItemsForProcessing(10),
+            during: function (): void {
+                expect(Builder::make('items')->getMaxItemsForProcessing())->toBe(10);
+
+                foreach ([5, 20, null] as $limit) {
+                    $component = Builder::make('items')->maxItems(2)->maxItemsForProcessing($limit);
+
+                    expect($component->getMaxItemsForProcessing())->toBe($limit)
+                        ->and($component->getMaxItems())->toBe(2);
+                }
+            },
+        );
     });
+
+    it('rejects oversized state before evaluating item schemas without truncating it', function (): void {
+        $items = array_fill(0, 3, ['type' => 'one', 'data' => ['foo' => 'Keep me']]);
+        $fields = static fn () => throw new RuntimeException('Item schemas must not be evaluated.');
+        $component = Builder::make('items')
+            ->maxItemsForProcessing(2)
+            ->blocks([Builder\Block::make('one')->schema($fields)]);
+
+        Schema::make(Livewire::make()->data(['items' => $items]))
+            ->statePath('data')
+            ->components([$component])
+            ->getComponents();
+
+        expect(fn () => $component->getDefaultChildSchemas())->toThrow(function (HttpException $exception): void {
+            expect($exception->getStatusCode())->toBe(413);
+        });
+
+        expect($component->getRawState())->toBe($items);
+    });
+
+    it('accepts the exact processing limit, rejects item growth after caching, and allows disabling the limit', function (): void {
+        $items = array_fill(0, 2, ['type' => 'one', 'data' => ['foo' => 'Keep me']]);
+        $component = Builder::make('items')
+            ->maxItems(1)
+            ->maxItemsForProcessing(2)
+            ->blocks([Builder\Block::make('one')->schema([TextInput::make('foo')])]);
+
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$component])
+            ->fill(['items' => $items]);
+
+        expect($component->getItems())->toHaveCount(2);
+
+        expect(fn () => $schema->getState())->toThrow(ValidationException::class);
+
+        $component->rawState([...$items, $items[0]]);
+
+        expect(fn () => $component->getItems())->toThrow(function (HttpException $exception): void {
+            expect($exception->getStatusCode())->toBe(413);
+        });
+
+        $component->maxItemsForProcessing(null);
+
+        expect($component->getItems())->toHaveCount(3);
+
+        $component->rawState([])->maxItemsForProcessing(0);
+
+        expect($component->getItems())->toBe([]);
+    });
+
+    it('rejects Livewire item and ancestor replacements above `maxItemsForProcessing()`', function (string $statePath): void {
+        $item = ['type' => 'one', 'data' => ['foo' => 'Keep me']];
+
+        Builder::configureUsing(
+            static fn (Builder $component) => $component->maxItemsForProcessing(2),
+            during: function () use ($statePath, $item): void {
+                $livewire = livewire(BuilderWithItemActions::class)
+                    ->set('data.group.items', array_fill(0, 2, $item))
+                    ->assertSuccessful();
+
+                $state = [];
+                data_set($state, 'data.group.items', array_fill(0, 3, $item));
+
+                $livewire->set($statePath, data_get($state, $statePath))->assertStatus(413);
+            },
+        );
+    })->with(['data.group.items', 'data.group', 'data']);
 });
 
 describe('`distinct()` validation', function (): void {
@@ -1314,102 +1394,11 @@ describe('`distinct()` validation', function (): void {
             ->call('save')
             ->assertHasNoFormErrors();
     });
-
-    it('can validate `distinct()` fields in a `Repeater` in a builder block with errors', function (): void {
-        $data = [
-            'builder' => [
-                [
-                    'type' => 'one',
-                    'data' => [
-                        'foo' => 'test 1',
-                        'repeater' => [
-                            [
-                                'bar' => 'test 1',
-                            ],
-                            [
-                                'bar' => 'test 1',
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'type' => 'one',
-                    'data' => [
-                        'foo' => 'test 1',
-                        'repeater' => [
-                            [
-                                'bar' => 'test 1',
-                            ],
-                            [
-                                'bar' => 'test 1',
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-
-        livewire(TestComponentWithBuilderAndRepeater::class)
-            ->assertSuccessful()
-            ->fillForm($data)
-            ->assertSchemaStateSet($data)
-            ->call('save')
-            ->assertHasFormErrors([
-                'builder.0.data.foo' => ['The foo field has a duplicate value.'],
-                'builder.0.data.repeater.0.bar' => ['The bar field has a duplicate value.'],
-                'builder.0.data.repeater.1.bar' => ['The bar field has a duplicate value.'],
-                'builder.1.data.foo' => ['The foo field has a duplicate value.'],
-                'builder.1.data.repeater.0.bar' => ['The bar field has a duplicate value.'],
-                'builder.1.data.repeater.1.bar' => ['The bar field has a duplicate value.'],
-            ]);
-    });
-
-    it('can validate `distinct()` fields in a `Repeater` in a builder block with no errors', function (): void {
-        $data = [
-            'builder' => [
-                [
-                    'type' => 'one',
-                    'data' => [
-                        'foo' => 'test 1',
-                        'repeater' => [
-                            [
-                                'bar' => 'test 1',
-                            ],
-                            [
-                                'bar' => 'test 2',
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'type' => 'one',
-                    'data' => [
-                        'foo' => 'test 2',
-                        'repeater' => [
-                            [
-                                'bar' => 'test 1',
-                            ],
-                            [
-                                'bar' => 'test 2',
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-
-        livewire(TestComponentWithBuilderAndRepeater::class)
-            ->assertSuccessful()
-            ->fillForm($data)
-            ->assertSchemaStateSet($data)
-            ->call('save')
-            ->assertHasNoFormErrors();
-    });
 });
 
 describe('item actions', function (): void {
-    it('inserts two items with distinct enabled UUIDs', function (string $fieldType): void {
-        $livewire = livewire(ItemStateTestComponent::class, compact('fieldType'));
+    it('inserts two items with distinct enabled UUIDs', function (): void {
+        $livewire = livewire(BuilderWithItemActions::class);
 
         foreach (range(1, 2) as $index) {
             $livewire->call('mountAction', 'add', ['block' => 'one'], ['schemaComponent' => 'form.group.items']);
@@ -1419,19 +1408,15 @@ describe('item actions', function (): void {
         foreach (array_keys($livewire->get('data.group.items')) as $key) {
             expect(Str::isUuid($key))->toBeTrue();
         }
-    })->with(['builder' => [Builder::class], 'repeater' => [Repeater::class]]);
+    });
 
-    it('clones an existing item without changing its source or sibling state', function (string $fieldType, bool $generateUuids): void {
+    it('clones an existing item without changing its source or sibling state', function (bool $generateUuids): void {
         $items = [
-            'source' => ['foo' => 'Alpha', 'nested' => ['left' => 13, 'right' => [7, 29]]],
-            'other' => ['foo' => 'Beta', 'nested' => ['left' => 31, 'right' => []]],
+            'source' => ['type' => 'one', 'data' => ['foo' => 'Alpha', 'nested' => ['left' => 13, 'right' => [7, 29]]]],
+            'other' => ['type' => 'one', 'data' => ['foo' => 'Beta', 'nested' => ['left' => 31, 'right' => []]]],
         ];
 
-        if ($fieldType === Builder::class) {
-            $items = array_map(static fn (array $item): array => ['type' => 'one', 'data' => $item], $items);
-        }
-
-        $livewire = livewire(ItemStateTestComponent::class, compact('fieldType', 'generateUuids'))
+        $livewire = livewire(BuilderWithItemActions::class, compact('generateUuids'))
             ->set('data.group.items', $items)
             ->call('mountAction', 'clone', ['item' => 'source'], ['schemaComponent' => 'form.group.items'])
             ->assertDispatched('items-updated');
@@ -1450,20 +1435,16 @@ describe('item actions', function (): void {
             'group' => ['items' => [...$items, $newKey => $items['source']]],
             'sibling' => 'Untouched',
         ]);
-    })->with(['builder' => [Builder::class], 'repeater' => [Repeater::class]])->with([false, true]);
+    })->with([false, true]);
 
-    it('ignores stale item actions after a concurrent deletion without changing nested or sibling state', function (string $fieldType, string $action, bool $deleteAll): void {
+    it('ignores stale item actions after a concurrent deletion without changing nested or sibling state', function (string $action, bool $deleteAll): void {
         $items = [
-            'record-17' => ['foo' => 'Alpha', 'nested' => ['left' => 13, 'right' => [7, 29]]],
-            'record-42' => ['foo' => 'Beta', 'nested' => ['left' => 31, 'right' => []]],
-            'record-93' => ['foo' => 'Gamma', 'nested' => ['left' => 2, 'right' => [11]]],
+            'record-17' => ['type' => 'one', 'data' => ['foo' => 'Alpha', 'nested' => ['left' => 13, 'right' => [7, 29]]]],
+            'record-42' => ['type' => 'one', 'data' => ['foo' => 'Beta', 'nested' => ['left' => 31, 'right' => []]]],
+            'record-93' => ['type' => 'one', 'data' => ['foo' => 'Gamma', 'nested' => ['left' => 2, 'right' => [11]]]],
         ];
 
-        if ($fieldType === Builder::class) {
-            $items = array_map(static fn (array $item): array => ['type' => 'one', 'data' => $item], $items);
-        }
-
-        $livewire = livewire(ItemStateTestComponent::class, compact('fieldType'))
+        $livewire = livewire(BuilderWithItemActions::class)
             ->set('data.group.items', $items);
 
         foreach ($deleteAll ? array_keys($items) : ['record-42'] as $key) {
@@ -1482,22 +1463,17 @@ describe('item actions', function (): void {
         ], ['schemaComponent' => 'form.group.items'])->assertNotDispatched('items-updated');
 
         expect($livewire->get('data'))->toBe($expected);
-    })->with(['builder' => [Builder::class], 'repeater' => [Repeater::class]])
-        ->with(['clone', 'moveUp', 'moveDown', 'delete', 'addBetween', 'reorder', 'collapse', 'expand'])
+    })->with(['clone', 'moveUp', 'moveDown', 'delete', 'addBetween', 'reorder', 'collapse', 'expand'])
         ->with([false, true]);
 
-    it('preserves item keys and values for valid moves and partial reorders', function (string $fieldType, array $keys): void {
+    it('preserves item keys and values for valid moves and partial reorders', function (array $keys): void {
         $items = array_combine($keys, [
-            ['foo' => 'Alpha', 'nested' => [13, 7]],
-            ['foo' => 'Beta', 'nested' => [29]],
-            ['foo' => 'Gamma', 'nested' => []],
+            ['type' => 'one', 'data' => ['foo' => 'Alpha', 'nested' => [13, 7]]],
+            ['type' => 'one', 'data' => ['foo' => 'Beta', 'nested' => [29]]],
+            ['type' => 'one', 'data' => ['foo' => 'Gamma', 'nested' => []]],
         ]);
 
-        if ($fieldType === Builder::class) {
-            $items = array_map(static fn (array $item): array => ['type' => 'one', 'data' => $item], $items);
-        }
-
-        $livewire = livewire(ItemStateTestComponent::class, compact('fieldType'))->set('data.group.items', $items);
+        $livewire = livewire(BuilderWithItemActions::class)->set('data.group.items', $items);
         $livewire->call('mountAction', 'moveDown', ['item' => (string) $keys[0]], ['schemaComponent' => 'form.group.items']);
         expect($livewire->get('data.group.items'))->toBe([$keys[1] => $items[$keys[1]], $keys[0] => $items[$keys[0]], $keys[2] => $items[$keys[2]]]);
         $livewire->call('mountAction', 'moveUp', ['item' => (string) $keys[0]], ['schemaComponent' => 'form.group.items']);
@@ -1510,46 +1486,21 @@ describe('item actions', function (): void {
             'group' => ['items' => [$keys[2] => $items[$keys[2]], $keys[0] => $items[$keys[0]], $keys[1] => $items[$keys[1]]]],
             'sibling' => 'Untouched',
         ]);
-    })->with(['builder' => [Builder::class], 'repeater' => [Repeater::class]])->with([
+    })->with([
         'relationship keys' => [['record-17', 'record-42', 'record-93']],
         'numeric keys' => [[0, 1, 2]],
     ]);
 
-    it('adds between numeric items without overwriting the following item when UUIDs are disabled', function (string $fieldType): void {
-        $items = [['foo' => 'Alpha'], ['foo' => 'Beta']];
+    it('adds between numeric items without overwriting the following item when UUIDs are disabled', function (): void {
+        $items = [['type' => 'one', 'data' => ['foo' => 'Alpha']], ['type' => 'one', 'data' => ['foo' => 'Beta']]];
 
-        if ($fieldType === Builder::class) {
-            $items = array_map(static fn (array $item): array => ['type' => 'one', 'data' => $item], $items);
-        }
-
-        $livewire = livewire(ItemStateTestComponent::class, ['fieldType' => $fieldType, 'generateUuids' => false])
+        $livewire = livewire(BuilderWithItemActions::class, ['generateUuids' => false])
             ->set('data.group.items', $items)
             ->call('mountAction', 'addBetween', ['block' => 'one', 'afterItem' => '0'], ['schemaComponent' => 'form.group.items']);
 
-        $newItem = ['foo' => 'Draft 3'];
-        if ($fieldType === Builder::class) {
-            $newItem = ['type' => 'one', 'data' => $newItem];
-        }
+        $newItem = ['type' => 'one', 'data' => ['foo' => 'Draft 3']];
 
         expect($livewire->get('data.group.items'))->toBe([0 => $items[0], 2 => $newItem, 1 => $items[1]]);
-    })->with(['builder' => [Builder::class], 'repeater' => [Repeater::class]]);
-
-    it('moves array items using exact PHP keys and leaves missing items or neighbors unchanged', function (): void {
-        $items = ['01' => ['name' => 'Padded'], 1 => ['name' => 'Integer'], 'tail' => ['name' => 'Last']];
-        expect(array_move_after($items, '1'))->toBe(['01' => $items['01'], 'tail' => $items['tail'], 1 => $items[1]]);
-        expect(array_move_before($items, '1'))->toBe([1 => $items[1], '01' => $items['01'], 'tail' => $items['tail']]);
-
-        foreach (['missing', '1.0', '1e0'] as $missingKey) {
-            expect(array_move_after($items, $missingKey))->toBe($items);
-            expect(array_move_before($items, $missingKey))->toBe($items);
-        }
-
-        expect(array_move_before($items, '01'))->toBe($items);
-        expect(array_move_after($items, 'tail'))->toBe($items);
-        expect(array_move_after([], 'missing'))->toBe([]);
-        expect(array_move_before([], 'missing'))->toBe([]);
-        expect(array_move_after([0 => null, 4 => ['value' => 7]], '0'))->toBe([4 => ['value' => 7], 0 => null]);
-        expect(array_move_before([0 => null, 4 => ['value' => 7]], '4'))->toBe([4 => ['value' => 7], 0 => null]);
     });
 
     it('does not resurrect a block deleted before mounting or submitting its preview edit action', function (bool $deleteBeforeMount): void {
@@ -1557,7 +1508,7 @@ describe('item actions', function (): void {
             'first' => ['type' => 'one', 'data' => ['foo' => 'Keep me']],
             'deleted' => ['type' => 'one', 'data' => ['foo' => 'Remove me']],
         ];
-        $livewire = livewire(ItemStateTestComponent::class, ['hasBlockPreviews' => true])->set('data.group.items', $items);
+        $livewire = livewire(BuilderWithItemActions::class, ['hasBlockPreviews' => true])->set('data.group.items', $items);
 
         if ($deleteBeforeMount) {
             $livewire->call('mountAction', 'delete', ['item' => 'deleted'], ['schemaComponent' => 'form.group.items']);
@@ -1579,7 +1530,7 @@ describe('item actions', function (): void {
             'first' => ['type' => 'one', 'data' => ['foo' => 'Keep me', 'nested' => [13, 29]]],
             'edited' => ['type' => 'one', 'data' => ['foo' => 'Original']],
         ];
-        $livewire = livewire(ItemStateTestComponent::class, ['hasBlockPreviews' => true])
+        $livewire = livewire(BuilderWithItemActions::class, ['hasBlockPreviews' => true])
             ->set('data.group.items', $items)
             ->mountAction(TestAction::make('edit')->schemaComponent('group.items')->arguments(['item' => 'edited']))
             ->assertActionDataSet(['foo' => 'Original'])
@@ -1600,7 +1551,7 @@ describe('item actions', function (): void {
             'second' => ['type' => 'one', 'data' => ['foo' => 'Beta']],
             'third' => ['type' => 'one', 'data' => ['foo' => 'Gamma']],
         ];
-        $livewire = livewire(ItemStateTestComponent::class)->set('data.group.items', $items);
+        $livewire = livewire(BuilderWithItemActions::class)->set('data.group.items', $items);
 
         $livewire->callAction(TestAction::make('moveDown')->schemaComponent('group.items')->arguments(['item' => 'first']));
         expect($livewire->get('data.group.items'))->toBe([
@@ -1748,7 +1699,7 @@ describe('rendering', function (): void {
     });
 
     it('returns inserted blocks in the Livewire partial response', function (string $action, bool $hasBlockPreviews): void {
-        $livewire = livewire(ItemStateTestComponent::class, compact('hasBlockPreviews'));
+        $livewire = livewire(BuilderWithItemActions::class, compact('hasBlockPreviews'));
         $items = [
             'first' => ['type' => 'one', 'data' => ['foo' => 'Stored first text']],
             'last' => ['type' => 'one', 'data' => ['foo' => 'Stored last text']],
@@ -1770,7 +1721,7 @@ describe('rendering', function (): void {
     })->with(['add', 'addBetween'])->with([false, true]);
 
     it('keeps full rendering for live or explicitly non-partial Builder actions', function (bool $isLive, ?bool $partialRender): void {
-        $livewire = livewire(ItemStateTestComponent::class, compact('isLive', 'partialRender'))
+        $livewire = livewire(BuilderWithItemActions::class, compact('isLive', 'partialRender'))
             ->call('mountAction', 'add', ['block' => 'one'], ['schemaComponent' => 'form.group.items']);
 
         expect($livewire->effects['html'] ?? null)->toBeString()->toContain('data.group.items.');
@@ -1803,27 +1754,21 @@ describe('rendering', function (): void {
         ]);
     });
 
-    it('preserves literal labels and decodes `Htmlable` text in reorder descriptions', function (string $fieldType, string | HtmlString $label, ?string $expectedLabel): void {
-        $field = $fieldType::make('items')->generateUuidUsing(false);
+    it('preserves literal labels and decodes `Htmlable` text in reorder descriptions', function (string | HtmlString $label, ?string $expectedLabel): void {
+        $builder = Builder::make('items')
+            ->generateUuidUsing(false)
+            ->blocks([Builder\Block::make('one')->label($label)->schema([TextInput::make('foo')])])
+            ->default([['type' => 'one', 'data' => ['foo' => 'Value']]]);
 
-        if ($field instanceof Builder) {
-            $field->blocks([Builder\Block::make('one')->label($label)->schema([TextInput::make('foo')])])
-                ->default([['type' => 'one', 'data' => ['foo' => 'Value']]]);
-        } else {
-            $field->schema([TextInput::make('foo')])->itemLabel($label)
-                ->default([['foo' => 'Value']]);
-        }
-
-        Schema::make(Livewire::make())->statePath('data')->components([$field])->fill();
-        $componentName = $field instanceof Builder ? 'builder' : 'repeater';
-        $expectedLabel ??= (($field instanceof Builder) && is_string($label))
+        Schema::make(Livewire::make())->statePath('data')->components([$builder])->fill();
+        $expectedLabel ??= is_string($label)
             ? 'One'
-            : __("filament-forms::components.{$componentName}.reordering.item");
+            : __('filament-forms::components.builder.reordering.item');
 
-        expect($field->toHtml())
+        expect($builder->toHtml())
             ->toContain('data-reorder-label="' . e($expectedLabel) . '"')
-            ->toContain(e(__("filament-forms::components.{$componentName}.reordering.position", ['label' => $expectedLabel, 'position' => 1, 'count' => 1])));
-    })->with(['builder' => [Builder::class], 'repeater' => [Repeater::class]])->with([
+            ->toContain(e(__('filament-forms::components.builder.reordering.position', ['label' => $expectedLabel, 'position' => 1, 'count' => 1])));
+    })->with([
         'literal' => ['Customer <West> &amp;', 'Customer <West> &amp;'],
         'HTML' => [new HtmlString('<strong>Research &amp; Development &lt;West&gt;</strong>'), 'Research & Development <West>'],
         'literal zero' => ['0', '0'],
@@ -2334,10 +2279,8 @@ describe('browser interactions', function (): void {
     })->with(['searchable' => true, 'not searchable' => false]);
 });
 
-class ItemStateTestComponent extends Livewire
+class BuilderWithItemActions extends Livewire
 {
-    public string $fieldType = Builder::class;
-
     public bool $isLive = false;
 
     public ?bool $partialRender = null;
@@ -2348,27 +2291,25 @@ class ItemStateTestComponent extends Livewire
 
     public function form(Schema $form): Schema
     {
-        $field = $this->fieldType::make('items')
+        $builder = Builder::make('items')
             ->generateUuidUsing($this->generateUuids)
             ->cloneable()
             ->reorderableWithButtons()
             ->partiallyRenderAfterActionsCalled($this->partialRender)
-            ->afterStateUpdated(fn () => $this->dispatch('items-updated'));
-
-        $components = [TextInput::make('foo')->default(fn (): string => 'Draft ' . count($this->data['group']['items'] ?? []))];
-
-        if ($field instanceof Builder) {
-            $field->blocks([Builder\Block::make('one')->schema($components)])->blockPreviews($this->hasBlockPreviews);
-        } else {
-            $field->schema($components)->defaultItems(0)->addBetweenAction(static fn (Action $action): Action => $action->visible());
-        }
+            ->afterStateUpdated(fn () => $this->dispatch('items-updated'))
+            ->blocks([
+                Builder\Block::make('one')->schema([
+                    TextInput::make('foo')->default(fn (): string => 'Draft ' . count($this->data['group']['items'] ?? [])),
+                ]),
+            ])
+            ->blockPreviews($this->hasBlockPreviews);
 
         if ($this->isLive) {
-            $field->live();
+            $builder->live();
         }
 
         return $form->components([
-            Section::make('Items')->statePath('group')->schema([$field]),
+            Section::make('Items')->statePath('group')->schema([$builder]),
             TextInput::make('sibling')->default('Untouched'),
         ])->statePath('data');
     }
@@ -2386,35 +2327,6 @@ class TestComponentWithBuilder extends Livewire
                             ->schema([
                                 TextInput::make('foo')
                                     ->distinct(),
-                            ]),
-                    ]),
-            ])
-            ->statePath('data');
-    }
-
-    public function save(): void
-    {
-        $this->form->getState();
-    }
-}
-
-class TestComponentWithBuilderAndRepeater extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->components([
-                Builder::make('builder')
-                    ->blocks([
-                        Builder\Block::make('one')
-                            ->schema([
-                                TextInput::make('foo')
-                                    ->distinct(),
-                                Repeater::make('repeater')
-                                    ->schema([
-                                        TextInput::make('bar')
-                                            ->distinct(),
-                                    ]),
                             ]),
                     ]),
             ])
@@ -2488,47 +2400,6 @@ class TestComponentWithExtraItemActionInBuilder extends Livewire
                     ]),
             ])
             ->statePath('data');
-    }
-}
-
-class TestComponentWithBuilderRepeaterAndHiddenField extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->components([
-                Builder::make('builder')
-                    ->blocks([
-                        Builder\Block::make('services')
-                            ->schema([
-                                Repeater::make('items')
-                                    ->schema([
-                                        TextInput::make('service')
-                                            ->required(),
-                                    ]),
-                                TextInput::make('hidden')
-                                    ->visible(false),
-                            ]),
-                    ])
-                    ->default([
-                        [
-                            'type' => 'services',
-                            'data' => [
-                                'items' => [
-                                    [
-                                        'service' => 'Service 1',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ]),
-            ])
-            ->statePath('data');
-    }
-
-    public function save(): void
-    {
-        $this->form->getState();
     }
 }
 
