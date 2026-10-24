@@ -1,0 +1,17 @@
+import type { JsComponentProps, JsComponentRenderer } from '@filament/schemas/js-component'
+
+type Configuration = { message?: string }
+
+const mount{{ componentName }}: JsComponentRenderer<Configuration> = ({ host, props: initialProps }) => {
+    const paragraph = document.createElement('p')
+    const update = (props: JsComponentProps<Configuration>) => {
+        paragraph.textContent = props.configuration.message ?? 'Your component is ready.'
+    }
+
+    update(initialProps)
+    host.append(paragraph)
+
+    return { update, destroy: () => paragraph.remove() }
+}
+
+export default mount{{ componentName }}
