@@ -257,13 +257,13 @@ class MakeWidgetCommand extends Command
         if ($this->framework) {
             $pendingActions = [];
             if ($this->isTypeScript && ! $this->configureTypeScript()) {
-                $pendingActions[] = 'Configure the @filament/widgets/js-widget type alias in tsconfig.json: https://filamentphp.com/docs/4.x/widgets/custom-widgets#typing-renderers';
+                $pendingActions[] = 'Configure the @filament/widgets/js-widget type alias in tsconfig.json: https://filamentphp.com/docs/5.x/widgets/custom-widgets#typing-renderers';
             }
             if (! $this->registerViteInput($this->renderer)) {
                 $pendingActions[] = "Add [{$this->renderer}] to the Laravel plugin's input array in your Vite config.";
             }
             if (! $this->configureRendererViteConfig()) {
-                $pendingActions[] = "Configure Vite to compile {$this->framework} and preserve the renderer's default export: https://filamentphp.com/docs/4.x/advanced/assets#building-lazy-loaded-es-modules";
+                $pendingActions[] = "Configure Vite to compile {$this->framework} and preserve the renderer's default export: https://filamentphp.com/docs/5.x/advanced/assets#building-lazy-loaded-es-modules";
             }
             if (filled($pendingActions)) {
                 $this->components->warn('Action is required to complete the widget setup:');
