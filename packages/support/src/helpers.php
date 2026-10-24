@@ -17,6 +17,7 @@ use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag
 use Filament\Support\View\Components\Contracts\HasColor;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
@@ -266,6 +267,10 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
      */
     function generate_search_column_expression(string $column, ?bool $isSearchForcedCaseInsensitive, Connection $databaseConnection): string | Expression
     {
+        if (! is_database_driver_supported($databaseConnection)) {
+            return $column;
+        }
+
         $driverName = $databaseConnection->getDriverName();
 
         if ($driverName === 'pgsql' && str_contains($column, '.')) {
@@ -348,6 +353,10 @@ if (! function_exists('Filament\Support\generate_search_term_expression')) {
      */
     function generate_search_term_expression(string $search, ?bool $isSearchForcedCaseInsensitive, Connection $databaseConnection): string
     {
+        if (! is_database_driver_supported($databaseConnection)) {
+            return $search;
+        }
+
         $isSearchForcedCaseInsensitive ??= match ($databaseConnection->getDriverName()) {
             'pgsql' => true,
             default => false,
@@ -365,15 +374,31 @@ if (! function_exists('Filament\Support\generate_search_pattern')) {
     /**
      * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
      */
-    function generate_search_pattern(string $search, bool $hasLeadingWildcard, bool $hasTrailingWildcard): string
+    function generate_search_pattern(string $search, bool $hasLeadingWildcard, bool $hasTrailingWildcard, ConnectionInterface $databaseConnection): string
     {
-        $search = str_replace(
-            ['!', '[', '%', '_'],
-            ['!!', '![', '!%', '!_'],
-            $search,
-        );
+        $search = is_database_driver_supported($databaseConnection)
+            ? str_replace(
+                ['!', '[', '%', '_'],
+                ['!!', '![', '!%', '!_'],
+                $search,
+            )
+            : str_replace(
+                ['%', '_'],
+                ['\\%', '\\_'],
+                $search,
+            );
 
         return ($hasLeadingWildcard ? '%' : '') . $search . ($hasTrailingWildcard ? '%' : '');
+    }
+}
+
+if (! function_exists('Filament\Support\is_database_driver_supported')) {
+    /**
+     * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
+     */
+    function is_database_driver_supported(ConnectionInterface $databaseConnection): bool
+    {
+        return method_exists($databaseConnection, 'getDriverName') && in_array($databaseConnection->getDriverName(), ['mariadb', 'mysql', 'pgsql', 'sqlite', 'sqlsrv'], true);
     }
 }
 
@@ -383,6 +408,10 @@ if (! function_exists('Filament\Support\apply_search_constraint')) {
      */
     function apply_search_constraint(Builder $query, string | Expression $column, string $pattern, string $boolean = 'and', bool $isInverse = false): Builder
     {
+        if (! is_database_driver_supported($query->getConnection())) {
+            return $query->whereLike($column, $pattern, false, $boolean, $isInverse);
+        }
+
         $column = $query->getQuery()->getGrammar()->wrap($column);
         $operator = $isInverse ? 'not like' : 'like';
 

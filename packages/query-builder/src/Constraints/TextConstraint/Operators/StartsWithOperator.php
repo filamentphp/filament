@@ -98,7 +98,7 @@ class StartsWithOperator extends Operator
         return apply_search_constraint(
             $query,
             $qualifiedColumn,
-            generate_search_pattern($text, hasLeadingWildcard: false, hasTrailingWildcard: true),
+            generate_search_pattern($text, hasLeadingWildcard: false, hasTrailingWildcard: true, databaseConnection: $databaseConnection),
             isInverse: $this->isInverse(),
         );
     }
