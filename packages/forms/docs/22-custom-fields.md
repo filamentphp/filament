@@ -246,21 +246,21 @@ Filament provides a `$applyStateBindingModifiers()` function that you may use in
 
 ## Calling field methods from JavaScript
 
-Sometimes you need to call a method on the field class from JavaScript in the Blade view. For example, you might want to fetch data asynchronously, process a file upload, or perform some server-side computation. Filament provides a way to expose methods on your field class to JavaScript using the `#[ExposedLivewireMethod]` attribute.
+You can call methods on your custom field class from JavaScript in a Blade view. For example, a location picker might call a geocoding service in PHP. Expose the method using `#[Exposed]`.
 
 ### Exposing a method
 
-To expose a method to JavaScript, add the `#[ExposedLivewireMethod]` attribute to a public method on your custom field class:
+Add `#[Exposed]` to a public instance method on your field:
 
 ```php
 use Filament\Forms\Components\Field;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 
 class LocationPicker extends Field
 {
     protected string $view = 'filament.forms.components.location-picker';
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     public function geocodeAddress(string $address): array
     {
         // Perform geocoding logic...
@@ -273,19 +273,21 @@ class LocationPicker extends Field
 }
 ```
 
-<Aside variant="info">
-    Only methods marked with `#[ExposedLivewireMethod]` can be called from JavaScript. This is a security measure to prevent arbitrary method execution.
+<Aside variant="warning">
+    Only methods marked with `#[Exposed]` can be called from JavaScript. The attribute does not authorize access to the method's data or operations. Validate client-supplied arguments and [authorize sensitive operations](../advanced/security#authorization) inside the method.
+
+    Exposed methods remain callable when the field is [disabled](overview#disabling-a-field), since read methods may still be needed to display its value. If a method changes the field's value and should respect its disabled state, check `$this->isDisabled()` before making changes.
 </Aside>
+
+Arguments must be a JSON-serializable object keyed by PHP parameter name. Filament binds each call to the current field, including nested repeater instances. The returned promise resolves to the method's return value, or `null` if the component or exposed method is missing. Calls make Livewire requests and can send pending deferred edits, regardless of `live()`.
+
+Use the PHP method's casing in JavaScript. Built-in utility and Alpine magic names are reserved; a method named `get`, for example, is available through `$callSchemaComponentMethod()` without replacing `$get()`. Do not register Alpine magics with the same names as your exposed methods.
 
 ### Calling the method from JavaScript
 
-In your Blade view, you may call the exposed method using `$wire.callSchemaComponentMethod()`. The first argument is the component's key (available via `$getKey()`), and the second argument is the method name. You may pass arguments as a third argument:
+In your Blade view, call the exposed method using its `$`-prefixed name. Pass an object keyed by PHP parameter name. The utility is bound to this field, so you do not need its key. You can also use `$callSchemaComponentMethod('geocodeAddress', { address: this.address })`, including when a method name collides with a built-in utility such as `$get()`:
 
 ```blade
-@php
-    $key = $getKey();
-@endphp
-
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field"
@@ -295,9 +297,7 @@ In your Blade view, you may call the exposed method using `$wire.callSchemaCompo
             address: '',
             coordinates: null,
             async geocode() {
-                this.coordinates = await $wire.callSchemaComponentMethod(
-                    @js($key),
-                    'geocodeAddress',
+                this.coordinates = await this.$geocodeAddress(
                     { address: this.address },
                 )
             },
@@ -315,18 +315,18 @@ In your Blade view, you may call the exposed method using `$wire.callSchemaCompo
 
 ### Preventing re-renders
 
-By default, calling an exposed method will trigger a re-render of the Livewire component. If your method doesn't need to update the UI, you may add Livewire's `#[Renderless]` attribute alongside `#[ExposedLivewireMethod]` to skip the re-render:
+By default, calling an exposed method triggers a re-render of the Livewire component. If your method only returns data and does not change state or PHP props that need rendering, add Livewire's `#[Renderless]` attribute. Other pending updates or calls in the same request may still require rendering:
 
 ```php
 use Filament\Forms\Components\Field;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Livewire\Attributes\Renderless;
 
 class LocationPicker extends Field
 {
     protected string $view = 'filament.forms.components.location-picker';
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function geocodeAddress(string $address): array
     {

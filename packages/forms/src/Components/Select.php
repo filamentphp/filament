@@ -15,7 +15,7 @@ use Filament\Schemas\Components\StateCasts\EnumStateCast;
 use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
 use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Schemas\Schema;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentAsset;
@@ -132,6 +132,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
     protected bool $shouldIgnoreRelationshipRecord = false;
+
+    protected bool $isResolvingRelationshipForStateCasts = false;
 
     protected ?Collection $cachedRelationshipRecords = null;
 
@@ -565,7 +567,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this->evaluate($this->position);
     }
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getOptionLabel(bool $withDefault = true): ?string
     {
@@ -735,7 +737,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @return array<array{'label': string, 'value': string}>
      */
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getSearchResultsForJs(string $search): array
     {
@@ -745,7 +747,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @return array<array{'label': string, 'value': string}>
      */
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getOptionsForJs(): array
     {
@@ -755,7 +757,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @return array<array{'label': string, 'value': string}>
      */
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getOptionLabelsForJs(): array
     {
@@ -1748,11 +1750,24 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             return parent::getDefaultStateCasts();
         }
 
-        if ($this->isMultiple()) {
-            return [app(OptionsArrayStateCast::class)];
+        $shouldCastToInteger = true;
+
+        // Relationship name callbacks may read this field's state, so nested reads use the default cast.
+        if (! $this->isResolvingRelationshipForStateCasts) {
+            $this->isResolvingRelationshipForStateCasts = true;
+
+            try {
+                $shouldCastToInteger = (! $this->hasRelationship()) || ($this->getRelationship()->getRelated()->getKeyType() !== 'string');
+            } finally {
+                $this->isResolvingRelationshipForStateCasts = false;
+            }
         }
 
-        return [app(OptionStateCast::class, ['isNullable' => true])];
+        if ($this->isMultiple()) {
+            return [app(OptionsArrayStateCast::class, ['shouldCastToInteger' => $shouldCastToInteger])];
+        }
+
+        return [app(OptionStateCast::class, ['isNullable' => true, 'shouldCastToInteger' => $shouldCastToInteger])];
     }
 
     /**
@@ -1992,30 +2007,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                     canSelectPlaceholder: <?= Js::from($canSelectPlaceholder) ?>,
                                     clearButtonLabel: <?= Js::from(__('filament-forms::components.select.actions.clear.label')) ?>,
                                     errorMessage: <?= Js::from(__('filament-forms::components.select.error_message')) ?>,
-                                    getOptionLabelUsing: async () => {
-                                        return await $wire.callSchemaComponentMethod(<?= Js::from($key) ?>, 'getOptionLabel')
-                                    },
-                                    getOptionLabelsUsing: async () => {
-                                        return await $wire.callSchemaComponentMethod(
-                                            <?= Js::from($key) ?>,
-                                            'getOptionLabelsForJs',
-                                        )
-                                    },
-                                    getOptionsUsing: async (request) => {
-                                        return await request(
-                                            $wire,
-                                            'callSchemaComponentMethod',
-                                            [<?= Js::from($key) ?>, 'getOptionsForJs'],
-                                        )
-                                    },
-                                    getSearchResultsUsing: async (search, request) => {
-                                        return await request(
-                                            $wire,
-                                            'callSchemaComponentMethod',
-                                            [<?= Js::from($key) ?>, 'getSearchResultsForJs'],
-                                            { search },
-                                        )
-                                    },
                                     hasDynamicOptions: <?= Js::from($hasDynamicOptions) ?>,
                                     hasDynamicSearchResults: <?= Js::from($this->hasDynamicSearchResults()) ?>,
                                     hasInitialNoOptionsMessage: <?= Js::from($hasInitialNoOptionsMessage) ?>,
@@ -2029,6 +2020,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                     isMultiple: <?= Js::from($isMultiple) ?>,
                                     isReorderable: <?= Js::from($isReorderable) ?>,
                                     isSearchable: <?= Js::from($isSearchable) ?>,
+                                    key: <?= Js::from($key) ?>,
                                     livewireId: <?= Js::from($this->getLivewire()->getId()) ?>,
                                     loadingMessage: <?= Js::from($this->getLoadingMessage()) ?>,
                                     maxItems: <?= Js::from($this->getMaxItems()) ?>,

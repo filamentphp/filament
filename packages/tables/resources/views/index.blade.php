@@ -236,7 +236,6 @@
                 maxSelectableRecords: @js($maxSelectableRecords),
                 reorderMessage: @js(__('filament-tables::table.reordering.moved')),
                 selectsCurrentPageOnly: @js($selectsCurrentPageOnly),
-                $wire,
             })"
     {{
         $getExtraAttributeBag()->class([

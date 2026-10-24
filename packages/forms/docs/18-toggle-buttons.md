@@ -23,7 +23,9 @@ ToggleButtons::make('status')
 
 By default, the field stores one selected option. Selecting that option again clears the field to `null`.
 
-`required()` prevents submitting an empty value, but does not prevent clearing the selection while editing. Use [`multiple()`](#selecting-multiple-buttons) to store more than one option.
+With `required()`, a single-select field uses radio buttons styled as buttons. The field can start empty, but once you select an option, you can only replace it with another option, not clear it by selecting it again. You can navigate between options using the arrow keys.
+
+Use [`multiple()`](#selecting-multiple-buttons) to store more than one option. In multiple-select fields, `required()` prevents submitting an empty value but still allows you to deselect every option while editing.
 
 ## Changing the color of option buttons
 

@@ -8,6 +8,7 @@ use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Grammars\SqlServerGrammar;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Znck\Eloquent\Relations\BelongsToThrough;
@@ -225,6 +226,15 @@ class SelectFilter extends BaseFilter
                         $query = $this->evaluate($this->modifyRelationshipQueryUsing, [
                             'query' => $query,
                         ]) ?? $query;
+                    }
+
+                    if (
+                        ($query->getQuery()->getGrammar() instanceof SqlServerGrammar) &&
+                        ($query->getQuery()->limit === null) &&
+                        (! $query->getQuery()->offset) &&
+                        ($query->getQuery()->groupLimit === null)
+                    ) {
+                        $query->reorder();
                     }
 
                     $queryValues = $isMultiple ? $filteredValues : $filteredValues[0];

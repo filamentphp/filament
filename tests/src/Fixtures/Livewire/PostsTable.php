@@ -255,6 +255,7 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                 ForceDeleteAction::make(),
                 RestoreAction::make(),
                 ReplicateAction::make()
+                    ->excludeAttributes(['location'])
                     ->mutateRecordDataUsing(function (array $data): array {
                         $data['title'] .= ' (Copy)';
 

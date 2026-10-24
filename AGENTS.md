@@ -1,100 +1,52 @@
 # AGENTS.md
 
-This file provides guidance to coding agents working in this repository.
-
-## Project Overview
-
 Filament is a full-stack UI framework for Laravel built with Livewire. It provides admin panels, forms, tables, notifications, actions, infolists, and widgets as composable packages.
 
-## Critical: Naming Conventions
+## Task-specific Skills
 
-### Variable Names
+Load the relevant skill before doing its work. If your agent cannot load skills, read the linked `SKILL.md` directly.
 
-**Never use abbreviated variable names.** Use full descriptive names:
+- **Testing**: Load [testing-filament](.agents/skills/testing-filament/SKILL.md) when planning verification, adding or changing tests, running tests, or validating asynchronous JavaScript changes. It covers Pest, browser testing, accessibility, and test databases.
+- **Documentation**: Load [writing-filament-docs](.agents/skills/writing-filament-docs/SKILL.md) when adding, editing, or reviewing developer documentation.
+- **Documentation screenshots**: Load [capturing-filament-screenshots](.agents/skills/capturing-filament-screenshots/SKILL.md) when adding screenshot examples, changing screenshot definitions, or capturing documentation screenshots.
 
-```php
-// GOOD
-$exception, $component, $response, $configuration, $record, $livewire
+## Testing and Documentation Requirements
 
-// BAD - never do this
-$e, $comp, $res, $cfg, $rec, $lw
-```
+**Introduce new tests only for actual frontend or backend behavior changes.** Styling changes and bug fixes that restore existing intended behavior should not introduce new tests. Verify those fixes using existing tests and, for styling, visual inspection. For frontend behavior changes, add browser tests using Pest Browser. Load `testing-filament` before planning or performing verification.
 
-Only exception: universally understood abbreviations like `$id`, `$url`.
+**Update documentation for developer-facing features and changes to supported usage** in the owning page under `docs/` or `packages/{package}/docs/`. Automatic styling, layout, interaction changes, fixes restoring intended behavior, and implementation details need documentation only when they change how developers configure, use, extend, or integrate Filament, or introduce consequential compatibility or accessibility limitations. A change visible to end users alone does not require documentation.
 
-### Pest Test Names
+## Naming Conventions
 
-**Always use backticks for code references. Add `()` for methods:**
-
-```php
-// GOOD
-it('can use `aspectRatio()` to force image cropping')
-it('returns `null` for `getImageCropAspectRatio()` by default')
-it('validates `$record` is an instance of `Model`')
-
-// BAD - missing backticks
-it('can use aspectRatio to force image cropping')
-it('returns null for getImageCropAspectRatio by default')
-```
-
-### Code Comments
-
-**Use backticks when referencing code in comments:**
-
-```php
-// GOOD
-// Uses `evaluate()` to resolve the `Closure`
-// Returns `null` if the `$record` is not set
-
-// BAD
-// Uses evaluate() to resolve the Closure
-```
+- **Never use abbreviated variable names.** Use `$exception`, `$component`, `$response`, `$configuration`, `$record`, and `$livewire`, not `$e`, `$comp`, `$res`, `$cfg`, `$rec`, or `$lw`. Universally understood abbreviations like `$id` and `$url` are allowed.
+- Use backticks for code references in Pest test names, with `()` for methods: `` it('can use `aspectRatio()` to force image cropping') ``.
+- Use backticks for code references in comments: `` // Uses `evaluate()` to resolve the `Closure` ``.
 
 ## Development Commands
 
-**Introduce new tests only for actual frontend or backend behavior changes.** Styling changes and bug fixes that restore existing intended behavior should not introduce new tests. Verify those fixes using existing tests and, for styling, visual inspection. For frontend behavior changes, add browser tests using Pest Browser with `visit()`. Check representative stable states with `assertNoAccessibilityIssues()` in both light and dark modes, using the page returned by `inDarkMode()`. Report dependency-related accessibility limitations rather than suppressing violations or waiting for private framework markup.
-
-- Keep inexpensive non-browser coverage of supported configuration and rendering paths, including setters, getters, `Closure` evaluation, and successful rendering.
-- In browser tests, do not assert exact translated copy, CSS classes, inline styles, utility classes, incidental HTML, or computed visual styling unless that output proves the behavior under test.
-- Prefer native Pest Browser / Playwright interactions and assertions with stable semantic selectors or `data-testid` hooks. Do not inspect framework/component internals, replace component methods, simulate private lifecycle calls, or synchronize on private markup such as NProgress. Use custom JavaScript only for public integration setup or observable facts that native APIs cannot reasonably express. Do not use presentation classes or visible copy merely as readiness checks.
-- Wait for observable readiness or outcomes, not fixed delays. Server-rendered presence, default attributes, or enabled state do not necessarily establish readiness. Perform each interaction once; do not replay actions inside polling assertions or add whole-test retries to hide failures.
-- If coverage cannot be made durable without implementation coupling, remove the assertion or scenario and its exclusive fixtures, and report the lost coverage. Do not force results, weaken meaningful outcomes, or add test-only production APIs to retain coverage numbers.
-- Before adding a browser test, search the file for the same route and setup. Combine related assertions into one coherently named test and reuse the page; use another visit only when isolation or a state reset is required.
-- Run behavior scenarios once unless the theme changes the behavior. Keep light- and dark-mode accessibility checks together for representative distinct states (such as open popups, errors, and disabled controls), not every interaction or dataset permutation. Reuse existing coverage instead of repeating equivalent whole-document scans or setup.
-- Keep each test focused on one behavior and each test file focused on its owning component or feature. Separate scenarios only when combining them would obscure the behavior or introduce order-dependent state.
-- Before inserting tests, read the file's existing organization. Place new cases beside related coverage, reusing an appropriate `describe()` group when present; add a focused group only when it improves organization. Keep basic rendering and common scenarios before specialized configuration and edge cases. Do not default to inserting tests immediately after `uses()` or at the top of the file.
-- For asynchronous JavaScript changes, exercise out-of-order completion, failure/cancellation, and destruction with pending work. Use the real integration where mocked callbacks would hide its contract. This validation does not automatically require new permanent tests.
+Run from the repository root:
 
 ```bash
 composer test              # Run all tests (SQLite + commands + PHPStan)
 composer test:sqlite       # Run tests with SQLite
-composer test:mysql        # Run tests with MySQL
-composer test:pgsql        # Run tests with PostgreSQL
 composer test:phpstan      # Run PHPStan static analysis
 composer cs                # Run all code style fixes (Rector + Pint + Prettier)
 
 npm run build              # Build all JS and CSS
 npm run build-demo         # Build and publish to ../demo if it exists
 
-# Run a single test file
 vendor/bin/pest tests/src/Forms/Components/FileUploadTest.php
-
-# Run a single test by name
-vendor/bin/pest --filter="it can use \`aspectRatio\(\)\` to force image cropping"
 ```
+
+Database-specific commands and startup instructions are in `testing-filament`. The demo uses SQLite.
 
 ## Coding Patterns
 
 ### Fluent API
 
-Components use `make()` constructor and fluent chainable methods. Nullable properties have nullable setters so they can be undone:
+Components use `make()` and fluent chainable methods. Nullable properties have nullable setters so they can be undone. Properties and setters share a name; getters use `get` and `evaluate()` for `Closure` support:
 
 ```php
-TextInput::make('name')
-    ->label('Full name')
-    ->icon('heroicon-o-user')
-
-// Property and setter share the same name, nullable to allow unsetting
 protected string | Closure | null $icon = null;
 
 public function icon(string | Closure | null $icon): static
@@ -104,7 +56,6 @@ public function icon(string | Closure | null $icon): static
     return $this;
 }
 
-// Getter prefixed with `get`, uses `evaluate()` for `Closure` support
 public function getIcon(): ?string
 {
     return $this->evaluate($this->icon);
@@ -113,11 +64,11 @@ public function getIcon(): ?string
 
 ### Boolean Methods
 
+Boolean properties use an `is`/`should`/`can`/`has` prefix, default to `false`, and support `Closure`. Setters use the verb form, default their argument to `true`, and accept `false` to undo. Getters cast to `bool`:
+
 ```php
-// Property - `is`/`should`/`can`/`has` prefix, defaults `false`, supports `Closure`
 protected bool | Closure $isDisabled = false;
 
-// Setter - verb form, defaults `true`, pass `false` to undo
 public function disabled(bool | Closure $condition = true): static
 {
     $this->isDisabled = $condition;
@@ -125,101 +76,37 @@ public function disabled(bool | Closure $condition = true): static
     return $this;
 }
 
-// Getter - cast to `bool`
 public function isDisabled(): bool
 {
     return (bool) $this->evaluate($this->isDisabled);
 }
 ```
 
-### Static Closures
+### Other PHP Conventions
 
-Use `static fn` when the closure doesn't use `$this`:
+- Use `static fn` when the closure doesn't use `$this`.
+- Use `app()` instead of `new` to allow users to bind custom implementations.
+- Do not use `final` or `readonly` classes; users need to extend Filament classes.
+- Traits in `Concerns/` use `Can*` for capabilities and `Has*` for properties. Interfaces belong in `Contracts/`.
+- Add PHPDoc only when providing type information beyond native PHP types.
+- Keep old public methods used in docs and mark them with `` /** @deprecated Use `newMethod()` instead. */ ``.
 
-```php
-->placeholder(static fn (Select $component): ?string => $component->isDisabled() ? null : 'Select...')
-->visible(fn (): bool => $this->canView()) // Uses `$this`, cannot be static
-```
+## JavaScript
 
-### Container Resolution
-
-Use `app()` instead of `new` to allow users to bind custom implementations:
-
-```php
-app(RelationshipJoiner::class)->prepareQuery($relationship) // Good
-(new RelationshipJoiner())->prepareQuery($relationship)     // Avoid
-```
-
-### Extensibility
-
-Do not use `final` or `readonly` classes - users need to extend Filament classes.
-
-### Concerns and Contracts
-
-Traits in `Concerns/` directories: `Can*` (capabilities), `Has*` (properties).
-Interfaces in `Contracts/` directories.
-
-## Coding Standards
-
-### JavaScript organization
+### Organization
 
 Use `components/` for eager and lazy Alpine factories, `stores/` for Alpine stores, `utilities/` for shared helpers and composition, and `components/<feature>/` for feature-private internals. Keep registration in `index.js`. Use kebab-case filenames and explicit `.js` extensions on relative JavaScript imports. Follow the owning package's frontend naming convention; check registration and markup usage before renaming existing names.
 
-### JavaScript lifecycle cleanup
+### Lifecycle Cleanup
 
 - Alpine components and directives must release resources they own in `destroy()` or `cleanup()`, including listeners on surviving ancestors or global objects, observers, animation loops, and third-party instances. Retain the same callback reference when adding and removing listeners. Listeners attached only to removed subtree elements do not need separate cleanup.
 - Guard asynchronous initialization and callbacks when they could create surviving resources or cause observable stale behavior after destruction. After asynchronous work, verify the owner and target are still current; saved document positions alone do not establish identity. Verify third-party completion, failure, cancellation, and teardown contracts against their implementation when necessary, and use their real teardown API.
 - Balance processing-start/finish signals exactly once per operation, including failure, cancellation, and destruction. For batches, restore busy/editable state only after every task settles; preserve the original state.
 - Do not add cleanup solely for short-lived timers; cancel or guard them when their callback could still cause stale behavior after destruction.
 
-### PHPDoc
+## CSS Hook Classes
 
-Only add when providing type info beyond native PHP types:
-
-```php
-/** @var array<string, array{label: string, icon: string}> */  // Good
-/** @param string $name The name */                            // Redundant
-```
-
-### Deprecations
-
-Keep old public methods used in docs, mark deprecated:
-
-```php
-/** @deprecated Use `newMethod()` instead. */
-public function oldMethod(): void
-{
-    return $this->newMethod();
-}
-```
-
-## Architecture
-
-### Packages (`packages/`)
-
-Core: **support** (base utilities) → **schemas** (UI layouts) → **forms**, **infolists**, **tables**, **actions**, **notifications**, **widgets** → **panels** (full admin framework)
-
-Other: query-builder, upgrade, spatie-laravel-media-library-plugin, spatie-laravel-settings-plugin, spatie-laravel-tags-plugin, spatie-laravel-google-fonts-plugin, spark-billing-provider
-
-### Key Classes
-
-- **Resources** (`packages/panels/src/Resources/`): CRUD interfaces for Eloquent models
-- **Pages** (`packages/panels/src/Pages/`): Livewire page components
-- **Schema Components** (`packages/schemas/src/Components/`): Base UI components
-- **Actions** (`packages/actions/src/`): Modal-based operations
-- **Panel** (`packages/panels/src/Panel.php`): Admin panel configuration
-
-### File Locations
-
-- Tests: `tests/src/{Forms,Tables,Actions,Panels}/`
-- Docs: `docs/` and `packages/{package}/docs/`
-- Views: `packages/{package}/resources/views/`
-- CSS: `packages/{package}/resources/css/`
-- Translations: `packages/{package}/resources/lang/{locale}/`
-
-### CSS Hook Classes
-
-**Never use Tailwind classes directly in Blade views.** All Tailwind classes must be in CSS files using `@apply`:
+**Never use Tailwind classes directly in Blade views.** Put them in CSS files using `@apply`:
 
 ```css
 .fi-fo-field {
@@ -227,82 +114,21 @@ Other: query-builder, upgrade, spatie-laravel-media-library-plugin, spatie-larav
 }
 ```
 
-Hook class naming:
-- Prefix: `fi-` with package codes (`fi-fo-` forms, `fi-ta-` tables, `fi-ac-` actions, etc.)
-- Abbreviations: `btn`, `col`, `ctn`, `wrp`
+Use the `fi-` prefix with package codes (`fi-fo-` forms, `fi-ta-` tables, `fi-ac-` actions, etc.). Hook abbreviations include `btn`, `col`, `ctn`, and `wrp`.
 
-## Writing Documentation
+## Repository Map
 
-**Update documentation for developer-facing features and changes to supported usage** in the owning page under `docs/` or `packages/{package}/docs/`. Do not add documentation merely because a change is visible to end users. Automatic styling, layout, and interaction changes (such as dropdown closing or focus restoration), fixes that restore intended behavior, and implementation details need documentation only when they change how developers configure, use, extend, or integrate Filament, or introduce consequential compatibility or accessibility limitations. A change to default end-user behavior alone is not a change to supported developer usage and does not need documentation.
+Core dependency direction: **support** → **schemas** → **forms**, **infolists**, **tables**, **actions**, **notifications**, **widgets** → **panels**.
 
-- **Tone**: Direct, second person ("You may set...", "You can do this using...")
-- **Audience**: Document how developers configure, extend, and troubleshoot Filament, not how end users operate it. Explain built-in interactions or internal behavior only when they affect a developer's decision, integration, or consequential limitation.
-- **Structure**: Start with `## Introduction`, briefly explain the purpose, and show the simplest useful example. Defer optional configuration and specialized integration details to later sections.
-- **Section order**: Review the full page and analogous pages, then place sections by reader importance and logical flow, not by when they were added. Do not default new sections to the top.
-- **Hierarchy**: Keep foundational and common workflows before specialized content, and nest narrower topics under their parent section. Place consequential warnings beside the first affected recipe, even when the full explanation belongs later.
-- **Security and accessibility**: State what Filament provides, where that protection or support stops, and what the application developer must implement. Preserve meaningful security, accessibility, compatibility, and data-loss guidance; do not replace precise boundaries with broad assurances.
-- **Examples**: Keep examples focused on the API being taught. Do not add application-specific authorization, re-querying, or defensive boilerplate to unrelated recipes; explain those responsibilities in an adjacent warning and link to the dedicated guidance. Examples must still demonstrate correct API usage and must not imply protections Filament does not provide.
-- **Accuracy and repetition**: Check behavioral claims and examples against the current branch's implementation. Explain shared contracts in their owning section and link from contextual recipes, retaining any caveat needed to use that recipe safely.
-- **Headings**: Use gerunds ("Setting the type" not "Type settings", "Enabling search" not "Search")
-- **Formatting**: Backticks for code (`method()`, `ClassName`), include `use` statements
-- **Asides**: `<Aside variant="tip|info|danger">...</Aside>`
+Other packages include query-builder, upgrade, spatie-laravel-media-library-plugin, spatie-laravel-settings-plugin, spatie-laravel-tags-plugin, spatie-laravel-google-fonts-plugin, and spark-billing-provider.
 
-### Documentation Screenshots
-
-Screenshots are in `docs-assets/screenshots/`. To add new screenshots:
-
-1. **Add component examples** to the appropriate Livewire component in `docs-assets/app/app/Livewire/` (e.g., `Schemas/LayoutDemo.php`). Give each example a unique `->id()` for the selector:
-   ```php
-   Group::make()
-       ->id('myComponent')
-       ->extraAttributes(['class' => 'p-16 max-w-2xl'])
-       ->schema([
-           // Your component here
-       ]),
-   ```
-
-2. **Add screenshot definitions** to `docs-assets/screenshots/schema.js`:
-   ```js
-   'schemas/layout/my-component/simple': {
-       url: 'schemas/layout',
-       selector: '#myComponent',
-       viewport: { width: 1920, height: 640, deviceScaleFactor: 3 },
-   },
-   ```
-
-3. **Build assets** if you changed any CSS or JS files. Two builds are required — the repo root compiles each package's dist output, and the docs app has its own Vite build that bundles those outputs into `docs-assets/app/public/build/`. Skipping the second step leaves the docs app serving stale CSS, and screenshots will render against pre-change styles:
-   ```bash
-   # Terminal 1: compile package dist output
-   npm run build
-
-   # Terminal 2: bundle the docs app's CSS from the package output
-   cd docs-assets/app && npm run build
-   ```
-   If you also changed the Livewire demo or Blade views, clear caches afterwards: `cd docs-assets/app && php artisan optimize:clear`.
-
-4. **Generate screenshots**:
-   ```bash
-   # Terminal 1: Start the app server (must use default port 8000)
-   cd docs-assets/app && php artisan serve
-
-   # Terminal 2: Run from the screenshots directory
-   cd docs-assets/screenshots
-   export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-   export PUPPETEER_EXECUTABLE_PATH=$(which chromium)
-   node script.js "schemas/layout/my-component/*"  # Filter pattern
-   node script.js --parallel "tables/*"            # Process in parallel (add =N for a specific worker count)
-   ```
-
-   **Important:** The script expects `http://127.0.0.1:8000`. Don't use a custom port.
-
-   **Important:** Set up the app first with `php artisan migrate:fresh --seed && php artisan storage:link` — seeding also copies the file upload demos' sample images from `database/seed-images/` to the `public` disk.
-
-   `--parallel` starts its own servers on ports 8001+ (no `php artisan serve` needed), each with its own copy of the seeded database, because many demos mutate the database on mount and would corrupt each other's screenshots if they shared one. The pristine database is restored before every page load, so each screenshot always sees freshly seeded data — this makes parallel mode the most reliable way to run large batches (in serial mode, a demo that truncates tables can 404 later entries, e.g. tenancy or resource pages, until you reseed). Screenshots using the `configure` option run serially after the parallel pool because they mutate a PHP file shared by every server.
-
-   Schema entries without a `before` callback that share the same URL, viewport, and theme are captured from a single page load, and one browser process is shared across the whole run. If an entry needs an isolated page load (e.g. its demo mutates state when rendered), give it a `before` callback.
-
-   Pages are captured with `prefers-reduced-motion: reduce` and with CSS animations, transitions, and the input caret disabled, so screenshots never depend on which animation frame they caught (e.g. spinning loading indicators, modal fade-ins, caret blinking).
-
-5. **Use in docs** with `<AutoScreenshot name="schemas/layout/my-component/simple" alt="Description" version="4.x" />`
-
-Screenshots are generated in `images/light/` and `images/dark/`. Use natural, realistic content - not test-like examples.
+- **Resources**: `packages/panels/src/Resources/` (Eloquent CRUD interfaces)
+- **Pages**: `packages/panels/src/Pages/` (Livewire page components)
+- **Schema components**: `packages/schemas/src/Components/`
+- **Actions**: `packages/actions/src/` (modal-based operations)
+- **Panel configuration**: `packages/panels/src/Panel.php`
+- **Tests**: `tests/src/{Forms,Tables,Actions,Panels}/`
+- **Docs**: `docs/` and `packages/{package}/docs/`
+- **Views**: `packages/{package}/resources/views/`
+- **CSS**: `packages/{package}/resources/css/`
+- **Translations**: `packages/{package}/resources/lang/{locale}/`

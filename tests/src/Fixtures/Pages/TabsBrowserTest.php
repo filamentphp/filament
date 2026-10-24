@@ -21,6 +21,12 @@ class TabsBrowserTest extends Page
 
     public ?array $data = [];
 
+    public bool $deferredBadges = false;
+
+    public bool $livewireTabs = false;
+
+    public string $activeProfileTab = '0';
+
     public ?string $activeTab = 'second';
 
     public bool $showSecondTab = true;
@@ -51,6 +57,8 @@ class TabsBrowserTest extends Page
         $this->isRightToLeft = request()->boolean('rtl');
         $this->hasDisabledProfileHeader = request()->boolean('disabled-profile');
         $this->hasNativeValidation = request()->boolean('native-validation');
+        $this->deferredBadges = request()->boolean('deferred');
+        $this->livewireTabs = request()->boolean('livewire');
         $this->form->fill();
     }
 
@@ -62,13 +70,16 @@ class TabsBrowserTest extends Page
                     ->key('profile')
                     ->id('profile-tabs')
                     ->persistTabInQueryString()
+                    ->livewireProperty($this->livewireTabs ? 'activeProfileTab' : null)
                     ->tabs([
                         Tab::make('Account')
                             ->key('account')
                             ->id('profile-account')
                             ->extraAttributes(fn (): array => $this->hasDisabledProfileHeader ? ['disabled' => true] : [])
                             ->badge('Available')
+                            ->deferBadge($this->deferredBadges)
                             ->badgeIcon(Heroicon::OutlinedCheckCircle)
+                            ->extraAttributes(['data-testid' => 'deferred-tab'], merge: true)
                             ->schema([
                                 TextInput::make('username')
                                     ->label('Username')

@@ -636,6 +636,20 @@ it('can render `Tabs` in the browser', function (): void {
         ->assertNoAccessibilityIssues();
 });
 
+it('loads deferred badges in both tab renderers', function (bool $livewireTabs): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/tabs-browser-test?deferred=1&livewire=' . (int) $livewireTabs);
+
+    $page->assertSeeIn('[data-testid="deferred-tab"]', 'Available')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()
+        ->assertSeeIn('[data-testid="deferred-tab"]', 'Available')
+        ->assertNoAccessibilityIssues();
+})->with(['Alpine' => false, 'Livewire' => true]);
+
 it('keeps non-scrollable `Tabs` in one keyboard sequence and accessible tablist', function (): void {
     $this->actingAs(User::factory()->create());
 
@@ -875,6 +889,29 @@ it('retains lazy panel shells and selection through `Livewire` morphs', function
         ->keys('#filter-tabs [data-tab-key="published"]', 'Enter')
         ->assertAttribute('#filter-tabs [data-tab-key="published"]', 'aria-pressed', 'true');
     $page->assertNoSmoke();
+});
+
+it('binds named and general exposed method calls to the active `Tab`', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/schema-component-scope-browser-test?scenario=tabs');
+
+    $page->click('#first-tab [data-testid=named-scope]')
+        ->assertSeeIn('#first-tab output', 'Tab: First tab: Named')
+        ->click('#first-tab [data-testid=general-scope]')
+        ->assertSeeIn('#first-tab output', 'Tab: First tab: General')
+        ->click('#method-tabs [data-tab-key=second]')
+        ->click('#second-tab [data-testid=named-scope]')
+        ->assertSeeIn('#second-tab output', 'Tab: Second tab: Named')
+        ->click('#second-tab [data-testid=general-scope]')
+        ->assertSeeIn('#second-tab output', 'Tab: Second tab: General')
+        ->click('#method-tabs [data-tab-key=first]')
+        ->click('#first-tab [data-testid=named-scope]')
+        ->assertSeeIn('#first-tab output', 'Tab: First tab: Named')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()->assertNoAccessibilityIssues();
 });
 
 class TabsWithDeferredBadges extends Component implements HasActions, HasSchemas

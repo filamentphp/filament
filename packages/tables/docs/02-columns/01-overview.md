@@ -140,6 +140,10 @@ TextColumn::make('users_exists')->exists('users')
 
 In this example, `users` is the name of the relationship to check for existence. The name of the column must be `users_exists`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
 
+<Aside variant="info">
+    `exists()` relies on Laravel's `withExists()`, which does not support SQL Server. You can use [`counts()`](#counting-relationships) instead to display the number of related records.
+</Aside>
+
 If you'd like to scope the relationship before checking existence, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
 
 ```php

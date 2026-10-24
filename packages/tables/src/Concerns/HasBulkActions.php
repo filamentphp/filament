@@ -422,7 +422,15 @@ trait HasBulkActions
     protected function lazyTableRecordsByKey(Builder $query, int $chunkSize): LazyCollection
     {
         if (! $this->getTable()->hasPivotRecordKeys()) {
-            return $query->lazyById($chunkSize);
+            $query->getQuery()->orders = collect($query->getQuery()->orders)
+                ->reject(static fn (array $order): bool => ($order['column'] ?? null) === $query->getModel()->getKeyName())
+                ->values()
+                ->all();
+
+            $limit = $query->getQuery()->limit;
+            $records = $query->lazyById($chunkSize, $query->getModel()->getQualifiedKeyName(), $query->getModel()->getKeyName());
+
+            return ($limit !== null) ? $records->take($limit) : $records;
         }
 
         $query = $this->applyPivotRecordKeyToTableQuery($query)->applyScopes()->withoutGlobalScopes();

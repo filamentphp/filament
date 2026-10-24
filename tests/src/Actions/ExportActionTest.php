@@ -55,7 +55,7 @@ it('submits a real form and completes a synchronous export using the configured 
 
     $export = Export::query()->sole();
     expect($export->total_rows)->toBe(1)
-        ->and($export->user_id)->toBe($exportUser->id)
+        ->and((string) $export->user_id)->toBe((string) $exportUser->id)
         ->and($export->processed_rows)->toBe(1)
         ->and($export->successful_rows)->toBe(1)
         ->and($export->completed_at)->not->toBeNull()
@@ -151,7 +151,7 @@ it('keeps table filters search order and both query modifiers in the preparation
         $job = $batch->jobs->sole();
         expect($job)->toBeInstanceOf(CustomPrepareCsvExport::class);
         $payload = (fn (): array => get_object_vars($this))->call($job);
-        expect(EloquentSerializeFacade::unserialize($payload['query'])->pluck('id')->all())->toBe([$first->id, $second->id])
+        expect(EloquentSerializeFacade::unserialize($payload['query'])->pluck('id')->map(strval(...))->all())->toBe([(string) $first->id, (string) $second->id])
             ->and($payload['options'])->toBe(['minimum' => 5.0, 'static' => 'retained'])
             ->and($payload['columnMap'])->toBe(['title' => 'Title'])
             ->and($payload['chunkSize'])->toBe(37)
@@ -225,7 +225,7 @@ it('keeps bulk selected IDs separate from the full export query', function (): v
 
     Bus::assertDispatched(ChainedBatch::class, function (ChainedBatch $batch) use ($posts): bool {
         $payload = (fn (): array => get_object_vars($this))->call($batch->jobs->sole());
-        expect($payload['records'])->toBe([$posts[1]->id])
+        expect(array_map(strval(...), $payload['records']))->toBe([(string) $posts[1]->id])
             ->and(EloquentSerializeFacade::unserialize($payload['query'])->count())->toBe(3);
 
         return true;

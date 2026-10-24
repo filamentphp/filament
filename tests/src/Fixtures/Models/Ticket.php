@@ -21,6 +21,7 @@ class Ticket extends Model
     public function departments(): BelongsToMany
     {
         return $this->belongsToMany(Department::class)
+            ->using(DepartmentTicket::class)
             ->withPivot(['quantity', 'price'])
             ->withTimestamps();
     }
