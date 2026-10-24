@@ -48,6 +48,8 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
+use function Livewire\before;
+
 class SupportServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
@@ -168,7 +170,7 @@ class SupportServiceProvider extends PackageServiceProvider
     {
         app('livewire')->componentHook(new PartialsComponentHook);
 
-        \Livewire\before('call', app(MethodAccess::class));
+        before('call', app(MethodAccess::class));
 
         FilamentAsset::register([
             Js::make('support', __DIR__ . '/../dist/index.js'),
