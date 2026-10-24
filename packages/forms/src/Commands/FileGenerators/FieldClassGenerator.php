@@ -2,8 +2,10 @@
 
 namespace Filament\Forms\Commands\FileGenerators;
 
+use Filament\Forms\Components\Concerns\HasJsRenderer;
 use Filament\Forms\Components\Field;
 use Filament\Support\Commands\FileGenerators\ClassGenerator;
+use Illuminate\Support\Facades\Vite;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Property;
 
@@ -12,6 +14,7 @@ class FieldClassGenerator extends ClassGenerator
     final public function __construct(
         protected string $fqn,
         protected string $view,
+        protected ?string $renderer = null,
     ) {}
 
     public function getNamespace(): string
@@ -26,6 +29,7 @@ class FieldClassGenerator extends ClassGenerator
     {
         return [
             $this->getExtends(),
+            ...($this->renderer ? [HasJsRenderer::class, Vite::class] : []),
         ];
     }
 
@@ -41,7 +45,30 @@ class FieldClassGenerator extends ClassGenerator
 
     protected function addPropertiesToClass(ClassType $class): void
     {
+        if ($this->renderer) {
+            return;
+        }
+
         $this->addViewPropertyToClass($class);
+    }
+
+    protected function addTraitsToClass(ClassType $class): void
+    {
+        if ($this->renderer) {
+            $class->addTrait(HasJsRenderer::class);
+        }
+    }
+
+    protected function addMethodsToClass(ClassType $class): void
+    {
+        if (! $this->renderer) {
+            return;
+        }
+
+        $class->addMethod('getRenderer')
+            ->setPublic()
+            ->setReturnType('string')
+            ->setBody('return ' . $this->simplifyFqn(Vite::class) . '::asset(?);', [$this->renderer]);
     }
 
     protected function addViewPropertyToClass(ClassType $class): void
