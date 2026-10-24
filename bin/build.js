@@ -120,6 +120,7 @@ const formComponents = [
     'color-picker',
     'date-time-picker',
     'file-upload',
+    'js-field',
     'key-value',
     'markdown-editor',
     'repeater',
