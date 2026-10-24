@@ -32,12 +32,19 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
+beforeEach(function (): void {
+    require_once __DIR__ . '/../../../../packages/forms/src/helpers.php';
+});
 
 describe('properties', function (): void {
     it('can set `addActionLabel()` with a string or `Closure`', function (): void {
@@ -357,6 +364,17 @@ describe('boolean properties', function (): void {
         expect($repeater->isReorderable())->toBeFalse();
     });
 
+    it('defaults `isReorderableWithButtons()` to `false`', function (): void {
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                $repeater = Repeater::make('items'),
+            ])
+            ->fill();
+
+        expect($repeater->isReorderableWithButtons())->toBeFalse();
+    });
+
     it('can set `reorderableWithButtons()` and `reorderableWithDragAndDrop()`', function (): void {
         Schema::make(Livewire::make())
             ->statePath('data')
@@ -478,6 +496,26 @@ describe('relationship name', function (): void {
             ->relationship('posts');
 
         expect($repeater->getRelationshipName())->toBe('posts');
+    });
+});
+
+describe('UUID generation', function (): void {
+    it('generates distinct UUIDs when enabled and preserves disabled and callback generation', function (): void {
+        foreach ([true, null] as $configuration) {
+            $repeater = Repeater::make('items')->generateUuidUsing($configuration);
+            $first = $repeater->generateUuid();
+            $second = $repeater->generateUuid();
+
+            expect(Str::isUuid($first))->toBeTrue();
+            expect(Str::isUuid($second))->toBeTrue();
+            expect($first)->not->toBe($second);
+        }
+
+        $repeater->generateUuidUsing(false);
+        expect($repeater->generateUuid())->toBeNull();
+        $repeater->generateUuidUsing(static fn ($component): string => $component->getName() . '-key');
+        expect($repeater->generateUuid())->toBe('items-key');
+        expect($repeater->generateUuid())->toBe('items-key');
     });
 });
 
@@ -822,10 +860,214 @@ describe('item schemas', function (): void {
             ->set('data.trigger', 'anything')
             ->assertSeeText('Added item');
     });
+
+    it('can save a builder block containing a repeater and hidden field', function (): void {
+        livewire(TestComponentWithBuilderRepeaterAndHiddenField::class)
+            ->assertSuccessful()
+            ->call('save')
+            ->assertHasNoFormErrors();
+    });
+});
+
+describe('processing item limits', function (): void {
+    it('allows overriding a global `maxItemsForProcessing()` independently of `maxItems()`', function (): void {
+        expect(Repeater::make('items')->getMaxItemsForProcessing())->toBeNull();
+
+        Repeater::configureUsing(
+            static fn (Repeater $component) => $component->maxItemsForProcessing(10),
+            during: function (): void {
+                expect(Repeater::make('items')->getMaxItemsForProcessing())->toBe(10);
+
+                foreach ([5, 20, null] as $limit) {
+                    $component = Repeater::make('items')->maxItems(2)->maxItemsForProcessing($limit);
+
+                    expect($component->getMaxItemsForProcessing())->toBe($limit)
+                        ->and($component->getMaxItems())->toBe(2);
+                }
+            },
+        );
+    });
+
+    it('rejects oversized state before evaluating item schemas without truncating it', function (): void {
+        $items = array_fill(0, 3, ['foo' => 'Keep me']);
+        $fields = static fn () => throw new RuntimeException('Item schemas must not be evaluated.');
+        $component = Repeater::make('items')
+            ->maxItemsForProcessing(2)
+            ->schema($fields);
+
+        Schema::make(Livewire::make()->data(['items' => $items]))
+            ->statePath('data')
+            ->components([$component])
+            ->getComponents();
+
+        expect(fn () => $component->getDefaultChildSchemas())->toThrow(function (HttpException $exception): void {
+            expect($exception->getStatusCode())->toBe(413);
+        });
+
+        expect($component->getRawState())->toBe($items);
+    });
+
+    it('accepts the exact processing limit, rejects item growth after caching, and allows disabling the limit', function (): void {
+        $items = array_fill(0, 2, ['foo' => 'Keep me']);
+        $component = Repeater::make('items')
+            ->maxItems(1)
+            ->maxItemsForProcessing(2)
+            ->schema([TextInput::make('foo')]);
+
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$component])
+            ->fill(['items' => $items]);
+
+        expect($component->getItems())->toHaveCount(2);
+
+        expect(fn () => $schema->getState())->toThrow(ValidationException::class);
+
+        $component->rawState([...$items, $items[0]]);
+
+        expect(fn () => $component->getItems())->toThrow(function (HttpException $exception): void {
+            expect($exception->getStatusCode())->toBe(413);
+        });
+
+        $component->maxItemsForProcessing(null);
+
+        expect($component->getItems())->toHaveCount(3);
+
+        $component->rawState([])->maxItemsForProcessing(0);
+
+        expect($component->getItems())->toBe([]);
+    });
+
+    it('rejects oversized nested data during `fill()` before evaluating item schemas', function (): void {
+        $fields = static fn () => throw new RuntimeException('Item schemas must not be evaluated.');
+        $component = Repeater::make('children')->maxItemsForProcessing(1)->schema($fields);
+
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([Repeater::make('parents')->schema([$component])]);
+
+        $item = ['foo' => 'Keep me'];
+
+        expect(fn () => $schema->fill(['parents' => [['children' => [$item, $item]]]]))
+            ->toThrow(function (HttpException $exception): void {
+                expect($exception->getStatusCode())->toBe(413);
+            });
+    });
+
+    it('rejects oversized builder data nested in a repeater during `fill()` before evaluating item schemas', function (): void {
+        $fields = static fn () => throw new RuntimeException('Item schemas must not be evaluated.');
+        $component = Builder::make('children')
+            ->maxItemsForProcessing(1)
+            ->blocks([Builder\Block::make('one')->schema($fields)]);
+
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([Repeater::make('parents')->schema([$component])]);
+
+        $item = ['type' => 'one', 'data' => ['foo' => 'Keep me']];
+
+        expect(fn () => $schema->fill(['parents' => [['children' => [$item, $item]]]]))
+            ->toThrow(function (HttpException $exception): void {
+                expect($exception->getStatusCode())->toBe(413);
+            });
+    });
+
+    it('rejects Livewire item and ancestor replacements above `maxItemsForProcessing()`', function (string $statePath): void {
+        $item = ['foo' => 'Keep me'];
+
+        Repeater::configureUsing(
+            static fn (Repeater $component) => $component->maxItemsForProcessing(2),
+            during: function () use ($statePath, $item): void {
+                $livewire = livewire(RepeaterWithItemActions::class)
+                    ->set('data.group.items', array_fill(0, 2, $item))
+                    ->assertSuccessful();
+
+                $state = [];
+                data_set($state, 'data.group.items', array_fill(0, 3, $item));
+
+                $livewire->set($statePath, data_get($state, $statePath))->assertStatus(413);
+            },
+        );
+    })->with(['data.group.items', 'data.group', 'data']);
 });
 
 describe('`distinct()` validation in nested builders', function (): void {
-    it('can validate distinct fields in a builder block in a repeater with errors', function (): void {
+    it('can validate `distinct()` fields in a repeater in a builder block with errors', function (): void {
+        $data = [
+            'builder' => [
+                [
+                    'type' => 'one',
+                    'data' => [
+                        'foo' => 'test 1',
+                        'repeater' => [
+                            ['bar' => 'test 1'],
+                            ['bar' => 'test 1'],
+                        ],
+                    ],
+                ],
+                [
+                    'type' => 'one',
+                    'data' => [
+                        'foo' => 'test 1',
+                        'repeater' => [
+                            ['bar' => 'test 1'],
+                            ['bar' => 'test 1'],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        livewire(TestComponentWithBuilderAndRepeater::class)
+            ->assertSuccessful()
+            ->fillForm($data)
+            ->assertSchemaStateSet($data)
+            ->call('save')
+            ->assertHasFormErrors([
+                'builder.0.data.foo' => ['The foo field has a duplicate value.'],
+                'builder.0.data.repeater.0.bar' => ['The bar field has a duplicate value.'],
+                'builder.0.data.repeater.1.bar' => ['The bar field has a duplicate value.'],
+                'builder.1.data.foo' => ['The foo field has a duplicate value.'],
+                'builder.1.data.repeater.0.bar' => ['The bar field has a duplicate value.'],
+                'builder.1.data.repeater.1.bar' => ['The bar field has a duplicate value.'],
+            ]);
+    });
+
+    it('can validate `distinct()` fields in a repeater in a builder block with no errors', function (): void {
+        $data = [
+            'builder' => [
+                [
+                    'type' => 'one',
+                    'data' => [
+                        'foo' => 'test 1',
+                        'repeater' => [
+                            ['bar' => 'test 1'],
+                            ['bar' => 'test 2'],
+                        ],
+                    ],
+                ],
+                [
+                    'type' => 'one',
+                    'data' => [
+                        'foo' => 'test 2',
+                        'repeater' => [
+                            ['bar' => 'test 1'],
+                            ['bar' => 'test 2'],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        livewire(TestComponentWithBuilderAndRepeater::class)
+            ->assertSuccessful()
+            ->fillForm($data)
+            ->assertSchemaStateSet($data)
+            ->call('save')
+            ->assertHasNoFormErrors();
+    });
+
+    it('can validate `distinct()` fields in a builder block in a repeater with errors', function (): void {
         $undoRepeaterFake = Repeater::fake();
 
         $data = [
@@ -833,35 +1075,15 @@ describe('`distinct()` validation in nested builders', function (): void {
                 [
                     'bar' => 'test 1',
                     'builder' => [
-                        [
-                            'type' => 'one',
-                            'data' => [
-                                'foo' => 'test 1',
-                            ],
-                        ],
-                        [
-                            'type' => 'one',
-                            'data' => [
-                                'foo' => 'test 1',
-                            ],
-                        ],
+                        ['type' => 'one', 'data' => ['foo' => 'test 1']],
+                        ['type' => 'one', 'data' => ['foo' => 'test 1']],
                     ],
                 ],
                 [
                     'bar' => 'test 1',
                     'builder' => [
-                        [
-                            'type' => 'one',
-                            'data' => [
-                                'foo' => 'test 1',
-                            ],
-                        ],
-                        [
-                            'type' => 'one',
-                            'data' => [
-                                'foo' => 'test 1',
-                            ],
-                        ],
+                        ['type' => 'one', 'data' => ['foo' => 'test 1']],
+                        ['type' => 'one', 'data' => ['foo' => 'test 1']],
                     ],
                 ],
             ],
@@ -884,7 +1106,7 @@ describe('`distinct()` validation in nested builders', function (): void {
         $undoRepeaterFake();
     });
 
-    it('can validate distinct fields in a builder block in a repeater with no errors', function (): void {
+    it('can validate `distinct()` fields in a builder block in a repeater with no errors', function (): void {
         $undoRepeaterFake = Repeater::fake();
 
         $data = [
@@ -892,35 +1114,15 @@ describe('`distinct()` validation in nested builders', function (): void {
                 [
                     'bar' => 'test 1',
                     'builder' => [
-                        [
-                            'type' => 'one',
-                            'data' => [
-                                'foo' => 'test 1',
-                            ],
-                        ],
-                        [
-                            'type' => 'one',
-                            'data' => [
-                                'foo' => 'test 2',
-                            ],
-                        ],
+                        ['type' => 'one', 'data' => ['foo' => 'test 1']],
+                        ['type' => 'one', 'data' => ['foo' => 'test 2']],
                     ],
                 ],
                 [
                     'bar' => 'test 2',
                     'builder' => [
-                        [
-                            'type' => 'one',
-                            'data' => [
-                                'foo' => 'test 1',
-                            ],
-                        ],
-                        [
-                            'type' => 'one',
-                            'data' => [
-                                'foo' => 'test 2',
-                            ],
-                        ],
+                        ['type' => 'one', 'data' => ['foo' => 'test 1']],
+                        ['type' => 'one', 'data' => ['foo' => 'test 2']],
                     ],
                 ],
             ],
@@ -1124,7 +1326,112 @@ describe('`disableOptionsWhenSelectedInSiblingRepeaterItems()`', function (): vo
     });
 });
 
-describe('actions in repeater', function (): void {
+describe('item actions', function (): void {
+    it('inserts two items with distinct enabled UUIDs', function (): void {
+        $livewire = livewire(RepeaterWithItemActions::class);
+
+        foreach (range(1, 2) as $index) {
+            $livewire->call('mountAction', 'add', [], ['schemaComponent' => 'form.group.items']);
+            expect($livewire->get('data.group.items'))->toHaveCount($index);
+        }
+
+        foreach (array_keys($livewire->get('data.group.items')) as $key) {
+            expect(Str::isUuid($key))->toBeTrue();
+        }
+    });
+
+    it('clones an existing item without changing its source or sibling state', function (bool $generateUuids): void {
+        $items = [
+            'source' => ['foo' => 'Alpha', 'nested' => ['left' => 13, 'right' => [7, 29]]],
+            'other' => ['foo' => 'Beta', 'nested' => ['left' => 31, 'right' => []]],
+        ];
+
+        $livewire = livewire(RepeaterWithItemActions::class, compact('generateUuids'))
+            ->set('data.group.items', $items)
+            ->call('mountAction', 'clone', ['item' => 'source'], ['schemaComponent' => 'form.group.items'])
+            ->assertDispatched('items-updated');
+
+        $state = $livewire->get('data.group.items');
+        expect($state)->toHaveCount(3);
+        $newKey = array_key_last($state);
+
+        if ($generateUuids) {
+            expect(Str::isUuid($newKey))->toBeTrue();
+        } else {
+            expect($newKey)->toBe(0);
+        }
+
+        expect($livewire->get('data'))->toBe([
+            'group' => ['items' => [...$items, $newKey => $items['source']]],
+            'sibling' => 'Untouched',
+        ]);
+    })->with([false, true]);
+
+    it('ignores stale item actions after a concurrent deletion without changing nested or sibling state', function (string $action, bool $deleteAll): void {
+        $items = [
+            'record-17' => ['foo' => 'Alpha', 'nested' => ['left' => 13, 'right' => [7, 29]]],
+            'record-42' => ['foo' => 'Beta', 'nested' => ['left' => 31, 'right' => []]],
+            'record-93' => ['foo' => 'Gamma', 'nested' => ['left' => 2, 'right' => [11]]],
+        ];
+
+        $livewire = livewire(RepeaterWithItemActions::class)
+            ->set('data.group.items', $items);
+
+        foreach ($deleteAll ? array_keys($items) : ['record-42'] as $key) {
+            $livewire->call('mountAction', 'delete', ['item' => $key], ['schemaComponent' => 'form.group.items']);
+            unset($items[$key]);
+        }
+
+        $expected = ['group' => ['items' => $items], 'sibling' => 'Untouched'];
+        expect($livewire->get('data'))->toBe($expected);
+
+        $livewire->call('mountAction', $action, [
+            'item' => 'record-42',
+            'afterItem' => 'record-42',
+            'items' => ['record-93', 'record-42', 'record-17'],
+        ], ['schemaComponent' => 'form.group.items'])->assertNotDispatched('items-updated');
+
+        expect($livewire->get('data'))->toBe($expected);
+    })->with(['clone', 'moveUp', 'moveDown', 'delete', 'addBetween', 'reorder', 'collapse', 'expand'])
+        ->with([false, true]);
+
+    it('preserves item keys and values for valid moves and partial reorders', function (array $keys): void {
+        $items = array_combine($keys, [
+            ['foo' => 'Alpha', 'nested' => [13, 7]],
+            ['foo' => 'Beta', 'nested' => [29]],
+            ['foo' => 'Gamma', 'nested' => []],
+        ]);
+
+        $livewire = livewire(RepeaterWithItemActions::class)->set('data.group.items', $items);
+        $livewire->call('mountAction', 'moveDown', ['item' => (string) $keys[0]], ['schemaComponent' => 'form.group.items']);
+        expect($livewire->get('data.group.items'))->toBe([$keys[1] => $items[$keys[1]], $keys[0] => $items[$keys[0]], $keys[2] => $items[$keys[2]]]);
+        $livewire->call('mountAction', 'moveUp', ['item' => (string) $keys[0]], ['schemaComponent' => 'form.group.items']);
+        expect($livewire->get('data.group.items'))->toBe($items);
+        $livewire->call('mountAction', 'moveUp', ['item' => $keys[0]], ['schemaComponent' => 'form.group.items']);
+        $livewire->call('mountAction', 'moveDown', ['item' => $keys[2]], ['schemaComponent' => 'form.group.items']);
+        expect($livewire->get('data.group.items'))->toBe($items);
+        $livewire->call('mountAction', 'reorder', ['items' => [(string) $keys[2], (string) $keys[0]]], ['schemaComponent' => 'form.group.items']);
+        expect($livewire->get('data'))->toBe([
+            'group' => ['items' => [$keys[2] => $items[$keys[2]], $keys[0] => $items[$keys[0]], $keys[1] => $items[$keys[1]]]],
+            'sibling' => 'Untouched',
+        ]);
+    })->with([
+        'relationship keys' => [['record-17', 'record-42', 'record-93']],
+        'numeric keys' => [[0, 1, 2]],
+    ]);
+
+    it('adds between numeric items without overwriting the following item when UUIDs are disabled', function (): void {
+        $items = [['foo' => 'Alpha'], ['foo' => 'Beta']];
+
+        $livewire = livewire(RepeaterWithItemActions::class, ['generateUuids' => false])
+            ->set('data.group.items', $items)
+            ->call('mountAction', 'addBetween', ['afterItem' => '0'], ['schemaComponent' => 'form.group.items']);
+
+        $newItem = ['foo' => 'Draft 3'];
+
+        expect($livewire->get('data.group.items'))->toBe([0 => $items[0], 2 => $newItem, 1 => $items[1]]);
+    });
+
     it('can set repeater state programmatically via action', function (): void {
         livewire(TestComponentWithRepeaterSetByAction::class)
             ->callAction(TestAction::make('insert')->schemaComponent('questionsSection'))
@@ -1546,8 +1853,6 @@ describe('nested singular relationships', function (): void {
 
 describe('relationship ordering and mutation', function (): void {
     it('preserves related records when stale reorders follow deletion and saves valid ordering', function (): void {
-        require_once __DIR__ . '/../../../../packages/forms/src/helpers.php';
-
         $user = User::factory()->create();
         $first = Post::factory()->create(['author_id' => $user->id, 'title' => 'Alpha', 'rating' => 1]);
         $deleted = Post::factory()->create(['author_id' => $user->id, 'title' => 'Beta', 'rating' => 2]);
@@ -1955,6 +2260,29 @@ describe('rendering', function (): void {
     it('can render with `table()` view', function (): void {
         livewire(RenderRepeaterWithTable::class)->assertSuccessful();
     });
+
+    it('preserves literal labels and decodes `Htmlable` text in reorder descriptions', function (string | HtmlString $label, ?string $expectedLabel): void {
+        $repeater = Repeater::make('items')
+            ->generateUuidUsing(false)
+            ->schema([TextInput::make('foo')])
+            ->itemLabel($label)
+            ->default([['foo' => 'Value']]);
+
+        Schema::make(Livewire::make())->statePath('data')->components([$repeater])->fill();
+        $expectedLabel ??= __('filament-forms::components.repeater.reordering.item');
+
+        expect($repeater->toHtml())
+            ->toContain('data-reorder-label="' . e($expectedLabel) . '"')
+            ->toContain(e(__('filament-forms::components.repeater.reordering.position', ['label' => $expectedLabel, 'position' => 1, 'count' => 1])));
+    })->with([
+        'literal' => ['Customer <West> &amp;', 'Customer <West> &amp;'],
+        'HTML' => [new HtmlString('<strong>Research &amp; Development &lt;West&gt;</strong>'), 'Research & Development <West>'],
+        'literal zero' => ['0', '0'],
+        'HTML zero' => [new HtmlString('<strong>0</strong>'), '0'],
+        'empty' => ['', null],
+        'whitespace' => ['  ', null],
+        'textless HTML' => [new HtmlString('<i></i>'), null],
+    ]);
 });
 
 describe('browser interactions', function (): void {
@@ -1982,7 +2310,6 @@ describe('browser interactions', function (): void {
     });
 
     it('keeps item order, position feedback and keyboard focus when reordering in the browser', function (string $view): void {
-        require_once __DIR__ . '/../../../../packages/forms/src/helpers.php';
         Artisan::call('filament:assets');
         $this->actingAs(User::factory()->create());
 
@@ -2068,7 +2395,6 @@ describe('browser interactions', function (): void {
     })->with(['regular', 'full', 'ancestor', 'simple', 'table', 'one-direction']);
 
     it('provides accessible non-tabbable move actions when visible buttons are disabled', function (string $view): void {
-        require_once __DIR__ . '/../../../../packages/forms/src/helpers.php';
         Artisan::call('filament:assets');
         $this->actingAs(User::factory()->create());
         $url = '/repeater-test?reordering=screen-reader-' . $view;
@@ -2104,7 +2430,6 @@ describe('browser interactions', function (): void {
     })->with(['no-drag', 'disabled', 'no-handle']);
 
     it('announces confirmed moves and allows reordering after cancelling confirmation', function (): void {
-        require_once __DIR__ . '/../../../../packages/forms/src/helpers.php';
         Artisan::call('filament:assets');
         $this->actingAs(User::factory()->create());
         $url = '/repeater-test?reordering=modal';
@@ -2138,7 +2463,6 @@ describe('browser interactions', function (): void {
     });
 
     it('leaves custom move handlers in control without locking later ordering', function (string $view): void {
-        require_once __DIR__ . '/../../../../packages/forms/src/helpers.php';
         Artisan::call('filament:assets');
         $this->actingAs(User::factory()->create());
         $url = '/repeater-test?reordering=' . $view;
@@ -2185,6 +2509,119 @@ describe('browser interactions', function (): void {
             ->assertNoAccessibilityIssues();
     });
 });
+
+class TestComponentWithBuilderAndRepeater extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Builder::make('builder')
+                    ->blocks([
+                        Builder\Block::make('one')
+                            ->schema([
+                                TextInput::make('foo')->distinct(),
+                                Repeater::make('repeater')
+                                    ->schema([
+                                        TextInput::make('bar')->distinct(),
+                                    ]),
+                            ]),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithRepeaterAndBuilder extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Repeater::make('repeater')
+                    ->schema([
+                        TextInput::make('bar')->distinct(),
+                        Builder::make('builder')
+                            ->blocks([
+                                Builder\Block::make('one')
+                                    ->schema([
+                                        TextInput::make('foo')->distinct(),
+                                    ]),
+                            ]),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithBuilderRepeaterAndHiddenField extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Builder::make('builder')
+                    ->blocks([
+                        Builder\Block::make('services')
+                            ->schema([
+                                Repeater::make('items')
+                                    ->schema([
+                                        TextInput::make('service')->required(),
+                                    ]),
+                                TextInput::make('hidden')->visible(false),
+                            ]),
+                    ])
+                    ->default([
+                        [
+                            'type' => 'services',
+                            'data' => [
+                                'items' => [['service' => 'Service 1']],
+                            ],
+                        ],
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class RepeaterWithItemActions extends Livewire
+{
+    public bool $generateUuids = true;
+
+    public function form(Schema $form): Schema
+    {
+        $repeater = Repeater::make('items')
+            ->generateUuidUsing($this->generateUuids)
+            ->cloneable()
+            ->reorderableWithButtons()
+            ->afterStateUpdated(fn () => $this->dispatch('items-updated'))
+            ->schema([
+                TextInput::make('foo')->default(fn (): string => 'Draft ' . count($this->data['group']['items'] ?? [])),
+            ])
+            ->defaultItems(0)
+            ->addBetweenAction(static fn (Action $action): Action => $action->visible());
+
+        return $form->components([
+            Section::make('Items')->statePath('group')->schema([$repeater]),
+            TextInput::make('sibling')->default('Untouched'),
+        ])->statePath('data');
+    }
+}
 
 class RepeaterWithNestedSingularRelationship extends Component implements HasActions, HasSchemas
 {
@@ -2718,35 +3155,6 @@ class TestComponentWithFixIndistinctStateRepeater extends Livewire
     public function save(): void
     {
         $this->submittedData = $this->form->getState();
-    }
-}
-
-class TestComponentWithRepeaterAndBuilder extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->components([
-                Repeater::make('repeater')
-                    ->schema([
-                        TextInput::make('bar')
-                            ->distinct(),
-                        Builder::make('builder')
-                            ->blocks([
-                                Builder\Block::make('one')
-                                    ->schema([
-                                        TextInput::make('foo')
-                                            ->distinct(),
-                                    ]),
-                            ]),
-                    ]),
-            ])
-            ->statePath('data');
-    }
-
-    public function save(): void
-    {
-        $this->form->getState();
     }
 }
 
