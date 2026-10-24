@@ -99,10 +99,13 @@ class ChildComponent extends Component
         traitAction as aliasedTraitAction;
     }
 
+    #[\Filament\Support\Components\Attributes\Unexposed]
     public function traitAction(): void {}
 
+    #[\Filament\Support\Components\Attributes\Unexposed]
     public function aliasedTraitAction(): void {}
 
+    #[\Filament\Support\Components\Attributes\Unexposed]
     public function inheritedTraitAction(): void {}
 
     #[\Filament\Support\Components\Attributes\Unexposed]
@@ -111,6 +114,7 @@ class ChildComponent extends Component
     #[\Filament\Support\Components\Attributes\Unexposed]
     public static function configuration(): void {}
 
+    #[\Filament\Support\Components\Attributes\Unexposed]
     public function inheritedAction(): void {}
 
     #[\Filament\Support\Components\Attributes\Unexposed]

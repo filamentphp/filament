@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use Filament\Forms\Components\DatePicker;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Widgets\ChartWidget;
 use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
 
@@ -19,6 +20,7 @@ class ChartWithCustomFiltersDemo extends ChartWidget
 
     protected bool $hasDeferredFilters = true;
 
+    #[Unexposed]
     public function filtersSchema(Schema $schema): Schema
     {
         return $schema->components([

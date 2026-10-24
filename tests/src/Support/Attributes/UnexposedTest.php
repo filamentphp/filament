@@ -52,6 +52,43 @@ it('inherits method access through unannotated overrides and lets `#[Unexposed]`
     'conflicting attributes on child' => [ConflictingMethodAccessTestComponent::class],
 ]);
 
+it('retains native trait alias attributes without blocking direct PHP calls', function (): void {
+    $component = Livewire::test(new class extends UnexposedTestBaseComponent
+    {
+        use HasUnexposedTestMethod {
+            unexposed as aliasedUnexposed;
+        }
+    });
+
+    $instance = $component->instance();
+
+    $component->call('aliasedUnexposed', 3)->assertForbidden();
+
+    expect(UnexposedTestComponent::$executionCount)->toBe(0)
+        ->and($instance->aliasedUnexposed(5))->toBe(5);
+});
+
+it('does not inherit access attributes from a replaced trait method', function (): void {
+    $component = Livewire::test(new class extends Component
+    {
+        use HasUnexposedTestMethod;
+
+        public function unexposed(int $amount): int
+        {
+            return UnexposedTestComponent::$executionCount += $amount;
+        }
+
+        public function render(): string
+        {
+            return '<div></div>';
+        }
+    });
+
+    $component->call('unexposed', 3)->assertReturned(3);
+
+    expect(UnexposedTestComponent::$executionCount)->toBe(3);
+});
+
 trait HasUnexposedTestMethod
 {
     #[Unexposed]

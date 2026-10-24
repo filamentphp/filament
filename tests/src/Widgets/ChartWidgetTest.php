@@ -4,6 +4,7 @@ namespace Filament\Tests\Widgets;
 
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Filament\Widgets\ChartWidget;
@@ -236,6 +237,7 @@ class TestChartWidgetDefault extends ChartWidget
         ];
     }
 
+    #[Unexposed]
     public function filtersSchema(Schema $schema): Schema
     {
         return $schema
@@ -277,6 +279,7 @@ class TestChartWidgetWithDeferredFiltersProperty extends ChartWidget
         ];
     }
 
+    #[Unexposed]
     public function filtersSchema(Schema $schema): Schema
     {
         return $schema
@@ -301,6 +304,7 @@ class TestChartWidgetWithDynamicDeferredFilters extends ChartWidget
         return 'line';
     }
 
+    #[Unexposed]
     public function hasDeferredFilters(): bool
     {
         return true;
@@ -314,6 +318,7 @@ class TestChartWidgetWithDynamicDeferredFilters extends ChartWidget
         ];
     }
 
+    #[Unexposed]
     public function filtersSchema(Schema $schema): Schema
     {
         return $schema

@@ -195,6 +195,7 @@ To get started, use the `HasFiltersSchema` trait and implement the `filtersSchem
 ```php
 use Filament\Forms\Components\DatePicker;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
 
 class BlogPostsChart extends ChartWidget
@@ -203,6 +204,7 @@ class BlogPostsChart extends ChartWidget
     
     // ...
     
+    #[Unexposed]
     public function filtersSchema(Schema $schema): Schema
     {
         return $schema->components([
@@ -214,6 +216,8 @@ class BlogPostsChart extends ChartWidget
     }
 }
 ```
+
+Repeat `#[Unexposed]` because this implementation replaces a trait method; PHP does not inherit the replaced method's attributes. The schema is still built from PHP, but cannot be called directly from the frontend. See [restricting methods to server-side calls](../advanced/security#restricting-methods-to-server-side-calls).
 
 The filter values are accessible via the `$this->filters` array. You can use these values inside your `getData()` method:
 
