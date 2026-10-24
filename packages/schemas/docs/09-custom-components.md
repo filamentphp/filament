@@ -423,8 +423,10 @@ class Chart extends Component
 }
 ```
 
-<Aside variant="info">
-    Only methods marked with `#[ExposedLivewireMethod]` can be called from JavaScript. This is a security measure to prevent arbitrary method execution.
+<Aside variant="warning">
+    Only methods marked with `#[ExposedLivewireMethod]` can be called through `$wire.callSchemaComponentMethod()`. The attribute does not authorize access to the method's data or operations. Validate client-supplied arguments and [authorize sensitive operations](../advanced/security#authorization) inside the method.
+
+    Exposed methods remain callable when the component is [disabled](../forms/overview#disabling-a-field), since read methods may still be needed to display its value. If a method changes the component's state and should respect its disabled state, check `$this->isDisabled()` before making changes.
 </Aside>
 
 #### Calling the method from JavaScript

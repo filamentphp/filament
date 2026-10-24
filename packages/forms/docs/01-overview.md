@@ -185,7 +185,7 @@ Toggle::make('is_admin')
 
 Disabling a field prevents editing through its built-in controls, but does not prevent inspecting or copying its value. Some fields also support `readOnly()`, which prevents editing without disabled styling. See the documentation for each field for its supported options.
 
-Custom actions, including prefix, suffix, and extra item actions, keep their own visibility and disabled settings. If a custom action changes a value, you should hide or disable it when the field is not editable. Neither `disabled()` nor `readOnly()` replaces server-side authorization.
+Custom actions, including prefix, suffix, and extra item actions, keep their own visibility and disabled settings. If a custom action changes a value, you should hide or disable it when the field is not editable. Neither `disabled()` nor `readOnly()` replaces server-side authorization. For file uploads, see [authorizing existing file paths](file-upload#authorizing-existing-file-paths) to restrict which files the field can expose.
 
 Disabling a field will prevent it from being saved. If you'd like it to be saved, but still not editable, use the `saved()` method:
 
