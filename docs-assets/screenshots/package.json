@@ -2,7 +2,7 @@
   "type": "module",
   "dependencies": {
     "pixelmatch": "^7.2.0",
-    "puppeteer": "^25.4.0",
+    "puppeteer": "^25.16.0",
     "sharp": "^0.35.5"
   }
 }

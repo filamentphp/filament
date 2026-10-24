@@ -366,6 +366,8 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
+For details about handling custom block HTML and configuration safely, see [rendering content with custom blocks](#rendering-content-with-custom-blocks).
+
 If you are using [merge tags](#using-merge-tags), you can pass an array of values to replace the merge tags with:
 
 ```php
@@ -422,7 +424,7 @@ When Filament outputs raw HTML from the database in components such as `TextColu
 {!! str($record->content)->sanitizeHtml() !!}
 ```
 
-If you're [storing content as JSON](#storing-content-as-json) instead of HTML, or your content requires processing to inject [private image URLs](#using-private-images-in-the-editor) or similar, you can use the [content renderer](#rendering-rich-content) to output HTML. This will automatically sanitize the HTML for you, so you don't need to worry about it.
+If you're [storing content as JSON](#storing-content-as-json) instead of HTML, or your content requires processing to inject [private image URLs](#using-private-images-in-the-editor) or similar, you can use the [content renderer](#rendering-rich-content) to output HTML. The renderer automatically sanitizes the editor's content, but treats HTML returned by [registered custom blocks](#rendering-content-with-custom-blocks) as trusted application HTML. You are responsible for escaping or sanitizing user-supplied configuration values in both the block's output and its [preview](#rendering-a-preview-for-a-custom-block).
 
 <Aside variant="danger">
     Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider restricting the default configuration. See the [security documentation](../advanced/security#customizing-the-sanitizer) for details on how to customize the sanitizer.
@@ -632,6 +634,10 @@ The `schema()` method on the action can define form fields that will be displaye
 
 Once a block is inserted into the editor, you may define a "preview" for it using the `toPreviewHtml()` method. This method should return a string of HTML that will be displayed in the editor when the block is inserted, allowing users to see what the block will look like before they save it. You can access the `$config` for the block in this method, which contains the data that was submitted in the modal when the block was inserted:
 
+<Aside variant="danger">
+    Filament treats HTML returned by `toPreviewHtml()` and the block's [`toHtml()` method](#rendering-content-with-custom-blocks) as trusted application HTML and does not sanitize it. Treat `$config` as untrusted user input, including when it comes from saved content. Escape plain text using Blade's `{{ }}` syntax or Laravel's `e()` helper, and validate user-supplied URLs before rendering them. If a configuration value intentionally contains HTML, [sanitize it](#security) before including it in either the preview or the final output.
+</Aside>
+
 ```php
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 
@@ -650,6 +656,13 @@ class HeroBlock extends RichContentCustomBlock
         ])->render();
     }
 }
+```
+
+In the preview's Blade view, escape the heading and subheading:
+
+```blade
+<h2>{{ $heading }}</h2>
+<p>{{ $subheading }}</p>
 ```
 
 <AutoScreenshot name="forms/fields/rich-editor/custom-block-previews" alt="Rich editor with custom block previews and normal controls" />
@@ -698,6 +711,10 @@ This setting applies to all custom blocks with previews in the editor. Blocks wi
 
 When rendering the rich content, you can pass the array of custom blocks to the `RichContentRenderer` to ensure that the blocks are rendered correctly:
 
+<Aside variant="danger">
+    The renderer sanitizes the surrounding editor content, but preserves HTML returned by registered custom blocks without sanitization, just like [custom block previews](#rendering-a-preview-for-a-custom-block). Your block's `toHtml()` method must escape or sanitize user-supplied configuration values itself. Do not return user-supplied HTML directly from this method.
+</Aside>
+
 ```php
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 
@@ -708,6 +725,8 @@ RichContentRenderer::make($record->content)
     ])
     ->toHtml()
 ```
+
+The renderer still uses your application's [configured HTML sanitizer](../advanced/security#customizing-the-sanitizer) for the surrounding content. Custom sanitizers must escape HTML characters in text and attribute values, as Filament's built-in sanitizer does. A block is restored only if its complete placeholder (`<div data-id="…"></div>`) remains unchanged in the sanitizer's output. Sanitizer policies or input length limits may prevent restoration. This does not sanitize the block's own HTML.
 
 Each block class may have a `toHtml()` method that returns the HTML that should be rendered for that block:
 

@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\Concerns\CanBeCollapsed;
+use Filament\Schemas\Components\Concerns\CanLimitItemsForProcessing;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
@@ -36,6 +37,7 @@ use function Filament\Support\generate_loading_indicator_html;
 class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 {
     use CanBeCollapsed;
+    use CanLimitItemsForProcessing;
     use Concerns\CanBeCloned;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
@@ -1029,6 +1031,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
      */
     public function getDefaultChildSchemas(): array
     {
+        $this->ensureItemsCanBeProcessed($this->getItemsCount());
+
         $rawState = $this->getRawState();
 
         $this->cachedItemsRawStateStructure = $this->getRawStateStructure($rawState);

@@ -9,6 +9,7 @@ use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanBeCollapsed;
 use Filament\Schemas\Components\Concerns\CanBeCompact;
+use Filament\Schemas\Components\Concerns\CanLimitItemsForProcessing;
 use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
 use Filament\Schemas\Schema;
@@ -37,6 +38,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
 {
     use CanBeCollapsed;
     use CanBeCompact;
+    use CanLimitItemsForProcessing;
     use Concerns\CanBeCloned;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
@@ -887,6 +889,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
      */
     public function getDefaultChildSchemas(): array
     {
+        $this->ensureItemsCanBeProcessed($this->getItemsCount());
+
         $rawState = ($this->getRawState() ?? []);
 
         $this->cachedItemsRawStateStructure = array_map(is_array(...), $rawState);

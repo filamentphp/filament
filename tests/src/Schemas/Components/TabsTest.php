@@ -636,7 +636,7 @@ it('can render `Tabs` in the browser', function (): void {
         ->assertNoAccessibilityIssues();
 });
 
-it('loads deferred badges through `$getDeferredTabBadges()` in both tab renderers', function (bool $livewireTabs): void {
+it('loads deferred badges in both tab renderers', function (bool $livewireTabs): void {
     $this->actingAs(User::factory()->create());
 
     $page = visit('/tabs-browser-test?deferred=1&livewire=' . (int) $livewireTabs);
