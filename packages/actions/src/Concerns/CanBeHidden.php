@@ -145,5 +145,11 @@ trait CanBeHidden
         $this->cachedIsAuthorizedOrNotHiddenWhenUnauthorized = null;
         $this->cachedVisibilityRecordKey = null;
         $this->hasVisibilityCache = false;
+
+        if ($this instanceof ActionGroup) {
+            foreach ($this->getActions() as $action) {
+                $action->clearVisibilityCache();
+            }
+        }
     }
 }

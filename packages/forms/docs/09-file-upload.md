@@ -205,6 +205,8 @@ FileUpload::make('avatar')
 
 Filament compares every submitted string path against the value originally loaded from the record (via `$record->getOriginal()` for the attribute matching the field name). Paths that do not match cause the field to fail validation, so the record is never saved with a tampered value. Newly uploaded files always pass through, the field can still be cleared, and for `multiple()` fields each entry is checked individually.
 
+The same check runs before the field returns existing file metadata or generates preview, open, and download URLs, including when the field is [disabled](overview#disabling-a-field). Unauthorized paths return no metadata or URLs.
+
 <Aside variant="warning">
     `preventFilePathTampering()` needs a record on the form. Without one — for example, on a create page — every submitted string path fails validation unless the [`allowFilePathUsing`](#allowing-additional-file-paths-with-a-callback) callback approves it. New uploads are unaffected.
 </Aside>
@@ -220,6 +222,8 @@ FileUpload::configureUsing(function (FileUpload $component): void {
 ```
 
 Individual fields can still opt out by calling `preventFilePathTampering(false)`.
+
+Disabling the field does not replace path authorization: existing files still load for display. Neither does `visibility('private')`: on disks that support temporary URLs, a tampered path can make a file readable before the form is submitted unless path authorization is enabled. This protection only restricts access through the field. You must still authorize your own file-serving routes and avoid storing private files where they are publicly accessible.
 
 ### Allowing additional file paths with a callback
 

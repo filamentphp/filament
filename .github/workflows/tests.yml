@@ -137,6 +137,9 @@ jobs:
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
           composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
+      # Remove once https://github.com/pestphp/pest-plugin-browser/pull/226 is released and required.
+      - name: Fix Pest Browser HTTP server port allocation
+        run: git apply --directory=vendor/pestphp/pest-plugin-browser tests/patches/pest-browser-http-server.patch
       - name: Set up Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
