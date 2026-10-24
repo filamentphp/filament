@@ -34,6 +34,7 @@ it('preserves colliding files until replacements are written', function (bool $c
         }
     };
 
+    ConfirmPrompt::fallbackWhen(true);
     ConfirmPrompt::fallbackUsing(function () use (&$confirmations, $confirmLast, $directory): bool {
         expect(File::get("{$directory}/entry.js"))->toBe('original entry')
             ->and(File::get("{$directory}/component.vue"))->toBe('original component');

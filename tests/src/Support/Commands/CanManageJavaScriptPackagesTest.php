@@ -61,6 +61,7 @@ $createJavaScriptPackageCommand = function (?string $packageManager = null, bool
 
 beforeEach(function (): void {
     $this->withoutMockingConsoleOutput();
+    ConfirmPrompt::fallbackWhen(true);
 });
 
 it('uses npm arguments and the application working directory', function () use ($createJavaScriptPackageCommand): void {
