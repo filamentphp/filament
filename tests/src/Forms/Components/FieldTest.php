@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\JsField;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Schema;
@@ -335,6 +336,43 @@ describe('field wrappers', function (): void {
 
         expect($html)->toContain('field-wrapper-blade-component', 'fi-fo-field', 'Name', '<input');
     });
+
+    it('groups `JsField` descriptions in embedded and Blade wrappers', function (bool $blade, string $errorMode): void {
+        $previousErrors = view()->shared('errors');
+
+        view()->share('errors', (new ViewErrorBag)->put('default', new MessageBag([
+            'data.title' => $errorMode === 'list' ? ['First error.', 'Second error.'] : ['First error.'],
+        ])));
+        view()->addNamespace('description-test', dirname(__DIR__, 4) . '/packages/forms/resources/views');
+
+        try {
+            $field = JsField::make('title')
+                ->helperText('Helpful description.')
+                ->showAllValidationMessages($errorMode === 'list');
+
+            if ($blade) {
+                $field->fieldWrapperView('description-test::field-wrapper');
+            }
+
+            $html = Schema::make(Livewire::make())
+                ->statePath('data')
+                ->components([$field])
+                ->toHtml();
+
+            $document = new DOMDocument;
+            @$document->loadHTML($html);
+            $description = $document->getElementById($field->getId() . '-description');
+
+            expect($description)->not->toBeNull();
+            expect($description->textContent)->toContain('Helpful description.', 'First error.');
+
+            if ($errorMode === 'list') {
+                expect($description->textContent)->toContain('Second error.');
+            }
+        } finally {
+            view()->share('errors', $previousErrors);
+        }
+    })->with([false, true])->with(['text', 'list']);
 });
 
 describe('validation messages for nested recursive rules', function (): void {
