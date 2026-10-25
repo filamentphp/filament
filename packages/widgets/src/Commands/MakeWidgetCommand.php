@@ -191,9 +191,9 @@ class MakeWidgetCommand extends Command
         ];
     }
 
-    public function handle(): int
+    public function handle(Filesystem $filesystem): int
     {
-        $this->filesystem = app(Filesystem::class);
+        $this->filesystem = $filesystem;
 
         try {
             $frameworks = array_values(array_filter(['js', 'react', 'vue', 'svelte'], fn (string $framework): bool => (bool) $this->option($framework)));
@@ -222,10 +222,6 @@ class MakeWidgetCommand extends Command
 
             $this->configureFqnEnd();
             $this->configureType();
-
-            if ($framework) {
-                $this->type = Widget::class;
-            }
             $this->configurePanel(
                 question: 'Which panel would you like to create this widget in?',
                 initialQuestion: 'Would you like to create this widget in a panel?',
@@ -256,13 +252,16 @@ class MakeWidgetCommand extends Command
 
         if ($this->framework) {
             $pendingActions = [];
-            if ($this->isTypeScript && ! $this->configureTypeScript()) {
+            if ($this->isTypeScript && ! $this->configureJavaScriptRendererTypeScript(
+                '@filament/widgets/js-widget',
+                'vendor/filament/widgets/resources/js/types/js-widget.d.ts',
+            )) {
                 $pendingActions[] = 'Configure the @filament/widgets/js-widget type alias in tsconfig.json: https://filamentphp.com/docs/5.x/widgets/custom-widgets#typing-renderers';
             }
             if (! $this->registerViteInput($this->renderer)) {
                 $pendingActions[] = "Add [{$this->renderer}] to the Laravel plugin's input array in your Vite config.";
             }
-            if (! $this->configureRendererViteConfig()) {
+            if (! $this->configureJavaScriptRendererVite($this->framework)) {
                 $pendingActions[] = "Configure Vite to compile {$this->framework} and preserve the renderer's default export: https://filamentphp.com/docs/5.x/advanced/assets#building-lazy-loaded-es-modules";
             }
             if (filled($pendingActions)) {
@@ -672,18 +671,5 @@ class MakeWidgetCommand extends Command
         foreach ($this->rendererFiles as $path => $stub) {
             $this->copyStubToApp($stub, $path, ['componentName' => class_basename($this->fqn)]);
         }
-    }
-
-    protected function configureTypeScript(): bool
-    {
-        return $this->configureJavaScriptRendererTypeScript(
-            '@filament/widgets/js-widget',
-            'vendor/filament/widgets/resources/js/types/js-widget.d.ts',
-        );
-    }
-
-    protected function configureRendererViteConfig(): bool
-    {
-        return $this->configureJavaScriptRendererVite($this->framework);
     }
 }
