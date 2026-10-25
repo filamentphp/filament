@@ -34,7 +34,10 @@ class CustomWidgetClassGenerator extends ClassGenerator
 
         return [
             ...(($extendsBasename === class_basename($this->getFqn())) ? [$extends => "Base{$extendsBasename}"] : [$extends]),
-            ...($this->renderer ? [HasJsRenderer::class, Vite::class] : []),
+            ...array_filter(
+                $this->renderer ? [HasJsRenderer::class, Vite::class] : [],
+                fn (string $import): bool => strcasecmp(class_basename($import), $this->getBasename()) !== 0,
+            ),
         ];
     }
 
