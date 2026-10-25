@@ -16,7 +16,7 @@ Choose **Custom**, then edit the generated view. Widgets are Livewire components
 
 ### Generating a JavaScript widget
 
-Install your application's existing JavaScript dependencies, including Vite, before running the generator, for example with `npm install`. The command reads the installed Vite version to select compatible compiler plugins, including when you use `--skip-install`.
+Install your application's JavaScript dependencies, including Vite, before running the generator, for example with `npm install`.
 
 Add one renderer flag to the command:
 
@@ -27,7 +27,9 @@ php artisan make:filament-widget RevenueOverview --svelte
 php artisan make:filament-widget RevenueOverview --js
 ```
 
-The command creates a PHP widget class and a renderer in `resources/js/filament/widgets/`, without a Blade view. It installs missing development dependencies, updates recognizable Vite configurations, and offers to compile your assets. Existing compatible dependency declarations keep their version constraints and their `package.json` sections. Incompatible dependencies require a manual upgrade instead of being replaced automatically. Replace the starter heading and description with your own UI. The renderer appears inside a standard Filament widget section.
+The command creates a PHP widget class and a renderer, normally in `resources/js/filament/widgets/`, instead of a Blade view. Replace the starter content with your own UI, which appears inside a standard Filament widget section.
+
+The command installs missing dependencies, configures Vite where possible, and offers to compile your assets. Existing dependencies are preserved; incompatible versions require a manual upgrade. If your Vite configuration needs manual changes, follow the command's instructions and the [Vite module setup](../advanced/assets#building-lazy-loaded-es-modules).
 
 For TypeScript, add `--typescript` or its alias `--ts`:
 
@@ -39,26 +41,26 @@ Register or discover the generated class in your panel like any other widget. Yo
 
 #### Customizing generation
 
-Use `--pm=yarn` to use Yarn instead of npm, `--skip-install` to install dependencies yourself, or `--skip-build` to skip the compilation prompt. Blade-based generation does not run a package manager. The existing panel, resource, cluster, and `--force` options still apply. Renderer flags cannot be combined with `--chart`, `--stats-overview`, or `--table`.
+You can customize the command with these options:
 
-The generated PHP class uses `HasJsRenderer` and loads its entry through `Vite::asset()`. The generated files depend on your chosen renderer:
+- `--pm=yarn` uses Yarn instead of npm.
+- `--skip-install` skips dependency installation. Vite must already be installed.
+- `--skip-build` skips the compilation prompt.
+
+The panel, resource, cluster, and `--force` options still apply. Renderer flags cannot be combined with `--chart`, `--stats-overview`, or `--table`.
+
+The generated files depend on your chosen renderer:
 
 - React: `revenue-overview.jsx`, or `revenue-overview.tsx` with `--typescript`.
 - Vue: `revenue-overview.js` and `RevenueOverview.vue`. With `--typescript`, the entry uses `.ts` and the component uses `<script setup lang="ts">`.
 - Svelte 5: `revenue-overview.svelte.js` and `RevenueOverview.svelte`. With `--typescript`, the entry uses `.svelte.ts` and the component uses `<script lang="ts">`.
 - Framework-free JavaScript: `revenue-overview.js`, or `revenue-overview.ts` with `--typescript`.
 
-Nested names, such as `Reports/RevenueOverview`, place the JavaScript files in a `reports/` subdirectory. Renderer directories mirror the widget's PHP namespace beneath `resources/js/` in kebab case, excluding your application's root namespace when present. For example, `App\Filament\Resources\Orders\Widgets\RevenueOverview` uses `resources/js/filament/resources/orders/widgets/`. TypeScript generation also configures the `@filament/widgets/js-widget` [type alias](#typing-renderers).
-
-Typed starters install TypeScript 6 when TypeScript is missing, and preserve an existing compatible TypeScript 5 or 6 installation. Vue and Svelte tooling require the JavaScript compiler API provided by these versions, which TypeScript 7 does not provide.
-
-The command adds the renderer to the Laravel Vite plugin's `input` array, enables the Vue or Svelte compiler plugin when needed, and preserves the renderer's default export in production builds. React uses Vite's built-in JSX support. If your configuration cannot be updated automatically, the command prints the remaining manual steps instead of replacing it. Follow the [Vite module setup](../advanced/assets#building-lazy-loaded-es-modules) to complete them.
+Renderer directories follow the PHP namespace in kebab case, excluding your application's root namespace. For example, `App\Filament\Resources\Orders\Widgets\RevenueOverview` uses `resources/js/filament/resources/orders/widgets/`.
 
 <Aside variant="info">
-    Importing the renderer does not load CSS extracted by Vite, including styles added to Vue or Svelte components. Include those styles through your application's stylesheet or [register them separately](../advanced/assets#registering-css-files), even when the generator configures Vite successfully.
+    Importing the renderer does not load CSS extracted by Vite. Include those styles through your application's stylesheet or [register them separately](../advanced/assets#registering-css-files).
 </Aside>
-
-New TypeScript configurations use `"jsx": "react-jsx"` so Vite transforms React JSX. Existing configurations are preserved. If yours uses `"jsx": "preserve"`, change it to `"react-jsx"` or configure a React JSX transformer in Vite; otherwise Vite 8 can fail with `Unexpected JSX expression`.
 
 ## Passing configuration from PHP
 
@@ -91,7 +93,11 @@ class RevenueOverview extends Widget
 }
 ```
 
-Use the entry extension generated for your chosen framework. Only include data that the current user is authorized to see. Props are snapshots, not writable Livewire state: changing `props.configuration` does not update PHP. When a Livewire request re-renders the widget, Filament sends changed props to the existing renderer's `update()` method without remounting it.
+Use the entry extension generated for your framework. When the widget re-renders, Filament passes changed configuration to the renderer's `update()` method without remounting it. Changing `props.configuration` in JavaScript does not update PHP.
+
+<Aside variant="danger">
+    Only include data that the current user is authorized to see.
+</Aside>
 
 ### Receiving dashboard filter values
 
@@ -113,9 +119,9 @@ public function getRendererConfiguration(): array
 }
 ```
 
-Set up the dashboard's [filters form or filter action](overview#filtering-widget-data) as usual. Filter updates re-render the widget, so both raw filter values and query results returned by `getRendererConfiguration()` reach JavaScript. Filters from a live form are not validated; validate values before using them in a query. Only pass the filter values the renderer needs.
+Set up the dashboard's [filters form or filter action](overview#filtering-widget-data) as usual. Only pass the filter values the renderer needs, and validate live form filters before using them in a query.
 
-The same pattern works with other reactive Livewire properties. Props are recalculated when the widget itself renders, not whenever arbitrary PHP or parent-page state changes. Mark custom parent-provided properties with Livewire's `#[Reactive]` attribute when they should trigger widget updates.
+For other parent-provided properties, use Livewire's `#[Reactive]` attribute to trigger widget updates when they change.
 
 ## Writing a renderer
 
@@ -238,11 +244,11 @@ export default function mountRevenueOverview({ host, props, utilities }) {
 }
 ```
 
-Define `refreshRevenue()` on your widget class. Normal Livewire authorization and validation rules apply: validate browser-provided arguments and authorize operations inside PHP methods. Unlike form fields, widgets do not require an `#[Exposed]` attribute and do not receive schema utilities, a field value, or `onChange()` / `onBlur()` callbacks. Pass `utilities` separately to a React, Vue, or Svelte component if it needs to interact with PHP.
+Define `refreshRevenue()` on your widget class. Validate browser-provided arguments and authorize operations inside PHP methods. To call PHP from a React, Vue, or Svelte component, pass `utilities` to it as a prop.
 
 ### Typing renderers
 
-The declarations ship at `vendor/filament/widgets/resources/js/types/js-widget.d.ts`. The generator configures an alias automatically for standard JSON `tsconfig.json` files. If it cannot, merge this mapping into your configuration, adjusting the path relative to `baseUrl` if you use one:
+The generator adds the `@filament/widgets/js-widget` type alias to standard JSON `tsconfig.json` files. To configure it manually, add this mapping, adjusting the path relative to `baseUrl` if set:
 
 ```json
 {
@@ -276,23 +282,21 @@ const mountRevenueOverview: JsWidgetRenderer<Configuration, Methods> = ({ host, 
 export default mountRevenueOverview
 ```
 
-#### Checking types
-
-`npm run build` compiles the renderers but does not check their types. For JavaScript/React TypeScript entries, run `npx tsc --noEmit`. For Vue single-file components, install `vue-tsc` and run `npx vue-tsc --noEmit`; plain `tsc` cannot resolve `.vue` imports. For Svelte components, install `svelte-check` and run `npx svelte-check --tsconfig ./tsconfig.json`.
-
-In a mixed-framework application, use separate TypeScript configurations with `include` patterns for each framework and pass the appropriate configuration to each checker. Keep the Filament type alias in each configuration or inherit it from a shared configuration.
+Vite builds do not check types. See [type-checking ES modules](../advanced/assets#type-checking-es-modules) for compiler setup and framework-specific commands.
 
 ### Synchronizing and disposing renderers
 
-Filament owns the outer widget and section. Your renderer owns only the ignored `host` subtree. Livewire does not morph that subtree, and you should not render Blade, Livewire, or Alpine components inside it. Preserve local UI state in your renderer while applying the latest PHP snapshots in `update()`.
+Livewire does not manage the contents of `host`. Use `update()` to apply PHP configuration while preserving local UI state. Do not render Blade, Livewire, or Alpine components inside this subtree.
 
-Mounting may be asynchronous. If PHP props change while mounting, the latest snapshot is delivered after mounting completes. If the widget is removed before mounting completes, the returned instance is disposed. Changing `getRenderer()` replaces the renderer; changing only `getRendererConfiguration()` updates it in place.
+Mounting may be asynchronous: Filament delivers the latest props when it completes, or disposes the instance if the widget was removed. Changing `getRenderer()` replaces the renderer; changing `getRendererConfiguration()` updates it in place.
 
-Return `destroy()` to unmount your framework and remove event listeners, observers, timers, and subscriptions. Stop DOM work immediately. Asynchronous updates may overlap, so cancel or order requests inside your renderer. Cleanup promise failures are logged, but remounting does not wait for cleanup.
+Use `destroy()` to unmount your framework and release listeners, observers, timers, and subscriptions. Stop DOM work immediately: Filament does not wait for asynchronous cleanup before remounting. Cancel or order overlapping asynchronous updates in your renderer.
 
 #### Handling renderer errors
 
-Import, mount, and update failures are logged to the browser console. Filament disposes the renderer, clears its host, and displays an accessible error message. Reload or remount the widget to retry. If mounting allocates resources before throwing, clean those resources up in your mount function since no instance has been returned yet.
+If importing, mounting, or updating fails, Filament logs the error, disposes the renderer, and replaces its contents with an accessible error message. Reload or remount to retry.
+
+If mounting allocates resources before throwing, clean them up in the mount function: Filament has not received an instance to dispose yet.
 
 ### Building reusable plugin widgets
 
