@@ -56,6 +56,8 @@ The generated PHP class uses `HasJsRenderer` and loads its entry through `Vite::
 
 Nested names, such as `Reports/Chart`, place JavaScript files in a `reports/` subdirectory. TypeScript generation also configures the `@filament/schemas/js-component` [type alias](#typing-renderers).
 
+For a custom component location, the renderer directory mirrors the PHP namespace under `resources/js/`, omitting your application's root namespace and converting each directory to kebab case.
+
 The command adds the renderer to the Laravel plugin's `input` array, enables the Vue or Svelte compiler plugin when needed, and preserves the renderer's default export in production builds. React uses Vite's built-in JSX support.
 
 If your configuration cannot be updated automatically, the command prints the remaining manual steps instead of replacing it. Follow the [Vite module setup](../advanced/assets#building-lazy-loaded-es-modules) to complete them. For a plugin, use a [published module](#building-reusable-plugin-components) instead of the application's Vite manifest.
@@ -310,7 +312,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 }
 ```
@@ -338,7 +343,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     public function heading(?string $heading): static
@@ -390,7 +398,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     public function heading(string | Closure | null $heading): static
@@ -437,7 +448,10 @@ class Chart extends Component
 
     public static function make(string | Closure | null $heading = null): static
     {
-        return app(static::class, ['heading' => $heading]);
+        $static = app(static::class, ['heading' => $heading]);
+        $static->configure();
+
+        return $static;
     }
 
     public function heading(string | Closure | null $heading): static
@@ -472,7 +486,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     #[Exposed]
@@ -565,7 +582,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     #[Exposed]
@@ -854,7 +874,10 @@ class SalesSummary extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     public function getRenderer(): string

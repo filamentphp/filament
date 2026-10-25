@@ -28,10 +28,10 @@ class ComponentClassGenerator extends ClassGenerator
      */
     public function getImports(): array
     {
-        return [
+        return array_filter([
             $this->getExtends(),
             ...($this->renderer ? [HasJsRenderer::class, Vite::class] : []),
-        ];
+        ], fn (string $import): bool => strcasecmp(class_basename($import), $this->getBasename()) !== 0);
     }
 
     public function getBasename(): string
@@ -89,7 +89,10 @@ class ComponentClassGenerator extends ClassGenerator
             ->setStatic()
             ->setReturnType('static')
             ->setBody(<<<'PHP'
-                return app(static::class);
+                $static = app(static::class);
+                $static->configure();
+
+                return $static;
                 PHP);
 
         $this->configureMakeMethod($method);

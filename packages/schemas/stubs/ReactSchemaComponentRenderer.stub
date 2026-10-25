@@ -1,13 +1,13 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 
-function {{ componentName }}(props) {
+function {{ componentName }}Component(props) {
     return <p>{props.configuration.message ?? 'Your component is ready.'}</p>
 }
 
 export default function mount{{ componentName }}({ host, props: initialProps }) {
     const root = createRoot(host)
-    const update = (props) => root.render(<{{ componentName }} {...props} />)
+    const update = (props) => root.render(<{{ componentName }}Component {...props} />)
 
     update(initialProps)
 

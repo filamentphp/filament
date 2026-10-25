@@ -4,13 +4,13 @@ import type { JsComponentProps, JsComponentRenderer } from '@filament/schemas/js
 
 type Configuration = { message?: string }
 
-function {{ componentName }}(props: JsComponentProps<Configuration>) {
+function {{ componentName }}Component(props: JsComponentProps<Configuration>) {
     return <p>{props.configuration.message ?? 'Your component is ready.'}</p>
 }
 
 const mount{{ componentName }}: JsComponentRenderer<Configuration> = ({ host, props: initialProps }) => {
     const root = createRoot(host)
-    const update = (props: JsComponentProps<Configuration>) => root.render(<{{ componentName }} {...props} />)
+    const update = (props: JsComponentProps<Configuration>) => root.render(<{{ componentName }}Component {...props} />)
 
     update(initialProps)
 
