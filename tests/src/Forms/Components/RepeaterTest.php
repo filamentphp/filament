@@ -2495,18 +2495,22 @@ describe('browser interactions', function (): void {
 
         $this->actingAs(User::factory()->create());
 
-        visit('/repeater-test')
-            ->assertPresent('[data-testid="repeater"] .fi-fo-repeater-item')
-            ->click('[data-testid="repeater"] .fi-fo-repeater-add button')
-            ->assertPresent('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2)')
-            ->click('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2) .fi-fo-repeater-item-header-end-actions button')
-            ->assertNotPresent('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2)')
+        $firstName = ':nth-match([data-testid="item-name"], 1)';
+        $secondName = ':nth-match([data-testid="item-name"], 2)';
+        $page = visit('/repeater-test');
+
+        $page->assertValue($firstName, 'Alpha')
+            ->click('[data-testid="add-item"]')
+            ->assertVisible($secondName)
+            ->fill($secondName, 'Beta')
+            ->assertValue($firstName, 'Alpha')
+            ->click(':nth-match([data-testid="delete-item"], 2)')
+            ->assertNotPresent($secondName)
+            ->assertValue($firstName, 'Alpha')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
-        visit('/repeater-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
+        $page->inDarkMode()->assertNoAccessibilityIssues();
     });
 });
 
