@@ -48,7 +48,7 @@ The generated PHP class uses `HasJsRenderer` and loads its entry through `Vite::
 - Svelte 5: `revenue-overview.svelte.js` and `RevenueOverview.svelte`. With `--typescript`, the entry uses `.svelte.ts` and the component uses `<script lang="ts">`.
 - Framework-free JavaScript: `revenue-overview.js`, or `revenue-overview.ts` with `--typescript`.
 
-Nested names, such as `Reports/RevenueOverview`, place the JavaScript files in a `reports/` subdirectory. TypeScript generation also configures the `@filament/widgets/js-widget` [type alias](#typing-renderers).
+Nested names, such as `Reports/RevenueOverview`, place the JavaScript files in a `reports/` subdirectory. Renderer directories mirror the widget's PHP namespace beneath `resources/js/` in kebab case, excluding your application's root namespace when present. For example, `App\Filament\Resources\Orders\Widgets\RevenueOverview` uses `resources/js/filament/resources/orders/widgets/`. TypeScript generation also configures the `@filament/widgets/js-widget` [type alias](#typing-renderers).
 
 Typed starters install TypeScript 6 when TypeScript is missing, and preserve an existing compatible TypeScript 5 or 6 installation. Vue and Svelte tooling require the JavaScript compiler API provided by these versions, which TypeScript 7 does not provide.
 

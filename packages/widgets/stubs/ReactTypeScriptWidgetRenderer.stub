@@ -4,13 +4,13 @@ import type { JsWidgetProps, JsWidgetRenderer } from '@filament/widgets/js-widge
 
 type Configuration = { heading?: string; description?: string }
 
-function {{ componentName }}({ configuration }: JsWidgetProps<Configuration>) {
+function WidgetContent({ configuration }: JsWidgetProps<Configuration>) {
     return <><h2>{configuration.heading ?? 'Widget heading'}</h2><p>{configuration.description ?? 'Widget description'}</p></>
 }
 
 const mount{{ componentName }}: JsWidgetRenderer<Configuration> = ({ host, props: initialProps }) => {
     const root = createRoot(host)
-    const update = (props: JsWidgetProps<Configuration>) => root.render(<{{ componentName }} {...props} />)
+    const update = (props: JsWidgetProps<Configuration>) => root.render(<WidgetContent {...props} />)
     update(initialProps)
 
     return { update, destroy: () => root.unmount() }
