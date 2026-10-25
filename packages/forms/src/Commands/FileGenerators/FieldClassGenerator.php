@@ -27,10 +27,10 @@ class FieldClassGenerator extends ClassGenerator
      */
     public function getImports(): array
     {
-        return [
+        return array_filter([
             $this->getExtends(),
             ...($this->renderer ? [HasJsRenderer::class, Vite::class] : []),
-        ];
+        ], fn (string $import): bool => strcasecmp(class_basename($import), $this->getBasename()) !== 0);
     }
 
     public function getBasename(): string

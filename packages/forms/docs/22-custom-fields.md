@@ -60,6 +60,8 @@ The generated renderers target React 18 or later, Vue 3.3 or later within Vue 3,
 
 Nested field names, such as `Maps/LocationPicker`, place the JavaScript files in a `maps/` subdirectory. TypeScript generation also configures the `@filament/forms/js-field` [type alias](#typing-renderers).
 
+If you configure an alternative component location, renderer directories follow the generated PHP namespace, with your application's root namespace removed and the remaining directories converted to kebab case. For example, `App\Admin\Forms\Components\LocationPicker` uses `resources/js/admin/forms/components/location-picker.js`. Namespaces outside your application's root are retained.
+
 The command shares its npm/Yarn and Vite setup with the theme generator. It adds the renderer to the Laravel plugin's `input` array, enables the Vue or Svelte compiler plugin when needed, and preserves the renderer's default export in production builds. React uses Vite's built-in JSX support.
 
 If your configuration cannot be updated automatically, the command prints the remaining manual steps instead of replacing it. Configurations containing comments or template literals require manual setup. Follow the [Vite module setup](../advanced/assets#building-lazy-loaded-es-modules) to complete them. For a plugin, use a [published module](#building-reusable-plugin-fields) instead of the application's Vite manifest.

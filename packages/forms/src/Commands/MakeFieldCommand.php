@@ -109,9 +109,9 @@ class MakeFieldCommand extends Command
         ];
     }
 
-    public function handle(Filesystem $filesystem): int
+    public function handle(): int
     {
-        $this->filesystem = $filesystem;
+        $this->filesystem = app(Filesystem::class);
 
         try {
             $frameworks = array_values(array_filter(['js', 'react', 'vue', 'svelte'], fn (string $framework): bool => (bool) $this->option($framework)));
@@ -257,14 +257,14 @@ class MakeFieldCommand extends Command
 
     protected function configureRendererLocation(): void
     {
-        $directory = 'js/filament/forms/components';
-        $name = str($this->fqnEnd)->replace('\\', '/');
+        $name = str($this->fqn);
 
-        if ($name->contains('/')) {
-            $directory .= '/' . $name->beforeLast('/')->explode('/')->map(Str::kebab(...))->implode('/');
+        if ($name->startsWith(app()->getNamespace())) {
+            $name = $name->after(app()->getNamespace());
         }
 
-        $basename = $name->afterLast('/')->toString();
+        $directory = 'js/' . $name->beforeLast('\\')->explode('\\')->map(Str::kebab(...))->implode('/');
+        $basename = $name->afterLast('\\')->toString();
         $extension = match ($this->framework) {
             'react' => $this->isTypeScript ? 'tsx' : 'jsx',
             'svelte' => $this->isTypeScript ? 'svelte.ts' : 'svelte.js',
