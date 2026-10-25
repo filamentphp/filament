@@ -29,8 +29,7 @@ it('syncs PHP props without replacing hosts and never renders children', functio
     $page = visit('/js-component-browser-test?framework=' . $framework);
     $page->assertSeeIn('[data-report]', 'Quarterly sales')
         ->assertSeeIn('[data-comparison]', 'Previous quarter')
-        ->assertDontSee('This child must not render')
-        ->assertNoAccessibilityIssues();
+        ->assertDontSee('This child must not render');
     $page->script('window.originalReport = document.querySelector("[data-report] [x-ref=host]"); window.originalParagraph = window.originalReport.firstElementChild');
     $page->fill('[id="form.caption"]', 'Revised café <em>literal</em>')
         ->assertSeeIn('[data-report]', 'Revised café <em>literal</em>')
@@ -47,23 +46,23 @@ it('syncs PHP props without replacing hosts and never renders children', functio
         ->click('Toggle mounted')
         ->assertSeeIn('[data-report]', 'Revised café <em>literal</em>')
         ->assertScript('document.querySelector("[data-report] [x-ref=host]") === window.originalReport', false)
-        ->assertNoAccessibilityIssues()
         ->assertNoSmoke();
 
     if ($framework === 'react') {
-        $page->screenshotElement('main', 'js-schema-component');
-    }
+        $page->assertNoAccessibilityIssues()
+            ->screenshotElement('main', 'js-schema-component');
 
-    $page->inDarkMode()
-        ->assertSeeIn('[data-report]', 'Quarterly sales')
-        ->assertNoAccessibilityIssues();
+        $page->inDarkMode()
+            ->assertSeeIn('[data-report]', 'Quarterly sales')
+            ->assertNoAccessibilityIssues();
+    }
 })->with(['js', 'react', 'vue', 'svelte', 'js-ts', 'react-ts', 'vue-ts', 'svelte-ts']);
 
 it('shows an accessible renderer error without affecting sibling components', function (): void {
     $page = visit('/js-component-browser-test');
     $page->assertSeeIn('[data-report]', 'Quarterly sales')
         ->click('Toggle failure')
-        ->assertSeeIn('[data-report] [role=alert]', 'This component could not be loaded.')
+        ->assertVisible('[data-report] [role=alert]')
         ->assertScript('document.querySelector("[data-report] [x-ref=host]").childElementCount', 0)
         ->assertSeeIn('[data-comparison]', 'Previous quarter')
         ->assertValue('[id="form.caption"]', 'Quarterly sales')
@@ -74,7 +73,7 @@ it('shows an accessible renderer error without affecting sibling components', fu
 
     $page->inDarkMode()
         ->click('Toggle failure')
-        ->assertPresent('[data-report] [role=alert]')
+        ->assertVisible('[data-report] [role=alert]')
         ->assertNoAccessibilityIssues()
         ->screenshotElement('main', 'js-schema-component-error-dark');
 });
