@@ -587,6 +587,7 @@
                                         @php
                                             $filtersTriggerActionModalAlignment = $filtersTriggerAction->getModalAlignment();
                                             $filtersTriggerActionIsModalAutofocused = $filtersTriggerAction->isModalAutofocused();
+                                            $filtersTriggerActionIsModalClickThrough = $filtersTriggerAction->isModalClickThrough();
                                             $filtersTriggerActionHasModalCloseButton = $filtersTriggerAction->hasModalCloseButton();
                                             $filtersTriggerActionIsModalClosedByClickingAway = $filtersTriggerAction->isModalClosedByClickingAway();
                                             $filtersTriggerActionIsModalClosedByEscaping = $filtersTriggerAction->isModalClosedByEscaping();
@@ -608,6 +609,7 @@
                                         <x-filament::modal
                                             :alignment="$filtersTriggerActionModalAlignment"
                                             :autofocus="$filtersTriggerActionIsModalAutofocused"
+                                            :click-through="$filtersTriggerActionIsModalClickThrough"
                                             :close-button="$filtersTriggerActionHasModalCloseButton"
                                             :close-by-clicking-away="$filtersTriggerActionIsModalClosedByClickingAway"
                                             :close-by-escaping="$filtersTriggerActionIsModalClosedByEscaping"
@@ -691,6 +693,7 @@
                                         @php
                                             $columnManagerTriggerActionModalAlignment = $columnManagerTriggerAction->getModalAlignment();
                                             $columnManagerTriggerActionIsModalAutofocused = $columnManagerTriggerAction->isModalAutofocused();
+                                            $columnManagerTriggerActionIsModalClickThrough = $columnManagerTriggerAction->isModalClickThrough();
                                             $columnManagerTriggerActionHasModalCloseButton = $columnManagerTriggerAction->hasModalCloseButton();
                                             $columnManagerTriggerActionIsModalClosedByClickingAway = $columnManagerTriggerAction->isModalClosedByClickingAway();
                                             $columnManagerTriggerActionIsModalClosedByEscaping = $columnManagerTriggerAction->isModalClosedByEscaping();
@@ -712,6 +715,7 @@
                                         <x-filament::modal
                                             :alignment="$columnManagerTriggerActionModalAlignment"
                                             :autofocus="$columnManagerTriggerActionIsModalAutofocused"
+                                            :click-through="$columnManagerTriggerActionIsModalClickThrough"
                                             :close-button="$columnManagerTriggerActionHasModalCloseButton"
                                             :close-by-clicking-away="$columnManagerTriggerActionIsModalClosedByClickingAway"
                                             :close-by-escaping="$columnManagerTriggerActionIsModalClosedByEscaping"
