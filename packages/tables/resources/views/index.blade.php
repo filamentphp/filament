@@ -587,6 +587,7 @@
                                         @php
                                             $filtersTriggerActionModalAlignment = $filtersTriggerAction->getModalAlignment();
                                             $filtersTriggerActionIsModalAutofocused = $filtersTriggerAction->isModalAutofocused();
+                                            $filtersTriggerActionIsModalClickThrough = $filtersTriggerAction->isModalClickThrough();
                                             $filtersTriggerActionHasModalCloseButton = $filtersTriggerAction->hasModalCloseButton();
                                             $filtersTriggerActionIsModalClosedByClickingAway = $filtersTriggerAction->isModalClosedByClickingAway();
                                             $filtersTriggerActionIsModalClosedByEscaping = $filtersTriggerAction->isModalClosedByEscaping();
@@ -608,6 +609,7 @@
                                         <x-filament::modal
                                             :alignment="$filtersTriggerActionModalAlignment"
                                             :autofocus="$filtersTriggerActionIsModalAutofocused"
+                                            :click-through="$filtersTriggerActionIsModalClickThrough"
                                             :close-button="$filtersTriggerActionHasModalCloseButton"
                                             :close-by-clicking-away="$filtersTriggerActionIsModalClosedByClickingAway"
                                             :close-by-escaping="$filtersTriggerActionIsModalClosedByEscaping"
