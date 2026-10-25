@@ -17,40 +17,40 @@ use function Livewire\trigger;
 trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
 {
     /** @var array<string, int> */
-    #[Reactive] #[Locked]
+    #[Reactive]
     public $paginators = [];
 
-    #[Reactive] #[Locked]
+    #[Reactive]
     public ?int $tableRecordsCount = null;
 
     /**
      * @var array<string, string | array<string, string | null> | null>
      */
-    #[Reactive] #[Locked]
+    #[Reactive]
     public array $tableColumnSearches = [];
 
-    #[Reactive] #[Locked]
+    #[Reactive]
     public ?string $tableGrouping = null;
 
     /**
      * @var array<string, mixed> | null
      */
-    #[Reactive] #[Locked]
+    #[Reactive]
     public ?array $tableFilters = null;
 
-    #[Reactive] #[Locked]
+    #[Reactive]
     public int | string | null $tableRecordsPerPage = null;
 
     /**
      * @var ?string
      */
-    #[Reactive] #[Locked]
+    #[Reactive]
     public $tableSearch = '';
 
-    #[Reactive] #[Locked]
+    #[Reactive]
     public ?string $tableSort = null;
 
-    #[Reactive] #[Locked]
+    #[Reactive]
     public ?string $activeTab = null;
 
     #[Reactive] #[Locked]

@@ -3,7 +3,6 @@
 namespace Filament\Widgets\Concerns;
 
 use Filament\Support\Components\Attributes\Unexposed;
-use Livewire\Attributes\Locked;
 use Livewire\Attributes\Reactive;
 
 trait InteractsWithPageFilters /** @phpstan-ignore trait.unused */
@@ -11,7 +10,7 @@ trait InteractsWithPageFilters /** @phpstan-ignore trait.unused */
     /**
      * @var array<string, mixed> | null
      */
-    #[Reactive] #[Locked]
+    #[Reactive]
     public ?array $pageFilters = null;
 
     #[Unexposed]
