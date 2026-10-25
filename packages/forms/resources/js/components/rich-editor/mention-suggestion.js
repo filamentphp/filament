@@ -9,31 +9,17 @@ export default ({
     searchingMessage = null,
     isSearchable = false,
 }) => {
-    let renderContext = null
-
     return {
         items: async ({ query }) => {
             if (typeof items === 'function') {
-                if (renderContext && isSearchable) {
-                    renderContext.setLoading(true)
-                }
-
                 try {
                     const result = items({ query })
                     const resolved = Array.isArray(result)
                         ? result
                         : await result
 
-                    if (renderContext) {
-                        renderContext.setLoading(false)
-                    }
-
                     return resolved
                 } catch {
-                    if (renderContext) {
-                        renderContext.setLoading(false)
-                    }
-
                     return []
                 }
             }
@@ -56,14 +42,6 @@ export default ({
             let element
             let selectedIndex = 0
             let currentProps = null
-            let isLoading = false
-
-            renderContext = {
-                setLoading: (loading) => {
-                    isLoading = loading
-                    renderItems()
-                },
-            }
 
             const createDropdown = () => {
                 const dropdown = document.createElement('div')
@@ -85,7 +63,7 @@ export default ({
 
                 element.innerHTML = ''
 
-                if (isLoading) {
+                if (isSearchable && currentProps.loading) {
                     const message = searchingMessage ?? 'Searching...'
                     const messageElement = document.createElement('div')
                     messageElement.className = 'fi-dropdown-header'
@@ -282,8 +260,6 @@ export default ({
                     if (element && element.parentNode) {
                         element.parentNode.removeChild(element)
                     }
-
-                    renderContext = null
                 },
             }
         },
