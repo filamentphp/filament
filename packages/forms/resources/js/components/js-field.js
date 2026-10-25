@@ -141,17 +141,19 @@ export default function jsFieldFormComponent({
                         clearTimeout(timer)
 
                         if (
-                            !fieldConfiguration.isLive ||
-                            fieldConfiguration.isLiveOnBlur
+                            fieldConfiguration.isLive &&
+                            !fieldConfiguration.isLiveOnBlur
                         ) {
-                            return
+                            timer = setTimeout(() => {
+                                if (
+                                    pendingValue === JSON.stringify(this.state)
+                                ) {
+                                    commit()
+                                }
+                            }, fieldConfiguration.debounce ?? 0)
                         }
 
-                        timer = setTimeout(() => {
-                            if (pendingValue === JSON.stringify(this.state)) {
-                                commit()
-                            }
-                        }, fieldConfiguration.debounce ?? 0)
+                        this.updateRenderer()
                     },
                     onBlur: () => {
                         if (

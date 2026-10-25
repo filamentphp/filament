@@ -109,9 +109,9 @@ class MakeFieldCommand extends Command
         ];
     }
 
-    public function handle(): int
+    public function handle(Filesystem $filesystem): int
     {
-        $this->filesystem = app(Filesystem::class);
+        $this->filesystem = $filesystem;
 
         try {
             $frameworks = array_values(array_filter(['js', 'react', 'vue', 'svelte'], fn (string $framework): bool => (bool) $this->option($framework)));
@@ -168,7 +168,10 @@ class MakeFieldCommand extends Command
         if ($this->framework) {
             $pendingActions = [];
 
-            if ($this->isTypeScript && ! $this->configureTypeScript()) {
+            if ($this->isTypeScript && ! $this->configureJavaScriptRendererTypeScript(
+                '@filament/forms/js-field',
+                'vendor/filament/forms/resources/js/types/js-field.d.ts',
+            )) {
                 $pendingActions[] = 'Configure the @filament/forms/js-field type alias in tsconfig.json: https://filamentphp.com/docs/5.x/forms/custom-fields#typing-renderers';
             }
 
@@ -176,7 +179,7 @@ class MakeFieldCommand extends Command
                 $pendingActions[] = "Add [{$this->renderer}] to the Laravel plugin's input array in your Vite config.";
             }
 
-            if (! $this->configureRendererViteConfig()) {
+            if (! $this->configureJavaScriptRendererVite($this->framework)) {
                 $pendingActions[] = "Configure Vite to compile {$this->framework} and preserve the renderer's default export: https://filamentphp.com/docs/5.x/advanced/assets#building-lazy-loaded-es-modules";
             }
 
@@ -288,19 +291,6 @@ class MakeFieldCommand extends Command
                 'componentName' => class_basename($this->fqn),
             ]);
         }
-    }
-
-    protected function configureRendererViteConfig(): bool
-    {
-        return $this->configureJavaScriptRendererVite($this->framework);
-    }
-
-    protected function configureTypeScript(): bool
-    {
-        return $this->configureJavaScriptRendererTypeScript(
-            '@filament/forms/js-field',
-            'vendor/filament/forms/resources/js/types/js-field.d.ts',
-        );
     }
 
     protected function createView(): void

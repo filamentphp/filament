@@ -24,7 +24,7 @@ Edit the generated Blade view to render your input, following [custom field clas
 
 ### Generating a JavaScript field
 
-Install your application's existing JavaScript dependencies, including Vite, before running the generator, for example with `npm install`. The command reads the installed Vite version to select compatible compiler plugins, including when you use `--skip-install`.
+Install your application's JavaScript dependencies, including Vite, before running the generator, for example with `npm install`.
 
 Add one renderer flag to the command:
 
@@ -35,7 +35,7 @@ php artisan make:filament-form-field LocationPicker --svelte
 php artisan make:filament-form-field LocationPicker --js
 ```
 
-The command creates a PHP field class and a text-input renderer in `resources/js/filament/forms/components/`, without a Blade view. It installs missing development dependencies, updates recognizable Vite configurations, and offers to compile your assets. Existing compatible dependency declarations keep their version constraints and their `package.json` sections. Incompatible dependencies require a manual upgrade instead of being replaced automatically. Use the generated class in your schema as shown above, then replace the starter input with your own UI.
+The command creates a PHP field class and a text-input renderer in `resources/js/filament/forms/components/`, without a Blade view. It installs missing dependencies, updates supported Vite configurations, and offers to compile your assets. Use the generated class in your schema as shown above, then replace the starter input with your own UI.
 
 For TypeScript, add `--typescript` or its alias `--ts`:
 
@@ -56,15 +56,13 @@ The generated PHP class uses `HasJsRenderer` and loads its entry through `Vite::
 - Svelte: `location-picker.svelte.js` and `LocationPicker.svelte`. With `--typescript`, the entry uses `.svelte.ts` and the component uses `<script lang="ts">`.
 - Framework-free JavaScript: `location-picker.js`, or `location-picker.ts` with `--typescript`.
 
-The generated renderers target React 18 or later, Vue 3.3 or later within Vue 3, or Svelte 5. The React generator defaults to React 19 when React is not already installed. Svelte renderers use runes and the `mount()` / `unmount()` APIs, so they are not compatible with Svelte 4.
+The starters support React 18 or later, Vue 3.3 or later within Vue 3, and Svelte 5. Missing React installations default to React 19. Existing compatible dependencies are preserved; incompatible versions require a manual upgrade.
 
 Nested field names, such as `Maps/LocationPicker`, place the JavaScript files in a `maps/` subdirectory. TypeScript generation also configures the `@filament/forms/js-field` [type alias](#typing-renderers).
 
 If you configure an alternative component location, renderer directories follow the generated PHP namespace, with your application's root namespace removed and the remaining directories converted to kebab case. For example, `App\Admin\Forms\Components\LocationPicker` uses `resources/js/admin/forms/components/location-picker.js`. Namespaces outside your application's root are retained.
 
-The command shares its npm/Yarn and Vite setup with the theme generator. It adds the renderer to the Laravel plugin's `input` array, enables the Vue or Svelte compiler plugin when needed, and preserves the renderer's default export in production builds. React uses Vite's built-in JSX support.
-
-If your configuration cannot be updated automatically, the command prints the remaining manual steps instead of replacing it. Configurations containing comments or template literals require manual setup. Follow the [Vite module setup](../advanced/assets#building-lazy-loaded-es-modules) to complete them. For a plugin, use a [published module](#building-reusable-plugin-fields) instead of the application's Vite manifest.
+If your configuration cannot be updated automatically, the command prints the remaining manual steps. Follow the [Vite module setup](../advanced/assets#building-lazy-loaded-es-modules) to complete them. For a plugin, use a [published module](#building-reusable-plugin-fields) instead of the application's Vite manifest.
 
 ## Custom field classes
 
@@ -313,6 +311,10 @@ JsField::make('location')
     ->default(['latitude' => 51.5, 'longitude' => -0.12])
 ```
 
+<Aside variant="danger">
+    Only use trusted application URLs or `RawJs` code; never let user input choose executable modules or interpolate it into renderer expressions. Renderers are not sandboxed and must comply with your application's CSP and cross-origin policy. Validate and authorize submitted values in PHP, including for disabled or read-only fields.
+</Aside>
+
 Filament loads the module when the field initializes, without a global registry or a script tag. Each field gets its own mounted instance, even when the browser has already loaded the module for another field.
 
 <UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `renderer()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
@@ -366,8 +368,6 @@ export default function mountLocationPicker({ host, props: initialProps }) {
     return { update, destroy: () => root.unmount() }
 }
 ```
-
-The default export mounts the component inside `host`. Filament calls `update(props)` when state or PHP configuration changes, and `destroy()` when removing or remounting the field. Keep the initial callbacks when updating props, as shown above.
 
 #### Creating a Vue field
 
@@ -556,8 +556,6 @@ export default function mountLocationPicker({ host, props: initialProps }) {
 }
 ```
 
-The default export receives `host` and the initial props, builds only inside that host, and returns the same `update(props)` and `destroy()` lifecycle methods as a framework renderer. The input listeners retain the initial `onChange()` and `onBlur()` callbacks because later updates do not include callbacks. `update()` applies incoming state and the `id`, disabled, read-only, required, invalid, and description properties. `destroy()` removes every listener and DOM node created during mounting.
-
 The examples leave styling to your application. See [registering CSS files](../advanced/assets#registering-css-files) to include a stylesheet with your field.
 
 ### Receiving state and emitting changes
@@ -581,7 +579,7 @@ JsField::make('location')
 
 #### Applying accessibility and input state
 
-Apply `id`, `isDisabled`, `isReadOnly`, `isRequired`, `isInvalid`, and `ariaDescribedBy` to your inputs as shown in the examples. Map the boolean props to the input's `disabled`, `readonly`, `required`, and `aria-invalid` attributes. Use `id` on the primary input to associate Filament's label, and give additional inputs their own labels. `ariaDescribedBy` associates the field's helper text, validation messages, and required description using the same IDs as ordinary fields; append any additional description IDs instead of replacing it. Custom field wrappers must preserve those IDs around their corresponding text.
+Apply the supplied input props as shown in the examples. Use `id` on the primary input to associate Filament's label, and label additional inputs separately. `ariaDescribedBy` associates helper text, validation messages, and the required description; append additional description IDs instead of replacing it. Custom wrappers must [preserve these associations](overview#preserving-accessibility-in-custom-field-views).
 
 ### Passing configuration from PHP
 
@@ -619,13 +617,13 @@ JsField::make('location')
     ])
 ```
 
-When the field renders on the server, Filament reevaluates the closure and passes changed configuration to `update(props)`. This preserves the mounted component and its local state. A deferred country edit reaches `props.configuration.country` on the next server render; use [`live()`](overview#the-basics-of-reactivity) on the country field if you need it sooner. A request that skips rendering this field does not update its PHP-derived configuration.
+Filament reevaluates the closure when the field renders on the server, then updates the renderer without remounting it. Use [`live()`](overview#the-basics-of-reactivity) on the country field to send edits immediately. Requests that skip rendering this field do not update its PHP-derived configuration.
 
 Treat configuration as immutable. Pass `null` to `rendererConfiguration()` to clear it. For a [reusable field](#building-reusable-plugin-fields), override `getRendererConfiguration(): array` instead; its default is `[]`.
 
 ### Accessing schema utilities
 
-You can accept `utilities` alongside `host` and `props` in your mount function, then pass it to your component as a prop. These are the utilities from the surrounding Alpine schema scope. For example, inside an interaction handler you can read or change a sibling country field:
+Accept `utilities` alongside `host` and `props` in your mount function to access schema utilities. For example, an interaction handler can read or change a sibling country field:
 
 ```js
 const country = utilities.$get('country')
@@ -634,9 +632,7 @@ await utilities.$set('country', 'GB')
 
 `$get(path, isAbsolute)` and `$set(path, value, isAbsolute, isLive = false)` use paths relative to the field's container unless `isAbsolute` is `true`. `$set()` is deferred unless `isLive` is `true`. It does not apply the target field's read-only configuration or state binding modifiers, so use `props.onChange()` for ordinary edits to this field.
 
-`utilities.$statePath` is this field's absolute state path. Read `utilities.$state` when you need its current value. It is a getter, so destructuring it during mounting captures only that initial value. Treat returned state as read-only.
-
-You can destructure functions such as `$get` and `$set`, but keep the `utilities` object intact when passing it into reactive framework state. Spreading it evaluates getters such as `$state` and `$wire` immediately. Reads do not subscribe your framework to sibling-field changes; use [PHP configuration](#passing-configuration-from-php) for values that should update after a server render.
+`utilities.$statePath` is this field's absolute state path, and `utilities.$state` reads its current value. Treat returned state as read-only. Keep `utilities` intact when passing it to your framework: spreading or destructuring its getters captures their current values. Reads do not subscribe to sibling-field changes; use [PHP configuration](#passing-configuration-from-php) for updates after a server render.
 
 In Svelte components, local names beginning with `$` are reserved. Keep property access such as `utilities.$get()`, or alias destructured functions: `const { $get: getState, $set: setState } = utilities`.
 
@@ -650,26 +646,11 @@ For methods on the owning Livewire component rather than the field class, use `u
 await utilities.$wire.$call('saveLocation')
 ```
 
-`$wire` is the original Livewire proxy, exposed through a getter to avoid Svelte deeply proxying it. Pass the `utilities` object intact. Direct `$wire` writes bypass the field's state binding timing; prefer `props.onChange()` for field edits. Handle request failures in your interaction handlers, and stop using utilities when the renderer is destroyed.
+`$wire` is the original Livewire proxy. Direct writes bypass the field's state binding timing; prefer `props.onChange()` for field edits. Handle request failures, and stop using utilities when the renderer is destroyed.
 
 ### Typing renderers
 
-Use [`--typescript` or `--ts`](#generating-a-javascript-field) to generate typed starters. Filament includes the declarations in its Composer package, without a JavaScript runtime dependency.
-
-Typed starters install `typescript@^6.0` because Vue and Svelte tooling still rely on its compiler API. Use the same version constraint when installing dependencies manually, including for React or framework-free fields in an application that also uses Vue or Svelte.
-
-New `tsconfig.json` files use `"jsx": "react-jsx"` so Vite can compile React TSX in production. Existing JSX settings are preserved. If your configuration uses `"jsx": "preserve"`, configure a JSX transformer such as `@vitejs/plugin-react`, or change that setting to `"react-jsx"`. See the [Vite module setup](../advanced/assets#building-lazy-loaded-es-modules) for the remaining build configuration.
-
-Vite transpiles TypeScript but does not type-check it. Run `npx tsc --noEmit` for React and framework-free renderers. For Vue, install `vue-tsc` as a development dependency and run `npx vue-tsc --noEmit`; for Svelte, install `svelte-check` and run `npx svelte-check --tsconfig ./tsconfig.json`. Use the framework-specific checker to check `.vue` or `.svelte` components, not just their entry files.
-
-If your application uses multiple frameworks, scope each checker to files it understands. For example, `svelte-check` cannot resolve Vue components imported by other renderers. Create `tsconfig.svelte.json` and run `npx svelte-check --tsconfig ./tsconfig.svelte.json`:
-
-```json
-{
-    "extends": "./tsconfig.json",
-    "include": ["resources/js/**/*.svelte", "resources/js/**/*.svelte.ts"]
-}
-```
+Use [`--typescript` or `--ts`](#generating-a-javascript-field) to generate typed starters. Filament includes the declarations in its Composer package, without a JavaScript runtime dependency. See [type-checking ES modules](../advanced/assets#type-checking-es-modules) for compiler configuration and framework-specific checks.
 
 For an existing renderer, add a type alias to your application's `tsconfig.json`, relative to that configuration file (or its `baseUrl`, if configured):
 
@@ -737,17 +718,13 @@ If you already load the renderer through another script, you may pass a trusted 
 
 #### Handling renderer errors
 
-If importing, mounting, or `update()` fails, Filament clears the host and shows an accessible error message without changing the field value. Console diagnostics identify the phase (`import`, `mount`, `update`, or `cleanup`), state path, renderer, and original error. Cleanup failures are reported without preventing other fields from being disposed. Both thrown errors and rejected lifecycle promises are handled. Filament does not add field values or PHP props to these diagnostics, but your error objects and renderer URLs may contain sensitive information.
+If importing, mounting, or `update()` fails, Filament shows an accessible error without changing the field value. Check the browser console, correct the module, then reload. Diagnostics include renderer URLs and original errors, so avoid including sensitive data in either. Cleanup failures are reported without blocking other fields' cleanup.
 
-Reload the page after correcting the module URL or implementation. If your mount function allocates resources and then throws before returning its lifecycle methods, it must clean up those resources itself. This handling is not a framework error boundary: errors in independently scheduled rendering, event handlers, or detached asynchronous work still need your framework's error handling. If you return a promise from `update()`, manage ordering and cancellation inside the renderer; Filament does not serialize updates or wait for asynchronous cleanup before remounting.
-
-<Aside variant="danger">
-    Only use trusted application URLs or `RawJs` code; never let user input choose executable modules or interpolate it into renderer expressions. Renderers are not sandboxed and must comply with your application's CSP and cross-origin policy. Validate and authorize submitted values in PHP, including for disabled or read-only fields.
-</Aside>
+Clean up resources yourself if mounting fails before returning lifecycle methods. Handle errors in framework rendering, event handlers, and independent asynchronous work with your framework's error handling. Manage ordering and cancellation for asynchronous updates: Filament does not serialize them or await cleanup before remounting.
 
 ### Building reusable plugin fields
 
-You do not need to extend `JsField` to build a reusable field. Use `HasJsRenderer` on your own `Field` class. The trait provides `toEmbeddedHtml()`, the field wrapper, read-only configuration, and state synchronization, without a Blade view or an additional interface. Implement `getRenderer()` to return your module URL:
+Use `HasJsRenderer` on your own `Field` class to build a reusable field without a Blade view. Implement `getRenderer()` to return your module URL:
 
 ```php
 namespace Vendor\LocationPicker\Forms\Components;

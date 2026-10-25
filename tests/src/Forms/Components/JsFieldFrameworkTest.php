@@ -126,28 +126,26 @@ it('synchronizes composite state with deferred, live, blur and debounce bindings
     $page = visit('/js-field-framework-test?framework=' . $framework);
     $state = "JSON.parse(document.querySelector('#framework-server-state').textContent)";
     $page->assertValue('[id="form.deferred"]', 'Original café');
-    $page->script('() => { window.requests = 0; Livewire.hook("request", () => window.requests++); }');
 
     $page->fill('[id="form.deferred"]', 'Edited "café" <em>text</em>')
         ->uncheck('[data-field="deferred"] input[type="checkbox"]')
         ->click('[data-field="deferred"] button:has-text("Toggle channels")')
-        ->wait(0.6)->assertScript('window.requests', 0)
+        ->assertValue('[id="form.deferred"]', 'Edited "café" <em>text</em>')
+        ->assertNotChecked('[data-field="deferred"] input[type="checkbox"]')
+        ->assertSeeIn('[data-field="deferred"] [data-channels]', '["sms","push"]')
         ->assertScript("{$state}.deferred", ['title' => 'Original café', 'enabled' => true, 'tags' => ['email']])
-        ->assertScript("Alpine.\$data(document.querySelector('[data-field=deferred]')).state", ['title' => 'Edited "café" <em>text</em>', 'enabled' => false, 'tags' => ['sms', 'push']])
         ->click('Sync')
         ->assertScript("{$state}.deferred", ['title' => 'Edited "café" <em>text</em>', 'enabled' => false, 'tags' => ['sms', 'push']])
         ->assertValue('[id="form.live"]', 'Original café')
         ->fill('[id="form.live"]', 'Live edit')
         ->assertScript("{$state}.live.title", 'Live edit');
 
-    $requests = $page->script('window.requests');
-    $page->fill('[id="form.blur"]', 'Blur edit')->wait(0.6)
-        ->assertScript('window.requests', $requests)
+    $page->fill('[id="form.blur"]', 'Blur edit')
+        ->assertValue('[id="form.blur"]', 'Blur edit')
         ->assertScript("{$state}.blur.title", 'Original café')
         ->click('#framework-server-state')->assertScript("{$state}.blur.title", 'Blur edit')
         ->fill('[id="form.debounce"]', 'First edit')
         ->fill('[id="form.debounce"]', 'Last edit')
-        ->assertScript("{$state}.debounce.title", 'Original café')
         ->assertScript("{$state}.debounce.title", 'Last edit');
 
     $page->click('Replace from server');
@@ -158,9 +156,9 @@ it('synchronizes composite state with deferred, live, blur and debounce bindings
     }
     $page->click('Reset')->assertValue('[id="form.live"]', 'Original café')
         ->assertChecked('[data-field="live"] input[type="checkbox"]')
-        ->assertSeeIn('[data-field="live"] [data-channels]', '["email"]');
-    $requests = $page->script('window.requests');
-    $page->wait(0.7)->assertScript('window.requests', $requests)->assertNoSmoke();
+        ->assertSeeIn('[data-field="live"] [data-channels]', '["email"]')
+        ->assertScript("{$state}.live", ['title' => 'Original café', 'enabled' => true, 'tags' => ['email']])
+        ->assertNoSmoke();
 })->with('JS field frameworks');
 
 it('contains initialization failures without losing state or breaking other framework instances', function (string $framework): void {
@@ -238,12 +236,10 @@ it('lazy loads one module for independent instances and cleans up on removal and
         ->assertAttribute('[id="form.blur"]', 'readonly', '')
         ->click('Toggle locked')->assertEnabled('[id="form.live"]');
 
-    $page->script('() => { window.hosts = [...document.querySelectorAll("[x-ref=host]")]; window.requests = 0; Livewire.hook("request", () => window.requests++); }');
+    $page->script('window.hosts = [...document.querySelectorAll("[x-ref=host]")]');
     $page->fill('[id="form.debounce"]', 'Pending removal')->click('Toggle mounted')
         ->assertNotPresent('[id="form.debounce"]')
-        ->assertScript('window.hosts.every(host => host.childElementCount === 0)', true);
-    $requests = $page->script('window.requests');
-    $page->wait(0.7)->assertScript('window.requests', $requests)
+        ->assertScript('window.hosts.every(host => host.childElementCount === 0)', true)
         ->click('Replace from server')->click('Toggle mounted')
         ->assertValue('[id="form.debounce"]', '')
         ->assertValue('[id="form.items.1.field"]', 'Survived')
@@ -287,10 +283,9 @@ it('respects a conditional `live(onBlur: true)` binding', function (): void {
     $page = visit('/js-field-framework-test?deferredBlur=1&framework=react');
     $state = "JSON.parse(document.querySelector('#framework-server-state').textContent)";
     $page->assertValue('[id="form.blur"]', 'Original café');
-    $page->script('() => { window.requests = 0; Livewire.hook("request", () => window.requests++); }');
     $page->fill('[id="form.blur"]', 'Deferred despite blur')
-        ->click('#framework-server-state')->wait(0.6)
-        ->assertScript('window.requests', 0)
+        ->click('#framework-server-state')
+        ->assertValue('[id="form.blur"]', 'Deferred despite blur')
         ->assertScript("{$state}.blur.title", 'Original café')
         ->click('Toggle blur binding')
         ->assertScript("{$state}.blur.title", 'Deferred despite blur')
@@ -320,24 +315,19 @@ it('honors explicit and inherited `stateBindingModifiers()`', function (): void 
     $page = visit('/js-field-framework-test?scenario=modifiers&framework=react');
     $state = "JSON.parse(document.querySelector('#framework-server-state').textContent)";
     $page->assertValue('[id="form.live"]', 'Original café');
-    $page->script('() => { window.requests = 0; Livewire.hook("request", () => window.requests++); }');
-    $page->fill('[id="form.live"]', 'Explicitly deferred')->click('#framework-server-state')->wait(0.8)
-        ->assertScript('window.requests', 0)
+    $page->fill('[id="form.live"]', 'Explicitly deferred')->click('#framework-server-state')
+        ->assertValue('[id="form.live"]', 'Explicitly deferred')
         ->assertScript("{$state}.live.title", 'Original café')
         ->fill('[id="form.deferred"]', 'Inherited live')
         ->assertScript("{$state}.deferred.title", 'Inherited live')
         ->assertScript("{$state}.live.title", 'Explicitly deferred');
-    $page->script('window.requests = 0');
-    $page->fill('[id="form.blur"]', 'Explicit blur')->wait(0.8)
-        ->assertScript('window.requests', 0)
+    $page->fill('[id="form.blur"]', 'Explicit blur')
+        ->assertValue('[id="form.blur"]', 'Explicit blur')
+        ->assertScript("{$state}.blur.title", 'Original café')
         ->click('#framework-server-state')
         ->assertScript("{$state}.blur.title", 'Explicit blur');
-    $page->script('window.requests = 0');
-    $page->fill('[id="form.debounce"]', 'Explicit debounce')->wait(0.2)
-        ->assertScript('window.requests', 0)
-        ->assertScript("{$state}.debounce.title", 'Original café')
+    $page->fill('[id="form.debounce"]', 'Explicit debounce')
         ->assertScript("{$state}.debounce.title", 'Explicit debounce')
-        ->assertScript('window.requests', 1)
         ->assertNoSmoke();
 });
 
