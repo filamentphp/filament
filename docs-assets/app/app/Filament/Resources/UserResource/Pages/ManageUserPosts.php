@@ -52,7 +52,7 @@ class ManageUserPosts extends ManageRelatedRecords
             ->headerActions([
                 Actions\CreateAction::make(),
             ])
-            ->actions([
+            ->recordActions([
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
             ]);

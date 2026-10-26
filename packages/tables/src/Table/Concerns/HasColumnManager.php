@@ -123,29 +123,11 @@ trait HasColumnManager
         return $this->evaluate($this->columnManagerResetActionPosition) ?? ColumnManagerResetActionPosition::Header;
     }
 
-    /**
-     * @deprecated Use `columnManagerTriggerAction()` instead.
-     */
-    public function toggleColumnsTriggerAction(?Closure $callback): static
-    {
-        return $this->columnManagerTriggerAction($callback);
-    }
-
     public function columnManagerTriggerAction(?Closure $callback): static
     {
         $this->modifyColumnManagerTriggerActionUsing = $callback;
 
         return $this;
-    }
-
-    /**
-     * @deprecated Use `columnManagerColumns()` instead.
-     *
-     * @param  int | array<string, int | null> | Closure  $columns
-     */
-    public function columnToggleFormColumns(int | array | Closure $columns): static
-    {
-        return $this->columnManagerColumns($columns);
     }
 
     /**
@@ -158,27 +140,11 @@ trait HasColumnManager
         return $this;
     }
 
-    /**
-     * @deprecated Use `columnManagerMaxHeight()` instead.
-     */
-    public function columnToggleFormMaxHeight(string | Closure | null $height): static
-    {
-        return $this->columnManagerMaxHeight($height);
-    }
-
     public function columnManagerMaxHeight(string | Closure | null $height): static
     {
         $this->columnManagerMaxHeight = $height;
 
         return $this;
-    }
-
-    /**
-     * @deprecated Use `columnManagerWidth()` instead.
-     */
-    public function columnToggleFormWidth(Width | string | Closure | null $width): static
-    {
-        return $this->columnManagerWidth($width);
     }
 
     public function columnManagerWidth(Width | string | Closure | null $width): static
@@ -189,16 +155,6 @@ trait HasColumnManager
     }
 
     /**
-     * @deprecated Use `getColumnManagerColumns()` instead.
-     *
-     * @return int | array<string, int | null>
-     */
-    public function getColumnToggleFormColumns(): int | array
-    {
-        return $this->getColumnManagerColumns();
-    }
-
-    /**
      * @return int | array<string, int | null>
      */
     public function getColumnManagerColumns(): int | array
@@ -206,25 +162,9 @@ trait HasColumnManager
         return $this->evaluate($this->columnManagerColumns) ?? 1;
     }
 
-    /**
-     * @deprecated Use `getColumnManagerMaxHeight()` instead.
-     */
-    public function getColumnToggleFormMaxHeight(): ?string
-    {
-        return $this->getColumnManagerMaxHeight();
-    }
-
     public function getColumnManagerMaxHeight(): ?string
     {
         return $this->evaluate($this->columnManagerMaxHeight);
-    }
-
-    /**
-     * @deprecated Use `getColumnManagerWidth()` instead.
-     */
-    public function getColumnToggleFormWidth(): ?string
-    {
-        return $this->getColumnManagerWidth();
     }
 
     public function getColumnManagerWidth(): Width | string | null
@@ -235,14 +175,6 @@ trait HasColumnManager
             4 => Width::SixExtraLarge,
             default => Width::ExtraSmall,
         };
-    }
-
-    /**
-     * @deprecated Use `getColumnManagerTriggerAction()` instead.
-     */
-    public function getToggleColumnsTriggerAction(): Action
-    {
-        return $this->getColumnManagerTriggerAction();
     }
 
     public function getColumnManagerTriggerAction(): Action

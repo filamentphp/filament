@@ -30,30 +30,6 @@ trait HasBulkActions
     protected bool | Closure $isSelectionDisabled = false;
 
     /**
-     * @deprecated Use `toolbarActions()` instead.
-     *
-     * @param  array<Action | ActionGroup> | ActionGroup  $actions
-     */
-    public function bulkActions(array | ActionGroup $actions): static
-    {
-        $this->toolbarActions($actions);
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `pushToolbarActions()` instead.
-     *
-     * @param  array<Action | ActionGroup> | ActionGroup  $actions
-     */
-    public function pushBulkActions(array | ActionGroup $actions): static
-    {
-        $this->pushToolbarActions($actions);
-
-        return $this;
-    }
-
-    /**
      * @param  array<Action | ActionGroup>  $actions
      */
     public function groupedBulkActions(array $actions): static
@@ -205,15 +181,5 @@ trait HasBulkActions
     public function isSelectionDisabled(): bool
     {
         return (bool) $this->evaluate($this->isSelectionDisabled);
-    }
-
-    /**
-     * @deprecated Use `getToolbarActions()` instead.
-     *
-     * @return array<Action | ActionGroup>
-     */
-    public function getBulkActions(): array
-    {
-        return $this->getToolbarActions();
     }
 }

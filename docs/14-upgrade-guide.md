@@ -445,6 +445,47 @@ Calls to `form()` that unpack arguments, such as `form(...$arguments)`, are also
 You must also manually update dynamic method names, string or array callbacks, calls whose receiver type cannot be determined, and references outside PHP files. If you invoke a migrated first-class callable with named arguments, update `form:` to `schema:` at that invocation yourself. If you use these concerns directly on a class that does not extend `Action`, update its calls manually.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('tables')">
+<span slot="summary">Deprecated fluent table method aliases have been removed</span>
+
+The following deprecated methods on `Filament\Tables\Table` and its subclasses have been removed. Use their replacements instead:
+
+| Removed method | Replacement |
+| --- | --- |
+| `actions()` | `recordActions()` |
+| `pushActions()` | `pushRecordActions()` |
+| `actionsColumnLabel()` | `recordActionsColumnLabel()` |
+| `actionsAlignment()` | `recordActionsAlignment()` |
+| `actionsPosition()` | `recordActionsPosition()` |
+| `getActions()` | `getRecordActions()` |
+| `getActionsPosition()` | `getRecordActionsPosition()` |
+| `getActionsAlignment()` | `getRecordActionsAlignment()` |
+| `getActionsColumnLabel()` | `getRecordActionsColumnLabel()` |
+| `bulkActions()` | `toolbarActions()` |
+| `pushBulkActions()` | `pushToolbarActions()` |
+| `getBulkActions()` | `getToolbarActions()` |
+| `toggleColumnsTriggerAction()` | `columnManagerTriggerAction()` |
+| `columnToggleFormColumns()` | `columnManagerColumns()` |
+| `columnToggleFormMaxHeight()` | `columnManagerMaxHeight()` |
+| `columnToggleFormWidth()` | `columnManagerWidth()` |
+| `getColumnToggleFormColumns()` | `getColumnManagerColumns()` |
+| `getColumnToggleFormMaxHeight()` | `getColumnManagerMaxHeight()` |
+| `getColumnToggleFormWidth()` | `getColumnManagerWidth()` |
+| `getToggleColumnsTriggerAction()` | `getColumnManagerTriggerAction()` |
+
+The automated upgrade script renames instance calls when it can identify the receiver as a `Table` or subclass, including nullsafe calls, first-class callables, and calls with unpacked arguments. Parameter names are unchanged, so named arguments and unpacked named-argument keys are preserved. Methods with these names on unrelated types, such as `Notification::actions()` and `ActionGroup::actions()`, are not renamed.
+
+`getColumnManagerWidth()` returns `Filament\Support\Enums\Width | string | null`, unlike the removed `getColumnToggleFormWidth()` wrapper's `?string` return type. The replacement returns a `Width` enum for the default width and for explicitly configured enum widths; the old wrapper could throw a `TypeError` for those values. Review migrated calls and any string-only consumers, return types, or comparisons. If you need a string, use `$width instanceof Width ? $width->value : $width`, importing `Filament\Support\Enums\Width`. The script renames the call but does not add this conversion or widen your own return types.
+
+Custom method declarations are not renamed. Calls whose receiver is known to override an alias or its replacement are left unchanged, including inherited overrides, since custom parameter names, defaults, return values, and behavior may differ. A receiver typed as the base `Table` may still contain a custom subclass at runtime. Migrate alias declarations and their calls manually, and review automated changes wherever you use custom subclasses. When moving an override to a replacement getter, ensure its return type and implementation are compatible with the replacement's contract, particularly for widths.
+
+Class-qualified calls, such as `parent::actions()`, are left unchanged. The removed wrappers dispatched to the replacement through `$this`; simply renaming a `parent::` call could bypass a replacement overridden in your subclass. Also, the record-action and bulk-action setters returned `$this` regardless of the replacement's return value. Preserve these semantics where custom behavior depends on them.
+
+Manually update dynamic method names, string or array callbacks, calls with unknown receiver types, references outside PHP files, and calls on classes that use these concerns directly without extending `Table`.
+
+`groupedBulkActions()` remains available: it wraps actions in a `BulkActionGroup` and is not an alias for `toolbarActions()`. The legacy Livewire table configuration hooks, including `getTableColumns()` and `getTableActions()`, are unchanged by this cleanup.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('panels')">
 <span slot="summary">Custom avatar providers must accept non-Eloquent users</span>
 

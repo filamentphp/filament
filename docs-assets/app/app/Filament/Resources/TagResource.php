@@ -61,7 +61,7 @@ class TagResource extends Resource
                     ->sortable(),
             ])
             ->defaultSort('name')
-            ->actions([
+            ->recordActions([
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
             ]);

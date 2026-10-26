@@ -23,7 +23,7 @@ class ExportTable extends ExportActions implements HasTable
             ->columns([TextColumn::make('title')->searchable()->sortable()])
             ->filters([Filter::make('published')->query(static fn (Builder $query): Builder => $query->where('is_published', true))])
             ->headerActions([$this->exportAction()])
-            ->bulkActions([
+            ->toolbarActions([
                 ExportBulkAction::make()
                     ->exporter(ActionPostExporter::class)
                     ->fileDisk('local')
