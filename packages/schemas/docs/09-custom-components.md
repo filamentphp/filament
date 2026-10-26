@@ -20,6 +20,52 @@ Chart::make()
 
 Then customize the generated view, following [custom component classes](#custom-component-classes). Most custom components can use Blade and the schema's existing utilities; use a [nested Livewire component](#inserting-a-livewire-component-into-a-schema) when you need a separately managed Livewire component.
 
+### Generating a JavaScript component
+
+Install your application's JavaScript dependencies, including Vite, before running the generator, even with `--skip-install`:
+
+```bash
+npm install
+```
+
+Add one renderer flag to generate a component using React, Vue, Svelte, or framework-free JavaScript:
+
+```bash
+php artisan make:filament-schema-component Chart --react
+php artisan make:filament-schema-component Chart --vue
+php artisan make:filament-schema-component Chart --svelte
+php artisan make:filament-schema-component Chart --js
+```
+
+The command creates a PHP component class and a renderer in `resources/js/filament/schemas/components/`, without a Blade view. It installs missing dependencies, configures Vite when possible, and offers to compile your assets. Use the generated class in your schema, then replace the starter paragraph with your own UI.
+
+For TypeScript, add `--typescript` or its alias `--ts`:
+
+```bash
+php artisan make:filament-schema-component Chart --react --ts
+```
+
+Use a [custom field](../forms/custom-fields) for an input with state binding and validation. JavaScript schema components do not render child schemas; use a Blade component when you need children.
+
+#### Customizing generation
+
+Use `--pm=yarn` to use Yarn, `--skip-install` to install dependencies yourself, or `--skip-build` to skip compilation. Use `--force` or `-F` to overwrite existing files.
+
+The generated PHP class uses `HasJsRenderer` and loads its entry through `Vite::asset()`. The generated files depend on your chosen renderer:
+
+- React: `chart.jsx`, or `chart.tsx` with `--typescript`.
+- Vue: `chart.js` and `Chart.vue`. With `--typescript`, the entry uses `.ts` and the component uses `<script setup lang="ts">`.
+- Svelte 5: `chart.svelte.js` and `Chart.svelte`. With `--typescript`, the entry uses `.svelte.ts` and the component uses `<script lang="ts">`.
+- Framework-free JavaScript: `chart.js`, or `chart.ts` with `--typescript`.
+
+The React component and Vue or Svelte import are named `Chart`, matching the PHP class. Names that start with a lowercase letter or conflict with a starter's imports use the local name `Component` instead. Filenames and the default-exported `mountChart()` function still use the requested name.
+
+Nested names, such as `Reports/Chart`, place JavaScript files in a `reports/` subdirectory.
+
+For a custom component location, the renderer directory mirrors the PHP namespace under `resources/js/`, omitting your application's root namespace and converting each directory to kebab case.
+
+Existing compatible dependencies are preserved; incompatible versions require a manual upgrade. If Vite cannot be configured automatically, follow the printed instructions and the [Vite module setup](../advanced/assets#building-lazy-loaded-es-modules). For a plugin, use a [published module](#building-reusable-plugin-components) instead of the application's Vite manifest.
+
 ## Inserting a Blade view into a schema
 
 You may use a "view" component to insert a Blade view into a schema arbitrarily:
@@ -270,7 +316,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 }
 ```
@@ -298,7 +347,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     public function heading(?string $heading): static
@@ -350,7 +402,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     public function heading(string | Closure | null $heading): static
@@ -397,7 +452,10 @@ class Chart extends Component
 
     public static function make(string | Closure | null $heading = null): static
     {
-        return app(static::class, ['heading' => $heading]);
+        $static = app(static::class, ['heading' => $heading]);
+        $static->configure();
+
+        return $static;
     }
 
     public function heading(string | Closure | null $heading): static
@@ -432,7 +490,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     #[Exposed]
@@ -525,7 +586,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     #[Exposed]
@@ -540,3 +604,290 @@ class Chart extends Component
 ### Styling components outside the container grid
 
 Components using `liberatedFromContainerGrid()` receive a `.fi-sc-liberated` Alpine scope wrapper with `display: contents`, so their contents still participate in the surrounding layout. If your [custom CSS](../styling/css-hooks) targets their output as a direct child of `.fi-sc`, include `.fi-sc > .fi-sc-liberated > ...` in that selector too. The wrapper provides the scope for [calling component methods](#calling-component-methods-from-javascript), but does not generate its own layout box.
+
+## Rendering components with JavaScript frameworks
+
+After [generating a JavaScript component](#generating-a-javascript-component), customize its renderer. Your application owns the renderer and its dependencies; Filament does not bundle a framework.
+
+You can also use `JsComponent` directly without generating a PHP class. Pass the URL of your renderer's ES module to `renderer()`:
+
+```php
+use Filament\Schemas\Components\JsComponent;
+use Illuminate\Support\Facades\Vite;
+
+JsComponent::make()
+    ->key('sales-summary')
+    ->renderer(Vite::asset('resources/js/components/sales-summary.jsx'))
+    ->rendererConfiguration(['message' => 'Sales increased by 12% this quarter.'])
+```
+
+Give each instance a unique `key()`. Instances can share a renderer without sharing their local state.
+
+<Aside variant="danger">
+    Only use trusted renderer URLs or `RawJs` code. Never let user input choose modules or generate executable code. Renderers are not sandboxed and must comply with your application's CSP and cross-origin policy. Validate and authorize requests in PHP.
+</Aside>
+
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `renderer()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+If you already load the renderer through another script, you may pass a trusted `Filament\Support\RawJs` function expression to `renderer()` instead of a URL.
+
+### Writing a renderer
+
+Each renderer exports a mount function receiving `host`, `props`, and schema `utilities`. Render inside `host`, then return `update(props)` and `destroy()` methods. Props contain `configuration`, your PHP configuration, and `id`, the component's nullable ID.
+
+If you create the files manually, follow the [Vite module setup](../advanced/assets#building-lazy-loaded-es-modules) to compile the entry file. The examples leave styling to your application; see [registering CSS files](../advanced/assets#registering-css-files).
+
+#### Creating a React component
+
+Create `resources/js/components/sales-summary.jsx`:
+
+```jsx
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+
+function SalesSummary(props) {
+    return <p>{props.configuration.message}</p>
+}
+
+export default function mountSalesSummary({ host, props: initialProps }) {
+    const root = createRoot(host)
+    const update = (props) => root.render(<SalesSummary {...props} />)
+
+    update(initialProps)
+
+    return { update, destroy: () => root.unmount() }
+}
+```
+
+#### Creating a Vue component
+
+Create `resources/js/components/SalesSummary.vue`:
+
+```vue
+<script setup>
+defineOptions({ inheritAttrs: false })
+
+const props = defineProps(['id', 'configuration'])
+</script>
+
+<template>
+    <p>{{ props.configuration.message }}</p>
+</template>
+```
+
+Create `resources/js/components/sales-summary.js` to mount it. Use this entry's URL in `renderer()`:
+
+```js
+import { createApp, h, shallowRef } from 'vue'
+import SalesSummary from './SalesSummary.vue'
+
+export default function mountSalesSummary({ host, props: initialProps }) {
+    const props = shallowRef(initialProps)
+    const application = createApp({
+        setup: () => () => h(SalesSummary, props.value),
+    })
+
+    application.mount(host)
+
+    return {
+        update(nextProps) {
+            props.value = nextProps
+        },
+        destroy: () => application.unmount(),
+    }
+}
+```
+
+#### Creating a Svelte component
+
+For Svelte 5, create `resources/js/components/SalesSummary.svelte`:
+
+```svelte
+<script>
+    let { configuration } = $props()
+</script>
+
+<p>{configuration.message}</p>
+```
+
+Create `resources/js/components/sales-summary.svelte.js` to mount it. The `.svelte.js` extension allows the Svelte compiler to process `$state`. Use this entry's URL in `renderer()`:
+
+```js
+import { mount, unmount } from 'svelte'
+import SalesSummary from './SalesSummary.svelte'
+
+export default function mountSalesSummary({ host, props: initialProps }) {
+    const props = $state({ ...initialProps })
+    const component = mount(SalesSummary, { target: host, props })
+
+    return {
+        update: (nextProps) => Object.assign(props, nextProps),
+        destroy: () => unmount(component),
+    }
+}
+```
+
+#### Creating a framework-free JavaScript component
+
+Create `resources/js/components/sales-summary.js`:
+
+```js
+export default function mountSalesSummary({ host, props: initialProps }) {
+    const paragraph = document.createElement('p')
+    const update = (props) => {
+        paragraph.textContent = props.configuration.message ?? ''
+    }
+
+    update(initialProps)
+    host.append(paragraph)
+
+    return { update, destroy: () => paragraph.remove() }
+}
+```
+
+### Passing configuration from PHP
+
+Use `rendererConfiguration()` to supply JSON-serializable data for the browser, not secrets. Read it from `props.configuration` and treat it as read-only; modifying it does not write back to PHP.
+
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `rendererConfiguration()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+For example, configure your renderer using another field's state:
+
+```php
+use Filament\Schemas\Components\JsComponent;
+use Filament\Schemas\Components\Utilities\Get;
+use Illuminate\Support\Facades\Vite;
+
+JsComponent::make()
+    ->key('sales-summary')
+    ->renderer(Vite::asset('resources/js/components/sales-summary.jsx'))
+    ->rendererConfiguration(static fn (Get $get): array => [
+        'message' => $get('summary'),
+    ])
+```
+
+When this component renders on the server, Filament passes changed configuration to `update(props)` without remounting it. Use [`live()`](../forms/overview#the-basics-of-reactivity) on the source field to trigger updates; deferred edits wait for the next render. Requests that skip this component, including partial renders of other components, do not update its configuration.
+
+Pass `null` to `rendererConfiguration()` to clear it. For a reusable component using `HasJsRenderer`, override `getRendererConfiguration(): array` instead; its default is `[]`.
+
+### Accessing schema utilities
+
+Accept `utilities` alongside `host` and `props` in your mount function, then pass it to your framework component as a prop. You can read or change sibling fields from an interaction handler:
+
+```js
+const country = utilities.$get('country')
+await utilities.$set('country', 'GB')
+```
+
+`$get(path, isAbsolute)` and `$set(path, value, isAbsolute, isLive = false)` use paths relative to the component's container unless `isAbsolute` is `true`. `$set()` is deferred unless `isLive` is `true`. These utilities do not apply a target field's read-only configuration or state binding modifiers.
+
+`utilities.$statePath` is the surrounding scope's absolute state path, or `null`. Read `utilities.$state` when needed and treat it as read-only. Neither it nor `$get()` subscribes your framework to changes; use [PHP configuration](#passing-configuration-from-php) for reactive values.
+
+Keep `utilities` intact when passing it into framework state: spreading or destructuring it captures the current values of its `$state` and `$wire` getters. Functions such as `$get` and `$set` may be destructured, but alias them in Svelte, where local names beginning with `$` are reserved.
+
+#### Calling PHP methods
+
+Call [exposed component methods](#calling-component-methods-from-javascript) through `utilities.$getChartData({ dateRange: 'week' })` or `utilities.$callSchemaComponentMethod('getChartData', { dateRange: 'week' })`. The same exposure and authorization rules apply as in Blade.
+
+For methods on the owning Livewire component, use `utilities.$wire.$call('methodName')`. Handle request failures and stop using utilities when the renderer is destroyed.
+
+### Typing renderers
+
+Use `--typescript` or `--ts` to generate a typed renderer and configure the `@filament/schemas/js-component` alias. See [type-checking ES modules](../advanced/assets#type-checking-es-modules) for compiler versions, React JSX configuration, and framework-specific type checks.
+
+Filament includes declarations in its Composer package, without a JavaScript runtime dependency. For an existing renderer, add a type alias to your application's `tsconfig.json`, relative to that file or its `baseUrl`:
+
+```json
+{
+    "compilerOptions": {
+        "paths": {
+            "@filament/schemas/js-component": ["./vendor/filament/schemas/resources/js/types/js-component.d.ts"]
+        }
+    }
+}
+```
+
+Use `JsComponentRenderer<Configuration, Methods>` to type your PHP configuration and exposed methods:
+
+```ts
+import type { JsComponentRenderer } from '@filament/schemas/js-component'
+
+type Configuration = { message: string }
+interface Methods {
+    $getChartData(argumentsObject: { dateRange: string }): Promise<number[]>
+}
+
+const mountSalesSummary: JsComponentRenderer<Configuration, Methods> = ({ host, props, utilities }) => {
+    const paragraph = document.createElement('p')
+    paragraph.textContent = props.configuration.message
+    host.append(paragraph)
+
+    return {
+        update(nextProps) {
+            paragraph.textContent = nextProps.configuration.message
+        },
+        destroy() {
+            paragraph.remove()
+        },
+    }
+}
+
+export default mountSalesSummary
+```
+
+The same module exports `JsComponentRendererContext`, `JsComponentProps`, `JsComponentUtilities`, `JsComponentLivewire`, and `JsComponentRendererInstance`. Use `import type`. Configuration is deeply read-only in TypeScript, not frozen at runtime.
+
+Declare PHP method signatures yourself. `$wire` includes `$call()`, `$get()`, and `$set()`; extend its type locally for other Livewire APIs.
+
+### Synchronizing and disposing renderers
+
+The mount function may return its lifecycle methods directly or through a promise. Configuration changes call `update(props)`; renderer URL or ID changes remount the component. Removal calls `destroy()`, including when mounting finishes after removal.
+
+Clean up subscriptions, event listeners, and framework roots in `destroy()`, including when the host is already detached. Stop DOM work synchronously even if cleanup returns a promise. Filament does not serialize updates or wait for asynchronous cleanup before remounting; order or cancel asynchronous work inside your renderer.
+
+#### Understanding the boundary with Blade and Alpine
+
+Livewire ignores `host` contents. Render only inside it, and keep child schemas and server-rendered actions outside the component. Pass serializable PHP data through `rendererConfiguration()`; Blade slots and PHP objects are not available in framework templates.
+
+Use framework events or the supplied utilities, not Alpine directives or magic properties. Access to `$wire` does not automatically integrate uploads, actions, modals, or reactive state into your framework.
+
+#### Handling renderer errors
+
+If importing, mounting, or `update()` throws or rejects, Filament clears the host and shows an accessible error message. Check the console for the phase, state path, renderer, and error, then reload after correcting it. Error objects and renderer URLs may contain sensitive information.
+
+Clean up resources yourself if mounting fails before returning lifecycle methods. Filament logs cleanup failures without blocking other components, but does not provide a framework error boundary: handle errors in event handlers and independently scheduled work in your renderer.
+
+### Building reusable plugin components
+
+Extend `Component` and use `Filament\Schemas\Components\Concerns\HasJsRenderer` for a reusable component. Implement `getRenderer()` and optionally `getRendererConfiguration()`. You do not need a Blade view or to extend `JsComponent`:
+
+```php
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Concerns\HasJsRenderer;
+use Filament\Support\Facades\FilamentAsset;
+
+class SalesSummary extends Component
+{
+    use HasJsRenderer;
+
+    public static function make(): static
+    {
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
+    }
+
+    public function getRenderer(): string
+    {
+        return FilamentAsset::getScriptSrc('sales-summary', 'acme/reports');
+    }
+
+    public function getRendererConfiguration(): array
+    {
+        return ['message' => 'Sales increased by 12% this quarter.'];
+    }
+}
+```
+
+Follow the [plugin guide](../plugins/getting-started#creating-a-plugin) and [publish the module](../advanced/assets#publishing-es-modules-in-plugins) under this asset ID and package name. Consumers can use `SalesSummary::make()->key('sales-summary')` without configuring Vite. Expose PHP configuration through the usual [fluent methods](#adding-a-configuration-method-to-a-custom-component-class).

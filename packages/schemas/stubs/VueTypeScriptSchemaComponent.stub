@@ -1,0 +1,11 @@
+<script setup lang="ts">
+import type { JsComponentProps } from '@filament/schemas/js-component'
+
+defineOptions({ inheritAttrs: false })
+
+const props = defineProps<JsComponentProps<{ message?: string }>>()
+</script>
+
+<template>
+    <p>{{ props.configuration.message ?? 'Your component is ready.' }}</p>
+</template>
