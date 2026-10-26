@@ -10,6 +10,8 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Renderless;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
@@ -412,12 +414,14 @@ it('can return lazy tab badges through both endpoint names', function (string $m
         ->and($badges['1']['badge'])->toBe('42');
 })->with(['getDeferredTabBadges', 'getLazyLoadedTabBadges']);
 
-it('preserves `getDeferredTabBadges()` overrides when calling `getLazyLoadedTabBadges()`', function (): void {
+it('respects a `getLazyLoadedTabBadges()` override through both endpoint names', function (string $method): void {
     app()->bind(Tabs::class, static fn (): Tabs => new class extends Tabs
     {
-        public function getDeferredTabBadges(): array
+        #[Exposed]
+        #[Renderless]
+        public function getLazyLoadedTabBadges(): array
         {
-            $badges = parent::getDeferredTabBadges();
+            $badges = parent::getLazyLoadedTabBadges();
             $badges['1']['badge'] = '84';
 
             return $badges;
@@ -425,14 +429,14 @@ it('preserves `getDeferredTabBadges()` overrides when calling `getLazyLoadedTabB
     });
 
     livewire(TabsWithDeferredBadges::class)
-        ->call('callSchemaComponentMethod', 'form.test-tabs', 'getLazyLoadedTabBadges')
+        ->call('callSchemaComponentMethod', 'form.test-tabs', $method)
         ->assertReturned(function (array $badges): bool {
             expect($badges)->toHaveCount(1)
                 ->and($badges['1']['badge'])->toBe('84');
 
             return true;
         });
-});
+})->with(['getDeferredTabBadges', 'getLazyLoadedTabBadges']);
 
 it('can call an `Action` nested inside a tab that uses `livewireProperty()`', function (): void {
     livewire(TabsWithLivewirePropertyAction::class)

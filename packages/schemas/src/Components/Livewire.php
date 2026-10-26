@@ -113,7 +113,7 @@ class Livewire extends Component implements HasEmbeddedView
             'record' => $this->getRecord(),
         ];
 
-        if ($this->isLazy()) {
+        if ($this->isLazyLoaded()) {
             $properties['lazy'] = true;
         }
 

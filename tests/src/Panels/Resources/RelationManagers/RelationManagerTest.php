@@ -1239,7 +1239,7 @@ it('preserves legacy relation manager loading overrides while prioritizing expli
     {
         public static function isLazy(): bool
         {
-            return false;
+            return ! parent::isLazy();
         }
     };
 
@@ -1264,6 +1264,7 @@ it('preserves legacy relation manager loading overrides while prioritizing expli
     };
 
     expect($legacyRelationManager::getDefaultProperties())->toBe([])
+        ->and($legacyRelationManager::isLazyLoaded())->toBeFalse()
         ->and($configuredRelationManager::getDefaultProperties())->toBe([])
         ->and($overriddenRelationManager::getDefaultProperties())->toBe([]);
 
@@ -1319,7 +1320,7 @@ it('respects both legacy and new relation manager badge getter overrides', funct
         {
             public static function isBadgeDeferred(Model $ownerRecord, string $pageClass): bool
             {
-                return true;
+                return ! parent::isBadgeDeferred($ownerRecord, $pageClass);
             }
         },
         new class extends DepartmentsRelationManager
@@ -1358,16 +1359,17 @@ it('shares relation group configuration between `lazyLoadedBadge()` and `deferBa
         ->and($group->deferBadge()->lazyLoadedBadge(false)->isBadgeDeferred())->toBeFalse();
 })->with(['lazyLoadedBadge', 'deferBadge']);
 
-it('respects an existing relation group `isBadgeDeferred()` override', function (): void {
+it('respects a relation group `isBadgeLazyLoaded()` override', function (): void {
     $group = new class('Departments', []) extends RelationGroup
     {
-        public function isBadgeDeferred(): bool
+        public function isBadgeLazyLoaded(): bool
         {
-            return true;
+            return ! parent::isBadgeLazyLoaded();
         }
     };
 
-    expect($group->getTabComponent()->isBadgeLazyLoaded())->toBeTrue();
+    expect($group->getTabComponent()->isBadgeLazyLoaded())->toBeTrue()
+        ->and($group->lazyLoadedBadge()->getTabComponent()->isBadgeLazyLoaded())->toBeFalse();
 });
 
 it('resolves the deferred tab badge value from `getBadge()`', function (): void {

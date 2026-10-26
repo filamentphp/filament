@@ -111,7 +111,7 @@ abstract class Widget extends Component
     {
         $properties = [];
 
-        if ((static::$isLazyLoaded !== null) ? static::isLazyLoaded() : static::isLazy()) {
+        if (static::isLazyLoaded()) {
             $properties['lazy'] = true;
         }
 

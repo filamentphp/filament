@@ -91,7 +91,7 @@ class LivewireField extends Field implements HasEmbeddedView
             $this->applyStateBindingModifiers('wire:model') => $this->getStatePath(),
         ];
 
-        if ($this->isLazy()) {
+        if ($this->isLazyLoaded()) {
             $properties['lazy'] = true;
         }
 
