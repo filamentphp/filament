@@ -33,7 +33,7 @@ it('cannot display trashed posts by default', function () {
 
 > If your table uses pagination, `assertCanSeeTableRecords()` will only check for records on the first page. To switch page, call `call('gotoPage', 2)`.
 
-> If your table uses `deferLoading()`, you should call `loadTable()` before `assertCanSeeTableRecords()`.
+> If your table uses `lazyLoaded()`, you should call `loadTable()` before `assertCanSeeTableRecords()`.
 
 ## Testing columns
 
