@@ -6,6 +6,7 @@ use Filament\Upgrade\Rector\RenameDeprecatedFormComponentMethodsRector;
 use Filament\Upgrade\Rector\RenameDeprecatedLazyLoadingApisRector;
 use Filament\Upgrade\Rector\RenameDeprecatedTableMethodsRector;
 use Filament\Upgrade\Rector\ReplaceConvenienceClassesRector;
+use Filament\Upgrade\Rector\ReplaceTypedChartWidgetsRector;
 use Filament\Upgrade\Rector\WidenAvatarProviderParameterTypeRector;
 use Rector\Config\RectorConfig;
 use Rector\Removing\Rector\Class_\RemoveTraitUseRector;
@@ -71,5 +72,6 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(RenameDeprecatedLazyLoadingApisRector::class);
     $rectorConfig->rule(RenameDeprecatedTableMethodsRector::class);
     $rectorConfig->rule(ReplaceConvenienceClassesRector::class);
+    $rectorConfig->rule(ReplaceTypedChartWidgetsRector::class);
     $rectorConfig->rule(WidenAvatarProviderParameterTypeRector::class);
 };
