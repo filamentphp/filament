@@ -8,10 +8,13 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
 use PhpParser\Node;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\StaticType;
+use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -88,7 +91,7 @@ class RenameDeprecatedFormComponentMethodsRector extends AbstractRector
         }
 
         $methodName = strtolower($node->name->toString());
-        $receiverType = TypeCombinator::removeNull($this->getType($node->var));
+        $receiverType = $this->resolveReceiverType($node->var);
 
         foreach (self::METHOD_RENAMES as $componentClass => $methodRenames) {
             $methodRenames = array_change_key_case($methodRenames);
@@ -139,5 +142,45 @@ class RenameDeprecatedFormComponentMethodsRector extends AbstractRector
         }
 
         return null;
+    }
+
+    private function resolveReceiverType(Expr $receiver): Type
+    {
+        $receiverType = TypeCombinator::removeNull($this->getType($receiver));
+
+        if (
+            ((! $receiver instanceof MethodCall) && (! $receiver instanceof NullsafeMethodCall)) ||
+            (! $receiver->name instanceof Identifier) ||
+            $receiver->isFirstClassCallable()
+        ) {
+            return $receiverType;
+        }
+
+        $callerType = $this->resolveReceiverType($receiver->var);
+
+        if ($callerType->isSuperTypeOf($receiverType)->yes()) {
+            return $receiverType;
+        }
+
+        $classReflections = $callerType->getObjectClassReflections();
+
+        if (! count($classReflections)) {
+            return $receiverType;
+        }
+
+        foreach ($classReflections as $classReflection) {
+            if (! $classReflection->hasNativeMethod($receiver->name->toString())) {
+                return $receiverType;
+            }
+
+            $methodReflection = $classReflection->getNativeMethod($receiver->name->toString());
+
+            if (! $methodReflection->getVariants()[0]->getReturnType() instanceof StaticType) {
+                return $receiverType;
+            }
+        }
+
+        // Inherited `static` returns retain the caller's class, not the declaring class.
+        return $callerType;
     }
 }

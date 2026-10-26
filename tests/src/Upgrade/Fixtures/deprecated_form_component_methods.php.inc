@@ -115,11 +115,21 @@ class GetterOverridingUpload extends FileUpload
 function subclasses(CustomUpload $custom, ?InheritedAliasOverridingUpload $alias, InheritedReplacementOverridingUpload $replacement, InheritedIntermediateOverridingBuilder $builder, GetterOverridingUpload $getter, CustomUpload | AliasOverridingUpload $union): void
 {
     $custom->enableDownload()->idleLabel(label: 'Upload');
+    $custom->enableDownload()->enableOpen()->idleLabel(label: 'Upload');
+    $custom?->enableDownload()?->idleLabel(label: 'Upload');
     $alias?->enableDownload(enabled: false);
     $replacement->idleLabel(label: 'Upload');
+    $replacement->enableDownload()->idleLabel(label: 'Upload');
     $builder->showBlockLabels();
     $getter->getImageResizeMode();
     $union->enableDownload();
+}
+
+function narrowedReceiver(FileUpload $upload): void
+{
+    if ($upload->getClone() instanceof AliasOverridingUpload) {
+        $upload->getClone()->enableDownload(enabled: false);
+    }
 }
 
 function unrelated(TextInput $input, UnrelatedComponent $component, FileUpload | UnrelatedComponent $union, $unknown): void
@@ -127,6 +137,7 @@ function unrelated(TextInput $input, UnrelatedComponent $component, FileUpload |
     $input->idleLabel(label: 'Text');
     $component->enableDownload();
     $component->createItemButtonLabel(label: 'Add');
+    $component->upload()->idleLabel(label: 'Upload');
     $union->enableDownload();
     $unknown->enableDownload();
 }
@@ -136,6 +147,11 @@ class UnrelatedComponent
     public function enableDownload(): void {}
 
     public function createItemButtonLabel(?string $label): void {}
+
+    public function upload(): FileUpload
+    {
+        return FileUpload::make('photo');
+    }
 }
 -----
 <?php
@@ -255,11 +271,21 @@ class GetterOverridingUpload extends FileUpload
 function subclasses(CustomUpload $custom, ?InheritedAliasOverridingUpload $alias, InheritedReplacementOverridingUpload $replacement, InheritedIntermediateOverridingBuilder $builder, GetterOverridingUpload $getter, CustomUpload | AliasOverridingUpload $union): void
 {
     $custom->downloadable()->placeholder(placeholder: 'Upload');
+    $custom->downloadable()->openable()->placeholder(placeholder: 'Upload');
+    $custom?->downloadable()?->placeholder(placeholder: 'Upload');
     $alias?->enableDownload(enabled: false);
     $replacement->idleLabel(label: 'Upload');
+    $replacement->downloadable()->idleLabel(label: 'Upload');
     $builder->showBlockLabels();
     $getter->getImageResizeMode();
     $union->enableDownload();
+}
+
+function narrowedReceiver(FileUpload $upload): void
+{
+    if ($upload->getClone() instanceof AliasOverridingUpload) {
+        $upload->getClone()->enableDownload(enabled: false);
+    }
 }
 
 function unrelated(TextInput $input, UnrelatedComponent $component, FileUpload | UnrelatedComponent $union, $unknown): void
@@ -267,6 +293,7 @@ function unrelated(TextInput $input, UnrelatedComponent $component, FileUpload |
     $input->idleLabel(label: 'Text');
     $component->enableDownload();
     $component->createItemButtonLabel(label: 'Add');
+    $component->upload()->placeholder(placeholder: 'Upload');
     $union->enableDownload();
     $unknown->enableDownload();
 }
@@ -276,4 +303,9 @@ class UnrelatedComponent
     public function enableDownload(): void {}
 
     public function createItemButtonLabel(?string $label): void {}
+
+    public function upload(): FileUpload
+    {
+        return FileUpload::make('photo');
+    }
 }
