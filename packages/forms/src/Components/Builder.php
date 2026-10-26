@@ -842,29 +842,9 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         return $this;
     }
 
-    /**
-     * @deprecated Use `addBetweenActionLabel()` instead.
-     */
-    public function createItemBetweenButtonLabel(string | Closure | null $label): static
-    {
-        $this->addBetweenActionLabel($label);
-
-        return $this;
-    }
-
     public function addActionLabel(string | Closure | null $label): static
     {
         $this->addActionLabel = $label;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `addActionLabel()` instead.
-     */
-    public function createItemButtonLabel(string | Closure | null $label): static
-    {
-        $this->addActionLabel($label);
 
         return $this;
     }
@@ -938,36 +918,6 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
     public function reorderableWithButtons(bool | Closure $condition = true): static
     {
         $this->isReorderableWithButtons = $condition;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `blockLabels()` instead.
-     */
-    public function showBlockLabels(bool | Closure $condition = true): static
-    {
-        $this->withBlockLabels($condition);
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `blockLabels()` instead.
-     */
-    public function withBlockLabels(bool | Closure $condition = true): static
-    {
-        $this->blockLabels($condition);
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `blockNumbers()` instead.
-     */
-    public function withBlockNumbers(bool | Closure $condition = true): static
-    {
-        $this->blockNumbers($condition);
 
         return $this;
     }

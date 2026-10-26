@@ -873,11 +873,11 @@ describe('configuration', function (): void {
         it('can set `imageCropAspectRatio()`', function (): void {
             $upload = FileUpload::make('photo');
 
-            expect($upload->getImageCropAspectRatio())->toBeNull();
+            expect($upload->getAutomaticallyCropImagesAspectRatio())->toBeNull();
 
             $upload->imageCropAspectRatio('16:9');
 
-            expect($upload->getImageCropAspectRatio())->toBe('16:9');
+            expect($upload->getAutomaticallyCropImagesAspectRatio())->toBe('16:9');
         });
 
         it('can set `automaticallyCropImagesToAspectRatio()`', function (): void {

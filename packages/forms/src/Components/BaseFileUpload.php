@@ -334,36 +334,6 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     }
 
     /**
-     * @deprecated Use `downloadable()` instead.
-     */
-    public function enableDownload(bool | Closure $condition = true): static
-    {
-        $this->downloadable($condition);
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `openable()` instead.
-     */
-    public function enableOpen(bool | Closure $condition = true): static
-    {
-        $this->openable($condition);
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `reorderable()` instead.
-     */
-    public function enableReordering(bool | Closure $condition = true): static
-    {
-        $this->reorderable($condition);
-
-        return $this;
-    }
-
-    /**
      * @deprecated Use `previewable()` instead.
      */
     public function disablePreview(bool | Closure $condition = true): static
@@ -396,16 +366,6 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     public function moveFiles(bool | Closure $condition = true): static
     {
         $this->shouldMoveFiles = $condition;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `moveFiles()` instead.
-     */
-    public function moveFile(bool | Closure $condition = true): static
-    {
-        $this->moveFiles($condition);
 
         return $this;
     }
@@ -482,16 +442,6 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     {
         $this->shouldPreventFilePathTampering = $condition;
         $this->allowFilePathUsing = $allowFilePathUsing;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `storeFiles()` instead.
-     */
-    public function storeFile(bool | Closure $condition = true): static
-    {
-        $this->storeFiles($condition);
 
         return $this;
     }

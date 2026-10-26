@@ -118,16 +118,6 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
         return $this;
     }
 
-    /**
-     * @deprecated Use `placeholder()` instead.
-     */
-    public function idleLabel(string | Closure | null $label): static
-    {
-        $this->placeholder($label);
-
-        return $this;
-    }
-
     public function getPlaceholder(): ?string
     {
         $placeholder = $this->evaluate($this->placeholder);
@@ -173,27 +163,11 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
         return $this;
     }
 
-    /**
-     * @deprecated Use `automaticallyResizeImagesMode()` instead.
-     */
-    public function imageResizeMode(string | Closure | null $mode): static
-    {
-        return $this->automaticallyResizeImagesMode($mode);
-    }
-
     public function automaticallyResizeImagesToHeight(string | Closure | null $height): static
     {
         $this->automaticallyResizeImagesHeight = $height;
 
         return $this;
-    }
-
-    /**
-     * @deprecated Use `automaticallyResizeImagesToHeight()` instead.
-     */
-    public function imageResizeTargetHeight(string | Closure | null $height): static
-    {
-        return $this->automaticallyResizeImagesToHeight($height);
     }
 
     public function automaticallyResizeImagesToWidth(string | Closure | null $width): static
@@ -203,27 +177,11 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
         return $this;
     }
 
-    /**
-     * @deprecated Use `automaticallyResizeImagesToWidth()` instead.
-     */
-    public function imageResizeTargetWidth(string | Closure | null $width): static
-    {
-        return $this->automaticallyResizeImagesToWidth($width);
-    }
-
     public function automaticallyUpscaleImagesWhenResizing(bool | Closure $condition = true): static
     {
         $this->shouldAutomaticallyUpscaleImagesWhenResizing = $condition;
 
         return $this;
-    }
-
-    /**
-     * @deprecated Use `automaticallyUpscaleImagesWhenResizing()` instead.
-     */
-    public function imageResizeUpscale(bool | Closure $condition = true): static
-    {
-        return $this->automaticallyUpscaleImagesWhenResizing($condition);
     }
 
     public function imagePreviewHeight(string | Closure | null $height): static
@@ -250,16 +208,6 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
     public function orientImagesFromExif(bool | Closure $condition = true): static
     {
         $this->shouldOrientImagesFromExif = $condition;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `orientImagesFromExif()` instead.
-     */
-    public function orientImageFromExif(bool | Closure $condition = true): static
-    {
-        $this->orientImagesFromExif($condition);
 
         return $this;
     }
@@ -323,25 +271,9 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
         return $this->normalizeAspectRatio($imageAspectRatio);
     }
 
-    /**
-     * @deprecated Use `getAutomaticallyCropImagesAspectRatio()` instead.
-     */
-    public function getImageCropAspectRatio(): ?string
-    {
-        return $this->getAutomaticallyCropImagesAspectRatio();
-    }
-
     public function getAutomaticallyResizeImagesMode(): ?string
     {
         return $this->evaluate($this->automaticallyResizeImagesMode);
-    }
-
-    /**
-     * @deprecated Use `getAutomaticallyResizeImagesMode()` instead.
-     */
-    public function getImageResizeMode(): ?string
-    {
-        return $this->getAutomaticallyResizeImagesMode();
     }
 
     public function getAutomaticallyResizeImagesHeight(): ?string
@@ -349,38 +281,14 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
         return $this->evaluate($this->automaticallyResizeImagesHeight);
     }
 
-    /**
-     * @deprecated Use `getAutomaticallyResizeImagesHeight()` instead.
-     */
-    public function getImageResizeTargetHeight(): ?string
-    {
-        return $this->getAutomaticallyResizeImagesHeight();
-    }
-
     public function getAutomaticallyResizeImagesWidth(): ?string
     {
         return $this->evaluate($this->automaticallyResizeImagesWidth);
     }
 
-    /**
-     * @deprecated Use `getAutomaticallyResizeImagesWidth()` instead.
-     */
-    public function getImageResizeTargetWidth(): ?string
-    {
-        return $this->getAutomaticallyResizeImagesWidth();
-    }
-
     public function shouldAutomaticallyUpscaleImagesWhenResizing(): bool
     {
         return (bool) $this->evaluate($this->shouldAutomaticallyUpscaleImagesWhenResizing);
-    }
-
-    /**
-     * @deprecated Use `shouldAutomaticallyUpscaleImagesWhenResizing()` instead.
-     */
-    public function getImageResizeUpscale(): bool
-    {
-        return $this->shouldAutomaticallyUpscaleImagesWhenResizing();
     }
 
     public function getImagePreviewHeight(): ?string
@@ -526,16 +434,6 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
         $this->imageEditorAspectRatioOptions = $ratios;
 
         return $this;
-    }
-
-    /**
-     * @deprecated Use `imageEditorAspectRatioOptions()` instead.
-     *
-     * @param  array<string | null> | Closure  $ratios
-     */
-    public function imageEditorAspectRatios(array | Closure $ratios): static
-    {
-        return $this->imageEditorAspectRatioOptions($ratios);
     }
 
     public function getImageEditorViewportHeight(): ?int
@@ -690,16 +588,6 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                 fn (Collection $ratios) => $ratios->take(0),
             )
             ->all();
-    }
-
-    /**
-     * @deprecated Use `getImageEditorAspectRatioOptionsForJs()` instead.
-     *
-     * @return array<string, float | string>
-     */
-    public function getImageEditorAspectRatiosForJs(): array
-    {
-        return $this->getImageEditorAspectRatioOptionsForJs();
     }
 
     /**
