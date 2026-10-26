@@ -79,30 +79,10 @@ class ImageEntry extends Entry implements HasEmbeddedView
         return $this;
     }
 
-    /**
-     * @deprecated Use `imageHeight()` instead.
-     */
-    public function height(int | string | Closure | null $height): static
-    {
-        $this->imageHeight($height);
-
-        return $this;
-    }
-
     public function imageSize(int | string | Closure $size): static
     {
         $this->imageWidth($size);
         $this->imageHeight($size);
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `imageSize()` instead.
-     */
-    public function size(int | string | Closure $size): static
-    {
-        $this->imageSize($size);
 
         return $this;
     }
@@ -131,16 +111,6 @@ class ImageEntry extends Entry implements HasEmbeddedView
     public function imageWidth(int | string | Closure | null $width): static
     {
         $this->imageWidth = $width;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `imageWidth()` instead.
-     */
-    public function width(int | string | Closure | null $width): static
-    {
-        $this->imageWidth($width);
 
         return $this;
     }
@@ -189,14 +159,6 @@ class ImageEntry extends Entry implements HasEmbeddedView
         }
 
         return $height;
-    }
-
-    /**
-     * @deprecated Use `getImageHeight()` instead.
-     */
-    public function getHeight(): ?string
-    {
-        return $this->getImageHeight();
     }
 
     public function defaultImageUrl(string | Closure | null $url): static
@@ -303,14 +265,6 @@ class ImageEntry extends Entry implements HasEmbeddedView
         }
 
         return $width;
-    }
-
-    /**
-     * @deprecated Use `getImageWidth()` instead.
-     */
-    public function getWidth(): ?string
-    {
-        return $this->getImageWidth();
     }
 
     public function isCircular(): bool

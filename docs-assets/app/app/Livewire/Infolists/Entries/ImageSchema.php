@@ -36,7 +36,7 @@ class ImageSchema
                 ])
                 ->schema([
                     ImageEntry::make('author.avatar')
-                        ->height(40)
+                        ->imageHeight(40)
                         ->state('https://picsum.photos/id/177/1200/800')
                         ->square(),
                 ]),
@@ -47,7 +47,7 @@ class ImageSchema
                 ])
                 ->schema([
                     ImageEntry::make('author.avatar')
-                        ->height(40)
+                        ->imageHeight(40)
                         ->state('https://picsum.photos/id/433/1200/800')
                         ->circular(),
                 ]),
@@ -58,7 +58,7 @@ class ImageSchema
                 ])
                 ->schema([
                     ImageEntry::make('colleagues')
-                        ->height(40)
+                        ->imageHeight(40)
                         ->state([
                             'https://avatars.githubusercontent.com/u/41837763?v=4',
                             'https://avatars.githubusercontent.com/u/44533235?v=4',
@@ -76,7 +76,7 @@ class ImageSchema
                 ])
                 ->schema([
                     ImageEntry::make('colleagues')
-                        ->height(40)
+                        ->imageHeight(40)
                         ->state([
                             'https://avatars.githubusercontent.com/u/41837763?v=4',
                             'https://avatars.githubusercontent.com/u/44533235?v=4',
@@ -95,7 +95,7 @@ class ImageSchema
                 ])
                 ->schema([
                     ImageEntry::make('colleagues')
-                        ->height(40)
+                        ->imageHeight(40)
                         ->state([
                             'https://avatars.githubusercontent.com/u/41837763?v=4',
                             'https://avatars.githubusercontent.com/u/44533235?v=4',
@@ -115,7 +115,7 @@ class ImageSchema
                 ])
                 ->schema([
                     ImageEntry::make('colleagues')
-                        ->height(40)
+                        ->imageHeight(40)
                         ->state([
                             'https://avatars.githubusercontent.com/u/41837763?v=4',
                             'https://avatars.githubusercontent.com/u/44533235?v=4',
@@ -134,7 +134,7 @@ class ImageSchema
                 ])
                 ->schema([
                     ImageEntry::make('colleagues')
-                        ->height(40)
+                        ->imageHeight(40)
                         ->state([
                             'https://avatars.githubusercontent.com/u/41837763?v=4',
                             'https://avatars.githubusercontent.com/u/44533235?v=4',

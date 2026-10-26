@@ -88,8 +88,8 @@ it('returns fluent `$this` from `keyLabel()`', function (): void {
     expect($entry->keyLabel('Key'))->toBe($entry);
 });
 
-it('can use deprecated `emptyMessage()` as an alias for `placeholder()`', function (): void {
-    $entry = KeyValueEntry::make('metadata')->emptyMessage('No data available');
+it('can set `placeholder()`', function (): void {
+    $entry = KeyValueEntry::make('metadata')->placeholder('No data available');
     expect($entry->getPlaceholder())->toBe('No data available');
 });
 
@@ -106,8 +106,8 @@ describe('rendering', function (): void {
             ->assertSeeText('Dynamic Value');
     });
 
-    it('can render with `emptyMessage()` as placeholder', function (): void {
-        livewire(RenderKeyValueEntryWithEmptyMessage::class)
+    it('can render with `placeholder()`', function (): void {
+        livewire(RenderKeyValueEntryWithPlaceholder::class)
             ->assertSuccessful()
             ->assertSeeText('No data available');
     });
@@ -205,14 +205,14 @@ class RenderKeyValueEntryWithClosureValueLabel extends Component implements HasS
     }
 }
 
-class RenderKeyValueEntryWithEmptyMessage extends Component implements HasSchemas
+class RenderKeyValueEntryWithPlaceholder extends Component implements HasSchemas
 {
     use InteractsWithSchemas;
 
     public function infolist(Schema $schema): Schema
     {
         return $schema->state(['metadata' => []])->components([
-            KeyValueEntry::make('metadata')->emptyMessage('No data available'),
+            KeyValueEntry::make('metadata')->placeholder('No data available'),
         ]);
     }
 

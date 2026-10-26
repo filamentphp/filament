@@ -35,16 +35,6 @@ class KeyValueEntry extends Entry implements HasEmbeddedView
         return $this;
     }
 
-    /**
-     * @deprecated Use `placeholder()` instead.
-     */
-    public function emptyMessage(string | Closure | null $message): static
-    {
-        $this->placeholder($message);
-
-        return $this;
-    }
-
     public function getKeyLabel(): string
     {
         return $this->evaluate($this->keyLabel) ?? __('filament-infolists::components.entries.key_value.columns.key.label');

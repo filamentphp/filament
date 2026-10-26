@@ -285,7 +285,7 @@ class EntrySchema
                 ])
                 ->schema([
                     ImageEntry::make('colleagues')
-                        ->height(40)
+                        ->imageHeight(40)
                         ->state([
                             'https://avatars.githubusercontent.com/u/41837763?v=4',
                             'https://avatars.githubusercontent.com/u/44533235?v=4',
