@@ -2,6 +2,7 @@
 
 use Composer\InstalledVersions;
 use Filament\Upgrade\Rector\RenameDeprecatedActionMethodsRector;
+use Filament\Upgrade\Rector\RenameDeprecatedTableMethodsRector;
 use Filament\Upgrade\Rector\ReplaceConvenienceClassesRector;
 use Filament\Upgrade\Rector\WidenAvatarProviderParameterTypeRector;
 use Rector\Config\RectorConfig;
@@ -64,6 +65,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->rule(RenameDeprecatedActionMethodsRector::class);
+    $rectorConfig->rule(RenameDeprecatedTableMethodsRector::class);
     $rectorConfig->rule(ReplaceConvenienceClassesRector::class);
     $rectorConfig->rule(WidenAvatarProviderParameterTypeRector::class);
 };

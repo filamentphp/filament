@@ -43,11 +43,11 @@ class PostsRelationManager extends RelationManager
             ->headerActions([
                 Actions\CreateAction::make(),
             ])
-            ->actions([
+            ->recordActions([
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 Actions\BulkActionGroup::make([
                     Actions\DeleteBulkAction::make(),
                 ]),

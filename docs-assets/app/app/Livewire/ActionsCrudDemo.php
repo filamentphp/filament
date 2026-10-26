@@ -62,7 +62,7 @@ class ActionsCrudDemo extends Component implements HasActions, HasSchemas, HasTa
                 ExportAction::make()
                     ->exporter(PostExporter::class),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->schema(static::getPostForm()),
                 EditAction::make()

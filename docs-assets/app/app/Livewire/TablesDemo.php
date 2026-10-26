@@ -108,11 +108,11 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ->headerActions([
                 CreateAction::make(),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
@@ -187,7 +187,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     public function gettingStartedActions(Table $table): Table
     {
         return $this->gettingStartedFilters($table)
-            ->actions([
+            ->recordActions([
                 Action::make('feature')
                     ->action(function (Post $record): void {
                         $record->is_featured = true;
@@ -201,7 +201,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                     })
                     ->visible(fn (Post $record): bool => $record->is_featured),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
@@ -231,12 +231,12 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 TextColumn::make('phone')
                     ->label('Phone'),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('view')
                     ->icon(Heroicon::OutlinedEye)
                     ->iconButton(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
@@ -1620,7 +1620,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     public function actions(Table $table): Table
     {
         return $this->actionsTable($table)
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
             ]);
@@ -1629,7 +1629,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     public function actionsBeforeColumns(Table $table): Table
     {
         return $this->actionsTable($table)
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
             ], position: RecordActionsPosition::BeforeColumns);
@@ -1638,11 +1638,11 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     public function actionsBeforeCells(Table $table): Table
     {
         return $this->actionsTable($table)
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
             ], position: RecordActionsPosition::BeforeCells)
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
@@ -1652,7 +1652,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     public function bulkActions(Table $table): Table
     {
         return $this->actionsTable($table)
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
@@ -1662,7 +1662,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     public function bulkActionsNotGrouped(Table $table): Table
     {
         return $this->actionsTable($table)
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     ForceDeleteBulkAction::make(),
@@ -1690,7 +1690,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     public function groupedActions(Table $table): Table
     {
         return $this->actionsTable($table)
-            ->actions([
+            ->recordActions([
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
@@ -1702,7 +1702,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     public function groupedActionsIconButton(Table $table): Table
     {
         return $this->actionsTable($table)
-            ->actions([
+            ->recordActions([
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
@@ -1714,7 +1714,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     public function groupedActionsButton(Table $table): Table
     {
         return $this->actionsTable($table)
-            ->actions([
+            ->recordActions([
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
@@ -1728,7 +1728,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     public function groupedActionsLink(Table $table): Table
     {
         return $this->actionsTable($table)
-            ->actions([
+            ->recordActions([
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
@@ -1742,7 +1742,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     public function groupedActionsIcon(Table $table): Table
     {
         return $this->actionsTable($table)
-            ->actions([
+            ->recordActions([
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
@@ -1754,7 +1754,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     public function groupedActionsColor(Table $table): Table
     {
         return $this->actionsTable($table)
-            ->actions([
+            ->recordActions([
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
@@ -1766,7 +1766,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     public function groupedActionsSmall(Table $table): Table
     {
         return $this->actionsTable($table)
-            ->actions([
+            ->recordActions([
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
@@ -1778,7 +1778,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     public function groupedActionsTooltip(Table $table): Table
     {
         return $this->actionsTable($table)
-            ->actions([
+            ->recordActions([
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
@@ -1790,10 +1790,10 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     public function layoutTable(Table $table): Table
     {
         return $this->usersTable($table)
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

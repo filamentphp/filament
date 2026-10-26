@@ -149,14 +149,14 @@ class PostResource extends Resource
                 Tables\Filters\TernaryFilter::make('is_featured')
                     ->label('Featured'),
             ])
-            ->actions([
+            ->recordActions([
                 Actions\ViewAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
                 Actions\ForceDeleteAction::make(),
                 Actions\RestoreAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 Actions\BulkActionGroup::make([
                     Actions\DeleteBulkAction::make(),
                     Actions\ForceDeleteBulkAction::make(),

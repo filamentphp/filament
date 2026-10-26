@@ -215,8 +215,8 @@ trait InteractsWithTable
     {
         return Table::make($this)
             ->query(fn (): Builder | Relation | null => $this->getTableQuery())
-            ->when($this->getTableActions(), fn (Table $table, array $actions): Table => $table->actions($actions))
-            ->when($this->getTableActionsColumnLabel(), fn (Table $table, string $actionsColumnLabel): Table => $table->actionsColumnLabel($actionsColumnLabel))
+            ->when($this->getTableActions(), fn (Table $table, array $actions): Table => $table->recordActions($actions))
+            ->when($this->getTableActionsColumnLabel(), fn (Table $table, string $actionsColumnLabel): Table => $table->recordActionsColumnLabel($actionsColumnLabel))
             ->when($this->getTableColumns(), fn (Table $table, array $columns): Table => $table->columns($columns))
             ->when(($columnManagerColumns = $this->getTableColumnToggleFormColumns()) !== 1, fn (Table $table): Table => $table->columnManagerColumns($columnManagerColumns))
             ->when($this->getTableColumnToggleFormMaxHeight(), fn (Table $table, string $columnManagerMaxHeight): Table => $table->columnManagerMaxHeight($columnManagerMaxHeight))

@@ -26,10 +26,10 @@ class TagsRelationManager extends RelationManager
                 Actions\AttachAction::make()
                     ->preloadRecordSelect(),
             ])
-            ->actions([
+            ->recordActions([
                 Actions\DetachAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 Actions\DetachBulkAction::make(),
             ]);
     }

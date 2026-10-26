@@ -2,405 +2,231 @@
 title: Upgrade guide
 ---
 
-<Aside variant="info">
-    If you see anything missing from this guide, please don’t hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/6.x/docs/14-upgrade-guide.md) to our repository! Any help is appreciated!
-</Aside>
+## Introduction
+
+This guide covers upgrading from Filament 5 to 6.
 
 ## New requirements
 
 - PHP 8.3+
 - Laravel v12.0+
 
-If your app uses Laravel 11, upgrade it to Laravel 12 or later before running the Filament upgrade script.
+Upgrade Laravel before running the Filament upgrade script.
 
 ## Running the automated upgrade script
 
-<Aside variant="info">
-    Some plugins you're using may not be available in v6 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v6-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
-</Aside>
-
-The first step to upgrade your Filament app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles breaking changes:
+Check that your plugins support Filament 6 before upgrading. Commit your changes first: the script edits your files directly.
 
 ```bash
 composer require filament/upgrade:"^6.0" -W --dev
 
 vendor/bin/filament-v6
 
-# Run the commands output by the upgrade script, they are unique to your app
-composer require filament/filament:"^6.0" -W --no-update
+# Run the Composer commands printed by the script for your app, then:
 composer update
 ```
 
-<Aside variant="warning">
-    When using Windows PowerShell to install Filament, you may need to run the command below, since it ignores `^` characters in version constraints:
-
-    ```bash
-    composer require filament/upgrade:"~6.0" -W --dev
-
-    vendor/bin/filament-v6
-
-    # Run the commands output by the upgrade script, they are unique to your app
-    composer require filament/filament:"~6.0" -W --no-update
-    composer update
-    ```
+<Aside variant="info">
+    In Windows PowerShell, use `~6.0` instead of `^6.0` if the caret is ignored.
 </Aside>
 
-Make sure to carefully follow the instructions, and review the changes made by the script. You may need to make some manual changes to your code afterwards, but the script should handle most of the repetitive work for you.
+Review the script's changes and the breaking changes below, then test your app. You can remove the upgrade package afterwards with `composer remove filament/upgrade --dev`.
 
-You can now `composer remove filament/upgrade --dev` as you don't need it anymore.
+## Breaking changes
 
-## Breaking changes that must be handled manually
+<div x-data="{ packages: ['panels', 'schemas', 'forms', 'infolists', 'tables', 'actions', 'notifications', 'widgets'] }">
 
-<div x-data="{ packages: ['panels', 'forms', 'infolists', 'tables', 'actions', 'notifications', 'widgets'] }">
-
-To begin, filter the upgrade guide for your specific needs by selecting only the packages that you use in your project:
+Select the packages your app uses, including dependencies such as Schemas:
 
 <Checkboxes>
-    <Checkbox value="panels">
-        Panels
-    </Checkbox>
-
-    <Checkbox value="forms">
-        Forms
-
-        <span slot="description">
-            This package is also often used in a panel, or using the tables or actions package.
-        </span>
-    </Checkbox>
-
-    <Checkbox value="infolists">
-        Infolists
-
-        <span slot="description">
-            This package is also often used in a panel, or using the tables or actions package.
-        </span>
-    </Checkbox>
-
-    <Checkbox value="tables">
-        Tables
-
-        <span slot="description">
-            This package is also often used in a panel.
-        </span>
-    </Checkbox>
-
-    <Checkbox value="actions">
-        Actions
-
-        <span slot="description">
-            This package is also often used in a panel.
-        </span>
-    </Checkbox>
-
-    <Checkbox value="notifications">
-        Notifications
-
-        <span slot="description">
-            This package is also often used in a panel.
-        </span>
-    </Checkbox>
-
-    <Checkbox value="widgets">
-        Widgets
-
-        <span slot="description">
-            This package is also often used in a panel.
-        </span>
-    </Checkbox>
+    <Checkbox value="panels">Panels</Checkbox>
+    <Checkbox value="schemas">Schemas</Checkbox>
+    <Checkbox value="forms">Forms</Checkbox>
+    <Checkbox value="infolists">Infolists</Checkbox>
+    <Checkbox value="tables">Tables</Checkbox>
+    <Checkbox value="actions">Actions</Checkbox>
+    <Checkbox value="notifications">Notifications</Checkbox>
+    <Checkbox value="widgets">Widgets</Checkbox>
 </Checkboxes>
 
+Place global configuration examples in a service provider's `boot()` method. Prefer overriding individual components when only some need the previous behavior.
+
 ### Medium-impact changes
-
-<Disclosure open x-show="packages.includes('panels')">
-<span slot="summary">App authentication now checks one adjacent TOTP period by default</span>
-
-To reduce the time for which a time-based one-time password (TOTP) is accepted, app authentication now checks the code for the current 30-second period and the periods immediately before and after it. Previously, it checked eight periods in each direction.
-
-Most applications do not need to make any changes. However, if a user's device and your server resolve to time periods that are not immediately adjacent, their app authentication code may now be rejected. You should ensure that the clocks are synchronized. If you need to temporarily restore the previous tolerance, you can pass `8` to the `codeWindow()` method:
-
-```php
-use Filament\Auth\MultiFactor\App\AppAuthentication;
-use Filament\Panel;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ...
-        ->multiFactorAuthentication([
-            AppAuthentication::make()
-                ->codeWindow(8),
-        ]);
-}
-```
-
-See the [multi-factor authentication documentation](../users/multi-factor-authentication#changing-the-app-code-expiration-time) for more details.
-</Disclosure>
 
 <Disclosure open x-show="packages.includes('forms')">
 <span slot="summary">`FileUpload` now prevents file path tampering by default</span>
 
-To protect applications whose storage disks hold files belonging to more than one user, tenant, or record, the `FileUpload` field now validates submitted file paths by default. Previously this check was opt-in via `preventFilePathTampering()`.
+`FileUpload` now rejects submitted file paths unless they were already stored on the record. New uploads and cleared values are unaffected.
 
-Every submitted string path is now compared against the value originally loaded from the record (via `$record->getOriginal()` for the attribute matching the field name). Paths that do not match cause the field to fail validation, so the record is never saved with a tampered value. Newly uploaded files, cleared values, and — for `multiple()` fields — each individual entry are all handled as before.
-
-This only affects fields that submit a string path that was **not** already stored on the record. Most applications never do this, so no changes are required. However, if you rely on a flow that sets the field to a path outside the record — for example, an action that selects a pre-uploaded template file, a "copy from another record" button, or a field seeded with a preset path via `->default('path/to/file.png')` on a create form — those submissions will now fail validation.
-
-You have three options, in order of preference:
-
-- Approve the specific paths using the `allowFilePathUsing` argument, so only known-safe paths are permitted:
+If you set paths through defaults, shared libraries, or copying from another record, allow the permitted paths using `allowFilePathUsing`. To restore the previous default globally:
 
 ```php
 use Filament\Forms\Components\FileUpload;
 
-FileUpload::make('avatar')
-    ->preventFilePathTampering(
-        allowFilePathUsing: fn (string $file): bool => str_starts_with($file, 'templates/'),
-    )
-```
-
-- Disable the protection on the individual fields that need it:
-
-```php
-use Filament\Forms\Components\FileUpload;
-
-FileUpload::make('avatar')
-    ->preventFilePathTampering(false)
-```
-
-- Restore the previous behavior for every `FileUpload` in your application by calling `configureUsing()` in a service provider's `boot()` method. This reintroduces the tampering risk across your whole app, so prefer one of the options above:
-
-```php
-use Filament\Forms\Components\FileUpload;
-
-FileUpload::configureUsing(function (FileUpload $component): void {
+FileUpload::configureUsing(static function (FileUpload $component): void {
     $component->preventFilePathTampering(false);
 });
 ```
 
-See the [file upload documentation](../forms/file-upload#authorizing-existing-file-paths) for more details.
+Disabling this protection requires you to authorize submitted paths yourself to prevent access to other users' or tenants' files.
+
+See [authorizing existing file paths](../forms/file-upload#authorizing-existing-file-paths).
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('forms')">
 <span slot="summary">`RichEditor` now prevents file attachment path tampering by default</span>
 
-For the same reason as the `FileUpload` change above, the `RichEditor` field now validates the `data-id` attributes of image nodes in submitted content by default. Previously this check was opt-in via `preventFileAttachmentPathTampering()`.
+`RichEditor` now rejects image attachment IDs that were not already stored in the record's original content. New uploads are unaffected, as are attachments using the Spatie Media Library provider.
 
-Filament parses the record's original content (via `$record->getOriginal()` for the attribute matching the field name) and allows only the `data-id` values already present. Any other existing `data-id` causes the field to fail validation, so the record is never saved with a tampered value. Newly uploaded images always pass through. If you use the [`spatie/laravel-medialibrary` plugin](https://filamentphp.com/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) as the file attachment provider, this protection was already implicit and its behavior is unchanged.
-
-This only affects editors that insert a `data-id` that was **not** already stored on the record — for example, an action that inserts an image from a shared library, or a "copy from another record" button. If you rely on such a flow, you have the same three options as for `FileUpload`:
-
-- Approve the specific identifiers using the `allowFilePathUsing` argument:
+If you insert existing images from a shared library or another record, allow those IDs using `allowFilePathUsing`. To restore the previous default globally:
 
 ```php
 use Filament\Forms\Components\RichEditor;
 
-RichEditor::make('content')
-    ->preventFileAttachmentPathTampering(
-        allowFilePathUsing: fn (string $file): bool => str_starts_with($file, 'templates/'),
-    )
-```
-
-- Disable the protection on the individual fields that need it:
-
-```php
-use Filament\Forms\Components\RichEditor;
-
-RichEditor::make('content')
-    ->preventFileAttachmentPathTampering(false)
-```
-
-- Restore the previous behavior for every `RichEditor` in your application by calling `configureUsing()` in a service provider's `boot()` method. This reintroduces the tampering risk across your whole app, so prefer one of the options above:
-
-```php
-use Filament\Forms\Components\RichEditor;
-
-RichEditor::configureUsing(function (RichEditor $component): void {
+RichEditor::configureUsing(static function (RichEditor $component): void {
     $component->preventFileAttachmentPathTampering(false);
 });
 ```
 
-See the [rich editor documentation](../forms/rich-editor#securing-file-attachment-ids) for more details.
+Disabling this protection requires you to authorize submitted attachment IDs yourself.
+
+See [securing file attachment IDs](../forms/rich-editor#securing-file-attachment-ids).
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('actions')">
+<span slot="summary">Exports and import failure CSVs now prevent formula injection by default</span>
+
+Exported strings and import failure CSV cells beginning with `=`, `+`, `-`, `@`, a tab, or a carriage return are now prefixed with a single quote to prevent spreadsheet formula execution. Numeric strings such as `-5` are unchanged. Values such as the phone number `+44 1234 567890` gain a quote, which may affect systems that consume these files.
+
+For trusted data only, you can restore the previous defaults globally:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+use Filament\Actions\Imports\Importer;
+
+ExportColumn::configureUsing(static function (ExportColumn $column): void {
+    $column->preventFormulaInjection(false);
+});
+
+Importer::preventFormulaInjection(false);
+```
+
+For individual components, use `preventFormulaInjection(false)` on an export column or redeclare `protected static bool $shouldPreventFormulaInjection = false` on an importer. Disabling either protection allows spreadsheet formulas in the affected output.
+
+See [export formula injection](../actions/export#csv-formula-injection) and [import failure CSV formula injection](../actions/import#csv-formula-injection).
+</Disclosure>
+
+### Low-impact changes
+
+<Disclosure open x-show="packages.includes('tables')">
+<span slot="summary">Tables now limit bulk selections to 10,000 records by default</span>
+
+The previously unlimited bulk selection now defaults to `maxSelectableRecords(10000)`. If your app processes larger selections, raise the limit on the affected table. To restore unlimited selection globally:
+
+```php
+use Filament\Tables\Table;
+
+Table::configureUsing(static function (Table $table): void {
+    $table->maxSelectableRecords(null);
+});
+```
+
+For database-backed tables, oversized bulk actions process only a subset of the selection, including inverse selections tracking deselected records. They do not reject the whole action. Custom-data tables throw a `LogicException` instead. The all-pages "select all" link is hidden when the selectable count exceeds the limit.
+
+The limit does not guarantee bounded memory usage or execution time. See [selection limits](../tables/actions#limiting-the-number-of-selectable-records) and [bulk-action performance](../tables/actions#improving-the-performance-of-bulk-actions) before increasing it.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('forms') || packages.includes('infolists')">
 <span slot="summary">Repeaters, builders, and repeatable entries now limit item processing by default</span>
 
-`Repeater` and `Builder` now process at most 500 items each by default, while `RepeatableEntry` processes at most 1,000 items. Previously, the processing limit was disabled. If existing or submitted state exceeds the component's limit, Filament aborts with an HTTP 413 response before building the item schemas, without truncating the data. This is separate from `maxItems()` validation.
+`Repeater` and `Builder` now limit processing to 500 items per component; `RepeatableEntry` limits it to 1,000. Previously, processing was unlimited. Exceeding the limit aborts with HTTP 413 without truncating data, including when opening existing records.
 
-Check existing records before upgrading: records containing more items than the component's limit cannot be opened through the affected form or infolist until you raise the limit. Set `maxItemsForProcessing()` on components that legitimately need more items:
+Check records with large item counts before upgrading. Raise `maxItemsForProcessing()` on affected components, or restore unlimited processing globally:
 
 ```php
+use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Repeater;
+use Filament\Infolists\Components\RepeatableEntry;
 
-Repeater::make('members')
-    ->schema([
-        // ...
-    ])
-    ->maxItemsForProcessing(1000)
+Repeater::configureUsing(static function (Repeater $component): void {
+    $component->maxItemsForProcessing(null);
+});
+
+Builder::configureUsing(static function (Builder $component): void {
+    $component->maxItemsForProcessing(null);
+});
+
+RepeatableEntry::configureUsing(static function (RepeatableEntry $component): void {
+    $component->maxItemsForProcessing(null);
+});
 ```
 
-Use the same method on `Builder` and `RepeatableEntry`, or pass `null` to restore unlimited processing. You can also use each class's `configureUsing()` method to change its default globally. Query Builder's internal rule builders and OR-group repeaters retain their separate `maxRules()` and `maxNestingDepth()` limits.
+This is separate from `maxItems()` validation and is not a request-size or execution-time guarantee. Query Builder retains its separate rule-tree limits.
 
-The limit applies per component, not to the total number of nested items or fields. It does not bound request decoding, database loading, or individual field costs, and does not guarantee a particular load time. See the [processing-limit documentation](../forms/repeater#limiting-item-processing) for configuration and limitations.
+See [limiting item processing](../forms/repeater#limiting-item-processing).
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
 <span slot="summary">Tables now enforce pagination options by default</span>
 
-Tables now restrict client-submitted page sizes to the configured pagination options. Previously, the options only constrained the page-size selector unless you enabled `enforcePaginationPageOptions()`.
+Submitted page sizes must now match the table's configured pagination options. If you set page sizes directly in PHP, include them in those options, or opt the table out with `enforcePaginationPageOptions(false)`.
 
-Most applications do not need to change anything. If your code sets a page size directly in PHP, make sure that size is included in the table's pagination options. Invalid page sizes fall back to a valid saved selection or the default option. Saved selections that are no longer listed are discarded in favor of the first option.
-
-If your table intentionally accepts sizes outside its options, you can restore the previous behavior for that table:
+To restore the previous default globally:
 
 ```php
 use Filament\Tables\Table;
 
-public function table(Table $table): Table
-{
-    return $table
-        ->enforcePaginationPageOptions(false);
-}
+Table::configureUsing(static function (Table $table): void {
+    $table->enforcePaginationPageOptions(false);
+});
 ```
 
-Explicitly configured `'all'` options and tables with `paginated(false)` remain unrestricted. For a fixed page size without a selector, use a single pagination option, or an empty options list with `defaultPaginationPageOption()`.
+Invalid sizes fall back to a valid saved selection or the default option. Stale saved selections fall back to the first option. Explicit `'all'` options and `paginated(false)` remain unrestricted.
 
-See the [pagination documentation](../tables/overview#enforcing-the-pagination-options) for more details.
-</Disclosure>
-
-<Disclosure open x-show="packages.includes('tables')">
-<span slot="summary">Tables now limit bulk selections to 10,000 records by default</span>
-
-Tables now default to `maxSelectableRecords(10000)`. Previously, the selection limit was disabled. The selection controls prevent selecting more records than the limit and hide the all-pages "select all" link when the selectable count exceeds it.
-
-For database-backed tables, an oversized selection submitted to a bulk action is limited to a subset of the selected records rather than rejecting the whole action with a notification. This also applies to inverse selections that track deselected records. Custom-data tables instead throw a `LogicException` if their resolved selection exceeds the limit.
-
-If your application intentionally processes larger selections, raise the limit for the affected table or pass `null` to restore unlimited selection:
-
-```php
-use Filament\Tables\Table;
-
-public function table(Table $table): Table
-{
-    return $table
-        ->maxSelectableRecords(20000);
-}
-```
-
-You can also change the default for all tables using `Table::configureUsing()` in a service provider's `boot()` method. This is a processing safeguard, not a request-size, memory, or execution-time guarantee. Review [bulk-action performance](../tables/actions#improving-the-performance-of-bulk-actions) before increasing or disabling it, and use chunking to reduce model-loading memory for large selections.
-
-See the [selection-limit documentation](../tables/actions#limiting-the-number-of-selectable-records) for more details.
+See [enforcing pagination options](../tables/overview#enforcing-the-pagination-options), including fixed page sizes without a selector.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
 <span slot="summary">`QueryBuilder` filters now limit rule-tree complexity by default</span>
 
-To protect against requests containing excessively large or deeply nested rule trees consuming too much server memory or CPU, `QueryBuilder` filters now limit each rule tree to 100 rules with a maximum nesting depth of 5 by default. Previously, both limits were disabled by default.
+Rule trees now default to at most 100 conditions and a nesting depth of 5. Previously, both were unlimited. If existing or submitted state exceeds either limit, **the filter is ignored and no constraints are applied**.
 
-The `maxRules()` limit counts individual conditions, while the top-level list of rules has a nesting depth of 1 and each nested "OR" group adds 1 to the depth. The UI disables new-rule and clone actions once the maximum number of rules is reached, and it stops offering deeper "OR" groups at the maximum nesting depth. If existing or submitted filter state exceeds either limit, the filter is ignored and no constraints are applied to the query.
-
-If your users need to build larger rule trees, you can customize the limits for an individual filter:
+For larger filters, raise `maxRules()` and `maxNestingDepth()` on the `QueryBuilder` filter. To restore unlimited rule trees globally, at the risk of excessive resource consumption:
 
 ```php
 use Filament\Tables\Filters\QueryBuilder;
 
-QueryBuilder::make()
-    ->maxRules(200)
-    ->maxNestingDepth(8)
-    ->constraints([
-        // ...
-    ])
-```
-
-To restore the previous behavior for every `QueryBuilder` filter in your application, call `configureUsing()` in a service provider's `boot()` method. Disabling the limits reintroduces the risk of excessive resource consumption, so prefer setting higher limits where possible:
-
-```php
-use Filament\Tables\Filters\QueryBuilder;
-
-QueryBuilder::configureUsing(function (QueryBuilder $queryBuilder): void {
+QueryBuilder::configureUsing(static function (QueryBuilder $queryBuilder): void {
     $queryBuilder
         ->maxRules(null)
         ->maxNestingDepth(null);
 });
 ```
 
-See the [query builder documentation](../tables/filters/query-builder#limiting-the-size-of-the-rule-tree) for more details.
+See [limiting the size of the rule tree](../tables/filters/query-builder#limiting-the-size-of-the-rule-tree).
 </Disclosure>
 
-<Disclosure open x-show="packages.includes('actions')">
-<span slot="summary">Exports now prevent CSV/XLSX formula injection by default</span>
+<Disclosure open x-show="packages.includes('panels')">
+<span slot="summary">App authentication now accepts a smaller TOTP window</span>
 
-To protect people who open exported files in spreadsheet software, every `ExportColumn` now neutralizes CSV/XLSX formula injection by default. Previously this check was opt-in via `preventFormulaInjection()`.
-
-Any exported string value that begins with a formula-triggering character (`=`, `+`, `-`, `@`, a tab, or a carriage return) is now prefixed with a single quote (`'`) so that spreadsheet software treats it as plain text. Purely numeric strings such as `-5` are left unchanged, since spreadsheets interpret them as numbers rather than formulas.
-
-This only changes the output for string values that begin with one of those characters and are not purely numeric — for example, a phone number stored as a string like `+44 1234 567890` will now be exported as `'+44 1234 567890`. If a specific column exports trusted data where this transformation is unwanted, disable the protection for that column:
+App authentication now accepts codes from the current 30-second period and one period on either side, rather than eight. Synchronize server and user-device clocks if valid codes are rejected. To temporarily restore the previous tolerance, configure the provider in your panel's `multiFactorAuthentication()` configuration:
 
 ```php
-use Filament\Actions\Exports\ExportColumn;
+use Filament\Auth\MultiFactor\App\AppAuthentication;
 
-ExportColumn::make('phone')
-    ->preventFormulaInjection(false)
+AppAuthentication::make()
+    ->codeWindow(8)
 ```
 
-To restore the previous behavior for every export column in your application, call `configureUsing()` in a service provider's `boot()` method. This reintroduces the formula injection risk across all your exports, so prefer disabling it only on the individual columns that need it:
-
-```php
-use Filament\Actions\Exports\ExportColumn;
-
-ExportColumn::configureUsing(function (ExportColumn $column): void {
-    $column->preventFormulaInjection(false);
-});
-```
-
-See the [export documentation](../actions/export#csv-formula-injection) for more details.
+See [changing the app code expiration time](../users/multi-factor-authentication#changing-the-app-code-expiration-time).
 </Disclosure>
 
-<Disclosure open x-show="packages.includes('actions')">
-<span slot="summary">Import failure CSVs now prevent formula injection by default</span>
-
-When rows fail validation during an import, Filament compiles them into a downloadable failure CSV. To protect people who open that file in spreadsheet software, formula injection is now neutralized in the failure CSV by default. Previously this check was opt-in via `preventFormulaInjection()`.
-
-Any cell that begins with a formula-triggering character (`=`, `+`, `-`, `@`, a tab, or a carriage return) is now prefixed with a single quote (`'`). Purely numeric strings such as `-5` are left unchanged, so the failure CSV can still be corrected and re-uploaded without corrupting legitimate data.
-
-This only changes the failure CSV output for values that begin with one of those characters and are not purely numeric — for example, a phone number stored as a string like `+44 1234 567890` will now appear as `'+44 1234 567890`. If a specific importer processes trusted files where this transformation is unwanted, disable it by redeclaring the property on your importer class:
-
-```php
-use Filament\Actions\Imports\Importer;
-
-class ProductImporter extends Importer
-{
-    protected static bool $shouldPreventFormulaInjection = false;
-}
-```
-
-To restore the previous behavior for every importer in your application, call `preventFormulaInjection(false)` in a service provider's `boot()` method:
-
-```php
-use Filament\Actions\Imports\Importer;
-
-Importer::preventFormulaInjection(false);
-```
-
-See the [import documentation](../actions/import#csv-formula-injection) for more details.
-</Disclosure>
-
-<Disclosure open x-show="packages.includes('actions')">
-<span slot="summary">OpenSpout has been upgraded to v5</span>
-
-The Actions package now depends on OpenSpout v5. If you customize XLSX exports using the OpenSpout API, you should update your code for its breaking changes. In particular, most OpenSpout objects are now immutable, so you should configure them using constructor arguments or `with*()` methods instead of setter methods. Rows no longer accept a default `Style`; apply styles to individual cells using `Cell::fromValue()` or `Row::fromValuesWithStyles()` instead.
-
-See the [XLSX export customization documentation](../actions/export#customizing-xlsx-files) for updated examples and the [OpenSpout v5 upgrade guide](https://github.com/openspout/openspout/blob/5.x/UPGRADE.md#upgrading-from-4x-to-50) for a complete list of changes.
-</Disclosure>
-
-<Disclosure open>
+<Disclosure open x-show="packages.includes('schemas')">
 <span slot="summary">Livewire file uploads are now restricted to schema components by default</span>
 
-Every Livewire component that uses the `InteractsWithSchemas` trait exposes Livewire's `_startUpload` and `_finishUpload` RPC methods, which by default accept uploads to any property name — even ones that are not real upload fields. To close this, Filament now restricts these uploads by default: `_startUpload` and `_finishUpload` abort with a `403` unless the target property maps to a `FileUpload` field (or any field that supports file attachments) registered in one of the component's schemas. Previously this was opt-in via the `RestrictsFileUploadsToSchemaComponents` trait.
+Components using `InteractsWithSchemas` now reject uploads with HTTP 403 unless the target property belongs to a schema component that supports uploads. Uploads through Filament fields are unaffected.
 
-Legitimate uploads from your schema's fields are unaffected. This only changes behavior for components that accept uploads to a property that is **not** a schema field — for example, a custom Livewire component that wires `wire:model` for a file upload to a property outside its Filament schema.
-
-The `RestrictsFileUploadsToSchemaComponents` trait has been removed, since its behavior is now the default. The upgrade command removes any usage of it from your components automatically. If a component legitimately needs to accept uploads to a non-schema property, opt out by overriding the method:
+If your component uploads directly to a non-schema property, opt out on that Livewire component and secure that upload yourself:
 
 ```php
 public function shouldRestrictFileUploadsToSchemaComponents(): bool
@@ -409,15 +235,45 @@ public function shouldRestrictFileUploadsToSchemaComponents(): bool
 }
 ```
 
-See the [security documentation](../advanced/security#restricting-livewire-file-uploads-to-schema-components) for more details.
+The upgrade script removes the obsolete `RestrictsFileUploadsToSchemaComponents` trait automatically. See [restricting Livewire file uploads](../advanced/security#restricting-livewire-file-uploads-to-schema-components).
 </Disclosure>
 
-### Low-impact changes
+<Disclosure open x-show="packages.includes('actions')">
+<span slot="summary">OpenSpout has been upgraded to v5</span>
+
+If you customize XLSX exports through OpenSpout, update your code for v5's immutable objects. Use constructor arguments or `with*()` methods instead of setters, and apply cell styles through `Cell::fromValue()` or `Row::fromValuesWithStyles()` rather than a default row style.
+
+See [customizing XLSX files](../actions/export#customizing-xlsx-files) and the [OpenSpout upgrade guide](https://github.com/openspout/openspout/blob/5.x/UPGRADE.md#upgrading-from-4x-to-50).
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('panels')">
+<span slot="summary">Custom avatar providers must accept non-Eloquent users</span>
+
+`AvatarProvider::get()` now accepts `Model | Authenticatable` instead of only `Model`. The script updates declarations directly on providers and interfaces extending `AvatarProvider`; update methods supplied by traits or non-provider parent classes manually.
+
+```php
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+
+public function get(Model | Authenticatable $record): string
+{
+    // Return the avatar URL for the record.
+}
+```
+
+Review Eloquent-specific calls if your app uses non-Eloquent users. Already-compatible parameter types need no change. See [custom avatar providers](../users/overview#using-a-different-avatar-provider).
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('actions')">
+<span slot="summary">Import and export job tags are now namespaced</span>
+
+Job tags change from `import{id}` and `export{id}` to `filament:import:{id}` and `filament:export:{id}`. Update filters or monitoring that use them. Existing tags and custom `getJobTags()` overrides are unchanged.
+</Disclosure>
 
 <Disclosure open x-show="packages.includes('actions')">
 <span slot="summary">Deprecated action method aliases have been removed</span>
 
-The following deprecated methods on `Filament\Actions\Action` and its subclasses have been removed. Use their replacements instead:
+The script renames calls on `Filament\Actions\Action` and its subclasses:
 
 | Removed method | Replacement |
 | --- | --- |
@@ -434,145 +290,108 @@ The following deprecated methods on `Filament\Actions\Action` and its subclasses
 | `getFormData()` | `getData()` |
 | `getRawFormData()` | `getRawData()` |
 
-The automated upgrade script renames instance calls when it can identify the receiver as an `Action` or subclass, including nullsafe calls and first-class callables. It also changes the named argument `form:` to `schema:` when replacing `form()`. Other parameter names are unchanged. Methods with these names on unrelated types, such as a resource's `form()`, are not renamed.
+It also renames `form:` arguments to `schema:`. Calls unpacking arguments into `form()` are left unchanged; rename the method and any `'form'` argument key manually. Update named arguments when invoking migrated first-class callables yourself.
 
-Custom method declarations are not renamed. Calls whose receiver is known to override an alias or its replacement are left unchanged, since overrides may change parameter names, defaults, or behavior. This also applies to overrides inherited from another subclass. A receiver typed as the base `Action` may still contain a custom subclass at runtime. If you override any of these methods, migrate the alias declarations and calls manually, and review any automated changes to ensure they preserve your custom behavior and forwarded arguments.
+Manually migrate custom overrides (including inherited ones), class-qualified calls such as `parent::disabledForm()`, dynamic names, callbacks, unknown receiver types, and non-PHP references. Calls on known overrides are skipped; review changes where a base-typed receiver may hold a custom subclass. Classes using action concerns without extending `Action` also need manual migration.
 
-Class-qualified calls, such as `parent::disabledForm()`, are left unchanged and must be migrated manually. The removed wrappers called the replacement methods through `$this`, so simply renaming a `parent::` call could bypass a replacement method overridden in your subclass. Preserve that dispatch behavior when updating these calls.
-
-Calls to `form()` that unpack arguments, such as `form(...$arguments)`, are also left unchanged. Rename the method and change any unpacked named-argument key from `'form'` to `'schema'` manually.
-
-You must also manually update dynamic method names, string or array callbacks, calls whose receiver type cannot be determined, and references outside PHP files. If you invoke a migrated first-class callable with named arguments, update `form:` to `schema:` at that invocation yourself. If you use these concerns directly on a class that does not extend `Action`, update its calls manually.
-</Disclosure>
-
-<Disclosure open x-show="packages.includes('panels')">
-<span slot="summary">Custom avatar providers must accept non-Eloquent users</span>
-
-The `AvatarProvider::get()` method now accepts `Model | Authenticatable` instead of only `Model`, so avatar providers can receive users that do not extend an Eloquent model.
-
-If you have a custom avatar provider, update its `get()` parameter type:
-
-```php
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Database\Eloquent\Model;
-
-public function get(Model | Authenticatable $record): string
-{
-    // Return the avatar URL for the record.
-}
-```
-
-The automated upgrade script updates this parameter type when `get()` is declared directly on a class implementing `AvatarProvider` or an interface extending it. If your provider uses a `get()` method declared in a trait or inherited from a parent class that does not implement `AvatarProvider`, you must update that declaration manually.
-
-You should review your provider's implementation for Eloquent-specific method calls and handle non-Eloquent users if your application uses them. Providers that already accept both types, `object`, `mixed`, or an untyped parameter do not need a signature change.
-
-See the [custom avatar provider documentation](../users/overview#using-a-different-avatar-provider) for more details.
-</Disclosure>
-
-<Disclosure open x-show="packages.includes('actions')">
-<span slot="summary">Import and export job tags are now namespaced</span>
-
-Default job tags have changed from `import{id}` and `export{id}` to `filament:import:{id}` and `filament:export:{id}`, respectively.
-
-If you filter or monitor jobs using these tags, update your filters to the new formats. Previously recorded tags are not rewritten. If you override `getJobTags()` in an importer or exporter, your overrides remain in effect; review any code that relies on the previous defaults.
-
-See the [import job tags documentation](../actions/import#customizing-the-import-job-tags) and [export job tags documentation](../actions/export#customizing-the-export-job-tags) for the updated examples.
+Preserve custom parameter names, defaults, and dispatch behavior: the old wrappers called replacements through `$this`, so simply renaming a `parent::` call may bypass a subclass override.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
-<span slot="summary">Legacy query builder constraint namespaces have been removed</span>
+<span slot="summary">Deprecated fluent table method aliases have been removed</span>
 
-The compatibility classes and traits under `Filament\Tables\Filters\QueryBuilder\Constraints` have been removed. Use the corresponding classes and traits under `Filament\QueryBuilder\Constraints` instead. For example, import `Filament\QueryBuilder\Constraints\TextConstraint` instead of `Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint`.
+The script renames calls on `Filament\Tables\Table` and its subclasses, preserving named and unpacked arguments:
 
-The automated upgrade script updates PHP references to these constraints, their operators, and their traits, including custom subclasses and PHPDoc types. Review references stored as strings or outside PHP files and update them manually. The table filter itself remains `Filament\Tables\Filters\QueryBuilder`, and its configuration is unchanged.
+| Removed method | Replacement |
+| --- | --- |
+| `actions()` | `recordActions()` |
+| `pushActions()` | `pushRecordActions()` |
+| `actionsColumnLabel()` | `recordActionsColumnLabel()` |
+| `actionsAlignment()` | `recordActionsAlignment()` |
+| `actionsPosition()` | `recordActionsPosition()` |
+| `getActions()` | `getRecordActions()` |
+| `getActionsPosition()` | `getRecordActionsPosition()` |
+| `getActionsAlignment()` | `getRecordActionsAlignment()` |
+| `getActionsColumnLabel()` | `getRecordActionsColumnLabel()` |
+| `bulkActions()` | `toolbarActions()` |
+| `pushBulkActions()` | `pushToolbarActions()` |
+| `getBulkActions()` | `getToolbarActions()` |
+| `toggleColumnsTriggerAction()` | `columnManagerTriggerAction()` |
+| `columnToggleFormColumns()` | `columnManagerColumns()` |
+| `columnToggleFormMaxHeight()` | `columnManagerMaxHeight()` |
+| `columnToggleFormWidth()` | `columnManagerWidth()` |
+| `getColumnToggleFormColumns()` | `getColumnManagerColumns()` |
+| `getColumnToggleFormMaxHeight()` | `getColumnManagerMaxHeight()` |
+| `getColumnToggleFormWidth()` | `getColumnManagerWidth()` |
+| `getToggleColumnsTriggerAction()` | `getColumnManagerTriggerAction()` |
 
-Grouped imports may be left unused after their references are updated. You can remove these unused imports manually.
+`getColumnManagerWidth()` returns `Filament\Support\Enums\Width | string | null`, not the old getter's `?string`. Review string-only consumers and your own return types. To convert an enum to a string, use `$width instanceof Width ? $width->value : $width`, importing `Filament\Support\Enums\Width`.
 
-See the [query builder documentation](../tables/filters/query-builder) for the current namespaces.
+Manually migrate custom overrides (including inherited ones), class-qualified calls, dynamic names, callbacks, unknown receiver types, and non-PHP references. Calls on known overrides are skipped; review changes where a base-typed receiver may hold a custom subclass. Classes using table concerns without extending `Table` also need manual migration.
+
+Preserve custom parameters and return behavior. The old wrappers dispatched through `$this`, so renaming `parent::` calls can bypass subclass overrides. Record-action and bulk-action setters also returned `$this` regardless of the replacement's return value.
+
+`groupedBulkActions()` and legacy Livewire configuration hooks such as `getTableActions()` remain available.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('actions') || packages.includes('tables')">
 <span slot="summary">Deprecated action and filter convenience classes have been removed</span>
 
-Replace `Filament\Actions\ButtonAction` and `Filament\Actions\IconButtonAction` with `Filament\Actions\Action`, calling `button()` or `iconButton()` immediately after `make()`. Replace `Filament\Tables\Filters\MultiSelectFilter` with `Filament\Tables\Filters\SelectFilter`, calling `multiple()`:
+The script replaces direct factories as follows, preserving subsequent chained configuration:
 
-```php
-use Filament\Actions\Action;
-use Filament\Tables\Filters\SelectFilter;
+| Removed factory | Replacement |
+| --- | --- |
+| `Filament\Actions\ButtonAction::make()` | `Filament\Actions\Action::make()->button()` |
+| `Filament\Actions\IconButtonAction::make()` | `Filament\Actions\Action::make()->iconButton()` |
+| `Filament\Tables\Filters\MultiSelectFilter::make()` | `Filament\Tables\Filters\SelectFilter::make()->multiple()` |
 
-Action::make('save')->button();
-Action::make('edit')->iconButton()->icon('heroicon-m-pencil');
-SelectFilter::make('status')->multiple()->options([
-    'draft' => 'Draft',
-    'published' => 'Published',
-]);
-```
+It also renames PHP class references, including custom parent classes, types, and `::class`. Review these cases:
 
-The automated upgrade script updates direct `ButtonAction::make()`, `IconButtonAction::make()`, and `MultiSelectFilter::make()` calls, including aliased imports and fully qualified names. It inserts `button()`, `iconButton()`, or `multiple()` immediately after `make()` and preserves the existing chain. Subsequent configuration still takes precedence.
+- **Global configuration, bindings, and type checks:** These now target the parent class and may affect unrelated actions or filters. Move configuration to individual components or a custom subclass if it should remain scoped. Explicit style and multiplicity methods now run after `make()` configuration callbacks, which may change configuration precedence or the values callbacks observe.
+- **Custom subclasses:** Add `button()`, `iconButton()`, or `multiple()` after `parent::setUp()` in your subclass where needed; the script does not add this configuration.
+- **Other construction paths:** Direct constructors, dynamic factories, and first-class factory callables receive class renames but not the explicit configuration methods. Add them manually. Update string and non-PHP references yourself, and remove unused imports.
+</Disclosure>
 
-The script also renames PHP class references to `Action` or `SelectFilter`, including parameter and return types, PHPDoc, custom parent classes, `instanceof` checks, and `::class` references. This makes common usages easier to migrate, but replacing a specialized class with its parent can broaden the scope of your configuration and type checks. Review these cases before using the migrated code:
+<Disclosure open x-show="packages.includes('tables')">
+<span slot="summary">Legacy query builder constraint namespaces have been removed</span>
 
-- **Global configuration and container bindings:** Renamed `configureUsing()` calls and bindings using `::class` now target the parent class, so configuration previously limited to button actions, icon-button actions, or multi-select filters can affect unrelated actions or select filters. Move that configuration to individual components or a custom subclass if it should remain scoped. Review base-class configuration too: the new explicit methods run after all `make()` configuration callbacks, whereas the old action styles ran during `setUp()`, and the old filter was already multiple throughout configuration. Important action configuration that changed the view could previously override the wrapper's style, but now runs before the explicit style method. Configuration callbacks that inspect the view or multiplicity may also observe different values.
-- **Custom subclasses:** The script changes the parent class but does not add configuration to your subclass. Call `button()`, `iconButton()`, or `multiple()` after `parent::setUp()` in your subclass's `setUp()` method where needed. Factories on custom subclasses are not given these methods automatically.
-- **Class identity:** Renamed types and `instanceof` checks accept all instances of the parent class, not just instances of the former convenience class. Review code that relied on distinguishing those components.
-- **Other construction paths and references:** Dynamic static calls, direct constructors, and first-class factory callables have their class references renamed, but do not receive the explicit configuration methods. Add the required configuration manually where needed. References stored as strings or outside PHP files must be updated manually. Remove unused imports of the deleted classes after reviewing the migration.
+The script replaces PHP references under `Filament\Tables\Filters\QueryBuilder\Constraints` with `Filament\QueryBuilder\Constraints`, including operators, traits, subclasses, and PHPDoc. Update string and non-PHP references manually and remove unused imports.
 
+The filter itself remains `Filament\Tables\Filters\QueryBuilder`; its configuration is unchanged.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
 <span slot="summary">Deprecated column-toggle render hook constants have been removed</span>
 
-The deprecated `TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER` and `TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE` constants have been removed. Use `TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER` and `TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE` instead.
+The script replaces `TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER` and `TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE` with `TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER` and `TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE`.
 
-The automated upgrade script updates references to these constants for you. Their underlying string values, `tables::toolbar.toggle-column-trigger.after` and `tables::toolbar.toggle-column-trigger.before`, are unchanged, so hooks registered using those strings do not need to be updated.
-
-See the [table render hook documentation](../advanced/render-hooks#table-builder-render-hooks) for more details.
+Their string values are unchanged, so registrations using literal strings need no changes.
 </Disclosure>
 
 <Disclosure open>
 <span slot="summary">The deprecated `IconSize::ExtraExtraLarge` alias has been removed</span>
 
-Replace `Filament\Support\Enums\IconSize::ExtraExtraLarge` with `IconSize::TwoExtraLarge`. The removed constant was an alias of the same enum case, so the underlying value remains `2xl` and the icon size is unchanged.
-
-The automated upgrade script updates PHP constant references for you. Update references stored as strings, dynamically accessed constants, and references outside PHP files manually.
+The script replaces `Filament\Support\Enums\IconSize::ExtraExtraLarge` with `IconSize::TwoExtraLarge`. Its value remains `2xl`. Update string, dynamic, and non-PHP references manually.
 </Disclosure>
 
 <Disclosure open>
 <span slot="summary">The deprecated badge delete button icon alias has been removed</span>
 
-The deprecated `SupportIconAlias::BADGE_DELETE_BUTTON` constant has been removed. Remove any icon registrations that use it and customize the `.fi-badge-delete-btn-icon` CSS class instead. There is no replacement icon alias, so this change must be handled manually rather than by the automated upgrade script.
+Remove registrations using `SupportIconAlias::BADGE_DELETE_BUTTON`. Customize `.fi-badge-delete-btn-icon` instead; there is no replacement icon alias or automated migration.
 </Disclosure>
 
 <Disclosure open>
-<span slot="summary">The modal content is now wrapped in a `fi-modal-window-scroll` element when using a sticky header or footer</span>
+<span slot="summary">Sticky modals have a new scroll wrapper</span>
 
-To fix an issue where modals with a sticky header or footer could overflow the viewport, the internal DOM structure of the modal component has changed. When a modal has a sticky header (`stickyHeader()`) or a sticky footer (`stickyFooter()`), and is not a slide-over or a screen-width modal, its heading, content, and footer are now wrapped in a new scrollable `fi-modal-window-scroll` element:
-
-```html
-<div class="fi-modal-window">
-    <div class="fi-modal-window-scroll">
-        <div class="fi-modal-header"><!-- ... --></div>
-        <div class="fi-modal-content"><!-- ... --></div>
-        <div class="fi-modal-footer"><!-- ... --></div>
-    </div>
-</div>
-```
-
-If you have written custom CSS or a theme that targets `fi-modal-header`, `fi-modal-content`, or `fi-modal-footer` as direct children of `fi-modal-window`, you should update your selectors to account for the new `fi-modal-window-scroll` wrapper.
+Modals with `stickyHeader()` or `stickyFooter()` now wrap their header, content, and footer in `.fi-modal-window-scroll`, except for slide-overs and screen-width modals. Update custom CSS that targets those elements as direct children of `.fi-modal-window`.
 </Disclosure>
 
 <Disclosure open>
-<span slot="summary">The `ryangjchandler/blade-capture-directive` Composer dependency has been removed</span>
+<span slot="summary">The Blade capture directive dependency has been removed</span>
 
-Filament no longer depends on the [`ryangjchandler/blade-capture-directive`](https://github.com/ryangjchandler/blade-capture-directive) package, since Filament registers its own `@capture` and `@endcapture` Blade directives with the same functionality. If you use these directives in your own Blade views, they will continue to work without any changes.
+Filament now provides `@capture` and `@endcapture` itself, so existing views need no changes. Remove `RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider` from plugin tests or other explicit provider registrations.
 
-If you use `@capture` outside of Filament and want to ensure that the directives remain available even if you remove Filament from your project, you can install the package yourself:
-
-```bash
-composer require ryangjchandler/blade-capture-directive
-```
-
-If you are a plugin developer and you register the package's service provider in your test cases, for example in the `getPackageProviders()` method of a [Testbench](https://packages.tools/testbench) test case, you should remove `RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider` from the list.
+If you need these directives without Filament, require `ryangjchandler/blade-capture-directive` directly.
 </Disclosure>
 
 </div>
