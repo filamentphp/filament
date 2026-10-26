@@ -7,6 +7,7 @@ use Illuminate\Cache\FileStore;
 use Illuminate\Contracts\Cache\LockProvider;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use RuntimeException;
 
@@ -16,7 +17,7 @@ class NotificationMailbox
 {
     protected const MAX_PENDING_NOTIFICATIONS = 50;
 
-    /** @var array<array{notification: array<string, mixed>, batch?: ?string}> */
+    /** @var array<array{notification: string | array<string, mixed>, batch?: ?string}> */
     protected array $pendingNotifications = [];
 
     /** @param array<string, mixed> $notification */
@@ -24,7 +25,7 @@ class NotificationMailbox
     {
         $this->initializeScope();
 
-        $this->pendingNotifications[] = ['notification' => $notification];
+        $this->pendingNotifications[] = ['notification' => serialize($notification)];
 
         if (count($this->pendingNotifications) > static::MAX_PENDING_NOTIFICATIONS) {
             array_shift($this->pendingNotifications);
@@ -113,14 +114,16 @@ class NotificationMailbox
     public function pull(array $batches = []): array
     {
         return array_map(
-            static fn (array $entry): array => $entry['notification'],
+            static fn (array $entry): array => is_string($entry['notification'])
+                ? unserialize($entry['notification'], ['allowed_classes' => [HtmlString::class]])
+                : $entry['notification'],
             $this->pullEntries($batches),
         );
     }
 
     /**
      * @param  ?array<string>  $batches
-     * @return array<array{notification: array<string, mixed>, batch: ?string}>
+     * @return array<array{notification: string | array<string, mixed>, batch: ?string}>
      */
     protected function pullEntries(?array $batches = null): array
     {
