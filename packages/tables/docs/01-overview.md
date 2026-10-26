@@ -241,7 +241,7 @@ public function table(Table $table): Table
 
 ### Enforcing the pagination options
 
-By default, pagination options control the choices displayed in the page-size selector, not the values accepted from a client request. You can use `enforcePaginationPageOptions()` to restrict the page size to the configured options:
+By default, pagination options control both the choices displayed in the page-size selector and the values accepted from a client request:
 
 ```php
 use Filament\Tables\Table;
@@ -249,28 +249,27 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->paginated([10, 25, 50])
-        ->enforcePaginationPageOptions();
+        ->paginated([10, 25, 50]);
 }
 ```
 
-This can be useful for large tables where you want to prevent a modified client request from loading more records per page than you offer in the selector. An invalid page size falls back to a valid saved selection or the default pagination option. If the saved selection is no longer listed, Filament discards it and uses the first option. Numeric strings submitted by the selector are accepted.
+This prevents a modified client request from loading more records per page than you offer in the selector. An invalid page size falls back to a valid saved selection or the default pagination option. If the saved selection is no longer listed, Filament discards it and uses the first option. Numeric strings submitted by the selector are accepted.
 
 <Aside variant="warning">
     Enforcement does not impose an additional limit on the options you configure. If you include `'all'` or a very large number, users can still request that many records. Choose options appropriate for your data and server capacity. Enforcement also does not enable pagination for a table configured with `paginated(false)`.
 </Aside>
 
-You can enable enforcement for all tables in the `boot()` method of a service provider:
+If you set a table's page size directly in PHP, include that size in its pagination options. You can opt an individual table out using `enforcePaginationPageOptions(false)`:
 
 ```php
 use Filament\Tables\Table;
 
-Table::configureUsing(function (Table $table): void {
-    $table->enforcePaginationPageOptions();
-});
+public function table(Table $table): Table
+{
+    return $table
+        ->enforcePaginationPageOptions(false);
+}
 ```
-
-Before enabling it globally, check tables that set their page size directly in PHP: when options are listed, the size must be included in that list. You can opt an individual table out using `enforcePaginationPageOptions(false)`.
 
 For a fixed page size without a page-size selector, you can provide a single option, such as `paginated([25])`. If you instead provide an empty options list, enforcement uses the configured `defaultPaginationPageOption()`, or the size initialized in the Livewire `$tableRecordsPerPage` property when the component first mounts. Saved or client-selected sizes do not replace that initial value. If neither is specified, it uses 10:
 
@@ -281,8 +280,7 @@ public function table(Table $table): Table
 {
     return $table
         ->paginationPageOptions([])
-        ->defaultPaginationPageOption(25)
-        ->enforcePaginationPageOptions();
+        ->defaultPaginationPageOption(25);
 }
 ```
 

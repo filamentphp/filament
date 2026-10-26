@@ -46,6 +46,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
     use HasContainerGridLayout;
     use HasReorderAnimationDuration;
 
+    protected ?int $maxItemsForProcessing = 500;
+
     protected string | Closure | null $addActionLabel = null;
 
     protected string | Closure | null $addBetweenActionLabel = null;

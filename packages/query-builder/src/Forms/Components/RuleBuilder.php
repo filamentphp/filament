@@ -31,6 +31,9 @@ class RuleBuilder extends Builder
 
     protected int | Closure | null $maxNestingDepth = 5;
 
+    // Rule trees use `maxRules()` and `maxNestingDepth()` instead of the generic item limit.
+    protected ?int $maxItemsForProcessing = null;
+
     protected int $nestingDepth = 1;
 
     protected ?RuleBuilder $rootRuleBuilder = null;
@@ -60,6 +63,7 @@ class RuleBuilder extends Builder
                             return [
                                 Repeater::make(static::OR_BLOCK_GROUPS_REPEATER_NAME)
                                     ->label(__('filament-query-builder::query-builder.form.or_groups.label'))
+                                    ->maxItemsForProcessing(null)
                                     ->schema([
                                         Flex::make([
                                             static::make('rules')

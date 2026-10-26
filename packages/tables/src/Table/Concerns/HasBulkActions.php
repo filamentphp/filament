@@ -25,7 +25,7 @@ trait HasBulkActions
 
     protected string | Closure | null $currentSelectionLivewireProperty = null;
 
-    protected int | Closure | null $maxSelectableRecords = null;
+    protected int | Closure | null $maxSelectableRecords = 10000;
 
     protected bool | Closure $isSelectionDisabled = false;
 

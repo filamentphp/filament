@@ -5030,6 +5030,34 @@ it('preserves constraint picker groups inside nested OR conditions', function ()
 });
 
 describe('rule limits', function () use ($applyQueryBuilderFilter): void {
+    it('can render more than 500 rules when the query builder limits allow it', function (?int $maxRules, bool $hasOrGroups): void {
+        $rules = array_fill(0, 501, [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ]);
+
+        if ($hasOrGroups) {
+            $rules = [[
+                'type' => 'or',
+                'data' => [
+                    'groups' => array_map(static fn (array $rule): array => ['rules' => [$rule]], $rules),
+                ],
+            ]];
+        }
+
+        QueryBuilder::configureUsing(
+            fn (QueryBuilder $queryBuilder) => $queryBuilder->maxRules($maxRules),
+            during: function () use ($rules): void {
+                livewire(PostsQueryBuilderTable::class)
+                    ->set('tableDeferredFilters.query_builder.rules', $rules)
+                    ->assertSuccessful();
+            },
+        );
+    })->with([600, null])->with([false, true]);
+
     it('has default rule limits on `QueryBuilder` and `RuleBuilder`', function (): void {
         $queryBuilder = QueryBuilder::make();
         $ruleBuilder = RuleBuilder::make('rules');

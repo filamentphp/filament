@@ -27,6 +27,8 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
     use CanLimitItemsForProcessing;
     use HasContainerGridLayout;
 
+    protected ?int $maxItemsForProcessing = 1000;
+
     /**
      * @var array<TableColumn> | Closure | null
      */

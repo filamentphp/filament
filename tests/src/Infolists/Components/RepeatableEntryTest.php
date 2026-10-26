@@ -344,8 +344,25 @@ describe('item collections', function (): void {
 });
 
 describe('processing item limits', function (): void {
+    it('processes at most 1000 items by default', function (): void {
+        $item = ['name' => 'Kept item'];
+        $entry = RepeatableEntry::make('items')
+            ->state(array_fill(0, 1000, $item))
+            ->schema([TextEntry::make('name')]);
+
+        Schema::make(Livewire::make())->components([$entry])->getComponents();
+
+        expect($entry->getItems())->toHaveCount(1000);
+
+        $entry->state(array_fill(0, 1001, $item));
+
+        expect(fn () => $entry->getItems())->toThrow(function (HttpException $exception): void {
+            expect($exception->getStatusCode())->toBe(413);
+        });
+    });
+
     it('allows increasing, decreasing and disabling a global `maxItemsForProcessing()`', function (): void {
-        expect(RepeatableEntry::make('items')->getMaxItemsForProcessing())->toBeNull();
+        expect(RepeatableEntry::make('items')->getMaxItemsForProcessing())->toBe(1000);
 
         RepeatableEntry::configureUsing(
             static fn (RepeatableEntry $entry) => $entry->maxItemsForProcessing(10),

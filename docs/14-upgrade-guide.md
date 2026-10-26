@@ -222,6 +222,76 @@ RichEditor::configureUsing(function (RichEditor $component): void {
 See the [rich editor documentation](../forms/rich-editor#securing-file-attachment-ids) for more details.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('forms') || packages.includes('infolists')">
+<span slot="summary">Repeaters, builders, and repeatable entries now limit item processing by default</span>
+
+`Repeater` and `Builder` now process at most 500 items each by default, while `RepeatableEntry` processes at most 1,000 items. Previously, the processing limit was disabled. If existing or submitted state exceeds the component's limit, Filament aborts with an HTTP 413 response before building the item schemas, without truncating the data. This is separate from `maxItems()` validation.
+
+Check existing records before upgrading: records containing more items than the component's limit cannot be opened through the affected form or infolist until you raise the limit. Set `maxItemsForProcessing()` on components that legitimately need more items:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->maxItemsForProcessing(1000)
+```
+
+Use the same method on `Builder` and `RepeatableEntry`, or pass `null` to restore unlimited processing. You can also use each class's `configureUsing()` method to change its default globally. Query Builder's internal rule builders and OR-group repeaters retain their separate `maxRules()` and `maxNestingDepth()` limits.
+
+The limit applies per component, not to the total number of nested items or fields. It does not bound request decoding, database loading, or individual field costs, and does not guarantee a particular load time. See the [processing-limit documentation](../forms/repeater#limiting-item-processing) for configuration and limitations.
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('tables')">
+<span slot="summary">Tables now enforce pagination options by default</span>
+
+Tables now restrict client-submitted page sizes to the configured pagination options. Previously, the options only constrained the page-size selector unless you enabled `enforcePaginationPageOptions()`.
+
+Most applications do not need to change anything. If your code sets a page size directly in PHP, make sure that size is included in the table's pagination options. Invalid page sizes fall back to a valid saved selection or the default option. Saved selections that are no longer listed are discarded in favor of the first option.
+
+If your table intentionally accepts sizes outside its options, you can restore the previous behavior for that table:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->enforcePaginationPageOptions(false);
+}
+```
+
+Explicitly configured `'all'` options and tables with `paginated(false)` remain unrestricted. For a fixed page size without a selector, use a single pagination option, or an empty options list with `defaultPaginationPageOption()`.
+
+See the [pagination documentation](../tables/overview#enforcing-the-pagination-options) for more details.
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('tables')">
+<span slot="summary">Tables now limit bulk selections to 10,000 records by default</span>
+
+Tables now default to `maxSelectableRecords(10000)`. Previously, the selection limit was disabled. The selection controls prevent selecting more records than the limit and hide the all-pages "select all" link when the selectable count exceeds it.
+
+For database-backed tables, an oversized selection submitted to a bulk action is limited to a subset of the selected records rather than rejecting the whole action with a notification. This also applies to inverse selections that track deselected records. Custom-data tables instead throw a `LogicException` if their resolved selection exceeds the limit.
+
+If your application intentionally processes larger selections, raise the limit for the affected table or pass `null` to restore unlimited selection:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->maxSelectableRecords(20000);
+}
+```
+
+You can also change the default for all tables using `Table::configureUsing()` in a service provider's `boot()` method. This is a processing safeguard, not a request-size, memory, or execution-time guarantee. Review [bulk-action performance](../tables/actions#improving-the-performance-of-bulk-actions) before increasing or disabling it, and use chunking to reduce model-loading memory for large selections.
+
+See the [selection-limit documentation](../tables/actions#limiting-the-number-of-selectable-records) for more details.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('tables')">
 <span slot="summary">`QueryBuilder` filters now limit rule-tree complexity by default</span>
 

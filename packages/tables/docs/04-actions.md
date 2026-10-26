@@ -384,11 +384,10 @@ public function table(Table $table): Table
 
 ### Limiting the number of selectable records
 
-You may restrict how many records the user can select in total:
+By default, tables limit bulk selections to 10,000 records. You can change the limit using `maxSelectableRecords()`:
 
 ```php
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 
 public function table(Table $table): Table
 {
@@ -399,6 +398,22 @@ public function table(Table $table): Table
         ->maxSelectableRecords(4);
 }
 ```
+
+Pass `null` to disable the limit. To change the default globally, use `Table::configureUsing()` in a service provider's `boot()` method:
+
+```php
+use Filament\Tables\Table;
+
+Table::configureUsing(static function (Table $table): void {
+    $table->maxSelectableRecords(20000);
+});
+```
+
+The header checkbox selects the current page. The all-pages "select all" link is only offered when the total selectable count fits within the limit. If an oversized selection reaches a bulk-action request on a database-backed table, processing is limited to a subset of the selection, including when deselected records are tracked instead of selected records. Filament does not reject the whole action with an over-limit notification. Custom-data tables throw a `LogicException` if the resolved selection exceeds the limit.
+
+<Aside variant="warning">
+    The selection limit is not an authorization boundary or a guarantee of memory usage or execution time. It does not bound incoming request size, selection discovery, custom data resolution, or the cost of processing each record. Use [authorization](#authorizing-bulk-actions) and review [bulk-action performance](#improving-the-performance-of-bulk-actions), especially before increasing or disabling the limit. Chunking reduces model-loading memory but does not reduce the total number of records processed.
+</Aside>
 
 ### Preventing bulk-selection of all pages
 

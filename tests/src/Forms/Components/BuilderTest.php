@@ -1255,8 +1255,19 @@ describe('item schemas', function (): void {
 });
 
 describe('processing item limits', function (): void {
+    it('processes at most 500 items by default', function (): void {
+        $item = ['type' => 'one', 'data' => ['foo' => 'Kept item']];
+
+        livewire(BuilderWithItemActions::class)
+            ->set('data.group.items', array_fill(0, 500, $item))
+            ->assertSuccessful()
+            ->assertSchemaStateSet(['group.items' => array_fill(0, 500, $item)])
+            ->set('data.group.items', array_fill(0, 501, $item))
+            ->assertStatus(413);
+    });
+
     it('allows overriding a global `maxItemsForProcessing()` independently of `maxItems()`', function (): void {
-        expect(Builder::make('items')->getMaxItemsForProcessing())->toBeNull();
+        expect(Builder::make('items')->getMaxItemsForProcessing())->toBe(500);
 
         Builder::configureUsing(
             static fn (Builder $component) => $component->maxItemsForProcessing(10),

@@ -367,25 +367,27 @@ describe('sorting', function (): void {
 });
 
 describe('pagination', function (): void {
-    it('can opt in to `enforcePaginationPageOptions()` and evaluate its condition', function (): void {
+    it('enforces pagination options by default and can evaluate an opt-out condition', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
-
-        expect($table->enforcesPaginationPageOptions())->toBeFalse();
-
-        $table->enforcePaginationPageOptions();
 
         expect($table->enforcesPaginationPageOptions())->toBeTrue();
 
         $table->enforcePaginationPageOptions(static fn (): bool => false);
 
         expect($table->enforcesPaginationPageOptions())->toBeFalse();
+
+        $table->enforcePaginationPageOptions();
+
+        expect($table->enforcesPaginationPageOptions())->toBeTrue();
     });
 
-    it('preserves unrestricted page sizes by default', function (): void {
+    it('allows opting out to preserve unrestricted page sizes', function (): void {
         $posts = Post::factory()->count(13)->create();
 
         Table::configureUsing(
-            static fn (Table $table): Table => $table->defaultSort('id'),
+            static fn (Table $table): Table => $table
+                ->enforcePaginationPageOptions(false)
+                ->defaultSort('id'),
             during: function () use ($posts): void {
                 livewire(TableTestComponent::class)
                     ->set('tableRecordsPerPage', 7)
@@ -396,12 +398,53 @@ describe('pagination', function (): void {
         );
     });
 
+    it('keeps the browser page-size selector within the configured options by default', function (): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        Post::query()->delete();
+
+        foreach (range(1, 13) as $number) {
+            Post::factory()->create(['title' => sprintf('Pagination item %02d', $number)]);
+        }
+
+        $selector = 'nav select:visible';
+        $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->assertValue($selector, '10')
+            ->assertSee('Pagination item 10')
+            ->assertDontSee('Pagination item 11')
+            ->select($selector, '5')
+            ->assertSee('Pagination item 05')
+            ->assertDontSee('Pagination item 06');
+
+        $page->script(<<<'JS'
+            document.querySelectorAll('nav select').forEach(select => {
+                select.add(new Option('Unlisted size', '1000000'))
+            })
+            JS);
+
+        $page
+            ->select($selector, '1000000')
+            ->assertValue($selector, '5')
+            ->assertSee('Pagination item 05')
+            ->assertDontSee('Pagination item 06')
+            ->select($selector, '25')
+            ->assertSee('Pagination item 13')
+            ->assertNoAccessibilityIssues();
+
+        visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false))
+            ->inDarkMode()
+            ->assertValue($selector, '25')
+            ->assertSee('Pagination item 13')
+            ->assertNoAccessibilityIssues();
+    });
+
     it('enforces configured page sizes before rendering and persisting updates', function (PaginationMode $mode, bool $persistsInSession): void {
         $posts = Post::factory()->count(13)->create();
 
         Table::configureUsing(
             static fn (Table $table): Table => $table
-                ->enforcePaginationPageOptions()
                 ->paginationPageOptions(static fn (): array => [3, 8])
                 ->defaultPaginationPageOption(8)
                 ->paginationMode($mode)

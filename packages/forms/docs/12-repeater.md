@@ -907,7 +907,7 @@ This method will automatically enable the `distinct()` and `live()` methods on t
 
 ## Limiting item processing
 
-If your application's JavaScript accidentally creates a large state array, building and rendering an item schema for every entry can cause a long wait. You can opt in to a processing limit using `maxItemsForProcessing()` to stop processing rather than build an unexpectedly large schema:
+By default, repeaters process at most 500 items to avoid building and rendering unexpectedly large schemas. You can change this processing limit using `maxItemsForProcessing()`:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -917,10 +917,10 @@ Repeater::make('members')
         // ...
     ])
     ->maxItems(5)
-    ->maxItemsForProcessing(100)
+    ->maxItemsForProcessing(200)
 ```
 
-In this example, up to 100 items can be processed, but the form will only pass validation with at most 5 items. If the raw state contains more than 100 items, Filament aborts with an HTTP 413 response before building the repeater's item schemas. It does not truncate the data. This limit is disabled by default and accepts an integer, or `null` to disable it.
+In this example, up to 200 items can be processed, but the form will only pass validation with at most 5 items. If the raw state exceeds the processing limit, Filament aborts with an HTTP 413 response before building the repeater's item schemas. It does not truncate the data. The limit accepts an integer, or `null` to disable it.
 
 <Aside variant="danger">
     The processing limit also applies to existing data loaded from your database. A record above the limit cannot be opened through that form until you raise the limit or correct its data elsewhere. Choose a limit that accommodates existing records you need to edit, including records above your validation limit.
@@ -928,7 +928,7 @@ In this example, up to 100 items can be processed, but the form will only pass v
 
 ### Applying processing limits globally
 
-To enable processing limits for all repeaters, builders, and repeatable entries, use `configureUsing()` in a service provider's `boot()` method. Configure each component class separately:
+Repeaters and builders default to a processing limit of 500 items, while repeatable entries default to 1,000 items. To change these defaults, use `configureUsing()` in a service provider's `boot()` method. Configure each component class separately:
 
 ```php
 use Filament\Forms\Components\Builder;
@@ -936,15 +936,15 @@ use Filament\Forms\Components\Repeater;
 use Filament\Infolists\Components\RepeatableEntry;
 
 Repeater::configureUsing(static function (Repeater $repeater): void {
-    $repeater->maxItemsForProcessing(100);
+    $repeater->maxItemsForProcessing(200);
 });
 
 Builder::configureUsing(static function (Builder $builder): void {
-    $builder->maxItemsForProcessing(100);
+    $builder->maxItemsForProcessing(200);
 });
 
 RepeatableEntry::configureUsing(static function (RepeatableEntry $entry): void {
-    $entry->maxItemsForProcessing(100);
+    $entry->maxItemsForProcessing(200);
 });
 ```
 
@@ -958,7 +958,7 @@ Repeater::make('members')
     ->schema([
         // ...
     ])
-    ->maxItemsForProcessing(200);
+    ->maxItemsForProcessing(300);
 
 Builder::make('content')
     ->blocks([
@@ -969,7 +969,7 @@ Builder::make('content')
 
 You can also pass `maxItemsForProcessing(null)` on a component to disable its inherited processing limit.
 
-This is an opt-in performance safeguard, not a security boundary or a guarantee of request duration. The limit applies to each repeater, builder, or repeatable entry separately, not to the total number of nested items or fields in a request. A parent's processing limit does not limit the number of items in its nested components. Builder limits count all raw items, including items with unrecognized block types. Nested schemas and expensive fields can still take time to process within these limits, and the limit does not bound request decoding or other work performed by a request. See the [repeatable entry guidance](../infolists/repeatable-entry#limiting-item-processing) for its state-loading limitations.
+This is a performance safeguard, not a security boundary or a guarantee of request duration. The limit applies to each repeater, builder, or repeatable entry separately, not to the total number of nested items or fields in a request. A parent's processing limit does not limit the number of items in its nested components. Builder limits count all raw items, including items with unrecognized block types. Nested schemas and expensive fields can still take time to process within these limits, and the limit does not bound request decoding or other work performed by a request. See the [repeatable entry guidance](../infolists/repeatable-entry#limiting-item-processing) for its state-loading limitations.
 
 ## Deferring the loading of repeater item schemas
 
