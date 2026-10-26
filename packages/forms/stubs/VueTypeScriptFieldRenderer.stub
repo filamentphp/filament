@@ -1,0 +1,21 @@
+import { createApp, h, shallowRef } from 'vue'
+import type { JsFieldProps, JsFieldRenderer } from '@filament/forms/js-field'
+import {{ componentIdentifier }} from './{{ componentName }}.vue'
+
+const mount{{ componentName }}: JsFieldRenderer<string | null> = ({ host, props: initialProps }) => {
+    const props = shallowRef<JsFieldProps<string | null>>(initialProps)
+    const application = createApp({
+        setup: () => () => h({{ componentIdentifier }}, props.value),
+    })
+
+    application.mount(host)
+
+    return {
+        update(nextProps) {
+            props.value = nextProps
+        },
+        destroy: () => application.unmount(),
+    }
+}
+
+export default mount{{ componentName }}

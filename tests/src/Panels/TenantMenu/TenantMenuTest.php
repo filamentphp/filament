@@ -78,33 +78,34 @@ it('renders and searches `Htmlable` tenant names while escaping string names', f
         ->hover($tenantTrigger)
         ->assertSeeIn('[role="tooltip"] b', 'Research & billing');
 
-    $switchableTenantUrl = Filament::getUrl($switchableTenant);
-    $literalTenantUrl = Filament::getUrl($literalTenant);
-    $accentedTenantUrl = Filament::getUrl($accentedTenant);
+    $tenantMenu = '#' . $page->attribute($tenantTrigger, 'aria-controls');
+    $switchableTenantLink = $tenantMenu . ' a[href="' . Filament::getUrl($switchableTenant) . '"]';
+    $literalTenantLink = $tenantMenu . ' a[href="' . Filament::getUrl($literalTenant) . '"]';
+    $accentedTenantLink = $tenantMenu . ' a[href="' . Filament::getUrl($accentedTenant) . '"]';
 
     $page->click($tenantTrigger)
-        ->assertSeeIn("a[href=\"{$literalTenantUrl}\"]", '<b>Archives</b>')
-        ->assertMissing("a[href=\"{$literalTenantUrl}\"] b")
+        ->assertSeeIn($literalTenantLink, '<b>Archives</b>')
+        ->assertMissing("{$literalTenantLink} b")
         ->type('input[type="search"]:visible', 'Support & sales')
-        ->assertVisible("a[href=\"{$switchableTenantUrl}\"]")
-        ->assertMissing("a[href=\"{$literalTenantUrl}\"]:visible")
+        ->assertVisible($switchableTenantLink)
+        ->assertMissing("{$literalTenantLink}:visible")
         ->type('input[type="search"]:visible', 'MALAGA')
-        ->assertVisible("a[href=\"{$accentedTenantUrl}\"]")
-        ->assertMissing("a[href=\"{$switchableTenantUrl}\"]:visible")
-        ->assertSeeIn("a[href=\"{$accentedTenantUrl}\"]", 'Málaga')
+        ->assertVisible($accentedTenantLink)
+        ->assertMissing("{$switchableTenantLink}:visible")
+        ->assertSeeIn($accentedTenantLink, 'Málaga')
         ->fill('input[type="search"]:visible', "Ma\u{0301}laga")
-        ->assertVisible("a[href=\"{$accentedTenantUrl}\"]")
+        ->assertVisible($accentedTenantLink)
         ->fill('input[type="search"]:visible', 'Súppórt & sales')
-        ->assertVisible("a[href=\"{$switchableTenantUrl}\"]")
-        ->assertMissing("a[href=\"{$accentedTenantUrl}\"]:visible")
+        ->assertVisible($switchableTenantLink)
+        ->assertMissing("{$accentedTenantLink}:visible")
         ->clear('input[type="search"]:visible')
-        ->assertVisible("a[href=\"{$accentedTenantUrl}\"]")
-        ->assertVisible("a[href=\"{$switchableTenantUrl}\"]")
-        ->assertVisible("a[href=\"{$literalTenantUrl}\"]")
+        ->assertVisible($accentedTenantLink)
+        ->assertVisible($switchableTenantLink)
+        ->assertVisible($literalTenantLink)
         ->type('input[type="search"]:visible', '<b>Archives</b>')
-        ->assertVisible("a[href=\"{$literalTenantUrl}\"]")
-        ->assertMissing("a[href=\"{$switchableTenantUrl}\"]:visible")
-        ->click("a[href=\"{$literalTenantUrl}\"]")
+        ->assertVisible($literalTenantLink)
+        ->assertMissing("{$switchableTenantLink}:visible")
+        ->click($literalTenantLink)
         ->hover('button:has(img[alt*="Archives"])')
         ->assertSeeIn('[role="tooltip"]', '<b>Archives</b>')
         ->assertMissing('[role="tooltip"] b');

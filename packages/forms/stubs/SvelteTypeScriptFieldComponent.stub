@@ -1,0 +1,18 @@
+<script lang="ts">
+    import type { JsFieldProps } from '@filament/forms/js-field'
+
+    let { value, id, isDisabled, isReadOnly, isRequired, isInvalid, ariaDescribedBy, onChange, onBlur }: JsFieldProps<string | null> = $props()
+</script>
+
+<input
+    {id}
+    type="text"
+    value={value ?? ''}
+    disabled={isDisabled}
+    readonly={isReadOnly}
+    required={isRequired}
+    aria-invalid={isInvalid}
+    aria-describedby={ariaDescribedBy}
+    oninput={(event) => onChange(event.currentTarget.value)}
+    onblur={onBlur}
+/>

@@ -120,6 +120,7 @@ const formComponents = [
     'color-picker',
     'date-time-picker',
     'file-upload',
+    'js-field',
     'key-value',
     'markdown-editor',
     'repeater',
@@ -142,7 +143,7 @@ formComponents.forEach((component) => {
     })
 })
 
-const schemaComponents = ['actions', 'tabs', 'wizard']
+const schemaComponents = ['actions', 'js-component', 'tabs', 'wizard']
 
 schemaComponents.forEach((component) => {
     compile({
@@ -166,7 +167,7 @@ tableColumns.forEach((column) => {
     })
 })
 
-const widgets = ['chart', 'stats-overview/stat/chart']
+const widgets = ['chart', 'js-widget', 'stats-overview/stat/chart']
 
 widgets.forEach((widget) => {
     compile({
