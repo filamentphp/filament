@@ -613,9 +613,9 @@ public function table(Table $table): Table
 }
 ```
 
-## Deferring loading
+## Lazy loading table data
 
-Tables with lots of data might take a while to load, in which case you can load the table data asynchronously using the `deferLoading()` method:
+Tables with lots of data might take a while to load, in which case you can load the table data asynchronously using the `lazyLoaded()` method. The data loads in a separate request after the initial render; it does not wait for the table to enter the viewport:
 
 ```php
 use Filament\Tables\Table;
@@ -623,7 +623,7 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->deferLoading();
+        ->lazyLoaded();
 }
 ```
 

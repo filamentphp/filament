@@ -152,7 +152,15 @@ describe('`toEmbeddedHtml()` rendering', function (): void {
 });
 
 describe('deferred rendering', function (): void {
-    it('renders a loading indicator instead of components with `deferLoading()`', function (): void {
+    it('preserves `lazy()` as the blur binding alias without enabling lazy loading', function (): void {
+        $schema = Schema::make()->lazy();
+
+        expect($schema->getStateBindingModifiers())->toBe(['live', 'blur'])
+            ->and($schema->isLazy())->toBeTrue()
+            ->and($schema->isLazyLoaded())->toBeFalse();
+    });
+
+    it('renders a loading indicator instead of components with lazy loading', function (string $method): void {
         $livewire = Livewire::make();
 
         $schema = Schema::make($livewire)
@@ -163,24 +171,61 @@ describe('deferred rendering', function (): void {
             ->extraAttributes([
                 'data-testid' => 'deferred-schema',
             ])
-            ->deferLoading();
+            ->{$method}();
 
         expect($schema->toEmbeddedHtml())
             ->toContain('fi-sc-loading')
             ->toContain('data-testid="deferred-schema"')
             ->toContain('wire:partial="schema.form"')
             ->not->toContain('Loaded content');
-    });
+    })->with(['lazyLoaded', 'deferLoading']);
 
-    it('can conditionally use `deferLoading()`', function (): void {
+    it('can conditionally use lazy loading', function (string $method): void {
         $schema = Schema::make(Livewire::make())
             ->components([
                 Text::make('Loaded content'),
             ])
-            ->deferLoading(static fn (): bool => false);
+            ->{$method}(static fn (): bool => false);
 
         expect($schema->isLoadingDeferred())->toBeFalse()
+            ->and($schema->isLazyLoaded())->toBeFalse()
             ->and($schema->toEmbeddedHtml())->toContain('Loaded content');
+    })->with(['lazyLoaded', 'deferLoading']);
+
+    it('shares configuration between `lazyLoaded()` and `deferLoading()` without changing state binding', function (): void {
+        $schema = Schema::make()->lazyLoaded();
+
+        expect($schema->isLoadingDeferred())->toBeTrue()
+            ->and($schema->isLazy())->toBeFalse()
+            ->and($schema->getStateBindingModifiers())->toBe([])
+            ->and($schema->deferLoading(false)->isLazyLoaded())->toBeFalse()
+            ->and($schema->deferLoading()->lazyLoaded(false)->isLoadingDeferred())->toBeFalse();
+    });
+
+    it('renders lazily with either loading getter overridden', function (): void {
+        $schemas = [
+            new class(Livewire::make()) extends Schema
+            {
+                public function isLoadingDeferred(): bool
+                {
+                    return true;
+                }
+            },
+            new class(Livewire::make()) extends Schema
+            {
+                public function isLazyLoaded(): bool
+                {
+                    return true;
+                }
+            },
+        ];
+
+        foreach ($schemas as $schema) {
+            $schema->key('form')->components([Text::make('Loaded content')]);
+
+            expect($schema->toEmbeddedHtml())->not->toContain('Loaded content')
+                ->and($schema->isLoadingDeferred())->toBeTrue();
+        }
     });
 
     it('requires deferred child schemas to have a unique key', function (): void {

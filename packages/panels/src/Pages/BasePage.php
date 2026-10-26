@@ -180,7 +180,7 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
     }
 
     /**
-     * @deprecated Use `alignFormActionsStart()` instead
+     * @deprecated Use `alignFormActionsStart()` instead.
      */
     #[Unexposed]
     public static function alignFormActionsLeft(): void
@@ -189,7 +189,7 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
     }
 
     /**
-     * @deprecated Use `alignFormActionsEnd()` instead
+     * @deprecated Use `alignFormActionsEnd()` instead.
      */
     #[Unexposed]
     public static function alignFormActionsRight(): void

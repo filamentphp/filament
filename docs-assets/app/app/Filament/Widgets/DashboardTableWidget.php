@@ -10,7 +10,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class DashboardTableWidget extends BaseWidget
 {
-    protected static bool $isLazy = false;
+    protected static ?bool $isLazyLoaded = false;
 
     protected ?string $pollingInterval = null;
 
