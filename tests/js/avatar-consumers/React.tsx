@@ -1,5 +1,5 @@
 import { createRef } from 'react'
-import Avatar from '../../../packages/support/resources/js/react/Avatar'
+import Avatar from '@filament/support/react/Avatar'
 
 const image = createRef<HTMLImageElement>()
 

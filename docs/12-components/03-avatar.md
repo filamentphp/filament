@@ -55,9 +55,9 @@ You can also pass your own custom size classes into the `size` attribute:
 
 ## Using avatars in JavaScript components
 
-You can use the same avatar markup and theme in your React, Vue, and Svelte 5 components. Import the component from your Composer-installed Filament Support package using your application's Vite build. The examples below assume your component is in `resources/js/`; adjust the relative import path if it is in a subdirectory.
+You can use the same avatar markup and theme in your React, Vue, and Svelte 5 components. First, [configure the Support component import aliases](overview#configuring-runtime-imports) in your application's Vite build. These resolve to your Composer-installed Filament Support package and work from any application directory.
 
-React 18 or 19, Vue 3.3.2 or later, and Svelte 5 are supported. Configure your application's Vite build with `@vitejs/plugin-vue` for Vue or `@sveltejs/vite-plugin-svelte` for Svelte. The components work in both JavaScript and TypeScript applications: your build compiles their TypeScript source, even if your application uses JavaScript.
+React 18 or 19, Vue 3.3.2 or later, and Svelte 5 are supported. The components work in both JavaScript and TypeScript applications. For TypeScript, also [configure the matching type-resolution paths](overview#configuring-typescript-imports).
 
 These components use the panel's existing stylesheet. You do not need to import another stylesheet or initialize Alpine for the avatar.
 
@@ -67,7 +67,7 @@ The examples use an image at `public/images/avatar.png`. Replace the `src` with 
 
 ```jsx
 import React from 'react'
-import Avatar from '../../vendor/filament/support/resources/js/react/Avatar'
+import Avatar from '@filament/support/react/Avatar'
 
 export default function Profile() {
     return (
@@ -85,7 +85,7 @@ export default function Profile() {
 
 ```vue
 <script setup>
-import Avatar from '../../vendor/filament/support/resources/js/vue/Avatar.vue'
+import Avatar from '@filament/support/vue/Avatar.vue'
 </script>
 
 <template>
@@ -102,7 +102,7 @@ import Avatar from '../../vendor/filament/support/resources/js/vue/Avatar.vue'
 
 ```svelte
 <script>
-    import Avatar from '../../vendor/filament/support/resources/js/svelte/Avatar.svelte'
+    import Avatar from '@filament/support/svelte/Avatar.svelte'
 </script>
 
 <Avatar

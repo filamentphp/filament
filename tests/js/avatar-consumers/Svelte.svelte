@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { ComponentProps } from 'svelte'
-    import Avatar from '../../../packages/support/resources/js/svelte/Avatar.svelte'
+    import Avatar from '@filament/support/svelte/Avatar.svelte'
 
     // @ts-expect-error `loading` only accepts native image loading values.
     const invalidLoading: ComponentProps<typeof Avatar> = { loading: 'invalid' }

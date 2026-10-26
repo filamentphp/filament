@@ -2,9 +2,9 @@ import { createElement } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createApp, h, shallowRef } from 'vue'
 import { mount, unmount } from 'svelte'
-import ReactAvatar from '../../../packages/support/resources/js/react/Avatar'
-import VueAvatar from '../../../packages/support/resources/js/vue/Avatar.vue'
-import SvelteAvatar from '../../../packages/support/resources/js/svelte/Avatar.svelte'
+import ReactAvatar from '@filament/support/react/Avatar'
+import VueAvatar from '@filament/support/vue/Avatar.vue'
+import SvelteAvatar from '@filament/support/svelte/Avatar.svelte'
 
 export default function mountAvatars(host, framework, cases) {
     const renderers = cases.map((attributes) => {

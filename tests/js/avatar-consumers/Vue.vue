@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Avatar from '../../../packages/support/resources/js/vue/Avatar.vue'
+import Avatar from '@filament/support/vue/Avatar.vue'
 
 type AvatarProps = InstanceType<typeof Avatar>['$props']
 
