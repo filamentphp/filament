@@ -406,6 +406,43 @@ Preserve custom parameters and return behavior. The old wrappers dispatched thro
 `groupedBulkActions()` and legacy Livewire configuration hooks such as `getTableActions()` remain available.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('widgets')">
+<span slot="summary">Deprecated typed chart widget classes have been removed</span>
+
+Extend `Filament\Widgets\ChartWidget` and define `getType()` instead of extending one of these removed classes in `Filament\Widgets`:
+
+| Removed class | `getType()` return value |
+| --- | --- |
+| `BarChartWidget` | `'bar'` |
+| `BubbleChartWidget` | `'bubble'` |
+| `DoughnutChartWidget` | `'doughnut'` |
+| `LineChartWidget` | `'line'` |
+| `PieChartWidget` | `'pie'` |
+| `PolarAreaChartWidget` | `'polarArea'` |
+| `RadarChartWidget` | `'radar'` |
+| `ScatterChartWidget` | `'scatter'` |
+
+For example, a widget previously extending `BarChartWidget` becomes:
+
+```php
+use Filament\Widgets\ChartWidget;
+
+class SalesChart extends ChartWidget
+{
+    protected function getType(): string
+    {
+        return 'bar';
+    }
+}
+```
+
+The upgrade script changes direct parent references, including fully qualified and imported aliases, and adds the inherited chart type if the class does not already declare `getType()`. Existing independent overrides are preserved, even if they return a different type. Descendants of a migrated intermediate class keep inheriting its implementation; migrate that intermediate class rather than assigning a type to every descendant.
+
+Classes using traits, calling `parent::getType()` (including first-class callables), making dynamic `parent::` method calls, or referencing `parent::` constants (including `parent::class` callbacks) are left unchanged. Migrate these manually: preserve trait implementations and adaptations, and replace calls to the removed wrapper's `getType()` with its literal type where appropriate. Do not replace a call to a custom intermediate parent's implementation with a literal, as that may bypass custom behavior.
+
+Other references are deliberately not renamed. Review parameter, return and property types, unions, PHPDoc, `instanceof`, `::class`, direct construction, container bindings, callbacks, strings, dynamic references, and non-PHP files. Replacing a typed wrapper with `ChartWidget` broadens type checks to all chart types, and `ChartWidget` is abstract, so it cannot replace direct construction. Use an application-owned typed subclass where that distinction is needed. Check reflection and parent-class inspection if your code depends on the old hierarchy, and remove unused imports after migration.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('actions') || packages.includes('tables')">
 <span slot="summary">Deprecated action and filter convenience classes have been removed</span>
 
