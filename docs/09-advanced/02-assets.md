@@ -440,7 +440,7 @@ npm install --save-dev vue @vitejs/plugin-vue
 npm install --save-dev svelte @sveltejs/vite-plugin-svelte
 ```
 
-Use framework and compiler plugin versions compatible with your installed Vite version and component code. For TypeScript, also install a compatible TypeScript compiler; React additionally needs `@types/react` and `@types/react-dom`. Vite transpiles TypeScript but does not type-check it. Use `tsc`, `vue-tsc`, or `svelte-check` as appropriate for your component syntax.
+Use framework and compiler plugin versions compatible with your installed Vite version and component code. For TypeScript dependencies and checks, see [type-checking ES modules](#type-checking-es-modules).
 
 For example, if your module is `resources/js/components/custom-component.js`, add it to your Laravel Vite plugin's `input` list and preserve entry exports in the production build:
 
@@ -481,6 +481,36 @@ Pass this URL to the component or JavaScript code responsible for importing the 
 <Aside variant="info">
     Importing a built JavaScript URL does not load CSS listed only in Vite's manifest. Include the component's CSS through your application's stylesheet or [register it separately](#registering-css-files). The browser caches imported modules by URL, so use versioned or hashed URLs when deploying changes.
 </Aside>
+
+#### Type-checking ES modules
+
+Filament's typed generators install `typescript@^6.0` and preserve compatible TypeScript 5 or 6 dependencies. When installing manually, choose a version supported by your framework's checker. React also requires `@types/react` and `@types/react-dom`.
+
+For React TSX, generated `tsconfig.json` files use `"jsx": "react-jsx"`. Existing settings are preserved. If yours uses `"jsx": "preserve"`, configure a JSX transformer such as `@vitejs/plugin-react`, or change it to `"react-jsx"`.
+
+Vite transpiles TypeScript but does not type-check it. Run the checker for your component syntax:
+
+```bash
+# React or framework-free TypeScript
+npx tsc --noEmit
+
+# Vue, including .vue components
+npm install --save-dev vue-tsc
+npx vue-tsc --noEmit
+
+# Svelte, including .svelte components
+npm install --save-dev svelte-check
+npx svelte-check --tsconfig ./tsconfig.json
+```
+
+If you use multiple frameworks, scope each checker to files it understands. For example, create `tsconfig.svelte.json` and pass it to `svelte-check --tsconfig`:
+
+```json
+{
+    "extends": "./tsconfig.json",
+    "include": ["resources/js/**/*.svelte", "resources/js/**/*.svelte.ts"]
+}
+```
 
 #### Building modules with esbuild
 
