@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { build } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
@@ -11,6 +12,28 @@ export async function buildViteRenderers(
     const result = await build({
         configFile: false,
         plugins: [vue(), svelte()],
+        resolve: {
+            alias: {
+                '@filament/support/react': fileURLToPath(
+                    new URL(
+                        '../../packages/support/resources/js/react',
+                        import.meta.url,
+                    ),
+                ),
+                '@filament/support/vue': fileURLToPath(
+                    new URL(
+                        '../../packages/support/resources/js/vue',
+                        import.meta.url,
+                    ),
+                ),
+                '@filament/support/svelte': fileURLToPath(
+                    new URL(
+                        '../../packages/support/resources/js/svelte',
+                        import.meta.url,
+                    ),
+                ),
+            },
+        },
         css: { postcss: { plugins: [] } },
         build: {
             outDir,

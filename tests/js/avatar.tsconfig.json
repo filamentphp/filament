@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "noEmit": true,
+        "target": "ES2020",
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "jsx": "react-jsx",
+        "paths": {
+            "@filament/support/react/*": [
+                "../../packages/support/resources/js/react/*"
+            ],
+            "@filament/support/vue/*": [
+                "../../packages/support/resources/js/vue/*"
+            ],
+            "@filament/support/svelte/*": [
+                "../../packages/support/resources/js/svelte/*"
+            ]
+        }
+    },
+    "vueCompilerOptions": {
+        "strictTemplates": true
+    },
+    "include": [
+        "avatar-consumers/**/*",
+        "../../packages/support/resources/js/react/Avatar.tsx",
+        "../../packages/support/resources/js/vue/Avatar.vue",
+        "../../packages/support/resources/js/svelte/Avatar.svelte"
+    ]
+}
