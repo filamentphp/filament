@@ -326,6 +326,49 @@ Manually migrate custom overrides (including inherited ones), class-qualified ca
 Preserve custom parameter names, defaults, and dispatch behavior: the old wrappers called replacements through `$this`, so simply renaming a `parent::` call may bypass a subclass override.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('forms')">
+<span slot="summary">Deprecated form component forwarding aliases have been removed</span>
+
+The script renames calls on the following form components and their subclasses. Arguments, defaults, and closure evaluation are unchanged, except for the `idleLabel()` argument rename below.
+
+| Component | Removed method | Replacement |
+| --- | --- | --- |
+| `BaseFileUpload` (including `FileUpload`) | `enableDownload()` | `downloadable()` |
+| `BaseFileUpload` | `enableOpen()` | `openable()` |
+| `BaseFileUpload` | `enableReordering()` | `reorderable()` |
+| `BaseFileUpload` | `moveFile()` | `moveFiles()` |
+| `BaseFileUpload` | `storeFile()` | `storeFiles()` |
+| `Builder`, `Repeater` | `createItemButtonLabel()` | `addActionLabel()` |
+| `Builder` | `createItemBetweenButtonLabel()` | `addBetweenActionLabel()` |
+| `Builder` | `showBlockLabels()`, `withBlockLabels()` | `blockLabels()` |
+| `Builder` | `withBlockNumbers()` | `blockNumbers()` |
+| `Repeater` | `orderable()` | `orderColumn()` |
+| `KeyValue` | `addButtonLabel()` | `addActionLabel()` |
+| `KeyValue` | `deleteButtonLabel()` | `deleteActionLabel()` |
+| `KeyValue` | `reorderButtonLabel()` | `reorderActionLabel()` |
+| `FileUpload` | `idleLabel()` | `placeholder()` |
+| `FileUpload` | `imageResizeMode()` | `automaticallyResizeImagesMode()` |
+| `FileUpload` | `imageResizeTargetHeight()` | `automaticallyResizeImagesToHeight()` |
+| `FileUpload` | `imageResizeTargetWidth()` | `automaticallyResizeImagesToWidth()` |
+| `FileUpload` | `imageResizeUpscale()` | `automaticallyUpscaleImagesWhenResizing()` |
+| `FileUpload` | `orientImageFromExif()` | `orientImagesFromExif()` |
+| `FileUpload` | `getImageCropAspectRatio()` | `getAutomaticallyCropImagesAspectRatio()` |
+| `FileUpload` | `getImageResizeMode()` | `getAutomaticallyResizeImagesMode()` |
+| `FileUpload` | `getImageResizeTargetHeight()` | `getAutomaticallyResizeImagesHeight()` |
+| `FileUpload` | `getImageResizeTargetWidth()` | `getAutomaticallyResizeImagesWidth()` |
+| `FileUpload` | `getImageResizeUpscale()` | `shouldAutomaticallyUpscaleImagesWhenResizing()` |
+| `FileUpload` | `imageEditorAspectRatios()` | `imageEditorAspectRatioOptions()` |
+| `FileUpload` | `getImageEditorAspectRatiosForJs()` | `getImageEditorAspectRatioOptionsForJs()` |
+
+The script also renames `idleLabel(label: ...)` to `placeholder(placeholder: ...)`. Calls unpacking arguments into `idleLabel()` are left unchanged; rename the method and any `'label'` argument key manually. Update named arguments when invoking migrated first-class callables yourself. Other aliases preserve named and unpacked arguments.
+
+Manually migrate custom overrides (including inherited ones), class-qualified calls such as `parent::enableOpen()`, dynamic names, callbacks, unknown or ambiguous receiver types, and non-PHP references. Calls on known overrides of either the alias or its replacement are skipped. For `showBlockLabels()`, this includes overrides of the intermediate `withBlockLabels()` method. Review changes where a base-typed receiver may hold a custom subclass.
+
+Preserve custom parameter names, defaults, return values, and dispatch behavior. The wrappers called replacements through `$this`, so renaming `parent::` calls can bypass subclass overrides. Many setters also returned `$this` regardless of the replacement's return value.
+
+Negating `disable*()` methods, `imageCropAspectRatio()`, and the no-op `inset()` methods remain unchanged. Other form component and concern aliases are outside this cleanup.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('tables')">
 <span slot="summary">Deprecated fluent table method aliases have been removed</span>
 

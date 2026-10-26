@@ -733,16 +733,6 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
         return $this;
     }
 
-    /**
-     * @deprecated Use `addActionLabel()` instead.
-     */
-    public function createItemButtonLabel(string | Closure | null $label): static
-    {
-        $this->addActionLabel($label);
-
-        return $this;
-    }
-
     public function labelBetweenItems(string | Closure | null $label): static
     {
         $this->labelBetweenItems = $label;
@@ -992,16 +982,6 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
     {
         $this->orderColumn = $column;
         $this->reorderable($column);
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `orderColumn()` instead.
-     */
-    public function orderable(string | Closure | null $column = 'sort'): static
-    {
-        $this->orderColumn($column);
 
         return $this;
     }

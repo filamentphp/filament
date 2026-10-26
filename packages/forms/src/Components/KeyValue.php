@@ -180,36 +180,6 @@ class KeyValue extends Field implements HasEmbeddedView
         return $this;
     }
 
-    /**
-     * @deprecated Use `addActionLabel()` instead.
-     */
-    public function addButtonLabel(string | Closure | null $label): static
-    {
-        $this->addActionLabel($label);
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `deleteActionLabel()` instead.
-     */
-    public function deleteButtonLabel(string | Closure | null $label): static
-    {
-        $this->deleteActionLabel($label);
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `reorderActionLabel()` instead.
-     */
-    public function reorderButtonLabel(string | Closure | null $label): static
-    {
-        $this->reorderActionLabel($label);
-
-        return $this;
-    }
-
     public function addable(bool | Closure $condition = true): static
     {
         $this->isAddable = $condition;
