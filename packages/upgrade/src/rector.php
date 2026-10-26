@@ -5,6 +5,7 @@ use Filament\Upgrade\Rector\RenameDeprecatedActionMethodsRector;
 use Filament\Upgrade\Rector\RenameDeprecatedFormComponentMethodsRector;
 use Filament\Upgrade\Rector\RenameDeprecatedImagePresentationMethodsRector;
 use Filament\Upgrade\Rector\RenameDeprecatedLazyLoadingApisRector;
+use Filament\Upgrade\Rector\RenameDeprecatedSchemaMethodsRector;
 use Filament\Upgrade\Rector\RenameDeprecatedTableMethodsRector;
 use Filament\Upgrade\Rector\ReplaceConvenienceClassesRector;
 use Filament\Upgrade\Rector\ReplaceTypedChartWidgetsRector;
@@ -72,6 +73,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(RenameDeprecatedFormComponentMethodsRector::class);
     $rectorConfig->rule(RenameDeprecatedImagePresentationMethodsRector::class);
     $rectorConfig->rule(RenameDeprecatedLazyLoadingApisRector::class);
+    $rectorConfig->rule(RenameDeprecatedSchemaMethodsRector::class);
     $rectorConfig->rule(RenameDeprecatedTableMethodsRector::class);
     $rectorConfig->rule(ReplaceConvenienceClassesRector::class);
     $rectorConfig->rule(ReplaceTypedChartWidgetsRector::class);

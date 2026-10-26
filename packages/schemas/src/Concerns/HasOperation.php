@@ -13,16 +13,6 @@ trait HasOperation
         return $this;
     }
 
-    /**
-     * @deprecated Use `operation()` instead.
-     */
-    public function context(?string $context): static
-    {
-        $this->operation($context);
-
-        return $this;
-    }
-
     public function getOperation(): string
     {
         if (filled($this->operation)) {

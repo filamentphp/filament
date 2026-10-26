@@ -63,16 +63,6 @@ class Step extends Component implements HasEmbeddedView
         return $this;
     }
 
-    /**
-     * @deprecated Use `afterValidation()` instead.
-     */
-    public function afterValidated(?Closure $callback): static
-    {
-        $this->afterValidation($callback);
-
-        return $this;
-    }
-
     public function beforeValidation(?Closure $callback): static
     {
         $this->beforeValidation = $callback;
