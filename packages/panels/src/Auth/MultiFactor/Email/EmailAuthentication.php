@@ -107,7 +107,7 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
 
                 if (! $cache->put($codeCacheKey, [
                     'hash' => $codeHash,
-                    'expiresAt' => $codeExpiresAt,
+                    'expiresAt' => $codeExpiresAt->getTimestamp(),
                 ], $codeExpiresAt)) {
                     return false;
                 }
@@ -194,6 +194,10 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
             ];
             $activeCodeHash = is_array($activeCode) ? ($activeCode['hash'] ?? null) : null;
             $activeCodeExpiresAt = is_array($activeCode) ? ($activeCode['expiresAt'] ?? null) : null;
+
+            if (is_int($activeCodeExpiresAt)) {
+                $activeCodeExpiresAt = CarbonImmutable::createFromTimestamp($activeCodeExpiresAt);
+            }
 
             if (
                 (! is_string($activeCodeHash))
