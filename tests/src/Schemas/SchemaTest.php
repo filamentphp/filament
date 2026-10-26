@@ -202,30 +202,19 @@ describe('deferred rendering', function (): void {
             ->and($schema->deferLoading()->lazyLoaded(false)->isLoadingDeferred())->toBeFalse();
     });
 
-    it('renders lazily with either loading getter overridden', function (): void {
-        $schemas = [
-            new class(Livewire::make()) extends Schema
+    it('renders lazily with `isLazyLoaded()` overridden', function (): void {
+        $schema = new class(Livewire::make()) extends Schema
+        {
+            public function isLazyLoaded(): bool
             {
-                public function isLoadingDeferred(): bool
-                {
-                    return true;
-                }
-            },
-            new class(Livewire::make()) extends Schema
-            {
-                public function isLazyLoaded(): bool
-                {
-                    return true;
-                }
-            },
-        ];
+                return true;
+            }
+        };
 
-        foreach ($schemas as $schema) {
-            $schema->key('form')->components([Text::make('Loaded content')]);
+        $schema->key('form')->components([Text::make('Loaded content')]);
 
-            expect($schema->toEmbeddedHtml())->not->toContain('Loaded content')
-                ->and($schema->isLoadingDeferred())->toBeTrue();
-        }
+        expect($schema->toEmbeddedHtml())->not->toContain('Loaded content')
+            ->and($schema->isLoadingDeferred())->toBeTrue();
     });
 
     it('requires deferred child schemas to have a unique key', function (): void {

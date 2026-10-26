@@ -191,7 +191,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
             return '';
         }
 
-        $isLoadingDeferred = $this->isLoadingDeferred();
+        $isLoadingDeferred = $this->isLazyLoaded();
 
         if ($isLoadingDeferred && (! $this->isDeferredSchemaLoaded())) {
             return $this->renderDeferredLoadingHtml();

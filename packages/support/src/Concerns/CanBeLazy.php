@@ -19,7 +19,7 @@ trait CanBeLazy
     #[Unexposed]
     public static function isLazyLoaded(): bool
     {
-        return static::$isLazyLoaded ?? static::$isLazy;
+        return static::$isLazyLoaded ?? static::isLazy();
     }
 
     /**
@@ -28,7 +28,7 @@ trait CanBeLazy
     #[Unexposed]
     public static function isLazy(): bool
     {
-        return static::isLazyLoaded();
+        return static::$isLazyLoaded ?? static::$isLazy;
     }
 
     #[Unexposed]

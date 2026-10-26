@@ -138,7 +138,7 @@ it('preserves legacy widget loading overrides while prioritizing explicit new co
     {
         public static function isLazy(): bool
         {
-            return false;
+            return ! parent::isLazy();
         }
     };
 
@@ -163,6 +163,7 @@ it('preserves legacy widget loading overrides while prioritizing explicit new co
     };
 
     expect($legacyWidget::getDefaultProperties())->toBe([])
+        ->and($legacyWidget::isLazyLoaded())->toBeFalse()
         ->and($configuredWidget::getDefaultProperties())->toBe([])
         ->and($overriddenWidget::getDefaultProperties())->toBe([])
         ->and(AccountWidget::getDefaultProperties())->toBe([])

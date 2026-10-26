@@ -288,7 +288,7 @@ class Tabs extends Component implements HasEmbeddedView
         }
 
         $activeTab = $this->getActiveTab();
-        $hasDeferredBadges = $this->hasDeferredBadges();
+        $hasDeferredBadges = $this->hasLazyLoadedBadges();
         $id = $this->getId();
         $isContained = $this->isContained();
         $isScrollable = $this->isScrollable();
@@ -397,7 +397,7 @@ class Tabs extends Component implements HasEmbeddedView
                 >
 
                 <?php foreach ($tabs as $index => $tab) {
-                    $isTabBadgeDeferred = $tab->isBadgeDeferred();
+                    $isTabBadgeDeferred = $tab->isBadgeLazyLoaded();
                     $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
                     $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
                     $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon($tabBadge);
@@ -473,7 +473,7 @@ class Tabs extends Component implements HasEmbeddedView
                             class="fi-dropdown-trigger"
                         >
                             <?php foreach ($tabs as $index => $tab) {
-                                $isTabBadgeDeferred = $tab->isBadgeDeferred();
+                                $isTabBadgeDeferred = $tab->isBadgeLazyLoaded();
                                 $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
                                 $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
                                 $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
@@ -547,7 +547,7 @@ class Tabs extends Component implements HasEmbeddedView
                         >
                             <div class="fi-dropdown-list">
                                 <?php foreach ($tabs as $index => $tab) {
-                                    $isTabBadgeDeferred = $tab->isBadgeDeferred();
+                                    $isTabBadgeDeferred = $tab->isBadgeLazyLoaded();
                                     $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
                                     $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
                                     $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
@@ -652,7 +652,7 @@ class Tabs extends Component implements HasEmbeddedView
     protected function toEmbeddedHtmlForLivewireProperty(): string
     {
         $livewireProperty = $this->getLivewireProperty();
-        $hasDeferredBadges = $this->hasDeferredBadges();
+        $hasDeferredBadges = $this->hasLazyLoadedBadges();
         $id = $this->getId();
         $isContained = $this->isContained();
         $isVertical = $this->isVertical();
@@ -746,7 +746,7 @@ class Tabs extends Component implements HasEmbeddedView
 
                 <?php foreach ($tabs as $tabKey => $tab) {
                     $tabKey = strval($tabKey);
-                    $isTabBadgeDeferred = $tab->isBadgeDeferred();
+                    $isTabBadgeDeferred = $tab->isBadgeLazyLoaded();
                     $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
                     $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
                     $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon($tabBadge);
@@ -934,13 +934,11 @@ class Tabs extends Component implements HasEmbeddedView
     }
 
     /**
-     * @deprecated Use `getLazyLoadedTabBadges()` instead.
-     *
      * @return array<string, array{badge: ?string, badgeColorClasses: string, badgeColorStyles: string, badgeIconHtml: string | null, badgeIconPosition: string | null, badgeTooltip: string | null}>
      */
     #[Exposed]
     #[Renderless]
-    public function getDeferredTabBadges(): array
+    public function getLazyLoadedTabBadges(): array
     {
         $badges = [];
 
@@ -949,7 +947,7 @@ class Tabs extends Component implements HasEmbeddedView
                 continue;
             }
 
-            if (! $tab->isBadgeDeferred()) {
+            if (! $tab->isBadgeLazyLoaded()) {
                 continue;
             }
 
@@ -988,21 +986,15 @@ class Tabs extends Component implements HasEmbeddedView
     }
 
     /**
+     * @deprecated Use `getLazyLoadedTabBadges()` instead.
+     *
      * @return array<string, array{badge: ?string, badgeColorClasses: string, badgeColorStyles: string, badgeIconHtml: string | null, badgeIconPosition: string | null, badgeTooltip: string | null}>
      */
     #[Exposed]
     #[Renderless]
-    public function getLazyLoadedTabBadges(): array
+    public function getDeferredTabBadges(): array
     {
-        return $this->getDeferredTabBadges();
-    }
-
-    /**
-     * @deprecated Use `hasLazyLoadedBadges()` instead.
-     */
-    public function hasDeferredBadges(): bool
-    {
-        return $this->hasLazyLoadedBadges();
+        return $this->getLazyLoadedTabBadges();
     }
 
     public function hasLazyLoadedBadges(): bool
@@ -1012,11 +1004,19 @@ class Tabs extends Component implements HasEmbeddedView
                 continue;
             }
 
-            if ($tab->isBadgeDeferred()) {
+            if ($tab->isBadgeLazyLoaded()) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * @deprecated Use `hasLazyLoadedBadges()` instead.
+     */
+    public function hasDeferredBadges(): bool
+    {
+        return $this->hasLazyLoadedBadges();
     }
 }

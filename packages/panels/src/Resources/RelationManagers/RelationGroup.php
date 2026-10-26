@@ -211,13 +211,13 @@ class RelationGroup extends Component
 
     public function getTabComponent(): Tab
     {
-        $isTabBadgeDeferred = $this->isBadgeDeferred();
+        $isTabBadgeDeferred = $this->isBadgeLazyLoaded();
 
         $tab = Tab::make($this->getLabel())
             ->badge($isTabBadgeDeferred
                 ? fn (): ?string => $this->getBadge()
                 : ($badge = $this->getBadge()))
-            ->deferBadge($isTabBadgeDeferred)
+            ->lazyLoadedBadge($isTabBadgeDeferred)
             ->badgeColor($this->getBadgeColor($badge ?? null))
             ->badgeTooltip($this->getBadgeTooltip($badge ?? null))
             ->icon($this->getIcon())
