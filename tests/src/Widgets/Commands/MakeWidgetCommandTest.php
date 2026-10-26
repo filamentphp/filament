@@ -258,6 +258,36 @@ it('can generate JavaScript widget renderers', function (string $framework, bool
     'Svelte with TypeScript' => ['svelte', true, 'svelte.ts', ['RenderedWidget.svelte']],
 ]);
 
+it('preserves renderer filenames and exports when component names collide with JavaScript bindings', function (string $name, string $framework, string $extension, string $basename): void {
+    $this->artisan('make:filament-widget', [
+        'name' => $name,
+        '--panel' => 'admin',
+        "--{$framework}" => true,
+        '--ts' => true,
+        '--skip-install' => true,
+        '--skip-build' => true,
+        '--no-interaction' => true,
+    ])
+        ->expectsQuestion('Would you like to create this widget in a resource?', false)
+        ->assertSuccessful();
+
+    $renderer = File::get(resource_path("js/filament/widgets/{$basename}.{$extension}"));
+    $componentName = basename($name);
+
+    expect($renderer)->toContain("export default mount{$componentName}");
+
+    if ($framework === 'react') {
+        expect($renderer)->toContain('function Component(', '<Component ');
+    } else {
+        expect($renderer)->toContain("import Component from './{$componentName}.{$framework}'");
+    }
+})->with([
+    ['React', 'react', 'tsx', 'react'],
+    ['JsWidgetRenderer', 'vue', 'ts', 'js-widget-renderer'],
+    ['Configuration', 'svelte', 'svelte.ts', 'configuration'],
+    ['Reports/chart', 'react', 'tsx', 'reports/chart'],
+]);
+
 it('rejects incompatible JavaScript widget renderer options', function (array $options): void {
     $this->artisan('make:filament-widget', [
         'name' => 'InvalidWidget',
