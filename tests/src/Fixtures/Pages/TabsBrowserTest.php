@@ -77,7 +77,7 @@ class TabsBrowserTest extends Page
                             ->id('profile-account')
                             ->extraAttributes(fn (): array => $this->hasDisabledProfileHeader ? ['disabled' => true] : [])
                             ->badge('Available')
-                            ->deferBadge($this->deferredBadges)
+                            ->lazyLoadedBadge($this->deferredBadges)
                             ->badgeIcon(Heroicon::OutlinedCheckCircle)
                             ->extraAttributes(['data-testid' => 'deferred-tab'], merge: true)
                             ->schema([
@@ -117,7 +117,7 @@ class TabsBrowserTest extends Page
                     ->scrollable(false)
                     ->tabs([
                         Tab::make('Overview and activity')->key('overview'),
-                        Tab::make('Contact information')->key('contact')->badge('12')->deferBadge(),
+                        Tab::make('Contact information')->key('contact')->badge('12')->lazyLoadedBadge(),
                         Tab::make('Billing information')->key('billing'),
                         Tab::make('Security settings')->key('security'),
                         Tab::make('Additional preferences')->key('hidden')->visibleJs('showOverflowChoice'),

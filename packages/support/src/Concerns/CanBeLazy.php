@@ -9,26 +9,12 @@ trait CanBeLazy
 {
     protected static ?bool $isLazyLoaded = null;
 
-    /**
-     * @deprecated Use `$isLazyLoaded` instead.
-     */
-    protected static bool $isLazy = true;
-
     protected ?string $placeholderHeight = null;
 
     #[Unexposed]
     public static function isLazyLoaded(): bool
     {
-        return static::$isLazyLoaded ?? static::$isLazy;
-    }
-
-    /**
-     * @deprecated Use `isLazyLoaded()` instead.
-     */
-    #[Unexposed]
-    public static function isLazy(): bool
-    {
-        return static::isLazyLoaded();
+        return static::$isLazyLoaded ?? true;
     }
 
     #[Unexposed]

@@ -283,45 +283,24 @@ describe('icon position', function (): void {
 });
 
 describe('deferred badge', function (): void {
-    it('defaults `isBadgeDeferred()` to `false`', function (): void {
+    it('defaults `isBadgeLazyLoaded()` to `false`', function (): void {
         $tab = Tab::make('Test');
 
-        expect($tab->isBadgeDeferred())->toBeFalse()
-            ->and($tab->isBadgeLazyLoaded())->toBeFalse();
+        expect($tab->isBadgeLazyLoaded())->toBeFalse();
     });
 
-    it('can enable lazy badge loading', function (string $method): void {
-        $tab = Tab::make('Test')->{$method}();
+    it('can enable and disable lazy badge loading', function (): void {
+        $tab = Tab::make('Test')->lazyLoadedBadge();
 
-        expect($tab->isBadgeDeferred())->toBeTrue()
-            ->and($tab->isBadgeLazyLoaded())->toBeTrue();
-    })->with(['lazyLoadedBadge', 'deferBadge']);
+        expect($tab->isBadgeLazyLoaded())->toBeTrue()
+            ->and($tab->lazyLoadedBadge(false)->isBadgeLazyLoaded())->toBeFalse();
+    });
 
-    it('can configure lazy badge loading with a `Closure`', function (string $method): void {
+    it('can configure lazy badge loading with a `Closure`', function (): void {
         $tab = Tab::make('Test')
-            ->{$method}(static fn (): bool => true);
+            ->lazyLoadedBadge(static fn (): bool => true);
 
-        expect($tab->isBadgeDeferred())->toBeTrue()
-            ->and($tab->isBadgeLazyLoaded())->toBeTrue();
-    })->with(['lazyLoadedBadge', 'deferBadge']);
-
-    it('shares configuration between `lazyLoadedBadge()` and `deferBadge()`', function (): void {
-        $tab = Tab::make('Test')->lazyLoadedBadge()->deferBadge(false);
-
-        expect($tab->isBadgeLazyLoaded())->toBeFalse()
-            ->and($tab->deferBadge()->lazyLoadedBadge(false)->isBadgeDeferred())->toBeFalse();
-    });
-
-    it('forwards `isBadgeDeferred()` to an overridden `isBadgeLazyLoaded()`', function (): void {
-        $tab = new class('Test') extends Tab
-        {
-            public function isBadgeLazyLoaded(): bool
-            {
-                return true;
-            }
-        };
-
-        expect($tab->isBadgeDeferred())->toBeTrue();
+        expect($tab->isBadgeLazyLoaded())->toBeTrue();
     });
 });
 

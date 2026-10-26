@@ -14,7 +14,7 @@ class JsWidget extends Widget
     use HasJsRenderer;
     use InteractsWithPageFilters;
 
-    protected static bool $isLazy = false;
+    protected static ?bool $isLazyLoaded = false;
 
     #[Locked]
     public string $framework = 'js';

@@ -13,7 +13,7 @@ class DepartmentsWithDeferredBadgeRelationManager extends RelationManager
 {
     protected static string $relationship = 'departments';
 
-    protected static bool $isBadgeDeferred = true;
+    protected static ?bool $isBadgeLazyLoaded = true;
 
     public static function getBadge(Model $ownerRecord, string $pageClass): ?string
     {

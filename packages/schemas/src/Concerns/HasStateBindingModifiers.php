@@ -34,16 +34,6 @@ trait HasStateBindingModifiers
         return $this;
     }
 
-    /**
-     * @deprecated Use `live(onBlur: true)` instead.
-     */
-    public function lazy(): static
-    {
-        $this->live(onBlur: true);
-
-        return $this;
-    }
-
     public function debounce(int | string | null $delay = 500): static
     {
         $this->live(debounce: $delay);
@@ -162,14 +152,6 @@ trait HasStateBindingModifiers
         }
 
         return false;
-    }
-
-    /**
-     * @deprecated Use `isLiveOnBlur()` instead.
-     */
-    public function isLazy(): bool
-    {
-        return $this->isLiveOnBlur();
     }
 
     public function isLiveDebounced(): bool

@@ -288,7 +288,7 @@ class Tabs extends Component implements HasEmbeddedView
         }
 
         $activeTab = $this->getActiveTab();
-        $hasDeferredBadges = $this->hasDeferredBadges();
+        $hasDeferredBadges = $this->hasLazyLoadedBadges();
         $id = $this->getId();
         $isContained = $this->isContained();
         $isScrollable = $this->isScrollable();
@@ -338,7 +338,7 @@ class Tabs extends Component implements HasEmbeddedView
 
                 async init() {
                     try {
-                        const badges = await this.$getDeferredTabBadges()
+                        const badges = await this.$getLazyLoadedTabBadges()
                         this.deferredBadges = badges ?? {}
                     } finally {
                         this.isLoadingDeferredBadges = false
@@ -397,7 +397,7 @@ class Tabs extends Component implements HasEmbeddedView
                 >
 
                 <?php foreach ($tabs as $index => $tab) {
-                    $isTabBadgeDeferred = $tab->isBadgeDeferred();
+                    $isTabBadgeDeferred = $tab->isBadgeLazyLoaded();
                     $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
                     $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
                     $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon($tabBadge);
@@ -473,7 +473,7 @@ class Tabs extends Component implements HasEmbeddedView
                             class="fi-dropdown-trigger"
                         >
                             <?php foreach ($tabs as $index => $tab) {
-                                $isTabBadgeDeferred = $tab->isBadgeDeferred();
+                                $isTabBadgeDeferred = $tab->isBadgeLazyLoaded();
                                 $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
                                 $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
                                 $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
@@ -547,7 +547,7 @@ class Tabs extends Component implements HasEmbeddedView
                         >
                             <div class="fi-dropdown-list">
                                 <?php foreach ($tabs as $index => $tab) {
-                                    $isTabBadgeDeferred = $tab->isBadgeDeferred();
+                                    $isTabBadgeDeferred = $tab->isBadgeLazyLoaded();
                                     $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
                                     $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
                                     $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
@@ -652,7 +652,7 @@ class Tabs extends Component implements HasEmbeddedView
     protected function toEmbeddedHtmlForLivewireProperty(): string
     {
         $livewireProperty = $this->getLivewireProperty();
-        $hasDeferredBadges = $this->hasDeferredBadges();
+        $hasDeferredBadges = $this->hasLazyLoadedBadges();
         $id = $this->getId();
         $isContained = $this->isContained();
         $isVertical = $this->isVertical();
@@ -697,7 +697,7 @@ class Tabs extends Component implements HasEmbeddedView
 
                     async init() {
                         try {
-                            const badges = await this.$getDeferredTabBadges()
+                            const badges = await this.$getLazyLoadedTabBadges()
                             this.deferredBadges = badges ?? {}
                         } finally {
                             this.isLoadingDeferredBadges = false
@@ -746,7 +746,7 @@ class Tabs extends Component implements HasEmbeddedView
 
                 <?php foreach ($tabs as $tabKey => $tab) {
                     $tabKey = strval($tabKey);
-                    $isTabBadgeDeferred = $tab->isBadgeDeferred();
+                    $isTabBadgeDeferred = $tab->isBadgeLazyLoaded();
                     $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
                     $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
                     $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon($tabBadge);
@@ -934,20 +934,10 @@ class Tabs extends Component implements HasEmbeddedView
     }
 
     /**
-     * @deprecated For PHP calls, use `getLazyLoadedTabBadges()` instead. Frontend calls must continue using this method for backward compatibility.
-     *
      * @return array<string, array{badge: ?string, badgeColorClasses: string, badgeColorStyles: string, badgeIconHtml: string | null, badgeIconPosition: string | null, badgeTooltip: string | null}>
      */
     #[Exposed]
     #[Renderless]
-    public function getDeferredTabBadges(): array
-    {
-        return $this->getLazyLoadedTabBadges();
-    }
-
-    /**
-     * @return array<string, array{badge: ?string, badgeColorClasses: string, badgeColorStyles: string, badgeIconHtml: string | null, badgeIconPosition: string | null, badgeTooltip: string | null}>
-     */
     public function getLazyLoadedTabBadges(): array
     {
         $badges = [];
@@ -957,7 +947,7 @@ class Tabs extends Component implements HasEmbeddedView
                 continue;
             }
 
-            if (! $tab->isBadgeDeferred()) {
+            if (! $tab->isBadgeLazyLoaded()) {
                 continue;
             }
 
@@ -995,14 +985,6 @@ class Tabs extends Component implements HasEmbeddedView
         return $badges;
     }
 
-    /**
-     * @deprecated Use `hasLazyLoadedBadges()` instead.
-     */
-    public function hasDeferredBadges(): bool
-    {
-        return $this->hasLazyLoadedBadges();
-    }
-
     public function hasLazyLoadedBadges(): bool
     {
         foreach ($this->getChildSchema()->getComponents() as $tab) {
@@ -1010,7 +992,7 @@ class Tabs extends Component implements HasEmbeddedView
                 continue;
             }
 
-            if ($tab->isBadgeDeferred()) {
+            if ($tab->isBadgeLazyLoaded()) {
                 return true;
             }
         }

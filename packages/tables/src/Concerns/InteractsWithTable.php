@@ -225,7 +225,7 @@ trait InteractsWithTable
             ->when($this->getTableContentFooter(), fn (Table $table, View $contentFooter): Table => $table->contentFooter($contentFooter))
             ->when($this->getTableContentGrid(), fn (Table $table, array $contentGrid): Table => $table->contentGrid($contentGrid))
             ->when($this->getDefaultTableSortColumn(), fn (Table $table, string $defaultSortColumn): Table => $table->defaultSort($defaultSortColumn, $this->getDefaultTableSortDirection()))
-            ->when($this->isTableLoadingDeferred(), fn (Table $table): Table => $table->deferLoading())
+            ->when($this->isTableLoadingDeferred(), fn (Table $table): Table => $table->lazyLoaded())
             ->when($this->getTableDescription(), fn (Table $table, string | Htmlable $description): Table => $table->description($description))
             ->when(! $this->shouldDeselectAllRecordsWhenTableFiltered(), fn (Table $table): Table => $table->deselectAllRecordsWhenFiltered(false))
             ->when($this->getTableEmptyState(), fn (Table $table, View $emptyState): Table => $table->emptyState($emptyState))

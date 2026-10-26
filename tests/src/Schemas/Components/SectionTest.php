@@ -981,7 +981,7 @@ it('renders section content classes on deferred loading placeholders', function 
 
             return ['class' => 'custom-content'];
         })
-        ->deferLoading();
+        ->lazyLoaded();
     $section = Section::make('Test')
         ->key('details')
         ->schema($childSchema)

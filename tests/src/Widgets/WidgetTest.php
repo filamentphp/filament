@@ -91,11 +91,11 @@ it('returns placeholder data from `getPlaceholderData()`', function (): void {
         ]);
 });
 
-it('returns `[\'lazy\' => true]` from `getDefaultProperties()` when `$isLazy` is `true`', function (): void {
+it('returns `[\'lazy\' => true]` from `getDefaultProperties()` by default', function (): void {
     expect(TestWidget::getDefaultProperties())->toBe(['lazy' => true]);
 });
 
-it('returns empty array from `getDefaultProperties()` when `$isLazy` is `false`', function (): void {
+it('returns empty array from `getDefaultProperties()` when `$isLazyLoaded` is `false`', function (): void {
     expect(TestWidgetNotLazy::getDefaultProperties())->toBe([]);
 });
 
@@ -111,47 +111,24 @@ it('supports the legacy `$filters` property without exposing `__get()` to fronte
         ->assertForbidden();
 });
 
-it('resolves nullable `$isLazyLoaded` configuration without replacing the configured value', function (?bool $configuration, bool $legacyConfiguration, bool $expected): void {
+it('resolves nullable `$isLazyLoaded` configuration without replacing the configured value', function (?bool $configuration, bool $expected): void {
     $widget = new class extends TestWidget
     {
         public static ?bool $isLazyLoaded = null;
-
-        public static bool $isLazy = true;
     };
 
     $widget::$isLazyLoaded = $configuration;
-    $widget::$isLazy = $legacyConfiguration;
 
     expect($widget::getDefaultProperties())->toBe($expected ? ['lazy' => true] : [])
         ->and($widget::isLazyLoaded())->toBe($expected)
-        ->and($widget::isLazy())->toBe($expected)
         ->and($widget::$isLazyLoaded)->toBe($configuration);
 })->with([
-    'unset with lazy legacy default' => [null, true, true],
-    'unset with eager legacy default' => [null, false, false],
-    'explicit true overrides eager legacy default' => [true, false, true],
-    'explicit false overrides lazy legacy default' => [false, true, false],
+    'unset defaults to lazy' => [null, true],
+    'explicit true' => [true, true],
+    'explicit false' => [false, false],
 ]);
 
-it('preserves legacy widget loading overrides while prioritizing explicit new configuration', function (): void {
-    $legacyWidget = new class extends TestWidget
-    {
-        public static function isLazy(): bool
-        {
-            return false;
-        }
-    };
-
-    $configuredWidget = new class extends TestWidget
-    {
-        protected static ?bool $isLazyLoaded = false;
-
-        public static function isLazy(): bool
-        {
-            return true;
-        }
-    };
-
+it('uses `isLazyLoaded()` overrides for default properties', function (): void {
     $overriddenWidget = new class extends TestWidget
     {
         public static ?bool $isLazyLoaded = null;
@@ -162,15 +139,18 @@ it('preserves legacy widget loading overrides while prioritizing explicit new co
         }
     };
 
-    expect($legacyWidget::getDefaultProperties())->toBe([])
-        ->and($configuredWidget::getDefaultProperties())->toBe([])
-        ->and($overriddenWidget::getDefaultProperties())->toBe([])
-        ->and(AccountWidget::getDefaultProperties())->toBe([])
-        ->and(FilamentInfoWidget::getDefaultProperties())->toBe([]);
+    expect($overriddenWidget::getDefaultProperties())->toBe([]);
 
     $overriddenWidget::$isLazyLoaded = true;
 
     expect($overriddenWidget::getDefaultProperties())->toBe([]);
+});
+
+it('loads account and Filament information widgets eagerly by default', function (): void {
+    expect(AccountWidget::isLazyLoaded())->toBeFalse()
+        ->and(AccountWidget::getDefaultProperties())->toBe([])
+        ->and(FilamentInfoWidget::isLazyLoaded())->toBeFalse()
+        ->and(FilamentInfoWidget::getDefaultProperties())->toBe([]);
 });
 
 describe('authorization', function (): void {
@@ -480,7 +460,7 @@ class TestWidgetWithColumnStart extends Widget
 
 class TestWidgetNotLazy extends Widget
 {
-    protected static bool $isLazy = false;
+    protected static ?bool $isLazyLoaded = false;
 
     protected string $view = 'filament-widgets::chart-widget';
 
@@ -499,7 +479,7 @@ class AuthorizableTestWidget extends Widget
 
     public ?string $name = null;
 
-    protected static bool $isLazy = false;
+    protected static ?bool $isLazyLoaded = false;
 
     protected string $view = 'widgets.authorizable';
 

@@ -38,10 +38,7 @@ class Tab extends Component implements HasEmbeddedView
 
     protected IconPosition | string | Closure | null $badgeIconPosition = null;
 
-    /**
-     * @deprecated Use `lazyLoadedBadge()` and `isBadgeLazyLoaded()` instead.
-     */
-    protected bool | Closure $isBadgeDeferred = false;
+    protected bool | Closure $isBadgeLazyLoaded = false;
 
     final public function __construct(string | Htmlable | Closure | null $label = null)
     {
@@ -137,30 +134,14 @@ class Tab extends Component implements HasEmbeddedView
 
     public function lazyLoadedBadge(bool | Closure $condition = true): static
     {
-        $this->isBadgeDeferred = $condition;
+        $this->isBadgeLazyLoaded = $condition;
 
         return $this;
     }
 
-    /**
-     * @deprecated Use `lazyLoadedBadge()` instead.
-     */
-    public function deferBadge(bool | Closure $condition = true): static
-    {
-        return $this->lazyLoadedBadge($condition);
-    }
-
     public function isBadgeLazyLoaded(): bool
     {
-        return (bool) $this->evaluate($this->isBadgeDeferred);
-    }
-
-    /**
-     * @deprecated Use `isBadgeLazyLoaded()` instead.
-     */
-    public function isBadgeDeferred(): bool
-    {
-        return $this->isBadgeLazyLoaded();
+        return (bool) $this->evaluate($this->isBadgeLazyLoaded);
     }
 
     public function getTabId(): string

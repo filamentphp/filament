@@ -1213,46 +1213,24 @@ it('can summarize both pivot and non-pivot columns in a `BelongsToMany` `Relatio
         ->assertTableColumnSummarySet('pivot.price', 'price_sum', 6000);
 });
 
-it('resolves nullable relation manager lazy loading configuration', function (?bool $configuration, bool $legacyConfiguration, bool $expected): void {
+it('resolves nullable relation manager lazy loading configuration', function (?bool $configuration, bool $expected): void {
     $relationManager = new class extends DepartmentsRelationManager
     {
         public static ?bool $isLazyLoaded = null;
-
-        public static bool $isLazy = true;
     };
 
     $relationManager::$isLazyLoaded = $configuration;
-    $relationManager::$isLazy = $legacyConfiguration;
 
     expect($relationManager::getDefaultProperties())->toBe($expected ? ['lazy' => true] : [])
         ->and($relationManager::isLazyLoaded())->toBe($expected)
         ->and($relationManager::$isLazyLoaded)->toBe($configuration);
 })->with([
-    'unset with lazy legacy default' => [null, true, true],
-    'unset with eager legacy default' => [null, false, false],
-    'explicit true overrides eager legacy default' => [true, false, true],
-    'explicit false overrides lazy legacy default' => [false, true, false],
+    'unset defaults to lazy' => [null, true],
+    'explicit true' => [true, true],
+    'explicit false' => [false, false],
 ]);
 
-it('preserves legacy relation manager loading overrides while prioritizing explicit new configuration', function (): void {
-    $legacyRelationManager = new class extends DepartmentsRelationManager
-    {
-        public static function isLazy(): bool
-        {
-            return false;
-        }
-    };
-
-    $configuredRelationManager = new class extends DepartmentsRelationManager
-    {
-        protected static ?bool $isLazyLoaded = false;
-
-        public static function isLazy(): bool
-        {
-            return true;
-        }
-    };
-
+it('uses relation manager `isLazyLoaded()` overrides for default properties', function (): void {
     $overriddenRelationManager = new class extends DepartmentsRelationManager
     {
         public static ?bool $isLazyLoaded = null;
@@ -1263,65 +1241,44 @@ it('preserves legacy relation manager loading overrides while prioritizing expli
         }
     };
 
-    expect($legacyRelationManager::getDefaultProperties())->toBe([])
-        ->and($configuredRelationManager::getDefaultProperties())->toBe([])
-        ->and($overriddenRelationManager::getDefaultProperties())->toBe([]);
+    expect($overriddenRelationManager::getDefaultProperties())->toBe([]);
 
     $overriddenRelationManager::$isLazyLoaded = true;
 
     expect($overriddenRelationManager::getDefaultProperties())->toBe([]);
 });
 
-it('defers the tab badge loading when `$isBadgeDeferred` is `true`', function (): void {
+it('lazily loads the tab badge when `$isBadgeLazyLoaded` is `true`', function (): void {
     $ticket = Ticket::factory()->create();
 
     $tab = DepartmentsWithDeferredBadgeRelationManager::getTabComponent($ticket, EditTicket::class);
 
-    expect($tab->isBadgeDeferred())->toBeTrue()
-        ->and($tab->isBadgeLazyLoaded())->toBeTrue();
+    expect($tab->isBadgeLazyLoaded())->toBeTrue();
 });
 
-it('uses `$isBadgeLazyLoaded` in preference to the legacy badge property', function (): void {
+it('resolves nullable relation manager badge loading configuration', function (?bool $configuration, bool $expected): void {
     $ticket = Ticket::factory()->create();
 
-    $lazyRelationManager = new class extends DepartmentsRelationManager
+    $relationManager = new class extends DepartmentsRelationManager
     {
-        protected static ?bool $isBadgeLazyLoaded = true;
+        public static ?bool $isBadgeLazyLoaded = null;
     };
 
-    $eagerRelationManager = new class extends DepartmentsWithDeferredBadgeRelationManager
-    {
-        protected static ?bool $isBadgeLazyLoaded = false;
-    };
+    $relationManager::$isBadgeLazyLoaded = $configuration;
 
-    $eagerRelationManagerWithLegacyGetter = new class extends DepartmentsRelationManager
-    {
-        protected static ?bool $isBadgeLazyLoaded = false;
+    expect($relationManager::getTabComponent($ticket, EditTicket::class)->isBadgeLazyLoaded())->toBe($expected)
+        ->and($relationManager::isBadgeLazyLoaded($ticket, EditTicket::class))->toBe($expected)
+        ->and($relationManager::$isBadgeLazyLoaded)->toBe($configuration);
+})->with([
+    'unset defaults to eager' => [null, false],
+    'explicit true' => [true, true],
+    'explicit false' => [false, false],
+]);
 
-        public static function isBadgeDeferred(Model $ownerRecord, string $pageClass): bool
-        {
-            return true;
-        }
-    };
-
-    expect($lazyRelationManager::getTabComponent($ticket, EditTicket::class)->isBadgeLazyLoaded())->toBeTrue()
-        ->and($lazyRelationManager::isBadgeDeferred($ticket, EditTicket::class))->toBeTrue()
-        ->and($eagerRelationManager::getTabComponent($ticket, EditTicket::class)->isBadgeLazyLoaded())->toBeFalse()
-        ->and($eagerRelationManager::isBadgeDeferred($ticket, EditTicket::class))->toBeFalse()
-        ->and($eagerRelationManagerWithLegacyGetter::getTabComponent($ticket, EditTicket::class)->isBadgeLazyLoaded())->toBeFalse();
-});
-
-it('respects both legacy and new relation manager badge getter overrides', function (): void {
+it('respects relation manager `isBadgeLazyLoaded()` overrides', function (): void {
     $ticket = Ticket::factory()->create();
 
     $relationManagers = [
-        new class extends DepartmentsRelationManager
-        {
-            public static function isBadgeDeferred(Model $ownerRecord, string $pageClass): bool
-            {
-                return true;
-            }
-        },
         new class extends DepartmentsRelationManager
         {
             public static function isBadgeLazyLoaded(Model $ownerRecord, string $pageClass): bool
@@ -1345,23 +1302,21 @@ it('respects both legacy and new relation manager badge getter overrides', funct
     }
 });
 
-it('shares relation group configuration between `lazyLoadedBadge()` and `deferBadge()`', function (string $method): void {
+it('can configure relation group lazy badge loading with a `Closure`', function (): void {
     $group = RelationGroup::make('Departments', [DepartmentsRelationManager::class])
         ->badge(static fn (): string => '3')
-        ->{$method}(static fn (): bool => true);
+        ->lazyLoadedBadge(static fn (): bool => true);
 
     expect($group->isBadgeLazyLoaded())->toBeTrue()
-        ->and($group->isBadgeDeferred())->toBeTrue()
         ->and($group->getTabComponent()->isBadgeLazyLoaded())->toBeTrue()
         ->and($group->getTabComponent()->getBadge())->toBe('3')
-        ->and($group->lazyLoadedBadge(false)->getTabComponent()->isBadgeLazyLoaded())->toBeFalse()
-        ->and($group->deferBadge()->lazyLoadedBadge(false)->isBadgeDeferred())->toBeFalse();
-})->with(['lazyLoadedBadge', 'deferBadge']);
+        ->and($group->lazyLoadedBadge(false)->getTabComponent()->isBadgeLazyLoaded())->toBeFalse();
+});
 
-it('respects an existing relation group `isBadgeDeferred()` override', function (): void {
+it('respects a relation group `isBadgeLazyLoaded()` override', function (): void {
     $group = new class('Departments', []) extends RelationGroup
     {
-        public function isBadgeDeferred(): bool
+        public function isBadgeLazyLoaded(): bool
         {
             return true;
         }
@@ -1377,7 +1332,7 @@ it('resolves the deferred tab badge value from `getBadge()`', function (): void 
 
     $tab = DepartmentsWithDeferredBadgeRelationManager::getTabComponent($ticket, EditTicket::class);
 
-    expect($tab->isBadgeDeferred())->toBeTrue()
+    expect($tab->isBadgeLazyLoaded())->toBeTrue()
         ->and($tab->getBadge())->toBe('3');
 });
 
@@ -1386,7 +1341,7 @@ it('does not defer the tab badge loading by default', function (): void {
 
     $tab = DepartmentsRelationManager::getTabComponent($ticket, EditTicket::class);
 
-    expect($tab->isBadgeDeferred())->toBeFalse();
+    expect($tab->isBadgeLazyLoaded())->toBeFalse();
 });
 
 it('can customize relation manager tabs without combining them with content', function (): void {
@@ -1622,7 +1577,7 @@ class RecordUrlResolutionRelationManager extends RelationManager
 
     protected static string $relationship = 'departments';
 
-    protected static bool $isLazy = false;
+    protected static ?bool $isLazyLoaded = false;
 
     public function table(Table $table): Table
     {
@@ -1662,7 +1617,7 @@ class RecordUrlResolutionRelationManager extends RelationManager
             ->when($this->hasCustomRecordAction, fn (Table $table): Table => $table->recordAction(null))
             ->defaultSort('departments.id')
             ->openRecordUrlInNewTab(static fn (Department $record): bool => $record->name === 'View URL')
-            ->deferLoading($this->isTableLoadingDeferred);
+            ->lazyLoaded($this->isTableLoadingDeferred);
     }
 }
 
@@ -1676,7 +1631,7 @@ class AuthorizationRelationManager extends DepartmentsRelationManager
 
     public ?string $name = null;
 
-    protected static bool $isLazy = false;
+    protected static ?bool $isLazyLoaded = false;
 
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {

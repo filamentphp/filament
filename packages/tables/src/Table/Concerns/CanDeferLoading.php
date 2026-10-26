@@ -6,37 +6,18 @@ use Closure;
 
 trait CanDeferLoading
 {
-    /**
-     * @deprecated Use `lazyLoaded()` and `isLazyLoaded()` instead.
-     */
-    protected bool | Closure $isLoadingDeferred = false;
+    protected bool | Closure $isLazyLoaded = false;
 
     public function lazyLoaded(bool | Closure $condition = true): static
     {
-        $this->isLoadingDeferred = $condition;
+        $this->isLazyLoaded = $condition;
 
         return $this;
     }
 
-    /**
-     * @deprecated Use `lazyLoaded()` instead.
-     */
-    public function deferLoading(bool | Closure $condition = true): static
-    {
-        return $this->lazyLoaded($condition);
-    }
-
     public function isLazyLoaded(): bool
     {
-        return (bool) $this->evaluate($this->isLoadingDeferred);
-    }
-
-    /**
-     * @deprecated Use `isLazyLoaded()` instead.
-     */
-    public function isLoadingDeferred(): bool
-    {
-        return $this->isLazyLoaded();
+        return (bool) $this->evaluate($this->isLazyLoaded);
     }
 
     public function isLoaded(): bool

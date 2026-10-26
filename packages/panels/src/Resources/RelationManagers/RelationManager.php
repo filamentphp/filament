@@ -118,11 +118,6 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
 
     protected static ?bool $isBadgeLazyLoaded = null;
 
-    /**
-     * @deprecated Use `$isBadgeLazyLoaded` instead.
-     */
-    protected static bool $isBadgeDeferred = false;
-
     #[Unexposed]
     public function mount(): void
     {
@@ -167,15 +162,13 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     #[Unexposed]
     public static function getTabComponent(Model $ownerRecord, string $pageClass): Tab
     {
-        $isTabBadgeDeferred = isset(static::$isBadgeLazyLoaded)
-            ? static::isBadgeLazyLoaded($ownerRecord, $pageClass)
-            : static::isBadgeDeferred($ownerRecord, $pageClass);
+        $isTabBadgeLazyLoaded = static::isBadgeLazyLoaded($ownerRecord, $pageClass);
 
         return Tab::make(static::getTitle($ownerRecord, $pageClass))
-            ->badge($isTabBadgeDeferred
+            ->badge($isTabBadgeLazyLoaded
                 ? static fn (): ?string => static::getBadge($ownerRecord, $pageClass)
                 : static::getBadge($ownerRecord, $pageClass))
-            ->deferBadge($isTabBadgeDeferred)
+            ->lazyLoadedBadge($isTabBadgeLazyLoaded)
             ->badgeColor(static::getBadgeColor($ownerRecord, $pageClass))
             ->badgeTooltip(static::getBadgeTooltip($ownerRecord, $pageClass))
             ->icon(static::getIcon($ownerRecord, $pageClass))
@@ -215,16 +208,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     #[Unexposed]
     public static function isBadgeLazyLoaded(Model $ownerRecord, string $pageClass): bool
     {
-        return static::$isBadgeLazyLoaded ?? static::$isBadgeDeferred;
-    }
-
-    /**
-     * @deprecated Use `isBadgeLazyLoaded()` instead.
-     */
-    #[Unexposed]
-    public static function isBadgeDeferred(Model $ownerRecord, string $pageClass): bool
-    {
-        return static::isBadgeLazyLoaded($ownerRecord, $pageClass);
+        return static::$isBadgeLazyLoaded ?? false;
     }
 
     #[Unexposed]
@@ -356,7 +340,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     {
         $properties = [];
 
-        if ((static::$isLazyLoaded !== null) ? static::isLazyLoaded() : static::isLazy()) {
+        if (static::isLazyLoaded()) {
             $properties['lazy'] = true;
         }
 

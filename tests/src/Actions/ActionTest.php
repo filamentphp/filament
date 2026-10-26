@@ -2247,7 +2247,7 @@ class TableActionTestComponent extends Component implements HasActions, HasSchem
 
     public function table(Table $table): Table
     {
-        return $table->query(Post::query())->deferLoading($this->deferTableLoading)->columns([
+        return $table->query(Post::query())->lazyLoaded($this->deferTableLoading)->columns([
             TextColumn::make('title'),
         ])->recordActions([
             Action::make('view')->requiresConfirmation()->registerModalActions([

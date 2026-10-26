@@ -29,7 +29,7 @@ trait CanDeferLoading
     #[Unexposed]
     public function isTableLoaded(): bool
     {
-        if (! $this->getTable()->isLoadingDeferred()) {
+        if (! $this->getTable()->isLazyLoaded()) {
             return true;
         }
 

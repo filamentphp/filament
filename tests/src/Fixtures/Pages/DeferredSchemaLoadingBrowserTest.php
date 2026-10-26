@@ -47,7 +47,7 @@ class DeferredSchemaLoadingBrowserTest extends Page
                                 TextInput::make('concealed_deferred_name')
                                     ->label('Concealed deferred name'),
                             ])
-                            ->deferLoading(),
+                            ->lazyLoaded(),
                     ),
                 Text::make('Scroll to load the deferred schema.')
                     ->extraAttributes([
@@ -66,7 +66,7 @@ class DeferredSchemaLoadingBrowserTest extends Page
                                     ->label('Deferred name')
                                     ->required(),
                             ])
-                            ->deferLoading(),
+                            ->lazyLoaded(),
                     ),
                 Tabs::make('Deferred tabs')
                     ->key('deferredTabs')
@@ -82,7 +82,7 @@ class DeferredSchemaLoadingBrowserTest extends Page
                                         TextInput::make('profile_name')
                                             ->label('Deferred profile name'),
                                     ])
-                                    ->deferLoading(),
+                                    ->lazyLoaded(),
                             ),
                         Tab::make('Preferences')
                             ->key('preferencesTab')
@@ -92,7 +92,7 @@ class DeferredSchemaLoadingBrowserTest extends Page
                                         TextInput::make('timezone')
                                             ->label('Deferred timezone'),
                                     ])
-                                    ->deferLoading(),
+                                    ->lazyLoaded(),
                             ),
                     ]),
                 Wizard::make([
@@ -104,7 +104,7 @@ class DeferredSchemaLoadingBrowserTest extends Page
                                     TextInput::make('account_name')
                                         ->label('Deferred account name'),
                                 ])
-                                ->deferLoading(),
+                                ->lazyLoaded(),
                         ),
                     Step::make('Confirmation')
                         ->key('confirmationStep')
@@ -114,7 +114,7 @@ class DeferredSchemaLoadingBrowserTest extends Page
                                     TextInput::make('confirmation_note')
                                         ->label('Deferred confirmation note'),
                                 ])
-                                ->deferLoading(),
+                                ->lazyLoaded(),
                         ),
                 ])
                     ->key('deferredWizard')

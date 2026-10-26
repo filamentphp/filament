@@ -378,7 +378,7 @@ it('prefers query-string tab keys before legacy IDs', function (string $query, i
     'legacy default absolute ID' => ['form.profile.billing', 3],
 ]);
 
-it('can detect lazy badges through both getter names', function (string $method): void {
+it('can detect lazy badges', function (): void {
     $lazyTab = Tab::make('Lazy')->badge(static fn (): int => 42)->lazyLoadedBadge();
     $tabs = Tabs::make('Settings')->tabs([
         Tab::make('Normal')->badge(10),
@@ -387,16 +387,16 @@ it('can detect lazy badges through both getter names', function (string $method)
 
     Schema::make(Livewire::make())->components([$tabs])->getComponents();
 
-    expect($tabs->{$method}())->toBeTrue();
+    expect($tabs->hasLazyLoadedBadges())->toBeTrue();
 
     $lazyTab->lazyLoadedBadge(false);
 
-    expect($tabs->{$method}())->toBeFalse();
-})->with(['hasLazyLoadedBadges', 'hasDeferredBadges']);
+    expect($tabs->hasLazyLoadedBadges())->toBeFalse();
+});
 
-it('can return lazy tab badges through the legacy endpoint and new getter', function (): void {
-    $component = livewire(TabsWithDeferredBadges::class)
-        ->call('callSchemaComponentMethod', 'form.test-tabs', 'getDeferredTabBadges')
+it('can return lazy tab badges through `getLazyLoadedTabBadges()`', function (): void {
+    livewire(TabsWithDeferredBadges::class)
+        ->call('callSchemaComponentMethod', 'form.test-tabs', 'getLazyLoadedTabBadges')
         ->assertReturned(function (array $badges): bool {
             expect($badges)->toHaveCount(1);
             expect($badges)->toHaveKey('1');
@@ -405,11 +405,6 @@ it('can return lazy tab badges through the legacy endpoint and new getter', func
 
             return true;
         });
-
-    $badges = $component->instance()->getSchemaComponent('form.test-tabs')->getLazyLoadedTabBadges();
-
-    expect($badges)->toHaveCount(1)
-        ->and($badges['1']['badge'])->toBe('42');
 });
 
 it('can call an `Action` nested inside a tab that uses `livewireProperty()`', function (): void {

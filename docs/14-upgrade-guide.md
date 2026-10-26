@@ -270,6 +270,35 @@ Review Eloquent-specific calls if your app uses non-Eloquent users. Already-comp
 Job tags change from `import{id}` and `export{id}` to `filament:import:{id}` and `filament:export:{id}`. Update filters or monitoring that use them. Existing tags and custom `getJobTags()` overrides are unchanged.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('schemas') || packages.includes('forms') || packages.includes('tables') || packages.includes('panels') || packages.includes('widgets')">
+<span slot="summary">Deprecated lazy-loading and blur-binding APIs have been removed</span>
+
+Use the current loading APIs:
+
+| Affected classes | Removed methods | Replacements |
+| --- | --- | --- |
+| `Schema`, `Table` | `deferLoading()`, `isLoadingDeferred()` | `lazyLoaded()`, `isLazyLoaded()` |
+| Schema `Livewire`, `LivewireField` | `lazy()`, `isLazy()` | `lazyLoaded()`, `isLazyLoaded()` |
+| `Tab`, `RelationGroup` | `deferBadge()`, `isBadgeDeferred()` | `lazyLoadedBadge()`, `isBadgeLazyLoaded()` |
+| `Widget`, `RelationManager` | `isLazy()` | `isLazyLoaded()` |
+| `RelationManager` | `isBadgeDeferred()` | `isBadgeLazyLoaded()` |
+| `Tabs` | `getDeferredTabBadges()`, `hasDeferredBadges()` | `getLazyLoadedTabBadges()`, `hasLazyLoadedBadges()` |
+
+Rename overridden loading properties too: `$isLoadingDeferred` and `$isLazy` become `$isLazyLoaded`; `$isBadgeDeferred` becomes `$isBadgeLazyLoaded`. On widgets and relation managers, declare these static properties as `?bool`, preserving your configured value:
+
+```php
+protected static ?bool $isLazyLoaded = false;
+```
+
+When migrating direct property reads, use `static::$isLazyLoaded ?? true` or `static::$isBadgeLazyLoaded ?? false` to preserve the previous non-null defaults.
+
+For state binding on `Schema` and schema components other than embedded Livewire components, replace `lazy()` with `live(onBlur: true)` and `isLazy()` with `isLiveOnBlur()`. This controls when input changes reach the server, not when a component loads.
+
+The upgrade script migrates statically identified PHP calls and unambiguous overrides declared in the same file. Manually reconcile old/new member collisions, grouped property declarations, traits, cross-file custom overrides, dynamic names, callbacks, unknown receiver types, and non-PHP references. Static property writes, references, `isset()` / `unset()`, array access, and argument uses are left for manual migration, along with dependent getters. Review base-typed receivers that may hold custom subclasses and preserve custom dispatch when updating `parent::` calls.
+
+Custom blur-binding `lazy()` overrides and first-class `lazy(...)` callables require manual migration; calls passing arguments to the old blur-binding method are also left unchanged. Custom frontend calls to `$getDeferredTabBadges()` must use `$getLazyLoadedTabBadges()` instead. Livewire's native `lazy` mount parameter is unchanged.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('actions')">
 <span slot="summary">Deprecated action method aliases have been removed</span>
 

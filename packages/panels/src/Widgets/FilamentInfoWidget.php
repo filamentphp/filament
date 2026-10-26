@@ -6,10 +6,7 @@ class FilamentInfoWidget extends Widget
 {
     protected static ?int $sort = -2;
 
-    /**
-     * @deprecated Use `$isLazyLoaded` instead.
-     */
-    protected static bool $isLazy = false;
+    protected static ?bool $isLazyLoaded = false;
 
     /**
      * @var view-string

@@ -7,7 +7,7 @@ use Illuminate\Contracts\View\View;
 
 class ChartWidgetWithAssistiveContent extends ChartWidget
 {
-    protected static bool $isLazy = false;
+    protected static ?bool $isLazyLoaded = false;
 
     protected ?string $heading = 'Sales';
 

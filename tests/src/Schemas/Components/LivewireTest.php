@@ -40,33 +40,25 @@ it('can set `data()` with a `Closure`', function (): void {
 });
 
 describe('lazy loading', function (): void {
-    it('defaults `isLazy()` to `false`', function (): void {
+    it('defaults `isLazyLoaded()` to `false`', function (): void {
         $livewire = Livewire::make('counter');
 
-        expect($livewire->isLazy())->toBeFalse()
-            ->and($livewire->isLazyLoaded())->toBeFalse();
+        expect($livewire->isLazyLoaded())->toBeFalse();
     });
 
-    it('can enable lazy loading through either setter', function (string $method): void {
-        $livewire = Livewire::make('counter')->{$method}();
+    it('can enable and disable lazy loading', function (): void {
+        $livewire = Livewire::make('counter')->lazyLoaded();
 
-        expect($livewire->isLazy())->toBeTrue()
-            ->and($livewire->isLazyLoaded())->toBeTrue();
-    })->with(['lazyLoaded', 'lazy']);
-
-    it('shares configuration between `lazyLoaded()` and `lazy()`', function (): void {
-        $livewire = Livewire::make('counter')->lazyLoaded()->lazy(false);
-
-        expect($livewire->isLazyLoaded())->toBeFalse()
-            ->and($livewire->lazy()->lazyLoaded(false)->isLazy())->toBeFalse();
+        expect($livewire->isLazyLoaded())->toBeTrue()
+            ->and($livewire->lazyLoaded(false)->isLazyLoaded())->toBeFalse();
     });
 
-    it('can configure lazy loading with a `Closure`', function (string $method): void {
+    it('can configure lazy loading with a `Closure`', function (): void {
         $livewire = Livewire::make('counter')
-            ->{$method}(static fn (): bool => true);
+            ->lazyLoaded(static fn (): bool => true);
 
         expect($livewire->isLazyLoaded())->toBeTrue();
-    })->with(['lazyLoaded', 'lazy']);
+    });
 });
 
 describe('component properties', function (): void {
@@ -79,15 +71,15 @@ describe('component properties', function (): void {
         expect($properties)->toHaveKey('count', 5);
     });
 
-    it('includes the Livewire `lazy` property through either setter', function (string $method): void {
+    it('includes the Livewire `lazy` property with `lazyLoaded()`', function (): void {
         $livewire = Livewire::make('counter')
-            ->{$method}()
+            ->lazyLoaded()
             ->container(Schema::make(LivewireFixture::make()));
 
         $properties = $livewire->getComponentProperties();
 
         expect($properties)->toHaveKey('lazy', true);
-    })->with(['lazyLoaded', 'lazy']);
+    });
 
     it('excludes `lazy` from `getComponentProperties()` when not lazy', function (): void {
         $livewire = Livewire::make('counter')

@@ -163,7 +163,7 @@ trait InteractsWithSchemas
                 return null;
             }
 
-            if (($schema->getKey() === $schemaKey) && $schema->isLoadingDeferred()) {
+            if (($schema->getKey() === $schemaKey) && $schema->isLazyLoaded()) {
                 return $schema;
             }
 

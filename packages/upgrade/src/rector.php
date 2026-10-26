@@ -2,6 +2,7 @@
 
 use Composer\InstalledVersions;
 use Filament\Upgrade\Rector\RenameDeprecatedActionMethodsRector;
+use Filament\Upgrade\Rector\RenameDeprecatedLazyLoadingApisRector;
 use Filament\Upgrade\Rector\RenameDeprecatedTableMethodsRector;
 use Filament\Upgrade\Rector\ReplaceConvenienceClassesRector;
 use Filament\Upgrade\Rector\WidenAvatarProviderParameterTypeRector;
@@ -65,6 +66,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->rule(RenameDeprecatedActionMethodsRector::class);
+    $rectorConfig->rule(RenameDeprecatedLazyLoadingApisRector::class);
     $rectorConfig->rule(RenameDeprecatedTableMethodsRector::class);
     $rectorConfig->rule(ReplaceConvenienceClassesRector::class);
     $rectorConfig->rule(WidenAvatarProviderParameterTypeRector::class);

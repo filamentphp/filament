@@ -493,10 +493,10 @@ class TestComponentWithDeferredSchemas extends Livewire
                                             ->components([
                                                 TextInput::make('description'),
                                             ])
-                                            ->deferLoading(),
+                                            ->lazyLoaded(),
                                     ),
                             ])
-                            ->deferLoading(),
+                            ->lazyLoaded(),
                     ),
                 Section::make('Hidden details')
                     ->key('hiddenDetails')
@@ -506,7 +506,7 @@ class TestComponentWithDeferredSchemas extends Livewire
                             ->components([
                                 TextInput::make('secret'),
                             ])
-                            ->deferLoading(),
+                            ->lazyLoaded(),
                     ),
                 Section::make('Empty details')
                     ->key('emptyDetails')
@@ -516,7 +516,7 @@ class TestComponentWithDeferredSchemas extends Livewire
                                 TextInput::make('empty')
                                     ->hidden(),
                             ])
-                            ->deferLoading(),
+                            ->lazyLoaded(),
                     ),
                 Repeater::make('members')
                     ->schema(
@@ -524,7 +524,7 @@ class TestComponentWithDeferredSchemas extends Livewire
                             ->components([
                                 TextInput::make('name'),
                             ])
-                            ->deferLoading(),
+                            ->lazyLoaded(),
                     )
                     ->default([
                         ['name' => 'Taylor'],
@@ -537,7 +537,7 @@ class TestComponentWithDeferredSchemas extends Livewire
                                     ->components([
                                         TextInput::make('text'),
                                     ])
-                                    ->deferLoading(),
+                                    ->lazyLoaded(),
                             ),
                     ])
                     ->default([
