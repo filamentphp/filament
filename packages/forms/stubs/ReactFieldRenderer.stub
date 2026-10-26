@@ -1,7 +1,7 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 
-function {{ componentName }}Component(props) {
+function {{ componentIdentifier }}(props) {
     return (
         <input
             id={props.id}
@@ -20,7 +20,7 @@ function {{ componentName }}Component(props) {
 
 export default function mount{{ componentName }}({ host, props: initialProps }) {
     const root = createRoot(host)
-    const update = (props) => root.render(<{{ componentName }}Component {...initialProps} {...props} />)
+    const update = (props) => root.render(<{{ componentIdentifier }} {...props} />)
 
     update(initialProps)
 

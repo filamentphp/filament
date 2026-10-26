@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { JsFieldInitialProps } from '@filament/forms/js-field'
+import type { JsFieldProps } from '@filament/forms/js-field'
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<JsFieldInitialProps<string | null>>()
+const props = defineProps<JsFieldProps<string | null>>()
 </script>
 
 <template>

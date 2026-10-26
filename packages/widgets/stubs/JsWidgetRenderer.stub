@@ -1,0 +1,14 @@
+export default function mount{{ componentName }}({ host, props: initialProps }) {
+    const heading = document.createElement('h2')
+    const paragraph = document.createElement('p')
+
+    const update = ({ configuration }) => {
+        heading.textContent = configuration.heading ?? 'Widget heading'
+        paragraph.textContent = configuration.description ?? 'Widget description'
+    }
+
+    update(initialProps)
+    host.append(heading, paragraph)
+
+    return { update, destroy: () => host.replaceChildren() }
+}

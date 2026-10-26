@@ -101,6 +101,43 @@ test('blur commits once and unchanged values never commit', async () => {
     assert.equal(result.commits, 1)
 })
 
+test('mount and update props supply the same callbacks with current field configuration', async () => {
+    let initialProps
+    let currentProps
+    const result = await fixture(
+        { isLive: true, isLiveOnBlur: true },
+        ({ props }) => {
+            initialProps = props
+            return {
+                update: (props) => (currentProps = props),
+                destroy() {},
+            }
+        },
+    )
+
+    result.field.state = 'Server replacement'
+    result.flush()
+    assert.equal(currentProps.value, 'Server replacement')
+    assert.equal(currentProps.onChange, initialProps.onChange)
+    assert.equal(currentProps.onBlur, initialProps.onBlur)
+    currentProps.onChange('Edited after replacement')
+    assert.equal(result.field.state, 'Edited after replacement')
+    assert.equal(result.commits, 0)
+    currentProps.onBlur()
+    assert.equal(result.commits, 1)
+
+    result.field.updateRendererConfiguration({ limit: 5 }, { isReadOnly: true })
+    assert.equal(currentProps.onChange, initialProps.onChange)
+    assert.equal(currentProps.onBlur, initialProps.onBlur)
+    currentProps.onChange('Rejected')
+    assert.equal(result.field.state, 'Edited after replacement')
+    result.field.destroy()
+    currentProps.onChange('After destruction')
+    currentProps.onBlur()
+    assert.equal(result.field.state, 'Edited after replacement')
+    assert.equal(result.commits, 1)
+})
+
 test('renderer failure cancels a pending field commit and rejects late input callbacks', async (context) => {
     context.mock.timers.enable({ apis: ['setTimeout'] })
     context.mock.method(console, 'error', () => {})

@@ -286,9 +286,15 @@ class MakeFieldCommand extends Command
 
     protected function createRenderer(): void
     {
+        $componentName = class_basename($this->fqn);
+        $componentIdentifier = (ctype_lower($componentName[0]) || in_array($componentName, [
+            'React', 'JsFieldInitialProps', 'JsFieldProps', 'JsFieldRenderer',
+        ], strict: true)) ? 'Component' : $componentName;
+
         foreach ($this->rendererFiles as $path => $stub) {
             $this->copyStubToApp($stub, $path, [
-                'componentName' => class_basename($this->fqn),
+                'componentName' => $componentName,
+                'componentIdentifier' => $componentIdentifier,
             ]);
         }
     }
