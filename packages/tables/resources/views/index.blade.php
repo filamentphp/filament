@@ -2785,6 +2785,7 @@
                     :extreme-links="$hasExtremePaginationLinks"
                     :page-options="$paginationPageOptions"
                     :paginator="$records"
+                    :loading-targets="Table::LOADING_TARGETS"
                 />
             @endif
 
