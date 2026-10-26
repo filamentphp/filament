@@ -1,7 +1,7 @@
 <script lang="ts">
-    import type { JsFieldInitialProps } from '@filament/forms/js-field'
+    import type { JsFieldProps } from '@filament/forms/js-field'
 
-    let { value, id, isDisabled, isReadOnly, isRequired, isInvalid, ariaDescribedBy, onChange, onBlur }: JsFieldInitialProps<string | null> = $props()
+    let { value, id, isDisabled, isReadOnly, isRequired, isInvalid, ariaDescribedBy, onChange, onBlur }: JsFieldProps<string | null> = $props()
 </script>
 
 <input

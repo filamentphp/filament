@@ -60,8 +60,10 @@ const renderer: JsFieldRenderer<Value, Configuration, Methods> = ({
     return {
         update(next) {
             next.value.title.toUpperCase()
-            // @ts-expect-error Updates deliberately do not supply callbacks.
             next.onChange(next.value)
+            next.onBlur()
+            // @ts-expect-error Update callbacks preserve the field's value shape.
+            next.onChange('invalid')
         },
         async destroy() {},
     }

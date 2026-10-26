@@ -26,15 +26,15 @@ export interface JsFieldProps<
     readonly isLive: boolean
     readonly isLiveOnBlur: boolean
     readonly debounce: number | null
-}
-
-export interface JsFieldInitialProps<
-    Value = unknown,
-    Configuration = Record<string, unknown>,
-> extends JsFieldProps<Value, Configuration> {
     readonly onChange: (value: Value | Snapshot<Value>) => void
     readonly onBlur: () => void
 }
+
+/** @deprecated Use `JsFieldProps`. Mount and update props have the same shape. */
+export interface JsFieldInitialProps<
+    Value = unknown,
+    Configuration = Record<string, unknown>,
+> extends JsFieldProps<Value, Configuration> {}
 
 /** Common proxy methods. The runtime object is Livewire's unmodified `$wire`. */
 export interface JsFieldLivewire extends JsRendererLivewire {}
@@ -65,7 +65,7 @@ export interface JsFieldRendererContext<
     Configuration = Record<string, unknown>,
     Methods = Record<never, never>,
 > extends JsRendererContext<
-    JsFieldInitialProps<Value, Configuration>,
+    JsFieldProps<Value, Configuration>,
     JsFieldUtilities<Value> & Methods
 > {}
 

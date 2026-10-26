@@ -20,7 +20,7 @@ function {{ componentIdentifier }}(props) {
 
 export default function mount{{ componentName }}({ host, props: initialProps }) {
     const root = createRoot(host)
-    const update = (props) => root.render(<{{ componentIdentifier }} {...initialProps} {...props} />)
+    const update = (props) => root.render(<{{ componentIdentifier }} {...props} />)
 
     update(initialProps)
 

@@ -857,6 +857,28 @@ If importing, mounting, or `update()` throws or rejects, Filament clears the hos
 
 Clean up resources yourself if mounting fails before returning lifecycle methods. Filament logs cleanup failures without blocking other components, but does not provide a framework error boundary: handle errors in event handlers and independently scheduled work in your renderer.
 
+### Customizing the Blade view
+
+A component using `HasJsRenderer` does not need a Blade view, but you can set its `$view` property or call `view()` to render a custom view instead:
+
+```php
+use App\Filament\Schemas\Components\Chart;
+
+Chart::make()
+    ->key('chart')
+    ->view('filament.schemas.components.chart')
+```
+
+The custom view replaces the default output; it does not automatically mount the JavaScript renderer. To keep the renderer inside your own Blade layout, render the component's `toEmbeddedHtml()` output in `resources/views/filament/schemas/components/chart.blade.php`:
+
+```blade
+<div>
+    {!! $schemaComponent->toEmbeddedHtml() !!}
+</div>
+```
+
+Keep any additional Blade content outside the renderer's `host`.
+
 ### Building reusable plugin components
 
 Extend `Component` and use `Filament\Schemas\Components\Concerns\HasJsRenderer` for a reusable component. Implement `getRenderer()` and optionally `getRendererConfiguration()`. You do not need a Blade view or to extend `JsComponent`:

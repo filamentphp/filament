@@ -300,6 +300,22 @@ If importing, mounting, or updating fails, Filament logs the error, disposes the
 
 If mounting allocates resources before throwing, clean them up in the mount function: Filament has not received an instance to dispose yet.
 
+### Customizing the Blade view
+
+Widgets using `HasJsRenderer` use `filament-widgets::js-widget` by default. To use a custom Blade view instead, set `$view` in your widget class:
+
+```php
+protected string $view = 'filament.widgets.revenue-overview';
+```
+
+The custom view replaces the default output; it does not automatically mount the JavaScript renderer. To keep the renderer, include the shared view in `resources/views/filament/widgets/revenue-overview.blade.php`:
+
+```blade
+@include('filament-widgets::js-widget')
+```
+
+The shared view already includes the widget and section wrappers. Do not wrap this include in another `<x-filament-widgets::widget>` or `<x-filament::section>`. If you replace it entirely, your custom view is responsible for the widget layout and any renderer integration.
+
 ### Building reusable plugin widgets
 
 For a plugin, build the renderer as an ES module and register it as a [published JavaScript asset](../advanced/assets#building-lazy-loaded-es-modules), rather than using the host application's Vite manifest:

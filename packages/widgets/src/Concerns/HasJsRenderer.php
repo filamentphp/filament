@@ -17,6 +17,6 @@ trait HasJsRenderer /** @phpstan-ignore trait.unused */
 
     public function render(): View
     {
-        return view('filament-widgets::js-widget', $this->getViewData());
+        return view($this->view ?? 'filament-widgets::js-widget', $this->getViewData());
     }
 }

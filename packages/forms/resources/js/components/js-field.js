@@ -12,10 +12,12 @@ export default function jsFieldFormComponent({
     let destroyed = false
     let timer
     let pendingValue
+    let callbacks
     const props = (state) => ({
         ...fieldConfiguration,
         value: snapshot(state),
         configuration: snapshot(rendererConfiguration),
+        ...callbacks,
     })
 
     return {
@@ -117,55 +119,54 @@ export default function jsFieldFormComponent({
                 },
             }
 
+            callbacks = {
+                onChange: (value) => {
+                    if (
+                        destroyed ||
+                        fieldConfiguration.isDisabled ||
+                        fieldConfiguration.isReadOnly
+                    ) {
+                        return
+                    }
+
+                    const serialized = JSON.stringify(value)
+
+                    if (serialized === JSON.stringify(this.state)) {
+                        return
+                    }
+
+                    this.state = snapshot(value)
+                    pendingValue = serialized
+                    clearTimeout(timer)
+
+                    if (
+                        fieldConfiguration.isLive &&
+                        !fieldConfiguration.isLiveOnBlur
+                    ) {
+                        timer = setTimeout(() => {
+                            if (pendingValue === JSON.stringify(this.state)) {
+                                commit()
+                            }
+                        }, fieldConfiguration.debounce ?? 0)
+                    }
+
+                    this.updateRenderer()
+                },
+                onBlur: () => {
+                    if (
+                        !destroyed &&
+                        fieldConfiguration.isLive &&
+                        fieldConfiguration.isLiveOnBlur &&
+                        pendingValue !== undefined
+                    ) {
+                        commit()
+                    }
+                },
+            }
+
             return {
                 host: this.$refs.host,
-                props: {
-                    ...props(this.state),
-                    onChange: (value) => {
-                        if (
-                            destroyed ||
-                            fieldConfiguration.isDisabled ||
-                            fieldConfiguration.isReadOnly
-                        ) {
-                            return
-                        }
-
-                        const serialized = JSON.stringify(value)
-
-                        if (serialized === JSON.stringify(this.state)) {
-                            return
-                        }
-
-                        this.state = snapshot(value)
-                        pendingValue = serialized
-                        clearTimeout(timer)
-
-                        if (
-                            fieldConfiguration.isLive &&
-                            !fieldConfiguration.isLiveOnBlur
-                        ) {
-                            timer = setTimeout(() => {
-                                if (
-                                    pendingValue === JSON.stringify(this.state)
-                                ) {
-                                    commit()
-                                }
-                            }, fieldConfiguration.debounce ?? 0)
-                        }
-
-                        this.updateRenderer()
-                    },
-                    onBlur: () => {
-                        if (
-                            !destroyed &&
-                            fieldConfiguration.isLive &&
-                            fieldConfiguration.isLiveOnBlur &&
-                            pendingValue !== undefined
-                        ) {
-                            commit()
-                        }
-                    },
-                },
+                props: props(this.state),
                 utilities,
             }
         },

@@ -361,9 +361,7 @@ function LocationPicker(props) {
 
 export default function mountLocationPicker({ host, props: initialProps }) {
     const root = createRoot(host)
-    const update = (props) => root.render(
-        <LocationPicker {...initialProps} {...props} />,
-    )
+    const update = (props) => root.render(<LocationPicker {...props} />)
 
     update(initialProps)
 
@@ -425,7 +423,7 @@ export default function mountLocationPicker({ host, props: initialProps }) {
 
     return {
         update(nextProps) {
-            props.value = { ...initialProps, ...nextProps }
+            props.value = nextProps
         },
         destroy: () => application.unmount(),
     }
@@ -527,7 +525,7 @@ export default function mountLocationPicker({ host, props: initialProps }) {
     }
 
     const update = (props) => {
-        currentProps = { ...currentProps, ...props }
+        currentProps = props
 
         coordinates.forEach((coordinate) => {
             const input = inputs[coordinate]
@@ -564,7 +562,7 @@ The examples leave styling to your application. See [registering CSS files](../a
 
 Use `props.value` to render the field's current state and call `props.onChange(nextValue)` after a user interaction. Always pass the complete value, rather than mutating the incoming object. Values must be JSON-serializable: `null`, scalars, arrays, or objects. Initialize a particular shape using `default()`, and handle cleared values in your component.
 
-Filament sends fresh state and configuration to `update(props)`, without the callbacks. Retain the initial `onChange()` and `onBlur()` callbacks, as shown in each example. Do not call `onChange()` when receiving props or rendering the component, as this can create feedback loops.
+Filament supplies the complete props to both the mount function and `update(props)`, including `onChange()` and `onBlur()`. These callbacks keep the same function references for the mounted field's lifetime, so you can replace props on each update or retain the callbacks for native event listeners. Do not call `onChange()` when receiving props or rendering the component, as this can create feedback loops.
 
 By default, edits update local Livewire state and are sent on the next request. Use the usual [state binding modifiers](#obeying-state-binding-modifiers) to change this behavior:
 
@@ -690,7 +688,9 @@ const mountLocationPicker: JsFieldRenderer<Location, Configuration> = ({ host, p
 export default mountLocationPicker
 ```
 
-You can also import `JsFieldRendererContext`, `JsFieldInitialProps`, `JsFieldProps`, `JsFieldUtilities`, and `JsFieldRendererInstance` to type individual parts of your implementation. Initial props include callbacks; subsequent props do not. State and configuration are deeply read-only snapshots in TypeScript, not runtime-frozen objects. Unspecified types must be narrowed before use. Keep `import type` so your bundler does not try to load the declaration file, and keep PHP validation even when using TypeScript.
+You can also import `JsFieldRendererContext`, `JsFieldProps`, `JsFieldUtilities`, and `JsFieldRendererInstance` to type individual parts of your implementation. `JsFieldProps` includes callbacks and describes both mount and update props. `JsFieldInitialProps` remains available as a deprecated compatibility alias for `JsFieldProps`.
+
+State and configuration are deeply read-only snapshots in TypeScript, not runtime-frozen objects. Unspecified types must be narrowed before use. Keep `import type` so your bundler does not try to load the declaration file, and keep PHP validation even when using TypeScript.
 
 #### Typing exposed methods
 
@@ -723,6 +723,27 @@ If you already load the renderer through another script, you may pass a trusted 
 If importing, mounting, or `update()` fails, Filament shows an accessible error without changing the field value. Check the browser console, correct the module, then reload. Diagnostics include renderer URLs and original errors, so avoid including sensitive data in either. Cleanup failures are reported without blocking other fields' cleanup.
 
 Clean up resources yourself if mounting fails before returning lifecycle methods. Handle errors in framework rendering, event handlers, and independent asynchronous work with your framework's error handling. Manage ordering and cancellation for asynchronous updates: Filament does not serialize them or await cleanup before remounting.
+
+### Customizing the Blade view
+
+A field using `HasJsRenderer` does not need a Blade view, but you can set its `$view` property or call `view()` to render a custom view instead:
+
+```php
+use App\Filament\Forms\Components\LocationPicker;
+
+LocationPicker::make('location')
+    ->view('filament.forms.components.location-picker')
+```
+
+The custom view replaces the default output; it does not automatically mount the JavaScript renderer. To keep the renderer inside your own Blade layout, render the field's `toEmbeddedHtml()` output in `resources/views/filament/forms/components/location-picker.blade.php`:
+
+```blade
+<div>
+    {!! $field->toEmbeddedHtml() !!}
+</div>
+```
+
+This output already includes the field wrapper, so do not add another field wrapper around it. Keep any additional Blade content outside the renderer's `host`.
 
 ### Building reusable plugin fields
 

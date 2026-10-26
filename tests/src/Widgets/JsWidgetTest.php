@@ -24,6 +24,15 @@ it('renders JavaScript widgets without a custom Blade view and synchronizes `get
     expect($initialConfigurationKey[1])->not->toBe($updatedConfigurationKey[1]);
 });
 
+it('honors a custom `$view` on a JavaScript widget', function (): void {
+    $widget = new class extends JsWidget
+    {
+        protected string $view = 'simple-component';
+    };
+
+    expect($widget->render()->render())->toBe(view('simple-component')->render());
+});
+
 it('escapes renderer props without treating their content as markup', function (): void {
     livewire(JsWidget::class, ['framework' => 'inline', 'pageFilters' => ['period' => '"><script>alert(1)</script>']])
         ->assertDontSee('<script>alert(1)</script>', escape: false)
