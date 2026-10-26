@@ -11,6 +11,7 @@
 
 @import './components/global-search.css' layer(components);
 @import './components/header.css' layer(components);
+@import './components/inertia.css' layer(components);
 @import './components/layout.css' layer(components);
 @import './components/logo.css' layer(components);
 @import './components/page.css' layer(components);

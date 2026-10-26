@@ -1,0 +1,11 @@
+import { createInertiaApp } from '@inertiajs/svelte'
+import createServer from '@inertiajs/svelte/server'
+import { render } from 'svelte/server'
+import { resolve } from '{{ resolver }}'
+
+createServer((page) => createInertiaApp({
+    id: 'filament-inertia',
+    page,
+    resolve,
+    setup: ({ App, props }) => render(App, { props }),
+}))

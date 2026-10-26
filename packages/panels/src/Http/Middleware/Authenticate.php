@@ -6,6 +6,8 @@ use Filament\Facades\Filament;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Inertia\Inertia;
 
 class Authenticate extends Middleware
 {
@@ -38,6 +40,24 @@ class Authenticate extends Middleware
                 (config('app.env') !== 'local'),
             403,
         );
+    }
+
+    /**
+     * @param  array<string>  $guards
+     * @return never
+     */
+    protected function unauthenticated($request, array $guards)
+    {
+        if (
+            $request->header('X-Inertia') &&
+            (! $request->expectsJson()) &&
+            Filament::getCurrentOrDefaultPanel()->hasPlugin('inertia') &&
+            filled($loginUrl = $this->redirectTo($request))
+        ) {
+            throw new HttpResponseException(Inertia::location(redirect()->guest($loginUrl)));
+        }
+
+        parent::unauthenticated($request, $guards);
     }
 
     protected function redirectTo($request): ?string
