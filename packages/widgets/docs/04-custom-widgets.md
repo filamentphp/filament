@@ -56,6 +56,8 @@ The generated files depend on your chosen renderer:
 - Svelte 5: `revenue-overview.svelte.js` and `RevenueOverview.svelte`. With `--typescript`, the entry uses `.svelte.ts` and the component uses `<script lang="ts">`.
 - Framework-free JavaScript: `revenue-overview.js`, or `revenue-overview.ts` with `--typescript`.
 
+The React component and Vue or Svelte import are named `RevenueOverview`, matching the PHP class. Names that start with a lowercase letter or conflict with a starter's imports use the local name `Component` instead. Filenames and the default-exported `mountRevenueOverview()` function still use the requested name.
+
 Renderer directories follow the PHP namespace in kebab case, excluding your application's root namespace. For example, `App\Filament\Resources\Orders\Widgets\RevenueOverview` uses `resources/js/filament/resources/orders/widgets/`.
 
 <Aside variant="info">

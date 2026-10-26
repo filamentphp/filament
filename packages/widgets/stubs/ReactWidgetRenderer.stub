@@ -1,13 +1,13 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 
-function WidgetContent({ configuration }) {
+function {{ componentIdentifier }}({ configuration }) {
     return <><h2>{configuration.heading ?? 'Widget heading'}</h2><p>{configuration.description ?? 'Widget description'}</p></>
 }
 
 export default function mount{{ componentName }}({ host, props: initialProps }) {
     const root = createRoot(host)
-    const update = (props) => root.render(<WidgetContent {...props} />)
+    const update = (props) => root.render(<{{ componentIdentifier }} {...props} />)
     update(initialProps)
 
     return { update, destroy: () => root.unmount() }
