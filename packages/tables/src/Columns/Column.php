@@ -22,6 +22,7 @@ use Filament\Tables\Columns\Concerns\HasTooltip;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Js;
 use LogicException;
 
 use function Filament\Support\generate_href_html;
@@ -172,13 +173,13 @@ class Column extends ViewComponent
                 'type' => ($wrapperTag === 'button') ? 'button' : null,
                 'wire:click.prevent.stop' => $wireClickAction = match (true) {
                     ($wrapperTag !== 'button') => null,
-                    $action instanceof Action => "mountTableAction('{$action->getName()}', '{$this->getRecordKey()}')",
-                    filled($action) => "callTableColumnAction('{$this->getName()}', '{$this->getRecordKey()}')",
+                    $action instanceof Action => "mountTableAction('{$action->getName()}', " . Js::from($this->getRecordKey()) . ')',
+                    filled($action) => "callTableColumnAction('{$this->getName()}', " . Js::from($this->getRecordKey()) . ')',
                     default => null,
                 },
                 'wire:loading.attr' => ($wrapperTag === 'button') ? 'disabled' : null,
                 'wire:target' => $wireClickAction,
-            ], escape: false)
+            ])
             ->class([
                 'fi-ta-col',
                 ((($alignment = $this->getAlignment()) instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')),
