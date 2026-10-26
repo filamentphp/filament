@@ -406,6 +406,31 @@ Preserve custom parameters and return behavior. The old wrappers dispatched thro
 `groupedBulkActions()` and legacy Livewire configuration hooks such as `getTableActions()` remain available.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('infolists') || packages.includes('tables')">
+<span slot="summary">Deprecated image and infolist presentation aliases have been removed</span>
+
+The script renames calls on the following components and their subclasses:
+
+| Component | Removed method | Replacement |
+| --- | --- | --- |
+| `Filament\Infolists\Components\ImageEntry`, `Filament\Tables\Columns\ImageColumn` | `height()` | `imageHeight()` |
+| `ImageEntry`, `ImageColumn` | `size()` | `imageSize()` |
+| `ImageEntry`, `ImageColumn` | `getHeight()` | `getImageHeight()` |
+| `ImageEntry` | `width()` | `imageWidth()` |
+| `ImageEntry` | `getWidth()` | `getImageWidth()` |
+| `ImageColumn` | `rounded()` | `circular()` |
+| `ImageColumn` | `isRounded()` | `isCircular()` |
+| `Filament\Infolists\Components\KeyValueEntry` | `emptyMessage()` | `placeholder()` |
+
+Arguments, defaults, nullable values, and closure evaluation are unchanged. The script renames `emptyMessage(message: ...)` to `placeholder(placeholder: ...)`. Calls unpacking arguments into `emptyMessage()` are left unchanged; rename the method and any `'message'` argument key manually. Update named arguments when invoking migrated first-class callables yourself. The image aliases preserve named and unpacked arguments. `imageSize()` still requires a non-null argument.
+
+`ImageColumn::width()` and `getWidth()` still configure and read the table column width, not the image width, and are not renamed. Methods such as `TextEntry::size()` and `TextColumn::size()` are also unchanged.
+
+Manually migrate custom overrides (including inherited ones), class-qualified calls such as `parent::height()`, dynamic names, callbacks, unknown or ambiguous receiver types, and non-PHP references. Calls on known overrides of either the alias or its replacement are skipped. Review changes where a base-typed receiver may hold a custom subclass.
+
+Preserve custom parameter names, defaults, return values, and dispatch behavior. The wrappers called replacements through `$this`, so renaming `parent::` calls can bypass subclass overrides. The dimension setters and `emptyMessage()` returned `$this` regardless of the replacement's return value, while `rounded()` returned the result of `circular()`.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('widgets')">
 <span slot="summary">Deprecated typed chart widget classes have been removed</span>
 

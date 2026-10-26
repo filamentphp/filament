@@ -75,29 +75,11 @@ class ImageColumn extends Column implements HasEmbeddedView
         return $this;
     }
 
-    /**
-     * @deprecated Use `imageHeight()` instead.
-     */
-    public function height(int | string | Closure | null $height): static
-    {
-        $this->imageHeight($height);
-
-        return $this;
-    }
-
     public function circular(bool | Closure $condition = true): static
     {
         $this->isCircular = $condition;
 
         return $this;
-    }
-
-    /**
-     * @deprecated Use `circular()` instead.
-     */
-    public function rounded(bool | Closure $condition = true): static
-    {
-        return $this->circular($condition);
     }
 
     public function square(bool | Closure $condition = true): static
@@ -111,16 +93,6 @@ class ImageColumn extends Column implements HasEmbeddedView
     {
         $this->imageWidth($size);
         $this->imageHeight($size);
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `imageSize()` instead.
-     */
-    public function size(int | string | Closure $size): static
-    {
-        $this->imageSize($size);
 
         return $this;
     }
@@ -183,14 +155,6 @@ class ImageColumn extends Column implements HasEmbeddedView
         }
 
         return $height;
-    }
-
-    /**
-     * @deprecated Use `getImageHeight()` instead.
-     */
-    public function getHeight(): ?string
-    {
-        return $this->getImageHeight();
     }
 
     public function defaultImageUrl(string | Closure | null $url): static
@@ -302,14 +266,6 @@ class ImageColumn extends Column implements HasEmbeddedView
     public function isCircular(): bool
     {
         return (bool) $this->evaluate($this->isCircular);
-    }
-
-    /**
-     * @deprecated Use `isCircular()` instead.
-     */
-    public function isRounded(): bool
-    {
-        return $this->isCircular();
     }
 
     public function isSquare(): bool
