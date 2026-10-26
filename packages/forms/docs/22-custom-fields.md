@@ -56,6 +56,8 @@ The generated PHP class uses `HasJsRenderer` and loads its entry through `Vite::
 - Svelte: `location-picker.svelte.js` and `LocationPicker.svelte`. With `--typescript`, the entry uses `.svelte.ts` and the component uses `<script lang="ts">`.
 - Framework-free JavaScript: `location-picker.js`, or `location-picker.ts` with `--typescript`.
 
+The React component and Vue or Svelte import are named `LocationPicker`, matching the PHP class. Names that start with a lowercase letter or conflict with a starter's imports use the local name `Component` instead. Filenames and the default-exported `mountLocationPicker()` function still use the requested name.
+
 The starters support React 18 or later, Vue 3.3 or later within Vue 3, and Svelte 5. Missing React installations default to React 19. Existing compatible dependencies are preserved; incompatible versions require a manual upgrade.
 
 Nested field names, such as `Maps/LocationPicker`, place the JavaScript files in a `maps/` subdirectory. TypeScript generation also configures the `@filament/forms/js-field` [type alias](#typing-renderers).

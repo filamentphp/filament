@@ -2,7 +2,7 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import type { JsFieldInitialProps, JsFieldProps, JsFieldRenderer } from '@filament/forms/js-field'
 
-function {{ componentName }}Component(props: JsFieldInitialProps<string | null>) {
+function {{ componentIdentifier }}(props: JsFieldInitialProps<string | null>) {
     return (
         <input
             id={props.id}
@@ -21,7 +21,7 @@ function {{ componentName }}Component(props: JsFieldInitialProps<string | null>)
 
 const mount{{ componentName }}: JsFieldRenderer<string | null> = ({ host, props: initialProps }) => {
     const root = createRoot(host)
-    const update = (props: JsFieldProps<string | null>) => root.render(<{{ componentName }}Component {...initialProps} {...props} />)
+    const update = (props: JsFieldProps<string | null>) => root.render(<{{ componentIdentifier }} {...initialProps} {...props} />)
 
     update(initialProps)
 

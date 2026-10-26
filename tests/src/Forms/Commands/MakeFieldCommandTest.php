@@ -90,7 +90,7 @@ it('can generate a field view in a nested directory', function (): void {
         ->toMatchSnapshot();
 });
 
-it('can generate a JavaScript field without a Blade view', function (string $framework, string $extension, ?string $typeScriptOption, string $name = 'GeneratedField', string $directory = '', string $basename = 'generated-field'): void {
+it('can generate a JavaScript field without a Blade view', function (string $framework, string $extension, ?string $typeScriptOption, string $name = 'GeneratedField', string $directory = '', string $basename = 'generated-field', ?string $componentIdentifier = null): void {
     $viewPath = resource_path("views/filament/forms/components/{$directory}{$basename}.blade.php");
     File::delete($viewPath);
 
@@ -119,7 +119,7 @@ it('can generate a JavaScript field without a Blade view', function (string $fra
     $componentName = basename($name);
     $stubPrefix = ucfirst($framework) . ($typeScriptOption ? 'TypeScript' : '');
     expect(file_get_contents(base_path($renderer)))
-        ->toBe(str_replace('{{ componentName }}', $componentName, file_get_contents(dirname(__DIR__, 4) . "/packages/forms/stubs/{$stubPrefix}FieldRenderer.stub")));
+        ->toBe(str_replace(['{{ componentName }}', '{{ componentIdentifier }}'], [$componentName, $componentIdentifier ?? $componentName], file_get_contents(dirname(__DIR__, 4) . "/packages/forms/stubs/{$stubPrefix}FieldRenderer.stub")));
 
     if (in_array($framework, ['vue', 'svelte'])) {
         expect(file_get_contents(resource_path("js/filament/forms/components/{$directory}{$componentName}.{$framework}")))
@@ -135,6 +135,11 @@ it('can generate a JavaScript field without a Blade view', function (string $fra
     'Vue with `--typescript`' => ['vue', 'ts', 'typescript'],
     'Svelte with `--ts`' => ['svelte', 'svelte.ts', 'ts'],
     'nested Vue' => ['vue', 'ts', 'ts', 'Custom/NestedField', 'custom/', 'nested-field'],
+    'React import collision' => ['react', 'jsx', null, 'React', '', 'react', 'Component'],
+    'Vue type import collision' => ['vue', 'ts', 'ts', 'JsFieldRenderer', '', 'js-field-renderer', 'Component'],
+    'Svelte type import collision' => ['svelte', 'svelte.ts', 'ts', 'JsFieldInitialProps', '', 'js-field-initial-props', 'Component'],
+    'nested Vue local variable collision' => ['vue', 'js', null, 'Custom/props', 'custom/', 'props', 'Component'],
+    'component name control' => ['react', 'jsx', null, 'Component', '', 'component'],
 ]);
 
 it('rejects conflicting framework flags before writing files', function (array $options): void {

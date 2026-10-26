@@ -50,7 +50,12 @@ export async function buildRendererStarters(kinds) {
                     )
                     await writeFile(
                         `${directory}/${filename}`,
-                        source.replaceAll('{{ componentName }}', componentName),
+                        source
+                            .replaceAll('{{ componentName }}', componentName)
+                            .replaceAll(
+                                '{{ componentIdentifier }}',
+                                componentName,
+                            ),
                     )
                 }
                 entries[`generated-${name}`] =
