@@ -2,6 +2,8 @@
 
 namespace Filament\Auth\MultiFactor\Email;
 
+use Carbon\CarbonImmutable;
+use Carbon\Exceptions\InvalidFormatException;
 use Closure;
 use DateTimeInterface;
 use Filament\Actions\Action;
@@ -105,7 +107,7 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
 
                 return $cache->put($codeCacheKey, [
                     'hash' => $codeHash,
-                    'expiresAt' => $codeExpiresAt,
+                    'expiresAt' => $codeExpiresAt->format('Y-m-d\TH:i:s.uP'),
                 ], $codeExpiresAt);
             },
         );
@@ -172,6 +174,14 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
             $activeCode = $cache->get($codeCacheKey);
             $activeCodeHash = is_array($activeCode) ? ($activeCode['hash'] ?? null) : null;
             $activeCodeExpiresAt = is_array($activeCode) ? ($activeCode['expiresAt'] ?? null) : null;
+
+            if (is_string($activeCodeExpiresAt)) {
+                try {
+                    $activeCodeExpiresAt = CarbonImmutable::parse($activeCodeExpiresAt);
+                } catch (InvalidFormatException) {
+                    return false;
+                }
+            }
 
             if (
                 (! is_string($activeCodeHash))

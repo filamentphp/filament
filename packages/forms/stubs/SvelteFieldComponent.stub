@@ -1,0 +1,16 @@
+<script>
+    let { value, id, isDisabled, isReadOnly, isRequired, isInvalid, ariaDescribedBy, onChange, onBlur } = $props()
+</script>
+
+<input
+    {id}
+    type="text"
+    value={value ?? ''}
+    disabled={isDisabled}
+    readonly={isReadOnly}
+    required={isRequired}
+    aria-invalid={isInvalid}
+    aria-describedby={ariaDescribedBy}
+    oninput={(event) => onChange(event.target.value)}
+    onblur={onBlur}
+/>

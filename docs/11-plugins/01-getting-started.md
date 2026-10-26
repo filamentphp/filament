@@ -55,6 +55,8 @@ While the plugin object is extremely helpful, it is not required to build a plug
 
 Register [assets](../advanced/assets) shared by standalone components, including lazily loaded CSS, JavaScript, and Alpine components, in the plugin service provider's `packageBooted()` method. For assets that should load on every page of a particular panel, use [`$panel->assets()`](../panel-configuration#registering-assets-for-a-panel) in the plugin object's `register()` method. This avoids loading panel-specific assets in panels that do not use your plugin.
 
+For a field built with React, Vue, Svelte, or native JavaScript, follow [building reusable JavaScript fields](../forms/custom-fields#building-reusable-plugin-fields) and [publishing ES modules in plugins](../advanced/assets#publishing-es-modules-in-plugins). Build and include any framework dependencies in your plugin's assets so consumers do not need to change their application's Vite configuration.
+
 ## Upgrading existing plugins
 
 To update a plugin from Filament 3 to 4, follow the [upgrade guide](../upgrade-guide) for the packages your plugin uses. Update its Composer constraints and test it in a Filament 4 application, including any custom views, styles, and JavaScript.

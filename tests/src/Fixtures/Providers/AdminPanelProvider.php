@@ -49,6 +49,7 @@ use Filament\Tests\Fixtures\Pages\IconBrowserTest;
 use Filament\Tests\Fixtures\Pages\IndistinctStateBrowserTest;
 use Filament\Tests\Fixtures\Pages\IndividualColumnSearchBrowserTest;
 use Filament\Tests\Fixtures\Pages\InfolistEntriesBrowserTest;
+use Filament\Tests\Fixtures\Pages\JsFieldFrameworkTest;
 use Filament\Tests\Fixtures\Pages\KeyValueTest;
 use Filament\Tests\Fixtures\Pages\ManageSiteSettings;
 use Filament\Tests\Fixtures\Pages\MarkdownEditorBrowserTest;
@@ -177,6 +178,7 @@ class AdminPanelProvider extends PanelProvider
                 IndistinctStateBrowserTest::class,
                 IndividualColumnSearchBrowserTest::class,
                 InfolistEntriesBrowserTest::class,
+                JsFieldFrameworkTest::class,
                 KeyValueTest::class,
                 ManageSiteSettings::class,
                 MarkdownEditorBrowserTest::class,
