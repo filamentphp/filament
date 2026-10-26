@@ -235,14 +235,14 @@ Livewire::make(Chart::class)
 
 ### Lazy loading a Livewire component
 
-You may allow the component to [lazily load](https://livewire.laravel.com/docs/lazy#rendering-placeholder-html) using the `lazy()` method:
+You may allow the component to [lazily load](https://livewire.laravel.com/docs/lazy#rendering-placeholder-html) when it enters the viewport using the `lazyLoaded()` method:
 
 ```php
 use Filament\Schemas\Components\Livewire;
 use App\Livewire\Chart;
 
 Livewire::make(Chart::class)
-    ->lazy()       
+    ->lazyLoaded()
 ```
 
 ## Custom component classes

@@ -6,7 +6,7 @@ use Filament\Widgets\ChartWidget;
 
 class PolarAreaChartDemo extends ChartWidget
 {
-    protected static bool $isLazy = false;
+    protected static ?bool $isLazyLoaded = false;
 
     protected ?string $pollingInterval = null;
 

@@ -10,7 +10,7 @@ use Filament\Schemas\Components\Component;
 trait HasInfolist
 {
     /**
-     * @deprecated Use `schema() instead.
+     * @deprecated Use `schema()` instead.
      *
      * @param  array<Component | Action | ActionGroup> | Closure | null  $infolist
      */

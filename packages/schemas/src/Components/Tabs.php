@@ -934,11 +934,21 @@ class Tabs extends Component implements HasEmbeddedView
     }
 
     /**
+     * @deprecated For PHP calls, use `getLazyLoadedTabBadges()` instead. Frontend calls must continue using this method for backward compatibility.
+     *
      * @return array<string, array{badge: ?string, badgeColorClasses: string, badgeColorStyles: string, badgeIconHtml: string | null, badgeIconPosition: string | null, badgeTooltip: string | null}>
      */
     #[Exposed]
     #[Renderless]
     public function getDeferredTabBadges(): array
+    {
+        return $this->getLazyLoadedTabBadges();
+    }
+
+    /**
+     * @return array<string, array{badge: ?string, badgeColorClasses: string, badgeColorStyles: string, badgeIconHtml: string | null, badgeIconPosition: string | null, badgeTooltip: string | null}>
+     */
+    public function getLazyLoadedTabBadges(): array
     {
         $badges = [];
 
@@ -985,7 +995,15 @@ class Tabs extends Component implements HasEmbeddedView
         return $badges;
     }
 
+    /**
+     * @deprecated Use `hasLazyLoadedBadges()` instead.
+     */
     public function hasDeferredBadges(): bool
+    {
+        return $this->hasLazyLoadedBadges();
+    }
+
+    public function hasLazyLoadedBadges(): bool
     {
         foreach ($this->getChildSchema()->getComponents() as $tab) {
             if (! $tab instanceof Tab) {

@@ -32,22 +32,26 @@ describe('component', function (): void {
 });
 
 describe('lazy loading', function (): void {
-    it('can set `lazy()` mode', function (): void {
+    it('can enable lazy loading through either setter', function (string $method): void {
         $field = LivewireField::make('custom');
 
-        expect($field->isLazy())->toBeFalse();
+        expect($field->isLazy())->toBeFalse()
+            ->and($field->isLazyLoaded())->toBeFalse();
 
-        $field->lazy();
+        $field->{$method}();
 
-        expect($field->isLazy())->toBeTrue();
-    });
+        expect($field->isLazy())->toBeTrue()
+            ->and($field->isLazyLoaded())->toBeTrue()
+            ->and($field->lazy(false)->lazyLoaded()->isLazy())->toBeTrue()
+            ->and($field->lazy()->lazyLoaded(false)->isLazy())->toBeFalse();
+    })->with(['lazyLoaded', 'lazy']);
 
-    it('can set `lazy()` with a `Closure`', function (): void {
+    it('can configure lazy loading with a `Closure`', function (string $method): void {
         $field = LivewireField::make('custom')
-            ->lazy(static fn (): bool => true);
+            ->{$method}(static fn (): bool => true);
 
-        expect($field->isLazy())->toBeTrue();
-    });
+        expect($field->isLazyLoaded())->toBeTrue();
+    })->with(['lazyLoaded', 'lazy']);
 });
 
 describe('data', function (): void {
@@ -88,13 +92,13 @@ describe('component properties', function (): void {
         expect($properties['wire:model'])->toBe('data.custom');
     });
 
-    it('includes `lazy` property when `lazy()` is enabled', function (): void {
+    it('includes the Livewire `lazy` property through either setter', function (string $method): void {
         Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
                 $field = LivewireField::make('custom')
                     ->component('App\\Livewire\\MyComponent')
-                    ->lazy(),
+                    ->{$method}(),
             ])
             ->fill();
 
@@ -102,7 +106,7 @@ describe('component properties', function (): void {
 
         expect($properties)->toHaveKey('lazy');
         expect($properties['lazy'])->toBeTrue();
-    });
+    })->with(['lazyLoaded', 'lazy']);
 
     it('does not include `lazy` property when `lazy()` is not set', function (): void {
         Schema::make(Livewire::make())
