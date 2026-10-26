@@ -861,22 +861,6 @@ trait HasState
         return app(Set::class, ['component' => $this]);
     }
 
-    /**
-     * @deprecated Use `makeGetUtility()` instead.
-     */
-    public function getGetCallback(): Get
-    {
-        return $this->makeGetUtility();
-    }
-
-    /**
-     * @deprecated Use `makeSetUtility()` instead.
-     */
-    public function getSetCallback(): Set
-    {
-        return $this->makeSetUtility();
-    }
-
     public function resolveRelativeStatePath(string | Component $path = '', bool $isAbsolute = false): string
     {
         if ($path instanceof Component) {

@@ -523,12 +523,4 @@ trait HasComponents
             }
         }
     }
-
-    /**
-     * @deprecated Use `clearCachedChildSchemas()` instead.
-     */
-    public function clearCachedDefaultChildSchemas(): void
-    {
-        $this->clearCachedChildSchemas();
-    }
 }

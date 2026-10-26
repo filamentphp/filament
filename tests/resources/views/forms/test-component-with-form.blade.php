@@ -3,6 +3,6 @@
         x-data="{ state: $wire.$entangle(@js($getStatePath())) }"
         {{ $getExtraAttributeBag() }}
     >
-        {{ $getChildComponentContainer() }}
+        {{ $getChildSchema() }}
     </div>
 </x-dynamic-component>

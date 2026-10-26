@@ -171,16 +171,6 @@ trait HasChildComponents
         return $childSchema;
     }
 
-    /**
-     * @deprecated Use `getChildSchema()` instead.
-     *
-     * @param  array-key  $key
-     */
-    public function getChildComponentContainer($key = null): ?Schema
-    {
-        return $this->getChildSchema($key);
-    }
-
     protected function makeChildSchema(string $key): Schema
     {
         return Schema::make($this->getLivewire())
@@ -256,16 +246,6 @@ trait HasChildComponents
         }
 
         return in_array($schema, $this->cachedChildSchemas, strict: true);
-    }
-
-    /**
-     * @deprecated Use `getChildSchemas()` instead.
-     *
-     * @return array<Schema>
-     */
-    public function getChildComponentContainers(bool $withHidden = false): array
-    {
-        return $this->getChildSchemas($withHidden);
     }
 
     /**
@@ -405,14 +385,6 @@ trait HasChildComponents
             $childSchema->flushCachedHierarchy();
             $flushedChildSchemas[$childSchemaId] = true;
         }
-    }
-
-    /**
-     * @deprecated Use `clearCachedChildSchemas()` instead.
-     */
-    public function clearCachedDefaultChildSchemas(): void
-    {
-        $this->clearCachedChildSchemas();
     }
 
     protected function cloneChildComponents(): static
