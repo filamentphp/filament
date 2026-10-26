@@ -934,7 +934,7 @@ class Tabs extends Component implements HasEmbeddedView
     }
 
     /**
-     * @deprecated For PHP calls, use `getLazyLoadedTabBadges()` instead. Frontend calls must continue using this method for backward compatibility.
+     * @deprecated Use `getLazyLoadedTabBadges()` instead.
      *
      * @return array<string, array{badge: ?string, badgeColorClasses: string, badgeColorStyles: string, badgeIconHtml: string | null, badgeIconPosition: string | null, badgeTooltip: string | null}>
      */
@@ -948,6 +948,8 @@ class Tabs extends Component implements HasEmbeddedView
     /**
      * @return array<string, array{badge: ?string, badgeColorClasses: string, badgeColorStyles: string, badgeIconHtml: string | null, badgeIconPosition: string | null, badgeTooltip: string | null}>
      */
+    #[Exposed]
+    #[Renderless]
     public function getLazyLoadedTabBadges(): array
     {
         $badges = [];
