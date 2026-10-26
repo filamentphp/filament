@@ -412,6 +412,28 @@ it('can return lazy tab badges through both endpoint names', function (string $m
         ->and($badges['1']['badge'])->toBe('42');
 })->with(['getDeferredTabBadges', 'getLazyLoadedTabBadges']);
 
+it('preserves `getDeferredTabBadges()` overrides when calling `getLazyLoadedTabBadges()`', function (): void {
+    app()->bind(Tabs::class, static fn (): Tabs => new class extends Tabs
+    {
+        public function getDeferredTabBadges(): array
+        {
+            $badges = parent::getDeferredTabBadges();
+            $badges['1']['badge'] = '84';
+
+            return $badges;
+        }
+    });
+
+    livewire(TabsWithDeferredBadges::class)
+        ->call('callSchemaComponentMethod', 'form.test-tabs', 'getLazyLoadedTabBadges')
+        ->assertReturned(function (array $badges): bool {
+            expect($badges)->toHaveCount(1)
+                ->and($badges['1']['badge'])->toBe('84');
+
+            return true;
+        });
+});
+
 it('can call an `Action` nested inside a tab that uses `livewireProperty()`', function (): void {
     livewire(TabsWithLivewirePropertyAction::class)
         ->callAction(TestAction::make('set_value')->schemaComponent('test-tabs.first'))

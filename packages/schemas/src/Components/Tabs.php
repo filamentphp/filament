@@ -338,7 +338,7 @@ class Tabs extends Component implements HasEmbeddedView
 
                 async init() {
                     try {
-                        const badges = await this.$getDeferredTabBadges()
+                        const badges = await this.$getLazyLoadedTabBadges()
                         this.deferredBadges = badges ?? {}
                     } finally {
                         this.isLoadingDeferredBadges = false
@@ -697,7 +697,7 @@ class Tabs extends Component implements HasEmbeddedView
 
                     async init() {
                         try {
-                            const badges = await this.$getDeferredTabBadges()
+                            const badges = await this.$getLazyLoadedTabBadges()
                             this.deferredBadges = badges ?? {}
                         } finally {
                             this.isLoadingDeferredBadges = false
@@ -942,16 +942,6 @@ class Tabs extends Component implements HasEmbeddedView
     #[Renderless]
     public function getDeferredTabBadges(): array
     {
-        return $this->getLazyLoadedTabBadges();
-    }
-
-    /**
-     * @return array<string, array{badge: ?string, badgeColorClasses: string, badgeColorStyles: string, badgeIconHtml: string | null, badgeIconPosition: string | null, badgeTooltip: string | null}>
-     */
-    #[Exposed]
-    #[Renderless]
-    public function getLazyLoadedTabBadges(): array
-    {
         $badges = [];
 
         foreach ($this->getChildSchema()->getComponents(withOriginalKeys: true) as $tabKey => $tab) {
@@ -995,6 +985,16 @@ class Tabs extends Component implements HasEmbeddedView
         }
 
         return $badges;
+    }
+
+    /**
+     * @return array<string, array{badge: ?string, badgeColorClasses: string, badgeColorStyles: string, badgeIconHtml: string | null, badgeIconPosition: string | null, badgeTooltip: string | null}>
+     */
+    #[Exposed]
+    #[Renderless]
+    public function getLazyLoadedTabBadges(): array
+    {
+        return $this->getDeferredTabBadges();
     }
 
     /**
