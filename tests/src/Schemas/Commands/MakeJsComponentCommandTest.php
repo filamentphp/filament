@@ -79,6 +79,31 @@ it('generates a nested two-file renderer', function (): void {
     expect(File::exists(resource_path('js/filament/schemas/components/reports/SalesChart.vue')))->toBeTrue();
 });
 
+it('preserves renderer filenames and exports when component names collide with JavaScript bindings', function (string $name, string $framework, string $extension, string $basename): void {
+    $this->artisan('make:filament-schema-component', [
+        'name' => $name,
+        "--{$framework}" => true,
+        '--ts' => true,
+        '--skip-install' => true,
+        '--skip-build' => true,
+        '--no-interaction' => true,
+    ])->assertSuccessful();
+
+    $renderer = File::get(resource_path("js/filament/schemas/components/{$basename}.{$extension}"));
+
+    expect($renderer)->toContain("export default mount{$name}");
+
+    if ($framework === 'react') {
+        expect($renderer)->toContain('function Component(', '<Component ');
+    } else {
+        expect($renderer)->toContain("import Component from './{$name}.{$framework}'");
+    }
+})->with([
+    ['React', 'react', 'tsx', 'react'],
+    ['JsComponentRenderer', 'vue', 'ts', 'js-component-renderer'],
+    ['Configuration', 'svelte', 'svelte.ts', 'configuration'],
+]);
+
 it('rejects conflicting frameworks and TypeScript without a renderer', function (array $options): void {
     $this->artisan('make:filament-schema-component', ['name' => 'InvalidChart', '--no-interaction' => true, ...$options])->assertFailed();
     expect(File::exists(app_path('Filament/Schemas/Components/InvalidChart.php')))->toBeFalse();

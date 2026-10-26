@@ -58,6 +58,8 @@ The generated PHP class uses `HasJsRenderer` and loads its entry through `Vite::
 - Svelte 5: `chart.svelte.js` and `Chart.svelte`. With `--typescript`, the entry uses `.svelte.ts` and the component uses `<script lang="ts">`.
 - Framework-free JavaScript: `chart.js`, or `chart.ts` with `--typescript`.
 
+The React component and Vue or Svelte import are named `Chart`, matching the PHP class. Names that start with a lowercase letter or conflict with a starter's imports use the local name `Component` instead. Filenames and the default-exported `mountChart()` function still use the requested name.
+
 Nested names, such as `Reports/Chart`, place JavaScript files in a `reports/` subdirectory.
 
 For a custom component location, the renderer directory mirrors the PHP namespace under `resources/js/`, omitting your application's root namespace and converting each directory to kebab case.
