@@ -26,6 +26,7 @@
     use Illuminate\Contracts\Support\Htmlable;
     use Illuminate\Database\Eloquent\Model;
     use Illuminate\Database\Query\Builder;
+    use Illuminate\Support\Js;
     use Illuminate\Support\Number;
     use Illuminate\Support\Str;
     use Illuminate\View\ComponentAttributeBag;
@@ -1392,8 +1393,8 @@
                                                 @elseif ($recordAction)
                                                     @php
                                                         $recordWireClickAction = $getRecordAction($record)
-                                                            ? "mountTableAction('{$recordAction}', '{$recordKey}')"
-                                                            : $recordWireClickAction = "{$recordAction}('{$recordKey}')";
+                                                            ? "mountTableAction('{$recordAction}', " . Js::from($recordKey) . ')'
+                                                            : $recordWireClickAction = "{$recordAction}(" . Js::from($recordKey) . ')';
                                                     @endphp
 
                                                     <button
@@ -2531,14 +2532,14 @@
 
                                                         if ($columnWrapperTag === 'button') {
                                                             if ($columnAction instanceof Action) {
-                                                                $columnWireClickAction = "mountTableAction('{$columnAction->getName()}', '{$recordKey}')";
+                                                                $columnWireClickAction = "mountTableAction('{$columnAction->getName()}', " . Js::from($recordKey) . ')';
                                                             } elseif ($columnAction) {
-                                                                $columnWireClickAction = "callTableColumnAction('{$column->getName()}', '{$recordKey}')";
+                                                                $columnWireClickAction = "callTableColumnAction('{$column->getName()}', " . Js::from($recordKey) . ')';
                                                             } else {
                                                                 if ($this->getTable()->getAction($recordAction)) {
-                                                                    $columnWireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
+                                                                    $columnWireClickAction = "mountTableAction('{$recordAction}', " . Js::from($recordKey) . ')';
                                                                 } else {
-                                                                    $columnWireClickAction = "{$recordAction}('{$recordKey}')";
+                                                                    $columnWireClickAction = "{$recordAction}(" . Js::from($recordKey) . ')';
                                                                 }
                                                             }
                                                         }
