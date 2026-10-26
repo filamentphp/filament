@@ -3,6 +3,7 @@
     'extremeLinks' => false,
     'paginator',
     'pageOptions' => [],
+    'loadingTargets' => [],
 ])
 
 @php
@@ -14,15 +15,24 @@
 
     $isRtl = __('filament-panels::layout.direction') === 'rtl';
     $isSimple = ! $paginator instanceof LengthAwarePaginator;
+    $wireLoadingTargets = implode(',', array_unique([...$loadingTargets, 'previousPage', 'gotoPage', 'setPage' , 'nextPage']));
 @endphp
 
 <nav
-    aria-label="{{ __('filament::components/pagination.label') }}"
     {{
-        $attributes->class([
-            'fi-pagination',
-            'fi-simple' => $isSimple,
-        ])
+        $attributes
+            ->merge([
+                'aria-label' => __('filament::components/pagination.label')
+            ])
+            ->merge([
+                'wire:loading.attr' => 'inert',
+                'wire:loading.class' => 'fi-pagination-loading',
+                'wire:target' => $wireLoadingTargets
+            ], escape: false)
+            ->class([
+                'fi-pagination',
+                'fi-simple' => $isSimple,
+            ])
     }}
 >
     @if (! $paginator->onFirstPage())
