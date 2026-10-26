@@ -9,6 +9,9 @@ class AccountWidget extends Widget
 {
     protected static ?int $sort = -3;
 
+    /**
+     * @deprecated Use `$isLazyLoaded` instead.
+     */
     protected static bool $isLazy = false;
 
     /**

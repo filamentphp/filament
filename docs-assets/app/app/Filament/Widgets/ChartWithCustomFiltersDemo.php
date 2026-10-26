@@ -11,7 +11,7 @@ class ChartWithCustomFiltersDemo extends ChartWidget
 {
     use HasFiltersSchema;
 
-    protected static bool $isLazy = false;
+    protected static ?bool $isLazyLoaded = false;
 
     protected ?string $pollingInterval = null;
 

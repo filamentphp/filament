@@ -4,6 +4,8 @@ namespace Filament\Support\Components\Attributes;
 
 use Attribute;
 
-/** @deprecated Use `Exposed` instead. */
+/**
+ * @deprecated Use `Exposed` instead.
+ */
 #[Attribute(Attribute::TARGET_METHOD)]
 class ExposedLivewireMethod extends Exposed {}

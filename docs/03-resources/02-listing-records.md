@@ -96,20 +96,20 @@ Tab::make()
 
 <AutoScreenshot name="panels/resources/listing-tabs-badge-colors" alt="Resource listing page with colored tab badges" />
 
-#### Deferring the loading of filter tab badges
+#### Lazy loading filter tab badges
 
-If you have expensive queries powering your tab badges (such as counting large datasets), the initial page load may be slow. You can defer the loading of tab badges using the `deferBadge()` method, which will load the badge values asynchronously after the page has rendered:
+If you have expensive queries powering your tab badges (such as counting large datasets), the initial page load may be slow. You can lazy load tab badges using the `lazyLoadedBadge()` method, which will load the badge values asynchronously after the page has rendered:
 
 ```php
 use Filament\Schemas\Components\Tabs\Tab;
 
 Tab::make()
     ->badge(static fn (): int => Customer::query()->where('active', true)->count())
-    ->deferBadge()
+    ->lazyLoadedBadge()
 ```
 
 <Aside variant="danger">
-    The `badge()` value must be returned from a function when using `deferBadge()`. If you pass a raw value like `badge(Customer::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of deferral.
+    The `badge()` value must be returned from a function when using `lazyLoadedBadge()`. If you pass a raw value like `badge(Customer::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of lazy loading.
 </Aside>
 
 ### Adding extra attributes to filter tabs

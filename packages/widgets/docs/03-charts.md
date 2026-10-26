@@ -569,10 +569,10 @@ public function getDescription(): ?string
 
 By default, widgets are lazy-loaded. This means that they will only be loaded when they are visible on the page.
 
-To disable this behavior, you may override the `$isLazy` property on the widget class:
+To disable this behavior, you may override the `$isLazyLoaded` property on the widget class:
 
 ```php
-protected static bool $isLazy = false;
+protected static ?bool $isLazyLoaded = false;
 ```
 
 ## Making the chart collapsible

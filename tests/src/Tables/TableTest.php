@@ -59,7 +59,28 @@ describe('defer loading', function (): void {
     it('defaults `isLoadingDeferred()` to `false`', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
 
-        expect($table->isLoadingDeferred())->toBeFalse();
+        expect($table->isLoadingDeferred())->toBeFalse()
+            ->and($table->isLazyLoaded())->toBeFalse();
+    });
+
+    it('shares configuration between `lazyLoaded()` and `deferLoading()`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable()->lazyLoaded();
+
+        expect($table->isLoadingDeferred())->toBeTrue()
+            ->and($table->deferLoading(false)->isLazyLoaded())->toBeFalse()
+            ->and($table->deferLoading()->lazyLoaded(static fn (): bool => false)->isLoadingDeferred())->toBeFalse();
+    });
+
+    it('forwards `isLoadingDeferred()` to an overridden `isLazyLoaded()`', function (): void {
+        $table = new class(livewire(TableTestComponent::class)->instance()) extends Table
+        {
+            public function isLazyLoaded(): bool
+            {
+                return true;
+            }
+        };
+
+        expect($table->isLoadingDeferred())->toBeTrue();
     });
 });
 
@@ -1107,7 +1128,7 @@ describe('rendering', function (): void {
             ->and($contentAfterData['records'])->toBe($contentBeforeData['records']);
     });
 
-    it('provides unloaded and loaded records to content render hooks when table loading is deferred', function (): void {
+    it('provides unloaded and loaded records to content render hooks with lazy loading', function (string $loadingMethod): void {
         $contentBeforeData = null;
         $contentAfterData = null;
 
@@ -1115,7 +1136,7 @@ describe('rendering', function (): void {
 
         Post::factory()->create();
 
-        $component = livewire(DeferredLoadingTableTestComponent::class)
+        $component = livewire(DeferredLoadingTableTestComponent::class, ['loadingMethod' => $loadingMethod])
             ->assertSuccessful();
 
         expect($contentBeforeData['hasPagination'])->toBeFalse()
@@ -1128,7 +1149,7 @@ describe('rendering', function (): void {
             ->and($contentBeforeData['records'])->toBeInstanceOf(LengthAwarePaginator::class)
             ->and($contentBeforeData['records'])->toHaveCount(1)
             ->and($contentAfterData['records'])->toBe($contentBeforeData['records']);
-    });
+    })->with(['lazyLoaded', 'deferLoading']);
 
     it('provides a collection and no pagination to content render hooks when pagination is disabled', function (): void {
         $contentBeforeData = null;
@@ -1390,10 +1411,12 @@ class EmptyStateTableTestComponent extends TableTestComponent
 
 class DeferredLoadingTableTestComponent extends TableTestComponent
 {
+    public string $loadingMethod = 'lazyLoaded';
+
     public function table(Table $table): Table
     {
         return parent::table($table)
-            ->deferLoading();
+            ->{$this->loadingMethod}();
     }
 }
 

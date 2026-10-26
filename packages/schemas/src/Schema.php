@@ -54,6 +54,9 @@ class Schema extends ViewComponent implements HasEmbeddedView
 
     protected string $viewIdentifier = 'schema';
 
+    /**
+     * @deprecated Use `lazyLoaded()` and `isLazyLoaded()` instead.
+     */
     protected bool | Closure $isLoadingDeferred = false;
 
     /**
@@ -149,16 +152,32 @@ class Schema extends ViewComponent implements HasEmbeddedView
             ->alignBetween();
     }
 
-    public function deferLoading(bool | Closure $condition = true): static
+    public function lazyLoaded(bool | Closure $condition = true): static
     {
         $this->isLoadingDeferred = $condition;
 
         return $this;
     }
 
-    public function isLoadingDeferred(): bool
+    /**
+     * @deprecated Use `lazyLoaded()` instead.
+     */
+    public function deferLoading(bool | Closure $condition = true): static
+    {
+        return $this->lazyLoaded($condition);
+    }
+
+    public function isLazyLoaded(): bool
     {
         return (bool) $this->evaluate($this->isLoadingDeferred);
+    }
+
+    /**
+     * @deprecated Use `isLazyLoaded()` instead.
+     */
+    public function isLoadingDeferred(): bool
+    {
+        return $this->isLazyLoaded();
     }
 
     public function toEmbeddedHtml(): string

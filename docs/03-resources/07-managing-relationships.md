@@ -839,14 +839,14 @@ RelationGroup::make('Contacts', [
 
 <UtilityInjection set="schemaComponents" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing static values, the `badgeColor()` and `badgeTooltip()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
-### Deferring the loading of relation manager tab badges
+### Lazy loading relation manager tab badges
 
-If `getBadge()` runs an expensive query, you may defer the badge so that it loads asynchronously after the page renders, by setting the `$isBadgeDeferred` property to `true`:
+If `getBadge()` runs an expensive query, you may lazy load the badge asynchronously after the page renders by setting the `$isBadgeLazyLoaded` property to `true`:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
 
-protected static bool $isBadgeDeferred = true;
+protected static ?bool $isBadgeLazyLoaded = true;
 
 public static function getBadge(Model $ownerRecord, string $pageClass): ?string
 {
@@ -856,18 +856,18 @@ public static function getBadge(Model $ownerRecord, string $pageClass): ?string
 }
 ```
 
-Alternatively, you may override the `isBadgeDeferred()` method to define dynamic behavior:
+Alternatively, you may override the `isBadgeLazyLoaded()` method to define dynamic behavior:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
 
-public static function isBadgeDeferred(Model $ownerRecord, string $pageClass): bool
+public static function isBadgeLazyLoaded(Model $ownerRecord, string $pageClass): bool
 {
     return FeatureFlag::active();
 }
 ```
 
-If you are using a [relation group](#grouping-relation-managers), use the fluent `deferBadge()` method:
+If you are using a [relation group](#grouping-relation-managers), use the fluent `lazyLoadedBadge()` method:
 
 ```php
 use Filament\Resources\RelationManagers\RelationGroup;
@@ -876,7 +876,7 @@ RelationGroup::make('Contacts', [
     // ...
 ])
     ->badge(fn (Model $ownerRecord): string => (string) $ownerRecord->contacts()->count())
-    ->deferBadge();
+    ->lazyLoadedBadge();
 ```
 
 ## Combining the relation manager tabs with the form
@@ -1317,10 +1317,10 @@ Now, you can access the `status` in the relation manager class using `$this->sta
 
 By default, relation managers are lazy-loaded. This means that they will only be loaded when they are visible on the page.
 
-To disable this behavior, you may override the `$isLazy` property on the relation manager class:
+To disable this behavior, you may override the `$isLazyLoaded` property on the relation manager class:
 
 ```php
-protected static bool $isLazy = false;
+protected static ?bool $isLazyLoaded = false;
 ```
 
 ## Opening relation manager actions from a URL
@@ -1338,4 +1338,4 @@ You can then use `?actionComponent=departments&tableAction=view&tableActionRecor
 
 Include the page's tab parameter to select and render that relation manager too. For example, a manually embedded manager in a content tab bound to `?tab=` can use `?tab=departments&actionComponent=departments&tableAction=view&tableActionRecord=123`.
 
-Each embedded instance needs a unique identifier. No custom relation manager Blade initializer is necessary: its table includes the shared action modals. Lazy managers initialize after they mount, and deferred tables wait until they load. See [opening an action from a URL](../actions/overview#opening-an-action-from-a-url) for arguments, custom views, and lifecycle limits.
+Each embedded instance needs a unique identifier. No custom relation manager Blade initializer is necessary: its table includes the shared action modals. Lazy managers initialize after they mount, and lazy tables wait until they load. See [opening an action from a URL](../actions/overview#opening-an-action-from-a-url) for arguments, custom views, and lifecycle limits.

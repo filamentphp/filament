@@ -378,13 +378,24 @@ it('prefers query-string tab keys before legacy IDs', function (string $query, i
     'legacy default absolute ID' => ['form.profile.billing', 3],
 ]);
 
-it('can detect deferred badges with `hasDeferredBadges()`', function (): void {
-    livewire(TabsWithDeferredBadges::class)
-        ->assertOk();
-});
+it('can detect lazy badges through both getter names', function (string $method): void {
+    $lazyTab = Tab::make('Lazy')->badge(static fn (): int => 42)->lazyLoadedBadge();
+    $tabs = Tabs::make('Settings')->tabs([
+        Tab::make('Normal')->badge(10),
+        $lazyTab,
+    ]);
 
-it('can return deferred tab badges with `getDeferredTabBadges()`', function (): void {
-    livewire(TabsWithDeferredBadges::class)
+    Schema::make(Livewire::make())->components([$tabs])->getComponents();
+
+    expect($tabs->{$method}())->toBeTrue();
+
+    $lazyTab->lazyLoadedBadge(false);
+
+    expect($tabs->{$method}())->toBeFalse();
+})->with(['hasLazyLoadedBadges', 'hasDeferredBadges']);
+
+it('can return lazy tab badges through the legacy endpoint and new getter', function (): void {
+    $component = livewire(TabsWithDeferredBadges::class)
         ->call('callSchemaComponentMethod', 'form.test-tabs', 'getDeferredTabBadges')
         ->assertReturned(function (array $badges): bool {
             expect($badges)->toHaveCount(1);
@@ -394,6 +405,11 @@ it('can return deferred tab badges with `getDeferredTabBadges()`', function (): 
 
             return true;
         });
+
+    $badges = $component->instance()->getSchemaComponent('form.test-tabs')->getLazyLoadedTabBadges();
+
+    expect($badges)->toHaveCount(1)
+        ->and($badges['1']['badge'])->toBe('42');
 });
 
 it('can call an `Action` nested inside a tab that uses `livewireProperty()`', function (): void {
@@ -938,7 +954,7 @@ class TabsWithDeferredBadges extends Component implements HasActions, HasSchemas
                             ->schema([]),
                         Tab::make('Deferred Tab')
                             ->badge(static fn (): int => 42)
-                            ->deferBadge()
+                            ->lazyLoadedBadge()
                             ->schema([]),
                     ]),
             ])
