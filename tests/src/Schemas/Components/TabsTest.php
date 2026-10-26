@@ -10,6 +10,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
@@ -17,6 +18,7 @@ use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\HtmlString;
+use Livewire\Attributes\Renderless;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -395,7 +397,7 @@ it('can detect lazy badges', function (): void {
 });
 
 it('can return lazy tab badges through `getLazyLoadedTabBadges()`', function (): void {
-    livewire(TabsWithDeferredBadges::class)
+    $component = livewire(TabsWithDeferredBadges::class)
         ->call('callSchemaComponentMethod', 'form.test-tabs', 'getLazyLoadedTabBadges')
         ->assertReturned(function (array $badges): bool {
             expect($badges)->toHaveCount(1);
@@ -405,6 +407,36 @@ it('can return lazy tab badges through `getLazyLoadedTabBadges()`', function ():
 
             return true;
         });
+
+    expect($component->effects)->not->toHaveKey('html')
+        ->and($component->effects['partials'] ?? [])->toBe([]);
+});
+
+it('respects a `getLazyLoadedTabBadges()` override', function (): void {
+    app()->bind(Tabs::class, static fn (): Tabs => new class extends Tabs
+    {
+        #[Exposed]
+        #[Renderless]
+        public function getLazyLoadedTabBadges(): array
+        {
+            $badges = parent::getLazyLoadedTabBadges();
+            $badges['1']['badge'] = '84';
+
+            return $badges;
+        }
+    });
+
+    $component = livewire(TabsWithDeferredBadges::class)
+        ->call('callSchemaComponentMethod', 'form.test-tabs', 'getLazyLoadedTabBadges')
+        ->assertReturned(function (array $badges): bool {
+            expect($badges)->toHaveCount(1)
+                ->and($badges['1']['badge'])->toBe('84');
+
+            return true;
+        });
+
+    expect($component->effects)->not->toHaveKey('html')
+        ->and($component->effects['partials'] ?? [])->toBe([]);
 });
 
 it('can call an `Action` nested inside a tab that uses `livewireProperty()`', function (): void {
