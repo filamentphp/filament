@@ -217,6 +217,27 @@ describe('action lifecycle and configuration', function (): void {
 });
 
 describe('selection limits', function (): void {
+    it('limits bulk selections to 10000 records by default', function (): void {
+        foreach (array_chunk(array_fill(0, 10001, ['title' => 'Selectable post']), 1000) as $posts) {
+            DB::table('posts')->insert($posts);
+        }
+
+        $expectedKeys = Post::query()->orderBy('id')->pluck('id')->take(10000)->all();
+
+        livewire(SelectablePostsTable::class)
+            ->set('isTrackingDeselectedTableRecords', true)
+            ->callTableBulkAction('customBulk', [])
+            ->assertDispatched('customBulk-called', records: $expectedKeys);
+    });
+
+    it('can override or disable the default `maxSelectableRecords()`', function (): void {
+        $table = livewire(PostsTable::class)->instance()->getTable();
+
+        expect($table->getMaxSelectableRecords())->toBe(10000)
+            ->and($table->maxSelectableRecords(static fn (): int => 20000)->getMaxSelectableRecords())->toBe(20000)
+            ->and($table->maxSelectableRecords(null)->getMaxSelectableRecords())->toBeNull();
+    });
+
     it('enforces `maxSelectableRecords()` after applying scopes and reports the bounded total', function (string $mode, bool $tracksDeselectedRecords, ?int $scopeLimit): void {
         $posts = Post::factory()->count(8)->create();
         $expectedKeys = $posts->slice(1, min(3, $scopeLimit ?? 3))->values()->modelKeys();

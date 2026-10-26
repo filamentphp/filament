@@ -146,7 +146,7 @@ TableColumn::make('Name')
 
 ## Limiting item processing
 
-An unexpectedly large item collection can take a long time to build and render. You can opt in to a processing limit using `maxItemsForProcessing()`:
+By default, repeatable entries process at most 1,000 items to avoid building and rendering unexpectedly large schemas. You can change this processing limit using `maxItemsForProcessing()`:
 
 ```php
 use Filament\Infolists\Components\RepeatableEntry;
@@ -156,10 +156,10 @@ RepeatableEntry::make('comments')
     ->schema([
         TextEntry::make('content'),
     ])
-    ->maxItemsForProcessing(100)
+    ->maxItemsForProcessing(200)
 ```
 
-If the entry has more than 100 items, Filament aborts with an HTTP 413 response before building its item schemas, without truncating the data. This also applies to the table layout. The limit is disabled by default and accepts an integer, or `null` to disable it.
+If the entry exceeds its processing limit, Filament aborts with an HTTP 413 response before building its item schemas, without truncating the data. This also applies to the table layout. The limit accepts an integer, or `null` to disable it.
 
 <Aside variant="danger">
     The processing limit also applies to existing data loaded from your database. A record above the limit cannot be displayed through that infolist until you raise the limit or correct its data elsewhere. Choose a limit that accommodates existing records you need to display.
@@ -173,12 +173,12 @@ Use `configureUsing()` in a service provider's `boot()` method to set a global d
 use Filament\Infolists\Components\RepeatableEntry;
 
 RepeatableEntry::configureUsing(static function (RepeatableEntry $entry): void {
-    $entry->maxItemsForProcessing(100);
+    $entry->maxItemsForProcessing(200);
 });
 ```
 
-You can override this default on individual entries using `maxItemsForProcessing(200)` to increase it, `maxItemsForProcessing(50)` to decrease it, or `maxItemsForProcessing(null)` to disable it. Repeaters and builders have independent defaults; see the [shared configuration guidance](../forms/repeater#applying-processing-limits-globally) to configure all three component types.
+You can override this global limit on individual entries using `maxItemsForProcessing(300)` to increase it, `maxItemsForProcessing(50)` to decrease it, or `maxItemsForProcessing(null)` to disable it. Repeaters and builders have independently configurable limits; see the [shared configuration guidance](../forms/repeater#applying-processing-limits-globally) to configure all three component types.
 
-This is an opt-in performance safeguard, not a security boundary or a guarantee of request duration. The limit applies to each repeatable entry separately, not to the total number of nested items or fields in a request. A parent's processing limit does not limit the number of items in its nested components.
+This is a performance safeguard, not a security boundary or a guarantee of request duration. The limit applies to each repeatable entry separately, not to the total number of nested items or fields in a request. A parent's processing limit does not limit the number of items in its nested components.
 
 Filament counts the normalized items before building their schemas. Database loading, state callbacks, and materializing generators or other iterables can still take place before this check. The limit does not bound that earlier work or the cost of rendering individual items.

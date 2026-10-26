@@ -647,7 +647,7 @@ Builder::make('content')
 
 ## Limiting item processing
 
-If your application's JavaScript accidentally creates a large state array, building and rendering a schema for every block can cause a long wait. You can opt in to a processing limit using `maxItemsForProcessing()`. If the raw state exceeds this limit, Filament aborts with an HTTP 413 response before building the builder's item schemas, without truncating the data. All raw items count towards the limit, including items with unrecognized block types:
+By default, builders process at most 500 blocks to avoid building and rendering unexpectedly large schemas. You can change this processing limit using `maxItemsForProcessing()`. If the raw state exceeds this limit, Filament aborts with an HTTP 413 response before building the builder's item schemas, without truncating the data. All raw items count towards the limit, including items with unrecognized block types:
 
 ```php
 use Filament\Forms\Components\Builder;
@@ -657,16 +657,16 @@ Builder::make('content')
         // ...
     ])
     ->maxItems(5)
-    ->maxItemsForProcessing(100)
+    ->maxItemsForProcessing(200)
 ```
 
-The processing limit is independent of `maxItems()` validation and is disabled by default. It accepts an integer, or `null` to disable it. It limits the number of items in each builder, not the total number of nested items or fields in a request.
+The processing limit is independent of `maxItems()` validation. It accepts an integer, or `null` to disable it. It limits the number of items in each builder, not the total number of nested items or fields in a request.
 
 <Aside variant="danger">
     The processing limit also applies to existing data loaded from your database. A record above the limit cannot be opened through that form until you raise the limit or correct its data elsewhere. Choose a limit that accommodates existing records you need to edit, including records above your validation limit.
 </Aside>
 
-This is an opt-in performance safeguard, not a security boundary or a guarantee of request duration. See the shared [guidance on configuring processing limits globally](repeater#applying-processing-limits-globally) for repeaters, builders, and repeatable entries, including increasing, decreasing, or disabling the limit on individual components and the scope of the processing limit.
+This is a performance safeguard, not a security boundary or a guarantee of request duration. See the shared [guidance on configuring processing limits globally](repeater#applying-processing-limits-globally) for repeaters, builders, and repeatable entries, including increasing, decreasing, or disabling the limit on individual components and the scope of the processing limit.
 
 ## Deferring the loading of block schemas
 

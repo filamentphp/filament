@@ -16,7 +16,7 @@ trait CanPaginateRecords
 
     protected bool | Closure $persistsRecordsPerPageInSession = true;
 
-    protected bool | Closure $enforcesPaginationPageOptions = false;
+    protected bool | Closure $enforcesPaginationPageOptions = true;
 
     /**
      * @var array<int | string> | Closure | null

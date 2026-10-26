@@ -44,6 +44,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
     use Concerns\HasExtraItemActions;
     use HasReorderAnimationDuration;
 
+    protected ?int $maxItemsForProcessing = 500;
+
     protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.builder';
 
     protected string | Closure | null $addBetweenActionLabel = null;

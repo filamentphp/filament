@@ -4,8 +4,6 @@ namespace Filament\Schemas\Components\Concerns;
 
 trait CanLimitItemsForProcessing
 {
-    protected ?int $maxItemsForProcessing = null;
-
     public function maxItemsForProcessing(?int $count): static
     {
         $this->maxItemsForProcessing = $count;
