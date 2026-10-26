@@ -11,7 +11,6 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\Exposed;
-use Filament\Support\Components\Attributes\Renderless;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
@@ -19,6 +18,7 @@ use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\HtmlString;
+use Livewire\Attributes\Renderless;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -408,6 +408,9 @@ it('can return lazy tab badges through both endpoint names', function (string $m
             return true;
         });
 
+    expect($component->effects)->not->toHaveKey('html')
+        ->and($component->effects['partials'] ?? [])->toBe([]);
+
     $badges = $component->instance()->getSchemaComponent('form.test-tabs')->getLazyLoadedTabBadges();
 
     expect($badges)->toHaveCount(1)
@@ -428,7 +431,7 @@ it('respects a `getLazyLoadedTabBadges()` override through both endpoint names',
         }
     });
 
-    livewire(TabsWithDeferredBadges::class)
+    $component = livewire(TabsWithDeferredBadges::class)
         ->call('callSchemaComponentMethod', 'form.test-tabs', $method)
         ->assertReturned(function (array $badges): bool {
             expect($badges)->toHaveCount(1)
@@ -436,6 +439,9 @@ it('respects a `getLazyLoadedTabBadges()` override through both endpoint names',
 
             return true;
         });
+
+    expect($component->effects)->not->toHaveKey('html')
+        ->and($component->effects['partials'] ?? [])->toBe([]);
 })->with(['getDeferredTabBadges', 'getLazyLoadedTabBadges']);
 
 it('can call an `Action` nested inside a tab that uses `livewireProperty()`', function (): void {
