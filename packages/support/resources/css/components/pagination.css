@@ -5,6 +5,13 @@
         @apply hidden;
     }
 
+    & .fi-pagination-previous-btn,
+    & .fi-pagination-next-btn {
+        &.fi-disabled {
+            @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 focus-visible:ring-2;
+        }
+    }
+
     & .fi-pagination-previous-btn {
         @apply justify-self-start;
     }
@@ -20,10 +27,6 @@
     & .fi-pagination-records-per-page-select {
         &:not(.fi-compact) {
             @apply hidden;
-        }
-
-        & .fi-select-input {
-            @apply cursor-pointer;
         }
     }
 
@@ -70,11 +73,21 @@
     & .fi-pagination-item-btn {
         @apply relative flex overflow-hidden p-2 transition duration-75 outline-none;
 
-        &:enabled {
-            @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 hover:bg-gray-50 focus-visible:z-1 focus-visible:ring-2 dark:hover:bg-white/5;
+        &.fi-disabled {
+            @apply cursor-default;
+
+            & .fi-pagination-item-label {
+                @apply text-gray-500 dark:text-gray-400;
+            }
         }
 
-        &:hover {
+        &:enabled {
+            @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 focus-visible:z-1 focus-visible:ring-2;
+        }
+
+        &:enabled:not(.fi-disabled):hover {
+            @apply bg-gray-50 dark:bg-white/5;
+
             & .fi-icon {
                 @apply text-gray-500 dark:text-gray-400;
             }
@@ -86,20 +99,6 @@
 
         & .fi-pagination-item-label {
             @apply px-1.5 text-sm font-semibold text-gray-700 dark:text-gray-200;
-        }
-    }
-
-     &.fi-pagination-loading {
-        & .fi-pagination-previous-btn,
-        & .fi-pagination-records-per-page-select-ctn,
-        & .fi-pagination-next-btn {
-            @apply opacity-70;
-        }
-
-        & .fi-pagination-item {
-            & .fi-pagination-item-label {
-                @apply text-gray-500 dark:text-gray-400;
-            }
         }
     }
 

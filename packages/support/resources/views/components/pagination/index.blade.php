@@ -15,24 +15,17 @@
 
     $isRtl = __('filament-panels::layout.direction') === 'rtl';
     $isSimple = ! $paginator instanceof LengthAwarePaginator;
-    $wireLoadingTargets = implode(',', array_unique([...$loadingTargets, 'previousPage', 'gotoPage', 'setPage' , 'nextPage']));
+    $loadingTargets = array_unique([...$loadingTargets, 'previousPage', 'gotoPage', 'setPage', 'nextPage', 'paginators', $currentPageOptionProperty]);
+    $wireLoadingTargets = implode(',', $loadingTargets);
 @endphp
 
 <nav
+    aria-label="{{ __('filament::components/pagination.label') }}"
     {{
-        $attributes
-            ->merge([
-                'aria-label' => __('filament::components/pagination.label')
-            ])
-            ->merge([
-                'wire:loading.attr' => 'inert',
-                'wire:loading.class' => 'fi-pagination-loading',
-                'wire:target' => $wireLoadingTargets
-            ], escape: false)
-            ->class([
-                'fi-pagination',
-                'fi-simple' => $isSimple,
-            ])
+        $attributes->class([
+            'fi-pagination',
+            'fi-simple' => $isSimple,
+        ])
     }}
 >
     @if (! $paginator->onFirstPage())
@@ -49,6 +42,7 @@
             rel="prev"
             :wire:click="$wireClickAction"
             :wire:key="$this->getId() . '.pagination.previous'"
+            :wire:target="$wireLoadingTargets"
             class="fi-pagination-previous-btn"
         >
             {{ __('filament::components/pagination.actions.previous.label') }}
@@ -123,6 +117,7 @@
             rel="next"
             :wire:click="$wireClickAction"
             :wire:key="$this->getId() . '.pagination.next'"
+            :wire:target="$wireLoadingTargets"
             class="fi-pagination-next-btn"
         >
             {{ __('filament::components/pagination.actions.next.label') }}
@@ -141,6 +136,7 @@
                             ? SupportIconAlias::PAGINATION_FIRST_BUTTON_RTL
                             : SupportIconAlias::PAGINATION_FIRST_BUTTON
                         "
+                        :loading-targets="$loadingTargets"
                         rel="first"
                         :wire:click="'gotoPage(1, \'' . $paginator->getPageName() . '\')'"
                         :wire:key="$this->getId() . '.pagination.first'"
@@ -159,6 +155,7 @@
                         ]
                         : SupportIconAlias::PAGINATION_PREVIOUS_BUTTON
                     "
+                    :loading-targets="$loadingTargets"
                     rel="prev"
                     :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
                     :wire:key="$this->getId() . '.pagination.previous'"
@@ -176,6 +173,7 @@
                             :active="$page === $paginator->currentPage()"
                             :aria-label="trans_choice('filament::components/pagination.actions.go_to_page.label', $page, ['page' => Number::format($page)])"
                             :label="$page"
+                            :loading-targets="$loadingTargets"
                             :wire:click="'gotoPage(' . $page . ', \'' . $paginator->getPageName() . '\')'"
                             :wire:key="$this->getId() . '.pagination.' . $paginator->getPageName() . '.' . $page"
                         />
@@ -196,6 +194,7 @@
                         ]
                         : SupportIconAlias::PAGINATION_NEXT_BUTTON
                     "
+                    :loading-targets="$loadingTargets"
                     rel="next"
                     :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
                     :wire:key="$this->getId() . '.pagination.next'"
@@ -210,6 +209,7 @@
                             ? SupportIconAlias::PAGINATION_LAST_BUTTON_RTL
                             : SupportIconAlias::PAGINATION_LAST_BUTTON
                         "
+                        :loading-targets="$loadingTargets"
                         rel="last"
                         :wire:click="'gotoPage(' . $paginator->lastPage() . ', \'' . $paginator->getPageName() . '\')'"
                         :wire:key="$this->getId() . '.pagination.last'"

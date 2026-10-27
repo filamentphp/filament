@@ -2783,9 +2783,9 @@
 
                 <x-filament::pagination
                     :extreme-links="$hasExtremePaginationLinks"
+                    :loading-targets="Table::LOADING_TARGETS"
                     :page-options="$paginationPageOptions"
                     :paginator="$records"
-                    :loading-targets="Table::LOADING_TARGETS"
                 />
             @endif
 

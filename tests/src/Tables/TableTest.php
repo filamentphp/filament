@@ -651,6 +651,61 @@ describe('pagination', function (): void {
             },
         );
     })->with([false, true]);
+
+    it('blocks repeated pagination while loading without losing focus', function (): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        Post::query()->delete();
+        Post::factory()->count(30)->create();
+
+        $secondPageButton = 'nav button[aria-label="Go to page 2"]';
+        $thirdPageButton = 'nav button[aria-label="Go to page 3"]';
+
+        $page = visit(TableRenderHooksBrowserTest::getUrl(isAbsolute: false));
+
+        $page->keys($secondPageButton, 'Enter')
+            ->assertAttribute($secondPageButton, 'aria-disabled', 'true')
+            ->assertAttribute($thirdPageButton, 'aria-disabled', 'true')
+            ->assertPresent($secondPageButton . ':focus')
+            ->assertMissing($secondPageButton . '[disabled]');
+
+        expect($page->script(<<<'JS'
+            document.querySelector('nav button[aria-label="Go to page 3"]').dispatchEvent(
+                new MouseEvent('click', { bubbles: true, cancelable: true }),
+            )
+            JS))->toBeFalse();
+
+        $page->script(<<<'JS'
+            document.querySelector('nav button[aria-label="Go to page 3"]').parentElement.dispatchEvent(
+                new MouseEvent('click', { bubbles: true, cancelable: true }),
+            )
+            JS);
+
+        $page->keys($secondPageButton, 'Enter')
+            ->keys($secondPageButton, 'Space')
+            ->assertAttributeMissing($secondPageButton, 'aria-disabled')
+            ->assertAttribute($secondPageButton, 'aria-current', 'page')
+            ->assertAttributeMissing($thirdPageButton, 'aria-current')
+            ->assertPresent($secondPageButton . ':focus')
+            ->keys($thirdPageButton, 'Enter')
+            ->assertAttribute($thirdPageButton, 'aria-current', 'page')
+            ->assertAttributeMissing($thirdPageButton, 'aria-disabled')
+            ->back()
+            ->assertAttribute($thirdPageButton, 'aria-disabled', 'true')
+            ->keys($thirdPageButton, 'Enter')
+            ->assertAttributeMissing($thirdPageButton, 'aria-disabled')
+            ->assertAttribute($secondPageButton, 'aria-current', 'page')
+            ->assertPresent($thirdPageButton . ':focus')
+            ->forward()
+            ->assertAttribute($secondPageButton, 'aria-disabled', 'true')
+            ->assertAttributeMissing($secondPageButton, 'aria-disabled')
+            ->assertAttribute($thirdPageButton, 'aria-current', 'page')
+            ->assertNoAccessibilityIssues();
+
+        $page->inDarkMode()->assertNoAccessibilityIssues();
+    });
 });
 
 describe('session persistence', function (): void {

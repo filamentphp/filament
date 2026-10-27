@@ -17,6 +17,11 @@ class TableRenderHooksBrowserTest extends Page implements HasTable
 
     protected static bool $shouldRegisterNavigation = false;
 
+    public function updatingPaginators(): void
+    {
+        \Amp\delay(1);
+    }
+
     public function table(Table $table): Table
     {
         return $table
