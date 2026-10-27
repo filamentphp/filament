@@ -16,7 +16,7 @@
     dir="{{ __('filament-panels::layout.direction') ?? 'ltr' }}"
     @class([
         'fi',
-        'dark' => filament()->hasDarkMode() && filament()->hasDarkModeForced(),
+        'dark' => filament()->hasDarkMode() && filament()->isDarkModeForced(),
     ])
 >
     <head>
@@ -100,7 +100,7 @@
             <script>
                 localStorage.setItem('filament:theme:mode', 'light')
             </script>
-        @elseif (filament()->hasDarkModeForced())
+        @elseif (filament()->isDarkModeForced())
             <script>
                 localStorage.setItem('filament:theme:mode', 'dark')
             </script>
@@ -157,7 +157,7 @@
             </script>
         @endif
 
-        @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
+        @if (filament()->hasDarkMode() && (! filament()->isDarkModeForced()))
             <script>
                 loadDarkMode()
             </script>

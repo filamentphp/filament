@@ -99,6 +99,16 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+If your panel uses `domains()` to register multiple domains, set the current domain before generating panel URLs outside an HTTP request, such as in a console command or queued job:
+
+```php
+use Filament\Facades\Filament;
+
+Filament::setCurrentDomain('admin.example.com');
+```
+
+Use one of the panel's registered domains. This changes the URL-generation context, not the panel's domain configuration. Pass `null` to `setCurrentDomain()` to clear this context when you have finished generating URLs.
+
 ## Customizing the maximum content width
 
 By default, Filament will restrict the width of the content on the page, so it doesn't become too wide on large screens. To change this, you may use the `maxContentWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `ExtraSmall`, `Small`, `Medium`, `Large`, `ExtraLarge`, `TwoExtraLarge`, `ThreeExtraLarge`, `FourExtraLarge`, `FiveExtraLarge`, `SixExtraLarge`, `SevenExtraLarge`, `Full`, `MinContent`, `MaxContent`, `FitContent`,  `Prose`, `ScreenSmall`, `ScreenMedium`, `ScreenLarge`, `ScreenExtraLarge` and `ScreenTwoExtraLarge`. The default is `SevenExtraLarge`:
