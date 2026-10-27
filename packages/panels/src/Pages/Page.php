@@ -162,7 +162,7 @@ abstract class Page extends BasePage
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn (): bool => original_request()->routeIs($activeRoutePattern))
+                ->activeWhen(fn (): bool => original_request()->routeIs($activeRoutePattern))
                 ->sort(static::getNavigationSort())
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())
@@ -216,7 +216,7 @@ abstract class Page extends BasePage
         }
 
         $breadcrumbs = filled($cluster = static::getCluster())
-            ? $cluster::unshiftClusterBreadcrumbs([])
+            ? $cluster::prependClusterBreadcrumbs([])
             : [];
 
         if ($breadcrumb !== null) {
