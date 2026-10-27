@@ -1724,7 +1724,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
             ->style(array_filter([
                 filled($minHeight) ? "--min-height: {$minHeight}" : null,
                 filled($maxHeight) ? "--max-height: {$maxHeight}" : null,
-                filled($stickyOffset) ? "--fi-fo-rich-editor-sticky-offset: {$stickyOffset}" : null,
+                filled($stickyOffset) ? "--rich-editor-sticky-offset: {$stickyOffset}" : null,
             ]))
             ->class(['fi-fo-rich-editor']);
 

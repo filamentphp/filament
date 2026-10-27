@@ -149,7 +149,7 @@ export default function richEditorFormComponent({
 
                     if (hasStickyToolbar) {
                         this.$el.style.setProperty(
-                            '--fi-fo-rich-editor-toolbar-height',
+                            '--rich-editor-toolbar-height',
                             `${entry.borderBoxSize[0].blockSize}px`,
                         )
                     }
@@ -195,19 +195,19 @@ export default function richEditorFormComponent({
                         [
                             modalHeader,
                             nextModalHeader,
-                            '--fi-fo-rich-editor-modal-header-height',
+                            '--rich-editor-modal-header-height',
                             'border-box',
                         ],
                         [
                             modalFooter,
                             nextModalFooter,
-                            '--fi-fo-rich-editor-modal-footer-height',
+                            '--rich-editor-modal-footer-height',
                             'border-box',
                         ],
                         [
                             modalViewport,
                             nextModalViewport,
-                            '--fi-fo-rich-editor-modal-viewport-height',
+                            '--rich-editor-modal-viewport-height',
                             'content-box',
                         ],
                     ]) {
@@ -235,10 +235,10 @@ export default function richEditorFormComponent({
                     for (const entry of entries) {
                         const property =
                             entry.target === modalHeader
-                                ? '--fi-fo-rich-editor-modal-header-height'
+                                ? '--rich-editor-modal-header-height'
                                 : entry.target === modalFooter
-                                  ? '--fi-fo-rich-editor-modal-footer-height'
-                                  : '--fi-fo-rich-editor-modal-viewport-height'
+                                  ? '--rich-editor-modal-footer-height'
+                                  : '--rich-editor-modal-viewport-height'
                         const height =
                             entry.target === modalViewport
                                 ? entry.contentBoxSize[0].blockSize
