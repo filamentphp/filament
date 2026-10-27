@@ -67,7 +67,7 @@ class RecipePostExporter extends Exporter
         ];
     }
 
-    public static function getOptionsFormComponents(): array
+    public static function getOptionsSchemaComponents(): array
     {
         return [
             TextInput::make('multiplier')

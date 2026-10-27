@@ -72,7 +72,7 @@ class IsBeforeOperator extends Operator
     /**
      * @return array<Component | Action | ActionGroup>
      */
-    public function getFormSchema(): array
+    public function getSchemaComponents(): array
     {
         $constraint = $this->getConstraint();
         $hasTime = $constraint instanceof DateConstraint && $constraint->hasTime();

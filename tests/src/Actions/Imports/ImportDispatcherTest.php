@@ -296,7 +296,7 @@ class DispatchPostImporter extends Importer
         return app(Post::class);
     }
 
-    public static function getOptionsFormComponents(): array
+    public static function getOptionsSchemaComponents(): array
     {
         return [TextInput::make('mode')->default('append')->required()->in(['append', 'replace'])];
     }

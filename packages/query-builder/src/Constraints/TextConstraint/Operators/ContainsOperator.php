@@ -47,7 +47,7 @@ class ContainsOperator extends Operator
     /**
      * @return array<Component | Action | ActionGroup>
      */
-    public function getFormSchema(): array
+    public function getSchemaComponents(): array
     {
         return [
             TextInput::make('text')

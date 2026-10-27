@@ -260,13 +260,13 @@ it('uses rebuilt builder item components for cached sibling `Set` lookups', func
     expect($livewire->data['content'][0]['data']['status'])->toBe(StringBackedEnum::Three);
 });
 
-it('can set `skipComponentsChildContainersWhileSearching()`', function (): void {
+it('can set `skipComponentsChildSchemasWhileSearching()`', function (): void {
     $component = (new Filament\Schemas\Components\Component)
         ->container(Schema::make(Livewire::make()));
 
     $set = new Set($component);
 
-    $result = $set->skipComponentsChildContainersWhileSearching(false);
+    $result = $set->skipComponentsChildSchemasWhileSearching(false);
 
     expect($result)->toBe($set);
 });

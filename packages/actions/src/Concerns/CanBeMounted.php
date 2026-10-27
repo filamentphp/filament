@@ -41,16 +41,6 @@ trait CanBeMounted
         return $this;
     }
 
-    /**
-     * @deprecated Use `fillSchema()` instead.
-     *
-     * @param  array<string, mixed> | Closure | null  $data
-     */
-    public function fillForm(array | Closure | null $data): static
-    {
-        return $this->fillSchema($data);
-    }
-
     public function getMountUsing(): Closure
     {
         return $this->mountUsing ?? static function (?Schema $schema = null): void {

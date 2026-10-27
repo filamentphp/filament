@@ -42,7 +42,7 @@ class IsDateOperator extends Operator
     /**
      * @return array<Component | Action | ActionGroup>
      */
-    public function getFormSchema(): array
+    public function getSchemaComponents(): array
     {
         return [
             DatePicker::make('date')

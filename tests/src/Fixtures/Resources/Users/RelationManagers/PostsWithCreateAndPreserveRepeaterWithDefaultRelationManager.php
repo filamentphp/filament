@@ -24,7 +24,7 @@ class PostsWithCreateAndPreserveRepeaterWithDefaultRelationManager extends Relat
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->preserveFormDataWhenCreatingAnother(['json_array_of_objects']),
+                    ->preserveDataWhenCreatingAnother(['json_array_of_objects']),
             ]);
     }
 

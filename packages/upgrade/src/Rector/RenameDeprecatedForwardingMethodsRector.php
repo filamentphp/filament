@@ -5,6 +5,7 @@ namespace Filament\Upgrade\Rector;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\ReplicateAction;
 use Filament\Clusters\Cluster;
@@ -22,6 +23,7 @@ use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\MorphToSelect\Type as MorphToSelectType;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\KeyValueEntry;
@@ -32,7 +34,10 @@ use Filament\Panel;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Schemas\Components\Concerns\HasLabel;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\ViewComponent;
@@ -45,6 +50,7 @@ use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
+use Filament\Upgrade\Support\UnnormalizedUnionTypeResolver;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
@@ -53,8 +59,6 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
-use PhpParser\Node\UnionType;
-use PhpParser\NodeFinder;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StaticType;
@@ -85,6 +89,15 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'resetFormData' => 'resetData',
             'getFormData' => 'getData',
             'getRawFormData' => 'getRawData',
+            'fillForm' => 'fillSchema',
+            'beforeFormFilled' => 'beforeSchemaFilled',
+            'afterFormFilled' => 'afterSchemaFilled',
+            'beforeFormValidated' => 'beforeSchemaValidated',
+            'afterFormValidated' => 'afterSchemaValidated',
+            'callBeforeFormFilled' => 'callBeforeSchemaFilled',
+            'callAfterFormFilled' => 'callAfterSchemaFilled',
+            'callBeforeFormValidated' => 'callBeforeSchemaValidated',
+            'callAfterFormValidated' => 'callAfterSchemaValidated',
             'modalActions' => 'modalFooterActions',
             'extraModalActions' => 'extraModalFooterActions',
             'modalButton' => 'modalSubmitActionLabel',
@@ -107,6 +120,9 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         ],
         ReplicateAction::class => [
             'afterReplicaSaved' => 'after',
+        ],
+        CreateAction::class => [
+            'preserveFormDataWhenCreatingAnother' => 'preserveDataWhenCreatingAnother',
         ],
         ExportColumn::class => [
             'queriesRelationships' => 'hasRelationship',
@@ -166,6 +182,15 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         Repeater::class => [
             'createItemButtonLabel' => 'addActionLabel',
             'orderable' => 'orderColumn',
+        ],
+        Select::class => [
+            'manageOptionForm' => 'manageOptionSchema',
+            'createOptionForm' => 'createOptionSchema',
+            'editOptionForm' => 'editOptionSchema',
+            'getCreateOptionActionForm' => 'getCreateOptionActionSchema',
+            'getEditOptionActionForm' => 'getEditOptionActionSchema',
+            'hasCreateOptionActionFormSchema' => 'hasCreateOptionActionSchema',
+            'hasEditOptionActionFormSchema' => 'hasEditOptionActionSchema',
         ],
         KeyValue::class => [
             'addButtonLabel' => 'addActionLabel',
@@ -232,6 +257,16 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         ],
         Step::class => [
             'afterValidated' => 'afterValidation',
+        ],
+        Section::class => [
+            'formBefore' => 'contentBefore',
+            'isFormBefore' => 'isContentBefore',
+        ],
+        Get::class => [
+            'skipComponentsChildContainersWhileSearching' => 'skipComponentsChildSchemasWhileSearching',
+        ],
+        Set::class => [
+            'skipComponentsChildContainersWhileSearching' => 'skipComponentsChildSchemasWhileSearching',
         ],
         ViewComponent::class => [
             'disableLabel' => 'hiddenLabel',
@@ -303,6 +338,8 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         'options' => ['options', 'icons'],
         'indicator' => ['indicator', 'badge'],
     ];
+
+    public function __construct(private UnnormalizedUnionTypeResolver $unnormalizedUnionTypeResolver) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -401,12 +438,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
     {
         // PHPStan can normalize `Base | CustomBase` to `Base`, hiding overrides.
         // Conservatively retain related calls in a file declaring that union.
-        return (new NodeFinder)->findFirst($this->getFile()->getNewStmts(), function (Node $node) use ($componentClass, $methodName, $replacement): bool {
-            if (! $node instanceof UnionType) {
-                return false;
-            }
-
-            $types = array_map(fn (Node $type): Type => $this->getType($type), $node->types);
+        foreach ($this->unnormalizedUnionTypeResolver->resolve($this->getFile()->getNewStmts()) as $types) {
             $ownerType = new ObjectType($componentClass);
 
             foreach ($types as $type) {
@@ -419,8 +451,9 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                 }
             }
 
-            return false;
-        }) !== null;
+        }
+
+        return false;
     }
 
     /**

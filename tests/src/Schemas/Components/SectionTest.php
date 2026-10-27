@@ -300,21 +300,21 @@ it('returns `false` for `isAside()` when set to `null`', function (): void {
     expect($section->isAside())->toBeFalse();
 });
 
-it('can set `formBefore()`', function (): void {
+it('can set `contentBefore()`', function (): void {
     $section = Section::make('Test');
 
-    expect($section->isFormBefore())->toBeFalse();
+    expect($section->isContentBefore())->toBeFalse();
 
-    $section->formBefore();
+    $section->contentBefore();
 
-    expect($section->isFormBefore())->toBeTrue();
+    expect($section->isContentBefore())->toBeTrue();
 });
 
-it('can set `formBefore()` with a `Closure`', function (): void {
+it('can set `contentBefore()` with a `Closure`', function (): void {
     $section = Section::make('Test')
-        ->formBefore(static fn (): bool => true);
+        ->contentBefore(static fn (): bool => true);
 
-    expect($section->isFormBefore())->toBeTrue();
+    expect($section->isContentBefore())->toBeTrue();
 });
 
 describe('collapsing', function (): void {

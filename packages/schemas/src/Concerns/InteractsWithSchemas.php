@@ -348,10 +348,10 @@ trait InteractsWithSchemas
     }
 
     /**
-     * @param  array<Component>  $skipComponentsChildContainersWhileSearching
+     * @param  array<Component>  $skipComponentsChildSchemasWhileSearching
      */
     #[Unexposed]
-    public function getSchemaComponent(string $key, bool $withHidden = false, array $skipComponentsChildContainersWhileSearching = []): Component | Action | ActionGroup | null
+    public function getSchemaComponent(string $key, bool $withHidden = false, array $skipComponentsChildSchemasWhileSearching = []): Component | Action | ActionGroup | null
     {
         if (! str($key)->contains('.')) {
             return null;
@@ -361,7 +361,7 @@ trait InteractsWithSchemas
 
         $schema = $this->getSchema($schemaName);
 
-        return $schema?->getComponent($key, withHidden: $withHidden, isAbsoluteKey: true, skipComponentsChildContainersWhileSearching: $skipComponentsChildContainersWhileSearching);
+        return $schema?->getComponent($key, withHidden: $withHidden, isAbsoluteKey: true, skipComponentsChildSchemasWhileSearching: $skipComponentsChildSchemasWhileSearching);
     }
 
     protected function cacheSchema(string $name, Schema | Closure | null $schema = null): ?Schema

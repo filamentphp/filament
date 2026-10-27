@@ -24,7 +24,7 @@ class ActionPostExporter extends Exporter
         ];
     }
 
-    public static function getOptionsFormComponents(): array
+    public static function getOptionsSchemaComponents(): array
     {
         return [TextInput::make('minimum')->numeric()->required()->default(2)];
     }
