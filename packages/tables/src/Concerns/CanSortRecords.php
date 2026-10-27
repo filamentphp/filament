@@ -70,6 +70,9 @@ trait CanSortRecords
         $this->resetPage();
     }
 
+    /**
+     * @deprecated Use `updatedTableSort()` instead.
+     */
     #[Unexposed]
     public function updatedTableSortDirection(): void
     {
