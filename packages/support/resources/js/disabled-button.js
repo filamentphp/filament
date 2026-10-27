@@ -5,15 +5,12 @@ if (!window.filamentDisabledButtonClickListener) {
     window.filamentDisabledButtonClickListener = (event) => {
         const button =
             event.target instanceof Element
-                ? event.target.closest('button')
+                ? event.target.closest(
+                      'button:is(.fi-btn, .fi-icon-btn, .fi-badge, .fi-link, .fi-dropdown-list-item)[aria-disabled="true"], [data-prevent-disabled-clicks][aria-disabled="true"]',
+                  )
                 : null
 
-        if (
-            !button?.matches(
-                '.fi-btn, .fi-icon-btn, .fi-badge, .fi-link, .fi-dropdown-list-item, [data-prevent-disabled-clicks]',
-            ) ||
-            button.getAttribute('aria-disabled') !== 'true'
-        ) {
+        if (!button) {
             return
         }
 

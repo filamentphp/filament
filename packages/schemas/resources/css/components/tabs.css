@@ -3,6 +3,10 @@
 
     & > .fi-tabs > .fi-sc-tabs-tablist {
         @apply contents;
+
+        &.fi-disabled > .fi-tabs-item {
+            @apply cursor-default opacity-70;
+        }
     }
 
     & .fi-sc-tabs-header-overflow:not(.fi-sc-tabs-header-overflow-open) {

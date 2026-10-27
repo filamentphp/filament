@@ -60,6 +60,10 @@
 
     & .fi-badge-delete-btn {
         @apply -my-1 -ms-1 -me-2 flex items-center justify-center p-1 transition duration-75 outline-none;
+
+        &.fi-disabled {
+            @apply cursor-default opacity-70;
+        }
     }
 
     /* The glyph is a mask painted in `currentColor`, not a hardcoded fill, so
