@@ -398,6 +398,26 @@ Preserve custom parameter names, defaults, return values, control flow, and disp
 `centerModal()`, `disableCreateAnother()`, `disableAttachAnother()`, and `disableAssociateAnother()` are unchanged: they evaluate or negate conditions rather than forwarding them directly. The legacy mounted-action schema bridge is also unchanged. Testing assertion aliases are covered separately below.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('schemas') || packages.includes('forms') || packages.includes('tables')">
+<span slot="summary">Legacy reactivity, affix, and sorting methods have been removed</span>
+
+| Affected API | Removed method | Replacement |
+| --- | --- | --- |
+| `Filament\Schemas\Schema` and schema components, including form fields | `reactive()` | `live()` |
+| Form components using `Filament\Forms\Components\Concerns\HasAffixes` | `postfix()` | `suffix()` |
+| Table Livewire components using `Filament\Tables\Concerns\CanSortRecords` | `updatedTableSortDirection()` | `updatedTableSort()` |
+
+The script renames zero-argument `reactive()` calls. Calls passing arguments, unpacked arguments, and first-class `reactive(...)` callables need manual migration: the old method ignored extra positional arguments, while `live()` consumes optional `onBlur`, `debounce`, and `condition` arguments. Preserve argument-expression side effects without passing formerly ignored values to `live()`. For a callback that must ignore supplied arguments, use `fn () => $component->live()`. `debounce()` remains available.
+
+For `postfix()`, the script renames calls on view components whose methods come from `HasAffixes`, including `TextInput`, `Select`, `ColorPicker`, `DateTimePicker`, and `TagsInput`. The required `label` and optional `isInline` parameters, named and unpacked arguments, nullable labels, HTML values, lazy closures, and first-class callables keep the same contract.
+
+For sorting, the script renames calls only when the receiver implements `Filament\Tables\Contracts\HasTable` and the hook implementations come from `CanSortRecords`. The canonical hook retains sort-session persistence and pagination reset. `$tableSort` and the existing `sortTable()` dispatch are unchanged. A receiver typed only as `HasTable` is insufficient to establish the hook implementation and needs manual review.
+
+Custom overrides of either method, including inherited or trait-provided overrides and non-public trait adaptations, are left unchanged. Review declarations, `parent::` calls, dynamic names, array callbacks, unknown receiver types, and non-PHP references manually. Direct trait consumers outside the owning types above also need manual migration. Review base-typed receivers that may hold custom subclasses; static types cannot identify every runtime override.
+
+Preserve custom dispatch and return values: `reactive()` called `$this->live()` and returned `$this`, while `postfix()` returned `$this->suffix(...)`. The old sorting hook had its own body rather than calling `updatedTableSort()`. Renaming a call can therefore invoke a different override, and renaming an old hook declaration can make it participate in the existing sorting lifecycle. Reconcile custom hooks manually rather than blindly renaming or deleting them. Keep `#[Unexposed]` on lifecycle hooks so they are not exposed as client-callable methods.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('schemas') || packages.includes('forms') || packages.includes('infolists') || packages.includes('widgets')">
 <span slot="summary">Deprecated schema forwarding aliases have been removed</span>
 

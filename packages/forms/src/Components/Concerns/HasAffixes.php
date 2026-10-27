@@ -61,14 +61,6 @@ trait HasAffixes
         return $this;
     }
 
-    /**
-     * @deprecated Use `suffix()` instead.
-     */
-    public function postfix(string | Htmlable | Closure | null $label, bool | Closure $isInline = false): static
-    {
-        return $this->suffix($label, $isInline);
-    }
-
     public function prefixAction(Action | Closure $action, bool | Closure $isInline = false): static
     {
         $this->prefixActions([$action], $isInline);

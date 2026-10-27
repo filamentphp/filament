@@ -125,6 +125,10 @@ function custom(InheritedAliasOverridingSchema $alias, InheritedReplacementOverr
 
 function dynamic(Schema $schema, Component $component, array $arguments): void
 {
+    $schema->reactive(false);
+    $schema->reactive(...$arguments);
+    $callback = $schema->reactive(...);
+    $callback = [$component, 'reactive'];
     $schema->name(...$arguments);
     $schema->context(...$arguments);
     $schema->getName(false);
@@ -152,6 +156,9 @@ class Unrelated extends ViewComponent
 
 function unrelated(Action $action, RenderHook $hook, EmbeddedSchema $embedded, Unrelated $unrelated, Schema | Unrelated $union, $unknown): void
 {
+    $unrelated->reactive();
+    $unknown->reactive();
+    $union->reactive();
     $action->name('save')->getName();
     $hook->name('panels::head.end')->getName();
     $embedded->name('sidebar')->getName();
@@ -167,4 +174,29 @@ function unrelated(Action $action, RenderHook $hook, EmbeddedSchema $embedded, U
     $unrelated->clearCachedDefaultChildSchemas();
     $union->name('details');
     $unknown->context('edit');
+}
+
+class ReactiveOverride extends Schema
+{
+    public function reactive(): static
+    {
+        return parent::reactive();
+    }
+}
+
+class LiveOverride extends Component
+{
+    public function live(bool $onBlur = false, int | string | null $debounce = null, bool | Closure | null $condition = true): static
+    {
+        return $this;
+    }
+}
+
+class InheritedLiveOverride extends LiveOverride {}
+
+function customBinding(ReactiveOverride $schema, InheritedLiveOverride $component, Schema | ReactiveOverride $union): void
+{
+    $schema->reactive();
+    $component->reactive();
+    $union->reactive();
 }
