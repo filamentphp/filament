@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'دەستکاریکردن',
 
+    'navigation_label' => 'دەستکاریکردن',
+
     'form' => [
 
         'actions' => [

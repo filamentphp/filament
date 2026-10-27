@@ -45,20 +45,20 @@ return [
 
     'multi_factor' => [
 
-        'heading' => 'Verify your identity',
+        'heading' => 'ناسنامەکەت پشتڕاست بکەرەوە',
 
-        'subheading' => 'To continue signing in, you need to verify your identity.',
+        'subheading' => 'بۆ بەردەوامبوون لە چوونەژوورەوە، پێویستە ناسنامەکەت پشتڕاست بکەیتەوە.',
 
         'form' => [
 
             'provider' => [
-                'label' => 'How would you like to verify?',
+                'label' => 'دەتەوێت بە چ ڕێگەیەک پشتڕاستی بکەیتەوە؟',
             ],
 
             'actions' => [
 
                 'authenticate' => [
-                    'label' => 'Confirm sign in',
+                    'label' => 'دڵنیاکردنەوەی چوونەژوورەوە',
                 ],
 
             ],

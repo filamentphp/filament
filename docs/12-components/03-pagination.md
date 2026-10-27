@@ -76,6 +76,17 @@ class ListUsers extends Component
 
 <AutoScreenshot name="components/pagination/page-options" alt="Pagination with page size options" />
 
+## Disabling pagination buttons during other requests
+
+You can disable pagination buttons during additional Livewire requests by passing their method or property names to `loading-targets`:
+
+```blade
+<x-filament::pagination
+    :paginator="$users"
+    :loading-targets="['search', 'applyFilters']"
+/>
+```
+
 ## Displaying links to the first and the last page
 
 Extreme links are the first and last page links. You can add them by passing the `extreme-links` attribute to the component:

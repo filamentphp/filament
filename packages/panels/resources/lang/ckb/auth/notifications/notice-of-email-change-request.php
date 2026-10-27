@@ -2,15 +2,15 @@
 
 return [
 
-    'subject' => 'Your email address is being changed',
+    'subject' => 'ناونیشانی ئیمەیڵەکەت دەگۆڕدرێت',
 
     'lines' => [
-        'We received a request to change the email address associated with your account. Your password was used to confirm this change.',
-        'Once verified, the new email address on your account will be: :email.',
-        'You can block the change before it is verified by clicking the button below.',
-        'If you did not make this request, please contact us immediately.',
+        'داواکارییەکمان پێگەیشت بۆ گۆڕینی ئەو ناونیشانی ئیمەیڵەی کە بە هەژمارەکەتەوە بەستراوە. تێپەڕەوشەکەت بەکارهات بۆ پشتڕاستکردنەوەی ئەم گۆڕانکارییە.',
+        'دوای پشتڕاستکردنەوە، ناونیشانی ئیمەیڵی نوێی هەژمارەکەت دەبێتە: :email.',
+        'دەتوانیت پێش پشتڕاستکردنەوە ڕێگە لە گۆڕانکارییەکە بگریت بە کرتەکردن لەسەر دوگمەی خوارەوە.',
+        'ئەگەر تۆ ئەم داواکارییەت نەکردووە، تکایە دەستبەجێ پەیوەندیمان پێوە بکە.',
     ],
 
-    'action' => 'Block Email Change',
+    'action' => 'بلۆککردنی گۆڕینی ئیمەیڵ',
 
 ];

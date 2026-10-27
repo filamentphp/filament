@@ -193,7 +193,7 @@ export default function editableTableColumn({
             this.isLoading = false
         },
 
-        blockEdit(event) {
+        preventEdit(event) {
             if (
                 !this.isLoading ||
                 (event.type === 'keydown' &&
