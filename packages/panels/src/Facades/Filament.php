@@ -85,7 +85,7 @@ use Livewire\Component;
  * @method static Width | string | null getMaxContentWidth()
  * @method static string | null getModelResource(string | Model $model)
  * @method static array<string, MultiFactorAuthenticationProvider> getMultiFactorAuthenticationProviders()
- * @method static string getNameForDefaultAvatar(Model | Authenticatable $user)
+ * @method static string getNameForDefaultAvatar(Model | Authenticatable $record)
  * @method static array<NavigationGroup> getNavigation()
  * @method static array<string | int, NavigationGroup | string> getNavigationGroups()
  * @method static array<NavigationItem> getNavigationItems()
