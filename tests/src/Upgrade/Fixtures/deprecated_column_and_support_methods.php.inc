@@ -49,11 +49,14 @@ class CustomIcon extends IconColumn
 
 class CustomAction extends Action {}
 
-function subclasses(CustomIcon $icon, CustomAction $action, CustomAction | Action $union): void
+class OtherCustomAction extends Action {}
+
+function subclasses(CustomIcon $icon, CustomAction $action, CustomAction | OtherCustomAction $union): void
 {
     $icon->label('Status')->options([])->disableClick(false);
     $action->label('Edit')->indicator(indicator: 'New');
     $union->indicator(indicator: 'Union');
+    $union?->label('Edit')?->indicator(indicator: 'Chained union');
 }
 -----
 <?php
@@ -107,9 +110,12 @@ class CustomIcon extends IconColumn
 
 class CustomAction extends Action {}
 
-function subclasses(CustomIcon $icon, CustomAction $action, CustomAction | Action $union): void
+class OtherCustomAction extends Action {}
+
+function subclasses(CustomIcon $icon, CustomAction $action, CustomAction | OtherCustomAction $union): void
 {
     $icon->label('Status')->icons([])->disabledClick(false);
     $action->label('Edit')->badge(badge: 'New');
     $union->badge(badge: 'Union');
+    $union?->label('Edit')?->badge(badge: 'Chained union');
 }

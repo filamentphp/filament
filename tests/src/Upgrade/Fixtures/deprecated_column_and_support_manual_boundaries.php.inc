@@ -97,7 +97,9 @@ class StandaloneBadge
     use HasBadge;
 }
 
-function overrides(InheritedAliasOverride $alias, ReplacementOverride $replacement, BadgeOverride $badge, TraitOverride $trait, AdaptedVisibility $visibility, RelationshipOverride $export, StandaloneBadge $standalone, IconColumn | ReplacementOverride $union, Model $record): void
+class UnmodifiedIcon extends IconColumn {}
+
+function overrides(InheritedAliasOverride $alias, ReplacementOverride $replacement, BadgeOverride $badge, TraitOverride $trait, AdaptedVisibility $visibility, RelationshipOverride $export, StandaloneBadge $standalone, UnmodifiedIcon | ReplacementOverride $union, Model $record): void
 {
     $alias->options(customOptions: []);
     $alias->label('Status')->options(customOptions: []);
@@ -110,6 +112,8 @@ function overrides(InheritedAliasOverride $alias, ReplacementOverride $replaceme
     $export->queriesRelationships($record);
     $standalone->indicator('New');
     $union->options([]);
+    $union->options(options: []);
+    $union?->label('Status')?->options([]);
 }
 
 function unrelated(SelectColumn $select, SelectFilter $filter, Constraint $constraint, TextEntry $entry, Section $section, IconColumn | SelectColumn $union): void
