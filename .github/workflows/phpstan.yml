@@ -57,3 +57,6 @@ jobs:
           composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
       - name: Run PHPStan
         run: ./vendor/bin/phpstan
+      - name: Check removed Filament APIs
+        if: matrix.php == '8.3' && matrix.laravel == '12.*'
+        run: composer rector:upgrade -- --dry-run

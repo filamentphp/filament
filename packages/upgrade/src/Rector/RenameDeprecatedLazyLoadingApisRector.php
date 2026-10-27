@@ -23,6 +23,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Foreach_;
 use PhpParser\Node\Stmt\Property;
+use PhpParser\Node\UnionType;
 use PhpParser\Node\VarLikeIdentifier;
 use PhpParser\NodeFinder;
 use PHPStan\Reflection\ClassReflection;
@@ -106,6 +107,12 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
 
         $oldName = $isProperty ? $node->name->toString() : strtolower($node->name->toString());
 
+        // Most application calls are unrelated. Avoid resolving their receiver
+        // types when no supported owner renames this member in the first place.
+        if (! array_filter($isProperty ? self::PROPERTIES : self::METHODS, static fn (array $renames): bool => isset($renames[$oldName]))) {
+            return null;
+        }
+
         if ($node instanceof StaticPropertyFetch && in_array($oldName, ['isLazy', 'isBadgeDeferred'], true) && $this->hasUnsafeStaticPropertyUse($oldName, $this->getFile()->getNewStmts())) {
             return null;
         }
@@ -153,7 +160,7 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
         }
 
         // A mixed or partially unrelated union must not be inferred from its object alternatives alone.
-        if ((! $newName) || (! $this->isEntirelySupported($receiverType, $oldName, $newName, $isProperty))) {
+        if ((! $newName) || (! $this->isEntirelySupported($receiverType, $oldName, $newName, $isProperty)) || $this->hasOverridingUnion($oldName, $newName, $isProperty)) {
             return null;
         }
 
@@ -194,7 +201,7 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
         $oldName = $isProperty ? $node->props[0]->name->toString() : strtolower($node->name->toString());
         $newName = $this->replacement(new ObjectType($classReflection->getName()), $oldName, $isProperty);
 
-        if ((! $newName) || (! $this->canRename($classReflection, $oldName, $newName, $isProperty))) {
+        if ((! $newName) || (! $this->canRename($classReflection, $oldName, $newName, $isProperty)) || $this->hasOverridingUnion($oldName, $newName, $isProperty)) {
             return null;
         }
 
@@ -235,6 +242,49 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
         }
 
         return $supportedType->isSuperTypeOf($type)->yes();
+    }
+
+    private function hasOverridingUnion(string $oldName, string $newName, bool $isProperty): bool
+    {
+        // Native unions retain subtype names that PHPStan can normalize away.
+        return (new NodeFinder)->findFirst($this->getFile()->getNewStmts(), function (Node $node) use ($oldName, $newName, $isProperty): bool {
+            if (! $node instanceof UnionType) {
+                return false;
+            }
+
+            $types = array_map(fn (Node $type): Type => $this->getType($type), $node->types);
+
+            foreach ($isProperty ? self::PROPERTIES : self::METHODS as $className => $renames) {
+                if (($renames[$oldName] ?? null) !== $newName) {
+                    continue;
+                }
+
+                $ownerType = new ObjectType($className);
+
+                foreach ($types as $type) {
+                    if ((! $ownerType->isSuperTypeOf($type)->yes()) || (! array_filter($types, static fn (Type $otherType): bool => (! $otherType->equals($type)) && $otherType->isSuperTypeOf($type)->yes()))) {
+                        continue;
+                    }
+
+                    foreach ($type->getObjectClassReflections() as $classReflection) {
+                        // A migrated getter or setter can use a backing property
+                        // implicitly through its parent. Keep the owner's mapped
+                        // declarations and references together when any collide.
+                        foreach ([false, true] as $memberIsProperty) {
+                            $memberRenames = ($memberIsProperty ? self::PROPERTIES : self::METHODS)[$className] ?? [];
+
+                            foreach ($memberRenames as $oldMember => $newMember) {
+                                if (! $this->canRename($classReflection, $oldMember, $newMember, $memberIsProperty)) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }) !== null;
     }
 
     private function canRename(ClassReflection $classReflection, string $oldName, string $newName, bool $isProperty): bool

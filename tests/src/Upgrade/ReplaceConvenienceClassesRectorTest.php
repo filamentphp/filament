@@ -11,7 +11,7 @@ class ReplaceConvenienceClassesRectorTest extends AbstractRectorTestCase
         $this->doTestFile(__DIR__ . '/Fixtures/convenience_factories.php.inc');
     }
 
-    public function test_renames_class_references_without_inserting_configuration_outside_direct_factories(): void
+    public function test_preserves_class_references_and_global_configuration_for_manual_review(): void
     {
         $this->doTestFile(__DIR__ . '/Fixtures/convenience_manual_boundaries.php.inc');
     }

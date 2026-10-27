@@ -1,6 +1,6 @@
 {
     "name": "filament/upgrade",
-    "description": "Upgrade Filament v5 code to Filament v6.",
+    "description": "Migrate Filament v5 code to v6 and check for deprecated APIs during development.",
     "license": "MIT",
     "homepage": "https://github.com/filamentphp/filament",
     "support": {
@@ -11,7 +11,7 @@
         "php": "^8.3",
         "composer-runtime-api": "^2.1",
         "nunomaduro/termwind": "^2.0",
-        "rector/rector": "^2.0"
+        "rector/rector": "^2.5"
     },
     "autoload": {
         "psr-4": {

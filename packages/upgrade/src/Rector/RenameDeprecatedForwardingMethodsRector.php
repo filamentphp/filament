@@ -37,7 +37,6 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Identifier;
-use PhpParser\Node\Name;
 use PhpParser\Node\UnionType;
 use PhpParser\NodeFinder;
 use PHPStan\Type\NullType;
@@ -290,24 +289,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
 
             $replacement = $methodRenames[$methodName];
 
-            // PHPStan can normalize a declared base/subclass union and hide its overrides.
-            if ($isGroupingDropdownAlias || in_array($componentClass, [MarkdownEditor::class, RichEditor::class, MorphToSelectType::class, BaseFilter::class, SelectFilter::class, Group::class], strict: true)) {
-                foreach ((new NodeFinder)->findInstanceOf($this->getFile()->getNewStmts(), UnionType::class) as $union) {
-                    foreach ($union->types as $type) {
-                        if (! $type instanceof Name) {
-                            continue;
-                        }
-
-                        $declaredType = $this->getType($type);
-
-                        if ($receiverType->isSuperTypeOf($declaredType)->yes() && (! $this->canRenameMethods($declaredType, $componentClass, $methodName, $replacement))) {
-                            return null;
-                        }
-                    }
-                }
-            }
-
-            if ((! $this->canRenameMethods($receiverType, $componentClass, $methodName, $replacement)) || (! $this->canForwardArguments($node, $componentClass, $methodName))) {
+            if ((! $this->canRenameMethods($receiverType, $componentClass, $methodName, $replacement)) || $this->hasOverridingUnion($componentClass, $methodName, $replacement) || (! $this->canForwardArguments($node, $componentClass, $methodName))) {
                 return null;
             }
 
@@ -336,6 +318,35 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         }
 
         return null;
+    }
+
+    /**
+     * @param  class-string  $componentClass
+     */
+    private function hasOverridingUnion(string $componentClass, string $methodName, string $replacement): bool
+    {
+        // PHPStan can normalize `Base | CustomBase` to `Base`, hiding overrides.
+        // Conservatively retain related calls in a file declaring that union.
+        return (new NodeFinder)->findFirst($this->getFile()->getNewStmts(), function (Node $node) use ($componentClass, $methodName, $replacement): bool {
+            if (! $node instanceof UnionType) {
+                return false;
+            }
+
+            $types = array_map(fn (Node $type): Type => $this->getType($type), $node->types);
+            $ownerType = new ObjectType($componentClass);
+
+            foreach ($types as $type) {
+                if ((! $ownerType->isSuperTypeOf($type)->yes()) || (! array_filter($types, static fn (Type $otherType): bool => (! $otherType->equals($type)) && $otherType->isSuperTypeOf($type)->yes()))) {
+                    continue;
+                }
+
+                if (! $this->canRenameMethods($type, $componentClass, $methodName, $replacement)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }) !== null;
     }
 
     /**

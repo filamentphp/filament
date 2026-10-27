@@ -29,7 +29,7 @@
         "phpstan/phpstan": "^2.1",
         "pragmarx/google2fa": "^8.0|^9.0",
         "pragmarx/google2fa-qrcode": "^3.0|^4.0",
-        "rector/rector": "^2.0",
+        "rector/rector": "^2.5",
         "spatie/laravel-google-fonts": "^1.5",
         "spatie/laravel-medialibrary": "^11.21",
         "spatie/laravel-settings": "^3.0",
@@ -86,6 +86,10 @@
         ],
         "pint": "pint --parallel --cache-file=.pint.cache",
         "rector": "rector",
+        "rector:upgrade": [
+            "Composer\\Config::disableProcessTimeout",
+            "rector process --config=rector-upgrade.php"
+        ],
         "test:pest": "pest --parallel --exclude-group=serial",
         "test:sqlite": "pest --configuration=phpunit.sqlite.xml --parallel --exclude-group=serial",
         "test:mysql": "pest --configuration=phpunit.mysql.xml --parallel --exclude-group=serial",
