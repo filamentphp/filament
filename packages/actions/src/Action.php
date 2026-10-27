@@ -376,10 +376,6 @@ class Action extends ViewComponent implements Arrayable
 
     protected function getLivewireKey(): ?string
     {
-        if (! ($this->getRecord(withDefault: false) && $this->getTable())) {
-            return null;
-        }
-
         $livewire = $this->getLivewire();
 
         if (! ($livewire instanceof Component)) {
