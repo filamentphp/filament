@@ -3,8 +3,10 @@
 namespace Filament\Notifications;
 
 use Closure;
+use Exception;
 use Illuminate\Cache\FileStore;
 use Illuminate\Contracts\Cache\LockProvider;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\HtmlString;
@@ -113,11 +115,39 @@ class NotificationMailbox
      */
     public function pull(array $batches = []): array
     {
+        return $this->decodeEntries($this->pullEntries($batches));
+    }
+
+    /** @return ?array<array<string, mixed>> */
+    public function tryPull(): ?array
+    {
+        try {
+            $entries = $this->withLock(
+                fn (Repository $cache, string $key): array => $this->consumeEntries($cache, $key, []),
+                shouldWaitForLock: false,
+            );
+        } catch (LockTimeoutException) {
+            return null;
+        } catch (Exception $exception) {
+            report($exception);
+
+            return null;
+        }
+
+        return $this->decodeEntries($entries);
+    }
+
+    /**
+     * @param  array<array{notification: string | array<string, mixed>, batch: ?string}>  $entries
+     * @return array<array<string, mixed>>
+     */
+    protected function decodeEntries(array $entries): array
+    {
         return array_map(
             static fn (array $entry): array => is_string($entry['notification'])
                 ? unserialize($entry['notification'], ['allowed_classes' => [HtmlString::class]])
                 : $entry['notification'],
-            $this->pullEntries($batches),
+            $entries,
         );
     }
 
@@ -127,36 +157,43 @@ class NotificationMailbox
      */
     protected function pullEntries(?array $batches = null): array
     {
-        return $this->mutate(function (Repository $cache, string $key) use ($batches): array {
-            $notifications = [];
-            $remaining = [];
+        return $this->mutate(fn (Repository $cache, string $key): array => $this->consumeEntries($cache, $key, $batches));
+    }
 
-            foreach ($cache->get($key) ?? [] as $entry) {
-                // Mailboxes published before response ownership was introduced
-                // contain bare notifications, which remain unowned catch-up work.
-                if (! array_key_exists('notification', $entry)) {
-                    $entry = ['notification' => $entry, 'batch' => null];
-                }
+    /**
+     * @param  ?array<string>  $batches
+     * @return array<array{notification: string | array<string, mixed>, batch: ?string}>
+     */
+    protected function consumeEntries(Repository $cache, string $key, ?array $batches): array
+    {
+        $notifications = [];
+        $remaining = [];
 
-                if (($batches === null) || ($entry['batch'] === null) || in_array($entry['batch'], $batches, strict: true)) {
-                    $notifications[] = $entry;
-                } else {
-                    $remaining[] = $entry;
-                }
+        foreach ($cache->get($key) ?? [] as $entry) {
+            // Mailboxes published before response ownership was introduced
+            // contain bare notifications, which remain unowned catch-up work.
+            if (! array_key_exists('notification', $entry)) {
+                $entry = ['notification' => $entry, 'batch' => null];
             }
 
-            if (count($notifications)) {
-                $wasStored = count($remaining)
-                    ? $cache->put($key, $remaining, now()->addMinutes(max(1, (int) config('session.lifetime', 120))))
-                    : $cache->forget($key);
-
-                if (! $wasStored) {
-                    throw new RuntimeException('Could not remove Filament notifications from the mailbox.');
-                }
+            if (($batches === null) || ($entry['batch'] === null) || in_array($entry['batch'], $batches, strict: true)) {
+                $notifications[] = $entry;
+            } else {
+                $remaining[] = $entry;
             }
+        }
 
-            return $notifications;
-        });
+        if (count($notifications)) {
+            $wasStored = count($remaining)
+                ? $cache->put($key, $remaining, now()->addMinutes(max(1, (int) config('session.lifetime', 120))))
+                : $cache->forget($key);
+
+            if (! $wasStored) {
+                throw new RuntimeException('Could not remove Filament notifications from the mailbox.');
+            }
+        }
+
+        return $notifications;
     }
 
     protected function getScope(): string
@@ -173,6 +210,11 @@ class NotificationMailbox
 
     protected function mutate(Closure $callback): mixed
     {
+        return $this->withLock($callback, shouldWaitForLock: true);
+    }
+
+    protected function withLock(Closure $callback, bool $shouldWaitForLock): mixed
+    {
         $cache = Cache::store(config('filament.cache_store'));
         $store = $cache->getStore();
         $key = $this->getCacheKey();
@@ -183,6 +225,20 @@ class NotificationMailbox
 
         // Only cache operations run under this lock, never application work,
         // rendering, or waiting for the browser to receive the response.
-        return $store->lock("{$key}:lock", 10)->block(5, fn (): mixed => $callback($cache, $key));
+        $lock = $store->lock("{$key}:lock", 10);
+
+        if ($shouldWaitForLock) {
+            return $lock->block(5, fn (): mixed => $callback($cache, $key));
+        }
+
+        if (! $lock->get()) {
+            throw new LockTimeoutException;
+        }
+
+        try {
+            return $callback($cache, $key);
+        } finally {
+            $lock->release();
+        }
     }
 }
