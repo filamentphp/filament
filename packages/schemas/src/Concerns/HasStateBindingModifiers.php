@@ -27,6 +27,9 @@ trait HasStateBindingModifiers
         return $this;
     }
 
+    /**
+     * @deprecated Use `live()` instead.
+     */
     public function reactive(): static
     {
         $this->live();
