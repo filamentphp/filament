@@ -1,10 +1,10 @@
 .fi-ta-content-loading {
     --loading-skeleton-animation: var(--animate-pulse);
-    --loading-skeleton-background-color: var(--gray-200);
+    --loading-skeleton-bg: var(--gray-200);
     --loading-skeleton-border-radius: var(--radius-md);
 
     @variant dark {
-        --loading-skeleton-background-color: rgb(255 255 255 / 0.1);
+        --loading-skeleton-bg: rgb(255 255 255 / 0.1);
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -180,9 +180,7 @@
             .fi-ta-content-loading & .fi-ta-record-checkbox {
                 @apply shadow-none ring-0 transition-none;
                 animation: var(--loading-skeleton-animation);
-                background-color: var(
-                    --loading-skeleton-background-color
-                ) !important;
+                background-color: var(--loading-skeleton-bg) !important;
                 background-image: none !important;
             }
 

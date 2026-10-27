@@ -186,7 +186,7 @@ Then, style the column while it is inside the loading table content. The loading
         position: absolute;
         inset: 0;
         animation: var(--loading-skeleton-animation);
-        background-color: var(--loading-skeleton-background-color);
+        background-color: var(--loading-skeleton-bg);
         border-radius: var(--loading-skeleton-border-radius);
     }
 
