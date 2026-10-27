@@ -9,7 +9,7 @@
             &::after {
                 @apply absolute inset-x-0 top-1/2 h-4 -translate-y-1/2;
                 animation: var(--loading-skeleton-animation);
-                background-color: var(--loading-skeleton-background-color);
+                background-color: var(--loading-skeleton-bg);
                 border-radius: var(--loading-skeleton-border-radius);
                 content: '';
             }
@@ -48,7 +48,7 @@
     .fi-ta-content-loading > .fi-ta-table > .fi-ta-records > .fi-ta-row & {
         @apply shadow-none ring-0 transition-none;
         animation: var(--loading-skeleton-animation);
-        background-color: var(--loading-skeleton-background-color) !important;
+        background-color: var(--loading-skeleton-bg) !important;
         background-image: none !important;
     }
 }

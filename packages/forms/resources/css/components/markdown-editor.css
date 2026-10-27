@@ -18,7 +18,7 @@
     --markdown-editor-color-rose: #9f1239;
     --markdown-editor-color-gray: #18181b;
     --markdown-editor-color-gray-muted: #71717a;
-    --markdown-editor-color-gray-background: #e4e4e7;
+    --markdown-editor-color-gray-bg: #e4e4e7;
 
     &:not(.fi-disabled) {
         @apply max-w-full overflow-hidden font-mono text-sm text-gray-950 dark:text-white;
@@ -174,7 +174,7 @@
         .cm-s-easymde
         .cm-formatting-code
         + .cm-comment:not(.cm-formatting-code) {
-        background-color: var(--markdown-editor-color-gray-background);
+        background-color: var(--markdown-editor-color-gray-bg);
         color: var(--markdown-editor-color-gray);
     }
 
@@ -322,7 +322,7 @@
         --markdown-editor-color-rose: #fb7185;
         --markdown-editor-color-gray: #fafafa;
         --markdown-editor-color-gray-muted: #a1a1aa;
-        --markdown-editor-color-gray-background: #52525b;
+        --markdown-editor-color-gray-bg: #52525b;
 
         & .EasyMDEContainer .cm-s-easymde span.CodeMirror-selectedtext {
             filter: invert(100%);

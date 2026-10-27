@@ -658,7 +658,7 @@ The loading skeleton's background color, border radius, and animation are contro
 ```css
 .fi-ta-content-loading {
     --loading-skeleton-animation: var(--animate-pulse);
-    --loading-skeleton-background-color: var(--primary-200);
+    --loading-skeleton-bg: var(--primary-200);
     --loading-skeleton-border-radius: var(--radius-lg);
 }
 ```

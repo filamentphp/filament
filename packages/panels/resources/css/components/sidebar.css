@@ -60,7 +60,7 @@
 }
 
 .fi-sidebar {
-    --sidebar-footer-horizontal-margin: calc(var(--spacing) * 4);
+    --sidebar-footer-margin-x: calc(var(--spacing) * 4);
 
     @apply fixed inset-y-0 start-0 z-30 flex h-dvh flex-col content-start bg-white transition-all lg:z-20 lg:bg-transparent lg:transition-none dark:bg-gray-900 dark:lg:bg-transparent;
 
@@ -250,7 +250,7 @@
 }
 
 .fi-sidebar-footer {
-    @apply mx-(--sidebar-footer-horizontal-margin) mb-3 grid gap-y-3 border-t border-gray-950/5 pt-3 dark:border-white/10;
+    @apply mx-(--sidebar-footer-margin-x) mb-3 grid gap-y-3 border-t border-gray-950/5 pt-3 dark:border-white/10;
 
     & > .fi-no-database {
         @apply block;
