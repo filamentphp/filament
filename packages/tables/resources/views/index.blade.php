@@ -912,7 +912,6 @@
                                                 name="deleteButton"
                                                 :label="__('filament-tables::table.filters.actions.remove.label')"
                                                 :wire:click="$indicatorRemoveLivewireClickHandler"
-                                                wire:loading.attr="disabled"
                                                 wire:target="removeTableFilter"
                                             ></x-slot>
                                         @endif
@@ -1902,11 +1901,14 @@
                                                         @else
                                                             role="button"
                                                             tabindex="0"
-                                                            x-on:keydown.enter.prevent.stop="$wire.sortTable('{{ $columnName }}')"
-                                                            x-on:keydown.space.prevent.stop="$wire.sortTable('{{ $columnName }}')"
+                                                            x-on:keydown.enter.self.prevent.stop="$el.click()"
+                                                            x-on:keydown.space.self.prevent.stop="$el.click()"
                                                         @endif
+                                                        data-prevent-disabled-clicks
                                                         wire:click="sortTable('{{ $columnName }}')"
-                                                        wire:target="sortTable('{{ $columnName }}')"
+                                                        wire:loading.attr="aria-disabled"
+                                                        wire:loading.class="fi-disabled"
+                                                        wire:target="{{ $loadingTargetsWireTarget }}"
                                                         class="fi-ta-header-cell-sort-btn"
                                                     >
                                                         @if (filled($columnHeaderTooltip))
