@@ -54,13 +54,23 @@ Record the exact old symbol, proposed replacement, evidence from equivalent APIs
 
 ### Additive changes in supported majors
 
-- Keep the old entry point and its argument names/defaults; add the new entry point and mark the old one with ``/** @deprecated Use `replacement()` instead. */``.
-- Preserve supported subclass overrides. An old method forwarding to a new method does not preserve an old override if internal callers switch to the new method. Trace dispatch from the actual framework call sites.
+- Keep the old entry point and its argument names/defaults; add the new entry point and mark the old one with ``@deprecated Use `replacement()` instead.``. Always put the deprecation annotation on its own line in a multiline docblock, with the opening and closing delimiters on separate lines:
+
+  ```php
+  /**
+   * @deprecated Use `replacement()` instead.
+   */
+  ```
+
+- Classify the method's intended role before choosing a bridge direction. Use documentation, framework dispatch and established usage; being technically overridable, public or protected does not by itself establish a supported extension hook. Absence from documentation alone does not prove a hook unsupported.
+- For ordinary setters, getters and configuration APIs intended to be called, keep the implementation in the new canonical method and make the old deprecated method forward to it (`OLD → NEW`).
+- For supported subclass extension hooks, use `NEW → OLD` when necessary to preserve existing overrides through supported majors: the new method calls the old virtual method, and framework entry points call the new method. Trace getter/output pipelines, recursive dispatch and `parent::` calls so both old and new overrides work. Do not apply this exception to ordinary APIs merely because PHP permits overriding them.
+- Preserve existing parameter names/defaults and authoritative backing properties regardless of bridge direction. Never create reciprocal old/new wrappers.
 - Preserve protected/static property configuration and direct subclass writes. Two independent properties are not aliases. Retain one authoritative storage location or define explicit new-versus-legacy precedence that distinguishes unset from `false` and meaningful `null`.
 - Check traits, interfaces, subclass type relationships, service-container bindings, attributes and serialization before renaming a class. A subclass shim and `class_alias()` have different identity and inheritance behavior.
 - Keep enum backed values, render-hook strings, event names and payload keys stable when adding a new PHP symbol. A renamed constant does not require renaming its string value.
 - Keep explicit exposure/security attributes and frontend callability on compatibility endpoints where that is part of their contract. Sharing an attribute name does not imply every dispatcher has the same inheritance policy.
-- Update public docs, IDE stubs and upgrade recipes together. Make replacement advice point to the current canonical API, not another deprecated alias.
+- Keep public docs, IDE stubs and necessary upgrade recipes consistent with the canonical API. Do not document deprecated methods or mention deprecated APIs or compatibility aliases in developer documentation unless doing so is absolutely necessary to use the feature. Deprecation alone does not justify a migration note or a list of old names. Keep required `@deprecated` annotations in source and IDE declarations; point replacement advice to the current canonical API, not another deprecated alias.
 
 ### Changes requiring a major version
 
