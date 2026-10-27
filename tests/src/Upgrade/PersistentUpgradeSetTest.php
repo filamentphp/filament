@@ -76,7 +76,7 @@ class PersistentUpgradeSetTest extends TestCase
             // Simulate old examples being copied into an already-upgraded app.
             $reintroducedFiles = [];
 
-            foreach (['convenience_factories', 'deprecated_action_methods', 'deprecated_lazy_loading_calls', 'deprecated_form_filter_group_methods'] as $fixture) {
+            foreach (['convenience_factories', 'deprecated_action_methods', 'deprecated_lazy_loading_calls', 'deprecated_form_filter_group_methods', 'deprecated_testing_assertions', 'deprecated_testing_assertions_pest'] as $fixture) {
                 $path = $directory . '/app/' . $fixture . '.php';
                 [$input] = explode("-----\n", file_get_contents(__DIR__ . '/Fixtures/' . $fixture . '.php.inc'), 2);
                 file_put_contents($path, $input);
