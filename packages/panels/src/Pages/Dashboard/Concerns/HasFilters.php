@@ -38,7 +38,7 @@ trait HasFilters /** @phpstan-ignore trait.unused */
 
         // https://github.com/filamentphp/filament/pull/7999
         if ($this->filters) {
-            $this->normalizeTableFilterValuesFromQueryString($this->filters);
+            $this->normalizeFilterValuesFromQueryString($this->filters);
         }
 
         if (method_exists($this, 'getFiltersForm')) {
@@ -56,11 +56,11 @@ trait HasFilters /** @phpstan-ignore trait.unused */
     /**
      * @param  array<string, mixed>  $data
      */
-    protected function normalizeTableFilterValuesFromQueryString(array &$data): void
+    protected function normalizeFilterValuesFromQueryString(array &$data): void
     {
         foreach ($data as &$value) {
             if (is_array($value)) {
-                $this->normalizeTableFilterValuesFromQueryString($value);
+                $this->normalizeFilterValuesFromQueryString($value);
             } elseif ($value === 'null') {
                 $value = null;
             } elseif ($value === 'false') {
@@ -69,6 +69,16 @@ trait HasFilters /** @phpstan-ignore trait.unused */
                 $value = true;
             }
         }
+    }
+
+    /**
+     * @deprecated Use `normalizeFilterValuesFromQueryString()` instead.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    protected function normalizeTableFilterValuesFromQueryString(array &$data): void
+    {
+        $this->normalizeFilterValuesFromQueryString($data);
     }
 
     #[Unexposed]
