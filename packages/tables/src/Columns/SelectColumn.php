@@ -981,8 +981,8 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                     state: ' . Js::from($state) . ',
                 })',
                 'x-id' => "['table-column-error']",
-                'x-on:click.capture' => 'blockEdit($event)',
-                'x-on:keydown.capture' => 'blockEdit($event)',
+                'x-on:click.capture' => 'preventEdit($event)',
+                'x-on:keydown.capture' => 'preventEdit($event)',
             ], escape: false)
             ->class([
                 'fi-ta-select',
