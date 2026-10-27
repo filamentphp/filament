@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Livewire\Attributes\Locked;
+use Livewire\Exceptions\PropertyNotFoundException;
 
 use function Filament\Tests\livewire;
 
@@ -99,15 +100,16 @@ it('returns empty array from `getDefaultProperties()` when `$isLazyLoaded` is `f
     expect(TestWidgetNotLazy::getDefaultProperties())->toBe([]);
 });
 
-it('supports the legacy `$filters` property without exposing `__get()` to frontend calls', function (): void {
+it('provides `$pageFilters` without the legacy `$filters` alias or frontend access to `__get()`', function (): void {
     $component = livewire(PageFiltersTestWidget::class, [
         'lazy' => false,
         'pageFilters' => ['status' => 'published'],
     ])->assertSuccessful();
 
-    expect($component->instance()->filters)->toBe(['status' => 'published']);
+    expect($component->instance()->pageFilters)->toBe(['status' => 'published']);
+    expect(static fn () => $component->instance()->filters)->toThrow(PropertyNotFoundException::class);
 
-    $component->call('__get', 'filters')
+    $component->call('__get', 'pageFilters')
         ->assertForbidden();
 });
 
