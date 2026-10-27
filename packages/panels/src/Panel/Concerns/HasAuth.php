@@ -235,27 +235,11 @@ trait HasAuth
         return $this;
     }
 
-    /**
-     * @deprecated Use `requestPasswordResetRouteSlug()` instead.
-     */
-    public function passwordResetRequestRouteSlug(string $slug): static
-    {
-        return $this->requestPasswordResetRouteSlug($slug);
-    }
-
     public function resetPasswordRouteSlug(string $slug): static
     {
         $this->resetPasswordRouteSlug = $slug;
 
         return $this;
-    }
-
-    /**
-     * @deprecated Use `resetPasswordRouteSlug()` instead.
-     */
-    public function passwordResetRouteSlug(string $slug): static
-    {
-        return $this->resetPasswordRouteSlug($slug);
     }
 
     public function passwordResetRoutePrefix(string $prefix): static

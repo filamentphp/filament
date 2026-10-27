@@ -408,11 +408,11 @@ describe('navigation groups from enums', function (): void {
 });
 
 describe('navigation activity', function (): void {
-    it('can configure and clear cached activity with either setter', function (string $method): void {
+    it('can configure and clear cached activity with `activeWhen()`', function (): void {
         $item = NavigationItem::make('Reports');
         $isActive = true;
 
-        expect($item->{$method}(callback: static function () use (&$isActive): bool {
+        expect($item->activeWhen(callback: static function () use (&$isActive): bool {
             return $isActive;
         }))->toBe($item)
             ->and($item->isActive())->toBeTrue();
@@ -420,28 +420,28 @@ describe('navigation activity', function (): void {
         $isActive = false;
 
         expect($item->isActive())->toBeTrue()
-            ->and($item->{$method}(callback: null))->toBe($item)
+            ->and($item->activeWhen(callback: null))->toBe($item)
             ->and($item->isActive())->toBeFalse();
-    })->with(['activeWhen', 'isActiveWhen']);
+    });
 
-    it('detects any active direct child without including grandchildren', function (string $method): void {
+    it('detects any active direct child without including grandchildren', function (): void {
         $item = NavigationItem::make('Reports');
 
-        expect($item->{$method}())->toBeFalse();
+        expect($item->hasActiveChildItems())->toBeFalse();
 
         $item->childItems([
             NavigationItem::make('Inactive')->activeWhen(static fn (): bool => false),
             NavigationItem::make('Active')->activeWhen(static fn (): bool => true),
         ]);
 
-        expect($item->{$method}())->toBeTrue();
+        expect($item->hasActiveChildItems())->toBeTrue();
 
         $item->childItems([NavigationItem::make('Child')->childItems($item->getChildItems())]);
 
-        expect($item->{$method}())->toBeFalse();
-    })->with(['hasActiveChildItems', 'isChildItemsActive']);
+        expect($item->hasActiveChildItems())->toBeFalse();
+    });
 
-    it('uses `activeWhen()` for legacy calls and generated page and resource navigation', function (): void {
+    it('uses `activeWhen()` for generated page and resource navigation', function (): void {
         $item = new class extends NavigationItem
         {
             public function activeWhen(?Closure $callback): static
@@ -450,9 +450,6 @@ describe('navigation activity', function (): void {
             }
         };
 
-        expect($item->isActiveWhen(callback: null))->toBe($item)
-            ->and($item->isActive())->toBeTrue();
-
         app()->bind(NavigationItem::class, $item::class);
 
         expect(Settings::getNavigationItems()[0]->isActive())->toBeTrue()
@@ -460,7 +457,7 @@ describe('navigation activity', function (): void {
             ->and(ListUsers::getNavigationItems()[0]->isActive())->toBeTrue();
     });
 
-    it('uses `hasActiveChildItems()` for legacy calls and sidebar groups and items', function (): void {
+    it('uses `hasActiveChildItems()` for sidebar groups and items', function (): void {
         $item = new class('Reports') extends NavigationItem
         {
             public function hasActiveChildItems(): bool
@@ -468,8 +465,6 @@ describe('navigation activity', function (): void {
                 return ! parent::hasActiveChildItems();
             }
         };
-
-        expect($item->isChildItemsActive())->toBeTrue();
 
         $item->url('/reports')->icon(Heroicon::OutlinedFolder)->activeWhen(static fn (): bool => true);
 

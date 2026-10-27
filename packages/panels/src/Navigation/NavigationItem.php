@@ -135,14 +135,6 @@ class NavigationItem extends Component
         return $this;
     }
 
-    /**
-     * @deprecated Use `activeWhen()` instead.
-     */
-    public function isActiveWhen(?Closure $callback): static
-    {
-        return $this->activeWhen($callback);
-    }
-
     public function label(string | Htmlable | Closure $label): static
     {
         $this->label = $label;
@@ -277,14 +269,6 @@ class NavigationItem extends Component
         }
 
         return false;
-    }
-
-    /**
-     * @deprecated Use `hasActiveChildItems()` instead.
-     */
-    public function isChildItemsActive(): bool
-    {
-        return $this->hasActiveChildItems();
     }
 
     public function shouldOpenUrlInNewTab(): bool

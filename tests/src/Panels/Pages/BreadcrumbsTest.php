@@ -54,14 +54,14 @@ it('preserves the title fallback for resource page breadcrumbs', function (): vo
     expect(app(ResourcePageWithTitle::class)->getBreadcrumb())->toBe('Resource page title');
 });
 
-it('prepends cluster breadcrumbs without losing URL keys or duplicating the first breadcrumb', function (string $method): void {
+it('prepends cluster breadcrumbs without losing URL keys or duplicating the first breadcrumb', function (): void {
     $breadcrumbs = ['/reports' => 'Reports', 'Details'];
     $expected = [UserManagement::getUrl() => 'User Management', '/reports' => 'Reports', 'Details'];
 
-    expect(UserManagement::{$method}(breadcrumbs: $breadcrumbs))->toBe($expected)
-        ->and(UserManagement::{$method}(breadcrumbs: $expected))->toBe($expected)
-        ->and(UserManagement::{$method}(breadcrumbs: []))->toBe([UserManagement::getUrl() => 'User Management']);
-})->with(['prependClusterBreadcrumbs', 'unshiftClusterBreadcrumbs']);
+    expect(UserManagement::prependClusterBreadcrumbs(breadcrumbs: $breadcrumbs))->toBe($expected)
+        ->and(UserManagement::prependClusterBreadcrumbs(breadcrumbs: $expected))->toBe($expected)
+        ->and(UserManagement::prependClusterBreadcrumbs(breadcrumbs: []))->toBe([UserManagement::getUrl() => 'User Management']);
+});
 
 it('uses the configured cluster breadcrumb and `getClusterBreadcrumb()` hook for pages and resource pages', function (): void {
     $page = new class extends Page
@@ -87,8 +87,6 @@ it('uses the configured cluster breadcrumb and `getClusterBreadcrumb()` hook for
     ])->and($resourcePage->getResourceBreadcrumbs())->toBe([
         UserManagement::getUrl() => 'Custom cluster dynamic',
         PostResource::getUrl() => 'Posts',
-    ])->and(DynamicBreadcrumbCluster::unshiftClusterBreadcrumbs(breadcrumbs: []))->toBe([
-        UserManagement::getUrl() => 'Custom cluster dynamic',
     ]);
 });
 

@@ -5,20 +5,17 @@ use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
-it('configures distinct password reset endpoint slugs with either setter family', function (string $requestMethod, string $resetMethod): void {
+it('configures distinct password reset endpoint slugs', function (): void {
     $panel = Panel::make()->passwordResetRoutePrefix(prefix: 'account-recovery');
 
-    expect($panel->{$requestMethod}(slug: 'send-link'))->toBe($panel)
-        ->and($panel->{$resetMethod}(slug: '/choose-password'))->toBe($panel)
+    expect($panel->requestPasswordResetRouteSlug(slug: 'send-link'))->toBe($panel)
+        ->and($panel->resetPasswordRouteSlug(slug: '/choose-password'))->toBe($panel)
         ->and($panel->getRequestPasswordResetRouteSlug())->toBe('/send-link')
         ->and($panel->getResetPasswordRouteSlug())->toBe('/choose-password')
         ->and($panel->getResetPasswordRoutePrefix())->toBe('/account-recovery');
-})->with([
-    ['requestPasswordResetRouteSlug', 'resetPasswordRouteSlug'],
-    ['passwordResetRequestRouteSlug', 'passwordResetRouteSlug'],
-]);
+});
 
-it('delegates legacy password reset setters to canonical setters while retaining protected configuration', function (): void {
+it('supports password reset setter overrides and protected configuration', function (): void {
     $panel = new class extends Panel
     {
         protected string $requestPasswordResetRouteSlug = 'send-link';
@@ -38,8 +35,8 @@ it('delegates legacy password reset setters to canonical setters while retaining
 
     expect($panel->getRequestPasswordResetRouteSlug())->toBe('/send-link')
         ->and($panel->getResetPasswordRouteSlug())->toBe('/choose-password')
-        ->and($panel->passwordResetRequestRouteSlug(slug: 'email'))->toBe($panel)
-        ->and($panel->passwordResetRouteSlug(slug: 'password'))->toBe($panel)
+        ->and($panel->requestPasswordResetRouteSlug(slug: 'email'))->toBe($panel)
+        ->and($panel->resetPasswordRouteSlug(slug: 'password'))->toBe($panel)
         ->and($panel->getRequestPasswordResetRouteSlug())->toBe('/request/email')
         ->and($panel->getResetPasswordRouteSlug())->toBe('/reset/password');
 });

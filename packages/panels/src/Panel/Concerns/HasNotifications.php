@@ -56,14 +56,6 @@ trait HasNotifications
         return $this;
     }
 
-    /**
-     * @deprecated Use `databaseNotificationsPollingInterval()` instead.
-     */
-    public function databaseNotificationsPolling(string | Closure | null $interval): static
-    {
-        return $this->databaseNotificationsPollingInterval($interval);
-    }
-
     public function hasDatabaseNotifications(): bool
     {
         return (bool) $this->evaluate($this->hasDatabaseNotifications);
