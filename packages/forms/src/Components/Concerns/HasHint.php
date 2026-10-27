@@ -6,7 +6,6 @@ use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Field;
-use Filament\Forms\Components\Placeholder;
 use Filament\Schemas\Components\Icon;
 use Filament\Schemas\Components\Text;
 use Illuminate\Contracts\Support\Htmlable;
@@ -31,7 +30,7 @@ trait HasHint
 
     protected function setUpHint(): void
     {
-        $this->afterLabel(function (Field | Placeholder $component): array {
+        $this->afterLabel(function (Field $component): array {
             $components = [];
 
             if ($component->hasHint()) {

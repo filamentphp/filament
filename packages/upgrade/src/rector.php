@@ -4,7 +4,7 @@ use Composer\InstalledVersions;
 use Filament\Upgrade\Rector\RenameDeprecatedForwardingMethodsRector;
 use Filament\Upgrade\Rector\RenameDeprecatedLazyLoadingApisRector;
 use Filament\Upgrade\Rector\ReplaceConvenienceClassesRector;
-use Filament\Upgrade\Rector\ReplaceLegacyColumnFactoriesRector;
+use Filament\Upgrade\Rector\ReplaceLegacyComponentFactoriesRector;
 use Filament\Upgrade\Rector\ReplaceTypedChartWidgetsRector;
 use Filament\Upgrade\Rector\WidenAvatarProviderParameterTypeRector;
 use Rector\Config\RectorConfig;
@@ -70,7 +70,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(RenameDeprecatedForwardingMethodsRector::class);
     $rectorConfig->rule(RenameDeprecatedLazyLoadingApisRector::class);
     $rectorConfig->rule(ReplaceConvenienceClassesRector::class);
-    $rectorConfig->rule(ReplaceLegacyColumnFactoriesRector::class);
+    $rectorConfig->rule(ReplaceLegacyComponentFactoriesRector::class);
     $rectorConfig->rule(ReplaceTypedChartWidgetsRector::class);
     $rectorConfig->rule(WidenAvatarProviderParameterTypeRector::class);
 };

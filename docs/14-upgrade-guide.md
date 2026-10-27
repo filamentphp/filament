@@ -551,6 +551,31 @@ Manually migrate custom overrides (including inherited ones), class-qualified ca
 Preserve custom parameter names, defaults, return values, and dispatch behavior. The wrappers called replacements through `$this`, so renaming `parent::` calls can bypass subclass overrides. The dimension setters and `emptyMessage()` returned `$this` regardless of the replacement's return value, while `rounded()` returned the result of `circular()`.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('forms')">
+<span slot="summary">Deprecated form compatibility classes have been removed</span>
+
+Replace these classes with their canonical components:
+
+| Removed class in `Filament\Forms\Components` | Replacement |
+| --- | --- |
+| `MultiSelect` | `Filament\Forms\Components\Select` with `multiple()` |
+| `RelationshipRepeater` | `Filament\Forms\Components\Repeater` with `relationship()` |
+| `Placeholder` | `Filament\Infolists\Components\TextEntry`, replacing `content()` with `state()` and `getContent()` with `getState()` |
+
+`TextEntry` can still be used in a form schema. Its namespace is in the infolists package; ensure that package is installed if you previously depended only on forms.
+
+The upgrade script migrates direct `make()` chains using known configuration methods, including imported aliases and fully qualified names. It adds `multiple()` or `relationship()` immediately after `make()`, retains factory arguments and subsequent configuration, and changes `content(content: ...)` to `state(state: ...)` only within migrated `Placeholder` chains. Values, closures, and their evaluation are preserved. Unrelated `content()` and `getContent()` methods are not renamed.
+
+The script leaves the following cases unchanged for manual migration; **running it is not sufficient to remove every reference**:
+
+- **Later configuration and ambiguous chains:** Factories inside assignments are left unchanged because stored instances may receive later `multiple(false)`, relationship configuration, or content alias calls. Chains using `tap()`, conditional, dynamic, nullsafe, custom or unrecognized methods, first-class callables, unpacked content arguments, or extra content/getter arguments also need review. Preserve argument evaluation and side effects, even for extra arguments the old wrapper ignored. Rename named content arguments, including keys in unpacked arrays, yourself.
+- **Forced multiplicity:** `MultiSelect::isMultiple()` always returned `true`, even after `multiple(false)` or `multiple(fn () => false)`. All chains containing an explicit `multiple()` call, including inside configuration callbacks, are left unchanged. Do not simply rename the class and retain a disabling call: preserve the always-multiple contract where intended, including calls made after construction and from callbacks.
+- **Relationship setup:** Chains containing an explicit `RelationshipRepeater::relationship()` call are left unchanged. The wrapper called `relationship()` after `parent::setUp()`, using the component name by default. Preserve its relationship name/query/record closures, hydration hook, relationship loading and saving callbacks, `dehydrated(false)`, and `reorderable(false)` defaults. Keep later intentional overrides in order; adding `relationship()` after them can overwrite hooks or flags. Test loading existing records and creating, updating, deleting, and ordering related records.
+- **Custom subclasses, intermediate parents, and traits:** Parent classes and subclass factories are not rewritten. For a `MultiSelect` subclass, retaining an `isMultiple(): bool` implementation returning `true` preserves forced multiplicity more faithfully than a mutable setter. For a `RelationshipRepeater` subclass, move its setup call into the application-owned class after `parent::setUp()`. Migrate the class that owns the inherited behavior, not every descendant, and preserve trait overrides/adaptations. Review `parent::` calls: replacing a wrapper call with a parent implementation can bypass `$this` dispatch or an intermediate override. `Placeholder::content()` called `$this->state($content)` and returned `$this`, regardless of the setter's result; `getContent()` returned `$this->getState()`. Preserve custom parameter names, defaults, visibility, return values, and overrides of both aliases and replacements. Keeping application-owned forwarding methods may be necessary.
+- **Global configuration and bindings:** Files containing a static `configureUsing()` registration are left unchanged. Audit registrations throughout the application, including other files and service providers, and container bindings before accepting any migrated factories. A registration scoped to a removed class must not be broadened to every `Select`, `Repeater`, or `TextEntry` unintentionally; use an application-owned subclass where needed. Explicit configuration after `make()` can change what callbacks observe and which configuration wins. In particular, the old relationship setup ran at its class's point in the configuration hierarchy, not after all ordinary and important callbacks.
+- **Other references:** Migrate parameter, return and property types, unions, PHPDoc, `instanceof`, `::class`, direct constructors, dynamic factories, factory callables, callbacks, strings and non-PHP files yourself. Renaming types broadens the accepted components; retaining an application-owned subclass may be necessary. Alias calls on stored or typed `Placeholder` instances, including callback consumers, are not rewritten. Update imports and remove unused legacy imports after migration.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('widgets')">
 <span slot="summary">Deprecated typed chart widget classes have been removed</span>
 
