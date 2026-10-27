@@ -557,10 +557,11 @@ export default function tabsSchemaComponent({
                     )
                 const clip = `inset(${Math.max(0, panelBounds.top - bounds.top) / scale}px 0 ${Math.max(0, bounds.bottom - panelBounds.bottom) / scale}px 0)`
                 if (
-                    header.style.getPropertyValue('--tab-overflow-clip') !==
-                    clip
+                    header.style.getPropertyValue(
+                        '--tab-overflow-clip-path',
+                    ) !== clip
                 )
-                    header.style.setProperty('--tab-overflow-clip', clip)
+                    header.style.setProperty('--tab-overflow-clip-path', clip)
             }
             const focused = this.pendingOverflowFocus
             this.pendingOverflowFocus = null

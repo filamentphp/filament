@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\Livewire;
 
 class Notifications extends Component
 {
@@ -24,6 +25,9 @@ class Notifications extends Component
 
     #[Locked]
     public Collection $notifications;
+
+    #[Locked]
+    public bool $hasPulledNotificationsOnMount = false;
 
     public static Alignment $alignment = Alignment::Right;
 
@@ -35,6 +39,31 @@ class Notifications extends Component
     public function mount(): void
     {
         $this->notifications = new Collection;
+        $request = request();
+
+        if (
+            $request->hasSession() &&
+            $request->isMethod('GET') &&
+            ($request->header('Sec-Fetch-Dest') === 'document') &&
+            (! Livewire::isLivewireRequest()) &&
+            (! $request->headers->has('X-Livewire-Navigate')) &&
+            (! $request->prefetch()) &&
+            (! str_contains(strtolower($request->header('Sec-Purpose', '')), 'prefetch'))
+        ) {
+            $mailbox = app(NotificationMailbox::class);
+            $mailbox->flush();
+            $notifications = $mailbox->tryPull();
+
+            if ($notifications === null) {
+                return;
+            }
+
+            foreach ($notifications as $notification) {
+                $this->pushNotification(Notification::fromArray($notification));
+            }
+
+            $this->hasPulledNotificationsOnMount = true;
+        }
     }
 
     /** @param array<string> $batches */
