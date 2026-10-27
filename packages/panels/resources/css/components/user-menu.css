@@ -37,7 +37,10 @@
 .fi-sidebar {
     & .fi-user-menu {
         & .fi-dropdown-panel {
-            max-width: max(14rem, calc(100% - 1.5rem)) !important;
+            max-width: max(
+                14rem,
+                calc(100% - var(--sidebar-footer-horizontal-margin) * 2)
+            ) !important;
         }
     }
 }
