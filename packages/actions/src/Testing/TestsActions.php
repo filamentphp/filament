@@ -598,14 +598,6 @@ class TestsActions
         return $this->assertActionMounted();
     }
 
-    /**
-     * @deprecated Use `assertActionHalted()` instead.
-     */
-    public function assertActionHeld(): Closure
-    {
-        return $this->assertActionHalted();
-    }
-
     public function assertHasActionErrors(): Closure
     {
         return function (array $keys = []): static {

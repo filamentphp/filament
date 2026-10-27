@@ -296,14 +296,6 @@ class TestsBulkActions
         return $this->assertTableBulkActionMounted();
     }
 
-    /**
-     * @deprecated Use `assertTableBulkActionHalted()` instead.
-     */
-    public function assertTableBulkActionHeld(): Closure
-    {
-        return $this->assertTableBulkActionHalted();
-    }
-
     public function assertHasTableBulkActionErrors(): Closure
     {
         return function (array $keys = []): static {

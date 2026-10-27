@@ -288,14 +288,6 @@ class TestsForms
         };
     }
 
-    /**
-     * @deprecated Use `assertFormFieldDisabled()` instead.
-     */
-    public function assertFormFieldIsDisabled(): Closure
-    {
-        return $this->assertFormFieldDisabled();
-    }
-
     public function assertFormFieldEnabled(): Closure
     {
         return function (string $key, ?string $form = null): static {
@@ -330,14 +322,6 @@ class TestsForms
         };
     }
 
-    /**
-     * @deprecated Use `assertFormFieldEnabled()` instead.
-     */
-    public function assertFormFieldIsEnabled(): Closure
-    {
-        return $this->assertFormFieldEnabled();
-    }
-
     public function assertFormFieldReadOnly(): Closure
     {
         return function (string $key, ?string $form = null): static {
@@ -365,14 +349,6 @@ class TestsForms
 
             return $this;
         };
-    }
-
-    /**
-     * @deprecated Use `assertFormFieldReadOnly()` instead.
-     */
-    public function assertFormFieldIsReadOnly(): Closure
-    {
-        return $this->assertFormFieldReadOnly();
     }
 
     public function assertFormFieldHidden(): Closure
@@ -404,14 +380,6 @@ class TestsForms
         };
     }
 
-    /**
-     * @deprecated Use `assertFormFieldHidden()` instead.
-     */
-    public function assertFormFieldIsHidden(): Closure
-    {
-        return $this->assertFormFieldHidden();
-    }
-
     public function assertFormFieldVisible(): Closure
     {
         return function (string $key, ?string $form = null): static {
@@ -439,13 +407,5 @@ class TestsForms
 
             return $this;
         };
-    }
-
-    /**
-     * @deprecated Use `assertFormFieldVisible()` instead.
-     */
-    public function assertFormFieldIsVisible(): Closure
-    {
-        return $this->assertFormFieldVisible();
     }
 }

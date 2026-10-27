@@ -362,14 +362,6 @@ class TestsActions
         return $this->assertTableActionMounted();
     }
 
-    /**
-     * @deprecated Use `assertTableActionHalted()` instead.
-     */
-    public function assertTableActionHeld(): Closure
-    {
-        return $this->assertTableActionHalted();
-    }
-
     public function assertHasTableActionErrors(): Closure
     {
         return function (array $keys = []): static {

@@ -395,7 +395,7 @@ Manually migrate custom overrides (including inherited methods and methods suppl
 
 Preserve custom parameter names, defaults, return values, control flow, and dispatch behavior: the old wrappers called replacements through `$this`, so simply renaming a `parent::` call may bypass a subclass override. Some fluent wrappers returned `$this` regardless of the replacement's return value.
 
-`centerModal()`, `disableCreateAnother()`, `disableAttachAnother()`, and `disableAssociateAnother()` are unchanged: they evaluate or negate conditions rather than forwarding them directly. The legacy mounted-action schema bridge and testing aliases are also unchanged.
+`centerModal()`, `disableCreateAnother()`, `disableAttachAnother()`, and `disableAssociateAnother()` are unchanged: they evaluate or negate conditions rather than forwarding them directly. The legacy mounted-action schema bridge is also unchanged. Testing assertion aliases are covered separately below.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('schemas') || packages.includes('forms') || packages.includes('infolists') || packages.includes('widgets')">
@@ -496,7 +496,34 @@ Manually migrate custom overrides (including inherited methods and methods suppl
 
 Preserve custom parameter names, defaults, control flow, visibility, return values, and dispatch behavior. The wrappers called replacements through `$this`, so simply renaming a `parent::` call may bypass a subclass override. The setters returned `$this` regardless of the replacement's return value; the getters returned the replacement's result. Retaining application-owned forwarding methods may be necessary. Renaming an old getter override can newly activate it where Filament already called the canonical getter; reconcile collisions and test the intended behavior rather than blindly renaming declarations.
 
-Negating form aliases, `centerModal()`, `imageCropAspectRatio()`, no-op `inset()` methods, testing aliases, and legacy Livewire/table configuration bridges are unchanged.
+Negating form aliases, `centerModal()`, `imageCropAspectRatio()`, no-op `inset()` methods, and legacy Livewire/table configuration bridges are unchanged.
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('forms') || packages.includes('actions') || packages.includes('tables')">
+<span slot="summary">Deprecated testing assertion aliases have been removed</span>
+
+Update your application tests to use the canonical assertions:
+
+| Removed assertion | Replacement |
+| --- | --- |
+| `assertFormFieldIsDisabled()` | `assertFormFieldDisabled()` |
+| `assertFormFieldIsEnabled()` | `assertFormFieldEnabled()` |
+| `assertFormFieldIsReadOnly()` | `assertFormFieldReadOnly()` |
+| `assertFormFieldIsHidden()` | `assertFormFieldHidden()` |
+| `assertFormFieldIsVisible()` | `assertFormFieldVisible()` |
+| `assertActionHeld()` | `assertActionHalted()` |
+| `assertTableActionHeld()` | `assertTableActionHalted()` |
+| `assertTableBulkActionHeld()` | `assertTableBulkActionHalted()` |
+
+These helpers register closures as macros on `Livewire\Features\SupportTesting\Testable`; they are not methods on your Livewire component or PHPUnit test case. Include your `tests` directory in Rector's paths. The set migrates calls whose receiver resolves to the exact `Testable` type, including `Livewire::test()` and Pest's `Pest\Livewire\livewire()` when its plugin is installed and its return type can be resolved. Imported function aliases and stored, typed test receivers are supported; unrelated custom assertions are not renamed. Calls on the exact Filament testing mixin objects also migrate, retaining their closure-factory behavior.
+
+Arguments, defaults, named argument keys (`key:`, `form:`, `actions:`), unpacked arguments, and first-class callables retain their existing contracts. Form assertions still return the same test receiver. The halted assertions still check that the action is mounted; this migration does not change what halting means or assert that a particular halt event occurred.
+
+The rule follows chains through these eight assertions and their replacements, `fillForm()`, `mountAction()`, `callAction()`, `mountTableAction()`, `callTableAction()`, `mountTableBulkAction()`, `callTableBulkAction()`, Livewire's `assertDispatched()`, `assertNotDispatched()`, `assertDispatchedTo()`, and native Livewire test methods declared to return the same receiver, such as `set()`. Unknown macro chains are left unchanged: Livewire's magic `__call()` return annotation does not guarantee that an arbitrary macro returns the test receiver. For example, a getter can return a custom object with an unrelated assertion of the same name.
+
+Manually review custom `Testable` or mixin subclasses (including inherited and trait-provided overrides of either name or magic dispatch), native unions involving these receivers, unresolved helper return types, class-qualified calls, dynamic method names, array callbacks, strings, and non-PHP references. Subclasses are deliberately not migrated, even when they currently inherit the default behavior. Files containing `macro()` or `mixin()` registrations or explicit magic-dispatch calls (`__call()`, `__callStatic()`, `macroCall()`) are also left unchanged. Audit registrations in other files and base-typed or PHPDoc-typed receivers that may hold custom subclasses before accepting automated changes; exclude affected files or `Filament\Upgrade\Rector\RenameDeprecatedTestingAssertionsRector` with Rector's `withSkip()` when necessary. Preserve custom closure binding, parameter names, visibility, return values, and dispatch rather than blindly renaming overrides or registrations. Macro names are case-sensitive, so differently cased calls are not treated as built-in Filament aliases.
+
+The same rule runs with the removed aliases absent, leaves canonical assertions unchanged, and can migrate deprecated calls introduced into an already-upgraded application later.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
