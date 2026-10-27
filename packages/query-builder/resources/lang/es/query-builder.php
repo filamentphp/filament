@@ -20,6 +20,7 @@ return [
 
             'block' => [
                 'label' => 'Disyunción (O)',
+                'picker_group' => 'Lógico',
                 'or' => 'O',
             ],
 
