@@ -398,6 +398,26 @@ Preserve custom parameter names, defaults, return values, control flow, and disp
 `centerModal()`, `disableCreateAnother()`, `disableAttachAnother()`, and `disableAssociateAnother()` are unchanged: they evaluate or negate conditions rather than forwarding them directly. The legacy mounted-action schema bridge is also unchanged. Testing assertion aliases are covered separately below.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('panels') || packages.includes('forms')">
+<span slot="summary">Legacy generator and dashboard method names have been removed</span>
+
+| Affected API | Removed method | Replacement |
+| --- | --- | --- |
+| Resource table generators | `getTableActions()` | `getTableRecordActions()` |
+| Resource table generators | `outputTableActions()` | `outputTableRecordActions()` |
+| Resource table generators | `outputTableMethodBulkActions()` | `outputTableBulkActions()` |
+| `Filament\Forms\Commands\FileGenerators\RichContentCustomBlockClassGenerator` | `configureToPreviewMethod()` | `configureToPreviewHtmlMethod()` |
+| Dashboard `HasFilters` concern | `normalizeTableFilterValuesFromQueryString()` | `normalizeFilterValuesFromQueryString()` |
+
+The resource table mappings apply to `ResourceClassGenerator`, `RelationManagerClassGenerator`, `Schemas\ResourceTableClassGenerator`, and `Pages\ResourceManageRelatedRecordsPageClassGenerator` under `Filament\Commands\FileGenerators\Resources`. Generated code is unchanged. Method parameters retain their names and defaults, including `$method` and the dashboard normalizer's by-reference `$data`.
+
+The script migrates calls on these owning classes and subclasses when the methods retain their Filament implementations. For the protected preview and dashboard methods, only calls through `$this` are migrated. Named and unpacked arguments, nullsafe calls, and first-class callables are preserved. Canonical calls are unchanged on repeated runs.
+
+Migrate custom generator overrides and their corresponding `parent::` calls manually. Previously, canonical generator hooks called the old virtual hooks; now the canonical hooks own the implementation. Move custom behavior to the replacement hooks, preserving visibility, parameters, return values, and the record-action output/getter pipeline. If you already override both names, reconcile them rather than creating duplicate declarations or reciprocal calls. Inherited overrides, trait methods and adaptations, class-qualified calls, dynamic names, array callbacks, unknown receiver types, and direct trait consumers outside the owning classes also need manual review. Calls on known overrides of either name are skipped; record-action output calls are also skipped when either getter is overridden. Review base-typed receivers that may hold custom subclasses not visible in their inferred types.
+
+Dashboard mounting and recursive normalization already use `normalizeFilterValuesFromQueryString()`. Renaming an old-name dashboard override can newly activate it; review that behavior rather than blindly renaming the declaration. Keep by-reference mutation when calling or overriding the canonical method. The table runtime's separate `normalizeTableFilterValuesFromQueryString()` and legacy Livewire `getTableActions()` configuration hooks are unchanged.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('schemas') || packages.includes('forms') || packages.includes('tables')">
 <span slot="summary">Legacy reactivity, affix, and sorting methods have been removed</span>
 
