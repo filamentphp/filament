@@ -2160,16 +2160,6 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
     }
 
     /**
-     * @deprecated Use `getItemStateSnapshot()` instead.
-     *
-     * @return array<string, mixed>
-     */
-    public function getRawItemState(string $key): array
-    {
-        return $this->getItemStateSnapshot($key);
-    }
-
-    /**
      * @return array<string, mixed>
      */
     public function getItemStateSnapshot(string $key): array

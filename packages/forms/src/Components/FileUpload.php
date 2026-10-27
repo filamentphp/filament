@@ -459,14 +459,6 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
         return $this->evaluate($this->imageEditorViewportWidth);
     }
 
-    /**
-     * @deprecated Use `getImageEditorViewportScaleFactor()` instead.
-     */
-    protected function getParentTargetSizes(int $widthOrHeight): int | float
-    {
-        return $this->getImageEditorViewportScaleFactor($widthOrHeight);
-    }
-
     protected function getImageEditorViewportScaleFactor(int $widthOrHeight): int | float
     {
         $targetWidth = (int) $this->getAutomaticallyResizeImagesWidth();

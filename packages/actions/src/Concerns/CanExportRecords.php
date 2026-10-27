@@ -482,14 +482,6 @@ trait CanExportRecords
         return $this;
     }
 
-    /**
-     * @deprecated Use `getFileDiskName()` instead.
-     */
-    public function getFileDisk(): ?string
-    {
-        return $this->getFileDiskName();
-    }
-
     public function getFileDiskName(): ?string
     {
         return $this->evaluate($this->fileDisk);
@@ -554,14 +546,6 @@ trait CanExportRecords
         $this->isEnablingVisibleTableColumnsByDefault = $condition;
 
         return $this;
-    }
-
-    /**
-     * @deprecated Use `shouldEnableVisibleTableColumnsByDefault()` instead.
-     */
-    public function isEnablingVisibleTableColumnsByDefault(): bool
-    {
-        return $this->shouldEnableVisibleTableColumnsByDefault();
     }
 
     public function shouldEnableVisibleTableColumnsByDefault(): bool

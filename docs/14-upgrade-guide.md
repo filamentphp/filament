@@ -438,6 +438,39 @@ Preserve custom parameter names, defaults, return values, control flow, and disp
 Behavioral configuration aliases such as `centerModal()` and `disableCreateAnother()` are covered separately below. The legacy mounted-action schema bridge is unchanged. Testing assertion aliases are covered separately below.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('actions') || packages.includes('forms') || packages.includes('infolists') || packages.includes('schemas') || packages.includes('tables')">
+<span slot="summary">Deprecated component getter and import-column names have been removed</span>
+
+| Owning type | Removed method | Replacement |
+| --- | --- | --- |
+| `Filament\Actions\ExportAction`, `ExportBulkAction`, `Filament\Actions\Exports\Exporter` | `getFileDisk()` | `getFileDiskName()` |
+| `ExportAction`, `ExportBulkAction` | `isEnablingVisibleTableColumnsByDefault()` | `shouldEnableVisibleTableColumnsByDefault()` |
+| `Filament\Actions\Imports\ImportColumn` | `guess()` | `guesses()` |
+| `Filament\Actions\Action` | `hasCustomLivewireClickHandler()` | `hasLivewireClickHandlerEnabledConfiguration()` |
+| `Filament\Actions\Imports\Events\ImportChunkProcessed` | `getProcessedRows()`, `getSuccessfulRows()` | `getProcessedRowsCount()`, `getSuccessfulRowsCount()` |
+| `Filament\Forms\Components\Field`, `Filament\Schemas\Components\FusedGroup` | `getExtraFieldWrapperAttributesBag()` | `getExtraFieldWrapperAttributeBag()` |
+| Form `Builder`, `Repeater` | `getRawItemState()` | `getItemStateSnapshot()` |
+| `Filament\Forms\Components\RichEditor\MentionProvider` | `hasSearchResultsUsing()` | `hasSearchResultsUsingCallback()` |
+| `Filament\Forms\Components\RichEditor\RichContentAttribute` | `getCustomBlocksConfig()` | `getCustomBlocksConfiguration()` |
+| `Filament\Forms\Components\SpatieMediaLibraryFileUpload` | `getConversionsDisk()` | `getConversionsDiskName()` |
+| `Filament\Forms\Components\FileUpload` (protected) | `getParentTargetSizes()` | `getImageEditorViewportScaleFactor()` |
+| `Filament\Infolists\Components\Entry` | `getExtraEntryWrapperAttributesBag()` | `getExtraEntryWrapperAttributeBag()` |
+| `Filament\Infolists\Components\RepeatableEntry` (protected) | `getItemState()` | `getItemStateWithExistence()` |
+| `Filament\Tables\Columns\Column`, `Filament\Actions\Exports\ExportColumn` | `getGetStateUsingCallback()` | `getStateUsingCallback()` |
+| `Filament\Tables\Table` | `getInverseRelationship()` | `getInverseRelationshipName()` |
+| `Filament\Tables\Columns\Summarizers\Summarizer` | `hasQueryModification()` | `hasQueryModificationCallback()` |
+
+The script renames typed instance calls on these types and subclasses when neither method is customized, including nullsafe calls, fluent chains, unpacked arguments, and first-class callables. Parameters retain their names and defaults, including `guesses:`, `key:`, `state:`, and `widthOrHeight:`. Protected helpers are migrated only through `$this`. The rule works with the removed methods absent and leaves canonical calls unchanged on repeated runs.
+
+These are naming changes, not changes to the returned data. Item snapshots still apply dehydration and state mutation without validation; they are not raw stored state. Repeatable entry lookup still returns `[exists, state]`, including `[true, null]` for a present null-valued array key. Custom block configuration retains groups, and `getStateUsingCallback()` returns the configured value without evaluating it. The action handler predicate checks for non-null configuration, so explicit `false` still counts as configured; it does not evaluate closures.
+
+Disk setters and storage are unchanged: continue using `fileDisk(disk: ...)` and `conversionsDisk(disk: ...)`. Import event constructor arguments and properties remain `processedRows` and `successfulRows`. The export model's filesystem-valued `getFileDisk()`, parent-resource `getInverseRelationship()`, and Builder/Repeater `getItemState()` methods are unrelated and unchanged.
+
+**Rename custom exporter disk hooks manually.** Move an `Exporter::getFileDisk(): string` override to `getFileDiskName(): string`, and review its `parent::` calls. In Filament 5, the canonical getter called the old virtual hook; in Filament 6, it owns the default implementation, including the `public`-to-`local` disk fallback. Reconcile existing overrides of both names without reciprocal calls, and test action-level disk precedence over the exporter default.
+
+Manually review other custom overrides, inherited and trait-provided methods, trait adaptations, class-qualified calls such as `parent::guess()`, dynamic names, array callbacks, unknown or ambiguous receiver types, and published Blade references. Direct trait consumers outside the types above also need manual migration. Calls on known overrides of either name are skipped; base-typed receivers can still hold custom subclasses that static analysis cannot identify. Preserve custom parameters, visibility, return values, and dispatch: ordinary old methods forwarded through `$this`, so replacing `parent::` calls can bypass overrides, and renaming an old override can newly activate it in framework calls already using the canonical name.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('panels')">
 <span slot="summary">Deprecated panel and navigation method names have been removed</span>
 

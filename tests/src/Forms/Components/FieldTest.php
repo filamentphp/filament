@@ -259,11 +259,11 @@ describe('extra field wrapper attributes', function (): void {
         expect($field->getExtraFieldWrapperAttributes())->toBe(['data-dynamic' => 'yes']);
     });
 
-    it('returns `ComponentAttributeBag` from `getExtraFieldWrapperAttributesBag()`', function (): void {
+    it('returns `ComponentAttributeBag` from `getExtraFieldWrapperAttributeBag()`', function (): void {
         $field = TextInput::make('name')
             ->extraFieldWrapperAttributes(['data-test' => 'bag']);
 
-        $bag = $field->getExtraFieldWrapperAttributesBag();
+        $bag = $field->getExtraFieldWrapperAttributeBag();
 
         expect($bag)->toBeInstanceOf(ComponentAttributeBag::class);
         expect($bag->get('data-test'))->toBe('bag');

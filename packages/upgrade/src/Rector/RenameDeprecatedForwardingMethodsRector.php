@@ -6,7 +6,12 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ExportBulkAction;
 use Filament\Actions\Exports\ExportColumn;
+use Filament\Actions\Exports\Exporter;
+use Filament\Actions\Imports\Events\ImportChunkProcessed;
+use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\ReplicateAction;
 use Filament\Clusters\Cluster;
 use Filament\Commands\FileGenerators\Resources\Pages\ResourceManageRelatedRecordsPageClassGenerator;
@@ -19,16 +24,21 @@ use Filament\Forms\Commands\FileGenerators\RichContentCustomBlockClassGenerator;
 use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Concerns\HasAffixes;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\MorphToSelect\Type as MorphToSelectType;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\MentionProvider;
+use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\KeyValueEntry;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Navigation\NavigationItem;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Pages\Dashboard;
@@ -37,6 +47,7 @@ use Filament\Panel;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Schemas\Components\Concerns\HasLabel;
+use Filament\Schemas\Components\FusedGroup;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
@@ -47,6 +58,7 @@ use Filament\Support\Components\ViewComponent;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Concerns\CanSortRecords;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\BaseFilter;
@@ -117,6 +129,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'disableLabel' => 'hiddenLabel',
             'indicator' => 'badge',
             'indicatorColor' => 'badgeColor',
+            'hasCustomLivewireClickHandler' => 'hasLivewireClickHandlerEnabledConfiguration',
         ],
         ActionGroup::class => [
             'disableLabel' => 'hiddenLabel',
@@ -129,8 +142,27 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         CreateAction::class => [
             'preserveFormDataWhenCreatingAnother' => 'preserveDataWhenCreatingAnother',
         ],
+        ExportAction::class => [
+            'getFileDisk' => 'getFileDiskName',
+            'isEnablingVisibleTableColumnsByDefault' => 'shouldEnableVisibleTableColumnsByDefault',
+        ],
+        ExportBulkAction::class => [
+            'getFileDisk' => 'getFileDiskName',
+            'isEnablingVisibleTableColumnsByDefault' => 'shouldEnableVisibleTableColumnsByDefault',
+        ],
         ExportColumn::class => [
             'queriesRelationships' => 'hasRelationship',
+            'getGetStateUsingCallback' => 'getStateUsingCallback',
+        ],
+        Exporter::class => [
+            'getFileDisk' => 'getFileDiskName',
+        ],
+        ImportColumn::class => [
+            'guess' => 'guesses',
+        ],
+        ImportChunkProcessed::class => [
+            'getProcessedRows' => 'getProcessedRowsCount',
+            'getSuccessfulRows' => 'getSuccessfulRowsCount',
         ],
         Cluster::class => [
             'unshiftClusterBreadcrumbs' => 'prependClusterBreadcrumbs',
@@ -188,10 +220,18 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'showBlockLabels' => 'blockLabels',
             'withBlockLabels' => 'blockLabels',
             'withBlockNumbers' => 'blockNumbers',
+            'getRawItemState' => 'getItemStateSnapshot',
         ],
         Repeater::class => [
             'createItemButtonLabel' => 'addActionLabel',
             'orderable' => 'orderColumn',
+            'getRawItemState' => 'getItemStateSnapshot',
+        ],
+        Field::class => [
+            'getExtraFieldWrapperAttributesBag' => 'getExtraFieldWrapperAttributeBag',
+        ],
+        FusedGroup::class => [
+            'getExtraFieldWrapperAttributesBag' => 'getExtraFieldWrapperAttributeBag',
         ],
         Select::class => [
             'manageOptionForm' => 'manageOptionSchema',
@@ -215,6 +255,15 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'getUploadedAttachmentUrlUsing' => 'getFileAttachmentUrlUsing',
             'saveUploadedFileAttachmentsUsing' => 'saveUploadedFileAttachmentUsing',
         ],
+        MentionProvider::class => [
+            'hasSearchResultsUsing' => 'hasSearchResultsUsingCallback',
+        ],
+        RichContentAttribute::class => [
+            'getCustomBlocksConfig' => 'getCustomBlocksConfiguration',
+        ],
+        SpatieMediaLibraryFileUpload::class => [
+            'getConversionsDisk' => 'getConversionsDiskName',
+        ],
         MorphToSelectType::class => [
             'titleColumnName' => 'titleAttribute',
         ],
@@ -232,6 +281,13 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'getImageResizeUpscale' => 'shouldAutomaticallyUpscaleImagesWhenResizing',
             'imageEditorAspectRatios' => 'imageEditorAspectRatioOptions',
             'getImageEditorAspectRatiosForJs' => 'getImageEditorAspectRatioOptionsForJs',
+            'getParentTargetSizes' => 'getImageEditorViewportScaleFactor',
+        ],
+        Entry::class => [
+            'getExtraEntryWrapperAttributesBag' => 'getExtraEntryWrapperAttributeBag',
+        ],
+        RepeatableEntry::class => [
+            'getItemState' => 'getItemStateWithExistence',
         ],
         ImageEntry::class => [
             'height' => 'imageHeight',
@@ -295,9 +351,13 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         Column::class => [
             'disableClick' => 'disabledClick',
             'queriesRelationships' => 'hasRelationship',
+            'getGetStateUsingCallback' => 'getStateUsingCallback',
         ],
         IconColumn::class => [
             'options' => 'icons',
+        ],
+        Summarizer::class => [
+            'hasQueryModification' => 'hasQueryModificationCallback',
         ],
         BaseFilter::class => [
             'form' => 'schema',
@@ -335,6 +395,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'getColumnToggleFormWidth' => 'getColumnManagerWidth',
             'getToggleColumnsTriggerAction' => 'getColumnManagerTriggerAction',
             'groupsInDropdownOnDesktop' => 'groupingSettingsInDropdownOnDesktop',
+            'getInverseRelationship' => 'getInverseRelationshipName',
         ],
     ];
 
@@ -383,6 +444,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
 
         $methodName = strtolower($node->name->toString());
         $isGroupingDropdownAlias = $methodName === 'groupsindropdownondesktop';
+        $isImageEditorScaleAlias = $methodName === 'getparenttargetsizes';
 
         foreach (self::METHOD_RENAMES as $componentClass => $methodRenames) {
             $methodRenames = array_change_key_case($methodRenames);
@@ -416,7 +478,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             }
 
             // These protected helpers are only migrated through `$this`, not external receivers.
-            if (in_array($componentClass, [RichContentCustomBlockClassGenerator::class, Dashboard::class], strict: true) && (($node instanceof StaticCall) || (! $node->var instanceof Variable) || ($node->var->name !== 'this'))) {
+            if ((in_array($componentClass, [RichContentCustomBlockClassGenerator::class, Dashboard::class, RepeatableEntry::class], strict: true) || $isImageEditorScaleAlias) && (($node instanceof StaticCall) || (! $node->var instanceof Variable) || ($node->var->name !== 'this'))) {
                 return null;
             }
 
@@ -510,7 +572,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
 
                 $methodReflection = $classReflection->getNativeMethod($candidateMethodName);
 
-                if ($requiresPublicReplacement && (! $methodReflection->isPublic()) && (! (in_array($componentClass, [RichContentCustomBlockClassGenerator::class, Dashboard::class], strict: true) && (! $methodReflection->isPrivate())))) {
+                if ($requiresPublicReplacement && (! $methodReflection->isPublic()) && (! (in_array($componentClass, [RichContentCustomBlockClassGenerator::class, Dashboard::class, RepeatableEntry::class], strict: true) && (! $methodReflection->isPrivate())))) {
                     return false;
                 }
 

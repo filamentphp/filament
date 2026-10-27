@@ -148,12 +148,12 @@ describe('`getCustomBlocks()` logic', function (): void {
     });
 });
 
-describe('`getCustomBlocksConfig()` logic', function (): void {
+describe('`getCustomBlocksConfiguration()` logic', function (): void {
     it('returns an empty array when no custom blocks are set', function (): void {
         $post = Post::factory()->create();
         $attribute = RichContentAttribute::make($post, 'content');
 
-        expect($attribute->getCustomBlocksConfig())->toBe([]);
+        expect($attribute->getCustomBlocksConfiguration())->toBe([]);
     });
 
     it('returns the raw blocks array as-is', function (): void {
@@ -167,7 +167,7 @@ describe('`getCustomBlocksConfig()` logic', function (): void {
         $attribute = RichContentAttribute::make($post, 'content')
             ->customBlocks($blocks);
 
-        expect($attribute->getCustomBlocksConfig())->toBe($blocks);
+        expect($attribute->getCustomBlocksConfiguration())->toBe($blocks);
     });
 });
 

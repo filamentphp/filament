@@ -54,14 +54,14 @@ describe('`getModel()` logic', function (): void {
     });
 });
 
-describe('`getFileDisk()` logic', function (): void {
+describe('`getFileDiskName()` logic', function (): void {
     it('returns `local` when default disk is `public` and `local` disk exists', function (): void {
         Config::set('filament.default_filesystem_disk', 'public');
 
         $export = Mockery::mock(Export::class);
         $exporter = new TestPostExporter($export, [], []);
 
-        expect($exporter->getFileDisk())->toBe('local');
+        expect($exporter->getFileDiskName())->toBe('local');
     });
 
     it('returns config default when not `public`', function (): void {
@@ -70,7 +70,7 @@ describe('`getFileDisk()` logic', function (): void {
         $export = Mockery::mock(Export::class);
         $exporter = new TestPostExporter($export, [], []);
 
-        expect($exporter->getFileDisk())->toBe('s3');
+        expect($exporter->getFileDiskName())->toBe('s3');
     });
 });
 
