@@ -72,7 +72,7 @@ class Cluster extends Page
      * @return array<string, string>
      */
     #[Unexposed]
-    public static function unshiftClusterBreadcrumbs(array $breadcrumbs): array
+    public static function prependClusterBreadcrumbs(array $breadcrumbs): array
     {
         $clusterBreadcrumb = static::getClusterBreadcrumb();
 
@@ -84,6 +84,18 @@ class Cluster extends Page
             ...[static::getUrl() => $clusterBreadcrumb],
             ...$breadcrumbs,
         ];
+    }
+
+    /**
+     * @deprecated Use `prependClusterBreadcrumbs()` instead.
+     *
+     * @param  array<string, string>  $breadcrumbs
+     * @return array<string, string>
+     */
+    #[Unexposed]
+    public static function unshiftClusterBreadcrumbs(array $breadcrumbs): array
+    {
+        return static::prependClusterBreadcrumbs($breadcrumbs);
     }
 
     #[Unexposed]

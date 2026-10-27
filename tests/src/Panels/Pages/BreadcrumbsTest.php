@@ -5,6 +5,7 @@ use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
+use Filament\Panel;
 use Filament\Resources\Pages\Page as ResourcePage;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Clusters\UserManagement;
@@ -51,6 +52,44 @@ it('includes an explicitly configured custom page breadcrumb without the navigat
 
 it('preserves the title fallback for resource page breadcrumbs', function (): void {
     expect(app(ResourcePageWithTitle::class)->getBreadcrumb())->toBe('Resource page title');
+});
+
+it('prepends cluster breadcrumbs without losing URL keys or duplicating the first breadcrumb', function (string $method): void {
+    $breadcrumbs = ['/reports' => 'Reports', 'Details'];
+    $expected = [UserManagement::getUrl() => 'User Management', '/reports' => 'Reports', 'Details'];
+
+    expect(UserManagement::{$method}(breadcrumbs: $breadcrumbs))->toBe($expected)
+        ->and(UserManagement::{$method}(breadcrumbs: $expected))->toBe($expected)
+        ->and(UserManagement::{$method}(breadcrumbs: []))->toBe([UserManagement::getUrl() => 'User Management']);
+})->with(['prependClusterBreadcrumbs', 'unshiftClusterBreadcrumbs']);
+
+it('uses the configured cluster breadcrumb and `getClusterBreadcrumb()` hook for pages and resource pages', function (): void {
+    $page = new class extends Page
+    {
+        protected static ?string $cluster = DynamicBreadcrumbCluster::class;
+
+        protected static ?string $breadcrumb = 'Reports';
+    };
+
+    $resourcePage = new class extends ResourcePage
+    {
+        protected static string $resource = PostResource::class;
+
+        public static function getCluster(): ?string
+        {
+            return DynamicBreadcrumbCluster::class;
+        }
+    };
+
+    expect($page->getBreadcrumbs())->toBe([
+        UserManagement::getUrl() => 'Custom cluster dynamic',
+        'Reports',
+    ])->and($resourcePage->getResourceBreadcrumbs())->toBe([
+        UserManagement::getUrl() => 'Custom cluster dynamic',
+        PostResource::getUrl() => 'Posts',
+    ])->and(DynamicBreadcrumbCluster::unshiftClusterBreadcrumbs(breadcrumbs: []))->toBe([
+        UserManagement::getUrl() => 'Custom cluster dynamic',
+    ]);
 });
 
 it('includes the navigation hierarchy in breadcrumbs for a grouped page with a parent item', function (): void {
@@ -306,4 +345,19 @@ class GroupedUnregisteredBreadcrumbsPage extends Page
     protected static ?string $title = 'Archived reports';
 
     protected string $view = 'filament-panels::pages.page';
+}
+
+class DynamicBreadcrumbCluster extends UserManagement
+{
+    protected static ?string $clusterBreadcrumb = 'Custom cluster';
+
+    public static function getRouteName(?Panel $panel = null): string
+    {
+        return UserManagement::getRouteName($panel);
+    }
+
+    public static function getClusterBreadcrumb(): ?string
+    {
+        return parent::getClusterBreadcrumb() . ' dynamic';
+    }
 }
