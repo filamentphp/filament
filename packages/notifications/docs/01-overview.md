@@ -428,7 +428,7 @@ The JavaScript objects (`FilamentNotification` and `FilamentNotificationAction`)
 You may also import them in a bundled JavaScript file:
 
 ```js
-import { Notification, NotificationAction } from '../../vendor/filament/notifications/dist/index.js'
+import { Notification, Action as NotificationAction } from '../../vendor/filament/notifications/resources/js/notification.js'
 
 // ...
 ```

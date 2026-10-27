@@ -77,7 +77,7 @@ trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
     }
 
     /**
-     * @deprecated Use `mountedActionHasForm()` instead.
+     * @deprecated Use `mountedActionHasSchema()` instead.
      */
     #[Unexposed]
     public function mountedInfolistActionHasForm(?Action $mountedAction = null): bool
@@ -95,7 +95,7 @@ trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
     }
 
     /**
-     * @deprecated Use `getMountedActionComponent()` instead.
+     * @deprecated Use `unmountAction()` instead.
      */
     #[Exposed]
     public function unmountInfolistAction(bool $shouldCancelParentActions = true): void
