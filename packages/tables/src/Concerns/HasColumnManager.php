@@ -165,7 +165,7 @@ trait HasColumnManager
     }
 
     /**
-     * @deprecated Use `getTableColumnManagerSessionKey()` instead.
+     * @deprecated Use `getTableColumnsSessionKey()` instead.
      */
     protected function getToggledTableColumnsSessionKey(): string
     {

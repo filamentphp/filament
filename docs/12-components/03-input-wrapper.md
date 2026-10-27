@@ -108,7 +108,7 @@ You may place an [icon](../styling/icons) before and after the input using the `
 
 #### Setting the affix icon's color
 
-Affix icons are gray by default, but you may set a different color using the `prefix-icon-color` and `affix-icon-color` attributes:
+Affix icons are gray by default, but you may set a different color using the `prefix-icon-color` and `suffix-icon-color` attributes:
 
 ```blade
 <x-filament::input.wrapper
