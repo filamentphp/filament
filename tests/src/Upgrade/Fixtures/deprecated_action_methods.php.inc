@@ -287,7 +287,7 @@ class CustomForwardingAction extends Action
         $this->modalSubmitActionLabel();
         $this->modalSubheading(subheading: 'Custom');
         parent::modalSubheading(subheading: 'Custom');
-        $this->getJavaScriptClickHandler();
+        $this->getJsClickHandler();
         parent::getJavaScriptClickHandler();
     }
 }

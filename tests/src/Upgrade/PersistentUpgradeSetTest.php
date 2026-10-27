@@ -2,13 +2,26 @@
 
 namespace Filament\Tests\Upgrade;
 
+use Filament\Actions\Action;
+use Filament\Facades\Filament;
+use Filament\FilamentManager;
 use Filament\Forms\Components\Field;
+use Filament\Panel;
+use Filament\PanelRegistry;
 use Filament\Schemas\Schema;
+use Filament\Support\Assets\AssetManager;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Facades\FilamentView;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\ViewManager;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Filesystem\Filesystem;
+use LogicException;
+use ReflectionMethod;
 use Symfony\Component\Process\Process;
 
 class PersistentUpgradeSetTest extends TestCase
@@ -82,10 +95,20 @@ class PersistentUpgradeSetTest extends TestCase
                 require_once $directory . '/app/behavioral_configuration.php';
                 $this->assertBehavioralConfiguration();
 
+                require_once $directory . '/app/panel_integrations.php';
+                $this->assertPanelIntegrations();
+
+                require_once $directory . '/app/behavioral_configuration_expressions.php';
+                require_once $directory . '/app/configuration_hooks.php';
+                require_once $directory . '/app/panel_registration.php';
+                require_once $directory . '/app/menu_items.php';
+                $this->assertConfigurationMigrations();
+
                 $runtime = new Process([PHP_BINARY, '-r', <<<'PHP'
                     require $argv[1] . '/vendor/autoload.php';
                     require $argv[2] . '/app/deprecated_number_helpers.php';
                     require $argv[2] . '/app/deprecated_exposed_attribute.php';
+                    require $argv[2] . '/app/number_helper_variables.php';
                     $results = \Illuminate\Support\Number::withLocale('en', fn () =>
                         \Illuminate\Support\Number::withCurrency('EUR', fn () =>
                             \Filament\Tests\Upgrade\Fixtures\NumberHelpers\results()));
@@ -101,6 +124,7 @@ class PersistentUpgradeSetTest extends TestCase
                         function_exists('Filament\\Support\\format_money') || function_exists('Filament\\Support\\format_number') ||
                             class_exists('Filament\\Support\\Components\\Attributes\\ExposedLivewireMethod') ||
                             interface_exists('Filament\\Schemas\\Components\\Contracts\\CanConcealComponents'),
+                        \Illuminate\Support\Number::withLocale('en', fn () => \Filament\Tests\Upgrade\Fixtures\NumberVariables\format(1234.75, 'USD')),
                     ]);
                     PHP, $root, $directory], $root);
                 $runtime->mustRun();
@@ -108,6 +132,7 @@ class PersistentUpgradeSetTest extends TestCase
                     ['1,234.5', '-1,234.5', '42', '$1,234.50', '-$42.50', '£125.00', '-€1.25', '$987.65', '€12.50'],
                     '1.234,5',
                     false,
+                    ['1,234.75', '-$12.35', '$1,234.75'],
                 ], json_decode($runtime->getOutput(), associative: true), "Runtime pass {$pass}");
             }
 
@@ -143,6 +168,167 @@ class PersistentUpgradeSetTest extends TestCase
             }
         } finally {
             (new Filesystem)->deleteDirectory($directory);
+        }
+    }
+
+    private function assertConfigurationMigrations(): void
+    {
+        $events = [];
+        $condition = true;
+        $components = Fixtures\BehavioralExpressions\components($events, $condition);
+        Schema::make(Livewire::make())->components(array_filter($components, static fn ($component): bool => $component instanceof Field))->getComponents();
+
+        $this->assertSame(['eager'], $events);
+        $this->assertFalse($components[0]->isPreviewable());
+        $condition = false;
+        $this->assertTrue($components[0]->isPreviewable());
+        $this->assertFalse($components[1]->isPreviewable());
+        $this->assertSame('16:9', $components[2]->getImageAspectRatio());
+        $this->assertTrue($components[2]->shouldAutomaticallyCropImagesToAspectRatio());
+        $this->assertSame(['eager', 'preview', 'preview', 'ratio', 'ratio'], $events);
+        $this->assertSame('off', $components[3]->getAutocomplete());
+        $this->assertFalse((clone $components[4])->label('clone')->isAddable());
+        $this->assertFalse((clone $components[5])->label('clone')->canSelectPlaceholder());
+        $this->assertSame(Alignment::End, $components[6]->getModalAlignment());
+        $this->assertFalse($components[7]->canCreateAnother());
+        $this->assertSame(Heroicon::Clock, $components[8]->getSuffixIcon());
+        $this->assertTrue($components[8]->isSuffixInline());
+        Fixtures\BehavioralExpressions\configureTyped($components[0], $components[6]);
+        $this->assertTrue($components[0]->isPreviewable());
+        $this->assertSame(Alignment::Center, $components[6]->getModalAlignment());
+
+        $originalLocale = app()->getLocale();
+
+        try {
+            app()->setLocale('en');
+            $this->assertSame('Person', Fixtures\ConfigurationHooks\Labels::getModelLabel());
+            $this->assertSame('People', Fixtures\ConfigurationHooks\Labels::getPluralModelLabel());
+            $this->assertSame('Mouse', Fixtures\ConfigurationHooks\LabelGetters::getModelLabel());
+            $this->assertSame('Mice', Fixtures\ConfigurationHooks\LabelGetters::getPluralModelLabel());
+            app()->setLocale('ja');
+            $this->assertSame('Mouse', Fixtures\ConfigurationHooks\LabelGetters::getPluralModelLabel());
+            app()->setLocale('en');
+
+            $create = new Fixtures\ConfigurationHooks\Create;
+            $notification = new ReflectionMethod($create, 'getCreatedNotification');
+            $this->assertSame('Created', $notification->invoke($create)->getTitle());
+            $create->message = '';
+            $this->assertNull($notification->invoke($create));
+            $create->message = 'Custom created';
+            $this->assertSame('Custom created', $notification->invoke($create)->getTitle());
+            $this->assertSame('Settings saved', (new Fixtures\ConfigurationHooks\Settings)->getSavedNotificationTitle());
+
+            $page = new Fixtures\ConfigurationHooks\Actions;
+            $page->cacheInteractsWithHeaderActions();
+            $this->assertSame(['export'], array_map(static fn ($action): string => $action->getName(), $page->getCachedHeaderActions()));
+            $stats = new Fixtures\ConfigurationHooks\Stats;
+            $this->assertSame(31, (new ReflectionMethod($stats, 'getStats'))->invoke($stats)[0]->getValue());
+            $widget = new Fixtures\ConfigurationHooks\Filters;
+            $widget->pageFilters = ['period' => 'quarter'];
+            $this->assertSame('quarter', $widget->selectedPeriod());
+        } finally {
+            app()->setLocale($originalLocale);
+        }
+
+        $originalRegistry = app(PanelRegistry::class);
+        $originalManager = Filament::getFacadeRoot();
+        $originalPanel = $originalManager->getCurrentOrDefaultPanel();
+        app()->instance(PanelRegistry::class, new PanelRegistry);
+        Filament::swap(app()->build(FilamentManager::class));
+
+        try {
+            $default = Panel::make()->id('upgrade-default')->default();
+            $current = Panel::make()->id('upgrade-current');
+            app(PanelRegistry::class)->register($default);
+            app(PanelRegistry::class)->register($current);
+            Filament::setCurrentPanel($current);
+            $events = [];
+            Fixtures\PanelRegistration\register($events);
+            $this->assertSame(['groups'], $events);
+            $this->assertSame(['First', 'Second'], $default->getNavigationGroups());
+            $this->assertSame([], $current->getNavigationGroups());
+
+            $default->navigationGroups(['Third']);
+            Fixtures\PanelRegistration\register($events);
+            $this->assertSame(['First', 'Second', 'Third', 'First', 'Second'], $default->getNavigationGroups());
+
+            // Resolve menus against the test panel's real routes and user.
+            Filament::setCurrentPanel($originalPanel);
+            $this->actingAs(User::factory()->create());
+            Fixtures\MenuItems\register($default);
+            $groups = $default->getUserMenuItemGroups();
+            $this->assertSame(['profile', 'help-support'], array_keys($groups[0]));
+            $this->assertSame('My profile', $groups[0]['profile']->getLabel());
+            $this->assertNull($groups[0]['profile']->getIcon());
+            $this->assertSame(0, $groups[0]['profile']->getSort());
+            $this->assertSame('/help', $groups[0]['help-support']->getUrl());
+            $this->assertFalse($groups[0]['help-support']->shouldOpenUrlInNewTab());
+            $this->assertSame('warning', $groups[0]['help-support']->getColor());
+            $this->assertFalse($groups[1]['hidden']->isVisible());
+            $this->assertTrue($groups[1]['logout']->shouldPostToUrl());
+            $this->assertSame('', $groups[1]['logout']->getUrl());
+
+            $originalTenant = Filament::getTenant();
+            Filament::setCurrentPanel('tenant-menu-flat');
+            Filament::setTenant(Team::factory()->create(), isQuiet: true);
+
+            try {
+                $configuredActions = [];
+                $tenantGroups = Action::configureUsing(
+                    static function (Action $action) use (&$configuredActions): void {
+                        $configuredActions[] = $action;
+                    },
+                    during: fn (): array => $default->getTenantMenuItemGroups(),
+                );
+                $this->assertSame(['profile', 'billing', 'register'], array_map(static fn (Action $action): string => $action->getName(), $configuredActions));
+                $this->assertSame($configuredActions[0], $tenantGroups[0]['profile']);
+                $this->assertSame('Organization', $tenantGroups[0]['profile']->getLabel());
+                $this->assertSame(-1, $tenantGroups[0]['profile']->getSort());
+            } finally {
+                Filament::setTenant($originalTenant, isQuiet: true);
+                Filament::setCurrentPanel($originalPanel);
+            }
+
+            app()->instance(PanelRegistry::class, new PanelRegistry);
+            $events = [];
+
+            try {
+                Fixtures\PanelRegistration\register($events);
+                $this->fail('Missing default panel should throw.');
+            } catch (LogicException $exception) {
+                $this->assertSame('Please use the `navigationGroups()` method on the panel configuration to register navigation groups. See the documentation - https://filamentphp.com/docs/panels/navigation#customizing-navigation-groups', $exception->getMessage());
+                $this->assertSame(['groups'], $events);
+            }
+        } finally {
+            app()->instance(PanelRegistry::class, $originalRegistry);
+            Filament::swap($originalManager);
+        }
+    }
+
+    private function assertPanelIntegrations(): void
+    {
+        $originalAssets = FilamentAsset::getFacadeRoot();
+        $originalView = FilamentView::getFacadeRoot();
+        FilamentAsset::swap(app()->build(AssetManager::class));
+        FilamentView::swap(app()->build(ViewManager::class));
+
+        try {
+            $events = [];
+            $this->assertSame([null, null, 'firstsecond'], Fixtures\PanelIntegrations\register($events));
+            $this->assertSame([[[], []]], $events);
+            $this->assertSame('firstsecondscoped', FilamentView::renderHook('upgrade.panel', scopes: 'only', data: ['value' => 13])->toHtml());
+            $this->assertSame([[[], []], [['only'], ['value' => 13]]], $events);
+            $this->assertSame(['legacy' => 17, 'shared' => 'new', 'package' => 29], FilamentAsset::getScriptData());
+            $this->assertSame(['legacy' => 17, 'shared' => 'new'], FilamentAsset::getScriptData(['other-package']));
+
+            foreach (['registerScriptData', 'registerRenderHook', 'renderHook', 'registerPages', 'registerResources', 'registerWidgets', 'registerTheme', 'registerViteTheme', 'registerNavigationGroups', 'registerNavigationItems', 'registerUserMenuItems', 'registerScripts', 'registerStyles'] as $method) {
+                $this->assertFalse(method_exists(FilamentManager::class, $method));
+            }
+
+            $this->assertFalse(class_exists('Filament\\Navigation\\MenuItem'));
+        } finally {
+            FilamentAsset::swap($originalAssets);
+            FilamentView::swap($originalView);
         }
     }
 

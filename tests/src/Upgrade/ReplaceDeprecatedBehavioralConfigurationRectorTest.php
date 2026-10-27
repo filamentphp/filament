@@ -8,14 +8,14 @@ use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 class ReplaceDeprecatedBehavioralConfigurationRectorTest extends AbstractRectorTestCase
 {
     #[DataProvider('fixtures')]
-    public function test_migrates_literal_configuration_and_preserves_manual_boundaries(string $fixture): void
+    public function test_migrates_configuration_and_preserves_manual_boundaries(string $fixture): void
     {
         $this->doTestFile(__DIR__ . '/Fixtures/' . $fixture . '.php.inc');
     }
 
     public static function fixtures(): array
     {
-        return [['behavioral_configuration'], ['behavioral_configuration_manual']];
+        return [['behavioral_configuration'], ['behavioral_configuration_manual'], ['behavioral_configuration_expressions']];
     }
 
     public function provideConfigFilePath(): string

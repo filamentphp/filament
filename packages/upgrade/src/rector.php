@@ -1,6 +1,7 @@
 <?php
 
 use Composer\InstalledVersions;
+use Filament\Upgrade\Rector\MigrateLegacyConfigurationHooksRector;
 use Filament\Upgrade\Rector\RemoveObsoleteUploadRestrictionTraitRector;
 use Filament\Upgrade\Rector\RenameDeprecatedConstantsRector;
 use Filament\Upgrade\Rector\RenameDeprecatedForwardingMethodsRector;
@@ -12,6 +13,8 @@ use Filament\Upgrade\Rector\ReplaceDeprecatedBehavioralConfigurationRector;
 use Filament\Upgrade\Rector\ReplaceDeprecatedNumberHelpersRector;
 use Filament\Upgrade\Rector\ReplaceExposedLivewireMethodAttributeRector;
 use Filament\Upgrade\Rector\ReplaceLegacyComponentFactoriesRector;
+use Filament\Upgrade\Rector\ReplaceLegacyMenuItemsRector;
+use Filament\Upgrade\Rector\ReplaceLegacyPanelIntegrationRector;
 use Filament\Upgrade\Rector\ReplaceTypedChartWidgetsRector;
 use Filament\Upgrade\Rector\WidenAvatarProviderParameterTypeRector;
 use Rector\Config\RectorConfig;
@@ -58,6 +61,7 @@ return static function (RectorConfig $rectorConfig): void {
         'Filament\\Tables\\Filters\\QueryBuilder\\Constraints\\TextConstraint\\Operators\\StartsWithOperator' => 'Filament\\QueryBuilder\\Constraints\\TextConstraint\\Operators\\StartsWithOperator',
     ]);
 
+    $rectorConfig->rule(MigrateLegacyConfigurationHooksRector::class);
     $rectorConfig->rule(RemoveObsoleteUploadRestrictionTraitRector::class);
     $rectorConfig->rule(RenameDeprecatedConstantsRector::class);
     $rectorConfig->rule(RenameDeprecatedForwardingMethodsRector::class);
@@ -69,6 +73,8 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(ReplaceDeprecatedNumberHelpersRector::class);
     $rectorConfig->rule(ReplaceExposedLivewireMethodAttributeRector::class);
     $rectorConfig->rule(ReplaceLegacyComponentFactoriesRector::class);
+    $rectorConfig->rule(ReplaceLegacyMenuItemsRector::class);
+    $rectorConfig->rule(ReplaceLegacyPanelIntegrationRector::class);
     $rectorConfig->rule(ReplaceTypedChartWidgetsRector::class);
     $rectorConfig->rule(WidenAvatarProviderParameterTypeRector::class);
 };

@@ -128,15 +128,7 @@ class SettingsPage extends Page
     #[Unexposed]
     public function getSavedNotificationTitle(): ?string
     {
-        return $this->getSavedNotificationMessage() ?? __('filament-spatie-laravel-settings-plugin::pages/settings-page.notifications.saved.title');
-    }
-
-    /**
-     * @deprecated Use `getSavedNotificationTitle()` instead.
-     */
-    protected function getSavedNotificationMessage(): ?string
-    {
-        return null;
+        return __('filament-spatie-laravel-settings-plugin::pages/settings-page.notifications.saved.title');
     }
 
     /**

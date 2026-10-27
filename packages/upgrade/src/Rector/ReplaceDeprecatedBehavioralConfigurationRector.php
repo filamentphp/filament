@@ -2,6 +2,7 @@
 
 namespace Filament\Upgrade\Rector;
 
+use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\AssociateAction;
 use Filament\Actions\AttachAction;
@@ -19,14 +20,36 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\ArrowFunction;
+use PhpParser\Node\Expr\BinaryOp\Coalesce;
+use PhpParser\Node\Expr\BinaryOp\Identical;
+use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\ClassConstFetch;
+use PhpParser\Node\Expr\Closure as ClosureExpression;
 use PhpParser\Node\Expr\ConstFetch;
+use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\Instanceof_;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Expr\Ternary;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\NullableType;
+use PhpParser\Node\Param;
 use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Stmt\If_;
+use PhpParser\Node\Stmt\Return_;
+use PhpParser\Node\UnionType;
+use PhpParser\NodeFinder;
+use PHPStan\Type\BooleanType;
+use PHPStan\Type\Constant\ConstantBooleanType;
+use PHPStan\Type\NullType;
+use PHPStan\Type\ObjectType;
+use PHPStan\Type\StringType;
+use PHPStan\Type\TypeCombinator;
 use Rector\Rector\AbstractRector;
 use ReflectionMethod;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -93,11 +116,39 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
             $factory = $factory->var;
         }
 
-        if ((! $factory instanceof StaticCall) || (! $factory->class instanceof Name) || (! $this->isName($factory->name, 'make')) || $factory->isFirstClassCallable()) {
-            return null;
+        if ($factory instanceof StaticCall && $factory->class instanceof Name && $this->isName($factory->name, 'make') && (! $factory->isFirstClassCallable())) {
+            $class = $this->getName($factory->class);
+        } else {
+            $type = $this->getNativeType($factory);
+            $classes = $type->getObjectClassNames();
+
+            // Do not normalize a union hiding an overriding subclass into a
+            // built-in receiver. PHPDoc alone is not a native type guarantee.
+            if ((count($classes) !== 1) || (! $type->equals(new ObjectType($classes[0])))) {
+                return null;
+            }
+
+            $class = $classes[0];
+
+            if ((new NodeFinder)->findFirst($this->getFile()->getNewStmts(), function (Node $candidate) use ($class): bool {
+                if (! $candidate instanceof UnionType) {
+                    return false;
+                }
+
+                foreach ($candidate->types as $unionMember) {
+                    $memberType = $this->getType($unionMember);
+
+                    if ((! $memberType->equals(new ObjectType($class))) && (new ObjectType($class))->isSuperTypeOf($memberType)->yes()) {
+                        return true;
+                    }
+                }
+
+                return false;
+            })) {
+                return null;
+            }
         }
 
-        $class = $this->getName($factory->class);
         $methods = match ($class) {
             BaseFileUpload::class, FileUpload::class => ['disablepreview', ...($class === FileUpload::class ? ['imagecropaspectratio'] : [])],
             Builder::class, Repeater::class => ['disableitemcreation', 'disableitemdeletion', 'disableitemmovement', 'inset'],
@@ -143,8 +194,30 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
         $literal = ($value instanceof ConstFetch) ? strtolower($value->name->toString()) : null;
 
         if ($method === 'imagecropaspectratio') {
-            if ((! $argument) || ((! $value instanceof String_) && ($literal !== 'null'))) {
+            if (! $argument) {
                 return null;
+            }
+
+            if ((! $value instanceof String_) && ($literal !== 'null')) {
+                if (! TypeCombinator::union(new StringType, new ObjectType(Closure::class), new NullType)->isSuperTypeOf($this->getNativeType($value))->yes()) {
+                    return null;
+                }
+
+                $wrapper = new ArrowFunction([
+                    'static' => true,
+                    'params' => [
+                        new Param(new Variable('component'), type: new FullyQualified(FileUpload::class)),
+                        new Param(new Variable('ratio'), type: new UnionType([new Identifier('string'), new FullyQualified(Closure::class), new Identifier('null')])),
+                    ],
+                    'returnType' => new FullyQualified(FileUpload::class),
+                    'expr' => new MethodCall(new MethodCall(new Variable('component'), 'imageAspectRatio', [new Arg(new Variable('ratio'))]), 'automaticallyCropImagesToAspectRatio', [new Arg(new Ternary(
+                        new Instanceof_(new Variable('ratio'), new FullyQualified(Closure::class)),
+                        new Variable('ratio'),
+                        new FuncCall(new FullyQualified('filled'), [new Arg(new Variable('ratio'))]),
+                    ))]),
+                ]);
+
+                return new FuncCall($wrapper, [new Arg($node->var), new Arg($value)]);
             }
 
             $ratio = ($value instanceof String_) ? $value->value : null;
@@ -158,13 +231,96 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
             }
 
             if ((! $value instanceof String_) && ($literal !== 'null')) {
-                return null;
+                if (! TypeCombinator::union(new StringType, new ObjectType('BackedEnum'), new ObjectType('Illuminate\\Contracts\\Support\\Htmlable'), new ObjectType(Closure::class), new ConstantBooleanType(false), new NullType)->isSuperTypeOf($this->getNativeType($value))->yes()) {
+                    return null;
+                }
+
+                return new FuncCall(new ArrowFunction([
+                    'static' => true,
+                    'params' => [
+                        new Param(new Variable('component'), type: new FullyQualified($class)),
+                        new Param(new Variable('icon'), type: new UnionType([new Identifier('string'), new FullyQualified('BackedEnum'), new FullyQualified('Illuminate\\Contracts\\Support\\Htmlable'), new FullyQualified(Closure::class), new Identifier('bool'), new Identifier('null')])),
+                    ],
+                    'returnType' => new FullyQualified($class),
+                    'expr' => new Ternary(
+                        new Identical(new Variable('icon'), new ConstFetch(new Name('false'))),
+                        new Variable('component'),
+                        new MethodCall(new Variable('component'), 'suffixIcon', [
+                            new Arg(new Coalesce(new Variable('icon'), new ClassConstFetch(new FullyQualified('Filament\\Support\\Icons\\Heroicon'), 'Calendar'))),
+                            new Arg(new ConstFetch(new Name('true')), name: new Identifier('isInline')),
+                        ]),
+                    ),
+                ]), [new Arg($node->var), new Arg($value)]);
             }
 
             return new MethodCall($node->var, 'suffixIcon', [
                 new Arg(($literal === 'null') ? new ClassConstFetch(new FullyQualified('Filament\\Support\\Icons\\Heroicon'), 'Calendar') : $value),
                 new Arg(new ConstFetch(new Name('true')), name: new Identifier('isInline')),
             ]);
+        }
+
+        if (($method === 'inset') && (! in_array($literal, ['true', 'false'], true)) && TypeCombinator::union(new BooleanType, new ObjectType(Closure::class))->isSuperTypeOf($this->getNativeType($value))->yes()) {
+            return new FuncCall(new ArrowFunction([
+                'static' => true,
+                'params' => [
+                    new Param(new Variable('component'), type: new FullyQualified($class)),
+                    new Param(new Variable('condition'), type: new UnionType([new Identifier('bool'), new FullyQualified(Closure::class)])),
+                ],
+                'returnType' => new FullyQualified($class),
+                'expr' => new Variable('component'),
+            ]), [new Arg($node->var), new Arg($value)]);
+        }
+
+        if (isset(self::NEGATIONS[$method]) && (! in_array($literal, ['true', 'false'], true)) && TypeCombinator::union(new BooleanType, new ObjectType(Closure::class))->isSuperTypeOf($this->getNativeType($value))->yes()) {
+            // Builder/repeater/placeholder wrappers captured the configuring
+            // owner rather than evaluating on a later injected clone.
+            $capturesOwner = in_array($class, [Builder::class, Repeater::class, Select::class], true);
+            $isAction = in_array($class, [CreateAction::class, AttachAction::class, AssociateAction::class], true);
+            $isAutocomplete = in_array($method, ['disableautocomplete', 'disableautocapitalize'], true);
+            $owner = match (true) {
+                $isAutocomplete => 'Filament\\Forms\\Components\\Field',
+                in_array($class, [BaseFileUpload::class, FileUpload::class], true) => BaseFileUpload::class,
+                in_array($class, [DateTimePicker::class, DatePicker::class, TimePicker::class], true) => DateTimePicker::class,
+                default => $class,
+            };
+            $ownerVariable = $isAction ? 'action' : 'component';
+            $evaluation = new MethodCall(new Variable($capturesOwner ? 'owner' : $ownerVariable), 'evaluate', [new Arg(new Variable('condition'))]);
+            $wrapper = new ArrowFunction([
+                'static' => true,
+                'params' => [new Param(new Variable('condition'), type: new UnionType([new Identifier('bool'), new FullyQualified(Closure::class)]))],
+                'returnType' => new FullyQualified(Closure::class),
+                'expr' => new ArrowFunction([
+                    'static' => true,
+                    'params' => [new Param(new Variable($ownerVariable), type: new FullyQualified($owner))],
+                    'returnType' => $isAutocomplete ? new NullableType(new Identifier('bool')) : new Identifier('bool'),
+                    'expr' => $isAutocomplete ? new Ternary($evaluation, new ConstFetch(new Name('false')), new ConstFetch(new Name('null'))) : new BooleanNot($evaluation),
+                ]),
+            ]);
+
+            if ($capturesOwner) {
+                array_unshift($wrapper->params, new Param(new Variable('owner'), type: new FullyQualified($class)));
+                $wrapper->returnType = new FullyQualified($class);
+                $wrapper->expr = new MethodCall(new Variable('owner'), self::NEGATIONS[$method], [new Arg($wrapper->expr)]);
+
+                return new FuncCall($wrapper, [new Arg($node->var), new Arg($value)]);
+            }
+
+            return new MethodCall($node->var, self::NEGATIONS[$method], [new Arg(new FuncCall($wrapper, [new Arg($value)]))]);
+        }
+
+        if (($method === 'centermodal') && (! in_array($literal, ['true', 'false', 'null'], true)) && TypeCombinator::union(new BooleanType, new ObjectType(Closure::class), new NullType)->isSuperTypeOf($this->getNativeType($value))->yes()) {
+            return new FuncCall(new ClosureExpression([
+                'static' => true,
+                'params' => [
+                    new Param(new Variable('action'), type: new FullyQualified(Action::class)),
+                    new Param(new Variable('condition'), type: new UnionType([new Identifier('bool'), new FullyQualified(Closure::class), new Identifier('null')])),
+                ],
+                'returnType' => new FullyQualified(Action::class),
+                'stmts' => [
+                    new If_(new MethodCall(new Variable('action'), 'evaluate', [new Arg(new Variable('condition'))]), ['stmts' => [new Expression(new MethodCall(new Variable('action'), 'modalAlignment', [new Arg(new ClassConstFetch(new FullyQualified('Filament\\Support\\Enums\\Alignment'), 'Center'))]))]]),
+                    new Return_(new Variable('action')),
+                ],
+            ]), [new Arg($node->var), new Arg($value)]);
         }
 
         if ((! in_array($literal, ['true', 'false'], true)) && (($method !== 'centermodal') || ($literal !== 'null'))) {

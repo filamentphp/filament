@@ -480,17 +480,6 @@ abstract class Page extends BasePage
     }
 
     /**
-     * @deprecated Use `getWidgetsSchemaComponents($this->getHeaderWidgets())` to transform widgets into schema components instead, which also filters their visibility.
-     *
-     * @return array<class-string<Widget> | WidgetConfiguration>
-     */
-    #[Unexposed]
-    public function getVisibleHeaderWidgets(): array
-    {
-        return $this->filterVisibleWidgets($this->getHeaderWidgets());
-    }
-
-    /**
      * @return int | array<string, ?int>
      */
     #[Unexposed]
@@ -505,28 +494,6 @@ abstract class Page extends BasePage
     protected function getFooterWidgets(): array
     {
         return [];
-    }
-
-    /**
-     * @deprecated Use `getWidgetsSchemaComponents($this->getFooterWidgets())` to transform widgets into schema components instead, which also filters their visibility.
-     *
-     * @return array<class-string<Widget> | WidgetConfiguration>
-     */
-    #[Unexposed]
-    public function getVisibleFooterWidgets(): array
-    {
-        return $this->filterVisibleWidgets($this->getFooterWidgets());
-    }
-
-    /**
-     * @deprecated Use `getWidgetsSchemaComponents()` to transform widgets into schema components instead, which also filters their visibility.
-     *
-     * @param  array<class-string<Widget> | WidgetConfiguration>  $widgets
-     * @return array<class-string<Widget> | WidgetConfiguration>
-     */
-    protected function filterVisibleWidgets(array $widgets): array
-    {
-        return array_filter($widgets, fn (string | WidgetConfiguration $widget): bool => $this->normalizeWidgetClass($widget)::canView());
     }
 
     /**

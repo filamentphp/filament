@@ -478,7 +478,7 @@ abstract class Page extends BasePage
     #[Unexposed]
     public function getDefaultActionModelLabel(Action $action): ?string
     {
-        return $this->getModelLabel() ?? static::getResource()::getModelLabel();
+        return static::getResource()::getModelLabel();
     }
 
     #[Unexposed]
@@ -525,15 +525,6 @@ abstract class Page extends BasePage
             return $this->getResourceUrl('view', ['record' => $action->getRecord()]);
         }
 
-        return null;
-    }
-
-    /**
-     * @deprecated Override the resource's `getModelLabel()` method to configure the model label.
-     */
-    #[Unexposed]
-    public function getModelLabel(): ?string
-    {
         return null;
     }
 
