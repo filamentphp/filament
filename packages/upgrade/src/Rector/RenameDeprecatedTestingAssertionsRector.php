@@ -36,6 +36,7 @@ class RenameDeprecatedTestingAssertionsRector extends AbstractRector
         'assertFormFieldIsVisible' => ['assertFormFieldVisible', TestsForms::class],
         'assertActionHeld' => ['assertActionHalted', TestsActions::class],
         'assertTableActionHeld' => ['assertTableActionHalted', TestsTableActions::class],
+        'assertTableActionsExistInOrder' => ['assertTableRecordActionsExistInOrder', TestsTableActions::class],
         'assertTableBulkActionHeld' => ['assertTableBulkActionHalted', TestsBulkActions::class],
     ];
 

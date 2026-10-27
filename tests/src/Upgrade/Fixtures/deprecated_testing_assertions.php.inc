@@ -22,6 +22,13 @@ function assertions(Testable $testable, ?Testable $nullable, array $arguments): 
     $testable->assertActionHeld();
     $testable->assertTableActionHeld(actions: ['edit']);
     $testable->assertTableBulkActionHeld(actions: 'delete');
+    $testable->assertTableActionsExistInOrder(names: ['edit', 'delete']);
+    $testable->assertTableActionsExistInOrder(...$arguments);
+    $nullable?->assertTableActionsExistInOrder(['edit', 'delete']);
+    $callback = $testable->assertTableActionsExistInOrder(...);
+    $testable->assertTableActionsExistInOrder(['edit'])->assertTableActionsExistInOrder(['delete']);
+    $testable->assertTableRecordActionsExistInOrder(['edit'])->assertTableActionsExistInOrder(['delete']);
+    Livewire::test('edit-post')->assertTableActionsExistInOrder(['edit', 'delete']);
     $nullable?->assertFormFieldIsVisible(key: 'title', form: null);
     $nullable?->assertFormFieldIsVisible('title')?->assertFormFieldIsEnabled('title');
     $testable->assertFormFieldIsDisabled(...$arguments);
@@ -54,6 +61,7 @@ function factories(TestsForms $forms, TestsActions $actions, TestsTableActions $
     $forms->assertFormFieldIsVisible();
     $actions->assertActionHeld();
     $tableActions->assertTableActionHeld();
+    $tableActions->assertTableActionsExistInOrder();
     $callback = $bulkActions->assertTableBulkActionHeld(...);
 }
 -----
@@ -81,6 +89,13 @@ function assertions(Testable $testable, ?Testable $nullable, array $arguments): 
     $testable->assertActionHalted();
     $testable->assertTableActionHalted(actions: ['edit']);
     $testable->assertTableBulkActionHalted(actions: 'delete');
+    $testable->assertTableRecordActionsExistInOrder(names: ['edit', 'delete']);
+    $testable->assertTableRecordActionsExistInOrder(...$arguments);
+    $nullable?->assertTableRecordActionsExistInOrder(['edit', 'delete']);
+    $callback = $testable->assertTableRecordActionsExistInOrder(...);
+    $testable->assertTableRecordActionsExistInOrder(['edit'])->assertTableRecordActionsExistInOrder(['delete']);
+    $testable->assertTableRecordActionsExistInOrder(['edit'])->assertTableRecordActionsExistInOrder(['delete']);
+    Livewire::test('edit-post')->assertTableRecordActionsExistInOrder(['edit', 'delete']);
     $nullable?->assertFormFieldVisible(key: 'title', form: null);
     $nullable?->assertFormFieldVisible('title')?->assertFormFieldEnabled('title');
     $testable->assertFormFieldDisabled(...$arguments);
@@ -113,5 +128,6 @@ function factories(TestsForms $forms, TestsActions $actions, TestsTableActions $
     $forms->assertFormFieldVisible();
     $actions->assertActionHalted();
     $tableActions->assertTableActionHalted();
+    $tableActions->assertTableRecordActionsExistInOrder();
     $callback = $bulkActions->assertTableBulkActionHalted(...);
 }
