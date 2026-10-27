@@ -97,16 +97,6 @@ class ReplicateAction extends Action
     }
 
     /**
-     * @deprecated Use `after()` instead.
-     */
-    public function afterReplicaSaved(?Closure $callback): static
-    {
-        $this->after($callback);
-
-        return $this;
-    }
-
-    /**
      * @param  array<string> | Closure | null  $attributes
      */
     public function excludeAttributes(array | Closure | null $attributes): static

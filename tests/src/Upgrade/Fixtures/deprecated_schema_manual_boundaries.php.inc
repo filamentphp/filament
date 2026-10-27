@@ -153,7 +153,6 @@ class Unrelated extends ViewComponent
 function unrelated(Action $action, RenderHook $hook, EmbeddedSchema $embedded, Unrelated $unrelated, Schema | Unrelated $union, $unknown): void
 {
     $action->name('save')->getName();
-    $action->disableLabel();
     $hook->name('panels::head.end')->getName();
     $embedded->name('sidebar')->getName();
     $unrelated->name('details');

@@ -150,10 +150,10 @@ it('returns `null` for `getReplica()` before action is executed', function (): v
     expect($action->getReplica())->toBeNull();
 });
 
-it('can set `afterReplicaSaved()` as deprecated alias for `after()`', function (): void {
+it('returns fluent `$this` from `after()`', function (): void {
     $action = ReplicateAction::make();
 
-    $result = $action->afterReplicaSaved(static fn () => null);
+    $result = $action->after(static fn () => null);
 
     expect($result)->toBe($action);
 });

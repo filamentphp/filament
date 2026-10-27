@@ -205,10 +205,10 @@ it('returns `callMountedAction` for `getLivewireCallMountedActionName()`', funct
     expect($action->getLivewireCallMountedActionName())->toBe('callMountedAction');
 });
 
-it('can use deprecated `hold()` as alias for `halt()`', function (): void {
+it('can `halt()` an action', function (): void {
     $action = Action::make('test');
 
-    expect(fn () => $action->hold())->toThrow(Halt::class);
+    expect(fn () => $action->halt())->toThrow(Halt::class);
 });
 
 it('can set `keyBindings()` with a string', function (): void {
@@ -537,9 +537,9 @@ describe('construction and properties', function (): void {
         expect(Action::BADGE_VIEW)->toBeString()->not->toBeEmpty();
     });
 
-    it('can set `withAttributes()`', function (): void {
+    it('can set `extraAttributes()`', function (): void {
         $action = Action::make('test')
-            ->withAttributes(['data-test' => 'value']);
+            ->extraAttributes(['data-test' => 'value']);
 
         expect($action->getExtraAttributes())->toBe(['data-test' => 'value']);
     });

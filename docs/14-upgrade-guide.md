@@ -318,12 +318,33 @@ The script renames calls on `Filament\Actions\Action` and its subclasses:
 | `resetFormData()` | `resetData()` |
 | `getFormData()` | `getData()` |
 | `getRawFormData()` | `getRawData()` |
+| `modalActions()` | `modalFooterActions()` |
+| `extraModalActions()` | `extraModalFooterActions()` |
+| `modalButton()` | `modalSubmitActionLabel()` |
+| `modalFooter()` | `modalContentFooter()` |
+| `modalSubheading()` | `modalDescription()` |
+| `makeExtraModalAction()` | `makeModalSubmitAction()` |
+| `failureNotificationMessage()` | `failureNotificationTitle()` |
+| `successNotificationMessage()` | `successNotificationTitle()` |
+| `withAttributes()` | `extraAttributes()` |
+| `hold()` | `halt()` |
+| `infolist()` | `schema()` |
+| `disableLabel()` | `hiddenLabel()` |
+| `ReplicateAction::afterReplicaSaved()` | `after()` |
 
-It also renames `form:` arguments to `schema:`. Calls unpacking arguments into `form()` are left unchanged; rename the method and any `'form'` argument key manually. Update named arguments when invoking migrated first-class callables yourself.
+Arguments, defaults, nullable values, and closure evaluation are unchanged for supported calls. `disableLabel()` also migrates on `ActionGroup`; it forwards its condition directly: use `hiddenLabel(condition: false)`, not a negated condition. Resource and page `infolist()` methods are unchanged. The alias-only `Filament\Actions\Concerns\HasInfolist` trait has also been removed; remove direct uses and use `HasSchema` for schema configuration where needed.
 
-Manually migrate custom overrides (including inherited ones), class-qualified calls such as `parent::disabledForm()`, dynamic names, callbacks, unknown receiver types, and non-PHP references. Calls on known overrides are skipped; review changes where a base-typed receiver may hold a custom subclass. Classes using action concerns without extending `Action` also need manual migration.
+The script also renames named arguments: `form:` and `infolist:` become `schema:`, `subheading:` becomes `description:`, and notification `message:` becomes `title:`. Calls unpacking arguments into these setters are left unchanged; rename the methods and any corresponding argument keys manually. Update named arguments when invoking migrated first-class callables yourself.
 
-Preserve custom parameter names, defaults, and dispatch behavior: the old wrappers called replacements through `$this`, so simply renaming a `parent::` call may bypass a subclass override.
+`hold()` always called `halt()` with its default `shouldRollBackDatabaseTransaction: false`, and `withAttributes()` always called `extraAttributes()` with its default `merge: false`. The script skips first-class callables, unpacked arguments, and calls passing extra arguments to these aliases, since the replacements would consume previously ignored positional arguments. Migrate these manually, preserving those defaults. For example, replace a `hold(...)` callback that must ignore supplied arguments with `fn () => $action->halt()`.
+
+The protected `getJavaScriptClickHandler()` alias has been removed in favor of `getJsClickHandler()`. Migrate calls and overrides manually. Filament already called `getJsClickHandler()` internally; renaming an old override may newly activate it. Review visibility, collisions with an existing replacement override, and calls to either parent method.
+
+Manually migrate custom overrides (including inherited methods and methods supplied by traits), trait adaptations, class-qualified calls such as `parent::modalSubheading()`, dynamic names, array callbacks, unknown or ambiguous receiver types, and non-PHP references. Calls on known overrides of either the alias or its replacement, or methods with adapted non-public visibility, are skipped. Review changes where a base-typed receiver may hold a custom subclass. Classes using action concerns without extending `Action` also need manual migration.
+
+Preserve custom parameter names, defaults, return values, control flow, and dispatch behavior: the old wrappers called replacements through `$this`, so simply renaming a `parent::` call may bypass a subclass override. Some fluent wrappers returned `$this` regardless of the replacement's return value.
+
+`centerModal()`, `disableCreateAnother()`, `disableAttachAnother()`, and `disableAssociateAnother()` are unchanged: they evaluate or negate conditions rather than forwarding them directly. The legacy mounted-action schema bridge and testing aliases are also unchanged.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('schemas') || packages.includes('forms') || packages.includes('infolists') || packages.includes('widgets')">
@@ -344,7 +365,7 @@ The script renames calls on `Filament\Schemas\Schema`, schema components, and th
 | `Filament\Schemas\Components\Wizard\Step` | `afterValidated()` | `afterValidation()` |
 | View components using `Filament\Schemas\Components\Concerns\HasLabel`, including fields, entries, stats, and rich editor tools | `disableLabel()` | `hiddenLabel()` |
 
-Arguments, defaults, nullable values, closure evaluation, and child-schema caching and visibility behavior are unchanged. `disableLabel()` forwards its condition directly: use `hiddenLabel(condition: false)`, not a negated condition. The separate action `disableLabel()` alias is unchanged. Component names, such as `TextInput::name()`, `RenderHook::name()`, and their `getName()` methods, are not schema keys and are not renamed.
+Arguments, defaults, nullable values, closure evaluation, and child-schema caching and visibility behavior are unchanged. `disableLabel()` forwards its condition directly: use `hiddenLabel(condition: false)`, not a negated condition. The separate action `disableLabel()` alias is covered by the action method migration above. Component names, such as `TextInput::name()`, `RenderHook::name()`, and their `getName()` methods, are not schema keys and are not renamed.
 
 The script renames `name(name: ...)` to `key(key: ...)` and `context(context: ...)` to `operation(operation: ...)` on schemas. Calls unpacking arguments into these two setters are left unchanged; rename the methods and any `'name'` or `'context'` argument keys manually. Update named arguments when invoking migrated first-class setter callables yourself. Other aliases preserve named and unpacked arguments, except for `getName()` below.
 

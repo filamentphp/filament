@@ -107,14 +107,6 @@ trait CanNotify
         return $this;
     }
 
-    /**
-     * @deprecated Use `failureNotificationTitle()` instead.
-     */
-    public function failureNotificationMessage(string | Closure | null $message): static
-    {
-        return $this->failureNotificationTitle($message);
-    }
-
     public function failureNotificationTitle(string | Closure | null $title): static
     {
         $this->failureNotificationTitle = $title;
@@ -154,14 +146,6 @@ trait CanNotify
         $this->isSuccessNotificationDisabled = $notification === null;
 
         return $this;
-    }
-
-    /**
-     * @deprecated Use `successNotificationTitle()` instead.
-     */
-    public function successNotificationMessage(string | Closure | null $message): static
-    {
-        return $this->successNotificationTitle($message);
     }
 
     public function successNotificationTitle(string | Closure | null $title): static
