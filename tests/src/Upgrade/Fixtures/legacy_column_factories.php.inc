@@ -28,7 +28,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\{BadgeColumn as Badge, BooleanColumn, TagsColumn};
 use Filament\Tables\Columns\TextColumn;
 
-$tags = TextColumn::make('configured-later')->badge();
+$tags = TagsColumn::make('configured-later');
 $tags->limit(2);
 
 return [

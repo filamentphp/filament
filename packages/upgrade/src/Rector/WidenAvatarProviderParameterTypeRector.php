@@ -72,6 +72,12 @@ class WidenAvatarProviderParameterTypeRector extends AbstractRector
             return null;
         }
 
+        // Only widen the old contract, not arbitrary custom restrictions or
+        // intersection types whose intended behavior requires manual review.
+        if (! TypeCombinator::removeNull($parameterType)->equals(new ObjectType('Illuminate\\Database\\Eloquent\\Model'))) {
+            return null;
+        }
+
         $parameter->type = $this->staticTypeMapper->mapPHPStanTypeToPhpParserNode(
             TypeCombinator::union($parameterType, $authenticatableType),
             TypeKind::PARAM,

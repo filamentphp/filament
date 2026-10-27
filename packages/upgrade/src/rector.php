@@ -1,6 +1,8 @@
 <?php
 
 use Composer\InstalledVersions;
+use Filament\Upgrade\Rector\RemoveObsoleteUploadRestrictionTraitRector;
+use Filament\Upgrade\Rector\RenameDeprecatedConstantsRector;
 use Filament\Upgrade\Rector\RenameDeprecatedForwardingMethodsRector;
 use Filament\Upgrade\Rector\RenameDeprecatedLazyLoadingApisRector;
 use Filament\Upgrade\Rector\ReplaceConvenienceClassesRector;
@@ -8,10 +10,7 @@ use Filament\Upgrade\Rector\ReplaceLegacyComponentFactoriesRector;
 use Filament\Upgrade\Rector\ReplaceTypedChartWidgetsRector;
 use Filament\Upgrade\Rector\WidenAvatarProviderParameterTypeRector;
 use Rector\Config\RectorConfig;
-use Rector\Removing\Rector\Class_\RemoveTraitUseRector;
-use Rector\Renaming\Rector\ClassConstFetch\RenameClassConstFetchRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
-use Rector\Renaming\ValueObject\RenameClassConstFetch;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->skip([
@@ -21,10 +20,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->importNames();
 
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
-        'Filament\\Actions\\ButtonAction' => 'Filament\\Actions\\Action',
-        'Filament\\Actions\\IconButtonAction' => 'Filament\\Actions\\Action',
         'Filament\\Tables\\Columns\\Concerns\\CanBeCopied' => 'Filament\\Support\\Concerns\\CanBeCopied',
-        'Filament\\Tables\\Filters\\MultiSelectFilter' => 'Filament\\Tables\\Filters\\SelectFilter',
         'Filament\\Tables\\Filters\\QueryBuilder\\Constraints\\Constraint' => 'Filament\\QueryBuilder\\Constraints\\Constraint',
         'Filament\\Tables\\Filters\\QueryBuilder\\Constraints\\BooleanConstraint' => 'Filament\\QueryBuilder\\Constraints\\BooleanConstraint',
         'Filament\\Tables\\Filters\\QueryBuilder\\Constraints\\BooleanConstraint\\Operators\\IsTrueOperator' => 'Filament\\QueryBuilder\\Constraints\\BooleanConstraint\\Operators\\IsTrueOperator',
@@ -57,16 +53,8 @@ return static function (RectorConfig $rectorConfig): void {
         'Filament\\Tables\\Filters\\QueryBuilder\\Constraints\\TextConstraint\\Operators\\StartsWithOperator' => 'Filament\\QueryBuilder\\Constraints\\TextConstraint\\Operators\\StartsWithOperator',
     ]);
 
-    $rectorConfig->ruleWithConfiguration(RemoveTraitUseRector::class, [
-        'Filament\\Schemas\\Concerns\\RestrictsFileUploadsToSchemaComponents',
-    ]);
-
-    $rectorConfig->ruleWithConfiguration(RenameClassConstFetchRector::class, [
-        new RenameClassConstFetch('Filament\\Support\\Enums\\IconSize', 'ExtraExtraLarge', 'TwoExtraLarge'),
-        new RenameClassConstFetch('Filament\\Tables\\View\\TablesRenderHook', 'TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER', 'TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER'),
-        new RenameClassConstFetch('Filament\\Tables\\View\\TablesRenderHook', 'TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE', 'TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE'),
-    ]);
-
+    $rectorConfig->rule(RemoveObsoleteUploadRestrictionTraitRector::class);
+    $rectorConfig->rule(RenameDeprecatedConstantsRector::class);
     $rectorConfig->rule(RenameDeprecatedForwardingMethodsRector::class);
     $rectorConfig->rule(RenameDeprecatedLazyLoadingApisRector::class);
     $rectorConfig->rule(ReplaceConvenienceClassesRector::class);

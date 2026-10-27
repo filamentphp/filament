@@ -68,7 +68,7 @@ class ReplaceLegacyComponentFactoriesRector extends AbstractRector
             return null;
         }
 
-        if (str_starts_with($legacyClass, 'filament\\forms\\components\\') && (! $this->canMigrateFormFactory($factory))) {
+        if (! $this->canMigrateFactory($factory)) {
             return null;
         }
 
@@ -102,7 +102,7 @@ class ReplaceLegacyComponentFactoriesRector extends AbstractRector
         return $node;
     }
 
-    protected function canMigrateFormFactory(StaticCall $factory): bool
+    protected function canMigrateFactory(StaticCall $factory): bool
     {
         $nodeFinder = new NodeFinder;
 
@@ -140,14 +140,16 @@ class ReplaceLegacyComponentFactoriesRector extends AbstractRector
         $methodsRequiringReview = match ($legacyClass) {
             'filament\\forms\\components\\multiselect' => ['multiple'],
             'filament\\forms\\components\\placeholder' => ['content', 'getContent'],
+            'filament\\tables\\columns\\badgecolumn' => ['badge'],
+            'filament\\tables\\columns\\booleancolumn' => ['boolean'],
             default => [],
         };
 
         // Callbacks can change forced multiplicity or use removed content aliases.
-        if ((new NodeFinder)->findFirst(
+        if ($methodsRequiringReview && (new NodeFinder)->findFirst(
             $arguments,
             fn (Node $candidate): bool => (($candidate instanceof MethodCall) || ($candidate instanceof NullsafeMethodCall)) &&
-            ($candidate->name instanceof Identifier) && $this->isNames($candidate->name, $methodsRequiringReview)
+            ((! $candidate->name instanceof Identifier) || $this->isNames($candidate->name, $methodsRequiringReview))
         )) {
             return false;
         }
