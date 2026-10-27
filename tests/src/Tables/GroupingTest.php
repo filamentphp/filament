@@ -728,7 +728,6 @@ describe('group configuration', function (): void {
         $group = Group::make('status');
 
         expect($group->getDescriptionFromRecordUsing(static fn () => 'desc'))->toBe($group);
-        expect($group->getDescriptionUsing(static fn () => 'desc'))->toBe($group);
         expect($group->getTitleFromRecordUsing(static fn () => 'title'))->toBe($group);
         expect($group->getKeyFromRecordUsing(static fn () => 'key'))->toBe($group);
         expect($group->groupQueryUsing(static fn ($query) => $query))->toBe($group);

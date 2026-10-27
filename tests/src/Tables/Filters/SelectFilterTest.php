@@ -825,13 +825,6 @@ it('returns fluent `$this` from `static()`', function (): void {
     expect($result)->toBe($filter);
 });
 
-it('can set deprecated `column()` as alias for `attribute()`', function (): void {
-    $filter = SelectFilter::make('status')
-        ->column('custom_column');
-
-    expect($filter->getAttribute())->toBe('custom_column');
-});
-
 it('returns fluent `$this` from `getOptionLabelFromRecordUsing()`', function (): void {
     $filter = SelectFilter::make('author');
 

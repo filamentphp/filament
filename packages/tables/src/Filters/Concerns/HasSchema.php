@@ -28,18 +28,6 @@ trait HasSchema
         return $this;
     }
 
-    /**
-     * @deprecated Use `schema()` instead.
-     *
-     * @param  array<Component | Action | ActionGroup> | Closure | null  $schema
-     */
-    public function form(array | Closure | null $schema): static
-    {
-        $this->schema($schema);
-
-        return $this;
-    }
-
     public function modifyFormFieldUsing(?Closure $callback): static
     {
         $this->modifyFormFieldUsing = $callback;
@@ -77,16 +65,6 @@ trait HasSchema
         ) ?? $field;
 
         return [$field];
-    }
-
-    /**
-     * @deprecated Use `getSchemaComponents()` instead.
-     *
-     * @return array<Component | Action | ActionGroup>
-     */
-    public function getFormSchema(): array
-    {
-        return $this->getSchemaComponents();
     }
 
     public function hasSchema(): bool

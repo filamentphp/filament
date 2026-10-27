@@ -150,29 +150,9 @@ trait HasFileAttachments
         return $this;
     }
 
-    /**
-     * @deprecated Use `getFileAttachmentUrlUsing()` instead.
-     */
-    public function getUploadedAttachmentUrlUsing(?Closure $callback): static
-    {
-        $this->getFileAttachmentUrlUsing($callback);
-
-        return $this;
-    }
-
     public function saveUploadedFileAttachmentUsing(?Closure $callback): static
     {
         $this->saveUploadedFileAttachmentUsing = $callback;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `saveUploadedFileAttachmentUsing()` instead.
-     */
-    public function saveUploadedFileAttachmentsUsing(?Closure $callback): static
-    {
-        $this->saveUploadedFileAttachmentUsing($callback);
 
         return $this;
     }

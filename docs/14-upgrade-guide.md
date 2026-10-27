@@ -421,6 +421,33 @@ Preserve custom parameter names, defaults, return values, and dispatch behavior.
 Negating `disable*()` methods, `imageCropAspectRatio()`, and the no-op `inset()` methods remain unchanged. Other form component and concern aliases are outside this cleanup.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('forms') || packages.includes('tables')">
+<span slot="summary">Deprecated attachment, morph type, filter, and group method aliases have been removed</span>
+
+The script renames calls on these owning types and their subclasses:
+
+| Owning type | Removed method | Replacement |
+| --- | --- | --- |
+| `Filament\Forms\Components\MarkdownEditor`, `RichEditor` | `getUploadedAttachmentUrlUsing()` | `getFileAttachmentUrlUsing()` |
+| `MarkdownEditor`, `RichEditor` | `saveUploadedFileAttachmentsUsing()` | `saveUploadedFileAttachmentUsing()` |
+| `Filament\Forms\Components\MorphToSelect\Type` | `titleColumnName()` | `titleAttribute()` |
+| `Filament\Tables\Filters\BaseFilter` (all table filters) | `form()` | `schema()` |
+| `BaseFilter` | `getFormSchema()` | `getSchemaComponents()` |
+| `Filament\Tables\Filters\SelectFilter` (including ternary and trashed filters) | `column()` | `attribute()` |
+| `SelectFilter` | `getColumn()` | `getAttribute()` |
+| `Filament\Tables\Grouping\Group` | `getDescriptionUsing()` | `getDescriptionFromRecordUsing()` |
+
+For automatically migrated calls, parameter names, required arguments, nullable values, closure evaluation, and return values are unchanged. Named and unpacked arguments and first-class callables are preserved. Filter `form(schema: ...)` becomes `schema(schema: ...)`, unlike action `form(form: ...)`, which also renames the argument. `getSchemaComponents()` returns the configured components or the default filter field, not the `Schema` instance returned by `getSchema()`. Select filter `attribute()` still evaluates closures lazily and falls back to the filter name for `null`.
+
+Unrelated `form()`, `column()`, and `getColumn()` methods are unchanged, including resource/page forms, group columns, table column lookups, and query builder operators' `getFormSchema()` methods. These migrations also run on upgraded applications with the removed methods absent; canonical calls are left unchanged on repeated runs.
+
+Manually migrate custom overrides (including inherited methods and methods supplied by traits), trait adaptations, class-qualified calls such as `parent::form()`, dynamic names, array callbacks, unknown or ambiguous receiver types, and non-PHP references. Calls on known overrides of either the alias or its replacement, or methods with adapted non-public visibility, are skipped. A declared union containing an overriding subclass also conservatively prevents related base-typed calls in that file from migrating, since type inference can normalize the union and hide the override. Direct consumers of `HasFileAttachments` outside the two editors, or filter `HasSchema` outside `BaseFilter`, also need manual migration. Review base-typed receivers that may hold custom subclasses not visible in their inferred types, including through PHPDoc, other files, factories, or container bindings.
+
+Preserve custom parameter names, defaults, control flow, visibility, return values, and dispatch behavior. The wrappers called replacements through `$this`, so simply renaming a `parent::` call may bypass a subclass override. The setters returned `$this` regardless of the replacement's return value; the getters returned the replacement's result. Retaining application-owned forwarding methods may be necessary. Renaming an old getter override can newly activate it where Filament already called the canonical getter; reconcile collisions and test the intended behavior rather than blindly renaming declarations.
+
+Negating form aliases, `centerModal()`, `imageCropAspectRatio()`, no-op `inset()` methods, testing aliases, and legacy Livewire/table configuration bridges are unchanged.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('tables')">
 <span slot="summary">Deprecated fluent table method aliases have been removed</span>
 
@@ -448,12 +475,15 @@ The script renames calls on `Filament\Tables\Table` and its subclasses, preservi
 | `getColumnToggleFormMaxHeight()` | `getColumnManagerMaxHeight()` |
 | `getColumnToggleFormWidth()` | `getColumnManagerWidth()` |
 | `getToggleColumnsTriggerAction()` | `getColumnManagerTriggerAction()` |
+| `groupsInDropdownOnDesktop()` | `groupingSettingsInDropdownOnDesktop()` |
+
+`groupsInDropdownOnDesktop()` forwards its condition without negating or eagerly evaluating it. Keep `condition:`, its default `true`, explicit `false`, and lazy closures unchanged; nullable conditions were not supported. Named and unpacked arguments and first-class callables retain the same contract. Unrelated methods with this name are unchanged, as are canonical calls on repeated upgrade runs.
 
 `getColumnManagerWidth()` returns `Filament\Support\Enums\Width | string | null`, not the old getter's `?string`. Review string-only consumers and your own return types. To convert an enum to a string, use `$width instanceof Width ? $width->value : $width`, importing `Filament\Support\Enums\Width`.
 
-Manually migrate custom overrides (including inherited ones), class-qualified calls, dynamic names, callbacks, unknown receiver types, and non-PHP references. Calls on known overrides are skipped; review changes where a base-typed receiver may hold a custom subclass. Classes using table concerns without extending `Table` also need manual migration.
+Manually migrate custom overrides (including inherited ones), class-qualified calls, dynamic names, callbacks, unknown receiver types, and non-PHP references. Calls on known overrides are skipped; review changes where a base-typed receiver may hold a custom subclass. For `groupsInDropdownOnDesktop()`, overrides of either method, non-public trait adaptations, and declared unions hiding an overriding subclass are left for manual review, as in the attachment/filter/group migration above. Classes using table concerns without extending `Table` also need manual migration.
 
-Preserve custom parameters and return behavior. The old wrappers dispatched through `$this`, so renaming `parent::` calls can bypass subclass overrides. Record-action and bulk-action setters also returned `$this` regardless of the replacement's return value.
+Preserve custom parameters and return behavior. The old wrappers dispatched through `$this`, so renaming `parent::` calls can bypass subclass overrides. Record-action, bulk-action, and desktop grouping-dropdown setters also returned `$this` regardless of the replacement's return value.
 
 `groupedBulkActions()` and legacy Livewire configuration hooks such as `getTableActions()` remain available.
 </Disclosure>
