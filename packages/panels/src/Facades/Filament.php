@@ -38,7 +38,6 @@ use Livewire\Component;
  * @method static StatefulGuard auth()
  * @method static void bootCurrentPanel()
  * @method static array<NavigationGroup> buildNavigation()
- * @method static void currentDomain(?string $domain) Deprecated. Use `setCurrentDomain()` instead.
  * @method static string getAuthGuard()
  * @method static string | null getAuthPasswordBroker()
  * @method static string | Htmlable getBrandName()
@@ -135,7 +134,6 @@ use Livewire\Component;
  * @method static bool hasBreadcrumbs()
  * @method static bool hasCollapsibleNavigationGroups()
  * @method static bool hasDarkMode()
- * @method static bool hasDarkModeForced() Deprecated. Use `isDarkModeForced()` instead.
  * @method static bool hasDatabaseNotifications()
  * @method static bool hasLazyLoadedDatabaseNotifications()
  * @method static bool hasEmailChangeVerification()

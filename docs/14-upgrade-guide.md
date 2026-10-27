@@ -449,12 +449,18 @@ Behavioral configuration aliases such as `centerModal()` and `disableCreateAnoth
 | `Filament\Panel` | `passwordResetRequestRouteSlug()` | `requestPasswordResetRouteSlug()` |
 | `Panel` | `passwordResetRouteSlug()` | `resetPasswordRouteSlug()` |
 | `Panel` | `databaseNotificationsPolling()` | `databaseNotificationsPollingInterval()` |
+| `Panel`, `Filament\FilamentManager`, `Filament\Facades\Filament` | `hasDarkModeForced()` | `isDarkModeForced()` |
+| `FilamentManager`, `Filament` facade | `currentDomain()` | `setCurrentDomain()` |
 
-The script renames typed instance calls on these classes and their subclasses, including fluent and nullsafe chains, and cluster calls using an explicit class name such as `SettingsCluster::unshiftClusterBreadcrumbs()`. Named arguments (`callback:`, `breadcrumbs:`, `slug:`, `interval:`), unpacked arguments, and first-class callables are preserved. It also works after the old methods have been removed; canonical calls are unchanged on repeated runs.
+The script renames typed instance calls on these classes and their subclasses, including fluent and nullsafe chains, and cluster calls using an explicit class name such as `SettingsCluster::unshiftClusterBreadcrumbs()`. It also migrates the domain setter and forced-dark-mode getter through `filament()` when its return type is known to be `FilamentManager`, and through explicit `Filament\Facades\Filament` calls, including imported aliases. Named arguments (`callback:`, `breadcrumbs:`, `slug:`, `interval:`, `domain:`), unpacked arguments, and first-class callables are preserved. It also works after the old methods have been removed; canonical calls are unchanged on repeated runs.
 
 Behavior and protected storage are unchanged. `hasActiveChildItems()` checks direct children, not all descendants. Cluster breadcrumbs retain URL keys and use the `getClusterBreadcrumb()` customization hook. `passwordResetRoutePrefix()` is unchanged. The polling interval remains a required argument: pass `null` explicitly to disable polling.
 
+`setCurrentDomain()` remains a `void` context setter with a required nullable `$domain` argument; pass `null` to clear it. `isDarkModeForced()` reads the forced configuration, while `hasDarkMode()` separately checks whether dark mode is available. Neither getter reports the user's selected theme.
+
 Manually review custom overrides, inherited and trait-provided methods, trait adaptations, relative calls through `self::`, `static::`, or `parent::`, dynamic class or method names, array callbacks, unknown receiver types, and non-PHP references such as published Blade views. Calls on known overrides of either name or with non-public replacements are skipped. Direct consumers of panel concerns outside `Panel` also need manual migration. Review base-typed receivers that may hold custom subclasses not visible in their inferred types.
+
+Facade subclasses and dynamic facade class names are not migrated. The script does not inspect runtime container replacements, custom `'filament'` bindings, or facade swaps. If your application replaces the manager, review helper and facade dispatch manually and exclude affected calls or files from the rule when necessary.
 
 Preserve custom parameters, visibility, return values, and dispatch. These aliases forwarded to the canonical methods through `$this` or `static::`; changing a `parent::` call can bypass a canonical override. Renaming an old override can newly activate it in framework calls already using the canonical name. Reconcile existing overrides of both names rather than blindly renaming declarations.
 </Disclosure>

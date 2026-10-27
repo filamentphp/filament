@@ -41,29 +41,29 @@ describe('`darkMode()`', function (): void {
     });
 });
 
-it('reads the forced state independently of availability through either getter', function (string $method): void {
+it('reads the forced state independently of availability using `isDarkModeForced()`', function (): void {
     $panel = Filament::getCurrentOrDefaultPanel();
     $isForced = true;
     $panel->darkMode(condition: false, isForced: static function () use (&$isForced): bool {
         return $isForced;
     });
 
-    expect($panel->{$method}())->toBeTrue()
-        ->and(filament()->{$method}())->toBeTrue()
-        ->and(Filament::{$method}())->toBeTrue()
+    expect($panel->isDarkModeForced())->toBeTrue()
+        ->and(filament()->isDarkModeForced())->toBeTrue()
+        ->and(Filament::isDarkModeForced())->toBeTrue()
         ->and(Filament::hasDarkMode())->toBeFalse();
 
     $isForced = false;
 
-    expect($panel->{$method}())->toBeFalse()
-        ->and(filament()->{$method}())->toBeFalse()
-        ->and(Filament::{$method}())->toBeFalse();
+    expect($panel->isDarkModeForced())->toBeFalse()
+        ->and(filament()->isDarkModeForced())->toBeFalse()
+        ->and(Filament::isDarkModeForced())->toBeFalse();
 
     Filament::setCurrentPanel(Panel::make()->darkMode(isForced: true));
 
-    expect(Filament::{$method}())->toBeTrue()
+    expect(Filament::isDarkModeForced())->toBeTrue()
         ->and(Filament::hasDarkMode())->toBeTrue();
-})->with(['isDarkModeForced', 'hasDarkModeForced']);
+});
 
 describe('`themeSwitcher()`', function (): void {
     it('can hide the theme switcher without disabling dark mode', function (): void {

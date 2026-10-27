@@ -26,6 +26,16 @@ class RenameDeprecatedPanelMethodsRectorTest extends AbstractRectorTestCase
         $this->doTestFile(__DIR__ . '/Fixtures/deprecated_panel_manual_boundaries.php.inc');
     }
 
+    public function test_renames_panel_context_calls_through_managers_helpers_and_facades(): void
+    {
+        $this->doTestFile(__DIR__ . '/Fixtures/deprecated_panel_context_methods.php.inc');
+    }
+
+    public function test_preserves_custom_panel_context_dispatch(): void
+    {
+        $this->doTestFile(__DIR__ . '/Fixtures/deprecated_panel_context_manual_boundaries.php.inc');
+    }
+
     public function provideConfigFilePath(): string
     {
         return dirname(__DIR__, 3) . '/packages/upgrade/src/rector.php';

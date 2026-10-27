@@ -712,14 +712,6 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->hasDarkMode();
     }
 
-    /**
-     * @deprecated Use `isDarkModeForced()` instead.
-     */
-    public function hasDarkModeForced(): bool
-    {
-        return $this->isDarkModeForced();
-    }
-
     public function isDarkModeForced(): bool
     {
         return $this->getCurrentOrDefaultPanel()->isDarkModeForced();
@@ -904,14 +896,6 @@ class FilamentManager
     public function serving(Closure $callback): void
     {
         Event::listen(ServingFilament::class, $callback);
-    }
-
-    /**
-     * @deprecated Use `setCurrentDomain()` instead.
-     */
-    public function currentDomain(?string $domain): void
-    {
-        $this->setCurrentDomain($domain);
     }
 
     public function setCurrentDomain(?string $domain): void
