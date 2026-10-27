@@ -92,7 +92,7 @@ class SetUpEmailAuthenticationAction
             ->schema([
                 $codeInput,
             ])
-            ->beforeFormValidated(fn () => $rateLimitAuthenticationAttempt($codeInput->getStatePath()))
+            ->beforeSchemaValidated(fn () => $rateLimitAuthenticationAttempt($codeInput->getStatePath()))
             ->modalSubmitAction(fn (Action $action) => $action
                 ->label(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.actions.submit.label')))
             ->action(function (): void {

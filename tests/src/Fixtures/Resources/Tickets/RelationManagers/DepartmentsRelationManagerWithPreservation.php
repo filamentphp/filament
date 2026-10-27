@@ -18,7 +18,7 @@ class DepartmentsRelationManagerWithPreservation extends RelationManager
         return DepartmentsTable::configure($table)
             ->headerActions([
                 CreateAction::make()
-                    ->preserveFormDataWhenCreatingAnother(['name']),
+                    ->preserveDataWhenCreatingAnother(['name']),
             ]);
     }
 

@@ -6,7 +6,7 @@ use Filament\Schemas\Components\Component;
 
 class Set
 {
-    protected bool $shouldSkipComponentsChildContainersWhileSearching = true;
+    protected bool $shouldSkipComponentsChildSchemasWhileSearching = true;
 
     public function __construct(
         protected Component $component,
@@ -24,7 +24,7 @@ class Set
                 $path,
                 withHidden: true,
                 withAbsoluteStatePath: true,
-                skipComponentsChildContainersWhileSearching: $this->shouldSkipComponentsChildContainersWhileSearching ? [$this->component] : [],
+                skipComponentsChildSchemasWhileSearching: $this->shouldSkipComponentsChildSchemasWhileSearching ? [$this->component] : [],
             );
 
         $state = $this->component->evaluate($state);
@@ -43,16 +43,8 @@ class Set
 
     public function skipComponentsChildSchemasWhileSearching(bool $condition = true): static
     {
-        $this->shouldSkipComponentsChildContainersWhileSearching = $condition;
+        $this->shouldSkipComponentsChildSchemasWhileSearching = $condition;
 
         return $this;
-    }
-
-    /**
-     * @deprecated Use `skipComponentsChildSchemasWhileSearching()` instead.
-     */
-    public function skipComponentsChildContainersWhileSearching(bool $condition = true): static
-    {
-        return $this->skipComponentsChildSchemasWhileSearching($condition);
     }
 }

@@ -97,7 +97,7 @@ class SelectSchema
                 ->schema([
                     Select::make('createSelectOption')
                         ->label('Author')
-                        ->createOptionForm([
+                        ->createOptionSchema([
                             TextInput::make('name'),
                         ]),
                 ]),
@@ -114,7 +114,7 @@ class SelectSchema
                             'dan' => 'Dan Harrin',
                         ])
                         ->fillEditOptionActionFormUsing(fn () => ['name' => 'Dan Harrin'])
-                        ->editOptionForm([
+                        ->editOptionSchema([
                             TextInput::make('name'),
                         ]),
                 ]),

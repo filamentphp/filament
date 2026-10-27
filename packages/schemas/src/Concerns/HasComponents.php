@@ -167,28 +167,28 @@ trait HasComponents
     }
 
     /**
-     * @param  array<Component>  $skipComponentsChildContainersWhileSearching
+     * @param  array<Component>  $skipComponentsChildSchemasWhileSearching
      */
-    public function getComponent(string | Closure $findComponentUsing, bool $withActions = true, bool $withHidden = false, bool $isAbsoluteKey = false, array $skipComponentsChildContainersWhileSearching = []): Component | Action | ActionGroup | null
+    public function getComponent(string | Closure $findComponentUsing, bool $withActions = true, bool $withHidden = false, bool $isAbsoluteKey = false, array $skipComponentsChildSchemasWhileSearching = []): Component | Action | ActionGroup | null
     {
         if (is_string($findComponentUsing) && (! $isAbsoluteKey) && filled($key = $this->getKey())) {
             $findComponentUsing = "{$key}.$findComponentUsing";
             $isAbsoluteKey = true;
         }
 
-        if ($skipComponentsChildContainersWhileSearching) {
+        if ($skipComponentsChildSchemasWhileSearching) {
             foreach ($this->getComponents($withActions, $withHidden) as $component) {
                 if ($findComponentUsing instanceof Closure) {
                     if ($findComponentUsing($component)) {
                         return $component;
                     }
 
-                    if (in_array($component, $skipComponentsChildContainersWhileSearching, strict: true)) {
+                    if (in_array($component, $skipComponentsChildSchemasWhileSearching, strict: true)) {
                         continue;
                     }
 
                     foreach ($component->getChildSchemas($withHidden) as $childSchema) {
-                        if ($foundComponent = $childSchema->getComponent($findComponentUsing, $withActions, $withHidden, $isAbsoluteKey, $skipComponentsChildContainersWhileSearching)) {
+                        if ($foundComponent = $childSchema->getComponent($findComponentUsing, $withActions, $withHidden, $isAbsoluteKey, $skipComponentsChildSchemasWhileSearching)) {
                             return $foundComponent;
                         }
                     }
@@ -206,7 +206,7 @@ trait HasComponents
                     return $component;
                 }
 
-                if (in_array($component, $skipComponentsChildContainersWhileSearching, strict: true)) {
+                if (in_array($component, $skipComponentsChildSchemasWhileSearching, strict: true)) {
                     continue;
                 }
 
@@ -214,7 +214,7 @@ trait HasComponents
 
                 if (blank($componentInheritanceKey) || str_starts_with($findComponentUsing, "{$componentInheritanceKey}.")) {
                     foreach ($component->getChildSchemas($withHidden) as $childSchema) {
-                        if ($foundComponent = $childSchema->getComponent($findComponentUsing, $withActions, $withHidden, $isAbsoluteKey, $skipComponentsChildContainersWhileSearching)) {
+                        if ($foundComponent = $childSchema->getComponent($findComponentUsing, $withActions, $withHidden, $isAbsoluteKey, $skipComponentsChildSchemasWhileSearching)) {
                             return $foundComponent;
                         }
                     }
@@ -232,15 +232,15 @@ trait HasComponents
     }
 
     /**
-     * @param  array<Component>  $skipComponentsChildContainersWhileSearching
+     * @param  array<Component>  $skipComponentsChildSchemasWhileSearching
      */
-    public function getComponentByStatePath(string $statePath, bool $withHidden = false, bool $withAbsoluteStatePath = false, array $skipComponentsChildContainersWhileSearching = []): ?Component
+    public function getComponentByStatePath(string $statePath, bool $withHidden = false, bool $withAbsoluteStatePath = false, array $skipComponentsChildSchemasWhileSearching = []): ?Component
     {
         if ((! $withAbsoluteStatePath) && filled($containerStatePath = $this->getStatePath())) {
             $statePath = "{$containerStatePath}.{$statePath}";
         }
 
-        $search = function (self $container, bool $shouldOnlySearchCachedChildSchemas = false, array &$cachedChildSchemaDependencies = []) use (&$search, $statePath, $withHidden, $skipComponentsChildContainersWhileSearching): ?Component {
+        $search = function (self $container, bool $shouldOnlySearchCachedChildSchemas = false, array &$cachedChildSchemaDependencies = []) use (&$search, $statePath, $withHidden, $skipComponentsChildSchemasWhileSearching): ?Component {
             foreach ($container->getComponents(withActions: false, withHidden: $withHidden) as $component) {
                 $componentStatePath = $component->getStatePath();
 
@@ -248,7 +248,7 @@ trait HasComponents
                     return $component;
                 }
 
-                $shouldSkipChildSchemas = in_array($component, $skipComponentsChildContainersWhileSearching, strict: true);
+                $shouldSkipChildSchemas = in_array($component, $skipComponentsChildSchemasWhileSearching, strict: true);
 
                 if (blank($componentStatePath) || str_starts_with($statePath, "{$componentStatePath}.")) {
                     $shouldOnlySearchDescendantsCachedChildSchemas = $shouldOnlySearchCachedChildSchemas || $shouldSkipChildSchemas;
@@ -277,7 +277,7 @@ trait HasComponents
             return null;
         };
 
-        $skipIds = array_map('spl_object_id', $skipComponentsChildContainersWhileSearching);
+        $skipIds = array_map('spl_object_id', $skipComponentsChildSchemasWhileSearching);
         sort($skipIds);
         $cacheKey = $skipIds ? implode('-', $skipIds) : '';
 

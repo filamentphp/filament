@@ -83,6 +83,8 @@ This is source migration, not runtime backwards-compatibility support or a compl
 
 When a native union declares both a base class and an overriding subclass, the method migration rules conservatively leave related calls in that file unchanged. For lazy loading, this also retains the owning type's mapped method and property declarations and references together, so a partial migration cannot disconnect a getter or setter from its backing property. Review subclasses passed through base types or PHPDoc types manually too: static receiver information cannot establish every runtime implementation.
 
+The forwarding-method and schema-hook migrations also inspect explicit PHPDoc unions for these override conflicts. This does not identify subclasses hidden behind a base type, a factory, or a container binding.
+
 ## Breaking changes
 
 <div x-data="{ packages: ['panels', 'schemas', 'forms', 'infolists', 'tables', 'actions', 'notifications', 'widgets'] }">
@@ -350,6 +352,44 @@ The upgrade script migrates statically identified PHP calls and unambiguous over
 Custom blur-binding `lazy()` overrides and first-class `lazy(...)` callables require manual migration; calls passing arguments to the old blur-binding method are also left unchanged. Custom frontend calls to `$getDeferredTabBadges()` must use `$getLazyLoadedTabBadges()` instead. Livewire's native `lazy` mount parameter is unchanged.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('actions') || packages.includes('forms') || packages.includes('schemas') || packages.includes('tables')">
+<span slot="summary">Schema definition and lifecycle APIs now use consistent names</span>
+
+The following deprecated methods have been removed:
+
+| Owning type | Removed method | Replacement |
+| --- | --- | --- |
+| `Filament\Actions\Action` | `fillForm()` | `fillSchema()` |
+| `Action` | `beforeFormFilled()`, `afterFormFilled()` | `beforeSchemaFilled()`, `afterSchemaFilled()` |
+| `Action` | `beforeFormValidated()`, `afterFormValidated()` | `beforeSchemaValidated()`, `afterSchemaValidated()` |
+| `Action` | `callBeforeFormFilled()`, `callAfterFormFilled()` | `callBeforeSchemaFilled()`, `callAfterSchemaFilled()` |
+| `Action` | `callBeforeFormValidated()`, `callAfterFormValidated()` | `callBeforeSchemaValidated()`, `callAfterSchemaValidated()` |
+| `Filament\Actions\CreateAction` | `preserveFormDataWhenCreatingAnother()` | `preserveDataWhenCreatingAnother()` |
+| `Filament\Actions\Imports\Importer`, `Filament\Actions\Exports\Exporter` | `getOptionsFormComponents()` | `getOptionsSchemaComponents()` |
+| `Filament\Forms\Components\Select` | `createOptionForm()`, `editOptionForm()`, `manageOptionForm()` | `createOptionSchema()`, `editOptionSchema()`, `manageOptionSchema()` |
+| `Select` | `getCreateOptionActionForm()`, `getEditOptionActionForm()` | `getCreateOptionActionSchema()`, `getEditOptionActionSchema()` |
+| `Select` | `hasCreateOptionActionFormSchema()`, `hasEditOptionActionFormSchema()` | `hasCreateOptionActionSchema()`, `hasEditOptionActionSchema()` |
+| `Filament\QueryBuilder\Constraints\Operators\Operator` and its subclasses | `getFormSchema()` | `getSchemaComponents()` |
+| `Filament\Schemas\Components\Section` | `formBefore()`, `isFormBefore()` | `contentBefore()`, `isContentBefore()` |
+| `Filament\Schemas\Components\Utilities\Get`, `Set` | `skipComponentsChildContainersWhileSearching()` | `skipComponentsChildSchemasWhileSearching()` |
+
+Arguments, nullable resets, lifecycle callback evaluation, and state traversal are unchanged. Existing callback injection names, including `$form` and `$schema`, remain available. The testing helper `fillForm()`, the resource page `CreateRecord::preserveFormDataWhenCreatingAnother()` hook, and Select's `fillEditOptionActionFormUsing()` are separate APIs and remain unchanged.
+
+The script migrates typed configuration calls, including named arguments, fluent/nullsafe chains, and first-class callables. Custom configuration overrides, trait adaptations, class-qualified configuration calls, dynamic names, array callbacks, unknown receiver types, and non-PHP references require manual review. Ordinary deprecated methods forwarded to their replacements: preserve custom dispatch when changing `parent::` calls or reconciling overrides of both names.
+
+For importer/exporter and query-builder operator hooks, move custom implementations to the replacement methods. Their old hooks are no longer called by Filament. The script migrates unambiguous old-only hook declarations and their local calls, including supported `parent::`, `self::`, `static::`, and explicit ancestor calls. It also combines legacy query-builder namespace migrations with the hook rename. Reconcile hooks with both names, trait-provided hooks, custom inheritance across files, and calls into custom hooks declared elsewhere manually. Do not create reciprocal forwarding methods or overwrite an existing canonical implementation.
+
+Rename protected properties in custom subclasses manually, preserving their types and values:
+
+- Action lifecycle properties `$beforeFormFilled`, `$afterFormFilled`, `$beforeFormValidated`, and `$afterFormValidated` now use `Schema` instead of `Form`.
+- `CreateAction::$preserveFormDataWhenCreatingAnotherUsing` becomes `$preserveDataWhenCreatingAnotherUsing`.
+- Select's `$createOptionActionForm` and `$editOptionActionForm` become `$createOptionActionSchema` and `$editOptionActionSchema`.
+- `Section::$isFormBefore` becomes `$isContentBefore`.
+- Get/Set's `$shouldSkipComponentsChildContainersWhileSearching` becomes `$shouldSkipComponentsChildSchemasWhileSearching`; Get's static `$skipComponentsChildContainersWhileSearching` becomes `$skipComponentsChildSchemasWhileSearching`.
+
+On `Schema::getComponent()`, `Schema::getComponentByStatePath()`, and `HasSchemas::getSchemaComponent()`, the named argument `skipComponentsChildContainersWhileSearching:` becomes `skipComponentsChildSchemasWhileSearching:`. Positional arguments are unchanged. The script updates known framework calls, including valid instance-context ancestor calls. Update custom lookup declarations, unpacked argument keys, callable invocations, and custom implementations of `HasSchemas` manually. Preserve cache-only descendant traversal for state-path lookups and recursion suppression when customizing these methods.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('actions')">
 <span slot="summary">Deprecated action method aliases have been removed</span>
 
@@ -551,7 +591,7 @@ The script renames calls on these owning types and their subclasses:
 
 For automatically migrated calls, parameter names, required arguments, nullable values, closure evaluation, and return values are unchanged. Named and unpacked arguments and first-class callables are preserved. Filter `form(schema: ...)` becomes `schema(schema: ...)`, unlike action `form(form: ...)`, which also renames the argument. `getSchemaComponents()` returns the configured components or the default filter field, not the `Schema` instance returned by `getSchema()`. Select filter `attribute()` still evaluates closures lazily and falls back to the filter name for `null`.
 
-Unrelated `form()`, `column()`, and `getColumn()` methods are unchanged, including resource/page forms, group columns, table column lookups, and query builder operators' `getFormSchema()` methods. These migrations also run on upgraded applications with the removed methods absent; canonical calls are left unchanged on repeated runs.
+Unrelated `form()`, `column()`, and `getColumn()` methods are unchanged, including resource/page forms, group columns, and table column lookups. Query builder operator hooks are covered by the schema-definition migration above. These migrations also run on upgraded applications with the removed methods absent; canonical calls are left unchanged on repeated runs.
 
 Manually migrate custom overrides (including inherited methods and methods supplied by traits), trait adaptations, class-qualified calls such as `parent::form()`, dynamic names, array callbacks, unknown or ambiguous receiver types, and non-PHP references. Calls on known overrides of either the alias or its replacement, or methods with adapted non-public visibility, are skipped. A declared union containing an overriding subclass also conservatively prevents related base-typed calls in that file from migrating, since type inference can normalize the union and hide the override. Direct consumers of `HasFileAttachments` outside the two editors, or filter `HasSchema` outside `BaseFilter`, also need manual migration. Review base-typed receivers that may hold custom subclasses not visible in their inferred types, including through PHPDoc, other files, factories, or container bindings.
 
@@ -652,12 +692,13 @@ Update your application tests to use the canonical assertions:
 | `assertActionHeld()` | `assertActionHalted()` |
 | `assertTableActionHeld()` | `assertTableActionHalted()` |
 | `assertTableBulkActionHeld()` | `assertTableBulkActionHalted()` |
+| `assertTableActionsExistInOrder()` | `assertTableRecordActionsExistInOrder()` |
 
 These helpers register closures as macros on `Livewire\Features\SupportTesting\Testable`; they are not methods on your Livewire component or PHPUnit test case. Include your `tests` directory in Rector's paths. The set migrates calls whose receiver resolves to the exact `Testable` type, including `Livewire::test()` and Pest's `Pest\Livewire\livewire()` when its plugin is installed and its return type can be resolved. Imported function aliases and stored, typed test receivers are supported; unrelated custom assertions are not renamed. Calls on the exact Filament testing mixin objects also migrate, retaining their closure-factory behavior.
 
-Arguments, defaults, named argument keys (`key:`, `form:`, `actions:`), unpacked arguments, and first-class callables retain their existing contracts. Form assertions still return the same test receiver. The halted assertions still check that the action is mounted; this migration does not change what halting means or assert that a particular halt event occurred.
+Arguments, defaults, named argument keys (`key:`, `form:`, `actions:`, `names:`), unpacked arguments, and first-class callables retain their existing contracts. Form assertions still return the same test receiver. The halted assertions still check that the action is mounted; this migration does not change what halting means or assert that a particular halt event occurred. The ordered table-action assertion still checks an ordered subset of record actions, including groups, not header or bulk action ordering.
 
-The rule follows chains through these eight assertions and their replacements, `fillForm()`, `mountAction()`, `callAction()`, `mountTableAction()`, `callTableAction()`, `mountTableBulkAction()`, `callTableBulkAction()`, Livewire's `assertDispatched()`, `assertNotDispatched()`, `assertDispatchedTo()`, and native Livewire test methods declared to return the same receiver, such as `set()`. Unknown macro chains are left unchanged: Livewire's magic `__call()` return annotation does not guarantee that an arbitrary macro returns the test receiver. For example, a getter can return a custom object with an unrelated assertion of the same name.
+The rule follows chains through these assertions and their replacements, `fillForm()`, `mountAction()`, `callAction()`, `mountTableAction()`, `callTableAction()`, `mountTableBulkAction()`, `callTableBulkAction()`, Livewire's `assertDispatched()`, `assertNotDispatched()`, `assertDispatchedTo()`, and native Livewire test methods declared to return the same receiver, such as `set()`. Unknown macro chains are left unchanged: Livewire's magic `__call()` return annotation does not guarantee that an arbitrary macro returns the test receiver. For example, a getter can return a custom object with an unrelated assertion of the same name.
 
 Manually review custom `Testable` or mixin subclasses (including inherited and trait-provided overrides of either name or magic dispatch), native unions involving these receivers, unresolved helper return types, class-qualified calls, dynamic method names, array callbacks, strings, and non-PHP references. Subclasses are deliberately not migrated, even when they currently inherit the default behavior. Files containing `macro()` or `mixin()` registrations or explicit magic-dispatch calls (`__call()`, `__callStatic()`, `macroCall()`) are also left unchanged. Audit registrations in other files and base-typed or PHPDoc-typed receivers that may hold custom subclasses before accepting automated changes; exclude affected files or `Filament\Upgrade\Rector\RenameDeprecatedTestingAssertionsRector` with Rector's `withSkip()` when necessary. Preserve custom closure binding, parameter names, visibility, return values, and dispatch rather than blindly renaming overrides or registrations. Macro names are case-sensitive, so differently cased calls are not treated as built-in Filament aliases.
 

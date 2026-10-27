@@ -356,7 +356,7 @@ class ActionsDemo extends Component implements HasActions, HasSchemas
                     ->default('In this article, we explore proven strategies for optimizing your Laravel applications, from query optimization to caching techniques.')
                     ->rows(3),
             ])
-            ->fillForm([
+            ->fillSchema([
                 'title' => '10 Tips for Better Laravel Performance',
                 'content' => 'In this article, we explore proven strategies for optimizing your Laravel applications, from query optimization to caching techniques.',
             ])

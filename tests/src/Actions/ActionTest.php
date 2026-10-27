@@ -363,18 +363,18 @@ it('returns fluent `$this` from `after()`', function (): void {
     expect($result)->toBe($action);
 });
 
-it('returns fluent `$this` from `beforeFormFilled()`', function (): void {
+it('returns fluent `$this` from `beforeSchemaFilled()`', function (): void {
     $action = Action::make('test');
 
-    $result = $action->beforeFormFilled(static fn () => null);
+    $result = $action->beforeSchemaFilled(static fn () => null);
 
     expect($result)->toBe($action);
 });
 
-it('returns fluent `$this` from `afterFormValidated()`', function (): void {
+it('returns fluent `$this` from `afterSchemaValidated()`', function (): void {
     $action = Action::make('test');
 
-    $result = $action->afterFormValidated(static fn () => null);
+    $result = $action->afterSchemaValidated(static fn () => null);
 
     expect($result)->toBe($action);
 });

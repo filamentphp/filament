@@ -865,13 +865,13 @@ describe('Livewire field labels', function (): void {
     });
 });
 
-it('can set `skipComponentsChildContainersWhileSearching()`', function (): void {
+it('can set `skipComponentsChildSchemasWhileSearching()`', function (): void {
     $component = (new Component)
         ->container(Schema::make(Livewire::make()));
 
     $get = new Get($component);
 
-    $result = $get->skipComponentsChildContainersWhileSearching(false);
+    $result = $get->skipComponentsChildSchemasWhileSearching(false);
 
     expect($result)->toBe($get);
 });

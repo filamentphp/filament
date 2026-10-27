@@ -27,7 +27,7 @@ class CreateAction extends Action
 
     protected ?Closure $modifyCreateAnotherActionUsing = null;
 
-    protected ?Closure $preserveFormDataWhenCreatingAnotherUsing = null;
+    protected ?Closure $preserveDataWhenCreatingAnotherUsing = null;
 
     protected ?Closure $getRelationshipUsing = null;
 
@@ -58,7 +58,7 @@ class CreateAction extends Action
 
         $this->action(function (array $arguments, Schema $schema): void {
             if ($arguments['another'] ?? false) {
-                $preserveRawState = $this->evaluate($this->preserveFormDataWhenCreatingAnotherUsing, [
+                $preserveRawState = $this->evaluate($this->preserveDataWhenCreatingAnotherUsing, [
                     'data' => $schema->getRawState(),
                 ]) ?? [];
             }
@@ -152,21 +152,11 @@ class CreateAction extends Action
      */
     public function preserveDataWhenCreatingAnother(array | Closure | null $fields): static
     {
-        $this->preserveFormDataWhenCreatingAnotherUsing = is_array($fields) ?
+        $this->preserveDataWhenCreatingAnotherUsing = is_array($fields) ?
             fn (array $data): array => Arr::only($data, $fields) :
             $fields;
 
         return $this;
-    }
-
-    /**
-     * @deprecated Use `preserveDataWhenCreatingAnother()` instead.
-     *
-     * @param  array<string>  $fields
-     */
-    public function preserveFormDataWhenCreatingAnother(array | Closure | null $fields): static
-    {
-        return $this->preserveDataWhenCreatingAnother($fields);
     }
 
     public function relationship(?Closure $relationship): static

@@ -90,7 +90,7 @@ class DisableEmailAuthenticationAction
             ->schema([
                 $codeInput,
             ])
-            ->beforeFormValidated(fn () => $rateLimitAuthenticationAttempt($codeInput->getStatePath()))
+            ->beforeSchemaValidated(fn () => $rateLimitAuthenticationAttempt($codeInput->getStatePath()))
             ->modalSubmitAction(fn (Action $action) => $action
                 ->label(__('filament-panels::auth/multi-factor/email/actions/disable.modal.actions.submit.label')))
             ->action(function (): void {
