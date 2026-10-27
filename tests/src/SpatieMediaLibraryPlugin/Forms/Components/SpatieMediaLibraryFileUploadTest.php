@@ -84,24 +84,24 @@ describe('conversion', function (): void {
 });
 
 describe('conversions disk', function (): void {
-    it('returns `null` for `getConversionsDisk()` by default', function (): void {
+    it('returns `null` for `getConversionsDiskName()` by default', function (): void {
         $component = SpatieMediaLibraryFileUpload::make('media');
 
-        expect($component->getConversionsDisk())->toBeNull();
+        expect($component->getConversionsDiskName())->toBeNull();
     });
 
     it('can set `conversionsDisk()`', function (): void {
         $component = SpatieMediaLibraryFileUpload::make('media')
             ->conversionsDisk('s3');
 
-        expect($component->getConversionsDisk())->toBe('s3');
+        expect($component->getConversionsDiskName())->toBe('s3');
     });
 
     it('can set `conversionsDisk()` with a `Closure`', function (): void {
         $component = SpatieMediaLibraryFileUpload::make('media')
             ->conversionsDisk(static fn (): string => 'local');
 
-        expect($component->getConversionsDisk())->toBe('local');
+        expect($component->getConversionsDiskName())->toBe('local');
     });
 
     it('can clear `conversionsDisk()` with `null`', function (): void {
@@ -109,7 +109,7 @@ describe('conversions disk', function (): void {
             ->conversionsDisk('s3')
             ->conversionsDisk(null);
 
-        expect($component->getConversionsDisk())->toBeNull();
+        expect($component->getConversionsDiskName())->toBeNull();
     });
 });
 

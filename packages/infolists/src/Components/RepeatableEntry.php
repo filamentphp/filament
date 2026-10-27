@@ -129,16 +129,6 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
     }
 
     /**
-     * @deprecated Use `getItemStateWithExistence()` instead.
-     *
-     * @return array{bool, mixed}
-     */
-    protected function getItemState(mixed $state, string | int $key): array
-    {
-        return $this->getItemStateWithExistence($state, $key);
-    }
-
-    /**
      * @return array{bool, mixed}
      */
     protected function getItemStateWithExistence(mixed $state, string | int $key): array

@@ -175,15 +175,15 @@ describe('messages', function (): void {
     });
 });
 
-it('returns `false` for `hasSearchResultsUsing()` by default', function (): void {
+it('returns `false` for `hasSearchResultsUsingCallback()` by default', function (): void {
     $provider = MentionProvider::make('@');
 
-    expect($provider->hasSearchResultsUsing())->toBeFalse();
+    expect($provider->hasSearchResultsUsingCallback())->toBeFalse();
 });
 
-it('returns `true` for `hasSearchResultsUsing()` when callback set', function (): void {
+it('returns `true` for `hasSearchResultsUsingCallback()` when callback set', function (): void {
     $provider = MentionProvider::make('@')
         ->getSearchResultsUsing(static fn (): array => []);
 
-    expect($provider->hasSearchResultsUsing())->toBeTrue();
+    expect($provider->hasSearchResultsUsingCallback())->toBeTrue();
 });

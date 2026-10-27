@@ -832,14 +832,6 @@ class Action extends ViewComponent implements Arrayable
         return $this->alpineClickHandler !== null;
     }
 
-    /**
-     * @deprecated Use `hasLivewireClickHandlerEnabledConfiguration()` instead.
-     */
-    public function hasCustomLivewireClickHandler(): bool
-    {
-        return $this->hasLivewireClickHandlerEnabledConfiguration();
-    }
-
     public function hasLivewireClickHandlerEnabledConfiguration(): bool
     {
         return $this->isLivewireClickHandlerEnabled !== null;

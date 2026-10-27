@@ -331,14 +331,6 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this->evaluate($this->conversion);
     }
 
-    /**
-     * @deprecated Use `getConversionsDiskName()` instead.
-     */
-    public function getConversionsDisk(): ?string
-    {
-        return $this->getConversionsDiskName();
-    }
-
     public function getConversionsDiskName(): ?string
     {
         return $this->evaluate($this->conversionsDisk);
