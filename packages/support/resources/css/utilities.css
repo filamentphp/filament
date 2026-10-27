@@ -466,15 +466,15 @@
         transparent
     );
     --prose-link-underline-color: var(--color-primary-400);
-    --prose-table-section-border-color: var(--color-gray-300);
-    --prose-table-row-border-color: var(--color-gray-200);
+    --prose-table-border-color: var(--color-gray-300);
+    --prose-tr-border-color: var(--color-gray-200);
     --prose-hr-border-color: color-mix(
         in oklab,
         var(--color-gray-950) 5%,
         transparent
     );
     --prose-blockquote-border-color: var(--color-gray-300);
-    --prose-pre-background-color: var(--color-gray-100);
+    --prose-pre-bg: var(--color-gray-100);
 
     @variant dark {
         --prose-color: var(--color-gray-300);
@@ -488,15 +488,15 @@
             transparent
         );
         --prose-link-underline-color: var(--color-sky-400);
-        --prose-table-section-border-color: var(--color-gray-600);
-        --prose-table-row-border-color: var(--color-gray-700);
+        --prose-table-border-color: var(--color-gray-600);
+        --prose-tr-border-color: var(--color-gray-700);
         --prose-hr-border-color: color-mix(
             in oklab,
             var(--color-white) 10%,
             transparent
         );
         --prose-blockquote-border-color: var(--color-gray-600);
-        --prose-pre-background-color: color-mix(
+        --prose-pre-bg: color-mix(
             in oklab,
             var(--color-gray-900) 40%,
             transparent
@@ -670,7 +670,7 @@
         padding-inline-end: calc(var(--spacing) * 4);
         padding-bottom: calc(var(--spacing) * 3);
         padding-inline-start: calc(var(--spacing) * 4);
-        background-color: var(--prose-pre-background-color);
+        background-color: var(--prose-pre-bg);
     }
 
     pre code * + *:where(:not(.fi-not-prose, .fi-not-prose *)) {
@@ -700,7 +700,7 @@
 
     thead:where(:not(.fi-not-prose, .fi-not-prose *)) {
         border-bottom-width: 1px;
-        border-bottom-color: var(--prose-table-section-border-color);
+        border-bottom-color: var(--prose-table-border-color);
     }
 
     thead th:where(:not(.fi-not-prose, .fi-not-prose *)) {
@@ -722,7 +722,7 @@
 
     tbody tr:where(:not(.fi-not-prose, .fi-not-prose *)) {
         border-bottom-width: 1px;
-        border-bottom-color: var(--prose-table-row-border-color);
+        border-bottom-color: var(--prose-tr-border-color);
     }
 
     tbody tr:last-child:where(:not(.fi-not-prose, .fi-not-prose *)) {
@@ -735,7 +735,7 @@
 
     tfoot:where(:not(.fi-not-prose, .fi-not-prose *)) {
         border-top-width: 1px;
-        border-top-color: var(--prose-table-section-border-color);
+        border-top-color: var(--prose-table-border-color);
     }
 
     tfoot td:where(:not(.fi-not-prose, .fi-not-prose *)) {

@@ -17,7 +17,7 @@
         &::after {
             @apply absolute inset-y-4 start-3 aspect-square;
             animation: var(--loading-skeleton-animation);
-            background-color: var(--loading-skeleton-background-color);
+            background-color: var(--loading-skeleton-bg);
             border-radius: var(--loading-skeleton-border-radius);
             content: '';
         }

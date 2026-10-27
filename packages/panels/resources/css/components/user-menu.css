@@ -39,7 +39,7 @@
         & .fi-dropdown-panel {
             max-width: max(
                 14rem,
-                calc(100% - var(--sidebar-footer-horizontal-margin) * 2)
+                calc(100% - var(--sidebar-footer-margin-x) * 2)
             ) !important;
         }
     }
