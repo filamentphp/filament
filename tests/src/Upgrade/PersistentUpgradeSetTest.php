@@ -17,6 +17,7 @@ class PersistentUpgradeSetTest extends TestCase
             mkdir($directory . '/' . $sourceDirectory);
         }
 
+        $originalFiles = [];
         $expectedFiles = [];
 
         try {
@@ -30,6 +31,7 @@ class PersistentUpgradeSetTest extends TestCase
                 };
                 $path = $directory . '/' . $sourceDirectory . '/' . basename($fixture, '.inc');
                 file_put_contents($path, $parts[0]);
+                $originalFiles[$path] = $parts[0];
                 $expectedFiles[$path] = trim($parts[1] ?? $parts[0]);
             }
 
@@ -71,14 +73,44 @@ class PersistentUpgradeSetTest extends TestCase
                 foreach ($expectedFiles as $path => $expected) {
                     $this->assertSame($expected, trim(file_get_contents($path)), "Pass {$pass}: " . basename($path));
                 }
+
+                $runtime = new Process([PHP_BINARY, '-r', <<<'PHP'
+                    require $argv[1] . '/vendor/autoload.php';
+                    require $argv[2] . '/app/deprecated_number_helpers.php';
+                    require $argv[2] . '/app/deprecated_exposed_attribute.php';
+                    $results = \Illuminate\Support\Number::withLocale('en', fn () =>
+                        \Illuminate\Support\Number::withCurrency('EUR', fn () =>
+                            \Filament\Tests\Upgrade\Fixtures\NumberHelpers\results()));
+                    foreach (['increment', 'inherited', 'current'] as $method) {
+                        $attribute = (new ReflectionMethod(\Filament\Tests\Upgrade\Fixtures\ExposedAttribute\Counter::class, $method))->getAttributes()[0]->newInstance();
+                        if (! $attribute instanceof \Filament\Support\Components\Attributes\Exposed) {
+                            throw new RuntimeException('Exposure was lost.');
+                        }
+                    }
+                    echo json_encode([
+                        array_slice($results, 0, 9),
+                        \Illuminate\Support\Number::withLocale('de', fn () => \Filament\Tests\Upgrade\Fixtures\NumberHelpers\results()[0]),
+                        function_exists('Filament\\Support\\format_money') || function_exists('Filament\\Support\\format_number') ||
+                            class_exists('Filament\\Support\\Components\\Attributes\\ExposedLivewireMethod') ||
+                            interface_exists('Filament\\Schemas\\Components\\Contracts\\CanConcealComponents'),
+                    ]);
+                    PHP, $root, $directory], $root);
+                $runtime->mustRun();
+                $this->assertSame([
+                    ['1,234.5', '-1,234.5', '42', '$1,234.50', '-$42.50', '£125.00', '-€1.25', '$987.65', '€12.50'],
+                    '1.234,5',
+                    false,
+                ], json_decode($runtime->getOutput(), associative: true), "Runtime pass {$pass}");
             }
 
-            // Simulate old examples being copied into an already-upgraded app.
+            // Reintroduce every migratable fixture, not just a subset of rules.
             $reintroducedFiles = [];
 
-            foreach (['convenience_factories', 'deprecated_action_methods', 'deprecated_lazy_loading_calls', 'deprecated_form_filter_group_methods', 'deprecated_testing_assertions', 'deprecated_testing_assertions_pest'] as $fixture) {
-                $path = $directory . '/app/' . $fixture . '.php';
-                [$input] = explode("-----\n", file_get_contents(__DIR__ . '/Fixtures/' . $fixture . '.php.inc'), 2);
+            foreach ($originalFiles as $path => $input) {
+                if (trim($input) === $expectedFiles[$path]) {
+                    continue;
+                }
+
                 file_put_contents($path, $input);
                 $reintroducedFiles[$path] = $input;
             }

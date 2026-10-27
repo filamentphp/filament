@@ -759,6 +759,50 @@ References through custom subclasses, `self`, `static`, dynamic class names, or 
 </Disclosure>
 
 <Disclosure open>
+<span slot="summary">The deprecated method exposure attribute has been removed</span>
+
+Use `Filament\Support\Components\Attributes\Exposed` instead of `ExposedLivewireMethod` on methods exposed to Livewire. The script migrates method attributes, including imported aliases and fully qualified names, without needing the removed class installed. Public instance methods remain exposed; unannotated methods remain inaccessible through schema/column method calls.
+
+The script does not globally rename types. Review custom subclasses, parameter, property and return types, unions, PHPDoc, constructors, `instanceof`, `::class`, reflection lookups, strings, bindings, and non-PHP references manually. Replacing the legacy type with `Exposed` broadens it to attributes that were not instances of the legacy subclass. Migrate related producers and consumers together, retaining an application-owned attribute subclass when that distinction matters. Files containing non-attribute PHP name references or fully qualified class-string literals for the legacy class are left unchanged for coordinated migration; cross-file consumers still require review. Methods using both attribute names are also left unchanged: replacing both with `Exposed` would create a duplicate non-repeatable attribute. Remove unused legacy imports afterwards.
+</Disclosure>
+
+<Disclosure open>
+<span slot="summary">Deprecated number formatting helpers have been removed</span>
+
+Replace `Filament\Support\format_number()` with `Illuminate\Support\Number::format()` and `Filament\Support\format_money()` with `Number::currency()`. The money helper required a currency and divided the amount only when its integer `$divideBy` argument was nonzero; the default `0` meant **no division**, not division by zero. For example:
+
+```php
+use Illuminate\Support\Number;
+
+(string) Number::format(1234.5);
+(string) Number::currency(123450 / 100, 'USD');
+(string) Number::currency(-42.5, 'USD'); // No division.
+```
+
+The script migrates only direct calls whose number is an integer or float literal (optionally signed), currency is a string literal, and divisor is an optionally signed integer literal or omitted. It supports named arguments and imported function aliases, preserves the current number locale/default currency, and retains the helpers' string result with an explicit cast. Laravel's methods can return `false`, which the old helpers coerced to a string even for strict callers. `format_number(number: ...)` keeps `number:` semantics; the money helper's `money:` and `currency:` correspond to `Number::currency(number: ..., in: ...)`, not `locale:` or `precision:`.
+
+Variables, expressions, side-effecting arguments, unpacking, extra/unknown/missing arguments, first-class callables, strings, dynamic calls, and non-PHP references require manual migration. The old signatures were `format_number(float | int $number): string` and `format_money(float | int $money, string $currency, int $divideBy = 0): string`. Preserve their argument validation and coercion at the original call boundary, including the caller's `strict_types` mode: Laravel accepts extra formatting arguments that the helpers ignored, and computing a quotient can accept values the old helper rejected. In weak callers, normalize a valid divisor to an integer before deciding whether to divide; a fractional divisor previously coerced to zero must not become a nonzero division. Evaluate every original argument once, in its original order, before division or formatting, including expressions in ignored extra arguments. Do not duplicate an expression in a ternary or move the division ahead of an argument's side effects. Review callable parameter names/defaults and unpacked argument keys yourself. Do not add a replacement compatibility helper merely to rename the removed one.
+
+Applications that supplied their own implementations of these conditionally defined functions must review those implementations rather than assuming Filament's contract. Files declaring either legacy function are left unchanged; custom implementations in other files require manual review and may need `withSkip()` for `ReplaceDeprecatedNumberHelpersRector`. Remove unused function imports after migration. Existing `Number::format()` / `currency()` calls and unrelated same-named functions are unchanged.
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('schemas')">
+<span slot="summary">Obsolete concealment identification APIs have been removed</span>
+
+`Filament\Schemas\Components\Contracts\CanConcealComponents` and `Filament\Schemas\Components\Component::isConcealed()` have been removed. They no longer controlled validation: the marker interface was empty and the base method always returned `false`. Native validation attributes remain on fields in concealed containers. Containers still reveal invalid controls, and client-side visibility conditions still disable their hidden fieldsets. Do not remove visibility, collapsing, tab switching, or validation configuration.
+
+There is no automated migration for these extension contracts. Remove obsolete `implements CanConcealComponents` entries and imports after checking type consumers; review interfaces extending it, parameter/property/return types, unions, PHPDoc, `instanceof`, reflection, strings, and dynamic references together. Preserve an application-owned contract if your application still needs its own container identification. Review custom `isConcealed()` overrides, inherited and trait implementations, and `parent::isConcealed()` calls rather than deleting application behavior. Migrate method calls, nullsafe calls, and callables manually. Do not blindly replace a call with `false`: the receiver expression or arguments may have side effects, and custom dispatch may return something else. Replace only an established call to the old base implementation while preserving evaluation and any surrounding application logic.
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('widgets')">
+<span slot="summary">Widgets no longer alias `filters` to `pageFilters`</span>
+
+In widgets using `Filament\Widgets\Concerns\InteractsWithPageFilters`, read `$this->pageFilters` instead of the legacy magic `$this->filters`. The trait's nullable reactive `$pageFilters` property is unchanged. Dashboard pages still own `$filters` and pass it to widgets as `pageFilters`; do not rename the page property or unrelated table/widget filter state.
+
+The removed fallback only redirected reads of an undeclared `filters` property. It did not declare or synchronize a second property, redirect writes, or override a real `filters` declaration. The trait retains its `#[Unexposed]` forwarding `__get()` so custom overrides still inherit protection from client method dispatch. Migrate reads only after reviewing the actual trait consumer, its parents, descendants, other traits, custom declarations, `__get()` overrides/adaptations, and inherited methods. Changing a parent method's read could affect a child that declares its own `filters`. Review Blade references, dynamic property names, property checks, callbacks, and custom property injection manually; do not turn formerly unsupported writes into writes to a reactive property. No automatic property rewrite is registered because receiver types alone cannot establish these inheritance and magic-property contracts. Test initial filter hydration and subsequent reactive updates.
+</Disclosure>
+
+<Disclosure open>
 <span slot="summary">The deprecated `IconSize::ExtraExtraLarge` alias has been removed</span>
 
 The script replaces `Filament\Support\Enums\IconSize::ExtraExtraLarge` with `IconSize::TwoExtraLarge`. Its value remains `2xl`. Update string, dynamic, and non-PHP references manually.

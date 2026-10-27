@@ -5,7 +5,6 @@ namespace Filament\Tests\Schemas\Components;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\Exposed;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Components\ComponentManager;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Concerns\HasColumns;
@@ -36,18 +35,18 @@ it('discovers only public instance methods with `Exposed` independently of Blade
     expect($other->getExposedMethodNames())->toEqualCanonicalizing(['inherited', 'overridden']);
 })->with([false, true]);
 
-it('discovers and calls both attribute names while rejecting unannotated schema methods', function (): void {
+it('discovers and calls annotated methods while rejecting unannotated schema methods', function (): void {
     $component = new class extends Component
     {
-        use ExposedCompatibilityMethods;
+        use ExposedTestMethods;
     };
     $livewire = Mockery::mock(Livewire::class)->makePartial();
     $livewire->shouldReceive('getSchemaComponent')->with('counter')->andReturn($component);
     $component->container(Schema::make($livewire));
 
-    expect($component->getExposedMethodNames())->toEqualCanonicalizing(['current', 'legacy']);
+    expect($component->getExposedMethodNames())->toEqualCanonicalizing(['current', 'additional']);
 
-    foreach (['current', 'legacy'] as $method) {
+    foreach (['current', 'additional'] as $method) {
         expect($livewire->callSchemaComponentMethod('counter', $method, ['value' => 7]))->toBe(14);
         expect((new ReflectionMethod($component, $method))->getAttributes()[0]->newInstance())->toBeInstanceOf(Exposed::class);
     }
@@ -55,10 +54,10 @@ it('discovers and calls both attribute names while rejecting unannotated schema 
     expect($livewire->callSchemaComponentMethod('counter', 'unannotated', ['value' => 7]))->toBeNull();
 });
 
-it('calls both attribute names while rejecting unannotated table column methods', function (): void {
+it('calls annotated methods while rejecting unannotated table column methods', function (): void {
     $column = new class('counter') extends Column
     {
-        use ExposedCompatibilityMethods;
+        use ExposedTestMethods;
     };
     $table = Mockery::mock(Table::class);
     $table->shouldReceive('getColumn')->with('counter')->andReturn($column);
@@ -66,7 +65,7 @@ it('calls both attribute names while rejecting unannotated table column methods'
     $livewire->shouldReceive('getTable')->andReturn($table);
     $livewire->shouldReceive('getTableRecord')->with('42')->andReturn(new User);
 
-    foreach (['current', 'legacy'] as $method) {
+    foreach (['current', 'additional'] as $method) {
         expect($livewire->callTableColumnMethod('counter', '42', $method, ['value' => 7]))->toBe(14);
     }
 
@@ -129,7 +128,7 @@ it('scopes exposed methods and embedded `$get()` and `$set()` in lists, tables a
     $page->inDarkMode()->assertNoAccessibilityIssues();
 });
 
-trait ExposedCompatibilityMethods
+trait ExposedTestMethods
 {
     #[Exposed]
     public function current(int $value): int
@@ -137,8 +136,8 @@ trait ExposedCompatibilityMethods
         return $value * 2;
     }
 
-    #[ExposedLivewireMethod]
-    public function legacy(int $value): int
+    #[Exposed]
+    public function additional(int $value): int
     {
         return $value * 2;
     }

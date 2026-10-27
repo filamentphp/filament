@@ -22,7 +22,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
 use Illuminate\Support\HtmlString;
-use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;
@@ -34,30 +33,6 @@ if (! function_exists('Filament\Support\encode_key_segments')) {
     function encode_key_segments(string ...$segments): string
     {
         return implode('', array_map(static fn (string $segment): string => strlen($segment) . ':' . $segment, $segments));
-    }
-}
-
-if (! function_exists('Filament\Support\format_money')) {
-    /**
-     * @deprecated Use `Illuminate\Support\Number::currency()` instead.
-     */
-    function format_money(float | int $money, string $currency, int $divideBy = 0): string
-    {
-        if ($divideBy) {
-            $money /= $divideBy;
-        }
-
-        return Number::currency($money, $currency);
-    }
-}
-
-if (! function_exists('Filament\Support\format_number')) {
-    /**
-     * @deprecated Use `Illuminate\Support\Number::format()` instead.
-     */
-    function format_number(float | int $number): string
-    {
-        return Number::format($number);
     }
 }
 
