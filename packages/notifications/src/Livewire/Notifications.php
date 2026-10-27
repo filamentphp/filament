@@ -72,7 +72,6 @@ class Notifications extends Component
      * @deprecated Use `pullNotifications()` instead.
      */
     #[Exposed]
-    #[On('notificationsSent')]
     public function pullNotificationsFromSession(array $batches = []): void
     {
         $this->pullNotifications($batches);
@@ -80,6 +79,7 @@ class Notifications extends Component
 
     /** @param array<string> $batches */
     #[Exposed]
+    #[On('notificationsSent')]
     public function pullNotifications(array $batches = []): void
     {
         validator(['batches' => $batches], [
