@@ -32,7 +32,15 @@ trait HasDarkMode
         return (bool) $this->evaluate($this->hasDarkMode);
     }
 
+    /**
+     * @deprecated Use `isDarkModeForced()` instead.
+     */
     public function hasDarkModeForced(): bool
+    {
+        return $this->isDarkModeForced();
+    }
+
+    public function isDarkModeForced(): bool
     {
         return (bool) $this->evaluate($this->hasDarkModeForced);
     }

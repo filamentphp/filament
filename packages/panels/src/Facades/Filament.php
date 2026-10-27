@@ -38,7 +38,7 @@ use Livewire\Component;
  * @method static StatefulGuard auth()
  * @method static void bootCurrentPanel()
  * @method static array<NavigationGroup> buildNavigation()
- * @method static void currentDomain(?string $domain)
+ * @method static void currentDomain(?string $domain) Deprecated. Use `setCurrentDomain()` instead.
  * @method static string getAuthGuard()
  * @method static string | null getAuthPasswordBroker()
  * @method static string | Htmlable getBrandName()
@@ -135,7 +135,7 @@ use Livewire\Component;
  * @method static bool hasBreadcrumbs()
  * @method static bool hasCollapsibleNavigationGroups()
  * @method static bool hasDarkMode()
- * @method static bool hasDarkModeForced()
+ * @method static bool hasDarkModeForced() Deprecated. Use `isDarkModeForced()` instead.
  * @method static bool hasDatabaseNotifications()
  * @method static bool hasLazyLoadedDatabaseNotifications()
  * @method static bool hasEmailChangeVerification()
@@ -159,6 +159,7 @@ use Livewire\Component;
  * @method static bool hasTopNavigation()
  * @method static bool hasUnsavedChangesAlerts()
  * @method static bool isAuthorizationStrict()
+ * @method static bool isDarkModeForced()
  * @method static bool isProfilePageSimple()
  * @method static bool isServing()
  * @method static bool isSidebarCollapsibleOnDesktop()
@@ -166,6 +167,7 @@ use Livewire\Component;
  * @method static bool hasTenantSwitcher()
  * @method static ?bool isTenantMenuSearchable()
  * @method static void serving(Closure $callback)
+ * @method static void setCurrentDomain(?string $domain)
  * @method static void setCurrentPanel(Panel | string | null $panel = null)
  * @method static void setServingStatus(bool $condition = true)
  * @method static void setTenant(Model | null $tenant, bool $isQuiet = false)
