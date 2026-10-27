@@ -97,7 +97,7 @@ function schedule() {
         flight = attempt
 
         try {
-            host.$wire.pullNotificationsFromSession(eligible).then(
+            host.$wire.pullNotifications(eligible).then(
                 () => settle(attempt),
                 () => settle(attempt),
             )

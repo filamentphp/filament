@@ -87,8 +87,17 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
         $this->cachedData = null;
     }
 
+    /**
+     * @deprecated Use `resetFilters()` instead.
+     */
     #[Exposed]
     public function resetFiltersForm(): void
+    {
+        $this->resetFilters();
+    }
+
+    #[Exposed]
+    public function resetFilters(): void
     {
         $this->getFiltersSchema()->fill();
 
@@ -121,7 +130,7 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
     {
         $action = Action::make('resetFilters')
             ->label(__('filament-widgets::chart.filters.actions.reset.label'))
-            ->action('resetFiltersForm')
+            ->action('resetFilters')
             ->color('danger')
             ->button();
 

@@ -213,7 +213,7 @@ describe('delivery', function (): void {
         livewire(Notifications::class)->dispatch('notificationsSent')->assertCount('notifications', 0);
     });
 
-    it('delivers a Livewire batch only to its response owner while retaining unowned catch-up', function (string $method, array $parameters, string $title): void {
+    it('delivers a Livewire batch only to its response owner while retaining unowned catch-up', function (string $method, array $parameters, string $title, string $pullMethod): void {
         $this->actingAs(User::factory()->create());
         $producer = livewire(NotificationBrowserTest::class);
 
@@ -235,7 +235,7 @@ describe('delivery', function (): void {
             ]],
         ], ['X-Livewire' => 'true'])->assertOk()->assertJsonMissingPath('filamentNotifications');
 
-        livewire(Notifications::class)->call('pullNotificationsFromSession')->assertCount('notifications', 0);
+        livewire(Notifications::class)->call($pullMethod)->assertCount('notifications', 0);
         expect($batch)->toMatch('/\A[a-f0-9]{40}\z/');
 
         Route::middleware('web')->get('/notification-unowned-catch-up', static function () {
@@ -245,18 +245,18 @@ describe('delivery', function (): void {
         });
         $this->get('/notification-unowned-catch-up')->assertNoContent();
 
-        livewire(Notifications::class)->call('pullNotificationsFromSession')
+        livewire(Notifications::class)->call($pullMethod)
             ->assertCount('notifications', 1)->assertSee('Unowned catch-up')->assertDontSee($title);
 
-        livewire(Notifications::class)->call('pullNotificationsFromSession', [$batch])
+        livewire(Notifications::class)->call($pullMethod, [$batch])
             ->assertCount('notifications', 1)->assertSee($title)->assertDontSee('Unowned catch-up');
 
-        livewire(Notifications::class)->call('pullNotificationsFromSession', [$batch])->assertCount('notifications', 0);
+        livewire(Notifications::class)->call($pullMethod, [$batch])->assertCount('notifications', 0);
     })->with([
         'action' => ['sendPersistentNotification', [], 'Persistent notification'],
         'full redirect' => ['sendRedirectNotification', [false], 'Redirect notification'],
         'SPA redirect' => ['sendRedirectNotification', [true], 'Redirect notification'],
-    ]);
+    ])->with(['pullNotifications', 'pullNotificationsFromSession']);
 });
 
 describe('session and authentication changes', function (): void {

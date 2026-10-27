@@ -389,7 +389,7 @@ describe('visibility and properties', function (): void {
 
     it('can state whether table actions exist in order', function (): void {
         livewire(PostsTable::class)
-            ->assertTableActionsExistInOrder(['edit', 'delete'])
+            ->assertTableRecordActionsExistInOrder(['edit', 'delete'])
             ->assertTableHeaderActionsExistInOrder(['exists', 'existsInOrder'])
             ->assertTableEmptyStateActionsExistInOrder(['emptyExists', 'emptyExistsInOrder']);
     });
