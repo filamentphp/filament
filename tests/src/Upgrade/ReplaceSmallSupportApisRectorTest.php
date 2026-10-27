@@ -20,6 +20,7 @@ class ReplaceSmallSupportApisRectorTest extends AbstractRectorTestCase
             'deprecated_number_helpers_manual',
             'deprecated_number_helpers_overrides',
             'deprecated_number_helpers_strict',
+            'number_helper_variables',
             'deprecated_exposed_attribute',
             'deprecated_exposed_attribute_reflection',
             'deprecated_exposed_attribute_types',

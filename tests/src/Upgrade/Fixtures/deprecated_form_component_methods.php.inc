@@ -210,9 +210,9 @@ function configure(BaseFileUpload $base, FileUpload $upload, Builder $builder, R
     $callback = [$upload, 'enableOpen'];
     FileUpload::enableOpen();
     $upload->disablePreview()->imageCropAspectRatio('16:9');
-    $builder->disableItemCreation()->disableItemDeletion()->disableItemMovement()->inset();
-    $repeater->disableItemCreation()->disableItemDeletion()->disableItemMovement()->inset();
-    $keyValue->disableAddingRows()->disableDeletingRows()->disableEditingKeys()->disableEditingValues();
+    $builder->addable(false)->deletable(false)->reorderable(false);
+    $repeater->addable(false)->deletable(false)->reorderable(false);
+    $keyValue->addable(false)->deletable(false)->editableKeys(false)->editableValues(false);
 }
 
 class CustomUpload extends FileUpload

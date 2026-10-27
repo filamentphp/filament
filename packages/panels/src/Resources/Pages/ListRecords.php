@@ -135,7 +135,6 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                 ),
             )
             ->modifyQueryUsing($this->modifyQueryWithActiveTab(...))
-            ->when($this->getModelLabel(), fn (Table $table, string $modelLabel): Table => $table->modelLabel($modelLabel))
             ->when($this->getPluralModelLabel(), fn (Table $table, string $pluralModelLabel): Table => $table->pluralModelLabel($pluralModelLabel))
             ->recordAction(function (Model $record, Table $table): ?string {
                 foreach (['view', 'edit'] as $action) {

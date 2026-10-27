@@ -41,6 +41,7 @@ use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Navigation\NavigationItem;
 use Filament\Notifications\Livewire\Notifications;
+use Filament\Pages\BasePage;
 use Filament\Pages\Dashboard;
 use Filament\Pages\Dashboard\Concerns\HasFilters;
 use Filament\Panel;
@@ -65,6 +66,7 @@ use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
+use Filament\Upgrade\ConfigurationClassAnalyzer;
 use Filament\Upgrade\Support\UnnormalizedUnionTypeResolver;
 use Filament\Widgets\ChartWidget;
 use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
@@ -76,12 +78,14 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
+use PhpParser\NodeFinder;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StaticType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use Rector\PHPStan\ScopeFetcher;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -130,6 +134,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'indicator' => 'badge',
             'indicatorColor' => 'badgeColor',
             'hasCustomLivewireClickHandler' => 'hasLivewireClickHandlerEnabledConfiguration',
+            'getJavaScriptClickHandler' => 'getJsClickHandler',
         ],
         ActionGroup::class => [
             'disableLabel' => 'hiddenLabel',
@@ -166,6 +171,10 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         ],
         Cluster::class => [
             'unshiftClusterBreadcrumbs' => 'prependClusterBreadcrumbs',
+        ],
+        BasePage::class => [
+            'alignFormActionsLeft' => 'alignFormActionsStart',
+            'alignFormActionsRight' => 'alignFormActionsEnd',
         ],
         NavigationItem::class => [
             'isActiveWhen' => 'activeWhen',
@@ -416,7 +425,10 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         'indicator' => ['indicator', 'badge'],
     ];
 
-    public function __construct(private UnnormalizedUnionTypeResolver $unnormalizedUnionTypeResolver) {}
+    public function __construct(
+        private UnnormalizedUnionTypeResolver $unnormalizedUnionTypeResolver,
+        private ConfigurationClassAnalyzer $configurationClassAnalyzer,
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -454,14 +466,33 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             }
 
             if ($node instanceof StaticCall) {
-                // Review dynamic and relative class dispatch manually.
-                if ((! $node->class instanceof Name) || $this->isNames($node->class, ['self', 'static', 'parent'])) {
+                // Review relative dispatch manually when a parent wrapper can
+                // dispatch back into a canonical subclass override.
+                if (! $node->class instanceof Name) {
                     continue;
                 }
 
-                if (($componentClass === FilamentManager::class) && $this->isName($node->class, Filament::class)) {
+                if ($this->isNames($node->class, ['self', 'static', 'parent'])) {
+                    $context = ScopeFetcher::fetch($node)->getClassReflection();
+
+                    if (($componentClass !== BasePage::class) || (! $context) || (! $this->canRenameMethods(new ObjectType($context->getName()), $componentClass, $methodName, $methodRenames[$methodName]))) {
+                        continue;
+                    }
+
+                    if ($this->configurationClassAnalyzer->hasDescendants($context->getName()) || (new NodeFinder)->findFirst($this->getFile()->getNewStmts(), fn (Node $candidate): bool => $candidate instanceof Node\Stmt\Class_ && $candidate->extends && $this->isName($candidate->extends, $context->getName()))) {
+                        continue;
+                    }
+
+                    $receiver = $this->isName($node->class, 'parent') ? $context->getParentClass() : $context;
+
+                    if (! $receiver) {
+                        continue;
+                    }
+
+                    $receiverType = new ObjectType($receiver->getName());
+                } elseif (($componentClass === FilamentManager::class) && $this->isName($node->class, Filament::class)) {
                     $receiverType = new ObjectType(FilamentManager::class);
-                } elseif ($componentClass === Cluster::class) {
+                } elseif (in_array($componentClass, [Cluster::class, BasePage::class], true)) {
                     $receiverType = $this->getType($node->class);
                 } else {
                     continue;
@@ -478,7 +509,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             }
 
             // These protected helpers are only migrated through `$this`, not external receivers.
-            if ((in_array($componentClass, [RichContentCustomBlockClassGenerator::class, Dashboard::class, RepeatableEntry::class], strict: true) || $isImageEditorScaleAlias) && (($node instanceof StaticCall) || (! $node->var instanceof Variable) || ($node->var->name !== 'this'))) {
+            if ((in_array($componentClass, [RichContentCustomBlockClassGenerator::class, Dashboard::class, RepeatableEntry::class], strict: true) || $isImageEditorScaleAlias || ($methodName === 'getjavascriptclickhandler')) && (($node instanceof StaticCall) || (! $node->var instanceof Variable) || ($node->var->name !== 'this'))) {
                 return null;
             }
 
@@ -572,7 +603,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
 
                 $methodReflection = $classReflection->getNativeMethod($candidateMethodName);
 
-                if ($requiresPublicReplacement && (! $methodReflection->isPublic()) && (! (in_array($componentClass, [RichContentCustomBlockClassGenerator::class, Dashboard::class, RepeatableEntry::class], strict: true) && (! $methodReflection->isPrivate())))) {
+                if ($requiresPublicReplacement && (! $methodReflection->isPublic()) && (! ((in_array($componentClass, [RichContentCustomBlockClassGenerator::class, Dashboard::class, RepeatableEntry::class], strict: true) || ($methodName === 'getjavascriptclickhandler')) && (! $methodReflection->isPrivate())))) {
                     return false;
                 }
 
@@ -599,6 +630,10 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                 };
 
                 if ($methodReflection->getDeclaringClass()->getName() === $declaringClass) {
+                    continue;
+                }
+
+                if (($componentClass === Action::class) && ($candidateMethodName === 'infolist') && method_exists($methodReflection, 'getDeclaringTrait') && ($methodReflection->getDeclaringTrait()?->getName() === 'Filament\\Actions\\Concerns\\HasInfolist')) {
                     continue;
                 }
 

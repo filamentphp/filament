@@ -57,16 +57,6 @@ trait InteractsWithHeaderActions
      */
     protected function getHeaderActions(): array
     {
-        return $this->getActions();
-    }
-
-    /**
-     * @deprecated Register header actions within the `getHeaderActions()` method instead.
-     *
-     * @return array<Action | ActionGroup>
-     */
-    protected function getActions(): array
-    {
         return [];
     }
 

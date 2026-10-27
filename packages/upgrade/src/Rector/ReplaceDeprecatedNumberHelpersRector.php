@@ -11,6 +11,7 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\UnaryMinus;
 use PhpParser\Node\Expr\UnaryPlus;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\Float_;
@@ -18,6 +19,9 @@ use PhpParser\Node\Scalar\Int_;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\NodeFinder;
+use PHPStan\Type\FloatType;
+use PHPStan\Type\IntegerType;
+use PHPStan\Type\TypeCombinator;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -26,7 +30,7 @@ class ReplaceDeprecatedNumberHelpersRector extends AbstractRector
 {
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Replace literal-only number helper calls, preserving division and string results', [
+        return new RuleDefinition('Replace number helper calls with literal or native numeric variable inputs', [
             new CodeSample(
                 "\\Filament\\Support\\format_money(123450, 'USD', 100);",
                 "(string) \\Illuminate\\Support\\Number::currency(123450 / 100, 'USD');",
@@ -79,9 +83,9 @@ class ReplaceDeprecatedNumberHelpersRector extends AbstractRector
 
         $number = $arguments[$parameters[0]] ?? null;
 
-        // Literal-only inputs avoid changing weak/strict argument coercion,
-        // argument evaluation order, side effects, or ignored extra arguments.
-        if ((! $number instanceof Expr) || (! $this->isNumericLiteral($number))) {
+        // Native numeric variables need no coercion, and these reads have no
+        // side effects when named arguments are placed in a different order.
+        if ((! $number instanceof Expr) || ((! $this->isNumericLiteral($number)) && ((! $number instanceof Variable) || (! is_string($number->name)) || (! TypeCombinator::union(new IntegerType, new FloatType)->isSuperTypeOf($this->getNativeType($number))->yes())))) {
             return null;
         }
 
@@ -91,7 +95,7 @@ class ReplaceDeprecatedNumberHelpersRector extends AbstractRector
             $currency = $arguments['currency'] ?? null;
             $divisor = $arguments['divideBy'] ?? new Int_(0);
 
-            if ((! $currency instanceof String_) || (! $this->isNumericLiteral($divisor, integerOnly: true))) {
+            if (((! $currency instanceof String_) && ((! $currency instanceof Variable) || (! is_string($currency->name)) || (! $this->getNativeType($currency)->isString()->yes()))) || (! $this->isNumericLiteral($divisor, integerOnly: true))) {
                 return null;
             }
 

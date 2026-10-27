@@ -112,20 +112,10 @@ class StatsOverviewWidget extends Widget implements HasSchemas
     }
 
     /**
-     * @deprecated Use `getStats()` instead.
-     *
-     * @return array<Stat>
-     */
-    protected function getCards(): array
-    {
-        return [];
-    }
-
-    /**
      * @return array<Stat>
      */
     protected function getStats(): array
     {
-        return $this->getCards();
+        return [];
     }
 }
