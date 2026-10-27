@@ -1,24 +1,24 @@
 .fi-fo-markdown-editor {
-    --color-cm-red: #991b1b;
-    --color-cm-orange: #9a3412;
-    --color-cm-amber: #92400e;
-    --color-cm-yellow: #854d0e;
-    --color-cm-lime: #3f6212;
-    --color-cm-green: #166534;
-    --color-cm-emerald: #065f46;
-    --color-cm-teal: #115e59;
-    --color-cm-cyan: #155e75;
-    --color-cm-sky: #075985;
-    --color-cm-blue: #1e40af;
-    --color-cm-indigo: #3730a3;
-    --color-cm-violet: #5b21b6;
-    --color-cm-purple: #6b21a8;
-    --color-cm-fuchsia: #86198f;
-    --color-cm-pink: #9d174d;
-    --color-cm-rose: #9f1239;
-    --color-cm-gray: #18181b;
-    --color-cm-gray-muted: #71717a;
-    --color-cm-gray-background: #e4e4e7;
+    --markdown-editor-color-red: #991b1b;
+    --markdown-editor-color-orange: #9a3412;
+    --markdown-editor-color-amber: #92400e;
+    --markdown-editor-color-yellow: #854d0e;
+    --markdown-editor-color-lime: #3f6212;
+    --markdown-editor-color-green: #166534;
+    --markdown-editor-color-emerald: #065f46;
+    --markdown-editor-color-teal: #115e59;
+    --markdown-editor-color-cyan: #155e75;
+    --markdown-editor-color-sky: #075985;
+    --markdown-editor-color-blue: #1e40af;
+    --markdown-editor-color-indigo: #3730a3;
+    --markdown-editor-color-violet: #5b21b6;
+    --markdown-editor-color-purple: #6b21a8;
+    --markdown-editor-color-fuchsia: #86198f;
+    --markdown-editor-color-pink: #9d174d;
+    --markdown-editor-color-rose: #9f1239;
+    --markdown-editor-color-gray: #18181b;
+    --markdown-editor-color-gray-muted: #71717a;
+    --markdown-editor-color-gray-background: #e4e4e7;
 
     &:not(.fi-disabled) {
         @apply max-w-full overflow-hidden font-mono text-sm text-gray-950 dark:text-white;
@@ -52,7 +52,7 @@
 
     & .cm-s-easymde .cm-comment {
         background-color: transparent;
-        color: var(--color-cm-gray-muted);
+        color: var(--markdown-editor-color-gray-muted);
     }
 
     & .EasyMDEContainer .CodeMirror-cursor {
@@ -60,87 +60,87 @@
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-keyword {
-        color: var(--color-cm-violet);
+        color: var(--markdown-editor-color-violet);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-atom {
-        color: var(--color-cm-blue);
+        color: var(--markdown-editor-color-blue);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-number {
-        color: var(--color-cm-green);
+        color: var(--markdown-editor-color-green);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-def {
-        color: var(--color-cm-blue);
+        color: var(--markdown-editor-color-blue);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-variable {
-        color: var(--color-cm-yellow);
+        color: var(--markdown-editor-color-yellow);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-variable-2 {
-        color: var(--color-cm-blue);
+        color: var(--markdown-editor-color-blue);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-variable-3 {
-        color: var(--color-cm-emerald);
+        color: var(--markdown-editor-color-emerald);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-property {
-        color: var(--color-cm-gray);
+        color: var(--markdown-editor-color-gray);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-operator {
-        color: var(--color-cm-gray);
+        color: var(--markdown-editor-color-gray);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-string {
-        color: var(--color-cm-rose);
+        color: var(--markdown-editor-color-rose);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-string-2 {
-        color: var(--color-cm-rose);
+        color: var(--markdown-editor-color-rose);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-meta {
-        color: var(--color-cm-gray-muted);
+        color: var(--markdown-editor-color-gray-muted);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-error {
-        color: var(--color-cm-red);
+        color: var(--markdown-editor-color-red);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-qualifier {
-        color: var(--color-cm-gray-muted);
+        color: var(--markdown-editor-color-gray-muted);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-builtin {
-        color: var(--color-cm-violet);
+        color: var(--markdown-editor-color-violet);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-bracket {
-        color: var(--color-cm-gray-muted);
+        color: var(--markdown-editor-color-gray-muted);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-tag {
-        color: var(--color-cm-green);
+        color: var(--markdown-editor-color-green);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-attribute {
-        color: var(--color-cm-blue);
+        color: var(--markdown-editor-color-blue);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-hr {
-        color: var(--color-cm-gray-muted);
+        color: var(--markdown-editor-color-gray-muted);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-formatting-quote {
-        color: var(--color-cm-sky);
+        color: var(--markdown-editor-color-sky);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-formatting-quote ~ .cm-quote {
-        color: var(--color-cm-gray-muted);
+        color: var(--markdown-editor-color-gray-muted);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-formatting-list,
@@ -150,23 +150,23 @@
     & .EasyMDEContainer .cm-s-easymde .cm-tab ~ .cm-variable-2,
     & .EasyMDEContainer .cm-s-easymde .cm-tab ~ .cm-variable-3,
     & .EasyMDEContainer .cm-s-easymde .cm-tab ~ .cm-keyword {
-        color: var(--color-cm-gray);
+        color: var(--markdown-editor-color-gray);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-link {
-        color: var(--color-cm-blue);
+        color: var(--markdown-editor-color-blue);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-tag {
-        color: var(--color-cm-red);
+        color: var(--markdown-editor-color-red);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-attribute {
-        color: var(--color-cm-amber);
+        color: var(--markdown-editor-color-amber);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-attribute + .cm-string {
-        color: var(--color-cm-green);
+        color: var(--markdown-editor-color-green);
     }
 
     &
@@ -174,8 +174,8 @@
         .cm-s-easymde
         .cm-formatting-code
         + .cm-comment:not(.cm-formatting-code) {
-        background-color: var(--color-cm-gray-background);
-        color: var(--color-cm-gray);
+        background-color: var(--markdown-editor-color-gray-background);
+        color: var(--markdown-editor-color-gray);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-header-1 {
@@ -303,26 +303,26 @@
     }
 
     @variant dark {
-        --color-cm-red: #f87171;
-        --color-cm-orange: #fb923c;
-        --color-cm-amber: #fbbf24;
-        --color-cm-yellow: #facc15;
-        --color-cm-lime: #a3e635;
-        --color-cm-green: #4ade80;
-        --color-cm-emerald: #4ade80;
-        --color-cm-teal: #2dd4bf;
-        --color-cm-cyan: #22d3ee;
-        --color-cm-sky: #38bdf8;
-        --color-cm-blue: #60a5fa;
-        --color-cm-indigo: #818cf8;
-        --color-cm-violet: #a78bfa;
-        --color-cm-purple: #c084fc;
-        --color-cm-fuchsia: #e879f9;
-        --color-cm-pink: #f472b6;
-        --color-cm-rose: #fb7185;
-        --color-cm-gray: #fafafa;
-        --color-cm-gray-muted: #a1a1aa;
-        --color-cm-gray-background: #52525b;
+        --markdown-editor-color-red: #f87171;
+        --markdown-editor-color-orange: #fb923c;
+        --markdown-editor-color-amber: #fbbf24;
+        --markdown-editor-color-yellow: #facc15;
+        --markdown-editor-color-lime: #a3e635;
+        --markdown-editor-color-green: #4ade80;
+        --markdown-editor-color-emerald: #4ade80;
+        --markdown-editor-color-teal: #2dd4bf;
+        --markdown-editor-color-cyan: #22d3ee;
+        --markdown-editor-color-sky: #38bdf8;
+        --markdown-editor-color-blue: #60a5fa;
+        --markdown-editor-color-indigo: #818cf8;
+        --markdown-editor-color-violet: #a78bfa;
+        --markdown-editor-color-purple: #c084fc;
+        --markdown-editor-color-fuchsia: #e879f9;
+        --markdown-editor-color-pink: #f472b6;
+        --markdown-editor-color-rose: #fb7185;
+        --markdown-editor-color-gray: #fafafa;
+        --markdown-editor-color-gray-muted: #a1a1aa;
+        --markdown-editor-color-gray-background: #52525b;
 
         & .EasyMDEContainer .cm-s-easymde span.CodeMirror-selectedtext {
             filter: invert(100%);

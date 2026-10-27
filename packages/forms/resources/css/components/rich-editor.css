@@ -1,21 +1,21 @@
 .fi-fo-rich-editor {
-    --fi-fo-rich-editor-toolbar-height: 0px;
-    --fi-fo-rich-editor-sticky-offset: 0px;
+    --rich-editor-toolbar-height: 0px;
+    --rich-editor-sticky-offset: 0px;
 
     .fi-topbar-ctn ~ * & {
-        --fi-fo-rich-editor-sticky-offset: var(--topbar-height, 4rem);
+        --rich-editor-sticky-offset: var(--topbar-height, 4rem);
     }
 
     .fi-modal & {
         /* Resolve the measured header height inside the editor's `wire:ignore` element. */
-        --fi-fo-rich-editor-sticky-offset: initial;
+        --rich-editor-sticky-offset: initial;
     }
 
     & .fi-fo-rich-editor-toolbar.fi-fo-rich-editor-sticky-toolbar {
         @apply sticky z-5 rounded-t-lg bg-white dark:bg-gray-900;
         top: var(
-            --fi-fo-rich-editor-sticky-offset,
-            var(--fi-fo-rich-editor-modal-header-height, 0px)
+            --rich-editor-sticky-offset,
+            var(--rich-editor-modal-header-height, 0px)
         );
     }
 
@@ -595,19 +595,19 @@
             @container (min-width: 42rem) {
                 top: calc(
                     var(
-                            --fi-fo-rich-editor-sticky-offset,
-                            var(--fi-fo-rich-editor-modal-header-height, 0px)
+                            --rich-editor-sticky-offset,
+                            var(--rich-editor-modal-header-height, 0px)
                         ) +
-                        var(--fi-fo-rich-editor-toolbar-height, 0px)
+                        var(--rich-editor-toolbar-height, 0px)
                 );
                 max-height: calc(
-                    var(--fi-fo-rich-editor-modal-viewport-height, 100dvh) -
+                    var(--rich-editor-modal-viewport-height, 100dvh) -
                         var(
-                            --fi-fo-rich-editor-sticky-offset,
-                            var(--fi-fo-rich-editor-modal-header-height, 0px)
+                            --rich-editor-sticky-offset,
+                            var(--rich-editor-modal-header-height, 0px)
                         ) -
-                        var(--fi-fo-rich-editor-toolbar-height, 0px) -
-                        var(--fi-fo-rich-editor-modal-footer-height, 0px)
+                        var(--rich-editor-toolbar-height, 0px) -
+                        var(--rich-editor-modal-footer-height, 0px)
                 );
             }
         }
@@ -634,19 +634,19 @@
             @media (min-width: 48rem) {
                 top: calc(
                     var(
-                            --fi-fo-rich-editor-sticky-offset,
-                            var(--fi-fo-rich-editor-modal-header-height, 0px)
+                            --rich-editor-sticky-offset,
+                            var(--rich-editor-modal-header-height, 0px)
                         ) +
-                        var(--fi-fo-rich-editor-toolbar-height, 0px)
+                        var(--rich-editor-toolbar-height, 0px)
                 );
                 max-height: calc(
-                    var(--fi-fo-rich-editor-modal-viewport-height, 100dvh) -
+                    var(--rich-editor-modal-viewport-height, 100dvh) -
                         var(
-                            --fi-fo-rich-editor-sticky-offset,
-                            var(--fi-fo-rich-editor-modal-header-height, 0px)
+                            --rich-editor-sticky-offset,
+                            var(--rich-editor-modal-header-height, 0px)
                         ) -
-                        var(--fi-fo-rich-editor-toolbar-height, 0px) -
-                        var(--fi-fo-rich-editor-modal-footer-height, 0px)
+                        var(--rich-editor-toolbar-height, 0px) -
+                        var(--rich-editor-modal-footer-height, 0px)
                 );
             }
         }

@@ -80,10 +80,10 @@
         <style>
             :root {
                 --font-family: '{!! filament()->getFontFamily() !!}';
-                --mono-font-family: '{!! filament()->getMonoFontFamily() !!}';
-                --serif-font-family: '{!! filament()->getSerifFontFamily() !!}';
+                --font-family-mono: '{!! filament()->getMonoFontFamily() !!}';
+                --font-family-serif: '{!! filament()->getSerifFontFamily() !!}';
                 --sidebar-width: {{ filament()->getSidebarWidth() }};
-                --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};
+                --sidebar-collapsed-width: {{ filament()->getCollapsedSidebarWidth() }};
                 --default-theme-mode: {{ filament()->getDefaultThemeMode()->value }};
             }
 
