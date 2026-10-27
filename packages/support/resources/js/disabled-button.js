@@ -10,7 +10,7 @@ if (!window.filamentDisabledButtonClickListener) {
 
         if (
             !button?.matches(
-                '.fi-btn, .fi-icon-btn, .fi-badge, .fi-link, .fi-dropdown-list-item',
+                '.fi-btn, .fi-icon-btn, .fi-badge, .fi-link, .fi-dropdown-list-item, [data-prevent-disabled-clicks]',
             ) ||
             button.getAttribute('aria-disabled') !== 'true'
         ) {
