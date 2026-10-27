@@ -249,16 +249,6 @@ class Type
     }
 
     /**
-     * @deprecated Use `titleAttribute()` instead.
-     */
-    public function titleColumnName(?string $name): static
-    {
-        $this->titleAttribute($name);
-
-        return $this;
-    }
-
-    /**
      * @param  array<string> | null  $columns
      */
     public function searchColumns(?array $columns): static

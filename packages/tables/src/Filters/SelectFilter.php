@@ -280,16 +280,6 @@ class SelectFilter extends BaseFilter
         return $this;
     }
 
-    /**
-     * @deprecated Use `attribute()` instead.
-     */
-    public function column(string | Closure | null $name): static
-    {
-        $this->attribute($name);
-
-        return $this;
-    }
-
     public function static(bool | Closure $condition = true): static
     {
         $this->isStatic = $condition;
@@ -324,14 +314,6 @@ class SelectFilter extends BaseFilter
     public function getAttribute(): string
     {
         return $this->evaluate($this->attribute) ?? $this->getName();
-    }
-
-    /**
-     * @deprecated Use `getAttribute()` instead.
-     */
-    public function getColumn(): string
-    {
-        return $this->getAttribute();
     }
 
     public function forceSearchCaseInsensitive(bool | Closure | null $condition = true): static

@@ -11,7 +11,10 @@ use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\MorphToSelect\Type as MorphToSelectType;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\KeyValueEntry;
@@ -25,12 +28,18 @@ use Filament\Support\Components\ViewComponent;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\Name;
+use PhpParser\Node\UnionType;
+use PhpParser\NodeFinder;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StaticType;
@@ -110,6 +119,17 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'deleteButtonLabel' => 'deleteActionLabel',
             'reorderButtonLabel' => 'reorderActionLabel',
         ],
+        MarkdownEditor::class => [
+            'getUploadedAttachmentUrlUsing' => 'getFileAttachmentUrlUsing',
+            'saveUploadedFileAttachmentsUsing' => 'saveUploadedFileAttachmentUsing',
+        ],
+        RichEditor::class => [
+            'getUploadedAttachmentUrlUsing' => 'getFileAttachmentUrlUsing',
+            'saveUploadedFileAttachmentsUsing' => 'saveUploadedFileAttachmentUsing',
+        ],
+        MorphToSelectType::class => [
+            'titleColumnName' => 'titleAttribute',
+        ],
         FileUpload::class => [
             'idleLabel' => 'placeholder',
             'imageResizeMode' => 'automaticallyResizeImagesMode',
@@ -172,6 +192,17 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         IconColumn::class => [
             'options' => 'icons',
         ],
+        BaseFilter::class => [
+            'form' => 'schema',
+            'getFormSchema' => 'getSchemaComponents',
+        ],
+        SelectFilter::class => [
+            'column' => 'attribute',
+            'getColumn' => 'getAttribute',
+        ],
+        Group::class => [
+            'getDescriptionUsing' => 'getDescriptionFromRecordUsing',
+        ],
         Table::class => [
             'actions' => 'recordActions',
             'pushActions' => 'pushRecordActions',
@@ -193,6 +224,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'getColumnToggleFormMaxHeight' => 'getColumnManagerMaxHeight',
             'getColumnToggleFormWidth' => 'getColumnManagerWidth',
             'getToggleColumnsTriggerAction' => 'getColumnManagerTriggerAction',
+            'groupsInDropdownOnDesktop' => 'groupingSettingsInDropdownOnDesktop',
         ],
     ];
 
@@ -238,6 +270,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         }
 
         $methodName = strtolower($node->name->toString());
+        $isGroupingDropdownAlias = $methodName === 'groupsindropdownondesktop';
 
         foreach (self::METHOD_RENAMES as $componentClass => $methodRenames) {
             $methodRenames = array_change_key_case($methodRenames);
@@ -246,8 +279,8 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                 continue;
             }
 
-            // Preserve the table migration's existing receiver inference boundary.
-            $receiverType = ($componentClass === Table::class)
+            // Preserve the older table migrations' receiver inference boundary.
+            $receiverType = (($componentClass === Table::class) && (! $isGroupingDropdownAlias))
                 ? TypeCombinator::removeNull($this->getType($node->var))
                 : $this->resolveReceiverType($node->var);
 
@@ -257,11 +290,31 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
 
             $replacement = $methodRenames[$methodName];
 
+            // PHPStan can normalize a declared base/subclass union and hide its overrides.
+            if ($isGroupingDropdownAlias || in_array($componentClass, [MarkdownEditor::class, RichEditor::class, MorphToSelectType::class, BaseFilter::class, SelectFilter::class, Group::class], strict: true)) {
+                foreach ((new NodeFinder)->findInstanceOf($this->getFile()->getNewStmts(), UnionType::class) as $union) {
+                    foreach ($union->types as $type) {
+                        if (! $type instanceof Name) {
+                            continue;
+                        }
+
+                        $declaredType = $this->getType($type);
+
+                        if ($receiverType->isSuperTypeOf($declaredType)->yes() && (! $this->canRenameMethods($declaredType, $componentClass, $methodName, $replacement))) {
+                            return null;
+                        }
+                    }
+                }
+            }
+
             if ((! $this->canRenameMethods($receiverType, $componentClass, $methodName, $replacement)) || (! $this->canForwardArguments($node, $componentClass, $methodName))) {
                 return null;
             }
 
-            $renamedArgument = self::ARGUMENT_RENAMES[$methodName] ?? null;
+            // Filter `form()` already used the canonical `$schema` parameter name.
+            $renamedArgument = (($componentClass === BaseFilter::class) && ($methodName === 'form'))
+                ? null
+                : (self::ARGUMENT_RENAMES[$methodName] ?? null);
 
             if ($renamedArgument && (! $node->isFirstClassCallable())) {
                 foreach ($node->getArgs() as $argument) {
@@ -297,7 +350,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         }
 
         // Retain the older form, image, and table rules' reflection boundaries.
-        $requiresPublicReplacement = ! in_array($componentClass, [BaseFileUpload::class, Builder::class, Repeater::class, KeyValue::class, FileUpload::class, ImageEntry::class, ImageColumn::class, KeyValueEntry::class, Table::class], strict: true);
+        $requiresPublicReplacement = ($methodName === 'groupsindropdownondesktop') || (! in_array($componentClass, [BaseFileUpload::class, Builder::class, Repeater::class, KeyValue::class, FileUpload::class, ImageEntry::class, ImageColumn::class, KeyValueEntry::class, Table::class], strict: true));
 
         foreach ($receiverType->getObjectClassReflections() as $classReflection) {
             foreach ($candidateMethodNames as $candidateMethodName) {

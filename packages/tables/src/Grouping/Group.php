@@ -108,16 +108,6 @@ class Group extends Component
         return $this;
     }
 
-    /**
-     * @deprecated Use the `getDescriptionFromRecordUsing()` method instead.
-     */
-    public function getDescriptionUsing(?Closure $callback): static
-    {
-        $this->getDescriptionFromRecordUsing($callback);
-
-        return $this;
-    }
-
     public function getTitleFromRecordUsing(?Closure $callback): static
     {
         $this->getTitleFromRecordUsing = $callback;

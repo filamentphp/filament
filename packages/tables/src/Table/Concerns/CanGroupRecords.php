@@ -54,16 +54,6 @@ trait CanGroupRecords
         return $this;
     }
 
-    /**
-     * @deprecated Use the `groupingSettingsInDropdownOnDesktop()` method instead.
-     */
-    public function groupsInDropdownOnDesktop(bool | Closure $condition = true): static
-    {
-        $this->groupingSettingsInDropdownOnDesktop($condition);
-
-        return $this;
-    }
-
     public function groupingSettingsHidden(bool | Closure $condition = true): static
     {
         $this->areGroupingSettingsHidden = $condition;
