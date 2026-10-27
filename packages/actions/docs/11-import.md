@@ -531,12 +531,12 @@ ImportColumn::make('price')
 
 ## Using import options
 
-The import action can render extra form components that the user can interact with when importing a CSV. This can be useful to allow the user to customize the behavior of the importer. For instance, you might want a user to be able to choose whether to update existing records when importing, or only create new ones. To do this, you can return options form components from the `getOptionsFormComponents()` method on your importer class:
+The import action can render extra form components that the user can interact with when importing a CSV. This can be useful to allow the user to customize the behavior of the importer. For instance, you might want a user to be able to choose whether to update existing records when importing, or only create new ones. To do this, you can return schema components from the `getOptionsSchemaComponents()` method on your importer class:
 
 ```php
 use Filament\Forms\Components\Checkbox;
 
-public static function getOptionsFormComponents(): array
+public static function getOptionsSchemaComponents(): array
 {
     return [
         Checkbox::make('updateExisting')

@@ -31,7 +31,7 @@ class FilterAction extends Action
 
         $this->defaultColor('gray');
 
-        $this->fillForm(function (Component $livewire): ?array {
+        $this->fillSchema(function (Component $livewire): ?array {
             if (! property_exists($livewire, 'filters')) {
                 throw new LogicException('The [' . $livewire::class . '] page must implement the [' . Dashboard\Concerns\HasFilters::class . '] trait.');
             }

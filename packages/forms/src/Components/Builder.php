@@ -775,7 +775,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->modalHeading(__('filament-forms::components.builder.actions.edit.modal.heading'))
             ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.edit.modal.actions.save.label'))
             ->color('gray')
-            ->fillForm(function (array $arguments, Builder $component) {
+            ->fillSchema(function (array $arguments, Builder $component) {
                 $state = $component->getState();
 
                 return $state[$arguments['item']]['data'] ?? [];

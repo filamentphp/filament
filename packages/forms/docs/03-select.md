@@ -474,7 +474,7 @@ use Filament\Forms\Components\Select;
 
 Select::make('author_id')
     ->relationship(name: 'author', titleAttribute: 'name')
-    ->createOptionForm([
+    ->createOptionSchema([
         Forms\Components\TextInput::make('name')
             ->required(),
         Forms\Components\TextInput::make('email')
@@ -483,7 +483,7 @@ Select::make('author_id')
     ]),
 ```
 
-<UtilityInjection set="formFields" extras="Schema;;Filament\Schemas\Schema;;$schema;;The schema object for the form in the modal.">As well as allowing a static value, the `createOptionForm()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" extras="Schema;;Filament\Schemas\Schema;;$schema;;The schema object for the form in the modal.">As well as allowing a static value, the `createOptionSchema()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="warning">
     Creating an option does not automatically check the related model's `create()` policy, even when the select is used in a resource form. [Authorize the option action](#authorizing-option-actions) separately from the parent resource.
@@ -504,7 +504,7 @@ use Filament\Forms\Components\Select;
 
 Select::make('author_id')
     ->relationship(name: 'author', titleAttribute: 'name')
-    ->createOptionForm([
+    ->createOptionSchema([
        // ...
     ])
     ->createOptionUsing(function (array $data): int {
@@ -523,7 +523,7 @@ use Filament\Forms\Components\Select;
 
 Select::make('author_id')
     ->relationship(name: 'author', titleAttribute: 'name')
-    ->editOptionForm([
+    ->editOptionSchema([
         Forms\Components\TextInput::make('name')
             ->required(),
         Forms\Components\TextInput::make('email')
@@ -532,7 +532,9 @@ Select::make('author_id')
     ]),
 ```
 
-<UtilityInjection set="formFields" extras="Schema;;Filament\Schemas\Schema;;$schema;;The schema object for the form in the modal.">As well as allowing a static value, the `editOptionForm()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" extras="Schema;;Filament\Schemas\Schema;;$schema;;The schema object for the form in the modal.">As well as allowing a static value, the `editOptionSchema()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+To use the same schema for creating and editing options, use `manageOptionSchema()`.
 
 <Aside variant="warning">
     Editing an option does not automatically check the selected record's `view()` or `update()` policy. [Authorize the option action](#authorizing-option-actions) before its modal is filled, not only when saving changes.
@@ -546,14 +548,14 @@ The form opens in a modal, where the user can fill it with data. Upon form submi
 
 #### Customizing the edit form data
 
-By default, the edit form is filled with the related record's non-hidden attributes, including attributes without a field in `editOptionForm()`. You can limit the data sent to the browser using `fillEditOptionActionFormUsing()`:
+By default, the edit form is filled with the related record's non-hidden attributes, including attributes without a field in `editOptionSchema()`. You can limit the data sent to the browser using `fillEditOptionActionFormUsing()`:
 
 ```php
 use Filament\Forms\Components\Select;
 
 Select::make('author_id')
     ->relationship(name: 'author', titleAttribute: 'name')
-    ->editOptionForm([
+    ->editOptionSchema([
         // ...
     ])
     ->fillEditOptionActionFormUsing(
@@ -573,7 +575,7 @@ use Filament\Schemas\Schema;
 
 Select::make('author_id')
     ->relationship(name: 'author', titleAttribute: 'name')
-    ->editOptionForm([
+    ->editOptionSchema([
        // ...
     ])
     ->updateOptionUsing(function (array $data, Schema $schema) {
@@ -595,7 +597,7 @@ use Filament\Forms\Components\Select;
 
 Select::make('author_id')
     ->relationship(name: 'author', titleAttribute: 'name')
-    ->createOptionForm([
+    ->createOptionSchema([
         // ...
     ])
     ->createOptionAction(
@@ -603,7 +605,7 @@ Select::make('author_id')
             static fn (): bool => Filament::auth()->user()->can('create', User::class),
         ),
     )
-    ->editOptionForm([
+    ->editOptionSchema([
         // ...
     ])
     ->editOptionAction(
@@ -706,7 +708,7 @@ MorphToSelect::make('commentable')
         MorphToSelect\Type::make(Product::class)
             ->titleAttribute('name')
             ->modifyKeySelectUsing(fn (Select $select): Select => $select
-                ->createOptionForm([
+                ->createOptionSchema([
                     TextInput::make('title')
                         ->required(),
                 ])

@@ -5,6 +5,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Enums\ActionStatus;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -376,6 +377,23 @@ it('returns fluent `$this` from `afterFormValidated()`', function (): void {
     $result = $action->afterFormValidated(static fn () => null);
 
     expect($result)->toBe($action);
+});
+
+it('fills and validates mounted actions using schema lifecycle hooks', function (): void {
+    livewire(SchemaLifecycleActions::class)
+        ->mountAction('save')
+        ->assertSchemaStateSet(['title' => 'Initial title'])
+        ->assertSet('observedState', ['beforeFill' => [], 'afterFill' => ['title' => 'Initial title']])
+        ->fillForm(['title' => 'Updated title'])
+        ->callMountedAction()
+        ->assertHasNoActionErrors()
+        ->assertSet('observedState', [
+            'beforeFill' => [],
+            'afterFill' => ['title' => 'Initial title'],
+            'beforeValidate' => ['title' => 'Updated title'],
+            'afterValidate' => ['title' => 'Updated title'],
+            'saved' => ['title' => 'Updated title'],
+        ]);
 });
 
 describe('construction and properties', function (): void {
@@ -2224,6 +2242,35 @@ describe('record visibility and authorization', function (): void {
             ->and($action->isAuthorized())->toBeFalse();
     });
 });
+
+class SchemaLifecycleActions extends Actions
+{
+    public array $observedState = [];
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('save')
+                ->schema([TextInput::make('title')->required()])
+                ->fillSchema(data: ['title' => 'Initial title'])
+                ->beforeSchemaFilled(callback: function (): void {
+                    $this->observedState['beforeFill'] = $this->getMountedActionSchema()->getRawState();
+                })
+                ->afterSchemaFilled(callback: function (): void {
+                    $this->observedState['afterFill'] = $this->getMountedActionSchema()->getRawState();
+                })
+                ->beforeSchemaValidated(callback: function (): void {
+                    $this->observedState['beforeValidate'] = $this->getMountedActionSchema()->getRawState();
+                })
+                ->afterSchemaValidated(callback: function (): void {
+                    $this->observedState['afterValidate'] = $this->getMountedActionSchema()->getRawState();
+                })
+                ->action(function (array $data): void {
+                    $this->observedState['saved'] = $data;
+                }),
+        ];
+    }
+}
 
 class TableActionTestComponent extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {

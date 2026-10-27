@@ -542,12 +542,12 @@ public function getFileName(Export $export): string
 
 ## Using export options
 
-The export action can render extra form components that the user can interact with when exporting a CSV. This can be useful to allow the user to customize the behavior of the exporter. For instance, you might want a user to be able to choose the format of specific columns when exporting. To do this, you can return options form components from the `getOptionsFormComponents()` method on your exporter class:
+The export action can render extra form components that the user can interact with when exporting a CSV. This can be useful to allow the user to customize the behavior of the exporter. For instance, you might want a user to be able to choose the format of specific columns when exporting. To do this, you can return schema components from the `getOptionsSchemaComponents()` method on your exporter class:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
-public static function getOptionsFormComponents(): array
+public static function getOptionsSchemaComponents(): array
 {
     return [
         TextInput::make('descriptionLimit')

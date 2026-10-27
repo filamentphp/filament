@@ -132,16 +132,16 @@ There are several available hooks:
 use Filament\Actions\CreateAction;
 
 CreateAction::make()
-    ->beforeFormFilled(function () {
+    ->beforeSchemaFilled(function () {
         // Runs before the form fields are populated with their default values.
     })
-    ->afterFormFilled(function () {
+    ->afterSchemaFilled(function () {
         // Runs after the form fields are populated with their default values.
     })
-    ->beforeFormValidated(function () {
+    ->beforeSchemaValidated(function () {
         // Runs before the form fields are validated when the form is submitted.
     })
-    ->afterFormValidated(function () {
+    ->afterSchemaValidated(function () {
         // Runs after the form fields are validated when the form is submitted.
     })
     ->before(function () {
@@ -273,13 +273,13 @@ CreateAction::make()
 
 ### Preserving data when creating another
 
-By default, when the user uses the "create and create another" feature, all the form data is cleared so the user can start fresh. If you'd like to preserve some of the data in the form, you may use the `preserveFormDataWhenCreatingAnother()` method, passing an array of fields to preserve:
+By default, when the user uses the "create and create another" feature, all the form data is cleared so the user can start fresh. If you'd like to preserve some of the data in the form, you may use the `preserveDataWhenCreatingAnother()` method, passing an array of fields to preserve:
 
 ```php
 use Filament\Actions\CreateAction;
 
 CreateAction::make()
-    ->preserveFormDataWhenCreatingAnother(['is_admin', 'organization'])
+    ->preserveDataWhenCreatingAnother(['is_admin', 'organization'])
 ```
 
 Alternatively, you can define a function that returns an array of the `$data` to preserve:
@@ -289,7 +289,7 @@ use Filament\Actions\CreateAction;
 use Illuminate\Support\Arr;
 
 CreateAction::make()
-    ->preserveFormDataWhenCreatingAnother(fn (array $data): array => Arr::only($data, ['is_admin', 'organization']))
+    ->preserveDataWhenCreatingAnother(fn (array $data): array => Arr::only($data, ['is_admin', 'organization']))
 ```
 
 To preserve all the data, return the entire `$data` array:
@@ -298,7 +298,7 @@ To preserve all the data, return the entire `$data` array:
 use Filament\Actions\CreateAction;
 
 CreateAction::make()
-    ->preserveFormDataWhenCreatingAnother(fn (array $data): array => $data)
+    ->preserveDataWhenCreatingAnother(fn (array $data): array => $data)
 ```
 
-<UtilityInjection set="actions">As well as allowing a static value, the `preserveFormDataWhenCreatingAnother()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions">As well as allowing a static value, the `preserveDataWhenCreatingAnother()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>

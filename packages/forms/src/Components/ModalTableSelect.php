@@ -114,7 +114,7 @@ class ModalTableSelect extends Field implements HasEmbeddedView
             ->modalSubmitActionLabel(__('filament-forms::components.modal_table_select.actions.select.actions.select.label'))
             ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_MODAL_TABLE_SELECT_ACTIONS_SELECT) ?? Heroicon::PencilSquare)
             ->iconPosition(IconPosition::After)
-            ->fillForm(['selection' => $this->getState()])
+            ->fillSchema(['selection' => $this->getState()])
             ->schema([$this->getTableSelect()])
             ->action(fn (array $data) => $this->state($data['selection'])->callAfterStateUpdated());
 

@@ -122,7 +122,7 @@ class Constraint extends Component
                                         $operator->constraint($this);
 
                                         try {
-                                            return $operator->getFormSchema();
+                                            return $operator->getSchemaComponents();
                                         } finally {
                                             $operator->constraint(null);
                                         }
