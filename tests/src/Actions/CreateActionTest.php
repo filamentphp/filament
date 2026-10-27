@@ -245,12 +245,12 @@ describe('create another', function (): void {
     });
 });
 
-it('can disable `createAnother()` via `disableCreateAnother()`', function (): void {
+it('can disable `createAnother()`', function (): void {
     $action = CreateAction::make();
 
     expect($action->canCreateAnother())->toBeTrue();
 
-    $action->disableCreateAnother();
+    $action->createAnother(false);
 
     expect($action->canCreateAnother())->toBeFalse();
 });
@@ -357,9 +357,9 @@ it('returns `null` from `getRelationship()` by default', function (): void {
     expect($action->getRelationship())->toBeNull();
 });
 
-it('can set `disableCreateAnother()` with a `Closure`', function (): void {
+it('can disable `createAnother()` with a `Closure`', function (): void {
     $action = CreateAction::make()
-        ->disableCreateAnother(static fn (): bool => true);
+        ->createAnother(static fn (): bool => false);
 
     expect($action->canCreateAnother())->toBeFalse();
 });

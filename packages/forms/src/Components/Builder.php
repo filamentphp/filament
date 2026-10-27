@@ -870,44 +870,6 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         return $this;
     }
 
-    /**
-     * @deprecated Use `addable()` instead.
-     */
-    public function disableItemCreation(bool | Closure $condition = true): static
-    {
-        $this->addable(fn (Builder $component): bool => ! $this->evaluate($condition));
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `deletable()` instead.
-     */
-    public function disableItemDeletion(bool | Closure $condition = true): static
-    {
-        $this->deletable(fn (Builder $component): bool => ! $this->evaluate($condition));
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `reorderable()` instead.
-     */
-    public function disableItemMovement(bool | Closure $condition = true): static
-    {
-        $this->reorderable(fn (Builder $component): bool => ! $this->evaluate($condition));
-
-        return $this;
-    }
-
-    /**
-     * @deprecated No longer part of the design system.
-     */
-    public function inset(bool | Closure $condition = true): static
-    {
-        return $this;
-    }
-
     public function reorderableWithDragAndDrop(bool | Closure $condition = true): static
     {
         $this->isReorderableWithDragAndDrop = $condition;

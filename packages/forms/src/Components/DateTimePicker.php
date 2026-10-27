@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Components;
 
-use BackedEnum;
 use Carbon\CarbonInterface;
 use Carbon\Exceptions\InvalidFormatException;
 use Closure;
@@ -16,7 +15,6 @@ use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentTimezone;
-use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
@@ -453,18 +451,6 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
         return $this;
     }
 
-    /**
-     * @deprecated Use `suffixIcon(Heroicon::Calendar)` instead.
-     */
-    public function icon(string | BackedEnum | bool | null $icon = null): static
-    {
-        if ($icon === false) {
-            return $this;
-        }
-
-        return $this->suffixIcon($icon ?? Heroicon::Calendar, isInline: true);
-    }
-
     public function maxDate(CarbonInterface | string | Closure | null $date): static
     {
         $this->maxDate = $date;
@@ -577,36 +563,6 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
     public function time(bool | Closure $condition = true): static
     {
         $this->hasTime = $condition;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `date()` instead.
-     */
-    public function withoutDate(bool | Closure $condition = true): static
-    {
-        $this->date(fn (DateTimePicker $component): bool => ! $component->evaluate($condition));
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `seconds()` instead.
-     */
-    public function withoutSeconds(bool | Closure $condition = true): static
-    {
-        $this->seconds(fn (DateTimePicker $component): bool => ! $component->evaluate($condition));
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `time()` instead.
-     */
-    public function withoutTime(bool | Closure $condition = true): static
-    {
-        $this->time(fn (DateTimePicker $component): bool => ! $component->evaluate($condition));
 
         return $this;
     }

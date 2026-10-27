@@ -157,16 +157,6 @@ class AssociateAction extends Action
         return $this;
     }
 
-    /**
-     * @deprecated Use `associateAnother()` instead.
-     */
-    public function disableAssociateAnother(bool | Closure $condition = true): static
-    {
-        $this->associateAnother(fn (AssociateAction $action): bool => ! $action->evaluate($condition));
-
-        return $this;
-    }
-
     public function preloadRecordSelect(bool | Closure $condition = true): static
     {
         $this->isRecordSelectPreloaded = $condition;

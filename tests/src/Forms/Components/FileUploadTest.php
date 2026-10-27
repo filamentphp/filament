@@ -870,12 +870,12 @@ describe('configuration', function (): void {
             expect($upload->getImageEditorEmptyFillColor())->toBe('#ffffff');
         });
 
-        it('can set `imageCropAspectRatio()`', function (): void {
+        it('can configure an image aspect ratio with automatic cropping', function (): void {
             $upload = FileUpload::make('photo');
 
             expect($upload->getAutomaticallyCropImagesAspectRatio())->toBeNull();
 
-            $upload->imageCropAspectRatio('16:9');
+            $upload->imageAspectRatio('16:9')->automaticallyCropImagesToAspectRatio();
 
             expect($upload->getAutomaticallyCropImagesAspectRatio())->toBe('16:9');
         });
@@ -2083,7 +2083,7 @@ describe('rendering', function (): void {
             ->assertSuccessful();
     });
 
-    it('can render with `imageCropAspectRatio()`', function (): void {
+    it('can render with an image aspect ratio and automatic cropping', function (): void {
         livewire(RenderFileUploadWithImageCropAspectRatio::class)
             ->assertSuccessful();
     });
@@ -2468,7 +2468,7 @@ class RenderFileUploadWithImageCropAspectRatio extends Livewire
 {
     public function form(Schema $form): Schema
     {
-        return $form->schema([FileUpload::make('photo')->imageCropAspectRatio('16:9')])->statePath('data');
+        return $form->schema([FileUpload::make('photo')->imageAspectRatio('16:9')->automaticallyCropImagesToAspectRatio()])->statePath('data');
     }
 }
 

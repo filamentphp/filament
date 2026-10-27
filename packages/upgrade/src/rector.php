@@ -7,6 +7,7 @@ use Filament\Upgrade\Rector\RenameDeprecatedForwardingMethodsRector;
 use Filament\Upgrade\Rector\RenameDeprecatedLazyLoadingApisRector;
 use Filament\Upgrade\Rector\RenameDeprecatedTestingAssertionsRector;
 use Filament\Upgrade\Rector\ReplaceConvenienceClassesRector;
+use Filament\Upgrade\Rector\ReplaceDeprecatedBehavioralConfigurationRector;
 use Filament\Upgrade\Rector\ReplaceDeprecatedNumberHelpersRector;
 use Filament\Upgrade\Rector\ReplaceExposedLivewireMethodAttributeRector;
 use Filament\Upgrade\Rector\ReplaceLegacyComponentFactoriesRector;
@@ -62,6 +63,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(RenameDeprecatedLazyLoadingApisRector::class);
     $rectorConfig->rule(RenameDeprecatedTestingAssertionsRector::class);
     $rectorConfig->rule(ReplaceConvenienceClassesRector::class);
+    $rectorConfig->rule(ReplaceDeprecatedBehavioralConfigurationRector::class);
     $rectorConfig->rule(ReplaceDeprecatedNumberHelpersRector::class);
     $rectorConfig->rule(ReplaceExposedLivewireMethodAttributeRector::class);
     $rectorConfig->rule(ReplaceLegacyComponentFactoriesRector::class);
