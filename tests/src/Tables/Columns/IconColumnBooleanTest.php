@@ -20,26 +20,26 @@ uses(TestCase::class);
 it('can render', function (): void {
     Post::factory()->count(5)->create();
 
-    livewire(TestTableWithTagsColumn::class)
+    livewire(TestTableWithIconColumnBoolean::class)
         ->assertSuccessful()
-        ->assertCanRenderTableColumn('tags');
+        ->assertCanRenderTableColumn('is_published');
 });
 
-it('can display multiple tags', function (): void {
-    Post::factory()->create(['tags' => ['tag1', 'tag2', 'tag3']]);
+it('can display true state', function (): void {
+    Post::factory()->create(['is_published' => true]);
 
-    livewire(TestTableWithTagsColumn::class)
+    livewire(TestTableWithIconColumnBoolean::class)
         ->assertSuccessful();
 });
 
-it('can display empty tags', function (): void {
-    Post::factory()->create(['tags' => []]);
+it('can display false state', function (): void {
+    Post::factory()->create(['is_published' => false]);
 
-    livewire(TestTableWithTagsColumn::class)
+    livewire(TestTableWithIconColumnBoolean::class)
         ->assertSuccessful();
 });
 
-class TestTableWithTagsColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+class TestTableWithIconColumnBoolean extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
     use InteractsWithSchemas;
@@ -51,7 +51,7 @@ class TestTableWithTagsColumn extends Component implements HasActions, HasSchema
             ->query(Post::query())
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
-                Tables\Columns\TagsColumn::make('tags'),
+                Tables\Columns\IconColumn::make('is_published')->boolean(),
             ]);
     }
 

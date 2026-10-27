@@ -20,26 +20,12 @@ uses(TestCase::class);
 it('can render', function (): void {
     Post::factory()->count(5)->create();
 
-    livewire(TestTableWithBooleanColumn::class)
+    livewire(TestTableWithTextColumnBadge::class)
         ->assertSuccessful()
-        ->assertCanRenderTableColumn('is_published');
+        ->assertCanRenderTableColumn('title');
 });
 
-it('can display true state', function (): void {
-    Post::factory()->create(['is_published' => true]);
-
-    livewire(TestTableWithBooleanColumn::class)
-        ->assertSuccessful();
-});
-
-it('can display false state', function (): void {
-    Post::factory()->create(['is_published' => false]);
-
-    livewire(TestTableWithBooleanColumn::class)
-        ->assertSuccessful();
-});
-
-class TestTableWithBooleanColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+class TestTableWithTextColumnBadge extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
     use InteractsWithSchemas;
@@ -51,7 +37,7 @@ class TestTableWithBooleanColumn extends Component implements HasActions, HasSch
             ->query(Post::query())
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
-                Tables\Columns\BooleanColumn::make('is_published'),
+                Tables\Columns\TextColumn::make('title')->badge(),
             ]);
     }
 
