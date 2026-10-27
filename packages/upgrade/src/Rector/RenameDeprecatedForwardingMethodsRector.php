@@ -7,6 +7,11 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\ReplicateAction;
+use Filament\Commands\FileGenerators\Resources\Pages\ResourceManageRelatedRecordsPageClassGenerator;
+use Filament\Commands\FileGenerators\Resources\RelationManagerClassGenerator;
+use Filament\Commands\FileGenerators\Resources\ResourceClassGenerator;
+use Filament\Commands\FileGenerators\Resources\Schemas\ResourceTableClassGenerator;
+use Filament\Forms\Commands\FileGenerators\RichContentCustomBlockClassGenerator;
 use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Concerns\HasAffixes;
@@ -19,6 +24,8 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\KeyValueEntry;
+use Filament\Pages\Dashboard;
+use Filament\Pages\Dashboard\Concerns\HasFilters;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Schemas\Components\Concerns\HasLabel;
@@ -39,6 +46,7 @@ use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\UnionType;
 use PhpParser\NodeFinder;
@@ -97,6 +105,32 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         ],
         ExportColumn::class => [
             'queriesRelationships' => 'hasRelationship',
+        ],
+        ResourceClassGenerator::class => [
+            'getTableActions' => 'getTableRecordActions',
+            'outputTableActions' => 'outputTableRecordActions',
+            'outputTableMethodBulkActions' => 'outputTableBulkActions',
+        ],
+        ResourceTableClassGenerator::class => [
+            'getTableActions' => 'getTableRecordActions',
+            'outputTableActions' => 'outputTableRecordActions',
+            'outputTableMethodBulkActions' => 'outputTableBulkActions',
+        ],
+        RelationManagerClassGenerator::class => [
+            'getTableActions' => 'getTableRecordActions',
+            'outputTableActions' => 'outputTableRecordActions',
+            'outputTableMethodBulkActions' => 'outputTableBulkActions',
+        ],
+        ResourceManageRelatedRecordsPageClassGenerator::class => [
+            'getTableActions' => 'getTableRecordActions',
+            'outputTableActions' => 'outputTableRecordActions',
+            'outputTableMethodBulkActions' => 'outputTableBulkActions',
+        ],
+        RichContentCustomBlockClassGenerator::class => [
+            'configureToPreviewMethod' => 'configureToPreviewHtmlMethod',
+        ],
+        Dashboard::class => [
+            'normalizeTableFilterValuesFromQueryString' => 'normalizeFilterValuesFromQueryString',
         ],
         BaseFileUpload::class => [
             'enableDownload' => 'downloadable',
@@ -296,6 +330,11 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                 continue;
             }
 
+            // These protected helpers are only migrated through `$this`, not external receivers.
+            if (in_array($componentClass, [RichContentCustomBlockClassGenerator::class, Dashboard::class], strict: true) && ((! $node->var instanceof Variable) || ($node->var->name !== 'this'))) {
+                return null;
+            }
+
             $replacement = $methodRenames[$methodName];
 
             if ((! $this->canRenameMethods($receiverType, $componentClass, $methodName, $replacement)) || $this->hasOverridingUnion($componentClass, $methodName, $replacement) || (! $this->canForwardArguments($node, $componentClass, $methodName))) {
@@ -369,13 +408,19 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             $candidateMethodNames[] = 'withBlockLabels';
         }
 
+        // Record-action output also dispatches through the getter extension hook.
+        if ($methodName === 'outputtableactions') {
+            $candidateMethodNames[] = 'getTableActions';
+            $candidateMethodNames[] = 'getTableRecordActions';
+        }
+
         // Retain the older form, image, and table rules' reflection boundaries.
         $requiresPublicReplacement = ($methodName === 'groupsindropdownondesktop') || (! in_array($componentClass, [BaseFileUpload::class, Builder::class, Repeater::class, KeyValue::class, FileUpload::class, ImageEntry::class, ImageColumn::class, KeyValueEntry::class, Table::class], strict: true));
 
         foreach ($receiverType->getObjectClassReflections() as $classReflection) {
             foreach ($candidateMethodNames as $candidateMethodName) {
                 if (! $classReflection->hasNativeMethod($candidateMethodName)) {
-                    if ((! $requiresPublicReplacement) || ($candidateMethodName === $methodName)) {
+                    if ((! $requiresPublicReplacement) || ($candidateMethodName === $methodName) || ($candidateMethodName === 'getTableActions')) {
                         continue;
                     }
 
@@ -384,14 +429,15 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
 
                 $methodReflection = $classReflection->getNativeMethod($candidateMethodName);
 
-                if ($requiresPublicReplacement && (! $methodReflection->isPublic())) {
+                if ($requiresPublicReplacement && (! $methodReflection->isPublic()) && (! (in_array($componentClass, [RichContentCustomBlockClassGenerator::class, Dashboard::class], strict: true) && (! $methodReflection->isPrivate())))) {
                     return false;
                 }
 
-                if (in_array($componentClass, [ViewComponent::class, HasTable::class], strict: true)) {
+                if (in_array($componentClass, [ViewComponent::class, HasTable::class, Dashboard::class], strict: true)) {
                     $declaringTrait = match ($methodName) {
                         'postfix' => HasAffixes::class,
                         'updatedtablesortdirection' => CanSortRecords::class,
+                        'normalizetablefiltervaluesfromquerystring' => HasFilters::class,
                         default => HasLabel::class,
                     };
 

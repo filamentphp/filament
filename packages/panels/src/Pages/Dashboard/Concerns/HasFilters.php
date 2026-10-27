@@ -71,16 +71,6 @@ trait HasFilters /** @phpstan-ignore trait.unused */
         }
     }
 
-    /**
-     * @deprecated Use `normalizeFilterValuesFromQueryString()` instead.
-     *
-     * @param  array<string, mixed>  $data
-     */
-    protected function normalizeTableFilterValuesFromQueryString(array &$data): void
-    {
-        $this->normalizeFilterValuesFromQueryString($data);
-    }
-
     #[Unexposed]
     public function updatedFilters(): void
     {
