@@ -97,7 +97,7 @@ function schedule() {
 
         try {
             // Livewire 3 transport failures are handled by `commit.fail` below.
-            host.$wire.pullNotificationsFromSession(eligible).then(
+            host.$wire.pullNotifications(eligible).then(
                 () => settle(attempt),
                 () => settle(attempt),
             )
@@ -199,7 +199,10 @@ export function setUpNotifications() {
             component.id === attempt.host.$wire.$id &&
             commit.calls.some(
                 (call) =>
-                    call.method === 'pullNotificationsFromSession' &&
+                    [
+                        'pullNotifications',
+                        'pullNotificationsFromSession',
+                    ].includes(call.method) &&
                     JSON.stringify(call.params) ===
                         JSON.stringify([attempt.batches]),
             )
