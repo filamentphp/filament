@@ -63,7 +63,7 @@ trait CanBeValidated
 
     public function validate(mixed $input): void
     {
-        $originalState = $this->getGetStateUsingCallback();
+        $originalState = $this->getStateUsingCallback();
 
         $this->getStateUsing($input);
         $this->clearCachedState();

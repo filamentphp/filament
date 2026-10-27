@@ -505,10 +505,10 @@ use Filament\Actions\ExportAction;
 ExportAction::configureUsing(fn (ExportAction $action) => $action->fileDisk('s3'));
 ```
 
-Alternatively, you can override the `getFileDisk()` method on the exporter class, returning the name of the disk:
+Alternatively, you can override the `getFileDiskName()` method on the exporter class, returning the name of the disk:
 
 ```php
-public function getFileDisk(): string
+public function getFileDiskName(): string
 {
     return 's3';
 }

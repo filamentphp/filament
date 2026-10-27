@@ -793,7 +793,7 @@ Builder::make('content')
 
 In this example, `$arguments['item']` gives you the ID of the current builder item. You can validate the data in that builder item using the `getItemState()` method on the builder component. This method returns the validated data for the item. If the item is not valid, it will cancel the action and show an error message for that item in the form.
 
-If you want to get the raw data from the current item without validating it, you can use `$component->getRawItemState($arguments['item'])` instead.
+If you want to get a snapshot of the current item's state without validating it, you can use `$component->getItemStateSnapshot($arguments['item'])` instead. The snapshot still applies state transformations.
 
 If you want to manipulate the raw data for the entire builder, for example, to add, remove or modify items, you can use `$component->getState()` to get the data, and `$component->state($state)` to set it again:
 
