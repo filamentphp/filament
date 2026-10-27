@@ -85,6 +85,23 @@ Section::make('Rate limiting')
 
 <UtilityInjection set="schemaComponents">As well as allowing a static value, the `aside()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Positioning the content before the heading
+
+Use `contentBefore()` with `aside()` to position the content before the heading and description on medium and larger screens:
+
+```php
+use Filament\Schemas\Components\Section;
+
+Section::make('Rate limiting')
+    ->aside()
+    ->contentBefore()
+    ->schema([
+        // ...
+    ])
+```
+
+You may pass a boolean or a closure to `contentBefore()` to control this condition.
+
 ## Collapsing sections
 
 Sections may be `collapsible()` to optionally hide long content:

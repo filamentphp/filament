@@ -138,16 +138,32 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
         return (bool) ($this->evaluate($this->isAside) ?? false);
     }
 
-    public function formBefore(bool | Closure $condition = true): static
+    public function contentBefore(bool | Closure $condition = true): static
     {
         $this->isFormBefore = $condition;
 
         return $this;
     }
 
-    public function isFormBefore(): bool
+    /**
+     * @deprecated Use `contentBefore()` instead.
+     */
+    public function formBefore(bool | Closure $condition = true): static
+    {
+        return $this->contentBefore($condition);
+    }
+
+    public function isContentBefore(): bool
     {
         return (bool) $this->evaluate($this->isFormBefore);
+    }
+
+    /**
+     * @deprecated Use `isContentBefore()` instead.
+     */
+    public function isFormBefore(): bool
+    {
+        return $this->isContentBefore();
     }
 
     /**
@@ -270,7 +286,7 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
         $isCompact = $this->isCompact();
         $isContained = $this->isContained();
         $isDivided = $this->isDivided();
-        $isFormBefore = $this->isFormBefore();
+        $isFormBefore = $this->isContentBefore();
         $description = $this->getDescription();
         $footer = $this->getChildSchema(static::FOOTER_SCHEMA_KEY)?->toHtmlString();
         $heading = $this->getHeading();

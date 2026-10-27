@@ -182,7 +182,7 @@ Inline editable table columns such as `ToggleColumn`, `TextInputColumn`, `Select
 
 When you create [custom actions](../actions/overview#authorization), you are responsible for authorizing them. Filament provides `visible()`, `hidden()`, and `authorize()` methods to help with this, but you must use them — they are not applied automatically. If an action modifies data or performs sensitive operations, always ensure it is authorized.
 
-This also applies to [Select option actions](../forms/select#authorizing-option-actions) enabled by `createOptionForm()` and `editOptionForm()`. Access to the parent resource does not authorize creating or editing related records. Authorize the option action itself so that unauthorized users cannot open its modal or submit it, and scope the related records separately.
+This also applies to [Select option actions](../forms/select#authorizing-option-actions) enabled by `createOptionSchema()` and `editOptionSchema()`. Access to the parent resource does not authorize creating or editing related records. Authorize the option action itself so that unauthorized users cannot open its modal or submit it, and scope the related records separately.
 
 ### Testing authorization
 
