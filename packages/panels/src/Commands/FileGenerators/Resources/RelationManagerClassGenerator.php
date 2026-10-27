@@ -276,11 +276,11 @@ class RelationManagerClassGenerator extends ClassGenerator implements HasSkipped
         return <<<PHP
             return {$this->simplifyFqn($tableFqn)}::configure(\$table){$recordTitleAttributeOutput}{$headerActionsOutput}
                 ->recordActions([
-                    {$this->outputTableActions()}
+                    {$this->outputTableRecordActions()}
                 ])
                 ->toolbarActions([
                     {$this->simplifyFqn(BulkActionGroup::class)}::make([
-                        {$this->outputTableMethodBulkActions()}
+                        {$this->outputTableBulkActions()}
                     ]),
                 ]);
             PHP;
