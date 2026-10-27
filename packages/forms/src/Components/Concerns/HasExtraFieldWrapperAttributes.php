@@ -48,7 +48,15 @@ trait HasExtraFieldWrapperAttributes
         return $temporaryAttributeBag->getAttributes();
     }
 
+    /**
+     * @deprecated Use `getExtraFieldWrapperAttributeBag()` instead.
+     */
     public function getExtraFieldWrapperAttributesBag(): ComponentAttributeBag
+    {
+        return $this->getExtraFieldWrapperAttributeBag();
+    }
+
+    public function getExtraFieldWrapperAttributeBag(): ComponentAttributeBag
     {
         return new FilamentComponentAttributeBag($this->getExtraFieldWrapperAttributes());
     }

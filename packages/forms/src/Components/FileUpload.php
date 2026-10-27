@@ -541,7 +541,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
     public function getImageEditorViewportHeight(): ?int
     {
         if (($targetHeight = (int) $this->getAutomaticallyResizeImagesHeight()) > 1) {
-            return (int) round($targetHeight * $this->getParentTargetSizes($targetHeight), precision: 0);
+            return (int) round($targetHeight * $this->getImageEditorViewportScaleFactor($targetHeight), precision: 0);
         }
 
         if (filled($ratio = $this->getAutomaticallyCropImagesAspectRatio())) {
@@ -558,7 +558,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
     public function getImageEditorViewportWidth(): ?int
     {
         if (($targetWidth = (int) $this->getAutomaticallyResizeImagesWidth()) > 1) {
-            return (int) round($targetWidth * $this->getParentTargetSizes($targetWidth), precision: 0);
+            return (int) round($targetWidth * $this->getImageEditorViewportScaleFactor($targetWidth), precision: 0);
         }
 
         if (filled($ratio = $this->getAutomaticallyCropImagesAspectRatio())) {
@@ -572,7 +572,15 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
         return $this->evaluate($this->imageEditorViewportWidth);
     }
 
+    /**
+     * @deprecated Use `getImageEditorViewportScaleFactor()` instead.
+     */
     protected function getParentTargetSizes(int $widthOrHeight): int | float
+    {
+        return $this->getImageEditorViewportScaleFactor($widthOrHeight);
+    }
+
+    protected function getImageEditorViewportScaleFactor(int $widthOrHeight): int | float
     {
         $targetWidth = (int) $this->getAutomaticallyResizeImagesWidth();
 

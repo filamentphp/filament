@@ -42,12 +42,28 @@ class ImportChunkProcessed
         return $this->options;
     }
 
+    /**
+     * @deprecated Use `getProcessedRowsCount()` instead.
+     */
     public function getProcessedRows(): int
+    {
+        return $this->getProcessedRowsCount();
+    }
+
+    public function getProcessedRowsCount(): int
     {
         return $this->processedRows;
     }
 
+    /**
+     * @deprecated Use `getSuccessfulRowsCount()` instead.
+     */
     public function getSuccessfulRows(): int
+    {
+        return $this->getSuccessfulRowsCount();
+    }
+
+    public function getSuccessfulRowsCount(): int
     {
         return $this->successfulRows;
     }
