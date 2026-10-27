@@ -28,6 +28,7 @@ use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Navigation\NavigationItem;
+use Filament\Notifications\Livewire\Notifications;
 use Filament\Pages\Dashboard;
 use Filament\Pages\Dashboard\Concerns\HasFilters;
 use Filament\Panel;
@@ -51,6 +52,8 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Filament\Upgrade\Support\UnnormalizedUnionTypeResolver;
+use Filament\Widgets\ChartWidget;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
@@ -267,6 +270,12 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         ],
         Set::class => [
             'skipComponentsChildContainersWhileSearching' => 'skipComponentsChildSchemasWhileSearching',
+        ],
+        Notifications::class => [
+            'pullNotificationsFromSession' => 'pullNotifications',
+        ],
+        ChartWidget::class => [
+            'resetFiltersForm' => 'resetFilters',
         ],
         ViewComponent::class => [
             'disableLabel' => 'hiddenLabel',
@@ -492,11 +501,12 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                     return false;
                 }
 
-                if (in_array($componentClass, [ViewComponent::class, HasTable::class, Dashboard::class], strict: true)) {
+                if (in_array($componentClass, [ViewComponent::class, HasTable::class, Dashboard::class, ChartWidget::class], strict: true)) {
                     $declaringTrait = match ($methodName) {
                         'postfix' => HasAffixes::class,
                         'updatedtablesortdirection' => CanSortRecords::class,
                         'normalizetablefiltervaluesfromquerystring' => HasFilters::class,
+                        'resetfiltersform' => HasFiltersSchema::class,
                         default => HasLabel::class,
                     };
 

@@ -121,7 +121,7 @@ describe('validation and HTTP updates', function (): void {
             'components' => [[
                 'snapshot' => json_encode($component->snapshot),
                 'updates' => ['notifications' => $notifications],
-                'calls' => [['method' => 'pullNotificationsFromSession', 'params' => []]],
+                'calls' => [['method' => 'pullNotifications', 'params' => []]],
             ]],
         ], ['X-Livewire' => 'true'])->assertStatus(419);
 

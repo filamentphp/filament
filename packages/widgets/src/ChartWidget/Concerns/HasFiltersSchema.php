@@ -87,15 +87,6 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
         $this->cachedData = null;
     }
 
-    /**
-     * @deprecated Use `resetFilters()` instead.
-     */
-    #[Exposed]
-    public function resetFiltersForm(): void
-    {
-        $this->resetFilters();
-    }
-
     #[Exposed]
     public function resetFilters(): void
     {
