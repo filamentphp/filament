@@ -729,6 +729,7 @@ class Tabs extends Component implements HasEmbeddedView
                 <?php foreach ($this->getStartRenderHooks() as $startRenderHook) { ?>
                     <?= FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes)->toHtml() ?>
                 <?php } ?>
+                <?php // Keep loading state on the group so tab availability and panel visibility do not change during the request.?>
                 <div
                     x-ref="tablist"
                     role="<?= $this->hasTabPanels() ? 'tablist' : 'group' ?>"
@@ -736,6 +737,10 @@ class Tabs extends Component implements HasEmbeddedView
                     aria-label="<?= e($label ?? __('filament::components/tabs.label')) ?>"
                     <?php if ($this->hasTabPanels() && $isVertical) { ?>x-bind:aria-orientation="hasVisibleTabHeaders ? 'vertical' : null"<?php } ?>
                     x-on:keydown="handleKeydown($event)"
+                    data-prevent-disabled-clicks
+                    wire:loading.attr="aria-disabled"
+                    wire:loading.class="fi-disabled"
+                    wire:target="<?= e($livewireProperty) ?>"
                     class="fi-sc-tabs-tablist"
                 >
 

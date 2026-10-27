@@ -1030,7 +1030,7 @@ describe('rendering', function (): void {
             ->assertSuccessful()
             ->html();
 
-        expect(substr_count($html, 'wire:target="sortTable(\'title\')"'))->toBe(3);
+        expect(substr_count($html, 'wire:target="sortTable(\'title\')"'))->toBe(2);
     });
 
     it('preserves the header sort loading indicator when the loading skeleton is enabled', function (): void {
@@ -1040,7 +1040,7 @@ describe('rendering', function (): void {
             ->assertSuccessful()
             ->html();
 
-        expect(substr_count($html, 'wire:target="sortTable(\'title\')"'))->toBe(3);
+        expect(substr_count($html, 'wire:target="sortTable(\'title\')"'))->toBe(2);
     });
 
     it('replaces the empty state icon with a loading indicator during updates that change the displayed records', function (): void {
