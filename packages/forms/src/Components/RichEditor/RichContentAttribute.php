@@ -273,9 +273,19 @@ class RichContentAttribute implements Htmlable
     }
 
     /**
+     * @deprecated Use `getCustomBlocksConfiguration()` instead.
+     *
      * @return array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock>>>
      */
     public function getCustomBlocksConfig(): array
+    {
+        return $this->getCustomBlocksConfiguration();
+    }
+
+    /**
+     * @return array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock>>>
+     */
+    public function getCustomBlocksConfiguration(): array
     {
         return $this->customBlocks ?? [];
     }

@@ -120,7 +120,7 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
 
     protected function isCachedDefaultChildSchemaFresh(string | int $key): bool
     {
-        [$hasItem, $itemState] = $this->getItemState($this->getState() ?? [], $key);
+        [$hasItem, $itemState] = $this->getItemStateWithExistence($this->getState() ?? [], $key);
 
         return $hasItem
             && is_array($this->cachedItemsState)
@@ -129,9 +129,19 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
     }
 
     /**
+     * @deprecated Use `getItemStateWithExistence()` instead.
+     *
      * @return array{bool, mixed}
      */
     protected function getItemState(mixed $state, string | int $key): array
+    {
+        return $this->getItemStateWithExistence($state, $key);
+    }
+
+    /**
+     * @return array{bool, mixed}
+     */
+    protected function getItemStateWithExistence(mixed $state, string | int $key): array
     {
         if ($state instanceof Generator) {
             $state = $this->normalizeItemsState($state);

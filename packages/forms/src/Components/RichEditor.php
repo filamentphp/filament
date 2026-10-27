@@ -1169,7 +1169,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                 return [
                     'char' => $provider->getChar(),
                     'extraAttributes' => $provider->getExtraAttributes(),
-                    'isSearchable' => $provider->hasSearchResultsUsing(),
+                    'isSearchable' => $provider->hasSearchResultsUsingCallback(),
                     'items' => $this->transformMentionItemsForJs($provider->getItems()),
                     'noOptionsMessage' => $provider->getNoItemsMessage(),
                     'noSearchResultsMessage' => $provider->getNoSearchResultsMessage(),
@@ -1405,7 +1405,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
      */
     protected function resolveCustomBlocks(): array
     {
-        return $this->evaluate($this->customBlocks) ?? $this->getContentAttribute()?->getCustomBlocksConfig() ?? [];
+        return $this->evaluate($this->customBlocks) ?? $this->getContentAttribute()?->getCustomBlocksConfiguration() ?? [];
     }
 
     /**
