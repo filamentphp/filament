@@ -9,6 +9,7 @@ use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\ReplicateAction;
 use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Concerns\HasAffixes;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\MarkdownEditor;
@@ -28,6 +29,8 @@ use Filament\Support\Components\ViewComponent;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Concerns\CanSortRecords;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
@@ -166,6 +169,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'getName' => 'getKey',
             'context' => 'operation',
             'clearCachedDefaultChildSchemas' => 'clearCachedChildSchemas',
+            'reactive' => 'live',
         ],
         Component::class => [
             'getGetCallback' => 'makeGetUtility',
@@ -173,12 +177,14 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'getChildComponentContainer' => 'getChildSchema',
             'getChildComponentContainers' => 'getChildSchemas',
             'clearCachedDefaultChildSchemas' => 'clearCachedChildSchemas',
+            'reactive' => 'live',
         ],
         Step::class => [
             'afterValidated' => 'afterValidation',
         ],
         ViewComponent::class => [
             'disableLabel' => 'hiddenLabel',
+            'postfix' => 'suffix',
         ],
         Tab::class => [
             'indicator' => 'badge',
@@ -201,6 +207,9 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         ],
         Group::class => [
             'getDescriptionUsing' => 'getDescriptionFromRecordUsing',
+        ],
+        HasTable::class => [
+            'updatedTableSortDirection' => 'updatedTableSort',
         ],
         Table::class => [
             'actions' => 'recordActions',
@@ -379,9 +388,14 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                     return false;
                 }
 
-                if ($componentClass === ViewComponent::class) {
-                    // This concern also belongs to fields, entries, stats, and editor tools.
-                    if ((! method_exists($methodReflection, 'getDeclaringTrait')) || ($methodReflection->getDeclaringTrait()?->getName() !== HasLabel::class)) {
+                if (in_array($componentClass, [ViewComponent::class, HasTable::class], strict: true)) {
+                    $declaringTrait = match ($methodName) {
+                        'postfix' => HasAffixes::class,
+                        'updatedtablesortdirection' => CanSortRecords::class,
+                        default => HasLabel::class,
+                    };
+
+                    if ((! method_exists($methodReflection, 'getDeclaringTrait')) || ($methodReflection->getDeclaringTrait()?->getName() !== $declaringTrait)) {
                         return false;
                     }
 
@@ -415,6 +429,11 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
      */
     private function canForwardArguments(MethodCall | NullsafeMethodCall $node, string $componentClass, string $methodName): bool
     {
+        // `reactive()` ignored positional arguments that `live()` would consume.
+        if ($methodName === 'reactive') {
+            return (! $node->isFirstClassCallable()) && (! count($node->getArgs()));
+        }
+
         // `getName()` ignored extra positional arguments; `getKey()` would consume one.
         if (($componentClass === Schema::class) && ($methodName === 'getname')) {
             return (! $node->isFirstClassCallable()) && (! count($node->getArgs()));

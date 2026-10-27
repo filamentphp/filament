@@ -13,6 +13,12 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 function configure(Schema $schema, Component $component, Step $step, ?Schema $nullableSchema, ?Section $section, TextInput $field, TextEntry $entry, Stat $stat, RichEditorTool $tool, array $arguments): void
 {
+    $schema->reactive();
+    $component->reactive();
+    $nullableSchema?->reactive();
+    $field->reactive()->debounce(250);
+    $entry->REACTIVE();
+    TextInput::make('title')->reactive();
     $schema->name(name: fn (): string => 'details')->context(context: 'edit');
     $schema->getName();
     $schema->clearCachedDefaultChildSchemas();
@@ -84,6 +90,12 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 function configure(Schema $schema, Component $component, Step $step, ?Schema $nullableSchema, ?Section $section, TextInput $field, TextEntry $entry, Stat $stat, RichEditorTool $tool, array $arguments): void
 {
+    $schema->live();
+    $component->live();
+    $nullableSchema?->live();
+    $field->live()->debounce(250);
+    $entry->live();
+    TextInput::make('title')->live();
     $schema->key(key: fn (): string => 'details')->operation(operation: 'edit');
     $schema->getKey();
     $schema->clearCachedChildSchemas();

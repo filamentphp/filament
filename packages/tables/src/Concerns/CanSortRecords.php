@@ -70,22 +70,6 @@ trait CanSortRecords
         $this->resetPage();
     }
 
-    /**
-     * @deprecated Use `updatedTableSort()` instead.
-     */
-    #[Unexposed]
-    public function updatedTableSortDirection(): void
-    {
-        if ($this->getTable()->persistsSortInSession()) {
-            session()->put(
-                $this->getTableSortSessionKey(),
-                $this->tableSort,
-            );
-        }
-
-        $this->resetPage();
-    }
-
     protected function applySortingToTableQuery(Builder $query): Builder
     {
         if ($this->getTable()->isGroupsOnly()) {

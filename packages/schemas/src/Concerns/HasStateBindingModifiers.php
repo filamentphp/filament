@@ -27,16 +27,6 @@ trait HasStateBindingModifiers
         return $this;
     }
 
-    /**
-     * @deprecated Use `live()` instead.
-     */
-    public function reactive(): static
-    {
-        $this->live();
-
-        return $this;
-    }
-
     public function debounce(int | string | null $delay = 500): static
     {
         $this->live(debounce: $delay);
