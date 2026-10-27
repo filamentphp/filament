@@ -17,7 +17,7 @@ class LinkAction
             ->label(__('filament-forms::components.rich_editor.actions.link.label'))
             ->modalHeading(__('filament-forms::components.rich_editor.actions.link.modal.heading'))
             ->modalWidth(Width::Large)
-            ->fillForm(fn (array $arguments): array => [
+            ->fillSchema(fn (array $arguments): array => [
                 'url' => $arguments['url'] ?? null,
                 'shouldOpenInNewTab' => $arguments['shouldOpenInNewTab'] ?? false,
             ])

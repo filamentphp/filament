@@ -42,7 +42,7 @@ class EditAction extends Action
         $this->tableIcon(FilamentIcon::resolve(ActionsIconAlias::EDIT_ACTION) ?? Heroicon::PencilSquare);
         $this->groupedIcon(FilamentIcon::resolve(ActionsIconAlias::EDIT_ACTION_GROUPED) ?? Heroicon::PencilSquare);
 
-        $this->fillForm(function (HasActions & HasSchemas $livewire, Model $record, ?Table $table): array {
+        $this->fillSchema(function (HasActions & HasSchemas $livewire, Model $record, ?Table $table): array {
             $translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver();
 
             if ($translatableContentDriver) {

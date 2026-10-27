@@ -19,7 +19,7 @@ class AttachFilesAction
             ->label(__('filament-forms::components.rich_editor.actions.attach_files.label'))
             ->modalHeading(__('filament-forms::components.rich_editor.actions.attach_files.modal.heading'))
             ->modalWidth(Width::Large)
-            ->fillForm(fn (array $arguments): array => [
+            ->fillSchema(fn (array $arguments): array => [
                 'alt' => $arguments['alt'] ?? null,
             ])
             ->schema(fn (array $arguments, RichEditor $component): array => [

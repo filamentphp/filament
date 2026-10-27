@@ -150,13 +150,23 @@ class CreateAction extends Action
     /**
      * @param  array<string>  $fields
      */
-    public function preserveFormDataWhenCreatingAnother(array | Closure | null $fields): static
+    public function preserveDataWhenCreatingAnother(array | Closure | null $fields): static
     {
         $this->preserveFormDataWhenCreatingAnotherUsing = is_array($fields) ?
             fn (array $data): array => Arr::only($data, $fields) :
             $fields;
 
         return $this;
+    }
+
+    /**
+     * @deprecated Use `preserveDataWhenCreatingAnother()` instead.
+     *
+     * @param  array<string>  $fields
+     */
+    public function preserveFormDataWhenCreatingAnother(array | Closure | null $fields): static
+    {
+        return $this->preserveDataWhenCreatingAnother($fields);
     }
 
     public function relationship(?Closure $relationship): static

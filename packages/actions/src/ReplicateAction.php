@@ -43,7 +43,7 @@ class ReplicateAction extends Action
 
         $this->successNotificationTitle(__('filament-actions::replicate.single.notifications.replicated.title'));
 
-        $this->fillForm(function (Model $record): array {
+        $this->fillSchema(function (Model $record): array {
             $data = Arr::except($record->attributesToArray(), $this->getExcludedAttributes() ?? []);
 
             if ($this->mutateRecordDataUsing) {

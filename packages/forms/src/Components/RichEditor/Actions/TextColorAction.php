@@ -19,7 +19,7 @@ class TextColorAction
             ->label(__('filament-forms::components.rich_editor.actions.text_color.label'))
             ->modalHeading(__('filament-forms::components.rich_editor.actions.text_color.modal.heading'))
             ->modalWidth(Width::Large)
-            ->fillForm(fn (array $arguments, RichEditor $component): ?array => filled($arguments['color'] ?? null) ? [
+            ->fillSchema(fn (array $arguments, RichEditor $component): ?array => filled($arguments['color'] ?? null) ? [
                 'color' => array_key_exists($arguments['color'], $options = $component->getTextColors()) ? $arguments['color'] : null,
                 'customColor' => $component->hasCustomTextColors() && (! array_key_exists($arguments['color'], $options)) ? $arguments['color'] : null,
             ] : null)
