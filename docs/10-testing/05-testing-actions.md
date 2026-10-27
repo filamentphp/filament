@@ -42,6 +42,19 @@ livewire(ListInvoices::class)
     ->assertActionExists(TestAction::make('send')->table($invoice));
 ```
 
+### Testing the order of table record actions
+
+To check that record actions exist in a particular order, use `assertTableRecordActionsExistInOrder()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+livewire(ListInvoices::class)
+    ->assertTableRecordActionsExistInOrder(['edit', 'send']);
+```
+
+This checks record actions, including actions inside groups, but not header or bulk actions. Other record actions may appear before, between, or after the actions you specify.
+
 ### Testing table header actions
 
 To test a header action, you can use the `table()` method without passing in a specific record to test with:
