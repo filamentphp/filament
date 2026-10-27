@@ -288,7 +288,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                 $hasSchema = $this->mountedActionHasSchema(mountedAction: $action);
 
                 if ($hasSchema) {
-                    $action->callBeforeFormFilled();
+                    $action->callBeforeSchemaFilled();
                 }
 
                 $schema = $this->getMountedActionSchema(mountedAction: $action);
@@ -299,7 +299,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                 ]);
 
                 if ($hasSchema) {
-                    $action->callAfterFormFilled();
+                    $action->callAfterSchemaFilled();
                 }
             } catch (Halt $exception) {
                 $this->unmountAction(cancelParentActions: false);
@@ -431,10 +431,10 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
             }
 
             if ($this->mountedActionHasSchema(mountedAction: $action)) {
-                $action->callBeforeFormValidated();
+                $action->callBeforeSchemaValidated();
 
                 $schema->getState(afterValidate: function (array $state) use ($action, $schemaState): void {
-                    $action->callAfterFormValidated();
+                    $action->callAfterSchemaValidated();
 
                     $action->data([
                         ...$schemaState,

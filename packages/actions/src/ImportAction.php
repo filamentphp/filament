@@ -184,7 +184,7 @@ class ImportAction extends Action
                 })
                 ->statePath('columnMap')
                 ->visible(fn (Get $get): bool => $get('file') instanceof TemporaryUploadedFile),
-        ], $action->getImporter()::getOptionsFormComponents()));
+        ], $action->getImporter()::getOptionsSchemaComponents()));
 
         $this->action(function (ImportAction $action, array $data): void {
             /** @var TemporaryUploadedFile $csvFile */

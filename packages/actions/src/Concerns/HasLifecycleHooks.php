@@ -35,32 +35,64 @@ trait HasLifecycleHooks
         return $this;
     }
 
-    public function beforeFormFilled(?Closure $callback): static
+    public function beforeSchemaFilled(?Closure $callback): static
     {
         $this->beforeFormFilled = $callback;
 
         return $this;
     }
 
-    public function afterFormFilled(?Closure $callback): static
+    /**
+     * @deprecated Use `beforeSchemaFilled()` instead.
+     */
+    public function beforeFormFilled(?Closure $callback): static
+    {
+        return $this->beforeSchemaFilled($callback);
+    }
+
+    public function afterSchemaFilled(?Closure $callback): static
     {
         $this->afterFormFilled = $callback;
 
         return $this;
     }
 
-    public function beforeFormValidated(?Closure $callback): static
+    /**
+     * @deprecated Use `afterSchemaFilled()` instead.
+     */
+    public function afterFormFilled(?Closure $callback): static
+    {
+        return $this->afterSchemaFilled($callback);
+    }
+
+    public function beforeSchemaValidated(?Closure $callback): static
     {
         $this->beforeFormValidated = $callback;
 
         return $this;
     }
 
-    public function afterFormValidated(?Closure $callback): static
+    /**
+     * @deprecated Use `beforeSchemaValidated()` instead.
+     */
+    public function beforeFormValidated(?Closure $callback): static
+    {
+        return $this->beforeSchemaValidated($callback);
+    }
+
+    public function afterSchemaValidated(?Closure $callback): static
     {
         $this->afterFormValidated = $callback;
 
         return $this;
+    }
+
+    /**
+     * @deprecated Use `afterSchemaValidated()` instead.
+     */
+    public function afterFormValidated(?Closure $callback): static
+    {
+        return $this->afterSchemaValidated($callback);
     }
 
     public function callBefore(): mixed
@@ -79,23 +111,55 @@ trait HasLifecycleHooks
         }
     }
 
-    public function callBeforeFormFilled(): mixed
+    public function callBeforeSchemaFilled(): mixed
     {
         return $this->evaluate($this->beforeFormFilled);
     }
 
-    public function callAfterFormFilled(): mixed
+    /**
+     * @deprecated Use `callBeforeSchemaFilled()` instead.
+     */
+    public function callBeforeFormFilled(): mixed
+    {
+        return $this->callBeforeSchemaFilled();
+    }
+
+    public function callAfterSchemaFilled(): mixed
     {
         return $this->evaluate($this->afterFormFilled);
     }
 
-    public function callBeforeFormValidated(): mixed
+    /**
+     * @deprecated Use `callAfterSchemaFilled()` instead.
+     */
+    public function callAfterFormFilled(): mixed
+    {
+        return $this->callAfterSchemaFilled();
+    }
+
+    public function callBeforeSchemaValidated(): mixed
     {
         return $this->evaluate($this->beforeFormValidated);
     }
 
-    public function callAfterFormValidated(): mixed
+    /**
+     * @deprecated Use `callBeforeSchemaValidated()` instead.
+     */
+    public function callBeforeFormValidated(): mixed
+    {
+        return $this->callBeforeSchemaValidated();
+    }
+
+    public function callAfterSchemaValidated(): mixed
     {
         return $this->evaluate($this->afterFormValidated);
+    }
+
+    /**
+     * @deprecated Use `callAfterSchemaValidated()` instead.
+     */
+    public function callAfterFormValidated(): mixed
+    {
+        return $this->callAfterSchemaValidated();
     }
 }

@@ -183,10 +183,18 @@ class Get
         return blank($this($key, $isAbsolute));
     }
 
-    public function skipComponentsChildContainersWhileSearching(bool $condition = true): static
+    public function skipComponentsChildSchemasWhileSearching(bool $condition = true): static
     {
         $this->shouldSkipComponentsChildContainersWhileSearching = $condition;
 
         return $this;
+    }
+
+    /**
+     * @deprecated Use `skipComponentsChildSchemasWhileSearching()` instead.
+     */
+    public function skipComponentsChildContainersWhileSearching(bool $condition = true): static
+    {
+        return $this->skipComponentsChildSchemasWhileSearching($condition);
     }
 }
