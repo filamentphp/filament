@@ -836,7 +836,7 @@ class Action extends ViewComponent implements Arrayable
             && ! $this->hasMarkAsRead()
             && ! $this->hasMarkAsUnread()
             && ! $this->hasAlpineClickHandler()
-            && ! $this->hasCustomLivewireClickHandler()
+            && ! $this->hasLivewireClickHandlerEnabledConfiguration()
             && ! $this->hasLivewireTarget()
             && ! $this->hasCanSubmitForm()
             && ! $this->hasFormId()
@@ -859,7 +859,15 @@ class Action extends ViewComponent implements Arrayable
         return $this->alpineClickHandler !== null;
     }
 
+    /**
+     * @deprecated Use `hasLivewireClickHandlerEnabledConfiguration()` instead.
+     */
     public function hasCustomLivewireClickHandler(): bool
+    {
+        return $this->hasLivewireClickHandlerEnabledConfiguration();
+    }
+
+    public function hasLivewireClickHandlerEnabledConfiguration(): bool
     {
         return $this->isLivewireClickHandlerEnabled !== null;
     }
@@ -945,7 +953,7 @@ class Action extends ViewComponent implements Arrayable
             && ! $this->hasMarkAsRead()
             && ! $this->hasMarkAsUnread()
             && ! $this->hasAlpineClickHandler()
-            && ! $this->hasCustomLivewireClickHandler()
+            && ! $this->hasLivewireClickHandlerEnabledConfiguration()
             && ! $this->hasLivewireTarget()
             && ! $this->hasCanSubmitForm();
     }

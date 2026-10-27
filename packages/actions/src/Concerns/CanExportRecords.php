@@ -105,7 +105,7 @@ trait CanExportRecords
                     ],
                 })
                 ->schema(function () use ($action): array {
-                    $isEnablingVisibleTableColumnsByDefault = $action->isEnablingVisibleTableColumnsByDefault();
+                    $isEnablingVisibleTableColumnsByDefault = $action->shouldEnableVisibleTableColumnsByDefault();
                     $visibleTableColumnNames = $isEnablingVisibleTableColumnsByDefault ? $action->getVisibleTableColumnNames() : [];
 
                     $columns = $action->getExporter()::getVisibleColumns();
@@ -240,7 +240,7 @@ trait CanExportRecords
                     ])
                     ->all();
             } else {
-                $isEnablingVisibleTableColumnsByDefault = $action->isEnablingVisibleTableColumnsByDefault();
+                $isEnablingVisibleTableColumnsByDefault = $action->shouldEnableVisibleTableColumnsByDefault();
                 $visibleTableColumnNames = $isEnablingVisibleTableColumnsByDefault ? $action->getVisibleTableColumnNames() : [];
 
                 $columnMap = collect($exporter::getVisibleColumns())
@@ -276,7 +276,7 @@ trait CanExportRecords
                 options: $options,
             );
 
-            $export->file_disk = $action->getFileDisk() ?? $exporter->getFileDisk();
+            $export->file_disk = $action->getFileDiskName() ?? $exporter->getFileDiskName();
             // Temporary save to obtain the sequence number of the export file.
             $export->save();
 
@@ -482,7 +482,15 @@ trait CanExportRecords
         return $this;
     }
 
+    /**
+     * @deprecated Use `getFileDiskName()` instead.
+     */
     public function getFileDisk(): ?string
+    {
+        return $this->getFileDiskName();
+    }
+
+    public function getFileDiskName(): ?string
     {
         return $this->evaluate($this->fileDisk);
     }
@@ -548,7 +556,15 @@ trait CanExportRecords
         return $this;
     }
 
+    /**
+     * @deprecated Use `shouldEnableVisibleTableColumnsByDefault()` instead.
+     */
     public function isEnablingVisibleTableColumnsByDefault(): bool
+    {
+        return $this->shouldEnableVisibleTableColumnsByDefault();
+    }
+
+    public function shouldEnableVisibleTableColumnsByDefault(): bool
     {
         return (bool) $this->evaluate($this->isEnablingVisibleTableColumnsByDefault);
     }

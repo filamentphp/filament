@@ -255,9 +255,19 @@ class ImportColumn extends Component
     }
 
     /**
+     * @deprecated Use `guesses()` instead.
+     *
      * @param  array<string> | Closure  $guesses
      */
     public function guess(array | Closure $guesses): static
+    {
+        return $this->guesses($guesses);
+    }
+
+    /**
+     * @param  array<string> | Closure  $guesses
+     */
+    public function guesses(array | Closure $guesses): static
     {
         $this->guesses = $guesses;
 

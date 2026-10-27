@@ -678,7 +678,15 @@ trait HasCellState
         return (string) $record->getKey();
     }
 
+    /**
+     * @deprecated Use `getStateUsingCallback()` instead.
+     */
     public function getGetStateUsingCallback(): mixed
+    {
+        return $this->getStateUsingCallback();
+    }
+
+    public function getStateUsingCallback(): mixed
     {
         return $this->getStateUsing;
     }

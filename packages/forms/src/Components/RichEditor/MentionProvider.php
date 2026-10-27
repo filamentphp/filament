@@ -196,7 +196,15 @@ class MentionProvider
         return $result;
     }
 
+    /**
+     * @deprecated Use `hasSearchResultsUsingCallback()` instead.
+     */
     public function hasSearchResultsUsing(): bool
+    {
+        return $this->hasSearchResultsUsingCallback();
+    }
+
+    public function hasSearchResultsUsingCallback(): bool
     {
         return $this->getSearchResultsUsing instanceof Closure;
     }

@@ -139,7 +139,7 @@ trait CanSummarizeRecords
                 : $query->getModel()->qualifyColumn($columnName);
 
             foreach ($summarizers as $summarizer) {
-                if ($summarizer->hasQueryModification()) {
+                if ($summarizer->hasQueryModificationCallback()) {
                     continue;
                 }
 
