@@ -279,6 +279,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+You can check this configuration with `$panel->isDarkModeForced()` or `Filament\Facades\Filament::isDarkModeForced()` for the current panel. This is distinct from `hasDarkMode()`, which checks whether dark mode is available, and does not indicate the user's selected theme.
+
 ### Changing the default theme mode
 
 By default, Filament uses the user's system theme as the default mode. For example, if the user's computer is in dark mode, Filament will use dark mode by default. The system mode in Filament is reactive if the user changes their computer's mode. If you want to change the default mode to force light or dark mode, you can use the `defaultThemeMode()` method, passing `ThemeMode::Light` or `ThemeMode::Dark`:
