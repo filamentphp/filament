@@ -85,7 +85,6 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\HasExtraModalOverlayAttributes;
     use Concerns\HasExtraModalWindowAttributes;
     use Concerns\HasGroupedIcon;
-    use Concerns\HasInfolist;
     use Concerns\HasKeyBindings;
     use Concerns\HasLabel;
     use Concerns\HasLifecycleHooks;
@@ -470,27 +469,9 @@ class Action extends ViewComponent implements Arrayable
         return $this->getJsClickHandler();
     }
 
-    /**
-     * @deprecated Use `extraAttributes()` instead.
-     *
-     * @param  array<mixed>  $attributes
-     */
-    public function withAttributes(array $attributes): static
-    {
-        return $this->extraAttributes($attributes);
-    }
-
     public function getLivewireCallMountedActionName(): string
     {
         return 'callMountedAction';
-    }
-
-    /**
-     * @deprecated Use `getJsClickHandler()` instead.
-     */
-    protected function getJavaScriptClickHandler(): ?string
-    {
-        return $this->getJsClickHandler();
     }
 
     protected function getJsClickHandler(): ?string
@@ -696,14 +677,6 @@ class Action extends ViewComponent implements Arrayable
     public function halt(bool $shouldRollBackDatabaseTransaction = false): void
     {
         throw (new Halt)->rollBackDatabaseTransaction($shouldRollBackDatabaseTransaction);
-    }
-
-    /**
-     * @deprecated Use `halt()` instead.
-     */
-    public function hold(): void
-    {
-        $this->halt();
     }
 
     public function success(): void

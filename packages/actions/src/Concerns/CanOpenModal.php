@@ -198,18 +198,6 @@ trait CanOpenModal
 
     /**
      * @param  array<Action> | Closure | null  $actions
-     *
-     * @deprecated Use `modalFooterActions()` instead.
-     */
-    public function modalActions(array | Closure | null $actions = null): static
-    {
-        $this->modalFooterActions($actions);
-
-        return $this;
-    }
-
-    /**
-     * @param  array<Action> | Closure | null  $actions
      */
     public function modalFooterActions(array | Closure | null $actions = null): static
     {
@@ -221,18 +209,6 @@ trait CanOpenModal
     public function modalFooterActionsAlignment(Alignment | string | Closure | null $alignment = null): static
     {
         $this->modalFooterActionsAlignment = $alignment;
-
-        return $this;
-    }
-
-    /**
-     * @param  array<Action> | Closure  $actions
-     *
-     * @deprecated Use `extraModalFooterActions()` instead.
-     */
-    public function extraModalActions(array | Closure $actions): static
-    {
-        $this->extraModalFooterActions($actions);
 
         return $this;
     }
@@ -288,29 +264,11 @@ trait CanOpenModal
         return $this;
     }
 
-    /**
-     * @deprecated Use `modalSubmitActionLabel()` instead.
-     */
-    public function modalButton(string | Closure | null $label = null): static
-    {
-        $this->modalSubmitActionLabel($label);
-
-        return $this;
-    }
-
     public function modalContent(View | Htmlable | Closure | null $content = null): static
     {
         $this->modalContent = $content;
 
         return $this;
-    }
-
-    /**
-     * @deprecated Use `modalContentFooter()` instead.
-     */
-    public function modalFooter(View | Htmlable | Closure | null $footer = null): static
-    {
-        return $this->modalContentFooter($footer);
     }
 
     public function modalContentFooter(View | Htmlable | Closure | null $footer = null): static
@@ -337,16 +295,6 @@ trait CanOpenModal
     public function modalEyebrow(string | Htmlable | Closure | null $eyebrow = null): static
     {
         $this->modalEyebrow = $eyebrow;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `modalDescription()` instead.
-     */
-    public function modalSubheading(string | Htmlable | Closure | null $subheading = null): static
-    {
-        $this->modalDescription($subheading);
 
         return $this;
     }
@@ -762,16 +710,6 @@ trait CanOpenModal
     public function hasUnsavedChangesAlert(): bool
     {
         return (bool) ($this->evaluate($this->hasUnsavedChangesAlert) ?? (! $this->isSchemaDisabled()));
-    }
-
-    /**
-     * @deprecated Use `makeModalSubmitAction()` instead.
-     *
-     * @param  array<string, mixed> | null  $arguments
-     */
-    public function makeExtraModalAction(string $name, ?array $arguments = null): Action
-    {
-        return $this->makeModalSubmitAction($name, $arguments);
     }
 
     /**
