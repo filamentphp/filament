@@ -485,7 +485,45 @@ Manually migrate custom overrides (including inherited methods and methods suppl
 
 Preserve custom parameter names, defaults, return values, and dispatch behavior. The wrappers called replacements through `$this`, so renaming `parent::` calls can bypass subclass overrides. `options()` and `disableClick()` returned `$this` regardless of the replacement's return value; the badge and relationship aliases returned the replacement's result.
 
-`BadgeColumn`, `BooleanColumn`, and `TagsColumn`, legacy table/infolist bridges, and unrelated deprecated methods remain available.
+Legacy table/infolist bridges and unrelated deprecated methods remain available.
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('tables')">
+<span slot="summary">Deprecated badge, boolean, and tags column classes have been removed</span>
+
+Use explicit configuration on the canonical column classes:
+
+| Removed factory | Replacement |
+| --- | --- |
+| `Filament\Tables\Columns\BadgeColumn::make()` | `Filament\Tables\Columns\TextColumn::make()->badge()` |
+| `Filament\Tables\Columns\BooleanColumn::make()` | `Filament\Tables\Columns\IconColumn::make()->boolean()` |
+| `Filament\Tables\Columns\TagsColumn::make()` | `Filament\Tables\Columns\TextColumn::make()->badge()` |
+
+The script migrates direct factories, including imported aliases and fully qualified names, with a limited set of known chained setters such as `label()`, `color()`, `icon()`, `sortable()`, and `searchable()`. Unknown methods, `tap()`, `when()`, dynamic and nullsafe chains, first-class callables, and arguments referencing the removed classes (including typed closures) are left unchanged for manual review. Factory arguments and the order of existing setters are preserved. Remove unused legacy imports afterwards.
+
+On migrated `TagsColumn` chains only, `limit()` becomes `limitList()`, and its named `length:` argument becomes `limit:`. Both methods default to three items when called without arguments, accept `null` for no limit, and evaluate length closures lazily. A tags column without either call remains unlimited. `TextColumn::limit()` still truncates each text value, not the list; unrelated calls, including character limits on migrated badge columns, are unchanged.
+
+If you store a tags column in a variable and call `$column->limit(2)` in a later statement, the factory can migrate while that separate call remains unchanged. Manually change it to `$column->limitList(2)`; otherwise it will truncate each tag's text instead of limiting the number of tags. The same applies to list limits configured through helpers or callbacks outside the direct factory chain.
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('tags')
+    ->badge()
+    ->limitList(limit: 2)
+```
+
+The old tags `limit()` ignored its `$end` value, but PHP still evaluated the argument expression. The script leaves the entire factory chain unchanged if `limit()` supplies `end:` or a second positional argument, even `null`, or unpacks arguments. Migrate these manually, preserving expression side effects and their evaluation order. Keep a length closure lazy; the ignored end closure's body was never evaluated. Do not blindly rename these calls: `limitList()` does not accept `end:`.
+
+`BadgeColumn::isBadge()` and `BooleanColumn::isBoolean($state = null, $relatedRecord = null)` always returned `true`, even after `badge(false)`, `boolean(false)`, or a condition closure. The script skips chains containing those setters on the forced-mode classes. When migrating manually, keep any argument-expression side effects without evaluating previously ignored condition closures, and ensure the mode remains enabled. Unlike those classes, `TagsColumn` only enabled badges during setup, so subsequent `badge(false)` calls did disable badges and are preserved by the script. Audit changes made after a factory chain as well, including through shared helpers or callbacks.
+
+Class references are deliberately **not** renamed globally. Manually migrate custom subclasses (including intermediate inheritance), parameter, return and property types, unions, PHPDoc, `instanceof`, `::class`, direct construction, container bindings, array callbacks, strings, dynamic references, and non-PHP files. Replacing a legacy type with its base broadens type checks to unrelated columns. Use an application-owned subclass if you need to retain that distinction.
+
+For custom subclasses, preserve inherited and trait-provided overrides, trait adaptations, parameter names, defaults, and fluent return values. A forced badge/boolean getter override may still be needed rather than a setup setter. Review calls to `parent::isBadge()`, `parent::isBoolean()`, `parent::setUp()`, and `parent::limit()`: the new parent has different behavior. The tags wrapper dispatched `limitList()` through `$this` and returned `$this` independently of that method's return value; a simple parent-method rename can bypass custom dispatch. Do not rename a custom text-truncation `limit()` implementation to a list limit.
+
+Review **all global configuration**, including `configureUsing()` on the legacy classes and their canonical bases, before relying on migrated factories. Renaming a legacy registration to `TextColumn` or `IconColumn` would affect unrelated columns. Move scoped configuration to individual columns or an application-owned subclass. Explicit `badge()` / `boolean()` now run after `make()` configuration callbacks: callbacks may observe different modes, and important configuration that disabled tags after legacy setup can be overridden by the appended `badge()`. Preserve the original configuration scope and precedence manually, including callback type hints and code that inspects the runtime class. Direct constructors, dynamic factories, and first-class factory callables also need manual configuration.
+
+Other column classes, table APIs, and legacy table/infolist bridges are unchanged.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('infolists') || packages.includes('tables')">

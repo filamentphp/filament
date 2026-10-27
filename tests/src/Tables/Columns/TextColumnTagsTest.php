@@ -20,12 +20,26 @@ uses(TestCase::class);
 it('can render', function (): void {
     Post::factory()->count(5)->create();
 
-    livewire(TestTableWithBadgeColumn::class)
+    livewire(TestTableWithTextColumnTags::class)
         ->assertSuccessful()
-        ->assertCanRenderTableColumn('title');
+        ->assertCanRenderTableColumn('tags');
 });
 
-class TestTableWithBadgeColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+it('can display multiple tags', function (): void {
+    Post::factory()->create(['tags' => ['tag1', 'tag2', 'tag3']]);
+
+    livewire(TestTableWithTextColumnTags::class)
+        ->assertSuccessful();
+});
+
+it('can display empty tags', function (): void {
+    Post::factory()->create(['tags' => []]);
+
+    livewire(TestTableWithTextColumnTags::class)
+        ->assertSuccessful();
+});
+
+class TestTableWithTextColumnTags extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
     use InteractsWithSchemas;
@@ -37,7 +51,7 @@ class TestTableWithBadgeColumn extends Component implements HasActions, HasSchem
             ->query(Post::query())
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
-                Tables\Columns\BadgeColumn::make('title'),
+                Tables\Columns\TextColumn::make('tags')->badge(),
             ]);
     }
 
