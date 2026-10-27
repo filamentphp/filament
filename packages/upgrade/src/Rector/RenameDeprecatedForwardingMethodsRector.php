@@ -13,6 +13,8 @@ use Filament\Commands\FileGenerators\Resources\Pages\ResourceManageRelatedRecord
 use Filament\Commands\FileGenerators\Resources\RelationManagerClassGenerator;
 use Filament\Commands\FileGenerators\Resources\ResourceClassGenerator;
 use Filament\Commands\FileGenerators\Resources\Schemas\ResourceTableClassGenerator;
+use Filament\Facades\Filament;
+use Filament\FilamentManager;
 use Filament\Forms\Commands\FileGenerators\RichContentCustomBlockClassGenerator;
 use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\Builder;
@@ -141,6 +143,11 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'passwordResetRequestRouteSlug' => 'requestPasswordResetRouteSlug',
             'passwordResetRouteSlug' => 'resetPasswordRouteSlug',
             'databaseNotificationsPolling' => 'databaseNotificationsPollingInterval',
+            'hasDarkModeForced' => 'isDarkModeForced',
+        ],
+        FilamentManager::class => [
+            'currentDomain' => 'setCurrentDomain',
+            'hasDarkModeForced' => 'isDarkModeForced',
         ],
         ResourceClassGenerator::class => [
             'getTableActions' => 'getTableRecordActions',
@@ -385,12 +392,18 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             }
 
             if ($node instanceof StaticCall) {
-                // Only migrate explicit cluster class names; review custom relative dispatch manually.
-                if (($componentClass !== Cluster::class) || (! $node->class instanceof Name) || $this->isNames($node->class, ['self', 'static', 'parent'])) {
+                // Review dynamic and relative class dispatch manually.
+                if ((! $node->class instanceof Name) || $this->isNames($node->class, ['self', 'static', 'parent'])) {
                     continue;
                 }
 
-                $receiverType = $this->getType($node->class);
+                if (($componentClass === FilamentManager::class) && $this->isName($node->class, Filament::class)) {
+                    $receiverType = new ObjectType(FilamentManager::class);
+                } elseif ($componentClass === Cluster::class) {
+                    $receiverType = $this->getType($node->class);
+                } else {
+                    continue;
+                }
             } else {
                 // Preserve the older table migrations' receiver inference boundary.
                 $receiverType = (($componentClass === Table::class) && (! $isGroupingDropdownAlias))

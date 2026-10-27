@@ -37,21 +37,21 @@ describe('domain-qualified route names', function (): void {
         expect($route)->not->toBeEmpty();
     });
 
-    it('sets and clears the domain used to generate URLs through either context setter', function (string $method): void {
+    it('sets and clears the domain used to generate URLs using `setCurrentDomain()`', function (): void {
         Filament::setCurrentPanel('multi-domain');
 
-        expect(Filament::{$method}(domain: 'example2.com'))->toBeNull()
+        expect(Filament::setCurrentDomain(domain: 'example2.com'))->toBeNull()
             ->and(filament()->getCurrentDomain())->toBe('example2.com')
             ->and(Filament::getLoginUrl())->toBe('http://example2.com/login');
 
-        expect(filament()->{$method}(domain: 'example.com'))->toBeNull()
+        expect(filament()->setCurrentDomain(domain: 'example.com'))->toBeNull()
             ->and(Filament::getCurrentDomain())->toBe('example.com')
             ->and(Filament::getLoginUrl())->toBe('http://example.com/login');
 
-        expect(Filament::{$method}(domain: null))->toBeNull()
+        expect(Filament::setCurrentDomain(domain: null))->toBeNull()
             ->and(Filament::getCurrentDomain(testingDomain: 'fallback.example.com'))->toBe('fallback.example.com')
             ->and(Filament::getLoginUrl())->toBe('http://example.com/login');
-    })->with(['setCurrentDomain', 'currentDomain']);
+    });
 });
 
 describe('root page routes', function (): void {
