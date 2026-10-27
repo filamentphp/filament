@@ -49,11 +49,19 @@ trait HasNotifications
         return $this;
     }
 
-    public function databaseNotificationsPolling(string | Closure | null $interval): static
+    public function databaseNotificationsPollingInterval(string | Closure | null $interval): static
     {
         $this->databaseNotificationsPolling = $interval;
 
         return $this;
+    }
+
+    /**
+     * @deprecated Use `databaseNotificationsPollingInterval()` instead.
+     */
+    public function databaseNotificationsPolling(string | Closure | null $interval): static
+    {
+        return $this->databaseNotificationsPollingInterval($interval);
     }
 
     public function hasDatabaseNotifications(): bool
