@@ -66,17 +66,6 @@ class Notifications extends Component
         }
     }
 
-    /**
-     * @param  array<string>  $batches
-     *
-     * @deprecated Use `pullNotifications()` instead.
-     */
-    #[Exposed]
-    public function pullNotificationsFromSession(array $batches = []): void
-    {
-        $this->pullNotifications($batches);
-    }
-
     /** @param array<string> $batches */
     #[Exposed]
     #[On('notificationsSent')]

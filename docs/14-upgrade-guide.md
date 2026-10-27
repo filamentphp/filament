@@ -863,6 +863,27 @@ The script leaves the following cases unchanged for manual migration; **running 
 - **Other references:** Migrate parameter, return and property types, unions, PHPDoc, `instanceof`, `::class`, direct constructors, dynamic factories, factory callables, callbacks, strings and non-PHP files yourself. Renaming types broadens the accepted components; retaining an application-owned subclass may be necessary. Alias calls on stored or typed `Placeholder` instances, including callback consumers, are not rewritten. Update imports and remove unused legacy imports after migration.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('notifications') || packages.includes('widgets')">
+<span slot="summary">Deprecated notification and chart filter operations have been removed</span>
+
+Use the canonical operation names:
+
+| Owning type | Removed method | Replacement |
+| --- | --- | --- |
+| `Filament\Notifications\Livewire\Notifications` | `pullNotificationsFromSession()` | `pullNotifications()` |
+| Chart widgets using `Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema` | `resetFiltersForm()` | `resetFilters()` |
+
+The upgrade script renames PHP calls on known owning types and their subclasses, including nullsafe calls, named and unpacked arguments, and first-class callables. For chart widgets, it requires the reset implementation to come from `HasFiltersSchema`; a receiver typed only as `ChartWidget` is not enough. Custom overrides of either name, non-public trait adaptations, unrelated or ambiguous receivers, and standalone trait consumers are left for manual review.
+
+`pullNotifications()` retains the optional `array $batches = []` argument, batch validation, and session-scoped mailbox consumption. The `notificationsSent` event continues to invoke `pullNotifications()` directly. `resetFilters()` still restores schema defaults, immediately applies deferred filters, and refreshes chart data. Both canonical methods remain client-callable with `#[Exposed]`.
+
+Manually update JavaScript and Blade calls, including `$wire.pullNotificationsFromSession(...)` and `wire:click="resetFiltersForm"`, action handler strings such as `->action('resetFiltersForm')`, array callbacks, and dynamic method names. Republish Filament assets using `php artisan filament:upgrade` and rebuild custom JavaScript bundles so clients do not keep calling the removed endpoints.
+
+Review custom method declarations, inherited or trait-provided overrides, and `parent::` calls manually. Preserve parameter names, defaults, visibility, and any explicit exposure restrictions. The old wrappers called the canonical methods through `$this`; simply renaming a `parent::` call can bypass a canonical override, while renaming an old override can make it run for framework calls that previously used the canonical name. Reconcile implementations of both names and event listeners rather than blindly renaming declarations. Review base-typed receivers that may hold custom subclasses too.
+
+When overriding `pullNotifications()`, retain `#[\Livewire\Attributes\On('notificationsSent')]` or register an equivalent listener explicitly. Livewire does not inherit method-level event attributes from overridden parent methods; event registration is separate from client exposure.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('widgets')">
 <span slot="summary">Deprecated typed chart widget classes have been removed</span>
 

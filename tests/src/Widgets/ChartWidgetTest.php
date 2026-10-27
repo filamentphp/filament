@@ -59,7 +59,7 @@ it('applies deferred filters when `applyFilters()` is called', function (): void
         ->assertSet('deferredFilters', ['year' => '2023']);
 });
 
-it('resets filters to defaults', function (string $widgetClass, bool $isDeferred, string $method): void {
+it('resets filters to defaults with `resetFilters()`', function (string $widgetClass, bool $isDeferred): void {
     $widget = Livewire::test($widgetClass)
         ->set($isDeferred ? 'deferredFilters.year' : 'filters.year', '2022');
 
@@ -72,7 +72,7 @@ it('resets filters to defaults', function (string $widgetClass, bool $isDeferred
             'datasets' => [['label' => 'Data for 2022', 'data' => [10, 20, 30]]],
             'labels' => ['Jan', 'Feb', 'Mar'],
         ])
-        ->call($method)
+        ->call('resetFilters')
         ->assertSet('filters', ['year' => '2024'])
         ->assertDispatched('updateChartData', data: [
             'datasets' => [['label' => 'Data for 2024', 'data' => [10, 20, 30]]],
@@ -85,7 +85,7 @@ it('resets filters to defaults', function (string $widgetClass, bool $isDeferred
 })->with([
     'immediate' => [TestChartWidgetDefault::class, false],
     'deferred' => [TestChartWidgetWithDeferredFiltersProperty::class, true],
-])->with(['resetFilters', 'resetFiltersForm']);
+]);
 
 it('can override `hasDeferredFilters()` for dynamic behavior', function (): void {
     $widget = Livewire::test(TestChartWidgetWithDynamicDeferredFilters::class);

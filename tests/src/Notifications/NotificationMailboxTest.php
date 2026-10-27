@@ -197,7 +197,7 @@ describe('delivery', function (): void {
                 [
                     'snapshot' => json_encode($consumer->snapshot),
                     'updates' => [],
-                    'calls' => [['method' => 'pullNotificationsFromSession', 'params' => []]],
+                    'calls' => [['method' => 'pullNotifications', 'params' => []]],
                 ],
             ],
         ], ['X-Livewire' => 'true'])
@@ -206,14 +206,14 @@ describe('delivery', function (): void {
 
         livewire(Notifications::class)->dispatch('notificationsSent')->assertCount('notifications', 0);
 
-        livewire(Notifications::class)->call('pullNotificationsFromSession', [$response->headers->get('X-Filament-Notifications')])
+        livewire(Notifications::class)->call('pullNotifications', [$response->headers->get('X-Filament-Notifications')])
             ->assertCount('notifications', 1)
             ->assertSee('Redirect notification');
 
         livewire(Notifications::class)->dispatch('notificationsSent')->assertCount('notifications', 0);
     });
 
-    it('delivers a Livewire batch only to its response owner while retaining unowned catch-up', function (string $method, array $parameters, string $title, string $pullMethod): void {
+    it('delivers a Livewire batch only to its response owner while retaining unowned catch-up', function (string $method, array $parameters, string $title): void {
         $this->actingAs(User::factory()->create());
         $producer = livewire(NotificationBrowserTest::class);
 
@@ -235,7 +235,7 @@ describe('delivery', function (): void {
             ]],
         ], ['X-Livewire' => 'true'])->assertOk()->assertJsonMissingPath('filamentNotifications');
 
-        livewire(Notifications::class)->call($pullMethod)->assertCount('notifications', 0);
+        livewire(Notifications::class)->call('pullNotifications')->assertCount('notifications', 0);
         expect($batch)->toMatch('/\A[a-f0-9]{40}\z/');
 
         Route::middleware('web')->get('/notification-unowned-catch-up', static function () {
@@ -245,18 +245,18 @@ describe('delivery', function (): void {
         });
         $this->get('/notification-unowned-catch-up')->assertNoContent();
 
-        livewire(Notifications::class)->call($pullMethod)
+        livewire(Notifications::class)->call('pullNotifications')
             ->assertCount('notifications', 1)->assertSee('Unowned catch-up')->assertDontSee($title);
 
-        livewire(Notifications::class)->call($pullMethod, [$batch])
+        livewire(Notifications::class)->call('pullNotifications', [$batch])
             ->assertCount('notifications', 1)->assertSee($title)->assertDontSee('Unowned catch-up');
 
-        livewire(Notifications::class)->call($pullMethod, [$batch])->assertCount('notifications', 0);
+        livewire(Notifications::class)->call('pullNotifications', [$batch])->assertCount('notifications', 0);
     })->with([
         'action' => ['sendPersistentNotification', [], 'Persistent notification'],
         'full redirect' => ['sendRedirectNotification', [false], 'Redirect notification'],
         'SPA redirect' => ['sendRedirectNotification', [true], 'Redirect notification'],
-    ])->with(['pullNotifications', 'pullNotificationsFromSession']);
+    ]);
 });
 
 describe('session and authentication changes', function (): void {
@@ -344,7 +344,7 @@ describe('session and authentication changes', function (): void {
                 ->assertSee('Pending before invalidation');
         }
 
-        $ownedNotifications = livewire(Notifications::class)->call('pullNotificationsFromSession', [str_repeat('a', 40)])
+        $ownedNotifications = livewire(Notifications::class)->call('pullNotifications', [str_repeat('a', 40)])
             ->assertCount('notifications', $shouldInvalidate ? 0 : 1);
 
         if (! $shouldInvalidate) {
@@ -464,7 +464,7 @@ describe('response middleware', function (): void {
         expect($returnedPayload->numeric->{'0'})->toBe('first');
         expect($returnedPayload->list)->toBeArray()->toBeEmpty();
 
-        livewire(Notifications::class)->call('pullNotificationsFromSession', [$response->headers->get('X-Filament-Notifications')])
+        livewire(Notifications::class)->call('pullNotifications', [$response->headers->get('X-Filament-Notifications')])
             ->assertCount('notifications', 1)
             ->assertSee('Sent by global middleware');
     });
