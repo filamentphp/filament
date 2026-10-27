@@ -2,8 +2,13 @@
 
 namespace Filament\Tests\Upgrade;
 
+use Filament\Forms\Components\Field;
+use Filament\Schemas\Schema;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\TestCase;
 use Illuminate\Filesystem\Filesystem;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
 
 class PersistentUpgradeSetTest extends TestCase
@@ -74,6 +79,9 @@ class PersistentUpgradeSetTest extends TestCase
                     $this->assertSame($expected, trim(file_get_contents($path)), "Pass {$pass}: " . basename($path));
                 }
 
+                require_once $directory . '/app/behavioral_configuration.php';
+                $this->assertBehavioralConfiguration();
+
                 $runtime = new Process([PHP_BINARY, '-r', <<<'PHP'
                     require $argv[1] . '/vendor/autoload.php';
                     require $argv[2] . '/app/deprecated_number_helpers.php';
@@ -135,6 +143,58 @@ class PersistentUpgradeSetTest extends TestCase
             }
         } finally {
             (new Filesystem)->deleteDirectory($directory);
+        }
+    }
+
+    private function assertBehavioralConfiguration(): void
+    {
+        $components = \Filament\Tests\Upgrade\Fixtures\BehavioralConfiguration\components();
+
+        Schema::make(Livewire::make())->components(array_filter($components, static fn ($component): bool => $component instanceof Field))->getComponents();
+
+        $this->assertFalse($components[0]->isPreviewable());
+        $this->assertTrue($components[1]->isPreviewable());
+        $this->assertSame('16:9', $components[1]->getAutomaticallyCropImagesAspectRatio());
+        $this->assertFalse($components[2]->shouldAutomaticallyCropImagesToAspectRatio());
+        $this->assertTrue($components[3]->shouldAutomaticallyCropImagesToAspectRatio());
+        $this->assertFalse($components[4]->shouldAutomaticallyCropImagesToAspectRatio());
+        $this->assertNull($components[4]->getImageAspectRatio());
+        $this->assertSame([false, true, false], [$components[5]->isAddable(), $components[5]->isDeletable(), $components[5]->isReorderable()]);
+        $this->assertSame([true, false, true], [$components[6]->isAddable(), $components[6]->isDeletable(), $components[6]->isReorderable()]);
+        $this->assertSame([false, true, true, false], [$components[7]->isAddable(), $components[7]->isDeletable(), $components[7]->canEditKeys(), $components[7]->canEditValues()]);
+        $this->assertSame([null, 'off'], [$components[8]->getAutocomplete(), $components[8]->getAutocapitalize()]);
+        $this->assertSame(['off', null], [$components[9]->getAutocomplete(), $components[9]->getAutocapitalize()]);
+        $this->assertNull($components[10]->getAutocomplete());
+        $this->assertFalse($components[11]->canSelectPlaceholder());
+        $this->assertTrue($components[12]->canSelectPlaceholder());
+        $this->assertSame('H:i', $components[13]->getInternalFormat());
+        $this->assertSame(Heroicon::Calendar, $components[13]->getSuffixIcon());
+        $this->assertTrue($components[13]->isSuffixInline());
+        $this->assertSame(Heroicon::Calendar, $components[14]->getSuffixIcon());
+        $this->assertSame('heroicon-o-clock', $components[15]->getSuffixIcon());
+        $this->assertSame('heroicon-o-star', $components[16]->getSuffixIcon());
+        $this->assertFalse($components[16]->isSuffixInline());
+        $this->assertSame(Alignment::Start, $components[17]->getModalAlignment());
+        $this->assertSame(Alignment::End, $components[18]->getModalAlignment());
+        $this->assertSame(Alignment::Center, $components[19]->getModalAlignment());
+        $this->assertFalse($components[20]->canCreateAnother());
+        $this->assertTrue($components[21]->canAttachAnother());
+        $this->assertFalse($components[22]->canAssociateAnother());
+        $this->assertFalse($components[23]->shouldAutomaticallyCropImagesToAspectRatio());
+        $this->assertSame('16:9', $components[23]->getImageAspectRatio());
+        $this->assertSame(Alignment::Start, $components[24]->getModalAlignment());
+        $this->assertSame(['on', 'words'], [$components[25]->getAutocomplete(), $components[25]->getAutocapitalize()]);
+
+        foreach ([
+            [0, 'disablePreview'], [1, 'imageCropAspectRatio'],
+            [5, 'disableItemCreation'], [5, 'disableItemDeletion'], [5, 'disableItemMovement'], [5, 'inset'],
+            [6, 'disableItemCreation'], [6, 'disableItemDeletion'], [6, 'disableItemMovement'], [6, 'inset'],
+            [7, 'disableAddingRows'], [7, 'disableDeletingRows'], [7, 'disableEditingKeys'], [7, 'disableEditingValues'],
+            [8, 'disableAutocomplete'], [8, 'disableAutocapitalize'], [11, 'disablePlaceholderSelection'],
+            [13, 'withoutDate'], [13, 'withoutSeconds'], [13, 'withoutTime'], [13, 'icon'],
+            [17, 'centerModal'], [20, 'disableCreateAnother'], [21, 'disableAttachAnother'], [22, 'disableAssociateAnother'],
+        ] as [$index, $method]) {
+            $this->assertFalse(method_exists($components[$index], $method));
         }
     }
 }

@@ -408,12 +408,12 @@ it('can set `attachAnother()` with a `Closure`', function (): void {
     expect($action->canAttachAnother())->toBeFalse();
 });
 
-it('can disable `attachAnother()` via deprecated `disableAttachAnother()`', function (): void {
+it('can disable `attachAnother()`', function (): void {
     $action = AttachAction::make();
 
     expect($action->canAttachAnother())->toBeTrue();
 
-    $action->disableAttachAnother();
+    $action->attachAnother(false);
 
     expect($action->canAttachAnother())->toBeFalse();
 });

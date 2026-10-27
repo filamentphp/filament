@@ -412,12 +412,12 @@ it('can set `associateAnother()` with a `Closure`', function (): void {
     expect($action->canAssociateAnother())->toBeFalse();
 });
 
-it('can disable `associateAnother()` via deprecated `disableAssociateAnother()`', function (): void {
+it('can disable `associateAnother()`', function (): void {
     $action = AssociateAction::make();
 
     expect($action->canAssociateAnother())->toBeTrue();
 
-    $action->disableAssociateAnother();
+    $action->associateAnother(false);
 
     expect($action->canAssociateAnother())->toBeFalse();
 });

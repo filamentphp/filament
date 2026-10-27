@@ -15,16 +15,6 @@ trait CanSelectPlaceholder
         return $this;
     }
 
-    /**
-     * @deprecated Use `selectablePlaceholder()` instead.
-     */
-    public function disablePlaceholderSelection(bool | Closure $condition = true): static
-    {
-        $this->selectablePlaceholder(fn (): bool => ! $this->evaluate($condition));
-
-        return $this;
-    }
-
     public function canSelectPlaceholder(): bool
     {
         return (bool) $this->evaluate($this->canSelectPlaceholder);

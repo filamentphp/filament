@@ -395,7 +395,7 @@ Manually migrate custom overrides (including inherited methods and methods suppl
 
 Preserve custom parameter names, defaults, return values, control flow, and dispatch behavior: the old wrappers called replacements through `$this`, so simply renaming a `parent::` call may bypass a subclass override. Some fluent wrappers returned `$this` regardless of the replacement's return value.
 
-`centerModal()`, `disableCreateAnother()`, `disableAttachAnother()`, and `disableAssociateAnother()` are unchanged: they evaluate or negate conditions rather than forwarding them directly. The legacy mounted-action schema bridge is also unchanged. Testing assertion aliases are covered separately below.
+Behavioral configuration aliases such as `centerModal()` and `disableCreateAnother()` are covered separately below. The legacy mounted-action schema bridge is unchanged. Testing assertion aliases are covered separately below.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('schemas') || packages.includes('forms') || packages.includes('tables')">
@@ -489,7 +489,7 @@ Manually migrate custom overrides (including inherited ones), class-qualified ca
 
 Preserve custom parameter names, defaults, return values, and dispatch behavior. The wrappers called replacements through `$this`, so renaming `parent::` calls can bypass subclass overrides. Many setters also returned `$this` regardless of the replacement's return value.
 
-Negating `disable*()` methods, `imageCropAspectRatio()`, and the no-op `inset()` methods remain unchanged. Other form component and concern aliases are outside this cleanup.
+Negating `disable*()` methods, `imageCropAspectRatio()`, and the no-op `inset()` methods are covered by the behavioral configuration migration below.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('forms') || packages.includes('tables')">
@@ -516,7 +516,84 @@ Manually migrate custom overrides (including inherited methods and methods suppl
 
 Preserve custom parameter names, defaults, control flow, visibility, return values, and dispatch behavior. The wrappers called replacements through `$this`, so simply renaming a `parent::` call may bypass a subclass override. The setters returned `$this` regardless of the replacement's return value; the getters returned the replacement's result. Retaining application-owned forwarding methods may be necessary. Renaming an old getter override can newly activate it where Filament already called the canonical getter; reconcile collisions and test the intended behavior rather than blindly renaming declarations.
 
-Negating form aliases, `centerModal()`, `imageCropAspectRatio()`, no-op `inset()` methods, and legacy Livewire/table configuration bridges are unchanged.
+Behavioral configuration aliases are covered separately below. Legacy Livewire/table configuration bridges are unchanged.
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('forms') || packages.includes('actions')">
+<span slot="summary">Deprecated behavioral configuration methods have been removed</span>
+
+These methods did more than forward their arguments. For boolean literals, use the following replacements; omitting the old condition meant `true`:
+
+| Owner | Removed method | Replacement for `true` / `false` |
+| --- | --- | --- |
+| `BaseFileUpload`, `FileUpload` | `disablePreview()` | `previewable(false)` / `previewable(true)` |
+| `Builder`, `Repeater` | `disableItemCreation()`, `disableItemDeletion()`, `disableItemMovement()` | `addable(false)`, `deletable(false)`, `reorderable(false)` / pass `true` instead |
+| `KeyValue` | `disableAddingRows()`, `disableDeletingRows()`, `disableEditingKeys()`, `disableEditingValues()` | `addable(false)`, `deletable(false)`, `editableKeys(false)`, `editableValues(false)` / pass `true` instead |
+| `TextInput`, `Textarea` | `disableAutocomplete()` | `autocomplete(false)` / `autocomplete(null)` |
+| `TextInput` | `disableAutocapitalize()` | `autocapitalize(false)` / `autocapitalize(null)` |
+| `Select` | `disablePlaceholderSelection()` | `selectablePlaceholder(false)` / `selectablePlaceholder(true)` |
+| `DateTimePicker`, including `DatePicker` and `TimePicker` | `withoutDate()`, `withoutSeconds()`, `withoutTime()` | `date(false)`, `seconds(false)`, `time(false)` / pass `true` instead |
+| `CreateAction`, `AttachAction`, `AssociateAction` | `disableCreateAnother()`, `disableAttachAnother()`, `disableAssociateAnother()` | `createAnother(false)`, `attachAnother(false)`, `associateAnother(false)` / pass `true` instead |
+
+`disableGrammarly()`, `disableOptionWhen()`, toolbar configuration, and the panel `CreateRecord::disableCreateAnother()` hook are not removed by this change.
+
+The `ReplaceDeprecatedBehavioralConfigurationRector` rule migrates omitted conditions and literal booleans on direct built-in `make()` factories, including named `condition:` arguments and chains of the listed setters and `label()`. It also handles the literal cases below. It leaves stored or typed receivers, custom subclasses, `parent::` / `static::` calls, dynamic or nullsafe calls, first-class callables, unpacked or extra arguments, variables, expressions, closures, and chains through other methods for manual migration. It does not rename declarations. Review container bindings, macros, and configuration that substitute custom implementations, even behind a built-in factory; exclude affected files from the rule when necessary. Existing supported calls are not rewritten, and the rule works without the removed methods installed.
+
+### Preserving lazy conditions
+
+Do not replace a closure with `! $condition`, or move its evaluation to configuration time. The old negating setters captured the supplied value once, then evaluated it lazily through the component's `evaluate()`, preserving Filament's closure injection. For example, migrate a file upload condition using:
+
+```php
+use Filament\Forms\Components\BaseFileUpload;
+
+$condition = resolvePreviewCondition(); // Evaluate the original argument once, at configuration time.
+
+$upload->previewable(static fn (BaseFileUpload $component): bool => ! $component->evaluate($condition));
+```
+
+Keep the original closure object, its binding, and any by-reference captures. Capture the resulting `$condition` by value in the wrapper, rather than accidentally making later assignments to the caller's variable change the configured condition. Autocomplete and autocapitalization must return `$component->evaluate($condition) ? false : null`, **not** `! $component->evaluate($condition)`: `null` leaves the browser attribute unset rather than enabling it explicitly.
+
+For `Builder` and `Repeater`, the old wrappers evaluated on the original configuring object (`$this`), even though they also accepted an injected component. `disablePlaceholderSelection()` likewise captured `$this`. If your code clones components or changes evaluation contexts, capture that original owner explicitly rather than evaluating on the clone. For upload, key/value, date/time, autocomplete/autocapitalization, and action wrappers, retain evaluation on the injected component or action. Review subclass overrides of both setters and `evaluate()`; these distinctions can be observable.
+
+### Migrating image cropping
+
+Replace `FileUpload::imageCropAspectRatio('16:9')` with `imageAspectRatio('16:9')->automaticallyCropImagesToAspectRatio(true)`, in that order. For `null`, empty strings, and whitespace-only strings, pass the same aspect ratio and disable automatic cropping. The string `'0'` is filled and enables cropping. Later configuration still takes precedence.
+
+For a computed value or closure, evaluate the argument expression only once and retain the same value for both operations:
+
+```php
+use Closure;
+
+$ratio = resolveAspectRatio();
+
+$upload
+    ->imageAspectRatio($ratio)
+    ->automaticallyCropImagesToAspectRatio($ratio instanceof Closure ? $ratio : filled($ratio));
+```
+
+Do not evaluate a ratio closure eagerly, duplicate its construction, or replace it with an unconditional `true`. The original method stored the **same closure** for both options; getters may evaluate it independently, including repeated side effects and injected utilities. The script only splits literal strings and `null` (including named `ratio:` arguments).
+
+### Migrating modal alignment
+
+`Action::centerModal()` evaluated its condition **immediately**, and only called `modalAlignment(Alignment::Center)` when truthy. `false` and `null` left any previous alignment untouched. The script replaces omitted or literal `true` conditions with `modalAlignment(Alignment::Center)` and removes calls with literal `false` or `null`, preserving the receiver and chain. For other conditions, evaluate through the action at the original point and configure alignment only in the truthy branch:
+
+```php
+use Filament\Support\Enums\Alignment;
+
+if ($action->evaluate($condition)) {
+    $action->modalAlignment(Alignment::Center);
+}
+```
+
+Do not set alignment to `null` on the false branch or store the condition in a lazy alignment closure. Preserve receiver and argument evaluation order when splitting an expression into statements.
+
+### Migrating date/time icons and inset calls
+
+`DateTimePicker::icon()` (also inherited by `DatePicker` and `TimePicker`) has been removed. It defaulted `null` or an omitted argument to `Heroicon::Calendar`, passed `isInline: true` to `suffixIcon()`, and did **nothing** for `false`, leaving any previous icon and inline setting unchanged. The script handles literal strings, `null`, omitted arguments, and `false`, including named `icon:` arguments. For enums or computed arguments, evaluate once, leave configuration alone for `false`, otherwise call `suffixIcon($icon ?? Heroicon::Calendar, isInline: true)`. Do not use `suffixIcon(false)` or drop the inline flag. The old signature accepted `true`, but it was not a supported `suffixIcon()` value; review such calls rather than assigning a new meaning.
+
+The no-op `Builder::inset()` and `Repeater::inset()` methods have been removed. The script removes calls with omitted or literal boolean arguments. For other calls, preserve evaluation of the receiver and every argument, including ignored extra arguments, in their original order; removing a call must not discard assignments, function calls, exceptions, or other side effects. Passing a closure did not execute its body, although constructing it still evaluated captures. Preserve any relevant argument type validation too.
+
+For all these methods, manually migrate array callbacks, callable references, argument unpacking, strings, Blade references, concern consumers outside the built-in owners, and custom overrides. Keep callable parameter names, defaults, ignored argument evaluation, and fluent return behavior. Except for `icon()`, the old setters returned their original receiver even when an overridden replacement returned something else; `icon()` returned the result of `suffixIcon()` unless its argument was `false`. Simply renaming a `parent::` call can also bypass subclass dispatch. Migrate producers and consumers together and test your application's public behavior. A clean Rector dry run does not prove these manual cases have been migrated.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('forms') || packages.includes('actions') || packages.includes('tables')">
