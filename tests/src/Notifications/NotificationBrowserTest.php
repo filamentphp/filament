@@ -41,7 +41,7 @@ it('skips empty activation pulls while retaining notification delivery', functio
         window.notificationPulls = 0;
         window.fetch = (...arguments_) => {
             const payload = JSON.parse(arguments_[1]?.body ?? '{}');
-            if (payload.components?.some(component => component.calls.some(call => call.method === 'pullNotificationsFromSession'))) {
+            if (payload.components?.some(component => component.calls.some(call => call.method === 'pullNotifications'))) {
                 window.notificationPulls++;
             }
             return originalFetch(...arguments_);
