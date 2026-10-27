@@ -7,15 +7,15 @@ use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
-it('configures and disables database notification polling with either setter', function (string $method): void {
+it('configures and disables database notification polling', function (): void {
     $panel = Filament::getCurrentOrDefaultPanel();
     $notifications = app(DatabaseNotifications::class);
 
-    expect($panel->{$method}(interval: '17s'))->toBe($panel)
+    expect($panel->databaseNotificationsPollingInterval(interval: '17s'))->toBe($panel)
         ->and($notifications->getPollingInterval())->toBe('17s');
 
     $interval = '43s';
-    $panel->{$method}(interval: static function () use (&$interval): ?string {
+    $panel->databaseNotificationsPollingInterval(interval: static function () use (&$interval): ?string {
         return $interval;
     });
 
@@ -24,11 +24,11 @@ it('configures and disables database notification polling with either setter', f
     $interval = null;
 
     expect($notifications->getPollingInterval())->toBeNull()
-        ->and($panel->{$method}(interval: null))->toBe($panel)
+        ->and($panel->databaseNotificationsPollingInterval(interval: null))->toBe($panel)
         ->and($notifications->getPollingInterval())->toBeNull();
-})->with(['databaseNotificationsPollingInterval', 'databaseNotificationsPolling']);
+});
 
-it('delegates the legacy polling setter to `databaseNotificationsPollingInterval()` while retaining protected configuration', function (): void {
+it('supports polling setter overrides and protected interval configuration', function (): void {
     $panel = new class extends Panel
     {
         protected string | Closure | null $databaseNotificationsPolling = '11s';
@@ -40,6 +40,6 @@ it('delegates the legacy polling setter to `databaseNotificationsPollingInterval
     };
 
     expect($panel->getDatabaseNotificationsPollingInterval())->toBe('11s')
-        ->and($panel->databaseNotificationsPolling(interval: null))->toBe($panel)
+        ->and($panel->databaseNotificationsPollingInterval(interval: null))->toBe($panel)
         ->and($panel->getDatabaseNotificationsPollingInterval())->toBe('29s');
 });

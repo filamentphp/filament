@@ -86,18 +86,6 @@ class Cluster extends Page
         ];
     }
 
-    /**
-     * @deprecated Use `prependClusterBreadcrumbs()` instead.
-     *
-     * @param  array<string, string>  $breadcrumbs
-     * @return array<string, string>
-     */
-    #[Unexposed]
-    public static function unshiftClusterBreadcrumbs(array $breadcrumbs): array
-    {
-        return static::prependClusterBreadcrumbs($breadcrumbs);
-    }
-
     #[Unexposed]
     public static function getNavigationLabel(): string | Htmlable
     {

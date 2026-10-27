@@ -21,7 +21,7 @@ class Group extends Page
                     ->items([
                         NavigationItem::make('Dashboard')
                             ->icon(Heroicon::OutlinedHome)
-                            ->isActiveWhen(static fn () => true)
+                            ->activeWhen(static fn () => true)
                             ->url('#'),
                     ])
                     ->groups([

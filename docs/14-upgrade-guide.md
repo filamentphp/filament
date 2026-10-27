@@ -398,6 +398,27 @@ Preserve custom parameter names, defaults, return values, control flow, and disp
 Behavioral configuration aliases such as `centerModal()` and `disableCreateAnother()` are covered separately below. The legacy mounted-action schema bridge is unchanged. Testing assertion aliases are covered separately below.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('panels')">
+<span slot="summary">Deprecated panel and navigation method names have been removed</span>
+
+| Owning type | Removed method | Replacement |
+| --- | --- | --- |
+| `Filament\Navigation\NavigationItem` | `isActiveWhen()` | `activeWhen()` |
+| `NavigationItem` | `isChildItemsActive()` | `hasActiveChildItems()` |
+| `Filament\Clusters\Cluster` | `unshiftClusterBreadcrumbs()` | `prependClusterBreadcrumbs()` |
+| `Filament\Panel` | `passwordResetRequestRouteSlug()` | `requestPasswordResetRouteSlug()` |
+| `Panel` | `passwordResetRouteSlug()` | `resetPasswordRouteSlug()` |
+| `Panel` | `databaseNotificationsPolling()` | `databaseNotificationsPollingInterval()` |
+
+The script renames typed instance calls on these classes and their subclasses, including fluent and nullsafe chains, and cluster calls using an explicit class name such as `SettingsCluster::unshiftClusterBreadcrumbs()`. Named arguments (`callback:`, `breadcrumbs:`, `slug:`, `interval:`), unpacked arguments, and first-class callables are preserved. It also works after the old methods have been removed; canonical calls are unchanged on repeated runs.
+
+Behavior and protected storage are unchanged. `hasActiveChildItems()` checks direct children, not all descendants. Cluster breadcrumbs retain URL keys and use the `getClusterBreadcrumb()` customization hook. `passwordResetRoutePrefix()` is unchanged. The polling interval remains a required argument: pass `null` explicitly to disable polling.
+
+Manually review custom overrides, inherited and trait-provided methods, trait adaptations, relative calls through `self::`, `static::`, or `parent::`, dynamic class or method names, array callbacks, unknown receiver types, and non-PHP references such as published Blade views. Calls on known overrides of either name or with non-public replacements are skipped. Direct consumers of panel concerns outside `Panel` also need manual migration. Review base-typed receivers that may hold custom subclasses not visible in their inferred types.
+
+Preserve custom parameters, visibility, return values, and dispatch. These aliases forwarded to the canonical methods through `$this` or `static::`; changing a `parent::` call can bypass a canonical override. Renaming an old override can newly activate it in framework calls already using the canonical name. Reconcile existing overrides of both names rather than blindly renaming declarations.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('panels') || packages.includes('forms')">
 <span slot="summary">Legacy generator and dashboard method names have been removed</span>
 

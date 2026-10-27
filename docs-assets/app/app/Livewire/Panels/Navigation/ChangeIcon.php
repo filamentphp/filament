@@ -22,7 +22,7 @@ class ChangeIcon extends Page
                         ->url('#'),
                     NavigationItem::make('Posts')
                         ->icon(Heroicon::OutlinedDocumentText)
-                        ->isActiveWhen(static fn () => true)
+                        ->activeWhen(static fn () => true)
                         ->url('#'),
                     NavigationItem::make('Orders')
                         ->icon(Heroicon::OutlinedShoppingCart)

@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\ReplicateAction;
+use Filament\Clusters\Cluster;
 use Filament\Commands\FileGenerators\Resources\Pages\ResourceManageRelatedRecordsPageClassGenerator;
 use Filament\Commands\FileGenerators\Resources\RelationManagerClassGenerator;
 use Filament\Commands\FileGenerators\Resources\ResourceClassGenerator;
@@ -24,8 +25,10 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\KeyValueEntry;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
 use Filament\Pages\Dashboard\Concerns\HasFilters;
+use Filament\Panel;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Schemas\Components\Concerns\HasLabel;
@@ -46,8 +49,10 @@ use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
+use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\Name;
 use PhpParser\Node\UnionType;
 use PhpParser\NodeFinder;
 use PHPStan\Type\NullType;
@@ -105,6 +110,18 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         ],
         ExportColumn::class => [
             'queriesRelationships' => 'hasRelationship',
+        ],
+        Cluster::class => [
+            'unshiftClusterBreadcrumbs' => 'prependClusterBreadcrumbs',
+        ],
+        NavigationItem::class => [
+            'isActiveWhen' => 'activeWhen',
+            'isChildItemsActive' => 'hasActiveChildItems',
+        ],
+        Panel::class => [
+            'passwordResetRequestRouteSlug' => 'requestPasswordResetRouteSlug',
+            'passwordResetRouteSlug' => 'resetPasswordRouteSlug',
+            'databaseNotificationsPolling' => 'databaseNotificationsPollingInterval',
         ],
         ResourceClassGenerator::class => [
             'getTableActions' => 'getTableRecordActions',
@@ -299,11 +316,11 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
 
     public function getNodeTypes(): array
     {
-        return [MethodCall::class, NullsafeMethodCall::class];
+        return [MethodCall::class, NullsafeMethodCall::class, StaticCall::class];
     }
 
     /**
-     * @param  MethodCall | NullsafeMethodCall  $node
+     * @param  MethodCall | NullsafeMethodCall | StaticCall  $node
      */
     public function refactor(Node $node): ?Node
     {
@@ -321,17 +338,26 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                 continue;
             }
 
-            // Preserve the older table migrations' receiver inference boundary.
-            $receiverType = (($componentClass === Table::class) && (! $isGroupingDropdownAlias))
-                ? TypeCombinator::removeNull($this->getType($node->var))
-                : $this->resolveReceiverType($node->var);
+            if ($node instanceof StaticCall) {
+                // Only migrate explicit cluster class names; review custom relative dispatch manually.
+                if (($componentClass !== Cluster::class) || (! $node->class instanceof Name) || $this->isNames($node->class, ['self', 'static', 'parent'])) {
+                    continue;
+                }
+
+                $receiverType = $this->getType($node->class);
+            } else {
+                // Preserve the older table migrations' receiver inference boundary.
+                $receiverType = (($componentClass === Table::class) && (! $isGroupingDropdownAlias))
+                    ? TypeCombinator::removeNull($this->getType($node->var))
+                    : $this->resolveReceiverType($node->var);
+            }
 
             if (! (new ObjectType($componentClass))->isSuperTypeOf($receiverType)->yes()) {
                 continue;
             }
 
             // These protected helpers are only migrated through `$this`, not external receivers.
-            if (in_array($componentClass, [RichContentCustomBlockClassGenerator::class, Dashboard::class], strict: true) && ((! $node->var instanceof Variable) || ($node->var->name !== 'this'))) {
+            if (in_array($componentClass, [RichContentCustomBlockClassGenerator::class, Dashboard::class], strict: true) && (($node instanceof StaticCall) || (! $node->var instanceof Variable) || ($node->var->name !== 'this'))) {
                 return null;
             }
 
@@ -473,7 +499,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
     /**
      * @param  class-string  $componentClass
      */
-    private function canForwardArguments(MethodCall | NullsafeMethodCall $node, string $componentClass, string $methodName): bool
+    private function canForwardArguments(MethodCall | NullsafeMethodCall | StaticCall $node, string $componentClass, string $methodName): bool
     {
         // `reactive()` ignored positional arguments that `live()` would consume.
         if ($methodName === 'reactive') {

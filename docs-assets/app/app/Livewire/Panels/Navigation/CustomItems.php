@@ -19,7 +19,7 @@ class CustomItems extends Page
                 return $builder->items([
                     NavigationItem::make('Dashboard')
                         ->icon(Heroicon::OutlinedHome)
-                        ->isActiveWhen(static fn () => true)
+                        ->activeWhen(static fn () => true)
                         ->url('#'),
                     NavigationItem::make('Users')
                         ->icon(Heroicon::OutlinedUserGroup)

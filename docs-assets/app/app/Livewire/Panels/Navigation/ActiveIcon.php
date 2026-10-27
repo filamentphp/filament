@@ -20,7 +20,7 @@ class ActiveIcon extends Page
                     NavigationItem::make('Dashboard')
                         ->icon(Heroicon::OutlinedHome)
                         ->activeIcon(Heroicon::Home)
-                        ->isActiveWhen(static fn () => true)
+                        ->activeWhen(static fn () => true)
                         ->url('#'),
                     NavigationItem::make('Orders')
                         ->icon(Heroicon::OutlinedShoppingCart)
