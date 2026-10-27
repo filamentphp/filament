@@ -98,12 +98,19 @@
                 &:not(.fi-sidebar-open) {
                     @apply lg:sticky lg:w-(--collapsed-sidebar-width) lg:translate-x-0 lg:rtl:-translate-x-0;
 
+                    & .fi-sidebar-database-notifications-btn,
+                    & .fi-sidebar-group-dropdown-trigger-btn,
+                    & .fi-sidebar-item-btn,
+                    & .fi-user-menu-trigger {
+                        @apply lg:px-0;
+                    }
+
                     & .fi-sidebar-nav {
-                        @apply lg:pe-0;
+                        @apply lg:[scrollbar-gutter:stable_both-edges] lg:px-0;
                     }
 
                     & .fi-sidebar-nav-groups {
-                        @apply lg:w-max;
+                        @apply lg:mx-auto lg:w-full lg:max-w-10;
                     }
                 }
             }
