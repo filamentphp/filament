@@ -119,11 +119,6 @@ namespace Livewire\Features\SupportTesting {
          */
         public function assertTableActionDoesNotExist(string | array $actions, ?Closure $checkActionUsing = null, $record = null): static {}
 
-        /**
-         * @deprecated Use `assertTableRecordActionsExistInOrder()` instead.
-         */
-        public function assertTableActionsExistInOrder(array $names): static {}
-
         public function assertTableRecordActionsExistInOrder(array $names): static {}
 
         public function assertTableHeaderActionsExistInOrder(array $names): static {}

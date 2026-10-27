@@ -21,6 +21,7 @@ function assertions(): void
 {
     testComponent('edit-post')->assertFormFieldIsVisible('title')->assertFormFieldIsEnabled('title');
     testComponent('edit-post')->callAction('save')->assertActionHeld(actions: 'save');
+    testComponent('edit-post')->assertTableActionsExistInOrder(names: ['edit', 'delete']);
     $testable = \Pest\Livewire\livewire('edit-post');
     $callback = $testable->assertTableActionHeld(...);
 }
@@ -48,6 +49,7 @@ function assertions(): void
 {
     testComponent('edit-post')->assertFormFieldVisible('title')->assertFormFieldEnabled('title');
     testComponent('edit-post')->callAction('save')->assertActionHalted(actions: 'save');
+    testComponent('edit-post')->assertTableRecordActionsExistInOrder(names: ['edit', 'delete']);
     $testable = \Pest\Livewire\livewire('edit-post');
     $callback = $testable->assertTableActionHalted(...);
 }

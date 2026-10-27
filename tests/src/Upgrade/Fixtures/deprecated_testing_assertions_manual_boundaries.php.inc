@@ -88,4 +88,10 @@ function manual(CustomAssertions $custom, CustomTestable $legacyOverride, Custom
     $stored->assertActionHeld('save');
     // Macro lookup is case-sensitive; this is not the deprecated Filament macro.
     $testable->ASSERTACTIONHELD('save');
+    $testable->ASSERTTABLEACTIONSEXISTINORDER(['edit']);
+    $custom->assertTableActionsExistInOrder(['edit']);
+    $legacyOverride->assertTableActionsExistInOrder(['edit']);
+    $unknown->assertTableActionsExistInOrder(['edit']);
+    $testable->customMacro()->assertTableActionsExistInOrder(['edit']);
+    $callback = [$testable, 'assertTableActionsExistInOrder'];
 }
