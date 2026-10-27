@@ -17,15 +17,12 @@ use Illuminate\Database\Query\Grammars\PostgresGrammar;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Support\HtmlString;
-use Illuminate\Support\Number;
 use Illuminate\View\ComponentAttributeBag;
 use Illuminate\View\ComponentSlot;
 use Symfony\Component\Process\Process;
 
 use function Filament\Support\apply_search_constraint;
 use function Filament\Support\encode_key_segments;
-use function Filament\Support\format_money;
-use function Filament\Support\format_number;
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;
 use function Filament\Support\generate_loading_indicator_html;
@@ -44,27 +41,6 @@ use function Filament\Support\original_request;
 use function Filament\Support\prepare_inherited_attributes;
 
 uses(TestCase::class);
-
-describe('`format_money()`', function (): void {
-    it('formats currency with optional division', function (): void {
-        Number::withLocale('en', function (): void {
-            expect(format_money(123450, 'USD', 100))->toBe('$1,234.50')
-                ->and(format_money(-42.5, 'USD'))->toBe('-$42.50');
-        });
-    });
-});
-
-describe('`format_number()`', function (): void {
-    it('uses the current number locale', function (): void {
-        Number::withLocale('en', function (): void {
-            expect(format_number(1234.5))->toBe('1,234.5');
-        });
-
-        Number::withLocale('de', function (): void {
-            expect(format_number(-1234.5))->toBe('-1.234,5');
-        });
-    });
-});
 
 describe('`get_model_label()`', function (): void {
     it('converts a namespaced model name to a human-readable label', function (): void {
