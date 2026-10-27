@@ -458,6 +458,36 @@ Preserve custom parameters and return behavior. The old wrappers dispatched thro
 `groupedBulkActions()` and legacy Livewire configuration hooks such as `getTableActions()` remain available.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('tables') || packages.includes('actions') || packages.includes('schemas')">
+<span slot="summary">Deprecated table-column and shared-support forwarding aliases have been removed</span>
+
+The script renames calls on these owning types and their subclasses:
+
+| Owning type | Removed method | Replacement |
+| --- | --- | --- |
+| `Filament\Tables\Columns\IconColumn` | `options()` | `icons()` |
+| `Filament\Tables\Columns\Column` | `disableClick()` | `disabledClick()` |
+| `Column`, `Filament\Actions\Exports\ExportColumn` | `queriesRelationships()` | `hasRelationship()` |
+| `Filament\Actions\Action`, `Filament\Actions\ActionGroup`, `Filament\Schemas\Components\Tabs\Tab` | `indicator()` | `badge()` |
+| `Action`, `ActionGroup`, `Tab` | `indicatorColor()` | `badgeColor()` |
+
+For automatically migrated calls, arguments, defaults, nullable values, and closure evaluation are unchanged. `disabledClick()` defaults to `true` and forwards the condition without negating it. `hasRelationship()` still requires a record. These aliases do not apply to filters: filter `options()`, `indicator()`, and `queriesRelationships()` methods are unchanged, as are query builder constraint methods and navigation badge APIs.
+
+The script renames named arguments from `options:` to `icons:` and from `indicator:` to `badge:`. Calls unpacking arguments into these two setters are left unchanged; rename the methods and any `'options'` or `'indicator'` argument keys manually. Update named arguments when invoking migrated first-class callables yourself. Other aliases preserve named and unpacked arguments.
+
+Keep passing an explicit badge value, including `null`, on actions and action groups. Their no-argument `badge()` method selects badge styling instead of setting a badge value. Their `badge()` parameter accepts `string | Closure | null`, whereas `indicator()` also accepted integers and floats and coerced them inside the wrapper. The script only migrates action/group `indicator()` calls with a known string, closure, or null argument. Migrate numeric or uncertain values manually, casting numbers to strings even in strict PHP files, for example `badge(badge: (string) $count)`. Preserve nullable and closure values instead of casting them. Action/group first-class `indicator(...)` callables also need manual migration to retain numeric coercion and the required argument. Schema tabs still accept numeric badges and convert them to strings.
+
+`icons()` accepts an array or closure, not an `Arrayable` object: although `options()` declared `Arrayable`, forwarding one to the built-in `icons()` already failed. Convert such objects to arrays explicitly when reviewing custom integrations.
+
+The deprecated `Filament\Tables\Columns\Concerns\CanBeCopied` trait has also been removed. The script replaces PHP references, including trait uses and adaptations, with `Filament\Support\Concerns\CanBeCopied`. Copy configuration and behavior are unchanged. Update string and non-PHP references manually, including trait-name introspection.
+
+Manually migrate custom overrides (including inherited methods and methods supplied by traits), method trait adaptations, class-qualified calls such as `parent::options()`, dynamic names, array callbacks, unknown or ambiguous receiver types, and non-PHP references. Calls on known overrides of either an alias or its replacement, or methods with adapted non-public visibility, are skipped. Review changes where a base-typed receiver may hold a custom subclass. Direct consumers of `HasBadge`, `HasCellState`, or the table-column `CanBeDisabled` concern outside the owning types listed above also need manual method migration.
+
+Preserve custom parameter names, defaults, return values, and dispatch behavior. The wrappers called replacements through `$this`, so renaming `parent::` calls can bypass subclass overrides. `options()` and `disableClick()` returned `$this` regardless of the replacement's return value; the badge and relationship aliases returned the replacement's result.
+
+`BadgeColumn`, `BooleanColumn`, and `TagsColumn`, legacy table/infolist bridges, and unrelated deprecated methods remain available.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('infolists') || packages.includes('tables')">
 <span slot="summary">Deprecated image and infolist presentation aliases have been removed</span>
 

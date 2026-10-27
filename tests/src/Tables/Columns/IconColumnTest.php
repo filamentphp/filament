@@ -189,10 +189,10 @@ describe('boolean icon resolution', function (): void {
         expect($icon)->not->toBeNull();
     });
 
-    it('returns fluent `$this` from `options()`', function (): void {
+    it('returns fluent `$this` from `icons()`', function (): void {
         $column = IconColumn::make('active');
 
-        $result = $column->options(['active' => 'heroicon-o-check', 'inactive' => 'heroicon-o-x-mark']);
+        $result = $column->icons(['active' => 'heroicon-o-check', 'inactive' => 'heroicon-o-x-mark']);
 
         expect($result)->toBe($column);
     });

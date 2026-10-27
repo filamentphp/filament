@@ -1,12 +1,8 @@
 <?php
 
 use Composer\InstalledVersions;
-use Filament\Upgrade\Rector\RenameDeprecatedActionMethodsRector;
-use Filament\Upgrade\Rector\RenameDeprecatedFormComponentMethodsRector;
-use Filament\Upgrade\Rector\RenameDeprecatedImagePresentationMethodsRector;
+use Filament\Upgrade\Rector\RenameDeprecatedForwardingMethodsRector;
 use Filament\Upgrade\Rector\RenameDeprecatedLazyLoadingApisRector;
-use Filament\Upgrade\Rector\RenameDeprecatedSchemaMethodsRector;
-use Filament\Upgrade\Rector\RenameDeprecatedTableMethodsRector;
 use Filament\Upgrade\Rector\ReplaceConvenienceClassesRector;
 use Filament\Upgrade\Rector\ReplaceTypedChartWidgetsRector;
 use Filament\Upgrade\Rector\WidenAvatarProviderParameterTypeRector;
@@ -26,6 +22,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
         'Filament\\Actions\\ButtonAction' => 'Filament\\Actions\\Action',
         'Filament\\Actions\\IconButtonAction' => 'Filament\\Actions\\Action',
+        'Filament\\Tables\\Columns\\Concerns\\CanBeCopied' => 'Filament\\Support\\Concerns\\CanBeCopied',
         'Filament\\Tables\\Filters\\MultiSelectFilter' => 'Filament\\Tables\\Filters\\SelectFilter',
         'Filament\\Tables\\Filters\\QueryBuilder\\Constraints\\Constraint' => 'Filament\\QueryBuilder\\Constraints\\Constraint',
         'Filament\\Tables\\Filters\\QueryBuilder\\Constraints\\BooleanConstraint' => 'Filament\\QueryBuilder\\Constraints\\BooleanConstraint',
@@ -69,12 +66,8 @@ return static function (RectorConfig $rectorConfig): void {
         new RenameClassConstFetch('Filament\\Tables\\View\\TablesRenderHook', 'TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE', 'TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE'),
     ]);
 
-    $rectorConfig->rule(RenameDeprecatedActionMethodsRector::class);
-    $rectorConfig->rule(RenameDeprecatedFormComponentMethodsRector::class);
-    $rectorConfig->rule(RenameDeprecatedImagePresentationMethodsRector::class);
+    $rectorConfig->rule(RenameDeprecatedForwardingMethodsRector::class);
     $rectorConfig->rule(RenameDeprecatedLazyLoadingApisRector::class);
-    $rectorConfig->rule(RenameDeprecatedSchemaMethodsRector::class);
-    $rectorConfig->rule(RenameDeprecatedTableMethodsRector::class);
     $rectorConfig->rule(ReplaceConvenienceClassesRector::class);
     $rectorConfig->rule(ReplaceTypedChartWidgetsRector::class);
     $rectorConfig->rule(WidenAvatarProviderParameterTypeRector::class);

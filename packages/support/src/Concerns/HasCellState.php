@@ -254,14 +254,6 @@ trait HasCellState
         return $this->hasRelationshipCache = $record->isRelation((string) str($name)->before('.'));
     }
 
-    /**
-     * @deprecated Use `hasRelationship()` instead.
-     */
-    public function queriesRelationships(Model $record): bool
-    {
-        return $this->hasRelationship($record);
-    }
-
     public function getRelationship(Model $record, ?string $relationshipName = null): ?Relation
     {
         $hasNestedMorphToRelationship = $this->hasNestedMorphToRelationship($record);

@@ -14,7 +14,6 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Tables\View\Components\Columns\IconColumnComponent\IconComponent;
 use Filament\Tables\View\TablesIconAlias;
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -125,18 +124,6 @@ class IconColumn extends Column implements HasEmbeddedView
     {
         $this->boolean();
         $this->trueIcon = $icon;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `icons()` instead.
-     *
-     * @param  array<mixed> | Arrayable | Closure  $options
-     */
-    public function options(array | Arrayable | Closure $options): static
-    {
-        $this->icons($options);
 
         return $this;
     }
