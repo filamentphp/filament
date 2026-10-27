@@ -1,8 +1,13 @@
 <?php
 
+use Filament\Notifications\Notification;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Cache\ArrayStore;
+use Illuminate\Cache\Repository;
+use Illuminate\Foundation\Http\Middleware\TrimStrings;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 
 uses(TestCase::class);
 
@@ -25,6 +30,72 @@ it('delivers notifications once across redirects', function (string $redirect): 
         ->assertSeeIn('.fi-no .fi-no-notification', 'Persistent notification')
         ->assertNoSmoke();
 })->with(['full', 'spa']);
+
+it('skips empty activation pulls while retaining notification delivery', function (): void {
+    $page = visit('/notification-browser-test')
+        ->click('[data-testid="send-persistent-notification"]')
+        ->assertSee('Persistent notification');
+
+    $page->page()->context()->addInitScript(<<<'JS'
+        const originalFetch = window.fetch;
+        window.notificationPulls = 0;
+        window.fetch = (...arguments_) => {
+            const payload = JSON.parse(arguments_[1]?.body ?? '{}');
+            if (payload.components?.some(component => component.calls.some(call => call.method === 'pullNotificationsFromSession'))) {
+                window.notificationPulls++;
+            }
+            return originalFetch(...arguments_);
+        };
+        JS);
+
+    $page->refresh()
+        ->click('[data-testid="send-persistent-notification"]')
+        ->assertSee('Persistent notification')
+        ->assertScript('window.notificationPulls', 1)
+        ->assertNoSmoke();
+});
+
+it('falls back to browser delivery when the notification cache is unavailable during mount', function (): void {
+    Cache::extend('notification-mount-outage', fn (): Repository => Cache::repository(new class extends ArrayStore
+    {
+        public function get($key)
+        {
+            throw new RuntimeException('Notification cache unavailable during mount.');
+        }
+    }));
+
+    config(['cache.stores.notification-mount-outage.driver' => 'notification-mount-outage']);
+
+    app()->bind(TrimStrings::class, static fn () => new class extends TrimStrings
+    {
+        public function handle($request, Closure $next)
+        {
+            $shouldFail = $request->is('notification-browser-test') && $request->boolean('cacheUnavailable');
+            $originalCacheStore = config('filament.cache_store');
+
+            if ($shouldFail) {
+                config(['filament.cache_store' => 'notification-mount-outage']);
+            }
+
+            try {
+                $response = parent::handle($request, $next);
+            } finally {
+                config(['filament.cache_store' => $originalCacheStore]);
+            }
+
+            if ($shouldFail) {
+                Notification::make()->title('Recovered notification')->persistent()->send();
+            }
+
+            return $response;
+        }
+    });
+
+    visit('/notification-browser-test?cacheUnavailable=1')
+        ->assertSeeIn('.fi-no .fi-no-notification', 'Recovered notification')
+        ->assertCount('.fi-no .fi-no-notification', 1)
+        ->assertNoSmoke();
+});
 
 it('dispatches `notificationClosed` when inline notifications expire', function (): void {
     visit('/notification-browser-test')
