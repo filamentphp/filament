@@ -44,21 +44,21 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
     protected string | int | float | Closure | null $itemPanelAspectRatio = null;
 
-    protected string | Closure | null $loadingIndicatorPosition = 'right';
+    protected string | Closure | null $loadingIndicatorPosition = null;
 
     protected string | Closure | null $panelAspectRatio = null;
 
     protected string | Closure | null $panelLayout = 'compact';
 
-    protected string | Closure | null $removeUploadedFileButtonPosition = 'left';
+    protected string | Closure | null $removeUploadedFileButtonPosition = null;
 
     protected bool | Closure $shouldAppendFiles = false;
 
     protected bool | Closure $shouldOrientImagesFromExif = true;
 
-    protected string | Closure | null $uploadButtonPosition = 'right';
+    protected string | Closure | null $uploadButtonPosition = null;
 
-    protected string | Closure | null $uploadProgressIndicatorPosition = 'right';
+    protected string | Closure | null $uploadProgressIndicatorPosition = null;
 
     protected bool | Closure $hasImageEditor = false;
 
