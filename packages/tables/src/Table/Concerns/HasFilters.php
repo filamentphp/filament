@@ -4,6 +4,8 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Size;
@@ -14,6 +16,7 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Enums\FiltersResetActionPosition;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\View\TablesIconAlias;
+use Illuminate\Contracts\Support\Htmlable;
 
 trait HasFilters
 {
@@ -25,7 +28,7 @@ trait HasFilters
     protected ?Closure $filtersFormSchema = null;
 
     /**
-     * @var int | array<string, int | null> | Closure
+     * @var int | array<string, int | null> | Closure | null
      */
     protected int | array | Closure | null $filtersFormColumns = null;
 
@@ -121,7 +124,7 @@ trait HasFilters
     }
 
     /**
-     * @param  int | array<string, int | null> | Closure  $columns
+     * @param  int | array<string, int | null> | Closure | null  $columns
      */
     public function filtersFormColumns(int | array | Closure | null $columns): static
     {
@@ -241,7 +244,7 @@ trait HasFilters
     }
 
     /**
-     * @return array<string, Group>
+     * @return array<Component | Action | ActionGroup | string | Htmlable>
      */
     public function getFiltersFormSchema(): array
     {

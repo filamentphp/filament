@@ -40,9 +40,9 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertTableColumnDoesNotHaveExtraAttributes(string $name, array $attributes, $record): static {}
 
-        public function assertTableColumnHasDescription(string $name, $description, $record, $position = 'below'): static {}
+        public function assertTableColumnHasDescription(string $name, $description, $record, string $position = 'below'): static {}
 
-        public function assertTableColumnDoesNotHaveDescription(string $name, $description, $record, $position = 'below'): static {}
+        public function assertTableColumnDoesNotHaveDescription(string $name, $description, $record, string $position = 'below'): static {}
 
         public function assertTableSelectColumnHasOptions(string $name, array $options, $record): static {}
 

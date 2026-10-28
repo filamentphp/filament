@@ -442,7 +442,9 @@ If you are using the `optionsRelationship()` method, the `getOptionLabelUsing()`
 Hooks may be used to execute code at various points within the select's lifecycle:
 
 ```php
-SelectColumn::make()
+use Filament\Tables\Columns\SelectColumn;
+
+SelectColumn::make('status')
     ->beforeStateUpdated(function ($record, $state) {
         // Runs before the state is saved to the database.
     })

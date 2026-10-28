@@ -373,7 +373,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     }
 
     /**
-     * @return array<array{'label': string, 'value': string}>
+     * @return array<array<string, mixed>>
      */
     #[Exposed]
     #[Renderless]
@@ -476,7 +476,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     }
 
     /**
-     * @return array<array{'label': string, 'value': string}>
+     * @return array<array<string, mixed>>
      */
     #[Exposed]
     #[Renderless]
@@ -568,7 +568,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     }
 
     /**
-     * @return array<string>
+     * @return array<string> | null
      */
     public function getOptionsSearchColumns(): ?array
     {

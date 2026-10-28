@@ -26,7 +26,7 @@ class AudioPlayerColumn extends Column
 It will also create a view file at `resources/views/filament/tables/columns/audio-player-column.blade.php`.
 
 <Aside variant="info">
-    Filament table columns are **not** Livewire components. Defining public properties and methods on a table column class will not make them accessible in the Blade view.
+    Filament table columns are **not** Livewire components. Public properties are not automatically available as variables in the Blade view. Public methods are available as variable functions, such as `$getState()`, or through the `$column` instance. Making a method public does not automatically expose it to remote calls from Livewire.
 </Aside>
 
 ## Accessing the state of the column in the Blade view
