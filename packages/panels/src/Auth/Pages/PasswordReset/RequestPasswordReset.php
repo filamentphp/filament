@@ -165,8 +165,8 @@ class RequestPasswordReset extends SimplePage
             ->link()
             ->label(__('filament-panels::auth/pages/password-reset/request-password-reset.actions.login.label'))
             ->icon(match (__('filament-panels::layout.direction')) {
-                'rtl' => FilamentIcon::resolve(PanelsIconAlias::PAGES_PASSWORD_RESET_REQUEST_PASSWORD_RESET_ACTIONS_LOGIN_RTL) ?? Heroicon::ArrowRight,
-                default => FilamentIcon::resolve(PanelsIconAlias::PAGES_PASSWORD_RESET_REQUEST_PASSWORD_RESET_ACTIONS_LOGIN) ?? Heroicon::ArrowLeft,
+                'rtl' => FilamentIcon::resolve(PanelsIconAlias::AUTH_PASSWORD_RESET_REQUEST_ACTIONS_LOGIN_RTL) ?? Heroicon::ArrowRight,
+                default => FilamentIcon::resolve(PanelsIconAlias::AUTH_PASSWORD_RESET_REQUEST_ACTIONS_LOGIN) ?? Heroicon::ArrowLeft,
             })
             ->url(filament()->getLoginUrl());
     }

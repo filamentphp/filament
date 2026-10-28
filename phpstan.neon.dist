@@ -3,6 +3,7 @@ parameters:
 
     paths:
         - packages
+        - tests/phpstan
 
     excludePaths:
         - packages/upgrade/bin

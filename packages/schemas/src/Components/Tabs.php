@@ -11,7 +11,7 @@ use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Contracts\HasRenderHookScopes;
 use Filament\Schemas\Schema;
-use Filament\Schemas\View\SchemaIconAlias;
+use Filament\Schemas\View\SchemasIconAlias;
 use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns;
@@ -500,7 +500,7 @@ class Tabs extends Component implements HasEmbeddedView
                                     ->class(['fi-tabs-item', 'fi-active']);
                                 ?>
                                 <button type="button" <?= $triggerTabAttributes->toHtml() ?>>
-                                    <?= generate_icon_html(Heroicon::ChevronDown, alias: SchemaIconAlias::COMPONENTS_TABS_DROPDOWN_TRIGGER_BUTTON)?->toHtml() ?>
+                                    <?= generate_icon_html(Heroicon::ChevronDown, alias: SchemasIconAlias::COMPONENTS_TABS_DROPDOWN_TRIGGER_BUTTON)?->toHtml() ?>
                                     <span class="fi-tabs-item-label"><?= e($tabLabel) ?></span>
                                     <?php if (filled($tabBadge)) { ?>
                                         <?= $this->generateTabBadgeHtml($tabBadge, $tabBadgeColor, tooltip: $tabBadgeTooltip) ?>
@@ -520,7 +520,7 @@ class Tabs extends Component implements HasEmbeddedView
                                 x-show="! overflowReady || (overflowTabs.some(key => availableTabs.includes(key)) && ! overflowTabs.includes(tab))"
                             >
                                 <span class="fi-tabs-item-label">
-                                    <?= generate_icon_html(Heroicon::EllipsisHorizontal, alias: SchemaIconAlias::COMPONENTS_TABS_MORE_TABS_BUTTON)?->toHtml() ?>
+                                    <?= generate_icon_html(Heroicon::EllipsisHorizontal, alias: SchemasIconAlias::COMPONENTS_TABS_MORE_TABS_BUTTON)?->toHtml() ?>
                                 </span>
                             </button>
                         </div>

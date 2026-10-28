@@ -5,6 +5,9 @@ namespace Filament\Forms\Components\Concerns;
 use Closure;
 use Filament\Schemas\Components\Component;
 
+/**
+ * @deprecated Use `CanLimitItemsCount` instead.
+ */
 trait CanLimitItemsLength
 {
     protected int | Closure | null $maxItems = null;
