@@ -27,6 +27,7 @@ trait CanDispatchEvent
         $this->event = $event;
         $this->eventData($data);
         $this->dispatchDirection = false;
+        $this->dispatchToComponent = null;
 
         return $this;
     }
