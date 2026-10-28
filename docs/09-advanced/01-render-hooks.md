@@ -189,7 +189,7 @@ use Filament\Widgets\View\WidgetsRenderHook;
 
 ## Scoping render hooks
 
-Some render hooks can be given a "scope", which allows them to only be output on a specific page or Livewire component. For instance, you might want to register a render hook for just 1 page. To do that, you can pass the class of the page or component as the second argument to `registerRenderHook()`:
+Some render hooks can be given a "scope", which allows them to only be output on a specific page or Livewire component. For instance, you might want to register a render hook for just 1 page. To do that, you can pass the class of the page or component as the `scopes` argument to `registerRenderHook()`:
 
 ```php
 use Filament\Support\Facades\FilamentView;
