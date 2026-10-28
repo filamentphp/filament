@@ -10,7 +10,7 @@ use Filament\Forms\View\FormsIconAlias;
 use Filament\Panel;
 use Filament\PanelRegistry;
 use Filament\Schemas\Schema;
-use Filament\Schemas\View\SchemaIconAlias;
+use Filament\Schemas\View\SchemasIconAlias;
 use Filament\Support\Assets\AssetManager;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentAsset;
@@ -18,11 +18,14 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\ViewManager;
+use Filament\Tables\Enums\HeaderActionsPosition;
+use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Filament\View\PanelsRenderHook;
+use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\ChartComponent;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
@@ -114,6 +117,10 @@ class PersistentUpgradeSetTest extends TestCase
                 require_once $directory . '/app/frontend_keys.php';
                 $this->assertFrontendKeys();
 
+                require_once $directory . '/app/php_type_names.php';
+                require_once $directory . '/app/password_reset_icon_constants.php';
+                $this->assertPhpTypeNames();
+
                 $runtime = new Process([PHP_BINARY, '-r', <<<'PHP'
                     require $argv[1] . '/vendor/autoload.php';
                     require $argv[2] . '/app/deprecated_number_helpers.php';
@@ -181,11 +188,43 @@ class PersistentUpgradeSetTest extends TestCase
         }
     }
 
+    private function assertPhpTypeNames(): void
+    {
+        $field = Fixtures\PhpTypeNames\LimitedField::make('items')->minItems(2)->maxItems(7);
+        $this->assertSame(2, $field->getMinItems());
+        $this->assertSame(7, $field->maximum());
+
+        $rowLoop = (object) ['index' => 3, 'iteration' => 4];
+        $column = Fixtures\PhpTypeNames\LoopColumn::make('title')->rowLoop(rowLoop: $rowLoop);
+        $this->assertSame($rowLoop, $column->currentRow());
+        $this->assertNull($column->rowLoop(null)->getRowLoop());
+
+        $table = Fixtures\PhpTypeNames\LoadingTable::make(app(Fixtures\PhpTypeNames\LoadingComponent::class));
+        $this->assertFalse($table->isLazyLoaded());
+        $this->assertTrue($table->lazyLoaded()->isLazyLoaded());
+        $this->assertFalse($table->lazyLoaded(false)->isLazyLoaded());
+
+        Table::configureUsing(
+            static fn (Table $table) => $table->lazyLoaded(),
+            during: fn () => \Livewire\Livewire::test(Fixtures\PhpTypeNames\LoadingComponent::class)
+                ->assertSet('isTableLoaded', false)
+                ->call('loadTable')
+                ->assertSet('isTableLoaded', true),
+        );
+
+        $position = Fixtures\PhpTypeNames\position();
+        $this->assertSame(HeaderActionsPosition::Bottom, $position);
+        $this->assertSame($position, unserialize(serialize($position)));
+
+        Fixtures\PhpTypeNames\registerChartColors();
+        $this->assertSame(['bg' => 300], app(ChartComponent::class)->getColorMap([]));
+    }
+
     private function assertFrontendKeys(): void
     {
         $aliases = array_merge(
             (new ReflectionClass(FormsIconAlias::class))->getConstants(),
-            (new ReflectionClass(SchemaIconAlias::class))->getConstants(),
+            (new ReflectionClass(SchemasIconAlias::class))->getConstants(),
         );
 
         foreach (Fixtures\FrontendKeys\iconAliases() as $index => $alias) {

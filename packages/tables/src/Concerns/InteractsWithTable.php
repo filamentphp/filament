@@ -18,8 +18,8 @@ use function Filament\Support\encode_key_segments;
 
 trait InteractsWithTable
 {
+    use CanBeLazyLoaded;
     use CanBeStriped;
-    use CanDeferLoading;
     use CanGroupRecords;
     use CanPaginateRecords;
     use CanPollRecords;

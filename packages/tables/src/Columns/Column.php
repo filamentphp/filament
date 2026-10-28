@@ -50,7 +50,7 @@ class Column extends ViewComponent
     use Concerns\HasLabel;
     use Concerns\HasName;
     use Concerns\HasRecord;
-    use Concerns\HasRowLoopObject;
+    use Concerns\HasRowLoop;
     use Concerns\InteractsWithTableQuery;
     use HasAlignment;
     use HasCellState;

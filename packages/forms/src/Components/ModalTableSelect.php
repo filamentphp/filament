@@ -33,7 +33,7 @@ use Znck\Eloquent\Relations\BelongsToThrough;
 
 class ModalTableSelect extends Field implements HasEmbeddedView
 {
-    use Concerns\CanLimitItemsLength;
+    use Concerns\CanLimitItemsCount;
     use Concerns\HasPivotData;
     use Concerns\HasPlaceholder;
 

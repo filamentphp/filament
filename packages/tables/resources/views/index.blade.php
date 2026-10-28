@@ -9,11 +9,11 @@
     use Filament\Support\Facades\FilamentView;
     use Filament\Support\Icons\Heroicon;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-    use Filament\Tables\Actions\HeaderActionsPosition;
     use Filament\Tables\Columns\Column;
     use Filament\Tables\Columns\ColumnGroup;
     use Filament\Tables\Enums\ColumnManagerLayout;
     use Filament\Tables\Enums\FiltersLayout;
+    use Filament\Tables\Enums\HeaderActionsPosition;
     use Filament\Tables\Enums\RecordActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
     use Filament\Tables\Filters\Indicator;

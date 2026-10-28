@@ -7,7 +7,6 @@ use Filament\Tests\TestCase;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\ChartComponent;
-use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\StatsOverviewWidgetStatChartComponent;
 use Illuminate\Support\Facades\Artisan;
 use Livewire\Livewire;
 
@@ -85,10 +84,8 @@ it('initializes `$chartDataChecksums` on mount via `mountHasChartData()`', funct
         ->and($chartDataChecksums['stats-overview-stat-0'])->toBe(md5(json_encode([1, 2, 3])));
 });
 
-it('preserves existing chart container bindings with the deprecated subclass', function (): void {
-    expect(app(StatsOverviewWidgetStatChartComponent::class))->toBeInstanceOf(ChartComponent::class);
-
-    app()->bind(StatsOverviewWidgetStatChartComponent::class, static fn () => new class extends StatsOverviewWidgetStatChartComponent
+it('uses custom chart colors from the `ChartComponent` container binding', function (): void {
+    app()->bind(ChartComponent::class, static fn () => new class extends ChartComponent
     {
         public function getColorMap(array $color): array
         {

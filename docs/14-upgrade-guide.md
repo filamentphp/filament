@@ -1083,6 +1083,36 @@ The script replaces PHP references under `Filament\Tables\Filters\QueryBuilder\C
 The filter itself remains `Filament\Tables\Filters\QueryBuilder`; its configuration is unchanged.
 </Disclosure>
 
+<Disclosure open>
+<span slot="summary">Deprecated PHP class and trait names have been removed</span>
+
+The script replaces PHP references to these classes, traits, and the table header action position enum:
+
+| Removed name | Replacement |
+| --- | --- |
+| `Filament\Schemas\View\SchemaIconAlias` | `Filament\Schemas\View\SchemasIconAlias` |
+| `Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\StatsOverviewWidgetStatChartComponent` | `Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\ChartComponent` |
+| `Filament\Forms\Components\Concerns\CanLimitItemsLength` | `Filament\Forms\Components\Concerns\CanLimitItemsCount` |
+| `Filament\Tables\Columns\Concerns\HasRowLoopObject` | `Filament\Tables\Columns\Concerns\HasRowLoop` |
+| `Filament\Tables\Table\Concerns\CanDeferLoading` | `Filament\Tables\Table\Concerns\CanBeLazyLoaded` |
+| `Filament\Tables\Concerns\CanDeferLoading` | `Filament\Tables\Concerns\CanBeLazyLoaded` |
+| `Filament\Tables\Actions\HeaderActionsPosition` | `Filament\Tables\Enums\HeaderActionsPosition` |
+
+Review string and non-PHP references manually. The stats chart now resolves the canonical `ChartComponent::class` container key. Registrations using the old `::class` reference are migrated by the script; registrations using literal strings must be updated manually. Review custom type checks and bindings together: the removed deprecated classes were subclasses of their replacements, so the replacements also accept instances that were not instances of the deprecated subclasses.
+
+The enum cases remain `Adaptive` and `Bottom`, but PHP serialization includes the enum's namespace. Before deploying, drain queued payloads containing the old enum and invalidate disposable cached values, or migrate persisted values to an application-owned representation. The script does not migrate stored serialized data; the old serialized enum name cannot be loaded after upgrading.
+
+The row-loop trait's protected `$loop` property and `rowLoop()` method's `$loop` parameter are now named `$rowLoop`. Manually update custom property declarations, direct property access, method overrides, named `loop:` arguments, and string keys in unpacked argument arrays. Positional calls and `getRowLoop()` are unchanged.
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('panels')">
+<span slot="summary">Deprecated password-reset login icon constants have been removed</span>
+
+The script replaces `PanelsIconAlias::PAGES_PASSWORD_RESET_REQUEST_PASSWORD_RESET_ACTIONS_LOGIN` and `PAGES_PASSWORD_RESET_REQUEST_PASSWORD_RESET_ACTIONS_LOGIN_RTL` with `AUTH_PASSWORD_RESET_REQUEST_ACTIONS_LOGIN` and `AUTH_PASSWORD_RESET_REQUEST_ACTIONS_LOGIN_RTL` on `Filament\View\PanelsIconAlias`.
+
+Their existing `panels::pages.password-reset.request-password-reset.actions.login` and `panels::pages.password-reset.request-password-reset.actions.login.rtl` strings are unchanged. Review references through custom subclasses, `self`, `static`, dynamic class names, or strings manually; custom constants may have different values.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('forms') || packages.includes('schemas') || packages.includes('panels')">
 <span slot="summary">Icon aliases and mobile sub-navigation render hook strings have been corrected</span>
 

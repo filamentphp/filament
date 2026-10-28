@@ -310,6 +310,7 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
             if (isset(self::METHODS[$declaringClass->getName()]) || in_array($declaringClass->getName(), [
                 'Filament\\Support\\Concerns\\CanBeLazy',
                 'Filament\\Schemas\\Concerns\\HasStateBindingModifiers',
+                'Filament\\Tables\\Table\\Concerns\\CanBeLazyLoaded',
                 'Filament\\Tables\\Table\\Concerns\\CanDeferLoading',
             ], true)) {
                 continue;

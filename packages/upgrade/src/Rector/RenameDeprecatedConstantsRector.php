@@ -43,6 +43,10 @@ class RenameDeprecatedConstantsRector extends AbstractRector
                 'TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER' => 'TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER',
                 'TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE' => 'TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE',
             ],
+            'filament\\view\\panelsiconalias' => [
+                'PAGES_PASSWORD_RESET_REQUEST_PASSWORD_RESET_ACTIONS_LOGIN' => 'AUTH_PASSWORD_RESET_REQUEST_ACTIONS_LOGIN',
+                'PAGES_PASSWORD_RESET_REQUEST_PASSWORD_RESET_ACTIONS_LOGIN_RTL' => 'AUTH_PASSWORD_RESET_REQUEST_ACTIONS_LOGIN_RTL',
+            ],
             default => [],
         };
 

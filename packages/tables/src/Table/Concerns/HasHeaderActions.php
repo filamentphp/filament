@@ -6,7 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkAction;
-use Filament\Tables\Actions\HeaderActionsPosition;
+use Filament\Tables\Enums\HeaderActionsPosition;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
 

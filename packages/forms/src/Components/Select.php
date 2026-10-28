@@ -57,7 +57,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     use Concerns\CanDisableOptions;
     use Concerns\CanDisableOptionsWhenSelectedInSiblingRepeaterItems;
     use Concerns\CanFixIndistinctState;
-    use Concerns\CanLimitItemsLength;
+    use Concerns\CanLimitItemsCount;
     use Concerns\CanSelectPlaceholder;
     use Concerns\HasAffixes;
     use Concerns\HasExtraInputAttributes;

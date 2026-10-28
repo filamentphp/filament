@@ -30,6 +30,13 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->importNames();
 
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
+        'Filament\\Schemas\\View\\SchemaIconAlias' => 'Filament\\Schemas\\View\\SchemasIconAlias',
+        'Filament\\Widgets\\View\\Components\\StatsOverviewWidgetComponent\\StatComponent\\StatsOverviewWidgetStatChartComponent' => 'Filament\\Widgets\\View\\Components\\StatsOverviewWidgetComponent\\StatComponent\\ChartComponent',
+        'Filament\\Forms\\Components\\Concerns\\CanLimitItemsLength' => 'Filament\\Forms\\Components\\Concerns\\CanLimitItemsCount',
+        'Filament\\Tables\\Columns\\Concerns\\HasRowLoopObject' => 'Filament\\Tables\\Columns\\Concerns\\HasRowLoop',
+        'Filament\\Tables\\Table\\Concerns\\CanDeferLoading' => 'Filament\\Tables\\Table\\Concerns\\CanBeLazyLoaded',
+        'Filament\\Tables\\Concerns\\CanDeferLoading' => 'Filament\\Tables\\Concerns\\CanBeLazyLoaded',
+        'Filament\\Tables\\Actions\\HeaderActionsPosition' => 'Filament\\Tables\\Enums\\HeaderActionsPosition',
         'Filament\\Tables\\Columns\\Concerns\\CanBeCopied' => 'Filament\\Support\\Concerns\\CanBeCopied',
         'Filament\\Tables\\Filters\\QueryBuilder\\Constraints\\Constraint' => 'Filament\\QueryBuilder\\Constraints\\Constraint',
         'Filament\\Tables\\Filters\\QueryBuilder\\Constraints\\BooleanConstraint' => 'Filament\\QueryBuilder\\Constraints\\BooleanConstraint',
