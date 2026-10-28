@@ -2,11 +2,19 @@
 
 namespace Filament\Upgrade\Rector;
 
+use Filament\Pages\Page;
+use Filament\Pages\Tenancy\RegisterTenant;
+use Filament\Panel;
+use Filament\Resources\Resource;
 use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Analyser\Scope;
+use PHPStan\Type\ObjectType;
+use PHPStan\Type\TypeCombinator;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpParser\Node\BetterNodeFinder;
 use Rector\Rector\AbstractRector;
@@ -29,8 +37,8 @@ class AddPanelParamToRouteMethodsRector extends AbstractRector
                     'Page::getRoutePath(Filament\Facades\Filament::getCurrentOrDefaultPanel());'
                 ),
                 new CodeSample(
-                    'Page::getRoutePath($param1, $param2);',
-                    'Page::getRoutePath(Filament\Facades\Filament::getCurrentOrDefaultPanel(), $param1, $param2);'
+                    'Page::prependClusterSlug($slug);',
+                    'Page::prependClusterSlug(Filament\Facades\Filament::getCurrentOrDefaultPanel(), $slug);'
                 ),
             ]
         );
@@ -54,7 +62,7 @@ class AddPanelParamToRouteMethodsRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
-        if (! $node instanceof StaticCall) {
+        if ((! $node instanceof StaticCall) || (! $node->name instanceof Identifier) || $node->isFirstClassCallable()) {
             return null;
         }
 
@@ -63,15 +71,53 @@ class AddPanelParamToRouteMethodsRector extends AbstractRector
         }
 
         $scope = $node->getAttribute(AttributeKey::SCOPE);
+        $receiverType = (($node->class instanceof Name) && ($scope instanceof Scope))
+            ? $scope->resolveTypeByName($node->class)
+            : $this->getType($node->class);
+
+        if ($receiverType->isClassString()->yes()) {
+            $receiverType = $receiverType->getClassStringObjectType();
+        }
+
+        $ownerType = match ($node->name->name) {
+            'getRoutePath' => TypeCombinator::union(new ObjectType(Page::class), new ObjectType(RegisterTenant::class)),
+            'getRelativeRouteName' => TypeCombinator::union(new ObjectType(Page::class), new ObjectType(RegisterTenant::class), new ObjectType(Resource::class)),
+            'getRoutePrefix' => new ObjectType(Resource::class),
+            'prependClusterRouteBaseName', 'prependClusterSlug' => new ObjectType(Page::class),
+            default => null,
+        };
+
+        if (($ownerType === null) || (! $ownerType->isSuperTypeOf($receiverType)->yes())) {
+            return null;
+        }
+
+        $argumentName = match ($node->name->name) {
+            'prependClusterRouteBaseName' => 'name',
+            'prependClusterSlug' => 'slug',
+            default => null,
+        };
+
+        // Only migrate the old signature, not calls that already pass a panel.
+        if (count($node->args) !== (($argumentName === null) ? 0 : 1)) {
+            return null;
+        }
+
+        if ($argumentName !== null) {
+            $argument = $node->args[0];
+
+            if ($argument->unpack || ($argument->name && (! $this->isName($argument->name, $argumentName))) || (! $this->getType($argument->value)->isString()->yes())) {
+                return null;
+            }
+        }
 
         $isPanelVariableDefinedInScope = false;
 
         if ($scope instanceof Scope) {
-            $isPanelVariableDefinedInScope = in_array('panel', $scope->getDefinedVariables());
+            $isPanelVariableDefinedInScope = in_array('panel', $scope->getDefinedVariables())
+                && (new ObjectType(Panel::class))->isSuperTypeOf($scope->getVariableType('panel'))->yes();
         }
 
         if ($isPanelVariableDefinedInScope) {
-            // Assuming `$panel` variable always refers to a panel in Filament-context...
             $panelArg = new Node\Arg(new Variable('panel'));
         } else {
             $getCurrentOrDefaultPanelStaticCall = new StaticCall(new FullyQualified('Filament\Facades\Filament'), 'getCurrentOrDefaultPanel');

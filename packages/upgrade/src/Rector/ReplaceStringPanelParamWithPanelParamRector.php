@@ -2,9 +2,16 @@
 
 namespace Filament\Upgrade\Rector;
 
+use Filament\Pages\Page;
+use Filament\Resources\Resource;
 use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
+use PHPStan\Analyser\Scope;
+use PHPStan\Type\ObjectType;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -39,7 +46,7 @@ class ReplaceStringPanelParamWithPanelParamRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
-        if (! $node instanceof StaticCall) {
+        if ((! $node instanceof StaticCall) || (! $node->name instanceof Identifier) || $node->isFirstClassCallable()) {
             return null;
         }
 
@@ -47,8 +54,36 @@ class ReplaceStringPanelParamWithPanelParamRector extends AbstractRector
             return null;
         }
 
-        // Only act on static calls with arguments...
-        if (! count($node->args)) {
+        $owner = match ($node->name->name) {
+            'getRouteName' => Page::class,
+            'getRouteBaseName' => Resource::class,
+            default => null,
+        };
+
+        if ($owner === null) {
+            return null;
+        }
+
+        $scope = $node->getAttribute(AttributeKey::SCOPE);
+        $receiverType = (($node->class instanceof Name) && ($scope instanceof Scope))
+            ? $scope->resolveTypeByName($node->class)
+            : $this->getType($node->class);
+
+        if ($receiverType->isClassString()->yes()) {
+            $receiverType = $receiverType->getClassStringObjectType();
+        }
+
+        if (! (new ObjectType($owner))->isSuperTypeOf($receiverType)->yes()) {
+            return null;
+        }
+
+        if (count($node->args) !== 1) {
+            return null;
+        }
+
+        $argument = $node->args[0];
+
+        if ($argument->unpack || ($argument->name && (! $this->isName($argument->name, 'panel'))) || (! $this->getType($argument->value)->isString()->yes())) {
             return null;
         }
 
@@ -56,11 +91,11 @@ class ReplaceStringPanelParamWithPanelParamRector extends AbstractRector
         $getPanelStaticCall = new StaticCall(
             new FullyQualified('Filament\Facades\Filament'),
             'getPanel',
-            [new Node\Arg($node->args[0]->value)]
+            [new Node\Arg($argument->value)]
         );
 
         // Replace only first argument...
-        $node->args[0] = new Node\Arg($getPanelStaticCall);
+        $argument->value = $getPanelStaticCall;
 
         return $node;
     }
