@@ -53,11 +53,11 @@
             @foreach ($navigationGroup->getItems() as $navigationItem)
                 @foreach ([$navigationItem, ...$navigationItem->getChildItems()] as $navigationItemChild)
                     @php
-                        $navigationItemBadge = $navigationItem->getBadge();
-                        $navigationItemBadgeColor = $navigationItem->getBadgeColor($navigationItemBadge);
-                        $navigationItemIcon = $navigationItem->isActive() ? ($navigationItem->getActiveIcon() ?? $navigationItem->getIcon()) : $navigationItem->getIcon();
-                        $navigationItemUrl = $navigationItem->getUrl();
-                        $shouldNavigationItemOpenUrlInNewTab = $navigationItem->shouldOpenUrlInNewTab();
+                        $navigationItemBadge = $navigationItemChild->getBadge();
+                        $navigationItemBadgeColor = $navigationItemChild->getBadgeColor($navigationItemBadge);
+                        $navigationItemIcon = $navigationItemChild->isActive() ? ($navigationItemChild->getActiveIcon() ?? $navigationItemChild->getIcon()) : $navigationItemChild->getIcon();
+                        $navigationItemUrl = $navigationItemChild->getUrl();
+                        $shouldNavigationItemOpenUrlInNewTab = $navigationItemChild->shouldOpenUrlInNewTab();
                         $navigationItemExtraAttributes = $navigationItemChild->getExtraAttributeBag();
                     @endphp
 
