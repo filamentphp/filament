@@ -392,11 +392,10 @@ When returning a collection, you should validate that your function resolves eve
 You could even use this function to dynamically determine which columns to use to resolve the record:
 
 ```php
-use App\Models\Author;
 use Filament\Actions\Imports\ImportColumn;
 
 ImportColumn::make('author')
-    ->relationship(resolveUsing: function (string $state): ?Author {
+    ->relationship(resolveUsing: function (string $state): string {
         if (filter_var($state, FILTER_VALIDATE_EMAIL)) {
             return 'email';
         }

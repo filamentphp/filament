@@ -2,6 +2,7 @@
 
 namespace Livewire\Features\SupportTesting {
 
+    use BackedEnum;
     use Closure;
 
     class Testable {
@@ -23,7 +24,7 @@ namespace Livewire\Features\SupportTesting {
         /**
          * @deprecated Use `assertSchemaStateSet()` instead.
          */
-        public function assertInfolistActionDataSet(array $data): static {}
+        public function assertInfolistActionDataSet(array | Closure $data): static {}
 
         /**
          * @deprecated Use `callAction()` instead.
@@ -78,7 +79,7 @@ namespace Livewire\Features\SupportTesting {
         /**
          * @deprecated Use `assertActionHalted()` instead.
          */
-        public function assertInfolistActionHalted(string $component, string | array $name, string $infolistName = 'infolist'): static {}
+        public function assertInfolistActionHalted(string $component, string | array $actions, string $schema = 'infolist'): static {}
 
         /**
          * @deprecated Use `assertHasFormErrors()` instead.
@@ -93,12 +94,12 @@ namespace Livewire\Features\SupportTesting {
         /**
          * @deprecated Use `assertActionHasIcon()` instead.
          */
-        public function assertInfolistActionHasIcon(string $component, string | array $actions, string $icon, string $schema = 'infolist'): static {}
+        public function assertInfolistActionHasIcon(string $component, string | array $actions, string | BackedEnum $icon, string $schema = 'infolist'): static {}
 
         /**
          * @deprecated Use `assertActionDoesNotHaveIcon()` instead.
          */
-        public function assertInfolistActionDoesNotHaveIcon(string $component, string | array $actions, string $icon, string $schema = 'infolist'): static {}
+        public function assertInfolistActionDoesNotHaveIcon(string $component, string | array $actions, string | BackedEnum $icon, string $schema = 'infolist'): static {}
 
         /**
          * @deprecated Use `assertActionHasLabel()` instead.

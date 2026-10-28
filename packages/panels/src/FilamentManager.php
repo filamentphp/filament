@@ -26,6 +26,7 @@ use Filament\Resources\ResourceConfiguration;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\Width;
 use Filament\Widgets\Widget;
+use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\Guard;
@@ -682,7 +683,7 @@ class FilamentManager
     }
 
     /**
-     * @return array<class-string<Widget>>
+     * @return array<class-string<Widget> | WidgetConfiguration>
      */
     public function getWidgets(): array
     {

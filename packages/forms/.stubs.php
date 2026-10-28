@@ -2,6 +2,7 @@
 
 namespace Livewire\Features\SupportTesting {
 
+    use BackedEnum;
     use Closure;
 
     class Testable {
@@ -31,15 +32,9 @@ namespace Livewire\Features\SupportTesting {
          */
         public function assertFormExists(string $name = 'form'): static {}
 
-        /**
-         * @deprecated Use `assertSchemaComponentHidden()` instead.
-         */
-        public function assertFormFieldHidden(string $key, string $form = 'form'): static {}
+        public function assertFormFieldHidden(string $key, ?string $form = null): static {}
 
-        /**
-         * @deprecated Use `assertSchemaComponentVisible()` instead.
-         */
-        public function assertFormFieldVisible(string $key, string $form = 'form'): static {}
+        public function assertFormFieldVisible(string $key, ?string $form = null): static {}
 
         /**
          * @deprecated Use `assertSchemaComponentExists()` instead.
@@ -69,7 +64,7 @@ namespace Livewire\Features\SupportTesting {
         /**
          * @deprecated Use `assertSchemaStateSet()` instead.
          */
-        public function assertFormComponentActionDataSet(array $data): static {}
+        public function assertFormComponentActionDataSet(array | Closure $data): static {}
 
         /**
          * @deprecated Use `callAction()` instead.
@@ -124,7 +119,7 @@ namespace Livewire\Features\SupportTesting {
         /**
          * @deprecated Use `assertActionHalted()` instead.
          */
-        public function assertFormComponentActionHalted(string | array $component, string | array $name, string $formName = 'form'): static {}
+        public function assertFormComponentActionHalted(string | array $components, string | array $actions, string $formName = 'form'): static {}
 
         /**
          * @deprecated Use `assertHasFormErrors()` instead.
@@ -139,12 +134,12 @@ namespace Livewire\Features\SupportTesting {
         /**
          * @deprecated Use `assertActionHasIcon()` instead.
          */
-        public function assertFormComponentActionHasIcon(string | array $components, string | array $actions, string $icon, array $arguments = [], string $formName = 'form'): static {}
+        public function assertFormComponentActionHasIcon(string | array $components, string | array $actions, string | BackedEnum $icon, array $arguments = [], string $formName = 'form'): static {}
 
         /**
          * @deprecated Use `assertActionDoesNotHaveIcon()` instead.
          */
-        public function assertFormComponentActionDoesNotHaveIcon(string | array $components, string | array $actions, string $icon, array $arguments = [], string $formName = 'form'): static {}
+        public function assertFormComponentActionDoesNotHaveIcon(string | array $components, string | array $actions, string | BackedEnum $icon, array $arguments = [], string $formName = 'form'): static {}
 
         /**
          * @deprecated Use `assertActionHasLabel()` instead.

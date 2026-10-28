@@ -220,19 +220,6 @@ SelectColumn::make('author_id')
 
 <UtilityInjection set="tableColumns">As well as allowing a static value, the `preloadOptions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-### Excluding the current record
-
-When working with recursive relationships, you will likely want to remove the current record from the set of results.
-
-This can be easily be done using the `ignoreRecord` argument:
-
-```php
-use Filament\Tables\Columns\SelectColumn;
-
-SelectColumn::make('parent_id')
-    ->optionsRelationship(name: 'parent', titleAttribute: 'name', ignoreRecord: true)
-```
-
 ### Customizing the relationship query
 
 You may customize the database query that retrieves options using the third parameter of the `optionsRelationship()` method:

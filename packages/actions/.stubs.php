@@ -43,9 +43,9 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertActionHasLabel(string | TestAction | array $actions, string $label): static {}
 
-        public function assertActionHasColor(string | TestAction | array $actions, string $color): static {}
+        public function assertActionHasColor(string | TestAction | array $actions, string | array $color): static {}
 
-        public function assertActionDoesNotHaveColor(string | TestAction | array $actions, string $color): static {}
+        public function assertActionDoesNotHaveColor(string | TestAction | array $actions, string | array $color): static {}
 
         public function assertActionHasUrl(string | TestAction | array $actions, string $url): static {}
 
@@ -57,7 +57,7 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertActionDoesNotHaveLabel(string | TestAction | array $actions, string $label): static {}
 
-        public function assertActionMounted(string | TestAction | array $actions): static {}
+        public function assertActionMounted(string | TestAction | array $actions = []): static {}
 
         public function assertActionNotMounted(string | TestAction | array $actions = []): static {}
 
@@ -80,10 +80,6 @@ namespace Livewire\Features\SupportTesting {
          * @deprecated Use `assertHasNoFormErrors()` instead.
          */
         public function assertHasNoActionErrors(array $keys = []): static {}
-
-        public function parseActionName(string | TestAction | array $actions): string {}
-
-        public function parseNestedActionName(string | array $name): array {}
 
         public function parseNestedActions(string | TestAction | array $actions, array $arguments = [], bool $areRelativeToMountedActions = true): array {}
     }
