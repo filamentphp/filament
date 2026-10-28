@@ -419,7 +419,7 @@ TextConstraint::make('author.name')
     ])
 ```
 
-This will remove all operators, and register the `EqualsOperator`.
+This will remove all operators, and register the `IsFilledOperator`.
 
 If you'd like to add an operator to the end of the list, use `pushOperators()` instead:
 

@@ -674,8 +674,6 @@ public static function getCsvDelimiter(): string
 }
 ```
 
-<UtilityInjection set="actions">As well as allowing a static value, the `csvDelimiter()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
-
 You can only specify a single character, otherwise an exception will be thrown.
 
 ## Customizing XLSX files

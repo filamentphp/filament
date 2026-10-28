@@ -514,7 +514,7 @@ public static function table(Table $table): Table
 
 ### Persisting the search in the user's session
 
-To persist the table or individual column search in the user's session, use the `persistSearchInSession()` or `persistColumnSearchInSession()` method:
+To persist the table or individual column search in the user's session, use the `persistSearchInSession()` or `persistColumnSearchesInSession()` method:
 
 ```php
 use Filament\Tables\Table;

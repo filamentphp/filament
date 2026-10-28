@@ -24,6 +24,7 @@ use Filament\Resources\ResourceConfiguration;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\Width;
 use Filament\Widgets\Widget;
+use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -44,7 +45,7 @@ use Livewire\Component;
  * @method static string | Htmlable getBrandName()
  * @method static string | Htmlable | null getBrandLogo()
  * @method static string | null getBrandLogoHeight()
- * @method static array<string | int, array<class-string> | class-string> getClusteredComponents(?string $cluster = null)
+ * @method static array<string | int, array<class-string> | class-string> getClusteredComponents(?string $cluster)
  * @method static string getCollapsedSidebarWidth()
  * @method static string getCurrentDomain(?string $testingDomain = null)
  * @method static Panel | null getCurrentPanel()
@@ -90,7 +91,7 @@ use Livewire\Component;
  * @method static array<string | int, NavigationGroup | string> getNavigationGroups()
  * @method static array<NavigationItem> getNavigationItems()
  * @method static array<class-string> getPages()
- * @method static Panel getPanel(?string $id = null, bool $isStrict = true)
+ * @method static Panel | null getPanel(?string $id = null, bool $isStrict = true)
  * @method static array<string, Panel> getPanels()
  * @method static Plugin getPlugin(string $id)
  * @method static string | null getProfileUrl(array<string, mixed> $parameters = [])
@@ -98,7 +99,7 @@ use Livewire\Component;
  * @method static string | null getRequestPasswordResetUrl(array<string, mixed> $parameters = [])
  * @method static string getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user, array<string, mixed> $parameters = [])
  * @method static array<class-string> getResources()
- * @method static string getResourceUrl(string | Model $model, string $name = 'index', array<string, mixed> $parameters = [], bool $isAbsolute = false, ?Model $tenant = null)
+ * @method static string getResourceUrl(string | Model $model, string $name = 'index', array<string, mixed> $parameters = [], bool $isAbsolute = true, ?Model $tenant = null)
  * @method static ?string getResourceCreatePageRedirect()
  * @method static ?string getResourceEditPageRedirect()
  * @method static class-string<Component> getSidebarLivewireComponent()
@@ -106,7 +107,7 @@ use Livewire\Component;
  * @method static SubNavigationPosition getSubNavigationPosition()
  * @method static string getTenancyScopeName()
  * @method static Model | null getTenant()
- * @method static string | null getTenantAvatarUrl(Model $tenant)
+ * @method static string getTenantAvatarUrl(Model $tenant)
  * @method static BillingProvider | null getTenantBillingProvider()
  * @method static string | null getTenantBillingUrl(array<string, mixed> $parameters = [], Model | null $tenant = null)
  * @method static array<Action> getTenantMenuItems()
@@ -120,7 +121,7 @@ use Livewire\Component;
  * @method static Theme getTheme()
  * @method static class-string<Component> getTopbarLivewireComponent()
  * @method static ThemeMode getDefaultThemeMode()
- * @method static string | null getUserAvatarUrl(Model | Authenticatable $user)
+ * @method static string getUserAvatarUrl(Model | Authenticatable $user)
  * @method static Model | null getUserDefaultTenant(HasTenants | Model | Authenticatable $user)
  * @method static array<Action> getUserMenuItems()
  * @method static UserMenuPosition getUserMenuPosition()
@@ -131,7 +132,7 @@ use Livewire\Component;
  * @method static string getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user, array<string, mixed> $parameters = [])
  * @method static string getVerifyEmailChangeUrl(MustVerifyEmail | Model | Authenticatable $user, string $newEmail, array<string, mixed> $parameters = [])
  * @method static string getBlockEmailChangeVerificationUrl(MustVerifyEmail | Model | Authenticatable $user, string $newEmail, string $verificationSignature, array<string, mixed> $parameters = [])
- * @method static array<class-string<Widget>> getWidgets()
+ * @method static array<class-string<Widget> | WidgetConfiguration> getWidgets()
  * @method static bool hasBreadcrumbs()
  * @method static bool hasCollapsibleNavigationGroups()
  * @method static bool hasDarkMode()
@@ -168,7 +169,7 @@ use Livewire\Component;
  * @method static ?bool isTenantMenuSearchable()
  * @method static void serving(Closure $callback)
  * @method static void setCurrentDomain(?string $domain)
- * @method static void setCurrentPanel(Panel | string | null $panel = null)
+ * @method static void setCurrentPanel(Panel | string | null $panel)
  * @method static void setServingStatus(bool $condition = true)
  * @method static void setTenant(Model | null $tenant, bool $isQuiet = false)
  * @method static void setCurrentResourceConfigurationKey(string | null $key)

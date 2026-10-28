@@ -421,16 +421,46 @@ describe('options and properties', function (): void {
         expect($limitedFilter->getOptionsLimit())->toBe(100);
     });
 
-    it('can check `queriesRelationships()` returns `true` when relationship is set', function (): void {
+    it('can check relationship presence with `hasRelationship()` and `queriesRelationships()`', function (): void {
         $withoutRelationship = SelectFilter::make('status')
             ->options(['active' => 'Active']);
 
         $withRelationship = SelectFilter::make('author')
-            ->relationship('author', 'name');
+            ->relationship(fn (): string => 'author', 'name');
 
-        expect($withoutRelationship->queriesRelationships())->toBeFalse();
-        expect($withRelationship->queriesRelationships())->toBeTrue();
+        expect($withoutRelationship->hasRelationship())->toBeFalse()
+            ->and($withoutRelationship->queriesRelationships())->toBeFalse()
+            ->and($withRelationship->hasRelationship())->toBeTrue()
+            ->and($withRelationship->queriesRelationships())->toBeTrue();
+
+        $withRelationship->relationship(name: null, titleAttribute: null);
+
+        expect($withRelationship->hasRelationship())->toBeFalse()
+            ->and($withRelationship->queriesRelationships())->toBeFalse();
     });
+
+    it('can resolve qualified relationship keys with both accessor names', function (string $model, string $relationship, ?string $key, ?string $aliasedKey): void {
+        $table = Table::make(app(TestTableWithSelectFilter::class))->query($model::query());
+        $filter = SelectFilter::make('related')
+            ->table($table)
+            ->relationship($relationship, 'name');
+
+        $relatedModel = $filter->getRelationship()->getRelated();
+        $relatedModel->setTable('related_alias');
+        $query = $relatedModel->newQuery();
+
+        expect($filter->getQualifiedRelatedKeyNameForRelationship())->toBe($key)
+            ->and($filter->getRelationshipKey())->toBe($key)
+            ->and($filter->getQualifiedRelatedKeyNameForRelationship(query: $query))->toBe($aliasedKey)
+            ->and($filter->getRelationshipKey(query: $query))->toBe($aliasedKey);
+    })->with([
+        'belongs to' => [Post::class, 'author', 'users.id', 'related_alias.id'],
+        'belongs to many' => [User::class, 'teams', 'teams.id', 'related_alias.id'],
+        'has one through' => [Post::class, 'teamThroughAuthor', 'teams.id', 'related_alias.id'],
+        'has one through foreign key' => [User::class, 'setting', 'settings.profile_id', 'related_alias.profile_id'],
+        'belongs to through' => [Post::class, 'team', 'teams.id', 'teams.id'],
+        'has one fallback' => [Post::class, 'metadata', null, null],
+    ]);
 
     it('can get `getRelationshipName()` from string', function (): void {
         $filter = SelectFilter::make('author')
