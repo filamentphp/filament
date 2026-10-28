@@ -8,7 +8,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static string | null resolve(string $alias)
+ * @method static string | BackedEnum | Htmlable | null resolve(string | array<string> $alias)
  *
  * @see IconManager
  */

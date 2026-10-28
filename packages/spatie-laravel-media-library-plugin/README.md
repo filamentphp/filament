@@ -397,7 +397,7 @@ It's possible to target the entry to only display a subset of media in a collect
 For example, you could scope the entry to only display media that has certain custom properties:
 
 ```php
-use Filament\Tables\Columns\SpatieMediaLibraryImageEntry;
+use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Illuminate\Support\Collection;
 
 SpatieMediaLibraryImageEntry::make('images')

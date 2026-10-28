@@ -73,6 +73,12 @@ class IconManager
         'schemas::components.tabs.dropdown-trigger-button' => 'schema::components.tabs.dropdown-trigger-button',
         'schemas::components.tabs.more-tabs-button' => 'schema::components.tabs.more-tabs-button',
         'schemas::components.wizard.completed-step' => 'schema::components.wizard.completed-step',
+        'tables::filters.query-builder.constraints.boolean' => 'query-builder::constraints.boolean',
+        'tables::filters.query-builder.constraints.date' => 'query-builder::constraints.date',
+        'tables::filters.query-builder.constraints.number' => 'query-builder::constraints.number',
+        'tables::filters.query-builder.constraints.relationship' => 'query-builder::constraints.relationship',
+        'tables::filters.query-builder.constraints.select' => 'query-builder::constraints.select',
+        'tables::filters.query-builder.constraints.text' => 'query-builder::constraints.text',
     ];
 
     /**

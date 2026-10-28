@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Support\Components\Component;
@@ -10,9 +9,6 @@ use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\ColumnGroup;
 use LogicException;
 
-/**
- * @property-read Schema $toggleTableColumnForm
- */
 trait HasColumnManager
 {
     public const TABLE_COLUMN_MANAGER_GROUP_TYPE = 'group';

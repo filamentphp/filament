@@ -283,7 +283,7 @@ CheckboxList::make('technologies')
 
 ### Customizing the relationship query
 
-You may customize the database query that retrieves options using the `modifyOptionsQueryUsing` parameter of the `relationship()` method:
+You may customize the database query that retrieves options using the `modifyQueryUsing` parameter of the `relationship()` method:
 
 ```php
 use Filament\Forms\Components\CheckboxList;

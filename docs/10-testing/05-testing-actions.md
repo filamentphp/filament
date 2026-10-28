@@ -327,21 +327,6 @@ it('can only print a sent invoice', function () {
 });
 ```
 
-To ensure sets of actions exist in the correct order, you can use `assertActionListInOrder()`:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('can have actions in order', function () {
-    $invoice = Invoice::factory()->create();
-
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])
-        ->assertActionListInOrder(['send', 'export']);
-});
-```
-
 To check if an action is hidden to a user, you can use the `assertActionHidden()` method:
 
 ```php

@@ -149,6 +149,10 @@ SelectFilter::make('author')
     ->relationship('author', 'name', fn (Builder $query) => $query->withTrashed())
 ```
 
+### Inspecting the configured relationship
+
+You can use `$filter->hasRelationship()` to check whether a relationship name is configured. To retrieve its qualified key column, use `$filter->getQualifiedRelatedKeyNameForRelationship()`. For a relationship type without a specialized key column, this returns `null`, allowing the filter to use the related model's primary key. For belongs-to, belongs-to-many, and has-one/many-through relationships, you may pass the related query using the optional `query` argument to qualify the column using that query model's table, including when filtering self-related records.
+
 ## Disable placeholder selection
 
 You can remove the placeholder (null option), which disables the filter so all options are applied, using the `selectablePlaceholder()` method:

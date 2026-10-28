@@ -51,14 +51,29 @@ interface HasTable
 
     public function getTableGrouping(): ?Group;
 
+    /**
+     * @deprecated Use `getMountedAction()` instead.
+     */
     public function getMountedTableAction(): ?Action;
 
+    /**
+     * @deprecated Use `getMountedActionSchema()` instead.
+     */
     public function getMountedTableActionForm(): ?Schema;
 
+    /**
+     * @deprecated Use `getMountedAction()?->getRecord()` instead.
+     */
     public function getMountedTableActionRecord(): ?Model;
 
+    /**
+     * @deprecated Use `getMountedAction()` instead.
+     */
     public function getMountedTableBulkAction(): ?Action;
 
+    /**
+     * @deprecated Use `getMountedActionSchema()` instead.
+     */
     public function getMountedTableBulkActionForm(): ?Schema;
 
     public function getTable(): Table;
@@ -119,26 +134,36 @@ interface HasTable
     public function makeFilamentTranslatableContentDriver(): ?TranslatableContentDriver;
 
     /**
+     * @deprecated Use `callMountedAction()` instead.
+     *
      * @param  array<string, mixed>  $arguments
      */
     public function callMountedTableAction(array $arguments = []): mixed;
 
     /**
+     * @deprecated Use `mountAction()` instead.
+     *
      * @param  array<string, mixed>  $arguments
      */
     public function mountTableAction(string $name, ?string $record = null, array $arguments = []): mixed;
 
     /**
+     * @deprecated Use `mountAction()` instead.
+     *
      * @param  array<string, mixed>  $arguments
      */
     public function replaceMountedTableAction(string $name, ?string $record = null, array $arguments = []): void;
 
     /**
+     * @deprecated Use `mountAction()` instead.
+     *
      * @param  array<int | string> | null  $selectedRecords
      */
     public function mountTableBulkAction(string $name, ?array $selectedRecords = null): mixed;
 
     /**
+     * @deprecated Use `replaceMountedAction()` instead.
+     *
      * @param  array<int | string> | null  $selectedRecords
      */
     public function replaceMountedTableBulkAction(string $name, ?array $selectedRecords = null): void;

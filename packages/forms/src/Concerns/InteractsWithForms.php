@@ -252,7 +252,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     }
 
     /**
-     * @deprecated Use `mountedActionHasForm()` instead.
+     * @deprecated Use `mountedActionHasSchema()` instead.
      */
     #[Unexposed]
     public function mountedFormComponentActionHasForm(?Action $mountedAction = null): bool
