@@ -263,14 +263,14 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
     public function searchOptionLabels(bool | Closure | null $condition = true): static
     {
-        $this->shouldSearchOptionLabels = $condition;
+        $this->shouldSearchOptionLabels = $condition ?? false;
 
         return $this;
     }
 
     public function searchOptionValues(bool | Closure | null $condition = true): static
     {
-        $this->shouldSearchOptionValues = $condition;
+        $this->shouldSearchOptionValues = $condition ?? false;
 
         return $this;
     }

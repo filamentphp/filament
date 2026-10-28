@@ -989,7 +989,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
     public function orderColumn(string | Closure | null $column = 'sort'): static
     {
         $this->orderColumn = $column;
-        $this->reorderable($column);
+        $this->reorderable($column ?? false);
 
         return $this;
     }
