@@ -688,7 +688,7 @@ const mountLocationPicker: JsFieldRenderer<Location, Configuration> = ({ host, p
 export default mountLocationPicker
 ```
 
-You can also import `JsFieldRendererContext`, `JsFieldProps`, `JsFieldUtilities`, and `JsFieldRendererInstance` to type individual parts of your implementation. `JsFieldProps` includes callbacks and describes both mount and update props. `JsFieldInitialProps` remains available as a deprecated compatibility alias for `JsFieldProps`.
+You can also import `JsFieldRendererContext`, `JsFieldProps`, `JsFieldUtilities`, and `JsFieldRendererInstance` to type individual parts of your implementation. `JsFieldProps` includes callbacks and describes both mount and update props.
 
 State and configuration are deeply read-only snapshots in TypeScript, not runtime-frozen objects. Unspecified types must be narrowed before use. Keep `import type` so your bundler does not try to load the declaration file, and keep PHP validation even when using TypeScript.
 
