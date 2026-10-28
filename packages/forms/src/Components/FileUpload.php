@@ -44,21 +44,21 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
     protected string | int | float | Closure | null $itemPanelAspectRatio = null;
 
-    protected string | Closure $loadingIndicatorPosition = 'right';
+    protected string | Closure | null $loadingIndicatorPosition = 'right';
 
     protected string | Closure | null $panelAspectRatio = null;
 
     protected string | Closure | null $panelLayout = 'compact';
 
-    protected string | Closure $removeUploadedFileButtonPosition = 'left';
+    protected string | Closure | null $removeUploadedFileButtonPosition = 'left';
 
     protected bool | Closure $shouldAppendFiles = false;
 
     protected bool | Closure $shouldOrientImagesFromExif = true;
 
-    protected string | Closure $uploadButtonPosition = 'right';
+    protected string | Closure | null $uploadButtonPosition = 'right';
 
-    protected string | Closure $uploadProgressIndicatorPosition = 'right';
+    protected string | Closure | null $uploadProgressIndicatorPosition = 'right';
 
     protected bool | Closure $hasImageEditor = false;
 
@@ -242,7 +242,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
     public function loadingIndicatorPosition(string | Closure | null $position): static
     {
-        $this->loadingIndicatorPosition = $position ?? (static fn () => null);
+        $this->loadingIndicatorPosition = $position;
 
         return $this;
     }
@@ -280,21 +280,21 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
     public function removeUploadedFileButtonPosition(string | Closure | null $position): static
     {
-        $this->removeUploadedFileButtonPosition = $position ?? (static fn () => null);
+        $this->removeUploadedFileButtonPosition = $position;
 
         return $this;
     }
 
     public function uploadButtonPosition(string | Closure | null $position): static
     {
-        $this->uploadButtonPosition = $position ?? (static fn () => null);
+        $this->uploadButtonPosition = $position;
 
         return $this;
     }
 
     public function uploadProgressIndicatorPosition(string | Closure | null $position): static
     {
-        $this->uploadProgressIndicatorPosition = $position ?? (static fn () => null);
+        $this->uploadProgressIndicatorPosition = $position;
 
         return $this;
     }
