@@ -7,33 +7,76 @@ use Illuminate\Contracts\Support\Htmlable;
 
 trait HasDescription
 {
-    protected string | Htmlable | Closure | null $descriptionAbove = null;
-
-    protected string | Htmlable | Closure | null $descriptionBelow = null;
+    /**
+     * @var array<array{description: string | Htmlable | Closure | null, position: string | Closure | null}>
+     */
+    protected array $descriptions = [];
 
     public function description(string | Htmlable | Closure | null $description, string | Closure | null $position = 'below'): static
     {
-        if ($position === 'above') {
-            $this->descriptionAbove = $description;
-        } else {
-            $this->descriptionBelow = $description;
-        }
+        $this->descriptions[] = [
+            'description' => $description,
+            'position' => $position,
+        ];
 
         return $this;
     }
 
     public function getDescriptionAbove(): string | Htmlable | null
     {
-        return $this->evaluate($this->descriptionAbove);
+        return $this->getDescription('above');
     }
 
     public function getDescriptionBelow(): string | Htmlable | null
     {
-        return $this->evaluate($this->descriptionBelow);
+        return $this->getDescription('below');
+    }
+
+    protected function getDescription(string $position): string | Htmlable | null
+    {
+        foreach (array_reverse($this->descriptions) as $description) {
+            $descriptionPosition = ($this->evaluate($description['position']) === 'above') ? 'above' : 'below';
+
+            if ($descriptionPosition !== $position) {
+                continue;
+            }
+
+            return $this->evaluate($description['description']);
+        }
+
+        return null;
     }
 
     public function hasDescription(): bool
     {
-        return $this->descriptionAbove !== null || $this->descriptionBelow !== null;
+        $clearedPositions = [];
+
+        foreach (array_reverse($this->descriptions) as $description) {
+            if ($description['position'] instanceof Closure) {
+                if ($description['description'] !== null) {
+                    return true;
+                }
+
+                continue;
+            }
+
+            $position = ($description['position'] === 'above') ? 'above' : 'below';
+
+            if (isset($clearedPositions[$position])) {
+                continue;
+            }
+
+            if ($description['description'] !== null) {
+                return true;
+            }
+
+            $clearedPositions[$position] = true;
+
+            if (count($clearedPositions) === 2) {
+                return false;
+            }
+        }
+
+        return false;
     }
 }
