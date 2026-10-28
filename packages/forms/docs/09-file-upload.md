@@ -517,8 +517,6 @@ FileUpload::make('attachment')
 
 <UtilityInjection set="formFields">As well as allowing static values, these methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
-Passing `null` to `loadingIndicatorPosition()`, `removeUploadedFileButtonPosition()`, `uploadButtonPosition()`, or `uploadProgressIndicatorPosition()` resets that position to the default for the current upload mode. Returning `null` from a function has the same effect. In avatar mode, this preserves the avatar positions, including their adjustments when the image editor is enabled. Call these methods after `avatar()` to override its position settings.
-
 ### Displaying files in a grid
 
 You can use the [Filepond `grid` layout](https://pqina.nl/filepond/docs/api/style/#grid-layout) by setting the `panelLayout()`:
