@@ -4,6 +4,9 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 
+/**
+ * @deprecated Use `CanBeLazyLoaded` instead.
+ */
 trait CanDeferLoading
 {
     /**
