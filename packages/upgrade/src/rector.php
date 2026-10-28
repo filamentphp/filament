@@ -23,6 +23,7 @@ use Rector\Renaming\Rector\String_\RenameStringRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->skip([
+        __FILE__,
         dirname((new ReflectionClass(InstalledVersions::class))->getFileName(), 2),
     ]);
 
