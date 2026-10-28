@@ -224,7 +224,9 @@ trait HasColumnManager
      */
     public function getColumnToggleFormWidth(): ?string
     {
-        return $this->getColumnManagerWidth();
+        $width = $this->getColumnManagerWidth();
+
+        return $width instanceof Width ? $width->value : $width;
     }
 
     public function getColumnManagerWidth(): Width | string | null
