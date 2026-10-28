@@ -197,7 +197,7 @@ ImageEntry::make('colleagues.avatar')
 
 ### Customizing the stacked overlap
 
-The default overlap is `4`, but you may customize it to be from `0` to `8`:
+The default overlap is `2`, but you may customize it to be from `0` to `8`:
 
 ```php
 use Filament\Infolists\Components\ImageEntry;
@@ -310,4 +310,4 @@ ImageEntry::make('logo')
 
 <UtilityInjection set="infolistEntries" extras="Related record;;Illuminate\Database\Eloquent\Model;;$relatedRecord;;The current related Eloquent record for the rendered item.">As well as allowing a static value, the `extraImgAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-By default, calling `extraImgAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
+Calling `extraImgAttributes()` multiple times will overwrite the previous attributes.

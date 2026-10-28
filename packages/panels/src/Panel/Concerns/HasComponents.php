@@ -100,7 +100,7 @@ trait HasComponents
     protected array $resourceNamespaces = [];
 
     /**
-     * @var array<class-string<Widget>>
+     * @var array<class-string<Widget> | WidgetConfiguration>
      */
     protected array $widgets = [];
 
