@@ -6,6 +6,9 @@ use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Attributes\Unexposed;
 use Livewire\Attributes\Locked;
 
+/**
+ * @deprecated Use `CanBeLazyLoaded` instead.
+ */
 trait CanDeferLoading
 {
     #[Locked]

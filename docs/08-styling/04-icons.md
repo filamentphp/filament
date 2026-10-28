@@ -268,11 +268,11 @@ Using class `Filament\View\PanelsIconAlias`
 - `PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_SET_UP` - Trigger button of the action to set up email authentication
 - `PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_SET_UP_MODAL` - Modal of the action to set up email authentication
 - `PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_SET_UP_NOTIFICATION` - Notification sent after setting up email authentication
+- `PanelsIconAlias::AUTH_PASSWORD_RESET_REQUEST_ACTIONS_LOGIN` - Trigger button of the login action on the request password reset page
+- `PanelsIconAlias::AUTH_PASSWORD_RESET_REQUEST_ACTIONS_LOGIN_RTL` - Trigger button of the login action on the request password reset page (right-to-left direction)
 - `PanelsIconAlias::GLOBAL_SEARCH_FIELD` - Global search field
 - `PanelsIconAlias::PAGES_DASHBOARD_ACTIONS_FILTER` - Trigger button of the dashboard filter action
 - `PanelsIconAlias::PAGES_DASHBOARD_NAVIGATION_ITEM` - Dashboard page navigation item
-- `PanelsIconAlias::PAGES_PASSWORD_RESET_REQUEST_PASSWORD_RESET_ACTIONS_LOGIN` - Trigger button of the login action on the request password reset page
-- `PanelsIconAlias::PAGES_PASSWORD_RESET_REQUEST_PASSWORD_RESET_ACTIONS_LOGIN_RTL` - Trigger button of the login action on the request password reset page (right-to-left direction)
 - `PanelsIconAlias::RESOURCES_PAGES_EDIT_RECORD_NAVIGATION_ITEM` - Resource edit record page navigation item
 - `PanelsIconAlias::RESOURCES_PAGES_MANAGE_RELATED_RECORDS_NAVIGATION_ITEM` - Resource manage related records page navigation item
 - `PanelsIconAlias::RESOURCES_PAGES_VIEW_RECORD_NAVIGATION_ITEM` - Resource view record page navigation item
@@ -317,15 +317,15 @@ Using class `Filament\QueryBuilder\View\QueryBuilderIconAlias`
 
 ### Schema icon aliases
 
-Using class `Filament\Schemas\View\SchemaIconAlias`
+Using class `Filament\Schemas\View\SchemasIconAlias`
 
-- `SchemaIconAlias::COMPONENTS_CALLOUT_DANGER` - Danger callout
-- `SchemaIconAlias::COMPONENTS_CALLOUT_INFO` - Info callout
-- `SchemaIconAlias::COMPONENTS_CALLOUT_SUCCESS` - Success callout
-- `SchemaIconAlias::COMPONENTS_CALLOUT_WARNING` - Warning callout
-- `SchemaIconAlias::COMPONENTS_TABS_DROPDOWN_TRIGGER_BUTTON` - Button to open the dropdown containing the tabs, when they do not fit on one line
-- `SchemaIconAlias::COMPONENTS_TABS_MORE_TABS_BUTTON` - Button to reveal the tabs that do not fit on one line
-- `SchemaIconAlias::COMPONENTS_WIZARD_COMPLETED_STEP` - Completed step in a wizard
+- `SchemasIconAlias::COMPONENTS_CALLOUT_DANGER` - Danger callout
+- `SchemasIconAlias::COMPONENTS_CALLOUT_INFO` - Info callout
+- `SchemasIconAlias::COMPONENTS_CALLOUT_SUCCESS` - Success callout
+- `SchemasIconAlias::COMPONENTS_CALLOUT_WARNING` - Warning callout
+- `SchemasIconAlias::COMPONENTS_TABS_DROPDOWN_TRIGGER_BUTTON` - Button to open the dropdown containing the tabs, when they do not fit on one line
+- `SchemasIconAlias::COMPONENTS_TABS_MORE_TABS_BUTTON` - Button to reveal the tabs that do not fit on one line
+- `SchemasIconAlias::COMPONENTS_WIZARD_COMPLETED_STEP` - Completed step in a wizard
 
 ### Tables icon aliases
 

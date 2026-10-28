@@ -4,6 +4,9 @@ namespace Filament\Tables\Columns\Concerns;
 
 use stdClass;
 
+/**
+ * @deprecated Use `HasRowLoop` instead.
+ */
 trait HasRowLoopObject
 {
     protected ?stdClass $loop = null;
