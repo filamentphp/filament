@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Support\Facades\FilamentView;
+use Filament\Support\View\ViewManager;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Blade;
@@ -159,4 +160,66 @@ test('render hooks can be passed data', function (): void {
     expect(FilamentView::renderHook('foo', data: ['foo' => 'bar']))
         ->toBeInstanceOf(HtmlString::class)
         ->toHtml()->toBe('bar');
+});
+
+test('mobile menu hook spellings share scopes, ordering and callback identity', function (string $legacy, string $canonical): void {
+    foreach ([[$legacy, $canonical], [$canonical, $legacy]] as [$first, $second]) {
+        FilamentView::swap(new ViewManager);
+
+        foreach ([$first, $second] as $name) {
+            expect(FilamentView::hasRenderHook($name))->toBeFalse()
+                ->and(FilamentView::renderHook($name)->toHtml())->toBe('');
+        }
+
+        FilamentView::registerRenderHook($first, static fn (): string => 'A', scopes: 'alpha');
+        FilamentView::registerRenderHook($second, static fn (): string => 'B', scopes: 'beta');
+
+        foreach ([$first, $second] as $name) {
+            expect(FilamentView::hasRenderHook($name))->toBeFalse()
+                ->and(FilamentView::hasRenderHook($name, scopes: 'unrelated'))->toBeFalse()
+                ->and(FilamentView::hasRenderHook($name, scopes: 'alpha'))->toBeTrue()
+                ->and(FilamentView::hasRenderHook($name, scopes: ['unrelated', 'beta']))->toBeTrue()
+                ->and(FilamentView::renderHook($name, scopes: ['beta', 'alpha'])->toHtml())->toBe('BA');
+        }
+
+        $calls = 0;
+        $sharedHook = function (array $scopes, array $data) use (&$calls): HtmlString {
+            $calls++;
+
+            return new HtmlString('<b>' . implode(',', $scopes) . ':' . $data['value'] . '</b>');
+        };
+
+        FilamentView::registerRenderHook($first, static fn (): string => '1');
+        FilamentView::registerRenderHook($second, $sharedHook, scopes: ['alpha', 'beta']);
+        FilamentView::registerRenderHook($second, static fn (): string => '2');
+        FilamentView::registerRenderHook($first, $sharedHook);
+        FilamentView::registerRenderHook($second, $sharedHook);
+        FilamentView::registerRenderHook($first, static fn (): string => 'R');
+        FilamentView::registerRenderHook($second, static fn (): string => 'R');
+
+        foreach ([$first, $second] as $name) {
+            $calls = 0;
+
+            expect(FilamentView::hasRenderHook($name))->toBeTrue()
+                ->and(FilamentView::hasRenderHook($name, scopes: 'unrelated'))->toBeTrue()
+                ->and(FilamentView::renderHook($name, scopes: ['beta', 'alpha'], data: ['value' => 'payload'])->toHtml())
+                ->toBe('12<b>beta,alpha:payload</b>RRBA')
+                ->and($calls)->toBe(1);
+        }
+    }
+})->with([
+    ['panels::page.sub-navigation.module-menu.before', 'panels::page.sub-navigation.mobile-menu.before'],
+    ['panels::page.sub-navigation.module-menu.after', 'panels::page.sub-navigation.mobile-menu.after'],
+]);
+
+test('unknown render hook spellings remain independent', function (): void {
+    FilamentView::registerRenderHook('panels::page.sub-navigation.module-menu.custom', static fn (): string => 'legacy');
+
+    expect(FilamentView::hasRenderHook('panels::page.sub-navigation.mobile-menu.custom'))->toBeFalse()
+        ->and(FilamentView::renderHook('panels::page.sub-navigation.mobile-menu.custom')->toHtml())->toBe('');
+
+    FilamentView::registerRenderHook('panels::page.sub-navigation.mobile-menu.custom', static fn (): string => 'canonical');
+
+    expect(FilamentView::renderHook('panels::page.sub-navigation.module-menu.custom')->toHtml())->toBe('legacy')
+        ->and(FilamentView::renderHook('panels::page.sub-navigation.mobile-menu.custom')->toHtml())->toBe('canonical');
 });
