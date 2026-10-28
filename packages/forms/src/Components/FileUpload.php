@@ -242,7 +242,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
     public function loadingIndicatorPosition(string | Closure | null $position): static
     {
-        $this->loadingIndicatorPosition = $position;
+        $this->loadingIndicatorPosition = $position ?? (static fn () => null);
 
         return $this;
     }
@@ -280,21 +280,21 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
     public function removeUploadedFileButtonPosition(string | Closure | null $position): static
     {
-        $this->removeUploadedFileButtonPosition = $position;
+        $this->removeUploadedFileButtonPosition = $position ?? (static fn () => null);
 
         return $this;
     }
 
     public function uploadButtonPosition(string | Closure | null $position): static
     {
-        $this->uploadButtonPosition = $position;
+        $this->uploadButtonPosition = $position ?? (static fn () => null);
 
         return $this;
     }
 
     public function uploadProgressIndicatorPosition(string | Closure | null $position): static
     {
-        $this->uploadProgressIndicatorPosition = $position;
+        $this->uploadProgressIndicatorPosition = $position ?? (static fn () => null);
 
         return $this;
     }
@@ -408,7 +408,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
     public function getLoadingIndicatorPosition(): string
     {
-        return $this->evaluate($this->loadingIndicatorPosition);
+        return $this->evaluate($this->loadingIndicatorPosition) ?? ($this->isAvatar() ? 'center bottom' : 'right');
     }
 
     public function getPanelAspectRatio(): ?string
@@ -423,17 +423,23 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
     public function getRemoveUploadedFileButtonPosition(): string
     {
-        return $this->evaluate($this->removeUploadedFileButtonPosition);
+        return $this->evaluate($this->removeUploadedFileButtonPosition) ?? ($this->isAvatar()
+            ? ($this->hasImageEditor() ? 'left bottom' : 'center bottom')
+            : 'left');
     }
 
     public function getUploadButtonPosition(): string
     {
-        return $this->evaluate($this->uploadButtonPosition);
+        return $this->evaluate($this->uploadButtonPosition) ?? ($this->isAvatar()
+            ? ($this->hasImageEditor() ? 'right bottom' : 'center bottom')
+            : 'right');
     }
 
     public function getUploadProgressIndicatorPosition(): string
     {
-        return $this->evaluate($this->uploadProgressIndicatorPosition);
+        return $this->evaluate($this->uploadProgressIndicatorPosition) ?? ($this->isAvatar()
+            ? ($this->hasImageEditor() ? 'right bottom' : 'center bottom')
+            : 'right');
     }
 
     public function isAvatar(): bool
