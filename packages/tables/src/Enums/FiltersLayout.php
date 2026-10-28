@@ -2,25 +2,25 @@
 
 namespace Filament\Tables\Enums;
 
-enum FiltersLayout
+enum FiltersLayout: string
 {
-    case AboveContent;
+    case AboveContent = 'above_content';
 
-    case AboveContentCollapsible;
+    case AboveContentCollapsible = 'above_content_collapsible';
 
-    case BelowContent;
+    case BelowContent = 'below_content';
 
-    case BeforeContent;
+    case BeforeContent = 'before_content';
 
-    case AfterContent;
+    case AfterContent = 'after_content';
 
-    case BeforeContentCollapsible;
+    case BeforeContentCollapsible = 'before_content_collapsible';
 
-    case AfterContentCollapsible;
+    case AfterContentCollapsible = 'after_content_collapsible';
 
-    case Dropdown;
+    case Dropdown = 'dropdown';
 
-    case Modal;
+    case Modal = 'modal';
 
-    case Hidden;
+    case Hidden = 'hidden';
 }

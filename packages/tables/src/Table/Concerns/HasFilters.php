@@ -103,7 +103,7 @@ trait HasFilters
         $this->pushFilters($filters);
 
         if ($layout) {
-            $this->filtersLayout($layout);
+            $this->filtersLayout(is_string($layout) ? (FiltersLayout::tryFrom($layout) ?? $layout) : $layout);
         }
 
         return $this;
