@@ -18,7 +18,7 @@ trait CanGenerateModelInfolists
     {
         return <<<PHP
             return \$schema
-                ->columns([
+                ->components([
                     {$this->outputInfolistComponents($model)}
                 ]);
             PHP;
