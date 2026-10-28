@@ -118,6 +118,27 @@ foreach (explode(',', $directories) as $directory) {
         HTML);
 }
 
+$bladeDirectories = array_values(array_filter(array_unique([
+    'resources/views',
+    ...array_map(trim(...), explode(',', $directories)),
+]), is_dir(...)));
+
+if ($bladeDirectories) {
+    $bladeProcess = proc_open([
+        PHP_BINARY,
+        $upgradePackagePath . '/src/upgrade-blade-templates.php',
+        ...$bladeDirectories,
+    ], [STDIN, STDOUT, STDERR], $pipes);
+
+    if (! is_resource($bladeProcess)) {
+        throw new RuntimeException('Unable to start the Blade template upgrade.');
+    }
+
+    if (proc_close($bladeProcess) !== 0) {
+        throw new RuntimeException('The Blade template upgrade failed.');
+    }
+}
+
 $requireCommands = [];
 
 foreach (json_decode(file_get_contents('composer.json'), true)['require'] as $package => $version) {

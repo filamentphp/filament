@@ -45,16 +45,19 @@ class PersistentUpgradeSetTest extends TestCase
             mkdir($directory . '/' . $sourceDirectory);
         }
 
+        mkdir($directory . '/resources/views', recursive: true);
+
         $originalFiles = [];
         $expectedFiles = [];
 
         try {
-            foreach (glob(__DIR__ . '/Fixtures/*.php.inc') as $fixture) {
+            foreach ([...glob(__DIR__ . '/Fixtures/*.php.inc'), ...glob(__DIR__ . '/Fixtures/Blade/*.inc')] as $fixture) {
                 $parts = explode("-----\n", file_get_contents($fixture), 2);
                 $sourceDirectory = match (basename($fixture)) {
                     'legacy_query_builder_classes.php.inc' => 'config',
                     'deprecated_enum_constants.php.inc' => 'routes',
                     'persistent_upload_restriction.php.inc' => 'tests',
+                    'legacy_aliases.blade.php.inc', 'unrelated.txt.inc' => 'resources/views',
                     default => 'app',
                 };
                 $path = $directory . '/' . $sourceDirectory . '/' . basename($fixture, '.inc');
@@ -82,7 +85,7 @@ class PersistentUpgradeSetTest extends TestCase
                     ->withSets([{$set}]);
                 PHP);
 
-            $runRector = function (bool $dryRun) use ($root, $configuration): Process {
+            $runUpgrade = function (bool $dryRun) use ($root, $configuration, $directory, $expectedFiles): Process {
                 $process = new Process([
                     PHP_BINARY, $root . '/vendor/bin/rector', 'process',
                     '--config', $configuration, '--clear-cache', '--no-progress-bar',
@@ -91,11 +94,27 @@ class PersistentUpgradeSetTest extends TestCase
                 $process->setTimeout(120);
                 $process->run();
 
-                return $process;
+                $expectedBladeExitCode = 0;
+
+                foreach ($expectedFiles as $path => $expected) {
+                    if ($dryRun && str_ends_with($path, '.blade.php') && (trim(file_get_contents($path)) !== $expected)) {
+                        $expectedBladeExitCode = 2;
+                    }
+                }
+
+                $bladeProcess = new Process([
+                    PHP_BINARY, $root . '/packages/upgrade/src/upgrade-blade-templates.php',
+                    'resources/views', 'app', 'config', 'routes', 'tests',
+                    ...($dryRun ? ['--dry-run'] : []),
+                ], $directory);
+                $bladeProcess->run();
+                $this->assertSame($expectedBladeExitCode, $bladeProcess->getExitCode(), $bladeProcess->getOutput() . $bladeProcess->getErrorOutput());
+
+                return $process->isSuccessful() ? $bladeProcess : $process;
             };
 
             for ($pass = 1; $pass <= 3; $pass++) {
-                $process = $runRector($pass > 1);
+                $process = $runUpgrade($pass > 1);
                 $this->assertSame(0, $process->getExitCode(), "Pass {$pass}:\n" . $process->getOutput() . $process->getErrorOutput());
 
                 foreach ($expectedFiles as $path => $expected) {
@@ -141,6 +160,8 @@ class PersistentUpgradeSetTest extends TestCase
                         \Illuminate\Support\Number::withLocale('de', fn () => \Filament\Tests\Upgrade\Fixtures\NumberHelpers\results()[0]),
                         function_exists('Filament\\Support\\format_money') || function_exists('Filament\\Support\\format_number') ||
                             class_exists('Filament\\Support\\Components\\Attributes\\ExposedLivewireMethod') ||
+                            class_exists('Filament\\View\\LegacyComponents\\PageComponent') ||
+                            class_exists('Filament\\View\\LegacyComponents\\WidgetComponent') ||
                             interface_exists('Filament\\Schemas\\Components\\Contracts\\CanConcealComponents'),
                         \Illuminate\Support\Number::withLocale('en', fn () => \Filament\Tests\Upgrade\Fixtures\NumberVariables\format(1234.75, 'USD')),
                     ]);
@@ -166,14 +187,14 @@ class PersistentUpgradeSetTest extends TestCase
                 $reintroducedFiles[$path] = $input;
             }
 
-            $process = $runRector(true);
+            $process = $runUpgrade(true);
             $this->assertSame(2, $process->getExitCode(), $process->getOutput() . $process->getErrorOutput());
 
             foreach ($reintroducedFiles as $path => $input) {
                 $this->assertSame($input, file_get_contents($path));
             }
 
-            $process = $runRector(false);
+            $process = $runUpgrade(false);
             $this->assertSame(0, $process->getExitCode(), $process->getOutput() . $process->getErrorOutput());
 
             foreach ($expectedFiles as $path => $expected) {
@@ -181,7 +202,7 @@ class PersistentUpgradeSetTest extends TestCase
             }
 
             for ($pass = 1; $pass <= 2; $pass++) {
-                $process = $runRector(true);
+                $process = $runUpgrade(true);
                 $this->assertSame(0, $process->getExitCode(), $process->getOutput() . $process->getErrorOutput());
             }
         } finally {

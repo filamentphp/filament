@@ -1202,6 +1202,45 @@ The script migrates direct `$this->filters` reads (including array-key reads) on
 The removed fallback only redirected reads of an undeclared `filters` property. It did not declare or synchronize a second property, redirect writes, or override a real `filters` declaration. The trait retains its `#[Unexposed]` forwarding `__get()` so custom overrides still inherit protection from client method dispatch. Migrate other reads only after reviewing the actual trait consumer, its parents, descendants, other traits, custom declarations, `__get()` overrides/adaptations, and inherited methods. Changing a parent method's read could affect a child that declares its own `filters`. Review Blade references, dynamic property names, property checks, callbacks, and custom property injection manually; do not turn formerly unsupported writes into writes to a reactive property. Test initial filter hydration and subsequent reactive updates.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('panels') || packages.includes('widgets')">
+<span slot="summary">Legacy page and widget Blade component aliases have been removed</span>
+
+Replace these exact component names in your Blade templates, including published views and application-owned plugin templates:
+
+| Removed alias | Replacement |
+| --- | --- |
+| `filament::page` | `filament-panels::page` |
+| `filament::widget` | `filament-widgets::widget` |
+
+The upgrade script updates opening, closing, and self-closing tags in `.blade.php` files under `resources/views` and your selected source directories. It preserves attributes, bound expressions, slot content, and unrelated component names. Blade comments, `@verbatim` blocks, and `@php` blocks are left unchanged. For example, your migrated templates should use:
+
+```blade
+<x-filament-panels::page>
+    {{ $this->form }}
+</x-filament-panels::page>
+
+<x-filament-widgets::widget data-widget="summary">
+    <x-filament::section>
+        Widget content
+    </x-filament::section>
+</x-filament-widgets::widget>
+```
+
+For `<x-dynamic-component>`, update literal `component="filament::page"` / `component="filament::widget"` values and any PHP expressions, configuration, or stored values that supply those exact names. Do not rename other `filament::` components or similarly prefixed custom names.
+
+The PHP Rector set does not process this template migration. To migrate additional template directories or check templates copied into an already-upgraded application, run the same standalone scanner from your application's root:
+
+```bash
+php vendor/filament/upgrade/src/upgrade-blade-templates.php resources/views app-modules
+```
+
+Pass only directories that exist and that you own. The scanner skips symlinks and nested `vendor`, `node_modules`, and `.git` directories. With no directory arguments, it scans `resources/views`. Add `--dry-run` to report changes without writing files; it exits with status `2` when changes are needed, `0` when none are needed, and a different nonzero status on failure. You can run it alongside your persistent Rector check in CI, but a clean result does not check dynamic component values or removed PHP class dependencies. Review the diff and test your application after applying changes.
+
+The `Filament\View\LegacyComponents\PageComponent` and `WidgetComponent` classes have also been removed. Review imports, registrations, subclasses, type references, and class strings manually. The replacements are anonymous Blade components, not replacement PHP classes; preserve any custom subclass behavior in your own component before removing the old dependency.
+
+Custom `fieldWrapperView()` and `entryWrapperView()` configuration still supports both ordinary views and registered Blade component aliases. These wrappers do not need to be migrated as part of this removal.
+</Disclosure>
+
 <Disclosure open>
 <span slot="summary">The deprecated `IconSize::ExtraExtraLarge` alias has been removed</span>
 
