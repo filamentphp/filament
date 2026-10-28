@@ -12,6 +12,14 @@ use function Filament\Support\is_app_url;
 class ViewManager
 {
     /**
+     * @var array<string, string>
+     */
+    private const RENDER_HOOK_ALIASES = [
+        'panels::page.sub-navigation.mobile-menu.after' => 'panels::page.sub-navigation.module-menu.after',
+        'panels::page.sub-navigation.mobile-menu.before' => 'panels::page.sub-navigation.module-menu.before',
+    ];
+
+    /**
      * @var array<string, array<string, array<Closure>>>
      */
     protected array $renderHooks = [];
@@ -26,10 +34,20 @@ class ViewManager
     protected array $spaModeUrlExceptions = [];
 
     /**
+     * @internal
+     */
+    public static function normalizeRenderHookName(string $name): string
+    {
+        return self::RENDER_HOOK_ALIASES[$name] ?? $name;
+    }
+
+    /**
      * @param  string | array<string> | null  $scopes
      */
     public function registerRenderHook(string $name, Closure $hook, string | array | null $scopes = null): void
     {
+        $name = static::normalizeRenderHookName($name);
+
         if ($scopes === null) {
             $scopes = [''];
         }
@@ -48,6 +66,8 @@ class ViewManager
      */
     public function hasRenderHook(string $name, string | array | null $scopes = null): bool
     {
+        $name = static::normalizeRenderHookName($name);
+
         if (! isset($this->renderHooks[$name])) {
             return false;
         }
@@ -73,6 +93,8 @@ class ViewManager
      */
     public function renderHook(string $name, string | array | null $scopes = null, array $data = []): Htmlable
     {
+        $name = static::normalizeRenderHookName($name);
+
         $renderedHooks = [];
 
         $scopes = Arr::wrap($scopes);
