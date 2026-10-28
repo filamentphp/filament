@@ -17,7 +17,7 @@ use function Filament\Support\locale_has_pluralization;
 trait InteractsWithRecord
 {
     /**
-     * @var Model | class-string<Model> | array<string, mixed> | Closure | null
+     * @var Model | string | array<string, mixed> | Closure | null
      */
     protected Model | string | array | Closure | null $record = null;
 

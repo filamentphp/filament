@@ -2,7 +2,7 @@
 
 namespace Filament\Actions\Imports\Models;
 
-use Carbon\CarbonInterface;
+use DateTimeInterface;
 use Filament\Actions\Imports\Importer;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Collection;
@@ -13,15 +13,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use LogicException;
 
 /**
- * @property CarbonInterface | null $completed_at
  * @property string $file_name
  * @property string $file_path
  * @property class-string<Importer> $importer
  * @property int $processed_rows
  * @property int $total_rows
  * @property int $successful_rows
+ * @property-read int | null $completed_at
  * @property-read Collection<FailedImportRow> $failedRows
  * @property-read Authenticatable $user
+ * @property-write DateTimeInterface | string | int | float | null $completed_at
  */
 class Import extends Model
 {
