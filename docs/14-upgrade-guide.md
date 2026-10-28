@@ -1083,6 +1083,20 @@ The script replaces PHP references under `Filament\Tables\Filters\QueryBuilder\C
 The filter itself remains `Filament\Tables\Filters\QueryBuilder`; its configuration is unchanged.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('forms') || packages.includes('schemas') || packages.includes('panels')">
+<span slot="summary">Icon aliases and mobile sub-navigation render hook strings have been corrected</span>
+
+The old spellings are no longer aliases for the built-in keys:
+
+- The 52 rich editor toolbar icon keys use `forms::components.rich-editor.toolbar.` instead of `forms:components.rich-editor.toolbar.`. Tool names use hyphens instead of underscores, such as `clear-formatting` and `table-add-row-after`.
+- The seven schema component icon keys use `schemas::` instead of `schema::`.
+- The mobile sub-navigation render hooks use `panels::page.sub-navigation.mobile-menu.before` and `.after` instead of `module-menu`.
+
+The corresponding icon alias and render hook constants now contain the corrected strings. Code using these constants needs no string changes.
+
+The script replaces exact PHP string literals for these 61 built-in keys, including registration keys and fallback arrays. It does not normalize custom keys. Review dynamically constructed strings, Blade templates, non-PHP references, and stored configuration manually. Update registrations and lookups together. If you mixed old and new spellings, review duplicate array keys and registration order after migration: the last icon registration wins, while render hook callbacks run in registration order within each scope.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('tables')">
 <span slot="summary">Deprecated column-toggle render hook constants have been removed</span>
 

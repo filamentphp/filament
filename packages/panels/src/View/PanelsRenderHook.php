@@ -78,9 +78,9 @@ class PanelsRenderHook
 
     const PAGE_START = 'panels::page.start';
 
-    const PAGE_SUB_NAVIGATION_MOBILE_MENU_AFTER = 'panels::page.sub-navigation.module-menu.after';
+    const PAGE_SUB_NAVIGATION_MOBILE_MENU_AFTER = 'panels::page.sub-navigation.mobile-menu.after';
 
-    const PAGE_SUB_NAVIGATION_MOBILE_MENU_BEFORE = 'panels::page.sub-navigation.module-menu.before';
+    const PAGE_SUB_NAVIGATION_MOBILE_MENU_BEFORE = 'panels::page.sub-navigation.mobile-menu.before';
 
     const PAGE_SUB_NAVIGATION_SIDEBAR_AFTER = 'panels::page.sub-navigation.sidebar.after';
 

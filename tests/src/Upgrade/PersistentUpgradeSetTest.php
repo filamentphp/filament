@@ -6,12 +6,15 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\FilamentManager;
 use Filament\Forms\Components\Field;
+use Filament\Forms\View\FormsIconAlias;
 use Filament\Panel;
 use Filament\PanelRegistry;
 use Filament\Schemas\Schema;
+use Filament\Schemas\View\SchemaIconAlias;
 use Filament\Support\Assets\AssetManager;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\ViewManager;
@@ -19,8 +22,12 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 use LogicException;
+use ReflectionClass;
 use ReflectionMethod;
 use Symfony\Component\Process\Process;
 
@@ -104,6 +111,9 @@ class PersistentUpgradeSetTest extends TestCase
                 require_once $directory . '/app/menu_items.php';
                 $this->assertConfigurationMigrations();
 
+                require_once $directory . '/app/frontend_keys.php';
+                $this->assertFrontendKeys();
+
                 $runtime = new Process([PHP_BINARY, '-r', <<<'PHP'
                     require $argv[1] . '/vendor/autoload.php';
                     require $argv[2] . '/app/deprecated_number_helpers.php';
@@ -168,6 +178,33 @@ class PersistentUpgradeSetTest extends TestCase
             }
         } finally {
             (new Filesystem)->deleteDirectory($directory);
+        }
+    }
+
+    private function assertFrontendKeys(): void
+    {
+        $aliases = array_merge(
+            (new ReflectionClass(FormsIconAlias::class))->getConstants(),
+            (new ReflectionClass(SchemaIconAlias::class))->getConstants(),
+        );
+
+        foreach (Fixtures\FrontendKeys\iconAliases() as $index => $alias) {
+            $this->assertContains($alias, $aliases);
+            $icon = new HtmlString('<svg data-upgraded-icon="' . $index . '"></svg>');
+            FilamentIcon::register([$alias => $icon]);
+            $this->assertSame($icon, FilamentIcon::resolve(['custom::missing', $alias]));
+            $this->assertStringContainsString($icon->toHtml(), Blade::render('<x-filament::icon :alias="$alias" />', ['alias' => $alias]));
+        }
+
+        $hooks = [PanelsRenderHook::PAGE_SUB_NAVIGATION_MOBILE_MENU_BEFORE, PanelsRenderHook::PAGE_SUB_NAVIGATION_MOBILE_MENU_AFTER];
+        $this->assertSame($hooks, Fixtures\FrontendKeys\renderHooks());
+        $view = app()->build(ViewManager::class);
+
+        foreach (Fixtures\FrontendKeys\renderHooks() as $index => $hook) {
+            $html = '<span data-upgraded-hook="' . $index . '"></span>';
+            $view->registerRenderHook($hook, static fn (): HtmlString => new HtmlString($html), scopes: $hook);
+            $this->assertTrue($view->hasRenderHook($hooks[$index], scopes: $hook));
+            $this->assertSame($html, $view->renderHook($hooks[$index], scopes: $hook)->toHtml());
         }
     }
 

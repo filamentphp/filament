@@ -3,7 +3,6 @@
 namespace Filament\Panel\Concerns;
 
 use BackedEnum;
-use Filament\Support\Icons\IconManager;
 
 trait HasIcons
 {
@@ -17,15 +16,9 @@ trait HasIcons
      */
     public function icons(array $icons): static
     {
-        $registeredIcons = [];
-
-        foreach ($icons as $alias => $icon) {
-            $registeredIcons[IconManager::normalizeAlias($alias)] = $icon;
-        }
-
         $this->icons = [
             ...$this->icons,
-            ...$registeredIcons,
+            ...$icons,
         ];
 
         return $this;
