@@ -132,6 +132,12 @@ return static function (RectorConfig $rectorConfig): void {
         'schema::components.wizard.completed-step' => 'schemas::components.wizard.completed-step',
         'panels::page.sub-navigation.module-menu.before' => 'panels::page.sub-navigation.mobile-menu.before',
         'panels::page.sub-navigation.module-menu.after' => 'panels::page.sub-navigation.mobile-menu.after',
+        'tables::filters.query-builder.constraints.boolean' => 'query-builder::constraints.boolean',
+        'tables::filters.query-builder.constraints.date' => 'query-builder::constraints.date',
+        'tables::filters.query-builder.constraints.number' => 'query-builder::constraints.number',
+        'tables::filters.query-builder.constraints.relationship' => 'query-builder::constraints.relationship',
+        'tables::filters.query-builder.constraints.select' => 'query-builder::constraints.select',
+        'tables::filters.query-builder.constraints.text' => 'query-builder::constraints.text',
     ]);
 
     $rectorConfig->rule(MigrateLegacyConfigurationHooksRector::class);

@@ -115,6 +115,7 @@ class PersistentUpgradeSetTest extends TestCase
                 $this->assertConfigurationMigrations();
 
                 require_once $directory . '/app/frontend_keys.php';
+                require_once $directory . '/app/query_builder_icons.php';
                 $this->assertFrontendKeys();
 
                 require_once $directory . '/app/php_type_names.php';
@@ -222,6 +223,12 @@ class PersistentUpgradeSetTest extends TestCase
 
     private function assertFrontendKeys(): void
     {
+        foreach (Fixtures\QueryBuilderIcons\aliases() as $alias => $constant) {
+            $this->assertSame($alias, $constant);
+            FilamentIcon::register([$alias => Heroicon::Star]);
+            $this->assertSame(Heroicon::Star, FilamentIcon::resolve(['custom::missing', $constant]));
+        }
+
         $aliases = array_merge(
             (new ReflectionClass(FormsIconAlias::class))->getConstants(),
             (new ReflectionClass(SchemasIconAlias::class))->getConstants(),

@@ -893,7 +893,7 @@ The script renames calls on these owning types and their subclasses:
 | `Filament\Actions\Action`, `Filament\Actions\ActionGroup`, `Filament\Schemas\Components\Tabs\Tab` | `indicator()` | `badge()` |
 | `Action`, `ActionGroup`, `Tab` | `indicatorColor()` | `badgeColor()` |
 
-For automatically migrated calls, arguments, defaults, nullable values, and closure evaluation are unchanged. `disabledClick()` defaults to `true` and forwards the condition without negating it. `hasRelationship()` still requires a record. These aliases do not apply to filters: filter `options()`, `indicator()`, and `queriesRelationships()` methods are unchanged, as are query builder constraint methods and navigation badge APIs.
+For automatically migrated calls, arguments, defaults, nullable values, and closure evaluation are unchanged. `disabledClick()` defaults to `true` and forwards the condition without negating it. On columns and export columns, `hasRelationship()` still requires a record. Filter `options()` and `indicator()` methods are unchanged, as are query builder constraint methods and navigation badge APIs. The separate filter relationship migration below preserves its no-argument presence check.
 
 The script renames named arguments from `options:` to `icons:` and from `indicator:` to `badge:`. Calls unpacking arguments into these two setters are left unchanged; rename the methods and any `'options'` or `'indicator'` argument keys manually. Update named arguments when invoking migrated first-class callables yourself. Other aliases preserve named and unpacked arguments.
 
@@ -908,6 +908,16 @@ Manually migrate custom overrides (including inherited methods and methods suppl
 Preserve custom parameter names, defaults, return values, and dispatch behavior. The wrappers called replacements through `$this`, so renaming `parent::` calls can bypass subclass overrides. `options()` and `disableClick()` returned `$this` regardless of the replacement's return value; the badge and relationship aliases returned the replacement's result.
 
 Legacy table/infolist bridges and unrelated deprecated methods remain available.
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('tables')">
+<span slot="summary">Filter relationship inspection methods have canonical names</span>
+
+The script migrates `queriesRelationships()` to `hasRelationship()` and `getRelationshipKey()` to `getQualifiedRelatedKeyNameForRelationship()` on `Filament\Tables\Filters\SelectFilter` and its subclasses, including `TernaryFilter`. The old methods remain deprecated forwarding aliases.
+
+The filter's `hasRelationship()` checks whether a relationship name is configured and takes no record argument. The key accessor retains `?Builder $query = null` and its nullable string result; it returns a qualified SQL column, not a record key value. Named `query:` arguments, unpacked arguments and first-class callables retain their contracts. Do not substitute the Forms Select accessor's relationship argument. Relationship-specific key selection and table qualification are unchanged.
+
+Calls on known overrides of either method name are left unchanged. Manually review subclass declarations, trait consumers outside SelectFilter, class-qualified calls such as `parent::getRelationshipKey()`, dynamic names, array callbacks, unknown or ambiguous receiver types, and non-PHP references. Base-typed receivers may hold custom subclasses that need review. Preserve custom parameter names, defaults and dispatch: the old wrappers call the canonical methods through `$this`, so changing a `parent::` call can bypass a subclass override.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
@@ -1083,6 +1093,14 @@ The script replaces PHP references under `Filament\Tables\Filters\QueryBuilder\C
 The filter itself remains `Filament\Tables\Filters\QueryBuilder`; its configuration is unchanged.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('tables')">
+<span slot="summary">Query builder icon constants belong to the query builder package</span>
+
+The script replaces the six deprecated `Filament\Tables\View\TablesIconAlias::FILTERS_QUERY_BUILDER_CONSTRAINTS_*` constants with `Filament\QueryBuilder\View\QueryBuilderIconAlias::CONSTRAINTS_*` for `BOOLEAN`, `DATE`, `NUMBER`, `RELATIONSHIP`, `SELECT`, and `TEXT`. The existing `query-builder::constraints.*` values are unchanged; the old constants remain forwarding aliases.
+
+Only direct references to the exact TablesIconAlias class are migrated, including imported aliases and fully qualified names. Review custom subclasses, `self`, `static`, dynamic class or constant names, string references and non-PHP references manually: custom constants may have different values. Remove unused legacy imports after migration. Historical literal registrations are covered by the icon-string migration below.
+</Disclosure>
+
 <Disclosure open>
 <span slot="summary">Deprecated PHP class and trait names have been removed</span>
 
@@ -1113,7 +1131,7 @@ The script replaces `PanelsIconAlias::PAGES_PASSWORD_RESET_REQUEST_PASSWORD_RESE
 Their existing `panels::pages.password-reset.request-password-reset.actions.login` and `panels::pages.password-reset.request-password-reset.actions.login.rtl` strings are unchanged. Review references through custom subclasses, `self`, `static`, dynamic class names, or strings manually; custom constants may have different values.
 </Disclosure>
 
-<Disclosure open x-show="packages.includes('forms') || packages.includes('schemas') || packages.includes('panels')">
+<Disclosure open x-show="packages.includes('forms') || packages.includes('schemas') || packages.includes('panels') || packages.includes('tables')">
 <span slot="summary">Icon aliases and mobile sub-navigation render hook strings have been corrected</span>
 
 The old spellings are no longer aliases for the built-in keys:
@@ -1121,10 +1139,11 @@ The old spellings are no longer aliases for the built-in keys:
 - The 52 rich editor toolbar icon keys use `forms::components.rich-editor.toolbar.` instead of `forms:components.rich-editor.toolbar.`. Tool names use hyphens instead of underscores, such as `clear-formatting` and `table-add-row-after`.
 - The seven schema component icon keys use `schemas::` instead of `schema::`.
 - The mobile sub-navigation render hooks use `panels::page.sub-navigation.mobile-menu.before` and `.after` instead of `module-menu`.
+- The six query builder constraint icons use `query-builder::constraints.{boolean,date,number,relationship,select,text}` instead of `tables::filters.query-builder.constraints.*`.
 
 The corresponding icon alias and render hook constants now contain the corrected strings. Code using these constants needs no string changes.
 
-The script replaces exact PHP string literals for these 61 built-in keys, including registration keys and fallback arrays. It does not normalize custom keys. Review dynamically constructed strings, Blade templates, non-PHP references, and stored configuration manually. Update registrations and lookups together. If you mixed old and new spellings, review duplicate array keys and registration order after migration: the last icon registration wins, while render hook callbacks run in registration order within each scope.
+The script replaces exact PHP string literals for these 67 built-in keys, including registration keys and fallback arrays. It does not normalize custom keys. Review dynamically constructed strings, Blade templates, non-PHP references, and stored configuration manually. Update registrations and lookups together. If you mixed old and new spellings, review duplicate array keys and registration order after migration: the last icon registration wins, while render hook callbacks run in registration order within each scope.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">

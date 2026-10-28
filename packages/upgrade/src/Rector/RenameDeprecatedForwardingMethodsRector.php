@@ -375,6 +375,8 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         SelectFilter::class => [
             'column' => 'attribute',
             'getColumn' => 'getAttribute',
+            'queriesRelationships' => 'hasRelationship',
+            'getRelationshipKey' => 'getQualifiedRelatedKeyNameForRelationship',
         ],
         Group::class => [
             'getDescriptionUsing' => 'getDescriptionFromRecordUsing',

@@ -13,12 +13,23 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Filament\Tables\Table\Concerns\CanGroupRecords;
+use Illuminate\Database\Eloquent\Builder;
 
 class AliasOverride extends SelectFilter
 {
     public function column(string | Closure | null $customName): static
     {
         return parent::column($customName);
+    }
+
+    public function queriesRelationships(): bool
+    {
+        return parent::queriesRelationships();
+    }
+
+    public function getRelationshipKey(?Builder $customQuery = null): ?string
+    {
+        return parent::getRelationshipKey($customQuery);
     }
 }
 
@@ -34,6 +45,16 @@ class ReplacementOverride extends SelectFilter
     public function getAttribute(): string
     {
         return 'custom';
+    }
+
+    public function hasRelationship(): bool
+    {
+        return false;
+    }
+
+    public function getQualifiedRelatedKeyNameForRelationship(?Builder $customQuery = null): ?string
+    {
+        return null;
     }
 }
 
@@ -107,6 +128,12 @@ function overrides(InheritedAliasOverride $alias, ReplacementOverride $replaceme
     $standalone->form(schema: []);
     $standalone->getUploadedAttachmentUrlUsing(null);
     $union->column(name: null);
+    $alias->queriesRelationships();
+    $alias->getRelationshipKey(customQuery: null);
+    $replacement->queriesRelationships();
+    $replacement->getRelationshipKey(query: null);
+    $union->queriesRelationships();
+    $union->getRelationshipKey();
 }
 
 function unrelated(Table $table, Group $group, Filter $filter, BaseFilter $base, SelectFilter | Group $union, $unknown): void
@@ -122,6 +149,13 @@ function unrelated(Table $table, Group $group, Filter $filter, BaseFilter $base,
     $filter->{'form'}([]);
     $callback = [$filter, 'getFormSchema'];
     SelectFilter::column('status');
+    $base->queriesRelationships();
+    $unknown->getRelationshipKey();
+    $union->queriesRelationships();
+    $method = 'getRelationshipKey';
+    $filter->{$method}();
+    $callback = [$filter, 'queriesRelationships'];
+    SelectFilter::getRelationshipKey();
 }
 
 function upgraded(RichEditor $editor, Type $type, SelectFilter $filter, Group $group): void

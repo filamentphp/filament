@@ -120,7 +120,6 @@ function unrelated(SelectColumn $select, SelectFilter $filter, Constraint $const
 {
     $select->options([]);
     $filter->options([])->indicator('Active');
-    $filter->queriesRelationships();
     $constraint->queriesRelationships();
     $entry->badge();
     $section->hasRelationship();

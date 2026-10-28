@@ -29,6 +29,13 @@ function configure(MarkdownEditor $markdown, RichEditor $rich, Type $type, BaseF
     $select->form(schema: [])->column(name: fn (): string => 'published_status')->getColumn();
     $ternary->column(name: null);
     $ternary->getColumn();
+    $select->queriesRelationships();
+    $ternary?->queriesRelationships();
+    $select->getRelationshipKey();
+    $select->getRelationshipKey(query: null);
+    $ternary?->getRelationshipKey(...$arguments);
+    $callback = $select->getRelationshipKey(...);
+    SelectFilter::make('author')->relationship('author', 'name')->queriesRelationships();
     $group?->getDescriptionUsing(callback: null);
     $group?->getDescriptionUsing(callback: fn ($record): string => $record->description);
     $select->COLUMN(name: 'status');
@@ -63,6 +70,8 @@ function inherited(CustomFilter $filter): void
 {
     $filter->form(schema: [])->column(name: null)->getColumn();
     $filter?->form(schema: [])?->column(name: null)?->getColumn();
+    $filter->getRelationshipKey(query: null);
+    $filter->queriesRelationships();
 }
 
 class CustomTable extends Table {}
@@ -112,6 +121,13 @@ function configure(MarkdownEditor $markdown, RichEditor $rich, Type $type, BaseF
     $select->schema(schema: [])->attribute(name: fn (): string => 'published_status')->getAttribute();
     $ternary->attribute(name: null);
     $ternary->getAttribute();
+    $select->hasRelationship();
+    $ternary?->hasRelationship();
+    $select->getQualifiedRelatedKeyNameForRelationship();
+    $select->getQualifiedRelatedKeyNameForRelationship(query: null);
+    $ternary?->getQualifiedRelatedKeyNameForRelationship(...$arguments);
+    $callback = $select->getQualifiedRelatedKeyNameForRelationship(...);
+    SelectFilter::make('author')->relationship('author', 'name')->hasRelationship();
     $group?->getDescriptionFromRecordUsing(callback: null);
     $group?->getDescriptionFromRecordUsing(callback: fn ($record): string => $record->description);
     $select->attribute(name: 'status');
@@ -146,6 +162,8 @@ function inherited(CustomFilter $filter): void
 {
     $filter->schema(schema: [])->attribute(name: null)->getAttribute();
     $filter?->schema(schema: [])?->attribute(name: null)?->getAttribute();
+    $filter->getQualifiedRelatedKeyNameForRelationship(query: null);
+    $filter->hasRelationship();
 }
 
 class CustomTable extends Table {}
