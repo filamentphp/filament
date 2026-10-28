@@ -478,23 +478,6 @@ TextColumn::make('title')
 
 <AutoScreenshot name="tables/columns/text/description-above" alt="Text column with description above the content" />
 
-You can also pass a function to `position` to choose the position for each record:
-
-```php
-use App\Models\Post;
-use Filament\Tables\Columns\TextColumn;
-
-TextColumn::make('title')
-    ->description(
-        fn (Post $record): string => $record->description,
-        position: fn (Post $record): string => $record->is_featured ? 'above' : 'below',
-    )
-```
-
-<UtilityInjection set="tableColumns">The function passed to `position` can inject various utilities as parameters. It is evaluated when the description is read, not when the column is configured. It may run more than once, so it should return the same position for the same record and state without causing side effects.</UtilityInjection>
-
-Descriptions above and below the content are independent. If you call `description()` multiple times, the last call selecting each position replaces the description at that position, leaving the other position unchanged. Passing `null` as the description, or returning `null` from its function, clears only the selected position.
-
 ## Listing multiple values
 
 Multiple values can be rendered in a text column if its [state](overview#column-content-state) is an array. This can happen if you are using an `array` cast on an Eloquent attribute, an Eloquent relationship with multiple results, or if you have passed an array to the [`state()` method](overview#setting-the-state-of-a-column). If there are multiple values inside your text column, they will be comma-separated. You may use the `listWithLineBreaks()` method to display them on new lines instead:
