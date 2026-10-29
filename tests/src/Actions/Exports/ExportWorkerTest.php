@@ -101,7 +101,7 @@ it('exports through separate serialized database worker processes', function ():
         livewire(ExportTable::class)
             ->selectTableRecords([Post::query()->first()->id, $excluded->id])
             ->callAction(TestAction::make('export')->table()->bulk())
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
         expect(Export::query()->pluck('total_rows')->all())->toBe([5, 5, 2])
             ->and(Export::query()->sum('processed_rows'))->toBe(0)

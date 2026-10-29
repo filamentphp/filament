@@ -1528,7 +1528,7 @@ describe('item actions', function (): void {
         $livewire->mountAction(TestAction::make('edit')->schemaComponent('group.items')->arguments(['item' => 'deleted']));
 
         if (! $deleteBeforeMount) {
-            $livewire->setActionData(['foo' => 'Late edit'])
+            $livewire->fillForm(['foo' => 'Late edit'])
                 ->set('data.group.items', ['first' => $items['first']]);
         }
 
@@ -1544,8 +1544,8 @@ describe('item actions', function (): void {
         $livewire = livewire(BuilderWithItemActions::class, ['hasBlockPreviews' => true])
             ->set('data.group.items', $items)
             ->mountAction(TestAction::make('edit')->schemaComponent('group.items')->arguments(['item' => 'edited']))
-            ->assertActionDataSet(['foo' => 'Original'])
-            ->setActionData(['foo' => 'Updated'])
+            ->assertSchemaStateSet(['foo' => 'Original'])
+            ->fillForm(['foo' => 'Updated'])
             ->callMountedAction()
             ->assertDispatched('items-updated');
 

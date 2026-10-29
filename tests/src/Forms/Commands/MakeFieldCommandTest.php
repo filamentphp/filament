@@ -137,7 +137,7 @@ it('can generate a JavaScript field without a Blade view', function (string $fra
     'nested Vue' => ['vue', 'ts', 'ts', 'Custom/NestedField', 'custom/', 'nested-field'],
     'React import collision' => ['react', 'jsx', null, 'React', '', 'react', 'Component'],
     'Vue type import collision' => ['vue', 'ts', 'ts', 'JsFieldRenderer', '', 'js-field-renderer', 'Component'],
-    'Svelte type import collision' => ['svelte', 'svelte.ts', 'ts', 'JsFieldInitialProps', '', 'js-field-initial-props', 'Component'],
+    'Svelte type import collision' => ['svelte', 'svelte.ts', 'ts', 'JsFieldProps', '', 'js-field-props', 'Component'],
     'nested Vue local variable collision' => ['vue', 'js', null, 'Custom/props', 'custom/', 'props', 'Component'],
     'component name control' => ['react', 'jsx', null, 'Component', '', 'component'],
 ]);

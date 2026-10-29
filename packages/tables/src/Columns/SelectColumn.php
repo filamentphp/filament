@@ -932,6 +932,22 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         return parent::applyEagerLoading($query);
     }
 
+    /**
+     * @param  array<array<string, mixed>>  $options
+     */
+    protected function getOptionLabelFromOptionsForJs(string $value, array $options): ?string
+    {
+        foreach ($options as $option) {
+            foreach (($option['options'] ?? [$option]) as $groupedOption) {
+                if (((string) $groupedOption['value'] === $value) && filled($groupedOption['label'])) {
+                    return $groupedOption['label'];
+                }
+            }
+        }
+
+        return null;
+    }
+
     public function toEmbeddedHtml(): string
     {
         $canSelectPlaceholder = $this->canSelectPlaceholder();
@@ -943,6 +959,15 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         $recordKey = $this->getRecordKey();
         $state = $this->getState();
         $relatedRecord = $this->getRelatedRecord();
+        $optionLabel = $this->getOptionLabel();
+        $optionsForJs = $isNative ? [] : $this->getOptionsForJs();
+
+        if ((! $isNative) && filled($state)) {
+            $value = (string) (($state instanceof BackedEnum) ? $state->value : $state);
+            $optionLabel = $this->getOptionLabelFromOptionsForJs($value, $optionsForJs)
+                ?? $this->getOptionLabelFromOptionsForJs($value, $this->transformOptionsForJs([$value => $optionLabel]))
+                ?? $optionLabel;
+        }
 
         $attributes = $this->getExtraAttributeBag()
             ->merge([
@@ -958,7 +983,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                     hasDynamicOptions: ' . Js::from($this->hasDynamicOptions()) . ',
                     hasDynamicSearchResults: ' . Js::from($this->hasDynamicOptionsSearchResults()) . ',
                     hasInitialNoOptionsMessage: ' . Js::from($this->hasInitialNoOptionsMessage()) . ',
-                    initialOptionLabel: ' . Js::from($this->getOptionLabel()) . ',
+                    initialOptionLabel: ' . Js::from($optionLabel) . ',
                     isDisabled: ' . Js::from($isDisabled) . ',
                     isHtmlAllowed: ' . Js::from($this->isOptionsHtmlAllowed()) . ',
                     isNative: ' . Js::from($isNative) . ',
@@ -968,7 +993,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                     name: ' . Js::from($name) . ',
                     noOptionsMessage: ' . Js::from($this->getNoOptionsMessage()) . ',
                     noSearchResultsMessage: ' . Js::from($this->getNoOptionsSearchResultsMessage()) . ',
-                    options: ' . Js::from($isNative ? [] : $this->getOptionsForJs()) . ',
+                    options: ' . Js::from($optionsForJs) . ',
                     optionsLimit: ' . Js::from($this->getOptionsLimit()) . ',
                     placeholder: ' . Js::from($placeholder) . ',
                     position: ' . Js::from($this->getPosition()) . ',
@@ -1026,7 +1051,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
             wire:ignore.self
             <?= $attributes->toHtml() ?>
         >
-            <input type="hidden" value="<?= e(($state instanceof BackedEnum) ? $state->value : $state) ?>" data-disabled="<?= $isDisabled ? 'true' : 'false' ?>" x-ref="serverState" />
+            <input type="hidden" value="<?= e(($state instanceof BackedEnum) ? $state->value : $state) ?>" data-option-label="<?= e($optionLabel) ?>" data-disabled="<?= $isDisabled ? 'true' : 'false' ?>" x-ref="serverState" />
 
             <div
                 x-bind:class="{

@@ -145,7 +145,7 @@ it('keeps table filters search order and both query modifiers in the preparation
         ->searchTable('Match')
         ->sortTable('title')
         ->callAction(TestAction::make('export')->table(), data: ['minimum' => 5])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     Bus::assertDispatched(ChainedBatch::class, function (ChainedBatch $batch) use ($first, $second): bool {
         $job = $batch->jobs->sole();
@@ -221,7 +221,7 @@ it('keeps bulk selected IDs separate from the full export query', function (): v
     livewire(ExportTable::class)
         ->selectTableRecords([$posts[1]])
         ->callAction(TestAction::make('export')->table()->bulk())
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     Bus::assertDispatched(ChainedBatch::class, function (ChainedBatch $batch) use ($posts): bool {
         $payload = (fn (): array => get_object_vars($this))->call($batch->jobs->sole());

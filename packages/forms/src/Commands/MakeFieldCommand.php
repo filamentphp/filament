@@ -288,7 +288,7 @@ class MakeFieldCommand extends Command
     {
         $componentName = class_basename($this->fqn);
         $componentIdentifier = (ctype_lower($componentName[0]) || in_array($componentName, [
-            'React', 'JsFieldInitialProps', 'JsFieldProps', 'JsFieldRenderer',
+            'React', 'JsFieldProps', 'JsFieldRenderer',
         ], strict: true)) ? 'Component' : $componentName;
 
         foreach ($this->rendererFiles as $path => $stub) {

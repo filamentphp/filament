@@ -699,8 +699,15 @@ trait CanBeValidated
                 }
 
                 if (is_array($rawState)) {
+                    $normalizeEnumValue = static fn (mixed $value): mixed => ($value instanceof BackedEnum) ? $value->value : $value;
+
+                    $rawState = array_map($normalizeEnumValue, $rawState);
+
                     $hasSiblingStateIntersections = collect($repeaterSiblingState)
-                        ->filter(fn (array $item): bool => filled(array_intersect(data_get($item, $componentItemStatePath, []), $rawState)))
+                        ->filter(fn (array $item): bool => filled(array_intersect(
+                            array_map($normalizeEnumValue, data_get($item, $componentItemStatePath, [])),
+                            $rawState,
+                        )))
                         ->isNotEmpty();
 
                     if (! $hasSiblingStateIntersections) {

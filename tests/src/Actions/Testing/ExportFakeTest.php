@@ -237,10 +237,10 @@ it('does not change unrelated real jobs batches or events or existing bus and ev
 it('still validates forms and rejects authorization empty columns and excessive rows', function (): void {
     $fake = ExportAction::fake();
     Post::factory()->count(2)->create(['rating' => 4]);
-    livewire(ExportActions::class)->callAction('export', data: ['minimum' => null])->assertHasActionErrors(['minimum' => 'required']);
+    livewire(ExportActions::class)->callAction('export', data: ['minimum' => null])->assertHasFormErrors(['minimum' => 'required']);
     livewire(ExportActions::class)->callAction('export', data: ['columnMap' => ['title' => ['isEnabled' => false]]])->assertActionHalted('export');
     $component = livewire(ExportActions::class)->mountAction('export')
-        ->assertActionDataSet([
+        ->assertSchemaStateSet([
             'minimum' => 2,
             'columnMap' => [
                 'title' => ['isEnabled' => true, 'label' => 'Title'],
