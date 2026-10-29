@@ -62,7 +62,7 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
 
     protected bool | Closure | null $isAside = null;
 
-    protected bool | Closure $isFormBefore = false;
+    protected bool | Closure $isContentBefore = false;
 
     protected ?Closure $contentSchemaExtraAttributes = null;
 
@@ -140,7 +140,7 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
 
     public function contentBefore(bool | Closure $condition = true): static
     {
-        $this->isFormBefore = $condition;
+        $this->isContentBefore = $condition;
 
         return $this;
     }
@@ -155,7 +155,7 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
 
     public function isContentBefore(): bool
     {
-        return (bool) $this->evaluate($this->isFormBefore);
+        return (bool) $this->evaluate($this->isContentBefore);
     }
 
     /**
@@ -286,7 +286,7 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
         $isCompact = $this->isCompact();
         $isContained = $this->isContained();
         $isDivided = $this->isDivided();
-        $isFormBefore = $this->isContentBefore();
+        $isContentBefore = $this->isContentBefore();
         $description = $this->getDescription();
         $footer = $this->getChildSchema(static::FOOTER_SCHEMA_KEY)?->toHtmlString();
         $heading = $this->getHeading();
@@ -320,7 +320,7 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
             ->class([
                 'fi-section',
                 'fi-section-not-contained' => ! $isContained,
-                'fi-section-has-content-before' => $isFormBefore,
+                'fi-section-has-content-before' => $isContentBefore,
                 'fi-section-has-header' => $hasHeader,
                 'fi-aside' => $isAside,
                 'fi-compact' => $isCompact,

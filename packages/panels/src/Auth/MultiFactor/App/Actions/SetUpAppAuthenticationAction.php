@@ -188,7 +188,7 @@ class SetUpAppAuthenticationAction
                     ])
                     ->visible($appAuthentication->isRecoverable()),
             ])
-            ->beforeFormValidated(function (HasActions & HasSchemas $livewire) use ($getPasswordInput, $rateLimitAuthenticationAttempt): void {
+            ->beforeSchemaValidated(function (HasActions & HasSchemas $livewire) use ($getPasswordInput, $rateLimitAuthenticationAttempt): void {
                 $mountedActionSchemaName = $livewire->getMountedActionSchemaName();
 
                 if ($mountedActionSchemaName === null) {

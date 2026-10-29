@@ -12,9 +12,9 @@ class Get
     /**
      * @var array<Component>
      */
-    protected static array $skipComponentsChildContainersWhileSearching = [];
+    protected static array $skipComponentsChildSchemasWhileSearching = [];
 
-    protected bool $shouldSkipComponentsChildContainersWhileSearching = true;
+    protected bool $shouldSkipComponentsChildSchemasWhileSearching = true;
 
     public function __construct(
         protected Component $component,
@@ -26,7 +26,7 @@ class Get
 
         $path = $this->component->resolveRelativeStatePath($path, $isAbsolute);
 
-        static::$skipComponentsChildContainersWhileSearching[] = $this->component;
+        static::$skipComponentsChildSchemasWhileSearching[] = $this->component;
 
         $component = ($this->component->getStatePath() === $path)
             ? $this->component
@@ -34,7 +34,7 @@ class Get
                 $path,
                 withHidden: true,
                 withAbsoluteStatePath: true,
-                skipComponentsChildContainersWhileSearching: $this->shouldSkipComponentsChildContainersWhileSearching ? static::$skipComponentsChildContainersWhileSearching : [],
+                skipComponentsChildContainersWhileSearching: $this->shouldSkipComponentsChildSchemasWhileSearching ? static::$skipComponentsChildSchemasWhileSearching : [],
             );
 
         try {
@@ -44,7 +44,7 @@ class Get
 
             return $component->getState();
         } finally {
-            array_pop(static::$skipComponentsChildContainersWhileSearching);
+            array_pop(static::$skipComponentsChildSchemasWhileSearching);
         }
     }
 
@@ -185,7 +185,7 @@ class Get
 
     public function skipComponentsChildSchemasWhileSearching(bool $condition = true): static
     {
-        $this->shouldSkipComponentsChildContainersWhileSearching = $condition;
+        $this->shouldSkipComponentsChildSchemasWhileSearching = $condition;
 
         return $this;
     }

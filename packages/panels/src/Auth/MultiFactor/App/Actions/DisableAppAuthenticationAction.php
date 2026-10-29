@@ -100,7 +100,7 @@ class DisableAppAuthenticationAction
                     ->visible(fn (Get $get): bool => $isRecoverable && $get('useRecoveryCode'))
                     ->live(onBlur: true),
             ])
-            ->beforeFormValidated(function (Component $livewire) use ($passwordInput, $rateLimitAuthenticationAttempt): void {
+            ->beforeSchemaValidated(function (Component $livewire) use ($passwordInput, $rateLimitAuthenticationAttempt): void {
                 $passwordStatePath = $passwordInput->getStatePath();
 
                 $rateLimitAuthenticationAttempt($passwordStatePath);

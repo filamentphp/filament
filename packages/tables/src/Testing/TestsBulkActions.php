@@ -126,7 +126,7 @@ class TestsBulkActions
         return function (array $names): static {
             $this->assertActionListInOrder(
                 $names,
-                $this->instance()->getTable()->getBulkActions(),
+                $this->instance()->getTable()->getToolbarActions(),
                 'table bulk',
                 BulkAction::class,
             );

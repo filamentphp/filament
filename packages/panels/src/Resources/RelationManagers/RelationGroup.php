@@ -23,10 +23,7 @@ class RelationGroup extends Component
      */
     protected string | array | Closure | null $badgeColor = null;
 
-    /**
-     * @deprecated Use `lazyLoadedBadge()` and `isBadgeLazyLoaded()` instead.
-     */
-    protected bool | Closure $isBadgeDeferred = false;
+    protected bool | Closure $isBadgeLazyLoaded = false;
 
     protected ?Model $ownerRecord = null;
 
@@ -86,7 +83,7 @@ class RelationGroup extends Component
 
     public function lazyLoadedBadge(bool | Closure $condition = true): static
     {
-        $this->isBadgeDeferred = $condition;
+        $this->isBadgeLazyLoaded = $condition;
 
         return $this;
     }
@@ -159,7 +156,7 @@ class RelationGroup extends Component
 
     public function isBadgeLazyLoaded(): bool
     {
-        return (bool) $this->evaluate($this->isBadgeDeferred);
+        return (bool) $this->evaluate($this->isBadgeLazyLoaded);
     }
 
     /**

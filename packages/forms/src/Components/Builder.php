@@ -40,7 +40,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
     use CanLimitItemsForProcessing;
     use Concerns\CanBeCloned;
     use Concerns\CanGenerateUuids;
-    use Concerns\CanLimitItemsLength;
+    use Concerns\CanLimitItemsCount;
     use Concerns\HasExtraItemActions;
     use HasReorderAnimationDuration;
 
