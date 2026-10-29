@@ -1299,12 +1299,16 @@ describe('`disableOptionsWhenSelectedInSiblingRepeaterItems()`', function (): vo
         $undoRepeaterFake();
     });
 
-    it('disables enum options selected in sibling repeater items for multiple fields', function (): void {
+    it('disables sibling enum options and validates enum defaults for multiple fields', function (): void {
         $schema = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
                 Repeater::make('items')
                     ->generateUuidUsing(false)
+                    ->default([
+                        ['choice' => [TestLetterEnum::A]],
+                        ['choice' => [TestLetterEnum::B]],
+                    ])
                     ->schema([
                         Select::make('choice')
                             ->multiple()
@@ -1313,7 +1317,7 @@ describe('`disableOptionsWhenSelectedInSiblingRepeaterItems()`', function (): vo
                     ]),
             ]);
 
-        $schema->fill(['items' => [['choice' => ['A']], ['choice' => ['B']]]]);
+        $schema->fill();
 
         expect($schema->getComponentByStatePath('items.0.choice', withHidden: true)->getEnabledOptions())->toBe([
             'A' => 'A',
@@ -1323,6 +1327,13 @@ describe('`disableOptionsWhenSelectedInSiblingRepeaterItems()`', function (): vo
                 'B' => 'B',
                 'C' => 'C',
             ]);
+
+        expect($schema->getState())->toBe([
+            'items' => [
+                ['choice' => [TestLetterEnum::A]],
+                ['choice' => [TestLetterEnum::B]],
+            ],
+        ]);
     });
 });
 
