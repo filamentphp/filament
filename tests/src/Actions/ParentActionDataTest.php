@@ -33,7 +33,7 @@ describe('reading the data of a parent action', function (): void {
     it('can use `getValidatedData()` to read the validated data of a parent action', function (): void {
         livewire(ParentActionData::class)
             ->mountAction('parentData')
-            ->setActionData([
+            ->fillForm([
                 'payload' => 'foo',
                 'reference' => 'bar',
             ])
@@ -49,7 +49,7 @@ describe('reading the data of a parent action', function (): void {
     it('throws a validation exception from `getValidatedData()` when the parent action is invalid', function (): void {
         livewire(ParentActionData::class)
             ->mountAction('parentData')
-            ->setActionData([
+            ->fillForm([
                 'payload' => null,
                 'reference' => 'bar',
             ])
@@ -61,7 +61,7 @@ describe('reading the data of a parent action', function (): void {
     it('keeps an invalid parent action mounted when the nested action uses `cancelParentActions()`', function (): void {
         livewire(ParentActionData::class)
             ->mountAction('parentData')
-            ->setActionData([
+            ->fillForm([
                 'payload' => null,
                 'reference' => 'bar',
             ])
@@ -74,7 +74,7 @@ describe('reading the data of a parent action', function (): void {
     it('does not call `beforeStateDehydrated()` when `getValidatedData()` reads', function (): void {
         livewire(ParentActionData::class)
             ->mountAction('parentData')
-            ->setActionData([
+            ->fillForm([
                 'payload' => 'foo',
                 'reference' => 'bar',
             ])
@@ -91,7 +91,7 @@ describe('reading the data of a parent action', function (): void {
     it('calls `beforeStateDehydrated()` when the parent action is submitted', function (): void {
         livewire(ParentActionData::class)
             ->mountAction('parentData')
-            ->setActionData([
+            ->fillForm([
                 'payload' => 'foo',
                 'reference' => 'bar',
             ])
@@ -105,7 +105,7 @@ describe('filling the data of a mounted action', function (): void {
     it('can use `fillData()` to write into a parent action', function (): void {
         livewire(ParentActionData::class)
             ->mountAction('parentData')
-            ->setActionData([
+            ->fillForm([
                 'payload' => 'foo',
                 'reference' => null,
             ])
@@ -123,13 +123,13 @@ describe('filling the data of a mounted action', function (): void {
     it('can access different mounted ancestors', function (): void {
         livewire(ParentActionData::class)
             ->mountAction('parentData')
-            ->setActionData([
+            ->fillForm([
                 'payload' => 'foo',
                 'reference' => null,
             ])
             ->mountAction('intermediateData')
             ->assertSet('mountedActions.1.data.intermediate', 'parentData')
-            ->setActionData([
+            ->fillForm([
                 'intermediate' => null,
             ])
             ->callAction(TestAction::make('fillAncestorData'))
@@ -152,7 +152,7 @@ describe('filling the data of a mounted action', function (): void {
     it('validates what was written with the rules of the parent action', function (): void {
         livewire(ParentActionData::class)
             ->mountAction('parentData')
-            ->setActionData([
+            ->fillForm([
                 'payload' => 'foo',
                 'reference' => 'valid',
             ])
@@ -213,7 +213,7 @@ describe('reading a parent action from an action that is not registered on its m
     it('can use `getValidatedData()` from an action registered on a schema component', function (): void {
         livewire(ParentActionData::class)
             ->mountAction('parentData')
-            ->setActionData([
+            ->fillForm([
                 'payload' => 'foo',
                 'reference' => 'bar',
             ])
@@ -232,7 +232,7 @@ describe('validating parent data before mounting a nested action', function (): 
     it('reports invalid parent data before opening a nested action modal', function (): void {
         livewire(ParentActionData::class)
             ->mountAction('parentData')
-            ->setActionData([
+            ->fillForm([
                 'payload' => null,
                 'reference' => 'bar',
             ])
@@ -247,7 +247,7 @@ describe('filling a parent action from an action that is not registered on its m
     it('can use `fillData()` from an action registered on a schema component', function (): void {
         livewire(ParentActionData::class)
             ->mountAction('parentData')
-            ->setActionData([
+            ->fillForm([
                 'payload' => 'foo',
                 'reference' => null,
             ])
@@ -267,7 +267,7 @@ describe('filling nested state of a parent action', function (): void {
     it('writes nested state and dot-notation keys where the parent action reads them', function (): void {
         livewire(ParentActionData::class)
             ->mountAction('parentData')
-            ->setActionData([
+            ->fillForm([
                 'payload' => 'foo',
                 'reference' => 'bar',
             ])

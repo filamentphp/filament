@@ -386,7 +386,7 @@ it('fills and validates mounted actions using schema lifecycle hooks', function 
         ->assertSet('observedState', ['beforeFill' => [], 'afterFill' => ['title' => 'Initial title']])
         ->fillForm(['title' => 'Updated title'])
         ->callMountedAction()
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->assertSet('observedState', [
             'beforeFill' => [],
             'afterFill' => ['title' => 'Initial title'],
@@ -2173,7 +2173,7 @@ describe('extra modal footer actions', function (): void {
                 'content' => $content = Str::random(),
             ])
             ->callMountedAction()
-            ->assertHasNoActionErrors()
+            ->assertHasNoFormErrors()
             ->assertDispatched('grouped-extra-actions-called', content: $content);
     });
 });
