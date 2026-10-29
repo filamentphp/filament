@@ -424,6 +424,9 @@ trait CanExportRecords
         return $this;
     }
 
+    /**
+     * @deprecated Override `Exporter::getCsvDelimiter()` instead. This method has no effect on exports.
+     */
     public function csvDelimiter(string | Closure | null $delimiter): static
     {
         $this->csvDelimiter = $delimiter;
