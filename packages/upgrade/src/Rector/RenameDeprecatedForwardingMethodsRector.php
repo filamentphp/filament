@@ -531,6 +531,16 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
 
             $replacement = $methodRenames[$methodName];
 
+            // Canonical methods may still dispatch through legacy extension hooks.
+            // Renaming that `$this` call would recurse instead of preserving overrides.
+            if ((! $node instanceof StaticCall) && ($node->var instanceof Variable) && ($node->var->name === 'this')) {
+                $function = ScopeFetcher::fetch($node)->getFunction();
+
+                if (($function instanceof MethodReflection) && (strtolower($function->getName()) === strtolower($replacement))) {
+                    return null;
+                }
+            }
+
             if ((! $this->canRenameMethods($receiverType, $componentClass, $methodName, $replacement)) || ((! $isParentForwarder) && $this->hasOverridingUnion($componentClass, $methodName, $replacement)) || (! $this->canForwardArguments($node, $componentClass, $methodName))) {
                 return null;
             }

@@ -1,5 +1,9 @@
 <?php
 
+if ((PHP_SAPI !== 'cli') || (! isset($argv))) {
+    throw new RuntimeException('This script must be run directly from the command line.');
+}
+
 $arguments = array_slice($argv, 1);
 $isDryRun = in_array('--dry-run', $arguments, true);
 $directories = array_values(array_diff($arguments, ['--dry-run'])) ?: ['resources/views'];

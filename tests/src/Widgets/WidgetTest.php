@@ -100,14 +100,15 @@ it('returns empty array from `getDefaultProperties()` when `$isLazyLoaded` is `f
     expect(TestWidgetNotLazy::getDefaultProperties())->toBe([]);
 });
 
-it('provides `$pageFilters` without the legacy `$filters` alias or frontend access to `__get()`', function (): void {
+it('preserves the legacy `$filters` alias without frontend access to `__get()`', function (): void {
     $component = livewire(PageFiltersTestWidget::class, [
         'lazy' => false,
         'pageFilters' => ['status' => 'published'],
     ])->assertSuccessful();
 
-    expect($component->instance()->pageFilters)->toBe(['status' => 'published']);
-    expect(static fn () => $component->instance()->filters)->toThrow(PropertyNotFoundException::class);
+    expect($component->instance()->pageFilters)->toBe(['status' => 'published'])
+        ->and($component->instance()->filters)->toBe(['status' => 'published']);
+    expect(static fn () => $component->instance()->missingProperty)->toThrow(PropertyNotFoundException::class);
 
     $component->call('__get', 'pageFilters')
         ->assertForbidden();
