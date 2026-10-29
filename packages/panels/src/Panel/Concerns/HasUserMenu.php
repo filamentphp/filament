@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Enums\UserMenuPosition;
 use Filament\Facades\Filament;
+use Filament\Navigation\MenuItem;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsIconAlias;
@@ -17,7 +18,7 @@ trait HasUserMenu
     protected bool | Closure $hasUserMenu = true;
 
     /**
-     * @var array<int, array<int | string, Action | Closure>>
+     * @var array<int, array<int | string, Action | Closure | MenuItem>>
      */
     protected array $userMenuItemGroups = [];
 
@@ -30,7 +31,7 @@ trait HasUserMenu
     }
 
     /**
-     * @param  array<int | string, Action | Closure> | array<int, array<int | string, Action | Closure>>  $items
+     * @param  array<int | string, Action | Closure | MenuItem> | array<int, array<int | string, Action | Closure | MenuItem>>  $items
      */
     public function userMenuItems(array $items): static
     {
@@ -66,7 +67,7 @@ trait HasUserMenu
 
     /**
      * @param  array<mixed>  $items
-     * @return list<array<int | string, Action | Closure>> | null
+     * @return list<array<int | string, Action | Closure | MenuItem>> | null
      */
     protected function splitUserMenuRegistrationGroups(array $items): ?array
     {
@@ -99,7 +100,7 @@ trait HasUserMenu
     {
         $groups = array_values(array_map(
             fn (array $group): array => collect($group)
-                ->mapWithKeys(function (Action | Closure $item, int | string $key): array {
+                ->mapWithKeys(function (Action | Closure | MenuItem $item, int | string $key): array {
                     if ($item instanceof Action) {
                         return [$item->getName() => $item];
                     }
@@ -113,6 +114,10 @@ trait HasUserMenu
                     }
 
                     $action = $this->evaluate($item);
+
+                    if ($action instanceof MenuItem) {
+                        $action = $action->toAction();
+                    }
 
                     return [$action->getName() => $action];
                 })
@@ -154,7 +159,7 @@ trait HasUserMenu
         return $this->evaluate($this->userMenuPosition) ?? ($this->hasTopbar() ? UserMenuPosition::Topbar : UserMenuPosition::Sidebar);
     }
 
-    protected function getUserProfileMenuItem(Action | Closure | null $item = null): Action
+    protected function getUserProfileMenuItem(Action | Closure | MenuItem | null $item = null): Action
     {
         $page = Filament::getProfilePage();
 
@@ -164,12 +169,16 @@ trait HasUserMenu
             ->url(Filament::getProfileUrl())
             ->sort(-1);
 
+        if ($item instanceof MenuItem) {
+            return $item->toAction($action);
+        }
+
         return $this->evaluate($item, [
             'action' => $action,
         ]) ?? $action;
     }
 
-    protected function getUserLogoutMenuItem(Action | Closure | null $item = null): Action
+    protected function getUserLogoutMenuItem(Action | Closure | MenuItem | null $item = null): Action
     {
         $action = Action::make('logout')
             ->label(__('filament-panels::layout.actions.logout.label'))
@@ -177,6 +186,10 @@ trait HasUserMenu
             ->url(Filament::getLogoutUrl())
             ->postToUrl()
             ->sort(PHP_INT_MAX);
+
+        if ($item instanceof MenuItem) {
+            return $item->toAction($action);
+        }
 
         return $this->evaluate($item, [
             'action' => $action,

@@ -132,6 +132,18 @@ trait CanOpenModal
         return $this;
     }
 
+    /**
+     * @deprecated Use `modalAlignment(Alignment::Center)` instead.
+     */
+    public function centerModal(bool | Closure | null $condition = true): static
+    {
+        if ($this->evaluate($condition)) {
+            $this->modalAlignment(Alignment::Center);
+        }
+
+        return $this;
+    }
+
     public function modalAlignment(Alignment | string | Closure | null $alignment = null): static
     {
         $this->modalAlignment = $alignment;

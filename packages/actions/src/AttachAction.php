@@ -158,6 +158,16 @@ class AttachAction extends Action
         return $this;
     }
 
+    /**
+     * @deprecated Use `attachAnother()` instead.
+     */
+    public function disableAttachAnother(bool | Closure $condition = true): static
+    {
+        $this->attachAnother(fn (AttachAction $action): bool => ! $action->evaluate($condition));
+
+        return $this;
+    }
+
     public function preloadRecordSelect(bool | Closure $condition = true): static
     {
         $this->isRecordSelectPreloaded = $condition;

@@ -119,3 +119,130 @@ return [
     new BarChartWidget(),
     'Filament\\Widgets\\BarChartWidget',
 ];
+-----
+<?php
+
+namespace Filament\Tests\Upgrade\Fixtures\TypedChartBoundaries;
+
+use Filament\Widgets\ChartWidget;
+use Filament\Widgets\BarChartWidget;
+use Filament\Widgets\LineChartWidget as LegacyLine;
+
+trait CustomType
+{
+    protected function getType(): string
+    {
+        return 'radar';
+    }
+}
+
+trait ParentType
+{
+    protected function getType(): string
+    {
+        return parent::getType();
+    }
+}
+
+trait NamedType
+{
+    protected function chartType(): string
+    {
+        return 'scatter';
+    }
+}
+
+class FromTrait extends ChartWidget
+{
+    use CustomType;
+}
+
+class FromParentTrait extends LegacyLine
+{
+    use ParentType;
+}
+
+class FromAdaptedTrait extends ChartWidget
+{
+    use NamedType { chartType as getType; }
+}
+
+class FromParent extends ChartWidget
+{
+    protected function getType(): string
+    {
+        return 'line';
+    }
+}
+
+class ParentCallable extends BarChartWidget
+{
+    protected function getType(): string
+    {
+        return (parent::getType(...))();
+    }
+}
+
+class ParentArrayCallback extends BarChartWidget
+{
+    protected function getType(): string
+    {
+        return call_user_func(['parent', 'getType']);
+    }
+}
+
+class ParentClassCallback extends BarChartWidget
+{
+    protected function getType(): string
+    {
+        return call_user_func([parent::class, 'getType']);
+    }
+}
+
+class ParentStringCallback extends BarChartWidget
+{
+    protected function getType(): string
+    {
+        return call_user_func('parent::getType');
+    }
+}
+
+class ParentCallElsewhere extends ChartWidget
+{
+    public function originalType(): string
+    {
+        return 'bar';
+    }
+    protected function getType(): string
+    {
+        return 'bar';
+    }
+}
+
+class DynamicParent extends BarChartWidget
+{
+    public function originalType(string $method): string
+    {
+        return parent::{$method}();
+    }
+}
+
+class Intermediate extends FromParent {}
+
+class TypedConsumer
+{
+    public ?BarChartWidget $chart = null;
+}
+
+/** @param array<BarChartWidget> $charts */
+function accept(BarChartWidget|LegacyLine $widget, array $charts): BarChartWidget|LegacyLine
+{
+    return $widget;
+}
+
+return [
+    BarChartWidget::class,
+    $widget instanceof LegacyLine,
+    new BarChartWidget(),
+    'Filament\\Widgets\\BarChartWidget',
+];

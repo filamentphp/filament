@@ -458,16 +458,7 @@ class EditProfile extends Page
 
     protected function getCancelFormAction(): Action
     {
-        $url = filament()->getUrl();
-
-        return Action::make('back')
-            ->label(__('filament-panels::auth/pages/edit-profile.actions.cancel.label'))
-            ->alpineClickHandler(
-                FilamentView::hasSpaMode($url)
-                    ? 'document.referrer ? window.history.back() : Livewire.navigate(' . Js::from($url) . ')'
-                    : 'document.referrer ? window.history.back() : (window.location.href = ' . Js::from($url) . ')',
-            )
-            ->color('gray');
+        return $this->backAction();
     }
 
     protected function getSaveFormAction(): Action
@@ -505,6 +496,24 @@ class EditProfile extends Page
     public function hasLogo(): bool
     {
         return false;
+    }
+
+    /**
+     * @deprecated Use `getCancelFormAction()` instead.
+     */
+    #[Unexposed]
+    public function backAction(): Action
+    {
+        $url = filament()->getUrl();
+
+        return Action::make('back')
+            ->label(__('filament-panels::auth/pages/edit-profile.actions.cancel.label'))
+            ->alpineClickHandler(
+                FilamentView::hasSpaMode($url)
+                    ? 'document.referrer ? window.history.back() : Livewire.navigate(' . Js::from($url) . ')'
+                    : 'document.referrer ? window.history.back() : (window.location.href = ' . Js::from($url) . ')',
+            )
+            ->color('gray');
     }
 
     protected function getLayoutData(): array

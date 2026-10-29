@@ -9,7 +9,7 @@ use Filament\Widgets\Widget;
 
 class PropertyCollision extends Widget
 {
-    protected static bool $isLazy = false;
+    protected static bool $other = true, $isLazy = false;
     protected static ?bool $isLazyLoaded = null;
 
     public function inspect(): bool
@@ -57,22 +57,6 @@ class InheritedDefault extends Widget
     }
 }
 
-class WritableConfiguration extends Widget
-{
-    protected static bool $isLazy = false;
-
-    public static function isLazy(): bool
-    {
-        return static::$isLazy;
-    }
-
-    public function configure(): void
-    {
-        static::$isLazy = true;
-        $reference = &static::$isLazy;
-    }
-}
-
 class EmbeddedOverride extends Livewire
 {
     public function lazy(bool | Closure $condition = true): static
@@ -83,16 +67,6 @@ class EmbeddedOverride extends Livewire
     public function lazyLoaded(bool | Closure $condition = true): static
     {
         return $this;
-    }
-}
-
-class GroupedProperties extends Widget
-{
-    protected static bool $other = true, $isLazy = false;
-
-    public function inspect(): bool
-    {
-        return static::$isLazy;
     }
 }
 

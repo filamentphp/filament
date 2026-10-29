@@ -372,7 +372,7 @@ class CustomAction extends Action
     {
         $this->schema(schema: []);
 
-        return parent::disabledForm(condition: false);
+        return parent::disabledSchema(condition: false);
     }
 }
 

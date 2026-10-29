@@ -25,6 +25,14 @@ trait HasBadge
     }
 
     /**
+     * @deprecated Use `badge()` instead.
+     */
+    public function indicator(string | int | float | Closure | null $indicator): static
+    {
+        return $this->badge($indicator);
+    }
+
+    /**
      * @param  string | array<string> | Closure | null  $color
      */
     public function badgeColor(string | array | Closure | null $color): static

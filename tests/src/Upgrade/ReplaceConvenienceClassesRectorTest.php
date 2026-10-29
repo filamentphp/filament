@@ -6,12 +6,12 @@ use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
 class ReplaceConvenienceClassesRectorTest extends AbstractRectorTestCase
 {
-    public function test_migrates_direct_factories_and_preserves_existing_chains(): void
+    public function test_preserves_deprecated_factories_and_existing_chains(): void
     {
         $this->doTestFile(__DIR__ . '/Fixtures/convenience_factories.php.inc');
     }
 
-    public function test_preserves_class_references_and_global_configuration_for_manual_review(): void
+    public function test_preserves_class_references_and_global_configuration(): void
     {
         $this->doTestFile(__DIR__ . '/Fixtures/convenience_manual_boundaries.php.inc');
     }

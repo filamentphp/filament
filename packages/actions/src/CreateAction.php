@@ -180,6 +180,16 @@ class CreateAction extends Action
         return $this;
     }
 
+    /**
+     * @deprecated Use `createAnother()` instead.
+     */
+    public function disableCreateAnother(bool | Closure $condition = true): static
+    {
+        $this->createAnother(fn (CreateAction $action): bool => ! $action->evaluate($condition));
+
+        return $this;
+    }
+
     public function canCreateAnother(): bool
     {
         return (bool) $this->evaluate($this->canCreateAnother);

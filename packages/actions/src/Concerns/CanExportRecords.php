@@ -50,8 +50,6 @@ trait CanExportRecords
 
     protected int | Closure | null $maxRows = null;
 
-    protected string | Closure | null $csvDelimiter = null;
-
     /**
      * @var array<string, mixed> | Closure
      */
@@ -420,13 +418,6 @@ trait CanExportRecords
     public function maxRows(int | Closure | null $rows): static
     {
         $this->maxRows = $rows;
-
-        return $this;
-    }
-
-    public function csvDelimiter(string | Closure | null $delimiter): static
-    {
-        $this->csvDelimiter = $delimiter;
 
         return $this;
     }

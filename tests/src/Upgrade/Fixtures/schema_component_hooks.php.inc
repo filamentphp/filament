@@ -4,6 +4,7 @@ namespace Filament\Tests\Upgrade\Fixtures\SchemaComponentHooks;
 
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Imports\Importer;
+use Filament\Forms\Components\TextInput;
 use Filament\QueryBuilder\Constraints\Operators\Operator;
 use Filament\QueryBuilder\Constraints\TextConstraint\Operators\ContainsOperator;
 
@@ -27,6 +28,38 @@ abstract class CustomExporter extends Exporter
         return [...parent::getOptionsFormComponents(), 'export'];
     }
 }
+
+trait OperatorFields
+{
+    public function getFormSchema(): array
+    {
+        return [...parent::getFormSchema(), TextInput::make('operator_option')];
+    }
+}
+
+class CustomTraitOperator extends Operator
+{
+    use OperatorFields {
+        getFormSchema as fields;
+    }
+}
+
+class UnrelatedOperatorParent
+{
+    public function getFormSchema(): array
+    {
+        return [TextInput::make('unrelated_operator_option')];
+    }
+}
+
+class UnrelatedTraitOperator extends UnrelatedOperatorParent
+{
+    use OperatorFields {
+        getFormSchema as fields;
+    }
+}
+
+class UnrelatedChildOperator extends UnrelatedTraitOperator {}
 
 class CustomOperator extends ContainsOperator
 {
@@ -60,6 +93,7 @@ namespace Filament\Tests\Upgrade\Fixtures\SchemaComponentHooks;
 
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Imports\Importer;
+use Filament\Forms\Components\TextInput;
 use Filament\QueryBuilder\Constraints\Operators\Operator;
 use Filament\QueryBuilder\Constraints\TextConstraint\Operators\ContainsOperator;
 
@@ -83,6 +117,42 @@ abstract class CustomExporter extends Exporter
         return [...parent::getOptionsSchemaComponents(), 'export'];
     }
 }
+
+trait OperatorFields
+{
+    public function getFormSchema(): array
+    {
+        return [...\is_a(parent::class, Operator::class, true) && !\method_exists(parent::class, 'getFormSchema') ? parent::getSchemaComponents() : parent::{'getFormSchema'}(), TextInput::make('operator_option')];
+    }
+}
+
+class CustomTraitOperator extends Operator
+{
+    use OperatorFields {
+        getFormSchema as fields;
+    }
+    public function getSchemaComponents(): array
+    {
+        return self::getFormSchema();
+    }
+}
+
+class UnrelatedOperatorParent
+{
+    public function getFormSchema(): array
+    {
+        return [TextInput::make('unrelated_operator_option')];
+    }
+}
+
+class UnrelatedTraitOperator extends UnrelatedOperatorParent
+{
+    use OperatorFields {
+        getFormSchema as fields;
+    }
+}
+
+class UnrelatedChildOperator extends UnrelatedTraitOperator {}
 
 class CustomOperator extends ContainsOperator
 {

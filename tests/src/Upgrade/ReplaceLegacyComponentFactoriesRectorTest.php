@@ -6,7 +6,7 @@ use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
 class ReplaceLegacyComponentFactoriesRectorTest extends AbstractRectorTestCase
 {
-    public function test_migrates_direct_factories_and_tag_list_limits(): void
+    public function test_preserves_column_factories_and_tag_list_limits(): void
     {
         $this->doTestFile(__DIR__ . '/Fixtures/legacy_column_factories.php.inc');
     }
@@ -16,7 +16,7 @@ class ReplaceLegacyComponentFactoriesRectorTest extends AbstractRectorTestCase
         $this->doTestFile(__DIR__ . '/Fixtures/legacy_column_manual_boundaries.php.inc');
     }
 
-    public function test_migrates_form_factories_with_their_defaults_and_content_aliases(): void
+    public function test_preserves_form_factories_with_their_defaults_and_content_aliases(): void
     {
         $this->doTestFile(__DIR__ . '/Fixtures/legacy_form_factories.php.inc');
     }

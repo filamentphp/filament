@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Forms\Components\Field;
 
 trait CanBeAutocompleted
 {
@@ -11,6 +12,18 @@ trait CanBeAutocompleted
     public function autocomplete(bool | string | Closure | null $autocomplete = true): static
     {
         $this->autocomplete = $autocomplete;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `autocomplete()` instead.
+     */
+    public function disableAutocomplete(bool | Closure $condition = true): static
+    {
+        $this->autocomplete(static function (Field $component) use ($condition): ?bool {
+            return $component->evaluate($condition) ? false : null;
+        });
 
         return $this;
     }

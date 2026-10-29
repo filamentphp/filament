@@ -20,3 +20,26 @@ class ReferenceTargetWidget extends Widget
 }
 
 ReferenceTargetWidget::isLazy();
+-----
+<?php
+
+namespace Filament\Tests\Upgrade\Fixtures\LazyLoadingReferenceTarget;
+
+use Filament\Widgets\Widget;
+
+class ReferenceTargetWidget extends Widget
+{
+    protected static ?bool $isLazyLoaded = false;
+
+    public static function isLazyLoaded(): bool
+    {
+        return static::$isLazyLoaded ?? true;
+    }
+
+    public function configure(bool $configuration): void
+    {
+        static::$isLazyLoaded =& $configuration;
+    }
+}
+
+ReferenceTargetWidget::isLazyLoaded();

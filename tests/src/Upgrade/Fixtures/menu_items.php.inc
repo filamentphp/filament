@@ -42,8 +42,6 @@ function manual(Panel $panel, string $label): void
 
 namespace Filament\Tests\Upgrade\Fixtures\MenuItems;
 
-use Filament\Actions\Action;
-use Illuminate\Support\Str;
 use Filament\Exceptions\NoDefaultPanelSetException;
 use LogicException;
 use Filament\Facades\Filament;
@@ -54,17 +52,17 @@ function register(Panel $panel): void
 {
     $panel->userMenuItems([
         [
-            'account' => static fn(Action $action): Action => $action->color(null)->icon(null)->label('My profile')->postToUrl(false)->sort(0)->visible(true)->url(null, false),
-            static fn(): Action => Action::make(Str::slug(Str::transliterate('Help & support', strict: true)))->color('warning')->icon(null)->label('Help & support')->postToUrl(false)->sort(3)->visible(true)->url('/help', false),
+            'account' => MenuItem::make()->label('My profile'),
+            MenuItem::make()->label('Help & support')->color('warning')->url('/help', true)->openUrlInNewTab(false)->sort(+3),
         ],
         [
-            static fn(): Action => Action::make(Str::slug(Str::transliterate('Hidden', strict: true)))->color(null)->icon(null)->label('Hidden')->postToUrl(false)->sort(0)->visible(false)->url(null, false),
-            'logout' => static fn(Action $action): Action => $action->color(null)->icon(null)->label('Exit')->postToUrl(true)->sort(0)->visible(true)->url('', false),
+            MenuItem::make()->label('Hidden')->hidden()->visible(true),
+            'logout' => MenuItem::make()->label('Exit')->postAction('/exit')->url(''),
         ],
     ]);
     $panel->tenantMenuItems([
-        'profile' => static fn(Action $action): Action => $action->color(null)->icon(null)->label('Organization')->postToUrl(false)->sort(-1)->visible(true)->url(null, false),
-        'billing' => static fn(Action $action): Action => $action->color(null)->icon(null)->label('Plan')->postToUrl(false)->sort(0)->visible(false)->url(null, false),
+        'profile' => MenuItem::make()->label('Organization')->sort(-1),
+        'billing' => MenuItem::make()->label('Plan')->visible(false),
     ]);
 }
 
@@ -76,7 +74,7 @@ function legacyRegistration(): void
         } catch (NoDefaultPanelSetException $exception) {
             throw new LogicException('Please use the `userMenuItems()` method on the panel configuration to register user menu items. See the documentation - https://filamentphp.com/docs/panels/navigation#customizing-the-user-menu');
         }
-    })([static fn(): Action => Action::make(Str::slug(Str::transliterate('Docs', strict: true)))->color(null)->icon(null)->label('Docs')->postToUrl(false)->sort(0)->visible(true)->url('/docs', false)]);
+    })([MenuItem::make()->label('Docs')->url('/docs')]);
 }
 
 function manual(Panel $panel, string $label): void

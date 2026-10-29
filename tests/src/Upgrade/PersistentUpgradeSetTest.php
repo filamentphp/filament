@@ -2,10 +2,13 @@
 
 namespace Filament\Tests\Upgrade;
 
+use Closure;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\FilamentManager;
+use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\View\FormsIconAlias;
 use Filament\Panel;
 use Filament\PanelRegistry;
@@ -66,6 +69,16 @@ class PersistentUpgradeSetTest extends TestCase
                 $expectedFiles[$path] = trim($parts[1] ?? $parts[0]);
             }
 
+            foreach (['behavioral_configuration', 'behavioral_configuration_expressions', 'deprecated_column_and_support_methods'] as $fixture) {
+                $legacyPath = $directory . '/legacy_' . $fixture . '.php';
+                file_put_contents($legacyPath, str_replace(
+                    ['namespace Filament\\Tests\\Upgrade\\Fixtures\\', 'use Filament\\Forms\\Components\\Builder;', 'use Filament\\Forms\\Components\\Repeater;'],
+                    ['namespace Filament\\Tests\\Upgrade\\LegacyFixtures\\', 'use Filament\\Tests\\Upgrade\\LegacyInsetBuilder as Builder;', 'use Filament\\Tests\\Upgrade\\LegacyInsetRepeater as Repeater;'],
+                    $originalFiles[$directory . '/app/' . $fixture . '.php'],
+                ));
+                require_once $legacyPath;
+            }
+
             $root = dirname(__DIR__, 3);
             $configuration = $directory . '/rector.php';
             $set = var_export($root . '/packages/upgrade/src/rector.php', true);
@@ -123,6 +136,11 @@ class PersistentUpgradeSetTest extends TestCase
 
                 require_once $directory . '/app/behavioral_configuration.php';
                 $this->assertBehavioralConfiguration();
+                $this->assertBehavioralConfiguration(legacy: true);
+
+                require_once $directory . '/app/deprecated_column_and_support_methods.php';
+                $this->assertSame(['42', '3.5'], Fixtures\DeprecatedColumnAndSupportMethods\numericIndicators(42, 3.5));
+                $this->assertSame(['42', '3.5'], LegacyFixtures\DeprecatedColumnAndSupportMethods\numericIndicators(42, 3.5));
 
                 require_once $directory . '/app/panel_integrations.php';
                 $this->assertPanelIntegrations();
@@ -158,11 +176,6 @@ class PersistentUpgradeSetTest extends TestCase
                     echo json_encode([
                         array_slice($results, 0, 9),
                         \Illuminate\Support\Number::withLocale('de', fn () => \Filament\Tests\Upgrade\Fixtures\NumberHelpers\results()[0]),
-                        function_exists('Filament\\Support\\format_money') || function_exists('Filament\\Support\\format_number') ||
-                            class_exists('Filament\\Support\\Components\\Attributes\\ExposedLivewireMethod') ||
-                            class_exists('Filament\\View\\LegacyComponents\\PageComponent') ||
-                            class_exists('Filament\\View\\LegacyComponents\\WidgetComponent') ||
-                            interface_exists('Filament\\Schemas\\Components\\Contracts\\CanConcealComponents'),
                         \Illuminate\Support\Number::withLocale('en', fn () => \Filament\Tests\Upgrade\Fixtures\NumberVariables\format(1234.75, 'USD')),
                     ]);
                     PHP, $root, $directory], $root);
@@ -170,7 +183,6 @@ class PersistentUpgradeSetTest extends TestCase
                 $this->assertSame([
                     ['1,234.5', '-1,234.5', '42', '$1,234.50', '-$42.50', '£125.00', '-€1.25', '$987.65', '€12.50'],
                     '1.234,5',
-                    false,
                     ['1,234.75', '-$12.35', '$1,234.75'],
                 ], json_decode($runtime->getOutput(), associative: true), "Runtime pass {$pass}");
             }
@@ -277,29 +289,32 @@ class PersistentUpgradeSetTest extends TestCase
 
     private function assertConfigurationMigrations(): void
     {
-        $events = [];
-        $condition = true;
-        $components = Fixtures\BehavioralExpressions\components($events, $condition);
-        Schema::make(Livewire::make())->components(array_filter($components, static fn ($component): bool => $component instanceof Field))->getComponents();
+        foreach (['Fixtures', 'LegacyFixtures'] as $fixtureNamespace) {
+            $functionNamespace = __NAMESPACE__ . '\\' . $fixtureNamespace . '\\BehavioralExpressions\\';
+            $events = [];
+            $condition = true;
+            $components = ($functionNamespace . 'components')($events, $condition);
+            Schema::make(Livewire::make())->components(array_filter($components, static fn ($component): bool => $component instanceof Field))->getComponents();
 
-        $this->assertSame(['eager'], $events);
-        $this->assertFalse($components[0]->isPreviewable());
-        $condition = false;
-        $this->assertTrue($components[0]->isPreviewable());
-        $this->assertFalse($components[1]->isPreviewable());
-        $this->assertSame('16:9', $components[2]->getImageAspectRatio());
-        $this->assertTrue($components[2]->shouldAutomaticallyCropImagesToAspectRatio());
-        $this->assertSame(['eager', 'preview', 'preview', 'ratio', 'ratio'], $events);
-        $this->assertSame('off', $components[3]->getAutocomplete());
-        $this->assertFalse((clone $components[4])->label('clone')->isAddable());
-        $this->assertFalse((clone $components[5])->label('clone')->canSelectPlaceholder());
-        $this->assertSame(Alignment::End, $components[6]->getModalAlignment());
-        $this->assertFalse($components[7]->canCreateAnother());
-        $this->assertSame(Heroicon::Clock, $components[8]->getSuffixIcon());
-        $this->assertTrue($components[8]->isSuffixInline());
-        Fixtures\BehavioralExpressions\configureTyped($components[0], $components[6]);
-        $this->assertTrue($components[0]->isPreviewable());
-        $this->assertSame(Alignment::Center, $components[6]->getModalAlignment());
+            $this->assertSame(['eager'], $events);
+            $this->assertFalse($components[0]->isPreviewable());
+            $condition = false;
+            $this->assertTrue($components[0]->isPreviewable());
+            $this->assertFalse($components[1]->isPreviewable());
+            $this->assertSame('16:9', $components[2]->getImageAspectRatio());
+            $this->assertTrue($components[2]->shouldAutomaticallyCropImagesToAspectRatio());
+            $this->assertSame(['eager', 'preview', 'preview', 'ratio', 'ratio'], $events);
+            $this->assertSame('off', $components[3]->getAutocomplete());
+            $this->assertFalse((clone $components[4])->label('clone')->isAddable());
+            $this->assertFalse((clone $components[5])->label('clone')->canSelectPlaceholder());
+            $this->assertSame(Alignment::End, $components[6]->getModalAlignment());
+            $this->assertFalse($components[7]->canCreateAnother());
+            $this->assertSame(Heroicon::Clock, $components[8]->getSuffixIcon());
+            $this->assertTrue($components[8]->isSuffixInline());
+            ($functionNamespace . 'configureTyped')($components[0], $components[6]);
+            $this->assertTrue($components[0]->isPreviewable());
+            $this->assertSame(Alignment::Center, $components[6]->getModalAlignment());
+        }
 
         $originalLocale = app()->getLocale();
 
@@ -425,20 +440,15 @@ class PersistentUpgradeSetTest extends TestCase
             $this->assertSame(['legacy' => 17, 'shared' => 'new', 'package' => 29], FilamentAsset::getScriptData());
             $this->assertSame(['legacy' => 17, 'shared' => 'new'], FilamentAsset::getScriptData(['other-package']));
 
-            foreach (['registerScriptData', 'registerRenderHook', 'renderHook', 'registerPages', 'registerResources', 'registerWidgets', 'registerTheme', 'registerViteTheme', 'registerNavigationGroups', 'registerNavigationItems', 'registerUserMenuItems', 'registerScripts', 'registerStyles'] as $method) {
-                $this->assertFalse(method_exists(FilamentManager::class, $method));
-            }
-
-            $this->assertFalse(class_exists('Filament\\Navigation\\MenuItem'));
         } finally {
             FilamentAsset::swap($originalAssets);
             FilamentView::swap($originalView);
         }
     }
 
-    private function assertBehavioralConfiguration(): void
+    private function assertBehavioralConfiguration(bool $legacy = false): void
     {
-        $components = \Filament\Tests\Upgrade\Fixtures\BehavioralConfiguration\components();
+        $components = $legacy ? LegacyFixtures\BehavioralConfiguration\components() : Fixtures\BehavioralConfiguration\components();
 
         Schema::make(Livewire::make())->components(array_filter($components, static fn ($component): bool => $component instanceof Field))->getComponents();
 
@@ -475,16 +485,22 @@ class PersistentUpgradeSetTest extends TestCase
         $this->assertSame(Alignment::Start, $components[24]->getModalAlignment());
         $this->assertSame(['on', 'words'], [$components[25]->getAutocomplete(), $components[25]->getAutocapitalize()]);
 
-        foreach ([
-            [0, 'disablePreview'], [1, 'imageCropAspectRatio'],
-            [5, 'disableItemCreation'], [5, 'disableItemDeletion'], [5, 'disableItemMovement'], [5, 'inset'],
-            [6, 'disableItemCreation'], [6, 'disableItemDeletion'], [6, 'disableItemMovement'], [6, 'inset'],
-            [7, 'disableAddingRows'], [7, 'disableDeletingRows'], [7, 'disableEditingKeys'], [7, 'disableEditingValues'],
-            [8, 'disableAutocomplete'], [8, 'disableAutocapitalize'], [11, 'disablePlaceholderSelection'],
-            [13, 'withoutDate'], [13, 'withoutSeconds'], [13, 'withoutTime'], [13, 'icon'],
-            [17, 'centerModal'], [20, 'disableCreateAnother'], [21, 'disableAttachAnother'], [22, 'disableAssociateAnother'],
-        ] as [$index, $method]) {
-            $this->assertFalse(method_exists($components[$index], $method));
-        }
+    }
+}
+
+// Preserve the pinned v5 no-op only for the original side of the runtime pair.
+class LegacyInsetBuilder extends Builder
+{
+    public function inset(bool | Closure $condition = true): static
+    {
+        return $this;
+    }
+}
+
+class LegacyInsetRepeater extends Repeater
+{
+    public function inset(bool | Closure $condition = true): static
+    {
+        return $this;
     }
 }

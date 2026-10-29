@@ -40,6 +40,8 @@ class Child extends Sales
 class Unrelated extends \stdClass {}
 
 $anonymous = new class extends \Filament\Widgets\PieChartWidget {};
+
+return [new Sales, new Bubbles, new Doughnut, new class extends Line {}, new Pie, new Polar, new Radar, new Scatter, new CustomType, new Child, $anonymous];
 -----
 <?php
 
@@ -139,3 +141,5 @@ $anonymous = new class extends ChartWidget
         return 'pie';
     }
 };
+
+return [new Sales, new Bubbles, new Doughnut, new class extends Line {}, new Pie, new Polar, new Radar, new Scatter, new CustomType, new Child, $anonymous];

@@ -70,6 +70,7 @@ namespace Filament\Tests\Upgrade\Fixtures\BehavioralConfigurationManual;
 
 use Filament\Forms\Components\BaseFileUpload;
 use Filament\Support\Enums\Alignment;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Field;
 use Closure;
 use Filament\Actions\Action;
@@ -110,8 +111,8 @@ function manual(FileUpload $upload, Action $action, bool $condition, array $argu
     })(Action::make('side-effect'), $condition = true);
     DateTimePicker::make('date')->icon(icon());
     DateTimePicker::make('date')->icon(true);
-    Builder::make('blocks')->inset(sideEffect());
-    (static fn(Builder $component, bool|Closure $condition): Builder => $component)(Builder::make('blocks'), fn () => sideEffect());
+    (static fn($component) => ($component instanceof Builder || $component instanceof Repeater) && !\method_exists($component, 'inset') ? static fn(bool|Closure $condition = true) => $component : $component->{'inset'}(...))(Builder::make('blocks'))(sideEffect());
+    (static fn($component) => ($component instanceof Builder || $component instanceof Repeater) && !\method_exists($component, 'inset') ? static fn(bool|Closure $condition = true) => $component : $component->{'inset'}(...))(Builder::make('blocks'))(fn () => sideEffect());
     Builder::make('blocks')->inset(true, sideEffect());
     Builder::make('blocks')->inset(...$arguments);
     Builder::make('blocks')->inset(...);

@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Billing\Providers\Contracts\BillingProvider;
 use Filament\Facades\Filament;
+use Filament\Navigation\MenuItem;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsIconAlias;
@@ -45,7 +46,7 @@ trait HasTenancy
     protected ?Closure $resolveTenantUsing = null;
 
     /**
-     * @var array<int, array<int | string, Action | Closure>>
+     * @var array<int, array<int | string, Action | Closure | MenuItem>>
      */
     protected array $tenantMenuItemGroups = [];
 
@@ -59,7 +60,7 @@ trait HasTenancy
     }
 
     /**
-     * @param  array<int | string, Action | Closure> | array<int, array<int | string, Action | Closure>>  $items
+     * @param  array<int | string, Action | Closure | MenuItem> | array<int, array<int | string, Action | Closure | MenuItem>>  $items
      */
     public function tenantMenuItems(array $items): static
     {
@@ -95,7 +96,7 @@ trait HasTenancy
 
     /**
      * @param  array<mixed>  $items
-     * @return list<array<int | string, Action | Closure>> | null
+     * @return list<array<int | string, Action | Closure | MenuItem>> | null
      */
     protected function splitTenantMenuRegistrationGroups(array $items): ?array
     {
@@ -345,7 +346,7 @@ trait HasTenancy
         return (bool) $this->evaluate($this->hasTenantMenu);
     }
 
-    protected function getTenantProfileMenuItem(Action | Closure | null $item = null): Action
+    protected function getTenantProfileMenuItem(Action | Closure | MenuItem | null $item = null): Action
     {
         $currentTenant = Filament::getTenant();
 
@@ -358,12 +359,16 @@ trait HasTenancy
             ->visible(filament()->hasTenantProfile() && filled($url) && (blank($page) || $page::canView($currentTenant)))
             ->sort(-2);
 
+        if ($item instanceof MenuItem) {
+            return $item->toAction($action);
+        }
+
         return $this->evaluate($item, [
             'action' => $action,
         ]) ?? $action;
     }
 
-    protected function getTenantBillingMenuItem(Action | Closure | null $item = null): Action
+    protected function getTenantBillingMenuItem(Action | Closure | MenuItem | null $item = null): Action
     {
         $action = Action::make('billing')
             ->label(__('filament-panels::layout.actions.billing.label'))
@@ -373,12 +378,16 @@ trait HasTenancy
             ->visible(filament()->hasTenantBilling() && filled($url))
             ->sort(-1);
 
+        if ($item instanceof MenuItem) {
+            return $item->toAction($action);
+        }
+
         return $this->evaluate($item, [
             'action' => $action,
         ]) ?? $action;
     }
 
-    protected function getTenantRegistrationMenuItem(Action | Closure | null $item = null): Action
+    protected function getTenantRegistrationMenuItem(Action | Closure | MenuItem | null $item = null): Action
     {
         $page = Filament::getTenantRegistrationPage();
 
@@ -388,6 +397,10 @@ trait HasTenancy
             ->url($url = Filament::getTenantRegistrationUrl())
             ->visible(filament()->hasTenantRegistration() && filled($url) && (blank($page) || $page::canView(Filament::getTenant())))
             ->sort(PHP_INT_MAX);
+
+        if ($item instanceof MenuItem) {
+            return $item->toAction($action);
+        }
 
         return $this->evaluate($item, [
             'action' => $action,
@@ -411,7 +424,7 @@ trait HasTenancy
     {
         $groups = array_values(array_map(
             fn (array $group): array => collect($group)
-                ->mapWithKeys(function (Action | Closure $item, int | string $key): array {
+                ->mapWithKeys(function (Action | Closure | MenuItem $item, int | string $key): array {
                     if ($item instanceof Action) {
                         return [$item->getName() => $item];
                     }
@@ -429,6 +442,10 @@ trait HasTenancy
                     }
 
                     $action = $this->evaluate($item);
+
+                    if ($action instanceof MenuItem) {
+                        $action = $action->toAction();
+                    }
 
                     return [$action->getName() => $action];
                 })

@@ -295,4 +295,12 @@ class Component extends ViewComponent
             ],
         );
     }
+
+    /**
+     * @deprecated Fields no longer strip their native validation attributes when concealed. Concealing containers reveal themselves around an invalid control, using the `invalid` event listener in the `filament/schemas` package, and components with a client-side visibility condition are wrapped in a `<fieldset>` that is `disabled` while hidden.
+     */
+    public function isConcealed(): bool
+    {
+        return false;
+    }
 }

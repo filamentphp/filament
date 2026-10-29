@@ -72,6 +72,7 @@ use Filament\Widgets\ChartWidget;
 use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\Cast\String_ as StringCast;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Expr\StaticCall;
@@ -79,6 +80,10 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\NodeFinder;
+use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Type\FloatType;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StaticType;
@@ -430,6 +435,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
     public function __construct(
         private UnnormalizedUnionTypeResolver $unnormalizedUnionTypeResolver,
         private ConfigurationClassAnalyzer $configurationClassAnalyzer,
+        private ReflectionProvider $reflectionProvider,
     ) {}
 
     public function getRuleDefinition(): RuleDefinition
@@ -467,6 +473,8 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                 continue;
             }
 
+            $isParentForwarder = false;
+
             if ($node instanceof StaticCall) {
                 // Review relative dispatch manually when a parent wrapper can
                 // dispatch back into a canonical subclass override.
@@ -477,12 +485,18 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                 if ($this->isNames($node->class, ['self', 'static', 'parent'])) {
                     $context = ScopeFetcher::fetch($node)->getClassReflection();
 
-                    if (($componentClass !== BasePage::class) || (! $context) || (! $this->canRenameMethods(new ObjectType($context->getName()), $componentClass, $methodName, $methodRenames[$methodName]))) {
+                    if (! $context) {
                         continue;
                     }
 
-                    if ($this->configurationClassAnalyzer->hasDescendants($context->getName()) || (new NodeFinder)->findFirst($this->getFile()->getNewStmts(), fn (Node $candidate): bool => $candidate instanceof Node\Stmt\Class_ && $candidate->extends && $this->isName($candidate->extends, $context->getName()))) {
+                    if ($componentClass === BasePage::class) {
+                        if ((! $this->canRenameMethods(new ObjectType($context->getName()), $componentClass, $methodName, $methodRenames[$methodName])) || $this->configurationClassAnalyzer->hasDescendants($context->getName()) || (new NodeFinder)->findFirst($this->getFile()->getNewStmts(), fn (Node $candidate): bool => $candidate instanceof Node\Stmt\Class_ && $candidate->extends && $this->isName($candidate->extends, $context->getName()))) {
+                            continue;
+                        }
+                    } elseif (! $this->canRenameParentForwarder($node, $componentClass, $methodName, $methodRenames[$methodName])) {
                         continue;
+                    } else {
+                        $isParentForwarder = true;
                     }
 
                     $receiver = $this->isName($node->class, 'parent') ? $context->getParentClass() : $context;
@@ -517,7 +531,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
 
             $replacement = $methodRenames[$methodName];
 
-            if ((! $this->canRenameMethods($receiverType, $componentClass, $methodName, $replacement)) || $this->hasOverridingUnion($componentClass, $methodName, $replacement) || (! $this->canForwardArguments($node, $componentClass, $methodName))) {
+            if ((! $this->canRenameMethods($receiverType, $componentClass, $methodName, $replacement)) || ((! $isParentForwarder) && $this->hasOverridingUnion($componentClass, $methodName, $replacement)) || (! $this->canForwardArguments($node, $componentClass, $methodName))) {
                 return null;
             }
 
@@ -540,12 +554,77 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                 }
             }
 
+            if (($methodName === 'indicator') && in_array($componentClass, [Action::class, ActionGroup::class], strict: true)) {
+                $argument = $node->getArgs()[0];
+
+                if (TypeCombinator::union(new IntegerType, new FloatType)->isSuperTypeOf($this->getType($argument->value))->yes()) {
+                    $argument->value = new StringCast($argument->value);
+                }
+            }
+
             $node->name = new Identifier($replacement);
 
             return $node;
         }
 
         return null;
+    }
+
+    /**
+     * @param  class-string  $componentClass
+     */
+    private function canRenameParentForwarder(StaticCall $node, string $componentClass, string $methodName, string $replacement): bool
+    {
+        // Repair the removed parent call, not the application's custom alias or its callers.
+        // These wrappers have matching argument contracts and return `$this` or the getter result.
+        $supported = (($componentClass === IconColumn::class) && ($methodName === 'options'))
+            || (($componentClass === Action::class) && in_array($methodName, [
+                'disableform', 'disabledform', 'form', 'getform', 'isformdisabled',
+                'mutateformdatausing', 'formdata', 'resetformdata', 'getformdata', 'getrawformdata',
+                'fillform', 'infolist',
+            ], strict: true));
+        $scope = ScopeFetcher::fetch($node);
+        $function = $scope->getFunction();
+        $context = $scope->getClassReflection();
+
+        if ((! $supported) || (! $this->isName($node->class, 'parent')) || $node->isFirstClassCallable() || (! $function instanceof MethodReflection) || $function->isStatic() || (! $context) || $context->isTrait()) {
+            return false;
+        }
+
+        $contextType = new ObjectType($context->getName());
+
+        if ((! (new ObjectType($componentClass))->isSuperTypeOf($contextType)->yes()) || (! $this->canRenameMethods($contextType, $componentClass, $replacement, $replacement))) {
+            return false;
+        }
+
+        $descendants = $this->configurationClassAnalyzer->getDescendants($context->getName());
+
+        // Rector's single-fixture runs need the same checks for local descendants.
+        foreach ((new NodeFinder)->findInstanceOf($this->getFile()->getNewStmts(), Node\Stmt\Class_::class) as $class) {
+            $className = $class->namespacedName?->toString();
+
+            if (! $className) {
+                if ($class->extends && $this->isName($class->extends, $context->getName())) {
+                    return false;
+                }
+
+                continue;
+            }
+
+            if ($contextType->isSuperTypeOf(new ObjectType($className))->yes()) {
+                $descendants[] = $className;
+            }
+        }
+
+        foreach (array_unique($descendants) as $descendant) {
+            if ((! $this->reflectionProvider->hasClass($descendant)) || (! $this->canRenameMethods(new ObjectType($descendant), $componentClass, $replacement, $replacement))) {
+                return false;
+            }
+        }
+
+        // The original wrapper dispatched virtually and sometimes discarded its return.
+        // A canonical override, including one supplied by a descendant's trait, needs reconciliation.
+        return true;
     }
 
     /**
@@ -687,8 +766,12 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             }
 
             $argument = $node->getArgs()[0];
+            $argumentType = $this->getType($argument->value);
 
-            return (! $argument->unpack) && TypeCombinator::union(new StringType, new ObjectType(Closure::class), new NullType)->isSuperTypeOf($this->getType($argument->value))->yes();
+            return (! $argument->unpack) && (
+                TypeCombinator::union(new StringType, new ObjectType(Closure::class), new NullType)->isSuperTypeOf($argumentType)->yes()
+                || TypeCombinator::union(new IntegerType, new FloatType)->isSuperTypeOf($argumentType)->yes()
+            );
         }
 
         return true;

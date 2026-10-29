@@ -210,8 +210,8 @@ function configure(BaseFileUpload $base, FileUpload $upload, Builder $builder, R
     $callback = [$upload, 'enableOpen'];
     FileUpload::enableOpen();
     $upload->disablePreview()->imageCropAspectRatio('16:9');
-    $builder->addable(false)->deletable(false)->reorderable(false);
-    $repeater->addable(false)->deletable(false)->reorderable(false);
+    (static fn($component) => ($component instanceof Builder || $component instanceof Repeater) && !\method_exists($component, 'inset') ? static fn(bool|Closure $condition = true) => $component : $component->{'inset'}(...))($builder->addable(false)->deletable(false)->reorderable(false))();
+    (static fn($component) => ($component instanceof Builder || $component instanceof Repeater) && !\method_exists($component, 'inset') ? static fn(bool|Closure $condition = true) => $component : $component->{'inset'}(...))($repeater->addable(false)->deletable(false)->reorderable(false))();
     $keyValue->addable(false)->deletable(false)->editableKeys(false)->editableValues(false);
 }
 

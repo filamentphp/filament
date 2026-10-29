@@ -11,6 +11,7 @@ use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
@@ -18,18 +19,30 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
+use Filament\Schemas\Components\Component as SchemaComponent;
+use Filament\Support\Components\Component;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\ArrowFunction;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
+use PhpParser\Node\Expr\BinaryOp\BooleanOr;
 use PhpParser\Node\Expr\BinaryOp\Coalesce;
 use PhpParser\Node\Expr\BinaryOp\Identical;
 use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\Closure as ClosureExpression;
 use PhpParser\Node\Expr\ConstFetch;
+use PhpParser\Node\Expr\Empty_;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\Instanceof_;
+use PhpParser\Node\Expr\Isset_;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\NullsafeMethodCall;
+use PhpParser\Node\Expr\NullsafePropertyFetch;
+use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Ternary;
 use PhpParser\Node\Expr\Variable;
@@ -43,12 +56,15 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\UnionType;
+use PhpParser\Node\VariadicPlaceholder;
 use PhpParser\NodeFinder;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\StaticType;
 use PHPStan\Type\StringType;
+use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use Rector\Rector\AbstractRector;
 use ReflectionMethod;
@@ -57,6 +73,9 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
 {
+    /** @var list<string> */
+    private array $insetReservedVariables = [];
+
     /** @var array<string, string> */
     private const NEGATIONS = [
         'disablepreview' => 'previewable',
@@ -87,28 +106,63 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
 
     public function getNodeTypes(): array
     {
-        return [MethodCall::class];
+        return [MethodCall::class, NullsafeMethodCall::class, PropertyFetch::class, NullsafePropertyFetch::class, ArrayDimFetch::class, Isset_::class, Empty_::class, Coalesce::class];
     }
 
-    /** @param MethodCall $node */
+    /** @param Expr $node */
     public function refactor(Node $node): ?Node
     {
+        $this->insetReservedVariables = [];
+
+        if ($node instanceof Coalesce) {
+            return $this->refactorInsetChain($node->left, static fn (Expr $expression): Expr => new Coalesce($expression, clone $node->right));
+        }
+
+        if ($node instanceof Empty_) {
+            return $this->refactorInsetChain($node->expr, static fn (Expr $expression, bool $isNull): Expr => $isNull ? new ConstFetch(new Name('true')) : new Empty_($expression));
+        }
+
+        if ($node instanceof Isset_) {
+            $result = null;
+            $changed = false;
+
+            foreach ($node->vars as $variable) {
+                $replacement = $this->refactorInsetChain($variable, static fn (Expr $expression, bool $isNull): Expr => $isNull ? new ConstFetch(new Name('false')) : new Isset_([$expression]));
+                $changed = $changed || ($replacement !== null);
+                $replacement ??= new Isset_([$variable]);
+                $result = $result ? new BooleanAnd($result, $replacement) : $replacement;
+            }
+
+            return $changed ? $result : null;
+        }
+
+        $insetReplacement = $this->refactorInsetChain($node);
+
+        if ($insetReplacement) {
+            return $insetReplacement;
+        }
+
+        if (! $node instanceof MethodCall) {
+            return null;
+        }
+
         if ((! $node->name instanceof Identifier) || $node->isFirstClassCallable()) {
             return null;
         }
 
         $method = strtolower($node->name->toString());
+
+        if ($method === 'inset') {
+            return null;
+        }
+
         $factory = $node->var;
         $precedingMethods = [];
 
-        // Do not infer a base type for custom receivers, unions, parent calls,
-        // or chains whose callbacks may return a different component.
+        // Check the preceding methods' native fluent contracts after resolving
+        // the owner, rather than limiting ordinary configuration to a whitelist.
         while ($factory instanceof MethodCall) {
-            if ((! $factory->name instanceof Identifier) || $factory->isFirstClassCallable() || (! in_array(strtolower($factory->name->toString()), [
-                ...array_keys(self::NEGATIONS), ...array_map('strtolower', array_values(self::NEGATIONS)),
-                'imagecropaspectratio', 'imageaspectratio', 'automaticallycropimagestoaspectratio',
-                'centermodal', 'modalalignment', 'icon', 'suffixicon', 'inset', 'label',
-            ], true))) {
+            if ((! $factory->name instanceof Identifier) || $factory->isFirstClassCallable()) {
                 return null;
             }
 
@@ -259,18 +313,6 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
             ]);
         }
 
-        if (($method === 'inset') && (! in_array($literal, ['true', 'false'], true)) && TypeCombinator::union(new BooleanType, new ObjectType(Closure::class))->isSuperTypeOf($this->getNativeType($value))->yes()) {
-            return new FuncCall(new ArrowFunction([
-                'static' => true,
-                'params' => [
-                    new Param(new Variable('component'), type: new FullyQualified($class)),
-                    new Param(new Variable('condition'), type: new UnionType([new Identifier('bool'), new FullyQualified(Closure::class)])),
-                ],
-                'returnType' => new FullyQualified($class),
-                'expr' => new Variable('component'),
-            ]), [new Arg($node->var), new Arg($value)]);
-        }
-
         if (isset(self::NEGATIONS[$method]) && (! in_array($literal, ['true', 'false'], true)) && TypeCombinator::union(new BooleanType, new ObjectType(Closure::class))->isSuperTypeOf($this->getNativeType($value))->yes()) {
             // Builder/repeater/placeholder wrappers captured the configuring
             // owner rather than evaluating on a later injected clone.
@@ -327,10 +369,6 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
             return null;
         }
 
-        if ($method === 'inset') {
-            return $node->var;
-        }
-
         if ($method === 'centermodal') {
             return ($literal === 'true')
                 ? new MethodCall($node->var, 'modalAlignment', [new Arg(new ClassConstFetch(new FullyQualified('Filament\\Support\\Enums\\Alignment'), 'Center'))])
@@ -341,5 +379,164 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
         $result = (($literal === 'false') && in_array($replacement, ['autocomplete', 'autocapitalize'], true)) ? 'null' : (($literal === 'true') ? 'false' : 'true');
 
         return new MethodCall($node->var, $replacement, [new Arg(new ConstFetch(new Name($result)))]);
+    }
+
+    private function refactorInsetChain(Expr $node, ?Closure $context = null): ?Expr
+    {
+        $chain = [];
+        $candidate = $node;
+        $hasInset = false;
+
+        while ($candidate instanceof MethodCall || $candidate instanceof NullsafeMethodCall || $candidate instanceof PropertyFetch || $candidate instanceof NullsafePropertyFetch || $candidate instanceof ArrayDimFetch) {
+            if (($candidate instanceof MethodCall || $candidate instanceof NullsafeMethodCall) && $this->isSupportedInsetCall($candidate)) {
+                $hasInset = true;
+            }
+
+            $chain[] = $candidate;
+            $candidate = $candidate->var;
+        }
+
+        return $hasInset ? $this->replaceInsetChain($candidate, array_reverse($chain), $context) : null;
+    }
+
+    /** @param array<MethodCall | NullsafeMethodCall | PropertyFetch | NullsafePropertyFetch | ArrayDimFetch> $chain */
+    private function replaceInsetChain(Expr $receiver, array $chain, ?Closure $context): Expr
+    {
+        foreach ($chain as $index => $original) {
+            $node = clone $original;
+
+            if ($node instanceof NullsafeMethodCall || $node instanceof NullsafePropertyFetch) {
+                $variable = new Variable($this->insetTemporary());
+                $normal = $node instanceof NullsafeMethodCall
+                    ? new MethodCall($node->var, $node->name, $node->args, $node->getAttributes())
+                    : new PropertyFetch($node->var, $node->name, $node->getAttributes());
+
+                // Keep the consuming context inside both branches, but read the
+                // receiver normally so magic access and its warnings stay intact.
+                return new Ternary(
+                    new Identical(new Assign($variable, $receiver), new ConstFetch(new Name('null'))),
+                    $context ? $context(new ConstFetch(new Name('null')), true) : new ConstFetch(new Name('null')),
+                    $this->replaceInsetChain($variable, [$normal, ...array_slice($chain, $index + 1)], $context),
+                );
+            }
+
+            if ($node instanceof MethodCall && $node->name instanceof Identifier && $this->isSupportedInsetCall($node)) {
+                $receiver = $this->insetAdapter($receiver, $node->getArgs()[0] ?? null, $node->name->toString());
+
+                continue;
+            }
+
+            $node->var = $receiver;
+            $receiver = $node;
+        }
+
+        return $context ? $context($receiver, false) : $receiver;
+    }
+
+    private function isSupportedInsetCall(MethodCall | NullsafeMethodCall $call): bool
+    {
+        if ((! $call->name instanceof Identifier) || ! $this->isName($call->name, 'inset') || $call->isFirstClassCallable() || count($call->args) > 1) {
+            return false;
+        }
+
+        $argument = $call->getArgs()[0] ?? null;
+
+        return (! $argument || (! $argument->unpack && (! $argument->name || $this->isName($argument->name, 'condition'))))
+            && $this->isInsetReceiver($call->var);
+    }
+
+    private function insetAdapter(Expr $receiver, ?Arg $argument, string $method): FuncCall
+    {
+        $callable = new FuncCall(new ArrowFunction([
+            'static' => true,
+            'params' => [new Param(new Variable('component'))],
+            // A base-typed receiver or container binding may supply an actual
+            // override. Resolve its callable before evaluating arguments, just
+            // like PHP does for the original method call.
+            'expr' => new Ternary(
+                new BooleanAnd(
+                    new BooleanOr(new Instanceof_(new Variable('component'), new FullyQualified(Builder::class)), new Instanceof_(new Variable('component'), new FullyQualified(Repeater::class))),
+                    new BooleanNot(new FuncCall(new FullyQualified('method_exists'), [new Arg(new Variable('component')), new Arg(new String_('inset'))])),
+                ),
+                new ArrowFunction([
+                    'static' => true,
+                    'params' => [
+                        new Param(new Variable('condition'), default: new ConstFetch(new Name('true')), type: new UnionType([new Identifier('bool'), new FullyQualified(Closure::class)])),
+                    ],
+                    'expr' => new Variable('component'),
+                ]),
+                new MethodCall(new Variable('component'), new String_($method), [new VariadicPlaceholder]),
+            ),
+        ]), [new Arg($receiver)]);
+
+        return new FuncCall($callable, $argument ? [$argument] : []);
+    }
+
+    private function isInsetReceiver(Expr $receiver): bool
+    {
+        return $this->isInsetType($this->insetReceiverType($receiver));
+    }
+
+    private function isInsetType(Type $type): bool
+    {
+        $type = TypeCombinator::removeNull($type);
+
+        if ($type->getObjectClassNames() && TypeCombinator::union(new ObjectType(Builder::class), new ObjectType(Repeater::class))->isSuperTypeOf($type)->yes()) {
+            return true;
+        }
+
+        if (in_array($type->getObjectClassNames(), [[Field::class], [SchemaComponent::class], [Component::class]], true)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function insetReceiverType(Expr $receiver): Type
+    {
+        $type = TypeCombinator::removeNull($this->getNativeType($receiver));
+
+        if ($this->isInsetType($type) || (! ($receiver instanceof MethodCall || $receiver instanceof NullsafeMethodCall)) || (! $receiver->name instanceof Identifier) || $receiver->isFirstClassCallable()) {
+            return $type;
+        }
+
+        $owner = $this->insetReceiverType($receiver->var);
+
+        if (! $this->isInsetType($owner)) {
+            return $type;
+        }
+
+        if ($this->isName($receiver->name, 'inset')) {
+            return $owner;
+        }
+
+        foreach ($owner->getObjectClassReflections() as $class) {
+            if (! $class->hasNativeMethod($receiver->name->toString())) {
+                return $type;
+            }
+
+            foreach ($class->getNativeMethod($receiver->name->toString())->getVariants() as $variant) {
+                if (! $variant->getNativeReturnType() instanceof StaticType) {
+                    return $type;
+                }
+            }
+        }
+
+        return $owner;
+    }
+
+    private function insetTemporary(): string
+    {
+        $variables = (new NodeFinder)->findInstanceOf($this->getFile()->getNewStmts(), Variable::class);
+        $names = [...$this->insetReservedVariables, ...array_map(static fn (Variable $variable): mixed => $variable->name, $variables)];
+        $name = 'filamentInsetComponent';
+
+        while (in_array($name, $names, true)) {
+            $name .= '_';
+        }
+
+        $this->insetReservedVariables[] = $name;
+
+        return $name;
     }
 }

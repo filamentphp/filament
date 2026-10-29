@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Filament\Tests\Upgrade\Fixtures\DeprecatedColumnAndSupportMethods;
 
 use Filament\Actions\Action;
@@ -23,6 +25,8 @@ function configure(IconColumn $icon, Column $column, ExportColumn $export, Actio
     $export->queriesRelationships($record);
     $export->queriesRelationships(...$arguments);
     $action->indicator(indicator: fn (): string => 'Pending')->indicatorColor(color: 'warning');
+    $action->indicator(indicator: 42);
+    $group->indicator(3.5);
     $group->indicator(null)->indicatorColor(fn (): string => 'success');
     $tab->indicator(indicator: 17)->indicatorColor(color: null);
     $nullableAction?->indicator(indicator: null)?->indicatorColor(color: 'gray');
@@ -51,6 +55,11 @@ class CustomAction extends Action {}
 
 class OtherCustomAction extends Action {}
 
+function numericIndicators(int $count, float $rating): array
+{
+    return [Action::make('count')->indicator($count)->getBadge(), ActionGroup::make([])->indicator($rating)->getBadge()];
+}
+
 function subclasses(CustomIcon $icon, CustomAction $action, CustomAction | OtherCustomAction $union): void
 {
     $icon->label('Status')->options([])->disableClick(false);
@@ -60,6 +69,8 @@ function subclasses(CustomIcon $icon, CustomAction $action, CustomAction | Other
 }
 -----
 <?php
+
+declare(strict_types=1);
 
 namespace Filament\Tests\Upgrade\Fixtures\DeprecatedColumnAndSupportMethods;
 
@@ -84,6 +95,8 @@ function configure(IconColumn $icon, Column $column, ExportColumn $export, Actio
     $export->hasRelationship($record);
     $export->hasRelationship(...$arguments);
     $action->badge(badge: fn (): string => 'Pending')->badgeColor(color: 'warning');
+    $action->badge(badge: (string) 42);
+    $group->badge((string) 3.5);
     $group->badge(null)->badgeColor(fn (): string => 'success');
     $tab->badge(badge: 17)->badgeColor(color: null);
     $nullableAction?->badge(badge: null)?->badgeColor(color: 'gray');
@@ -111,6 +124,11 @@ class CustomIcon extends IconColumn
 class CustomAction extends Action {}
 
 class OtherCustomAction extends Action {}
+
+function numericIndicators(int $count, float $rating): array
+{
+    return [Action::make('count')->badge((string) $count)->getBadge(), ActionGroup::make([])->badge((string) $rating)->getBadge()];
+}
 
 function subclasses(CustomIcon $icon, CustomAction $action, CustomAction | OtherCustomAction $union): void
 {

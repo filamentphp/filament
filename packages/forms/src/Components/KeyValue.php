@@ -208,6 +208,46 @@ class KeyValue extends Field implements HasEmbeddedView
         return $this;
     }
 
+    /**
+     * @deprecated Use `addable()` instead.
+     */
+    public function disableAddingRows(bool | Closure $condition = true): static
+    {
+        $this->addable(fn (KeyValue $component): bool => ! $component->evaluate($condition));
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `deletable()` instead.
+     */
+    public function disableDeletingRows(bool | Closure $condition = true): static
+    {
+        $this->deletable(fn (KeyValue $component): bool => ! $component->evaluate($condition));
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `editableKeys()` instead.
+     */
+    public function disableEditingKeys(bool | Closure $condition = true): static
+    {
+        $this->editableKeys(fn (KeyValue $component): bool => ! $component->evaluate($condition));
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `editableValues()` instead.
+     */
+    public function disableEditingValues(bool | Closure $condition = true): static
+    {
+        $this->editableValues(fn (KeyValue $component): bool => ! $component->evaluate($condition));
+
+        return $this;
+    }
+
     public function keyLabel(string | Closure | null $label): static
     {
         $this->keyLabel = $label;

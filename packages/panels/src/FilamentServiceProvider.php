@@ -34,9 +34,11 @@ use Filament\Support\Assets\Font;
 use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\View\LegacyComponents;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 use Livewire\Livewire;
@@ -129,6 +131,11 @@ class FilamentServiceProvider extends PackageServiceProvider
             static fn (): Limit => Limit::perMinute(6)
                 ->by(Filament::getUserScopedAuthIdentifier()),
         );
+
+        Blade::components([
+            LegacyComponents\PageComponent::class => 'filament::page',
+            LegacyComponents\WidgetComponent::class => 'filament::widget',
+        ]);
 
         FilamentAsset::register([
             Font::make('inter', __DIR__ . '/../dist/fonts/inter'),

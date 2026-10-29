@@ -18,6 +18,7 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasDefaultTenant;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasTenants;
+use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
@@ -25,6 +26,8 @@ use Filament\Pages\PageConfiguration;
 use Filament\Resources\ResourceConfiguration;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Facades\FilamentView;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -883,6 +886,14 @@ class FilamentManager
         app(PanelRegistry::class)->register($panel);
     }
 
+    /**
+     * @deprecated Use `\Filament\Support\Facades\FilamentView::renderHook()` instead.
+     */
+    public function renderHook(string $name): Htmlable
+    {
+        return FilamentView::renderHook($name);
+    }
+
     public function serving(Closure $callback): void
     {
         Event::listen(ServingFilament::class, $callback);
@@ -978,6 +989,134 @@ class FilamentManager
     public function forPageConfiguration(string $pageClass, string $key): void
     {
         $this->setCurrentPageConfigurationKey($key);
+    }
+
+    /**
+     * @param  array<string | int, NavigationGroup | string>  $groups
+     *
+     * @deprecated Use `Panel::navigationGroups()` instead.
+     */
+    public function registerNavigationGroups(array $groups): void
+    {
+        try {
+            $this->getDefaultPanel()->navigationGroups($groups);
+        } catch (NoDefaultPanelSetException $exception) {
+            throw new LogicException('Please use the `navigationGroups()` method on the panel configuration to register navigation groups. See the documentation - https://filamentphp.com/docs/panels/navigation#customizing-navigation-groups');
+        }
+    }
+
+    /**
+     * @param  array<NavigationItem>  $items
+     *
+     * @deprecated Use `Panel::navigationItems()` instead.
+     */
+    public function registerNavigationItems(array $items): void
+    {
+        try {
+            $this->getDefaultPanel()->navigationItems($items);
+        } catch (NoDefaultPanelSetException $exception) {
+            throw new LogicException('Please use the `navigationItems()` method on the panel configuration to register navigation items. See the documentation - https://filamentphp.com/docs/panels/navigation#registering-custom-navigation-items');
+        }
+    }
+
+    /**
+     * @param  array<class-string>  $pages
+     *
+     * @deprecated Use `Panel::pages()` instead.
+     */
+    public function registerPages(array $pages): void
+    {
+        try {
+            $this->getDefaultPanel()->pages($pages);
+        } catch (NoDefaultPanelSetException $exception) {
+            throw new LogicException('Please use the `pages()` method on the panel configuration to register pages.');
+        }
+    }
+
+    /**
+     * @deprecated Use `\Filament\Support\Facades\FilamentView::registerRenderHook()` instead.
+     */
+    public function registerRenderHook(string $name, Closure $hook): void
+    {
+        FilamentView::registerRenderHook($name, $hook);
+    }
+
+    /**
+     * @param  array<class-string>  $resources
+     *
+     * @deprecated Use `Panel::resources()` instead.
+     */
+    public function registerResources(array $resources): void
+    {
+        try {
+            $this->getDefaultPanel()->resources($resources);
+        } catch (NoDefaultPanelSetException $exception) {
+            throw new LogicException('Please use the `resources()` method on the panel configuration to register resources.');
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     *
+     * @deprecated Use `\Filament\Support\Facades\FilamentAsset::registerScriptData()` instead.
+     */
+    public function registerScriptData(array $data): void
+    {
+        FilamentAsset::registerScriptData($data);
+    }
+
+    /**
+     * @deprecated Use `Panel::theme()` instead.
+     */
+    public function registerTheme(string | Htmlable | null $theme): void
+    {
+        try {
+            $this->getDefaultPanel()->theme($theme);
+        } catch (NoDefaultPanelSetException $exception) {
+            throw new LogicException('Please use the `theme()` method on the panel configuration to register themes.');
+        }
+    }
+
+    /**
+     * @param  string | array<string>  $theme
+     *
+     * @deprecated Use `Panel::viteTheme()` instead.
+     */
+    public function registerViteTheme(string | array $theme, ?string $buildDirectory = null): void
+    {
+        try {
+            $this->getDefaultPanel()->viteTheme($theme, $buildDirectory);
+        } catch (NoDefaultPanelSetException $exception) {
+            throw new LogicException('Please use the `viteTheme()` method on the panel configuration to register themes.');
+        }
+    }
+
+    /**
+     * @param  array<MenuItem>  $items
+     *
+     * @deprecated Use `Panel::userMenuItems()` instead.
+     */
+    public function registerUserMenuItems(array $items): void
+    {
+        try {
+            $this->getDefaultPanel()->userMenuItems($items);
+        } catch (NoDefaultPanelSetException $exception) {
+            throw new LogicException('Please use the `userMenuItems()` method on the panel configuration to register user menu items. See the documentation - https://filamentphp.com/docs/panels/navigation#customizing-the-user-menu');
+        }
+    }
+
+    /**
+     * @param  array<class-string>  $widgets
+     *
+     * @deprecated Use `Panel::widgets()` instead.
+     */
+    public function registerWidgets(array $widgets): void
+    {
+        try {
+            $this->getDefaultPanel()->widgets($widgets);
+        } catch (NoDefaultPanelSetException $exception) {
+            throw new LogicException('Please use the `widgets()` method on the panel configuration to register widgets.');
+        }
     }
 
     public function getDefaultThemeMode(): ThemeMode

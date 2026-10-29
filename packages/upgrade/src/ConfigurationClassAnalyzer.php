@@ -28,6 +28,28 @@ class ConfigurationClassAnalyzer
         return in_array(strtolower($className), $this->parents[$this->loadSources()], true);
     }
 
+    /** @return list<string> */
+    public function getDescendants(string $className): array
+    {
+        $parents = $this->parents[$this->loadSources()];
+        $descendants = [];
+        $className = strtolower($className);
+
+        foreach ($parents as $candidate => $parent) {
+            while ($parent) {
+                if ($parent === $className) {
+                    $descendants[] = $candidate;
+
+                    break;
+                }
+
+                $parent = $parents[$parent] ?? null;
+            }
+        }
+
+        return $descendants;
+    }
+
     /** @param array<Node> $statements */
     public function hasExternalClassReferences(string $className, array $statements): bool
     {

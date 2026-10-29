@@ -197,6 +197,14 @@ abstract class Exporter
 
     public function getFileDiskName(): string
     {
+        return $this->getFileDisk();
+    }
+
+    /**
+     * @deprecated Use `getFileDiskName()` instead.
+     */
+    public function getFileDisk(): string
+    {
         $disk = config('filament.default_filesystem_disk');
 
         if (($disk === 'public') && array_key_exists('local', config('filesystems.disks'))) {

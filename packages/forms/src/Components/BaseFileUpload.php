@@ -333,6 +333,16 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return $this;
     }
 
+    /**
+     * @deprecated Use `previewable()` instead.
+     */
+    public function disablePreview(bool | Closure $condition = true): static
+    {
+        $this->previewable(fn (BaseFileUpload $component): bool => ! $component->evaluate($condition));
+
+        return $this;
+    }
+
     public function storeFileNamesIn(string | Closure | null $statePath): static
     {
         $this->fileNamesStatePath = $statePath;

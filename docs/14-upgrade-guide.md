@@ -79,11 +79,40 @@ vendor/bin/rector process --dry-run
 
 Run the Rector set routinely, **not** `vendor/bin/filament-v6`. The latter is the interactive, one-time migration workflow: it checks PHP, Laravel, and plugin compatibility, edits source, and prints dependency-upgrade commands. Running Rector directly does not perform those compatibility checks or update dependencies. Neither command is the `php artisan filament:upgrade` asset update command used during deployment.
 
-This is source migration, not runtime backwards-compatibility support or a complete deprecated-API detector. A clean dry run does not prove that all removed APIs are absent. Dynamic names, strings, Blade references, unknown receiver types, custom overrides, and ambiguous migrations can require manual review, as detailed below. Factory migrations cannot account for configuration, container bindings, or macros elsewhere in your application: review these before applying changes, including configuration on canonical base classes and important `configureUsing()` callbacks. Use Rector's `withSkip()` configuration to exclude a rule or affected files when your application needs a manual migration. Keep static analysis and application tests alongside this check; do not apply its changes automatically in CI.
+This is source migration, not a complete deprecated-API detector. A clean dry run does not prove that all removed APIs are absent. Dynamic names, strings, Blade references, unknown receiver types, custom overrides, and ambiguous migrations can require manual review, as detailed below. Review container bindings, macros, and global configuration before accepting changes. Use Rector's `withSkip()` configuration to exclude a rule or affected files when necessary. Keep static analysis and application tests alongside this check; do not apply its changes automatically in CI. [Retained deprecated APIs](#retaining-deprecated-integration-apis) continue to work when a migration is skipped.
 
 When a native union declares both a base class and an overriding subclass, the method migration rules conservatively leave related calls in that file unchanged. For lazy loading, this also retains the owning type's mapped method and property declarations and references together, so a partial migration cannot disconnect a getter or setter from its backing property. Review subclasses passed through base types or PHPDoc types manually too: static receiver information cannot establish every runtime implementation.
 
 The forwarding-method and schema-hook migrations also inspect explicit PHPDoc unions for these override conflicts. This does not identify subclasses hidden behind a base type, a factory, or a container binding.
+
+## Retaining deprecated integration APIs
+
+Filament 6 retains deprecated APIs when normal supported usage cannot be migrated automatically without changing behavior. You do not need to rewrite these integrations to upgrade:
+
+- `InteractsWithForms`, infolist integrations, mounted-action bridges, and inherited table configuration.
+- `ButtonAction`, `IconButtonAction`, `MultiSelectFilter`, `BadgeColumn`, `BooleanColumn`, `TagsColumn`, `MultiSelect`, `RelationshipRepeater`, and `Placeholder`.
+- Legacy resource `$label` / `$pluralLabel` and label getters, resource-page labels, page `getActions()`, widget `getCards()`, notification-message hooks, visible-widget-list helpers, profile `backAction()`, and form-action alignment hooks.
+- Functioning legacy panel registration and render-hook methods and `Filament\Navigation\MenuItem`, including stored items, callbacks, and scoped global configuration. `registerScripts()` and `registerStyles()` are still removed; use [asset registration](../support/assets).
+- Negating behavioral setters, image cropping, modal alignment, and date/time icons.
+- Action, action-group, and schema-tab `indicator()` badge setters, including numeric values and callable references. `indicatorColor()` is still removed; use `badgeColor()`.
+- Widget magic `filters` reads, `CanConcealComponents`, and `Component::isConcealed()`.
+- Exporter `getFileDisk()` and resource-table generator virtual hooks, and legacy page/widget Blade aliases and PHP component subclasses.
+
+These APIs remain deprecated. Prefer their modern equivalents for new code. The persistent PHP Rector set still modernizes safe calls, hooks, and widget filter reads; the optional standalone Blade scanner described below modernizes template tags separately. Skipped migrations for retained APIs are not upgrade blockers. The PHP set does not convert the retained action/filter, form, or column factories or `MenuItem` objects: these integrations can depend on class-scoped configuration, setup precedence, or callback timing and scope. Existing modernized code remains supported.
+
+Modernization of these retained resource, page, and widget hooks is conservative: the script handles unambiguous leaf classes directly extending built-in owners and leaves custom inheritance, traits, collisions, and externally referenced public contracts unchanged. Include your full application source in Rector's paths so it can check descendants. When modernizing notification hooks, preserve the legacy `null` fallback to the translated default; returning `null` from a modern title hook disables the notification. Keep the settings page's public title hook `#[Unexposed]`, and do not expose protected replacement hooks as Livewire endpoints.
+
+Behavioral modernization still handles safe built-in calls, including negating conditions, image cropping, `centerModal()`, and date/time `icon()`. It preserves lazy closure injection, original-owner evaluation where needed, argument side effects, and eager modal alignment. Custom overrides, uncertain types, dynamic calls, and ambiguous expressions remain functional through these retained wrappers; do not replace lazy conditions with eager negation or blindly rename custom `parent::` calls.
+
+Legacy panel registrations still target the default panel, not the current panel. Manager render hooks and script data remain global and immediate. When modernizing, preserve registration timing and scope rather than moving request-dependent work into early panel configuration. Legacy menus retain their historical defaults: an old logout item without a post action can disable POST, and tenant items can replace built-in visibility. Review authorization and HTTP methods when customizing these items.
+
+The panel-integration rule still modernizes safe calls through the exact `Filament\Facades\Filament` class, preserving argument evaluation, registration order, and default-panel selection. Manager instances, custom facade roots, dynamic calls, and ambiguous arguments are left unchanged. `MenuItem` conversion is not registered in the upgrade set; use actions for new menus without rewriting existing integrations.
+
+Exporter `getFileDiskName()` and the canonical resource-table generator methods still call their legacy virtual hooks. Existing overrides remain effective; you do not need to rename them. The dashboard's separate `normalizeTableFilterValuesFromQueryString()` alias is removed, as described below.
+
+Widget `filters` compatibility redirects only reads of an undeclared property to `pageFilters`; it does not redirect writes or override a real `filters` declaration. Dashboard pages still own `$filters`. The script modernizes safe `$this->filters` reads on direct leaf `Widget` / `StatsOverviewWidget` consumers of the unadapted `InteractsWithPageFilters` trait. Custom inheritance, declarations, magic methods, writes, and property probes are left unchanged. The trait's `__get()` remains `#[Unexposed]`.
+
+Concealment compatibility does not control validation: the marker interface is empty and the base `isConcealed()` returns `false`. Native validation attributes remain on concealed fields, containers reveal invalid controls, and client-side visibility conditions disable hidden fieldsets. Keep visibility and validation configuration intact.
 
 ## Breaking changes
 
@@ -299,6 +328,14 @@ If you customize XLSX exports through OpenSpout, update your code for v5's immut
 See [customizing XLSX files](../actions/export#customizing-xlsx-files) and the [OpenSpout upgrade guide](https://github.com/openspout/openspout/blob/5.x/UPGRADE.md#upgrading-from-4x-to-50).
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('actions')">
+<span slot="summary">Ineffective export-action CSV delimiter configuration has been removed</span>
+
+`ExportAction::csvDelimiter()` and `ExportBulkAction::csvDelimiter()` did not control exported files and have been removed, along with their protected `$csvDelimiter` property. Override your exporter's public static `getCsvDelimiter(): string` method to configure the delimiter. This method controls CSV output and the intermediate CSV files used to build XLSX exports. `ImportAction::csvDelimiter()` is unchanged.
+
+The script migrates statically identified export-action calls, preserving receiver and argument evaluation, fluent chains, nullsafe short-circuiting, and genuine custom overrides. Supplied closures are not invoked merely to discard the ineffective configuration. Review dynamic calls, opaque receiver types, and custom code reading or writing the removed protected property manually; preserve any application-owned delimiter behavior rather than deleting it.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('panels')">
 <span slot="summary">Custom avatar providers must accept non-Eloquent users</span>
 
@@ -323,19 +360,29 @@ Review Eloquent-specific calls if your app uses non-Eloquent users. Already-comp
 Job tags change from `import{id}` and `export{id}` to `filament:import:{id}` and `filament:export:{id}`. Update filters or monitoring that use them. Existing tags and custom `getJobTags()` overrides are unchanged.
 </Disclosure>
 
+<Disclosure open>
+<span slot="summary">Deprecated number-formatting helpers have been removed</span>
+
+Replace `Filament\Support\format_number()` and `format_money()` with `Illuminate\Support\Number::format()` and `Number::currency()`. The script migrates recognized PHP calls, including computed arguments and divisors, named arguments, unpacking, and first-class callables. Simple calls become direct formatting calls; other calls use typed adapters to preserve argument evaluation order and validation, including the caller's weak or strict coercion rules.
+
+Keep the old helpers' string result, including when Laravel returns `false`. For money, preserve the integer `divideBy` parameter and its default `0`, which means no division; divide only when the coerced divisor is nonzero. Do not reorder side-effecting named arguments or replace a typed adapter with unvalidated arithmetic.
+
+Manually update dynamic function names and string callbacks. These helpers were conditionally defined, so review application-defined implementations and calls to them separately. The script skips files declaring either helper, but cannot discover every custom implementation loaded elsewhere; exclude affected calls or files using Rector's `withSkip()` when necessary.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('schemas') || packages.includes('forms') || packages.includes('tables') || packages.includes('panels') || packages.includes('widgets')">
 <span slot="summary">Deprecated lazy-loading and blur-binding APIs have been removed</span>
 
 Use the current loading APIs:
 
-| Affected classes | Removed methods | Replacements |
-| --- | --- | --- |
-| `Schema`, `Table` | `deferLoading()`, `isLoadingDeferred()` | `lazyLoaded()`, `isLazyLoaded()` |
-| Schema `Livewire`, `LivewireField` | `lazy()`, `isLazy()` | `lazyLoaded()`, `isLazyLoaded()` |
-| `Tab`, `RelationGroup` | `deferBadge()`, `isBadgeDeferred()` | `lazyLoadedBadge()`, `isBadgeLazyLoaded()` |
-| `Widget`, `RelationManager` | `isLazy()` | `isLazyLoaded()` |
-| `RelationManager` | `isBadgeDeferred()` | `isBadgeLazyLoaded()` |
-| `Tabs` | `getDeferredTabBadges()`, `hasDeferredBadges()` | `getLazyLoadedTabBadges()`, `hasLazyLoadedBadges()` |
+| Affected classes                   | Removed methods                                 | Replacements                                        |
+| ---------------------------------- | ----------------------------------------------- | --------------------------------------------------- |
+| `Schema`, `Table`                  | `deferLoading()`, `isLoadingDeferred()`         | `lazyLoaded()`, `isLazyLoaded()`                    |
+| Schema `Livewire`, `LivewireField` | `lazy()`, `isLazy()`                            | `lazyLoaded()`, `isLazyLoaded()`                    |
+| `Tab`, `RelationGroup`             | `deferBadge()`, `isBadgeDeferred()`             | `lazyLoadedBadge()`, `isBadgeLazyLoaded()`          |
+| `Widget`, `RelationManager`        | `isLazy()`                                      | `isLazyLoaded()`                                    |
+| `RelationManager`                  | `isBadgeDeferred()`                             | `isBadgeLazyLoaded()`                               |
+| `Tabs`                             | `getDeferredTabBadges()`, `hasDeferredBadges()` | `getLazyLoadedTabBadges()`, `hasLazyLoadedBadges()` |
 
 Rename overridden loading properties too: `$isLoadingDeferred` and `$isLazy` become `$isLazyLoaded`; `$isBadgeDeferred` becomes `$isBadgeLazyLoaded`. On widgets and relation managers, declare these static properties as `?bool`, preserving your configured value:
 
@@ -347,7 +394,9 @@ When migrating direct property reads, use `static::$isLazyLoaded ?? true` or `st
 
 For state binding on `Schema` and schema components other than embedded Livewire components, replace `lazy()` with `live(onBlur: true)` and `isLazy()` with `isLiveOnBlur()`. This controls when input changes reach the server, not when a component loads.
 
-The upgrade script migrates statically identified PHP calls and unambiguous overrides declared in the same file. Manually reconcile old/new member collisions, grouped property declarations, traits, cross-file custom overrides, dynamic names, callbacks, unknown receiver types, and non-PHP references. Static property writes, references, `isset()` / `unset()`, array access, and argument uses are left for manual migration, along with dependent getters. Review base-typed receivers that may hold custom subclasses and preserve custom dispatch when updating `parent::` calls.
+The upgrade script migrates statically identified PHP calls and unambiguous overrides declared in the same file. It splits grouped property declarations so unrelated properties retain their types and defaults. It also migrates writes and reference bindings to initialized local boolean configuration, and preserves subclass settings overriding the built-in eager defaults of `AccountWidget` and `FilamentInfoWidget`.
+
+Manually reconcile old/new member collisions, traits, cross-file custom overrides, dynamic names, callbacks, unknown receiver types, and non-PHP references. Unresolved writes and references, including destructured `foreach` targets, are left unchanged together with dependent configuration. Review base-typed receivers that may hold custom subclasses and preserve custom dispatch when updating `parent::` calls.
 
 Custom blur-binding `lazy()` overrides and first-class `lazy(...)` callables require manual migration; calls passing arguments to the old blur-binding method are also left unchanged. Custom frontend calls to `$getDeferredTabBadges()` must use `$getLazyLoadedTabBadges()` instead. Livewire's native `lazy` mount parameter is unchanged.
 </Disclosure>
@@ -357,27 +406,27 @@ Custom blur-binding `lazy()` overrides and first-class `lazy(...)` callables req
 
 The following deprecated methods have been removed:
 
-| Owning type | Removed method | Replacement |
-| --- | --- | --- |
-| `Filament\Actions\Action` | `fillForm()` | `fillSchema()` |
-| `Action` | `beforeFormFilled()`, `afterFormFilled()` | `beforeSchemaFilled()`, `afterSchemaFilled()` |
-| `Action` | `beforeFormValidated()`, `afterFormValidated()` | `beforeSchemaValidated()`, `afterSchemaValidated()` |
-| `Action` | `callBeforeFormFilled()`, `callAfterFormFilled()` | `callBeforeSchemaFilled()`, `callAfterSchemaFilled()` |
-| `Action` | `callBeforeFormValidated()`, `callAfterFormValidated()` | `callBeforeSchemaValidated()`, `callAfterSchemaValidated()` |
-| `Filament\Actions\CreateAction` | `preserveFormDataWhenCreatingAnother()` | `preserveDataWhenCreatingAnother()` |
-| `Filament\Actions\Imports\Importer`, `Filament\Actions\Exports\Exporter` | `getOptionsFormComponents()` | `getOptionsSchemaComponents()` |
-| `Filament\Forms\Components\Select` | `createOptionForm()`, `editOptionForm()`, `manageOptionForm()` | `createOptionSchema()`, `editOptionSchema()`, `manageOptionSchema()` |
-| `Select` | `getCreateOptionActionForm()`, `getEditOptionActionForm()` | `getCreateOptionActionSchema()`, `getEditOptionActionSchema()` |
-| `Select` | `hasCreateOptionActionFormSchema()`, `hasEditOptionActionFormSchema()` | `hasCreateOptionActionSchema()`, `hasEditOptionActionSchema()` |
-| `Filament\QueryBuilder\Constraints\Operators\Operator` and its subclasses | `getFormSchema()` | `getSchemaComponents()` |
-| `Filament\Schemas\Components\Section` | `formBefore()`, `isFormBefore()` | `contentBefore()`, `isContentBefore()` |
-| `Filament\Schemas\Components\Utilities\Get`, `Set` | `skipComponentsChildContainersWhileSearching()` | `skipComponentsChildSchemasWhileSearching()` |
+| Owning type                                                               | Removed method                                                         | Replacement                                                          |
+| ------------------------------------------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `Filament\Actions\Action`                                                 | `fillForm()`                                                           | `fillSchema()`                                                       |
+| `Action`                                                                  | `beforeFormFilled()`, `afterFormFilled()`                              | `beforeSchemaFilled()`, `afterSchemaFilled()`                        |
+| `Action`                                                                  | `beforeFormValidated()`, `afterFormValidated()`                        | `beforeSchemaValidated()`, `afterSchemaValidated()`                  |
+| `Action`                                                                  | `callBeforeFormFilled()`, `callAfterFormFilled()`                      | `callBeforeSchemaFilled()`, `callAfterSchemaFilled()`                |
+| `Action`                                                                  | `callBeforeFormValidated()`, `callAfterFormValidated()`                | `callBeforeSchemaValidated()`, `callAfterSchemaValidated()`          |
+| `Filament\Actions\CreateAction`                                           | `preserveFormDataWhenCreatingAnother()`                                | `preserveDataWhenCreatingAnother()`                                  |
+| `Filament\Actions\Imports\Importer`, `Filament\Actions\Exports\Exporter`  | `getOptionsFormComponents()`                                           | `getOptionsSchemaComponents()`                                       |
+| `Filament\Forms\Components\Select`                                        | `createOptionForm()`, `editOptionForm()`, `manageOptionForm()`         | `createOptionSchema()`, `editOptionSchema()`, `manageOptionSchema()` |
+| `Select`                                                                  | `getCreateOptionActionForm()`, `getEditOptionActionForm()`             | `getCreateOptionActionSchema()`, `getEditOptionActionSchema()`       |
+| `Select`                                                                  | `hasCreateOptionActionFormSchema()`, `hasEditOptionActionFormSchema()` | `hasCreateOptionActionSchema()`, `hasEditOptionActionSchema()`       |
+| `Filament\QueryBuilder\Constraints\Operators\Operator` and its subclasses | `getFormSchema()`                                                      | `getSchemaComponents()`                                              |
+| `Filament\Schemas\Components\Section`                                     | `formBefore()`, `isFormBefore()`                                       | `contentBefore()`, `isContentBefore()`                               |
+| `Filament\Schemas\Components\Utilities\Get`, `Set`                        | `skipComponentsChildContainersWhileSearching()`                        | `skipComponentsChildSchemasWhileSearching()`                         |
 
 Arguments, nullable resets, lifecycle callback evaluation, and state traversal are unchanged. Existing callback injection names, including `$form` and `$schema`, remain available. The testing helper `fillForm()`, the resource page `CreateRecord::preserveFormDataWhenCreatingAnother()` hook, and Select's `fillEditOptionActionFormUsing()` are separate APIs and remain unchanged.
 
 The script migrates typed configuration calls, including named arguments, fluent/nullsafe chains, and first-class callables. Custom configuration overrides, trait adaptations, class-qualified configuration calls, dynamic names, array callbacks, unknown receiver types, and non-PHP references require manual review. Ordinary deprecated methods forwarded to their replacements: preserve custom dispatch when changing `parent::` calls or reconciling overrides of both names.
 
-For importer/exporter and query-builder operator hooks, move custom implementations to the replacement methods. Their old hooks are no longer called by Filament. The script migrates unambiguous old-only hook declarations and their local calls, including supported `parent::`, `self::`, `static::`, and explicit ancestor calls. It also combines legacy query-builder namespace migrations with the hook rename. Reconcile hooks with both names, trait-provided hooks, custom inheritance across files, and calls into custom hooks declared elsewhere manually. Do not create reciprocal forwarding methods or overwrite an existing canonical implementation.
+For importer/exporter and query-builder operator hooks, move custom implementations to the replacement methods. Filament now invokes the canonical hooks. The script migrates unambiguous old-only hook declarations and supported calls across the configured source paths, including `parent::`, `self::`, `static::`, and explicit ancestor calls. For ordinary trait-provided hooks, it adds a canonical bridge on the owning class instead of renaming a shared trait. It also combines legacy query-builder namespace migrations with the hook rename. Reconcile old/new collisions, custom canonical implementations, and unsupported trait adaptations manually. Do not create reciprocal forwarding methods or overwrite an existing canonical implementation.
 
 Rename protected properties in custom subclasses manually, preserving their types and values:
 
@@ -395,33 +444,33 @@ On `Schema::getComponent()`, `Schema::getComponentByStatePath()`, and `HasSchema
 
 The script renames calls on `Filament\Actions\Action` and its subclasses:
 
-| Removed method | Replacement |
-| --- | --- |
-| `emit()` | `dispatch()` |
-| `emitSelf()` | `dispatchSelf()` |
-| `emitTo()` | `dispatchTo()` |
-| `disableForm()`, `disabledForm()` | `disabledSchema()` |
-| `form()` | `schema()` |
-| `getForm()` | `getSchema()` |
-| `isFormDisabled()` | `isSchemaDisabled()` |
-| `mutateFormDataUsing()` | `mutateDataUsing()` |
-| `formData()` | `data()` |
-| `resetFormData()` | `resetData()` |
-| `getFormData()` | `getData()` |
-| `getRawFormData()` | `getRawData()` |
-| `modalActions()` | `modalFooterActions()` |
-| `extraModalActions()` | `extraModalFooterActions()` |
-| `modalButton()` | `modalSubmitActionLabel()` |
-| `modalFooter()` | `modalContentFooter()` |
-| `modalSubheading()` | `modalDescription()` |
-| `makeExtraModalAction()` | `makeModalSubmitAction()` |
-| `failureNotificationMessage()` | `failureNotificationTitle()` |
-| `successNotificationMessage()` | `successNotificationTitle()` |
-| `withAttributes()` | `extraAttributes()` |
-| `hold()` | `halt()` |
-| `infolist()` | `schema()` |
-| `disableLabel()` | `hiddenLabel()` |
-| `ReplicateAction::afterReplicaSaved()` | `after()` |
+| Removed method                         | Replacement                  |
+| -------------------------------------- | ---------------------------- |
+| `emit()`                               | `dispatch()`                 |
+| `emitSelf()`                           | `dispatchSelf()`             |
+| `emitTo()`                             | `dispatchTo()`               |
+| `disableForm()`, `disabledForm()`      | `disabledSchema()`           |
+| `form()`                               | `schema()`                   |
+| `getForm()`                            | `getSchema()`                |
+| `isFormDisabled()`                     | `isSchemaDisabled()`         |
+| `mutateFormDataUsing()`                | `mutateDataUsing()`          |
+| `formData()`                           | `data()`                     |
+| `resetFormData()`                      | `resetData()`                |
+| `getFormData()`                        | `getData()`                  |
+| `getRawFormData()`                     | `getRawData()`               |
+| `modalActions()`                       | `modalFooterActions()`       |
+| `extraModalActions()`                  | `extraModalFooterActions()`  |
+| `modalButton()`                        | `modalSubmitActionLabel()`   |
+| `modalFooter()`                        | `modalContentFooter()`       |
+| `modalSubheading()`                    | `modalDescription()`         |
+| `makeExtraModalAction()`               | `makeModalSubmitAction()`    |
+| `failureNotificationMessage()`         | `failureNotificationTitle()` |
+| `successNotificationMessage()`         | `successNotificationTitle()` |
+| `withAttributes()`                     | `extraAttributes()`          |
+| `hold()`                               | `halt()`                     |
+| `infolist()`                           | `schema()`                   |
+| `disableLabel()`                       | `hiddenLabel()`              |
+| `ReplicateAction::afterReplicaSaved()` | `after()`                    |
 
 Arguments, defaults, nullable values, and closure evaluation are unchanged for supported calls. `disableLabel()` also migrates on `ActionGroup`; it forwards its condition directly: use `hiddenLabel(condition: false)`, not a negated condition. Resource and page `infolist()` methods are unchanged. The alias-only `Filament\Actions\Concerns\HasInfolist` trait has also been removed. The script removes unadapted uses on direct `Action` subclasses without other traits or custom `infolist()` / `schema()` declarations, and migrates their setter calls. Review other uses manually; use `HasSchema` for schema configuration where needed.
 
@@ -431,34 +480,36 @@ The script also renames named arguments: `form:` and `infolist:` become `schema:
 
 The protected `getJavaScriptClickHandler()` alias has been removed in favor of `getJsClickHandler()`. The script migrates `$this` calls with unchanged built-in implementations; migrate overrides and other calls manually. Filament already called `getJsClickHandler()` internally; renaming an old override may newly activate it. Review visibility, collisions with an existing replacement override, and calls to either parent method.
 
-Manually migrate custom overrides (including inherited methods and methods supplied by traits), trait adaptations, class-qualified calls such as `parent::modalSubheading()`, dynamic names, array callbacks, unknown or ambiguous receiver types, and non-PHP references. Calls on known overrides of either the alias or its replacement, or methods with adapted non-public visibility, are skipped. Review changes where a base-typed receiver may hold a custom subclass. Classes using action concerns without extending `Action` also need manual migration.
+The script also repairs ordinary `parent::` calls inside custom action overrides for schema/form configuration and data aliases when the canonical implementation is unchanged, including in known descendants. It preserves the application-owned override and its callers. Dual-name custom implementations and canonical overrides still need manual reconciliation.
+
+Manually migrate other custom overrides (including inherited methods and methods supplied by traits), trait adaptations, unsupported class-qualified calls such as `parent::modalSubheading()`, dynamic names, array callbacks, unknown or ambiguous receiver types, and non-PHP references. Calls on known overrides of either the alias or its replacement, or methods with adapted non-public visibility, are otherwise skipped. Review changes where a base-typed receiver may hold a custom subclass. Classes using action concerns without extending `Action` also need manual migration.
 
 Preserve custom parameter names, defaults, return values, control flow, and dispatch behavior: the old wrappers called replacements through `$this`, so simply renaming a `parent::` call may bypass a subclass override. Some fluent wrappers returned `$this` regardless of the replacement's return value.
 
-Behavioral configuration aliases such as `centerModal()` and `disableCreateAnother()` are covered separately below. The legacy mounted-action schema bridge is unchanged. Testing assertion aliases are covered separately below.
+Behavioral configuration aliases such as `centerModal()` and `disableCreateAnother()` [remain supported](#retaining-deprecated-integration-apis). The legacy mounted-action schema bridge is unchanged. Testing assertion aliases are covered separately below.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('actions') || packages.includes('forms') || packages.includes('infolists') || packages.includes('schemas') || packages.includes('tables')">
 <span slot="summary">Deprecated component getter and import-column names have been removed</span>
 
-| Owning type | Removed method | Replacement |
-| --- | --- | --- |
-| `Filament\Actions\ExportAction`, `ExportBulkAction`, `Filament\Actions\Exports\Exporter` | `getFileDisk()` | `getFileDiskName()` |
-| `ExportAction`, `ExportBulkAction` | `isEnablingVisibleTableColumnsByDefault()` | `shouldEnableVisibleTableColumnsByDefault()` |
-| `Filament\Actions\Imports\ImportColumn` | `guess()` | `guesses()` |
-| `Filament\Actions\Action` | `hasCustomLivewireClickHandler()` | `hasLivewireClickHandlerEnabledConfiguration()` |
-| `Filament\Actions\Imports\Events\ImportChunkProcessed` | `getProcessedRows()`, `getSuccessfulRows()` | `getProcessedRowsCount()`, `getSuccessfulRowsCount()` |
-| `Filament\Forms\Components\Field`, `Filament\Schemas\Components\FusedGroup` | `getExtraFieldWrapperAttributesBag()` | `getExtraFieldWrapperAttributeBag()` |
-| Form `Builder`, `Repeater` | `getRawItemState()` | `getItemStateSnapshot()` |
-| `Filament\Forms\Components\RichEditor\MentionProvider` | `hasSearchResultsUsing()` | `hasSearchResultsUsingCallback()` |
-| `Filament\Forms\Components\RichEditor\RichContentAttribute` | `getCustomBlocksConfig()` | `getCustomBlocksConfiguration()` |
-| `Filament\Forms\Components\SpatieMediaLibraryFileUpload` | `getConversionsDisk()` | `getConversionsDiskName()` |
-| `Filament\Forms\Components\FileUpload` (protected) | `getParentTargetSizes()` | `getImageEditorViewportScaleFactor()` |
-| `Filament\Infolists\Components\Entry` | `getExtraEntryWrapperAttributesBag()` | `getExtraEntryWrapperAttributeBag()` |
-| `Filament\Infolists\Components\RepeatableEntry` (protected) | `getItemState()` | `getItemStateWithExistence()` |
-| `Filament\Tables\Columns\Column`, `Filament\Actions\Exports\ExportColumn` | `getGetStateUsingCallback()` | `getStateUsingCallback()` |
-| `Filament\Tables\Table` | `getInverseRelationship()` | `getInverseRelationshipName()` |
-| `Filament\Tables\Columns\Summarizers\Summarizer` | `hasQueryModification()` | `hasQueryModificationCallback()` |
+| Owning type                                                                 | Removed method                              | Replacement                                           |
+| --------------------------------------------------------------------------- | ------------------------------------------- | ----------------------------------------------------- |
+| `Filament\Actions\ExportAction`, `ExportBulkAction`                         | `getFileDisk()`                             | `getFileDiskName()`                                   |
+| `ExportAction`, `ExportBulkAction`                                          | `isEnablingVisibleTableColumnsByDefault()`  | `shouldEnableVisibleTableColumnsByDefault()`          |
+| `Filament\Actions\Imports\ImportColumn`                                     | `guess()`                                   | `guesses()`                                           |
+| `Filament\Actions\Action`                                                   | `hasCustomLivewireClickHandler()`           | `hasLivewireClickHandlerEnabledConfiguration()`       |
+| `Filament\Actions\Imports\Events\ImportChunkProcessed`                      | `getProcessedRows()`, `getSuccessfulRows()` | `getProcessedRowsCount()`, `getSuccessfulRowsCount()` |
+| `Filament\Forms\Components\Field`, `Filament\Schemas\Components\FusedGroup` | `getExtraFieldWrapperAttributesBag()`       | `getExtraFieldWrapperAttributeBag()`                  |
+| Form `Builder`, `Repeater`                                                  | `getRawItemState()`                         | `getItemStateSnapshot()`                              |
+| `Filament\Forms\Components\RichEditor\MentionProvider`                      | `hasSearchResultsUsing()`                   | `hasSearchResultsUsingCallback()`                     |
+| `Filament\Forms\Components\RichEditor\RichContentAttribute`                 | `getCustomBlocksConfig()`                   | `getCustomBlocksConfiguration()`                      |
+| `Filament\Forms\Components\SpatieMediaLibraryFileUpload`                    | `getConversionsDisk()`                      | `getConversionsDiskName()`                            |
+| `Filament\Forms\Components\FileUpload` (protected)                          | `getParentTargetSizes()`                    | `getImageEditorViewportScaleFactor()`                 |
+| `Filament\Infolists\Components\Entry`                                       | `getExtraEntryWrapperAttributesBag()`       | `getExtraEntryWrapperAttributeBag()`                  |
+| `Filament\Infolists\Components\RepeatableEntry` (protected)                 | `getItemState()`                            | `getItemStateWithExistence()`                         |
+| `Filament\Tables\Columns\Column`, `Filament\Actions\Exports\ExportColumn`   | `getGetStateUsingCallback()`                | `getStateUsingCallback()`                             |
+| `Filament\Tables\Table`                                                     | `getInverseRelationship()`                  | `getInverseRelationshipName()`                        |
+| `Filament\Tables\Columns\Summarizers\Summarizer`                            | `hasQueryModification()`                    | `hasQueryModificationCallback()`                      |
 
 The script renames typed instance calls on these types and subclasses when neither method is customized, including nullsafe calls, fluent chains, unpacked arguments, and first-class callables. Parameters retain their names and defaults, including `guesses:`, `key:`, `state:`, and `widthOrHeight:`. Protected helpers are migrated only through `$this`. The rule works with the removed methods absent and leaves canonical calls unchanged on repeated runs.
 
@@ -466,7 +517,7 @@ These are naming changes, not changes to the returned data. Item snapshots still
 
 Disk setters and storage are unchanged: continue using `fileDisk(disk: ...)` and `conversionsDisk(disk: ...)`. Import event constructor arguments and properties remain `processedRows` and `successfulRows`. The export model's filesystem-valued `getFileDisk()`, parent-resource `getInverseRelationship()`, and Builder/Repeater `getItemState()` methods are unrelated and unchanged.
 
-**Rename custom exporter disk hooks manually.** Move an `Exporter::getFileDisk(): string` override to `getFileDiskName(): string`, and review its `parent::` calls. In Filament 5, the canonical getter called the old virtual hook; in Filament 6, it owns the default implementation, including the `public`-to-`local` disk fallback. Reconcile existing overrides of both names without reciprocal calls, and test action-level disk precedence over the exporter default.
+The exporter's separate `getFileDisk()` virtual hook remains supported and is still called by `getFileDiskName()`, including its `public`-to-`local` disk fallback. Safe calls can be modernized by the script; custom exporter overrides do not need to be renamed.
 
 Manually review other custom overrides, inherited and trait-provided methods, trait adaptations, class-qualified calls such as `parent::guess()`, dynamic names, array callbacks, unknown or ambiguous receiver types, and published Blade references. Direct trait consumers outside the types above also need manual migration. Calls on known overrides of either name are skipped; base-typed receivers can still hold custom subclasses that static analysis cannot identify. Preserve custom parameters, visibility, return values, and dispatch: ordinary old methods forwarded through `$this`, so replacing `parent::` calls can bypass overrides, and renaming an old override can newly activate it in framework calls already using the canonical name.
 </Disclosure>
@@ -474,16 +525,16 @@ Manually review other custom overrides, inherited and trait-provided methods, tr
 <Disclosure open x-show="packages.includes('panels')">
 <span slot="summary">Deprecated panel and navigation method names have been removed</span>
 
-| Owning type | Removed method | Replacement |
-| --- | --- | --- |
-| `Filament\Navigation\NavigationItem` | `isActiveWhen()` | `activeWhen()` |
-| `NavigationItem` | `isChildItemsActive()` | `hasActiveChildItems()` |
-| `Filament\Clusters\Cluster` | `unshiftClusterBreadcrumbs()` | `prependClusterBreadcrumbs()` |
-| `Filament\Panel` | `passwordResetRequestRouteSlug()` | `requestPasswordResetRouteSlug()` |
-| `Panel` | `passwordResetRouteSlug()` | `resetPasswordRouteSlug()` |
-| `Panel` | `databaseNotificationsPolling()` | `databaseNotificationsPollingInterval()` |
-| `Panel`, `Filament\FilamentManager`, `Filament\Facades\Filament` | `hasDarkModeForced()` | `isDarkModeForced()` |
-| `FilamentManager`, `Filament` facade | `currentDomain()` | `setCurrentDomain()` |
+| Owning type                                                      | Removed method                    | Replacement                              |
+| ---------------------------------------------------------------- | --------------------------------- | ---------------------------------------- |
+| `Filament\Navigation\NavigationItem`                             | `isActiveWhen()`                  | `activeWhen()`                           |
+| `NavigationItem`                                                 | `isChildItemsActive()`            | `hasActiveChildItems()`                  |
+| `Filament\Clusters\Cluster`                                      | `unshiftClusterBreadcrumbs()`     | `prependClusterBreadcrumbs()`            |
+| `Filament\Panel`                                                 | `passwordResetRequestRouteSlug()` | `requestPasswordResetRouteSlug()`        |
+| `Panel`                                                          | `passwordResetRouteSlug()`        | `resetPasswordRouteSlug()`               |
+| `Panel`                                                          | `databaseNotificationsPolling()`  | `databaseNotificationsPollingInterval()` |
+| `Panel`, `Filament\FilamentManager`, `Filament\Facades\Filament` | `hasDarkModeForced()`             | `isDarkModeForced()`                     |
+| `FilamentManager`, `Filament` facade                             | `currentDomain()`                 | `setCurrentDomain()`                     |
 
 The script renames typed instance calls on these classes and their subclasses, including fluent and nullsafe chains, and cluster calls using an explicit class name such as `SettingsCluster::unshiftClusterBreadcrumbs()`. It also migrates the domain setter and forced-dark-mode getter through `filament()` when its return type is known to be `FilamentManager`, and through explicit `Filament\Facades\Filament` calls, including imported aliases. Named arguments (`callback:`, `breadcrumbs:`, `slug:`, `interval:`, `domain:`), unpacked arguments, and first-class callables are preserved. It also works after the old methods have been removed; canonical calls are unchanged on repeated runs.
 
@@ -499,32 +550,31 @@ Preserve custom parameters, visibility, return values, and dispatch. These alias
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('panels') || packages.includes('forms')">
-<span slot="summary">Legacy generator and dashboard method names have been removed</span>
+<span slot="summary">Legacy preview-generator and dashboard method names have been removed</span>
 
-| Affected API | Removed method | Replacement |
-| --- | --- | --- |
-| Resource table generators | `getTableActions()` | `getTableRecordActions()` |
-| Resource table generators | `outputTableActions()` | `outputTableRecordActions()` |
-| Resource table generators | `outputTableMethodBulkActions()` | `outputTableBulkActions()` |
-| `Filament\Forms\Commands\FileGenerators\RichContentCustomBlockClassGenerator` | `configureToPreviewMethod()` | `configureToPreviewHtmlMethod()` |
-| Dashboard `HasFilters` concern | `normalizeTableFilterValuesFromQueryString()` | `normalizeFilterValuesFromQueryString()` |
+| Affected API                                                                  | Removed method                                | Replacement                              |
+| ----------------------------------------------------------------------------- | --------------------------------------------- | ---------------------------------------- |
+| `Filament\Forms\Commands\FileGenerators\RichContentCustomBlockClassGenerator` | `configureToPreviewMethod()`                  | `configureToPreviewHtmlMethod()`         |
+| Dashboard `HasFilters` concern                                                | `normalizeTableFilterValuesFromQueryString()` | `normalizeFilterValuesFromQueryString()` |
 
-The resource table mappings apply to `ResourceClassGenerator`, `RelationManagerClassGenerator`, `Schemas\ResourceTableClassGenerator`, and `Pages\ResourceManageRelatedRecordsPageClassGenerator` under `Filament\Commands\FileGenerators\Resources`. Generated code is unchanged. Method parameters retain their names and defaults, including `$method` and the dashboard normalizer's by-reference `$data`.
+Method parameters retain their names and defaults, including `$method` and the dashboard normalizer's by-reference `$data`.
 
 The script migrates calls on these owning classes and subclasses when the methods retain their Filament implementations. For the protected preview and dashboard methods, only calls through `$this` are migrated. Named and unpacked arguments, nullsafe calls, and first-class callables are preserved. Canonical calls are unchanged on repeated runs.
 
-Migrate custom generator overrides and their corresponding `parent::` calls manually. Previously, canonical generator hooks called the old virtual hooks; now the canonical hooks own the implementation. Move custom behavior to the replacement hooks, preserving visibility, parameters, return values, and the record-action output/getter pipeline. If you already override both names, reconcile them rather than creating duplicate declarations or reciprocal calls. Inherited overrides, trait methods and adaptations, class-qualified calls, dynamic names, array callbacks, unknown receiver types, and direct trait consumers outside the owning classes also need manual review. Calls on known overrides of either name are skipped; record-action output calls are also skipped when either getter is overridden. Review base-typed receivers that may hold custom subclasses not visible in their inferred types.
+Review custom overrides and their `parent::` calls, inherited or trait-provided methods, adaptations, class-qualified calls, dynamic names, callbacks, and unknown receiver types manually. Preserve visibility, parameters, return values, and dispatch. Reconcile implementations of both names without duplicate declarations or reciprocal calls.
 
 Dashboard mounting and recursive normalization already use `normalizeFilterValuesFromQueryString()`. Renaming an old-name dashboard override can newly activate it; review that behavior rather than blindly renaming the declaration. Keep by-reference mutation when calling or overriding the canonical method. The table runtime's separate `normalizeTableFilterValuesFromQueryString()` and legacy Livewire `getTableActions()` configuration hooks are unchanged.
+
+Resource-table generator `getTableActions()`, `outputTableActions()`, and `outputTableMethodBulkActions()` remain deprecated virtual hooks called by their canonical counterparts. Safe calls are still modernized, but existing overrides remain functional.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('schemas') || packages.includes('forms') || packages.includes('tables')">
 <span slot="summary">Legacy reactivity, affix, and sorting methods have been removed</span>
 
-| Affected API | Removed method | Replacement |
-| --- | --- | --- |
-| `Filament\Schemas\Schema` and schema components, including form fields | `reactive()` | `live()` |
-| Form components using `Filament\Forms\Components\Concerns\HasAffixes` | `postfix()` | `suffix()` |
+| Affected API                                                              | Removed method                | Replacement          |
+| ------------------------------------------------------------------------- | ----------------------------- | -------------------- |
+| `Filament\Schemas\Schema` and schema components, including form fields    | `reactive()`                  | `live()`             |
+| Form components using `Filament\Forms\Components\Concerns\HasAffixes`     | `postfix()`                   | `suffix()`           |
 | Table Livewire components using `Filament\Tables\Concerns\CanSortRecords` | `updatedTableSortDirection()` | `updatedTableSort()` |
 
 The script renames zero-argument `reactive()` calls. Calls passing arguments, unpacked arguments, and first-class `reactive(...)` callables need manual migration: the old method ignored extra positional arguments, while `live()` consumes optional `onBlur`, `debounce`, and `condition` arguments. Preserve argument-expression side effects without passing formerly ignored values to `live()`. For a callback that must ignore supplied arguments, use `fn () => $component->live()`. `debounce()` remains available.
@@ -543,18 +593,18 @@ Preserve custom dispatch and return values: `reactive()` called `$this->live()` 
 
 The script renames calls on `Filament\Schemas\Schema`, schema components, and their subclasses:
 
-| Affected API | Removed method | Replacement |
-| --- | --- | --- |
-| `Schema` | `name()` | `key()` |
-| `Schema` | `getName()` | `getKey()` |
-| `Schema` | `context()` | `operation()` |
-| `Schema`, schema components | `clearCachedDefaultChildSchemas()` | `clearCachedChildSchemas()` |
-| Schema components | `getGetCallback()` | `makeGetUtility()` |
-| Schema components | `getSetCallback()` | `makeSetUtility()` |
-| Schema components | `getChildComponentContainer()` | `getChildSchema()` |
-| Schema components | `getChildComponentContainers()` | `getChildSchemas()` |
-| `Filament\Schemas\Components\Wizard\Step` | `afterValidated()` | `afterValidation()` |
-| View components using `Filament\Schemas\Components\Concerns\HasLabel`, including fields, entries, stats, and rich editor tools | `disableLabel()` | `hiddenLabel()` |
+| Affected API                                                                                                                   | Removed method                     | Replacement                 |
+| ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------- | --------------------------- |
+| `Schema`                                                                                                                       | `name()`                           | `key()`                     |
+| `Schema`                                                                                                                       | `getName()`                        | `getKey()`                  |
+| `Schema`                                                                                                                       | `context()`                        | `operation()`               |
+| `Schema`, schema components                                                                                                    | `clearCachedDefaultChildSchemas()` | `clearCachedChildSchemas()` |
+| Schema components                                                                                                              | `getGetCallback()`                 | `makeGetUtility()`          |
+| Schema components                                                                                                              | `getSetCallback()`                 | `makeSetUtility()`          |
+| Schema components                                                                                                              | `getChildComponentContainer()`     | `getChildSchema()`          |
+| Schema components                                                                                                              | `getChildComponentContainers()`    | `getChildSchemas()`         |
+| `Filament\Schemas\Components\Wizard\Step`                                                                                      | `afterValidated()`                 | `afterValidation()`         |
+| View components using `Filament\Schemas\Components\Concerns\HasLabel`, including fields, entries, stats, and rich editor tools | `disableLabel()`                   | `hiddenLabel()`             |
 
 Arguments, defaults, nullable values, closure evaluation, and child-schema caching and visibility behavior are unchanged. `disableLabel()` forwards its condition directly: use `hiddenLabel(condition: false)`, not a negated condition. The separate action `disableLabel()` alias is covered by the action method migration above. Component names, such as `TextInput::name()`, `RenderHook::name()`, and their `getName()` methods, are not schema keys and are not renamed.
 
@@ -574,34 +624,34 @@ The legacy `InteractsWithInfolists` Livewire bridge, legacy table configuration 
 
 The script renames calls on the following form components and their subclasses. Arguments, defaults, and closure evaluation are unchanged, except for the `idleLabel()` argument rename below.
 
-| Component | Removed method | Replacement |
-| --- | --- | --- |
-| `BaseFileUpload` (including `FileUpload`) | `enableDownload()` | `downloadable()` |
-| `BaseFileUpload` | `enableOpen()` | `openable()` |
-| `BaseFileUpload` | `enableReordering()` | `reorderable()` |
-| `BaseFileUpload` | `moveFile()` | `moveFiles()` |
-| `BaseFileUpload` | `storeFile()` | `storeFiles()` |
-| `Builder`, `Repeater` | `createItemButtonLabel()` | `addActionLabel()` |
-| `Builder` | `createItemBetweenButtonLabel()` | `addBetweenActionLabel()` |
-| `Builder` | `showBlockLabels()`, `withBlockLabels()` | `blockLabels()` |
-| `Builder` | `withBlockNumbers()` | `blockNumbers()` |
-| `Repeater` | `orderable()` | `orderColumn()` |
-| `KeyValue` | `addButtonLabel()` | `addActionLabel()` |
-| `KeyValue` | `deleteButtonLabel()` | `deleteActionLabel()` |
-| `KeyValue` | `reorderButtonLabel()` | `reorderActionLabel()` |
-| `FileUpload` | `idleLabel()` | `placeholder()` |
-| `FileUpload` | `imageResizeMode()` | `automaticallyResizeImagesMode()` |
-| `FileUpload` | `imageResizeTargetHeight()` | `automaticallyResizeImagesToHeight()` |
-| `FileUpload` | `imageResizeTargetWidth()` | `automaticallyResizeImagesToWidth()` |
-| `FileUpload` | `imageResizeUpscale()` | `automaticallyUpscaleImagesWhenResizing()` |
-| `FileUpload` | `orientImageFromExif()` | `orientImagesFromExif()` |
-| `FileUpload` | `getImageCropAspectRatio()` | `getAutomaticallyCropImagesAspectRatio()` |
-| `FileUpload` | `getImageResizeMode()` | `getAutomaticallyResizeImagesMode()` |
-| `FileUpload` | `getImageResizeTargetHeight()` | `getAutomaticallyResizeImagesHeight()` |
-| `FileUpload` | `getImageResizeTargetWidth()` | `getAutomaticallyResizeImagesWidth()` |
-| `FileUpload` | `getImageResizeUpscale()` | `shouldAutomaticallyUpscaleImagesWhenResizing()` |
-| `FileUpload` | `imageEditorAspectRatios()` | `imageEditorAspectRatioOptions()` |
-| `FileUpload` | `getImageEditorAspectRatiosForJs()` | `getImageEditorAspectRatioOptionsForJs()` |
+| Component                                 | Removed method                           | Replacement                                      |
+| ----------------------------------------- | ---------------------------------------- | ------------------------------------------------ |
+| `BaseFileUpload` (including `FileUpload`) | `enableDownload()`                       | `downloadable()`                                 |
+| `BaseFileUpload`                          | `enableOpen()`                           | `openable()`                                     |
+| `BaseFileUpload`                          | `enableReordering()`                     | `reorderable()`                                  |
+| `BaseFileUpload`                          | `moveFile()`                             | `moveFiles()`                                    |
+| `BaseFileUpload`                          | `storeFile()`                            | `storeFiles()`                                   |
+| `Builder`, `Repeater`                     | `createItemButtonLabel()`                | `addActionLabel()`                               |
+| `Builder`                                 | `createItemBetweenButtonLabel()`         | `addBetweenActionLabel()`                        |
+| `Builder`                                 | `showBlockLabels()`, `withBlockLabels()` | `blockLabels()`                                  |
+| `Builder`                                 | `withBlockNumbers()`                     | `blockNumbers()`                                 |
+| `Repeater`                                | `orderable()`                            | `orderColumn()`                                  |
+| `KeyValue`                                | `addButtonLabel()`                       | `addActionLabel()`                               |
+| `KeyValue`                                | `deleteButtonLabel()`                    | `deleteActionLabel()`                            |
+| `KeyValue`                                | `reorderButtonLabel()`                   | `reorderActionLabel()`                           |
+| `FileUpload`                              | `idleLabel()`                            | `placeholder()`                                  |
+| `FileUpload`                              | `imageResizeMode()`                      | `automaticallyResizeImagesMode()`                |
+| `FileUpload`                              | `imageResizeTargetHeight()`              | `automaticallyResizeImagesToHeight()`            |
+| `FileUpload`                              | `imageResizeTargetWidth()`               | `automaticallyResizeImagesToWidth()`             |
+| `FileUpload`                              | `imageResizeUpscale()`                   | `automaticallyUpscaleImagesWhenResizing()`       |
+| `FileUpload`                              | `orientImageFromExif()`                  | `orientImagesFromExif()`                         |
+| `FileUpload`                              | `getImageCropAspectRatio()`              | `getAutomaticallyCropImagesAspectRatio()`        |
+| `FileUpload`                              | `getImageResizeMode()`                   | `getAutomaticallyResizeImagesMode()`             |
+| `FileUpload`                              | `getImageResizeTargetHeight()`           | `getAutomaticallyResizeImagesHeight()`           |
+| `FileUpload`                              | `getImageResizeTargetWidth()`            | `getAutomaticallyResizeImagesWidth()`            |
+| `FileUpload`                              | `getImageResizeUpscale()`                | `shouldAutomaticallyUpscaleImagesWhenResizing()` |
+| `FileUpload`                              | `imageEditorAspectRatios()`              | `imageEditorAspectRatioOptions()`                |
+| `FileUpload`                              | `getImageEditorAspectRatiosForJs()`      | `getImageEditorAspectRatioOptionsForJs()`        |
 
 The script also renames `idleLabel(label: ...)` to `placeholder(placeholder: ...)`. Calls unpacking arguments into `idleLabel()` are left unchanged; rename the method and any `'label'` argument key manually. Update named arguments when invoking migrated first-class callables yourself. Other aliases preserve named and unpacked arguments.
 
@@ -609,7 +659,15 @@ Manually migrate custom overrides (including inherited ones), class-qualified ca
 
 Preserve custom parameter names, defaults, return values, and dispatch behavior. The wrappers called replacements through `$this`, so renaming `parent::` calls can bypass subclass overrides. Many setters also returned `$this` regardless of the replacement's return value.
 
-Negating `disable*()` methods, `imageCropAspectRatio()`, and the no-op `inset()` methods are covered by the behavioral configuration migration below.
+Negating `disable*()` methods and `imageCropAspectRatio()` [remain supported](#retaining-deprecated-integration-apis).
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('forms')">
+<span slot="summary">Ineffective builder and repeater `inset()` methods have been removed</span>
+
+`Builder::inset()` and `Repeater::inset()` had no effect. The script migrates supported calls while evaluating the receiver and argument expressions once, preserving fluent chains and nullsafe short-circuiting. Creating a supplied closure still happens, but its body is not invoked. Genuine custom `inset()` implementations retain their dispatch.
+
+Review custom overrides, dynamic calls, first-class callables, unpacked arguments, and opaque receiver types manually. When removing an ineffective call yourself, preserve side effects in its receiver and argument expressions; do not invoke a closure merely to discard it or evaluate arguments that a nullsafe chain would skip.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('forms') || packages.includes('tables')">
@@ -617,16 +675,16 @@ Negating `disable*()` methods, `imageCropAspectRatio()`, and the no-op `inset()`
 
 The script renames calls on these owning types and their subclasses:
 
-| Owning type | Removed method | Replacement |
-| --- | --- | --- |
-| `Filament\Forms\Components\MarkdownEditor`, `RichEditor` | `getUploadedAttachmentUrlUsing()` | `getFileAttachmentUrlUsing()` |
-| `MarkdownEditor`, `RichEditor` | `saveUploadedFileAttachmentsUsing()` | `saveUploadedFileAttachmentUsing()` |
-| `Filament\Forms\Components\MorphToSelect\Type` | `titleColumnName()` | `titleAttribute()` |
-| `Filament\Tables\Filters\BaseFilter` (all table filters) | `form()` | `schema()` |
-| `BaseFilter` | `getFormSchema()` | `getSchemaComponents()` |
-| `Filament\Tables\Filters\SelectFilter` (including ternary and trashed filters) | `column()` | `attribute()` |
-| `SelectFilter` | `getColumn()` | `getAttribute()` |
-| `Filament\Tables\Grouping\Group` | `getDescriptionUsing()` | `getDescriptionFromRecordUsing()` |
+| Owning type                                                                    | Removed method                       | Replacement                         |
+| ------------------------------------------------------------------------------ | ------------------------------------ | ----------------------------------- |
+| `Filament\Forms\Components\MarkdownEditor`, `RichEditor`                       | `getUploadedAttachmentUrlUsing()`    | `getFileAttachmentUrlUsing()`       |
+| `MarkdownEditor`, `RichEditor`                                                 | `saveUploadedFileAttachmentsUsing()` | `saveUploadedFileAttachmentUsing()` |
+| `Filament\Forms\Components\MorphToSelect\Type`                                 | `titleColumnName()`                  | `titleAttribute()`                  |
+| `Filament\Tables\Filters\BaseFilter` (all table filters)                       | `form()`                             | `schema()`                          |
+| `BaseFilter`                                                                   | `getFormSchema()`                    | `getSchemaComponents()`             |
+| `Filament\Tables\Filters\SelectFilter` (including ternary and trashed filters) | `column()`                           | `attribute()`                       |
+| `SelectFilter`                                                                 | `getColumn()`                        | `getAttribute()`                    |
+| `Filament\Tables\Grouping\Group`                                               | `getDescriptionUsing()`              | `getDescriptionFromRecordUsing()`   |
 
 For automatically migrated calls, parameter names, required arguments, nullable values, closure evaluation, and return values are unchanged. Named and unpacked arguments and first-class callables are preserved. Filter `form(schema: ...)` becomes `schema(schema: ...)`, unlike action `form(form: ...)`, which also renames the argument. `getSchemaComponents()` returns the configured components or the default filter field, not the `Schema` instance returned by `getSchema()`. Select filter `attribute()` still evaluates closures lazily and falls back to the filter name for `null`.
 
@@ -636,180 +694,13 @@ Manually migrate custom overrides (including inherited methods and methods suppl
 
 Preserve custom parameter names, defaults, control flow, visibility, return values, and dispatch behavior. The wrappers called replacements through `$this`, so simply renaming a `parent::` call may bypass a subclass override. The setters returned `$this` regardless of the replacement's return value; the getters returned the replacement's result. Retaining application-owned forwarding methods may be necessary. Renaming an old getter override can newly activate it where Filament already called the canonical getter; reconcile collisions and test the intended behavior rather than blindly renaming declarations.
 
-Behavioral configuration aliases are covered separately below. Legacy Livewire/table configuration bridges are unchanged.
-</Disclosure>
-
-<Disclosure open x-show="packages.includes('panels') || packages.includes('widgets')">
-<span slot="summary">Deprecated panel, resource, and widget configuration hooks have been removed</span>
-
-The script migrates unambiguous declarations on leaf classes extending the built-in owners directly: resource label properties/getters, notification-message hooks, page header actions, stats, and the profile back action. It checks all configured source paths for descendants, not just the file being processed. Include your full application source in those paths. Public hook and property declarations are left unchanged when the class is referenced outside its own declaration, including type declarations, registrations, and callbacks: those references can expose callers whose nullable return or visibility contracts require manual reconciliation. Custom parents, other traits, old/new collisions, custom signatures/attributes, callbacks, dynamic dispatch, and references to either hook also require manual reconciliation. Nullable hooks retain their original body in an immediately invoked closure before resolving the fallback, preserving return validation and `finally` timing. Hooks with static local variables or method-name introspection are left unchanged.
-
-Alignment calls through explicit classes also migrate when both implementations retain their built-in behavior. Calls through `self::`, `static::`, and `parent::` additionally require a leaf declaring class: otherwise a descendant override can change the old wrapper's late-static dispatch. The script does not rename custom alignment overrides. Audit inheritance outside the configured source paths, published Blade references, and custom dispatch. Preserve static declarations, visibility, parameter names, side effects, evaluation order, and existing modern overrides. Do not rename both methods onto the same name or newly activate an old override that a modern override previously bypassed.
-
-| Owner | Removed configuration | Supported configuration |
-| --- | --- | --- |
-| Resources | Static `$label`, `$pluralLabel`, `getLabel()`, `getPluralLabel()` | Static `$modelLabel`, `$pluralModelLabel`, `getModelLabel(): string`, `getPluralModelLabel(): string` |
-| Resource pages | `getModelLabel()` | Resource labels, or page-specific action/table configuration as described below |
-| `CreateRecord` | `getCreatedNotificationMessage()` | `getCreatedNotificationTitle(): ?string` |
-| `EditRecord` and the settings plugin's `SettingsPage` | `getSavedNotificationMessage()` | `getSavedNotificationTitle(): ?string` |
-| Pages | `getActions()` | `getHeaderActions(): array` |
-| `StatsOverviewWidget` | `getCards()` | `getStats(): array` |
-| `BasePage` | Static `alignFormActionsLeft()` / `alignFormActionsRight()` | Static `alignFormActionsStart()` / `alignFormActionsEnd()` |
-| `EditProfile` | `backAction()` | `getCancelFormAction(): Action` |
-
-For a simple `getCards()` or `getActions()` override with no modern override anywhere in its hierarchy, move its body to the replacement method. Calls to the removed framework implementation returned `[]`; replace those with `[]`, rather than a new parent call that might now invoke different behavior. Reconcile intermediate parents and traits before migrating descendants. Where both names were used to compose results, merge the implementation into the modern hook without introducing recursion or evaluating a result twice. The same inheritance review applies to alignment aliases: their old implementations dispatched through `static::` and returned `void`. They already meant logical start/end, including in RTL.
-
-For resource properties, rename only when there is no modern configuration to preserve. The old singular lookup was `static::$modelLabel ?? static::getLabel() ?? get_model_label(static::getModel())`; the plural lookup first selected `static::$pluralModelLabel ?? static::getPluralLabel()`, then used it only when `filled()`. A modern empty plural label suppressed the legacy fallback and selected locale-dependent pluralization. If both configurations exist, explicitly preserve this precedence in the modern getter or consolidate the property declarations across the hierarchy. Do not replace a non-null modern value with the old value. A renamed nullable getter must still return a string: use `Filament\Support\get_model_label()` for the singular model fallback, and retain the plural getter's locale-aware behavior. A parent modern getter may read the same property or invoke another override; it is not always equivalent to calling the removed parent getter.
-
-A resource page's label was used by its default action resolver and, on `ListRecords`, its table. Moving it to the resource changes every page using that resource. For a page-specific label, override `getDefaultActionModelLabel(Action $action): ?string`, returning the former page result `?? parent::getDefaultActionModelLabel($action)`, and configure the list table's `modelLabel()` separately. Keep an empty action label distinct from `null`; the old list-table override applied only to truthy values. If the old getter used page state or had side effects, preserve its original evaluation point in table construction rather than turning it into a deferred closure or a static resource getter. The separate inherited table configuration bridge and `ListRecords::getPluralModelLabel()` have not been removed in this round.
-
-Notification-message hooks returned nullable text, but **`null` fell back to the translated default**. A title override returning `null` instead disables the notification. For example, migrate an `EditRecord` message override like this, retaining its original computations:
-
-```php
-protected function getSavedNotificationTitle(): ?string
-{
-    $message = $this->record->is_featured ? 'Featured record saved' : null;
-
-    return $message ?? __('filament-panels::resources/pages/edit-record.notifications.saved.title');
-}
-```
-
-Use `filament-panels::resources/pages/create-record.notifications.created.title` for `CreateRecord`, or `filament-spatie-laravel-settings-plugin::pages/settings-page.notifications.saved.title` for `SettingsPage`. The settings page's title hook is **public** and `#[Unexposed]`; retain that attribute when overriding it. Preserve `''` as an explicit suppression and do not replace `??` with `?:`. A removed base message hook returned `null`, not the parent's title. If an existing modern title override calls its parent, inline the old fallback into that path instead of overwriting the modern override.
-
-`EditProfile` now builds the existing cancel action directly in `getCancelFormAction()`, keeping the action name `back`, its styling, and SPA/history navigation. Move custom `backAction()` behavior into that hook, reconciling existing overrides and parent calls first. The replacement is protected: migrate external calls through an appropriate application-owned public API rather than calling it externally or exposing it as a Livewire endpoint.
-
-The deprecated widget-list helpers `Page::getVisibleHeaderWidgets()`, `getVisibleFooterWidgets()`, `filterVisibleWidgets()`, and `Dashboard::getVisibleWidgets()` have also been removed. When building a schema, use `getWidgetsSchemaComponents($this->getHeaderWidgets())`, `getWidgetsSchemaComponents($this->getFooterWidgets())`, or `getWidgetsSchemaComponents($this->getWidgets())`. These return schema components, **not widget class names/configurations**, and perform visibility filtering. Migrate custom templates to render a schema rather than feeding these components back into a widget loop. If you need a filtered widget list instead, filter your original list with `array_filter($widgets, fn ($widget): bool => $this->normalizeWidgetClass($widget)::canView())`, preserving its keys. Move custom selection logic into the widget-list hooks or schema construction explicitly; the modern rendering path already bypassed overrides of the old visible-list helpers. Preserve widget configuration/data, visibility checks, and the time at which those checks run.
+Behavioral configuration aliases [remain supported](#retaining-deprecated-integration-apis). Legacy Livewire/table configuration bridges are unchanged.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('panels')">
-<span slot="summary">Old panel registration APIs and `Navigation\MenuItem` have been removed</span>
-
-The deprecated registration methods on `FilamentManager` (also called through `Filament`) have been removed. `registerPanel()` and `serving()` remain available.
-
-| Removed manager method | Replacement |
-| --- | --- |
-| `registerNavigationGroups($groups)` | Panel `navigationGroups($groups)` |
-| `registerNavigationItems($items)` | Panel `navigationItems($items)` |
-| `registerPages($pages)` | Panel `pages($pages)` |
-| `registerResources($resources)` | Panel `resources($resources)` |
-| `registerWidgets($widgets)` | Panel `widgets($widgets)` |
-| `registerUserMenuItems($items)` | Panel `userMenuItems($items)` |
-| `registerTheme($theme)` | Panel `theme($theme)` |
-| `registerViteTheme($theme, $buildDirectory)` | Panel `viteTheme($theme, $buildDirectory)` |
-| `registerRenderHook($name, $hook)` | Global `FilamentView::registerRenderHook($name, $hook)` |
-| `renderHook($name)` | `FilamentView::renderHook($name)` |
-| `registerScriptData($data)` | Global `FilamentAsset::registerScriptData($data)` |
-| `registerScripts()` / `registerStyles()` | Explicit `Js` / `Css` assets registered with `FilamentAsset` |
-
-The `ReplaceLegacyPanelIntegrationRector` rule migrates direct PHP calls to the exact `Filament\Facades\Filament` class for the global hook/script-data methods and the eight panel-targeted configuration methods, including imported aliases and named arguments. It preserves argument order and does not depend on the removed methods being installed. It leaves manager instances, custom facade subclasses, dynamic calls, first-class callables, unpacking, extra arguments, and unknown argument names unchanged. Theme inputs that need uncertain scalar coercion are also left unchanged. Review custom facade roots/container bindings in other files before accepting changes; skip the rule for affected files. Extra positional arguments were ignored by the old wrappers: do not accidentally turn an ignored scope, hook data, or asset package into active configuration.
-
-For panel-targeted registrations, the script uses an immediately invoked closure to preserve argument evaluation/validation before selecting **the default panel**, even while another panel is current. It retains registration timing/order, `void` results, and the old missing-default-panel `LogicException` messages. It does not relocate registrations into providers. When simplifying the generated code or migrating unsupported calls manually, put configuration in that panel's `PanelProvider::panel()` only when the timing is equivalent. To keep an existing serving-time or provider-time registration, evaluate its arguments at the original point, then call `Filament::getDefaultPanel()->pages($pages)` (or the corresponding method), preserving registration order. For example:
-
-```php
-use App\Filament\Pages\Report;
-use Filament\Facades\Filament;
-
-Filament::serving(function (): void {
-    $pages = [Report::class]; // Retain any original argument computations here.
-
-    Filament::getDefaultPanel()->pages($pages);
-});
-```
-
-Do not use the current panel, move request-dependent computations into early provider configuration, or defer side effects to a new closure. Keep append/merge order, navigation registration timing, theme replacement precedence, and the Vite build directory. If code handled the old missing-default-panel `LogicException`, handle `NoDefaultPanelSetException` explicitly after migration. The old methods returned `void`; do not start consuming fluent panel return values. Review custom manager overrides and trait-provided behavior manually, not just their call sites.
-
-Render-hook registration through the old manager was **global and immediate**, despite its deprecation suggesting panel configuration. Keep it global with `Filament\Support\Facades\FilamentView`; using a panel's `renderHook()` instead changes registration lifecycle and scope. Script data likewise stays global (the default `null` package), with later registrations overwriting duplicate keys. Do not migrate it to panel boot or an asset package unless that change is intentional.
+<span slot="summary">Legacy asset registration methods have been removed</span>
 
 `registerScripts()` and `registerStyles()` already threw exceptions rather than registering assets. There is no functioning legacy asset conversion to preserve. Choose stable IDs and the existing package namespace explicitly using `Filament\Support\Assets\Js::make($id, $path)` / `Css::make($id, $path)` and `Filament\Support\Facades\FilamentAsset::register($assets, $package)`. Preserve URLs versus local paths, module/async/defer flags, on-demand loading, and asset ordering when migrating an older integration. The removed `shouldBeLoadedBeforeCoreScripts` flag has no direct replacement; inspect dependencies and the [asset registration API](../support/assets) instead of silently dropping it.
-
-`Filament\Navigation\MenuItem` and its user/tenant-menu conversion branches have been removed. Use `Filament\Actions\Action` or menu configuration closures returning an action. The script converts direct factories with literal configuration inside literal panel user/tenant-menu arrays, including grouped menus and legacy `registerUserMenuItems()` calls. Generated closures preserve the old defaults, slugged names, special keys, and action construction at menu resolution, rather than constructing actions during provider configuration. Review global `MenuItem` configuration and bindings in other files; files containing other static `MenuItem` calls are left unchanged.
-
-Stored items, computed values, callbacks, custom subclasses, enum/HTML icons, and non-PHP references need manual migration. This is not a global class rename: `Action::make()` needs a stable unique name, and its defaults, closure injection, and evaluation timing differ. Keep existing groups and special names (user `profile` / `logout`, and tenant `profile` / `billing` / `register`). Use a keyed closure accepting `Action $action` to customize a built-in action; a direct action is keyed by its own name, not its array key. The old user-menu `account` key resolved to `profile`.
-
-For an ordinary item, choose an explicit name and copy its evaluated color, icon, label, sort (default `0`), visibility, URL, and new-tab flag into `Action::make($name)`. The old name was the slug of the transliterated label, so retain it where code relies on that name and check collisions. `postAction($url)` becomes `postToUrl(filled($url))` plus `url($explicitUrl ?? $url)`; an explicit URL, even `''`, took precedence. Preserve `hidden` before `visible` short-circuiting and post-action evaluation even when an explicit URL is present.
-
-When callbacks have side effects or use injection, preserve evaluation **inside the menu registration closure**, including the action-construction boundary. For an ordinary item, evaluate label and post action first, then call `Action::make($name)` (which runs configuration callbacks). Next, evaluate and apply color, then icon; apply the saved label and POST flag; evaluate and apply sort, then visibility; finally evaluate URL and the new-tab flag and apply them together. Do not evaluate all fields before constructing the action: configuration callbacks or container bindings may change state read by the remaining fields. For a built-in item, use the already-constructed action supplied to the keyed closure rather than making another one.
-
-Pass evaluated snapshots to each setter instead of transplanting callbacks onto the action. Re-evaluating later on an `Action` can inject different objects, repeat effects, or observe different state. Move custom subclasses/configuration into application-owned action factories only after reviewing those contracts; do not globally rename `configureUsing()` registrations, bindings, type declarations, or `toAction()` calls.
-
-For a special built-in item, the old conversion overwrote every listed field, including `null` color/icon/label, sort `0`, visibility `true`, and `postToUrl(false)` when unset. A closure that merely changes the label keeps modern built-in defaults instead; explicitly set the other fields if you require the old result. In particular, an old logout item without a post action disabled POST, and old tenant items could replace built-in visibility. Verify authorization and HTTP method intentionally rather than carrying those values over blindly. Test both single and grouped menus, hidden items, profile/logout placement, and tenant availability after migrating.
-</Disclosure>
-
-<Disclosure open x-show="packages.includes('forms') || packages.includes('actions')">
-<span slot="summary">Deprecated behavioral configuration methods have been removed</span>
-
-These methods did more than forward their arguments. For boolean literals, use the following replacements; omitting the old condition meant `true`:
-
-| Owner | Removed method | Replacement for `true` / `false` |
-| --- | --- | --- |
-| `BaseFileUpload`, `FileUpload` | `disablePreview()` | `previewable(false)` / `previewable(true)` |
-| `Builder`, `Repeater` | `disableItemCreation()`, `disableItemDeletion()`, `disableItemMovement()` | `addable(false)`, `deletable(false)`, `reorderable(false)` / pass `true` instead |
-| `KeyValue` | `disableAddingRows()`, `disableDeletingRows()`, `disableEditingKeys()`, `disableEditingValues()` | `addable(false)`, `deletable(false)`, `editableKeys(false)`, `editableValues(false)` / pass `true` instead |
-| `TextInput`, `Textarea` | `disableAutocomplete()` | `autocomplete(false)` / `autocomplete(null)` |
-| `TextInput` | `disableAutocapitalize()` | `autocapitalize(false)` / `autocapitalize(null)` |
-| `Select` | `disablePlaceholderSelection()` | `selectablePlaceholder(false)` / `selectablePlaceholder(true)` |
-| `DateTimePicker`, including `DatePicker` and `TimePicker` | `withoutDate()`, `withoutSeconds()`, `withoutTime()` | `date(false)`, `seconds(false)`, `time(false)` / pass `true` instead |
-| `CreateAction`, `AttachAction`, `AssociateAction` | `disableCreateAnother()`, `disableAttachAnother()`, `disableAssociateAnother()` | `createAnother(false)`, `attachAnother(false)`, `associateAnother(false)` / pass `true` instead |
-
-`disableGrammarly()`, `disableOptionWhen()`, toolbar configuration, and the panel `CreateRecord::disableCreateAnother()` hook are not removed by this change.
-
-The `ReplaceDeprecatedBehavioralConfigurationRector` rule migrates omitted conditions, literal booleans, and natively typed boolean/closure expressions on direct built-in `make()` factories and exact built-in typed receivers. This includes named arguments and chains of the listed setters and `label()`. Computed arguments are captured once; generated closures retain lazy injection, original-owner evaluation for builder/repeater/select clones, and eager modal alignment. It also handles the cases below. It leaves uncertain types, custom subclasses, `parent::` / `static::` calls, dynamic or nullsafe calls, first-class callables, unpacked or extra arguments, and chains through other methods for manual migration. It does not rename declarations. Review container bindings, macros, and configuration that substitute custom implementations, even behind a built-in factory or base-typed receiver; exclude affected files from the rule when necessary. Existing supported calls are not rewritten, and the rule works without the removed methods installed.
-
-### Preserving lazy conditions
-
-Do not replace a closure with `! $condition`, or move its evaluation to configuration time. The old negating setters captured the supplied value once, then evaluated it lazily through the component's `evaluate()`, preserving Filament's closure injection. For example, migrate a file upload condition using:
-
-```php
-use Filament\Forms\Components\BaseFileUpload;
-
-$condition = resolvePreviewCondition(); // Evaluate the original argument once, at configuration time.
-
-$upload->previewable(static fn (BaseFileUpload $component): bool => ! $component->evaluate($condition));
-```
-
-Keep the original closure object, its binding, and any by-reference captures. Capture the resulting `$condition` by value in the wrapper, rather than accidentally making later assignments to the caller's variable change the configured condition. Autocomplete and autocapitalization must return `$component->evaluate($condition) ? false : null`, **not** `! $component->evaluate($condition)`: `null` leaves the browser attribute unset rather than enabling it explicitly.
-
-For `Builder` and `Repeater`, the old wrappers evaluated on the original configuring object (`$this`), even though they also accepted an injected component. `disablePlaceholderSelection()` likewise captured `$this`. If your code clones components or changes evaluation contexts, capture that original owner explicitly rather than evaluating on the clone. For upload, key/value, date/time, autocomplete/autocapitalization, and action wrappers, retain evaluation on the injected component or action. Review subclass overrides of both setters and `evaluate()`; these distinctions can be observable.
-
-### Migrating image cropping
-
-Replace `FileUpload::imageCropAspectRatio('16:9')` with `imageAspectRatio('16:9')->automaticallyCropImagesToAspectRatio(true)`, in that order. For `null`, empty strings, and whitespace-only strings, pass the same aspect ratio and disable automatic cropping. The string `'0'` is filled and enables cropping. Later configuration still takes precedence.
-
-For a computed value or closure, evaluate the argument expression only once and retain the same value for both operations:
-
-```php
-use Closure;
-
-$ratio = resolveAspectRatio();
-
-$upload
-    ->imageAspectRatio($ratio)
-    ->automaticallyCropImagesToAspectRatio($ratio instanceof Closure ? $ratio : filled($ratio));
-```
-
-Do not evaluate a ratio closure eagerly, duplicate its construction, or replace it with an unconditional `true`. The original method stored the **same closure** for both options; getters may evaluate it independently, including repeated side effects and injected utilities. The script handles literal and natively typed string/closure/nullable expressions (including named `ratio:` arguments), capturing the supplied value once for both setters.
-
-### Migrating modal alignment
-
-`Action::centerModal()` evaluated its condition **immediately**, and only called `modalAlignment(Alignment::Center)` when truthy. `false` and `null` left any previous alignment untouched. The script replaces omitted or literal `true` conditions with `modalAlignment(Alignment::Center)` and removes calls with literal `false` or `null`, preserving the receiver and chain. For other conditions, evaluate through the action at the original point and configure alignment only in the truthy branch:
-
-```php
-use Filament\Support\Enums\Alignment;
-
-if ($action->evaluate($condition)) {
-    $action->modalAlignment(Alignment::Center);
-}
-```
-
-Do not set alignment to `null` on the false branch or store the condition in a lazy alignment closure. Preserve receiver and argument evaluation order when splitting an expression into statements.
-
-### Migrating date/time icons and inset calls
-
-`DateTimePicker::icon()` (also inherited by `DatePicker` and `TimePicker`) has been removed. It defaulted `null` or an omitted argument to `Heroicon::Calendar`, passed `isInline: true` to `suffixIcon()`, and did **nothing** for `false`, leaving any previous icon and inline setting unchanged. The script handles those literals and natively typed string, enum, HTML, closure, and nullable expressions, including named `icon:` arguments. For unsupported computed arguments, evaluate once, leave configuration alone for `false`, otherwise call `suffixIcon($icon ?? Heroicon::Calendar, isInline: true)`. Do not use `suffixIcon(false)` or drop the inline flag. The old signature accepted `true`, but it was not a supported `suffixIcon()` value; review such calls rather than assigning a new meaning.
-
-The no-op `Builder::inset()` and `Repeater::inset()` methods have been removed. The script removes calls with omitted or literal boolean arguments, and preserves evaluation of natively typed boolean/closure arguments through an immediately invoked expression. For other calls, preserve evaluation of the receiver and every argument, including ignored extra arguments, in their original order; removing a call must not discard assignments, function calls, exceptions, or other side effects. Passing a closure did not execute its body, although constructing it still evaluated captures. Preserve any relevant argument type validation too.
-
-For all these methods, manually migrate array callbacks, callable references, argument unpacking, strings, Blade references, concern consumers outside the built-in owners, and custom overrides. Keep callable parameter names, defaults, ignored argument evaluation, and fluent return behavior. Except for `icon()`, the old setters returned their original receiver even when an overridden replacement returned something else; `icon()` returned the result of `suffixIcon()` unless its argument was `false`. Simply renaming a `parent::` call can also bypass subclass dispatch. Migrate producers and consumers together and test your application's public behavior. A clean Rector dry run does not prove these manual cases have been migrated.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('forms') || packages.includes('actions') || packages.includes('tables')">
@@ -817,16 +708,16 @@ For all these methods, manually migrate array callbacks, callable references, ar
 
 Update your application tests to use the canonical assertions:
 
-| Removed assertion | Replacement |
-| --- | --- |
-| `assertFormFieldIsDisabled()` | `assertFormFieldDisabled()` |
-| `assertFormFieldIsEnabled()` | `assertFormFieldEnabled()` |
-| `assertFormFieldIsReadOnly()` | `assertFormFieldReadOnly()` |
-| `assertFormFieldIsHidden()` | `assertFormFieldHidden()` |
-| `assertFormFieldIsVisible()` | `assertFormFieldVisible()` |
-| `assertActionHeld()` | `assertActionHalted()` |
-| `assertTableActionHeld()` | `assertTableActionHalted()` |
-| `assertTableBulkActionHeld()` | `assertTableBulkActionHalted()` |
+| Removed assertion                  | Replacement                              |
+| ---------------------------------- | ---------------------------------------- |
+| `assertFormFieldIsDisabled()`      | `assertFormFieldDisabled()`              |
+| `assertFormFieldIsEnabled()`       | `assertFormFieldEnabled()`               |
+| `assertFormFieldIsReadOnly()`      | `assertFormFieldReadOnly()`              |
+| `assertFormFieldIsHidden()`        | `assertFormFieldHidden()`                |
+| `assertFormFieldIsVisible()`       | `assertFormFieldVisible()`               |
+| `assertActionHeld()`               | `assertActionHalted()`                   |
+| `assertTableActionHeld()`          | `assertTableActionHalted()`              |
+| `assertTableBulkActionHeld()`      | `assertTableBulkActionHalted()`          |
 | `assertTableActionsExistInOrder()` | `assertTableRecordActionsExistInOrder()` |
 
 These helpers register closures as macros on `Livewire\Features\SupportTesting\Testable`; they are not methods on your Livewire component or PHPUnit test case. Include your `tests` directory in Rector's paths. The set migrates calls whose receiver resolves to the exact `Testable` type, including `Livewire::test()` and Pest's `Pest\Livewire\livewire()` when its plugin is installed and its return type can be resolved. Imported function aliases and stored, typed test receivers are supported; unrelated custom assertions are not renamed. Calls on the exact Filament testing mixin objects also migrate, retaining their closure-factory behavior.
@@ -845,29 +736,29 @@ The same rule runs with the removed aliases absent, leaves canonical assertions 
 
 The script renames calls on `Filament\Tables\Table` and its subclasses, preserving named and unpacked arguments:
 
-| Removed method | Replacement |
-| --- | --- |
-| `actions()` | `recordActions()` |
-| `pushActions()` | `pushRecordActions()` |
-| `actionsColumnLabel()` | `recordActionsColumnLabel()` |
-| `actionsAlignment()` | `recordActionsAlignment()` |
-| `actionsPosition()` | `recordActionsPosition()` |
-| `getActions()` | `getRecordActions()` |
-| `getActionsPosition()` | `getRecordActionsPosition()` |
-| `getActionsAlignment()` | `getRecordActionsAlignment()` |
-| `getActionsColumnLabel()` | `getRecordActionsColumnLabel()` |
-| `bulkActions()` | `toolbarActions()` |
-| `pushBulkActions()` | `pushToolbarActions()` |
-| `getBulkActions()` | `getToolbarActions()` |
-| `toggleColumnsTriggerAction()` | `columnManagerTriggerAction()` |
-| `columnToggleFormColumns()` | `columnManagerColumns()` |
-| `columnToggleFormMaxHeight()` | `columnManagerMaxHeight()` |
-| `columnToggleFormWidth()` | `columnManagerWidth()` |
-| `getColumnToggleFormColumns()` | `getColumnManagerColumns()` |
-| `getColumnToggleFormMaxHeight()` | `getColumnManagerMaxHeight()` |
-| `getColumnToggleFormWidth()` | `getColumnManagerWidth()` |
-| `getToggleColumnsTriggerAction()` | `getColumnManagerTriggerAction()` |
-| `groupsInDropdownOnDesktop()` | `groupingSettingsInDropdownOnDesktop()` |
+| Removed method                    | Replacement                             |
+| --------------------------------- | --------------------------------------- |
+| `actions()`                       | `recordActions()`                       |
+| `pushActions()`                   | `pushRecordActions()`                   |
+| `actionsColumnLabel()`            | `recordActionsColumnLabel()`            |
+| `actionsAlignment()`              | `recordActionsAlignment()`              |
+| `actionsPosition()`               | `recordActionsPosition()`               |
+| `getActions()`                    | `getRecordActions()`                    |
+| `getActionsPosition()`            | `getRecordActionsPosition()`            |
+| `getActionsAlignment()`           | `getRecordActionsAlignment()`           |
+| `getActionsColumnLabel()`         | `getRecordActionsColumnLabel()`         |
+| `bulkActions()`                   | `toolbarActions()`                      |
+| `pushBulkActions()`               | `pushToolbarActions()`                  |
+| `getBulkActions()`                | `getToolbarActions()`                   |
+| `toggleColumnsTriggerAction()`    | `columnManagerTriggerAction()`          |
+| `columnToggleFormColumns()`       | `columnManagerColumns()`                |
+| `columnToggleFormMaxHeight()`     | `columnManagerMaxHeight()`              |
+| `columnToggleFormWidth()`         | `columnManagerWidth()`                  |
+| `getColumnToggleFormColumns()`    | `getColumnManagerColumns()`             |
+| `getColumnToggleFormMaxHeight()`  | `getColumnManagerMaxHeight()`           |
+| `getColumnToggleFormWidth()`      | `getColumnManagerWidth()`               |
+| `getToggleColumnsTriggerAction()` | `getColumnManagerTriggerAction()`       |
+| `groupsInDropdownOnDesktop()`     | `groupingSettingsInDropdownOnDesktop()` |
 
 `groupsInDropdownOnDesktop()` forwards its condition without negating or eagerly evaluating it. Keep `condition:`, its default `true`, explicit `false`, and lazy closures unchanged; nullable conditions were not supported. Named and unpacked arguments and first-class callables retain the same contract. Unrelated methods with this name are unchanged, as are canonical calls on repeated upgrade runs.
 
@@ -885,25 +776,26 @@ Preserve custom parameters and return behavior. The old wrappers dispatched thro
 
 The script renames calls on these owning types and their subclasses:
 
-| Owning type | Removed method | Replacement |
-| --- | --- | --- |
-| `Filament\Tables\Columns\IconColumn` | `options()` | `icons()` |
-| `Filament\Tables\Columns\Column` | `disableClick()` | `disabledClick()` |
-| `Column`, `Filament\Actions\Exports\ExportColumn` | `queriesRelationships()` | `hasRelationship()` |
-| `Filament\Actions\Action`, `Filament\Actions\ActionGroup`, `Filament\Schemas\Components\Tabs\Tab` | `indicator()` | `badge()` |
-| `Action`, `ActionGroup`, `Tab` | `indicatorColor()` | `badgeColor()` |
+| Owning type                                                                                       | Removed method           | Replacement         |
+| ------------------------------------------------------------------------------------------------- | ------------------------ | ------------------- |
+| `Filament\Tables\Columns\IconColumn`                                                              | `options()`              | `icons()`           |
+| `Filament\Tables\Columns\Column`                                                                  | `disableClick()`         | `disabledClick()`   |
+| `Column`, `Filament\Actions\Exports\ExportColumn`                                                 | `queriesRelationships()` | `hasRelationship()` |
+| `Filament\Actions\Action`, `Filament\Actions\ActionGroup`, `Filament\Schemas\Components\Tabs\Tab` | `indicatorColor()`       | `badgeColor()`      |
 
 For automatically migrated calls, arguments, defaults, nullable values, and closure evaluation are unchanged. `disabledClick()` defaults to `true` and forwards the condition without negating it. On columns and export columns, `hasRelationship()` still requires a record. Filter `options()` and `indicator()` methods are unchanged, as are query builder constraint methods and navigation badge APIs. The separate filter relationship migration below preserves its no-argument presence check.
 
-The script renames named arguments from `options:` to `icons:` and from `indicator:` to `badge:`. Calls unpacking arguments into these two setters are left unchanged; rename the methods and any `'options'` or `'indicator'` argument keys manually. Update named arguments when invoking migrated first-class callables yourself. Other aliases preserve named and unpacked arguments.
+The script renames named arguments from `options:` to `icons:`. Calls unpacking arguments into that setter are left unchanged; rename the method and any `'options'` argument key manually. Update named arguments when invoking migrated first-class callables yourself. Other removed aliases preserve named and unpacked arguments.
 
-Keep passing an explicit badge value, including `null`, on actions and action groups. Their no-argument `badge()` method selects badge styling instead of setting a badge value. Their `badge()` parameter accepts `string | Closure | null`, whereas `indicator()` also accepted integers and floats and coerced them inside the wrapper. The script only migrates action/group `indicator()` calls with a known string, closure, or null argument. Migrate numeric or uncertain values manually, casting numbers to strings even in strict PHP files, for example `badge(badge: (string) $count)`. Preserve nullable and closure values instead of casting them. Action/group first-class `indicator(...)` callables also need manual migration to retain numeric coercion and the required argument. Schema tabs still accept numeric badges and convert them to strings.
+`indicator()` remains a deprecated, supported badge setter on `Filament\Actions\Action`, `Filament\Actions\ActionGroup`, and `Filament\Schemas\Components\Tabs\Tab`. Unknown values, unpacked arguments, custom overrides, and first-class `indicator(...)` callables can continue using that wrapper. The script optionally modernizes safe calls to `badge()`, renames `indicator:` to `badge:`, and casts known action/group integer or float values to strings, including in strict PHP files. When modernizing yourself, preserve `null` and closures rather than casting them. Pass an explicit badge value on actions and action groups: their no-argument `badge()` selects badge styling instead of setting a value. Schema tabs accept numeric badges directly. These optional changes do not apply to the removed `indicatorColor()` alias.
 
 `icons()` accepts an array or closure, not an `Arrayable` object: although `options()` declared `Arrayable`, forwarding one to the built-in `icons()` already failed. Convert such objects to arrays explicitly when reviewing custom integrations.
 
 The deprecated `Filament\Tables\Columns\Concerns\CanBeCopied` trait has also been removed. The script replaces PHP references, including trait uses and adaptations, with `Filament\Support\Concerns\CanBeCopied`. Copy configuration and behavior are unchanged. Update string and non-PHP references manually, including trait-name introspection.
 
-Manually migrate custom overrides (including inherited methods and methods supplied by traits), method trait adaptations, class-qualified calls such as `parent::options()`, dynamic names, array callbacks, unknown or ambiguous receiver types, and non-PHP references. Calls on known overrides of either an alias or its replacement, or methods with adapted non-public visibility, are skipped. Review changes where a base-typed receiver may hold a custom subclass. Redundant unions of a base class and its subclass may be normalized to the base type and have the same limitation. Direct consumers of `HasBadge`, `HasCellState`, or the table-column `CanBeDisabled` concern outside the owning types listed above also need manual method migration.
+The script repairs ordinary `parent::options()` calls inside custom `IconColumn` overrides when `icons()` retains its canonical implementation, including in known descendants. It leaves the custom `options()` declaration and its callers intact. Dual-name implementations or custom `icons()` overrides need manual reconciliation.
+
+For the removed aliases, manually migrate other custom overrides (including inherited methods and methods supplied by traits), method trait adaptations, unsupported class-qualified calls, dynamic names, array callbacks, unknown or ambiguous receiver types, and non-PHP references. Calls on known overrides of either an alias or its replacement, or methods with adapted non-public visibility, are otherwise skipped. Review changes where a base-typed receiver may hold a custom subclass. Redundant unions of a base class and its subclass may be normalized to the base type and have the same limitation. Direct consumers of `HasBadge`, `HasCellState`, or the table-column `CanBeDisabled` concern outside the owning types listed above also need manual migration of removed methods, not the retained `indicator()` wrapper.
 
 Preserve custom parameter names, defaults, return values, and dispatch behavior. The wrappers called replacements through `$this`, so renaming `parent::` calls can bypass subclass overrides. `options()` and `disableClick()` returned `$this` regardless of the replacement's return value; the badge and relationship aliases returned the replacement's result.
 
@@ -920,59 +812,21 @@ The filter's `hasRelationship()` checks whether a relationship name is configure
 Calls on known overrides of either method name are left unchanged. Manually review subclass declarations, trait consumers outside SelectFilter, class-qualified calls such as `parent::getRelationshipKey()`, dynamic names, array callbacks, unknown or ambiguous receiver types, and non-PHP references. Base-typed receivers may hold custom subclasses that need review. Preserve custom parameter names, defaults and dispatch: the old wrappers call the canonical methods through `$this`, so changing a `parent::` call can bypass a subclass override.
 </Disclosure>
 
-<Disclosure open x-show="packages.includes('tables')">
-<span slot="summary">Deprecated badge, boolean, and tags column classes have been removed</span>
-
-Use explicit configuration on the canonical column classes:
-
-| Removed factory | Replacement |
-| --- | --- |
-| `Filament\Tables\Columns\BadgeColumn::make()` | `Filament\Tables\Columns\TextColumn::make()->badge()` |
-| `Filament\Tables\Columns\BooleanColumn::make()` | `Filament\Tables\Columns\IconColumn::make()->boolean()` |
-| `Filament\Tables\Columns\TagsColumn::make()` | `Filament\Tables\Columns\TextColumn::make()->badge()` |
-
-The script migrates direct factories, including imported aliases and fully qualified names, with a limited set of known chained setters such as `label()`, `color()`, `icon()`, `sortable()`, and `searchable()`. Unknown methods, `tap()`, `when()`, dynamic and nullsafe chains, first-class callables, and arguments referencing the removed classes (including typed closures) are left unchanged for manual review. Factory arguments and the order of existing setters are preserved. Remove unused legacy imports afterwards.
-
-On migrated `TagsColumn` chains only, `limit()` becomes `limitList()`, and its named `length:` argument becomes `limit:`. Both methods default to three items when called without arguments, accept `null` for no limit, and evaluate length closures lazily. A tags column without either call remains unlimited. `TextColumn::limit()` still truncates each text value, not the list; unrelated calls, including character limits on migrated badge columns, are unchanged.
-
-Factories in assignments are left unchanged because later statements may depend on legacy behavior. If you store a tags column in a variable, migrate the factory and later `$column->limit(2)` calls together, changing those calls to `$column->limitList(2)`; otherwise they will truncate each tag's text instead of limiting the number of tags. The same applies to list limits configured through helpers or callbacks outside the direct factory chain.
-
-```php
-use Filament\Tables\Columns\TextColumn;
-
-TextColumn::make('tags')
-    ->badge()
-    ->limitList(limit: 2)
-```
-
-The old tags `limit()` ignored its `$end` value, but PHP still evaluated the argument expression. The script leaves the entire factory chain unchanged if `limit()` supplies `end:` or a second positional argument, even `null`, or unpacks arguments. Migrate these manually, preserving expression side effects and their evaluation order. Keep a length closure lazy; the ignored end closure's body was never evaluated. Do not blindly rename these calls: `limitList()` does not accept `end:`.
-
-`BadgeColumn::isBadge()` and `BooleanColumn::isBoolean($state = null, $relatedRecord = null)` always returned `true`, even after `badge(false)`, `boolean(false)`, or a condition closure. The script skips chains containing those setters on the forced-mode classes, including nested calls in configuration arguments. When migrating manually, keep any argument-expression side effects without evaluating previously ignored condition closures, and ensure the mode remains enabled. Unlike those classes, `TagsColumn` only enabled badges during setup, so subsequent `badge(false)` calls did disable badges and are preserved by the script. Audit changes made after a factory chain as well, including through shared helpers or callbacks.
-
-Class references are deliberately **not** renamed globally. Manually migrate custom subclasses (including intermediate inheritance), parameter, return and property types, unions, PHPDoc, `instanceof`, `::class`, direct construction, container bindings, array callbacks, strings, dynamic references, and non-PHP files. Replacing a legacy type with its base broadens type checks to unrelated columns. Use an application-owned subclass if you need to retain that distinction.
-
-For custom subclasses, preserve inherited and trait-provided overrides, trait adaptations, parameter names, defaults, and fluent return values. A forced badge/boolean getter override may still be needed rather than a setup setter. Review calls to `parent::isBadge()`, `parent::isBoolean()`, `parent::setUp()`, and `parent::limit()`: the new parent has different behavior. The tags wrapper dispatched `limitList()` through `$this` and returned `$this` independently of that method's return value; a simple parent-method rename can bypass custom dispatch. Do not rename a custom text-truncation `limit()` implementation to a list limit.
-
-Review **all global configuration**, including `configureUsing()` on the legacy classes and their canonical bases, before relying on migrated factories. Factories in files containing static `configureUsing()` calls are left unchanged; configuration in other files still requires review. Renaming a legacy registration to `TextColumn` or `IconColumn` would affect unrelated columns. Move scoped configuration to individual columns or an application-owned subclass. Explicit `badge()` / `boolean()` now run after `make()` configuration callbacks: callbacks may observe different modes, and important configuration that disabled tags after legacy setup can be overridden by the appended `badge()`. Preserve the original configuration scope and precedence manually, including callback type hints and code that inspects the runtime class. Direct constructors, dynamic factories, and first-class factory callables also need manual configuration.
-
-Other column classes, table APIs, and legacy table/infolist bridges are unchanged.
-</Disclosure>
-
 <Disclosure open x-show="packages.includes('infolists') || packages.includes('tables')">
 <span slot="summary">Deprecated image and infolist presentation aliases have been removed</span>
 
 The script renames calls on the following components and their subclasses:
 
-| Component | Removed method | Replacement |
-| --- | --- | --- |
-| `Filament\Infolists\Components\ImageEntry`, `Filament\Tables\Columns\ImageColumn` | `height()` | `imageHeight()` |
-| `ImageEntry`, `ImageColumn` | `size()` | `imageSize()` |
-| `ImageEntry`, `ImageColumn` | `getHeight()` | `getImageHeight()` |
-| `ImageEntry` | `width()` | `imageWidth()` |
-| `ImageEntry` | `getWidth()` | `getImageWidth()` |
-| `ImageColumn` | `rounded()` | `circular()` |
-| `ImageColumn` | `isRounded()` | `isCircular()` |
-| `Filament\Infolists\Components\KeyValueEntry` | `emptyMessage()` | `placeholder()` |
+| Component                                                                         | Removed method   | Replacement        |
+| --------------------------------------------------------------------------------- | ---------------- | ------------------ |
+| `Filament\Infolists\Components\ImageEntry`, `Filament\Tables\Columns\ImageColumn` | `height()`       | `imageHeight()`    |
+| `ImageEntry`, `ImageColumn`                                                       | `size()`         | `imageSize()`      |
+| `ImageEntry`, `ImageColumn`                                                       | `getHeight()`    | `getImageHeight()` |
+| `ImageEntry`                                                                      | `width()`        | `imageWidth()`     |
+| `ImageEntry`                                                                      | `getWidth()`     | `getImageWidth()`  |
+| `ImageColumn`                                                                     | `rounded()`      | `circular()`       |
+| `ImageColumn`                                                                     | `isRounded()`    | `isCircular()`     |
+| `Filament\Infolists\Components\KeyValueEntry`                                     | `emptyMessage()` | `placeholder()`    |
 
 Arguments, defaults, nullable values, and closure evaluation are unchanged. The script renames `emptyMessage(message: ...)` to `placeholder(placeholder: ...)`. Calls unpacking arguments into `emptyMessage()` are left unchanged; rename the method and any `'message'` argument key manually. Update named arguments when invoking migrated first-class callables yourself. The image aliases preserve named and unpacked arguments. `imageSize()` still requires a non-null argument.
 
@@ -983,29 +837,23 @@ Manually migrate custom overrides (including inherited ones), class-qualified ca
 Preserve custom parameter names, defaults, return values, and dispatch behavior. The wrappers called replacements through `$this`, so renaming `parent::` calls can bypass subclass overrides. The dimension setters and `emptyMessage()` returned `$this` regardless of the replacement's return value, while `rounded()` returned the result of `circular()`.
 </Disclosure>
 
-<Disclosure open x-show="packages.includes('forms')">
-<span slot="summary">Deprecated form compatibility classes have been removed</span>
+<Disclosure open x-show="packages.includes('widgets')">
+<span slot="summary">Typed chart widget parents have been removed</span>
 
-Replace these classes with their canonical components:
+Extend `Filament\Widgets\ChartWidget` instead of a typed chart class and implement `protected function getType(): string` with the corresponding Chart.js type:
 
-| Removed class in `Filament\Forms\Components` | Replacement |
-| --- | --- |
-| `MultiSelect` | `Filament\Forms\Components\Select` with `multiple()` |
-| `RelationshipRepeater` | `Filament\Forms\Components\Repeater` with `relationship()` |
-| `Placeholder` | `Filament\Infolists\Components\TextEntry`, replacing `content()` with `state()` and `getContent()` with `getState()` |
+| Removed parent         | Chart type  |
+| ---------------------- | ----------- |
+| `BarChartWidget`       | `bar`       |
+| `BubbleChartWidget`    | `bubble`    |
+| `DoughnutChartWidget`  | `doughnut`  |
+| `LineChartWidget`      | `line`      |
+| `PieChartWidget`       | `pie`       |
+| `PolarAreaChartWidget` | `polarArea` |
+| `RadarChartWidget`     | `radar`     |
+| `ScatterChartWidget`   | `scatter`   |
 
-`TextEntry` can still be used in a form schema. Its namespace is in the infolists package; ensure that package is installed if you previously depended only on forms.
-
-The upgrade script migrates direct `make()` chains using known configuration methods, including imported aliases and fully qualified names. It adds `multiple()` or `relationship()` immediately after `make()`, retains factory arguments and subsequent configuration, and changes `content(content: ...)` to `state(state: ...)` only within migrated `Placeholder` chains. Values, closures, and their evaluation are preserved. Unrelated `content()` and `getContent()` methods are not renamed.
-
-The script leaves the following cases unchanged for manual migration; **running it is not sufficient to remove every reference**:
-
-- **Later configuration and ambiguous chains:** Factories inside assignments are left unchanged because stored instances may receive later `multiple(false)`, relationship configuration, or content alias calls. Chains using `tap()`, conditional, dynamic, nullsafe, custom or unrecognized methods, first-class callables, unpacked content arguments, or extra content/getter arguments also need review. Preserve argument evaluation and side effects, even for extra arguments the old wrapper ignored. Rename named content arguments, including keys in unpacked arrays, yourself.
-- **Forced multiplicity:** `MultiSelect::isMultiple()` always returned `true`, even after `multiple(false)` or `multiple(fn () => false)`. All chains containing an explicit `multiple()` call, including inside configuration callbacks, are left unchanged. Do not simply rename the class and retain a disabling call: preserve the always-multiple contract where intended, including calls made after construction and from callbacks.
-- **Relationship setup:** Chains containing an explicit `RelationshipRepeater::relationship()` call are left unchanged. The wrapper called `relationship()` after `parent::setUp()`, using the component name by default. Preserve its relationship name/query/record closures, hydration hook, relationship loading and saving callbacks, `dehydrated(false)`, and `reorderable(false)` defaults. Keep later intentional overrides in order; adding `relationship()` after them can overwrite hooks or flags. Test loading existing records and creating, updating, deleting, and ordering related records.
-- **Custom subclasses, intermediate parents, and traits:** Parent classes and subclass factories are not rewritten. For a `MultiSelect` subclass, retaining an `isMultiple(): bool` implementation returning `true` preserves forced multiplicity more faithfully than a mutable setter. For a `RelationshipRepeater` subclass, move its setup call into the application-owned class after `parent::setUp()`. Migrate the class that owns the inherited behavior, not every descendant, and preserve trait overrides/adaptations. Review `parent::` calls: replacing a wrapper call with a parent implementation can bypass `$this` dispatch or an intermediate override. `Placeholder::content()` called `$this->state($content)` and returned `$this`, regardless of the setter's result; `getContent()` returned `$this->getState()`. Preserve custom parameter names, defaults, visibility, return values, and overrides of both aliases and replacements. Keeping application-owned forwarding methods may be necessary.
-- **Global configuration and bindings:** Files containing a static `configureUsing()` registration are left unchanged. Audit registrations throughout the application, including other files and service providers, and container bindings before accepting any migrated factories. A registration scoped to a removed class must not be broadened to every `Select`, `Repeater`, or `TextEntry` unintentionally; use an application-owned subclass where needed. Explicit configuration after `make()` can change what callbacks observe and which configuration wins. In particular, the old relationship setup ran at its class's point in the configuration hierarchy, not after all ordinary and important callbacks.
-- **Other references:** Migrate parameter, return and property types, unions, PHPDoc, `instanceof`, `::class`, direct constructors, dynamic factories, factory callables, callbacks, strings and non-PHP files yourself. Renaming types broadens the accepted components; retaining an application-owned subclass may be necessary. Alias calls on stored or typed `Placeholder` instances, including callback consumers, are not rewritten. Update imports and remove unused legacy imports after migration.
+The script changes supported direct parents, adds the inherited type when needed, and preserves existing custom methods, including a concrete `getType()` supplied by a trait. Direct zero-argument `parent::getType()` calls become the inherited type string. It leaves unresolved traits and unsupported parent references for manual review; shared traits must not be specialized to one consumer's chart type. Review dynamic class names, strings, and other references to the removed parents manually.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('notifications') || packages.includes('widgets')">
@@ -1013,10 +861,10 @@ The script leaves the following cases unchanged for manual migration; **running 
 
 Use the canonical operation names:
 
-| Owning type | Removed method | Replacement |
-| --- | --- | --- |
-| `Filament\Notifications\Livewire\Notifications` | `pullNotificationsFromSession()` | `pullNotifications()` |
-| Chart widgets using `Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema` | `resetFiltersForm()` | `resetFilters()` |
+| Owning type                                                                  | Removed method                   | Replacement           |
+| ---------------------------------------------------------------------------- | -------------------------------- | --------------------- |
+| `Filament\Notifications\Livewire\Notifications`                              | `pullNotificationsFromSession()` | `pullNotifications()` |
+| Chart widgets using `Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema` | `resetFiltersForm()`             | `resetFilters()`      |
 
 The upgrade script renames PHP calls on known owning types and their subclasses, including nullsafe calls, named and unpacked arguments, and first-class callables. For chart widgets, it requires the reset implementation to come from `HasFiltersSchema`; a receiver typed only as `ChartWidget` is not enough. Custom overrides of either name, non-public trait adaptations, unrelated or ambiguous receivers, and standalone trait consumers are left for manual review.
 
@@ -1027,62 +875,6 @@ Manually update JavaScript and Blade calls, including `$wire.pullNotificationsFr
 Review custom method declarations, inherited or trait-provided overrides, and `parent::` calls manually. Preserve parameter names, defaults, visibility, and any explicit exposure restrictions. The old wrappers called the canonical methods through `$this`; simply renaming a `parent::` call can bypass a canonical override, while renaming an old override can make it run for framework calls that previously used the canonical name. Reconcile implementations of both names and event listeners rather than blindly renaming declarations. Review base-typed receivers that may hold custom subclasses too.
 
 When overriding `pullNotifications()`, retain `#[\Livewire\Attributes\On('notificationsSent')]` or register an equivalent listener explicitly. Livewire does not inherit method-level event attributes from overridden parent methods; event registration is separate from client exposure.
-</Disclosure>
-
-<Disclosure open x-show="packages.includes('widgets')">
-<span slot="summary">Deprecated typed chart widget classes have been removed</span>
-
-Extend `Filament\Widgets\ChartWidget` and define `getType()` instead of extending one of these removed classes in `Filament\Widgets`:
-
-| Removed class | `getType()` return value |
-| --- | --- |
-| `BarChartWidget` | `'bar'` |
-| `BubbleChartWidget` | `'bubble'` |
-| `DoughnutChartWidget` | `'doughnut'` |
-| `LineChartWidget` | `'line'` |
-| `PieChartWidget` | `'pie'` |
-| `PolarAreaChartWidget` | `'polarArea'` |
-| `RadarChartWidget` | `'radar'` |
-| `ScatterChartWidget` | `'scatter'` |
-
-For example, a widget previously extending `BarChartWidget` becomes:
-
-```php
-use Filament\Widgets\ChartWidget;
-
-class SalesChart extends ChartWidget
-{
-    protected function getType(): string
-    {
-        return 'bar';
-    }
-}
-```
-
-The upgrade script changes direct parent references, including fully qualified and imported aliases, and adds the inherited chart type if the class does not already declare `getType()`. Existing independent overrides are preserved, even if they return a different type. Descendants of a migrated intermediate class keep inheriting its implementation; migrate that intermediate class rather than assigning a type to every descendant.
-
-Classes using traits, calling `parent::getType()` (including first-class callables), making dynamic `parent::` method calls, or referencing `parent::` constants (including `parent::class` callbacks) are left unchanged. Migrate these manually: preserve trait implementations and adaptations, and replace calls to the removed wrapper's `getType()` with its literal type where appropriate. Do not replace a call to a custom intermediate parent's implementation with a literal, as that may bypass custom behavior.
-
-Other references are deliberately not renamed. Review parameter, return and property types, unions, PHPDoc, `instanceof`, `::class`, direct construction, container bindings, callbacks, strings, dynamic references, and non-PHP files. Replacing a typed wrapper with `ChartWidget` broadens type checks to all chart types, and `ChartWidget` is abstract, so it cannot replace direct construction. Use an application-owned typed subclass where that distinction is needed. Check reflection and parent-class inspection if your code depends on the old hierarchy, and remove unused imports after migration.
-</Disclosure>
-
-<Disclosure open x-show="packages.includes('actions') || packages.includes('tables')">
-<span slot="summary">Deprecated action and filter convenience classes have been removed</span>
-
-The script replaces direct factories with supported chained setters as follows:
-
-| Removed factory | Replacement |
-| --- | --- |
-| `Filament\Actions\ButtonAction::make()` | `Filament\Actions\Action::make()->button()` |
-| `Filament\Actions\IconButtonAction::make()` | `Filament\Actions\Action::make()->iconButton()` |
-| `Filament\Tables\Filters\MultiSelectFilter::make()` | `Filament\Tables\Filters\SelectFilter::make()->multiple()` |
-
-Class references are deliberately **not** renamed globally. Migrate custom parent classes, types, `instanceof`, `::class`, direct construction, container bindings, and callbacks manually. Replacing a legacy type with its parent broadens it to unrelated components. Use an application-owned subclass if you need to retain the distinction. Review these cases:
-
-- **Global configuration, bindings, and type checks:** Do not simply rename legacy registrations to the parent class: that would affect unrelated actions or filters. Move configuration to individual components or a custom subclass if it should remain scoped. Explicit style and multiplicity methods now run after `make()` configuration callbacks, which may change configuration precedence or the values callbacks observe. Factories in files containing static `configureUsing()` calls are left unchanged; also review configuration in other files, including important callbacks on the canonical bases.
-- **Custom subclasses:** Add `button()`, `iconButton()`, or `multiple()` after `parent::setUp()` in your subclass where needed; the script does not add this configuration.
-- **Forced multiplicity:** `MultiSelectFilter::isMultiple()` always returned `true`, even after `multiple(false)`. Chains with `multiple()` calls, including nested calls in configuration arguments, require manual migration. Preserve argument-expression side effects without evaluating previously ignored condition closures, and keep the filter multiple.
-- **Other construction and configuration paths:** Assignments, unknown methods, `tap()`, `when()`, dynamic and nullsafe chains, first-class factory callables, and arguments referencing legacy classes are left unchanged. Migrate these manually, preserving setup order and configuration applied outside the chain. Update string and non-PHP references yourself, and remove unused imports.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
@@ -1106,15 +898,15 @@ Only direct references to the exact TablesIconAlias class are migrated, includin
 
 The script replaces PHP references to these classes, traits, and the table header action position enum:
 
-| Removed name | Replacement |
-| --- | --- |
-| `Filament\Schemas\View\SchemaIconAlias` | `Filament\Schemas\View\SchemasIconAlias` |
+| Removed name                                                                                                        | Replacement                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `Filament\Schemas\View\SchemaIconAlias`                                                                             | `Filament\Schemas\View\SchemasIconAlias`                                                     |
 | `Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\StatsOverviewWidgetStatChartComponent` | `Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\ChartComponent` |
-| `Filament\Forms\Components\Concerns\CanLimitItemsLength` | `Filament\Forms\Components\Concerns\CanLimitItemsCount` |
-| `Filament\Tables\Columns\Concerns\HasRowLoopObject` | `Filament\Tables\Columns\Concerns\HasRowLoop` |
-| `Filament\Tables\Table\Concerns\CanDeferLoading` | `Filament\Tables\Table\Concerns\CanBeLazyLoaded` |
-| `Filament\Tables\Concerns\CanDeferLoading` | `Filament\Tables\Concerns\CanBeLazyLoaded` |
-| `Filament\Tables\Actions\HeaderActionsPosition` | `Filament\Tables\Enums\HeaderActionsPosition` |
+| `Filament\Forms\Components\Concerns\CanLimitItemsLength`                                                            | `Filament\Forms\Components\Concerns\CanLimitItemsCount`                                      |
+| `Filament\Tables\Columns\Concerns\HasRowLoopObject`                                                                 | `Filament\Tables\Columns\Concerns\HasRowLoop`                                                |
+| `Filament\Tables\Table\Concerns\CanDeferLoading`                                                                    | `Filament\Tables\Table\Concerns\CanBeLazyLoaded`                                             |
+| `Filament\Tables\Concerns\CanDeferLoading`                                                                          | `Filament\Tables\Concerns\CanBeLazyLoaded`                                                   |
+| `Filament\Tables\Actions\HeaderActionsPosition`                                                                     | `Filament\Tables\Enums\HeaderActionsPosition`                                                |
 
 Review string and non-PHP references manually. The stats chart now resolves the canonical `ChartComponent::class` container key. Registrations using the old `::class` reference are migrated by the script; registrations using literal strings must be updated manually. Review custom type checks and bindings together: the removed deprecated classes were subclasses of their replacements, so the replacements also accept instances that were not instances of the deprecated subclasses.
 
@@ -1164,52 +956,14 @@ Use `Filament\Support\Components\Attributes\Exposed` instead of `ExposedLivewire
 The script does not globally rename types. Review custom subclasses, parameter, property and return types, unions, PHPDoc, constructors, `instanceof`, `::class`, reflection lookups, strings, bindings, and non-PHP references manually. Replacing the legacy type with `Exposed` broadens it to attributes that were not instances of the legacy subclass. Migrate related producers and consumers together, retaining an application-owned attribute subclass when that distinction matters. Files containing non-attribute PHP name references or fully qualified class-string literals for the legacy class are left unchanged for coordinated migration; cross-file consumers still require review. Methods using both attribute names are also left unchanged: replacing both with `Exposed` would create a duplicate non-repeatable attribute. Remove unused legacy imports afterwards.
 </Disclosure>
 
-<Disclosure open>
-<span slot="summary">Deprecated number formatting helpers have been removed</span>
-
-Replace `Filament\Support\format_number()` with `Illuminate\Support\Number::format()` and `Filament\Support\format_money()` with `Number::currency()`. The money helper required a currency and divided the amount only when its integer `$divideBy` argument was nonzero; the default `0` meant **no division**, not division by zero. For example:
-
-```php
-use Illuminate\Support\Number;
-
-(string) Number::format(1234.5);
-(string) Number::currency(123450 / 100, 'USD');
-(string) Number::currency(-42.5, 'USD'); // No division.
-```
-
-The script migrates direct calls whose number is an integer or float literal (optionally signed) or native numeric variable, currency is a string literal or native string variable, and divisor is an optionally signed integer literal or omitted. It supports named arguments and imported function aliases, preserves the current number locale/default currency, and retains the helpers' string result with an explicit cast. Laravel's methods can return `false`, which the old helpers coerced to a string even for strict callers. `format_number(number: ...)` keeps `number:` semantics; the money helper's `money:` and `currency:` correspond to `Number::currency(number: ..., in: ...)`, not `locale:` or `precision:`.
-
-Uncertain variables, computed divisors, side-effecting expressions, unpacking, extra/unknown/missing arguments, first-class callables, strings, dynamic calls, and non-PHP references require manual migration. The old signatures were `format_number(float | int $number): string` and `format_money(float | int $money, string $currency, int $divideBy = 0): string`. Preserve their argument validation and coercion at the original call boundary, including the caller's `strict_types` mode: Laravel accepts extra formatting arguments that the helpers ignored, and computing a quotient can accept values the old helper rejected. In weak callers, normalize a valid divisor to an integer before deciding whether to divide; a fractional divisor previously coerced to zero must not become a nonzero division. Evaluate every original argument once, in its original order, before division or formatting, including expressions in ignored extra arguments. Do not duplicate an expression in a ternary or move the division ahead of an argument's side effects. Review callable parameter names/defaults and unpacked argument keys yourself. Do not add a replacement compatibility helper merely to rename the removed one.
-
-Applications that supplied their own implementations of these conditionally defined functions must review those implementations rather than assuming Filament's contract. Files declaring either legacy function are left unchanged; custom implementations in other files require manual review and may need `withSkip()` for `ReplaceDeprecatedNumberHelpersRector`. Remove unused function imports after migration. Existing `Number::format()` / `currency()` calls and unrelated same-named functions are unchanged.
-</Disclosure>
-
-<Disclosure open x-show="packages.includes('schemas')">
-<span slot="summary">Obsolete concealment identification APIs have been removed</span>
-
-`Filament\Schemas\Components\Contracts\CanConcealComponents` and `Filament\Schemas\Components\Component::isConcealed()` have been removed. They no longer controlled validation: the marker interface was empty and the base method always returned `false`. Native validation attributes remain on fields in concealed containers. Containers still reveal invalid controls, and client-side visibility conditions still disable their hidden fieldsets. Do not remove visibility, collapsing, tab switching, or validation configuration.
-
-There is no automated migration for these extension contracts. Remove obsolete `implements CanConcealComponents` entries and imports after checking type consumers; review interfaces extending it, parameter/property/return types, unions, PHPDoc, `instanceof`, reflection, strings, and dynamic references together. Preserve an application-owned contract if your application still needs its own container identification. Review custom `isConcealed()` overrides, inherited and trait implementations, and `parent::isConcealed()` calls rather than deleting application behavior. Migrate method calls, nullsafe calls, and callables manually. Do not blindly replace a call with `false`: the receiver expression or arguments may have side effects, and custom dispatch may return something else. Replace only an established call to the old base implementation while preserving evaluation and any surrounding application logic.
-</Disclosure>
-
-<Disclosure open x-show="packages.includes('widgets')">
-<span slot="summary">Widgets no longer alias `filters` to `pageFilters`</span>
-
-In widgets using `Filament\Widgets\Concerns\InteractsWithPageFilters`, read `$this->pageFilters` instead of the legacy magic `$this->filters`. The trait's nullable reactive `$pageFilters` property is unchanged. Dashboard pages still own `$filters` and pass it to widgets as `pageFilters`; do not rename the page property or unrelated table/widget filter state.
-
-The script migrates direct `$this->filters` reads (including array-key reads) on leaf classes directly extending `Widget` or `StatsOverviewWidget` and using only the unadapted `InteractsWithPageFilters` trait. It leaves writes, references, property probes, argument uses, custom declarations/magic methods, other traits, and custom inheritance unchanged. All configured paths are checked for descendants.
-
-The removed fallback only redirected reads of an undeclared `filters` property. It did not declare or synchronize a second property, redirect writes, or override a real `filters` declaration. The trait retains its `#[Unexposed]` forwarding `__get()` so custom overrides still inherit protection from client method dispatch. Migrate other reads only after reviewing the actual trait consumer, its parents, descendants, other traits, custom declarations, `__get()` overrides/adaptations, and inherited methods. Changing a parent method's read could affect a child that declares its own `filters`. Review Blade references, dynamic property names, property checks, callbacks, and custom property injection manually; do not turn formerly unsupported writes into writes to a reactive property. Test initial filter hydration and subsequent reactive updates.
-</Disclosure>
-
 <Disclosure open x-show="packages.includes('panels') || packages.includes('widgets')">
-<span slot="summary">Legacy page and widget Blade component aliases have been removed</span>
+<span slot="summary">Modernizing legacy page and widget Blade aliases</span>
 
-Replace these exact component names in your Blade templates, including published views and application-owned plugin templates:
+The legacy aliases remain supported. The upgrade script modernizes these exact component names in your Blade templates, including published views and application-owned plugin templates:
 
-| Removed alias | Replacement |
-| --- | --- |
-| `filament::page` | `filament-panels::page` |
+| Deprecated alias   | Preferred alias            |
+| ------------------ | -------------------------- |
+| `filament::page`   | `filament-panels::page`    |
 | `filament::widget` | `filament-widgets::widget` |
 
 The upgrade script updates opening, closing, and self-closing tags in `.blade.php` files under `resources/views` and your selected source directories. It preserves attributes, bound expressions, slot content, and unrelated component names. Blade comments, `@verbatim` blocks, and `@php` blocks are left unchanged. For example, your migrated templates should use:
@@ -1220,9 +974,7 @@ The upgrade script updates opening, closing, and self-closing tags in `.blade.ph
 </x-filament-panels::page>
 
 <x-filament-widgets::widget data-widget="summary">
-    <x-filament::section>
-        Widget content
-    </x-filament::section>
+    <x-filament::section>Widget content</x-filament::section>
 </x-filament-widgets::widget>
 ```
 
@@ -1234,11 +986,11 @@ The PHP Rector set does not process this template migration. To migrate addition
 php vendor/filament/upgrade/src/upgrade-blade-templates.php resources/views app-modules
 ```
 
-Pass only directories that exist and that you own. The scanner skips symlinks and nested `vendor`, `node_modules`, and `.git` directories. With no directory arguments, it scans `resources/views`. Add `--dry-run` to report changes without writing files; it exits with status `2` when changes are needed, `0` when none are needed, and a different nonzero status on failure. You can run it alongside your persistent Rector check in CI, but a clean result does not check dynamic component values or removed PHP class dependencies. Review the diff and test your application after applying changes.
+Pass only directories that exist and that you own. The scanner skips symlinks and nested `vendor`, `node_modules`, and `.git` directories. With no directory arguments, it scans `resources/views`. Add `--dry-run` to report changes without writing files; it exits with status `2` when changes are needed, `0` when none are needed, and a different nonzero status on failure. You can run it alongside your persistent Rector check in CI, but a clean result does not check dynamic component values or PHP class dependencies. Review the diff and test your application after applying changes.
 
-The `Filament\View\LegacyComponents\PageComponent` and `WidgetComponent` classes have also been removed. Review imports, registrations, subclasses, type references, and class strings manually. The replacements are anonymous Blade components, not replacement PHP classes; preserve any custom subclass behavior in your own component before removing the old dependency.
+The `Filament\View\LegacyComponents\PageComponent` and `WidgetComponent` PHP classes also remain supported, including custom subclasses. The preferred aliases are anonymous Blade components, not replacement PHP classes; the scanner does not rewrite PHP integrations.
 
-Custom `fieldWrapperView()` and `entryWrapperView()` configuration still supports both ordinary views and registered Blade component aliases. These wrappers do not need to be migrated as part of this removal.
+Custom `fieldWrapperView()` and `entryWrapperView()` configuration still supports both ordinary views and registered Blade component aliases. These wrappers do not need to be migrated.
 </Disclosure>
 
 <Disclosure open>

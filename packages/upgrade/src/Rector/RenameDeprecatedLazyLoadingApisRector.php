@@ -2,6 +2,7 @@
 
 namespace Filament\Upgrade\Rector;
 
+use Filament\Upgrade\ConfigurationClassAnalyzer;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\ArrayItem;
@@ -28,10 +29,13 @@ use PhpParser\Node\VarLikeIdentifier;
 use PhpParser\NodeFinder;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use Rector\Configuration\Option;
+use Rector\Configuration\Parameter\SimpleParameterProvider;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpParser\AstResolver;
 use Rector\PHPStan\ScopeFetcher;
@@ -71,7 +75,11 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
         'Filament\\Widgets\\Widget' => ['isLazy' => 'isLazyLoaded'],
     ];
 
-    public function __construct(private AstResolver $astResolver) {}
+    public function __construct(
+        private AstResolver $astResolver,
+        private ConfigurationClassAnalyzer $configurationClassAnalyzer,
+        private ReflectionProvider $reflectionProvider,
+    ) {}
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -88,8 +96,9 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
 
     /**
      * @param  ClassMethod | Property | MethodCall | NullsafeMethodCall | StaticCall | PropertyFetch | NullsafePropertyFetch | StaticPropertyFetch  $node
+     * @return Node | array<Node> | null
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): Node | array | null
     {
         if ($node instanceof ClassMethod || $node instanceof Property) {
             return $this->refactorDeclaration($node);
@@ -97,7 +106,7 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
 
         $isProperty = $node instanceof PropertyFetch || $node instanceof NullsafePropertyFetch || $node instanceof StaticPropertyFetch;
 
-        if ($node instanceof StaticPropertyFetch && $this->isUnsafePropertyContext($node)) {
+        if ($node instanceof StaticPropertyFetch && (! $node->getAttribute(AttributeKey::SCOPE))) {
             return null;
         }
 
@@ -110,10 +119,6 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
         // Most application calls are unrelated. Avoid resolving their receiver
         // types when no supported owner renames this member in the first place.
         if (! array_filter($isProperty ? self::PROPERTIES : self::METHODS, static fn (array $renames): bool => isset($renames[$oldName]))) {
-            return null;
-        }
-
-        if ($node instanceof StaticPropertyFetch && in_array($oldName, ['isLazy', 'isBadgeDeferred'], true) && $this->hasUnsafeStaticPropertyUse($oldName, $this->getFile()->getNewStmts())) {
             return null;
         }
 
@@ -182,20 +187,36 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
 
         $node->name = $node instanceof StaticPropertyFetch ? new VarLikeIdentifier($newName) : new Identifier($newName);
 
-        if ($node instanceof StaticPropertyFetch && in_array($oldName, ['isLazy', 'isBadgeDeferred'], true)) {
+        if ($node instanceof StaticPropertyFetch && in_array($oldName, ['isLazy', 'isBadgeDeferred'], true) && (! $this->isUnsafePropertyContext($node))) {
             return new Coalesce($node, new ConstFetch(new Name($oldName === 'isLazy' ? 'true' : 'false')));
         }
 
         return $node;
     }
 
-    private function refactorDeclaration(ClassMethod | Property $node): ?Node
+    /** @return Node | array<Node> | null */
+    private function refactorDeclaration(ClassMethod | Property $node): Node | array | null
     {
         $classReflection = ScopeFetcher::fetch($node)->getClassReflection();
         $isProperty = $node instanceof Property;
 
-        if ((! $classReflection) || $classReflection->isTrait() || ($isProperty && (count($node->props) !== 1))) {
+        if ((! $classReflection) || $classReflection->isTrait()) {
             return null;
+        }
+
+        if ($isProperty && (count($node->props) > 1)) {
+            $properties = [];
+            $changed = false;
+
+            foreach ($node->props as $property) {
+                $declaration = clone $node;
+                $declaration->props = [clone $property];
+                $replacement = $this->refactorDeclaration($declaration);
+                $properties[] = $replacement ?? $declaration;
+                $changed = $changed || ($replacement !== null);
+            }
+
+            return $changed ? $properties : null;
         }
 
         $oldName = $isProperty ? $node->props[0]->name->toString() : strtolower($node->name->toString());
@@ -287,12 +308,28 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
         }) !== null;
     }
 
-    private function canRename(ClassReflection $classReflection, string $oldName, string $newName, bool $isProperty): bool
+    private function canRename(ClassReflection $classReflection, string $oldName, string $newName, bool $isProperty, bool $checkDescendants = true): bool
     {
+        if ($isProperty && $checkDescendants && $classReflection->hasNativeProperty($oldName)) {
+            $owner = $classReflection->getNativeProperty($oldName)->getDeclaringClass();
+
+            if ($this->isConfiguredFile($owner->getFileName())) {
+                if (! $this->canRename($owner, $oldName, $newName, true, checkDescendants: false)) {
+                    return false;
+                }
+
+                foreach ($this->configurationClassAnalyzer->getDescendants($owner->getName()) as $descendant) {
+                    if ((! $this->reflectionProvider->hasClass($descendant)) || (! $this->canRename($this->reflectionProvider->getClass($descendant), $oldName, $newName, true, checkDescendants: false))) {
+                        return false;
+                    }
+                }
+            }
+        }
+
         if ($isProperty && in_array($oldName, ['isLazy', 'isBadgeDeferred'], true)) {
             $declaration = $this->astResolver->resolveClassFromClassReflection($classReflection);
 
-            if ($this->hasUnsafeStaticPropertyUse($oldName, [...$this->getFile()->getNewStmts(), ...($declaration->stmts ?? [])])) {
+            if ($this->hasUnsafeStaticPropertyUse($oldName, $declaration->stmts ?? []) && (! $this->hasInitializedLocalProperty($classReflection, $oldName))) {
                 return false;
             }
         }
@@ -307,6 +344,14 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
             $member = $isProperty ? $classReflection->getNativeProperty($name) : $classReflection->getNativeMethod($name);
             $declaringClass = $member->getDeclaringClass();
 
+            // Built-in eager defaults must not prevent a subclass's legacy setting from migrating.
+            if ($isProperty && ($name === 'isLazyLoaded') && in_array($declaringClass->getName(), [
+                'Filament\\Widgets\\AccountWidget',
+                'Filament\\Widgets\\FilamentInfoWidget',
+            ], true)) {
+                continue;
+            }
+
             if (isset(self::METHODS[$declaringClass->getName()]) || in_array($declaringClass->getName(), [
                 'Filament\\Support\\Concerns\\CanBeLazy',
                 'Filament\\Schemas\\Concerns\\HasStateBindingModifiers',
@@ -316,8 +361,11 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
                 continue;
             }
 
-            // Only migrate custom declarations in this file, together with their references.
-            if (($name === $newName) || ($declaringClass->getFileName() !== $this->getFile()->getFilePath())) {
+            // Property declarations and their inherited uses migrate together
+            // only when the declaring file is included in the upgrade.
+            if (($name === $newName) || ($isProperty
+                ? (! $this->isConfiguredFile($declaringClass->getFileName()))
+                : ($declaringClass->getFileName() !== $this->getFile()->getFilePath()))) {
                 return false;
             }
 
@@ -330,7 +378,7 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
             if ($isProperty) {
                 $property = $declaration->getProperty($oldName);
 
-                if ((! $property) || (count($property->props) !== 1)) {
+                if (! $property) {
                     return false;
                 }
             } else {
@@ -359,6 +407,52 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
         }
 
         return true;
+    }
+
+    private function hasInitializedLocalProperty(ClassReflection $classReflection, string $propertyName): bool
+    {
+        if (! $classReflection->hasNativeProperty($propertyName)) {
+            return false;
+        }
+
+        $declaringClass = $classReflection->getNativeProperty($propertyName)->getDeclaringClass();
+
+        if (! $this->isConfiguredFile($declaringClass->getFileName())) {
+            return false;
+        }
+
+        $declaration = $this->astResolver->resolveClassFromClassReflection($declaringClass);
+        $property = $declaration instanceof Class_ ? $declaration->getProperty($propertyName) : null;
+        $context = $this->astResolver->resolveClassFromClassReflection($classReflection);
+
+        // Destructured `foreach` targets do not reliably carry refreshed scope.
+        if ((new NodeFinder)->findFirst([...($declaration->stmts ?? []), ...($context->stmts ?? [])], static fn (Node $node): bool => $node instanceof Foreach_
+            && ((new NodeFinder)->findFirst(array_filter([$node->keyVar, $node->valueVar]), static fn (Node $target): bool => $target instanceof StaticPropertyFetch && $target->name instanceof VarLikeIdentifier && ($target->name->toString() === $propertyName)) !== null))) {
+            return false;
+        }
+
+        foreach ($property->props ?? [] as $member) {
+            if (($member->name->toString() === $propertyName) && $member->default instanceof ConstFetch && in_array(strtolower($member->default->name->toString()), ['true', 'false'], true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function isConfiguredFile(?string $file): bool
+    {
+        if ($file === $this->getFile()->getFilePath()) {
+            return true;
+        }
+
+        foreach (SimpleParameterProvider::provideArrayParameter(Option::PATHS) as $path) {
+            if (($file === $path) || (is_dir($path) && str_starts_with($file ?? '', rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -393,6 +487,16 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
             }
         }
 
-        return false;
+        return (new NodeFinder)->findFirst($this->getFile()->getNewStmts(), static function (Node $candidate) use ($node): bool {
+            $targets = match (true) {
+                $candidate instanceof AssignRef => [$candidate->var, $candidate->expr],
+                $candidate instanceof Assign, $candidate instanceof AssignOp => [$candidate->var],
+                $candidate instanceof Foreach_ => array_filter([$candidate->keyVar, $candidate->valueVar]),
+                $candidate instanceof ArrayItem && $candidate->byRef => [$candidate->value],
+                default => [],
+            };
+
+            return $targets && ((new NodeFinder)->findFirst($targets, static fn (Node $target): bool => $target === $node) !== null);
+        }) !== null;
     }
 }

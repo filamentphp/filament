@@ -2,18 +2,16 @@
 
 use Composer\InstalledVersions;
 use Filament\Upgrade\Rector\MigrateLegacyConfigurationHooksRector;
+use Filament\Upgrade\Rector\RemoveExportActionCsvDelimiterRector;
 use Filament\Upgrade\Rector\RemoveObsoleteUploadRestrictionTraitRector;
 use Filament\Upgrade\Rector\RenameDeprecatedConstantsRector;
 use Filament\Upgrade\Rector\RenameDeprecatedForwardingMethodsRector;
 use Filament\Upgrade\Rector\RenameDeprecatedLazyLoadingApisRector;
 use Filament\Upgrade\Rector\RenameDeprecatedTestingAssertionsRector;
 use Filament\Upgrade\Rector\RenameSchemaComponentHooksRector;
-use Filament\Upgrade\Rector\ReplaceConvenienceClassesRector;
 use Filament\Upgrade\Rector\ReplaceDeprecatedBehavioralConfigurationRector;
 use Filament\Upgrade\Rector\ReplaceDeprecatedNumberHelpersRector;
 use Filament\Upgrade\Rector\ReplaceExposedLivewireMethodAttributeRector;
-use Filament\Upgrade\Rector\ReplaceLegacyComponentFactoriesRector;
-use Filament\Upgrade\Rector\ReplaceLegacyMenuItemsRector;
 use Filament\Upgrade\Rector\ReplaceLegacyPanelIntegrationRector;
 use Filament\Upgrade\Rector\ReplaceTypedChartWidgetsRector;
 use Filament\Upgrade\Rector\WidenAvatarProviderParameterTypeRector;
@@ -141,18 +139,16 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->rule(MigrateLegacyConfigurationHooksRector::class);
+    $rectorConfig->rule(RemoveExportActionCsvDelimiterRector::class);
     $rectorConfig->rule(RemoveObsoleteUploadRestrictionTraitRector::class);
     $rectorConfig->rule(RenameDeprecatedConstantsRector::class);
     $rectorConfig->rule(RenameDeprecatedForwardingMethodsRector::class);
     $rectorConfig->rule(RenameDeprecatedLazyLoadingApisRector::class);
     $rectorConfig->rule(RenameDeprecatedTestingAssertionsRector::class);
     $rectorConfig->rule(RenameSchemaComponentHooksRector::class);
-    $rectorConfig->rule(ReplaceConvenienceClassesRector::class);
     $rectorConfig->rule(ReplaceDeprecatedBehavioralConfigurationRector::class);
     $rectorConfig->rule(ReplaceDeprecatedNumberHelpersRector::class);
     $rectorConfig->rule(ReplaceExposedLivewireMethodAttributeRector::class);
-    $rectorConfig->rule(ReplaceLegacyComponentFactoriesRector::class);
-    $rectorConfig->rule(ReplaceLegacyMenuItemsRector::class);
     $rectorConfig->rule(ReplaceLegacyPanelIntegrationRector::class);
     $rectorConfig->rule(ReplaceTypedChartWidgetsRector::class);
     $rectorConfig->rule(WidenAvatarProviderParameterTypeRector::class);
