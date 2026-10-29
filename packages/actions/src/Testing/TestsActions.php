@@ -339,8 +339,8 @@ class TestsActions
 
             $this->assertActionExists(
                 $actions,
-                checkActionUsing: fn (Action $action): bool => $action->getColor() === $colorName,
-                generateMessageUsing: fn (string $prettyName, string $livewireClass): string => "Failed asserting that an action with name [{$prettyName}] has color [{$color}] on the [{$livewireClass}] component.",
+                checkActionUsing: fn (Action $action): bool => $action->getColor() === $color,
+                generateMessageUsing: fn (string $prettyName, string $livewireClass): string => "Failed asserting that an action with name [{$prettyName}] has color [{$colorName}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -354,8 +354,8 @@ class TestsActions
 
             $this->assertActionExists(
                 $actions,
-                checkActionUsing: fn (Action $action): bool => $action->getColor() !== $colorName,
-                generateMessageUsing: fn (string $prettyName, string $livewireClass): string => "Failed asserting that an action with name [{$prettyName}] does not have color [{$color}] on the [{$livewireClass}] component.",
+                checkActionUsing: fn (Action $action): bool => $action->getColor() !== $color,
+                generateMessageUsing: fn (string $prettyName, string $livewireClass): string => "Failed asserting that an action with name [{$prettyName}] does not have color [{$colorName}] on the [{$livewireClass}] component.",
             );
 
             return $this;

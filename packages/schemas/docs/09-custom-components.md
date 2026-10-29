@@ -270,7 +270,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 }
 ```
@@ -298,7 +301,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     public function heading(?string $heading): static
@@ -350,7 +356,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     public function heading(string | Closure | null $heading): static
@@ -397,7 +406,10 @@ class Chart extends Component
 
     public static function make(string | Closure | null $heading = null): static
     {
-        return app(static::class, ['heading' => $heading]);
+        $static = app(static::class, ['heading' => $heading]);
+        $static->configure();
+
+        return $static;
     }
 
     public function heading(string | Closure | null $heading): static
@@ -432,7 +444,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     #[Exposed]
@@ -525,7 +540,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     #[Exposed]
