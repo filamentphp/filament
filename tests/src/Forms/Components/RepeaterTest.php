@@ -1299,7 +1299,33 @@ describe('`disableOptionsWhenSelectedInSiblingRepeaterItems()`', function (): vo
         $undoRepeaterFake();
     });
 
-    it('disables sibling enum options and validates enum defaults for multiple fields', function (): void {
+    it('disables enum options selected in sibling repeater items for multiple fields', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                Repeater::make('items')
+                    ->generateUuidUsing(false)
+                    ->schema([
+                        Select::make('choice')
+                            ->multiple()
+                            ->options(TestLetterEnum::class)
+                            ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+                    ]),
+            ]);
+
+        $schema->fill(['items' => [['choice' => ['A']], ['choice' => ['B']]]]);
+
+        expect($schema->getComponentByStatePath('items.0.choice', withHidden: true)->getEnabledOptions())->toBe([
+            'A' => 'A',
+            'C' => 'C',
+        ])
+            ->and($schema->getComponentByStatePath('items.1.choice', withHidden: true)->getEnabledOptions())->toBe([
+                'B' => 'B',
+                'C' => 'C',
+            ]);
+    });
+
+    it('can validate enum defaults for multiple fields', function (): void {
         $schema = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -1318,15 +1344,6 @@ describe('`disableOptionsWhenSelectedInSiblingRepeaterItems()`', function (): vo
             ]);
 
         $schema->fill();
-
-        expect($schema->getComponentByStatePath('items.0.choice', withHidden: true)->getEnabledOptions())->toBe([
-            'A' => 'A',
-            'C' => 'C',
-        ])
-            ->and($schema->getComponentByStatePath('items.1.choice', withHidden: true)->getEnabledOptions())->toBe([
-                'B' => 'B',
-                'C' => 'C',
-            ]);
 
         expect($schema->getState())->toBe([
             'items' => [

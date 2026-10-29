@@ -698,9 +698,9 @@ trait CanBeValidated
                     return;
                 }
 
-                $normalizeEnumValue = static fn (mixed $value): mixed => ($value instanceof BackedEnum) ? $value->value : $value;
-
                 if (is_array($rawState)) {
+                    $normalizeEnumValue = static fn (mixed $value): mixed => ($value instanceof BackedEnum) ? $value->value : $value;
+
                     $rawState = array_map($normalizeEnumValue, $rawState);
 
                     $hasSiblingStateIntersections = collect($repeaterSiblingState)
@@ -721,8 +721,7 @@ trait CanBeValidated
 
                 $hasDuplicateSiblingState = collect($repeaterSiblingState)
                     ->pluck($componentItemStatePath)
-                    ->map($normalizeEnumValue)
-                    ->contains($normalizeEnumValue($rawState));
+                    ->contains($rawState);
 
                 if (! $hasDuplicateSiblingState) {
                     return;
