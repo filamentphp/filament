@@ -33,10 +33,10 @@
                 "description": "The Eloquent model FQN for the current action, if one is attached."
             },
             {
-                "name": "Eloquent record",
-                "type": "?Illuminate\\Database\\Eloquent\\Model",
+                "name": "Record",
+                "type": "Illuminate\\Database\\Eloquent\\Model|array<string, mixed>|null",
                 "parameter": "$record",
-                "description": "The Eloquent record for the current action, if one is attached."
+                "description": "The Eloquent record or custom data array for the current action, if one is attached."
             },
             {
                 "name": "Selected Eloquent records",
@@ -131,10 +131,10 @@
                 "description": "The Eloquent model FQN for the current action group, if one is attached."
             },
             {
-                "name": "Eloquent record",
-                "type": "?Illuminate\\Database\\Eloquent\\Model",
+                "name": "Record",
+                "type": "Illuminate\\Database\\Eloquent\\Model|array<string, mixed>|null",
                 "parameter": "$record",
-                "description": "The Eloquent record for the current action group, if one is attached."
+                "description": "The Eloquent record or custom data array for the current action group, if one is attached."
             },
             {
                 "name": "Mounted actions",
@@ -235,10 +235,10 @@
                 "description": "The current operation being performed by the schema. Usually <code>create</code>, <code>edit</code>, or <code>view</code>."
             },
             {
-                "name": "Eloquent record",
-                "type": "?Illuminate\\Database\\Eloquent\\Model",
+                "name": "Record",
+                "type": "Illuminate\\Database\\Eloquent\\Model|array<string, mixed>|null",
                 "parameter": "$record",
-                "description": "The Eloquent record for the current schema."
+                "description": "The Eloquent record or custom data array for the current schema."
             }
         ],
         "exportColumns": [
@@ -349,10 +349,10 @@
                 "description": "The current operation being performed by the schema. Usually <code>create</code>, <code>edit</code>, or <code>view</code>."
             },
             {
-                "name": "Eloquent record",
-                "type": "?Illuminate\\Database\\Eloquent\\Model",
+                "name": "Record",
+                "type": "Illuminate\\Database\\Eloquent\\Model|array<string, mixed>|null",
                 "parameter": "$record",
-                "description": "The Eloquent record for the current schema."
+                "description": "The Eloquent record or custom data array for the current schema."
             }
         ],
         "schemaComponents": [
@@ -393,10 +393,10 @@
                 "description": "The current operation being performed by the schema. Usually <code>create</code>, <code>edit</code>, or <code>view</code>."
             },
             {
-                "name": "Eloquent record",
-                "type": "?Illuminate\\Database\\Eloquent\\Model",
+                "name": "Record",
+                "type": "Illuminate\\Database\\Eloquent\\Model|array<string, mixed>|null",
                 "parameter": "$record",
-                "description": "The Eloquent record for the current schema."
+                "description": "The Eloquent record or custom data array for the current schema."
             }
         ],
         "tableColumns": [

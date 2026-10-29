@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 trait CanBeValidated
 {
     /**
-     * @var array<array-key> | Closure
+     * @var array<mixed> | Closure
      */
     protected array | Closure $rules = [];
 
@@ -21,7 +21,7 @@ trait CanBeValidated
     protected array $validationMessages = [];
 
     /**
-     * @param  array<array-key> | Closure  $rules
+     * @param  array<mixed> | Closure  $rules
      */
     public function rules(array | Closure $rules): static
     {
@@ -48,7 +48,7 @@ trait CanBeValidated
     }
 
     /**
-     * @return array<array-key>
+     * @return array<mixed>
      */
     public function getRules(): array
     {
