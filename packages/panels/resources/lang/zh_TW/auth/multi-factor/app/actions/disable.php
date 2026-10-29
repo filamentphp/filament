@@ -6,9 +6,9 @@ return [
 
     'modal' => [
 
-        'heading' => '停用信箱驗證',
+        'heading' => '停用驗證器驗證',
 
-        'description' => '您確定要停止使用信箱驗證嗎？停用此功能將會降低安全性。',
+        'description' => '您確定要停止使用驗證器驗證嗎？停用此功能將會降低安全性。',
 
         'form' => [
             'password' => [
@@ -18,7 +18,7 @@ return [
 
             'code' => [
 
-                'label' => '輸入來自信箱的 6 位數驗證碼',
+                'label' => '輸入來自驗證器的 6 位數驗證碼',
 
                 'validation_attribute' => '驗證碼',
 
@@ -61,7 +61,7 @@ return [
         'actions' => [
 
             'submit' => [
-                'label' => '停用信箱驗證',
+                'label' => '停用驗證器驗證',
             ],
 
         ],
