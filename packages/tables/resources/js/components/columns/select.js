@@ -89,6 +89,7 @@ export default function selectTableColumn({
                     hasDynamicSearchResults,
                     hasInitialNoOptionsMessage,
                     initialOptionLabel,
+                    initialState: this.state,
                     isDisabled,
                     isHtmlAllowed,
                     isSearchable,
