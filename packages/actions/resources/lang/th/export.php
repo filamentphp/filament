@@ -48,6 +48,6 @@ return [
 
     ],
 
-    'file_name' => 'export-:resource-:date',
+    'file_name' => 'export-:export_id-:model',
 
 ];

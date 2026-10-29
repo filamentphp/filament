@@ -48,7 +48,7 @@ return [
 
         'throttled' => [
             'title' => 'Terlalu banyak percubaan pendaftaran',
-            'body' => 'Sila cuba lagi dalam :second saat.',
+            'body' => 'Sila cuba lagi dalam :seconds saat.',
         ],
 
     ],
