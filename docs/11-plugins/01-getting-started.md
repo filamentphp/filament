@@ -59,7 +59,7 @@ For a field built with React, Vue, Svelte, or native JavaScript, follow [buildin
 
 ## Upgrading existing plugins
 
-To update a plugin from Filament 3 to 4, follow the [upgrade guide](../upgrade-guide) for the packages your plugin uses. Update its Composer constraints and test it in a Filament 4 application, including any custom views, styles, and JavaScript.
+To update a plugin for a new major version of Filament, follow the [upgrade guide](../upgrade-guide) for the packages your plugin uses. Update its Composer constraints and test it in an application using the target version of Filament, including any custom views, styles, and JavaScript.
 
 ### Helpful links
 

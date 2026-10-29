@@ -11,7 +11,7 @@ title: Upgrade guide
 - PHP 8.2+
 - Laravel v11.28+
 - Livewire v4.0+
-- Tailwind CSS v4.0+
+- Tailwind CSS v4.1+ when compiling custom theme or standalone CSS. Panels using Filament's precompiled CSS do not require a local Tailwind CSS compiler.
 
 ## Running the automated upgrade script
 
