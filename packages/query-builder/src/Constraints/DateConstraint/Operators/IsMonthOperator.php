@@ -58,7 +58,7 @@ class IsMonthOperator extends Operator
     {
         return collect(range(1, 12))
             ->mapWithKeys(fn (int $month): array => [
-                $month => now()->setMonth($month)->setDay(1)->getTranslatedMonthName(),
+                $month => now()->setDay(1)->setMonth($month)->getTranslatedMonthName(),
             ])
             ->all();
     }

@@ -164,6 +164,19 @@ trait InteractsWithRecord
             $record = null;
         }
 
+        if (is_array($record)) {
+            $originalRecord = $this->record;
+            $this->record = $record;
+
+            try {
+                $title = $this->getCustomRecordTitle();
+            } finally {
+                $this->record = $originalRecord;
+            }
+
+            return filled($title) ? $title : $this->getDefaultRecordTitle();
+        }
+
         if ($record) {
             if (filled($title = $this->getCustomRecordTitle($record))) {
                 return $title;
