@@ -138,7 +138,7 @@
     <div
         @if ($hasLoadingIndicator && (! $hasPrefix))
             @if ($inlinePrefix)
-                wire:loading.delay.{{ $loadingDelay }}.class.remove="ps-3"
+                wire:loading.delay.{{ $loadingDelay }}.class.remove="fi-input-wrp-content-ctn-ps"
             @endif
 
             wire:target="{{ $loadingIndicatorTarget }}"

@@ -29,7 +29,7 @@
         }
     }
 
-    .fi-tenant-menu-trigger-text {
+    .fi-user-menu-trigger-text {
         @apply grid justify-items-start text-start text-gray-950 dark:text-white;
     }
 }
