@@ -122,6 +122,7 @@ class RenameDeprecatedLazyLoadingApisRectorTest extends AbstractRectorTestCase
 
                 return \Rector\Config\RectorConfig::configure()
                     ->withPaths([__DIR__ . '/BaseWidget.php', __DIR__ . '/ReportWidget.php'])
+                    ->withCache(__DIR__ . '/cache')
                     ->withRules([{$rule}]);
                 PHP);
 

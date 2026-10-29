@@ -45,6 +45,7 @@ class RenameDeprecatedForwardingParentCallsRectorTest extends AbstractRectorTest
 
                 return RectorConfig::configure()
                     ->withPaths([__DIR__ . '/parent.php', __DIR__ . '/child.php'])
+                    ->withCache(__DIR__ . '/cache')
                     ->withRules([RenameDeprecatedForwardingMethodsRector::class]);
                 PHP);
 

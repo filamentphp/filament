@@ -26,9 +26,19 @@ class RenameDeprecatedFormFilterAndGroupMethodsRectorTest extends AbstractRector
         file_put_contents($directory . '/app.php', $fixture);
 
         try {
+            $configuration = $directory . '/rector.php';
+            $set = var_export($this->provideConfigFilePath(), true);
+            file_put_contents($configuration, <<<PHP
+                <?php
+
+                return \Rector\Config\RectorConfig::configure()
+                    ->withCache(__DIR__ . '/cache')
+                    ->withSets([{$set}]);
+                PHP);
+
             $process = new Process([
                 PHP_BINARY, dirname(__DIR__, 3) . '/vendor/bin/rector', 'process', $directory . '/app.php',
-                '--config', $this->provideConfigFilePath(), '--clear-cache', '--no-progress-bar', '--dry-run',
+                '--config', $configuration, '--clear-cache', '--no-progress-bar', '--dry-run',
             ], dirname(__DIR__, 3));
             $process->setTimeout(120);
             $process->run();

@@ -46,7 +46,15 @@ class ReplaceTypedChartWidgetsRectorTest extends AbstractRectorTestCase
 
         try {
             $root = dirname(__DIR__, 3);
-            $configuration = $this->provideConfigFilePath();
+            $configuration = $directory . '/rector.php';
+            $set = var_export($this->provideConfigFilePath(), true);
+            file_put_contents($configuration, <<<PHP
+                <?php
+
+                return \Rector\Config\RectorConfig::configure()
+                    ->withCache(__DIR__ . '/cache')
+                    ->withSets([{$set}]);
+                PHP);
             $originals = __DIR__ . '/Fixtures/TypedCharts/LegacyTypedChartWidgets.php';
 
             if (! class_exists('Filament\\Widgets\\BarChartWidget')) {
