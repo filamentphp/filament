@@ -496,7 +496,7 @@ trait HasComponents
     }
 
     /**
-     * @param  array<string, class-string<Component>>  $register
+     * @param  array<array-key, class-string | WidgetConfiguration>  $register
      */
     public function discoverComponents(string $baseClass, array &$register, ?string $directory, ?string $namespace): void
     {

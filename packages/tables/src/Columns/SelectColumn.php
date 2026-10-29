@@ -146,7 +146,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     }
 
     /**
-     * @return array<array-key>
+     * @return array<mixed>
      */
     public function getRules(): array
     {

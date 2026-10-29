@@ -893,7 +893,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param  array<string, array<string, string>>  $messages
+     * @param  array<string, string>  $messages
      */
     public function dehydrateValidationMessages(array &$messages): void
     {

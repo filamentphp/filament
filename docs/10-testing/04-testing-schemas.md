@@ -54,7 +54,7 @@ it('can automatically generate a slug from the title without any spaces', functi
         ->fillForm([
             'title' => $title,
         ])
-        ->assertSchemaStateSet(function (array $state): array {
+        ->assertSchemaStateSet(function (array $state) use ($title): array {
             expect($state['slug'])
                 ->not->toContain(' ');
                 
