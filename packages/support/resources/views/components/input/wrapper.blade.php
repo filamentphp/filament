@@ -86,8 +86,8 @@
             ->except(['wire:target', 'tabindex'])
             ->class([
                 'fi-input-wrp',
-                'fi-disabled' => (! $hasAlpineClasses) && $disabled,
-                'fi-invalid' => (! $hasAlpineClasses) && (! $valid),
+                'fi-disabled' => (! $hasAlpineDisabledClasses) && $disabled,
+                'fi-invalid' => (! $hasAlpineValidClasses) && (! $valid),
             ])
     }}
 >
