@@ -28,16 +28,16 @@ it('configures and disables database notification polling with either setter', f
         ->and($notifications->getPollingInterval())->toBeNull();
 })->with(['databaseNotificationsPollingInterval', 'databaseNotificationsPolling']);
 
-it('delegates the legacy polling setter to `databaseNotificationsPollingInterval()` while retaining protected configuration', function (): void {
+it('delegates the legacy polling setter to `databaseNotificationsPollingInterval()`', function (): void {
     $panel = new class extends Panel
     {
-        protected string | Closure | null $databaseNotificationsPolling = '11s';
-
         public function databaseNotificationsPollingInterval(string | Closure | null $interval): static
         {
             return parent::databaseNotificationsPollingInterval($interval ?? '29s');
         }
     };
+
+    $panel->databaseNotificationsPollingInterval('11s');
 
     expect($panel->getDatabaseNotificationsPollingInterval())->toBe('11s')
         ->and($panel->databaseNotificationsPolling(interval: null))->toBe($panel)

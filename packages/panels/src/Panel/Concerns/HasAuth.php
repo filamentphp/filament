@@ -30,7 +30,7 @@ trait HasAuth
     /**
      * @var string | Closure | array<array-key, mixed> | null
      */
-    protected string | Closure | array | null $emailVerificationRouteAction = null;
+    protected string | Closure | array | null $emailVerificationPromptRouteAction = null;
 
     /**
      * @var string | Closure | array<array-key, mixed> | null
@@ -109,7 +109,7 @@ trait HasAuth
      */
     public function emailVerification(string | Closure | array | null $promptAction = EmailVerificationPrompt::class, bool | Closure $isRequired = true): static
     {
-        $this->emailVerificationRouteAction = $promptAction;
+        $this->emailVerificationPromptRouteAction = $promptAction;
         $this->requiresEmailVerification($isRequired);
 
         return $this;
@@ -525,7 +525,7 @@ trait HasAuth
      */
     public function getEmailVerificationPromptRouteAction(): string | Closure | array | null
     {
-        return $this->emailVerificationRouteAction;
+        return $this->emailVerificationPromptRouteAction;
     }
 
     /**
