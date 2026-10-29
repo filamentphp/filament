@@ -89,6 +89,7 @@ export default function selectTableColumn({
                     hasDynamicSearchResults,
                     hasInitialNoOptionsMessage,
                     initialOptionLabel,
+                    initialState: this.state,
                     isDisabled,
                     isHtmlAllowed,
                     isSearchable,
@@ -146,6 +147,23 @@ export default function selectTableColumn({
         },
 
         syncServerState() {
+            if (
+                !isNative &&
+                this.select &&
+                this.$refs.serverState?.hasAttribute('data-option-label')
+            ) {
+                const state = this.getServerState()
+                const label = this.$refs.serverState.dataset.optionLabel
+
+                if (this.select.labelRepository[state] !== label) {
+                    this.select.updateOptionLabelInList(state, label)
+
+                    if (this.select.state === state) {
+                        this.select.updateSelectedDisplay()
+                    }
+                }
+            }
+
             editableColumn.syncServerState.call(this)
 
             if (
