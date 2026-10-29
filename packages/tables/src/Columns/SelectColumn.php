@@ -932,6 +932,22 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         return parent::applyEagerLoading($query);
     }
 
+    /**
+     * @param  array<array<string, mixed>>  $options
+     */
+    protected function getOptionLabelFromOptionsForJs(string $value, array $options): ?string
+    {
+        foreach ($options as $option) {
+            foreach (($option['options'] ?? [$option]) as $groupedOption) {
+                if (((string) $groupedOption['value'] === $value) && filled($groupedOption['label'])) {
+                    return $groupedOption['label'];
+                }
+            }
+        }
+
+        return null;
+    }
+
     public function toEmbeddedHtml(): string
     {
         $canSelectPlaceholder = $this->canSelectPlaceholder();
@@ -946,14 +962,11 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         $optionLabel = $this->getOptionLabel();
         $optionsForJs = $isNative ? [] : $this->getOptionsForJs();
 
-        foreach ($optionsForJs as $option) {
-            foreach (($option['options'] ?? [$option]) as $groupedOption) {
-                if (((string) $groupedOption['value'] === (string) (($state instanceof BackedEnum) ? $state->value : $state)) && filled($groupedOption['label'])) {
-                    $optionLabel = $groupedOption['label'];
-
-                    break 2;
-                }
-            }
+        if ((! $isNative) && filled($state)) {
+            $value = (string) (($state instanceof BackedEnum) ? $state->value : $state);
+            $optionLabel = $this->getOptionLabelFromOptionsForJs($value, $optionsForJs)
+                ?? $this->getOptionLabelFromOptionsForJs($value, $this->transformOptionsForJs([$value => $optionLabel]))
+                ?? $optionLabel;
         }
 
         $attributes = $this->getExtraAttributeBag()
