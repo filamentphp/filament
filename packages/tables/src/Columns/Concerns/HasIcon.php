@@ -7,8 +7,10 @@ use Closure;
 use Filament\Support\Contracts\HasIcon as IconInterface;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Columns\Column;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Traversable;
 
 trait HasIcon
 {
@@ -24,15 +26,19 @@ trait HasIcon
     }
 
     /**
-     * @param  array<mixed> | Closure  $icons
+     * @param  array<mixed> | Arrayable | Closure  $icons
      */
-    public function icons(array | Closure $icons): static
+    public function icons(array | Arrayable | Closure $icons): static
     {
         $this->icon(function (Column $column, $state, ?Model $relatedRecord) use ($icons) {
             $icons = $column->evaluate($icons, [
                 'state' => $state,
                 'relatedRecord' => $relatedRecord,
             ]);
+
+            if (($icons instanceof Arrayable) && (! $icons instanceof Traversable)) {
+                $icons = $icons->toArray();
+            }
 
             $icon = null;
 

@@ -3,6 +3,8 @@
 namespace Filament\QueryBuilder\Constraints\Operators;
 
 use Closure;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\QueryBuilder\Constraints\Constraint;
 use Filament\QueryBuilder\Constraints\Operators\Concerns\CanBeHidden;
 use Filament\Support\Components\Component;
@@ -173,7 +175,7 @@ class Operator extends Component
     }
 
     /**
-     * @return array<\Filament\Schemas\Components\Component>
+     * @return array<\Filament\Schemas\Components\Component | Action | ActionGroup>
      */
     public function getSchemaComponents(): array
     {
@@ -183,7 +185,7 @@ class Operator extends Component
     /**
      * @deprecated Use `getSchemaComponents()` instead.
      *
-     * @return array<\Filament\Schemas\Components\Component>
+     * @return array<\Filament\Schemas\Components\Component | Action | ActionGroup>
      */
     public function getFormSchema(): array
     {

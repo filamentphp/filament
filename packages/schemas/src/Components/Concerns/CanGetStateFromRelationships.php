@@ -8,9 +8,9 @@ use Illuminate\Support\Collection;
 
 trait CanGetStateFromRelationships
 {
-    protected ?bool $hasMultipleStateRelationshipCache = null;
+    protected ?bool $cachedHasMultipleStateRelationship = null;
 
-    protected ?Relation $stateRelationshipCache = null;
+    protected ?Relation $cachedStateRelationship = null;
 
     public function hasStateRelationship(Model $record): bool
     {
@@ -19,8 +19,8 @@ trait CanGetStateFromRelationships
 
     public function getStateRelationship(Model $record, ?string $statePath = null): ?Relation
     {
-        if ($this->stateRelationshipCache) {
-            return $this->stateRelationshipCache;
+        if ($this->cachedStateRelationship) {
+            return $this->cachedStateRelationship;
         }
 
         if (blank($statePath) && (! str($this->getStateRelationshipPath())->contains('.'))) {
@@ -52,13 +52,13 @@ trait CanGetStateFromRelationships
             $record = $relationship->getRelated();
         }
 
-        return $this->stateRelationshipCache = $relationship;
+        return $this->cachedStateRelationship = $relationship;
     }
 
     public function hasMultipleStateRelationship(Model $record): bool
     {
-        if (isset($this->hasMultipleStateRelationshipCache)) {
-            return $this->hasMultipleStateRelationshipCache;
+        if (isset($this->cachedHasMultipleStateRelationship)) {
+            return $this->cachedHasMultipleStateRelationship;
         }
 
         $relationships = explode('.', $this->getStateRelationshipName(record: $record) ?? '');
@@ -69,7 +69,7 @@ trait CanGetStateFromRelationships
             $currentRelationshipValue = $record->getRelationValue($currentRelationshipName);
 
             if ($currentRelationshipValue instanceof Collection) {
-                return $this->hasMultipleStateRelationshipCache = true;
+                return $this->cachedHasMultipleStateRelationship = true;
             }
 
             if (! $currentRelationshipValue instanceof Model) {
@@ -83,7 +83,7 @@ trait CanGetStateFromRelationships
             $record = $currentRelationshipValue;
         }
 
-        return $this->hasMultipleStateRelationshipCache = false;
+        return $this->cachedHasMultipleStateRelationship = false;
     }
 
     /**

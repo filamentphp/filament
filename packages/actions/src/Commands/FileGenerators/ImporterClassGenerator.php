@@ -185,13 +185,10 @@ class ImporterClassGenerator extends ClassGenerator
                 $columnData['boolean'] = [];
             } elseif (in_array($type['name'], [
                 'date',
-            ])) {
-                $columnData['rules'][0][] = 'date';
-            } elseif (in_array($type['name'], [
                 'datetime',
                 'timestamp',
             ])) {
-                $columnData['rules'][0][] = 'datetime';
+                $columnData['rules'][0][] = 'date';
             } elseif (in_array($type['name'], [
                 'integer',
                 'decimal',
@@ -199,7 +196,7 @@ class ImporterClassGenerator extends ClassGenerator
                 'double',
                 'money',
             ])) {
-                $columnData['rules'][0][] = 'integer';
+                $columnData['rules'][0][] = ($type['name'] === 'integer') ? 'integer' : 'numeric';
                 $columnData['numeric'] = [];
             } elseif (isset($type['length'])) {
                 $columnData['rules'][0][] = "max:{$type['length']}";

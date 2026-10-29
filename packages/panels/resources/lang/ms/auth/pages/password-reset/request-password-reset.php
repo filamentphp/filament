@@ -38,7 +38,7 @@ return [
 
         'throttled' => [
             'title' => 'Terlalu banyak permintaan',
-            'body' => 'Sila cuba lagi dalam :second saat.',
+            'body' => 'Sila cuba lagi dalam :seconds saat.',
         ],
 
     ],

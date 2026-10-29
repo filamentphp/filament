@@ -10,7 +10,7 @@ use ReflectionMethod;
 trait Macroable
 {
     /**
-     * @var array<string, array<class-string, Closure>>
+     * @var array<string, array<class-string, callable>>
      */
     protected static array $macros = [];
 
@@ -43,7 +43,7 @@ trait Macroable
     }
 
     /**
-     * @param  array<array-key>  $parameters
+     * @param  array<array-key, mixed>  $parameters
      */
     public static function __callStatic(string $method, array $parameters): mixed
     {
@@ -65,7 +65,7 @@ trait Macroable
     }
 
     /**
-     * @param  array<array-key>  $parameters
+     * @param  array<array-key, mixed>  $parameters
      */
     public function __call(string $method, array $parameters): mixed
     {

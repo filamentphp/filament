@@ -27,12 +27,13 @@ trait CanDispatchEvent
         $this->event = $event;
         $this->eventData($data);
         $this->dispatchDirection = false;
+        $this->dispatchToComponent = null;
 
         return $this;
     }
 
     /**
-     * @param  array<int, mixed> | Closure  $data
+     * @param  array<mixed> | Closure  $data
      */
     public function dispatchSelf(
         string | Closure | null $event,
@@ -45,7 +46,7 @@ trait CanDispatchEvent
     }
 
     /**
-     * @param  array<int, mixed> | Closure  $data
+     * @param  array<mixed> | Closure  $data
      */
     public function dispatchTo(
         string $component,
@@ -62,7 +63,7 @@ trait CanDispatchEvent
     /**
      * @deprecated Use `dispatch()` instead.
      *
-     * @param  array<int, mixed> | Closure  $data
+     * @param  array<mixed> | Closure  $data
      */
     public function emit(
         string | Closure | null $event,
@@ -76,7 +77,7 @@ trait CanDispatchEvent
     /**
      * @deprecated Use `dispatchSelf()` instead.
      *
-     * @param  array<int, mixed> | Closure  $data
+     * @param  array<mixed> | Closure  $data
      */
     public function emitSelf(
         string | Closure | null $event,
@@ -90,7 +91,7 @@ trait CanDispatchEvent
     /**
      * @deprecated Use `dispatchTo()` instead.
      *
-     * @param  array<int, mixed> | Closure  $data
+     * @param  array<mixed> | Closure  $data
      */
     public function emitTo(
         string $component,

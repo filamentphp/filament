@@ -118,7 +118,7 @@ trait HasEmptyState
         ]);
     }
 
-    public function getEmptyStateIcon(): string | BackedEnum
+    public function getEmptyStateIcon(): string | BackedEnum | Htmlable
     {
         return $this->evaluate($this->emptyStateIcon)
             ?? FilamentIcon::resolve(TablesIconAlias::EMPTY_STATE)

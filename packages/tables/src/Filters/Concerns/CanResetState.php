@@ -7,7 +7,7 @@ use Closure;
 trait CanResetState
 {
     /**
-     * @var array<string, mixed>
+     * @var array<string, mixed> | Closure | null
      */
     protected array | Closure | null $resetState = null;
 

@@ -19,7 +19,9 @@ ToggleColumn::make('is_admin')
 Hooks may be used to execute code at various points within the toggle's lifecycle:
 
 ```php
-ToggleColumn::make()
+use Filament\Tables\Columns\ToggleColumn;
+
+ToggleColumn::make('is_admin')
     ->beforeStateUpdated(function ($record, $state) {
         // Runs before the state is saved to the database.
     })

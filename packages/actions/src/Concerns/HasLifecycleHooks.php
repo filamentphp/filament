@@ -13,13 +13,13 @@ trait HasLifecycleHooks
 
     protected ?Closure $after = null;
 
-    protected ?Closure $beforeFormFilled = null;
+    protected ?Closure $beforeSchemaFilled = null;
 
-    protected ?Closure $afterFormFilled = null;
+    protected ?Closure $afterSchemaFilled = null;
 
-    protected ?Closure $beforeFormValidated = null;
+    protected ?Closure $beforeSchemaValidated = null;
 
-    protected ?Closure $afterFormValidated = null;
+    protected ?Closure $afterSchemaValidated = null;
 
     public function before(?Closure $callback): static
     {
@@ -37,7 +37,7 @@ trait HasLifecycleHooks
 
     public function beforeSchemaFilled(?Closure $callback): static
     {
-        $this->beforeFormFilled = $callback;
+        $this->beforeSchemaFilled = $callback;
 
         return $this;
     }
@@ -52,7 +52,7 @@ trait HasLifecycleHooks
 
     public function afterSchemaFilled(?Closure $callback): static
     {
-        $this->afterFormFilled = $callback;
+        $this->afterSchemaFilled = $callback;
 
         return $this;
     }
@@ -67,7 +67,7 @@ trait HasLifecycleHooks
 
     public function beforeSchemaValidated(?Closure $callback): static
     {
-        $this->beforeFormValidated = $callback;
+        $this->beforeSchemaValidated = $callback;
 
         return $this;
     }
@@ -82,7 +82,7 @@ trait HasLifecycleHooks
 
     public function afterSchemaValidated(?Closure $callback): static
     {
-        $this->afterFormValidated = $callback;
+        $this->afterSchemaValidated = $callback;
 
         return $this;
     }
@@ -113,7 +113,7 @@ trait HasLifecycleHooks
 
     public function callBeforeSchemaFilled(): mixed
     {
-        return $this->evaluate($this->beforeFormFilled);
+        return $this->evaluate($this->beforeSchemaFilled);
     }
 
     /**
@@ -126,7 +126,7 @@ trait HasLifecycleHooks
 
     public function callAfterSchemaFilled(): mixed
     {
-        return $this->evaluate($this->afterFormFilled);
+        return $this->evaluate($this->afterSchemaFilled);
     }
 
     /**
@@ -139,7 +139,7 @@ trait HasLifecycleHooks
 
     public function callBeforeSchemaValidated(): mixed
     {
-        return $this->evaluate($this->beforeFormValidated);
+        return $this->evaluate($this->beforeSchemaValidated);
     }
 
     /**
@@ -152,7 +152,7 @@ trait HasLifecycleHooks
 
     public function callAfterSchemaValidated(): mixed
     {
-        return $this->evaluate($this->afterFormValidated);
+        return $this->evaluate($this->afterSchemaValidated);
     }
 
     /**

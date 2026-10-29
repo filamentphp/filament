@@ -84,7 +84,7 @@ To prevent this, do at least one of the following:
 
 - **Authorise the field itself** with `->disabled()` or `->hidden()` when the user lacks permission to manage tags on the record, paired with a server-side authorisation check.
 
-The same caveat applies to `SpatieTagsColumn` (editable inline) — pass `->type(...)` when the column should be scoped to a single tag type.
+`SpatieTagsColumn` is display-only, not an inline editor. Use `type()` to restrict which tags the column displays and avoid exposing tag names from other types.
 
 ## Table column
 
@@ -109,7 +109,7 @@ SpatieTagsColumn::make('tags')
 
 The [type](https://spatie.be/docs/laravel-tags/advanced-usage/using-types) allows you to group tags into collections.
 
-The tags column supports all the customization options of the [original tags column](https://filamentphp.com/docs/tables/columns/tags).
+The tags column supports all the customization options of the [text column](https://filamentphp.com/docs/5.x/tables/columns/text).
 
 ## Infolist entry
 

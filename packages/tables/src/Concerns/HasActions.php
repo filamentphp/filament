@@ -88,9 +88,11 @@ trait HasActions
 
     /**
      * @deprecated Use `getMountedAction()?->getRecord()` instead.
+     *
+     * @return Model | array<string, mixed> | null
      */
     #[Unexposed]
-    public function getMountedTableActionRecord(): ?Model
+    public function getMountedTableActionRecord(): Model | array | null
     {
         return $this->getMountedAction()?->getRecord();
     }

@@ -10,7 +10,7 @@ trait BelongsToContainer
 {
     protected Schema $container;
 
-    protected Schema $rootContainer;
+    protected Schema $cachedRootContainer;
 
     public function container(Schema $schema): static
     {
@@ -40,7 +40,7 @@ trait BelongsToContainer
         $this->flushCachedAbsoluteStatePath();
         $this->flushCachedParentRepeaterItem();
         /** @phpstan-ignore unset.possiblyHookedProperty */
-        unset($this->rootContainer);
+        unset($this->cachedRootContainer);
 
         $this->flushCachedChildSchemaHierarchies();
     }
@@ -60,7 +60,7 @@ trait BelongsToContainer
 
     public function getRootContainer(): Schema
     {
-        return $this->rootContainer ??= (function (): Schema {
+        return $this->cachedRootContainer ??= (function (): Schema {
             $container = $this->getContainer();
 
             while (($parentComponent = $container->getParentComponent()) !== null) {

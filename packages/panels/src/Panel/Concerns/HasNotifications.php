@@ -15,7 +15,7 @@ trait HasNotifications
 
     protected string | Closure | null $databaseNotificationsLivewireComponent = null;
 
-    protected string | Closure | null $databaseNotificationsPolling = '30s';
+    protected string | Closure | null $databaseNotificationsPollingInterval = '30s';
 
     protected DatabaseNotificationsPosition | Closure | null $databaseNotificationsPosition = null;
 
@@ -51,7 +51,7 @@ trait HasNotifications
 
     public function databaseNotificationsPollingInterval(string | Closure | null $interval): static
     {
-        $this->databaseNotificationsPolling = $interval;
+        $this->databaseNotificationsPollingInterval = $interval;
 
         return $this;
     }
@@ -84,7 +84,7 @@ trait HasNotifications
 
     public function getDatabaseNotificationsPollingInterval(): ?string
     {
-        return $this->evaluate($this->databaseNotificationsPolling);
+        return $this->evaluate($this->databaseNotificationsPollingInterval);
     }
 
     public function getDatabaseNotificationsPosition(): DatabaseNotificationsPosition

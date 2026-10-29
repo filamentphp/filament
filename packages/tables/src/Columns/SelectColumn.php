@@ -146,7 +146,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     }
 
     /**
-     * @return array<array-key>
+     * @return array<mixed>
      */
     public function getRules(): array
     {
@@ -263,14 +263,14 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
     public function searchOptionLabels(bool | Closure | null $condition = true): static
     {
-        $this->shouldSearchOptionLabels = $condition;
+        $this->shouldSearchOptionLabels = $condition ?? false;
 
         return $this;
     }
 
     public function searchOptionValues(bool | Closure | null $condition = true): static
     {
-        $this->shouldSearchOptionValues = $condition;
+        $this->shouldSearchOptionValues = $condition ?? false;
 
         return $this;
     }
@@ -373,7 +373,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     }
 
     /**
-     * @return array<array{'label': string, 'value': string}>
+     * @return array<array<string, mixed>>
      */
     #[Exposed]
     #[Renderless]
@@ -476,7 +476,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     }
 
     /**
-     * @return array<array{'label': string, 'value': string}>
+     * @return array<array<string, mixed>>
      */
     #[Exposed]
     #[Renderless]
@@ -568,7 +568,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     }
 
     /**
-     * @return array<string>
+     * @return array<string> | null
      */
     public function getOptionsSearchColumns(): ?array
     {
@@ -950,7 +950,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                 'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/select', 'filament/tables'),
                 'x-data' => 'selectTableColumn({
                     accessibilityAttributes: ' . Js::from($this->getExtraInputAttributeBag()->only(['aria-label', 'aria-labelledby', 'aria-describedby', 'aria-invalid', 'aria-busy', 'aria-required'])->getAttributes()) . ',
-                    ariaLabel: ' . Js::from(trim(strip_tags((string) $this->getLabel()))) . ',
+                    ariaLabel: ' . Js::from(trim(strip_tags(($ariaLabel = $this->getLabel()) instanceof Htmlable ? $ariaLabel->toHtml() : $ariaLabel))) . ',
                     canOptionLabelsWrap: ' . Js::from($this->canOptionLabelsWrap()) . ',
                     canSelectPlaceholder: ' . Js::from($canSelectPlaceholder) . ',
                     clearButtonLabel: ' . Js::from(__('filament-forms::components.select.actions.clear.label')) . ',

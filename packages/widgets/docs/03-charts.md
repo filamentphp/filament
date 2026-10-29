@@ -355,6 +355,7 @@ public function getEmptyStateDescription(): string | Htmlable | null
 To customize the [icon](../styling/icons) of the empty state, set the `$emptyStateIcon` property:
 
 ```php
+use BackedEnum;
 use Filament\Support\Icons\Heroicon;
 
 protected string | BackedEnum | null $emptyStateIcon = Heroicon::OutlinedChartBar;

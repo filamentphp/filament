@@ -72,7 +72,7 @@ return [
     ],
 
     'example_csv' => [
-        'file_name' => ':import-naidis',
+        'file_name' => ':importer-naidis',
     ],
 
     'failure_csv' => [

@@ -400,7 +400,7 @@ Repeater::make('qualifications')
     })
 ```
 
-<UtilityInjection set="formFields" extras="Data;;array<array<string, mixed>>;;$data;;The data that is being filled into the repeater.">You can inject various utilities into the function passed to `mutateRelationshipDataBeforeFillUsing()` as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" extras="Data;;array<string, mixed>;;$data;;The related item's data that is being filled into the repeater.">You can inject various utilities into the function passed to `mutateRelationshipDataBeforeFillUsing()` as parameters.</UtilityInjection>
 
 ### Mutating related item data before creating
 

@@ -400,7 +400,7 @@ CheckboxList::make('technologies')
 
 ## Tweaking the search debounce
 
-By default, Filament will wait 1000 milliseconds (1 second) before searching for options when the user types in a searchable checkbox list. It will also wait 1000 milliseconds between searches if the user is continuously typing into the search input. You can change this using the `searchDebounce()` method:
+By default, checkbox list searches have no added debounce delay (0 milliseconds). You can configure a debounce delay using the `searchDebounce()` method:
 
 ```php
 use Filament\Forms\Components\CheckboxList;

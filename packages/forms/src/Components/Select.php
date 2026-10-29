@@ -57,7 +57,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     use Concerns\CanDisableOptions;
     use Concerns\CanDisableOptionsWhenSelectedInSiblingRepeaterItems;
     use Concerns\CanFixIndistinctState;
-    use Concerns\CanLimitItemsLength;
+    use Concerns\CanLimitItemsCount;
     use Concerns\CanSelectPlaceholder;
     use Concerns\HasAffixes;
     use Concerns\HasExtraInputAttributes;
@@ -73,7 +73,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @var array<Component | Action | ActionGroup> | Closure | null
      */
-    protected array | Closure | null $createOptionActionForm = null;
+    protected array | Closure | null $createOptionActionSchema = null;
 
     protected ?Closure $createOptionUsing = null;
 
@@ -88,7 +88,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @var array<Component | Action | ActionGroup> | Closure | null
      */
-    protected array | Closure | null $editOptionActionForm = null;
+    protected array | Closure | null $editOptionActionSchema = null;
 
     protected ?Closure $fillEditOptionActionFormUsing = null;
 
@@ -227,7 +227,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
      */
     public function createOptionSchema(array | Closure | null $schema): static
     {
-        $this->createOptionActionForm = $schema;
+        $this->createOptionActionSchema = $schema;
 
         return $this;
     }
@@ -360,7 +360,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
      */
     public function getCreateOptionActionSchema(Schema $schema): array | Schema | null
     {
-        return $this->evaluate($this->createOptionActionForm, ['form' => $schema, 'schema' => $schema]);
+        return $this->evaluate($this->createOptionActionSchema, ['form' => $schema, 'schema' => $schema]);
     }
 
     /**
@@ -375,7 +375,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     public function hasCreateOptionActionSchema(): bool
     {
-        return (bool) $this->createOptionActionForm;
+        return (bool) $this->createOptionActionSchema;
     }
 
     /**
@@ -391,7 +391,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
      */
     public function getEditOptionActionSchema(Schema $schema): array | Schema | null
     {
-        return $this->evaluate($this->editOptionActionForm, ['form' => $schema, 'schema' => $schema]);
+        return $this->evaluate($this->editOptionActionSchema, ['form' => $schema, 'schema' => $schema]);
     }
 
     /**
@@ -406,7 +406,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     public function hasEditOptionActionSchema(): bool
     {
-        return (bool) $this->editOptionActionForm;
+        return (bool) $this->editOptionActionSchema;
     }
 
     /**
@@ -422,7 +422,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
      */
     public function editOptionSchema(array | Closure | null $schema): static
     {
-        $this->editOptionActionForm = $schema;
+        $this->editOptionActionSchema = $schema;
         $this->live();
 
         return $this;

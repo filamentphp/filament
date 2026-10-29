@@ -41,7 +41,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
     use CanLimitItemsForProcessing;
     use Concerns\CanBeCloned;
     use Concerns\CanGenerateUuids;
-    use Concerns\CanLimitItemsLength;
+    use Concerns\CanLimitItemsCount;
     use Concerns\HasExtraItemActions;
     use HasContainerGridLayout;
     use HasReorderAnimationDuration;
@@ -989,7 +989,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
     public function orderColumn(string | Closure | null $column = 'sort'): static
     {
         $this->orderColumn = $column;
-        $this->reorderable($column);
+        $this->reorderable($column ?? false);
 
         return $this;
     }
@@ -1410,8 +1410,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
     }
 
     /**
-     * @param  array<array<string, mixed>>  $data
-     * @return array<array<string, mixed>> | null
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed> | null
      */
     public function mutateRelationshipDataBeforeCreate(array $data): ?array
     {
@@ -1432,8 +1432,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
     }
 
     /**
-     * @param  array<array<string, mixed>>  $data
-     * @return array<array<string, mixed>>
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
      */
     public function mutateRelationshipDataBeforeFill(array $data): array
     {
@@ -1454,8 +1454,8 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
     }
 
     /**
-     * @param  array<array<string, mixed>>  $data
-     * @return array<array<string, mixed>> | null
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed> | null
      */
     public function mutateRelationshipDataBeforeSave(array $data, Model $record): ?array
     {

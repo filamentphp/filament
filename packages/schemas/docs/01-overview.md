@@ -130,7 +130,7 @@ The vast majority of methods used to configure entries accept functions as param
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 
-Grid::make(fn (): array => [
+Grid::make()->columns(fn (): array => [
     'lg' => auth()->user()->isAdmin() ? 4 : 6,
 ])->schema([
     // ...
