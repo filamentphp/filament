@@ -52,6 +52,14 @@ Apply these policies to new APIs and planned migrations, not as permission to br
 
 Record the exact old symbol, proposed replacement, evidence from equivalent APIs, all affected declarations, release boundary and compatibility strategy. Separate recommendations from preferences that need a maintainer decision. An existing `@deprecated` is already a migration, not a new rename candidate.
 
+### Choose the compatibility boundary by intended use
+
+- Put compatible cleanup in the oldest supported major, then forward-merge it. Keep canonical implementations, internal callers and storage aligned across majors so a future major mainly removes compatibility wrappers; do not reserve implementation ownership changes for that removal release.
+- Distinguish externally configured components, such as `TextInput`, from classes deliberately designed for developers to extend. PHP visibility or the mere possibility of subclassing is not a compatibility promise.
+- For ordinary components, internal property names/types and implementation method types may change in supported majors. Undocumented subclass overrides and direct writes to internal properties do not by themselves block cleanup. Preserve documented component overrides and externally supported calls, inputs, outputs and named arguments; retain deprecated callable entry points forwarding to canonical methods where needed.
+- For deliberately extensible classes, preserve supported subclass property configuration, method signatures, virtual dispatch and `parent::` calls. Establish the contract from documentation, framework dispatch and established usage rather than treating absence from documentation as proof that it is unsupported.
+- Classify shared traits by their consumers and supported extension contracts. Moving implementation to a canonical trait does not require changing observable behavior or dropping a supported override hook.
+
 ### Additive changes in supported majors
 
 - Keep the old entry point and its argument names/defaults; add the new entry point and mark the old one with ``@deprecated Use `replacement()` instead.``. Always put the deprecation annotation on its own line in a multiline docblock, with the opening and closing delimiters on separate lines:
@@ -64,9 +72,10 @@ Record the exact old symbol, proposed replacement, evidence from equivalent APIs
 
 - Classify the method's intended role before choosing a bridge direction. Use documentation, framework dispatch and established usage; being technically overridable, public or protected does not by itself establish a supported extension hook. Absence from documentation alone does not prove a hook unsupported.
 - For ordinary setters, getters and configuration APIs intended to be called, keep the implementation in the new canonical method and make the old deprecated method forward to it (`OLD → NEW`).
+- For renamed traits, the canonical trait owns the implementation and the deprecated trait uses the canonical trait, not the other way around. Update internal consumers to the canonical trait. Keep legacy callable wrappers where required without making canonical internals depend on deprecated trait names or deprecated component storage.
 - For supported subclass extension hooks, use `NEW → OLD` when necessary to preserve existing overrides through supported majors: the new method calls the old virtual method, and framework entry points call the new method. Trace getter/output pipelines, recursive dispatch and `parent::` calls so both old and new overrides work. Do not apply this exception to ordinary APIs merely because PHP permits overriding them.
-- Preserve existing parameter names/defaults and authoritative backing properties regardless of bridge direction. Never create reciprocal old/new wrappers.
-- Preserve protected/static property configuration and direct subclass writes. Two independent properties are not aliases. Retain one authoritative storage location or define explicit new-versus-legacy precedence that distinguishes unset from `false` and meaningful `null`.
+- Preserve existing externally callable parameter names/defaults regardless of bridge direction. Keep one authoritative backing state; its name/type may change for component internals under the compatibility boundary above. Never create reciprocal old/new wrappers.
+- Preserve protected/static property configuration and direct subclass writes when they are supported extension contracts, not merely technically possible. Two independent properties are not aliases. Retain one authoritative storage location or define explicit new-versus-legacy precedence that distinguishes unset from `false` and meaningful `null`.
 - Check traits, interfaces, subclass type relationships, service-container bindings, attributes and serialization before renaming a class. A subclass shim and `class_alias()` have different identity and inheritance behavior.
 - Keep enum backed values, render-hook strings, event names and payload keys stable when adding a new PHP symbol. A renamed constant does not require renaming its string value.
 - Keep explicit exposure/security attributes and frontend callability on compatibility endpoints where that is part of their contract. Sharing an attribute name does not imply every dispatcher has the same inheritance policy.
@@ -76,10 +85,22 @@ Record the exact old symbol, proposed replacement, evidence from equivalent APIs
 
 - Rename existing PHP parameters only in a major version: named arguments are public API. Check overriding declarations, interfaces, factories, returned testing closures, documentation and stubs together.
 - Treat named closure-injection keys as API. They can sometimes gain an alias in a minor release, but removing an old injection name is breaking, and conflicting keys need a defined resolution policy.
-- Schedule property removals, changed interface requirements, incompatible class identity changes, event/payload changes, CSS-hook removals and serialized-value changes separately from adding replacement names.
+- Schedule removal of supported property configuration, changed interface requirements, incompatible class identity changes, event/payload changes, CSS-hook removals and serialized-value changes separately from adding replacement names. Internal component property cleanup does not automatically require a major release.
 - Case-only PHP method renames cannot have two separately declared alias methods. Check reflection, generated frontend calls and case-sensitive external consumers before deciding the release boundary.
 - Do not remove every `@deprecated` mechanically. Some deprecated members still hold state or implement a fallback. Preserve behavior in the surviving implementation and distinguish methods/classes already removed on the target branch.
 - Scope automated upgrade rules by receiver type. Explain manual migration boundaries for dynamic method names, string references, named arguments, subclasses and custom dispatch.
+
+### Gate removals on reliable upgrades
+
+- Deprecation is not a removal mandate. Before proposing deprecation, establish a practical upgrade path; before removing the API, prove that Rector upgrades normal supported usage reliably. Improve automation or retain/restore the API when it cannot. Do not classify ordinary fluent chains, closures, stored/computed components, global configuration or documented override declarations as manual edge cases just to permit removal.
+- Judge compatibility by practical supported usage, not every theoretically observable implementation detail. Incidental lifetime or destructor timing of objects captured by a Closure stored in an ineffective setter is not, by itself, a reason to retain that setter or recreate its storage. Preserve meaningful argument side effects and callback behavior without manufacturing a compatibility contract for incidental internals.
+- Preserve compatibility behavior, not only symbols. Keeping a trait name while deleting its supported registration, configuration or dispatch bridges is still a breaking removal.
+- Prefer more verbose generated code over manual work when it preserves semantics. Check receiver/argument evaluation order and count, lazy versus eager evaluation, closure captures and binding, nullsafe short-circuiting, coercion, fluent return identity and side effects.
+- When migrating disabled-to-enabled conditions, evaluate the original condition through the appropriate component's `evaluate()` and negate the result at the same time as before. Never negate a Closure object. Preserve original-owner capture where legacy code captures it; use injected-current ownership where that matches the old contract. Preserve meaningful `false`/`null` distinctions rather than applying boolean negation indiscriminately.
+- Removing an ineffective setter must not activate its configuration elsewhere. Preserve argument creation/evaluation without invoking a Closure that the old setter only stored. Protect genuinely overridden methods and unrelated receiver types.
+- For changed defaults or limits, provide an easy, documented service-provider opt-back using `configureUsing()` where supported, or the owning API's equivalent. Execute the exact recipe and its precedence/boundary behavior; retain security and resource-risk warnings.
+- Prove paired legacy-versus-migrated public behavior as well as full-set fresh-process reruns, reintroduction checks and idempotence. A clean dry run, passing narrow fixtures or a stable second run does not establish migration coverage. Verify supported inherited and trait-defined hooks, not only direct calls.
+- Reconcile already-removed APIs against this gate when policy changes. Record per-family repair/retain/restore outcomes and unresolved decisions; do not silently expand a cleanup into removal of every deprecated API.
 
 ## Reviewing documented frontend names
 
