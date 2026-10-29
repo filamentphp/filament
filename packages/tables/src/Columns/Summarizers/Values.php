@@ -10,7 +10,7 @@ class Values extends Summarizer
     protected bool | Closure $isBulleted = true;
 
     /**
-     * @return array<string, int>
+     * @return array<int, mixed>
      */
     public function summarize(Builder $query, string $attribute): array
     {

@@ -98,7 +98,8 @@ class KeyValue extends Field implements HasEmbeddedView
     public function getDeleteAction(): Action
     {
         $action = Action::make($this->getDeleteActionName())
-            ->label(__('filament-forms::components.key_value.actions.delete.label'))
+            ->schemaComponent($this)
+            ->label(static fn (KeyValue $component) => $component->getDeleteActionLabel())
             ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_KEY_VALUE_ACTIONS_DELETE) ?? Heroicon::Trash)
             ->color('danger')
             ->livewireClickHandlerEnabled(false)
@@ -130,7 +131,8 @@ class KeyValue extends Field implements HasEmbeddedView
     public function getReorderAction(): Action
     {
         $action = Action::make($this->getReorderActionName())
-            ->label(__('filament-forms::components.key_value.actions.reorder.label'))
+            ->schemaComponent($this)
+            ->label(static fn (KeyValue $component) => $component->getReorderActionLabel())
             ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_KEY_VALUE_ACTIONS_REORDER) ?? Heroicon::ArrowsUpDown)
             ->color('gray')
             ->livewireClickHandlerEnabled(false)

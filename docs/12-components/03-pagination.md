@@ -69,7 +69,7 @@ class ListUsers extends Component
 ```blade
 <x-filament::pagination
     :paginator="$users"
-    :page-options="[5, 10, 20, 50, 100, 'all']"
+    :page-options="[5, 10, 20, 50, 100]"
     current-page-option-property="perPage"
 />
 ```

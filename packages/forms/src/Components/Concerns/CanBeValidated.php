@@ -252,7 +252,7 @@ trait CanBeValidated
         if (! $condition) {
             $values = null;
         } elseif ($condition instanceof Closure) {
-            $values = fn (Component $component): array | Arrayable | string | Closure | null => $component->evaluate($condition) ? $values : null;
+            $values = fn (Component $component): array | Arrayable | string | null => $component->evaluate($condition) ? $component->evaluate($values) : null;
         }
 
         $this->inValidationRuleValues = $values;
@@ -893,7 +893,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param  array<string, array<string, string>>  $messages
+     * @param  array<string, string>  $messages
      */
     public function dehydrateValidationMessages(array &$messages): void
     {

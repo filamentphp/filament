@@ -130,6 +130,7 @@ abstract class ClassGenerator implements FileGenerator
     {
         $printer = new PsrPrinter;
         $printer->linesBetweenProperties = 1;
+        $this->configurePrinter($printer);
 
         return $printer;
     }

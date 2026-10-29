@@ -349,7 +349,7 @@ class IconColumn extends Column implements HasEmbeddedView
             // rendered alongside it. It also gives any `<a>` / `<button>` wrapping the
             // cell's content an accessible name.
             $stateItemTextAlternative = match (true) {
-                filled($tooltip) => $tooltip,
+                filled($tooltip) => $tooltip instanceof Htmlable ? $tooltip->toHtml() : $tooltip,
                 $this->isBoolean($stateItem, $relatedRecord) => __('filament-tables::table.columns.icon.boolean.' . ($stateItem ? 'true' : 'false')),
                 $stateItem instanceof LabelInterface => $stateItem->getLabel(),
                 $stateItem instanceof BackedEnum => $stateItem->value,

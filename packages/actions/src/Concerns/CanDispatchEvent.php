@@ -27,12 +27,13 @@ trait CanDispatchEvent
         $this->event = $event;
         $this->eventData($data);
         $this->dispatchDirection = false;
+        $this->dispatchToComponent = null;
 
         return $this;
     }
 
     /**
-     * @param  array<int, mixed> | Closure  $data
+     * @param  array<mixed> | Closure  $data
      */
     public function dispatchSelf(
         string | Closure | null $event,
@@ -45,7 +46,7 @@ trait CanDispatchEvent
     }
 
     /**
-     * @param  array<int, mixed> | Closure  $data
+     * @param  array<mixed> | Closure  $data
      */
     public function dispatchTo(
         string $component,

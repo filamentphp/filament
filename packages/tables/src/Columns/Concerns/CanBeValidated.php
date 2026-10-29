@@ -3,13 +3,14 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 trait CanBeValidated
 {
     /**
-     * @var array<array-key> | Closure
+     * @var array<mixed> | Closure
      */
     protected array | Closure $rules = [];
 
@@ -21,7 +22,7 @@ trait CanBeValidated
     protected array $validationMessages = [];
 
     /**
-     * @param  array<array-key> | Closure  $rules
+     * @param  array<mixed> | Closure  $rules
      */
     public function rules(array | Closure $rules): static
     {
@@ -48,7 +49,7 @@ trait CanBeValidated
     }
 
     /**
-     * @return array<array-key>
+     * @return array<mixed>
      */
     public function getRules(): array
     {
@@ -83,7 +84,13 @@ trait CanBeValidated
 
     public function getValidationAttribute(): string
     {
-        return $this->evaluate($this->validationAttribute) ?? Str::lcfirst($this->getLabel());
+        if (($validationAttribute = $this->evaluate($this->validationAttribute)) !== null) {
+            return $validationAttribute;
+        }
+
+        $label = $this->getLabel();
+
+        return Str::lcfirst($label instanceof Htmlable ? $label->toHtml() : $label);
     }
 
     /**

@@ -160,8 +160,6 @@ DateTimePicker::make('published_at')
     ->firstDayOfWeek(7)
 ```
 
-<UtilityInjection set="formFields">As well as allowing a static value, the `firstDayOfWeek()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
-
 <AutoScreenshot name="forms/fields/date-time-picker/week-starts-on-sunday" alt="Date time picker where the week starts on Sunday" />
 
 There are additionally convenient helper methods to set the first day of the week more semantically:

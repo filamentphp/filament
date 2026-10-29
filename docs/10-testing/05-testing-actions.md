@@ -116,7 +116,7 @@ livewire(EditInvoice::class)
 
 ## Testing actions inside another action's schema / form
 
-If an action belongs to a component in another action's `schema()` (or `form()`), for example, if it is in the `belowContent()` method of a form field in an action modal, you can use the `TestAction` object with the `schemaComponent()` method. This object receives the name of the action you want to test and replaces the name of the action in any testing method you want to use. You should pass an array of `TestAction` objects in order, for example:
+If an action belongs to a component in another action's `schema()`, for example, if it is in the `belowContent()` method of a form field in an action modal, you can use the `TestAction` object with the `schemaComponent()` method. This object receives the name of the action you want to test and replaces the name of the action in any testing method you want to use. You should pass an array of `TestAction` objects in order, for example:
 
 ```php
 use Filament\Actions\Testing\TestAction;

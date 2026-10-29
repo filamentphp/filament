@@ -16,6 +16,7 @@ use Filament\Tests\Tables\Fixtures\PostsTableWithIconColumnStaticUrl;
 use Filament\Tests\Tables\Fixtures\PostsTableWithIconColumnUrl;
 use Filament\Tests\Tables\Fixtures\PostsTableWithIconColumnUrlNewTab;
 use Filament\Tests\Tables\TestCase;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -152,6 +153,48 @@ describe('state and related record injection', function (): void {
         expect($column->getTrueColor())->toBe('info')
             ->and($column->getTrueColor(null))->toBe('danger');
     });
+});
+
+describe('icon maps', function (): void {
+    it('resolves `Arrayable` icon maps directly and from lazy closures', function (string $type, bool $isLazy): void {
+        $record = new User(['name' => 'Example']);
+        $icons = [
+            'heroicon-o-question-mark-circle',
+            'heroicon-o-pencil' => 'draft',
+            'heroicon-o-clock' => static fn (mixed $state): bool => in_array($state, ['draft', 'reviewing'], true),
+            'heroicon-o-check-circle' => 'published',
+            'heroicon-o-user' => $record,
+        ];
+        $icons = match ($type) {
+            'collection' => collect($icons),
+            'arrayable' => new class($icons) implements Arrayable
+            {
+                public function __construct(private array $icons) {}
+
+                public function toArray(): array
+                {
+                    return $this->icons;
+                }
+            },
+            default => $icons,
+        };
+        $evaluatedStates = [];
+        $configuration = $isLazy ? static function (mixed $state) use ($icons, &$evaluatedStates) {
+            $evaluatedStates[] = $state;
+
+            return $icons;
+        } : $icons;
+        $column = IconColumn::make('status')->boolean(false);
+
+        expect($column->icons($configuration))->toBe($column)
+            ->and($evaluatedStates)->toBe([])
+            ->and($column->getIcon('draft'))->toBe('heroicon-o-clock')
+            ->and($column->getIcon('reviewing'))->toBe('heroicon-o-clock')
+            ->and($column->getIcon('published'))->toBe('heroicon-o-check-circle')
+            ->and($column->getIcon('other'))->toBe('heroicon-o-question-mark-circle')
+            ->and($column->getIcon($record))->toBe('heroicon-o-user')
+            ->and($evaluatedStates)->toBe($isLazy ? ['draft', 'reviewing', 'published', 'other', $record] : []);
+    })->with(['array', 'collection', 'arrayable'])->with([false, true]);
 });
 
 describe('boolean icon resolution', function (): void {

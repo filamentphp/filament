@@ -57,6 +57,9 @@ class TestsActions
         };
     }
 
+    /**
+     * @deprecated Use `fillForm()` instead.
+     */
     public function setActionData(): Closure
     {
         return function (array $data): static {
@@ -66,6 +69,9 @@ class TestsActions
         };
     }
 
+    /**
+     * @deprecated Use `assertSchemaStateSet()` instead.
+     */
     public function assertActionDataSet(): Closure
     {
         return function (array | Closure $data): static {
@@ -333,8 +339,8 @@ class TestsActions
 
             $this->assertActionExists(
                 $actions,
-                checkActionUsing: fn (Action $action): bool => $action->getColor() === $colorName,
-                generateMessageUsing: fn (string $prettyName, string $livewireClass): string => "Failed asserting that an action with name [{$prettyName}] has color [{$color}] on the [{$livewireClass}] component.",
+                checkActionUsing: fn (Action $action): bool => $action->getColor() === $color,
+                generateMessageUsing: fn (string $prettyName, string $livewireClass): string => "Failed asserting that an action with name [{$prettyName}] has color [{$colorName}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -348,8 +354,8 @@ class TestsActions
 
             $this->assertActionExists(
                 $actions,
-                checkActionUsing: fn (Action $action): bool => $action->getColor() !== $colorName,
-                generateMessageUsing: fn (string $prettyName, string $livewireClass): string => "Failed asserting that an action with name [{$prettyName}] does not have color [{$color}] on the [{$livewireClass}] component.",
+                checkActionUsing: fn (Action $action): bool => $action->getColor() !== $color,
+                generateMessageUsing: fn (string $prettyName, string $livewireClass): string => "Failed asserting that an action with name [{$prettyName}] does not have color [{$colorName}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -598,6 +604,9 @@ class TestsActions
         return $this->assertActionMounted();
     }
 
+    /**
+     * @deprecated Use `assertHasFormErrors()` instead.
+     */
     public function assertHasActionErrors(): Closure
     {
         return function (array $keys = []): static {
@@ -607,6 +616,9 @@ class TestsActions
         };
     }
 
+    /**
+     * @deprecated Use `assertHasNoFormErrors()` instead.
+     */
     public function assertHasNoActionErrors(): Closure
     {
         return function (array $keys = []): static {

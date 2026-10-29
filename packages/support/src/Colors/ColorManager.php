@@ -23,12 +23,12 @@ class ColorManager
     ];
 
     /**
-     * @var array<array<string, array<int, string> | string> | Closure>
+     * @var array<array<string, array<int | string, string | int> | string> | Closure>
      */
     protected array $colors = [];
 
     /**
-     * @var array<string, array<int, string>>
+     * @var array<string, array<int | string, string | int>>
      */
     protected array $cachedColors;
 
@@ -58,7 +58,7 @@ class ColorManager
     protected array $removedShades = [];
 
     /**
-     * @param  array<string, array<int, string> | string> | Closure  $colors
+     * @param  array<string, array<int | string, string | int> | string> | Closure  $colors
      */
     public function register(array | Closure $colors): static
     {
@@ -68,7 +68,7 @@ class ColorManager
     }
 
     /**
-     * @return array<string, array<int, string>>
+     * @return array<string, array<int | string, string | int>>
      */
     public function getColors(): array
     {
@@ -99,7 +99,7 @@ class ColorManager
     }
 
     /**
-     * @return ?array<int, string>
+     * @return ?array<int | string, string | int>
      */
     public function getColor(string $color): ?array
     {

@@ -594,7 +594,7 @@ Block::make('heading')
 
 All form components are able to [use `$get()` and `$set()`](overview#injecting-the-state-of-another-field) to access another field's value. However, you might experience unexpected behavior when using this inside the builder's schema.
 
-This is because `$get()` and `$set()`, by default, are scoped to the current builder item. This means that you are able to interact with another field inside that builder item easily without knowing which builder item the current form component belongs to.
+This is because `$get()` and `$set()`, by default, are scoped to the current builder item's `data` array. This means that you are able to interact with another field inside that builder item easily without knowing which builder item the current form component belongs to.
 
 The consequence of this is that you may be confused when you are unable to interact with a field outside the builder. We use `../` syntax to solve this problem - `$get('../parent_field_name')`.
 
@@ -606,7 +606,10 @@ Consider your form has this data structure:
 
     'builder' => [
         'item1' => [
-            'service_id' => 2,
+            'type' => 'service',
+            'data' => [
+                'service_id' => 2,
+            ],
         ],
     ],
 ]
@@ -614,11 +617,17 @@ Consider your form has this data structure:
 
 You are trying to retrieve the value of `client_id` from inside the builder item.
 
-`$get()` is relative to the current builder item, so `$get('client_id')` is looking for `$get('builder.item1.client_id')`.
+`$get()` is relative to the current builder item's `data` array, so `$get('client_id')` looks for `builder.item1.data.client_id` in the form data.
 
-You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('builder.client_id')` and `$get('../../client_id')` is `$get('client_id')`.
+You can use `../` to go up a level in the data structure:
 
-The special case of `$get()` with no arguments, or `$get('')` or `$get('./')`, will always return the full data array for the current builder item.
+- `$get('../client_id')` looks for `builder.item1.client_id`.
+- `$get('../../client_id')` looks for `builder.client_id`.
+- `$get('../../../client_id')` reaches `client_id` at the root of the form data shown above and returns `1`.
+
+If the form has its own state path, these paths remain relative to that form's data, not the entire Livewire component.
+
+The special case of `$get()` with no arguments, or `$get('')` or `$get('./')`, returns the current block's `data` array, `['service_id' => 2]`, not the enclosing item with its `type` and `data` keys.
 
 ## Builder validation
 

@@ -1175,7 +1175,7 @@ class FilamentManager
     }
 
     /**
-     * @return array<array{ title: string | Closure, body: string | Closure | null }>
+     * @return array<array{ title: ?string, body: ?string, isHidden: bool, isDisabled: bool }>
      */
     public function getErrorNotifications(): array
     {

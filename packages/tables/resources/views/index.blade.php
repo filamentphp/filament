@@ -795,10 +795,10 @@
                         </div>
                     @endif
 
-                    {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_END) }}
+                    {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_END, scopes: static::class) }}
                 </div>
 
-                {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_AFTER) }}
+                {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_AFTER, scopes: static::class) }}
             </div>
 
             @if ($isReordering)

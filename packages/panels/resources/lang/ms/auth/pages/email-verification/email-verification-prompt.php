@@ -27,7 +27,7 @@ return [
 
         'notification_resend_throttled' => [
             'title' => 'Terlalu banyak percubaan menghantar semula',
-            'body' => 'Sila cuba lagi dalam :second saat.',
+            'body' => 'Sila cuba lagi dalam :seconds saat.',
         ],
 
     ],

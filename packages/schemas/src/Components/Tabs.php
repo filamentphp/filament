@@ -295,10 +295,10 @@ class Tabs extends Component implements HasEmbeddedView
         $isVertical = $this->isVertical();
         $label = $this->getLabel();
         $renderHookScopes = $this->getRenderHookScopes();
-        $tabs = array_values(array_filter(
-            $this->getChildSchema()->getComponents(),
+        $tabs = array_filter(
+            $this->getChildSchema()->getComponents(withOriginalKeys: true),
             static fn ($component): bool => $component instanceof Tab,
-        ));
+        );
 
         $outerAttributes = (new FilamentComponentAttributeBag)
             ->merge([

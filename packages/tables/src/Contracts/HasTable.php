@@ -63,8 +63,10 @@ interface HasTable
 
     /**
      * @deprecated Use `getMountedAction()?->getRecord()` instead.
+     *
+     * @return Model | array<string, mixed> | null
      */
-    public function getMountedTableActionRecord(): ?Model;
+    public function getMountedTableActionRecord(): Model | array | null;
 
     /**
      * @deprecated Use `getMountedAction()` instead.

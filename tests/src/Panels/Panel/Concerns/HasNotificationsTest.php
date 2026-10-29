@@ -31,7 +31,7 @@ it('configures and disables database notification polling', function (): void {
 it('supports polling setter overrides and protected interval configuration', function (): void {
     $panel = new class extends Panel
     {
-        protected string | Closure | null $databaseNotificationsPolling = '11s';
+        protected string | Closure | null $databaseNotificationsPollingInterval = '11s';
 
         public function databaseNotificationsPollingInterval(string | Closure | null $interval): static
         {

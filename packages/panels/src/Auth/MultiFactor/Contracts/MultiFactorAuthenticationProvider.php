@@ -16,7 +16,7 @@ interface MultiFactorAuthenticationProvider
     public function getLoginFormLabel(): string;
 
     /**
-     * @return array<Component| Action>
+     * @return array<Component | Action | ActionGroup>
      */
     public function getManagementSchemaComponents(): array;
 

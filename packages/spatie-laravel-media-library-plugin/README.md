@@ -54,9 +54,9 @@ By default, files will be uploaded publicly to your storage disk defined in the 
 Alternatively, you can manually set the disk with the `disk()` method:
 
 ```php
-use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
-FileUpload::make('attachment')
+SpatieMediaLibraryFileUpload::make('attachment')
     ->disk('s3')
 ```
 

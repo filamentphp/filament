@@ -30,7 +30,7 @@ trait HasColumnManager
      */
     protected ?array $tableColumnsToggleStateByName = null;
 
-    protected ?bool $hasReorderableTableColumns = null;
+    protected ?bool $cachedHasReorderableTableColumns = null;
 
     #[Unexposed]
     public function initTableColumnManager(): void
@@ -496,7 +496,7 @@ trait HasColumnManager
 
     protected function hasReorderableTableColumns(): bool
     {
-        return $this->hasReorderableTableColumns ??= $this->getTable()->hasReorderableColumns();
+        return $this->cachedHasReorderableTableColumns ??= $this->getTable()->hasReorderableColumns();
     }
 
     protected function hasReorderedTableColumns(): bool

@@ -7,7 +7,9 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Facades\FilamentView;
 use Filament\Tables;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Enums\PaginationMode;
+use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
@@ -251,6 +253,107 @@ describe('content grid', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
 
         expect($table->getContentGrid())->toBeNull();
+    });
+});
+
+describe('filter layout', function (): void {
+    it('accepts string layouts in `filters()`', function (string $layout, FiltersLayout $expectedLayout): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        $table->filters([], layout: $layout);
+
+        expect($table->getFiltersLayout())->toBe($expectedLayout);
+    })->with([
+        ['above_content', FiltersLayout::AboveContent],
+        ['above_content_collapsible', FiltersLayout::AboveContentCollapsible],
+        ['below_content', FiltersLayout::BelowContent],
+        ['before_content', FiltersLayout::BeforeContent],
+        ['after_content', FiltersLayout::AfterContent],
+        ['before_content_collapsible', FiltersLayout::BeforeContentCollapsible],
+        ['after_content_collapsible', FiltersLayout::AfterContentCollapsible],
+        ['dropdown', FiltersLayout::Dropdown],
+        ['modal', FiltersLayout::Modal],
+        ['hidden', FiltersLayout::Hidden],
+    ]);
+
+    it('preserves enum, closure, and omitted layouts in `filters()`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        $table->filters([], layout: FiltersLayout::Modal);
+
+        expect($table->getFiltersLayout())->toBe(FiltersLayout::Modal);
+
+        foreach ([null, '', '0'] as $layout) {
+            $table->filters([], layout: $layout);
+
+            expect($table->getFiltersLayout())->toBe(FiltersLayout::Modal);
+        }
+
+        $layout = FiltersLayout::AboveContent;
+        $table->filters([], layout: static function (Table $table) use (&$layout): FiltersLayout {
+            return $layout;
+        });
+
+        expect($table->getFiltersLayout())->toBe(FiltersLayout::AboveContent);
+
+        $layout = FiltersLayout::BelowContent;
+
+        expect($table->getFiltersLayout())->toBe(FiltersLayout::BelowContent)
+            ->and($table->filters([], layout: static fn () => null)->getFiltersLayout())->toBe(FiltersLayout::Dropdown);
+    });
+
+    it('rejects unknown string layouts in `filters()`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        expect(static fn () => $table->filters([], layout: 'not_a_layout'))->toThrow(TypeError::class);
+    });
+});
+
+describe('record action position', function (): void {
+    it('accepts string positions in `recordActions()`', function (string $position, RecordActionsPosition $expectedPosition): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        $table->recordActions([], position: $position);
+
+        expect($table->getRecordActionsPosition())->toBe($expectedPosition);
+    })->with([
+        ['after_cells', RecordActionsPosition::AfterCells],
+        ['after_columns', RecordActionsPosition::AfterColumns],
+        ['after_content', RecordActionsPosition::AfterContent],
+        ['before_cells', RecordActionsPosition::BeforeCells],
+        ['before_columns', RecordActionsPosition::BeforeColumns],
+    ]);
+
+    it('preserves enum, closure, and omitted positions in `recordActions()`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        $table->recordActions([], position: RecordActionsPosition::BeforeColumns);
+
+        expect($table->getRecordActionsPosition())->toBe(RecordActionsPosition::BeforeColumns);
+
+        foreach ([null, '', '0'] as $position) {
+            $table->recordActions([], position: $position);
+
+            expect($table->getRecordActionsPosition())->toBe(RecordActionsPosition::BeforeColumns);
+        }
+
+        $position = RecordActionsPosition::BeforeCells;
+        $table->recordActions([], position: static function (Table $table) use (&$position): RecordActionsPosition {
+            return $position;
+        });
+
+        expect($table->getRecordActionsPosition())->toBe(RecordActionsPosition::BeforeCells);
+
+        $position = RecordActionsPosition::AfterCells;
+
+        expect($table->getRecordActionsPosition())->toBe(RecordActionsPosition::AfterCells)
+            ->and($table->recordActions([], position: static fn () => null)->getRecordActionsPosition())->toBe(RecordActionsPosition::AfterColumns);
+    });
+
+    it('rejects unknown string positions in `recordActions()`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        expect(static fn () => $table->recordActions([], position: 'not_a_position'))->toThrow(TypeError::class);
     });
 });
 
