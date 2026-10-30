@@ -327,7 +327,8 @@ On resource pages, actions are usually in 2 places: in the top right of the page
 For example, you may add a new button action next to "Delete" on the Edit page:
 
 ```php
-use Filament\Actions;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditUser extends EditRecord
@@ -337,11 +338,11 @@ class EditUser extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('impersonate')
+            Action::make('impersonate')
                 ->action(function (): void {
                     // ...
                 }),
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }
@@ -445,14 +446,14 @@ public function form(Schema $schema): Schema
 If you're using [resource sub-navigation](overview#resource-sub-navigation), you can register this page as normal in `getRecordSubNavigation()` of the resource:
 
 ```php
-use App\Filament\Resources\Customers\Pages;
+use App\Filament\Resources\Customers\Pages\EditCustomerContact;
 use Filament\Resources\Pages\Page;
 
 public static function getRecordSubNavigation(Page $page): array
 {
     return $page->generateNavigationItems([
         // ...
-        Pages\EditCustomerContact::class,
+        EditCustomerContact::class,
     ]);
 }
 ```

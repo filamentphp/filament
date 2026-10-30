@@ -110,10 +110,6 @@ class Stat extends Component
      */
     public function chart(array | Arrayable | null $chart): static
     {
-        if (is_null($chart)) {
-            return $this;
-        }
-
         if ($chart instanceof Arrayable) {
             $chart = $chart->toArray();
         }

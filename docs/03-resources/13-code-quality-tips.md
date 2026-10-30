@@ -44,7 +44,7 @@ public static function form(Schema $schema): Schema
 You could do the same for the `table()`:
 
 ```php
-use App\Filament\Resources\Customers\Schemas\CustomersTable;
+use App\Filament\Resources\Customers\Tables\CustomersTable;
 use Filament\Tables\Table;
 
 public static function table(Table $table): Table
