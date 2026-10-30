@@ -1,8 +1,8 @@
 <?php
 
 use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Actions\Exports\Jobs\CompleteExport;
 use Filament\Actions\Exports\Jobs\CreateXlsxFile;
-use Filament\Actions\Exports\Jobs\ExportCompletion;
 use Filament\Actions\Exports\Jobs\ExportCsv;
 use Filament\Actions\Exports\Jobs\PrepareCsvExport;
 use Filament\Actions\Exports\Models\Export;
@@ -118,7 +118,7 @@ it('exports through separate serialized database worker processes', function ():
         Queue::after(static function (JobProcessed $event) use ($directory): void {
             $job = $event->job->payload();
             $name = $event->job->resolveName();
-            if (! in_array($name, [PrepareCsvExport::class, ExportCsv::class, CreateXlsxFile::class, ExportCompletion::class])) {
+            if (! in_array($name, [PrepareCsvExport::class, ExportCsv::class, CreateXlsxFile::class, CompleteExport::class])) {
                 return;
             }
             $command = unserialize($job['data']['command']);
@@ -163,12 +163,12 @@ it('exports through separate serialized database worker processes', function ():
             PrepareCsvExport::class,
             ...array_fill(0, $index < 2 ? 3 : 1, ExportCsv::class),
             ...match ($index) {
-                0 => [ExportCompletion::class, CreateXlsxFile::class],
-                1 => [CreateXlsxFile::class, ExportCompletion::class],
-                2 => [ExportCompletion::class],
+                0 => [CompleteExport::class, CreateXlsxFile::class],
+                1 => [CreateXlsxFile::class, CompleteExport::class],
+                2 => [CompleteExport::class],
             },
         ]);
-        $completion = array_values(array_filter($exportEvents, static fn (array $event): bool => $event['name'] === ExportCompletion::class))[0];
+        $completion = array_values(array_filter($exportEvents, static fn (array $event): bool => $event['name'] === CompleteExport::class))[0];
         expect($completion['xlsxExists'])->toBe($index === 1);
         expect($export->completed_at)->not->toBeNull()
             ->and($export->total_rows)->toBe($index < 2 ? 5 : 2)

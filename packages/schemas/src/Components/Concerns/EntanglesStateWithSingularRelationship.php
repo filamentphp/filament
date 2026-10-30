@@ -201,7 +201,7 @@ trait EntanglesStateWithSingularRelationship
     protected function getStateFromRelatedRecord(Model $record): array
     {
         if ($translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver()) {
-            return $translatableContentDriver->getRecordAttributesToArray($record);
+            return $translatableContentDriver->recordAttributesToArray($record);
         }
 
         return $record->attributesToArray();

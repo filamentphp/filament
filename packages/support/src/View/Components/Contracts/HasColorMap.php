@@ -2,7 +2,7 @@
 
 namespace Filament\Support\View\Components\Contracts;
 
-interface HasColor
+interface HasColorMap
 {
     /**
      * @param  array<int, string>  $color

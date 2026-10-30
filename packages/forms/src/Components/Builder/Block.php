@@ -61,9 +61,9 @@ class Block extends Component
         return $this->evaluate($this->icon);
     }
 
-    public function maxItems(int | Closure | null $maxItems): static
+    public function maxItems(int | Closure | null $count): static
     {
-        $this->maxItems = $maxItems;
+        $this->maxItems = $count;
 
         return $this;
     }

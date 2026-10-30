@@ -23,7 +23,7 @@ trait InteractsWithEmailAuthentication /** @phpstan-ignore trait.unused */
         return (bool) $this->has_email_authentication;
     }
 
-    public function toggleEmailAuthentication(bool $condition): void
+    public function saveEmailAuthentication(bool $condition): void
     {
         $this->has_email_authentication = $condition;
         $this->save();

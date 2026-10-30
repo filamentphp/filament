@@ -585,18 +585,24 @@ class StateCastCustomBlock extends RichContentCustomBlock
         return 'preview-block';
     }
 
-    public static function getPreviewLabel(array $config): string
+    public static function getPreviewLabel(array $configuration): string
     {
+        $config = &$configuration;
+
         return 'Custom preview label';
     }
 
-    public static function toPreviewHtml(array $config): ?string
+    public static function toPreviewHtml(array $configuration): ?string
     {
+        $config = &$configuration;
+
         return '<strong>Preview HTML</strong>';
     }
 
-    public static function toHtml(array $config, array $data): ?string
+    public static function toHtml(array $configuration, array $data): ?string
     {
+        $config = &$configuration;
+
         return '<div>Rendered block</div>';
     }
 }
@@ -608,23 +614,31 @@ class StateCastProseBlock extends RichContentCustomBlock
         return 'prose-block';
     }
 
-    public static function getPreviewLabel(array $config): string
+    public static function getPreviewLabel(array $configuration): string
     {
+        $config = &$configuration;
+
         return 'Prose block';
     }
 
-    public static function toPreviewHtml(array $config): ?string
+    public static function toPreviewHtml(array $configuration): ?string
     {
+        $config = &$configuration;
+
         return '<h2>With Prose Styling</h2>';
     }
 
-    public static function shouldApplyProseStylingToPreview(array $config): bool
+    public static function shouldApplyProseStylingToPreview(array $configuration): bool
     {
+        $config = &$configuration;
+
         return true;
     }
 
-    public static function toHtml(array $config, array $data): ?string
+    public static function toHtml(array $configuration, array $data): ?string
     {
+        $config = &$configuration;
+
         return '<div>Rendered prose block</div>';
     }
 }

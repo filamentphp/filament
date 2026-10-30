@@ -392,7 +392,7 @@ class MakeRelationManagerCommand extends Command
         $this->formSchemaFqn = filled($formSchema) && class_exists($formSchema)
             ? $formSchema
             : $this->askForSchema(
-                intialQuestion: 'Would you like to use an existing form schema class?',
+                initialQuestion: 'Would you like to use an existing form schema class?',
                 question: 'Which form schema class would you like to use?',
                 questionPlaceholder: app()->getNamespace() . 'Filament\\Resources\\Users\\Schemas\\UserForm',
             );
@@ -476,7 +476,7 @@ class MakeRelationManagerCommand extends Command
         $this->infolistSchemaFqn = filled($infolistSchema) && class_exists($infolistSchema)
             ? $infolistSchema
             : $this->askForSchema(
-                intialQuestion: 'Would you like to use an existing infolist schema class?',
+                initialQuestion: 'Would you like to use an existing infolist schema class?',
                 question: 'Which infolist schema class would you like to use?',
                 questionPlaceholder: app()->getNamespace() . 'Filament\\Resources\\Users\\Schemas\\UserInfolist',
             );
@@ -493,7 +493,7 @@ class MakeRelationManagerCommand extends Command
         $this->tableFqn = filled($table) && class_exists($table)
             ? $table
             : $this->askForSchema(
-                intialQuestion: 'Would you like to use an existing table class?',
+                initialQuestion: 'Would you like to use an existing table class?',
                 question: 'Which table class would you like to use?',
                 questionPlaceholder: app()->getNamespace() . 'Filament\\Resources\\Users\\Tables\\UsersTable',
             );

@@ -23,5 +23,5 @@ interface MultiFactorAuthenticationProvider
     /**
      * @return array<Component | Action | ActionGroup>
      */
-    public function getChallengeFormComponents(Authenticatable $user): array;
+    public function getChallengeSchemaComponents(Authenticatable $user): array;
 }

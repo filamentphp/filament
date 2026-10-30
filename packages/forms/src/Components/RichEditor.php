@@ -706,13 +706,13 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
     }
 
     /**
-     * @param  array<RichContentPlugin> | Closure  $extensions
+     * @param  array<RichContentPlugin> | Closure  $plugins
      */
-    public function plugins(array | Closure $extensions): static
+    public function plugins(array | Closure $plugins): static
     {
         $this->plugins = [
             ...$this->plugins,
-            ...is_array($extensions) ? $extensions : [$extensions],
+            ...is_array($plugins) ? $plugins : [$plugins],
         ];
 
         $this->cachedPlugins = null;

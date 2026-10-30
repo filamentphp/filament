@@ -154,7 +154,7 @@ describe('schema components', function (): void {
         $provider = Mockery::mock(MultiFactorAuthenticationProvider::class);
         $provider->shouldReceive('getId')->andReturn('custom');
         $provider->shouldReceive('isEnabled')->with($user)->andReturnTrue();
-        $provider->shouldReceive('getChallengeFormComponents')->with($user)->andReturn([]);
+        $provider->shouldReceive('getChallengeSchemaComponents')->with($user)->andReturn([]);
 
         Filament::getCurrentPanel()->multiFactorAuthentication([$provider]);
 

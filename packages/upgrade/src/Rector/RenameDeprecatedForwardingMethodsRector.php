@@ -502,6 +502,17 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             }
 
             $replacement = $methodRenames[$methodName];
+
+            // Canonical extension hooks still dispatch to legacy overrides. Renaming
+            // that bridge would make the canonical implementation call itself.
+            if (($node instanceof MethodCall) && ($node->var instanceof Variable) && ($node->var->name === 'this')) {
+                $function = ScopeFetcher::fetch($node)->getFunction();
+
+                if (($function instanceof MethodReflection) && (strcasecmp($function->getName(), $replacement) === 0)) {
+                    return null;
+                }
+            }
+
             $canCallProtected = $node instanceof StaticCall
                 ? $this->isNames($node->class, ['parent', 'self', 'static'])
                 : (($node->var instanceof Variable) && ($node->var->name === 'this'));
@@ -613,7 +624,9 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
      */
     private function canRenameMethods(Type $receiverType, string $componentClass, string $methodName, string $replacement, bool $canCallProtected): bool
     {
-        foreach ($receiverType->getObjectClassReflections() as $classReflection) {
+        $classReflections = $receiverType->getObjectClassReflections();
+
+        foreach ($classReflections as $classReflection) {
             if (! $classReflection->hasNativeMethod($replacement)) {
                 return false;
             }
@@ -673,7 +686,8 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             }
         }
 
-        return true;
+        // `never` is a subtype of every owner, but does not identify a receiver.
+        return count($classReflections) > 0;
     }
 
     /**

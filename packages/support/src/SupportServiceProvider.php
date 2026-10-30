@@ -27,7 +27,7 @@ use Filament\Support\Icons\IconManager;
 use Filament\Support\Livewire\MethodAccess;
 use Filament\Support\Livewire\Partials\DataStoreOverride;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
-use Filament\Support\View\Components\Contracts\HasColor;
+use Filament\Support\View\Components\Contracts\HasColorMap;
 use Filament\Support\View\DefaultLoadingIndicator;
 use Filament\Support\View\ViewManager;
 use Illuminate\Foundation\Console\AboutCommand;
@@ -213,7 +213,7 @@ class SupportServiceProvider extends PackageServiceProvider
         });
 
         // When updating this macro, also update the corresponding method in `Filament\Support\View\ComponentAttributeBag`.
-        ComponentAttributeBag::macro('color', function (string | HasColor $component, string | array | null $color): ComponentAttributeBag {
+        ComponentAttributeBag::macro('color', function (string | HasColorMap $component, string | array | null $color): ComponentAttributeBag {
             if (is_array($color)) {
                 return $this
                     ->class(['fi-color'])

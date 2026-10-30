@@ -47,7 +47,7 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
 
     public static string | Alignment $formActionsAlignment = Alignment::Start;
 
-    public static bool $formActionsAreSticky = false;
+    public static bool $areFormActionsSticky = false;
 
     public static bool $hasInlineLabels = false;
 
@@ -150,15 +150,15 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
         (static::$reportValidationErrorUsing)($exception);
     }
 
-    protected function halt(bool $shouldRollbackDatabaseTransaction = false): void
+    protected function halt(bool $shouldRollBackDatabaseTransaction = false): void
     {
-        throw (new Halt)->rollBackDatabaseTransaction($shouldRollbackDatabaseTransaction);
+        throw (new Halt)->rollBackDatabaseTransaction($shouldRollBackDatabaseTransaction);
     }
 
     #[Unexposed]
     public static function stickyFormActions(bool $condition = true): void
     {
-        static::$formActionsAreSticky = $condition;
+        static::$areFormActionsSticky = $condition;
     }
 
     #[Unexposed]
@@ -188,7 +188,7 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
     #[Unexposed]
     public function areFormActionsSticky(): bool
     {
-        return static::$formActionsAreSticky;
+        return static::$areFormActionsSticky;
     }
 
     #[Unexposed]

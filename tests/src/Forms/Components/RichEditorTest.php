@@ -2935,8 +2935,10 @@ class RichEditorTestBlockA extends RichContentCustomBlock
         return 'block-a';
     }
 
-    public static function toHtml(array $config, array $data): ?string
+    public static function toHtml(array $configuration, array $data): ?string
     {
+        $config = &$configuration;
+
         return '<div>A</div>';
     }
 }
@@ -2948,8 +2950,10 @@ class RichEditorTestBlockB extends RichContentCustomBlock
         return 'block-b';
     }
 
-    public static function toHtml(array $config, array $data): ?string
+    public static function toHtml(array $configuration, array $data): ?string
     {
+        $config = &$configuration;
+
         return '<div>B</div>';
     }
 }
@@ -2961,8 +2965,10 @@ class RichEditorTestBlockC extends RichContentCustomBlock
         return 'block-c';
     }
 
-    public static function toHtml(array $config, array $data): ?string
+    public static function toHtml(array $configuration, array $data): ?string
     {
+        $config = &$configuration;
+
         return '<div>C</div>';
     }
 }

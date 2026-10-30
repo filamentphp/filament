@@ -77,9 +77,9 @@ class ParentResourceRegistration
         return $parentRecord->{$this->getRelationshipName()}();
     }
 
-    public function getInverseRelationship(Model $parentRecord): BelongsTo | BelongsToMany
+    public function getInverseRelationship(Model $childRecord): BelongsTo | BelongsToMany
     {
-        return $parentRecord->{$this->getInverseRelationshipName()}();
+        return $childRecord->{$this->getInverseRelationshipName()}();
     }
 
     public function getRelationshipName(): string

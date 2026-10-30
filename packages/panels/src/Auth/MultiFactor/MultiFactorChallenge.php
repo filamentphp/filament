@@ -146,7 +146,7 @@ class MultiFactorChallenge
     protected function getChallengeSchemaComponentsForEnabledProviders(Authenticatable $user, array $enabledProviders): array
     {
         return collect($enabledProviders)
-            ->map(fn (MultiFactorAuthenticationProvider $provider): Component => Group::make($provider->getChallengeFormComponents($user))
+            ->map(fn (MultiFactorAuthenticationProvider $provider): Component => Group::make($provider->getChallengeSchemaComponents($user))
                 ->statePath($provider->getId())
                 ->when(
                     count($enabledProviders) > 1,

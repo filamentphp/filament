@@ -133,18 +133,24 @@ class TestBlockWithPreview extends RichContentCustomBlock
         return 'with-preview';
     }
 
-    public static function toPreviewHtml(array $config): ?string
+    public static function toPreviewHtml(array $configuration): ?string
     {
+        $config = &$configuration;
+
         return '<p>' . ($config['text'] ?? '') . '</p>';
     }
 
-    public static function getPreviewLabel(array $config): string
+    public static function getPreviewLabel(array $configuration): string
     {
+        $config = &$configuration;
+
         return 'Preview: ' . ($config['text'] ?? 'empty');
     }
 
-    public static function toHtml(array $config, array $data): ?string
+    public static function toHtml(array $configuration, array $data): ?string
     {
+        $config = &$configuration;
+
         return '<div>' . ($config['text'] ?? '') . ': ' . ($data['extra'] ?? '') . '</div>';
     }
 
@@ -161,13 +167,17 @@ class TestBlockWithProsePreview extends RichContentCustomBlock
         return 'prose-preview';
     }
 
-    public static function toPreviewHtml(array $config): ?string
+    public static function toPreviewHtml(array $configuration): ?string
     {
+        $config = &$configuration;
+
         return '<h2>' . ($config['title'] ?? '') . '</h2>';
     }
 
-    public static function shouldApplyProseStylingToPreview(array $config): bool
+    public static function shouldApplyProseStylingToPreview(array $configuration): bool
     {
+        $config = &$configuration;
+
         return $config['applyProseStyling'] ?? true;
     }
 }

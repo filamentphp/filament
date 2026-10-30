@@ -5,10 +5,10 @@ namespace Filament\Infolists\View\Components\IconEntryComponent;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\View\Components\ColorMaps\ComponentColorMap;
-use Filament\Support\View\Components\Contracts\HasColor;
+use Filament\Support\View\Components\Contracts\HasColorMap;
 use Filament\Support\View\Components\Contracts\HasDefaultGrayColor;
 
-class IconComponent implements HasColor, HasDefaultGrayColor
+class IconComponent implements HasColorMap, HasDefaultGrayColor
 {
     /**
      * Since the icons in the entry are the only content, they should have a color that contrasts

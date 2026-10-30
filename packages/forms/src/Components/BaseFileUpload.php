@@ -289,9 +289,9 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return $this;
     }
 
-    public function disk(string | Closure | null $name): static
+    public function disk(string | Closure | null $disk): static
     {
-        $this->diskName = $name;
+        $this->diskName = $disk;
 
         $this->cachedDisk = null;
 

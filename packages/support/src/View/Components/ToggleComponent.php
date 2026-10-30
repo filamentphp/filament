@@ -5,10 +5,10 @@ namespace Filament\Support\View\Components;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\View\Components\ColorMaps\ComponentColorMap;
-use Filament\Support\View\Components\Contracts\HasColor;
+use Filament\Support\View\Components\Contracts\HasColorMap;
 use Filament\Support\View\Components\Contracts\HasDefaultGrayColor;
 
-class ToggleComponent implements HasColor, HasDefaultGrayColor
+class ToggleComponent implements HasColorMap, HasDefaultGrayColor
 {
     /**
      * Since the toggle doesn't contain text, the icon may be imperative for the user to

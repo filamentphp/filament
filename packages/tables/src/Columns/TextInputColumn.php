@@ -105,16 +105,16 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         return $this;
     }
 
-    public function inlinePrefix(bool | Closure $isInline = true): static
+    public function inlinePrefix(bool | Closure $condition = true): static
     {
-        $this->isPrefixInline = $isInline;
+        $this->isPrefixInline = $condition;
 
         return $this;
     }
 
-    public function inlineSuffix(bool | Closure $isInline = true): static
+    public function inlineSuffix(bool | Closure $condition = true): static
     {
-        $this->isSuffixInline = $isInline;
+        $this->isSuffixInline = $condition;
 
         return $this;
     }

@@ -98,7 +98,7 @@ class DisableEmailAuthenticationAction
                 $user = Filament::auth()->user();
 
                 DB::transaction(function () use ($user): void {
-                    $user->toggleEmailAuthentication(false);
+                    $user->saveEmailAuthentication(false);
                 });
 
                 Notification::make()

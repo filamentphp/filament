@@ -39,7 +39,7 @@ class ViewAction extends Action
 
         $this->fillSchema(function (HasActions & HasSchemas $livewire, Model $record): array {
             if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
-                $data = $translatableContentDriver->getRecordAttributesToArray($record);
+                $data = $translatableContentDriver->recordAttributesToArray($record);
             } else {
                 $data = $record->attributesToArray();
             }

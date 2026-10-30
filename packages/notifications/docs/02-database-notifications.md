@@ -135,7 +135,7 @@ public function panel(Panel $panel): Panel
 
 Websockets are a more efficient way to receive new notifications in real-time. To set up websockets, you must [configure it](broadcast-notifications#setting-up-websockets-in-a-panel) in the panel first.
 
-Once websockets are set up, you can automatically dispatch a `DatabaseNotificationsSent` event by setting the `isEventDispatched` parameter to `true` when sending the notification. This will trigger the immediate fetching of new notifications for the user:
+Once websockets are set up, you can automatically dispatch a `DatabaseNotificationsSent` event by setting the `shouldDispatchEvent` parameter to `true` when sending the notification. This will trigger the immediate fetching of new notifications for the user:
 
 ```php
 use Filament\Notifications\Notification;
@@ -144,7 +144,7 @@ $recipient = auth()->user();
 
 Notification::make()
     ->title('Saved successfully')
-    ->sendToDatabase($recipient, isEventDispatched: true);
+    ->sendToDatabase($recipient, shouldDispatchEvent: true);
 ```
 
 ## Marking database notifications as read

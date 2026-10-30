@@ -103,7 +103,7 @@ abstract class RegisterTenant extends SimplePage
 
             $this->callHook('afterRegister');
         } catch (Halt $exception) {
-            $exception->shouldRollbackDatabaseTransaction() ?
+            $exception->shouldRollBackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
                 $this->commitDatabaseTransaction();
 

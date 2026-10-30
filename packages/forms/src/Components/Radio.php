@@ -30,7 +30,7 @@ class Radio extends Field implements Contracts\CanDisableOptions, HasEmbeddedVie
             0 => $falseLabel ?? __('filament-forms::components.radio.boolean.false'),
         ]);
 
-        $this->stateCast(app(BooleanStateCast::class, ['isStoredAsInt' => true]));
+        $this->stateCast(app(BooleanStateCast::class, ['isStoredAsInteger' => true]));
 
         return $this;
     }

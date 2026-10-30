@@ -329,7 +329,7 @@ describe('settings type safety', function () use ($applyQueryBuilderFilter): voi
         ]);
 
         // Security: a tampered request can nest an array inside the `values` of a multiple
-        // select, which would reach `strval()` in `OptionsArrayStateCast` and throw an
+        // select, which would reach `strval()` in `OptionArrayStateCast` and throw an
         // `Array to string conversion` error (HTTP 500). The cast must skip the bad element.
         livewire(PostsQueryBuilderTable::class)
             ->tap($applyQueryBuilderFilter([

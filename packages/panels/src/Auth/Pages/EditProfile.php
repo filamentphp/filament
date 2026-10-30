@@ -214,7 +214,7 @@ class EditProfile extends Page
 
             $this->callHook('afterSave');
         } catch (Halt $exception) {
-            $exception->shouldRollbackDatabaseTransaction() ?
+            $exception->shouldRollBackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
                 $this->commitDatabaseTransaction();
 

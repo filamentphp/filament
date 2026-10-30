@@ -17,7 +17,7 @@ interface TranslatableContentDriver
     /**
      * @return array<string, mixed>
      */
-    public function getRecordAttributesToArray(Model $record): array;
+    public function recordAttributesToArray(Model $record): array;
 
     /**
      * @param  class-string<Model>  $model

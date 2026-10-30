@@ -11,7 +11,7 @@ use Filament\Support\Colors\ColorManager;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\View\Components\BadgeComponent;
 use Filament\Support\View\Components\ButtonComponent;
-use Filament\Support\View\Components\Contracts\HasColor;
+use Filament\Support\View\Components\Contracts\HasColorMap;
 use Filament\Support\View\Components\DropdownComponent\HeaderComponent as DropdownHeaderComponent;
 use Filament\Support\View\Components\DropdownComponent\ItemComponent as DropdownItemComponent;
 use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent as DropdownItemIconComponent;
@@ -236,7 +236,7 @@ it('calculates maximum contrast ratio between black and white', function (): voi
     expect($ratio)->toBeGreaterThan(20.0);
 });
 
-it('generates component classes', function (string | HasColor $component, string $color): void {
+it('generates component classes', function (string | HasColorMap $component, string $color): void {
     expect(FilamentColor::getComponentClasses($component, $color))
         ->toMatchSnapshot();
 })

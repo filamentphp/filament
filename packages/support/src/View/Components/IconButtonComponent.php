@@ -5,10 +5,10 @@ namespace Filament\Support\View\Components;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\View\Components\ColorMaps\IconButtonComponentColorMap;
-use Filament\Support\View\Components\Contracts\HasColor;
+use Filament\Support\View\Components\Contracts\HasColorMap;
 use Filament\Support\View\Components\Contracts\HasDefaultGrayColor;
 
-class IconButtonComponent implements HasColor, HasDefaultGrayColor
+class IconButtonComponent implements HasColorMap, HasDefaultGrayColor
 {
     /**
      * Since the icon button doesn't contain text, the icon is imperative for the user to

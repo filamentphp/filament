@@ -8,9 +8,9 @@ trait CanBeHidden
 {
     protected bool | Closure $isHidden = false;
 
-    public function hidden(bool | Closure $hidden = true): static
+    public function hidden(bool | Closure $condition = true): static
     {
-        $this->isHidden = $hidden;
+        $this->isHidden = $condition;
 
         return $this;
     }

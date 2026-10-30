@@ -133,7 +133,7 @@ class CreateRecord extends Page
             Event::dispatch(RecordCreated::class, ['record' => $this->record, 'data' => $data, 'page' => $this]);
             Event::dispatch(RecordSaved::class, ['record' => $this->record, 'data' => $data, 'page' => $this]);
         } catch (Halt $exception) {
-            $exception->shouldRollbackDatabaseTransaction() ?
+            $exception->shouldRollBackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
                 $this->commitDatabaseTransaction();
 

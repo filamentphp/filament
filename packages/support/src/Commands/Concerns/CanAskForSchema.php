@@ -11,10 +11,10 @@ trait CanAskForSchema
     /**
      * @return ?class-string
      */
-    protected function askForSchema(string $intialQuestion, string $question, string $questionPlaceholder): ?string
+    protected function askForSchema(string $initialQuestion, string $question, string $questionPlaceholder): ?string
     {
         if (! confirm(
-            label: $intialQuestion,
+            label: $initialQuestion,
             default: false,
         )) {
             return null;

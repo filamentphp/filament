@@ -6,5 +6,5 @@ interface HasEmailAuthentication
 {
     public function hasEmailAuthentication(): bool;
 
-    public function toggleEmailAuthentication(bool $condition): void;
+    public function saveEmailAuthentication(bool $condition): void;
 }

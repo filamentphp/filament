@@ -17,8 +17,8 @@ class ImportChunkProcessed
         protected Import $import,
         protected array $columnMap,
         protected array $options,
-        protected int $processedRows,
-        protected int $successfulRows,
+        protected int $processedRowsCount,
+        protected int $successfulRowsCount,
     ) {}
 
     public function getImport(): Import
@@ -44,11 +44,11 @@ class ImportChunkProcessed
 
     public function getProcessedRowsCount(): int
     {
-        return $this->processedRows;
+        return $this->processedRowsCount;
     }
 
     public function getSuccessfulRowsCount(): int
     {
-        return $this->successfulRows;
+        return $this->successfulRowsCount;
     }
 }

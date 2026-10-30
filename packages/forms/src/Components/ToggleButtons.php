@@ -8,7 +8,7 @@ use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
 use Filament\Schemas\Components\StateCasts\EnumStateCast;
-use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
+use Filament\Schemas\Components\StateCasts\OptionArrayStateCast;
 use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\GridDirection;
@@ -374,7 +374,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
             0 => FilamentIcon::resolve(FormsIconAlias::COMPONENTS_TOGGLE_BUTTONS_BOOLEAN_FALSE) ?? Heroicon::XMark,
         ]);
 
-        $this->stateCast(app(BooleanStateCast::class, ['isStoredAsInt' => true]));
+        $this->stateCast(app(BooleanStateCast::class, ['isStoredAsInteger' => true]));
 
         return $this;
     }
@@ -469,7 +469,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
         }
 
         if ($this->isMultiple()) {
-            return [app(OptionsArrayStateCast::class)];
+            return [app(OptionArrayStateCast::class)];
         }
 
         return [app(OptionStateCast::class, ['isNullable' => true])];

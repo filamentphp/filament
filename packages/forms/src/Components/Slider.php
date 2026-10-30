@@ -157,23 +157,23 @@ class Slider extends Field implements Contracts\HasNestedRecursiveValidationRule
         return $this;
     }
 
-    public function minValue(int | float | Closure $minValue): static
+    public function minValue(int | float | Closure $value): static
     {
-        $this->minValue = $minValue;
+        $this->minValue = $value;
 
         return $this;
     }
 
-    public function maxValue(int | float | Closure $maxValue): static
+    public function maxValue(int | float | Closure $value): static
     {
-        $this->maxValue = $maxValue;
+        $this->maxValue = $value;
 
         return $this;
     }
 
-    public function minDifference(int | Closure | null $minDifference = null): static
+    public function minDifference(int | Closure | null $difference = null): static
     {
-        $this->minDifference = $minDifference;
+        $this->minDifference = $difference;
 
         return $this;
     }

@@ -5,7 +5,7 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
-use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
+use Filament\Schemas\Components\StateCasts\OptionArrayStateCast;
 use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Services\RelationshipJoiner;
@@ -472,7 +472,7 @@ class TableSelect extends Field implements HasEmbeddedView
         }
 
         if ($this->isMultiple()) {
-            return [app(OptionsArrayStateCast::class)];
+            return [app(OptionArrayStateCast::class)];
         }
 
         return [app(OptionStateCast::class, ['isNullable' => true])];

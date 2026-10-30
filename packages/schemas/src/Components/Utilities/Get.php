@@ -54,9 +54,9 @@ class Get
      * @param  TNullable  $isNullable
      * @return (TNullable is true ? ?string : string)
      */
-    public function string(string $key, bool $isNullable = false, bool $isAbsolute = false): ?string
+    public function string(string $path, bool $isNullable = false, bool $isAbsolute = false): ?string
     {
-        $state = $this($key, $isAbsolute);
+        $state = $this($path, $isAbsolute);
 
         if ($isNullable && blank($state)) {
             return null;
@@ -71,9 +71,9 @@ class Get
      * @param  TNullable  $isNullable
      * @return (TNullable is true ? ?int : int)
      */
-    public function integer(string $key, bool $isNullable = false, bool $isAbsolute = false): ?int
+    public function integer(string $path, bool $isNullable = false, bool $isAbsolute = false): ?int
     {
-        $state = $this($key, $isAbsolute);
+        $state = $this($path, $isAbsolute);
 
         if ($isNullable && blank($state)) {
             return null;
@@ -88,9 +88,9 @@ class Get
      * @param  TNullable  $isNullable
      * @return (TNullable is true ? ?float : float)
      */
-    public function float(string $key, bool $isNullable = false, bool $isAbsolute = false): ?float
+    public function float(string $path, bool $isNullable = false, bool $isAbsolute = false): ?float
     {
-        $state = $this($key, $isAbsolute);
+        $state = $this($path, $isAbsolute);
 
         if ($isNullable && blank($state)) {
             return null;
@@ -105,9 +105,9 @@ class Get
      * @param  TNullable  $isNullable
      * @return (TNullable is true ? ?bool : bool)
      */
-    public function boolean(string $key, bool $isNullable = false, bool $isAbsolute = false): ?bool
+    public function boolean(string $path, bool $isNullable = false, bool $isAbsolute = false): ?bool
     {
-        $state = $this($key, $isAbsolute);
+        $state = $this($path, $isAbsolute);
 
         if ($isNullable && blank($state)) {
             return null;
@@ -122,9 +122,9 @@ class Get
      * @param  TNullable  $isNullable
      * @return (TNullable is true ? ?array<mixed, mixed> : array<mixed, mixed>)
      */
-    public function array(string $key, bool $isNullable = false, bool $isAbsolute = false): ?array
+    public function array(string $path, bool $isNullable = false, bool $isAbsolute = false): ?array
     {
-        $state = $this($key, $isAbsolute);
+        $state = $this($path, $isAbsolute);
 
         if ($isNullable && (! is_array($state))) {
             return null;
@@ -139,9 +139,9 @@ class Get
      * @param  TNullable  $isNullable
      * @return (TNullable is true ? ?CarbonInterface : CarbonInterface)
      */
-    public function date(string $key, bool $isNullable = false, bool $isAbsolute = false): ?CarbonInterface
+    public function date(string $path, bool $isNullable = false, bool $isAbsolute = false): ?CarbonInterface
     {
-        $state = $this($key, $isAbsolute);
+        $state = $this($path, $isAbsolute);
 
         if ($isNullable && blank($state)) {
             return null;
@@ -158,9 +158,9 @@ class Get
      * @param  TNullable  $isNullable
      * @return (TNullable is true ? T|null : T)
      */
-    public function enum(string $key, string $enumClass, bool $isNullable = false, bool $isAbsolute = false): ?BackedEnum
+    public function enum(string $path, string $enumClass, bool $isNullable = false, bool $isAbsolute = false): ?BackedEnum
     {
-        $state = $this($key, $isAbsolute);
+        $state = $this($path, $isAbsolute);
 
         if ($isNullable && blank($state)) {
             return null;
@@ -173,14 +173,14 @@ class Get
         return $enumClass::tryFrom($state);
     }
 
-    public function filled(string $key, bool $isAbsolute = false): bool
+    public function filled(string $path, bool $isAbsolute = false): bool
     {
-        return filled($this($key, $isAbsolute));
+        return filled($this($path, $isAbsolute));
     }
 
-    public function blank(string $key, bool $isAbsolute = false): bool
+    public function blank(string $path, bool $isAbsolute = false): bool
     {
-        return blank($this($key, $isAbsolute));
+        return blank($this($path, $isAbsolute));
     }
 
     public function skipComponentsChildSchemasWhileSearching(bool $condition = true): static

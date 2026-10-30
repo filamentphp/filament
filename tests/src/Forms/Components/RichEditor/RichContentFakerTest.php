@@ -705,8 +705,10 @@ class FakeableRichContentBlock extends RichContentCustomBlock implements CanGene
         return ['message' => $faker->sentence()];
     }
 
-    public static function toHtml(array $config, array $data): ?string
+    public static function toHtml(array $configuration, array $data): ?string
     {
+        $config = &$configuration;
+
         return '<div class="fakeable-block">' . e($config['message']) . '</div>';
     }
 }

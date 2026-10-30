@@ -100,7 +100,7 @@ class SetUpEmailAuthenticationAction
                 $user = Filament::auth()->user();
 
                 DB::transaction(function () use ($user): void {
-                    $user->toggleEmailAuthentication(true);
+                    $user->saveEmailAuthentication(true);
                 });
 
                 Notification::make()

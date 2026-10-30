@@ -8,9 +8,9 @@ trait HasReorderAnimationDuration
 {
     protected int | Closure $reorderAnimationDuration = 300;
 
-    public function reorderAnimationDuration(int | Closure $animation): static
+    public function reorderAnimationDuration(int | Closure $duration): static
     {
-        $this->reorderAnimationDuration = $animation;
+        $this->reorderAnimationDuration = $duration;
 
         return $this;
     }

@@ -7,7 +7,7 @@ use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Illuminate\Support\Arr;
 use Stringable;
 
-class OptionsArrayStateCast implements StateCast
+class OptionArrayStateCast implements StateCast
 {
     public function __construct(
         protected bool $shouldCastToInteger = true,

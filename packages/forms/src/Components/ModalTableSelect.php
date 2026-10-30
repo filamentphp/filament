@@ -6,7 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
-use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
+use Filament\Schemas\Components\StateCasts\OptionArrayStateCast;
 use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\IconPosition;
@@ -898,7 +898,7 @@ class ModalTableSelect extends Field implements HasEmbeddedView
         }
 
         if ($this->isMultiple()) {
-            return [app(OptionsArrayStateCast::class)];
+            return [app(OptionArrayStateCast::class)];
         }
 
         return [app(OptionStateCast::class, ['isNullable' => true])];

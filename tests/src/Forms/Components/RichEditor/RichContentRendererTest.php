@@ -2392,8 +2392,10 @@ class RendererTestAlertBlock extends RichContentCustomBlock
         return 'alert';
     }
 
-    public static function toHtml(array $config, array $data): ?string
+    public static function toHtml(array $configuration, array $data): ?string
     {
+        $config = &$configuration;
+
         return '<div class="alert-' . ($config['type'] ?? 'info') . '">' . ($data['message'] ?? '') . '</div>';
     }
 }
@@ -2405,8 +2407,10 @@ class RendererTestBannerBlock extends RichContentCustomBlock
         return 'banner';
     }
 
-    public static function toHtml(array $config, array $data): ?string
+    public static function toHtml(array $configuration, array $data): ?string
     {
+        $config = &$configuration;
+
         return '<div class="banner">' . ($config['text'] ?? '') . '</div>';
     }
 }
@@ -2418,8 +2422,10 @@ class RendererTestInteractiveBlock extends RichContentCustomBlock
         return 'interactive';
     }
 
-    public static function toHtml(array $config, array $data): string
+    public static function toHtml(array $configuration, array $data): string
     {
+        $config = &$configuration;
+
         return '<section x-data="{ open: false }"><button x-on:click="open = ! open">' . e($config['label']) . '</button><iframe src="https://example.com/embed"></iframe></section>';
     }
 }

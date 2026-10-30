@@ -108,7 +108,7 @@ class ImportDispatcher
                 if ($isSynchronous) {
                     $notification->send();
                 } else {
-                    $notification->sendToDatabase($import->user, isEventDispatched: true);
+                    $notification->sendToDatabase($import->user, shouldDispatchEvent: true);
                 }
             })
             ->dispatch();

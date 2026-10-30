@@ -686,15 +686,15 @@ class RichContentRenderer implements Htmlable
     }
 
     /**
-     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $configuration
      */
-    public function getCustomBlockHtml(string $id, array $config): ?string
+    public function getCustomBlockHtml(string $id, array $configuration): ?string
     {
         foreach ($this->customBlocks as $key => $block) {
             if (is_string($key) && ($key::getId() === $id)) {
-                return $key::toHtml($config, data: value($block) ?? []);
+                return $key::toHtml($configuration, data: value($block) ?? []);
             } elseif (is_string($block) && ($block::getId() === $id)) {
-                return $block::toHtml($config, data: []);
+                return $block::toHtml($configuration, data: []);
             }
         }
 

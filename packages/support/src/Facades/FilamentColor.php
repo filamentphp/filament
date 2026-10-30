@@ -4,14 +4,14 @@ namespace Filament\Support\Facades;
 
 use Closure;
 use Filament\Support\Colors\ColorManager;
-use Filament\Support\View\Components\Contracts\HasColor;
+use Filament\Support\View\Components\Contracts\HasColorMap;
 use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static array<string, array<int | string, string | int>> getColors()
  * @method static ?array<int | string, string | int> getColor(string $color)
- * @method static array<string> getComponentClasses(class-string<HasColor> | HasColor $component, ?string $color)
- * @method static array<string> getComponentCustomStyles(class-string<HasColor> | HasColor $component, array<string> $color)
+ * @method static array<string> getComponentClasses(class-string<HasColorMap> | HasColorMap $component, ?string $color)
+ * @method static array<string> getComponentCustomStyles(class-string<HasColorMap> | HasColorMap $component, array<string> $color)
  * @method static void addShades(string $alias, array<int> $shades)
  * @method static array<int> | null getAddedShades(string $alias)
  * @method static array<int> | null getOverridingShades(string $alias)

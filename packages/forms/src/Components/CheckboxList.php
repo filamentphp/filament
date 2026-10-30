@@ -7,7 +7,7 @@ use Filament\Actions\Action;
 use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
-use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
+use Filament\Schemas\Components\StateCasts\OptionArrayStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Enums\GridDirection;
@@ -512,7 +512,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
             return parent::getDefaultStateCasts();
         }
 
-        return [app(OptionsArrayStateCast::class)];
+        return [app(OptionArrayStateCast::class)];
     }
 
     /**

@@ -351,6 +351,52 @@ Rebuild your bundles afterwards.
 Replace `registerScripts()` / `registerStyles()` with `Filament\Support\Facades\FilamentAsset::register()`, using `Js::make()` / `Css::make()` from `Filament\Support\Assets`. See [asset registration](../support/assets).
 </Disclosure>
 
+<Disclosure>
+<span slot="summary">Updating renamed parameters and extension contracts</span>
+
+The following changes align public names without changing their behavior. The script updates statically identifiable calls and declarations. Check dynamic method names, callable invocations with named arguments, and argument arrays assembled elsewhere manually. PHP names below are relative to `Filament`.
+
+| Owner | Previous name | New name |
+| --- | --- | --- |
+| `Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider` | `getChallengeFormComponents()` | `getChallengeSchemaComponents()` |
+| `Auth\MultiFactor\Email\Contracts\HasEmailAuthentication` | `toggleEmailAuthentication()` | `saveEmailAuthentication()` |
+| `Support\Contracts\TranslatableContentDriver` | `getRecordAttributesToArray()` | `recordAttributesToArray()` |
+| `Support\Exceptions\Halt`, `Cancel` | `shouldRollbackDatabaseTransaction()` and `$shouldRollbackDatabaseTransaction` | `shouldRollBackDatabaseTransaction()` and `$shouldRollBackDatabaseTransaction` |
+| `Actions\Contracts\HasActions::getAction()` | `$name` | `$actions` |
+| `Actions\Imports\Events\ImportChunkProcessed` constructor and properties | `$processedRows`, `$successfulRows` | `$processedRowsCount`, `$successfulRowsCount` |
+| Form `RichEditor::plugins()` | `$extensions` | `$plugins` |
+| Form `Slider::minValue()`, `maxValue()` | `$minValue`, `$maxValue` | `$value` |
+| Form `Slider::minDifference()` | `$minDifference` | `$difference` |
+| Form `Builder\Block::maxItems()` | `$maxItems` | `$count` |
+| Form fields and table `TextInputColumn`: `inlinePrefix()`, `inlineSuffix()` | `$isInline` | `$condition` |
+| Form `BaseFileUpload::disk()` | `$name` | `$disk` |
+| `RichContentCustomBlock::toHtml()`, `toPreviewHtml()`, `getPreviewLabel()`, `shouldApplyProseStylingToPreview()`; `RichContentRenderer::getCustomBlockHtml()` | `$config` | `$configuration` |
+| `Navigation\NavigationItem::parentItem()` | `$group` | `$parentItem` |
+| `Resources\ParentResourceRegistration::getInverseRelationship()` | `$parentRecord` | `$childRecord` |
+| `Schemas\Schema::hidden()`; schema `Actions::fullWidth()` | `$hidden`, `$isFullWidth` | `$condition` |
+| Schema `Get` helpers: `string()`, `integer()`, `float()`, `boolean()`, `array()`, `date()`, `enum()`, `filled()`, `blank()` | `$key` | `$path` |
+| Infolist entries and table columns: `iconPosition()` | `$iconPosition` | `$position` |
+| `Schemas\Components\StateCasts\BooleanStateCast` constructor and property | `$isStoredAsInt` | `$isStoredAsInteger` |
+| Command `askForSchema()` | `$intialQuestion` | `$initialQuestion` |
+| `reorderAnimationDuration()` | `$animation` | `$duration` |
+| `Notifications\Notification::sendToDatabase()` | `$isEventDispatched` | `$shouldDispatchEvent` |
+| Table Livewire `updateTableColumnState()` | `$column`, `$record`, `$input` | `$name`, `$recordKey`, `$state` |
+| `Pages\BasePage::halt()` | `$shouldRollbackDatabaseTransaction` | `$shouldRollBackDatabaseTransaction` |
+| Page configuration | `$formActionsAreSticky` | `$areFormActionsSticky` |
+
+Update constructor parameter keys in container calls such as `app(BooleanStateCast::class, ['isStoredAsInteger' => true])`. Positional arguments are unchanged. The custom-block rename does not change stored `config` keys or JavaScript payloads. PHP method calls are case-insensitive, but the rollback property and named parameter spellings are not.
+
+When migrating an override, the script may keep its old local variable as a reference to the renamed parameter. This preserves body logic, argument forwarding, closure captures, and string keys such as `compact('config')`. If an override already uses the destination name for a separate parameter or local variable, reconcile that name first; the script leaves the affected parameter family and its named calls unchanged.
+
+Declarations that already use both names, or traits shared with unrelated classes, require manual review. Include both the traits and their named consuming classes in the upgrade paths so the script can migrate supported trait-defined hooks together with their callers. Anonymous-only trait consumers and dynamic or string references require manual review.
+
+If competing old and new methods prevent a contract migration, reconcile all its implementations and callers before using the new interface. If a trait alias shares its name with an independent method on another subclass, the script leaves that parameter family unchanged, including direct calls, to avoid breaking calls that can reach either signature.
+
+Use `$maxContentWidth` / `getMaxContentWidth()` for new page configuration. Existing `HasMaxWidth` configuration and the `maxWidth` layout-data key remain supported and are not migrated automatically: moving width configuration can change inherited precedence and legacy getter results. Existing exporter disk and generator action overrides also remain supported.
+
+`Actions\Exports\Jobs\ExportCompletion` is now `CompleteExport`. The old class remains as a subclass for already-queued and retry payloads. New jobs use `CompleteExport` directly, so move container bindings, resolving callbacks, and type checks to the new class; new jobs are not instances of `ExportCompletion`. Deploy the updated code to all workers and restart long-running workers before dispatching jobs using the new name. Drain queued listeners carrying old `ImportChunkProcessed` objects before upgrading, since the event's serialized property names change.
+</Disclosure>
+
 ### Referencing removed APIs
 
 The upgrade script handles the common uses of the APIs below. Use these tables to update any references that remain. PHP names are relative to the `Filament` namespace unless stated otherwise.
@@ -484,6 +530,8 @@ Resource/page `form()` / `infolist()` hooks and `InteractsWithForms` remain supp
 
 | Removed name                                                                                               | Replacement                                                                         |
 | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `Schemas\Components\StateCasts\OptionsArrayStateCast` | `Schemas\Components\StateCasts\OptionArrayStateCast` |
+| `Support\View\Components\Contracts\HasColor` | `Support\View\Components\Contracts\HasColorMap` |
 | `Schemas\View\SchemaIconAlias`                                                                             | `Schemas\View\SchemasIconAlias`                                                     |
 | `Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\StatsOverviewWidgetStatChartComponent` | `Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\ChartComponent` |
 | `Forms\Components\Concerns\CanLimitItemsLength`                                                            | `Forms\Components\Concerns\CanLimitItemsCount`                                      |
@@ -505,7 +553,7 @@ Resource/page `form()` / `infolist()` hooks and `InteractsWithForms` remain supp
 | `Widgets\RadarChartWidget`                                                                                 | `Widgets\ChartWidget` with `getType()` returning `'radar'`                          |
 | `Widgets\ScatterChartWidget`                                                                               | `Widgets\ChartWidget` with `getType()` returning `'scatter'`                        |
 
-The query builder filter itself remains `Tables\Filters\QueryBuilder`. Update any remaining type hints for removed chart classes to `Widgets\ChartWidget`.
+The query builder filter itself remains `Tables\Filters\QueryBuilder`. Update any remaining type hints for removed chart classes to `Widgets\ChartWidget`. The enum color contract `Support\Contracts\HasColor` is unchanged; only the view-component contract becomes `HasColorMap`.
 </Disclosure>
 
 <Disclosure>

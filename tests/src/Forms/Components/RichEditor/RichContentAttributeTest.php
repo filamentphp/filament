@@ -362,8 +362,10 @@ class AttributeTestBlockA extends RichContentCustomBlock
         return 'attribute-block-a';
     }
 
-    public static function toHtml(array $config, array $data): ?string
+    public static function toHtml(array $configuration, array $data): ?string
     {
+        $config = &$configuration;
+
         return '<div>' . ($config['heading'] ?? 'A') . ($data['message'] ?? '') . '</div>';
     }
 }
@@ -375,8 +377,10 @@ class AttributeTestBlockB extends RichContentCustomBlock
         return 'attribute-block-b';
     }
 
-    public static function toHtml(array $config, array $data): ?string
+    public static function toHtml(array $configuration, array $data): ?string
     {
+        $config = &$configuration;
+
         return '<div>B</div>';
     }
 }

@@ -603,7 +603,7 @@ class MakePageCommand extends Command
             if (! $isGenerated) {
                 if (! $this->hasFileGenerationFlag(FileGenerationFlag::EMBEDDED_PANEL_RESOURCE_SCHEMAS)) {
                     $formSchemaFqn = $this->askForSchema(
-                        intialQuestion: 'Should an existing form schema class be used?',
+                        initialQuestion: 'Should an existing form schema class be used?',
                         question: 'Which form schema class would you like to use?',
                         questionPlaceholder: app()->getNamespace() . 'Filament\\Resources\\Users\\Schemas\\UserForm',
                     );
@@ -611,7 +611,7 @@ class MakePageCommand extends Command
 
                 if ($hasViewOperation && (! $this->hasFileGenerationFlag(FileGenerationFlag::EMBEDDED_PANEL_RESOURCE_SCHEMAS))) {
                     $infolistSchemaFqn = $this->askForSchema(
-                        intialQuestion: 'Would you like to use an existing infolist schema class?',
+                        initialQuestion: 'Would you like to use an existing infolist schema class?',
                         question: 'Which infolist schema class would you like to use?',
                         questionPlaceholder: app()->getNamespace() . 'Filament\\Resources\\Users\\Schemas\\UserInfolist',
                     );
@@ -619,7 +619,7 @@ class MakePageCommand extends Command
 
                 if (! $this->hasFileGenerationFlag(FileGenerationFlag::EMBEDDED_PANEL_RESOURCE_TABLES)) {
                     $tableFqn = $this->askForSchema(
-                        intialQuestion: 'Would you like to use an existing table class?',
+                        initialQuestion: 'Would you like to use an existing table class?',
                         question: 'Which table class would you like to use?',
                         questionPlaceholder: app()->getNamespace() . 'Filament\\Resources\\Users\\Tables\\UsersTable',
                     );

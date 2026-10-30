@@ -3,8 +3,8 @@
 use AnourValar\EloquentSerialize\Facades\EloquentSerializeFacade;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Actions\Exports\Jobs\CompleteExport;
 use Filament\Actions\Exports\Jobs\CreateXlsxFile;
-use Filament\Actions\Exports\Jobs\ExportCompletion;
 use Filament\Actions\Exports\Jobs\PrepareCsvExport;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Actions\Testing\TestAction;
@@ -98,7 +98,7 @@ it('preserves job construction and serialized chain ordering and configuration',
     Bus::fake();
     ExportActions::$formats = $formats;
     $constructed = [];
-    foreach ([PrepareCsvExport::class, CreateXlsxFile::class, ExportCompletion::class] as $jobClass) {
+    foreach ([PrepareCsvExport::class, CreateXlsxFile::class, CompleteExport::class] as $jobClass) {
         app()->resolving($jobClass, function (object $job) use (&$constructed): void {
             $constructed[] = $job::class;
         });
@@ -120,9 +120,9 @@ it('preserves job construction and serialized chain ordering and configuration',
         return true;
     });
 })->with([
-    'CSV' => [[ExportFormat::Csv], [ExportCompletion::class]],
-    'XLSX' => [[ExportFormat::Xlsx], [CreateXlsxFile::class, ExportCompletion::class]],
-    'both' => [[ExportFormat::Csv, ExportFormat::Xlsx], [ExportCompletion::class, CreateXlsxFile::class]],
+    'CSV' => [[ExportFormat::Csv], [CompleteExport::class]],
+    'XLSX' => [[ExportFormat::Xlsx], [CreateXlsxFile::class, CompleteExport::class]],
+    'both' => [[ExportFormat::Csv, ExportFormat::Xlsx], [CompleteExport::class, CreateXlsxFile::class]],
 ]);
 
 it('keeps table filters search order and both query modifiers in the preparation payload', function (): void {
@@ -159,7 +159,7 @@ it('keeps table filters search order and both query modifiers in the preparation
             ->and($batch->name)->toBe('Post export')
             ->and($batch->options)->toMatchArray(['allowFailures' => true, 'queue' => 'exports', 'connection' => 'sync']);
         $completion = unserialize($batch->chained[0]);
-        expect($completion)->toBeInstanceOf(ExportCompletion::class);
+        expect($completion)->toBeInstanceOf(CompleteExport::class);
         $completionPayload = (fn (): array => get_object_vars($this))->call($completion);
         expect($completionPayload['authGuard'])->toBe('export');
 

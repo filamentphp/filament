@@ -190,7 +190,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
     /**
      * @param  Model | Authenticatable | Collection | array<Model | Authenticatable>  $users
      */
-    public function sendToDatabase(Model | Authenticatable | Collection | array $users, bool $isEventDispatched = false): static
+    public function sendToDatabase(Model | Authenticatable | Collection | array $users, bool $shouldDispatchEvent = false): static
     {
         if (! is_iterable($users)) {
             $users = [$users];
@@ -199,7 +199,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         foreach ($users as $user) {
             $user->notify($this->toDatabase());
 
-            if ($isEventDispatched) {
+            if ($shouldDispatchEvent) {
                 DatabaseNotificationsSent::dispatch($user);
             }
         }

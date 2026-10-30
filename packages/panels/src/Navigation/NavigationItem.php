@@ -93,9 +93,9 @@ class NavigationItem extends Component
         return $this;
     }
 
-    public function parentItem(string | Closure | null $group): static
+    public function parentItem(string | Closure | null $parentItem): static
     {
-        $this->parentItem = $group;
+        $this->parentItem = $parentItem;
 
         return $this;
     }

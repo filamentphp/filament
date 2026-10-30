@@ -6,10 +6,10 @@ use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\View\Components\ColorMaps\ButtonComponentColorMap;
 use Filament\Support\View\Components\ColorMaps\ComponentColorMap;
-use Filament\Support\View\Components\Contracts\HasColor;
+use Filament\Support\View\Components\Contracts\HasColorMap;
 use Filament\Support\View\Components\Contracts\HasDefaultGrayColor;
 
-class ButtonComponent implements HasColor, HasDefaultGrayColor
+class ButtonComponent implements HasColorMap, HasDefaultGrayColor
 {
     /**
      * @var array<int, static>

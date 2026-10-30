@@ -68,6 +68,11 @@ function manual(CustomAction $action, Unrelated $unrelated, Action $builtIn, arr
     $unrelated->rowLoop(loop: $loop);
     $builtIn->form(...$arguments);
 }
+
+function emptyActionNames(): array
+{
+    return array_map(static fn (Action $action): string => $action->getName(), []);
+}
 -----
 <?php
 
@@ -138,4 +143,9 @@ function manual(CustomAction $action, Unrelated $unrelated, Action $builtIn, arr
     $unrelated->form(form: []);
     $unrelated->rowLoop(loop: $loop);
     $builtIn->form(...$arguments);
+}
+
+function emptyActionNames(): array
+{
+    return array_map(static fn (Action $action): string => $action->getName(), []);
 }

@@ -4,10 +4,10 @@ namespace Filament\Schemas\View\Components;
 
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\View\Components\ColorMaps\ComponentColorMap;
-use Filament\Support\View\Components\Contracts\HasColor;
+use Filament\Support\View\Components\Contracts\HasColorMap;
 use Filament\Support\View\Components\Contracts\HasDefaultGrayColor;
 
-class TextComponent implements HasColor, HasDefaultGrayColor
+class TextComponent implements HasColorMap, HasDefaultGrayColor
 {
     /**
      * @param  array<int, string>  $color

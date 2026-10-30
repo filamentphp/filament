@@ -4,10 +4,10 @@ namespace Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComp
 
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\View\Components\ColorMaps\ComponentColorMap;
-use Filament\Support\View\Components\Contracts\HasColor;
+use Filament\Support\View\Components\Contracts\HasColorMap;
 use Filament\Support\View\Components\Contracts\HasDefaultGrayColor;
 
-class DescriptionComponent implements HasColor, HasDefaultGrayColor
+class DescriptionComponent implements HasColorMap, HasDefaultGrayColor
 {
     /**
      * @param  array<int, string>  $color

@@ -430,7 +430,7 @@ In this example, the setup and disable actions should send an SMS code, display 
 
 ### Rendering the challenge form
 
-The `getChallengeFormComponents()` method returns the fields shown after the user's password has been verified. Filament completes authentication only when the components pass validation, so the SMS code field uses the service to reject an invalid challenge:
+The `getChallengeSchemaComponents()` method returns the fields shown after the user's password has been verified. Filament completes authentication only when the components pass validation, so the SMS code field uses the service to reject an invalid challenge:
 
 ```php
 use Closure;
@@ -440,7 +440,7 @@ use SensitiveParameter;
 
 // ...
 
-public function getChallengeFormComponents(Authenticatable $user): array
+public function getChallengeSchemaComponents(Authenticatable $user): array
 {
     return [
         OneTimeCodeInput::make('code')

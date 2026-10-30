@@ -137,7 +137,7 @@ class RichContentCustomBlockClassGenerator extends ClassGenerator
                 ])->render();
                 PHP,
             );
-        $method->addParameter('config')
+        $method->addParameter('configuration')
             ->setType('array');
 
         $this->configureToPreviewHtmlMethod($method);
@@ -158,7 +158,7 @@ class RichContentCustomBlockClassGenerator extends ClassGenerator
                 ])->render();
                 PHP,
             );
-        $method->addParameter('config')
+        $method->addParameter('configuration')
             ->setType('array');
         $method->addParameter('data')
             ->setType('array');

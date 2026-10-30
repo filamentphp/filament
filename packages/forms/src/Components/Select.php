@@ -12,7 +12,7 @@ use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
 use Filament\Schemas\Components\StateCasts\EnumStateCast;
-use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
+use Filament\Schemas\Components\StateCasts\OptionArrayStateCast;
 use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\Exposed;
@@ -182,7 +182,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $this->placeholder($placeholder ?? '-');
 
-        $this->stateCast(app(BooleanStateCast::class, ['isStoredAsInt' => true]));
+        $this->stateCast(app(BooleanStateCast::class, ['isStoredAsInteger' => true]));
 
         return $this;
     }
@@ -1764,7 +1764,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         if ($this->isMultiple()) {
-            return [app(OptionsArrayStateCast::class, ['shouldCastToInteger' => $shouldCastToInteger])];
+            return [app(OptionArrayStateCast::class, ['shouldCastToInteger' => $shouldCastToInteger])];
         }
 
         return [app(OptionStateCast::class, ['isNullable' => true, 'shouldCastToInteger' => $shouldCastToInteger])];

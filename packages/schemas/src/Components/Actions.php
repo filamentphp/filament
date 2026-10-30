@@ -80,9 +80,9 @@ class Actions extends Component implements HasEmbeddedView
         return true;
     }
 
-    public function fullWidth(bool | Closure $isFullWidth = true): static
+    public function fullWidth(bool | Closure $condition = true): static
     {
-        $this->isFullWidth = $isFullWidth;
+        $this->isFullWidth = $condition;
 
         return $this;
     }

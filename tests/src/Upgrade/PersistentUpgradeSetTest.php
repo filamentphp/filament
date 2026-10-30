@@ -73,7 +73,7 @@ class PersistentUpgradeSetTest extends TestCase
                 $expectedFiles[$path] = trim($parts[1] ?? $parts[0]);
             }
 
-            foreach (['behavioral_configuration', 'behavioral_configuration_expressions', 'deprecated_column_and_support_methods'] as $fixture) {
+            foreach (['api_parameters', 'behavioral_configuration', 'behavioral_configuration_expressions', 'deprecated_column_and_support_methods'] as $fixture) {
                 $legacyPath = $directory . '/legacy_' . $fixture . '.php';
                 file_put_contents($legacyPath, str_replace(
                     ['namespace Filament\\Tests\\Upgrade\\Fixtures\\', 'use Filament\\Forms\\Components\\Builder;', 'use Filament\\Forms\\Components\\Repeater;'],
@@ -146,6 +146,13 @@ class PersistentUpgradeSetTest extends TestCase
                 require_once $directory . '/app/deprecated_column_and_support_methods.php';
                 $this->assertSame(['42', '3.5'], Fixtures\DeprecatedColumnAndSupportMethods\numericIndicators(42, 3.5));
                 $this->assertSame(['42', '3.5'], LegacyFixtures\DeprecatedColumnAndSupportMethods\numericIndicators(42, 3.5));
+
+                require_once $directory . '/app/api_parameters.php';
+                $this->assertSame('TITLE!', Fixtures\ApiParameters\render());
+                $this->assertSame('TITLE!', LegacyFixtures\ApiParameters\render());
+
+                require_once $directory . '/app/api_parameter_overrides.php';
+                $this->assertSame(['Trait', 11, 7, 0, false, null], Fixtures\ApiParameterOverrides\result());
 
                 require_once $directory . '/app/panel_integrations.php';
                 $this->assertPanelIntegrations();

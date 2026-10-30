@@ -5,7 +5,7 @@ namespace Filament\Support\View;
 use Closure;
 use Filament\Support\Enums\GridDirection;
 use Filament\Support\Facades\FilamentColor;
-use Filament\Support\View\Components\Contracts\HasColor;
+use Filament\Support\View\Components\Contracts\HasColorMap;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\View\AppendableAttributeValue;
@@ -55,7 +55,7 @@ class ComponentAttributeBag extends BaseComponentAttributeBag
      *
      * @param  string | array<string> | null  $color
      */
-    public function color(string | HasColor $component, string | array | null $color): static
+    public function color(string | HasColorMap $component, string | array | null $color): static
     {
         if (is_array($color)) {
             return $this

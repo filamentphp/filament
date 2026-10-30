@@ -46,7 +46,7 @@ class EditAction extends Action
             $translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver();
 
             if ($translatableContentDriver) {
-                $data = $translatableContentDriver->getRecordAttributesToArray($record);
+                $data = $translatableContentDriver->recordAttributesToArray($record);
             } else {
                 $data = $record->attributesToArray();
             }
@@ -61,7 +61,7 @@ class EditAction extends Action
                 if ($translatableContentDriver) {
                     $data = [
                         ...$data,
-                        ...Arr::only($translatableContentDriver->getRecordAttributesToArray($pivot), $pivotColumns),
+                        ...Arr::only($translatableContentDriver->recordAttributesToArray($pivot), $pivotColumns),
                     ];
                 } else {
                     $data = [

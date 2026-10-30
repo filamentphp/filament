@@ -668,10 +668,10 @@ The `schema()` method on the action can define form fields that will be displaye
 
 ### Rendering a preview for a custom block
 
-Once a block is inserted into the editor, you may define a "preview" for it using the `toPreviewHtml()` method. This method should return a string of HTML that will be displayed in the editor when the block is inserted, allowing users to see what the block will look like before they save it. You can access the `$config` for the block in this method, which contains the data that was submitted in the modal when the block was inserted:
+Once a block is inserted into the editor, you may define a "preview" for it using the `toPreviewHtml()` method. This method should return a string of HTML that will be displayed in the editor when the block is inserted, allowing users to see what the block will look like before they save it. You can access the `$configuration` for the block in this method, which contains the data that was submitted in the modal when the block was inserted:
 
 <Aside variant="danger">
-    Filament treats HTML returned by `toPreviewHtml()` and the block's [`toHtml()` method](#rendering-content-with-custom-blocks) as trusted application HTML and does not sanitize it. Treat `$config` as untrusted user input, including when it comes from saved content. Escape plain text using Blade's `{{ }}` syntax or Laravel's `e()` helper, and validate user-supplied URLs before rendering them. If a configuration value intentionally contains HTML, [sanitize it](#security) before including it in either the preview or the final output.
+    Filament treats HTML returned by `toPreviewHtml()` and the block's [`toHtml()` method](#rendering-content-with-custom-blocks) as trusted application HTML and does not sanitize it. Treat `$configuration` as untrusted user input, including when it comes from saved content. Escape plain text using Blade's `{{ }}` syntax or Laravel's `e()` helper, and validate user-supplied URLs before rendering them. If a configuration value intentionally contains HTML, [sanitize it](#security) before including it in either the preview or the final output.
 </Aside>
 
 ```php
@@ -682,13 +682,13 @@ class HeroBlock extends RichContentCustomBlock
     // ...
 
     /**
-     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $configuration
      */
-    public static function toPreviewHtml(array $config): string
+    public static function toPreviewHtml(array $configuration): string
     {
         return view('filament.forms.components.rich-editor.rich-content-custom-blocks.hero.preview', [
-            'heading' => $config['heading'],
-            'subheading' => $config['subheading'] ?? 'Default subheading',
+            'heading' => $configuration['heading'],
+            'subheading' => $configuration['subheading'] ?? 'Default subheading',
         ])->render();
     }
 }
@@ -703,7 +703,7 @@ In the preview's Blade view, escape the heading and subheading:
 
 <AutoScreenshot name="forms/fields/rich-editor/custom-block-previews" alt="Rich editor with custom block previews and normal controls" />
 
-The `getPreviewLabel()` can be defined if you would like to customize the label that is displayed above the preview in the editor. By default, it will use the label defined in the `getLabel()` method, but the `getPreviewLabel()` is able to access the `$config` for the block, allowing you to display dynamic information in the label:
+The `getPreviewLabel()` can be defined if you would like to customize the label that is displayed above the preview in the editor. By default, it will use the label defined in the `getLabel()` method, but the `getPreviewLabel()` is able to access the `$configuration` for the block, allowing you to display dynamic information in the label:
 
 ```php
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
@@ -713,11 +713,11 @@ class HeroBlock extends RichContentCustomBlock
     // ...
 
     /**
-     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $configuration
      */
-    public static function getPreviewLabel(array $config): string
+    public static function getPreviewLabel(array $configuration): string
     {
-        return "Hero section: {$config['heading']}";
+        return "Hero section: {$configuration['heading']}";
     }
 }
 ```
@@ -776,14 +776,14 @@ class HeroBlock extends RichContentCustomBlock
     // ...
 
     /**
-     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $configuration
      * @param  array<string, mixed>  $data
      */
-    public static function toHtml(array $config, array $data): string
+    public static function toHtml(array $configuration, array $data): string
     {
         return view('filament.forms.components.rich-editor.rich-content-custom-blocks.hero.index', [
-            'heading' => $config['heading'],
-            'subheading' => $config['subheading'],
+            'heading' => $configuration['heading'],
+            'subheading' => $configuration['subheading'],
             'buttonLabel' => 'View category',
             'buttonUrl' => $data['categoryUrl'],
         ])->render();
@@ -791,7 +791,7 @@ class HeroBlock extends RichContentCustomBlock
 }
 ```
 
-As seen above, the `toHtml()` method receives two parameters: `$config`, which contains the configuration data submitted in the modal when the block was inserted, and `$data`, which contains any additional data that may be needed to render the block. This allows you to access the configuration data and render the block accordingly. The data can be passed in the `customBlocks()` method:
+As seen above, the `toHtml()` method receives two parameters: `$configuration`, which contains the configuration data submitted in the modal when the block was inserted, and `$data`, which contains any additional data that may be needed to render the block. This allows you to access the configuration data and render the block accordingly. The data can be passed in the `customBlocks()` method:
 
 ```php
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
@@ -950,9 +950,9 @@ class HeadingBlock extends RichContentCustomBlock
     // ...
 
     /**
-     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $configuration
      */
-    public static function shouldApplyProseStylingToPreview(array $config): bool
+    public static function shouldApplyProseStylingToPreview(array $configuration): bool
     {
         return true;
     }
@@ -964,9 +964,9 @@ When `shouldApplyProseStylingToPreview()` returns `true`, the block's preview wi
 You can make this decision based on the block's configuration, allowing different blocks to have different preview styling:
 
 ```php
-public static function shouldApplyProseStylingToPreview(array $config): bool
+public static function shouldApplyProseStylingToPreview(array $configuration): bool
 {
-    return ($config['useProseStyle'] ?? false) === true;
+    return ($configuration['useProseStyle'] ?? false) === true;
 }
 ```
 

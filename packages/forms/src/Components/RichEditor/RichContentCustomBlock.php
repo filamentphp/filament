@@ -24,34 +24,34 @@ abstract class RichContentCustomBlock
     }
 
     /**
-     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $configuration
      * @param  array<string, mixed>  $data
      */
-    public static function toHtml(array $config, array $data): ?string
+    public static function toHtml(array $configuration, array $data): ?string
     {
         return null;
     }
 
     /**
-     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $configuration
      */
-    public static function getPreviewLabel(array $config): string
+    public static function getPreviewLabel(array $configuration): string
     {
         return static::getLabel();
     }
 
     /**
-     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $configuration
      */
-    public static function toPreviewHtml(array $config): ?string
+    public static function toPreviewHtml(array $configuration): ?string
     {
         return null;
     }
 
     /**
-     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $configuration
      */
-    public static function shouldApplyProseStylingToPreview(array $config): bool
+    public static function shouldApplyProseStylingToPreview(array $configuration): bool
     {
         return false;
     }

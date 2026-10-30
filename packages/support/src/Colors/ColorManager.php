@@ -4,7 +4,7 @@ namespace Filament\Support\Colors;
 
 use Closure;
 use Filament\Support\Concerns\EvaluatesClosures;
-use Filament\Support\View\Components\Contracts\HasColor;
+use Filament\Support\View\Components\Contracts\HasColorMap;
 use Filament\Support\View\Components\Contracts\HasDefaultGrayColor;
 use Illuminate\Support\Str;
 use LogicException;
@@ -33,12 +33,12 @@ class ColorManager
     protected array $cachedColors;
 
     /**
-     * @var array<class-string<HasColor>, array<string, array<string>>>
+     * @var array<class-string<HasColorMap>, array<string, array<string>>>
      */
     protected array $componentClasses = [];
 
     /**
-     * @var array<class-string<HasColor>, array<string, array<string>>>
+     * @var array<class-string<HasColorMap>, array<string, array<string>>>
      */
     protected array $componentCustomStyles = [];
 
@@ -107,10 +107,10 @@ class ColorManager
     }
 
     /**
-     * @param  class-string<HasColor> | HasColor  $component
+     * @param  class-string<HasColorMap> | HasColorMap  $component
      * @return array<string>
      */
-    public function getComponentClasses(string | HasColor $component, ?string $color): array
+    public function getComponentClasses(string | HasColorMap $component, ?string $color): array
     {
         if (blank($color)) {
             return [];
@@ -159,11 +159,11 @@ class ColorManager
     }
 
     /**
-     * @param  class-string<HasColor> | HasColor  $component
+     * @param  class-string<HasColorMap> | HasColorMap  $component
      * @param  array<string>  $color
      * @return array<string>
      */
-    public function getComponentCustomStyles(string | HasColor $component, array $color): array
+    public function getComponentCustomStyles(string | HasColorMap $component, array $color): array
     {
         $componentKey = is_string($component) ? $component : serialize($component);
         $colorKey = serialize($color);

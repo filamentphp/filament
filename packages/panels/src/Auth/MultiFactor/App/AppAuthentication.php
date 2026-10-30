@@ -381,7 +381,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
     /**
      * @param  Authenticatable&HasAppAuthentication&HasAppAuthenticationRecovery  $user
      */
-    public function getChallengeFormComponents(Authenticatable $user): array
+    public function getChallengeSchemaComponents(Authenticatable $user): array
     {
         $isRecoverable = $this->isRecoverable();
 

@@ -469,13 +469,13 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                 },
             })();
         } catch (Halt $exception) {
-            $exception->shouldRollbackDatabaseTransaction() ?
+            $exception->shouldRollBackDatabaseTransaction() ?
                 $action->rollBackDatabaseTransaction() :
                 $action->commitDatabaseTransaction();
 
             return null;
         } catch (Cancel $exception) {
-            $exception->shouldRollbackDatabaseTransaction() ?
+            $exception->shouldRollBackDatabaseTransaction() ?
                 $action->rollBackDatabaseTransaction() :
                 $action->commitDatabaseTransaction();
 

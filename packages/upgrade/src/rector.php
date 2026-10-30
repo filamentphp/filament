@@ -5,11 +5,14 @@ use Filament\Upgrade\Rector\MigrateLegacyConfigurationHooksRector;
 use Filament\Upgrade\Rector\RemoveExportActionCsvDelimiterRector;
 use Filament\Upgrade\Rector\RemoveObsoleteConcealmentRector;
 use Filament\Upgrade\Rector\RemoveObsoleteUploadRestrictionTraitRector;
+use Filament\Upgrade\Rector\RenameApiParametersRector;
+use Filament\Upgrade\Rector\RenameApiPropertiesRector;
 use Filament\Upgrade\Rector\RenameDeprecatedConstantsRector;
 use Filament\Upgrade\Rector\RenameDeprecatedForwardingMethodsRector;
 use Filament\Upgrade\Rector\RenameDeprecatedLazyLoadingApisRector;
 use Filament\Upgrade\Rector\RenameDeprecatedTestingAssertionsRector;
 use Filament\Upgrade\Rector\RenamePlainSchemaAliasesRector;
+use Filament\Upgrade\Rector\RenameReconciledContractMethodsRector;
 use Filament\Upgrade\Rector\RenameSchemaComponentHooksRector;
 use Filament\Upgrade\Rector\RenameThinActionAndTableAliasesRector;
 use Filament\Upgrade\Rector\ReplaceDeprecatedBehavioralConfigurationRector;
@@ -22,6 +25,7 @@ use Filament\Upgrade\Rector\WidenAvatarProviderParameterTypeRector;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\Rector\String_\RenameStringRector;
+use Rector\Renaming\ValueObject\RenameProperty;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->skip([
@@ -32,6 +36,9 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->importNames();
 
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
+        'Filament\\Actions\\Exports\\Jobs\\ExportCompletion' => 'Filament\\Actions\\Exports\\Jobs\\CompleteExport',
+        'Filament\\Schemas\\Components\\StateCasts\\OptionsArrayStateCast' => 'Filament\\Schemas\\Components\\StateCasts\\OptionArrayStateCast',
+        'Filament\\Support\\View\\Components\\Contracts\\HasColor' => 'Filament\\Support\\View\\Components\\Contracts\\HasColorMap',
         'Filament\\Schemas\\View\\SchemaIconAlias' => 'Filament\\Schemas\\View\\SchemasIconAlias',
         'Filament\\Widgets\\View\\Components\\StatsOverviewWidgetComponent\\StatComponent\\StatsOverviewWidgetStatChartComponent' => 'Filament\\Widgets\\View\\Components\\StatsOverviewWidgetComponent\\StatComponent\\ChartComponent',
         'Filament\\Forms\\Components\\Concerns\\CanLimitItemsLength' => 'Filament\\Forms\\Components\\Concerns\\CanLimitItemsCount',
@@ -71,6 +78,17 @@ return static function (RectorConfig $rectorConfig): void {
         'Filament\\Tables\\Filters\\QueryBuilder\\Constraints\\TextConstraint\\Operators\\EqualsOperator' => 'Filament\\QueryBuilder\\Constraints\\TextConstraint\\Operators\\EqualsOperator',
         'Filament\\Tables\\Filters\\QueryBuilder\\Constraints\\TextConstraint\\Operators\\StartsWithOperator' => 'Filament\\QueryBuilder\\Constraints\\TextConstraint\\Operators\\StartsWithOperator',
     ]);
+
+    $propertyRenames = [
+        new RenameProperty('Filament\\Actions\\Imports\\Events\\ImportChunkProcessed', 'processedRows', 'processedRowsCount'),
+        new RenameProperty('Filament\\Actions\\Imports\\Events\\ImportChunkProcessed', 'successfulRows', 'successfulRowsCount'),
+        new RenameProperty('Filament\\Schemas\\Components\\StateCasts\\BooleanStateCast', 'isStoredAsInt', 'isStoredAsInteger'),
+        new RenameProperty('Filament\\Support\\Exceptions\\Halt', 'shouldRollbackDatabaseTransaction', 'shouldRollBackDatabaseTransaction'),
+        new RenameProperty('Filament\\Support\\Exceptions\\Cancel', 'shouldRollbackDatabaseTransaction', 'shouldRollBackDatabaseTransaction'),
+        new RenameProperty('Filament\\Pages\\BasePage', 'formActionsAreSticky', 'areFormActionsSticky'),
+    ];
+
+    $rectorConfig->ruleWithConfiguration(RenameApiPropertiesRector::class, $propertyRenames);
 
     $rectorConfig->ruleWithConfiguration(RenameStringRector::class, [
         'forms:components.rich-editor.toolbar.align-center' => 'forms::components.rich-editor.toolbar.align-center',
@@ -146,11 +164,13 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(RemoveExportActionCsvDelimiterRector::class);
     $rectorConfig->rule(RemoveObsoleteConcealmentRector::class);
     $rectorConfig->rule(RemoveObsoleteUploadRestrictionTraitRector::class);
+    $rectorConfig->rule(RenameApiParametersRector::class);
     $rectorConfig->rule(RenameDeprecatedConstantsRector::class);
     $rectorConfig->rule(RenameDeprecatedForwardingMethodsRector::class);
     $rectorConfig->rule(RenameDeprecatedLazyLoadingApisRector::class);
     $rectorConfig->rule(RenameDeprecatedTestingAssertionsRector::class);
     $rectorConfig->rule(RenamePlainSchemaAliasesRector::class);
+    $rectorConfig->rule(RenameReconciledContractMethodsRector::class);
     $rectorConfig->rule(RenameSchemaComponentHooksRector::class);
     $rectorConfig->rule(RenameThinActionAndTableAliasesRector::class);
     $rectorConfig->rule(ReplaceDeprecatedBehavioralConfigurationRector::class);

@@ -61,9 +61,9 @@ trait HasIcon
         return $this;
     }
 
-    public function iconPosition(IconPosition | string | Closure | null $iconPosition): static
+    public function iconPosition(IconPosition | string | Closure | null $position): static
     {
-        $this->iconPosition = $iconPosition;
+        $this->iconPosition = $position;
 
         return $this;
     }

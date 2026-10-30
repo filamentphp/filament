@@ -5,10 +5,10 @@ namespace Filament\Tables\View\Components\Columns\Summarizers\CountComponent;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\View\Components\ColorMaps\ComponentColorMap;
-use Filament\Support\View\Components\Contracts\HasColor;
+use Filament\Support\View\Components\Contracts\HasColorMap;
 use Filament\Support\View\Components\Contracts\HasDefaultGrayColor;
 
-class IconComponent implements HasColor, HasDefaultGrayColor
+class IconComponent implements HasColorMap, HasDefaultGrayColor
 {
     /**
      * Since the icons in the count summarizer are imperative for the user to understand the

@@ -43,9 +43,9 @@ trait HasColumns
     }
 
     #[Exposed]
-    public function updateTableColumnState(string $column, string $record, mixed $input): mixed
+    public function updateTableColumnState(string $name, string $recordKey, mixed $state): mixed
     {
-        $column = $this->getTable()->getColumn($column);
+        $column = $this->getTable()->getColumn($name);
 
         if (! ($column instanceof Editable)) {
             return ['error' => __('filament-tables::table.columns.editable.unavailable')];
@@ -55,7 +55,7 @@ trait HasColumns
             return ['error' => __('filament-tables::table.columns.editable.unavailable')];
         }
 
-        $record = $this->getTableRecord($record);
+        $record = $this->getTableRecord($recordKey);
 
         if (! $record) {
             return ['error' => __('filament-tables::table.columns.editable.unavailable')];
@@ -68,14 +68,14 @@ trait HasColumns
         }
 
         try {
-            $column->validate($input);
+            $column->validate($state);
         } catch (ValidationException $exception) {
             return [
                 'error' => $exception->getMessage(),
             ];
         }
 
-        $response = $column->updateState($input);
+        $response = $column->updateState($state);
 
         $column->clearCachedState();
         $this->flushCachedTableRecords();

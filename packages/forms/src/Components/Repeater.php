@@ -1160,7 +1160,7 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
         return $records
             ->map(function (Model $record) use ($translatableContentDriver): array {
                 $data = $translatableContentDriver ?
-                    $translatableContentDriver->getRecordAttributesToArray($record) :
+                    $translatableContentDriver->recordAttributesToArray($record) :
                     $record->attributesToArray();
 
                 return $this->mutateRelationshipDataBeforeFill($data);

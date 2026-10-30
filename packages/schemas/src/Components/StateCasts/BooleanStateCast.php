@@ -8,7 +8,7 @@ class BooleanStateCast implements StateCast
 {
     public function __construct(
         protected bool $isNullable = true,
-        protected bool $isStoredAsInt = false,
+        protected bool $isStoredAsInteger = false,
     ) {}
 
     public function get(mixed $state): ?bool
@@ -26,7 +26,7 @@ class BooleanStateCast implements StateCast
             return null;
         }
 
-        if ($this->isStoredAsInt) {
+        if ($this->isStoredAsInteger) {
             return $state ? 1 : 0;
         }
 

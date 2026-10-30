@@ -32,10 +32,12 @@ class AlertBlock extends RichContentCustomBlock
     }
 
     /**
-     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $configuration
      */
-    public static function toPreviewHtml(array $config): string
+    public static function toPreviewHtml(array $configuration): string
     {
+        $config = &$configuration;
+
         return '<p>' . e($config['message'] ?? '') . '</p>';
     }
 }

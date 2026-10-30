@@ -23,7 +23,7 @@ class RecordingTranslatableContentDriver implements TranslatableContentDriver
         return false;
     }
 
-    public function getRecordAttributesToArray(Model $record): array
+    public function recordAttributesToArray(Model $record): array
     {
         return $record->attributesToArray();
     }

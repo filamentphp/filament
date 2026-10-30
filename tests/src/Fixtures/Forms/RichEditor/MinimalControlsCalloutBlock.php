@@ -24,8 +24,10 @@ class MinimalControlsCalloutBlock extends RichContentCustomBlock
             ->extraModalWindowAttributes(['data-testid' => 'minimal-controls-edit-modal']);
     }
 
-    public static function toPreviewHtml(array $config): ?string
+    public static function toPreviewHtml(array $configuration): ?string
     {
+        $config = &$configuration;
+
         return '<p>' . e($config['message'] ?? '') . '</p>';
     }
 }

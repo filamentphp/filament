@@ -6,17 +6,17 @@ use Exception;
 
 class Cancel extends Exception
 {
-    protected bool $shouldRollbackDatabaseTransaction = false;
+    protected bool $shouldRollBackDatabaseTransaction = false;
 
     public function rollBackDatabaseTransaction(bool $condition = true): static
     {
-        $this->shouldRollbackDatabaseTransaction = $condition;
+        $this->shouldRollBackDatabaseTransaction = $condition;
 
         return $this;
     }
 
-    public function shouldRollbackDatabaseTransaction(): bool
+    public function shouldRollBackDatabaseTransaction(): bool
     {
-        return $this->shouldRollbackDatabaseTransaction;
+        return $this->shouldRollBackDatabaseTransaction;
     }
 }

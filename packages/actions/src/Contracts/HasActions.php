@@ -11,9 +11,9 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 interface HasActions
 {
     /**
-     * @param  string | array<string>  $name
+     * @param  string | array<string>  $actions
      */
-    public function getAction(string | array $name, bool $isMounting = true): ?Action;
+    public function getAction(string | array $actions, bool $isMounting = true): ?Action;
 
     /**
      * @param  array<string, mixed>  $arguments

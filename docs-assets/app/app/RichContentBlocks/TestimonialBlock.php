@@ -34,18 +34,22 @@ class TestimonialBlock extends RichContentCustomBlock
     }
 
     /**
-     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $configuration
      */
-    public static function toPreviewHtml(array $config): string
+    public static function toPreviewHtml(array $configuration): string
     {
+        $config = &$configuration;
+
         return '<blockquote><p>' . e($config['quote'] ?? '') . '</p><p>— ' . e($config['author'] ?? '') . '</p></blockquote>';
     }
 
     /**
-     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $configuration
      */
-    public static function shouldApplyProseStylingToPreview(array $config): bool
+    public static function shouldApplyProseStylingToPreview(array $configuration): bool
     {
+        $config = &$configuration;
+
         return true;
     }
 }

@@ -2,10 +2,10 @@
 
 namespace Filament\Support\View\Components\SectionComponent;
 
-use Filament\Support\View\Components\Contracts\HasColor;
+use Filament\Support\View\Components\Contracts\HasColorMap;
 use Filament\Support\View\Components\Contracts\HasDefaultGrayColor;
 
-class IconComponent implements HasColor, HasDefaultGrayColor
+class IconComponent implements HasColorMap, HasDefaultGrayColor
 {
     /**
      * @param  array<int, string>  $color
