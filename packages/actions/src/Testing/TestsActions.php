@@ -57,30 +57,6 @@ class TestsActions
         };
     }
 
-    /**
-     * @deprecated Use `fillForm()` instead.
-     */
-    public function setActionData(): Closure
-    {
-        return function (array $data): static {
-            $this->fillForm($data);
-
-            return $this;
-        };
-    }
-
-    /**
-     * @deprecated Use `assertSchemaStateSet()` instead.
-     */
-    public function assertActionDataSet(): Closure
-    {
-        return function (array | Closure $data): static {
-            $this->assertSchemaStateSet($data);
-
-            return $this;
-        };
-    }
-
     public function callAction(): Closure
     {
         return function (string | TestAction | array $actions, array $data = [], array $arguments = []): static {
@@ -602,30 +578,6 @@ class TestsActions
     public function assertActionHalted(): Closure
     {
         return $this->assertActionMounted();
-    }
-
-    /**
-     * @deprecated Use `assertHasFormErrors()` instead.
-     */
-    public function assertHasActionErrors(): Closure
-    {
-        return function (array $keys = []): static {
-            $this->assertHasFormErrors($keys);
-
-            return $this;
-        };
-    }
-
-    /**
-     * @deprecated Use `assertHasNoFormErrors()` instead.
-     */
-    public function assertHasNoActionErrors(): Closure
-    {
-        return function (array $keys = []): static {
-            $this->assertHasNoFormErrors($keys);
-
-            return $this;
-        };
     }
 
     public function assertActionListInOrder(): Closure

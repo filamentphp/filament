@@ -53,14 +53,6 @@ trait HasRelationship
         return filled($this->getRelationshipName());
     }
 
-    /**
-     * @deprecated Use `hasRelationship()` instead.
-     */
-    public function queriesRelationships(): bool
-    {
-        return $this->hasRelationship();
-    }
-
     public function getRelationship(): Relation | Builder
     {
         $model = $this->getTable()->getModel();
@@ -153,14 +145,6 @@ trait HasRelationship
         }
 
         return null;
-    }
-
-    /**
-     * @deprecated Use `getQualifiedRelatedKeyNameForRelationship()` instead.
-     */
-    public function getRelationshipKey(?Builder $query = null): ?string
-    {
-        return $this->getQualifiedRelatedKeyNameForRelationship($query);
     }
 
     public function hasEmptyRelationshipOption(): bool

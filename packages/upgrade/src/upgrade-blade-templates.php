@@ -53,10 +53,11 @@ foreach ($directories as $directory) {
                 )*>
             ~sx
             REGEX, static fn (array $matches): string => preg_replace_callback(
-            '~^(<\s*/?\s*x[-:])filament::(page|widget)(?=[\s/>])~',
+            '~^(<\s*/?\s*x[-:])filament::(page|widget|card)(?=[\s/>])~',
             static fn (array $component): string => $component[1] . match ($component[2]) {
                 'page' => 'filament-panels::page',
                 'widget' => 'filament-widgets::widget',
+                'card' => 'filament::section',
             },
             $matches[0],
         ), $contents);

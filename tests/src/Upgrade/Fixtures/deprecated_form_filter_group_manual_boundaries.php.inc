@@ -24,12 +24,12 @@ class AliasOverride extends SelectFilter
 
     public function queriesRelationships(): bool
     {
-        return parent::queriesRelationships();
+        return parent::hasRelationship();
     }
 
     public function getRelationshipKey(?Builder $customQuery = null): ?string
     {
-        return parent::getRelationshipKey($customQuery);
+        return parent::getQualifiedRelatedKeyNameForRelationship($customQuery);
     }
 }
 

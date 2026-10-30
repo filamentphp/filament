@@ -10,6 +10,7 @@ use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\View\FormsIconAlias;
+use Filament\Pages\Page;
 use Filament\Panel;
 use Filament\PanelRegistry;
 use Filament\Schemas\Schema;
@@ -22,8 +23,11 @@ use Filament\Support\Facades\FilamentView;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\ViewManager;
 use Filament\Tables\Enums\HeaderActionsPosition;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
@@ -94,6 +98,7 @@ class PersistentUpgradeSetTest extends TestCase
                         __DIR__ . '/routes',
                         __DIR__ . '/tests',
                     ])
+                    ->withoutParallel()
                     ->withCache(__DIR__ . '/cache')
                     ->withSets([{$set}]);
                 PHP);
@@ -104,7 +109,7 @@ class PersistentUpgradeSetTest extends TestCase
                     '--config', $configuration, '--clear-cache', '--no-progress-bar',
                     ...($dryRun ? ['--dry-run'] : []),
                 ], $root);
-                $process->setTimeout(120);
+                $process->setTimeout(300);
                 $process->run();
 
                 $expectedBladeExitCode = 0;
@@ -157,7 +162,11 @@ class PersistentUpgradeSetTest extends TestCase
 
                 require_once $directory . '/app/php_type_names.php';
                 require_once $directory . '/app/password_reset_icon_constants.php';
+                require_once $directory . '/app/row_loop_arguments.php';
                 $this->assertPhpTypeNames();
+
+                require_once $directory . '/app/filter_and_alignment_parent_aliases.php';
+                $this->assertFilterAndAlignmentParentCalls();
 
                 $runtime = new Process([PHP_BINARY, '-r', <<<'PHP'
                     require $argv[1] . '/vendor/autoload.php';
@@ -222,6 +231,31 @@ class PersistentUpgradeSetTest extends TestCase
         }
     }
 
+    private function assertFilterAndAlignmentParentCalls(): void
+    {
+        $table = Table::make(app(PostsTable::class))->query(Post::query());
+
+        foreach ([LegacyRelationshipFilter::class, Fixtures\FilterAndAlignmentParents\InheritedFilter::class] as $filterClass) {
+            $filter = $filterClass::make('author')->table($table);
+            $this->assertFalse($filter->queriesRelationships());
+            $filter->relationship(static fn (): string => 'author', 'name');
+            $this->assertTrue($filter->queriesRelationships());
+            $this->assertSame('users.id', $filter->getRelationshipKey());
+            $query = (new User)->setTable('related_alias')->newQuery();
+            $this->assertSame('related_alias.id', $filter->getRelationshipKey(query: $query));
+        }
+
+        foreach ([LegacyAlignmentPage::class, Fixtures\FilterAndAlignmentParents\InheritedPage::class] as $pageClass) {
+            $page = new $pageClass;
+            $pageClass::alignFormActionsLeft();
+            $this->assertSame(Alignment::Start, $page->getFormActionsAlignment());
+            $pageClass::configureRight();
+            $this->assertSame(Alignment::End, $page->getFormActionsAlignment());
+            $page->configureLeft();
+            $this->assertSame(Alignment::Start, $page->getFormActionsAlignment());
+        }
+    }
+
     private function assertPhpTypeNames(): void
     {
         $field = Fixtures\PhpTypeNames\LimitedField::make('items')->minItems(2)->maxItems(7);
@@ -232,6 +266,9 @@ class PersistentUpgradeSetTest extends TestCase
         $column = Fixtures\PhpTypeNames\LoopColumn::make('title')->rowLoop(rowLoop: $rowLoop);
         $this->assertSame($rowLoop, $column->currentRow());
         $this->assertNull($column->rowLoop(null)->getRowLoop());
+
+        $this->assertSame([$rowLoop, null, $rowLoop, $rowLoop, null], Fixtures\RowLoopArguments\configure($column, null, $rowLoop));
+        $this->assertSame([$rowLoop, $rowLoop, $rowLoop, $rowLoop, null], Fixtures\RowLoopArguments\configure($column, $column, $rowLoop));
 
         $table = Fixtures\PhpTypeNames\LoadingTable::make(app(Fixtures\PhpTypeNames\LoadingComponent::class));
         $this->assertFalse($table->isLazyLoaded());
@@ -502,5 +539,37 @@ class LegacyInsetRepeater extends Repeater
     public function inset(bool | Closure $condition = true): static
     {
         return $this;
+    }
+}
+
+// Preserve the original forwarding contracts only on the legacy side of the pair.
+class LegacyRelationshipFilter extends SelectFilter
+{
+    public function queriesRelationships(): bool
+    {
+        return $this->hasRelationship();
+    }
+
+    public function getRelationshipKey(?\Illuminate\Database\Eloquent\Builder $query = null): ?string
+    {
+        return $this->getQualifiedRelatedKeyNameForRelationship($query);
+    }
+}
+
+class LegacyAlignmentPage extends Page
+{
+    public static function alignFormActionsLeft(): void
+    {
+        static::alignFormActionsStart();
+    }
+
+    public static function configureRight(): void
+    {
+        static::alignFormActionsEnd();
+    }
+
+    public function configureLeft(): void
+    {
+        static::alignFormActionsStart();
     }
 }

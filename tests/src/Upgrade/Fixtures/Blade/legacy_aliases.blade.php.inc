@@ -40,6 +40,21 @@
     Content with an attribute bag
 </x-filament::page>
 <x-filament::widget {{ $attributes->class([count($items) < 2 ? 'compact' : 'wide']) }} />
+<x-filament::card :heading="$heading" data-example="<x-filament::card />" {{ $attributes }}>
+    <x-filament::card @class([count($items) < 2 ? 'compact' : 'wide']) />
+    {{ $content }}
+</x-filament::card>
+<x:filament::card></x:filament::card>
+<x-filament::card-custom /><x-filament::card.header /><x-other::card />
+<x-dynamic-component component="filament::card" />
+<div data-example="<x-filament::card />">Literal card attribute</div>
+{{-- <x-filament::card /> --}}
+@verbatim
+<x-filament::card />
+@endverbatim
+@php
+    $template = '<x-filament::card />';
+@endphp
 -----
 <x-filament-panels::page :full-height="$fullHeight" data-test="A > B" {{ $attributes }}>
     Don't change the content or surrounding whitespace.
@@ -83,3 +98,18 @@
     Content with an attribute bag
 </x-filament-panels::page>
 <x-filament-widgets::widget {{ $attributes->class([count($items) < 2 ? 'compact' : 'wide']) }} />
+<x-filament::section :heading="$heading" data-example="<x-filament::card />" {{ $attributes }}>
+    <x-filament::section @class([count($items) < 2 ? 'compact' : 'wide']) />
+    {{ $content }}
+</x-filament::section>
+<x:filament::section></x:filament::section>
+<x-filament::card-custom /><x-filament::card.header /><x-other::card />
+<x-dynamic-component component="filament::card" />
+<div data-example="<x-filament::card />">Literal card attribute</div>
+{{-- <x-filament::card /> --}}
+@verbatim
+<x-filament::card />
+@endverbatim
+@php
+    $template = '<x-filament::card />';
+@endphp

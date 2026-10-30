@@ -27,6 +27,11 @@ class RenameDeprecatedForwardingParentCallsRectorTest extends AbstractRectorTest
         $this->doTestFile(__DIR__ . '/Fixtures/deprecated_parent_forwarding_boundaries.php.inc');
     }
 
+    public function test_repairs_filter_and_static_alignment_parent_calls(): void
+    {
+        $this->doTestFile(__DIR__ . '/Fixtures/filter_and_alignment_parent_aliases.php.inc');
+    }
+
     public function test_checks_configured_descendants_even_when_only_processing_the_parent_file(): void
     {
         $directory = sys_get_temp_dir() . '/filament-parent-forwarders-' . bin2hex(random_bytes(8));

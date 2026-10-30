@@ -421,7 +421,7 @@ describe('options and properties', function (): void {
         expect($limitedFilter->getOptionsLimit())->toBe(100);
     });
 
-    it('can check relationship presence with `hasRelationship()` and `queriesRelationships()`', function (): void {
+    it('can check relationship presence with `hasRelationship()`', function (): void {
         $withoutRelationship = SelectFilter::make('status')
             ->options(['active' => 'Active']);
 
@@ -429,17 +429,14 @@ describe('options and properties', function (): void {
             ->relationship(fn (): string => 'author', 'name');
 
         expect($withoutRelationship->hasRelationship())->toBeFalse()
-            ->and($withoutRelationship->queriesRelationships())->toBeFalse()
-            ->and($withRelationship->hasRelationship())->toBeTrue()
-            ->and($withRelationship->queriesRelationships())->toBeTrue();
+            ->and($withRelationship->hasRelationship())->toBeTrue();
 
         $withRelationship->relationship(name: null, titleAttribute: null);
 
-        expect($withRelationship->hasRelationship())->toBeFalse()
-            ->and($withRelationship->queriesRelationships())->toBeFalse();
+        expect($withRelationship->hasRelationship())->toBeFalse();
     });
 
-    it('can resolve qualified relationship keys with both accessor names', function (string $model, string $relationship, ?string $key, ?string $aliasedKey): void {
+    it('can resolve qualified relationship keys with `getQualifiedRelatedKeyNameForRelationship()`', function (string $model, string $relationship, ?string $key, ?string $aliasedKey): void {
         $table = Table::make(app(TestTableWithSelectFilter::class))->query($model::query());
         $filter = SelectFilter::make('related')
             ->table($table)
@@ -450,9 +447,7 @@ describe('options and properties', function (): void {
         $query = $relatedModel->newQuery();
 
         expect($filter->getQualifiedRelatedKeyNameForRelationship())->toBe($key)
-            ->and($filter->getRelationshipKey())->toBe($key)
-            ->and($filter->getQualifiedRelatedKeyNameForRelationship(query: $query))->toBe($aliasedKey)
-            ->and($filter->getRelationshipKey(query: $query))->toBe($aliasedKey);
+            ->and($filter->getQualifiedRelatedKeyNameForRelationship(query: $query))->toBe($aliasedKey);
     })->with([
         'belongs to' => [Post::class, 'author', 'users.id', 'related_alias.id'],
         'belongs to many' => [User::class, 'teams', 'teams.id', 'related_alias.id'],
@@ -938,10 +933,10 @@ describe('option callbacks', function (): void {
 });
 
 describe('relationship defaults', function (): void {
-    it('returns `false` for `queriesRelationships()` by default', function (): void {
+    it('returns `false` for `hasRelationship()` by default', function (): void {
         $filter = SelectFilter::make('status');
 
-        expect($filter->queriesRelationships())->toBeFalse();
+        expect($filter->hasRelationship())->toBeFalse();
     });
 
     it('returns `null` for `getRelationshipName()` by default', function (): void {

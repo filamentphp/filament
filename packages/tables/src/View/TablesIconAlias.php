@@ -2,8 +2,6 @@
 
 namespace Filament\Tables\View;
 
-use Filament\QueryBuilder\View\QueryBuilderIconAlias;
-
 class TablesIconAlias
 {
     const ACTIONS_DISABLE_REORDERING = 'tables::actions.disable-reordering';
@@ -25,36 +23,6 @@ class TablesIconAlias
     const COLUMNS_ICON_COLUMN_TRUE = 'tables::columns.icon-column.true';
 
     const EMPTY_STATE = 'tables::empty-state';
-
-    /**
-     * @deprecated Use `\Filament\QueryBuilder\View\QueryBuilderIconAlias::CONSTRAINTS_BOOLEAN` instead.
-     */
-    const FILTERS_QUERY_BUILDER_CONSTRAINTS_BOOLEAN = QueryBuilderIconAlias::CONSTRAINTS_BOOLEAN;
-
-    /**
-     * @deprecated Use `\Filament\QueryBuilder\View\QueryBuilderIconAlias::CONSTRAINTS_DATE` instead.
-     */
-    const FILTERS_QUERY_BUILDER_CONSTRAINTS_DATE = QueryBuilderIconAlias::CONSTRAINTS_DATE;
-
-    /**
-     * @deprecated Use `\Filament\QueryBuilder\View\QueryBuilderIconAlias::CONSTRAINTS_NUMBER` instead.
-     */
-    const FILTERS_QUERY_BUILDER_CONSTRAINTS_NUMBER = QueryBuilderIconAlias::CONSTRAINTS_NUMBER;
-
-    /**
-     * @deprecated Use `\Filament\QueryBuilder\View\QueryBuilderIconAlias::CONSTRAINTS_RELATIONSHIP` instead.
-     */
-    const FILTERS_QUERY_BUILDER_CONSTRAINTS_RELATIONSHIP = QueryBuilderIconAlias::CONSTRAINTS_RELATIONSHIP;
-
-    /**
-     * @deprecated Use `\Filament\QueryBuilder\View\QueryBuilderIconAlias::CONSTRAINTS_SELECT` instead.
-     */
-    const FILTERS_QUERY_BUILDER_CONSTRAINTS_SELECT = QueryBuilderIconAlias::CONSTRAINTS_SELECT;
-
-    /**
-     * @deprecated Use `\Filament\QueryBuilder\View\QueryBuilderIconAlias::CONSTRAINTS_TEXT` instead.
-     */
-    const FILTERS_QUERY_BUILDER_CONSTRAINTS_TEXT = QueryBuilderIconAlias::CONSTRAINTS_TEXT;
 
     const FILTERS_REMOVE_ALL_BUTTON = 'tables::filters.remove-all-button';
 

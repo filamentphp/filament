@@ -45,13 +45,9 @@
                     <x-filament::icon-button
                         color="gray"
                         :icon="$isRtl ? \Filament\Support\Icons\Heroicon::OutlinedChevronLeft : \Filament\Support\Icons\Heroicon::OutlinedChevronRight"
-                        {{-- @deprecated Use `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL` instead of `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON` for RTL. --}}
                         :icon-alias="
                             $isRtl
-                            ? [
-                                \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL,
-                                \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON,
-                            ]
+                            ? \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL
                             : \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON
                         "
                         icon-size="lg"
@@ -70,13 +66,9 @@
                     <x-filament::icon-button
                         color="gray"
                         :icon="$isRtl ? \Filament\Support\Icons\Heroicon::OutlinedChevronRight : \Filament\Support\Icons\Heroicon::OutlinedChevronLeft"
-                        {{-- @deprecated Use `PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL` instead of `PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON` for RTL. --}}
                         :icon-alias="
                             $isRtl
-                            ? [
-                                \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL,
-                                \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON,
-                            ]
+                            ? \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL
                             : \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON
                         "
                         icon-size="lg"

@@ -146,13 +146,9 @@
                 <x-filament::pagination.item
                     :aria-label="__('filament::components/pagination.actions.previous.label')"
                     :icon="$isRtl ? Heroicon::ChevronRight : Heroicon::ChevronLeft"
-                    {{-- @deprecated Use `SupportIconAlias::PAGINATION_PREVIOUS_BUTTON_RTL` instead of `SupportIconAlias::PAGINATION_PREVIOUS_BUTTON` for RTL. --}}
                     :icon-alias="
                         $isRtl
-                        ? [
-                            SupportIconAlias::PAGINATION_PREVIOUS_BUTTON_RTL,
-                            SupportIconAlias::PAGINATION_PREVIOUS_BUTTON,
-                        ]
+                        ? SupportIconAlias::PAGINATION_PREVIOUS_BUTTON_RTL
                         : SupportIconAlias::PAGINATION_PREVIOUS_BUTTON
                     "
                     :loading-targets="$loadingTargets"
@@ -185,13 +181,9 @@
                 <x-filament::pagination.item
                     :aria-label="__('filament::components/pagination.actions.next.label')"
                     :icon="$isRtl ? Heroicon::ChevronLeft : Heroicon::ChevronRight"
-                    {{-- @deprecated Use `SupportIconAlias::PAGINATION_NEXT_BUTTON_RTL` instead of `SupportIconAlias::PAGINATION_NEXT_BUTTON` for RTL. --}}
                     :icon-alias="
                         $isRtl
-                        ? [
-                            SupportIconAlias::PAGINATION_NEXT_BUTTON_RTL,
-                            SupportIconAlias::PAGINATION_NEXT_BUTTON,
-                        ]
+                        ? SupportIconAlias::PAGINATION_NEXT_BUTTON_RTL
                         : SupportIconAlias::PAGINATION_NEXT_BUTTON
                     "
                     :loading-targets="$loadingTargets"

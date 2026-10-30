@@ -71,13 +71,9 @@
                         <x-filament::icon-button
                             color="gray"
                             :icon="$isRtl ? Heroicon::OutlinedChevronLeft : Heroicon::OutlinedChevronRight"
-                            {{-- @deprecated Use `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL` instead of `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON` for RTL. --}}
                             :icon-alias="
                                 $isRtl
-                                ? [
-                                    PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL,
-                                    PanelsIconAlias::SIDEBAR_EXPAND_BUTTON,
-                                ]
+                                ? PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL
                                 : PanelsIconAlias::SIDEBAR_EXPAND_BUTTON
                             "
                             icon-size="lg"
@@ -96,13 +92,9 @@
                         <x-filament::icon-button
                             color="gray"
                             :icon="$isRtl ? Heroicon::OutlinedChevronRight : Heroicon::OutlinedChevronLeft"
-                            {{-- @deprecated Use `PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL` instead of `PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON` for RTL. --}}
                             :icon-alias="
                                 $isRtl
-                                ? [
-                                    PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL,
-                                    PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON,
-                                ]
+                                ? PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL
                                 : PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON
                             "
                             icon-size="lg"

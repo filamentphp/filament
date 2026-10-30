@@ -64,15 +64,6 @@ trait HasColumnManager
     }
 
     /**
-     * @deprecated Use `applyTableColumnManager()` instead.
-     */
-    #[Unexposed]
-    public function updatedToggledTableColumns(): void
-    {
-        $this->applyTableColumnManager();
-    }
-
-    /**
      * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>|null  $state
      */
     #[Exposed]
@@ -158,14 +149,6 @@ trait HasColumnManager
     public function isTableColumnToggledHidden(string $name): bool
     {
         return ! ($this->getTableColumnsToggleStateByName()[$name] ?? false);
-    }
-
-    /**
-     * @deprecated Use `getTableColumnsSessionKey()` instead.
-     */
-    protected function getToggledTableColumnsSessionKey(): string
-    {
-        return $this->getTableColumnsSessionKey();
     }
 
     #[Unexposed]

@@ -188,33 +188,6 @@ class Action {
         return this
     }
 
-    /**
-     * @deprecated Use `dispatch()` instead.
-     */
-    emit(event, data) {
-        this.dispatch(event, data)
-
-        return this
-    }
-
-    /**
-     * @deprecated Use `dispatchSelf()` instead.
-     */
-    emitSelf(event, data) {
-        this.dispatchSelf(event, data)
-
-        return this
-    }
-
-    /**
-     * @deprecated Use `dispatchTo()` instead.
-     */
-    emitTo(component, event, data) {
-        this.dispatchTo(component, event, data)
-
-        return this
-    }
-
     dispatchDirection(dispatchDirection) {
         this._dispatchDirection = dispatchDirection
 

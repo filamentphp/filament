@@ -30,12 +30,6 @@ export interface JsFieldProps<
     readonly onBlur: () => void
 }
 
-/** @deprecated Use `JsFieldProps`. Mount and update props have the same shape. */
-export interface JsFieldInitialProps<
-    Value = unknown,
-    Configuration = Record<string, unknown>,
-> extends JsFieldProps<Value, Configuration> {}
-
 /** Common proxy methods. The runtime object is Livewire's unmodified `$wire`. */
 export interface JsFieldLivewire extends JsRendererLivewire {}
 

@@ -673,14 +673,6 @@ class ImportColumn extends Component
     }
 
     /**
-     * @deprecated Use `getExamples()` instead.
-     */
-    public function getExample(): mixed
-    {
-        return Arr::first($this->getExamples());
-    }
-
-    /**
      * @return array<mixed>
      */
     public function getExamples(): array

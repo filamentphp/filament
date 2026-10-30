@@ -622,15 +622,6 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     }
 
     /**
-     * @deprecated Use `mountedActionHasSchema()` instead.
-     */
-    #[Unexposed]
-    public function mountedActionHasForm(?Action $mountedAction = null): bool
-    {
-        return $this->mountedActionHasSchema($mountedAction);
-    }
-
-    /**
      * @return array<Action>
      */
     #[Unexposed]
@@ -923,14 +914,6 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                 )
                 ->rootHeadingLevel(3),
         );
-    }
-
-    /**
-     * @deprecated Use `getMountedActionSchema()` instead.
-     */
-    protected function getMountedActionForm(?int $actionNestingIndex = null, ?Action $mountedAction = null): ?Schema
-    {
-        return $this->getMountedActionSchema($actionNestingIndex, $mountedAction);
     }
 
     /**

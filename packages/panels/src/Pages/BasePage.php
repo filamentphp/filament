@@ -179,24 +179,6 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
         static::$formActionsAlignment = Alignment::End;
     }
 
-    /**
-     * @deprecated Use `alignFormActionsStart()` instead.
-     */
-    #[Unexposed]
-    public static function alignFormActionsLeft(): void
-    {
-        static::alignFormActionsStart();
-    }
-
-    /**
-     * @deprecated Use `alignFormActionsEnd()` instead.
-     */
-    #[Unexposed]
-    public static function alignFormActionsRight(): void
-    {
-        static::alignFormActionsEnd();
-    }
-
     #[Unexposed]
     public function getFormActionsAlignment(): string | Alignment
     {

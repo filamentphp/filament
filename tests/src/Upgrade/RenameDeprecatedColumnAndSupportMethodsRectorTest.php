@@ -19,6 +19,7 @@ class RenameDeprecatedColumnAndSupportMethodsRectorTest extends AbstractRectorTe
     public function test_renames_calls_only_on_known_owners_without_custom_overrides(): void
     {
         $this->doTestFile(__DIR__ . '/Fixtures/deprecated_column_and_support_methods.php.inc');
+        $this->doTestFile(__DIR__ . '/Fixtures/row_loop_arguments.php.inc');
     }
 
     public function test_preserves_manual_migration_boundaries(): void

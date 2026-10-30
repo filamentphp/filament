@@ -3,48 +3,11 @@
 namespace Filament\Infolists\Concerns;
 
 use Filament\Actions\Action;
-use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Attributes\Unexposed;
 
 trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
 {
-    /**
-     * @deprecated Use `getSchema()` instead.
-     */
-    #[Unexposed]
-    public function getInfolist(string $name): ?Schema
-    {
-        return $this->getSchema($name);
-    }
-
-    /**
-     * @deprecated Use `cacheSchema()` instead.
-     */
-    protected function cacheInfolist(string $name, Schema $schema): ?Schema
-    {
-        return $this->cacheSchema($name, $schema);
-    }
-
-    /**
-     * @return array<string, Schema>
-     *
-     * @deprecated Use `getCachedSchemas()` instead.
-     */
-    #[Unexposed]
-    public function getCachedInfolists(): array
-    {
-        return $this->getCachedSchemas();
-    }
-
-    /**
-     * @deprecated Use `hasCachedSchema()` instead.
-     */
-    protected function hasCachedInfolist(string $name): bool
-    {
-        return $this->hasCachedSchema($name);
-    }
-
     /**
      * @deprecated Use `callMountedAction()` instead.
      *

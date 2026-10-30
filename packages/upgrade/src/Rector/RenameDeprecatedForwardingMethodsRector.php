@@ -366,6 +366,8 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'disableClick' => 'disabledClick',
             'queriesRelationships' => 'hasRelationship',
             'getGetStateUsingCallback' => 'getStateUsingCallback',
+            // Only the named argument changes for `rowLoop()`.
+            'rowLoop' => 'rowLoop',
         ],
         IconColumn::class => [
             'options' => 'icons',
@@ -430,6 +432,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         'context' => ['context', 'operation'],
         'options' => ['options', 'icons'],
         'indicator' => ['indicator', 'badge'],
+        'rowloop' => ['loop', 'rowLoop'],
     ];
 
     public function __construct(
@@ -489,7 +492,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                         continue;
                     }
 
-                    if ($componentClass === BasePage::class) {
+                    if (($componentClass === BasePage::class) && (! $this->canRenameParentForwarder($node, $componentClass, $methodName, $methodRenames[$methodName]))) {
                         if ((! $this->canRenameMethods(new ObjectType($context->getName()), $componentClass, $methodName, $methodRenames[$methodName])) || $this->configurationClassAnalyzer->hasDescendants($context->getName()) || (new NodeFinder)->findFirst($this->getFile()->getNewStmts(), fn (Node $candidate): bool => $candidate instanceof Node\Stmt\Class_ && $candidate->extends && $this->isName($candidate->extends, $context->getName()))) {
                             continue;
                         }
@@ -588,6 +591,8 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         // Repair the removed parent call, not the application's custom alias or its callers.
         // These wrappers have matching argument contracts and return `$this` or the getter result.
         $supported = (($componentClass === IconColumn::class) && ($methodName === 'options'))
+            || (($componentClass === BasePage::class) && in_array($methodName, ['alignformactionsleft', 'alignformactionsright'], strict: true))
+            || (($componentClass === SelectFilter::class) && in_array($methodName, ['queriesrelationships', 'getrelationshipkey'], strict: true))
             || (($componentClass === Action::class) && in_array($methodName, [
                 'disableform', 'disabledform', 'form', 'getform', 'isformdisabled',
                 'mutateformdatausing', 'formdata', 'resetformdata', 'getformdata', 'getrawformdata',
@@ -597,7 +602,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         $function = $scope->getFunction();
         $context = $scope->getClassReflection();
 
-        if ((! $supported) || (! $this->isName($node->class, 'parent')) || $node->isFirstClassCallable() || (! $function instanceof MethodReflection) || $function->isStatic() || (! $context) || $context->isTrait()) {
+        if ((! $supported) || (! $this->isName($node->class, 'parent')) || $node->isFirstClassCallable() || (! $function instanceof MethodReflection) || ($function->isStatic() && ($componentClass !== BasePage::class)) || (! $context) || $context->isTrait()) {
             return false;
         }
 
@@ -725,6 +730,10 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                 }
 
                 if (($componentClass === Action::class) && ($candidateMethodName === 'infolist') && method_exists($methodReflection, 'getDeclaringTrait') && ($methodReflection->getDeclaringTrait()?->getName() === 'Filament\\Actions\\Concerns\\HasInfolist')) {
+                    continue;
+                }
+
+                if (($componentClass === Column::class) && ($methodName === 'rowloop') && method_exists($methodReflection, 'getDeclaringTrait') && in_array($methodReflection->getDeclaringTrait()?->getName(), ['Filament\\Tables\\Columns\\Concerns\\HasRowLoop', 'Filament\\Tables\\Columns\\Concerns\\HasRowLoopObject'], strict: true)) {
                     continue;
                 }
 

@@ -11,16 +11,6 @@ namespace Livewire\Features\SupportTesting {
 
         public function unmountAction(bool | string | null $cancelParentActions = null): static {}
 
-        /**
-         * @deprecated Use `fillForm()` instead.
-         */
-        public function setActionData(array $data): static {}
-
-        /**
-         * @deprecated Use `assertSchemaStateSet()` instead.
-         */
-        public function assertActionDataSet(array | Closure $data): static {}
-
         public function callAction(string | TestAction | array $actions, array $data = [], array $arguments = []): static {}
 
         public function callMountedAction(array $arguments = []): static {}
@@ -70,16 +60,6 @@ namespace Livewire\Features\SupportTesting {
         public function assertMountedActionModalDontSeeHtml(string | array $values): static {}
 
         public function assertActionHalted(string | TestAction | array $actions = []): static {}
-
-        /**
-         * @deprecated Use `assertHasFormErrors()` instead.
-         */
-        public function assertHasActionErrors(array $keys = []): static {}
-
-        /**
-         * @deprecated Use `assertHasNoFormErrors()` instead.
-         */
-        public function assertHasNoActionErrors(array $keys = []): static {}
 
         public function parseNestedActions(string | TestAction | array $actions, array $arguments = [], bool $areRelativeToMountedActions = true): array {}
     }

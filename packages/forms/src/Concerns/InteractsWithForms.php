@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Concerns;
 
-use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Component;
@@ -32,14 +31,6 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
         }
 
         return $this->getBaseCachedSchemas();
-    }
-
-    /**
-     * @deprecated Use `cacheSchema()` instead.
-     */
-    protected function cacheForm(string $name, Schema | Closure | null $form): ?Schema
-    {
-        return $this->cacheSchema($name, $form);
     }
 
     /**
@@ -106,34 +97,6 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     }
 
     /**
-     * @deprecated Use `hasCachedSchema()` instead.
-     */
-    protected function hasCachedForm(string $name): bool
-    {
-        return $this->hasCachedSchema($name);
-    }
-
-    /**
-     * @deprecated Use `getSchema()` instead.
-     */
-    #[Unexposed]
-    public function getForm(string $name): ?Schema
-    {
-        return $this->getSchema($name);
-    }
-
-    /**
-     * @return array<string, Schema>
-     *
-     * @deprecated Use `getCachedSchemas()` instead.
-     */
-    #[Unexposed]
-    public function getCachedForms(): array
-    {
-        return $this->getCachedSchemas();
-    }
-
-    /**
      * @deprecated You do not need to register forms in the `getForms()` method any longer. Define a method of the form's name and return the form from it.
      *
      * @return array<int | string, string | Schema>
@@ -189,33 +152,6 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     protected function getFormStatePath(): ?string
     {
         return null;
-    }
-
-    /**
-     * @deprecated Use `isCachingSchemas()` instead.
-     */
-    #[Unexposed]
-    public function isCachingForms(): bool
-    {
-        return $this->isCachingSchemas();
-    }
-
-    /**
-     * @deprecated Use `getActiveSchemaLocale()` instead.
-     */
-    #[Unexposed]
-    public function getActiveFormsLocale(): ?string
-    {
-        return $this->getActiveSchemaLocale();
-    }
-
-    /**
-     * @deprecated Use `getOldSchemaState()` instead.
-     */
-    #[Unexposed]
-    public function getOldFormState(string $statePath): mixed
-    {
-        return $this->getOldSchemaState($statePath);
     }
 
     /**
