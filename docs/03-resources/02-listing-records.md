@@ -205,6 +205,7 @@ Each page in Filament has its own [schema](../schemas), which defines the overal
 use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Schema;
+use Filament\View\PanelsRenderHook;
 
 public function content(Schema $schema): Schema
 {

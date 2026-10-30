@@ -46,6 +46,7 @@ You may insert [actions](../actions) and any other schema component (usually [pr
 ```php
 use Filament\Actions\Action;
 use Filament\Schemas\Components\EmptyState;
+use Filament\Support\Icons\Heroicon;
 
 EmptyState::make('No users yet')
     ->description('Get started by creating a new user.')

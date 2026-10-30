@@ -253,6 +253,7 @@ If you need to hide an entry based on a user interaction, you can use the `hidde
 ```php
 use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\IconEntry;
+use Filament\Schemas\Components\Utilities\Get;
 
 Select::make('role')
     ->options([

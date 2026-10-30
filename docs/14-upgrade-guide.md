@@ -561,9 +561,11 @@ This behavior can be customized in the [importer](actions/import#customizing-the
 ### Low-impact changes
 
 <Disclosure x-show="packages.includes('tables') || packages.includes('infolists')">
-<span slot="summary">The `isSeparate` parameter of `ImageColumn::limitedRemainingText()` and `ImageEntry::limitedRemainingText()` has been removed</span>
+<span slot="summary">Remaining image counts follow the stack layout</span>
 
-Previously, users were able to display the number of limited images separately to an image stack using the `isSeparate` parameter. Now the parameter has been removed, and if a stack exists, the text will always be stacked on top and not separate. If the images aren’t stacked, the text will be separate.
+Previously, users were able to display the number of limited images separately to an image stack using the `isSeparate` parameter. In the built-in `ImageColumn` and `ImageEntry` renderers, the text is now stacked on top when the images are stacked, and separate otherwise.
+
+The `isSeparate` parameter has been removed from `ImageColumn::limitedRemainingText()`. `ImageEntry::limitedRemainingText()` retains the parameter, along with `limitedRemainingTextSeparate()` and `isLimitedRemainingTextSeparate()`, for custom views. The built-in `ImageEntry` renderer does not use this setting.
 </Disclosure>
 
 <Disclosure x-show="packages.includes('forms')">
