@@ -237,8 +237,9 @@ In widget classes that require data from the filters, you need to add the `Inter
 ```php
 use App\Models\BlogPost;
 use Carbon\CarbonImmutable;
-use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
+use Filament\Widgets\StatsOverviewWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 
 class BlogPostsOverview extends StatsOverviewWidget
@@ -251,7 +252,7 @@ class BlogPostsOverview extends StatsOverviewWidget
         $endDate = $this->pageFilters['endDate'] ?? null;
 
         return [
-            StatsOverviewWidget\Stat::make(
+            Stat::make(
                 label: 'Total posts',
                 value: BlogPost::query()
                     ->when($startDate, fn (Builder $query) => $query->whereDate('created_at', '>=', $startDate))

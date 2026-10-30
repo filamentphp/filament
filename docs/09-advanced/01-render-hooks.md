@@ -194,7 +194,7 @@ Some render hooks can be given a "scope", which allows them to only be output on
 ```php
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
-use Illuminate\Support\Facades\Blade;
+use Illuminate\Contracts\View\View;
 
 FilamentView::registerRenderHook(
     PanelsRenderHook::PAGE_START,
@@ -208,6 +208,7 @@ You can also pass an array of scopes to register the render hook for:
 ```php
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 
 FilamentView::registerRenderHook(
     PanelsRenderHook::PAGE_START,
@@ -224,6 +225,7 @@ Some render hooks for the [Panel Builder](#panel-builder-render-hooks) allow you
 ```php
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 
 FilamentView::registerRenderHook(
     PanelsRenderHook::PAGE_START,
@@ -239,6 +241,7 @@ The `$scopes` are passed to the render hook function, and you can use them to de
 ```php
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 
 FilamentView::registerRenderHook(
     PanelsRenderHook::PAGE_START,
@@ -254,6 +257,7 @@ Render hooks can receive "data" from when the hook is rendered. To access data f
 ```php
 use Filament\Support\Facades\FilamentView;
 use Filament\Tables\View\TablesRenderHook;
+use Illuminate\Contracts\View\View;
 
 FilamentView::registerRenderHook(
     TablesRenderHook::FILTER_INDICATORS,

@@ -73,19 +73,19 @@ php artisan make:filament-relation-manager CategoryResource posts title
 - `posts` is the name of the relationship you want to manage.
 - `title` is the name of the attribute that will be used to identify posts.
 
-This will create a `CategoryResource/RelationManagers/PostsRelationManager.php` file. This contains a class where you are able to define a [form](overview#resource-forms) and [table](overview#resource-tables) for your relation manager:
+By default, this will create a `Categories/RelationManagers/PostsRelationManager.php` file in your panel's resource directory. This contains a class where you are able to define a [form](overview#resource-forms) and [table](overview#resource-tables) for your relation manager:
 
 ```php
-use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
-use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 public function form(Schema $schema): Schema
 {
     return $schema
         ->components([
-            Forms\Components\TextInput::make('title')->required(),
+            TextInput::make('title')->required(),
             // ...
         ]);
 }
@@ -94,7 +94,7 @@ public function table(Table $table): Table
 {
     return $table
         ->columns([
-            Tables\Columns\TextColumn::make('title'),
+            TextColumn::make('title'),
             // ...
         ]);
 }
@@ -157,14 +157,14 @@ public function panel(Panel $panel): Panel
 For inverse relationships that do not follow Laravel's naming guidelines, you may wish to use the `inverseRelationship()` method on the table:
 
 ```php
-use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {
     return $table
         ->columns([
-            Tables\Columns\TextColumn::make('title'),
+            TextColumn::make('title'),
             // ...
         ])
         ->inverseRelationship('section'); // Since the inverse related model is `Category`, this is normally `category`, not `section`.
@@ -192,14 +192,15 @@ You may use any features of the [Table Builder](../tables) to customize relation
 For `BelongsToMany` and `MorphToMany` relationships, you may also add pivot table attributes. For example, if you have a `TeamsRelationManager` for your `UserResource`, and you want to add the `role` pivot attribute to the table, you can use:
 
 ```php
-use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {
     return $table
         ->columns([
-            Tables\Columns\TextColumn::make('name'),
-            Tables\Columns\TextColumn::make('role'),
+            TextColumn::make('name'),
+            TextColumn::make('role'),
         ]);
 }
 ```
@@ -213,15 +214,15 @@ Please ensure that any pivot attributes are listed in the `withPivot()` method o
 For `BelongsToMany` and `MorphToMany` relationships, you may also add pivot table attributes. For example, if you have a `TeamsRelationManager` for your `UserResource`, and you want to add the `role` pivot attribute to the create form, you can use:
 
 ```php
-use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 public function form(Schema $schema): Schema
 {
     return $schema
         ->components([
-            Forms\Components\TextInput::make('name')->required(),
-            Forms\Components\TextInput::make('role')->required(),
+            TextInput::make('name')->required(),
+            TextInput::make('role')->required(),
             // ...
         ]);
 }
@@ -240,15 +241,15 @@ To learn how to customize the `CreateAction`, including mutating the form data, 
 For `BelongsToMany` and `MorphToMany` relationships, you may also edit pivot table attributes. For example, if you have a `TeamsRelationManager` for your `UserResource`, and you want to add the `role` pivot attribute to the edit form, you can use:
 
 ```php
-use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 public function form(Schema $schema): Schema
 {
     return $schema
         ->components([
-            Forms\Components\TextInput::make('name')->required(),
-            Forms\Components\TextInput::make('role')->required(),
+            TextInput::make('name')->required(),
+            TextInput::make('role')->required(),
             // ...
         ]);
 }
@@ -325,12 +326,12 @@ When you attach record with the `Attach` button, you may wish to define a custom
 
 ```php
 use Filament\Actions\AttachAction;
-use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 
 AttachAction::make()
     ->schema(fn (AttachAction $action): array => [
         $action->getRecordSelect(),
-        Forms\Components\TextInput::make('role')->required(),
+        TextInput::make('role')->required(),
     ])
 ```
 
@@ -733,7 +734,7 @@ $this->getOwnerRecord()
 However, if you're inside a `static` method like `form()` or `table()`, `$this` isn't accessible. So, you may [use a callback](../forms/overview#field-utility-injection) to access the `$livewire` instance:
 
 ```php
-use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 
@@ -741,7 +742,7 @@ public function form(Schema $schema): Schema
 {
     return $schema
         ->components([
-            Forms\Components\Select::make('store_id')
+            Select::make('store_id')
                 ->options(function (RelationManager $livewire): array {
                     return $livewire->getOwnerRecord()->stores()
                         ->pluck('name', 'id')
@@ -1052,7 +1053,7 @@ public function table(Table $table): Table
 If you're sharing a form component from the resource with the relation manager, you may want to hide it on the relation manager. This is especially useful if you want to hide a `Select` field for the owner record in the relation manager, since Filament will handle this for you anyway. To do this, you may use the `hiddenOn()` method, passing the name of the relation manager:
 
 ```php
-use App\Filament\Resources\Blog\Posts\PostResource\RelationManagers\CommentsRelationManager;
+use App\Filament\Resources\Blog\Posts\RelationManagers\CommentsRelationManager;
 use Filament\Forms\Components\Select;
 
 Select::make('post_id')
@@ -1065,7 +1066,7 @@ Select::make('post_id')
 If you're sharing a table column from the resource with the relation manager, you may want to hide it on the relation manager. This is especially useful if you want to hide a column for the owner record in the relation manager, since this is not appropriate when the owner record is already listed above the relation manager. To do this, you may use the `hiddenOn()` method, passing the name of the relation manager:
 
 ```php
-use App\Filament\Resources\Blog\Posts\PostResource\RelationManagers\CommentsRelationManager;
+use App\Filament\Resources\Blog\Posts\RelationManagers\CommentsRelationManager;
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('post.title')
@@ -1077,7 +1078,7 @@ TextColumn::make('post.title')
 If you're sharing a table filter from the resource with the relation manager, you may want to hide it on the relation manager. This is especially useful if you want to hide a filter for the owner record in the relation manager, since this is not appropriate when the table is already filtered by the owner record. To do this, you may use the `hiddenOn()` method, passing the name of the relation manager:
 
 ```php
-use App\Filament\Resources\Blog\Posts\PostResource\RelationManagers\CommentsRelationManager;
+use App\Filament\Resources\Blog\Posts\RelationManagers\CommentsRelationManager;
 use Filament\Tables\Filters\SelectFilter;
 
 SelectFilter::make('post')
@@ -1123,7 +1124,7 @@ public function table(Table $table): Table
 You can apply your own query constraints or [model scopes](https://laravel.com/docs/eloquent#query-scopes) that affect the entire relation manager. To do this, you can pass a function to the `modifyQueryUsing()` method of the table, inside which you can customize the query:
 
 ```php
-use Filament\Tables;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
 public function table(Table $table): Table
@@ -1174,7 +1175,7 @@ public static function getTitle(Model $ownerRecord, string $pageClass): string
 The title will be reflected in the [heading of the table](../tables/overview#customizing-the-table-header), as well as the relation manager tab if there is more than one. If you want to customize the table heading independently, you can still use the `$table->heading()` method:
 
 ```php
-use Filament\Tables;
+use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {
@@ -1267,14 +1268,14 @@ Now, you can customize the page in exactly the same way as a relation manager, w
 If you're using [resource sub-navigation](overview#resource-sub-navigation), you can register this page as normal in `getRecordSubNavigation()` of the resource:
 
 ```php
-use App\Filament\Resources\Customers\Pages;
+use App\Filament\Resources\Customers\Pages\ManageCustomerAddresses;
 use Filament\Resources\Pages\Page;
 
 public static function getRecordSubNavigation(Page $page): array
 {
     return $page->generateNavigationItems([
         // ...
-        Pages\ManageCustomerAddresses::class,
+        ManageCustomerAddresses::class,
     ]);
 }
 ```
@@ -1284,7 +1285,7 @@ public static function getRecordSubNavigation(Page $page): array
 When registering a relation manager in a resource, you can use the `make()` method to pass an array of [Livewire properties](https://livewire.laravel.com/docs/properties) to it:
 
 ```php
-use App\Filament\Resources\Blog\Posts\PostResource\RelationManagers\CommentsRelationManager;
+use App\Filament\Resources\Blog\Posts\RelationManagers\CommentsRelationManager;
 
 public static function getRelations(): array
 {

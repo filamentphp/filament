@@ -76,14 +76,16 @@ public static function getRecordRouteBindingEloquentQuery(): Builder
 Now, update the Edit page class if you have one:
 
 ```php
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
 
 protected function getHeaderActions(): array
 {
     return [
-        Actions\DeleteAction::make(),
-        Actions\ForceDeleteAction::make(),
-        Actions\RestoreAction::make(),
+        DeleteAction::make(),
+        ForceDeleteAction::make(),
+        RestoreAction::make(),
         // ...
     ];
 }

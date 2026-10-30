@@ -101,12 +101,12 @@ In this example, we create a new file at `app/Filament/AvatarProviders/BoringAva
 
 namespace App\Filament\AvatarProviders;
 
-use Filament\AvatarProviders\Contracts;
+use Filament\AvatarProviders\Contracts\AvatarProvider;
 use Filament\Facades\Filament;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
-class BoringAvatarsProvider implements Contracts\AvatarProvider
+class BoringAvatarsProvider implements AvatarProvider
 {
     public function get(Model | Authenticatable $record): string
     {

@@ -284,10 +284,11 @@ On the page class, add the corresponding `HasWizard` trait:
 ```php
 use App\Filament\Resources\Categories\CategoryResource;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
 
 class CreateCategory extends CreateRecord
 {
-    use CreateRecord\Concerns\HasWizard;
+    use HasWizard;
     
     protected static string $resource = CategoryResource::class;
 
@@ -360,7 +361,7 @@ public function hasSkippableSteps(): bool
 If you'd like to reduce the amount of repetition between the resource form and wizard steps, it's a good idea to extract public static form functions for your fields, where you can easily retrieve an instance of a field from the form schema or the wizard:
 
 ```php
-use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 class CategoryForm
@@ -375,7 +376,7 @@ class CategoryForm
             ]);
     }
     
-    public static function getNameFormField(): Forms\Components\TextInput
+    public static function getNameFormField(): TextInput
     {
         return TextInput::make('name')
             ->required()
@@ -383,7 +384,7 @@ class CategoryForm
             ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state)));
     }
     
-    public static function getSlugFormField(): Forms\Components\TextInput
+    public static function getSlugFormField(): TextInput
     {
         return TextInput::make('slug')
             ->disabled()
@@ -396,10 +397,11 @@ class CategoryForm
 ```php
 use App\Filament\Resources\Categories\Schemas\CategoryForm;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
 
 class CreateCategory extends CreateRecord
 {
-    use CreateRecord\Concerns\HasWizard;
+    use HasWizard;
     
     protected static string $resource = CategoryResource::class;
 
@@ -424,14 +426,15 @@ Filament includes an `ImportAction` that you can add to the `getHeaderActions()`
 
 ```php
 use App\Filament\Imports\ProductImporter;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
+use Filament\Actions\ImportAction;
 
 protected function getHeaderActions(): array
 {
     return [
-        Actions\ImportAction::make()
+        ImportAction::make()
             ->importer(ProductImporter::class),
-        Actions\CreateAction::make(),
+        CreateAction::make(),
     ];
 }
 ```
@@ -448,7 +451,7 @@ For example, you may add a new button action in the header of the Create page:
 
 ```php
 use App\Filament\Imports\UserImporter;
-use Filament\Actions;
+use Filament\Actions\ImportAction;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateUser extends CreateRecord
@@ -458,7 +461,7 @@ class CreateUser extends CreateRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ImportAction::make()
+            ImportAction::make()
                 ->importer(UserImporter::class),
         ];
     }

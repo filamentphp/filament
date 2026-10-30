@@ -473,6 +473,6 @@ use function Pest\Livewire\livewire;
 it('moves to next wizard step only for fooForm', function () {
     livewire(CreatePost::class)
         ->goToNextWizardStep(schema: 'fooForm')
-        ->assertHasFormErrors(['title'], schema: 'fooForm');
+        ->assertHasFormErrors(['title'], form: 'fooForm');
 });
 ```

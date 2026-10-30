@@ -475,13 +475,14 @@ use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('image')
     ->image()
-    ->automaticallyCropImagesToAspectRatio('16:9')
+    ->imageAspectRatio('16:9')
+    ->automaticallyCropImagesToAspectRatio()
     ->automaticallyResizeImagesMode('cover')
     ->automaticallyResizeImagesToWidth('1920')
     ->automaticallyResizeImagesToHeight('1080')
 ```
 
-To enable automatic cropping with a specific aspect ratio, use the `automaticallyCropImagesToAspectRatio()` method. If you also have `imageAspectRatio()` set for validation and want the automatic crop to use the same ratio, you can call `automaticallyCropImagesToAspectRatio()` without any arguments:
+Set the aspect ratio using `imageAspectRatio()`, then enable automatic cropping using `automaticallyCropImagesToAspectRatio()`. The crop uses the same ratio as validation; the optional argument to `automaticallyCropImagesToAspectRatio()` controls whether cropping is enabled, not the ratio:
 
 ```php
 use Filament\Forms\Components\FileUpload;

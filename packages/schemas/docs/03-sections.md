@@ -263,6 +263,7 @@ Section::make('Notes')
 You may insert [actions](../actions) and any other schema component (usually [prime components](primes)) into the header of a section by passing an array of components to the `afterHeader()` method:
 
 ```php
+use Filament\Actions\Action;
 use Filament\Schemas\Components\Section;
 
 Section::make('Rate limiting')
@@ -284,6 +285,7 @@ Section::make('Rate limiting')
 You may insert [actions](../actions) and any other schema component (usually [prime components](primes)) into the footer of a section by passing an array of components to the `footer()` method:
 
 ```php
+use Filament\Actions\Action;
 use Filament\Schemas\Components\Section;
 
 Section::make('Rate limiting')
