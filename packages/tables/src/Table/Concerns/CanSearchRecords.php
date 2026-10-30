@@ -208,7 +208,7 @@ trait CanSearchRecords
             $model = $query->getModel();
 
             $nonTranslatableSearch = generate_search_term_expression($search, isSearchForcedCaseInsensitive: null, databaseConnection: $databaseConnection);
-            $searchPattern = generate_search_pattern($nonTranslatableSearch, hasLeadingWildcard: true, hasTrailingWildcard: true);
+            $searchPattern = generate_search_pattern($nonTranslatableSearch, hasLeadingWildcard: true, hasTrailingWildcard: true, databaseConnection: $databaseConnection);
 
             $translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver();
 
@@ -219,11 +219,18 @@ trait CanSearchRecords
                     $this->getExtraSearchableColumnRelationship($column, $query->getModel()),
                     fn (Builder $query): Builder => $query->{"{$whereClause}Has"}(
                         (string) str($column)->beforeLast('.'),
-                        fn (Builder $query): Builder => apply_search_constraint(
-                            $query,
-                            generate_search_column_expression((string) str($column)->afterLast('.'), isSearchForcedCaseInsensitive: null, databaseConnection: $databaseConnection),
-                            $searchPattern,
-                        ),
+                        function (Builder $query) use ($column, $search): Builder {
+                            /** @var Connection $databaseConnection */
+                            $databaseConnection = $query->getConnection();
+
+                            $search = generate_search_term_expression($search, isSearchForcedCaseInsensitive: null, databaseConnection: $databaseConnection);
+
+                            return apply_search_constraint(
+                                $query,
+                                generate_search_column_expression((string) str($column)->afterLast('.'), isSearchForcedCaseInsensitive: null, databaseConnection: $databaseConnection),
+                                generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true, databaseConnection: $databaseConnection),
+                            );
+                        },
                     ),
                     function (Builder $query) use ($databaseConnection, $searchPattern, $column, $whereClause): Builder {
                         // Treat the missing "relationship" as a JSON column if dot notation is used in the column name.

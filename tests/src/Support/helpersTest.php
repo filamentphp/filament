@@ -11,9 +11,13 @@ use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Database\Query\Grammars\Grammar;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use Illuminate\Database\Query\Grammars\PostgresGrammar;
+use Illuminate\Database\Query\Processors\Processor;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Support\HtmlString;
@@ -36,6 +40,7 @@ use function Filament\Support\get_color_css_variables;
 use function Filament\Support\get_component_color_classes;
 use function Filament\Support\get_model_label;
 use function Filament\Support\is_app_url;
+use function Filament\Support\is_database_driver_supported;
 use function Filament\Support\is_path_within_directory;
 use function Filament\Support\is_path_within_vendor_directory;
 use function Filament\Support\is_slot_empty;
@@ -52,6 +57,60 @@ describe('`format_money()`', function (): void {
                 ->and(format_money(-42.5, 'USD'))->toBe('-$42.50');
         });
     });
+});
+
+it('recognizes supported drivers with `is_database_driver_supported()`', function (string $driver, bool $isSupported): void {
+    $databaseConnection = Mockery::mock(Connection::class);
+    $databaseConnection->shouldReceive('getDriverName')->once()->andReturn($driver);
+
+    expect(is_database_driver_supported($databaseConnection))->toBe($isSupported);
+})->with([
+    'MariaDB' => ['mariadb', true],
+    'MySQL' => ['mysql', true],
+    'PostgreSQL' => ['pgsql', true],
+    'SQLite' => ['sqlite', true],
+    'SQL Server' => ['sqlsrv', true],
+    'MongoDB' => ['mongodb', false],
+]);
+
+it('uses `whereLike()` without SQL expressions and with literal wildcards for unsupported database drivers', function (): void {
+    $databaseConnection = new Connection(null, config: [
+        'driver' => 'mongodb',
+        'search_collation' => 'utf8mb4_unicode_ci',
+    ]);
+
+    $baseQuery = new class($databaseConnection, new Grammar($databaseConnection), new Processor) extends QueryBuilder
+    {
+        /** @var array<mixed> */
+        public array $whereLikeArguments = [];
+
+        public function whereLike($column, $value, $caseSensitive = false, $boolean = 'and', $not = false)
+        {
+            $this->whereLikeArguments = [$column, $value, $caseSensitive, $boolean, $not];
+
+            return $this;
+        }
+    };
+
+    $query = (new EloquentBuilder($baseQuery))->setModel(new Ticket);
+
+    $returnedQuery = apply_search_constraint(
+        $query,
+        generate_search_column_expression('profile.name', true, $databaseConnection),
+        generate_search_pattern(
+            generate_search_term_expression('Café!_100%[draft]\\path\\%\\_wow!!', true, $databaseConnection),
+            hasLeadingWildcard: true,
+            hasTrailingWildcard: true,
+            databaseConnection: $databaseConnection,
+        ),
+        boolean: 'or',
+        isInverse: true,
+    );
+
+    expect($returnedQuery)
+        ->toBe($query)
+        ->and($baseQuery->whereLikeArguments)
+        ->toBe(['profile.name', '%Café!\\_100\\%[draft]\\path\\\\%\\\\_wow!!%', false, 'or', true]);
 });
 
 describe('`format_number()`', function (): void {
@@ -276,7 +335,7 @@ describe('`encode_key_segments()`', function (): void {
 
 describe('`generate_search_pattern()`', function (): void {
     it('generates patterns with literal LIKE wildcard characters', function (bool $hasLeadingWildcard, bool $hasTrailingWildcard, string $expected): void {
-        expect(generate_search_pattern('café!_100%[draft]\\path', $hasLeadingWildcard, $hasTrailingWildcard))
+        expect(generate_search_pattern('café!_100%[draft]\\path', $hasLeadingWildcard, $hasTrailingWildcard, Ticket::query()->getConnection()))
             ->toBe($expected);
     })->with([
         'equals' => [false, false, 'café!!!_100!%![draft]\\path'],

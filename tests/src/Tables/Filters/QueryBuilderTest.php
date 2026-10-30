@@ -38,6 +38,9 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Pages\QueryBuilderTableTest;
 use Filament\Tests\Tables\TestCase;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Artisan;
 use Livewire\Features\SupportTesting\Testable;
 
@@ -1685,6 +1688,95 @@ describe('`relationship()` constraints', function () use ($applyQueryBuilderFilt
                 ->call('applyTableFilters'))
             ->assertCanSeeTableRecords([$highTotalUser])
             ->assertCanNotSeeTableRecords([$lowTotalUser]);
+    });
+
+    it('uses `whereRelationAggregate()` with callback injections provided by an unsupported Eloquent query builder', function (bool $returnsNewQuery): void {
+        $matchingUser = User::factory()->create();
+        $excludedUser = User::factory()->create();
+        Post::factory()->count(2)->for($matchingUser, 'author')->create(['rating' => 12, 'is_published' => true]);
+        Post::factory()->for($excludedUser, 'author')->create(['rating' => 30, 'is_published' => true]);
+        Post::factory()->for($excludedUser, 'author')->create(['rating' => 5, 'is_published' => true]);
+        Post::factory()->for($excludedUser, 'author')->create(['rating' => 100, 'is_published' => false]);
+
+        $defaultConnection = User::query()->getConnection();
+        $databaseConnection = new Connection(
+            $defaultConnection->getPdo(),
+            $defaultConnection->getDatabaseName(),
+            $defaultConnection->getTablePrefix(),
+            ['driver' => 'compatibility-test'],
+        );
+        $grammarClass = $defaultConnection->getQueryGrammar()::class;
+        $databaseConnection->setQueryGrammar(new $grammarClass($databaseConnection));
+
+        $query = new class($databaseConnection->query()) extends EloquentBuilder
+        {
+            public function whereRelationAggregate(string $relationship, string $column, string $aggregate, string $operator, float $value, ?Closure $modifyQueryUsing = null): static
+            {
+                $relation = Relation::noConstraints(fn (): Relation => $this->getModel()->{$relationship}());
+                $relationshipQuery = $relation->getRelationExistenceQuery(
+                    $relation->getRelated()->newQuery(),
+                    $this,
+                    [],
+                )->selectRaw("{$aggregate}({$column})");
+
+                if ($modifyQueryUsing) {
+                    $relationshipQuery = $modifyQueryUsing($relationshipQuery) ?? $relationshipQuery;
+                }
+
+                return $this->whereRaw(
+                    "({$relationshipQuery->toSql()}) {$operator} cast(? as decimal(10,2))",
+                    [...$relationshipQuery->getBindings(), $value],
+                );
+            }
+        };
+        $query->setModel(new User);
+
+        $modifyQueryUsing = static function (array $settings, EloquentBuilder $query) use ($returnsNewQuery): ?EloquentBuilder {
+            $modifiedQuery = $returnsNewQuery ? clone $query : $query;
+            $modifiedQuery->where('is_published', true)->where('rating', '<=', $settings['number']);
+
+            return $returnsNewQuery ? $modifiedQuery : null;
+        };
+        $constraint = NumberConstraint::make('posts.rating')
+            ->modifyRelationshipQueryUsing($modifyQueryUsing);
+        $operator = IsMinOperator::make()
+            ->constraint($constraint)
+            ->settings(['number' => 20, 'aggregate' => 'sum']);
+
+        expect($operator->apply($query, 'rating'))
+            ->toBe($query)
+            ->and($query->get()->modelKeys())
+            ->toBe([$matchingUser->getKey()]);
+    })->with([
+        'mutating the query and returning `null`' => [false],
+        'returning a new query' => [true],
+    ]);
+
+    it('does not use `whereRelationAggregate()` for a supported database driver', function (): void {
+        $query = new class(User::query()->toBase()) extends EloquentBuilder
+        {
+            public bool $usedRelationshipAggregateWhere = false;
+
+            public function whereRelationAggregate(string $relationship, string $column, string $aggregate, string $operator, float $value, ?Closure $modifyQueryUsing = null): static
+            {
+                $this->usedRelationshipAggregateWhere = true;
+
+                return $this;
+            }
+        };
+        $query->setModel(new User);
+
+        $constraint = NumberConstraint::make('posts.rating');
+        $operator = IsMinOperator::make()
+            ->constraint($constraint)
+            ->settings(['number' => 20, 'aggregate' => 'sum']);
+
+        expect($operator->apply($query, 'rating'))
+            ->toBe($query)
+            ->and($query->usedRelationshipAggregateWhere)
+            ->toBeFalse()
+            ->and($query->getQuery()->wheres[0]['type'])
+            ->toBe('raw');
     });
 
     it('can filter records using number constraint with average aggregate on relationship', function (): void {
