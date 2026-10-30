@@ -32,8 +32,9 @@ function configure(Schema $schema, Table $table, ?Table $nullableTable, Livewire
     $schema->lazy()->isLazy();
     $input->lazy()->isLazy();
     $input->live(onBlur: true);
-    $callback = $input->lazy(...);
-    $input->lazy(...$arguments);
+    $nullableTable?->deferLoading()->isLoadingDeferred();
+    $nullableInput = rand(0, 1) ? $input : null;
+    $nullableInput?->lazy();
 }
 
 function mixedReceivers(Schema|Table $loading, Livewire|TextInput $different, Table|string $partial, Table|Unrelated $unrelated, $unknown): void
@@ -88,8 +89,9 @@ function configure(Schema $schema, Table $table, ?Table $nullableTable, Livewire
     $schema->live(onBlur: true)->isLiveOnBlur();
     $input->live(onBlur: true)->isLiveOnBlur();
     $input->live(onBlur: true);
-    $callback = $input->lazy(...);
-    $input->lazy(...$arguments);
+    $nullableTable?->lazyLoaded()->isLazyLoaded();
+    $nullableInput = rand(0, 1) ? $input : null;
+    $nullableInput?->live(onBlur: true);
 }
 
 function mixedReceivers(Schema|Table $loading, Livewire|TextInput $different, Table|string $partial, Table|Unrelated $unrelated, $unknown): void

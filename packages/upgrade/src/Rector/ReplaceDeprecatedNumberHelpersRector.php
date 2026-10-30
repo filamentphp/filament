@@ -28,21 +28,9 @@ use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\TypeCombinator;
 use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class ReplaceDeprecatedNumberHelpersRector extends AbstractRector
 {
-    public function getRuleDefinition(): RuleDefinition
-    {
-        return new RuleDefinition('Replace number helper calls while preserving argument evaluation and validation', [
-            new CodeSample(
-                "\\Filament\\Support\\format_money(123450, 'USD', 100);",
-                "(string) \\Illuminate\\Support\\Number::currency(123450 / 100, 'USD');",
-            ),
-        ]);
-    }
-
     public function getNodeTypes(): array
     {
         return [FuncCall::class];

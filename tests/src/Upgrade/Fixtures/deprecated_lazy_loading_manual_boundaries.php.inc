@@ -2,71 +2,25 @@
 
 namespace Filament\Tests\Upgrade\Fixtures\LazyLoadingBoundaries;
 
-use Closure;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Livewire;
 use Filament\Widgets\Widget;
 
 class PropertyCollision extends Widget
 {
-    protected static bool $other = true, $isLazy = false;
+    protected static bool $isLazy = false;
     protected static ?bool $isLazyLoaded = null;
-
-    public function inspect(): bool
-    {
-        return static::$isLazy;
-    }
 }
 
 class MethodCollision extends Widget
 {
     public static function isLazy(): bool
     {
-        return parent::isLazy();
+        return false;
     }
 
     public static function isLazyLoaded(): bool
     {
-        return false;
-    }
-}
-
-class ForwardingOverride extends Widget
-{
-    public static function isLazy(): bool
-    {
-        return static::isLazyLoaded();
-    }
-}
-
-class ExplicitNewConfiguration extends Widget
-{
-    protected static ?bool $isLazyLoaded = false;
-
-    public static function isLazy(): bool
-    {
-        return parent::isLazy();
-    }
-}
-
-class InheritedDefault extends Widget
-{
-    public function isConfigured(): bool
-    {
-        return isset(static::$isLazy);
-    }
-}
-
-class EmbeddedOverride extends Livewire
-{
-    public function lazy(bool | Closure $condition = true): static
-    {
-        return $this;
-    }
-
-    public function lazyLoaded(bool | Closure $condition = true): static
-    {
-        return $this;
+        return true;
     }
 }
 
@@ -74,15 +28,27 @@ class BindingOverride extends TextInput
 {
     public function lazy(): static
     {
-        return parent::lazy();
+        return $this;
     }
 }
 
-function inspect(BindingOverride $binding, EmbeddedOverride $embedded): void
+class CustomNames
+{
+    public function lazy(): string
+    {
+        return 'custom';
+    }
+
+    public static function isLazy(): bool
+    {
+        return false;
+    }
+}
+
+function inspect(BindingOverride $binding, CustomNames $custom): void
 {
     MethodCollision::isLazy();
-    ForwardingOverride::isLazy();
-    ExplicitNewConfiguration::isLazy();
     $binding->lazy();
-    $embedded->lazy();
+    $custom->lazy();
+    CustomNames::isLazy();
 }

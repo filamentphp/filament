@@ -13,6 +13,10 @@ use function Filament\Tests\livewire;
 
 function assertions(Testable $testable, ?Testable $nullable, array $arguments): void
 {
+    $testable->setActionData(data: ['title' => 'Changed'])->assertActionDataSet(data: ['title' => 'Changed'])->assertHasNoActionErrors();
+    $testable->assertHasActionErrors(keys: ['title' => 'required']);
+    $nullable?->setActionData([])->assertActionDataSet(data: []);
+    $callback = $testable->assertActionDataSet(...);
     $testable->assertFormFieldIsDisabled(key: 'title', form: 'editForm');
     $testable->assertFormFieldIsEnabled('title');
     $testable->assertFormFieldIsReadOnly('slug');
@@ -80,6 +84,10 @@ use function Filament\Tests\livewire;
 
 function assertions(Testable $testable, ?Testable $nullable, array $arguments): void
 {
+    $testable->fillForm(state: ['title' => 'Changed'])->assertSchemaStateSet(state: ['title' => 'Changed'])->assertHasNoFormErrors();
+    $testable->assertHasFormErrors(keys: ['title' => 'required']);
+    $nullable?->fillForm([])->assertSchemaStateSet(state: []);
+    $callback = $testable->assertSchemaStateSet(...);
     $testable->assertFormFieldDisabled(key: 'title', form: 'editForm');
     $testable->assertFormFieldEnabled('title');
     $testable->assertFormFieldReadOnly('slug');

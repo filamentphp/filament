@@ -9,6 +9,12 @@ $isDryRun = in_array('--dry-run', $arguments, true);
 $directories = array_values(array_diff($arguments, ['--dry-run'])) ?: ['resources/views'];
 $hasChanges = false;
 
+$componentNames = [
+    'filament::page' => 'filament-panels::page',
+    'filament::widget' => 'filament-widgets::widget',
+    'filament::card' => 'filament::section',
+];
+
 foreach ($directories as $directory) {
     if (! is_dir($directory)) {
         fwrite(STDERR, "Blade template directory does not exist: {$directory}\n");
@@ -38,12 +44,18 @@ foreach ($directories as $directory) {
         }
 
         // Consume complete tags so component-like strings inside attributes are unchanged.
-        // Blade also excludes comments, `@verbatim` blocks, and `@php` blocks from tag compilation.
+        // Blade also excludes Blade comments, `@verbatim` blocks, and `@php` blocks from tag compilation.
         $updatedContents = preg_replace_callback(<<<'REGEX'
             ~
                 (?<!@)@verbatim\b.*?@endverbatim
                 | (?<!@)@php\b.*?@endphp
                 | \{\{--.*?--\}\}
+                | <\?(?:php\b|=)(?>'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|(?! \?>).)*\?>
+                | (?:
+                    @?\{!!(?>'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|(?! !!\}).)*!!\}
+                    | @?\{\{(?>'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|(?! \}\}).)*\}\}
+                )
+                | @?@[a-zA-Z]+\s*(?<arguments>\((?:[^()'"/]+|'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|/\*.*?\*/|/(?!\*)|(?&arguments))*\))
                 | <\s*/?\s*[a-zA-Z][\w:.-]*(?:
                     @(?:class|style)(?<expression>\((?:[^()]++|(?&expression))*\))
                     | \{\{\s*\$attributes(?:[^}]+?)?\s*\}\}
@@ -52,15 +64,59 @@ foreach ($directories as $directory) {
                     | '[^']*'
                 )*>
             ~sx
-            REGEX, static fn (array $matches): string => preg_replace_callback(
-            '~^(<\s*/?\s*x[-:])filament::(page|widget|card)(?=[\s/>])~',
-            static fn (array $component): string => $component[1] . match ($component[2]) {
-                'page' => 'filament-panels::page',
-                'widget' => 'filament-widgets::widget',
-                'card' => 'filament::section',
-            },
-            $matches[0],
-        ), $contents);
+            REGEX, static function (array $matches) use ($componentNames): string {
+            $source = $matches[0];
+
+            $source = preg_replace_callback(
+                '~^(<\s*/?\s*x[-:])(filament::(?:page|widget|card))(?=[\s/>])~',
+                static fn (array $component): string => $component[1] . $componentNames[$component[2]],
+                $source,
+            );
+
+            if (! preg_match('~^<\s*x[-:]dynamic-component(?=[\s/>])~', $source)) {
+                return $source;
+            }
+
+            // Consume every quoted attribute, including unrelated ones containing example markup.
+            return preg_replace_callback(
+                <<<'REGEX'
+                    ~
+                        @(?:class|style)(?<expression>\((?:[^()'"/]+|'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|/(?!\*)|/\*.*?\*/|(?&expression))*\))
+                        | \{\{.*?\}\}
+                        | (?<attribute>[^\s=<>/]+)\s*=\s*(?:"(?<double>[^"]*)"|'(?<single>[^']*)')
+                    ~sx
+                    REGEX,
+                static function (array $attribute) use ($componentNames): string {
+                    if (empty($attribute['attribute'])) {
+                        return $attribute[0];
+                    }
+
+                    $value = $attribute['single'] ?? $attribute['double'];
+                    $name = $value;
+                    $isBound = in_array($attribute['attribute'], [':component', 'bind:component'], true);
+
+                    if ($attribute['attribute'] === 'component') {
+                        if (preg_match('~^(?:\{\{\{(.*?)\}\}\}|\{\{(.*?)\}\}|\{!!(.*?)!!\})$~s', $value, $echo, PREG_UNMATCHED_AS_NULL)) {
+                            $value = $echo[1] ?? $echo[2] ?? $echo[3];
+                            $isBound = true;
+                        }
+                    } elseif (! $isBound) {
+                        return $attribute[0];
+                    }
+
+                    if ($isBound) {
+                        if (! preg_match('~^\s*([\'\"])(filament::(?:page|widget|card))\1\s*$~', $value, $literal)) {
+                            return $attribute[0];
+                        }
+
+                        $name = $literal[2];
+                    }
+
+                    return isset($componentNames[$name]) ? str_replace($name, $componentNames[$name], $attribute[0]) : $attribute[0];
+                },
+                $source,
+            );
+        }, $contents);
 
         if ($updatedContents === null) {
             throw new RuntimeException("Unable to migrate Blade template [{$path}]: " . preg_last_error_msg());

@@ -71,16 +71,16 @@ class Container extends Component implements CanConcealComponents
 {
     public function isConcealed(): bool
     {
-        return (\method_exists(parent::class, 'isConcealed') ? parent::{'isConcealed'}(...) : fn() => false)() || customCondition();
+        return false || customCondition();
     }
 }
 
 function inspect(Component $component, CanConcealComponents $container): void
 {
-    (static fn($component) => \method_exists($component, 'isConcealed') ? $component->{'isConcealed'}(...) : static fn() => false)($component)();
+    false;
     makeComponent()->isConcealed();
-    ($componentForRemovedGetter1 = $component) === null ? null : (static fn($component) => \method_exists($component, 'isConcealed') ? $component->{'isConcealed'}(...) : static fn() => false)($componentForRemovedGetter1)();
-    $callback = (static fn($component) => \method_exists($component, 'isConcealed') ? $component->{'isConcealed'}(...) : static fn() => false)($component);
+    $component === null ? null : false;
+    $callback = $component->isConcealed(...);
     $isContainer = $container instanceof CanConcealComponents;
 }
 

@@ -29,18 +29,9 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\TypeCombinator;
 use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class ReplaceLegacyPanelIntegrationRector extends AbstractRector
 {
-    public function getRuleDefinition(): RuleDefinition
-    {
-        return new RuleDefinition('Move global Filament facade integrations to their owning facades', [
-            new CodeSample('Filament::registerScriptData($data);', 'FilamentAsset::registerScriptData($data);'),
-        ]);
-    }
-
     public function getNodeTypes(): array
     {
         return [StaticCall::class];

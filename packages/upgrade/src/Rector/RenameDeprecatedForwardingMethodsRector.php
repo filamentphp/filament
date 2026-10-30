@@ -66,12 +66,11 @@ use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
-use Filament\Upgrade\ConfigurationClassAnalyzer;
-use Filament\Upgrade\Support\UnnormalizedUnionTypeResolver;
 use Filament\Widgets\ChartWidget;
 use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\Cast\String_ as StringCast;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
@@ -79,9 +78,9 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
-use PhpParser\NodeFinder;
+use PhpParser\Node\Scalar\Int_;
+use PhpParser\Node\Scalar\String_;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\NullType;
@@ -92,8 +91,6 @@ use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use Rector\PHPStan\ScopeFetcher;
 use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class RenameDeprecatedForwardingMethodsRector extends AbstractRector
 {
@@ -435,22 +432,6 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         'rowloop' => ['loop', 'rowLoop'],
     ];
 
-    public function __construct(
-        private UnnormalizedUnionTypeResolver $unnormalizedUnionTypeResolver,
-        private ConfigurationClassAnalyzer $configurationClassAnalyzer,
-        private ReflectionProvider $reflectionProvider,
-    ) {}
-
-    public function getRuleDefinition(): RuleDefinition
-    {
-        return new RuleDefinition('Replace deprecated Filament forwarding method calls on their owning types', [
-            new CodeSample(
-                '$action->form(form: []);',
-                '$action->schema(schema: []);',
-            ),
-        ]);
-    }
-
     public function getNodeTypes(): array
     {
         return [MethodCall::class, NullsafeMethodCall::class, StaticCall::class];
@@ -466,7 +447,6 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         }
 
         $methodName = strtolower($node->name->toString());
-        $isGroupingDropdownAlias = $methodName === 'groupsindropdownondesktop';
         $isImageEditorScaleAlias = $methodName === 'getparenttargetsizes';
 
         foreach (self::METHOD_RENAMES as $componentClass => $methodRenames) {
@@ -476,30 +456,22 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                 continue;
             }
 
-            $isParentForwarder = false;
-
             if ($node instanceof StaticCall) {
-                // Review relative dispatch manually when a parent wrapper can
-                // dispatch back into a canonical subclass override.
                 if (! $node->class instanceof Name) {
                     continue;
                 }
 
                 if ($this->isNames($node->class, ['self', 'static', 'parent'])) {
-                    $context = ScopeFetcher::fetch($node)->getClassReflection();
+                    $scope = ScopeFetcher::fetch($node);
+                    $context = $scope->getClassReflection();
+                    $function = $scope->getFunction();
 
-                    if (! $context) {
+                    if ((! $context) || $context->isTrait() || (! $function instanceof MethodReflection)) {
                         continue;
                     }
 
-                    if (($componentClass === BasePage::class) && (! $this->canRenameParentForwarder($node, $componentClass, $methodName, $methodRenames[$methodName]))) {
-                        if ((! $this->canRenameMethods(new ObjectType($context->getName()), $componentClass, $methodName, $methodRenames[$methodName])) || $this->configurationClassAnalyzer->hasDescendants($context->getName()) || (new NodeFinder)->findFirst($this->getFile()->getNewStmts(), fn (Node $candidate): bool => $candidate instanceof Node\Stmt\Class_ && $candidate->extends && $this->isName($candidate->extends, $context->getName()))) {
-                            continue;
-                        }
-                    } elseif (! $this->canRenameParentForwarder($node, $componentClass, $methodName, $methodRenames[$methodName])) {
+                    if (($componentClass !== BasePage::class) && ((! $this->isName($node->class, 'parent')) || $function->isStatic())) {
                         continue;
-                    } else {
-                        $isParentForwarder = true;
                     }
 
                     $receiver = $this->isName($node->class, 'parent') ? $context->getParentClass() : $context;
@@ -517,10 +489,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                     continue;
                 }
             } else {
-                // Preserve the older table migrations' receiver inference boundary.
-                $receiverType = (($componentClass === Table::class) && (! $isGroupingDropdownAlias))
-                    ? TypeCombinator::removeNull($this->getType($node->var))
-                    : $this->resolveReceiverType($node->var);
+                $receiverType = $this->resolveReceiverType($node->var);
             }
 
             if (! (new ObjectType($componentClass))->isSuperTypeOf($receiverType)->yes()) {
@@ -533,18 +502,11 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             }
 
             $replacement = $methodRenames[$methodName];
+            $canCallProtected = $node instanceof StaticCall
+                ? $this->isNames($node->class, ['parent', 'self', 'static'])
+                : (($node->var instanceof Variable) && ($node->var->name === 'this'));
 
-            // Canonical methods may still dispatch through legacy extension hooks.
-            // Renaming that `$this` call would recurse instead of preserving overrides.
-            if ((! $node instanceof StaticCall) && ($node->var instanceof Variable) && ($node->var->name === 'this')) {
-                $function = ScopeFetcher::fetch($node)->getFunction();
-
-                if (($function instanceof MethodReflection) && (strtolower($function->getName()) === strtolower($replacement))) {
-                    return null;
-                }
-            }
-
-            if ((! $this->canRenameMethods($receiverType, $componentClass, $methodName, $replacement)) || ((! $isParentForwarder) && $this->hasOverridingUnion($componentClass, $methodName, $replacement)) || (! $this->canForwardArguments($node, $componentClass, $methodName))) {
+            if ((! $this->canRenameMethods($receiverType, $componentClass, $methodName, $replacement, $canCallProtected)) || (! $this->canForwardArguments($node, $componentClass, $methodName))) {
                 return null;
             }
 
@@ -555,12 +517,16 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
 
             if ($renamedArgument && (! $node->isFirstClassCallable())) {
                 foreach ($node->getArgs() as $argument) {
-                    if ($argument->unpack) {
+                    if ($argument->unpack && (! $this->canRenameUnpackedArgument($argument->value, $renamedArgument[0]))) {
                         return null;
                     }
                 }
 
                 foreach ($node->getArgs() as $argument) {
+                    if ($argument->unpack && $argument->value instanceof Array_) {
+                        $this->renameUnpackedArgument($argument->value, ...$renamedArgument);
+                    }
+
                     if ($argument->name?->toString() === $renamedArgument[0]) {
                         $argument->name = new Identifier($renamedArgument[1]);
                     }
@@ -583,123 +549,84 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         return null;
     }
 
-    /**
-     * @param  class-string  $componentClass
-     */
-    private function canRenameParentForwarder(StaticCall $node, string $componentClass, string $methodName, string $replacement): bool
+    private function resolveReceiverType(Expr $receiver): Type
     {
-        // Repair the removed parent call, not the application's custom alias or its callers.
-        // These wrappers have matching argument contracts and return `$this` or the getter result.
-        $supported = (($componentClass === IconColumn::class) && ($methodName === 'options'))
-            || (($componentClass === BasePage::class) && in_array($methodName, ['alignformactionsleft', 'alignformactionsright'], strict: true))
-            || (($componentClass === SelectFilter::class) && in_array($methodName, ['queriesrelationships', 'getrelationshipkey'], strict: true))
-            || (($componentClass === Action::class) && in_array($methodName, [
-                'disableform', 'disabledform', 'form', 'getform', 'isformdisabled',
-                'mutateformdatausing', 'formdata', 'resetformdata', 'getformdata', 'getrawformdata',
-                'fillform', 'infolist',
-            ], strict: true));
-        $scope = ScopeFetcher::fetch($node);
-        $function = $scope->getFunction();
-        $context = $scope->getClassReflection();
+        $receiverType = TypeCombinator::removeNull($this->getType($receiver));
 
-        if ((! $supported) || (! $this->isName($node->class, 'parent')) || $node->isFirstClassCallable() || (! $function instanceof MethodReflection) || ($function->isStatic() && ($componentClass !== BasePage::class)) || (! $context) || $context->isTrait()) {
-            return false;
+        if ((! ($receiver instanceof MethodCall || $receiver instanceof NullsafeMethodCall)) || (! $receiver->name instanceof Identifier) || $receiver->isFirstClassCallable()) {
+            return $receiverType;
         }
 
-        $contextType = new ObjectType($context->getName());
+        $callerType = $this->resolveReceiverType($receiver->var);
+        $classReflections = $callerType->getObjectClassReflections();
 
-        if ((! (new ObjectType($componentClass))->isSuperTypeOf($contextType)->yes()) || (! $this->canRenameMethods($contextType, $componentClass, $replacement, $replacement))) {
-            return false;
-        }
+        foreach ($classReflections as $classReflection) {
+            $methodName = $receiver->name->toString();
 
-        $descendants = $this->configurationClassAnalyzer->getDescendants($context->getName());
+            if (! $classReflection->hasNativeMethod($methodName)) {
+                foreach (self::METHOD_RENAMES as $componentClass => $methodRenames) {
+                    $replacement = array_change_key_case($methodRenames)[strtolower($methodName)] ?? null;
 
-        // Rector's single-fixture runs need the same checks for local descendants.
-        foreach ((new NodeFinder)->findInstanceOf($this->getFile()->getNewStmts(), Node\Stmt\Class_::class) as $class) {
-            $className = $class->namespacedName?->toString();
+                    if ($replacement && (new ObjectType($componentClass))->isSuperTypeOf($callerType)->yes() && $this->canRenameMethods($callerType, $componentClass, $methodName, $replacement, canCallProtected: true)) {
+                        $methodName = $replacement;
 
-            if (! $className) {
-                if ($class->extends && $this->isName($class->extends, $context->getName())) {
-                    return false;
+                        break;
+                    }
                 }
-
-                continue;
             }
 
-            if ($contextType->isSuperTypeOf(new ObjectType($className))->yes()) {
-                $descendants[] = $className;
+            if ((! $classReflection->hasNativeMethod($methodName)) || (! $classReflection->getNativeMethod($methodName)->getVariants()[0]->getReturnType() instanceof StaticType)) {
+                return $receiverType;
             }
         }
 
-        foreach (array_unique($descendants) as $descendant) {
-            if ((! $this->reflectionProvider->hasClass($descendant)) || (! $this->canRenameMethods(new ObjectType($descendant), $componentClass, $replacement, $replacement))) {
+        // Native fluent methods and known replacements returning `static` keep their caller's type.
+        return count($classReflections) ? $callerType : $receiverType;
+    }
+
+    private function canRenameUnpackedArgument(Expr $expression, string $parameter): bool
+    {
+        if (! $expression instanceof Array_) {
+            return false;
+        }
+
+        foreach ($expression->items as $item) {
+            if ($item->unpack || ($item->key && (! $item->key instanceof Int_) && ((! $item->key instanceof String_) || ($item->key->value !== $parameter)))) {
                 return false;
             }
         }
 
-        // The original wrapper dispatched virtually and sometimes discarded its return.
-        // A canonical override, including one supplied by a descendant's trait, needs reconciliation.
         return true;
     }
 
-    /**
-     * @param  class-string  $componentClass
-     */
-    private function hasOverridingUnion(string $componentClass, string $methodName, string $replacement): bool
+    private function renameUnpackedArgument(Array_ $array, string $oldName, string $newName): void
     {
-        // PHPStan can normalize `Base | CustomBase` to `Base`, hiding overrides.
-        // Conservatively retain related calls in a file declaring that union.
-        foreach ($this->unnormalizedUnionTypeResolver->resolve($this->getFile()->getNewStmts()) as $types) {
-            $ownerType = new ObjectType($componentClass);
-
-            foreach ($types as $type) {
-                if ((! $ownerType->isSuperTypeOf($type)->yes()) || (! array_filter($types, static fn (Type $otherType): bool => (! $otherType->equals($type)) && $otherType->isSuperTypeOf($type)->yes()))) {
-                    continue;
-                }
-
-                if (! $this->canRenameMethods($type, $componentClass, $methodName, $replacement)) {
-                    return true;
-                }
+        foreach ($array->items as $item) {
+            if ($item->key instanceof String_ && ($item->key->value === $oldName)) {
+                $item->key = new String_($newName);
             }
-
         }
-
-        return false;
     }
 
     /**
      * @param  class-string  $componentClass
      */
-    private function canRenameMethods(Type $receiverType, string $componentClass, string $methodName, string $replacement): bool
+    private function canRenameMethods(Type $receiverType, string $componentClass, string $methodName, string $replacement, bool $canCallProtected): bool
     {
-        $candidateMethodNames = [$methodName, $replacement];
-
-        if ($methodName === 'showblocklabels') {
-            $candidateMethodNames[] = 'withBlockLabels';
-        }
-
-        // Record-action output also dispatches through the getter extension hook.
-        if ($methodName === 'outputtableactions') {
-            $candidateMethodNames[] = 'getTableActions';
-            $candidateMethodNames[] = 'getTableRecordActions';
-        }
-
-        // Retain the older form, image, and table rules' reflection boundaries.
-        $requiresPublicReplacement = ($methodName === 'groupsindropdownondesktop') || (! in_array($componentClass, [BaseFileUpload::class, Builder::class, Repeater::class, KeyValue::class, FileUpload::class, ImageEntry::class, ImageColumn::class, KeyValueEntry::class, Table::class], strict: true));
-
         foreach ($receiverType->getObjectClassReflections() as $classReflection) {
-            foreach ($candidateMethodNames as $candidateMethodName) {
-                if (! $classReflection->hasNativeMethod($candidateMethodName)) {
-                    if ((! $requiresPublicReplacement) || ($candidateMethodName === $methodName) || ($candidateMethodName === 'getTableActions')) {
-                        continue;
-                    }
+            if (! $classReflection->hasNativeMethod($replacement)) {
+                return false;
+            }
 
-                    return false;
+            // Leave application-owned methods alone, even on Filament subclasses.
+            foreach (array_unique([$methodName, $replacement]) as $candidateMethodName) {
+                if (! $classReflection->hasNativeMethod($candidateMethodName)) {
+                    continue;
                 }
 
                 $methodReflection = $classReflection->getNativeMethod($candidateMethodName);
 
-                if ($requiresPublicReplacement && (! $methodReflection->isPublic()) && (! ((in_array($componentClass, [RichContentCustomBlockClassGenerator::class, Dashboard::class, RepeatableEntry::class], strict: true) || ($methodName === 'getjavascriptclickhandler')) && (! $methodReflection->isPrivate())))) {
+                if ((! $methodReflection->isPublic()) && ((! $canCallProtected) || $methodReflection->isPrivate())) {
                     return false;
                 }
 
@@ -756,17 +683,21 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
     {
         // `reactive()` ignored positional arguments that `live()` would consume.
         if ($methodName === 'reactive') {
-            return (! $node->isFirstClassCallable()) && (! count($node->getArgs()));
+            return $node->isFirstClassCallable() || (! count($node->getArgs()));
         }
 
         // `getName()` ignored extra positional arguments; `getKey()` would consume one.
         if (($componentClass === Schema::class) && ($methodName === 'getname')) {
-            return (! $node->isFirstClassCallable()) && (! count($node->getArgs()));
+            return $node->isFirstClassCallable() || (! count($node->getArgs()));
         }
 
         // These action wrappers did not forward the replacement's optional parameters.
         if (($componentClass === Action::class) && in_array($methodName, ['hold', 'withattributes'], strict: true)) {
-            if ($node->isFirstClassCallable() || (count($node->getArgs()) > (($methodName === 'hold') ? 0 : 1))) {
+            if ($node->isFirstClassCallable()) {
+                return true;
+            }
+
+            if (count($node->getArgs()) > (($methodName === 'hold') ? 0 : 1)) {
                 return false;
             }
 
@@ -794,45 +725,5 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         }
 
         return true;
-    }
-
-    private function resolveReceiverType(Expr $receiver): Type
-    {
-        $receiverType = TypeCombinator::removeNull($this->getType($receiver));
-
-        if (
-            ((! $receiver instanceof MethodCall) && (! $receiver instanceof NullsafeMethodCall)) ||
-            (! $receiver->name instanceof Identifier) ||
-            $receiver->isFirstClassCallable()
-        ) {
-            return $receiverType;
-        }
-
-        $callerType = $this->resolveReceiverType($receiver->var);
-
-        if ($callerType->isSuperTypeOf($receiverType)->yes()) {
-            return $receiverType;
-        }
-
-        $classReflections = $callerType->getObjectClassReflections();
-
-        if (! count($classReflections)) {
-            return $receiverType;
-        }
-
-        foreach ($classReflections as $classReflection) {
-            if (! $classReflection->hasNativeMethod($receiver->name->toString())) {
-                return $receiverType;
-            }
-
-            $methodReflection = $classReflection->getNativeMethod($receiver->name->toString());
-
-            if (! $methodReflection->getVariants()[0]->getReturnType() instanceof StaticType) {
-                return $receiverType;
-            }
-        }
-
-        // Inherited `static` returns retain the caller's class, not the declaring class.
-        return $callerType;
     }
 }

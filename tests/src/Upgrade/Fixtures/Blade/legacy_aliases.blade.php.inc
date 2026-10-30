@@ -55,6 +55,10 @@
 @php
     $template = '<x-filament::card />';
 @endphp
+<!-- <x-filament::card heading="Heading" heading-tag="h3">Content</x-filament::card> -->
+<!-- @if ($visible) <x-dynamic-component component="filament::card" /> @endif -->
+@include('filament::components.card', ['attributes' => $attributes])
+{!! view('filament::components.card')->render() !!}
 -----
 <x-filament-panels::page :full-height="$fullHeight" data-test="A > B" {{ $attributes }}>
     Don't change the content or surrounding whitespace.
@@ -73,7 +77,7 @@
 <x-filament-panels::page /><x-filament-widgets::widget />
 <x-filament::page-header /><x-filament::page.header /><x-filament::widget-custom />
 <x-filament::section /><x-other::page />
-<x-dynamic-component component="filament::page" />
+<x-dynamic-component component="filament-panels::page" />
 <x-dynamic-component :component="$widgetComponent" />
 <div data-example="<x-filament::page />">Literal attribute</div>
 {{-- <x-filament::page /><x-filament::widget /> --}}
@@ -104,7 +108,7 @@
 </x-filament::section>
 <x:filament::section></x:filament::section>
 <x-filament::card-custom /><x-filament::card.header /><x-other::card />
-<x-dynamic-component component="filament::card" />
+<x-dynamic-component component="filament::section" />
 <div data-example="<x-filament::card />">Literal card attribute</div>
 {{-- <x-filament::card /> --}}
 @verbatim
@@ -113,3 +117,7 @@
 @php
     $template = '<x-filament::card />';
 @endphp
+<!-- <x-filament::section heading="Heading" heading-tag="h3">Content</x-filament::section> -->
+<!-- @if ($visible) <x-dynamic-component component="filament::section" /> @endif -->
+@include('filament::components.card', ['attributes' => $attributes])
+{!! view('filament::components.card')->render() !!}

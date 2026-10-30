@@ -17,30 +17,10 @@ use PhpParser\NodeTraverser;
 use Rector\PhpParser\AstResolver;
 use Rector\PHPStan\ScopeFetcher;
 use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class ReplaceTypedChartWidgetsRector extends AbstractRector
 {
     public function __construct(private AstResolver $astResolver) {}
-
-    public function getRuleDefinition(): RuleDefinition
-    {
-        return new RuleDefinition('Replace typed chart widget parents while preserving the inherited chart type', [
-            new CodeSample(
-                'class SalesChart extends \\Filament\\Widgets\\BarChartWidget {}',
-                <<<'PHP'
-                    class SalesChart extends \Filament\Widgets\ChartWidget
-                    {
-                        protected function getType(): string
-                        {
-                            return 'bar';
-                        }
-                    }
-                    PHP,
-            ),
-        ]);
-    }
 
     public function getNodeTypes(): array
     {

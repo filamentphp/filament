@@ -22,8 +22,6 @@ class ReplaceSmallSupportApisRectorTest extends AbstractRectorTestCase
             'deprecated_number_helpers_strict',
             'number_helper_variables',
             'deprecated_exposed_attribute',
-            'deprecated_exposed_attribute_reflection',
-            'deprecated_exposed_attribute_types',
             'obsolete_concealment_and_widget_filters',
         ]);
     }

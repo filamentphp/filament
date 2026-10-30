@@ -260,18 +260,18 @@ function configureForwarders(Action $action, ?Action $nullableAction, ReplicateA
     ReplicateAction::make()->after(null);
 
     // These calls and callables need manual migration.
-    $action->modalSubheading(...['subheading' => null]);
-    $action->failureNotificationMessage(...['message' => null]);
-    $action->successNotificationMessage(...['message' => null]);
-    $action->infolist(...['infolist' => []]);
+    $action->modalDescription(...['description' => null]);
+    $action->failureNotificationTitle(...['title' => null]);
+    $action->successNotificationTitle(...['title' => null]);
+    $action->schema(...['schema' => []]);
     $action->hold(true);
     $action->hold(...[]);
     $action->withAttributes([], true);
     $action->withAttributes(...['attributes' => []]);
-    $callback = $action->hold(...);
-    $callback = $action->withAttributes(...);
+    $callback = $action->halt(...);
+    $callback = $action->extraAttributes(...);
     $action->getJavaScriptClickHandler();
-    $action->centerModal(false);
+    $action;
     $action->afterReplicaSaved(null);
 }
 
@@ -286,7 +286,7 @@ class CustomForwardingAction extends Action
     {
         $this->modalSubmitActionLabel();
         $this->modalSubheading(subheading: 'Custom');
-        parent::modalSubheading(subheading: 'Custom');
+        parent::modalDescription(description: 'Custom');
         $this->getJsClickHandler();
         parent::getJavaScriptClickHandler();
     }
@@ -355,7 +355,7 @@ function configure(Action $action, ?Action $nullableAction, Schema $schema): voi
     Action::make('save')->schema([])->disabledSchema();
     EditAction::make()->schema(schema: [])->data(data: [], shouldMutate: false);
 
-    $action->form(...['form' => []]);
+    $action->schema(...['schema' => []]);
     $arguments = ['form' => []];
     $action->form(...$arguments);
 
@@ -411,7 +411,7 @@ class ReplacementOverridingAction extends Action
         $this->disabledForm();
         $this->disabledForm(condition: false);
 
-        return parent::disabledForm(condition: false);
+        return parent::disabledSchema(condition: false);
     }
 }
 

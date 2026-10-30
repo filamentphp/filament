@@ -29,7 +29,7 @@ abstract class ChildExporter extends ParentExporter
 {
     public static function getOptionsSchemaComponents(): array
     {
-        return [...parent::getOptionsFormComponents(), TextInput::make('child_option')];
+        return [...parent::getOptionsSchemaComponents(), TextInput::make('child_option')];
     }
 }
 

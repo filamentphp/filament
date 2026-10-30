@@ -4,63 +4,66 @@ namespace Filament\Tests\Upgrade\Fixtures\BehavioralConfigurationManual;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 
-function manual(FileUpload $upload, Action $action, bool $condition, array $arguments, string $method): void
+function configure(?FileUpload $upload, bool | Closure $condition): ?FileUpload
 {
-    $upload->disablePreview();
-    $action->centerModal(false);
-    FileUpload::make('dynamic')->disablePreview($condition);
-    FileUpload::make('injected')->disablePreview(fn (FileUpload $component): bool => $component->isDisabled());
-    FileUpload::make('captured')->disablePreview(function () use (&$condition): bool { return $condition; });
-    FileUpload::make('evaluated')->disablePreview($condition = random_int(0, 1) === 1);
-    FileUpload::make('extra')->disablePreview(true, random_int(0, 1));
-    FileUpload::make('named')->disablePreview(unknown: true);
-    FileUpload::make('unpacked')->disablePreview(...$arguments);
-    FileUpload::make('callable')->disablePreview(...);
-    FileUpload::make('nullsafe')?->disablePreview();
-    FileUpload::make('dynamic')->{$method}();
-    FileUpload::make('tap')->tap(fn ($component) => $component)->disablePreview();
-    FileUpload::make('macro')->icon()->disablePreview();
-    FileUpload::make('ratio')->imageCropAspectRatio(ratio());
-    FileUpload::make('ratio')->imageCropAspectRatio(fn (): string => '16:9');
-    Action::make('eager')->centerModal(fn (): bool => $condition);
-    Action::make('side-effect')->centerModal($condition = true);
-    DateTimePicker::make('date')->icon(icon());
-    DateTimePicker::make('date')->icon(true);
-    Builder::make('blocks')->inset(sideEffect());
-    Builder::make('blocks')->inset(fn () => sideEffect());
-    Builder::make('blocks')->inset(true, sideEffect());
-    Builder::make('blocks')->inset(...$arguments);
-    Builder::make('blocks')->inset(...);
-    TextInput::make('name')->disableAutocomplete(fn () => $condition);
-    TextInput::make('name')->disableAutocapitalize($condition);
-    CustomUpload::make('custom')->disablePreview();
-    Other::make()->disablePreview();
+    return $upload?->label('Configured')->disablePreview($condition);
 }
 
-class CustomUpload extends FileUpload
+function ratio(FileUpload $upload, string | Closure | null $ratio): FileUpload
 {
-    public function configureLegacy(): static
-    {
-        parent::disablePreview();
-        $this->disablePreview();
+    return $upload->imageCropAspectRatio($ratio);
+}
 
-        return $this;
-    }
+function icon(DateTimePicker $picker, string | false | null $icon): DateTimePicker
+{
+    return $picker->icon($icon);
+}
 
-    public function previewable(bool | Closure $condition = true): static
-    {
-        return $this;
-    }
+function center(Action $action, bool | Closure | null $condition): Action
+{
+    return $action->centerModal($condition);
+}
+
+function nullableConfiguration(?FileUpload $upload, ?DateTimePicker $picker, ?Action $action, string | null $ratio, string | false | null $icon, bool $condition): void
+{
+    $upload?->imageCropAspectRatio($ratio);
+    $upload?->label('Photo')->imageCropAspectRatio($ratio);
+    $picker?->icon($icon);
+    $picker?->label('Date')->icon($icon);
+    $action?->centerModal($condition);
+    $action?->label('Edit')->centerModal($condition);
+}
+
+class Configuration
+{
+    public FileUpload $upload;
+    public DateTimePicker $picker;
+    public Action $action;
+}
+
+function nullableProperties(?Configuration $configuration, string $ratio, string $icon, bool $condition): void
+{
+    $configuration?->upload->imageCropAspectRatio($ratio);
+    $configuration?->picker->label('Date')->icon($icon);
+    $configuration?->action->centerModal($condition);
+}
+
+function autocomplete(TextInput $input, bool | Closure $condition): TextInput
+{
+    return $input->disableAutocomplete($condition)->disableAutocapitalize($condition);
+}
+
+function unrelated(Other $component): void
+{
+    $component->disablePreview();
 }
 
 class Other
 {
-    public static function make(): static { return new static; }
     public function disablePreview(): static { return $this; }
 }
 -----
@@ -69,77 +72,77 @@ class Other
 namespace Filament\Tests\Upgrade\Fixtures\BehavioralConfigurationManual;
 
 use Filament\Forms\Components\BaseFileUpload;
+use BackedEnum;
+use Illuminate\Contracts\Support\Htmlable;
+use Filament\Support\Icons\Heroicon;
 use Filament\Support\Enums\Alignment;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Field;
 use Closure;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 
-function manual(FileUpload $upload, Action $action, bool $condition, array $arguments, string $method): void
+function configure(?FileUpload $upload, bool | Closure $condition): ?FileUpload
 {
-    $upload->previewable(false);
-    $action;
-    FileUpload::make('dynamic')->previewable((static fn(bool|Closure $condition): Closure => static fn(BaseFileUpload $component): bool => !$component->evaluate($condition))($condition));
-    FileUpload::make('injected')->previewable((static fn(bool|Closure $condition): Closure => static fn(BaseFileUpload $component): bool => !$component->evaluate($condition))(fn (FileUpload $component): bool => $component->isDisabled()));
-    FileUpload::make('captured')->previewable((static fn(bool|Closure $condition): Closure => static fn(BaseFileUpload $component): bool => !$component->evaluate($condition))(function () use (&$condition): bool { return $condition; }));
-    FileUpload::make('evaluated')->previewable((static fn(bool|Closure $condition): Closure => static fn(BaseFileUpload $component): bool => !$component->evaluate($condition))($condition = random_int(0, 1) === 1));
-    FileUpload::make('extra')->disablePreview(true, random_int(0, 1));
-    FileUpload::make('named')->disablePreview(unknown: true);
-    FileUpload::make('unpacked')->disablePreview(...$arguments);
-    FileUpload::make('callable')->disablePreview(...);
-    FileUpload::make('nullsafe')?->disablePreview();
-    FileUpload::make('dynamic')->{$method}();
-    FileUpload::make('tap')->tap(fn ($component) => $component)->disablePreview();
-    FileUpload::make('macro')->icon()->disablePreview();
-    FileUpload::make('ratio')->imageCropAspectRatio(ratio());
-    (static fn(FileUpload $component, string|Closure|null $ratio): FileUpload => $component->imageAspectRatio($ratio)->automaticallyCropImagesToAspectRatio($ratio instanceof Closure ? $ratio : \filled($ratio)))(FileUpload::make('ratio'), fn (): string => '16:9');
-    (static function (Action $action, bool|Closure|null $condition): Action {
-        if ($action->evaluate($condition)) {
-            $action->modalAlignment(Alignment::Center);
-        }
-        return $action;
-    })(Action::make('eager'), fn (): bool => $condition);
-    (static function (Action $action, bool|Closure|null $condition): Action {
-        if ($action->evaluate($condition)) {
-            $action->modalAlignment(Alignment::Center);
-        }
-        return $action;
-    })(Action::make('side-effect'), $condition = true);
-    DateTimePicker::make('date')->icon(icon());
-    DateTimePicker::make('date')->icon(true);
-    (static fn($component) => ($component instanceof Builder || $component instanceof Repeater) && !\method_exists($component, 'inset') ? static fn(bool|Closure $condition = true) => $component : $component->{'inset'}(...))(Builder::make('blocks'))(sideEffect());
-    (static fn($component) => ($component instanceof Builder || $component instanceof Repeater) && !\method_exists($component, 'inset') ? static fn(bool|Closure $condition = true) => $component : $component->{'inset'}(...))(Builder::make('blocks'))(fn () => sideEffect());
-    Builder::make('blocks')->inset(true, sideEffect());
-    Builder::make('blocks')->inset(...$arguments);
-    Builder::make('blocks')->inset(...);
-    TextInput::make('name')->autocomplete((static fn(bool|Closure $condition): Closure => static fn(Field $component): ?bool => $component->evaluate($condition) ? false : null)(fn () => $condition));
-    TextInput::make('name')->autocapitalize((static fn(bool|Closure $condition): Closure => static fn(Field $component): ?bool => $component->evaluate($condition) ? false : null)($condition));
-    CustomUpload::make('custom')->disablePreview();
-    Other::make()->disablePreview();
+    return $upload?->label('Configured')->previewable((static fn(bool|Closure $condition): Closure => static fn(BaseFileUpload $component): bool => !$component->evaluate($condition))($condition));
 }
 
-class CustomUpload extends FileUpload
+function ratio(FileUpload $upload, string | Closure | null $ratio): FileUpload
 {
-    public function configureLegacy(): static
-    {
-        parent::disablePreview();
-        $this->disablePreview();
+    return (static fn(FileUpload $component, string|Closure|null $ratio): FileUpload => $component->imageAspectRatio($ratio)->automaticallyCropImagesToAspectRatio($ratio instanceof Closure ? $ratio : \filled($ratio)))($upload, $ratio);
+}
 
-        return $this;
-    }
+function icon(DateTimePicker $picker, string | false | null $icon): DateTimePicker
+{
+    return (static fn(DateTimePicker $component, string|BackedEnum|Htmlable|Closure|bool|null $icon): DateTimePicker => $icon === false ? $component : $component->suffixIcon($icon ?? Heroicon::Calendar, isInline: true))($picker, $icon);
+}
 
-    public function previewable(bool | Closure $condition = true): static
-    {
-        return $this;
-    }
+function center(Action $action, bool | Closure | null $condition): Action
+{
+    return (static function (Action $action, bool|Closure|null $condition): Action {
+        if ($action->evaluate($condition)) {
+            $action->modalAlignment(Alignment::Center);
+        }
+        return $action;
+    })($action, $condition);
+}
+
+function nullableConfiguration(?FileUpload $upload, ?DateTimePicker $picker, ?Action $action, string | null $ratio, string | false | null $icon, bool $condition): void
+{
+    $upload?->imageCropAspectRatio($ratio);
+    $upload?->label('Photo')->imageCropAspectRatio($ratio);
+    $picker?->icon($icon);
+    $picker?->label('Date')->icon($icon);
+    $action?->centerModal($condition);
+    $action?->label('Edit')->centerModal($condition);
+}
+
+class Configuration
+{
+    public FileUpload $upload;
+    public DateTimePicker $picker;
+    public Action $action;
+}
+
+function nullableProperties(?Configuration $configuration, string $ratio, string $icon, bool $condition): void
+{
+    $configuration?->upload->imageCropAspectRatio($ratio);
+    $configuration?->picker->label('Date')->icon($icon);
+    $configuration?->action->centerModal($condition);
+}
+
+function autocomplete(TextInput $input, bool | Closure $condition): TextInput
+{
+    return $input->autocomplete((static fn(bool|Closure $condition): Closure => static fn(Field $component): ?bool => $component->evaluate($condition) ? false : null)($condition))->autocapitalize((static fn(bool|Closure $condition): Closure => static fn(Field $component): ?bool => $component->evaluate($condition) ? false : null)($condition));
+}
+
+function unrelated(Other $component): void
+{
+    $component->disablePreview();
 }
 
 class Other
 {
-    public static function make(): static { return new static; }
     public function disablePreview(): static { return $this; }
 }

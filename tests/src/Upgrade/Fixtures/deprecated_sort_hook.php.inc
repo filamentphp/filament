@@ -71,7 +71,7 @@ abstract class CustomLegacyHook extends TableComponent
 {
     public function updatedTableSortDirection(): void
     {
-        parent::updatedTableSortDirection();
+        parent::updatedTableSort();
     }
 }
 

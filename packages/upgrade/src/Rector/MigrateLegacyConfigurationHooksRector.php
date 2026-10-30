@@ -2,7 +2,6 @@
 
 namespace Filament\Upgrade\Rector;
 
-use Filament\Upgrade\ConfigurationClassAnalyzer;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Attribute;
@@ -29,44 +28,33 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Return_;
+use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\Node\VarLikeIdentifier;
 use PhpParser\NodeFinder;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class MigrateLegacyConfigurationHooksRector extends AbstractRector
 {
-    public function __construct(private ConfigurationClassAnalyzer $configurationClassAnalyzer) {}
-
-    public function getRuleDefinition(): RuleDefinition
-    {
-        return new RuleDefinition('Migrate unambiguous configuration hooks and properties on leaf classes with built-in parents', [
-            new CodeSample(
-                'class Overview extends \\Filament\\Widgets\\StatsOverviewWidget { protected function getCards(): array { return []; } }',
-                'class Overview extends \\Filament\\Widgets\\StatsOverviewWidget { protected function getStats(): array { return []; } }',
-            ),
-        ]);
-    }
-
     public function getNodeTypes(): array
     {
-        return [Class_::class];
+        return [Class_::class, TraitUse::class];
     }
 
-    /** @param Class_ $node */
+    /**
+     * @param  Class_ | TraitUse  $node
+     */
     public function refactor(Node $node): ?Node
     {
+        if ($node instanceof TraitUse) {
+            return $this->replaceActionInfolistTrait($node);
+        }
+
         if ((! $node->extends) || (! $node->name)) {
             return null;
         }
 
         $parent = $this->getName($node->extends);
-
-        if ($parent === 'Filament\\Actions\\Action') {
-            return $this->removeActionInfolistTrait($node);
-        }
 
         $isResource = $parent === 'Filament\\Resources\\Resource';
         $isStats = $parent === 'Filament\\Widgets\\StatsOverviewWidget';
@@ -80,12 +68,6 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
         $isWidget = $isStats || ($parent === 'Filament\\Widgets\\Widget');
 
         if ((! $isResource) && (! $isPage) && (! $isWidget)) {
-            return null;
-        }
-
-        $className = (string) $this->getName($node);
-
-        if ($this->configurationClassAnalyzer->hasDescendants($className) || (new NodeFinder)->findFirst($this->getFile()->getNewStmts(), fn (Node $candidate): bool => $candidate instanceof Class_ && $candidate->extends && $this->isName($candidate->extends, $className))) {
             return null;
         }
 
@@ -171,10 +153,6 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
     private function canMoveMethod(Class_ $class, ClassMethod $method, string $oldName, string $newName, bool $nullable, bool $static = false, string $returnType = 'array'): bool
     {
         if (($method->isStatic() !== $static) || $method->isPrivate() || $method->params || $method->byRef || $method->attrGroups || (! $method->stmts)) {
-            return false;
-        }
-
-        if ($method->isPublic() && $this->configurationClassAnalyzer->hasExternalClassReferences((string) $this->getName($class), $this->getFile()->getNewStmts())) {
             return false;
         }
 
@@ -266,10 +244,6 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
             $property = $class->getProperty($oldName);
 
             if ((! $property) || (! $property->isStatic()) || $property->isPrivate() || (count($property->props) !== 1) || $class->getProperty($newName)) {
-                continue;
-            }
-
-            if ($property->isPublic() && $this->configurationClassAnalyzer->hasExternalClassReferences((string) $this->getName($class), $this->getFile()->getNewStmts())) {
                 continue;
             }
 
@@ -369,26 +343,22 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
         return $class;
     }
 
-    private function removeActionInfolistTrait(Class_ $class): ?Class_
+    private function replaceActionInfolistTrait(TraitUse $traitUse): ?TraitUse
     {
-        if ($class->getMethod('infolist') || $class->getMethod('schema') || (! $class->getTraitUses())) {
+        if ($traitUse->adaptations) {
             return null;
         }
 
-        foreach ($class->getTraitUses() as $traitUse) {
-            if ($traitUse->adaptations) {
-                return null;
+        foreach ($traitUse->traits as $index => $trait) {
+            if (! $this->isName($trait, 'Filament\\Actions\\Concerns\\HasInfolist')) {
+                continue;
             }
 
-            foreach ($traitUse->traits as $trait) {
-                if (! $this->isName($trait, 'Filament\\Actions\\Concerns\\HasInfolist')) {
-                    return null;
-                }
-            }
+            $traitUse->traits[$index] = new FullyQualified('Filament\\Actions\\Concerns\\HasSchema');
+
+            return $traitUse;
         }
 
-        $class->stmts = array_values(array_filter($class->stmts, static fn (Node $statement): bool => ! $statement instanceof Node\Stmt\TraitUse));
-
-        return $class;
+        return null;
     }
 }

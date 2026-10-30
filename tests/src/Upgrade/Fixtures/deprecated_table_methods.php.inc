@@ -173,7 +173,7 @@ class CustomTable extends Table
     {
         $this->recordActions(actions: []);
 
-        return parent::bulkActions(actions: []);
+        return parent::toolbarActions(actions: []);
     }
 }
 

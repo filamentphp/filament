@@ -16,7 +16,7 @@ class RenameDeprecatedNotificationAndChartMethodsRectorTest extends AbstractRect
         $this->doTestFile(__DIR__ . '/Fixtures/deprecated_notification_and_chart_manual_boundaries.php.inc');
     }
 
-    public function test_preserves_unions_of_base_types_and_custom_subclasses(): void
+    public function test_uses_normalized_receiver_types_for_base_and_subclass_unions(): void
     {
         $this->doTestFile(__DIR__ . '/Fixtures/deprecated_notification_and_chart_normalized_unions.php.inc');
     }

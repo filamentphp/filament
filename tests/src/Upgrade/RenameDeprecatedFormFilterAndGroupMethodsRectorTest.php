@@ -18,11 +18,12 @@ class RenameDeprecatedFormFilterAndGroupMethodsRectorTest extends AbstractRector
         $this->doTestFile(__DIR__ . '/Fixtures/deprecated_form_filter_group_manual_boundaries.php.inc');
     }
 
-    public function test_preserves_override_boundaries_in_a_fresh_complete_set_process(): void
+    public function test_keeps_migrated_calls_stable_in_a_fresh_complete_set_process(): void
     {
         $directory = sys_get_temp_dir() . '/filament-aliases-' . bin2hex(random_bytes(8));
         mkdir($directory);
-        $fixture = file_get_contents(__DIR__ . '/Fixtures/deprecated_form_filter_group_manual_boundaries.php.inc');
+        $parts = explode("-----\n", file_get_contents(__DIR__ . '/Fixtures/deprecated_form_filter_group_manual_boundaries.php.inc'), 2);
+        $fixture = $parts[1] ?? $parts[0];
         file_put_contents($directory . '/app.php', $fixture);
 
         try {

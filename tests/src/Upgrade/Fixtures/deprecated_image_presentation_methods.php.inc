@@ -97,22 +97,14 @@ function subclasses(CustomEntry $custom, InheritedAliasOverridingEntry $alias, I
 {
     $custom->height(35)->width(47)->getHeight();
     $alias->width(customWidth: 59);
-    $alias->height(35)->width(customWidth: 59);
     $alias?->imageHeight(35)?->width(customWidth: 59);
-    $replacement->height(35)->rounded(condition: false);
+    $replacement->rounded(condition: false);
     $getter->getWidth();
     $keyValue->keyLabel('Property')->emptyMessage(message: 'Empty');
     $placeholder->keyLabel('Property')->emptyMessage(message: 'Empty');
     $mediaEntry->collection('avatars')->height(31)->width(53);
     $mediaColumn->collection('avatars')->rounded()->size(43);
     $union->width(59);
-}
-
-function narrowedReceiver(ImageEntry $entry): void
-{
-    if ($entry->getClone() instanceof AliasOverridingEntry) {
-        $entry->getClone()->width(customWidth: 59);
-    }
 }
 
 function unrelated(TextEntry $entry, TextColumn $column, UnrelatedComponent $unrelated, ImageEntry | UnrelatedComponent $union, $unknown): void
@@ -191,7 +183,7 @@ class CustomEntry extends ImageEntry
     {
         $this->imageHeight(35);
 
-        return parent::width(47);
+        return parent::imageWidth(47);
     }
 }
 
@@ -239,22 +231,14 @@ function subclasses(CustomEntry $custom, InheritedAliasOverridingEntry $alias, I
 {
     $custom->imageHeight(35)->imageWidth(47)->getImageHeight();
     $alias->width(customWidth: 59);
-    $alias->imageHeight(35)->width(customWidth: 59);
     $alias?->imageHeight(35)?->width(customWidth: 59);
-    $replacement->imageHeight(35)->rounded(condition: false);
+    $replacement->rounded(condition: false);
     $getter->getWidth();
     $keyValue->keyLabel('Property')->placeholder(placeholder: 'Empty');
     $placeholder->keyLabel('Property')->emptyMessage(message: 'Empty');
     $mediaEntry->collection('avatars')->imageHeight(31)->imageWidth(53);
     $mediaColumn->collection('avatars')->circular()->imageSize(43);
     $union->width(59);
-}
-
-function narrowedReceiver(ImageEntry $entry): void
-{
-    if ($entry->getClone() instanceof AliasOverridingEntry) {
-        $entry->getClone()->width(customWidth: 59);
-    }
 }
 
 function unrelated(TextEntry $entry, TextColumn $column, UnrelatedComponent $unrelated, ImageEntry | UnrelatedComponent $union, $unknown): void

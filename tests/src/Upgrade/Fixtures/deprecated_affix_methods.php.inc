@@ -80,7 +80,7 @@ class CustomInput extends TextInput
 {
     public function postfix(string | Htmlable | Closure | null $label, bool | Closure $isInline = false): static
     {
-        return parent::postfix($label, $isInline);
+        return parent::suffix($label, $isInline);
     }
 }
 

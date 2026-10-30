@@ -10,21 +10,9 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class RenameDeprecatedConstantsRector extends AbstractRector
 {
-    public function getRuleDefinition(): RuleDefinition
-    {
-        return new RuleDefinition('Rename deprecated constants on their exact owning classes', [
-            new CodeSample(
-                '\Filament\Support\Enums\IconSize::ExtraExtraLarge',
-                '\Filament\Support\Enums\IconSize::TwoExtraLarge',
-            ),
-        ]);
-    }
-
     public function getNodeTypes(): array
     {
         return [ClassConstFetch::class];

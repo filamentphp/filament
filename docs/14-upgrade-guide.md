@@ -30,7 +30,7 @@ composer update
     In Windows PowerShell, use `~6.0` instead of `^6.0` if the caret is ignored.
 </Aside>
 
-Include all your application source directories and tests when prompted. Review the diff, complete the applicable manual steps below, and test your application. The script handles recognized PHP references with Rector and ordinary Blade component tags with a separate scanner; it does not update JavaScript, TypeScript, stored data, or every custom integration.
+Include your application source directories and tests when prompted. The script handles most repetitive PHP and Blade changes. Review its changes, follow the applicable manual steps below, and test your application.
 
 ### Checking for deprecated APIs during development
 
@@ -51,7 +51,7 @@ return RectorConfig::configure()
     ]);
 ```
 
-Include your own source directories and omit paths that do not exist. Do not include `vendor` or third-party source. Use the upgrade package for your target major; this set requires PHP 8.3+ and Rector 2.5+ within the 2.x series. Keep Rector up to date, particularly if you install PHPStan separately.
+Include your own source directories and omit paths that do not exist. Do not include `vendor` or third-party source. Use the upgrade package for your target major and keep Rector up to date.
 
 ```bash
 # Apply migrations locally, then review and test:
@@ -61,7 +61,7 @@ vendor/bin/rector process
 vendor/bin/rector process --dry-run
 ```
 
-A dry run exits nonzero for proposed changes or errors. It is not a complete deprecated-API detector: review the [manual migration boundaries](#reviewing-custom-integrations) too. Use Rector's `withSkip()` to exclude custom integrations where necessary; do not automatically apply changes in CI.
+A dry run exits nonzero when changes are needed or an error occurs. Review and apply changes locally rather than automatically applying them in CI.
 
 Run Rector routinely, not `vendor/bin/filament-v6`, which is the one-time interactive workflow. Neither replaces the deployment command `php artisan filament:upgrade` for publishing assets.
 
@@ -256,7 +256,7 @@ public function shouldRestrictFileUploadsToSchemaComponents(): bool
 }
 ```
 
-The script removes redundant `RestrictsFileUploadsToSchemaComponents` uses on direct, unadapted `InteractsWithSchemas` consumers. Shared traits and adaptations require manual review; preserve aliased methods and conflict resolutions. See [restricting Livewire file uploads](../advanced/security#restricting-livewire-file-uploads-to-schema-components).
+Remove uses of the obsolete `RestrictsFileUploadsToSchemaComponents` trait; the restriction is now built into `InteractsWithSchemas`. See [restricting Livewire file uploads](../advanced/security#restricting-livewire-file-uploads-to-schema-components).
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('actions')">
@@ -270,7 +270,7 @@ See [customizing XLSX files](../actions/export#customizing-xlsx-files) and the [
 <Disclosure open x-show="packages.includes('panels')">
 <span slot="summary">Custom avatar providers must accept non-Eloquent users</span>
 
-`AvatarProvider::get()` accepts `Model | Authenticatable`. Rector widens direct `Model` and nullable `Model` declarations; update narrower custom types and methods supplied by traits or non-provider parent classes manually:
+`AvatarProvider::get()` now accepts `Model | Authenticatable`. Update your provider's signature if the script has not already done so:
 
 ```php
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -299,7 +299,7 @@ RTL pagination and sidebar controls, including those in the topbar, no longer fa
 - `Filament\Support\View\SupportIconAlias::PAGINATION_PREVIOUS_BUTTON_RTL` and `PAGINATION_NEXT_BUTTON_RTL`.
 - `Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL` and `SIDEBAR_COLLAPSE_BUTTON_RTL`.
 
-Keep non-RTL registrations for LTR layouts. Without RTL customizations, Filament uses its built-in RTL icons. The upgrade script cannot choose your artwork.
+Without custom registrations, Filament uses its built-in RTL icons.
 </Disclosure>
 
 <Disclosure open>
@@ -326,78 +326,34 @@ Modals using `stickyHeader()` or `stickyFooter()` wrap their header, content, an
 Filament provides `@capture` and `@endcapture` itself; existing views need no changes. Remove explicit `RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider` registrations, including in plugin tests. If you need the directives without Filament, require `ryangjchandler/blade-capture-directive` directly.
 </Disclosure>
 
-### Reviewing custom integrations
+### Updating custom code
 
-Rector handles statically recognized PHP usage, not arbitrary runtime dispatch. Review dynamic names, string and array callbacks, Blade/JavaScript calls, container replacements, custom macros, and unresolved receiver types. Update non-PHP references to removed Livewire endpoints, including `wire:click`, `$wire` calls, and action-handler strings. Rebuild custom bundles and publish current Filament assets.
+The script focuses on documented configuration and extension points. If you use custom components or plugins, update any remaining references to the removed APIs listed below, including overrides and `parent::` calls. JavaScript and TypeScript changes need to be made manually. Run your tests and static analysis after upgrading.
 
-Some ordinary PHP usage also needs manual changes after a clean dry run: shared-trait configuration, inherited `parent::` calls, renamed backing properties, and named arguments passed through callables or unpacked arrays. Review these integrations using the disclosures below.
-
-For custom subclasses and shared concerns, review declarations, trait adaptations and `parent::` calls together. Do not blindly rename overrides: this can activate previously unused methods or bypass canonical overrides. Preserve argument names, return values, visibility and exposure restrictions such as `#[Unexposed]`. When overriding notification `pullNotifications()`, retain its `#[\Livewire\Attributes\On('notificationsSent')]` listener or register an equivalent listener explicitly.
-
-<Disclosure>
-<span slot="summary">Updating custom properties, parameters, and callbacks</span>
-
-These cases are not all automated. In custom subclasses, update renamed backing properties while preserving their types and values:
-
-| Owner                       | Old member                                                                             | Replacement                                            |
-| --------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| Action                      | `$beforeFormFilled`, `$afterFormFilled`, `$beforeFormValidated`, `$afterFormValidated` | Use `Schema` instead of `Form` in each name            |
-| Create action               | `$preserveFormDataWhenCreatingAnotherUsing`                                            | `$preserveDataWhenCreatingAnotherUsing`                |
-| Select                      | `$createOptionActionForm`, `$editOptionActionForm`                                     | `$createOptionActionSchema`, `$editOptionActionSchema` |
-| Section                     | `$isFormBefore`                                                                        | `$isContentBefore`                                     |
-| Schema Get/Set utilities    | `$shouldSkipComponentsChildContainersWhileSearching`                                   | `$shouldSkipComponentsChildSchemasWhileSearching`      |
-| Schema Get utility (static) | `$skipComponentsChildContainersWhileSearching`                                         | `$skipComponentsChildSchemasWhileSearching`            |
-| Table row-loop concern      | `$loop` backing property                                                               | `$rowLoop`                                             |
-
-The script renames `rowLoop(loop: ...)` to `rowLoop(rowLoop: ...)` on recognized built-in column implementations. Positional calls are unchanged. Review custom overrides, unpacked arguments and named invocations through stored callables separately.
-
-For widget/relation-manager loading configuration, use nullable static booleans such as `protected static ?bool $isLazyLoaded = false`. Rector does not migrate configuration supplied by shared traits: rename `$isLazy` to `$isLazyLoaded` and `$isBadgeDeferred` to `$isBadgeLazyLoaded`, coordinating declarations and reads/writes with their consumers. Otherwise eager loading can silently revert to lazy loading. Reconcile name collisions yourself. Direct reads use `static::$isLazyLoaded ?? true` and `static::$isBadgeLazyLoaded ?? false` to retain the old defaults.
-
-Also review trait-defined `isLazy()` and `isBadgeDeferred()` overrides and their parent calls: framework dispatch now uses `isLazyLoaded()` and `isBadgeLazyLoaded()`, so keeping only the old override does not preserve its behavior.
-
-Review unpacked argument keys and named calls through first-class callables when the replacement changes parameter names: `form:` / `infolist:` → `schema:`, `subheading:` → `description:`, notification `message:` → `title:`, `idleLabel(label:)` / `emptyMessage(message:)` → `placeholder(placeholder:)`, `options:` → `icons:`, schema `name:` → `key:`, and schema `context:` → `operation:`. On schema lookup methods, `skipComponentsChildContainersWhileSearching:` becomes `skipComponentsChildSchemasWhileSearching:`; update custom declarations too.
-
-If Rector leaves `reactive(...)`, blur-binding `lazy(...)`, `hold(...)`, `withAttributes(...)`, or `Schema::getName(...)` callables or argument-bearing calls unchanged, migrate them without passing formerly ignored arguments to the replacement. For example, use `fn () => $component->live()` rather than `$component->live(...)`, which would consume those arguments. Preserve argument side effects and the old defaults: `live()`, `live(onBlur: true)`, `halt(shouldRollBackDatabaseTransaction: false)`, `extraAttributes(merge: false)`, and `getKey(isAbsolute: true)` respectively.
-
-`ExportAction::csvDelimiter()` and `ExportBulkAction::csvDelimiter()` never controlled exported files. Configure your exporter's public static `getCsvDelimiter(): string` instead. Review custom access to the removed action `$csvDelimiter` property. Likewise, Builder/Repeater `inset()` had no effect. When removing ineffective calls manually, preserve receiver/argument side effects without invoking supplied closures.
-
-For `cacheSchema()`, keep the second argument when replacing `cacheForm()` / `cacheInfolist()`: explicit `null` clears the cache; omission requests discovery. `ImportColumn::getExample()` needs `Arr::first($column->getExamples())`, not index `[0]`, because keys can be associative and empty examples return `null`.
-
-When manually replacing `format_number()` / `format_money()`, preserve a string result even if Laravel returns `false`. Money's integer `divideBy` defaults to `0` (no division). Application-defined helpers and dynamic function callbacks require review.
-</Disclosure>
-
-<Disclosure>
-<span slot="summary">Updating stored enum values and application-owned type contracts</span>
-
-The removed `Filament\Tables\Actions\HeaderActionsPosition` enum becomes `Filament\Tables\Enums\HeaderActionsPosition`, retaining `Adaptive` and `Bottom`. If your application explicitly serialized old enum objects into caches, sessions or queued jobs, migrate or discard those specific values: PHP serialization includes the namespace, and Rector does not update stored data. Ordinary table configuration does not require this step.
-
-The removed `ExposedLivewireMethod` attribute and deprecated class wrappers were subclasses of their replacements. If you use these types for application-owned identification, bindings or reflection, migrate producers and consumers together; a global rename can broaden a type check. Rector only replaces `ExposedLivewireMethod` in supported method attributes, not arbitrary type contracts or duplicate old/new attributes. Retain an application-owned subclass where the distinction matters.
-
-Likewise, the typed-chart rule replaces widget parent classes but not parameter, return or property types such as `BarChartWidget`. Reconcile those consumers with the migrated widgets; changing every type to `ChartWidget` removes the restriction to one chart type.
-</Disclosure>
+For widget and relation manager lazy-loading configuration supplied by traits, manually rename `$isLazy` to `$isLazyLoaded` and `$isBadgeDeferred` to `$isBadgeLazyLoaded`. Declare both as `protected static ?bool`, keeping their configured values. The script updates class declarations but leaves shared traits unchanged.
 
 <Disclosure x-show="packages.includes('notifications') || packages.includes('forms')">
 <span slot="summary">Updating JavaScript and TypeScript aliases manually</span>
 
-PHP Rector does not process these references, including embedded Blade expressions:
+Update these references in your JavaScript and TypeScript:
 
 | Owner                                        | Removed API                                 | Replacement                                    |
 | -------------------------------------------- | ------------------------------------------- | ---------------------------------------------- |
 | JavaScript `FilamentNotificationAction`      | `emit()`, `emitSelf()`, `emitTo()`          | `dispatch()`, `dispatchSelf()`, `dispatchTo()` |
 | Type imports from `@filament/forms/js-field` | `JsFieldInitialProps<Value, Configuration>` | `JsFieldProps<Value, Configuration>`           |
 
-Update type imports, re-exports and annotations, retaining local import aliases where needed. Only change notification-action receivers, not unrelated event emitters. Arguments and fluent return values are unchanged. Rebuild your bundles afterwards.
+Rebuild your bundles afterwards.
 </Disclosure>
 
 <Disclosure x-show="packages.includes('panels')">
 <span slot="summary">Replacing obsolete asset registration calls manually</span>
 
-`registerScripts()` / `registerStyles()` already threw exceptions. Use `Filament\Support\Facades\FilamentAsset::register()` with `Js::make()` / `Css::make()` from `Filament\Support\Assets`. Choose stable IDs and a package namespace, preserving URLs versus local paths, loading flags and ordering. `shouldBeLoadedBeforeCoreScripts` has no direct replacement; see [asset registration](../support/assets).
+Replace `registerScripts()` / `registerStyles()` with `Filament\Support\Facades\FilamentAsset::register()`, using `Js::make()` / `Css::make()` from `Filament\Support\Assets`. See [asset registration](../support/assets).
 </Disclosure>
 
 ### Referencing removed APIs
 
-The following tables group the removals handled by the upgrade script. They apply only to the listed owners, not unrelated methods with the same name. PHP names below are relative to the `Filament` namespace unless stated otherwise. Custom integration limits are described once [above](#reviewing-custom-integrations).
+The upgrade script handles the common uses of the APIs below. Use these tables to update any references that remain. PHP names are relative to the `Filament` namespace unless stated otherwise.
 
 <Disclosure>
 <span slot="summary">Removed methods and functions</span>
@@ -520,7 +476,7 @@ The following tables group the removals handled by the upgrade script. They appl
 | Livewire test assertions                                             | `setActionData()`, `assertActionDataSet()`                                                     | `fillForm()`, `assertSchemaStateSet()` (`data:` → `state:`)                             |
 | Livewire test assertions                                             | `assertHasActionErrors()`, `assertHasNoActionErrors()`                                         | `assertHasFormErrors()`, `assertHasNoFormErrors()`                                      |
 
-The test helpers run on Livewire's `Testable`, not your component. Resource/page `form()` / `infolist()` hooks, the testing `fillForm()`, `CreateRecord::preserveFormDataWhenCreatingAnother()`, and table-column `width()` remain separate APIs. The removals above do not change callback injection names such as `$form` and `$schema`.
+Resource/page `form()` / `infolist()` hooks and `InteractsWithForms` remain supported; you do not need to replace your form components with `InteractsWithSchemas`.
 </Disclosure>
 
 <Disclosure>
@@ -549,9 +505,7 @@ The test helpers run on Livewire's `Testable`, not your component. Resource/page
 | `Widgets\RadarChartWidget`                                                                                 | `Widgets\ChartWidget` with `getType()` returning `'radar'`                          |
 | `Widgets\ScatterChartWidget`                                                                               | `Widgets\ChartWidget` with `getType()` returning `'scatter'`                        |
 
-The query builder filter itself remains `Tables\Filters\QueryBuilder`. Review application-owned type identity and serialized enum data as described above; shared/adapted trait removals and unsupported chart parent references also need manual review.
-
-Automatic `HasInfolist` removal requires a direct `Action` subclass with no other traits, adaptations, or custom `infolist()` / `schema()` declarations; review other uses manually.
+The query builder filter itself remains `Tables\Filters\QueryBuilder`. Update any remaining type hints for removed chart classes to `Widgets\ChartWidget`.
 </Disclosure>
 
 <Disclosure>
@@ -567,7 +521,7 @@ Automatic `HasInfolist` removal requires a direct `Action` subclass with no othe
 | `schema::components.*` built-in keys                                              | `schemas::components.*`                                                                                                    |
 | `tables::filters.query-builder.constraints.*`                                     | `query-builder::constraints.*`                                                                                             |
 
-Rector updates exact built-in PHP constants and string literals; constants with corrected values need no caller changes. Review constructed strings, non-PHP references, and duplicate registrations if you used both spellings. Custom keys are not normalized. The badge delete icon and RTL fallback changes require the manual steps above.
+The script updates PHP constants and string literals. Apply the badge delete icon and RTL registration changes described above manually.
 </Disclosure>
 
 <Disclosure>
@@ -579,7 +533,7 @@ Rector updates exact built-in PHP constants and string literals; constants with 
 | `Tables\View\TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER`  | `TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER` on the same class    |
 | `panels::page.sub-navigation.module-menu.before` / `.after`          | `panels::page.sub-navigation.mobile-menu.before` / `.after` |
 
-The table-hook string values are unchanged. Rector updates exact PHP references and mobile-hook string literals; update constructed or non-PHP references manually. Preserve callback registration order and scope.
+The table-hook string values are unchanged.
 </Disclosure>
 
 <Disclosure>
@@ -589,30 +543,13 @@ The table-hook string values are unchanged. Rector updates exact PHP references 
 | -------------------- | ----------------------- |
 | `<x-filament::card>` | `<x-filament::section>` |
 
-The standalone scanner handles ordinary opening, closing and self-closing tags. Update dynamic component names and direct view references yourself. To scan additional application-owned directories or check later changes:
+The script updates component tags and literal dynamic-component names. Update computed names and direct references to the old card view manually. To scan additional view directories:
 
 ```bash
 php vendor/filament/upgrade/src/upgrade-blade-templates.php resources/views app-modules
 ```
 
-Pass existing directories. Add `--dry-run` to check without writing: exit `2` means changes are needed, `0` means none, and other nonzero statuses indicate failure. The scanner skips symlinks, dependencies, comments, `@verbatim` and `@php` blocks.
-
-It also modernizes the retained `filament::page` / `filament::widget` tags to `filament-panels::page` / `filament-widgets::widget`. Their PHP component classes remain supported; anonymous Blade components are not replacement PHP classes. Custom field/entry wrapper views remain supported.
-</Disclosure>
-
-<Disclosure>
-<span slot="summary">Retaining deprecated integration APIs</span>
-
-These integrations remain supported; you do not need to rewrite them to upgrade:
-
-- `InteractsWithForms` registration/configuration, form/infolist mounted-action bridges, and inherited table configuration. Do not replace the whole trait with `InteractsWithSchemas`.
-- Legacy action/filter/field/column convenience classes, including `ButtonAction`, `IconButtonAction`, `MultiSelectFilter`, `BadgeColumn`, `BooleanColumn`, `TagsColumn`, `MultiSelect`, `RelationshipRepeater`, and `Placeholder`.
-- Resource label properties/getters, page `getActions()`, widget `getCards()`, notification-message hooks, visible-widget helpers, and profile `backAction()`.
-- Functioning legacy panel registration/render methods and `Navigation\MenuItem`. Registrations retain their default-panel/global scope and timing.
-- Negating behavioral setters, image cropping, modal alignment, date/time icons, and `indicator()` badge setters. Prefer the modern APIs for new code.
-- Widget magic `filters` reads (not writes or real property declarations), the `CanConcealComponents` marker, exporter `getFileDisk()` overrides, resource-table generator hooks, and legacy page/widget Blade classes.
-
-Rector optionally modernizes safe uses of some retained APIs. Skipped migrations for these APIs do not block upgrading. Their compatibility behavior remains; do not blindly replace factories with base classes or move request-dependent registration into early panel configuration.
+Add `--dry-run` to check without changing files. The scanner also updates `filament::page` / `filament::widget` tags to `filament-panels::page` / `filament-widgets::widget`.
 </Disclosure>
 
 </div>

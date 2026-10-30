@@ -10,40 +10,12 @@ use PHPStan\Type\TypeCombinator;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
 use Rector\Rector\AbstractRector;
 use Rector\StaticTypeMapper\StaticTypeMapper;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class WidenAvatarProviderParameterTypeRector extends AbstractRector
 {
     public function __construct(
         private StaticTypeMapper $staticTypeMapper,
     ) {}
-
-    public function getRuleDefinition(): RuleDefinition
-    {
-        return new RuleDefinition('Allow avatar providers to accept non-Eloquent users', [
-            new CodeSample(
-                <<<'PHP'
-                    class CustomAvatarProvider implements \Filament\AvatarProviders\Contracts\AvatarProvider
-                    {
-                        public function get(\Illuminate\Database\Eloquent\Model $record): string
-                        {
-                            return 'https://example.com/avatar.svg';
-                        }
-                    }
-                    PHP,
-                <<<'PHP'
-                    class CustomAvatarProvider implements \Filament\AvatarProviders\Contracts\AvatarProvider
-                    {
-                        public function get(\Illuminate\Database\Eloquent\Model | \Illuminate\Contracts\Auth\Authenticatable $record): string
-                        {
-                            return 'https://example.com/avatar.svg';
-                        }
-                    }
-                    PHP,
-            ),
-        ]);
-    }
 
     public function getNodeTypes(): array
     {

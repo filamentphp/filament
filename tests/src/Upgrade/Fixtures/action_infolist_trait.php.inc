@@ -18,21 +18,27 @@ class CustomAction extends Action
     }
 }
 
-class AdaptedAction extends Action
+class CustomNames
 {
-    use HasInfolist { infolist as customInfolist; }
+    public function infolist(string $infolist): string
+    {
+        return $infolist;
+    }
 }
 -----
 <?php
 
 namespace Filament\Tests\Upgrade\Fixtures\ActionInfolistTrait;
 
+use Filament\Actions\Concerns\HasSchema;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\HasInfolist;
 use Filament\Schemas\Components\Text;
 
 class CustomAction extends Action
 {
+    use HasSchema;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -41,7 +47,10 @@ class CustomAction extends Action
     }
 }
 
-class AdaptedAction extends Action
+class CustomNames
 {
-    use HasInfolist { infolist as customInfolist; }
+    public function infolist(string $infolist): string
+    {
+        return $infolist;
+    }
 }

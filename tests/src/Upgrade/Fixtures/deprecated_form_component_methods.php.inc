@@ -114,8 +114,7 @@ class GetterOverridingUpload extends FileUpload
 
 function subclasses(CustomUpload $custom, ?InheritedAliasOverridingUpload $alias, InheritedReplacementOverridingUpload $replacement, InheritedIntermediateOverridingBuilder $builder, GetterOverridingUpload $getter, CustomUpload | AliasOverridingUpload $union): void
 {
-    $custom->enableDownload()->idleLabel(label: 'Upload');
-    $custom->enableDownload()->enableOpen()->idleLabel(label: 'Upload');
+    $custom->idleLabel(label: 'Upload');
     $custom?->enableDownload()?->idleLabel(label: 'Upload');
     $alias?->enableDownload(enabled: false);
     $replacement->idleLabel(label: 'Upload');
@@ -123,13 +122,6 @@ function subclasses(CustomUpload $custom, ?InheritedAliasOverridingUpload $alias
     $builder->showBlockLabels();
     $getter->getImageResizeMode();
     $union->enableDownload();
-}
-
-function narrowedReceiver(FileUpload $upload): void
-{
-    if ($upload->getClone() instanceof AliasOverridingUpload) {
-        $upload->getClone()->enableDownload(enabled: false);
-    }
 }
 
 function unrelated(TextInput $input, UnrelatedComponent $component, FileUpload | UnrelatedComponent $union, $unknown): void
@@ -209,9 +201,9 @@ function configure(BaseFileUpload $base, FileUpload $upload, Builder $builder, R
     $upload->{'enableOpen'}();
     $callback = [$upload, 'enableOpen'];
     FileUpload::enableOpen();
-    $upload->disablePreview()->imageCropAspectRatio('16:9');
-    (static fn($component) => ($component instanceof Builder || $component instanceof Repeater) && !\method_exists($component, 'inset') ? static fn(bool|Closure $condition = true) => $component : $component->{'inset'}(...))($builder->addable(false)->deletable(false)->reorderable(false))();
-    (static fn($component) => ($component instanceof Builder || $component instanceof Repeater) && !\method_exists($component, 'inset') ? static fn(bool|Closure $condition = true) => $component : $component->{'inset'}(...))($repeater->addable(false)->deletable(false)->reorderable(false))();
+    $upload->previewable(false)->imageAspectRatio('16:9')->automaticallyCropImagesToAspectRatio(true);
+    $builder->addable(false)->deletable(false)->reorderable(false);
+    $repeater->addable(false)->deletable(false)->reorderable(false);
     $keyValue->addable(false)->deletable(false)->editableKeys(false)->editableValues(false);
 }
 
@@ -221,7 +213,7 @@ class CustomUpload extends FileUpload
     {
         $this->downloadable();
 
-        return parent::enableOpen();
+        return parent::openable();
     }
 }
 
@@ -270,22 +262,14 @@ class GetterOverridingUpload extends FileUpload
 
 function subclasses(CustomUpload $custom, ?InheritedAliasOverridingUpload $alias, InheritedReplacementOverridingUpload $replacement, InheritedIntermediateOverridingBuilder $builder, GetterOverridingUpload $getter, CustomUpload | AliasOverridingUpload $union): void
 {
-    $custom->downloadable()->placeholder(placeholder: 'Upload');
-    $custom->downloadable()->openable()->placeholder(placeholder: 'Upload');
+    $custom->placeholder(placeholder: 'Upload');
     $custom?->downloadable()?->placeholder(placeholder: 'Upload');
     $alias?->enableDownload(enabled: false);
     $replacement->idleLabel(label: 'Upload');
     $replacement->downloadable()->idleLabel(label: 'Upload');
-    $builder->showBlockLabels();
+    $builder->blockLabels();
     $getter->getImageResizeMode();
     $union->enableDownload();
-}
-
-function narrowedReceiver(FileUpload $upload): void
-{
-    if ($upload->getClone() instanceof AliasOverridingUpload) {
-        $upload->getClone()->enableDownload(enabled: false);
-    }
 }
 
 function unrelated(TextInput $input, UnrelatedComponent $component, FileUpload | UnrelatedComponent $union, $unknown): void

@@ -342,8 +342,8 @@ class PersistentUpgradeSetTest extends TestCase
             $this->assertTrue($components[2]->shouldAutomaticallyCropImagesToAspectRatio());
             $this->assertSame(['eager', 'preview', 'preview', 'ratio', 'ratio'], $events);
             $this->assertSame('off', $components[3]->getAutocomplete());
-            $this->assertFalse((clone $components[4])->label('clone')->isAddable());
-            $this->assertFalse((clone $components[5])->label('clone')->canSelectPlaceholder());
+            $this->assertFalse($components[4]->isAddable());
+            $this->assertFalse($components[5]->canSelectPlaceholder());
             $this->assertSame(Alignment::End, $components[6]->getModalAlignment());
             $this->assertFalse($components[7]->canCreateAnother());
             $this->assertSame(Heroicon::Clock, $components[8]->getSuffixIcon());

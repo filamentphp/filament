@@ -56,7 +56,6 @@ function components(): array
 
 namespace Filament\Tests\Upgrade\Fixtures\BehavioralConfiguration;
 
-use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\AssociateAction;
 use Filament\Actions\AttachAction;
@@ -83,8 +82,8 @@ function components(): array
         Upload::make('blank')->imageAspectRatio('   ')->automaticallyCropImagesToAspectRatio(false),
         Upload::make('zero')->imageAspectRatio('0')->automaticallyCropImagesToAspectRatio(true),
         Upload::make('reset')->imageAspectRatio('4:3')->automaticallyCropImagesToAspectRatio()->imageAspectRatio(null)->automaticallyCropImagesToAspectRatio(false),
-        (static fn($component) => ($component instanceof Builder || $component instanceof Repeater) && !\method_exists($component, 'inset') ? static fn(bool|Closure $condition = true) => $component : $component->{'inset'}(...))(Builder::make('blocks')->addable(false)->deletable(true)->reorderable(false))(),
-        (static fn($component) => ($component instanceof Builder || $component instanceof Repeater) && !\method_exists($component, 'inset') ? static fn(bool|Closure $condition = true) => $component : $component->{'inset'}(...))(Repeater::make('items')->addable(true)->deletable(false)->reorderable(true))(condition: false),
+        Builder::make('blocks')->addable(false)->deletable(true)->reorderable(false),
+        Repeater::make('items')->addable(true)->deletable(false)->reorderable(true),
         KeyValue::make('metadata')->addable(false)->deletable(true)->editableKeys(true)->editableValues(false),
         TextInput::make('name')->autocomplete(null)->autocapitalize(false),
         TextInput::make('other')->autocomplete(false)->autocapitalize(null),

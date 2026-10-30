@@ -4,18 +4,18 @@ namespace Filament\Upgrade\Rector;
 
 use Filament\Schemas\Components\Component;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\ArrayDimFetch;
+use PhpParser\Node\Expr\ArrayItem;
+use PhpParser\Node\Expr\BinaryOp\Identical;
 use PhpParser\Node\Expr\ConstFetch;
+use PhpParser\Node\Expr\Ternary;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use PhpParser\Node\Scalar\Int_;
 
 class RemoveObsoleteConcealmentRector extends AbstractRemovedGetterRector
 {
-    public function getRuleDefinition(): RuleDefinition
-    {
-        return new RuleDefinition('Lower the removed concealment getter without changing marker contracts', [new CodeSample('$component->isConcealed()', 'false')]);
-    }
-
     protected function owner(): string
     {
         return Component::class;
@@ -26,8 +26,16 @@ class RemoveObsoleteConcealmentRector extends AbstractRemovedGetterRector
         return 'isConcealed';
     }
 
-    protected function result(Expr $receiver): Expr
+    protected function result(Expr $receiver, bool $isNullsafe = false): Expr
     {
-        return new ConstFetch(new Name('false'));
+        $result = new ConstFetch(new Name('false'));
+
+        if ($isNullsafe) {
+            return new Ternary(new Identical($receiver, new ConstFetch(new Name('null'))), new ConstFetch(new Name('null')), $result);
+        }
+
+        return $receiver instanceof Variable
+            ? $result
+            : new ArrayDimFetch(new Array_([new ArrayItem($receiver), new ArrayItem($result)]), new Int_(1));
     }
 }
