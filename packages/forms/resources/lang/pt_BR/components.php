@@ -4,6 +4,12 @@ return [
 
     'builder' => [
 
+        'reordering' => [
+            'item' => 'Bloco',
+            'position' => ':label, posição :position de :count',
+            'moved' => ':label agora está na posição :position de :count',
+        ],
+
         'actions' => [
 
             'clone' => [
@@ -164,6 +170,8 @@ return [
 
     'file_upload' => [
 
+        'placeholder' => 'Nenhum arquivo enviado',
+
         'actions' => [
 
             'download' => [
@@ -316,6 +324,14 @@ return [
                 'label' => 'Excluir linha',
             ],
 
+            'move_down' => [
+                'label' => 'Mover para baixo',
+            ],
+
+            'move_up' => [
+                'label' => 'Mover para cima',
+            ],
+
             'reorder' => [
                 'label' => 'Reordenar linha',
             ],
@@ -344,6 +360,12 @@ return [
                 'label' => 'Valor',
             ],
 
+        ],
+
+        'reordering' => [
+            'row' => 'Linha',
+            'position' => ':label, posição :position de :count',
+            'moved' => ':label agora está na posição :position de :count',
         ],
 
     ],
@@ -404,6 +426,12 @@ return [
     ],
 
     'repeater' => [
+
+        'reordering' => [
+            'item' => 'Item',
+            'position' => ':label, posição :position de :count',
+            'moved' => ':label agora está na posição :position de :count',
+        ],
 
         'columns' => [
 
@@ -831,6 +859,8 @@ return [
             'false' => 'Não',
         ],
 
+        'error_message' => 'Não foi possível carregar as opções. Tente novamente.',
+
         'loading_message' => 'Carregando...',
 
         'max_items_message' => 'Apenas :count item pode ser selecionado.|Apenas :count itens podem ser selecionados.',
@@ -840,6 +870,8 @@ return [
         'no_search_results_message' => 'Nenhuma opção corresponde à sua pesquisa.',
 
         'placeholder' => 'Selecione uma opção',
+
+        'required_description' => 'Selecione uma opção.',
 
         'searching_message' => 'Pesquisando...',
 
