@@ -6,10 +6,30 @@ return [
 
         'heading' => 'Colunas',
 
+        'position' => 'Posição :position de :count.',
+
+        'position_in_group' => 'Posição :position de :count em :group.',
+
+        'reordered' => 'A coluna :column agora está na posição :position de :count.',
+
+        'reordered_deferred' => 'A coluna :column agora está na posição :position de :count. Aplique as colunas para salvar suas alterações.',
+
+        'reordered_in_group' => 'A coluna :column agora está na posição :position de :count em :group.',
+
+        'reordered_in_group_deferred' => 'A coluna :column agora está na posição :position de :count em :group. Aplique as colunas para salvar suas alterações.',
+
         'actions' => [
 
             'apply' => [
                 'label' => 'Aplicar colunas',
+            ],
+
+            'move_up' => [
+                'label' => 'Mover :column para cima',
+            ],
+
+            'move_down' => [
+                'label' => 'Mover :column para baixo',
             ],
 
             'reorder' => [
@@ -28,6 +48,13 @@ return [
 
         'actions' => [
             'label' => 'Ação|Ações',
+        ],
+
+        'editable' => [
+            'saving' => 'Salvando alteração...',
+            'saved' => 'Alteração salva.',
+            'failure' => 'Não foi possível confirmar o salvamento. Atualize a página antes de tentar novamente.',
+            'unavailable' => 'Este item não pode mais ser editado.',
         ],
 
         'icon' => [
@@ -130,6 +157,14 @@ return [
 
         'reorder_record' => [
             'label' => 'Reordenar item :key',
+        ],
+
+        'move_record_up' => [
+            'label' => 'Mover :label para cima',
+        ],
+
+        'move_record_down' => [
+            'label' => 'Mover :label para baixo',
         ],
 
         'filter' => [
@@ -243,6 +278,11 @@ return [
     'loading' => 'Carregando...',
 
     'reorder_indicator' => 'Arraste e solte os registros na ordem.',
+
+    'reordering' => [
+        'position' => ':label, posição :position de :count.',
+        'moved' => ':label agora está na posição :position de :count.',
+    ],
 
     'result_count' => '{0} Nenhum resultado|{1} :count resultado|[2,*] :count resultados',
 
