@@ -152,7 +152,9 @@
     @if ((! \Filament\Support\is_slot_empty($slot)) || $hasError || $aboveContentSchema || $belowContentSchema || $beforeContentSchema || $afterContentSchema || $aboveErrorMessageSchema || $belowErrorMessageSchema)
         <div class="fi-fo-field-content-col">
             @if ($hasAboveContentSchema)
-                {!! $aboveContentSchema ?? '<div hidden></div>' !!}
+                <div class="fi-fo-field-content-slot">
+                    {{ $aboveContentSchema }}
+                </div>
             @endif
 
             @if ($hasBeforeContentSchema || $hasAfterContentSchema)
@@ -163,7 +165,9 @@
                     ])
                 >
                     @if ($hasBeforeContentSchema)
-                        {!! $beforeContentSchema ?? '<div hidden></div>' !!}
+                        <div class="fi-fo-field-content-slot">
+                            {{ $beforeContentSchema }}
+                        </div>
                     @endif
 
                     <div class="fi-fo-field-content">

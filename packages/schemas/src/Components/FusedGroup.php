@@ -412,7 +412,9 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
 
             <div class="fi-fo-field-content-col">
                 <?php if ($hasAboveContentSchema) { ?>
-                    <?= $aboveContentSchema?->toHtml() ?? '<div hidden></div>' ?>
+                    <div class="fi-fo-field-content-slot">
+                        <?= $aboveContentSchema?->toHtml() ?>
+                    </div>
                 <?php } ?>
 
                 <?php if ($hasBeforeContentSchema || $hasAfterContentSchema) { ?>
@@ -423,7 +425,9 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
                         ])->toHtml() ?>
                     >
                         <?php if ($hasBeforeContentSchema) { ?>
-                            <?= $beforeContentSchema?->toHtml() ?? '<div hidden></div>' ?>
+                            <div class="fi-fo-field-content-slot">
+                                <?= $beforeContentSchema?->toHtml() ?>
+                            </div>
                         <?php } ?>
                         <div class="fi-fo-field-content"><?= $innerHtml ?></div>
                         <?= $afterContentSchema?->toHtml() ?>

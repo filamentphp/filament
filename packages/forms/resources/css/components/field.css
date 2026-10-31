@@ -58,14 +58,18 @@
         @apply grid auto-cols-fr gap-y-2;
     }
 
+    & .fi-fo-field-content-slot {
+        @apply contents;
+    }
+
     & .fi-fo-field-content-ctn {
         @apply flex w-full items-center gap-x-3;
 
         &.fi-empty {
-            @apply grid items-stretch;
+            @apply contents;
 
             & > .fi-fo-field-content {
-                @apply grid auto-cols-fr gap-y-2;
+                @apply contents;
             }
         }
     }
