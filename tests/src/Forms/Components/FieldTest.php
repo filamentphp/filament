@@ -6,7 +6,9 @@ use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\ViewErrorBag;
 use Illuminate\View\ComponentAttributeBag;
@@ -335,6 +337,58 @@ describe('field wrappers', function (): void {
 
         expect($html)->toContain('field-wrapper-blade-component', 'fi-fo-field', 'Name', '<input');
     });
+
+    it('preserves field state when attached content changes in the browser', function (string $contentPosition, string $wrapper): void {
+        Artisan::call('filament:assets');
+        $this->actingAs(User::factory()->create());
+
+        $input = '[data-testid="password"]';
+        $note = '[data-testid="password-note"]';
+        $page = visit('/field-content-test?' . http_build_query([
+            'contentPosition' => $contentPosition,
+            'wrapper' => $wrapper,
+        ]));
+
+        $page
+            ->click('[data-testid="show-password"]')
+            ->assertAttribute($input, 'type', 'text')
+            ->assertPresent('[data-testid="hide-password"]:focus')
+            ->fill($input, 'secret-value')
+            ->assertVisible($note)
+            ->assertValue($input, 'secret-value')
+            ->assertAttribute($input, 'type', 'text')
+            ->assertPresent($input . ':focus');
+
+        if ($contentPosition === 'beforeContent') {
+            $page->assertNoAccessibilityIssues();
+        }
+
+        $page
+            ->clear($input)
+            ->assertMissing($note)
+            ->assertValue($input, '')
+            ->assertAttribute($input, 'type', 'text')
+            ->assertPresent($input . ':focus')
+            ->click('[data-testid="hide-password"]')
+            ->assertAttribute($input, 'type', 'password')
+            ->assertNoSmoke();
+
+        if ($contentPosition === 'beforeContent') {
+            $page->assertNoAccessibilityIssues();
+
+            $darkPage = $page->inDarkMode();
+            $darkPage
+                ->click('[data-testid="show-password"]')
+                ->assertPresent('[data-testid="hide-password"]:focus')
+                ->fill($input, 'secret-value')
+                ->assertVisible($note)
+                ->assertNoAccessibilityIssues()
+                ->clear($input)
+                ->assertMissing($note)
+                ->assertNoAccessibilityIssues();
+        }
+    })->with(['aboveContent', 'beforeContent', 'afterContent'])
+        ->with(['default', 'blade', 'fused']);
 });
 
 describe('validation messages for nested recursive rules', function (): void {

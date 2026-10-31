@@ -45,10 +45,21 @@
     $belowLabelSchema = $field?->getChildSchema($field::BELOW_LABEL_SCHEMA_KEY)?->toHtmlString();
     $beforeLabelSchema = $field?->getChildSchema($field::BEFORE_LABEL_SCHEMA_KEY)?->toHtmlString();
     $afterLabelSchema = $field?->getChildSchema($field::AFTER_LABEL_SCHEMA_KEY)?->toHtmlString();
-    $aboveContentSchema = $field?->getChildSchema($field::ABOVE_CONTENT_SCHEMA_KEY)?->toHtmlString();
+
+    $aboveContentSchema = $field?->getChildSchema($field::ABOVE_CONTENT_SCHEMA_KEY);
+    $hasAboveContentSchema = $field?->hasChildSchemaConfiguration($field::ABOVE_CONTENT_SCHEMA_KEY) || $aboveContentSchema;
+    $aboveContentSchema = $aboveContentSchema?->toHtmlString();
+
     $belowContentSchema = $field?->getChildSchema($field::BELOW_CONTENT_SCHEMA_KEY)?->toHtmlString();
-    $beforeContentSchema = $field?->getChildSchema($field::BEFORE_CONTENT_SCHEMA_KEY)?->toHtmlString();
-    $afterContentSchema = $field?->getChildSchema($field::AFTER_CONTENT_SCHEMA_KEY)?->toHtmlString();
+
+    $beforeContentSchema = $field?->getChildSchema($field::BEFORE_CONTENT_SCHEMA_KEY);
+    $hasBeforeContentSchema = $field?->hasChildSchemaConfiguration($field::BEFORE_CONTENT_SCHEMA_KEY) || $beforeContentSchema;
+    $beforeContentSchema = $beforeContentSchema?->toHtmlString();
+
+    $afterContentSchema = $field?->getChildSchema($field::AFTER_CONTENT_SCHEMA_KEY);
+    $hasAfterContentSchema = $field?->hasChildSchemaConfiguration($field::AFTER_CONTENT_SCHEMA_KEY) || $afterContentSchema;
+    $afterContentSchema = $afterContentSchema?->toHtmlString();
+
     $aboveErrorMessageSchema = $field?->getChildSchema($field::ABOVE_ERROR_MESSAGE_SCHEMA_KEY)?->toHtmlString();
     $belowErrorMessageSchema = $field?->getChildSchema($field::BELOW_ERROR_MESSAGE_SCHEMA_KEY)?->toHtmlString();
 
@@ -140,11 +151,24 @@
 
     @if ((! \Filament\Support\is_slot_empty($slot)) || $hasError || $aboveContentSchema || $belowContentSchema || $beforeContentSchema || $afterContentSchema || $aboveErrorMessageSchema || $belowErrorMessageSchema)
         <div class="fi-fo-field-content-col">
-            {{ $aboveContentSchema }}
+            @if ($hasAboveContentSchema)
+                <div class="fi-fo-field-content-slot">
+                    {{ $aboveContentSchema }}
+                </div>
+            @endif
 
-            @if ($beforeContentSchema || $afterContentSchema)
-                <div class="fi-fo-field-content-ctn">
-                    {{ $beforeContentSchema }}
+            @if ($hasBeforeContentSchema || $hasAfterContentSchema)
+                <div
+                    @class([
+                        'fi-fo-field-content-ctn',
+                        'fi-empty' => ! ($beforeContentSchema || $afterContentSchema),
+                    ])
+                >
+                    @if ($hasBeforeContentSchema)
+                        <div class="fi-fo-field-content-slot">
+                            {{ $beforeContentSchema }}
+                        </div>
+                    @endif
 
                     <div class="fi-fo-field-content">
                         {{ $slot }}

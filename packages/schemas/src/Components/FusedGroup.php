@@ -348,10 +348,21 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
         $belowLabelSchema = $this->getChildSchema(static::BELOW_LABEL_SCHEMA_KEY)?->toHtmlString();
         $beforeLabelSchema = $this->getChildSchema(static::BEFORE_LABEL_SCHEMA_KEY)?->toHtmlString();
         $afterLabelSchema = $this->getChildSchema(static::AFTER_LABEL_SCHEMA_KEY)?->toHtmlString();
-        $aboveContentSchema = $this->getChildSchema(static::ABOVE_CONTENT_SCHEMA_KEY)?->toHtmlString();
+
+        $aboveContentSchema = $this->getChildSchema(static::ABOVE_CONTENT_SCHEMA_KEY);
+        $hasAboveContentSchema = $this->hasChildSchemaConfiguration(static::ABOVE_CONTENT_SCHEMA_KEY) || $aboveContentSchema;
+        $aboveContentSchema = $aboveContentSchema?->toHtmlString();
+
         $belowContentSchema = $this->getChildSchema(static::BELOW_CONTENT_SCHEMA_KEY)?->toHtmlString();
-        $beforeContentSchema = $this->getChildSchema(static::BEFORE_CONTENT_SCHEMA_KEY)?->toHtmlString();
-        $afterContentSchema = $this->getChildSchema(static::AFTER_CONTENT_SCHEMA_KEY)?->toHtmlString();
+
+        $beforeContentSchema = $this->getChildSchema(static::BEFORE_CONTENT_SCHEMA_KEY);
+        $hasBeforeContentSchema = $this->hasChildSchemaConfiguration(static::BEFORE_CONTENT_SCHEMA_KEY) || $beforeContentSchema;
+        $beforeContentSchema = $beforeContentSchema?->toHtmlString();
+
+        $afterContentSchema = $this->getChildSchema(static::AFTER_CONTENT_SCHEMA_KEY);
+        $hasAfterContentSchema = $this->hasChildSchemaConfiguration(static::AFTER_CONTENT_SCHEMA_KEY) || $afterContentSchema;
+        $afterContentSchema = $afterContentSchema?->toHtmlString();
+
         $aboveErrorMessageSchema = $this->getChildSchema(static::ABOVE_ERROR_MESSAGE_SCHEMA_KEY)?->toHtmlString();
         $belowErrorMessageSchema = $this->getChildSchema(static::BELOW_ERROR_MESSAGE_SCHEMA_KEY)?->toHtmlString();
 
@@ -400,11 +411,24 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
             <?php } ?>
 
             <div class="fi-fo-field-content-col">
-                <?= $aboveContentSchema?->toHtml() ?>
+                <?php if ($hasAboveContentSchema) { ?>
+                    <div class="fi-fo-field-content-slot">
+                        <?= $aboveContentSchema?->toHtml() ?>
+                    </div>
+                <?php } ?>
 
-                <?php if ($beforeContentSchema || $afterContentSchema) { ?>
-                    <div class="fi-fo-field-content-ctn">
-                        <?= $beforeContentSchema?->toHtml() ?>
+                <?php if ($hasBeforeContentSchema || $hasAfterContentSchema) { ?>
+                    <div
+                        <?= (new FilamentComponentAttributeBag)->class([
+                            'fi-fo-field-content-ctn',
+                            'fi-empty' => ! ($beforeContentSchema || $afterContentSchema),
+                        ])->toHtml() ?>
+                    >
+                        <?php if ($hasBeforeContentSchema) { ?>
+                            <div class="fi-fo-field-content-slot">
+                                <?= $beforeContentSchema?->toHtml() ?>
+                            </div>
+                        <?php } ?>
                         <div class="fi-fo-field-content"><?= $innerHtml ?></div>
                         <?= $afterContentSchema?->toHtml() ?>
                     </div>
