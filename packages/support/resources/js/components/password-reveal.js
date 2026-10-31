@@ -1,4 +1,4 @@
-export default function passwordRevealFormComponent() {
+export default function passwordReveal() {
     return {
         isPasswordRevealed: false,
 

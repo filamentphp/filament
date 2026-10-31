@@ -9,6 +9,7 @@ import dropdown from './components/dropdown.js'
 import formButton from './components/form-button.js'
 import modal from './components/modal.js'
 import oneTimeCodeInput from './components/one-time-code.js'
+import passwordReveal from './components/password-reveal.js'
 import './disabled-button.js'
 import copyable from './components/copyable.js'
 import './partials.js'
@@ -36,6 +37,7 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.data('filamentFormButton', formButton)
     window.Alpine.data('filamentModal', modal)
     window.Alpine.data('filamentOneTimeCodeInput', oneTimeCodeInput)
+    window.Alpine.data('filamentPasswordReveal', passwordReveal)
     window.Alpine.data('filamentCopyable', copyable)
 })
 

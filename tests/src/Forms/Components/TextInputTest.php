@@ -561,7 +561,10 @@ describe('rendering', function (): void {
     it('can render with `password()` and `revealable()`', function (): void {
         livewire(RenderTextInputWithRevealable::class)
             ->assertSuccessful()
-            ->assertSeeHtml('type="password"');
+            ->assertSeeHtml('type="password"')
+            ->assertSeeHtml('x-data="filamentPasswordReveal()"')
+            ->assertDontSeeHtml('x-load')
+            ->assertDontSeeHtml('password-reveal');
     });
 
     it('can render with `integer()`', function (): void {

@@ -128,7 +128,6 @@ const formComponents = [
     'slider',
     'tags-input',
     'textarea',
-    'text-input/password-reveal',
     'toggle-buttons',
 ]
 
