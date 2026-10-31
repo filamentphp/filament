@@ -99,12 +99,12 @@ describe('calling actions', function (): void {
 
                     $component->call('mountAction', 'detach', [], $context)->callMountedAction()->assertNotified();
 
-                    expect(DB::table('department_ticket')->where('ticket_id', $ticket->getKey())->pluck('quantity')->all())->toBe($index === 0 ? [7] : []);
+                    expect(DB::table('department_ticket')->where('ticket_id', $ticket->getKey())->pluck('quantity')->all())->toEqual($index === 0 ? [7] : []);
                 }
             },
         );
 
-        expect($otherTicket->departments()->pluck('quantity')->all())->toBe([99]);
+        expect($otherTicket->departments()->pluck('quantity')->all())->toEqual([99]);
     });
 
     it('can validate an action\'s data', function (): void {

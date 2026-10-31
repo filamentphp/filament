@@ -531,8 +531,8 @@ describe('duplicate relationship selection', function (): void {
             ->callTableBulkAction(DetachBulkAction::class, $pivotKeys)
             ->assertNotified();
 
-        expect($ticket->departments()->pluck('quantity')->all())->toBe([7])
-            ->and($otherTicket->departments()->pluck('quantity')->all())->toBe([99])
+        expect($ticket->departments()->pluck('quantity')->all())->toEqual([7])
+            ->and($otherTicket->departments()->pluck('quantity')->all())->toEqual([99])
             ->and(Department::find($department->getKey()))->not->toBeNull();
     })->with([null, 1]);
 
