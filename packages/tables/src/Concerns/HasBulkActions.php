@@ -306,7 +306,7 @@ trait HasBulkActions
         if ($chunkSize || (! $shouldFetchSelectedRecords)) {
             $resolvedSelectedRecords = $this->lazyTableRecordsByKey($query, $chunkSize ?? 1000);
 
-            if ($table->getRelationship() instanceof BelongsToMany && ! $table->allowsDuplicates()) {
+            if ($table->getRelationship() instanceof BelongsToMany) {
                 $invadedRelationship = invade($table->getRelationship());
 
                 $resolvedSelectedRecords = $resolvedSelectedRecords

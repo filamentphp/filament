@@ -227,7 +227,7 @@ trait InteractsWithRecord
             return null;
         }
 
-        return strval($key);
+        return $this->getTable()?->getRecordKey($record) ?? strval($key);
     }
 
     public function getCustomRecordTitle(?Model $record = null): ?string
