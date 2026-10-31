@@ -3,12 +3,18 @@
 use Filament\Actions\Action;
 use Filament\Actions\AttachAction;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\DetachAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithToggleableRecordActions;
+use Filament\Tests\Fixtures\Livewire\TicketDepartmentsReorderableTable;
+use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Tables\TestCase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -68,6 +74,37 @@ describe('calling actions', function (): void {
             ->callTableAction('groupedDelete', $post);
 
         assertSoftDeleted($post);
+    });
+
+    it('can detach duplicate records sequentially with `allowDuplicates()`', function (): void {
+        $ticket = Ticket::factory()->create();
+        $otherTicket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+        $otherTicket->departments()->attach($department, ['quantity' => 99]);
+        $ticket->departments()->attach($department, ['quantity' => 3]);
+        $ticket->departments()->attach($department, ['quantity' => 7]);
+        $pivotKeys = DB::table('department_ticket')->where('ticket_id', $ticket->getKey())->orderBy('id')->pluck('id')->all();
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->defaultSort('department_ticket.id')->recordActions([DetachAction::make()]),
+            during: function () use ($ticket, $pivotKeys): void {
+                $component = livewire(TicketDepartmentsReorderableTable::class, ['ticketKey' => $ticket->getKey(), 'duplicates' => true]);
+
+                foreach ($pivotKeys as $index => $pivotKey) {
+                    $table = $component->instance()->getTable();
+                    $record = $component->instance()->getTableRecords()->first();
+                    $context = $table->getAction('detach')->record($record)->getContext();
+
+                    expect($context['recordKey'])->toBe((string) $pivotKey);
+
+                    $component->call('mountAction', 'detach', [], $context)->callMountedAction()->assertNotified();
+
+                    expect(DB::table('department_ticket')->where('ticket_id', $ticket->getKey())->pluck('quantity')->all())->toBe($index === 0 ? [7] : []);
+                }
+            },
+        );
+
+        expect($otherTicket->departments()->pluck('quantity')->all())->toBe([99]);
     });
 
     it('can validate an action\'s data', function (): void {
@@ -255,6 +292,34 @@ describe('nested actions', function (): void {
             ->assertDispatched('nested-called', bar: $bar, recordKey: $post->getKey())
             ->assertActionNotMounted()
             ->assertNotDispatched('grouped-parent-called');
+    });
+
+    it('can call a nested action with its own record when `allowDuplicates()` is enabled', function (): void {
+        $ticket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+        $ticket->departments()->attach($department);
+        $pivotKey = DB::table('department_ticket')->value('id');
+        $otherDepartment = Department::make(['uuid' => (string) Str::uuid()])->setKeyName('uuid')->setKeyType('string');
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->recordActions([
+                Action::make('parent')
+                    ->requiresConfirmation()
+                    ->extraModalFooterActions([
+                        Action::make('child')
+                            ->record($otherDepartment)
+                            ->action(function (Department $record, TicketDepartmentsReorderableTable $livewire): void {
+                                $livewire->dispatch('child-called', recordKey: $record->getKey());
+                            }),
+                    ]),
+            ]),
+            during: static fn () => livewire(TicketDepartmentsReorderableTable::class, ['ticketKey' => $ticket->getKey(), 'duplicates' => true])
+                ->callAction([
+                    TestAction::make('parent')->table($pivotKey),
+                    TestAction::make('child'),
+                ])
+                ->assertDispatched('child-called', recordKey: $otherDepartment->getKey()),
+        );
     });
 });
 
