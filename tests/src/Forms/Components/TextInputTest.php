@@ -564,7 +564,8 @@ describe('rendering', function (): void {
             ->assertSeeHtml('type="password"');
     });
 
-    it('renders revealable password with synchronous Alpine component without async loading', function (): void {
+    // https://github.com/filamentphp/filament/issues/20912
+    it('does not load `revealable()` password component asynchronously', function (): void {
         livewire(RenderTextInputWithRevealable::class)
             ->assertSuccessful()
             ->assertSeeHtml('x-data="filamentPasswordReveal()"')
