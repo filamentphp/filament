@@ -128,9 +128,9 @@ trait HasQuery
         $relationship = $this->getRelationship();
 
         $columns = [
-            ...invade($relationship)->aliasedPivotColumns(),
             $relationship->getTable() . '.*',
             $query->getModel()->getTable() . '.*',
+            ...invade($relationship)->aliasedPivotColumns(),
         ];
 
         $baseQuery = $query instanceof Relation ? $query->getQuery()->getQuery() : $query->getQuery();
