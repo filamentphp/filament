@@ -561,9 +561,15 @@ describe('rendering', function (): void {
     it('can render with `password()` and `revealable()`', function (): void {
         livewire(RenderTextInputWithRevealable::class)
             ->assertSuccessful()
-            ->assertSeeHtml('type="password"')
+            ->assertSeeHtml('type="password"');
+    });
+
+    it('renders revealable password with synchronous Alpine component without async loading', function (): void {
+        livewire(RenderTextInputWithRevealable::class)
+            ->assertSuccessful()
             ->assertSeeHtml('x-data="filamentPasswordReveal()"')
             ->assertDontSeeHtml('x-load')
+            ->assertDontSeeHtml('x-load-src')
             ->assertDontSeeHtml('password-reveal');
     });
 
