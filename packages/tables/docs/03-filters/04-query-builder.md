@@ -524,7 +524,7 @@ The `label()` method is used to render the options in the operator select. Two o
 
 The `summary()` method is used in the header of the constraint when it is applied to the query, to provide an overview of the active constraint.
 
-If your operator needs input fields, extend `Operator` and return the components from `getSchemaComponents()`:
+If your operator needs input fields, extend `Operator` and return the components from `getFormSchema()`:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -532,7 +532,7 @@ use Filament\QueryBuilder\Constraints\Operators\Operator;
 
 class CustomOperator extends Operator
 {
-    public function getSchemaComponents(): array
+    public function getFormSchema(): array
     {
         return [
             TextInput::make('value')->required(),
@@ -541,7 +541,7 @@ class CustomOperator extends Operator
 }
 ```
 
-When extending a built-in operator, use `parent::getSchemaComponents()` to retain its fields.
+When extending a built-in operator, use `parent::getFormSchema()` to retain its fields.
 
 ## Customizing the constraint picker
 

@@ -93,9 +93,9 @@ describe('`getFormats()`', function (): void {
     });
 });
 
-describe('`getOptionsSchemaComponents()`', function (): void {
+describe('`getOptionsFormComponents()`', function (): void {
     it('returns empty array by default', function (): void {
-        expect(TestPostExporter::getOptionsSchemaComponents())->toBe([]);
+        expect(TestPostExporter::getOptionsFormComponents())->toBe([]);
     });
 });
 

@@ -47,7 +47,7 @@ class EndsWithOperator extends Operator
     /**
      * @return array<Component | Action | ActionGroup>
      */
-    public function getSchemaComponents(): array
+    public function getFormSchema(): array
     {
         return [
             TextInput::make('text')

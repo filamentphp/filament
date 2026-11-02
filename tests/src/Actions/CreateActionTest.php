@@ -322,24 +322,24 @@ it('returns a create another action with default label from `getCreateAnotherAct
     expect($createAnotherAction->getLabel())->not->toBeEmpty();
 });
 
-it('can set `preserveDataWhenCreatingAnother()` with an array', function (): void {
+it('can set `preserveFormDataWhenCreatingAnother()` with an array', function (): void {
     $action = CreateAction::make()
-        ->preserveDataWhenCreatingAnother(['title', 'category']);
+        ->preserveFormDataWhenCreatingAnother(['title', 'category']);
 
     expect($action)->toBeInstanceOf(CreateAction::class);
 });
 
-it('can set `preserveDataWhenCreatingAnother()` with a `Closure`', function (): void {
+it('can set `preserveFormDataWhenCreatingAnother()` with a `Closure`', function (): void {
     $action = CreateAction::make()
-        ->preserveDataWhenCreatingAnother(static fn (): array => ['title']);
+        ->preserveFormDataWhenCreatingAnother(static fn (): array => ['title']);
 
     expect($action)->toBeInstanceOf(CreateAction::class);
 });
 
-it('can clear `preserveDataWhenCreatingAnother()` with `null`', function (): void {
+it('can clear `preserveFormDataWhenCreatingAnother()` with `null`', function (): void {
     $action = CreateAction::make()
-        ->preserveDataWhenCreatingAnother(['title'])
-        ->preserveDataWhenCreatingAnother(null);
+        ->preserveFormDataWhenCreatingAnother(['title'])
+        ->preserveFormDataWhenCreatingAnother(null);
 
     expect($action)->toBeInstanceOf(CreateAction::class);
 });

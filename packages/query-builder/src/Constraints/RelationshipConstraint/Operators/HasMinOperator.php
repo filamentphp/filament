@@ -41,7 +41,7 @@ class HasMinOperator extends Operator
     /**
      * @return array<Component | Action | ActionGroup>
      */
-    public function getSchemaComponents(): array
+    public function getFormSchema(): array
     {
         return [
             TextInput::make('count')

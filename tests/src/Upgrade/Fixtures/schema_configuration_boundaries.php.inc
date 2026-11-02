@@ -18,7 +18,7 @@ class CustomAction extends Action
 
 class CustomSelect extends Select
 {
-    public function createOptionSchema(array | Closure | null $customSchema): static
+    public function createOptionForm(array | Closure | null $customSchema): static
     {
         return $this;
     }

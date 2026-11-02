@@ -19,7 +19,7 @@ class RenameSchemaComponentHooksRectorTest extends AbstractRectorTestCase
         }
     }
 
-    public function test_migrates_component_hooks_and_their_calls_together(): void
+    public function test_preserves_form_component_hooks_and_their_calls(): void
     {
         $this->doTestFile(__DIR__ . '/Fixtures/schema_component_hooks.php.inc');
     }
@@ -34,7 +34,7 @@ class RenameSchemaComponentHooksRectorTest extends AbstractRectorTestCase
         $this->doTestFile(__DIR__ . '/Fixtures/schema_configuration_boundaries.php.inc');
     }
 
-    public function test_combines_legacy_operator_class_and_hook_renames(): void
+    public function test_migrates_legacy_operator_classes_without_renaming_form_hooks(): void
     {
         $this->doTestFile(__DIR__ . '/Fixtures/schema_legacy_operator_hook.php.inc');
     }
@@ -44,7 +44,7 @@ class RenameSchemaComponentHooksRectorTest extends AbstractRectorTestCase
         $this->doTestFile(__DIR__ . '/Fixtures/schema_lookup_arguments.php.inc');
     }
 
-    public function test_migrates_parent_and_child_hooks_in_a_fresh_process(): void
+    public function test_preserves_parent_and_child_form_hooks_in_a_fresh_process(): void
     {
         $directory = sys_get_temp_dir() . '/filament-schema-hooks-' . bin2hex(random_bytes(8));
         mkdir($directory . '/app', recursive: true);
@@ -60,17 +60,16 @@ class RenameSchemaComponentHooksRectorTest extends AbstractRectorTestCase
             }
 
             $root = dirname(__DIR__, 3);
-            file_put_contents($directory . '/rector.php', <<<'PHP'
+            file_put_contents($directory . '/rector.php', <<<PHP
                 <?php
 
-                use Filament\Upgrade\Rector\RenameSchemaComponentHooksRector;
                 use Rector\Config\RectorConfig;
 
                 return RectorConfig::configure()
                     ->withPaths([__DIR__ . '/app'])
                     ->withCache(__DIR__ . '/cache')
                     ->withoutParallel()
-                    ->withRules([RenameSchemaComponentHooksRector::class]);
+                    ->withSets(['{$root}/packages/upgrade/src/rector.php']);
                 PHP);
 
             foreach ([false, true] as $dryRun) {
@@ -88,7 +87,7 @@ class RenameSchemaComponentHooksRectorTest extends AbstractRectorTestCase
             require $directory . '/app/parent.php';
             require $directory . '/app/child.php';
 
-            $components = MigratedSchemaHooks\SchemaCrossFileHook\ChildExporter::getOptionsSchemaComponents();
+            $components = MigratedSchemaHooks\SchemaCrossFileHook\ChildExporter::getOptionsFormComponents();
             $this->assertSame(['parent_option', 'child_option'], array_map(static fn (TextInput $component): string => $component->getName(), $components));
         } finally {
             (new Filesystem)->deleteDirectory($directory);

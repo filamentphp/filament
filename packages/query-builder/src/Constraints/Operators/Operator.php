@@ -177,7 +177,7 @@ class Operator extends Component
     /**
      * @return array<\Filament\Schemas\Components\Component | Action | ActionGroup>
      */
-    public function getSchemaComponents(): array
+    public function getFormSchema(): array
     {
         return [];
     }

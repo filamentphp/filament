@@ -391,7 +391,7 @@ class TestComponentWithListFields extends Livewire
     public function rolesAction(): Action
     {
         return Action::make('roles')
-            ->fillSchema(['roles' => ['viewer', 'creator']])
+            ->fillForm(['roles' => ['viewer', 'creator']])
             ->schema([
                 CheckboxList::make('roles')
                     ->options([

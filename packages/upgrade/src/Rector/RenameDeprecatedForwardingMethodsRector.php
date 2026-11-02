@@ -5,7 +5,6 @@ namespace Filament\Upgrade\Rector;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Actions\CreateAction;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ExportBulkAction;
 use Filament\Actions\Exports\ExportColumn;
@@ -33,7 +32,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\ImageEntry;
@@ -112,15 +110,6 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'resetFormData' => 'resetData',
             'getFormData' => 'getData',
             'getRawFormData' => 'getRawData',
-            'fillForm' => 'fillSchema',
-            'beforeFormFilled' => 'beforeSchemaFilled',
-            'afterFormFilled' => 'afterSchemaFilled',
-            'beforeFormValidated' => 'beforeSchemaValidated',
-            'afterFormValidated' => 'afterSchemaValidated',
-            'callBeforeFormFilled' => 'callBeforeSchemaFilled',
-            'callAfterFormFilled' => 'callAfterSchemaFilled',
-            'callBeforeFormValidated' => 'callBeforeSchemaValidated',
-            'callAfterFormValidated' => 'callAfterSchemaValidated',
             'modalActions' => 'modalFooterActions',
             'extraModalActions' => 'extraModalFooterActions',
             'modalButton' => 'modalSubmitActionLabel',
@@ -145,9 +134,6 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         ],
         ReplicateAction::class => [
             'afterReplicaSaved' => 'after',
-        ],
-        CreateAction::class => [
-            'preserveFormDataWhenCreatingAnother' => 'preserveDataWhenCreatingAnother',
         ],
         ExportAction::class => [
             'getFileDisk' => 'getFileDiskName',
@@ -243,15 +229,6 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         ],
         FusedGroup::class => [
             'getExtraFieldWrapperAttributesBag' => 'getExtraFieldWrapperAttributeBag',
-        ],
-        Select::class => [
-            'manageOptionForm' => 'manageOptionSchema',
-            'createOptionForm' => 'createOptionSchema',
-            'editOptionForm' => 'editOptionSchema',
-            'getCreateOptionActionForm' => 'getCreateOptionActionSchema',
-            'getEditOptionActionForm' => 'getEditOptionActionSchema',
-            'hasCreateOptionActionFormSchema' => 'hasCreateOptionActionSchema',
-            'hasEditOptionActionFormSchema' => 'hasEditOptionActionSchema',
         ],
         KeyValue::class => [
             'addButtonLabel' => 'addActionLabel',

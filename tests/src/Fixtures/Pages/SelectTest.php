@@ -168,7 +168,7 @@ class SelectTest extends Page
                         'existing' => 'Existing',
                     ])
                     ->native(false)
-                    ->createOptionSchema([
+                    ->createOptionForm([
                         TextInput::make('name')
                             ->autofocus()
                             ->required()

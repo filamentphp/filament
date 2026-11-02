@@ -66,7 +66,7 @@ class IsOperator extends Operator
     /**
      * @return array<Component | Action | ActionGroup>
      */
-    public function getSchemaComponents(): array
+    public function getFormSchema(): array
     {
         $constraint = $this->getConstraint();
 

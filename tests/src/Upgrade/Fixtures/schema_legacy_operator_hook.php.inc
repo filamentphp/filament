@@ -26,14 +26,14 @@ use Filament\QueryBuilder\Constraints\TextConstraint\Operators\ContainsOperator;
 
 class CustomOperator extends ContainsOperator
 {
-    public function getSchemaComponents(): array
+    public function getFormSchema(): array
     {
-        return [...parent::getSchemaComponents(), 'custom'];
+        return [...parent::getFormSchema(), 'custom'];
     }
 }
 
 function inspect(CustomOperator $operator, ContainsOperator $builtIn): void
 {
-    $operator->getSchemaComponents();
-    $builtIn->getSchemaComponents();
+    $operator->getFormSchema();
+    $builtIn->getFormSchema();
 }

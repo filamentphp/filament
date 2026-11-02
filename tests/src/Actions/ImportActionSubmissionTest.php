@@ -136,7 +136,7 @@ class SubmissionPostImporter extends Importer
         ];
     }
 
-    public static function getOptionsSchemaComponents(): array
+    public static function getOptionsFormComponents(): array
     {
         return [
             TextInput::make('mode')->default('append')->required()->in(['append', 'replace']),

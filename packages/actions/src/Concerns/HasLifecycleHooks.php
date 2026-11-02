@@ -13,13 +13,13 @@ trait HasLifecycleHooks
 
     protected ?Closure $after = null;
 
-    protected ?Closure $beforeSchemaFilled = null;
+    protected ?Closure $beforeFormFilled = null;
 
-    protected ?Closure $afterSchemaFilled = null;
+    protected ?Closure $afterFormFilled = null;
 
-    protected ?Closure $beforeSchemaValidated = null;
+    protected ?Closure $beforeFormValidated = null;
 
-    protected ?Closure $afterSchemaValidated = null;
+    protected ?Closure $afterFormValidated = null;
 
     public function before(?Closure $callback): static
     {
@@ -35,30 +35,30 @@ trait HasLifecycleHooks
         return $this;
     }
 
-    public function beforeSchemaFilled(?Closure $callback): static
+    public function beforeFormFilled(?Closure $callback): static
     {
-        $this->beforeSchemaFilled = $callback;
+        $this->beforeFormFilled = $callback;
 
         return $this;
     }
 
-    public function afterSchemaFilled(?Closure $callback): static
+    public function afterFormFilled(?Closure $callback): static
     {
-        $this->afterSchemaFilled = $callback;
+        $this->afterFormFilled = $callback;
 
         return $this;
     }
 
-    public function beforeSchemaValidated(?Closure $callback): static
+    public function beforeFormValidated(?Closure $callback): static
     {
-        $this->beforeSchemaValidated = $callback;
+        $this->beforeFormValidated = $callback;
 
         return $this;
     }
 
-    public function afterSchemaValidated(?Closure $callback): static
+    public function afterFormValidated(?Closure $callback): static
     {
-        $this->afterSchemaValidated = $callback;
+        $this->afterFormValidated = $callback;
 
         return $this;
     }
@@ -79,23 +79,23 @@ trait HasLifecycleHooks
         }
     }
 
-    public function callBeforeSchemaFilled(): mixed
+    public function callBeforeFormFilled(): mixed
     {
-        return $this->evaluate($this->beforeSchemaFilled);
+        return $this->evaluate($this->beforeFormFilled);
     }
 
-    public function callAfterSchemaFilled(): mixed
+    public function callAfterFormFilled(): mixed
     {
-        return $this->evaluate($this->afterSchemaFilled);
+        return $this->evaluate($this->afterFormFilled);
     }
 
-    public function callBeforeSchemaValidated(): mixed
+    public function callBeforeFormValidated(): mixed
     {
-        return $this->evaluate($this->beforeSchemaValidated);
+        return $this->evaluate($this->beforeFormValidated);
     }
 
-    public function callAfterSchemaValidated(): mixed
+    public function callAfterFormValidated(): mixed
     {
-        return $this->evaluate($this->afterSchemaValidated);
+        return $this->evaluate($this->afterFormValidated);
     }
 }

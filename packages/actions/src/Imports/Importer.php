@@ -314,7 +314,7 @@ abstract class Importer
     /**
      * @return array<Component | Action | ActionGroup>
      */
-    public static function getOptionsSchemaComponents(): array
+    public static function getOptionsFormComponents(): array
     {
         return [];
     }

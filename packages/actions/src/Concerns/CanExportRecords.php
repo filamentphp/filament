@@ -175,7 +175,7 @@ trait CanExportRecords
                     ];
                 })
                 ->statePath('columnMap')] : []),
-            ...$action->getExporter()::getOptionsSchemaComponents(),
+            ...$action->getExporter()::getOptionsFormComponents(),
         ]);
 
         $this->action(function (ExportAction | ExportBulkAction $action, array $data, Component $livewire): void {

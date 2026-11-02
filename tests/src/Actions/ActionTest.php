@@ -363,24 +363,24 @@ it('returns fluent `$this` from `after()`', function (): void {
     expect($result)->toBe($action);
 });
 
-it('returns fluent `$this` from `beforeSchemaFilled()`', function (): void {
+it('returns fluent `$this` from `beforeFormFilled()`', function (): void {
     $action = Action::make('test');
 
-    $result = $action->beforeSchemaFilled(static fn () => null);
+    $result = $action->beforeFormFilled(static fn () => null);
 
     expect($result)->toBe($action);
 });
 
-it('returns fluent `$this` from `afterSchemaValidated()`', function (): void {
+it('returns fluent `$this` from `afterFormValidated()`', function (): void {
     $action = Action::make('test');
 
-    $result = $action->afterSchemaValidated(static fn () => null);
+    $result = $action->afterFormValidated(static fn () => null);
 
     expect($result)->toBe($action);
 });
 
-it('fills and validates mounted actions using schema lifecycle hooks', function (): void {
-    livewire(SchemaLifecycleActions::class)
+it('fills and validates mounted actions using form lifecycle hooks', function (): void {
+    livewire(FormLifecycleActions::class)
         ->mountAction('save')
         ->assertSchemaStateSet(['title' => 'Initial title'])
         ->assertSet('observedState', ['beforeFill' => [], 'afterFill' => ['title' => 'Initial title']])
@@ -2243,7 +2243,7 @@ describe('record visibility and authorization', function (): void {
     });
 });
 
-class SchemaLifecycleActions extends Actions
+class FormLifecycleActions extends Actions
 {
     public array $observedState = [];
 
@@ -2252,17 +2252,17 @@ class SchemaLifecycleActions extends Actions
         return [
             Action::make('save')
                 ->schema([TextInput::make('title')->required()])
-                ->fillSchema(data: ['title' => 'Initial title'])
-                ->beforeSchemaFilled(callback: function (): void {
+                ->fillForm(data: ['title' => 'Initial title'])
+                ->beforeFormFilled(callback: function (): void {
                     $this->observedState['beforeFill'] = $this->getMountedActionSchema()->getRawState();
                 })
-                ->afterSchemaFilled(callback: function (): void {
+                ->afterFormFilled(callback: function (): void {
                     $this->observedState['afterFill'] = $this->getMountedActionSchema()->getRawState();
                 })
-                ->beforeSchemaValidated(callback: function (): void {
+                ->beforeFormValidated(callback: function (): void {
                     $this->observedState['beforeValidate'] = $this->getMountedActionSchema()->getRawState();
                 })
-                ->afterSchemaValidated(callback: function (): void {
+                ->afterFormValidated(callback: function (): void {
                     $this->observedState['afterValidate'] = $this->getMountedActionSchema()->getRawState();
                 })
                 ->action(function (array $data): void {

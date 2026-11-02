@@ -144,34 +144,34 @@ describe('configuration', function (): void {
             expect($select->getEditOptionActionName())->toBe('editOption');
         });
 
-        it('returns `false` for `hasCreateOptionActionSchema()` by default', function (): void {
+        it('returns `false` for `hasCreateOptionActionFormSchema()` by default', function (): void {
             $select = Select::make('category');
 
-            expect($select->hasCreateOptionActionSchema())->toBeFalse();
+            expect($select->hasCreateOptionActionFormSchema())->toBeFalse();
         });
 
-        it('returns `true` for `hasCreateOptionActionSchema()` when set', function (): void {
+        it('returns `true` for `hasCreateOptionActionFormSchema()` when set', function (): void {
             $select = Select::make('category')
-                ->createOptionSchema([
+                ->createOptionForm([
                     TextInput::make('name'),
                 ]);
 
-            expect($select->hasCreateOptionActionSchema())->toBeTrue();
+            expect($select->hasCreateOptionActionFormSchema())->toBeTrue();
         });
 
-        it('returns `false` for `hasEditOptionActionSchema()` by default', function (): void {
+        it('returns `false` for `hasEditOptionActionFormSchema()` by default', function (): void {
             $select = Select::make('category');
 
-            expect($select->hasEditOptionActionSchema())->toBeFalse();
+            expect($select->hasEditOptionActionFormSchema())->toBeFalse();
         });
 
-        it('returns `true` for `hasEditOptionActionSchema()` when set', function (): void {
+        it('returns `true` for `hasEditOptionActionFormSchema()` when set', function (): void {
             $select = Select::make('category')
-                ->editOptionSchema([
+                ->editOptionForm([
                     TextInput::make('name'),
                 ]);
 
-            expect($select->hasEditOptionActionSchema())->toBeTrue();
+            expect($select->hasEditOptionActionFormSchema())->toBeTrue();
         });
 
         it('can set `createOptionUsing()` and retrieve with `getCreateOptionUsing()`', function (): void {
@@ -216,20 +216,20 @@ describe('configuration', function (): void {
             expect($select->getEditOptionModalHeading())->toBe('Edit Category');
         });
 
-        it('returns fluent `$this` from `manageOptionSchema()`', function (): void {
+        it('returns fluent `$this` from `manageOptionForm()`', function (): void {
             $select = Select::make('category');
 
-            $result = $select->manageOptionSchema([
+            $result = $select->manageOptionForm([
                 TextInput::make('name'),
             ]);
 
             expect($result)->toBe($select);
-            expect($select->hasCreateOptionActionSchema())->toBeTrue();
-            expect($select->hasEditOptionActionSchema())->toBeTrue();
+            expect($select->hasCreateOptionActionFormSchema())->toBeTrue();
+            expect($select->hasEditOptionActionFormSchema())->toBeTrue();
         });
 
-        it('uses `manageOptionSchema()` for both option actions with legacy callback injections', function (): void {
-            $select = Select::make('category')->manageOptionSchema(schema: static function (Schema $schema, Schema $form): Schema {
+        it('uses `manageOptionForm()` for both option actions with form and schema callback injections', function (): void {
+            $select = Select::make('category')->manageOptionForm(schema: static function (Schema $schema, Schema $form): Schema {
                 expect($form)->toBe($schema);
 
                 return $schema->components([TextInput::make('name')->default('New option')]);
@@ -244,7 +244,7 @@ describe('configuration', function (): void {
                 expect($schema->getRawState())->toBe(['name' => 'New option']);
             }
 
-            $select->manageOptionSchema(schema: null);
+            $select->manageOptionForm(schema: null);
 
             expect($select->getCreateOptionAction())->toBeNull()
                 ->and($select->getEditOptionAction())->toBeNull();
@@ -1972,12 +1972,12 @@ describe('rendering', function (): void {
             ->assertSuccessful();
     });
 
-    it('can render with `createOptionSchema()`', function (): void {
+    it('can render with `createOptionForm()`', function (): void {
         livewire(RenderSelectWithCreateOptionForm::class)
             ->assertSuccessful();
     });
 
-    it('can render with `editOptionSchema()`', function (): void {
+    it('can render with `editOptionForm()`', function (): void {
         livewire(RenderSelectWithEditOptionForm::class)
             ->assertSuccessful();
     });
@@ -2074,7 +2074,7 @@ describe('browser interactions', function (): void {
             ->assertNoAccessibilityIssues();
     });
 
-    it('can create an option using `createOptionSchema()` in the browser', function (): void {
+    it('can create an option using `createOptionForm()` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/select-test')
@@ -3817,7 +3817,7 @@ class RenderSelectWithCreateOptionForm extends Livewire
             Select::make('category')
                 ->options(['a' => 'A'])
                 ->searchable()
-                ->createOptionSchema([TextInput::make('name')]),
+                ->createOptionForm([TextInput::make('name')]),
         ])->statePath('data');
     }
 }
@@ -3830,7 +3830,7 @@ class RenderSelectWithEditOptionForm extends Livewire
             Select::make('category')
                 ->options(['a' => 'A'])
                 ->searchable()
-                ->editOptionSchema([TextInput::make('name')]),
+                ->editOptionForm([TextInput::make('name')]),
         ])->statePath('data');
     }
 }
