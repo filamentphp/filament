@@ -4952,13 +4952,13 @@ describe('properties', function () use ($applyQueryBuilderFilter): void {
     });
 });
 
-it('uses `getSchemaComponents()` overrides when building operator settings', function (): void {
+it('uses `getFormSchema()` overrides when building operator settings', function (): void {
     $operator = new class('contains') extends ContainsOperator
     {
-        public function getSchemaComponents(): array
+        public function getFormSchema(): array
         {
             return [
-                ...parent::getSchemaComponents(),
+                ...parent::getFormSchema(),
                 TextInput::make('extra'),
             ];
         }

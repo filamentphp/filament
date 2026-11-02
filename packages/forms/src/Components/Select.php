@@ -73,7 +73,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @var array<Component | Action | ActionGroup> | Closure | null
      */
-    protected array | Closure | null $createOptionActionSchema = null;
+    protected array | Closure | null $createOptionActionForm = null;
 
     protected ?Closure $createOptionUsing = null;
 
@@ -88,7 +88,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @var array<Component | Action | ActionGroup> | Closure | null
      */
-    protected array | Closure | null $editOptionActionSchema = null;
+    protected array | Closure | null $editOptionActionForm = null;
 
     protected ?Closure $fillEditOptionActionFormUsing = null;
 
@@ -204,42 +204,22 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @param  array<Component | Action | ActionGroup> | Closure | null  $schema
      */
-    public function manageOptionSchema(array | Closure | null $schema): static
-    {
-        $this->createOptionSchema($schema);
-        $this->editOptionSchema($schema);
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `manageOptionSchema()` instead.
-     *
-     * @param  array<Component | Action | ActionGroup> | Closure | null  $schema
-     */
     public function manageOptionForm(array | Closure | null $schema): static
     {
-        return $this->manageOptionSchema($schema);
-    }
-
-    /**
-     * @param  array<Component | Action | ActionGroup> | Closure | null  $schema
-     */
-    public function createOptionSchema(array | Closure | null $schema): static
-    {
-        $this->createOptionActionSchema = $schema;
+        $this->createOptionForm($schema);
+        $this->editOptionForm($schema);
 
         return $this;
     }
 
     /**
-     * @deprecated Use `createOptionSchema()` instead.
-     *
      * @param  array<Component | Action | ActionGroup> | Closure | null  $schema
      */
     public function createOptionForm(array | Closure | null $schema): static
     {
-        return $this->createOptionSchema($schema);
+        $this->createOptionActionForm = $schema;
+
+        return $this;
     }
 
     public function createOptionUsing(?Closure $callback): static
@@ -265,14 +245,14 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             return null;
         }
 
-        if (! $this->hasCreateOptionActionSchema()) {
+        if (! $this->hasCreateOptionActionFormSchema()) {
             return null;
         }
 
         $action = Action::make($this->getCreateOptionActionName())
             ->label(__('filament-forms::components.select.actions.create_option.label'))
             ->schema(static function (Select $component, Schema $schema): array | Schema | null {
-                return $component->getCreateOptionActionSchema($schema->model(
+                return $component->getCreateOptionActionForm($schema->model(
                     $component->hasRelationship() ? $component->getRelationship()->getModel()::class : $component->getActionSchemaModel(),
                 ));
             })
@@ -358,84 +338,38 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @return array<Component | Action | ActionGroup> | Schema | null
      */
-    public function getCreateOptionActionSchema(Schema $schema): array | Schema | null
-    {
-        return $this->evaluate($this->createOptionActionSchema, ['form' => $schema, 'schema' => $schema]);
-    }
-
-    /**
-     * @deprecated Use `getCreateOptionActionSchema()` instead.
-     *
-     * @return array<Component | Action | ActionGroup> | Schema | null
-     */
     public function getCreateOptionActionForm(Schema $schema): array | Schema | null
     {
-        return $this->getCreateOptionActionSchema($schema);
+        return $this->evaluate($this->createOptionActionForm, ['form' => $schema, 'schema' => $schema]);
     }
 
-    public function hasCreateOptionActionSchema(): bool
-    {
-        return (bool) $this->createOptionActionSchema;
-    }
-
-    /**
-     * @deprecated Use `hasCreateOptionActionSchema()` instead.
-     */
     public function hasCreateOptionActionFormSchema(): bool
     {
-        return $this->hasCreateOptionActionSchema();
+        return (bool) $this->createOptionActionForm;
     }
 
     /**
-     * @return array<Component | Action | ActionGroup> | Schema | null
-     */
-    public function getEditOptionActionSchema(Schema $schema): array | Schema | null
-    {
-        return $this->evaluate($this->editOptionActionSchema, ['form' => $schema, 'schema' => $schema]);
-    }
-
-    /**
-     * @deprecated Use `getEditOptionActionSchema()` instead.
-     *
      * @return array<Component | Action | ActionGroup> | Schema | null
      */
     public function getEditOptionActionForm(Schema $schema): array | Schema | null
     {
-        return $this->getEditOptionActionSchema($schema);
+        return $this->evaluate($this->editOptionActionForm, ['form' => $schema, 'schema' => $schema]);
     }
 
-    public function hasEditOptionActionSchema(): bool
-    {
-        return (bool) $this->editOptionActionSchema;
-    }
-
-    /**
-     * @deprecated Use `hasEditOptionActionSchema()` instead.
-     */
     public function hasEditOptionActionFormSchema(): bool
     {
-        return $this->hasEditOptionActionSchema();
+        return (bool) $this->editOptionActionForm;
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup> | Closure | null  $schema
-     */
-    public function editOptionSchema(array | Closure | null $schema): static
-    {
-        $this->editOptionActionSchema = $schema;
-        $this->live();
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Use `editOptionSchema()` instead.
-     *
      * @param  array<Component | Action | ActionGroup> | Closure | null  $schema
      */
     public function editOptionForm(array | Closure | null $schema): static
     {
-        return $this->editOptionSchema($schema);
+        $this->editOptionActionForm = $schema;
+        $this->live();
+
+        return $this;
     }
 
     public function updateOptionUsing(?Closure $callback): static
@@ -465,18 +399,18 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             return null;
         }
 
-        if (! $this->hasEditOptionActionSchema()) {
+        if (! $this->hasEditOptionActionFormSchema()) {
             return null;
         }
 
         $action = Action::make($this->getEditOptionActionName())
             ->label(__('filament-forms::components.select.actions.edit_option.label'))
             ->schema(static function (Select $component, Schema $schema): array | Schema | null {
-                return $component->getEditOptionActionSchema(
+                return $component->getEditOptionActionForm(
                     $schema->model($component->getSelectedRecord()),
                 );
             })
-            ->fillSchema(static fn (Select $component): ?array => $component->getEditOptionActionFormData())
+            ->fillForm(static fn (Select $component): ?array => $component->getEditOptionActionFormData())
             ->action(static function (Action $action, array $arguments, Select $component, array $data, Schema $schema): void {
                 if (! $component->getUpdateOptionUsing()) {
                     throw new LogicException("Select field [{$component->getStatePath()}] must have a [updateOptionUsing()] closure set.");

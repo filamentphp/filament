@@ -177,16 +177,6 @@ class Operator extends Component
     /**
      * @return array<\Filament\Schemas\Components\Component | Action | ActionGroup>
      */
-    public function getSchemaComponents(): array
-    {
-        return $this->getFormSchema();
-    }
-
-    /**
-     * @deprecated Use `getSchemaComponents()` instead.
-     *
-     * @return array<\Filament\Schemas\Components\Component | Action | ActionGroup>
-     */
     public function getFormSchema(): array
     {
         return [];

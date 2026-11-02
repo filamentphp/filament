@@ -36,7 +36,7 @@ Keep Laravel, Livewire, PHP magic-method, package interface and third-party call
 
 Apply these policies to new APIs and planned migrations, not as permission to break existing supported APIs:
 
-- Use `Schema` for component definitions, including import/export options, Select option definitions and MFA challenges. Keep `Form` for actual HTML submission and form-input operations.
+- Use domain meaning rather than the shared `Schema` implementation type. Keep `Form` for form-specific APIs, including action filling and lifecycle hooks, Select option forms, import/export options, query-builder operator forms, and preserving form data when creating another record. A form schema may include sections, text or actions. Keep `Schema` for genuinely generic schema infrastructure and existing released APIs such as MFA challenge components.
 - Include `Interval` in a polling setter name when its interval argument is required; omit it when the interval is optional. Nullable does not mean optional: an argument without a default is required.
 - Name fluent configuration setters for what they configure: `activeWhen()` rather than the predicate-shaped `isActiveWhen()`, and `guesses()` for import-column candidate names. Preserve the distinction between configuration presence and evaluated state.
 - Use unabbreviated PHP configuration parameters (`$configuration`) and `Integer` in descriptive names. Keep language types such as `int` and persisted/JavaScript payload keys unchanged.

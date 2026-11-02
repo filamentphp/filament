@@ -161,16 +161,16 @@ There are several available hooks:
 use Filament\Actions\EditAction;
 
 EditAction::make()
-    ->beforeSchemaFilled(function () {
+    ->beforeFormFilled(function () {
         // Runs before the form fields are populated from the database.
     })
-    ->afterSchemaFilled(function () {
+    ->afterFormFilled(function () {
         // Runs after the form fields are populated from the database.
     })
-    ->beforeSchemaValidated(function () {
+    ->beforeFormValidated(function () {
         // Runs before the form fields are validated when the form is saved.
     })
-    ->afterSchemaValidated(function () {
+    ->afterFormValidated(function () {
         // Runs after the form fields are validated when the form is saved.
     })
     ->before(function () {
