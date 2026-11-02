@@ -142,12 +142,15 @@ export default ({ isMenu = true } = {}) => ({
         const triggerContainer = this.getTriggerContainer()
 
         this.observer = new MutationObserver((mutations) => {
-            // Showing or hiding a trigger, e.g. with `x-show`, may not resize the trigger container,
-            // so check which trigger is visible again once, after the current changes are rendered.
+            // Visibility or candidate changes may not resize the trigger container, so check
+            // which trigger is visible again once, after the current changes are rendered.
             if (
                 mutations.some(
                     (mutation) =>
-                        mutation.attributeName === 'style' &&
+                        (mutation.type === 'childList' ||
+                            ['class', 'hidden', 'style', 'tabindex'].includes(
+                                mutation.attributeName,
+                            )) &&
                         triggerContainer.contains(mutation.target),
                 )
             ) {
@@ -178,14 +181,17 @@ export default ({ isMenu = true } = {}) => ({
                 'aria-controls',
                 'aria-expanded',
                 'aria-haspopup',
+                'class',
+                'hidden',
                 'style',
+                'tabindex',
             ],
+            childList: true,
             subtree: true,
         })
 
-        // Which trigger is visible changes when the dropdown is shown or hidden, or a breakpoint
-        // swaps the triggers, and each of those resizes the trigger container. Resize observer
-        // callbacks run after layout, so checking visibility there does not force a recalculation.
+        // Also re-check when ancestor visibility or responsive styles resize the container.
+        // Resize observer callbacks run after layout, avoiding a forced recalculation for the read.
         this.triggerResizeObserver = new ResizeObserver(() => {
             this.shouldCheckTriggerVisibility = true
             this.syncAria()
@@ -225,8 +231,8 @@ export default ({ isMenu = true } = {}) => ({
 
         // Checking which trigger is visible forces a style recalculation, which is expensive when a
         // Livewire morph makes the observer re-sync the ARIA attributes. Only check again when the
-        // trigger container was resized, a trigger's `style` changed, or the active trigger is no
-        // longer in place.
+        // trigger container was resized, its candidates or their visibility changed, or the active
+        // trigger is no longer in place.
         if (
             !this.shouldCheckTriggerVisibility &&
             this.activeTrigger?.isConnected &&
