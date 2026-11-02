@@ -32,6 +32,8 @@ use Rector\Renaming\Rector\String_\RenameStringRector;
 use Rector\Renaming\ValueObject\RenameProperty;
 
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->phpstanConfig(__DIR__ . '/phpstan.neon');
+
     $rectorConfig->skip([
         __FILE__,
         dirname((new ReflectionClass(InstalledVersions::class))->getFileName(), 2),

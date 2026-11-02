@@ -2,13 +2,11 @@
 
 namespace Filament\Tests\Upgrade;
 
-use Closure;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\FilamentManager;
-use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Field;
-use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\View\FormsIconAlias;
 use Filament\Pages\Page;
 use Filament\Panel;
@@ -33,6 +31,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Filament\View\PanelsRenderHook;
 use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\ChartComponent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
@@ -150,15 +149,13 @@ class PersistentUpgradeSetTest extends TestCase
                 $expectedFiles[$path] = trim($parts[1] ?? $parts[0]);
             }
 
-            foreach (['api_parameters', 'behavioral_configuration', 'behavioral_configuration_expressions', 'deprecated_column_and_support_methods'] as $fixture) {
-                $legacyPath = $directory . '/legacy_' . $fixture . '.php';
-                file_put_contents($legacyPath, str_replace(
-                    ['namespace Filament\\Tests\\Upgrade\\Fixtures\\', 'use Filament\\Forms\\Components\\Builder;', 'use Filament\\Forms\\Components\\Repeater;'],
-                    ['namespace Filament\\Tests\\Upgrade\\LegacyFixtures\\', 'use Filament\\Tests\\Upgrade\\LegacyInsetBuilder as Builder;', 'use Filament\\Tests\\Upgrade\\LegacyInsetRepeater as Repeater;'],
-                    $originalFiles[$directory . '/app/' . $fixture . '.php'],
-                ));
-                require_once $legacyPath;
-            }
+            $legacyPath = $directory . '/legacy_api_parameters.php';
+            file_put_contents($legacyPath, str_replace(
+                'namespace Filament\\Tests\\Upgrade\\Fixtures\\',
+                'namespace Filament\\Tests\\Upgrade\\LegacyFixtures\\',
+                $originalFiles[$directory . '/app/api_parameters.php'],
+            ));
+            require_once $legacyPath;
 
             $root = dirname(__DIR__, 3);
             $configuration = $directory . '/rector.php';
@@ -218,11 +215,9 @@ class PersistentUpgradeSetTest extends TestCase
 
                 require_once $directory . '/app/behavioral_configuration.php';
                 $this->assertBehavioralConfiguration();
-                $this->assertBehavioralConfiguration(legacy: true);
 
                 require_once $directory . '/app/deprecated_column_and_support_methods.php';
                 $this->assertSame(['42', '3.5'], Fixtures\DeprecatedColumnAndSupportMethods\numericIndicators(42, 3.5));
-                $this->assertSame(['42', '3.5'], LegacyFixtures\DeprecatedColumnAndSupportMethods\numericIndicators(42, 3.5));
 
                 require_once $directory . '/app/api_parameters.php';
                 $this->assertSame('TITLE!', Fixtures\ApiParameters\render());
@@ -235,6 +230,7 @@ class PersistentUpgradeSetTest extends TestCase
                 $this->assertPanelIntegrations();
 
                 require_once $directory . '/app/behavioral_configuration_expressions.php';
+                require_once $directory . '/app/stored_behavioral_configuration.php';
                 require_once $directory . '/app/configuration_hooks.php';
                 require_once $directory . '/app/panel_registration.php';
                 require_once $directory . '/app/menu_items.php';
@@ -410,32 +406,50 @@ class PersistentUpgradeSetTest extends TestCase
 
     private function assertConfigurationMigrations(): void
     {
-        foreach (['Fixtures', 'LegacyFixtures'] as $fixtureNamespace) {
-            $functionNamespace = __NAMESPACE__ . '\\' . $fixtureNamespace . '\\BehavioralExpressions\\';
-            $events = [];
-            $condition = true;
-            $components = ($functionNamespace . 'components')($events, $condition);
-            Schema::make(Livewire::make())->components(array_filter($components, static fn ($component): bool => $component instanceof Field))->getComponents();
+        $events = [];
+        $condition = true;
+        $components = Fixtures\BehavioralExpressions\components($events, $condition);
+        Schema::make(Livewire::make())->components(array_filter($components, static fn ($component): bool => $component instanceof Field))->getComponents();
 
-            $this->assertSame(['eager'], $events);
-            $this->assertFalse($components[0]->isPreviewable());
-            $condition = false;
-            $this->assertTrue($components[0]->isPreviewable());
-            $this->assertFalse($components[1]->isPreviewable());
-            $this->assertSame('16:9', $components[2]->getImageAspectRatio());
-            $this->assertTrue($components[2]->shouldAutomaticallyCropImagesToAspectRatio());
-            $this->assertSame(['eager', 'preview', 'preview', 'ratio', 'ratio'], $events);
-            $this->assertSame('off', $components[3]->getAutocomplete());
-            $this->assertFalse($components[4]->isAddable());
-            $this->assertFalse($components[5]->canSelectPlaceholder());
-            $this->assertSame(Alignment::End, $components[6]->getModalAlignment());
-            $this->assertFalse($components[7]->canCreateAnother());
-            $this->assertSame(Heroicon::Clock, $components[8]->getSuffixIcon());
-            $this->assertTrue($components[8]->isSuffixInline());
-            ($functionNamespace . 'configureTyped')($components[0], $components[6]);
-            $this->assertTrue($components[0]->isPreviewable());
-            $this->assertSame(Alignment::Center, $components[6]->getModalAlignment());
-        }
+        $this->assertSame(['eager'], $events);
+        $this->assertFalse($components[0]->isPreviewable());
+        $condition = false;
+        $this->assertTrue($components[0]->isPreviewable());
+        $this->assertFalse($components[1]->isPreviewable());
+        $this->assertSame('16:9', $components[2]->getImageAspectRatio());
+        $this->assertTrue($components[2]->shouldAutomaticallyCropImagesToAspectRatio());
+        $this->assertSame(['eager', 'preview', 'preview', 'ratio', 'ratio'], $events);
+        $this->assertSame('off', $components[3]->getAutocomplete());
+        $this->assertFalse($components[4]->isAddable());
+        $this->assertFalse($components[5]->canSelectPlaceholder());
+        $this->assertSame(Alignment::End, $components[6]->getModalAlignment());
+        $this->assertFalse($components[7]->canCreateAnother());
+        $this->assertSame(Heroicon::Clock, $components[8]->getSuffixIcon());
+        $this->assertTrue($components[8]->isSuffixInline());
+        $this->assertFalse((clone $components[4])->label('clone')->isAddable());
+        $this->assertFalse((clone $components[5])->label('clone')->canSelectPlaceholder());
+        $repeater = (clone $components[10])->label('clone');
+        $this->assertSame([false, false, false], [$repeater->isAddable(), $repeater->isDeletable(), $repeater->isReorderable()]);
+        $this->assertSame(Alignment::Center, $components[11]->getModalAlignment());
+        $this->assertTrue((clone $components[12])->label('clone')->canEditKeys());
+        $this->assertFalse(Fixtures\BehavioralExpressions\globallyConfigured(true)->isPreviewable());
+        $this->assertTrue(Fixtures\BehavioralExpressions\globallyConfigured(false)->isPreviewable());
+        $this->assertFalse(Fixtures\BehavioralExpressions\globallyConfigured(static fn (FileUpload $component): bool => $component->getName() === 'global')->isPreviewable());
+        $stored = Fixtures\BehavioralExpressions\stored();
+        Schema::make(Livewire::make())->components([$stored])->getComponents();
+        $this->assertFalse((clone $stored)->label('clone')->isAddable());
+        Fixtures\BehavioralExpressions\configureTyped($components[0], $components[6]);
+        $this->assertTrue($components[0]->isPreviewable());
+        $this->assertSame(Alignment::Center, $components[6]->getModalAlignment());
+
+        [$storedBuilder, $storedAction, $storedBadge] = Fixtures\StoredBehavioralConfiguration\components();
+        Schema::make(Livewire::make())->components([$storedBuilder])->getComponents();
+        $this->assertFalse((clone $storedBuilder)->label('clone')->isAddable());
+        $this->assertTrue($storedBuilder->isDeletable());
+        $this->assertSame(Alignment::Center, $storedAction->getModalAlignment());
+        $this->assertFalse($storedAction->canCreateAnother());
+        $this->assertSame('Ready', $storedBadge->getBadge());
+        $this->assertFalse($storedBadge->isBadge());
 
         $originalLocale = app()->getLocale();
 
@@ -567,9 +581,9 @@ class PersistentUpgradeSetTest extends TestCase
         }
     }
 
-    private function assertBehavioralConfiguration(bool $legacy = false): void
+    private function assertBehavioralConfiguration(): void
     {
-        $components = $legacy ? LegacyFixtures\BehavioralConfiguration\components() : Fixtures\BehavioralConfiguration\components();
+        $components = Fixtures\BehavioralConfiguration\components();
 
         Schema::make(Livewire::make())->components(array_filter($components, static fn ($component): bool => $component instanceof Field))->getComponents();
 
@@ -637,23 +651,6 @@ class LegacyMultipleFilter extends SelectFilter
     }
 }
 
-// Preserve the pinned v5 no-op only for the original side of the runtime pair.
-class LegacyInsetBuilder extends Builder
-{
-    public function inset(bool | Closure $condition = true): static
-    {
-        return $this;
-    }
-}
-
-class LegacyInsetRepeater extends Repeater
-{
-    public function inset(bool | Closure $condition = true): static
-    {
-        return $this;
-    }
-}
-
 // Preserve the original forwarding contracts only on the legacy side of the pair.
 class LegacyRelationshipFilter extends SelectFilter
 {
@@ -662,7 +659,7 @@ class LegacyRelationshipFilter extends SelectFilter
         return $this->hasRelationship();
     }
 
-    public function getRelationshipKey(?\Illuminate\Database\Eloquent\Builder $query = null): ?string
+    public function getRelationshipKey(?Builder $query = null): ?string
     {
         return $this->getQualifiedRelatedKeyNameForRelationship($query);
     }

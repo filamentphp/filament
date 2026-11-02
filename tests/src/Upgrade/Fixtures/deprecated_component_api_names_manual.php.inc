@@ -117,7 +117,7 @@ abstract class CustomExporter extends Exporter
 {
     public function getFileDisk(): string
     {
-        return parent::getFileDiskName();
+        return parent::getFileDisk();
     }
 }
 

@@ -9,7 +9,6 @@ use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
@@ -17,7 +16,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\TimePicker;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
@@ -114,7 +112,7 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
         if ($factory instanceof StaticCall && $factory->class instanceof Name && $this->isName($factory->name, 'make') && (! $factory->isFirstClassCallable())) {
             $class = $this->getName($factory->class);
         } else {
-            $type = TypeCombinator::removeNull($this->getNativeType($factory));
+            $type = TypeCombinator::removeNull($this->getType($factory));
             $classes = $type->getObjectClassNames();
 
             if (count($classes) !== 1) {
@@ -124,22 +122,32 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
             $class = $classes[0];
         }
 
-        $methods = match ($class) {
-            BaseFileUpload::class, FileUpload::class => ['disablepreview', ...($class === FileUpload::class ? ['imagecropaspectratio'] : [])],
-            Builder::class, Repeater::class => ['disableitemcreation', 'disableitemdeletion', 'disableitemmovement', 'inset'],
+        $receiverType = new ObjectType($class);
+        $configurationClass = null;
+
+        foreach ([
+            BaseFileUpload::class => ['disablepreview'],
+            FileUpload::class => ['imagecropaspectratio'],
+            Builder::class => ['disableitemcreation', 'disableitemdeletion', 'disableitemmovement', 'inset'],
+            Repeater::class => ['disableitemcreation', 'disableitemdeletion', 'disableitemmovement', 'inset'],
             KeyValue::class => ['disableaddingrows', 'disabledeletingrows', 'disableeditingkeys', 'disableeditingvalues'],
             TextInput::class => ['disableautocomplete', 'disableautocapitalize'],
             Textarea::class => ['disableautocomplete'],
             Select::class => ['disableplaceholderselection'],
-            DateTimePicker::class, DatePicker::class, TimePicker::class => ['withoutdate', 'withoutseconds', 'withouttime', 'icon'],
+            DateTimePicker::class => ['withoutdate', 'withoutseconds', 'withouttime', 'icon'],
             Action::class => ['centermodal'],
-            CreateAction::class => ['disablecreateanother', 'centermodal'],
-            AttachAction::class => ['disableattachanother', 'centermodal'],
-            AssociateAction::class => ['disableassociateanother', 'centermodal'],
-            default => [],
-        };
+            CreateAction::class => ['disablecreateanother'],
+            AttachAction::class => ['disableattachanother'],
+            AssociateAction::class => ['disableassociateanother'],
+        ] as $candidateClass => $methods) {
+            if (in_array($method, $methods, true) && (new ObjectType($candidateClass))->isSuperTypeOf($receiverType)->yes()) {
+                $configurationClass = $candidateClass;
 
-        if (in_array($class, [Builder::class, Repeater::class], true) && $node->var instanceof NullsafeMethodCall && $this->isName($node->var->name, 'inset')) {
+                break;
+            }
+        }
+
+        if (((new ObjectType(Builder::class))->isSuperTypeOf($receiverType)->yes() || (new ObjectType(Repeater::class))->isSuperTypeOf($receiverType)->yes()) && $node->var instanceof NullsafeMethodCall && $this->isName($node->var->name, 'inset')) {
             $receiver = $this->refactor($node->var);
 
             if ($receiver instanceof Expr) {
@@ -147,8 +155,34 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
             }
         }
 
-        if ((! in_array($method, $methods, true)) || (count($node->args) > 1)) {
+        if ((! $configurationClass) || (count($node->args) > 1)) {
             return null;
+        }
+
+        $replacementMethods = match ($method) {
+            'imagecropaspectratio' => ['imageAspectRatio', 'automaticallyCropImagesToAspectRatio'],
+            'icon' => ['suffixIcon'],
+            'centermodal' => ['modalAlignment'],
+            'inset' => [],
+            default => [self::NEGATIONS[$method]],
+        };
+        $owner = (new ObjectType($configurationClass))->getClassReflection();
+
+        if (! $owner) {
+            return null;
+        }
+
+        foreach ($receiverType->getObjectClassReflections() as $reflection) {
+            foreach ([$method, ...$replacementMethods] as $name) {
+                if (! $reflection->hasNativeMethod($name)) {
+                    continue;
+                }
+
+                // Inherited built-in behavior is safe; application-owned methods are not aliases.
+                if ((! $owner->hasNativeMethod($name)) || ($reflection->getNativeMethod($name)->getDeclaringClass()->getName() !== $owner->getNativeMethod($name)->getDeclaringClass()->getName())) {
+                    return null;
+                }
+            }
         }
 
         $parameter = match ($method) {
@@ -188,10 +222,10 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
                 $wrapper = new ArrowFunction([
                     'static' => true,
                     'params' => [
-                        new Param(new Variable('component'), type: new FullyQualified(FileUpload::class)),
+                        new Param(new Variable('component'), type: new FullyQualified($class)),
                         new Param(new Variable('ratio'), type: new UnionType([new Identifier('string'), new FullyQualified(Closure::class), new Identifier('null')])),
                     ],
-                    'returnType' => new FullyQualified(FileUpload::class),
+                    'returnType' => new FullyQualified($class),
                     'expr' => new MethodCall(new MethodCall(new Variable('component'), 'imageAspectRatio', [new Arg(new Variable('ratio'))]), 'automaticallyCropImagesToAspectRatio', [new Arg(new Ternary(
                         new Instanceof_(new Variable('ratio'), new FullyQualified(Closure::class)),
                         new Variable('ratio'),
@@ -242,12 +276,33 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
         }
 
         if (isset(self::NEGATIONS[$method]) && (! in_array($literal, ['true', 'false'], true)) && TypeCombinator::union(new BooleanType, new ObjectType(Closure::class))->isSuperTypeOf($this->getNativeType($value))->yes()) {
-            $isAction = in_array($class, [CreateAction::class, AttachAction::class, AssociateAction::class], true);
+            // These legacy callbacks capture the configured component, even after cloning.
+            if (in_array($configurationClass, [Builder::class, Repeater::class, Select::class], true)) {
+                if ($hasNullsafeAccess) {
+                    return null;
+                }
+
+                return new FuncCall(new ArrowFunction([
+                    'static' => true,
+                    'params' => [
+                        new Param(new Variable('component'), type: new FullyQualified($class)),
+                        new Param(new Variable('condition'), type: new UnionType([new Identifier('bool'), new FullyQualified(Closure::class)])),
+                    ],
+                    'returnType' => new FullyQualified($class),
+                    'expr' => new MethodCall(new Variable('component'), self::NEGATIONS[$method], [new Arg(new ArrowFunction([
+                        'static' => true,
+                        'returnType' => new Identifier('bool'),
+                        'expr' => new BooleanNot(new MethodCall(new Variable('component'), 'evaluate', [new Arg(new Variable('condition'))])),
+                    ]))]),
+                ]), [new Arg($node->var), new Arg($value)]);
+            }
+
+            $isAction = in_array($configurationClass, [CreateAction::class, AttachAction::class, AssociateAction::class], true);
             $isAutocomplete = in_array($method, ['disableautocomplete', 'disableautocapitalize'], true);
             $owner = match (true) {
                 $isAutocomplete => 'Filament\\Forms\\Components\\Field',
-                in_array($class, [BaseFileUpload::class, FileUpload::class], true) => BaseFileUpload::class,
-                in_array($class, [DateTimePicker::class, DatePicker::class, TimePicker::class], true) => DateTimePicker::class,
+                $configurationClass === BaseFileUpload::class => BaseFileUpload::class,
+                $configurationClass === DateTimePicker::class => DateTimePicker::class,
                 default => $class,
             };
             $ownerVariable = $isAction ? 'action' : 'component';
@@ -274,10 +329,10 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
             return new FuncCall(new ClosureExpression([
                 'static' => true,
                 'params' => [
-                    new Param(new Variable('action'), type: new FullyQualified(Action::class)),
+                    new Param(new Variable('action'), type: new FullyQualified($class)),
                     new Param(new Variable('condition'), type: new UnionType([new Identifier('bool'), new FullyQualified(Closure::class), new Identifier('null')])),
                 ],
-                'returnType' => new FullyQualified(Action::class),
+                'returnType' => new FullyQualified($class),
                 'stmts' => [
                     new If_(new MethodCall(new Variable('action'), 'evaluate', [new Arg(new Variable('condition'))]), ['stmts' => [new Expression(new MethodCall(new Variable('action'), 'modalAlignment', [new Arg(new ClassConstFetch(new FullyQualified('Filament\\Support\\Enums\\Alignment'), 'Center'))]))]]),
                     new Return_(new Variable('action')),

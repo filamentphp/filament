@@ -515,6 +515,31 @@ Resource/page `form()` / `infolist()` hooks and `InteractsWithForms` remain supp
 </Disclosure>
 
 <Disclosure>
+<span slot="summary">Replacing removed configuration setters</span>
+
+| Owner | Removed method | Replacement |
+| --- | --- | --- |
+| Form `BaseFileUpload` | `disablePreview()` | `previewable()` with the opposite condition |
+| Form `Builder`, `Repeater` | `disableItemCreation()`, `disableItemDeletion()`, `disableItemMovement()` | `addable()`, `deletable()`, `reorderable()` with the opposite condition |
+| Form `KeyValue` | `disableAddingRows()`, `disableDeletingRows()`, `disableEditingKeys()`, `disableEditingValues()` | `addable()`, `deletable()`, `editableKeys()`, `editableValues()` with the opposite condition |
+| Form `TextInput`, `Textarea` | `disableAutocomplete()` | `autocomplete(false)` when disabled, `autocomplete(null)` otherwise |
+| Form `TextInput` | `disableAutocapitalize()` | `autocapitalize(false)` when disabled, `autocapitalize(null)` otherwise |
+| Form `Select` | `disablePlaceholderSelection()` | `selectablePlaceholder()` with the opposite condition |
+| Form `DateTimePicker`, `DatePicker`, `TimePicker` | `withoutDate()`, `withoutSeconds()`, `withoutTime()` | `date()`, `seconds()`, `time()` with the opposite condition |
+| Form `DateTimePicker`, `DatePicker`, `TimePicker` | `icon()` | `suffixIcon($icon ?? Heroicon::Calendar, isInline: true)`; `false` leaves the existing icon unchanged |
+| Form `FileUpload` | `imageCropAspectRatio()` | `imageAspectRatio()` and `automaticallyCropImagesToAspectRatio()` |
+| `Actions\Action` and built-in subclasses | `centerModal()` | Apply `modalAlignment(Alignment::Center)` only when the eagerly evaluated condition is truthy |
+| `Actions\CreateAction`, `AttachAction`, `AssociateAction` | `disableCreateAnother()`, `disableAttachAnother()`, `disableAssociateAnother()` | `createAnother()`, `attachAnother()`, `associateAnother()` with the opposite condition |
+| Actions, action groups, schema tabs | `indicator()` | `badge()` with a value; convert numeric action and action-group values to strings |
+
+The script handles ordinary fluent calls, stored or computed components with identifiable types, named arguments, and typed `configureUsing()` callbacks. It also handles inherited setters, including built-in action subclasses. Application overrides of the removed or replacement methods require manual review.
+
+For conditional setters, the script preserves lazy callback evaluation and component injection rather than negating the closure itself. Builder, Repeater, and Select callbacks retain their original component when cloned. `centerModal()` conditions are evaluated during configuration; false or null does not reset an existing alignment. For `imageCropAspectRatio()`, the same ratio is passed to `imageAspectRatio()` and, for closures, `automaticallyCropImagesToAspectRatio()`; other values enable cropping only when `filled($ratio)` is true. The script preserves numeric badge values, lazy closures, and null resets without turning actions into badge-style actions.
+
+Review dynamic method names, first-class callables, unresolved receiver types, and unpacked argument arrays manually. Nullsafe calls requiring a multi-call or original-component adapter are also left for manual migration: keep the null check around both the configuration and argument evaluation. Custom consumers of the support `HasBadge` trait should replace `indicator()` with their own `badge()` API.
+</Disclosure>
+
+<Disclosure>
 <span slot="summary">Removed classes, traits, and enum names</span>
 
 | Removed name                                                                                               | Replacement                                                                         |

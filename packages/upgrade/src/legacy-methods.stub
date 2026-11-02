@@ -1,0 +1,81 @@
+<?php
+
+// Upgrade-only type information for fluent methods absent from the installed runtime.
+// Without it, assignments through these methods lose their component type in Rector.
+
+namespace Filament\Forms\Components;
+
+/** @method $this disablePreview(bool | \Closure $condition = true) */
+class BaseFileUpload {}
+
+/** @method $this imageCropAspectRatio(string | \Closure | null $ratio) */
+class FileUpload {}
+
+/**
+ * @method $this disableItemCreation(bool | \Closure $condition = true)
+ * @method $this disableItemDeletion(bool | \Closure $condition = true)
+ * @method $this disableItemMovement(bool | \Closure $condition = true)
+ * @method $this inset(bool | \Closure $condition = true)
+ */
+class Builder {}
+
+/**
+ * @method $this disableItemCreation(bool | \Closure $condition = true)
+ * @method $this disableItemDeletion(bool | \Closure $condition = true)
+ * @method $this disableItemMovement(bool | \Closure $condition = true)
+ * @method $this inset(bool | \Closure $condition = true)
+ */
+class Repeater {}
+
+/**
+ * @method $this disableAddingRows(bool | \Closure $condition = true)
+ * @method $this disableDeletingRows(bool | \Closure $condition = true)
+ * @method $this disableEditingKeys(bool | \Closure $condition = true)
+ * @method $this disableEditingValues(bool | \Closure $condition = true)
+ */
+class KeyValue {}
+
+/**
+ * @method $this disableAutocomplete(bool | \Closure $condition = true)
+ * @method $this disableAutocapitalize(bool | \Closure $condition = true)
+ */
+class TextInput {}
+
+/** @method $this disableAutocomplete(bool | \Closure $condition = true) */
+class Textarea {}
+
+/** @method $this disablePlaceholderSelection(bool | \Closure $condition = true) */
+class Select {}
+
+/**
+ * @method $this withoutDate(bool | \Closure $condition = true)
+ * @method $this withoutSeconds(bool | \Closure $condition = true)
+ * @method $this withoutTime(bool | \Closure $condition = true)
+ * @method $this icon(string | \BackedEnum | bool | null $icon = null)
+ */
+class DateTimePicker {}
+
+namespace Filament\Actions;
+
+/**
+ * @method $this centerModal(bool | \Closure | null $condition = true)
+ * @method $this indicator(string | int | float | \Closure | null $indicator)
+ */
+class Action {}
+
+/** @method $this disableCreateAnother(bool | \Closure $condition = true) */
+class CreateAction {}
+
+/** @method $this disableAttachAnother(bool | \Closure $condition = true) */
+class AttachAction {}
+
+/** @method $this disableAssociateAnother(bool | \Closure $condition = true) */
+class AssociateAction {}
+
+/** @method $this indicator(string | int | float | \Closure | null $indicator) */
+class ActionGroup {}
+
+namespace Filament\Schemas\Components\Tabs;
+
+/** @method $this indicator(string | int | float | \Closure | null $indicator) */
+class Tab {}

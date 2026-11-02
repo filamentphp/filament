@@ -66,6 +66,25 @@ class Other
 {
     public function disablePreview(): static { return $this; }
 }
+
+class CustomUpload extends FileUpload {}
+
+class OverriddenUpload extends FileUpload
+{
+    public function disablePreview(bool | Closure $condition = true): static { return $this; }
+}
+
+class OverriddenPreview extends FileUpload
+{
+    public function previewable(bool | Closure $condition = true): static { return $this; }
+}
+
+function subclasses(CustomUpload $inherited, OverriddenUpload $legacy, OverriddenPreview $canonical): void
+{
+    $inherited->disablePreview(false);
+    $legacy->disablePreview(false);
+    $canonical->disablePreview(false);
+}
 -----
 <?php
 
@@ -145,4 +164,23 @@ function unrelated(Other $component): void
 class Other
 {
     public function disablePreview(): static { return $this; }
+}
+
+class CustomUpload extends FileUpload {}
+
+class OverriddenUpload extends FileUpload
+{
+    public function disablePreview(bool | Closure $condition = true): static { return $this; }
+}
+
+class OverriddenPreview extends FileUpload
+{
+    public function previewable(bool | Closure $condition = true): static { return $this; }
+}
+
+function subclasses(CustomUpload $inherited, OverriddenUpload $legacy, OverriddenPreview $canonical): void
+{
+    $inherited->previewable(true);
+    $legacy->disablePreview(false);
+    $canonical->disablePreview(false);
 }

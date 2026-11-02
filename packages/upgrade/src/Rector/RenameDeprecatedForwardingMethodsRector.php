@@ -67,17 +67,27 @@ use Filament\Tables\Table;
 use Filament\Widgets\ChartWidget;
 use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\ArrowFunction;
+use PhpParser\Node\Expr\BinaryOp\BooleanOr;
 use PhpParser\Node\Expr\Cast\String_ as StringCast;
+use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Expr\Ternary;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\Param;
 use PhpParser\Node\Scalar\Int_;
 use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\ClassLike;
+use PhpParser\Node\UnionType;
+use PhpParser\NodeFinder;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
@@ -87,6 +97,7 @@ use PHPStan\Type\StaticType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use Rector\PhpParser\Parser\RectorParser;
 use Rector\PHPStan\ScopeFetcher;
 use Rector\Rector\AbstractRector;
 
@@ -409,6 +420,10 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         'rowloop' => ['loop', 'rowLoop'],
     ];
 
+    public function __construct(
+        private RectorParser $rectorParser,
+    ) {}
+
     public function getNodeTypes(): array
     {
         return [MethodCall::class, NullsafeMethodCall::class, StaticCall::class];
@@ -498,6 +513,12 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                 return null;
             }
 
+            // A retained canonical hook calls the legacy hook virtually. Calling it
+            // through `parent::` can re-enter the application's legacy override.
+            if (($node instanceof StaticCall) && $this->isName($node->class, 'parent') && $this->replacementCallsLegacyHook($receiverType, $methodName, $replacement)) {
+                return null;
+            }
+
             // Filter `form()` already used the canonical `$schema` parameter name.
             $renamedArgument = (($componentClass === BaseFilter::class) && ($methodName === 'form'))
                 ? null
@@ -524,8 +545,29 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             if (($methodName === 'indicator') && in_array($componentClass, [Action::class, ActionGroup::class], strict: true)) {
                 $argument = $node->getArgs()[0];
 
-                if (TypeCombinator::union(new IntegerType, new FloatType)->isSuperTypeOf($this->getType($argument->value))->yes()) {
+                if ($argument->unpack && $argument->value instanceof Array_) {
+                    $argument = $argument->value->items[0];
+                }
+
+                $argumentType = $this->getType($argument->value);
+
+                if (TypeCombinator::union(new IntegerType, new FloatType)->isSuperTypeOf($argumentType)->yes()) {
                     $argument->value = new StringCast($argument->value);
+                } elseif (! TypeCombinator::union(new StringType, new ObjectType(Closure::class), new NullType)->isSuperTypeOf($argumentType)->yes()) {
+                    // Match the legacy parameter's validation, evaluating mixed values once
+                    // and coercing only numbers without consuming closures or null resets.
+                    $argument->value = new FuncCall(new ArrowFunction([
+                        'static' => true,
+                        'params' => [new Param(new Variable('indicator'), type: new UnionType([
+                            new Identifier('string'), new Identifier('int'), new Identifier('float'), new FullyQualified(Closure::class), new Identifier('null'),
+                        ]))],
+                        'returnType' => new UnionType([new Identifier('string'), new FullyQualified(Closure::class), new Identifier('null')]),
+                        'expr' => new Ternary(
+                            new BooleanOr(new FuncCall(new FullyQualified('is_int'), [new Arg(new Variable('indicator'))]), new FuncCall(new FullyQualified('is_float'), [new Arg(new Variable('indicator'))])),
+                            new StringCast(new Variable('indicator')),
+                            new Variable('indicator'),
+                        ),
+                    ]), [new Arg($argument->value)]);
                 }
             }
 
@@ -535,6 +577,39 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         }
 
         return null;
+    }
+
+    private function replacementCallsLegacyHook(Type $receiverType, string $methodName, string $replacement): bool
+    {
+        $finder = new NodeFinder;
+
+        foreach ($receiverType->getObjectClassReflections() as $classReflection) {
+            $methodReflection = $classReflection->getNativeMethod($replacement);
+            $owner = (method_exists($methodReflection, 'getDeclaringTrait') ? $methodReflection->getDeclaringTrait() : null)
+                ?? $methodReflection->getDeclaringClass();
+
+            if (! $owner->getFileName()) {
+                continue;
+            }
+
+            $declarations = $finder->findInstanceOf($this->rectorParser->parseFile($owner->getFileName()), ClassLike::class);
+
+            foreach ($declarations as $declaration) {
+                if ((! isset($declaration->namespacedName)) || (! $this->isName($declaration->namespacedName, $owner->getName()))) {
+                    continue;
+                }
+
+                $method = $declaration->getMethod($replacement);
+
+                if ($method && $finder->findFirst($method->stmts ?? [], fn (Node $node): bool => $node instanceof MethodCall
+                    && $node->var instanceof Variable && ($node->var->name === 'this')
+                    && $this->isName($node->name, $methodName))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private function resolveReceiverType(Expr $receiver): Type
@@ -707,12 +782,15 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             }
 
             $argument = $node->getArgs()[0];
-            $argumentType = $this->getType($argument->value);
 
-            return (! $argument->unpack) && (
-                TypeCombinator::union(new StringType, new ObjectType(Closure::class), new NullType)->isSuperTypeOf($argumentType)->yes()
-                || TypeCombinator::union(new IntegerType, new FloatType)->isSuperTypeOf($argumentType)->yes()
-            );
+            if (! $argument->unpack) {
+                return true;
+            }
+
+            return $argument->value instanceof Array_ && (count($argument->value->items) === 1)
+                && (! $argument->value->items[0]->unpack)
+                && ((! $argument->value->items[0]->key) || ($argument->value->items[0]->key instanceof Int_ && ($argument->value->items[0]->key->value === 0))
+                    || ($argument->value->items[0]->key instanceof String_ && ($argument->value->items[0]->key->value === 'indicator')));
         }
 
         return true;

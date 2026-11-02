@@ -145,17 +145,6 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
         return $this;
     }
 
-    /**
-     * @deprecated Use `imageAspectRatio()` and `automaticallyCropImagesToAspectRatio()` instead.
-     */
-    public function imageCropAspectRatio(string | Closure | null $ratio): static
-    {
-        $this->imageAspectRatio($ratio);
-        $this->automaticallyCropImagesToAspectRatio(($ratio instanceof Closure) ? $ratio : filled($ratio));
-
-        return $this;
-    }
-
     public function automaticallyResizeImagesMode(string | Closure | null $mode): static
     {
         $this->automaticallyResizeImagesMode = $mode;

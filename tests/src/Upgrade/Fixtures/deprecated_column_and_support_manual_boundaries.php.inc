@@ -150,8 +150,8 @@ function manual(IconColumn $icon, Action $action, ActionGroup $group, Tab $tab, 
     $icon->options(...$arguments);
     $action->indicator(...$arguments);
     $tab->indicator(...$arguments);
-    $action->indicator($badge);
-    $group->indicator($unknown);
+    $action->badge((static fn(string|int|float|Closure|null $indicator): string|Closure|null => \is_int($indicator) || \is_float($indicator) ? (string) $indicator : $indicator)($badge));
+    $group->badge((static fn(string|int|float|Closure|null $indicator): string|Closure|null => \is_int($indicator) || \is_float($indicator) ? (string) $indicator : $indicator)($unknown));
     $callback = $action->indicator(...);
     $callback = $group->indicator(...);
     $method = 'indicator';

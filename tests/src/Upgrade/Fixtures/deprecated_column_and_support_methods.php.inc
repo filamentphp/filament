@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Filament\Tests\Upgrade\Fixtures\DeprecatedColumnAndSupportMethods;
 
+use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\Exports\ExportColumn;
@@ -60,6 +61,21 @@ function numericIndicators(int $count, float $rating): array
     return [Action::make('count')->indicator($count)->getBadge(), ActionGroup::make([])->indicator($rating)->getBadge()];
 }
 
+function unionIndicators(Action $action, ActionGroup $group, Tab $tab, string | int | float | Closure | null $indicator): array
+{
+    return [$action->indicator(indicator: $indicator), $group->indicator($indicator), $tab->indicator($indicator)];
+}
+
+function unpackedIndicators(Action $action, ActionGroup $group): array
+{
+    return [$action->indicator(...['indicator' => 42]), $group->indicator(...[null])];
+}
+
+function nullableIndicator(?Action $action, Closure $value): ?Action
+{
+    return $action?->indicator($value());
+}
+
 function subclasses(CustomIcon $icon, CustomAction $action, CustomAction | OtherCustomAction $union): void
 {
     $icon->label('Status')->options([])->disableClick(false);
@@ -74,6 +90,7 @@ declare(strict_types=1);
 
 namespace Filament\Tests\Upgrade\Fixtures\DeprecatedColumnAndSupportMethods;
 
+use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\Exports\ExportColumn;
@@ -128,6 +145,21 @@ class OtherCustomAction extends Action {}
 function numericIndicators(int $count, float $rating): array
 {
     return [Action::make('count')->badge((string) $count)->getBadge(), ActionGroup::make([])->badge((string) $rating)->getBadge()];
+}
+
+function unionIndicators(Action $action, ActionGroup $group, Tab $tab, string | int | float | Closure | null $indicator): array
+{
+    return [$action->badge(badge: (static fn(string|int|float|Closure|null $indicator): string|Closure|null => \is_int($indicator) || \is_float($indicator) ? (string) $indicator : $indicator)($indicator)), $group->badge((static fn(string|int|float|Closure|null $indicator): string|Closure|null => \is_int($indicator) || \is_float($indicator) ? (string) $indicator : $indicator)($indicator)), $tab->badge($indicator)];
+}
+
+function unpackedIndicators(Action $action, ActionGroup $group): array
+{
+    return [$action->badge(...['badge' => (string) 42]), $group->badge(...[null])];
+}
+
+function nullableIndicator(?Action $action, Closure $value): ?Action
+{
+    return $action?->badge((static fn(string|int|float|Closure|null $indicator): string|Closure|null => \is_int($indicator) || \is_float($indicator) ? (string) $indicator : $indicator)($value()));
 }
 
 function subclasses(CustomIcon $icon, CustomAction $action, CustomAction | OtherCustomAction $union): void

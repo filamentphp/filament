@@ -19,6 +19,21 @@ class CustomGetter extends ResourceTableClassGenerator
     }
 }
 
+class ParentOutput extends ResourceTableClassGenerator
+{
+    public function outputTableActions(): string
+    {
+        return parent::outputTableActions();
+    }
+
+    public function outputTableMethodBulkActions(): string
+    {
+        return parent::outputTableMethodBulkActions();
+    }
+}
+
+class InheritedParentOutput extends ParentOutput {}
+
 class CustomOutput extends ResourceTableClassGenerator
 {
     public function outputTableRecordActions(): string
@@ -126,9 +141,24 @@ class CustomGetter extends ResourceTableClassGenerator
 {
     public function getTableActions(): array
     {
-        return parent::getTableRecordActions();
+        return parent::getTableActions();
     }
 }
+
+class ParentOutput extends ResourceTableClassGenerator
+{
+    public function outputTableActions(): string
+    {
+        return parent::outputTableActions();
+    }
+
+    public function outputTableMethodBulkActions(): string
+    {
+        return parent::outputTableMethodBulkActions();
+    }
+}
+
+class InheritedParentOutput extends ParentOutput {}
 
 class CustomOutput extends ResourceTableClassGenerator
 {

@@ -1,0 +1,3 @@
+parameters:
+    stubFiles:
+        - legacy-methods.stub
