@@ -29,6 +29,10 @@
         @apply grid auto-cols-fr gap-y-2;
     }
 
+    & .fi-in-entry-content-slot {
+        @apply contents;
+    }
+
     & .fi-in-entry-content-ctn {
         @apply flex w-full items-center gap-x-3;
     }
