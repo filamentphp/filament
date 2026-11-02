@@ -33,7 +33,7 @@ it('cannot display trashed posts by default', function () {
 
 > If your table uses pagination, `assertCanSeeTableRecords()` will only check for records on the first page. To switch page, call `call('gotoPage', 2)`.
 
-> If your table uses `deferLoading()`, you should call `loadTable()` before `assertCanSeeTableRecords()`.
+> If your table uses `lazyLoaded()`, you should call `loadTable()` before `assertCanSeeTableRecords()`.
 
 ## Testing columns
 
@@ -187,7 +187,7 @@ it('has an author column', function () {
     $post = Post::factory()->create();
     
     livewire(PostResource\Pages\ListPosts::class)
-        ->assertTableColumnExists('author', function (TextColumn $column): bool {
+        ->assertTableColumnExists('author', function (TextColumn $column) use ($post): bool {
             return $column->getDescriptionBelow() === $post->subtitle;
         }, $post);
 });
@@ -320,7 +320,7 @@ use function Pest\Livewire\livewire;
 it('filters list by published', function () {
     $posts = Post::factory()->count(10)->create();
 
-    $unpublishedPosts = $posts->where('is_published', false)->get();
+    $unpublishedPosts = $posts->where('is_published', false);
 
     livewire(PostsTable::class)
         ->filterTable('is_published')
@@ -344,7 +344,7 @@ it('can remove all table filters', function () {
 
     livewire(PostsTable::class)
         ->filterTable('is_published')
-        ->filterTable('author', $author)
+        ->filterTable('author', $posts->first()->author)
         ->assertCanNotSeeTableRecords($unpublishedPosts)
         ->removeTableFilters()
         ->assertCanSeeTableRecords($posts);

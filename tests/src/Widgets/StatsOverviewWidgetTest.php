@@ -6,6 +6,8 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\ChartComponent;
+use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\StatsOverviewWidgetStatChartComponent;
 use Illuminate\Support\Facades\Artisan;
 use Livewire\Livewire;
 
@@ -81,6 +83,24 @@ it('initializes `$chartDataChecksums` on mount via `mountHasChartData()`', funct
 
     expect($chartDataChecksums)->toHaveKey('stats-overview-stat-0')
         ->and($chartDataChecksums['stats-overview-stat-0'])->toBe(md5(json_encode([1, 2, 3])));
+});
+
+it('preserves existing chart container bindings with the deprecated subclass', function (): void {
+    expect(app(StatsOverviewWidgetStatChartComponent::class))->toBeInstanceOf(ChartComponent::class);
+
+    app()->bind(StatsOverviewWidgetStatChartComponent::class, static fn () => new class extends StatsOverviewWidgetStatChartComponent
+    {
+        public function getColorMap(array $color): array
+        {
+            return ['bg' => 300];
+        }
+    });
+
+    Stat::configureUsing(
+        static fn (Stat $stat) => $stat->chartColor('success'),
+        during: fn () => Livewire::test(TestStatsOverviewWidgetWithChart::class)
+            ->assertSeeHtml('fi-bg-color-300'),
+    );
 });
 
 it('does not dispatch `updateStatsOverviewChartData` when chart data is unchanged', function (): void {

@@ -244,7 +244,7 @@ describe('record select options', function (): void {
             ->callAction(TestAction::make(AssociateAction::class)->table(), [
                 'recordId' => $outOfScopePost->getKey(),
             ])
-            ->assertHasActionErrors(['recordId']);
+            ->assertHasFormErrors(['recordId']);
 
         expect($outOfScopePost->refresh()->author_id)->toBeNull();
     });
@@ -258,7 +258,7 @@ describe('record select options', function (): void {
             ->callAction(TestAction::make(AssociateAction::class)->table(), [
                 'recordId' => [$inScopePost->getKey(), $outOfScopePost->getKey()],
             ])
-            ->assertHasActionErrors();
+            ->assertHasFormErrors();
 
         expect($outOfScopePost->refresh()->author_id)->toBeNull();
         expect($inScopePost->refresh()->author_id)->toBeNull();

@@ -2,20 +2,25 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Locked;
 
 trait CanReorderRecords
 {
+    #[Locked]
     public bool $isTableReordering = false;
 
     /**
      * @param  array<int | string>  $order
      */
+    #[Exposed]
     public function reorderTable(array $order, int | string | null $draggedRecordKey = null): void
     {
         if (! $this->getTable()->isReorderable()) {
@@ -63,6 +68,7 @@ trait CanReorderRecords
         $this->getTable()->callAfterReordering($order);
     }
 
+    #[Exposed]
     public function moveTableRecord(string $recordKey, string $direction): void
     {
         if (! $this->isTableReordering() || ! in_array($direction, ['up', 'down'], true)) {
@@ -107,11 +113,13 @@ trait CanReorderRecords
         );
     }
 
+    #[Exposed]
     public function toggleTableReordering(): void
     {
         $this->isTableReordering = ! $this->isTableReordering;
     }
 
+    #[Unexposed]
     public function isTableReordering(): bool
     {
         return $this->getTable()->isReorderable() && $this->isTableReordering;

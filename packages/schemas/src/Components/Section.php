@@ -62,7 +62,7 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
 
     protected bool | Closure | null $isAside = null;
 
-    protected bool | Closure $isFormBefore = false;
+    protected bool | Closure $isContentBefore = false;
 
     protected ?Closure $contentSchemaExtraAttributes = null;
 
@@ -138,16 +138,32 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
         return (bool) ($this->evaluate($this->isAside) ?? false);
     }
 
-    public function formBefore(bool | Closure $condition = true): static
+    public function contentBefore(bool | Closure $condition = true): static
     {
-        $this->isFormBefore = $condition;
+        $this->isContentBefore = $condition;
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `contentBefore()` instead.
+     */
+    public function formBefore(bool | Closure $condition = true): static
+    {
+        return $this->contentBefore($condition);
+    }
+
+    public function isContentBefore(): bool
+    {
+        return (bool) $this->evaluate($this->isContentBefore);
+    }
+
+    /**
+     * @deprecated Use `isContentBefore()` instead.
+     */
     public function isFormBefore(): bool
     {
-        return (bool) $this->evaluate($this->isFormBefore);
+        return $this->isContentBefore();
     }
 
     /**
@@ -270,7 +286,7 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
         $isCompact = $this->isCompact();
         $isContained = $this->isContained();
         $isDivided = $this->isDivided();
-        $isFormBefore = $this->isFormBefore();
+        $isContentBefore = $this->isContentBefore();
         $description = $this->getDescription();
         $footer = $this->getChildSchema(static::FOOTER_SCHEMA_KEY)?->toHtmlString();
         $heading = $this->getHeading();
@@ -304,7 +320,7 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
             ->class([
                 'fi-section',
                 'fi-section-not-contained' => ! $isContained,
-                'fi-section-has-content-before' => $isFormBefore,
+                'fi-section-has-content-before' => $isContentBefore,
                 'fi-section-has-header' => $hasHeader,
                 'fi-aside' => $isAside,
                 'fi-compact' => $isCompact,

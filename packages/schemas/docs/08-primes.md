@@ -23,6 +23,7 @@ use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\UnorderedList;
+use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
 
@@ -485,6 +486,7 @@ For instance, you may make the bullets larger using `size(TextSize::Large)`:
 ```php
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\UnorderedList;
+use Filament\Support\Enums\TextSize;
 
 UnorderedList::make([
     Text::make('Tables')->size(TextSize::Large),

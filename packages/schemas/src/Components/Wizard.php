@@ -7,7 +7,7 @@ use Filament\Actions\Action;
 use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Contracts\HasSchemas;
-use Filament\Schemas\View\SchemaIconAlias;
+use Filament\Schemas\View\SchemasIconAlias;
 use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns;
@@ -502,7 +502,7 @@ class Wizard extends Component implements HasEmbeddedView
 
                                     <?= generate_icon_html(
                                         $completedIcon ?? Heroicon::OutlinedCheck,
-                                        alias: filled($completedIcon) ? null : SchemaIconAlias::COMPONENTS_WIZARD_COMPLETED_STEP,
+                                        alias: filled($completedIcon) ? null : SchemasIconAlias::COMPONENTS_WIZARD_COMPLETED_STEP,
                                         attributes: new FilamentComponentAttributeBag([
                                             'x-cloak' => 'x-cloak',
                                             'x-show' => "getStepIndex(step) > {$stepIndex}",

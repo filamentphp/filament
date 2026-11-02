@@ -455,7 +455,7 @@ public function panel(Panel $panel): Panel
             NavigationItem::make('dashboard')
                 ->label(fn (): string => __('filament-panels::pages/dashboard.title'))
                 ->url(fn (): string => Dashboard::getUrl())
-                ->isActiveWhen(fn () => original_request()->routeIs('filament.admin.pages.dashboard')),
+                ->activeWhen(fn () => original_request()->routeIs('filament.admin.pages.dashboard')),
             // ...
         ]);
 }
@@ -569,7 +569,7 @@ public function panel(Panel $panel): Panel
             return $builder->items([
                 NavigationItem::make('Dashboard')
                     ->icon(Heroicon::OutlinedHome)
-                    ->isActiveWhen(fn (): bool => original_request()->routeIs('filament.admin.pages.dashboard'))
+                    ->activeWhen(fn (): bool => original_request()->routeIs('filament.admin.pages.dashboard'))
                     ->url(fn (): string => Dashboard::getUrl()),
                 ...UserResource::getNavigationItems(),
                 ...Settings::getNavigationItems(),

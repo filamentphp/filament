@@ -17,7 +17,7 @@ use function Filament\Support\locale_has_pluralization;
 trait InteractsWithRecord
 {
     /**
-     * @var Model | class-string<Model> | array<string, mixed> | Closure | null
+     * @var Model | string | array<string, mixed> | Closure | null
      */
     protected Model | string | array | Closure | null $record = null;
 
@@ -162,6 +162,19 @@ trait InteractsWithRecord
             && (! $record instanceof $customModel)
         ) {
             $record = null;
+        }
+
+        if (is_array($record)) {
+            $originalRecord = $this->record;
+            $this->record = $record;
+
+            try {
+                $title = $this->getCustomRecordTitle();
+            } finally {
+                $this->record = $originalRecord;
+            }
+
+            return filled($title) ? $title : $this->getDefaultRecordTitle();
         }
 
         if ($record) {

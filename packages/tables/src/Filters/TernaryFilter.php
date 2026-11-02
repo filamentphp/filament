@@ -79,7 +79,7 @@ class TernaryFilter extends SelectFilter
     {
         $this->queries(
             true: function (Builder $query): Builder {
-                if ($this->queriesRelationships()) {
+                if ($this->hasRelationship()) {
                     return $query->whereRelation(
                         $this->getRelationshipName(),
                         $this->getRelationshipTitleAttribute(),
@@ -91,7 +91,7 @@ class TernaryFilter extends SelectFilter
                 return $query->whereNotNull($this->getAttribute());
             },
             false: function (Builder $query): Builder {
-                if ($this->queriesRelationships()) {
+                if ($this->hasRelationship()) {
                     return $query->whereRelation(
                         $this->getRelationshipName(),
                         $this->getRelationshipTitleAttribute(),
@@ -110,7 +110,7 @@ class TernaryFilter extends SelectFilter
     {
         $this->queries(
             true: function (Builder $query): Builder {
-                if ($this->queriesRelationships()) {
+                if ($this->hasRelationship()) {
                     return $query->whereRelation(
                         $this->getRelationshipName(),
                         $this->getRelationshipTitleAttribute(),
@@ -121,7 +121,7 @@ class TernaryFilter extends SelectFilter
                 return $query->where($this->getAttribute(), true);
             },
             false: function (Builder $query): Builder {
-                if ($this->queriesRelationships()) {
+                if ($this->hasRelationship()) {
                     return $query->whereRelation(
                         $this->getRelationshipName(),
                         $this->getRelationshipTitleAttribute(),

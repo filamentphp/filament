@@ -14,6 +14,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * @deprecated Use `CompleteExport` instead.
+ */
 class ExportCompletion implements ShouldQueue
 {
     use Dispatchable;

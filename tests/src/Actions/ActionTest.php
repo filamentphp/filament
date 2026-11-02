@@ -5,6 +5,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Enums\ActionStatus;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -376,6 +377,23 @@ it('returns fluent `$this` from `afterFormValidated()`', function (): void {
     $result = $action->afterFormValidated(static fn () => null);
 
     expect($result)->toBe($action);
+});
+
+it('fills and validates mounted actions using form lifecycle hooks', function (): void {
+    livewire(FormLifecycleActions::class)
+        ->mountAction('save')
+        ->assertSchemaStateSet(['title' => 'Initial title'])
+        ->assertSet('observedState', ['beforeFill' => [], 'afterFill' => ['title' => 'Initial title']])
+        ->fillForm(['title' => 'Updated title'])
+        ->callMountedAction()
+        ->assertHasNoFormErrors()
+        ->assertSet('observedState', [
+            'beforeFill' => [],
+            'afterFill' => ['title' => 'Initial title'],
+            'beforeValidate' => ['title' => 'Updated title'],
+            'afterValidate' => ['title' => 'Updated title'],
+            'saved' => ['title' => 'Updated title'],
+        ]);
 });
 
 describe('construction and properties', function (): void {
@@ -1592,8 +1610,11 @@ describe('actions mounted from a URL query parameter', function (): void {
         // `$defaultActionContext` is populated from the `?actionContext=` query string, so
         // an attacker controls it. The context builder must always win, keeping any other
         // keys but forcing `mountedFromUrl` to `true`.
+        Livewire::withQueryParams([
+            'actionContext' => ['mountedFromUrl' => false, 'schemaComponent' => 'foo'],
+        ]);
+
         $context = livewire(Actions::class)
-            ->set('defaultActionContext', ['mountedFromUrl' => false, 'schemaComponent' => 'foo'])
             ->instance()
             ->getDefaultActionUrlContext();
 
@@ -1602,8 +1623,9 @@ describe('actions mounted from a URL query parameter', function (): void {
     });
 
     it('does not run a modal-less action even when the `actionContext` query string tries to unset `mountedFromUrl`', function (): void {
-        $component = livewire(Actions::class)
-            ->set('defaultActionContext', ['mountedFromUrl' => false]);
+        Livewire::withQueryParams(['actionContext' => ['mountedFromUrl' => false]]);
+
+        $component = livewire(Actions::class);
 
         $component
             ->call('mountAction', 'simple', [], $component->instance()->getDefaultActionUrlContext())
@@ -2151,7 +2173,7 @@ describe('extra modal footer actions', function (): void {
                 'content' => $content = Str::random(),
             ])
             ->callMountedAction()
-            ->assertHasNoActionErrors()
+            ->assertHasNoFormErrors()
             ->assertDispatched('grouped-extra-actions-called', content: $content);
     });
 });
@@ -2220,6 +2242,35 @@ describe('record visibility and authorization', function (): void {
             ->and($action->isAuthorized())->toBeFalse();
     });
 });
+
+class FormLifecycleActions extends Actions
+{
+    public array $observedState = [];
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('save')
+                ->schema([TextInput::make('title')->required()])
+                ->fillForm(data: ['title' => 'Initial title'])
+                ->beforeFormFilled(callback: function (): void {
+                    $this->observedState['beforeFill'] = $this->getMountedActionSchema()->getRawState();
+                })
+                ->afterFormFilled(callback: function (): void {
+                    $this->observedState['afterFill'] = $this->getMountedActionSchema()->getRawState();
+                })
+                ->beforeFormValidated(callback: function (): void {
+                    $this->observedState['beforeValidate'] = $this->getMountedActionSchema()->getRawState();
+                })
+                ->afterFormValidated(callback: function (): void {
+                    $this->observedState['afterValidate'] = $this->getMountedActionSchema()->getRawState();
+                })
+                ->action(function (array $data): void {
+                    $this->observedState['saved'] = $data;
+                }),
+        ];
+    }
+}
 
 class TableActionTestComponent extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {

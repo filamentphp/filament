@@ -130,7 +130,7 @@ The vast majority of methods used to configure entries accept functions as param
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 
-Grid::make(fn (): array => [
+Grid::make()->columns(fn (): array => [
     'lg' => auth()->user()->isAdmin() ? 4 : 6,
 ])->schema([
     // ...
@@ -165,6 +165,8 @@ function (Get $get) {
 <Aside variant="tip">
     Unless a form field is [reactive](../forms/overview#the-basics-of-reactivity), the schema will not refresh when the value of the field changes, only when the next user interaction occurs that makes a request to the server. If you need to react to changes in a field's value, it should be `live()`.
 </Aside>
+
+By default, `Get` and `Set` avoid resolving fresh child schemas of the component being evaluated while searching for state, but can still search its cached descendants. This prevents recursive schema evaluation. If you need to include fresh child schemas, you can call `skipComponentsChildSchemasWhileSearching(false)` on the utility before using it. Do not disable this protection inside a child schema callback that would resolve itself again.
 
 ### Injecting the current Eloquent record
 
@@ -243,9 +245,9 @@ function (Request $request, Set $set) {
 }
 ```
 
-## Deferring the loading of a child schema
+## Lazy loading a child schema
 
-By default, a schema's components are rendered when the page loads. If a child schema is expensive to render, you can defer its loading until it enters the viewport using the `deferLoading()` method:
+By default, a schema's components are rendered when the page loads. If a child schema is expensive to render, you can lazy load it when it enters the viewport using the `lazyLoaded()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -261,15 +263,15 @@ Section::make('Customer details')
                 TextInput::make('email')
                     ->email(),
             ])
-            ->deferLoading(),
+            ->lazyLoaded(),
     )
 ```
 
-The deferred schema initially renders a loading indicator. When the loading indicator enters the viewport, only that schema is rendered in a new request. If the schema contains a validation error before it has loaded, it is loaded automatically so the validation error can be revealed.
+The lazy schema initially renders a loading indicator. When the loading indicator enters the viewport, only that schema is rendered in a new request. If the schema contains a validation error before it has loaded, it is loaded automatically so the validation error can be revealed.
 
-If a deferred schema is inside a concealed component, such as a collapsed section or an inactive tab, it will not load until its parent is revealed and it enters the viewport. Once a schema has loaded, it remains loaded for the lifetime of the Livewire component.
+If a lazy schema is inside a concealed component, such as a collapsed section or an inactive tab, it will not load until its parent is revealed and it enters the viewport. Once a schema has loaded, it remains loaded for the lifetime of the Livewire component.
 
-Every deferred schema needs a unique key. In this example, the child schema inherits the `customerDetails` key from the section. You can instead call `key()` on the child schema itself. If multiple child schemas of the same component are deferred, such as a section's content and footer schemas, you must call `key()` on each additional schema so that they do not inherit the same key. If you defer the schema for a repeater item or builder block, each item schema automatically receives a unique key from its state path:
+Every lazy schema needs a unique key. In this example, the child schema inherits the `customerDetails` key from the section. You can instead call `key()` on the child schema itself. If multiple child schemas of the same component are lazy, such as a section's content and footer schemas, you must call `key()` on each additional schema so that they do not inherit the same key. If you lazy load the schema for a repeater item or builder block, each item schema automatically receives a unique key from its state path:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -284,11 +286,11 @@ Repeater::make('members')
                 TextInput::make('email')
                     ->email(),
             ])
-            ->deferLoading(),
+            ->lazyLoaded(),
     )
 ```
 
-You may also pass a boolean or function to `deferLoading()` to control it conditionally.
+You may also pass a boolean or function to `lazyLoaded()` to control it conditionally.
 
 ## Setting the root heading level
 

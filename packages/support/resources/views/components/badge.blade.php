@@ -137,10 +137,16 @@
         @endphp
 
         <button
+            data-prevent-disabled-clicks
             type="button"
             {{
                 $deleteButton->attributes
                     ->except(['label'])
+                    ->merge([
+                        'wire:loading.attr' => $deleteButtonHasLoadingIndicator ? 'aria-disabled' : null,
+                        'wire:loading.class' => $deleteButtonHasLoadingIndicator ? $deleteButton->attributes->prepends('fi-disabled') : null,
+                        'wire:target' => $deleteButtonHasLoadingIndicator ? $deleteButtonLoadingIndicatorTarget : null,
+                    ], escape: false)
                     ->class([
                         'fi-badge-delete-btn',
                     ])

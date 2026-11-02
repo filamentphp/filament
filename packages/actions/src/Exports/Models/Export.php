@@ -2,7 +2,7 @@
 
 namespace Filament\Actions\Exports\Models;
 
-use Carbon\CarbonInterface;
+use DateTimeInterface;
 use Filament\Actions\Exports\Exporter;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Filesystem\Filesystem;
@@ -13,14 +13,15 @@ use Illuminate\Support\Facades\Storage;
 use LogicException;
 
 /**
- * @property CarbonInterface | null $completed_at
  * @property string $file_disk
  * @property string $file_name
  * @property class-string<Exporter> $exporter
  * @property int $processed_rows
  * @property int $total_rows
  * @property int $successful_rows
+ * @property-read int | null $completed_at
  * @property-read Authenticatable $user
+ * @property-write DateTimeInterface | string | int | float | null $completed_at
  */
 class Export extends Model
 {

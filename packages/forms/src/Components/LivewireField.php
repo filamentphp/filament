@@ -11,7 +11,7 @@ class LivewireField extends Field implements HasEmbeddedView
 {
     protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.livewire-field';
 
-    protected bool | Closure $isLazy = false;
+    protected bool | Closure $isLazyLoaded = false;
 
     /**
      * @var array<string, mixed> | Closure
@@ -32,16 +32,32 @@ class LivewireField extends Field implements HasEmbeddedView
         return $this->evaluate($this->component);
     }
 
-    public function lazy(bool | Closure $condition = true): static
+    public function lazyLoaded(bool | Closure $condition = true): static
     {
-        $this->isLazy = $condition;
+        $this->isLazyLoaded = $condition;
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `lazyLoaded()` instead.
+     */
+    public function lazy(bool | Closure $condition = true): static
+    {
+        return $this->lazyLoaded($condition);
+    }
+
+    public function isLazyLoaded(): bool
+    {
+        return (bool) $this->evaluate($this->isLazyLoaded);
+    }
+
+    /**
+     * @deprecated Use `isLazyLoaded()` instead.
+     */
     public function isLazy(): bool
     {
-        return (bool) $this->evaluate($this->isLazy);
+        return $this->isLazyLoaded();
     }
 
     /**
@@ -72,7 +88,7 @@ class LivewireField extends Field implements HasEmbeddedView
             $this->applyStateBindingModifiers('wire:model') => $this->getStatePath(),
         ];
 
-        if ($this->isLazy()) {
+        if ($this->isLazyLoaded()) {
             $properties['lazy'] = true;
         }
 

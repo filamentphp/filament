@@ -3,7 +3,10 @@
     use Filament\Support\Enums\VerticalAlignment;
 @endphp
 
-<div x-data="notificationsComponent()">
+<div
+    x-data="notificationsComponent()"
+    data-filament-notifications="{{ $hasPulledNotificationsOnMount ? 'mounted' : 'pending' }}"
+>
     <div
         @class([
             'fi-no',

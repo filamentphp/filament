@@ -42,6 +42,19 @@ livewire(ListInvoices::class)
     ->assertActionExists(TestAction::make('send')->table($invoice));
 ```
 
+### Testing the order of table record actions
+
+To check that record actions exist in a particular order, use `assertTableRecordActionsExistInOrder()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+livewire(ListInvoices::class)
+    ->assertTableRecordActionsExistInOrder(['edit', 'send']);
+```
+
+This checks record actions, including actions inside groups, but not header or bulk actions. Other record actions may appear before, between, or after the actions you specify.
+
 ### Testing table header actions
 
 To test a header action, you can use the `table()` method without passing in a specific record to test with:
@@ -103,7 +116,7 @@ livewire(EditInvoice::class)
 
 ## Testing actions inside another action's schema / form
 
-If an action belongs to a component in another action's `schema()` (or `form()`), for example, if it is in the `belowContent()` method of a form field in an action modal, you can use the `TestAction` object with the `schemaComponent()` method. This object receives the name of the action you want to test and replaces the name of the action in any testing method you want to use. You should pass an array of `TestAction` objects in order, for example:
+If an action belongs to a component in another action's `schema()`, for example, if it is in the `belowContent()` method of a form field in an action modal, you can use the `TestAction` object with the `schemaComponent()` method. This object receives the name of the action you want to test and replaces the name of the action in any testing method you want to use. You should pass an array of `TestAction` objects in order, for example:
 
 ```php
 use Filament\Actions\Testing\TestAction;
@@ -311,21 +324,6 @@ it('can only print a sent invoice', function () {
     ])
         ->assertActionDisabled('send')
         ->assertActionEnabled('print');
-});
-```
-
-To ensure sets of actions exist in the correct order, you can use `assertActionListInOrder()`:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('can have actions in order', function () {
-    $invoice = Invoice::factory()->create();
-
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])
-        ->assertActionListInOrder(['send', 'export']);
 });
 ```
 

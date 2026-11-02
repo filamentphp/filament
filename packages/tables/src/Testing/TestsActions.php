@@ -107,12 +107,20 @@ class TestsActions
         };
     }
 
+    /**
+     * @deprecated Use `assertTableRecordActionsExistInOrder()` instead.
+     */
     public function assertTableActionsExistInOrder(): Closure
+    {
+        return $this->assertTableRecordActionsExistInOrder();
+    }
+
+    public function assertTableRecordActionsExistInOrder(): Closure
     {
         return function (array $names): static {
             $this->assertActionListInOrder(
                 $names,
-                $this->instance()->getTable()->getActions(),
+                $this->instance()->getTable()->getRecordActions(),
                 'table',
                 Action::class,
             );

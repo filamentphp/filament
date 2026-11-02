@@ -27,6 +27,9 @@ trait HasStateBindingModifiers
         return $this;
     }
 
+    /**
+     * @deprecated Use `live()` instead.
+     */
     public function reactive(): static
     {
         $this->live();
@@ -34,6 +37,9 @@ trait HasStateBindingModifiers
         return $this;
     }
 
+    /**
+     * @deprecated Use `live(onBlur: true)` instead.
+     */
     public function lazy(): static
     {
         $this->live(onBlur: true);
@@ -161,6 +167,9 @@ trait HasStateBindingModifiers
         return false;
     }
 
+    /**
+     * @deprecated Use `isLiveOnBlur()` instead.
+     */
     public function isLazy(): bool
     {
         return $this->isLiveOnBlur();

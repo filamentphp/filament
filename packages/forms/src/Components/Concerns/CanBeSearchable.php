@@ -67,14 +67,14 @@ trait CanBeSearchable
 
     public function searchLabels(bool | Closure | null $condition = true): static
     {
-        $this->shouldSearchLabels = $condition;
+        $this->shouldSearchLabels = $condition ?? false;
 
         return $this;
     }
 
     public function searchValues(bool | Closure | null $condition = true): static
     {
-        $this->shouldSearchValues = $condition;
+        $this->shouldSearchValues = $condition ?? false;
 
         return $this;
     }

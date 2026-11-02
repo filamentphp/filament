@@ -29,6 +29,7 @@ use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\Widgets\Widget;
+use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\Guard;
@@ -685,7 +686,7 @@ class FilamentManager
     }
 
     /**
-     * @return array<class-string<Widget>>
+     * @return array<class-string<Widget> | WidgetConfiguration>
      */
     public function getWidgets(): array
     {
@@ -712,9 +713,17 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->hasDarkMode();
     }
 
+    /**
+     * @deprecated Use `isDarkModeForced()` instead.
+     */
     public function hasDarkModeForced(): bool
     {
-        return $this->getCurrentOrDefaultPanel()->hasDarkModeForced();
+        return $this->isDarkModeForced();
+    }
+
+    public function isDarkModeForced(): bool
+    {
+        return $this->getCurrentOrDefaultPanel()->isDarkModeForced();
     }
 
     public function hasThemeSwitcher(): bool
@@ -898,7 +907,15 @@ class FilamentManager
         Event::listen(ServingFilament::class, $callback);
     }
 
+    /**
+     * @deprecated Use `setCurrentDomain()` instead.
+     */
     public function currentDomain(?string $domain): void
+    {
+        $this->setCurrentDomain($domain);
+    }
+
+    public function setCurrentDomain(?string $domain): void
     {
         $this->currentDomain = $domain;
     }
@@ -1159,7 +1176,7 @@ class FilamentManager
         }
 
         if (app()->runningInConsole()) {
-            throw new LogicException('The current domain is not set, but multiple domains are registered for the panel. Please use [Filament::currentDomain(\'example.com\')] to set the current domain to ensure that panel URLs are generated correctly.');
+            throw new LogicException('The current domain is not set, but multiple domains are registered for the panel. Please use [Filament::setCurrentDomain(\'example.com\')] to set the current domain to ensure that panel URLs are generated correctly.');
         }
 
         return request()->getHost();
@@ -1194,7 +1211,7 @@ class FilamentManager
     }
 
     /**
-     * @return array<array{ title: string | Closure, body: string | Closure | null }>
+     * @return array<array{ title: ?string, body: ?string, isHidden: bool, isDisabled: bool }>
      */
     public function getErrorNotifications(): array
     {

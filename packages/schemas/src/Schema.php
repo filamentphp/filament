@@ -54,7 +54,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
 
     protected string $viewIdentifier = 'schema';
 
-    protected bool | Closure $isLoadingDeferred = false;
+    protected bool | Closure $isLazyLoaded = false;
 
     /**
      * @param  (LivewireComponent & HasSchemas) | null  $livewire
@@ -149,16 +149,32 @@ class Schema extends ViewComponent implements HasEmbeddedView
             ->alignBetween();
     }
 
-    public function deferLoading(bool | Closure $condition = true): static
+    public function lazyLoaded(bool | Closure $condition = true): static
     {
-        $this->isLoadingDeferred = $condition;
+        $this->isLazyLoaded = $condition;
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `lazyLoaded()` instead.
+     */
+    public function deferLoading(bool | Closure $condition = true): static
+    {
+        return $this->lazyLoaded($condition);
+    }
+
+    public function isLazyLoaded(): bool
+    {
+        return (bool) $this->evaluate($this->isLazyLoaded);
+    }
+
+    /**
+     * @deprecated Use `isLazyLoaded()` instead.
+     */
     public function isLoadingDeferred(): bool
     {
-        return (bool) $this->evaluate($this->isLoadingDeferred);
+        return $this->isLazyLoaded();
     }
 
     public function toEmbeddedHtml(): string
@@ -172,9 +188,9 @@ class Schema extends ViewComponent implements HasEmbeddedView
             return '';
         }
 
-        $isLoadingDeferred = $this->isLoadingDeferred();
+        $isLazyLoaded = $this->isLazyLoaded();
 
-        if ($isLoadingDeferred && (! $this->isDeferredSchemaLoaded())) {
+        if ($isLazyLoaded && (! $this->isDeferredSchemaLoaded())) {
             return $this->renderDeferredLoadingHtml();
         }
 
@@ -207,7 +223,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
                 fn (ComponentAttributeBag $attributes) => $attributes->grid($this->getColumns()),
             )
             ->merge([
-                'wire:partial' => ($this->shouldPartiallyRender() || $isLoadingDeferred) ? ('schema.' . $this->getKey()) : null,
+                'wire:partial' => ($this->shouldPartiallyRender() || $isLazyLoaded) ? ('schema.' . $this->getKey()) : null,
                 'x-data' => $isRoot ? 'filamentSchema({ livewireId: ' . Js::from($this->getLivewire()->getId()) . ', schemaKey: ' . Js::from($this->getKey()) . ' })' : null,
                 'x-on:form-validation-error.window' => $isRoot ? 'handleFormValidationError' : null,
                 'x-on:reset-schema-component-state.window' => $isRoot ? 'handleClientSideStateReset' : null,

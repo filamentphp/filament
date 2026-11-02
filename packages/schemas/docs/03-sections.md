@@ -85,6 +85,23 @@ Section::make('Rate limiting')
 
 <UtilityInjection set="schemaComponents">As well as allowing a static value, the `aside()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Positioning the content before the heading
+
+Use `contentBefore()` with `aside()` to position the content before the heading and description on medium and larger screens:
+
+```php
+use Filament\Schemas\Components\Section;
+
+Section::make('Rate limiting')
+    ->aside()
+    ->contentBefore()
+    ->schema([
+        // ...
+    ])
+```
+
+You may pass a boolean or a closure to `contentBefore()` to control this condition.
+
 ## Collapsing sections
 
 Sections may be `collapsible()` to optionally hide long content:
@@ -131,7 +148,7 @@ Section::make('Cart')
 
 <UtilityInjection set="schemaComponents">As well as allowing static values, the `collapsible()` and `collapsed()` methods also accept functions to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-If a collapsed section contains components that are expensive to render, you can [defer the loading of its content](#deferring-the-loading-of-section-content) until the section is expanded.
+If a collapsed section contains components that are expensive to render, you can [lazy load its content](#lazy-loading-section-content) when the section is expanded.
 
 ### Persisting collapsed sections in the user's session
 
@@ -246,6 +263,7 @@ Section::make('Notes')
 You may insert [actions](../actions) and any other schema component (usually [prime components](primes)) into the header of a section by passing an array of components to the `afterHeader()` method:
 
 ```php
+use Filament\Actions\Action;
 use Filament\Schemas\Components\Section;
 
 Section::make('Rate limiting')
@@ -267,6 +285,7 @@ Section::make('Rate limiting')
 You may insert [actions](../actions) and any other schema component (usually [prime components](primes)) into the footer of a section by passing an array of components to the `footer()` method:
 
 ```php
+use Filament\Actions\Action;
 use Filament\Schemas\Components\Section;
 
 Section::make('Rate limiting')
@@ -301,9 +320,9 @@ Section::make('Heading')
 
 <UtilityInjection set="schemaComponents">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-## Deferring the loading of section content
+## Lazy loading section content
 
-If the content of a section is expensive to render, you can pass a `Schema` object to `schema()` and use `deferLoading()`. This is particularly useful for a section that is [collapsed](#collapsing-sections) by default. The section and its header will render immediately, while its content will not be loaded until the section is expanded and the content enters the viewport:
+If the content of a section is expensive to render, you can pass a `Schema` object to `schema()` and use `lazyLoaded()`. This is particularly useful for a section that is [collapsed](#collapsing-sections) by default. The section and its header will render immediately, while its content will not be loaded until the section is expanded and the content enters the viewport:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -319,9 +338,9 @@ Section::make('Customer details')
                 TextInput::make('email')
                     ->email(),
             ])
-            ->deferLoading(),
+            ->lazyLoaded(),
     )
     ->collapsed()
 ```
 
-Every deferred schema must have a unique key. In this example, the child schema inherits its key from the section. You can learn more in the [schema overview](overview#deferring-the-loading-of-a-child-schema).
+Every lazy schema must have a unique key. In this example, the child schema inherits its key from the section. You can learn more in the [schema overview](overview#lazy-loading-a-child-schema).

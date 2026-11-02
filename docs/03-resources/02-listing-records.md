@@ -96,20 +96,20 @@ Tab::make()
 
 <AutoScreenshot name="panels/resources/listing-tabs-badge-colors" alt="Resource listing page with colored tab badges" />
 
-#### Deferring the loading of filter tab badges
+#### Lazy loading filter tab badges
 
-If you have expensive queries powering your tab badges (such as counting large datasets), the initial page load may be slow. You can defer the loading of tab badges using the `deferBadge()` method, which will load the badge values asynchronously after the page has rendered:
+If you have expensive queries powering your tab badges (such as counting large datasets), the initial page load may be slow. You can lazy load tab badges using the `lazyLoadedBadge()` method, which will load the badge values asynchronously after the page has rendered:
 
 ```php
 use Filament\Schemas\Components\Tabs\Tab;
 
 Tab::make()
     ->badge(static fn (): int => Customer::query()->where('active', true)->count())
-    ->deferBadge()
+    ->lazyLoadedBadge()
 ```
 
 <Aside variant="danger">
-    The `badge()` value must be returned from a function when using `deferBadge()`. If you pass a raw value like `badge(Customer::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of deferral.
+    The `badge()` value must be returned from a function when using `lazyLoadedBadge()`. If you pass a raw value like `badge(Customer::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of lazy loading.
 </Aside>
 
 ### Adding extra attributes to filter tabs
@@ -205,6 +205,7 @@ Each page in Filament has its own [schema](../schemas), which defines the overal
 use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Schema;
+use Filament\View\PanelsRenderHook;
 
 public function content(Schema $schema): Schema
 {
@@ -222,7 +223,7 @@ Inside the `components()` array, you can insert any [schema component](../schema
 
 ### Using a custom Blade view
 
-For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:
+For further customization opportunities, you can override the `$view` property on the page class to a custom view in your app:
 
 ```php
 protected string $view = 'filament.resources.users.pages.list-users';

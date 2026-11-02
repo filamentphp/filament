@@ -36,6 +36,7 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasRenderHookScopes;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Support\Concerns\CanBeLazy;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Contracts\HasTable;
@@ -115,8 +116,14 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
 
     protected static string | Htmlable | null $badgeTooltip = null;
 
+    protected static ?bool $isBadgeLazyLoaded = null;
+
+    /**
+     * @deprecated Use `$isBadgeLazyLoaded` instead.
+     */
     protected static bool $isBadgeDeferred = false;
 
+    #[Unexposed]
     public function mount(): void
     {
         $this->loadDefaultActiveTab();
@@ -125,6 +132,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     /**
      * @param  array<string, mixed>  $properties
      */
+    #[Unexposed]
     public static function make(array $properties = []): RelationManagerConfiguration
     {
         return app(RelationManagerConfiguration::class, ['relationManager' => static::class, 'properties' => $properties]);
@@ -133,6 +141,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     /**
      * @return array<string>
      */
+    #[Unexposed]
     public function getRenderHookScopes(): array
     {
         return [
@@ -141,6 +150,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
         ];
     }
 
+    #[Unexposed]
     public function render(): View
     {
         return view($this->view, $this->getViewData());
@@ -154,51 +164,68 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
         return [];
     }
 
+    #[Unexposed]
     public static function getTabComponent(Model $ownerRecord, string $pageClass): Tab
     {
-        $isTabBadgeDeferred = static::isBadgeDeferred($ownerRecord, $pageClass);
+        $isTabBadgeDeferred = static::isBadgeLazyLoaded($ownerRecord, $pageClass);
 
         return Tab::make(static::getTitle($ownerRecord, $pageClass))
             ->badge($isTabBadgeDeferred
                 ? static fn (): ?string => static::getBadge($ownerRecord, $pageClass)
                 : static::getBadge($ownerRecord, $pageClass))
-            ->deferBadge($isTabBadgeDeferred)
+            ->lazyLoadedBadge($isTabBadgeDeferred)
             ->badgeColor(static::getBadgeColor($ownerRecord, $pageClass))
             ->badgeTooltip(static::getBadgeTooltip($ownerRecord, $pageClass))
             ->icon(static::getIcon($ownerRecord, $pageClass))
             ->iconPosition(static::getIconPosition($ownerRecord, $pageClass));
     }
 
+    #[Unexposed]
     public static function getIcon(Model $ownerRecord, string $pageClass): string | BackedEnum | Htmlable | null
     {
         return static::$icon;
     }
 
+    #[Unexposed]
     public static function getIconPosition(Model $ownerRecord, string $pageClass): IconPosition
     {
         return static::$iconPosition;
     }
 
+    #[Unexposed]
     public static function getBadge(Model $ownerRecord, string $pageClass): ?string
     {
         return static::$badge;
     }
 
+    #[Unexposed]
     public static function getBadgeColor(Model $ownerRecord, string $pageClass): ?string
     {
         return static::$badgeColor;
     }
 
+    #[Unexposed]
     public static function getBadgeTooltip(Model $ownerRecord, string $pageClass): string | Htmlable | null
     {
         return static::$badgeTooltip;
     }
 
-    public static function isBadgeDeferred(Model $ownerRecord, string $pageClass): bool
+    #[Unexposed]
+    public static function isBadgeLazyLoaded(Model $ownerRecord, string $pageClass): bool
     {
-        return static::$isBadgeDeferred;
+        return static::$isBadgeLazyLoaded ?? static::isBadgeDeferred($ownerRecord, $pageClass);
     }
 
+    /**
+     * @deprecated Use `isBadgeLazyLoaded()` instead.
+     */
+    #[Unexposed]
+    public static function isBadgeDeferred(Model $ownerRecord, string $pageClass): bool
+    {
+        return static::$isBadgeLazyLoaded ?? static::$isBadgeDeferred;
+    }
+
+    #[Unexposed]
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return static::$title ?? static::getRelationshipTitle();
@@ -207,16 +234,19 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     /**
      * @return class-string<Page>
      */
+    #[Unexposed]
     public function getPageClass(): string
     {
         return $this->pageClass;
     }
 
+    #[Unexposed]
     public function getOwnerRecord(): Model
     {
         return $this->ownerRecord;
     }
 
+    #[Unexposed]
     public function isReadOnly(): bool
     {
         if (blank($this->getPageClass())) {
@@ -239,6 +269,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
+    #[Unexposed]
     public static function getRecordTitleAttribute(): ?string
     {
         return static::$recordTitleAttribute;
@@ -279,11 +310,13 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
+    #[Unexposed]
     public function getInverseRelationshipName(): ?string
     {
         return static::$inverseRelationship;
     }
 
+    #[Unexposed]
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
         if (static::shouldSkipAuthorization()) {
@@ -316,17 +349,19 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     /**
      * @return array<string, mixed>
      */
+    #[Unexposed]
     public static function getDefaultProperties(): array
     {
         $properties = [];
 
-        if (static::isLazy()) {
+        if (static::isLazyLoaded()) {
             $properties['lazy'] = true;
         }
 
         return $properties;
     }
 
+    #[Unexposed]
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -343,6 +378,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
         return $this->isReadOnly() ? false : $this->baseCanReorder();
     }
 
+    #[Unexposed]
     public function getDefaultActionAuthorizationResponse(Action $action): ?Response
     {
         // Security: `AssociateAction`, `AttachAction`, `DetachAction`, and
@@ -370,6 +406,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
         };
     }
 
+    #[Unexposed]
     public function getDefaultActionIndividualRecordAuthorizationResponseResolver(Action $action): ?Closure
     {
         return match (true) {
@@ -380,6 +417,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
         };
     }
 
+    #[Unexposed]
     public function getDefaultActionSchemaResolver(Action $action): ?Closure
     {
         return match (true) {
@@ -389,6 +427,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
         };
     }
 
+    #[Unexposed]
     public function getDefaultActionUrl(Action $action): ?string
     {
         $relatedResource = static::getRelatedResource();

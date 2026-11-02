@@ -112,8 +112,9 @@ describe('chart', function (): void {
         expect($stat->getChart())->toBe($data);
     });
 
-    it('ignores `chart()` when `null` is passed', function (): void {
+    it('can clear `chart()` with `null`', function (): void {
         $stat = Stat::make('Count', 1)
+            ->chart([3, 19, 7])
             ->chart(null);
 
         expect($stat->getChart())->toBeNull();

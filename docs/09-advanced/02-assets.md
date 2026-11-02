@@ -94,7 +94,7 @@ Sometimes, you may wish to use dynamic data from the backend in CSS files. To do
 use Filament\Support\Facades\FilamentAsset;
 
 FilamentAsset::registerCssVariables([
-    'background-image' => asset('images/background.jpg'),
+    'background-image' => 'url(' . asset('images/background.jpg') . ')',
 ]);
 ```
 
@@ -246,7 +246,7 @@ use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\Facades\Vite;
 
 FilamentAsset::register([
-    Js::make('timezone', Vite::asset('resources/js/timezone.js')),
+    Js::make('timezone', Vite::asset('resources/js/timezone.js'))->module(),
 ]);
 ```
 

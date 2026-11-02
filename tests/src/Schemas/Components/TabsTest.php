@@ -10,6 +10,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
@@ -17,6 +18,7 @@ use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\HtmlString;
+use Livewire\Attributes\Renderless;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -378,14 +380,25 @@ it('prefers query-string tab keys before legacy IDs', function (string $query, i
     'legacy default absolute ID' => ['form.profile.billing', 3],
 ]);
 
-it('can detect deferred badges with `hasDeferredBadges()`', function (): void {
-    livewire(TabsWithDeferredBadges::class)
-        ->assertOk();
-});
+it('can detect lazy badges through both getter names', function (string $method): void {
+    $lazyTab = Tab::make('Lazy')->badge(static fn (): int => 42)->lazyLoadedBadge();
+    $tabs = Tabs::make('Settings')->tabs([
+        Tab::make('Normal')->badge(10),
+        $lazyTab,
+    ]);
 
-it('can return deferred tab badges with `getDeferredTabBadges()`', function (): void {
-    livewire(TabsWithDeferredBadges::class)
-        ->call('callSchemaComponentMethod', 'form.test-tabs', 'getDeferredTabBadges')
+    Schema::make(Livewire::make())->components([$tabs])->getComponents();
+
+    expect($tabs->{$method}())->toBeTrue();
+
+    $lazyTab->lazyLoadedBadge(false);
+
+    expect($tabs->{$method}())->toBeFalse();
+})->with(['hasLazyLoadedBadges', 'hasDeferredBadges']);
+
+it('can return lazy tab badges through both endpoint names', function (string $method): void {
+    $component = livewire(TabsWithDeferredBadges::class)
+        ->call('callSchemaComponentMethod', 'form.test-tabs', $method)
         ->assertReturned(function (array $badges): bool {
             expect($badges)->toHaveCount(1);
             expect($badges)->toHaveKey('1');
@@ -394,7 +407,42 @@ it('can return deferred tab badges with `getDeferredTabBadges()`', function (): 
 
             return true;
         });
-});
+
+    expect($component->effects)->not->toHaveKey('html')
+        ->and($component->effects['partials'] ?? [])->toBe([]);
+
+    $badges = $component->instance()->getSchemaComponent('form.test-tabs')->getLazyLoadedTabBadges();
+
+    expect($badges)->toHaveCount(1)
+        ->and($badges['1']['badge'])->toBe('42');
+})->with(['getDeferredTabBadges', 'getLazyLoadedTabBadges']);
+
+it('respects a `getLazyLoadedTabBadges()` override through both endpoint names', function (string $method): void {
+    app()->bind(Tabs::class, static fn (): Tabs => new class extends Tabs
+    {
+        #[Exposed]
+        #[Renderless]
+        public function getLazyLoadedTabBadges(): array
+        {
+            $badges = parent::getLazyLoadedTabBadges();
+            $badges['1']['badge'] = '84';
+
+            return $badges;
+        }
+    });
+
+    $component = livewire(TabsWithDeferredBadges::class)
+        ->call('callSchemaComponentMethod', 'form.test-tabs', $method)
+        ->assertReturned(function (array $badges): bool {
+            expect($badges)->toHaveCount(1)
+                ->and($badges['1']['badge'])->toBe('84');
+
+            return true;
+        });
+
+    expect($component->effects)->not->toHaveKey('html')
+        ->and($component->effects['partials'] ?? [])->toBe([]);
+})->with(['getDeferredTabBadges', 'getLazyLoadedTabBadges']);
 
 it('can call an `Action` nested inside a tab that uses `livewireProperty()`', function (): void {
     livewire(TabsWithLivewirePropertyAction::class)
@@ -938,7 +986,7 @@ class TabsWithDeferredBadges extends Component implements HasActions, HasSchemas
                             ->schema([]),
                         Tab::make('Deferred Tab')
                             ->badge(static fn (): int => 42)
-                            ->deferBadge()
+                            ->lazyLoadedBadge()
                             ->schema([]),
                     ]),
             ])

@@ -4,6 +4,7 @@ namespace Filament\Livewire\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Support\Collection;
 
 trait HasUserMenu
@@ -18,6 +19,7 @@ trait HasUserMenu
      */
     protected array $userMenuItemGroupsAfterTheme = [];
 
+    #[Unexposed]
     public function bootHasUserMenu(): void
     {
         if (Filament::auth()->guest()) {
@@ -34,6 +36,7 @@ trait HasUserMenu
     /**
      * @return array<int, Collection<string, Action>>
      */
+    #[Unexposed]
     public function getUserMenuItemGroupsAfterTheme(): array
     {
         $this->getUserMenuItems();
@@ -41,6 +44,7 @@ trait HasUserMenu
         return $this->userMenuItemGroupsAfterTheme;
     }
 
+    #[Unexposed]
     public function hasMultipleUserMenuItemGroups(): bool
     {
         return Filament::getCurrentPanel()?->hasMultipleUserMenuItemGroups() ?? false;

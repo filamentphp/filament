@@ -5,20 +5,29 @@ namespace Filament\Notifications\Livewire;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Notification;
 use Filament\Notifications\NotificationMailbox;
+use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\Livewire;
 
 class Notifications extends Component
 {
     // Used to check if Livewire messages should trigger notification animations.
+    #[Locked]
     public bool $isFilamentNotificationsComponent = true;
 
+    #[Locked]
     public Collection $notifications;
+
+    #[Locked]
+    public bool $hasPulledNotificationsOnMount = false;
 
     public static Alignment $alignment = Alignment::Right;
 
@@ -26,14 +35,52 @@ class Notifications extends Component
 
     public static ?string $authGuard = null;
 
+    #[Unexposed]
     public function mount(): void
     {
         $this->notifications = new Collection;
+        $request = request();
+
+        if (
+            $request->hasSession() &&
+            $request->isMethod('GET') &&
+            ($request->header('Sec-Fetch-Dest') === 'document') &&
+            (! Livewire::isLivewireRequest()) &&
+            (! $request->headers->has('X-Livewire-Navigate')) &&
+            (! $request->prefetch()) &&
+            (! str_contains(strtolower($request->header('Sec-Purpose', '')), 'prefetch'))
+        ) {
+            $mailbox = app(NotificationMailbox::class);
+            $mailbox->flush();
+            $notifications = $mailbox->tryPull();
+
+            if ($notifications === null) {
+                return;
+            }
+
+            foreach ($notifications as $notification) {
+                $this->pushNotification(Notification::fromArray($notification));
+            }
+
+            $this->hasPulledNotificationsOnMount = true;
+        }
+    }
+
+    /**
+     * @param  array<string>  $batches
+     *
+     * @deprecated Use `pullNotifications()` instead.
+     */
+    #[Exposed]
+    public function pullNotificationsFromSession(array $batches = []): void
+    {
+        $this->pullNotifications($batches);
     }
 
     /** @param array<string> $batches */
+    #[Exposed]
     #[On('notificationsSent')]
-    public function pullNotificationsFromSession(array $batches = []): void
+    public function pullNotifications(array $batches = []): void
     {
         validator(['batches' => $batches], [
             'batches' => ['array', 'max:50'],
@@ -50,6 +97,7 @@ class Notifications extends Component
     /**
      * @param  array<string, mixed>  $notification
      */
+    #[Exposed]
     #[On('notificationSent')]
     public function pushNotificationFromEvent(array $notification): void
     {
@@ -58,6 +106,7 @@ class Notifications extends Component
         $this->pushNotification($notification);
     }
 
+    #[Exposed]
     #[On('notificationClosed')]
     public function removeNotification(string $id): void
     {
@@ -71,6 +120,7 @@ class Notifications extends Component
     /**
      * @param  array<string, mixed>  $notification
      */
+    #[Exposed]
     public function handleBroadcastNotification(array $notification): void
     {
         if (($notification['format'] ?? null) !== 'filament') {
@@ -88,11 +138,13 @@ class Notifications extends Component
         );
     }
 
+    #[Unexposed]
     public function getUser(): Model | Authenticatable | null
     {
         return auth(static::$authGuard)->user();
     }
 
+    #[Unexposed]
     public function getBroadcastChannel(): ?string
     {
         $user = $this->getUser();
@@ -110,21 +162,25 @@ class Notifications extends Component
         return "{$userClass}.{$user->getKey()}";
     }
 
+    #[Unexposed]
     public static function alignment(Alignment $alignment): void
     {
         static::$alignment = $alignment;
     }
 
+    #[Unexposed]
     public static function verticalAlignment(VerticalAlignment $alignment): void
     {
         static::$verticalAlignment = $alignment;
     }
 
+    #[Unexposed]
     public static function authGuard(?string $guard): void
     {
         static::$authGuard = $guard;
     }
 
+    #[Unexposed]
     public function render(): View
     {
         return view('filament-notifications::notifications');

@@ -16,7 +16,7 @@
     dir="{{ __('filament-panels::layout.direction') ?? 'ltr' }}"
     @class([
         'fi',
-        'dark' => filament()->hasDarkMode() && filament()->hasDarkModeForced(),
+        'dark' => filament()->hasDarkMode() && filament()->isDarkModeForced(),
     ])
 >
     <head>
@@ -80,10 +80,10 @@
         <style>
             :root {
                 --font-family: '{!! filament()->getFontFamily() !!}';
-                --mono-font-family: '{!! filament()->getMonoFontFamily() !!}';
-                --serif-font-family: '{!! filament()->getSerifFontFamily() !!}';
+                --font-family-mono: '{!! filament()->getMonoFontFamily() !!}';
+                --font-family-serif: '{!! filament()->getSerifFontFamily() !!}';
                 --sidebar-width: {{ filament()->getSidebarWidth() }};
-                --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};
+                --sidebar-collapsed-width: {{ filament()->getCollapsedSidebarWidth() }};
                 --default-theme-mode: {{ filament()->getDefaultThemeMode()->value }};
             }
 
@@ -100,7 +100,7 @@
             <script>
                 localStorage.setItem('filament:theme:mode', 'light')
             </script>
-        @elseif (filament()->hasDarkModeForced())
+        @elseif (filament()->isDarkModeForced())
             <script>
                 localStorage.setItem('filament:theme:mode', 'dark')
             </script>
@@ -157,7 +157,7 @@
             </script>
         @endif
 
-        @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
+        @if (filament()->hasDarkMode() && (! filament()->isDarkModeForced()))
             <script>
                 loadDarkMode()
             </script>

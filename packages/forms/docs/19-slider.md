@@ -268,14 +268,14 @@ Slider::make('slider')
 
 <AutoScreenshot name="forms/fields/slider/fill" alt="Slider with fill" />
 
-Optionally, you may pass a boolean value to control if the slider should be filled or not:
+Optionally, you may pass an array of boolean values to control which sections of the track should be filled:
 
 ```php
 use Filament\Forms\Components\Slider;
 
 Slider::make('slider')
     ->range(minValue: 0, maxValue: 100)
-    ->fillTrack(FeatureFlag::active())
+    ->fillTrack([FeatureFlag::active(), false])
 ```
 
 <UtilityInjection set="formFields">As well as allowing a static value, the `fillTrack()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>

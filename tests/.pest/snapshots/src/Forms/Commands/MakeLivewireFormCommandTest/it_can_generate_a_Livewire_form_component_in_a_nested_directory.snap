@@ -7,6 +7,8 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -17,11 +19,13 @@ class CreatePost extends Component implements HasActions, HasSchemas
 
     public ?array $data = [];
 
+    #[Unexposed]
     public function mount(): void
     {
         $this->form->fill();
     }
 
+    #[Unexposed]
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -31,6 +35,7 @@ class CreatePost extends Component implements HasActions, HasSchemas
             ->statePath('data');
     }
 
+    #[Exposed]
     public function submit(): void
     {
         $data = $this->form->getState();
@@ -38,6 +43,7 @@ class CreatePost extends Component implements HasActions, HasSchemas
         //
     }
 
+    #[Unexposed]
     public function render(): View
     {
         return view('livewire.blog.create-post');

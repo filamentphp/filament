@@ -4,6 +4,8 @@ namespace Filament\Widgets\ChartWidget\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\View\WidgetsIconAlias;
@@ -20,16 +22,19 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
      */
     public ?array $deferredFilters = null;
 
+    #[Unexposed]
     public function filtersSchema(Schema $schema): Schema
     {
         return $schema;
     }
 
+    #[Unexposed]
     public function hasDeferredFilters(): bool
     {
         return property_exists($this, 'hasDeferredFilters') && $this->hasDeferredFilters;
     }
 
+    #[Unexposed]
     public function mountHasFiltersSchema(): void
     {
         $this->getFiltersSchema()->fill();
@@ -39,6 +44,7 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
         }
     }
 
+    #[Unexposed]
     public function getFiltersTriggerAction(): Action
     {
         return Action::make('filter')
@@ -49,6 +55,7 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
             ->livewireClickHandlerEnabled(false);
     }
 
+    #[Unexposed]
     public function getFiltersSchema(): Schema
     {
         if ((! $this->isCachingSchemas) && $this->hasCachedSchema('filtersSchema')) {
@@ -67,18 +74,30 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
             );
     }
 
+    #[Unexposed]
     public function updatedFilters(): void
     {
         $this->cachedData = null;
     }
 
+    #[Exposed]
     public function applyFilters(): void
     {
         $this->filters = $this->deferredFilters;
         $this->cachedData = null;
     }
 
+    /**
+     * @deprecated Use `resetFilters()` instead.
+     */
+    #[Exposed]
     public function resetFiltersForm(): void
+    {
+        $this->resetFilters();
+    }
+
+    #[Exposed]
+    public function resetFilters(): void
     {
         $this->getFiltersSchema()->fill();
 
@@ -91,6 +110,7 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
         $this->cachedData = null;
     }
 
+    #[Unexposed]
     public function getFiltersApplyAction(): Action
     {
         $action = Action::make('applyFilters')
@@ -105,11 +125,12 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
         return $action;
     }
 
+    #[Unexposed]
     public function getFiltersResetAction(): Action
     {
         $action = Action::make('resetFilters')
             ->label(__('filament-widgets::chart.filters.actions.reset.label'))
-            ->action('resetFiltersForm')
+            ->action('resetFilters')
             ->color('danger')
             ->button();
 

@@ -2,15 +2,15 @@
 
 namespace Filament\Tables\Enums;
 
-enum RecordActionsPosition
+enum RecordActionsPosition: string
 {
-    case AfterCells;
+    case AfterCells = 'after_cells';
 
-    case AfterColumns;
+    case AfterColumns = 'after_columns';
 
-    case AfterContent;
+    case AfterContent = 'after_content';
 
-    case BeforeCells;
+    case BeforeCells = 'before_cells';
 
-    case BeforeColumns;
+    case BeforeColumns = 'before_columns';
 }

@@ -11,7 +11,7 @@ class Livewire extends Component implements HasEmbeddedView
 {
     protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.livewire';
 
-    protected bool | Closure $isLazy = false;
+    protected bool | Closure $isLazyLoaded = false;
 
     /**
      * @var array<string, mixed> | Closure
@@ -55,16 +55,32 @@ class Livewire extends Component implements HasEmbeddedView
         return $this->evaluate($this->component);
     }
 
-    public function lazy(bool | Closure $condition = true): static
+    public function lazyLoaded(bool | Closure $condition = true): static
     {
-        $this->isLazy = $condition;
+        $this->isLazyLoaded = $condition;
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `lazyLoaded()` instead.
+     */
+    public function lazy(bool | Closure $condition = true): static
+    {
+        return $this->lazyLoaded($condition);
+    }
+
+    public function isLazyLoaded(): bool
+    {
+        return (bool) $this->evaluate($this->isLazyLoaded);
+    }
+
+    /**
+     * @deprecated Use `isLazyLoaded()` instead.
+     */
     public function isLazy(): bool
     {
-        return (bool) $this->evaluate($this->isLazy);
+        return $this->isLazyLoaded();
     }
 
     /**
@@ -94,7 +110,7 @@ class Livewire extends Component implements HasEmbeddedView
             'record' => $this->getRecord(),
         ];
 
-        if ($this->isLazy()) {
+        if ($this->isLazyLoaded()) {
             $properties['lazy'] = true;
         }
 

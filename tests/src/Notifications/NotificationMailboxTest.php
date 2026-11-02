@@ -11,6 +11,7 @@ use Illuminate\Cache\Repository;
 use Illuminate\Contracts\Cache\Store as CacheStore;
 use Illuminate\Foundation\Http\Middleware\TrimStrings;
 use Illuminate\Session\Store;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
@@ -52,6 +53,77 @@ describe('delivery', function (): void {
         livewire(Notifications::class)
             ->dispatch('notificationsSent')
             ->assertCount('notifications', 1);
+    });
+
+    it('renders request-local notifications on an ordinary document mount without replay', function (): void {
+        Route::middleware('web')->get('/notification-document-mount', static function () {
+            if (request()->boolean('send')) {
+                Notification::make()->title('Document notification')->send();
+            }
+
+            return Blade::render('@livewire("notifications")');
+        });
+
+        $this->get('/notification-document-mount?send=1', ['Sec-Fetch-Dest' => 'document'])
+            ->assertOk()->assertSee('Document notification');
+
+        $this->get('/notification-document-mount', ['Sec-Fetch-Dest' => 'document'])
+            ->assertOk()->assertDontSee('Document notification');
+    });
+
+    it('leaves speculative renders available for a later document mount', function (array $headers): void {
+        Route::middleware('web')->get('/notification-speculative-mount', static function () {
+            Notification::make()->title('Pending document notification')->send();
+
+            return Blade::render('@livewire("notifications")');
+        });
+
+        Route::middleware('web')->get('/notification-committed-mount', static fn () => Blade::render('@livewire("notifications")'));
+
+        $this->get('/notification-speculative-mount', $headers)
+            ->assertOk()->assertDontSee('Pending document notification');
+
+        $this->get('/notification-committed-mount', ['Sec-Fetch-Dest' => 'document'])
+            ->assertOk()->assertSee('Pending document notification');
+
+        $this->get('/notification-committed-mount', ['Sec-Fetch-Dest' => 'document'])
+            ->assertOk()->assertDontSee('Pending document notification');
+    })->with([
+        'Livewire 3 navigation' => [['Sec-Fetch-Dest' => 'document', 'X-Livewire-Navigate' => '']],
+        'Livewire 4 navigation' => [['Sec-Fetch-Dest' => 'document', 'X-Livewire-Navigate' => '1']],
+        'browser prefetch' => [['Sec-Fetch-Dest' => 'document', 'Purpose' => 'prefetch']],
+        'secure browser prefetch' => [['Sec-Fetch-Dest' => 'document', 'Sec-Purpose' => 'prefetch']],
+        'browser prerender' => [['Sec-Fetch-Dest' => 'document', 'Sec-Purpose' => 'prefetch;prerender']],
+        'Firefox prefetch' => [['Sec-Fetch-Dest' => 'document', 'X-Moz' => 'prefetch']],
+        'fetch' => [['Sec-Fetch-Dest' => 'empty']],
+        'missing fetch metadata' => [[]],
+    ]);
+
+    it('leaves notifications available for browser delivery while the mailbox is locked', function (): void {
+        config(['cache.stores.notification-mount-lock.driver' => 'array', 'filament.cache_store' => 'notification-mount-lock']);
+
+        Route::middleware('web')->get('/notification-locked-send', static function () {
+            Notification::make()->title('Locked mailbox notification')->send();
+
+            return redirect('/');
+        });
+        Route::middleware('web')->get('/notification-locked-document', static fn () => Blade::render('@livewire("notifications")'));
+
+        $this->get('/notification-locked-send')->assertRedirect('/');
+
+        $lock = Cache::store('notification-mount-lock')->lock('filament:notifications:' . session('filament.notifications.mailbox') . ':lock', 30);
+        expect($lock->get())->toBeTrue();
+
+        try {
+            $this->get('/notification-locked-document', ['Sec-Fetch-Dest' => 'document'])
+                ->assertOk()->assertDontSee('Locked mailbox notification');
+        } finally {
+            $lock->release();
+        }
+
+        livewire(Notifications::class)->dispatch('notificationsSent')
+            ->assertCount('notifications', 1)->assertSee('Locked mailbox notification');
+        livewire(Notifications::class)->dispatch('notificationsSent')->assertCount('notifications', 0);
     });
 
     it('keeps the newest 50 pending notifications', function (array $batches, int $firstRetainedId, int $lastRetainedId): void {
@@ -141,7 +213,7 @@ describe('delivery', function (): void {
         livewire(Notifications::class)->dispatch('notificationsSent')->assertCount('notifications', 0);
     });
 
-    it('delivers a Livewire batch only to its response owner while retaining unowned catch-up', function (string $method, array $parameters, string $title): void {
+    it('delivers a Livewire batch only to its response owner while retaining unowned catch-up', function (string $method, array $parameters, string $title, string $pullMethod): void {
         $this->actingAs(User::factory()->create());
         $producer = livewire(NotificationBrowserTest::class);
 
@@ -163,7 +235,7 @@ describe('delivery', function (): void {
             ]],
         ], ['X-Livewire' => 'true'])->assertOk()->assertJsonMissingPath('filamentNotifications');
 
-        livewire(Notifications::class)->call('pullNotificationsFromSession')->assertCount('notifications', 0);
+        livewire(Notifications::class)->call($pullMethod)->assertCount('notifications', 0);
         expect($batch)->toMatch('/\A[a-f0-9]{40}\z/');
 
         Route::middleware('web')->get('/notification-unowned-catch-up', static function () {
@@ -173,18 +245,18 @@ describe('delivery', function (): void {
         });
         $this->get('/notification-unowned-catch-up')->assertNoContent();
 
-        livewire(Notifications::class)->call('pullNotificationsFromSession')
+        livewire(Notifications::class)->call($pullMethod)
             ->assertCount('notifications', 1)->assertSee('Unowned catch-up')->assertDontSee($title);
 
-        livewire(Notifications::class)->call('pullNotificationsFromSession', [$batch])
+        livewire(Notifications::class)->call($pullMethod, [$batch])
             ->assertCount('notifications', 1)->assertSee($title)->assertDontSee('Unowned catch-up');
 
-        livewire(Notifications::class)->call('pullNotificationsFromSession', [$batch])->assertCount('notifications', 0);
+        livewire(Notifications::class)->call($pullMethod, [$batch])->assertCount('notifications', 0);
     })->with([
         'action' => ['sendPersistentNotification', [], 'Persistent notification'],
         'full redirect' => ['sendRedirectNotification', [false], 'Redirect notification'],
         'SPA redirect' => ['sendRedirectNotification', [true], 'Redirect notification'],
-    ]);
+    ])->with(['pullNotifications', 'pullNotificationsFromSession']);
 });
 
 describe('session and authentication changes', function (): void {

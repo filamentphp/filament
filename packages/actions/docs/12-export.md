@@ -505,10 +505,10 @@ use Filament\Actions\ExportAction;
 ExportAction::configureUsing(fn (ExportAction $action) => $action->fileDisk('s3'));
 ```
 
-Alternatively, you can override the `getFileDisk()` method on the exporter class, returning the name of the disk:
+Alternatively, you can override the `getFileDiskName()` method on the exporter class, returning the name of the disk:
 
 ```php
-public function getFileDisk(): string
+public function getFileDiskName(): string
 {
     return 's3';
 }
@@ -542,7 +542,7 @@ public function getFileName(Export $export): string
 
 ## Using export options
 
-The export action can render extra form components that the user can interact with when exporting a CSV. This can be useful to allow the user to customize the behavior of the exporter. For instance, you might want a user to be able to choose the format of specific columns when exporting. To do this, you can return options form components from the `getOptionsFormComponents()` method on your exporter class:
+The export action can render extra form components that the user can interact with when exporting a CSV. This can be useful to allow the user to customize the behavior of the exporter. For instance, you might want a user to be able to choose the format of specific columns when exporting. To do this, you can return schema components from the `getOptionsFormComponents()` method on your exporter class:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -673,8 +673,6 @@ public static function getCsvDelimiter(): string
     return ';';
 }
 ```
-
-<UtilityInjection set="actions">As well as allowing a static value, the `csvDelimiter()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You can only specify a single character, otherwise an exception will be thrown.
 

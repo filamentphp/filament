@@ -486,12 +486,6 @@ describe('soft-deletable nested resource', function (): void {
             ->and($page->getParentRecord())->not->toBe($expectedParent);
     })->with([false, true]);
 
-    it('rejects direct Livewire calls to `resolveScopedModelProperties()` on resource pages', function (): void {
-        livewire(CreateUserPost::class, ['parentRecord' => User::factory()->create()])
-            ->call('resolveScopedModelProperties')
-            ->assertNotFound();
-    });
-
     it('can save', function (): void {
         $parentRecord = User::factory()->create();
         $post = Post::factory()->create([

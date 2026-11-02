@@ -7,7 +7,9 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Facades\FilamentView;
 use Filament\Tables;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Enums\PaginationMode;
+use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
@@ -61,7 +63,28 @@ describe('defer loading', function (): void {
     it('defaults `isLoadingDeferred()` to `false`', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
 
-        expect($table->isLoadingDeferred())->toBeFalse();
+        expect($table->isLoadingDeferred())->toBeFalse()
+            ->and($table->isLazyLoaded())->toBeFalse();
+    });
+
+    it('shares configuration between `lazyLoaded()` and `deferLoading()`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable()->lazyLoaded();
+
+        expect($table->isLoadingDeferred())->toBeTrue()
+            ->and($table->deferLoading(false)->isLazyLoaded())->toBeFalse()
+            ->and($table->deferLoading()->lazyLoaded(static fn (): bool => false)->isLoadingDeferred())->toBeFalse();
+    });
+
+    it('forwards `isLoadingDeferred()` to an overridden `isLazyLoaded()`', function (): void {
+        $table = new class(livewire(TableTestComponent::class)->instance()) extends Table
+        {
+            public function isLazyLoaded(): bool
+            {
+                return true;
+            }
+        };
+
+        expect($table->isLoadingDeferred())->toBeTrue();
     });
 });
 
@@ -245,6 +268,113 @@ describe('content grid', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
 
         expect($table->getContentGrid())->toBeNull();
+    });
+});
+
+describe('filter layout', function (): void {
+    it('accepts string layouts in `filters()`', function (string $layout, FiltersLayout $expectedLayout): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        $table->filters([], layout: $layout);
+
+        expect($table->getFiltersLayout())->toBe($expectedLayout);
+    })->with([
+        ['above_content', FiltersLayout::AboveContent],
+        ['above_content_collapsible', FiltersLayout::AboveContentCollapsible],
+        ['below_content', FiltersLayout::BelowContent],
+        ['before_content', FiltersLayout::BeforeContent],
+        ['after_content', FiltersLayout::AfterContent],
+        ['before_content_collapsible', FiltersLayout::BeforeContentCollapsible],
+        ['after_content_collapsible', FiltersLayout::AfterContentCollapsible],
+        ['dropdown', FiltersLayout::Dropdown],
+        ['modal', FiltersLayout::Modal],
+        ['hidden', FiltersLayout::Hidden],
+    ]);
+
+    it('preserves enum, closure, and omitted layouts in `filters()`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        $table->filters([], layout: FiltersLayout::Modal);
+
+        expect($table->getFiltersLayout())->toBe(FiltersLayout::Modal);
+
+        foreach ([null, '', '0'] as $layout) {
+            $table->filters([], layout: $layout);
+
+            expect($table->getFiltersLayout())->toBe(FiltersLayout::Modal);
+        }
+
+        $layout = FiltersLayout::AboveContent;
+        $table->filters([], layout: static function (Table $table) use (&$layout): FiltersLayout {
+            return $layout;
+        });
+
+        expect($table->getFiltersLayout())->toBe(FiltersLayout::AboveContent);
+
+        $layout = FiltersLayout::BelowContent;
+
+        expect($table->getFiltersLayout())->toBe(FiltersLayout::BelowContent)
+            ->and($table->filters([], layout: static fn () => null)->getFiltersLayout())->toBe(FiltersLayout::Dropdown);
+    });
+
+    it('rejects unknown string layouts in `filters()`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        expect(static fn () => $table->filters([], layout: 'not_a_layout'))->toThrow(TypeError::class);
+    });
+});
+
+describe('record action position', function (): void {
+    it('accepts string positions in `recordActions()` and `actions()`', function (string $position, RecordActionsPosition $expectedPosition): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        $table->recordActions([], position: $position);
+
+        expect($table->getRecordActionsPosition())->toBe($expectedPosition);
+
+        $table->recordActionsPosition(($expectedPosition === RecordActionsPosition::AfterContent) ? RecordActionsPosition::BeforeColumns : RecordActionsPosition::AfterContent);
+        $table->actions([], position: $position);
+
+        expect($table->getRecordActionsPosition())->toBe($expectedPosition);
+    })->with([
+        ['after_cells', RecordActionsPosition::AfterCells],
+        ['after_columns', RecordActionsPosition::AfterColumns],
+        ['after_content', RecordActionsPosition::AfterContent],
+        ['before_cells', RecordActionsPosition::BeforeCells],
+        ['before_columns', RecordActionsPosition::BeforeColumns],
+    ]);
+
+    it('preserves enum, closure, and omitted positions in `recordActions()`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        $table->recordActions([], position: RecordActionsPosition::BeforeColumns);
+
+        expect($table->getRecordActionsPosition())->toBe(RecordActionsPosition::BeforeColumns);
+
+        foreach ([null, '', '0'] as $position) {
+            $table->recordActions([], position: $position);
+
+            expect($table->getRecordActionsPosition())->toBe(RecordActionsPosition::BeforeColumns);
+        }
+
+        $position = RecordActionsPosition::BeforeCells;
+        $table->recordActions([], position: static function (Table $table) use (&$position): RecordActionsPosition {
+            return $position;
+        });
+
+        expect($table->getRecordActionsPosition())->toBe(RecordActionsPosition::BeforeCells);
+
+        $position = RecordActionsPosition::AfterCells;
+
+        expect($table->getRecordActionsPosition())->toBe(RecordActionsPosition::AfterCells)
+            ->and($table->recordActions([], position: static fn () => null)->getRecordActionsPosition())->toBe(RecordActionsPosition::AfterColumns);
+    });
+
+    it('rejects unknown string positions in `recordActions()` and `actions()`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        expect(static fn () => $table->recordActions([], position: 'not_a_position'))->toThrow(TypeError::class)
+            ->and(static fn () => $table->actions([], position: 'not_a_position'))->toThrow(TypeError::class);
     });
 });
 
@@ -829,7 +959,7 @@ describe('session persistence', function (): void {
             ->assertSet('tableColumns', $reorderedColumns)
             ->set('tableRecordsPerPage', 10)
             ->call('resetTableSearch')
-            ->call('resetTableColumnSearches')
+            ->call('resetTableColumnSearch', 'title')
             ->set('tableSort', null)
             ->set('tableGrouping', null)
             ->resetTableFilters()
@@ -1047,7 +1177,7 @@ describe('rendering', function (): void {
             ->assertSuccessful()
             ->html();
 
-        expect(substr_count($html, 'wire:target="sortTable(\'title\')"'))->toBe(3);
+        expect(substr_count($html, 'wire:target="sortTable(\'title\')"'))->toBe(2);
     });
 
     it('preserves the header sort loading indicator when the loading skeleton is enabled', function (): void {
@@ -1057,7 +1187,7 @@ describe('rendering', function (): void {
             ->assertSuccessful()
             ->html();
 
-        expect(substr_count($html, 'wire:target="sortTable(\'title\')"'))->toBe(3);
+        expect(substr_count($html, 'wire:target="sortTable(\'title\')"'))->toBe(2);
     });
 
     it('replaces the empty state icon with a loading indicator during updates that change the displayed records', function (): void {
@@ -1132,7 +1262,7 @@ describe('rendering', function (): void {
             ->and($contentAfterData['records'])->toBe($contentBeforeData['records']);
     });
 
-    it('provides unloaded and loaded records to content render hooks when table loading is deferred', function (): void {
+    it('provides unloaded and loaded records to content render hooks with lazy loading', function (string $loadingMethod): void {
         $contentBeforeData = null;
         $contentAfterData = null;
 
@@ -1140,7 +1270,7 @@ describe('rendering', function (): void {
 
         Post::factory()->create();
 
-        $component = livewire(DeferredLoadingTableTestComponent::class)
+        $component = livewire(DeferredLoadingTableTestComponent::class, ['loadingMethod' => $loadingMethod])
             ->assertSuccessful();
 
         expect($contentBeforeData['hasPagination'])->toBeFalse()
@@ -1153,7 +1283,7 @@ describe('rendering', function (): void {
             ->and($contentBeforeData['records'])->toBeInstanceOf(LengthAwarePaginator::class)
             ->and($contentBeforeData['records'])->toHaveCount(1)
             ->and($contentAfterData['records'])->toBe($contentBeforeData['records']);
-    });
+    })->with(['lazyLoaded', 'deferLoading']);
 
     it('provides a collection and no pagination to content render hooks when pagination is disabled', function (): void {
         $contentBeforeData = null;
@@ -1415,10 +1545,12 @@ class EmptyStateTableTestComponent extends TableTestComponent
 
 class DeferredLoadingTableTestComponent extends TableTestComponent
 {
+    public string $loadingMethod = 'lazyLoaded';
+
     public function table(Table $table): Table
     {
         return parent::table($table)
-            ->deferLoading();
+            ->{$this->loadingMethod}();
     }
 }
 

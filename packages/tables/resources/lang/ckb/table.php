@@ -6,10 +6,34 @@ return [
 
         'heading' => 'ستوونەکان',
 
+        'position' => 'شوێنی :position لە :count.',
+
+        'position_in_group' => 'شوێنی :position لە :count لەناو :group.',
+
+        'reordered' => ':column گوازرایەوە بۆ شوێنی :position لە :count.',
+
+        'reordered_deferred' => ':column گوازرایەوە بۆ شوێنی :position لە :count. ستوونەکان جێبەجێ بکە بۆ پاشەکەوتکردنی گۆڕانکارییەکانت.',
+
+        'reordered_in_group' => ':column گوازرایەوە بۆ شوێنی :position لە :count لەناو :group.',
+
+        'reordered_in_group_deferred' => ':column گوازرایەوە بۆ شوێنی :position لە :count لەناو :group. ستوونەکان جێبەجێ بکە بۆ پاشەکەوتکردنی گۆڕانکارییەکانت.',
+
         'actions' => [
 
             'apply' => [
                 'label' => 'جێبەجێکردنی ستونەکان',
+            ],
+
+            'move_up' => [
+                'label' => 'جوڵاندنی :column بۆ سەرەوە',
+            ],
+
+            'move_down' => [
+                'label' => 'جوڵاندنی :column بۆ خوارەوە',
+            ],
+
+            'reorder' => [
+                'label' => 'ڕیزکردنەوەی ستوون',
             ],
 
             'reset' => [
@@ -23,7 +47,39 @@ return [
     'columns' => [
 
         'actions' => [
-            'label' => 'کردار|کردارەکان',
+            'label' => '{1} کردار|[2,*] کردارەکان',
+        ],
+
+        'editable' => [
+            'saving' => 'پاشەکەوتکردنی گۆڕانکاری...',
+            'saved' => 'گۆڕانکارییەکە پاشەکەوت کرا.',
+            'failure' => 'پاشەکەوتکردنەکە پشتڕاست نەکرایەوە. پێش هەوڵدانەوە پەڕەکە نوێ بکەرەوە.',
+            'unavailable' => 'ئەم دانەیە چیتر ناتوانرێت دەستکاری بکرێت.',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'بەڵێ',
+                'false' => 'نەخێر',
+            ],
+
+        ],
+
+        'select' => [
+
+            'loading_message' => 'بارکردن...',
+
+            'no_options_message' => 'هیچ هەڵبژاردەیەک بەردەست نییە.',
+
+            'no_search_results_message' => 'هیچ هەڵبژاردەیەک لەگەڵ گەڕانەکەت ناگونجێت.',
+
+            'placeholder' => 'هەڵبژاردەیەک هەڵبژێرە',
+
+            'searching_message' => 'گەڕان...',
+
+            'search_prompt' => 'دەست بکە بە نووسین بۆ گەڕان',
+
         ],
 
         'text' => [
@@ -99,6 +155,18 @@ return [
             'label' => 'ڕێکخستنی تۆمارەکان',
         ],
 
+        'reorder_record' => [
+            'label' => 'ڕیزکردنەوەی دانەی :key',
+        ],
+
+        'move_record_up' => [
+            'label' => 'جوڵاندنی :label بۆ سەرەوە',
+        ],
+
+        'move_record_down' => [
+            'label' => 'جوڵاندنی :label بۆ خوارەوە',
+        ],
+
         'filter' => [
             'label' => 'پاڵاوتن',
         ],
@@ -113,6 +181,10 @@ return [
 
         'column_manager' => [
             'label' => 'پشاندان/لابردنی ستوونەکان',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'کردنەوە/داخستنی دانەی :key',
         ],
 
     ],
@@ -203,7 +275,16 @@ return [
 
     ],
 
+    'loading' => 'بارکردن...',
+
     'reorder_indicator' => 'تۆمارەکان هەڵبگرە و ڕیزیان بکە.',
+
+    'reordering' => [
+        'position' => ':label، شوێنی :position لە :count.',
+        'moved' => ':label گوازرایەوە بۆ شوێنی :position لە :count.',
+    ],
+
+    'result_count' => '{0} هیچ ئەنجامێک نییە|{1} :count ئەنجام|[2,*] :count ئەنجام',
 
     'selection_indicator' => [
 

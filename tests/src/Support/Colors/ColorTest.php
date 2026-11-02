@@ -27,8 +27,8 @@ use Filament\Tables\View\Components\Columns\TextColumnComponent\ItemComponent as
 use Filament\Tables\View\Components\Columns\TextColumnComponent\ItemComponent\IconComponent as TableTextColumnItemIconComponent;
 use Filament\Tests\TestCase;
 use Filament\Widgets\View\Components\ChartWidgetComponent;
+use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\ChartComponent as StatsOverviewWidgetStatChartComponent;
 use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\DescriptionComponent as StatsOverviewWidgetStatDescriptionComponent;
-use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\StatsOverviewWidgetStatChartComponent;
 use Illuminate\Support\Str;
 
 uses(TestCase::class);

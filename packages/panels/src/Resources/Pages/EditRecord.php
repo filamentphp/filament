@@ -22,6 +22,8 @@ use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
@@ -32,6 +34,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Js;
+use Livewire\Attributes\Locked;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
@@ -56,8 +59,10 @@ class EditRecord extends Page
      */
     public ?array $data = [];
 
+    #[Locked]
     public ?string $previousUrl = null;
 
+    #[Unexposed]
     public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$navigationIcon
@@ -65,11 +70,13 @@ class EditRecord extends Page
             ?? Heroicon::OutlinedPencilSquare;
     }
 
+    #[Unexposed]
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? __('filament-panels::resources/pages/edit-record.breadcrumb');
     }
 
+    #[Unexposed]
     public static function getNavigationLabel(): string | Htmlable
     {
         if (filled(static::$navigationLabel)) {
@@ -79,11 +86,13 @@ class EditRecord extends Page
         return __('filament-panels::resources/pages/edit-record.navigation_label');
     }
 
+    #[Unexposed]
     public function getContentTabLabel(): ?string
     {
         return __('filament-panels::resources/pages/edit-record.content.tab.label');
     }
 
+    #[Unexposed]
     public function mount(int | string $record): void
     {
         $this->record = $this->resolveRecord($record);
@@ -100,6 +109,7 @@ class EditRecord extends Page
         abort_unless(static::getResource()::canEdit($this->getRecord()), 403);
     }
 
+    #[Unexposed]
     public function hydrate(): void
     {
         $this->authorizeAccess();
@@ -133,6 +143,7 @@ class EditRecord extends Page
     /**
      * @param  array<string>  $statePaths
      */
+    #[Unexposed]
     public function refreshFormData(array $statePaths): void
     {
         $this->form->fillPartially(
@@ -156,6 +167,7 @@ class EditRecord extends Page
         return $data;
     }
 
+    #[Exposed]
     public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
     {
         $this->authorizeAccess();
@@ -203,6 +215,7 @@ class EditRecord extends Page
         }
     }
 
+    #[Unexposed]
     public function saveFormComponentOnly(Component $component): void
     {
         $this->authorizeAccess();
@@ -294,6 +307,7 @@ class EditRecord extends Page
         return $data;
     }
 
+    #[Unexposed]
     public function getDefaultActionSchemaResolver(Action $action): ?Closure
     {
         return match (true) {
@@ -304,6 +318,7 @@ class EditRecord extends Page
         };
     }
 
+    #[Unexposed]
     public function getTitle(): string | Htmlable
     {
         if (filled(static::$title)) {
@@ -361,6 +376,7 @@ class EditRecord extends Page
             ->color('gray');
     }
 
+    #[Unexposed]
     public function defaultForm(Schema $schema): Schema
     {
         if (! $schema->hasCustomColumns()) {
@@ -374,11 +390,13 @@ class EditRecord extends Page
             ->statePath('data');
     }
 
+    #[Unexposed]
     public function form(Schema $schema): Schema
     {
         return static::getResource()::form($schema);
     }
 
+    #[Unexposed]
     public function getContentTabComponent(): Tab
     {
         return $this->getBaseContentTabComponent()
@@ -422,11 +440,13 @@ class EditRecord extends Page
         return [];
     }
 
+    #[Unexposed]
     public static function shouldRegisterNavigation(array $parameters = []): bool
     {
         return parent::shouldRegisterNavigation($parameters) && static::getResource()::canEdit($parameters['record']);
     }
 
+    #[Unexposed]
     public function content(Schema $schema): Schema
     {
         if ($this->hasCombinedRelationManagerTabsWithContent()) {
@@ -443,6 +463,7 @@ class EditRecord extends Page
             ]);
     }
 
+    #[Unexposed]
     public function getFormContentComponent(): Component
     {
         if (! $this->hasFormWrapper()) {
@@ -460,6 +481,7 @@ class EditRecord extends Page
             ]);
     }
 
+    #[Unexposed]
     public function getFormActionsContentComponent(): Component
     {
         return Actions::make($this->getFormActions())
@@ -469,6 +491,7 @@ class EditRecord extends Page
             ->key('form-actions');
     }
 
+    #[Unexposed]
     public function hasFormWrapper(): bool
     {
         return true;
@@ -477,6 +500,7 @@ class EditRecord extends Page
     /**
      * @return array<string>
      */
+    #[Unexposed]
     public function getPageClasses(): array
     {
         return [
@@ -494,6 +518,7 @@ class EditRecord extends Page
     /**
      * @return TModel
      */
+    #[Unexposed]
     public function getRecord(): Model
     {
         return $this->getBaseRecord();

@@ -13,7 +13,7 @@ use InvalidArgumentException;
 trait HasHeaderActions
 {
     /**
-     * @var array<string, Action | BulkAction | ActionGroup>
+     * @var array<Action | BulkAction | ActionGroup>
      */
     protected array $headerActions = [];
 
@@ -95,7 +95,7 @@ trait HasHeaderActions
     }
 
     /**
-     * @return array<string, Action | BulkAction | ActionGroup>
+     * @return array<Action | BulkAction | ActionGroup>
      */
     public function getHeaderActions(): array
     {

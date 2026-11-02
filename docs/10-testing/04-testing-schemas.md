@@ -54,7 +54,7 @@ it('can automatically generate a slug from the title without any spaces', functi
         ->fillForm([
             'title' => $title,
         ])
-        ->assertSchemaStateSet(function (array $state): array {
+        ->assertSchemaStateSet(function (array $state) use ($title): array {
             expect($state['slug'])
                 ->not->toContain(' ');
                 
@@ -473,6 +473,6 @@ use function Pest\Livewire\livewire;
 it('moves to next wizard step only for fooForm', function () {
     livewire(CreatePost::class)
         ->goToNextWizardStep(schema: 'fooForm')
-        ->assertHasFormErrors(['title'], schema: 'fooForm');
+        ->assertHasFormErrors(['title'], form: 'fooForm');
 });
 ```

@@ -248,7 +248,7 @@ Repeater::make('qualifications')
 
 <UtilityInjection set="formFields">As well as allowing static values, the `collapsible()` and `collapsed()` methods also accept functions to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-If collapsed items contain components that are expensive to render, you can [defer the loading of their schemas](#deferring-the-loading-of-repeater-item-schemas) until they are expanded.
+If collapsed items contain components that are expensive to render, you can [lazy load their schemas](#lazy-loading-repeater-item-schemas) when they are expanded.
 
 ## Cloning items
 
@@ -400,7 +400,7 @@ Repeater::make('qualifications')
     })
 ```
 
-<UtilityInjection set="formFields" extras="Data;;array<array<string, mixed>>;;$data;;The data that is being filled into the repeater.">You can inject various utilities into the function passed to `mutateRelationshipDataBeforeFillUsing()` as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" extras="Data;;array<string, mixed>;;$data;;The related item's data that is being filled into the repeater.">You can inject various utilities into the function passed to `mutateRelationshipDataBeforeFillUsing()` as parameters.</UtilityInjection>
 
 ### Mutating related item data before creating
 
@@ -971,9 +971,9 @@ You can also pass `maxItemsForProcessing(null)` on a component to disable its in
 
 This is an opt-in performance safeguard, not a security boundary or a guarantee of request duration. The limit applies to each repeater, builder, or repeatable entry separately, not to the total number of nested items or fields in a request. A parent's processing limit does not limit the number of items in its nested components. Builder limits count all raw items, including items with unrecognized block types. Nested schemas and expensive fields can still take time to process within these limits, and the limit does not bound request decoding or other work performed by a request. See the [repeatable entry guidance](../infolists/repeatable-entry#limiting-item-processing) for its state-loading limitations.
 
-## Deferring the loading of repeater item schemas
+## Lazy loading repeater item schemas
 
-If a repeater's item schema is expensive to render, you can pass a `Schema` object to `schema()` and use `deferLoading()`. This is particularly useful when items are [collapsed](#collapsing-items) by default. Each item schema will be loaded independently when its item is expanded and enters the viewport:
+If a repeater's item schema is expensive to render, you can pass a `Schema` object to `schema()` and use `lazyLoaded()`. This is particularly useful when items are [collapsed](#collapsing-items) by default. Each item schema will be loaded independently when its item is expanded and enters the viewport:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -988,12 +988,12 @@ Repeater::make('members')
                 TextInput::make('email')
                     ->email(),
             ])
-            ->deferLoading(),
+            ->lazyLoaded(),
     )
     ->collapsed()
 ```
 
-Repeater item schemas automatically receive unique keys from their item state paths. You can learn more about deferred schemas in the [schema overview](../schemas/overview#deferring-the-loading-of-a-child-schema).
+Repeater item schemas automatically receive unique keys from their item state paths. You can learn more about lazy schemas in the [schema overview](../schemas/overview#lazy-loading-a-child-schema).
 
 ## Customizing the repeater item actions
 
@@ -1084,7 +1084,7 @@ Repeater::make('members')
 
 In this example, `$arguments['item']` gives you the ID of the current repeater item. You can validate the data in that repeater item using the `getItemState()` method on the repeater component. This method returns the validated data for the item. If the item is not valid, it will cancel the action and show an error message for that item in the form.
 
-If you want to get the raw data from the current item without validating it, you can use `$component->getRawItemState($arguments['item'])` instead.
+If you want to get a snapshot of the current item's state without validating it, you can use `$component->getItemStateSnapshot($arguments['item'])` instead. The snapshot still applies state transformations.
 
 If you want to manipulate the raw data for the entire repeater, for example, to add, remove or modify items, you can use `$component->getState()` to get the data, and `$component->state($state)` to set it again:
 

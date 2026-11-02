@@ -2,16 +2,16 @@
 
 return [
 
-    'title' => 'Set up two-factor authentication (2FA)',
+    'title' => 'ڕێکخستنی ڕەسەنایەتی دوو هۆکار (2FA)',
 
-    'heading' => 'Set up two-factor authentication',
+    'heading' => 'ڕێکخستنی ڕەسەنایەتی دوو هۆکار',
 
-    'subheading' => '2FA adds an extra layer of security to your account by requiring a second form of verification when signing in.',
+    'subheading' => '2FA چینێکی زیادەی ئاسایش بۆ هەژمارەکەت زیاد دەکات، بە داواکردنی شێوازێکی دووەمی پشتڕاستکردنەوە لە کاتی چوونەژوورەوەدا.',
 
     'actions' => [
 
         'continue' => [
-            'label' => 'Continue',
+            'label' => 'بەردەوامبوون',
         ],
 
     ],

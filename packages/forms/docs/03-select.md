@@ -534,6 +534,8 @@ Select::make('author_id')
 
 <UtilityInjection set="formFields" extras="Schema;;Filament\Schemas\Schema;;$schema;;The schema object for the form in the modal.">As well as allowing a static value, the `editOptionForm()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+To use the same form schema for creating and editing options, use `manageOptionForm()`.
+
 <Aside variant="warning">
     Editing an option does not automatically check the selected record's `view()` or `update()` policy. [Authorize the option action](#authorizing-option-actions) before its modal is filled, not only when saving changes.
 </Aside>
@@ -635,12 +637,13 @@ To use the `MorphToSelect`, you must pass `types()` into the component, which te
 
 ```php
 use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\MorphToSelect\Type;
 
 MorphToSelect::make('commentable')
     ->types([
-        MorphToSelect\Type::make(Product::class)
+        Type::make(Product::class)
             ->titleAttribute('name'),
-        MorphToSelect\Type::make(Post::class)
+        Type::make(Post::class)
             ->titleAttribute('title'),
     ])
 ```
@@ -653,12 +656,13 @@ The `titleAttribute()` is used to extract the titles out of each product or post
 
 ```php
 use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\MorphToSelect\Type;
 
 MorphToSelect::make('commentable')
     ->types([
-        MorphToSelect\Type::make(Product::class)
+        Type::make(Product::class)
             ->getOptionLabelFromRecordUsing(fn (Product $record): string => "{$record->name} - {$record->slug}"),
-        MorphToSelect\Type::make(Post::class)
+        Type::make(Post::class)
             ->titleAttribute('title'),
     ])
 ```
@@ -669,14 +673,15 @@ You may customize the database query that retrieves options using the `modifyOpt
 
 ```php
 use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\MorphToSelect\Type;
 use Illuminate\Database\Eloquent\Builder;
 
 MorphToSelect::make('commentable')
     ->types([
-        MorphToSelect\Type::make(Product::class)
+        Type::make(Product::class)
             ->titleAttribute('name')
             ->modifyOptionsQueryUsing(fn (Builder $query) => $query->whereBelongsTo($this->team)),
-        MorphToSelect\Type::make(Post::class)
+        Type::make(Post::class)
             ->titleAttribute('title')
             ->modifyOptionsQueryUsing(fn (Builder $query) => $query->whereBelongsTo($this->team)),
     ])
@@ -698,12 +703,13 @@ You may further customize the "key" select field for a specific morph type using
 
 ```php
 use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 
 MorphToSelect::make('commentable')
     ->types([
-        MorphToSelect\Type::make(Product::class)
+        Type::make(Product::class)
             ->titleAttribute('name')
             ->modifyKeySelectUsing(fn (Select $select): Select => $select
                 ->createOptionForm([
@@ -713,7 +719,7 @@ MorphToSelect::make('commentable')
                 ->createOptionUsing(function (array $data): int {
                     return Product::create($data)->getKey();
                 })),
-        MorphToSelect\Type::make(Post::class)
+        Type::make(Post::class)
             ->titleAttribute('title'),
     ])
 ```
@@ -722,13 +728,14 @@ This is useful if you want to customize the "key" select field for each morphed 
 
 ```php
 use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Forms\Components\Select;
 
 MorphToSelect::make('commentable')
     ->types([
-        MorphToSelect\Type::make(Product::class)
+        Type::make(Product::class)
             ->titleAttribute('name'),
-        MorphToSelect\Type::make(Post::class)
+        Type::make(Post::class)
             ->titleAttribute('title'),
     ])
     ->modifyKeySelectUsing(fn (Select $select): Select => $select->native())
@@ -738,13 +745,14 @@ You can also modify the "type" select field using the `modifyTypeSelectUsing()` 
 
 ```php
 use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Forms\Components\Select;
 
 MorphToSelect::make('commentable')
     ->types([
-        MorphToSelect\Type::make(Product::class)
+        Type::make(Product::class)
             ->titleAttribute('name'),
-        MorphToSelect\Type::make(Post::class)
+        Type::make(Post::class)
             ->titleAttribute('title'),
     ])
     ->modifyTypeSelectUsing(fn (Select $select): Select => $select->native())
@@ -756,13 +764,14 @@ By default, the type selector is a select field. You may switch it to use inline
 
 ```php
 use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\MorphToSelect\Type;
 
 MorphToSelect::make('commentable')
     ->typeSelectToggleButtons()
     ->types([
-        MorphToSelect\Type::make(Product::class)
+        Type::make(Product::class)
             ->titleAttribute('name'),
-        MorphToSelect\Type::make(Post::class)
+        Type::make(Post::class)
             ->titleAttribute('title'),
     ])
 ```
@@ -771,14 +780,15 @@ When using toggle buttons, you can customize them using the `modifyTypeSelectUsi
 
 ```php
 use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Forms\Components\ToggleButtons;
 
 MorphToSelect::make('commentable')
     ->typeSelectToggleButtons()
     ->types([
-        MorphToSelect\Type::make(Product::class)
+        Type::make(Product::class)
             ->titleAttribute('name'),
-        MorphToSelect\Type::make(Post::class)
+        Type::make(Post::class)
             ->titleAttribute('title'),
     ])
     ->modifyTypeSelectUsing(fn (ToggleButtons $toggleButtons): ToggleButtons => $toggleButtons->grouped())

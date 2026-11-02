@@ -273,6 +273,8 @@ public function hasDeferredFilters(): bool
 
 When using deferred filters, a "Reset" link appears in the filter dropdown footer alongside the "Apply" button. Clicking this link restores all filters to their default values as defined in the `filtersSchema()` method. For example, if you set `->default(now()->subDays(30))` on a `DatePicker`, the reset action will restore that default date, not an empty value.
 
+You may also call `$this->resetFilters()` from your chart widget to restore the default filter values and refresh the chart data. This applies the defaults immediately, even when filter updates are deferred.
+
 #### Customizing filter actions
 
 You may customize the apply and reset actions that appear when using deferred filters. All methods that are available to [customize action trigger buttons](../actions/overview) can be used:
@@ -353,6 +355,7 @@ public function getEmptyStateDescription(): string | Htmlable | null
 To customize the [icon](../styling/icons) of the empty state, set the `$emptyStateIcon` property:
 
 ```php
+use BackedEnum;
 use Filament\Support\Icons\Heroicon;
 
 protected string | BackedEnum | null $emptyStateIcon = Heroicon::OutlinedChartBar;
@@ -569,10 +572,10 @@ public function getDescription(): ?string
 
 By default, widgets are lazy-loaded. This means that they will only be loaded when they are visible on the page.
 
-To disable this behavior, you may override the `$isLazy` property on the widget class:
+To disable this behavior, you may override the `$isLazyLoaded` property on the widget class:
 
 ```php
-protected static bool $isLazy = false;
+protected static ?bool $isLazyLoaded = false;
 ```
 
 ## Making the chart collapsible

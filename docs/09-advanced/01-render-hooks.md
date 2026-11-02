@@ -81,8 +81,8 @@ use Filament\View\PanelsRenderHook;
 - `PanelsRenderHook::PAGE_START` - Start of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_SUB_NAVIGATION_END_AFTER` - After the page sub navigation "end" sidebar position, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_SUB_NAVIGATION_END_BEFORE` - Before the page sub navigation "end" sidebar position, also [can be scoped](#scoping-render-hooks) to the page or resource class
-- `PanelsRenderHook::PAGE_SUB_NAVIGATION_SELECT_AFTER` - After the page sub navigation select (for mobile), also [can be scoped](#scoping-render-hooks) to the page or resource class
-- `PanelsRenderHook::PAGE_SUB_NAVIGATION_SELECT_BEFORE` - Before the page sub navigation select (for mobile), also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::PAGE_SUB_NAVIGATION_MOBILE_MENU_AFTER` - After the page sub navigation mobile menu, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::PAGE_SUB_NAVIGATION_MOBILE_MENU_BEFORE` - Before the page sub navigation mobile menu, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_SUB_NAVIGATION_SIDEBAR_AFTER` - After the page sub navigation sidebar, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_SUB_NAVIGATION_SIDEBAR_BEFORE` - Before the page sub navigation sidebar, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_SUB_NAVIGATION_START_AFTER` - After the page sub navigation "start" sidebar position, also [can be scoped](#scoping-render-hooks) to the page or resource class
@@ -156,7 +156,7 @@ use Filament\Tables\View\TablesRenderHook;
 - `TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER` - After the [column manager](../tables/columns/overview#toggling-column-visibility) trigger
 - `TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE` - Before the [column manager](../tables/columns/overview#toggling-column-visibility) trigger
 
-The `records` data provided to the content hooks contains the current records collection or paginator, or `null` before a deferred table has loaded. The `hasPagination` data indicates whether the native pagination component will be rendered, and the `table` data contains the `Filament\Tables\Table` instance.
+The `records` data provided to the content hooks contains the current records collection or paginator, or `null` before a lazy table has loaded. The `hasPagination` data indicates whether the native pagination component will be rendered, and the `table` data contains the `Filament\Tables\Table` instance.
 
 
 ### Actions render hooks
@@ -189,12 +189,12 @@ use Filament\Widgets\View\WidgetsRenderHook;
 
 ## Scoping render hooks
 
-Some render hooks can be given a "scope", which allows them to only be output on a specific page or Livewire component. For instance, you might want to register a render hook for just 1 page. To do that, you can pass the class of the page or component as the second argument to `registerRenderHook()`:
+Some render hooks can be given a "scope", which allows them to only be output on a specific page or Livewire component. For instance, you might want to register a render hook for just 1 page. To do that, you can pass the class of the page or component as the `scopes` argument to `registerRenderHook()`:
 
 ```php
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
-use Illuminate\Support\Facades\Blade;
+use Illuminate\Contracts\View\View;
 
 FilamentView::registerRenderHook(
     PanelsRenderHook::PAGE_START,
@@ -208,6 +208,7 @@ You can also pass an array of scopes to register the render hook for:
 ```php
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 
 FilamentView::registerRenderHook(
     PanelsRenderHook::PAGE_START,
@@ -224,6 +225,7 @@ Some render hooks for the [Panel Builder](#panel-builder-render-hooks) allow you
 ```php
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 
 FilamentView::registerRenderHook(
     PanelsRenderHook::PAGE_START,
@@ -239,6 +241,7 @@ The `$scopes` are passed to the render hook function, and you can use them to de
 ```php
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 
 FilamentView::registerRenderHook(
     PanelsRenderHook::PAGE_START,
@@ -254,6 +257,7 @@ Render hooks can receive "data" from when the hook is rendered. To access data f
 ```php
 use Filament\Support\Facades\FilamentView;
 use Filament\Tables\View\TablesRenderHook;
+use Illuminate\Contracts\View\View;
 
 FilamentView::registerRenderHook(
     TablesRenderHook::FILTER_INDICATORS,

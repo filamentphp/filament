@@ -7,12 +7,17 @@ return [
         'text' => [
 
             'actions' => [
-                'collapse_list' => 'Show :count less',
-                'expand_list' => 'Show :count more',
+                'collapse_list' => 'پیشاندانی :count کەمتر',
+                'expand_list' => 'پیشاندانی :count زیاتر',
             ],
 
-            'more_list_items' => 'and :count more',
+            'more_list_items' => 'هەروەها :count زیاتر',
 
+        ],
+
+        'icon' => [
+            'true' => 'بەڵێ',
+            'false' => 'نەخێر',
         ],
 
         'key_value' => [
@@ -20,16 +25,16 @@ return [
             'columns' => [
 
                 'key' => [
-                    'label' => 'Key',
+                    'label' => 'کلیل',
                 ],
 
                 'value' => [
-                    'label' => 'Value',
+                    'label' => 'بەها',
                 ],
 
             ],
 
-            'placeholder' => 'No entries',
+            'placeholder' => 'هیچ تۆمارێک نییە',
 
         ],
 

@@ -119,7 +119,7 @@
         </x-filament::dropdown.list>
     @endif
 
-    @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()) && filament()->hasThemeSwitcher())
+    @if (filament()->hasDarkMode() && (! filament()->isDarkModeForced()) && filament()->hasThemeSwitcher())
         <x-filament::dropdown.list>
             <x-filament-panels::theme-switcher />
         </x-filament::dropdown.list>

@@ -27,7 +27,7 @@ use Znck\Eloquent\Relations\BelongsToThrough;
 
 class TableSelect extends Field implements HasEmbeddedView
 {
-    use Concerns\CanLimitItemsLength;
+    use Concerns\CanLimitItemsCount;
     use Concerns\HasPivotData;
 
     protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.table-select';

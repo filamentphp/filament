@@ -7,7 +7,7 @@ use Filament\Support\TimezoneManager;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static void set(string | Closure | null $timezone)
+ * @method static void set(string | Closure | null $timezone = null)
  * @method static string get()
  *
  * @see TimezoneManager

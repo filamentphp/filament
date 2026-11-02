@@ -1,11 +1,5 @@
 {
     "plugins": ["prettier-plugin-blade", "prettier-plugin-tailwindcss"],
-    "overrides": [
-        {
-            "files": "*.svelte",
-            "options": { "plugins": ["prettier-plugin-svelte"] }
-        }
-    ],
     "semi": false,
     "singleQuote": true
 }

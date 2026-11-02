@@ -67,7 +67,10 @@ class ComponentClassGenerator extends ClassGenerator
             ->setStatic()
             ->setReturnType('static')
             ->setBody(<<<'PHP'
-                return app(static::class);
+                $static = app(static::class);
+                $static->configure();
+
+                return $static;
                 PHP);
 
         $this->configureMakeMethod($method);

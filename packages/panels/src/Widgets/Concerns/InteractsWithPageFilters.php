@@ -2,6 +2,7 @@
 
 namespace Filament\Widgets\Concerns;
 
+use Filament\Support\Components\Attributes\Unexposed;
 use Livewire\Attributes\Reactive;
 
 trait InteractsWithPageFilters /** @phpstan-ignore trait.unused */
@@ -12,6 +13,7 @@ trait InteractsWithPageFilters /** @phpstan-ignore trait.unused */
     #[Reactive]
     public ?array $pageFilters = null;
 
+    #[Unexposed]
     public function __get($property): mixed
     {
         // Backwards compatibility for the `$this->filters` property before it was renamed.

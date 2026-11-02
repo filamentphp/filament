@@ -3,6 +3,10 @@
 
     & > .fi-tabs > .fi-sc-tabs-tablist {
         @apply contents;
+
+        &.fi-disabled > .fi-tabs-item {
+            @apply cursor-default opacity-70;
+        }
     }
 
     & .fi-sc-tabs-header-overflow:not(.fi-sc-tabs-header-overflow-open) {
@@ -16,7 +20,7 @@
         top: var(--tab-overflow-top);
         width: var(--tab-overflow-width);
         height: var(--tab-overflow-height);
-        clip-path: var(--tab-overflow-clip);
+        clip-path: var(--tab-overflow-clip-path);
 
         & .fi-tabs-item-label {
             @apply flex-1 truncate text-start;

@@ -256,7 +256,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
 
         $notificationsLivewireComponent = new Notifications;
         $notificationsLivewireComponent->mount();
-        $notificationsLivewireComponent->pullNotificationsFromSession();
+        $notificationsLivewireComponent->pullNotifications();
         $notifications = $notificationsLivewireComponent->notifications;
 
         $expectedNotification = null;
@@ -304,7 +304,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
 
         $notificationsLivewireComponent = new Notifications;
         $notificationsLivewireComponent->mount();
-        $notificationsLivewireComponent->pullNotificationsFromSession();
+        $notificationsLivewireComponent->pullNotifications();
         $notifications = $notificationsLivewireComponent->notifications;
 
         $expectedNotification = null;

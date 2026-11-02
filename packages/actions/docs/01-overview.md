@@ -556,7 +556,7 @@ If the component is inside an inactive tab, your link must also select that tab 
 
 ### Initializing URL actions
 
-An action is initialized once per component lifetime, so closing its modal or re-rendering the component does not reopen it. Deferred table actions wait until the table has loaded. Prefer linking to one action at a time rather than combining `action` and `tableAction`.
+An action is initialized once per component lifetime, so closing its modal or re-rendering the component does not reopen it. Actions on lazy tables wait until the table has loaded. Prefer linking to one action at a time rather than combining `action` and `tableAction`.
 
 Closing an ordinary action removes its action parameters from the URL. Table action parameters remain; a newly mounted component, including after navigation or destroying and recreating a child, can consume a link still present in the URL again.
 

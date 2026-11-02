@@ -184,7 +184,7 @@
     >
         @foreach ($items as $item)
             @php
-                $isItemChildItemsActive = $item->isChildItemsActive();
+                $isItemChildItemsActive = $item->hasActiveChildItems();
                 $isItemActive = (! $isItemChildItemsActive) && $item->isActive();
                 $itemActiveIcon = $item->getActiveIcon();
                 $itemBadge = $item->getBadge();

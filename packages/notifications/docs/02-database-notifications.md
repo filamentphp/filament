@@ -113,7 +113,7 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->databaseNotifications()
-        ->databaseNotificationsPolling('30s');
+        ->databaseNotificationsPollingInterval('30s');
 }
 ```
 
@@ -127,7 +127,7 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->databaseNotifications()
-        ->databaseNotificationsPolling(null);
+        ->databaseNotificationsPollingInterval(null);
 }
 ```
 

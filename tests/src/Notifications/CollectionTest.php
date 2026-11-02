@@ -7,6 +7,7 @@ use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Exceptions;
+use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 use Livewire\Livewire;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -165,7 +166,15 @@ describe('validation and HTTP updates', function (): void {
         expect($collection['without-actions']->getActions())->toBe([]);
         expect($collection['null-actions']->getActions())->toBe([]);
 
-        $component = livewire(Notifications::class)->set('notifications', $data)->assertStatus(200);
+        expect(fn () => livewire(Notifications::class)->set('notifications', $data))
+            ->toThrow(CannotUpdateLockedPropertyException::class);
+
+        $component = livewire(Notifications::class);
+
+        foreach ($data as $notificationData) {
+            $component->dispatch('notificationSent', notification: $notificationData)->assertStatus(200);
+        }
+
         $component->call('removeNotification', 'with-actions')->assertStatus(200);
 
         expect($component->instance()->notifications->keys()->all())->toBe(['without-actions', 'null-actions']);

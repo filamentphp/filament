@@ -48,9 +48,17 @@ trait HasRelationship
         return (bool) $this->evaluate($this->isPreloaded);
     }
 
-    public function queriesRelationships(): bool
+    public function hasRelationship(): bool
     {
         return filled($this->getRelationshipName());
+    }
+
+    /**
+     * @deprecated Use `hasRelationship()` instead.
+     */
+    public function queriesRelationships(): bool
+    {
+        return $this->hasRelationship();
     }
 
     public function getRelationship(): Relation | Builder
@@ -121,7 +129,7 @@ trait HasRelationship
         return $relationshipQuery;
     }
 
-    public function getRelationshipKey(?Builder $query = null): ?string
+    public function getQualifiedRelatedKeyNameForRelationship(?Builder $query = null): ?string
     {
         $relationship = $this->getRelationship();
 
@@ -145,6 +153,14 @@ trait HasRelationship
         }
 
         return null;
+    }
+
+    /**
+     * @deprecated Use `getQualifiedRelatedKeyNameForRelationship()` instead.
+     */
+    public function getRelationshipKey(?Builder $query = null): ?string
+    {
+        return $this->getQualifiedRelatedKeyNameForRelationship($query);
     }
 
     public function hasEmptyRelationshipOption(): bool

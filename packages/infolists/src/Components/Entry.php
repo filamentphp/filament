@@ -297,7 +297,7 @@ class Entry extends Component
         $beforeContentSchema = $this->getChildSchema($this::BEFORE_CONTENT_SCHEMA_KEY)?->toHtmlString();
         $afterContentSchema = $this->getChildSchema($this::AFTER_CONTENT_SCHEMA_KEY)?->toHtmlString();
 
-        $attributes = $this->getExtraEntryWrapperAttributesBag()
+        $attributes = $this->getExtraEntryWrapperAttributeBag()
             ->class([
                 'fi-in-entry',
                 'fi-in-entry-has-inline-label' => $hasInlineLabel,

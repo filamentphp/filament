@@ -37,7 +37,7 @@ trait HasRecordActions
         $this->pushRecordActions($actions);
 
         if ($position) {
-            $this->recordActionsPosition($position);
+            $this->recordActionsPosition(is_string($position) ? (RecordActionsPosition::tryFrom($position) ?? $position) : $position);
         }
 
         return $this;

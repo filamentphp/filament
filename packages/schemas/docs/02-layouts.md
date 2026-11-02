@@ -444,9 +444,9 @@ Grid::make()
 
 In this example, the fallback breakpoints ensure that even in browsers that don't support container queries, the layout will still respond to viewport size changes, with the name field appearing first and the email field second on larger screens.
 
-## Deferring the loading of a layout's child schema
+## Lazy loading a layout's child schema
 
-If a layout contains components that are expensive to render, you can pass a `Schema` object to its `schema()` method and use `deferLoading()`. The child schema will initially render a loading indicator and will be loaded when it enters the viewport:
+If a layout contains components that are expensive to render, you can pass a `Schema` object to its `schema()` method and use `lazyLoaded()`. The child schema will initially render a loading indicator and will be loaded when it enters the viewport:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -462,11 +462,11 @@ Group::make()
                 TextInput::make('email')
                     ->email(),
             ])
-            ->deferLoading(),
+            ->lazyLoaded(),
     )
 ```
 
-In this example, a `Group` is used because it has no visual styling of its own. You can use the same approach with other layout components that accept a child schema. Every deferred schema must have a unique key, which it can inherit from a keyed parent component as in this example. You can learn more in the [schema overview](overview#deferring-the-loading-of-a-child-schema).
+In this example, a `Group` is used because it has no visual styling of its own. You can use the same approach with other layout components that accept a child schema. Every lazy schema must have a unique key, which it can inherit from a keyed parent component as in this example. You can learn more in the [schema overview](overview#lazy-loading-a-child-schema).
 
 ## Adding extra HTML attributes to a layout component
 

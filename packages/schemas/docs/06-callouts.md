@@ -145,7 +145,7 @@ Callout::make('Your trial ends in 3 days')
     ])
 ```
 
-<UtilityInjection set="schemaComponents">As well as allowing a static value, the `actions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">You can pass functions inside the `actions()` array to dynamically calculate actions. You can inject various utilities into these functions as parameters.</UtilityInjection>
 
 <AutoScreenshot name="schemas/layout/callout/actions" alt="Callout with actions" />
 

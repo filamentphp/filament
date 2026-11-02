@@ -62,10 +62,10 @@ it('runs synchronous imports and completion notifications with the original guar
 
     livewire(ImportDispatchPage::class)
         ->mountAction('import')
-        ->setActionData(['file' => UploadedFile::fake()->createWithContent('posts.csv', "title,content\nFirst post,Body\n,Invalid row\n")])
-        ->setActionData(['columnMap' => ['title' => 'title', 'content' => 'content']])
+        ->fillForm(['file' => UploadedFile::fake()->createWithContent('posts.csv', "title,content\nFirst post,Body\n,Invalid row\n")])
+        ->fillForm(['columnMap' => ['title' => 'title', 'content' => 'content']])
         ->callMountedAction()
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $import = Import::query()->sole();
     expect($events)->toBe(['started', 'completed'])
@@ -97,10 +97,10 @@ it('preserves importer batch metadata and the asynchronous started notification'
 
     livewire(ImportDispatchPage::class)
         ->mountAction('import')
-        ->setActionData(['file' => UploadedFile::fake()->createWithContent('posts.csv', "title,content\nFirst post,Body\n")])
-        ->setActionData(['columnMap' => ['title' => 'title', 'content' => 'content']])
+        ->fillForm(['file' => UploadedFile::fake()->createWithContent('posts.csv', "title,content\nFirst post,Body\n")])
+        ->fillForm(['columnMap' => ['title' => 'title', 'content' => 'content']])
         ->callMountedAction()
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->assertNotified();
 
     Bus::assertBatched(static fn (PendingBatch $batch): bool => ($batch->name === 'Post import')
@@ -132,10 +132,10 @@ it('fakes only import dispatch while preserving action metadata and unrelated jo
 
     $page = livewire(ImportDispatchPage::class)
         ->mountAction('import')
-        ->setActionData(['file' => UploadedFile::fake()->createWithContent('posts.csv', "Headline,Body\nImported title,Imported body\n")])
-        ->setActionData(['columnMap' => ['title' => 'Headline', 'content' => 'Body'], 'mode' => 'replace'])
+        ->fillForm(['file' => UploadedFile::fake()->createWithContent('posts.csv', "Headline,Body\nImported title,Imported body\n")])
+        ->fillForm(['columnMap' => ['title' => 'Headline', 'content' => 'Body'], 'mode' => 'replace'])
         ->callMountedAction()
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     if ($connection === 'sync') {
         $page->assertNotNotified();
@@ -184,13 +184,13 @@ it('does not record rejected import forms or unauthorized submissions', function
 
     $page = livewire(ImportDispatchPage::class)
         ->mountAction('import')
-        ->setActionData(['file' => UploadedFile::fake()->createWithContent('posts.csv', "title,content\nFirst post,Body\n")])
-        ->setActionData(['columnMap' => ['title' => 'title', 'content' => 'content'], ...$data])
+        ->fillForm(['file' => UploadedFile::fake()->createWithContent('posts.csv', "title,content\nFirst post,Body\n")])
+        ->fillForm(['columnMap' => ['title' => 'title', 'content' => 'content'], ...$data])
         ->set('canImport', $authorized)
         ->call('callMountedAction');
 
     if ($errors) {
-        $page->assertHasActionErrors($errors);
+        $page->assertHasFormErrors($errors);
     }
 
     $fake->assertNothingDispatched();
@@ -228,10 +228,10 @@ it('asserts no matching import was dispatched without rejecting other imports', 
     foreach (['append', 'replace'] as $mode) {
         livewire(ImportDispatchPage::class)
             ->mountAction('import')
-            ->setActionData(['file' => UploadedFile::fake()->createWithContent('posts.csv', "Headline,Body\nFirst post,Content\n")])
-            ->setActionData(['columnMap' => ['title' => 'Headline', 'content' => 'Body'], 'mode' => $mode])
+            ->fillForm(['file' => UploadedFile::fake()->createWithContent('posts.csv', "Headline,Body\nFirst post,Content\n")])
+            ->fillForm(['columnMap' => ['title' => 'Headline', 'content' => 'Body'], 'mode' => $mode])
             ->callMountedAction()
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
     }
 
     $fake->assertNotDispatched(Importer::class, static fn (): bool => throw new LogicException('Unrelated importer callback invoked.'));

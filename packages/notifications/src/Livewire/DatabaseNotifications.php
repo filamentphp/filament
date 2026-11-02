@@ -9,6 +9,8 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\View\View;
@@ -36,9 +38,11 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
 
     public static ?string $authGuard = null;
 
+    #[Exposed]
     #[On('databaseNotificationsSent')]
     public function refresh(): void {}
 
+    #[Exposed]
     #[On('notificationClosed')]
     public function removeNotification(string $id): void
     {
@@ -51,6 +55,7 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
             ->delete();
     }
 
+    #[Exposed]
     #[On('markedNotificationAsRead')]
     public function markNotificationAsRead(string $id): void
     {
@@ -63,6 +68,7 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
             ->update(['read_at' => now()]);
     }
 
+    #[Exposed]
     #[On('markedNotificationAsUnread')]
     public function markNotificationAsUnread(string $id): void
     {
@@ -75,16 +81,19 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
             ->update(['read_at' => null]);
     }
 
+    #[Exposed]
     public function clearNotifications(): void
     {
         $this->getNotificationsQuery()->delete();
     }
 
+    #[Exposed]
     public function markAllNotificationsAsRead(): void
     {
         $this->getUnreadNotificationsQuery()->update(['read_at' => now()]);
     }
 
+    #[Unexposed]
     public function getNotifications(): DatabaseNotificationCollection | Paginator
     {
         if (! $this->isPaginated()) {
@@ -95,11 +104,13 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
         return $this->getNotificationsQuery()->simplePaginate(50, pageName: 'database-notifications-page');
     }
 
+    #[Unexposed]
     public function isPaginated(): bool
     {
         return static::$isPaginated;
     }
 
+    #[Unexposed]
     public function getNotificationsQuery(): Builder | Relation
     {
         $user = $this->getUser();
@@ -112,22 +123,26 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
         return $user->notifications()->where('data->format', 'filament');
     }
 
+    #[Unexposed]
     public function getUnreadNotificationsQuery(): Builder | Relation
     {
         /** @phpstan-ignore-next-line */
         return $this->getNotificationsQuery()->unread();
     }
 
+    #[Unexposed]
     public function getUnreadNotificationsCount(): int
     {
         return $this->getUnreadNotificationsQuery()->count();
     }
 
+    #[Unexposed]
     public function getPollingInterval(): ?string
     {
         return static::$pollingInterval;
     }
 
+    #[Unexposed]
     public function getTrigger(): ?View
     {
         $viewPath = static::$trigger;
@@ -139,6 +154,7 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
         return view($viewPath);
     }
 
+    #[Unexposed]
     public function markAllNotificationsAsReadAction(): Action
     {
         return Action::make('markAllNotificationsAsRead')
@@ -147,6 +163,7 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
             ->action('markAllNotificationsAsRead');
     }
 
+    #[Unexposed]
     public function clearNotificationsAction(): Action
     {
         return Action::make('clearNotifications')
@@ -157,11 +174,13 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
             ->close();
     }
 
+    #[Unexposed]
     public function getUser(): Model | Authenticatable | null
     {
         return auth(static::$authGuard)->user();
     }
 
+    #[Unexposed]
     public function getBroadcastChannel(): ?string
     {
         $user = $this->getUser();
@@ -179,6 +198,7 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
         return "{$userClass}.{$user->getKey()}";
     }
 
+    #[Unexposed]
     public function getNotification(DatabaseNotification $notification): Notification
     {
         return Notification::fromDatabase($notification)
@@ -190,16 +210,19 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
         return $date->diffForHumans();
     }
 
+    #[Unexposed]
     public static function trigger(?string $trigger): void
     {
         static::$trigger = $trigger;
     }
 
+    #[Unexposed]
     public static function pollingInterval(?string $interval): void
     {
         static::$pollingInterval = $interval;
     }
 
+    #[Unexposed]
     public static function authGuard(?string $guard): void
     {
         static::$authGuard = $guard;
@@ -208,16 +231,19 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
     /**
      * @return array<string>
      */
+    #[Unexposed]
     public function queryStringHandlesPagination(): array
     {
         return [];
     }
 
+    #[Unexposed]
     public function render(): View
     {
         return view('filament-notifications::database-notifications');
     }
 
+    #[Unexposed]
     public function placeholder(): string
     {
         return '<div>' . $this->getTrigger()?->with(['unreadNotificationsCount' => $this->getUnreadNotificationsCount()])->render() . '</div>';

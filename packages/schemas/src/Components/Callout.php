@@ -10,7 +10,7 @@ use Filament\Schemas\Components\Concerns\HasDescription;
 use Filament\Schemas\Components\Concerns\HasFooterActions;
 use Filament\Schemas\Components\Concerns\HasHeading;
 use Filament\Schemas\Schema;
-use Filament\Schemas\View\SchemaIconAlias;
+use Filament\Schemas\View\SchemasIconAlias;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasIcon;
@@ -159,10 +159,10 @@ class Callout extends Component implements HasEmbeddedView
     public function getIcon(): string | BackedEnum | Htmlable | null
     {
         return $this->getBaseIcon() ?? match ($this->getStatus()) {
-            'danger' => FilamentIcon::resolve(SchemaIconAlias::COMPONENTS_CALLOUT_DANGER) ?? Heroicon::OutlinedXCircle,
-            'info' => FilamentIcon::resolve(SchemaIconAlias::COMPONENTS_CALLOUT_INFO) ?? Heroicon::OutlinedInformationCircle,
-            'success' => FilamentIcon::resolve(SchemaIconAlias::COMPONENTS_CALLOUT_SUCCESS) ?? Heroicon::OutlinedCheckCircle,
-            'warning' => FilamentIcon::resolve(SchemaIconAlias::COMPONENTS_CALLOUT_WARNING) ?? Heroicon::OutlinedExclamationCircle,
+            'danger' => FilamentIcon::resolve(SchemasIconAlias::COMPONENTS_CALLOUT_DANGER) ?? Heroicon::OutlinedXCircle,
+            'info' => FilamentIcon::resolve(SchemasIconAlias::COMPONENTS_CALLOUT_INFO) ?? Heroicon::OutlinedInformationCircle,
+            'success' => FilamentIcon::resolve(SchemasIconAlias::COMPONENTS_CALLOUT_SUCCESS) ?? Heroicon::OutlinedCheckCircle,
+            'warning' => FilamentIcon::resolve(SchemasIconAlias::COMPONENTS_CALLOUT_WARNING) ?? Heroicon::OutlinedExclamationCircle,
             default => null,
         };
     }

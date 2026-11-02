@@ -34,15 +34,25 @@ class PanelsIconAlias
 
     const AUTH_MULTI_FACTOR_EMAIL_ACTIONS_SET_UP_NOTIFICATION = 'panels::auth.multi-factor.email.actions.set-up.notification';
 
+    const AUTH_PASSWORD_RESET_REQUEST_ACTIONS_LOGIN = 'panels::pages.password-reset.request-password-reset.actions.login';
+
+    const AUTH_PASSWORD_RESET_REQUEST_ACTIONS_LOGIN_RTL = 'panels::pages.password-reset.request-password-reset.actions.login.rtl';
+
     const GLOBAL_SEARCH_FIELD = 'panels::global-search.field';
 
     const PAGES_DASHBOARD_ACTIONS_FILTER = 'panels::pages.dashboard.actions.filter';
 
     const PAGES_DASHBOARD_NAVIGATION_ITEM = 'panels::pages.dashboard.navigation-item';
 
-    const PAGES_PASSWORD_RESET_REQUEST_PASSWORD_RESET_ACTIONS_LOGIN = 'panels::pages.password-reset.request-password-reset.actions.login';
+    /**
+     * @deprecated Use `AUTH_PASSWORD_RESET_REQUEST_ACTIONS_LOGIN` instead.
+     */
+    const PAGES_PASSWORD_RESET_REQUEST_PASSWORD_RESET_ACTIONS_LOGIN = self::AUTH_PASSWORD_RESET_REQUEST_ACTIONS_LOGIN;
 
-    const PAGES_PASSWORD_RESET_REQUEST_PASSWORD_RESET_ACTIONS_LOGIN_RTL = 'panels::pages.password-reset.request-password-reset.actions.login.rtl';
+    /**
+     * @deprecated Use `AUTH_PASSWORD_RESET_REQUEST_ACTIONS_LOGIN_RTL` instead.
+     */
+    const PAGES_PASSWORD_RESET_REQUEST_PASSWORD_RESET_ACTIONS_LOGIN_RTL = self::AUTH_PASSWORD_RESET_REQUEST_ACTIONS_LOGIN_RTL;
 
     const RESOURCES_PAGES_EDIT_RECORD_NAVIGATION_ITEM = 'panels::resources.pages.edit-record.navigation-item';
 

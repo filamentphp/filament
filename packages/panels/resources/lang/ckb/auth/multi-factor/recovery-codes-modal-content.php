@@ -4,24 +4,24 @@ return [
 
     'actions' => [
 
-        'Click to',
+        'کرتە بکە بۆ',
 
         'copy' => [
-            'label' => 'copy',
+            'label' => 'لەبەرگرتنەوە',
         ],
 
-        'or',
+        'یان',
 
         'download' => [
-            'label' => 'download',
+            'label' => 'داگرتنی',
         ],
 
-        'all the codes at once.',
+        'هەموو کۆدەکان بەیەکجار.',
 
     ],
 
     'messages' => [
-        'copied' => 'Copied',
+        'copied' => 'لەبەرگیرایەوە',
     ],
 
 ];

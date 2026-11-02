@@ -79,7 +79,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'xatolik',
         'system_error' => 'Tizim xatosi, yordam xizmatiga murojaat qiling.',
-        'column_mapping_required_for_new_record' => ':atribut ustuni fayldagi ustunga moslashtirilmagan, lekin u yangi yozuvlar yaratish uchun talab qilinadi.',
+        'column_mapping_required_for_new_record' => ':attribute ustuni fayldagi ustunga moslashtirilmagan, lekin u yangi yozuvlar yaratish uchun talab qilinadi.',
     ],
 
 ];

@@ -8,7 +8,7 @@ trait CanBeContained
 {
     protected bool | Closure $isContained = true;
 
-    protected bool $isContainedCache;
+    protected bool $cachedIsContained;
 
     public function contained(bool | Closure $condition = true): static
     {
@@ -19,6 +19,6 @@ trait CanBeContained
 
     public function isContained(): bool
     {
-        return $this->isContainedCache ??= (bool) $this->evaluate($this->isContained);
+        return $this->cachedIsContained ??= (bool) $this->evaluate($this->isContained);
     }
 }

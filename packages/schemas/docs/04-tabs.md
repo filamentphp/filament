@@ -154,9 +154,9 @@ Tabs::make('Tabs')
 
 <AutoScreenshot name="schemas/layout/tabs/badges-color" alt="Tabs with badges with color" />
 
-### Deferring the loading of tab badges
+### Lazy loading tab badges
 
-If you have expensive queries powering your tab badges, the initial page load may be slow. You can defer the loading of tab badges using the `deferBadge()` method, which will load the badge values asynchronously after the page has rendered:
+If you have expensive queries powering your tab badges, the initial page load may be slow. You can lazy load tab badges using the `lazyLoadedBadge()` method, which will load the badge values asynchronously after the page has rendered:
 
 ```php
 use App\Models\Notification;
@@ -168,7 +168,7 @@ Tabs::make('Tabs')
     ->tabs([
         Tab::make('Notifications')
             ->badge(static fn (): int => Notification::query()->where('unread', true)->count())
-            ->deferBadge()
+            ->lazyLoadedBadge()
             ->schema([
                 // ...
             ]),
@@ -177,12 +177,12 @@ Tabs::make('Tabs')
 ```
 
 <Aside variant="warning">
-    The `badge()` value must be returned from a function when using `deferBadge()`. If you pass a raw value like `badge(Notification::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of deferral.
+    The `badge()` value must be returned from a function when using `lazyLoadedBadge()`. If you pass a raw value like `badge(Notification::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of lazy loading.
 
-    The `Tabs` component must have a `key()` set when using `deferBadge()`. Without a key, the deferred badge request cannot identify the correct component on the server.
+    The `Tabs` component must have a `key()` set when using `lazyLoadedBadge()`. Without a key, the lazy badge request cannot identify the correct component on the server.
 </Aside>
 
-<UtilityInjection set="schemaComponents">As well as allowing a static value, the `deferBadge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents">As well as allowing a static value, the `lazyLoadedBadge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Using grid columns within a tab
 
@@ -387,9 +387,9 @@ Tabs::make('Tabs')
 
 <UtilityInjection set="schemaComponents">As well as allowing a static value, the `persistTabInQueryString()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-## Deferring the loading of tab content
+## Lazy loading tab content
 
-If the content of a tab is expensive to render, you can pass a `Schema` object to its `schema()` method and use `deferLoading()`. The content of the active tab will be loaded when it enters the viewport. The content of an inactive tab will not be loaded until the tab is selected:
+If the content of a tab is expensive to render, you can pass a `Schema` object to its `schema()` method and use `lazyLoaded()`. The content of the active tab will be loaded when it enters the viewport. The content of an inactive tab will not be loaded until the tab is selected:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -407,7 +407,7 @@ Tabs::make('Settings')
                     ->components([
                         TextInput::make('name'),
                     ])
-                    ->deferLoading(),
+                    ->lazyLoaded(),
             ),
         Tab::make('Notifications')
             ->key('notificationsTab')
@@ -416,12 +416,12 @@ Tabs::make('Settings')
                     ->components([
                         // ...
                     ])
-                    ->deferLoading(),
+                    ->lazyLoaded(),
             ),
     ])
 ```
 
-Every deferred schema must have a unique key. In this example, the keys on the tabs are inherited by their child schemas, while the key on the `Tabs` component namespaces them from other tabs in the same schema. You can learn more in the [schema overview](overview#deferring-the-loading-of-a-child-schema).
+Every lazy schema must have a unique key. In this example, the keys on the tabs are inherited by their child schemas, while the key on the `Tabs` component namespaces them from other tabs in the same schema. You can learn more in the [schema overview](overview#lazy-loading-a-child-schema).
 
 ## Using tabs without content panels
 

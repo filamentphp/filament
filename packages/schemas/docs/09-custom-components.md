@@ -199,12 +199,15 @@ class Chart extends Component
 }
 ```
 
+For server-provided configuration that should not be editable, add [`#[Locked]`](../advanced/security#protecting-server-managed-component-state) to the property.
+
 #### Accessing the current record in the Livewire component
 
 You can access the current record in the Livewire component using the `$record` parameter in the `mount()` method, or the `$record` property:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Attributes\Locked;
 
 class Chart extends Component
 {
@@ -215,6 +218,7 @@ class Chart extends Component
     
     // or
     
+    #[Locked]
     public ?Model $record = null;
 }
 ```
@@ -231,14 +235,14 @@ Livewire::make(Chart::class)
 
 ### Lazy loading a Livewire component
 
-You may allow the component to [lazily load](https://livewire.laravel.com/docs/lazy#rendering-placeholder-html) using the `lazy()` method:
+You may allow the component to [lazily load](https://livewire.laravel.com/docs/lazy#rendering-placeholder-html) when it enters the viewport using the `lazyLoaded()` method:
 
 ```php
 use Filament\Schemas\Components\Livewire;
 use App\Livewire\Chart;
 
 Livewire::make(Chart::class)
-    ->lazy()       
+    ->lazyLoaded()
 ```
 
 ## Custom component classes
@@ -266,7 +270,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 }
 ```
@@ -294,7 +301,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     public function heading(?string $heading): static
@@ -346,7 +356,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     public function heading(string | Closure | null $heading): static
@@ -393,7 +406,10 @@ class Chart extends Component
 
     public static function make(string | Closure | null $heading = null): static
     {
-        return app(static::class, ['heading' => $heading]);
+        $static = app(static::class, ['heading' => $heading]);
+        $static->configure();
+
+        return $static;
     }
 
     public function heading(string | Closure | null $heading): static
@@ -428,7 +444,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     #[Exposed]
@@ -521,7 +540,10 @@ class Chart extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     #[Exposed]

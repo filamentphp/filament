@@ -7,7 +7,7 @@ use Closure;
 interface BillingProvider
 {
     /**
-     * @return class-string | callable-string | Closure | array<class-string, string>
+     * @return class-string | callable-string | Closure | array<array-key, mixed>
      */
     public function getRouteAction(): string | Closure | array;
 

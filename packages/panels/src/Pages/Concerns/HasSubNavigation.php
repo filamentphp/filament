@@ -8,6 +8,7 @@ use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\Page as ResourcePage;
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
 use UnitEnum;
@@ -24,6 +25,7 @@ trait HasSubNavigation
     /**
      * @return array<NavigationItem | NavigationGroup>
      */
+    #[Unexposed]
     public function getSubNavigation(): array
     {
         if (filled($cluster = static::getCluster()) && $cluster::shouldRegisterSubNavigation()) {
@@ -33,6 +35,7 @@ trait HasSubNavigation
         return [];
     }
 
+    #[Unexposed]
     public static function getSubNavigationPosition(): SubNavigationPosition
     {
         if (filled(static::$subNavigationPosition)) {
@@ -49,6 +52,7 @@ trait HasSubNavigation
     /**
      * @return array<NavigationGroup>
      */
+    #[Unexposed]
     public function getCachedSubNavigation(): array
     {
         if (isset($this->cachedSubNavigation)) {
@@ -162,6 +166,7 @@ trait HasSubNavigation
      * @param  array<class-string<Page>>  $components
      * @return array<NavigationItem>
      */
+    #[Unexposed]
     public function generateNavigationItems(array $components): array
     {
         $parameters = $this->getSubNavigationParameters();
@@ -203,6 +208,7 @@ trait HasSubNavigation
     /**
      * @return array<string, mixed>
      */
+    #[Unexposed]
     public function getSubNavigationParameters(): array
     {
         return [];

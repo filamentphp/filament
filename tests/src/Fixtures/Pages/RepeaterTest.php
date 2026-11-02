@@ -84,10 +84,14 @@ class RepeaterTest extends Page
             ->schema([
                 Repeater::make('items')
                     ->label('Items')
+                    ->default([['name' => 'Alpha']])
+                    ->addAction(static fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'add-item']))
+                    ->deleteAction(static fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'delete-item']))
                     ->schema([
                         TextInput::make('name')
                             ->label('Name')
-                            ->required(),
+                            ->required()
+                            ->extraInputAttributes(['data-testid' => 'item-name']),
                     ])
                     ->extraAttributes(['data-testid' => 'repeater']),
             ])

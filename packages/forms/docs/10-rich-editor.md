@@ -334,7 +334,7 @@ use Filament\Forms\Components\RichEditor\RichContentRenderer;
 RichContentRenderer::make($record->content)->toHtml()
 ```
 
-The `toHtml()` method returns a string. If you would like to output HTML in a Blade view without escaping the HTML, you can echo the `RichContentRender` object without calling `toHtml()`:
+The `toHtml()` method returns a string. If you would like to output HTML in a Blade view without escaping the HTML, you can echo the `RichContentRenderer` object without calling `toHtml()`:
 
 ```blade
 {{ \Filament\Forms\Components\RichEditor\RichContentRenderer::make($record->content) }}

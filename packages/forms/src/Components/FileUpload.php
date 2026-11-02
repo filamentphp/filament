@@ -44,21 +44,21 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
     protected string | int | float | Closure | null $itemPanelAspectRatio = null;
 
-    protected string | Closure $loadingIndicatorPosition = 'right';
+    protected string | Closure | null $loadingIndicatorPosition = null;
 
     protected string | Closure | null $panelAspectRatio = null;
 
     protected string | Closure | null $panelLayout = 'compact';
 
-    protected string | Closure $removeUploadedFileButtonPosition = 'left';
+    protected string | Closure | null $removeUploadedFileButtonPosition = null;
 
     protected bool | Closure $shouldAppendFiles = false;
 
     protected bool | Closure $shouldOrientImagesFromExif = true;
 
-    protected string | Closure $uploadButtonPosition = 'right';
+    protected string | Closure | null $uploadButtonPosition = null;
 
-    protected string | Closure $uploadProgressIndicatorPosition = 'right';
+    protected string | Closure | null $uploadProgressIndicatorPosition = null;
 
     protected bool | Closure $hasImageEditor = false;
 
@@ -408,7 +408,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
     public function getLoadingIndicatorPosition(): string
     {
-        return $this->evaluate($this->loadingIndicatorPosition);
+        return $this->evaluate($this->loadingIndicatorPosition) ?? ($this->isAvatar() ? 'center bottom' : 'right');
     }
 
     public function getPanelAspectRatio(): ?string
@@ -423,17 +423,23 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
     public function getRemoveUploadedFileButtonPosition(): string
     {
-        return $this->evaluate($this->removeUploadedFileButtonPosition);
+        return $this->evaluate($this->removeUploadedFileButtonPosition) ?? ($this->isAvatar()
+            ? ($this->hasImageEditor() ? 'left bottom' : 'center bottom')
+            : 'left');
     }
 
     public function getUploadButtonPosition(): string
     {
-        return $this->evaluate($this->uploadButtonPosition);
+        return $this->evaluate($this->uploadButtonPosition) ?? ($this->isAvatar()
+            ? ($this->hasImageEditor() ? 'right bottom' : 'center bottom')
+            : 'right');
     }
 
     public function getUploadProgressIndicatorPosition(): string
     {
-        return $this->evaluate($this->uploadProgressIndicatorPosition);
+        return $this->evaluate($this->uploadProgressIndicatorPosition) ?? ($this->isAvatar()
+            ? ($this->hasImageEditor() ? 'right bottom' : 'center bottom')
+            : 'right');
     }
 
     public function isAvatar(): bool
@@ -541,7 +547,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
     public function getImageEditorViewportHeight(): ?int
     {
         if (($targetHeight = (int) $this->getAutomaticallyResizeImagesHeight()) > 1) {
-            return (int) round($targetHeight * $this->getParentTargetSizes($targetHeight), precision: 0);
+            return (int) round($targetHeight * $this->getImageEditorViewportScaleFactor($targetHeight), precision: 0);
         }
 
         if (filled($ratio = $this->getAutomaticallyCropImagesAspectRatio())) {
@@ -558,7 +564,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
     public function getImageEditorViewportWidth(): ?int
     {
         if (($targetWidth = (int) $this->getAutomaticallyResizeImagesWidth()) > 1) {
-            return (int) round($targetWidth * $this->getParentTargetSizes($targetWidth), precision: 0);
+            return (int) round($targetWidth * $this->getImageEditorViewportScaleFactor($targetWidth), precision: 0);
         }
 
         if (filled($ratio = $this->getAutomaticallyCropImagesAspectRatio())) {
@@ -572,7 +578,15 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
         return $this->evaluate($this->imageEditorViewportWidth);
     }
 
+    /**
+     * @deprecated Use `getImageEditorViewportScaleFactor()` instead.
+     */
     protected function getParentTargetSizes(int $widthOrHeight): int | float
+    {
+        return $this->getImageEditorViewportScaleFactor($widthOrHeight);
+    }
+
+    protected function getImageEditorViewportScaleFactor(int $widthOrHeight): int | float
     {
         $targetWidth = (int) $this->getAutomaticallyResizeImagesWidth();
 

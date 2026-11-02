@@ -6,7 +6,7 @@ use Filament\Widgets\ChartWidget;
 
 class ChartWithDescriptionDemo extends ChartWidget
 {
-    protected static bool $isLazy = false;
+    protected static ?bool $isLazyLoaded = false;
 
     protected ?string $pollingInterval = null;
 

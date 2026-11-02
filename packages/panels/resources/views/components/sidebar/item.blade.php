@@ -123,7 +123,7 @@
         <ul class="fi-sidebar-sub-group-items">
             @foreach ($childItems as $childItem)
                 @php
-                    $isChildItemChildItemsActive = $childItem->isChildItemsActive();
+                    $isChildItemChildItemsActive = $childItem->hasActiveChildItems();
                     $isChildActive = (! $isChildItemChildItemsActive) && $childItem->isActive();
                     $childItemActiveIcon = $childItem->getActiveIcon();
                     $childItemBadge = $childItem->getBadge();

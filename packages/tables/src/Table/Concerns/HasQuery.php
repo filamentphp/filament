@@ -155,7 +155,15 @@ trait HasQuery
         return $this->evaluate($this->getRelationshipUsing);
     }
 
+    /**
+     * @deprecated Use `getInverseRelationshipName()` instead.
+     */
     public function getInverseRelationship(): ?string
+    {
+        return $this->getInverseRelationshipName();
+    }
+
+    public function getInverseRelationshipName(): ?string
     {
         $relationship = $this->getRelationship();
 
@@ -180,6 +188,6 @@ trait HasQuery
 
     public function getInverseRelationshipFor(Model $record): Relation | Builder
     {
-        return $record->{$this->getInverseRelationship()}();
+        return $record->{$this->getInverseRelationshipName()}();
     }
 }

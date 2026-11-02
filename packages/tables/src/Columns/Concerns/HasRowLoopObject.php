@@ -2,21 +2,10 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
-use stdClass;
-
-trait HasRowLoopObject
+/**
+ * @deprecated Use `HasRowLoop` instead.
+ */
+trait HasRowLoopObject /** @phpstan-ignore trait.unused */
 {
-    protected ?stdClass $loop = null;
-
-    public function rowLoop(?stdClass $loop): static
-    {
-        $this->loop = $loop;
-
-        return $this;
-    }
-
-    public function getRowLoop(): ?stdClass
-    {
-        return $this->loop;
-    }
+    use HasRowLoop;
 }

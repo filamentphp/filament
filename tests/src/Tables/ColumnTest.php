@@ -492,11 +492,13 @@ describe('searching', function (): void {
     });
 
     it('keeps reserved keys present in `tableColumnSearches` after resetting all column searches', function (): void {
-        livewire(PostsTableWithReservedJsPropertyColumnSearch::class)
+        $component = livewire(PostsTableWithReservedJsPropertyColumnSearch::class)
             ->set('tableColumnSearches.length', 'foo')
-            ->set('tableColumnSearches.sort', 'bar')
-            ->call('resetTableColumnSearches')
-            ->assertSet('tableColumnSearches', ['length' => '', 'sort' => '']);
+            ->set('tableColumnSearches.sort', 'bar');
+
+        $component->instance()->resetTableColumnSearches();
+
+        expect($component->instance()->tableColumnSearches)->toBe(['length' => '', 'sort' => '']);
     });
 
     it('renders, responsively hides, and clears individual column search inputs with associated labels for columns named after JavaScript array properties in the browser', function (): void {

@@ -443,7 +443,7 @@ use Filament\Facades\Filament;
 
 $team = Team::factory()->create();
 
-Filament::setTenant($this->team);
+Filament::setTenant($team);
 Filament::setCurrentPanel('admin');
 Filament::bootCurrentPanel();
 ```

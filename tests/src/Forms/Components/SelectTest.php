@@ -224,6 +224,28 @@ describe('configuration', function (): void {
             expect($select->hasCreateOptionActionFormSchema())->toBeTrue();
             expect($select->hasEditOptionActionFormSchema())->toBeTrue();
         });
+
+        it('uses `manageOptionForm()` for both option actions with form and schema callback injections', function (): void {
+            $select = Select::make('category')->manageOptionForm(schema: static function (Schema $schema, Schema $form): Schema {
+                expect($form)->toBe($schema);
+
+                return $schema->components([TextInput::make('name')->default('New option')]);
+            });
+
+            Schema::make(Livewire::make())->components([$select])->fill();
+
+            foreach ([$select->getCreateOptionAction(), $select->getEditOptionAction()] as $action) {
+                $schema = $action->schemaComponent($select)->getSchema(Schema::make($select->getLivewire())->statePath('optionData'));
+                $schema->fill();
+
+                expect($schema->getRawState())->toBe(['name' => 'New option']);
+            }
+
+            $select->manageOptionForm(schema: null);
+
+            expect($select->getCreateOptionAction())->toBeNull()
+                ->and($select->getEditOptionAction())->toBeNull();
+        });
     });
 
     describe('dropdown `Closure` configuration', function (): void {

@@ -81,7 +81,7 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
 
         $hasRelationship = $query && $column->hasRelationship($query->getModel());
 
-        if ($this->hasQueryModification() && $hasRelationship) {
+        if ($this->hasQueryModificationCallback() && $hasRelationship) {
             $baseQueryForModification = $query->toBase();
             $this->evaluate($this->modifyQueryUsing, [
                 'attribute' => $attribute,
@@ -151,7 +151,7 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
         $query = $query?->getModel()->resolveConnection($query->getModel()->getConnectionName())
             ->table($query->toBase(), $asName);
 
-        if ($this->hasQueryModification() && ! $hasRelationship) {
+        if ($this->hasQueryModificationCallback() && ! $hasRelationship) {
             $query = $this->evaluate($this->modifyQueryUsing, [
                 'attribute' => $attribute,
                 'query' => $query,

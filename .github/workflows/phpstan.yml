@@ -53,6 +53,17 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: mbstring, pdo, pdo_sqlite
           coverage: none
+      - name: Allow known Laravel 11 advisories for compatibility testing
+        if: matrix.laravel == '11.*'
+        # Laravel 11 is EOL. Allow these only in CI, without hiding audit reports.
+        run: |
+          composer config --json --merge policy.advisories.ignore-id '{
+            "PKSA-b41t-wbzk-9q51": {"on-audit": false},
+            "PKSA-d5tc-s1qs-h781": {"on-audit": false},
+            "PKSA-3r5d-mb8f-1qw9": {"on-audit": false},
+            "PKSA-m5cs-t1y6-qpcs": {"on-audit": false},
+            "PKSA-mdq4-51ck-6kdq": {"on-audit": false}
+          }'
       - name: Install dependencies
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update

@@ -2,6 +2,7 @@
 
 namespace Livewire\Features\SupportTesting {
 
+    use BackedEnum;
     use Closure;
     use Illuminate\Database\Eloquent\Model;
     use Illuminate\Support\Collection;
@@ -39,9 +40,9 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertTableColumnDoesNotHaveExtraAttributes(string $name, array $attributes, $record): static {}
 
-        public function assertTableColumnHasDescription(string $name, $description, $record, $position = 'below'): static {}
+        public function assertTableColumnHasDescription(string $name, $description, $record, string $position = 'below'): static {}
 
-        public function assertTableColumnDoesNotHaveDescription(string $name, $description, $record, $position = 'below'): static {}
+        public function assertTableColumnDoesNotHaveDescription(string $name, $description, $record, string $position = 'below'): static {}
 
         public function assertTableSelectColumnHasOptions(string $name, array $options, $record): static {}
 
@@ -80,7 +81,7 @@ namespace Livewire\Features\SupportTesting {
         /**
          * @deprecated Use `mountAction()` instead.
          */
-        public function mountTableAction(string | array $name, $record = null): static {}
+        public function mountTableAction(string | array $actions, $record = null): static {}
 
         /**
          * @deprecated Use `unmountAction()` instead.
@@ -95,12 +96,12 @@ namespace Livewire\Features\SupportTesting {
         /**
          * @deprecated Use `assertSchemaStateSet()` instead.
          */
-        public function assertTableActionDataSet(array | Closure $state): static {}
+        public function assertTableActionDataSet(array | Closure $data): static {}
 
         /**
          * @deprecated Use `callAction()` instead.
          */
-        public function callTableAction(string | array $name, $record = null, array $data = [], array $arguments = []): static {}
+        public function callTableAction(string | array $actions, $record = null, array $data = [], array $arguments = []): static {}
 
         public function callTableColumnAction(string $name, $record = null): static {}
 
@@ -112,14 +113,19 @@ namespace Livewire\Features\SupportTesting {
         /**
          * @deprecated Use `assertActionExists()` instead.
          */
-        public function assertTableActionExists(string | array $name, ?Closure $checkActionUsing = null, $record = null): static {}
+        public function assertTableActionExists(string | array $actions, ?Closure $checkActionUsing = null, $record = null): static {}
 
         /**
          * @deprecated Use `assertActionDoesNotExist()` instead.
          */
-        public function assertTableActionDoesNotExist(string | array $name, ?Closure $checkActionUsing = null, $record = null): static {}
+        public function assertTableActionDoesNotExist(string | array $actions, ?Closure $checkActionUsing = null, $record = null): static {}
 
+        /**
+         * @deprecated Use `assertTableRecordActionsExistInOrder()` instead.
+         */
         public function assertTableActionsExistInOrder(array $names): static {}
+
+        public function assertTableRecordActionsExistInOrder(array $names): static {}
 
         public function assertTableHeaderActionsExistInOrder(array $names): static {}
 
@@ -128,37 +134,42 @@ namespace Livewire\Features\SupportTesting {
         /**
          * @deprecated Use `assertActionVisible()` instead.
          */
-        public function assertTableActionVisible(string | array $name, $record = null): static {}
+        public function assertTableActionVisible(string | array $actions, $record = null): static {}
 
         /**
          * @deprecated Use `assertActionHidden()` instead.
          */
-        public function assertTableActionHidden(string | array $name, $record = null): static {}
+        public function assertTableActionHidden(string | array $actions, $record = null): static {}
 
         /**
          * @deprecated Use `assertActionEnabled()` instead.
          */
-        public function assertTableActionEnabled(string | array $name, $record = null): static {}
+        public function assertTableActionEnabled(string | array $actions, $record = null): static {}
 
         /**
          * @deprecated Use `assertActionDisabled()` instead.
          */
-        public function assertTableActionDisabled(string | array $name, $record = null): static {}
+        public function assertTableActionDisabled(string | array $actions, $record = null): static {}
 
         /**
          * @deprecated Use `assertActionMounted()` instead.
          */
-        public function assertTableActionMounted(string | array $name): static {}
+        public function assertTableActionMounted(string | array $actions): static {}
 
         /**
          * @deprecated Use `assertActionNotMounted()` instead.
          */
-        public function assertTableActionNotMounted(string | array $name): static {}
+        public function assertTableActionNotMounted(string | array $actions): static {}
 
         /**
          * @deprecated Use `assertActionHalted()` instead.
          */
-        public function assertTableActionHalted(string | array $name): static {}
+        public function assertTableActionHalted(string | array $actions): static {}
+
+        /**
+         * @deprecated Use `assertActionHalted()` with table context instead.
+         */
+        public function assertTableActionHeld(string | array $actions): static {}
 
         /**
          * @deprecated Use `assertHasFormErrors()` instead.
@@ -173,7 +184,7 @@ namespace Livewire\Features\SupportTesting {
         /**
          * @deprecated Use `selectTableRecords()` and `mountAction()` instead.
          */
-        public function mountTableBulkAction(string $name, array | Collection $records): static {}
+        public function mountTableBulkAction(string | array $actions, array | Collection $records): static {}
 
         /**
          * @deprecated Use `fillForm()` instead.
@@ -183,12 +194,12 @@ namespace Livewire\Features\SupportTesting {
         /**
          * @deprecated Use `assertSchemaStateSet()` instead.
          */
-        public function assertTableBulkActionDataSet(array | Closure $state): static {}
+        public function assertTableBulkActionDataSet(array | Closure $data): static {}
 
         /**
          * @deprecated Use `callAction()` instead.
          */
-        public function callTableBulkAction(string $name, array | Collection $records, array $data = [], array $arguments = []): static {}
+        public function callTableBulkAction(string | array $actions, array | Collection $records, array $data = [], array $arguments = []): static {}
 
         /**
          * @deprecated Use `callMountedAction()` instead.
@@ -198,12 +209,12 @@ namespace Livewire\Features\SupportTesting {
         /**
          * @deprecated Use `assertActionExists()` instead.
          */
-        public function assertTableBulkActionExists(string $name): static {}
+        public function assertTableBulkActionExists(string | array $actions): static {}
 
         /**
          * @deprecated Use `assertActionDoesNotExist()` instead.
          */
-        public function assertTableBulkActionDoesNotExist(string $name): static {}
+        public function assertTableBulkActionDoesNotExist(string | array $actions): static {}
 
         /**
          * @deprecated Use `assertActionListInOrder()` instead.
@@ -213,117 +224,122 @@ namespace Livewire\Features\SupportTesting {
         /**
          * @deprecated Use `assertActionVisible()` instead.
          */
-        public function assertTableBulkActionVisible(string $name): static {}
+        public function assertTableBulkActionVisible(string | array $actions): static {}
 
         /**
          * @deprecated Use `assertActionHidden()` instead.
          */
-        public function assertTableBulkActionHidden(string $name): static {}
+        public function assertTableBulkActionHidden(string | array $actions): static {}
 
         /**
          * @deprecated Use `assertActionEnabled()` instead.
          */
-        public function assertTableBulkActionEnabled(string $name): static {}
+        public function assertTableBulkActionEnabled(string | array $actions): static {}
 
         /**
          * @deprecated Use `assertActionDisabled()` instead.
          */
-        public function assertTableBulkActionDisabled(string $name): static {}
+        public function assertTableBulkActionDisabled(string | array $actions): static {}
 
         /**
          * @deprecated Use `assertActionHasIcon()` instead.
          */
-        public function assertTableActionHasIcon(string | array $name, string $icon, $record = null): static {}
+        public function assertTableActionHasIcon(string | array $actions, string | BackedEnum $icon, $record = null): static {}
 
         /**
          * @deprecated Use `assertActionDoesNotHaveIcon()` instead.
          */
-        public function assertTableActionDoesNotHaveIcon(string | array $name, string $icon, $record = null): static {}
+        public function assertTableActionDoesNotHaveIcon(string | array $actions, string | BackedEnum $icon, $record = null): static {}
 
         /**
          * @deprecated Use `assertActionHasLabel()` instead.
          */
-        public function assertTableActionHasLabel(string | array $name, string $label, $record = null): static {}
+        public function assertTableActionHasLabel(string | array $actions, string $label, $record = null): static {}
 
         /**
          * @deprecated Use `assertActionDoesNotHaveLabel()` instead.
          */
-        public function assertTableActionDoesNotHaveLabel(string | array $name, string $label, $record = null): static {}
+        public function assertTableActionDoesNotHaveLabel(string | array $actions, string $label, $record = null): static {}
 
         /**
          * @deprecated Use `assertActionHasColor()` instead.
          */
-        public function assertTableActionHasColor(string | array $name, string | array $color, $record = null): static {}
+        public function assertTableActionHasColor(string | array $actions, string | array $color, $record = null): static {}
 
         /**
          * @deprecated Use `assertActionDoesNotHaveColor()` instead.
          */
-        public function assertTableActionDoesNotHaveColor(string | array $name, string | array $color, $record = null): static {}
+        public function assertTableActionDoesNotHaveColor(string | array $actions, string | array $color, $record = null): static {}
 
         /**
          * @deprecated Use `assertActionHasIcon()` instead.
          */
-        public function assertTableBulkActionHasIcon(string $name, string $icon): static {}
+        public function assertTableBulkActionHasIcon(string | array $actions, string | BackedEnum $icon): static {}
 
         /**
          * @deprecated Use `assertActionDoesNotHaveIcon()` instead.
          */
-        public function assertTableBulkActionDoesNotHaveIcon(string $name, string $icon): static {}
+        public function assertTableBulkActionDoesNotHaveIcon(string | array $actions, string | BackedEnum $icon): static {}
 
         /**
          * @deprecated Use `assertActionHasLabel()` instead.
          */
-        public function assertTableBulkActionHasLabel(string $name, string $label): static {}
+        public function assertTableBulkActionHasLabel(string | array $actions, string $label): static {}
 
         /**
          * @deprecated Use `assertActionDoesNotHaveLabel()` instead.
          */
-        public function assertTableBulkActionDoesNotHaveLabel(string $name, string $label): static {}
+        public function assertTableBulkActionDoesNotHaveLabel(string | array $actions, string $label): static {}
 
         /**
          * @deprecated Use `assertActionHasColor()` instead.
          */
-        public function assertTableBulkActionHasColor(string $name, string | array $color): static {}
+        public function assertTableBulkActionHasColor(string | array $actions, string | array $color): static {}
 
         /**
          * @deprecated Use `assertActionDoesNotHaveColor()` instead.
          */
-        public function assertTableBulkActionDoesNotHaveColor(string $name, string | array $color): static {}
+        public function assertTableBulkActionDoesNotHaveColor(string | array $actions, string | array $color): static {}
 
         /**
          * @deprecated Use `assertActionHasUrl()` instead.
          */
-        public function assertTableActionHasUrl(string | array $name, string $url, $record = null): static {}
+        public function assertTableActionHasUrl(string | array $actions, string $url, $record = null): static {}
 
         /**
          * @deprecated Use `assertActionDoesNotHaveUrl()` instead.
          */
-        public function assertTableActionDoesNotHaveUrl(string | array $name, string $url, $record = null): static {}
+        public function assertTableActionDoesNotHaveUrl(string | array $actions, string $url, $record = null): static {}
 
         /**
          * @deprecated Use `assertActionShouldOpenUrlInNewTab()` instead.
          */
-        public function assertTableActionShouldOpenUrlInNewTab(string | array $name, $record = null): static {}
+        public function assertTableActionShouldOpenUrlInNewTab(string | array $actions, $record = null): static {}
 
         /**
          * @deprecated Use `assertActionShouldNotOpenUrlInNewTab()` instead.
          */
-        public function assertTableActionShouldNotOpenUrlInNewTab(string | array $name, $record = null): static {}
+        public function assertTableActionShouldNotOpenUrlInNewTab(string | array $actions, $record = null): static {}
 
         /**
          * @deprecated Use `assertActionMounted()` instead.
          */
-        public function assertTableBulkActionMounted(string $name): static {}
+        public function assertTableBulkActionMounted(string | array $actions): static {}
 
         /**
          * @deprecated Use `assertActionNotMounted()` instead.
          */
-        public function assertTableBulkActionNotMounted(string $name): static {}
+        public function assertTableBulkActionNotMounted(string | array $actions): static {}
 
         /**
          * @deprecated Use `assertActionHalted()` instead.
          */
-        public function assertTableBulkActionHalted(string $name): static {}
+        public function assertTableBulkActionHalted(string | array $actions): static {}
+
+        /**
+         * @deprecated Use `assertActionHalted()` with table and bulk context instead.
+         */
+        public function assertTableBulkActionHeld(string | array $actions): static {}
 
         /**
          * @deprecated Use `assertHasFormErrors()` instead.

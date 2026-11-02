@@ -74,6 +74,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 
 Action::make('viewUser')
@@ -947,7 +948,7 @@ By default, when a child action opens its modal, the parent action's modal is te
 
 ```php
 use Filament\Actions\Action;
-use Filament\Schemas\Components\Repeater;
+use Filament\Forms\Components\Repeater;
 
 Action::make('editItems')
     ->slideOver()

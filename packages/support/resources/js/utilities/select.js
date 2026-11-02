@@ -1200,6 +1200,12 @@ export class Select {
                     const labelSpan = document.createElement('span')
                     labelSpan.innerHTML = newLabel
                     option.appendChild(labelSpan)
+                    option.setAttribute(
+                        'aria-label',
+                        labelSpan.textContent ||
+                            labelSpan.innerText ||
+                            newLabel,
+                    )
                 } else {
                     option.appendChild(document.createTextNode(newLabel))
                 }

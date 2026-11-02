@@ -115,7 +115,9 @@ TextInputColumn::make('status')
 Hooks may be used to execute code at various points within the input's lifecycle:
 
 ```php
-TextInputColumn::make()
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('email')
     ->beforeStateUpdated(function ($record, $state) {
         // Runs before the state is saved to the database.
     })

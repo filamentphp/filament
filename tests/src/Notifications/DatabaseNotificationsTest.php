@@ -220,12 +220,9 @@ describe('user isolation', function (): void {
     })->with('database notification components')->with(['clearNotifications', 'markAllNotificationsAsRead']);
 
     it('does not return another user\'s notification data through `getNotification()`', function (string $component): void {
-        // Implicit model binding is not ownership-scoped. The returned `Notification`
-        // serializes to `{}`, decoded as `[]`, without exposing its protected payload.
         livewire($component)
             ->call('getNotification', $this->foreignNotification->getKey())
-            ->assertReturned([])
-            ->assertDontSee($this->foreignNotification->data['title']);
+            ->assertForbidden();
     })->with('database notification components');
 
     it('rejects unauthenticated rendering and hydrated mutations without changing rows', function (string $component, string $method): void {

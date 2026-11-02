@@ -140,9 +140,17 @@ class RichContentCustomBlockClassGenerator extends ClassGenerator
         $method->addParameter('config')
             ->setType('array');
 
+        $this->configureToPreviewHtmlMethod($method);
+    }
+
+    protected function configureToPreviewHtmlMethod(Method $method): void
+    {
         $this->configureToPreviewMethod($method);
     }
 
+    /**
+     * @deprecated Use `configureToPreviewHtmlMethod()` instead.
+     */
     protected function configureToPreviewMethod(Method $method): void {}
 
     protected function addToHtmlMethodToClass(ClassType $class): void

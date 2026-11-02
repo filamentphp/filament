@@ -421,10 +421,10 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     {
         $this->maxSize = $size;
 
-        $this->rule(static function (BaseFileUpload $component): string {
+        $this->rule(static function (BaseFileUpload $component): string | array {
             $size = $component->getMaxSize();
 
-            return "max:{$size}";
+            return $size === null ? [] : "max:{$size}";
         });
 
         return $this;

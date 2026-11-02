@@ -279,7 +279,7 @@ class AttachAction extends Action
                 ->when(
                     ! $table->allowsDuplicates(),
                     fn (Builder $query): Builder => $query->whereDoesntHave(
-                        $table->getInverseRelationship(),
+                        $table->getInverseRelationshipName(),
                         fn (Builder $query): Builder => $query->where(
                             // https://github.com/filamentphp/filament/issues/8067
                             $relationship->getParent()->getTable() === $relationship->getRelated()->getTable() ?

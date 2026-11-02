@@ -142,16 +142,26 @@ trait CanBeAuthorized
         $arguments = $this->parseAuthorizationArguments($this->authorization['arguments'] ?? []);
         $type = $this->authorization['type'] ?? null;
 
+        $firstDeniedResponse = null;
+
         foreach ($abilities as $ability) {
             $response = Gate::inspect($ability, Arr::wrap($arguments));
 
-            if (($type === 'any') && $response->allowed()) {
-                return $response;
+            if ($type === 'any') {
+                if ($response->allowed()) {
+                    return $response;
+                }
+
+                $firstDeniedResponse ??= $response;
             }
 
             if (($type === 'all') && $response->denied()) {
                 return $response;
             }
+        }
+
+        if ($type === 'any') {
+            return $firstDeniedResponse ?? Response::deny();
         }
 
         return Response::allow();

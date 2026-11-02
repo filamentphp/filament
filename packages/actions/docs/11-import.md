@@ -392,11 +392,10 @@ When returning a collection, you should validate that your function resolves eve
 You could even use this function to dynamically determine which columns to use to resolve the record:
 
 ```php
-use App\Models\Author;
 use Filament\Actions\Imports\ImportColumn;
 
 ImportColumn::make('author')
-    ->relationship(resolveUsing: function (string $state): ?Author {
+    ->relationship(resolveUsing: function (string $state): string {
         if (filter_var($state, FILTER_VALIDATE_EMAIL)) {
             return 'email';
         }
@@ -531,7 +530,7 @@ ImportColumn::make('price')
 
 ## Using import options
 
-The import action can render extra form components that the user can interact with when importing a CSV. This can be useful to allow the user to customize the behavior of the importer. For instance, you might want a user to be able to choose whether to update existing records when importing, or only create new ones. To do this, you can return options form components from the `getOptionsFormComponents()` method on your importer class:
+The import action can render extra form components that the user can interact with when importing a CSV. This can be useful to allow the user to customize the behavior of the importer. For instance, you might want a user to be able to choose whether to update existing records when importing, or only create new ones. To do this, you can return schema components from the `getOptionsFormComponents()` method on your importer class:
 
 ```php
 use Filament\Forms\Components\Checkbox;
@@ -577,13 +576,13 @@ public function resolveRecord(): ?Product
 
 ## Improving import column mapping guesses
 
-By default, Filament will attempt to "guess" which columns in the CSV match which columns in the database, to save the user time. It does this by attempting to find different combinations of the column name, with spaces, `-`, `_`, all cases insensitively. However, if you'd like to improve the guesses, you can call the `guess()` method with more examples of the column name that could be present in the CSV:
+By default, Filament will attempt to "guess" which columns in the CSV match which columns in the database, to save the user time. It does this by attempting to find different combinations of the column name, with spaces, `-`, `_`, all cases insensitively. However, if you'd like to improve the guesses, you can call the `guesses()` method with more examples of the column name that could be present in the CSV:
 
 ```php
 use Filament\Actions\Imports\ImportColumn;
 
 ImportColumn::make('sku')
-    ->guess(['id', 'number', 'stock-keeping unit'])
+    ->guesses(['id', 'number', 'stock-keeping unit'])
 ```
 
 ## Providing example CSV data

@@ -3,6 +3,7 @@
 namespace Filament\Pages\Dashboard\Concerns;
 
 use Filament\Facades\Filament;
+use Filament\Support\Components\Attributes\Unexposed;
 use Livewire\Attributes\Url;
 
 use function Filament\Support\encode_key_segments;
@@ -17,6 +18,7 @@ trait HasFilters /** @phpstan-ignore trait.unused */
 
     protected bool $persistsFiltersInSession = true;
 
+    #[Unexposed]
     public function mountHasFilters(): void
     {
         $shouldPersistFiltersInSession = $this->persistsFiltersInSession();
@@ -36,7 +38,7 @@ trait HasFilters /** @phpstan-ignore trait.unused */
 
         // https://github.com/filamentphp/filament/pull/7999
         if ($this->filters) {
-            $this->normalizeTableFilterValuesFromQueryString($this->filters);
+            $this->normalizeFilterValuesFromQueryString($this->filters);
         }
 
         if (method_exists($this, 'getFiltersForm')) {
@@ -54,11 +56,11 @@ trait HasFilters /** @phpstan-ignore trait.unused */
     /**
      * @param  array<string, mixed>  $data
      */
-    protected function normalizeTableFilterValuesFromQueryString(array &$data): void
+    protected function normalizeFilterValuesFromQueryString(array &$data): void
     {
         foreach ($data as &$value) {
             if (is_array($value)) {
-                $this->normalizeTableFilterValuesFromQueryString($value);
+                $this->normalizeFilterValuesFromQueryString($value);
             } elseif ($value === 'null') {
                 $value = null;
             } elseif ($value === 'false') {
@@ -69,6 +71,17 @@ trait HasFilters /** @phpstan-ignore trait.unused */
         }
     }
 
+    /**
+     * @deprecated Use `normalizeFilterValuesFromQueryString()` instead.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    protected function normalizeTableFilterValuesFromQueryString(array &$data): void
+    {
+        $this->normalizeFilterValuesFromQueryString($data);
+    }
+
+    #[Unexposed]
     public function updatedFilters(): void
     {
         if ($this->persistsFiltersInSession()) {
@@ -79,6 +92,7 @@ trait HasFilters /** @phpstan-ignore trait.unused */
         }
     }
 
+    #[Unexposed]
     public function getFiltersSessionKey(): string
     {
         $namespace = $this::class;
@@ -92,6 +106,7 @@ trait HasFilters /** @phpstan-ignore trait.unused */
         return "filament.dashboard.{$livewire}.filters";
     }
 
+    #[Unexposed]
     public function persistsFiltersInSession(): bool
     {
         return $this->persistsFiltersInSession;

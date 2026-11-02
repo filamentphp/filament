@@ -5,16 +5,20 @@
     'icon' => null,
     'iconAlias' => null,
     'label' => null,
+    'loadingTargets' => [],
 ])
 
 @php
     use Filament\Support\View\ComponentAttributeBag;
     use Illuminate\Support\Number;
+
+    $wireClickAction = $attributes->whereStartsWith('wire:click')->first();
+    $hasLoadingState = filled($wireClickAction) && (! $disabled);
 @endphp
 
 <li
     {{
-        $attributes->class([
+        $attributes->whereDoesntStartWith('wire:click')->class([
             'fi-pagination-item',
             'fi-disabled' => $disabled,
             'fi-active' => $active,
@@ -32,8 +36,17 @@
             aria-hidden="true"
         @endif
         @disabled($disabled)
+        data-prevent-disabled-clicks
         type="button"
-        class="fi-pagination-item-btn"
+        {{
+            $attributes->whereStartsWith('wire:click')
+                ->merge([
+                    'wire:loading.attr' => $hasLoadingState ? 'aria-disabled' : null,
+                    'wire:loading.class' => $hasLoadingState ? 'fi-disabled' : null,
+                    'wire:target' => $hasLoadingState ? (implode(',', $loadingTargets) ?: $wireClickAction) : null,
+                ], escape: false)
+                ->class(['fi-pagination-item-btn'])
+        }}
     >
         @if ($icon || $iconAlias)
             {{

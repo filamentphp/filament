@@ -42,14 +42,14 @@ it('submits a real `ImportAction` with CSV mapping and merged options without ru
 
     livewire(ImportActionSubmissionPage::class)
         ->mountAction('import')
-        ->setActionData(['file' => UploadedFile::fake()->createWithContent('articles.csv', $csv)])
-        ->assertActionDataSet(['region' => 'Europe'])
-        ->setActionData([
+        ->fillForm(['file' => UploadedFile::fake()->createWithContent('articles.csv', $csv)])
+        ->assertSchemaStateSet(['region' => 'Europe'])
+        ->fillForm([
             'columnMap' => ['title' => 'Article headline', 'content' => 'Article body'],
             'mode' => 'replace',
         ])
         ->callMountedAction()
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     Event::assertDispatched(ImportStarted::class, function (ImportStarted $event) use ($csv, $user): bool {
         $import = $event->getImport();
@@ -78,13 +78,13 @@ it('submits a real `ImportAction` with CSV mapping and merged options without ru
 it('does not start an import when the mapping or options form is invalid', function (array $data, array $errors): void {
     livewire(ImportActionSubmissionPage::class)
         ->mountAction('import')
-        ->setActionData(['file' => UploadedFile::fake()->createWithContent('articles.csv', "Article headline,Article body\nFirst article,First body\n")])
-        ->setActionData([
+        ->fillForm(['file' => UploadedFile::fake()->createWithContent('articles.csv', "Article headline,Article body\nFirst article,First body\n")])
+        ->fillForm([
             'columnMap' => ['title' => 'Article headline', 'content' => 'Article body'],
             ...$data,
         ])
         ->callMountedAction()
-        ->assertHasActionErrors($errors);
+        ->assertHasFormErrors($errors);
 
     Event::assertNotDispatched(ImportStarted::class);
     Bus::assertBatchCount(0);
@@ -98,8 +98,8 @@ it('does not start an import when the mapping or options form is invalid', funct
 it('does not dispatch an import when authorization is revoked before the server call', function (): void {
     livewire(ImportActionSubmissionPage::class)
         ->mountAction('import')
-        ->setActionData(['file' => UploadedFile::fake()->createWithContent('articles.csv', "Article headline,Article body\nFirst article,First body\n")])
-        ->setActionData(['columnMap' => ['title' => 'Article headline', 'content' => 'Article body']])
+        ->fillForm(['file' => UploadedFile::fake()->createWithContent('articles.csv', "Article headline,Article body\nFirst article,First body\n")])
+        ->fillForm(['columnMap' => ['title' => 'Article headline', 'content' => 'Article body']])
         ->set('canImport', false)
         ->call('callMountedAction');
 

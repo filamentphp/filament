@@ -168,7 +168,7 @@ ActionGroup::make([
 
 ## Controlling the maximum height of the dropdown
 
-The dropdown content can have a maximum height using the `maxHeight()` method, so that it scrolls. You can pass a [CSS length](https://developer.mozilla.org/en-US/docs/Web/CSS/length):
+The dropdown content can have a maximum height using the `dropdownMaxHeight()` method, so that it scrolls. You can pass a [CSS length](https://developer.mozilla.org/en-US/docs/Web/CSS/length):
 
 ```php
 use Filament\Actions\ActionGroup;
@@ -176,7 +176,7 @@ use Filament\Actions\ActionGroup;
 ActionGroup::make([
     // Array of actions
 ])
-    ->maxHeight('400px')
+    ->dropdownMaxHeight('400px')
 ```
 
-<UtilityInjection set="actionGroups">The `maxHeight()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actionGroups">The `dropdownMaxHeight()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>

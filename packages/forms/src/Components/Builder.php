@@ -40,7 +40,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
     use CanLimitItemsForProcessing;
     use Concerns\CanBeCloned;
     use Concerns\CanGenerateUuids;
-    use Concerns\CanLimitItemsLength;
+    use Concerns\CanLimitItemsCount;
     use Concerns\HasExtraItemActions;
     use HasReorderAnimationDuration;
 
@@ -1373,9 +1373,19 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
     }
 
     /**
+     * @deprecated Use `getItemStateSnapshot()` instead.
+     *
      * @return array<string, mixed>
      */
     public function getRawItemState(string $key): array
+    {
+        return $this->getItemStateSnapshot($key);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getItemStateSnapshot(string $key): array
     {
         return $this->getChildSchema($key)->getStateSnapshot();
     }

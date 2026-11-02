@@ -8,7 +8,7 @@
         &::after {
             @apply absolute inset-x-3 inset-y-4;
             animation: var(--loading-skeleton-animation);
-            background-color: var(--loading-skeleton-background-color);
+            background-color: var(--loading-skeleton-bg);
             border-radius: var(--loading-skeleton-border-radius);
             content: '';
         }

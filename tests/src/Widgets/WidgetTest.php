@@ -9,7 +9,10 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Pages\TableRenderHooksBrowserTest;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPosts;
 use Filament\Tests\TestCase;
+use Filament\Widgets\AccountWidget;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
+use Filament\Widgets\FilamentInfoWidget;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Database\Eloquent\Builder;
@@ -94,6 +97,81 @@ it('returns `[\'lazy\' => true]` from `getDefaultProperties()` when `$isLazy` is
 
 it('returns empty array from `getDefaultProperties()` when `$isLazy` is `false`', function (): void {
     expect(TestWidgetNotLazy::getDefaultProperties())->toBe([]);
+});
+
+it('supports the legacy `$filters` property without exposing `__get()` to frontend calls', function (): void {
+    $component = livewire(PageFiltersTestWidget::class, [
+        'lazy' => false,
+        'pageFilters' => ['status' => 'published'],
+    ])->assertSuccessful();
+
+    expect($component->instance()->filters)->toBe(['status' => 'published']);
+
+    $component->call('__get', 'filters')
+        ->assertForbidden();
+});
+
+it('resolves nullable `$isLazyLoaded` configuration without replacing the configured value', function (?bool $configuration, bool $legacyConfiguration, bool $expected): void {
+    $widget = new class extends TestWidget
+    {
+        public static ?bool $isLazyLoaded = null;
+
+        public static bool $isLazy = true;
+    };
+
+    $widget::$isLazyLoaded = $configuration;
+    $widget::$isLazy = $legacyConfiguration;
+
+    expect($widget::getDefaultProperties())->toBe($expected ? ['lazy' => true] : [])
+        ->and($widget::isLazyLoaded())->toBe($expected)
+        ->and($widget::isLazy())->toBe($expected)
+        ->and($widget::$isLazyLoaded)->toBe($configuration);
+})->with([
+    'unset with lazy legacy default' => [null, true, true],
+    'unset with eager legacy default' => [null, false, false],
+    'explicit true overrides eager legacy default' => [true, false, true],
+    'explicit false overrides lazy legacy default' => [false, true, false],
+]);
+
+it('preserves legacy widget loading overrides while prioritizing explicit new configuration', function (): void {
+    $legacyWidget = new class extends TestWidget
+    {
+        public static function isLazy(): bool
+        {
+            return ! parent::isLazy();
+        }
+    };
+
+    $configuredWidget = new class extends TestWidget
+    {
+        protected static ?bool $isLazyLoaded = false;
+
+        public static function isLazy(): bool
+        {
+            return true;
+        }
+    };
+
+    $overriddenWidget = new class extends TestWidget
+    {
+        public static ?bool $isLazyLoaded = null;
+
+        public static function isLazyLoaded(): bool
+        {
+            return false;
+        }
+    };
+
+    expect($legacyWidget::getDefaultProperties())->toBe([])
+        ->and($legacyWidget::isLazyLoaded())->toBeFalse()
+        ->and($configuredWidget::getDefaultProperties())->toBe([])
+        ->and($overriddenWidget::getDefaultProperties())->toBe([])
+        ->and(AccountWidget::getDefaultProperties())->toBe([])
+        ->and(FilamentInfoWidget::getDefaultProperties())->toBe([]);
+
+    $overriddenWidget::$isLazyLoaded = true;
+
+    expect($overriddenWidget::getDefaultProperties())->toBe([]);
 });
 
 describe('authorization', function (): void {
@@ -344,6 +422,13 @@ class TestWidget extends Widget
     {
         return [];
     }
+}
+
+class PageFiltersTestWidget extends Widget
+{
+    use InteractsWithPageFilters;
+
+    protected string $view = 'pages.settings';
 }
 
 class TestWidgetWithSort extends Widget

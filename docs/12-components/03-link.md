@@ -34,9 +34,13 @@ By default, a link's underlying HTML tag is `<a>`. You can change it to be a `<b
 
 ## Setting the size of a link
 
-By default, the size of a link is "medium". You can make it "small", "large", "extra large" or "extra extra large" by using the `size` attribute:
+By default, the size of a link is `md` (medium). The built-in sizes are `xs`, `sm`, `md`, `lg`, and `xl`, which you can select using the `size` attribute. In the default theme, `md`, `lg`, and `xl` use the same text size:
 
 ```blade
+<x-filament::link size="xs">
+    New user
+</x-filament::link>
+
 <x-filament::link size="sm">
     New user
 </x-filament::link>
@@ -48,17 +52,13 @@ By default, the size of a link is "medium". You can make it "small", "large", "e
 <x-filament::link size="xl">
     New user
 </x-filament::link>
-
-<x-filament::link size="2xl">
-    New user
-</x-filament::link>
 ```
 
 <AutoScreenshot name="components/link/sizes" alt="Links in different sizes" />
 
 ## Setting the font weight of a link
 
-By default, the font weight of links is `semibold`. You can make it `thin`, `extralight`, `light`, `normal`, `medium`, `bold`, `extrabold` or `black` by using the `weight` attribute:
+By default, the font weight of links is `medium`. You can make it `thin`, `extralight`, `light`, `normal`, `semibold`, `bold`, `extrabold` or `black` by using the `weight` attribute:
 
 ```blade
 <x-filament::link weight="thin">

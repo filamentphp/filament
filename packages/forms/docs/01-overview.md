@@ -12,7 +12,7 @@ This guide will walk you through the basics of building forms with Filament's fo
 
 ## Form fields
 
-Form field classes can be found in the `Filament\Form\Components` namespace. They reside within the schema array of components. Filament ships with many types of field, suitable for editing different types of data:
+Form field classes can be found in the `Filament\Forms\Components` namespace. They reside within the schema array of components. Filament ships with many types of field, suitable for editing different types of data:
 
 - [Text input](text-input)
 - [Select](select)

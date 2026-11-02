@@ -86,8 +86,8 @@
             ->except(['wire:target', 'tabindex'])
             ->class([
                 'fi-input-wrp',
-                'fi-disabled' => (! $hasAlpineClasses) && $disabled,
-                'fi-invalid' => (! $hasAlpineClasses) && (! $valid),
+                'fi-disabled' => (! $hasAlpineDisabledClasses) && $disabled,
+                'fi-invalid' => (! $hasAlpineValidClasses) && (! $valid),
             ])
     }}
 >
@@ -138,7 +138,7 @@
     <div
         @if ($hasLoadingIndicator && (! $hasPrefix))
             @if ($inlinePrefix)
-                wire:loading.delay.{{ $loadingDelay }}.class.remove="ps-3"
+                wire:loading.delay.{{ $loadingDelay }}.class.remove="fi-input-wrp-content-ctn-ps"
             @endif
 
             wire:target="{{ $loadingIndicatorTarget }}"

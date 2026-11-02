@@ -17,16 +17,16 @@ php artisan make:filament-resource User --view
 By default, the View page will display a disabled form with the record's data. If you preferred to display the record's data in an "infolist", you can define an `infolist()` method on the resource class:
 
 ```php
-use Filament\Infolists;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
 public static function infolist(Schema $schema): Schema
 {
     return $schema
         ->components([
-            Infolists\Components\TextEntry::make('name'),
-            Infolists\Components\TextEntry::make('email'),
-            Infolists\Components\TextEntry::make('notes')
+            TextEntry::make('name'),
+            TextEntry::make('email'),
+            TextEntry::make('notes')
                 ->columnSpanFull(),
         ]);
 }
@@ -257,14 +257,14 @@ If `getAllRelationManagers()` isn't defined, any relation managers defined in th
 If you're using [resource sub-navigation](overview#resource-sub-navigation), you can register this page as normal in `getRecordSubNavigation()` of the resource:
 
 ```php
-use App\Filament\Resources\Customers\Pages;
+use App\Filament\Resources\Customers\Pages\ViewCustomerContact;
 use Filament\Resources\Pages\Page;
 
 public static function getRecordSubNavigation(Page $page): array
 {
     return $page->generateNavigationItems([
         // ...
-        Pages\ViewCustomerContact::class,
+        ViewCustomerContact::class,
     ]);
 }
 ```
@@ -292,7 +292,7 @@ Inside the `components()` array, you can insert any [schema component](../schema
 
 ### Using a custom Blade view
 
-For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:
+For further customization opportunities, you can override the `$view` property on the page class to a custom view in your app:
 
 ```php
 protected string $view = 'filament.resources.users.pages.view-user';

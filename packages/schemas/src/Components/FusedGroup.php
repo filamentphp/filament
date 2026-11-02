@@ -230,7 +230,7 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
         $errorMessages = [];
         $areHtmlErrorMessagesAllowed = false;
 
-        foreach ($this->getChildComponentContainer()->getComponents() as $childComponent) {
+        foreach ($this->getChildSchema()->getComponents() as $childComponent) {
             if (! ($childComponent instanceof Field)) {
                 continue;
             }

@@ -14,8 +14,13 @@ return [
 
             'label' => 'گرووپەکان',
 
+            'group' => [
+                'label' => 'گرووپ',
+            ],
+
             'block' => [
                 'label' => 'جیاکردنەوە (یان)',
+                'picker_group' => 'لۆجیک',
                 'or' => 'یان',
             ],
 
@@ -34,6 +39,8 @@ return [
     ],
 
     'no_rules' => '(هیچ ڕێسایەک نیە)',
+
+    'max_rules_reached_tooltip' => 'گەیشتوویتە زۆرترین ژمارەی ڕێساکان، کە :count ڕێسایە.',
 
     'item_separators' => [
         'and' => 'لەگەڵ',
@@ -146,6 +153,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'چرکە',
+                'minute' => 'خولەک',
+                'hour' => 'کاتژمێر',
+                'day' => 'ڕۆژ',
+                'week' => 'هەفتە',
+                'month' => 'مانگ',
+                'quarter' => 'چارەک',
+                'year' => 'ساڵ',
+            ],
+
+            'presets' => [
+                'past_decade' => 'دەیەی ڕابردوو',
+                'past_5_years' => '5 ساڵی ڕابردوو',
+                'past_2_years' => '2 ساڵی ڕابردوو',
+                'past_year' => 'ساڵی ڕابردوو',
+                'past_6_months' => '6 مانگی ڕابردوو',
+                'past_quarter' => 'چارەکی ڕابردوو',
+                'past_month' => 'مانگی ڕابردوو',
+                'past_2_weeks' => '2 هەفتەی ڕابردوو',
+                'past_week' => 'هەفتەی ڕابردوو',
+                'past_hour' => 'کاتژمێری ڕابردوو',
+                'past_minute' => 'خولەکی ڕابردوو',
+                'this_decade' => 'ئەم دەیەیە',
+                'this_year' => 'ئەمساڵ',
+                'this_quarter' => 'ئەم چارەکە',
+                'this_month' => 'ئەم مانگە',
+                'today' => 'ئەمڕۆ',
+                'this_hour' => 'ئەم کاتژمێرە',
+                'this_minute' => 'ئەم خولەکە',
+                'next_minute' => 'خولەکی داهاتوو',
+                'next_hour' => 'کاتژمێری داهاتوو',
+                'next_week' => 'هەفتەی داهاتوو',
+                'next_2_weeks' => '2 هەفتەی داهاتوو',
+                'next_month' => 'مانگی داهاتوو',
+                'next_quarter' => 'چارەکی داهاتوو',
+                'next_6_months' => '6 مانگی داهاتوو',
+                'next_year' => 'ساڵی داهاتوو',
+                'next_2_years' => '2 ساڵی داهاتوو',
+                'next_5_years' => '5 ساڵی داهاتوو',
+                'next_decade' => 'دەیەی داهاتوو',
+                'custom' => 'دڵخواز',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +209,40 @@ return [
 
                 'year' => [
                     'label' => 'ساڵ',
+                ],
+
+                'mode' => [
+
+                    'label' => 'جۆری بەروار',
+
+                    'options' => [
+                        'absolute' => 'بەرواری دیاریکراو',
+                        'relative' => 'ماوەی ڕێژەیی',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'ماوەی کات',
+                ],
+
+                'relative_value' => [
+                    'label' => 'چەند',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'یەکەی کات',
+                ],
+
+                'tense' => [
+
+                    'label' => 'ئاڕاستەی کات',
+
+                    'options' => [
+                        'past' => 'ڕابردوو',
+                        'future' => 'داهاتوو',
+                    ],
+
                 ],
 
             ],

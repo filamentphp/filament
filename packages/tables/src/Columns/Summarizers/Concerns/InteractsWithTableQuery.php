@@ -29,7 +29,15 @@ trait InteractsWithTableQuery
         return $this->query;
     }
 
+    /**
+     * @deprecated Use `hasQueryModificationCallback()` instead.
+     */
     public function hasQueryModification(): bool
+    {
+        return $this->hasQueryModificationCallback();
+    }
+
+    public function hasQueryModificationCallback(): bool
     {
         return $this->modifyQueryUsing instanceof Closure;
     }

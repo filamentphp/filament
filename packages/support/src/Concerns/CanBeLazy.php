@@ -2,19 +2,36 @@
 
 namespace Filament\Support\Concerns;
 
+use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Contracts\View\View;
 
 trait CanBeLazy
 {
+    protected static ?bool $isLazyLoaded = null;
+
+    /**
+     * @deprecated Use `$isLazyLoaded` instead.
+     */
     protected static bool $isLazy = true;
 
     protected ?string $placeholderHeight = null;
 
-    public static function isLazy(): bool
+    #[Unexposed]
+    public static function isLazyLoaded(): bool
     {
-        return static::$isLazy;
+        return static::$isLazyLoaded ?? static::isLazy();
     }
 
+    /**
+     * @deprecated Use `isLazyLoaded()` instead.
+     */
+    #[Unexposed]
+    public static function isLazy(): bool
+    {
+        return static::$isLazyLoaded ?? static::$isLazy;
+    }
+
+    #[Unexposed]
     public function placeholder(): View
     {
         return view(
@@ -29,6 +46,7 @@ trait CanBeLazy
     /**
      * @return array<string, mixed>
      */
+    #[Unexposed]
     public function getPlaceholderData(): array
     {
         return [
@@ -36,6 +54,7 @@ trait CanBeLazy
         ];
     }
 
+    #[Unexposed]
     public function getPlaceholderHeight(): ?string
     {
         return $this->placeholderHeight;

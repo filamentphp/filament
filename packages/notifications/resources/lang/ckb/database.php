@@ -6,6 +6,8 @@ return [
 
         'heading' => 'ئاگادارینامەکان',
 
+        'unread_label' => 'ئاگانامەی نەخوێنراوە',
+
         'actions' => [
 
             'clear' => [

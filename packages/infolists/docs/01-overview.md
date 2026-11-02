@@ -253,6 +253,7 @@ If you need to hide an entry based on a user interaction, you can use the `hidde
 ```php
 use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\IconEntry;
+use Filament\Schemas\Components\Utilities\Get;
 
 Select::make('role')
     ->options([
@@ -379,7 +380,7 @@ Entries may have their labels displayed inline with the entry, rather than above
 ```php
 use Filament\Infolists\Components\TextEntry;
 
-TextInput::make('name')
+TextEntry::make('name')
     ->inlineLabel()
 ```
 
@@ -388,9 +389,9 @@ TextInput::make('name')
 Optionally, you may pass a boolean value to control if the label should be displayed inline or not:
 
 ```php
-use Filament\Infolists\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 
-TextInput::make('name')
+TextEntry::make('name')
     ->inlineLabel(FeatureFlag::active())
 ```
 
@@ -401,16 +402,16 @@ TextInput::make('name')
 If you wish to display all labels inline in a [layout component](../schemas/layouts) like a [section](../schemas/sections) or [tab](../schemas/tabs), you can use the `inlineLabel()` on the component itself, and all entries within it will have their labels displayed inline:
 
 ```php
-use Filament\Infolists\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 
 Section::make('Details')
     ->inlineLabel()
     ->schema([
-        TextInput::make('name'),
-        TextInput::make('email')
+        TextEntry::make('name'),
+        TextEntry::make('email')
             ->label('Email address'),
-        TextInput::make('phone')
+        TextEntry::make('phone')
             ->label('Phone number'),
     ])
 ```
@@ -435,16 +436,16 @@ public function infolist(Schema $schema): Schema
 When using `inlineLabel()` on a layout component or schema, you can still opt-out of inline labels for individual entries by using the `inlineLabel(false)` method on the entry:
 
 ```php
-use Filament\Infolists\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 
 Section::make('Details')
     ->inlineLabel()
     ->schema([
-        TextInput::make('name'),
-        TextInput::make('email')
+        TextEntry::make('name'),
+        TextEntry::make('email')
             ->label('Email address'),
-        TextInput::make('phone')
+        TextEntry::make('phone')
             ->label('Phone number')
             ->inlineLabel(false),
     ])

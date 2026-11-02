@@ -26,6 +26,7 @@
     use Illuminate\Contracts\Support\Htmlable;
     use Illuminate\Database\Eloquent\Model;
     use Illuminate\Database\Query\Builder;
+    use Illuminate\Support\Js;
     use Illuminate\Support\Number;
     use Illuminate\Support\Str;
     use Illuminate\View\ComponentAttributeBag;
@@ -587,6 +588,7 @@
                                         @php
                                             $filtersTriggerActionModalAlignment = $filtersTriggerAction->getModalAlignment();
                                             $filtersTriggerActionIsModalAutofocused = $filtersTriggerAction->isModalAutofocused();
+                                            $filtersTriggerActionIsModalClickThrough = $filtersTriggerAction->isModalClickThrough();
                                             $filtersTriggerActionHasModalCloseButton = $filtersTriggerAction->hasModalCloseButton();
                                             $filtersTriggerActionIsModalClosedByClickingAway = $filtersTriggerAction->isModalClosedByClickingAway();
                                             $filtersTriggerActionIsModalClosedByEscaping = $filtersTriggerAction->isModalClosedByEscaping();
@@ -608,6 +610,7 @@
                                         <x-filament::modal
                                             :alignment="$filtersTriggerActionModalAlignment"
                                             :autofocus="$filtersTriggerActionIsModalAutofocused"
+                                            :click-through="$filtersTriggerActionIsModalClickThrough"
                                             :close-button="$filtersTriggerActionHasModalCloseButton"
                                             :close-by-clicking-away="$filtersTriggerActionIsModalClosedByClickingAway"
                                             :close-by-escaping="$filtersTriggerActionIsModalClosedByEscaping"
@@ -691,6 +694,7 @@
                                         @php
                                             $columnManagerTriggerActionModalAlignment = $columnManagerTriggerAction->getModalAlignment();
                                             $columnManagerTriggerActionIsModalAutofocused = $columnManagerTriggerAction->isModalAutofocused();
+                                            $columnManagerTriggerActionIsModalClickThrough = $columnManagerTriggerAction->isModalClickThrough();
                                             $columnManagerTriggerActionHasModalCloseButton = $columnManagerTriggerAction->hasModalCloseButton();
                                             $columnManagerTriggerActionIsModalClosedByClickingAway = $columnManagerTriggerAction->isModalClosedByClickingAway();
                                             $columnManagerTriggerActionIsModalClosedByEscaping = $columnManagerTriggerAction->isModalClosedByEscaping();
@@ -712,6 +716,7 @@
                                         <x-filament::modal
                                             :alignment="$columnManagerTriggerActionModalAlignment"
                                             :autofocus="$columnManagerTriggerActionIsModalAutofocused"
+                                            :click-through="$columnManagerTriggerActionIsModalClickThrough"
                                             :close-button="$columnManagerTriggerActionHasModalCloseButton"
                                             :close-by-clicking-away="$columnManagerTriggerActionIsModalClosedByClickingAway"
                                             :close-by-escaping="$columnManagerTriggerActionIsModalClosedByEscaping"
@@ -790,10 +795,10 @@
                         </div>
                     @endif
 
-                    {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_END) }}
+                    {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_END, scopes: static::class) }}
                 </div>
 
-                {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_AFTER) }}
+                {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_AFTER, scopes: static::class) }}
             </div>
 
             @if ($isReordering)
@@ -907,7 +912,6 @@
                                                 name="deleteButton"
                                                 :label="__('filament-tables::table.filters.actions.remove.label')"
                                                 :wire:click="$indicatorRemoveLivewireClickHandler"
-                                                wire:loading.attr="disabled"
                                                 wire:target="removeTableFilter"
                                             ></x-slot>
                                         @endif
@@ -1388,8 +1392,8 @@
                                                 @elseif ($recordAction)
                                                     @php
                                                         $recordWireClickAction = $getRecordAction($record)
-                                                            ? "mountTableAction('{$recordAction}', '{$recordKey}')"
-                                                            : $recordWireClickAction = "{$recordAction}('{$recordKey}')";
+                                                            ? "mountTableAction('{$recordAction}', " . Js::from($recordKey) . ')'
+                                                            : $recordWireClickAction = "{$recordAction}(" . Js::from($recordKey) . ')';
                                                     @endphp
 
                                                     <button
@@ -1897,11 +1901,14 @@
                                                         @else
                                                             role="button"
                                                             tabindex="0"
-                                                            x-on:keydown.enter.prevent.stop="$wire.sortTable('{{ $columnName }}')"
-                                                            x-on:keydown.space.prevent.stop="$wire.sortTable('{{ $columnName }}')"
+                                                            x-on:keydown.enter.self.prevent.stop="$el.click()"
+                                                            x-on:keydown.space.self.prevent.stop="$el.click()"
                                                         @endif
+                                                        data-prevent-disabled-clicks
                                                         wire:click="sortTable('{{ $columnName }}')"
-                                                        wire:target="sortTable('{{ $columnName }}')"
+                                                        wire:loading.attr="aria-disabled"
+                                                        wire:loading.class="fi-disabled"
+                                                        wire:target="{{ $loadingTargetsWireTarget }}"
                                                         class="fi-ta-header-cell-sort-btn"
                                                     >
                                                         @if (filled($columnHeaderTooltip))
@@ -2527,14 +2534,14 @@
 
                                                         if ($columnWrapperTag === 'button') {
                                                             if ($columnAction instanceof Action) {
-                                                                $columnWireClickAction = "mountTableAction('{$columnAction->getName()}', '{$recordKey}')";
+                                                                $columnWireClickAction = "mountTableAction('{$columnAction->getName()}', " . Js::from($recordKey) . ')';
                                                             } elseif ($columnAction) {
-                                                                $columnWireClickAction = "callTableColumnAction('{$column->getName()}', '{$recordKey}')";
+                                                                $columnWireClickAction = "callTableColumnAction('{$column->getName()}', " . Js::from($recordKey) . ')';
                                                             } else {
                                                                 if ($this->getTable()->getAction($recordAction)) {
-                                                                    $columnWireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
+                                                                    $columnWireClickAction = "mountTableAction('{$recordAction}', " . Js::from($recordKey) . ')';
                                                                 } else {
-                                                                    $columnWireClickAction = "{$recordAction}('{$recordKey}')";
+                                                                    $columnWireClickAction = "{$recordAction}(" . Js::from($recordKey) . ')';
                                                                 }
                                                             }
                                                         }
@@ -2778,6 +2785,7 @@
 
                 <x-filament::pagination
                     :extreme-links="$hasExtremePaginationLinks"
+                    :loading-targets="Table::LOADING_TARGETS"
                     :page-options="$paginationPageOptions"
                     :paginator="$records"
                 />

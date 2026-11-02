@@ -29,7 +29,7 @@
         }
     }
 
-    .fi-tenant-menu-trigger-text {
+    .fi-user-menu-trigger-text {
         @apply grid justify-items-start text-start text-gray-950 dark:text-white;
     }
 }
@@ -37,7 +37,10 @@
 .fi-sidebar {
     & .fi-user-menu {
         & .fi-dropdown-panel {
-            max-width: max(14rem, calc(100% - 1.5rem)) !important;
+            max-width: max(
+                14rem,
+                calc(100% - var(--sidebar-footer-margin-x) * 2)
+            ) !important;
         }
     }
 }

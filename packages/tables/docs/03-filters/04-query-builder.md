@@ -419,7 +419,7 @@ TextConstraint::make('author.name')
     ])
 ```
 
-This will remove all operators, and register the `EqualsOperator`.
+This will remove all operators, and register the `IsFilledOperator`.
 
 If you'd like to add an operator to the end of the list, use `pushOperators()` instead:
 
@@ -510,6 +510,25 @@ The `baseQuery()` method is used to define the query that will be used to filter
 The `label()` method is used to render the options in the operator select. Two options are registered for each operator, one for when the operator is not inverted, and one for when it is inverted.
 
 The `summary()` method is used in the header of the constraint when it is applied to the query, to provide an overview of the active constraint.
+
+If your operator needs input fields, extend `Operator` and return the components from `getFormSchema()`:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\QueryBuilder\Constraints\Operators\Operator;
+
+class CustomOperator extends Operator
+{
+    public function getFormSchema(): array
+    {
+        return [
+            TextInput::make('value')->required(),
+        ];
+    }
+}
+```
+
+When extending a built-in operator, use `parent::getFormSchema()` to retain its fields.
 
 ## Customizing the constraint picker
 

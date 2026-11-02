@@ -12,7 +12,7 @@ use Spark\Spark;
 class SparkBillingProvider implements Contracts\BillingProvider
 {
     /**
-     * @return string | Closure | array<class-string, string>
+     * @return string | Closure | array<array-key, mixed>
      */
     public function getRouteAction(): string | Closure | array
     {

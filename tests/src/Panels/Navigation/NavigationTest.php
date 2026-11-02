@@ -13,10 +13,12 @@ use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster;
 use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster\Pages\ClusteredPageWithoutSubNavigation;
 use Filament\Tests\Fixtures\Enums\NavigationGroupEnum;
 use Filament\Tests\Fixtures\Pages\Settings;
+use Filament\Tests\Fixtures\Resources\Users\Pages\ListUsers;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Panels\Navigation\TestCase;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
 use function Filament\Tests\livewire;
@@ -402,6 +404,85 @@ describe('navigation groups from enums', function (): void {
 
         expect($group->isCollapsible())->toBeTrue();
         expect($group->isCollapsed())->toBeFalse();
+    });
+});
+
+describe('navigation activity', function (): void {
+    it('can configure and clear cached activity with either setter', function (string $method): void {
+        $item = NavigationItem::make('Reports');
+        $isActive = true;
+
+        expect($item->{$method}(callback: static function () use (&$isActive): bool {
+            return $isActive;
+        }))->toBe($item)
+            ->and($item->isActive())->toBeTrue();
+
+        $isActive = false;
+
+        expect($item->isActive())->toBeTrue()
+            ->and($item->{$method}(callback: null))->toBe($item)
+            ->and($item->isActive())->toBeFalse();
+    })->with(['activeWhen', 'isActiveWhen']);
+
+    it('detects any active direct child without including grandchildren', function (string $method): void {
+        $item = NavigationItem::make('Reports');
+
+        expect($item->{$method}())->toBeFalse();
+
+        $item->childItems([
+            NavigationItem::make('Inactive')->activeWhen(static fn (): bool => false),
+            NavigationItem::make('Active')->activeWhen(static fn (): bool => true),
+        ]);
+
+        expect($item->{$method}())->toBeTrue();
+
+        $item->childItems([NavigationItem::make('Child')->childItems($item->getChildItems())]);
+
+        expect($item->{$method}())->toBeFalse();
+    })->with(['hasActiveChildItems', 'isChildItemsActive']);
+
+    it('uses `activeWhen()` for legacy calls and generated page and resource navigation', function (): void {
+        $item = new class extends NavigationItem
+        {
+            public function activeWhen(?Closure $callback): static
+            {
+                return parent::activeWhen(static fn (): bool => true);
+            }
+        };
+
+        expect($item->isActiveWhen(callback: null))->toBe($item)
+            ->and($item->isActive())->toBeTrue();
+
+        app()->bind(NavigationItem::class, $item::class);
+
+        expect(Settings::getNavigationItems()[0]->isActive())->toBeTrue()
+            ->and(UserResource::getNavigationItems()[0]->isActive())->toBeTrue()
+            ->and(ListUsers::getNavigationItems()[0]->isActive())->toBeTrue();
+    });
+
+    it('uses `hasActiveChildItems()` for legacy calls and sidebar groups and items', function (): void {
+        $item = new class('Reports') extends NavigationItem
+        {
+            public function hasActiveChildItems(): bool
+            {
+                return ! parent::hasActiveChildItems();
+            }
+        };
+
+        expect($item->isChildItemsActive())->toBeTrue();
+
+        $item->url('/reports')->icon(Heroicon::OutlinedFolder)->activeWhen(static fn (): bool => true);
+
+        $groupHtml = Blade::render('<x-filament-panels::sidebar.group :items="$items" />', ['items' => [$item]]);
+        $itemHtml = Blade::render('<x-filament-panels::sidebar.item :url="null" :child-items="$items" />', ['items' => [$item]]);
+
+        foreach ([$groupHtml, $itemHtml] as $html) {
+            $document = new DOMDocument;
+            @$document->loadHTML($html);
+
+            expect((new DOMXPath($document))->query('//a[@href="/reports"]')->length)->toBe(1)
+                ->and((new DOMXPath($document))->query('//a[@href="/reports"]/@aria-current')->length)->toBe(0);
+        }
     });
 });
 

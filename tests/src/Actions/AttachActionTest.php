@@ -214,7 +214,7 @@ describe('record select options', function (): void {
             ->callAction(TestAction::make(AttachAction::class)->table(), [
                 'recordId' => $outOfScopeDepartment->getKey(),
             ])
-            ->assertHasActionErrors(['recordId']);
+            ->assertHasFormErrors(['recordId']);
 
         assertDatabaseMissing('department_ticket', [
             'department_id' => $outOfScopeDepartment->getKey(),
@@ -231,7 +231,7 @@ describe('record select options', function (): void {
             ->callAction(TestAction::make(AttachAction::class)->table(), [
                 'recordId' => [$inScopeDepartment->getKey(), $outOfScopeDepartment->getKey()],
             ])
-            ->assertHasActionErrors();
+            ->assertHasFormErrors();
 
         assertDatabaseMissing('department_ticket', [
             'department_id' => $outOfScopeDepartment->getKey(),

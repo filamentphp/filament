@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'بینین',
 
+    'navigation_label' => 'بینین',
+
     'content' => [
 
         'tab' => [

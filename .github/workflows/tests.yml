@@ -19,7 +19,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: lts/*
           cache: npm
@@ -149,6 +149,17 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: mbstring, pdo, pdo_sqlite, pdo_mysql, pdo_pgsql${{ matrix.db == 'sqlsrv' && ', pdo_sqlsrv' || '' }}
           coverage: none
+      - name: Allow known Laravel 11 advisories for compatibility testing
+        if: matrix.laravel == '11.*'
+        # Laravel 11 is EOL. Allow these only in CI, without hiding audit reports.
+        run: |
+          composer config --json --merge policy.advisories.ignore-id '{
+            "PKSA-b41t-wbzk-9q51": {"on-audit": false},
+            "PKSA-d5tc-s1qs-h781": {"on-audit": false},
+            "PKSA-3r5d-mb8f-1qw9": {"on-audit": false},
+            "PKSA-m5cs-t1y6-qpcs": {"on-audit": false},
+            "PKSA-mdq4-51ck-6kdq": {"on-audit": false}
+          }'
       - name: Install dependencies
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
@@ -164,11 +175,7 @@ jobs:
       - name: Install npm dependencies
         run: npm ci --ignore-scripts
       - name: Build JavaScript assets for browser tests
-        run: |
-          npm run build:js
-          if [ -f tests/js/build-renderers.js ]; then
-            node tests/js/build-renderers.js
-          fi
+        run: npm run build:js
       - name: Install Chromium system dependencies
         run: |
           packages=(libnss3 libatk-bridge2.0-0t64 libdrm2 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxkbcommon0 libpango-1.0-0 libcairo2 libasound2t64)

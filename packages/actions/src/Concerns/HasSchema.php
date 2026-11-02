@@ -101,7 +101,7 @@ trait HasSchema
     }
 
     /**
-     * @deprecated Use `disabledSchema() instead.
+     * @deprecated Use `disabledSchema()` instead.
      */
     public function disableForm(bool | Closure $condition = true): static
     {
@@ -111,7 +111,7 @@ trait HasSchema
     }
 
     /**
-     * @deprecated Use `disabledSchema() instead.
+     * @deprecated Use `disabledSchema()` instead.
      */
     public function disabledForm(bool | Closure $condition = true): static
     {
@@ -121,7 +121,7 @@ trait HasSchema
     }
 
     /**
-     * @deprecated Use `schema() instead.
+     * @deprecated Use `schema()` instead.
      *
      * @param  array<Component| Action> | Closure | null  $form
      */

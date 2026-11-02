@@ -252,7 +252,7 @@ trait CanBeValidated
         if (! $condition) {
             $values = null;
         } elseif ($condition instanceof Closure) {
-            $values = fn (Component $component): array | Arrayable | string | Closure | null => $component->evaluate($condition) ? $values : null;
+            $values = fn (Component $component): array | Arrayable | string | null => $component->evaluate($condition) ? $component->evaluate($values) : null;
         }
 
         $this->inValidationRuleValues = $values;
@@ -699,8 +699,15 @@ trait CanBeValidated
                 }
 
                 if (is_array($rawState)) {
+                    $normalizeEnumValue = static fn (mixed $value): mixed => ($value instanceof BackedEnum) ? $value->value : $value;
+
+                    $rawState = array_map($normalizeEnumValue, $rawState);
+
                     $hasSiblingStateIntersections = collect($repeaterSiblingState)
-                        ->filter(fn (array $item): bool => filled(array_intersect(data_get($item, $componentItemStatePath, []), $rawState)))
+                        ->filter(fn (array $item): bool => filled(array_intersect(
+                            array_map($normalizeEnumValue, data_get($item, $componentItemStatePath, [])),
+                            $rawState,
+                        )))
                         ->isNotEmpty();
 
                     if (! $hasSiblingStateIntersections) {
@@ -893,7 +900,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param  array<string, array<string, string>>  $messages
+     * @param  array<string, string>  $messages
      */
     public function dehydrateValidationMessages(array &$messages): void
     {

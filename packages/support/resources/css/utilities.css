@@ -466,9 +466,9 @@
         transparent
     );
     --prose-link-underline-color: var(--color-primary-400);
-    --prose-th-borders: var(--color-gray-300);
-    --prose-td-borders: var(--color-gray-200);
-    --prose-hr-color: color-mix(
+    --prose-table-border-color: var(--color-gray-300);
+    --prose-tr-border-color: var(--color-gray-200);
+    --prose-hr-border-color: color-mix(
         in oklab,
         var(--color-gray-950) 5%,
         transparent
@@ -488,9 +488,9 @@
             transparent
         );
         --prose-link-underline-color: var(--color-sky-400);
-        --prose-th-borders: var(--color-gray-600);
-        --prose-td-borders: var(--color-gray-700);
-        --prose-hr-color: color-mix(
+        --prose-table-border-color: var(--color-gray-600);
+        --prose-tr-border-color: var(--color-gray-700);
+        --prose-hr-border-color: color-mix(
             in oklab,
             var(--color-white) 10%,
             transparent
@@ -700,7 +700,7 @@
 
     thead:where(:not(.fi-not-prose, .fi-not-prose *)) {
         border-bottom-width: 1px;
-        border-bottom-color: var(--prose-th-borders);
+        border-bottom-color: var(--prose-table-border-color);
     }
 
     thead th:where(:not(.fi-not-prose, .fi-not-prose *)) {
@@ -722,7 +722,7 @@
 
     tbody tr:where(:not(.fi-not-prose, .fi-not-prose *)) {
         border-bottom-width: 1px;
-        border-bottom-color: var(--prose-td-borders);
+        border-bottom-color: var(--prose-tr-border-color);
     }
 
     tbody tr:last-child:where(:not(.fi-not-prose, .fi-not-prose *)) {
@@ -735,7 +735,7 @@
 
     tfoot:where(:not(.fi-not-prose, .fi-not-prose *)) {
         border-top-width: 1px;
-        border-top-color: var(--prose-th-borders);
+        border-top-color: var(--prose-table-border-color);
     }
 
     tfoot td:where(:not(.fi-not-prose, .fi-not-prose *)) {
@@ -773,7 +773,7 @@
     }
 
     hr:where(:not(.fi-not-prose, .fi-not-prose *)) {
-        border-color: var(--prose-hr-color);
+        border-color: var(--prose-hr-border-color);
         margin-block: --spacing(8);
         & + h2 {
             margin-top: --spacing(8);
