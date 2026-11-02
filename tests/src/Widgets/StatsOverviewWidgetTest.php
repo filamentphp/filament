@@ -85,23 +85,46 @@ it('initializes `$chartDataChecksums` on mount via `mountHasChartData()`', funct
         ->and($chartDataChecksums['stats-overview-stat-0'])->toBe(md5(json_encode([1, 2, 3])));
 });
 
-it('preserves existing chart container bindings with the deprecated subclass', function (): void {
+it('honors legacy and canonical chart container bindings', function (bool $hasLegacyBinding, bool $hasCanonicalBinding, ?string $expectedColorClass): void {
     expect(app(StatsOverviewWidgetStatChartComponent::class))->toBeInstanceOf(ChartComponent::class);
 
-    app()->bind(StatsOverviewWidgetStatChartComponent::class, static fn () => new class extends StatsOverviewWidgetStatChartComponent
-    {
-        public function getColorMap(array $color): array
+    if ($hasLegacyBinding) {
+        app()->bind(StatsOverviewWidgetStatChartComponent::class, static fn () => new class extends StatsOverviewWidgetStatChartComponent
         {
-            return ['bg' => 300];
-        }
-    });
+            public function getColorMap(array $color): array
+            {
+                return ['bg' => 300];
+            }
+        });
+    }
+
+    if ($hasCanonicalBinding) {
+        app()->bind(ChartComponent::class, static fn () => new class extends ChartComponent
+        {
+            public function getColorMap(array $color): array
+            {
+                return ['bg' => 700];
+            }
+        });
+    }
 
     Stat::configureUsing(
         static fn (Stat $stat) => $stat->chartColor('success'),
         during: fn () => Livewire::test(TestStatsOverviewWidgetWithChart::class)
-            ->assertSeeHtml('fi-bg-color-300'),
+            ->when(
+                $expectedColorClass !== null,
+                fn ($livewire) => $livewire->assertSeeHtml($expectedColorClass),
+                fn ($livewire) => $livewire
+                    ->assertDontSeeHtml('fi-bg-color-300')
+                    ->assertDontSeeHtml('fi-bg-color-700'),
+            ),
     );
-});
+})->with([
+    'default' => [false, false, null],
+    'legacy binding' => [true, false, 'fi-bg-color-300'],
+    'canonical binding' => [false, true, 'fi-bg-color-700'],
+    'canonical binding takes precedence' => [true, true, 'fi-bg-color-700'],
+]);
 
 it('does not dispatch `updateStatsOverviewChartData` when chart data is unchanged', function (): void {
     TestStatsOverviewWidgetWithChart::$chartData = [1, 2, 3];

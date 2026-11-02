@@ -20,6 +20,7 @@ return [
 
             'block' => [
                 'label' => 'Condição OU',
+                'picker_group' => 'Lógica',
                 'or' => 'OU',
             ],
 

@@ -82,6 +82,10 @@ class ExportCsv implements ShouldQueue
 
             $query = EloquentSerializeFacade::unserialize($this->query);
 
+            // Pagination was already applied when selecting the record keys for this job.
+            $query->getQuery()->limit = null;
+            $query->getQuery()->offset = null;
+
             foreach ($this->exporter->getCachedColumns() as $column) {
                 $column->applyRelationshipAggregates($query);
                 $column->applyEagerLoading($query);
