@@ -3,6 +3,7 @@
 use AnourValar\EloquentSerialize\Facades\EloquentSerializeFacade;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Actions\Exports\Jobs\CompleteExport;
 use Filament\Actions\Exports\Jobs\CreateXlsxFile;
 use Filament\Actions\Exports\Jobs\ExportCompletion;
 use Filament\Actions\Exports\Jobs\PrepareCsvExport;
@@ -120,9 +121,45 @@ it('preserves job construction and serialized chain ordering and configuration',
         return true;
     });
 })->with([
-    'CSV' => [[ExportFormat::Csv], [ExportCompletion::class]],
-    'XLSX' => [[ExportFormat::Xlsx], [CreateXlsxFile::class, ExportCompletion::class]],
-    'both' => [[ExportFormat::Csv, ExportFormat::Xlsx], [ExportCompletion::class, CreateXlsxFile::class]],
+    'CSV' => [[ExportFormat::Csv], [CompleteExport::class]],
+    'XLSX' => [[ExportFormat::Xlsx], [CreateXlsxFile::class, CompleteExport::class]],
+    'both' => [[ExportFormat::Csv, ExportFormat::Xlsx], [CompleteExport::class, CreateXlsxFile::class]],
+]);
+
+it('honors completion job bindings and legacy typed customization', function (?string $binding, bool $hasLegacyBinding = false): void {
+    Bus::fake();
+
+    if ($hasLegacyBinding) {
+        app()->bind(ExportCompletion::class);
+    }
+
+    if ($binding !== null) {
+        app()->bind($binding, CustomCompleteExport::class);
+    }
+
+    app()->resolving(ExportCompletion::class, static function (ExportCompletion $job): void {
+        $job->tries = 7;
+    });
+    app()->afterResolving(ExportCompletion::class, static function (ExportCompletion $job): void {
+        $job->tries += 3;
+    });
+
+    livewire(ExportActions::class)->callAction('export')->assertHasNoErrors();
+
+    Bus::assertDispatched(ChainedBatch::class, function (ChainedBatch $batch) use ($binding): bool {
+        $completion = unserialize($batch->chained[0]);
+
+        expect($completion::class)->toBe($binding === null ? CompleteExport::class : CustomCompleteExport::class)
+            ->and($completion)->toBeInstanceOf(ExportCompletion::class)
+            ->and($completion->tries)->toBe(10);
+
+        return true;
+    });
+})->with([
+    'default' => [null],
+    'legacy binding' => [ExportCompletion::class],
+    'canonical binding' => [CompleteExport::class],
+    'canonical binding takes precedence' => [CompleteExport::class, true],
 ]);
 
 it('keeps table filters search order and both query modifiers in the preparation payload', function (): void {
@@ -262,3 +299,5 @@ it('enforces `maxRows()` before creating an export and accepts the exact boundar
 });
 
 class CustomPrepareCsvExport extends PrepareCsvExport {}
+
+class CustomCompleteExport extends ExportCompletion {}
