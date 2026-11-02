@@ -15,7 +15,7 @@ class ReplaceLegacyPanelIntegrationRectorTest extends AbstractRectorTestCase
 
     public static function fixtures(): array
     {
-        return [['panel_integrations'], ['panel_integrations_manual'], ['panel_registration'], ['menu_items']];
+        return [['panel_integrations'], ['panel_integrations_manual'], ['panel_registration'], ['menu_items'], ['menu_items_dynamic'], ['menu_items_manual']];
     }
 
     public function provideConfigFilePath(): string

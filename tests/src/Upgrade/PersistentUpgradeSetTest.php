@@ -43,6 +43,83 @@ use Symfony\Component\Process\Process;
 
 class PersistentUpgradeSetTest extends TestCase
 {
+    public function test_convenience_factories_preserve_styles_and_forced_filter_mode(): void
+    {
+        $directory = sys_get_temp_dir() . '/filament-convenience-' . bin2hex(random_bytes(8));
+        mkdir($directory);
+        $root = dirname(__DIR__, 3);
+        $source = <<<'PHP'
+            <?php
+
+            use Filament\Actions\ButtonAction;
+            use Filament\Actions\IconButtonAction;
+            use Filament\Tables\Filters\MultiSelectFilter;
+            use Filament\Tables\Filters\SelectFilter;
+
+            $events = [];
+            $components = [
+                ButtonAction::make(name: 'save')->label('Save'),
+                IconButtonAction::make('edit')->label('Edit')->icon('heroicon-m-pencil'),
+                ButtonAction::make('view')->link()->label('View'),
+                IconButtonAction::make('open')->button()->label('Open'),
+                MultiSelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published'])->default(['published']),
+                MultiSelectFilter::make('forced')->multiple(static function () use (&$events): bool {
+                    $events[] = 'evaluated';
+                    return false;
+                }),
+                MultiSelectFilter::make('side-effect')->multiple((static function () use (&$events): bool {
+                    $events[] = 'constructed';
+                    return false;
+                })())->tap(static function (SelectFilter $filter) use (&$events): void {
+                    $events[] = $filter->isMultiple();
+                }),
+            ];
+
+            return [$components, &$events];
+            PHP;
+
+        try {
+            $original = str_replace(
+                ['use Filament\\Actions\\ButtonAction;', 'use Filament\\Actions\\IconButtonAction;', 'use Filament\\Tables\\Filters\\MultiSelectFilter;'],
+                ['use Filament\\Tests\\Upgrade\\LegacyButtonAction as ButtonAction;', 'use Filament\\Tests\\Upgrade\\LegacyIconButtonAction as IconButtonAction;', 'use Filament\\Tests\\Upgrade\\LegacyMultipleFilter as MultiSelectFilter;'],
+                $source,
+            );
+            [$legacyComponents, $legacyEvents] = eval('?>' . $original);
+            $snapshot = static fn (array $components): array => array_map(
+                static fn (Action | SelectFilter $component): array => $component instanceof Action
+                    ? [$component->getName(), $component->getLabel(), $component->isButton(), $component->isIconButton(), $component->isLink()]
+                    : [$component->getName(), $component->isMultiple(), $component->getDefaultState(), $component->getOptions()],
+                $components,
+            );
+            $expected = [
+                ['save', 'Save', true, false, false],
+                ['edit', 'Edit', false, true, false],
+                ['view', 'View', false, false, true],
+                ['open', 'Open', true, false, false],
+                ['status', true, ['published'], ['draft' => 'Draft', 'published' => 'Published']],
+                ['forced', true, null, []],
+                ['side-effect', true, null, []],
+            ];
+            $this->assertSame($expected, $snapshot($legacyComponents));
+            $this->assertSame(['constructed', true], $legacyEvents);
+            file_put_contents($directory . '/components.php', $source);
+
+            foreach ([false, true] as $dryRun) {
+                (new Process([
+                    PHP_BINARY, $root . '/vendor/bin/rector', 'process', $directory,
+                    '--config', $root . '/packages/upgrade/src/rector.php', '--clear-cache', '--no-progress-bar',
+                    ...($dryRun ? ['--dry-run'] : []),
+                ], $root))->setTimeout(120)->mustRun();
+            }
+
+            [$components, $events] = require $directory . '/components.php';
+            $this->assertSame($expected, $snapshot($components));
+            $this->assertSame(['constructed', true], $events);
+        } finally {
+            (new Filesystem)->deleteDirectory($directory);
+        }
+    }
+
     public function test_the_complete_set_migrates_fixtures_and_remains_stable_in_fresh_processes(): void
     {
         $directory = sys_get_temp_dir() . '/filament-upgrade-' . bin2hex(random_bytes(8));
@@ -529,6 +606,34 @@ class PersistentUpgradeSetTest extends TestCase
         $this->assertSame(Alignment::Start, $components[24]->getModalAlignment());
         $this->assertSame(['on', 'words'], [$components[25]->getAutocomplete(), $components[25]->getAutocapitalize()]);
 
+    }
+}
+
+class LegacyButtonAction extends Action
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->button();
+    }
+}
+
+class LegacyIconButtonAction extends Action
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->iconButton();
+    }
+}
+
+class LegacyMultipleFilter extends SelectFilter
+{
+    public function isMultiple(): bool
+    {
+        return true;
     }
 }
 

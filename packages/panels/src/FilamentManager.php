@@ -18,7 +18,6 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasDefaultTenant;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasTenants;
-use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
@@ -1092,7 +1091,7 @@ class FilamentManager
     }
 
     /**
-     * @param  array<MenuItem>  $items
+     * @param  array<int | string, Action | Closure> | array<int, array<int | string, Action | Closure>>  $items
      *
      * @deprecated Use `Panel::userMenuItems()` instead.
      */

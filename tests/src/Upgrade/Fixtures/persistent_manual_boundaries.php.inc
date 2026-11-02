@@ -208,14 +208,14 @@ class ReviewableSchema extends Schema
     }
 }
 
-$filter = MultiSelectFilter::make('configured-later');
+$filter = SelectFilter::make('configured-later')->multiple();
 $filter->multiple(false);
 
 return [
     CustomHooks::TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER,
     CustomHooks::TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE,
     ButtonAction::make('typed')->label(fn (ButtonAction $action) => $action->getLabel()),
-    IconButtonAction::make('unknown')->tap($configure),
+    Action::make('unknown')->iconButton()->tap($configure),
     MultiSelectFilter::make('callback')->options(fn (SelectFilter $filter) => $filter->multiple(false)->getOptions()),
     MultiSelectFilter::make('nullsafe')->options(fn (SelectFilter $filter) => $filter?->multiple(false)->getOptions()),
     BadgeColumn::make('callback')->color(fn (TextColumn $column) => $column->badge(false)->getColor()),

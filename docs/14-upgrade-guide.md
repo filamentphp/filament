@@ -519,6 +519,16 @@ Resource/page `form()` / `infolist()` hooks and `InteractsWithForms` remain supp
 
 | Removed name                                                                                               | Replacement                                                                         |
 | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `Actions\ButtonAction` | `Actions\Action::make()->button()` |
+| `Actions\IconButtonAction` | `Actions\Action::make()->iconButton()` |
+| `Forms\Components\MultiSelect` | `Forms\Components\Select::make()->multiple()` |
+| `Forms\Components\RelationshipRepeater` | `Forms\Components\Repeater::make()->relationship()` |
+| `Forms\Components\Placeholder` | `Infolists\Components\TextEntry::make()`, with `content()` replaced by `state()` |
+| `Tables\Columns\BadgeColumn` | `Tables\Columns\TextColumn::make()->badge()` |
+| `Tables\Columns\BooleanColumn` | `Tables\Columns\IconColumn::make()->boolean()` |
+| `Tables\Columns\TagsColumn` | `Tables\Columns\TextColumn::make()->badge()`, with `limit()` replaced by `limitList()` |
+| `Tables\Filters\MultiSelectFilter` | `Tables\Filters\SelectFilter::make()->multiple()` |
+| `Navigation\MenuItem` | `Actions\Action` in user and tenant menus |
 | `Schemas\Components\StateCasts\OptionsArrayStateCast` | `Schemas\Components\StateCasts\OptionArrayStateCast` |
 | `Support\View\Components\Contracts\HasColor` | `Support\View\Components\Contracts\HasColorMap` |
 | `Schemas\View\SchemaIconAlias`                                                                             | `Schemas\View\SchemasIconAlias`                                                     |
@@ -541,6 +551,14 @@ Resource/page `form()` / `infolist()` hooks and `InteractsWithForms` remain supp
 | `Widgets\PolarAreaChartWidget`                                                                             | `Widgets\ChartWidget` with `getType()` returning `'polarArea'`                      |
 | `Widgets\RadarChartWidget`                                                                                 | `Widgets\ChartWidget` with `getType()` returning `'radar'`                          |
 | `Widgets\ScatterChartWidget`                                                                               | `Widgets\ChartWidget` with `getType()` returning `'scatter'`                        |
+
+The script replaces ordinary `::make()` calls for the removed component classes, including their fluent configuration. Review remaining references such as subclasses, type declarations, container bindings, class strings, direct constructors, and first-class factory callables manually. Update `Placeholder::getContent()` calls to `TextEntry::getState()`, and calls to `TagsColumn::limit()` on separately configured instances to `TextColumn::limitList()`. The replacements can be reconfigured, unlike legacy classes that forced multiple, badge, or boolean mode; review callbacks or later calls that disable those modes.
+
+Class-specific `configureUsing()` registrations require manual migration. For example, do not simply replace `MultiSelect::configureUsing()` with `Select::configureUsing()`: that would also configure single-select fields. Move these defaults into an application-owned factory or subclass, or apply them to the intended instances. The script can still migrate ordinary factories in files containing these registrations; review the resulting instances alongside your configuration changes.
+
+Also review existing `configureUsing()` callbacks on replacement classes such as `Select` and `Action`, even if they do not mention a removed class. The injected `multiple()`, `badge()`, `boolean()`, `relationship()`, `button()`, and `iconButton()` calls run after `make()` finishes setup and global configuration. Callbacks that inspect these modes during construction may now see different values, and the injected setters can override important configuration. For example, `Select::configureUsing()` logic based on `isMultiple()` runs before the injected `multiple()`, while an important `Action::configureUsing()` callback that calls `link()` can be overridden by the injected `iconButton()`. Apply affected defaults explicitly to the intended instances after their mode setters, or move them into an application-owned factory or subclass with the required setup order.
+
+For `MenuItem`, the script migrates direct factory chains registered in literal arrays passed to `userMenuItems()` and `tenantMenuItems()`, including grouped menus and built-in keyed items. Review separately constructed menu items, dynamically assembled registrations, and custom subclasses manually. Use an action customization closure for built-in items so their existing action name is retained. See [customizing the user menu](../navigation/user-menu) and [customizing the tenant menu](../users/tenancy#customizing-the-tenant-menu).
 
 The query builder filter itself remains `Tables\Filters\QueryBuilder`. Update any remaining type hints for removed chart classes to `Widgets\ChartWidget`. The enum color contract `Support\Contracts\HasColor` is unchanged; only the view-component contract becomes `HasColorMap`.
 </Disclosure>
