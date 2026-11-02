@@ -6,7 +6,6 @@ use Filament\Support\Components\Attributes\Unexposed;
 
 abstract class SimplePage extends BasePage
 {
-    use Concerns\HasMaxWidth;
     use Concerns\HasTopbar;
 
     protected string $view = 'filament-panels::pages.simple';
@@ -17,8 +16,6 @@ abstract class SimplePage extends BasePage
     {
         return [
             'hasTopbar' => $this->hasTopbar(),
-            'maxContentWidth' => $maxContentWidth = $this->getMaxWidth() ?? $this->getMaxContentWidth(),
-            'maxWidth' => $maxContentWidth,
         ];
     }
 

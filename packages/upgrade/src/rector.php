@@ -11,6 +11,7 @@ use Filament\Upgrade\Rector\RenameDeprecatedConstantsRector;
 use Filament\Upgrade\Rector\RenameDeprecatedForwardingMethodsRector;
 use Filament\Upgrade\Rector\RenameDeprecatedLazyLoadingApisRector;
 use Filament\Upgrade\Rector\RenameDeprecatedTestingAssertionsRector;
+use Filament\Upgrade\Rector\RenamePageWidthRector;
 use Filament\Upgrade\Rector\RenamePlainSchemaAliasesRector;
 use Filament\Upgrade\Rector\RenameReconciledContractMethodsRector;
 use Filament\Upgrade\Rector\RenameSchemaComponentHooksRector;
@@ -169,6 +170,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(RenameDeprecatedForwardingMethodsRector::class);
     $rectorConfig->rule(RenameDeprecatedLazyLoadingApisRector::class);
     $rectorConfig->rule(RenameDeprecatedTestingAssertionsRector::class);
+    $rectorConfig->rule(RenamePageWidthRector::class);
     $rectorConfig->rule(RenamePlainSchemaAliasesRector::class);
     $rectorConfig->rule(RenameReconciledContractMethodsRector::class);
     $rectorConfig->rule(RenameSchemaComponentHooksRector::class);

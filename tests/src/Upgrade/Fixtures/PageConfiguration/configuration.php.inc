@@ -59,41 +59,40 @@ use Filament\Support\Enums\Width;
 
 final class Login extends SimplePage
 {
-    protected Width | string | null $maxWidth = Width::Large;
+    protected Width | string | null $maxContentWidth = Width::Large;
 
     public static bool $areFormActionsSticky = true;
 
-    public function getMaxWidth(): Width | string | null
+    public function getMaxContentWidth(): Width | string | null
     {
-        return parent::getMaxWidth() ?? $this->maxWidth;
+        return parent::getMaxContentWidth() ?? $this->maxContentWidth;
     }
 
     public function widthFromClassName(): Width | string | null
     {
         $page = self::class;
 
-        return $page::getMaxWidth();
+        return $page::getMaxContentWidth();
     }
 
     public function update(): void
     {
-        $this->maxWidth = Width::Small;
+        $this->maxContentWidth = Width::Small;
         static::$areFormActionsSticky = false;
     }
 }
 
 final class Profile extends EditProfile
 {
-    protected Width | string | null $maxWidth = null;
+    protected Width | string | null $maxContentWidth = null;
 }
 
 final class TraitPage extends SimplePage
 {
-    use HasMaxWidth;
 }
 
 function inspect(?SimplePage $page): void
 {
-    $page?->getMaxWidth();
+    $page?->getMaxContentWidth();
     Login::$areFormActionsSticky = true;
 }

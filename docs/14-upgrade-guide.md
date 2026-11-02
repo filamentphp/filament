@@ -392,9 +392,9 @@ Declarations that already use both names, or traits shared with unrelated classe
 
 If competing old and new methods prevent a contract migration, reconcile all its implementations and callers before using the new interface. If a trait alias shares its name with an independent method on another subclass, the script leaves that parameter family unchanged, including direct calls, to avoid breaking calls that can reach either signature.
 
-Use `$maxContentWidth` / `getMaxContentWidth()` for new page configuration. Existing `HasMaxWidth` configuration and the `maxWidth` layout-data key remain supported and are not migrated automatically: moving width configuration can change inherited precedence and legacy getter results. Existing exporter disk and generator action overrides also remain supported.
+Page `$maxWidth` / `getMaxWidth()` configuration is replaced by `$maxContentWidth` / `getMaxContentWidth()`, and `Pages\Concerns\HasMaxWidth` is removed. The script migrates properties, getter overrides, calls, and unadapted uses of the removed trait on simple pages and profile pages. Include shared base pages and width traits in the upgrade paths. Reconcile competing old and new width configuration before running the script; it leaves conflicting families unchanged to avoid changing inherited precedence. Explicit aliases or precedence rules involving the removed `HasMaxWidth` trait require manual migration. Update custom layouts to read `maxContentWidth` instead of the removed `maxWidth` layout-data key. Existing exporter disk and generator action overrides remain supported.
 
-`Actions\Exports\Jobs\ExportCompletion` is now `CompleteExport`. The old class remains as a subclass for already-queued and retry payloads. New jobs use `CompleteExport` directly, so move container bindings, resolving callbacks, and type checks to the new class; new jobs are not instances of `ExportCompletion`. Deploy the updated code to all workers and restart long-running workers before dispatching jobs using the new name. Drain queued listeners carrying old `ImportChunkProcessed` objects before upgrading, since the event's serialized property names change.
+`Actions\Exports\Jobs\ExportCompletion` is replaced by `CompleteExport`; the script renames PHP references. Drain queued and retry jobs using `ExportCompletion` before upgrading, since the old class is removed. Deploy the updated code to all workers and restart long-running workers before dispatching jobs using the new name. Drain queued listeners carrying old `ImportChunkProcessed` objects before upgrading, since the event's serialized property names change.
 </Disclosure>
 
 ### Referencing removed APIs
@@ -590,6 +590,8 @@ The table-hook string values are unchanged.
 | Removed component    | Replacement             |
 | -------------------- | ----------------------- |
 | `<x-filament::card>` | `<x-filament::section>` |
+| `<x-filament::page>` | `<x-filament-panels::page>` |
+| `<x-filament::widget>` | `<x-filament-widgets::widget>` |
 
 The script updates component tags and literal dynamic-component names. Update computed names and direct references to the old card view manually. To scan additional view directories:
 

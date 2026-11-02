@@ -17,9 +17,19 @@ class RenamePageConfigurationRectorTest extends AbstractRectorTestCase
         }
     }
 
-    public function test_migrates_sticky_configuration_without_changing_width_apis(): void
+    public function test_migrates_sticky_and_width_configuration(): void
     {
         $this->doTestFile(__DIR__ . '/Fixtures/PageConfiguration/configuration.php.inc');
+    }
+
+    public function test_migrates_inherited_and_trait_defined_width_configuration(): void
+    {
+        $this->doTestFile(__DIR__ . '/Fixtures/page_width.php.inc');
+    }
+
+    public function test_preserves_conflicting_width_configuration_for_manual_reconciliation(): void
+    {
+        $this->doTestFile(__DIR__ . '/Fixtures/PageConfiguration/width_conflicts.php.inc');
     }
 
     public function test_migrates_trait_configuration_and_inherited_references(): void
@@ -30,6 +40,68 @@ class RenamePageConfigurationRectorTest extends AbstractRectorTestCase
     public function test_preserves_shared_unrelated_traits_and_conflicting_properties(): void
     {
         $this->doTestFile(__DIR__ . '/Fixtures/PageConfiguration/sticky_trait_boundaries.php.inc');
+    }
+
+    public function test_width_migration_preserves_configured_values_in_fresh_processes(): void
+    {
+        $directory = sys_get_temp_dir() . '/filament-page-width-' . bin2hex(random_bytes(8));
+        mkdir($directory . '/app', recursive: true);
+        $root = dirname(__DIR__, 3);
+        [$source] = explode("-----\n", file_get_contents(__DIR__ . '/Fixtures/page_width.php.inc'), 2);
+
+        try {
+            file_put_contents($directory . '/app/PageWidth.php', $source);
+            file_put_contents($directory . '/verify.php', <<<'PHP'
+                <?php
+
+                require $argv[1] . '/vendor/autoload.php';
+
+                if ($argv[2] === 'legacy') {
+                    // Reproduce the released width storage and getter on both page types.
+                    eval('namespace Filament\Pages; abstract class SimplePage extends BasePage {
+                        protected \Filament\Support\Enums\Width | string | null $maxWidth = null;
+                        public function getMaxWidth(): \Filament\Support\Enums\Width | string | null { return $this->maxWidth; }
+                    }');
+                    eval('namespace Filament\Auth\Pages; class EditProfile extends \Filament\Pages\Page {
+                        protected \Filament\Support\Enums\Width | string | null $maxWidth = null;
+                        public function getMaxWidth(): \Filament\Support\Enums\Width | string | null { return $this->maxWidth; }
+                    }');
+                }
+
+                require __DIR__ . '/app/PageWidth.php';
+
+                $getter = $argv[2] === 'legacy' ? 'getMaxWidth' : 'getMaxContentWidth';
+                $page = new Filament\Tests\Upgrade\Fixtures\PageWidth\ChildLogin;
+                $states = [Filament\Tests\Upgrade\Fixtures\PageWidth\width($page)];
+                foreach ([\Filament\Support\Enums\Width::Small, 'custom-width', '', null] as $width) {
+                    $page->configureWidth($width);
+                    $states[] = $page->$getter();
+                }
+                $states[] = $page->originalWidth();
+                $states[] = (new Filament\Tests\Upgrade\Fixtures\PageWidth\Profile)->$getter();
+                $states[] = (new Filament\Tests\Upgrade\Fixtures\PageWidth\GetterOnly)->$getter();
+                $states[] = Filament\Tests\Upgrade\Fixtures\PageWidth\width(null);
+                $states[] = (new Filament\Tests\Upgrade\Fixtures\PageWidth\Unrelated)->getMaxWidth();
+                echo json_encode($states, JSON_THROW_ON_ERROR);
+                PHP);
+
+            $legacy = new Process([PHP_BINARY, $directory . '/verify.php', $root, 'legacy'], $root);
+            $legacy->mustRun();
+            $this->assertSame('["fallback-width","sm","custom-width","","fallback-width","fallback-width","xl","md",null,"unrelated"]', $legacy->getOutput());
+
+            $command = [PHP_BINARY, $root . '/vendor/bin/rector', 'process', $directory . '/app', '--config', $this->provideConfigFilePath(), '--clear-cache', '--no-progress-bar'];
+
+            foreach ([false, true] as $dryRun) {
+                (new Process([...$command, ...($dryRun ? ['--dry-run'] : [])], $root))->setTimeout(120)->mustRun();
+            }
+
+            $migrated = new Process([PHP_BINARY, $directory . '/verify.php', $root, 'migrated'], $root);
+            $migrated->mustRun();
+            $this->assertSame($legacy->getOutput(), $migrated->getOutput());
+            $this->assertSame('', $migrated->getErrorOutput());
+        } finally {
+            (new Filesystem)->deleteDirectory($directory);
+        }
     }
 
     public function test_migrates_cross_file_sticky_traits_without_changing_configuration(): void

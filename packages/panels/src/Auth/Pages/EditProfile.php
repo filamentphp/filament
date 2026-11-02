@@ -51,7 +51,6 @@ use Throwable;
 class EditProfile extends Page
 {
     use Concerns\CanUseDatabaseTransactions;
-    use Concerns\HasMaxWidth;
     use Concerns\HasTopbar;
     use WithRateLimiting;
 
@@ -520,8 +519,6 @@ class EditProfile extends Page
     {
         return [
             'hasTopbar' => $this->hasTopbar(),
-            'maxContentWidth' => $maxContentWidth = $this->getMaxWidth() ?? $this->getMaxContentWidth(),
-            'maxWidth' => $maxContentWidth,
         ];
     }
 
