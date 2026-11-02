@@ -33,12 +33,22 @@ export default function notificationComponent({ notification }) {
         isDestroyed: false,
 
         init() {
-            this.computedStyle = window.getComputedStyle(this.$el)
+            // Inline notifications, such as those in the database notifications
+            // modal, are rendered as a list, often dozens at once. Reading their
+            // computed style while Livewire morphs them in forces a style
+            // recalculation of the whole page for each one, and they do not use
+            // the transition timing anyway, as they appear and disappear instantly.
+            if (this.$el.classList.contains('fi-inline')) {
+                this.isShown = true
+            } else {
+                this.computedStyle = window.getComputedStyle(this.$el)
 
-            this.transitionDuration =
-                parseFloat(this.computedStyle.transitionDuration) * 1000
+                this.transitionDuration =
+                    parseFloat(this.computedStyle.transitionDuration) * 1000
 
-            this.transitionEasing = this.computedStyle.transitionTimingFunction
+                this.transitionEasing =
+                    this.computedStyle.transitionTimingFunction
+            }
 
             this.configureTransitions()
             this.configureAnimations()
@@ -160,6 +170,30 @@ export default function notificationComponent({ notification }) {
         },
 
         configureTransitions() {
+            // Inline notifications appear and disappear without a transition, so
+            // they are shown without reading the element's computed `display`.
+            if (this.$el.classList.contains('fi-inline')) {
+                this.transitionEffect = Alpine.effect(() => {
+                    if (this.isDestroyed) {
+                        return
+                    }
+
+                    const isShown = this.isShown
+
+                    Alpine.mutateDom(() => {
+                        if (isShown) {
+                            this.$el.style.removeProperty('display')
+                            this.$el.style.setProperty('visibility', 'visible')
+                        } else {
+                            this.$el.style.setProperty('display', 'none')
+                        }
+                    })
+                    this.$el._x_isShown = isShown
+                })
+
+                return
+            }
+
             const display = this.computedStyle.display
 
             const show = () => {
