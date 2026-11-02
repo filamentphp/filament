@@ -228,8 +228,8 @@ describe('configuration', function (): void {
             expect($select->hasEditOptionActionFormSchema())->toBeTrue();
         });
 
-        it('uses `manageOptionSchema()` for both option actions with legacy callback injections', function (): void {
-            $select = Select::make('category')->manageOptionSchema(schema: static function (Schema $schema, Schema $form): Schema {
+        it('uses `manageOptionForm()` for both option actions with form and schema callback injections', function (): void {
+            $select = Select::make('category')->manageOptionForm(schema: static function (Schema $schema, Schema $form): Schema {
                 expect($form)->toBe($schema);
 
                 return $schema->components([TextInput::make('name')->default('New option')]);
@@ -244,7 +244,7 @@ describe('configuration', function (): void {
                 expect($schema->getRawState())->toBe(['name' => 'New option']);
             }
 
-            $select->manageOptionSchema(schema: null);
+            $select->manageOptionForm(schema: null);
 
             expect($select->getCreateOptionAction())->toBeNull()
                 ->and($select->getEditOptionAction())->toBeNull();

@@ -133,7 +133,7 @@ Action::make('updateAuthor')
 
 ##### Filling the form with existing data
 
-You may fill the form with existing data, using the `fillSchema()` method:
+You may fill the form with existing data, using the `fillForm()` method:
 
 ```php
 use App\Models\Post;
@@ -142,7 +142,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 
 Action::make('updateAuthor')
-    ->fillSchema(fn (Post $record): array => [
+    ->fillForm(fn (Post $record): array => [
         'authorId' => $record->author->id,
     ])
     ->schema([
@@ -157,7 +157,7 @@ Action::make('updateAuthor')
     })
 ```
 
-<UtilityInjection set="actions">The `fillSchema()` method also accepts a function to dynamically calculate the data to fill the form with. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions">The `fillForm()` method also accepts a function to dynamically calculate the data to fill the form with. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ##### Disabling all form fields
 
@@ -477,7 +477,7 @@ Action::make('create')
     })
 ```
 
-> The `mountUsing()` method, by default, is used by Filament to initialize the [form](#rendering-a-form-in-a-modal). If you override this method, you will need to call `$form->fill()` to ensure the form is initialized correctly. If you wish to populate the form with data, you can do so by passing an array to the `fill()` method, instead of [using `fillSchema()` on the action itself](#filling-the-form-with-existing-data).
+> The `mountUsing()` method, by default, is used by Filament to initialize the [form](#rendering-a-form-in-a-modal). If you override this method, you will need to call `$form->fill()` to ensure the form is initialized correctly. If you wish to populate the form with data, you can do so by passing an array to the `fill()` method, instead of [using `fillForm()` on the action itself](#filling-the-form-with-existing-data).
 
 ## Customizing the action buttons in the footer of the modal
 
@@ -750,7 +750,7 @@ Action::make('second')
 ```
 
 <Aside variant="warning">
-    `getValidatedData()` validates the data without submitting the parent action. It skips `beforeStateDehydrated()` hooks, so a newly uploaded file can remain a `TemporaryUploadedFile` instead of a stored path. It also skips `mutateDataUsing()`, `beforeSchemaValidated()`, and `afterSchemaValidated()`.
+    `getValidatedData()` validates the data without submitting the parent action. It skips `beforeStateDehydrated()` hooks, so a newly uploaded file can remain a `TemporaryUploadedFile` instead of a stored path. It also skips `mutateDataUsing()`, `beforeFormValidated()`, and `afterFormValidated()`.
 </Aside>
 
 ### Filling in the data of a parent action

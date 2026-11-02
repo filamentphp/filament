@@ -1510,7 +1510,7 @@ class HighlightRichContentPlugin implements RichContentPlugin
         return [
             Action::make('highlightWithCustomColor')
                 ->modalWidth(Width::Large)
-                ->fillSchema(fn (array $arguments): array => [
+                ->fillForm(fn (array $arguments): array => [
                     'color' => $arguments['color'] ?? null,
                 ])
                 ->schema([

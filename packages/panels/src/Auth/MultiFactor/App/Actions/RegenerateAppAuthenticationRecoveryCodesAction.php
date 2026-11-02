@@ -79,7 +79,7 @@ class RegenerateAppAuthenticationRecoveryCodesAction
                     }),
                 $passwordInput,
             ])
-            ->beforeSchemaValidated(function (LivewireComponent $livewire) use ($passwordInput, $rateLimitAuthenticationAttempt): void {
+            ->beforeFormValidated(function (LivewireComponent $livewire) use ($passwordInput, $rateLimitAuthenticationAttempt): void {
                 $passwordStatePath = $passwordInput->getStatePath();
 
                 $rateLimitAuthenticationAttempt($passwordStatePath);
