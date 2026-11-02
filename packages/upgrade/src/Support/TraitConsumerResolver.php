@@ -10,7 +10,7 @@ use Rector\Configuration\Option;
 use Rector\Configuration\Parameter\SimpleParameterProvider;
 use Rector\FileSystem\FilesystemTweaker;
 use Rector\PhpParser\Parser\RectorParser;
-use Rector\Skipper\Skipper\PathSkipper;
+use Rector\Skipper\Skipper\Skipper;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -36,7 +36,7 @@ class TraitConsumerResolver
     public function __construct(
         private RectorParser $rectorParser,
         private ReflectionProvider $reflectionProvider,
-        private PathSkipper $pathSkipper,
+        private Skipper $skipper,
         private FilesystemTweaker $filesystemTweaker,
     ) {}
 
@@ -98,7 +98,7 @@ class TraitConsumerResolver
         }
 
         foreach (array_unique($paths) as $path) {
-            if ($this->pathSkipper->shouldSkip($path)) {
+            if ($this->skipper->shouldSkipFilePath($path)) {
                 continue;
             }
 
