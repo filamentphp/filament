@@ -59,10 +59,6 @@ This method applies to general default-order checks, not CSV export pagination o
 
 For other database drivers, Filament calculates summaries through the driver's native query builder instead of wrapping the source query in a SQL subquery or batching raw SQL aggregate expressions. No additional Eloquent methods are required. Your driver must support Laravel's `sum()`, `avg()`, `count()`, `min()`, and `max()` methods for the summarizers you use. Range summaries call `min()` and `max()` separately. Count summaries count matching records; icon counts also require `distinct()->pluck()` and filtered counts.
 
-<Aside variant="info">
-    MongoDB Laravel 5.12 returns incompatible results from `distinct()->pluck()`. Icon-count summaries require a driver fix before you can use them with this version. Other native summaries do not depend on that operation.
-</Aside>
-
 Filament preserves filters and Eloquent scopes. Display-group summaries use separate group-scoped queries rather than raw SQL grouping, so your driver must support the group's constraints, including `whereDate()` for date groups. Summary `query()` and `using()` callbacks receive the driver's query builder and must use operations it supports. Summary visibility callbacks are evaluated without SQL-based caching.
 
 For non-relationship summaries, use `query()` callbacks only to configure the query, not to execute it. Filament applies the callback to a clone without source predicates, then combines the source and callback predicates as separate groups. This prevents callback `orWhere()` conditions from bypassing source filters. Use `using()` to execute custom calculations against the combined query.
