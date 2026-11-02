@@ -507,7 +507,7 @@ describe('duplicate relationship selection', function (): void {
         expect(Department::query()->whereIn('id', $otherDepartments->modelKeys())->count())->toBe(2);
     })->with([false, true])->with(['delete', 'queryBulkDelete']);
 
-    it('can detach selected duplicates with `allowDuplicates()`', function (?int $chunkSize): void {
+    it('can detach selected duplicates with `allowDuplicates()`', function (?int $chunkSize, bool $shouldFetchSelectedRecords): void {
         $ticket = Ticket::factory()->create();
         $otherTicket = Ticket::factory()->create();
         $department = Department::factory()->create();
@@ -521,20 +521,26 @@ describe('duplicate relationship selection', function (): void {
         {
             public ?int $chunkSize = null;
 
+            public bool $shouldFetchSelectedRecords = true;
+
             public function table(Table $table): Table
             {
-                return parent::table($table)->toolbarActions([
-                    DetachBulkAction::make()->chunkSelectedRecords($this->chunkSize),
-                ]);
+                return parent::table($table)
+                    ->checkIfRecordIsSelectableUsing(static fn (Department $record): bool => $record->pivot->quantity > 0)
+                    ->toolbarActions([
+                        DetachBulkAction::make()
+                            ->chunkSelectedRecords($this->chunkSize)
+                            ->fetchSelectedRecords($this->shouldFetchSelectedRecords),
+                    ]);
             }
-        }, ['ticketKey' => $ticket->getKey(), 'duplicates' => true, 'chunkSize' => $chunkSize])
+        }, ['ticketKey' => $ticket->getKey(), 'duplicates' => true, 'chunkSize' => $chunkSize, 'shouldFetchSelectedRecords' => $shouldFetchSelectedRecords])
             ->callTableBulkAction(DetachBulkAction::class, $pivotKeys)
             ->assertNotified();
 
         expect($ticket->departments()->pluck('quantity')->all())->toEqual([7])
             ->and($otherTicket->departments()->pluck('quantity')->all())->toEqual([99])
             ->and(Department::find($department->getKey()))->not->toBeNull();
-    })->with([null, 1]);
+    })->with([null, 1])->with([true, false]);
 
     it('respects search filters scopes and exclusions when selecting all with `allowDuplicates()`', function (string $constraint, string $action): void {
         $ticket = Ticket::factory()->create();

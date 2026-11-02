@@ -132,7 +132,7 @@ trait HasBulkActions
 
         $records = $this->getTable()->selectsCurrentPageOnly() ?
             $this->getTableRecords() :
-            $query->get();
+            $this->hydratePivotRelationForTableRecords($query->get());
 
         return $records->reduce(
             function (array $carry, Model | array $record, string $key): array {
@@ -216,7 +216,7 @@ trait HasBulkActions
             $this->getTableRecords()->filter(
                 fn (Model $record) => $tableGrouping->getStringKey($record) === $group,
             ) :
-            $query->get();
+            $this->hydratePivotRelationForTableRecords($query->get());
 
         return $records->reduce(
             function (array $carry, Model $record): array {
@@ -239,9 +239,9 @@ trait HasBulkActions
             /** @var Collection $records */
             $records = $this->getTable()->selectsCurrentPageOnly() ?
                 $this->getTableRecords() :
-                ($this->getTable()->hasPivotRecordKeys() ?
+                $this->hydratePivotRelationForTableRecords(($this->getTable()->hasPivotRecordKeys() ?
                     $this->applyPivotRecordKeyToTableQuery($this->getFilteredTableQuery()) :
-                    $this->getFilteredTableQuery())->get();
+                    $this->getFilteredTableQuery())->get());
 
             return $records
                 ->filter(fn (Model | array $record): bool => $this->getTable()->isRecordSelectable($record))
@@ -305,13 +305,6 @@ trait HasBulkActions
 
         if ($chunkSize || (! $shouldFetchSelectedRecords)) {
             $resolvedSelectedRecords = $this->lazyTableRecordsByKey($query, $chunkSize ?? 1000);
-
-            if ($table->getRelationship() instanceof BelongsToMany) {
-                $invadedRelationship = invade($table->getRelationship());
-
-                $resolvedSelectedRecords = $resolvedSelectedRecords
-                    ->tapEach(fn (Model $record) => $invadedRelationship->hydratePivotRelation([$record]));
-            }
         } else {
             $resolvedSelectedRecords = $this->hydratePivotRelationForTableRecords($query->get());
         }
@@ -491,6 +484,12 @@ trait HasBulkActions
         }
 
         $records = $query->reorder()->lazyById($chunkSize, $qualifiedKeyName, $keyName);
+
+        if ($this->getTable()->getRelationship() instanceof BelongsToMany) {
+            $invadedRelationship = invade($this->getTable()->getRelationship());
+
+            $records = $records->tapEach(fn (Model $record) => $invadedRelationship->hydratePivotRelation([$record]));
+        }
 
         return ($limit !== null) ? $records->take($limit) : $records;
     }
