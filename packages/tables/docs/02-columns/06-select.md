@@ -453,6 +453,10 @@ SelectColumn::make('status')
     })
 ```
 
+## Rendering only the updated cells
+
+By default, the whole table re-renders after a select column is updated. You may [re-render only the updated cells](overview#rendering-only-the-updated-cells-of-editable-columns) using `partiallyRenderAfterStateUpdated()` or `partiallyRenderColumnsAfterStateUpdated()`.
+
 ## Security
 
 ### Authorization

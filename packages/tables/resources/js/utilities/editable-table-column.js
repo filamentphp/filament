@@ -45,8 +45,12 @@ export default function editableTableColumn({
                     }
 
                     succeed(({ effects }) => {
+                        const hasRenderedCell =
+                            Boolean(effects.html) ||
+                            this.isRenderedByPartial(effects.partials)
+
                         if (isSaveCommit || isRefreshCommit) {
-                            this.hasRenderedState = Boolean(effects.html)
+                            this.hasRenderedState = hasRenderedCell
                         }
 
                         if (isRefreshCommit) {
@@ -54,7 +58,7 @@ export default function editableTableColumn({
                             this.isRefreshing = false
                         }
 
-                        if (!effects.html) {
+                        if (!hasRenderedCell) {
                             return
                         }
 
@@ -158,6 +162,30 @@ export default function editableTableColumn({
                     this.handleSaveFailure()
                 }
             })
+        },
+
+        isRenderedByPartial(partials) {
+            if (!partials) {
+                return false
+            }
+
+            // Published table views may not mark the cell as a partial, so the save falls back to a full refresh.
+            let element = this.$el.closest('[wire\\:partial]')
+
+            while (element) {
+                if (
+                    Object.hasOwn(
+                        partials,
+                        element.getAttribute('wire:partial'),
+                    )
+                ) {
+                    return true
+                }
+
+                element = element.parentElement?.closest('[wire\\:partial]')
+            }
+
+            return false
         },
 
         syncServerState() {

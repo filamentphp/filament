@@ -36,6 +36,43 @@ it('persists boolean changes through `updateTableColumnState()` and rejects vali
     expect(data_get($post->fresh(), $columnName))->toBeFalse();
 })->with(['is_published', 'json.approved']);
 
+it('renders the configured cells instead of the whole table after `updateTableColumnState()`', function (string $saveScenario, array $expectedPartiallyRenderedColumns): void {
+    $post = Post::factory()->create(['title' => 'Original title', 'rating' => 1]);
+    $component = livewire(ColumnsBrowserTest::class, ['editableColumns' => true, 'saveScenario' => $saveScenario])
+        ->call('updateTableColumnState', 'title', (string) $post->getKey(), 'mixedCase');
+
+    $expectedPartialNames = array_map(
+        fn (string $columnName): string => "table.record.{$post->getKey()}.column.{$columnName}",
+        $expectedPartiallyRenderedColumns,
+    );
+
+    expect($post->fresh())->title->toBe('MIXEDCASE')->rating->toBe(2)
+        ->and($component->effects)->not->toHaveKey('html')
+        ->and(array_keys($component->effects['partials']))->toBe($expectedPartialNames)
+        ->and($component->effects['partials']["table.record.{$post->getKey()}.column.title"])->toContain('value="MIXEDCASE"');
+
+    $partials = $component->effects['partials'];
+
+    // The full table renders the same cell HTML, so the partial can replace the cell in place.
+    $component->call('$refresh');
+
+    foreach ($partials as $partialHtml) {
+        expect($component->effects['html'])->toContain($partialHtml);
+    }
+})->with([
+    '`partiallyRenderAfterStateUpdated()`' => ['partial', ['title']],
+    '`partiallyRenderColumnsAfterStateUpdated()`' => ['partial-columns', ['title', 'rating']],
+]);
+
+it('renders the whole table after `updateTableColumnState()` by default', function (): void {
+    $post = Post::factory()->create(['title' => 'Original title']);
+    $component = livewire(ColumnsBrowserTest::class, ['editableColumns' => true])
+        ->call('updateTableColumnState', 'title', (string) $post->getKey(), 'Updated title');
+
+    expect($component->effects['html'])->toContain('value="Updated title"')->not->toContain('wire:partial="table.record.')
+        ->and($component->effects['partials'] ?? [])->toBe([]);
+});
+
 describe('browser interactions', function (): void {
     beforeEach(function (): void {
         Artisan::call('filament:assets');
@@ -141,4 +178,27 @@ describe('browser interactions', function (): void {
         'normalization' => ['normalize', 'MIXEDCASE'],
         'custom records' => ['custom-records', 'MIXEDCASE'],
     ]);
+
+    it('updates partially rendered cells without rendering the rest of the table', function (): void {
+        $post = Post::factory()->create(['title' => 'Original title', 'rating' => 1]);
+
+        $page = visit('/columns-browser-test?editableColumns=1&saveScenario=partial-columns');
+
+        // Rendering the whole table would morph this cell and remove the attribute added in the browser.
+        $page->script(<<<'JS'
+            document.querySelector('[data-testid="editable-is_published"]').closest('td').setAttribute('data-testid', 'unrendered-cell')
+            JS);
+
+        $control = '[data-testid="editable-title"] input:not([type="hidden"])';
+        $page->assertValue($control, 'Original title')
+            ->fill($control, 'mixedCase')
+            ->keys($control, 'Tab')
+            ->assertValue($control, 'MIXEDCASE')
+            ->assertValue('[data-testid="editable-rating"] select', '2')
+            ->assertAttributeMissing($control, 'aria-busy')
+            ->assertPresent('[data-testid="unrendered-cell"]')
+            ->assertNoSmoke();
+
+        expect($post->fresh())->title->toBe('MIXEDCASE')->rating->toBe(2);
+    });
 });

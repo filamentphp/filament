@@ -1,5 +1,4 @@
 @php
-    use Filament\Actions\Action;
     use Filament\Actions\ActionGroup;
     use Filament\Actions\BulkAction;
     use Filament\Actions\BulkActionGroup;
@@ -45,6 +44,7 @@
     $isSelectionDisabled = $isSelectionDisabled();
     $maxSelectableRecords = $getMaxSelectableRecords();
     $columns = $getVisibleColumns();
+    $partiallyRenderableColumnNames = $getPartiallyRenderableColumnNames();
     $collapsibleColumnsLayout = $getCollapsibleColumnsLayout();
     $columnsLayout = $getColumnsLayout();
     $content = $getContent();
@@ -2520,59 +2520,16 @@
                                                         $column->record($record);
                                                         $column->rowLoop($loop->parent);
                                                         $column->recordKey($recordKey);
-
-                                                        $columnAction = $column->getAction();
-                                                        $columnUrl = $column->getUrl();
-                                                        $columnHasStateBasedUrls = $column->hasStateBasedUrls();
-                                                        $isColumnClickDisabled = $column->isClickDisabled() || $isReordering;
-
-                                                        $columnWrapperTag = match (true) {
-                                                            ($columnUrl || ($recordUrl && $columnAction === null)) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'a',
-                                                            ($columnAction || $recordAction) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'button',
-                                                            default => 'div',
-                                                        };
-
-                                                        if ($columnWrapperTag === 'button') {
-                                                            if ($columnAction instanceof Action) {
-                                                                $columnWireClickAction = "mountTableAction('{$columnAction->getName()}', " . Js::from($recordKey) . ')';
-                                                            } elseif ($columnAction) {
-                                                                $columnWireClickAction = "callTableColumnAction('{$column->getName()}', " . Js::from($recordKey) . ')';
-                                                            } else {
-                                                                if ($this->getTable()->getAction($recordAction)) {
-                                                                    $columnWireClickAction = "mountTableAction('{$recordAction}', " . Js::from($recordKey) . ')';
-                                                                } else {
-                                                                    $columnWireClickAction = "{$recordAction}(" . Js::from($recordKey) . ')';
-                                                                }
-                                                            }
-                                                        }
                                                     @endphp
 
-                                                    <td
-                                                        wire:key="{{ $this->getId() }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
-                                                        {!! $column->getCachedCellAttributeHtml() !!}
-                                                    >
-                                                        {!! $isStackedOnMobile ? '<div class="fi-ta-cell-label">' . e($column->getLabel()) . '</div><div class="fi-ta-cell-content">' : '' !!}
-                                                        <{{ $columnWrapperTag }}
-                                                            @if ($columnWrapperTag === 'a')
-                                                                {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab, hasNestedClickEventHandler: true) }}
-                                                                @if (blank($columnUrl) && filled($recordUrl))
-                                                                    {{ $getExtraRecordLinkAttributeBag($record) }}
-                                                                @endif
-                                                            @elseif ($columnWrapperTag === 'button')
-                                                                type="button"
-                                                                wire:click.prevent.stop="{{ $columnWireClickAction }}"
-                                                                wire:loading.attr="disabled"
-                                                                wire:target="{{ $columnWireClickAction }}"
-                                                            @endif
-                                                            @class([
-                                                                'fi-ta-col',
-                                                                'fi-ta-col-has-column-url' => ($columnWrapperTag === 'a') && filled($columnUrl),
-                                                            ])
-                                                        >
-                                                            {{ $column }}
-                                                        </{{ $columnWrapperTag }}>
-                                                        {!! $isStackedOnMobile ? '</div>' : '' !!}
-                                                    </td>
+                                                    {{
+                                                        $column->renderInTableCell(
+                                                            recordAction: $recordAction,
+                                                            recordUrl: $recordUrl,
+                                                            shouldOpenRecordUrlInNewTab: $openRecordUrlInNewTab,
+                                                            isPartiallyRenderable: array_key_exists($column->getName(), $partiallyRenderableColumnNames),
+                                                        )
+                                                    }}
                                                 @endforeach
 
                                                 @if ($hasRecordActionsForAnyRecord && $recordActionsPosition === RecordActionsPosition::AfterColumns && (! $isReordering))

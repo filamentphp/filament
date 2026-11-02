@@ -73,6 +73,15 @@ class ColumnsBrowserTest extends Page implements HasTable
                     });
             }
 
+            if (in_array($this->saveScenario, ['partial', 'partial-columns'])) {
+                $columns[2]
+                    ->updateStateUsing(static function (Post $record, string $state): void {
+                        $record->update(['title' => strtoupper($state), 'rating' => 2]);
+                    })
+                    ->partiallyRenderAfterStateUpdated(fn (): bool => $this->saveScenario === 'partial')
+                    ->partiallyRenderColumnsAfterStateUpdated(($this->saveScenario === 'partial-columns') ? ['rating'] : []);
+            }
+
             if ($this->saveScenario === 'custom-records') {
                 $columns[2]->updateStateUsing(static function (Post $record, string $state): void {
                     Post::query()->whereKey($record->getKey())->update(['title' => strtoupper($state)]);
