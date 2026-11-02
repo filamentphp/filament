@@ -39,6 +39,11 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.data('filamentOneTimeCodeInput', oneTimeCodeInput)
     window.Alpine.data('filamentPasswordReveal', passwordReveal)
     window.Alpine.data('filamentCopyable', copyable)
+
+    /**
+     * @deprecated Use `filamentPasswordReveal` instead.
+     */
+    window.Alpine.data('passwordRevealFormComponent', passwordReveal)
 })
 
 window.jsMd5 = md5
