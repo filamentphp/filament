@@ -271,8 +271,11 @@ class Column extends ViewComponent
 
     public function getTableCellPartialName(): string
     {
-        // Strip characters that could break the `wire:partial` attribute selector used to find the cell in the DOM.
-        return preg_replace('/[<>"\'`\\\\\x00-\x1F\x7F]/', '', "table.record.{$this->getRecordKey()}.column.{$this->getName()}");
+        // Encode each segment, including the `.` delimiter, so distinct record keys and column names never share
+        // a name, and the name is safe in the `wire:partial` attribute selector used to find the cell in the DOM.
+        $encodeSegment = static fn (string $segment): string => str_replace('.', '%2E', rawurlencode($segment));
+
+        return 'table.record.' . $encodeSegment((string) $this->getRecordKey()) . '.column.' . $encodeSegment($this->getName());
     }
 
     public function getCellAttributeHtml(): string

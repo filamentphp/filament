@@ -2,6 +2,7 @@
 
 namespace Filament\Tests\Tables\Columns;
 
+use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Pages\ColumnsBrowserTest;
@@ -71,6 +72,17 @@ it('renders the whole table after `updateTableColumnState()` by default', functi
 
     expect($component->effects['html'])->toContain('value="Updated title"')->not->toContain('wire:partial="table.record.')
         ->and($component->effects['partials'] ?? [])->toBe([]);
+});
+
+it('encodes the record key and column name in `getTableCellPartialName()` without collisions', function (): void {
+    $getPartialName = fn (string $recordKey, string $columnName): string => TextInputColumn::make($columnName)
+        ->recordKey($recordKey)
+        ->getTableCellPartialName();
+
+    expect($getPartialName('1', 'title'))->toBe('table.record.1.column.title')
+        ->and($getPartialName("a'b", 'title'))->not->toBe($getPartialName('ab', 'title'))
+        ->and($getPartialName('1.column.a', 'b'))->not->toBe($getPartialName('1', 'a.column.b'))
+        ->and($getPartialName('"<a\\b>`', 'author.name'))->toMatch('/^[\w.%~-]+$/');
 });
 
 describe('browser interactions', function (): void {
