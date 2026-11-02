@@ -35,6 +35,10 @@
                     @apply border-b border-gray-200 dark:border-white/10;
                 }
             }
+
+            & .fi-no-notifications-loading-section {
+                @apply m-6;
+            }
         }
 
         &.fi-modal-window-has-footer .fi-modal-content {
