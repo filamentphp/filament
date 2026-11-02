@@ -39,6 +39,8 @@ export default ({ isMenu = true } = {}) => ({
 
     triggerResizeObserver: null,
 
+    triggerVisibilityAnimationFrame: null,
+
     navigateListener: null,
 
     resizeListener: null,
@@ -137,7 +139,21 @@ export default ({ isMenu = true } = {}) => ({
 
         this.syncAria()
 
-        this.observer = new MutationObserver(() => {
+        const triggerContainer = this.getTriggerContainer()
+
+        this.observer = new MutationObserver((mutations) => {
+            // Showing or hiding a trigger, e.g. with `x-show`, may not resize the trigger container,
+            // so check which trigger is visible again once, after the current changes are rendered.
+            if (
+                mutations.some(
+                    (mutation) =>
+                        mutation.attributeName === 'style' &&
+                        triggerContainer.contains(mutation.target),
+                )
+            ) {
+                this.scheduleTriggerVisibilityCheck()
+            }
+
             this.syncAria()
             this.setUpMenu()
             this.recoverMenuFocus()
@@ -157,7 +173,7 @@ export default ({ isMenu = true } = {}) => ({
         // A Livewire morph re-renders the trigger from server HTML, stripping the client-applied
         // ARIA attributes, so observe them and re-apply. `syncAria()` only writes attributes whose
         // values have changed, so re-applying does not retrigger the observer in a loop.
-        this.observer.observe(this.getTriggerContainer(), {
+        this.observer.observe(triggerContainer, {
             attributeFilter: [
                 'aria-controls',
                 'aria-expanded',
@@ -175,7 +191,21 @@ export default ({ isMenu = true } = {}) => ({
             this.syncAria()
         })
 
-        this.triggerResizeObserver.observe(this.getTriggerContainer())
+        this.triggerResizeObserver.observe(triggerContainer)
+    },
+
+    scheduleTriggerVisibilityCheck() {
+        if (this.triggerVisibilityAnimationFrame !== null) {
+            return
+        }
+
+        this.triggerVisibilityAnimationFrame = window.requestAnimationFrame(
+            () => {
+                this.triggerVisibilityAnimationFrame = null
+                this.shouldCheckTriggerVisibility = true
+                this.syncAria()
+            },
+        )
     },
 
     getTriggerContainer() {
@@ -195,7 +225,8 @@ export default ({ isMenu = true } = {}) => ({
 
         // Checking which trigger is visible forces a style recalculation, which is expensive when a
         // Livewire morph makes the observer re-sync the ARIA attributes. Only check again when the
-        // trigger container was resized, or the active trigger is no longer in place.
+        // trigger container was resized, a trigger's `style` changed, or the active trigger is no
+        // longer in place.
         if (
             !this.shouldCheckTriggerVisibility &&
             this.activeTrigger?.isConnected &&
@@ -761,6 +792,8 @@ export default ({ isMenu = true } = {}) => ({
         this.observer = null
         this.triggerResizeObserver?.disconnect()
         this.triggerResizeObserver = null
+        window.cancelAnimationFrame(this.triggerVisibilityAnimationFrame)
+        this.triggerVisibilityAnimationFrame = null
 
         document.removeEventListener('livewire:navigate', this.navigateListener)
         window.removeEventListener('resize', this.resizeListener)
