@@ -163,13 +163,7 @@ it('renders accessible charts in light and dark modes', function (): void {
         ->assertNoAccessibilityIssues();
 });
 
-class TestStatsOverviewWidgetDefault extends StatsOverviewWidget
-{
-    protected function getStats(): array
-    {
-        return [];
-    }
-}
+class TestStatsOverviewWidgetDefault extends StatsOverviewWidget {}
 
 class TestStatsOverviewWidgetWithHeading extends StatsOverviewWidget
 {

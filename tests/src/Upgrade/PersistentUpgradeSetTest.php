@@ -476,7 +476,7 @@ class PersistentUpgradeSetTest extends TestCase
             $page->cacheInteractsWithHeaderActions();
             $this->assertSame(['export'], array_map(static fn ($action): string => $action->getName(), $page->getCachedHeaderActions()));
             $stats = new Fixtures\ConfigurationHooks\Stats;
-            $this->assertSame(31, (new ReflectionMethod($stats, 'getStats'))->invoke($stats)[0]->getValue());
+            $this->assertSame(31, $stats->getSectionContentComponent()->getDefaultChildComponents()[0]->getValue());
             $widget = new Fixtures\ConfigurationHooks\Filters;
             $widget->pageFilters = ['period' => 'quarter'];
             $this->assertSame('quarter', $widget->selectedPeriod());

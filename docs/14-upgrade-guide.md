@@ -34,36 +34,11 @@ Include your application source directories and tests when prompted. The script 
 
 ### Checking for deprecated APIs during development
 
-Keep `filament/upgrade` as a development dependency to migrate deprecated PHP copied into an already-upgraded application. Add its set to your existing `rector.php`, or create one:
+To check for deprecated APIs after upgrading, keep `filament/upgrade` as a development dependency and add `vendor/filament/upgrade/src/rector.php` to `withSets()` in your Rector configuration. Include your application source and tests, not `vendor` or third-party source.
 
-```php
-use Rector\Config\RectorConfig;
+Run `vendor/bin/rector process` to apply changes, or add `--dry-run` to check in CI without editing files. A dry run exits nonzero when changes are needed or an error occurs.
 
-return RectorConfig::configure()
-    ->withPaths([
-        __DIR__ . '/app',
-        __DIR__ . '/config',
-        __DIR__ . '/routes',
-        __DIR__ . '/tests',
-    ])
-    ->withSets([
-        __DIR__ . '/vendor/filament/upgrade/src/rector.php',
-    ]);
-```
-
-Include your own source directories and omit paths that do not exist. Do not include `vendor` or third-party source. Use the upgrade package for your target major and keep Rector up to date.
-
-```bash
-# Apply migrations locally, then review and test:
-vendor/bin/rector process
-
-# Check in CI without changing source files:
-vendor/bin/rector process --dry-run
-```
-
-A dry run exits nonzero when changes are needed or an error occurs. Review and apply changes locally rather than automatically applying them in CI.
-
-Run Rector routinely, not `vendor/bin/filament-v6`, which is the one-time interactive workflow. Neither replaces the deployment command `php artisan filament:upgrade` for publishing assets.
+Use Rector for ongoing checks, not the one-time `vendor/bin/filament-v6` script. Neither replaces `php artisan filament:upgrade` for publishing assets during deployment.
 
 ## Breaking changes
 
@@ -328,7 +303,7 @@ Filament provides `@capture` and `@endcapture` itself; existing views need no ch
 
 ### Updating custom code
 
-The script focuses on documented configuration and extension points. If you use custom components or plugins, update any remaining references to the removed APIs listed below, including overrides and `parent::` calls. JavaScript and TypeScript changes need to be made manually. Run your tests and static analysis after upgrading.
+Include shared base classes and traits in the upgrade paths. Review references the script leaves unchanged, especially custom overrides, `parent::` calls, conflicting old and new declarations, dynamic method names, callable references, and computed argument arrays. For manual nullsafe migrations, keep argument evaluation inside the null check. Update JavaScript and TypeScript manually, then run your tests and static analysis.
 
 For widget and relation manager lazy-loading configuration supplied by traits, manually rename `$isLazy` to `$isLazyLoaded` and `$isBadgeDeferred` to `$isBadgeLazyLoaded`. Declare both as `protected static ?bool`, keeping their configured values. The script updates class declarations but leaves shared traits unchanged.
 
@@ -354,7 +329,7 @@ Replace `registerScripts()` / `registerStyles()` with `Filament\Support\Facades\
 <Disclosure>
 <span slot="summary">Updating renamed parameters and extension contracts</span>
 
-The following changes align public names without changing their behavior. The script updates statically identifiable calls and declarations. Check dynamic method names, callable invocations with named arguments, and argument arrays assembled elsewhere manually. PHP names below are relative to `Filament`.
+The script updates statically identifiable calls and declarations. PHP names below are relative to `Filament`.
 
 | Owner | Previous name | New name |
 | --- | --- | --- |
@@ -384,15 +359,9 @@ The following changes align public names without changing their behavior. The sc
 | `Pages\BasePage::halt()` | `$shouldRollbackDatabaseTransaction` | `$shouldRollBackDatabaseTransaction` |
 | Page configuration | `$formActionsAreSticky` | `$areFormActionsSticky` |
 
-Update constructor parameter keys in container calls such as `app(BooleanStateCast::class, ['isStoredAsInteger' => true])`. Positional arguments are unchanged. The custom-block rename does not change stored `config` keys or JavaScript payloads. PHP method calls are case-insensitive, but the rollback property and named parameter spellings are not.
+Update constructor parameter keys in container calls such as `app(BooleanStateCast::class, ['isStoredAsInteger' => true])`. Resolve naming conflicts in overrides and competing old and new contract implementations before updating callers.
 
-When migrating an override, the script may keep its old local variable as a reference to the renamed parameter. This preserves body logic, argument forwarding, closure captures, and string keys such as `compact('config')`. If an override already uses the destination name for a separate parameter or local variable, reconcile that name first; the script leaves the affected parameter family and its named calls unchanged.
-
-Declarations that already use both names, or traits shared with unrelated classes, require manual review. Include both the traits and their named consuming classes in the upgrade paths so the script can migrate supported trait-defined hooks together with their callers. Anonymous-only trait consumers and dynamic or string references require manual review.
-
-If competing old and new methods prevent a contract migration, reconcile all its implementations and callers before using the new interface. If a trait alias shares its name with an independent method on another subclass, the script leaves that parameter family unchanged, including direct calls, to avoid breaking calls that can reach either signature.
-
-Page `$maxWidth` / `getMaxWidth()` configuration is replaced by `$maxContentWidth` / `getMaxContentWidth()`, and `Pages\Concerns\HasMaxWidth` is removed. The script migrates properties, getter overrides, calls, and unadapted uses of the removed trait on simple pages and profile pages. Include shared base pages and width traits in the upgrade paths. Reconcile competing old and new width configuration before running the script; it leaves conflicting families unchanged to avoid changing inherited precedence. Explicit aliases or precedence rules involving the removed `HasMaxWidth` trait require manual migration. Update custom layouts to read `maxContentWidth` instead of the removed `maxWidth` layout-data key. Existing exporter disk and generator action overrides remain supported.
+Replace page `$maxWidth` / `getMaxWidth()` with `$maxContentWidth` / `getMaxContentWidth()`, and remove `Pages\Concerns\HasMaxWidth`. Update custom layouts to read `maxContentWidth` instead of `maxWidth`.
 
 `Actions\Exports\Jobs\ExportCompletion` is replaced by `CompleteExport`; the script renames PHP references. Drain queued and retry jobs using `ExportCompletion` before upgrading, since the old class is removed. Deploy the updated code to all workers and restart long-running workers before dispatching jobs using the new name. Drain queued listeners carrying old `ImportChunkProcessed` objects before upgrading, since the event's serialized property names change.
 </Disclosure>
@@ -503,6 +472,7 @@ The upgrade script handles the common uses of the APIs below. Use these tables t
 | `Forms\Commands\FileGenerators\RichContentCustomBlockClassGenerator` | `configureToPreviewMethod()`                                                                   | `configureToPreviewHtmlMethod()`                                                        |
 | `Notifications\Livewire\Notifications`                               | `pullNotificationsFromSession()`                                                               | `pullNotifications()`                                                                   |
 | Chart widgets using `HasFiltersSchema`                               | `resetFiltersForm()`                                                                           | `resetFilters()`                                                                        |
+| `Widgets\StatsOverviewWidget`                                       | `getCards()`                                                                                   | `getStats()`                                                                            |
 | `Support` functions                                                  | `format_number()`, `format_money()`                                                            | `Illuminate\Support\Number::format()`, `Number::currency()` with adapters where needed  |
 | Livewire test assertions                                             | `assertFormFieldIsDisabled()`, `assertFormFieldIsEnabled()`, `assertFormFieldIsReadOnly()`     | `assertFormFieldDisabled()`, `assertFormFieldEnabled()`, `assertFormFieldReadOnly()`    |
 | Livewire test assertions                                             | `assertFormFieldIsHidden()`, `assertFormFieldIsVisible()`                                      | `assertFormFieldHidden()`, `assertFormFieldVisible()`                                   |
@@ -510,8 +480,6 @@ The upgrade script handles the common uses of the APIs below. Use these tables t
 | Livewire test assertions                                             | `assertTableActionsExistInOrder()`                                                             | `assertTableRecordActionsExistInOrder()`                                                |
 | Livewire test assertions                                             | `setActionData()`, `assertActionDataSet()`                                                     | `fillForm()`, `assertSchemaStateSet()` (`data:` → `state:`)                             |
 | Livewire test assertions                                             | `assertHasActionErrors()`, `assertHasNoActionErrors()`                                         | `assertHasFormErrors()`, `assertHasNoFormErrors()`                                      |
-
-Resource/page `form()` / `infolist()` hooks and `InteractsWithForms` remain supported; you do not need to replace your form components with `InteractsWithSchemas`.
 </Disclosure>
 
 <Disclosure>
@@ -532,11 +500,7 @@ Resource/page `form()` / `infolist()` hooks and `InteractsWithForms` remain supp
 | `Actions\CreateAction`, `AttachAction`, `AssociateAction` | `disableCreateAnother()`, `disableAttachAnother()`, `disableAssociateAnother()` | `createAnother()`, `attachAnother()`, `associateAnother()` with the opposite condition |
 | Actions, action groups, schema tabs | `indicator()` | `badge()` with a value; convert numeric action and action-group values to strings |
 
-The script handles ordinary fluent calls, stored or computed components with identifiable types, named arguments, and typed `configureUsing()` callbacks. It also handles inherited setters, including built-in action subclasses. Application overrides of the removed or replacement methods require manual review.
-
-For conditional setters, the script preserves lazy callback evaluation and component injection rather than negating the closure itself. Builder, Repeater, and Select callbacks retain their original component when cloned. `centerModal()` conditions are evaluated during configuration; false or null does not reset an existing alignment. For `imageCropAspectRatio()`, the same ratio is passed to `imageAspectRatio()` and, for closures, `automaticallyCropImagesToAspectRatio()`; other values enable cropping only when `filled($ratio)` is true. The script preserves numeric badge values, lazy closures, and null resets without turning actions into badge-style actions.
-
-Review dynamic method names, first-class callables, unresolved receiver types, and unpacked argument arrays manually. Nullsafe calls requiring a multi-call or original-component adapter are also left for manual migration: keep the null check around both the configuration and argument evaluation. Custom consumers of the support `HasBadge` trait should replace `indicator()` with their own `badge()` API.
+Custom consumers of the support `HasBadge` trait should replace `indicator()` with their own `badge()` API.
 </Disclosure>
 
 <Disclosure>
@@ -577,15 +541,11 @@ Review dynamic method names, first-class callables, unresolved receiver types, a
 | `Widgets\RadarChartWidget`                                                                                 | `Widgets\ChartWidget` with `getType()` returning `'radar'`                          |
 | `Widgets\ScatterChartWidget`                                                                               | `Widgets\ChartWidget` with `getType()` returning `'scatter'`                        |
 
-The script replaces ordinary `::make()` calls for the removed component classes, including their fluent configuration. Review remaining references such as subclasses, type declarations, container bindings, class strings, direct constructors, and first-class factory callables manually. Update `Placeholder::getContent()` calls to `TextEntry::getState()`, and calls to `TagsColumn::limit()` on separately configured instances to `TextColumn::limitList()`. The replacements can be reconfigured, unlike legacy classes that forced multiple, badge, or boolean mode; review callbacks or later calls that disable those modes.
+Review class references outside `::make()` calls manually, including subclasses, type declarations and container bindings. Replace `Placeholder::getContent()` with `TextEntry::getState()` and `TagsColumn::limit()` with `TextColumn::limitList()`.
 
-Class-specific `configureUsing()` registrations require manual migration. For example, do not simply replace `MultiSelect::configureUsing()` with `Select::configureUsing()`: that would also configure single-select fields. Move these defaults into an application-owned factory or subclass, or apply them to the intended instances. The script can still migrate ordinary factories in files containing these registrations; review the resulting instances alongside your configuration changes.
+Review global `configureUsing()` callbacks when replacing specialized classes. Changing `MultiSelect::configureUsing()` to `Select::configureUsing()` would also affect single selects; scope those defaults to the intended instances. Generated mode setters such as `multiple()` or `iconButton()` run after global configuration and can override it. Apply mode-dependent defaults after those setters, and check callbacks that disable modes the old classes forced.
 
-Also review existing `configureUsing()` callbacks on replacement classes such as `Select` and `Action`, even if they do not mention a removed class. The injected `multiple()`, `badge()`, `boolean()`, `relationship()`, `button()`, and `iconButton()` calls run after `make()` finishes setup and global configuration. Callbacks that inspect these modes during construction may now see different values, and the injected setters can override important configuration. For example, `Select::configureUsing()` logic based on `isMultiple()` runs before the injected `multiple()`, while an important `Action::configureUsing()` callback that calls `link()` can be overridden by the injected `iconButton()`. Apply affected defaults explicitly to the intended instances after their mode setters, or move them into an application-owned factory or subclass with the required setup order.
-
-For `MenuItem`, the script migrates direct factory chains registered in literal arrays passed to `userMenuItems()` and `tenantMenuItems()`, including grouped menus and built-in keyed items. Review separately constructed menu items, dynamically assembled registrations, and custom subclasses manually. Use an action customization closure for built-in items so their existing action name is retained. See [customizing the user menu](../navigation/user-menu) and [customizing the tenant menu](../users/tenancy#customizing-the-tenant-menu).
-
-The query builder filter itself remains `Tables\Filters\QueryBuilder`. Update any remaining type hints for removed chart classes to `Widgets\ChartWidget`. The enum color contract `Support\Contracts\HasColor` is unchanged; only the view-component contract becomes `HasColorMap`.
+Migrate separately constructed or dynamically registered menu items manually. For built-in user and tenant menu items, use an action customization closure to retain their action names. See [customizing the user menu](../navigation/user-menu) and [customizing the tenant menu](../users/tenancy#customizing-the-tenant-menu).
 </Disclosure>
 
 <Disclosure>
