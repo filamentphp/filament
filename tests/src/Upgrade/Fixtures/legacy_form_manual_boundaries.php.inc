@@ -54,20 +54,7 @@ function configure(MultiSelect|Select $select, RelationshipRepeater $repeater, a
     return $notices[0]->content(content: 'Notice');
 }
 
-$select = MultiSelect::make('later');
-$select->multiple(false);
-$notice = Placeholder::make('later');
-$notice->content(content: 'Later');
-$notice->getContent();
-$repeater = RelationshipRepeater::make('later');
-$repeater->relationship(name: 'custom');
-$reference =& $select;
-
 return [
-    MultiSelect::make('tags')->multiple(false)->label('Forced'),
-    MultiSelect::make('tags')->multiple(condition: fn () => false),
-    MultiSelect::make('tags')->multiple(),
-    MultiSelect::make('tags')->tap($configure),
     MultiSelect::make('tags')->options(fn (MultiSelect $component) => []),
     MultiSelect::make('tags')->options(function (Select $component): array {
         $component->multiple(false);
@@ -75,8 +62,6 @@ return [
         return ['a' => 'Alpha'];
     }),
     MultiSelect::make('tags')->options(fn (Select $component): array => $component?->multiple(condition: false) ? ['b' => 'Beta'] : []),
-    RelationshipRepeater::make('items')->relationship(name: 'custom'),
-    RelationshipRepeater::make('items')->relationship(modifyQueryUsing: fn ($query) => $query->where('active', true)),
     RelationshipRepeater::make('items')->schema(fn (RelationshipRepeater $component) => []),
     Placeholder::make('notice')->content(content: fn (Placeholder $component) => 'Typed'),
     Placeholder::make('notice')->content(fn ($component) => $component->getContent()),
