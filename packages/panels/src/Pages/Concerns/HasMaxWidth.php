@@ -10,8 +10,14 @@ use Filament\Support\Enums\Width;
  */
 trait HasMaxWidth
 {
+    /**
+     * @deprecated Use `$maxContentWidth` instead.
+     */
     protected Width | string | null $maxWidth = null;
 
+    /**
+     * @deprecated Use `getMaxContentWidth()` instead.
+     */
     #[Unexposed]
     public function getMaxWidth(): Width | string | null
     {
