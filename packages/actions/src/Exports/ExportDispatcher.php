@@ -4,6 +4,7 @@ namespace Filament\Actions\Exports;
 
 use Filament\Actions\Exports\Enums\Contracts\ExportFormat as ExportFormatInterface;
 use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Actions\Exports\Jobs\CompleteExport;
 use Filament\Actions\Exports\Jobs\CreateXlsxFile;
 use Filament\Actions\Exports\Jobs\ExportCompletion;
 use Filament\Actions\Exports\Models\Export;
@@ -37,6 +38,10 @@ class ExportDispatcher
         $hasCsv = in_array(ExportFormat::Csv, $formats);
         $hasXlsx = in_array(ExportFormat::Xlsx, $formats);
 
+        $completionJobClass = app()->bound(ExportCompletion::class) && (! app()->bound(CompleteExport::class))
+            ? ExportCompletion::class
+            : CompleteExport::class;
+
         $makeCreateXlsxFileJob = fn (): CreateXlsxFile => app(CreateXlsxFile::class, [
             'export' => $export,
             'columnMap' => $columnMap,
@@ -66,7 +71,7 @@ class ExportDispatcher
                     fn (PendingBatch $batch) => $batch->name($jobBatchName),
                 ),
             ...(($hasXlsx && (! $hasCsv)) ? [$makeCreateXlsxFileJob()] : []),
-            app(ExportCompletion::class, [
+            app($completionJobClass, [
                 'authGuard' => $authGuard,
                 'export' => $export,
                 'columnMap' => $columnMap,
