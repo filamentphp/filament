@@ -7,7 +7,7 @@ use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Grammars\SqlServerGrammar;
 
-use function Filament\Support\is_database_driver_supported;
+use function Filament\Support\get_query_orders;
 
 trait CanSortRecords
 {
@@ -159,22 +159,15 @@ trait CanSortRecords
         }
 
         $qualifiedKeyName = $query->getModel()->getQualifiedKeyName();
-        $getOrderClausesMethod = 'getOrderClauses';
-        $orders = (
-            (! is_database_driver_supported($query->getConnection())) &&
-            method_exists($query, $getOrderClausesMethod)
-        )
-            ? $query->{$getOrderClausesMethod}()
-            : ($query->getQuery()->orders ?? []);
 
-        foreach ($orders as $order) {
+        foreach (get_query_orders($query) as $order) {
             if (($order['column'] ?? null) === $qualifiedKeyName) {
                 return $query;
             }
 
             if (
                 is_string($order['column'] ?? null) &&
-                str($order['column'] ?? null)->afterLast('.')->is(
+                str($order['column'])->afterLast('.')->is(
                     str($qualifiedKeyName)->afterLast('.')
                 )
             ) {

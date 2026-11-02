@@ -38,6 +38,7 @@ use function Filament\Support\apply_search_constraint;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_pattern;
 use function Filament\Support\generate_search_term_expression;
+use function Filament\Support\get_query_orders;
 
 class SelectColumn extends Column implements Editable, HasEmbeddedView
 {
@@ -640,7 +641,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
         $relationshipTitleAttribute = $this->getOptionsRelationshipTitleAttribute();
 
-        if (empty($relationshipQuery->getQuery()->orders)) {
+        if (blank(get_query_orders($relationshipQuery))) {
             $relationshipOrderByAttribute = $relationshipTitleAttribute;
 
             if (str_contains($relationshipOrderByAttribute, ' as ')) {
@@ -704,7 +705,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
         $relationshipTitleAttribute = $this->getOptionsRelationshipTitleAttribute();
 
-        if (empty($relationshipQuery->getQuery()->orders)) {
+        if (blank(get_query_orders($relationshipQuery))) {
             $relationshipOrderByAttribute = $relationshipTitleAttribute;
 
             if (str_contains($relationshipOrderByAttribute, ' as ')) {

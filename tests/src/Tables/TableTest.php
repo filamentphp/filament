@@ -497,7 +497,7 @@ describe('sorting', function (): void {
             ->assertCanSeeTableRecords($expectedUsers, inOrder: true);
     })->with(['asc', 'desc']);
 
-    it('uses `getOrderClauses()` to preserve custom-driver key sorting without changing its native order representation', function (array $orders, string $defaultDirection, array $expectedOrders): void {
+    it('uses `getOrders()` to preserve custom-driver key sorting without changing its native order representation', function (array $orders, string $defaultDirection, array $expectedOrders): void {
         $databaseConnection = new Connection(null, config: ['driver' => 'custom']);
         $baseQuery = new class($databaseConnection) extends QueryBuilder
         {
@@ -514,7 +514,7 @@ describe('sorting', function (): void {
             /**
              * @return array<array{column: string, direction: string}>
              */
-            public function getOrderClauses(): array
+            public function getOrders(): array
             {
                 $orders = [];
 
@@ -544,13 +544,13 @@ describe('sorting', function (): void {
         'no orders' => [[], 'desc', ['posts.id' => -1]],
     ]);
 
-    it('does not use `getOrderClauses()` for a supported database driver', function (): void {
+    it('does not use `getOrders()` for a supported database driver', function (): void {
         $firstPost = Post::factory()->create();
         $secondPost = Post::factory()->create();
 
         $query = new class(Post::query()->getQuery()) extends Builder
         {
-            public function getOrderClauses(): array
+            public function getOrders(): array
             {
                 throw new LogicException('Supported database drivers must use their native order clauses.');
             }

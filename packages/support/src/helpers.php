@@ -392,6 +392,27 @@ if (! function_exists('Filament\Support\generate_search_pattern')) {
     }
 }
 
+if (! function_exists('Filament\Support\get_query_orders')) {
+    /**
+     * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
+     *
+     * @return array<array<string, mixed>>
+     */
+    function get_query_orders(Builder $query): array
+    {
+        $getOrdersMethod = 'getOrders';
+
+        if (
+            (! is_database_driver_supported($query->getConnection())) &&
+            method_exists($query, $getOrdersMethod)
+        ) {
+            return $query->{$getOrdersMethod}();
+        }
+
+        return $query->getQuery()->orders ?? [];
+    }
+}
+
 if (! function_exists('Filament\Support\is_database_driver_supported')) {
     /**
      * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.

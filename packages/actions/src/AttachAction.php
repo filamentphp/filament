@@ -22,6 +22,7 @@ use function Filament\Support\apply_search_constraint;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_pattern;
 use function Filament\Support\generate_search_term_expression;
+use function Filament\Support\get_query_orders;
 
 class AttachAction extends Action
 {
@@ -295,7 +296,7 @@ class AttachAction extends Action
                 (! $this->hasCustomRecordTitle()) &&
                 ($this->hasCustomRecordTitleAttribute() || (! $this->getTable()->hasCustomRecordTitle()))
             ) {
-                if (empty($relationshipQuery->getQuery()->orders)) {
+                if (blank(get_query_orders($relationshipQuery))) {
                     $relationshipQuery->orderBy($titleAttribute);
                 }
 

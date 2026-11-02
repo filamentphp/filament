@@ -35,21 +35,25 @@ For these drivers, Filament passes the column name and search term without SQL `
 
 ## Reading order clauses
 
-Filament adds a default primary-key sort to tables unless the query already orders by that key. If your driver does not store order clauses in Laravel's list format, you can expose them through a method on your Eloquent builder:
+Filament inspects the current ordering before adding a default primary-key sort to tables or a default label sort to relationship options and filters. If your driver does not store order clauses in Laravel's list format, you can expose them through a method on your Eloquent builder:
 
 ```php
+use Illuminate\Contracts\Database\Query\Expression;
+
 /**
- * @return list<array{column: string, direction: 'asc' | 'desc'}>
+ * @return list<array{column: string | Expression, direction: 'asc' | 'desc'} | array{type: 'Raw', sql: string}>
  */
-public function getOrderClauses(): array
+public function getOrders(): array
 {
     // Return the query's current order clauses in Laravel's list format.
 }
 ```
 
-Return clauses in their original precedence order, with `asc` or `desc` directions and column names that identify the model's primary key when it is already sorted. The method must only read the current ordering, without changing the query or the driver's native order representation. Filament uses these clauses to avoid adding a redundant primary-key sort that could overwrite its existing direction. Without this method, Filament reads the underlying query builder's `orders` property.
+Return every clause in its original precedence order. For column sorts, use `asc` or `desc` directions and column names that identify the model's primary key when it is already sorted. Preserve expression objects and raw clauses rather than dropping them: a query ordered only by an expression or raw clause is still ordered. Return an empty list only when the query has no ordering.
 
-This method currently applies to table default-key sorting, not CSV export pagination.
+The method must only read the current ordering, without changing the query or the driver's native order representation. Filament uses these clauses to avoid adding a redundant primary-key sort that could overwrite its existing direction, or adding a label sort to an already-ordered relationship query. Without this method, Filament reads the underlying query builder's `orders` property.
+
+This method applies to general default-order checks, not CSV export pagination or SQL-specific order rewriting.
 
 ## Ordering by a relationship
 

@@ -15,6 +15,7 @@ use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_pattern;
 use function Filament\Support\generate_search_term_expression;
 use function Filament\Support\get_model_label;
+use function Filament\Support\get_query_orders;
 
 class Type
 {
@@ -132,7 +133,7 @@ class Type
                 ? $titleAttribute
                 : $query->qualifyColumn($titleAttribute);
 
-            if (empty($query->getQuery()->orders)) {
+            if (blank(get_query_orders($query))) {
                 $query->orderBy($qualifiedTitleAttribute);
             }
 
@@ -182,7 +183,7 @@ class Type
                 ? $titleAttribute
                 : $query->qualifyColumn($titleAttribute);
 
-            if (empty($query->getQuery()->orders)) {
+            if (blank(get_query_orders($query))) {
                 $query->orderBy($qualifiedTitleAttribute);
             }
 
