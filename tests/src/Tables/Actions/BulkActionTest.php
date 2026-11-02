@@ -2,6 +2,7 @@
 
 use Filament\Actions\BulkAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\DetachBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -505,6 +506,41 @@ describe('duplicate relationship selection', function (): void {
 
         expect(Department::query()->whereIn('id', $otherDepartments->modelKeys())->count())->toBe(2);
     })->with([false, true])->with(['delete', 'queryBulkDelete']);
+
+    it('can detach selected duplicates with `allowDuplicates()`', function (?int $chunkSize, bool $shouldFetchSelectedRecords): void {
+        $ticket = Ticket::factory()->create();
+        $otherTicket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+        $otherTicket->departments()->attach($department, ['quantity' => 99]);
+        $ticket->departments()->attach($department, ['quantity' => 3]);
+        $ticket->departments()->attach($department, ['quantity' => 7]);
+        $ticket->departments()->attach($department, ['quantity' => 9]);
+        $pivotKeys = DB::table('department_ticket')->where('ticket_id', $ticket->getKey())->whereIn('quantity', [3, 9])->pluck('id')->all();
+
+        livewire(new class extends TicketDepartmentsReorderableTable
+        {
+            public ?int $chunkSize = null;
+
+            public bool $shouldFetchSelectedRecords = true;
+
+            public function table(Table $table): Table
+            {
+                return parent::table($table)
+                    ->checkIfRecordIsSelectableUsing(static fn (Department $record): bool => $record->pivot->quantity > 0)
+                    ->toolbarActions([
+                        DetachBulkAction::make()
+                            ->chunkSelectedRecords($this->chunkSize)
+                            ->fetchSelectedRecords($this->shouldFetchSelectedRecords),
+                    ]);
+            }
+        }, ['ticketKey' => $ticket->getKey(), 'duplicates' => true, 'chunkSize' => $chunkSize, 'shouldFetchSelectedRecords' => $shouldFetchSelectedRecords])
+            ->callTableBulkAction(DetachBulkAction::class, $pivotKeys)
+            ->assertNotified();
+
+        expect($ticket->departments()->pluck('quantity')->all())->toEqual([7])
+            ->and($otherTicket->departments()->pluck('quantity')->all())->toEqual([99])
+            ->and(Department::find($department->getKey()))->not->toBeNull();
+    })->with([null, 1])->with([true, false]);
 
     it('respects search filters scopes and exclusions when selecting all with `allowDuplicates()`', function (string $constraint, string $action): void {
         $ticket = Ticket::factory()->create();

@@ -537,7 +537,9 @@ class Action extends ViewComponent implements Arrayable
             || blank($table->getModel())
             || is_a($record::class, $table->getModel(), true)
         ) && filled($recordKey = $this->resolveRecordKey($record))) {
-            $context['recordKey'] = $recordKey;
+            $context['recordKey'] = ($table && (! $this->getParentAction()))
+                ? $table->getRecordKey($record)
+                : $recordKey;
         }
 
         if ($this->getParentAction()) {
