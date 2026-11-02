@@ -33,6 +33,24 @@ This is a standard Laravel query builder method rather than a Filament-specific 
 
 For these drivers, Filament passes the column name and search term without SQL `lower()` expressions, PostgreSQL casts, or the configured `search_collation`. The driver is responsible for case-insensitive matching even when the component explicitly forces it. Literal `%` and `_` characters in user input are escaped as `\%` and `\_`; the driver must distinguish these from the wildcards Filament adds around the search term.
 
+## Reading order clauses
+
+Filament adds a default primary-key sort to tables unless the query already orders by that key. If your driver does not store order clauses in Laravel's list format, you can expose them through a method on your Eloquent builder:
+
+```php
+/**
+ * @return list<array{column: string, direction: 'asc' | 'desc'}>
+ */
+public function getOrderClauses(): array
+{
+    // Return the query's current order clauses in Laravel's list format.
+}
+```
+
+Return clauses in their original precedence order, with `asc` or `desc` directions and column names that identify the model's primary key when it is already sorted. The method must only read the current ordering, without changing the query or the driver's native order representation. Filament uses these clauses to avoid adding a redundant primary-key sort that could overwrite its existing direction. Without this method, Filament reads the underlying query builder's `orders` property.
+
+This method currently applies to table default-key sorting, not CSV export pagination.
+
 ## Ordering by a relationship
 
 Filament normally orders records by a relationship attribute using a correlated SQL subquery. A custom Eloquent builder can implement the operation directly instead:

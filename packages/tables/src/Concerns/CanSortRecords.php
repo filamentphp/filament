@@ -5,6 +5,8 @@ namespace Filament\Tables\Concerns;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Grammars\SqlServerGrammar;
 
+use function Filament\Support\is_database_driver_supported;
+
 trait CanSortRecords
 {
     public ?string $tableSort = null;
@@ -145,8 +147,15 @@ trait CanSortRecords
         }
 
         $qualifiedKeyName = $query->getModel()->getQualifiedKeyName();
+        $getOrderClausesMethod = 'getOrderClauses';
+        $orders = (
+            (! is_database_driver_supported($query->getConnection())) &&
+            method_exists($query, $getOrderClausesMethod)
+        )
+            ? $query->{$getOrderClausesMethod}()
+            : ($query->getQuery()->orders ?? []);
 
-        foreach ($query->getQuery()->orders ?? [] as $order) {
+        foreach ($orders as $order) {
             if (($order['column'] ?? null) === $qualifiedKeyName) {
                 return $query;
             }
