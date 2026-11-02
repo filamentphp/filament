@@ -42,7 +42,6 @@ use Filament\Tests\Fixtures\Pages\DeferredSchemaLoadingBrowserTest;
 use Filament\Tests\Fixtures\Pages\DissociateBulkActionBrowserTest;
 use Filament\Tests\Fixtures\Pages\DropdownTest;
 use Filament\Tests\Fixtures\Pages\FieldAccessibilityTest;
-use Filament\Tests\Fixtures\Pages\FieldContentTest;
 use Filament\Tests\Fixtures\Pages\FileUploadBrowserTest;
 use Filament\Tests\Fixtures\Pages\FiltersModalBrowserTest;
 use Filament\Tests\Fixtures\Pages\FiltersResetActionBrowserTest;
@@ -171,7 +170,6 @@ class AdminPanelProvider extends PanelProvider
                 DeferredSchemaLoadingBrowserTest::class,
                 DissociateBulkActionBrowserTest::class,
                 FieldAccessibilityTest::class,
-                FieldContentTest::class,
                 FileUploadBrowserTest::class,
                 FiltersModalBrowserTest::class,
                 FiltersResetActionBrowserTest::class,

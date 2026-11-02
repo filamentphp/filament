@@ -1,6 +1,10 @@
 .fi-sc-section {
     @apply flex flex-col gap-2;
 
+    & .fi-sc-section-content-slot {
+        @apply contents;
+    }
+
     & .fi-sc-section-label-ctn {
         @apply flex items-center gap-x-3;
 
