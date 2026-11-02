@@ -27,6 +27,8 @@ export default ({ isMenu = true } = {}) => ({
 
     activeTrigger: null,
 
+    shouldCheckTriggerVisibility: true,
+
     isOpen: false,
 
     isClosing: false,
@@ -34,6 +36,8 @@ export default ({ isMenu = true } = {}) => ({
     shouldAutofocus: true,
 
     observer: null,
+
+    triggerResizeObserver: null,
 
     navigateListener: null,
 
@@ -162,6 +166,16 @@ export default ({ isMenu = true } = {}) => ({
             ],
             subtree: true,
         })
+
+        // Which trigger is visible changes when the dropdown is shown or hidden, or a breakpoint
+        // swaps the triggers, and each of those resizes the trigger container. Resize observer
+        // callbacks run after layout, so checking visibility there does not force a recalculation.
+        this.triggerResizeObserver = new ResizeObserver(() => {
+            this.shouldCheckTriggerVisibility = true
+            this.syncAria()
+        })
+
+        this.triggerResizeObserver.observe(this.getTriggerContainer())
     },
 
     getTriggerContainer() {
@@ -178,6 +192,20 @@ export default ({ isMenu = true } = {}) => ({
 
     getTrigger() {
         const triggerContainer = this.getTriggerContainer()
+
+        // Checking which trigger is visible forces a style recalculation, which is expensive when a
+        // Livewire morph makes the observer re-sync the ARIA attributes. Only check again when the
+        // trigger container was resized, or the active trigger is no longer in place.
+        if (
+            !this.shouldCheckTriggerVisibility &&
+            this.activeTrigger?.isConnected &&
+            triggerContainer?.contains(this.activeTrigger)
+        ) {
+            return this.activeTrigger
+        }
+
+        this.shouldCheckTriggerVisibility = false
+
         const triggers = this.getTriggers()
 
         // Avoid forcing style recalculation when there is only one trigger to choose from.
@@ -251,6 +279,8 @@ export default ({ isMenu = true } = {}) => ({
     },
 
     handleResize(previousTrigger) {
+        this.shouldCheckTriggerVisibility = true
+
         const trigger = this.getTrigger()
         const panel = this.$refs.panel
         const isOpen = panel?.style.display === 'block'
@@ -729,6 +759,8 @@ export default ({ isMenu = true } = {}) => ({
 
         this.observer?.disconnect()
         this.observer = null
+        this.triggerResizeObserver?.disconnect()
+        this.triggerResizeObserver = null
 
         document.removeEventListener('livewire:navigate', this.navigateListener)
         window.removeEventListener('resize', this.resizeListener)
