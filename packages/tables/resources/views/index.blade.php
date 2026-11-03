@@ -1392,7 +1392,7 @@
                                                 @elseif ($recordAction)
                                                     @php
                                                         $recordWireClickAction = $getRecordAction($record)
-                                                            ? "mountTableAction('{$recordAction}', " . Js::from($recordKey) . ')'
+                                                            ? "mountAction('{$recordAction}', {}, " . Js::from(['table' => true, 'recordKey' => $recordKey]) . ')'
                                                             : $recordWireClickAction = "{$recordAction}(" . Js::from($recordKey) . ')';
                                                     @endphp
 
@@ -2534,12 +2534,12 @@
 
                                                         if ($columnWrapperTag === 'button') {
                                                             if ($columnAction instanceof Action) {
-                                                                $columnWireClickAction = "mountTableAction('{$columnAction->getName()}', " . Js::from($recordKey) . ')';
+                                                                $columnWireClickAction = "mountAction('{$columnAction->getName()}', {}, " . Js::from(['table' => true, 'recordKey' => $recordKey]) . ')';
                                                             } elseif ($columnAction) {
                                                                 $columnWireClickAction = "callTableColumnAction('{$column->getName()}', " . Js::from($recordKey) . ')';
                                                             } else {
                                                                 if ($this->getTable()->getAction($recordAction)) {
-                                                                    $columnWireClickAction = "mountTableAction('{$recordAction}', " . Js::from($recordKey) . ')';
+                                                                    $columnWireClickAction = "mountAction('{$recordAction}', {}, " . Js::from(['table' => true, 'recordKey' => $recordKey]) . ')';
                                                                 } else {
                                                                     $columnWireClickAction = "{$recordAction}(" . Js::from($recordKey) . ')';
                                                                 }

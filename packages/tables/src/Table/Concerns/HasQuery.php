@@ -130,14 +130,8 @@ trait HasQuery
         $columns = [
             $relationship->getTable() . '.*',
             $query->getModel()->getTable() . '.*',
+            ...invade($relationship)->aliasedPivotColumns(),
         ];
-
-        if (! $this->allowsDuplicates()) {
-            $columns = [
-                ...invade($relationship)->aliasedPivotColumns(),
-                ...$columns,
-            ];
-        }
 
         $baseQuery = $query instanceof Relation ? $query->getQuery()->getQuery() : $query->getQuery();
         $baseQuery->columns = array_values(array_filter(
