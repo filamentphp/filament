@@ -355,16 +355,13 @@ export default ({ isMenu = true } = {}) => ({
             this.activeMenuItem = null
         }
 
-        this.setAttributeIfChanged(
-            trigger,
-            'aria-haspopup',
-            this.isMenu ? 'menu' : 'true',
-        )
-
         if (this.isMenu) {
+            this.setAttributeIfChanged(trigger, 'aria-haspopup', 'menu')
             this.triggerId = this.getTriggerId(trigger)
             this.setAttributeIfChanged(panel, 'role', 'menu')
             this.setAttributeIfChanged(panel, 'aria-labelledby', this.triggerId)
+        } else {
+            trigger.removeAttribute('aria-haspopup')
         }
 
         this.setAttributeIfChanged(trigger, 'aria-controls', this.panelId)
