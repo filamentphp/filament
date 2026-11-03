@@ -14,17 +14,7 @@ use function Filament\Support\locale_has_pluralization;
  */
 trait HasLabels
 {
-    /**
-     * @deprecated Use `$modelLabel` instead.
-     */
-    protected static ?string $label = null;
-
     protected static ?string $modelLabel = null;
-
-    /**
-     * @deprecated Use `$pluralModelLabel` instead.
-     */
-    protected static ?string $pluralLabel = null;
 
     protected static ?string $pluralModelLabel = null;
 
@@ -32,17 +22,9 @@ trait HasLabels
 
     protected static bool $hasTitleCaseModelLabel = true;
 
-    /**
-     * @deprecated Use `getModelLabel()` instead.
-     */
-    public static function getLabel(): ?string
-    {
-        return static::$label;
-    }
-
     public static function getModelLabel(): string
     {
-        return static::$modelLabel ?? static::getLabel() ?? get_model_label(static::getModel());
+        return static::$modelLabel ?? get_model_label(static::getModel());
     }
 
     public static function getTitleCaseModelLabel(): string
@@ -54,17 +36,9 @@ trait HasLabels
         return Str::ucwords(static::getModelLabel());
     }
 
-    /**
-     * @deprecated Use `getPluralModelLabel()` instead.
-     */
-    public static function getPluralLabel(): ?string
-    {
-        return static::$pluralLabel;
-    }
-
     public static function getPluralModelLabel(): string
     {
-        if (filled($label = static::$pluralModelLabel ?? static::getPluralLabel())) {
+        if (filled($label = static::$pluralModelLabel)) {
             return $label;
         }
 

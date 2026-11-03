@@ -470,6 +470,14 @@ class PersistentUpgradeSetTest extends TestCase
             $this->assertNull($notification->invoke($create));
             $create->message = 'Custom created';
             $this->assertSame('Custom created', $notification->invoke($create)->getTitle());
+
+            $edit = new Fixtures\ConfigurationHooks\Edit;
+            $edit->record = null;
+            $notification = new ReflectionMethod($edit, 'getSavedNotification');
+            $this->assertSame('Saved', $notification->invoke($edit)->getTitle());
+            $edit->record = new Post;
+            $this->assertNull($notification->invoke($edit));
+
             $this->assertSame('Settings saved', (new Fixtures\ConfigurationHooks\Settings)->getSavedNotificationTitle());
 
             $page = new Fixtures\ConfigurationHooks\Actions;
