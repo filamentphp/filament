@@ -19,10 +19,15 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\Url;
 
 class FiltersResetActionBrowserTest extends Page implements HasTable
 {
     use Tables\Concerns\InteractsWithTable;
+
+    // Filters are kept in the URL, as on a resource's list page.
+    #[Url(as: 'filters')]
+    public ?array $tableFilters = null;
 
     public string $focusScenario = 'default';
 

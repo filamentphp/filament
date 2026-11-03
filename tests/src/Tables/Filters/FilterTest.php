@@ -433,15 +433,17 @@ describe('browser interactions', function (): void {
         $publishedFilter = '[data-testid="published-filter"]';
         $applyAction = '[data-table-filter-action="apply"]';
 
-        visit("/filters-reset-action-browser-test?deferred=1&layout={$layout}")
-            ->assertNotPresent($publishedFilter)
-            ->click($filtersTrigger)
-            ->click($publishedFilter)
-            ->click($applyAction)
+        visit('/filters-reset-action-browser-test?' . http_build_query(['deferred' => true, 'layout' => $layout, 'filters' => ['is_published' => ['isActive' => true]]]))
             ->assertDontSee('Draft post')
             ->assertNotPresent($publishedFilter)
             ->click($filtersTrigger)
             ->assertAttribute($publishedFilter, 'aria-checked', 'true')
+            ->click($publishedFilter)
+            ->click($applyAction)
+            ->assertSee('Draft post')
+            ->assertNotPresent($publishedFilter)
+            ->click($filtersTrigger)
+            ->assertAttribute($publishedFilter, 'aria-checked', 'false')
             ->keys($publishedFilter, 'Escape')
             ->assertNotPresent($publishedFilter)
             ->click($filtersTrigger)
