@@ -141,7 +141,11 @@ class CustomGetter extends ResourceTableClassGenerator
 {
     public function getTableActions(): array
     {
-        return parent::getTableActions();
+        return parent::getTableRecordActions();
+    }
+    public function getTableRecordActions(): array
+    {
+        return $this->getTableActions();
     }
 }
 
@@ -149,12 +153,20 @@ class ParentOutput extends ResourceTableClassGenerator
 {
     public function outputTableActions(): string
     {
-        return parent::outputTableActions();
+        return parent::outputTableRecordActions();
     }
 
     public function outputTableMethodBulkActions(): string
     {
-        return parent::outputTableMethodBulkActions();
+        return parent::outputTableBulkActions();
+    }
+    public function outputTableRecordActions(): string
+    {
+        return $this->outputTableActions();
+    }
+    public function outputTableBulkActions(): string
+    {
+        return $this->outputTableMethodBulkActions();
     }
 }
 
@@ -181,6 +193,14 @@ trait CustomBulkOutput
 class CustomBulkGenerator extends ResourceTableClassGenerator
 {
     use CustomBulkOutput;
+    public function outputTableMethodBulkActions(): string
+    {
+        return 'custom';
+    }
+    public function outputTableBulkActions(): string
+    {
+        return $this->outputTableMethodBulkActions();
+    }
 }
 
 function manual(CustomGetter $getter, InheritedOutput $output, CustomBulkGenerator $bulk, ResourceTableClassGenerator $base, object $unrelated, ResourceTableClassGenerator | CustomGetter $union): void

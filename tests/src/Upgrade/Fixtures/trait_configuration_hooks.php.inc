@@ -166,8 +166,12 @@ class ChildStats extends Stats
 
 trait HasBackAction
 {
+    public int $backActionCalls = 0;
+
     public function backAction(): Action
     {
+        $this->backActionCalls++;
+
         return parent::backAction()->label('Trait return');
     }
 }
@@ -175,6 +179,16 @@ trait HasBackAction
 class Profile extends EditProfile
 {
     use HasBackAction;
+}
+
+class ChildProfile extends Profile
+{
+    public function backAction(): Action
+    {
+        $action = parent::backAction();
+
+        return $action->label($action->getLabel() . ' child');
+    }
 }
 
 class LegacyTraitPage extends Page
@@ -455,8 +469,12 @@ class ChildStats extends Stats
 
 trait HasBackAction
 {
+    public int $backActionCalls = 0;
+
     public function backAction(): Action
     {
+        $this->backActionCalls++;
+
         return parent::backAction()->label('Trait return');
     }
 }
@@ -466,12 +484,23 @@ class Profile extends EditProfile
     use HasBackAction;
     public function backAction(): Action
     {
-        return parent::backAction()->label('Trait return');
+        $this->backActionCalls++;
+        return parent::getCancelFormAction()->label('Trait return');
     }
     #[Unexposed]
     public function getCancelFormAction(): Action
     {
         return $this->backAction();
+    }
+}
+
+class ChildProfile extends Profile
+{
+    public function backAction(): Action
+    {
+        $action = parent::backAction();
+
+        return $action->label($action->getLabel() . ' child');
     }
 }
 

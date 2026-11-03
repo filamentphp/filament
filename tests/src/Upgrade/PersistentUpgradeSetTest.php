@@ -2,7 +2,10 @@
 
 namespace Filament\Tests\Upgrade;
 
+use Error;
 use Filament\Actions\Action;
+use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\Models\Export;
 use Filament\Facades\Filament;
 use Filament\FilamentManager;
 use Filament\Forms\Components\Field;
@@ -42,6 +45,7 @@ use ReflectionProperty;
 use Symfony\Component\Process\Process;
 use TraitHookConsumer\OtherResource;
 use TraitHookConsumer\PropertyResource;
+use TypeError;
 
 class PersistentUpgradeSetTest extends TestCase
 {
@@ -236,9 +240,11 @@ class PersistentUpgradeSetTest extends TestCase
                 require_once $directory . '/app/stored_behavioral_configuration.php';
                 require_once $directory . '/app/configuration_hooks.php';
                 require_once $directory . '/app/trait_configuration_hooks.php';
+                require_once $directory . '/app/forwarding_configuration_hooks.php';
                 require_once $directory . '/app/panel_registration.php';
                 require_once $directory . '/app/menu_items.php';
                 $this->assertConfigurationMigrations();
+                $this->assertForwardingConfigurationHooks();
 
                 require_once $directory . '/app/frontend_keys.php';
                 require_once $directory . '/app/query_builder_icons.php';
@@ -432,6 +438,155 @@ class PersistentUpgradeSetTest extends TestCase
         }
     }
 
+    public function test_manager_integrations_preserve_receivers_arguments_and_overrides(): void
+    {
+        $directory = sys_get_temp_dir() . '/filament-manager-' . bin2hex(random_bytes(8));
+        mkdir($directory);
+        $root = dirname(__DIR__, 3);
+        $source = explode("-----\n", file_get_contents(__DIR__ . '/Fixtures/panel_integrations.php.inc'), 2)[0];
+        $source = str_replace('Fixtures\\PanelIntegrations', 'Fixtures\\ManagerIntegrations', $source);
+        $path = $directory . '/manager.php';
+        file_put_contents($path, $source);
+        $scalarSource = <<<'PHP'
+            <?php
+            declare(strict_types=1);
+
+            namespace ManagerStrict;
+
+            use Filament\FilamentManager;
+
+            function theme(FilamentManager $manager, mixed $theme): void
+            {
+                $manager->registerViteTheme($theme);
+            }
+
+            function nullableTheme(?FilamentManager $manager, mixed $theme): void
+            {
+                $manager?->registerViteTheme($theme);
+            }
+
+            class CustomManager extends FilamentManager
+            {
+                public string | array | null $theme = null;
+
+                public function registerViteTheme(string | array $theme, ?string $buildDirectory = null): void
+                {
+                    $this->theme = $theme;
+                }
+            }
+            PHP;
+        file_put_contents($directory . '/strict.php', $scalarSource);
+        file_put_contents($directory . '/weak.php', str_replace(['strict_types=1', 'ManagerStrict'], ['strict_types=0', 'ManagerWeak'], $scalarSource));
+        $originalRegistry = app(PanelRegistry::class);
+        $originalManager = Filament::getFacadeRoot();
+        $originalAssets = FilamentAsset::getFacadeRoot();
+        $originalView = FilamentView::getFacadeRoot();
+
+        try {
+            foreach ([false, true] as $dryRun) {
+                (new Process([
+                    PHP_BINARY, $root . '/vendor/bin/rector', 'process', $path,
+                    $directory . '/strict.php', $directory . '/weak.php',
+                    '--config', $root . '/packages/upgrade/src/rector.php', '--clear-cache', '--no-progress-bar',
+                    ...($dryRun ? ['--dry-run'] : []),
+                ], $root, ['TMPDIR' => $directory]))->setTimeout(120)->mustRun();
+            }
+
+            require $path;
+            require $directory . '/strict.php';
+            require $directory . '/weak.php';
+            app()->instance(PanelRegistry::class, new PanelRegistry);
+            Filament::swap(app()->build(FilamentManager::class));
+            FilamentAsset::swap(app()->build(AssetManager::class));
+            FilamentView::swap(app()->build(ViewManager::class));
+            $default = Panel::make()->id('manager-default')->default();
+            $current = Panel::make()->id('manager-current');
+            app(PanelRegistry::class)->register($default);
+            app(PanelRegistry::class)->register($current);
+            Filament::setCurrentPanel($current);
+            $events = [];
+
+            $this->assertSame([null, null, null, null, null, null, null, null, null, 'manager', null, null], Fixtures\ManagerIntegrations\registerManager(filament(), $events));
+            $this->assertSame(['receiver', 'build', 'theme', 'receiver', 'hook-created', 'manager.hook', 'hook-rendered'], $events);
+            $this->assertSame(['Manager'], $default->getNavigationGroups());
+            $this->assertSame([], $current->getNavigationGroups());
+            $this->assertSame('theme', $default->getViteTheme());
+            $this->assertSame(['manager' => 31, 'helper' => 37], FilamentAsset::getScriptData());
+
+            $events = [];
+            $this->assertNull(Fixtures\ManagerIntegrations\nullableManager(null, $events));
+            $this->assertSame(['receiver'], $events);
+            $this->assertSame('manager', Fixtures\ManagerIntegrations\nullableManager(filament(), $events));
+            $this->assertSame(['receiver', 'receiver', 'manager.hook', 'hook-rendered'], $events);
+
+            $events = [];
+            $this->assertSame([null, 'original'], Fixtures\ManagerIntegrations\chainedManager(null, $events));
+            $this->assertSame([], $events);
+            $this->assertSame(['manager', 'original'], Fixtures\ManagerIntegrations\chainedManager(new Fixtures\ManagerIntegrations\ManagerHolder(filament()), $events));
+            $this->assertSame(['manager.hook', 'hook-rendered'], $events);
+            $events = [];
+
+            try {
+                Fixtures\ManagerIntegrations\chainedManager(new Fixtures\ManagerIntegrations\ManagerHolder(null), $events);
+                $this->fail('A null manager without nullsafe access should throw.');
+            } catch (Error $exception) {
+                $this->assertSame('Call to a member function renderHook() on null', $exception->getMessage());
+                $this->assertSame([], $events);
+            }
+
+            Fixtures\ManagerIntegrations\inheritedManager(new Fixtures\ManagerIntegrations\InheritedManager);
+            $this->assertSame(41, FilamentAsset::getScriptData()['inherited']);
+
+            $custom = new Fixtures\ManagerIntegrations\CustomManager;
+            Fixtures\ManagerIntegrations\customManager($custom);
+            $this->assertSame(['Custom'], $custom->groups);
+            $events = [];
+            Fixtures\ManagerIntegrations\registerManager($custom, $events);
+            $this->assertSame(['Manager'], $custom->groups);
+            $this->assertSame(['Manager'], $default->getNavigationGroups());
+
+            $selected = Panel::make()->id('manager-selected');
+            $events = [];
+            Fixtures\ManagerIntegrations\registerManager(new Fixtures\ManagerIntegrations\PanelManager($selected), $events);
+            $this->assertSame(['Manager'], $selected->getNavigationGroups());
+            $this->assertSame(['Manager'], $default->getNavigationGroups());
+
+            foreach (['ManagerStrict' => true, 'ManagerWeak' => false] as $namespace => $isStrict) {
+                $customClass = $namespace . '\\CustomManager';
+                $scalarCustom = new $customClass;
+
+                foreach (['theme', 'nullableTheme'] as $function) {
+                    foreach ([filament(), $scalarCustom] as $manager) {
+                        try {
+                            ($namespace . '\\' . $function)($manager, 42);
+                            $this->assertFalse($isStrict, 'Strict scalar arguments must not be coerced.');
+                            $this->assertSame('42', $manager === $scalarCustom ? $scalarCustom->theme : $default->getViteTheme());
+                        } catch (TypeError $exception) {
+                            $this->assertTrue($isStrict);
+                        }
+                    }
+                }
+            }
+
+            app()->instance(PanelRegistry::class, new PanelRegistry);
+            $events = [];
+
+            try {
+                Fixtures\ManagerIntegrations\registerManager(filament(), $events);
+                $this->fail('Missing default panel should throw.');
+            } catch (LogicException $exception) {
+                $this->assertSame('Please use the `navigationGroups()` method on the panel configuration to register navigation groups. See the documentation - https://filamentphp.com/docs/panels/navigation#customizing-navigation-groups', $exception->getMessage());
+                $this->assertSame(['receiver'], $events);
+            }
+        } finally {
+            app()->instance(PanelRegistry::class, $originalRegistry);
+            Filament::swap($originalManager);
+            FilamentAsset::swap($originalAssets);
+            FilamentView::swap($originalView);
+            (new Filesystem)->deleteDirectory($directory);
+        }
+    }
+
     private function assertFilterAndAlignmentParentCalls(): void
     {
         $table = Table::make(app(PostsTable::class))->query(Post::query());
@@ -523,6 +678,92 @@ class PersistentUpgradeSetTest extends TestCase
             $this->assertTrue($view->hasRenderHook($hooks[$index], scopes: $hook));
             $this->assertSame($html, $view->renderHook($hooks[$index], scopes: $hook)->toHtml());
         }
+    }
+
+    private function assertForwardingConfigurationHooks(): void
+    {
+        $originalDisk = config('filament.default_filesystem_disk');
+
+        try {
+            foreach (['local', 's3'] as $disk) {
+                config(['filament.default_filesystem_disk' => $disk]);
+
+                foreach ([
+                    Fixtures\ForwardingConfigurationHooks\DiskExporter::class => 'root:',
+                    Fixtures\ForwardingConfigurationHooks\ChildExporter::class => 'child:root:',
+                    Fixtures\ForwardingConfigurationHooks\TraitExporter::class => 'trait:',
+                    Fixtures\ForwardingConfigurationHooks\ChildTraitExporter::class => 'child:trait:',
+                ] as $class => $prefix) {
+                    $exporter = new $class(new Export, [], []);
+                    $this->assertSame($prefix . $disk, $exporter->getFileDiskName());
+                    $this->assertSame($prefix . $disk, Fixtures\ForwardingConfigurationHooks\disk($exporter));
+                    $this->assertSame($prefix . $disk, Fixtures\ForwardingConfigurationHooks\nullableDisk($exporter));
+
+                    if ($exporter instanceof Fixtures\ForwardingConfigurationHooks\DiskExporter) {
+                        $this->assertSame($prefix . $disk, $exporter->applicationDisk());
+                        $this->assertSame($disk, $exporter->defaultDisk());
+                        $this->assertSame($prefix . $disk, Fixtures\ForwardingConfigurationHooks\customCallback($exporter)());
+                    }
+                }
+            }
+
+            $this->assertNull(Fixtures\ForwardingConfigurationHooks\nullableDisk(null));
+            $this->assertSame('trait:unrelated', (new Fixtures\ForwardingConfigurationHooks\UnrelatedDiskConsumer)->getFileDisk());
+        } finally {
+            config(['filament.default_filesystem_disk' => $originalDisk]);
+        }
+
+        foreach ([
+            Fixtures\ForwardingConfigurationHooks\TableGenerator::class,
+            Fixtures\ForwardingConfigurationHooks\ChildTableGenerator::class,
+            Fixtures\ForwardingConfigurationHooks\ResourceGenerator::class,
+            Fixtures\ForwardingConfigurationHooks\RelationGenerator::class,
+            Fixtures\ForwardingConfigurationHooks\RelatedRecordsGenerator::class,
+        ] as $class) {
+            $generator = app($class, [
+                'fqn' => 'App\\Generated\\Posts',
+                'modelFqn' => Post::class,
+                'resourceFqn' => 'App\\Resources\\Posts\\PostResource',
+                'pageRoutes' => [],
+                'formSchemaFqn' => null,
+                'infolistSchemaFqn' => null,
+                'tableFqn' => null,
+                'clusterFqn' => null,
+                'parentResourceFqn' => null,
+                'relatedResourceFqn' => null,
+                'recordTitleAttribute' => 'title',
+                'hasViewOperation' => true,
+                'isGenerated' => false,
+                'isSoftDeletable' => true,
+                'isSimple' => true,
+                'relationship' => 'posts',
+                'relatedModelFqn' => Post::class,
+                'relationshipType' => null,
+            ]);
+            $output = $generator->generate();
+            $this->assertStringContainsString('// record-hook', $output);
+            $this->assertStringContainsString('// bulk-hook', $output);
+            $this->assertContains(Action::class, $generator->getTableRecordActions());
+
+            if ($generator instanceof Fixtures\ForwardingConfigurationHooks\ChildTableGenerator) {
+                $this->assertContains(ExportAction::class, $generator->getTableRecordActions());
+                $this->assertStringStartsWith('// child-record' . PHP_EOL . '// record-hook', $generator->outputTableRecordActions());
+                $this->assertStringStartsWith('// child-bulk' . PHP_EOL . '// bulk-hook', $generator->outputTableBulkActions());
+            }
+        }
+
+        foreach ([
+            Fixtures\ForwardingConfigurationHooks\DirectGenerator::class => [[Action::class], '// direct-record', '// direct-bulk'],
+            Fixtures\ForwardingConfigurationHooks\ChildDirectGenerator::class => [[Action::class, ExportAction::class], '// child' . PHP_EOL . '// direct-record', '// child' . PHP_EOL . '// direct-bulk'],
+        ] as $class => $expected) {
+            $generator = new $class;
+            $generator->generate();
+            $this->assertSame($expected, [$generator->getTableRecordActions(), $generator->outputTableRecordActions(), $generator->outputTableBulkActions()]);
+        }
+
+        $generator = new Fixtures\ForwardingConfigurationHooks\DirectDefaults;
+        $generator->generate();
+        $this->assertSame([['Filament\\Actions\\EditAction'], 'EditAction::make(),', 'DeleteBulkAction::make(),'], Fixtures\ForwardingConfigurationHooks\directOutputs($generator));
     }
 
     private function assertConfigurationMigrations(): void
@@ -693,7 +934,17 @@ class PersistentUpgradeSetTest extends TestCase
 
             $stats = new Fixtures\TraitConfigurationHooks\ChildStats;
             $this->assertSame([43, 19], array_map(static fn ($stat) => $stat->getValue(), $stats->getSectionContentComponent()->getDefaultChildComponents()));
-            $this->assertSame('Trait return', (new Fixtures\TraitConfigurationHooks\Profile)->getCancelFormAction()->getLabel());
+            $this->assertSame('Return', (new Fixtures\ConfigurationHooks\Profile)->getCancelFormAction()->getLabel());
+            $this->assertSame('Child', (new Fixtures\ConfigurationHooks\ChildProfile)->getCancelFormAction()->getLabel());
+
+            foreach ([Fixtures\TraitConfigurationHooks\Profile::class => 'Trait return', Fixtures\TraitConfigurationHooks\ChildProfile::class => 'Trait return child'] as $profileClass => $label) {
+                $profile = new $profileClass;
+                $action = $profile->getCancelFormAction();
+                $this->assertSame('back', $action->getName());
+                $this->assertSame($label, $action->getLabel());
+                $this->assertSame('gray', $action->getColor());
+                $this->assertSame(1, $profile->backActionCalls);
+            }
         } finally {
             app()->setLocale($originalLocale);
         }

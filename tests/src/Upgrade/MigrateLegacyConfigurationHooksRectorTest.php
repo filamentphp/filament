@@ -27,6 +27,11 @@ class MigrateLegacyConfigurationHooksRectorTest extends AbstractRectorTestCase
         $this->doTestFile(__DIR__ . '/Fixtures/action_infolist_trait.php.inc');
     }
 
+    public function test_preserves_exporter_and_generator_hook_dispatch(): void
+    {
+        $this->doTestFile(__DIR__ . '/Fixtures/forwarding_configuration_hooks.php.inc');
+    }
+
     public function test_preserves_ambiguous_configuration(): void
     {
         $this->doTestFile(__DIR__ . '/Fixtures/configuration_hooks_manual.php.inc');

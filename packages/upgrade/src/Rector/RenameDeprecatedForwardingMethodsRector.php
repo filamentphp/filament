@@ -13,10 +13,7 @@ use Filament\Actions\Imports\Events\ImportChunkProcessed;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\ReplicateAction;
 use Filament\Clusters\Cluster;
-use Filament\Commands\FileGenerators\Resources\Pages\ResourceManageRelatedRecordsPageClassGenerator;
-use Filament\Commands\FileGenerators\Resources\RelationManagerClassGenerator;
-use Filament\Commands\FileGenerators\Resources\ResourceClassGenerator;
-use Filament\Commands\FileGenerators\Resources\Schemas\ResourceTableClassGenerator;
+use Filament\Commands\FileGenerators\Resources\Concerns\CanGenerateResourceTables;
 use Filament\Facades\Filament;
 use Filament\FilamentManager;
 use Filament\Forms\Commands\FileGenerators\RichContentCustomBlockClassGenerator;
@@ -88,6 +85,7 @@ use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\UnionType;
 use PhpParser\NodeFinder;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
@@ -189,22 +187,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'currentDomain' => 'setCurrentDomain',
             'hasDarkModeForced' => 'isDarkModeForced',
         ],
-        ResourceClassGenerator::class => [
-            'getTableActions' => 'getTableRecordActions',
-            'outputTableActions' => 'outputTableRecordActions',
-            'outputTableMethodBulkActions' => 'outputTableBulkActions',
-        ],
-        ResourceTableClassGenerator::class => [
-            'getTableActions' => 'getTableRecordActions',
-            'outputTableActions' => 'outputTableRecordActions',
-            'outputTableMethodBulkActions' => 'outputTableBulkActions',
-        ],
-        RelationManagerClassGenerator::class => [
-            'getTableActions' => 'getTableRecordActions',
-            'outputTableActions' => 'outputTableRecordActions',
-            'outputTableMethodBulkActions' => 'outputTableBulkActions',
-        ],
-        ResourceManageRelatedRecordsPageClassGenerator::class => [
+        CanGenerateResourceTables::class => [
             'getTableActions' => 'getTableRecordActions',
             'outputTableActions' => 'outputTableRecordActions',
             'outputTableMethodBulkActions' => 'outputTableBulkActions',
@@ -484,7 +467,13 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                 $receiverType = $this->resolveReceiverType($node->var);
             }
 
-            if (! (new ObjectType($componentClass))->isSuperTypeOf($receiverType)->yes()) {
+            if ($componentClass === CanGenerateResourceTables::class) {
+                $classes = $receiverType->getObjectClassReflections();
+
+                if ((! count($classes)) || array_filter($classes, static fn (ClassReflection $class): bool => ! $class->hasTraitUse(CanGenerateResourceTables::class))) {
+                    continue;
+                }
+            } elseif (! (new ObjectType($componentClass))->isSuperTypeOf($receiverType)->yes()) {
                 continue;
             }
 
@@ -695,12 +684,13 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                     return false;
                 }
 
-                if (in_array($componentClass, [ViewComponent::class, HasTable::class, Dashboard::class, ChartWidget::class], strict: true)) {
+                if (in_array($componentClass, [ViewComponent::class, HasTable::class, Dashboard::class, ChartWidget::class, CanGenerateResourceTables::class], strict: true)) {
                     $declaringTrait = match ($methodName) {
                         'postfix' => HasAffixes::class,
                         'updatedtablesortdirection' => CanSortRecords::class,
                         'normalizetablefiltervaluesfromquerystring' => HasFilters::class,
                         'resetfiltersform' => HasFiltersSchema::class,
+                        'gettableactions', 'outputtableactions', 'outputtablemethodbulkactions' => CanGenerateResourceTables::class,
                         default => HasLabel::class,
                     };
 

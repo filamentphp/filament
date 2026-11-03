@@ -2,6 +2,7 @@
 
 namespace Filament\Upgrade\Rector;
 
+use Filament\Commands\FileGenerators\Resources\Concerns\CanGenerateResourceTables;
 use Filament\Upgrade\Support\TraitConsumerResolver;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
@@ -58,6 +59,7 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
         'Filament\\Widgets\\StatsOverviewWidget', 'Filament\\Resources\\Pages\\CreateRecord',
         'Filament\\Resources\\Pages\\EditRecord', 'Filament\\Pages\\SettingsPage',
         'Filament\\Auth\\Pages\\EditProfile',
+        'Filament\\Actions\\Exports\\Exporter',
     ];
 
     public function __construct(
@@ -82,7 +84,7 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
             return $this->replaceActionInfolistTrait($node);
         }
 
-        if ((! $node->extends) || (! $node->name)) {
+        if (! $node->name) {
             return null;
         }
 
@@ -90,8 +92,10 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
         $isStats = $this->isObjectType($node, new ObjectType('Filament\\Widgets\\StatsOverviewWidget'));
         $isPage = $this->isObjectType($node, new ObjectType('Filament\\Pages\\Page'));
         $isWidget = $this->isObjectType($node, new ObjectType('Filament\\Widgets\\Widget'));
+        $isExporter = $this->isObjectType($node, new ObjectType('Filament\\Actions\\Exports\\Exporter'));
+        $isGenerator = ScopeFetcher::fetch($node)->getClassReflection()?->hasTraitUse(CanGenerateResourceTables::class) ?? false;
 
-        if ((! $isResource) && (! $isPage) && (! $isWidget)) {
+        if ((! $isResource) && (! $isPage) && (! $isWidget) && (! $isExporter) && (! $isGenerator)) {
             return null;
         }
 
@@ -127,29 +131,41 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
             $hooks['backAction'] = ['getCancelFormAction', null];
         }
 
+        if ($isExporter) {
+            $hooks['getFileDisk'] = ['getFileDiskName', null];
+        } elseif ($isGenerator) {
+            $hooks += [
+                'getTableActions' => ['getTableRecordActions', null],
+                'outputTableActions' => ['outputTableRecordActions', null],
+                'outputTableMethodBulkActions' => ['outputTableBulkActions', null],
+            ];
+        }
+
         foreach ($hooks as $oldName => [$newName, $translation]) {
             $context = ScopeFetcher::fetch($node)->getClassReflection();
             $method = $node->getMethod($oldName) ?? $this->getTraitHook($context, $oldName);
+            $retainsLegacy = $isExporter || $isGenerator;
+            $returnType = match ($oldName) {
+                'backAction' => 'Filament\\Actions\\Action',
+                'getFileDisk', 'outputTableActions', 'outputTableMethodBulkActions' => 'string',
+                default => 'array',
+            };
 
-            if ((! $method) || (! $this->canMigrateHierarchy($node, $oldName, $newName, $translation !== null, returnType: $oldName === 'backAction' ? 'Filament\\Actions\\Action' : 'array'))) {
+            if ((! $method) || (! $this->canMigrateHierarchy($node, $oldName, $newName, $translation !== null, returnType: $returnType, retainsLegacy: $retainsLegacy))) {
                 continue;
             }
 
             $hasApplicationParent = $this->getApplicationParentHookOwner($context, $oldName) !== null;
             $hasTraitHook = $this->hasTraitHookInHierarchy($context, $oldName);
 
-            if ($hasApplicationParent && (($translation !== null) || $hasTraitHook)) {
+            if ($hasApplicationParent && (($translation !== null) || $hasTraitHook || $retainsLegacy)) {
                 continue;
             }
 
             // Only framework defaults are empty. Application parents retain their logic.
-            $this->traverseNodesWithCallable($method->stmts ?? [], function (Node $candidate) use ($oldName, $newName, $translation, $hasApplicationParent, $hasTraitHook): ?Node {
+            $this->traverseNodesWithCallable($retainsLegacy ? [...$node->stmts, $method] : ($method->stmts ?? []), function (Node $candidate) use ($oldName, $newName, $translation, $hasApplicationParent, $retainsLegacy): ?Node {
                 if ($candidate instanceof StaticCall && $candidate->class instanceof Name && $this->isName($candidate->class, 'parent') && $this->isName($candidate->name, $oldName)) {
-                    if ($hasTraitHook && ($oldName === 'backAction')) {
-                        return null;
-                    }
-
-                    if ($hasApplicationParent || ($oldName === 'backAction')) {
+                    if ($hasApplicationParent || ($oldName === 'backAction') || $retainsLegacy) {
                         return new StaticCall(new Name('parent'), $newName);
                     }
 
@@ -158,6 +174,22 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
 
                 return null;
             });
+
+            if ($retainsLegacy) {
+                if ($method !== $node->getMethod($oldName)) {
+                    $this->aliasTraitFunctionsAndConstants($method, $node);
+                    $node->stmts[] = $method;
+                }
+
+                $node->stmts[] = new ClassMethod($newName, [
+                    'flags' => Class_::MODIFIER_PUBLIC,
+                    'returnType' => new Identifier($returnType),
+                    'stmts' => [new Return_(new MethodCall(new Variable('this'), $oldName))],
+                ]);
+                $changed = true;
+
+                continue;
+            }
 
             $value = null;
 
@@ -212,9 +244,15 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
             return null;
         }
 
-        $owner = $parent->getNativeMethod($oldName)->getDeclaringClass();
+        return $this->isFrameworkHook($parent, $oldName) ? null : $parent->getNativeMethod($oldName)->getDeclaringClass();
+    }
 
-        return in_array($owner->getName(), self::FRAMEWORK_HOOK_OWNERS, true) ? null : $owner;
+    private function isFrameworkHook(ClassReflection $class, string $name): bool
+    {
+        $method = $class->getNativeMethod($name);
+
+        return in_array($method->getDeclaringClass()->getName(), self::FRAMEWORK_HOOK_OWNERS, true)
+            || (method_exists($method, 'getDeclaringTrait') && ($method->getDeclaringTrait()?->getName() === CanGenerateResourceTables::class));
     }
 
     private function getTraitHook(ClassReflection $class, string $oldName): ?ClassMethod
@@ -226,7 +264,7 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
         $reflection = $class->getNativeMethod($oldName);
         $trait = method_exists($reflection, 'getDeclaringTrait') ? $reflection->getDeclaringTrait() : null;
 
-        if ((! $trait) || ($trait->getName() === 'Filament\\Pages\\Concerns\\InteractsWithHeaderActions')) {
+        if ((! $trait) || in_array($trait->getName(), ['Filament\\Pages\\Concerns\\InteractsWithHeaderActions', CanGenerateResourceTables::class], true)) {
             return null;
         }
 
@@ -447,7 +485,7 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
         return false;
     }
 
-    private function canMigrateHierarchy(Class_ $class, string $oldName, string $newName, bool $nullable, bool $static = false, string $returnType = 'array'): bool
+    private function canMigrateHierarchy(Class_ $class, string $oldName, string $newName, bool $nullable, bool $static = false, string $returnType = 'array', bool $retainsLegacy = false): bool
     {
         $context = ScopeFetcher::fetch($class)->getClassReflection();
 
@@ -473,14 +511,14 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
             }
 
             // A custom canonical hook may already bypass the legacy override.
-            if ($candidate->hasNativeMethod($newName) && (! in_array($candidate->getNativeMethod($newName)->getDeclaringClass()->getName(), self::FRAMEWORK_HOOK_OWNERS, true))) {
+            if ($candidate->hasNativeMethod($newName) && (! $this->isFrameworkHook($candidate, $newName))) {
                 return false;
             }
 
             $declaration = $this->astResolver->resolveClassFromClassReflection($candidate);
 
             // Inherited calls and configuration constrain the whole hierarchy too.
-            if ((! $declaration instanceof Class_) || (! $this->canMigrateHookReferences($declaration, $oldName, $newName))) {
+            if ((! $declaration instanceof Class_) || (! $this->canMigrateHookReferences($declaration, $oldName, $newName, $retainsLegacy))) {
                 return false;
             }
 
@@ -491,7 +529,7 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
                     return false;
                 }
 
-                if ($owner->isTrait() && ($owner->getName() !== 'Filament\\Widgets\\Concerns\\InteractsWithPageFilters') && (! $this->canMigrateHookReferences($ownerDeclaration, $oldName, $newName))) {
+                if ($owner->isTrait() && (! in_array($owner->getName(), ['Filament\\Widgets\\Concerns\\InteractsWithPageFilters', CanGenerateResourceTables::class, 'Filament\\Tables\\Commands\\FileGenerators\\Concerns\\CanGenerateModelTables'], true)) && (! $this->canMigrateHookReferences($ownerDeclaration, $oldName, $newName, $retainsLegacy))) {
                     return false;
                 }
 
@@ -502,7 +540,7 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
 
             $method = $declaration->getMethod($oldName) ?? $this->getTraitHook($candidate, $oldName);
 
-            if ($candidate->hasNativeMethod($oldName) && ($candidate->getNativeMethod($oldName)->getDeclaringClass()->getName() === $candidate->getName()) && (! $method)) {
+            if ($candidate->hasNativeMethod($oldName) && ($candidate->getNativeMethod($oldName)->getDeclaringClass()->getName() === $candidate->getName()) && (! $method) && (! $this->isFrameworkHook($candidate, $oldName))) {
                 return false;
             }
 
@@ -549,20 +587,20 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
         });
     }
 
-    private function canMigrateHookReferences(ClassLike $class, string $oldName, string $newName): bool
+    private function canMigrateHookReferences(ClassLike $class, string $oldName, string $newName, bool $retainsLegacy = false): bool
     {
         $hookStaticCalls = (new NodeFinder)->findInstanceOf($class->getMethod($oldName)->stmts ?? [], StaticCall::class);
 
-        return ! (new NodeFinder)->findFirst($class->stmts, function (Node $candidate) use ($oldName, $newName, $hookStaticCalls): bool {
+        return ! (new NodeFinder)->findFirst($class->stmts, function (Node $candidate) use ($class, $oldName, $newName, $hookStaticCalls, $retainsLegacy): bool {
             if ($candidate instanceof ClassLike) {
                 return true;
             }
 
-            if ($candidate instanceof Return_ && (! $candidate->expr)) {
+            if ((! $retainsLegacy) && $candidate instanceof Return_ && (! $candidate->expr)) {
                 return true;
             }
 
-            if ($candidate instanceof String_ && in_array(strtolower($candidate->value), [strtolower($oldName), strtolower($newName)], true)) {
+            if ((! $retainsLegacy) && $candidate instanceof String_ && in_array(strtolower($candidate->value), [strtolower($oldName), strtolower($newName)], true)) {
                 return true;
             }
 
@@ -575,14 +613,18 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
             }
 
             if ($this->isName($candidate->name, $newName)) {
-                return true;
+                return ! $retainsLegacy;
             }
 
             if (! $this->isName($candidate->name, $oldName)) {
                 return false;
             }
 
-            return (! $candidate instanceof StaticCall) || (! $candidate->class instanceof Name) || (! $this->isName($candidate->class, 'parent')) || $candidate->isFirstClassCallable() || (bool) $candidate->args || (! in_array($candidate, $hookStaticCalls, true));
+            if ($retainsLegacy && ((! $candidate instanceof StaticCall) || ($candidate->class instanceof Name && $this->isNames($candidate->class, ['self', 'static'])))) {
+                return false;
+            }
+
+            return (! $candidate instanceof StaticCall) || (! $candidate->class instanceof Name) || (! $this->isName($candidate->class, 'parent')) || $candidate->isFirstClassCallable() || (bool) $candidate->args || ((! ($retainsLegacy && $class instanceof Class_)) && (! in_array($candidate, $hookStaticCalls, true)));
         });
     }
 

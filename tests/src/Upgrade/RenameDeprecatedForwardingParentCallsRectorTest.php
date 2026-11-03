@@ -32,7 +32,7 @@ class RenameDeprecatedForwardingParentCallsRectorTest extends AbstractRectorTest
         $this->doTestFile(__DIR__ . '/Fixtures/filter_and_alignment_parent_aliases.php.inc');
     }
 
-    public function test_retained_parent_hooks_preserve_runtime_dispatch_after_migration(): void
+    public function test_migrated_parent_hooks_preserve_runtime_dispatch(): void
     {
         $directory = sys_get_temp_dir() . '/filament-parent-hooks-' . bin2hex(random_bytes(8));
         mkdir($directory . '/app', recursive: true);
@@ -105,10 +105,6 @@ class RenameDeprecatedForwardingParentCallsRectorTest extends AbstractRectorTest
                 ], JSON_THROW_ON_ERROR);
                 PHP;
 
-            $original = new Process([PHP_BINARY, '-r', $probe, $root, $directory], $root);
-            $original->mustRun();
-            $this->assertSame(['local', 1, ['Filament\\Actions\\EditAction'], 1, 'EditAction::make(),', 1, 'DeleteBulkAction::make(),', 1], json_decode($original->getOutput(), associative: true, flags: JSON_THROW_ON_ERROR));
-
             foreach ([false, true] as $dryRun) {
                 $migration = new Process([PHP_BINARY, $root . '/vendor/bin/rector', 'process', '--config', $directory . '/rector.php', '--clear-cache', '--no-progress-bar', ...($dryRun ? ['--dry-run'] : [])], $root);
                 $migration->setTimeout(60);
@@ -118,7 +114,7 @@ class RenameDeprecatedForwardingParentCallsRectorTest extends AbstractRectorTest
 
             $migrated = new Process([PHP_BINARY, '-r', $probe, $root, $directory], $root);
             $migrated->mustRun();
-            $this->assertSame($original->getOutput(), $migrated->getOutput());
+            $this->assertSame(['local', 1, ['Filament\\Actions\\EditAction'], 1, 'EditAction::make(),', 1, 'DeleteBulkAction::make(),', 1], json_decode($migrated->getOutput(), associative: true, flags: JSON_THROW_ON_ERROR));
         } finally {
             (new Filesystem)->deleteDirectory($directory);
         }

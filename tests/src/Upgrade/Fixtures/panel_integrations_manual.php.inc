@@ -80,6 +80,8 @@ class ActionsPage extends Page
 
 namespace Filament\Tests\Upgrade\Fixtures\PanelIntegrationsManual;
 
+use Closure;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Exceptions\NoDefaultPanelSetException;
 use LogicException;
 use Illuminate\Contracts\Support\Htmlable;
@@ -91,7 +93,9 @@ use Filament\Widgets\StatsOverviewWidget;
 
 function manual(FilamentManager $manager, string $method, array $arguments): void
 {
-    $manager->registerScriptData(['custom' => true]);
+    (static fn(?FilamentManager $manager) => $manager === null ? null : (\method_exists($manager, 'registerScriptData') ? Closure::fromCallable([$manager, 'registerScriptData']) : static function (array $data) use ($manager): void {
+        FilamentAsset::registerScriptData($data);
+    }))($manager)(['custom' => true]);
     Filament::$method(...$arguments);
     Filament::registerRenderHook(...$arguments);
     Filament::registerScriptData(['ignored' => true], 'ignored-package');
