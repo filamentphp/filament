@@ -421,6 +421,37 @@ describe('browser interactions', function (): void {
         $page->inDarkMode()->assertNoAccessibilityIssues();
     });
 
+    it('renders filters in a modal or slide-over only while it is open', function (string $layout): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        Post::factory()->create(['title' => 'Published post', 'is_published' => true]);
+        Post::factory()->create(['title' => 'Draft post', 'is_published' => false]);
+
+        $filtersTrigger = '[data-testid="filters-trigger"]';
+        $publishedFilter = '[data-testid="published-filter"]';
+        $applyAction = '[data-table-filter-action="apply"]';
+
+        visit("/filters-reset-action-browser-test?deferred=1&layout={$layout}")
+            ->assertNotPresent($publishedFilter)
+            ->click($filtersTrigger)
+            ->click($publishedFilter)
+            ->click($applyAction)
+            ->assertDontSee('Draft post')
+            ->assertNotPresent($publishedFilter)
+            ->click($filtersTrigger)
+            ->assertAttribute($publishedFilter, 'aria-checked', 'true')
+            ->keys($publishedFilter, 'Escape')
+            ->assertNotPresent($publishedFilter)
+            ->click($filtersTrigger)
+            ->assertVisible($publishedFilter)
+            ->assertNoSmoke();
+    })->with([
+        'modal' => ['modal'],
+        'slide-over' => ['slideOver'],
+    ]);
+
     it('contains filters `Escape` handling inside an enclosing modal', function (): void {
         Artisan::call('filament:assets');
 

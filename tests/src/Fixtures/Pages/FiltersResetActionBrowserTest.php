@@ -15,6 +15,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
 use Illuminate\Database\Eloquent\Builder;
@@ -29,6 +30,8 @@ class FiltersResetActionBrowserTest extends Page implements HasTable
 
     public bool $hasDeferredFilters = false;
 
+    public string $filtersLayout = 'dropdown';
+
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedFunnel;
 
     protected static bool $shouldRegisterNavigation = false;
@@ -38,6 +41,7 @@ class FiltersResetActionBrowserTest extends Page implements HasTable
         $this->focusScenario = request()->string('focusScenario')->toString();
         $this->hasFocusLifecycleFilters = request()->boolean('focus');
         $this->hasDeferredFilters = request()->boolean('deferred');
+        $this->filtersLayout = request()->string('layout', 'dropdown')->toString();
     }
 
     public function table(Table $table): Table
@@ -111,8 +115,10 @@ class FiltersResetActionBrowserTest extends Page implements HasTable
                 default => $this->hasFocusLifecycleFilters ? [$publishedFilter, $detailsFilter] : [$publishedFilter],
             })
             ->deferFilters($this->hasDeferredFilters)
+            ->filtersLayout(($this->filtersLayout === 'modal') ? FiltersLayout::Modal : FiltersLayout::Dropdown)
             ->filtersTriggerAction(
-                static fn (Action $action) => $action
+                fn (Action $action) => $action
+                    ->slideOver($this->filtersLayout === 'slideOver')
                     ->extraAttributes(['data-testid' => 'filters-trigger']),
             )
             ->filtersResetAction(

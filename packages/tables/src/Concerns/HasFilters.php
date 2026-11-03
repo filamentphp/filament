@@ -7,6 +7,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Attributes\Unexposed;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\QueryBuilder;
@@ -41,6 +42,12 @@ trait HasFilters
             ->columns($table->getFiltersFormColumns())
             ->model($table->getModel())
             ->schema($table->getFiltersFormSchema())
+            // A modal or slide-over is closed most of the time, so its filters are only rendered while it is open.
+            ->lazyLoaded(fn (): bool => match ($table->getFiltersLayout()) {
+                FiltersLayout::Modal => true,
+                FiltersLayout::Dropdown => $table->getFiltersTriggerAction()->isModalSlideOver(),
+                default => false,
+            })
             ->when(
                 $table->hasDeferredFilters(),
                 fn (Schema $schema) => $schema

@@ -104,6 +104,15 @@ document.addEventListener('alpine:init', () => {
                             return
                         }
 
+                        // A closing modal stays visible during its leave transition, so it must not load a schema that was just unloaded.
+                        if (
+                            this.$el
+                                .closest('.fi-modal')
+                                ?.classList.contains('fi-modal-open') === false
+                        ) {
+                            return
+                        }
+
                         this.isLoadingDeferredSchema = true
 
                         try {

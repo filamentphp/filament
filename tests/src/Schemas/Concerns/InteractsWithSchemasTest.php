@@ -330,6 +330,20 @@ it('loads deferred schemas with no visible components', function (): void {
         ->toContain('<div wire:partial="schema.form.emptyDetails" hidden></div>');
 });
 
+it('can unload a loaded deferred schema with `unloadDeferredSchema()`', function (): void {
+    $livewire = livewire(TestComponentWithDeferredSchemas::class)
+        ->call('loadDeferredSchema', 'form.details')
+        ->call('unloadDeferredSchema', 'form.details');
+
+    expect($livewire->get('loadedDeferredSchemas'))->not->toHaveKey('form.details')
+        ->and($livewire->effects['partials']['schema.form.details'])
+        ->toContain('aria-busy="true"');
+
+    $livewire->call('loadDeferredSchema', 'form.details');
+
+    expect($livewire->get('loadedDeferredSchemas'))->toHaveKey('form.details', true);
+});
+
 it('loads deferred schemas containing validation errors', function (): void {
     $livewire = livewire(TestComponentWithDeferredSchemas::class)
         ->call('save')

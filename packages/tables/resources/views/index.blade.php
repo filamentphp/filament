@@ -605,6 +605,7 @@
                                             $filtersTriggerActionModalSlideOverPosition = $filtersTriggerAction->getModalSlideOverPosition();
                                             $filtersTriggerActionIsModalFooterSticky = $filtersTriggerAction->isModalFooterSticky();
                                             $filtersTriggerActionIsModalHeaderSticky = $filtersTriggerAction->isModalHeaderSticky();
+                                            $filtersModalClosedEventHandler = $filtersForm->isLazyLoaded() ? ('if ($event.target.closest(\'.fi-modal\') === $el) $wire.unloadDeferredSchema(' . Js::from($filtersForm->getKey()) . ')') : null;
                                         @endphp
 
                                         <x-filament::modal
@@ -629,6 +630,7 @@
                                             :sticky-header="$filtersTriggerActionIsModalHeaderSticky"
                                             :width="$filtersFormWidth"
                                             :wire:key="$this->getId() . '.table.filters'"
+                                            :x-on:modal-closed="$filtersModalClosedEventHandler"
                                             class="fi-ta-filters-modal"
                                         >
                                             <x-slot name="trigger">

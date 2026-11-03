@@ -150,12 +150,62 @@ trait InteractsWithSchemas
             return;
         }
 
-        $rootSchema = $this->getSchema((string) str($schemaKey)->before('.'));
+        $schema = $this->findLazyLoadedSchema($schemaKey);
 
-        if (! $rootSchema) {
+        if (! $schema) {
             app(PartialsComponentHook::class)->skipPartialRender($this);
 
             return;
+        }
+
+        $this->loadedDeferredSchemas[$schemaKey] = true;
+
+        app(PartialsComponentHook::class)->renderPartial($this, fn (): array => [
+            "schema.{$schemaKey}" => function () use ($schema, $schemaKey): string {
+                $html = $schema->toHtml();
+
+                if (filled($html)) {
+                    return $html;
+                }
+
+                return '<div wire:partial="' . e("schema.{$schemaKey}") . '" hidden></div>';
+            },
+        ]);
+    }
+
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     */
+    #[Exposed]
+    public function unloadDeferredSchema(string $schemaKey): void
+    {
+        if (! ($this->loadedDeferredSchemas[$schemaKey] ?? false)) {
+            app(PartialsComponentHook::class)->skipPartialRender($this);
+
+            return;
+        }
+
+        $schema = $this->findLazyLoadedSchema($schemaKey);
+
+        if (! $schema) {
+            app(PartialsComponentHook::class)->skipPartialRender($this);
+
+            return;
+        }
+
+        unset($this->loadedDeferredSchemas[$schemaKey]);
+
+        app(PartialsComponentHook::class)->renderPartial($this, fn (): array => [
+            "schema.{$schemaKey}" => fn (): string => $schema->toHtml(),
+        ]);
+    }
+
+    protected function findLazyLoadedSchema(string $schemaKey): ?Schema
+    {
+        $rootSchema = $this->getSchema((string) str($schemaKey)->before('.'));
+
+        if (! $rootSchema) {
+            return null;
         }
 
         $findSchema = function (Schema $schema) use (&$findSchema, $schemaKey): ?Schema {
@@ -198,27 +248,7 @@ trait InteractsWithSchemas
             return null;
         };
 
-        $schema = $findSchema($rootSchema);
-
-        if (! $schema) {
-            app(PartialsComponentHook::class)->skipPartialRender($this);
-
-            return;
-        }
-
-        $this->loadedDeferredSchemas[$schemaKey] = true;
-
-        app(PartialsComponentHook::class)->renderPartial($this, fn (): array => [
-            "schema.{$schemaKey}" => function () use ($schema, $schemaKey): string {
-                $html = $schema->toHtml();
-
-                if (filled($html)) {
-                    return $html;
-                }
-
-                return '<div wire:partial="' . e("schema.{$schemaKey}") . '" hidden></div>';
-            },
-        ]);
+        return $findSchema($rootSchema);
     }
 
     /**
