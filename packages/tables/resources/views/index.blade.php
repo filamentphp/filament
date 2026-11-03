@@ -1199,7 +1199,7 @@
 
                                         <div
                                             @if ($isRecordGroupCollapsible = $group->isCollapsible())
-                                                x-on:click="toggleCollapseGroup(@js($recordGroupTitle))"
+                                                x-on:click="if (! $event.target.closest('.fi-ta-group-checkbox')) toggleCollapseGroup(@js($recordGroupTitle))"
                                                 @if (! $hasSummary)
                                                     x-bind:class="{ 'fi-collapsed': isGroupCollapsed(@js($recordGroupTitle)) }"
                                                 @endif
