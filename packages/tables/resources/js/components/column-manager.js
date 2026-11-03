@@ -26,6 +26,8 @@ export default function filamentTableColumnManager({ columns, isLive }) {
 
         focusRevision: 0,
 
+        hasBeenOpened: false,
+
         init() {
             this.dropdownPanel = this.$el.closest('.fi-dropdown-panel')
             this.dropdownOpenedListener = () => this.dropdownRevision++

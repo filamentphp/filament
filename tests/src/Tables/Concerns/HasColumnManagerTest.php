@@ -191,7 +191,7 @@ describe('column manager reordering', function (): void {
             ->assertNoSmoke();
     });
 
-    it('renders modal column manager items only while the modal is open', function (): void {
+    it('renders modal column manager items only once the modal is opened', function (): void {
         Artisan::call('filament:assets');
         $this->actingAs(User::factory()->create());
         Post::factory()->create();
@@ -207,7 +207,9 @@ describe('column manager reordering', function (): void {
             ->assertScript("Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-rating')) < Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-title'))", true)
             ->assertScript($order, ['group::Publication', 'column::title', 'column::id'])
             ->keys($titleDown, 'Escape')
-            ->assertNotPresent($titleDown)
+            // The items stay rendered after closing, so the modal keeps its size during its leave transition.
+            ->assertMissing($titleDown)
+            ->assertPresent($titleDown)
             ->click($trigger)
             ->assertScript($order, ['group::Publication', 'column::title', 'column::id'])
             ->assertNoSmoke();

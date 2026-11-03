@@ -750,9 +750,12 @@
                                                         })"
                                                 x-on:apply-table-column-manager.window="applyTableColumnManager()"
                                                 x-on:reset-table-column-manager.window="resetDeferredColumns()"
+                                                x-effect="if (isOpen) hasBeenOpened = true"
                                                 class="fi-ta-col-manager"
                                             >
-                                                <template x-if="isOpen">
+                                                <template
+                                                    x-if="hasBeenOpened"
+                                                >
                                                     <x-filament-tables::column-manager.content
                                                         :columns="$columnManagerColumns"
                                                         :has-reorderable-columns="$hasReorderableColumns"
