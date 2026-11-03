@@ -36,8 +36,8 @@
                 }
             }
 
-            & .fi-no-notifications-loading-section {
-                @apply m-6;
+            & .fi-no-notifications-loading-ctn {
+                @apply flex justify-center p-6 text-gray-400 dark:text-gray-500;
             }
         }
 

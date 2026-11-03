@@ -103,11 +103,11 @@ describe('slide-over', function (): void {
 
         livewire($component)
             ->assertDontSee('Export completed')
-            ->assertSeeHtml('fi-no-notifications-loading-section')
+            ->assertSeeHtml('aria-busy="true"')
             ->assertDontSee(__('filament-notifications::database.modal.empty.heading'))
             ->set('isOpen', true)
             ->assertSee('Export completed')
-            ->assertDontSeeHtml('fi-no-notifications-loading-section')
+            ->assertDontSeeHtml('aria-busy="true"')
             ->set('isOpen', false)
             ->assertDontSee('Export completed');
     })->with('database notification components');
@@ -115,7 +115,7 @@ describe('slide-over', function (): void {
     it('shows the empty state without opening the slide-over when there are no notifications', function (string $component): void {
         livewire($component)
             ->assertSee(__('filament-notifications::database.modal.empty.heading'))
-            ->assertDontSeeHtml('fi-no-notifications-loading-section');
+            ->assertDontSeeHtml('aria-busy="true"');
     })->with('database notification components');
 
     it('counts unread notifications while the slide-over is closed', function (string $component): void {
@@ -320,7 +320,7 @@ describe('browser interactions', function (): void {
             ->sendToDatabase($user);
         Notification::make()->title('Second')->sendToDatabase($user);
 
-        visit('/database-notifications-browser-test')
+        $page = visit('/database-notifications-browser-test')
             ->assertNotPresent('[id="database-notifications"] .fi-no-notification')
             ->click('[data-testid="database-notifications-trigger"]')
             ->assertVisible('[id="database-notifications"] .fi-modal-window')
@@ -334,6 +334,18 @@ describe('browser interactions', function (): void {
 
         // No notification has been marked as read by simply opening the slide-over.
         expect($user->unreadNotifications()->count())->toBe(2);
+
+        $page->keys('[id="database-notifications"] .fi-modal-window', 'Escape')
+            ->assertMissing('[id="database-notifications"] [role="list"]');
+
+        Notification::make()->title('Arrived while closed')->sendToDatabase($user);
+
+        $page->click('[data-testid="database-notifications-trigger"]')
+            ->assertVisible('[id="database-notifications"] [role="list"]')
+            ->assertSee('Arrived while closed')
+            ->assertNoSmoke();
+
+        expect($user->unreadNotifications()->count())->toBe(3);
 
         visit('/database-notifications-browser-test')
             ->inDarkMode()

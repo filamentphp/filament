@@ -117,9 +117,17 @@
                     @endforeach
                 </div>
             @else
-                <x-filament::loading-section
-                    class="fi-no-notifications-loading-section"
-                />
+                <div
+                    role="status"
+                    aria-busy="true"
+                    class="fi-no-notifications-loading-ctn"
+                >
+                    {{ \Filament\Support\generate_loading_indicator_html() }}
+
+                    <span class="fi-sr-only">
+                        {{ __('filament::components/loading-section.label') }}
+                    </span>
+                </div>
             @endif
 
             @if ($broadcastChannel = $this->getBroadcastChannel())
