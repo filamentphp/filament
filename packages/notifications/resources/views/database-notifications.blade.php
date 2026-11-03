@@ -6,14 +6,19 @@
     use Filament\Support\View\Components\BadgeComponent;
     use Illuminate\Contracts\Pagination\Paginator;
 
-    $notifications = $this->getNotifications();
+    $notifications = $this->isOpen ? $this->getNotifications() : null;
     $unreadNotificationsCount = $this->getUnreadNotificationsCount();
-    $hasNotifications = $notifications->count();
+    $hasNotifications = $notifications?->count() ?? $this->getNotificationsQuery()->exists();
     $isPaginated = $notifications instanceof Paginator && $notifications->hasPages();
     $pollingInterval = $this->getPollingInterval();
 @endphp
 
-<div class="fi-no-database">
+<div
+    x-data
+    x-on:x-modal-opened.window="if ($event.detail.id === 'database-notifications' && ! $wire.isOpen) $wire.set('isOpen', true)"
+    x-on:modal-closed.window="if ($event.detail.id === 'database-notifications') $wire.set('isOpen', false, false)"
+    class="fi-no-database"
+>
     {{-- The focus trap autofocuses the modal window itself when the slide-over opens, since the first tabbable element is the `Mark all as read` header action, which `Enter` would otherwise immediately (and irreversibly) trigger. The window must carry the `autofocus` attribute because the focus trap resolves it once, when the modal first initializes, and the window is always rendered. --}}
     <x-filament::modal
         :alignment="$hasNotifications ? null : Alignment::Center"
@@ -86,30 +91,44 @@
                 </div>
             </x-slot>
 
-            <div
-                aria-label="{{ __('filament-notifications::database.modal.heading') }}"
-                role="list"
-                class="fi-no-notifications"
-            >
-                @foreach ($notifications as $notification)
-                    <div
-                        role="listitem"
-                        wire:key="{{ $notification->getKey() }}.database-notifications.ctn"
-                        @class([
-                            'fi-no-notification-read-ctn' => ! $notification->unread(),
-                            'fi-no-notification-unread-ctn' => $notification->unread(),
-                        ])
-                    >
-                        @if ($notification->unread())
-                            <span class="fi-sr-only">
-                                {{ __('filament-notifications::database.modal.unread_label') }}
-                            </span>
-                        @endif
+            @if ($notifications)
+                <div
+                    aria-label="{{ __('filament-notifications::database.modal.heading') }}"
+                    role="list"
+                    class="fi-no-notifications"
+                >
+                    @foreach ($notifications as $notification)
+                        <div
+                            role="listitem"
+                            wire:key="{{ $notification->getKey() }}.database-notifications.ctn"
+                            @class([
+                                'fi-no-notification-read-ctn' => ! $notification->unread(),
+                                'fi-no-notification-unread-ctn' => $notification->unread(),
+                            ])
+                        >
+                            @if ($notification->unread())
+                                <span class="fi-sr-only">
+                                    {{ __('filament-notifications::database.modal.unread_label') }}
+                                </span>
+                            @endif
 
-                        {{ $this->getNotification($notification)->inline() }}
-                    </div>
-                @endforeach
-            </div>
+                            {{ $this->getNotification($notification)->inline() }}
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div
+                    role="status"
+                    aria-busy="true"
+                    class="fi-no-notifications-loading-ctn"
+                >
+                    {{ \Filament\Support\generate_loading_indicator_html() }}
+
+                    <span class="fi-sr-only">
+                        {{ __('filament::components/loading-section.label') }}
+                    </span>
+                </div>
+            @endif
 
             @if ($broadcastChannel = $this->getBroadcastChannel())
                 @script
