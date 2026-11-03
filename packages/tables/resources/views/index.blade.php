@@ -605,7 +605,7 @@
                                             $filtersTriggerActionModalSlideOverPosition = $filtersTriggerAction->getModalSlideOverPosition();
                                             $filtersTriggerActionIsModalFooterSticky = $filtersTriggerAction->isModalFooterSticky();
                                             $filtersTriggerActionIsModalHeaderSticky = $filtersTriggerAction->isModalHeaderSticky();
-                                            $filtersModalClosedEventHandler = $filtersForm->isLazyLoaded() ? ('if ($event.target.closest(\'.fi-modal\') === $el) $wire.unloadDeferredSchema(' . Js::from($filtersForm->getKey()) . ')') : null;
+                                            $filtersModalClosedEventHandler = $filtersForm->isLazyLoaded() ? ('if ($event.target.closest(\'.fi-modal\') === $el) unloadFiltersFormOnceHidden($el, ' . Js::from($filtersForm->getKey()) . ')') : null;
                                         @endphp
 
                                         <x-filament::modal

@@ -37,6 +37,8 @@ export default function table({
 
         cleanUpFiltersDropdown: null,
 
+        filtersModalObserver: null,
+
         livewireEventListenersController: null,
 
         unsubscribeLivewireHook: null,
@@ -705,12 +707,37 @@ export default function table({
             }
         },
 
+        unloadFiltersFormOnceHidden(modal, schemaKey) {
+            this.filtersModalObserver?.disconnect()
+
+            const unloadIfHidden = () => {
+                if (modal.style.display !== 'none') {
+                    return
+                }
+
+                this.filtersModalObserver?.disconnect()
+                this.filtersModalObserver = null
+
+                this.$wire.unloadDeferredSchema(schemaKey)
+            }
+
+            // The modal stays visible during its leave transition, so the form is only unloaded once it is hidden, keeping the modal's size.
+            this.filtersModalObserver = new MutationObserver(unloadIfHidden)
+            this.filtersModalObserver.observe(modal, {
+                attributes: true,
+                attributeFilter: ['style'],
+            })
+
+            unloadIfHidden()
+        },
+
         destroy() {
             this.tableReorderOperation = null
             cancelAnimationFrame(this.tableReorderFrame)
             this.unsubscribeTableReorderHook?.()
             this.unsubscribeTableReorderHook = null
             this.cleanUpFiltersDropdown?.()
+            this.filtersModalObserver?.disconnect()
             this.livewireEventListenersController?.abort()
             this.unsubscribeLivewireHook?.()
         },
