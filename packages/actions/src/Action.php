@@ -686,7 +686,7 @@ class Action extends ViewComponent implements Arrayable
             }
 
             $this->clearVisibilityCache();
-            $this->getRootGroup()?->clearVisibilityCache();
+            $this->getRootGroup()?->clearVisibilityCacheRecursively();
         }
     }
 

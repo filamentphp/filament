@@ -8,6 +8,7 @@ use Filament\Actions\Testing\TestAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithGroupedRecordActions;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithToggleableRecordActions;
 use Filament\Tests\Fixtures\Livewire\TicketDepartmentsReorderableTable;
 use Filament\Tests\Fixtures\Models\Department;
@@ -579,6 +580,30 @@ describe('record actions column visibility', function (): void {
         livewire(PostsTableWithToggleableRecordActions::class, ['hasVisibleRecordActions' => false])
             ->assertActionHidden(TestAction::make('test')->table($posts->first()))
             ->assertDontSeeHtml('fi-ta-actions-header-cell');
+    });
+
+    it('authorizes a grouped record action once per record when its group is handed the record again', function (): void {
+        $posts = Post::factory()->count(5)->create();
+
+        PostsTableWithGroupedRecordActions::$authorizationChecks = [];
+
+        livewire(PostsTableWithGroupedRecordActions::class)
+            ->assertSuccessful();
+
+        // The first record is also asked while the table decides whether to render the actions column.
+        $expected = $posts->mapWithKeys(fn (Post $post): array => [$post->getKey() => 1])->all();
+        $expected[$posts->first()->getKey()] = 2;
+
+        expect(PostsTableWithGroupedRecordActions::$authorizationChecks['edit'])->toEqual($expected);
+    });
+
+    it('hides an action group after calling an action that hides every action in it', function (): void {
+        PostsTableWithGroupedRecordActions::$isPublished = false;
+
+        livewire(PostsTableWithGroupedRecordActions::class)
+            ->assertSee('Draft')
+            ->callAction(TestAction::make('discard')->table())
+            ->assertDontSee('Draft');
     });
 
     it('does not render the record actions column when every record in a large result set has no visible record action', function (): void {
