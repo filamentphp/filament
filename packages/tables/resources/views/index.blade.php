@@ -1150,9 +1150,9 @@
 
                                 @foreach ($records as $record)
                                     @php
-                                        $recordAction = $getRecordAction($record);
                                         $recordKey = $getRecordKey($record);
                                         $recordUrl = $getRecordUrl($record);
+                                        $recordAction = $recordUrl ? null : $getRecordAction($record);
                                         $openRecordUrlInNewTab = $shouldOpenRecordUrlInNewTab($record);
                                         $recordGroupKey = $group?->getStringKey($record);
                                         $recordGroupTitle = $group?->getTitle($record, $recordGroupKey);
@@ -2181,9 +2181,9 @@
 
                                     @foreach ($records as $record)
                                         @php
-                                            $recordAction = $getRecordAction($record);
                                             $recordKey = $getRecordKey($record);
                                             $recordUrl = $getRecordUrl($record);
+                                            $recordAction = $recordUrl ? null : $getRecordAction($record);
                                             $openRecordUrlInNewTab = $shouldOpenRecordUrlInNewTab($record);
                                             $recordGroupKey = $group?->getStringKey($record);
                                             $recordGroupTitle = $group?->getTitle($record, $recordGroupKey);
