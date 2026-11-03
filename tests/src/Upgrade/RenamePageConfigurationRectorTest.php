@@ -92,7 +92,7 @@ class RenamePageConfigurationRectorTest extends AbstractRectorTestCase
             $command = [PHP_BINARY, $root . '/vendor/bin/rector', 'process', $directory . '/app', '--config', $this->provideConfigFilePath(), '--clear-cache', '--no-progress-bar'];
 
             foreach ([false, true] as $dryRun) {
-                (new Process([...$command, ...($dryRun ? ['--dry-run'] : [])], $root))->setTimeout(120)->mustRun();
+                (new Process([...$command, ...($dryRun ? ['--dry-run'] : [])], $root, ['TMPDIR' => $directory]))->setTimeout(120)->mustRun();
             }
 
             $migrated = new Process([PHP_BINARY, $directory . '/verify.php', $root, 'migrated'], $root);
@@ -156,7 +156,7 @@ class RenamePageConfigurationRectorTest extends AbstractRectorTestCase
 
             $command = [PHP_BINARY, $root . '/vendor/bin/rector', 'process', $directory . '/app', '--config', $this->provideConfigFilePath(), '--clear-cache', '--no-progress-bar'];
             foreach ([false, true] as $dryRun) {
-                $process = new Process([...$command, ...($dryRun ? ['--dry-run'] : [])], $root);
+                $process = new Process([...$command, ...($dryRun ? ['--dry-run'] : [])], $root, ['TMPDIR' => $directory]);
                 $process->setTimeout(120)->mustRun();
             }
 

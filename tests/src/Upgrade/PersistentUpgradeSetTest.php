@@ -105,10 +105,10 @@ class PersistentUpgradeSetTest extends TestCase
 
             foreach ([false, true] as $dryRun) {
                 (new Process([
-                    PHP_BINARY, $root . '/vendor/bin/rector', 'process', $directory,
+                    PHP_BINARY, $root . '/vendor/bin/rector', 'process', $directory . '/components.php',
                     '--config', $root . '/packages/upgrade/src/rector.php', '--clear-cache', '--no-progress-bar',
                     ...($dryRun ? ['--dry-run'] : []),
-                ], $root))->setTimeout(120)->mustRun();
+                ], $root, ['TMPDIR' => $directory]))->setTimeout(120)->mustRun();
             }
 
             [$components, $events] = require $directory . '/components.php';

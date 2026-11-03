@@ -22,7 +22,7 @@ class RemoveExportActionCsvDelimiterRectorTest extends AbstractRectorTestCase
 
         try {
             for ($pass = 0; $pass < 2; $pass++) {
-                $process = new Process([PHP_BINARY, $root . '/vendor/bin/rector', 'process', $directory . '/calls.php', '--config', $this->provideConfigFilePath(), '--clear-cache', '--no-progress-bar', ...($pass ? ['--dry-run'] : [])], $root);
+                $process = new Process([PHP_BINARY, $root . '/vendor/bin/rector', 'process', $directory . '/calls.php', '--config', $this->provideConfigFilePath(), '--clear-cache', '--no-progress-bar', ...($pass ? ['--dry-run'] : [])], $root, ['TMPDIR' => $directory]);
                 $process->setTimeout(120);
                 $process->mustRun();
                 $runtime = new Process([PHP_BINARY, '-r', 'require $argv[1]; require $argv[2];', $root . '/vendor/autoload.php', $directory . '/calls.php'], $root);

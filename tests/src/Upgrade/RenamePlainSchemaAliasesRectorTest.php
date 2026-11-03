@@ -21,7 +21,7 @@ class RenamePlainSchemaAliasesRectorTest extends AbstractRectorTestCase
         copy(__DIR__ . '/Fixtures/plain_schema_runtime.php', $directory . '/calls.php');
 
         try {
-            $upgrade = new Process([PHP_BINARY, $root . '/vendor/bin/rector', 'process', $directory . '/calls.php', '--config', $this->provideConfigFilePath(), '--clear-cache', '--no-progress-bar'], $root);
+            $upgrade = new Process([PHP_BINARY, $root . '/vendor/bin/rector', 'process', $directory . '/calls.php', '--config', $this->provideConfigFilePath(), '--clear-cache', '--no-progress-bar'], $root, ['TMPDIR' => $directory]);
             $upgrade->setTimeout(120);
             $upgrade->mustRun();
             $runtime = new Process([PHP_BINARY, '-r', 'require $argv[1]; require $argv[2];', $root . '/vendor/autoload.php', $directory . '/calls.php'], $root);

@@ -21,7 +21,7 @@ class RemovedGetterExpressionsRectorTest extends AbstractRectorTestCase
         copy(__DIR__ . '/Fixtures/import_example_runtime.php', $directory . '/calls.php');
 
         try {
-            $process = new Process([PHP_BINARY, $root . '/vendor/bin/rector', 'process', $directory . '/calls.php', '--config', $this->provideConfigFilePath(), '--clear-cache', '--no-progress-bar'], $root);
+            $process = new Process([PHP_BINARY, $root . '/vendor/bin/rector', 'process', $directory . '/calls.php', '--config', $this->provideConfigFilePath(), '--clear-cache', '--no-progress-bar'], $root, ['TMPDIR' => $directory]);
             $process->setTimeout(120);
             $process->mustRun();
             $runtime = new Process([PHP_BINARY, '-r', 'require $argv[1]; require $argv[2];', $root . '/vendor/autoload.php', $directory . '/calls.php'], $root);
@@ -29,7 +29,7 @@ class RemovedGetterExpressionsRectorTest extends AbstractRectorTestCase
             $this->assertSame("PASS\n", $runtime->getOutput());
             $this->assertSame('', $runtime->getErrorOutput());
 
-            $process = new Process([PHP_BINARY, $root . '/vendor/bin/rector', 'process', $directory . '/calls.php', '--config', $this->provideConfigFilePath(), '--clear-cache', '--no-progress-bar', '--dry-run'], $root);
+            $process = new Process([PHP_BINARY, $root . '/vendor/bin/rector', 'process', $directory . '/calls.php', '--config', $this->provideConfigFilePath(), '--clear-cache', '--no-progress-bar', '--dry-run'], $root, ['TMPDIR' => $directory]);
             $process->setTimeout(120);
             $process->mustRun();
         } finally {
