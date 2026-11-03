@@ -78,6 +78,12 @@ namespace Livewire\Features\SupportTesting {
 
         public function loadTable(): static {}
 
+        public function assertTableRendersWithinQueries(int $maxQueryCount): static {}
+
+        public function assertTableQueryCountDoesNotGrowWithRecords(Closure $createRecords, int $smallRecordCount = 3, int $largeRecordCount = 20): static {}
+
+        public function assertTableHasNoLazyLoading(): static {}
+
         /**
          * @deprecated Use `mountAction()` instead.
          */
