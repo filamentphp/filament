@@ -83,6 +83,30 @@ DeleteAction::make()
     ->successNotification(null)
 ```
 
+## Allowing the user to undo a deletion
+
+If your model uses the `SoftDeletes` trait, you may use the `undoable()` method to add an "Undo" button to the success notification. Clicking it restores the records that were just deleted:
+
+```php
+use Filament\Actions\DeleteAction;
+
+DeleteAction::make()
+    ->undoable()
+```
+
+By default, the "Undo" button is available for 10 seconds. You may customize this by passing the number of seconds to the `seconds` argument:
+
+```php
+use Filament\Actions\DeleteBulkAction;
+
+DeleteBulkAction::make()
+    ->undoable(seconds: 30)
+```
+
+<UtilityInjection set="actions">As well as allowing static values, the `undoable()` method also accepts functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
+The records are only restored if the user is still authorized to restore them, using the same authorization as the [restore action](restore). Only the user who deleted the records can undo the deletion, and only from the same page, so the "Undo" button is not shown if the action redirects after deleting. Records deleted by a `DeleteBulkAction` using `fetchSelectedRecords(false)` cannot be undone, since they are not loaded before deletion.
+
 ## Lifecycle hooks
 
 You can use the `before()` and `after()` methods to execute code before and after a record is deleted:

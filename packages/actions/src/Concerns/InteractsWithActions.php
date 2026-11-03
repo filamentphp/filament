@@ -6,8 +6,11 @@ use Closure;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\Enums\ActionStatus;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
+use Filament\Actions\RestoreAction;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Contracts\ExposesStateToActionData;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -21,9 +24,12 @@ use Filament\Tables\Contracts\HasTable;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use ReflectionMethod;
 use ReflectionNamedType;
@@ -527,6 +533,76 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         $this->unmountAction();
 
         return $result;
+    }
+
+    #[Exposed]
+    #[On('filament-actions::undo-deletion')]
+    public function undoDeletedRecords(string $id, string $token): void
+    {
+        if ($id !== $this->getId()) {
+            return;
+        }
+
+        $cacheKey = DeleteAction::getUndoDeletionCacheKey($token);
+        $deletion = preg_match('/\A[a-zA-Z0-9]{40}\z/', $token) ? Cache::pull($cacheKey) : null;
+
+        if (
+            (! is_array($deletion)) ||
+            (($deletion['livewire'] ?? null) !== $this->getId()) ||
+            (($deletion['user'] ?? null) !== auth()->id())
+        ) {
+            Notification::make()
+                ->danger()
+                ->title(__('filament-actions::delete.undo.notifications.failed.title'))
+                ->send();
+
+            return;
+        }
+
+        $restoredCount = 0;
+
+        $table = (($deletion['isTable'] ?? false) && ($this instanceof HasTable)) ? $this->getTable() : null;
+
+        foreach ($deletion['records'] ?? [] as $model => $keys) {
+            if (
+                (! is_string($model)) ||
+                (! is_a($model, Model::class, allow_string: true)) ||
+                (! in_array(SoftDeletes::class, class_uses_recursive($model)))
+            ) {
+                continue;
+            }
+
+            foreach ($model::query()->onlyTrashed()->whereKey($keys)->get() as $record) {
+                $isAuthorized = RestoreAction::make()
+                    ->livewire($this)
+                    ->table($table)
+                    ->record($record)
+                    ->getAuthorizationResponse()
+                    ->allowed();
+
+                if ($isAuthorized && $record->restore()) {
+                    $restoredCount++;
+                }
+            }
+        }
+
+        if ($this instanceof HasTable) {
+            $this->flushCachedTableRecords();
+        }
+
+        if (! $restoredCount) {
+            Notification::make()
+                ->danger()
+                ->title(__('filament-actions::delete.undo.notifications.failed.title'))
+                ->send();
+
+            return;
+        }
+
+        Notification::make()
+            ->success()
+            ->title(__('filament-actions::restore.single.notifications.restored.title'))
+            ->send();
     }
 
     #[Exposed]
