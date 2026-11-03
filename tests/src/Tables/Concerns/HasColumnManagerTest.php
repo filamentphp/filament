@@ -190,4 +190,26 @@ describe('column manager reordering', function (): void {
             ->assertNotPresent('[data-testid^="column-manager-"]:focus')
             ->assertNoSmoke();
     });
+
+    it('renders modal column manager items only while the modal is open', function (): void {
+        Artisan::call('filament:assets');
+        $this->actingAs(User::factory()->create());
+        Post::factory()->create();
+
+        $page = visit('/column-manager-reordering-browser-test?' . http_build_query(['layout' => 'modal', 'deferred' => false]));
+        $trigger = '#reorderable-columns button[aria-label="Column manager"]';
+        $titleDown = '[data-testid="column-manager-title-move-down"]';
+        $order = "Array.from(document.querySelectorAll('#reorderable-columns [data-testid$=\"-move-up\"]')).filter(control => ! control.closest('.fi-ta-col-manager-group-items')).map(control => (control.closest('.fi-ta-col-manager-group') ? 'group::' : 'column::') + control.dataset.testid.slice('column-manager-'.length, -'-move-up'.length))";
+
+        $page->assertNotPresent($titleDown)
+            ->click($trigger)
+            ->keys($titleDown, 'Enter')
+            ->assertScript("Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-rating')) < Array.from(document.querySelectorAll('#reorderable-columns th')).findIndex(header => header.classList.contains('fi-ta-header-cell-title'))", true)
+            ->assertScript($order, ['group::Publication', 'column::title', 'column::id'])
+            ->keys($titleDown, 'Escape')
+            ->assertNotPresent($titleDown)
+            ->click($trigger)
+            ->assertScript($order, ['group::Publication', 'column::title', 'column::id'])
+            ->assertNoSmoke();
+    });
 });

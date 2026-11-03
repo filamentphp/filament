@@ -752,12 +752,14 @@
                                                 x-on:reset-table-column-manager.window="resetDeferredColumns()"
                                                 class="fi-ta-col-manager"
                                             >
-                                                <x-filament-tables::column-manager.content
-                                                    :columns="$columnManagerColumns"
-                                                    :has-reorderable-columns="$hasReorderableColumns"
-                                                    :has-toggleable-columns="$hasToggleableColumns"
-                                                    :reorder-animation-duration="$getReorderAnimationDuration()"
-                                                />
+                                                <template x-if="isOpen">
+                                                    <x-filament-tables::column-manager.content
+                                                        :columns="$columnManagerColumns"
+                                                        :has-reorderable-columns="$hasReorderableColumns"
+                                                        :has-toggleable-columns="$hasToggleableColumns"
+                                                        :reorder-animation-duration="$getReorderAnimationDuration()"
+                                                    />
+                                                </template>
                                             </div>
 
                                             {{ $columnManagerTriggerAction->getModalContentFooter() }}
