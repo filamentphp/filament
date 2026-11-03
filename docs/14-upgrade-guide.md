@@ -484,7 +484,7 @@ The upgrade script handles the common uses of the APIs below. Use these tables t
 | Livewire test assertions                                             | `setActionData()`, `assertActionDataSet()`                                                     | `fillForm()`, `assertSchemaStateSet()` (`data:` → `state:`)                             |
 | Livewire test assertions                                             | `assertHasActionErrors()`, `assertHasNoActionErrors()`                                         | `assertHasFormErrors()`, `assertHasNoFormErrors()`                                      |
 
-Resource `$label` / `$pluralLabel` become `$modelLabel` / `$pluralModelLabel`. The script handles simple direct-subclass declarations; review inherited or trait-provided overrides, combined property/getter configuration, and remaining calls manually. When moving notification-message hooks, preserve translated defaults for `null`; empty strings disable notifications. Label getters now return `string`: preserve model-derived defaults for `null` singular labels and blank plural labels.
+Resource `$label` / `$pluralLabel` become `$modelLabel` / `$pluralModelLabel`. The script handles class hierarchies included in the upgrade paths; review trait-provided overrides, conflicting declarations, combined property/getter configuration, and remaining calls manually. It may retain application-local legacy hooks behind canonical methods to preserve inherited override behavior. When moving notification-message hooks, preserve translated defaults for `null`; empty strings disable notifications. Label getters now return `string`: preserve model-derived defaults for `null` singular labels and blank plural labels.
 </Disclosure>
 
 <Disclosure>

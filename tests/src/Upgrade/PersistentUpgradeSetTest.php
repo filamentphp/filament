@@ -457,8 +457,16 @@ class PersistentUpgradeSetTest extends TestCase
             app()->setLocale('en');
             $this->assertSame('Person', Fixtures\ConfigurationHooks\Labels::getModelLabel());
             $this->assertSame('People', Fixtures\ConfigurationHooks\Labels::getPluralModelLabel());
+            $this->assertSame('Customer', Fixtures\ConfigurationHooks\ChildLabels::getModelLabel());
+            $this->assertSame('Customers', Fixtures\ConfigurationHooks\ChildLabels::getPluralModelLabel());
             $this->assertSame('Mouse', Fixtures\ConfigurationHooks\LabelGetters::getModelLabel());
             $this->assertSame('Mice', Fixtures\ConfigurationHooks\LabelGetters::getPluralModelLabel());
+            Fixtures\ConfigurationHooks\ChildLabelGetters::$labelCalls = 0;
+            $this->assertSame('Field mouse', Fixtures\ConfigurationHooks\ChildLabelGetters::getModelLabel());
+            $this->assertSame(1, Fixtures\ConfigurationHooks\ChildLabelGetters::$labelCalls);
+            Fixtures\ConfigurationHooks\ChildLabelGetters::$labelCalls = 0;
+            $this->assertSame('Field mice', Fixtures\ConfigurationHooks\ChildLabelGetters::getPluralModelLabel());
+            $this->assertSame(1, Fixtures\ConfigurationHooks\ChildLabelGetters::$labelCalls);
             app()->setLocale('ja');
             $this->assertSame('Mouse', Fixtures\ConfigurationHooks\LabelGetters::getPluralModelLabel());
             app()->setLocale('en');
@@ -471,6 +479,13 @@ class PersistentUpgradeSetTest extends TestCase
             $create->message = 'Custom created';
             $this->assertSame('Custom created', $notification->invoke($create)->getTitle());
 
+            $create = new Fixtures\ConfigurationHooks\ChildCreate;
+            $this->assertSame('Child created', $notification->invoke($create)->getTitle());
+            $create->message = '';
+            $this->assertNull($notification->invoke($create));
+            $create->message = 'Custom child';
+            $this->assertSame('Custom child', $notification->invoke($create)->getTitle());
+
             $edit = new Fixtures\ConfigurationHooks\Edit;
             $edit->record = null;
             $notification = new ReflectionMethod($edit, 'getSavedNotification');
@@ -478,16 +493,31 @@ class PersistentUpgradeSetTest extends TestCase
             $edit->record = new Post;
             $this->assertNull($notification->invoke($edit));
 
+            $edit = new Fixtures\ConfigurationHooks\ChildEdit;
+            $edit->record = null;
+            $this->assertSame('Child saved', $notification->invoke($edit)->getTitle());
+            $edit->record = new Post;
+            $this->assertNull($notification->invoke($edit));
+
             $this->assertSame('Settings saved', (new Fixtures\ConfigurationHooks\Settings)->getSavedNotificationTitle());
+            $this->assertSame('Settings saved again', (new Fixtures\ConfigurationHooks\ChildSettings)->getSavedNotificationTitle());
 
             $page = new Fixtures\ConfigurationHooks\Actions;
             $page->cacheInteractsWithHeaderActions();
             $this->assertSame(['export'], array_map(static fn ($action): string => $action->getName(), $page->getCachedHeaderActions()));
+            $page = new Fixtures\ConfigurationHooks\ChildActions;
+            $page->cacheInteractsWithHeaderActions();
+            $this->assertSame(['export', 'print'], array_map(static fn ($action): string => $action->getName(), $page->getCachedHeaderActions()));
             $stats = new Fixtures\ConfigurationHooks\Stats;
             $this->assertSame(31, $stats->getSectionContentComponent()->getDefaultChildComponents()[0]->getValue());
+            $stats = new Fixtures\ConfigurationHooks\ChildStats;
+            $this->assertSame([31, 17], array_map(static fn ($stat) => $stat->getValue(), $stats->getSectionContentComponent()->getDefaultChildComponents()));
             $widget = new Fixtures\ConfigurationHooks\Filters;
             $widget->pageFilters = ['period' => 'quarter'];
             $this->assertSame('quarter', $widget->selectedPeriod());
+            $widget = new Fixtures\ConfigurationHooks\ChildFilters;
+            $widget->pageFilters = ['period' => 'month'];
+            $this->assertSame('month', $widget->selectedPeriod());
         } finally {
             app()->setLocale($originalLocale);
         }
