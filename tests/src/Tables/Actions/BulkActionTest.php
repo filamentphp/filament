@@ -70,7 +70,7 @@ describe('action lifecycle and configuration', function (): void {
             ->callTableBulkAction('data', records: $posts, data: [
                 'payload' => $payload = Str::random(),
             ])
-            ->assertHasNoTableBulkActionErrors()
+            ->assertHasNoFormErrors()
             ->assertDispatched('data-called', data: [
                 'payload' => $payload,
             ]);
@@ -91,7 +91,7 @@ describe('action lifecycle and configuration', function (): void {
             ->callTableBulkAction('data', records: $posts, data: [
                 'payload' => null,
             ])
-            ->assertHasTableBulkActionErrors(['payload' => ['required']])
+            ->assertHasFormErrors(['payload' => ['required']])
             ->assertNotDispatched('data-called');
     });
 
@@ -107,10 +107,10 @@ describe('action lifecycle and configuration', function (): void {
 
         livewire(PostsTable::class)
             ->mountTableBulkAction('data', records: $posts)
-            ->assertTableBulkActionDataSet([
+            ->assertSchemaStateSet([
                 'foo' => 'bar',
             ])
-            ->assertTableBulkActionDataSet(function (array $data): bool {
+            ->assertSchemaStateSet(function (array $data): bool {
                 return $data['foo'] === 'bar';
             });
     });

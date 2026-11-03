@@ -41,24 +41,6 @@ class TestsActions
         };
     }
 
-    public function setTableActionData(): Closure
-    {
-        return function (array $data): static {
-            $this->fillForm($data);
-
-            return $this;
-        };
-    }
-
-    public function assertTableActionDataSet(): Closure
-    {
-        return function (array | Closure $data): static {
-            $this->assertSchemaStateSet($data);
-
-            return $this;
-        };
-    }
-
     public function callTableAction(): Closure
     {
         return function (string | array $actions, $record = null, array $data = [], array $arguments = []): static {
@@ -360,24 +342,6 @@ class TestsActions
     public function assertTableActionHalted(): Closure
     {
         return $this->assertTableActionMounted();
-    }
-
-    public function assertHasTableActionErrors(): Closure
-    {
-        return function (array $keys = []): static {
-            $this->assertHasFormErrors($keys);
-
-            return $this;
-        };
-    }
-
-    public function assertHasNoTableActionErrors(): Closure
-    {
-        return function (array $keys = []): static {
-            $this->assertHasNoFormErrors($keys);
-
-            return $this;
-        };
     }
 
     public function parseNestedTableActions(): Closure

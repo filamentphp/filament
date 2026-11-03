@@ -57,16 +57,6 @@ namespace Livewire\Features\SupportTesting {
         public function unmountFormComponentAction(): static {}
 
         /**
-         * @deprecated Use `fillForm()` instead.
-         */
-        public function setFormComponentActionData(array $data): static {}
-
-        /**
-         * @deprecated Use `assertSchemaStateSet()` instead.
-         */
-        public function assertFormComponentActionDataSet(array | Closure $data): static {}
-
-        /**
          * @deprecated Use `callAction()` instead.
          */
         public function callFormComponentAction(string | array $components, string | array $actions, array $data = [], array $arguments = [], string $formName = 'form'): static {}
@@ -120,16 +110,6 @@ namespace Livewire\Features\SupportTesting {
          * @deprecated Use `assertActionHalted()` instead.
          */
         public function assertFormComponentActionHalted(string | array $components, string | array $actions, string $formName = 'form'): static {}
-
-        /**
-         * @deprecated Use `assertHasFormErrors()` instead.
-         */
-        public function assertHasFormComponentActionErrors(array $keys = []): static {}
-
-        /**
-         * @deprecated Use `assertHasNoFormErrors()` instead.
-         */
-        public function assertHasNoFormComponentActionErrors(array $keys = []): static {}
 
         /**
          * @deprecated Use `assertActionHasIcon()` instead.

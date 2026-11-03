@@ -49,7 +49,7 @@ describe('calling actions', function (): void {
             ->callInfolistAction('textEntry', 'setValue', data: [
                 'value' => null,
             ])
-            ->assertHasInfolistActionErrors(['value' => ['required']])
+            ->assertHasFormErrors(['value' => ['required']])
             ->assertNotDispatched('foo');
     });
 
@@ -62,7 +62,7 @@ describe('calling actions', function (): void {
 
         livewire(InfolistActions::class)
             ->mountInfolistAction('textEntry', 'setValue')
-            ->assertInfolistActionDataSet([
+            ->assertSchemaStateSet([
                 'value' => 'foo',
             ]);
     });

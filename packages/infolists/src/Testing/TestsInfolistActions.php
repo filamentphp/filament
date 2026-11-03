@@ -37,24 +37,6 @@ class TestsInfolistActions
         };
     }
 
-    public function setInfolistActionData(): Closure
-    {
-        return function (array $data): static {
-            $this->fillForm($data);
-
-            return $this;
-        };
-    }
-
-    public function assertInfolistActionDataSet(): Closure
-    {
-        return function (array | Closure $data): static {
-            $this->assertSchemaStateSet($data);
-
-            return $this;
-        };
-    }
-
     public function callInfolistAction(): Closure
     {
         return function (string $component, string | array $actions, array $data = [], array $arguments = [], string $schema = 'infolist'): static {
@@ -314,24 +296,6 @@ class TestsInfolistActions
     public function assertInfolistActionHalted(): Closure
     {
         return $this->assertInfolistActionMounted();
-    }
-
-    public function assertHasInfolistActionErrors(): Closure
-    {
-        return function (array $keys = []): static {
-            $this->assertHasFormErrors($keys);
-
-            return $this;
-        };
-    }
-
-    public function assertHasNoInfolistActionErrors(): Closure
-    {
-        return function (array $keys = []): static {
-            $this->assertHasNoFormErrors($keys);
-
-            return $this;
-        };
     }
 
     public function parseNestedInfolistActions(): Closure

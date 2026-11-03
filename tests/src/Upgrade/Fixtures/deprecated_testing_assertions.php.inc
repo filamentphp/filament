@@ -49,6 +49,18 @@ function assertions(Testable $testable, ?Testable $nullable, array $arguments): 
     $testable->callTableAction('edit', 1)->assertTableActionHeld('edit');
     $testable->mountTableBulkAction('delete', [1])->assertTableBulkActionHeld('delete');
     $testable->callTableBulkAction('delete', [1])->assertTableBulkActionHeld('delete');
+    $testable->callFormComponentAction('title', 'save')->assertHasFormComponentActionErrors();
+    $testable->mountFormComponentAction('title', 'save')->setFormComponentActionData(data: [])->assertFormComponentActionDataSet(data: [])->assertHasNoFormComponentActionErrors();
+    $testable->callInfolistAction('title', 'save')->assertHasInfolistActionErrors();
+    $testable->mountInfolistAction('title', 'save')->setInfolistActionData(data: [])->assertInfolistActionDataSet(data: [])->assertHasNoInfolistActionErrors();
+    $testable->callTableAction('edit', 1)->assertHasTableActionErrors();
+    $testable->mountTableAction('edit', 1)->setTableActionData(data: [])->assertTableActionDataSet(data: [])->assertHasNoTableActionErrors();
+    $testable->callTableBulkAction('edit', [1])->assertHasTableBulkActionErrors();
+    $testable->mountTableBulkAction('edit', [1])->setTableBulkActionData(data: [])->assertTableBulkActionDataSet(data: [])->assertHasNoTableBulkActionErrors();
+    $testable->assertTableActionExists('replicate')->callTableAction('replicate', 1)->callMountedTableAction()->assertHasNoTableActionErrors();
+    $testable->mountTableAction('edit', 1)->assertTableActionMounted('edit')->setTableActionData(data: []);
+    $testable->selectTableRecords([1])->mountTableBulkAction('edit', [1])->assertHasNoTableBulkActionErrors();
+    $testable->assertActionExists('edit')->assertHasNoFormComponentActionErrors();
     livewire('edit-post')->assertFormFieldIsVisible('title');
     Livewire::test('edit-post')->assertFormFieldIsDisabled('title');
     Livewire::test('edit-post')->callAction('save')->assertDispatched('saved')->assertActionHeld('save');
@@ -73,6 +85,7 @@ function factories(TestsForms $forms, TestsActions $actions, TestsTableActions $
 
 namespace Filament\Tests\Upgrade\Fixtures\DeprecatedTestingAssertions;
 
+use Closure;
 use Filament\Actions\Testing\TestsActions;
 use Filament\Forms\Testing\TestsForms;
 use Filament\Tables\Testing\TestsActions as TestsTableActions;
@@ -87,7 +100,10 @@ function assertions(Testable $testable, ?Testable $nullable, array $arguments): 
     $testable->fillForm(state: ['title' => 'Changed'])->assertSchemaStateSet(state: ['title' => 'Changed'])->assertHasNoFormErrors();
     $testable->assertHasFormErrors(keys: ['title' => 'required']);
     $nullable?->fillForm([])->assertSchemaStateSet(state: []);
-    $callback = $testable->assertSchemaStateSet(...);
+    $callback = Closure::bind(function (array|Closure $data): static {
+        $this->assertSchemaStateSet($data);
+        return $this;
+    }, $testable, 'Livewire\Features\SupportTesting\Testable');
     $testable->assertFormFieldDisabled(key: 'title', form: 'editForm');
     $testable->assertFormFieldEnabled('title');
     $testable->assertFormFieldReadOnly('slug');
@@ -120,6 +136,18 @@ function assertions(Testable $testable, ?Testable $nullable, array $arguments): 
     $testable->callTableAction('edit', 1)->assertTableActionHalted('edit');
     $testable->mountTableBulkAction('delete', [1])->assertTableBulkActionHalted('delete');
     $testable->callTableBulkAction('delete', [1])->assertTableBulkActionHalted('delete');
+    $testable->callFormComponentAction('title', 'save')->assertHasFormErrors();
+    $testable->mountFormComponentAction('title', 'save')->fillForm(state: [])->assertSchemaStateSet(state: [])->assertHasNoFormErrors();
+    $testable->callInfolistAction('title', 'save')->assertHasFormErrors();
+    $testable->mountInfolistAction('title', 'save')->fillForm(state: [])->assertSchemaStateSet(state: [])->assertHasNoFormErrors();
+    $testable->callTableAction('edit', 1)->assertHasFormErrors();
+    $testable->mountTableAction('edit', 1)->fillForm(state: [])->assertSchemaStateSet(state: [])->assertHasNoFormErrors();
+    $testable->callTableBulkAction('edit', [1])->assertHasFormErrors();
+    $testable->mountTableBulkAction('edit', [1])->fillForm(state: [])->assertSchemaStateSet(state: [])->assertHasNoFormErrors();
+    $testable->assertTableActionExists('replicate')->callTableAction('replicate', 1)->callMountedTableAction()->assertHasNoFormErrors();
+    $testable->mountTableAction('edit', 1)->assertTableActionMounted('edit')->fillForm(state: []);
+    $testable->selectTableRecords([1])->mountTableBulkAction('edit', [1])->assertHasNoFormErrors();
+    $testable->assertActionExists('edit')->assertHasNoFormErrors();
     livewire('edit-post')->assertFormFieldVisible('title');
     Livewire::test('edit-post')->assertFormFieldDisabled('title');
     Livewire::test('edit-post')->callAction('save')->assertDispatched('saved')->assertActionHalted('save');

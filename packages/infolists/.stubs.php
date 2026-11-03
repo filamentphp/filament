@@ -3,7 +3,6 @@
 namespace Livewire\Features\SupportTesting {
 
     use BackedEnum;
-    use Closure;
 
     class Testable {
         /**
@@ -15,16 +14,6 @@ namespace Livewire\Features\SupportTesting {
          * @deprecated Use `unmountAction()` instead.
          */
         public function unmountInfolistAction(): static {}
-
-        /**
-         * @deprecated Use `fillForm()` instead.
-         */
-        public function setInfolistActionData(array $data): static {}
-
-        /**
-         * @deprecated Use `assertSchemaStateSet()` instead.
-         */
-        public function assertInfolistActionDataSet(array | Closure $data): static {}
 
         /**
          * @deprecated Use `callAction()` instead.
@@ -80,16 +69,6 @@ namespace Livewire\Features\SupportTesting {
          * @deprecated Use `assertActionHalted()` instead.
          */
         public function assertInfolistActionHalted(string $component, string | array $actions, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertHasFormErrors()` instead.
-         */
-        public function assertHasInfolistActionErrors(array $keys = []): static {}
-
-        /**
-         * @deprecated Use `assertHasNoFormErrors()` instead.
-         */
-        public function assertHasNoInfolistActionErrors(array $keys = []): static {}
 
         /**
          * @deprecated Use `assertActionHasIcon()` instead.

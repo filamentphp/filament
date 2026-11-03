@@ -54,7 +54,7 @@ describe('calling actions', function (): void {
             ->callTableAction('data', data: [
                 'payload' => $payload = Str::random(),
             ])
-            ->assertHasNoTableActionErrors()
+            ->assertHasNoFormErrors()
             ->assertDispatched('data-called', data: [
                 'payload' => $payload,
             ]);
@@ -119,7 +119,7 @@ describe('calling actions', function (): void {
             ->callTableAction('data', data: [
                 'payload' => null,
             ])
-            ->assertHasTableActionErrors(['payload' => ['required']])
+            ->assertHasFormErrors(['payload' => ['required']])
             ->assertNotDispatched('data-called');
     });
 
@@ -132,10 +132,10 @@ describe('calling actions', function (): void {
 
         livewire(PostsTable::class)
             ->mountTableAction('data')
-            ->assertTableActionDataSet([
+            ->assertSchemaStateSet([
                 'foo' => 'bar',
             ])
-            ->assertTableActionDataSet(function (array $data): bool {
+            ->assertSchemaStateSet(function (array $data): bool {
                 return $data['foo'] === 'bar';
             });
     });
@@ -478,7 +478,7 @@ describe('replication', function (): void {
             ->assertTableActionExists('replicate')
             ->callTableAction('replicate', $post)
             ->callMountedTableAction()
-            ->assertHasNoTableActionErrors();
+            ->assertHasNoFormErrors();
 
         assertDatabaseHas('posts', [
             'title' => $post->title . ' (Copy)',
@@ -559,7 +559,7 @@ describe('extra modal footer actions', function (): void {
                 'content' => $content = Str::random(),
             ])
             ->callMountedTableAction()
-            ->assertHasNoTableActionErrors()
+            ->assertHasNoFormErrors()
             ->assertDispatched('grouped-extra-actions-called', content: $content, recordKey: $post->getKey());
     });
 });

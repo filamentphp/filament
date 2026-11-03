@@ -89,16 +89,6 @@ namespace Livewire\Features\SupportTesting {
         public function unmountTableAction(): static {}
 
         /**
-         * @deprecated Use `fillForm()` instead.
-         */
-        public function setTableActionData(array $data): static {}
-
-        /**
-         * @deprecated Use `assertSchemaStateSet()` instead.
-         */
-        public function assertTableActionDataSet(array | Closure $data): static {}
-
-        /**
          * @deprecated Use `callAction()` instead.
          */
         public function callTableAction(string | array $actions, $record = null, array $data = [], array $arguments = []): static {}
@@ -162,29 +152,9 @@ namespace Livewire\Features\SupportTesting {
         public function assertTableActionHalted(string | array $actions): static {}
 
         /**
-         * @deprecated Use `assertHasFormErrors()` instead.
-         */
-        public function assertHasTableActionErrors(array $keys = []): static {}
-
-        /**
-         * @deprecated Use `assertHasNoFormErrors()` instead.
-         */
-        public function assertHasNoTableActionErrors(array $keys = []): static {}
-
-        /**
          * @deprecated Use `selectTableRecords()` and `mountAction()` instead.
          */
         public function mountTableBulkAction(string | array $actions, array | Collection $records): static {}
-
-        /**
-         * @deprecated Use `fillForm()` instead.
-         */
-        public function setTableBulkActionData(array $data): static {}
-
-        /**
-         * @deprecated Use `assertSchemaStateSet()` instead.
-         */
-        public function assertTableBulkActionDataSet(array | Closure $data): static {}
 
         /**
          * @deprecated Use `callAction()` instead.
@@ -325,16 +295,6 @@ namespace Livewire\Features\SupportTesting {
          * @deprecated Use `assertActionHalted()` instead.
          */
         public function assertTableBulkActionHalted(string | array $actions): static {}
-
-        /**
-         * @deprecated Use `assertHasFormErrors()` instead.
-         */
-        public function assertHasTableBulkActionErrors(array $keys = []): static {}
-
-        /**
-         * @deprecated Use `assertHasNoFormErrors()` instead.
-         */
-        public function assertHasNoTableBulkActionErrors(array $keys = []): static {}
     }
 
 }

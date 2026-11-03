@@ -7,8 +7,13 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Testing\TestsActions;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Testing\TestsFormComponentActions;
+use Filament\Infolists\Testing\TestsInfolistActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
+use Filament\Tables\Testing\TestsActions as TestsTableActions;
+use Filament\Tables\Testing\TestsBulkActions;
 use Filament\Tests\Actions\TestCase;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Component;
@@ -29,12 +34,31 @@ class ActionTestingMigrationTest extends TestCase
         $macros = new ReflectionProperty(Testable::class, 'macros');
         $originalMacros = $macros->getValue();
         $methods = ['setActionData', 'assertActionDataSet', 'assertHasActionErrors', 'assertHasNoActionErrors'];
+        $compatibilityMethods = [];
+        foreach ([
+            'FormComponentAction' => TestsFormComponentActions::class,
+            'InfolistAction' => TestsInfolistActions::class,
+            'TableAction' => TestsTableActions::class,
+            'TableBulkAction' => TestsBulkActions::class,
+        ] as $prefix => $owner) {
+            foreach ([
+                "set{$prefix}Data" => 'setActionData',
+                "assert{$prefix}DataSet" => 'assertActionDataSet',
+                "assertHas{$prefix}Errors" => 'assertHasActionErrors',
+                "assertHasNo{$prefix}Errors" => 'assertHasNoActionErrors',
+            ] as $method => $delegate) {
+                $this->assertFalse(method_exists($owner, $method));
+                $this->assertFalse(Testable::hasMacro($method));
+                $compatibilityMethods[$method] = $delegate;
+            }
+        }
+        $methods = [...$methods, ...array_keys($compatibilityMethods)];
 
         try {
             foreach ($methods as $method) {
-                $this->assertFalse(method_exists(TestsActions::class, $method));
                 $this->assertFalse(Testable::hasMacro($method));
             }
+            $this->assertFalse(method_exists(TestsActions::class, 'setActionData'));
 
             file_put_contents($directory . '/app/macros.php', $source);
             $expectedFiles = [];
@@ -79,10 +103,20 @@ class ActionTestingMigrationTest extends TestCase
             require $directory . '/app/macros.php';
 
             // Compare real mounted schemas, validation, callbacks, and returns.
-            Testable::mixin(new LegacyActionTestingCallbacks);
-            $legacy = $this->exercisePublicBehavior('LegacyActionTesting');
+            $legacyCallbacks = new LegacyActionTestingCallbacks;
+            Testable::mixin($legacyCallbacks);
+            foreach ($compatibilityMethods as $method => $delegate) {
+                Testable::macro($method, $legacyCallbacks->{$delegate}());
+            }
+            $legacy = [
+                $this->exercisePublicBehavior('LegacyActionTesting'),
+                $this->exercisePublicBehavior('LegacyActionTesting', isMounted: false),
+            ];
             $macros->setValue(null, $originalMacros);
-            $actual = $this->exercisePublicBehavior('ActionTesting');
+            $actual = [
+                $this->exercisePublicBehavior('ActionTesting'),
+                $this->exercisePublicBehavior('ActionTesting', isMounted: false),
+            ];
             $this->assertSame($legacy, $actual);
         } finally {
             $macros->setValue(null, $originalMacros);
@@ -90,17 +124,29 @@ class ActionTestingMigrationTest extends TestCase
         }
     }
 
-    private function exercisePublicBehavior(string $fixture): array
+    private function exercisePublicBehavior(string $fixture, bool $isMounted = true): array
     {
         $namespace = 'Filament\\Tests\\Upgrade\\Fixtures\\' . $fixture;
-        $testable = Livewire::test(ActionTestingMigrationComponent::class)->mountAction('edit');
+        $testable = Livewire::test(ActionTestingMigrationComponent::class);
+        if ($isMounted) {
+            $testable->mountAction('edit');
+        }
         $results = ($namespace . '\\exercise')($testable);
         foreach ($results as $index => $result) {
             $this->assertSame($index === 3 ? null : $testable, $result);
         }
+        foreach (($namespace . '\\compatibilityAliases')($testable) as $index => $result) {
+            $this->assertSame($index === 8 ? null : $testable, $result);
+        }
         $testable->assertSchemaStateSet(['title' => 'Changed']);
-        $testable->fillForm(['title' => null])->callMountedAction();
+        $testable->fillForm(['title' => null]);
+        if ($isMounted) {
+            $testable->callMountedAction();
+        } else {
+            $testable->call('validateForm');
+        }
         $this->assertSame($testable, ($namespace . '\\errors')($testable));
+        $this->assertSame($testable, ($namespace . '\\compatibilityErrors')($testable));
 
         return [$testable->get('mountedActions'), $testable->errors()->messages()];
     }
@@ -110,6 +156,23 @@ class ActionTestingMigrationComponent extends Component implements HasActions, H
 {
     use InteractsWithActions;
     use InteractsWithSchemas;
+
+    public array $data = [];
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema->statePath('data')->components([TextInput::make('title')->required()]);
+    }
+
+    public function getDefaultTestingSchemaName(): ?string
+    {
+        return 'form';
+    }
+
+    public function validateForm(): void
+    {
+        $this->form->validate();
+    }
 
     public function editAction(): Action
     {

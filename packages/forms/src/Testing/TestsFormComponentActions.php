@@ -38,24 +38,6 @@ class TestsFormComponentActions
         };
     }
 
-    public function setFormComponentActionData(): Closure
-    {
-        return function (array $data): static {
-            $this->fillForm($data);
-
-            return $this;
-        };
-    }
-
-    public function assertFormComponentActionDataSet(): Closure
-    {
-        return function (array | Closure $data): static {
-            $this->assertSchemaStateSet($data);
-
-            return $this;
-        };
-    }
-
     public function callFormComponentAction(): Closure
     {
         return function (string | array $components, string | array $actions, array $data = [], array $arguments = [], string $formName = 'form'): static {
@@ -315,24 +297,6 @@ class TestsFormComponentActions
     public function assertFormComponentActionHalted(): Closure
     {
         return $this->assertFormComponentActionMounted();
-    }
-
-    public function assertHasFormComponentActionErrors(): Closure
-    {
-        return function (array $keys = []): static {
-            $this->assertHasFormErrors($keys);
-
-            return $this;
-        };
-    }
-
-    public function assertHasNoFormComponentActionErrors(): Closure
-    {
-        return function (array $keys = []): static {
-            $this->assertHasNoFormErrors($keys);
-
-            return $this;
-        };
     }
 
     public function parseNestedFormComponentActions(): Closure

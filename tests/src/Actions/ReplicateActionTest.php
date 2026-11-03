@@ -32,7 +32,7 @@ it('can replicate a record using `ReplicateAction`', function (): void {
     livewire(PostsTable::class)
         ->callTableAction('replicate', $post)
         ->callMountedTableAction()
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     assertDatabaseHas('posts', [
         'title' => 'Original Post (Copy)',

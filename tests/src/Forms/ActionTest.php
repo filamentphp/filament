@@ -81,7 +81,7 @@ describe('registering and calling actions', function (): void {
 
         livewire(Actions::class)
             ->mountFormComponentAction('textInput', 'setValue')
-            ->assertFormComponentActionDataSet([
+            ->assertSchemaStateSet([
                 'value' => 'foo',
             ]);
     });
@@ -108,7 +108,7 @@ describe('registering and calling actions', function (): void {
             ->callFormComponentAction('textInput', 'setValue', data: [
                 'value' => null,
             ])
-            ->assertHasFormComponentActionErrors(['value' => ['required']])
+            ->assertHasFormErrors(['value' => ['required']])
             ->assertSchemaStateSet(['textInput' => null]);
     });
 });

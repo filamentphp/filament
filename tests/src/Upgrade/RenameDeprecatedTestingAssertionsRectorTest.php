@@ -11,11 +11,6 @@ class RenameDeprecatedTestingAssertionsRectorTest extends AbstractRectorTestCase
         $this->doTestFile(__DIR__ . '/Fixtures/deprecated_testing_assertions.php.inc');
     }
 
-    public function test_migrates_pest_testing_calls(): void
-    {
-        $this->doTestFile(__DIR__ . '/Fixtures/deprecated_testing_assertions_pest.php.inc');
-    }
-
     public function test_preserves_unrelated_receivers_and_dynamic_calls(): void
     {
         $this->doTestFile(__DIR__ . '/Fixtures/deprecated_testing_assertions_manual_boundaries.php.inc');

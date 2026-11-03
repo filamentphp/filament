@@ -52,24 +52,6 @@ class TestsBulkActions
         };
     }
 
-    public function setTableBulkActionData(): Closure
-    {
-        return function (array $data): static {
-            $this->fillForm($data);
-
-            return $this;
-        };
-    }
-
-    public function assertTableBulkActionDataSet(): Closure
-    {
-        return function (array | Closure $data): static {
-            $this->assertSchemaStateSet($data);
-
-            return $this;
-        };
-    }
-
     public function callTableBulkAction(): Closure
     {
         return function (string | array $actions, array | Collection $records, array $data = [], array $arguments = []): static {
@@ -294,24 +276,6 @@ class TestsBulkActions
     public function assertTableBulkActionHalted(): Closure
     {
         return $this->assertTableBulkActionMounted();
-    }
-
-    public function assertHasTableBulkActionErrors(): Closure
-    {
-        return function (array $keys = []): static {
-            $this->assertHasFormErrors($keys);
-
-            return $this;
-        };
-    }
-
-    public function assertHasNoTableBulkActionErrors(): Closure
-    {
-        return function (array $keys = []): static {
-            $this->assertHasNoFormErrors($keys);
-
-            return $this;
-        };
     }
 
     public function parseNestedTableBulkActions(): Closure
