@@ -425,7 +425,7 @@ export default ({ isMenu = true } = {}) => ({
                 item.setAttribute('role', 'menuitem')
             }
 
-            item.setAttribute('tabindex', '-1')
+            this.setAttributeIfChanged(item, 'tabindex', '-1')
 
             if (item.hasAttribute('disabled')) {
                 item.setAttribute('aria-disabled', 'true')

@@ -532,6 +532,20 @@ describe('rendering', function (): void {
             ->toContain('Charlie');
     });
 
+    it('renders the menu roles a Livewire morph would otherwise strip from the dropdown', function (): void {
+        $group = ActionGroup::make([
+            Action::make('link')->label('Link')->url('https://filamentphp.com'),
+            Action::make('plain')->label('Plain'),
+        ]);
+
+        $html = $group->toHtml();
+
+        expect($html)
+            ->toMatch('/<div[^>]*role="menu"[^>]*class="fi-dropdown-panel/s')
+            ->toContain('<div class="fi-dropdown-list" role="group">')
+            ->and(substr_count($html, 'role="menuitem" tabindex="-1"'))->toBe(2);
+    });
+
     it('skips hidden actions in `ActionGroup` rendering', function (): void {
         $group = ActionGroup::make([
             Action::make('visible')->label('Visible Action'),
