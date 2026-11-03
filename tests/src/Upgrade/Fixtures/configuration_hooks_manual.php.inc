@@ -35,21 +35,6 @@ class InactiveLegacyPage extends CanonicalPage
     protected function getActions(): array { return []; }
 }
 
-class LegacyTraitPage extends Page
-{
-    protected function getActions(): array { return []; }
-}
-
-trait HasLegacyActions
-{
-    protected function getActions(): array { return parent::getActions(); }
-}
-
-class ChildTraitPage extends LegacyTraitPage
-{
-    use HasLegacyActions;
-}
-
 class BothLabels extends Resource
 {
     protected static ?string $label = 'old';
@@ -122,22 +107,6 @@ class GroupedChildLabels extends GroupedParentLabels
     protected static ?string $label = 'Child', $other = null;
 }
 
-trait UnrelatedBehavior {}
-
-class TraitIntermediateResource extends Resource {}
-
-class TraitParentLabels extends TraitIntermediateResource
-{
-    protected static ?string $label = 'Parent';
-}
-
-class TraitChildLabels extends TraitParentLabels
-{
-    use UnrelatedBehavior;
-
-    protected static ?string $label = 'Child';
-}
-
 class GetterParentLabels extends Resource
 {
     public static function getLabel(): ?string { return 'Parent'; }
@@ -146,6 +115,40 @@ class GetterParentLabels extends Resource
 class PropertyChildLabels extends GetterParentLabels
 {
     protected static ?string $label = 'Child';
+}
+
+trait AdaptedActions
+{
+    protected function getActions(): array { return parent::getActions(); }
+}
+
+class AdaptedPage extends Page
+{
+    use AdaptedActions {
+        getActions as applicationActions;
+    }
+}
+
+trait MagicLabels
+{
+    public static function getLabel(): ?string { return __TRAIT__; }
+}
+
+class MagicResource extends Resource
+{
+    use MagicLabels;
+}
+
+trait ReadTraitLabels
+{
+    protected static ?string $label = 'Custom';
+
+    public static function report(): ?string { return static::$label; }
+}
+
+class ReadTraitResource extends Resource
+{
+    use ReadTraitLabels;
 }
 
 class WrittenFilters extends Widget

@@ -38,7 +38,10 @@ use Illuminate\Support\HtmlString;
 use LogicException;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionProperty;
 use Symfony\Component\Process\Process;
+use TraitHookConsumer\OtherResource;
+use TraitHookConsumer\PropertyResource;
 
 class PersistentUpgradeSetTest extends TestCase
 {
@@ -232,6 +235,7 @@ class PersistentUpgradeSetTest extends TestCase
                 require_once $directory . '/app/behavioral_configuration_expressions.php';
                 require_once $directory . '/app/stored_behavioral_configuration.php';
                 require_once $directory . '/app/configuration_hooks.php';
+                require_once $directory . '/app/trait_configuration_hooks.php';
                 require_once $directory . '/app/panel_registration.php';
                 require_once $directory . '/app/menu_items.php';
                 $this->assertConfigurationMigrations();
@@ -306,6 +310,123 @@ class PersistentUpgradeSetTest extends TestCase
                 $process = $runUpgrade(true);
                 $this->assertSame(0, $process->getExitCode(), $process->getOutput() . $process->getErrorOutput());
             }
+        } finally {
+            (new Filesystem)->deleteDirectory($directory);
+        }
+    }
+
+    public function test_trait_hooks_preserve_cross_file_names_and_lexical_boundaries(): void
+    {
+        $directory = sys_get_temp_dir() . '/filament-trait-hooks-' . bin2hex(random_bytes(8));
+        mkdir($directory);
+        mkdir($directory . '/app');
+        $root = dirname(__DIR__, 3);
+
+        try {
+            $sources = [
+                'Source.php' => <<<'PHP'
+                    <?php
+                    namespace TraitHookSource;
+                    use Attribute;
+                    use Filament\Actions\Action as SharedAction;
+                    const PREFIX = 'Trait:';
+                    function formatLabel(int $number): string { return (string) $number; }
+                    trait HasLabel {
+                        public static function getLabel(): ?string { return PREFIX . formatLabel('17'); }
+                    }
+                    trait HasActions {
+                        protected function getActions(): array { return [SharedAction::make('source')->action(fn () => null)]; }
+                    }
+                    #[Attribute(Attribute::TARGET_PROPERTY)]
+                    class Metadata { public function __construct(public string $value) {} }
+                    trait HasProperty {
+                        #[Metadata(123)]
+                        protected static ?string $label = null;
+                    }
+                    PHP,
+                'OtherSource.php' => <<<'PHP'
+                    <?php
+                    namespace OtherTraitHookSource;
+                    const PREFIX = 'Other:';
+                    function formatLabel(int $number): string { return (string) $number; }
+                    trait HasLabel {
+                        public static function getLabel(): ?string { return PREFIX . formatLabel('19'); }
+                    }
+                    PHP,
+                'Existing.php' => <<<'PHP'
+                    <?php
+                    namespace ExistingTraitHookImports;
+                    const filamentUpgradePREFIXValue = 'Wrong imported alias:';
+                    function filamentUpgradeFormatLabelValue(int $number): string { return 'wrong imported alias'; }
+                    PHP,
+                'Consumer.php' => <<<'PHP'
+                    <?php
+                    namespace TraitHookConsumer;
+                    use function ExistingTraitHookImports\filamentUpgradeFormatLabelValue;
+                    use const ExistingTraitHookImports\{filamentUpgradePREFIXValue};
+                    use TraitHookSource\HasLabel;
+                    use TraitHookSource\HasActions;
+                    use TraitHookSource\HasProperty;
+                    use Filament\Forms\Components\TextInput as SharedAction;
+                    const PREFIX = 'Wrong:';
+                    const filamentUpgradePREFIX = 'Wrong alias:';
+                    function formatLabel(int $number): string { return 'wrong'; }
+                    function filamentUpgradeFormatLabel(int $number): string { return 'wrong alias'; }
+                    class Resource extends \Filament\Resources\Resource { use HasLabel; }
+                    use function TraitHookSource\formatLabel as laterFormatLabel;
+                    class OtherResource extends \Filament\Resources\Resource { use \OtherTraitHookSource\HasLabel; }
+                    class PropertyResource extends \Filament\Resources\Resource { use HasProperty; }
+                    class Page extends \Filament\Pages\Page { use HasActions; }
+                    PHP,
+                'Strict.php' => <<<'PHP'
+                    <?php
+                    declare(STRICT_TYPES=1);
+                    namespace TraitHookStrict;
+                    use Filament\Resources\Resource as BaseResource;
+                    use TraitHookSource\HasProperty;
+                    use TraitHookSource\HasLabel;
+                    class Resource extends BaseResource { use HasProperty; }
+                    class GetterResource extends BaseResource { use HasLabel; }
+                    PHP,
+                'Ticks.php' => <<<'PHP'
+                    <?php
+                    declare(TICKS=1);
+                    namespace TraitHookTicks;
+                    use Filament\Pages\Page as BasePage;
+                    trait HasActions {
+                        protected function getActions(): array { $actions = []; return $actions; }
+                    }
+                    class Page extends BasePage { use HasActions; }
+                    PHP,
+            ];
+
+            foreach ($sources as $name => $source) {
+                file_put_contents($directory . '/app/' . $name, $source);
+            }
+
+            foreach ([false, true] as $dryRun) {
+                (new Process([
+                    PHP_BINARY, $root . '/vendor/bin/rector', 'process', $directory . '/app',
+                    '--config', $root . '/packages/upgrade/src/rector.php', '--clear-cache', '--no-progress-bar',
+                    ...($dryRun ? ['--dry-run'] : []),
+                ], $root, ['TMPDIR' => $directory]))->setTimeout(120)->mustRun();
+            }
+
+            foreach (['Source.php', 'OtherSource.php', 'Existing.php', 'Strict.php', 'Ticks.php'] as $name) {
+                $this->assertSame($sources[$name], file_get_contents($directory . '/app/' . $name));
+            }
+
+            require $directory . '/app/Source.php';
+            require $directory . '/app/OtherSource.php';
+            require $directory . '/app/Existing.php';
+            require $directory . '/app/Consumer.php';
+            $this->assertSame('Trait:17', \TraitHookConsumer\Resource::getModelLabel());
+            $this->assertSame('Other:19', OtherResource::getModelLabel());
+            $property = new ReflectionProperty(PropertyResource::class, 'modelLabel');
+            $this->assertSame('123', $property->getAttributes()[0]->newInstance()->value);
+            $page = new \TraitHookConsumer\Page;
+            $page->cacheInteractsWithHeaderActions();
+            $this->assertSame(['source'], array_map(static fn (Action $action): string => $action->getName(), $page->getCachedHeaderActions()));
         } finally {
             (new Filesystem)->deleteDirectory($directory);
         }
@@ -518,6 +639,61 @@ class PersistentUpgradeSetTest extends TestCase
             $widget = new Fixtures\ConfigurationHooks\ChildFilters;
             $widget->pageFilters = ['period' => 'month'];
             $this->assertSame('month', $widget->selectedPeriod());
+
+            $page = new Fixtures\TraitConfigurationHooks\ChildActions;
+            $page->cacheInteractsWithHeaderActions();
+            $this->assertSame(['shared', 'child'], array_map(static fn ($action): string => $action->getName(), $page->getCachedHeaderActions()));
+            $this->assertSame(1, $page->actionCalls);
+            $page = new Fixtures\TraitConfigurationHooks\ChildTraitPage;
+            $page->cacheInteractsWithHeaderActions();
+            $this->assertSame(['base', 'child'], array_map(static fn ($action): string => $action->getName(), $page->getCachedHeaderActions()));
+            $consumer = new Fixtures\TraitConfigurationHooks\PlainConsumer;
+            $this->assertSame('unrelated', $consumer->actions()[0]);
+            $this->assertSame(1, $consumer->actionCalls);
+
+            $this->assertSame('Mouse', Fixtures\TraitConfigurationHooks\Labels::getModelLabel());
+            $this->assertSame('Mice', Fixtures\TraitConfigurationHooks\Labels::getPluralModelLabel());
+            Fixtures\TraitConfigurationHooks\ChildLabels::$labelCalls = 0;
+            $this->assertSame('Field mouse', Fixtures\TraitConfigurationHooks\ChildLabels::getModelLabel());
+            $this->assertSame(1, Fixtures\TraitConfigurationHooks\ChildLabels::$labelCalls);
+            $this->assertSame('Field mice', Fixtures\TraitConfigurationHooks\ChildLabels::getPluralModelLabel());
+            $this->assertSame('Customer', Fixtures\TraitConfigurationHooks\PropertyLabels::getModelLabel());
+            $this->assertSame('Customers', Fixtures\TraitConfigurationHooks\PropertyLabels::getPluralModelLabel());
+            $this->assertSame('Partner', Fixtures\TraitConfigurationHooks\ChildPropertyLabels::getModelLabel());
+            $this->assertSame('Partners', Fixtures\TraitConfigurationHooks\ChildPropertyLabels::getPluralModelLabel());
+            $this->assertSame('Child', Fixtures\TraitConfigurationHooks\ChildDeclaredPropertyLabels::getModelLabel());
+
+            $create = new Fixtures\TraitConfigurationHooks\Create;
+            $notification = new ReflectionMethod($create, 'getCreatedNotification');
+            $this->assertSame('Created', $notification->invoke($create)->getTitle());
+            $create->message = '';
+            $this->assertNull($notification->invoke($create));
+            $create->message = 'Trait created';
+            $this->assertSame('Trait created', $notification->invoke($create)->getTitle());
+            $create = new Fixtures\TraitConfigurationHooks\ChildCreate;
+            $this->assertSame('Trait child created', $notification->invoke($create)->getTitle());
+            $create->message = '';
+            $this->assertNull($notification->invoke($create));
+
+            app('translator')->addLines([
+                'resources/pages/edit-record.notifications.saved.title' => 'Record saved',
+            ], 'trait-testing', 'filament-panels');
+            app('translator')->addLines([
+                'pages/settings-page.notifications.saved.title' => 'Settings saved',
+            ], 'trait-testing', 'filament-spatie-laravel-settings-plugin');
+            app()->setLocale('trait-testing');
+            $edit = new Fixtures\TraitConfigurationHooks\Edit;
+            $notification = new ReflectionMethod($edit, 'getSavedNotification');
+            $this->assertSame('Record saved', $notification->invoke($edit)->getTitle());
+            $settings = new Fixtures\TraitConfigurationHooks\Settings;
+            $this->assertSame('Settings saved', $settings->getSavedNotificationTitle());
+            $settings->message = '';
+            $this->assertSame('', $settings->getSavedNotificationTitle());
+            app()->setLocale('en');
+
+            $stats = new Fixtures\TraitConfigurationHooks\ChildStats;
+            $this->assertSame([43, 19], array_map(static fn ($stat) => $stat->getValue(), $stats->getSectionContentComponent()->getDefaultChildComponents()));
+            $this->assertSame('Trait return', (new Fixtures\TraitConfigurationHooks\Profile)->getCancelFormAction()->getLabel());
         } finally {
             app()->setLocale($originalLocale);
         }
