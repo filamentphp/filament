@@ -378,35 +378,95 @@ class ImportAction extends Action
     {
         rewind($resource);
 
-        $lineCount = 0;
+        $sampledLineCount = 0;
+        $scannedBytes = 0;
         $contentSample = '';
 
-        while ((! feof($resource)) && ($lineCount < 20)) {
+        while ((! feof($resource)) && ($sampledLineCount < 20) && ($scannedBytes < (1024 * 1024))) {
             $line = fgets($resource);
 
             if ($line === false) {
                 break;
             }
 
+            $scannedBytes += strlen($line);
+
+            // Only lines holding a non-ASCII byte tell the encodings apart, so ASCII-only
+            // lines are skipped and an accent on line 500 still reaches the sample, as long
+            // as it lies within the first mebibyte of the file.
+            if (! preg_match('/[\x80-\xFF]/', $line)) {
+                continue;
+            }
+
             $contentSample .= $line;
-            $lineCount++;
+            $sampledLineCount++;
         }
 
         // The encoding of a subset should be declared before the encoding of its superset.
+        // The multi-byte pages keep their original order. EUC-JP is checked only after
+        // GB18030 has failed or been vetoed, and every EUC-JP two-byte character is also
+        // valid GB18030, so EUC-JP is returned only for rare samples, in practice ones
+        // holding JIS X 0212 three-byte characters.
         $encodings = [
             'UTF-8',
             'SJIS-win',
             'EUC-KR',
-            'ISO-8859-1',
             'GB18030',
-            'Windows-1251',
+            'EUC-JP',
             'Windows-1252',
+        ];
+
+        // Western text is often structurally valid in a multi-byte encoding too, but it
+        // then decodes to one or two CJK characters glued to ASCII letters or digits, or
+        // to a lone half-width katakana between ASCII characters: the Windows-1252 bytes
+        // of `Félix` are valid Shift JIS, but decode to `F`, one kanji and `ix`. Real CJK
+        // text almost always contains a run of CJK characters standing on its own, or
+        // three CJK characters in a row, so a multi-byte verdict is vetoed when the decoded
+        // sample shows glued characters but no such run. A file whose only CJK text is
+        // one or two characters glued to ASCII, such as a `3個` quantity or `B級品` grade
+        // column under an ASCII header, is the known exception and is read as Windows-1252.
+        $multiByteEncodings = [
+            'SJIS-win',
+            'EUC-KR',
+            'GB18030',
             'EUC-JP',
         ];
+
+        $gluedCharacterPattern = <<<'REGEX'
+            ~
+            # an ASCII letter or digit directly followed by a non-ASCII character
+            [A-Za-z0-9][^\x00-\x7F]
+            # or a non-ASCII character directly followed by an ASCII letter or digit
+            | [^\x00-\x7F][A-Za-z0-9]
+            # or a half-width katakana with no non-ASCII character on either side
+            | (?<![^\x00-\x7F])[\x{FF61}-\x{FF9F}](?![^\x00-\x7F])
+            ~ux
+            REGEX;
+
+        $cjkRunPattern = <<<'REGEX'
+            ~
+            # a whole run of non-ASCII characters, other than a lone half-width katakana,
+            # with no ASCII letter or digit directly before or after it
+            (?<![A-Za-z0-9\x80-\x{10FFFF}])(?![\x{FF61}-\x{FF9F}](?![^\x00-\x7F]))[^\x00-\x7F]++(?![A-Za-z0-9])
+            # or three non-ASCII characters in a row, none of them from the private-use area
+            | [^\x00-\x7F\x{E000}-\x{F8FF}]{3}
+            ~ux
+            REGEX;
 
         foreach ($encodings as $encoding) {
             if (! mb_check_encoding($contentSample, $encoding)) {
                 continue;
+            }
+
+            if (in_array($encoding, $multiByteEncodings, true)) {
+                $decodedSample = mb_convert_encoding($contentSample, 'UTF-8', $encoding);
+
+                if (
+                    preg_match($gluedCharacterPattern, $decodedSample) &&
+                    (! preg_match($cjkRunPattern, $decodedSample))
+                ) {
+                    continue;
+                }
             }
 
             return $encoding;
