@@ -745,10 +745,18 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             $this->actions,
         );
 
-        $this->flatActions = array_map(
-            fn (Action $action): Action => $action->getClone()->group($this),
-            $this->flatActions,
-        );
+        $this->flatActions = [];
+
+        foreach ($this->actions as $action) {
+            if ($action instanceof ActionGroup) {
+                $this->flatActions = [
+                    ...$this->flatActions,
+                    ...$action->getFlatActions(),
+                ];
+            } else {
+                $this->flatActions[$action->getName()] = $action;
+            }
+        }
     }
 
     /**

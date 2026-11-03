@@ -4,21 +4,15 @@ namespace Filament\Tests\Fixtures\Livewire;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Actions\Contracts\HasActions;
-use Filament\Schemas\Concerns\InteractsWithSchemas;
-use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Resources\Pages\ListRecords;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
-use Illuminate\Contracts\View\View;
-use Livewire\Component;
+use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 
-class PostsTableWithGroupedRecordActions extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+class PostsTableWithGroupedRecordActions extends ListRecords
 {
-    use InteractsWithActions;
-    use InteractsWithSchemas;
-    use Tables\Concerns\InteractsWithTable;
+    protected static string $resource = PostResource::class;
 
     /**
      * @var array<string, array<int, int>>
@@ -27,32 +21,17 @@ class PostsTableWithGroupedRecordActions extends Component implements HasActions
 
     public static bool $isPublished = false;
 
+    public bool $hasColumnsLayout = false;
+
     public function table(Table $table): Table
     {
+        $column = Tables\Columns\TextColumn::make('title');
+
         return $table
             ->query(Post::query())
             ->columns([
-                Tables\Columns\TextColumn::make('title'),
+                $this->hasColumnsLayout ? Tables\Columns\Layout\Stack::make([$column]) : $column,
             ])
-            // What a resource's `ListRecords` page does for every row: hand the record to a
-            // grouped record action and to each group above it, then ask whether it is hidden.
-            ->recordUrl(function (Post $record, Table $table): ?string {
-                $action = $table->getAction('edit');
-
-                $action->record($record);
-
-                $actionGroup = $action->getGroup();
-
-                while ($actionGroup) {
-                    $actionGroup->record($record);
-
-                    $actionGroup = $actionGroup->getGroup();
-                }
-
-                $action->isHidden();
-
-                return null;
-            })
             ->headerActions([
                 ActionGroup::make([
                     Action::make('publish')
@@ -74,14 +53,10 @@ class PostsTableWithGroupedRecordActions extends Component implements HasActions
             ]);
     }
 
-    public function render(): View
-    {
-        return view('livewire.table');
-    }
-
     protected function countedAction(string $name): Action
     {
         return Action::make($name)
+            ->url(fn (Post $record): string => '/posts/' . $record->getKey())
             ->authorize(function (Post $record) use ($name): bool {
                 static::$authorizationChecks[$name][$record->getKey()] = (static::$authorizationChecks[$name][$record->getKey()] ?? 0) + 1;
 

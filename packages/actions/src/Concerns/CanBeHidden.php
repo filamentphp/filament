@@ -145,18 +145,11 @@ trait CanBeHidden
         $this->cachedIsAuthorizedOrNotHiddenWhenUnauthorized = null;
         $this->cachedVisibilityRecordKey = null;
         $this->hasVisibilityCache = false;
-    }
 
-    public function clearVisibilityCacheRecursively(): void
-    {
-        $this->clearVisibilityCache();
-
-        if (! $this instanceof ActionGroup) {
-            return;
-        }
-
-        foreach ($this->getActions() as $action) {
-            $action->clearVisibilityCacheRecursively();
+        if ($this instanceof ActionGroup) {
+            foreach ($this->getActions() as $action) {
+                $action->clearVisibilityCache();
+            }
         }
     }
 }
