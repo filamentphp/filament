@@ -100,6 +100,14 @@ trait HasChildComponents
     }
 
     /**
+     * @internal
+     */
+    public function hasChildSchemaConfiguration(string $key): bool
+    {
+        return array_key_exists($key, $this->childComponents);
+    }
+
+    /**
      * @param  array-key  $key
      */
     public function getChildSchema($key = null): ?Schema

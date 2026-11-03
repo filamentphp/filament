@@ -2,10 +2,12 @@
     use Filament\Support\Enums\IconPosition;
     use Filament\Support\Facades\FilamentAsset;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\ChartComponent;
     use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\DescriptionComponent;
     use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\StatsOverviewWidgetStatChartComponent;
 
     $chartColor = $getChartColor() ?? 'gray';
+    $chartComponentClass = app()->bound(ChartComponent::class) ? ChartComponent::class : StatsOverviewWidgetStatChartComponent::class;
     $descriptionColor = $getDescriptionColor() ?? 'gray';
     $descriptionIcon = $getDescriptionIcon();
     $descriptionIconPosition = $getDescriptionIconPosition();
@@ -74,7 +76,7 @@
                             labels: @js(array_keys($chart)),
                             values: @js(array_values($chart)),
                         })"
-                {{ (new FilamentComponentAttributeBag)->color(StatsOverviewWidgetStatChartComponent::class, $chartColor)->class(['fi-wi-stats-overview-stat-chart']) }}
+                {{ (new FilamentComponentAttributeBag)->color($chartComponentClass, $chartColor)->class(['fi-wi-stats-overview-stat-chart']) }}
             >
                 {{-- The label and value are already exposed as text, so the trend sparkline is decorative. --}}
                 <canvas x-ref="canvas" aria-hidden="true"></canvas>

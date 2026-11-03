@@ -1392,7 +1392,7 @@
                                                 @elseif ($recordAction)
                                                     @php
                                                         $recordWireClickAction = $getRecordAction($record)
-                                                            ? "mountTableAction('{$recordAction}', " . Js::from($recordKey) . ')'
+                                                            ? "mountAction('{$recordAction}', {}, " . Js::from(['table' => true, 'recordKey' => $recordKey]) . ')'
                                                             : $recordWireClickAction = "{$recordAction}(" . Js::from($recordKey) . ')';
                                                     @endphp
 

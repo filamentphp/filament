@@ -175,7 +175,7 @@ class Column extends ViewComponent
                 'type' => ($wrapperTag === 'button') ? 'button' : null,
                 'wire:click.prevent.stop' => $wireClickAction = match (true) {
                     ($wrapperTag !== 'button') => null,
-                    $action instanceof Action => "mountTableAction('{$action->getName()}', " . Js::from($this->getRecordKey()) . ')',
+                    $action instanceof Action => "mountAction('{$action->getName()}', {}, " . Js::from(['table' => true, 'recordKey' => $this->getRecordKey()]) . ')',
                     filled($action) => "callTableColumnAction('{$this->getName()}', " . Js::from($this->getRecordKey()) . ')',
                     default => null,
                 },
@@ -224,11 +224,11 @@ class Column extends ViewComponent
 
         if ($wrapperTag === 'button') {
             if ($action instanceof Action) {
-                $wireClickAction = "mountTableAction('{$action->getName()}', " . Js::from($recordKey) . ')';
+                $wireClickAction = "mountAction('{$action->getName()}', {}, " . Js::from(['table' => true, 'recordKey' => $recordKey]) . ')';
             } elseif ($action) {
                 $wireClickAction = "callTableColumnAction('{$this->getName()}', " . Js::from($recordKey) . ')';
             } elseif ($table->getAction($recordAction)) {
-                $wireClickAction = "mountTableAction('{$recordAction}', " . Js::from($recordKey) . ')';
+                $wireClickAction = "mountAction('{$recordAction}', {}, " . Js::from(['table' => true, 'recordKey' => $recordKey]) . ')';
             } else {
                 $wireClickAction = "{$recordAction}(" . Js::from($recordKey) . ')';
             }

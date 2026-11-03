@@ -97,16 +97,6 @@ abstract class Exporter
     /**
      * @return array<Component | Action | ActionGroup>
      */
-    public static function getOptionsSchemaComponents(): array
-    {
-        return static::getOptionsFormComponents();
-    }
-
-    /**
-     * @deprecated Use `getOptionsSchemaComponents()` instead.
-     *
-     * @return array<Component | Action | ActionGroup>
-     */
     public static function getOptionsFormComponents(): array
     {
         return [];

@@ -27,7 +27,14 @@
 
     $beforeLabelContainer = $entry?->getChildSchema($entry::BEFORE_LABEL_SCHEMA_KEY)?->toHtmlString();
     $afterLabelContainer = $entry?->getChildSchema($entry::AFTER_LABEL_SCHEMA_KEY)?->toHtmlString();
-    $beforeContentContainer = $entry?->getChildSchema($entry::BEFORE_CONTENT_SCHEMA_KEY)?->toHtmlString();
+
+    $aboveContentSchema = $entry?->getChildSchema($entry::ABOVE_CONTENT_SCHEMA_KEY);
+    $hasAboveContentSchema = $entry?->hasChildSchemaConfiguration($entry::ABOVE_CONTENT_SCHEMA_KEY) || $aboveContentSchema;
+
+    $beforeContentContainer = $entry?->getChildSchema($entry::BEFORE_CONTENT_SCHEMA_KEY);
+    $hasBeforeContentSchema = $entry?->hasChildSchemaConfiguration($entry::BEFORE_CONTENT_SCHEMA_KEY) || $beforeContentContainer;
+    $beforeContentContainer = $beforeContentContainer?->toHtmlString();
+
     $afterContentContainer = $entry?->getChildSchema($entry::AFTER_CONTENT_SCHEMA_KEY)?->toHtmlString();
 @endphp
 
@@ -83,10 +90,18 @@
     </div>
 
     <div class="fi-in-entry-content-col">
-        {{ $entry?->getChildSchema($entry::ABOVE_CONTENT_SCHEMA_KEY) }}
+        @if ($hasAboveContentSchema)
+            <div class="fi-in-entry-content-slot">
+                {{ $aboveContentSchema }}
+            </div>
+        @endif
 
         <div class="fi-in-entry-content-ctn" role="definition">
-            {{ $beforeContentContainer }}
+            @if ($hasBeforeContentSchema)
+                <div class="fi-in-entry-content-slot">
+                    {{ $beforeContentContainer }}
+                </div>
+            @endif
 
             @if (filled($url))
                 <a
