@@ -164,7 +164,13 @@ const LocalFilesPlugin = ({
     return new Plugin({
         key: new PluginKey('localFiles'),
         props: {
-            handleDrop(editorView, event) {
+            handleDrop(editorView, event, slice, moved) {
+                // Browsers attach a dragged image as a file, so leave a move
+                // within the editor to ProseMirror instead of uploading it again.
+                if (moved) {
+                    return false
+                }
+
                 if (!event.dataTransfer?.files.length) {
                     return false
                 }
