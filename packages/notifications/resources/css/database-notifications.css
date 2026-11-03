@@ -35,6 +35,10 @@
                     @apply border-b border-gray-200 dark:border-white/10;
                 }
             }
+
+            & .fi-no-notifications-loading-ctn {
+                @apply flex justify-center p-6 text-gray-400 dark:text-gray-500;
+            }
         }
 
         &.fi-modal-window-has-footer .fi-modal-content {
