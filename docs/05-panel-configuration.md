@@ -444,6 +444,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+In strict authorization mode, [inline editable columns](tables/columns/toggle#authorization) in resource and relation manager tables also check the resource's `update()` policy before they allow a record to be edited.
+
 ## Configuring error notifications
 
 When Laravel's debug mode is disabled, Filament will replace Livewire's full-screen error modals with neater flash notifications. You can disable this behavior using the `errorNotifications(false)` method:

@@ -20,7 +20,7 @@ This page covers key security considerations when building applications with Fil
 Filament automatically checks [Laravel Model Policies](https://laravel.com/docs/authorization#creating-policies) for standard CRUD operations on [resources](../resources/overview#authorization). When a policy exists for a resource's model, Filament will check methods like `viewAny()`, `create()`, `update()`, `view()`, `delete()`, and others before allowing access to the corresponding pages and actions.
 
 <Aside variant="warning">
-    By default, a missing resource policy or policy method does not deny access: Filament allows the operation unless a Gate before callback denies it. Define the policy methods your application needs, or enable [strict authorization](../panel-configuration#strict-authorization-mode) to detect missing policies and methods. Strict mode does not add authorization to custom actions, inline editable columns, or other code that does not use resource authorization. Skipping authorization on a resource bypasses its policy checks even in strict mode.
+    By default, a missing resource policy or policy method does not deny access: Filament allows the operation unless a Gate before callback denies it. Define the policy methods your application needs, or enable [strict authorization](../panel-configuration#strict-authorization-mode) to detect missing policies and methods. Strict mode does not add authorization to custom actions, inline editable columns outside resource and relation manager tables, or other code that does not use resource authorization. Skipping authorization on a resource bypasses its policy checks even in strict mode.
 </Aside>
 
 However, Filament's automatic authorization only covers these built-in resource operations. Any custom functionality you add — custom actions, custom pages, custom Livewire components, API endpoints, or other business logic — must be authorized by you. Filament cannot know your application's authorization requirements beyond the standard CRUD operations it provides.
@@ -176,7 +176,9 @@ After the applicable built-in authorization check, Livewire runs per-property hy
 
 ### Inline editable columns
 
-Inline editable table columns such as `ToggleColumn`, `TextInputColumn`, `SelectColumn`, and `CheckboxColumn` do not check Model Policies before saving changes. They only check the column's `disabled()` state. If you need to restrict who can edit these columns, use the `disabled()` method with your own authorization logic. See the documentation for each [editable column type](../tables/columns/toggle) for more details.
+By default, inline editable table columns such as `ToggleColumn`, `TextInputColumn`, `SelectColumn`, and `CheckboxColumn` do not check Model Policies before saving changes. They only check the column's `disabled()` state. If you need to restrict who can edit these columns, use the `authorize()` method to check the record's `update()` policy (or another ability), or use the `disabled()` method with your own authorization logic. When authorization fails, the column is shown as disabled and changes are rejected on the server.
+
+When [strict authorization](../panel-configuration#strict-authorization-mode) is enabled, editable columns in resource and relation manager tables check the resource's `update()` policy by default, and a missing policy or policy method throws an exception. Editable columns in other tables, such as tables in custom pages or Livewire components, still need `authorize()` or `disabled()`. See the documentation for each [editable column type](../tables/columns/toggle) for more details.
 
 ### Custom actions
 
