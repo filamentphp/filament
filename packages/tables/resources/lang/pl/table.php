@@ -47,7 +47,7 @@ return [
     'columns' => [
 
         'actions' => [
-            'label' => 'Akcja|Akcje',
+            'label' => 'Akcja|Akcje|Akcje',
         ],
 
         'editable' => [
@@ -284,7 +284,7 @@ return [
         'moved' => ':label przeniesiono na pozycję :position z :count.',
     ],
 
-    'result_count' => '{0} Brak wyników|{1} :count wynik|[2,*] :count wyników',
+    'result_count' => ':count wynik|:count wyniki|:count wyników|{0} Brak wyników',
 
     'selection_indicator' => [
 

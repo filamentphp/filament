@@ -20,7 +20,7 @@ return [
 
         'open_database_notifications' => [
             'label' => 'Otwórz powiadomienia',
-            'label_with_unread_count' => '{1} Powiadomienie, :count nieprzeczytane|[2,*] Powiadomienia, :count nieprzeczytanych',
+            'label_with_unread_count' => 'Powiadomienie, :count nieprzeczytane|Powiadomienia, :count nieprzeczytane|Powiadomienia, :count nieprzeczytanych',
         ],
 
         'open_user_menu' => [

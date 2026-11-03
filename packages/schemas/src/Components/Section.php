@@ -329,7 +329,11 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
         $label = $this->getLabel();
         $beforeLabelSchema = $this->getChildSchema(static::BEFORE_LABEL_SCHEMA_KEY)?->toHtmlString();
         $afterLabelSchema = $this->getChildSchema(static::AFTER_LABEL_SCHEMA_KEY)?->toHtmlString();
-        $aboveContentSchema = $this->getChildSchema(static::ABOVE_CONTENT_SCHEMA_KEY)?->toHtmlString();
+
+        $aboveContentSchema = $this->getChildSchema(static::ABOVE_CONTENT_SCHEMA_KEY);
+        $hasAboveContentSchema = $this->hasChildSchemaConfiguration(static::ABOVE_CONTENT_SCHEMA_KEY) || $aboveContentSchema;
+        $aboveContentSchema = $aboveContentSchema?->toHtmlString();
+
         $belowContentSchema = $this->getChildSchema(static::BELOW_CONTENT_SCHEMA_KEY)?->toHtmlString();
 
         // Name the `<section>` as a landmark region by referencing its heading (or, failing that, its `label()`),
@@ -358,7 +362,11 @@ class Section extends Component implements CanEntangleWithSingularRelationships,
                 </div>
             <?php } ?>
 
-            <?= $aboveContentSchema?->toHtml() ?>
+            <?php if ($hasAboveContentSchema) { ?>
+                <div class="fi-sc-section-content-slot">
+                    <?= $aboveContentSchema?->toHtml() ?>
+                </div>
+            <?php } ?>
 
             <section
                 x-data="{

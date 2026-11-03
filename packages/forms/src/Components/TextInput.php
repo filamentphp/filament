@@ -384,7 +384,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
                 'required' => $this->isRequired() && (! $isDisabled) && (! $this->isReadOnly()),
                 'step' => $this->getStep(),
                 'type' => $type,
-                $this->applyStateBindingModifiers('wire:model') => $statePath,
+                $this->applyStateBindingModifiers($isPasswordRevealable ? 'wire:model.fill' : 'wire:model') => $statePath,
                 'x-bind:type' => $isPasswordRevealable ? 'isPasswordRevealed ? \'text\' : \'password\'' : null,
                 'x-mask' . ($mask instanceof RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
             ], escape: false)
