@@ -1150,9 +1150,9 @@
 
                                 @foreach ($records as $record)
                                     @php
-                                        $recordAction = $getRecordAction($record);
                                         $recordKey = $getRecordKey($record);
                                         $recordUrl = $getRecordUrl($record);
+                                        $recordAction = $recordUrl ? null : $getRecordAction($record);
                                         $openRecordUrlInNewTab = $shouldOpenRecordUrlInNewTab($record);
                                         $recordGroupKey = $group?->getStringKey($record);
                                         $recordGroupTitle = $group?->getTitle($record, $recordGroupKey);
@@ -1168,38 +1168,44 @@
 
                                     @if ((string) $recordGroupTitle !== (string) $previousRecordGroupTitle)
                                         @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
-                                            <table
-                                                @class([
-                                                    'fi-ta-table',
-                                                    'fi-ta-table-stacked-on-mobile' => $isStackedOnMobile,
-                                                    'fi-ta-table-reordering' => $isReordering,
-                                                ])
+                                            <div
+                                                role="listitem"
+                                                class="fi-ta-group-summary"
                                             >
-                                                <tbody>
-                                                    @php
-                                                        $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
-                                                    @endphp
+                                                <table
+                                                    @class([
+                                                        'fi-ta-table',
+                                                        'fi-ta-table-stacked-on-mobile' => $isStackedOnMobile,
+                                                        'fi-ta-table-reordering' => $isReordering,
+                                                    ])
+                                                >
+                                                    <tbody>
+                                                        @php
+                                                            $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
+                                                        @endphp
 
-                                                    <x-filament-tables::summary.row
-                                                        :columns="$columns"
-                                                        extra-heading-column
-                                                        :heading="
-                                                            __('filament-tables::table.summary.subheadings.group', [
-                                                                'group' => $previousRecordGroupTitle,
-                                                                'label' => $pluralModelLabel,
-                                                            ])
-                                                        "
-                                                        :placeholder-columns="false"
-                                                        :query="$groupScopedAllTableSummaryQuery"
-                                                        :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
-                                                    />
-                                                </tbody>
-                                            </table>
+                                                        <x-filament-tables::summary.row
+                                                            :columns="$columns"
+                                                            extra-heading-column
+                                                            :heading="
+                                                                __('filament-tables::table.summary.subheadings.group', [
+                                                                    'group' => $previousRecordGroupTitle,
+                                                                    'label' => $pluralModelLabel,
+                                                                ])
+                                                            "
+                                                            :placeholder-columns="false"
+                                                            :query="$groupScopedAllTableSummaryQuery"
+                                                            :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
+                                                        />
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         @endif
 
                                         <div
+                                            role="listitem"
                                             @if ($isRecordGroupCollapsible = $group->isCollapsible())
-                                                x-on:click="toggleCollapseGroup(@js($recordGroupTitle))"
+                                                x-on:click="if (! $event.target.closest('.fi-ta-group-checkbox')) toggleCollapseGroup(@js($recordGroupTitle))"
                                                 @if (! $hasSummary)
                                                     x-bind:class="{ 'fi-collapsed': isGroupCollapsed(@js($recordGroupTitle)) }"
                                                 @endif
@@ -1481,27 +1487,32 @@
                                 @endforeach
 
                                 @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && $this->shouldRenderTrailingGroupedTableSummary($previousRecord))
-                                    <table
-                                        @class([
-                                            'fi-ta-table',
-                                            'fi-ta-table-stacked-on-mobile' => $isStackedOnMobile,
-                                        ])
+                                    <div
+                                        role="listitem"
+                                        class="fi-ta-group-summary"
                                     >
-                                        <tbody>
-                                            @php
-                                                $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
-                                            @endphp
+                                        <table
+                                            @class([
+                                                'fi-ta-table',
+                                                'fi-ta-table-stacked-on-mobile' => $isStackedOnMobile,
+                                            ])
+                                        >
+                                            <tbody>
+                                                @php
+                                                    $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
+                                                @endphp
 
-                                            <x-filament-tables::summary.row
-                                                :columns="$columns"
-                                                extra-heading-column
-                                                :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
-                                                :placeholder-columns="false"
-                                                :query="$groupScopedAllTableSummaryQuery"
-                                                :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
-                                            />
-                                        </tbody>
-                                    </table>
+                                                <x-filament-tables::summary.row
+                                                    :columns="$columns"
+                                                    extra-heading-column
+                                                    :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
+                                                    :placeholder-columns="false"
+                                                    :query="$groupScopedAllTableSummaryQuery"
+                                                    :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
+                                                />
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 @endif
                             </div>
                         @endif
@@ -2181,9 +2192,9 @@
 
                                     @foreach ($records as $record)
                                         @php
-                                            $recordAction = $getRecordAction($record);
                                             $recordKey = $getRecordKey($record);
                                             $recordUrl = $getRecordUrl($record);
+                                            $recordAction = $recordUrl ? null : $getRecordAction($record);
                                             $openRecordUrlInNewTab = $shouldOpenRecordUrlInNewTab($record);
                                             $recordGroupKey = $group?->getStringKey($record);
                                             $recordGroupTitle = $group?->getTitle($record, $recordGroupKey);

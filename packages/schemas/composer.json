@@ -1,6 +1,6 @@
 {
     "name": "filament/schemas",
-    "description": "Easily add beautiful UI to any Livewire component.",
+    "description": "Compose interfaces with reusable schema and layout components for Livewire.",
     "license": "MIT",
     "homepage": "https://github.com/filamentphp/filament",
     "support": {

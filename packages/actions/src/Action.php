@@ -952,13 +952,13 @@ class Action extends ViewComponent implements Arrayable
             )?->toHtml() : '';
             $hrefHtml = generate_href_html($url)->toHtml();
 
-            return "<a {$hrefHtml}{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></a>";
+            return "<a {$hrefHtml}{$wireKeyAttribute} class=\"{$classString}\"{$styleString} role=\"menuitem\" tabindex=\"-1\">{$iconHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></a>";
         }
 
         $handler = $this->getLivewireClickHandler();
 
         if (blank($handler)) {
-            return "<button type=\"button\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}><span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
+            return "<button type=\"button\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString} role=\"menuitem\" tabindex=\"-1\"><span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
         }
 
         $loadingDelay = config('filament.livewire_loading_delay', 'default');
@@ -981,7 +981,7 @@ class Action extends ViewComponent implements Arrayable
         // Match `ComponentAttributeBag::__toString()` attribute escaping (only `"` → `\"`).
         $handlerEscaped = str_replace('"', '\\"', $handler);
 
-        return "<button type=\"button\" wire:loading.attr=\"aria-disabled\" wire:loading.class=\"fi-disabled\" wire:click=\"{$handlerEscaped}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
+        return "<button type=\"button\" wire:loading.attr=\"aria-disabled\" wire:loading.class=\"fi-disabled\" wire:click=\"{$handlerEscaped}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString} role=\"menuitem\" tabindex=\"-1\">{$iconHtml}{$loadingHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
     }
 
     protected function toBadgeHtml(): string
