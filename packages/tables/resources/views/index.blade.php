@@ -1168,34 +1168,38 @@
 
                                     @if ((string) $recordGroupTitle !== (string) $previousRecordGroupTitle)
                                         @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
-                                            <table
+                                            <div
                                                 role="listitem"
-                                                @class([
-                                                    'fi-ta-table',
-                                                    'fi-ta-table-stacked-on-mobile' => $isStackedOnMobile,
-                                                    'fi-ta-table-reordering' => $isReordering,
-                                                ])
+                                                class="fi-ta-group-summary"
                                             >
-                                                <tbody>
-                                                    @php
-                                                        $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
-                                                    @endphp
+                                                <table
+                                                    @class([
+                                                        'fi-ta-table',
+                                                        'fi-ta-table-stacked-on-mobile' => $isStackedOnMobile,
+                                                        'fi-ta-table-reordering' => $isReordering,
+                                                    ])
+                                                >
+                                                    <tbody>
+                                                        @php
+                                                            $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
+                                                        @endphp
 
-                                                    <x-filament-tables::summary.row
-                                                        :columns="$columns"
-                                                        extra-heading-column
-                                                        :heading="
-                                                            __('filament-tables::table.summary.subheadings.group', [
-                                                                'group' => $previousRecordGroupTitle,
-                                                                'label' => $pluralModelLabel,
-                                                            ])
-                                                        "
-                                                        :placeholder-columns="false"
-                                                        :query="$groupScopedAllTableSummaryQuery"
-                                                        :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
-                                                    />
-                                                </tbody>
-                                            </table>
+                                                        <x-filament-tables::summary.row
+                                                            :columns="$columns"
+                                                            extra-heading-column
+                                                            :heading="
+                                                                __('filament-tables::table.summary.subheadings.group', [
+                                                                    'group' => $previousRecordGroupTitle,
+                                                                    'label' => $pluralModelLabel,
+                                                                ])
+                                                            "
+                                                            :placeholder-columns="false"
+                                                            :query="$groupScopedAllTableSummaryQuery"
+                                                            :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
+                                                        />
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         @endif
 
                                         <div
@@ -1483,28 +1487,32 @@
                                 @endforeach
 
                                 @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && $this->shouldRenderTrailingGroupedTableSummary($previousRecord))
-                                    <table
+                                    <div
                                         role="listitem"
-                                        @class([
-                                            'fi-ta-table',
-                                            'fi-ta-table-stacked-on-mobile' => $isStackedOnMobile,
-                                        ])
+                                        class="fi-ta-group-summary"
                                     >
-                                        <tbody>
-                                            @php
-                                                $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
-                                            @endphp
+                                        <table
+                                            @class([
+                                                'fi-ta-table',
+                                                'fi-ta-table-stacked-on-mobile' => $isStackedOnMobile,
+                                            ])
+                                        >
+                                            <tbody>
+                                                @php
+                                                    $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
+                                                @endphp
 
-                                            <x-filament-tables::summary.row
-                                                :columns="$columns"
-                                                extra-heading-column
-                                                :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
-                                                :placeholder-columns="false"
-                                                :query="$groupScopedAllTableSummaryQuery"
-                                                :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
-                                            />
-                                        </tbody>
-                                    </table>
+                                                <x-filament-tables::summary.row
+                                                    :columns="$columns"
+                                                    extra-heading-column
+                                                    :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
+                                                    :placeholder-columns="false"
+                                                    :query="$groupScopedAllTableSummaryQuery"
+                                                    :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
+                                                />
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 @endif
                             </div>
                         @endif

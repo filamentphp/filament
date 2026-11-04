@@ -170,6 +170,7 @@
             }
         }
 
+        & .fi-ta-group-summary,
         & .fi-ta-table {
             @apply col-span-full;
         }
