@@ -689,6 +689,23 @@ ImportAction::make()
     If you are encountering memory or timeout issues when importing large CSV files, you may wish to reduce the chunk size.
 </Aside>
 
+## Setting the CSV encoding
+
+By default, Filament attempts to detect the encoding of an uploaded CSV file and converts its contents to UTF-8. Since some encodings accept the same byte sequences, automatic detection can select the wrong encoding. If you know the encoding of your CSV files, you can specify it using the `csvEncoding()` method on the action:
+
+```php
+use App\Filament\Imports\ProductImporter;
+use Filament\Actions\ImportAction;
+
+ImportAction::make()
+    ->importer(ProductImporter::class)
+    ->csvEncoding('Windows-1252')
+```
+
+The encoding applies to both column headers and row data. Use a canonical encoding name returned by PHP's [`mb_list_encodings()` function](https://www.php.net/manual/en/function.mb-list-encodings.php), such as `Windows-1252` or `SJIS-win`. Encoding aliases such as `CP1252` are not accepted. Passing `null` restores automatic detection.
+
+<UtilityInjection set="actions" extras="CSV stream;;resource;;$resource;;The uploaded CSV stream before UTF-8 conversion. You can read a bounded sample for custom encoding detection, but must not modify or close the stream.">As well as allowing a static value, the `csvEncoding()` method also accepts a function to dynamically calculate it. Returning `null` falls back to automatic detection. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Changing the CSV delimiter
 
 The default delimiter for CSVs is the comma (`,`). If your import uses a different delimiter, you may call the `csvDelimiter()` method on the action, passing a new one:
