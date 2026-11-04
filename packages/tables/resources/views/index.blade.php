@@ -1169,6 +1169,7 @@
                                     @if ((string) $recordGroupTitle !== (string) $previousRecordGroupTitle)
                                         @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
                                             <table
+                                                role="listitem"
                                                 @class([
                                                     'fi-ta-table',
                                                     'fi-ta-table-stacked-on-mobile' => $isStackedOnMobile,
@@ -1198,6 +1199,7 @@
                                         @endif
 
                                         <div
+                                            role="listitem"
                                             @if ($isRecordGroupCollapsible = $group->isCollapsible())
                                                 x-on:click="if (! $event.target.closest('.fi-ta-group-checkbox')) toggleCollapseGroup(@js($recordGroupTitle))"
                                                 @if (! $hasSummary)
@@ -1482,6 +1484,7 @@
 
                                 @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && $this->shouldRenderTrailingGroupedTableSummary($previousRecord))
                                     <table
+                                        role="listitem"
                                         @class([
                                             'fi-ta-table',
                                             'fi-ta-table-stacked-on-mobile' => $isStackedOnMobile,
