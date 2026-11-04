@@ -46,6 +46,9 @@
             x-ref="panel"
             x-transition:enter-start="fi-opacity-0"
             x-transition:leave-end="fi-opacity-0"
+            @if ($menu)
+                role="menu"
+            @endif
             @if ($attributes->has('wire:key'))
                 wire:ignore.self
                 wire:key="{{ $attributes->get('wire:key') }}.panel"
