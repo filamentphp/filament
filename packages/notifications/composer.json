@@ -1,6 +1,6 @@
 {
     "name": "filament/notifications",
-    "description": "Easily add beautiful notifications to any Livewire app.",
+    "description": "Send in-app, database, and broadcast notifications with Livewire.",
     "license": "MIT",
     "homepage": "https://github.com/filamentphp/filament",
     "support": {
