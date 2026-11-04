@@ -1288,7 +1288,6 @@
                                             x-init="$dispatch('collapsible-table-row-initialized')"
                                             x-on:collapse-all-table-rows.window="isCollapsed = true"
                                             x-on:expand-all-table-rows.window="isCollapsed = false"
-                                            x-bind:class="isCollapsed && 'fi-ta-record-collapsed'"
                                         @endif
                                         role="listitem"
                                         wire:key="{{ $this->getId() }}.table.records.{{ $recordKey }}"
@@ -1304,6 +1303,7 @@
                                             ...$getRecordClasses($record),
                                         ])
                                         x-bind:class="{
+                                            {{ $hasCollapsibleColumnsLayout ? '\'fi-ta-record-collapsed\': isCollapsed,' : '' }}
                                             {{ $group?->isCollapsible() ? '\'fi-collapsed\': isGroupCollapsed(' . \Illuminate\Support\Js::from($recordGroupTitle) . '),' : '' }}
                                             'fi-selected': @js($recordIsSelectable) && isRecordSelected(@js($recordKey)),
                                         }"
