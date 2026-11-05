@@ -4,6 +4,7 @@ namespace Filament\Tests\PHPStan;
 
 use Filament\Forms\Components\Concerns\CanLimitItemsCount;
 use Filament\Forms\Components\Select;
+use Filament\Support\Concerns\CanBeLazy;
 use Filament\Tables\Columns\Concerns\HasRowLoop;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\CanBeLazyLoaded as LivewireCanBeLazyLoaded;
@@ -15,6 +16,12 @@ use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Widgets\ChartWidget;
 use Filament\Widgets\ChartWidget\Concerns\HasFiltersForm;
 use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+use Filament\Widgets\Widget;
+
+class LegacyLazyWidget extends Widget
+{
+    use CanBeLazy;
+}
 
 class ItemCountSelect extends Select
 {

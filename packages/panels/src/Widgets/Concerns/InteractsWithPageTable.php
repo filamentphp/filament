@@ -56,7 +56,7 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
     #[Reactive] #[Locked]
     public ?Model $parentRecord = null;
 
-    protected HasTable $tablePage;
+    protected HasTable $cachedTablePageInstance;
 
     protected function getTablePage(): string
     {
@@ -73,8 +73,8 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
 
     protected function getTablePageInstance(): HasTable
     {
-        if (isset($this->tablePage)) {
-            return $this->tablePage;
+        if (isset($this->cachedTablePageInstance)) {
+            return $this->cachedTablePageInstance;
         }
 
         /** @var HasTable $page */
@@ -107,7 +107,7 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
 
         $page->bootedInteractsWithTable();
 
-        return $this->tablePage = $page;
+        return $this->cachedTablePageInstance = $page;
     }
 
     protected function getPageTableQuery(): Builder
