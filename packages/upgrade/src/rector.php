@@ -12,7 +12,6 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Table;
 use Filament\Upgrade\Rector;
 use Filament\Upgrade\Rector\AddTraitByTraitRector;
@@ -37,6 +36,8 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(
         RenameClassRector::class,
         [
+            'Filament\\Tables\\Filters\\Concerns\\HasSchema' => 'Filament\\Tables\\Filters\\Concerns\\HasForm',
+            'Filament\\Widgets\\ChartWidget\\Concerns\\HasFiltersSchema' => 'Filament\\Widgets\\ChartWidget\\Concerns\\HasFiltersForm',
             'Filament\\Forms\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Schemas\\Commands\\MakeComponentCommand',
             'Filament\\Pages\\Actions\\Action' => 'Filament\\Actions\\Action',
             'Filament\\Forms\\Components\\BelongsToManyCheckboxList' => 'Filament\\Forms\\Components\\CheckboxList',
@@ -318,7 +319,6 @@ return static function (RectorConfig $rectorConfig): void {
         new MethodCallRename(Component::class, 'getChildComponents', 'getDefaultChildComponents'),
         new MethodCallRename(Component::class, 'getChildComponentContainer', 'getChildSchema'),
         new MethodCallRename(Component::class, 'getChildComponentContainers', 'getChildSchemas'),
-        new MethodCallRename(BaseFilter::class, 'form', 'schema'),
         new MethodCallRename(Schema::class, 'schema', 'components'),
         new MethodCallRename(FilamentManager::class, 'getCurrentPanel', 'getCurrentOrDefaultPanel'),
         new MethodCallRename(Filament::class, 'getCurrentPanel', 'getCurrentOrDefaultPanel'),
