@@ -50,14 +50,14 @@ function configure(Panel $panel, ?EmailAuthentication $emailAuthentication, Cust
 
 namespace NamingConsistencyUpgrade;
 
+use Filament\Support\Concerns\CanBeLazyLoaded;
 use Closure;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Panel;
-use Filament\Support\Concerns\CanBeLazy;
 
 trait CustomLoading
 {
-    use \Filament\Support\Concerns\CanBeLazyLoaded;
+    use CanBeLazyLoaded;
 }
 
 class CustomPanel extends Panel {}
