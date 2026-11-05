@@ -510,7 +510,7 @@ public function panel(Panel $panel): Panel
 
 The multi-factor challenge that the login page presents is also available on its own, so that you can ask a signed-in user to verify a configured factor before they perform a sensitive action.
 
-The `MultiFactorChallenge` class builds the challenge for a user. Its schema components carry the validation rules that verify the code that the user enters.
+The `MultiFactorChallenge` class builds the challenge form for a user. Its components carry the validation rules that verify the code that the user enters.
 
 <Aside variant="info">
     The examples below assume that `$user` is the signed-in user and is an instance of `Authenticatable`. Your Livewire component must also be [set up to use schemas](../components/schema) and use the `RestrictsFileUploadsToSchemaComponents` trait described in the [security documentation](../advanced/security#restricting-livewire-file-uploads-to-schema-components).
@@ -528,29 +528,29 @@ $multiFactorChallenge = MultiFactorChallenge::make();
 abort_unless($multiFactorChallenge->hasEnabledProviders($user), 403);
 ```
 
-Always repeat this check immediately before validating the challenge. When no provider is enabled, `getSchemaComponents()` returns an empty schema, and validating an empty schema succeeds. Your application must treat that state as a failed challenge.
+Always repeat this check immediately before validating the challenge. When no provider is enabled, `getFormComponents()` returns no components, and validating an empty form succeeds. Your application must treat that state as a failed challenge.
 
 You can use `getEnabledProviders()` to retrieve all enabled provider instances, or `getFirstEnabledProvider()` to retrieve the first one. `getFirstEnabledProvider()` returns `null` when none are enabled.
 
-### Building the challenge schema
+### Building the challenge form
 
-Use `getSchemaComponents()` to get the provider picker and challenge fields for every enabled provider:
+Use `getFormComponents()` to get the provider picker and challenge fields for every enabled provider:
 
 ```php
 use Filament\Auth\MultiFactor\MultiFactorChallenge;
 
-$schema
-    ->components(MultiFactorChallenge::make()->getSchemaComponents($user))
+$form
+    ->components(MultiFactorChallenge::make()->getFormComponents($user))
     ->statePath('multiFactorData');
 ```
 
-When more than one provider is enabled, the generated provider picker controls which provider's fields are visible. If you need to place the picker and fields separately, use `getProviderPickerSchemaComponent()` and `getChallengeSchemaComponents()` instead. Both components must belong to the same root schema so that the picker can find the selected provider's fields.
+When more than one provider is enabled, the generated provider picker controls which provider's fields are visible. If you need to place the picker and fields separately, use `getProviderPickerFormComponent()` and `getChallengeFormComponents()` instead. Both components must belong to the same root schema so that the picker can find the selected provider's fields.
 
-Render and submit the schema like any other Livewire schema.
+Render and submit the form like any other Filament form.
 
 ### Running logic before the challenge
 
-Some providers need to do work before their challenge is presented, such as emailing the user a code. Use `beforeChallenge()` before filling and presenting the schema:
+Some providers need to do work before their challenge is presented, such as emailing the user a code. Use `beforeChallenge()` before filling and presenting the form:
 
 ```php
 $multiFactorChallenge->beforeChallenge($user);
@@ -574,7 +574,7 @@ The rate limiter is shared with the login page's challenge and is scoped to the 
 
 ### Validating the challenge
 
-Call `getState()` on the schema to validate the selected provider's fields. Immediately before doing so, check that the user still has an enabled provider and record a rate-limited attempt:
+Call `getState()` on the form to validate the selected provider's fields. Immediately before doing so, check that the user still has an enabled provider and record a rate-limited attempt:
 
 ```php
 abort_unless($multiFactorChallenge->hasEnabledProviders($user), 403);

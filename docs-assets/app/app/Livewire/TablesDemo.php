@@ -1362,7 +1362,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
         return $this->filtersTable($table)
             ->filters([
                 Filter::make('created_at')
-                    ->schema([
+                    ->form([
                         DatePicker::make('created_from'),
                         DatePicker::make('created_until'),
                     ]),
@@ -1390,7 +1390,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 SelectFilter::make('status'),
                 SelectFilter::make('author'),
                 Filter::make('created_at')
-                    ->schema([
+                    ->form([
                         DatePicker::make('created_from'),
                         DatePicker::make('created_until'),
                     ])
@@ -1407,7 +1407,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 SelectFilter::make('status'),
                 SelectFilter::make('author'),
                 Filter::make('created_at')
-                    ->schema([
+                    ->form([
                         DatePicker::make('created_from'),
                         DatePicker::make('created_until'),
                     ])
@@ -1424,7 +1424,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 SelectFilter::make('status'),
                 SelectFilter::make('author'),
                 Filter::make('created_at')
-                    ->schema([
+                    ->form([
                         DatePicker::make('created_from'),
                         DatePicker::make('created_until'),
                     ])

@@ -285,7 +285,7 @@ class Login extends SimplePage
 
                 return [
                     ...Arr::wrap($this->getMultiFactorProviderFormComponent()),
-                    ...$this->getMultiFactorChallenge()->getChallengeSchemaComponents($user),
+                    ...$this->getMultiFactorChallenge()->getChallengeFormComponents($user),
                 ];
             })
             ->statePath('data.multiFactor');
@@ -372,7 +372,7 @@ class Login extends SimplePage
             return null;
         }
 
-        return $this->getMultiFactorChallenge()->getProviderPickerSchemaComponent($user);
+        return $this->getMultiFactorChallenge()->getProviderPickerFormComponent($user);
     }
 
     #[Unexposed]
