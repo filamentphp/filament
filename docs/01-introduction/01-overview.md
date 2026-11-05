@@ -86,23 +86,3 @@ For more information about testing Filament applications, visit the [Testing doc
 Filament is a good fit for operational, data-rich applications where forms, tables, dashboards, and workflows benefit from shared components and conventions. You can use it for a single admin panel or a system with several panels serving different groups of users.
 
 You configure most built-in features in PHP. Familiarity with Laravel and Livewire is useful when extending those features or building custom components, while custom frontend behavior may also require JavaScript and CSS.
-
-## Considering alternatives
-
-Choose tools based on the kind of software you're building, your preferred UI architecture, and the parts of the application you want to implement yourself. Other projects in the Laravel ecosystem offer different approaches:
-
-### Building an admin panel with Vue.js and Inertia.js
-
-[Laravel Nova](https://nova.laravel.com) is an admin panel built with Vue.js and Inertia.js and maintained by the Laravel team. Consider it if you prefer to use those tools when building custom components for your admin panel.
-
-Purchasing Nova helps support the development of the Laravel framework.
-
-### Managing content with a CMS
-
-[Statamic](https://statamic.com) is a CMS built on Laravel. Consider it when you need a content management system rather than building your own content management features.
-
-### Writing interfaces directly in Blade
-
-[Flux](https://fluxui.dev) is the official Livewire UI kit, with pre-built and pre-styled Blade components. Consider it when you want to compose your interfaces directly in Blade and implement the application behavior yourself. You can also use [individual Filament components](../components) within an existing Blade application without adopting the panel builder.
-
-Flux is maintained by the same team that maintains Livewire and Alpine.js, and purchasing it helps support the development of these projects.
