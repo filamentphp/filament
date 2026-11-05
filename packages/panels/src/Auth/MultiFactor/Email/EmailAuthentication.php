@@ -40,7 +40,7 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
 
     protected string $codeNotification = VerifyEmailAuthentication::class;
 
-    protected ?Closure $generateCodesUsing = null;
+    protected ?Closure $generateCodeUsing = null;
 
     public static function make(): static
     {
@@ -129,17 +129,25 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
         $user->saveEmailAuthentication(true);
     }
 
-    public function generateCodesUsing(?Closure $callback): static
+    public function generateCodeUsing(?Closure $callback): static
     {
-        $this->generateCodesUsing = $callback;
+        $this->generateCodeUsing = $callback;
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `generateCodeUsing()` instead.
+     */
+    public function generateCodesUsing(?Closure $callback): static
+    {
+        return $this->generateCodeUsing($callback);
+    }
+
     public function generateCode(): string
     {
-        if ($this->generateCodesUsing) {
-            return ($this->generateCodesUsing)();
+        if ($this->generateCodeUsing) {
+            return ($this->generateCodeUsing)();
         }
 
         return str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);

@@ -1,6 +1,8 @@
 <?php
 
 use Composer\InstalledVersions;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
+use Filament\Panel;
 use Filament\Upgrade\Rector\MigrateLegacyConfigurationHooksRector;
 use Filament\Upgrade\Rector\RemoveExportActionCsvDelimiterRector;
 use Filament\Upgrade\Rector\RemoveObsoleteConcealmentRector;
@@ -27,8 +29,10 @@ use Filament\Upgrade\Rector\ReplaceLegacyPanelIntegrationRector;
 use Filament\Upgrade\Rector\ReplaceTypedChartWidgetsRector;
 use Filament\Upgrade\Rector\WidenAvatarProviderParameterTypeRector;
 use Rector\Config\RectorConfig;
+use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\Rector\String_\RenameStringRector;
+use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameProperty;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -42,6 +46,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->importNames();
 
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
+        'Filament\\Support\\Concerns\\CanBeLazy' => 'Filament\\Support\\Concerns\\CanBeLazyLoaded',
         'Filament\\Tables\\Filters\\Concerns\\HasSchema' => 'Filament\\Tables\\Filters\\Concerns\\HasForm',
         'Filament\\Widgets\\ChartWidget\\Concerns\\HasFiltersSchema' => 'Filament\\Widgets\\ChartWidget\\Concerns\\HasFiltersForm',
         'Filament\\Actions\\Exports\\Jobs\\ExportCompletion' => 'Filament\\Actions\\Exports\\Jobs\\CompleteExport',
@@ -192,4 +197,9 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(ReplaceLegacyPanelIntegrationRector::class);
     $rectorConfig->rule(ReplaceTypedChartWidgetsRector::class);
     $rectorConfig->rule(WidenAvatarProviderParameterTypeRector::class);
+
+    $rectorConfig->ruleWithConfiguration(RenameMethodRector::class, [
+        new MethodCallRename(Panel::class, 'getResetPasswordRoutePrefix', 'getPasswordResetRoutePrefix'),
+        new MethodCallRename(EmailAuthentication::class, 'generateCodesUsing', 'generateCodeUsing'),
+    ]);
 };

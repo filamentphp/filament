@@ -293,6 +293,19 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+### Customizing email code generation
+
+You can customize how each email code is generated using `generateCodeUsing()`. The callback receives no arguments and must return a string. Use a cryptographically secure random source and return a six-digit code to match the challenge input:
+
+```php
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
+
+EmailAuthentication::make()
+    ->generateCodeUsing(fn (): string => str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT));
+```
+
+Pass `null` to `generateCodeUsing()` to restore the default generator.
+
 ## Requiring multi-factor authentication
 
 By default, users are not required to set up multi-factor authentication. You can require users to configure it by passing `isRequired: true` as a parameter to the `multiFactorAuthentication()` method in the [configuration](../panel-configuration):

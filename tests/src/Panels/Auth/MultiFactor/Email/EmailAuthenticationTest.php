@@ -35,6 +35,26 @@ beforeEach(function (): void {
     Notification::fake();
 });
 
+it('configures and clears the code generator through either setter', function (string $method, string $otherMethod): void {
+    $emailAuthentication = EmailAuthentication::make();
+    $generatedCodeCount = 0;
+
+    expect($emailAuthentication->{$method}(callback: function (...$arguments) use (&$generatedCodeCount): string {
+        expect($arguments)->toBe([]);
+
+        return '01234' . ++$generatedCodeCount;
+    }))->toBe($emailAuthentication)
+        ->and($emailAuthentication->generateCode())->toBe('012341')
+        ->and($emailAuthentication->generateCode())->toBe('012342')
+        ->and($emailAuthentication->{$otherMethod}(callback: static fn (): string => '654321'))->toBe($emailAuthentication)
+        ->and($emailAuthentication->generateCode())->toBe('654321')
+        ->and($emailAuthentication->{$method}(callback: null))->toBe($emailAuthentication)
+        ->and($emailAuthentication->generateCode())->toMatch('/^[0-9]{6}$/');
+})->with([
+    ['generateCodeUsing', 'generateCodesUsing'],
+    ['generateCodesUsing', 'generateCodeUsing'],
+]);
+
 describe('authentication flow', function (): void {
     it('can render the challenge form after valid login credentials are successfully used', function (): void {
         /** @var EmailAuthentication $emailAuthentication */
@@ -45,7 +65,7 @@ describe('authentication flow', function (): void {
             ->create();
 
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        $emailAuthentication->generateCodesUsing(fn (): string => $code);
+        $emailAuthentication->generateCodeUsing(fn (): string => $code);
 
         $livewire = livewire(Login::class)
             ->fillForm([
