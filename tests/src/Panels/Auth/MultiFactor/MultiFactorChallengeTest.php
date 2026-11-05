@@ -154,7 +154,7 @@ describe('form components', function (): void {
         $provider = Mockery::mock(MultiFactorAuthenticationProvider::class);
         $provider->shouldReceive('getId')->andReturn('custom');
         $provider->shouldReceive('isEnabled')->with($user)->andReturnTrue();
-        $provider->shouldReceive('getChallengeSchemaComponents')->with($user)->andReturn([]);
+        $provider->shouldReceive('getChallengeFormComponents')->with($user)->andReturn([]);
 
         Filament::getCurrentPanel()->multiFactorAuthentication([$provider]);
 
@@ -167,7 +167,7 @@ describe('form components', function (): void {
 });
 
 describe('standalone challenge flow', function (): void {
-    it('blocks an invalid code and accepts a valid code outside `Login`', function (bool $shouldUseLegacyComponentMethods): void {
+    it('blocks an invalid code and accepts a valid code outside `Login`', function (): void {
         /** @var EmailAuthentication $emailAuthentication */
         $emailAuthentication = Filament::getMultiFactorAuthenticationProviders()[EmailAuthentication::make()->getId()];
         $emailAuthentication->generateCodesUsing(static fn (): string => '123456');
@@ -178,9 +178,7 @@ describe('standalone challenge flow', function (): void {
 
         $this->actingAs($user);
 
-        livewire(MultiFactorChallengeBrowserTest::class, [
-            'shouldUseLegacyComponentMethods' => $shouldUseLegacyComponentMethods,
-        ])
+        livewire(MultiFactorChallengeBrowserTest::class)
             ->assertSet('isVerified', false)
             ->fillForm([
                 $emailAuthentication->getId() => [
@@ -198,12 +196,9 @@ describe('standalone challenge flow', function (): void {
             ->call('verify')
             ->assertHasNoFormErrors(form: 'multiFactorChallengeForm')
             ->assertSet('isVerified', true);
-    })->with([
-        'Form methods' => false,
-        'deprecated Schema methods' => true,
-    ]);
+    });
 
-    it('runs the selected provider hook when switching providers across separate layout containers', function (bool $shouldUseLegacyComponentMethods): void {
+    it('runs the selected provider hook when switching providers across separate layout containers', function (): void {
         $user = User::factory()
             ->hasEmailAuthentication()
             ->hasAppAuthentication()
@@ -213,7 +208,6 @@ describe('standalone challenge flow', function (): void {
 
         livewire(MultiFactorChallengeBrowserTest::class, [
             'shouldSeparateChallengeFormComponents' => true,
-            'shouldUseLegacyComponentMethods' => $shouldUseLegacyComponentMethods,
         ])
             ->assertSchemaStateSet([
                 'provider' => EmailAuthentication::make()->getId(),
@@ -222,10 +216,7 @@ describe('standalone challenge flow', function (): void {
             ->set('data.provider', EmailAuthentication::make()->getId());
 
         Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
-    })->with([
-        'Form methods' => false,
-        'deprecated Schema methods' => true,
-    ]);
+    });
 
     it('fails closed when the user has no enabled providers', function (): void {
         $this->actingAs(User::factory()->create());

@@ -4,7 +4,7 @@ namespace Filament\Tests\Upgrade\Fixtures\DeprecatedNotificationAndChartNormaliz
 
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Widgets\ChartWidget;
-use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersForm;
 
 class LegacyNotifications extends Notifications
 {
@@ -13,7 +13,7 @@ class LegacyNotifications extends Notifications
 
 abstract class FiltersChart extends ChartWidget
 {
-    use HasFiltersSchema;
+    use HasFiltersForm;
 }
 
 abstract class LegacyChart extends FiltersChart
@@ -33,7 +33,7 @@ namespace Filament\Tests\Upgrade\Fixtures\DeprecatedNotificationAndChartNormaliz
 
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Widgets\ChartWidget;
-use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersForm;
 
 class LegacyNotifications extends Notifications
 {
@@ -42,7 +42,7 @@ class LegacyNotifications extends Notifications
 
 abstract class FiltersChart extends ChartWidget
 {
-    use HasFiltersSchema;
+    use HasFiltersForm;
 }
 
 abstract class LegacyChart extends FiltersChart

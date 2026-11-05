@@ -7,7 +7,7 @@ use Filament\Forms\Components\Concerns\HasFileAttachments;
 use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Forms\Components\RichEditor;
 use Filament\Tables\Filters\BaseFilter;
-use Filament\Tables\Filters\Concerns\HasSchema;
+use Filament\Tables\Filters\Concerns\HasForm;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
@@ -102,15 +102,15 @@ class TraitOverride extends Group
 
 class AdaptedVisibility extends Filter
 {
-    use HasSchema {
-        schema as protected;
+    use HasForm {
+        form as protected;
     }
 }
 
 class StandaloneConcerns
 {
     use HasFileAttachments;
-    use HasSchema;
+    use HasForm;
 }
 
 function overrides(InheritedAliasOverride $alias, ReplacementOverride $replacement, SchemaOverride $schema, EditorOverride $editor, TypeOverride $type, TraitOverride $group, AdaptedVisibility $visibility, StandaloneConcerns $standalone, SelectFilter | ReplacementOverride $union): void
@@ -222,7 +222,7 @@ use Filament\Forms\Components\Concerns\HasFileAttachments;
 use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Forms\Components\RichEditor;
 use Filament\Tables\Filters\BaseFilter;
-use Filament\Tables\Filters\Concerns\HasSchema;
+use Filament\Tables\Filters\Concerns\HasForm;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
@@ -317,15 +317,15 @@ class TraitOverride extends Group
 
 class AdaptedVisibility extends Filter
 {
-    use HasSchema {
-        schema as protected;
+    use HasForm {
+        form as protected;
     }
 }
 
 class StandaloneConcerns
 {
     use HasFileAttachments;
-    use HasSchema;
+    use HasForm;
 }
 
 function overrides(InheritedAliasOverride $alias, ReplacementOverride $replacement, SchemaOverride $schema, EditorOverride $editor, TypeOverride $type, TraitOverride $group, AdaptedVisibility $visibility, StandaloneConcerns $standalone, SelectFilter | ReplacementOverride $union): void
@@ -377,8 +377,8 @@ function upgraded(RichEditor $editor, Type $type, SelectFilter $filter, Group $g
 {
     $editor->getFileAttachmentUrlUsing(callback: null)->saveUploadedFileAttachmentUsing(callback: null);
     $type->titleAttribute(name: null);
-    $filter->schema(schema: null)->attribute(name: null)->getAttribute();
-    $filter->getSchemaComponents();
+    $filter->form(schema: null)->attribute(name: null)->getAttribute();
+    $filter->getFormSchema();
     $group->getDescriptionFromRecordUsing(callback: null);
 }
 

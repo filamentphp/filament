@@ -286,7 +286,7 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
     /**
      * @param  Authenticatable&HasEmailAuthentication  $user
      */
-    public function getChallengeSchemaComponents(Authenticatable $user): array
+    public function getChallengeFormComponents(Authenticatable $user): array
     {
         return [
             OneTimeCodeInput::make('code')

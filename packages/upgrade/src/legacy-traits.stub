@@ -1,0 +1,18 @@
+<?php
+
+// Upgrade-only bridges for the two renamed traits. These declarations
+// are scanned by PHPStan, never loaded into the application's runtime.
+
+namespace Filament\Tables\Filters\Concerns;
+
+trait HasSchema
+{
+    use HasForm;
+}
+
+namespace Filament\Widgets\ChartWidget\Concerns;
+
+trait HasFiltersSchema
+{
+    use HasFiltersForm;
+}

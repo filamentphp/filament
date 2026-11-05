@@ -79,3 +79,8 @@ namespace Filament\Schemas\Components\Tabs;
 
 /** @method $this indicator(string | int | float | \Closure | null $indicator) */
 class Tab {}
+
+namespace Filament\Tables\Filters;
+
+/** @method $this schema(array | \Closure | null $schema) */
+class BaseFilter {}

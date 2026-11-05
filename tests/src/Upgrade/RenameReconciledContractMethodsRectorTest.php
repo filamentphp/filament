@@ -32,6 +32,11 @@ class RenameReconciledContractMethodsRectorTest extends AbstractRectorTestCase
         $this->doTestFile(__DIR__ . '/Fixtures/ReconciledContractMethods/boundaries.php.inc');
     }
 
+    public function test_preserves_competing_chart_hooks_and_traits_shared_with_unrelated_classes(): void
+    {
+        $this->doTestFile(__DIR__ . '/Fixtures/ReconciledContractMethods/chart_boundaries.php.inc');
+    }
+
     public function test_preserves_behavior_when_a_descendant_has_a_competing_canonical_method(): void
     {
         $directory = sys_get_temp_dir() . '/filament-contract-collision-' . bin2hex(random_bytes(8));

@@ -28,18 +28,6 @@ trait HasForm
         return $this;
     }
 
-    /**
-     * @deprecated Use `form()` instead.
-     *
-     * @param  array<Component | Action | ActionGroup> | Closure | null  $schema
-     */
-    public function schema(array | Closure | null $schema): static
-    {
-        $this->form($schema);
-
-        return $this;
-    }
-
     public function modifyFormFieldUsing(?Closure $callback): static
     {
         $this->modifyFormFieldUsing = $callback;
@@ -79,27 +67,9 @@ trait HasForm
         return [$field];
     }
 
-    /**
-     * @deprecated Use `getFormSchema()` instead.
-     *
-     * @return array<Component | Action | ActionGroup>
-     */
-    public function getSchemaComponents(): array
-    {
-        return $this->getFormSchema();
-    }
-
     public function hasForm(): bool
     {
         return $this->evaluate($this->formSchema) !== null;
-    }
-
-    /**
-     * @deprecated Use `hasForm()` instead.
-     */
-    public function hasSchema(): bool
-    {
-        return $this->hasForm();
     }
 
     public function getFormField(): ?Field
@@ -113,13 +83,5 @@ trait HasForm
             ->getTableFiltersForm()
             ->getComponent($this->getName())
             ->getChildSchema();
-    }
-
-    /**
-     * @deprecated Use `getForm()` instead.
-     */
-    public function getSchema(): Schema
-    {
-        return $this->getForm();
     }
 }

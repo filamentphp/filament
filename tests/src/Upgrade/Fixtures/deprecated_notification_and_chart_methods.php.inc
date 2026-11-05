@@ -4,11 +4,11 @@ namespace Filament\Tests\Upgrade\Fixtures\DeprecatedNotificationAndChartMethods;
 
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Widgets\ChartWidget;
-use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersForm;
 
 abstract class FilteredChart extends ChartWidget
 {
-    use HasFiltersSchema;
+    use HasFiltersForm;
 
     public function restore(): void
     {
@@ -41,11 +41,11 @@ namespace Filament\Tests\Upgrade\Fixtures\DeprecatedNotificationAndChartMethods;
 
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Widgets\ChartWidget;
-use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersForm;
 
 abstract class FilteredChart extends ChartWidget
 {
-    use HasFiltersSchema;
+    use HasFiltersForm;
 
     public function restore(): void
     {

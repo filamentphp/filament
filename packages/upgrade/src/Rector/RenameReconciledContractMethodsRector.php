@@ -2,15 +2,14 @@
 
 namespace Filament\Upgrade\Rector;
 
-use Filament\Auth\MultiFactor\App\AppAuthentication;
-use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
 use Filament\Auth\MultiFactor\Email\Concerns\InteractsWithEmailAuthentication;
 use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
-use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Upgrade\Support\TraitConsumerResolver;
+use Filament\Widgets\ChartWidget;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersForm;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
@@ -33,7 +32,8 @@ class RenameReconciledContractMethodsRector extends AbstractRector
      * @var array<string, array{string, array<class-string>}>
      */
     private const METHODS = [
-        'getchallengeformcomponents' => ['getChallengeSchemaComponents', [MultiFactorAuthenticationProvider::class]],
+        'filtersschema' => ['filtersForm', [ChartWidget::class]],
+        'getfiltersschema' => ['getFiltersForm', [ChartWidget::class]],
         'toggleemailauthentication' => ['saveEmailAuthentication', [HasEmailAuthentication::class]],
         'getrecordattributestoarray' => ['recordAttributesToArray', [TranslatableContentDriver::class]],
         'shouldrollbackdatabasetransaction' => ['shouldRollBackDatabaseTransaction', [Halt::class, Cancel::class]],
@@ -43,9 +43,7 @@ class RenameReconciledContractMethodsRector extends AbstractRector
      * @var array<class-string>
      */
     private const CANONICAL_METHOD_OWNERS = [
-        MultiFactorAuthenticationProvider::class,
-        AppAuthentication::class,
-        EmailAuthentication::class,
+        HasFiltersForm::class,
         HasEmailAuthentication::class,
         InteractsWithEmailAuthentication::class,
         TranslatableContentDriver::class,

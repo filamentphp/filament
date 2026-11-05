@@ -24,12 +24,9 @@ class MultiFactorChallengeBrowserTest extends Page
 
     public bool $shouldSeparateChallengeFormComponents = false;
 
-    public bool $shouldUseLegacyComponentMethods = false;
-
-    public function mount(bool $shouldSeparateChallengeFormComponents = false, bool $shouldUseLegacyComponentMethods = false): void
+    public function mount(bool $shouldSeparateChallengeFormComponents = false): void
     {
         $this->shouldSeparateChallengeFormComponents = $shouldSeparateChallengeFormComponents;
-        $this->shouldUseLegacyComponentMethods = $shouldUseLegacyComponentMethods;
 
         $user = $this->getAuthenticatedUser();
         $multiFactorChallenge = MultiFactorChallenge::make();
@@ -49,20 +46,14 @@ class MultiFactorChallengeBrowserTest extends Page
         if ($this->shouldSeparateChallengeFormComponents) {
             return $schema
                 ->components([
-                    Group::make(Arr::wrap($this->shouldUseLegacyComponentMethods
-                        ? $multiFactorChallenge->getProviderPickerSchemaComponent($user)
-                        : $multiFactorChallenge->getProviderPickerFormComponent($user))),
-                    Group::make($this->shouldUseLegacyComponentMethods
-                        ? $multiFactorChallenge->getChallengeSchemaComponents($user)
-                        : $multiFactorChallenge->getChallengeFormComponents($user)),
+                    Group::make(Arr::wrap($multiFactorChallenge->getProviderPickerFormComponent($user))),
+                    Group::make($multiFactorChallenge->getChallengeFormComponents($user)),
                 ])
                 ->statePath('data');
         }
 
         return $schema
-            ->components($this->shouldUseLegacyComponentMethods
-                ? $multiFactorChallenge->getSchemaComponents($user)
-                : $multiFactorChallenge->getFormComponents($user))
+            ->components($multiFactorChallenge->getFormComponents($user))
             ->statePath('data');
     }
 

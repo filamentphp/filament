@@ -4,7 +4,7 @@ namespace Filament\Tests\Upgrade\Fixtures\DeprecatedNotificationAndChartManualBo
 
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Widgets\ChartWidget;
-use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersForm;
 
 class LegacyNotifications extends Notifications
 {
@@ -21,7 +21,7 @@ class CanonicalNotifications extends Notifications
 
 abstract class FiltersChart extends ChartWidget
 {
-    use HasFiltersSchema;
+    use HasFiltersForm;
 }
 
 abstract class LegacyChart extends FiltersChart
@@ -34,21 +34,21 @@ abstract class LegacyChart extends FiltersChart
 
 abstract class CanonicalChart extends ChartWidget
 {
-    use HasFiltersSchema;
+    use HasFiltersForm;
 
     public function resetFilters(): void {}
 }
 
 abstract class HiddenChart extends ChartWidget
 {
-    use HasFiltersSchema {
+    use HasFiltersForm {
         resetFilters as protected;
     }
 }
 
 class StandaloneFilters
 {
-    use HasFiltersSchema;
+    use HasFiltersForm;
 }
 
 class Unrelated
@@ -85,7 +85,7 @@ namespace Filament\Tests\Upgrade\Fixtures\DeprecatedNotificationAndChartManualBo
 
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Widgets\ChartWidget;
-use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersForm;
 
 class LegacyNotifications extends Notifications
 {
@@ -102,7 +102,7 @@ class CanonicalNotifications extends Notifications
 
 abstract class FiltersChart extends ChartWidget
 {
-    use HasFiltersSchema;
+    use HasFiltersForm;
 }
 
 abstract class LegacyChart extends FiltersChart
@@ -115,21 +115,21 @@ abstract class LegacyChart extends FiltersChart
 
 abstract class CanonicalChart extends ChartWidget
 {
-    use HasFiltersSchema;
+    use HasFiltersForm;
 
     public function resetFilters(): void {}
 }
 
 abstract class HiddenChart extends ChartWidget
 {
-    use HasFiltersSchema {
+    use HasFiltersForm {
         resetFilters as protected;
     }
 }
 
 class StandaloneFilters
 {
-    use HasFiltersSchema;
+    use HasFiltersForm;
 }
 
 class Unrelated

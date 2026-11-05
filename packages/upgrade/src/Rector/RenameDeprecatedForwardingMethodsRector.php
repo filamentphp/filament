@@ -12,6 +12,7 @@ use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Imports\Events\ImportChunkProcessed;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\ReplicateAction;
+use Filament\Auth\MultiFactor\MultiFactorChallenge;
 use Filament\Clusters\Cluster;
 use Filament\Commands\FileGenerators\Resources\Concerns\CanGenerateResourceTables;
 use Filament\Facades\Filament;
@@ -62,7 +63,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Filament\Widgets\ChartWidget;
-use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersForm;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
@@ -322,6 +323,11 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         ChartWidget::class => [
             'resetFiltersForm' => 'resetFilters',
         ],
+        MultiFactorChallenge::class => [
+            'getSchemaComponents' => 'getFormComponents',
+            'getProviderPickerSchemaComponent' => 'getProviderPickerFormComponent',
+            'getChallengeSchemaComponents' => 'getChallengeFormComponents',
+        ],
         ViewComponent::class => [
             'disableLabel' => 'hiddenLabel',
             'postfix' => 'suffix',
@@ -344,8 +350,10 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'hasQueryModification' => 'hasQueryModificationCallback',
         ],
         BaseFilter::class => [
-            'form' => 'schema',
-            'getFormSchema' => 'getSchemaComponents',
+            'schema' => 'form',
+            'getSchemaComponents' => 'getFormSchema',
+            'hasSchema' => 'hasForm',
+            'getSchema' => 'getForm',
         ],
         SelectFilter::class => [
             'column' => 'attribute',
@@ -508,10 +516,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                 return null;
             }
 
-            // Filter `form()` already used the canonical `$schema` parameter name.
-            $renamedArgument = (($componentClass === BaseFilter::class) && ($methodName === 'form'))
-                ? null
-                : (self::ARGUMENT_RENAMES[$methodName] ?? null);
+            $renamedArgument = self::ARGUMENT_RENAMES[$methodName] ?? null;
 
             if ($renamedArgument && (! $node->isFirstClassCallable())) {
                 foreach ($node->getArgs() as $argument) {
@@ -689,7 +694,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
                         'postfix' => HasAffixes::class,
                         'updatedtablesortdirection' => CanSortRecords::class,
                         'normalizetablefiltervaluesfromquerystring' => HasFilters::class,
-                        'resetfiltersform' => HasFiltersSchema::class,
+                        'resetfiltersform' => HasFiltersForm::class,
                         'gettableactions', 'outputtableactions', 'outputtablemethodbulkactions' => CanGenerateResourceTables::class,
                         default => HasLabel::class,
                     };

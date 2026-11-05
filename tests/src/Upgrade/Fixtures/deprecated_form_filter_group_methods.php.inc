@@ -114,11 +114,11 @@ function configure(MarkdownEditor $markdown, RichEditor $rich, Type $type, BaseF
     $rich->getFileAttachmentUrlUsing(null)->saveUploadedFileAttachmentUsing(null);
     $type->titleAttribute(name: null);
     $type->titleAttribute(name: 'headline');
-    $base->schema(schema: fn (): array => []);
-    $base->getSchemaComponents();
-    $filter?->schema(schema: null);
-    $filter?->getSchemaComponents();
-    $select->schema(schema: [])->attribute(name: fn (): string => 'published_status')->getAttribute();
+    $base->form(schema: fn (): array => []);
+    $base->getFormSchema();
+    $filter?->form(schema: null);
+    $filter?->getFormSchema();
+    $select->form(schema: [])->attribute(name: fn (): string => 'published_status')->getAttribute();
     $ternary->attribute(name: null);
     $ternary->getAttribute();
     $select->hasRelationship();
@@ -133,16 +133,16 @@ function configure(MarkdownEditor $markdown, RichEditor $rich, Type $type, BaseF
     $select->attribute(name: 'status');
     $markdown->getFileAttachmentUrlUsing(...$arguments);
     $type->titleAttribute(...$arguments);
-    $base->schema(...$arguments);
+    $base->form(...$arguments);
     $select->attribute(...$arguments);
     $group?->getDescriptionFromRecordUsing(...$arguments);
     $callback = $rich->saveUploadedFileAttachmentUsing(...);
     $callback = $type->titleAttribute(...);
-    $callback = $base->schema(...);
+    $callback = $base->form(...);
     $callback = $select->getAttribute(...);
     $callback = $group->getDescriptionFromRecordUsing(...);
     Action::make('edit')->schema(schema: []);
-    Filter::make('active')->schema(schema: []);
+    Filter::make('active')->form(schema: []);
     SelectFilter::make('status')->attribute(name: 'published_status');
     Group::make('status')->getDescriptionFromRecordUsing(callback: null);
 }
@@ -151,17 +151,17 @@ class CustomFilter extends SelectFilter
 {
     public function configureFilter(): void
     {
-        $this->schema(schema: []);
+        $this->form(schema: []);
         $this->attribute(name: null);
-        $this->getSchemaComponents();
+        $this->getFormSchema();
         $this->getAttribute();
     }
 }
 
 function inherited(CustomFilter $filter): void
 {
-    $filter->schema(schema: [])->attribute(name: null)->getAttribute();
-    $filter?->schema(schema: [])?->attribute(name: null)?->getAttribute();
+    $filter->form(schema: [])->attribute(name: null)->getAttribute();
+    $filter?->form(schema: [])?->attribute(name: null)?->getAttribute();
     $filter->getQualifiedRelatedKeyNameForRelationship(query: null);
     $filter->hasRelationship();
 }

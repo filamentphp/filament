@@ -101,7 +101,7 @@ function configure(Action $action, ?Action $nullableAction, Schema $schema, File
     $column->rowLoop(...['rowLoop' => null]);
     $icon->icons(icons: ['heroicon-o-check' => 'published']);
     $entry->placeholder(placeholder: 'No entries');
-    $filter->schema(schema: []);
+    $filter->form(schema: []);
     $action->schema(...['schema' => []]);
     $action->modalDescription(...['description' => 'Unpacked']);
     $callback = $action->successNotificationTitle(...);

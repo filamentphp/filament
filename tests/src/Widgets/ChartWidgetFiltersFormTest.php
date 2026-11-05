@@ -7,20 +7,12 @@ use Filament\Schemas\Schema;
 use Filament\Tests\TestCase;
 use Filament\Widgets\ChartWidget;
 use Filament\Widgets\ChartWidget\Concerns\HasFiltersForm;
-use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
 use Livewire\Livewire;
 
 uses(TestCase::class);
 
-dataset('chart filters forms', [
-    'canonical trait and configuration' => [TestChartWidgetWithFiltersForm::class],
-    'canonical trait and legacy configuration' => [TestChartWidgetWithLegacyFiltersSchema::class],
-    'legacy trait and configuration' => [TestLegacyChartWidgetWithFiltersSchema::class],
-    'legacy trait and canonical configuration' => [TestLegacyChartWidgetWithFiltersForm::class],
-]);
-
-it('initializes and renders filters once using either trait and configuration hook', function (string $widgetClass): void {
-    Livewire::test($widgetClass)
+it('initializes and renders filters once', function (): void {
+    Livewire::test(TestChartWidgetWithFiltersForm::class)
         ->assertSet('filters', ['year' => '2024'])
         ->assertSet('filterHydrations', 1)
         ->assertSeeHtml('id="filters.year"')
@@ -28,16 +20,15 @@ it('initializes and renders filters once using either trait and configuration ho
         ->call('resetFilters')
         ->assertSet('filters', ['year' => '2024'])
         ->assertSet('filterHydrations', 2);
-})->with('chart filters forms');
+});
 
-it('preserves the cached `filtersSchema` key, defaults and getter aliases', function (string $widgetClass): void {
-    $widget = Livewire::test($widgetClass, ['cacheFiltersForm' => true]);
+it('preserves the cached `filtersSchema` key and defaults', function (): void {
+    $widget = Livewire::test(TestChartWidgetWithFiltersForm::class, ['cacheFiltersForm' => true]);
     $instance = $widget->instance();
     $schema = $instance->getSchema('filtersSchema');
 
     expect($schema)
         ->toBe($instance->getFiltersForm())
-        ->toBe($instance->getFiltersSchema())
         ->and($schema->getKey())->toBe('filtersSchema')
         ->and($schema->getStatePath())->toBe('filters')
         ->and($schema->getColumns('lg'))->toBe(3)
@@ -51,28 +42,27 @@ it('preserves the cached `filtersSchema` key, defaults and getter aliases', func
         ->assertSet('filters', ['year' => '2024']);
 
     expect($widget->instance()->getFiltersForm()->getKey())->toBe('filtersSchema');
-})->with('chart filters forms');
+});
 
-it('preserves legacy and canonical getter overrides calling `parent::`', function (string $widgetClass): void {
-    $widget = Livewire::test($widgetClass)
+it('uses `getFiltersForm()` overrides calling `parent::`', function (): void {
+    $widget = Livewire::test(TestChartWidgetWithFiltersFormGetter::class)
         ->assertSet('filters', ['year' => '2024'])
         ->assertSeeHtml('id="filters.year"');
 
     expect($widget->instance()->getFiltersForm()->getColumns('lg'))->toBe(4)
         ->and($widget->instance()->getSchema('filtersSchema')->getColumns('lg'))->toBe(4);
-})->with([
-    'canonical' => [TestChartWidgetWithFiltersFormGetter::class],
-    'legacy' => [TestChartWidgetWithLegacyFiltersSchemaGetter::class],
-]);
+});
 
 it('does not expose filter configuration or getter methods to Livewire', function (string $method): void {
-    Livewire::test(TestLegacyChartWidgetWithFiltersSchema::class)
+    Livewire::test(TestChartWidgetWithFiltersForm::class)
         ->call($method)
         ->assertForbidden();
-})->with(['filtersForm', 'filtersSchema', 'getFiltersForm', 'getFiltersSchema']);
+})->with(['filtersForm', 'getFiltersForm']);
 
 abstract class TestChartWidgetFiltersFormBase extends ChartWidget
 {
+    use HasFiltersForm;
+
     public int $filterHydrations = 0;
 
     public function mount(bool $cacheFiltersForm = false): void
@@ -107,41 +97,7 @@ abstract class TestChartWidgetFiltersFormBase extends ChartWidget
     }
 }
 
-abstract class TestChartWidgetFiltersForm extends TestChartWidgetFiltersFormBase
-{
-    use HasFiltersForm;
-}
-
-class TestChartWidgetWithFiltersForm extends TestChartWidgetFiltersForm
-{
-    public function filtersForm(Schema $schema): Schema
-    {
-        return $this->configureFiltersForm(parent::filtersForm($schema));
-    }
-}
-
-class TestChartWidgetWithLegacyFiltersSchema extends TestChartWidgetFiltersForm
-{
-    public function filtersSchema(Schema $schema): Schema
-    {
-        return $this->configureFiltersForm(parent::filtersSchema($schema));
-    }
-}
-
-abstract class TestLegacyChartWidgetFiltersSchema extends TestChartWidgetFiltersFormBase
-{
-    use HasFiltersSchema;
-}
-
-class TestLegacyChartWidgetWithFiltersSchema extends TestLegacyChartWidgetFiltersSchema
-{
-    public function filtersSchema(Schema $schema): Schema
-    {
-        return $this->configureFiltersForm(parent::filtersSchema($schema));
-    }
-}
-
-class TestLegacyChartWidgetWithFiltersForm extends TestLegacyChartWidgetFiltersSchema
+class TestChartWidgetWithFiltersForm extends TestChartWidgetFiltersFormBase
 {
     public function filtersForm(Schema $schema): Schema
     {
@@ -154,13 +110,5 @@ class TestChartWidgetWithFiltersFormGetter extends TestChartWidgetWithFiltersFor
     public function getFiltersForm(): Schema
     {
         return parent::getFiltersForm()->columns(4);
-    }
-}
-
-class TestChartWidgetWithLegacyFiltersSchemaGetter extends TestLegacyChartWidgetWithFiltersSchema
-{
-    public function getFiltersSchema(): Schema
-    {
-        return parent::getFiltersSchema()->columns(4);
     }
 }

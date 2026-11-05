@@ -26,16 +26,6 @@ trait HasFiltersForm
     #[Unexposed]
     public function filtersForm(Schema $schema): Schema
     {
-        // Preserve existing `filtersSchema()` overrides, including `parent::` calls.
-        return $this->filtersSchema($schema);
-    }
-
-    /**
-     * @deprecated Use `filtersForm()` instead.
-     */
-    #[Unexposed]
-    public function filtersSchema(Schema $schema): Schema
-    {
         return $schema;
     }
 
@@ -68,15 +58,6 @@ trait HasFiltersForm
 
     #[Unexposed]
     public function getFiltersForm(): Schema
-    {
-        return $this->getFiltersSchema();
-    }
-
-    /**
-     * @deprecated Use `getFiltersForm()` instead.
-     */
-    #[Unexposed]
-    public function getFiltersSchema(): Schema
     {
         if ((! $this->isCachingSchemas) && $this->hasCachedSchema('filtersSchema')) {
             return $this->getSchema('filtersSchema');
@@ -125,15 +106,6 @@ trait HasFiltersForm
     {
         $this->filters = $this->deferredFilters;
         $this->cachedData = null;
-    }
-
-    /**
-     * @deprecated Use `resetFilters()` instead.
-     */
-    #[Exposed]
-    public function resetFiltersForm(): void
-    {
-        $this->resetFilters();
     }
 
     #[Exposed]

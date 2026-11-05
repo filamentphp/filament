@@ -85,14 +85,14 @@ use Illuminate\Database\Eloquent\Model;
 
 interface CustomProvider extends MultiFactorAuthenticationProvider
 {
-    public function getChallengeSchemaComponents(Authenticatable $user): array;
+    public function getChallengeFormComponents(Authenticatable $user): array;
 }
 
 class ParentProvider extends EmailAuthentication
 {
-    public function getChallengeSchemaComponents(Authenticatable $user): array
+    public function getChallengeFormComponents(Authenticatable $user): array
     {
-        return [...parent::getChallengeSchemaComponents($user), 'parent'];
+        return [...parent::getChallengeFormComponents($user), 'parent'];
     }
 }
 
@@ -100,14 +100,14 @@ class ChildProvider extends ParentProvider
 {
     public function inspect(Authenticatable $user): array
     {
-        return [...$this->getChallengeSchemaComponents($user), ...self::getChallengeSchemaComponents($user), ...static::getChallengeSchemaComponents($user)];
+        return [...$this->getChallengeFormComponents($user), ...self::getChallengeFormComponents($user), ...static::getChallengeFormComponents($user)];
     }
 
     public function inspectClassString(Authenticatable $user): array
     {
         $providerClass = ParentProvider::class;
 
-        return [...$providerClass::getChallengeSchemaComponents($user), ...EmailAuthentication::getChallengeSchemaComponents($user)];
+        return [...$providerClass::getChallengeFormComponents($user), ...EmailAuthentication::getChallengeFormComponents($user)];
     }
 }
 
@@ -134,8 +134,8 @@ class CustomHalt extends Halt
 
 function inspect(MultiFactorAuthenticationProvider $provider, ?ChildProvider $child, HasEmailAuthentication $user, TranslatableContentDriver $driver, Model $record, Authenticatable $authenticatable, Halt | Cancel $exception): void
 {
-    $provider->getChallengeSchemaComponents(user: $authenticatable);
-    $child?->getChallengeSchemaComponents($authenticatable);
+    $provider->getChallengeFormComponents(user: $authenticatable);
+    $child?->getChallengeFormComponents($authenticatable);
     $user->saveEmailAuthentication(condition: false);
     $driver->recordAttributesToArray(record: $record);
     $callback = $driver->recordAttributesToArray(...);

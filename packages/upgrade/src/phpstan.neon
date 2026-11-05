@@ -1,3 +1,5 @@
 parameters:
+    scanFiles:
+        - legacy-traits.stub
     stubFiles:
         - legacy-methods.stub

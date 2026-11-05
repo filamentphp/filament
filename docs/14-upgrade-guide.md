@@ -333,7 +333,6 @@ The script updates statically identifiable calls and declarations. PHP names bel
 
 | Owner | Previous name | New name |
 | --- | --- | --- |
-| `Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider` | `getChallengeFormComponents()` | `getChallengeSchemaComponents()` |
 | `Auth\MultiFactor\Email\Contracts\HasEmailAuthentication` | `toggleEmailAuthentication()` | `saveEmailAuthentication()` |
 | `Support\Contracts\TranslatableContentDriver` | `getRecordAttributesToArray()` | `recordAttributesToArray()` |
 | `Support\Exceptions\Halt`, `Cancel` | `shouldRollbackDatabaseTransaction()` and `$shouldRollbackDatabaseTransaction` | `shouldRollBackDatabaseTransaction()` and `$shouldRollBackDatabaseTransaction` |
@@ -458,7 +457,7 @@ The upgrade script handles the common uses of the APIs below. Use these tables t
 | Table `Column`, `Actions\Exports\ExportColumn`                       | `queriesRelationships()`, `getGetStateUsingCallback()`                                         | `hasRelationship()`, `getStateUsingCallback()`                                          |
 | Table `Summarizers\Summarizer`                                       | `hasQueryModification()`                                                                       | `hasQueryModificationCallback()`                                                        |
 | `Tables\Table`                                                       | `getInverseRelationship()`                                                                     | `getInverseRelationshipName()`                                                          |
-| Table `Filters\BaseFilter`                                           | `form()`, `getFormSchema()`                                                                    | `schema()`, `getSchemaComponents()`                                                     |
+| Table `Filters\BaseFilter`                                           | `schema()`, `getSchemaComponents()`, `hasSchema()`, `getSchema()`                              | `form()`, `getFormSchema()`, `hasForm()`, `getForm()`                                    |
 | Table `Filters\SelectFilter`                                         | `column()`, `getColumn()`                                                                      | `attribute()`, `getAttribute()`                                                         |
 | Table `Filters\SelectFilter`                                         | `queriesRelationships()`, `getRelationshipKey()`                                               | `hasRelationship()`, `getQualifiedRelatedKeyNameForRelationship()`                      |
 | Table `Grouping\Group`                                               | `getDescriptionUsing()`                                                                        | `getDescriptionFromRecordUsing()`                                                       |
@@ -482,7 +481,8 @@ The upgrade script handles the common uses of the APIs below. Use these tables t
 | Resource, table, relation-manager, and related-record page class generators | `getTableActions()`, `outputTableActions()`, `outputTableMethodBulkActions()` | `getTableRecordActions()`, `outputTableRecordActions()`, `outputTableBulkActions()` |
 | `Forms\Commands\FileGenerators\RichContentCustomBlockClassGenerator` | `configureToPreviewMethod()`                                                                   | `configureToPreviewHtmlMethod()`                                                        |
 | `Notifications\Livewire\Notifications`                               | `pullNotificationsFromSession()`                                                               | `pullNotifications()`                                                                   |
-| Chart widgets using `HasFiltersSchema`                               | `resetFiltersForm()`                                                                           | `resetFilters()`                                                                        |
+| Chart widgets using `HasFiltersForm`                                 | `filtersSchema()`, `getFiltersSchema()`, `resetFiltersForm()`                                   | `filtersForm()`, `getFiltersForm()`, `resetFilters()`                                    |
+| `Auth\MultiFactor\MultiFactorChallenge`                              | `getSchemaComponents()`, `getProviderPickerSchemaComponent()`, `getChallengeSchemaComponents()` | `getFormComponents()`, `getProviderPickerFormComponent()`, `getChallengeFormComponents()` |
 | `Widgets\StatsOverviewWidget`                                       | `getCards()`                                                                                   | `getStats()`                                                                            |
 | `Support` functions                                                  | `format_number()`, `format_money()`                                                            | `Illuminate\Support\Number::format()`, `Number::currency()` with adapters where needed  |
 | Livewire test assertions                                             | `assertFormFieldIsDisabled()`, `assertFormFieldIsEnabled()`, `assertFormFieldIsReadOnly()`     | `assertFormFieldDisabled()`, `assertFormFieldEnabled()`, `assertFormFieldReadOnly()`    |
@@ -557,6 +557,8 @@ Custom consumers of the support `HasBadge` trait should replace `indicator()` wi
 | `Tables\Actions\HeaderActionsPosition`                                                                     | `Tables\Enums\HeaderActionsPosition`                                                |
 | `Tables\Filters\QueryBuilder\Constraints\*`, including operators and traits                                | `QueryBuilder\Constraints\*`                                                        |
 | `Actions\Concerns\HasInfolist`                                                                             | `Actions\Concerns\HasSchema`, or remove a redundant trait use                       |
+| `Tables\Filters\Concerns\HasSchema`                                                                       | `Tables\Filters\Concerns\HasForm`                                                 |
+| `Widgets\ChartWidget\Concerns\HasFiltersSchema`                                                           | `Widgets\ChartWidget\Concerns\HasFiltersForm`                                     |
 | `Schemas\Concerns\RestrictsFileUploadsToSchemaComponents`                                                  | Remove redundant uses; see the upload restriction change above                      |
 | `Support\Components\Attributes\ExposedLivewireMethod`                                                      | `Support\Components\Attributes\Exposed` for method attributes                       |
 | `Widgets\BarChartWidget`                                                                                   | `Widgets\ChartWidget` with `getType()` returning `'bar'`                            |
