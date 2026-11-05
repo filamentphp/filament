@@ -136,14 +136,6 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
         return $this;
     }
 
-    /**
-     * @deprecated Use `generateCodeUsing()` instead.
-     */
-    public function generateCodesUsing(?Closure $callback): static
-    {
-        return $this->generateCodeUsing($callback);
-    }
-
     public function generateCode(): string
     {
         if ($this->generateCodeUsing) {

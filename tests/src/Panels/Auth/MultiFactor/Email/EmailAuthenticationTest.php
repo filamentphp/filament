@@ -35,25 +35,22 @@ beforeEach(function (): void {
     Notification::fake();
 });
 
-it('configures and clears the code generator through either setter', function (string $method, string $otherMethod): void {
+it('configures and clears the code generator using `generateCodeUsing()`', function (): void {
     $emailAuthentication = EmailAuthentication::make();
     $generatedCodeCount = 0;
 
-    expect($emailAuthentication->{$method}(callback: function (...$arguments) use (&$generatedCodeCount): string {
+    expect($emailAuthentication->generateCodeUsing(callback: function (...$arguments) use (&$generatedCodeCount): string {
         expect($arguments)->toBe([]);
 
         return '01234' . ++$generatedCodeCount;
     }))->toBe($emailAuthentication)
         ->and($emailAuthentication->generateCode())->toBe('012341')
         ->and($emailAuthentication->generateCode())->toBe('012342')
-        ->and($emailAuthentication->{$otherMethod}(callback: static fn (): string => '654321'))->toBe($emailAuthentication)
+        ->and($emailAuthentication->generateCodeUsing(callback: static fn (): string => '654321'))->toBe($emailAuthentication)
         ->and($emailAuthentication->generateCode())->toBe('654321')
-        ->and($emailAuthentication->{$method}(callback: null))->toBe($emailAuthentication)
+        ->and($emailAuthentication->generateCodeUsing(callback: null))->toBe($emailAuthentication)
         ->and($emailAuthentication->generateCode())->toMatch('/^[0-9]{6}$/');
-})->with([
-    ['generateCodeUsing', 'generateCodesUsing'],
-    ['generateCodesUsing', 'generateCodeUsing'],
-]);
+});
 
 describe('authentication flow', function (): void {
     it('can render the challenge form after valid login credentials are successfully used', function (): void {
@@ -108,7 +105,7 @@ describe('authentication flow', function (): void {
             ->create();
 
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        $emailAuthentication->generateCodesUsing(fn (): string => $code);
+        $emailAuthentication->generateCodeUsing(fn (): string => $code);
 
         livewire(Login::class)
             ->fillForm([
@@ -298,7 +295,7 @@ describe('failure cases', function (): void {
             ->create();
 
         $code = '123456';
-        $emailAuthentication->generateCodesUsing(static fn (): string => $code);
+        $emailAuthentication->generateCodeUsing(static fn (): string => $code);
         $emailAuthentication->sendCode($userToAuthenticate);
 
         $staleSessionData = session()->all();
@@ -319,7 +316,7 @@ describe('failure cases', function (): void {
             ->create();
 
         $issuedCodes = ['123456', '654321'];
-        $emailAuthentication->generateCodesUsing(function () use (&$issuedCodes): string {
+        $emailAuthentication->generateCodeUsing(function () use (&$issuedCodes): string {
             return array_shift($issuedCodes);
         });
 
@@ -347,9 +344,9 @@ describe('failure cases', function (): void {
             ->create();
 
         $olderEmailAuthentication = EmailAuthentication::make()
-            ->generateCodesUsing(static fn (): string => '123456');
+            ->generateCodeUsing(static fn (): string => '123456');
         $newerEmailAuthentication = EmailAuthentication::make()
-            ->generateCodesUsing(static fn (): string => '654321');
+            ->generateCodeUsing(static fn (): string => '654321');
         $newerCodeWasSent = null;
 
         $cacheStore->afterLockAcquired(function () use ($newerEmailAuthentication, $userToAuthenticate, &$newerCodeWasSent): void {
@@ -376,9 +373,9 @@ describe('failure cases', function (): void {
             ->create();
 
         $olderEmailAuthentication = EmailAuthentication::make()
-            ->generateCodesUsing(static fn (): string => '123456');
+            ->generateCodeUsing(static fn (): string => '123456');
         $newerEmailAuthentication = EmailAuthentication::make()
-            ->generateCodesUsing(static fn (): string => '654321');
+            ->generateCodeUsing(static fn (): string => '654321');
 
         expect($olderEmailAuthentication->sendCode($userToAuthenticate))->toBeTrue();
 
@@ -407,7 +404,7 @@ describe('failure cases', function (): void {
             ->hasEmailAuthentication()
             ->create();
 
-        $emailAuthentication->generateCodesUsing(static fn (): string => '123456');
+        $emailAuthentication->generateCodeUsing(static fn (): string => '123456');
 
         expect($emailAuthentication->sendCode($userToAuthenticate))->toBeTrue()
             ->and($emailAuthentication->verifyCode('123456', $userToAuthenticate))->toBeTrue()
@@ -420,7 +417,7 @@ describe('failure cases', function (): void {
         config()->set('cache.stores.failed-email-authentication-write', ['driver' => 'failed-email-authentication-write']);
 
         $emailAuthentication = EmailAuthentication::make()
-            ->generateCodesUsing(static fn (): string => '123456');
+            ->generateCodeUsing(static fn (): string => '123456');
 
         $userToAuthenticate = User::factory()
             ->hasEmailAuthentication()
@@ -437,7 +434,7 @@ describe('failure cases', function (): void {
         config()->set('cache.stores.failed-email-authentication-delete', ['driver' => 'failed-email-authentication-delete']);
 
         $emailAuthentication = EmailAuthentication::make()
-            ->generateCodesUsing(static fn (): string => '123456');
+            ->generateCodeUsing(static fn (): string => '123456');
 
         $userToAuthenticate = User::factory()
             ->hasEmailAuthentication()
@@ -456,7 +453,7 @@ describe('failure cases', function (): void {
 
         $issuedCodes = [];
 
-        $emailAuthentication->generateCodesUsing(function () use (&$issuedCodes): string {
+        $emailAuthentication->generateCodeUsing(function () use (&$issuedCodes): string {
             $code = str_pad((string) (count($issuedCodes) + 1), 6, '0', STR_PAD_LEFT);
 
             $issuedCodes[] = $code;
@@ -504,7 +501,7 @@ describe('failure cases', function (): void {
 
         $issuedCodes = [];
 
-        $emailAuthentication->generateCodesUsing(function () use (&$issuedCodes): string {
+        $emailAuthentication->generateCodeUsing(function () use (&$issuedCodes): string {
             $code = str_pad((string) (count($issuedCodes) + 1), 6, '0', STR_PAD_LEFT);
 
             $issuedCodes[] = $code;
@@ -554,7 +551,7 @@ describe('failure cases', function (): void {
             ->create();
 
         $code = '123456';
-        $emailAuthentication->generateCodesUsing(static fn (): string => $code);
+        $emailAuthentication->generateCodeUsing(static fn (): string => $code);
 
         $login = livewire(EmailAuthenticationLogin::class)
             ->call('setLegacyUserUndertakingMultiFactorAuthenticationForTesting', $userToAuthenticate->getAuthIdentifier())
@@ -655,7 +652,7 @@ describe('failure cases', function (): void {
 
         $issuedCodes = [];
 
-        $emailAuthentication->generateCodesUsing(function () use (&$issuedCodes): string {
+        $emailAuthentication->generateCodeUsing(function () use (&$issuedCodes): string {
             $code = str_pad((string) (count($issuedCodes) + 1), 6, '0', STR_PAD_LEFT);
 
             $issuedCodes[] = $code;
@@ -686,7 +683,7 @@ describe('failure cases', function (): void {
 
         /** @var EmailAuthentication $victimEmailAuthentication */
         $victimEmailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
-        $victimEmailAuthentication->generateCodesUsing(function () use (&$issuedCodes): string {
+        $victimEmailAuthentication->generateCodeUsing(function () use (&$issuedCodes): string {
             $code = str_pad((string) (count($issuedCodes) + 1), 6, '0', STR_PAD_LEFT);
 
             $issuedCodes[] = $code;
@@ -885,7 +882,7 @@ it('can throttle multi-factor challenge attempts per user', function (): void {
         ->create();
 
     $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-    $emailAuthentication->generateCodesUsing(fn (): string => $code);
+    $emailAuthentication->generateCodeUsing(fn (): string => $code);
 
     // Clear the IP-based rate limiter between attempts to isolate the
     // user-based rate limit (simulates an attacker rotating IPs).
@@ -940,7 +937,7 @@ it('can throttle multi-factor challenge attempts per user', function (): void {
         ->create();
 
     $secondCode = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-    $emailAuthentication->generateCodesUsing(fn (): string => $secondCode);
+    $emailAuthentication->generateCodeUsing(fn (): string => $secondCode);
 
     livewire(Login::class)
         ->fillForm([

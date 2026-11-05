@@ -12,6 +12,7 @@ use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Imports\Events\ImportChunkProcessed;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\ReplicateAction;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Auth\MultiFactor\MultiFactorChallenge;
 use Filament\Clusters\Cluster;
 use Filament\Commands\FileGenerators\Resources\Concerns\CanGenerateResourceTables;
@@ -181,8 +182,12 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
         Panel::class => [
             'passwordResetRequestRouteSlug' => 'requestPasswordResetRouteSlug',
             'passwordResetRouteSlug' => 'resetPasswordRouteSlug',
+            'getResetPasswordRoutePrefix' => 'getPasswordResetRoutePrefix',
             'databaseNotificationsPolling' => 'databaseNotificationsPollingInterval',
             'hasDarkModeForced' => 'isDarkModeForced',
+        ],
+        EmailAuthentication::class => [
+            'generateCodesUsing' => 'generateCodeUsing',
         ],
         FilamentManager::class => [
             'currentDomain' => 'setCurrentDomain',

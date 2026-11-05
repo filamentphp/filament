@@ -612,14 +612,6 @@ trait HasAuth
         return Str::start($this->passwordResetRoutePrefix, '/');
     }
 
-    /**
-     * @deprecated Use `getPasswordResetRoutePrefix()` instead.
-     */
-    public function getResetPasswordRoutePrefix(): string
-    {
-        return $this->getPasswordResetRoutePrefix();
-    }
-
     public function hasEmailChangeVerification(): bool
     {
         return (bool) $this->evaluate($this->hasEmailChangeVerification);

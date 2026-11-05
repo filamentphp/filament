@@ -38,7 +38,7 @@ describe('disabling authentication', function (): void {
             ->toBeTrue();
 
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        $emailAuthentication->generateCodesUsing(fn (): string => $code);
+        $emailAuthentication->generateCodeUsing(fn (): string => $code);
 
         livewire(EditProfile::class)
             ->callAction(
@@ -201,7 +201,7 @@ it('can throttle code verification attempts per user', function (): void {
     }
 
     $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-    $emailAuthentication->generateCodesUsing(fn (): string => $code);
+    $emailAuthentication->generateCodeUsing(fn (): string => $code);
 
     // Even with a valid code, the rate limit should block the attempt
     livewire(EditProfile::class)
@@ -223,7 +223,7 @@ it('cannot bypass code throttling with blank submissions and changing action arg
     $user = auth()->user();
 
     $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-    $emailAuthentication->generateCodesUsing(fn (): string => $code);
+    $emailAuthentication->generateCodeUsing(fn (): string => $code);
 
     foreach (range(1, 5) as $attempt) {
         livewire(EditProfile::class)

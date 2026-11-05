@@ -16,6 +16,14 @@ class CustomPanel extends Panel {}
 
 class CustomEmailAuthentication extends EmailAuthentication {}
 
+class OverriddenEmailAuthentication extends EmailAuthentication
+{
+    public function generateCodesUsing(?Closure $callback): static
+    {
+        return $this;
+    }
+}
+
 class Unrelated
 {
     public function getResetPasswordRoutePrefix(): string
@@ -35,6 +43,9 @@ function configure(Panel $panel, ?EmailAuthentication $emailAuthentication, Cust
     Panel::make()->passwordResetRoutePrefix('recovery')->getResetPasswordRoutePrefix();
     $emailAuthentication?->generateCodesUsing(callback: static fn (): string => '012345');
     EmailAuthentication::make()->generateCodesUsing(null)->generateCode();
+    $configuredProvider = EmailAuthentication::make()->generateCodesUsing(null);
+    $configuredProvider->generateCodesUsing(callback: null)->generateCodesUsing(null);
+    $codeCallback = $configuredProvider->generateCodesUsing(...);
     $customPanel->getResetPasswordRoutePrefix();
     $customEmailAuthentication->generateCodesUsing(null);
     $getPrefix = $panel->getResetPasswordRoutePrefix(...);
@@ -44,25 +55,34 @@ function configure(Panel $panel, ?EmailAuthentication $emailAuthentication, Cust
     Panel::configureUsing(static fn (Panel $configuredPanel) => $configuredPanel->getResetPasswordRoutePrefix());
     $unrelated->getResetPasswordRoutePrefix();
     $unrelated->generateCodesUsing(null);
+    (new OverriddenEmailAuthentication)->generateCodesUsing(null);
 }
 -----
 <?php
 
 namespace NamingConsistencyUpgrade;
 
+use Filament\Support\Concerns\CanBeLazyLoaded;
 use Closure;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Panel;
-use Filament\Support\Concerns\CanBeLazy;
 
 trait CustomLoading
 {
-    use \Filament\Support\Concerns\CanBeLazyLoaded;
+    use CanBeLazyLoaded;
 }
 
 class CustomPanel extends Panel {}
 
 class CustomEmailAuthentication extends EmailAuthentication {}
+
+class OverriddenEmailAuthentication extends EmailAuthentication
+{
+    public function generateCodesUsing(?Closure $callback): static
+    {
+        return $this;
+    }
+}
 
 class Unrelated
 {
@@ -83,6 +103,9 @@ function configure(Panel $panel, ?EmailAuthentication $emailAuthentication, Cust
     Panel::make()->passwordResetRoutePrefix('recovery')->getPasswordResetRoutePrefix();
     $emailAuthentication?->generateCodeUsing(callback: static fn (): string => '012345');
     EmailAuthentication::make()->generateCodeUsing(null)->generateCode();
+    $configuredProvider = EmailAuthentication::make()->generateCodeUsing(null);
+    $configuredProvider->generateCodeUsing(callback: null)->generateCodeUsing(null);
+    $codeCallback = $configuredProvider->generateCodeUsing(...);
     $customPanel->getPasswordResetRoutePrefix();
     $customEmailAuthentication->generateCodeUsing(null);
     $getPrefix = $panel->getPasswordResetRoutePrefix(...);
@@ -92,4 +115,5 @@ function configure(Panel $panel, ?EmailAuthentication $emailAuthentication, Cust
     Panel::configureUsing(static fn (Panel $configuredPanel) => $configuredPanel->getPasswordResetRoutePrefix());
     $unrelated->getResetPasswordRoutePrefix();
     $unrelated->generateCodesUsing(null);
+    (new OverriddenEmailAuthentication)->generateCodesUsing(null);
 }

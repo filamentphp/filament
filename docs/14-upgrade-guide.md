@@ -464,6 +464,8 @@ The upgrade script handles the common uses of the APIs below. Use these tables t
 | `Navigation\NavigationItem`                                          | `isActiveWhen()`, `isChildItemsActive()`                                                       | `activeWhen()`, `hasActiveChildItems()`                                                 |
 | `Clusters\Cluster`                                                   | `unshiftClusterBreadcrumbs()`                                                                  | `prependClusterBreadcrumbs()`                                                           |
 | `Panel`                                                              | `passwordResetRequestRouteSlug()`, `passwordResetRouteSlug()`                                  | `requestPasswordResetRouteSlug()`, `resetPasswordRouteSlug()`                           |
+| `Panel` | `getResetPasswordRoutePrefix()` | `getPasswordResetRoutePrefix()` |
+| `Auth\MultiFactor\Email\EmailAuthentication` | `generateCodesUsing()` | `generateCodeUsing()` |
 | `Panel`                                                              | `databaseNotificationsPolling()`                                                               | `databaseNotificationsPollingInterval()`                                                |
 | `Panel`, `FilamentManager`, `Facades\Filament`                       | `hasDarkModeForced()`                                                                          | `isDarkModeForced()`                                                                    |
 | `FilamentManager`, `Facades\Filament`                                | `currentDomain()`                                                                              | `setCurrentDomain()`                                                                    |
@@ -563,6 +565,7 @@ Custom consumers of the support `HasBadge` trait should replace `indicator()` wi
 | `Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\StatsOverviewWidgetStatChartComponent` | `Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\ChartComponent` |
 | `Forms\Components\Concerns\CanLimitItemsLength`                                                            | `Forms\Components\Concerns\CanLimitItemsCount`                                      |
 | `Tables\Columns\Concerns\HasRowLoopObject`                                                                 | `Tables\Columns\Concerns\HasRowLoop`                                                |
+| `Support\Concerns\CanBeLazy` | `Support\Concerns\CanBeLazyLoaded` |
 | `Tables\Table\Concerns\CanDeferLoading`                                                                    | `Tables\Table\Concerns\CanBeLazyLoaded`                                             |
 | `Tables\Concerns\CanDeferLoading`                                                                          | `Tables\Concerns\CanBeLazyLoaded`                                                   |
 | `Tables\Columns\Concerns\CanBeCopied`                                                                      | `Support\Concerns\CanBeCopied`                                                      |

@@ -84,3 +84,8 @@ namespace Filament\Tables\Filters;
 
 /** @method $this schema(array | \Closure | null $schema) */
 class BaseFilter {}
+
+namespace Filament\Auth\MultiFactor\Email;
+
+/** @method $this generateCodesUsing(?\Closure $callback) */
+class EmailAuthentication {}

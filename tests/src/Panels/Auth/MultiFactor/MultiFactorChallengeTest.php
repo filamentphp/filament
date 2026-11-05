@@ -170,7 +170,7 @@ describe('standalone challenge flow', function (): void {
     it('blocks an invalid code and accepts a valid code outside `Login`', function (): void {
         /** @var EmailAuthentication $emailAuthentication */
         $emailAuthentication = Filament::getMultiFactorAuthenticationProviders()[EmailAuthentication::make()->getId()];
-        $emailAuthentication->generateCodesUsing(static fn (): string => '123456');
+        $emailAuthentication->generateCodeUsing(static fn (): string => '123456');
 
         $user = User::factory()
             ->hasEmailAuthentication()

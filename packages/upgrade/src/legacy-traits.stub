@@ -1,7 +1,14 @@
 <?php
 
-// Upgrade-only bridges for the two renamed traits. These declarations
+// Upgrade-only bridges for renamed traits. These declarations
 // are scanned by PHPStan, never loaded into the application's runtime.
+
+namespace Filament\Support\Concerns;
+
+trait CanBeLazy
+{
+    use CanBeLazyLoaded;
+}
 
 namespace Filament\Tables\Filters\Concerns;
 

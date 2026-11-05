@@ -31,7 +31,7 @@ describe('setup flow', function (): void {
         $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        $emailAuthentication->generateCodesUsing(fn (): string => $code);
+        $emailAuthentication->generateCodeUsing(fn (): string => $code);
 
         livewire(EditProfile::class)
             ->mountAction(TestAction::make('setUpEmailAuthentication')
@@ -56,7 +56,7 @@ describe('setup flow', function (): void {
             ->toBeFalse();
 
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        $emailAuthentication->generateCodesUsing(fn (): string => $code);
+        $emailAuthentication->generateCodeUsing(fn (): string => $code);
 
         $livewire = livewire(EditProfile::class)
             ->mountAction(TestAction::make('setUpEmailAuthentication')
@@ -217,7 +217,7 @@ it('can throttle code verification attempts per user', function (): void {
     }
 
     $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-    $emailAuthentication->generateCodesUsing(fn (): string => $code);
+    $emailAuthentication->generateCodeUsing(fn (): string => $code);
 
     $livewire = livewire(EditProfile::class)
         ->mountAction(TestAction::make('setUpEmailAuthentication')
@@ -240,7 +240,7 @@ it('cannot bypass code throttling with blank submissions and changing action arg
     $user = auth()->user();
 
     $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-    $emailAuthentication->generateCodesUsing(fn (): string => $code);
+    $emailAuthentication->generateCodeUsing(fn (): string => $code);
 
     foreach (range(1, 5) as $attempt) {
         livewire(EditProfile::class)

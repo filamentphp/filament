@@ -12,19 +12,17 @@ it('configures distinct password reset endpoint slugs', function (): void {
         ->and($panel->resetPasswordRouteSlug(slug: '/choose-password'))->toBe($panel)
         ->and($panel->getRequestPasswordResetRouteSlug())->toBe('/send-link')
         ->and($panel->getResetPasswordRouteSlug())->toBe('/choose-password')
-        ->and($panel->getPasswordResetRoutePrefix())->toBe('/account-recovery')
-        ->and($panel->getResetPasswordRoutePrefix())->toBe('/account-recovery');
+        ->and($panel->getPasswordResetRoutePrefix())->toBe('/account-recovery');
 });
 
-it('normalizes password reset prefixes through both getters', function (?string $prefix, string $expected): void {
+it('normalizes password reset prefixes using `getPasswordResetRoutePrefix()`', function (?string $prefix, string $expected): void {
     $panel = Panel::make();
 
     if ($prefix !== null) {
         expect($panel->passwordResetRoutePrefix(prefix: $prefix))->toBe($panel);
     }
 
-    expect($panel->getPasswordResetRoutePrefix())->toBe($expected)
-        ->and($panel->getResetPasswordRoutePrefix())->toBe($expected);
+    expect($panel->getPasswordResetRoutePrefix())->toBe($expected);
 })->with([
     'default' => [null, '/password-reset'],
     'no slash' => ['account/recovery', '/account/recovery'],
