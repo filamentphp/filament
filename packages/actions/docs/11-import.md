@@ -852,10 +852,12 @@ use Illuminate\Queue\Middleware\WithoutOverlapping;
 public function getJobMiddleware(): array
 {
     return [
-        (new WithoutOverlapping("filament:imports:{$this->import->getKey()}"))->expireAfter(600),
+        (new WithoutOverlapping("filament:imports:{$this->import->getKey()}"))->releaseAfter(5)->expireAfter(600),
     ];
 }
 ```
+
+Chunks that cannot acquire the lock are released back to the queue with a five-second delay. These releases still count as job attempts. For long imports using the database queue, use an application migration to widen a tinyint `attempts` column to an unsigned integer. For SQS, ensure the source queue's redrive policy has a `maxReceiveCount` that allows for these additional deliveries.
 
 If you'd like to customize the middleware that is applied to jobs of a certain importer, you may override this method in your importer class. You can read more about job middleware in the [Laravel docs](https://laravel.com/docs/queues#job-middleware).
 
