@@ -33,6 +33,8 @@ interface HasTable
 
     public function getAllSelectableTableRecordsCount(): int;
 
+    public function isTableRecordSelectableByQuery(Model $record): bool;
+
     /**
      * @return array<string, mixed> | null
      */
