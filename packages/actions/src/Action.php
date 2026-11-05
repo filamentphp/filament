@@ -62,7 +62,7 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\CanBeBooted;
     use Concerns\CanBeDisabled;
     use Concerns\CanBeHidden;
-    use Concerns\CanBeLabeledFrom;
+    use Concerns\CanBeLabeledFromBreakpoint;
     use Concerns\CanBeMounted;
     use Concerns\CanBeOutlined;
     use Concerns\CanBeRateLimited;

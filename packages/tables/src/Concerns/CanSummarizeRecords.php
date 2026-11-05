@@ -131,7 +131,7 @@ trait CanSummarizeRecords
                 ? (string) str($columnName)->after('pivot.')->prepend('pivot_')
                 : 'pivot_' . $columnName;
             $isPivotColumn = $hasPivotColumns && collect($query->getQuery()->getColumns())
-                ->contains(fn (string $col): bool => str($col)->endsWith(" as {$pivotAlias}"));
+                ->contains(fn (string $column): bool => str($column)->endsWith(" as {$pivotAlias}"));
 
             // Use the pivot alias if this is a pivot column, otherwise qualify with the model's table
             $qualifiedAttribute = $isPivotColumn

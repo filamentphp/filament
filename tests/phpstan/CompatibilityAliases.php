@@ -2,6 +2,8 @@
 
 namespace Filament\Tests\PHPStan;
 
+use Filament\Actions\Action;
+use Filament\Actions\Concerns\CanBeLabeledFrom;
 use Filament\Forms\Components\Concerns\CanLimitItemsCount;
 use Filament\Forms\Components\Select;
 use Filament\Support\Concerns\CanBeLazy;
@@ -17,6 +19,11 @@ use Filament\Widgets\ChartWidget;
 use Filament\Widgets\ChartWidget\Concerns\HasFiltersForm;
 use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
 use Filament\Widgets\Widget;
+
+class LegacyResponsiveLabelAction extends Action
+{
+    use CanBeLabeledFrom;
+}
 
 class LegacyLazyWidget extends Widget
 {

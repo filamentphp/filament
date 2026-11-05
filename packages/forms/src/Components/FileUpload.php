@@ -66,7 +66,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
     protected bool | Closure $canEditSvgs = true;
 
-    protected bool | Closure $isSvgEditingConfirmed = false;
+    protected bool | Closure $shouldConfirmSvgEditing = false;
 
     protected bool | Closure $shouldAutomaticallyOpenImageEditorForAspectRatio = false;
 
@@ -480,7 +480,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
     public function confirmSvgEditing(bool | Closure $condition = true): static
     {
-        $this->isSvgEditingConfirmed = $condition;
+        $this->shouldConfirmSvgEditing = $condition;
 
         return $this;
     }
@@ -631,9 +631,17 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
         return (bool) $this->evaluate($this->canEditSvgs);
     }
 
+    public function shouldConfirmSvgEditing(): bool
+    {
+        return (bool) $this->evaluate($this->shouldConfirmSvgEditing);
+    }
+
+    /**
+     * @deprecated Use `shouldConfirmSvgEditing()` instead.
+     */
     public function isSvgEditingConfirmed(): bool
     {
-        return (bool) $this->evaluate($this->isSvgEditingConfirmed);
+        return $this->shouldConfirmSvgEditing();
     }
 
     public function shouldAutomaticallyOpenImageEditorForAspectRatio(): bool
@@ -944,7 +952,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                         isPasteable: <?= Js::from($this->isPasteable()) ?>,
                         isPreviewable: <?= Js::from($this->isPreviewable()) ?>,
                         isReorderable: <?= Js::from($this->isReorderable()) ?>,
-                        isSvgEditingConfirmed: <?= Js::from($this->isSvgEditingConfirmed()) ?>,
+                        isSvgEditingConfirmed: <?= Js::from($this->shouldConfirmSvgEditing()) ?>,
                         itemPanelAspectRatio: <?= Js::from($this->getItemPanelAspectRatio()) ?>,
                         loadingIndicatorPosition: <?= Js::from($this->getLoadingIndicatorPosition()) ?>,
                         locale: <?= Js::from(app()->getLocale()) ?>,

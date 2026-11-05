@@ -475,7 +475,7 @@ class RichContentFaker extends ContentFaker
             } else {
                 $provider = ($char === null)
                     ? $this->faker->randomElement($providers)
-                    : collect($providers)->first(fn (MentionProvider $registeredProvider): bool => $registeredProvider->getChar() === $char);
+                    : collect($providers)->first(fn (MentionProvider $registeredProvider): bool => $registeredProvider->getTriggerCharacter() === $char);
             }
         }
 
@@ -483,7 +483,7 @@ class RichContentFaker extends ContentFaker
             throw new LogicException('No matching mention provider is configured on the rich content attribute.');
         }
 
-        $char ??= $provider?->getChar() ?? '@';
+        $char ??= $provider?->getTriggerCharacter() ?? '@';
 
         if ($id === null) {
             $items ??= $provider->getSearchResults('');

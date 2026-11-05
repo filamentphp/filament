@@ -12,12 +12,12 @@ trait HasUserMenu
     /**
      * @var ?array<Action>
      */
-    protected ?array $userMenuItems = null;
+    protected ?array $cachedUserMenuItems = null;
 
     /**
      * @var array<int, Collection<string, Action>>
      */
-    protected array $userMenuItemGroupsAfterTheme = [];
+    protected array $cachedUserMenuItemGroupsAfterTheme = [];
 
     #[Unexposed]
     public function bootHasUserMenu(): void
@@ -41,7 +41,7 @@ trait HasUserMenu
     {
         $this->getUserMenuItems();
 
-        return $this->userMenuItemGroupsAfterTheme;
+        return $this->cachedUserMenuItemGroupsAfterTheme;
     }
 
     #[Unexposed]
@@ -55,8 +55,8 @@ trait HasUserMenu
      */
     protected function getUserMenuItems(): array
     {
-        if (isset($this->userMenuItems)) {
-            return $this->userMenuItems;
+        if (isset($this->cachedUserMenuItems)) {
+            return $this->cachedUserMenuItems;
         }
 
         $panel = Filament::getCurrentPanel();
@@ -78,7 +78,7 @@ trait HasUserMenu
 
         // Split the groups into the separate lists rendered after the theme switcher (visible items with a non-negative sort).
         if ($panel?->hasMultipleUserMenuItemGroups()) {
-            $this->userMenuItemGroupsAfterTheme = collect($groups)
+            $this->cachedUserMenuItemGroupsAfterTheme = collect($groups)
                 ->map(fn (array $group): Collection => collect($group)
                     ->filter(fn (Action $action): bool => $action->isVisible() && ($action->getSort() >= 0))
                     ->sortBy(fn (Action $action): int => $action->getSort()))
@@ -91,6 +91,6 @@ trait HasUserMenu
             return [];
         }
 
-        return $this->userMenuItems = $items;
+        return $this->cachedUserMenuItems = $items;
     }
 }
