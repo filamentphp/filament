@@ -7,9 +7,14 @@ use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\Concerns\HasRowLoop;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\CanBeLazyLoaded as LivewireCanBeLazyLoaded;
+use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\Filters\Concerns\HasSchema;
 use Filament\Tables\Table;
 use Filament\Tables\Table\Concerns\CanBeLazyLoaded;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Widgets\ChartWidget;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersForm;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
 
 class ItemCountSelect extends Select
 {
@@ -29,4 +34,29 @@ class LazyLoadedTable extends Table
 class LazyLoadedTableComponent extends PostsTable
 {
     use LivewireCanBeLazyLoaded;
+}
+
+class LegacyFormFilter extends BaseFilter
+{
+    use HasSchema;
+}
+
+class LegacyFilteredChart extends ChartWidget
+{
+    use HasFiltersSchema;
+
+    protected function getType(): string
+    {
+        return 'line';
+    }
+}
+
+class FormFilteredChart extends ChartWidget
+{
+    use HasFiltersForm;
+
+    protected function getType(): string
+    {
+        return 'line';
+    }
 }

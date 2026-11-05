@@ -2,9 +2,12 @@
 
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Enums\FiltersResetActionPosition;
+use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\Filters\Concerns\HasSchema;
 use Filament\Tables\Filters\Filter;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithCustomFiltersApplyAction;
@@ -46,6 +49,37 @@ describe('form component configuration', function (): void {
         expect($filter->getFormField())->toBeInstanceOf(Toggle::class);
     });
 
+    it('shares custom form configuration with legacy APIs', function (string $method): void {
+        $filter = Filter::make('custom');
+        $field = TextInput::make('value');
+
+        expect($filter->{$method}(schema: static fn (Filter $filter): array => ($filter->getName() === 'custom') ? [$field] : []))->toBe($filter)
+            ->and($filter->hasForm())->toBeTrue()
+            ->and($filter->hasSchema())->toBeTrue()
+            ->and($filter->getFormSchema())->toBe([$field])
+            ->and($filter->getSchemaComponents())->toBe([$field])
+            ->and($filter->getResetState())->toBe([]);
+
+        $filter->form(schema: []);
+
+        expect($filter->hasForm())->toBeTrue()
+            ->and($filter->getFormSchema())->toBe([]);
+
+        $filter->schema(schema: null)
+            ->modifyFormFieldUsing(static fn (Checkbox $field): Checkbox => $field->label('Modified'));
+
+        expect($filter->hasForm())->toBeFalse()
+            ->and($filter->hasSchema())->toBeFalse()
+            ->and($filter->getFormSchema()[0]->getLabel())->toBe('Modified')
+            ->and($filter->getResetState())->toBe(['isActive' => false]);
+
+        $legacyFilter = new class('legacy') extends BaseFilter
+        {
+            use HasSchema;
+        };
+
+        expect($legacyFilter->{$method}(schema: [$field])->getFormSchema())->toBe([$field]);
+    })->with(['form', 'schema']);
 });
 
 describe('filtering and resetting records', function (): void {

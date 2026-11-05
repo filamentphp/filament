@@ -32,7 +32,7 @@
         :heading="$heading"
         :collapsible="$isCollapsible"
     >
-        @if ($filters || method_exists($this, 'getFiltersSchema'))
+        @if ($filters || method_exists($this, 'getFiltersForm'))
             <x-slot name="afterHeader">
                 @if ($filters)
                     <x-filament::input.wrapper
@@ -54,7 +54,7 @@
                     </x-filament::input.wrapper>
                 @endif
 
-                @if (method_exists($this, 'getFiltersSchema'))
+                @if (method_exists($this, 'getFiltersForm'))
                     <x-filament::dropdown
                         :menu="false"
                         placement="bottom-end"
@@ -67,7 +67,7 @@
                         </x-slot>
 
                         <div class="fi-wi-chart-filter-content">
-                            {{ $this->getFiltersSchema() }}
+                            {{ $this->getFiltersForm() }}
 
                             @if (method_exists($this, 'hasDeferredFilters') && $this->hasDeferredFilters())
                                 <div
