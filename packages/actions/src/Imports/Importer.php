@@ -373,7 +373,7 @@ abstract class Importer
     public function getJobMiddleware(): array
     {
         return [
-            (new WithoutOverlapping("filament:imports:{$this->import->getKey()}"))->expireAfter(600),
+            (new WithoutOverlapping("filament:imports:{$this->import->getKey()}"))->releaseAfter(5)->expireAfter(600),
         ];
     }
 
