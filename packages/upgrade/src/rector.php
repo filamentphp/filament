@@ -4,10 +4,12 @@ use Composer\InstalledVersions;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Facades\Filament;
 use Filament\FilamentManager;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
+use Filament\Panel;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
@@ -36,6 +38,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(
         RenameClassRector::class,
         [
+            'Filament\\Support\\Concerns\\CanBeLazy' => 'Filament\\Support\\Concerns\\CanBeLazyLoaded',
             'Filament\\Tables\\Filters\\Concerns\\HasSchema' => 'Filament\\Tables\\Filters\\Concerns\\HasForm',
             'Filament\\Widgets\\ChartWidget\\Concerns\\HasFiltersSchema' => 'Filament\\Widgets\\ChartWidget\\Concerns\\HasFiltersForm',
             'Filament\\Forms\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Schemas\\Commands\\MakeComponentCommand',
@@ -313,6 +316,8 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->ruleWithConfiguration(RenameMethodRector::class, [
+        new MethodCallRename(Panel::class, 'getResetPasswordRoutePrefix', 'getPasswordResetRoutePrefix'),
+        new MethodCallRename(EmailAuthentication::class, 'generateCodesUsing', 'generateCodeUsing'),
         new MethodCallRename(Action::class, 'infolist', 'schema'),
         new MethodCallRename(Action::class, 'form', 'schema'),
         new MethodCallRename(Action::class, 'mutateFormDataUsing', 'mutateDataUsing'),
