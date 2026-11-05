@@ -142,25 +142,25 @@ describe('integration', function (): void {
         $record->attachTags(['Laravel', 'PHP']);
 
         livewire(SpatieTagsInputForm::class, ['record' => $record])
-            ->assertFormSet(function (array $state): array {
+            ->assertSchemaStateSet(function (array $state): array {
                 expect($state['tags'])->toBeArray();
                 expect($state['tags'])->toContain('Laravel');
                 expect($state['tags'])->toContain('PHP');
 
                 return [];
-            });
+            }, 'form');
     });
 
     it('loads empty state when record has no tags', function (): void {
         $record = Article::factory()->create();
 
         livewire(SpatieTagsInputForm::class, ['record' => $record])
-            ->assertFormSet(function (array $state): array {
+            ->assertSchemaStateSet(function (array $state): array {
                 expect($state['tags'])->toBeArray();
                 expect($state['tags'])->toBeEmpty();
 
                 return [];
-            });
+            }, 'form');
     });
 
     it('can save tags to the record', function (): void {
@@ -231,12 +231,12 @@ describe('integration', function (): void {
             'record' => $record,
             'tagType' => 'framework',
         ])
-            ->assertFormSet(function (array $state): array {
+            ->assertSchemaStateSet(function (array $state): array {
                 expect($state['tags'])->toContain('Laravel');
                 expect($state['tags'])->not->toContain('PHP');
 
                 return [];
-            });
+            }, 'form');
     });
 
     it('can save typed tags to the record', function (): void {

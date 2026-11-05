@@ -14,7 +14,7 @@ uses(TestCase::class);
 
 it('can render a form with a `Closure`-based `hint()`', function (): void {
     livewire(TestComponentWithFormWithTestFieldHint::class)
-        ->assertFormExists();
+        ->assertSchemaExists('form');
 });
 
 describe('hint icon tooltip', function (): void {

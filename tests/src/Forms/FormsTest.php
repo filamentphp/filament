@@ -16,13 +16,13 @@ uses(TestCase::class);
 describe('form and field existence', function (): void {
     it('has a form with the default name \'form\'', function (): void {
         livewire(TestComponentWithForm::class)
-            ->assertFormExists();
+            ->assertSchemaExists('form');
     });
 
     it('can have forms with non-default names', function (): void {
         livewire(TestComponentWithMultipleForms::class)
-            ->assertFormExists('fooForm')
-            ->assertFormExists('barForm');
+            ->assertSchemaExists('fooForm')
+            ->assertSchemaExists('barForm');
     });
 
     it('has fields', function (): void {
@@ -104,16 +104,16 @@ describe('field state', function (): void {
 describe('schema components', function (): void {
     it('has layout components', function (): void {
         livewire(TestComponentWithForm::class)
-            ->assertFormComponentExists('section')
-            ->assertFormComponentExists('section.nested.section')
-            ->assertFormComponentExists('section.nested.section', function (Section $section): bool {
+            ->assertSchemaComponentExists('section', 'form')
+            ->assertSchemaComponentExists('section.nested.section', 'form')
+            ->assertSchemaComponentExists('section.nested.section', 'form', function (Section $section): bool {
                 return $section->getHeading() === 'I am nested';
             });
     });
 
     it('does not have layout components', function (): void {
         livewire(TestComponentWithForm::class)
-            ->assertFormComponentDoesNotExist('no-such-section');
+            ->assertSchemaComponentDoesNotExist('no-such-section', 'form');
     });
 
     it('can have hidden schema components', function (): void {

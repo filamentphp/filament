@@ -838,17 +838,17 @@ describe('item schemas', function (): void {
         $undoRepeaterFake = Repeater::fake();
 
         livewire(TestComponentWithParentRepeaterItemIndex::class)
-            ->assertFormComponentExists('items.0.name', function (TextInput $field): bool {
+            ->assertSchemaComponentExists('items.0.name', 'form', function (TextInput $field): bool {
                 expect($field->getLabel())->toBe('Item 0');
 
                 return true;
             })
-            ->assertFormComponentExists('items.1.name', function (TextInput $field): bool {
+            ->assertSchemaComponentExists('items.1.name', 'form', function (TextInput $field): bool {
                 expect($field->getLabel())->toBe('Item 1');
 
                 return true;
             })
-            ->assertFormComponentExists('items.2.name', function (TextInput $field): bool {
+            ->assertSchemaComponentExists('items.2.name', 'form', function (TextInput $field): bool {
                 expect($field->getLabel())->toBe('Item 2');
 
                 return true;
@@ -1106,7 +1106,7 @@ describe('`distinct()` validation in nested builders', function (): void {
         livewire(TestComponentWithRepeaterAndBuilder::class)
             ->assertSuccessful()
             ->fillForm($data)
-            ->assertFormSet($data)
+            ->assertSchemaStateSet($data, 'form')
             ->call('save')
             ->assertHasFormErrors([
                 'repeater.0.bar' => ['The bar field has a duplicate value.'],
@@ -1145,7 +1145,7 @@ describe('`distinct()` validation in nested builders', function (): void {
         livewire(TestComponentWithRepeaterAndBuilder::class)
             ->assertSuccessful()
             ->fillForm($data)
-            ->assertFormSet($data)
+            ->assertSchemaStateSet($data, 'form')
             ->call('save')
             ->assertHasNoFormErrors();
 
@@ -1303,12 +1303,12 @@ describe('`disableOptionsWhenSelectedInSiblingRepeaterItems()`', function (): vo
                     ['letter' => TestLetterEnum::B],
                 ],
             ])
-            ->assertFormSet([
+            ->assertSchemaStateSet([
                 'alternatives' => [
                     ['letter' => TestLetterEnum::A],
                     ['letter' => TestLetterEnum::B],
                 ],
-            ]);
+            ], 'form');
 
         $undoRepeaterFake();
     });
@@ -1794,13 +1794,13 @@ describe('nested singular relationships', function (): void {
         $undoRepeaterFake = Repeater::fake();
 
         livewire(RepeaterWithNestedSingularRelationship::class, ['record' => $user])
-            ->assertFormSet(function (array $state): array {
+            ->assertSchemaStateSet(function (array $state): array {
                 expect($state['posts'])->toHaveCount(1);
                 expect($state['posts'][array_key_first($state['posts'])]['title'])->toBe('Existing Post');
                 expect($state['posts'][array_key_first($state['posts'])]['metadata']['seo_title'])->toBe('Existing SEO Title');
 
                 return [];
-            });
+            }, 'form');
 
         $undoRepeaterFake();
     });

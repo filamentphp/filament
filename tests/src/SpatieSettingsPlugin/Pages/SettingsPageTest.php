@@ -30,11 +30,11 @@ it('can render page', function (): void {
 
 it('can retrieve data', function (): void {
     livewire(ManageSiteSettings::class)
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'site_name' => 'My Site',
             'site_description' => 'A test site',
             'site_active' => true,
-        ]);
+        ], 'form');
 });
 
 it('can save', function (): void {

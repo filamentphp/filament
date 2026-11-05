@@ -111,8 +111,16 @@ function assertions(Testable $testable, ?Testable $nullable, array $arguments): 
     $testable->assertFormFieldVisible('title');
     $testable->assertActionHalted(actions: 'save');
     $testable->assertActionHalted();
-    $testable->assertTableActionHalted(actions: ['edit']);
-    $testable->assertTableBulkActionHalted(actions: 'delete');
+    Closure::bind(function (string|array $actions): static {
+        $actions = $this->parseNestedTableActions($actions);
+        $this->assertActionMounted($actions);
+        return $this;
+    }, $testable, 'Livewire\Features\SupportTesting\Testable')->__invoke(actions: ['edit']);
+    Closure::bind(function (string|array $actions): static {
+        $actions = $this->parseNestedTableBulkActions($actions);
+        $this->assertActionMounted($actions);
+        return $this;
+    }, $testable, 'Livewire\Features\SupportTesting\Testable')->__invoke(actions: 'delete');
     $testable->assertTableRecordActionsExistInOrder(names: ['edit', 'delete']);
     $testable->assertTableRecordActionsExistInOrder(...$arguments);
     $nullable?->assertTableRecordActionsExistInOrder(['edit', 'delete']);
@@ -132,10 +140,26 @@ function assertions(Testable $testable, ?Testable $nullable, array $arguments): 
     $testable->fillForm(['title' => 'Hello'])->assertFormFieldEnabled('title');
     $testable->mountAction('save')->assertActionHalted('save');
     $testable->callAction('save')->assertActionHalted('save');
-    $testable->mountTableAction('edit', 1)->assertTableActionHalted('edit');
-    $testable->callTableAction('edit', 1)->assertTableActionHalted('edit');
-    $testable->mountTableBulkAction('delete', [1])->assertTableBulkActionHalted('delete');
-    $testable->callTableBulkAction('delete', [1])->assertTableBulkActionHalted('delete');
+    Closure::bind(function (string|array $actions): static {
+        $actions = $this->parseNestedTableActions($actions);
+        $this->assertActionMounted($actions);
+        return $this;
+    }, $testable->mountTableAction('edit', 1), 'Livewire\Features\SupportTesting\Testable')->__invoke('edit');
+    Closure::bind(function (string|array $actions): static {
+        $actions = $this->parseNestedTableActions($actions);
+        $this->assertActionMounted($actions);
+        return $this;
+    }, $testable->callTableAction('edit', 1), 'Livewire\Features\SupportTesting\Testable')->__invoke('edit');
+    Closure::bind(function (string|array $actions): static {
+        $actions = $this->parseNestedTableBulkActions($actions);
+        $this->assertActionMounted($actions);
+        return $this;
+    }, $testable->mountTableBulkAction('delete', [1]), 'Livewire\Features\SupportTesting\Testable')->__invoke('delete');
+    Closure::bind(function (string|array $actions): static {
+        $actions = $this->parseNestedTableBulkActions($actions);
+        $this->assertActionMounted($actions);
+        return $this;
+    }, $testable->callTableBulkAction('delete', [1]), 'Livewire\Features\SupportTesting\Testable')->__invoke('delete');
     $testable->callFormComponentAction('title', 'save')->assertHasFormErrors();
     $testable->mountFormComponentAction('title', 'save')->fillForm(state: [])->assertSchemaStateSet(state: [])->assertHasNoFormErrors();
     $testable->callInfolistAction('title', 'save')->assertHasFormErrors();
@@ -144,8 +168,16 @@ function assertions(Testable $testable, ?Testable $nullable, array $arguments): 
     $testable->mountTableAction('edit', 1)->fillForm(state: [])->assertSchemaStateSet(state: [])->assertHasNoFormErrors();
     $testable->callTableBulkAction('edit', [1])->assertHasFormErrors();
     $testable->mountTableBulkAction('edit', [1])->fillForm(state: [])->assertSchemaStateSet(state: [])->assertHasNoFormErrors();
-    $testable->assertTableActionExists('replicate')->callTableAction('replicate', 1)->callMountedTableAction()->assertHasNoFormErrors();
-    $testable->mountTableAction('edit', 1)->assertTableActionMounted('edit')->fillForm(state: []);
+    Closure::bind(function (string|array $actions, ?Closure $checkActionUsing = null, $record = null): static {
+        $actions = $this->parseNestedTableActions($actions, $record);
+        $this->assertActionExists($actions, $checkActionUsing);
+        return $this;
+    }, $testable, 'Livewire\Features\SupportTesting\Testable')->__invoke('replicate')->callTableAction('replicate', 1)->callMountedTableAction()->assertHasNoFormErrors();
+    Closure::bind(function (string|array $actions): static {
+        $actions = $this->parseNestedTableActions($actions);
+        $this->assertActionMounted($actions);
+        return $this;
+    }, $testable->mountTableAction('edit', 1), 'Livewire\Features\SupportTesting\Testable')->__invoke('edit')->fillForm(state: []);
     $testable->selectTableRecords([1])->mountTableBulkAction('edit', [1])->assertHasNoFormErrors();
     $testable->assertActionExists('edit')->assertHasNoFormErrors();
     livewire('edit-post')->assertFormFieldVisible('title');
@@ -155,15 +187,23 @@ function assertions(Testable $testable, ?Testable $nullable, array $arguments): 
     $stored->assertFormFieldHidden('secret');
     $testable->assertFormFieldDisabled('title');
     $testable->assertActionHalted('save');
-    $testable->assertTableActionHalted('edit');
-    $testable->assertTableBulkActionHalted('delete');
+    Closure::bind(function (string|array $actions): static {
+        $actions = $this->parseNestedTableActions($actions);
+        $this->assertActionMounted($actions);
+        return $this;
+    }, $testable, 'Livewire\Features\SupportTesting\Testable')->__invoke('edit');
+    Closure::bind(function (string|array $actions): static {
+        $actions = $this->parseNestedTableBulkActions($actions);
+        $this->assertActionMounted($actions);
+        return $this;
+    }, $testable, 'Livewire\Features\SupportTesting\Testable')->__invoke('delete');
 }
 
 function factories(TestsForms $forms, TestsActions $actions, TestsTableActions $tableActions, TestsBulkActions $bulkActions): void
 {
     $forms->assertFormFieldVisible();
     $actions->assertActionHalted();
-    $tableActions->assertTableActionHalted();
+    $tableActions->assertTableActionHeld();
     $tableActions->assertTableRecordActionsExistInOrder();
-    $callback = $bulkActions->assertTableBulkActionHalted(...);
+    $callback = $bulkActions->assertTableBulkActionHeld(...);
 }

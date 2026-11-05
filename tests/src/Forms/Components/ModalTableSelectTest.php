@@ -200,7 +200,7 @@ describe('action modifier', function (): void {
         $user = User::factory()->create();
 
         livewire(ModalTableSelectWithBelongsToRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('team_id', function (ModalTableSelect $select): bool {
+            ->assertSchemaComponentExists('team_id', 'form', function (ModalTableSelect $select): bool {
                 $select->selectAction(static fn ($action) => $action->label('Choose'));
 
                 $action = $select->getSelectAction();
@@ -471,7 +471,7 @@ describe('option labels', function (): void {
         $user = User::factory()->create(['team_id' => $team->id]);
 
         livewire(ModalTableSelectWithBelongsToRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('team_id', function (ModalTableSelect $select) use ($team): bool {
+            ->assertSchemaComponentExists('team_id', 'form', function (ModalTableSelect $select) use ($team): bool {
                 expect($select->getOptionLabel())->toBe($team->name);
 
                 return true;
@@ -484,7 +484,7 @@ describe('option labels', function (): void {
         $user->teams()->attach($teams);
 
         livewire(ModalTableSelectWithBelongsToManyRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('teams', function (ModalTableSelect $select) use ($teams): bool {
+            ->assertSchemaComponentExists('teams', 'form', function (ModalTableSelect $select) use ($teams): bool {
                 $labels = $select->getOptionLabels();
 
                 expect($labels)->toHaveCount(2);
@@ -500,7 +500,7 @@ describe('option labels', function (): void {
         $posts = Post::factory()->count(2)->create(['author_id' => $user->id]);
 
         livewire(ModalTableSelectWithHasManyRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('posts', function (ModalTableSelect $select) use ($posts): bool {
+            ->assertSchemaComponentExists('posts', 'form', function (ModalTableSelect $select) use ($posts): bool {
                 $labels = $select->getOptionLabels();
 
                 expect($labels)->toHaveCount(2);
@@ -516,7 +516,7 @@ describe('option labels', function (): void {
         $user = User::factory()->create(['team_id' => $team->id]);
 
         livewire(ModalTableSelectWithCustomBelongsToLabel::class, ['record' => $user])
-            ->assertFormComponentExists('team_id', function (ModalTableSelect $select) use ($team): bool {
+            ->assertSchemaComponentExists('team_id', 'form', function (ModalTableSelect $select) use ($team): bool {
                 expect($select->getOptionLabel())->toBe("Team: {$team->name}");
 
                 return true;
@@ -529,7 +529,7 @@ describe('option labels', function (): void {
         $user->teams()->attach($teams);
 
         livewire(ModalTableSelectWithCustomBelongsToManyLabels::class, ['record' => $user])
-            ->assertFormComponentExists('teams', function (ModalTableSelect $select) use ($teams): bool {
+            ->assertSchemaComponentExists('teams', 'form', function (ModalTableSelect $select) use ($teams): bool {
                 $labels = $select->getOptionLabels();
 
                 expect($labels)->toHaveCount(2);
@@ -545,7 +545,7 @@ describe('option labels', function (): void {
         $posts = Post::factory()->count(2)->create(['author_id' => $user->id]);
 
         livewire(ModalTableSelectWithCustomHasManyLabels::class, ['record' => $user])
-            ->assertFormComponentExists('posts', function (ModalTableSelect $select) use ($posts): bool {
+            ->assertSchemaComponentExists('posts', 'form', function (ModalTableSelect $select) use ($posts): bool {
                 $labels = $select->getOptionLabels();
 
                 expect($labels)->toHaveCount(2);
@@ -560,7 +560,7 @@ describe('option labels', function (): void {
         $user = User::factory()->create(['team_id' => null]);
 
         livewire(ModalTableSelectWithBelongsToRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('team_id', function (ModalTableSelect $select): bool {
+            ->assertSchemaComponentExists('team_id', 'form', function (ModalTableSelect $select): bool {
                 expect($select->getOptionLabel(withDefault: false))->toBeNull();
 
                 return true;
@@ -571,7 +571,7 @@ describe('option labels', function (): void {
         $user = User::factory()->create();
 
         livewire(ModalTableSelectWithBelongsToManyRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('teams', function (ModalTableSelect $select): bool {
+            ->assertSchemaComponentExists('teams', 'form', function (ModalTableSelect $select): bool {
                 expect($select->getOptionLabels())->toBe([]);
 
                 return true;
@@ -657,7 +657,7 @@ describe('saving `BelongsTo` relationships', function (): void {
 
         livewire(ModalTableSelectWithBelongsToRelationship::class, ['record' => $user])
             ->fillForm(['team_id' => (string) $team->id])
-            ->assertFormComponentExists('team_id', function (ModalTableSelect $select) use ($team): bool {
+            ->assertSchemaComponentExists('team_id', 'form', function (ModalTableSelect $select) use ($team): bool {
                 expect($select->getContainer()->getState()['team_id'])->toBe($team->getKey());
 
                 return true;
@@ -701,7 +701,7 @@ describe('loading relationships', function (): void {
         $user = User::factory()->create(['team_id' => $teamA->id]);
 
         livewire(ModalTableSelectWithBelongsToRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('team_id', function (ModalTableSelect $component) use ($teamB): bool {
+            ->assertSchemaComponentExists('team_id', 'form', function (ModalTableSelect $component) use ($teamB): bool {
                 $component->state((string) $teamB->id);
                 $component->fillStateFromRelationship();
 
@@ -756,7 +756,7 @@ describe('loading relationships', function (): void {
         };
 
         livewire(ModalTableSelectWithBelongsToRelationshipAndModifyQuery::class, ['record' => $user])
-            ->assertFormComponentExists('team_id', function (ModalTableSelect $component) use ($teams): bool {
+            ->assertSchemaComponentExists('team_id', 'form', function (ModalTableSelect $component) use ($teams): bool {
                 $record = $component->getSelectedRecord();
                 expect($record?->id)->toBe($teams->first()->id);
 
@@ -777,7 +777,7 @@ describe('loading relationships', function (): void {
         };
 
         livewire(ModalTableSelectWithBelongsToManyRelationshipAndModifyQueryThatCounts::class, ['record' => $user])
-            ->assertFormComponentExists('teams', function (ModalTableSelect $component): bool {
+            ->assertSchemaComponentExists('teams', 'form', function (ModalTableSelect $component): bool {
                 $component->getOptionLabels();
 
                 return true;
@@ -801,7 +801,7 @@ describe('saving relationships', function (): void {
         };
 
         livewire(ModalTableSelectWithHasManyRelationshipAndModifyQuery::class, ['record' => $user])
-            ->assertFormComponentExists('posts', function (ModalTableSelect $component): bool {
+            ->assertSchemaComponentExists('posts', 'form', function (ModalTableSelect $component): bool {
                 $component->state([]);
                 $component->saveStateToRelationship();
 
@@ -817,7 +817,7 @@ describe('saving relationships', function (): void {
         $user = User::factory()->create(['team_id' => $teamA->id]);
 
         livewire(ModalTableSelectWithBelongsToRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('team_id', function (ModalTableSelect $component) use ($teamA, $teamB): bool {
+            ->assertSchemaComponentExists('team_id', 'form', function (ModalTableSelect $component) use ($teamA, $teamB): bool {
                 $component->getRecord()->wasRecentlyCreated = true;
                 $component->getRecord()->team_id = $teamA->id;
 
@@ -836,7 +836,7 @@ describe('saving relationships', function (): void {
         $posts = Post::factory()->count(2)->create(['author_id' => $user->id]);
 
         livewire(ModalTableSelectWithHasManyThroughRelationship::class, ['record' => $team])
-            ->assertFormComponentExists('posts', function (ModalTableSelect $component) use ($posts): bool {
+            ->assertSchemaComponentExists('posts', 'form', function (ModalTableSelect $component) use ($posts): bool {
                 $component->state([(string) $posts->first()->id]);
                 $component->saveStateToRelationship();
 
@@ -855,7 +855,7 @@ describe('saving relationships', function (): void {
         $user = User::factory()->create(['team_id' => $team->id]);
 
         livewire(ModalTableSelectWithBelongsToThroughRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('company', function (ModalTableSelect $component) use ($companyB): bool {
+            ->assertSchemaComponentExists('company', 'form', function (ModalTableSelect $component) use ($companyB): bool {
                 $component->state((string) $companyB->id);
                 $component->saveStateToRelationship();
 

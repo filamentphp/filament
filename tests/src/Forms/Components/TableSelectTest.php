@@ -205,7 +205,7 @@ describe('loading relationships', function (): void {
         $otherTeam = Team::factory()->create();
 
         livewire(TableSelectWithBelongsToRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('team_id', function (TableSelect $component) use ($otherTeam): bool {
+            ->assertSchemaComponentExists('team_id', 'form', function (TableSelect $component) use ($otherTeam): bool {
                 $component->state((string) $otherTeam->id);
                 $component->fillStateFromRelationship();
 
@@ -297,7 +297,7 @@ describe('saving relationships', function (): void {
 
         livewire(TableSelectWithBelongsToRelationship::class, ['record' => $user])
             ->fillForm(['team_id' => (string) $team->id])
-            ->assertFormComponentExists('team_id', function (TableSelect $component) use ($team): bool {
+            ->assertSchemaComponentExists('team_id', 'form', function (TableSelect $component) use ($team): bool {
                 $component->saveStateToRelationship();
 
                 expect($component->getRecord()->team_id)->toBe($team->id);
@@ -313,7 +313,7 @@ describe('saving relationships', function (): void {
         $user = User::factory()->create(['team_id' => $teamA->id]);
 
         livewire(TableSelectWithBelongsToRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('team_id', function (TableSelect $component) use ($teamA, $teamB): bool {
+            ->assertSchemaComponentExists('team_id', 'form', function (TableSelect $component) use ($teamA, $teamB): bool {
                 $component->getRecord()->wasRecentlyCreated = true;
                 $component->getRecord()->team_id = $teamA->id;
 
@@ -365,7 +365,7 @@ describe('saving relationships', function (): void {
         expect($loadedPostIds)->toHaveCount(2);
 
         livewire(TableSelectWithHasManyThroughRelationship::class, ['record' => $team])
-            ->assertFormComponentExists('posts', function (TableSelect $component) use ($posts): bool {
+            ->assertSchemaComponentExists('posts', 'form', function (TableSelect $component) use ($posts): bool {
                 $component->state([$posts->first()->id]);
                 $component->saveStateToRelationship();
 
@@ -386,7 +386,7 @@ describe('saving relationships', function (): void {
         expect($user->company?->id)->toBe($companyA->id);
 
         livewire(TableSelectWithBelongsToThroughRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('company', function (TableSelect $component) use ($companyB): bool {
+            ->assertSchemaComponentExists('company', 'form', function (TableSelect $component) use ($companyB): bool {
                 $component->state((string) $companyB->id);
                 $component->saveStateToRelationship();
 

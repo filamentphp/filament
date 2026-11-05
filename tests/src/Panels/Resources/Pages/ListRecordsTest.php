@@ -404,5 +404,5 @@ it('cannot access record for action after record no longer matches tab without `
         ->set('shouldExcludeTabQueryWhenResolvingRecord', false)
         ->set('activeTab', 'published')
         ->mountTableAction(DeleteAction::class, $post)
-        ->assertTableActionNotMounted(DeleteAction::class);
+        ->assertActionNotMounted(TestAction::make(DeleteAction::class)->table());
 });

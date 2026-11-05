@@ -93,7 +93,7 @@ describe('registering and calling actions', function (): void {
 
         livewire(Actions::class)
             ->callFormComponentAction('textInput', 'halt')
-            ->assertFormComponentActionHalted('textInput', 'halt');
+            ->assertActionHalted(TestAction::make('halt')->schemaComponent('textInput', 'form'));
     });
 
     it('can validate an action\'s data', function (): void {
@@ -124,8 +124,8 @@ describe('visibility and state', function (): void {
             ->assertActionDoesNotExist(TestAction::make('hidden')->schemaComponent('textInput'), fn (Action $action): bool => $action->isVisible());
 
         livewire(Actions::class)
-            ->assertFormComponentActionVisible('textInput', 'visible')
-            ->assertFormComponentActionHidden('textInput', 'hidden');
+            ->assertActionVisible(TestAction::make('visible')->schemaComponent('textInput', 'form'))
+            ->assertActionHidden(TestAction::make('hidden')->schemaComponent('textInput', 'form'));
     });
 
     it('can disable an action', function (): void {
@@ -134,8 +134,8 @@ describe('visibility and state', function (): void {
             ->assertActionEnabled(TestAction::make('enabled')->schemaComponent('textInput'));
 
         livewire(Actions::class)
-            ->assertFormComponentActionEnabled('textInput', 'enabled')
-            ->assertFormComponentActionDisabled('textInput', 'disabled');
+            ->assertActionEnabled(TestAction::make('enabled')->schemaComponent('textInput', 'form'))
+            ->assertActionDisabled(TestAction::make('disabled')->schemaComponent('textInput', 'form'));
     });
 
     it('can state whether a form component action exists', function (): void {
@@ -144,8 +144,8 @@ describe('visibility and state', function (): void {
             ->assertActionDoesNotExist(TestAction::make('doesNotExist')->schemaComponent('textInput'));
 
         livewire(Actions::class)
-            ->assertFormComponentActionExists('textInput', 'exists')
-            ->assertFormComponentActionDoesNotExist('textInput', 'doesNotExist');
+            ->assertActionExists(TestAction::make('exists')->schemaComponent('textInput', 'form'))
+            ->assertActionDoesNotExist(TestAction::make('doesNotExist')->schemaComponent('textInput', 'form'));
     });
 });
 
@@ -156,8 +156,8 @@ describe('properties', function (): void {
             ->assertActionDoesNotHaveIcon(TestAction::make('hasIcon')->schemaComponent('textInput'), Heroicon::Trash);
 
         livewire(Actions::class)
-            ->assertFormComponentActionHasIcon('textInput', 'hasIcon', Heroicon::PencilSquare)
-            ->assertFormComponentActionDoesNotHaveIcon('textInput', 'hasIcon', Heroicon::Trash);
+            ->assertActionHasIcon(TestAction::make('hasIcon')->schemaComponent('textInput', 'form'), Heroicon::PencilSquare)
+            ->assertActionDoesNotHaveIcon(TestAction::make('hasIcon')->schemaComponent('textInput', 'form'), Heroicon::Trash);
     });
 
     it('can have a label', function (): void {
@@ -166,8 +166,8 @@ describe('properties', function (): void {
             ->assertActionDoesNotHaveLabel(TestAction::make('hasLabel')->schemaComponent('textInput'), 'My Other Action');
 
         livewire(Actions::class)
-            ->assertFormComponentActionHasLabel('textInput', 'hasLabel', 'My Action')
-            ->assertFormComponentActionDoesNotHaveLabel('textInput', 'hasLabel', 'My Other Action');
+            ->assertActionHasLabel(TestAction::make('hasLabel')->schemaComponent('textInput', 'form'), 'My Action')
+            ->assertActionDoesNotHaveLabel(TestAction::make('hasLabel')->schemaComponent('textInput', 'form'), 'My Other Action');
     });
 
     it('can have a color', function (): void {
@@ -176,8 +176,8 @@ describe('properties', function (): void {
             ->assertActionDoesNotHaveColor(TestAction::make('hasColor')->schemaComponent('textInput'), 'gray');
 
         livewire(Actions::class)
-            ->assertFormComponentActionHasColor('textInput', 'hasColor', 'primary')
-            ->assertFormComponentActionDoesNotHaveColor('textInput', 'hasColor', 'gray');
+            ->assertActionHasColor(TestAction::make('hasColor')->schemaComponent('textInput', 'form'), 'primary')
+            ->assertActionDoesNotHaveColor(TestAction::make('hasColor')->schemaComponent('textInput', 'form'), 'gray');
     });
 
     it('can have a URL', function (): void {
@@ -186,8 +186,8 @@ describe('properties', function (): void {
             ->assertActionDoesNotHaveUrl(TestAction::make('url')->schemaComponent('textInput'), 'https://google.com');
 
         livewire(Actions::class)
-            ->assertFormComponentActionHasUrl('textInput', 'url', 'https://filamentphp.com')
-            ->assertFormComponentActionDoesNotHaveUrl('textInput', 'url', 'https://google.com');
+            ->assertActionHasUrl(TestAction::make('url')->schemaComponent('textInput', 'form'), 'https://filamentphp.com')
+            ->assertActionDoesNotHaveUrl(TestAction::make('url')->schemaComponent('textInput', 'form'), 'https://google.com');
     });
 
     it('can open a URL in a new tab', function (): void {
@@ -196,8 +196,8 @@ describe('properties', function (): void {
             ->assertActionShouldNotOpenUrlInNewTab(TestAction::make('urlNotInNewTab')->schemaComponent('textInput'));
 
         livewire(Actions::class)
-            ->assertFormComponentActionShouldOpenUrlInNewTab('textInput', 'urlInNewTab')
-            ->assertFormComponentActionShouldNotOpenUrlInNewTab('textInput', 'urlNotInNewTab');
+            ->assertActionShouldOpenUrlInNewTab(TestAction::make('urlInNewTab')->schemaComponent('textInput', 'form'))
+            ->assertActionShouldNotOpenUrlInNewTab(TestAction::make('urlNotInNewTab')->schemaComponent('textInput', 'form'));
     });
 });
 

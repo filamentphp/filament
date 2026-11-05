@@ -41,9 +41,9 @@ it('can set sibling state via `__invoke()`', function (): void {
         ->fillForm([
             'source' => 'hello',
         ])
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'target' => 'hello',
-        ]);
+        ], 'form');
 });
 
 it('can set state with a `Closure` value', function (): void {
@@ -55,9 +55,9 @@ it('can set state with a `Closure` value', function (): void {
         ->fillForm([
             'source' => 'world',
         ])
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'target' => 'WORLD',
-        ]);
+        ], 'form');
 });
 
 it('returns the state value from `__invoke()`', function (): void {
@@ -70,10 +70,10 @@ it('returns the state value from `__invoke()`', function (): void {
         ->fillForm([
             'source' => 'test',
         ])
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'target' => 'test',
             'returned' => 'test',
-        ]);
+        ], 'form');
 });
 
 it('clears cached default child schemas when setting a path without a component', function (): void {

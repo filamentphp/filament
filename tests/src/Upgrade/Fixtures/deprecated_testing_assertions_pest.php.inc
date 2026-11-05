@@ -51,5 +51,9 @@ function assertions(): void
     testComponent('edit-post')->callAction('save')->assertActionHalted(actions: 'save');
     testComponent('edit-post')->assertTableRecordActionsExistInOrder(names: ['edit', 'delete']);
     $testable = \Pest\Livewire\livewire('edit-post');
-    $callback = $testable->assertTableActionHalted(...);
+    $callback = (static fn(\Closure $assertion) => static fn(...$arguments) => $assertion->__invoke(...$arguments))(\Closure::bind(function (string|array $actions): static {
+        $actions = $this->parseNestedTableActions($actions);
+        $this->assertActionMounted($actions);
+        return $this;
+    }, $testable, 'Livewire\Features\SupportTesting\Testable'));
 }

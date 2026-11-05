@@ -72,15 +72,6 @@ class TestsForms
         };
     }
 
-    public function assertFormSet(): Closure
-    {
-        return function (array | Closure $state, string $form = 'form'): static {
-            $this->assertSchemaStateSet($state, $form);
-
-            return $this;
-        };
-    }
-
     public function assertHasFormErrors(): Closure
     {
         return function (array $keys = [], ?string $form = null): static {
@@ -146,38 +137,6 @@ class TestsForms
                     })
                     ->all(),
             );
-
-            return $this;
-        };
-    }
-
-    public function assertFormExists(): Closure
-    {
-        return function (string $name = 'form'): static {
-            $this->assertSchemaExists($name);
-
-            return $this;
-        };
-    }
-
-    public function assertFormComponentExists(): Closure
-    {
-        return function (string $componentKey, string | Closure $form = 'form', ?Closure $checkComponentUsing = null): static {
-            if ($form instanceof Closure) {
-                $checkComponentUsing = $form;
-                $form = 'form';
-            }
-
-            $this->assertSchemaComponentExists($componentKey, $form, $checkComponentUsing);
-
-            return $this;
-        };
-    }
-
-    public function assertFormComponentDoesNotExist(): Closure
-    {
-        return function (string $componentKey, string $form = 'form'): static {
-            $this->assertSchemaComponentDoesNotExist($componentKey, $form);
 
             return $this;
         };

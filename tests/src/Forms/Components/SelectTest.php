@@ -611,7 +611,7 @@ describe('option labels', function (): void {
     it('can get `getOptionLabel()` from flat options', function (): void {
         livewire(TestSelectWithFlatOptions::class)
             ->fillForm(['category' => 'electronics'])
-            ->assertFormComponentExists('category', function (Select $select): bool {
+            ->assertSchemaComponentExists('category', 'form', function (Select $select): bool {
                 expect($select->getOptionLabel())->toBe('Electronics');
 
                 return true;
@@ -621,7 +621,7 @@ describe('option labels', function (): void {
     it('can get `getOptionLabel()` from grouped options', function (): void {
         livewire(TestSelectWithGroupedOptions::class)
             ->fillForm(['product' => 'laptop'])
-            ->assertFormComponentExists('product', function (Select $select): bool {
+            ->assertSchemaComponentExists('product', 'form', function (Select $select): bool {
                 expect($select->getOptionLabel())->toBe('Laptop');
 
                 return true;
@@ -631,7 +631,7 @@ describe('option labels', function (): void {
     it('returns state as default when option not found in `getOptionLabel()`', function (): void {
         livewire(TestSelectWithFlatOptions::class)
             ->fillForm(['category' => 'unknown'])
-            ->assertFormComponentExists('category', function (Select $select): bool {
+            ->assertSchemaComponentExists('category', 'form', function (Select $select): bool {
                 expect($select->getOptionLabel())->toBe('unknown');
 
                 return true;
@@ -641,7 +641,7 @@ describe('option labels', function (): void {
     it('returns `null` when option not found and `withDefault` is `false` in `getOptionLabel()`', function (): void {
         livewire(TestSelectWithFlatOptions::class)
             ->fillForm(['category' => 'unknown'])
-            ->assertFormComponentExists('category', function (Select $select): bool {
+            ->assertSchemaComponentExists('category', 'form', function (Select $select): bool {
                 expect($select->getOptionLabel(withDefault: false))->toBeNull();
 
                 return true;
@@ -651,7 +651,7 @@ describe('option labels', function (): void {
     it('can get `getOptionLabel()` using custom `getOptionLabelUsing()` closure', function (): void {
         livewire(TestSelectWithCustomOptionLabel::class)
             ->fillForm(['category' => 'electronics'])
-            ->assertFormComponentExists('category', function (Select $select): bool {
+            ->assertSchemaComponentExists('category', 'form', function (Select $select): bool {
                 expect($select->getOptionLabel())->toBe('ELECTRONICS');
 
                 return true;
@@ -661,7 +661,7 @@ describe('option labels', function (): void {
     it('can get `getOptionLabels()` from flat options for multiple select', function (): void {
         livewire(TestMultipleSelectWithFlatOptions::class)
             ->fillForm(['categories' => ['electronics', 'books']])
-            ->assertFormComponentExists('categories', function (Select $select): bool {
+            ->assertSchemaComponentExists('categories', 'form', function (Select $select): bool {
                 expect($select->getOptionLabels())->toBe([
                     'electronics' => 'Electronics',
                     'books' => 'Books',
@@ -674,7 +674,7 @@ describe('option labels', function (): void {
     it('can get `getOptionLabels()` from grouped options for multiple select', function (): void {
         livewire(TestMultipleSelectWithGroupedOptions::class)
             ->fillForm(['products' => ['laptop', 'shirt']])
-            ->assertFormComponentExists('products', function (Select $select): bool {
+            ->assertSchemaComponentExists('products', 'form', function (Select $select): bool {
                 expect($select->getOptionLabels())->toBe([
                     'laptop' => 'Laptop',
                     'shirt' => 'Shirt',
@@ -687,7 +687,7 @@ describe('option labels', function (): void {
     it('returns value as default when option not found in `getOptionLabels()`', function (): void {
         livewire(TestMultipleSelectWithFlatOptions::class)
             ->fillForm(['categories' => ['electronics', 'unknown']])
-            ->assertFormComponentExists('categories', function (Select $select): bool {
+            ->assertSchemaComponentExists('categories', 'form', function (Select $select): bool {
                 expect($select->getOptionLabels())->toBe([
                     'electronics' => 'Electronics',
                     'unknown' => 'unknown',
@@ -700,7 +700,7 @@ describe('option labels', function (): void {
     it('excludes missing options when `withDefaults` is `false` in `getOptionLabels()`', function (): void {
         livewire(TestMultipleSelectWithFlatOptions::class)
             ->fillForm(['categories' => ['electronics', 'unknown']])
-            ->assertFormComponentExists('categories', function (Select $select): bool {
+            ->assertSchemaComponentExists('categories', 'form', function (Select $select): bool {
                 expect($select->getOptionLabels(withDefaults: false))->toBe([
                     'electronics' => 'Electronics',
                 ]);
@@ -998,7 +998,7 @@ describe('relationship options and search', function (): void {
         Team::factory()->count(5)->create();
 
         livewire(SelectWithBelongsToManyRelationshipAndExplicitLimit::class)
-            ->assertFormComponentExists('teams', function (Select $component): bool {
+            ->assertSchemaComponentExists('teams', 'form', function (Select $component): bool {
                 $results = $component->getSearchResults('');
 
                 expect($results)->toHaveCount(2);
@@ -1012,7 +1012,7 @@ describe('relationship options and search', function (): void {
         Team::factory()->create(['name' => 'Alpha']);
 
         livewire(SelectWithBelongsToManyRelationshipAndExistingOrder::class)
-            ->assertFormComponentExists('teams', function (Select $component): bool {
+            ->assertSchemaComponentExists('teams', 'form', function (Select $component): bool {
                 $results = $component->getSearchResults('');
 
                 $names = array_values($results);
@@ -1027,7 +1027,7 @@ describe('relationship options and search', function (): void {
         Team::factory()->create(['name' => 'Beta']);
 
         livewire(SelectWithBelongsToManyRelationshipAndOptionLabelFromRecord::class)
-            ->assertFormComponentExists('teams', function (Select $component): bool {
+            ->assertSchemaComponentExists('teams', 'form', function (Select $component): bool {
                 $results = $component->getSearchResults('');
 
                 expect(array_values($results))->toContain('Custom: Alpha');
@@ -1043,7 +1043,7 @@ describe('relationship options and search', function (): void {
         Post::factory()->create(['author_id' => $author->id, 'title' => 'Post B', 'json' => ['title' => 'JSON Title B']]);
 
         livewire(SelectWithJsonPathTitleAttribute::class, ['record' => $author])
-            ->assertFormComponentExists('posts', function (Select $component): bool {
+            ->assertSchemaComponentExists('posts', 'form', function (Select $component): bool {
                 $results = $component->getSearchResults('');
 
                 expect(array_values($results))->toContain('JSON Title A');
@@ -1057,7 +1057,7 @@ describe('relationship options and search', function (): void {
         $users = User::factory()->count(3)->create();
 
         livewire(TestSelectWithBelongsToRelationship::class)
-            ->assertFormComponentExists('author_id', function (Select $select) use ($users): bool {
+            ->assertSchemaComponentExists('author_id', 'form', function (Select $select) use ($users): bool {
                 $options = $select->getOptions();
 
                 expect($options)->toHaveCount(3);
@@ -1075,7 +1075,7 @@ describe('relationship options and search', function (): void {
         User::factory()->create(['name' => 'Bob Johnson']);
 
         livewire(TestSelectWithSearchableBelongsToRelationship::class)
-            ->assertFormComponentExists('author_id', function (Select $select): bool {
+            ->assertSchemaComponentExists('author_id', 'form', function (Select $select): bool {
                 $results = $select->getSearchResults('John');
 
                 expect($results)->toHaveCount(2);
@@ -1092,7 +1092,7 @@ describe('relationship options and search', function (): void {
         $post = Post::factory()->create(['author_id' => $author->id]);
 
         livewire(TestSelectWithPreloadedBelongsToRelationship::class, ['record' => $post])
-            ->assertFormComponentExists('author_id', function (Select $select) use ($author, $otherAuthor): bool {
+            ->assertSchemaComponentExists('author_id', 'form', function (Select $select) use ($author, $otherAuthor): bool {
                 expect($select->getOptionLabel())->toBe($author->name);
 
                 $select->state($otherAuthor->getKey());
@@ -1116,7 +1116,7 @@ describe('relationship options and search', function (): void {
         $teams = Team::factory()->count(3)->create();
 
         livewire(TestSelectWithPreloadedBelongsToManyRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('teams', function (Select $select) use ($teams): bool {
+            ->assertSchemaComponentExists('teams', 'form', function (Select $select) use ($teams): bool {
                 $options = $select->getOptions();
 
                 expect($options)->toHaveCount(3);
@@ -1134,7 +1134,7 @@ describe('relationship options and search', function (): void {
         Team::factory()->create(['name' => 'Gamma Group']);
 
         livewire(TestSelectWithSearchableBelongsToManyRelationship::class)
-            ->assertFormComponentExists('teams', function (Select $select): bool {
+            ->assertSchemaComponentExists('teams', 'form', function (Select $select): bool {
                 $results = $select->getSearchResults('Team');
 
                 expect($results)->toHaveCount(2);
@@ -1151,7 +1151,7 @@ describe('relationship options and search', function (): void {
         $user->teams()->attach($teams);
 
         livewire(TestSelectWithPreloadedBelongsToManyRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('teams', function (Select $select) use ($teams): bool {
+            ->assertSchemaComponentExists('teams', 'form', function (Select $select) use ($teams): bool {
                 $labels = $select->getOptionLabels();
 
                 expect($labels)->toHaveCount(2);
@@ -1217,7 +1217,7 @@ describe('relationship options and search', function (): void {
         User::factory()->count(3)->create();
 
         livewire(TestSelectWithSearchableBelongsToRelationship::class)
-            ->assertFormComponentExists('author_id', function (Select $select): bool {
+            ->assertSchemaComponentExists('author_id', 'form', function (Select $select): bool {
                 expect($select->getOptions())->toBe([]);
 
                 return true;
@@ -1229,7 +1229,7 @@ describe('relationship options and search', function (): void {
         $post = Post::factory()->create(['author_id' => $users[0]->id]);
 
         livewire(TestSelectWithPreloadedBelongsToRelationship::class, ['record' => $post])
-            ->assertFormComponentExists('author_id', function (Select $select): bool {
+            ->assertSchemaComponentExists('author_id', 'form', function (Select $select): bool {
                 $options = $select->getOptions();
 
                 expect($options)->toHaveCount(3);
@@ -1244,7 +1244,7 @@ describe('relationship options and search', function (): void {
         User::factory()->create(['name' => 'Admin Manager']);
 
         livewire(TestSelectWithModifiedRelationshipQuery::class)
-            ->assertFormComponentExists('author_id', function (Select $select): bool {
+            ->assertSchemaComponentExists('author_id', 'form', function (Select $select): bool {
                 $options = $select->getOptions();
 
                 expect($options)->toHaveCount(2);
@@ -1261,7 +1261,7 @@ describe('relationship options and search', function (): void {
         User::factory()->create(['name' => 'Jane', 'email' => 'jane@example.com']);
 
         livewire(TestSelectWithCustomRelationshipLabel::class)
-            ->assertFormComponentExists('author_id', function (Select $select): bool {
+            ->assertSchemaComponentExists('author_id', 'form', function (Select $select): bool {
                 $options = $select->getOptions();
 
                 expect(array_values($options))->toContain('John (john@example.com)');
@@ -1278,7 +1278,7 @@ describe('relationship state', function (): void {
         $user = User::factory()->create(['team_id' => $teams->first()->id]);
 
         livewire(SelectWithBelongsToRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('team_id', function (Select $component) use ($teams): bool {
+            ->assertSchemaComponentExists('team_id', 'form', function (Select $component) use ($teams): bool {
                 $component->state((string) $teams->last()->id);
                 $component->fillStateFromRelationship();
 
@@ -1294,7 +1294,7 @@ describe('relationship state', function (): void {
         $orphanPosts = Post::factory()->count(2)->create(['author_id' => null]);
 
         livewire(SelectWithHasManyRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('posts', function (Select $component) use ($orphanPosts): bool {
+            ->assertSchemaComponentExists('posts', 'form', function (Select $component) use ($orphanPosts): bool {
                 $component->state($orphanPosts->pluck('id')->map(fn ($id) => (string) $id)->all());
                 $component->saveStateToRelationship();
 
@@ -1313,7 +1313,7 @@ describe('relationship state', function (): void {
         $orphanPost = Post::factory()->create(['author_id' => null, 'is_published' => true]);
 
         livewire(SelectWithHasOneRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('publishedPost', function (Select $component) use ($orphanPost): bool {
+            ->assertSchemaComponentExists('publishedPost', 'form', function (Select $component) use ($orphanPost): bool {
                 $component->state((string) $orphanPost->id);
                 $component->saveStateToRelationship();
 
@@ -1332,7 +1332,7 @@ describe('relationship state', function (): void {
         };
 
         livewire(SelectWithHasManyRelationshipAndModifyQuery::class, ['record' => $user])
-            ->assertFormComponentExists('posts', function (Select $component): bool {
+            ->assertSchemaComponentExists('posts', 'form', function (Select $component): bool {
                 $component->state([]);
                 $component->saveStateToRelationship();
 
@@ -1368,7 +1368,7 @@ describe('relationship state', function (): void {
         $posts = Post::factory()->count(2)->create(['author_id' => $user->id]);
 
         livewire(SelectWithHasManyThroughRelationship::class, ['record' => $team])
-            ->assertFormComponentExists('posts', function (Select $component) use ($posts): bool {
+            ->assertSchemaComponentExists('posts', 'form', function (Select $component) use ($posts): bool {
                 $component->state([(string) $posts->first()->id]);
                 $component->saveStateToRelationship();
 
@@ -1387,7 +1387,7 @@ describe('relationship state', function (): void {
         $user = User::factory()->create(['team_id' => $team->id]);
 
         livewire(SelectWithBelongsToThroughRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('company', function (Select $component) use ($companyB): bool {
+            ->assertSchemaComponentExists('company', 'form', function (Select $component) use ($companyB): bool {
                 $component->state((string) $companyB->id);
                 $component->saveStateToRelationship();
 
@@ -1771,7 +1771,7 @@ describe('eager loading', function (): void {
         DB::flushQueryLog();
 
         livewire(SelectWithBelongsToManyRelationship::class, ['record' => $freshUser])
-            ->assertFormComponentExists('teams', function (Select $select) use ($teamIds): bool {
+            ->assertSchemaComponentExists('teams', 'form', function (Select $select) use ($teamIds): bool {
                 $labels = $select->getOptionLabels();
 
                 expect($labels)->toHaveCount(3);
@@ -1789,7 +1789,7 @@ describe('eager loading', function (): void {
         DB::flushQueryLog();
 
         livewire(SelectWithBelongsToManyRelationship::class, ['record' => $eagerUser])
-            ->assertFormComponentExists('teams', function (Select $select) use ($teamIds): bool {
+            ->assertSchemaComponentExists('teams', 'form', function (Select $select) use ($teamIds): bool {
                 $labels = $select->getOptionLabels();
 
                 expect($labels)->toHaveCount(3);
@@ -1816,7 +1816,7 @@ describe('eager loading', function (): void {
         DB::flushQueryLog();
 
         livewire(SelectWithBelongsToRelationship::class, ['record' => $freshUser])
-            ->assertFormComponentExists('team_id', function (Select $select) use ($team): bool {
+            ->assertSchemaComponentExists('team_id', 'form', function (Select $select) use ($team): bool {
                 $label = $select->getOptionLabel();
 
                 expect($label)->toBe($team->name);
@@ -1833,7 +1833,7 @@ describe('eager loading', function (): void {
         DB::flushQueryLog();
 
         livewire(SelectWithBelongsToRelationship::class, ['record' => $eagerUser])
-            ->assertFormComponentExists('team_id', function (Select $select) use ($team): bool {
+            ->assertSchemaComponentExists('team_id', 'form', function (Select $select) use ($team): bool {
                 $label = $select->getOptionLabel();
 
                 expect($label)->toBe($team->name);

@@ -348,9 +348,9 @@ it('can remove items from a list field in a mounted action form', function (): v
 
 it('can remove items from a list field in a page form', function (): void {
     livewire(TestComponentWithListFields::class)
-        ->assertFormSet(['roles' => ['viewer', 'creator']])
+        ->assertSchemaStateSet(['roles' => ['viewer', 'creator']], 'form')
         ->fillForm(['roles' => ['viewer']])
-        ->assertFormSet(['roles' => ['viewer']]);
+        ->assertSchemaStateSet(['roles' => ['viewer']], 'form');
 });
 
 it('can clear a list field in a mounted action form', function (): void {

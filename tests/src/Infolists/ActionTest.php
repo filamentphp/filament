@@ -88,7 +88,7 @@ describe('calling actions', function (): void {
 
         livewire(InfolistActions::class)
             ->callInfolistAction('textEntry', 'halt')
-            ->assertInfolistActionHalted('textEntry', 'halt');
+            ->assertActionHalted(TestAction::make('halt')->schemaComponent('textEntry', 'infolist'));
     });
 
 });
@@ -104,8 +104,8 @@ describe('visibility and state', function (): void {
             ->assertActionDoesNotExist(TestAction::make('hidden')->schemaComponent('textEntry'), fn (Action $action): bool => $action->isVisible());
 
         livewire(InfolistActions::class)
-            ->assertInfolistActionVisible('textEntry', 'visible')
-            ->assertInfolistActionHidden('textEntry', 'hidden');
+            ->assertActionVisible(TestAction::make('visible')->schemaComponent('textEntry', 'infolist'))
+            ->assertActionHidden(TestAction::make('hidden')->schemaComponent('textEntry', 'infolist'));
     });
 
     it('can disable an action', function (): void {
@@ -114,8 +114,8 @@ describe('visibility and state', function (): void {
             ->assertActionDisabled(TestAction::make('disabled')->schemaComponent('textEntry'));
 
         livewire(InfolistActions::class)
-            ->assertInfolistActionEnabled('textEntry', 'enabled')
-            ->assertInfolistActionDisabled('textEntry', 'disabled');
+            ->assertActionEnabled(TestAction::make('enabled')->schemaComponent('textEntry', 'infolist'))
+            ->assertActionDisabled(TestAction::make('disabled')->schemaComponent('textEntry', 'infolist'));
     });
 
 });
@@ -127,8 +127,8 @@ describe('properties', function (): void {
             ->assertActionDoesNotHaveIcon(TestAction::make('hasIcon')->schemaComponent('textEntry'), Heroicon::Trash);
 
         livewire(InfolistActions::class)
-            ->assertInfolistActionHasIcon('textEntry', 'hasIcon', Heroicon::PencilSquare)
-            ->assertInfolistActionDoesNotHaveIcon('textEntry', 'hasIcon', Heroicon::Trash);
+            ->assertActionHasIcon(TestAction::make('hasIcon')->schemaComponent('textEntry', 'infolist'), Heroicon::PencilSquare)
+            ->assertActionDoesNotHaveIcon(TestAction::make('hasIcon')->schemaComponent('textEntry', 'infolist'), Heroicon::Trash);
     });
 
     it('can have a label', function (): void {
@@ -137,8 +137,8 @@ describe('properties', function (): void {
             ->assertActionDoesNotHaveLabel(TestAction::make('hasLabel')->schemaComponent('textEntry'), 'My Other Action');
 
         livewire(InfolistActions::class)
-            ->assertInfolistActionHasLabel('textEntry', 'hasLabel', 'My Action')
-            ->assertInfolistActionDoesNotHaveLabel('textEntry', 'hasLabel', 'My Other Action');
+            ->assertActionHasLabel(TestAction::make('hasLabel')->schemaComponent('textEntry', 'infolist'), 'My Action')
+            ->assertActionDoesNotHaveLabel(TestAction::make('hasLabel')->schemaComponent('textEntry', 'infolist'), 'My Other Action');
     });
 
     it('can have a color', function (): void {
@@ -147,8 +147,8 @@ describe('properties', function (): void {
             ->assertActionDoesNotHaveColor(TestAction::make('hasColor')->schemaComponent('textEntry'), 'gray');
 
         livewire(InfolistActions::class)
-            ->assertInfolistActionHasColor('textEntry', 'hasColor', 'primary')
-            ->assertInfolistActionDoesNotHaveColor('textEntry', 'hasColor', 'gray');
+            ->assertActionHasColor(TestAction::make('hasColor')->schemaComponent('textEntry', 'infolist'), 'primary')
+            ->assertActionDoesNotHaveColor(TestAction::make('hasColor')->schemaComponent('textEntry', 'infolist'), 'gray');
     });
 
     it('can have a URL', function (): void {
@@ -157,8 +157,8 @@ describe('properties', function (): void {
             ->assertActionDoesNotHaveUrl(TestAction::make('url')->schemaComponent('textEntry'), 'https://google.com');
 
         livewire(InfolistActions::class)
-            ->assertInfolistActionHasUrl('textEntry', 'url', 'https://filamentphp.com')
-            ->assertInfolistActionDoesNotHaveUrl('textEntry', 'url', 'https://google.com');
+            ->assertActionHasUrl(TestAction::make('url')->schemaComponent('textEntry', 'infolist'), 'https://filamentphp.com')
+            ->assertActionDoesNotHaveUrl(TestAction::make('url')->schemaComponent('textEntry', 'infolist'), 'https://google.com');
     });
 
     it('can open a URL in a new tab', function (): void {
@@ -167,8 +167,8 @@ describe('properties', function (): void {
             ->assertActionShouldNotOpenUrlInNewTab(TestAction::make('urlNotInNewTab')->schemaComponent('textEntry'));
 
         livewire(InfolistActions::class)
-            ->assertInfolistActionShouldOpenUrlInNewTab('textEntry', 'urlInNewTab')
-            ->assertInfolistActionShouldNotOpenUrlInNewTab('textEntry', 'urlNotInNewTab');
+            ->assertActionShouldOpenUrlInNewTab(TestAction::make('urlInNewTab')->schemaComponent('textEntry', 'infolist'))
+            ->assertActionShouldNotOpenUrlInNewTab(TestAction::make('urlNotInNewTab')->schemaComponent('textEntry', 'infolist'));
     });
 
     it('can state whether a form component action exists', function (): void {
@@ -177,7 +177,7 @@ describe('properties', function (): void {
             ->assertActionDoesNotExist(TestAction::make('doesNotExist')->schemaComponent('textEntry'));
 
         livewire(InfolistActions::class)
-            ->assertInfolistActionExists('textEntry', 'exists')
-            ->assertInfolistActionDoesNotExist('textEntry', 'doesNotExist');
+            ->assertActionExists(TestAction::make('exists')->schemaComponent('textEntry', 'infolist'))
+            ->assertActionDoesNotExist(TestAction::make('doesNotExist')->schemaComponent('textEntry', 'infolist'));
     });
 });

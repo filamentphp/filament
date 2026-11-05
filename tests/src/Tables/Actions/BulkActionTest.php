@@ -148,7 +148,7 @@ describe('action lifecycle and configuration', function (): void {
         livewire(PostsTable::class)
             ->callTableBulkAction('halt', records: $posts)
             ->assertDispatched('halt-called')
-            ->assertTableBulkActionHalted('halt');
+            ->assertActionHalted(TestAction::make('halt')->table()->bulk());
     });
 
     it('can hide a bulk action', function (): void {
@@ -157,8 +157,8 @@ describe('action lifecycle and configuration', function (): void {
             ->assertActionHidden(TestAction::make('hidden')->table()->bulk());
 
         livewire(PostsTable::class)
-            ->assertTableBulkActionVisible('visible')
-            ->assertTableBulkActionHidden('hidden');
+            ->assertActionVisible(TestAction::make('visible')->table()->bulk())
+            ->assertActionHidden(TestAction::make('hidden')->table()->bulk());
     });
 
     it('can disable a bulk action', function (): void {
@@ -167,8 +167,8 @@ describe('action lifecycle and configuration', function (): void {
             ->assertActionDisabled(TestAction::make('disabled')->table()->bulk());
 
         livewire(PostsTable::class)
-            ->assertTableBulkActionEnabled('enabled')
-            ->assertTableBulkActionDisabled('disabled');
+            ->assertActionEnabled(TestAction::make('enabled')->table()->bulk())
+            ->assertActionDisabled(TestAction::make('disabled')->table()->bulk());
     });
 
     it('can have an icon', function (): void {
@@ -177,8 +177,8 @@ describe('action lifecycle and configuration', function (): void {
             ->assertActionDoesNotHaveIcon(TestAction::make('hasIcon')->table()->bulk(), Heroicon::Trash);
 
         livewire(PostsTable::class)
-            ->assertTableBulkActionHasIcon('hasIcon', Heroicon::PencilSquare)
-            ->assertTableBulkActionDoesNotHaveIcon('hasIcon', Heroicon::Trash);
+            ->assertActionHasIcon(TestAction::make('hasIcon')->table()->bulk(), Heroicon::PencilSquare)
+            ->assertActionDoesNotHaveIcon(TestAction::make('hasIcon')->table()->bulk(), Heroicon::Trash);
     });
 
     it('can have a label', function (): void {
@@ -187,8 +187,8 @@ describe('action lifecycle and configuration', function (): void {
             ->assertActionDoesNotHaveLabel(TestAction::make('hasLabel')->table()->bulk(), 'My Other Action');
 
         livewire(PostsTable::class)
-            ->assertTableBulkActionHasLabel('hasLabel', 'My Action')
-            ->assertTableBulkActionDoesNotHaveLabel('hasLabel', 'My Other Action');
+            ->assertActionHasLabel(TestAction::make('hasLabel')->table()->bulk(), 'My Action')
+            ->assertActionDoesNotHaveLabel(TestAction::make('hasLabel')->table()->bulk(), 'My Other Action');
     });
 
     it('can have a color', function (): void {
@@ -197,8 +197,8 @@ describe('action lifecycle and configuration', function (): void {
             ->assertActionDoesNotHaveColor(TestAction::make('hasColor')->table()->bulk(), 'gray');
 
         livewire(PostsTable::class)
-            ->assertTableBulkActionHasColor('hasColor', 'primary')
-            ->assertTableBulkActionDoesNotHaveColor('hasColor', 'gray');
+            ->assertActionHasColor(TestAction::make('hasColor')->table()->bulk(), 'primary')
+            ->assertActionDoesNotHaveColor(TestAction::make('hasColor')->table()->bulk(), 'gray');
     });
 
     it('can state whether a bulk action exists', function (): void {
@@ -207,13 +207,19 @@ describe('action lifecycle and configuration', function (): void {
             ->assertActionDoesNotExist(TestAction::make('doesNotExist')->table()->bulk());
 
         livewire(PostsTable::class)
-            ->assertTableBulkActionExists('exists')
-            ->assertTableBulkActionDoesNotExist('doesNotExist');
+            ->assertActionExists(TestAction::make('exists')->table()->bulk())
+            ->assertActionDoesNotExist(TestAction::make('doesNotExist')->table()->bulk());
     });
 
     it('can state whether bulk actions exist in order', function (): void {
-        livewire(PostsTable::class)
-            ->assertTableBulkActionsExistInOrder(['exists', 'existsInOrder']);
+        $livewire = livewire(PostsTable::class);
+
+        $livewire->assertActionListInOrder(
+            ['exists', 'existsInOrder'],
+            $livewire->instance()->getTable()->getToolbarActions(),
+            'table bulk',
+            BulkAction::class,
+        );
     });
 });
 

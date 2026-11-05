@@ -352,7 +352,7 @@ describe('arguments and halting', function (): void {
         livewire(PostsTable::class)
             ->callTableAction('halt')
             ->assertDispatched('halt-called')
-            ->assertTableActionHalted('halt');
+            ->assertActionHalted(TestAction::make('halt')->table());
     });
 });
 
@@ -369,18 +369,18 @@ describe('visibility and properties', function (): void {
             ->assertActionDoesNotExist(TestAction::make('hidden')->table(), fn (Action $action): bool => $action->isVisible());
 
         livewire(PostsTable::class)
-            ->assertTableActionVisible('visible')
-            ->assertTableActionHidden('hidden')
-            ->assertTableActionVisible('groupedWithVisibleGroupCondition', $post)
-            ->assertTableActionHidden('groupedWithHiddenGroupCondition', $post)
-            ->assertTableActionExists('visible', fn (Action $action): bool => $action->isVisible())
-            ->assertTableActionExists('hidden', fn (Action $action): bool => $action->isHidden())
-            ->assertTableActionDoesNotExist('visible', fn (Action $action): bool => $action->isHidden())
-            ->assertTableActionDoesNotExist('hidden', fn (Action $action): bool => $action->isVisible())
-            ->assertTableActionExists('groupedWithVisibleGroupCondition', fn (Action $action): bool => $action->isVisible(), $post)
-            ->assertTableActionExists('groupedWithHiddenGroupCondition', fn (Action $action): bool => $action->isHidden(), $post)
-            ->assertTableActionDoesNotExist('groupedWithVisibleGroupCondition', fn (Action $action): bool => $action->isHidden(), $post)
-            ->assertTableActionDoesNotExist('groupedWithHiddenGroupCondition', fn (Action $action): bool => $action->isVisible(), $post);
+            ->assertActionVisible(TestAction::make('visible')->table())
+            ->assertActionHidden(TestAction::make('hidden')->table())
+            ->assertActionVisible(TestAction::make('groupedWithVisibleGroupCondition')->table($post))
+            ->assertActionHidden(TestAction::make('groupedWithHiddenGroupCondition')->table($post))
+            ->assertActionExists(TestAction::make('visible')->table(), fn (Action $action): bool => $action->isVisible())
+            ->assertActionExists(TestAction::make('hidden')->table(), fn (Action $action): bool => $action->isHidden())
+            ->assertActionDoesNotExist(TestAction::make('visible')->table(), fn (Action $action): bool => $action->isHidden())
+            ->assertActionDoesNotExist(TestAction::make('hidden')->table(), fn (Action $action): bool => $action->isVisible())
+            ->assertActionExists(TestAction::make('groupedWithVisibleGroupCondition')->table($post), fn (Action $action): bool => $action->isVisible())
+            ->assertActionExists(TestAction::make('groupedWithHiddenGroupCondition')->table($post), fn (Action $action): bool => $action->isHidden())
+            ->assertActionDoesNotExist(TestAction::make('groupedWithVisibleGroupCondition')->table($post), fn (Action $action): bool => $action->isHidden())
+            ->assertActionDoesNotExist(TestAction::make('groupedWithHiddenGroupCondition')->table($post), fn (Action $action): bool => $action->isVisible());
     });
 
     it('can disable an action', function (): void {
@@ -389,8 +389,8 @@ describe('visibility and properties', function (): void {
             ->assertActionDisabled(TestAction::make('disabled')->table());
 
         livewire(PostsTable::class)
-            ->assertTableActionEnabled('enabled')
-            ->assertTableActionDisabled('disabled');
+            ->assertActionEnabled(TestAction::make('enabled')->table())
+            ->assertActionDisabled(TestAction::make('disabled')->table());
     });
 
     it('can have an icon', function (): void {
@@ -399,8 +399,8 @@ describe('visibility and properties', function (): void {
             ->assertActionDoesNotHaveIcon(TestAction::make('hasIcon')->table(), Heroicon::Trash);
 
         livewire(PostsTable::class)
-            ->assertTableActionHasIcon('hasIcon', Heroicon::PencilSquare)
-            ->assertTableActionDoesNotHaveIcon('hasIcon', Heroicon::Trash);
+            ->assertActionHasIcon(TestAction::make('hasIcon')->table(), Heroicon::PencilSquare)
+            ->assertActionDoesNotHaveIcon(TestAction::make('hasIcon')->table(), Heroicon::Trash);
     });
 
     it('can have a label', function (): void {
@@ -409,8 +409,8 @@ describe('visibility and properties', function (): void {
             ->assertActionDoesNotHaveLabel(TestAction::make('hasLabel')->table(), 'My Other Action');
 
         livewire(PostsTable::class)
-            ->assertTableActionHasLabel('hasLabel', 'My Action')
-            ->assertTableActionDoesNotHaveLabel('hasLabel', 'My Other Action');
+            ->assertActionHasLabel(TestAction::make('hasLabel')->table(), 'My Action')
+            ->assertActionDoesNotHaveLabel(TestAction::make('hasLabel')->table(), 'My Other Action');
     });
 
     it('can have a color', function (): void {
@@ -419,8 +419,8 @@ describe('visibility and properties', function (): void {
             ->assertActionDoesNotHaveColor(TestAction::make('hasColor')->table(), 'gray');
 
         livewire(PostsTable::class)
-            ->assertTableActionHasColor('hasColor', 'primary')
-            ->assertTableActionDoesNotHaveColor('hasColor', 'gray');
+            ->assertActionHasColor(TestAction::make('hasColor')->table(), 'primary')
+            ->assertActionDoesNotHaveColor(TestAction::make('hasColor')->table(), 'gray');
     });
 
     it('can have a URL', function (): void {
@@ -429,8 +429,8 @@ describe('visibility and properties', function (): void {
             ->assertActionDoesNotHaveUrl(TestAction::make('url')->table(), 'https://google.com');
 
         livewire(PostsTable::class)
-            ->assertTableActionHasUrl('url', 'https://filamentphp.com')
-            ->assertTableActionDoesNotHaveUrl('url', 'https://google.com');
+            ->assertActionHasUrl(TestAction::make('url')->table(), 'https://filamentphp.com')
+            ->assertActionDoesNotHaveUrl(TestAction::make('url')->table(), 'https://google.com');
     });
 
     it('can open a URL in a new tab', function (): void {
@@ -439,8 +439,8 @@ describe('visibility and properties', function (): void {
             ->assertActionShouldNotOpenUrlInNewTab(TestAction::make('urlNotInNewTab')->table());
 
         livewire(PostsTable::class)
-            ->assertTableActionShouldOpenUrlInNewTab('urlInNewTab')
-            ->assertTableActionShouldNotOpenUrlInNewTab('urlNotInNewTab');
+            ->assertActionShouldOpenUrlInNewTab(TestAction::make('urlInNewTab')->table())
+            ->assertActionShouldNotOpenUrlInNewTab(TestAction::make('urlNotInNewTab')->table());
     });
 
     it('can state whether a table action exists', function (): void {
@@ -449,8 +449,8 @@ describe('visibility and properties', function (): void {
             ->assertActionDoesNotExist(TestAction::make('doesNotExist')->table());
 
         livewire(PostsTable::class)
-            ->assertTableActionExists('exists')
-            ->assertTableActionDoesNotExist('doesNotExist');
+            ->assertActionExists(TestAction::make('exists')->table())
+            ->assertActionDoesNotExist(TestAction::make('doesNotExist')->table());
     });
 
     it('can state whether table actions exist in order', function (): void {
@@ -466,8 +466,8 @@ describe('visibility and properties', function (): void {
             ->assertActionDoesNotExist(TestAction::make(AttachAction::class)->table(), fn (AttachAction $action) => $action->isMultiple());
 
         livewire(PostsTable::class)
-            ->assertTableActionExists('attachMultiple', fn (AttachAction $action) => $action->isMultiple())
-            ->assertTableActionDoesNotExist(AttachAction::class, fn (AttachAction $action) => $action->isMultiple());
+            ->assertActionExists(TestAction::make('attachMultiple')->table(), fn (AttachAction $action) => $action->isMultiple())
+            ->assertActionDoesNotExist(TestAction::make(AttachAction::class)->table(), fn (AttachAction $action) => $action->isMultiple());
     });
 });
 
@@ -476,7 +476,7 @@ describe('replication', function (): void {
         $post = Post::factory()->create();
 
         livewire(PostsTable::class)
-            ->assertTableActionExists('replicate')
+            ->assertActionExists(TestAction::make('replicate')->table())
             ->callTableAction('replicate', $post)
             ->callMountedTableAction()
             ->assertHasNoFormErrors();
@@ -518,15 +518,7 @@ describe('extra modal footer actions', function (): void {
 
         livewire(PostsTable::class)
             ->mountTableAction('withGroupedExtraActions', $post)
-            ->assertTableActionMounted([
-                [
-                    'name' => 'withGroupedExtraActions',
-                    'context' => [
-                        'table' => true,
-                        'recordKey' => (string) $post->getKey(),
-                    ],
-                ],
-            ]);
+            ->assertActionMounted(TestAction::make('withGroupedExtraActions')->table((string) $post->getKey()));
     });
 
     it('can call multiple actions registered in a group in `extraModalFooterActions()`', function (): void {

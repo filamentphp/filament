@@ -48,9 +48,9 @@ it('can delete records that are not already deleted', function (): void {
     livewire(PostsTable::class)
         ->callTableAction(DeleteAction::class, $post)
         ->filterTable(TrashedFilter::class, true)
-        ->assertTableActionHidden(DeleteAction::class, $trashedPost)
+        ->assertActionHidden(TestAction::make(DeleteAction::class)->table($trashedPost))
         ->mountTableAction(DeleteAction::class, $trashedPost)
-        ->assertTableActionNotMounted(DeleteAction::class);
+        ->assertActionNotMounted(TestAction::make(DeleteAction::class)->table());
 
     assertSoftDeleted($post);
 
@@ -69,9 +69,9 @@ it('can force delete records that are already deleted', function (): void {
     assertSoftDeleted($trashedPost);
 
     livewire(PostsTable::class)
-        ->assertTableActionHidden(ForceDeleteAction::class, $post)
+        ->assertActionHidden(TestAction::make(ForceDeleteAction::class)->table($post))
         ->mountTableAction(ForceDeleteAction::class, $post)
-        ->assertTableActionNotMounted(ForceDeleteAction::class)
+        ->assertActionNotMounted(TestAction::make(ForceDeleteAction::class)->table())
         ->filterTable(TrashedFilter::class, true)
         ->callTableAction(ForceDeleteAction::class, $trashedPost);
 
@@ -92,9 +92,9 @@ it('can restore records that are already deleted', function (): void {
     assertSoftDeleted($trashedPost);
 
     livewire(PostsTable::class)
-        ->assertTableActionHidden(RestoreAction::class, $post)
+        ->assertActionHidden(TestAction::make(RestoreAction::class)->table($post))
         ->mountTableAction(RestoreAction::class, $post)
-        ->assertTableActionNotMounted(RestoreAction::class)
+        ->assertActionNotMounted(TestAction::make(RestoreAction::class)->table())
         ->filterTable(TrashedFilter::class, true)
         ->callTableAction(RestoreAction::class, $trashedPost);
 
@@ -140,5 +140,5 @@ it('cannot access record for action after record no longer matches non-excluded 
     livewire(PostsTable::class)
         ->filterTable('is_published')
         ->mountTableAction(DeleteAction::class, $post)
-        ->assertTableActionNotMounted(DeleteAction::class);
+        ->assertActionNotMounted(TestAction::make(DeleteAction::class)->table());
 });

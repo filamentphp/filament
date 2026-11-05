@@ -634,7 +634,7 @@ describe('relationship options', function (): void {
         $teams = Team::factory()->count(3)->create();
 
         livewire(CheckboxListWithBelongsToManyRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('teams', function (CheckboxList $component) use ($teams): bool {
+            ->assertSchemaComponentExists('teams', 'form', function (CheckboxList $component) use ($teams): bool {
                 $options = $component->getOptions();
 
                 expect($options)->toHaveCount(3);
@@ -653,7 +653,7 @@ describe('relationship options', function (): void {
         Team::factory()->create(['name' => 'Gamma Team']);
 
         livewire(CheckboxListWithBelongsToManyRelationshipAndModifyQuery::class, ['record' => $user])
-            ->assertFormComponentExists('teams', function (CheckboxList $component): bool {
+            ->assertSchemaComponentExists('teams', 'form', function (CheckboxList $component): bool {
                 $options = $component->getOptions();
 
                 expect($options)->toHaveCount(3);
@@ -672,7 +672,7 @@ describe('relationship options', function (): void {
         Team::factory()->create(['name' => 'Beta', 'description' => 'Second team']);
 
         livewire(CheckboxListWithCustomRelationshipLabel::class, ['record' => $user])
-            ->assertFormComponentExists('teams', function (CheckboxList $component): bool {
+            ->assertSchemaComponentExists('teams', 'form', function (CheckboxList $component): bool {
                 $options = $component->getOptions();
 
                 expect($options)->toHaveCount(2);
@@ -799,7 +799,7 @@ describe('relationship options closure branches', function (): void {
         Team::factory()->create(['name' => 'Beta', 'description' => 'Second team']);
 
         livewire(CheckboxListWithRelationshipDescriptions::class, ['record' => $user])
-            ->assertFormComponentExists('teams', function (CheckboxList $component): bool {
+            ->assertSchemaComponentExists('teams', 'form', function (CheckboxList $component): bool {
                 $options = $component->getOptions();
 
                 expect($options)->toHaveCount(2);

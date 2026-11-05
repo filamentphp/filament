@@ -1079,7 +1079,7 @@ describe('record access edge cases', function (): void {
             ->set('shouldExcludeTabQueryWhenResolvingRecord', false)
             ->set('activeTab', 'a_names')
             ->mountTableAction(DeleteAction::class, $department)
-            ->assertTableActionNotMounted(DeleteAction::class);
+            ->assertActionNotMounted(TestAction::make(DeleteAction::class)->table());
     });
 });
 

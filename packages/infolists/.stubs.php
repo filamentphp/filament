@@ -2,8 +2,6 @@
 
 namespace Livewire\Features\SupportTesting {
 
-    use BackedEnum;
-
     class Testable {
         /**
          * @deprecated Use `mountAction()` instead.
@@ -24,101 +22,6 @@ namespace Livewire\Features\SupportTesting {
          * @deprecated Use `callMountedAction()` instead.
          */
         public function callMountedInfolistAction(array $arguments = []): static {}
-
-        /**
-         * @deprecated Use `assertActionExists()` instead.
-         */
-        public function assertInfolistActionExists(string $component, string | array $actions, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertActionDoesNotExist()` instead.
-         */
-        public function assertInfolistActionDoesNotExist(string $component, string | array $actions, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertActionVisible()` instead.
-         */
-        public function assertInfolistActionVisible(string $component, string | array $actions, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertActionHidden()` instead.
-         */
-        public function assertInfolistActionHidden(string $component, string | array $actions, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertActionEnabled()` instead.
-         */
-        public function assertInfolistActionEnabled(string $component, string | array $actions, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertActionDisabled()` instead.
-         */
-        public function assertInfolistActionDisabled(string $component, string | array $actions, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertActionMounted()` instead.
-         */
-        public function assertInfolistActionMounted(string $component, string | array $actions, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertActionNotMounted()` instead.
-         */
-        public function assertInfolistActionNotMounted(string $component, string | array $actions, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertActionHalted()` instead.
-         */
-        public function assertInfolistActionHalted(string $component, string | array $actions, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertActionHasIcon()` instead.
-         */
-        public function assertInfolistActionHasIcon(string $component, string | array $actions, string | BackedEnum $icon, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertActionDoesNotHaveIcon()` instead.
-         */
-        public function assertInfolistActionDoesNotHaveIcon(string $component, string | array $actions, string | BackedEnum $icon, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertActionHasLabel()` instead.
-         */
-        public function assertInfolistActionHasLabel(string $component, string | array $actions, string $label, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertActionDoesNotHaveLabel()` instead.
-         */
-        public function assertInfolistActionDoesNotHaveLabel(string $component, string | array $actions, string $label, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertActionHasColor()` instead.
-         */
-        public function assertInfolistActionHasColor(string $component, string | array $actions, string | array $color, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertActionDoesNotHaveColor()` instead.
-         */
-        public function assertInfolistActionDoesNotHaveColor(string $component, string | array $actions, string | array $color, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertActionHasUrl()` instead.
-         */
-        public function assertInfolistActionHasUrl(string $component, string | array $actions, string $url, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertActionDoesNotHaveUrl()` instead.
-         */
-        public function assertInfolistActionDoesNotHaveUrl(string $component, string | array $actions, string $url, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertActionShouldOpenUrlInNewTab()` instead.
-         */
-        public function assertInfolistActionShouldOpenUrlInNewTab(string $component, string | array $actions, string $schema = 'infolist'): static {}
-
-        /**
-         * @deprecated Use `assertActionShouldNotOpenUrlInNewTab()` instead.
-         */
-        public function assertInfolistActionShouldNotOpenUrlInNewTab(string $component, string | array $actions, string $schema = 'infolist'): static {}
     }
 
 }

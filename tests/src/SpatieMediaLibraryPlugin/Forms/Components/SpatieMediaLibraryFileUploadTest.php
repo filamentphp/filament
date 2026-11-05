@@ -360,23 +360,23 @@ describe('integration', function (): void {
         $mediaItem->refresh();
 
         livewire(SpatieMediaLibraryFileUploadForm::class, ['record' => $record])
-            ->assertFormSet(function (array $state) use ($mediaItem): array {
+            ->assertSchemaStateSet(function (array $state) use ($mediaItem): array {
                 expect($state['avatar'])->toBeArray();
                 expect($state['avatar'])->toHaveKey($mediaItem->uuid);
 
                 return [];
-            });
+            }, 'form');
     });
 
     it('loads no media when collection is empty', function (): void {
         $record = MediaPost::factory()->create();
 
         livewire(SpatieMediaLibraryFileUploadForm::class, ['record' => $record])
-            ->assertFormSet(function (array $state): array {
+            ->assertSchemaStateSet(function (array $state): array {
                 expect($state['avatar'])->toBeEmpty();
 
                 return [];
-            });
+            }, 'form');
     });
 
     it('can upload media and save to the collection', function (): void {
@@ -643,12 +643,12 @@ describe('reordering', function (): void {
 
         $mediaUuid = $record->getMedia('avatars')->first()->uuid;
 
-        $livewireComponent->assertFormSet(function (array $state) use ($mediaUuid): array {
+        $livewireComponent->assertSchemaStateSet(function (array $state) use ($mediaUuid): array {
             expect($state['avatar'])->toBeArray();
             expect(array_values($state['avatar']))->toBe([$mediaUuid]);
 
             return [];
-        });
+        }, 'form');
     });
 
     it('replaces a consumed `TemporaryUploadedFile` with the stored media UUID in state when uploading alongside existing media in a `reorderable()` field', function (): void {
@@ -679,12 +679,12 @@ describe('reordering', function (): void {
             ->pluck('uuid')
             ->first(static fn (string $uuid): bool => $uuid !== $existingMedia->uuid);
 
-        $livewireComponent->assertFormSet(function (array $state) use ($existingMedia, $newMediaUuid): array {
+        $livewireComponent->assertSchemaStateSet(function (array $state) use ($existingMedia, $newMediaUuid): array {
             expect($state['avatar'])->toBeArray();
             expect(array_values($state['avatar']))->toEqualCanonicalizing([$existingMedia->uuid, $newMediaUuid]);
 
             return [];
-        });
+        }, 'form');
     });
 
     // In a full form request, `Schema::getState()` reloads the state from the
