@@ -21,6 +21,13 @@ trait CanUpdateState
 
     protected ?Closure $afterStateUpdated = null;
 
+    protected bool | Closure $isPartiallyRenderedAfterStateUpdated = false;
+
+    /**
+     * @var array<string>
+     */
+    protected array $columnsToPartiallyRenderAfterStateUpdated = [];
+
     public function updateStateUsing(?Closure $callback): static
     {
         $this->updateStateUsing = $callback;
@@ -40,6 +47,52 @@ trait CanUpdateState
         $this->afterStateUpdated = $callback;
 
         return $this;
+    }
+
+    public function partiallyRenderAfterStateUpdated(bool | Closure $condition = true): static
+    {
+        $this->isPartiallyRenderedAfterStateUpdated = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string>  $columns
+     */
+    public function partiallyRenderColumnsAfterStateUpdated(array $columns): static
+    {
+        $this->columnsToPartiallyRenderAfterStateUpdated = $columns;
+
+        return $this;
+    }
+
+    public function isPartiallyRenderedAfterStateUpdated(): bool
+    {
+        return (bool) $this->evaluate($this->isPartiallyRenderedAfterStateUpdated);
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getColumnsToPartiallyRenderAfterStateUpdated(): array
+    {
+        return $this->columnsToPartiallyRenderAfterStateUpdated;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getPartiallyRenderableColumnNamesAfterStateUpdated(): array
+    {
+        if (filled($this->columnsToPartiallyRenderAfterStateUpdated)) {
+            return [$this->getName(), ...$this->columnsToPartiallyRenderAfterStateUpdated];
+        }
+
+        if ($this->isPartiallyRenderedAfterStateUpdated === false) {
+            return [];
+        }
+
+        return [$this->getName()];
     }
 
     /**

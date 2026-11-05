@@ -21,8 +21,10 @@ use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag
 use Filament\Tables\Columns\Concerns\HasTooltip;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
+use Livewire\Component;
 use LogicException;
 
 use function Filament\Support\generate_href_html;
@@ -198,6 +200,82 @@ class Column extends ViewComponent
         </<?= $wrapperTag ?>>
 
         <?php return new HtmlString(ob_get_clean());
+    }
+
+    public function renderInTableCell(?string $recordAction = null, ?string $recordUrl = null, bool $shouldOpenRecordUrlInNewTab = false, bool $isPartiallyRenderable = false): HtmlString
+    {
+        $table = $this->getTable();
+        $livewire = $this->getLivewire();
+        $recordKey = $this->getRecordKey();
+
+        $action = $this->getAction();
+        $url = $this->getUrl();
+        $hasStateBasedUrls = $this->hasStateBasedUrls();
+        $isClickDisabled = $this->isClickDisabled() || $table->isReordering();
+        $isStackedOnMobile = $table->isStackedOnMobile();
+
+        $wrapperTag = match (true) {
+            ($url || ($recordUrl && $action === null)) && (! $hasStateBasedUrls) && (! $isClickDisabled) => 'a',
+            ($action || $recordAction) && (! $hasStateBasedUrls) && (! $isClickDisabled) => 'button',
+            default => 'div',
+        };
+
+        $wireClickAction = null;
+
+        if ($wrapperTag === 'button') {
+            if ($action instanceof Action) {
+                $wireClickAction = "mountAction('{$action->getName()}', {}, " . Js::from(['table' => true, 'recordKey' => $recordKey]) . ')';
+            } elseif ($action) {
+                $wireClickAction = "callTableColumnAction('{$this->getName()}', " . Js::from($recordKey) . ')';
+            } elseif ($table->getAction($recordAction)) {
+                $wireClickAction = "mountAction('{$recordAction}', {}, " . Js::from(['table' => true, 'recordKey' => $recordKey]) . ')';
+            } else {
+                $wireClickAction = "{$recordAction}(" . Js::from($recordKey) . ')';
+            }
+        }
+
+        ob_start(); ?>
+
+        <td
+            wire:key="<?= ($livewire instanceof Component) ? e($livewire->getId()) : '' ?>.table.record.<?= e($recordKey) ?>.column.<?= e($this->getName()) ?>"
+            <?php if ($isPartiallyRenderable) { ?>
+                wire:partial="<?= e($this->getTableCellPartialName()) ?>"
+            <?php } ?>
+            <?= $this->getCachedCellAttributeHtml() ?>
+        >
+            <?= $isStackedOnMobile ? '<div class="fi-ta-cell-label">' . e($this->getLabel()) . '</div><div class="fi-ta-cell-content">' : '' ?>
+            <<?= $wrapperTag ?>
+                <?php if ($wrapperTag === 'a') { ?>
+                    <?= generate_href_html($url ?: $recordUrl, $url ? $this->shouldOpenUrlInNewTab() : $shouldOpenRecordUrlInNewTab, hasNestedClickEventHandler: true)->toHtml() ?>
+                    <?php if (blank($url) && filled($recordUrl)) { ?>
+                        <?= $table->getExtraRecordLinkAttributeBag($this->getRecord())->toHtml() ?>
+                    <?php } ?>
+                <?php } elseif ($wrapperTag === 'button') { ?>
+                    type="button"
+                    wire:click.prevent.stop="<?= e($wireClickAction) ?>"
+                    wire:loading.attr="disabled"
+                    wire:target="<?= e($wireClickAction) ?>"
+                <?php } ?>
+                class="<?= Arr::toCssClasses([
+                    'fi-ta-col',
+                    'fi-ta-col-has-column-url' => ($wrapperTag === 'a') && filled($url),
+                ]) ?>"
+            >
+                <?= $this->toHtml() ?>
+            </<?= $wrapperTag ?>>
+            <?= $isStackedOnMobile ? '</div>' : '' ?>
+        </td>
+
+        <?php return new HtmlString(ob_get_clean());
+    }
+
+    public function getTableCellPartialName(): string
+    {
+        // Encode each segment, including the `.` delimiter, so distinct record keys and column names never share
+        // a name, and the name is safe in the `wire:partial` attribute selector used to find the cell in the DOM.
+        $encodeSegment = static fn (string $segment): string => str_replace('.', '%2E', rawurlencode($segment));
+
+        return 'table.record.' . $encodeSegment((string) $this->getRecordKey()) . '.column.' . $encodeSegment($this->getName());
     }
 
     public function getCellAttributeHtml(): string

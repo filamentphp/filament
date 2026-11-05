@@ -30,6 +30,10 @@ CheckboxColumn::make('is_admin')
     })
 ```
 
+## Rendering only the updated cells
+
+By default, the whole table re-renders after a checkbox column is updated. You may [re-render only the updated cells](overview#rendering-only-the-updated-cells-of-editable-columns) using `partiallyRenderAfterStateUpdated()` or `partiallyRenderColumnsAfterStateUpdated()`.
+
 ## Security
 
 ### Authorization
