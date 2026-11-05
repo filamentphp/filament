@@ -33,12 +33,12 @@ it('initializes both `$filters` and `$deferredFilters` on mount when deferred', 
         ->assertSet('deferredFilters', ['year' => '2024']);
 });
 
-it('updates `$filters` immediately without exposing `filtersSchema()` when deferred is disabled', function (): void {
+it('updates `$filters` immediately without exposing `filtersForm()` when deferred is disabled', function (): void {
     Livewire::test(TestChartWidgetDefault::class)
         ->assertSet('filters', ['year' => '2024'])
         ->set('filters.year', '2023')
         ->assertSet('filters', ['year' => '2023'])
-        ->call('filtersSchema')
+        ->call('filtersForm')
         ->assertForbidden();
 });
 
@@ -96,13 +96,13 @@ it('can override `hasDeferredFilters()` for dynamic behavior', function (): void
 it('uses `statePath("deferredFilters")` when deferred', function (): void {
     $widget = Livewire::test(TestChartWidgetWithDeferredFiltersProperty::class);
 
-    expect($widget->instance()->getFiltersSchema()->getStatePath())->toBe('deferredFilters');
+    expect($widget->instance()->getFiltersForm()->getStatePath())->toBe('deferredFilters');
 });
 
 it('uses `statePath("filters")` when not deferred', function (): void {
     $widget = Livewire::test(TestChartWidgetDefault::class);
 
-    expect($widget->instance()->getFiltersSchema()->getStatePath())->toBe('filters');
+    expect($widget->instance()->getFiltersForm()->getStatePath())->toBe('filters');
 });
 
 it('returns `primary` as default value from `getColor()`', function (): void {
@@ -233,7 +233,7 @@ it('keeps chart alternatives accessible when changing filters', function (): voi
 
 class TestChartWidgetDefault extends ChartWidget
 {
-    use ChartWidget\Concerns\HasFiltersSchema;
+    use ChartWidget\Concerns\HasFiltersForm;
 
     protected function getType(): string
     {
@@ -255,7 +255,7 @@ class TestChartWidgetDefault extends ChartWidget
         ];
     }
 
-    public function filtersSchema(Schema $schema): Schema
+    public function filtersForm(Schema $schema): Schema
     {
         return $schema
             ->components([
@@ -272,7 +272,7 @@ class TestChartWidgetDefault extends ChartWidget
 
 class TestChartWidgetWithDeferredFiltersProperty extends ChartWidget
 {
-    use ChartWidget\Concerns\HasFiltersSchema;
+    use ChartWidget\Concerns\HasFiltersForm;
 
     protected bool $hasDeferredFilters = true;
 
@@ -296,7 +296,7 @@ class TestChartWidgetWithDeferredFiltersProperty extends ChartWidget
         ];
     }
 
-    public function filtersSchema(Schema $schema): Schema
+    public function filtersForm(Schema $schema): Schema
     {
         return $schema
             ->components([
@@ -313,7 +313,7 @@ class TestChartWidgetWithDeferredFiltersProperty extends ChartWidget
 
 class TestChartWidgetWithDynamicDeferredFilters extends ChartWidget
 {
-    use ChartWidget\Concerns\HasFiltersSchema;
+    use ChartWidget\Concerns\HasFiltersForm;
 
     protected function getType(): string
     {
@@ -334,7 +334,7 @@ class TestChartWidgetWithDynamicDeferredFilters extends ChartWidget
         ];
     }
 
-    public function filtersSchema(Schema $schema): Schema
+    public function filtersForm(Schema $schema): Schema
     {
         return $schema
             ->components([

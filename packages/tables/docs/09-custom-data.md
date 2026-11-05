@@ -274,7 +274,7 @@ public function table(Table $table): Table
                     'Zep Fietje' => 'Zep Fietje',
                 ]),
             Filter::make('creation_date')
-                ->schema([
+                ->form([
                     DatePicker::make('date'),
                 ]),
         ]);

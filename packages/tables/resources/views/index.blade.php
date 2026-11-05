@@ -1202,9 +1202,23 @@
                                             </div>
                                         @endif
 
+                                        @php
+                                            $recordGroupLabel = $group->isTitlePrefixedWithLabel() ? $group->getLabel() : null;
+                                            $recordGroupDescription = $group->getDescription($record, $recordGroupTitle);
+                                            $hasRecordGroupCheckbox = $isSelectionEnabled && ($maxSelectableRecords !== 1);
+                                            $hasRecordGroupHeader = filled($recordGroupTitle)
+                                                || filled($recordGroupLabel)
+                                                || filled($recordGroupDescription)
+                                                || $isRecordGroupCollapsible
+                                                || $hasRecordGroupCheckbox;
+                                        @endphp
+
                                         <div
                                             role="listitem"
-                                            @if ($isRecordGroupCollapsible = $group->isCollapsible())
+                                            @if (! $hasRecordGroupHeader)
+                                                aria-hidden="true"
+                                            @endif
+                                            @if ($isRecordGroupCollapsible)
                                                 x-on:click="if (! $event.target.closest('.fi-ta-group-checkbox')) toggleCollapseGroup(@js($recordGroupTitle))"
                                                 @if (! $hasSummary)
                                                     x-bind:class="{ 'fi-collapsed': isGroupCollapsed(@js($recordGroupTitle)) }"
@@ -1215,7 +1229,7 @@
                                                 'fi-collapsible' => $isRecordGroupCollapsible,
                                             ])
                                         >
-                                            @if ($isSelectionEnabled && ($maxSelectableRecords !== 1))
+                                            @if ($hasRecordGroupCheckbox)
                                                 <input
                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                     type="checkbox"
@@ -1259,14 +1273,14 @@
                                                 <{{ $secondLevelHeadingTag }}
                                                     class="fi-ta-group-heading"
                                                 >
-                                                    @if (filled($recordGroupLabel = ($group->isTitlePrefixedWithLabel() ? $group->getLabel() : null)))
+                                                    @if (filled($recordGroupLabel))
                                                             {{ $recordGroupLabel }}:
                                                     @endif
 
                                                     {{ $recordGroupTitle }}
                                                 </{{ $secondLevelHeadingTag }}>
 
-                                                @if (filled($recordGroupDescription = $group->getDescription($record, $recordGroupTitle)))
+                                                @if (filled($recordGroupDescription))
                                                     <p
                                                         class="fi-ta-group-description"
                                                     >
@@ -2226,14 +2240,28 @@
                                             @endif
 
                                             @if (! $isGroupsOnly)
+                                                @php
+                                                    $isRecordGroupCollapsible = $group?->isCollapsible();
+                                                    $recordGroupLabel = $group->isTitlePrefixedWithLabel() ? $group->getLabel() : null;
+                                                    $recordGroupDescription = $group->getDescription($record, $recordGroupTitle);
+                                                    $hasRecordGroupCheckbox = $isSelectionEnabled && ($maxSelectableRecords !== 1);
+                                                    $hasRecordGroupHeader = filled($recordGroupTitle)
+                                                        || filled($recordGroupLabel)
+                                                        || filled($recordGroupDescription)
+                                                        || $isRecordGroupCollapsible
+                                                        || $hasRecordGroupCheckbox;
+                                                @endphp
+
                                                 <tr
+                                                    @if (! $hasRecordGroupHeader)
+                                                        aria-hidden="true"
+                                                    @endif
                                                     @class([
                                                         'fi-ta-row fi-ta-group-header-row',
-                                                        'fi-ta-group-header-row-with-selection' => $isSelectionEnabled && ($maxSelectableRecords !== 1),
+                                                        'fi-ta-group-header-row-with-selection' => $hasRecordGroupCheckbox,
                                                     ])
                                                 >
                                                     @php
-                                                        $isRecordGroupCollapsible = $group?->isCollapsible();
                                                         $groupHeaderColspan = $columnsCount;
 
                                                         if ($isSelectionEnabled) {
@@ -2317,14 +2345,14 @@
                                                                 <{{ $secondLevelHeadingTag }}
                                                                     class="fi-ta-group-heading"
                                                                 >
-                                                                    @if (filled($recordGroupLabel = ($group->isTitlePrefixedWithLabel() ? $group->getLabel() : null)))
+                                                                    @if (filled($recordGroupLabel))
                                                                             {{ $recordGroupLabel }}:
                                                                     @endif
 
                                                                     {{ $recordGroupTitle }}
                                                                 </{{ $secondLevelHeadingTag }}>
 
-                                                                @if (filled($recordGroupDescription = $group->getDescription($record, $recordGroupTitle)))
+                                                                @if (filled($recordGroupDescription))
                                                                     <p
                                                                         class="fi-ta-group-description"
                                                                     >

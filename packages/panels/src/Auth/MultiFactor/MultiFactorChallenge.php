@@ -65,29 +65,47 @@ class MultiFactorChallenge
     /**
      * @return array<Component>
      */
-    public function getSchemaComponents(Authenticatable $user): array
+    public function getFormComponents(Authenticatable $user): array
     {
         $enabledProviders = $this->getEnabledProviders($user);
 
         return [
-            ...Arr::wrap($this->getProviderPickerSchemaComponentForEnabledProviders($user, $enabledProviders)),
-            ...$this->getChallengeSchemaComponentsForEnabledProviders($user, $enabledProviders),
+            ...Arr::wrap($this->getProviderPickerFormComponentForEnabledProviders($user, $enabledProviders)),
+            ...$this->getChallengeFormComponentsForEnabledProviders($user, $enabledProviders),
         ];
+    }
+
+    /**
+     * @deprecated Use `getFormComponents()` instead.
+     *
+     * @return array<Component>
+     */
+    public function getSchemaComponents(Authenticatable $user): array
+    {
+        return $this->getFormComponents($user);
     }
 
     /**
      * The component that lets the user choose which of their enabled providers to
      * be challenged with. Returns `null` when there is nothing to choose between.
      */
+    public function getProviderPickerFormComponent(Authenticatable $user): ?Component
+    {
+        return $this->getProviderPickerFormComponentForEnabledProviders($user, $this->getEnabledProviders($user));
+    }
+
+    /**
+     * @deprecated Use `getProviderPickerFormComponent()` instead.
+     */
     public function getProviderPickerSchemaComponent(Authenticatable $user): ?Component
     {
-        return $this->getProviderPickerSchemaComponentForEnabledProviders($user, $this->getEnabledProviders($user));
+        return $this->getProviderPickerFormComponent($user);
     }
 
     /**
      * @param  array<string, MultiFactorAuthenticationProvider>  $enabledProviders
      */
-    protected function getProviderPickerSchemaComponentForEnabledProviders(Authenticatable $user, array $enabledProviders): ?Component
+    protected function getProviderPickerFormComponentForEnabledProviders(Authenticatable $user, array $enabledProviders): ?Component
     {
         if (count($enabledProviders) <= 1) {
             return null;
@@ -111,15 +129,15 @@ class MultiFactorChallenge
                             return;
                         }
 
-                        $providerChallengeSchemaComponent = $section
+                        $providerChallengeFormComponent = $section
                             ->getRootContainer()
                             ->getComponent($provider->getId(), withActions: false, withHidden: true);
 
-                        if (! ($providerChallengeSchemaComponent instanceof Group)) {
-                            throw new LogicException("The multi-factor challenge schema component for provider [{$provider->getId()}] could not be found in the root schema.");
+                        if (! ($providerChallengeFormComponent instanceof Group)) {
+                            throw new LogicException("The multi-factor challenge form component for provider [{$provider->getId()}] could not be found in the root schema.");
                         }
 
-                        $providerChallengeSchemaComponent
+                        $providerChallengeFormComponent
                             ->getChildSchema()
                             ->fill();
 
@@ -134,16 +152,26 @@ class MultiFactorChallenge
     /**
      * @return array<Component>
      */
+    public function getChallengeFormComponents(Authenticatable $user): array
+    {
+        return $this->getChallengeFormComponentsForEnabledProviders($user, $this->getEnabledProviders($user));
+    }
+
+    /**
+     * @deprecated Use `getChallengeFormComponents()` instead.
+     *
+     * @return array<Component>
+     */
     public function getChallengeSchemaComponents(Authenticatable $user): array
     {
-        return $this->getChallengeSchemaComponentsForEnabledProviders($user, $this->getEnabledProviders($user));
+        return $this->getChallengeFormComponents($user);
     }
 
     /**
      * @param  array<string, MultiFactorAuthenticationProvider>  $enabledProviders
      * @return array<string, Component>
      */
-    protected function getChallengeSchemaComponentsForEnabledProviders(Authenticatable $user, array $enabledProviders): array
+    protected function getChallengeFormComponentsForEnabledProviders(Authenticatable $user, array $enabledProviders): array
     {
         return collect($enabledProviders)
             ->map(fn (MultiFactorAuthenticationProvider $provider): Component => Group::make($provider->getChallengeSchemaComponents($user))

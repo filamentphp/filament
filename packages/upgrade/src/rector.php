@@ -42,6 +42,8 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->importNames();
 
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
+        'Filament\\Tables\\Filters\\Concerns\\HasSchema' => 'Filament\\Tables\\Filters\\Concerns\\HasForm',
+        'Filament\\Widgets\\ChartWidget\\Concerns\\HasFiltersSchema' => 'Filament\\Widgets\\ChartWidget\\Concerns\\HasFiltersForm',
         'Filament\\Actions\\Exports\\Jobs\\ExportCompletion' => 'Filament\\Actions\\Exports\\Jobs\\CompleteExport',
         'Filament\\Schemas\\Components\\StateCasts\\OptionsArrayStateCast' => 'Filament\\Schemas\\Components\\StateCasts\\OptionArrayStateCast',
         'Filament\\Support\\View\\Components\\Contracts\\HasColor' => 'Filament\\Support\\View\\Components\\Contracts\\HasColorMap',
