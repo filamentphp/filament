@@ -73,6 +73,12 @@ export default function tagsInputFormComponent({
             ['x-on:blur']: 'createTag()',
             ['x-model']: 'newTag',
             ['x-on:keydown'](event) {
+                // Ignore key events fired while an IME is composing text
+                // (e.g. Korean), so confirming a character does not create a tag.
+                if (event.isComposing) {
+                    return
+                }
+
                 if (['Enter', ...splitKeys].includes(event.key)) {
                     event.preventDefault()
                     event.stopPropagation()

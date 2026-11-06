@@ -355,6 +355,30 @@ describe('browser interactions', function (): void {
             ->inDarkMode()
             ->assertNoAccessibilityIssues();
     });
+
+    it('ignores `Enter` while an IME is composing text', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/tags-input-test');
+
+        $page->type('[data-testid="basic-tags"] input', '뉴 태그');
+
+        // Native key simulation cannot set `isComposing`, so dispatch the
+        // compositional `Enter` directly: confirming a Korean character must
+        // not create a tag on its own.
+        $page->script(<<<'JS'
+            document.querySelector('[data-testid="basic-tags"] input').dispatchEvent(
+                new KeyboardEvent('keydown', { key: 'Enter', isComposing: true, bubbles: true, cancelable: true }),
+            )
+            JS);
+
+        $page
+            ->assertCount('[data-testid="basic-tags"] button[aria-label]', 0)
+            ->keys('[data-testid="basic-tags"] input', 'Enter')
+            ->assertCount('[data-testid="basic-tags"] button[aria-label]', 1)
+            ->assertSee('뉴 태그')
+            ->assertNoSmoke();
+    });
 });
 
 class TestComponentWithTagsInputTrim extends Livewire
