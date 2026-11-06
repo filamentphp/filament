@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
+use function Filament\Support\get_query_orders;
+
 trait HasRelationship
 {
     protected ?Closure $modifyRelationshipQueryUsing = null;
@@ -122,7 +124,7 @@ trait HasRelationship
             ]) ?? $relationshipQuery;
         }
 
-        if (empty($relationshipQuery->getQuery()->orders)) {
+        if (blank(get_query_orders($relationshipQuery))) {
             $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($this->getRelationshipTitleAttribute()));
         }
 

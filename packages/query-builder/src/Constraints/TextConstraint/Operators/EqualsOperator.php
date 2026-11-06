@@ -98,7 +98,7 @@ class EqualsOperator extends Operator
         return apply_search_constraint(
             $query,
             $qualifiedColumn,
-            generate_search_pattern($text, hasLeadingWildcard: false, hasTrailingWildcard: false),
+            generate_search_pattern($text, hasLeadingWildcard: false, hasTrailingWildcard: false, databaseConnection: $databaseConnection),
             isInverse: $this->isInverse(),
         );
     }

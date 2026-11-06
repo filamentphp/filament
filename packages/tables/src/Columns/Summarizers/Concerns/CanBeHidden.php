@@ -6,6 +6,8 @@ use Closure;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Support\Arr;
 
+use function Filament\Support\is_database_driver_supported;
+
 trait CanBeHidden
 {
     protected bool | Closure $isHidden = false;
@@ -70,6 +72,11 @@ trait CanBeHidden
     public function isHidden(): bool
     {
         $query = $this->getQuery();
+
+        if ($query && (! is_database_driver_supported($query->getConnection()))) {
+            return $this->evaluate($this->isHidden) || (! $this->evaluate($this->isVisible));
+        }
+
         $querySql = $query ? md5($query->toRawSql()) : '';
 
         if (array_key_exists($querySql, $this->visibilityCache)) {

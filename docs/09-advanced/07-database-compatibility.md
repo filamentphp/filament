@@ -1,0 +1,152 @@
+---
+title: Database compatibility
+---
+
+## Introduction
+
+Filament's built-in database support covers MariaDB (`mariadb`), MySQL (`mysql`), PostgreSQL (`pgsql`), SQLite (`sqlite`), and SQL Server (`sqlsrv`). Filament sometimes uses database-specific SQL for these drivers when Laravel's query builder does not provide the behavior that a feature needs.
+
+Other database drivers can support these features through methods on their Eloquent query builder and relationship classes. Filament does not require an adapter, interface, or package-specific integration. It uses Laravel's existing query builder methods where possible and checks for the additional methods described below before falling back to SQL. You only need to implement the methods used by the features that your driver supports. Filament does not call these additional methods for its built-in supported drivers.
+
+The Filament-specific methods must be real public methods on the custom Eloquent builder or relationship class. Filament discovers them using `method_exists()`, so builder macros and methods that are only available through `__call()` are not detected.
+
+## Searching text
+
+For supported drivers, Filament preserves its database-specific handling for case-insensitive searches, JSON paths, collations, and PostgreSQL text casting. For any other driver, Filament's built-in table searches, relationship option searches, action record searches, resource global search, and query builder text operators use Laravel's `whereLike()` method:
+
+```php
+use Illuminate\Contracts\Database\Query\Expression;
+
+public function whereLike(
+    string | Expression $column,
+    string $value,
+    bool $caseSensitive = false,
+    string $boolean = 'and',
+    bool $not = false,
+): static
+{
+    // Apply the search constraint to the query.
+}
+```
+
+This is a standard Laravel query builder method rather than a Filament-specific extension. Eloquent normally forwards the call to the underlying query builder. Filament calls it without checking `method_exists()` and passes `false` for `$caseSensitive`. The driver implementation should interpret `%` and `_` as multi-character and single-character wildcards respectively, honor the boolean and negation arguments, apply a case-insensitive search, and return the builder.
+
+For these drivers, Filament passes the column name and search term without SQL `lower()` expressions, PostgreSQL casts, or the configured `search_collation`. The driver is responsible for case-insensitive matching even when the component explicitly forces it. Literal `%` and `_` characters in user input are escaped as `\%` and `\_`; the driver must distinguish these from the wildcards Filament adds around the search term.
+
+## Reading order clauses
+
+Filament inspects the current ordering before adding a default primary-key sort to tables or a default label sort to relationship options and filters. If your driver does not store order clauses in Laravel's list format, you can expose them through a method on your Eloquent builder:
+
+```php
+use Illuminate\Contracts\Database\Query\Expression;
+
+/**
+ * @return list<array{column: string | Expression, direction: 'asc' | 'desc'} | array{type: 'Raw', sql: string}>
+ */
+public function getOrders(): array
+{
+    // Return the query's current order clauses in Laravel's list format.
+}
+```
+
+Return every clause in its original precedence order. For column sorts, use `asc` or `desc` directions and column names that identify the model's primary key when it is already sorted. Preserve expression objects and raw clauses rather than dropping them: a query ordered only by an expression or raw clause is still ordered. Return an empty list only when the query has no ordering.
+
+The method must only read the current ordering, without changing the query or the driver's native order representation. Filament uses these clauses to avoid adding a redundant primary-key sort that could overwrite its existing direction, or adding a label sort to an already-ordered relationship query. Without this method, Filament reads the underlying query builder's `orders` property.
+
+This method applies to general default-order checks, not CSV export pagination or SQL-specific order rewriting.
+
+## Calculating table summaries
+
+For other database drivers, Filament calculates summaries through the driver's native query builder instead of wrapping the source query in a SQL subquery or batching raw SQL aggregate expressions. No additional Eloquent methods are required. Your driver must support Laravel's `sum()`, `avg()`, `count()`, `min()`, and `max()` methods for the summarizers you use. Range summaries call `min()` and `max()` separately. Count summaries count matching records; icon counts also require `distinct()->pluck()` and filtered counts.
+
+Filament preserves filters and Eloquent scopes. Display-group summaries use separate group-scoped queries rather than raw SQL grouping, so your driver must support the group's constraints, including `whereDate()` for date groups. Summary `query()` and `using()` callbacks receive the driver's query builder and must use operations it supports. Summary visibility callbacks are evaluated without SQL-based caching.
+
+For non-relationship summaries, use `query()` callbacks only to configure the query, not to execute it. Filament applies the callback to a clone without source predicates, then combines the source and callback predicates as separate groups. This prevents callback `orWhere()` conditions from bypassing source filters. Use `using()` to execute custom calculations against the combined query.
+
+For current-page summaries and other sources with a limit or offset, Filament first fetches the matching primary keys, then aggregates records restricted to those keys without the original ordering, limit, or offset. This preserves the source window before applying a summary's `query()` callback. Your driver must support primary-key selection, `pluck()`, `whereIn()`, and `reorder()`. Use deterministic source ordering to keep page boundaries consistent.
+
+<Aside variant="info">
+    The fallback executes separate queries per summary and display group. Limited or offset sources also require fetching their keys into memory; an offset without a limit can still select a large number of keys. Account for your driver's request-size limits and use a transaction or snapshot supported by your driver if you require consistency across concurrent writes.
+</Aside>
+
+This fallback supports ordinary model attributes, not computed SQL selections, pivot projections, or derived-table queries. Source queries using `distinct()`, `groupBy()`, `having()`, `union()`, or `unionAll()` are rejected rather than aggregated with different row-set semantics. Joined source queries with a limit or offset are also rejected, since a model's primary key does not uniquely identify joined rows. Filament display grouping is not subject to these restrictions. Relationship summaries still require the driver's support for the existing relationship queries. Aggregate values, including null handling and comparisons between different value types, follow your driver's native semantics.
+
+## Ordering by a relationship
+
+Filament normally orders records by a relationship attribute using a correlated SQL subquery. A custom Eloquent builder can implement the operation directly instead:
+
+```php
+public function orderByRelation(
+    string $relation,
+    string $column,
+    string $direction = 'asc',
+): static
+{
+    // Apply the relationship ordering to the query.
+}
+```
+
+The `$relation` may be a dot-notated nested relationship path. The implementation should order the parent records by the related `$column` in the requested direction and return the builder. Filament uses this method when sorting table relationship columns and ordering table groups by relationship attributes.
+
+## Ordering by a relationship aggregate
+
+Filament loads relationship aggregates using Laravel's `withAvg()`, `withCount()`, `withExists()`, `withMax()`, `withMin()`, and `withSum()` methods. SQL drivers can then order by the generated aggregate alias. Drivers that cannot order by these hydrated aliases can implement the aggregate and ordering together:
+
+```php
+use Closure;
+use Illuminate\Contracts\Database\Query\Expression;
+
+public function orderByRelationAggregate(
+    string $relation,
+    string | Expression $column,
+    string $function,
+    string $direction = 'asc',
+    ?Closure $callback = null,
+): static
+{
+    // Apply the relationship aggregate ordering to the query.
+}
+```
+
+Filament calls this method when sorting table columns configured with `avg()`, `counts()`, `exists()`, `max()`, `min()`, or `sum()`. The `$function` is `avg`, `count`, `exists`, `max`, `min`, or `sum`; `$column` is `*` for `count` and `exists`. If provided, the `$callback` must be applied to the related query before calculating the aggregate. The implementation should order the parent records by the aggregate in the requested direction and return the builder.
+
+## Filtering by a relationship aggregate
+
+Filament normally filters by a relationship aggregate using a correlated SQL subquery. A custom Eloquent builder can implement the aggregate comparison directly instead:
+
+```php
+use Closure;
+
+public function whereRelationAggregate(
+    string $relation,
+    string $column,
+    string $function,
+    string $operator,
+    float $value,
+    ?Closure $callback = null,
+): static
+{
+    // Apply the relationship aggregate constraint to the query.
+}
+```
+
+Filament uses this method for query builder number constraints that aggregate a relationship column. The `$function` is `avg`, `max`, `min`, or `sum`, and `$operator` is the comparison operator selected by the constraint. If provided, call `$callback($relatedQuery)` and use its returned Eloquent builder before calculating the aggregate. Filament resolves the application's callback dependencies, including the operator's `$settings`, when you invoke it. The implementation should compare the aggregate with `$value`, constrain the parent query, and return the builder.
+
+## Querying unattached relationship records
+
+Filament normally finds records that can be attached to a `BelongsToMany` relationship using a pivot-table subquery. A custom `BelongsToMany` relationship without a SQL pivot table can provide this query directly:
+
+```php
+use Illuminate\Database\Eloquent\Builder;
+
+public function newUnattachedQuery(): Builder
+{
+    // Return a query for related records that are not attached to the parent.
+}
+```
+
+The method should return a new Eloquent query for the related model, preserve any relevant relationship constraints, exclude records already attached to the current parent record, and remain independently modifiable by Filament. Filament uses this method in table select fields that exclude already-attached records, including attach actions configured with `tableSelect()`.
+
+<Aside variant="info">
+    This method only replaces the unattached-record query. It does not provide pivot-record support. Relationship tables configured with `allowDuplicates()` still require independently addressable pivot records: the driver must support selecting, filtering, and ordering by their qualified keys, including the `filament_pivot_key` alias used for selection and cursor pagination. A relationship that only stores related IDs without separate pivot records cannot support this configuration through `newUnattachedQuery()` alone.
+</Aside>

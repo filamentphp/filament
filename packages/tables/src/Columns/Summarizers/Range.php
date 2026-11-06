@@ -7,6 +7,8 @@ use Closure;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Str;
 
+use function Filament\Support\is_database_driver_supported;
+
 class Range extends Summarizer
 {
     protected bool | Closure $shouldExcludeNull = true;
@@ -18,6 +20,10 @@ class Range extends Summarizer
     {
         if ($this->shouldExcludeNull()) {
             $query->whereNotNull($attribute);
+        }
+
+        if (! is_database_driver_supported($query->getConnection())) {
+            return [$query->clone()->min($attribute), $query->clone()->max($attribute)];
         }
 
         $minSelectAlias = Str::random();

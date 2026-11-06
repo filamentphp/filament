@@ -20,6 +20,7 @@ use function Filament\Support\apply_search_constraint;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_pattern;
 use function Filament\Support\generate_search_term_expression;
+use function Filament\Support\get_query_orders;
 
 class AssociateAction extends Action
 {
@@ -245,7 +246,7 @@ class AssociateAction extends Action
                 $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
 
                 $search = generate_search_term_expression($search, $isForcedCaseInsensitive, $databaseConnection);
-                $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true);
+                $searchPattern = generate_search_pattern($search, hasLeadingWildcard: true, hasTrailingWildcard: true, databaseConnection: $databaseConnection);
                 $searchColumns ??= [$titleAttribute];
 
                 $isFirst = true;
@@ -288,7 +289,7 @@ class AssociateAction extends Action
                 (! $this->hasCustomRecordTitle()) &&
                 ($this->hasCustomRecordTitleAttribute() || (! $this->getTable()->hasCustomRecordTitle()))
             ) {
-                if (empty($relationshipQuery->getQuery()->orders)) {
+                if (blank(get_query_orders($relationshipQuery))) {
                     $relationshipQuery->orderBy($titleAttribute);
                 }
 

@@ -7,6 +7,8 @@ use Filament\Support\Components\Attributes\Unexposed;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Grammars\SqlServerGrammar;
 
+use function Filament\Support\get_query_orders;
+
 trait CanSortRecords
 {
     public ?string $tableSort = null;
@@ -158,14 +160,14 @@ trait CanSortRecords
 
         $qualifiedKeyName = $query->getModel()->getQualifiedKeyName();
 
-        foreach ($query->getQuery()->orders ?? [] as $order) {
+        foreach (get_query_orders($query) as $order) {
             if (($order['column'] ?? null) === $qualifiedKeyName) {
                 return $query;
             }
 
             if (
                 is_string($order['column'] ?? null) &&
-                str($order['column'] ?? null)->afterLast('.')->is(
+                str($order['column'])->afterLast('.')->is(
                     str($qualifiedKeyName)->afterLast('.')
                 )
             ) {

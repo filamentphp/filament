@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
+use function Filament\Support\get_query_orders;
+
 class IsRelatedToOperator extends Operator
 {
     protected string | Closure | null $titleAttribute = null;
@@ -292,7 +294,7 @@ class IsRelatedToOperator extends Operator
             ]) ?? $relationshipQuery;
         }
 
-        if (empty($relationshipQuery->getQuery()->orders)) {
+        if (blank(get_query_orders($relationshipQuery))) {
             $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($this->getTitleAttribute()));
         }
 
