@@ -9,6 +9,7 @@ use Filament\Tables\Testing\TestsActions;
 use Filament\Tables\Testing\TestsBulkActions;
 use Filament\Tables\Testing\TestsColumns;
 use Filament\Tables\Testing\TestsFilters;
+use Filament\Tables\Testing\TestsQueries;
 use Filament\Tables\Testing\TestsRecords;
 use Filament\Tables\Testing\TestsSummaries;
 use Illuminate\Filesystem\Filesystem;
@@ -53,6 +54,7 @@ class TablesServiceProvider extends PackageServiceProvider
         Testable::mixin(new TestsBulkActions);
         Testable::mixin(new TestsColumns);
         Testable::mixin(new TestsFilters);
+        Testable::mixin(new TestsQueries);
         Testable::mixin(new TestsRecords);
         Testable::mixin(new TestsSummaries);
     }

@@ -456,6 +456,55 @@ it('can average values in a column', function () {
 });
 ```
 
+## Testing database queries
+
+To ensure that a table does not execute too many database queries while rendering, you can use `assertTableRendersWithinQueries()`, passing the maximum number of queries:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('renders posts within a query budget', function () {
+    Post::factory()->count(10)->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableRendersWithinQueries(12);
+});
+```
+
+To detect N+1 queries, for example from relationship columns that are not eager loaded, or from functions passed to `state()`, `description()` or `url()`, you can use `assertTableQueryCountDoesNotGrowWithRecords()`. It accepts a function that creates the given number of records. The table is rendered with a small number of records, then more records are created and the table is rendered again, and the helper asserts that the same number of queries was executed both times:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('does not have N+1 queries', function () {
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableQueryCountDoesNotGrowWithRecords(
+            fn (int $count) => Post::factory()->count($count)->forAuthor()->create(),
+        );
+});
+```
+
+By default, the table is rendered with 3 records, and then with 20 records. You may customize these numbers using the `smallRecordCount` and `largeRecordCount` arguments.
+
+To assert that no relationships are lazy loaded while rendering the table, you can use `assertTableHasNoLazyLoading()`. If a relationship is lazy loaded, the failure message will include the model and relationship name:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('does not lazy load relationships', function () {
+    Post::factory()->count(10)->forAuthor()->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableHasNoLazyLoading();
+});
+```
+
+<Aside variant="info">
+    Laravel only detects lazy loading on models that were retrieved alongside other models, so you should create at least two records before using `assertTableHasNoLazyLoading()`.
+</Aside>
+
+> If your table uses `lazyLoaded()`, you should call `loadTable()` before using these helpers.
+
 ## Testing toggleable columns
 
 By default, only columns that are toggled on by default in the table will be rendered and testable. You can toggle all columns in the table on using `toggleAllTableColumns()`:
