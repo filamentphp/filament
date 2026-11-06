@@ -13,10 +13,10 @@ class BaseFilter extends Component
     use Concerns\CanSpanColumns;
     use Concerns\HasColumns;
     use Concerns\HasDefaultState;
+    use Concerns\HasForm;
     use Concerns\HasIndicators;
     use Concerns\HasLabel;
     use Concerns\HasName;
-    use Concerns\HasSchema;
     use Concerns\InteractsWithTableQuery;
 
     protected string $evaluationIdentifier = 'filter';

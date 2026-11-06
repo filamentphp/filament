@@ -726,7 +726,7 @@ class RichContentRenderer implements Htmlable
         }
 
         foreach ($this->mentionProviders as $provider) {
-            if ($provider->getChar() === $char) {
+            if ($provider->getTriggerCharacter() === $char) {
                 return $provider;
             }
         }

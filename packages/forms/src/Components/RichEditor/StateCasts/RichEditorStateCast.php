@@ -159,7 +159,7 @@ class RichEditorStateCast implements StateCast
 
         foreach ($mentionsByChar as $char => $ids) {
             foreach ($mentionProviders as $provider) {
-                if ($provider->getChar() === $char) {
+                if ($provider->getTriggerCharacter() === $char) {
                     $labelsByChar[$char] = $provider->getLabels(array_unique($ids));
 
                     break;

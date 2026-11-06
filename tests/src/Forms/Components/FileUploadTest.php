@@ -926,11 +926,18 @@ describe('configuration', function (): void {
         it('can set `confirmSvgEditing()`', function (): void {
             $upload = FileUpload::make('icon');
 
-            expect($upload->isSvgEditingConfirmed())->toBeFalse();
+            expect($upload->shouldConfirmSvgEditing())->toBeFalse()
+                ->and($upload->isSvgEditingConfirmed())->toBeFalse();
 
             $upload->confirmSvgEditing();
 
-            expect($upload->isSvgEditingConfirmed())->toBeTrue();
+            expect($upload->shouldConfirmSvgEditing())->toBeTrue()
+                ->and($upload->isSvgEditingConfirmed())->toBeTrue();
+
+            $upload->confirmSvgEditing(false);
+
+            expect($upload->shouldConfirmSvgEditing())->toBeFalse()
+                ->and($upload->isSvgEditingConfirmed())->toBeFalse();
         });
 
         it('can set `imageEditorViewportWidth()` and `imageEditorViewportHeight()`', function (): void {
@@ -1901,10 +1908,19 @@ describe('configuration', function (): void {
         });
 
         it('can set `confirmSvgEditing()` with a `Closure`', function (): void {
+            $shouldConfirm = true;
             $upload = FileUpload::make('icon')
-                ->confirmSvgEditing(static fn (): bool => true);
+                ->confirmSvgEditing(static function () use (&$shouldConfirm): bool {
+                    return $shouldConfirm;
+                });
 
-            expect($upload->isSvgEditingConfirmed())->toBeTrue();
+            expect($upload->shouldConfirmSvgEditing())->toBeTrue()
+                ->and($upload->isSvgEditingConfirmed())->toBeTrue();
+
+            $shouldConfirm = false;
+
+            expect($upload->shouldConfirmSvgEditing())->toBeFalse()
+                ->and($upload->isSvgEditingConfirmed())->toBeFalse();
         });
 
         it('can set `panelLayout()` with a `Closure`', function (): void {

@@ -1,6 +1,6 @@
 {
     "name": "filament/filament",
-    "description": "A collection of full-stack components for accelerated Laravel app development.",
+    "description": "An open-source framework for building polished, maintainable business software with Laravel.",
     "license": "MIT",
     "homepage": "https://github.com/filamentphp/filament",
     "support": {

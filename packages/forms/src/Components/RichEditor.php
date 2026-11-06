@@ -1167,7 +1167,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         return array_map(
             function (MentionProvider $provider): array {
                 return [
-                    'char' => $provider->getChar(),
+                    'char' => $provider->getTriggerCharacter(),
                     'extraAttributes' => $provider->getExtraAttributes(),
                     'isSearchable' => $provider->hasSearchResultsUsingCallback(),
                     'items' => $this->transformMentionItemsForJs($provider->getItems()),
@@ -1193,7 +1193,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         $providers = $this->getMentionProviders();
 
         $provider = collect($providers)->first(function (MentionProvider $mentionProvider) use ($char): bool {
-            return $mentionProvider->getChar() === $char;
+            return $mentionProvider->getTriggerCharacter() === $char;
         }) ?? ($providers[0] ?? null);
 
         if (! $provider) {
@@ -1235,7 +1235,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
         foreach ($mentionsByChar as $char => $charMentions) {
             $provider = collect($providers)->first(function (MentionProvider $mentionProvider) use ($char): bool {
-                return $mentionProvider->getChar() === $char;
+                return $mentionProvider->getTriggerCharacter() === $char;
             }) ?? ($providers[0] ?? null);
 
             if (! $provider) {

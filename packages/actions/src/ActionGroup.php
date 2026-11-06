@@ -49,7 +49,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     use Concerns\CanBeHidden {
         isHidden as baseIsHidden;
     }
-    use Concerns\CanBeLabeledFrom;
+    use Concerns\CanBeLabeledFromBreakpoint;
     use Concerns\CanBeOutlined;
     use Concerns\HasDropdown;
     use Concerns\HasGroupedIcon;

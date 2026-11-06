@@ -7,9 +7,15 @@ uses(TestCase::class);
 
 describe('construction', function (): void {
     it('can be constructed with a trigger character', function (): void {
-        $provider = MentionProvider::make('@');
+        $provider = MentionProvider::make(char: '@');
 
-        expect($provider->getChar())->toBe('@');
+        expect($provider->getTriggerCharacter())->toBe('@')
+            ->and($provider->getChar())->toBe('@');
+
+        $provider = new MentionProvider(char: '#');
+
+        expect($provider->getTriggerCharacter())->toBe('#')
+            ->and($provider->getChar())->toBe('#');
     });
 });
 

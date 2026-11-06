@@ -175,6 +175,22 @@ it('can set `headerOffset()` to `0`', function (): void {
     expect($action->getHeaderOffset())->toBe(0);
 });
 
+it('can configure and reset `csvEncoding()`', function (): void {
+    $action = ImportAction::make();
+
+    expect($action->getCsvEncoding())->toBeNull()
+        ->and($action->csvEncoding('Windows-1252'))->toBe($action)
+        ->and($action->getCsvEncoding())->toBe('Windows-1252');
+
+    $action->csvEncoding(static fn (ImportAction $action): string => $action->getName() === 'import' ? 'SJIS-win' : 'UTF-8');
+
+    expect($action->getCsvEncoding())->toBe('SJIS-win');
+
+    $action->csvEncoding(null);
+
+    expect($action->getCsvEncoding())->toBeNull();
+});
+
 it('can set `csvDelimiter()` with a `Closure`', function (): void {
     $action = ImportAction::make()
         ->csvDelimiter(static fn (): string => "\t");

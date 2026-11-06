@@ -36,7 +36,7 @@ class QueryBuilder extends BaseFilter
     /**
      * @var array<string, bool>
      */
-    protected array $cachedRuleSchemaValidity = [];
+    protected array $cachedRuleFormValidity = [];
 
     protected function setUp(): void
     {
@@ -44,7 +44,7 @@ class QueryBuilder extends BaseFilter
 
         $this->label(__('filament-query-builder::query-builder.label'));
 
-        $this->schema(fn (QueryBuilder $filter): array => [
+        $this->form(fn (QueryBuilder $filter): array => [
             RuleBuilder::make('rules')
                 ->label($filter->getLabel())
                 ->hiddenLabel()
@@ -188,7 +188,7 @@ class QueryBuilder extends BaseFilter
                 continue;
             }
 
-            if (! $this->ruleSchemaPassesValidation($ruleBuilderBlockContainer)) {
+            if (! $this->ruleFormPassesValidation($ruleBuilderBlockContainer)) {
                 continue;
             }
 
@@ -417,7 +417,7 @@ class QueryBuilder extends BaseFilter
             return $this->cachedRuleBuilder;
         }
 
-        $builder = $this->getSchema()->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
+        $builder = $this->getForm()->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
 
         if (! ($builder instanceof RuleBuilder)) {
             throw new LogicException('No rule builder component found.');
@@ -465,7 +465,7 @@ class QueryBuilder extends BaseFilter
             return;
         }
 
-        if (! $this->ruleSchemaPassesValidation($schema)) {
+        if (! $this->ruleFormPassesValidation($schema)) {
             return;
         }
 
@@ -492,11 +492,11 @@ class QueryBuilder extends BaseFilter
             ->inverse(null);
     }
 
-    protected function ruleSchemaPassesValidation(Schema $schema): bool
+    protected function ruleFormPassesValidation(Schema $schema): bool
     {
         $statePath = $schema->getStatePath();
 
-        return $this->cachedRuleSchemaValidity[$statePath] ??= (function () use ($schema): bool {
+        return $this->cachedRuleFormValidity[$statePath] ??= (function () use ($schema): bool {
             try {
                 $schema->validate();
 

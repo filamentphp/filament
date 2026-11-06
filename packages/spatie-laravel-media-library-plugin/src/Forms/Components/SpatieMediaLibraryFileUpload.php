@@ -23,7 +23,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     protected string | Closure | null $conversion = null;
 
-    protected string | Closure | null $conversionsDisk = null;
+    protected string | Closure | null $conversionsDiskName = null;
 
     protected bool | Closure $hasResponsiveImages = false;
 
@@ -213,7 +213,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     public function conversionsDisk(string | Closure | null $disk): static
     {
-        $this->conversionsDisk = $disk;
+        $this->conversionsDiskName = $disk;
 
         return $this;
     }
@@ -341,7 +341,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     public function getConversionsDiskName(): ?string
     {
-        return $this->evaluate($this->conversionsDisk);
+        return $this->evaluate($this->conversionsDiskName);
     }
 
     /**
