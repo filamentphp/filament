@@ -5,6 +5,7 @@ namespace Filament\Tables\Testing;
 use Closure;
 use Filament\Support\ArrayRecord;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -292,6 +293,74 @@ class TestsColumns
                 $state,
                 $actualState,
                 "Failed asserting that a table column with name [{$name}] does not have a value of [{$displayState}] for record [{$recordKey}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableColumnStateCanBeUpdated(): Closure
+    {
+        return function (string $name, $record): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableColumnExists($name);
+
+            $column = $this->instance()->getTable()->getColumn($name);
+
+            if ($record instanceof Model) {
+                $recordKey = (string) $record->getKey();
+            } elseif (is_array($record)) {
+                $recordKey = (string) $record[ArrayRecord::getKeyName()];
+            } else {
+                $recordKey = (string) $record;
+            }
+
+            /** @phpstan-ignore-next-line */
+            $this->assertTableRecordKeyExists($recordKey);
+
+            $record = $this->instance()->getTableRecord($recordKey);
+
+            $column->record($record);
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertTrue(
+                ($column instanceof Editable) && (! $column->isHidden()) && (! $column->isDisabled()),
+                "Failed asserting that a table column with name [{$name}] can be updated for record [{$recordKey}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableColumnStateCanNotBeUpdated(): Closure
+    {
+        return function (string $name, $record): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableColumnExists($name);
+
+            $column = $this->instance()->getTable()->getColumn($name);
+
+            if ($record instanceof Model) {
+                $recordKey = (string) $record->getKey();
+            } elseif (is_array($record)) {
+                $recordKey = (string) $record[ArrayRecord::getKeyName()];
+            } else {
+                $recordKey = (string) $record;
+            }
+
+            /** @phpstan-ignore-next-line */
+            $this->assertTableRecordKeyExists($recordKey);
+
+            $record = $this->instance()->getTableRecord($recordKey);
+
+            $column->record($record);
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertFalse(
+                ($column instanceof Editable) && (! $column->isHidden()) && (! $column->isDisabled()),
+                "Failed asserting that a table column with name [{$name}] can not be updated for record [{$recordKey}] on the [{$livewireClass}] component.",
             );
 
             return $this;

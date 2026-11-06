@@ -21,10 +21,12 @@ use function Filament\Support\get_component_color_classes;
 
 class ToggleColumn extends Column implements Editable, HasEmbeddedView
 {
-    // Security: This column saves directly without checking Laravel
-    // Model Policies. Use `disabled()` to restrict editing
-    // based on your own authorization logic.
+    // Security: This column only checks Laravel Model Policies when
+    // `authorize()` is used, or when the table belongs to a resource
+    // in a panel with strict authorization. Use `authorize()` or
+    // `disabled()` to restrict editing.
 
+    use Concerns\CanBeAuthorized;
     use Concerns\CanBeValidated;
     use Concerns\CanUpdateState;
     use HasToggleColors;

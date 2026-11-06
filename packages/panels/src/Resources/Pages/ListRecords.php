@@ -16,8 +16,10 @@ use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Tables;
+use Filament\Tables\Columns\Column;
 use Filament\Tables\Table;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -105,6 +107,22 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             $action instanceof ViewAction => fn (Schema $schema): Schema => $this->infolist($this->form($schema->hasCustomColumns() ? $schema : $schema->columns(2))),
             default => null,
         };
+    }
+
+    #[Unexposed]
+    public function getDefaultTableColumnAuthorizationResponse(Column $column): ?Response
+    {
+        if (! Filament::isAuthorizationStrict()) {
+            return null;
+        }
+
+        $record = $column->getRecord();
+
+        if (! ($record instanceof Model)) {
+            return null;
+        }
+
+        return static::getResource()::getEditAuthorizationResponse($record);
     }
 
     /**
