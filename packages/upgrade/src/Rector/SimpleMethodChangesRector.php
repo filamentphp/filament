@@ -113,10 +113,8 @@ class SimpleMethodChangesRector extends AbstractRector
                 ],
                 'changes' => [
                     'infolist' => function (ClassMethod $node): void {
-                        $param = new Param(new Variable('schema'));
+                        $param = $node->getParams()[0];
                         $param->type = new FullyQualified('Filament\\Schemas\\Schema');
-
-                        $node->params = [$param];
                     },
                 ],
             ],
