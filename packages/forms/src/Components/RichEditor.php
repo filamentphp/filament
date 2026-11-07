@@ -1233,7 +1233,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
     /**
      * @param  array<array{id: mixed, triggerCharacter: string}>  $mentions
-     * @return array<mixed, string>
+     * @return array<string, array<string, string>>
      */
     #[Exposed]
     #[Renderless]
@@ -1254,11 +1254,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
             }
 
             $ids = $mentionsForTriggerCharacter->pluck('id')->all();
-            $labelsForTriggerCharacter = $provider->getLabels($ids);
-
-            foreach ($labelsForTriggerCharacter as $id => $label) {
-                $labels[$id] = $label;
-            }
+            $labels[$triggerCharacter] = $provider->getLabels($ids);
         }
 
         return $labels;
