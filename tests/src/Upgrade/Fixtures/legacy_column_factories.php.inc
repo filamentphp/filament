@@ -7,6 +7,13 @@ use Filament\Tables\Columns\TextColumn;
 
 $tags = TagsColumn::make('configured-later');
 $tags->limit(2);
+$tags->label('Later')->limit(1);
+$badge = Badge::make('stored')->label('Stored badge');
+$badge->badge(false);
+$boolean = BooleanColumn::make('stored');
+$boolean->boolean(condition: fn () => false);
+$column = TagsColumn::make('conditional')->when(true, fn () => TextColumn::make('ordinary'))->label('Ordinary');
+$column->limit(2);
 
 return [
     Badge::make(name: name())->label(label())->color('success')->limit(length: 9, end: '!'),
@@ -37,7 +44,14 @@ use Filament\Tables\Columns\{BadgeColumn as Badge, BooleanColumn, TagsColumn};
 use Filament\Tables\Columns\TextColumn;
 
 $tags = TextColumn::make('configured-later')->badge();
-$tags->limit(2);
+$tags->limitList(2);
+$tags->label('Later')->limitList(1);
+$badge = TextColumn::make('stored')->badge()->label('Stored badge');
+$badge->badge(false)->badge();
+$boolean = IconColumn::make('stored')->boolean();
+$boolean->boolean(condition: fn () => false)->boolean();
+$column = TextColumn::make('conditional')->badge()->when(true, fn () => TextColumn::make('ordinary'))->label('Ordinary');
+$column->limit(2);
 
 return [
     TextColumn::make(name: name())->badge()->label(label())->color('success')->limit(length: 9, end: '!'),

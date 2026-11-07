@@ -587,6 +587,8 @@ Custom consumers of the support `HasBadge` trait should replace `indicator()` wi
 
 Review class references outside `::make()` calls manually, including subclasses, type declarations and container bindings. Replace `Placeholder::getContent()` with `TextEntry::getState()` and `TagsColumn::limit()` with `TextColumn::limitList()`.
 
+The script also updates later literal method calls on components assigned directly to local variables in the same straight-line block. Review uses across branches, loops, variable aliases, properties, and callbacks manually, including calls that disable modes the old classes forced.
+
 Review global `configureUsing()` callbacks when replacing specialized classes. Changing `MultiSelect::configureUsing()` to `Select::configureUsing()` would also affect single selects; scope those defaults to the intended instances. Generated mode setters such as `multiple()` or `iconButton()` run after global configuration and can override it. Apply mode-dependent defaults after those setters, and check callbacks that disable modes the old classes forced.
 
 Migrate separately constructed or dynamically registered menu items manually. For built-in user and tenant menu items, use an action customization closure to retain their action names. See [customizing the user menu](../navigation/user-menu) and [customizing the tenant menu](../users/tenancy#customizing-the-tenant-menu).

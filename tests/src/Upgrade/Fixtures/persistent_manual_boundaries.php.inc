@@ -209,7 +209,7 @@ class ReviewableSchema extends Schema
 }
 
 $filter = SelectFilter::make('configured-later')->multiple();
-$filter->multiple(false);
+$filter->multiple(false)->multiple();
 
 return [
     CustomHooks::TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER,

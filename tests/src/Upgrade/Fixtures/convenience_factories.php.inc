@@ -5,6 +5,10 @@ namespace Filament\Tests\Upgrade\Fixtures\ConvenienceFactories;
 use Filament\Actions\{ButtonAction, IconButtonAction as IconAction};
 use Filament\Tables\Filters\MultiSelectFilter as MultipleFilter;
 
+$filter = MultipleFilter::make('stored')->label('Stored filter');
+$filter->multiple(condition: false);
+$configure = MultipleFilter::make('callable')->multiple(...);
+
 return [
     ButtonAction::make('save')->label('Save changes'),
     IconAction::make(name: 'edit')->icon('heroicon-m-pencil'),
@@ -27,10 +31,14 @@ return [
 
 namespace Filament\Tests\Upgrade\Fixtures\ConvenienceFactories;
 
-use Filament\Actions\Action;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\Action;
 use Filament\Actions\{ButtonAction, IconButtonAction as IconAction};
 use Filament\Tables\Filters\MultiSelectFilter as MultipleFilter;
+
+$filter = SelectFilter::make('stored')->multiple()->label('Stored filter');
+$filter->multiple(condition: false)->multiple();
+$configure = SelectFilter::make('callable')->multiple()->multiple(...);
 
 return [
     Action::make('save')->button()->label('Save changes'),

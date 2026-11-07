@@ -43,7 +43,6 @@ class ReplaceConvenienceClassesRector extends AbstractRector
         $replacement = match (strtolower((string) $this->getName($factory->class))) {
             'filament\\actions\\buttonaction' => ['Filament\\Actions\\Action', 'button'],
             'filament\\actions\\iconbuttonaction' => ['Filament\\Actions\\Action', 'iconButton'],
-            'filament\\tables\\filters\\multiselectfilter' => ['Filament\\Tables\\Filters\\SelectFilter', 'multiple'],
             default => null,
         };
 
@@ -58,7 +57,7 @@ class ReplaceConvenienceClassesRector extends AbstractRector
         }
 
         $nodeFinder = new NodeFinder;
-        $requiresReview = $nodeFinder->findFirst($arguments, function (Node $candidate) use ($nodeFinder, $replacement): bool {
+        $requiresReview = $nodeFinder->findFirst($arguments, function (Node $candidate) use ($nodeFinder): bool {
             $type = match (true) {
                 $candidate instanceof Param => $candidate->type,
                 $candidate instanceof FunctionLike => $candidate->getReturnType(),
@@ -71,8 +70,7 @@ class ReplaceConvenienceClassesRector extends AbstractRector
                 return true;
             }
 
-            return $replacement[1] === 'multiple' && ($candidate instanceof MethodCall || $candidate instanceof NullsafeMethodCall)
-                && $this->isName($candidate->name, 'multiple');
+            return false;
         });
 
         if ($requiresReview) {
@@ -89,24 +87,6 @@ class ReplaceConvenienceClassesRector extends AbstractRector
         }
 
         $calls[array_key_last($calls)]->var = $configuredFactory;
-
-        // The legacy filter always used multiple mode, even after an explicit setter.
-        if ($replacement[1] === 'multiple') {
-            foreach (array_reverse($calls) as $index => $call) {
-                if ((! $call->name instanceof Identifier) || (! $this->isName($call->name, 'multiple')) || $call->isFirstClassCallable()) {
-                    continue;
-                }
-
-                $configuredCall = new MethodCall($call, 'multiple');
-                $parent = $calls[count($calls) - $index - 2] ?? null;
-
-                if ($parent) {
-                    $parent->var = $configuredCall;
-                } else {
-                    return $configuredCall;
-                }
-            }
-        }
 
         return $node;
     }
