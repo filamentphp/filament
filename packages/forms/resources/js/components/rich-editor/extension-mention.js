@@ -295,7 +295,8 @@ export default Node.create({
                     )
                         return
 
-                    const label = labels[node.attrs.id]
+                    const label =
+                        labels[node.attrs.char ?? '@']?.[node.attrs.id]
                     if (!label) return
 
                     transaction.setNodeMarkup(position, undefined, {
