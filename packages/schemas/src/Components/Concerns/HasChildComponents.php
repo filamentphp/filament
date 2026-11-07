@@ -8,6 +8,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Arr;
 
 trait HasChildComponents
 {
@@ -93,7 +94,9 @@ trait HasChildComponents
         $this->isEvaluatingDefaultChildSchemas = true;
 
         try {
-            return $this->evaluate($this->childComponents['default'] ?? []) ?? [];
+            $components = $this->evaluate($this->childComponents['default'] ?? []);
+
+            return ($components instanceof Schema) ? $components : Arr::wrap($components);
         } finally {
             $this->isEvaluatingDefaultChildSchemas = $wasEvaluatingDefaultChildSchemas;
         }
