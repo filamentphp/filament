@@ -21,9 +21,14 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\VarLikeIdentifier;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Rector\Reflection\ClassReflectionAnalyzer;
 
 class ConvertStaticConfigurationToConfigureUsingFunction extends AbstractRector
 {
+    public function __construct(
+        private ClassReflectionAnalyzer $classReflectionAnalyzer,
+    ) {}
+
     /**
      * @return array<array{
      *     class: class-string | array<class-string>,
@@ -99,7 +104,7 @@ class ConvertStaticConfigurationToConfigureUsingFunction extends AbstractRector
 
         foreach ($this->getChanges() as $change) {
             foreach ((is_array($change['class']) ? $change['class'] : [$change['class']]) as $class) {
-                if (! $this->isObjectType($node->expr->var->class, new ObjectType($class))) {
+                if (! $this->isObjectTypeIncludingRenamedParents($node->expr->var->class, new ObjectType($class))) {
                     continue;
                 }
 
@@ -151,5 +156,29 @@ class ConvertStaticConfigurationToConfigureUsingFunction extends AbstractRector
         }
 
         return null;
+    }
+
+    private function isObjectTypeIncludingRenamedParents(FullyQualified $name, ObjectType $requiredType): bool
+    {
+        if ($this->isObjectType($name, $requiredType)) {
+            return true;
+        }
+
+        $type = $this->getType($name);
+
+        if (! ($type instanceof ObjectType)) {
+            return false;
+        }
+
+        // PHPStan may omit a removed v3 parent from the analysed ancestry before Rector's renames are applied.
+        foreach ($type->getClassReflection()?->getAncestors() ?? [] as $ancestor) {
+            $parentClassName = $this->classReflectionAnalyzer->resolveParentClassName($ancestor);
+
+            if (($parentClassName !== null) && $this->isObjectType(new FullyQualified($parentClassName), $requiredType)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
