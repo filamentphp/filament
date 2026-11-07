@@ -153,6 +153,7 @@ export default ({ loadingMessage, failureMessage }) => ({
         if (
             event.defaultPrevented ||
             event.isComposing ||
+            event.keyCode === 229 ||
             event.altKey ||
             event.ctrlKey ||
             event.metaKey ||
