@@ -489,6 +489,10 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
 
     private function canMigrateHierarchy(Class_ $class, string $oldName, string $newName, bool $nullable, bool $static = false, string $returnType = 'array', bool $retainsLegacy = false): bool
     {
+        if ($class->getMethod($newName)) {
+            return false;
+        }
+
         $context = ScopeFetcher::fetch($class)->getClassReflection();
 
         if (! $context) {
