@@ -134,52 +134,52 @@ class RichEditorStateCast implements StateCast
             return;
         }
 
-        $mentionsByChar = [];
+        $mentionsByTriggerCharacter = [];
 
-        $editor->descendants(function (object &$node) use (&$mentionsByChar): void {
+        $editor->descendants(function (object &$node) use (&$mentionsByTriggerCharacter): void {
             if ($node->type !== 'mention') {
                 return;
             }
 
-            $char = $node->attrs->char ?? '@';
+            $triggerCharacter = $node->attrs->char ?? '@';
             $id = $node->attrs->id ?? null;
 
             if (blank($id)) {
                 return;
             }
 
-            $mentionsByChar[$char][] = (string) $id;
+            $mentionsByTriggerCharacter[$triggerCharacter][] = (string) $id;
         });
 
-        if (blank($mentionsByChar)) {
+        if (blank($mentionsByTriggerCharacter)) {
             return;
         }
 
-        $labelsByChar = [];
+        $labelsByTriggerCharacter = [];
 
-        foreach ($mentionsByChar as $char => $ids) {
+        foreach ($mentionsByTriggerCharacter as $triggerCharacter => $ids) {
             foreach ($mentionProviders as $provider) {
-                if ($provider->getChar() === $char) {
-                    $labelsByChar[$char] = $provider->getLabels(array_unique($ids));
+                if ($provider->getTriggerCharacter() === $triggerCharacter) {
+                    $labelsByTriggerCharacter[$triggerCharacter] = $provider->getLabels(array_unique($ids));
 
                     break;
                 }
             }
         }
 
-        $editor->descendants(function (object &$node) use ($labelsByChar): void {
+        $editor->descendants(function (object &$node) use ($labelsByTriggerCharacter): void {
             if ($node->type !== 'mention') {
                 return;
             }
 
-            $char = $node->attrs->char ?? '@';
+            $triggerCharacter = $node->attrs->char ?? '@';
             $id = $node->attrs->id ?? null;
 
             if (blank($id)) {
                 return;
             }
 
-            $node->attrs->label = $labelsByChar[$char][(string) $id] ?? '';
+            $node->attrs->label = $labelsByTriggerCharacter[$triggerCharacter][(string) $id] ?? '';
         });
     }
 }

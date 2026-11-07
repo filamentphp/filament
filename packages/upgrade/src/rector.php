@@ -2,6 +2,8 @@
 
 use Composer\InstalledVersions;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Panel;
 use Filament\Upgrade\Rector;
 use Rector\Config\RectorConfig;
@@ -15,6 +17,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
+        'Filament\\Actions\\Concerns\\CanBeLabeledFrom' => 'Filament\\Actions\\Concerns\\CanBeLabeledFromBreakpoint',
         'Filament\\Support\\Concerns\\CanBeLazy' => 'Filament\\Support\\Concerns\\CanBeLazyLoaded',
         'Filament\\Tables\\Filters\\Concerns\\HasSchema' => 'Filament\\Tables\\Filters\\Concerns\\HasForm',
         'Filament\\Widgets\\ChartWidget\\Concerns\\HasFiltersSchema' => 'Filament\\Widgets\\ChartWidget\\Concerns\\HasFiltersForm',
@@ -27,5 +30,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(RenameMethodRector::class, [
         new MethodCallRename(Panel::class, 'getResetPasswordRoutePrefix', 'getPasswordResetRoutePrefix'),
         new MethodCallRename(EmailAuthentication::class, 'generateCodesUsing', 'generateCodeUsing'),
+        new MethodCallRename(FileUpload::class, 'isSvgEditingConfirmed', 'shouldConfirmSvgEditing'),
+        new MethodCallRename(MentionProvider::class, 'getChar', 'getTriggerCharacter'),
     ]);
 };

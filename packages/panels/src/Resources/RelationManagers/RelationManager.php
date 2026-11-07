@@ -167,13 +167,13 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     #[Unexposed]
     public static function getTabComponent(Model $ownerRecord, string $pageClass): Tab
     {
-        $isTabBadgeDeferred = static::isBadgeLazyLoaded($ownerRecord, $pageClass);
+        $isTabBadgeLazyLoaded = static::isBadgeLazyLoaded($ownerRecord, $pageClass);
 
         return Tab::make(static::getTitle($ownerRecord, $pageClass))
-            ->badge($isTabBadgeDeferred
+            ->badge($isTabBadgeLazyLoaded
                 ? static fn (): ?string => static::getBadge($ownerRecord, $pageClass)
                 : static::getBadge($ownerRecord, $pageClass))
-            ->lazyLoadedBadge($isTabBadgeDeferred)
+            ->lazyLoadedBadge($isTabBadgeLazyLoaded)
             ->badgeColor(static::getBadgeColor($ownerRecord, $pageClass))
             ->badgeTooltip(static::getBadgeTooltip($ownerRecord, $pageClass))
             ->icon(static::getIcon($ownerRecord, $pageClass))
