@@ -154,19 +154,23 @@ export default function chart({ cachedData, options, type }) {
                 options.elements.arc ??= {}
 
                 options.plugins ??= {}
-                options.plugins.legend ??= {}
-                options.plugins.legend.labels ??= {}
-                options.plugins.legend.labels.generateLabels ??= (chart) => {
-                    const labels =
-                        Chart.overrides[
-                            type
-                        ].plugins.legend.labels.generateLabels(chart)
+                if (options.plugins.legend !== false) {
+                    options.plugins.legend ??= {}
+                    options.plugins.legend.labels ??= {}
+                    options.plugins.legend.labels.generateLabels ??= (
+                        chart,
+                    ) => {
+                        const labels =
+                            Chart.overrides[
+                                type
+                            ].plugins.legend.labels.generateLabels(chart)
 
-                    for (const label of labels) {
-                        label.strokeStyle = darken(label.fillStyle, 0.2)
+                        for (const label of labels) {
+                            label.strokeStyle = darken(label.fillStyle, 0.2)
+                        }
+
+                        return labels
                     }
-
-                    return labels
                 }
             }
 
@@ -397,20 +401,23 @@ export default function chart({ cachedData, options, type }) {
             options.plugins.tooltip.borderWidth =
                 this.userTooltipBorderWidth ?? tooltipBorderWidth
 
-            const resolvedLegendBorderRadius =
-                this.userLegendBorderRadius ?? legendBorderRadius
+            if (options.plugins.legend !== false) {
+                const resolvedLegendBorderRadius =
+                    this.userLegendBorderRadius ?? legendBorderRadius
 
-            options.plugins.legend ??= {}
-            options.plugins.legend.labels ??= {}
-            options.plugins.legend.labels.borderRadius =
-                resolvedLegendBorderRadius
-            // Chart.js ignores the radius unless this is on, and treats a radius of `0` as
-            // "inherit from the data" rather than "square", so it is derived rather than
-            // exposed as a property of its own.
-            options.plugins.legend.labels.useBorderRadius =
-                this.userLegendUseBorderRadius ?? resolvedLegendBorderRadius > 0
-            options.plugins.legend.labels.boxWidth =
-                this.userLegendBoxWidth ?? legendBoxWidth
+                options.plugins.legend ??= {}
+                options.plugins.legend.labels ??= {}
+                options.plugins.legend.labels.borderRadius =
+                    resolvedLegendBorderRadius
+                // Chart.js ignores the radius unless this is on, and treats a radius of `0` as
+                // "inherit from the data" rather than "square", so it is derived rather than
+                // exposed as a property of its own.
+                options.plugins.legend.labels.useBorderRadius =
+                    this.userLegendUseBorderRadius ??
+                    resolvedLegendBorderRadius > 0
+                options.plugins.legend.labels.boxWidth =
+                    this.userLegendBoxWidth ?? legendBoxWidth
+            }
         },
 
         // The parts of a chart that a stylesheet cannot otherwise reach, since Chart.js
