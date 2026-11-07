@@ -3,6 +3,7 @@
 namespace Filament\Actions;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\Concerns\CanUndoDeletion;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
@@ -18,6 +19,7 @@ use Throwable;
 class DeleteBulkAction extends BulkAction
 {
     use CanCustomizeProcess;
+    use CanUndoDeletion;
 
     public static function getDefaultName(): ?string
     {
@@ -98,7 +100,13 @@ class DeleteBulkAction extends BulkAction
 
                 $records->each(static function (Model $record) use ($action, &$isFirstException): void {
                     try {
-                        $record->delete() || $action->reportBulkProcessingFailure();
+                        if (! $record->delete()) {
+                            $action->reportBulkProcessingFailure();
+
+                            return;
+                        }
+
+                        $action->rememberUndoableDeletion($record);
                     } catch (Throwable $exception) {
                         $action->reportBulkProcessingFailure();
 

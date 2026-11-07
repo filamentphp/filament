@@ -141,12 +141,16 @@ trait CanNotify
                 ->title($this->getSuccessNotificationTitle()),
         ]) ?? $notification;
 
+        $this->modifySuccessNotification($notification);
+
         if (filled($notification->getTitle())) {
             $notification->send();
         }
 
         return $this;
     }
+
+    protected function modifySuccessNotification(Notification $notification): void {}
 
     public function successNotification(Notification | Closure | null $notification): static
     {
