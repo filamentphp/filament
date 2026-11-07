@@ -82,9 +82,9 @@ Disabling this protection requires you to authorize submitted paths yourself to 
 <Disclosure open x-show="packages.includes('forms')">
 <span slot="summary">`RichEditor` now prevents file attachment path tampering by default</span>
 
-`RichEditor` rejects image attachment IDs that were not already stored in the record's original content. New uploads and attachments using the Spatie Media Library provider are unaffected.
+`RichEditor` rejects image attachment IDs that were not already stored in the record's original content unless explicitly authorized. New uploads are unaffected. This validation also applies to Spatie Media Library attachments, including existing media from the same record's collection. URL resolution does not authorize an attachment ID.
 
-If you insert existing images from a shared library or another record, authorize those IDs using the `allowFilePathUsing:` argument of `preventFileAttachmentPathTampering()`. To restore the previous default globally:
+If you insert existing images that are absent from the original content, authorize those IDs using the [`allowFilePathUsing:` argument](../forms/rich-editor#allowing-additional-data-id-values-with-a-callback) of `preventFileAttachmentPathTampering()`. To restore the previous default globally:
 
 ```php
 use Filament\Forms\Components\RichEditor;
