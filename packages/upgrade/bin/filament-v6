@@ -80,37 +80,46 @@ HTML);
 
 $rectorScriptPath = $composerBinDirectory . DIRECTORY_SEPARATOR . 'rector';
 $rectorConfigurationPath = $upgradePackagePath . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'rector.php';
+$rectorDirectories = [];
 
 foreach (explode(',', $directories) as $directory) {
     $directory = trim($directory);
     $directory = trim($directory, DIRECTORY_SEPARATOR);
+
+    if ((! file_exists($directory)) && ((! str_contains($directory, '*')) || (! array_filter(glob($directory) ?: [], file_exists(...))))) {
+        throw new RuntimeException("The source path [{$directory}] does not exist.");
+    }
+
+    $rectorDirectories[] = $directory;
 
     render(<<<HTML
         <p>
             Start processing <strong>/{$directory}</strong> to fix code affected by breaking changes.
         </p>
         HTML);
+}
 
-    $rectorProcess = proc_open([
-        PHP_BINARY,
-        $rectorScriptPath,
-        'process',
-        $directory,
-        '--config',
-        $rectorConfigurationPath,
-        '--clear-cache',
-    ], [STDIN, STDOUT, STDERR], $pipes);
+$rectorProcess = proc_open([
+    PHP_BINARY,
+    $rectorScriptPath,
+    'process',
+    ...$rectorDirectories,
+    '--config',
+    $rectorConfigurationPath,
+    '--clear-cache',
+], [STDIN, STDOUT, STDERR], $pipes);
 
-    if (! is_resource($rectorProcess)) {
-        throw new RuntimeException('Unable to start Rector.');
-    }
+if (! is_resource($rectorProcess)) {
+    throw new RuntimeException('Unable to start Rector.');
+}
 
-    $rectorExitCode = proc_close($rectorProcess);
+$rectorExitCode = proc_close($rectorProcess);
 
-    if ($rectorExitCode !== 0) {
-        throw new RuntimeException("Rector failed while processing [{$directory}].");
-    }
+if ($rectorExitCode !== 0) {
+    throw new RuntimeException('Rector failed while processing [' . implode(', ', $rectorDirectories) . '].');
+}
 
+foreach ($rectorDirectories as $directory) {
     render(<<<HTML
         <p class="pt-2">
             Finished processing <strong>/{$directory}</strong>.
