@@ -125,7 +125,7 @@ class ConvertStaticConfigurationToConfigureUsingFunction extends AbstractRector
                                                     'params' => [
                                                         new Param(
                                                             var: new Variable('component'),
-                                                            type: $node->expr->var->class,
+                                                            type: new FullyQualified($node->expr->var->class->toString()),
                                                         ),
                                                     ],
                                                     'expr' => new MethodCall(
@@ -149,5 +149,7 @@ class ConvertStaticConfigurationToConfigureUsingFunction extends AbstractRector
                 }
             }
         }
+
+        return null;
     }
 }
