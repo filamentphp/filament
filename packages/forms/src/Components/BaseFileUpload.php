@@ -1080,10 +1080,21 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             return [];
         }
 
-        $attribute = $this->getName();
+        $statePath = $this->getStatePath();
+
+        if (filled($modelStatePath = $this->getModelRootContainer()->getStatePath())) {
+            $statePath = (string) str($statePath)->after("{$modelStatePath}.");
+        }
+
+        $attribute = explode('.', $statePath)[0];
+        $originalState = [
+            $attribute => str_contains($statePath, '.')
+                ? $record->getOriginal($attribute)
+                : $record->getOriginal($attribute, $record->getAttribute($attribute)),
+        ];
 
         return array_values(array_filter(
-            Arr::wrap($record->getOriginal($attribute, $record->getAttribute($attribute))),
+            Arr::wrap(Arr::get($originalState, $statePath)),
             static fn (mixed $path): bool => is_string($path) && filled($path),
         ));
     }
