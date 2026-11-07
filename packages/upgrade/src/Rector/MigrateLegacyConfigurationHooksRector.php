@@ -42,6 +42,7 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpParser\AstResolver;
+use Rector\PhpParser\Node\BetterNodeFinder;
 use Rector\PhpParser\Parser\RectorParser;
 use Rector\PHPStan\ScopeFetcher;
 use Rector\Rector\AbstractRector;
@@ -64,6 +65,7 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
 
     public function __construct(
         private AstResolver $astResolver,
+        private BetterNodeFinder $betterNodeFinder,
         private TraitConsumerResolver $traitConsumerResolver,
         private ReflectionProvider $reflectionProvider,
         private RectorParser $rectorParser,
@@ -589,14 +591,16 @@ class MigrateLegacyConfigurationHooksRector extends AbstractRector
 
     private function canMigrateHookReferences(ClassLike $class, string $oldName, string $newName, bool $retainsLegacy = false): bool
     {
+        $method = $class->getMethod($oldName);
+
+        if ((! $retainsLegacy) && $method && $this->betterNodeFinder->findFirstInFunctionLikeScoped($method, static fn (Node $candidate): bool => $candidate instanceof Return_ && (! $candidate->expr))) {
+            return false;
+        }
+
         $hookStaticCalls = (new NodeFinder)->findInstanceOf($class->getMethod($oldName)->stmts ?? [], StaticCall::class);
 
         return ! (new NodeFinder)->findFirst($class->stmts, function (Node $candidate) use ($class, $oldName, $newName, $hookStaticCalls, $retainsLegacy): bool {
             if ($candidate instanceof ClassLike) {
-                return true;
-            }
-
-            if ((! $retainsLegacy) && $candidate instanceof Return_ && (! $candidate->expr)) {
                 return true;
             }
 
