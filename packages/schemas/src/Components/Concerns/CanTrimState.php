@@ -9,13 +9,13 @@ trait CanTrimState
 {
     protected bool | Closure $isTrimmed = false;
 
-    protected bool $cachedIsTrimmed;
+    protected ?bool $cachedIsTrimmed = null;
 
     public function trim(bool | Closure $condition = true): static
     {
         $this->isTrimmed = $condition;
 
-        unset($this->cachedIsTrimmed);
+        $this->cachedIsTrimmed = null;
 
         return $this;
     }
