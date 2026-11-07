@@ -1160,14 +1160,14 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
     }
 
     /**
-     * @return array<int, array{char: string, extraAttributes: array<string, mixed>, isSearchable: bool, items: array<int, array{id: string, label: string}>, noOptionsMessage: string, noSearchResultsMessage: string, searchPrompt: string, searchingMessage: string}>
+     * @return array<int, array{triggerCharacter: string, extraAttributes: array<string, mixed>, isSearchable: bool, items: array<int, array{id: string, label: string}>, noOptionsMessage: string, noSearchResultsMessage: string, searchPrompt: string, searchingMessage: string}>
      */
     public function getMentionsForJs(): array
     {
         return array_map(
             function (MentionProvider $provider): array {
                 return [
-                    'char' => $provider->getTriggerCharacter(),
+                    'triggerCharacter' => $provider->getTriggerCharacter(),
                     'extraAttributes' => $provider->getExtraAttributes(),
                     'isSearchable' => $provider->hasSearchResultsUsingCallback(),
                     'items' => $this->transformMentionItemsForJs($provider->getItems()),
@@ -1186,14 +1186,14 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
      */
     #[Exposed]
     #[Renderless]
-    public function getMentionSearchResultsForJs(?string $search = null, ?string $char = '@'): array
+    public function getMentionSearchResultsForJs(?string $search = null, ?string $triggerCharacter = '@'): array
     {
-        $char = $char ?? '@';
+        $triggerCharacter = $triggerCharacter ?? '@';
 
         $providers = $this->getMentionProviders();
 
-        $provider = collect($providers)->first(function (MentionProvider $mentionProvider) use ($char): bool {
-            return $mentionProvider->getTriggerCharacter() === $char;
+        $provider = collect($providers)->first(function (MentionProvider $mentionProvider) use ($triggerCharacter): bool {
+            return $mentionProvider->getTriggerCharacter() === $triggerCharacter;
         }) ?? ($providers[0] ?? null);
 
         if (! $provider) {
@@ -1221,7 +1221,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
     }
 
     /**
-     * @param  array<array{id: mixed, char: string}>  $mentions
+     * @param  array<array{id: mixed, triggerCharacter: string}>  $mentions
      * @return array<mixed, string>
      */
     #[Exposed]
@@ -1231,21 +1231,21 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         $providers = $this->getMentionProviders();
         $labels = [];
 
-        $mentionsByChar = collect($mentions)->groupBy('char');
+        $mentionsByTriggerCharacter = collect($mentions)->groupBy('triggerCharacter');
 
-        foreach ($mentionsByChar as $char => $charMentions) {
-            $provider = collect($providers)->first(function (MentionProvider $mentionProvider) use ($char): bool {
-                return $mentionProvider->getTriggerCharacter() === $char;
+        foreach ($mentionsByTriggerCharacter as $triggerCharacter => $mentionsForTriggerCharacter) {
+            $provider = collect($providers)->first(function (MentionProvider $mentionProvider) use ($triggerCharacter): bool {
+                return $mentionProvider->getTriggerCharacter() === $triggerCharacter;
             }) ?? ($providers[0] ?? null);
 
             if (! $provider) {
                 continue;
             }
 
-            $ids = $charMentions->pluck('id')->all();
-            $charLabels = $provider->getLabels($ids);
+            $ids = $mentionsForTriggerCharacter->pluck('id')->all();
+            $labelsForTriggerCharacter = $provider->getLabels($ids);
 
-            foreach ($charLabels as $id => $label) {
+            foreach ($labelsForTriggerCharacter as $id => $label) {
                 $labels[$id] = $label;
             }
         }
