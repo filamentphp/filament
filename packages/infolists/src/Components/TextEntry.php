@@ -5,6 +5,7 @@ namespace Filament\Infolists\Components;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Infolists\View\Components\TextEntryComponent\ItemComponent;
 use Filament\Infolists\View\Components\TextEntryComponent\ItemComponent\IconComponent;
 use Filament\Schemas\Components\Contracts\HasAffixActions;
@@ -192,7 +193,13 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                 'fi-numeric' => $this->isNumeric() || $this->isMoney(),
             ]);
 
-        if (blank($state instanceof Htmlable ? $state->toHtml() : $state)) {
+        $isEmpty = match (true) {
+            $state instanceof RichContentAttribute => $state->isEmpty(),
+            is_array($state) => collect($state)->every(static fn (mixed $stateItem): bool => ($stateItem instanceof RichContentAttribute) && $stateItem->isEmpty()),
+            default => blank($state instanceof Htmlable ? $state->toHtml() : $state),
+        };
+
+        if ($isEmpty) {
             $attributes = $attributes
                 ->merge([
                     'x-tooltip' => filled($tooltip = $this->getEmptyTooltip())
