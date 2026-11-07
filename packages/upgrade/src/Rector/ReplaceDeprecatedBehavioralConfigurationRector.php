@@ -19,6 +19,7 @@ use Filament\Forms\Components\TextInput;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\BinaryOp\Coalesce;
 use PhpParser\Node\Expr\BinaryOp\Identical;
@@ -40,6 +41,7 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\NullableType;
 use PhpParser\Node\Param;
+use PhpParser\Node\Scalar\Int_;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\If_;
@@ -166,6 +168,11 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
             'inset' => [],
             default => [self::NEGATIONS[$method]],
         };
+
+        if ($hasNullsafeAccess && in_array($method, ['imagecropaspectratio', 'icon', 'disableplaceholderselection'], true)) {
+            $replacementMethods[] = 'tap';
+        }
+
         $owner = (new ObjectType($configurationClass))->getClassReflection();
 
         if (! $owner) {
@@ -192,6 +199,20 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
         };
         $argument = $node->getArgs()[0] ?? null;
 
+        if (($method === 'disableplaceholderselection') && $argument?->unpack && $argument->value instanceof Array_) {
+            $items = $argument->value->items;
+
+            if ($items === []) {
+                $argument = null;
+            } elseif (count($items) === 1) {
+                $item = $items[0];
+
+                if ((! $item->unpack) && (! $item->byRef) && (($item->key === null) || ($item->key instanceof Int_) || (($item->key instanceof String_) && ($item->key->value === $parameter)))) {
+                    $argument = new Arg($item->value);
+                }
+            }
+        }
+
         if ($argument && ($argument->unpack || ($argument->name && ($argument->name->toString() !== $parameter)))) {
             return null;
         }
@@ -200,9 +221,7 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
             return $node->var;
         }
 
-        // Renaming preserves nullsafe short-circuiting for ordinary setters.
-        // Multi-call adapters below require an ordinary receiver.
-        if ($hasNullsafeAccess && in_array($method, ['imagecropaspectratio', 'icon', 'centermodal'], true)) {
+        if ($hasNullsafeAccess && ($method === 'centermodal')) {
             return null;
         }
 
@@ -214,7 +233,7 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
                 return null;
             }
 
-            if ((! $value instanceof String_) && ($literal !== 'null')) {
+            if ($hasNullsafeAccess || ((! $value instanceof String_) && ($literal !== 'null'))) {
                 if (! TypeCombinator::union(new StringType, new ObjectType(Closure::class), new NullType)->isSuperTypeOf($this->getNativeType($value))->yes()) {
                     return null;
                 }
@@ -233,7 +252,7 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
                     ))]),
                 ]);
 
-                return new FuncCall($wrapper, [new Arg($node->var), new Arg($value)]);
+                return $this->callAdapter($wrapper, $node, $value, $hasNullsafeAccess);
             }
 
             $ratio = ($value instanceof String_) ? $value->value : null;
@@ -242,16 +261,16 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
         }
 
         if ($method === 'icon') {
-            if ($literal === 'false') {
+            if (($literal === 'false') && (! $hasNullsafeAccess)) {
                 return $node->var;
             }
 
-            if ((! $value instanceof String_) && ($literal !== 'null')) {
-                if (! TypeCombinator::union(new StringType, new ObjectType('BackedEnum'), new ObjectType('Illuminate\\Contracts\\Support\\Htmlable'), new ObjectType(Closure::class), new ConstantBooleanType(false), new NullType)->isSuperTypeOf($this->getNativeType($value))->yes()) {
+            if ($hasNullsafeAccess || ((! $value instanceof String_) && ($literal !== 'null'))) {
+                if ((! in_array($literal, ['false', 'null'], true)) && (! TypeCombinator::union(new StringType, new ObjectType('BackedEnum'), new ObjectType('Illuminate\\Contracts\\Support\\Htmlable'), new ObjectType(Closure::class), new ConstantBooleanType(false), new NullType)->isSuperTypeOf($this->getNativeType($value))->yes())) {
                     return null;
                 }
 
-                return new FuncCall(new ArrowFunction([
+                return $this->callAdapter(new ArrowFunction([
                     'static' => true,
                     'params' => [
                         new Param(new Variable('component'), type: new FullyQualified($class)),
@@ -266,7 +285,7 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
                             new Arg(new ConstFetch(new Name('true')), name: new Identifier('isInline')),
                         ]),
                     ),
-                ]), [new Arg($node->var), new Arg($value)]);
+                ]), $node, $value, $hasNullsafeAccess);
             }
 
             return new MethodCall($node->var, 'suffixIcon', [
@@ -278,11 +297,11 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
         if (isset(self::NEGATIONS[$method]) && (! in_array($literal, ['true', 'false'], true)) && TypeCombinator::union(new BooleanType, new ObjectType(Closure::class))->isSuperTypeOf($this->getNativeType($value))->yes()) {
             // These legacy callbacks capture the configured component, even after cloning.
             if (in_array($configurationClass, [Builder::class, Repeater::class, Select::class], true)) {
-                if ($hasNullsafeAccess) {
+                if ($hasNullsafeAccess && ($configurationClass !== Select::class)) {
                     return null;
                 }
 
-                return new FuncCall(new ArrowFunction([
+                return $this->callAdapter(new ArrowFunction([
                     'static' => true,
                     'params' => [
                         new Param(new Variable('component'), type: new FullyQualified($class)),
@@ -294,7 +313,7 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
                         'returnType' => new Identifier('bool'),
                         'expr' => new BooleanNot(new MethodCall(new Variable('component'), 'evaluate', [new Arg(new Variable('condition'))])),
                     ]))]),
-                ]), [new Arg($node->var), new Arg($value)]);
+                ]), $node, $value, $hasNullsafeAccess);
             }
 
             $isAction = in_array($configurationClass, [CreateAction::class, AttachAction::class, AssociateAction::class], true);
@@ -355,6 +374,30 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
 
         $node->name = new Identifier($replacement);
         $node->args = [new Arg(new ConstFetch(new Name($result)))];
+
+        return $node;
+    }
+
+    private function callAdapter(ArrowFunction $adapter, MethodCall | NullsafeMethodCall $node, Expr $value, bool $hasNullsafeAccess): Expr
+    {
+        if (! $hasNullsafeAccess) {
+            return new FuncCall($adapter, [new Arg($node->var), new Arg($value)]);
+        }
+
+        // Keep the argument expression in the original nullsafe chain and scope.
+        // `tap()` supplies the receiver once, without changing fluent short-circuiting.
+        $node->name = new Identifier('tap');
+        $node->args = [new Arg(new FuncCall(new ArrowFunction([
+            'static' => true,
+            'params' => [$adapter->params[1]],
+            'returnType' => new FullyQualified(Closure::class),
+            'expr' => new ArrowFunction([
+                'static' => true,
+                'params' => [$adapter->params[0]],
+                'returnType' => $adapter->returnType,
+                'expr' => $adapter->expr,
+            ]),
+        ]), [new Arg($value)]))];
 
         return $node;
     }
