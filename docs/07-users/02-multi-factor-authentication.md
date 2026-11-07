@@ -526,7 +526,7 @@ The multi-factor challenge that the login page presents is also available on its
 The `MultiFactorChallenge` class builds the challenge form for a user. Its components carry the validation rules that verify the code that the user enters.
 
 <Aside variant="info">
-    The examples below assume that `$user` is the signed-in user and is an instance of `Authenticatable`. Your Livewire component must also be [set up to use schemas](../components/schema) and use the `RestrictsFileUploadsToSchemaComponents` trait described in the [security documentation](../advanced/security#restricting-livewire-file-uploads-to-schema-components).
+    The examples below assume that `$user` is the signed-in user and is an instance of `Authenticatable`. Your Livewire component must also be [set up to use schemas](../components/schema). The `InteractsWithSchemas` trait restricts Livewire file uploads to schema components by default, as described in the [security documentation](../advanced/security#restricting-livewire-file-uploads-to-schema-components).
 </Aside>
 
 ### Checking whether a user can be challenged
