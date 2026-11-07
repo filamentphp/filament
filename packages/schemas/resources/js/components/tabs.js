@@ -73,7 +73,11 @@ export default function tabsSchemaComponent({
             })
 
             this.boundFocusHandler = (event) => {
-                if (!this.root.contains(event.target)) {
+                if (
+                    !this.root.contains(event.target) ||
+                    event.target.closest('.fi-modal') !==
+                        this.root.closest('.fi-modal')
+                ) {
                     this.closeOverflow()
                     this.lastFocusedElement = null
                     this.lastFocusedTabset = null
