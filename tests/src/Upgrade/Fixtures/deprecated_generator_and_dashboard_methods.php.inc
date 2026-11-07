@@ -30,6 +30,42 @@ function migrate(ResourceClassGenerator $resource, ResourceTableClassGenerator $
     $table->outputTableRecordActions();
 }
 
+trait PreviewHook
+{
+    protected function configureToPreviewMethod(Method $method): void
+    {
+        parent::configureToPreviewMethod(method: $method);
+        $method->setBody("return 'custom-preview';");
+    }
+}
+
+class CustomPreviewGenerator extends RichContentCustomBlockClassGenerator
+{
+    use PreviewHook;
+}
+
+class ChildPreviewGenerator extends CustomPreviewGenerator
+{
+    protected function configureToPreviewMethod(Method $method): void
+    {
+        parent::configureToPreviewMethod(method: $method);
+        $method->addBody('// child');
+    }
+}
+
+class PublicPreviewGenerator extends CustomPreviewGenerator
+{
+    public function configureToPreviewMethod(Method $method): void
+    {
+        parent::configureToPreviewMethod($method);
+    }
+}
+
+function inspectPublic(PublicPreviewGenerator $generator, Method $method): void
+{
+    $generator->configureToPreviewMethod($method);
+}
+
 class PreviewGenerator extends RichContentCustomBlockClassGenerator
 {
     public function inspect(Method $method, array $arguments): void
@@ -37,6 +73,8 @@ class PreviewGenerator extends RichContentCustomBlockClassGenerator
         $this->configureToPreviewMethod(method: $method);
         $this->configureToPreviewMethod(...$arguments);
         $callback = $this->configureToPreviewMethod(...);
+        $generator = $this;
+        $generator->configureToPreviewMethod(method: $method);
     }
 }
 
@@ -85,6 +123,42 @@ function migrate(ResourceClassGenerator $resource, ResourceTableClassGenerator $
     $table->outputTableRecordActions();
 }
 
+trait PreviewHook
+{
+    protected function configureToPreviewHtmlMethod(Method $method): void
+    {
+        parent::configureToPreviewHtmlMethod(method: $method);
+        $method->setBody("return 'custom-preview';");
+    }
+}
+
+class CustomPreviewGenerator extends RichContentCustomBlockClassGenerator
+{
+    use PreviewHook;
+}
+
+class ChildPreviewGenerator extends CustomPreviewGenerator
+{
+    protected function configureToPreviewHtmlMethod(Method $method): void
+    {
+        parent::configureToPreviewHtmlMethod(method: $method);
+        $method->addBody('// child');
+    }
+}
+
+class PublicPreviewGenerator extends CustomPreviewGenerator
+{
+    public function configureToPreviewHtmlMethod(Method $method): void
+    {
+        parent::configureToPreviewHtmlMethod($method);
+    }
+}
+
+function inspectPublic(PublicPreviewGenerator $generator, Method $method): void
+{
+    $generator->configureToPreviewHtmlMethod($method);
+}
+
 class PreviewGenerator extends RichContentCustomBlockClassGenerator
 {
     public function inspect(Method $method, array $arguments): void
@@ -92,6 +166,8 @@ class PreviewGenerator extends RichContentCustomBlockClassGenerator
         $this->configureToPreviewHtmlMethod(method: $method);
         $this->configureToPreviewHtmlMethod(...$arguments);
         $callback = $this->configureToPreviewHtmlMethod(...);
+        $generator = $this;
+        $generator->configureToPreviewHtmlMethod(method: $method);
     }
 }
 

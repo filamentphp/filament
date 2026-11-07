@@ -2,6 +2,7 @@
 
 namespace Filament\Upgrade\Rector;
 
+use Filament\Upgrade\Support\TraitConsumerResolver;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ConstFetch;
@@ -11,6 +12,7 @@ use PhpParser\Node\Expr\NullsafePropertyFetch;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\StaticPropertyFetch;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\NullableType;
@@ -37,8 +39,6 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
         'Filament\\Tables\\Table' => ['deferloading' => 'lazyLoaded', 'isloadingdeferred' => 'isLazyLoaded'],
         'Filament\\Resources\\RelationManagers\\RelationGroup' => ['deferbadge' => 'lazyLoadedBadge', 'isbadgedeferred' => 'isBadgeLazyLoaded'],
         'Filament\\Schemas\\Components\\Tabs\\Tab' => ['deferbadge' => 'lazyLoadedBadge', 'isbadgedeferred' => 'isBadgeLazyLoaded'],
-        'Filament\\Resources\\RelationManagers\\RelationManager' => ['islazy' => 'isLazyLoaded', 'isbadgedeferred' => 'isBadgeLazyLoaded'],
-        'Filament\\Widgets\\Widget' => ['islazy' => 'isLazyLoaded'],
         'Filament\\Schemas\\Components\\Tabs' => ['getdeferredtabbadges' => 'getLazyLoadedTabBadges', 'hasdeferredbadges' => 'hasLazyLoadedBadges'],
         'Filament\\Schemas\\Components\\Component' => ['lazy' => 'live', 'islazy' => 'isLiveOnBlur'],
     ];
@@ -55,7 +55,10 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
         'Filament\\Widgets\\Widget' => ['isLazy' => 'isLazyLoaded'],
     ];
 
-    public function __construct(private AstResolver $astResolver) {}
+    public function __construct(
+        private AstResolver $astResolver,
+        private TraitConsumerResolver $traitConsumerResolver,
+    ) {}
 
     public function getNodeTypes(): array
     {
@@ -83,6 +86,31 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
 
         $receiver = ($node instanceof StaticCall || $node instanceof StaticPropertyFetch) ? $node->class : $node->var;
         $receiverType = TypeCombinator::removeNull($this->getType($receiver));
+        $context = ScopeFetcher::fetch($node)->getClassReflection();
+
+        if (($node instanceof StaticPropertyFetch) && $context?->isTrait() && in_array($oldName, ['isLazy', 'isBadgeDeferred'], true)
+            && ((($receiver instanceof Name) && $this->isNames($receiver, ['parent', 'self', 'static']))
+                || (($receiver instanceof Variable) && ($receiver->name === 'this')))) {
+            $newName = null;
+
+            foreach ($this->traitConsumerResolver->getConsumers($context, $this->getFile()->getFilePath()) as $consumer) {
+                $replacement = $this->replacement(new ObjectType($consumer->getName()), $oldName, true);
+
+                if ((! $replacement) || ($newName && ($newName !== $replacement)) || (! $this->canRename($consumer, $oldName, $replacement, true))) {
+                    return null;
+                }
+
+                $newName = $replacement;
+            }
+
+            if (! $newName) {
+                return null;
+            }
+
+            $node->name = new VarLikeIdentifier($newName);
+
+            return $node;
+        }
 
         // PHPStan cannot infer a removed setter's result in a nullsafe chain.
         if (($receiver instanceof MethodCall || $receiver instanceof NullsafeMethodCall)
@@ -96,7 +124,6 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
         }
 
         if ($receiver instanceof Name && in_array(strtolower($receiver->toString()), ['parent', 'self', 'static'])) {
-            $context = ScopeFetcher::fetch($node)->getClassReflection();
             $receiverClass = strtolower($receiver->toString()) === 'parent' ? $context?->getParentClass() : $context;
 
             if (! $receiverClass) {
@@ -113,6 +140,11 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
         }
 
         foreach ($receiverType->getObjectClassReflections() as $classReflection) {
+            if ($isProperty && $context && in_array($newName, ['isLazyLoaded', 'isBadgeLazyLoaded'], true)
+                && (($context->getName() === $classReflection->getName()) || $context->isSubclassOf($classReflection->getName()))) {
+                $classReflection = $context;
+            }
+
             if (! $this->canRename($classReflection, $oldName, $newName, $isProperty)) {
                 return null;
             }
@@ -195,6 +227,60 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
 
     private function canRename(ClassReflection $classReflection, string $oldName, string $newName, bool $isProperty): bool
     {
+        $isOverrideProperty = $isProperty && in_array($newName, ['isLazyLoaded', 'isBadgeLazyLoaded'], true)
+            && ((new ObjectType('Filament\\Widgets\\Widget'))->isSuperTypeOf(new ObjectType($classReflection->getName()))->yes()
+                || (new ObjectType('Filament\\Resources\\RelationManagers\\RelationManager'))->isSuperTypeOf(new ObjectType($classReflection->getName()))->yes());
+
+        if ($isOverrideProperty) {
+            foreach ($this->traitConsumerResolver->getRelatedClasses($classReflection, $oldName, $this->getFile()->getFilePath()) as $candidate) {
+                if ($this->replacement(new ObjectType($candidate->getName()), $oldName, true) !== $newName) {
+                    return false;
+                }
+
+                // Migrate backing state with its legacy hook, never independently
+                // of a competing canonical hook or an owner outside the upgrade paths.
+                foreach ([$oldName, $newName] as $methodName) {
+                    if (! $candidate->hasNativeMethod($methodName)) {
+                        continue;
+                    }
+
+                    $method = $candidate->getNativeMethod($methodName);
+                    $owner = (method_exists($method, 'getDeclaringTrait') ? $method->getDeclaringTrait() : null) ?? $method->getDeclaringClass();
+
+                    if ((! in_array($owner->getName(), ['Filament\\Support\\Concerns\\CanBeLazyLoaded', 'Filament\\Resources\\RelationManagers\\RelationManager'], true))
+                        && (($methodName === $newName) || (! isset($this->traitConsumerResolver->getSourceClasses($this->getFile()->getFilePath())[$owner->getName()])))) {
+                        return false;
+                    }
+                }
+
+                if ($candidate->hasNativeProperty($newName)
+                    && (! in_array($candidate->getNativeProperty($newName)->getDeclaringClass()->getName(), ['Filament\\Widgets\\Widget', 'Filament\\Resources\\RelationManagers\\RelationManager'], true))) {
+                    return false;
+                }
+
+                if ($candidate->hasNativeProperty($oldName)) {
+                    $propertyOwner = $candidate->getNativeProperty($oldName)->getDeclaringClass();
+
+                    if (! in_array($propertyOwner->getName(), ['Filament\\Widgets\\Widget', 'Filament\\Resources\\RelationManagers\\RelationManager', 'Filament\\Support\\Concerns\\CanBeLazyLoaded'], true)) {
+                        $declaration = $this->astResolver->resolveClassFromClassReflection($propertyOwner);
+
+                        if ((! isset($this->traitConsumerResolver->getSourceClasses($this->getFile()->getFilePath())[$propertyOwner->getName()]))
+                            || (($property = $declaration?->getProperty($oldName)) && (count($property->props) !== 1))) {
+                            return false;
+                        }
+                    }
+                }
+
+                foreach ([$candidate, ...$candidate->getParents()] as $ancestor) {
+                    foreach ($ancestor->getTraits(true) as $trait) {
+                        if ($trait->hasNativeProperty($oldName) && (! in_array($trait->getName(), ['Filament\\Support\\Concerns\\CanBeLazyLoaded', 'Filament\\Support\\Concerns\\CanBeLazy'], true))) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
         foreach ([$oldName, $newName] as $name) {
             if ($isProperty ? (! $classReflection->hasNativeProperty($name)) : (! $classReflection->hasNativeMethod($name))) {
                 continue;
@@ -203,7 +289,7 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
             $member = $isProperty ? $classReflection->getNativeProperty($name) : $classReflection->getNativeMethod($name);
             $owner = $member->getDeclaringClass();
 
-            if (isset(self::METHODS[$owner->getName()]) || in_array($owner->getName(), [
+            if (isset(self::METHODS[$owner->getName()]) || ($isProperty && isset(self::PROPERTIES[$owner->getName()])) || in_array($owner->getName(), [
                 'Filament\\Support\\Concerns\\CanBeLazy',
                 'Filament\\Support\\Concerns\\CanBeLazyLoaded',
                 'Filament\\Schemas\\Concerns\\HasStateBindingModifiers',
@@ -215,7 +301,9 @@ class RenameDeprecatedLazyLoadingApisRector extends AbstractRector
                 continue;
             }
 
-            if (($name === $newName) || ($newName === 'live') || ($owner->getFileName() !== $this->getFile()->getFilePath())) {
+            if (($name === $newName) || ($newName === 'live')
+                || (($owner->getFileName() !== $this->getFile()->getFilePath())
+                    && ((! $isOverrideProperty) || (! isset($this->traitConsumerResolver->getSourceClasses($this->getFile()->getFilePath())[$owner->getName()]))))) {
                 return false;
             }
 

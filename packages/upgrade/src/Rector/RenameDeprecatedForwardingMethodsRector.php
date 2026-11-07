@@ -18,7 +18,6 @@ use Filament\Clusters\Cluster;
 use Filament\Commands\FileGenerators\Resources\Concerns\CanGenerateResourceTables;
 use Filament\Facades\Filament;
 use Filament\FilamentManager;
-use Filament\Forms\Commands\FileGenerators\RichContentCustomBlockClassGenerator;
 use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Concerns\HasAffixes;
@@ -198,9 +197,6 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'getTableActions' => 'getTableRecordActions',
             'outputTableActions' => 'outputTableRecordActions',
             'outputTableMethodBulkActions' => 'outputTableBulkActions',
-        ],
-        RichContentCustomBlockClassGenerator::class => [
-            'configureToPreviewMethod' => 'configureToPreviewHtmlMethod',
         ],
         Dashboard::class => [
             'normalizeTableFilterValuesFromQueryString' => 'normalizeFilterValuesFromQueryString',
@@ -494,7 +490,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             }
 
             // These protected helpers are only migrated through `$this`, not external receivers.
-            if ((in_array($componentClass, [RichContentCustomBlockClassGenerator::class, Dashboard::class, RepeatableEntry::class], strict: true) || $isImageEditorScaleAlias || ($methodName === 'getjavascriptclickhandler')) && (($node instanceof StaticCall) || (! $node->var instanceof Variable) || ($node->var->name !== 'this'))) {
+            if ((in_array($componentClass, [Dashboard::class, RepeatableEntry::class], strict: true) || $isImageEditorScaleAlias || ($methodName === 'getjavascriptclickhandler')) && (($node instanceof StaticCall) || (! $node->var instanceof Variable) || ($node->var->name !== 'this'))) {
                 return null;
             }
 

@@ -29,6 +29,36 @@ class CustomManager extends RelationManager
     }
 }
 
+trait EagerHook
+{
+    public static function isLazy(): bool
+    {
+        return ! parent::isLazy() || static::$isLazy;
+    }
+}
+
+class TraitWidget extends Widget
+{
+    use EagerHook;
+
+    protected static bool $isLazy = false;
+}
+
+class InheritedWidget extends TraitWidget
+{
+    public static function isLazy(): bool
+    {
+        return ! parent::isLazy();
+    }
+}
+
+class TraitManager extends RelationManager
+{
+    use EagerHook;
+
+    protected static bool $isLazy = false;
+}
+
 class CustomSchema extends Schema
 {
     protected bool | Closure $isLoadingDeferred = false;
@@ -74,6 +104,36 @@ class CustomManager extends RelationManager
     {
         return parent::isBadgeLazyLoaded($ownerRecord, $pageClass) || static::$isBadgeLazyLoaded;
     }
+}
+
+trait EagerHook
+{
+    public static function isLazyLoaded(): bool
+    {
+        return ! parent::isLazyLoaded() || static::$isLazyLoaded;
+    }
+}
+
+class TraitWidget extends Widget
+{
+    use EagerHook;
+
+    protected static ?bool $isLazyLoaded = false;
+}
+
+class InheritedWidget extends TraitWidget
+{
+    public static function isLazyLoaded(): bool
+    {
+        return ! parent::isLazyLoaded();
+    }
+}
+
+class TraitManager extends RelationManager
+{
+    use EagerHook;
+
+    protected static ?bool $isLazyLoaded = false;
 }
 
 class CustomSchema extends Schema

@@ -4,12 +4,16 @@ namespace Filament\Upgrade\Rector;
 
 use Filament\Auth\MultiFactor\Email\Concerns\InteractsWithEmailAuthentication;
 use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
+use Filament\Forms\Commands\FileGenerators\RichContentCustomBlockClassGenerator;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Support\Concerns\CanBeLazyLoaded;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Upgrade\Support\TraitConsumerResolver;
 use Filament\Widgets\ChartWidget;
 use Filament\Widgets\ChartWidget\Concerns\HasFiltersForm;
+use Filament\Widgets\Widget;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
@@ -23,6 +27,7 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use Rector\PhpParser\AstResolver;
 use Rector\PHPStan\ScopeFetcher;
 use Rector\Rector\AbstractRector;
 
@@ -37,6 +42,9 @@ class RenameReconciledContractMethodsRector extends AbstractRector
         'toggleemailauthentication' => ['saveEmailAuthentication', [HasEmailAuthentication::class]],
         'getrecordattributestoarray' => ['recordAttributesToArray', [TranslatableContentDriver::class]],
         'shouldrollbackdatabasetransaction' => ['shouldRollBackDatabaseTransaction', [Halt::class, Cancel::class]],
+        'islazy' => ['isLazyLoaded', [Widget::class, RelationManager::class]],
+        'isbadgedeferred' => ['isBadgeLazyLoaded', [RelationManager::class]],
+        'configuretopreviewmethod' => ['configureToPreviewHtmlMethod', [RichContentCustomBlockClassGenerator::class]],
     ];
 
     /**
@@ -49,10 +57,14 @@ class RenameReconciledContractMethodsRector extends AbstractRector
         TranslatableContentDriver::class,
         Halt::class,
         Cancel::class,
+        CanBeLazyLoaded::class,
+        RelationManager::class,
+        RichContentCustomBlockClassGenerator::class,
     ];
 
     public function __construct(
         private TraitConsumerResolver $traitConsumerResolver,
+        private AstResolver $astResolver,
     ) {}
 
     public function getNodeTypes(): array
@@ -85,14 +97,38 @@ class RenameReconciledContractMethodsRector extends AbstractRector
         [$newName, $owners] = $mapping;
         $context = ScopeFetcher::fetch($node)->getClassReflection();
 
+        if (($newName === 'configureToPreviewHtmlMethod') && (! $node instanceof ClassMethod)) {
+            $receivers = $this->getReceiverType($node)->getObjectClassReflections();
+            $hasPublicHook = $receivers && (! array_filter($receivers, static fn (ClassReflection $receiver): bool => (! $receiver->hasNativeMethod($oldName)) || (! $receiver->getNativeMethod($oldName)->isPublic())));
+
+            if (! $hasPublicHook) {
+                $contexts = $context?->isTrait() ? $this->traitConsumerResolver->getConsumers($context, $this->getFile()->getFilePath()) : [$context];
+
+                if (! $contexts) {
+                    return null;
+                }
+
+                foreach ($contexts as $scopeClass) {
+                    if ((! $scopeClass) || (! $this->supportsType(new ObjectType($scopeClass->getName()), $owners))) {
+                        return null;
+                    }
+                }
+            }
+        }
+
+        $isContextualHookCall = in_array($newName, ['isLazyLoaded', 'isBadgeLazyLoaded', 'configureToPreviewHtmlMethod'], true)
+            && $context && (! $node instanceof ClassMethod)
+            && ((($node instanceof StaticCall) && ($node->class instanceof Name) && $this->isNames($node->class, ['parent', 'self', 'static']))
+                || ((! $node instanceof StaticCall) && ($node->var instanceof Variable) && ($node->var->name === 'this')));
+
         if ($node instanceof ClassMethod) {
             if ((! $context) || (! $this->supportsClass($context, $owners, $oldName, $newName))) {
                 return null;
             }
-        } elseif ($context?->isTrait() && (
+        } elseif ($isContextualHookCall || ($context?->isTrait() && (
             (($node instanceof StaticCall) && ($node->class instanceof Name) && $this->isNames($node->class, ['self', 'static', 'parent']))
             || ((! $node instanceof StaticCall) && ($node->var instanceof Variable) && ($node->var->name === 'this'))
-        )) {
+        ))) {
             if (! $this->supportsClass($context, $owners, $oldName, $newName)) {
                 return null;
             }
@@ -104,6 +140,13 @@ class RenameReconciledContractMethodsRector extends AbstractRector
             }
 
             foreach ($receiverType->getObjectClassReflections() as $receiver) {
+                // A literal framework call cannot dispatch to application subclasses.
+                if (($node instanceof StaticCall) && ($node->class instanceof Name)
+                    && in_array($newName, ['isLazyLoaded', 'isBadgeLazyLoaded'], true)
+                    && in_array($receiver->getName(), $owners, true)) {
+                    continue;
+                }
+
                 if (! $this->supportsClass($receiver, $owners, $oldName, $newName)) {
                     return null;
                 }
@@ -173,7 +216,7 @@ class RenameReconciledContractMethodsRector extends AbstractRector
             $method = $class->getNativeMethod($oldName);
             $trait = method_exists($method, 'getDeclaringTrait') ? $method->getDeclaringTrait() : null;
 
-            if ($trait) {
+            if ($trait && ((! in_array($newName, ['isLazyLoaded', 'isBadgeLazyLoaded', 'configureToPreviewHtmlMethod'], true)) || (! in_array($trait->getName(), self::CANONICAL_METHOD_OWNERS, true)))) {
                 return $this->supportsClass($trait, $owners, $oldName, $newName);
             }
         }
@@ -191,13 +234,65 @@ class RenameReconciledContractMethodsRector extends AbstractRector
             return false;
         }
 
-        $classes = $this->traitConsumerResolver->getSourceClasses($this->getFile()->getFilePath());
-        $classes[$class->getName()] = $class;
+        $isOverrideHook = in_array($newName, ['isLazyLoaded', 'isBadgeLazyLoaded', 'configureToPreviewHtmlMethod'], true);
+        $classes = $isOverrideHook
+            ? $this->traitConsumerResolver->getRelatedClasses($class, $oldName, $this->getFile()->getFilePath())
+            : [$class->getName() => $class, ...$this->traitConsumerResolver->getSourceClasses($this->getFile()->getFilePath())];
 
         foreach ($classes as $candidate) {
-            if ((! $this->supportsType(new ObjectType($candidate->getName()), $owners))
-                || (! $candidate->hasNativeMethod($oldName))
-                || (! $candidate->hasNativeMethod($newName))) {
+            if ((! $isOverrideHook) && (! $candidate->hasNativeMethod($oldName))) {
+                continue;
+            }
+
+            if (! $this->supportsType(new ObjectType($candidate->getName()), $owners)) {
+                if ($isOverrideHook) {
+                    return true;
+                }
+
+                continue;
+            }
+
+            if ($isOverrideHook && $candidate->hasNativeMethod($oldName)) {
+                $legacyMethod = $candidate->getNativeMethod($oldName);
+                $legacyOwner = (method_exists($legacyMethod, 'getDeclaringTrait') ? $legacyMethod->getDeclaringTrait() : null) ?? $legacyMethod->getDeclaringClass();
+
+                if ((! in_array($legacyOwner->getName(), self::CANONICAL_METHOD_OWNERS, true))
+                    && (! isset($this->traitConsumerResolver->getSourceClasses($this->getFile()->getFilePath())[$legacyOwner->getName()]))) {
+                    return true;
+                }
+            }
+
+            if (in_array($newName, ['isLazyLoaded', 'isBadgeLazyLoaded'], true)) {
+                if ($candidate->hasNativeProperty($newName)
+                    && (! in_array($candidate->getNativeProperty($newName)->getDeclaringClass()->getName(), [Widget::class, RelationManager::class], true))) {
+                    return true;
+                }
+
+                $oldPropertyName = ($newName === 'isLazyLoaded') ? 'isLazy' : 'isBadgeDeferred';
+
+                foreach ([$candidate, ...$candidate->getParents()] as $ancestor) {
+                    foreach ($ancestor->getTraits(true) as $trait) {
+                        if ($trait->hasNativeProperty($oldPropertyName) && (! in_array($trait->getName(), [CanBeLazyLoaded::class, 'Filament\\Support\\Concerns\\CanBeLazy'], true))) {
+                            return true;
+                        }
+                    }
+                }
+
+                if ($candidate->hasNativeProperty($oldPropertyName)) {
+                    $propertyOwner = $candidate->getNativeProperty($oldPropertyName)->getDeclaringClass();
+
+                    if (! in_array($propertyOwner->getName(), [Widget::class, RelationManager::class, CanBeLazyLoaded::class], true)) {
+                        $declaration = $this->astResolver->resolveClassFromClassReflection($propertyOwner);
+
+                        if ((! isset($this->traitConsumerResolver->getSourceClasses($this->getFile()->getFilePath())[$propertyOwner->getName()]))
+                            || (($property = $declaration?->getProperty($oldPropertyName)) && (count($property->props) !== 1))) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            if (! $candidate->hasNativeMethod($newName)) {
                 continue;
             }
 
