@@ -283,12 +283,6 @@ Without custom registrations, Filament uses its built-in RTL icons.
 Remove registrations for `Filament\Support\View\SupportIconAlias::BADGE_DELETE_BUTTON`. Customize `.fi-badge-delete-btn-icon` instead; there is no replacement icon alias or automated migration.
 </Disclosure>
 
-<Disclosure open x-show="packages.includes('tables')">
-<span slot="summary">Column manager widths can now be enums</span>
-
-`getColumnToggleFormWidth()` is replaced by `getColumnManagerWidth()`, which returns `Filament\Support\Enums\Width | string | null` instead of `?string`. Update string-only consumers and custom return types. Convert an enum using `$width instanceof Width ? $width->value : $width` after importing `Filament\Support\Enums\Width`.
-</Disclosure>
-
 <Disclosure open>
 <span slot="summary">Sticky modals have a new scroll wrapper</span>
 
