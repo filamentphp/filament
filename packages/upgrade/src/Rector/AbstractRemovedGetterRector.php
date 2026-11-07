@@ -12,6 +12,7 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\NodeFinder;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\TypeCombinator;
 use Rector\PHPStan\ScopeFetcher;
@@ -46,7 +47,7 @@ abstract class AbstractRemovedGetterRector extends AbstractRector
             $context = ScopeFetcher::fetch($node)->getClassReflection();
             $class = $this->isName($node->class, 'parent') ? $context?->getParentClass() : $context;
 
-            if ((! $class) || $class->hasNativeMethod($this->method()) || (! (new ObjectType($this->owner()))->isSuperTypeOf(new ObjectType($class->getName()))->yes())) {
+            if ((! $class) || $this->hasCustomGetter($class) || (! (new ObjectType($this->owner()))->isSuperTypeOf(new ObjectType($class->getName()))->yes())) {
                 return null;
             }
 
@@ -60,7 +61,7 @@ abstract class AbstractRemovedGetterRector extends AbstractRector
         }
 
         foreach ($type->getObjectClassReflections() as $class) {
-            if ($class->hasNativeMethod($this->method())) {
+            if ($this->hasCustomGetter($class)) {
                 return null;
             }
         }
@@ -68,5 +69,12 @@ abstract class AbstractRemovedGetterRector extends AbstractRector
         $hasNullsafeReceiver = (new NodeFinder)->findFirst([$node->var], static fn (Node $receiver): bool => $receiver instanceof NullsafeMethodCall || $receiver instanceof NullsafePropertyFetch) !== null;
 
         return $this->result($node->var, $node instanceof NullsafeMethodCall || $hasNullsafeReceiver);
+    }
+
+    private function hasCustomGetter(ClassReflection $class): bool
+    {
+        // The upgrade script runs before the installed runtime's built-in getter is removed.
+        return $class->hasNativeMethod($this->method())
+            && ($class->getNativeMethod($this->method())->getDeclaringClass()->getName() !== $this->owner());
     }
 }
