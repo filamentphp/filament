@@ -72,6 +72,7 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\BinaryOp\BooleanOr;
 use PhpParser\Node\Expr\Cast\String_ as StringCast;
+use PhpParser\Node\Expr\Closure as ClosureExpression;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
@@ -616,6 +617,16 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
     private function resolveReceiverType(Expr $receiver): Type
     {
         $receiverType = TypeCombinator::removeNull($this->getType($receiver));
+
+        if ($receiver instanceof FuncCall && (! $receiver->isFirstClassCallable()) && ($receiver->name instanceof ClosureExpression || $receiver->name instanceof ArrowFunction) && $receiver->name->returnType instanceof Name) {
+            // Newly generated wrappers can have an unqualified inferred invocation type.
+            // Resolve the signature's name metadata, retaining any valid narrower type.
+            $declaredType = $this->getType($receiver->name->returnType);
+
+            if (! $declaredType->isSuperTypeOf($receiverType)->yes()) {
+                $receiverType = $declaredType;
+            }
+        }
 
         if ((! ($receiver instanceof MethodCall || $receiver instanceof NullsafeMethodCall)) || (! $receiver->name instanceof Identifier) || $receiver->isFirstClassCallable()) {
             return $receiverType;
