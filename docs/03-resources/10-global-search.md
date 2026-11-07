@@ -18,8 +18,8 @@ protected static ?string $recordTitleAttribute = 'title';
 
 This attribute is used to retrieve the search result title for that record.
 
-<Aside variant="warning">
-    Your resource needs to have an Edit or View page to allow the global search results to link to a URL, otherwise no results will be returned for this resource.
+<Aside variant="info">
+    Your resource does not need an Edit or View page to appear in global search results. Results can also link to table action modals, as explained in [Customizing global search result URLs](#customizing-global-search-result-urls).
 </Aside>
 
 You may customize the title further by overriding `getGlobalSearchResultTitle()` method. It may return a plain text string, or an instance of `Illuminate\Support\HtmlString` or `Illuminate\Contracts\Support\Htmlable`. This allows you to render HTML, or even Markdown, in the search result title:
@@ -73,7 +73,11 @@ public static function getGlobalSearchEloquentQuery(): Builder
 
 ## Customizing global search result URLs
 
-Global search results will link to the [Edit page](editing-records) of your resource, or the [View page](viewing-records) if the user does not have [edit permissions](editing-records#authorization). To customize this, you may override the `getGlobalSearchResultUrl()` method and return a route of your choice:
+By default, global search results link to the [View page](viewing-records) if it exists and the user has [view permissions](viewing-records#authorization). Otherwise, they link to the [Edit page](editing-records) if it exists and the user has [edit permissions](editing-records#authorization).
+
+If neither page is available to the user, Filament generates a URL to the resource's List page that targets the `view` table action if the user has view permissions, or the `edit` table action if they only have edit permissions. This default fallback requires a registered List (`index`) page with the corresponding table action configured to open a modal. Otherwise, you must provide a custom result URL. If the user has neither permission, the record is excluded from the results.
+
+To customize this, you may override the `getGlobalSearchResultUrl()` method and return a route of your choice:
 
 ```php
 public static function getGlobalSearchResultUrl(Model $record): string
@@ -81,6 +85,8 @@ public static function getGlobalSearchResultUrl(Model $record): string
     return UserResource::getUrl('edit', ['record' => $record]);
 }
 ```
+
+For [nested resources](nesting), you must override this method to provide a URL with the required parent record parameters. Nested resource records are excluded from global search results by default.
 
 ## Adding actions to global search results
 
