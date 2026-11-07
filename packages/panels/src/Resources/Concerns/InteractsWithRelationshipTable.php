@@ -4,9 +4,11 @@ namespace Filament\Resources\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Facades\Filament;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Tables;
+use Filament\Tables\Columns\Column;
 use Filament\Tables\Table;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Builder;
@@ -263,6 +265,22 @@ trait InteractsWithRelationshipTable
         }
 
         return $table;
+    }
+
+    #[Unexposed]
+    public function getDefaultTableColumnAuthorizationResponse(Column $column): ?Response
+    {
+        if (! Filament::isAuthorizationStrict()) {
+            return null;
+        }
+
+        $record = $column->getRecord();
+
+        if (! ($record instanceof Model)) {
+            return null;
+        }
+
+        return $this->getEditAuthorizationResponse($record);
     }
 
     protected function getAssociateAuthorizationResponse(): Response

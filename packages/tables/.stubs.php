@@ -26,6 +26,10 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertTableColumnStateNotSet(string $name, $state, $record): static {}
 
+        public function assertTableColumnStateCanBeUpdated(string $name, $record): static {}
+
+        public function assertTableColumnStateCanNotBeUpdated(string $name, $record): static {}
+
         public function assertTableColumnSummarizerExists(string $columnName, string $summarizerId): static {}
 
         public function assertTableColumnSummarySet(string $columnName, string $summarizerId, $state, bool $isCurrentPaginationPageOnly = false): static {}

@@ -4,9 +4,11 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Support\Components\Attributes\Exposed;
+use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Columns\Layout\Component as ColumnLayoutComponent;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Renderless;
 use ReflectionAttribute;
@@ -92,7 +94,7 @@ trait HasColumns
         // Security: This method is callable from the frontend and dispatches
         // to `#[Exposed]` methods on table columns. It does
         // not perform per-record policy checks. Inline editable columns
-        // called through here bypass Model Policies.
+        // called through here bypass `authorize()` and Model Policies.
 
         $column = $this->getTable()->getColumn($name);
 
@@ -127,6 +129,12 @@ trait HasColumns
         $column->record($record);
 
         return $column->{$method}(...$arguments);
+    }
+
+    #[Unexposed]
+    public function getDefaultTableColumnAuthorizationResponse(Column $column): ?Response
+    {
+        return null;
     }
 
     /**
