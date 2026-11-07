@@ -27,6 +27,8 @@ export default ({ isMenu = true } = {}) => ({
 
     activeTrigger: null,
 
+    shouldCheckTriggerVisibility: true,
+
     isOpen: false,
 
     isClosing: false,
@@ -34,6 +36,10 @@ export default ({ isMenu = true } = {}) => ({
     shouldAutofocus: true,
 
     observer: null,
+
+    triggerResizeObserver: null,
+
+    triggerVisibilityAnimationFrame: null,
 
     navigateListener: null,
 
@@ -133,7 +139,24 @@ export default ({ isMenu = true } = {}) => ({
 
         this.syncAria()
 
-        this.observer = new MutationObserver(() => {
+        const triggerContainer = this.getTriggerContainer()
+
+        this.observer = new MutationObserver((mutations) => {
+            // Visibility or candidate changes may not resize the trigger container, so check
+            // which trigger is visible again once, after the current changes are rendered.
+            if (
+                mutations.some(
+                    (mutation) =>
+                        (mutation.type === 'childList' ||
+                            ['class', 'hidden', 'style', 'tabindex'].includes(
+                                mutation.attributeName,
+                            )) &&
+                        triggerContainer.contains(mutation.target),
+                )
+            ) {
+                this.scheduleTriggerVisibilityCheck()
+            }
+
             this.syncAria()
             this.setUpMenu()
             this.recoverMenuFocus()
@@ -153,24 +176,51 @@ export default ({ isMenu = true } = {}) => ({
         // A Livewire morph re-renders the trigger from server HTML, stripping the client-applied
         // ARIA attributes, so observe them and re-apply. `syncAria()` only writes attributes whose
         // values have changed, so re-applying does not retrigger the observer in a loop.
-        this.observer.observe(this.getTriggerContainer(), {
+        this.observer.observe(triggerContainer, {
             attributeFilter: [
                 'aria-controls',
                 'aria-expanded',
                 'aria-haspopup',
+                'class',
+                'hidden',
                 'style',
+                'tabindex',
             ],
+            childList: true,
             subtree: true,
         })
+
+        // Also re-check when ancestor visibility or responsive styles resize the container.
+        // Resize observer callbacks run after layout, avoiding a forced recalculation for the read.
+        this.triggerResizeObserver = new ResizeObserver(() => {
+            this.shouldCheckTriggerVisibility = true
+            this.syncAria()
+        })
+
+        this.triggerResizeObserver.observe(triggerContainer)
+    },
+
+    scheduleTriggerVisibilityCheck() {
+        if (this.triggerVisibilityAnimationFrame !== null) {
+            return
+        }
+
+        this.triggerVisibilityAnimationFrame = window.requestAnimationFrame(
+            () => {
+                this.triggerVisibilityAnimationFrame = null
+                this.shouldCheckTriggerVisibility = true
+                this.syncAria()
+            },
+        )
     },
 
     getTriggerContainer() {
-        return this.$el.querySelector(':scope > .fi-dropdown-trigger')
+        return this.$root.querySelector(':scope > .fi-dropdown-trigger')
     },
 
     getTriggers() {
         return Array.from(
-            this.$el.querySelectorAll(
+            this.$root.querySelectorAll(
                 ':scope > .fi-dropdown-trigger button, :scope > .fi-dropdown-trigger a, :scope > .fi-dropdown-trigger [tabindex]',
             ),
         )
@@ -178,6 +228,21 @@ export default ({ isMenu = true } = {}) => ({
 
     getTrigger() {
         const triggerContainer = this.getTriggerContainer()
+
+        // Checking which trigger is visible forces a style recalculation, which is expensive when a
+        // Livewire morph makes the observer re-sync the ARIA attributes. Only check again when the
+        // trigger container was resized, its candidates or their visibility changed, or the active
+        // trigger is no longer in place.
+        if (
+            !this.shouldCheckTriggerVisibility &&
+            this.activeTrigger?.isConnected &&
+            triggerContainer?.contains(this.activeTrigger)
+        ) {
+            return this.activeTrigger
+        }
+
+        this.shouldCheckTriggerVisibility = false
+
         const triggers = this.getTriggers()
 
         // Avoid forcing style recalculation when there is only one trigger to choose from.
@@ -251,6 +316,8 @@ export default ({ isMenu = true } = {}) => ({
     },
 
     handleResize(previousTrigger) {
+        this.shouldCheckTriggerVisibility = true
+
         const trigger = this.getTrigger()
         const panel = this.$refs.panel
         const isOpen = panel?.style.display === 'block'
@@ -288,16 +355,13 @@ export default ({ isMenu = true } = {}) => ({
             this.activeMenuItem = null
         }
 
-        this.setAttributeIfChanged(
-            trigger,
-            'aria-haspopup',
-            this.isMenu ? 'menu' : 'true',
-        )
-
         if (this.isMenu) {
+            this.setAttributeIfChanged(trigger, 'aria-haspopup', 'menu')
             this.triggerId = this.getTriggerId(trigger)
             this.setAttributeIfChanged(panel, 'role', 'menu')
             this.setAttributeIfChanged(panel, 'aria-labelledby', this.triggerId)
+        } else {
+            trigger.removeAttribute('aria-haspopup')
         }
 
         this.setAttributeIfChanged(trigger, 'aria-controls', this.panelId)
@@ -309,7 +373,7 @@ export default ({ isMenu = true } = {}) => ({
 
         // The floating UI plugin also writes `aria-expanded` onto the non-focusable
         // `.fi-dropdown-trigger` wrapper; remove it so the state only lives on the real control.
-        this.$el
+        this.$root
             .querySelector(':scope > .fi-dropdown-trigger')
             ?.removeAttribute('aria-expanded')
 
@@ -358,7 +422,7 @@ export default ({ isMenu = true } = {}) => ({
                 item.setAttribute('role', 'menuitem')
             }
 
-            item.setAttribute('tabindex', '-1')
+            this.setAttributeIfChanged(item, 'tabindex', '-1')
 
             if (item.hasAttribute('disabled')) {
                 item.setAttribute('aria-disabled', 'true')
@@ -436,7 +500,9 @@ export default ({ isMenu = true } = {}) => ({
         }
 
         const panel = this.$refs.panel
-        const trigger = this.$el.querySelector(':scope > .fi-dropdown-trigger')
+        const trigger = this.$root.querySelector(
+            ':scope > .fi-dropdown-trigger',
+        )
         const isFromTrigger = trigger?.contains(event.target)
 
         if (
@@ -729,6 +795,10 @@ export default ({ isMenu = true } = {}) => ({
 
         this.observer?.disconnect()
         this.observer = null
+        this.triggerResizeObserver?.disconnect()
+        this.triggerResizeObserver = null
+        window.cancelAnimationFrame(this.triggerVisibilityAnimationFrame)
+        this.triggerVisibilityAnimationFrame = null
 
         document.removeEventListener('livewire:navigate', this.navigateListener)
         window.removeEventListener('resize', this.resizeListener)

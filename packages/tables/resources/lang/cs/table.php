@@ -6,10 +6,30 @@ return [
 
         'heading' => 'Sloupce',
 
+        'position' => 'Pozice :position z :count.',
+
+        'position_in_group' => 'Pozice :position z :count ve skupině :group.',
+
+        'reordered' => ':column je nyní na pozici :position z :count.',
+
+        'reordered_deferred' => ':column je nyní na pozici :position z :count. Změny uložíte tlačítkem Použít sloupce.',
+
+        'reordered_in_group' => ':column je nyní na pozici :position z :count ve skupině :group.',
+
+        'reordered_in_group_deferred' => ':column je nyní na pozici :position z :count ve skupině :group. Změny uložíte tlačítkem Použít sloupce.',
+
         'actions' => [
 
             'apply' => [
                 'label' => 'Použít sloupce',
+            ],
+
+            'move_up' => [
+                'label' => 'Posunout :column nahoru',
+            ],
+
+            'move_down' => [
+                'label' => 'Posunout :column dolů',
             ],
 
             'reorder' => [
@@ -28,6 +48,13 @@ return [
 
         'actions' => [
             'label' => 'Akce|Akce',
+        ],
+
+        'editable' => [
+            'saving' => 'Ukládá se změna...',
+            'saved' => 'Změna uložena.',
+            'failure' => 'Uložení se nepodařilo potvrdit. Před dalším pokusem obnovte stránku.',
+            'unavailable' => 'Tuto položku už nelze upravit.',
         ],
 
         'icon' => [
@@ -129,6 +156,14 @@ return [
 
         'reorder_record' => [
             'label' => 'Přesunout položku :key',
+        ],
+
+        'move_record_up' => [
+            'label' => 'Posunout :label nahoru',
+        ],
+
+        'move_record_down' => [
+            'label' => 'Posunout :label dolů',
         ],
 
         'filter' => [
@@ -242,6 +277,11 @@ return [
     'loading' => 'Načítá se...',
 
     'reorder_indicator' => 'Vyberte a přesuňte položky.',
+
+    'reordering' => [
+        'position' => ':label, pozice :position z :count.',
+        'moved' => ':label je nyní na pozici :position z :count.',
+    ],
 
     'result_count' => '{0} Žádné výsledky|{1} :count výsledek|[2,4] :count výsledky|[5,*] :count výsledků',
 

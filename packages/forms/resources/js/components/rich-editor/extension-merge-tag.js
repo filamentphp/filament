@@ -64,7 +64,7 @@ export default Node.create({
         return {
             mergeTags: [],
             suggestions: [],
-            getSuggestionFromChar: () => null,
+            getSuggestionFromTriggerCharacter: () => null,
         }
     },
 
@@ -128,9 +128,9 @@ export default Node.create({
         // We cannot use the `this.storage` property here because, when accessed this method,
         // it returns the initial value of the extension storage
         const suggestion =
-            this.editor?.extensionStorage?.[this.name]?.getSuggestionFromChar(
-                '{{',
-            )
+            this.editor?.extensionStorage?.[
+                this.name
+            ]?.getSuggestionFromTriggerCharacter('{{')
 
         const mergedOptions = { ...this.options }
 
@@ -167,7 +167,7 @@ export default Node.create({
             suggestion:
                 this.editor?.extensionStorage?.[
                     this.name
-                ]?.getSuggestionFromChar('{{'),
+                ]?.getSuggestionFromTriggerCharacter('{{'),
         }
 
         return this.options.renderText(args)
@@ -262,9 +262,9 @@ export default Node.create({
             }),
         )
 
-        this.storage.getSuggestionFromChar = (char) => {
+        this.storage.getSuggestionFromTriggerCharacter = (triggerCharacter) => {
             const suggestion = this.storage.suggestions.find(
-                (s) => s.char === char,
+                (suggestion) => suggestion.char === triggerCharacter,
             )
             if (suggestion) {
                 return suggestion

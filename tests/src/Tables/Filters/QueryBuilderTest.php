@@ -5085,7 +5085,7 @@ it('groups the OR block using its translated heading only when attributes are gr
     $label ??= 'Logic';
     $livewire = livewire(QueryBuilderTableTest::class, ['grouped' => $hasGroups]);
     $filter = $livewire->instance()->getTable()->getFilter('query_builder');
-    $builder = $filter->getSchema()->getComponent(static fn ($component): bool => $component instanceof RuleBuilder);
+    $builder = $filter->getForm()->getComponent(static fn ($component): bool => $component instanceof RuleBuilder);
 
     $html = $builder->toHtml();
     $document = new DOMDocument;

@@ -2,6 +2,10 @@
 
 return [
 
+    'js_component' => [
+        'failed_to_load' => 'Tuto komponentu se nepodařilo načíst. Pro nový pokus obnovte stránku.',
+    ],
+
     'callout' => [
 
         'statuses' => [
@@ -23,6 +27,18 @@ return [
 
             'expand' => [
                 'label' => 'Rozbalit sekci',
+            ],
+
+        ],
+
+    ],
+
+    'tabs' => [
+
+        'actions' => [
+
+            'more' => [
+                'label' => 'Další záložky',
             ],
 
         ],

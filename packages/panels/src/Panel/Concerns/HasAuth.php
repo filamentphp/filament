@@ -85,7 +85,7 @@ trait HasAuth
 
     protected string $resetPasswordRouteSlug = 'reset';
 
-    protected string $resetPasswordRoutePrefix = 'password-reset';
+    protected string $passwordResetRoutePrefix = 'password-reset';
 
     protected ?string $profilePage = null;
 
@@ -260,7 +260,7 @@ trait HasAuth
 
     public function passwordResetRoutePrefix(string $prefix): static
     {
-        $this->resetPasswordRoutePrefix = $prefix;
+        $this->passwordResetRoutePrefix = $prefix;
 
         return $this;
     }
@@ -623,9 +623,17 @@ trait HasAuth
         return Str::start($this->resetPasswordRouteSlug, '/');
     }
 
+    public function getPasswordResetRoutePrefix(): string
+    {
+        return Str::start($this->passwordResetRoutePrefix, '/');
+    }
+
+    /**
+     * @deprecated Use `getPasswordResetRoutePrefix()` instead.
+     */
     public function getResetPasswordRoutePrefix(): string
     {
-        return Str::start($this->resetPasswordRoutePrefix, '/');
+        return $this->getPasswordResetRoutePrefix();
     }
 
     public function hasEmailChangeVerification(): bool

@@ -61,12 +61,12 @@ return [
 
         'max_rows' => [
             'title' => 'Przesłany plik CSV jest zbyt duży',
-            'body' => 'Nie możesz zaimportować więcej niż 1 wiersz na raz.|Nie możesz zaimportować więcej niż :count wierszy na raz.',
+            'body' => 'Nie możesz zaimportować więcej niż 1 wiersz na raz.|Nie możesz zaimportować więcej niż :count wiersze na raz.|Nie możesz zaimportować więcej niż :count wierszy na raz.',
         ],
 
         'started' => [
             'title' => 'Import rozpoczęty',
-            'body' => 'Import rozpoczęty i 1 wiersz zostanie przetworzony w tle.|Import rozpoczęty i :count wierszy zostanie przetworzonych w tle.',
+            'body' => 'Import rozpoczęty i 1 wiersz zostanie przetworzony w tle.|Import rozpoczęty i :count wiersze zostaną przetworzone w tle.|Import rozpoczęty i :count wierszy zostanie przetworzonych w tle.',
         ],
 
     ],

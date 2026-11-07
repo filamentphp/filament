@@ -689,6 +689,23 @@ ImportAction::make()
     If you are encountering memory or timeout issues when importing large CSV files, you may wish to reduce the chunk size.
 </Aside>
 
+## Setting the CSV encoding
+
+By default, Filament attempts to detect the encoding of an uploaded CSV file and converts its contents to UTF-8. Since some encodings accept the same byte sequences, automatic detection can select the wrong encoding. If you know the encoding of your CSV files, you can specify it using the `csvEncoding()` method on the action:
+
+```php
+use App\Filament\Imports\ProductImporter;
+use Filament\Actions\ImportAction;
+
+ImportAction::make()
+    ->importer(ProductImporter::class)
+    ->csvEncoding('Windows-1252')
+```
+
+The encoding applies to both column headers and row data. Use a canonical encoding name returned by PHP's [`mb_list_encodings()` function](https://www.php.net/manual/en/function.mb-list-encodings.php), such as `Windows-1252` or `SJIS-win`. Encoding aliases such as `CP1252` are not accepted. Passing `null` restores automatic detection.
+
+<UtilityInjection set="actions" extras="CSV stream;;resource;;$resource;;The uploaded CSV stream before UTF-8 conversion. You can read a bounded sample for custom encoding detection, but must not modify or close the stream.">As well as allowing a static value, the `csvEncoding()` method also accepts a function to dynamically calculate it. Returning `null` falls back to automatic detection. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Changing the CSV delimiter
 
 The default delimiter for CSVs is the comma (`,`). If your import uses a different delimiter, you may call the `csvDelimiter()` method on the action, passing a new one:
@@ -835,10 +852,12 @@ use Illuminate\Queue\Middleware\WithoutOverlapping;
 public function getJobMiddleware(): array
 {
     return [
-        (new WithoutOverlapping("filament:imports:{$this->import->getKey()}"))->expireAfter(600),
+        (new WithoutOverlapping("filament:imports:{$this->import->getKey()}"))->releaseAfter(5)->expireAfter(600),
     ];
 }
 ```
+
+Chunks that cannot acquire the lock are released back to the queue with a five-second delay. These releases still count as job attempts. For long imports using the database queue, use an application migration to widen a tinyint `attempts` column to an unsigned integer. For SQS, ensure the source queue's redrive policy has a `maxReceiveCount` that allows for these additional deliveries.
 
 If you'd like to customize the middleware that is applied to jobs of a certain importer, you may override this method in your importer class. You can read more about job middleware in the [Laravel docs](https://laravel.com/docs/queues#job-middleware).
 
@@ -1104,7 +1123,7 @@ The restored context covers row processing and importer lifecycle hooks, not cus
 
 When rows fail validation during import, Filament compiles them into a downloadable CSV for the user to review. This failure CSV contains the original data from the uploaded file exactly as it was submitted, without any transformation. If the uploaded CSV contains values beginning with characters like `=`, `+`, `-`, or `@`, they will appear unchanged in the failure CSV. When opened in spreadsheet software such as Microsoft Excel or Google Sheets, these values may be interpreted as formulas, which could pose a security risk if the original CSV was provided by an untrusted source. You should ensure that your users are aware of this risk when reviewing failure CSVs, or implement sanitization in your importer's lifecycle hooks to neutralize potentially dangerous values before they are stored as failed rows.
 
-Alternatively, you may opt in to Filament's built-in protection for the failure CSV. When enabled, any cell that begins with a formula-triggering character (`=`, `+`, `-`, `@`, a tab, or a carriage return) is prefixed with a single quote (`'`) so that spreadsheet software treats it as plain text. Because the failure CSV includes every column from the uploaded file — even columns that are not mapped to an `ImportColumn` — this protection is applied to the whole file rather than to individual columns.
+Alternatively, you may opt in to Filament's built-in protection for the failure CSV. When enabled, any cell that begins with a formula-triggering character (`=`, `+`, `-`, `@`, a tab, or a carriage return) is prefixed with a single quote (`'`) so that spreadsheet software treats it as plain text. Purely numeric strings beginning with `+` or `-`, such as `+42` or `-5`, remain unchanged. Because the failure CSV includes every column from the uploaded file — even columns that are not mapped to an `ImportColumn` — this protection is applied to the whole file rather than to individual columns.
 
 To enable it for a single importer, set the `$shouldPreventFormulaInjection` property on your importer class:
 
@@ -1126,5 +1145,5 @@ Importer::preventFormulaInjection();
 ```
 
 <Aside variant="warning">
-    This protection is **opt in** and disabled by default, because the failure CSV is intended to be corrected and re-uploaded. Prefixing a single quote alters legitimate data — for example, values such as `-5` or a phone number like `+44 1234 567890` are valid formula triggers and would be rewritten to `'-5` and `'+44 1234 567890`, which would then be imported with the leading quote intact. Only enable it when the uploaded files may come from an untrusted source.
+    This protection is **opt in** and disabled by default, because the failure CSV is intended to be corrected and re-uploaded. Prefixing a single quote can still alter legitimate data — for example, a phone number like `+44 1234 567890` would be rewritten to `'+44 1234 567890`, which would then be imported with the leading quote intact. Only enable it when the uploaded files may come from an untrusted source.
 </Aside>

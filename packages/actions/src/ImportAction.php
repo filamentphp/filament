@@ -55,6 +55,8 @@ class ImportAction extends Action
 
     protected int | Closure | null $headerOffset = null;
 
+    protected string | Closure | null $csvEncoding = null;
+
     protected string | Closure | null $csvDelimiter = null;
 
     /**
@@ -355,7 +357,7 @@ class ImportAction extends Action
             ]));
         }
 
-        $inputEncoding = $this->detectCsvEncoding($resource);
+        $inputEncoding = $this->getCsvEncoding($resource) ?? $this->detectCsvEncoding($resource);
         $outputEncoding = 'UTF-8';
 
         if (
@@ -461,6 +463,13 @@ class ImportAction extends Action
         return $this;
     }
 
+    public function csvEncoding(string | Closure | null $encoding): static
+    {
+        $this->csvEncoding = $encoding;
+
+        return $this;
+    }
+
     public function csvDelimiter(string | Closure | null $delimiter): static
     {
         $this->csvDelimiter = $delimiter;
@@ -497,6 +506,16 @@ class ImportAction extends Action
     public function getHeaderOffset(): ?int
     {
         return $this->evaluate($this->headerOffset);
+    }
+
+    /**
+     * @param  resource | null  $resource
+     */
+    public function getCsvEncoding(mixed $resource = null): ?string
+    {
+        return $this->evaluate($this->csvEncoding, [
+            'resource' => $resource,
+        ]);
     }
 
     public function getCsvDelimiter(?CsvReader $reader = null): ?string

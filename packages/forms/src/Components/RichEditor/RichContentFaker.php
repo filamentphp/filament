@@ -447,16 +447,17 @@ class RichContentFaker extends ContentFaker
 
     public function mention(string | int | null $id = null, ?string $char = null): static
     {
+        $triggerCharacter = $char;
         $providers = $this->attribute?->getMentionProviders() ?? [];
         $provider = null;
         $items = null;
 
-        if (($id !== null) && ($char === null) && (count($providers) > 1)) {
+        if (($id !== null) && ($triggerCharacter === null) && (count($providers) > 1)) {
             throw new InvalidArgumentException('A mention trigger character must be specified when generating an explicit mention ID with multiple providers.');
         }
 
         if ($providers !== []) {
-            if (($id === null) && ($char === null)) {
+            if (($id === null) && ($triggerCharacter === null)) {
                 $providersWithItems = [];
 
                 foreach ($providers as $registeredProvider) {
@@ -473,9 +474,9 @@ class RichContentFaker extends ContentFaker
                     [$provider, $items] = $this->faker->randomElement($providersWithItems);
                 }
             } else {
-                $provider = ($char === null)
+                $provider = ($triggerCharacter === null)
                     ? $this->faker->randomElement($providers)
-                    : collect($providers)->first(fn (MentionProvider $registeredProvider): bool => $registeredProvider->getChar() === $char);
+                    : collect($providers)->first(fn (MentionProvider $registeredProvider): bool => $registeredProvider->getTriggerCharacter() === $triggerCharacter);
             }
         }
 
@@ -483,13 +484,13 @@ class RichContentFaker extends ContentFaker
             throw new LogicException('No matching mention provider is configured on the rich content attribute.');
         }
 
-        $char ??= $provider?->getChar() ?? '@';
+        $triggerCharacter ??= $provider?->getTriggerCharacter() ?? '@';
 
         if ($id === null) {
             $items ??= $provider->getSearchResults('');
 
             if ($items === []) {
-                throw new LogicException("The mention provider for [{$char}] did not return any items.");
+                throw new LogicException("The mention provider for [{$triggerCharacter}] did not return any items.");
             }
 
             $id = $this->faker->randomElement(array_keys($items));
@@ -504,7 +505,7 @@ class RichContentFaker extends ContentFaker
             'attrs' => [
                 'id' => (string) $id,
                 'label' => $label,
-                'char' => $char,
+                'char' => $triggerCharacter,
             ],
         ]);
 

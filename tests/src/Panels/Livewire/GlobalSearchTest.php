@@ -400,6 +400,53 @@ describe('SPA mode', function (): void {
     });
 });
 
+describe('key bindings', function (): void {
+    it('focuses the search field after results have been rendered', function (string $panel): void {
+        Artisan::call('filament:assets');
+        Filament::getPanel($panel)->globalSearchKeyBindings(['ctrl+k']);
+
+        Post::query()->delete();
+
+        $post = Post::factory()->create();
+        $inputSelector = 'input[type="search"][aria-controls]';
+
+        $page = visit(PostResource::getUrl(panel: $panel));
+
+        $page->keys('.fi-header-heading', 'Control+k')
+            ->assertPresent("{$inputSelector}:focus");
+
+        $page->type($inputSelector, $post->title)
+            ->assertVisible('[role=region] a');
+
+        $page->click('.fi-header-heading')
+            ->assertNotPresent("{$inputSelector}:focus")
+            ->keys('.fi-header-heading', 'Control+k')
+            ->assertPresent("{$inputSelector}:focus");
+    })->with(['standard panel' => 'admin', 'SPA panel' => 'spa']);
+
+    it('focuses the search field after selecting a result in SPA mode', function (): void {
+        Artisan::call('filament:assets');
+        Filament::getPanel('spa')->globalSearchKeyBindings(['ctrl+k']);
+
+        Post::query()->delete();
+
+        $post = Post::factory()->create();
+        $inputSelector = 'input[type="search"][aria-controls]';
+        $expectedPath = parse_url(PostResource::getUrl('view', ['record' => $post], panel: 'spa'), PHP_URL_PATH);
+
+        $page = visit(PostResource::getUrl(panel: 'spa'))
+            ->type($inputSelector, $post->title)
+            ->assertVisible('[role=region] a');
+
+        $page
+            ->click('[role=region] a')
+            ->assertPathIs($expectedPath)
+            ->assertNotPresent("{$inputSelector}:focus")
+            ->keys('.fi-header-heading', 'Control+k')
+            ->assertPresent("{$inputSelector}:focus");
+    });
+});
+
 describe('`globalSearchResourceOptIn()`', function (): void {
     it('excludes resources without explicit `$isGloballySearchable` when `globalSearchResourceOptIn()` is enabled', function (): void {
         Filament::getCurrentOrDefaultPanel()->globalSearchResourceOptIn();

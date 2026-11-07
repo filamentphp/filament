@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
+use UnitEnum;
 
 use function Filament\Support\apply_search_constraint;
 use function Filament\Support\generate_search_column_expression;
@@ -302,7 +303,7 @@ class AttachAction extends Action
 
                 return $relationshipQuery
                     ->pluck($titleAttribute, $relationship->getQualifiedRelatedKeyName())
-                    ->map(fn (mixed $title): mixed => $this->hasCustomRecordTitleAttribute() ? $title : $this->formatRecordTitle($title))
+                    ->map(fn (mixed $title): mixed => ($this->hasCustomRecordTitleAttribute() && (! $title instanceof UnitEnum)) ? $title : $this->formatRecordTitle($title))
                     ->all();
             }
 

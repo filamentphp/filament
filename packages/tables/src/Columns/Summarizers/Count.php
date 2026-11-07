@@ -124,7 +124,7 @@ class Count extends Summarizer
 
             <div <?= $attributes->toHtml() ?>>
                 <?php if (filled($label = $this->getLabel())) { ?>
-                    <span class="fi-ta-icon-count-summary-label">
+                    <span class="fi-ta-icon-count-summary-label<?= $this->isLabelHidden() ? ' fi-sr-only' : '' ?>">
                         <?= e($label) ?>
                     </span>
                 <?php } ?>

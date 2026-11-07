@@ -6,7 +6,7 @@ return [
 
     'lines' => [
         'Twój kod logowania to: :code',
-        'Ten kod wygaśnie za minutę.|Ten kod wygaśnie za :minutes minut.',
+        'Ten kod wygaśnie za minutę.|Ten kod wygaśnie za :minutes minuty.|Ten kod wygaśnie za :minutes minut.',
     ],
 
 ];

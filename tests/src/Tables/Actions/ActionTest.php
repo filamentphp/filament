@@ -3,12 +3,19 @@
 use Filament\Actions\Action;
 use Filament\Actions\AttachAction;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\DetachAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithGroupedRecordActions;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithToggleableRecordActions;
+use Filament\Tests\Fixtures\Livewire\TicketDepartmentsReorderableTable;
+use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Tables\TestCase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -68,6 +75,37 @@ describe('calling actions', function (): void {
             ->callTableAction('groupedDelete', $post);
 
         assertSoftDeleted($post);
+    });
+
+    it('can detach duplicate records sequentially with `allowDuplicates()`', function (): void {
+        $ticket = Ticket::factory()->create();
+        $otherTicket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+        $otherTicket->departments()->attach($department, ['quantity' => 99]);
+        $ticket->departments()->attach($department, ['quantity' => 3]);
+        $ticket->departments()->attach($department, ['quantity' => 7]);
+        $pivotKeys = DB::table('department_ticket')->where('ticket_id', $ticket->getKey())->orderBy('id')->pluck('id')->all();
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->defaultSort('department_ticket.id')->recordActions([DetachAction::make()]),
+            during: function () use ($ticket, $pivotKeys): void {
+                $component = livewire(TicketDepartmentsReorderableTable::class, ['ticketKey' => $ticket->getKey(), 'duplicates' => true]);
+
+                foreach ($pivotKeys as $index => $pivotKey) {
+                    $table = $component->instance()->getTable();
+                    $record = $component->instance()->getTableRecords()->first();
+                    $context = $table->getAction('detach')->record($record)->getContext();
+
+                    expect($context['recordKey'])->toBe((string) $pivotKey);
+
+                    $component->call('mountAction', 'detach', [], $context)->callMountedAction()->assertNotified();
+
+                    expect(DB::table('department_ticket')->where('ticket_id', $ticket->getKey())->pluck('quantity')->all())->toEqual($index === 0 ? [7] : []);
+                }
+            },
+        );
+
+        expect($otherTicket->departments()->pluck('quantity')->all())->toEqual([99]);
     });
 
     it('can validate an action\'s data', function (): void {
@@ -255,6 +293,34 @@ describe('nested actions', function (): void {
             ->assertDispatched('nested-called', bar: $bar, recordKey: $post->getKey())
             ->assertActionNotMounted()
             ->assertNotDispatched('grouped-parent-called');
+    });
+
+    it('can call a nested action with its own record when `allowDuplicates()` is enabled', function (): void {
+        $ticket = Ticket::factory()->create();
+        $department = Department::factory()->create();
+        $ticket->departments()->attach($department);
+        $pivotKey = DB::table('department_ticket')->value('id');
+        $otherDepartment = Department::make(['uuid' => (string) Str::uuid()])->setKeyName('uuid')->setKeyType('string');
+
+        Table::configureUsing(
+            static fn (Table $table): Table => $table->recordActions([
+                Action::make('parent')
+                    ->requiresConfirmation()
+                    ->extraModalFooterActions([
+                        Action::make('child')
+                            ->record($otherDepartment)
+                            ->action(function (Department $record, TicketDepartmentsReorderableTable $livewire): void {
+                                $livewire->dispatch('child-called', recordKey: $record->getKey());
+                            }),
+                    ]),
+            ]),
+            during: static fn () => livewire(TicketDepartmentsReorderableTable::class, ['ticketKey' => $ticket->getKey(), 'duplicates' => true])
+                ->callAction([
+                    TestAction::make('parent')->table($pivotKey),
+                    TestAction::make('child'),
+                ])
+                ->assertDispatched('child-called', recordKey: $otherDepartment->getKey()),
+        );
     });
 });
 
@@ -514,6 +580,48 @@ describe('record actions column visibility', function (): void {
         livewire(PostsTableWithToggleableRecordActions::class, ['hasVisibleRecordActions' => false])
             ->assertActionHidden(TestAction::make('test')->table($posts->first()))
             ->assertDontSeeHtml('fi-ta-actions-header-cell');
+    });
+
+    it('avoids redundant grouped authorization when resolving resource record URLs', function (bool $hasColumnsLayout): void {
+        $posts = Post::factory()->count(5)->create();
+
+        PostsTableWithGroupedRecordActions::$authorizationChecks = [];
+
+        livewire(PostsTableWithGroupedRecordActions::class, ['hasColumnsLayout' => $hasColumnsLayout])
+            ->assertSuccessful();
+
+        // Each record is authorized for its row URL and its rendered action group.
+        // Resolving an unused row action must not add further checks.
+        $expected = $posts->mapWithKeys(fn (Post $post): array => [$post->getKey() => 2])->all();
+
+        expect(PostsTableWithGroupedRecordActions::$authorizationChecks['edit'])->toEqual($expected);
+    })->with([false, true]);
+
+    it('does not reuse a modal row record for grouped actions on a linked row', function (bool $hasColumnsLayout): void {
+        $modalRecord = Post::factory()->create(['is_published' => true]);
+        $linkedRecord = Post::factory()->create(['is_published' => false]);
+        $table = livewire(PostsTableWithGroupedRecordActions::class, ['hasColumnsLayout' => $hasColumnsLayout])
+            ->instance()
+            ->getTable();
+
+        $table->recordUrl(static fn (Post $record): ?string => $record->is_published ? null : '/posts/' . $record->getKey());
+
+        foreach ($table->getFlatRecordActions() as $action) {
+            $action->url(null)->authorize(static fn (Post $record): bool => $record->is_published);
+        }
+
+        expect($table->getRecordAction($modalRecord))->toBe('edit')
+            ->and($table->getRecordUrl($linkedRecord))->toBe('/posts/' . $linkedRecord->getKey())
+            ->and($table->getRecordActions()[0]->getClone()->record($linkedRecord)->isHidden())->toBeTrue();
+    })->with([false, true]);
+
+    it('hides an action group after calling an action that hides every action in it', function (): void {
+        PostsTableWithGroupedRecordActions::$isPublished = false;
+
+        livewire(PostsTableWithGroupedRecordActions::class)
+            ->assertSee('Draft')
+            ->callAction(TestAction::make('discard')->table())
+            ->assertDontSee('Draft');
     });
 
     it('does not render the record actions column when every record in a large result set has no visible record action', function (): void {

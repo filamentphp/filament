@@ -190,20 +190,20 @@ protected function getData(): array
 
 You can use [schema components](../schemas) to build custom filters for your chart widget. This approach offers a more flexible way to define filters.
 
-To get started, use the `HasFiltersSchema` trait and implement the `filtersSchema()` method:
+To get started, use the `HasFiltersForm` trait and implement the `filtersForm()` method:
 
 ```php
 use Filament\Forms\Components\DatePicker;
 use Filament\Schemas\Schema;
-use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersForm;
 
 class BlogPostsChart extends ChartWidget
 {
-    use HasFiltersSchema;
+    use HasFiltersForm;
     
     // ...
     
-    public function filtersSchema(Schema $schema): Schema
+    public function filtersForm(Schema $schema): Schema
     {
         return $schema->components([
             DatePicker::make('startDate')
@@ -239,7 +239,7 @@ The `$this->filters` array will always reflect the current form data. Please not
 
 #### Deferring filter updates
 
-By default, filters using the `filtersSchema()` method update the chart data immediately as they are changed. However, for complex queries or better user experience, you may want to **defer** filter updates until the user clicks an "Apply" button.
+By default, filters using the `filtersForm()` method update the chart data immediately as they are changed. However, for complex queries or better user experience, you may want to **defer** filter updates until the user clicks an "Apply" button.
 
 When deferred, filter changes are only applied when the user clicks the "Apply" button. This ensures that the chart only re-renders when the user has finished adjusting all of their filters.
 
@@ -248,11 +248,11 @@ The chart will display data using the default filter values when the page first 
 To enable deferred filters, set the `$hasDeferredFilters` property to `true`:
 
 ```php
-use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersForm;
 
 class BlogPostsChart extends ChartWidget
 {
-    use HasFiltersSchema;
+    use HasFiltersForm;
 
     protected bool $hasDeferredFilters = true;
 
@@ -271,7 +271,7 @@ public function hasDeferredFilters(): bool
 
 #### Resetting filters to defaults
 
-When using deferred filters, a "Reset" link appears in the filter dropdown footer alongside the "Apply" button. Clicking this link restores all filters to their default values as defined in the `filtersSchema()` method. For example, if you set `->default(now()->subDays(30))` on a `DatePicker`, the reset action will restore that default date, not an empty value.
+When using deferred filters, a "Reset" link appears in the filter dropdown footer alongside the "Apply" button. Clicking this link restores all filters to their default values as defined in the `filtersForm()` method. For example, if you set `->default(now()->subDays(30))` on a `DatePicker`, the reset action will restore that default date, not an empty value.
 
 You may also call `$this->resetFilters()` from your chart widget to restore the default filter values and refresh the chart data. This applies the defaults immediately, even when filter updates are deferred.
 

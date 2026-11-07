@@ -688,7 +688,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
         if (isset($baseRelationshipQuery->limit)) {
             $this->optionsLimit($baseRelationshipQuery->limit);
-        } elseif ($this->isSearchable() && filled($this->getOptionsSearchColumns())) {
+        } elseif ($this->areOptionsSearchable() && filled($this->getOptionsSearchColumns())) {
             $relationshipQuery->limit($this->getOptionsLimit());
         }
 

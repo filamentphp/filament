@@ -102,7 +102,7 @@ trait HasRecords
         $table = $this->getTable();
         $relationship = $table->getRelationship();
 
-        if ($table->getRelationship() instanceof BelongsToMany && ! $table->allowsDuplicates()) {
+        if ($table->getRelationship() instanceof BelongsToMany) {
             invade($relationship)->hydratePivotRelation($records->all());
         }
 
