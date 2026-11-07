@@ -181,10 +181,6 @@
         & > .fi-section-header-content > .fi-section-header-after-ctn {
             @apply max-w-full shrink-0 self-center;
 
-            &
-                .fi-sc-text:not(
-                    .fi-section-header-after-ctn .fi-dropdown-panel *
-                ),
             & .fi-link:not(.fi-section-header-after-ctn .fi-dropdown-panel *) {
                 @apply leading-6;
             }
