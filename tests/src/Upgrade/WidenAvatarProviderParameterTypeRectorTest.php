@@ -6,6 +6,16 @@ use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
 class WidenAvatarProviderParameterTypeRectorTest extends AbstractRectorTestCase
 {
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+
+        // Refresh Rector's source locator for application subclasses between fixtures.
+        if (! defined('PHPUNIT_COMPOSER_INSTALL')) {
+            define('PHPUNIT_COMPOSER_INSTALL', dirname(__DIR__, 3) . '/vendor/autoload.php');
+        }
+    }
+
     public function test_widens_avatar_providers_without_narrowing_compatible_signatures(): void
     {
         $this->doTestFile(__DIR__ . '/Fixtures/avatar_providers.php.inc');
