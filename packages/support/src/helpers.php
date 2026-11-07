@@ -268,21 +268,10 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
     {
         $driverName = $databaseConnection->getDriverName();
 
-        if ($driverName === 'pgsql' && str_contains($column, '.')) {
-            $column = $databaseConnection->getTablePrefix() . $column;
-        }
-
         $column = match ($driverName) {
             'pgsql' => (
                 str($column)->contains('->')
-                            ? (
-                                // Handle `table.field` part with double quotes
-                                str($column)
-                                    ->before('->')
-                                    ->explode('.')
-                                    ->map(fn (string $part): string => (string) str($part)->wrap('"'))
-                                    ->implode('.')
-                            ) . collect(str($column)->after('->')->explode('->')) // Handle JSON path parts
+                            ? $databaseConnection->getQueryGrammar()->wrap((string) str($column)->before('->')) . collect(str($column)->after('->')->explode('->')) // Handle JSON path parts
                                 ->map(function ($segment, $index) use ($column): string {
                                     // If segment already starts with `>` (from `->>` operator), preserve it
                                     $isExplicitOperatorPrefixed = str($segment)->startsWith('>');
@@ -303,10 +292,7 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
                                         : "->'{$segment}'";
                                 })
                                 ->implode('')
-                            : str($column)
-                                ->explode('.')
-                                ->map(fn (string $part): string => (string) str($part)->wrap('"'))
-                                ->implode('.')
+                            : $databaseConnection->getQueryGrammar()->wrap($column)
             ) . '::text',
             default => $column,
         };
@@ -332,6 +318,7 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
         }
 
         if (
+            ($driverName === 'pgsql') ||
             str($column)->contains('(') || // This checks if the column name probably contains a raw expression like `lower()` or `json_extract()`.
             filled($collation)
         ) {

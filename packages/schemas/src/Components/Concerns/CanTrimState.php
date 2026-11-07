@@ -15,6 +15,8 @@ trait CanTrimState
     {
         $this->isTrimmed = $condition;
 
+        unset($this->cachedIsTrimmed);
+
         return $this;
     }
 

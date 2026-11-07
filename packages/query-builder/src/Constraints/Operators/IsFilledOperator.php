@@ -5,7 +5,6 @@ namespace Filament\QueryBuilder\Constraints\Operators;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Str;
 
 class IsFilledOperator extends Operator
 {
@@ -40,14 +39,8 @@ class IsFilledOperator extends Operator
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
 
-        $isPostgres = $databaseConnection->getDriverName() === 'pgsql';
-
-        if ((Str::lower($qualifiedColumn) !== $qualifiedColumn) && $isPostgres) {
-            $qualifiedColumn = (string) str($qualifiedColumn)->wrap('"');
-        }
-
-        if ($isPostgres) {
-            $qualifiedStringColumn = new Expression("{$qualifiedColumn}::text");
+        if ($databaseConnection->getDriverName() === 'pgsql') {
+            $qualifiedStringColumn = new Expression($query->getQuery()->getGrammar()->wrap($qualifiedColumn) . '::text');
         }
 
         return $query->where(

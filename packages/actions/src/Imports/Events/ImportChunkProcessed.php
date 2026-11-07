@@ -9,10 +9,6 @@ class ImportChunkProcessed
 {
     use Dispatchable;
 
-    protected int $processedRowsCount;
-
-    protected int $successfulRowsCount;
-
     /**
      * @param  array<string, string>  $columnMap
      * @param  array<string, mixed>  $options
@@ -21,12 +17,9 @@ class ImportChunkProcessed
         protected Import $import,
         protected array $columnMap,
         protected array $options,
-        int $processedRows,
-        int $successfulRows,
-    ) {
-        $this->processedRowsCount = $processedRows;
-        $this->successfulRowsCount = $successfulRows;
-    }
+        protected int $processedRows,
+        protected int $successfulRows,
+    ) {}
 
     public function getImport(): Import
     {
@@ -59,7 +52,7 @@ class ImportChunkProcessed
 
     public function getProcessedRowsCount(): int
     {
-        return $this->processedRowsCount;
+        return $this->processedRows;
     }
 
     /**
@@ -72,6 +65,6 @@ class ImportChunkProcessed
 
     public function getSuccessfulRowsCount(): int
     {
-        return $this->successfulRowsCount;
+        return $this->successfulRows;
     }
 }
