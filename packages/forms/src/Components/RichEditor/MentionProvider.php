@@ -31,9 +31,13 @@ class MentionProvider
 
     protected ?string $searchPrompt = null;
 
+    protected string $triggerCharacter;
+
     final public function __construct(
-        protected string $char,
-    ) {}
+        string $char,
+    ) {
+        $this->triggerCharacter = $char;
+    }
 
     public static function make(string $char): static
     {
@@ -122,9 +126,9 @@ class MentionProvider
         return $this;
     }
 
-    public function getChar(): string
+    public function getTriggerCharacter(): string
     {
-        return $this->char;
+        return $this->triggerCharacter;
     }
 
     /**

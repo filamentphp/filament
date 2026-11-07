@@ -12,12 +12,12 @@ const getSuggestionOptions = function ({
 }) {
     const pluginKey = new PluginKey()
 
-    const triggerChar = overrideSuggestionOptions?.char ?? '@'
+    const triggerCharacter = overrideSuggestionOptions?.triggerCharacter ?? '@'
     const extraAttributes = overrideSuggestionOptions?.extraAttributes ?? {}
 
     return {
         editor: tiptapEditor,
-        char: triggerChar,
+        char: triggerCharacter,
         pluginKey,
         command: ({ editor, range, props }) => {
             const nodeAfter = editor.view.state.selection.$to.nodeAfter
@@ -29,7 +29,7 @@ const getSuggestionOptions = function ({
 
             const mentionAttrs = {
                 ...props,
-                char: triggerChar,
+                char: triggerCharacter,
                 extra: extraAttributes,
             }
 
@@ -71,7 +71,7 @@ export default Node.create({
     addStorage() {
         return {
             suggestions: [],
-            getSuggestionFromChar: () => null,
+            getSuggestionFromTriggerCharacter: () => null,
         }
     },
 
@@ -79,8 +79,8 @@ export default Node.create({
         return {
             HTMLAttributes: {},
             renderText({ node }) {
-                const char = node.attrs.char ?? '@'
-                return `${char}`
+                const triggerCharacter = node.attrs.char ?? '@'
+                return `${triggerCharacter}`
             },
             deleteTriggerWithBackspace: true,
             renderHTML({ options, node }) {
@@ -174,7 +174,7 @@ export default Node.create({
     renderHTML({ node, HTMLAttributes }) {
         const suggestion = this.editor?.extensionStorage?.[
             this.name
-        ]?.getSuggestionFromChar(node?.attrs?.char ?? '@')
+        ]?.getSuggestionFromTriggerCharacter(node?.attrs?.char ?? '@')
 
         const mergedOptions = { ...this.options }
 
@@ -210,7 +210,7 @@ export default Node.create({
             node,
             suggestion: this.editor?.extensionStorage?.[
                 this.name
-            ]?.getSuggestionFromChar(node?.attrs?.char ?? '@'),
+            ]?.getSuggestionFromTriggerCharacter(node?.attrs?.char ?? '@'),
         }
         return this.options.renderText(args)
     },
@@ -240,11 +240,11 @@ export default Node.create({
                     })
 
                     if (isMention) {
-                        const trigger = mentionNode?.attrs?.char ?? '@'
+                        const triggerCharacter = mentionNode?.attrs?.char ?? '@'
                         transaction.insertText(
                             this.options.deleteTriggerWithBackspace
                                 ? ''
-                                : trigger,
+                                : triggerCharacter,
                             mentionPos,
                             mentionPos + mentionNode.nodeSize,
                         )
@@ -266,9 +266,9 @@ export default Node.create({
                 if (node.type.name !== this.name) return
                 if (node.attrs?.label) return
                 const id = node.attrs?.id
-                const char = node.attrs?.char ?? '@'
+                const triggerCharacter = node.attrs?.char ?? '@'
                 if (!id) return
-                pending.push({ id, char })
+                pending.push({ id, triggerCharacter })
             })
 
             if (pending.length === 0) return
@@ -288,9 +288,9 @@ export default Node.create({
                         node.type.name !== this.name ||
                         node.attrs.label ||
                         !pending.some(
-                            ({ id, char }) =>
+                            ({ id, triggerCharacter }) =>
                                 id === node.attrs.id &&
-                                char === (node.attrs.char ?? '@'),
+                                triggerCharacter === (node.attrs.char ?? '@'),
                         )
                     )
                         return
@@ -342,7 +342,7 @@ export default Node.create({
             : [this.options.suggestion]
 
         this.storage.suggestions = configured.map((suggestionConfig) => {
-            const char = suggestionConfig?.char ?? '@'
+            const triggerCharacter = suggestionConfig?.triggerCharacter ?? '@'
             const baseItems = suggestionConfig?.items ?? []
             const noOptionsMessage = suggestionConfig?.noOptionsMessage ?? null
             const noSearchResultsMessage =
@@ -367,7 +367,7 @@ export default Node.create({
                                 const results =
                                     await getMentionSearchResultsUsing(
                                         context?.query,
-                                        char,
+                                        triggerCharacter,
                                     )
 
                                 return toItemsArray(results)
@@ -408,7 +408,7 @@ export default Node.create({
                                     const results =
                                         await getMentionSearchResultsUsing(
                                             query,
-                                            char,
+                                            triggerCharacter,
                                         )
 
                                     return toItemsArray(results)
@@ -440,7 +440,7 @@ export default Node.create({
                         searchPrompt,
                         searchingMessage,
                     }),
-                    char,
+                    triggerCharacter,
                     ...(extraAttributes ? { extraAttributes } : {}),
                 }
             }
@@ -452,9 +452,11 @@ export default Node.create({
             })
         })
 
-        this.storage.getSuggestionFromChar = (char) => {
+        this.storage.getSuggestionFromTriggerCharacter = (triggerCharacter) => {
             return (
-                this.storage.suggestions.find((item) => item.char === char) ??
+                this.storage.suggestions.find(
+                    (item) => item.char === triggerCharacter,
+                ) ??
                 this.storage.suggestions[0] ??
                 null
             )

@@ -55,7 +55,7 @@ trait CanExportRecords
      */
     protected array | Closure $options = [];
 
-    protected string | Closure | null $fileDisk = null;
+    protected string | Closure | null $fileDiskName = null;
 
     protected string | Closure | null $fileName = null;
 
@@ -468,14 +468,14 @@ trait CanExportRecords
 
     public function fileDisk(string | Closure | null $disk): static
     {
-        $this->fileDisk = $disk;
+        $this->fileDiskName = $disk;
 
         return $this;
     }
 
     public function getFileDiskName(): ?string
     {
-        return $this->evaluate($this->fileDisk);
+        return $this->evaluate($this->fileDiskName);
     }
 
     public function fileName(string | Closure | null $name): static

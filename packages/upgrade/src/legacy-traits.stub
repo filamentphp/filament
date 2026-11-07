@@ -3,6 +3,13 @@
 // Upgrade-only bridges for renamed traits. These declarations
 // are scanned by PHPStan, never loaded into the application's runtime.
 
+namespace Filament\Actions\Concerns;
+
+trait CanBeLabeledFrom
+{
+    use CanBeLabeledFromBreakpoint;
+}
+
 namespace Filament\Support\Concerns;
 
 trait CanBeLazy

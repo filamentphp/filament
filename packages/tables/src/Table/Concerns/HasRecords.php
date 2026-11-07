@@ -7,10 +7,12 @@ use Closure;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Stringable;
 
 use function Filament\Support\get_model_label;
 use function Filament\Support\locale_has_pluralization;
@@ -217,7 +219,9 @@ trait HasRecords
         $title ??= $this->getModelLabel();
 
         if ($title instanceof HasLabel) {
-            return $title->getLabel();
+            $title = $title->getLabel() ?? $this->getModelLabel();
+
+            return ($title instanceof Htmlable) && (! $title instanceof Stringable) ? $title->toHtml() : $title;
         }
 
         if ($title instanceof BackedEnum) {

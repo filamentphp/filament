@@ -244,6 +244,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'saveUploadedFileAttachmentsUsing' => 'saveUploadedFileAttachmentUsing',
         ],
         MentionProvider::class => [
+            'getChar' => 'getTriggerCharacter',
             'hasSearchResultsUsing' => 'hasSearchResultsUsingCallback',
         ],
         RichContentAttribute::class => [
@@ -256,6 +257,7 @@ class RenameDeprecatedForwardingMethodsRector extends AbstractRector
             'titleColumnName' => 'titleAttribute',
         ],
         FileUpload::class => [
+            'isSvgEditingConfirmed' => 'shouldConfirmSvgEditing',
             'idleLabel' => 'placeholder',
             'imageResizeMode' => 'automaticallyResizeImagesMode',
             'imageResizeTargetHeight' => 'automaticallyResizeImagesToHeight',

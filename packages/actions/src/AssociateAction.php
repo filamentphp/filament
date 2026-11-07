@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use UnitEnum;
 
 use function Filament\Support\apply_search_constraint;
 use function Filament\Support\generate_search_column_expression;
@@ -284,7 +285,7 @@ class AssociateAction extends Action
 
                 return $relationshipQuery
                     ->pluck($titleAttribute, $relationship->getModel()->getQualifiedKeyName())
-                    ->map(fn (mixed $title): mixed => $this->hasCustomRecordTitleAttribute() ? $title : $this->formatRecordTitle($title))
+                    ->map(fn (mixed $title): mixed => ($this->hasCustomRecordTitleAttribute() && (! $title instanceof UnitEnum)) ? $title : $this->formatRecordTitle($title))
                     ->all();
             }
 

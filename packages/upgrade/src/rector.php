@@ -42,6 +42,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->importNames();
 
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
+        'Filament\\Actions\\Concerns\\CanBeLabeledFrom' => 'Filament\\Actions\\Concerns\\CanBeLabeledFromBreakpoint',
         'Filament\\Support\\Concerns\\CanBeLazy' => 'Filament\\Support\\Concerns\\CanBeLazyLoaded',
         'Filament\\Tables\\Filters\\Concerns\\HasSchema' => 'Filament\\Tables\\Filters\\Concerns\\HasForm',
         'Filament\\Widgets\\ChartWidget\\Concerns\\HasFiltersSchema' => 'Filament\\Widgets\\ChartWidget\\Concerns\\HasFiltersForm',

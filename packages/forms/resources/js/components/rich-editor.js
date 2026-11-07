@@ -127,8 +127,11 @@ export default function richEditorFormComponent({
                 maxFileSizeValidationMessage,
                 mergeTags,
                 mentions,
-                getMentionSearchResultsUsing: (search, char) =>
-                    this.$getMentionSearchResultsForJs({ search, char }),
+                getMentionSearchResultsUsing: (search, triggerCharacter) =>
+                    this.$getMentionSearchResultsForJs({
+                        search,
+                        triggerCharacter,
+                    }),
                 getMentionLabelsUsing: (mentions) =>
                     this.$getMentionLabelsForJs({ mentions }),
                 noMergeTagSearchResultsMessage,
