@@ -886,7 +886,11 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
             $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
         }
 
-        $wireKey = $livewireKey . '.' . substr(md5(serialize([$isDisabled, $isDisabled ? $placeholder : null])), 0, 64);
+        $wireKey = $livewireKey . '.' . substr(md5(serialize([
+            $isDisabled,
+            $isDisabled ? $placeholder : null,
+            $isDisabled && ($placeholder === '') && blank($this->getState()),
+        ])), 0, 64);
 
         $outerAttributes = $this->getExtraAttributeBag()
             ->merge([
