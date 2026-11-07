@@ -18,6 +18,7 @@ use Rector\PhpParser\AstResolver;
 use Rector\PHPStan\ScopeFetcher;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
 use Rector\Rector\AbstractRector;
+use Rector\Skipper\Skipper\Skipper;
 use Rector\StaticTypeMapper\StaticTypeMapper;
 use Symfony\Component\Console\Input\ArgvInput;
 
@@ -28,6 +29,7 @@ class WidenAvatarProviderParameterTypeRector extends AbstractRector
         private TraitConsumerResolver $traitConsumerResolver,
         private AstResolver $astResolver,
         private ChangedFilesDetector $changedFilesDetector,
+        protected Skipper $skipper,
     ) {}
 
     public function getNodeTypes(): array
@@ -179,9 +181,19 @@ class WidenAvatarProviderParameterTypeRector extends AbstractRector
             }
 
             if ((! isset($classes[$owner->getName()])) || (! $this->isOldContract($type)) || (! $filePath)
-                || $this->skipper->shouldSkipFilePath($filePath)
-                || $this->skipper->shouldSkipElementAndFilePath($this, $filePath)
-                || (! $this->changedFilesDetector->hasFileChanged($filePath))) {
+                || $this->skipper->shouldSkipFilePath($filePath)) {
+                return false;
+            }
+
+            $skipMatch = $this->skipper->matchSkip($this, $filePath);
+
+            if ($skipMatch) {
+                $this->skipper->markSkipUsed($skipMatch);
+
+                return false;
+            }
+
+            if (! $this->changedFilesDetector->hasFileChanged($filePath)) {
                 return false;
             }
         }
