@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
@@ -9,6 +10,7 @@ use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\View\FormsIconAlias;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Forms\RichEditor\MinimalControlsCalloutBlock;
 use Filament\Tests\Fixtures\Forms\RichEditor\PluginWithFileAttachmentProvider;
@@ -16,6 +18,7 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\PostWithRichContent;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Models\UserWithJsonAccessor;
 use Filament\Tests\Fixtures\RichEditor\TestRichContentPlugin;
 use Filament\Tests\Fixtures\RichEditor\TestRichContentPluginWithoutToolbarButtons;
 use Filament\Tests\TestCase;
@@ -2296,6 +2299,10 @@ describe('browser interactions', function (): void {
 });
 
 describe('preventing file attachment tampering', function (): void {
+    $makeContent = static fn (string $file, bool $isJson): array | string => $isJson
+        ? ['type' => 'doc', 'content' => [['type' => 'image', 'attrs' => ['id' => $file, 'src' => '/placeholder']]]]
+        : '<p>Hello</p><img src="/placeholder" data-id="' . $file . '" />';
+
     beforeEach(function (): void {
         Storage::fake('local');
         Storage::disk('local')->put('uploads/original.jpg', 'original');
@@ -2358,6 +2365,108 @@ describe('preventing file attachment tampering', function (): void {
 
         expect($post->fresh()->content)->toContain('data-id="uploads/original.jpg"');
     });
+
+    it('validates nested original content rather than dirty current values with `preventFileAttachmentPathTampering()`', function (bool $isJson, bool $usesLayout, string $file, bool $shouldPass) use ($makeContent): void {
+        $user = User::factory()->create(['json' => ['content' => $makeContent('uploads/original.jpg', $isJson)]]);
+        $user->json = ['content' => $makeContent('uploads/evil.jpg', $isJson)];
+        $content = $makeContent($file, $isJson);
+
+        $field = RichEditor::make($usesLayout ? 'content' : 'json.content')
+            ->json($isJson)
+            ->preventFileAttachmentPathTampering();
+
+        $schema = Schema::make(Livewire::make()->data(['json' => ['content' => $content]]))
+            ->model($user)
+            ->statePath('data')
+            ->components([
+                $usesLayout ? Group::make([$field])->statePath('json') : $field,
+            ]);
+
+        if ($shouldPass) {
+            expect(data_get($schema->validate(), 'data.json.content'))->toBe($content);
+
+            return;
+        }
+
+        expect(fn (): array => $schema->validate())
+            ->toThrow(function (ValidationException $exception): void {
+                expect($exception->errors())->toHaveKey('data.json.content');
+            });
+    })->with(['HTML' => [false], 'JSON' => [true]])
+        ->with(['dotted name' => [false], 'layout' => [true]])
+        ->with(['original' => ['uploads/original.jpg', true], 'foreign' => ['uploads/evil.jpg', false]]);
+
+    it('requires callback approval for nested content without original data using `preventFileAttachmentPathTampering()`', function (bool $isJson, bool $usesAccessor, ?bool $isAllowed) use ($makeContent): void {
+        $content = $makeContent('uploads/evil.jpg', $isJson);
+        $user = $usesAccessor ? new UserWithJsonAccessor : new User;
+        $user->setRawAttributes(['id' => 1], sync: true);
+        $user->exists = true;
+        $user->json = ['content' => $content];
+
+        $schema = Schema::make(Livewire::make()->data(['json' => ['content' => $content]]))
+            ->model($user)
+            ->statePath('data')
+            ->components([
+                RichEditor::make('json.content')
+                    ->json($isJson)
+                    ->preventFileAttachmentPathTampering(
+                        allowFilePathUsing: $isAllowed === null ? null : static fn (string $file): bool => $isAllowed && ($file === 'uploads/evil.jpg'),
+                    ),
+            ]);
+
+        if ($isAllowed) {
+            expect(data_get($schema->validate(), 'data.json.content'))->toBe($content);
+
+            return;
+        }
+
+        expect(fn (): array => $schema->validate())
+            ->toThrow(function (ValidationException $exception): void {
+                expect($exception->errors())->toHaveKey('data.json.content');
+            });
+    })->with(['HTML' => [false], 'JSON' => [true]])
+        ->with(['array cast' => [false], 'accessor' => [true]])
+        ->with(['no callback' => [null], 'denied' => [false], 'approved' => [true]]);
+
+    it('authorizes nested content against the relationship item record with `preventFileAttachmentPathTampering()`', function (bool $isJson, string $file, bool $shouldPass) use ($makeContent): void {
+        $user = User::factory()->create(['json' => ['content' => $makeContent('uploads/parent.jpg', $isJson)]]);
+        $post = Post::factory()->create(['author_id' => $user->getKey(), 'json' => ['content' => $makeContent('uploads/child.jpg', $isJson)]]);
+        Post::factory()->create(['author_id' => $user->getKey(), 'json' => ['content' => $makeContent('uploads/sibling.jpg', $isJson)]]);
+        $content = $makeContent($file, $isJson);
+        $itemKey = 'record-' . $post->getKey();
+        $statePath = "data.posts.{$itemKey}.json.content";
+
+        $schema = Schema::make(Livewire::make()->data(['posts' => [$itemKey => ['json' => ['content' => $content]]]]))
+            ->model($user)
+            ->statePath('data')
+            ->components([
+                Repeater::make('posts')
+                    ->relationship()
+                    ->schema([
+                        Group::make([
+                            RichEditor::make('content')
+                                ->json($isJson)
+                                ->preventFileAttachmentPathTampering(),
+                        ])->statePath('json'),
+                    ]),
+            ]);
+
+        if ($shouldPass) {
+            expect(data_get($schema->validate(), $statePath))->toBe($content);
+
+            return;
+        }
+
+        expect(fn (): array => $schema->validate())
+            ->toThrow(function (ValidationException $exception) use ($statePath): void {
+                expect($exception->errors())->toHaveKey($statePath);
+            });
+    })->with(['HTML' => [false], 'JSON' => [true]])
+        ->with([
+            'own record' => ['uploads/child.jpg', true],
+            'parent record' => ['uploads/parent.jpg', false],
+            'sibling record' => ['uploads/sibling.jpg', false],
+        ]);
 
     it('keeps a `data-id` that the `$allowFilePathUsing` callback approves', function (): void {
         Storage::disk('local')->put('templates/brochure.jpg', 'template');

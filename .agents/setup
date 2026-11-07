@@ -153,24 +153,17 @@ prepare_demo_checkout() {
     local current_demo_branch
     local demo_branch
     local demo_filament_constraint
-    local filament_major_version
-    local locked_filament_version
 
-    locked_filament_version="$(php -r '
-        $lock = json_decode(file_get_contents($argv[1]), true, flags: JSON_THROW_ON_ERROR);
+    # Filament 6.x uses the established 5.x demo application, with local 6.x
+    # packages linked by `write_demo_composer_manifest()` below.
+    # Keep this explicit: Composer path packages may be locked as `dev-main`,
+    # including on release branches, feature branches, and detached checkouts.
+    local demo_major_version=5
 
-        foreach (array_merge($lock["packages"], $lock["packages-dev"]) as $package) {
-            if ($package["name"] === "filament/support") {
-                echo $package["version"];
-                break;
-            }
-        }
-    ' "$repository_root/composer.lock")"
-    filament_major_version="$(sed -E 's/^([0-9]+)\.x-dev$/\1/' <<< "$locked_filament_version")"
-    demo_branch="$filament_major_version.x"
+    demo_branch="$demo_major_version.x"
 
     if ! git ls-remote --exit-code --heads https://github.com/filamentphp/demo.git "$demo_branch" >/dev/null 2>&1; then
-        echo "The preferred filamentphp/demo branch $demo_branch was not found for Filament $locked_filament_version." >&2
+        echo "The preferred filamentphp/demo branch $demo_branch was not found." >&2
         return 1
     fi
 
@@ -186,7 +179,7 @@ prepare_demo_checkout() {
         echo $manifest["require"]["filament/filament"] ?? "";
     ' "$demo_root/composer.json")"
 
-    if [[ ! "$demo_filament_constraint" =~ (^|[^0-9])$filament_major_version([^0-9]|$) ]]; then
+    if [[ ! "$demo_filament_constraint" =~ (^|[^0-9])$demo_major_version([^0-9]|$) ]]; then
         if [[ -n "$(git -C "$demo_root" status --porcelain)" ]]; then
             echo "The existing demo checkout requires Filament $demo_filament_constraint and has changes." >&2
             echo "Preserve or remove those changes before switching it to $demo_branch." >&2

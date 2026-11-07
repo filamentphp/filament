@@ -24,6 +24,8 @@ trait CanStripCharactersFromState
     {
         $this->stripCharacters = $characters;
 
+        unset($this->cachedStripCharacters);
+
         return $this;
     }
 

@@ -630,9 +630,20 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
             return [];
         }
 
-        $attribute = $this->getName();
+        $statePath = $this->getStatePath();
 
-        $originalContent = $record->getOriginal($attribute, $record->getAttribute($attribute));
+        if (filled($modelStatePath = $this->getModelRootContainer()->getStatePath())) {
+            $statePath = (string) str($statePath)->after("{$modelStatePath}.");
+        }
+
+        $attribute = explode('.', $statePath)[0];
+        $originalState = [
+            $attribute => str_contains($statePath, '.')
+                ? $record->getOriginal($attribute)
+                : $record->getOriginal($attribute, $record->getAttribute($attribute)),
+        ];
+
+        $originalContent = Arr::get($originalState, $statePath);
 
         if (blank($originalContent)) {
             return [];
@@ -1222,7 +1233,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
     /**
      * @param  array<array{id: mixed, triggerCharacter: string}>  $mentions
-     * @return array<mixed, string>
+     * @return array<string, array<string, string>>
      */
     #[Exposed]
     #[Renderless]
@@ -1243,11 +1254,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
             }
 
             $ids = $mentionsForTriggerCharacter->pluck('id')->all();
-            $labelsForTriggerCharacter = $provider->getLabels($ids);
-
-            foreach ($labelsForTriggerCharacter as $id => $label) {
-                $labels[$id] = $label;
-            }
+            $labels[$triggerCharacter] = $provider->getLabels($ids);
         }
 
         return $labels;
