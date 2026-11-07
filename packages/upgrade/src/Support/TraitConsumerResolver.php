@@ -2,6 +2,7 @@
 
 namespace Filament\Upgrade\Support;
 
+use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\NodeFinder;
 use PHPStan\Reflection\ClassReflection;
@@ -31,6 +32,12 @@ class TraitConsumerResolver
      */
     private array $sourceClasses = [];
 
+    /** @var array<string, ClassReflection> */
+    private array $allSourceClasses = [];
+
+    /** @var array<string, true> */
+    private array $anonymousClassDependencies = [];
+
     private ?string $cachedSourceKey = null;
 
     public function __construct(
@@ -54,11 +61,21 @@ class TraitConsumerResolver
     /**
      * @return array<string, ClassReflection>
      */
-    public function getSourceClasses(string $currentFilePath): array
+    public function getSourceClasses(string $currentFilePath, bool $includeSkipped = false): array
     {
         $this->collect($currentFilePath);
 
-        return $this->sourceClasses;
+        return $includeSkipped ? $this->allSourceClasses : $this->sourceClasses;
+    }
+
+    /**
+     * @return array<string, true>
+     */
+    public function getAnonymousClassDependencies(string $currentFilePath): array
+    {
+        $this->collect($currentFilePath);
+
+        return $this->anonymousClassDependencies;
     }
 
     private function collect(string $currentFilePath): void
@@ -76,6 +93,8 @@ class TraitConsumerResolver
         $this->traitConsumers = [];
         $this->sourceTraits = [];
         $this->sourceClasses = [];
+        $this->allSourceClasses = [];
+        $this->anonymousClassDependencies = [];
         $paths = [];
 
         // Include unchanged source files too: a cached consumer still constrains its trait.
@@ -98,13 +117,49 @@ class TraitConsumerResolver
         }
 
         foreach (array_unique($paths) as $path) {
-            if ($this->skipper->shouldSkipFilePath($path)) {
-                continue;
-            }
-
+            $isSkipped = $this->skipper->shouldSkipFilePath($path);
             $classes = (new NodeFinder)->findInstanceOf($this->rectorParser->parseFile($path), ClassLike::class);
 
             foreach ($classes as $declaration) {
+                if (($declaration instanceof Class_) && (! $declaration->name)) {
+                    // Pure inheritance adds no signature constraint. Only an
+                    // anonymous override or trait implementation needs review.
+                    if ((! $declaration->getMethod('get')) && (! $declaration->getTraitUses())) {
+                        continue;
+                    }
+
+                    $dependencies = [...$declaration->implements];
+
+                    if ($declaration->extends) {
+                        $dependencies[] = $declaration->extends;
+                    }
+
+                    foreach ($declaration->getTraitUses() as $traitUse) {
+                        array_push($dependencies, ...$traitUse->traits);
+                    }
+
+                    foreach ($dependencies as $dependency) {
+                        $name = $dependency->toString();
+                        $this->anonymousClassDependencies[strtolower($name)] = true;
+
+                        if (! $this->reflectionProvider->hasClass($name)) {
+                            continue;
+                        }
+
+                        $class = $this->reflectionProvider->getClass($name);
+
+                        foreach ([$class, ...$class->getAncestors()] as $ancestor) {
+                            $this->anonymousClassDependencies[strtolower($ancestor->getName())] = true;
+
+                            foreach ($ancestor->getTraits(true) as $trait) {
+                                $this->anonymousClassDependencies[strtolower($trait->getName())] = true;
+                            }
+                        }
+                    }
+
+                    continue;
+                }
+
                 $name = isset($declaration->namespacedName) ? $declaration->namespacedName->toString() : null;
 
                 if ((! $name) || (! $this->reflectionProvider->hasClass($name))) {
@@ -112,6 +167,12 @@ class TraitConsumerResolver
                 }
 
                 $class = $this->reflectionProvider->getClass($name);
+                $this->allSourceClasses[$name] = $class;
+
+                if ($isSkipped) {
+                    continue;
+                }
+
                 $this->sourceClasses[$name] = $class;
 
                 if ($class->isTrait()) {

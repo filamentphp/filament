@@ -257,6 +257,8 @@ public function get(Model | Authenticatable $record): string
 }
 ```
 
+The script also updates implementations in shared traits and parent classes, together with related overrides included in the upgrade paths. If you run Rector directly, use `--clear-cache` without file filters or change limits when related declarations span multiple files. Review signatures left unchanged, including restricted overrides, adaptations of `get()`, and related declarations outside the processed files.
+
 Review Eloquent-specific calls if your app uses non-Eloquent users. See [custom avatar providers](../users/overview#using-a-different-avatar-provider).
 </Disclosure>
 

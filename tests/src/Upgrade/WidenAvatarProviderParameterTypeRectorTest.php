@@ -11,6 +11,11 @@ class WidenAvatarProviderParameterTypeRectorTest extends AbstractRectorTestCase
         $this->doTestFile(__DIR__ . '/Fixtures/avatar_providers.php.inc');
     }
 
+    public function test_widens_implementation_owners_and_related_overrides_together(): void
+    {
+        $this->doTestFile(__DIR__ . '/Fixtures/avatar_provider_owners.php.inc');
+    }
+
     public function provideConfigFilePath(): string
     {
         return dirname(__DIR__, 3) . '/packages/upgrade/src/rector.php';

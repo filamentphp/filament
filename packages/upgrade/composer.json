@@ -11,7 +11,7 @@
         "php": "^8.3",
         "composer-runtime-api": "^2.1",
         "nunomaduro/termwind": "^2.0",
-        "rector/rector": "^2.5"
+        "rector/rector": "^2.6.7"
     },
     "autoload": {
         "psr-4": {
