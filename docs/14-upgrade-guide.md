@@ -355,6 +355,10 @@ The script updates statically identifiable calls and declarations. PHP names bel
 | `reorderAnimationDuration()` | `$animation` | `$duration` |
 | `Notifications\Notification::sendToDatabase()` | `$isEventDispatched` | `$shouldDispatchEvent` |
 | Table Livewire `updateTableColumnState()` | `$column`, `$record`, `$input` | `$name`, `$recordKey`, `$state` |
+| `GlobalSearch\Providers\Contracts\GlobalSearchProvider::getResults()` and implementations | `$query` | `$search` |
+| `Panel::databaseNotifications()` | `$isLazy` | `$isLazyLoaded` |
+| `Support\View\Components\ColorMaps\ButtonComponentColorMap::lightBackground()`, `darkBackground()` | `$bg` | `$background` |
+| `Support\View\Components\ColorMaps\ButtonComponentColorMap::probeTextLightness()` | `$textForBg` | `$textForBackground` |
 | `Pages\BasePage::halt()` | `$shouldRollbackDatabaseTransaction` | `$shouldRollBackDatabaseTransaction` |
 | Page configuration | `$formActionsAreSticky` | `$areFormActionsSticky` |
 

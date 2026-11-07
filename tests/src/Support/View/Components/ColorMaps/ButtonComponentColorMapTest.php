@@ -10,9 +10,9 @@ uses(TestCase::class);
  */
 $defaultButtonColorMap = function (array $palette): ButtonComponentColorMap {
     return ButtonComponentColorMap::make($palette)
-        ->lightBackground(bg: 600, hover: 500)
-        ->lightBackground(bg: 400, hover: 300, alternateHover: 500)
-        ->darkBackground(bg: 600, hover: 500, alternateHover: 700);
+        ->lightBackground(background: 600, hover: 500)
+        ->lightBackground(background: 400, hover: 300, alternateHover: 500)
+        ->darkBackground(background: 600, hover: 500, alternateHover: 700);
 };
 
 it('produces all eight slots when fully configured for a vibrant palette', function () use ($defaultButtonColorMap): void {
@@ -24,20 +24,20 @@ it('produces all eight slots when fully configured for a vibrant palette', funct
 
 it('throws when no `lightBackground()` candidate is configured', function (): void {
     ButtonComponentColorMap::make(Color::Red)
-        ->darkBackground(bg: 600, hover: 500, alternateHover: 700)
+        ->darkBackground(background: 600, hover: 500, alternateHover: 700)
         ->get();
 })->throws(LogicException::class, '`lightBackground()`');
 
 it('throws when no `darkBackground()` candidate is configured', function (): void {
     ButtonComponentColorMap::make(Color::Red)
-        ->lightBackground(bg: 600, hover: 500)
+        ->lightBackground(background: 600, hover: 500)
         ->get();
 })->throws(LogicException::class, '`darkBackground()`');
 
 it('uses `lightBackground()` when both shades resolve to light text', function (): void {
     $map = ButtonComponentColorMap::make(Color::Red)
-        ->lightBackground(bg: 800, hover: 700)
-        ->darkBackground(bg: 600, hover: 500, alternateHover: 700)
+        ->lightBackground(background: 800, hover: 700)
+        ->darkBackground(background: 600, hover: 500, alternateHover: 700)
         ->get();
 
     expect($map)
@@ -49,9 +49,9 @@ it('uses `lightBackground()` when both shades resolve to light text', function (
 
 it('iterates multiple `lightBackground()` candidates in the order they were added', function (): void {
     $map = ButtonComponentColorMap::make(Color::Red)
-        ->lightBackground(bg: 700, hover: 600)
-        ->lightBackground(bg: 600, hover: 500)
-        ->darkBackground(bg: 600, hover: 500, alternateHover: 700)
+        ->lightBackground(background: 700, hover: 600)
+        ->lightBackground(background: 600, hover: 500)
+        ->darkBackground(background: 600, hover: 500, alternateHover: 700)
         ->get();
 
     // Red 700/600 both have light text, so the first candidate wins.
@@ -66,9 +66,9 @@ it('falls through to a later `lightBackground()` candidate when the first does n
     // Yellow 600/500 take dark text (the first candidate fails the lightness check),
     // but Yellow 800/700 take light text — so the second candidate wins.
     $map = ButtonComponentColorMap::make(Color::Yellow)
-        ->lightBackground(bg: 600, hover: 500)
-        ->lightBackground(bg: 800, hover: 700)
-        ->darkBackground(bg: 600, hover: 500, alternateHover: 700)
+        ->lightBackground(background: 600, hover: 500)
+        ->lightBackground(background: 800, hover: 700)
+        ->darkBackground(background: 600, hover: 500, alternateHover: 700)
         ->get();
 
     expect($map)
@@ -89,8 +89,8 @@ it('uses the last `lightBackground()` candidate as the fallback when no candidat
 
 it('uses the last `lightBackground()` candidate as the fallback when only one candidate is configured', function (): void {
     $map = ButtonComponentColorMap::make(Color::Yellow)
-        ->lightBackground(bg: 300, hover: 200, alternateHover: 400)
-        ->darkBackground(bg: 600, hover: 500, alternateHover: 700)
+        ->lightBackground(background: 300, hover: 200, alternateHover: 400)
+        ->darkBackground(background: 600, hover: 500, alternateHover: 700)
         ->get();
 
     expect($map['bg'])->toBe(300);
@@ -98,9 +98,9 @@ it('uses the last `lightBackground()` candidate as the fallback when only one ca
 
 it('iterates multiple `darkBackground()` candidates in the order they were added', function (): void {
     $map = ButtonComponentColorMap::make(Color::Red)
-        ->lightBackground(bg: 600, hover: 500)
-        ->darkBackground(bg: 700, hover: 600)
-        ->darkBackground(bg: 600, hover: 500, alternateHover: 700)
+        ->lightBackground(background: 600, hover: 500)
+        ->darkBackground(background: 700, hover: 600)
+        ->darkBackground(background: 600, hover: 500, alternateHover: 700)
         ->get();
 
     expect($map)
@@ -113,9 +113,9 @@ it('iterates multiple `darkBackground()` candidates in the order they were added
 it('uses the last `darkBackground()` candidate as the fallback when no candidate produces light text on its bg', function (): void {
     // For yellow, neither dark candidate has light text on its bg, so the last is used as fallback.
     $map = ButtonComponentColorMap::make(Color::Yellow)
-        ->lightBackground(bg: 400, hover: 300, alternateHover: 500)
-        ->darkBackground(bg: 600, hover: 500, alternateHover: 700)
-        ->darkBackground(bg: 400, hover: 300, alternateHover: 500)
+        ->lightBackground(background: 400, hover: 300, alternateHover: 500)
+        ->darkBackground(background: 600, hover: 500, alternateHover: 700)
+        ->darkBackground(background: 400, hover: 300, alternateHover: 500)
         ->get();
 
     expect($map['dark:bg'])->toBe(400);

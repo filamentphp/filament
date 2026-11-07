@@ -50,31 +50,31 @@ class ButtonComponentColorMap
     }
 
     /**
-     * Add a candidate `(bg, hover, alternateHover?)` triplet for light mode. Each call appends
+     * Add a candidate `(background, hover, alternateHover?)` triplet for light mode. Each call appends
      * a candidate; the resolver evaluates them in the order added.
      *
      * `$alternateHover` is consulted whenever the main `$hover` isn't a good match — either
-     * because it doesn't produce light text alongside a vibrant `$bg`, or because its
-     * lightness disagrees with `$bg`'s in the fallback case.
+     * because it doesn't produce light text alongside a vibrant `$background`, or because its
+     * lightness disagrees with `$background`'s in the fallback case.
      *
      * The last candidate added serves as the guaranteed fallback for palettes where no
-     * candidate produces light text on its `$bg` — pale colors like yellow.
+     * candidate produces light text on its `$background` — pale colors like yellow.
      */
-    public function lightBackground(int $bg, int $hover, ?int $alternateHover = null): static
+    public function lightBackground(int $background, int $hover, ?int $alternateHover = null): static
     {
-        $this->lightBackgrounds[] = ['bg' => $bg, 'hover' => $hover, 'alternateHover' => $alternateHover];
+        $this->lightBackgrounds[] = ['bg' => $background, 'hover' => $hover, 'alternateHover' => $alternateHover];
 
         return $this;
     }
 
     /**
-     * Add a candidate `(bg, hover, alternateHover?)` triplet for dark mode. Each call appends
+     * Add a candidate `(background, hover, alternateHover?)` triplet for dark mode. Each call appends
      * a candidate; the resolver evaluates them in the order added using the same two-pass
      * algorithm as `lightBackground()`.
      */
-    public function darkBackground(int $bg, int $hover, ?int $alternateHover = null): static
+    public function darkBackground(int $background, int $hover, ?int $alternateHover = null): static
     {
-        $this->darkBackgrounds[] = ['bg' => $bg, 'hover' => $hover, 'alternateHover' => $alternateHover];
+        $this->darkBackgrounds[] = ['bg' => $background, 'hover' => $hover, 'alternateHover' => $alternateHover];
 
         return $this;
     }
@@ -92,22 +92,22 @@ class ButtonComponentColorMap
             throw new LogicException('At least one `darkBackground()` candidate must be configured before calling `get()`.');
         }
 
-        $textForBg = $this->resolveTextForEachBackground();
+        $textForBackground = $this->resolveTextForEachBackground();
 
-        $textLightness = $this->probeTextLightness($textForBg);
+        $textLightness = $this->probeTextLightness($textForBackground);
 
-        [$bg, $hoverBg] = $this->pickBackgroundShades($textLightness, $this->lightBackgrounds);
-        [$darkBg, $darkHoverBg] = $this->pickBackgroundShades($textLightness, $this->darkBackgrounds);
+        [$background, $hoverBackground] = $this->pickBackgroundShades($textLightness, $this->lightBackgrounds);
+        [$darkBackground, $darkHoverBackground] = $this->pickBackgroundShades($textLightness, $this->darkBackgrounds);
 
         return [
-            'bg' => $bg,
-            'hover:bg' => $hoverBg,
-            'dark:bg' => $darkBg,
-            'dark:hover:bg' => $darkHoverBg,
-            'text' => $textForBg[$bg] ?? 0,
-            'hover:text' => $textForBg[$hoverBg] ?? 0,
-            'dark:text' => $textForBg[$darkBg] ?? 0,
-            'dark:hover:text' => $textForBg[$darkHoverBg] ?? 0,
+            'bg' => $background,
+            'hover:bg' => $hoverBackground,
+            'dark:bg' => $darkBackground,
+            'dark:hover:bg' => $darkHoverBackground,
+            'text' => $textForBackground[$background] ?? 0,
+            'hover:text' => $textForBackground[$hoverBackground] ?? 0,
+            'dark:text' => $textForBackground[$darkBackground] ?? 0,
+            'dark:hover:text' => $textForBackground[$darkHoverBackground] ?? 0,
         ];
     }
 
@@ -120,20 +120,20 @@ class ButtonComponentColorMap
      */
     protected function resolveTextForEachBackground(): array
     {
-        $textForBg = [];
+        $textForBackground = [];
 
         $possibleDarkTextShades = $this->palette;
         unset($possibleDarkTextShades[array_key_first($possibleDarkTextShades)]);
 
         $isFallbackAccessibleOnDarkerShades = true;
 
-        foreach (array_keys($this->palette) as $bgShade) {
+        foreach (array_keys($this->palette) as $backgroundShade) {
             foreach ($possibleDarkTextShades as $darkTextShade => $darkTextValue) {
                 if (
                     ($darkTextShade >= 800) &&
-                    (Color::calculateContrastRatio($this->palette[$bgShade], $darkTextValue) >= $this->minContrastRatio)
+                    (Color::calculateContrastRatio($this->palette[$backgroundShade], $darkTextValue) >= $this->minContrastRatio)
                 ) {
-                    $textForBg[$bgShade] = $darkTextShade;
+                    $textForBackground[$backgroundShade] = $darkTextShade;
 
                     continue 2;
                 }
@@ -145,8 +145,8 @@ class ButtonComponentColorMap
                 $isFallbackAccessibleOnDarkerShades &&
                 array_key_exists(50, $this->palette)
             ) {
-                if (Color::calculateContrastRatio($this->palette[$bgShade], $this->palette[50]) >= $this->minContrastRatio) {
-                    $textForBg[$bgShade] = 50;
+                if (Color::calculateContrastRatio($this->palette[$backgroundShade], $this->palette[50]) >= $this->minContrastRatio) {
+                    $textForBackground[$backgroundShade] = 50;
 
                     continue;
                 }
@@ -154,17 +154,17 @@ class ButtonComponentColorMap
                 $isFallbackAccessibleOnDarkerShades = false;
             }
 
-            $textForBg[$bgShade] = 0;
+            $textForBackground[$backgroundShade] = 0;
         }
 
-        return $textForBg;
+        return $textForBackground;
     }
 
     /**
-     * @param  array<int, int>  $textForBg
+     * @param  array<int, int>  $textForBackground
      * @return array<int, bool>
      */
-    protected function probeTextLightness(array $textForBg): array
+    protected function probeTextLightness(array $textForBackground): array
     {
         $shades = [];
 
@@ -180,7 +180,7 @@ class ButtonComponentColorMap
         $lightness = [];
 
         foreach (array_unique($shades) as $shade) {
-            $textShade = $textForBg[$shade] ?? 0;
+            $textShade = $textForBackground[$shade] ?? 0;
 
             $lightness[$shade] = ($textShade === 0) || Color::isLight($this->palette[$textShade] ?? 'oklch(1 0 0)');
         }

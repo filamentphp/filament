@@ -25,6 +25,11 @@ class RenameApiParametersRectorTest extends AbstractRectorTestCase
         $this->doTestFile(__DIR__ . '/Fixtures/api_parameter_overrides.php.inc');
     }
 
+    public function test_migrates_search_lazy_loading_and_background_parameters(): void
+    {
+        $this->doTestFile(__DIR__ . '/Fixtures/ApiParameters/search_lazy_loading_background.php.inc');
+    }
+
     public function test_keeps_ambiguous_alias_declarations_and_calls_together(): void
     {
         $fixture = __DIR__ . '/Fixtures/ApiParameters/ambiguous_alias.php.inc';

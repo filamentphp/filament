@@ -32,6 +32,9 @@ describe('search results', function (): void {
     it('can retrieve search results', function (): void {
         $post = Post::factory()->create();
 
+        expect(Filament::getGlobalSearchProvider()->getResults(search: $post->title)->getCategories()->flatten()->pluck('title')->all())
+            ->toContain($post->title);
+
         livewire(GlobalSearch::class)
             ->set('search', $post->title)
             ->assertDispatched('open-global-search-results')
@@ -454,7 +457,7 @@ class OptedInGlobalSearchResource extends Resource
 
 class CustomSearchProvider implements GlobalSearchProvider
 {
-    public function getResults(string $query): ?GlobalSearchResults
+    public function getResults(string $search): ?GlobalSearchResults
     {
         return GlobalSearchResults::make()
             ->category('foobarbaz', [
@@ -466,13 +469,13 @@ class CustomSearchProvider implements GlobalSearchProvider
 }
 class ActionSearchProvider implements GlobalSearchProvider
 {
-    public function getResults(string $query): ?GlobalSearchResults
+    public function getResults(string $search): ?GlobalSearchResults
     {
-        if (mb_strlen($query) < 3) {
+        if (mb_strlen($search) < 3) {
             return null;
         }
 
-        $results = Post::query()->where('title', 'like', "{$query}%")->orderBy('id')->get()
+        $results = Post::query()->where('title', 'like', "{$search}%")->orderBy('id')->get()
             ->map(static fn (Post $post): GlobalSearchResult => new GlobalSearchResult(
                 title: $post->title,
                 url: PostResource::getUrl('view', ['record' => $post]),

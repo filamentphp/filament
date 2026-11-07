@@ -218,25 +218,25 @@ use Filament\Support\View\Components\ColorMaps\ButtonComponentColorMap;
 
 ButtonComponentColorMap::make($color)
     ->minContrastRatio(Color::WCAG_AA_TEXT)
-    ->lightBackground(bg: 600, hover: 500)
-    ->lightBackground(bg: 400, hover: 300, alternateHover: 500)
-    ->darkBackground(bg: 600, hover: 500, alternateHover: 700)
+    ->lightBackground(background: 600, hover: 500)
+    ->lightBackground(background: 400, hover: 300, alternateHover: 500)
+    ->darkBackground(background: 600, hover: 500, alternateHover: 700)
     ->get();
 ```
 
 `minContrastRatio()` sets the minimum WCAG ratio between bg and text. Defaults to `Color::WCAG_AA_TEXT` (`4.5`); set to `WCAG_AAA_TEXT` (`7.0`) for AAA.
 
-`lightBackground()` and `darkBackground()` accept `(bg, hover, alternateHover?)`. Chain candidates in preference order. Filament prefers candidates that support light text in both resting and hover states, using `alternateHover` when the main hover shade is unsuitable. The final candidate is the fallback. Provide a pale-friendly fallback to support palettes that need dark text.
+`lightBackground()` and `darkBackground()` accept `(background, hover, alternateHover?)`. Chain candidates in preference order. Filament prefers candidates that support light text in both resting and hover states, using `alternateHover` when the main hover shade is unsuitable. The final candidate is the fallback. Provide a pale-friendly fallback to support palettes that need dark text.
 
 To express a color-aware cascade — "use 800 if the palette can carry it, otherwise 700, otherwise 600, falling back to a paler bg with dark text for yellows" — chain candidates and end with a pale-friendly fallback:
 
 ```php
 ButtonComponentColorMap::make($color)
-    ->lightBackground(bg: 800, hover: 700)
-    ->lightBackground(bg: 700, hover: 600)
-    ->lightBackground(bg: 600, hover: 500)
-    ->lightBackground(bg: 400, hover: 300, alternateHover: 500) // pale fallback
-    ->darkBackground(bg: 600, hover: 500, alternateHover: 700)
+    ->lightBackground(background: 800, hover: 700)
+    ->lightBackground(background: 700, hover: 600)
+    ->lightBackground(background: 600, hover: 500)
+    ->lightBackground(background: 400, hover: 300, alternateHover: 500) // pale fallback
+    ->darkBackground(background: 600, hover: 500, alternateHover: 700)
     ->get();
 ```
 
@@ -295,9 +295,9 @@ class ButtonComponent extends BaseButtonComponent
 
         return ButtonComponentColorMap::make($color)
             ->minContrastRatio(Color::WCAG_AAA_TEXT)
-            ->lightBackground(bg: 700, hover: 600)
-            ->lightBackground(bg: 400, hover: 300, alternateHover: 500)
-            ->darkBackground(bg: 600, hover: 500, alternateHover: 700)
+            ->lightBackground(background: 700, hover: 600)
+            ->lightBackground(background: 400, hover: 300, alternateHover: 500)
+            ->darkBackground(background: 600, hover: 500, alternateHover: 700)
             ->get();
     }
 }

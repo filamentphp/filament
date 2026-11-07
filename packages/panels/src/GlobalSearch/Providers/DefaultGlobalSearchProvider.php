@@ -7,7 +7,7 @@ use Filament\GlobalSearch\GlobalSearchResults;
 
 class DefaultGlobalSearchProvider implements Contracts\GlobalSearchProvider
 {
-    public function getResults(string $query): ?GlobalSearchResults
+    public function getResults(string $search): ?GlobalSearchResults
     {
         $builder = GlobalSearchResults::make();
 
@@ -23,7 +23,7 @@ class DefaultGlobalSearchProvider implements Contracts\GlobalSearchProvider
                 continue;
             }
 
-            $resourceResults = $resource::getGlobalSearchResults($query);
+            $resourceResults = $resource::getGlobalSearchResults($search);
 
             if (! $resourceResults->count()) {
                 continue;

@@ -7,6 +7,23 @@ use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
+it('configures lazy loading through `databaseNotifications()`', function (): void {
+    $panel = Panel::make();
+    $isLazyLoaded = false;
+
+    expect($panel->databaseNotifications(isLazyLoaded: static function () use (&$isLazyLoaded): bool {
+        return $isLazyLoaded;
+    }))->toBe($panel)
+        ->and($panel->hasDatabaseNotifications())->toBeTrue()
+        ->and($panel->hasLazyLoadedDatabaseNotifications())->toBeFalse();
+
+    $isLazyLoaded = true;
+
+    expect($panel->hasLazyLoadedDatabaseNotifications())->toBeTrue()
+        ->and($panel->databaseNotifications(isLazyLoaded: false))->toBe($panel)
+        ->and($panel->hasLazyLoadedDatabaseNotifications())->toBeFalse();
+});
+
 it('configures and disables database notification polling', function (): void {
     $panel = Filament::getCurrentOrDefaultPanel();
     $notifications = app(DatabaseNotifications::class);

@@ -42,9 +42,9 @@ class ButtonComponent implements HasColorMap, HasDefaultGrayColor
 
         return ButtonComponentColorMap::make($color)
             ->minContrastRatio(Color::WCAG_AA_TEXT)
-            ->lightBackground(bg: 600, hover: 500)
-            ->lightBackground(bg: 400, hover: 300, alternateHover: 500)
-            ->darkBackground(bg: 600, hover: 500, alternateHover: 700)
+            ->lightBackground(background: 600, hover: 500)
+            ->lightBackground(background: 400, hover: 300, alternateHover: 500)
+            ->darkBackground(background: 600, hover: 500, alternateHover: 700)
             ->get();
     }
 }

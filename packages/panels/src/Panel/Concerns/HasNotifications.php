@@ -22,11 +22,11 @@ trait HasNotifications
     /**
      * @param  class-string<Component> | Closure | null  $livewireComponent
      */
-    public function databaseNotifications(bool | Closure $condition = true, string | Closure | null $livewireComponent = null, bool | Closure $isLazy = true, DatabaseNotificationsPosition | Closure | null $position = null): static
+    public function databaseNotifications(bool | Closure $condition = true, string | Closure | null $livewireComponent = null, bool | Closure $isLazyLoaded = true, DatabaseNotificationsPosition | Closure | null $position = null): static
     {
         $this->hasDatabaseNotifications = $condition;
         $this->databaseNotificationsLivewireComponent($livewireComponent);
-        $this->lazyLoadedDatabaseNotifications($isLazy);
+        $this->lazyLoadedDatabaseNotifications($isLazyLoaded);
         $this->databaseNotificationsPosition = $position;
 
         return $this;

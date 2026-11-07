@@ -11,10 +11,12 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\Slider;
+use Filament\GlobalSearch\Providers\Contracts\GlobalSearchProvider;
 use Filament\Infolists\Components\Concerns\HasIcon;
 use Filament\Navigation\NavigationItem;
 use Filament\Notifications\Notification;
 use Filament\Pages\BasePage;
+use Filament\Panel\Concerns\HasNotifications;
 use Filament\Resources\ParentResourceRegistration;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\StateCasts\BooleanStateCast;
@@ -22,6 +24,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Concerns\CanBeHidden;
 use Filament\Support\Commands\Concerns\CanAskForSchema;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
+use Filament\Support\View\Components\ColorMaps\ButtonComponentColorMap;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Concerns\HasColumns;
 use Filament\Upgrade\Support\ParameterRenameGuard;
@@ -104,6 +107,13 @@ class RenameApiParametersRector extends AbstractRector
         HasColumns::class => ['updateTableColumnState' => ['column' => 'name', 'record' => 'recordKey', 'input' => 'state']],
         BaseFileUpload::class => ['disk' => ['name' => 'disk']],
         BasePage::class => ['halt' => ['shouldRollbackDatabaseTransaction' => 'shouldRollBackDatabaseTransaction']],
+        GlobalSearchProvider::class => ['getResults' => ['query' => 'search']],
+        HasNotifications::class => ['databaseNotifications' => ['isLazy' => 'isLazyLoaded']],
+        ButtonComponentColorMap::class => [
+            'lightBackground' => ['bg' => 'background'],
+            'darkBackground' => ['bg' => 'background'],
+            'probeTextLightness' => ['textForBg' => 'textForBackground'],
+        ],
     ];
 
     public function __construct(

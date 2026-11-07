@@ -6,5 +6,5 @@ use Filament\GlobalSearch\GlobalSearchResults;
 
 interface GlobalSearchProvider
 {
-    public function getResults(string $query): ?GlobalSearchResults;
+    public function getResults(string $search): ?GlobalSearchResults;
 }
