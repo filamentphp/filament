@@ -149,14 +149,6 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
             }
         }
 
-        if (((new ObjectType(Builder::class))->isSuperTypeOf($receiverType)->yes() || (new ObjectType(Repeater::class))->isSuperTypeOf($receiverType)->yes()) && $node->var instanceof NullsafeMethodCall && $this->isName($node->var->name, 'inset')) {
-            $receiver = $this->refactor($node->var);
-
-            if ($receiver instanceof Expr) {
-                return new NullsafeMethodCall($receiver, $node->name, $node->args);
-            }
-        }
-
         if ((! $configurationClass) || (count($node->args) > 1)) {
             return null;
         }
@@ -165,7 +157,7 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
             'imagecropaspectratio' => ['imageAspectRatio', 'automaticallyCropImagesToAspectRatio'],
             'icon' => ['suffixIcon'],
             'centermodal' => ['modalAlignment'],
-            'inset' => [],
+            'inset' => ['tap'],
             default => [self::NEGATIONS[$method]],
         };
 
@@ -218,7 +210,15 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
         }
 
         if ($method === 'inset') {
-            return $node->var;
+            // The setter never invokes a Closure, but PHP still evaluates its argument.
+            return $this->callAdapter(new ArrowFunction([
+                'static' => true,
+                'params' => [
+                    new Param(new Variable('component')),
+                    new Param(new Variable('condition'), type: new UnionType([new Identifier('bool'), new FullyQualified(Closure::class)])),
+                ],
+                'expr' => new Variable('component'),
+            ]), $node, $argument->value ?? new ConstFetch(new Name('true')), true);
         }
 
         if ($hasNullsafeAccess && ($method === 'centermodal')) {
@@ -378,13 +378,13 @@ class ReplaceDeprecatedBehavioralConfigurationRector extends AbstractRector
         return $node;
     }
 
-    private function callAdapter(ArrowFunction $adapter, MethodCall | NullsafeMethodCall $node, Expr $value, bool $hasNullsafeAccess): Expr
+    private function callAdapter(ArrowFunction $adapter, MethodCall | NullsafeMethodCall $node, Expr $value, bool $preserveReceiverChain): Expr
     {
-        if (! $hasNullsafeAccess) {
+        if (! $preserveReceiverChain) {
             return new FuncCall($adapter, [new Arg($node->var), new Arg($value)]);
         }
 
-        // Keep the argument expression in the original nullsafe chain and scope.
+        // Keep receiver checks and argument evaluation in the original chain and scope.
         // `tap()` supplies the receiver once, without changing fluent short-circuiting.
         $node->name = new Identifier('tap');
         $node->args = [new Arg(new FuncCall(new ArrowFunction([

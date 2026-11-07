@@ -31,15 +31,15 @@ use Filament\Forms\Components\Repeater;
 
 function stored(Builder $component, bool | Closure $condition): Builder
 {
-    return $component->label('configured');
+    return $component->tap((static fn(bool|Closure $condition): Closure => static fn($component) => $component)($condition))->label('configured');
 }
 
 function nullable(?Repeater $component): ?Repeater
 {
-    return $component?->label('configured');
+    return $component?->tap((static fn(bool|Closure $condition): Closure => static fn($component) => $component)(false))->label('configured');
 }
 
 function factory(): Builder
 {
-    return Builder::make('blocks')->label('configured');
+    return Builder::make('blocks')->tap((static fn(bool|Closure $condition): Closure => static fn($component) => $component)(fn (): bool => true))->label('configured');
 }

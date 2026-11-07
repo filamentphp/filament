@@ -202,8 +202,8 @@ function configure(BaseFileUpload $base, FileUpload $upload, Builder $builder, R
     $callback = [$upload, 'enableOpen'];
     FileUpload::enableOpen();
     $upload->previewable(false)->imageAspectRatio('16:9')->automaticallyCropImagesToAspectRatio(true);
-    $builder->addable(false)->deletable(false)->reorderable(false);
-    $repeater->addable(false)->deletable(false)->reorderable(false);
+    $builder->addable(false)->deletable(false)->reorderable(false)->tap((static fn(bool|Closure $condition): Closure => static fn($component) => $component)(true));
+    $repeater->addable(false)->deletable(false)->reorderable(false)->tap((static fn(bool|Closure $condition): Closure => static fn($component) => $component)(true));
     $keyValue->addable(false)->deletable(false)->editableKeys(false)->editableValues(false);
 }
 

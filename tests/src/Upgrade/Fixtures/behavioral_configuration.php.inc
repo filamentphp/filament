@@ -56,6 +56,7 @@ function components(): array
 
 namespace Filament\Tests\Upgrade\Fixtures\BehavioralConfiguration;
 
+use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\AssociateAction;
 use Filament\Actions\AttachAction;
@@ -82,8 +83,8 @@ function components(): array
         Upload::make('blank')->imageAspectRatio('   ')->automaticallyCropImagesToAspectRatio(false),
         Upload::make('zero')->imageAspectRatio('0')->automaticallyCropImagesToAspectRatio(true),
         Upload::make('reset')->imageAspectRatio('4:3')->automaticallyCropImagesToAspectRatio()->imageAspectRatio(null)->automaticallyCropImagesToAspectRatio(false),
-        Builder::make('blocks')->addable(false)->deletable(true)->reorderable(false),
-        Repeater::make('items')->addable(true)->deletable(false)->reorderable(true),
+        Builder::make('blocks')->addable(false)->deletable(true)->reorderable(false)->tap((static fn(bool|Closure $condition): Closure => static fn($component) => $component)(true)),
+        Repeater::make('items')->addable(true)->deletable(false)->reorderable(true)->tap((static fn(bool|Closure $condition): Closure => static fn($component) => $component)(false)),
         KeyValue::make('metadata')->addable(false)->deletable(true)->editableKeys(true)->editableValues(false),
         TextInput::make('name')->autocomplete(null)->autocapitalize(false),
         TextInput::make('other')->autocomplete(false)->autocapitalize(null),
