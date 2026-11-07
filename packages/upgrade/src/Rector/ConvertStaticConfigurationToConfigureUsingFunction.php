@@ -9,6 +9,7 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\StaticPropertyFetch;
@@ -107,28 +108,37 @@ class ConvertStaticConfigurationToConfigureUsingFunction extends AbstractRector
                         continue;
                     }
 
+                    // Evaluate the RHS in its original scope, then capture its value without introducing a local variable.
                     $node->expr = new StaticCall(
                         class: $node->expr->var->class,
                         name: new Identifier('configureUsing'),
                         args: [
                             new Arg(
-                                value: new ArrowFunction(
-                                    subNodes: [
-                                        'params' => [
-                                            new Param(
-                                                var: new Variable(lcfirst(class_basename($node->expr->var->class->toCodeString()))),
-                                                type: $node->expr->var->class,
+                                value: new FuncCall(
+                                    name: new ArrowFunction(
+                                        subNodes: [
+                                            'static' => true,
+                                            'params' => [new Param(var: new Variable('value'))],
+                                            'expr' => new ArrowFunction(
+                                                subNodes: [
+                                                    'static' => true,
+                                                    'params' => [
+                                                        new Param(
+                                                            var: new Variable('component'),
+                                                            type: $node->expr->var->class,
+                                                        ),
+                                                    ],
+                                                    'expr' => new MethodCall(
+                                                        var: new Variable('component'),
+                                                        name: new Identifier($node->expr->var->name->toString()),
+                                                        args: [new Arg(value: new Variable('value'))],
+                                                    ),
+                                                ],
                                             ),
                                         ],
-                                        'expr' => new MethodCall(
-                                            var: new Variable(lcfirst(class_basename($node->expr->var->class->toCodeString()))),
-                                            name: new Identifier($node->expr->var->name->toString()),
-                                            args: [
-                                                new Arg(
-                                                    value: $node->expr->expr,
-                                                ),
-                                            ],
-                                        ),
+                                    ),
+                                    args: [
+                                        new Arg(value: $node->expr->expr),
                                     ],
                                 ),
                             ),
