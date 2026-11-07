@@ -35,7 +35,7 @@ trait CanGroupRecords
     public function updatedTableGrouping(): void
     {
         if ($this->getTable()->persistsGroupInSession()) {
-            session()->put(
+            $this->getTable()->getStateStore()->put(
                 $this->getTableGroupingSessionKey(),
                 $this->tableGrouping,
             );

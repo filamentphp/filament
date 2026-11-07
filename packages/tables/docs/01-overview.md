@@ -733,6 +733,68 @@ When using Filament tenancy, persisted filters, global searches, and individual 
 
 In existing applications that use tenancy, persisted searches will start fresh for each tenant after upgrading. Existing search state remains available when no tenant is active. Other existing state keeps its current tenant-sharing behavior.
 
+### Storing the persisted table state somewhere other than the session
+
+By default, persisted table state is stored in the user's session. To store it somewhere else, such as the database or the cache, create a class that implements the `Filament\Tables\Contracts\TableStateStore` interface:
+
+```php
+use Filament\Tables\Contracts\TableStateStore;
+use Illuminate\Support\Facades\Cache;
+
+class CacheTableStateStore implements TableStateStore
+{
+    public function has(string $key): bool
+    {
+        return Cache::has($this->getCacheKey($key));
+    }
+
+    public function get(string $key, mixed $default = null): mixed
+    {
+        return Cache::get($this->getCacheKey($key), $default);
+    }
+
+    public function put(string $key, mixed $value): void
+    {
+        Cache::forever($this->getCacheKey($key), $value);
+    }
+
+    public function forget(string $key): void
+    {
+        Cache::forget($this->getCacheKey($key));
+    }
+
+    protected function getCacheKey(string $key): string
+    {
+        return 'users.' . auth()->id() . ".{$key}";
+    }
+}
+```
+
+The `has()` method should return `true` when a value has been stored for the key, even if that value is `null`.
+
+Then pass an instance of the store to the `persistStateUsing()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->persistInSession()
+        ->persistStateUsing(new CacheTableStateStore);
+}
+```
+
+The store only decides where the state is saved. You still choose which parts of the state are persisted with `persistInSession()` and the other `persist*InSession()` methods.
+
+To use a store for every table in your app, bind it to the `TableStateStore` interface in the `register()` method of a service provider:
+
+```php
+use Filament\Tables\Contracts\TableStateStore;
+
+$this->app->bind(TableStateStore::class, CacheTableStateStore::class);
+```
+
 ## Styling table rows
 
 ### Striped table rows

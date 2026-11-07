@@ -65,7 +65,7 @@ trait HasFilters
     protected function handleTableFilterUpdates(): void
     {
         if ($this->getTable()->persistsFiltersInSession()) {
-            session()->put(
+            $this->getTable()->getStateStore()->put(
                 $this->getTableFiltersSessionKey(),
                 $this->tableFilters,
             );

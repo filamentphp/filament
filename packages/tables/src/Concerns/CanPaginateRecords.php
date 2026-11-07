@@ -30,9 +30,10 @@ trait CanPaginateRecords
         }
 
         if ($this->getTable()->persistsRecordsPerPageInSession()) {
-            session()->put([
-                $this->getTablePerPageSessionKey() => $this->getTableRecordsPerPage(),
-            ]);
+            $this->getTable()->getStateStore()->put(
+                $this->getTablePerPageSessionKey(),
+                $this->getTableRecordsPerPage(),
+            );
         }
 
         $this->resetPage();
@@ -97,7 +98,7 @@ trait CanPaginateRecords
     {
         $defaultOption = $this->defaultTableRecordsPerPageSelectOption ?? $this->getTable()->getDefaultPaginationPageOption();
         $option = $this->getTable()->persistsRecordsPerPageInSession()
-            ? session()->get($this->getTablePerPageSessionKey(), $defaultOption)
+            ? $this->getTable()->getStateStore()->get($this->getTablePerPageSessionKey(), $defaultOption)
             : $defaultOption;
 
         $pageOptions = $this->getTable()->getPaginationPageOptions();
@@ -114,7 +115,7 @@ trait CanPaginateRecords
         }
 
         if ($this->getTable()->persistsRecordsPerPageInSession()) {
-            session()->remove($this->getTablePerPageSessionKey());
+            $this->getTable()->getStateStore()->forget($this->getTablePerPageSessionKey());
         }
 
         return $pageOptions[0];

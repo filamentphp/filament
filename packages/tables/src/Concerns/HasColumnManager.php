@@ -90,7 +90,7 @@ trait HasColumnManager
             $this->hasReorderableTableColumns() &&
             (
                 $this->getTable()->persistsColumnsInSession()
-                    ? session()->get($this->getHasReorderedTableColumnsSessionKey())
+                    ? $this->getTable()->getStateStore()->get($this->getHasReorderedTableColumnsSessionKey())
                     : ($wasReordered || $this->hasReorderedTableColumns())
             )
         ) {
@@ -189,7 +189,7 @@ trait HasColumnManager
             return $this->getDefaultTableColumnState();
         }
 
-        return session()->get(
+        return $this->getTable()->getStateStore()->get(
             $this->getTableColumnsSessionKey(),
             $this->getDefaultTableColumnState(),
         );
@@ -198,7 +198,7 @@ trait HasColumnManager
     protected function persistTableColumns(): void
     {
         if ($this->getTable()->persistsColumnsInSession()) {
-            session()->put(
+            $this->getTable()->getStateStore()->put(
                 $this->getTableColumnsSessionKey(),
                 $this->tableColumns
             );
@@ -211,7 +211,7 @@ trait HasColumnManager
             return;
         }
 
-        session()->put(
+        $this->getTable()->getStateStore()->put(
             $this->getHasReorderedTableColumnsSessionKey(),
             $wasReordered || $this->hasReorderedTableColumns()
         );
