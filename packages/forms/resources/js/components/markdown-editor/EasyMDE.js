@@ -7,7 +7,6 @@
  * - Changed `minHeight` and `maxHeight` to apply independently when both options are set. See https://github.com/Ionaru/easy-markdown-editor/issues/413.
  * - Made the `CodeMirror` scroller keyboard-focusable when `maxHeight` is set so overflowing content can be scrolled with a keyboard. See https://github.com/filamentphp/filament/pull/20258.
  * - Prevented `CodeMirror` from wrapping the ancestor form's `submit()` method, so detached editors can fully release their form listener during teardown.
- * - Expanded local character names without changing `CodeMirror` token fields.
  */
 
 // Some variables
@@ -500,7 +499,7 @@ function toggleStrikethrough(editor) {
  * @param {EasyMDE} editor
  */
 function toggleCodeBlock(editor) {
-    var fenceCharactersToInsert = editor.options.blockStyles.code
+    var fenceCharsToInsert = editor.options.blockStyles.code
 
     function fencing_line(line) {
         /* return true, if this is a ``` or ~~~ line */
@@ -547,10 +546,10 @@ function toggleCodeBlock(editor) {
                 }))
         var types = firstTok.type ? firstTok.type.split(' ') : []
         if (lastTok && token_state(lastTok).indentedCode) {
-            // have to check last character, since first characters of first line aren"t marked as indented
+            // have to check last char, since first chars of first line aren"t marked as indented
             return 'indented'
         } else if (types.indexOf('comment') === -1) {
-            // has to be after "indented" check, since first characters of first indented line aren"t marked as such
+            // has to be after "indented" check, since first chars of first indented line aren"t marked as such
             return false
         } else if (
             token_state(firstTok).fencedChars ||
@@ -567,19 +566,19 @@ function toggleCodeBlock(editor) {
         cm,
         cur_start,
         cur_end,
-        fenceCharactersToInsert,
+        fenceCharsToInsert,
     ) {
         var start_line_sel = cur_start.line + 1,
             end_line_sel = cur_end.line + 1,
             sel_multi = cur_start.line !== cur_end.line,
-            repl_start = fenceCharactersToInsert + '\n',
-            repl_end = '\n' + fenceCharactersToInsert
+            repl_start = fenceCharsToInsert + '\n',
+            repl_end = '\n' + fenceCharsToInsert
         if (sel_multi) {
             end_line_sel++
         }
-        // handle last character including \n or not
+        // handle last char including \n or not
         if (sel_multi && cur_end.ch === 0) {
-            repl_end = fenceCharactersToInsert + '\n'
+            repl_end = fenceCharsToInsert + '\n'
             end_line_sel--
         }
         _replaceSelection(cm, false, [repl_start, repl_end])
@@ -646,7 +645,7 @@ function toggleCodeBlock(editor) {
                 line: block_start,
                 ch: 1,
             })
-            var fence_characters = token_state(fencedTok).fencedChars
+            var fence_chars = token_state(fencedTok).fencedChars
             var start_text, start_line
             var end_text, end_line
             // check for selection going up against fenced lines, in which case we don't want to add more fencing
@@ -657,7 +656,7 @@ function toggleCodeBlock(editor) {
                 start_text = ''
                 start_line = cur_start.line - 1
             } else {
-                start_text = fence_characters + '\n'
+                start_text = fence_chars + '\n'
                 start_line = cur_start.line
             }
             if (fencing_line(cm.getLineHandle(cur_end.line))) {
@@ -673,7 +672,7 @@ function toggleCodeBlock(editor) {
                 end_text = ''
                 end_line = cur_end.line + 1
             } else {
-                end_text = fence_characters + '\n'
+                end_text = fence_chars + '\n'
                 end_line = cur_end.line + 1
             }
             if (cur_end.ch === 0) {
@@ -857,12 +856,7 @@ function toggleCodeBlock(editor) {
             cur_start.ch === 0
         var sel_multi = cur_start.line !== cur_end.line
         if (no_sel_and_starting_of_line || sel_multi) {
-            insertFencingAtSelection(
-                cm,
-                cur_start,
-                cur_end,
-                fenceCharactersToInsert,
-            )
+            insertFencingAtSelection(cm, cur_start, cur_end, fenceCharsToInsert)
         } else {
             _replaceSelection(cm, false, ['`', '`'])
         }
@@ -1358,7 +1352,7 @@ function _toggleLine(cm, name, liststyle) {
         'ordered-list': listRegexp,
     }
 
-    var _getCharacter = function (name, i) {
+    var _getChar = function (name, i) {
         var map = {
             quote: '>',
             'unordered-list': liststyle,
@@ -1368,7 +1362,7 @@ function _toggleLine(cm, name, liststyle) {
         return map[name].replace('%%i', i)
     }
 
-    var _checkCharacter = function (name, character) {
+    var _checkChar = function (name, char) {
         var map = {
             quote: '>',
             'unordered-list': '\\' + liststyle,
@@ -1376,23 +1370,23 @@ function _toggleLine(cm, name, liststyle) {
         }
         var rt = new RegExp(map[name])
 
-        return character && rt.test(character)
+        return char && rt.test(char)
     }
 
     var _toggle = function (name, text, untoggleOnly) {
         var arr = listRegexp.exec(text)
-        var character = _getCharacter(name, line)
+        var char = _getChar(name, line)
         if (arr !== null) {
-            if (_checkCharacter(name, arr[2])) {
-                character = ''
+            if (_checkChar(name, arr[2])) {
+                char = ''
             }
             text =
                 arr[1] +
-                character +
+                char +
                 arr[3] +
                 text.replace(whitespacesRegexp, '').replace(repl[name], '$1')
         } else if (untoggleOnly == false) {
-            text = character + ' ' + text
+            text = char + ' ' + text
         }
         return text
     }
@@ -1484,21 +1478,18 @@ function _toggleLink(editor, type, startEnd, url) {
 /**
  * @param {EasyMDE} editor
  */
-function _toggleBlock(editor, type, start_characters, end_characters) {
+function _toggleBlock(editor, type, start_chars, end_chars) {
     if (!editor.codemirror || editor.isPreviewActive()) {
         return
     }
 
-    end_characters =
-        typeof end_characters === 'undefined'
-            ? start_characters
-            : end_characters
+    end_chars = typeof end_chars === 'undefined' ? start_chars : end_chars
     var cm = editor.codemirror
     var stat = getState(cm)
 
     var text
-    var start = start_characters
-    var end = end_characters
+    var start = start_chars
+    var end = end_chars
 
     var startPoint = cm.getCursor('start')
     var endPoint = cm.getCursor('end')
@@ -1553,7 +1544,7 @@ function _toggleBlock(editor, type, start_characters, end_characters) {
         }
         cm.replaceSelection(start + text + end)
 
-        startPoint.ch += start_characters.length
+        startPoint.ch += start_chars.length
         endPoint.ch = startPoint.ch + text.length
     }
 
