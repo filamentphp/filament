@@ -31,11 +31,14 @@ function calls(Owner $owner, ?Owner $nullable, object $unrelated, string $method
 {
     $owner->fluent()->getForm(name: 'form')->key('form');
     $nullable?->fluent()->getInfolist('info')?->key('info');
+    $form = $owner->getForm(...);
+    $infolist = $owner->fluent()->getInfolist(...);
     $owner->getCachedForms();
     $owner->getCachedInfolists();
     $owner->isCachingForms();
     $owner->getActiveFormsLocale();
     $unrelated->getForm('form');
+    $unrelatedCallable = $unrelated->getForm(...);
     $owner->{$method}('form');
 }
 -----
@@ -72,10 +75,13 @@ function calls(Owner $owner, ?Owner $nullable, object $unrelated, string $method
 {
     $owner->fluent()->getSchema(name: 'form')->key('form');
     $nullable?->fluent()->getSchema('info')?->key('info');
+    $form = $owner->getSchema(...);
+    $infolist = $owner->fluent()->getSchema(...);
     $owner->getCachedSchemas();
     $owner->getCachedSchemas();
     $owner->isCachingSchemas();
     $owner->getActiveSchemaLocale();
     $unrelated->getForm('form');
+    $unrelatedCallable = $unrelated->getForm(...);
     $owner->{$method}('form');
 }

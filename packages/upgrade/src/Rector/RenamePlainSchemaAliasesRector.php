@@ -44,7 +44,7 @@ class RenamePlainSchemaAliasesRector extends AbstractRector
     /** @param MethodCall | NullsafeMethodCall | StaticCall $node */
     public function refactor(Node $node): ?Node
     {
-        if ((! $node->name instanceof Identifier) || $node->isFirstClassCallable()) {
+        if (! $node->name instanceof Identifier) {
             return null;
         }
 
@@ -56,13 +56,20 @@ class RenamePlainSchemaAliasesRector extends AbstractRector
 
         [$replacement, $parameters] = self::METHODS[$alias];
 
-        // Keep required cache arguments explicit: `cacheSchema($name)` builds
-        // a schema, while `cacheSchema($name, null)` removes it.
-        if (count($node->args) !== count($parameters)) {
+        // Cache aliases require their second argument, unlike `cacheSchema()`.
+        if ($node->isFirstClassCallable() && in_array($alias, ['cacheform', 'cacheinfolist'], true)) {
             return null;
         }
 
-        foreach ($node->args as $argument) {
+        // Keep required cache arguments explicit: `cacheSchema($name)` builds
+        // a schema, while `cacheSchema($name, null)` removes it.
+        if ((! $node->isFirstClassCallable()) && (count($node->args) !== count($parameters))) {
+            return null;
+        }
+
+        $arguments = $node->isFirstClassCallable() ? [] : $node->getArgs();
+
+        foreach ($arguments as $argument) {
             if ($argument->unpack || ($argument->name && ! in_array($argument->name->toString(), $parameters, true))) {
                 return null;
             }
@@ -87,7 +94,7 @@ class RenamePlainSchemaAliasesRector extends AbstractRector
             }
         }
 
-        foreach ($node->args as $argument) {
+        foreach ($arguments as $argument) {
             if (($alias === 'cacheform') && $argument->name?->toString() === 'form') {
                 $argument->name = new Identifier('schema');
             }
@@ -104,12 +111,14 @@ class RenamePlainSchemaAliasesRector extends AbstractRector
 
     private function owns(ClassReflection $class, string $alias): bool
     {
+        $owner = str_contains($alias, 'infolist') ? InteractsWithInfolists::class : InteractsWithForms::class;
+
         // Application-defined methods with the old name need manual migration.
         if ($class->hasNativeMethod($alias)) {
-            return false;
-        }
+            $method = $class->getNativeMethod($alias);
 
-        $owner = str_contains($alias, 'infolist') ? InteractsWithInfolists::class : InteractsWithForms::class;
+            return method_exists($method, 'getDeclaringTrait') && ($method->getDeclaringTrait()?->getName() === $owner);
+        }
 
         foreach ($class->getAncestors() as $ancestor) {
             if (($ancestor->getName() === $owner) || $ancestor->hasTraitUse($owner)) {

@@ -41,6 +41,11 @@ class Owner extends Component implements HasSchemas
         check($this->cacheForm('details', static fn (): Schema => $schema) === $schema);
         check($this->cacheInfolist(name: 'info', schema: $schema) === $schema);
         check($this->hasCachedInfolist('info'));
+        $resolveForm = $this->getForm(...);
+        $resolveInfolist = $this->getInfolist(...);
+        check($resolveForm(name: 'details') === $schema);
+        check($resolveInfolist('info') === $schema);
+        check($this->builds === 1);
     }
 }
 
