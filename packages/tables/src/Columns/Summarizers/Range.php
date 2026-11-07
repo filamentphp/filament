@@ -148,7 +148,7 @@ class Range extends Summarizer
 
         <div <?= $attributes->toHtml() ?>>
             <?php if (filled($label = $this->getLabel())) { ?>
-                <span class="fi-ta-range-summary-label">
+                <span class="fi-ta-range-summary-label<?= $this->isLabelHidden() ? ' fi-sr-only' : '' ?>">
                     <?= e($label) ?>
                 </span>
             <?php } ?>
