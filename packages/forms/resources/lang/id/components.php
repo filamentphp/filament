@@ -312,6 +312,10 @@ return [
 
     ],
 
+    'js_field' => [
+        'failed_to_load' => 'Field ini tidak dapat dimuat. Silakan muat ulang halaman untuk mencoba lagi.',
+    ],
+
     'key_value' => [
 
         'actions' => [
