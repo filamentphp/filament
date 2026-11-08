@@ -15,7 +15,19 @@ FilamentRealtime::subscribe(Post::class);
 
 Filament dispatches a `ModelChanged` Laravel event for each matching model event. Notifications follow Laravel's after-commit event behavior: they wait until commit and are discarded on rollback. Outside a transaction, they are dispatched immediately.
 
-This foundation does not broadcast events, register browser subscriptions, or refresh tables, forms, statistics, or badges. It does not modify filters or form input.
+With [websockets configured in your panel](../notifications/broadcast-notifications#setting-up-websockets-in-a-panel), these notifications also keep resource record pages up to date.
+
+## Refreshing resource pages
+
+Resource record pages automatically listen for changes when their model has an active subscription and your panel has broadcasting enabled with `broadcasting.echo` configured in `config/filament.php`. There is no separate resource opt-in. Namespace and all-model subscriptions work too; the effective subscription's event filters and exclusions still apply.
+
+Changes made in another session or a background job re-render the page, updating its heading, breadcrumbs, custom header and footer content, and widget selection. Your `getHeading()` and `getTitle()` overrides are respected, and the browser title is updated too. The page is not remounted or its forms refilled, so unsaved input and open actions are preserved. Existing child Livewire components, such as widgets and relation managers, retain their own state and do not automatically refresh.
+
+Configure Laravel's broadcaster to use the same websocket application as Echo, and run a queue worker if your queue connection is asynchronous. There is no polling fallback; reconnecting refreshes the page to catch up with missed changes.
+
+Broadcasts contain no model attributes and use private record-specific channels. Filament authorizes subscriptions through the resource page and rechecks record scope and page access when refreshing. You do not need a channel authorization callback for these built-in subscriptions; your own channels still need their own authorization. Deleted or inaccessible records leave the current screen and unsaved input in place.
+
+Quiet, bulk, raw SQL, and external writes need a [manual change notification](#dispatching-changes-manually), with the model subscription still configured to enable the page listener. Explicit `retrieved` notifications remain backend-only to avoid refresh loops.
 
 ## Selecting models
 
@@ -142,7 +154,7 @@ Custom events are not observed by default: select them explicitly using `onlyEve
 
 `subscribe()` returns the live registered subscription. You can keep this object and change its event filters or model selector later. The registry uses its current selector for observation, inspection, and removal. When multiple subscriptions resolve to the same selector, the most recently registered one replaces the others without duplicating notifications. Exact-model selectors, namespaces, and the all-model selector each have their own registration.
 
-`getSubscriptions()` returns copies of the active subscriptions, keyed by their current `getKey()`. Changing these copies does not change the registry; use the object returned by `subscribe()` or register a replacement instead.
+`getSubscriptions()` returns copies of the active subscriptions, keyed by their current `getKey()`. `getSubscription(Post::class)` returns a copy of the effective subscription for that model, or `null` when none matches. Changing these copies does not change the registry; use the object returned by `subscribe()` or register a replacement instead.
 
 You can inspect subscriptions or remove one:
 

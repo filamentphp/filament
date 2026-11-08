@@ -29,6 +29,7 @@
         "phpstan/phpstan": "^2.1",
         "pragmarx/google2fa": "^8.0|^9.0",
         "pragmarx/google2fa-qrcode": "^3.0|^4.0",
+        "pusher/pusher-php-server": "^7.2",
         "rector/rector": "^2.6.7",
         "spatie/laravel-google-fonts": "^1.5",
         "spatie/laravel-medialibrary": "^11.21",
