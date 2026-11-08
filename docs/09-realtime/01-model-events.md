@@ -15,19 +15,7 @@ FilamentRealtime::subscribe(Post::class);
 
 Filament dispatches a `ModelChanged` Laravel event for each matching model event. Notifications follow Laravel's after-commit event behavior: they wait until commit and are discarded on rollback. Outside a transaction, they are dispatched immediately.
 
-With [websockets configured in your panel](../notifications/broadcast-notifications#setting-up-websockets-in-a-panel), these notifications also keep resource record pages up to date.
-
-## Refreshing resource pages
-
-Resource record pages automatically listen for changes when their model has an active subscription and your panel has broadcasting enabled with `broadcasting.echo` configured in `config/filament.php`. There is no separate resource opt-in. Namespace and all-model subscriptions work too; the effective subscription's event filters and exclusions still apply.
-
-Changes made in another session or a background job re-render the page, updating its heading, breadcrumbs, custom header and footer content, and widget selection. Your `getHeading()` and `getTitle()` overrides are respected, and the browser title is updated too. The page is not remounted or its forms refilled, so unsaved input and open actions are preserved. Existing child Livewire components, such as widgets and relation managers, retain their own state and do not automatically refresh.
-
-Configure Laravel's broadcaster to use the same websocket application as Echo, and run a queue worker if your queue connection is asynchronous. There is no polling fallback; reconnecting refreshes the page to catch up with missed changes.
-
-Broadcasts contain no model attributes and use private record-specific channels. Filament authorizes subscriptions through the resource page and rechecks record scope and page access when refreshing. You do not need a channel authorization callback for these built-in subscriptions; your own channels still need their own authorization. Deleted or inaccessible records leave the current screen and unsaved input in place.
-
-Quiet, bulk, raw SQL, and external writes need a [manual change notification](#dispatching-changes-manually), with the model subscription still configured to enable the page listener. Explicit `retrieved` notifications remain backend-only to avoid refresh loops.
+With [websockets configured in your panel](../notifications/broadcast-notifications#setting-up-websockets-in-a-panel), these notifications also [keep resource record pages up to date](#refreshing-resource-pages).
 
 ## Selecting models
 
@@ -223,6 +211,22 @@ ModelChanged::make($post)
 ```
 
 Manual notifications follow the same transaction rules as automatic notifications, but bypass model subscription filters. They do not save the record or verify that a write occurred. Avoid manually notifying for a write that already produces an automatic notification unless you intend both events.
+
+## Refreshing resource pages
+
+Resource record pages automatically listen for changes when their model has an active subscription and your panel has broadcasting enabled with `broadcasting.echo` configured in `config/filament.php`. There is no separate resource opt-in. Namespace and all-model subscriptions work too; the effective subscription's event filters and exclusions still apply.
+
+Configure Laravel's broadcaster to use the same websocket application as Echo, and run a queue worker if your queue connection is asynchronous. There is no polling fallback; a successful reconnection refreshes the page to catch up with missed changes.
+
+Quiet, bulk, raw SQL, and external writes need a [manual change notification](#dispatching-changes-manually), with the model subscription still configured to enable the page listener. Explicit `retrieved` notifications remain backend-only to avoid refresh loops.
+
+### Preserving page state
+
+Changes made in another session or a background job re-render the page, updating its heading, breadcrumbs, custom header and footer content, and widget selection. Your `getHeading()` and `getTitle()` overrides are respected, and the browser title is updated too. The page is not remounted or its forms refilled, so unsaved input and open actions are preserved. Existing child Livewire components, such as widgets and relation managers, retain their own state and do not automatically refresh.
+
+### Authorizing subscriptions
+
+Broadcasts contain no model attributes and use private record-specific channels. Filament authorizes subscriptions through the resource page and rechecks record scope and page access when refreshing. You do not need a channel authorization callback for these built-in subscriptions; your own channels still need their own authorization. Deleted or inaccessible records leave the current screen and unsaved input in place.
 
 ## Listening for changes
 

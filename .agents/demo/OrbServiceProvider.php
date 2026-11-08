@@ -10,7 +10,7 @@ class OrbServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->booting(function (): void {
+        $this->app->booting(static function (): void {
             $host = parse_url(config('app.url'), PHP_URL_HOST);
             $secret = trim(file_get_contents(base_path('.orb/reverb-secret')));
 

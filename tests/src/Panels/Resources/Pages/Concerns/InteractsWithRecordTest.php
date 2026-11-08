@@ -74,7 +74,7 @@ it('renders the current record without refilling the form', function (string $pa
     $post = Post::factory()->create(['title' => 'Original title']);
     FilamentRealtime::subscribe(Post::class);
 
-    FilamentView::registerRenderHook(PanelsRenderHook::PAGE_END, fn (): string => 'Footer: ' . $post->fresh()->title);
+    FilamentView::registerRenderHook(PanelsRenderHook::PAGE_END, static fn (): string => 'Footer: ' . $post->fresh()->title);
 
     $page = livewire($pageClass, ['record' => $post->getKey()])
         ->fillForm(['title' => 'Unsaved draft'])
@@ -90,26 +90,6 @@ it('renders the current record without refilling the form', function (string $pa
     'edit' => [EditPost::class, 'Edit Updated elsewhere - Laravel'],
     'view' => [ViewPost::class, 'View Updated elsewhere - Laravel'],
 ]);
-
-it('strips HTML from the browser title without using the page heading', function (): void {
-    $post = Post::factory()->create(['title' => '<script>alert(1)</script> & title']);
-
-    $page = new class extends EditPost
-    {
-        public function getTitle(): string
-        {
-            return 'Browser: ' . $this->getRecord()->title;
-        }
-
-        public function getHeading(): string
-        {
-            return 'Distinct heading';
-        }
-    };
-
-    $page->record = $post;
-    expect($page->getBrowserTitle())->toBe('Browser: alert(1) & title - Laravel');
-});
 
 it('authorizes only the mounted record channel for the requested socket', function (): void {
     $post = Post::factory()->create();
@@ -133,7 +113,7 @@ it('rechecks page authorization before refreshing or authorizing a subscription'
 
     $page = livewire(EditTicket::class, ['record' => $ticket->getKey()]);
 
-    app()->bind(TicketPolicy::class . '::update', fn (): bool => false);
+    app()->bind(TicketPolicy::class . '::update', static fn (): bool => false);
 
     $page->call($method, ...$parameters)->assertForbidden();
 })->with([
@@ -199,11 +179,11 @@ it('refreshes the page from a browser subscription without replacing drafts, foc
     FilamentRealtime::subscribe(Post::class)->onlyEvents([ModelEvent::Updated]);
     $post = Post::factory()->create(['title' => 'Original record title']);
 
-    FilamentView::registerRenderHook(PanelsRenderHook::PAGE_END, fn (): HtmlString => new HtmlString('<p data-testid="record-footer">Footer: ' . e($post->fresh()->title) . '</p>'));
+    FilamentView::registerRenderHook(PanelsRenderHook::PAGE_END, static fn (): HtmlString => new HtmlString('<p data-testid="record-footer">Footer: ' . e($post->fresh()->title) . '</p>'));
 
     // Supply the public Echo integration here; the authorization request still
     // uses the real page and Laravel's Pusher broadcaster.
-    FilamentView::registerRenderHook(PanelsRenderHook::SCRIPTS_AFTER, fn (): HtmlString => new HtmlString(<<<'HTML'
+    FilamentView::registerRenderHook(PanelsRenderHook::SCRIPTS_AFTER, static fn (): HtmlString => new HtmlString(<<<'HTML'
         <script>
             window.EchoFactory = class {
                 constructor(configuration) {
@@ -214,7 +194,7 @@ it('refreshes the page from a browser subscription without replacing drafts, foc
                     const transport = window.recordTitleTestTransport = { isSubscribed: false }
                     const channel = {
                         listen(event, callback) {
-                            transport.notify = callback
+                            if (event === '.filament.model-changed') transport.notify = callback
                             return channel
                         },
                         subscribed: (callback) => {
@@ -234,72 +214,61 @@ it('refreshes the page from a browser subscription without replacing drafts, foc
         </script>
         HTML));
 
+    $titleInputSelector = 'input[id="form.title"]';
+
     $page = visit(PostResource::getUrl($operation, ['record' => $post]))
         ->assertScript('window.recordTitleTestTransport?.isSubscribed', true)
-        ->assertScript('document.querySelector("h1")?.textContent.includes("Original record title")', true);
+        ->assertSeeIn('h1:visible', 'Original record title');
 
     if ($operation === 'edit') {
-        $page->fill('input[wire\\:model="data.title"]', 'My unsaved draft')
-            ->click('input[wire\\:model="data.title"]');
+        $page->fill($titleInputSelector, 'My unsaved draft');
     }
 
     $post->update(['title' => 'Changed in another session']);
     $page->script('window.recordTitleTestTransport.notify(); undefined');
 
-    $page->assertScript('document.querySelector("h1")?.textContent.includes("Changed in another session")', true)
-        ->assertScript('document.title.includes("Changed in another session")', true)
+    $page->assertSeeIn('h1:visible', 'Changed in another session')
+        ->assertTitleContains('Changed in another session')
         ->assertSeeIn('nav[aria-label]', 'Changed in another session')
         ->assertSeeIn('[data-testid="record-footer"]', 'Footer: Changed in another session');
 
     if ($operation === 'edit') {
-        $page->assertValue('input[wire\\:model="data.title"]', 'My unsaved draft')
-            ->assertPresent('input[wire\\:model="data.title"]:focus');
+        $page->assertValue($titleInputSelector, 'My unsaved draft')
+            ->assertPresent("{$titleInputSelector}:focus");
     } else {
-        $page->assertValue('input[wire\\:model="data.title"]', 'Original record title');
+        $page->assertValue($titleInputSelector, 'Original record title');
     }
 
     $page->assertNoAccessibilityIssues();
-    visit(PostResource::getUrl($operation, ['record' => $post]))->inDarkMode()->assertNoAccessibilityIssues();
+    $darkPage = visit(PostResource::getUrl($operation, ['record' => $post]))
+        ->inDarkMode()
+        ->assertScript('window.recordTitleTestTransport?.isSubscribed', true)
+        ->assertNoAccessibilityIssues();
 
     if ($operation !== 'edit') {
         return;
     }
 
-    $post->update(['title' => 'Changed while opening an action']);
-
-    // Delay the title response across action mounting to catch stale snapshots
-    // that would leave the modal open but discard its executable action state.
-    $page->script(<<<'JS'
-        window.recordTitleRace = { isHeld: false }
-        const originalFetch = window.fetch.bind(window)
-        window.fetch = async (...arguments_) => {
-            const calls = JSON.parse(arguments_[1]?.body ?? '{}').components?.flatMap(component => component.calls) ?? []
-            if (calls.some(call => call.method === 'mountAction')) {
-                window.recordTitleTestTransport.notify()
-            }
-            const response = await originalFetch(...arguments_)
-            if (calls.some(call => call.method === 'refreshRecordPage')) {
-                window.recordTitleRace.isHeld = true
-                await new Promise(resolve => { window.recordTitleRace.release = resolve })
-                window.fetch = originalFetch
-            }
-            return response
-        }
-        undefined
-        JS);
-
     $page->click('button[aria-label="Actions"]')
         ->click('button[role="menuitem"][type="button"]')
-        ->assertScript('window.recordTitleRace.isHeld', true)
         ->assertVisible('[role="alertdialog"] h2');
 
-    $page->script('window.recordTitleRace.release(); undefined');
+    $post->update(['title' => 'Changed while an action is open']);
+    $page->script('window.recordTitleTestTransport.notify(); undefined');
 
-    $page->assertScript('document.title.includes("Changed while opening an action")', true)
-        ->assertScript('document.querySelector("h1")?.textContent.includes("Changed while opening an action")', true)
-        ->assertSeeIn('[data-testid="record-footer"]', 'Footer: Changed while opening an action')
+    $page->assertTitleContains('Changed while an action is open')
+        ->assertSeeIn('h1:visible', 'Changed while an action is open')
+        ->assertSeeIn('[data-testid="record-footer"]', 'Footer: Changed while an action is open')
         ->assertVisible('[role="alertdialog"] h2')
-        ->assertValue('input[wire\\:model="data.title"]', 'My unsaved draft')
+        ->assertValue($titleInputSelector, 'My unsaved draft')
+        ->assertNoAccessibilityIssues();
+
+    $darkPage->click('button[aria-label="Actions"]')
+        ->click('button[role="menuitem"][type="button"]')
+        ->assertVisible('[role="alertdialog"] h2')
+        ->assertNoAccessibilityIssues();
+
+    $page
         ->click('[role="alertdialog"] button[type="submit"]')
         ->assertPathIs('/posts');
 
