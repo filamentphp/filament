@@ -8,9 +8,8 @@ Sometimes you need to register the same resource or page multiple times with dif
 
 Configurable resources and pages allow you to register a single class multiple times in a panel, each with a unique configuration key and its own set of options. Each configuration gets its own routes, navigation items, and URL slugs, while the resource or page class can use the active configuration to adjust its behavior at runtime.
 
-<Aside variant="info">
-    While this guide is in the plugins section, configurable resources and pages work in any `PanelProvider` - you don't need to be building a plugin to use them. They are especially useful for plugins because they let plugin authors expose flexible configuration to their users.
-</Aside>
+> [!NOTE]
+> While this guide is in the plugins section, configurable resources and pages work in any `PanelProvider` - you don't need to be building a plugin to use them. They are especially useful for plugins because they let plugin authors expose flexible configuration to their users.
 
 ## Creating a resource configuration class
 
@@ -67,9 +66,8 @@ class OrderResourceConfiguration extends ResourceConfiguration
 
 The configuration class follows the same [fluent API patterns](../plugins/panel-plugins#configuring-plugins-per-panel) as the rest of Filament - setter methods return `$this` for chaining, and getter methods retrieve stored values.
 
-<Aside variant="tip">
-    The `ResourceConfiguration` base class already includes a `slug()` method for overriding the URL slug. You only need to add properties specific to your plugin.
-</Aside>
+> [!TIP]
+> The `ResourceConfiguration` base class already includes a `slug()` method for overriding the URL slug. You only need to add properties specific to your plugin.
 
 ## Linking the configuration class to a resource
 
@@ -125,9 +123,8 @@ $panel->resources([
 ]);
 ```
 
-<Aside variant="tip">
-    If you're building a [plugin class](panel-plugins#configuring-the-panel-with-a-plugin-class), you would register configurations inside the `register(Panel $panel)` method instead. See [using configurable resources in a plugin class](#using-configurable-resources-in-a-plugin-class) for a complete example.
-</Aside>
+> [!TIP]
+> If you're building a [plugin class](panel-plugins#configuring-the-panel-with-a-plugin-class), you would register configurations inside the `register(Panel $panel)` method instead. See [using configurable resources in a plugin class](#using-configurable-resources-in-a-plugin-class) for a complete example.
 
 ### URL slugs
 

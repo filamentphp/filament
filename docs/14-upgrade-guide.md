@@ -2,9 +2,8 @@
 title: Upgrade guide
 ---
 
-<Aside variant="info">
-    If you see anything missing from this guide, please don’t hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/4.x/docs/14-upgrade-guide.md) to our repository! Any help is appreciated!
-</Aside>
+> [!NOTE]
+> If you see anything missing from this guide, please don’t hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/4.x/docs/14-upgrade-guide.md) to our repository! Any help is appreciated!
 
 ## New requirements
 
@@ -15,13 +14,11 @@ title: Upgrade guide
 
 ## Running the automated upgrade script
 
-<Aside variant="info">
-    The upgrade script is not a replacement for the upgrade guide. It handles many small changes that aren’t mentioned in the upgrade guide, but it doesn’t handle all breaking changes. You should still read the [manual upgrade steps](#breaking-changes-that-must-be-handled-manually) to see what changes you need to make to your code.
-</Aside>
+> [!NOTE]
+> The upgrade script is not a replacement for the upgrade guide. It handles many small changes that aren’t mentioned in the upgrade guide, but it doesn’t handle all breaking changes. You should still read the [manual upgrade steps](#breaking-changes-that-must-be-handled-manually) to see what changes you need to make to your code.
 
-<Aside variant="info">
-    Some plugins you're using may not be available in v4 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with similar plugins that are v4-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
-</Aside>
+> [!NOTE]
+> Some plugins you're using may not be available in v4 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with similar plugins that are v4-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
 
 The first step to upgrade your Filament app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes:
 
@@ -35,23 +32,21 @@ composer require filament/filament:"^4.0" -W --no-update
 composer update
 ```
 
-<Aside variant="warning">
-    When using Windows PowerShell to install Filament, you may need to run the command below, since it ignores `^` characters in version constraints:
+> [!WARNING]
+> When using Windows PowerShell to install Filament, you may need to run the command below, since it ignores `^` characters in version constraints:
+>
+> ```bash
+> composer require filament/upgrade:"~4.0" -W --dev
+>
+> vendor/bin/filament-v4
+>
+> # Run the commands output by the upgrade script, they are unique to your app
+> composer require filament/filament:"~4.0" -W --no-update
+> composer update
+> ```
 
-    ```bash
-    composer require filament/upgrade:"~4.0" -W --dev
-
-    vendor/bin/filament-v4
-
-    # Run the commands output by the upgrade script, they are unique to your app
-    composer require filament/filament:"~4.0" -W --no-update
-    composer update
-    ```
-</Aside>
-
-<Aside variant="warning">
-    If installing the upgrade script fails, make sure that your PHPStan version is at least v2, or your Larastan version is at least v3. The script uses Rector v2, which requires PHPStan v2 or higher.
-</Aside>
+> [!WARNING]
+> If installing the upgrade script fails, make sure that your PHPStan version is at least v2, or your Larastan version is at least v3. The script uses Rector v2, which requires PHPStan v2 or higher.
 
 Make sure to carefully follow the instructions, and review the changes made by the script. You may need to make some manual changes to your code afterwards, but the script should handle most of the repetitive work for you.
 
@@ -67,9 +62,8 @@ The `--dry-run` option will show you what the command would do without actually 
 php artisan filament:upgrade-directory-structure-to-v4
 ```
 
-<Aside variant="warning">
-    This directory upgrade script is not able to perfectly update any references to classes in the same namespace that were present in resource and cluster files, and those references will need to be updated manually after the script has run. You should use tools like [PHPStan](https://phpstan.org) to identify references to classes that are broken after the upgrade.
-</Aside>
+> [!WARNING]
+> This directory upgrade script is not able to perfectly update any references to classes in the same namespace that were present in resource and cluster files, and those references will need to be updated manually after the script has run. You should use tools like [PHPStan](https://phpstan.org) to identify references to classes that are broken after the upgrade.
 
 You can now `composer remove filament/upgrade --dev` as you don't need it anymore.
 
@@ -119,23 +113,22 @@ return [
 ]
 ```
 
-<Aside variant="tip">
-    The `filament/upgrade` package includes a command to help you move panel resources and clusters to the new directory structure, which is the default in v4:
-
-    ```bash
-    php artisan filament:upgrade-directory-structure-to-v4 --dry-run
-    ```
-
-    The `--dry-run` option will show you what the command would do without actually making any changes. If you are happy with the changes, you can run the command without the `--dry-run` option to apply the changes:
-
-    ```bash
-    php artisan filament:upgrade-directory-structure-to-v4
-    ```
-
-    This directory upgrade script is not able to perfectly update any references to classes in the same namespace that were present in resource and cluster files, and those references will need to be updated manually after the script has run. You should use tools like [PHPStan](https://phpstan.org) to identify references to classes that are broken after the upgrade.
-
-    Once you have run the command, you do not need to keep the `FileGenerationFlag::PANEL_CLUSTER_CLASSES_OUTSIDE_DIRECTORIES` or `FileGenerationFlag::PANEL_RESOURCE_CLASSES_OUTSIDE_DIRECTORIES` flags in your configuration file, as the new directory structure is now the default. You can remove them from the `file_generation.flags` array.
-</Aside>
+> [!TIP]
+> The `filament/upgrade` package includes a command to help you move panel resources and clusters to the new directory structure, which is the default in v4:
+>
+> ```bash
+> php artisan filament:upgrade-directory-structure-to-v4 --dry-run
+> ```
+>
+> The `--dry-run` option will show you what the command would do without actually making any changes. If you are happy with the changes, you can run the command without the `--dry-run` option to apply the changes:
+>
+> ```bash
+> php artisan filament:upgrade-directory-structure-to-v4
+> ```
+>
+> This directory upgrade script is not able to perfectly update any references to classes in the same namespace that were present in resource and cluster files, and those references will need to be updated manually after the script has run. You should use tools like [PHPStan](https://phpstan.org) to identify references to classes that are broken after the upgrade.
+>
+> Once you have run the command, you do not need to keep the `FileGenerationFlag::PANEL_CLUSTER_CLASSES_OUTSIDE_DIRECTORIES` or `FileGenerationFlag::PANEL_RESOURCE_CLASSES_OUTSIDE_DIRECTORIES` flags in your configuration file, as the new directory structure is now the default. You can remove them from the `file_generation.flags` array.
 
 ## Breaking changes that must be handled manually
 
@@ -216,24 +209,23 @@ In addition to the [default disk being changed to `local`](#publishing-the-confi
 - `ImageColumn` table column, including `SpatieMediaLibraryImageColumn`
 - `ImageEntry` infolist entry, including `SpatieMediaLibraryImageEntry`
 
-<Aside variant="tip">
-    If you use a non-local disk such as `s3`, you can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
-
-    ```php
-    use Filament\Forms\Components\FileUpload;
-    use Filament\Infolists\Components\ImageEntry;
-    use Filament\Tables\Columns\ImageColumn;
-    
-    FileUpload::configureUsing(fn (FileUpload $fileUpload) => $fileUpload
-        ->visibility('public'));
-    
-    ImageColumn::configureUsing(fn (ImageColumn $imageColumn) => $imageColumn
-        ->visibility('public'));
-    
-    ImageEntry::configureUsing(fn (ImageEntry $imageEntry) => $imageEntry
-        ->visibility('public'));
-    ```
-</Aside>
+> [!TIP]
+> If you use a non-local disk such as `s3`, you can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+>
+> ```php
+> use Filament\Forms\Components\FileUpload;
+> use Filament\Infolists\Components\ImageEntry;
+> use Filament\Tables\Columns\ImageColumn;
+>
+> FileUpload::configureUsing(fn (FileUpload $fileUpload) => $fileUpload
+>     ->visibility('public'));
+>
+> ImageColumn::configureUsing(fn (ImageColumn $imageColumn) => $imageColumn
+>     ->visibility('public'));
+>
+> ImageEntry::configureUsing(fn (ImageEntry $imageEntry) => $imageEntry
+>     ->visibility('public'));
+> ```
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('panels')">
@@ -287,9 +279,8 @@ Run `php artisan make:filament-theme` and follow the [theming documentation](sty
 @source '../../../../resources/views/livewire/**/*'; /* Add your own paths */
 ```
 
-<Aside variant="tip">
-    This change only affects you if you were relying on Filament's compiled styles to include Tailwind classes that you used in your own code. If you already have a custom theme, you likely won't notice any difference.
-</Aside>
+> [!TIP]
+> This change only affects you if you were relying on Filament's compiled styles to include Tailwind classes that you used in your own code. If you already have a custom theme, you likely won't notice any difference.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
@@ -307,16 +298,15 @@ public function table(Table $table): Table
 }
 ```
 
-<Aside variant="tip">
-    You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
-
-    ```php
-    use Filament\Tables\Table;
-
-    Table::configureUsing(fn (Table $table) => $table
-        ->deferFilters(false));
-    ```
-</Aside>
+> [!TIP]
+> You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+>
+> ```php
+> use Filament\Tables\Table;
+>
+> Table::configureUsing(fn (Table $table) => $table
+>     ->deferFilters(false));
+> ```
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('forms') || packages.includes('infolists')">
@@ -341,24 +331,23 @@ Section::make()
     ->columnSpanFull()
 ```
 
-<Aside variant="tip">
-    You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
-
-    ```php
-    use Filament\Schemas\Components\Fieldset;
-    use Filament\Schemas\Components\Grid;
-    use Filament\Schemas\Components\Section;
-
-    Fieldset::configureUsing(fn (Fieldset $fieldset) => $fieldset
-        ->columnSpanFull());
-
-    Grid::configureUsing(fn (Grid $grid) => $grid
-        ->columnSpanFull());
-
-    Section::configureUsing(fn (Section $section) => $section
-        ->columnSpanFull());
-    ```
-</Aside>
+> [!TIP]
+> You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+>
+> ```php
+> use Filament\Schemas\Components\Fieldset;
+> use Filament\Schemas\Components\Grid;
+> use Filament\Schemas\Components\Section;
+>
+> Fieldset::configureUsing(fn (Fieldset $fieldset) => $fieldset
+>     ->columnSpanFull());
+>
+> Grid::configureUsing(fn (Grid $grid) => $grid
+>     ->columnSpanFull());
+>
+> Section::configureUsing(fn (Section $section) => $section
+>     ->columnSpanFull());
+> ```
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('forms')">
@@ -370,16 +359,15 @@ In v4, the `unique()` method's `ignoreRecord` parameter defaults to `true`.
 
 If you were previously using `unique()` validation rule without the `ignoreRecord` or `ignorable` parameters, you should use `ignoreRecord: false` to disable the new behavior.
 
-<Aside variant="tip">
-    You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
-
-    ```php
-    use Filament\Forms\Components\Field;
-
-    Field::configureUsing(fn (Field $field) => $field
-        ->uniqueValidationIgnoresRecordByDefault(false));
-    ```
-</Aside>
+> [!TIP]
+> You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+>
+> ```php
+> use Filament\Forms\Components\Field;
+>
+> Field::configureUsing(fn (Field $field) => $field
+>     ->uniqueValidationIgnoresRecordByDefault(false));
+> ```
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
@@ -399,16 +387,15 @@ public function table(Table $table): Table
 
 Be aware when using `all` as it will cause performance issues when dealing with a large number of records.
 
-<Aside variant="tip">
-    You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
-
-    ```php
-    use Filament\Tables\Table;
-
-    Table::configureUsing(fn (Table $table) => $table
-        ->paginationPageOptions([5, 10, 25, 50, 'all']));
-    ```
-</Aside>
+> [!TIP]
+> You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+>
+> ```php
+> use Filament\Tables\Table;
+>
+> Table::configureUsing(fn (Table $table) => $table
+>     ->paginationPageOptions([5, 10, 25, 50, 'all']));
+> ```
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('spatie-translatable-plugin')">
@@ -536,16 +523,15 @@ In v4, the `inline()` method now only puts the radio buttons inline with each ot
 
 If you were previously using `inline()->inlineLabel(false)` to achieve the v4 behavior, you can now simply use `inline()`.
 
-<Aside variant="tip">
-    You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
-
-    ```php
-    use Filament\Forms\Components\Radio;
-    
-    Radio::configureUsing(fn (Radio $radio) => $radio
-        ->inlineLabel(fn (): bool => $radio->isInline()));
-    ```
-</Aside>
+> [!TIP]
+> You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+>
+> ```php
+> use Filament\Forms\Components\Radio;
+>
+> Radio::configureUsing(fn (Radio $radio) => $radio
+>     ->inlineLabel(fn (): bool => $radio->isInline()));
+> ```
 </Disclosure>
 
 <Disclosure x-show="packages.includes('actions')">
@@ -725,16 +711,15 @@ public function table(Table $table): Table
 }
 ```
 
-<Aside variant="tip">
-    You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
-
-    ```php
-    use Filament\Tables\Table;
-
-    Table::configureUsing(fn (Table $table) => $table
-        ->defaultKeySort(false));
-    ```
-</Aside>
+> [!TIP]
+> You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+>
+> ```php
+> use Filament\Tables\Table;
+>
+> Table::configureUsing(fn (Table $table) => $table
+>     ->defaultKeySort(false));
+> ```
 </Disclosure>
 
 <Disclosure x-show="packages.includes('panels')">

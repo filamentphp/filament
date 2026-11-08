@@ -252,9 +252,8 @@ FilamentAsset::register([
 
 This approach also works for TypeScript files or any other JavaScript that needs a build step. Since `Vite::asset()` returns a URL, the asset will not be copied by `php artisan filament:assets` — it is served directly from Vite's build output.
 
-<Aside variant="info">
-    If you need to bundle JavaScript for an [asynchronous Alpine.js component](#asynchronous-alpinejs-components), consider using esbuild instead, as documented in that section.
-</Aside>
+> [!NOTE]
+> If you need to bundle JavaScript for an [asynchronous Alpine.js component](#asynchronous-alpinejs-components), consider using esbuild instead, as documented in that section.
 
 ### Lazy loading JavaScript
 
@@ -478,9 +477,8 @@ $moduleUrl = Vite::asset('resources/js/components/custom-component.js');
 
 Pass this URL to the component or JavaScript code responsible for importing the module. Do not import it from your main application entry or include it with `@vite()`, as that would load it eagerly. `Vite::asset()` resolves the development URL or the production manifest's hashed URL. Include the Vite client through your normal application layout during development. Lazy loading alone does not provide automatic state-preserving hot replacement for an already mounted component.
 
-<Aside variant="info">
-    Importing a built JavaScript URL does not load CSS listed only in Vite's manifest. Include the component's CSS through your application's stylesheet or [register it separately](#registering-css-files). The browser caches imported modules by URL, so use versioned or hashed URLs when deploying changes.
-</Aside>
+> [!NOTE]
+> Importing a built JavaScript URL does not load CSS listed only in Vite's manifest. Include the component's CSS through your application's stylesheet or [register it separately](#registering-css-files). The browser caches imported modules by URL, so use versioned or hashed URLs when deploying changes.
 
 #### Building modules with esbuild
 

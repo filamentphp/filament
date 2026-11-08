@@ -33,9 +33,8 @@ ImageColumn::make('avatar')
 
 If you do not set any alt text, the image is rendered with an empty `alt` attribute, which marks it as decorative for assistive technology.
 
-<Aside variant="warning">
-    When an image [links to a URL](overview#opening-urls), its alt text becomes the accessible name of the link. Always set meaningful `alt()` text on linked images, otherwise screen reader users will encounter a link with no name.
-</Aside>
+> [!WARNING]
+> When an image [links to a URL](overview#opening-urls), its alt text becomes the accessible name of the link. Always set meaningful `alt()` text on linked images, otherwise screen reader users will encounter a link with no name.
 
 ## Managing the image disk
 
@@ -307,9 +306,8 @@ ImageColumn::make('colleagues.avatar')
     ->wrap()
 ```
 
-<Aside variant="tip">
-    The "width" for wrapping is affected by the column label, so you may need to use a shorter or hidden label to wrap more tightly.
-</Aside>
+> [!TIP]
+> The "width" for wrapping is affected by the column label, so you may need to use a shorter or hidden label to wrap more tightly.
 
 ## Adding extra HTML attributes to the image
 
