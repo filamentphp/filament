@@ -14,8 +14,13 @@ return [
 
             'label' => 'Grup',
 
+            'group' => [
+                'label' => 'Grup',
+            ],
+
             'block' => [
                 'label' => 'Disjungsi (ATAU)',
+                'picker_group' => 'Logika',
                 'or' => 'ATAU',
             ],
 
@@ -34,6 +39,8 @@ return [
     ],
 
     'no_rules' => '(Tanpa aturan)',
+
+    'max_rules_reached_tooltip' => 'Anda telah mencapai batas maksimum :count aturan.',
 
     'item_separators' => [
         'and' => 'DAN',
