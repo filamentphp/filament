@@ -33,9 +33,8 @@ ImageEntry::make('header_image')
 
 If you do not set any alt text, the image is rendered with an empty `alt` attribute, which marks it as decorative for assistive technology.
 
-<Aside variant="warning">
-    When an image [links to a URL](overview#opening-a-url-when-an-entry-is-clicked), its alt text becomes the accessible name of the link. Always set meaningful `alt()` text on linked images, otherwise screen reader users will encounter a link with no name.
-</Aside>
+> [!WARNING]
+> When an image [links to a URL](overview#opening-a-url-when-an-entry-is-clicked), its alt text becomes the accessible name of the link. Always set meaningful `alt()` text on linked images, otherwise screen reader users will encounter a link with no name.
 
 ## Managing the image disk
 

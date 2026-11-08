@@ -252,9 +252,8 @@ FilamentAsset::register([
 
 This approach also works for TypeScript files or any other JavaScript that needs a build step. Since `Vite::asset()` returns a URL, the asset will not be copied by `php artisan filament:assets` — it is served directly from Vite's build output.
 
-<Aside variant="info">
-    If you need to bundle JavaScript for an [asynchronous Alpine.js component](#asynchronous-alpinejs-components), consider using esbuild instead, as documented in that section.
-</Aside>
+> [!NOTE]
+> If you need to bundle JavaScript for an [asynchronous Alpine.js component](#asynchronous-alpinejs-components), consider using esbuild instead, as documented in that section.
 
 ### Lazy loading JavaScript
 
@@ -478,9 +477,8 @@ $moduleUrl = Vite::asset('resources/js/components/custom-component.js');
 
 Pass this URL to the component or JavaScript code responsible for importing the module. Do not import it from your main application entry or include it with `@vite()`, as that would load it eagerly. `Vite::asset()` resolves the development URL or the production manifest's hashed URL. Include the Vite client through your normal application layout during development. Lazy loading alone does not provide automatic state-preserving hot replacement for an already mounted component.
 
-<Aside variant="info">
-    Importing a built JavaScript URL does not load CSS listed only in Vite's manifest. Include the component's CSS through your application's stylesheet or [register it separately](#registering-css-files). The browser caches imported modules by URL, so use versioned or hashed URLs when deploying changes.
-</Aside>
+> [!NOTE]
+> Importing a built JavaScript URL does not load CSS listed only in Vite's manifest. Include the component's CSS through your application's stylesheet or [register it separately](#registering-css-files). The browser caches imported modules by URL, so use versioned or hashed URLs when deploying changes.
 
 #### Type-checking ES modules
 
@@ -597,13 +595,11 @@ Vite::useCspNonce($nonce);
 
 You should call `Vite::useCspNonce()` for every request, before the response is rendered, using the same nonce that you add to the `Content-Security-Policy` header. You can usually do this in the middleware that creates the policy.
 
-<Aside variant="info">
-    The `Vite` facade is only used to share the nonce between Laravel, Livewire, and Filament. Your application does not need to compile its assets with Vite or use the `@vite` Blade directive, so this also works in applications that use Laravel Mix.
-</Aside>
+> [!NOTE]
+> The `Vite` facade is only used to share the nonce between Laravel, Livewire, and Filament. Your application does not need to compile its assets with Vite or use the `@vite` Blade directive, so this also works in applications that use Laravel Mix.
 
-<Aside variant="info">
-    Scripts registered with `Js::make()->html()`, where the HTML already contains a `<script>` element, are rendered exactly as you provide them. Filament does not modify that markup, so you should add the nonce yourself using `Vite::cspNonce()`.
-</Aside>
+> [!NOTE]
+> Scripts registered with `Js::make()->html()`, where the HTML already contains a `<script>` element, are rendered exactly as you provide them. Filament does not modify that markup, so you should add the nonce yourself using `Vite::cspNonce()`.
 
 ## Ignoring published assets in version control
 

@@ -15,9 +15,8 @@ The link component is used to render a clickable link that can perform an action
 
 <AutoScreenshot name="components/link/simple" alt="A simple link" />
 
-<Aside variant="danger">
-    If you are passing user-controlled data to the `href` attribute, validate its scheme using [`Str::sanitizeUrl()`](../advanced/security#validating-user-input) before rendering it. HTML escaping alone does not prevent a `javascript:` URL from executing code when clicked.
-</Aside>
+> [!CAUTION]
+> If you are passing user-controlled data to the `href` attribute, validate its scheme using [`Str::sanitizeUrl()`](../advanced/security#validating-user-input) before rendering it. HTML escaping alone does not prevent a `javascript:` URL from executing code when clicked.
 
 ## Using a link as a button
 

@@ -361,9 +361,8 @@ class OrderProduct extends Pivot
 }
 ```
 
-<Aside variant="info">
-    Please ensure that your pivot model has a primary key column, like `id`, to allow Filament to keep track of which repeater items have been created, updated and deleted. To make sure that Filament keeps track of the primary key, the pivot model needs to have the `$incrementing` property set to `true`.
-</Aside>
+> [!NOTE]
+> Please ensure that your pivot model has a primary key column, like `id`, to allow Filament to keep track of which repeater items have been created, updated and deleted. To make sure that Filament keeps track of the primary key, the pivot model needs to have the `$incrementing` property set to `true`.
 
 Now you can use the `orderProducts` relationship with the repeater, and it will save the data to the `order_product` pivot table:
 
@@ -573,9 +572,8 @@ Repeater::make('members')
     ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
 ```
 
-<Aside variant="tip">
-    Any fields that you use from `$state` should be `live()` if you wish to see the item label update live as you use the form.
-</Aside>
+> [!TIP]
+> Any fields that you use from `$state` should be `live()` if you wish to see the item label update live as you use the form.
 
 <UtilityInjection set="formFields" extras="Item;;Filament\Schemas\Schema;;$item;;The schema object for the current repeater item.||Key;;string;;$key;;The key for the current repeater item.||Index;;int;;$index;;The zero-based index of the current repeater item.||State;;array<string, mixed>;;$state;;The raw unvalidated data for the current repeater item.">You can inject various utilities into the function passed to `itemLabel()` as parameters.</UtilityInjection>
 
@@ -791,9 +789,8 @@ Repeater::make('members')
 
 <UtilityInjection set="formFields">As well as allowing static values, the `minItems()` and `maxItems()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<Aside variant="info">
-    `maxItems()` is a validation rule. Filament builds item schemas before evaluating the rule, and Livewire requests can render items without running form validation. To avoid long processing times if your application accidentally creates too many items, you can [limit item processing](#limiting-item-processing) separately.
-</Aside>
+> [!NOTE]
+> `maxItems()` is a validation rule. Filament builds item schemas before evaluating the rule, and Livewire requests can render items without running form validation. To avoid long processing times if your application accidentally creates too many items, you can [limit item processing](#limiting-item-processing) separately.
 
 ### Distinct state validation
 
@@ -886,24 +883,23 @@ Repeater::make('members')
 
 This method will automatically enable the `distinct()` and `live()` methods on the field.
 
-<Aside variant="warning">
-    In case you want to add another condition to [disable options](select#disabling-specific-options) with, you can chain `disableOptionWhen()` with the `merge: true` argument:
-    
-    ```php
-    use Filament\Forms\Components\Repeater;
-    use Filament\Forms\Components\Select;
-    
-    Repeater::make('members')
-        ->schema([
-            Select::make('role')
-                ->options([
-                    // ...
-                ])
-                ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                ->disableOptionWhen(fn (string $value): bool => $value === 'super_admin', merge: true),
-        ])
-    ```
-</Aside>
+> [!WARNING]
+> In case you want to add another condition to [disable options](select#disabling-specific-options) with, you can chain `disableOptionWhen()` with the `merge: true` argument:
+>
+> ```php
+> use Filament\Forms\Components\Repeater;
+> use Filament\Forms\Components\Select;
+>
+> Repeater::make('members')
+>     ->schema([
+>         Select::make('role')
+>             ->options([
+>                 // ...
+>             ])
+>             ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+>             ->disableOptionWhen(fn (string $value): bool => $value === 'super_admin', merge: true),
+>     ])
+> ```
 
 ## Limiting item processing
 
@@ -922,9 +918,8 @@ Repeater::make('members')
 
 In this example, up to 100 items can be processed, but the form will only pass validation with at most 5 items. If the raw state contains more than 100 items, Filament aborts with an HTTP 413 response before building the repeater's item schemas. It does not truncate the data. This limit is disabled by default and accepts an integer, or `null` to disable it.
 
-<Aside variant="danger">
-    The processing limit also applies to existing data loaded from your database. A record above the limit cannot be opened through that form until you raise the limit or correct its data elsewhere. Choose a limit that accommodates existing records you need to edit, including records above your validation limit.
-</Aside>
+> [!CAUTION]
+> The processing limit also applies to existing data loaded from your database. A record above the limit cannot be opened through that form until you raise the limit or correct its data elsewhere. Choose a limit that accommodates existing records you need to edit, including records above your validation limit.
 
 ### Applying processing limits globally
 
@@ -1044,9 +1039,8 @@ Repeater::make('members')
     )
 ```
 
-<Aside variant="info">
-    The `collapseAction()`, `collapseAllAction()`, `expandAction()` and `expandAllAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
-</Aside>
+> [!NOTE]
+> The `collapseAction()`, `collapseAllAction()`, `expandAction()` and `expandAllAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
 
 Completing a drag that changes the item order invokes `reorderAction()`, which supports `requiresConfirmation()`. Clicking the drag handle alone does not invoke the action.
 

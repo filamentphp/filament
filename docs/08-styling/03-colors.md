@@ -136,9 +136,8 @@ The contrast thresholds Filament uses come from WCAG 2.1:
 
 The `Filament\Support\Colors\Color` class exposes these as constants — `WCAG_AA_TEXT`, `WCAG_AA_LARGE_TEXT`, `WCAG_AA_NON_TEXT`, `WCAG_AAA_TEXT`, `WCAG_AAA_LARGE_TEXT` — so you can reference them by name when customizing.
 
-<Aside variant="warning">
-    Shade selection uses fallback shades when a palette cannot meet the requested contrast. It does not guarantee accessibility for every custom palette or background. Check contrast in light and dark mode, including hover states, after customizing colors or component styles.
-</Aside>
+> [!WARNING]
+> Shade selection uses fallback shades when a palette cannot meet the requested contrast. It does not guarantee accessibility for every custom palette or background. Check contrast in light and dark mode, including hover states, after customizing colors or component styles.
 
 ### Why some buttons render dark text instead of white
 
@@ -177,9 +176,8 @@ Every Filament component that picks shades from a palette implements `getColorMa
 | `Filament\Tables\View\Components\Columns\Summarizers\CountComponent\IconComponent` | Table count summarizers | [Summaries](../tables/summaries) |
 | `Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\DescriptionComponent` | Stats overview widget descriptions | [Stats overview](../widgets/stats-overview) |
 
-<Aside variant="tip">
-The fastest way to write a custom `getColorMap()` is to copy the original implementation from the class you're overriding and tweak the configuration values. The source files live alongside the documented classes in `packages/<package>/src/View/Components/`. Each one is a few lines of fluent calls — the easiest way to learn the surface is to read the default and change it.
-</Aside>
+> [!TIP]
+> The fastest way to write a custom `getColorMap()` is to copy the original implementation from the class you're overriding and tweak the configuration values. The source files live alongside the documented classes in `packages/<package>/src/View/Components/`. Each one is a few lines of fluent calls — the easiest way to learn the surface is to read the default and change it.
 
 ### `ComponentColorMap`
 
@@ -240,9 +238,8 @@ ButtonComponentColorMap::make($color)
     ->get();
 ```
 
-<Aside variant="warning">
-The last candidate doubles as the fallback when no candidate produces light text on its `bg`. If you configure only vibrant-friendly candidates and your palette is pale, that last candidate is used anyway — likely producing a dark-text-on-dark-bg button. Always end with a pale-friendly candidate (typically `bg` around `400`) to handle yellows, ambers, and limes.
-</Aside>
+> [!WARNING]
+> The last candidate doubles as the fallback when no candidate produces light text on its `bg`. If you configure only vibrant-friendly candidates and your palette is pale, that last candidate is used anyway — likely producing a dark-text-on-dark-bg button. Always end with a pale-friendly candidate (typically `bg` around `400`) to handle yellows, ambers, and limes.
 
 ### `IconButtonComponentColorMap`
 
@@ -317,6 +314,5 @@ public function register(): void
 
 The same pattern works for any of the components listed above — extend, override `getColorMap()`, and bind.
 
-<Aside variant="tip">
-The defaults work for the overwhelming majority of palettes. Only override these classes if you have specific accessibility requirements (such as AAA compliance) or a design system that mandates different shade preferences.
-</Aside>
+> [!TIP]
+> The defaults work for the overwhelming majority of palettes. Only override these classes if you have specific accessibility requirements (such as AAA compliance) or a design system that mandates different shade preferences.

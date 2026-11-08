@@ -128,9 +128,8 @@ it('can sort posts by title', function () {
 });
 ```
 
-<Aside variant="info">
-    Filament tables use a SQL `order` statement to sort records before they are output. Different database drivers can use different sorting strategies, and they can differ from PHP's own sorting strategy, so you should ensure that test records are sorted using `orderBy()` on a database query rather than `sortBy()` on a collection of models.
-</Aside>
+> [!NOTE]
+> Filament tables use a SQL `order` statement to sort records before they are output. Different database drivers can use different sorting strategies, and they can differ from PHP's own sorting strategy, so you should ensure that test records are sorted using `orderBy()` on a database query rather than `sortBy()` on a collection of models.
 
 ### Testing the state of a column
 

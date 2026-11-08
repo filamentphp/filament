@@ -44,9 +44,8 @@ public function table(Table $table): Table
 }
 ```
 
-<Aside variant="warning">
-    The array keys `(e.g., 1, 2, 3)` represent the record IDs. Use unique and consistent keys to ensure proper diffing and state tracking. This helps prevent issues with record integrity during Livewire interactions and updates.
-</Aside>
+> [!WARNING]
+> The array keys `(e.g., 1, 2, 3)` represent the record IDs. Use unique and consistent keys to ensure proper diffing and state tracking. This helps prevent issues with record integrity during Livewire interactions and updates.
 
 ## Securing custom data
 
@@ -106,9 +105,8 @@ public function table(Table $table): Table
 }
 ```
 
-<Aside variant="info">
-    It might seem like Filament should sort the data for you, but in many cases, it's better to let your data source—like a custom query or API call—handle the sorting instead.
-</Aside>
+> [!NOTE]
+> It might seem like Filament should sort the data for you, but in many cases, it's better to let your data source—like a custom query or API call—handle the sorting instead.
 
 ### Searching
 
@@ -151,9 +149,8 @@ public function table(Table $table): Table
 
 In this example, specific columns like `title` do not need to be `searchable()` because the search logic is handled inside the `records()` function. However, if you want to enable the search field without enabling search for a specific column, you can use the `searchable()` method on the entire table.
 
-<Aside variant="info">
-    It might seem like Filament should search the data for you, but in many cases, it's better to let your data source—like a custom query or API call—handle the searching instead.
-</Aside>
+> [!NOTE]
+> It might seem like Filament should search the data for you, but in many cases, it's better to let your data source—like a custom query or API call—handle the searching instead.
 
 #### Searching individual columns
 
@@ -192,9 +189,8 @@ public function table(Table $table): Table
 }
 ```
 
-<Aside variant="info">
-    It might seem like Filament should search the data for you, but in many cases, it's better to let your data source—like a custom query or API call—handle the searching instead.
-</Aside>
+> [!NOTE]
+> It might seem like Filament should search the data for you, but in many cases, it's better to let your data source—like a custom query or API call—handle the searching instead.
 
 ## Filters
 
@@ -289,9 +285,8 @@ Filter values aren't directly accessible via `$filters['filterName']`. Instead, 
 
 - [Custom schema filters](filters/custom#custom-filter-schemas) (e.g., creation_date) use the actual form field names. If the field is named `date`, access it like this: `$filters['creation_date']['date']`
 
-<Aside variant="info">
-    It might seem like Filament should filter the data for you, but in many cases, it's better to let your data source—like a custom query or API call—handle the filtering instead.
-</Aside>
+> [!NOTE]
+> It might seem like Filament should filter the data for you, but in many cases, it's better to let your data source—like a custom query or API call—handle the filtering instead.
 
 ## Pagination
 
@@ -330,13 +325,11 @@ public function table(Table $table): Table
 
 In this example, the `forPage()` method is used to paginate the data. This probably isn't the most efficient way to paginate data from a query or API, but it is a simple way to demonstrate how to paginate data from a custom array.
 
-<Aside variant="info">
-    It might seem like Filament should paginate the data for you, but in many cases, it's better to let your data source—like a custom query or API call—handle the pagination instead.
-</Aside>
+> [!NOTE]
+> It might seem like Filament should paginate the data for you, but in many cases, it's better to let your data source—like a custom query or API call—handle the pagination instead.
 
-<Aside variant="warning">
-    If you have multiple custom tables on a page and are using the `queryStringIdentifier('customIdentifier')` method to distinguish them, you will need to add an `options` argument to the `LengthAwarePaginator` with the `pageName`, like `options: ['pageName' => 'customIdentifierPage']`. Note that adding the `Page` suffix to your custom identifier is required here.
-</Aside>
+> [!WARNING]
+> If you have multiple custom tables on a page and are using the `queryStringIdentifier('customIdentifier')` method to distinguish them, you will need to add an `options` argument to the `LengthAwarePaginator` with the `pageName`, like `options: ['pageName' => 'customIdentifierPage']`. Note that adding the `Page` suffix to your custom identifier is required here.
 
 ## Actions
 
@@ -379,17 +372,15 @@ public function table(Table $table): Table
 }
 ```
 
-<Aside variant="warning">
-    When using custom data, the table data is not automatically refreshed after an action is executed.  If you have an action that changes the state of a table record in the current pagination page, you should call `$this->resetTable()` in your action function.
-</Aside>
+> [!WARNING]
+> When using custom data, the table data is not automatically refreshed after an action is executed.  If you have an action that changes the state of a table record in the current pagination page, you should call `$this->resetTable()` in your action function.
 
 ### Bulk actions
 
 For actions that interact with a single record, the record is always present on the current table page, so the `records()` method can be used to fetch the data. However for bulk actions, records can be selected across pagination pages. If you would like to use a bulk action that selects records across pages, you need to give Filament a way to fetch records across pages, otherwise it will only return the records from the current page. The `resolveSelectedRecordsUsing()` method should accept a function which has a `$keys` parameter, and returns a `Collection` of record data:
 
-<Aside variant="warning">
-    Treat `$keys` as client-controlled. The resolver must only return records the current user may access, with the same tenant and ownership restrictions as `records()`. Authorize the intended operation on each returned record before processing it; selection is not authorization.
-</Aside>
+> [!WARNING]
+> Treat `$keys` as client-controlled. The resolver must only return records the current user may access, with the same tenant and ownership restrictions as `records()`. Authorize the intended operation on each returned record before processing it; selection is not authorization.
 
 ```php
 use Filament\Actions\BulkAction;
@@ -503,9 +494,8 @@ public function table(Table $table): Table
 
 [Filament's table builder](overview/#introduction) allows you to populate tables with data fetched from any external source—not just [Eloquent models](https://laravel.com/docs/eloquent). This is particularly useful when you want to display data from a REST API or a third-party service.
 
-<Aside variant="warning">
-    The examples in this section use DummyJSON, a demonstration API. Before adapting them for production, add authentication, authorization for each operation, input validation, error handling, and rate limiting appropriate to your API. Filament does not automatically authorize array records or scope them to a tenant. Follow the [custom data security guidance](#securing-custom-data). DummyJSON simulates create, update, and delete requests without persisting changes.
-</Aside>
+> [!WARNING]
+> The examples in this section use DummyJSON, a demonstration API. Before adapting them for production, add authentication, authorization for each operation, input validation, error handling, and rate limiting appropriate to your API. Filament does not automatically authorize array records or scope them to a tenant. Follow the [custom data security guidance](#securing-custom-data). DummyJSON simulates create, update, and delete requests without persisting changes.
 
 ### Fetching data from an external API
 
@@ -537,9 +527,8 @@ public function table(Table $table): Table
 
 The `records()` callback returns the response's products keyed by their stable `id`. Keep these keys across sorting, filtering, and pagination so a selection or mounted action continues to identify the same product even if the API changes the order of its results. Handle failed requests separately rather than treating an empty array as a successful response.
 
-<Aside variant="info">
-    DummyJSON returns 30 items by default. You can use the [limit and skip](#external-api-pagination) query parameters to paginate through all items or use [`limit=0`](https://dummyjson.com/docs/products#products-limit_skip) to get all items.
-</Aside>
+> [!NOTE]
+> DummyJSON returns 30 items by default. You can use the [limit and skip](#external-api-pagination) query parameters to paginate through all items or use [`limit=0`](https://dummyjson.com/docs/products#products-limit_skip) to get all items.
 
 #### Setting the state of a column using API data
 
@@ -561,9 +550,8 @@ TextColumn::make('category_brand')
     })
 ```
 
-<Aside variant="tip">
-    You can use the [`formatStateUsing()`](columns/text#formatting) method to format the state of a text column without changing the state itself.
-</Aside>
+> [!TIP]
+> You can use the [`formatStateUsing()`](columns/text#formatting) method to format the state of a text column without changing the state itself.
 
 ### External API sorting
 
@@ -733,9 +721,8 @@ Filament provides a variety of [built-in actions](../actions/overview#available-
 
 The examples below demonstrate how to create and use actions with an external API using [DummyJSON](https://dummyjson.com) as a simulated API source.
 
-<Aside variant="warning">
-    These examples do not implement application authorization. Check the current user's permission for each operation and record before loading modal data or sending an API request, and enforce tenant or ownership restrictions in your API or server-side data access. Modal confirmation, form validation, and API authentication do not replace those checks. See [securing custom data](#securing-custom-data).
-</Aside>
+> [!WARNING]
+> These examples do not implement application authorization. Check the current user's permission for each operation and record before loading modal data or sending an API request, and enforce tenant or ownership restrictions in your API or server-side data access. Modal confirmation, form validation, and API authentication do not replace those checks. See [securing custom data](#securing-custom-data).
 
 #### External API create action example
 
@@ -973,9 +960,8 @@ public function table(Table $table): Table
 - [`modalSubmitAction(false)`](../actions/modals#modifying-the-default-modal-footer-action-button) disables the submit button, making this a read-only view action.
 - [`modalCancelActionLabel()`](../actions/modals#modifying-the-default-modal-footer-action-button) customizes the label for the close button.
 
-<Aside variant="info">
-    The [`select`](https://dummyjson.com/docs/products#products-limit_skip) parameter is used to limit the fields returned by the API. This helps reduce payload size and improves performance when rendering the table.
-</Aside>
+> [!NOTE]
+> The [`select`](https://dummyjson.com/docs/products#products-limit_skip) parameter is used to limit the fields returned by the API. This helps reduce payload size and improves performance when rendering the table.
 
 If you don't need a modal, you can directly redirect users to a specified URL when they click the action button. You can achieve this by defining a URL with a dynamic route that includes the `record` parameter:
 
@@ -1055,9 +1041,8 @@ public function table(Table $table): Table
 
 This example adds [sorting](#external-api-sorting) and [pagination](#external-api-pagination) to the products, search, and category endpoints. When a search is entered, it uses `/products/search`; otherwise, it uses the selected category's endpoint or `/products`.
 
-<Aside variant="warning">
-    In this example, search takes precedence over the category filter: selecting a category does not restrict search results. If your application needs both constraints, use an API that supports them together, or filter the complete matching dataset before paginating. A client-controlled filter must never be your authorization boundary. For private data, enforce the [current user's access restrictions](#securing-custom-data) on every endpoint, regardless of the search or filters they choose.
-</Aside>
+> [!WARNING]
+> In this example, search takes precedence over the category filter: selecting a category does not restrict search results. If your application needs both constraints, use an API that supports them together, or filter the complete matching dataset before paginating. A client-controlled filter must never be your authorization boundary. For private data, enforce the [current user's access restrictions](#securing-custom-data) on every endpoint, regardless of the search or filters they choose.
 
 ```php
 use Filament\Tables\Columns\ImageColumn;
@@ -1154,6 +1139,5 @@ public function table(Table $table): Table
 }
 ```
 
-<Aside variant="info">
-    The [`select`](https://dummyjson.com/docs/products#products-limit_skip) parameter is used to limit the fields returned by the API. This helps reduce payload size and improves performance when rendering the table.
-</Aside>
+> [!NOTE]
+> The [`select`](https://dummyjson.com/docs/products#products-limit_skip) parameter is used to limit the fields returned by the API. This helps reduce payload size and improves performance when rendering the table.

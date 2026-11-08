@@ -162,9 +162,8 @@ The function allows you to access the current table `$records` that are selected
 
 Custom bulk actions need explicit authorization. See [authorizing bulk actions](#authorizing-bulk-actions) to check each selected record's policy before processing it.
 
-<Aside variant="info">
-    Bulk-action queries must return one row per selectable record key. Joins that repeat the same model key are not supported: use `whereHas()` or `whereExists()` when filtering by related records instead. Many-to-many relationships using [`allowDuplicates()`](../resources/managing-relationships#handling-duplicates) remain supported because each pivot row has its own primary key.
-</Aside>
+> [!NOTE]
+> Bulk-action queries must return one row per selectable record key. Joins that repeat the same model key are not supported: use `whereHas()` or `whereExists()` when filtering by related records instead. Many-to-many relationships using [`allowDuplicates()`](../resources/managing-relationships#handling-duplicates) remain supported because each pivot row has its own primary key.
 
 <AutoScreenshot name="tables/actions/bulk" alt="Table with bulk action" />
 
@@ -417,9 +416,8 @@ public function table(Table $table): Table
 }
 ```
 
-<Aside variant="info">
-    This only changes the selection controls, not which records a bulk-action request can select. Use [`maxSelectableRecords()`](#limiting-the-number-of-selectable-records) to enforce a maximum selection size. Selection controls do not replace [authorization](#authorizing-bulk-actions).
-</Aside>
+> [!NOTE]
+> This only changes the selection controls, not which records a bulk-action request can select. Use [`maxSelectableRecords()`](#limiting-the-number-of-selectable-records) to enforce a maximum selection size. Selection controls do not replace [authorization](#authorizing-bulk-actions).
 
 ### Restricting bulk selection to groups only
 

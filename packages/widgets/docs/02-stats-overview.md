@@ -203,9 +203,8 @@ The chart takes its colors from the [color of the stat](#changing-the-color-of-t
 }
 ```
 
-<Aside variant="info">
-    These properties only affect the charts inside stats. [Chart widgets](charts#styling-charts-in-a-theme) are styled with their own set, prefixed `--chart-`.
-</Aside>
+> [!NOTE]
+> These properties only affect the charts inside stats. [Chart widgets](charts#styling-charts-in-a-theme) are styled with their own set, prefixed `--chart-`.
 
 ## Live updating stats (polling)
 
