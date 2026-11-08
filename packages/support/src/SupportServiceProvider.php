@@ -88,6 +88,8 @@ class SupportServiceProvider extends PackageServiceProvider
             fn () => new TimezoneManager,
         );
 
+        $this->app->singleton(RealtimeManager::class);
+
         $this->app->scoped(
             ScopedComponentManager::class,
             fn () => $this->app->make(ComponentManager::class)->clone(),
@@ -168,6 +170,13 @@ class SupportServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        Event::listen('eloquent.*', static function (string $event, array $payload): void {
+            app(RealtimeManager::class)->handleModelEvent(
+                substr(explode(': ', $event, 2)[0], strlen('eloquent.')),
+                $payload[0],
+            );
+        });
+
         app('livewire')->componentHook(new PartialsComponentHook);
 
         before('call', app(MethodAccess::class));
