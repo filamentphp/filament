@@ -9,6 +9,7 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Route;
 use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Tests\livewire;
@@ -17,6 +18,11 @@ uses(TestCase::class);
 
 beforeEach(function (): void {
     Artisan::call('filament:assets');
+
+    Route::get('/code-editor-language.js', static fn () => response(
+        file_get_contents(__DIR__ . '/../../../resources/js/code-editor-language.js'),
+        headers: ['Content-Type' => 'text/javascript'],
+    ));
 });
 
 it('can render', function (): void {
@@ -60,6 +66,18 @@ describe('language', function (): void {
 
         expect($editor->getLanguage())->toBe(Language::Json);
     });
+
+    it('can set `language()` to a module URL', function (bool $useClosure): void {
+        $url = '/js/code-editor-language.js';
+        $editor = CodeEditor::make('code')
+            ->language($useClosure ? static fn (): string => $url : $url);
+
+        expect($editor->getLanguage())->toBe($url);
+
+        $editor->language(null);
+
+        expect($editor->getLanguage())->toBeNull();
+    })->with([false, true]);
 
     it('can clear `language()` with `null`', function (): void {
         $editor = CodeEditor::make('code')
@@ -204,6 +222,33 @@ it('can render `CodeEditor` in the browser', function (): void {
         ->assertNoAccessibilityIssues();
 
     $page->inDarkMode()
+        ->assertNoAccessibilityIssues();
+});
+
+it('can load a custom `language()` module and save edits', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/code-editor-browser-test?customLanguage=1');
+
+    $page
+        ->assertAttribute('[role="textbox"]', 'data-custom-language', 'loaded')
+        ->type('[role="textbox"]', 'server {')
+        ->keys('[role="textbox"]', ['End', 'Tab'])
+        ->click('Save')
+        ->assertScript('document.querySelector(\'[data-testid="saved-code"]\').textContent', '    server {')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()->assertNoAccessibilityIssues();
+});
+
+it('preserves disabled behavior with a custom `language()` module', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/code-editor-browser-test?customLanguage=1&disabled=1')
+        ->assertAttribute('[role="textbox"]', 'data-custom-language', 'loaded')
+        ->assertAttribute('[role="textbox"]', 'contenteditable', 'false')
+        ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
 });
 
