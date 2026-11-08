@@ -34,15 +34,10 @@
         @endif
 
         @php
-            $title = trim(strip_tags($livewire?->getTitle() ?? ''));
-            $brandName = trim(strip_tags(filament()->getBrandName()));
+            $title = $livewire?->getBrowserTitle() ?? trim(strip_tags(filament()->getBrandName()));
         @endphp
 
-        <title>
-            {{ filled($title) ? $title : null }}
-            {{ filled($brandName) && filled($title) ? ' - ' : null }}
-            {{ filled($brandName) ? $brandName : null }}
-        </title>
+        <title>{{ $title }}</title>
 
         {{ FilamentView::renderHook(PanelsRenderHook::STYLES_BEFORE, scopes: $renderHookScopes) }}
 

@@ -1,13 +1,29 @@
 services:
   demo:
     command: >-
-      php artisan optimize:clear &&
-      APP_ENV=production APP_URL="$PUBLIC_URL" ASSET_URL="$PUBLIC_URL" DEBUGBAR_ENABLED=false
-      php artisan serve --host=0.0.0.0 --port="$PORT"
-    cwd: ../repos/demo
-    health: /login
+      sed "s/__PORT__/$PORT/" .agents/demo/nginx.conf > /tmp/filament-demo-nginx.conf &&
+      exec /usr/sbin/nginx -c /tmp/filament-demo-nginx.conf
+    health: /__orb/health
     portal:
       url: /login
       title: Filament demo
-      description: Sign in with admin@filamentphp.com and password "demo.Filament@2021!".
+      description: Sign in with admin@filamentphp.com and password "demo.Filament@2021!". Websockets and live resource updates are enabled.
     agent: control
+  demo-app:
+    command: >-
+      php artisan optimize:clear &&
+      exec php artisan serve --host=127.0.0.1 --port="$PORT"
+    cwd: ../repos/demo
+    port: 8000
+    env:
+      APP_ENV: production
+      APP_URL: ${services.demo.publicURL}
+      ASSET_URL: ${services.demo.publicURL}
+      DEBUGBAR_ENABLED: 'false'
+    health: /login
+  demo-reverb:
+    command: php artisan reverb:start --host=127.0.0.1 --port="$PORT"
+    cwd: ../repos/demo
+    port: 6001
+    env:
+      APP_URL: ${services.demo.publicURL}

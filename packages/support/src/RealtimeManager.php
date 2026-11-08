@@ -77,12 +77,15 @@ class RealtimeManager
         return array_map(fn (int $index): ModelSubscription => $this->subscriptions[$index], $subscriptionIndexes);
     }
 
-    public function handleModelEvent(string $event, Model $record): void
+    /**
+     * @param  class-string<Model>  $model
+     */
+    public function getSubscription(string $model): ?ModelSubscription
     {
         $subscription = null;
 
         foreach ($this->resolveSubscriptions() as $candidate) {
-            if (! $candidate->matchesModel($record::class)) {
+            if (! $candidate->matchesModel($model)) {
                 continue;
             }
 
@@ -98,6 +101,13 @@ class RealtimeManager
 
             $subscription = $candidate;
         }
+
+        return $subscription ? clone $subscription : null;
+    }
+
+    public function handleModelEvent(string $event, Model $record): void
+    {
+        $subscription = $this->getSubscription($record::class);
 
         if (! $subscription) {
             return;

@@ -149,6 +149,16 @@ install_composer() {
     rm /tmp/composer-setup.php
 }
 
+install_demo_proxy() {
+    if [[ -x /usr/sbin/nginx ]]; then
+        return
+    fi
+
+    sudo apt-get update
+    sudo apt-get install -y --no-install-recommends nginx-light
+    sudo systemctl disable --now nginx.service
+}
+
 prepare_demo_checkout() {
     local current_demo_branch
     local demo_branch
@@ -198,7 +208,7 @@ prepare_demo_checkout() {
     printf 'Using filamentphp/demo %s at %s.\n' "${current_demo_branch:-detached HEAD}" "$(git -C "$demo_root" rev-parse --short HEAD)"
 
     mkdir -p "$demo_root/.git/info"
-    for excluded_path in composer.orb.json composer.orb.lock .composer-orb-hash .orb-demo-state-branch config/trustedproxy.php; do
+    for excluded_path in composer.orb.json composer.orb.lock .composer-orb-hash .orb-demo-state-branch .orb/ config/trustedproxy.php; do
         if ! grep -Fqx "/$excluded_path" "$demo_root/.git/info/exclude" 2>/dev/null; then
             printf '/%s\n' "$excluded_path" >> "$demo_root/.git/info/exclude"
         fi
@@ -229,6 +239,9 @@ write_demo_composer_manifest() {
             }
         }
 
+        $manifest["require"]["laravel/reverb"] = "^1.0";
+        $manifest["autoload"]["files"][] = ".orb/OrbServiceProvider.php";
+
         $manifest["repositories"] = [[
             "type" => "path",
             "url" => $argv[3] . "/packages/*",
@@ -248,8 +261,15 @@ install_demo_dependencies() {
     local composer_hash
     local previous_composer_hash=''
 
+    mkdir -p "$demo_root/.orb"
+    cp "$repository_root/.agents/demo/OrbServiceProvider.php" "$demo_root/.orb/OrbServiceProvider.php"
+
+    if [[ ! -f "$demo_root/.orb/reverb-secret" ]]; then
+        php -r 'file_put_contents($argv[1], bin2hex(random_bytes(32))); chmod($argv[1], 0600);' "$demo_root/.orb/reverb-secret"
+    fi
+
     write_demo_composer_manifest
-    composer_hash="$({ sha256sum "$demo_root/composer.json" "$demo_root/composer.lock"; find "$repository_root/packages" -mindepth 2 -maxdepth 2 -name composer.json -print0 | sort -z | xargs -0 sha256sum; } | sha256sum | cut -d ' ' -f 1)"
+    composer_hash="$({ sha256sum "$demo_root/composer.orb.json" "$demo_root/composer.lock"; find "$repository_root/packages" -mindepth 2 -maxdepth 2 -name composer.json -print0 | sort -z | xargs -0 sha256sum; } | sha256sum | cut -d ' ' -f 1)"
 
     if [[ -f "$demo_root/.composer-orb-hash" ]]; then
         previous_composer_hash="$(cat "$demo_root/.composer-orb-hash")"
@@ -257,7 +277,7 @@ install_demo_dependencies() {
 
     if [[ ! -f "$demo_root/composer.orb.lock" ]] || [[ "$composer_hash" != "$previous_composer_hash" ]]; then
         cp "$demo_root/composer.lock" "$demo_root/composer.orb.lock"
-        COMPOSER=composer.orb.json composer --working-dir="$demo_root" update 'filament/*' --with-dependencies --minimal-changes --prefer-dist --no-interaction
+        COMPOSER=composer.orb.json composer --working-dir="$demo_root" update 'filament/*' laravel/reverb --with-dependencies --minimal-changes --prefer-dist --no-interaction
         printf '%s\n' "$composer_hash" > "$demo_root/.composer-orb-hash"
     else
         COMPOSER=composer.orb.json composer --working-dir="$demo_root" install --prefer-dist --no-interaction
@@ -348,6 +368,7 @@ cd "$repository_root"
 run_step 'Installing PHP 8.4 and extensions' install_php
 run_step 'Installing SQL Server test dependencies and caching its image' install_sqlserver
 run_step 'Installing Composer' install_composer
+run_step 'Installing the demo HTTP and websocket proxy' install_demo_proxy
 run_step 'Installing Filament Composer dependencies' composer install --prefer-dist --no-interaction --no-scripts
 run_step 'Installing Filament Node.js dependencies' npm ci --ignore-scripts --prefer-offline --no-audit --no-fund
 run_step 'Installing Playwright Chromium' npx playwright install --with-deps chromium
@@ -360,7 +381,8 @@ run_step 'Building the docs screenshot application assets' npm --prefix "$reposi
 run_step 'Preparing the matching Filament demo checkout' prepare_demo_checkout
 run_step 'Configuring the demo portal proxy' write_demo_proxy_configuration
 run_step 'Installing locally linked demo dependencies' install_demo_dependencies
-run_step 'Initializing the demo Laravel application' initialize_demo_application
+# Setup seeds before the supervised websocket server is started.
+FILAMENT_ORB_REALTIME=false run_step 'Initializing the demo Laravel application' initialize_demo_application
 
 printf '\nOrb setup complete. The demo checkout is at %s.\n' "$demo_root"
 printf 'Docs screenshot generation is ready in %s.\n' "$repository_root/docs-assets/screenshots"
