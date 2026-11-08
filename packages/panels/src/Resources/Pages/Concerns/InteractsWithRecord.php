@@ -5,10 +5,19 @@ namespace Filament\Resources\Pages\Concerns;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
+use Filament\Facades\Filament;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Attributes\Unexposed;
+use Filament\Support\Events\ModelChangedBroadcast;
+use Filament\Support\Facades\FilamentRealtime;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Validator;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Renderless;
+
+use function Livewire\store;
 
 trait InteractsWithRecord
 {
@@ -66,6 +75,59 @@ trait InteractsWithRecord
         return $resource::getRecordTitle($this->getRecord());
     }
 
+    #[Unexposed]
+    public function hasLiveRecordUpdates(): bool
+    {
+        return Filament::getCurrentOrDefaultPanel()->hasBroadcasting()
+            && filled(config('filament.broadcasting.echo'))
+            && $this->hasRecord()
+            && filled(FilamentRealtime::getSubscription($this->getRecord()::class)?->getEvents());
+    }
+
+    #[Unexposed]
+    public function getRecordBroadcastChannel(): string
+    {
+        return ModelChangedBroadcast::getChannel($this->getRecord());
+    }
+
+    /**
+     * @return array<string, mixed> | null
+     */
+    #[Exposed]
+    #[Renderless]
+    public function authorizeRecordUpdates(string $socketId): ?array
+    {
+        if (! $this->hasRecord()) {
+            return null;
+        }
+
+        abort_unless($this->hasLiveRecordUpdates(), 403);
+
+        Validator::make(['socketId' => $socketId], ['socketId' => ['required', 'regex:/\A\d+\.\d+\z/']])->validate();
+
+        $request = clone request();
+        $request->replace([
+            'channel_name' => 'private-' . $this->getRecordBroadcastChannel(),
+            'socket_id' => $socketId,
+        ]);
+
+        return Broadcast::connection()->validAuthenticationResponse($request, true);
+    }
+
+    #[Exposed]
+    public function refreshRecordPage(): ?string
+    {
+        if (! $this->hasRecord()) {
+            return null;
+        }
+
+        abort_unless($this->hasLiveRecordUpdates(), 403);
+
+        $this->forceRender();
+
+        return $this->getBrowserTitle();
+    }
+
     /**
      * @return array<string>
      */
@@ -107,6 +169,14 @@ trait InteractsWithRecord
         // Ensure that Livewire does not attempt to dehydrate
         // a record that does not exist.
         $this->record = null;
+
+        // A refresh batched before this action must not force a render
+        // after the action has removed the record and is redirecting.
+        store($this)->unset('forceRender');
+
+        if (store($this)->has('redirect')) {
+            $this->skipRender();
+        }
     }
 
     /**

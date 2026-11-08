@@ -2,5 +2,5 @@
 
 set -euo pipefail
 
-# Restore the SQLite-backed preview only. Test databases are started on demand.
+# Restore the demo HTTP and websocket services. Test databases start on demand.
 amp orb services ensure

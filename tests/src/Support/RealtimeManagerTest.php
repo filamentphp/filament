@@ -91,6 +91,7 @@ it('replaces subscriptions without duplicating notifications or sharing mutable 
     $registeredSubscription = FilamentRealtime::subscribe($subscription);
     $subscription->onlyEvents([ModelEvent::Deleted]);
     FilamentRealtime::getSubscriptions()[Post::class]->onlyEvents([]);
+    FilamentRealtime::getSubscription(Post::class)->onlyEvents([]);
 
     $post = Post::factory()->create();
 

@@ -5,6 +5,7 @@ namespace Filament\Pages;
 use Closure;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Facades\Filament;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasRenderHookScopes;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -108,6 +109,15 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
             ->kebab()
             ->replace('-', ' ')
             ->ucwords();
+    }
+
+    #[Unexposed]
+    public function getBrowserTitle(): string
+    {
+        $title = trim(strip_tags($this->getTitle()));
+        $brandName = trim(strip_tags(Filament::getBrandName()));
+
+        return implode(' - ', array_filter([$title, $brandName], static fn (string $value): bool => filled($value)));
     }
 
     #[Unexposed]

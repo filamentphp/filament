@@ -1,5 +1,6 @@
 import Mousetrap from '@danharrin/alpine-mousetrap'
 import globalSearch from './components/global-search.js'
+import recordPage from './components/record-page.js'
 import sidebar from './components/sidebar.js'
 import sidebarBackground from './components/sidebar-background.js'
 import sidebarTooltip from './components/sidebar-tooltip.js'
@@ -15,6 +16,7 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.plugin(Mousetrap)
 
     window.Alpine.data('filamentGlobalSearch', globalSearch)
+    window.Alpine.data('filamentRecordPage', recordPage)
     window.Alpine.data('filamentSidebar', sidebar)
     window.Alpine.data('filamentSidebarBackground', sidebarBackground)
     window.Alpine.data('filamentSidebarTooltip', sidebarTooltip)

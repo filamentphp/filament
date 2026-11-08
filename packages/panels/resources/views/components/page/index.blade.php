@@ -15,6 +15,12 @@
 @endphp
 
 <div
+    @if (method_exists($this, 'hasLiveRecordUpdates') && $this->hasLiveRecordUpdates())
+        x-data="filamentRecordPage({
+                    channel: @js($this->getRecordBroadcastChannel()),
+                    echoConfiguration: @js(config('filament.broadcasting.echo')),
+                })"
+    @endif
     {{
         $attributes->class([
             'fi-page',

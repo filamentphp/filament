@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static ModelSubscription subscribe(class-string<Model>|ModelSubscription|null $model = null)
  * @method static RealtimeManager unsubscribe(class-string<Model>|ModelSubscription $subscription)
+ * @method static ?ModelSubscription getSubscription(class-string<Model> $model)
  * @method static array<string, ModelSubscription> getSubscriptions()
  *
  * @see RealtimeManager

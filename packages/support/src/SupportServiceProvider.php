@@ -21,6 +21,8 @@ use Filament\Support\Components\ComponentManager;
 use Filament\Support\Components\Contracts\ScopedComponentManager;
 use Filament\Support\Contracts\LoadingIndicator;
 use Filament\Support\Enums\GridDirection;
+use Filament\Support\Events\ModelChanged;
+use Filament\Support\Events\ModelChangedBroadcast;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Icons\IconManager;
@@ -170,6 +172,21 @@ class SupportServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        Event::listen(ModelChanged::class, static function (ModelChanged $event): void {
+            if (! config('filament.broadcasting.echo')) {
+                return;
+            }
+
+            $eventName = $event->getEvent();
+
+            // Rendering a page must not trigger another refresh.
+            if ((($eventName instanceof BackedEnum) ? $eventName->value : $eventName) === 'retrieved') {
+                return;
+            }
+
+            event(app(ModelChangedBroadcast::class, ['record' => $event->getRecord()]));
+        });
+
         Event::listen('eloquent.*', static function (string $event, array $payload): void {
             app(RealtimeManager::class)->handleModelEvent(
                 substr(explode(': ', $event, 2)[0], strlen('eloquent.')),
