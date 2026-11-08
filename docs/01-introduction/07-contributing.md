@@ -3,9 +3,8 @@ title: Contributing
 contents: false
 ---
 
-<Aside variant="info">
-    Parts of this guide are adapted from [Laravel's contribution guide](https://laravel.com/docs/contributions), which served as valuable inspiration.
-</Aside>
+> [!NOTE]
+> Parts of this guide are adapted from [Laravel's contribution guide](https://laravel.com/docs/contributions), which served as valuable inspiration.
 
 ## Reporting bugs
 

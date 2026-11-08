@@ -162,9 +162,8 @@ The function allows you to access the current table `$records` that are selected
 
 Custom bulk actions need explicit authorization. See [authorizing bulk actions](#authorizing-bulk-actions) to check each selected record's policy before processing it.
 
-<Aside variant="info">
-    Bulk-action queries must return one row per selectable record key. Joins that repeat the same model key are not supported: use `whereHas()` or `whereExists()` when filtering by related records instead. Many-to-many relationships using [`allowDuplicates()`](../resources/managing-relationships#handling-duplicates) remain supported because each pivot row has its own primary key.
-</Aside>
+> [!NOTE]
+> Bulk-action queries must return one row per selectable record key. Joins that repeat the same model key are not supported: use `whereHas()` or `whereExists()` when filtering by related records instead. Many-to-many relationships using [`allowDuplicates()`](../resources/managing-relationships#handling-duplicates) remain supported because each pivot row has its own primary key.
 
 <AutoScreenshot name="tables/actions/bulk" alt="Table with bulk action" />
 
@@ -411,9 +410,8 @@ Table::configureUsing(static function (Table $table): void {
 
 The header checkbox selects the current page. The all-pages "select all" link is only offered when the total selectable count fits within the limit. If an oversized selection reaches a bulk-action request on a database-backed table, processing is limited to a subset of the selection, including when deselected records are tracked instead of selected records. Filament does not reject the whole action with an over-limit notification. Custom-data tables throw a `LogicException` if the resolved selection exceeds the limit.
 
-<Aside variant="warning">
-    The selection limit is not an authorization boundary or a guarantee of memory usage or execution time. It does not bound incoming request size, selection discovery, custom data resolution, or the cost of processing each record. Use [authorization](#authorizing-bulk-actions) and review [bulk-action performance](#improving-the-performance-of-bulk-actions), especially before increasing or disabling the limit. Chunking reduces model-loading memory but does not reduce the total number of records processed.
-</Aside>
+> [!WARNING]
+> The selection limit is not an authorization boundary or a guarantee of memory usage or execution time. It does not bound incoming request size, selection discovery, custom data resolution, or the cost of processing each record. Use [authorization](#authorizing-bulk-actions) and review [bulk-action performance](#improving-the-performance-of-bulk-actions), especially before increasing or disabling the limit. Chunking reduces model-loading memory but does not reduce the total number of records processed.
 
 ### Preventing bulk-selection of all pages
 
@@ -432,9 +430,8 @@ public function table(Table $table): Table
 }
 ```
 
-<Aside variant="info">
-    This only changes the selection controls, not which records a bulk-action request can select. Use [`maxSelectableRecords()`](#limiting-the-number-of-selectable-records) to enforce a maximum selection size. Selection controls do not replace [authorization](#authorizing-bulk-actions).
-</Aside>
+> [!NOTE]
+> This only changes the selection controls, not which records a bulk-action request can select. Use [`maxSelectableRecords()`](#limiting-the-number-of-selectable-records) to enforce a maximum selection size. Selection controls do not replace [authorization](#authorizing-bulk-actions).
 
 ### Restricting bulk selection to groups only
 

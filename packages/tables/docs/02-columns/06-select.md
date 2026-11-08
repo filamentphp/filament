@@ -283,9 +283,8 @@ SelectColumn::make('author_id')
     ->rememberOptions(false)
 ```
 
-<Aside variant="warning">
-    When options are remembered, any record-specific options or disabled options will not work correctly, as the same options will be used for all records in the table. If you need record-specific options or disabled options, you should disable option remembering.
-</Aside>
+> [!WARNING]
+> When options are remembered, any record-specific options or disabled options will not work correctly, as the same options will be used for all records in the table. If you need record-specific options or disabled options, you should disable option remembering.
 
 <UtilityInjection set="tableColumns">As well as allowing a static value, the `rememberOptions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -307,9 +306,8 @@ SelectColumn::make('technology')
     ->allowOptionsHtml()
 ```
 
-<Aside variant="danger">
-    Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
-</Aside>
+> [!CAUTION]
+> Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
 
 Optionally, you may pass a boolean value to control if the input should allow HTML or not:
 

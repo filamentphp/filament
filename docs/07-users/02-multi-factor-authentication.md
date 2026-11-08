@@ -15,9 +15,8 @@ Filament includes two methods of MFA which you can enable out of the box:
 - [App authentication](#app-authentication) uses a Google Authenticator-compatible app (such as the Google Authenticator, Authy, or Microsoft Authenticator apps) to generate a time-based one-time password (TOTP) that is used to verify the user.
 - [Email authentication](#email-authentication) sends a one-time code to the user's email address, which they must enter to verify their identity.
 
-<Aside variant="warning">
-    The built-in providers use your application's default cache store for challenge or replay-protection state and use an atomic cache lock when the store supports one. In a multi-server deployment, every server should use the same authoritative cache backend, and this state should remain available while its codes can be accepted. Cache locks reduce the chance that overlapping requests accept the same code while the lock lease remains valid. Without lock support, sequential code reuse is still prevented, but concurrent requests may accept the same code.
-</Aside>
+> [!WARNING]
+> The built-in providers use your application's default cache store for challenge or replay-protection state and use an atomic cache lock when the store supports one. In a multi-server deployment, every server should use the same authoritative cache backend, and this state should remain available while its codes can be accepted. Cache locks reduce the chance that overlapping requests accept the same code while the lock lease remains valid. Without lock support, sequential code reuse is still prevented, but concurrent requests may accept the same code.
 
 In Filament, users set up multi-factor authentication from their [profile page](overview#authentication-features). If you use Filament's profile page feature, setting up multi-factor authentication will automatically add the correct UI elements to the profile page:
 
@@ -64,9 +63,8 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
 }
 ```
 
-<Aside variant="tip">
-    Filament provides a default implementation for speed and simplicity, but you could implement the required methods yourself and customize the column name or store the secret in a completely separate table.
-</Aside>
+> [!TIP]
+> Filament provides a default implementation for speed and simplicity, but you could implement the required methods yourself and customize the column name or store the secret in a completely separate table.
 
 Finally, you should activate the app authentication feature in your panel. To do this, use the `multiFactorAuthentication()` method in the [configuration](../panel-configuration), and pass a `AppAuthentication` instance to it:
 
@@ -119,9 +117,8 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
 }
 ```
 
-<Aside variant="tip">
-    Filament provides a default implementation for speed and simplicity, but you could implement the required methods yourself and customize the column name or store the recovery codes in a completely separate table.
-</Aside>
+> [!TIP]
+> Filament provides a default implementation for speed and simplicity, but you could implement the required methods yourself and customize the column name or store the recovery codes in a completely separate table.
 
 Finally, you should activate the app authentication recovery codes feature in your panel. To do this, pass the `recoverable()` method to the `AppAuthentication` instance in the `multiFactorAuthentication()` method in the [configuration](../panel-configuration):
 
@@ -252,9 +249,8 @@ class User extends Authenticatable implements FilamentUser, HasEmailAuthenticati
 }
 ```
 
-<Aside variant="tip">
-    Filament provides a default implementation for speed and simplicity, but you could implement the required methods yourself and customize the column name or store the value in a completely separate table.
-</Aside>
+> [!TIP]
+> Filament provides a default implementation for speed and simplicity, but you could implement the required methods yourself and customize the column name or store the value in a completely separate table.
 
 Finally, you should activate the email authentication feature in your panel. To do this, use the `multiFactorAuthentication()` method in the [configuration](../panel-configuration), and pass an `EmailAuthentication` instance to it:
 
@@ -497,9 +493,8 @@ class SmsAuthentication implements HasBeforeChallengeHook, MultiFactorAuthentica
 
 The `beforeChallenge()` method may be called more than once if the user switches between enabled providers. The service should rate-limit code delivery using the scoped principal identifier and avoid invalidating an existing code when another code cannot be sent yet.
 
-<Aside variant="danger">
-    Store phone numbers in a consistent format such as E.164, and disable SMS authentication whenever a user's phone number changes so that they must verify the new number. You should also provide a secure account recovery process for users who lose access to their phone. SMS authentication is vulnerable to risks such as SIM swapping, so consider offering app authentication or security keys as stronger alternatives.
-</Aside>
+> [!CAUTION]
+> Store phone numbers in a consistent format such as E.164, and disable SMS authentication whenever a user's phone number changes so that they must verify the new number. You should also provide a secure account recovery process for users who lose access to their phone. SMS authentication is vulnerable to risks such as SIM swapping, so consider offering app authentication or security keys as stronger alternatives.
 
 ### Registering the provider
 
@@ -525,9 +520,8 @@ The multi-factor challenge that the login page presents is also available on its
 
 The `MultiFactorChallenge` class builds the challenge form for a user. Its components carry the validation rules that verify the code that the user enters.
 
-<Aside variant="info">
-    The examples below assume that `$user` is the signed-in user and is an instance of `Authenticatable`. Your Livewire component must also be [set up to use schemas](../components/schema). The `InteractsWithSchemas` trait restricts Livewire file uploads to schema components by default, as described in the [security documentation](../advanced/security#restricting-livewire-file-uploads-to-schema-components).
-</Aside>
+> [!NOTE]
+> The examples below assume that `$user` is the signed-in user and is an instance of `Authenticatable`. Your Livewire component must also be [set up to use schemas](../components/schema). The `InteractsWithSchemas` trait restricts Livewire file uploads to schema components by default, as described in the [security documentation](../advanced/security#restricting-livewire-file-uploads-to-schema-components).
 
 ### Checking whether a user can be challenged
 
@@ -598,9 +592,8 @@ $multiFactorChallenge->hitRateLimiter($user);
 $this->multiFactorChallengeForm->getState();
 ```
 
-<Aside variant="danger">
-    Verifying a challenge does not authenticate anyone or authorize the protected operation. It only proves that the signed-in user holds a factor currently registered against their account. After validation succeeds, reload any security-sensitive state and reauthorize the protected operation immediately before performing it.
-</Aside>
+> [!CAUTION]
+> Verifying a challenge does not authenticate anyone or authorize the protected operation. It only proves that the signed-in user holds a factor currently registered against their account. After validation succeeds, reload any security-sensitive state and reauthorize the protected operation immediately before performing it.
 
 ## Security notes about multi-factor authentication
 
@@ -612,6 +605,5 @@ Filament does not challenge users who arrive at the panel already authenticated 
 
 When a user signs in with a recovery code, Filament's `verifyRecoveryCode()` method wraps the read-validate-write sequence in a database transaction with a `lockForUpdate()` row lock on the user's row. This prevents concurrent submissions using the built-in Eloquent storage from consuming the same code or writing a stale list of codes. Filament also uses a per-user cache lock when the configured cache store supports atomic locks.
 
-<Aside variant="warning">
-    If you override `getAppAuthenticationRecoveryCodes()` / `saveAppAuthenticationRecoveryCodes()`, your storage is responsible for preventing concurrent updates. `saveAppAuthenticationRecoveryCodes()` must either persist the new state successfully or throw an exception, since silently ignoring a failed write can allow a recovery code to be reused.
-</Aside>
+> [!WARNING]
+> If you override `getAppAuthenticationRecoveryCodes()` / `saveAppAuthenticationRecoveryCodes()`, your storage is responsible for preventing concurrent updates. `saveAppAuthenticationRecoveryCodes()` must either persist the new state successfully or throw an exception, since silently ignoring a failed write can allow a recovery code to be reused.

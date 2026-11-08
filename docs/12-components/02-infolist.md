@@ -2,14 +2,13 @@
 title: Rendering an infolist in a Blade view
 ---
 
-<Aside variant="warning">
-    Before proceeding, make sure `filament/infolists` is installed in your project. You can check by running:
-
-    ```bash
-    composer show filament/infolists
-    ```
-    If it's not installed, consult the [installation guide](../introduction/installation#installing-the-individual-components) and configure the **individual components** according to the instructions.
-</Aside>
+> [!WARNING]
+> Before proceeding, make sure `filament/infolists` is installed in your project. You can check by running:
+>
+> ```bash
+> composer show filament/infolists
+> ```
+> If it's not installed, consult the [installation guide](../introduction/installation#installing-the-individual-components) and configure the **individual components** according to the instructions.
 
 ## Setting up the Livewire component
 
@@ -66,9 +65,8 @@ public function productInfolist(Schema $schema): Schema
 }
 ```
 
-<Aside variant="warning">
-    `$product` is a model property on a regular Livewire component. Filament does not re-query or authorize it on later requests. Re-query and authorize the product before passing it to the infolist, including any tenant or ownership restrictions your application requires. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
-</Aside>
+> [!WARNING]
+> `$product` is a model property on a regular Livewire component. Filament does not re-query or authorize it on later requests. Re-query and authorize the product before passing it to the infolist, including any tenant or ownership restrictions your application requires. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
 
 Finally, render the infolist in the Livewire component's view:
 
@@ -76,19 +74,18 @@ Finally, render the infolist in the Livewire component's view:
 {{ $this->productInfolist }}
 ```
 
-<Aside variant="info">
-    `filament/infolists` also includes the following packages:
-
-    - `filament/actions`
-    - `filament/schemas`
-    - `filament/support`
-    
-    These packages allow you to use their components within Livewire components.
-    For example, if your infolist uses [Actions](../actions), remember to implement the `HasActions` interface and use the `InteractsWithActions` trait on your Livewire component class.
-    
-    If you are using any other [Filament components](overview#package-components) in your infolist, make sure to install and integrate the corresponding package as well.
-
-</Aside>
+> [!NOTE]
+> `filament/infolists` also includes the following packages:
+>
+> - `filament/actions`
+> - `filament/schemas`
+> - `filament/support`
+>
+> These packages allow you to use their components within Livewire components.
+> For example, if your infolist uses [Actions](../actions), remember to implement the `HasActions` interface and use the `InteractsWithActions` trait on your Livewire component class.
+>
+> If you are using any other [Filament components](overview#package-components) in your infolist, make sure to install and integrate the corresponding package as well.
+>
 
 ## Passing data to the infolist
 

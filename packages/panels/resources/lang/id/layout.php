@@ -4,6 +4,10 @@ return [
 
     'direction' => 'ltr',
 
+    'skip_to_content' => [
+        'label' => 'Langsung ke konten',
+    ],
+
     'actions' => [
 
         'billing' => [
@@ -16,6 +20,7 @@ return [
 
         'open_database_notifications' => [
             'label' => 'Buka notifikasi',
+            'label_with_unread_count' => '{1} Notifikasi, :count belum dibaca|[2,*] Notifikasi, :count belum dibaca',
         ],
 
         'open_user_menu' => [
@@ -36,6 +41,8 @@ return [
 
         'theme_switcher' => [
 
+            'label' => 'Tema',
+
             'dark' => [
                 'label' => 'Mode Gelap',
             ],
@@ -50,6 +57,13 @@ return [
 
         ],
 
+    ],
+    'navigation' => [
+        'label' => 'Navigasi sidebar',
+    ],
+
+    'topbar' => [
+        'label' => 'Bilah atas',
     ],
 
     'avatar' => [

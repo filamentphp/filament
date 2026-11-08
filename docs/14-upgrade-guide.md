@@ -26,9 +26,8 @@ vendor/bin/filament-v6
 composer update
 ```
 
-<Aside variant="info">
-    In Windows PowerShell, use `~6.0` instead of `^6.0` if the caret is ignored.
-</Aside>
+> [!NOTE]
+> In Windows PowerShell, use `~6.0` instead of `^6.0` if the caret is ignored.
 
 Include your application source directories and tests when prompted. The script handles most repetitive PHP and Blade changes. Review its changes, follow the applicable manual steps below, and test your application.
 

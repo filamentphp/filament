@@ -2,14 +2,13 @@
 title: Rendering an action in a Livewire component
 ---
 
-<Aside variant="warning">
-    Before proceeding, make sure `filament/actions` is installed in your project. You can check by running:
-
-    ```bash
-    composer show filament/actions
-    ```
-    If it's not installed, consult the [installation guide](../introduction/installation#installing-the-individual-components) and configure the **individual components** according to the instructions.
-</Aside>
+> [!WARNING]
+> Before proceeding, make sure `filament/actions` is installed in your project. You can check by running:
+>
+> ```bash
+> composer show filament/actions
+> ```
+> If it's not installed, consult the [installation guide](../introduction/installation#installing-the-individual-components) and configure the **individual components** according to the instructions.
 
 ## Setting up the Livewire component
 
@@ -90,9 +89,8 @@ class ManagePost extends Component implements HasActions, HasSchemas
 }
 ```
 
-<Aside variant="warning">
-    `$post` is a model property on a regular Livewire component. Filament does not re-query or authorize it on later requests. Re-query and authorize the post before using it in the action, including any tenant or ownership restrictions your application requires. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
-</Aside>
+> [!WARNING]
+> `$post` is a model property on a regular Livewire component. Filament does not re-query or authorize it on later requests. Re-query and authorize the post before using it in the action, including any tenant or ownership restrictions your application requires. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
 
 Finally, you need to render the action in your view. To do this, you can use `{{ $this->deleteAction }}`, where you replace `deleteAction` with the name of your action method:
 
@@ -106,19 +104,18 @@ Finally, you need to render the action in your view. To do this, you can use `{{
 
 You also need `<x-filament-actions::modals />` which injects the HTML required to render action modals. This only needs to be included within the Livewire component once, regardless of how many actions you have for that component.
 
-<Aside variant="info">
-    `filament/actions` also includes the following packages:
-    
-    - `filament/forms`
-    - `filament/infolists`
-    - `filament/notifications`
-    - `filament/support`
-    
-    These packages allow you to use their components within Livewire components.
-    For example, if your action uses [Notifications](notifications), remember to include `@livewire('notifications')` in your layout and add `@import '../../vendor/filament/notifications/resources/css/index.css'` to your CSS file.
-    
-    If you are using any other [Filament components](overview#package-components) in your action, make sure to install and integrate the corresponding package as well.
-</Aside>
+> [!NOTE]
+> `filament/actions` also includes the following packages:
+>
+> - `filament/forms`
+> - `filament/infolists`
+> - `filament/notifications`
+> - `filament/support`
+>
+> These packages allow you to use their components within Livewire components.
+> For example, if your action uses [Notifications](notifications), remember to include `@livewire('notifications')` in your layout and add `@import '../../vendor/filament/notifications/resources/css/index.css'` to your CSS file.
+>
+> If you are using any other [Filament components](overview#package-components) in your action, make sure to install and integrate the corresponding package as well.
 
 ## Passing action arguments
 
@@ -155,9 +152,8 @@ public function deleteAction(): Action
 }
 ```
 
-<Aside variant="warning">
-    Action arguments are client-controlled. Always query and authorize the requested record, including any tenant or ownership restrictions, before acting on it.
-</Aside>
+> [!WARNING]
+> Action arguments are client-controlled. Always query and authorize the requested record, including any tenant or ownership restrictions, before acting on it.
 
 ## Hiding actions in a Livewire view
 

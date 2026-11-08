@@ -108,9 +108,8 @@ Tab::make()
     ->lazyLoadedBadge()
 ```
 
-<Aside variant="danger">
-    The `badge()` value must be returned from a function when using `lazyLoadedBadge()`. If you pass a raw value like `badge(Customer::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of lazy loading.
-</Aside>
+> [!CAUTION]
+> The `badge()` value must be returned from a function when using `lazyLoadedBadge()`. If you pass a raw value like `badge(Customer::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of lazy loading.
 
 ### Adding extra attributes to filter tabs
 
@@ -170,9 +169,8 @@ public function getTabs(): array
 }
 ```
 
-<Aside variant="danger">
-    Tabs are controlled by the client and must not be your only tenant or ownership restriction. Apply mandatory restrictions to the resource's `getEloquentQuery()` or the table's `modifyQueryUsing()`, and authorize operations separately. `excludeQueryWhenResolvingRecord()` only changes record resolution; it must not remove your application's authorization boundary.
-</Aside>
+> [!CAUTION]
+> Tabs are controlled by the client and must not be your only tenant or ownership restriction. Apply mandatory restrictions to the resource's `getEloquentQuery()` or the table's `modifyQueryUsing()`, and authorize operations separately. `excludeQueryWhenResolvingRecord()` only changes record resolution; it must not remove your application's authorization boundary.
 
 ## Authorization
 

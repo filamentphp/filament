@@ -38,9 +38,8 @@ The classes in the `Pages` directory are used to customize the pages in the app 
 
 The classes in the `Schemas` directory are used to define the content of the [forms](../forms) and [infolists](../infolists) for your resource. The classes in the `Tables` directory are used to build the table for your resource.
 
-<Aside variant="tip">
-    Have you created a resource, but it's not appearing in the navigation menu? If you have a [model policy](#authorization), make sure you return `true` from the `viewAny()` method.
-</Aside>
+> [!TIP]
+> Have you created a resource, but it's not appearing in the navigation menu? If you have a [model policy](#authorization), make sure you return `true` from the `viewAny()` method.
 
 ### Simple (modal) resources
 
@@ -116,9 +115,8 @@ protected static ?string $recordTitleAttribute = 'name';
 
 This is required for features like [global search](global-search) to work.
 
-<Aside variant="tip">
-    You may specify the name of an [Eloquent accessor](https://laravel.com/docs/eloquent-mutators#defining-an-accessor) if just one column is inadequate at identifying a record.
-</Aside>
+> [!TIP]
+> You may specify the name of an [Eloquent accessor](https://laravel.com/docs/eloquent-mutators#defining-an-accessor) if just one column is inadequate at identifying a record.
 
 ## Resource forms
 
@@ -157,24 +155,23 @@ The `components()` method is used to define the structure of your form. It is an
 
 Check out the Forms docs for a [guide](../forms) on how to build forms with Filament.
 
-<Aside variant="tip">
-    If you would prefer to define the form directly in the resource class, you can do so and delete the form schema class altogether:
-
-    ```php
-    use Filament\Forms\Components\TextInput;
-    use Filament\Schemas\Schema;
-
-    public static function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                TextInput::make('name')->required(),
-                TextInput::make('email')->email()->required(),
-                // ...
-            ]);
-    }
-    ```
-</Aside>
+> [!TIP]
+> If you would prefer to define the form directly in the resource class, you can do so and delete the form schema class altogether:
+>
+> ```php
+> use Filament\Forms\Components\TextInput;
+> use Filament\Schemas\Schema;
+>
+> public static function form(Schema $schema): Schema
+> {
+>     return $schema
+>         ->components([
+>             TextInput::make('name')->required(),
+>             TextInput::make('email')->email()->required(),
+>             // ...
+>         ]);
+> }
+> ```
 
 ### Hiding components based on the current operation
 
@@ -257,42 +254,41 @@ public static function configure(Table $table): Table
 
 Check out the [tables](../tables) docs to find out how to add table columns, filters, actions and more.
 
-<Aside variant="tip">
-    If you would prefer to define the table directly in the resource class, you can do so and delete the table class altogether:
-
-    ```php
-    use Filament\Actions\BulkActionGroup;
-    use Filament\Actions\DeleteBulkAction;
-    use Filament\Actions\EditAction;
-    use Filament\Tables\Columns\TextColumn;
-    use Filament\Tables\Filters\Filter;
-    use Filament\Tables\Table;
-    use Illuminate\Database\Eloquent\Builder;
-    
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                TextColumn::make('name'),
-                TextColumn::make('email'),
-                // ...
-            ])
-            ->filters([
-                Filter::make('verified')
-                    ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
-                // ...
-            ])
-            ->recordActions([
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
-    ```
-</Aside>
+> [!TIP]
+> If you would prefer to define the table directly in the resource class, you can do so and delete the table class altogether:
+>
+> ```php
+> use Filament\Actions\BulkActionGroup;
+> use Filament\Actions\DeleteBulkAction;
+> use Filament\Actions\EditAction;
+> use Filament\Tables\Columns\TextColumn;
+> use Filament\Tables\Filters\Filter;
+> use Filament\Tables\Table;
+> use Illuminate\Database\Eloquent\Builder;
+>
+> public static function table(Table $table): Table
+> {
+>     return $table
+>         ->columns([
+>             TextColumn::make('name'),
+>             TextColumn::make('email'),
+>             // ...
+>         ])
+>         ->filters([
+>             Filter::make('verified')
+>                 ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
+>             // ...
+>         ])
+>         ->recordActions([
+>             EditAction::make(),
+>         ])
+>         ->toolbarActions([
+>             BulkActionGroup::make([
+>                 DeleteBulkAction::make(),
+>             ]),
+>         ]);
+> }
+> ```
 
 ## Customizing the model label
 
@@ -466,9 +462,8 @@ public static function getNavigationParentItem(): ?string
 
 The parent and child items must belong to the same navigation group. If the parent item has a navigation group, that group must also be defined on the child, otherwise the correct parent item cannot be identified. This applies whether you reference the parent by its class or by its label.
 
-<Aside variant="tip">
-    If you're reaching for a third level of navigation like this, you should consider using [clusters](../navigation/clusters) instead, which are a logical grouping of resources and [custom pages](../navigation/custom-pages), which can share their own separate navigation.
-</Aside>
+> [!TIP]
+> If you're reaching for a third level of navigation like this, you should consider using [clusters](../navigation/clusters) instead, which are a logical grouping of resources and [custom pages](../navigation/custom-pages), which can share their own separate navigation.
 
 ## Generating URLs to resource pages
 
@@ -613,9 +608,8 @@ Each item in the sub-navigation can be customized using the [same navigation met
 
 <AutoScreenshot name="panels/resources/sub-navigation" alt="Resource with sub-navigation" />
 
-<Aside variant="tip">
-    If you're looking to add sub-navigation to switch *between* entire resources and [custom pages](../navigation/custom-pages), you might be looking for [clusters](../navigation/clusters), which are used to group these together. The `getRecordSubNavigation()` method is intended to construct a navigation between pages that relate to a particular record *inside* a resource.
-</Aside>
+> [!TIP]
+> If you're looking to add sub-navigation to switch *between* entire resources and [custom pages](../navigation/custom-pages), you might be looking for [clusters](../navigation/clusters), which are used to group these together. The `getRecordSubNavigation()` method is intended to construct a navigation between pages that relate to a particular record *inside* a resource.
 
 ### Setting the sub-navigation position for a resource
 
@@ -666,13 +660,11 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 - `restore()` is used to prevent a single soft-deleted record from being restored. `restoreAny()` is used to prevent records from being bulk restored. Filament uses the `restoreAny()` method because iterating through multiple records and checking the `restore()` policy is not very performant. When using a `RestoreBulkAction`, if you want to call the `restore()` method for each record anyway, you should use the `RestoreBulkAction::make()->authorizeIndividualRecords()` method. Any records that fail the authorization check will not be processed.
 - `reorder()` is used to control [reordering records in a table](../tables/overview#reordering-records).
 
-<Aside variant="warning">
-    By default, Filament allows an operation when its model policy or policy method is missing, unless a Gate before callback denies it. Define the required policy methods, or enable [strict authorization](../panel-configuration#strict-authorization-mode) to detect missing policies and methods. `viewAny()` controls resource access, not which records appear in its table: add query restrictions for records the user must not see. Custom actions and inline editable columns need their own authorization, even in strict mode. See the [security overview](../advanced/security#authorization) for these boundaries.
-</Aside>
+> [!WARNING]
+> By default, Filament allows an operation when its model policy or policy method is missing, unless a Gate before callback denies it. Define the required policy methods, or enable [strict authorization](../panel-configuration#strict-authorization-mode) to detect missing policies and methods. `viewAny()` controls resource access, not which records appear in its table: add query restrictions for records the user must not see. Custom actions and inline editable columns need their own authorization, even in strict mode. See the [security overview](../advanced/security#authorization) for these boundaries.
 
-<Aside variant="info">
-    On every Livewire request, Filament re-queries the page's `$record` using the resource query, then repeats the page's authorization checks. For example, edit and view pages check the resource's `update()` and `view()` policies. A `ManageRelatedRecords` page checks access to the related resource or model, but does not authorize the owner record unless you add that check to the page's `canAccess()` method. Any global scopes removed by the resource query remain removed. Filament does not re-query or authorize additional model properties that you add to the page. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
-</Aside>
+> [!NOTE]
+> On every Livewire request, Filament re-queries the page's `$record` using the resource query, then repeats the page's authorization checks. For example, edit and view pages check the resource's `update()` and `view()` policies. A `ManageRelatedRecords` page checks access to the related resource or model, but does not authorize the owner record unless you add that check to the page's `canAccess()` method. Any global scopes removed by the resource query remain removed. Filament does not re-query or authorize additional model properties that you add to the page. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
 
 #### Skipping authorization
 
@@ -682,17 +674,15 @@ If you'd like to skip authorization for a resource, you may set the `$shouldSkip
 protected static bool $shouldSkipAuthorization = true;
 ```
 
-<Aside variant="danger">
-    This bypasses the resource's policy checks, including in strict authorization mode. Panel authentication and tenant scoping do not replace operation-level authorization. Only skip these checks if you enforce equivalent authorization yourself.
-</Aside>
+> [!CAUTION]
+> This bypasses the resource's policy checks, including in strict authorization mode. Panel authentication and tenant scoping do not replace operation-level authorization. Only skip these checks if you enforce equivalent authorization yourself.
 
 ### Protecting model attributes
 
 Filament will expose all model attributes to JavaScript, except if they are `$hidden` on your model. This is Livewire's behavior for model binding. We preserve this functionality to facilitate the dynamic addition and removal of form fields after they are initially loaded, while preserving the data they may need.
 
-<Aside variant="danger">
-    While attributes may be visible in JavaScript, only those with a form field are actually editable by the user. This is not an issue with mass assignment.
-</Aside>
+> [!CAUTION]
+> While attributes may be visible in JavaScript, only those with a form field are actually editable by the user. This is not an issue with mass assignment.
 
 To remove certain attributes from JavaScript on the Edit and View pages, you may override [the `mutateFormDataBeforeFill()` method](editing-records#customizing-data-before-filling-the-form):
 
@@ -707,14 +697,13 @@ protected function mutateFormDataBeforeFill(array $data): array
 
 In this example, we remove the `is_admin` attribute from JavaScript, as it's not being used by the form.
 
-<Aside variant="warning">
-    Adding a column to `$hidden` is required, not just recommended, when it contains binary data that is not valid UTF-8, such as a `geometry`, `point`, or `blob` column. Since Filament exposes model attributes to JavaScript, these values are sent to the browser as part of the Livewire request, but they cannot be serialized to JSON. This causes the page to fail to load, often with a blank screen and no error in the Laravel log.
-
-    Adding such columns to [the `$hidden` array](https://laravel.com/docs/eloquent-serialization#hiding-attributes-from-json) on your model excludes them from its array and JSON representations, resolving the issue:
-
-    ```php
-    protected $hidden = ['location'];
-    ```
-
-    If you need to work with the value, expose it through an [accessor](https://laravel.com/docs/eloquent-mutators#defining-an-accessor) instead of the raw column.
-</Aside>
+> [!WARNING]
+> Adding a column to `$hidden` is required, not just recommended, when it contains binary data that is not valid UTF-8, such as a `geometry`, `point`, or `blob` column. Since Filament exposes model attributes to JavaScript, these values are sent to the browser as part of the Livewire request, but they cannot be serialized to JSON. This causes the page to fail to load, often with a blank screen and no error in the Laravel log.
+>
+> Adding such columns to [the `$hidden` array](https://laravel.com/docs/eloquent-serialization#hiding-attributes-from-json) on your model excludes them from its array and JSON representations, resolving the issue:
+>
+> ```php
+> protected $hidden = ['location'];
+> ```
+>
+> If you need to work with the value, expose it through an [accessor](https://laravel.com/docs/eloquent-mutators#defining-an-accessor) instead of the raw column.

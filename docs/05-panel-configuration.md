@@ -211,9 +211,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<Aside variant="info">
-    In this example, we are using [`getUrl()`](resources/overview#generating-urls-to-resource-pages) on a resource to get the URL to the resource's index page. This feature requires the panel to already be registered though, and the configuration is too early in the request lifecycle to do that. You can use a function to return the URLs instead, which will be resolved when the panel has been registered.
-</Aside>
+> [!NOTE]
+> In this example, we are using [`getUrl()`](resources/overview#generating-urls-to-resource-pages) on a resource to get the URL to the resource's index page. This feature requires the panel to already be registered though, and the configuration is too early in the request lifecycle to do that. You can use a function to return the URLs instead, which will be resolved when the panel has been registered.
 
 These URLs need to exactly match the URL that the user is navigating to, including the domain and protocol. If you'd like to use a pattern to match multiple URLs, you can use an asterisk (`*`) as a wildcard character:
 
@@ -246,9 +245,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<Aside variant="warning">
-    Prefetching heavy pages can lead to increased bandwidth usage and server load, especially if users hover over many links in quick succession. Use this feature judiciously, particularly if your app has pages with large amounts of data or complex queries.
-</Aside>
+> [!WARNING]
+> Prefetching heavy pages can lead to increased bandwidth usage and server load, especially if users hover over many links in quick succession. Use this feature judiciously, particularly if your app has pages with large amounts of data or complex queries.
 
 ## Unsaved changes alerts
 

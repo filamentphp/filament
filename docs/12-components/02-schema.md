@@ -2,14 +2,13 @@
 title: Rendering a schema in a Blade view
 ---
 
-<Aside variant="warning">
-    Before proceeding, make sure `filament/schemas` is installed in your project. You can check by running:
-
-    ```bash
-    composer show filament/schemas
-    ```
-    If it's not installed, consult the [installation guide](../introduction/installation#installing-the-individual-components) and configure the **individual components** according to the instructions.
-</Aside>
+> [!WARNING]
+> Before proceeding, make sure `filament/schemas` is installed in your project. You can check by running:
+>
+> ```bash
+> composer show filament/schemas
+> ```
+> If it's not installed, consult the [installation guide](../introduction/installation#installing-the-individual-components) and configure the **individual components** according to the instructions.
 
 ## Setting up the Livewire component
 
@@ -71,17 +70,16 @@ Finally, render the schema in the Livewire component's view:
 {{ $this->productSchema }}
 ```
 
-<Aside variant="info">
-    `filament/schemas` also includes the following packages:
-
-    - `filament/actions`
-    - `filament/support`
-    
-    These packages allow you to use their components within Livewire components.
-    For example, if your schema uses [Actions](../actions), remember to implement the `HasActions` interface and use the `InteractsWithActions` trait on your Livewire component class.
-    
-    If you are using any other [Filament components](overview#package-components) in your schema, make sure to install and integrate the corresponding package as well.
-</Aside>
+> [!NOTE]
+> `filament/schemas` also includes the following packages:
+>
+> - `filament/actions`
+> - `filament/support`
+>
+> These packages allow you to use their components within Livewire components.
+> For example, if your schema uses [Actions](../actions), remember to implement the `HasActions` interface and use the `InteractsWithActions` trait on your Livewire component class.
+>
+> If you are using any other [Filament components](overview#package-components) in your schema, make sure to install and integrate the corresponding package as well.
 
 ## Security considerations for file uploads
 

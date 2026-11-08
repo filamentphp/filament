@@ -6,6 +6,8 @@ return [
 
         'heading' => 'Notifikasi',
 
+        'unread_label' => 'Notifikasi belum dibaca',
+
         'actions' => [
 
             'clear' => [

@@ -2,14 +2,13 @@
 title: Rendering a form in a Blade view
 ---
 
-<Aside variant="warning">
-    Before proceeding, make sure `filament/forms` is installed in your project. You can check by running:
-
-    ```bash
-    composer show filament/forms
-    ```
-    If it's not installed, consult the [installation guide](../introduction/installation#installing-the-individual-components) and configure the **individual components** according to the instructions.
-</Aside>
+> [!WARNING]
+> Before proceeding, make sure `filament/forms` is installed in your project. You can check by running:
+>
+> ```bash
+> composer show filament/forms
+> ```
+> If it's not installed, consult the [installation guide](../introduction/installation#installing-the-individual-components) and configure the **individual components** according to the instructions.
 
 ## Setting up the Livewire component
 
@@ -108,9 +107,8 @@ Finally, in your Livewire component's view, render the form:
 </div>
 ```
 
-<Aside variant="info">
-    `<x-filament-actions::modals />` is used to render form component [action modals](../actions/modals). The code can be put anywhere outside the `<form>` element, as long as it's within the Livewire component.
-</Aside>
+> [!NOTE]
+> `<x-filament-actions::modals />` is used to render form component [action modals](../actions/modals). The code can be put anywhere outside the `<form>` element, as long as it's within the Livewire component.
 
 Visit your Livewire component in the browser, and you should see the form components from `components()`:
 
@@ -125,18 +123,17 @@ public function create(): void
 }
 ```
 
-<Aside variant="info">
-    `filament/forms` also includes the following packages:
-
-    - `filament/actions`
-    - `filament/schemas`
-    - `filament/support`
-    
-    These packages allow you to use their components within Livewire components.
-    For example, if your form uses [Actions](../actions), remember to implement the `HasActions` interface and use the `InteractsWithActions` trait on your Livewire component class.
-    
-    If you are using any other [Filament components](overview#package-components) in your form, make sure to install and integrate the corresponding package as well.
-</Aside>
+> [!NOTE]
+> `filament/forms` also includes the following packages:
+>
+> - `filament/actions`
+> - `filament/schemas`
+> - `filament/support`
+>
+> These packages allow you to use their components within Livewire components.
+> For example, if your form uses [Actions](../actions), remember to implement the `HasActions` interface and use the `InteractsWithActions` trait on your Livewire component class.
+>
+> If you are using any other [Filament components](overview#package-components) in your form, make sure to install and integrate the corresponding package as well.
 
 ## Initializing the form with data
 
@@ -153,15 +150,14 @@ public function mount(Post $post): void
 
 It's important that you use the `$this->form->fill()` method instead of assigning the data directly to the `$this->data` property. This is because the post's data needs to be internally transformed into a useful format before being stored.
 
-<Aside variant="warning">
-    The data you pass to `fill()` is exposed to JavaScript as part of the Livewire request. If your model has a column containing binary data that is not valid UTF-8, such as a `geometry`, `point`, or `blob` column, it cannot be serialized to JSON and the page will fail to load, often with a blank screen and no error in the Laravel log.
-
-    To resolve this, add the column to [the `$hidden` array](https://laravel.com/docs/eloquent-serialization#hiding-attributes-from-json) on your model, which excludes it from `attributesToArray()`:
-
-    ```php
-    protected $hidden = ['location'];
-    ```
-</Aside>
+> [!WARNING]
+> The data you pass to `fill()` is exposed to JavaScript as part of the Livewire request. If your model has a column containing binary data that is not valid UTF-8, such as a `geometry`, `point`, or `blob` column, it cannot be serialized to JSON and the page will fail to load, often with a blank screen and no error in the Laravel log.
+>
+> To resolve this, add the column to [the `$hidden` array](https://laravel.com/docs/eloquent-serialization#hiding-attributes-from-json) on your model, which excludes it from `attributesToArray()`:
+>
+> ```php
+> protected $hidden = ['location'];
+> ```
 
 ## Setting a form model
 
@@ -191,9 +187,8 @@ public function form(Schema $schema): Schema
 }
 ```
 
-<Aside variant="warning">
-    `$post` is a model property on a regular Livewire component. Filament does not re-query or authorize it on later requests. Re-query and authorize the post before passing it to the form or saving it, including any tenant or ownership restrictions your application requires. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
-</Aside>
+> [!WARNING]
+> `$post` is a model property on a regular Livewire component. Filament does not re-query or authorize it on later requests. Re-query and authorize the post before passing it to the form or saving it, including any tenant or ownership restrictions your application requires. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
 
 ### Passing the form model after the form has been submitted
 
@@ -345,9 +340,8 @@ By default, passing a model to the `make:livewire-form` command will result in a
 php artisan make:filament-livewire-form Products/EditProduct --edit
 ```
 
-<Aside variant="warning">
-    The generated component is a regular Livewire component. Filament does not re-query or authorize its `$record` property on later requests. Re-query and authorize the record before filling or saving the form. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
-</Aside>
+> [!WARNING]
+> The generated component is a regular Livewire component. Filament does not re-query or authorize its `$record` property on later requests. Re-query and authorize the record before filling or saving the form. See [Eloquent model restoration in Livewire](../advanced/security#understanding-eloquent-model-restoration-in-livewire) for more information.
 
 ### Automatically generating form schemas
 

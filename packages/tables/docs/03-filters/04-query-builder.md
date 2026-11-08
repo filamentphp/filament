@@ -217,11 +217,10 @@ SelectConstraint::make('creator.department') // Filter the `department` column o
     ])
 ```
 
-<Aside variant="danger">
-    `options()` controls the available filter values, but it does not restrict access to records. Users can remove the rule, and rules that fail validation are ignored.
-
-    If you are using `options()` to hide certain values from a group of users (for example, hiding `archived` from non-admins), apply the mandatory restriction to the table's underlying query using the resource's [`getEloquentQuery()`](../../resources/overview#customizing-the-resource-eloquent-query), the table's [`modifyQueryUsing()`](../../resources/listing-records#customizing-the-table-eloquent-query), or a global scope on the model. [`modifyRelationshipQueryUsing()`](#scoping-relationships) only scopes the relationship query for that individual rule, which the user can omit. Authorization for operations on records must be handled separately.
-</Aside>
+> [!CAUTION]
+> `options()` controls the available filter values, but it does not restrict access to records. Users can remove the rule, and rules that fail validation are ignored.
+>
+> If you are using `options()` to hide certain values from a group of users (for example, hiding `archived` from non-admins), apply the mandatory restriction to the table's underlying query using the resource's [`getEloquentQuery()`](../../resources/overview#customizing-the-resource-eloquent-query), the table's [`modifyQueryUsing()`](../../resources/listing-records#customizing-the-table-eloquent-query), or a global scope on the model. [`modifyRelationshipQueryUsing()`](#scoping-relationships) only scopes the relationship query for that individual rule, which the user can omit. Authorization for operations on records must be handled separately.
 
 #### Searchable select constraints
 
@@ -380,19 +379,18 @@ The `maxRules()` limit counts individual conditions only. "OR" groups are struct
 
 The UI enforces these limits: once the maximum number of rules is reached, the "add rule" and clone buttons are disabled with a tooltip explaining why, and the "OR" grouping option is hidden once the maximum nesting depth is reached. As a safeguard against a tampered request that bypasses the UI, a submitted rule tree that exceeds either limit is ignored and no constraints are applied to the query.
 
-<Aside variant="tip">
-    To customize these limits for every query builder in your app, you can use `configureUsing()` in the `boot()` method of a service provider:
-
-    ```php
-    use Filament\Tables\Filters\QueryBuilder;
-
-    QueryBuilder::configureUsing(function (QueryBuilder $queryBuilder): void {
-        $queryBuilder
-            ->maxRules(50)
-            ->maxNestingDepth(3);
-    });
-    ```
-</Aside>
+> [!TIP]
+> To customize these limits for every query builder in your app, you can use `configureUsing()` in the `boot()` method of a service provider:
+>
+> ```php
+> use Filament\Tables\Filters\QueryBuilder;
+>
+> QueryBuilder::configureUsing(function (QueryBuilder $queryBuilder): void {
+>     $queryBuilder
+>         ->maxRules(50)
+>         ->maxNestingDepth(3);
+> });
+> ```
 
 ## Scoping relationships
 
