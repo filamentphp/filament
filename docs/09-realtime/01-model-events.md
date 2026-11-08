@@ -106,9 +106,8 @@ You can combine both methods with any model selector. Event exclusions take prec
 
 Quiet writes, mass updates or deletes through a query, raw SQL, and changes made by other applications do not emit Eloquent model events. Notify Filament manually for these operations.
 
-<Aside variant="info">
-    Automatic observation requires Laravel's string Eloquent event to reach Filament's listener. Laravel can stop propagation, for example when an `updated` observer returns `false`, or skip the string event because a `$dispatchesEvents` listener returned a result. A write may succeed without Filament receiving that event. If your integration suppresses these events, dispatch `ModelChanged` manually from that integration instead.
-</Aside>
+> [!NOTE]
+> Automatic observation requires Laravel's string Eloquent event to reach Filament's listener. Laravel can stop propagation, for example when an `updated` observer returns `false`, or skip the string event because a `$dispatchesEvents` listener returned a result. A write may succeed without Filament receiving that event. If your integration suppresses these events, dispatch `ModelChanged` manually from that integration instead.
 
 ### Observing custom model events
 
@@ -239,9 +238,8 @@ This event is backend-only: do not expose its model attributes to clients withou
 
 You can test your application's integration using Laravel's event fake and the public `ModelChanged` event. Keep your model subscriptions in your application's service provider, then exercise the application code that writes or manually reports a change:
 
-<Aside variant="info">
-    Fake only `ModelChanged`, not all events: a bare `Event::fake()` also prevents the Eloquent events that trigger automatic notifications.
-</Aside>
+> [!NOTE]
+> Fake only `ModelChanged`, not all events: a bare `Event::fake()` also prevents the Eloquent events that trigger automatic notifications.
 
 ```php
 use App\Models\Post;
