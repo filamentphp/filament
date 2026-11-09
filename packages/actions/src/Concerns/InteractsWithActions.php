@@ -34,6 +34,7 @@ use function Livewire\store;
 
 trait InteractsWithActions /** @phpstan-ignore trait.unused */
 {
+    use InteractsWithActionRecordUpdates;
     use WithRateLimiting;
 
     /**
@@ -317,6 +318,8 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
             $mountedActionState['hasUnsavedChangesAlert'] = $action->hasUnsavedChangesAlert();
             unset($mountedActionState);
+
+            $this->rememberMountedActionRecord($action);
 
             if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
                 if ($context['mountedFromUrl'] ?? false) {
@@ -973,6 +976,12 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         // the schema of the action that used to be there, since `getMountedActionSchema()` reads
         // the cache before it builds anything.
         $this->forgetCachedMountedActionSchemas(fromNestingIndex: count($this->mountedActions));
+
+        $this->mountedActionRecords = array_filter(
+            $this->mountedActionRecords,
+            fn (int $actionNestingIndex): bool => $actionNestingIndex < count($this->mountedActions),
+            ARRAY_FILTER_USE_KEY,
+        );
 
         if (! count($this->mountedActions)) {
             $action?->clearRecordAfter();

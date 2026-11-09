@@ -222,11 +222,64 @@ Quiet, bulk, raw SQL, and external writes need a [manual change notification](#d
 
 ### Preserving page state
 
-Changes made in another session or a background job re-render the page, updating its heading, breadcrumbs, custom header and footer content, and widget selection. Your `getHeading()` and `getTitle()` overrides are respected, and the browser title is updated too. The page is not remounted or its forms refilled, so unsaved input and open actions are preserved. Existing child Livewire components, such as widgets and relation managers, retain their own state and do not automatically refresh.
+Changes made in another session or a background job re-render the page, updating its heading, breadcrumbs, custom header and footer content, and widget selection. Your `getHeading()` and `getTitle()` overrides are respected, and the browser title is updated too. The page is not remounted. Edit forms retain unsaved input; view pages refresh their infolists and refill disabled forms using `mutateFormDataBeforeFill()` and normal field hydration, without calling `beforeFill()` or `afterFill()` again. Open actions are preserved. Existing child Livewire components, such as widgets and relation managers, retain their own state and do not automatically refresh.
+
+### Refreshing view action modals
+
+Mounted `ViewAction` modals also listen for their record's changes when its effective model subscription and Echo configuration are active. Panel broadcasting must be enabled when using a panel. Infolists and record-backed modal content re-render, and disabled action forms refill using their configured `fillForm()` data, including `mutateRecordDataUsing()` and translatable content handling. Editing parent or child actions retain their drafts.
+
+The action is not remounted, and `beforeFormFilled()` and `afterFormFilled()` do not run again. Put repeatable data mapping in `fillForm()` or `mutateRecordDataUsing()`, not those hooks. A custom `mountUsing()` callback is not replayed and its form state is not automatically refilled. Enabled action schemas are not refilled. Field hydration callbacks may run during refilling, so keep them safe to repeat.
+
+Subscriptions close when the modal unmounts. Successful resubscription catches up missed changes; notifications for an old mount cannot refill a replacement action. Refreshing and signing re-resolve the mounted action through its existing table, relationship, schema or page context and recheck action authorization. No model attributes are broadcast, and no polling is used. When the record can no longer be resolved or authorized, the last displayed data stays in place rather than receiving fresh values. Soft-deleted records remain available if the action's existing scope includes them.
+
+### Refreshing other action modals
+
+Other mounted, record-backed actions can opt in using `receiveRecordUpdates()`. They use the same model subscription, Echo configuration and authorization checks as view actions:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
+
+Action::make('review')
+    ->receiveRecordUpdates()
+    ->schema([
+        TextEntry::make('title'),
+        TextInput::make('note'),
+    ])
+```
+
+By default, the action's modal re-renders without refilling its form or changing drafts. Entries read from the current record, not the action's form data. Use `receiveRecordUpdates(false)` to disable updates, including the automatic updates on a `ViewAction`. The condition also accepts a closure.
+
+You can provide a repeatable PHP handler using `recordUpdateReceived()`. It runs after the record has been resolved and authorized, before rendering. The handler receives normal action utility injections, including the current `$record`, `$action` and `$livewire`. The `$schema` and `$form` injections both refer to that action's own modal schema, even when a child action is open. For example, you can update a disabled status field without replacing editable fields:
+
+```php
+use App\Models\Post;
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
+
+Action::make('review')
+    ->receiveRecordUpdates()
+    ->schema([
+        TextInput::make('note'),
+        TextInput::make('last_updated_at')->disabled(),
+    ])
+    ->recordUpdateReceived(function (Post $record, Schema $schema): void {
+        $schema->fillPartially([
+            'last_updated_at' => $record->updated_at,
+        ], ['last_updated_at']);
+    })
+```
+
+Registering a handler does not itself enable listening; also call `receiveRecordUpdates()`. Passing `null` removes the handler. On a `ViewAction`, a custom handler replaces its default disabled-form refilling. Callback-requested partial or full rendering is preserved; the action's modal is the default render target, not a restriction on additional rendering.
+
+> [!WARNING]
+> The handler receives an invalidation, not a once-per-save event or an event payload. It also runs when the subscription connects or reconnects, and notifications may repeat or coalesce. Keep it safe to repeat. Listening does not enable edit-conflict protection: replacing editable state can overwrite input typed while a request is in flight, so draft reconciliation needs its own concurrency checks. Subscription authorization is not a substitute for authorization and conflict checks when saving.
 
 ### Authorizing subscriptions
 
-Broadcasts contain no model attributes and use private record-specific channels. Filament authorizes subscriptions through the resource page and rechecks record scope and page access when refreshing. You do not need a channel authorization callback for these built-in subscriptions; your own channels still need their own authorization. Deleted or inaccessible records leave the current screen and unsaved input in place.
+Broadcasts contain no model attributes and use private record-specific channels. Filament authorizes subscriptions through the resource page or mounted action and rechecks record scope and access when refreshing. You do not need a channel authorization callback for these built-in subscriptions; your own channels still need their own authorization. Records that can no longer be resolved or authorized leave the current screen and unsaved input in place.
 
 ## Listening for changes
 

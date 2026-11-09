@@ -75,6 +75,7 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\CanNotify;
     use Concerns\CanOpenModal;
     use Concerns\CanOpenUrl;
+    use Concerns\CanReceiveRecordUpdates;
     use Concerns\CanRedirect;
     use Concerns\CanRequireConfirmation;
     use Concerns\CanSubmitForm;

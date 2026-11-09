@@ -70,7 +70,7 @@ it('automatically enables page updates using the effective model subscription an
     expect($page->hasLiveRecordUpdates())->toBeFalse();
 });
 
-it('renders the current record without refilling the form', function (string $pageClass, string $browserTitle): void {
+it('renders the current record while preserving edit drafts and refreshing view forms', function (string $pageClass, string $browserTitle): void {
     $post = Post::factory()->create(['title' => 'Original title']);
     FilamentRealtime::subscribe(Post::class);
 
@@ -83,7 +83,7 @@ it('renders the current record without refilling the form', function (string $pa
     $post->update(['title' => 'Updated elsewhere']);
 
     $page->call('refreshRecordPage')
-        ->assertSchemaStateSet(['title' => 'Unsaved draft'])
+        ->assertSchemaStateSet(['title' => $pageClass === ViewPost::class ? 'Updated elsewhere' : 'Unsaved draft'])
         ->assertSee('Footer: Updated elsewhere')
         ->assertReturned($browserTitle);
 })->with([
@@ -236,7 +236,7 @@ it('refreshes the page from a browser subscription without replacing drafts, foc
         $page->assertValue($titleInputSelector, 'My unsaved draft')
             ->assertPresent("{$titleInputSelector}:focus");
     } else {
-        $page->assertValue($titleInputSelector, 'Original record title');
+        $page->assertValue($titleInputSelector, 'Changed in another session');
     }
 
     $page->assertNoAccessibilityIssues();

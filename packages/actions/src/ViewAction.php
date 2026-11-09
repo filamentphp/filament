@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
@@ -36,6 +37,14 @@ class ViewAction extends Action
         $this->groupedIcon(FilamentIcon::resolve(ActionsIconAlias::VIEW_ACTION_GROUPED) ?? Heroicon::Eye);
 
         $this->disabledSchema();
+
+        $this->receiveRecordUpdates();
+
+        $this->recordUpdateReceived(static function (Action $action, ?Schema $schema): void {
+            if ($schema?->isDisabled()) {
+                $action->refillForm(['form' => $schema, 'schema' => $schema]);
+            }
+        });
 
         $this->fillForm(function (HasActions & HasSchemas $livewire, Model $record): array {
             if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
