@@ -280,6 +280,25 @@ ImageEntry::make('colleagues.avatar')
 
 <UtilityInjection set="infolistEntries">As well as allowing a static value, the `limitedRemainingText()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+#### Adding a tooltip to the remaining images count
+
+You can add a tooltip to the `+N` count using `limitedRemainingTextTooltip()`. This is separate from `tooltip()`, which applies to each visible image:
+
+```php
+use Filament\Infolists\Components\ImageEntry;
+
+ImageEntry::make('colleagues.avatar')
+    ->circular()
+    ->stacked()
+    ->limit(3)
+    ->limitedRemainingText()
+    ->limitedRemainingTextTooltip('More colleagues')
+```
+
+<UtilityInjection set="infolistEntries">As well as allowing a static value, the `limitedRemainingTextTooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters. The `$state` contains the full entry state, including images hidden by the limit.</UtilityInjection>
+
+The tooltip is only displayed when the remaining images count is visible. Pass `null` to disable it.
+
 ## Prevent file existence checks
 
 When the schema is loaded, it will automatically detect whether the images exist to prevent errors for missing files. This is all done on the backend. When using remote storage with many images, this can be time-consuming. You can use the `checkFileExistence(false)` method to disable this feature:

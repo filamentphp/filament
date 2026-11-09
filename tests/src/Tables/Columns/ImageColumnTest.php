@@ -13,7 +13,10 @@ use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\HtmlString;
 use Livewire\Component;
+use RuntimeException;
 
 use function Filament\Tests\livewire;
 
@@ -130,6 +133,23 @@ describe('stacking and limits', function (): void {
     it('defaults `hasLimitedRemainingText()` to `false`', function (): void {
         expect(ImageColumn::make('avatar')->hasLimitedRemainingText())->toBeFalse();
     });
+
+    it('can configure and clear `limitedRemainingTextTooltip()`', function (mixed $tooltip): void {
+        $column = ImageColumn::make('avatar');
+
+        expect($column->getLimitedRemainingTextTooltip())->toBeNull();
+
+        $column->limitedRemainingTextTooltip($tooltip);
+
+        expect((string) $column->getLimitedRemainingTextTooltip())->toBe('More colleagues');
+
+        $column->limitedRemainingTextTooltip(null);
+
+        expect($column->getLimitedRemainingTextTooltip())->toBeNull();
+    })->with([
+        'text' => ['More colleagues'],
+        'HTML' => [new HtmlString('More colleagues')],
+    ]);
 });
 
 describe('file visibility and existence', function (): void {
@@ -233,6 +253,18 @@ describe('state and related record injection', function (): void {
 });
 
 describe('rendering and escaping', function (): void {
+    it('only evaluates `limitedRemainingTextTooltip()` when the remaining count is visible', function (int $imageCount, bool $showRemainingCount): void {
+        $column = ImageColumn::make('avatars')
+            ->table(livewire(TestTableWithImageColumn::class)->instance()->getTable())
+            ->record(new User)
+            ->state(array_fill(0, $imageCount, 'https://example.com/avatar.jpg'))
+            ->limit(3)
+            ->limitedRemainingText($showRemainingCount)
+            ->limitedRemainingTextTooltip(static fn () => throw new RuntimeException('The hidden count tooltip must not be evaluated.'));
+
+        expect($column->toHtml())->not->toContain('+2');
+    })->with([[3, true], [5, false]]);
+
     it('can render', function (): void {
         Post::factory()->count(5)->create();
 
@@ -351,6 +383,25 @@ describe('rendering', function (): void {
         Post::factory()->create();
         livewire(RenderImageColumnWithClosureCheckFileExistence::class)->assertSuccessful();
     });
+});
+
+it('shows a separate `limitedRemainingTextTooltip()` without interpreting plain text as HTML', function (): void {
+    Artisan::call('filament:assets');
+    Post::factory()->create();
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/columns-browser-test?imageTooltips=1');
+
+    $page
+        ->assertCount('[data-testid="image-stack"] img', 3)
+        ->hover('[data-testid="image-stack"] img >> nth=0')
+        ->assertSeeIn('[role="tooltip"]', 'Visible colleague')
+        ->hover('[data-testid="image-stack"] :text-is("+2")')
+        ->assertSeeIn('[role="tooltip"]', 'More from 5 colleagues: <b>Dan & Alex</b>')
+        ->assertMissing('[role="tooltip"] b')
+        ->assertNoSmoke();
+
+    $page->inDarkMode()->assertNoAccessibilityIssues();
 });
 
 class TestTableWithImageColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
