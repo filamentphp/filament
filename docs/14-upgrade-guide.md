@@ -201,16 +201,16 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
 ### High-impact changes
 
 <Disclosure open x-show="packages.includes('forms') || packages.includes('infolists') || packages.includes('tables')">
-<span slot="summary">File visibility is now private by default for non-local disks</span>
+<span slot="summary">File visibility is now private by default, except for the public disk</span>
 
-In addition to the [default disk being changed to `local`](#publishing-the-configuration-file), the file visibility settings for non-local disks (such as `s3`, but not `public` or `local`) across various components have been changed to `private` instead of `public` by default. This means that files aren't publicly accessible by default, and you need to generate a temporary signed URL to access them. This change affects the following components:
+In addition to the [default disk being changed to `local`](#publishing-the-configuration-file), the file visibility settings for disks such as `local` and `s3` across various components have been changed to `private` instead of `public` by default. Only disks named `public` still default to `public` visibility. This means that files aren't publicly accessible by default, and you need to generate a temporary signed URL to access them. This change affects the following components:
 
 - `FileUpload` form field, including `SpatieMediaLibraryFileUpload`
 - `ImageColumn` table column, including `SpatieMediaLibraryImageColumn`
 - `ImageEntry` infolist entry, including `SpatieMediaLibraryImageEntry`
 
 > [!TIP]
-> If you use a non-local disk such as `s3`, you can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+> If you use a disk other than `public`, such as `local` or `s3`, you can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
 >
 > ```php
 > use Filament\Forms\Components\FileUpload;
