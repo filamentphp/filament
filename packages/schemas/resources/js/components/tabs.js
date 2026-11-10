@@ -681,7 +681,8 @@ export default function tabsSchemaComponent({
                 const focused = this.lastFocusedElement
                 if (
                     focused &&
-                    (this.lastFocusedTabset === this.root ||
+                    ((this.lastFocusedTabset === this.root &&
+                        !this.lastFocusedPanel) ||
                         (this.lastFocusedPanel &&
                             !this.lastFocusedPanel.checkVisibility())) &&
                     (!focused.checkVisibility() ||
