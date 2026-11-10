@@ -205,7 +205,7 @@ ImageEntry::make('colleagues.avatar')
     ->imageHeight(40)
     ->circular()
     ->stacked()
-    ->overlap(2)
+    ->overlap(4)
 ```
 
 <AutoScreenshot name="infolists/entries/image/stacked-overlap" alt="Image entry with stacked overlap" />

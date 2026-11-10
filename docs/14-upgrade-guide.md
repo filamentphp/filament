@@ -203,14 +203,18 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
 <Disclosure open x-show="packages.includes('forms') || packages.includes('infolists') || packages.includes('tables')">
 <span slot="summary">File visibility is now private by default, except for the public disk</span>
 
-In addition to the [default disk being changed to `local`](#publishing-the-configuration-file), the file visibility settings for disks such as `local` and `s3` across various components have been changed to `private` instead of `public` by default. Only disks named `public` still default to `public` visibility. This means that files aren't publicly accessible by default, and you need to generate a temporary signed URL to access them. This change affects the following components:
+In addition to the [default disk being changed to `local`](#publishing-the-configuration-file), the file visibility settings for disks such as `local` and `s3` across various components have been changed to `private` instead of `public` by default. Only a disk named `public` defaults to `public` visibility. Filament will generate temporary signed URLs to access private files if the disk supports them. This change affects the following components:
 
 - `FileUpload` form field, including `SpatieMediaLibraryFileUpload`
 - `ImageColumn` table column, including `SpatieMediaLibraryImageColumn`
 - `ImageEntry` infolist entry, including `SpatieMediaLibraryImageEntry`
 
+Laravel 11 introduced a new "Local Temporary URLs" feature. Users who created their project before this feature was added may have to [update their `config/filesystems.php` file to enable it](https://laravel.com/docs/filesystem#enabling-local-temporary-urls).
+
 > [!TIP]
-> If you use a disk other than `public`, such as `local` or `s3`, you can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+> To preserve the v3 behavior of storing files on the `public` disk, update the [configuration file](#publishing-the-configuration-file). Setting `visibility('public')` does not change the disk or make private local files publicly accessible.
+>
+> If your files are stored in a public disk such as `s3`, you can preserve the old default visibility across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
 >
 > ```php
 > use Filament\Forms\Components\FileUpload;

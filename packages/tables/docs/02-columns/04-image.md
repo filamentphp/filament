@@ -205,7 +205,7 @@ ImageColumn::make('colleagues.avatar')
     ->imageHeight(40)
     ->circular()
     ->stacked()
-    ->overlap(2)
+    ->overlap(4)
 ```
 
 <AutoScreenshot name="tables/columns/image/stacked-overlap" alt="Image column with stacked overlap" />
