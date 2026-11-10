@@ -601,7 +601,7 @@ class ImageColumn extends Column implements HasEmbeddedView
                 ->merge([
                     'x-tooltip' => filled($tooltip = $this->getLimitedRemainingTextTooltip())
                         ? '{
-                                content: ' . Js::from($tooltip) . ',
+                                content: ' . Js::from($tooltip instanceof Htmlable ? $tooltip->toHtml() : $tooltip) . ',
                                 theme: $store.theme,
                                 allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                             }'
