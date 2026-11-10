@@ -51,7 +51,12 @@ ImageEntry::make('header_image')
 
 ## Public images
 
-By default, Filament will generate temporary URLs to images in the filesystem, unless the [disk](#managing-the-image-disk) is set to `public`. If your images are stored in a public disk, you can set the `visibility()` to `public`:
+By default, images use `private` visibility unless the [disk](#managing-the-image-disk) is named `public`. Filament attempts to generate temporary URLs for private images if the disk supports them, falling back to permanent URLs if it cannot. The default visibility depends on the disk's name, not its filesystem configuration.
+
+> [!NOTE]
+> If your application uses the `local` disk, you may need to [enable local temporary URLs](https://laravel.com/docs/filesystem#enabling-local-temporary-urls) by adding `'serve' => true` to the disk's configuration in `config/filesystems.php`.
+
+If your images are already publicly accessible, you can set `visibility('public')` to use permanent URLs. This does not change the disk or make private files publicly accessible:
 
 ```php
 use Filament\Infolists\Components\ImageEntry;
@@ -205,7 +210,7 @@ ImageEntry::make('colleagues.avatar')
     ->imageHeight(40)
     ->circular()
     ->stacked()
-    ->overlap(2)
+    ->overlap(4)
 ```
 
 <AutoScreenshot name="infolists/entries/image/stacked-overlap" alt="Image entry with stacked overlap" />
