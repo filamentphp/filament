@@ -209,13 +209,8 @@ In addition to the [default disk being changed to `local`](#publishing-the-confi
 - `ImageColumn` table column, including `SpatieMediaLibraryImageColumn`
 - `ImageEntry` infolist entry, including `SpatieMediaLibraryImageEntry`
 
-> [!NOTE]
-> Laravel 11 introduced a new "Local Temporary URLs" feature. Users who created their project before this feature was added may have to [update their `config/filesystems.php` file to enable it](https://laravel.com/docs/filesystem#enabling-local-temporary-urls).
-
 > [!TIP]
-> To preserve the v3 behavior of storing files on the `public` disk, update the [configuration file](#publishing-the-configuration-file). Setting `visibility('public')` does not change the disk or make private local files publicly accessible.
->
-> If your files are stored on a publicly accessible disk such as `s3`, you can preserve the old default visibility across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+> If you use a non-local disk such as `s3`, you can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
 >
 > ```php
 > use Filament\Forms\Components\FileUpload;
