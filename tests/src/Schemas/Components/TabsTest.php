@@ -939,6 +939,31 @@ it('retains lazy panel shells and selection through `Livewire` morphs', function
     $page->assertNoSmoke();
 });
 
+it('preserves the scroll position when deleting a `Repeater` item inside the active `Tab`', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/tabs-browser-test?repeater=1');
+    $deleteItem = ':nth-match([data-testid="delete-item"], 27)';
+
+    $page->click('#profile-tabs [data-tab-key="contact"]')
+        ->assertVisible('#profile-contact')
+        ->assertCount('[data-testid="item-name"]', 30);
+
+    $page->page()->locator($deleteItem)->scrollIntoViewIfNeeded();
+    $page->assertScript('window.scrollY > window.innerHeight', true);
+    $scrollPosition = $page->script('window.scrollY');
+
+    $page->click($deleteItem)
+        ->assertCount('[data-testid="item-name"]', 29)
+        ->assertValue(':nth-match([data-testid="item-name"], 27)', 'Item 28');
+
+    // Allow deferred focus recovery to finish before checking the scroll position.
+    $page->script('() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))');
+
+    $page->assertScript('window.scrollY', $scrollPosition)
+        ->assertNoSmoke();
+});
+
 it('binds named and general exposed method calls to the active `Tab`', function (): void {
     $this->actingAs(User::factory()->create());
 
