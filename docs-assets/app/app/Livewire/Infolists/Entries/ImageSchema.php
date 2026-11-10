@@ -144,7 +144,7 @@ class ImageSchema
                         ])
                         ->circular()
                         ->stacked()
-                        ->overlap(2),
+                        ->overlap(4),
                 ]),
         ];
     }
