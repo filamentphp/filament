@@ -24,7 +24,7 @@ return [
         ],
 
         'open_user_menu' => [
-            'label' => 'Vartotojo meniu',
+            'label' => 'Naudotojo meniu',
         ],
 
         'sidebar' => [
