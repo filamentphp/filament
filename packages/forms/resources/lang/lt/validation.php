@@ -7,4 +7,6 @@ return [
         'only_one_must_be_selected' => 'Tik vienas :attribute laukas gali būti pasirinktas.',
     ],
 
+    'tampered_file_path' => 'Lauke :attribute nurodytas neleidžiamas failo kelias.',
+
 ];

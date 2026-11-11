@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'Sukurti :label',
+    'title' => 'Įrašo kūrimas',
 
     'breadcrumb' => 'Sukurti',
 

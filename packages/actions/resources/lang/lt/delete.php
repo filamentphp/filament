@@ -57,13 +57,13 @@ return [
             'deleted_partial' => [
                 'title' => 'Ištrinta :count iš :total',
                 'missing_authorization_failure_message' => 'Neturite leidimo ištrinti :count.',
-                'missing_processing_failure_message' => ':count negalėjo būti ištrinta.',
+                'missing_processing_failure_message' => ':count nepavyko ištrinti.',
             ],
 
             'deleted_none' => [
                 'title' => 'Nepavyko ištrinti',
                 'missing_authorization_failure_message' => 'Neturite leidimo ištrinti :count.',
-                'missing_processing_failure_message' => ':count negalėjo būti ištrinta.',
+                'missing_processing_failure_message' => ':count nepavyko ištrinti.',
             ],
 
         ],

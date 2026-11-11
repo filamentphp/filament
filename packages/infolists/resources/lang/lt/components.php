@@ -7,12 +7,17 @@ return [
         'text' => [
 
             'actions' => [
-                'collapse_list' => 'Rodyti dar :count',
-                'expand_list' => 'Slėpti :count',
+                'collapse_list' => 'Rodyti :count mažiau',
+                'expand_list' => 'Rodyti dar :count',
             ],
 
             'more_list_items' => 'ir dar :count',
 
+        ],
+
+        'icon' => [
+            'true' => 'Taip',
+            'false' => 'Ne',
         ],
 
         'key_value' => [

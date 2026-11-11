@@ -14,8 +14,13 @@ return [
 
             'label' => 'Grupės',
 
+            'group' => [
+                'label' => 'Grupė',
+            ],
+
             'block' => [
-                'label' => 'Blokas (ARBA)',
+                'label' => 'Sąlyga ARBA',
+                'picker_group' => 'Logika',
                 'or' => 'ARBA',
             ],
 
@@ -34,6 +39,8 @@ return [
     ],
 
     'no_rules' => '(Nėra taisyklių)',
+
+    'max_rules_reached_tooltip' => 'Pasiekėte didžiausią taisyklių skaičių: :count.',
 
     'item_separators' => [
         'and' => 'IR',
