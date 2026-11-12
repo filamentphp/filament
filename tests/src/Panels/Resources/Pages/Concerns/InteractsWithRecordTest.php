@@ -267,7 +267,7 @@ it('refreshes untouched values from a browser subscription without replacing dra
         $page->assertValue('input[id="form.rating"]', '7')
             ->assertScript('window.recordRefreshRequests', 1);
 
-        $post->update(['title' => 'Original record title', 'rating' => 2]);
+        $post->refresh()->update(['title' => 'Original record title', 'rating' => 2]);
         $page->script(<<<'JS'
             window.fetch = window.originalSaveFetch
             window.recordTitleTestTransport.notify()
