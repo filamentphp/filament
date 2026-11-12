@@ -256,7 +256,12 @@ class EditRecord extends Page
             Event::dispatch(RecordSaved::class, ['record' => $this->record, 'data' => $data, 'page' => $this]);
 
             if ($comparison) {
-                $this->baseFormState = $this->getFormStateForStaleEditComparison($this->getLockedRecord());
+                $baseFormState = $this->getFormStateForStaleEditComparison($this->getLockedRecord());
+
+                if (! store($this)->has('recordSaveOperation')) {
+                    $this->baseFormState = $baseFormState;
+                }
+
                 $this->staleFormState = null;
             }
         } catch (Halt $exception) {
@@ -319,6 +324,12 @@ class EditRecord extends Page
                 $this->resolveScopedModelProperties();
                 $this->authorizeAccess();
                 $this->form->model($this->getRecord());
+
+                if ($comparison) {
+                    // Do not publish newly read values until native scope and
+                    // authorization have been established for this response.
+                    $this->baseFormState = $baseFormState;
+                }
             }
 
             store($this)->set('recordSaveSucceeded', true);

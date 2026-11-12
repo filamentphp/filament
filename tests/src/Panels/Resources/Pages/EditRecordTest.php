@@ -37,6 +37,7 @@ use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
+use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource;
 use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource\Pages\EditUserPost;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
@@ -182,6 +183,75 @@ it('correlates committed page saves without restricting custom bindings or taggi
     'mutable route key' => [true, false],
     'custom binding includes trashed records' => [true, true],
 ]);
+
+it('does not reuse an acknowledgement when a later batched save needs ordinary invalidation', function (): void {
+    config(['filament.broadcasting.echo' => ['broadcaster' => 'null']]);
+    FilamentRealtime::subscribe(Post::class);
+    Event::fake([RecordChangedBroadcast::class]);
+    $post = Post::factory()->create(['title' => 'Original title']);
+    $saveCount = 0;
+
+    Event::listen(RecordSaved::class, static function (Post $record) use ($post, &$saveCount): void {
+        if ((! $record->is($post)) || (++$saveCount !== 2)) {
+            return;
+        }
+
+        $savedRecord = Post::findOrFail($record->getKey());
+        $savedRecord->update(['title' => 'Final committed title']);
+        $savedRecord->delete();
+    });
+
+    $page = livewire(new class extends EditPost
+    {
+        protected static string $resource = TitleRoutePostResource::class;
+    }, ['record' => $post->title])->fillForm(['title' => 'My draft']);
+    $operationId = bin2hex(random_bytes(16));
+
+    $page->update(calls: [
+        ['method' => 'save', 'params' => [false, false], 'metadata' => ['filamentRecordSave' => $operationId]],
+        ['method' => 'save', 'params' => [false, true], 'metadata' => ['filamentRecordSave' => $operationId]],
+    ])->assertSuccessful()->assertHasNoFormErrors();
+
+    expect($post->fresh()->title)->toBe('Final committed title')
+        ->and($post->fresh()->trashed())->toBeTrue()
+        ->and($page->effects)->not->toHaveKey('filamentRecordSave');
+
+    $page->call('refreshRecordPage')->assertSuccessful()->assertSee('Final committed title');
+});
+
+it('does not expose a new baseline when save reconciliation falls outside the mounted scope', function (): void {
+    $parent = User::factory()->create();
+    $otherParent = User::factory()->create();
+    $post = Post::factory()->create(['author_id' => $parent->getKey(), 'title' => 'Original title']);
+    $page = livewire(new class extends EditUserPost
+    {
+        protected static string $resource = TitleRouteUserPostResource::class;
+    }, ['record' => $post->title, 'parentRecord' => $parent])->fillForm(['title' => 'My draft']);
+
+    Event::listen(RecordSaved::class, static function (Post $record) use ($post, $otherParent): void {
+        if ($record->is($post)) {
+            Post::findOrFail($record->getKey())->update([
+                'author_id' => $otherParent->getKey(),
+                'title' => 'Unauthorized current secret',
+            ]);
+        }
+    });
+
+    $page->update(calls: [[
+        'method' => 'save',
+        'params' => [false],
+        'metadata' => ['filamentRecordSave' => bin2hex(random_bytes(16))],
+    ]])->assertSuccessful()->assertHasNoFormErrors()
+        ->assertSet('baseFormState.title', 'Original title')
+        ->assertSchemaStateSet(['title' => 'My draft']);
+
+    expect($post->fresh()->title)->toBe('Unauthorized current secret')
+        ->and($post->fresh()->author_id)->toBe($otherParent->getKey())
+        ->and($page->effects)->not->toHaveKey('filamentRecordSave')
+        ->and(json_encode([$page->snapshot, $page->effects]))->not->toContain('Unauthorized current secret');
+
+    $page->call('refreshRecordPage')->assertNotFound();
+});
 
 it('does not acknowledge page saves rejected by validation or a stale edit', function (bool $isStale): void {
     $post = Post::factory()->create(['title' => 'Original']);
@@ -1492,6 +1562,11 @@ it('renders actions based on policy', function (string $action, string $policyMe
     'replicate action with policy returning false' => fn (): array => [ReplicateAction::class, 'replicate', false, false],
     'replicate action with policy returning denied response' => fn (): array => [ReplicateAction::class, 'replicate', Response::deny(), false],
 ]);
+
+class TitleRouteUserPostResource extends UserPostResource
+{
+    protected static ?string $recordRouteKeyName = 'title';
+}
 
 class TitleRoutePostResource extends PostResource
 {

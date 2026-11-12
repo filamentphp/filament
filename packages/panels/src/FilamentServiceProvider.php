@@ -126,6 +126,8 @@ class FilamentServiceProvider extends PackageServiceProvider
                 return null;
             }
 
+            unset($context->effects['filamentRecordSave']);
+
             $operationId = $metadata['filamentRecordSave'] ?? null;
 
             if ((! is_string($operationId)) || (! preg_match('/\A[a-f0-9]{32}\z/', $operationId))) {
