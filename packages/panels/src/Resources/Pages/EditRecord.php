@@ -289,6 +289,23 @@ class EditRecord extends Page
                 // another model instance. Reuse native scope and authorization
                 // before acknowledging that this response replaces a refresh.
                 $this->hasResolvedParentRecordForRequest = false;
+                $this->mountParentRecord();
+
+                $resource = static::getResource();
+                $routeKeyName = $resource::getRecordRouteKeyName() ?? $this->getRecord()->getRouteKeyName();
+
+                if ($routeKeyName !== $this->getRecord()->getKeyName()) {
+                    $query = $resource::getRecordRouteBindingEloquentQuery()->useWritePdo()->whereKey($this->getRecord()->getKey());
+
+                    if ($parentRecord = $this->getParentRecord()) {
+                        $query = $resource::scopeEloquentQueryToParent($query, $parentRecord);
+                    }
+
+                    // Refresh a mutable route key by stable identity before
+                    // retaining the native binding and authorization checks.
+                    $this->record = $query->firstOrFail();
+                }
+
                 $this->hasResolvedRecordForRequest = false;
                 $this->resolveScopedModelProperties();
                 $this->authorizeAccess();

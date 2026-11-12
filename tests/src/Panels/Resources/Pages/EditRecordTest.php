@@ -107,7 +107,7 @@ it('can save', function (): void {
     Event::assertDispatched(RecordSaved::class);
 });
 
-it('correlates committed page saves without tagging other records or later changes', function (): void {
+it('correlates committed page saves without tagging other records or later changes', function (bool $hasMutableRouteKey): void {
     config(['filament.broadcasting.echo' => ['broadcaster' => 'null']]);
     FilamentRealtime::subscribe(Post::class)->onlyEvents(['updated']);
     $post = Post::factory()->create(['title' => 'Original title']);
@@ -126,7 +126,11 @@ it('correlates committed page saves without tagging other records or later chang
         }
     });
 
-    $page = livewire(EditPost::class, ['record' => $post->getKey()])
+    $pageClass = $hasMutableRouteKey ? new class extends EditPost
+    {
+        protected static string $resource = TitleRoutePostResource::class;
+    } : EditPost::class;
+    $page = livewire($pageClass, ['record' => $hasMutableRouteKey ? $post->title : $post->getKey()])
         ->fillForm(['title' => 'Saved in this editor']);
 
     DB::beginTransaction();
@@ -156,7 +160,7 @@ it('correlates committed page saves without tagging other records or later chang
 
     $post->update(['title' => 'Later change']);
     expect(Event::dispatched(RecordChangedBroadcast::class)->last()[0]->broadcastWith())->toBe([]);
-});
+})->with([false, true]);
 
 it('does not acknowledge page saves rejected by validation or a stale edit', function (bool $isStale): void {
     $post = Post::factory()->create(['title' => 'Original']);
@@ -1467,3 +1471,10 @@ it('renders actions based on policy', function (string $action, string $policyMe
     'replicate action with policy returning false' => fn (): array => [ReplicateAction::class, 'replicate', false, false],
     'replicate action with policy returning denied response' => fn (): array => [ReplicateAction::class, 'replicate', Response::deny(), false],
 ]);
+
+class TitleRoutePostResource extends PostResource
+{
+    protected static ?string $slug = 'posts';
+
+    protected static ?string $recordRouteKeyName = 'title';
+}
