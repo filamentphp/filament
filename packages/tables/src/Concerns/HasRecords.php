@@ -284,12 +284,14 @@ trait HasRecords
 
     /** @internal */
     #[Unexposed]
-    public function getTableRecordForUpdate(string $key): Model | array | null
+    public function getTableRecordForUpdate(string $key): ?Model
     {
         $this->shouldLockTableRecordForUpdate = true;
 
         try {
-            return $this->getTableRecord($key);
+            $record = $this->getTableRecord($key);
+
+            return ($record instanceof Model) ? $record : null;
         } finally {
             $this->shouldLockTableRecordForUpdate = false;
         }

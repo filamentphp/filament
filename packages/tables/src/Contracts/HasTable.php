@@ -80,6 +80,9 @@ interface HasTable
 
     public function getTable(): Table;
 
+    /** @internal */
+    public function rebuildTable(): void;
+
     public function getTableFiltersForm(): Schema;
 
     public function getTableRecords(): Collection | Paginator | CursorPaginator;
@@ -102,6 +105,9 @@ interface HasTable
      * @return Model | array<string, mixed> | null
      */
     public function getTableRecord(?string $key): Model | array | null;
+
+    /** @internal */
+    public function getTableRecordForUpdate(string $key): ?Model;
 
     /**
      * @param  Model | array<string, mixed>  $record

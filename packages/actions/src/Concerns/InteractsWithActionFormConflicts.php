@@ -35,6 +35,8 @@ trait InteractsWithActionFormConflicts
         }
 
         $record = $action->getRecord();
+        abort_unless($record instanceof Model, 404);
+
         $this->actionFormConflictStates[$action->getNestingIndex()] = [
             'record' => [$record::class, (string) $record->getKey(), $record->getConnection()->getName()],
             'context' => $this->getActionFormConflictContext($action),
@@ -144,7 +146,7 @@ trait InteractsWithActionFormConflicts
         $owner->cachedMountedActions = null;
 
         if ($owner instanceof HasTable) {
-            $owner->table = $owner->table($owner->makeTable());
+            $owner->rebuildTable();
         }
 
         // A mounting action can hold an entry by reference. Do not retain that

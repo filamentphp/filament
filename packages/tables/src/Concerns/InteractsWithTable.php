@@ -51,7 +51,7 @@ trait InteractsWithTable
     #[Unexposed]
     public function bootedInteractsWithTable(): void
     {
-        $this->table = $this->table($this->makeTable());
+        $this->rebuildTable();
 
         $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm(...));
 
@@ -209,6 +209,13 @@ trait InteractsWithTable
     public function getTable(): Table
     {
         return $this->table;
+    }
+
+    /** @internal */
+    #[Unexposed]
+    public function rebuildTable(): void
+    {
+        $this->table = $this->table($this->makeTable());
     }
 
     protected function makeTable(): Table
