@@ -224,7 +224,26 @@ it('refreshes untouched values from a browser subscription without replacing dra
         ->assertSeeIn('h1:visible', 'Original record title');
 
     if ($operation === 'edit') {
-        $page->fill($titleInputSelector, 'My unsaved draft');
+        $hasUnsavedChanges = <<<'JS'
+            (() => {
+                const event = new Event('beforeunload', { cancelable: true })
+                window.dispatchEvent(event)
+                return event.defaultPrevented
+            })()
+            JS;
+
+        $page->assertScript($hasUnsavedChanges, false)
+            ->fill($titleInputSelector, 'My unsaved draft')
+            ->assertScript($hasUnsavedChanges, true);
+
+        $post->update(['rating' => 5]);
+        $page->script('window.recordTitleTestTransport.notify([]); undefined');
+        $page->assertValue('input[id="form.rating"]', '5')
+            ->assertScript($hasUnsavedChanges, true)
+            ->fill($titleInputSelector, 'Original record title')
+            ->assertScript($hasUnsavedChanges, false)
+            ->fill($titleInputSelector, 'My unsaved draft')
+            ->assertScript($hasUnsavedChanges, true);
     }
 
     $post->update(['title' => 'Changed in another session', 'rating' => 8]);

@@ -119,7 +119,7 @@ class AdminPanelProvider extends PanelProvider
             ->emailChangeVerification()
             ->emailVerification()
             ->profile()
-            ->unsavedChangesAlerts(static fn (): bool => request()->routeIs('filament.admin.pages.unsaved-changes-alert-browser-test'))
+            ->unsavedChangesAlerts(static fn (): bool => request()->routeIs('filament.admin.pages.unsaved-changes-alert-browser-test', 'filament.admin.resources.posts.edit'))
             ->livewireComponents([
                 JsWidget::class,
                 ScopedDepartmentsRelationManager::class,

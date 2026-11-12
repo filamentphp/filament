@@ -27,6 +27,10 @@ trait ResolvesFormConflicts
     #[Locked]
     public array $baseFormState = [];
 
+    /** @var array<string, mixed> */
+    #[Locked]
+    public array $savedFormData = [];
+
     /** @var array<string, mixed> | null */
     #[Locked]
     public ?array $staleFormState = null;

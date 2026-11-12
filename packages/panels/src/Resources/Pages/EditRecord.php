@@ -54,7 +54,9 @@ class EditRecord extends Page
         refreshRecordPage as protected refreshBaseRecordPage;
     }
     use Concerns\ResolvesFormConflicts;
-    use HasUnsavedDataChangesAlert;
+    use HasUnsavedDataChangesAlert {
+        rememberData as rememberBaseData;
+    }
 
     /**
      * @var array<string, mixed> | null
@@ -168,20 +170,32 @@ class EditRecord extends Page
         return null;
     }
 
+    protected function rememberData(): void
+    {
+        $this->rememberBaseData();
+
+        if ($this->getFormEditConflictHandler() && $this->hasUnsavedDataChangesAlert()) {
+            // Keep the raw alert baseline, including non-dehydrated values and
+            // component item keys, separate from normalized conflict state.
+            $this->savedFormData = $this->data ?? [];
+        }
+    }
+
     #[Exposed]
     public function refreshRecordPage(bool $shouldRefreshForm = true): ?string
     {
         $title = $this->refreshBaseRecordPage();
 
         if (($title !== null) && $shouldRefreshForm && $this->getFormEditConflictHandler() && ($this->staleFormState === null)) {
-            $wasUnedited = $this->hasUnsavedDataChangesAlert()
-                && ($this->savedDataHash === md5((string) str(json_encode($this->data, JSON_UNESCAPED_UNICODE))->replace('\\', '')));
+            $handler = $this->getFormEditConflictHandler();
             $comparison = $this->getFormStateComparison()->ignoredStatePaths([]);
-            $this->baseFormState = $this->getFormEditConflictHandler()->acceptIncomingState($this->form, $comparison, $this->formConflictPreviewState['current']);
+            $this->baseFormState = $handler->acceptIncomingState($this->form, $comparison, $this->formConflictPreviewState['current']);
             $this->formConflictPreviewState = [];
 
-            if ($wasUnedited) {
-                $this->rememberData();
+            if ($this->hasUnsavedDataChangesAlert()) {
+                $paths = array_merge([], ...array_values(array_intersect_key($comparison->getStatePathGroups(), array_flip($comparison->getIncomingPaths()))));
+                $this->savedFormData = $handler->acceptBaseline($this->savedFormData, $this->data ?? [], $paths);
+                $this->savedDataHash = md5((string) str(json_encode($this->savedFormData, JSON_UNESCAPED_UNICODE))->replace('\\', ''));
             }
         }
 
