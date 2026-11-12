@@ -16,7 +16,7 @@ return [
 
                 'label' => 'Įveskite 6 skaitmenų kodą, kurį jums atsiuntėme el. paštu',
 
-                'validation_attribute' => 'code',
+                'validation_attribute' => 'kodas',
 
                 'actions' => [
 

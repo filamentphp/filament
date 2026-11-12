@@ -2,36 +2,36 @@
 
 return [
 
-    'label' => 'Turn off',
+    'label' => 'Išjungti',
 
     'modal' => [
 
-        'heading' => 'Disable email verification codes',
+        'heading' => 'Išjungti el. pašto patvirtinimo kodus',
 
-        'description' => 'Are you sure you want to stop receiving email verification codes? Disabling this will remove an extra layer of security from your account.',
+        'description' => 'Ar tikrai norite nustoti gauti el. pašto patvirtinimo kodus? Tai panaikins papildomą apsaugos sluoksnį jūsų paskyroje.',
 
         'form' => [
 
             'code' => [
 
-                'label' => 'Enter the 6-digit code we sent you by email',
+                'label' => 'Įveskite 6 skaitmenų kodą, kurį atsiuntėme el. paštu',
 
-                'validation_attribute' => 'code',
+                'validation_attribute' => 'kodas',
 
                 'actions' => [
 
                     'resend' => [
 
-                        'label' => 'Send a new code by email',
+                        'label' => 'Siųsti naują kodą el. paštu',
 
                         'notifications' => [
 
                             'resent' => [
-                                'title' => 'We\'ve sent you a new code by email',
+                                'title' => 'Išsiuntėme jums naują kodą el. paštu',
                             ],
 
                             'throttled' => [
-                                'title' => 'Too many resend attempts. Please wait before requesting another code.',
+                                'title' => 'Per daug bandymų siųsti kodą. Palaukite prieš prašydami naujo kodo.',
                             ],
 
                         ],
@@ -42,7 +42,7 @@ return [
 
                 'messages' => [
 
-                    'invalid' => 'The code you entered is invalid.',
+                    'invalid' => 'Įvestas kodas yra neteisingas.',
 
                     'rate_limited' => 'Per daug bandymų. Pabandykite vėliau.',
 
@@ -55,7 +55,7 @@ return [
         'actions' => [
 
             'submit' => [
-                'label' => 'Disable email verification codes',
+                'label' => 'Išjungti el. pašto patvirtinimo kodus',
             ],
 
         ],
@@ -65,7 +65,7 @@ return [
     'notifications' => [
 
         'disabled' => [
-            'title' => 'Email verification codes have been disabled',
+            'title' => 'El. pašto patvirtinimo kodai išjungti',
         ],
 
     ],

@@ -22,12 +22,12 @@ return [
     'notifications' => [
 
         'notification_resent' => [
-            'title' => 'Persiuntėme el. laišką dar karta.',
+            'title' => 'Persiuntėme el. laišką dar kartą.',
         ],
 
         'notification_resend_throttled' => [
-            'title' => 'Per daug bandymų išsiųsti dar karta',
-            'body' => 'Bandykite dar kartą už :seconds sekundžių.',
+            'title' => 'Per daug bandymų išsiųsti dar kartą',
+            'body' => 'Bandykite dar kartą po :seconds sekundžių.',
         ],
 
     ],

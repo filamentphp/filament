@@ -6,7 +6,7 @@ return [
 
     'lines' => [
         'Jūsų prisijungimo kodas yra: :code',
-        'Šis kodas galios minutę.|Šis kodas galios :minutes minutes.',
+        'Šis kodas galios 1 minutę.|Šis kodas galios :minutes minutes.|Šis kodas galios :minutes minučių.',
     ],
 
 ];

@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'Redaguoti :label',
+    'title' => 'Įrašo redagavimas',
 
     'breadcrumb' => 'Redaguoti',
 

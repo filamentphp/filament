@@ -16,18 +16,18 @@ return [
 
         'password' => [
             'label' => 'Naujas slaptažodis',
-            'validation_attribute' => 'password',
+            'validation_attribute' => 'slaptažodis',
         ],
 
         'password_confirmation' => [
             'label' => 'Patvirtinkite naują slaptažodį',
-            'validation_attribute' => 'password confirmation',
+            'validation_attribute' => 'slaptažodžio patvirtinimas',
         ],
 
         'current_password' => [
             'label' => 'Dabartinis slaptažodis',
             'below_content' => 'Saugumo sumetimais, prašome patvirtinti savo slaptažodį, kad galėtumėte tęsti.',
-            'validation_attribute' => 'current password',
+            'validation_attribute' => 'dabartinis slaptažodis',
         ],
 
         'actions' => [
@@ -56,7 +56,7 @@ return [
         ],
 
         'throttled' => [
-            'title' => 'Per daug užklausų. Pabandykite dar kartą po :seconds sekundžių. ',
+            'title' => 'Per daug užklausų. Pabandykite dar kartą po :seconds sekundžių.',
             'body' => 'Pabandykite dar kartą po :seconds sekundžių.',
         ],
 
