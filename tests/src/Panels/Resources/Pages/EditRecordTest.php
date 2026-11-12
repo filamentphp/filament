@@ -112,7 +112,7 @@ it('correlates committed page saves without tagging other records or later chang
     FilamentRealtime::subscribe(Post::class)->onlyEvents(['updated']);
     $post = Post::factory()->create(['title' => 'Original title']);
     $otherPost = Post::factory()->create();
-    $operationId = (string) Str::uuid();
+    $operationId = bin2hex(random_bytes(16));
     Event::fake([RecordChangedBroadcast::class]);
     Event::listen('eloquent.updated: ' . Post::class, static function (Post $record) use ($post, $otherPost): void {
         if ($record->is($post)) {
@@ -164,7 +164,7 @@ it('does not acknowledge page saves rejected by validation or a stale edit', fun
     $page->update(calls: [[
         'method' => 'save',
         'params' => [false],
-        'metadata' => ['filamentRecordSave' => (string) Str::uuid()],
+        'metadata' => ['filamentRecordSave' => bin2hex(random_bytes(16))],
     ]]);
 
     expect($page->effects)->not->toHaveKey('filamentRecordSave')

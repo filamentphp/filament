@@ -39,7 +39,6 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\Livewire;
 use Livewire\Mechanisms\HandleComponents\ComponentContext;
@@ -129,7 +128,7 @@ class FilamentServiceProvider extends PackageServiceProvider
 
             $operationId = $metadata['filamentRecordSave'] ?? null;
 
-            if ((! is_string($operationId)) || (! Str::isUuid($operationId))) {
+            if ((! is_string($operationId)) || (! preg_match('/\A[a-f0-9]{32}\z/', $operationId))) {
                 return null;
             }
 
