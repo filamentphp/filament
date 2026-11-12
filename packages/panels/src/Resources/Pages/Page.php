@@ -47,6 +47,8 @@ abstract class Page extends BasePage
 
     protected static bool $isDiscovered = false;
 
+    protected bool $shouldLockRecordForUpdate = false;
+
     #[Unexposed]
     public function resolveScopedModelProperties(): void
     {
@@ -60,7 +62,7 @@ abstract class Page extends BasePage
 
     protected function resolveRecordPropertyFromLivewire(): void
     {
-        if (! (($this->record ?? null) instanceof Model)) {
+        if ((! property_exists($this, 'record')) || (! (($this->record ?? null) instanceof Model))) {
             return;
         }
 
@@ -82,16 +84,38 @@ abstract class Page extends BasePage
         return $record;
     }
 
+    protected function getActionFormConflictRecordForUpdate(EditAction $action, Model $lockedRecord): ?Model
+    {
+        if (! $this->getDefaultActionRecord($action)?->is($lockedRecord)) {
+            return parent::getActionFormConflictRecordForUpdate($action, $lockedRecord);
+        }
+
+        $shouldLockRecordForUpdate = $this->shouldLockRecordForUpdate;
+        $this->shouldLockRecordForUpdate = true;
+
+        try {
+            return $this->resolveRecordFromLivewire($lockedRecord);
+        } finally {
+            $this->shouldLockRecordForUpdate = $shouldLockRecordForUpdate;
+        }
+    }
+
     protected function resolveRecord(int | string $key): Model
     {
         $this->mountParentRecord();
 
         $parentRecord = $this->getParentRecord();
-        $modifyQuery = fn (Builder $query): Builder => $query->useWritePdo();
+        $modifyQuery = function (Builder $query) use ($parentRecord): Builder {
+            $query->useWritePdo();
 
-        if ($parentRecord) {
-            $modifyQuery = fn (Builder $query): Builder => static::getResource()::scopeEloquentQueryToParent($query->useWritePdo(), $parentRecord);
-        }
+            if ($this->shouldLockRecordForUpdate) {
+                $query->lockForUpdate();
+            }
+
+            return $parentRecord
+                ? static::getResource()::scopeEloquentQueryToParent($query, $parentRecord)
+                : $query;
+        };
 
         $record = static::getResource()::resolveRecordRouteBinding($key, $modifyQuery);
 

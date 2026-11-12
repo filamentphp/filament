@@ -173,11 +173,13 @@ it('rejects updates after a record leaves its mounted parent scope', function (s
     ['authorizeRecordUpdates', ['123.456']],
 ]);
 
-it('refreshes the page from a browser subscription without replacing drafts, focus or open actions', function (string $operation): void {
+it('refreshes untouched values from a browser subscription without replacing drafts, newer input, focus or open actions', function (string $operation): void {
     Artisan::call('filament:assets');
 
     FilamentRealtime::subscribe(Post::class)->onlyEvents([ModelEvent::Updated]);
-    $post = Post::factory()->create(['title' => 'Original record title']);
+    $post = Post::factory()->create(['title' => 'Original record title', 'rating' => 2]);
+    $incomingAuthor = User::factory()->create();
+    $draftAuthor = User::factory()->create();
 
     FilamentView::registerRenderHook(PanelsRenderHook::PAGE_END, static fn (): HtmlString => new HtmlString('<p data-testid="record-footer">Footer: ' . e($post->fresh()->title) . '</p>'));
 
@@ -225,7 +227,7 @@ it('refreshes the page from a browser subscription without replacing drafts, foc
         $page->fill($titleInputSelector, 'My unsaved draft');
     }
 
-    $post->update(['title' => 'Changed in another session']);
+    $post->update(['title' => 'Changed in another session', 'rating' => 8]);
     $page->script('window.recordTitleTestTransport.notify(); undefined');
 
     $page->assertSeeIn('h1:visible', 'Changed in another session')
@@ -235,6 +237,7 @@ it('refreshes the page from a browser subscription without replacing drafts, foc
 
     if ($operation === 'edit') {
         $page->assertValue($titleInputSelector, 'My unsaved draft')
+            ->assertValue('input[id="form.rating"]', '8')
             ->assertPresent("{$titleInputSelector}:focus");
     } else {
         $page->assertValue($titleInputSelector, 'Changed in another session');
@@ -250,9 +253,51 @@ it('refreshes the page from a browser subscription without replacing drafts, foc
         return;
     }
 
-    $page->click('button[aria-label="Actions"]')
-        ->click('button[role="menuitem"][type="button"]')
-        ->assertVisible('[role="alertdialog"] h2');
+    // Hold a real refresh response while the user starts editing a field
+    // that was untouched when the request was sent.
+    $page->script(<<<'JS'
+        window.originalRecordFetch = window.fetch
+        window.holdRecordRefresh = true
+        window.fetch = async (...requestArguments) => {
+            const response = await window.originalRecordFetch(...requestArguments)
+            const payload = requestArguments[1]?.body ? JSON.parse(requestArguments[1].body) : null
+            if (window.holdRecordRefresh && payload?.components?.some(component => component.calls.some(call => call.method === 'refreshRecordPage'))) {
+                window.holdRecordRefresh = false
+                window.recordRefreshHeld = true
+                await new Promise(resolve => window.releaseRecordRefresh = resolve)
+            }
+            return response
+        }
+        undefined
+        JS);
+
+    $post->update(['title' => 'Changed during typing', 'rating' => 6]);
+    $page->script('window.recordTitleTestTransport.notify([]); undefined');
+    $page->assertScript('window.recordRefreshHeld', true)
+        ->fill('input[id="form.rating"]', '4');
+    $page->script('window.releaseRecordRefresh(); undefined');
+
+    $page->assertTitleContains('Changed during typing')
+        ->assertValue('input[id="form.rating"]', '4')
+        ->assertValue($titleInputSelector, 'My unsaved draft')
+        ->assertPresent('input[id="form.rating"]:focus');
+
+    expect($post->fresh()->rating)->toBe(6);
+
+    $post->update(['author_id' => $incomingAuthor->getKey()]);
+    $page->click('button[aria-label="Actions"]');
+    $page->script(<<<'JS'
+        window.recordRefreshHeld = false
+        window.holdRecordRefresh = true
+        document.querySelector('button[role="menuitem"][type="button"]').addEventListener('click', () => window.recordTitleTestTransport.notify([]), { once: true })
+        undefined
+        JS);
+    $page->click('button[role="menuitem"][type="button"]')
+        ->assertScript('window.recordRefreshHeld', true)
+        ->select('select[id="form.author_id"]', (string) $draftAuthor->getKey());
+    $page->script('window.releaseRecordRefresh(); undefined');
+    $page->assertVisible('[role="alertdialog"] h2')
+        ->assertValue('select[id="form.author_id"]', (string) $draftAuthor->getKey());
 
     $post->update(['title' => 'Changed while an action is open']);
     $page->script('window.recordTitleTestTransport.notify(); undefined');
@@ -262,6 +307,7 @@ it('refreshes the page from a browser subscription without replacing drafts, foc
         ->assertSeeIn('[data-testid="record-footer"]', 'Footer: Changed while an action is open')
         ->assertVisible('[role="alertdialog"] h2')
         ->assertValue($titleInputSelector, 'My unsaved draft')
+        ->assertValue('input[id="form.rating"]', '4')
         ->assertNoAccessibilityIssues();
 
     $darkPage->click('button[aria-label="Actions"]')

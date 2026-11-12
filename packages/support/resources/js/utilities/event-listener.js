@@ -68,6 +68,7 @@ export default ({
     passEvent = true,
     refreshOnSubscription = false,
     coalesce = false,
+    refreshFormParameter = null,
     onRefreshed = () => {},
 }) => {
     let echo
@@ -79,6 +80,8 @@ export default ({
     let removeLivewireListener
     let removeRequestInterceptor
     let removeMessageInterceptor
+    let removeInputListeners
+    let inputRevision = 0
 
     const listener = {
         matches: (action) =>
@@ -101,9 +104,85 @@ export default ({
             }
             listener.componentListeners.listeners.add(listener)
 
+            if (refreshFormParameter !== null) {
+                const componentElement = this.$wire.$el
+                const inputChanged = () => inputRevision++
+                componentElement.addEventListener('input', inputChanged, true)
+                componentElement.addEventListener('change', inputChanged, true)
+                removeInputListeners = () => {
+                    componentElement.removeEventListener(
+                        'input',
+                        inputChanged,
+                        true,
+                    )
+                    componentElement.removeEventListener(
+                        'change',
+                        inputChanged,
+                        true,
+                    )
+                }
+            }
+
             removeMessageInterceptor = this.$wire.$interceptMessage(
                 ({ message, onSuccess, cancel }) => {
                     const listeners = getMessageListeners(message)
+
+                    if (refreshFormParameter !== null) {
+                        const refreshCalls = message.calls.filter(
+                            (call) =>
+                                call.method === refreshMethod &&
+                                parameters.every(
+                                    (parameter, index) =>
+                                        call.params[index] === parameter,
+                                ),
+                        )
+
+                        if (refreshCalls.length) {
+                            if (message.calls.length !== refreshCalls.length) {
+                                // A user action owns this response. Leave its
+                                // effects intact and reconcile in a later call.
+                                refreshCalls.forEach((call) => {
+                                    call.params[refreshFormParameter] = false
+                                })
+                                // Livewire's legacy request interceptor has
+                                // already cached the serialized request body.
+                                message.request.options.body = JSON.stringify(
+                                    message.request.payload,
+                                )
+                                onSuccess(() => {
+                                    if (!isDestroyed) pendingEvents.push({})
+                                })
+
+                                return
+                            }
+
+                            const state = JSON.stringify(
+                                message.component.ephemeral,
+                            )
+                            const snapshot = message.component.snapshotEncoded
+                            const revision = inputRevision
+
+                            onSuccess(() => {
+                                if (
+                                    !listener.isActive() ||
+                                    revision !== inputRevision ||
+                                    snapshot !==
+                                        message.component.snapshotEncoded ||
+                                    state !==
+                                        JSON.stringify(
+                                            message.component.ephemeral,
+                                        )
+                                ) {
+                                    // Neither the form patch nor its advanced
+                                    // baseline may reach a newer local draft.
+                                    if (!isDestroyed) pendingEvents.push({})
+                                    cancel()
+                                }
+                            })
+
+                            return
+                        }
+                    }
 
                     if (!listeners) return
 
@@ -281,6 +360,7 @@ export default ({
 
             window.removeEventListener('EchoLoaded', registerEchoListener)
             removeLivewireListener?.()
+            removeInputListeners?.()
             removeRequestInterceptor?.()
             removeMessageInterceptor?.()
             if (listener.componentListeners) {
@@ -303,6 +383,7 @@ export default ({
             owner = null
             listener.componentListeners = null
             removeLivewireListener = null
+            removeInputListeners = null
             removeRequestInterceptor = null
             removeMessageInterceptor = null
             registerEchoListener = null

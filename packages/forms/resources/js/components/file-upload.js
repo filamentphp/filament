@@ -659,24 +659,28 @@ export default function fileUploadFormComponent({
         buildPondFiles() {
             let files = []
 
-            for (const uploadedFile of Object.values(this.fileKeyIndex)) {
+            for (const [fileKey, uploadedFile] of Object.entries(
+                this.fileKeyIndex,
+            )) {
                 if (!uploadedFile) {
                     continue
                 }
 
                 files.push({
-                    source: uploadedFile.url,
+                    source: uploadedFile.url ?? fileKey,
                     options: {
                         metadata: {
+                            url: uploadedFile.url,
                             openableUrl: uploadedFile.openableUrl,
                             downloadableUrl: uploadedFile.downloadableUrl,
                         },
                         type: 'local',
-                        ...(!uploadedFile.type ||
-                        (isPreviewable &&
-                            (/^audio/.test(uploadedFile.type) ||
-                                /^image/.test(uploadedFile.type) ||
-                                /^video/.test(uploadedFile.type)))
+                        ...(uploadedFile.url &&
+                        (!uploadedFile.type ||
+                            (isPreviewable &&
+                                (/^audio/.test(uploadedFile.type) ||
+                                    /^image/.test(uploadedFile.type) ||
+                                    /^video/.test(uploadedFile.type))))
                             ? {}
                             : {
                                   file: {
@@ -728,7 +732,7 @@ export default function fileUploadFormComponent({
 
         getDownloadLink(file) {
             let downloadableUrl =
-                file.getMetadata('downloadableUrl') ?? file.source
+                file.getMetadata('downloadableUrl') ?? file.getMetadata('url')
 
             if (!downloadableUrl) {
                 return
@@ -750,7 +754,8 @@ export default function fileUploadFormComponent({
         },
 
         getOpenLink(file) {
-            let openableUrl = file.getMetadata('openableUrl') ?? file.source
+            let openableUrl =
+                file.getMetadata('openableUrl') ?? file.getMetadata('url')
 
             if (!openableUrl) {
                 return

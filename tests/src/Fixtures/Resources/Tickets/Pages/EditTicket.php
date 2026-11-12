@@ -8,11 +8,14 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
+use Filament\Resources\Pages\Concerns\ResolvesFormConflicts;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 
 class EditTicket extends EditRecord
 {
+    use ResolvesFormConflicts;
+
     protected static string $resource = TicketResource::class;
 
     protected function getHeaderActions(): array

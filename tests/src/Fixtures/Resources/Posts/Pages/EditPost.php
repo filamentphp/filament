@@ -3,6 +3,7 @@
 namespace Filament\Tests\Fixtures\Resources\Posts\Pages;
 
 use Filament\Actions;
+use Filament\Resources\Pages\Concerns\ResolvesFormConflicts;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
@@ -11,6 +12,8 @@ use RuntimeException;
 
 class EditPost extends EditRecord
 {
+    use ResolvesFormConflicts;
+
     protected static string $resource = PostResource::class;
 
     protected function getHeaderActions(): array

@@ -6,6 +6,7 @@ use Closure;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
+use Filament\Actions\EditAction;
 use Filament\Actions\Enums\ActionStatus;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
 use Filament\Facades\Filament;
@@ -40,6 +41,7 @@ use function Livewire\store;
 
 trait InteractsWithActions /** @phpstan-ignore trait.unused */
 {
+    use InteractsWithActionFormConflicts;
     use WithRateLimiting;
 
     /**
@@ -168,6 +170,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                 'eventName' => $eventName,
                 'parameters' => [$action->getNestingIndex(), $name],
                 'refreshMethod' => 'callActionWebSocketListener',
+                'refreshFormParameter' => (($configuration['authorizationMethod'] ?? null) === 'authorizeActionRecordUpdates') && ($action instanceof EditAction) && $action->getEditConflictHandler() ? 3 : null,
             ];
         }
 
@@ -231,9 +234,9 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
      * @param  array<string, mixed>  $event
      */
     #[Exposed]
-    public function callActionWebSocketListener(int $actionNestingIndex, string $name, array $event = []): bool
+    public function callActionWebSocketListener(int $actionNestingIndex, string $name, array $event = [], bool $shouldRefreshForm = true): bool
     {
-        return $this->callActionEventListener($actionNestingIndex, $name, $event, isWebSocket: true);
+        return $this->callActionEventListener($actionNestingIndex, $name, $event, isWebSocket: true, shouldRefreshForm: $shouldRefreshForm);
     }
 
     /**
@@ -248,7 +251,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     /**
      * @param  array<string, mixed>  $event
      */
-    protected function callActionEventListener(int $actionNestingIndex, string $name, array $event, bool $isWebSocket): bool
+    protected function callActionEventListener(int $actionNestingIndex, string $name, array $event, bool $isWebSocket, bool $shouldRefreshForm = true): bool
     {
         if (! $action = $this->resolveActionForEventListener($actionNestingIndex)) {
             return false;
@@ -261,6 +264,10 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         $listeners = $isWebSocket ? $action->getWebSocketListeners() : $action->getLivewireListeners();
 
         abort_unless(array_key_exists($name, $listeners), 404);
+
+        if ($shouldRefreshForm && $isWebSocket && ($action instanceof EditAction) && (($listeners[$name]['authorizationMethod'] ?? null) === 'authorizeActionRecordUpdates')) {
+            $this->refreshActionFormForRecordUpdate($action);
+        }
 
         $schema = $this->renderActionForEvent($action);
 
@@ -506,6 +513,10 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
             $mountedActionState['hasUnsavedChangesAlert'] = $action->hasUnsavedChangesAlert();
             unset($mountedActionState);
 
+            if ($action instanceof EditAction) {
+                $this->rememberActionFormConflictBaseline($action);
+            }
+
             if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
                 if ($context['mountedFromUrl'] ?? false) {
                     // A modal-less action mounted from the URL has nothing to show the user, so
@@ -623,6 +634,10 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
                 $schema->getState(afterValidate: function (array $state) use ($action, $schemaState): void {
                     $action->callAfterFormValidated();
+
+                    if (($action instanceof EditAction) && $action->getEditConflictHandler()) {
+                        $state = $action->getEditConflictHandler()->preserveUneditedNestedData($state, $action->getRecord(), $this->actionFormComparisons[$action->getNestingIndex()]);
+                    }
 
                     $action->data([
                         ...$schemaState,
@@ -1161,6 +1176,9 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         // the schema of the action that used to be there, since `getMountedActionSchema()` reads
         // the cache before it builds anything.
         $this->forgetCachedMountedActionSchemas(fromNestingIndex: count($this->mountedActions));
+
+        $this->actionFormConflictStates = array_filter($this->actionFormConflictStates, fn (int $index): bool => $index < count($this->mountedActions), ARRAY_FILTER_USE_KEY);
+        $this->actionFormConflictPreviewState = [];
 
         if (! count($this->mountedActions)) {
             $action?->clearRecordAfter();

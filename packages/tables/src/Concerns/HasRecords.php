@@ -28,6 +28,8 @@ trait HasRecords
 
     protected bool $shouldApplyTableColumnRelationshipAggregates = true;
 
+    protected bool $shouldLockTableRecordForUpdate = false;
+
     #[Unexposed]
     public function getFilteredTableQuery(): ?Builder
     {
@@ -231,7 +233,7 @@ trait HasRecords
                 $column->applyRelationshipAggregates($query);
             }
 
-            return $query->find($key);
+            return $query->when($this->shouldLockTableRecordForUpdate, static fn (Builder $query): Builder => $query->lockForUpdate())->find($key);
         }
 
         /** @var BelongsToMany $relationship */
@@ -258,7 +260,9 @@ trait HasRecords
             $this->applyPivotRecordKeyToTableQuery($query->getQuery());
         }
 
-        $record = $table->selectPivotDataInQuery($query)->first();
+        $record = $table->selectPivotDataInQuery($query)
+            ->when($this->shouldLockTableRecordForUpdate, static fn ($query) => $query->lockForUpdate())
+            ->first();
 
         return $record?->setRawAttributes($record->getRawOriginal());
     }
@@ -276,6 +280,19 @@ trait HasRecords
         }
 
         return $record;
+    }
+
+    /** @internal */
+    #[Unexposed]
+    public function getTableRecordForUpdate(string $key): Model | array | null
+    {
+        $this->shouldLockTableRecordForUpdate = true;
+
+        try {
+            return $this->getTableRecord($key);
+        } finally {
+            $this->shouldLockTableRecordForUpdate = false;
+        }
     }
 
     /**

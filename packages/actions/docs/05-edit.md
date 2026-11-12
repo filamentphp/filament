@@ -217,3 +217,78 @@ If you'd like the action modal to close too, you can completely `cancel()` the a
 ```php
 $action->cancel();
 ```
+
+## Resolving conflicting edits
+
+You can opt in to concurrent-edit protection using `editConflictHandler()`:
+
+```php
+use Filament\Actions\EditAction;
+
+EditAction::make()
+    ->editConflictHandler()
+```
+
+Filament retains the original form values while the modal is open. Before validation, dehydration, upload storage, or save hooks, it locks the record on its database connection and compares the draft with current authorized values. Non-overlapping changes are combined; different changes to the same whole field open a recovery modal without closing the edit modal or saving its draft. Choosing a version updates the form only. Saving checks again atomically. Discarding the draft loads current values without saving. Ordinary Edit actions keep their existing behavior unless enabled.
+
+> [!WARNING]
+> Protection covers the form's changes to the edited record, not a universal transaction across related records, pivots, other connections, or external services. Table and resource-page actions retain their native query and relationship scope. Outside those integrations, provide an explicit model with `record($record)` or a [query-returning record resolver](#resolving-records-with-a-scoped-query). Model-returning custom resolvers, closures passed to `record()`, and arbitrary inherited schema record sources are not supported with conflict protection; Filament rejects these saves rather than replacing their scope with a generic query. Keep custom `using()` writes on the locked record's connection and implement protection for any independently edited related records yourself. Pending drafts are not retained across reloads or session expiry.
+
+### Configuring comparison and previews
+
+You can pass a configured `EditConflictHandler` or your own subclass:
+
+```php
+use Filament\Actions\EditAction;
+use Filament\Forms\EditConflictHandler;
+
+EditAction::make()
+    ->editConflictHandler(
+        EditConflictHandler::make()
+            ->ignoredStatePaths(['search_text'])
+            ->statePathGroups([
+                'content' => ['title', 'body'],
+            ]),
+    )
+```
+
+Only configure `statePathGroups()` when replacing the default whole-field boundaries; include every field you want protected. Ignored paths can be overwritten without a warning. `editConflictHandler(false)` or `editConflictHandler(null)` disables protection. You can also pass a closure returning a handler. [Customizing conflict previews](../resources/editing-records#customizing-conflict-previews) describes the shared schema factories and retained comparison outcome.
+
+### Loading current values
+
+Current values reuse the action's configured `fillForm()` callback, including the built-in `mutateRecordDataUsing()` mapping, on an isolated form. Filament does not rerun `mountUsing()`, `beforeFormFilled()`, or `afterFormFilled()`. Keep data-loading and field hydration callbacks free of writes or external side effects.
+
+If you customize how form values are loaded, configure that repeatable mapping using `fillForm()`. Conflict protection rejects saves when a custom `mountUsing()` callback has replaced the repeatable fill mapping, rather than replaying initialization or comparing the draft with itself.
+
+Enabling `receiveRecordUpdates()` independently subscribes the action to record invalidations. Without conflict protection, these events retain the existing rerender-only behavior. Combining it with `editConflictHandler()` also updates untouched fields and advances only their accepted baseline:
+
+```php
+use Filament\Actions\EditAction;
+
+EditAction::make()
+    ->editConflictHandler()
+    ->receiveRecordUpdates()
+```
+
+Locally changed fields and groups are retained, including edits made while a refresh is in flight. Current values reuse the same scoped record resolution, authorization and fill mapping as conflict recovery. Background updates do not save or accept conflict choices. Automatic field updates pause while a conflict comparison is open; choices and saving still check current values again. Custom `afterRecordUpdateReceived()` callbacks keep their normal behavior and may intentionally change form state, so do not refill the editable form indiscriminately in that callback. See [updating untouched values live](../resources/editing-records#updating-untouched-values-live) for the shared behavior and limits.
+
+### Resolving records with a scoped query
+
+When you resolve an action's record from a key, `resolveRecordUsing()` can return an Eloquent query builder instead of a fetched model:
+
+```php
+use App\Models\Post;
+use Filament\Actions\EditAction;
+use Illuminate\Database\Eloquent\Builder;
+
+EditAction::make()
+    ->record((string) $postId)
+    ->resolveRecordUsing(static fn (string $key): Builder => Post::query()
+        ->whereKey($key)
+        ->where('team_id', auth()->user()->team_id))
+    ->editConflictHandler()
+```
+
+Return the query without calling `first()`, `find()`, or another method that fetches the record. Include its key and every application-specific scope. Filament fetches the record when needed, then reruns the resolver and executes a locking read inside the transaction for each protected save, recovery choice, or discard. Keep the resolver free of writes and external side effects. A record that no longer matches the query cannot be compared or saved.
+
+Query-returning resolvers also work on action groups and mounted parent actions. Existing model-returning resolvers remain supported when conflict protection is disabled, but cannot provide a repeatable scoped locking read for protected saves. A resolver does not replace action authorization or protect independently edited related records.

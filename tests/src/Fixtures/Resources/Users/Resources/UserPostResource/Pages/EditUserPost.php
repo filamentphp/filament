@@ -3,11 +3,14 @@
 namespace Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource\Pages;
 
 use Filament\Actions;
+use Filament\Resources\Pages\Concerns\ResolvesFormConflicts;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource;
 
 class EditUserPost extends EditRecord
 {
+    use ResolvesFormConflicts;
+
     protected static string $resource = UserPostResource::class;
 
     protected function getHeaderActions(): array

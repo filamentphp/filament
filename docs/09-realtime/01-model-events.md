@@ -224,6 +224,8 @@ Quiet, bulk, raw SQL, and external writes need a [manual change notification](#d
 
 Changes made in another session or a background job re-render the page, updating its heading, breadcrumbs, custom header and footer content, and widget selection. Your `getHeading()` and `getTitle()` overrides are respected, and the browser title is updated too. The page is not remounted. Edit forms retain unsaved input; view pages refresh their infolists and refill disabled forms using `mutateFormDataBeforeFill()` and normal field hydration, without calling `beforeFill()` or `afterFill()` again. Open actions are preserved. Existing child Livewire components, such as widgets and relation managers, retain their own state and do not automatically refresh.
 
+Edit pages using [concurrent-edit protection](../resources/editing-records#updating-untouched-values-live) also update untouched fields, preserving local edits and advancing only accepted comparison baselines. Unprotected Edit pages retain the rerender-only behavior.
+
 ### Refreshing view action modals
 
 Mounted `ViewAction` modals also listen for their record's changes when its effective model subscription and Echo configuration are active. Panel broadcasting must be enabled when using a panel. Infolists and record-backed modal content re-render, and disabled action forms refill using their configured `fillForm()` data, including `mutateRecordDataUsing()` and translatable content handling. Editing parent or child actions retain their drafts.
@@ -252,6 +254,8 @@ Action::make('review')
 ```
 
 By default, the action's modal re-renders without refilling its form or changing drafts. Entries read from the current record, not the action's form data. Use `receiveRecordUpdates(false)` to disable updates, including the automatic updates on a `ViewAction`. The condition also accepts a closure.
+
+An `EditAction` combining `receiveRecordUpdates()` with [`editConflictHandler()`](../actions/edit#loading-current-values) also updates untouched fields while preserving locally edited fields and groups. This does not enable autosave or accept conflict choices.
 
 You can provide a repeatable PHP handler using `afterRecordUpdateReceived()`. It runs after the record has been resolved and authorized, before rendering. The handler receives normal action utility injections, including the current `$record`, `$action` and `$livewire`. The `$schema` and `$form` injections both refer to that action's own modal schema, even when a child action is open. For example, you can update a disabled status field without replacing editable fields:
 

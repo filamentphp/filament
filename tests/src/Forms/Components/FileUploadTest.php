@@ -641,6 +641,37 @@ describe('`getUploadedFiles()` accumulation', function (): void {
             ->and(Storage::disk('local')->get('uploads/notes.txt'))->toBe('meeting notes');
     });
 
+    it('previews temporary uploads only in disabled fields without storing them', function (bool $isImage): void {
+        Storage::fake('local');
+        $upload = $isImage
+            ? UploadedFile::fake()->image('draft.png', 4, 3)
+            : UploadedFile::fake()->createWithContent('draft.txt', 'Draft');
+        $page = livewire(TestComponentWithFileUpload::class)
+            ->fillForm(['single-file' => $upload]);
+        $field = $page->instance()->form->getComponentByStatePath('single-file');
+        $state = $field->getRawState();
+        $fileKey = array_key_first($state);
+
+        expect($field->getUploadedFiles()[$fileKey])->toBeNull();
+
+        $field->disabled();
+        $metadata = $field->getUploadedFiles()[$fileKey];
+
+        expect($metadata['name'])->toBe($isImage ? 'draft.png' : 'draft.txt')
+            ->and($metadata['type'])->toBe($isImage ? 'image/png' : 'text/plain')
+            ->and($metadata['size'])->toBeGreaterThan(0)
+            ->and($field->getRawState())->toBe($state)
+            ->and($state[$fileKey]->exists())->toBeTrue()
+            ->and(Storage::disk('local')->allFiles())->toBe([]);
+
+        if ($isImage) {
+            expect($metadata['url'])->toContain('signature=');
+        } else {
+            expect($metadata['url'])->toBeNull()
+                ->and($metadata['size'])->toBe(5);
+        }
+    })->with([false, true]);
+
     it('continues past unauthorized paths and `null` metadata without exposing paths to read callbacks', function (): void {
         Storage::fake('local');
         Storage::disk('local')->put('uploads/hidden.txt', 'private');
@@ -2315,6 +2346,52 @@ describe('browser rendering', function (): void {
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
     });
+
+    it('renders disabled temporary uploads without inventing file URLs', function (string $fileType): void {
+        $this->actingAs(User::factory()->create());
+        Storage::fake('local');
+        $isImage = $fileType !== 'text';
+        $fileName = $isImage ? 'draft.png' : 'draft.txt';
+        $upload = $isImage
+            ? UploadedFile::fake()->image($fileName, 40, 30)
+            : UploadedFile::fake()->createWithContent($fileName, 'Draft');
+        $temporaryFile = array_values(livewire(TestComponentWithFileUpload::class)
+            ->fillForm(['single-file' => $upload])->get('data.single-file'))[0];
+
+        if ($fileType === 'restricted-image') {
+            config()->set('livewire.temporary_file_upload.preview_mimes', ['jpg']);
+        }
+
+        FileUpload::configureUsing(
+            static fn (FileUpload $component) => $component
+                ->disabled()
+                ->openable()
+                ->downloadable()
+                ->afterStateHydrated(static fn (FileUpload $component) => $component->rawState(['draft' => $temporaryFile])),
+            during: static function () use ($fileType, $fileName): void {
+                $page = visit('/file-upload-browser-test');
+
+                $page
+                    ->assertPresent('[data-testid="attachment-upload"] fieldset:has(legend:text-is("' . $fileName . '"))')
+                    ->assertNoSmoke();
+
+                if ($fileType === 'image') {
+                    $page->assertPresent('[data-testid="attachment-upload"] a');
+                } else {
+                    $page->assertMissing('[data-testid="attachment-upload"] a');
+                }
+
+                // FilePond places configured image links in an `aria-hidden` filename.
+                if ($fileType === 'text') {
+                    $page->assertNoAccessibilityIssues();
+                    $page->inDarkMode()->assertNoAccessibilityIssues();
+                }
+            },
+        );
+
+        expect($temporaryFile->exists())->toBeTrue()
+            ->and(Storage::disk('local')->allFiles())->toBe([]);
+    })->with(['text', 'image', 'restricted-image']);
 
     it('can remove a stored file through the Alpine scope', function (): void {
         $this->actingAs(User::factory()->create());

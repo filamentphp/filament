@@ -115,7 +115,7 @@ trait InteractsWithRecord
     }
 
     #[Exposed]
-    public function refreshRecordPage(): ?string
+    public function refreshRecordPage(bool $shouldRefreshForm = true): ?string
     {
         if (! $this->hasRecord()) {
             return null;

@@ -4,6 +4,7 @@
 
 @php
     use Filament\Pages\Enums\SubNavigationPosition;
+    use Filament\Resources\Pages\EditRecord;
     use Filament\Support\Facades\FilamentView;
     use Filament\Tables\Contracts\HasTable;
     use Filament\View\PanelsRenderHook;
@@ -19,6 +20,7 @@
         x-data="filamentRecordPage({
                     channel: @js($this->getRecordBroadcastChannel()),
                     echoConfiguration: @js(config('filament.broadcasting.echo')),
+                    refreshForm: @js($this instanceof EditRecord),
                 })"
     @endif
     {{

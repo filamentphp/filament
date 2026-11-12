@@ -10,5 +10,6 @@ export default (configuration) =>
         passEvent: false,
         refreshOnSubscription: true,
         coalesce: true,
+        refreshFormParameter: configuration.refreshForm ? 0 : null,
         onRefreshed: (title) => (document.title = title),
     })

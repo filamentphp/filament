@@ -10,8 +10,8 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
+use Filament\Forms\EditConflictHandler;
 use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Resources\Events\RecordSaved;
 use Filament\Resources\Events\RecordUpdated;
@@ -41,17 +41,19 @@ use Throwable;
 /**
  * @template TModel of Model = Model
  *
+ * @property-read Schema $content
  * @property-read Schema $form
  */
 class EditRecord extends Page
 {
-    use CanUseDatabaseTransactions;
     use Concerns\HasRelationManagers {
         getContentTabComponent as getBaseContentTabComponent;
     }
     use Concerns\InteractsWithRecord {
         getRecord as getBaseRecord;
+        refreshRecordPage as protected refreshBaseRecordPage;
     }
+    use Concerns\ResolvesFormConflicts;
     use HasUnsavedDataChangesAlert;
 
     /**
@@ -138,6 +140,11 @@ class EditRecord extends Page
         $this->form->fill($data);
 
         $this->callHook('afterFill');
+
+        if ($this->getFormEditConflictHandler()) {
+            $this->baseFormState = $this->getFormStateForStaleEditComparison();
+            $this->staleFormState = null;
+        }
     }
 
     /**
@@ -150,6 +157,35 @@ class EditRecord extends Page
             $this->mutateFormDataBeforeFill($this->getRecord()->attributesToArray()),
             $statePaths,
         );
+
+        if ($this->getFormEditConflictHandler()) {
+            $this->acceptFormStateBaseline($this->getFormStateForStaleEditComparison($this->getRecord()), $statePaths);
+        }
+    }
+
+    protected function getFormEditConflictHandler(): ?EditConflictHandler
+    {
+        return null;
+    }
+
+    #[Exposed]
+    public function refreshRecordPage(bool $shouldRefreshForm = true): ?string
+    {
+        $title = $this->refreshBaseRecordPage();
+
+        if (($title !== null) && $shouldRefreshForm && $this->getFormEditConflictHandler() && ($this->staleFormState === null)) {
+            $wasUnedited = $this->hasUnsavedDataChangesAlert()
+                && ($this->savedDataHash === md5((string) str(json_encode($this->data, JSON_UNESCAPED_UNICODE))->replace('\\', '')));
+            $comparison = $this->getFormStateComparison()->ignoredStatePaths([]);
+            $this->baseFormState = $this->getFormEditConflictHandler()->acceptIncomingState($this->form, $comparison, $this->formConflictPreviewState['current']);
+            $this->formConflictPreviewState = [];
+
+            if ($wasUnedited) {
+                $this->rememberData();
+            }
+        }
+
+        return $title;
     }
 
     /**
@@ -175,6 +211,14 @@ class EditRecord extends Page
         try {
             $this->beginDatabaseTransaction();
 
+            $comparison = $this->getFormEditConflictHandler() ? $this->getFormStateComparison() : null;
+
+            if ($comparison && (! $this->checkForStaleEdit($comparison))) {
+                $this->rollBackDatabaseTransaction();
+
+                return;
+            }
+
             $this->callHook('beforeValidate');
 
             $data = $this->form->getState(afterValidate: function (): void {
@@ -183,6 +227,10 @@ class EditRecord extends Page
                 $this->callHook('beforeSave');
             });
 
+            if ($comparison) {
+                $data = $this->getFormEditConflictHandler()->preserveUneditedNestedData($data, $this->getRecord(), $comparison);
+            }
+
             $data = $this->mutateFormDataBeforeSave($data);
 
             $this->handleRecordUpdate($this->getRecord(), $data);
@@ -190,6 +238,11 @@ class EditRecord extends Page
             $this->callHook('afterSave');
             Event::dispatch(RecordUpdated::class, ['record' => $this->record, 'data' => $data, 'page' => $this]);
             Event::dispatch(RecordSaved::class, ['record' => $this->record, 'data' => $data, 'page' => $this]);
+
+            if ($comparison) {
+                $this->baseFormState = $this->getFormStateForStaleEditComparison($this->getLockedRecord());
+                $this->staleFormState = null;
+            }
         } catch (Halt $exception) {
             $exception->shouldRollBackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
@@ -219,9 +272,22 @@ class EditRecord extends Page
     public function saveFormComponentOnly(Component $component): void
     {
         $this->authorizeAccess();
+        $hasStaleEdit = false;
 
         try {
             $this->beginDatabaseTransaction();
+
+            $comparison = null;
+
+            if ($this->getFormEditConflictHandler()) {
+                $comparison = $this->getFormStateComparisonForComponent($component);
+
+                if (! $this->checkForStaleEdit($comparison)) {
+                    $hasStaleEdit = true;
+
+                    throw new Halt;
+                }
+            }
 
             $this->callHook('beforeValidate');
 
@@ -238,6 +304,10 @@ class EditRecord extends Page
 
             $this->callHook('afterValidate');
 
+            if ($comparison) {
+                $data = $this->getFormEditConflictHandler()->preserveUneditedNestedData($data, $this->getRecord(), $comparison);
+            }
+
             $data = $this->mutateFormDataBeforeSave($data);
 
             $this->callHook('beforeSave');
@@ -245,7 +315,23 @@ class EditRecord extends Page
             $this->handleRecordUpdate($this->getRecord(), $data);
 
             $this->callHook('afterSave');
+
+            if ($comparison) {
+                $currentState = $this->getFormStateForStaleEditComparison($this->getLockedRecord());
+
+                foreach ($comparison->getStatePathGroups() as $statePaths) {
+                    $this->acceptFormStateBaseline($currentState, $statePaths);
+                }
+
+                $this->staleFormState = null;
+            }
         } catch (Halt $exception) {
+            if ($hasStaleEdit) {
+                $this->rollBackDatabaseTransaction();
+
+                throw $exception;
+            }
+
             $exception->shouldRollBackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
                 $this->commitDatabaseTransaction();
@@ -477,6 +563,7 @@ class EditRecord extends Page
     public function getFormActionsContentComponent(): Component
     {
         return Actions::make($this->getFormActions())
+            ->registerActions($this->getFormEditConflictHandler() ? [$this->getResolveFormConflictsAction()] : [])
             ->alignment($this->getFormActionsAlignment())
             ->fullWidth($this->hasFullWidthFormActions())
             ->sticky($this->areFormActionsSticky())

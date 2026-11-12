@@ -858,7 +858,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     }
 
     /**
-     * @return array<array{name: string, size: int, type: string, url: string, openableUrl?: string, downloadableUrl?: string} | null> | null
+     * @return array<array{name: string, size: int, type: string, url: ?string, openableUrl?: string, downloadableUrl?: string} | null> | null
      */
     #[Exposed]
     #[Renderless]
@@ -875,7 +875,14 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
         foreach ($this->getRawState() ?? [] as $fileKey => $file) {
             if ($file instanceof TemporaryUploadedFile) {
-                $urls[$fileKey] = null;
+                // Editable instances already retain the browser's upload. A newly
+                // rendered disabled instance needs its own read-only preview.
+                $urls[$fileKey] = $this->isDisabled() ? [
+                    'name' => $file->getClientOriginalName(),
+                    'size' => $file->getSize(),
+                    'type' => $file->getMimeType(),
+                    'url' => $file->isPreviewable() ? $file->temporaryUrl() : null,
+                ] : null;
 
                 continue;
             }

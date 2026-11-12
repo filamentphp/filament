@@ -6,19 +6,34 @@ use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\View\ActionsIconAlias;
+use Filament\Forms\EditConflictHandler;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
+use LogicException;
+use Throwable;
 
 class EditAction extends Action
 {
     use CanCustomizeProcess;
 
     protected ?Closure $mutateRecordDataUsing = null;
+
+    protected EditConflictHandler | Closure | bool | null $editConflictHandler = null;
+
+    protected ?int $editTransactionLevel = null;
+
+    protected ?Connection $editTransactionConnection = null;
+
+    protected ?EditConflictHandler $activeEditConflictHandler = null;
+
+    protected bool $isUsingEditConflictTransaction = false;
 
     public static function getDefaultName(): ?string
     {
@@ -117,5 +132,123 @@ class EditAction extends Action
         $this->mutateRecordDataUsing = $callback;
 
         return $this;
+    }
+
+    public function editConflictHandler(EditConflictHandler | Closure | bool | null $handler = true): static
+    {
+        $this->editConflictHandler = $handler;
+
+        return $this;
+    }
+
+    public function getEditConflictHandler(): ?EditConflictHandler
+    {
+        if ($this->editTransactionConnection !== null) {
+            return $this->activeEditConflictHandler;
+        }
+
+        $handler = $this->evaluate($this->editConflictHandler);
+
+        return $handler === true ? EditConflictHandler::make() : ($handler ?: null);
+    }
+
+    public function getModalAction(string $name): ?Action
+    {
+        if (($name === 'resolveFormConflicts') && $this->getEditConflictHandler()) {
+            return $this->prepareModalAction($this->getLivewire()->getActionEditConflictHandler($this)->getAction());
+        }
+
+        return parent::getModalAction($name);
+    }
+
+    public function boot(): void
+    {
+        if (isset($this->getLivewire()->actionFormConflictStates[$this->getNestingIndex()])) {
+            abort_unless($this->getRecord() instanceof Model, 404);
+        }
+
+        parent::boot();
+    }
+
+    public function beginDatabaseTransaction(): void
+    {
+        $this->isUsingEditConflictTransaction = false;
+
+        if (! $this->getEditConflictHandler()) {
+            parent::beginDatabaseTransaction();
+
+            return;
+        }
+
+        $this->beginEditConflictTransaction();
+
+        if (! $this->getLivewire()->checkActionFormConflicts($this)) {
+            throw (new Halt)->rollBackDatabaseTransaction();
+        }
+    }
+
+    /** @internal Recovery uses the same lock without attempting a save. */
+    public function beginEditConflictTransaction(): void
+    {
+        $this->activeEditConflictHandler = $this->getEditConflictHandler();
+        $this->isUsingEditConflictTransaction = true;
+
+        if ($this->fillFormUsing === null) {
+            throw new LogicException('Edit conflict protection requires a repeatable fillForm() mapping. Custom mountUsing() callbacks cannot be replayed safely.');
+        }
+
+        $record = $this->getRecord();
+        abort_unless($record instanceof Model, 404);
+
+        $connection = $record->getConnection();
+        $this->editTransactionConnection = $connection;
+        $this->editTransactionLevel = $connection->transactionLevel();
+        $connection->beginTransaction();
+        $lockedRecord = $this->activeEditConflictHandler->lockRecord($record);
+
+        $this->getLivewire()->authorizeActionFormConflictRecord($this, $lockedRecord);
+    }
+
+    public function commitDatabaseTransaction(): void
+    {
+        if (! $this->isUsingEditConflictTransaction) {
+            parent::commitDatabaseTransaction();
+
+            return;
+        }
+
+        if ($this->editTransactionConnection === null) {
+            return;
+        }
+
+        try {
+            $this->editTransactionConnection->commit();
+        } catch (Throwable $exception) {
+            $this->rollBackDatabaseTransaction();
+
+            throw $exception;
+        }
+
+        $this->editTransactionLevel = null;
+        $this->editTransactionConnection = null;
+        $this->activeEditConflictHandler = null;
+    }
+
+    public function rollBackDatabaseTransaction(): void
+    {
+        if (! $this->isUsingEditConflictTransaction) {
+            parent::rollBackDatabaseTransaction();
+
+            return;
+        }
+
+        if ($this->editTransactionConnection === null) {
+            return;
+        }
+
+        $this->editTransactionConnection->rollBack($this->editTransactionLevel);
+        $this->editTransactionLevel = null;
+        $this->editTransactionConnection = null;
+        $this->activeEditConflictHandler = null;
     }
 }

@@ -137,7 +137,7 @@ class ViewRecord extends Page
     }
 
     #[Exposed]
-    public function refreshRecordPage(): ?string
+    public function refreshRecordPage(bool $shouldRefreshForm = true): ?string
     {
         $title = $this->refreshBaseRecordPage();
 

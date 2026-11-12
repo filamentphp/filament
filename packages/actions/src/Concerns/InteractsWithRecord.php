@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Support\ArrayRecord;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use LogicException;
@@ -25,6 +26,8 @@ trait InteractsWithRecord
     protected Model | string | array | Closure | null $record = null;
 
     protected ?Closure $resolveRecordUsing = null;
+
+    protected ?Model $cachedRecord = null;
 
     /**
      * @var class-string<Model>|Closure|null
@@ -45,6 +48,7 @@ trait InteractsWithRecord
     public function record(Model | string | array | Closure | null $record): static
     {
         $this->record = $record;
+        $this->cachedRecord = null;
 
         $this->clearVisibilityCache();
 
@@ -54,8 +58,17 @@ trait InteractsWithRecord
     public function resolveRecordUsing(?Closure $callback): static
     {
         $this->resolveRecordUsing = $callback;
+        $this->cachedRecord = null;
 
         return $this;
+    }
+
+    /** @internal */
+    public function hasCustomRecordResolver(): bool
+    {
+        return ($this->resolveRecordUsing !== null)
+            || ($this->record instanceof Closure)
+            || ((! $this->hasRecord()) && ($this->getGroup()?->hasCustomRecordResolver() ?? false));
     }
 
     /**
@@ -99,20 +112,48 @@ trait InteractsWithRecord
     /**
      * @return Model | array<string, mixed> | null
      */
-    public function getRecord(bool $withDefault = true): Model | array | null
+    public function getRecord(bool $withDefault = true, bool $shouldLockForUpdate = false): Model | array | null
     {
         $record = $this->evaluate($this->record);
 
         $isRecordKey = filled($record) && (! $record instanceof Model) && (! is_array($record));
+
+        if ($shouldLockForUpdate && $this->hasRecord() && ((! $isRecordKey) || ($this->record instanceof Closure))) {
+            throw new LogicException('Edit conflict protection requires resolveRecordUsing() to return an Eloquent query builder for a scoped locking read.');
+        }
 
         if ($isRecordKey && (! $this->resolveRecordUsing)) {
             throw new LogicException("Could not resolve record from key [{$record}] without a [resolveRecordUsing()] callback.");
         }
 
         if ($isRecordKey) {
+            if ((! $shouldLockForUpdate) && $this->cachedRecord && (! $this->record instanceof Closure)) {
+                return $this->ensureCorrectRecordType($this->cachedRecord);
+            }
+
             $record = $this->evaluate($this->resolveRecordUsing, [
                 'key' => $record,
             ]);
+
+            if ($record instanceof Builder) {
+                $query = clone $record;
+
+                if ($shouldLockForUpdate) {
+                    $query->lockForUpdate();
+                }
+
+                $record = $query->first();
+
+                if (! $this->record instanceof Closure) {
+                    $this->cachedRecord = $record;
+                }
+
+                return $this->ensureCorrectRecordType($record);
+            }
+
+            if ($shouldLockForUpdate) {
+                throw new LogicException('Edit conflict protection requires resolveRecordUsing() to return an Eloquent query builder for a scoped locking read.');
+            }
         }
 
         if ($isRecordKey && $record && (! $this->record instanceof Closure)) {
@@ -123,8 +164,12 @@ trait InteractsWithRecord
             return $this->ensureCorrectRecordType($record);
         }
 
-        if ($record = $this->getGroup()?->getRecord($withDefault)) {
+        if ($record = $this->getGroup()?->getRecord($withDefault, shouldLockForUpdate: $shouldLockForUpdate)) {
             return $this->ensureCorrectRecordType($record);
+        }
+
+        if ($shouldLockForUpdate) {
+            return null;
         }
 
         if (($this instanceof Action) && $record = $this->getSchemaContainer()?->getRecord()) {

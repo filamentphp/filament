@@ -58,6 +58,147 @@ protected function mutateFormDataBeforeSave(array $data): array
 
 Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../actions/edit#customizing-data-before-saving).
 
+## Resolving conflicting edits
+
+You can opt in to concurrent-edit protection by adding the `ResolvesFormConflicts` trait to your Edit page:
+
+```php
+use Filament\Resources\Pages\Concerns\ResolvesFormConflicts;
+use Filament\Resources\Pages\EditRecord;
+
+class EditPost extends EditRecord
+{
+    use ResolvesFormConflicts;
+
+    // ...
+}
+```
+
+Without this trait or a configured handler, existing save behavior is unchanged. Protected pages compare the original form values, the user's draft, and the record's current values before saving. Changes to different fields are combined automatically: the user's edits are retained, and current saved values replace fields the user has not edited. If both writers chose the same value, no conflict is raised. This does not require websockets, model event subscriptions, a version column, or changes to external writers. [Edit actions](../actions/edit#resolving-conflicting-edits) can opt in independently.
+
+When both writers change a field differently, Filament stops before validation/save hooks, upload storage, relationship saves, or saved notifications. An action modal compares the draft and current values for each conflict. The user can choose their value or the saved value independently for each field, then save normally. Dismissing the modal retains the draft. Choosing a value does not save anything. A choice is accepted only if the displayed values are still current; otherwise, the comparison refreshes automatically. Saving checks for newer conflicting changes again. The user can also discard the whole draft and load current values.
+
+The draft and saved previews reuse disabled instances of your configured form fields, with separate state that is never saved. Field actions and update callbacks are disabled. Custom fields must respect their disabled state. Pending uploads that Livewire cannot preview display their file name and size instead of a media preview.
+
+The boundary is a whole field, including repeaters, builders, multi-selects, and auxiliary state such as uploaded file names. Changes to different items of the same repeater therefore require a whole-field choice rather than automatically combining rows. Separate fields using paths such as `settings.title` and `settings.summary` remain separate boundaries, even when persisted in one JSON attribute. Incoming values pass through the normal validation and save transformations before they are persisted.
+
+Reordering a reorderable `KeyValue` counts as editing that field, including when it is inside a repeater or builder. Your database storage must preserve object key ordering if you need to persist that order; native MySQL JSON and PostgreSQL JSONB objects do not. Pending uploads are compared using an opaque temporary identity and their original name, without storing the file. Replacing an upload after displaying a conflict requires reviewing the new value before choosing it.
+
+Filament rechecks resource scope and edit authorization before reading current values. The comparison and save run in a transaction on the record's database connection, holding its write lock until the save finishes. This transaction is required even when optional panel database transactions are disabled.
+
+> [!WARNING]
+> This protects fields saved to the resource record by `save()` and `saveFormComponentOnly()`, not arbitrary actions or independently written related records, pivots, or other database connections. A section save checks only its fields and halts its enclosing action on conflict, so code after `saveFormComponentOnly()` does not report success. Custom save implementations must keep their record writes on the locked connection. It is not a transaction around external services or a universal conflict/merge engine.
+
+Comparison uses loaded form values and field state casts, before save-time dehydration transformations. Reading current values runs `mutateFormDataBeforeFill()` and field hydration callbacks, but not the page's `beforeFill()` / `afterFill()` hooks. Keep these data-loading callbacks free of writes or external side effects. Values generated only by page fill hooks may need to be excluded from comparison.
+
+Only current differences count: a value changed and then changed back does not cause a conflict. Changes to attributes outside persisted form fields do not reject a save. The base and draft are retained while the form remains open, not across reloads or session expiry. Explicitly refreshing form paths with `refreshFormData()` updates their baseline without accepting changes to the rest of the form.
+
+### Updating untouched values live
+
+When your panel and model are configured for [live record updates](../realtime/model-events#refreshing-resource-pages), protected Edit pages also update fields the user has not edited. Each accepted field advances its comparison baseline. Fields changed locally retain their values and original baseline, so saving still detects conflicting edits. Your `statePathGroups()` boundaries apply to live updates too: editing one field in a group keeps the whole group unchanged.
+
+Background updates do not validate or save the form, run save hooks, or open the conflict modal. Filament reads current values through the configured form mapping and current resource authorization. Changes typed while a refresh is in flight are retained; an obsolete background response is discarded before its form values or baseline are accepted, then the comparison is fetched again. A refresh batched with a user action leaves that action's result intact and reconciles afterward.
+
+While a conflict comparison is open, automatic field updates pause so its displayed choices remain stable. Choosing a value and saving still recheck current values. Ignoring a path for save-time conflict detection does not permit live updates to replace local changes to it. There is no autosave or persistence of unsaved work across reloads.
+
+### Ignoring regenerated values
+
+Some form values are derived from other fields and deliberately regenerated on every save. For example, a hidden `search_text` field might contain searchable text built from the title and body. A background job rebuilding `search_text` should not cause a conflict with a regenerated draft value: the next save will calculate it again from the combined source fields.
+
+Configure the handler by overriding `getFormEditConflictHandler()` on your Edit page:
+
+```php
+use Filament\Forms\EditConflictHandler;
+
+protected function getFormEditConflictHandler(): ?EditConflictHandler
+{
+    return EditConflictHandler::make()
+        ->ignoredStatePaths([
+            'search_text',
+            'totals.calculated_tax',
+        ]);
+}
+```
+
+The shared `EditConflictHandler` owns comparison policy, recovery choices, and schema-based rendering. The page and action integrations supply authorized record reads and the save transaction. You can pass the same handler configuration to an Edit action; configuring a page does not automatically enable its actions.
+
+Paths are relative to the form's data, without the `data.` prefix. You can exclude a whole nested value, such as `totals`, or use `*` to match item paths, such as `items.*.calculated_total`. Excluding a parent also excludes its descendants.
+
+An exclusion only changes comparison. It does not remove the value from the form or comparison snapshots, stop it being saved, recompute it, or change validation and authorization. Keep your existing save-time calculation in place so it uses the combined source fields, not an earlier draft. The source fields, such as the title and body, should remain protected.
+
+> [!CAUTION]
+> Do not exclude editable values simply to make conflicts disappear. An ignored value can be overwritten without a stale warning. Exclude it only when replacing the stored value on every save is intentional.
+
+### Customizing conflict previews
+
+The conflict modal uses schema components and actions. You can extend `EditConflictHandler` and return your implementation from `getFormEditConflictHandler()`, without replacing authorization or atomic save logic:
+
+- Override `getSchemaComponents()` to add context around the conflict list or replace its overall layout.
+- Override `getContentComponent(string $statePath)` to change the layout of one conflict group.
+- Override `getLabel(string $statePath)` to label a group that does not correspond to one field.
+- Override `getPreviewComponent(string $statePath, string $source)` to add context to a preview or replace it with other schema components. `$source` is either `'draft'` or `'current'`.
+- Override `getChoiceAction(string $statePath, string $source)` to configure a choice action, such as its label or icon.
+- Override `getAction()` to configure the modal itself, such as its heading, width, or footer actions.
+
+For example, you can wrap each configured preview with additional context:
+
+```php
+use Filament\Forms\EditConflictHandler;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Text;
+
+class PostEditConflictHandler extends EditConflictHandler
+{
+    protected function getPreviewComponent(string $statePath, string $source): Component
+    {
+        return Group::make([
+            Text::make($source === 'draft' ? 'Your proposed values' : 'Currently saved values'),
+            parent::getPreviewComponent($statePath, $source),
+        ]);
+    }
+}
+```
+
+Return `PostEditConflictHandler::make()` from the page's `getFormEditConflictHandler()` method, or pass it to an action's `editConflictHandler()` method.
+
+`$statePath` identifies a comparison group, not necessarily a model attribute or field. Default previews render the configured fields represented by that group's member paths. Forms that map several inputs into one attribute, or use nested input names unrelated to model columns, can keep their existing `mutateFormDataBeforeFill()` and `mutateFormDataBeforeSave()` mappings. Configure which inputs must be chosen together using `statePathGroups()` on the handler. Override `snapshot(Schema $form)` or `compare()` in your handler for specialized comparison representations; the supplied snapshot form is isolated from the editable form. Keep these methods read-only.
+
+The default previews keep their own form state and component ownership, separate from the modal schema and editable draft. Wrapping the preview component preserves this isolation. If you replace it, prefer non-editable schema components and the handler's retained `getOutcome()[$source]` values rather than binding new inputs to the draft or querying a newer value that does not match the displayed choice. Authorize any additional context you load yourself. Rendering overrides do not extend protection to other records or change the comparison boundaries.
+
+### Reusing comparison data
+
+The page retains `baseFormState` and, after a conflicting save, `staleFormState`. These are server-controlled Livewire properties. The structured outcome contains `base`, `draft`, `current`, `changedPaths`, `conflictingPaths`, `incomingPaths`, `statePathGroups`, `orderedStatePaths`, and `ignoredStatePaths`; it does not reduce the comparison to a hash. `draft` is the snapshot of the attempted save, while the form remains editable.
+
+The reusable `Filament\Schemas\StateComparison` compares these state arrays without reading records, authorizing access, or saving anything:
+
+```php
+use Filament\Schemas\StateComparison;
+
+$comparison = StateComparison::make()
+    ->base($base)
+    ->draft($draft)
+    ->current($current)
+    ->statePathGroups([
+        'title' => ['title'],
+        'tags' => ['tags'],
+    ])
+    ->ignoredStatePaths(['search_text']);
+
+$hasConflicts = $comparison->hasConflicts();
+$conflictingPaths = $comparison->getConflictingPaths();
+$incomingPaths = $comparison->getIncomingPaths();
+$outcome = $comparison->toArray();
+```
+
+`statePathGroups` defines the comparison boundaries independently of the three-way classification. Each group has an identifier and one or more state paths that must be chosen together. Without explicit groups, each top-level key is a boundary. Resource Edit pages supply groups from whole fields, including their auxiliary output. This separation allows later boundary policies to reuse comparison and recovery; it does not provide item identity or safe row-level merging today.
+
+Keep every member of a custom group within the same section when using `saveFormComponentOnly()`. A section save that would split a group throws a `LogicException` before saving rather than silently removing its protection.
+
+Associative key ordering is ignored unless you configure `orderedStatePaths()`. These paths also support `*`. Resource Edit pages configure them for reorderable `KeyValue` fields automatically. List item ordering remains significant.
+
+`conflictingPaths` and `incomingPaths` contain group identifiers. `changedPaths` remains the list of differences between `base` and `current`, not a list of conflicts. Ignored values remain available in all three snapshots. Authorize and filter any current values before passing them to a client; using `StateComparison` alone provides no write protection or permission checks.
+
 ## Customizing the saving process
 
 You can tweak how the record is updated using the `handleRecordUpdate()` method on the Edit page class:
