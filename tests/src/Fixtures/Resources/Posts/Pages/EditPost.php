@@ -16,6 +16,8 @@ class EditPost extends EditRecord
 
     protected static string $resource = PostResource::class;
 
+    protected ?bool $hasUnsavedDataChangesAlert = true;
+
     protected function getHeaderActions(): array
     {
         return [
