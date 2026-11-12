@@ -224,6 +224,59 @@ it('refreshes untouched values from a browser subscription without replacing dra
         ->assertSeeIn('h1:visible', 'Original record title');
 
     if ($operation === 'edit') {
+        // Exercise the public transport with the save's real request and
+        // response. Its own notification can precede that response.
+        $page->script(<<<'JS'
+            window.originalSaveFetch = window.fetch
+            window.recordRefreshRequests = 0
+            window.fetch = async (...requestArguments) => {
+                const payload = requestArguments[1]?.body ? JSON.parse(requestArguments[1].body) : null
+                const calls = payload?.components?.flatMap(component => component.calls) ?? []
+                if (calls.some(call => call.method === 'refreshRecordPage')) window.recordRefreshRequests++
+                const response = await window.originalSaveFetch(...requestArguments)
+                const save = calls.find(call => call.method === 'save')
+                if (save) {
+                    window.recordSaveOperation = save.metadata.filamentRecordSave
+                    window.recordTitleTestTransport.notify({ operationId: window.recordSaveOperation })
+                    window.recordSaveHeld = true
+                    await new Promise(resolve => window.releaseRecordSave = resolve)
+                }
+                return response
+            }
+            undefined
+            JS);
+
+        $page->fill($titleInputSelector, 'Saved in this editor')
+            ->click('button[type="submit"]')
+            ->assertScript('window.recordSaveHeld', true);
+
+        expect($post->fresh()->title)->toBe('Saved in this editor');
+
+        $page->script('window.releaseRecordSave(); undefined');
+        $page->assertSeeIn('h1:visible', 'Saved in this editor')
+            ->assertTitleContains('Saved in this editor');
+
+        // A later notification from that same save remains redundant, but
+        // an unrelated update must still get through.
+        $post->update(['rating' => 7]);
+        $page->script(<<<'JS'
+            window.recordTitleTestTransport.notify({ operationId: window.recordSaveOperation })
+            window.recordTitleTestTransport.notify({ operationId: '7d594569-bb56-4916-b7b5-05303c7f4428' })
+            undefined
+            JS);
+        $page->assertValue('input[id="form.rating"]', '7')
+            ->assertScript('window.recordRefreshRequests', 1);
+
+        $post->update(['title' => 'Original record title', 'rating' => 2]);
+        $page->script(<<<'JS'
+            window.fetch = window.originalSaveFetch
+            window.recordTitleTestTransport.notify()
+            undefined
+            JS);
+        $page->assertSeeIn('h1:visible', 'Original record title')
+            ->assertValue($titleInputSelector, 'Original record title')
+            ->assertValue('input[id="form.rating"]', '2');
+
         $hasUnsavedChanges = <<<'JS'
             (() => {
                 const event = new Event('beforeunload', { cancelable: true })

@@ -29,6 +29,7 @@ use Filament\Http\Middleware\SetUpPanel;
 use Filament\Livewire\ScopedModelPropertiesComponentHook;
 use Filament\Navigation\NavigationManager;
 use Filament\Queue\Middleware\RestoreImportTenant;
+use Filament\Resources\Pages\EditRecord;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Assets\Font;
 use Filament\Support\Assets\Js;
@@ -38,10 +39,14 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\Livewire;
+use Livewire\Mechanisms\HandleComponents\ComponentContext;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+
+use function Livewire\store;
 
 class FilamentServiceProvider extends PackageServiceProvider
 {
@@ -117,6 +122,36 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        Livewire::listen('call', static function (Component $component, string $method, array $parameters, ComponentContext $context, callable $returnEarly, array $metadata): ?callable {
+            if ((! ($component instanceof EditRecord)) || ($method !== 'save')) {
+                return null;
+            }
+
+            $operationId = $metadata['filamentRecordSave'] ?? null;
+
+            if ((! is_string($operationId)) || (! Str::isUuid($operationId))) {
+                return null;
+            }
+
+            store($component)->set('recordSaveOperation', ['id' => $operationId, 'channel' => $component->getRecordBroadcastChannel()]);
+            store($component)->set('recordSaveSucceeded', false);
+
+            return static function () use ($component, $context, $operationId): void {
+                if (store($component)->get('recordSaveSucceeded')) {
+                    // The save response replaces the otherwise redundant page
+                    // refresh, including its heading and browser title.
+                    if (! store($component)->has('redirect')) {
+                        $component->forceRender();
+                    }
+
+                    $context->addEffect('filamentRecordSave', ['id' => $operationId, 'title' => $component->getBrowserTitle()]);
+                }
+
+                store($component)->unset('recordSaveOperation');
+                store($component)->unset('recordSaveSucceeded');
+            };
+        });
+
         Livewire::listen('hydrate', static function (Component $component, array $memo): void {
             // Livewire skips lifecycle hooks for lazy components that have not mounted yet.
             if (($component instanceof RelationManager) && (($memo['lazyLoaded'] ?? null) === false)) {

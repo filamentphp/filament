@@ -38,6 +38,8 @@ use Livewire\Attributes\Locked;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
+use function Livewire\store;
+
 /**
  * @template TModel of Model = Model
  *
@@ -272,6 +274,7 @@ class EditRecord extends Page
         $this->commitDatabaseTransaction();
 
         $this->rememberData();
+        store($this)->set('recordSaveSucceeded', true);
 
         if ($shouldSendSavedNotification) {
             $this->getSavedNotification()?->send();

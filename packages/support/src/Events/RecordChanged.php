@@ -7,12 +7,17 @@ use Filament\Support\Components\Component;
 use Filament\Support\Enums\ModelEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Livewire;
+
+use function Livewire\store;
 
 class RecordChanged extends Component implements ShouldDispatchAfterCommit
 {
     protected Model $record;
 
     protected BackedEnum | string | null $event = null;
+
+    protected ?string $operationId = null;
 
     public function __construct(Model $record)
     {
@@ -55,10 +60,23 @@ class RecordChanged extends Component implements ShouldDispatchAfterCommit
         return ModelEvent::tryFrom($this->event) ?? $this->event;
     }
 
+    public function getOperationId(): ?string
+    {
+        return $this->operationId;
+    }
+
     public function dispatch(): static
     {
         $event = clone $this;
         $event->record(clone $this->getRecord());
+
+        // Capture the originating save before after-commit delivery can run
+        // under a different component or outside its method call.
+        $component = Livewire::current();
+        $operation = $component ? store($component)->get('recordSaveOperation') : null;
+        $event->operationId = ($operation && ($operation['channel'] === RecordChangedBroadcast::getChannel($this->getRecord())))
+            ? $operation['id']
+            : null;
 
         event($event);
 

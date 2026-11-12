@@ -184,7 +184,7 @@ class SupportServiceProvider extends PackageServiceProvider
                 return;
             }
 
-            event(app(RecordChangedBroadcast::class, ['record' => $event->getRecord()]));
+            event(app(RecordChangedBroadcast::class, ['record' => $event->getRecord(), 'operationId' => $event->getOperationId()]));
         });
 
         Event::listen('eloquent.*', static function (string $event, array $payload): void {

@@ -10,7 +10,7 @@ class RecordChangedBroadcast implements ShouldBroadcast
 {
     protected string $channel;
 
-    public function __construct(Model $record)
+    public function __construct(Model $record, protected ?string $operationId = null)
     {
         $this->channel = static::getChannel($record);
     }
@@ -40,6 +40,6 @@ class RecordChangedBroadcast implements ShouldBroadcast
      */
     public function broadcastWith(): array
     {
-        return [];
+        return $this->operationId === null ? [] : ['operationId' => $this->operationId];
     }
 }

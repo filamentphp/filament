@@ -107,6 +107,70 @@ it('can save', function (): void {
     Event::assertDispatched(RecordSaved::class);
 });
 
+it('correlates committed page saves without tagging other records or later changes', function (): void {
+    config(['filament.broadcasting.echo' => ['broadcaster' => 'null']]);
+    FilamentRealtime::subscribe(Post::class)->onlyEvents(['updated']);
+    $post = Post::factory()->create(['title' => 'Original title']);
+    $otherPost = Post::factory()->create();
+    $operationId = (string) Str::uuid();
+    Event::fake([RecordChangedBroadcast::class]);
+    Event::listen('eloquent.updated: ' . Post::class, static function (Post $record) use ($post, $otherPost): void {
+        if ($record->is($post)) {
+            $otherPost->update(['title' => 'Related write']);
+        }
+    });
+
+    $page = livewire(EditPost::class, ['record' => $post->getKey()])
+        ->fillForm(['title' => 'Saved in this editor']);
+
+    DB::beginTransaction();
+
+    try {
+        $page->update(calls: [[
+            'method' => 'save',
+            'params' => [false],
+            'metadata' => ['filamentRecordSave' => $operationId],
+        ]])->assertHasNoFormErrors()->assertSee('Saved in this editor');
+
+        expect($page->effects['filamentRecordSave']['id'])->toBe($operationId)
+            ->and($page->effects['filamentRecordSave']['title'])->toContain('Saved in this editor');
+        Event::assertNotDispatched(RecordChangedBroadcast::class);
+        DB::commit();
+    } finally {
+        if (DB::transactionLevel() > 1) {
+            DB::rollBack();
+        }
+    }
+
+    Event::assertDispatched(RecordChangedBroadcast::class, static fn (RecordChangedBroadcast $event): bool => ((string) $event->broadcastOn() === 'private-' . RecordChangedBroadcast::getChannel($post)) &&
+        ($event->broadcastWith() === ['operationId' => $operationId]));
+    Event::assertDispatched(RecordChangedBroadcast::class, static fn (RecordChangedBroadcast $event): bool => ((string) $event->broadcastOn() === 'private-' . RecordChangedBroadcast::getChannel($otherPost)) &&
+        ($event->broadcastWith() === []));
+
+    $post->update(['title' => 'Later change']);
+    $broadcasts = Event::dispatched(RecordChangedBroadcast::class);
+    expect($broadcasts[array_key_last($broadcasts)][0]->broadcastWith())->toBe([]);
+});
+
+it('does not acknowledge page saves rejected by validation or a stale edit', function (bool $isStale): void {
+    $post = Post::factory()->create(['title' => 'Original']);
+    $page = livewire(EditPost::class, ['record' => $post->getKey()])
+        ->fillForm(['title' => $isStale ? 'My draft' : '']);
+
+    if ($isStale) {
+        $post->update(['title' => 'Saved elsewhere']);
+    }
+
+    $page->update(calls: [[
+        'method' => 'save',
+        'params' => [false],
+        'metadata' => ['filamentRecordSave' => (string) Str::uuid()],
+    ]]);
+
+    expect($page->effects)->not->toHaveKey('filamentRecordSave')
+        ->and($post->fresh()->title)->toBe($isStale ? 'Saved elsewhere' : 'Original');
+})->with([false, true]);
+
 describe('stale edits', function (): void {
     it('keeps existing save behavior without opting in to a handler', function (): void {
         $post = Post::factory()->create(['title' => 'Original']);
