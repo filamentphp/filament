@@ -20,6 +20,7 @@ return [
 
             'block' => [
                 'label' => '或条件组 (OR)',
+                'picker_group' => '逻辑',
                 'or' => '或',
             ],
 
