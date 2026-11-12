@@ -148,8 +148,7 @@ it('correlates committed page saves without tagging other records or later chang
         ($event->broadcastWith() === []));
 
     $post->update(['title' => 'Later change']);
-    $broadcasts = Event::dispatched(RecordChangedBroadcast::class);
-    expect($broadcasts[array_key_last($broadcasts)][0]->broadcastWith())->toBe([]);
+    expect(Event::dispatched(RecordChangedBroadcast::class)->last()[0]->broadcastWith())->toBe([]);
 });
 
 it('does not acknowledge page saves rejected by validation or a stale edit', function (bool $isStale): void {

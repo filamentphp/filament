@@ -247,7 +247,7 @@ it('refreshes untouched values from a browser subscription without replacing dra
             JS);
 
         $page->fill($titleInputSelector, 'Saved in this editor')
-            ->click('button[type="submit"]')
+            ->click('form[id="form"] button[type="submit"]')
             ->assertScript('window.recordSaveHeld', true);
 
         expect($post->fresh()->title)->toBe('Saved in this editor');
