@@ -3,7 +3,7 @@
 namespace Filament\Support;
 
 use BackedEnum;
-use Filament\Support\Events\ModelChanged;
+use Filament\Support\Events\RecordChanged;
 use Illuminate\Database\Eloquent\Model;
 
 class RealtimeManager
@@ -120,7 +120,7 @@ class RealtimeManager
                 continue;
             }
 
-            ModelChanged::make($record)
+            RecordChanged::make($record)
                 ->event($subscribedEvent)
                 ->dispatch();
 

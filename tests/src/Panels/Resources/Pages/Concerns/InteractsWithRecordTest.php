@@ -3,7 +3,7 @@
 use Filament\Actions\ForceDeleteAction;
 use Filament\Facades\Filament;
 use Filament\Support\Enums\ModelEvent;
-use Filament\Support\Events\ModelChangedBroadcast;
+use Filament\Support\Events\RecordChangedBroadcast;
 use Filament\Support\Facades\FilamentRealtime;
 use Filament\Support\Facades\FilamentView;
 use Filament\Tests\Fixtures\Models\Post;
@@ -38,7 +38,7 @@ beforeEach(function (): void {
         ],
     ]);
 
-    Event::fake([ModelChangedBroadcast::class]);
+    Event::fake([RecordChangedBroadcast::class]);
 });
 
 it('automatically enables page updates using the effective model subscription and panel broadcasting', function (): void {
@@ -97,14 +97,14 @@ it('authorizes only the mounted record channel for the requested socket', functi
     FilamentRealtime::subscribe(Post::class);
 
     $authorization = [
-        'auth' => 'record-title-test-key:' . hash_hmac('sha256', '123.456:private-' . ModelChangedBroadcast::getChannel($post), 'record-title-test-secret'),
+        'auth' => 'record-title-test-key:' . hash_hmac('sha256', '123.456:private-' . RecordChangedBroadcast::getChannel($post), 'record-title-test-secret'),
     ];
 
     livewire(EditPost::class, ['record' => $post->getKey()])
         ->call('authorizeRecordUpdates', '123.456')
         ->assertReturned($authorization);
 
-    expect($authorization['auth'])->not->toBe('record-title-test-key:' . hash_hmac('sha256', '123.456:private-' . ModelChangedBroadcast::getChannel($otherPost), 'record-title-test-secret'));
+    expect($authorization['auth'])->not->toBe('record-title-test-key:' . hash_hmac('sha256', '123.456:private-' . RecordChangedBroadcast::getChannel($otherPost), 'record-title-test-secret'));
 });
 
 it('rechecks page authorization before refreshing or authorizing a subscription', function (string $method, array $parameters): void {
@@ -194,7 +194,7 @@ it('refreshes the page from a browser subscription without replacing drafts, foc
                     const transport = window.recordTitleTestTransport = { isSubscribed: false }
                     const channel = {
                         listen(event, callback) {
-                            if (event === '.filament.model-changed') transport.notify = callback
+                            if (event === '.filament.record-changed') transport.notify = callback
                             return channel
                         },
                         subscribed: (callback) => {

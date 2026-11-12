@@ -15,7 +15,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Attributes\Unexposed;
-use Filament\Support\Events\ModelChangedBroadcast;
+use Filament\Support\Events\RecordChangedBroadcast;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
@@ -291,7 +291,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
         $request = clone request();
         $request->replace([
-            'channel_name' => 'private-' . ModelChangedBroadcast::getChannel($action->getRecord()),
+            'channel_name' => 'private-' . RecordChangedBroadcast::getChannel($action->getRecord()),
             'socket_id' => $socketId,
         ]);
 

@@ -4,7 +4,7 @@ export default (configuration) =>
     eventListener({
         ...configuration,
         channelType: 'private',
-        eventName: '.filament.model-changed',
+        eventName: '.filament.record-changed',
         authorizationMethod: 'authorizeRecordUpdates',
         refreshMethod: 'refreshRecordPage',
         passEvent: false,

@@ -9,7 +9,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\ModelEvent;
-use Filament\Support\Events\ModelChangedBroadcast;
+use Filament\Support\Events\RecordChangedBroadcast;
 use Filament\Support\Facades\FilamentRealtime;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
@@ -329,7 +329,7 @@ describe('record updates', function (): void {
             ],
         ]);
 
-        Event::fake([ModelChangedBroadcast::class]);
+        Event::fake([RecordChangedBroadcast::class]);
     });
 
     it('enables modal updates only for an effective subscription and configured broadcasting', function (): void {
@@ -402,7 +402,7 @@ describe('record updates', function (): void {
 
         if (! $isEnabled) {
             expect($listeners)->toBeEmpty();
-            $component->call('callActionWebSocketListener', 1, 'private:' . ModelChangedBroadcast::getChannel($department) . ',.filament.model-changed')->assertNotFound();
+            $component->call('callActionWebSocketListener', 1, 'private:' . RecordChangedBroadcast::getChannel($department) . ',.filament.record-changed')->assertNotFound();
 
             return;
         }
@@ -462,7 +462,7 @@ describe('record updates', function (): void {
         $parameters = $component->instance()->getActionEventListeners($component->instance()->getMountedAction())[0]['parameters'];
 
         $component->call('authorizeActionRecordUpdates', ...[...$parameters, '123.456'])
-            ->assertReturned(['auth' => 'view-test-key:' . hash_hmac('sha256', '123.456:private-' . ModelChangedBroadcast::getChannel($department), 'view-test-secret')])
+            ->assertReturned(['auth' => 'view-test-key:' . hash_hmac('sha256', '123.456:private-' . RecordChangedBroadcast::getChannel($department), 'view-test-secret')])
             ->unmountAction()
             ->call('callActionWebSocketListener', ...$parameters)->assertReturned(false)
             ->call('authorizeActionRecordUpdates', ...[...$parameters, '123.456'])->assertReturned(null)
@@ -472,7 +472,7 @@ describe('record updates', function (): void {
 
         $component->call('callActionWebSocketListener', ...$parameters)->assertReturned(true)
             ->call('authorizeActionRecordUpdates', ...[...$parameters, '123.456'])
-            ->assertReturned(['auth' => 'view-test-key:' . hash_hmac('sha256', '123.456:private-' . ModelChangedBroadcast::getChannel($department), 'view-test-secret')])
+            ->assertReturned(['auth' => 'view-test-key:' . hash_hmac('sha256', '123.456:private-' . RecordChangedBroadcast::getChannel($department), 'view-test-secret')])
             ->assertSchemaStateSet(['name' => 'Newer value']);
 
         $replacement = Department::factory()->hasAttached($ticket)->create(['name' => 'Different record']);
@@ -658,7 +658,7 @@ describe('record updates', function (): void {
                     const transport = this.transport
                     const channel = {
                         listen(event, callback) {
-                            if (event === '.filament.model-changed') transport.notify = callback
+                            if (event === '.filament.record-changed') transport.notify = callback
                             return channel
                         },
                         subscribed: (callback) => {
@@ -691,7 +691,7 @@ describe('record updates', function (): void {
 
         $page->script('window.originalViewInput = document.getElementById("live-view-title"); undefined');
         $post->update(['title' => 'Updated record', 'content' => 'Updated content']);
-        $page->script('window.viewActionTestConnections.filter(connection => !connection.isDisconnected).forEach(connection => connection.notify()); undefined');
+        $page->script('window.viewActionTestConnections.filter(connection => !connection.isDisconnected).forEach(connection => connection.notify([])); undefined');
 
         $page->assertValue('#live-view-title', 'Updated record')
             ->assertSeeIn('[data-testid="live-view-content"]', 'Updated content')

@@ -11,7 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
-use Filament\Support\Events\ModelChangedBroadcast;
+use Filament\Support\Events\RecordChangedBroadcast;
 use Filament\Support\Facades\FilamentRealtime;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
@@ -389,7 +389,7 @@ it('preserves content tab customization for infolists and disabled forms', funct
 
 it('refills a live view form through its mapping without fill hooks or changing open action data', function (): void {
     config(['filament.broadcasting.echo' => ['broadcaster' => 'null']]);
-    Event::fake([ModelChangedBroadcast::class]);
+    Event::fake([RecordChangedBroadcast::class]);
     FilamentRealtime::subscribe(Post::class);
     $post = Post::factory()->create(['title' => 'Original']);
     $newAuthor = User::factory()->create();

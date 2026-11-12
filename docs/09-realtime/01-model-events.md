@@ -13,7 +13,7 @@ use Filament\Support\Facades\FilamentRealtime;
 FilamentRealtime::subscribe(Post::class);
 ```
 
-Filament dispatches a `ModelChanged` Laravel event for each matching model event. Notifications follow Laravel's after-commit event behavior: they wait until commit and are discarded on rollback. Outside a transaction, they are dispatched immediately.
+Filament dispatches a `RecordChanged` Laravel event for each matching model event. Notifications follow Laravel's after-commit event behavior: they wait until commit and are discarded on rollback. Outside a transaction, they are dispatched immediately.
 
 With [websockets configured in your panel](../notifications/broadcast-notifications#setting-up-websockets-in-a-panel), these notifications also [keep resource record pages up to date](#refreshing-resource-pages).
 
@@ -107,7 +107,7 @@ You can combine both methods with any model selector. Event exclusions take prec
 Quiet writes, mass updates or deletes through a query, raw SQL, and changes made by other applications do not emit Eloquent model events. Notify Filament manually for these operations.
 
 > [!NOTE]
-> Automatic observation requires Laravel's string Eloquent event to reach Filament's listener. Laravel can stop propagation, for example when an `updated` observer returns `false`, or skip the string event because a `$dispatchesEvents` listener returned a result. A write may succeed without Filament receiving that event. If your integration suppresses these events, dispatch `ModelChanged` manually from that integration instead.
+> Automatic observation requires Laravel's string Eloquent event to reach Filament's listener. Laravel can stop propagation, for example when an `updated` observer returns `false`, or skip the string event because a `$dispatchesEvents` listener returned a result. A write may succeed without Filament receiving that event. If your integration suppresses these events, dispatch `RecordChanged` manually from that integration instead.
 
 ### Observing custom model events
 
@@ -183,18 +183,18 @@ $registeredSubscription = FilamentRealtime::subscribe($subscription);
 Dispatch a change for a record without configuring automatic observation:
 
 ```php
-use Filament\Support\Events\ModelChanged;
+use Filament\Support\Events\RecordChanged;
 
-ModelChanged::make($post)->dispatch();
+RecordChanged::make($post)->dispatch();
 ```
 
 You may attach a built-in event using its enum case:
 
 ```php
 use Filament\Support\Enums\ModelEvent;
-use Filament\Support\Events\ModelChanged;
+use Filament\Support\Events\RecordChanged;
 
-ModelChanged::make($post)
+RecordChanged::make($post)
     ->event(ModelEvent::Updated)
     ->dispatch();
 ```
@@ -203,9 +203,9 @@ Custom names, including application-backed enums, are also supported:
 
 ```php
 use App\Enums\PostEvent;
-use Filament\Support\Events\ModelChanged;
+use Filament\Support\Events\RecordChanged;
 
-ModelChanged::make($post)
+RecordChanged::make($post)
     ->event(PostEvent::Published)
     ->dispatch();
 ```
@@ -288,10 +288,10 @@ Broadcasts contain no model attributes and use private record-specific channels.
 Register a Laravel listener for the shared event:
 
 ```php
-use Filament\Support\Events\ModelChanged;
+use Filament\Support\Events\RecordChanged;
 use Illuminate\Support\Facades\Event;
 
-Event::listen(ModelChanged::class, function (ModelChanged $event): void {
+Event::listen(RecordChanged::class, function (RecordChanged $event): void {
     $record = $event->getRecord();
     $name = $event->getEvent(); // Null for an unnamed manual notification.
 
@@ -307,25 +307,25 @@ This event is backend-only: do not expose its model attributes to clients withou
 
 ## Testing model changes
 
-You can test your application's integration using Laravel's event fake and the public `ModelChanged` event. Keep your model subscriptions in your application's service provider, then exercise the application code that writes or manually reports a change:
+You can test your application's integration using Laravel's event fake and the public `RecordChanged` event. Keep your model subscriptions in your application's service provider, then exercise the application code that writes or manually reports a change:
 
 > [!NOTE]
-> Fake only `ModelChanged`, not all events: a bare `Event::fake()` also prevents the Eloquent events that trigger automatic notifications.
+> Fake only `RecordChanged`, not all events: a bare `Event::fake()` also prevents the Eloquent events that trigger automatic notifications.
 
 ```php
 use App\Models\Post;
 use Filament\Support\Enums\ModelEvent;
-use Filament\Support\Events\ModelChanged;
+use Filament\Support\Events\RecordChanged;
 use Illuminate\Support\Facades\Event;
 
 it('notifies Filament when a post is updated', function (): void {
     $post = Post::factory()->create();
 
-    Event::fake([ModelChanged::class]);
+    Event::fake([RecordChanged::class]);
 
     $post->update(['title' => 'Updated title']);
 
-    Event::assertDispatched(ModelChanged::class, static fn (ModelChanged $event): bool =>
+    Event::assertDispatched(RecordChanged::class, static fn (RecordChanged $event): bool =>
         $event->getRecord()->is($post)
         && ($event->getEvent() === ModelEvent::Updated));
 });

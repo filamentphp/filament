@@ -5,7 +5,7 @@ namespace Filament\Actions\Concerns;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
-use Filament\Support\Events\ModelChangedBroadcast;
+use Filament\Support\Events\RecordChangedBroadcast;
 use Filament\Support\Facades\FilamentRealtime;
 use Illuminate\Database\Eloquent\Model;
 
@@ -43,7 +43,7 @@ trait HasWebSocketListeners
             && $record->exists
             && filled(FilamentRealtime::getSubscription($record::class)?->getEvents())
         ) {
-            $listeners['private:' . ModelChangedBroadcast::getChannel($record) . ',.filament.model-changed'] = [
+            $listeners['private:' . RecordChangedBroadcast::getChannel($record) . ',.filament.record-changed'] = [
                 'callback' => static function (Action $action, ?Schema $schema): void {
                     $action->callAfterRecordUpdateReceived(['schema' => $schema, 'form' => $schema]);
                 },

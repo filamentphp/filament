@@ -6,7 +6,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Database\Eloquent\Model;
 
-class ModelChangedBroadcast implements ShouldBroadcast
+class RecordChangedBroadcast implements ShouldBroadcast
 {
     protected string $channel;
 
@@ -17,7 +17,7 @@ class ModelChangedBroadcast implements ShouldBroadcast
 
     public static function getChannel(Model $record): string
     {
-        return 'filament.models.' . hash('sha256', serialize([
+        return 'filament.records.' . hash('sha256', serialize([
             $record::class,
             $record->getConnection()->getName(),
             $record->getConnection()->getDatabaseName(),
@@ -32,7 +32,7 @@ class ModelChangedBroadcast implements ShouldBroadcast
 
     public function broadcastAs(): string
     {
-        return 'filament.model-changed';
+        return 'filament.record-changed';
     }
 
     /**
