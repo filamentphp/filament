@@ -1,7 +1,7 @@
 <?php
 
 use Filament\Support\Enums\ModelEvent;
-use Filament\Support\Events\ModelChanged;
+use Filament\Support\Events\RecordChanged;
 use Filament\Support\Facades\FilamentRealtime;
 use Filament\Support\ModelSubscription;
 use Filament\Tests\Fixtures\Enums\ObservablePostEvent;
@@ -15,7 +15,7 @@ uses(TestCase::class);
 beforeEach(function (): void {
     $this->events = [];
 
-    Event::listen(ModelChanged::class, function (ModelChanged $event): void {
+    Event::listen(RecordChanged::class, function (RecordChanged $event): void {
         $this->events[] = $event;
     });
 });
@@ -30,7 +30,7 @@ it('observes completion events without observing reads or pre-write events', fun
     $post->restore();
     $post->forceDelete();
 
-    expect(array_map(static fn (ModelChanged $event): BackedEnum | string | null => $event->getEvent(), $this->events))
+    expect(array_map(static fn (RecordChanged $event): BackedEnum | string | null => $event->getEvent(), $this->events))
         ->toBe([ModelEvent::Created, ModelEvent::Saved, ModelEvent::Updated, ModelEvent::Saved, ModelEvent::Trashed, ModelEvent::Deleted, ModelEvent::Updated, ModelEvent::Saved, ModelEvent::Restored, ModelEvent::Deleted, ModelEvent::ForceDeleted]);
 
     foreach ($this->events as $event) {
@@ -41,7 +41,7 @@ it('observes completion events without observing reads or pre-write events', fun
 });
 
 it('does not observe models until subscribed or after unsubscribing', function (): void {
-    Event::fake([ModelChanged::class]);
+    Event::fake([RecordChanged::class]);
 
     $post = Post::factory()->create();
 
@@ -52,8 +52,8 @@ it('does not observe models until subscribed or after unsubscribing', function (
     FilamentRealtime::unsubscribe(Post::class);
     $post->update(['title' => 'Not observed']);
 
-    Event::assertDispatchedTimes(ModelChanged::class, 1);
-    Event::assertDispatched(ModelChanged::class, static fn (ModelChanged $event): bool => $event->getRecord()->is($post)
+    Event::assertDispatchedTimes(RecordChanged::class, 1);
+    Event::assertDispatched(RecordChanged::class, static fn (RecordChanged $event): bool => $event->getRecord()->is($post)
         && ($event->getRecord()->getAttribute('title') === 'Observed')
         && ($event->getEvent() === ModelEvent::Updated));
 
@@ -102,7 +102,7 @@ it('replaces subscriptions without duplicating notifications or sharing mutable 
     $post->update(['title' => 'Not observed']);
     $post->delete();
 
-    expect(array_map(static fn (ModelChanged $event): BackedEnum | string | null => $event->getEvent(), $this->events))
+    expect(array_map(static fn (RecordChanged $event): BackedEnum | string | null => $event->getEvent(), $this->events))
         ->toBe([ModelEvent::Created, ModelEvent::Updated, ModelEvent::Deleted])
         ->and(FilamentRealtime::getSubscriptions())->toHaveCount(1);
 });
@@ -110,7 +110,7 @@ it('replaces subscriptions without duplicating notifications or sharing mutable 
 it('uses current selectors when inspecting or removing live subscriptions', function (): void {
     $post = Post::factory()->create();
     $author = $post->author;
-    Event::fake([ModelChanged::class]);
+    Event::fake([RecordChanged::class]);
 
     $subscription = FilamentRealtime::subscribe(Post::class)->onlyEvents([ModelEvent::Updated]);
     $subscription->modelsInNamespace('Filament\\Tests\\Fixtures\\Models')->exceptModels([User::class]);
@@ -121,8 +121,8 @@ it('uses current selectors when inspecting or removing live subscriptions', func
     $post->update(['title' => 'Namespace']);
     $author->update(['name' => 'Excluded']);
 
-    Event::assertDispatchedTimes(ModelChanged::class, 1);
-    Event::assertDispatched(ModelChanged::class, static fn (ModelChanged $event): bool => $event->getRecord()->is($post)
+    Event::assertDispatchedTimes(RecordChanged::class, 1);
+    Event::assertDispatched(RecordChanged::class, static fn (RecordChanged $event): bool => $event->getRecord()->is($post)
         && ($event->getRecord()->title === 'Namespace')
         && ($event->getEvent() === ModelEvent::Updated));
 
@@ -130,8 +130,8 @@ it('uses current selectors when inspecting or removing live subscriptions', func
     $author->update(['name' => 'All models']);
 
     expect(array_keys(FilamentRealtime::getSubscriptions()))->toBe(['*']);
-    Event::assertDispatchedTimes(ModelChanged::class, 2);
-    Event::assertDispatched(ModelChanged::class, static fn (ModelChanged $event): bool => $event->getRecord()->is($author)
+    Event::assertDispatchedTimes(RecordChanged::class, 2);
+    Event::assertDispatched(RecordChanged::class, static fn (RecordChanged $event): bool => $event->getRecord()->is($author)
         && ($event->getRecord()->name === 'All models')
         && ($event->getEvent() === ModelEvent::Updated));
 
@@ -140,12 +140,12 @@ it('uses current selectors when inspecting or removing live subscriptions', func
     $post->update(['title' => 'Unsubscribed']);
 
     expect(FilamentRealtime::getSubscriptions())->toBe([]);
-    Event::assertDispatchedTimes(ModelChanged::class, 2);
+    Event::assertDispatchedTimes(RecordChanged::class, 2);
 });
 
 it('keeps the latest registration when live selectors collide without reviving replaced subscriptions', function (bool $inspectBetweenChanges): void {
     $post = Post::factory()->create();
-    Event::fake([ModelChanged::class]);
+    Event::fake([RecordChanged::class]);
 
     $olderSubscription = FilamentRealtime::subscribe()
         ->modelsInNamespace('Filament\\Tests\\Fixtures\\Models')
@@ -163,15 +163,15 @@ it('keeps the latest registration when live selectors collide without reviving r
     $createdPost = Post::factory()->create(['author_id' => $post->author_id]);
 
     expect(array_keys(FilamentRealtime::getSubscriptions()))->toBe(['*']);
-    Event::assertDispatchedTimes(ModelChanged::class, 1);
-    Event::assertDispatched(ModelChanged::class, static fn (ModelChanged $event): bool => $event->getRecord()->is($createdPost)
+    Event::assertDispatchedTimes(RecordChanged::class, 1);
+    Event::assertDispatched(RecordChanged::class, static fn (RecordChanged $event): bool => $event->getRecord()->is($createdPost)
         && ($event->getEvent() === ModelEvent::Saved));
 })->with(['without inspection' => false, 'with inspection' => true]);
 
 it('replaces subscriptions consistently through direct and fluent registration before any observation', function (bool $registerFluently, bool $inspectBetweenChanges): void {
     $post = Post::factory()->create();
     $author = $post->author;
-    Event::fake([ModelChanged::class]);
+    Event::fake([RecordChanged::class]);
 
     FilamentRealtime::subscribe(Post::class)->onlyEvents([ModelEvent::Updated]);
     $subscription = $registerFluently
@@ -187,8 +187,8 @@ it('replaces subscriptions consistently through direct and fluent registration b
     $author->update(['name' => 'Current subscription']);
 
     expect(array_keys(FilamentRealtime::getSubscriptions()))->toBe([User::class]);
-    Event::assertDispatchedTimes(ModelChanged::class, 1);
-    Event::assertDispatched(ModelChanged::class, static fn (ModelChanged $event): bool => $event->getRecord()->is($author)
+    Event::assertDispatchedTimes(RecordChanged::class, 1);
+    Event::assertDispatched(RecordChanged::class, static fn (RecordChanged $event): bool => $event->getRecord()->is($author)
         && ($event->getEvent() === ModelEvent::Updated));
 })->with(['direct' => false, 'fluent' => true])->with(['without inspection' => false, 'with inspection' => true]);
 
@@ -250,7 +250,7 @@ it('does not notify for cancelled writes, quiet writes, or bulk queries', functi
 
 it('uses the most-specific model subscription regardless of registration order', function (bool $reverse): void {
     $post = Post::factory()->create();
-    Event::fake([ModelChanged::class]);
+    Event::fake([RecordChanged::class]);
 
     $subscriptions = [
         ModelSubscription::make()->allModels()->onlyEvents([ModelEvent::Created]),
@@ -268,7 +268,7 @@ it('uses the most-specific model subscription regardless of registration order',
     FilamentRealtime::subscribe(ModelSubscription::make(Post::class)->onlyEvents([]));
     $post->update(['title' => 'Muted']);
 
-    Event::assertDispatchedTimes(ModelChanged::class, 1);
+    Event::assertDispatchedTimes(RecordChanged::class, 1);
 
     FilamentRealtime::unsubscribe(Post::class);
     $post->update(['title' => 'Namespace']);
@@ -279,23 +279,23 @@ it('uses the most-specific model subscription regardless of registration order',
     FilamentRealtime::unsubscribe(ModelSubscription::make()->modelsInNamespace('Filament\\Tests'));
     $createdPost = Post::factory()->create(['author_id' => $post->author_id]);
 
-    Event::assertDispatchedTimes(ModelChanged::class, 4);
+    Event::assertDispatchedTimes(RecordChanged::class, 4);
 
-    Event::assertDispatched(ModelChanged::class, static fn (ModelChanged $event): bool => $event->getRecord()->is($post)
+    Event::assertDispatched(RecordChanged::class, static fn (RecordChanged $event): bool => $event->getRecord()->is($post)
         && ($event->getRecord()->title === 'Exact')
         && ($event->getEvent() === ModelEvent::Updated));
-    Event::assertDispatched(ModelChanged::class, static fn (ModelChanged $event): bool => $event->getRecord()->is($post)
+    Event::assertDispatched(RecordChanged::class, static fn (RecordChanged $event): bool => $event->getRecord()->is($post)
         && ($event->getRecord()->title === 'Namespace')
         && ($event->getEvent() === ModelEvent::Saved));
-    Event::assertDispatched(ModelChanged::class, static fn (ModelChanged $event): bool => $event->getRecord()->is($post)
+    Event::assertDispatched(RecordChanged::class, static fn (RecordChanged $event): bool => $event->getRecord()->is($post)
         && ($event->getEvent() === ModelEvent::Deleted));
-    Event::assertDispatched(ModelChanged::class, static fn (ModelChanged $event): bool => $event->getRecord()->is($createdPost)
+    Event::assertDispatched(RecordChanged::class, static fn (RecordChanged $event): bool => $event->getRecord()->is($createdPost)
         && ($event->getEvent() === ModelEvent::Created));
 })->with(['broad first' => false, 'exact first' => true]);
 
 it('applies model exclusions only to their owning subscription', function (): void {
     $author = User::factory()->create();
-    Event::fake([ModelChanged::class]);
+    Event::fake([RecordChanged::class]);
 
     FilamentRealtime::subscribe(
         ModelSubscription::make()->allModels()->exceptModels([User::class])->onlyEvents([ModelEvent::Created]),
@@ -307,16 +307,16 @@ it('applies model exclusions only to their owning subscription', function (): vo
     $post = Post::factory()->create(['author_id' => $author->getKey()]);
     $user = User::factory()->create();
 
-    Event::assertDispatchedTimes(ModelChanged::class, 2);
-    Event::assertDispatched(ModelChanged::class, static fn (ModelChanged $event): bool => $event->getRecord()->is($post)
+    Event::assertDispatchedTimes(RecordChanged::class, 2);
+    Event::assertDispatched(RecordChanged::class, static fn (RecordChanged $event): bool => $event->getRecord()->is($post)
         && ($event->getEvent() === ModelEvent::Created));
-    Event::assertDispatched(ModelChanged::class, static fn (ModelChanged $event): bool => $event->getRecord()->is($user)
+    Event::assertDispatched(RecordChanged::class, static fn (RecordChanged $event): bool => $event->getRecord()->is($user)
         && ($event->getEvent() === ModelEvent::Saved));
 });
 
 it('can replace and remove broad subscriptions without sharing mutable configuration', function (): void {
     $author = User::factory()->create();
-    Event::fake([ModelChanged::class]);
+    Event::fake([RecordChanged::class]);
 
     $subscription = ModelSubscription::make()->modelsInNamespace('Filament\\Tests\\Fixtures\\Models')->onlyEvents([ModelEvent::Created]);
     FilamentRealtime::subscribe($subscription);
@@ -339,10 +339,10 @@ it('can replace and remove broad subscriptions without sharing mutable configura
     FilamentRealtime::unsubscribe(ModelSubscription::make()->allModels());
     User::factory()->create();
 
-    Event::assertDispatchedTimes(ModelChanged::class, 2);
-    Event::assertDispatched(ModelChanged::class, static fn (ModelChanged $event): bool => $event->getRecord()->is($post)
+    Event::assertDispatchedTimes(RecordChanged::class, 2);
+    Event::assertDispatched(RecordChanged::class, static fn (RecordChanged $event): bool => $event->getRecord()->is($post)
         && ($event->getEvent() === ModelEvent::Created));
-    Event::assertDispatched(ModelChanged::class, static fn (ModelChanged $event): bool => $event->getRecord()->is($user)
+    Event::assertDispatched(RecordChanged::class, static fn (RecordChanged $event): bool => $event->getRecord()->is($user)
         && ($event->getEvent() === ModelEvent::Saved));
     expect(FilamentRealtime::getSubscriptions())->toBe([]);
 });

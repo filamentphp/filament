@@ -1,7 +1,7 @@
 <?php
 
 use Filament\Support\Enums\ModelEvent;
-use Filament\Support\Events\ModelChanged;
+use Filament\Support\Events\RecordChanged;
 use Filament\Support\Facades\FilamentRealtime;
 use Filament\Support\ModelSubscription;
 use Filament\Tests\Fixtures\Enums\ObservablePostEvent;
@@ -15,7 +15,7 @@ uses(TestCase::class);
 beforeEach(function (): void {
     $this->events = [];
 
-    Event::listen(ModelChanged::class, function (ModelChanged $event): void {
+    Event::listen(RecordChanged::class, function (RecordChanged $event): void {
         $this->events[] = $event;
     });
 });
@@ -36,7 +36,7 @@ it('waits for the outer transaction to commit and preserves each change snapshot
         expect($this->events)->toBe([]);
     });
 
-    expect(array_map(static fn (ModelChanged $event): mixed => $event->getRecord()->getAttribute('title'), $this->events))
+    expect(array_map(static fn (RecordChanged $event): mixed => $event->getRecord()->getAttribute('title'), $this->events))
         ->toEqualCanonicalizing(['First', 'Second'])
         ->and($post->fresh()->title)->toBe('Second');
 });
@@ -47,7 +47,7 @@ it('discards automatic and manual events when a transaction rolls back', functio
 
     DB::beginTransaction();
     $post->update(['title' => 'Rolled back']);
-    ModelChanged::make($post)->dispatch();
+    RecordChanged::make($post)->dispatch();
     DB::rollBack();
 
     DB::transaction(function () use ($post): void {
@@ -62,19 +62,19 @@ it('discards automatic and manual events when a transaction rolls back', functio
 it('can dispatch manual changes without a model subscription', function (): void {
     $post = Post::factory()->create();
 
-    Event::fake([ModelChanged::class]);
+    Event::fake([RecordChanged::class]);
 
-    ModelChanged::make($post)->dispatch();
-    ModelChanged::make($post)->event(ModelEvent::Updated)->dispatch();
-    ModelChanged::make($post)->event(ObservablePostEvent::Published)->dispatch();
-    ModelChanged::make($post)->event('updated')->dispatch();
-    ModelChanged::make($post)->event('inventory-adjusted')->dispatch();
+    RecordChanged::make($post)->dispatch();
+    RecordChanged::make($post)->event(ModelEvent::Updated)->dispatch();
+    RecordChanged::make($post)->event(ObservablePostEvent::Published)->dispatch();
+    RecordChanged::make($post)->event('updated')->dispatch();
+    RecordChanged::make($post)->event('inventory-adjusted')->dispatch();
 
-    Event::assertDispatchedTimes(ModelChanged::class, 5);
-    Event::assertDispatched(ModelChanged::class, static fn (ModelChanged $event): bool => $event->getEvent() === null);
-    expect(Event::dispatched(ModelChanged::class, static fn (ModelChanged $event): bool => $event->getEvent() === ModelEvent::Updated))
+    Event::assertDispatchedTimes(RecordChanged::class, 5);
+    Event::assertDispatched(RecordChanged::class, static fn (RecordChanged $event): bool => $event->getEvent() === null);
+    expect(Event::dispatched(RecordChanged::class, static fn (RecordChanged $event): bool => $event->getEvent() === ModelEvent::Updated))
         ->toHaveCount(2);
-    Event::assertDispatched(ModelChanged::class, static fn (ModelChanged $event): bool => ($event->getEvent() === ObservablePostEvent::Published)
+    Event::assertDispatched(RecordChanged::class, static fn (RecordChanged $event): bool => ($event->getEvent() === ObservablePostEvent::Published)
         && $event->getRecord()->is($post));
-    Event::assertDispatched(ModelChanged::class, static fn (ModelChanged $event): bool => $event->getEvent() === 'inventory-adjusted');
+    Event::assertDispatched(RecordChanged::class, static fn (RecordChanged $event): bool => $event->getEvent() === 'inventory-adjusted');
 });

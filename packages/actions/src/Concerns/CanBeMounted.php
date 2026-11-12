@@ -10,6 +10,8 @@ trait CanBeMounted
 {
     protected ?Closure $mountUsing = null;
 
+    protected ?Closure $fillFormUsing = null;
+
     /**
      * @param  array<string, mixed>  $parameters
      */
@@ -25,6 +27,7 @@ trait CanBeMounted
     public function mountUsing(?Closure $callback): static
     {
         $this->mountUsing = $callback;
+        $this->fillFormUsing = null;
 
         return $this;
     }
@@ -38,7 +41,17 @@ trait CanBeMounted
             $schema?->fill($action->evaluate($data));
         });
 
+        $this->fillFormUsing = $this->mountUsing;
+
         return $this;
+    }
+
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public function refillForm(array $parameters): void
+    {
+        $this->evaluate($this->fillFormUsing, $parameters);
     }
 
     public function getMountUsing(): Closure

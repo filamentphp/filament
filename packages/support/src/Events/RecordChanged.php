@@ -8,7 +8,7 @@ use Filament\Support\Enums\ModelEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Database\Eloquent\Model;
 
-class ModelChanged extends Component implements ShouldDispatchAfterCommit
+class RecordChanged extends Component implements ShouldDispatchAfterCommit
 {
     protected Model $record;
 

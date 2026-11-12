@@ -8,7 +8,7 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Facades\Filament;
 use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Attributes\Unexposed;
-use Filament\Support\Events\ModelChangedBroadcast;
+use Filament\Support\Events\RecordChangedBroadcast;
 use Filament\Support\Facades\FilamentRealtime;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -87,7 +87,7 @@ trait InteractsWithRecord
     #[Unexposed]
     public function getRecordBroadcastChannel(): string
     {
-        return ModelChangedBroadcast::getChannel($this->getRecord());
+        return RecordChangedBroadcast::getChannel($this->getRecord());
     }
 
     /**

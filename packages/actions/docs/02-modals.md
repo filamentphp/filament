@@ -478,6 +478,92 @@ Action::make('create')
 
 > The `mountUsing()` method, by default, is used by Filament to initialize the [form](#rendering-a-form-in-a-modal). If you override this method, you will need to call `$form->fill()` to ensure the form is initialized correctly. If you wish to populate the form with data, you can do so by passing an array to the `fill()` method, instead of [using `fillForm()` on the action itself](#filling-the-form-with-existing-data).
 
+## Listening for Livewire events while a modal is open
+
+You can subscribe an action modal to Livewire events using `livewireListeners()`. When an event arrives, Filament re-renders that action's modal without remounting it or refilling its form:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('shippingStatus')
+    ->modalContent(view('actions.shipping-status'))
+    ->livewireListeners([
+        'shipment-updated',
+    ])
+```
+
+Use the event name as an array key and a closure as its value to run PHP before rendering. The `$event` parameter receives the event data, and `$schema` or `$form` refers to the listening action's own schema:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
+
+Action::make('shippingStatus')
+    ->schema([
+        TextInput::make('note'),
+        TextInput::make('status')->disabled(),
+    ])
+    ->livewireListeners([
+        'shipment-updated' => function (array $event, Schema $schema): void {
+            $schema->fillPartially(['status' => $event['status']], ['status']);
+        },
+    ])
+```
+
+For example, dispatch the event from a Livewire component using `$this->dispatch('shipment-updated', status: 'Shipped')`, or from JavaScript using `Livewire.dispatch('shipment-updated', { status: 'Shipped' })`. Events targeted at the owning Livewire component, including self-dispatches, also reach its mounted action listeners. Listening does not require Echo, broadcasting, or an action record. Listeners are removed when the action unmounts; events sent before opening or after closing the modal are not replayed.
+
+The listener array also accepts a closure. Callbacks support normal action utility injections, retain unrelated parent and child form state, and may request additional rendering. Passing an empty listener array disables listening.
+
+> [!WARNING]
+> Event data is untrusted browser input. Filament rechecks mounted action authorization, but your callback must scope and authorize any additional data access or changes. Listeners do not automatically refill editable forms or protect drafts against concurrent edits. Keep callbacks safe to repeat, and do not treat an event as proof that a server-side operation occurred.
+
+## Listening for WebSocket events while a modal is open
+
+You can subscribe an action modal to broadcast events using `webSocketListeners()`. This uses your application's [configured Echo connection](../realtime/model-events#refreshing-resource-pages), and does not require the action to have a record:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('shippingStatus')
+    ->modalContent(view('actions.shipping-status'))
+    ->webSocketListeners([
+        'private:orders,.OrderShipped',
+    ])
+```
+
+Each listener uses `channel,event` syntax, without an `echo` prefix. Use `private:channel,event` for private channels, `presence:channel,event` for presence channels, or `encrypted-private:channel,event` for encrypted private channels. A channel without a prefix is public. Event names follow Echo's naming rules: a leading `.` listens for a custom broadcast name without adding the configured event namespace. Presence channels also support the `here`, `joining`, and `leaving` notifications as event names.
+
+When an event arrives, Filament re-renders that action's modal without remounting it or refilling its form. Unrelated modals and nested form drafts are not refilled. Subscriptions are removed when the action is unmounted.
+
+### Executing a callback when an event arrives
+
+Use the listener name as an array key and a closure as its value to run PHP before rendering. The `$event` parameter receives the event payload:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
+
+Action::make('shippingStatus')
+    ->schema([
+        TextInput::make('note'),
+        TextInput::make('status')->disabled(),
+    ])
+    ->webSocketListeners([
+        'private:orders,.OrderShipped' => function (array $event, Schema $schema): void {
+            $schema->fillPartially(['status' => $event['status']], ['status']);
+        },
+    ])
+```
+
+Callbacks support normal action utility injections. The `$schema` and `$form` injections refer to the listening action's own schema, even when a child action is open. The listening modal is the default render target; any additional rendering requested by your callback is preserved. You may also pass a closure to `webSocketListeners()` to calculate the listener array dynamically.
+
+> [!WARNING]
+> Event payloads reach PHP through the browser and must be treated as untrusted input. Filament rechecks mounted action authorization before invoking the callback, but your application must authorize its private and presence channels, scope any additional data it loads, and authorize any changes it makes. Generic listeners do not infer record scope from the channel or payload, refill editable forms, or provide edit-conflict protection. Replacing editable state can overwrite input typed while the request is in flight.
+
+Listeners run only for events received while subscribed, not automatically on connection or reconnection. Delivery is not an exactly-once or durable event log; callbacks should tolerate repeated notifications, and applications must arrange any required catch-up. For automatic, scoped record invalidations with reconnect catch-up and read-only `ViewAction` refilling, use [record updates](../realtime/model-events#refreshing-view-action-modals) instead.
+
 ## Customizing the action buttons in the footer of the modal
 
 By default, there are two actions in the footer of a modal. The first is a button to submit, which executes the `action()`. The second button closes the modal and cancels the action.
