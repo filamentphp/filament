@@ -79,7 +79,9 @@ export default (configuration) => {
                         } else if (save.receivedEvent) {
                             // A failed or cancelled response has not applied
                             // the saved state. Do not lose its invalidation.
-                            this.receive({})
+                            queueMicrotask(() => {
+                                if (!isDestroyed) this.receive({})
+                            })
                         }
                     })
                 },

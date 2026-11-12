@@ -274,7 +274,6 @@ class EditRecord extends Page
         $this->commitDatabaseTransaction();
 
         $this->rememberData();
-        store($this)->set('recordSaveSucceeded', true);
 
         if ($shouldSendSavedNotification) {
             $this->getSavedNotification()?->send();
@@ -282,6 +281,21 @@ class EditRecord extends Page
 
         if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
             $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode($redirectUrl));
+        }
+
+        if (store($this)->has('recordSaveOperation')) {
+            if (! store($this)->has('redirect')) {
+                // Hooks and after-commit callbacks may have written through
+                // another model instance. Reuse native scope and authorization
+                // before acknowledging that this response replaces a refresh.
+                $this->hasResolvedParentRecordForRequest = false;
+                $this->hasResolvedRecordForRequest = false;
+                $this->resolveScopedModelProperties();
+                $this->authorizeAccess();
+                $this->form->model($this->getRecord());
+            }
+
+            store($this)->set('recordSaveSucceeded', true);
         }
     }
 

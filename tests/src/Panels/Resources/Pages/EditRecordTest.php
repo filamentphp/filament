@@ -120,6 +120,12 @@ it('correlates committed page saves without tagging other records or later chang
         }
     });
 
+    Event::listen(RecordSaved::class, static function (Post $record) use ($post): void {
+        if ($record->is($post)) {
+            Post::findOrFail($record->getKey())->update(['title' => 'Normalized committed title']);
+        }
+    });
+
     $page = livewire(EditPost::class, ['record' => $post->getKey()])
         ->fillForm(['title' => 'Saved in this editor']);
 
@@ -130,10 +136,11 @@ it('correlates committed page saves without tagging other records or later chang
             'method' => 'save',
             'params' => [false],
             'metadata' => ['filamentRecordSave' => $operationId],
-        ]])->assertHasNoFormErrors()->assertSee('Saved in this editor');
+        ]])->assertHasNoFormErrors()->assertSee('Normalized committed title');
 
-        expect($page->effects['filamentRecordSave']['id'])->toBe($operationId)
-            ->and($page->effects['filamentRecordSave']['title'])->toContain('Saved in this editor');
+        expect($post->fresh()->title)->toBe('Normalized committed title')
+            ->and($page->effects['filamentRecordSave']['id'])->toBe($operationId)
+            ->and($page->effects['filamentRecordSave']['title'])->toContain('Normalized committed title');
         Event::assertNotDispatched(RecordChangedBroadcast::class);
         DB::commit();
     } finally {
