@@ -42,6 +42,8 @@ use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\DatabaseTransactionsManager;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -107,11 +109,16 @@ it('can save', function (): void {
     Event::assertDispatched(RecordSaved::class);
 });
 
-it('correlates committed page saves without tagging other records or later changes', function (bool $hasMutableRouteKey): void {
+it('correlates committed page saves without restricting custom bindings or tagging unrelated changes', function (bool $hasMutableRouteKey, bool $isTrashed): void {
     config(['filament.broadcasting.echo' => ['broadcaster' => 'null']]);
     FilamentRealtime::subscribe(Post::class)->onlyEvents(['updated']);
     $post = Post::factory()->create(['title' => 'Original title']);
     $otherPost = Post::factory()->create();
+
+    if ($isTrashed) {
+        $post->delete();
+    }
+
     $operationId = bin2hex(random_bytes(16));
     Event::fake([RecordChangedBroadcast::class]);
     Event::listen('eloquent.updated: ' . Post::class, static function (Post $record) use ($post, $otherPost): void {
@@ -122,7 +129,7 @@ it('correlates committed page saves without tagging other records or later chang
 
     Event::listen(RecordSaved::class, static function (Post $record) use ($post): void {
         if ($record->is($post)) {
-            Post::findOrFail($record->getKey())->update(['title' => 'Normalized committed title']);
+            Post::withTrashed()->findOrFail($record->getKey())->update(['title' => 'Normalized committed title']);
         }
     });
 
@@ -140,11 +147,17 @@ it('correlates committed page saves without tagging other records or later chang
             'method' => 'save',
             'params' => [false],
             'metadata' => ['filamentRecordSave' => $operationId],
-        ]])->assertHasNoFormErrors()->assertSee('Normalized committed title');
+        ]])->assertSuccessful()->assertHasNoFormErrors();
 
-        expect($post->fresh()->title)->toBe('Normalized committed title')
-            ->and($page->effects['filamentRecordSave']['id'])->toBe($operationId)
-            ->and($page->effects['filamentRecordSave']['title'])->toContain('Normalized committed title');
+        expect($post->fresh()->title)->toBe('Normalized committed title');
+
+        if ($isTrashed) {
+            expect($page->effects)->not->toHaveKey('filamentRecordSave');
+        } else {
+            $page->assertSee('Normalized committed title');
+            expect($page->effects['filamentRecordSave']['id'])->toBe($operationId)
+                ->and($page->effects['filamentRecordSave']['title'])->toContain('Normalized committed title');
+        }
         Event::assertNotDispatched(RecordChangedBroadcast::class);
         DB::commit();
     } finally {
@@ -158,9 +171,17 @@ it('correlates committed page saves without tagging other records or later chang
     Event::assertDispatched(RecordChangedBroadcast::class, static fn (RecordChangedBroadcast $event): bool => ((string) $event->broadcastOn() === 'private-' . RecordChangedBroadcast::getChannel($otherPost)) &&
         ($event->broadcastWith() === []));
 
+    if ($isTrashed) {
+        $page->call('refreshRecordPage')->assertSuccessful()->assertSee('Normalized committed title');
+    }
+
     $post->update(['title' => 'Later change']);
     expect(Event::dispatched(RecordChangedBroadcast::class)->last()[0]->broadcastWith())->toBe([]);
-})->with([false, true]);
+})->with([
+    'primary key' => [false, false],
+    'mutable route key' => [true, false],
+    'custom binding includes trashed records' => [true, true],
+]);
 
 it('does not acknowledge page saves rejected by validation or a stale edit', function (bool $isStale): void {
     $post = Post::factory()->create(['title' => 'Original']);
@@ -1477,4 +1498,13 @@ class TitleRoutePostResource extends PostResource
     protected static ?string $slug = 'posts';
 
     protected static ?string $recordRouteKeyName = 'title';
+
+    public static function resolveRecordRouteBinding(int | string $key, ?Closure $modifyQuery = null): ?Model
+    {
+        return parent::resolveRecordRouteBinding($key, static function (Builder $query) use ($modifyQuery): Builder {
+            $query = $modifyQuery ? ($modifyQuery($query) ?? $query) : $query;
+
+            return $query->withTrashed();
+        });
+    }
 }

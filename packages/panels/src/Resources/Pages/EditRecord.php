@@ -301,9 +301,18 @@ class EditRecord extends Page
                         $query = $resource::scopeEloquentQueryToParent($query, $parentRecord);
                     }
 
+                    // A custom binding may allow records absent from this
+                    // query. Retain ordinary invalidation rather than add an
+                    // eligibility gate or fall back to an unrestricted lookup.
+                    $record = $query->first();
+
+                    if (! $record) {
+                        return;
+                    }
+
                     // Refresh a mutable route key by stable identity before
                     // retaining the native binding and authorization checks.
-                    $this->record = $query->firstOrFail();
+                    $this->record = $record;
                 }
 
                 $this->hasResolvedRecordForRequest = false;
