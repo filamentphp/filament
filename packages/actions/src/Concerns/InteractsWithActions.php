@@ -8,12 +8,14 @@ use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
 use Filament\Actions\Enums\ActionStatus;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
+use Filament\Facades\Filament;
 use Filament\Schemas\Components\Contracts\ExposesStateToActionData;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Attributes\Unexposed;
+use Filament\Support\Events\RecordChangedBroadcast;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
@@ -22,8 +24,12 @@ use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use InvalidArgumentException;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Renderless;
 use Livewire\Attributes\Url;
 use ReflectionMethod;
 use ReflectionNamedType;
@@ -109,6 +115,188 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     protected ?array $cachedMountedActions = null;
 
     protected bool $hasActionsModalRendered = false;
+
+    /**
+     * @return array<array<string, mixed>>
+     */
+    #[Unexposed]
+    public function getActionEventListeners(Action $action): array
+    {
+        return [
+            ...$this->getActionLivewireListeners($action),
+            ...$this->getActionWebSocketListeners($action),
+        ];
+    }
+
+    /**
+     * @return array<array<string, mixed>>
+     */
+    protected function getActionWebSocketListeners(Action $action): array
+    {
+        if (
+            blank(config('filament.broadcasting.echo'))
+            || (class_exists(Filament::class) && (Filament::getCurrentPanel()?->hasBroadcasting() === false))
+            || (! $this->isActionMounted($action))
+        ) {
+            return [];
+        }
+
+        $listeners = [];
+
+        foreach ($action->getWebSocketListeners() as $name => $configuration) {
+            [$channel, $eventName] = array_pad(explode(',', $name, 2), 2, null);
+            $channelType = 'channel';
+
+            foreach (['private' => 'private', 'presence' => 'join', 'encrypted-private' => 'encryptedPrivate'] as $prefix => $method) {
+                if (str_starts_with($channel, "{$prefix}:")) {
+                    $channelType = $method;
+                    $channel = substr($channel, strlen($prefix) + 1);
+
+                    break;
+                }
+            }
+
+            if (blank($channel) || blank($eventName) || str_starts_with($name, 'echo:') || str_starts_with($name, 'echo-')) {
+                throw new InvalidArgumentException("Invalid action WebSocket listener [{$name}]. Use [channel,event], [private:channel,event], or [presence:channel,event] without an Echo prefix.");
+            }
+
+            $listeners[] = [
+                ...Arr::except($configuration, ['callback']),
+                'key' => $action->getNestingIndex() . ':webSocket:' . $name,
+                'channel' => $channel,
+                'channelType' => $channelType,
+                'eventName' => $eventName,
+                'parameters' => [$action->getNestingIndex(), $name],
+                'refreshMethod' => 'callActionWebSocketListener',
+            ];
+        }
+
+        return $listeners;
+    }
+
+    /**
+     * @return array<array<string, mixed>>
+     */
+    protected function getActionLivewireListeners(Action $action): array
+    {
+        if (! $this->isActionMounted($action)) {
+            return [];
+        }
+
+        $listeners = [];
+
+        foreach ($action->getLivewireListeners() as $name => $callback) {
+            $listeners[] = [
+                'key' => $action->getNestingIndex() . ':livewire:' . $name,
+                'eventType' => 'livewire',
+                'eventName' => $name,
+                'parameters' => [$action->getNestingIndex(), $name],
+                'refreshMethod' => 'callActionLivewireListener',
+            ];
+        }
+
+        return $listeners;
+    }
+
+    protected function resolveActionForEventListener(int $actionNestingIndex): ?Action
+    {
+        if (! array_key_exists($actionNestingIndex, $this->mountedActions ?? [])) {
+            return null;
+        }
+
+        $action = $this->getMountedAction($actionNestingIndex);
+
+        abort_unless($action instanceof Action, 404);
+
+        foreach (array_slice($this->getMountedActions(), 0, $actionNestingIndex + 1) as $parentAction) {
+            $parentAction->clearVisibilityCache();
+            abort_unless($parentAction->isAuthorized() && (! $parentAction->isDisabled()), 403);
+        }
+
+        return $action;
+    }
+
+    protected function renderActionForEvent(Action $action): ?Schema
+    {
+        $schema = $this->getMountedActionSchema(mountedAction: $action);
+
+        app(PartialsComponentHook::class)->renderPartial($this, fn (): array => [
+            "action-modals.{$action->getNestingIndex()}" => $action->renderModal(),
+        ]);
+
+        return $schema;
+    }
+
+    /**
+     * @param  array<string, mixed>  $event
+     */
+    #[Exposed]
+    public function callActionWebSocketListener(int $actionNestingIndex, string $name, array $event = []): bool
+    {
+        return $this->callActionEventListener($actionNestingIndex, $name, $event, isWebSocket: true);
+    }
+
+    /**
+     * @param  array<string, mixed>  $event
+     */
+    #[Exposed]
+    public function callActionLivewireListener(int $actionNestingIndex, string $name, array $event = []): bool
+    {
+        return $this->callActionEventListener($actionNestingIndex, $name, $event, isWebSocket: false);
+    }
+
+    /**
+     * @param  array<string, mixed>  $event
+     */
+    protected function callActionEventListener(int $actionNestingIndex, string $name, array $event, bool $isWebSocket): bool
+    {
+        if (! $action = $this->resolveActionForEventListener($actionNestingIndex)) {
+            return false;
+        }
+
+        if ($isWebSocket) {
+            abort_if(blank($this->getActionWebSocketListeners($action)), 404);
+        }
+
+        $listeners = $isWebSocket ? $action->getWebSocketListeners() : $action->getLivewireListeners();
+
+        abort_unless(array_key_exists($name, $listeners), 404);
+
+        $schema = $this->renderActionForEvent($action);
+
+        $action->evaluate($isWebSocket ? $listeners[$name]['callback'] : $listeners[$name], ['event' => $event, 'schema' => $schema, 'form' => $schema]);
+
+        return true;
+    }
+
+    /**
+     * @return array<string, mixed> | null
+     */
+    #[Exposed]
+    #[Renderless]
+    public function authorizeActionRecordUpdates(int $actionNestingIndex, string $name, string $socketId): ?array
+    {
+        if (! $action = $this->resolveActionForEventListener($actionNestingIndex)) {
+            return null;
+        }
+
+        if (
+            blank($this->getActionWebSocketListeners($action))
+            || (($action->getWebSocketListeners()[$name]['authorizationMethod'] ?? null) !== 'authorizeActionRecordUpdates')
+        ) {
+            return null;
+        }
+
+        Validator::make(['socketId' => $socketId], ['socketId' => ['required', 'regex:/\A\d+\.\d+\z/']])->validate();
+
+        $request = clone request();
+        $request->replace([
+            'channel_name' => 'private-' . RecordChangedBroadcast::getChannel($action->getRecord()),
+            'socket_id' => $socketId,
+        ]);
+
+        return Broadcast::connection()->validAuthenticationResponse($request, true);
+    }
 
     #[Unexposed]
     public function getDefaultActionUrlIdentifier(): ?string

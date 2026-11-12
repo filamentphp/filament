@@ -13,6 +13,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Attributes\Unexposed;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
@@ -32,6 +33,7 @@ class ViewRecord extends Page
     }
     use Concerns\InteractsWithRecord {
         getRecord as getBaseRecord;
+        refreshRecordPage as protected refreshBaseRecordPage;
     }
 
     /**
@@ -132,6 +134,18 @@ class ViewRecord extends Page
             $this->mutateFormDataBeforeFill($this->getRecord()->attributesToArray()),
             $statePaths,
         );
+    }
+
+    #[Exposed]
+    public function refreshRecordPage(): ?string
+    {
+        $title = $this->refreshBaseRecordPage();
+
+        if (($title !== null) && (! $this->hasInfolist()) && $this->form->isDisabled()) {
+            $this->form->fill($this->mutateFormDataBeforeFill($this->getRecord()->attributesToArray()));
+        }
+
+        return $title;
     }
 
     /**

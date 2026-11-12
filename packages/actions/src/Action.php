@@ -88,12 +88,14 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\HasKeyBindings;
     use Concerns\HasLabel;
     use Concerns\HasLifecycleHooks;
+    use Concerns\HasLivewireListeners;
     use Concerns\HasMountableArguments;
     use Concerns\HasName;
     use Concerns\HasParentActions;
     use Concerns\HasSchema;
     use Concerns\HasSize;
     use Concerns\HasTableIcon;
+    use Concerns\HasWebSocketListeners;
     use Concerns\HasWizard;
     use Concerns\InteractsWithRecord;
     use Concerns\InteractsWithSelectedRecords;

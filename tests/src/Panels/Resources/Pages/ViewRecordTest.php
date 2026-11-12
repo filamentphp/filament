@@ -11,9 +11,12 @@ use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
+use Filament\Support\Events\RecordChangedBroadcast;
+use Filament\Support\Facades\FilamentRealtime;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\TicketMessage;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\ViewPost;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
@@ -22,6 +25,7 @@ use Filament\Tests\Fixtures\Resources\Tickets\Pages\ViewTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -382,6 +386,49 @@ it('preserves content tab customization for infolists and disabled forms', funct
             ->assertDontSee('Read-only overview');
     }
 })->with([false, true]);
+
+it('refills a live view form through its mapping without fill hooks or changing open action data', function (): void {
+    config(['filament.broadcasting.echo' => ['broadcaster' => 'null']]);
+    Event::fake([RecordChangedBroadcast::class]);
+    FilamentRealtime::subscribe(Post::class);
+    $post = Post::factory()->create(['title' => 'Original']);
+    $newAuthor = User::factory()->create();
+
+    $page = livewire(LiveUpdatedViewPost::class, ['record' => $post->getKey()])
+        ->assertSet('data.title', 'ORIGINAL')
+        ->mountAction('simpleModalAction')
+        ->fillForm(['name' => 'Retained action draft']);
+
+    $post->update(['title' => 'Updated elsewhere', 'author_id' => $newAuthor->getKey()]);
+
+    $page->call('refreshRecordPage')
+        ->assertSet('data.title', 'UPDATED ELSEWHERE')
+        ->assertSet('data.author_id', $newAuthor->getKey())
+        ->assertSchemaStateSet(['name' => 'Retained action draft'])
+        ->assertActionMounted('simpleModalAction')
+        ->assertNotDispatched('before-view-fill')
+        ->assertNotDispatched('after-view-fill')
+        ->callMountedAction()
+        ->assertDispatched('simple-modal-action-called');
+});
+
+class LiveUpdatedViewPost extends ViewPost
+{
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        return [...$data, 'title' => strtoupper($data['title'])];
+    }
+
+    protected function beforeFill(): void
+    {
+        $this->dispatch('before-view-fill');
+    }
+
+    protected function afterFill(): void
+    {
+        $this->dispatch('after-view-fill');
+    }
+}
 
 class CombinedContentViewTicket extends ViewTicket
 {
