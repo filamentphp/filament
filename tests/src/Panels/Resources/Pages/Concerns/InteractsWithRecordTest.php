@@ -210,6 +210,7 @@ it('refreshes the page from a browser subscription without replacing drafts, foc
                 }
 
                 disconnect() {}
+                leave() {}
             }
         </script>
         HTML));

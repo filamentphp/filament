@@ -230,9 +230,11 @@ Mounted `ViewAction` modals also listen for their record's changes when its effe
 
 The action is not remounted, and `beforeFormFilled()` and `afterFormFilled()` do not run again. Put repeatable data mapping in `fillForm()` or `mutateRecordDataUsing()`, not those hooks. A custom `mountUsing()` callback is not replayed and its form state is not automatically refilled. Enabled action schemas are not refilled. Field hydration callbacks may run during refilling, so keep them safe to repeat.
 
-Subscriptions close when the modal unmounts. Successful resubscription catches up missed changes; notifications for an old mount cannot refill a replacement action. Refreshing and signing re-resolve the mounted action through its existing table, relationship, schema or page context and recheck action authorization. No model attributes are broadcast, and no polling is used. When the record can no longer be resolved or authorized, the last displayed data stays in place rather than receiving fresh values. Soft-deleted records remain available if the action's existing scope includes them.
+Subscriptions close when the modal unmounts. Successful resubscription catches up missed changes. Refreshing and signing re-resolve the mounted action through its existing table, relationship, schema or page context and recheck action authorization. No model attributes are broadcast, and no polling is used. When the record can no longer be resolved or authorized, the action receives no fresh values; the normal action lifecycle may close its modal. Soft-deleted records remain available if the action's existing scope includes them.
 
 ### Refreshing other action modals
+
+To listen for arbitrary broadcast events, including on actions without records, use [`webSocketListeners()`](../actions/modals#listening-for-websocket-events-while-a-modal-is-open). The record-update API below builds on the same modal transport, adding automatic model subscription selection, scoped authorization and reconnect catch-up.
 
 Other mounted, record-backed actions can opt in using `receiveRecordUpdates()`. They use the same model subscription, Echo configuration and authorization checks as view actions:
 
@@ -251,7 +253,7 @@ Action::make('review')
 
 By default, the action's modal re-renders without refilling its form or changing drafts. Entries read from the current record, not the action's form data. Use `receiveRecordUpdates(false)` to disable updates, including the automatic updates on a `ViewAction`. The condition also accepts a closure.
 
-You can provide a repeatable PHP handler using `recordUpdateReceived()`. It runs after the record has been resolved and authorized, before rendering. The handler receives normal action utility injections, including the current `$record`, `$action` and `$livewire`. The `$schema` and `$form` injections both refer to that action's own modal schema, even when a child action is open. For example, you can update a disabled status field without replacing editable fields:
+You can provide a repeatable PHP handler using `afterRecordUpdateReceived()`. It runs after the record has been resolved and authorized, before rendering. The handler receives normal action utility injections, including the current `$record`, `$action` and `$livewire`. The `$schema` and `$form` injections both refer to that action's own modal schema, even when a child action is open. For example, you can update a disabled status field without replacing editable fields:
 
 ```php
 use App\Models\Post;
@@ -265,7 +267,7 @@ Action::make('review')
         TextInput::make('note'),
         TextInput::make('last_updated_at')->disabled(),
     ])
-    ->recordUpdateReceived(function (Post $record, Schema $schema): void {
+    ->afterRecordUpdateReceived(function (Post $record, Schema $schema): void {
         $schema->fillPartially([
             'last_updated_at' => $record->updated_at,
         ], ['last_updated_at']);

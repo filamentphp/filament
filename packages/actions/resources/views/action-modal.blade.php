@@ -62,16 +62,15 @@
     :wire:submit.prevent="$actionLivewireCallMountedActionName"
     :x-on:modal-closed="$actionModalClosedEventHandler"
 >
-    @if ($recordUpdates = $this->getActionRecordUpdates($action))
+    @foreach ($this->getActionEventListeners($action) as $eventListener)
         <div
-            wire:key="{{ $recordUpdates['key'] }}"
-            x-data="filamentActionRecordUpdates({
-                        channel: @js($recordUpdates['channel']),
-                        parameters: @js([$recordUpdates['key']]),
-                        echoConfiguration: @js(config('filament.broadcasting.echo')),
-                    })"
+            wire:key="{{ $eventListener['key'] }}"
+            x-data="filamentActionEventListener(@js([
+                ...$eventListener,
+                'echoConfiguration' => config('filament.broadcasting.echo'),
+            ]))"
         ></div>
-    @endif
+    @endforeach
 
     {{ FilamentView::renderHook(ActionsRenderHook::MODAL_CUSTOM_CONTENT_BEFORE, scopes: static::class, data: ['action' => $action]) }}
 

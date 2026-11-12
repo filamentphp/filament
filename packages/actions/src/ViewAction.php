@@ -40,7 +40,7 @@ class ViewAction extends Action
 
         $this->receiveRecordUpdates();
 
-        $this->recordUpdateReceived(static function (Action $action, ?Schema $schema): void {
+        $this->afterRecordUpdateReceived(static function (Action $action, ?Schema $schema): void {
             if ($schema?->isDisabled()) {
                 $action->refillForm(['form' => $schema, 'schema' => $schema]);
             }

@@ -1,9 +1,14 @@
-import recordUpdates from '../../../../support/resources/js/utilities/record-updates.js'
+import eventListener from '../../../../support/resources/js/utilities/event-listener.js'
 
 export default (configuration) =>
-    recordUpdates({
+    eventListener({
         ...configuration,
+        channelType: 'private',
+        eventName: '.filament.model-changed',
         authorizationMethod: 'authorizeRecordUpdates',
         refreshMethod: 'refreshRecordPage',
+        passEvent: false,
+        refreshOnSubscription: true,
+        coalesce: true,
         onRefreshed: (title) => (document.title = title),
     })
