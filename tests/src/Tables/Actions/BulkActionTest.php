@@ -322,7 +322,7 @@ describe('selection limits', function (): void {
         );
 
         $queries = $queries->getArrayCopy();
-        $keyOnlyQueries = array_filter($queries, static fn (string $sql): bool => preg_match('/^select ["`\[]?users["`\]]?\.["`\[]?id["`\]]? from /i', $sql) === 1);
+        $keyOnlyQueries = array_filter($queries, static fn (string $sql): bool => preg_match('/^select (?:"filament_record_key"|["`\[]?users["`\]]?\.["`\[]?id["`\]]?) from /i', $sql) === 1);
         $unboundedFullRowQueries = array_filter($queries, static fn (string $sql): bool => preg_match('/^select ["`\[]?users["`\]]?\.\*/i', $sql) === 1 && ! preg_match('/\b(limit|top|fetch)\b/i', $sql));
 
         expect($actionRan)->toHaveCount(1);

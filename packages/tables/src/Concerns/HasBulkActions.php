@@ -303,18 +303,32 @@ trait HasBulkActions
             $qualifiedKeyName = $query->getModel()->getQualifiedKeyName();
             $baseQuery = $query->toBase();
 
-            // Without a limit or offset, neither the ordering nor the selected
+            // Without a limit, group limit, or offset, neither the ordering nor the selected
             // columns can affect which keys are returned, unless another
             // clause could still reference a selected column alias.
             if (
                 ($baseQuery->limit === null) &&
+                ($baseQuery->groupLimit === null) &&
                 (! $baseQuery->offset) &&
                 blank($baseQuery->havings) &&
                 blank($baseQuery->groups) &&
                 blank($baseQuery->unions) &&
                 (! $baseQuery->distinct)
             ) {
-                $baseQuery->reorder()->select($qualifiedKeyName);
+                $baseQuery->reorder();
+
+                // SQLite allows aliases in `WHERE` and `JOIN`, and PostgreSQL
+                // set-returning projections can determine which rows exist.
+                // Preserve the projection while pruning unused output columns.
+                if (in_array($baseQuery->getConnection()->getDriverName(), ['pgsql', 'sqlite'])) {
+                    $baseQuery->addSelect($qualifiedKeyName . ' as filament_record_key');
+                    $baseQuery = $baseQuery->getConnection()->query()
+                        ->fromSub($baseQuery, 'filament_bulk_records')
+                        ->when($baseQuery->useWritePdo, static fn ($query) => $query->useWritePdo());
+                    $qualifiedKeyName = 'filament_record_key';
+                }
+
+                $baseQuery->select($qualifiedKeyName);
             }
 
             return $this->cachedSelectedTableRecords = $baseQuery->pluck($qualifiedKeyName);
